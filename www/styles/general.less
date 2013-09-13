@@ -3,7 +3,6 @@ body {
 }
 
 .title {
-  font-size: 20px;
   color: #4d535c;
   font-weight: bold;
   font-family: 'Ubuntu', sans-serif;
@@ -16,12 +15,56 @@ body {
 .organizations-list {
 }
 
-.organizations-list .title {
-  float: left;
+.organizations-list .organizations-title {
+  display: inline-block;
   margin-top: 6px;
+  margin-bottom: 19px;
+  font-size: 20px;
 }
 
 .organizations-list .action-buttons {
   float: right;
   display: block;
+}
+
+.object-list {
+  margin-bottom: 25px;
+  border: 1px solid #cfcfcf;
+  background-color: #f9f9f9;
+  .border-radius(4px);
+  .box-shadow-both(0, 3px, 1px, 0, rgba(0, 0, 0, 0.05),
+    0, -1px, 2px,  0, rgba(0, 0, 0, 0.05))
+}
+
+.object-list .label {
+  margin-top: 1px;
+  margin-right: 14px;
+  padding: 6px 12px;
+}
+
+.object-list .object-title {
+  margin: 0;
+  display: inline-block;
+  line-height: 15px;
+}
+
+.object-list .object-title a {
+  font-size: 17px;
+  color: #4d535c;
+}
+
+.object-list .object-title a:hover {
+  color: #4d535c;
+}
+
+.object-list .object-list-header {
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  background-color: #fff;
+  padding: 10px 11px 16px 14px;
+  border-bottom: 1px solid #ccc;
+}
+
+.object-list .object-list-header button {
+  float: right;
 }
