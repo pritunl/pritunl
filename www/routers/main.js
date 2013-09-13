@@ -3,8 +3,9 @@ define([
   'underscore',
   'backbone',
   'googleAnalytics',
-  'routers/dashboard'
-], function($, _, Backbone, GoogleAnalytics, DashboardRouter) {
+  'routers/dashboard',
+  'routers/users'
+], function($, _, Backbone, GoogleAnalytics, DashboardRouter, UsersRouter) {
   'use strict';
   var initialize = function() {
     var _loadUrl = Backbone.History.prototype.loadUrl;
@@ -29,6 +30,7 @@ define([
     };
 
     new DashboardRouter(data);
+    new UsersRouter(data);
 
     Backbone.history.start();
   };
