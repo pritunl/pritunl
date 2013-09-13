@@ -82,7 +82,7 @@ require([
   'jquery',
   'underscore',
   'backbone',
-  'views/header/header',
+  'views/header',
   'routers/main',
   'initialize'
 ], function($, _, Backbone, HeaderView, mainRouter, initialize) {

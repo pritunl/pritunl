@@ -2,7 +2,7 @@ define([
   'jquery',
   'underscore',
   'backbone',
-  'text!templates/header/header.html'
+  'text!templates/header.html'
 ], function($, _, Backbone, headerTemplate) {
   'use strict';
   var HeaderView = Backbone.View.extend({

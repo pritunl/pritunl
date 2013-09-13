@@ -2,7 +2,7 @@ define([
   'jquery',
   'underscore',
   'backbone',
-  'text!templates/dashboard/dashboard.html'
+  'text!templates/dashboard.html'
 ], function($, _, Backbone, dashboardTemplate) {
   'use strict';
   var DashboardView = Backbone.View.extend({

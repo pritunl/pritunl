@@ -3,10 +3,47 @@ define([
   'underscore',
   'backbone',
   'googleAnalytics',
-  'routers/dashboard',
-  'routers/users'
-], function($, _, Backbone, GoogleAnalytics, DashboardRouter, UsersRouter) {
+  'views/dashboard',
+  'views/users'
+], function($, _, Backbone, GoogleAnalytics, DashboardView, UsersView) {
   'use strict';
+  var Router = Backbone.Router.extend({
+    routes: {
+      '': 'dashboard',
+      'dashboard': 'dashboard',
+      'users': 'users'
+    },
+    initialize: function(data) {
+      this.data = data;
+    },
+    dashboard: function() {
+      $('header .navbar .nav li').removeClass('active');
+      $('header .dashboard').addClass('active');
+
+      if (this.data.view) {
+        this.data.view.remove();
+      }
+      this.data.view = new DashboardView();
+      $(this.data.element).fadeOut(400, function() {
+        $(this.data.element).html(this.data.view.render().el);
+        $(this.data.element).fadeIn(400);
+      }.bind(this));
+    },
+    users: function() {
+      $('header .navbar .nav li').removeClass('active');
+      $('header .users').addClass('active');
+
+      if (this.data.view) {
+        this.data.view.remove();
+      }
+      this.data.view = new UsersView();
+      $(this.data.element).fadeOut(400, function() {
+        $(this.data.element).html(this.data.view.render().el);
+        $(this.data.element).fadeIn(400);
+      }.bind(this));
+    }
+  });
+
   var initialize = function() {
     var _loadUrl = Backbone.History.prototype.loadUrl;
 
@@ -29,10 +66,9 @@ define([
       view: null
     };
 
-    new DashboardRouter(data);
-    new UsersRouter(data);
-
+    var router = new Router(data);
     Backbone.history.start();
+    return router;
   };
 
   return {
