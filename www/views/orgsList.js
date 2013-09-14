@@ -62,8 +62,6 @@ define([
       else {
         this.$('.orgs-deleted-selected').attr('disabled', 'disabled');
       }
-
-      console.log('select:', view);
     },
     onReset: function(collection) {
       var i;

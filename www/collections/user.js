@@ -7,8 +7,11 @@ define([
   'use strict';
   var UserCollection = Backbone.Collection.extend({
     model: UserModel,
+    initialize: function(options) {
+      this.organization = options.organization;
+    },
     url: function() {
-      return '/user';
+      return '/users/' + this.organization;
     }
   });
 

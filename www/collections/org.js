@@ -8,7 +8,7 @@ define([
   var OrgCollection = Backbone.Collection.extend({
     model: OrgModel,
     url: function() {
-      return '/organization';
+      return '/organizations';
     }
   });
 

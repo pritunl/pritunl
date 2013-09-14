@@ -9,7 +9,9 @@ define([
   var OrgsListItemView = Backbone.View.extend({
     template: _.template(orgsListItemTemplate),
     initialize: function() {
-      this.usersListView = new UsersListView();
+      this.usersListView = new UsersListView({
+        organization: this.model.get('id')
+      });
       this.listenTo(this.usersListView, 'select', this.onSelect);
     },
     onSelect: function(view) {

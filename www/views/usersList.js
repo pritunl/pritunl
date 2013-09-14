@@ -10,8 +10,10 @@ define([
   'use strict';
   var UsersListView = Backbone.View.extend({
     template: _.template(usersListTemplate),
-    initialize: function() {
-      this.collection = new UserCollection();
+    initialize: function(options) {
+      this.collection = new UserCollection({
+        organization: options.organization
+      });
       this.listenTo(this.collection, 'reset', this.onReset);
       this.views = [];
       this.selected = [];
