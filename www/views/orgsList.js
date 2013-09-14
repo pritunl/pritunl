@@ -57,10 +57,10 @@ define([
       }
 
       if (this.selected.length) {
-        this.$('.orgs-deleted-selected').removeAttr('disabled');
+        this.$('.orgs-del-selected').removeAttr('disabled');
       }
       else {
-        this.$('.orgs-deleted-selected').attr('disabled', 'disabled');
+        this.$('.orgs-del-selected').attr('disabled', 'disabled');
       }
     },
     onReset: function(collection) {
