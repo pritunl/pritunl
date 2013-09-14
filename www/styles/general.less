@@ -86,7 +86,7 @@ body {
 
 
 
-.user {
+.users-list .user {
   height: 40px;
   background: #fff;
   border: 1px solid #cfcfcf;
@@ -98,7 +98,7 @@ body {
 }
 
 
-.user .select {
+.users-list .user .select {
   width: 19px;
   height: 19px;
   margin: 10px 10px;
@@ -108,25 +108,25 @@ body {
   .border-radius(3px);
 }
 
-.user .select .select-inner {
+.users-list .user .select .select-inner {
   font-size: 14px;
   top: -1px;
   color: #858585;
   display: none;
 }
 
-.user.selected .select .select-inner {
+.users-list .user.selected .select .select-inner {
   display: inline-block;
 }
 
-.user .select:active {
+.users-list .user .select:active {
   .box-shadow(0 1px 2px rgba(0, 0, 0, 0.05),
     0 1px 3px rgba(0, 0, 0, 0.1) inset);
   .background-clip-padding;
 }
 
 
-.user .name-container {
+.users-list .user .name-container {
   position: absolute;
   display: inline-block;
   margin-top: 5px;
@@ -136,7 +136,7 @@ body {
   border-left: 1px solid #cfcfcf;
 }
 
-.user .name-container .name-icon {
+.users-list .user .name-container .name-icon {
   top: 2px;
   margin-top: 0;
   margin-right: 6px;
@@ -144,13 +144,13 @@ body {
   color: #64b3f6;
 }
 
-.user .name-container .name {
+.users-list .user .name-container .name {
   font-size: 18px;
   line-height: 22px;
 }
 
 
-.user .status-container {
+.users-list .user .status-container {
   float: right;
   display: inline-block;
   margin-top: 6px;
@@ -160,7 +160,7 @@ body {
   border-left: 1px solid #cfcfcf;
 }
 
-.user .status-container .status-icon {
+.users-list .user .status-container .status-icon {
   display: inline-block;
   position: relative;
   top: 3px;
@@ -171,14 +171,14 @@ body {
 }
 
 
-.user .status-container .status-icon.true {
+.users-list .user .status-container .status-icon.true {
   background-color: #47a447;
 }
 
-.user .status-container .status-icon.false {
+.users-list .user .status-container .status-icon.false {
   background-color: #d2322d;
 }
 
-.user .status-container .status-text {
+.users-list .user .status-container .status-text {
   color: #6f7277;
 }
