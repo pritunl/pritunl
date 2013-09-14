@@ -42,6 +42,9 @@ define([
         }.bind(this)
       });
     },
+    onSelect: function(view) {
+      console.log('select:', view);
+    },
     onReset: function(collection) {
       var i;
       var modelView;
@@ -76,6 +79,7 @@ define([
 
         modelView = new OrgsListItemView({model: collection.models[i]});
         this.views.splice(i, 0, modelView);
+        this.listenTo(modelView, 'select', this.onSelect);
         modelView.render().$el.hide();
 
         if (i === 0) {
