@@ -10,6 +10,9 @@ define([
   'use strict';
   var OrgsListView = Backbone.View.extend({
     template: _.template(orgsListTemplate),
+    events: {
+      'click .orgs-del-selected': 'onDelSelected'
+    },
     initialize: function() {
       this.collection = new OrgCollection();
       this.listenTo(this.collection, 'reset', this.onReset);
@@ -41,6 +44,13 @@ define([
           view.remove();
         }.bind(this)
       });
+    },
+    onDelSelected: function(view) {
+      var i;
+
+      for (i = 0; i < this.selected.length; i++) {
+        this.removeItem(this.selected[i]);
+      }
     },
     onSelect: function(view) {
       var i;
