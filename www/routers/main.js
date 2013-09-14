@@ -4,14 +4,17 @@ define([
   'backbone',
   'googleAnalytics',
   'views/dashboard',
-  'views/users'
-], function($, _, Backbone, GoogleAnalytics, DashboardView, UsersView) {
+  'views/users',
+  'views/servers'
+], function($, _, Backbone, GoogleAnalytics, DashboardView, UsersView,
+    ServersView) {
   'use strict';
   var Router = Backbone.Router.extend({
     routes: {
       '': 'dashboard',
       'dashboard': 'dashboard',
-      'users': 'users'
+      'users': 'users',
+      'servers': 'servers'
     },
     initialize: function(data) {
       this.data = data;
@@ -37,6 +40,19 @@ define([
         this.data.view.remove();
       }
       this.data.view = new UsersView();
+      $(this.data.element).fadeOut(400, function() {
+        $(this.data.element).html(this.data.view.render().el);
+        $(this.data.element).fadeIn(400);
+      }.bind(this));
+    },
+    servers: function() {
+      $('header .navbar .nav li').removeClass('active');
+      $('header .servers').addClass('active');
+
+      if (this.data.view) {
+        this.data.view.remove();
+      }
+      this.data.view = new ServersView();
       $(this.data.element).fadeOut(400, function() {
         $(this.data.element).html(this.data.view.render().el);
         $(this.data.element).fadeIn(400);
