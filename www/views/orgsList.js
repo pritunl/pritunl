@@ -43,6 +43,26 @@ define([
       });
     },
     onSelect: function(view) {
+      var i;
+
+      if (view.getSelect()) {
+        this.selected.push(view);
+      }
+      else {
+        for (i = 0; i < this.selected.length; i++) {
+          if (this.selected[i] === view) {
+            this.selected.splice(i, 1);
+          }
+        }
+      }
+
+      if (this.selected.length) {
+        this.$('.orgs-deleted-selected').removeAttr('disabled');
+      }
+      else {
+        this.$('.orgs-deleted-selected').attr('disabled', 'disabled');
+      }
+
       console.log('select:', view);
     },
     onReset: function(collection) {

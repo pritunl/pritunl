@@ -10,6 +10,10 @@ define([
     template: _.template(orgsListItemTemplate),
     initialize: function() {
       this.usersListView = new UsersListView();
+      this.listenTo(this.usersListView, 'select', this.onSelect);
+    },
+    onSelect: function(view) {
+      this.trigger('select', view);
     },
     render: function() {
       this.$el.html(this.template(this.model.toJSON()));
