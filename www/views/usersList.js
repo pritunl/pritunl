@@ -153,6 +153,10 @@ define([
         this.views[i].model.set(collection.models[i].attributes);
         this.views[i].render();
       }
+
+      if (!this.views.length) {
+        this.$('.no-users').slideDown(250);
+      }
     }
   });
 
