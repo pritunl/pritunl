@@ -2,10 +2,15 @@ body {
   background-color: #efefef;
 }
 
-.title {
-  color: #4d535c;
+.title,
+.name {
   font-weight: bold;
   font-family: 'Ubuntu', sans-serif;
+}
+
+.title a,
+.title a:hover {
+  color: #4d535c;
 }
 
 .container {
@@ -16,13 +21,14 @@ body {
 }
 
 .organizations-list .organizations-title {
+  color: #4d535c;
   display: inline-block;
   margin-top: 6px;
   margin-bottom: 19px;
-  font-size: 20px;
+  font-size: 22px;
 }
 
-.organizations-list .action-buttons {
+.organizations-list .organizations-action-buttons {
   float: right;
   display: block;
 }
@@ -32,8 +38,9 @@ body {
   border: 1px solid #cfcfcf;
   background-color: #f9f9f9;
   .border-radius(4px);
-  .box-shadow-both(0, 3px, 1px, 0, rgba(0, 0, 0, 0.05),
-    0, -1px, 2px,  0, rgba(0, 0, 0, 0.05))
+  .box-shadow(0 2px 1px rgba(0, 0, 0, 0.05),
+    0 -1px 2px rgba(0, 0, 0, 0.05) inset);
+  .background-clip-padding;
 }
 
 .object-list .label {
@@ -49,12 +56,7 @@ body {
 }
 
 .object-list .object-title a {
-  font-size: 17px;
-  color: #4d535c;
-}
-
-.object-list .object-title a:hover {
-  color: #4d535c;
+  font-size: 19px;
 }
 
 .object-list .object-list-header {
@@ -67,4 +69,99 @@ body {
 
 .object-list .object-list-header button {
   float: right;
+}
+
+.object-list-container {
+  padding: 0 13px 13px 13px;
+}
+
+.object {
+  height: 40px;
+  background: #fff;
+  border: 1px solid #cfcfcf;
+  margin-top: 12px;
+  .border-radius(3px);
+  .box-shadow(0 1px 0 rgba(255, 255, 255, 0.02)
+    0 1px 3px rgba(0, 0, 0, 0.08) inset);
+  .background-clip-padding;
+}
+
+
+.object .select {
+  width: 19px;
+  height: 19px;
+  margin: 10px 10px;
+  padding-left: 1px;
+  border: 1px solid #cfcfcf;
+  display: inline-block;
+  .border-radius(3px);
+}
+
+.object .select .select-inner {
+  font-size: 14px;
+  top: -1px;
+  color: #858585;
+}
+
+.object .select:active {
+  .box-shadow(0 1px 2px rgba(0, 0, 0, 0.05),
+    0 1px 3px rgba(0, 0, 0, 0.1) inset);
+  .background-clip-padding;
+}
+
+
+.object .name-container {
+  position: absolute;
+  display: inline-block;
+  margin-top: 6px;
+  height: 28px;
+  padding-left: 13px;
+  border-left: 1px solid #cfcfcf;
+}
+
+.object .name-container .name-icon {
+  top: 2px;
+  margin-top: 0;
+  margin-right: 6px;
+  font-size: 19px;
+  color: #64b3f6;
+}
+
+.object .name-container .name {
+  font-size: 18px;
+  line-height: 22px;
+}
+
+
+.object .status-container {
+  float: right;
+  display: inline-block;
+  margin-top: 6px;
+  height: 28px;
+  width: 100px;
+  padding: 2px 12px 0 12px;
+  border-left: 1px solid #cfcfcf;
+}
+
+.object .status-container .status-icon {
+  display: inline-block;
+  position: relative;
+  top: 3px;
+  margin-right: 4px;
+  width: 16px;
+  height: 16px;
+  .border-radius(50%);
+}
+
+
+.object .status-container .status-icon.true {
+  background-color: #47a447;
+}
+
+.object .status-container .status-icon.false {
+  background-color: #d2322d;
+}
+
+.object .status-container .status-text {
+  color: #6f7277;
 }

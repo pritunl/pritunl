@@ -1,17 +1,19 @@
 .border-radius(@radius) {
-  -webkit-box-shadow: @radius;
-  -moz-box-shadow: @radius;
-  box-shadow: @radius;
+  -webkit-border-radius: @radius;
+  -moz-border-radius: @radius;
+  border-radius: @radius;
 }
 
-.box-shadow-both(@horz, @virt, @blur, @spread, @color, @inHorz, @inVert,
-    @inBlur, @inSpread, @inColor) {
-  -webkit-box-shadow: @horz @virt @blur @spread @color,
-    inset @horz @virt @blur @spread @color;
-  -moz-box-shadow: @horz @virt @blur @spread @color,
-    inset @horz @virt @blur @spread @color;
-  -o-box-shadow: @horz @virt @blur @spread @color,
-    inset @horz @virt @blur @spread @color;
-  box-shadow: @horz @virt @blur @spread @color,
-    inset @horz @virt @blur @spread @color;
+.box-shadow(...) {
+  @args: ~`"@{arguments}".replace(/[\[\]]/g, '')`;
+  -webkit-box-shadow: @args;
+  -moz-box-shadow: @args;
+  -o-box-shadow: @args;
+  box-shadow: @args;
+}
+
+.background-clip-padding {
+  -webkit-background-clip: padding;
+  -moz-background-clip: padding;
+  background-clip: padding-box;
 }
