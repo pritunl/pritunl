@@ -4,7 +4,7 @@ define([
   'backbone'
 ], function($, _, Backbone) {
   'use strict';
-  var OrganizationModel = Backbone.Model.extend({
+  var OrgModel = Backbone.Model.extend({
     defaults: {
       'id': null,
       'name': null,
@@ -21,5 +21,5 @@ define([
     }
   });
 
-  return OrganizationModel;
+  return OrgModel;
 });
