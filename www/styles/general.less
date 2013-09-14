@@ -17,10 +17,13 @@ body {
   width: 940px;
 }
 
+
+
+
 .organizations-list {
 }
 
-.organizations-list .organizations-title {
+.organizations-list .organizations-list-title {
   color: #4d535c;
   display: inline-block;
   margin-top: 6px;
@@ -28,12 +31,15 @@ body {
   font-size: 22px;
 }
 
-.organizations-list .organizations-action-buttons {
+.organizations-list .organizations-list-buttons {
   float: right;
   display: block;
 }
 
-.object-list {
+
+
+
+.users-list {
   margin-bottom: 25px;
   border: 1px solid #cfcfcf;
   background-color: #f9f9f9;
@@ -43,13 +49,13 @@ body {
   .background-clip-padding;
 }
 
-.object-list .label {
+.users-list .label {
   margin-top: 1px;
   margin-right: 14px;
   padding: 6px 12px;
 }
 
-.object-list .object-title {
+.users-list .users-list-title {
   margin: 0;
   display: inline-block;
   line-height: 16px;
@@ -57,11 +63,11 @@ body {
   top: 2px;
 }
 
-.object-list .object-title a {
+.users-list .users-list-title a {
   font-size: 19px;
 }
 
-.object-list .object-list-header {
+.users-list .users-list-header {
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
   background-color: #fff;
@@ -69,15 +75,18 @@ body {
   border-bottom: 1px solid #ccc;
 }
 
-.object-list .object-list-header button {
+.users-list .users-list-header button {
   float: right;
 }
 
-.object-list-container {
+.users-list-container {
   padding: 0 13px 13px 13px;
 }
 
-.object {
+
+
+
+.user {
   height: 40px;
   background: #fff;
   border: 1px solid #cfcfcf;
@@ -89,7 +98,7 @@ body {
 }
 
 
-.object .select {
+.user .select {
   width: 19px;
   height: 19px;
   margin: 10px 10px;
@@ -99,20 +108,20 @@ body {
   .border-radius(3px);
 }
 
-.object .select .select-inner {
+.user .select .select-inner {
   font-size: 14px;
   top: -1px;
   color: #858585;
 }
 
-.object .select:active {
+.user .select:active {
   .box-shadow(0 1px 2px rgba(0, 0, 0, 0.05),
     0 1px 3px rgba(0, 0, 0, 0.1) inset);
   .background-clip-padding;
 }
 
 
-.object .name-container {
+.user .name-container {
   position: absolute;
   display: inline-block;
   margin-top: 6px;
@@ -121,7 +130,7 @@ body {
   border-left: 1px solid #cfcfcf;
 }
 
-.object .name-container .name-icon {
+.user .name-container .name-icon {
   top: 2px;
   margin-top: 0;
   margin-right: 6px;
@@ -129,13 +138,13 @@ body {
   color: #64b3f6;
 }
 
-.object .name-container .name {
+.user .name-container .name {
   font-size: 18px;
   line-height: 22px;
 }
 
 
-.object .status-container {
+.user .status-container {
   float: right;
   display: inline-block;
   margin-top: 6px;
@@ -145,7 +154,7 @@ body {
   border-left: 1px solid #cfcfcf;
 }
 
-.object .status-container .status-icon {
+.user .status-container .status-icon {
   display: inline-block;
   position: relative;
   top: 3px;
@@ -156,14 +165,14 @@ body {
 }
 
 
-.object .status-container .status-icon.true {
+.user .status-container .status-icon.true {
   background-color: #47a447;
 }
 
-.object .status-container .status-icon.false {
+.user .status-container .status-icon.false {
   background-color: #d2322d;
 }
 
-.object .status-container .status-text {
+.user .status-container .status-text {
   color: #6f7277;
 }
