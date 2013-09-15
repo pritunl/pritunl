@@ -6,14 +6,16 @@ define([
   'views/orgsListItem',
   'views/alert',
   'views/modalAddOrg',
+  'views/modalAddUser',
   'text!templates/orgsList.html'
 ], function($, _, Backbone, OrgCollection, OrgsListItemView, AlertView,
-    ModalAddOrgView, orgsListTemplate) {
+    ModalAddOrgView, ModalAddUserView, orgsListTemplate) {
   'use strict';
   var OrgsListView = Backbone.View.extend({
     template: _.template(orgsListTemplate),
     events: {
       'click .orgs-add-org': 'onAddOrg',
+      'click .orgs-add-user': 'onAddUser',
       'click .orgs-del-selected': 'onDelSelected'
     },
     initialize: function() {
@@ -50,6 +52,9 @@ define([
     },
     onAddOrg: function() {
       var modal = new ModalAddOrgView();
+    },
+    onAddUser: function() {
+      var modal = new ModalAddUserView();
     },
     onDelSelected: function(view) {
       var i;
