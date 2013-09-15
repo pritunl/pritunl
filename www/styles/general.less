@@ -48,7 +48,22 @@ body {
   border-color: #e0a2ac;
 }
 
+.modal {
+  overflow-y: auto;
+}
 
+.modal .modal-dialog {
+  width: 600px;
+  position: fixed;
+  top: 20%;
+  .left-calc(~'50% - 300px');
+}
+
+.modal .modal-dialog .modal-footer {
+  background-color: #f5f5f5;
+  .border-bottom-left-radius(6px);
+  .border-bottom-right-radius(6px);
+}
 
 .orgs-list {
 }
