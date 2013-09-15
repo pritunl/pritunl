@@ -161,6 +161,15 @@ define([
         this.views[i].model.set(collection.models[i].attributes);
         this.views[i].render();
       }
+
+      if (!this.views.length) {
+        this.$('.orgs-add-user').attr('disabled', 'disabled');
+        this.$('.no-orgs').slideDown(250);
+      }
+      else {
+        this.$('.orgs-add-user').removeAttr('disabled');
+        this.$('.no-orgs').slideUp(250);
+      }
     }
   });
 

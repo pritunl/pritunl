@@ -14,7 +14,7 @@ define([
       this.type = options.type;
       this.message = options.message;
       this.dismissable = options.dismissable;
-      this.animate = options.animate || true;
+      this.animate = (options.animate === false) ? false : true;
       this.render();
     },
     render: function() {
