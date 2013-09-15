@@ -58,10 +58,12 @@ define([
         this.removeItem(this.selected[i]);
       }
 
-      new AlertView({
+      var alertView = new AlertView({
         type: 'warning',
-        message: 'Successfully deleted selected users.'
+        message: 'Successfully deleted selected users.',
+        dismissable: true
       });
+      $('.alerts-container').append(alertView.render().el);
     },
     onSelect: function(view) {
       var i;
