@@ -23,7 +23,6 @@ define([
         dismissable: this.dismissable
       }));
       this.$el.hide();
-      //$('.alerts-container').append(this.el);
       this.$el.slideDown(250);
       return this;
     },
