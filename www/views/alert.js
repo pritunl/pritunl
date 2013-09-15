@@ -8,26 +8,31 @@ define([
   var AlertView = Backbone.View.extend({
     template: _.template(alertTemplate),
     events: {
-      'click .close': 'onRemove'
+      'click .close': 'close'
     },
     initialize: function(options) {
       this.type = options.type;
       this.message = options.message;
+      this.dismissable = options.dismissable;
       this.render();
     },
     render: function() {
       this.$el.html(this.template({
         type: this.type,
-        message: this.message
+        message: this.message,
+        dismissable: this.dismissable
       }));
       this.$el.hide();
-      $('.alerts-container').append(this.el);
+      //$('.alerts-container').append(this.el);
       this.$el.slideDown(250);
       return this;
     },
-    onRemove: function() {
+    close: function(complete) {
       this.$el.slideUp(250, function() {
         this.remove();
+        if (complete) {
+          complete();
+        }
       });
     }
   });
