@@ -7,32 +7,37 @@ define([
 ], function($, _, Backbone, Bootstrap, modalTemplate) {
   'use strict';
   var ModalView = Backbone.View.extend({
-    template: _.template(modalTemplate),
+    modalTemplate: _.template(modalTemplate),
     events: {
-      'click .close': 'onRemove'
+      'click .ok': 'onOk',
+      'hidden.bs.modal .modal': 'onRemove'
     },
-    initialize: function(options) {
-      this.title = options.title;
-      this.body = options.body;
-      this.cancelText = options.cancelText || 'Cancel';
-      this.okText = options.okText || 'Ok';
+    title: '',
+    cancelText: 'Cancel',
+    body: '',
+    okText: 'Ok',
+    initialize: function() {
       this.render();
     },
     render: function() {
-      this.$el.html(this.template({
+      this.$el.html(this.modalTemplate({
         title: this.title,
-        body: this.body,
         cancelText: this.cancelText,
         okText: this.okText
       }));
+      this.$('.modal-body').html(this.body);
       this.$('.modal').modal();
       $('body').append(this.el);
       return this;
     },
+    close: function() {
+      this.$('.modal').modal('hide');
+    },
+    onOk: function() {
+      this.close();
+    },
     onRemove: function() {
-      this.$el.slideUp(250, function() {
-        this.remove();
-      });
+      this.remove();
     }
   });
 
