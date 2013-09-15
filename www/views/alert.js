@@ -26,6 +26,21 @@ define([
       this.$el.slideDown(250);
       return this;
     },
+    flash: function(complete) {
+      this.$('.alert').addClass('flash');
+      setTimeout(function() {
+        this.$('.alert').removeClass('flash');
+        setTimeout(function() {
+          this.$('.alert').addClass('flash');
+          setTimeout(function() {
+            this.$('.alert').removeClass('flash');
+            if (complete) {
+              complete();
+            }
+          }.bind(this), 175);
+        }.bind(this), 175);
+      }.bind(this), 175);
+    },
     close: function(complete) {
       this.$el.slideUp(250, function() {
         this.remove();
