@@ -14,6 +14,7 @@ define([
       this.type = options.type;
       this.message = options.message;
       this.dismissable = options.dismissable;
+      this.animate = options.animate || true;
       this.render();
     },
     render: function() {
@@ -22,8 +23,10 @@ define([
         message: this.message,
         dismissable: this.dismissable
       }));
-      this.$el.hide();
-      this.$el.slideDown(250);
+      if (this.animate) {
+        this.$el.hide();
+        this.$el.slideDown(250);
+      }
       return this;
     },
     flash: function(complete) {
