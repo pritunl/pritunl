@@ -28,7 +28,7 @@ define([
         type: 'danger',
         message: 'Name can not be empty.'
       });
-      this.$('.form-group').prepend(this.alertView.render().el);
+      this.$('form').prepend(this.alertView.render().el);
     },
     onOk: function() {
       if (!this.$('input').val()) {

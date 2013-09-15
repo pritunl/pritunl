@@ -7,10 +7,9 @@
   <div class="form-group">
     <label>Select an organization</label>
     <select class="form-control">
-      <option value="1">organizationname1</option>
-      <option value="2">organizationname2</option>
-      <option value="3">organizationname3</option>
-      <option value="4">organizationname4</option>
+      <% _.each(orgs, function(org) { %>
+        <option value="<%= org.id %>"><%= org.name %></option>
+      <% }); %>
     </select>
   </div>
 </form>

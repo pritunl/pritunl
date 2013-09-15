@@ -54,7 +54,9 @@ define([
       var modal = new ModalAddOrgView();
     },
     onAddUser: function() {
-      var modal = new ModalAddUserView();
+      var modal = new ModalAddUserView({
+        orgs: this.collection
+      });
     },
     onDelSelected: function(view) {
       var i;

@@ -12,7 +12,9 @@ define([
     title: 'Add User',
     okText: 'Add',
     initialize: function(options) {
-      this.body = this.template();
+      this.body = this.template({
+        orgs: options.orgs.toJSON()
+      });
       this.render();
     },
     alert: function() {
@@ -28,7 +30,7 @@ define([
         type: 'danger',
         message: 'Name can not be empty.'
       });
-      this.$('.form-group').prepend(this.alertView.render().el);
+      this.$('form').prepend(this.alertView.render().el);
     },
     onOk: function() {
       if (!this.$('input').val()) {
