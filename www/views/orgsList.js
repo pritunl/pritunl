@@ -56,7 +56,7 @@ define([
       new AlertView({
         type: 'warning',
         message: 'Successfully deleted selected users.'
-      })
+      });
     },
     onSelect: function(view) {
       var i;
