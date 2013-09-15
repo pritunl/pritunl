@@ -4,8 +4,9 @@ define([
   'backbone',
   'collections/org',
   'views/orgsListItem',
+  'views/alert',
   'text!templates/orgsList.html'
-], function($, _, Backbone, OrgCollection, OrgsListItemView,
+], function($, _, Backbone, OrgCollection, OrgsListItemView, AlertView,
     orgsListTemplate) {
   'use strict';
   var OrgsListView = Backbone.View.extend({
@@ -51,6 +52,11 @@ define([
       for (i = 0; i < this.selected.length; i++) {
         this.removeItem(this.selected[i]);
       }
+
+      new AlertView({
+        type: 'warning',
+        message: 'Successfully deleted selected users.'
+      })
     },
     onSelect: function(view) {
       var i;
