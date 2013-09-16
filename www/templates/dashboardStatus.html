@@ -1,0 +1,33 @@
+<table>
+  <tbody>
+    <tr>
+      <td class="status-item orgs-status">
+        <h3 class="status-title title">
+          <span class="status-icon glyphicon glyphicon-tower"></span>
+          Organizations
+        </h3>
+        <div class="status-text title">
+          <span class="status-num"><%= orgs_available %>/<%= orgs_total %></span> organizations available
+        </div>
+      </td>
+      <td class="status-item users-status">
+        <h3 class="status-title title">
+          <span class="status-icon glyphicon glyphicon-user"></span>
+          Users
+        </h3>
+        <div class="status-text title">
+          <span class="status-num"><%= users_online %>/<%= users_total %></span> users online
+        </div>
+      </td>
+      <td class="status-item servers-status">
+        <h3 class="status-title title">
+          <span class="status-icon glyphicon glyphicon-cloud"></span>
+          Servers
+        </h3>
+        <div class="status-text title">
+          <span class="status-num"><%= servers_online %>/<%= servers_total %></span> servers online
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
