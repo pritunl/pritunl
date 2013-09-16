@@ -14,7 +14,7 @@ define([
     },
     render: function() {
       this.$el.html(this.template());
-      this.$el.prepend(dashboardStatus.render().el);
+      this.$el.prepend(this.dashboardStatusView.render().el);
       return this;
     }
   });
