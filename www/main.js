@@ -79,6 +79,24 @@ require.config({
 });
 
 require([
+  'backbone',
+], function(Backbone) {
+  Backbone.View = Backbone.View.extend({
+    deinitialize: function() {
+    },
+    destroy: function() {
+      this.deinitialize();
+      if (this.children) {
+        for (var i = 0; i < this.children.length; i++) {
+          this.children[i].destroy();
+        }
+      }
+      this.remove();
+    }
+  });
+});
+
+require([
   'jquery',
   'underscore',
   'backbone',
