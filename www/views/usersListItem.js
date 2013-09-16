@@ -2,8 +2,9 @@ define([
   'jquery',
   'underscore',
   'backbone',
+  'views/modalRenameUser',
   'text!templates/usersListItem.html'
-], function($, _, Backbone, usersListItemTemplate) {
+], function($, _, Backbone, ModalRenameUserView, usersListItemTemplate) {
   'use strict';
   var UsersListItemView = Backbone.View.extend({
     template: _.template(usersListItemTemplate),
@@ -34,6 +35,9 @@ define([
       this.setSelect(!this.getSelect());
     },
     onRename: function() {
+      new ModalRenameUserView({
+        model: this.model
+      });
     }
   });
 
