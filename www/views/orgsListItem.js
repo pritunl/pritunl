@@ -14,7 +14,8 @@ define([
     template: _.template(orgsListItemTemplate),
     events: {
       'click .org-rename': 'onRenameOrg',
-      'click .org-del': 'onDelOrg'
+      'click .org-del': 'onDelOrg',
+      'click .download-key': 'onDownloadKey'
     },
     initialize: function() {
       this.usersListView = new UsersListView({
@@ -44,6 +45,8 @@ define([
         model: this.model
       });
     },
+    onDownloadKey: function() {
+    }
   });
 
   return OrgsListItemView;
