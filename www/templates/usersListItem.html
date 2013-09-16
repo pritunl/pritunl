@@ -6,8 +6,12 @@
     <span class="name-icon glyphicon glyphicon-user"></span>
     <a class="name" href="#/users/<%= id %>"><%= username %></a>
   </div>
-  <div class="status-container">
-    <div class="status-icon <%= status %>"></div>
-    <span class="status-text title"><%= (status) ? 'Online' : 'Offline' %></span>
+
+  <div class="right-container">
+    <div class="status-container">
+      <div class="status-icon <%= status %>"></div>
+      <span class="status-text title"><%= (status) ? 'Online' : 'Offline' %></span>
+      <a class="download-key glyphicon glyphicon-save no-select" data-toggle="tooltip" title="Click to download key"></a>
+    </div>
   </div>
 </div>

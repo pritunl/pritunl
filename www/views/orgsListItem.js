@@ -28,6 +28,7 @@ define([
       this.$('.org-rename').tooltip({
         container: this.el
       });
+      this.$('.download-key').tooltip();
       return this;
     },
     onSelect: function(view) {
