@@ -8,7 +8,8 @@ define([
   var UsersListItemView = Backbone.View.extend({
     template: _.template(usersListItemTemplate),
     events: {
-      'click .select': 'onSelect'
+      'click .select': 'onSelect',
+      'click .user-name': 'onRename'
     },
     render: function() {
       this.$el.html(this.template(this.model.toJSON()));
@@ -31,6 +32,8 @@ define([
     },
     onSelect: function() {
       this.setSelect(!this.getSelect());
+    },
+    onRename: function() {
     }
   });
 

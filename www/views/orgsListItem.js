@@ -13,8 +13,8 @@ define([
   var OrgsListItemView = Backbone.View.extend({
     template: _.template(orgsListItemTemplate),
     events: {
-      'click .org-rename': 'onRenameOrg',
-      'click .org-del': 'onDelOrg',
+      'click .org-rename': 'onRename',
+      'click .org-del': 'onDelete',
       'click .download-key': 'onDownloadKey'
     },
     initialize: function() {
@@ -35,12 +35,12 @@ define([
     onSelect: function(view) {
       this.trigger('select', view);
     },
-    onRenameOrg: function() {
+    onRename: function() {
       var modal = new ModalRenameOrgView({
         model: this.model
       });
     },
-    onDelOrg: function() {
+    onDelete: function() {
       var modal = new ModalDeleteOrgView({
         model: this.model
       });
