@@ -29,7 +29,7 @@ define([
 
       var alertView = new AlertView({
         type: 'warning',
-        message: 'Successfully deleted users.',
+        message: 'Successfully deleted selected users.',
         dismissable: true
       });
       $('.alerts-container').append(alertView.render().el);
