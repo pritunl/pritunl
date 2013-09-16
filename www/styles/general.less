@@ -289,7 +289,8 @@ ul {
 
 
 
-.dashboard .status-container {
+.dashboard .status-container,
+.dashboard .log-container {
   margin-bottom: 25px;
   border: 1px solid #cfcfcf;
   background-color: #f9f9f9;
@@ -334,4 +335,40 @@ ul {
 .dashboard .status-container .status-text .status-num {
   color: #3ba51a;
   font-weight: bold;
+}
+
+.dashboard .log-container {
+  padding: 20px 20px 5px 20px;
+}
+
+.dashboard .log-container .log-title {
+  color: #4d535c;
+  margin: 0;
+  font-size: 20px;
+  padding-bottom: 17px;
+  border-bottom: 1px solid #cfcfcf;
+}
+
+.dashboard .log-container .log-entry {
+  color: #4d535c;
+  padding: 15px 15px 15px 10px;
+  border-bottom: 1px solid #cfcfcf;
+}
+
+.dashboard .log-container .log-entry.last {
+  border-bottom: 0 none;
+}
+
+.dashboard .log-container .log-entry .log-msg {
+  display: inline-block;
+}
+
+.dashboard .log-container .log-entry .log-date {
+  float: right;
+  display: inline-block;
+}
+
+.dashboard .log-container .log-entry .log-icon {
+  font-size: 15px;
+  margin-right: 7px;
 }
