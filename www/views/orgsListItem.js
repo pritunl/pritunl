@@ -5,9 +5,10 @@ define([
   'views/alert',
   'views/usersList',
   'views/modalRenameOrg',
+  'views/modalDeleteOrg',
   'text!templates/orgsListItem.html'
 ], function($, _, Backbone, AlertView, UsersListView, ModalRenameOrgView,
-    orgsListItemTemplate) {
+    ModalDeleteOrgView, orgsListItemTemplate) {
   'use strict';
   var OrgsListItemView = Backbone.View.extend({
     template: _.template(orgsListItemTemplate),
@@ -38,18 +39,17 @@ define([
       });
     },
     onDelOrg: function() {
+      var modal = new ModalDeleteOrgView({
+        model: this.model
+      });
+
+      return;
       var alertView = new AlertView({
         type: 'warning',
         message: 'Successfully deleted organization.',
         dismissable: true
       });
       $('.alerts-container').append(alertView.render().el);
-      this.$el.slideUp({
-        duration: 250,
-        complete: function() {
-          this.remove();
-        }.bind(this)
-      });
     },
   });
 
