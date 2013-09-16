@@ -42,14 +42,6 @@ define([
       var modal = new ModalDeleteOrgView({
         model: this.model
       });
-
-      return;
-      var alertView = new AlertView({
-        type: 'warning',
-        message: 'Successfully deleted organization.',
-        dismissable: true
-      });
-      $('.alerts-container').append(alertView.render().el);
     },
   });
 
