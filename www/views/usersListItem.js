@@ -12,6 +12,7 @@ define([
     },
     render: function() {
       this.$el.html(this.template(this.model.toJSON()));
+      this.$('.user-name').tooltip();
       return this;
     },
     getSelect: function() {
