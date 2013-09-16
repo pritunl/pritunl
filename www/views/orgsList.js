@@ -3,13 +3,16 @@ define([
   'underscore',
   'backbone',
   'collections/org',
+  'collections/user',
   'views/orgsListItem',
   'views/alert',
   'views/modalAddOrg',
   'views/modalAddUser',
+  'views/modalDeleteUsers',
   'text!templates/orgsList.html'
-], function($, _, Backbone, OrgCollection, OrgsListItemView, AlertView,
-    ModalAddOrgView, ModalAddUserView, orgsListTemplate) {
+], function($, _, Backbone, OrgCollection, UserCollection,
+    OrgsListItemView, AlertView, ModalAddOrgView, ModalAddUserView,
+    ModalDeleteUsersView, orgsListTemplate) {
   'use strict';
   var OrgsListView = Backbone.View.extend({
     template: _.template(orgsListTemplate),
@@ -60,17 +63,15 @@ define([
     },
     onDelSelected: function(view) {
       var i;
+      var models = [];
 
       for (i = 0; i < this.selected.length; i++) {
-        this.removeItem(this.selected[i]);
+        models.push(this.selected[i].model);
       }
 
-      var alertView = new AlertView({
-        type: 'warning',
-        message: 'Successfully deleted selected users.',
-        dismissable: true
+      var modal = new ModalDeleteUsersView({
+        users: new UserCollection(models)
       });
-      $('.alerts-container').append(alertView.render().el);
     },
     onSelect: function(view) {
       var i;
