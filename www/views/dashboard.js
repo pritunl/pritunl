@@ -2,13 +2,19 @@ define([
   'jquery',
   'underscore',
   'backbone',
+  'views/dashboardStatus',
   'text!templates/dashboard.html'
-], function($, _, Backbone, dashboardTemplate) {
+], function($, _, Backbone, DashboardStatus, dashboardTemplate) {
   'use strict';
   var DashboardView = Backbone.View.extend({
+    className: 'dashboard container',
     template: _.template(dashboardTemplate),
+    initialize: function() {
+      this.dashboardStatusView = new DashboardStatus();
+    },
     render: function() {
       this.$el.html(this.template());
+      this.$el.prepend(dashboardStatus.render().el);
       return this;
     }
   });
