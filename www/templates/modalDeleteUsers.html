@@ -4,7 +4,7 @@
     <ul class="modal-user-list">
       <% _.each(users, function(user) { %>
         <li>
-          <a href="#/users/<%= user.id %>"><%= user.username %></a>
+          <%= user.username %>
         </li>
       <% }); %>
     </ul>
