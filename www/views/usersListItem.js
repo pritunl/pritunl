@@ -35,14 +35,10 @@ define([
       this.setSelect(!this.getSelect());
     },
     onRename: function() {
-      if (this.renameUserView) {
-        this.renameUserView.destroy();
-        this.renameUserView = null;
-      }
-      this.renameUserView = new ModalRenameUserView({
+      var modal = new ModalRenameUserView({
         model: this.model
       });
-      this.addView(this.renameUserView);
+      this.addView(modal);
     }
   });
 
