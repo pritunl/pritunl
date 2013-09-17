@@ -72,6 +72,14 @@ define([
       ]);
       return this;
     },
+    removeItem: function(view) {
+      view.$el.slideUp({
+        duration: 250,
+        complete: function() {
+          view.destroy();
+        }.bind(this)
+      });
+    },
     onReset: function(collection) {
       var i;
       var modelView;
