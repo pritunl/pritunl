@@ -84,14 +84,29 @@ require([
   Backbone.View = Backbone.View.extend({
     deinitialize: function() {
     },
+    addView: function(view) {
+      if (!this.children) {
+        this.children = [];
+      }
+      this.children.push(view);
+      this.listenTo(view, 'destroy', function() {
+        var index = this.children.indexOf(view);
+        if (index !== -1) {
+          this.children[index] = null;
+        }
+      }.bind(this));
+    },
     destroy: function() {
       this.deinitialize();
       if (this.children) {
         for (var i = 0; i < this.children.length; i++) {
-          this.children[i].destroy();
+          if (this.children[i]) {
+            this.children[i].destroy();
+          }
         }
       }
       this.remove();
+      this.trigger('destroy');
     }
   });
 });
