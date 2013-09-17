@@ -78,6 +78,9 @@ define([
       view.$el.slideUp({
         duration: 250,
         complete: function() {
+          if (view.getSelect()) {
+            view.setSelect(false);
+          }
           view.destroy();
         }.bind(this)
       });
@@ -117,7 +120,9 @@ define([
           continue;
         }
 
-        modelView = new UsersListItemView({model: collection.models[i]});
+        modelView = new UsersListItemView({
+          model: collection.models[i]
+        });
         this.addView(modelView);
         this.views.splice(i, 0, modelView);
         this.listenTo(modelView, 'select', this.onSelect);
