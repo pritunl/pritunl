@@ -117,7 +117,6 @@ define([
         });
         this.addView(modelView);
         this.views.splice(i, 0, modelView);
-        this.listenTo(modelView, 'select', this.onSelect);
         modelView.render().$el.hide();
 
         if (i === 0) {
