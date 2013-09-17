@@ -4,13 +4,13 @@ define([
   'backbone',
   'views/dashboardStatus',
   'text!templates/dashboard.html'
-], function($, _, Backbone, DashboardStatus, dashboardTemplate) {
+], function($, _, Backbone, DashboardStatusView, dashboardTemplate) {
   'use strict';
   var DashboardView = Backbone.View.extend({
     className: 'dashboard container',
     template: _.template(dashboardTemplate),
     initialize: function() {
-      this.dashboardStatusView = new DashboardStatus();
+      this.dashboardStatusView = new DashboardStatusView();
       this.addView(this.dashboardStatusView);
     },
     render: function() {
