@@ -74,6 +74,15 @@ define([
       var modal = new ModalDeleteUsersView({
         users: new UserCollection(models)
       });
+      this.listenTo(modal, 'deleted', function() {
+        var alertView = new AlertView({
+          type: 'warning',
+          message: 'Successfully deleted selected users.',
+          dismissable: true
+        });
+        $('.alerts-container').append(alertView.render().el);
+        this.addView(alertView);
+      }.bind(this));
       this.addView(modal);
     },
     onSelect: function(view) {

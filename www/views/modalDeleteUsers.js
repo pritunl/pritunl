@@ -26,14 +26,7 @@ define([
       if (!this.removedOrg) {
         return;
       }
-
-      // TODO Not watched for destroy
-      var alertView = new AlertView({
-        type: 'warning',
-        message: 'Successfully deleted selected users.',
-        dismissable: true
-      });
-      $('.alerts-container').append(alertView.render().el);
+      this.trigger('deleted');
     }
   });
 
