@@ -88,12 +88,15 @@ require([
       if (!this.children) {
         this.children = [];
       }
-      this.children.push(view);
+      var index = this.children.push(view) - 1;
       this.listenTo(view, 'destroy', function() {
-        var index = this.children.indexOf(view);
-        if (index !== -1) {
-          this.children[index] = null;
+        if (this.children[index] !== view) {
+          index = this.children.indexOf(view);
+          if (index === -1) {
+            return;
+          }
         }
+        this.children[index] = null;
       }.bind(this));
     },
     destroy: function() {
