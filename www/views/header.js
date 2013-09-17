@@ -10,9 +10,8 @@ define([
     tagName: 'header',
     template: _.template(headerTemplate),
     initialize: function() {
-      this.children = [];
       this.searchView = new SearchView();
-      this.children.push(this.searchView);
+      this.addView(this.searchView);
     },
     render: function() {
       this.$el.html(this.template());

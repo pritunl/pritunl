@@ -12,7 +12,6 @@ define([
     title: 'Delete Users',
     okText: 'Delete',
     initialize: function(options) {
-      this.children = [];
       this.body = this.template({
         users: options.users.toJSON()
       });
@@ -28,6 +27,7 @@ define([
         return;
       }
 
+      // TODO Not watched for destroy
       var alertView = new AlertView({
         type: 'warning',
         message: 'Successfully deleted selected users.',

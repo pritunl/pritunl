@@ -10,9 +10,8 @@ define([
     className: 'users container',
     template: _.template(usersTemplate),
     initialize: function(options) {
-      this.children = [];
       this.orgsList = new OrgsListView();
-      this.children.push(this.orgsList);
+      this.addView(this.orgsList);
     },
     render: function() {
       this.$el.html(this.template());

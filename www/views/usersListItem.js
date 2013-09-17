@@ -12,18 +12,10 @@ define([
       'click .select': 'onSelect',
       'click .user-name': 'onRename'
     },
-    initialize: function() {
-      this.children = [];
-    },
     render: function() {
       this.$el.html(this.template(this.model.toJSON()));
       this.$('.user-name').tooltip();
       return this;
-    },
-    deinitialize: function() {
-      if (this.renameUserView) {
-        this.children.push(renameUserView);
-      }
     },
     getSelect: function() {
       return this.$el.hasClass('selected');
@@ -50,6 +42,7 @@ define([
       this.renameUserView = new ModalRenameUserView({
         model: this.model
       });
+      this.addView(this.renameUserView);
     }
   });
 

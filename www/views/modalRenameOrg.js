@@ -11,7 +11,6 @@ define([
     title: 'Rename Organization',
     okText: 'Rename',
     initialize: function(options) {
-      this.children = [];
       this.body = this.template(this.model.toJSON());
       this.render();
     },

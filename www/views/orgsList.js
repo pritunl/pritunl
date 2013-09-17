@@ -24,12 +24,8 @@ define([
     initialize: function() {
       this.collection = new OrgCollection();
       this.listenTo(this.collection, 'reset', this.onReset);
-      this.children = [];
       this.views = [];
       this.selected = [];
-    },
-    deinitialize: function() {
-      this.children = this.children.concat(this.views);
     },
     render: function() {
       this.$el.html(this.template());
@@ -59,11 +55,13 @@ define([
     },
     onAddOrg: function() {
       var modal = new ModalAddOrgView();
+      this.addView(modal);
     },
     onAddUser: function() {
       var modal = new ModalAddUserView({
         orgs: this.collection
       });
+      this.addView(modal);
     },
     onDelSelected: function(view) {
       var i;
@@ -76,6 +74,7 @@ define([
       var modal = new ModalDeleteUsersView({
         users: new UserCollection(models)
       });
+      this.addView(modal);
     },
     onSelect: function(view) {
       var i;
@@ -131,6 +130,7 @@ define([
         }
 
         modelView = new OrgsListItemView({model: collection.models[i]});
+        this.addView(modelView);
         this.views.splice(i, 0, modelView);
         this.listenTo(modelView, 'select', this.onSelect);
         modelView.render().$el.hide();

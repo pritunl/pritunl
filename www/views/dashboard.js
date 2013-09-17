@@ -10,9 +10,8 @@ define([
     className: 'dashboard container',
     template: _.template(dashboardTemplate),
     initialize: function() {
-      this.children = [];
       this.dashboardStatusView = new DashboardStatus();
-      this.children.push(this.dashboardStatusView);
+      this.addView(this.dashboardStatusView);
     },
     render: function() {
       this.$el.html(this.template());

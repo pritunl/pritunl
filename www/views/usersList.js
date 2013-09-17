@@ -15,12 +15,8 @@ define([
         organization: options.organization
       });
       this.listenTo(this.collection, 'reset', this.onReset);
-      this.children = [];
       this.views = [];
       this.selected = [];
-    },
-    deinitialize: function() {
-      this.children = this.children.concat(this.views);
     },
     render: function() {
       this.$el.html(this.template());
@@ -122,6 +118,7 @@ define([
         }
 
         modelView = new UsersListItemView({model: collection.models[i]});
+        this.addView(modelView);
         this.views.splice(i, 0, modelView);
         this.listenTo(modelView, 'select', this.onSelect);
         modelView.render().$el.hide();

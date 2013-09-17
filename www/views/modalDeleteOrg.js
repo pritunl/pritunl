@@ -12,16 +12,15 @@ define([
     title: 'Delete Organization',
     okText: 'Delete',
     initialize: function(options) {
-      this.children = [];
       this.body = this.template();
       this.render();
 
-      this.deleteAlertView = new AlertView({
+      var alertView = new AlertView({
         type: 'danger',
         message: 'Deleting the organization will delete all the users in it.',
         animate: false
       });
-      this.children.push(this.deleteAlertView);
+      this.addView(alertView);
       this.$('form').prepend(alertView.render().el);
     },
     onOk: function() {
@@ -39,6 +38,7 @@ define([
         return;
       }
 
+      // TODO Not watched for destroy
       var alertView = new AlertView({
         type: 'warning',
         message: 'Successfully deleted organization.',

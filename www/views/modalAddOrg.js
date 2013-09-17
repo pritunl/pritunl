@@ -11,7 +11,6 @@ define([
     title: 'Add Organization',
     okText: 'Add',
     initialize: function(options) {
-      this.children = [];
       this.body = this.template();
       this.render();
     },

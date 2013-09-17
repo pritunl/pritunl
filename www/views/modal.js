@@ -18,13 +18,7 @@ define([
     body: '',
     okText: 'Ok',
     initialize: function() {
-      this.children = [];
       this.render();
-    },
-    deinitialize: function() {
-      if (this.alertView) {
-        this.children.push(this.alertView);
-      }
     },
     render: function() {
       this.$el.html(this.modalTemplate({
@@ -42,9 +36,9 @@ define([
         if (this.alertView.type !== type ||
             this.alertView.message !== message) {
           this.alertView.close(function() {
-            this.alertView = null;
             this.setAlert(type, message);
           }.bind(this));
+          this.alertView = null;
         }
         else {
           this.alertView.flash();
@@ -56,6 +50,7 @@ define([
         type: type,
         message: message
       });
+      this.addView(this.alertView);
       this.$('form').prepend(this.alertView.render().el);
     },
     clearAlert: function() {
@@ -71,7 +66,7 @@ define([
       this.close();
     },
     onRemove: function() {
-      this.remove();
+      this.destroy();
     }
   });
 
