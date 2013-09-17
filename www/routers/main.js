@@ -24,7 +24,7 @@ define([
       $('header .dashboard').addClass('active');
 
       if (this.data.view) {
-        this.data.view.remove();
+        this.data.view.destroy();
       }
       this.data.view = new DashboardView();
       $(this.data.element).fadeOut(400, function() {
@@ -37,7 +37,7 @@ define([
       $('header .users').addClass('active');
 
       if (this.data.view) {
-        this.data.view.remove();
+        this.data.view.destroy();
       }
       this.data.view = new UsersView();
       $(this.data.element).fadeOut(400, function() {
@@ -50,7 +50,7 @@ define([
       $('header .servers').addClass('active');
 
       if (this.data.view) {
-        this.data.view.remove();
+        this.data.view.destroy();
       }
       this.data.view = new ServersView();
       $(this.data.element).fadeOut(400, function() {

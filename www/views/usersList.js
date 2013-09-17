@@ -78,7 +78,7 @@ define([
       view.$el.slideUp({
         duration: 250,
         complete: function() {
-          view.remove();
+          view.destroy();
         }.bind(this)
       });
     },
