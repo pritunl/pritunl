@@ -9,10 +9,14 @@ define([
   var HeaderView = Backbone.View.extend({
     tagName: 'header',
     template: _.template(headerTemplate),
+    initialize: function() {
+      this.children = [];
+      this.searchView = new SearchView();
+      this.children.push(this.searchView);
+    },
     render: function() {
       this.$el.html(this.template());
-      var searchView = new SearchView();
-      this.$('.navbar-collapse').append(searchView.render().el);
+      this.$('.navbar-collapse').append(this.searchView.render().el);
       return this;
     }
   });

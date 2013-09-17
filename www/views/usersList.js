@@ -15,8 +15,12 @@ define([
         organization: options.organization
       });
       this.listenTo(this.collection, 'reset', this.onReset);
+      this.children = [];
       this.views = [];
       this.selected = [];
+    },
+    deinitialize: function() {
+      this.children = this.children.concat(this.views);
     },
     render: function() {
       this.$el.html(this.template());

@@ -18,9 +18,11 @@ define([
       'click .download-key': 'onDownloadKey'
     },
     initialize: function() {
+      this.children = [];
       this.usersListView = new UsersListView({
         organization: this.model.get('id')
       });
+      this.children.push(this.usersListView);
       this.listenTo(this.usersListView, 'select', this.onSelect);
     },
     render: function() {

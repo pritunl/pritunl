@@ -46,7 +46,7 @@ define([
     },
     close: function(complete) {
       this.$el.slideUp(250, function() {
-        this.remove();
+        this.destroy();
         if (complete) {
           complete();
         }

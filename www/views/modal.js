@@ -18,7 +18,13 @@ define([
     body: '',
     okText: 'Ok',
     initialize: function() {
+      this.children = [];
       this.render();
+    },
+    deinitialize: function() {
+      if (this.alertView) {
+        this.children.push(this.alertView);
+      }
     },
     render: function() {
       this.$el.html(this.modalTemplate({

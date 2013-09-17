@@ -11,6 +11,7 @@ define([
     title: 'Add User',
     okText: 'Add',
     initialize: function(options) {
+      this.children = [];
       this.body = this.template({
         orgs: options.orgs.toJSON()
       });
