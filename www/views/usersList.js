@@ -121,6 +121,9 @@ define([
       if (!this.views.length) {
         this.$('.no-users').slideDown(250);
       }
+      else {
+        this.$('.no-users').slideUp(250);
+      }
     }
   });
 

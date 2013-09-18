@@ -1,6 +1,7 @@
 from constants import *
 from pritunl import server, openssl_lock
 from config import Config
+from event import Event
 from user import User
 import uuid
 import os
@@ -38,6 +39,7 @@ class Organization(Config):
         self._make_dirs()
         self.ca_cert = User(self, type=CERT_CA)
         self.commit()
+        Event(type=ORGS_UPDATED)
 
     def _make_dirs(self):
         os.makedirs(os.path.join(self.path, REQS_DIR))
