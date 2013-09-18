@@ -54,9 +54,9 @@ class User(Config):
     def _initialize(self):
         self._create_ssl_conf()
         self._cert_request()
+        self.commit()
         self._cert_create()
         self._delete_ssl_conf()
-        self.commit()
         Event(type=USERS_UPDATED)
 
     def _cert_request(self):
