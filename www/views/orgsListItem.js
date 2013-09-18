@@ -46,7 +46,7 @@ define([
       var modal = new ModalDeleteOrgView({
         model: this.model
       });
-      this.listenTo(modal, 'deleted', function() {
+      this.listenToOnce(modal, 'deleted', function() {
         var alertView = new AlertView({
           type: 'warning',
           message: 'Successfully deleted organization.',

@@ -87,7 +87,7 @@ require([
     addView: function(view) {
       this.children || (this.children = []);
       var index = this.children.push(view) - 1;
-      this.listenTo(view, 'destroy', function() {
+      this.listenToOnce(view, 'destroy', function() {
         if (this.children[index] !== view) {
           index = this.children.indexOf(view);
           if (index === -1) {

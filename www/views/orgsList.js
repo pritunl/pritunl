@@ -63,7 +63,7 @@ define([
       var modal = new ModalDeleteUsersView({
         users: new UserCollection(models)
       });
-      this.listenTo(modal, 'deleted', function() {
+      this.listenToOnce(modal, 'deleted', function() {
         var alertView = new AlertView({
           type: 'warning',
           message: 'Successfully deleted selected users.',
