@@ -1,11 +1,9 @@
 from constants import *
 from config import Config
-import threading
+from pritunl import openssl_lock
 import uuid
 import os
 import subprocess
-
-openssl_lock = threading.Lock()
 
 class Organization(Config):
     str_options = ['name']
