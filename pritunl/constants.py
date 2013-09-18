@@ -6,8 +6,9 @@ CLOSED = 'closed'
 SAVED = 'saved'
 UNSAVED = 'unsaved'
 
+DEFAULT_DB_PATH = '/var/lib/pritunl/pritunl.db'
 DEFAULT_WWW_PATH = '/usr/share/pritunl/www'
-DEFAULT_DATA_PATH = '/var/lib/pritunl'
+DEFAULT_DATA_PATH = '/var/lib/pritunl/organizations'
 
 REQS_DIR = 'reqs'
 KEYS_DIR = 'keys'

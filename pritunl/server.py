@@ -3,6 +3,7 @@ import logging
 import signal
 import time
 from constants import *
+from database import Database
 from config import Config
 
 logger = None
@@ -10,12 +11,14 @@ logger = None
 class Server(Config):
     bool_options = ['debug', 'log_debug']
     int_options = ['port']
-    path_options = ['log_path', 'www_path', 'data_path']
+    path_options = ['log_path', 'db_path', 'www_path', 'data_path']
     str_options = ['bind_addr']
 
     def __init__(self):
         Config.__init__(self)
         self.app = None
+        self.app_db = None
+        self.mem_db = None
         self.interrupt = False
 
     def _setup_app(self):
@@ -52,6 +55,14 @@ class Server(Config):
 
         logger.addHandler(self.log_handler)
 
+    def _setup_db(self):
+        self.mem_db = Database(None)
+        self.app_db = Database(self.db_path or DEFAULT_DB_PATH)
+
+    def _close_db(self):
+        self.mem_db.close()
+        self.app_db.close()
+
     def _setup_handlers(self):
         import handlers
 
@@ -73,6 +84,7 @@ class Server(Config):
         self._setup_app()
         self._setup_conf()
         self._setup_log()
+        self._setup_db()
         self._setup_handlers()
         self._setup_static_handler()
 
@@ -90,6 +102,7 @@ class Server(Config):
             self.interrupt = True
             logger.info('Stopping server...')
             server.stop()
+            self._close_db()
 
     def _run_wsgi_debug(self):
         logger.info('Starting debug server...')
@@ -104,6 +117,8 @@ class Server(Config):
         finally:
             signal.signal(signal.SIGINT, signal.SIG_IGN)
             self.interrupt = True
+            # Possible data loss here db closing before debug server
+            self._close_db()
             logger.info('Stopping server...')
 
     def _run_server(self):
