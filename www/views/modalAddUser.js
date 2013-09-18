@@ -22,13 +22,27 @@ define([
         this.setAlert('danger', 'Name can not be empty.');
         return;
       }
-      var userModel = new UserModel({
+      var userModel = new UserModel();
+      userModel.save({
         organization: this.$('select').val(),
         name: this.$('input').val()
+      }, {
+        success: function() {
+          this.triggerEvt = true;
+          this.clearAlert();
+          this.close();
+        }.bind(this),
+        error: function() {
+          this.setAlert('danger',
+            'Failed to add user, server error occurred.');
+        }.bind(this)
       });
-      userModel.save();
-      this.clearAlert();
-      this.close();
+    },
+    onRemove: function() {
+      if (!this.triggerEvt) {
+        return;
+      }
+      this.trigger('added');
     }
   });
 
