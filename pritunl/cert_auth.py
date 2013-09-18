@@ -128,7 +128,7 @@ class Cert(Config):
             conf_file.write(conf_data)
         self._cert_request()
         self._cert_create()
-        self._delete_conf()
+        self._delete_ssl_conf()
         self.commit()
 
     def _cert_request(self):
@@ -161,7 +161,7 @@ class Cert(Config):
         finally:
             openssl_lock.release()
 
-    def _delete_conf(self):
+    def _delete_ssl_conf(self):
         os.remove(self.ssl_conf_path)
 
     def _load_type(self):
