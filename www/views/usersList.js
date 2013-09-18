@@ -12,7 +12,7 @@ define([
     template: _.template(usersListTemplate),
     initialize: function(options) {
       this.collection = new UserCollection({
-        organization: options.organization
+        org: options.org
       });
       this.listenTo(this.collection, 'reset', this.onReset);
       this.views = [];

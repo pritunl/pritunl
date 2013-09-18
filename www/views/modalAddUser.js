@@ -2,9 +2,10 @@ define([
   'jquery',
   'underscore',
   'backbone',
+  'models/user',
   'views/modal',
   'text!templates/modalAddUser.html'
-], function($, _, Backbone, ModalView, modalAddUserTemplate) {
+], function($, _, Backbone, UserModel, ModalView, modalAddUserTemplate) {
   'use strict';
   var ModalAddUserView = ModalView.extend({
     template: _.template(modalAddUserTemplate),
@@ -21,6 +22,11 @@ define([
         this.setAlert('danger', 'Name can not be empty.');
         return;
       }
+      var userModel = new UserModel({
+        organization: this.$('select').val(),
+        name: this.$('input').val()
+      });
+      userModel.save();
       this.clearAlert();
       this.close();
     }

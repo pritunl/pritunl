@@ -8,10 +8,10 @@ define([
   var UserCollection = Backbone.Collection.extend({
     model: UserModel,
     initialize: function(options) {
-      this.organization = options.organization;
+      this.org = options.org;
     },
     url: function() {
-      return '/user/' + this.organization;
+      return '/user/' + this.org;
     }
   });
 

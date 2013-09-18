@@ -19,7 +19,7 @@ define([
     },
     initialize: function() {
       this.usersListView = new UsersListView({
-        organization: this.model.get('id')
+        org: this.model.get('id')
       });
       this.addView(this.usersListView);
       this.listenTo(this.usersListView, 'select', this.onSelect);
