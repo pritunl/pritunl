@@ -18,11 +18,11 @@ define([
       this.render();
     },
     onOk: function() {
-      this.removedOrg = true;
+      this.triggerEvt = true;
       this.close();
     },
     onRemove: function() {
-      if (!this.removedOrg) {
+      if (!this.triggerEvt) {
         return;
       }
       this.trigger('deleted');

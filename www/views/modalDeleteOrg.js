@@ -29,11 +29,11 @@ define([
           'of the organization being deleted.');
         return;
       }
-      this.removedOrg = true;
+      this.triggerEvt = true;
       this.close();
     },
     onRemove: function() {
-      if (!this.removedOrg) {
+      if (!this.triggerEvt) {
         return;
       }
       this.trigger('deleted');
