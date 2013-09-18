@@ -7,8 +7,8 @@ SAVED = 'saved'
 UNSAVED = 'unsaved'
 
 DEFAULT_WWW_PATH = '/usr/share/pritunl/www'
+DEFAULT_DATA_PATH = '/var/lib/pritunl'
 
-DATA_DIR = './data'
 REQS_DIR = 'reqs'
 KEYS_DIR = 'keys'
 CERTS_DIR = 'certs'

@@ -10,7 +10,7 @@ logger = None
 class Server(Config):
     bool_options = ['debug', 'log_debug']
     int_options = ['port']
-    path_options = ['log_path', 'www_path']
+    path_options = ['log_path', 'www_path', 'data_path']
     str_options = ['bind_addr']
 
     def __init__(self):

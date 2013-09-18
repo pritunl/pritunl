@@ -1,5 +1,5 @@
 from constants import *
-from pritunl import openssl_lock
+from pritunl import server, openssl_lock
 from config import Config
 from user import User
 import uuid
@@ -18,7 +18,7 @@ class Organization(Config):
         else:
             self._initialized = True
             self.id = id
-        self.path = os.path.join(DATA_DIR, self.id)
+        self.path = os.path.join(server.data_path, self.id)
 
         self.index_path = os.path.join(self.path, INDEX_NAME)
         self.index_attr_path = os.path.join(self.path, INDEX_NAME + '.attr')
@@ -58,11 +58,13 @@ class Organization(Config):
 
     def get_users(self):
         users = []
-        for user_id in os.listdir(os.path.join(self.path, CERTS_DIR)):
-            user_id = user_id.replace('.crt', '')
-            if user_id == CA_CERT_ID:
-                continue
-            users.append(User(self, id=user_id))
+        certs_path = os.path.join(self.path, CERTS_DIR)
+        if os.path.isdir(certs_path):
+            for user_id in os.listdir(certs_path):
+                user_id = user_id.replace('.crt', '')
+                if user_id == CA_CERT_ID:
+                    continue
+                users.append(User(self, id=user_id))
         return users
 
     def get_user(self, id):
@@ -91,6 +93,7 @@ class Organization(Config):
     @staticmethod
     def get_orgs():
         orgs = []
-        for org_id in os.listdir(DATA_DIR):
-            orgs.append(Organization(org_id))
+        if os.path.isdir(server.data_path):
+            for org_id in os.listdir(server.data_path):
+                orgs.append(Organization(org_id))
         return orgs
