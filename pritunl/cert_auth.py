@@ -1,4 +1,5 @@
 from constants import *
+from config import Config
 import threading
 import uuid
 import os
@@ -35,6 +36,7 @@ class CertAuth:
         os.makedirs(os.path.join(self.path, KEYS_DIR), 0700)
         os.makedirs(os.path.join(self.path, CERTS_DIR))
         os.makedirs(os.path.join(self.path, INDEXED_CERTS_DIR))
+        os.makedirs(os.path.join(self.path, USERS_DIR))
         os.makedirs(os.path.join(self.path, TEMP_DIR))
 
         with open(self.index_path, 'a'):
@@ -55,14 +57,17 @@ class CertAuth:
             certs.append(Cert(self, id=cert_id))
         return certs
 
-    def new_cert(self, type):
-        return Cert(self, type=type)
+    def new_cert(self, type, name=None):
+        return Cert(self, name=name, type=type)
 
     def create_crl(self):
         pass
 
-class Cert:
-    def __init__(self, ca, id=None, type=None):
+class Cert(Config):
+    str_options = ['name']
+
+    def __init__(self, ca, id=None, name=None, type=None):
+        Config.__init__(self)
         self.ca = ca
         self.id = id
 
@@ -80,28 +85,33 @@ class Cert:
         else:
             self._initialized = True
 
-        self.conf_path = os.path.join(self.ca.path, TEMP_DIR,
-            '%s.conf' % self.id)
         self.reqs_path = os.path.join(self.ca.path, REQS_DIR,
             '%s.csr' % self.id)
+        self.ssl_conf_path = os.path.join(self.ca.path, TEMP_DIR,
+            '%s.conf' % self.id)
         self.key_path = os.path.join(self.ca.path, KEYS_DIR,
             '%s.key' % self.id)
         self.cert_path = os.path.join(self.ca.path, CERTS_DIR,
             '%s.crt' % self.id)
+        self.set_path(os.path.join(self.ca.path, USERS_DIR,
+            '%s.conf' % self.id))
+
+        if name is not None:
+            self.name = name
 
         if not self._initialized:
             self._initialize()
+            self.commit()
 
     def __getattr__(self, name):
         if name == 'type':
             self.type = self._load_type()
             return self.type
-        else:
-            raise AttributeError('Config instance has no attribute %r' % name)
+        return Config.__getattr__(self, name)
 
     def _initialize(self):
         conf_data = CERT_CONF % (self.ca.id, self.ca.path, self.id)
-        with open(self.conf_path, 'w') as conf_file:
+        with open(self.ssl_conf_path, 'w') as conf_file:
             conf_file.write(conf_data)
         self._cert_request()
         self._cert_create()
@@ -112,7 +122,7 @@ class Cert:
         try:
             args = [
                 'openssl', 'req', '-new', '-batch',
-                '-config', self.conf_path,
+                '-config', self.ssl_conf_path,
                 '-out', self.reqs_path,
                 '-keyout', self.key_path,
                 '-reqexts', '%s_req_ext' % self.type,
@@ -128,7 +138,7 @@ class Cert:
             if self.type == CERT_CA:
                 args += ['-selfsign']
             args += [
-                '-config', self.conf_path,
+                '-config', self.ssl_conf_path,
                 '-in', self.reqs_path,
                 '-out', self.cert_path,
                 '-extensions', '%s_ext' % self.type,
@@ -138,7 +148,7 @@ class Cert:
             openssl_lock.release()
 
     def _delete_conf(self):
-        os.remove(self.conf_path)
+        os.remove(self.ssl_conf_path)
 
     def _load_type(self):
         with open(self.cert_path, 'r') as cert_file:
