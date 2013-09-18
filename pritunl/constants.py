@@ -34,6 +34,9 @@ CESSATION_OF_OPERATION = 'cessationOfOperation'
 CERTIFICATE_HOLD = 'certificateHold'
 REMOVE_FROM_CRL = 'removeFromCRL'
 
+ORGS_UPDATED = 'organizations_updated'
+USERS_UPDATED = 'users_updated'
+
 CERT_CONF = """[ default ]
 ca = %s
 dir = %s

@@ -1,6 +1,7 @@
 from constants import *
 from pritunl import openssl_lock
 from config import Config
+from event import Event
 import uuid
 import os
 import subprocess
@@ -56,6 +57,7 @@ class User(Config):
         self._cert_create()
         self._delete_ssl_conf()
         self.commit()
+        Event(type=USERS_UPDATED)
 
     def _cert_request(self):
         openssl_lock.acquire()

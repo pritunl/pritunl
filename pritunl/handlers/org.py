@@ -1,7 +1,7 @@
 from pritunl.constants import *
 from pritunl.organization import Organization
-from pritunl import server
 import pritunl.utils as utils
+from pritunl import server
 import flask
 
 @server.app.route('/organization', methods=['GET'])

@@ -116,10 +116,12 @@ require([
   'jquery',
   'underscore',
   'backbone',
+  'collections/event',
   'views/header',
   'routers/main',
   'initialize'
-], function($, _, Backbone, HeaderView, mainRouter, initialize) {
+], function($, _, Backbone, EventCollection, HeaderView, mainRouter,
+    initialize) {
   'use strict';
 
   initialize();
@@ -232,6 +234,9 @@ require([
   };
 
   $(document).on('dblclick mousedown', '.no-select', false);
+
+  window.events = new EventCollection();
+  window.events.start();
 
   var headerView = new HeaderView();
   $('body').prepend(headerView.render().el);

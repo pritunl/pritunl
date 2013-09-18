@@ -15,15 +15,22 @@ define([
         org: options.org
       });
       this.listenTo(this.collection, 'reset', this.onReset);
+      this.listenTo(window.events, 'users_updated', this.update);
       this.views = [];
       this.selected = [];
     },
     render: function() {
       this.$el.html(this.template());
-      this.collection.fetch({
-        reset: true
-      });
+      this.update();
       return this;
+    },
+    update: function() {
+      this.collection.fetch({
+        reset: true,
+        error: function() {
+          this.collection.reset();
+        }.bind(this)
+      });
     },
     removeItem: function(view) {
       view.$el.slideUp({
