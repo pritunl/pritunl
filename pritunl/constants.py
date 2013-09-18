@@ -24,6 +24,15 @@ CERT_CA = 'ca'
 CERT_SERVER = 'server'
 CERT_CLIENT = 'client'
 
+UNSPECIFIED = 'unspecified'
+KEY_COMPROMISE = 'keyCompromise'
+CA_COMPROMISE = 'CACompromise'
+AFFILIATION_CHANGED = 'affiliationChanged'
+SUPERSEDED = 'superseded'
+CESSATION_OF_OPERATION = 'cessationOfOperation'
+CERTIFICATE_HOLD = 'certificateHold'
+REMOVE_FROM_CRL = 'removeFromCRL'
+
 CERT_CONF = """[ default ]
 ca = %s
 dir = %s

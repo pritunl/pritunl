@@ -177,6 +177,18 @@ class Cert(Config):
             else:
                 return  CERT_CLIENT
 
-    def revoke(self):
+    def revoke(self, reason=UNSPECIFIED):
         if self.id == CA_CERT_ID:
             raise TypeError('Cannot revoke ca cert')
+        openssl_lock.acquire()
+        try:
+            self._create_ssl_conf()
+            args = ['openssl', 'ca', '-batch',
+                '-config', self.ssl_conf_path,
+                '-revoke', self.cert_path,
+                '-crl_reason', reason
+            ]
+            subprocess.check_call(args)
+            self._delete_ssl_conf()
+        finally:
+            openssl_lock.release()
