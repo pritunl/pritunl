@@ -53,8 +53,7 @@ class Server(Config):
         logger.addHandler(self.log_handler)
 
     def _setup_handlers(self):
-        #import handlers
-        pass
+        import handlers
 
     def _setup_static_handler(self):
         www_path = self.www_path or DEFAULT_WWW_PATH
