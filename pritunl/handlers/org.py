@@ -4,7 +4,7 @@ from pritunl import server
 import pritunl.utils as utils
 
 @server.app.route('/organization', methods=['GET'])
-def orgs_get():
+def org_get():
     orgs = []
 
     for org in Organization.get_orgs():
