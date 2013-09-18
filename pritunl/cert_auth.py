@@ -123,9 +123,7 @@ class Cert(Config):
         return Config.__getattr__(self, name)
 
     def _initialize(self):
-        conf_data = CERT_CONF % (self.ca.id, self.ca.path, self.id)
-        with open(self.ssl_conf_path, 'w') as conf_file:
-            conf_file.write(conf_data)
+        self._create_ssl_conf()
         self._cert_request()
         self._cert_create()
         self._delete_ssl_conf()
@@ -160,6 +158,11 @@ class Cert(Config):
             subprocess.check_call(args)
         finally:
             openssl_lock.release()
+
+    def _create_ssl_conf(self):
+        conf_data = CERT_CONF % (self.ca.id, self.ca.path, self.id)
+        with open(self.ssl_conf_path, 'w') as conf_file:
+            conf_file.write(conf_data)
 
     def _delete_ssl_conf(self):
         os.remove(self.ssl_conf_path)
