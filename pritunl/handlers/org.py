@@ -15,7 +15,7 @@ def org_get():
         orgs_sort.append(name_id)
         orgs_dict[name_id] = {
             'id': org.id,
-            'name': org.name
+            'name': org.name,
         }
 
     for name_id in sorted(orgs_sort):
@@ -30,5 +30,5 @@ def org_post():
 
     return utils.jsonify({
         'id': org.id,
-        'name': org.name
+        'name': org.name,
     })

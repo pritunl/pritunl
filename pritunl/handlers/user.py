@@ -36,5 +36,5 @@ def user_post(org_id):
         'id': user.id,
         'organization': org.id,
         'name': user.name,
-        'status': False
+        'status': False,
     })
