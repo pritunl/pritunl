@@ -2,6 +2,7 @@ from pritunl.constants import *
 from pritunl.organization import Organization
 from pritunl import server
 import pritunl.utils as utils
+import flask
 
 @server.app.route('/organization', methods=['GET'])
 def org_get():
@@ -14,3 +15,13 @@ def org_get():
         })
 
     return utils.jsonify(orgs)
+
+@server.app.route('/organization', methods=['POST'])
+def org_post():
+    name = flask.request.json['name'].encode()
+    org = Organization(name=name)
+
+    return utils.jsonify({
+        'id': org.id,
+        'name': org.name
+    })

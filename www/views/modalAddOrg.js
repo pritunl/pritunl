@@ -2,9 +2,10 @@ define([
   'jquery',
   'underscore',
   'backbone',
+  'models/org',
   'views/modal',
   'text!templates/modalAddOrg.html'
-], function($, _, Backbone, ModalView, modalAddOrgTemplate) {
+], function($, _, Backbone, OrgModel, ModalView, modalAddOrgTemplate) {
   'use strict';
   var ModalAddOrgView = ModalView.extend({
     template: _.template(modalAddOrgTemplate),
@@ -19,6 +20,10 @@ define([
         this.setAlert('danger', 'Name can not be empty.');
         return;
       }
+      var orgModel = new OrgModel({
+        name: this.$('input').val()
+      });
+      orgModel.save();
       this.clearAlert();
       this.close();
     }
