@@ -19,7 +19,7 @@ def event_get(last_event=None):
         return utils.jsonify(events)
 
     run_time = 0
-    while run_time <= 10 and not server.interrupt:
+    while run_time <= 30 and not server.interrupt:
         events = []
 
         for event in Event.get_events(last_event):
