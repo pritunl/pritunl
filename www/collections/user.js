@@ -11,7 +11,7 @@ define([
       this.organization = options.organization;
     },
     url: function() {
-      return '/users/' + this.organization;
+      return '/user/' + this.organization;
     }
   });
 
