@@ -20,11 +20,25 @@ define([
         this.setAlert('danger', 'Name can not be empty.');
         return;
       }
-      var orgModel = new OrgModel({
+      var orgModel = new OrgModel();
+      orgModel.save({
         name: this.$('input').val()
+      }, {
+        success: function() {
+          this.triggerEvt = true;
+          this.close();
+        }.bind(this),
+        error: function() {
+          this.setAlert('danger',
+            'Failed to add user, server error occurred.');
+        }.bind(this)
       });
-      orgModel.save();
-      this.close();
+    },
+    onRemove: function() {
+      if (!this.triggerEvt) {
+        return;
+      }
+      this.trigger('added');
     }
   });
 

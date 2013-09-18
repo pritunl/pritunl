@@ -44,6 +44,15 @@ define([
     },
     onAddOrg: function() {
       var modal = new ModalAddOrgView();
+      this.listenToOnce(modal, 'added', function() {
+        var alertView = new AlertView({
+          type: 'warning',
+          message: 'Successfully added organization.',
+          dismissable: true
+        });
+        $('.alerts-container').append(alertView.render().el);
+        this.addView(alertView);
+      }.bind(this));
       this.addView(modal);
     },
     onAddUser: function() {
