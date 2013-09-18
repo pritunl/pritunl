@@ -59,8 +59,33 @@ define([
         this.alertView = null;
       }
     },
+    setLoading: function(message) {
+      if (this.loadingView) {
+        if (this.loadingView.message !== message) {
+          this.loadingView.close(function() {
+            this.setLoading(message);
+          }.bind(this));
+          this.loadingView = null;
+        }
+        return;
+      }
+
+      this.loadingView = new AlertView({
+        type: 'info',
+        message: message
+      });
+      this.addView(this.loadingView);
+      this.$('form').append(this.loadingView.render().el);
+    },
+    clearLoading: function() {
+      if (this.loadingView) {
+        this.loadingView.close();
+        this.loadingView = null;
+      }
+    },
     close: function() {
       this.clearAlert();
+      this.clearLoading();
       this.$('.modal').modal('hide');
     },
     onOk: function() {

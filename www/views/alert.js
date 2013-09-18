@@ -50,7 +50,7 @@ define([
         if (complete) {
           complete();
         }
-      });
+      }.bind(this));
     }
   });
 
