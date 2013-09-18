@@ -76,7 +76,7 @@ commonName = supplied
 
 [ ca_ext ]
 keyUsage = critical,keyCertSign,cRLSign
-basicConstraints = critical,CA:true,pathlen:0
+basicConstraints = critical,CA:true
 subjectKeyIdentifier = hash
 authorityKeyIdentifier = keyid:always
 
