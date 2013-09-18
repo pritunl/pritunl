@@ -1,5 +1,5 @@
 from constants import *
-from drivnal import server
+from pritunl import server
 import logging
 
 logger = logging.getLogger(APP_NAME)
