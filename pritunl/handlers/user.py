@@ -8,14 +8,21 @@ import flask
 def user_get(org_id):
     org = Organization(org_id)
     users = []
+    users_dict = {}
+    users_sort = []
 
     for user in org.get_users():
-        users.append({
+        name_id = '%s_%s' % (user.name, user.id)
+        users_sort.append(name_id)
+        users_dict[name_id] = {
             'id': user.id,
             'organization': org.id,
             'name': user.name,
-            'status': False
-        })
+            'status': False,
+        }
+
+    for name_id in sorted(users_sort):
+        users.append(users_dict[name_id])
 
     return utils.jsonify(users)
 

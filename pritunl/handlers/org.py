@@ -7,12 +7,19 @@ import flask
 @server.app.route('/organization', methods=['GET'])
 def org_get():
     orgs = []
+    orgs_dict = {}
+    orgs_sort = []
 
     for org in Organization.get_orgs():
-        orgs.append({
+        name_id = '%s_%s' % (org.name, org.id)
+        orgs_sort.append(name_id)
+        orgs_dict[name_id] = {
             'id': org.id,
             'name': org.name
-        })
+        }
+
+    for name_id in sorted(orgs_sort):
+        orgs.append(orgs_dict[name_id])
 
     return utils.jsonify(orgs)
 
