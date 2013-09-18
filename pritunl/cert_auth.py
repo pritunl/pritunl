@@ -7,7 +7,7 @@ import subprocess
 
 openssl_lock = threading.Lock()
 
-class CertAuth(Config):
+class Organization(Config):
     str_options = ['name']
 
     def __init__(self, id=None, name=None):
@@ -33,11 +33,11 @@ class CertAuth(Config):
         if not self._initialized:
             self._initialize()
 
-        self.ca_cert = Cert(self, id=CA_CERT_ID)
+        self.ca_cert = User(self, id=CA_CERT_ID)
 
     def _initialize(self):
         self._make_dirs()
-        self.ca_cert = Cert(self, type=CERT_CA)
+        self.ca_cert = User(self, type=CERT_CA)
         self.commit()
 
     def _make_dirs(self):
@@ -63,11 +63,11 @@ class CertAuth(Config):
             cert_id = cert_id.replace('.crt', '')
             if cert_id == CA_CERT_ID:
                 continue
-            certs.append(Cert(self, id=cert_id))
+            certs.append(User(self, id=cert_id))
         return certs
 
     def new_cert(self, type, name=None):
-        return Cert(self, name=name, type=type)
+        return User(self, name=name, type=type)
 
     def generate_crl(self):
         openssl_lock.acquire()
@@ -86,7 +86,7 @@ class CertAuth(Config):
         finally:
             openssl_lock.release()
 
-class Cert(Config):
+class User(Config):
     str_options = ['name']
 
     def __init__(self, ca, id=None, name=None, type=None):
