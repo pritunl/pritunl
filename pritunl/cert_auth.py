@@ -73,6 +73,7 @@ class CertAuth:
                 '-out', self.crl_path
             ]
             subprocess.check_call(args)
+            os.remove(conf_path)
         finally:
             openssl_lock.release()
 
