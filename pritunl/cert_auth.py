@@ -60,8 +60,21 @@ class CertAuth:
     def new_cert(self, type, name=None):
         return Cert(self, name=name, type=type)
 
-    def create_crl(self):
-        pass
+    def generate_crl(self):
+        openssl_lock.acquire()
+        try:
+            conf_path = os.path.join(self.path, TEMP_DIR, 'crl.conf')
+            conf_data = CERT_CONF % (self.id, self.path, CA_CERT_ID)
+            with open(conf_path, 'w') as conf_file:
+                conf_file.write(conf_data)
+            args = [
+                'openssl', 'ca', '-gencrl', '-batch',
+                '-config', conf_path,
+                '-out', self.crl_path
+            ]
+            subprocess.check_call(args)
+        finally:
+            openssl_lock.release()
 
 class Cert(Config):
     str_options = ['name']
