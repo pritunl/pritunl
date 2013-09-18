@@ -66,6 +66,7 @@ new_certs_dir = $dir/indexed_certs
 certificate = $dir/certs/ca.crt
 private_key = $dir/keys/ca.key
 default_days = 3652
+default_crl_days = 365
 default_md = sha1
 policy = ca_policy
 
