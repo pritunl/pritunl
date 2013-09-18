@@ -20,58 +20,9 @@ define([
     },
     render: function() {
       this.$el.html(this.template());
-      this.collection.reset([
-        {
-          'id': '0ebeed1612f24c2dbd5bf2efc51f9b61',
-          'username': 'username0',
-          'status': true
-        },
-        {
-          'id': '9487991a880146eabfa1c253f90ba690',
-          'username': 'username1',
-          'status': true
-        },
-        {
-          'id': '87865d89ff914bdfb365fab85622620c',
-          'username': 'username2',
-          'status': false
-        },
-        {
-          'id': '58887df5d0684dc98573f79f8d916aac',
-          'username': 'username3',
-          'status': true
-        },
-        {
-          'id': '3bfbab146dae46199f02f9391ff8e61c',
-          'username': 'username4',
-          'status': false
-        },
-        {
-          'id': '0aed88706e73451bad0edf7490f5c07b',
-          'username': 'username5',
-          'status': true
-        },
-        {
-          'id': '8f198417c7e74417b66186b7bfbf5478',
-          'username': 'username6',
-          'status': false
-        },
-        {
-          'id': 'b5b6ed6ab3394a879ee966aa492a5073',
-          'username': 'username7',
-          'status': false
-        },
-        {
-          'id': '73fbd092edb74e7cb7427458a7233efe',
-          'username': 'username8',
-          'status': false
-        },
-        {
-          'id': '832a8b3ff7c740d990c3a85f2a4287ca',
-          'username': 'username9',
-          'status': true
-        }
-      ]);
+      this.collection.fetch({
+        reset: true
+      });
       return this;
     },
     removeItem: function(view) {

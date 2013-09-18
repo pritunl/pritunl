@@ -29,20 +29,9 @@ define([
     },
     render: function() {
       this.$el.html(this.template());
-      this.collection.reset([
-        {
-          'id': '7ea4e93cb44b4db5ae5322105363677f',
-          'name': 'organizationname1'
-        },
-        {
-          'id': 'f069f8e7566c47f99b72420252d42a4b',
-          'name': 'organizationname2'
-        },
-        {
-          'id': 'e29dd434c59f4b07b19efc1dbdfaff31',
-          'name': 'organizationname3'
-        }
-      ]);
+      this.collection.fetch({
+        reset: true
+      });
       return this;
     },
     removeItem: function(view) {
