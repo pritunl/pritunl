@@ -19,7 +19,6 @@ define([
         this.setAlert('danger', 'Name can not be empty.');
         return;
       }
-      this.clearAlert();
       this.close();
     }
   });

@@ -24,7 +24,6 @@ define([
         name: this.$('input').val()
       });
       orgModel.save();
-      this.clearAlert();
       this.close();
     }
   });

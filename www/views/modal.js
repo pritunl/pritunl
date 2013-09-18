@@ -60,6 +60,7 @@ define([
       }
     },
     close: function() {
+      this.clearAlert();
       this.$('.modal').modal('hide');
     },
     onOk: function() {

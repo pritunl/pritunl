@@ -30,7 +30,6 @@ define([
         return;
       }
       this.removedOrg = true;
-      this.clearAlert();
       this.close();
     },
     onRemove: function() {

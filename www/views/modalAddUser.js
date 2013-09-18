@@ -29,7 +29,6 @@ define([
       }, {
         success: function() {
           this.triggerEvt = true;
-          this.clearAlert();
           this.close();
         }.bind(this),
         error: function() {
