@@ -78,6 +78,7 @@ default_days = 3652
 default_crl_days = 365
 default_md = sha1
 policy = ca_policy
+crl_extensions = crl_ext
 
 [ ca_policy ]
 organizationName = match
@@ -87,6 +88,9 @@ commonName = supplied
 keyUsage = critical,keyCertSign,cRLSign
 basicConstraints = critical,CA:true
 subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always
+
+[ crl_ext ]
 authorityKeyIdentifier = keyid:always
 
 [ server_ext ]
