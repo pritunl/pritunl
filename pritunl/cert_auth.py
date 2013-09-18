@@ -175,4 +175,5 @@ class Cert(Config):
                 return  CERT_CLIENT
 
     def revoke(self):
-        pass
+        if self.id == CA_CERT_ID:
+            raise TypeError('Cannot revoke ca cert')
