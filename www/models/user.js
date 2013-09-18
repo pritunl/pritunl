@@ -7,8 +7,7 @@ define([
   var UserModel = Backbone.Model.extend({
     defaults: {
       'id': null,
-      'username': null,
-      'expires': null
+      'username': null
     },
     url: function() {
       var url = '/user';

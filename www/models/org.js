@@ -7,8 +7,7 @@ define([
   var OrgModel = Backbone.Model.extend({
     defaults: {
       'id': null,
-      'name': null,
-      'expires': null
+      'name': null
     },
     url: function() {
       var url = '/organization';
