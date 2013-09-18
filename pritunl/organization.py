@@ -85,4 +85,9 @@ class Organization(Config):
         finally:
             openssl_lock.release()
 
-
+    @staticmethod
+    def get_orgs():
+        orgs = []
+        for org_id in os.listdir(DATA_DIR):
+            orgs.append(Organization(org_id))
+        return orgs
