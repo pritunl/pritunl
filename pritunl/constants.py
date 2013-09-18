@@ -37,8 +37,6 @@ prompt = no
 distinguished_name = req_dn
 
 [ req_dn ]
-0.domainComponent = pritunl
-1.domainComponent = $ca
 organizationName = $ca
 commonName = %s
 
@@ -71,7 +69,6 @@ default_md = sha1
 policy = ca_policy
 
 [ ca_policy ]
-domainComponent = match
 organizationName = match
 commonName = supplied
 
