@@ -10,6 +10,7 @@ Thumbs.db
 /.vagrant
 /build
 /dist
+/data
 /pritunl.egg-info
 /pritunl.db
 /www/node_modules
