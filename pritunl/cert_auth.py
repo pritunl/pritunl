@@ -7,8 +7,12 @@ import subprocess
 
 openssl_lock = threading.Lock()
 
-class CertAuth:
-    def __init__(self, id=None):
+class CertAuth(Config):
+    str_options = ['name']
+
+    def __init__(self, id=None, name=None):
+        Config.__init__(self)
+
         if id is None:
             self._initialized = False
             self.id = uuid.uuid4().hex
@@ -21,6 +25,10 @@ class CertAuth:
         self.index_attr_path = os.path.join(self.path, INDEX_NAME + '.attr')
         self.serial_path = os.path.join(self.path, SERIAL_NAME)
         self.crl_path = os.path.join(self.path, CRL_NAME)
+        self.set_path(os.path.join(self.path, 'ca.conf'))
+
+        if name is not None:
+            self.name = name
 
         if not self._initialized:
             self._initialize()
@@ -30,6 +38,7 @@ class CertAuth:
     def _initialize(self):
         self._make_dirs()
         self.ca_cert = Cert(self, type=CERT_CA)
+        self.commit()
 
     def _make_dirs(self):
         os.makedirs(os.path.join(self.path, REQS_DIR))
