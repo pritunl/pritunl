@@ -101,7 +101,6 @@ class Cert(Config):
 
         if not self._initialized:
             self._initialize()
-            self.commit()
 
     def __getattr__(self, name):
         if name == 'type':
@@ -116,6 +115,7 @@ class Cert(Config):
         self._cert_request()
         self._cert_create()
         self._delete_conf()
+        self.commit()
 
     def _cert_request(self):
         openssl_lock.acquire()
