@@ -16,10 +16,15 @@ define([
       this.render();
     },
     onOk: function() {
+      if (this.locked) {
+        return;
+      }
       if (!this.$('input').val()) {
         this.setAlert('danger', 'Name can not be empty.');
         return;
       }
+      this.locked = true;
+      this.setLoading('Adding organization...');
       var orgModel = new OrgModel();
       orgModel.save({
         name: this.$('input').val()
