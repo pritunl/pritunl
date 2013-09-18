@@ -56,16 +56,19 @@ class Organization(Config):
         with open(self.serial_path, 'w') as serial_file:
             serial_file.write('01\n')
 
-    def get_certs(self):
-        certs = []
-        for cert_id in os.listdir(os.path.join(self.path, CERTS_DIR)):
-            cert_id = cert_id.replace('.crt', '')
-            if cert_id == CA_CERT_ID:
+    def get_users(self):
+        users = []
+        for user_id in os.listdir(os.path.join(self.path, CERTS_DIR)):
+            user_id = user_id.replace('.crt', '')
+            if user_id == CA_CERT_ID:
                 continue
-            certs.append(User(self, id=cert_id))
-        return certs
+            users.append(User(self, id=user_id))
+        return users
 
-    def new_cert(self, type, name=None):
+    def get_user(self, id):
+        return User(self, id=id)
+
+    def new_user(self, type, name=None):
         return User(self, name=name, type=type)
 
     def generate_crl(self):
