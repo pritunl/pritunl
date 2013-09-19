@@ -36,6 +36,7 @@ define([
         error: function() {
           this.setAlert('danger',
             'Failed to add user, server error occurred.');
+          this.locked = false;
         }.bind(this)
       });
     },
