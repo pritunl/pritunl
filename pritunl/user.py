@@ -145,7 +145,6 @@ class User(Config):
         try:
             os.remove(self.reqs_path)
         except OSError, error:
-            print error
             logger.debug('Failed to remove user reqs file. %r' % {
                 'path': self.reqs_path,
                 'error': error,
@@ -159,7 +158,6 @@ class User(Config):
         try:
             os.remove(self.key_path)
         except OSError, error:
-            print error
             logger.debug('Failed to remove user key file. %r' % {
                 'path': self.reqs_path,
                 'error': error,
@@ -168,7 +166,6 @@ class User(Config):
         try:
             os.remove(self.cert_path)
         except OSError, error:
-            print error
             logger.debug('Failed to remove user cert file. %r' % {
                 'path': self.reqs_path,
                 'error': error,
@@ -177,7 +174,6 @@ class User(Config):
         try:
             os.remove(self.get_path())
         except OSError, error:
-            print error
             logger.debug('Failed to remove user conf file. %r' % {
                 'path': self.reqs_path,
                 'error': error,
