@@ -8,7 +8,7 @@ define([
   var AlertView = Backbone.View.extend({
     template: _.template(alertTemplate),
     events: {
-      'click .close': 'close'
+      'click .close': 'onClose'
     },
     initialize: function(options) {
       this.type = options.type;
@@ -43,6 +43,9 @@ define([
           }.bind(this), 175);
         }.bind(this), 175);
       }.bind(this), 175);
+    },
+    onClose: function() {
+      this.close();
     },
     close: function(complete) {
       this.$el.slideUp(250, function() {
