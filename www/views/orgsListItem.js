@@ -29,7 +29,7 @@ define([
     },
     render: function() {
       this.$el.html(this.template(this.model.toJSON()));
-      this.$('.users-list-container').append(this.usersListView.render().el);
+      this.$('.users-list').append(this.usersListView.render().el);
       this.$('.org-title').tooltip({
         container: this.el
       });

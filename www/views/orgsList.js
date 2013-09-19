@@ -4,50 +4,28 @@ define([
   'backbone',
   'collections/org',
   'collections/user',
+  'views/list',
   'views/orgsListItem',
   'views/alert',
   'views/modalAddOrg',
   'views/modalAddUser',
   'views/modalDeleteUsers',
   'text!templates/orgsList.html'
-], function($, _, Backbone, OrgCollection, UserCollection,
+], function($, _, Backbone, OrgCollection, UserCollection, ListView,
     OrgsListItemView, AlertView, ModalAddOrgView, ModalAddUserView,
     ModalDeleteUsersView, orgsListTemplate) {
   'use strict';
-  var OrgsListView = Backbone.View.extend({
+  var OrgsListView = ListView.extend({
+    listContainer: '.orgs-list-container',
     template: _.template(orgsListTemplate),
     events: {
       'click .orgs-add-org': 'onAddOrg',
       'click .orgs-add-user': 'onAddUser',
       'click .orgs-del-selected': 'onDelSelected'
     },
-    initialize: function() {
+    init: function() {
       this.collection = new OrgCollection();
-      this.listenTo(this.collection, 'reset', this.onReset);
       this.listenTo(window.events, 'organizations_updated', this.update);
-      this.views = [];
-      this.selected = [];
-    },
-    render: function() {
-      this.$el.html(this.template());
-      this.update();
-      return this;
-    },
-    update: function() {
-      this.collection.fetch({
-        reset: true,
-        error: function() {
-          this.collection.reset();
-        }.bind(this)
-      });
-    },
-    removeItem: function(view) {
-      view.$el.slideUp({
-        duration: 250,
-        complete: function() {
-          view.destroy();
-        }.bind(this)
-      });
     },
     onAddOrg: function() {
       var modal = new ModalAddOrgView();
@@ -120,77 +98,15 @@ define([
         this.$('.orgs-del-selected').attr('disabled', 'disabled');
       }
     },
-    onReset: function(collection) {
-      var i;
-      var modelView;
-      var attr;
-      var modified;
-      var currentModels = [];
-      var newModels = [];
-
-      for (i = 0; i < this.views.length; i++) {
-        currentModels.push(this.views[i].model.get('id'));
-      }
-
-      for (i = 0; i < collection.models.length; i++) {
-        newModels.push(collection.models[i].get('id'));
-      }
-
-      // Remove elements that no longer exists
-      for (i = 0; i < this.views.length; i++) {
-        if (newModels.indexOf(this.views[i].model.get('id')) === -1) {
-          // Remove item from dom and array
-          this.removeItem(this.views[i]);
-          this.views.splice(i, 1);
-          i -= 1;
-        }
-      }
-
-      // Add new elements
-      for (i = 0; i < collection.models.length; i++) {
-        if (currentModels.indexOf(collection.models[i].get('id')) !== -1) {
-          continue;
-        }
-
-        modelView = new OrgsListItemView({model: collection.models[i]});
-        this.addView(modelView);
-        this.views.splice(i, 0, modelView);
-        this.listenTo(modelView, 'select', this.onSelect);
-        modelView.render().$el.hide();
-
-        if (i === 0) {
-          this.$('.orgs-list-container').prepend(modelView.el);
-        }
-        else {
-          this.views[i - 1].$el.after(modelView.el);
-        }
-
-        modelView.$el.slideDown(250);
-      }
-
-      // Check for modified data
-      for (i = 0; i < collection.models.length; i++) {
-        modified = false;
-
-        // Check each attr for modified data
-        for (attr in collection.models[i].attributes) {
-          if (collection.models[i].get(attr) !==
-              this.views[i].model.get(attr)) {
-            modified = true;
-            break;
-          }
-        }
-
-        if (!modified) {
-          continue;
-        }
-
-        // If data was modified updated attributes and render
-        this.views[i].model.set(collection.models[i].attributes);
-        this.views[i].update();
-      }
-
-      if (!this.views.length) {
+    buildItem: function(model) {
+      var modelView = new OrgsListItemView({
+        model: model
+      });
+      this.listenTo(modelView, 'select', this.onSelect);
+      return modelView;
+    },
+    resetItems: function(views) {
+      if (!views.length) {
         this.$('.orgs-add-user').attr('disabled', 'disabled');
         this.$('.no-orgs').slideDown(250);
       }
