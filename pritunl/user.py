@@ -169,4 +169,6 @@ class User(Config):
                 'error': error,
             })
 
+        self.ca.generate_crl()
+
         Event(type=USERS_UPDATED)

@@ -11,10 +11,9 @@ define([
     template: _.template(modalDeleteUsersTemplate),
     title: 'Delete Users',
     okText: 'Delete',
-    initialize: function(options) {
-      this.users = options.users.models.slice(0);
+    initialize: function() {
       this.body = this.template({
-        users: options.users.toJSON()
+        users: this.collection.toJSON()
       });
       this.render();
     },
@@ -27,8 +26,9 @@ define([
       if (!this.triggerEvt) {
         return;
       }
-      for (i = 0; i < this.users.length; i++) {
-        this.users[i].destroy();
+      var users = this.collection.models.slice(0);
+      for (i = 0; i < users.length; i++) {
+        users[i].destroy();
       }
       this.trigger('deleted');
     }
