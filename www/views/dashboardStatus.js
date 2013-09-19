@@ -20,17 +20,86 @@ define([
           this.$('.orgs-status .status-num').text('-/-');
           this.$('.users-status .status-num').text('-/-');
           this.$('.servers-status .status-num').text('-/-');
+
+          var selectors = '.orgs-status .status-num, ' +
+            '.users-status .status-num, ' +
+            '.servers-status .status-num';
+          this.$(selectors).removeClass('none warning success');
+          this.$(selectors).addClass('error');
         }.bind(this),
         success: function() {
-          this.$('.orgs-status .status-num').text(
-            this.model.get('orgs_available') + '/' +
-            this.model.get('orgs_total'));
-          this.$('.users-status .status-num').text(
-            this.model.get('users_online') + '/' +
-            this.model.get('users_total'));
-          this.$('.servers-status .status-num').text(
-            this.model.get('servers_online') + '/' +
-            this.model.get('servers_total'));
+          var num;
+          var totalNum;
+
+          num = this.model.get('orgs_available');
+          totalNum = this.model.get('orgs_total');
+          if (totalNum === 0) {
+            num = '-';
+            totalNum = '-';
+            this.$('.orgs-status .status-num').removeClass(
+              'error warning success');
+            this.$('.orgs-status .status-num').addClass('none');
+          }
+          else if (num === 0) {
+            this.$('.orgs-status .status-num').removeClass(
+              'none warning success');
+            this.$('.orgs-status .status-num').addClass('error');
+          }
+          else if (num < totalNum) {
+            this.$('.orgs-status .status-num').removeClass(
+              'none error success');
+            this.$('.orgs-status .status-num').addClass('warning');
+          }
+          else {
+            this.$('.orgs-status .status-num').removeClass(
+              'none error warning');
+            this.$('.orgs-status .status-num').addClass('success');
+          }
+          this.$('.orgs-status .status-num').text(num + '/' + totalNum);
+
+          num = this.model.get('users_online');
+          totalNum = this.model.get('users_total');
+          if (num === 0) {
+            if (totalNum === 0) {
+              num = '-';
+              totalNum = '-';
+            }
+            this.$('.users-status .status-num').removeClass(
+              'error warning success');
+            this.$('.users-status .status-num').addClass('none');
+          }
+          else {
+            this.$('.users-status .status-num').removeClass(
+              'none error warning');
+            this.$('.users-status .status-num').addClass('success');
+          }
+          this.$('.users-status .status-num').text(num + '/' + totalNum);
+
+          num = this.model.get('servers_online');
+          totalNum = this.model.get('servers_total');
+          if (totalNum === 0) {
+            num = '-';
+            totalNum = '-';
+            this.$('.servers-status .status-num').removeClass(
+              'error warning success');
+            this.$('.servers-status .status-num').addClass('none');
+          }
+          else if (num === 0) {
+            this.$('.servers-status .status-num').removeClass(
+              'none warning success');
+            this.$('.servers-status .status-num').addClass('error');
+          }
+          else if (num < totalNum) {
+            this.$('.servers-status .status-num').removeClass(
+              'none error success');
+            this.$('.servers-status .status-num').addClass('warning');
+          }
+          else {
+            this.$('.servers-status .status-num').removeClass(
+              'none error warning');
+            this.$('.servers-status .status-num').addClass('success');
+          }
+          this.$('.servers-status .status-num').text(num + '/' + totalNum);
         }.bind(this)
       });
     },
