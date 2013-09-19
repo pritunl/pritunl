@@ -32,3 +32,9 @@ def org_post():
         'id': org.id,
         'name': org.name,
     })
+
+@server.app.route('/organization/<org_id>', methods=['DELETE'])
+def org_delete(org_id):
+    org = Organization(org_id)
+    org.remove()
+    return utils.jsonify({})

@@ -5,6 +5,7 @@ from event import Event
 from user import User
 import uuid
 import os
+import shutil
 import subprocess
 
 class Organization(Config):
@@ -92,6 +93,10 @@ class Organization(Config):
             os.remove(conf_path)
         finally:
             openssl_lock.release()
+
+    def remove(self):
+        shutil.rmtree(self.path)
+        Event(type=ORGS_UPDATED)
 
     @staticmethod
     def get_orgs():
