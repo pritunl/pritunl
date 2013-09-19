@@ -28,7 +28,6 @@ define([
         return;
       }
       for (i = 0; i < this.users.length; i++) {
-        console.log(this.users[i].get('name'));
         this.users[i].destroy();
       }
       this.trigger('deleted');
