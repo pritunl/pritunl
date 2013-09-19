@@ -19,7 +19,7 @@ class LogEntry(DatabaseObject):
 
         if id is None:
             self.id = uuid.uuid4().hex
-            self.type = type
+            self.type = type or INFO
             self.time = int(time.time())
             self.message = message
             Event(type=LOG_UPDATED)

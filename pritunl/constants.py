@@ -11,6 +11,10 @@ DEFAULT_WWW_PATH = '/usr/share/pritunl/www'
 DEFAULT_DATA_PATH = '/var/lib/pritunl/organizations'
 DEFAULT_LOG_LIMIT = 20
 
+INFO = 'info'
+WARNING = 'warning'
+ERROR = 'error'
+
 REQS_DIR = 'reqs'
 KEYS_DIR = 'keys'
 CERTS_DIR = 'certs'
