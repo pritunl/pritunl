@@ -61,7 +61,7 @@ class User(Config):
         self.commit()
         self._cert_create()
         self._delete_ssl_conf()
-        LogEntry(message='Create new user.')
+        LogEntry(message='Created new user.')
         Event(type=USERS_UPDATED)
 
     def _cert_request(self):
@@ -183,3 +183,4 @@ class User(Config):
 
         self.ca.generate_crl()
         Event(type=USERS_UPDATED)
+        LogEntry(message='Deleted user.')
