@@ -12,8 +12,25 @@ define([
     title: 'Delete Users',
     okText: 'Delete',
     initialize: function() {
+      var i;
+      var nameId;
+      var users = [];
+      var usersSort = [];
+      var usersObj = {};
+      var usersData = this.collection.toJSON();
+
+      for (i = 0; i < usersData.length; i++) {
+        nameId = usersData[i].name + '_' + usersData[i].id;
+        usersSort.push(nameId);
+        usersObj[nameId] = usersData[i];
+      }
+      usersSort.sort();
+      for (i = 0; i < usersSort.length; i++) {
+        users.push(usersObj[usersSort[i]]);
+      }
+
       this.body = this.template({
-        users: this.collection.toJSON()
+        users: users
       });
       this.render();
     },
