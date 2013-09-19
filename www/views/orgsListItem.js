@@ -30,7 +30,7 @@ define([
     render: function() {
       this.$el.html(this.template(this.model.toJSON()));
       this.$('.users-list-container').append(this.usersListView.render().el);
-      this.$('.org-rename').tooltip({
+      this.$('.org-title').tooltip({
         container: this.el
       });
       this.$('.download-key').tooltip();
