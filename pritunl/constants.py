@@ -36,6 +36,7 @@ REMOVE_FROM_CRL = 'removeFromCRL'
 
 ORGS_UPDATED = 'organizations_updated'
 USERS_UPDATED = 'users_updated'
+LOG_UPDATED = 'log_updated'
 
 CERT_CONF = """[ default ]
 ca = %s

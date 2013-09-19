@@ -8,7 +8,7 @@ define([
   var LogCollection = Backbone.Collection.extend({
     model: LogModel,
     url: function() {
-      return '/logs';
+      return '/log';
     }
   });
 

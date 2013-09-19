@@ -167,8 +167,8 @@ require([
       }
     }
     else {
-      time = month + ' ' + day + ' ' + year + ' ' +
-        hours + ':' + minutes + ' ' + meridiem;
+      time = hours + ':' + minutes + ' ' + meridiem + ' - ' +
+        month + ' ' + day + ' ' + year;
     }
 
     return time;

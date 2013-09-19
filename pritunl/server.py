@@ -90,7 +90,6 @@ class Server(Config):
 
     def _run_wsgi(self):
         import cherrypy.wsgiserver
-
         logger.info('Starting server...')
 
         server = cherrypy.wsgiserver.CherryPyWSGIServer(
@@ -122,6 +121,8 @@ class Server(Config):
             logger.info('Stopping server...')
 
     def _run_server(self):
+        from log_entry import LogEntry
+        LogEntry(message='Server started.')
         if self.debug:
             self._run_wsgi_debug()
         else:

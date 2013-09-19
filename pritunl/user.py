@@ -1,6 +1,7 @@
 from constants import *
 from pritunl import openssl_lock
 from config import Config
+from log_entry import LogEntry
 from event import Event
 import uuid
 import os
@@ -60,6 +61,7 @@ class User(Config):
         self.commit()
         self._cert_create()
         self._delete_ssl_conf()
+        LogEntry(message='Create new user.')
         Event(type=USERS_UPDATED)
 
     def _cert_request(self):

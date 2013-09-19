@@ -51,7 +51,7 @@ class Event(DatabaseObject):
     def get_events(last_time=0):
         events = []
         events_dict = {}
-        events_time = []
+        events_sort = []
         cur_time = int(time.time() * 1000)
 
         logger.debug('Getting events. %r' % {
@@ -71,17 +71,11 @@ class Event(DatabaseObject):
             if event['time'] <= last_time:
                 continue
 
-            # Prevent events with the same time from breaking sorted list,
-            # event that is sent to client will always have original time
-            while True:
-                if event['time'] not in events_time:
-                    break
-                event['time'] += 1
+            time_id = '%s_%s' % (event['time'], event_id)
+            events_dict[time_id] = Event(id=event_id)
+            events_sort.append(time_id)
 
-            events_dict[event['time']] = Event(id=event_id)
-            events_time.append(event['time'])
-
-        for event_time in sorted(events_time):
-            events.append(events_dict[event_time])
+        for time_id in sorted(events_sort):
+            events.append(events_dict[time_id])
 
         return events

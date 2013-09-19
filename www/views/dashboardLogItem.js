@@ -11,6 +11,10 @@ define([
     render: function() {
       this.$el.html(this.template(this.model.toJSON()));
       return this;
+    },
+    update: function() {
+      this.$('.log-msg').text(this.model.get('message'));
+      this.$('.log-time').text(window.formatTime(this.model.get('time')));
     }
   });
 
