@@ -5,6 +5,9 @@ from event import Event
 import uuid
 import os
 import subprocess
+import logging
+
+logger = logging.getLogger(APP_NAME)
 
 class User(Config):
     str_options = ['name']
@@ -107,7 +110,7 @@ class User(Config):
             else:
                 return  CERT_CLIENT
 
-    def revoke(self, reason=UNSPECIFIED):
+    def _revoke(self, reason):
         if self.id == CA_CERT_ID:
             raise TypeError('Cannot revoke ca cert')
         openssl_lock.acquire()
@@ -118,7 +121,50 @@ class User(Config):
                 '-revoke', self.cert_path,
                 '-crl_reason', reason
             ]
-            subprocess.check_call(args)
+            proc = subprocess.Popen(args, stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE)
+            returncode = proc.wait()
+            if returncode != 0:
+                err_output = proc.communicate()[1]
+                if 'ERROR:Already revoked' not in err_output:
+                    raise subprocess.CalledProcessError(returncode, args)
             self._delete_ssl_conf()
         finally:
             openssl_lock.release()
+
+    def remove(self, reason=UNSPECIFIED):
+        self._revoke(reason)
+
+        try:
+            os.remove(self.reqs_path)
+        except OSError, error:
+            print error
+            logger.debug('Failed to remove user reqs file. %r' % {
+                'path': self.reqs_path,
+                'error': error,
+            })
+
+        try:
+            os.remove(self.ssl_conf_path)
+        except OSError, error:
+            pass
+
+        try:
+            os.remove(self.key_path)
+        except OSError, error:
+            print error
+            logger.debug('Failed to remove user key file. %r' % {
+                'path': self.reqs_path,
+                'error': error,
+            })
+
+        try:
+            os.remove(self.cert_path)
+        except OSError, error:
+            print error
+            logger.debug('Failed to remove user cert file. %r' % {
+                'path': self.reqs_path,
+                'error': error,
+            })
+
+        Event(type=USERS_UPDATED)

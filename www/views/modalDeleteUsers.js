@@ -12,6 +12,7 @@ define([
     title: 'Delete Users',
     okText: 'Delete',
     initialize: function(options) {
+      this.users = options.users.models.slice(0);
       this.body = this.template({
         users: options.users.toJSON()
       });
@@ -22,8 +23,13 @@ define([
       this.close();
     },
     onRemove: function() {
+      var i;
       if (!this.triggerEvt) {
         return;
+      }
+      for (i = 0; i < this.users.length; i++) {
+        console.log(this.users[i].get('name'));
+        this.users[i].destroy();
       }
       this.trigger('deleted');
     }

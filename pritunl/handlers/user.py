@@ -38,3 +38,10 @@ def user_post(org_id):
         'name': user.name,
         'status': False,
     })
+
+@server.app.route('/user/<org_id>/<user_id>', methods=['DELETE'])
+def user_delete(org_id, user_id):
+    org = Organization(org_id)
+    user = org.get_user(user_id)
+    user.remove()
+    return utils.jsonify({})
