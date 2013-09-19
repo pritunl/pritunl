@@ -34,6 +34,7 @@ define([
           this.close();
         }.bind(this),
         error: function() {
+          this.clearLoading();
           this.setAlert('danger',
             'Failed to add user, server error occurred.');
           this.locked = false;

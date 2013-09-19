@@ -39,6 +39,13 @@ def user_post(org_id):
         'status': False,
     })
 
+@server.app.route('/user/<org_id>/<user_id>', methods=['PUT'])
+def user_put(org_id, user_id):
+    org = Organization(org_id)
+    user = org.get_user(user_id)
+    user.rename(flask.request.json['name'].encode())
+    return utils.jsonify({})
+
 @server.app.route('/user/<org_id>/<user_id>', methods=['DELETE'])
 def user_delete(org_id, user_id):
     org = Organization(org_id)

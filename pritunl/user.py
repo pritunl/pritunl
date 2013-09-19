@@ -134,6 +134,11 @@ class User(Config):
         finally:
             openssl_lock.release()
 
+    def rename(self, name):
+        self.name = name
+        self.commit()
+        Event(type=USERS_UPDATED)
+
     def remove(self, reason=UNSPECIFIED):
         self._revoke(reason)
 
@@ -169,6 +174,14 @@ class User(Config):
                 'error': error,
             })
 
-        self.ca.generate_crl()
+        try:
+            os.remove(self.get_path())
+        except OSError, error:
+            print error
+            logger.debug('Failed to remove user conf file. %r' % {
+                'path': self.reqs_path,
+                'error': error,
+            })
 
+        self.ca.generate_crl()
         Event(type=USERS_UPDATED)

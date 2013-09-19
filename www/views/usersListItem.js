@@ -17,6 +17,23 @@ define([
       this.$('.user-name').tooltip();
       return this;
     },
+    update: function() {
+      this.$('.user-name').text(this.model.get('name'));
+      if (this.model.get('status')) {
+        if (!this.$('.status-icon').hasClass('online')) {
+          this.$('.status-icon').removeClass('offline');
+          this.$('.status-icon').addClass('online');
+          this.$('.status-text').text('Online');
+        }
+      }
+      else {
+        if (!this.$('.status-icon').hasClass('offline')) {
+          this.$('.status-icon').removeClass('online');
+          this.$('.status-icon').addClass('offline');
+          this.$('.status-text').text('Offline');
+        }
+      }
+    },
     getSelect: function() {
       return this.$el.hasClass('selected');
     },
@@ -36,7 +53,7 @@ define([
     },
     onRename: function() {
       var modal = new ModalRenameUserView({
-        model: this.model
+        model: this.model.clone()
       });
       this.addView(modal);
     }

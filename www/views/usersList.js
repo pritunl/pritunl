@@ -102,8 +102,11 @@ define([
 
         // Check each attr for modified data
         for (attr in collection.models[i].attributes) {
+          console.log(collection.models[i].get(attr),
+            this.views[i].model.get(attr));
           if (collection.models[i].get(attr) !==
               this.views[i].model.get(attr)) {
+            console.log('modified')
             modified = true;
             break;
           }
@@ -115,7 +118,7 @@ define([
 
         // If data was modified updated attributes and render
         this.views[i].model.set(collection.models[i].attributes);
-        this.views[i].render();
+        this.views[i].update();
       }
 
       if (!this.views.length) {

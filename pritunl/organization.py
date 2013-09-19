@@ -94,6 +94,11 @@ class Organization(Config):
         finally:
             openssl_lock.release()
 
+    def rename(self, name):
+        self.name = name
+        self.commit()
+        Event(type=ORGS_UPDATED)
+
     def remove(self):
         shutil.rmtree(self.path)
         Event(type=ORGS_UPDATED)

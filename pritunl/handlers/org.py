@@ -33,6 +33,12 @@ def org_post():
         'name': org.name,
     })
 
+@server.app.route('/organization/<org_id>', methods=['PUT'])
+def org_put(org_id):
+    org = Organization(org_id)
+    org.rename(flask.request.json['name'].encode())
+    return utils.jsonify({})
+
 @server.app.route('/organization/<org_id>', methods=['DELETE'])
 def org_delete(org_id):
     org = Organization(org_id)

@@ -187,7 +187,7 @@ define([
 
         // If data was modified updated attributes and render
         this.views[i].model.set(collection.models[i].attributes);
-        this.views[i].render();
+        this.views[i].update();
       }
 
       if (!this.views.length) {

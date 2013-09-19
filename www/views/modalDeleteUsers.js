@@ -37,6 +37,7 @@ define([
             }
           }.bind(this),
           error: function() {
+            this.clearLoading();
             this.setAlert('danger',
               'Failed to delete users, server error occurred.');
             this.locked = false;
