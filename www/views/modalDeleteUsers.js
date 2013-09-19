@@ -38,14 +38,13 @@ define([
           }.bind(this),
           error: function() {
             this.setAlert('danger',
-              'Failed to delete user, server error occurred.');
+              'Failed to delete users, server error occurred.');
             this.locked = false;
           }.bind(this)
         });
       }
     },
     onRemove: function() {
-      var i;
       if (!this.triggerEvt) {
         return;
       }
