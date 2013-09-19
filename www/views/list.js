@@ -10,7 +10,6 @@ define([
       this.init(options);
       this.listenTo(this.collection, 'reset', this._onReset);
       this.views = [];
-      this.selected = [];
     },
     init: function() {
     },

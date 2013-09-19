@@ -26,6 +26,7 @@ define([
     init: function() {
       this.collection = new OrgCollection();
       this.listenTo(window.events, 'organizations_updated', this.update);
+      this.selected = [];
     },
     onAddOrg: function() {
       var modal = new ModalAddOrgView();

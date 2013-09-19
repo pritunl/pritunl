@@ -3,21 +3,32 @@ define([
   'underscore',
   'backbone',
   'collections/log',
+  'views/list',
   'views/dashboardLogItem',
   'text!templates/dashboardLog.html'
-], function($, _, Backbone, LogCollection, DashboardLogItemView,
+], function($, _, Backbone, LogCollection, ListView, DashboardLogItemView,
     dashboardLogTemplate) {
   'use strict';
-  var DashboardLogView = Backbone.View.extend({
+  var DashboardLogView = ListView.extend({
     className: 'log-container',
+    listContainer: '.log-entry-list',
     template: _.template(dashboardLogTemplate),
-    initialize: function() {
+    init: function() {
       this.collection = new LogCollection();
-      this.listenTo(this.collection, 'reset', this.onReset);
-      this.views = [];
     },
-    render: function() {
-      this.$el.html(this.template());
+    buildItem: function(model) {
+      var modelView = new DashboardLogItemView({
+        model: model
+      });
+      return modelView;
+    },
+    resetItems: function(views) {
+      if (this.views.length) {
+        this.$('.last').removeClass('last');
+        this.views[this.views.length - 1].$el.addClass('last');
+      }
+    },
+    update: function() {
       this.collection.reset([
         {
           'id': 'd5d860c2a5af48e2933e42119be5f43c',
@@ -70,92 +81,6 @@ define([
           'message': 'Created new organization.'
         }
       ]);
-      return this;
-    },
-    removeItem: function(view) {
-      view.$el.slideUp({
-        duration: 250,
-        complete: function() {
-          view.destroy();
-        }.bind(this)
-      });
-    },
-    onReset: function(collection) {
-      var i;
-      var modelView;
-      var attr;
-      var modified;
-      var currentModels = [];
-      var newModels = [];
-
-      for (i = 0; i < this.views.length; i++) {
-        currentModels.push(this.views[i].model.get('id'));
-      }
-
-      for (i = 0; i < collection.models.length; i++) {
-        newModels.push(collection.models[i].get('id'));
-      }
-
-      // Remove elements that no longer exists
-      for (i = 0; i < this.views.length; i++) {
-        if (newModels.indexOf(this.views[i].model.get('id')) === -1) {
-          // Remove item from dom and array
-          this.removeItem(this.views[i]);
-          this.views.splice(i, 1);
-          i -= 1;
-        }
-      }
-
-      // Add new elements
-      for (i = 0; i < collection.models.length; i++) {
-        if (currentModels.indexOf(collection.models[i].get('id')) !== -1) {
-          continue;
-        }
-
-        modelView = new DashboardLogItemView({
-          model: collection.models[i]
-        });
-        this.addView(modelView);
-        this.views.splice(i, 0, modelView);
-        modelView.render().$el.hide();
-
-        if (i === 0) {
-          this.$('.log-entry-list').prepend(modelView.el);
-        }
-        else {
-          this.views[i - 1].$el.after(modelView.el);
-        }
-
-        modelView.$el.slideDown(250);
-      }
-
-      // Check for modified data
-      for (i = 0; i < collection.models.length; i++) {
-        modified = false;
-
-        // Check each attr for modified data
-        for (attr in collection.models[i].attributes) {
-          if (collection.models[i].get(attr) !==
-              this.views[i].model.get(attr)) {
-            modified = true;
-            break;
-          }
-        }
-
-        if (!modified) {
-          continue;
-        }
-
-        // If data was modified updated attributes and render
-        this.views[i].model.set(collection.models[i].attributes);
-        this.views[i].render();
-      }
-
-      if (this.views.length) {
-        this.$('.last').removeClass('last');
-        this.views[this.views.length - 1].$el.addClass('last');
-      }
-
     }
   });
 
