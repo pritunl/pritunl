@@ -87,7 +87,8 @@ class Organization(Config):
                 '-config', conf_path,
                 '-out', self.crl_path
             ]
-            subprocess.check_call(args)
+            subprocess.check_call(args, stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE)
             os.remove(conf_path)
         finally:
             openssl_lock.release()

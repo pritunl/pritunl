@@ -72,7 +72,8 @@ class User(Config):
                 '-keyout', self.key_path,
                 '-reqexts', '%s_req_ext' % self.type,
             ]
-            subprocess.check_call(args)
+            subprocess.check_call(args, stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE)
         finally:
             openssl_lock.release()
 
@@ -88,7 +89,8 @@ class User(Config):
                 '-out', self.cert_path,
                 '-extensions', '%s_ext' % self.type,
             ]
-            subprocess.check_call(args)
+            subprocess.check_call(args, stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE)
         finally:
             openssl_lock.release()
 
