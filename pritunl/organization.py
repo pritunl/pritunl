@@ -70,6 +70,12 @@ class Organization(Config):
                 users.append(User(self, id=user_id))
         return users
 
+    def count_users(self):
+        certs_path = os.path.join(self.path, CERTS_DIR)
+        if not os.path.isdir(certs_path):
+            return 0
+        return len(os.listdir(certs_path))
+
     def get_user(self, id):
         return User(self, id=id)
 
@@ -102,6 +108,10 @@ class Organization(Config):
     def remove(self):
         shutil.rmtree(self.path)
         Event(type=ORGS_UPDATED)
+
+    @staticmethod
+    def count_orgs():
+        return len(os.listdir(server.data_path))
 
     @staticmethod
     def get_orgs():
