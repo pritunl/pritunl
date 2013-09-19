@@ -9,6 +9,7 @@ UNSAVED = 'unsaved'
 DEFAULT_DB_PATH = '/var/lib/pritunl/pritunl.db'
 DEFAULT_WWW_PATH = '/usr/share/pritunl/www'
 DEFAULT_DATA_PATH = '/var/lib/pritunl/organizations'
+DEFAULT_LOG_LIMIT = 20
 
 REQS_DIR = 'reqs'
 KEYS_DIR = 'keys'

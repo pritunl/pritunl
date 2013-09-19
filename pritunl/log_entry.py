@@ -50,4 +50,10 @@ class LogEntry(DatabaseObject):
         for time_id in reversed(sorted(logs_sort)):
             logs.append(logs_dict[time_id])
 
-        return logs
+        for log in logs[DEFAULT_LOG_LIMIT:]:
+            logger.debug('Pruning log entry from database. %r' % {
+                'log_id': log.id,
+            })
+            LogEntry.db.remove(LogEntry.column_family, log.id)
+
+        return logs[:DEFAULT_LOG_LIMIT]
