@@ -16,6 +16,9 @@ define([
       this.addView(this.serverOrgsListView);
     },
     update: function() {
+      var status = this.model.get('status');
+      status = status.charAt(0).toUpperCase() + status.slice(1);
+      this.$('.server-status .status-text').text(status);
       this.$('.server-uptime .status-text').text(
         this.model.get('uptime'));
       this.$('.server-users .status-num').text(

@@ -12,6 +12,13 @@
   <table>
     <tbody>
       <tr>
+        <td class="status-item server-status">
+          <h3 class="status-title title">
+            <span class="status-icon glyphicon glyphicon-dashboard"></span>
+            Status
+          </h3>
+          <div class="status-text title"><%= status.charAt(0).toUpperCase() + status.slice(1) %></div>
+        </td>
         <td class="status-item server-uptime">
           <h3 class="status-title title">
             <span class="status-icon glyphicon glyphicon-time"></span>
