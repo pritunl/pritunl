@@ -119,3 +119,17 @@ extendedKeyUsage = clientAuth
 subjectKeyIdentifier = hash
 authorityKeyIdentifier = keyid:always
 """
+
+NETWORK_NOT_VALID = 'network_not_valid'
+NETWORK_NOT_VALID_MSG = 'Network address is not valid, format must be ' + \
+    '"10.[1-254].[1-254].0/[8-28]" such as "10.12.32.0/24".'
+
+PORT_NOT_VALID = 'port_not_valid'
+PORT_NOT_VALID_MSG = 'Port number is not valid, must be between 1 and 65535.'
+
+INTERFACE_NOT_VALID = 'interface_not_valid'
+INTERFACE_NOT_VALID_MSG = 'Interface is not valid, must be ' + \
+    '"tun[0-64]" example "tun0".'
+
+PROTOCOL_NOT_VALID = 'protocol_not_valid'
+PROTOCOL_NOT_VALID_MSG = 'Protocol is not valid, must be "udp" or "tcp".'
