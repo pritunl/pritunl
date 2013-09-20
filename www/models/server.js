@@ -7,13 +7,13 @@ define([
   var ServerModel = Backbone.Model.extend({
     defaults: {
       'id': null,
-      'name': 'server0',
-      'uptime': '128 days 12 hrs 34 mins',
-      'users_online': 12,
-      'users_total': 32,
-      'network': '10.232.128.0/24',
-      'interface': 'tun0',
-      'port': '12345/udp'
+      'name': null,
+      'uptime': null,
+      'users_online': null,
+      'users_total': null,
+      'network': null,
+      'interface': null,
+      'port': null
     },
     url: function() {
       var url = '/server';
