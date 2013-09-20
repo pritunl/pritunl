@@ -22,7 +22,7 @@ define([
     },
     onSettings: function() {
       var modal = new ModalServerSettingsView({
-        model: this.model
+        model: this.model.clone()
       });
       this.addView(modal);
     },
