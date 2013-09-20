@@ -4,12 +4,9 @@
     <a class="no-select" data-toggle="tooltip" title="Click to open settings for this server"><%= name %></a>
   </h2>
   <button type="button" class="server-del btn btn-danger btn-sm">Delete Server</button>
-  <% if (status === 'online') { %>
-    <button type="button" class="server-stop btn btn-warning btn-sm">Stop Server</button>
-  <% } else { %>
-    <button type="button" class="server-start btn btn-success btn-sm">Start Server</button>
-  <% } %>
-  <button type="button" <%= (status !== 'online') ? 'disabled' : '' %> class="server-restart btn btn-primary btn-sm">Restart Server</button>
+  <button type="button" class="server-stop btn btn-warning btn-sm">Stop Server</button>
+  <button type="button" class="server-start btn btn-success btn-sm">Start Server</button>
+  <button type="button" class="server-restart btn btn-primary btn-sm">Restart Server</button>
 </div>
 <div class="server-status">
   <table>
