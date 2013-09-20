@@ -41,6 +41,9 @@ define([
     render: function() {
       this.$el.html(this.template(this.model.toJSON()));
       this.update();
+      this.$('.server-title a').tooltip({
+        container: this.el
+      });
       this.$el.append(this.serverOrgsListView.render().el);
       return this;
     }
