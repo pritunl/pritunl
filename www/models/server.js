@@ -8,6 +8,7 @@ define([
     defaults: {
       'id': null,
       'name': null,
+      'status': null,
       'uptime': null,
       'users_online': null,
       'users_total': null,
