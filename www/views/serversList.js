@@ -28,6 +28,16 @@ define([
           'interface': 'tun0',
           'port': '12345/udp'
         },
+        {
+          'id': '2',
+          'name': 'server1',
+          'uptime': '43 days 12 hrs 34 mins',
+          'users_online': 8,
+          'users_total': 12,
+          'network': '10.64.32.0/16',
+          'interface': 'tun1',
+          'port': '4563/tcp'
+        }
       ]);
     },
     buildItem: function(model) {
