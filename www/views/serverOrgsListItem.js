@@ -13,6 +13,7 @@ define([
       return this;
     },
     update: function() {
+      this.$('.org-name').text(this.model.get('name'));
     }
   });
 
