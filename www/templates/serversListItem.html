@@ -1,0 +1,96 @@
+<div class="server-header">
+  <div class="label label-primary">Server</div>
+  <h2 class="server-title title">
+    <a class="no-select" data-toggle="tooltip" title="Click to open settings for this server">server0</a>
+  </h2>
+  <button type="button" class="server-del btn btn-danger btn-sm">Delete Server</button>
+  <button type="button" class="server-restart btn btn-primary btn-sm">Restart Server</button>
+</div>
+<div class="server-status">
+  <table>
+    <tbody>
+      <tr>
+        <td class="status-item server-uptime">
+          <h3 class="status-title title">
+            <span class="status-icon glyphicon glyphicon-time"></span>
+            Uptime
+          </h3>
+          <div class="status-text title">
+            <%= uptime %>
+          </div>
+        </td>
+        <td class="status-item server-users">
+          <h3 class="status-title title">
+            <span class="status-icon glyphicon glyphicon-user"></span>
+            Users
+          </h3>
+          <div class="status-text title">
+            <span class="status-num"><%= users_online %>/<%= users_total %></span> users online
+          </div>
+        </td>
+        <td class="status-item server-network">
+          <h3 class="status-title title">
+            <span class="status-icon glyphicon glyphicon-signal"></span>
+            Network
+          </h3>
+          <div class="status-text title">
+            <%= network %>
+          </div>
+        </td>
+        <td class="status-item server-interface">
+          <h3 class="status-title title">
+            <span class="status-icon glyphicon glyphicon-transfer"></span>
+            Interface
+          </h3>
+          <div class="status-text title">
+            <%= interface %>
+          </div>
+        </td>
+        <td class="status-item last server-port">
+          <h3 class="status-title title">
+            <span class="status-icon glyphicon glyphicon-cloud-upload"></span>
+            Port
+          </h3>
+          <div class="status-text title">
+            <%= port %>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="server-orgs-list">
+  <div class="org">
+    <div class="name-container">
+      <span class="name-icon glyphicon glyphicon-tower"></span>
+      <span class="org-name title">testorg1</span>
+    </div>
+    <div class="button-container">
+      <button type="button" class="server-restart btn btn-danger btn-xs">Detach Organization</button>
+    </div>
+  </div>
+
+  <div class="org">
+    <div class="name-container">
+      <span class="name-icon glyphicon glyphicon-tower"></span>
+      <span class="org-name title">testorg2</span>
+    </div>
+    <div class="button-container">
+      <button type="button" class="server-restart btn btn-danger btn-xs">Detach Organization</button>
+    </div>
+  </div>
+
+  <div class="org">
+    <div class="name-container">
+      <span class="name-icon glyphicon glyphicon-tower"></span>
+      <span class="org-name title">testorg3</span>
+    </div>
+    <div class="button-container">
+      <button type="button" class="server-restart btn btn-danger btn-xs">Detach Organization</button>
+    </div>
+  </div>
+
+  <div class="no-orgs">
+    There are no organizations attached to this server.
+  </div>
+</div>
