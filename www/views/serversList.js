@@ -31,7 +31,8 @@ define([
           'users_total': 128,
           'network': '10.232.128.0/24',
           'interface': 'tun0',
-          'port': '12345/udp'
+          'port': '12345',
+          'protocol': 'udp'
         },
         {
           'id': '2',
@@ -42,7 +43,8 @@ define([
           'users_total': 12,
           'network': '10.64.32.0/16',
           'interface': 'tun1',
-          'port': '4563/tcp'
+          'port': '4563',
+          'protocol': 'tcp'
         }
       ]);
     },
