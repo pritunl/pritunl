@@ -24,7 +24,7 @@ define([
           'status': 'online',
           'uptime': '1024d 12h 32m 15s',
           'users_online': 12,
-          'users_total': 32,
+          'users_total': 128,
           'network': '10.232.128.0/24',
           'interface': 'tun0',
           'port': '12345/udp'
