@@ -7,6 +7,7 @@ define([
   var ServerModel = Backbone.Model.extend({
     defaults: {
       'id': null,
+      'name': 'server0',
       'uptime': '128 days 12 hrs 34 mins',
       'users_online': 12,
       'users_total': 32,
