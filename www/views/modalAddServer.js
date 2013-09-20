@@ -70,9 +70,7 @@ define([
         return;
       }
       this.locked = true;
-
       this.setLoading('Adding server...');
-
       this.model.save({
         name: name,
         network: network,
