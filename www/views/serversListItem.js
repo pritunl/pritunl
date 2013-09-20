@@ -3,17 +3,28 @@ define([
   'underscore',
   'backbone',
   'views/serverOrgsList',
+  'views/modalServerSettings',
   'text!templates/serversListItem.html'
-], function($, _, Backbone, ServerOrgsListView, serversListItemTemplate) {
+], function($, _, Backbone, ServerOrgsListView, ModalServerSettingsView,
+    serversListItemTemplate) {
   'use strict';
   var ServersListItemView = Backbone.View.extend({
     className: 'server',
     template: _.template(serversListItemTemplate),
+    events: {
+      'click .server-title a': 'onSettings'
+    },
     initialize: function() {
       this.serverOrgsListView = new ServerOrgsListView({
         server: this.model.get('id')
       });
       this.addView(this.serverOrgsListView);
+    },
+    onSettings: function() {
+      var modal = new ModalServerSettingsView({
+        model: this.model
+      });
+      this.addView(modal);
     },
     update: function() {
       var status = this.model.get('status');
@@ -28,7 +39,7 @@ define([
       this.$('.server-interface .status-text').text(
         this.model.get('interface'));
       this.$('.server-port .status-text').text(
-        this.model.get('port'));
+        this.model.get('port') + '/' + this.model.get('protocol'));
 
       if (this.model.get('status') === 'online') {
         this.$('.server-start').hide();
