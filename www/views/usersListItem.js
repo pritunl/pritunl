@@ -7,6 +7,7 @@ define([
 ], function($, _, Backbone, ModalRenameUserView, usersListItemTemplate) {
   'use strict';
   var UsersListItemView = Backbone.View.extend({
+    className: 'user',
     template: _.template(usersListItemTemplate),
     events: {
       'click .select': 'onSelect',
