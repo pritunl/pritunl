@@ -21,6 +21,7 @@ define([
         {
           'id': '1',
           'name': 'server0',
+          'status': 'online',
           'uptime': '128 days 12 hrs 34 mins',
           'users_online': 12,
           'users_total': 32,
@@ -31,6 +32,7 @@ define([
         {
           'id': '2',
           'name': 'server1',
+          'status': 'offline',
           'uptime': '43 days 12 hrs 34 mins',
           'users_online': 8,
           'users_total': 12,

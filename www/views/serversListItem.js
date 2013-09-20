@@ -26,6 +26,17 @@ define([
         this.model.get('interface'));
       this.$('.server-port .status-text').text(
         this.model.get('port'));
+
+      if (this.model.get('status') === 'online') {
+        this.$('.server-start').hide();
+        this.$('.server-stop').show();
+        this.$('.server-restart').removeAttr('disabled');
+      }
+      else {
+        this.$('.server-stop').hide();
+        this.$('.server-start').show();
+        this.$('.server-restart').attr('disabled', 'disabled');
+      }
     },
     render: function() {
       this.$el.html(this.template(this.model.toJSON()));
