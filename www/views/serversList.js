@@ -5,14 +5,18 @@ define([
   'collections/server',
   'views/list',
   'views/serversListItem',
+  'views/modalAddServer',
   'text!templates/serversList.html'
 ], function($, _, Backbone, ServerCollection, ListView, ServersListItemView,
-    serversListTemplate) {
+    ModalAddServerView, serversListTemplate) {
   'use strict';
   var ServersListView = ListView.extend({
     className: 'servers-list',
     listContainer: '.servers-list-container',
     template: _.template(serversListTemplate),
+    events: {
+      'click .servers-add-server': 'onAddServer'
+    },
     init: function() {
       this.collection = new ServerCollection();
     },
@@ -41,6 +45,11 @@ define([
           'port': '4563/tcp'
         }
       ]);
+    },
+    onAddServer: function() {
+      var modal = new ModalAddServerView({
+      });
+      this.addView(modal);
     },
     buildItem: function(model) {
       var modelView = new ServersListItemView({
