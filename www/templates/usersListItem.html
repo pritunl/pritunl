@@ -7,11 +7,9 @@
     <a class="user-name title no-select" data-toggle="tooltip" title="Click to rename this user"><%= name %></a>
   </div>
 
-  <div class="right-container">
-    <div class="status-container">
-      <div class="status-icon <%= (status) ? 'online' : 'offline' %>"></div>
-      <span class="status-text title"><%= (status) ? 'Online' : 'Offline' %></span>
-      <a class="download-key glyphicon glyphicon-save no-select" data-toggle="tooltip" title="Click to download key"></a>
-    </div>
+  <div class="status-container">
+    <div class="status-icon <%= (status) ? 'online' : 'offline' %>"></div>
+    <span class="status-text title"><%= (status) ? 'Online' : 'Offline' %></span>
+    <a class="download-key glyphicon glyphicon-save no-select" data-toggle="tooltip" title="Click to download key"></a>
   </div>
 </div>

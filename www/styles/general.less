@@ -105,10 +105,10 @@ ul {
 }
 
 
-.orgs-list {
-}
 
-.orgs-list .orgs-list-title {
+
+.orgs-list .orgs-list-title,
+.servers-list .servers-list-title {
   color: #4d535c;
   display: inline-block;
   margin-top: 6px;
@@ -116,7 +116,8 @@ ul {
   font-size: 22px;
 }
 
-.orgs-list .orgs-list-buttons {
+.orgs-list .orgs-list-buttons,
+.servers-list .servers-list-buttons {
   float: right;
   display: block;
 }
@@ -125,7 +126,9 @@ ul {
 
 
 .users-list,
-.no-orgs {
+.server,
+.orgs-list-container .no-orgs,
+ {
   margin-bottom: 25px;
   border: 1px solid #cfcfcf;
   background-color: #f9f9f9;
@@ -135,13 +138,15 @@ ul {
   .background-clip-padding;
 }
 
-.users-list .label {
+.users-list .label,
+.server .label {
   margin-top: 1px;
   margin-right: 14px;
   padding: 6px 12px;
 }
 
-.users-list .users-list-title {
+.users-list .users-list-title,
+.server .server-title {
   margin: 0;
   display: inline-block;
   line-height: 16px;
@@ -149,11 +154,13 @@ ul {
   top: 2px;
 }
 
-.users-list .users-list-title a {
+.users-list .users-list-title a,
+.server .server-title a {
   font-size: 19px;
 }
 
-.users-list .users-list-header {
+.users-list .users-list-header,
+.server .server-header {
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
   background-color: #fff;
@@ -161,15 +168,18 @@ ul {
   border-bottom: 1px solid #ccc;
 }
 
-.users-list .users-list-header button {
+.users-list .users-list-header button,
+.server .server-header button {
+  margin-left: 10px;
   float: right;
 }
 
-.users-list-container {
+.users-list-container,
+.server-orgs-list {
   padding: 0 13px 13px 13px;
 }
 
-.no-orgs {
+.orgs-list-container .no-orgs {
   text-align: center;
   font-size: 14px;
   padding: 10px;
@@ -182,7 +192,9 @@ ul {
 
 
 .users-list .user,
-.users-list .no-users {
+.users-list .no-users,
+.server-orgs-list .org,
+.server-orgs-list .no-orgs {
   height: 40px;
   background: #fff;
   border: 1px solid #cfcfcf;
@@ -193,7 +205,8 @@ ul {
   .background-clip-padding;
 }
 
-.users-list .no-users {
+.users-list .no-users,
+.server-orgs-list .no-orgs {
   text-align: center;
   font-size: 14px;
   color: #777;
@@ -202,7 +215,8 @@ ul {
   display: none;
 }
 
-.users-list .org-title {
+.users-list .org-title,
+.server .server-title a {
   cursor: pointer;
 }
 
@@ -234,7 +248,8 @@ ul {
 }
 
 
-.users-list .user .name-container {
+.users-list .user .name-container,
+.server-orgs-list .org .name-container {
   float: left;
   height: 28px;
   padding-top: 1px;
@@ -243,7 +258,12 @@ ul {
   border-left: 1px solid #cfcfcf;
 }
 
-.users-list .user .name-container .name-icon {
+.server-orgs-list .org .name-container {
+  border-left: 0 none;
+}
+
+.users-list .user .name-container .name-icon,
+.server-orgs-list .org .name-container .name-icon {
   top: 2px;
   margin-top: 0;
   margin-right: 6px;
@@ -251,10 +271,16 @@ ul {
   color: #64b3f6;
 }
 
-.users-list .user .name-container .user-name {
+.users-list .user .name-container .user-name,
+.server-orgs-list .org .org-name {
   font-size: 18px;
   line-height: 22px;
   cursor: pointer;
+}
+
+.server-orgs-list .org .org-name {
+  color: #428bca;
+  cursor: default;
 }
 
 .users-list .user .download-key {
@@ -274,7 +300,8 @@ ul {
   color: #9ea0a3;
 }
 
-.users-list .user .status-container {
+.users-list .user .status-container,
+.server-orgs-list .org .button-container {
   float: right;
   display: inline-block;
   margin-top: 5px;
@@ -282,6 +309,11 @@ ul {
   width: 120px;
   padding: 3px 8px 0 12px;
   border-left: 1px solid #cfcfcf;
+}
+
+.server-orgs-list .org .button-container {
+  width: auto;
+  border-left: 0 none;
 }
 
 .users-list .user .status-container .status-icon {
@@ -321,34 +353,61 @@ ul {
   .background-clip-padding;
 }
 
-.dashboard .status-container table {
+.dashboard .status-container table,
+.server .server-status table {
   width: 100%;
   table-layout: fixed;
 }
 
-.dashboard .status-container .status-item {
-  padding: 20px;
+.dashboard .status-container .status-item,
+.server .server-status .status-item {
+  padding: 20px 0;
   border-right: 1px solid #cfcfcf;
   text-align: center;
 }
 
-.dashboard .status-container .status-item .status-title {
+.server .server-status .status-item {
+  border-bottom: 1px solid #cfcfcf;
+}
+
+.dashboard .status-container .status-item.last,
+.server .server-status .status-item.last {
+  border-right: 0 none;
+}
+
+.dashboard .status-container .status-item .status-title,
+.server .server-status .status-item .status-title {
   color: #4d535c;
   font-size: 26px;
   margin: 0 0 10px 0;
 }
 
-.dashboard .status-container .status-item .status-icon {
+.server .server-status .status-item .status-title {
+  font-size: 23px;
+}
+
+.dashboard .status-container .status-item .status-icon,
+.server .server-status .status-item .status-icon {
   color: #1f83bb;
   font-size: 26px;
   margin-right: 3px;
+}
+
+.server .server-status .status-item .status-icon {
+  font-size: 20px;
+  margin-right: 0;
+  top: 0;
 }
 
 .dashboard .status-container .servers-status .status-icon {
   top: 4px;
 }
 
-.dashboard .status-container .status-text {
+.server .server-status .server-port .status-icon {
+  top: -2px;
+}
+
+.dashboard .status-container .status-text, {
   font-size: 16px;
   font-weight: normal;
 }
