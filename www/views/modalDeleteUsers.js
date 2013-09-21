@@ -8,6 +8,7 @@ define([
 ], function($, _, Backbone, ModalView, AlertView, modalDeleteUsersTemplate) {
   'use strict';
   var ModalDeleteUsersView = ModalView.extend({
+    className: 'delete-users-modal',
     template: _.template(modalDeleteUsersTemplate),
     title: 'Delete Users',
     okText: 'Delete',

@@ -8,6 +8,7 @@ define([
 ], function($, _, Backbone, ModalView, AlertView, modalDeleteOrgTemplate) {
   'use strict';
   var ModalDeleteOrgView = ModalView.extend({
+    className: 'delete-org-modal',
     template: _.template(modalDeleteOrgTemplate),
     title: 'Delete Organization',
     okText: 'Delete',

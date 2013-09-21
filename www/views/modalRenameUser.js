@@ -7,6 +7,7 @@ define([
 ], function($, _, Backbone, ModalView, modalRenameUserTemplate) {
   'use strict';
   var ModalRenameUserView = ModalView.extend({
+    className: 'rename-user-modal',
     template: _.template(modalRenameUserTemplate),
     title: 'Rename User',
     okText: 'Rename',

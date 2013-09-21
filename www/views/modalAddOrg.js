@@ -8,6 +8,7 @@ define([
 ], function($, _, Backbone, OrgModel, ModalView, modalAddOrgTemplate) {
   'use strict';
   var ModalAddOrgView = ModalView.extend({
+    className: 'add-org-modal',
     template: _.template(modalAddOrgTemplate),
     title: 'Add Organization',
     okText: 'Add',

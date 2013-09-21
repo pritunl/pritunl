@@ -7,6 +7,7 @@ define([
 ], function($, _, Backbone, ModalView, modalRenameOrgTemplate) {
   'use strict';
   var ModalRenameOrgView = ModalView.extend({
+    className: 'rename-org-modal',
     template: _.template(modalRenameOrgTemplate),
     title: 'Rename Organization',
     okText: 'Rename',
