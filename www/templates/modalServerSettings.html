@@ -1,0 +1,35 @@
+<form role="form">
+  <div class="name form-group">
+    <label>Name</label>
+    <input type="text" class="form-control" placeholder="Enter name" value="<%= name %>">
+  </div>
+  <div class="network form-group">
+    <label>Network</label>
+    <input type="text" class="form-control" placeholder="Enter network address" value="<%= network %>">
+  </div>
+  <div class="interface form-group">
+    <label>Interface</label>
+    <input type="text" class="form-control" placeholder="Enter tunnel interface" value="<%= interface %>">
+  </div>
+  <div class="port form-group">
+    <label>Port</label>
+    <input type="text" class="form-control" placeholder="Enter port number" value="<%= port %>">
+  </div>
+  <div class="protocol form-group">
+    <label>Protocol</label>
+    <select class="form-control">
+      <option value="udp" <%= (protocol === 'udp') ? 'selected' : '' %>>udp</option>
+      <option value="tcp" <%= (protocol === 'tcp') ? 'selected' : '' %>>tcp</option>
+    </select>
+  </div>
+  <div class="local-network-toggle form-group">
+    <label>Local Network Only</label>
+    <div class="selector <%= (local_network) ? 'selected' : '' %> no-select">
+      <span class="selector-inner glyphicon glyphicon-ok"></span>
+    </div>
+  </div>
+  <div class="local-network form-group" <%= (local_network) ? '' : 'style="display: none;"' %>>
+    <label>Local Network</label>
+    <input type="text" class="form-control" placeholder="Enter network address" value="<%= local_network %>">
+  </div>
+</form>

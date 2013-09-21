@@ -122,7 +122,12 @@ authorityKeyIdentifier = keyid:always
 
 NETWORK_NOT_VALID = 'network_not_valid'
 NETWORK_NOT_VALID_MSG = 'Network address is not valid, format must be ' + \
-    '"10.[1-254].[1-254].0/[8-28]" such as "10.12.32.0/24".'
+    '"10.[0-255].[0-255].0/[8-24]" such as "10.12.32.0/24".'
+
+LOCAL_NETWORK_NOT_VALID = 'local_network_not_valid'
+LOCAL_NETWORK_NOT_VALID_MSG = 'Local network address is not valid, ' + \
+    'format must be "[0-255].[0-255].[0-255].[0-254]/[8-30]" such as ' + \
+    '"10.0.0.0/8".'
 
 PORT_NOT_VALID = 'port_not_valid'
 PORT_NOT_VALID_MSG = 'Port number is not valid, must be between 1 and 65535.'

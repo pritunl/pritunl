@@ -33,7 +33,8 @@ define([
           'network': '10.232.128.0/24',
           'interface': 'tun0',
           'port': '12345',
-          'protocol': 'udp'
+          'protocol': 'udp',
+          'local_network': null
         },
         {
           'id': '2',
@@ -45,7 +46,8 @@ define([
           'network': '10.64.32.0/16',
           'interface': 'tun1',
           'port': '4563',
-          'protocol': 'tcp'
+          'protocol': 'tcp',
+          'local_network': '10.0.0.0'
         }
       ]);
     },

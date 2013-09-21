@@ -3,15 +3,17 @@ define([
   'underscore',
   'backbone',
   'models/server',
-  'views/modal',
-  'text!templates/modalAddServer.html'
-], function($, _, Backbone, ServerModel, ModalView, modalAddServerTemplate) {
+  'views/modalServerSettings'
+], function($, _, Backbone, ServerModel, ModalServerSettingsView) {
   'use strict';
-  var ModalAddServerView = ModalView.extend({
-    template: _.template(modalAddServerTemplate),
+  var ModalAddServerView = ModalServerSettingsView.extend({
     title: 'Add Server',
     okText: 'Add',
+    loadingMsg: 'Adding server...',
+    errorMsg: 'Failed to add server, server error occurred.',
     initialize: function() {
+      // TODO
+      this.events['click .selector'] = 'onSelect';
       this.model = new ServerModel({
         name: '',
         network: '10.' + this._rand(15, 250) + '.' +
@@ -42,58 +44,6 @@ define([
       }
 
       return iface;
-    },
-    onOk: function() {
-      if (this.locked) {
-        return;
-      }
-      var name = this.$('.name').val();
-      var network = this.$('.network').val();
-      var iface = this.$('.interface').val();
-      var port = this.$('.port').val();
-      var protocol = this.$('.protocol').val();
-
-      if (!name) {
-        this.setAlert('danger', 'Name can not be empty.');
-        return;
-      }
-      if (!network) {
-        this.setAlert('danger', 'Network can not be empty.');
-        return;
-      }
-      if (!iface) {
-        this.setAlert('danger', 'Interface can not be empty.');
-        return;
-      }
-      if (!port) {
-        this.setAlert('danger', 'Port can not be empty.');
-        return;
-      }
-      this.locked = true;
-      this.setLoading('Adding server...');
-      this.model.save({
-        name: name,
-        network: network,
-        interface: iface,
-        port: port,
-        protocol: protocol
-      }, {
-        success: function() {
-          this.triggerEvt = true;
-          this.close();
-        }.bind(this),
-        error: function(model, response) {
-          this.clearLoading();
-          if (response.responseJSON) {
-            this.setAlert('danger', response.responseJSON.error_msg);
-          }
-          else {
-            this.setAlert('danger',
-              'Failed to add server, server error occurred.');
-          }
-          this.locked = false;
-        }.bind(this)
-      });
     },
     onRemove: function() {
       if (!this.triggerEvt) {
