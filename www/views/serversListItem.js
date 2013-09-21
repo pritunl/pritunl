@@ -2,11 +2,12 @@ define([
   'jquery',
   'underscore',
   'backbone',
+  'views/alert',
   'views/serverOrgsList',
   'views/modalServerSettings',
   'text!templates/serversListItem.html'
-], function($, _, Backbone, ServerOrgsListView, ModalServerSettingsView,
-    serversListItemTemplate) {
+], function($, _, Backbone, AlertView, ServerOrgsListView,
+    ModalServerSettingsView, serversListItemTemplate) {
   'use strict';
   var ServersListItemView = Backbone.View.extend({
     className: 'server',
@@ -24,6 +25,15 @@ define([
       var modal = new ModalServerSettingsView({
         model: this.model.clone()
       });
+      this.listenToOnce(modal, 'saved', function() {
+        var alertView = new AlertView({
+          type: 'warning',
+          message: 'Successfully saved server settings.',
+          dismissable: true
+        });
+        $('.alerts-container').append(alertView.render().el);
+        this.addView(alertView);
+      }.bind(this));
       this.addView(modal);
     },
     update: function() {
