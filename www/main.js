@@ -81,6 +81,7 @@ require.config({
 require([
   'backbone',
 ], function(Backbone) {
+  'use strict';
   Backbone.View = Backbone.View.extend({
     deinitialize: function() {
     },
