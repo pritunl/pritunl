@@ -10,7 +10,7 @@ define([
     className: 'user',
     template: _.template(usersListItemTemplate),
     events: {
-      'click .select': 'onSelect',
+      'click .selector': 'onSelect',
       'click .user-name': 'onRename'
     },
     render: function() {
@@ -37,16 +37,16 @@ define([
       }
     },
     getSelect: function() {
-      return this.$el.hasClass('selected');
+      return this.$('.selector').hasClass('selected');
     },
     setSelect: function(state) {
       if (state) {
-        this.$el.addClass('selected');
-        this.$('.select-inner').show();
+        this.$('.selector').addClass('selected');
+        this.$('.selector-inner').show();
       }
       else {
-        this.$el.removeClass('selected');
-        this.$('.select-inner').hide();
+        this.$('.selector').removeClass('selected');
+        this.$('.selector-inner').hide();
       }
       this.trigger('select', this);
     },

@@ -104,6 +104,33 @@ ul {
   color: #ececec;
 }
 
+.selector {
+  width: 19px;
+  height: 19px;
+  margin-right: 10px;
+  padding-left: 1px;
+  border: 1px solid #cfcfcf;
+  float: left;
+  .border-radius(3px);
+}
+
+.selector .selector-inner {
+  font-size: 14px;
+  top: auto;
+  color: #858585;
+  display: none;
+}
+
+.selector.selected .selector-inner {
+  display: inline;
+}
+
+.selector:active {
+  .box-shadow(0 1px 2px rgba(0, 0, 0, 0.05),
+    0 1px 3px rgba(0, 0, 0, 0.1) inset);
+  .background-clip-padding;
+}
+
 
 
 
@@ -221,32 +248,11 @@ ul {
   cursor: pointer;
 }
 
-.users-list .user .select {
-  width: 19px;
-  height: 19px;
+.users-list .user .selector {
   margin: 10px 10px;
-  padding-left: 1px;
-  border: 1px solid #cfcfcf;
-  float: left;
-  .border-radius(3px);
 }
 
-.users-list .user .select .select-inner {
-  font-size: 14px;
-  top: auto;
-  color: #858585;
-  display: none;
-}
 
-.users-list .user.selected .select .select-inner {
-  display: inline;
-}
-
-.users-list .user .select:active {
-  .box-shadow(0 1px 2px rgba(0, 0, 0, 0.05),
-    0 1px 3px rgba(0, 0, 0, 0.1) inset);
-  .background-clip-padding;
-}
 
 
 .users-list .user .name-container,
