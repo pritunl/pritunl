@@ -1,5 +1,5 @@
-Pritunl: Simple openvpn server (In Development)
-===============================================
+Pritunl: Simple openvpn server
+==============================
 
 Simple openvpn server. Currently in development, not ready for use.
 
