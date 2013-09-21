@@ -6,12 +6,9 @@ define([
   'use strict';
   var ListView = Backbone.View.extend({
     listContainer: null,
-    initialize: function(options) {
-      this.init(options);
+    initialize: function() {
       this.listenTo(this.collection, 'reset', this._onReset);
       this.views = [];
-    },
-    init: function() {
     },
     render: function() {
       this.$el.html(this.template());

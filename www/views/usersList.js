@@ -12,11 +12,12 @@ define([
   var UsersListView = ListView.extend({
     className: 'users-list-container',
     template: _.template(usersListTemplate),
-    init: function(options) {
+    initialize: function(options) {
       this.collection = new UserCollection({
         org: options.org
       });
       this.listenTo(window.events, 'users_updated', this.update);
+      UsersListView.__super__.initialize.call(this);
     },
     removeItem: function(view) {
       if (view.getSelect()) {

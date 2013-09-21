@@ -23,10 +23,11 @@ define([
       'click .orgs-add-user': 'onAddUser',
       'click .orgs-del-selected': 'onDelSelected'
     },
-    init: function() {
+    initialize: function() {
       this.collection = new OrgCollection();
       this.listenTo(window.events, 'organizations_updated', this.update);
       this.selected = [];
+      OrgsListView.__super__.initialize.call(this);
     },
     onAddOrg: function() {
       var modal = new ModalAddOrgView();

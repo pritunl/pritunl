@@ -18,8 +18,9 @@ define([
     events: {
       'click .servers-add-server': 'onAddServer'
     },
-    init: function() {
+    initialize: function() {
       this.collection = new ServerCollection();
+      ServersListView.__super__.initialize.call(this);
     },
     update: function() {
       this.collection.reset([

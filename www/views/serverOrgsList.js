@@ -12,10 +12,11 @@ define([
   var ServerOrgsListView = ListView.extend({
     className: 'server-orgs-list',
     template: _.template(serverOrgsListTemplate),
-    init: function(options) {
+    initialize: function(options) {
       this.collection = new ServerOrgCollection({
         server: options.server
       });
+      ServerOrgsListView.__super__.initialize.call(this);
     },
     update: function() {
       this.collection.reset([
