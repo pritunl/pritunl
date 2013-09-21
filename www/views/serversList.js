@@ -4,11 +4,12 @@ define([
   'backbone',
   'collections/server',
   'views/list',
+  'views/alert',
   'views/serversListItem',
   'views/modalAddServer',
   'text!templates/serversList.html'
-], function($, _, Backbone, ServerCollection, ListView, ServersListItemView,
-    ModalAddServerView, serversListTemplate) {
+], function($, _, Backbone, ServerCollection, ListView, AlertView,
+    ServersListItemView, ModalAddServerView, serversListTemplate) {
   'use strict';
   var ServersListView = ListView.extend({
     className: 'servers-list',
@@ -51,6 +52,15 @@ define([
     onAddServer: function() {
       var modal = new ModalAddServerView({
       });
+      this.listenToOnce(modal, 'added', function() {
+        var alertView = new AlertView({
+          type: 'warning',
+          message: 'Successfully added server.',
+          dismissable: true
+        });
+        $('.alerts-container').append(alertView.render().el);
+        this.addView(alertView);
+      }.bind(this));
       this.addView(modal);
     },
     buildItem: function(model) {
