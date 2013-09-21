@@ -31,6 +31,13 @@
   left: calc(@func);
 }
 
+.top-calc(@func) {
+  top: -webkit-calc(@func);
+  top: -moz-calc(@func);
+  top: -o-calc(@func);
+  top: calc(@func);
+}
+
 .transition(@property, @duration) {
   -webkit-transition: @property @duration;
   -moz-transition: @property @duration;
