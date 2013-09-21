@@ -11,9 +11,8 @@ define([
     template: _.template(modalDeleteOrgTemplate),
     title: 'Delete Organization',
     okText: 'Delete',
-    initialize: function() {
-      this.body = this.template();
-      this.render();
+    initialize: function(options) {
+      ModalDeleteOrgView.__super__.initialize.call(this);
 
       var alertView = new AlertView({
         type: 'danger',
@@ -22,6 +21,9 @@ define([
       });
       this.addView(alertView);
       this.$('form').prepend(alertView.render().el);
+    },
+    body: function() {
+      return this.template();
     },
     onOk: function() {
       if (this.locked) {
@@ -36,8 +38,7 @@ define([
       this.setLoading('Deleting organization...');
       this.model.destroy({
         success: function() {
-          this.triggerEvt = true;
-          this.close();
+          this.close(true);
         }.bind(this),
         error: function() {
           this.setAlert('danger',
@@ -45,12 +46,6 @@ define([
           this.locked = false;
         }.bind(this)
       });
-    },
-    onRemove: function() {
-      if (!this.triggerEvt) {
-        return;
-      }
-      this.trigger('deleted');
     }
   });
 

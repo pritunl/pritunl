@@ -11,7 +11,7 @@ define([
     template: _.template(modalDeleteUsersTemplate),
     title: 'Delete Users',
     okText: 'Delete',
-    initialize: function() {
+    body: function() {
       var i;
       var nameId;
       var users = [];
@@ -29,10 +29,9 @@ define([
         users.push(usersObj[usersSort[i]]);
       }
 
-      this.body = this.template({
+      return this.template({
         users: users
       });
-      this.render();
     },
     onOk: function() {
       if (this.locked) {
@@ -49,8 +48,7 @@ define([
           success: function() {
             count -= 1;
             if (count === 0) {
-              this.triggerEvt = true;
-              this.close();
+              this.close(true);
             }
           }.bind(this),
           error: function() {
@@ -61,12 +59,6 @@ define([
           }.bind(this)
         });
       }
-    },
-    onRemove: function() {
-      if (!this.triggerEvt) {
-        return;
-      }
-      this.trigger('deleted');
     }
   });
 

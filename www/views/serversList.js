@@ -53,7 +53,7 @@ define([
     },
     onAddServer: function() {
       var modal = new ModalAddServerView();
-      this.listenToOnce(modal, 'added', function() {
+      this.listenToOnce(modal, 'applied', function() {
         var alertView = new AlertView({
           type: 'warning',
           message: 'Successfully added server.',

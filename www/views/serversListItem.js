@@ -25,7 +25,7 @@ define([
       var modal = new ModalServerSettingsView({
         model: this.model.clone()
       });
-      this.listenToOnce(modal, 'saved', function() {
+      this.listenToOnce(modal, 'applied', function() {
         var alertView = new AlertView({
           type: 'warning',
           message: 'Successfully saved server settings.',

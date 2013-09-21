@@ -2,11 +2,9 @@ define([
   'jquery',
   'underscore',
   'backbone',
-  'models/server',
   'views/modal',
   'text!templates/modalServerSettings.html'
-], function($, _, Backbone, ServerModel, ModalView,
-    modalServerSettingsTemplate) {
+], function($, _, Backbone, ModalView, modalServerSettingsTemplate) {
   'use strict';
   var ModalServerSettingsView = ModalView.extend({
     className: 'server-settings-modal',
@@ -15,11 +13,13 @@ define([
     okText: 'Save',
     loadingMsg: 'Saving server...',
     errorMsg: 'Failed to saving server, server error occurred.',
-    initialize: function() {
-      // TODO
-      this.events['click .selector'] = 'onSelect';
-      this.body = this.template(this.model.toJSON());
-      this.render();
+    events: function() {
+      return _.extend(ModalServerSettingsView.__super__.events, {
+        'click .selector': 'onSelect'
+      });
+    },
+    body: function() {
+      return this.template(this.model.toJSON());
     },
     getSelect: function() {
       return this.$('.local-network-toggle .selector').hasClass('selected');
@@ -85,8 +85,7 @@ define([
         'local_network': localNetwork
       }, {
         success: function() {
-          this.triggerEvt = true;
-          this.close();
+          this.close(true);
         }.bind(this),
         error: function(model, response) {
           this.clearLoading();
@@ -99,12 +98,6 @@ define([
           this.locked = false;
         }.bind(this)
       });
-    },
-    onRemove: function() {
-      if (!this.triggerEvt) {
-        return;
-      }
-      this.trigger('saved');
     }
   });
 

@@ -11,9 +11,8 @@ define([
     template: _.template(modalAddOrgTemplate),
     title: 'Add Organization',
     okText: 'Add',
-    initialize: function(options) {
-      this.body = this.template();
-      this.render();
+    body: function() {
+      return this.template();
     },
     onOk: function() {
       if (this.locked) {
@@ -30,8 +29,7 @@ define([
         name: this.$('input').val()
       }, {
         success: function() {
-          this.triggerEvt = true;
-          this.close();
+          this.close(true);
         }.bind(this),
         error: function() {
           this.clearLoading();
@@ -40,12 +38,6 @@ define([
           this.locked = false;
         }.bind(this)
       });
-    },
-    onRemove: function() {
-      if (!this.triggerEvt) {
-        return;
-      }
-      this.trigger('added');
     }
   });
 

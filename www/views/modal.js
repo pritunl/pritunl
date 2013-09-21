@@ -9,13 +9,17 @@ define([
   'use strict';
   var ModalView = Backbone.View.extend({
     modalTemplate: _.template(modalTemplate),
-    events: {
-      'click .ok': 'onOk',
-      'hidden.bs.modal .modal': 'onRemove'
+    events: function() {
+      return {
+        'click .ok': 'onOk',
+        'hidden.bs.modal .modal': 'onRemove'
+      }
     },
     title: '',
     cancelText: 'Cancel',
-    body: '',
+    body: function() {
+      return '';
+    },
     okText: 'Ok',
     initialize: function() {
       this.render();
@@ -26,7 +30,7 @@ define([
         cancelText: this.cancelText,
         okText: this.okText
       }));
-      this.$('.modal-body').html(this.body);
+      this.$('.modal-body').html(this.body());
       this.$('.modal').modal();
       $('body').append(this.el);
       return this;
@@ -83,7 +87,8 @@ define([
         this.loadingView = null;
       }
     },
-    close: function() {
+    close: function(triggerApplied) {
+      this.applied = triggerApplied;
       this.clearAlert();
       this.clearLoading();
       this.$('.modal').modal('hide');
@@ -92,6 +97,9 @@ define([
       this.close();
     },
     onRemove: function() {
+      if (this.applied) {
+        this.trigger('applied');
+      }
       this.destroy();
     }
   });

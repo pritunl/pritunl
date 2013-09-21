@@ -30,7 +30,7 @@ define([
     },
     onAddOrg: function() {
       var modal = new ModalAddOrgView();
-      this.listenToOnce(modal, 'added', function() {
+      this.listenToOnce(modal, 'applied', function() {
         var alertView = new AlertView({
           type: 'warning',
           message: 'Successfully added organization.',
@@ -45,7 +45,7 @@ define([
       var modal = new ModalAddUserView({
         orgs: this.collection
       });
-      this.listenToOnce(modal, 'added', function() {
+      this.listenToOnce(modal, 'applied', function() {
         var alertView = new AlertView({
           type: 'warning',
           message: 'Successfully added user.',
@@ -67,7 +67,7 @@ define([
       var modal = new ModalDeleteUsersView({
         collection: new UserCollection(models)
       });
-      this.listenToOnce(modal, 'deleted', function() {
+      this.listenToOnce(modal, 'applied', function() {
         var alertView = new AlertView({
           type: 'warning',
           message: 'Successfully deleted selected users.',

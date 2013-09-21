@@ -12,10 +12,13 @@ define([
     title: 'Add User',
     okText: 'Add',
     initialize: function(options) {
-      this.body = this.template({
-        orgs: options.orgs.toJSON()
+      this.orgs = options.orgs;
+      ModalAddUserView.__super__.initialize.call(this);
+    },
+    body: function() {
+      return this.template({
+        orgs: this.orgs.toJSON()
       });
-      this.render();
     },
     onOk: function() {
       if (this.locked) {
@@ -33,8 +36,7 @@ define([
         name: this.$('input').val()
       }, {
         success: function() {
-          this.triggerEvt = true;
-          this.close();
+          this.close(true);
         }.bind(this),
         error: function() {
           this.clearLoading();
@@ -43,12 +45,6 @@ define([
           this.locked = false;
         }.bind(this)
       });
-    },
-    onRemove: function() {
-      if (!this.triggerEvt) {
-        return;
-      }
-      this.trigger('added');
     }
   });
 

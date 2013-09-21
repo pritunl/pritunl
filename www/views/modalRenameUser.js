@@ -10,9 +10,8 @@ define([
     template: _.template(modalRenameUserTemplate),
     title: 'Rename User',
     okText: 'Rename',
-    initialize: function(options) {
-      this.body = this.template(this.model.toJSON());
-      this.render();
+    body: function() {
+      return this.template(this.model.toJSON());
     },
     onOk: function() {
       if (this.locked) {
@@ -28,8 +27,7 @@ define([
         name: this.$('input').val()
       }, {
         success: function() {
-          this.triggerEvt = true;
-          this.close();
+          this.close(true);
         }.bind(this),
         error: function() {
           this.clearLoading();
@@ -38,12 +36,6 @@ define([
           this.locked = false;
         }.bind(this)
       });
-    },
-    onRemove: function() {
-      if (!this.triggerEvt) {
-        return;
-      }
-      this.trigger('renamed');
     }
   });
 
