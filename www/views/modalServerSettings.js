@@ -11,7 +11,7 @@ define([
     template: _.template(modalAddServerTemplate),
     title: 'Server Settings',
     okText: 'Save',
-    initialize: function(options) {
+    initialize: function() {
       this.body = this.template(this.model.toJSON());
       this.render();
     },

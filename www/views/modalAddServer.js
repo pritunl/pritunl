@@ -11,7 +11,7 @@ define([
     template: _.template(modalAddServerTemplate),
     title: 'Add Server',
     okText: 'Add',
-    initialize: function(options) {
+    initialize: function() {
       this.model = new ServerModel({
         name: '',
         network: '10.' + this._rand(15, 250) + '.' +

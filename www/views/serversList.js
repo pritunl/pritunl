@@ -50,8 +50,7 @@ define([
       ]);
     },
     onAddServer: function() {
-      var modal = new ModalAddServerView({
-      });
+      var modal = new ModalAddServerView();
       this.listenToOnce(modal, 'added', function() {
         var alertView = new AlertView({
           type: 'warning',
