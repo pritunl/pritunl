@@ -43,7 +43,7 @@ define([
         }.bind(this),
         error: function() {
           this.setAlert('danger',
-            'Failed to delet organization, server error occurred.');
+            'Failed to delete organization, server error occurred.');
           this.locked = false;
         }.bind(this)
       });
