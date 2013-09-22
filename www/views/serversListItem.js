@@ -79,6 +79,7 @@ define([
       this.addView(modal);
     },
     _updateTime: function() {
+      setTimeout((this._updateTime).bind(this), 1000);
       if (!this.model.get('uptime')) {
         return;
       }
@@ -87,8 +88,6 @@ define([
       });
       this.$('.server-uptime .status-text').text(
         window.formatUptime(this.model.get('uptime')));
-
-      setTimeout((this._updateTime).bind(this), 1000);
     }
   });
 
