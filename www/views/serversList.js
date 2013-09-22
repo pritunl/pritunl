@@ -3,29 +3,35 @@ define([
   'underscore',
   'backbone',
   'collections/server',
+  'collections/org',
   'views/list',
   'views/alert',
   'views/serversListItem',
   'views/modalAddServer',
+  'views/modalAttachOrg',
   'text!templates/serversList.html'
-], function($, _, Backbone, ServerCollection, ListView, AlertView,
-    ServersListItemView, ModalAddServerView, serversListTemplate) {
+], function($, _, Backbone, ServerCollection, OrgCollection, ListView,
+    AlertView, ServersListItemView, ModalAddServerView, ModalAttachOrgView,
+    serversListTemplate) {
   'use strict';
   var ServersListView = ListView.extend({
     className: 'servers-list',
     listContainer: '.servers-list-container',
     template: _.template(serversListTemplate),
     events: {
-      'click .servers-add-server': 'onAddServer'
+      'click .servers-add-server': 'onAddServer',
+      'click .servers-attach-org': 'onAttachOrg'
     },
     initialize: function() {
       this.collection = new ServerCollection();
+      this.orgs = new OrgCollection();
+      this.listenTo(window.events, 'organizations_updated', this.updateOrgs);
       ServersListView.__super__.initialize.call(this);
     },
     update: function() {
       this.collection.reset([
         {
-          'id': '1',
+          'id': 'b4182ab869ff4269b4015391e618e4a8',
           'name': 'server0',
           'status': 'online',
           'uptime': 88488573,
@@ -38,7 +44,7 @@ define([
           'local_network': null
         },
         {
-          'id': '2',
+          'id': '65a3224e94ad4449aacac992d4e1e6ab',
           'name': 'server1',
           'status': 'offline',
           'uptime': null,
@@ -52,12 +58,59 @@ define([
         }
       ]);
     },
+    updateOrgs: function() {
+      this.collection.fetch({
+        error: function() {
+          this.collection.reset();
+        }.bind(this)
+      });
+    },
     onAddServer: function() {
       var modal = new ModalAddServerView();
       this.listenToOnce(modal, 'applied', function() {
         var alertView = new AlertView({
           type: 'warning',
           message: 'Successfully added server.',
+          dismissable: true
+        });
+        $('.alerts-container').append(alertView.render().el);
+        this.addView(alertView);
+      }.bind(this));
+      this.addView(modal);
+    },
+    onAttachOrg: function() {
+      if (this.orgs.models.length) {
+        this._attachOrg();
+        return;
+      }
+      this.$('.servers-attach-org').attr('disabled', 'disabled');
+      this.orgs.fetch({
+        success: function() {
+          this._attachOrg();
+          this.$('.servers-attach-org').removeAttr('disabled');
+        }.bind(this),
+        error: function() {
+          this.orgs.reset();
+          var alertView = new AlertView({
+            type: 'danger',
+            message: 'Failed to load organizations, server error occurred.',
+            dismissable: true
+          });
+          $('.alerts-container').append(alertView.render().el);
+          this.addView(alertView);
+          this.$('.servers-attach-org').removeAttr('disabled');
+        }.bind(this)
+      });
+    },
+    _attachOrg: function() {
+      var modal = new ModalAttachOrgView({
+        orgs: this.orgs,
+        collection: this.collection
+      });
+      this.listenToOnce(modal, 'applied', function() {
+        var alertView = new AlertView({
+          type: 'warning',
+          message: 'Successfully attached organization.',
           dismissable: true
         });
         $('.alerts-container').append(alertView.render().el);

@@ -7,8 +7,7 @@ define([
   var ServerOrgModel = Backbone.Model.extend({
     defaults: {
       'id': null,
-      'server': null,
-      'name': null
+      'server': null
     },
     url: function() {
       var url = '/server/' + this.get('server') + '/organization';
