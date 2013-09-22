@@ -9,11 +9,9 @@ define([
   'use strict';
   var ModalView = Backbone.View.extend({
     modalTemplate: _.template(modalTemplate),
-    events: function() {
-      return {
-        'click .ok': 'onOk',
-        'hidden.bs.modal .modal': 'onRemove'
-      }
+    events: {
+      'click .ok': 'onOk',
+      'hidden.bs.modal .modal': 'onRemove'
     },
     title: '',
     cancelText: 'Cancel',
