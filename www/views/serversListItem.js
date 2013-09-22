@@ -32,6 +32,7 @@ define([
       return this;
     },
     update: function() {
+      this.$('.server-title a').text(this.model.get('name'));
       var status = this.model.get('status');
       status = status.charAt(0).toUpperCase() + status.slice(1);
       this.$('.server-status .status-text').text(status);
