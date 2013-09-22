@@ -12,6 +12,8 @@ define([
   var ServerOrgsListView = ListView.extend({
     className: 'server-orgs-list',
     template: _.template(serverOrgsListTemplate),
+    listErrorMsg: 'Failed to load server organizations, ' +
+      'server error occurred.',
     initialize: function(options) {
       this.collection = new ServerOrgCollection({
         server: options.server

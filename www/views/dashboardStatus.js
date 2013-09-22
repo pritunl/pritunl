@@ -3,8 +3,9 @@ define([
   'underscore',
   'backbone',
   'models/status',
+  'views/alert',
   'text!templates/dashboardStatus.html'
-], function($, _, Backbone, StatusModel, dashboardStatusTemplate) {
+], function($, _, Backbone, StatusModel, AlertView, dashboardStatusTemplate) {
   'use strict';
   var DashboardStatusView = Backbone.View.extend({
     className: 'status-container',
@@ -26,6 +27,13 @@ define([
             '.servers-status .status-num';
           this.$(selectors).removeClass('none warning success');
           this.$(selectors).addClass('error');
+
+          var alertView = new AlertView({
+            type: 'danger',
+            message: 'Failed to load server status, server error occurred.',
+            dismissable: true
+          });
+          $('.alerts-container').append(alertView.render().el);
         }.bind(this),
         success: function() {
           var num;

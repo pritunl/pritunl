@@ -1,11 +1,13 @@
 define([
   'jquery',
   'underscore',
-  'backbone'
-], function($, _, Backbone) {
+  'backbone',
+  'views/alert'
+], function($, _, Backbone, AlertView) {
   'use strict';
   var ListView = Backbone.View.extend({
     listContainer: null,
+    listErrorMsg: 'Failed to load list, server error occurred.',
     initialize: function() {
       this.listenTo(this.collection, 'reset', this._onReset);
       this.views = [];
@@ -103,6 +105,12 @@ define([
       this.collection.fetch({
         reset: true,
         error: function() {
+          var alertView = new AlertView({
+            type: 'danger',
+            message: this.listErrorMsg,
+            dismissable: true
+          });
+          $('.alerts-container').append(alertView.render().el);
           this.collection.reset();
         }.bind(this)
       });

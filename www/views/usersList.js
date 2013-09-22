@@ -12,6 +12,7 @@ define([
   var UsersListView = ListView.extend({
     className: 'users-list-container',
     template: _.template(usersListTemplate),
+    listErrorMsg: 'Failed to load users, server error occurred.',
     initialize: function(options) {
       this.collection = new UserCollection({
         org: options.org

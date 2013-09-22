@@ -18,6 +18,7 @@ define([
     className: 'servers-list',
     listContainer: '.servers-list-container',
     template: _.template(serversListTemplate),
+    listErrorMsg: 'Failed to load servers, server error occurred.',
     events: {
       'click .servers-add-server': 'onAddServer',
       'click .servers-attach-org': 'onAttachOrg'

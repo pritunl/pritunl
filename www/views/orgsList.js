@@ -18,6 +18,7 @@ define([
   var OrgsListView = ListView.extend({
     listContainer: '.orgs-list-container',
     template: _.template(orgsListTemplate),
+    listErrorMsg: 'Failed to load organizations, server error occurred.',
     events: {
       'click .orgs-add-org': 'onAddOrg',
       'click .orgs-add-user': 'onAddUser',

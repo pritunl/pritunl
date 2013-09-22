@@ -12,6 +12,7 @@ define([
   var DashboardLogView = ListView.extend({
     className: 'log-container',
     listContainer: '.log-entry-list',
+    listErrorMsg: 'Failed to load log entries, server error occurred.',
     template: _.template(dashboardLogTemplate),
     initialize: function() {
       this.collection = new LogCollection();
