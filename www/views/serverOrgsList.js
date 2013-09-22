@@ -23,13 +23,13 @@ define([
     update: function() {
       this.collection.reset([
         {
-          'id': '1',
-          'server': '1',
+          'id': 'a48f72fcb29d42b583ef32aa2bcad49d',
+          'server': '2eca7aa7852f49fbbb737585141014f4',
           'name': 'testorg0',
         },
         {
-          'id': '2',
-          'server': '1',
+          'id': 'b3b02c88a9a44ae3883707052f58bad3',
+          'server': '13f695ff5f0c4d32afdbb4ff658d143e',
           'name': 'testorg1',
         }
       ]);
