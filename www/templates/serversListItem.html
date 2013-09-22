@@ -1,7 +1,7 @@
 <div class="server-header">
   <div class="label label-primary">Server</div>
   <h2 class="server-title title">
-    <a class="no-select" data-toggle="tooltip" title="Click to open server settings"><%= name %></a>
+    <a class="no-select" data-toggle="tooltip" title="Click to open server settings"></a>
   </h2>
   <button type="button" class="server-del btn btn-danger btn-sm">Delete Server</button>
   <button type="button" class="server-stop btn btn-warning btn-sm">Stop Server</button>
@@ -17,14 +17,14 @@
             <span class="status-icon glyphicon glyphicon-dashboard"></span>
             Status
           </h3>
-          <div class="status-text title"><%= status.charAt(0).toUpperCase() + status.slice(1) %></div>
+          <div class="status-text title"></div>
         </td>
         <td class="status-item server-uptime">
           <h3 class="status-title title">
             <span class="status-icon glyphicon glyphicon-time"></span>
             Uptime
           </h3>
-          <div class="status-text title"><%= uptime %></div>
+          <div class="status-text title"></div>
         </td>
         <td class="status-item server-users">
           <h3 class="status-title title">
@@ -32,7 +32,7 @@
             Users
           </h3>
           <div class="status-text title">
-            <span class="status-num"><%= users_online %>/<%= users_total %></span> users online
+            <span class="status-num"></span> users online
           </div>
         </td>
         <td class="status-item server-network">
@@ -40,21 +40,21 @@
             <span class="status-icon glyphicon glyphicon-signal"></span>
             Network
           </h3>
-          <div class="status-text title"><%= network %></div>
+          <div class="status-text title"></div>
         </td>
         <td class="status-item server-interface">
           <h3 class="status-title title">
             <span class="status-icon glyphicon glyphicon-transfer"></span>
             Interface
           </h3>
-          <div class="status-text title"><%= interface %></div>
+          <div class="status-text title"></div>
         </td>
         <td class="status-item last server-port">
           <h3 class="status-title title">
             <span class="status-icon glyphicon glyphicon-cloud-upload"></span>
             Port
           </h3>
-          <div class="status-text title"><%= port %>/<%= protocol %></div>
+          <div class="status-text title"></div>
         </td>
       </tr>
     </tbody>
