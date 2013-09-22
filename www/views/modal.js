@@ -89,7 +89,9 @@ define([
       }
     },
     close: function(triggerApplied) {
-      this.applied = triggerApplied;
+      if (triggerApplied) {
+        this.trigger('applied');
+      }
       this.clearAlert();
       this.clearLoading();
       this.$('.modal').modal('hide');
@@ -98,9 +100,6 @@ define([
       this.close();
     },
     onRemove: function() {
-      if (this.applied) {
-        this.trigger('applied');
-      }
       this.destroy();
     }
   });
