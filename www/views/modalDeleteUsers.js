@@ -47,8 +47,7 @@ define([
       for (i = 0; i < users.length; i++) {
         users[i].destroy({
           success: function() {
-            count -= 1;
-            if (count === 0) {
+            if (--count < 1) {
               this.close(true);
             }
           }.bind(this),
