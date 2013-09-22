@@ -127,6 +127,17 @@ require([
 
   initialize();
 
+  window.formatUptime = function(time) {
+    var days = Math.floor(time / 86400);
+    time -= days * 86400;
+    var hours = Math.floor(time / 3600);
+    time -= hours * 3600;
+    var minutes = Math.floor(time / 60);
+    time -= minutes * 60;
+    var seconds = time;
+    return days + 'd ' + hours + 'h ' + minutes + 'm ' + seconds + 's';
+  };
+
   window.formatTime = function(time, short) {
     var abbrev = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
       'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];

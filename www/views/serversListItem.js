@@ -20,28 +20,28 @@ define([
         server: this.model.get('id')
       });
       this.addView(this.serverOrgsListView);
+      setTimeout((this._updateTime).bind(this), 1000);
     },
-    onSettings: function() {
-      var modal = new ModalServerSettingsView({
-        model: this.model.clone()
+    render: function() {
+      this.$el.html(this.template(this.model.toJSON()));
+      this.update();
+      this.$('.server-title a').tooltip({
+        container: this.el
       });
-      this.listenToOnce(modal, 'applied', function() {
-        var alertView = new AlertView({
-          type: 'warning',
-          message: 'Successfully saved server settings.',
-          dismissable: true
-        });
-        $('.alerts-container').append(alertView.render().el);
-        this.addView(alertView);
-      }.bind(this));
-      this.addView(modal);
+      this.$el.append(this.serverOrgsListView.render().el);
+      return this;
     },
     update: function() {
       var status = this.model.get('status');
       status = status.charAt(0).toUpperCase() + status.slice(1);
       this.$('.server-status .status-text').text(status);
-      this.$('.server-uptime .status-text').text(
-        this.model.get('uptime'));
+      if (this.model.get('uptime')) {
+        this.$('.server-uptime .status-text').text(
+          window.formatUptime(this.model.get('uptime')));
+      }
+      else {
+        this.$('.server-uptime .status-text').text('-');
+      }
       this.$('.server-users .status-num').text(
         this.model.get('users_online') + '/' + this.model.get('users_total'));
       this.$('.server-network .status-text').text(
@@ -62,14 +62,32 @@ define([
         this.$('.server-restart').attr('disabled', 'disabled');
       }
     },
-    render: function() {
-      this.$el.html(this.template(this.model.toJSON()));
-      this.update();
-      this.$('.server-title a').tooltip({
-        container: this.el
+    onSettings: function() {
+      var modal = new ModalServerSettingsView({
+        model: this.model.clone()
       });
-      this.$el.append(this.serverOrgsListView.render().el);
-      return this;
+      this.listenToOnce(modal, 'applied', function() {
+        var alertView = new AlertView({
+          type: 'warning',
+          message: 'Successfully saved server settings.',
+          dismissable: true
+        });
+        $('.alerts-container').append(alertView.render().el);
+        this.addView(alertView);
+      }.bind(this));
+      this.addView(modal);
+    },
+    _updateTime: function() {
+      if (!this.model.get('uptime')) {
+        return;
+      }
+      this.model.set({
+        uptime: this.model.get('uptime') + 1
+      });
+      this.$('.server-uptime .status-text').text(
+        window.formatUptime(this.model.get('uptime')));
+
+      setTimeout((this._updateTime).bind(this), 1000);
     }
   });
 
