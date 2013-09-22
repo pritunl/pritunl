@@ -14,7 +14,6 @@ define([
     okText: 'Delete',
     initialize: function(options) {
       ModalDeleteOrgView.__super__.initialize.call(this);
-
       var alertView = new AlertView({
         type: 'danger',
         message: 'Deleting the organization will delete all the users in it.',
