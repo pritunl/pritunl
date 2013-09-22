@@ -32,6 +32,7 @@ define([
       }));
       this.$('.modal-body').html(this.body());
       this.$('.modal').modal();
+      this.$('[data-toggle="tooltip"]').tooltip();
       $('body').append(this.el);
       return this;
     },
