@@ -5,15 +5,17 @@ define([
   'views/alert',
   'views/serverOrgsList',
   'views/modalServerSettings',
+  'views/modalDeleteServer',
   'text!templates/serversListItem.html'
 ], function($, _, Backbone, AlertView, ServerOrgsListView,
-    ModalServerSettingsView, serversListItemTemplate) {
+    ModalServerSettingsView, ModalDeleteServerView, serversListItemTemplate) {
   'use strict';
   var ServersListItemView = Backbone.View.extend({
     className: 'server',
     template: _.template(serversListItemTemplate),
     events: {
-      'click .server-title a': 'onSettings'
+      'click .server-title a': 'onSettings',
+      'click .server-del': 'onDelete'
     },
     initialize: function() {
       this.serverOrgsListView = new ServerOrgsListView({
@@ -71,6 +73,21 @@ define([
         var alertView = new AlertView({
           type: 'warning',
           message: 'Successfully saved server settings.',
+          dismissable: true
+        });
+        $('.alerts-container').append(alertView.render().el);
+        this.addView(alertView);
+      }.bind(this));
+      this.addView(modal);
+    },
+    onDelete: function() {
+      var modal = new ModalDeleteServerView({
+        model: this.model.clone()
+      });
+      this.listenToOnce(modal, 'applied', function() {
+        var alertView = new AlertView({
+          type: 'warning',
+          message: 'Successfully deleted server.',
           dismissable: true
         });
         $('.alerts-container').append(alertView.render().el);
