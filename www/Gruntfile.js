@@ -22,7 +22,7 @@ module.exports = function(grunt) {
     jshint: {
       options: {
         bitwise: true,
-        camelcase: true,
+        camelcase: false,
         curly: true,
         eqeqeq: true,
         immed: true,
