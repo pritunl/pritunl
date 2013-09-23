@@ -8,7 +8,7 @@ from config import Config
 
 logger = None
 
-class Server(Config):
+class WsgiServer(Config):
     bool_options = ['debug', 'log_debug']
     int_options = ['port']
     path_options = ['log_path', 'db_path', 'www_path', 'data_path']
