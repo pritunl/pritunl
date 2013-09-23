@@ -28,6 +28,34 @@ def _local_network_not_valid():
         'error_msg': LOCAL_NETWORK_NOT_VALID_MSG,
     }, 400)
 
+@app_server.app.route('/server', methods=['GET'])
+def server_get():
+    servers = []
+    servers_dict = {}
+    servers_sort = []
+
+    for server in Server.get_servers():
+        name_id = '%s_%s' % (server.name, server.id)
+        servers_sort.append(name_id)
+        servers_dict[name_id] = {
+            'id': server.id,
+            'name': server.name,
+            'status': 'online',
+            'uptime': 88573,
+            'users_online': 16,
+            'users_total': 32,
+            'network': server.network,
+            'interface': server.interface,
+            'port': server.port,
+            'protocol': server.protocol,
+            'local_network': server.local_network
+        }
+
+    for name_id in sorted(servers_sort):
+        servers.append(servers_dict[name_id])
+
+    return utils.jsonify(servers)
+
 @app_server.app.route('/server', methods=['POST'])
 @app_server.app.route('/server/<server_id>', methods=['PUT'])
 def server_put_post(server_id=None):
@@ -129,7 +157,7 @@ def server_put_post(server_id=None):
         if subnet < 8 or subnet > 30:
             return _local_network_not_valid()
 
-    if server_id:
+    if not server_id:
         ovpn_server = Server(
             name=name,
             network=network,

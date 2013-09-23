@@ -30,36 +30,6 @@ define([
       this.listenTo(window.events, 'organizations_updated', this.updateOrgs);
       ServersListView.__super__.initialize.call(this);
     },
-    update: function() {
-      this.collection.reset([
-        {
-          'id': 'b4182ab869ff4269b4015391e618e4a8',
-          'name': 'server0',
-          'status': 'online',
-          'uptime': 88488573,
-          'users_online': 12,
-          'users_total': 128,
-          'network': '10.232.128.0/24',
-          'interface': 'tun0',
-          'port': '12345',
-          'protocol': 'udp',
-          'local_network': null
-        },
-        {
-          'id': '65a3224e94ad4449aacac992d4e1e6ab',
-          'name': 'server1',
-          'status': 'offline',
-          'uptime': null,
-          'users_online': 0,
-          'users_total': 12,
-          'network': '10.64.32.0/16',
-          'interface': 'tun1',
-          'port': '4563',
-          'protocol': 'tcp',
-          'local_network': '10.0.0.0'
-        }
-      ]);
-    },
     updateOrgs: function() {
       this.collection.fetch({
         error: function() {
