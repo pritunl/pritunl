@@ -45,12 +45,11 @@ module.exports = function(grunt) {
         }
       },
       all: [
-        'collections/**/*.js',
-        'demo/*.js',
+        'collections/*.js',
         'init/*.js',
-        'models/**/*.js',
+        'models/*.js',
         'routers/*.js',
-        'views/**/*.js',
+        'views/*.js',
         '*.js',
       ]
     },
