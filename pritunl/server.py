@@ -10,11 +10,13 @@ import shutil
 import subprocess
 
 class Server(Config):
-    str_options = ['name', 'network', 'interface', 'protocol', 'local_network']
+    str_options = ['name', 'network', 'interface', 'protocol',
+        'local_network', 'organizations']
     int_options = ['port']
+    list_options = ['organizations']
 
     def __init__(self, id=None, name=None, network=None, interface=None,
-            port=None, protocol=None, local_network=None):
+            port=None, protocol=None, local_network=None, organizations=[]):
         Config.__init__(self)
 
         if id is None:
@@ -26,6 +28,7 @@ class Server(Config):
             self.port = port
             self.protocol = protocol
             self.local_network = local_network
+            self.organizations = organizations
         else:
             self._initialized = True
             self.id = id
