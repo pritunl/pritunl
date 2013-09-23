@@ -26,9 +26,9 @@ define([
       return modelView;
     },
     resetItems: function(views) {
-      if (this.views.length) {
+      if (views.length) {
         this.$('.last').removeClass('last');
-        this.views[this.views.length - 1].$el.addClass('last');
+        views[views.length - 1].$el.addClass('last');
       }
     }
   });
