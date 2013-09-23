@@ -1,9 +1,9 @@
 from pritunl.constants import *
 import pritunl.utils as utils
 from pritunl.organization import Organization
-from pritunl import server
+from pritunl import app_server
 
-@server.app.route('/status', methods=['GET'])
+@app_server.app.route('/status', methods=['GET'])
 def status_get():
     orgs = Organization.get_orgs()
     orgs_count = len(orgs)

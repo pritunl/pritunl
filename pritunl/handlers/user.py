@@ -1,10 +1,10 @@
 from pritunl.constants import *
 from pritunl.organization import Organization
 import pritunl.utils as utils
-from pritunl import server
+from pritunl import app_server
 import flask
 
-@server.app.route('/user/<org_id>', methods=['GET'])
+@app_server.app.route('/user/<org_id>', methods=['GET'])
 def user_get(org_id):
     org = Organization(org_id)
     users = []
@@ -26,7 +26,7 @@ def user_get(org_id):
 
     return utils.jsonify(users)
 
-@server.app.route('/user/<org_id>', methods=['POST'])
+@app_server.app.route('/user/<org_id>', methods=['POST'])
 def user_post(org_id):
     org = Organization(org_id)
     name = flask.request.json['name'].encode()
@@ -40,7 +40,7 @@ def user_post(org_id):
         'status': False,
     })
 
-@server.app.route('/user/<org_id>/<user_id>', methods=['PUT'])
+@app_server.app.route('/user/<org_id>/<user_id>', methods=['PUT'])
 def user_put(org_id, user_id):
     org = Organization(org_id)
     user = org.get_user(user_id)
@@ -49,7 +49,7 @@ def user_put(org_id, user_id):
     user.rename(name)
     return utils.jsonify({})
 
-@server.app.route('/user/<org_id>/<user_id>', methods=['DELETE'])
+@app_server.app.route('/user/<org_id>/<user_id>', methods=['DELETE'])
 def user_delete(org_id, user_id):
     org = Organization(org_id)
     user = org.get_user(user_id)

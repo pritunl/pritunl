@@ -1,10 +1,10 @@
 from pritunl.constants import *
 from pritunl.log_entry import LogEntry
 import pritunl.utils as utils
-from pritunl import server
+from pritunl import app_server
 import flask
 
-@server.app.route('/log', methods=['GET'])
+@app_server.app.route('/log', methods=['GET'])
 def log_get():
     log_entries = []
 

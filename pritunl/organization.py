@@ -1,5 +1,5 @@
 from constants import *
-from pritunl import server, openssl_lock
+from pritunl import app_server, openssl_lock
 from config import Config
 from event import Event
 from log_entry import LogEntry
@@ -21,7 +21,7 @@ class Organization(Config):
         else:
             self._initialized = True
             self.id = id
-        self.path = os.path.join(server.data_path, ORGS_DIR, self.id)
+        self.path = os.path.join(app_server.data_path, ORGS_DIR, self.id)
 
         self.index_path = os.path.join(self.path, INDEX_NAME)
         self.index_attr_path = os.path.join(self.path, INDEX_NAME + '.attr')
@@ -109,16 +109,16 @@ class Organization(Config):
 
     def remove(self):
         shutil.rmtree(self.path)
-        Event(type=ORGS_UPDATED)
         LogEntry(message='Deleted organization.')
+        Event(type=ORGS_UPDATED)
 
     @staticmethod
     def count_orgs():
-        return len(os.listdir(os.path.join(server.data_path, ORGS_DIR)))
+        return len(os.listdir(os.path.join(app_server.data_path, ORGS_DIR)))
 
     @staticmethod
     def get_orgs():
-        path = os.path.join(server.data_path, ORGS_DIR)
+        path = os.path.join(app_server.data_path, ORGS_DIR)
         orgs = []
         if os.path.isdir(path):
             for org_id in os.listdir(path):

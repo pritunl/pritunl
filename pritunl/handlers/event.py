@@ -1,12 +1,12 @@
 from pritunl.constants import *
 from pritunl.event import Event
 import pritunl.utils as utils
-from pritunl import server
+from pritunl import app_server
 import time
 import uuid
 
-@server.app.route('/event', methods=['GET'])
-@server.app.route('/event/<int:last_event>', methods=['GET'])
+@app_server.app.route('/event', methods=['GET'])
+@app_server.app.route('/event/<int:last_event>', methods=['GET'])
 def event_get(last_event=None):
     if not last_event:
         events = [
@@ -19,7 +19,7 @@ def event_get(last_event=None):
         return utils.jsonify(events)
 
     run_time = 0
-    while run_time <= 30 and not server.interrupt:
+    while run_time <= 30 and not app_server.interrupt:
         events = []
 
         for event in Event.get_events(last_event):

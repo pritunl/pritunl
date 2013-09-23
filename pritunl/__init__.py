@@ -7,5 +7,5 @@ import threading
 
 openssl_lock = threading.Lock()
 
-from wsgi_server import WsgiServer
-server = WsgiServer()
+from app_server import AppServer
+app_server = AppServer()

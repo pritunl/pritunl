@@ -1,7 +1,7 @@
 from pritunl.constants import *
-from pritunl.organization import Organization
+from pritunl.server import Server
 import pritunl.utils as utils
-from pritunl import server
+from pritunl import app_server
 import flask
 
 def _network_not_valid():
@@ -28,8 +28,8 @@ def _local_network_not_valid():
         'error_msg': LOCAL_NETWORK_NOT_VALID_MSG,
     }, 400)
 
-@server.app.route('/server', methods=['POST'])
-@server.app.route('/server/<server_id>', methods=['PUT'])
+@app_server.app.route('/server', methods=['POST'])
+@app_server.app.route('/server/<server_id>', methods=['PUT'])
 def server_put_post(server_id=None):
     name = flask.request.json['name'].encode()
     network = flask.request.json['network'].encode()
@@ -129,17 +129,37 @@ def server_put_post(server_id=None):
         if subnet < 8 or subnet > 30:
             return _local_network_not_valid()
 
+    if server_id:
+        ovpn_server = Server(
+            name=name,
+            network=network,
+            interface=interface,
+            port=port,
+            protocol=protocol,
+            local_network=local_network
+        )
+    else:
+        ovpn_server = Server(id=server_id)
+        ovpn_server.name = name
+        ovpn_server.network = network
+        ovpn_server.interface = interface
+        ovpn_server.port = port
+        ovpn_server.protocol = protocol
+        ovpn_server.local_network = local_network
+        ovpn_server.commit()
+
     return utils.jsonify({})
 
-@server.app.route('/server/<server_id>/organization/<org_id>', methods=['PUT'])
+@app_server.app.route('/server/<server_id>/organization/<org_id>',
+    methods=['PUT'])
 def server_org_put(server_id, org_id):
     return utils.jsonify({})
 
-@server.app.route('/server/<server_id>/organization/<org_id>',
+@app_server.app.route('/server/<server_id>/organization/<org_id>',
     methods=['DELETE'])
 def server_org_delete(server_id, org_id):
     return utils.jsonify({})
 
-@server.app.route('/server/<server_id>/<operation>', methods=['PUT'])
+@app_server.app.route('/server/<server_id>/<operation>', methods=['PUT'])
 def server_operation_put(server_id, operation):
     return utils.jsonify({})

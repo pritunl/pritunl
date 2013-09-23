@@ -1,5 +1,5 @@
 from constants import *
-from pritunl import server
+from pritunl import app_server
 import logging
 
 logger = logging.getLogger(APP_NAME)
@@ -8,7 +8,7 @@ _RESERVED_ATTRIBUTES = ['column_family', 'bool_columns', 'int_columns',
     'all_columns', 'id']
 
 class DatabaseObject:
-    db = server.app_db
+    db = app_server.app_db
     column_family = 'column_family'
     bool_columns = []
     int_columns = []

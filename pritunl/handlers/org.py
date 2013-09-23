@@ -1,10 +1,10 @@
 from pritunl.constants import *
 from pritunl.organization import Organization
 import pritunl.utils as utils
-from pritunl import server
+from pritunl import app_server
 import flask
 
-@server.app.route('/organization', methods=['GET'])
+@app_server.app.route('/organization', methods=['GET'])
 def org_get():
     orgs = []
     orgs_dict = {}
@@ -23,7 +23,7 @@ def org_get():
 
     return utils.jsonify(orgs)
 
-@server.app.route('/organization', methods=['POST'])
+@app_server.app.route('/organization', methods=['POST'])
 def org_post():
     name = flask.request.json['name'].encode()
     name = ''.join(x for x in name if x.isalnum() or x in NAME_SAFE_CHARS)
@@ -34,7 +34,7 @@ def org_post():
         'name': org.name,
     })
 
-@server.app.route('/organization/<org_id>', methods=['PUT'])
+@app_server.app.route('/organization/<org_id>', methods=['PUT'])
 def org_put(org_id):
     org = Organization(org_id)
     name = flask.request.json['name'].encode()
@@ -42,7 +42,7 @@ def org_put(org_id):
     org.rename(name)
     return utils.jsonify({})
 
-@server.app.route('/organization/<org_id>', methods=['DELETE'])
+@app_server.app.route('/organization/<org_id>', methods=['DELETE'])
 def org_delete(org_id):
     org = Organization(org_id)
     org.remove()

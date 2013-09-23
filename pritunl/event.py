@@ -1,5 +1,5 @@
 from constants import *
-from pritunl import server
+from pritunl import app_server
 from database_object import DatabaseObject
 import logging
 import time
@@ -8,7 +8,7 @@ import uuid
 logger = logging.getLogger(APP_NAME)
 
 class Event(DatabaseObject):
-    db = server.mem_db
+    db = app_server.mem_db
     column_family = 'events'
     str_columns = ['type']
     int_columns = ['time']
