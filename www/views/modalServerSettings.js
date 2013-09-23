@@ -93,7 +93,7 @@ define([
             this.setAlert('danger', response.responseJSON.error_msg);
           }
           else {
-            this.setAlert('danger', this.loadingMsg);
+            this.setAlert('danger', this.errorMsg);
           }
           this.locked = false;
         }.bind(this)
