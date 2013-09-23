@@ -44,20 +44,21 @@ define([
       var i;
       var users = this.collection.models.slice(0);
       var count = users.length;
+      var destroyData = {
+        success: function() {
+          if (--count < 1) {
+            this.close(true);
+          }
+        }.bind(this),
+        error: function() {
+          this.clearLoading();
+          this.setAlert('danger',
+            'Failed to delete users, server error occurred.');
+          this.locked = false;
+        }.bind(this)
+      };
       for (i = 0; i < users.length; i++) {
-        users[i].destroy({
-          success: function() {
-            if (--count < 1) {
-              this.close(true);
-            }
-          }.bind(this),
-          error: function() {
-            this.clearLoading();
-            this.setAlert('danger',
-              'Failed to delete users, server error occurred.');
-            this.locked = false;
-          }.bind(this)
-        });
+        users[i].destroy(destroyData);
       }
     }
   });
