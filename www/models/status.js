@@ -11,7 +11,7 @@ define([
       'users_online': null,
       'users_total': null,
       'servers_online': null,
-      'servers_total': null,
+      'servers_total': null
     },
     url: function() {
       return '/status';
