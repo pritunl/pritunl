@@ -16,8 +16,7 @@ class Config:
 
     def __init__(self, path=None):
         self.all_options = self.bool_options + self.int_options + \
-            self.float_options + self.path_options + self.str_options + \
-            self.list_options
+            self.float_options + self.path_options + self.str_options
         self._conf_path = path
         self.set_state(CLOSED)
 
