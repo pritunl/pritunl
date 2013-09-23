@@ -1,5 +1,6 @@
 from pritunl.constants import *
 from pritunl.server import Server
+from pritunl.organization import Organization
 import pritunl.utils as utils
 from pritunl import app_server
 import flask
@@ -164,7 +165,7 @@ def server_put_post(server_id=None):
             interface=interface,
             port=port,
             protocol=protocol,
-            local_network=local_network
+            local_network=local_network,
         )
     else:
         ovpn_server = Server(id=server_id)
@@ -184,14 +185,44 @@ def server_delete(server_id):
     ovpn_server.remove()
     return utils.jsonify({})
 
+@app_server.app.route('/server/<server_id>/organization', methods=['GET'])
+def server_org_get(server_id):
+    orgs = []
+    orgs_dict = {}
+    orgs_sort = []
+    ovpn_server = Server(server_id)
+
+    for org_id in ovpn_server.organizations:
+        org = Organization(org_id)
+        name_id = '%s_%s' % (org.name, org.id)
+        orgs_sort.append(name_id)
+        orgs_dict[name_id] = {
+            'id': org.id,
+            'server': ovpn_server.id,
+            'name': org.name,
+        }
+
+    for name_id in sorted(orgs_sort):
+        orgs.append(orgs_dict[name_id])
+
+    return utils.jsonify(orgs)
+
 @app_server.app.route('/server/<server_id>/organization/<org_id>',
     methods=['PUT'])
 def server_org_put(server_id, org_id):
+    ovpn_server = Server(server_id)
+    if org_id not in ovpn_server.organizations:
+        ovpn_server.organizations.append(org_id)
+        ovpn_server.commit()
     return utils.jsonify({})
 
 @app_server.app.route('/server/<server_id>/organization/<org_id>',
     methods=['DELETE'])
 def server_org_delete(server_id, org_id):
+    ovpn_server = Server(server_id)
+    if org_id in ovpn_server.organizations:
+        ovpn_server.organizations.remove(org_id)
+        ovpn_server.commit()
     return utils.jsonify({})
 
 @app_server.app.route('/server/<server_id>/<operation>', methods=['PUT'])
