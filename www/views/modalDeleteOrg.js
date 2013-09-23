@@ -12,7 +12,7 @@ define([
     template: _.template(modalDeleteOrgTemplate),
     title: 'Delete Organization',
     okText: 'Delete',
-    initialize: function(options) {
+    initialize: function() {
       ModalDeleteOrgView.__super__.initialize.call(this);
       var alertView = new AlertView({
         type: 'danger',

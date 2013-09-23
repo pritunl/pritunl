@@ -58,7 +58,7 @@ define([
       }.bind(this));
       this.addView(modal);
     },
-    onDelSelected: function(view) {
+    onDelSelected: function() {
       var i;
       var models = [];
 

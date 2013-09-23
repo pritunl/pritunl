@@ -33,7 +33,7 @@ define([
         ifaces.push($(this).text());
       });
 
-      for (var i = 0; i < 64; i++) {
+      for (i = 0; i < 64; i++) {
         iface = 'tun' + i;
         if (ifaces.indexOf(iface) === -1) {
           break;

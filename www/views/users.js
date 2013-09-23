@@ -7,7 +7,7 @@ define([
   'use strict';
   var UsersView = Backbone.View.extend({
     className: 'users container',
-    initialize: function(options) {
+    initialize: function() {
       this.orgsList = new OrgsListView();
       this.addView(this.orgsList);
     },
