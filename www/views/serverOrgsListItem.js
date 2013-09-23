@@ -2,9 +2,11 @@ define([
   'jquery',
   'underscore',
   'backbone',
+  'views/alert',
   'views/modalDetachOrg',
   'text!templates/serverOrgsListItem.html'
-], function($, _, Backbone, ModalDetachOrg, serverOrgsListItemTemplate) {
+], function($, _, Backbone, AlertView, ModalDetachOrg,
+    serverOrgsListItemTemplate) {
   'use strict';
   var ServerOrgsListItemView = Backbone.View.extend({
     className: 'org',
