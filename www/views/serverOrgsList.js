@@ -18,6 +18,7 @@ define([
       this.collection = new ServerOrgCollection({
         server: options.server
       });
+      this.listenTo(window.events, 'servers_updated', this.update);
       ServerOrgsListView.__super__.initialize.call(this);
     },
     update: function() {

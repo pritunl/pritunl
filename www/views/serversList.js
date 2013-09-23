@@ -26,6 +26,7 @@ define([
     initialize: function() {
       this.collection = new ServerCollection();
       this.orgs = new OrgCollection();
+      this.listenTo(window.events, 'servers_updated', this.update);
       this.listenTo(window.events, 'organizations_updated', this.updateOrgs);
       ServersListView.__super__.initialize.call(this);
     },
