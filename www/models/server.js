@@ -23,6 +23,10 @@ define([
 
       if (this.get('id')) {
         url += '/' + this.get('id');
+
+        if (this.get('operation')) {
+          url += '/' + this.get('operation');
+        }
       }
 
       return url;

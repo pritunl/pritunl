@@ -15,7 +15,8 @@ define([
     template: _.template(serversListItemTemplate),
     events: {
       'click .server-title a': 'onSettings',
-      'click .server-del': 'onDelete'
+      'click .server-del': 'onDelete',
+      'click .server-restart, .server-start, .server-stop': 'onOperation'
     },
     initialize: function() {
       this.serverOrgsListView = new ServerOrgsListView({
@@ -94,6 +95,53 @@ define([
         this.addView(alertView);
       }.bind(this));
       this.addView(modal);
+    },
+    onOperation: function(evt) {
+      var operation;
+      var operationPastTense;
+
+      if ($(evt.target).hasClass('server-restart')) {
+        operation = 'restart';
+        operationPastTense = 'restarted';
+      }
+      else if ($(evt.target).hasClass('server-start')) {
+        operation = 'start';
+        operationPastTense = 'started';
+      }
+      else if ($(evt.target).hasClass('server-stop')) {
+        operation = 'stop';
+        operationPastTense = 'stopped';
+      }
+      if (!operation) {
+        return;
+      }
+
+      $(evt.target).attr('disabled', 'disabled');
+      this.model.save({
+        operation: operation
+      }, {
+        success: function() {
+          $(evt.target).removeAttr('disabled');
+          var alertView = new AlertView({
+            type: 'warning',
+            message: 'Successfully ' + operationPastTense + ' the server.',
+            dismissable: true
+          });
+          $('.alerts-container').append(alertView.render().el);
+          this.addView(alertView);
+        }.bind(this),
+        error: function() {
+          $(evt.target).removeAttr('disabled');
+          var alertView = new AlertView({
+            type: 'danger',
+            message: 'Failed to ' + operation +
+              ' the server, server error occurred.',
+            dismissable: true
+          });
+          $('.alerts-container').append(alertView.render().el);
+          this.addView(alertView);
+        }.bind(this)
+      });
     },
     _updateTime: function() {
       setTimeout((this._updateTime).bind(this), 1000);
