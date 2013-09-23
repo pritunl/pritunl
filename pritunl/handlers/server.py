@@ -130,3 +130,12 @@ def server_put_post(server_id=None):
             return _local_network_not_valid()
 
     return utils.jsonify({})
+
+@server.app.route('/server/<server_id>/organization/<org_id>', methods=['PUT'])
+def server_org_put(server_id, org_id):
+    return utils.jsonify({})
+
+@server.app.route('/server/<server_id>/organization/<org_id>',
+    methods=['DELETE'])
+def server_org_delete(server_id, org_id):
+    return utils.jsonify({})
