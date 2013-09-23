@@ -178,6 +178,12 @@ def server_put_post(server_id=None):
 
     return utils.jsonify({})
 
+@app_server.app.route('/server/<server_id>', methods=['DELETE'])
+def server_delete(server_id):
+    ovpn_server = Server(server_id)
+    ovpn_server.remove()
+    return utils.jsonify({})
+
 @app_server.app.route('/server/<server_id>/organization/<org_id>',
     methods=['PUT'])
 def server_org_put(server_id, org_id):
