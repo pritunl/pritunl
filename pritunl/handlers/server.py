@@ -41,11 +41,11 @@ def server_put_post(server_id=None):
         local_network = local_network.encode()
 
     # Network
-    network = network.split('/')
-    if len(network) != 2:
+    network_split = network.split('/')
+    if len(network_split) != 2:
         return _network_not_valid()
 
-    address = network[0].split('.')
+    address = network_split[0].split('.')
     if len(address) != 4:
         return _network_not_valid()
     for i, value in enumerate(address):
@@ -64,7 +64,7 @@ def server_put_post(server_id=None):
         return _network_not_valid()
 
     try:
-        subnet = int(network[1])
+        subnet = int(network_split[1])
     except ValueError:
         return _network_not_valid()
 
@@ -103,11 +103,11 @@ def server_put_post(server_id=None):
 
     # Local network
     if local_network:
-        local_network = local_network.split('/')
-        if len(local_network) != 2:
+        local_network_split = local_network.split('/')
+        if len(local_network_split) != 2:
             return _local_network_not_valid()
 
-        address = local_network[0].split('.')
+        address = local_network_split[0].split('.')
         if len(address) != 4:
             return _local_network_not_valid()
         for i, value in enumerate(address):
@@ -122,7 +122,7 @@ def server_put_post(server_id=None):
             return _local_network_not_valid()
 
         try:
-            subnet = int(local_network[1])
+            subnet = int(local_network_split[1])
         except ValueError:
             return _local_network_not_valid()
 
