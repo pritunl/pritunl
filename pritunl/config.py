@@ -35,7 +35,7 @@ class Config:
             if self.get_state() == CLOSED:
                 self.load()
             if name not in self.__dict__:
-                return None
+                return [] if name in self.list_options else None
         elif name not in self.__dict__:
             raise AttributeError('Config instance has no attribute %r' % name)
         return self.__dict__[name]
@@ -129,7 +129,7 @@ class Config:
                 value = self._decode_path(value)
 
         else:
-            value = None
+            value = [] if name in self.list_options else None
 
         return name, value
 
