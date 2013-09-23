@@ -139,3 +139,7 @@ def server_org_put(server_id, org_id):
     methods=['DELETE'])
 def server_org_delete(server_id, org_id):
     return utils.jsonify({})
+
+@server.app.route('/server/<server_id>/<operation>', methods=['PUT'])
+def server_operation_put(server_id, operation):
+    return utils.jsonify({})
