@@ -21,7 +21,7 @@ class Organization(Config):
         else:
             self._initialized = True
             self.id = id
-        self.path = os.path.join(server.data_path, self.id)
+        self.path = os.path.join(server.data_path, ORGS_DIR, self.id)
 
         self.index_path = os.path.join(self.path, INDEX_NAME)
         self.index_attr_path = os.path.join(self.path, INDEX_NAME + '.attr')
@@ -114,12 +114,13 @@ class Organization(Config):
 
     @staticmethod
     def count_orgs():
-        return len(os.listdir(server.data_path))
+        return len(os.listdir(os.path.join(server.data_path, ORGS_DIR)))
 
     @staticmethod
     def get_orgs():
+        path = os.path.join(server.data_path, ORGS_DIR)
         orgs = []
-        if os.path.isdir(server.data_path):
-            for org_id in os.listdir(server.data_path):
+        if os.path.isdir(path):
+            for org_id in os.listdir(path):
                 orgs.append(Organization(org_id))
         return orgs
