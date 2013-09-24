@@ -133,7 +133,7 @@ class Config:
 
         return name, value
 
-    def load(self, safe=False):
+    def load(self, merge=False):
         logger.debug('Loading config.')
         self._loaded = True
 
@@ -156,7 +156,7 @@ class Config:
 
                     try:
                         name, value = self._decode_line(line)
-                        if safe and name in self.__dict__:
+                        if merge and name in self.__dict__:
                             continue
                         self.__dict__[name] = value
                     except ValueError:
@@ -164,7 +164,7 @@ class Config:
                             'line': line,
                         })
         except IOError:
-            if not safe:
+            if not merge:
                 raise
 
     def commit(self):
