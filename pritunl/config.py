@@ -18,7 +18,8 @@ class Config:
         self.all_options = self.bool_options + self.int_options + \
             self.float_options + self.path_options + self.str_options
         self._conf_path = path
-        self.set_state(CLOSED)
+        self._loaded = False
+        self.set_state(SAVED)
 
     def __setattr__(self, name, value):
         if name in _RESERVED_ATTRIBUTES:
@@ -31,7 +32,7 @@ class Config:
         if name in _RESERVED_ATTRIBUTES:
             pass
         elif name in self.all_options:
-            if self.get_state() == CLOSED:
+            if not self._loaded:
                 self.load()
             if name not in self.__dict__:
                 return [] if name in self.list_options else None
@@ -132,36 +133,44 @@ class Config:
 
         return name, value
 
-    def load(self):
+    def load(self, safe=False):
         logger.debug('Loading config.')
-        self.set_state(SAVED)
+        self._loaded = True
 
-        with open(self._conf_path) as config:
-            for line in config:
-                line = line.rstrip('\n')
+        try:
+            with open(self._conf_path) as config:
+                for line in config:
+                    line = line.rstrip('\n')
 
-                if line.strip() == '':
-                    continue
-                elif line[0] == '#':
-                    continue
-                elif '=' in line:
-                    pass
-                else:
-                    logger.warning('Ignoring invalid line. %r' % {
-                        'line': line,
-                    })
-                    continue
+                    if line.strip() == '':
+                        continue
+                    elif line[0] == '#':
+                        continue
+                    elif '=' in line:
+                        pass
+                    else:
+                        logger.warning('Ignoring invalid line. %r' % {
+                            'line': line,
+                        })
+                        continue
 
-                try:
-                    name, value = self._decode_line(line)
-                    self.__dict__[name] = value
-                except ValueError:
-                    logger.warning('Ignoring invalid line. %r' % {
-                        'line': line,
-                    })
+                    try:
+                        name, value = self._decode_line(line)
+                        if safe and name in self.__dict__:
+                            continue
+                        self.__dict__[name] = value
+                    except ValueError:
+                        logger.warning('Ignoring invalid line. %r' % {
+                            'line': line,
+                        })
+        except IOError:
+            if not safe:
+                raise
 
     def commit(self):
         logger.debug('Committing config.')
+        if not self._loaded:
+            self.load(True)
 
         with open(self._conf_path, 'w') as config:
             for name in self.all_options:
