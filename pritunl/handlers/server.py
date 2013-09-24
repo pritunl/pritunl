@@ -49,7 +49,7 @@ def server_get():
             'interface': server.interface,
             'port': server.port,
             'protocol': server.protocol,
-            'local_network': server.local_network
+            'local_network': server.local_network,
         }
 
     for name_id in sorted(servers_sort):
