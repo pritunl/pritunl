@@ -158,7 +158,7 @@ key %s
 dh %s
 server %s
 ifconfig-pool-persist %s
-%s
+push "%s"
 keepalive 10 120
 persist-tun
 verb 0
