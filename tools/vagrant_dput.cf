@@ -1,0 +1,121 @@
+# Example dput.cf that defines the host that can be used
+# with dput for uploading.
+
+[DEFAULT]
+login			= *
+method			= ftp
+hash			= md5
+allow_unsigned_uploads	= 0
+allow_dcut		= 0
+run_lintian		= 0
+run_dinstall		= 0
+check_version		= 0
+scp_compress		= 0
+post_upload_command	=
+pre_upload_command	=
+passive_ftp		= 1
+default_host_main	= ubuntu
+allowed_distributions	= (?!UNRELEASED)
+progress_indicator	= 2
+
+[ftp-master]
+fqdn			= ftp.upload.debian.org
+incoming		= /pub/UploadQueue/
+login			= anonymous
+allow_dcut		= 1
+method			= ftp
+
+# http://lists.debian.org/debian-project/2009/05/msg00036.html
+[ftp-eu]
+fqdn			= ftp.eu.upload.debian.org
+method			= ftp
+incoming		= /pub/UploadQueue/
+login			= anonymous
+allow_dcut		= 1
+
+# http://lists.debian.org/debian-devel-announce/2008/09/msg00007.html
+[ssh-upload]
+login			= *
+# login			= another_username
+fqdn			= ssh.upload.debian.org
+method			= scp
+incoming		= /srv/upload.debian.org/UploadQueue/
+allow_dcut		= 1
+
+# And if you want to override one of the defaults, add it here.
+# For example, comment out the next line
+# post_upload_command	= /path/to/some/script
+# pre_upload_command	= /path/to/some/script
+
+[security-master]
+fqdn			= security-master.debian.org
+method			= ftp
+incoming		= /pub/SecurityUploadQueue
+login			= anonymous
+allow_dcut		= 1
+# This has been added at the request of the security team.
+# Please be sure to know what you are doing before taking it out.
+pre_upload_command	= /usr/share/dput/helper/security-warning
+
+[security-master-unembargoed]
+fqdn			= security-master.debian.org
+method			= ftp
+incoming		= /pub/OpenSecurityUploadQueue
+login			= anonymous
+allow_dcut		= 1
+# This has been added at the request of the security team.
+# Please be sure to know what you are doing before taking it out.
+pre_upload_command	= /usr/share/dput/helper/security-warning
+
+[jp]
+fqdn			= hp.debian.or.jp
+method			= ftp
+incoming		= /pub/Incoming/upload
+login			= anonymous
+
+### Delayed Upload queue will move off gluck.
+### please use [ftp-master] (aka ftp.upload.debian.org)
+
+[volatile]
+fqdn			= volatile-master.debian.org
+method			= ftp
+incoming		= /pub/UploadQueue/
+login			= anonymous
+hash			= md5
+
+[backports]
+fqdn			= backports-master.debian.org
+method			= ftp
+incoming		= /pub/UploadQueue/
+login			= anonymous
+allow_dcut		= 1
+
+[ubuntu]
+fqdn			= upload.ubuntu.com
+method			= ftp
+incoming		= /
+login			= anonymous
+
+[revu]
+fqdn			= revu.ubuntuwire.com
+method			= ftp
+incoming		= /incoming
+login			= anonymous
+
+[ppa]
+fqdn			= ppa.launchpad.net
+method			= ftp
+incoming		= ~%(ppa)s
+login			= anonymous
+
+[mentors]
+method			= ftp
+fqdn			= mentors.debian.net
+incoming		= .
+login			= anonymous
+
+[local]
+method			= local
+incoming		= ~/public_html/debian/mini-dinstall/incoming
+run_dinstall		= 0
+post_upload_command	= /usr/bin/mini-dinstall --batch
