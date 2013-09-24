@@ -12,7 +12,7 @@ DEFAULT_DB_PATH = '/var/lib/pritunl/pritunl.db'
 DEFAULT_WWW_PATH = '/usr/share/pritunl/www'
 DEFAULT_DATA_PATH = '/var/lib/pritunl'
 DEFAULT_LOG_LIMIT = 20
-DH_PARAM_BITS = 2048
+DH_PARAM_BITS = 512 # TODO Temporary
 
 INFO = 'info'
 WARNING = 'warning'
@@ -31,6 +31,7 @@ SERIAL_NAME = 'serial'
 CRL_NAME = 'ca.crl'
 OVPN_CONF_NAME = 'openvpn.conf'
 OVPN_CA_NAME = 'ca.crt'
+IFC_POOL_NAME = 'ifc_pool'
 DH_PARAM_NAME = 'dh_param.pem'
 SERVER_USER_PREFIX = 'server_'
 
@@ -147,3 +148,19 @@ INTERFACE_NOT_VALID_MSG = 'Interface is not valid, must be ' + \
 
 PROTOCOL_NOT_VALID = 'protocol_not_valid'
 PROTOCOL_NOT_VALID_MSG = 'Protocol is not valid, must be "udp" or "tcp".'
+
+OVPN_CONF = """port %s
+proto %s
+dev %s
+ca %s
+cert %s
+key %s
+dh %s
+server %s
+ifconfig-pool-persist %s
+push "redirect-gateway"
+keepalive 10 120
+persist-tun
+verb 0
+mute 5
+"""
