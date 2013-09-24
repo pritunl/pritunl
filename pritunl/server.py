@@ -112,6 +112,56 @@ class Server(Config):
         subprocess.check_call(args, stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
 
+    def _parse_network(self, network):
+        network_split = network.split('/')
+        address = network_split[0]
+        cidr = int(network_split[1])
+        subnet = ('255.' * (cidr / 8)) + str(
+            int(('1' * (cidr % 8)).ljust(8, '0'), 2))
+        subnet += '.0' * (3 - subnet.count('.'))
+        return (address, subnet)
+
+    def _generate_ovpn_conf(self):
+        if not self.organizations:
+            return
+
+        if not self.primary_organization or not self.primary_user:
+            self._create_primary_user()
+
+        if not os.path.isfile(self.dh_param_path):
+            self._generate_dh_param()
+
+        primary_org = Organization(self.primary_organization)
+        primary_user = primary_org.get_user(self.primary_user)
+
+        with open(self.ca_cert_path, 'w') as server_ca_cert:
+            for org_id in self.organizations:
+                ca_path = Organization(org_id).ca_cert.cert_path
+                with open(ca_path, 'r') as org_ca_cert:
+                    server_ca_cert.write(org_ca_cert.read())
+
+        address, subnet = self._parse_network(self.network)
+
+        if self.local_network:
+            push = 'route %s %s' % self._parse_network(
+                self.local_network)
+        else:
+            push = 'redirect-gateway'
+
+        with open(self.ovpn_conf_path, 'w') as ovpn_conf:
+            ovpn_conf.write(OVPN_CONF % (
+                self.port,
+                self.protocol,
+                self.interface,
+                self.ca_cert_path,
+                primary_user.cert_path,
+                primary_user.key_path,
+                self.dh_param_path,
+                '%s %s' % (address, subnet),
+                self.ifc_pool_path,
+                push,
+            ))
+
     @staticmethod
     def count_servers():
         return len(os.listdir(os.path.join(app_server.data_path, SERVERS_DIR)))
