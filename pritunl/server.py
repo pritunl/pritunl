@@ -37,6 +37,7 @@ class Server(Config):
 
         self.path = os.path.join(app_server.data_path, SERVERS_DIR, self.id)
         self.ovpn_conf_path = os.path.join(self.path, OVPN_CONF_NAME)
+        self.dh_param_path = os.path.join(self.path, DH_PARAM_NAME)
         self.set_path(os.path.join(self.path, 'server.conf'))
 
         if not self._initialized:
@@ -44,10 +45,12 @@ class Server(Config):
 
     def _initialize(self):
         os.makedirs(self.path)
+        self._generate_dh_param()
         self.commit()
         LogEntry(message='Created new server.')
 
     def remove(self):
+        self._remove_primary_user()
         shutil.rmtree(self.path)
         LogEntry(message='Deleted server.')
         Event(type=SERVERS_UPDATED)
@@ -71,27 +74,41 @@ class Server(Config):
 
     def add_org(self, org_id):
         org = Organization(org_id)
-
         if org.id in self.organizations:
             return
         self.organizations.append(org.id)
-
-        if not self.primary_organization or self.primary_user:
-            self._create_primary_user()
-        else:
-            self.commit()
+        self.commit()
         Event(type=SERVER_ORGS_UPDATED)
+
+    def _remove_primary_user(self):
+        if not self.primary_organization or not self.primary_user:
+            return
+        org = Organization(self.primary_organization)
+        if not org:
+            return
+        user = org.get_user(self.primary_user)
+        if not user:
+            return
+        self.primary_organization = None
+        self.primary_user = None
+        if user:
+            user.remove()
 
     def remove_org(self, org_id):
         if org_id in self.organizations:
             if self.primary_organization == org_id:
-                org = Organization(self.primary_organization)
-                user = org.get_user(self.primary_user)
-                if user:
-                    user.remove()
+                self._remove_primary_user()
             self.organizations.remove(org_id)
             self.commit()
             Event(type=SERVER_ORGS_UPDATED)
+
+    def _generate_dh_param(self):
+        args = [
+            'openssl', 'dhparam',
+            '-out', self.dh_param_path, str(DH_PARAM_BITS)
+        ]
+        subprocess.check_call(args, stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
 
     @staticmethod
     def count_servers():
