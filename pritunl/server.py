@@ -140,8 +140,6 @@ class Server(Config):
                 with open(ca_path, 'r') as org_ca_cert:
                     server_ca_cert.write(org_ca_cert.read())
 
-        address, subnet = self._parse_network(self.network)
-
         if self.local_network:
             push = 'route %s %s' % self._parse_network(
                 self.local_network)
@@ -157,7 +155,7 @@ class Server(Config):
                 primary_user.cert_path,
                 primary_user.key_path,
                 self.dh_param_path,
-                '%s %s' % (address, subnet),
+                '%s %s' % self._parse_network(self.network),
                 self.ifc_pool_path,
                 push,
             ))
