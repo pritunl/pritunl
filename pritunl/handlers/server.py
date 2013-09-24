@@ -211,18 +211,14 @@ def server_org_get(server_id):
     methods=['PUT'])
 def server_org_put(server_id, org_id):
     ovpn_server = Server(server_id)
-    if org_id not in ovpn_server.organizations:
-        ovpn_server.organizations.append(org_id)
-        ovpn_server.commit()
+    ovpn_server.add_org(org_id)
     return utils.jsonify({})
 
 @app_server.app.route('/server/<server_id>/organization/<org_id>',
     methods=['DELETE'])
 def server_org_delete(server_id, org_id):
     ovpn_server = Server(server_id)
-    if org_id in ovpn_server.organizations:
-        ovpn_server.organizations.remove(org_id)
-        ovpn_server.commit()
+    ovpn_server.remove_org(org_id)
     return utils.jsonify({})
 
 @app_server.app.route('/server/<server_id>/<operation>', methods=['PUT'])

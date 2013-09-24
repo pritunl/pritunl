@@ -29,6 +29,7 @@ INDEX_NAME = 'index'
 SERIAL_NAME = 'serial'
 CRL_NAME = 'ca.crl'
 OVPN_CONF_NAME = 'openvpn.conf'
+SERVER_USER_PREFIX = 'server_'
 
 CA_CERT_ID = 'ca'
 CERT_CA = 'ca'
