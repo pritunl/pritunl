@@ -4,6 +4,7 @@ from config import Config
 from log_entry import LogEntry
 from event import Event
 import uuid
+import tarfile
 import os
 import subprocess
 import logging
@@ -40,6 +41,8 @@ class User(Config):
             '%s.key' % self.id)
         self.cert_path = os.path.join(self.ca.path, CERTS_DIR,
             '%s.crt' % self.id)
+        self.key_archive_path = os.path.join(os.path.join(self.ca.path,
+            TEMP_DIR, '%s.tar' % self.id))
         self.set_path(os.path.join(self.ca.path, USERS_DIR,
             '%s.conf' % self.id))
 
