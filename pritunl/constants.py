@@ -30,6 +30,7 @@ INDEX_NAME = 'index'
 SERIAL_NAME = 'serial'
 CRL_NAME = 'ca.crl'
 OVPN_CONF_NAME = 'openvpn.conf'
+OVPN_CA_NAME = 'ca.crt'
 DH_PARAM_NAME = 'dh_param.pem'
 SERVER_USER_PREFIX = 'server_'
 

@@ -38,13 +38,14 @@ class Server(Config):
         self.path = os.path.join(app_server.data_path, SERVERS_DIR, self.id)
         self.ovpn_conf_path = os.path.join(self.path, OVPN_CONF_NAME)
         self.dh_param_path = os.path.join(self.path, DH_PARAM_NAME)
+        self.ca_cert_path = os.path.join(self.path, TEMP_DIR, OVPN_CA_NAME)
         self.set_path(os.path.join(self.path, 'server.conf'))
 
         if not self._initialized:
             self._initialize()
 
     def _initialize(self):
-        os.makedirs(self.path)
+        os.makedirs(self.path, TEMP_DIR)
         self._generate_dh_param()
         self.commit()
         LogEntry(message='Created new server.')
