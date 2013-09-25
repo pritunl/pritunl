@@ -74,7 +74,9 @@ define([
           this.views[i - 1].$el.after(modelView.el);
         }
 
-        modelView.$el.slideDown(250);
+        if (!modelView.hidden) {
+          modelView.$el.slideDown(250);
+        }
       }
 
       // Check for modified data

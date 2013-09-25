@@ -16,6 +16,9 @@ define([
     render: function() {
       this.$el.html(this.template(this.model.toJSON()));
       this.$('[data-toggle="tooltip"]').tooltip();
+      if (this.model.get('type') !== 'client') {
+        this.hidden = true;
+      }
       return this;
     },
     update: function() {

@@ -20,6 +20,7 @@ def user_get(org_id):
             'organization': org.id,
             'name': user.name,
             'status': False,
+            'type': user.type,
         }
 
     for name_id in sorted(users_sort):
