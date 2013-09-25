@@ -142,9 +142,9 @@ class User(Config):
     def _build_key_archive(self):
         with tarfile.open(self.key_archive_path, 'w') as tar_file:
             tar_file.add(self.key_path,
-                arcname=os.path.basename(self.key_path))
+                arcname='%s_%s.key' % (self.org.name, self.name))
             tar_file.add(self.cert_path,
-                arcname=os.path.basename(self.cert_path))
+                arcname='%s_%s.crt' % (self.org.name, self.name))
 
     def rename(self, name):
         self.name = name
