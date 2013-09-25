@@ -61,6 +61,9 @@ class Organization(Config):
         with open(self.serial_path, 'w') as serial_file:
             serial_file.write('01\n')
 
+    def get_user(self, id):
+        return User(self, id=id)
+
     def get_users(self):
         users = []
         certs_path = os.path.join(self.path, CERTS_DIR)
@@ -72,14 +75,21 @@ class Organization(Config):
                 users.append(User(self, id=user_id))
         return users
 
+    def get_servers(self):
+        from server import Server
+        servers = []
+
+        for server in Server.get_servers():
+            if self.id in server.organizations:
+                servers.append(server)
+
+        return servers
+
     def count_users(self):
         certs_path = os.path.join(self.path, CERTS_DIR)
         if not os.path.isdir(certs_path):
             return 0
         return len(os.listdir(certs_path))
-
-    def get_user(self, id):
-        return User(self, id=id)
 
     def new_user(self, type, name=None):
         return User(self, name=name, type=type)
