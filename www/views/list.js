@@ -74,7 +74,7 @@ define([
           this.views[i - 1].$el.after(modelView.el);
         }
 
-        if (!modelView.hidden) {
+        if (!modelView.hidden || this.showHidden) {
           modelView.$el.slideDown(250);
         }
       }
@@ -104,7 +104,13 @@ define([
       var views = [];
       for (i = 0; i < this.views.length; i++) {
         if (this.views[i].hidden) {
-          continue;
+          if (this.showHidden) {
+            this.views[i].$el.slideDown(250);
+          }
+          else {
+            this.views[i].$el.slideUp(250);
+            continue;
+          }
         }
         views.push(this.views[i]);
       }

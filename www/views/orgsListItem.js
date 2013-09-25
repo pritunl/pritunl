@@ -15,7 +15,8 @@ define([
     events: {
       'click .org-title': 'onRename',
       'click .org-del': 'onDelete',
-      'click .download-key': 'onDownloadKey'
+      'click .download-key': 'onDownloadKey',
+      'click .toggle-hidden': 'onToggleHidden'
     },
     initialize: function() {
       this.usersListView = new UsersListView({
@@ -63,6 +64,27 @@ define([
       this.addView(modal);
     },
     onDownloadKey: function() {
+    },
+    onToggleHidden: function(evt) {
+      if (!evt.shiftKey) {
+        return;
+      }
+      if (this.usersListView.showHidden) {
+        this.usersListView.showHidden = false;
+        this.$('.toggle-hidden').removeClass('label-primary');
+        this.$('.toggle-hidden').addClass('label-success');
+        this.$('.toggle-hidden').tooltip('destroy');
+      }
+      else {
+        this.usersListView.showHidden = true;
+        this.$('.toggle-hidden').removeClass('label-success');
+        this.$('.toggle-hidden').addClass('label-primary');
+        this.$('.toggle-hidden').tooltip({
+          title: 'Showing hidden users'
+        });
+        this.$('.toggle-hidden').tooltip('show');
+      }
+      this.usersListView.update();
     }
   });
 
