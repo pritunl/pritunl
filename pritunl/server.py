@@ -120,7 +120,7 @@ class Server(Config):
         subnet += '.0' * (3 - subnet.count('.'))
         return (address, subnet)
 
-    def _generate_ca_cert(self):
+    def generate_ca_cert(self):
         with open(self.ca_cert_path, 'w') as server_ca_cert:
             for org_id in self.organizations:
                 ca_path = Organization(org_id).ca_cert.cert_path
@@ -140,7 +140,7 @@ class Server(Config):
         primary_org = Organization(self.primary_organization)
         primary_user = primary_org.get_user(self.primary_user)
 
-        self._generate_ca_cert()
+        self.generate_ca_cert()
 
         if self.local_network:
             push = 'route %s %s' % self._parse_network(

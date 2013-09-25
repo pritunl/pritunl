@@ -152,7 +152,7 @@ class User(Config):
             tar_file.add(self.cert_path,
                 arcname='%s_%s.crt' % (self.org.name, self.name))
             for server in servers:
-                server._generate_ca_cert()
+                server.generate_ca_cert()
                 tar_file.add(server.ca_cert_path, arcname='%s_%s_%s.crt' % (
                     self.org.name, self.name, server.name))
 
