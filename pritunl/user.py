@@ -140,32 +140,32 @@ class User(Config):
             openssl_lock.release()
 
     def _build_key_archive(self):
-        user_key_path = '%s_%s.key' % (self.org.name, self.name)
-        user_cert_path = '%s_%s.crt' % (self.org.name, self.name)
+        user_key_arcname = '%s_%s.key' % (self.org.name, self.name)
+        user_cert_arcname = '%s_%s.crt' % (self.org.name, self.name)
 
         with tarfile.open(self.key_archive_path, 'w') as tar_file:
-            tar_file.add(self.key_path, arcname=user_key_path)
-            tar_file.add(self.cert_path, arcname=user_cert_path)
+            tar_file.add(self.key_path, arcname=user_key_arcname)
+            tar_file.add(self.cert_path, arcname=user_cert_arcname)
             for server in self.org.get_servers():
-                server_cert_path = '%s_%s_%s.crt' % (
+                server_cert_arcname = '%s_%s_%s.crt' % (
                     self.org.name, self.name, server.name)
-                server_conf_temp_path = os.path.join(self.org.path,
+                server_conf_path = os.path.join(self.org.path,
                     TEMP_DIR, '%s_%s.conf' % (self.id, server.id))
-                server_conf_path = '%s_%s_%s.conf' % (
+                server_conf_arcname = '%s_%s_%s.conf' % (
                     self.org.name, self.name, server.name)
                 server.generate_ca_cert()
-                tar_file.add(server.ca_cert_path, arcname=server_cert_path)
+                tar_file.add(server.ca_cert_path, arcname=server_cert_arcname)
 
-                with open(server_conf_temp_path, 'w') as ovpn_conf:
+                with open(server_conf_path, 'w') as ovpn_conf:
                     ovpn_conf.write(OVPN_CLIENT_CONF % (
                         server.protocol,
                         'localhost', server.port,
-                        server_cert_path,
-                        user_cert_path,
-                        user_key_path,
+                        server_cert_arcname,
+                        user_cert_arcname,
+                        user_key_arcname,
                     ))
-                tar_file.add(server_conf_temp_path, arcname=server_conf_path)
-                os.remove(server_conf_temp_path)
+                tar_file.add(server_conf_path, arcname=server_conf_arcname)
+                os.remove(server_conf_path)
 
     def rename(self, name):
         self.name = name
