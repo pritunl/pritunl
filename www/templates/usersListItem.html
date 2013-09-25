@@ -9,5 +9,5 @@
 <div class="status-container">
   <div class="status-icon <%= (status) ? 'online' : 'offline' %>"></div>
   <span class="status-text title"><%= (status) ? 'Online' : 'Offline' %></span>
-  <a class="download-key glyphicon glyphicon-download no-select" data-toggle="tooltip" title="Click to download key"></a>
+  <a class="download-key glyphicon glyphicon-download no-select" data-toggle="tooltip" title="Click to download key" href="/user/<%= organization %>/<%= id %>.tar"></a>
 </div>
