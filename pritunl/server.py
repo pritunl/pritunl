@@ -120,6 +120,13 @@ class Server(Config):
         subnet += '.0' * (3 - subnet.count('.'))
         return (address, subnet)
 
+    def _generate_ca_cert(self):
+        with open(self.ca_cert_path, 'w') as server_ca_cert:
+            for org_id in self.organizations:
+                ca_path = Organization(org_id).ca_cert.cert_path
+                with open(ca_path, 'r') as org_ca_cert:
+                    server_ca_cert.write(org_ca_cert.read())
+
     def _generate_ovpn_conf(self):
         if not self.organizations:
             return
@@ -132,6 +139,8 @@ class Server(Config):
 
         primary_org = Organization(self.primary_organization)
         primary_user = primary_org.get_user(self.primary_user)
+
+        self._generate_ca_cert()
 
         with open(self.ca_cert_path, 'w') as server_ca_cert:
             for org_id in self.organizations:
