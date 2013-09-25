@@ -19,6 +19,10 @@ define([
       'click .server-restart, .server-start, .server-stop': 'onOperation'
     },
     initialize: function() {
+      this.serverOrgsListView = new ServerOrgsListView({
+        server: this.model.get('id')
+      });
+      this.addView(this.serverOrgsListView);
       setTimeout((this._updateTime).bind(this), 1000);
     },
     render: function() {
@@ -27,6 +31,7 @@ define([
       this.$('.server-title a').tooltip({
         container: this.el
       });
+      this.$el.append(this.serverOrgsListView.render().el);
       return this;
     },
     update: function() {
@@ -60,16 +65,6 @@ define([
         this.$('.server-start').show();
         this.$('.server-restart').attr('disabled', 'disabled');
       }
-
-      // TODO
-      if (this.serverOrgsListView) {
-        this.serverOrgsListView.destroy();
-      }
-      this.serverOrgsListView = new ServerOrgsListView({
-        server: this.model.get('id')
-      });
-      this.addView(this.serverOrgsListView);
-      this.$el.append(this.serverOrgsListView.render().el);
     },
     onSettings: function() {
       var modal = new ModalServerSettingsView({
