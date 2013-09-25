@@ -77,7 +77,7 @@ define([
         this.$('.toggle-hidden').removeClass('label-success');
         this.$('.toggle-hidden').addClass('label-primary');
         this.$('.toggle-hidden').tooltip({
-          title: 'Showing hidden users'
+          title: 'Showing server users'
         });
         this.$('.toggle-hidden').tooltip('show');
       }
