@@ -58,4 +58,10 @@ def user_delete(org_id, user_id):
 
 @app_server.app.route('/user/<org_id>/<user_id>.tar', methods=['GET'])
 def user_key_archive_get(org_id, user_id):
-    return ''
+    org = Organization(org_id)
+    user = org.get_user(user_id)
+    archive_path = user._build_key_archive()
+
+    with open(archive_path, 'r') as archive_file:
+        return flask.Response(response=archive_file.read(),
+            mimetype='application/x-tar')

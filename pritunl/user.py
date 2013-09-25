@@ -167,6 +167,8 @@ class User(Config):
                 tar_file.add(server_conf_path, arcname=server_conf_arcname)
                 os.remove(server_conf_path)
 
+        return self.key_archive_path
+
     def rename(self, name):
         self.name = name
         self.commit()
