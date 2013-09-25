@@ -139,7 +139,7 @@ class User(Config):
         finally:
             openssl_lock.release()
 
-    def _build_key_archive(self):
+    def build_key_archive(self):
         user_key_arcname = '%s_%s.key' % (self.org.name, self.name)
         user_cert_arcname = '%s_%s.crt' % (self.org.name, self.name)
 
