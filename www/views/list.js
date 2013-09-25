@@ -101,7 +101,14 @@ define([
         this.views[i].update();
       }
 
-      this.resetItems(this.views);
+      var views = [];
+      for (i = 0; i < this.views.length; i++) {
+        if (this.views[i].hidden) {
+          continue;
+        }
+        views.push(this.views[i]);
+      }
+      this.resetItems(views);
     },
     update: function() {
       this.collection.fetch({
