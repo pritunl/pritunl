@@ -149,8 +149,23 @@ class User(Config):
             for server in self.org.get_servers():
                 server_cert_path = '%s_%s_%s.crt' % (
                     self.org.name, self.name, server.name)
+                server_conf_temp_path = os.path.join(self.org.path,
+                    TEMP_DIR, '%s_%s.conf' % (self.id, server.id))
+                server_conf_path = '%s_%s_%s.conf' % (
+                    self.org.name, self.name, server.name)
                 server.generate_ca_cert()
                 tar_file.add(server.ca_cert_path, arcname=server_cert_path)
+
+                with open(server_conf_temp_path, 'w') as ovpn_conf:
+                    ovpn_conf.write(OVPN_CLIENT_CONF % (
+                        server.protocol,
+                        'localhost', server.port,
+                        server_cert_path,
+                        user_cert_path,
+                        user_key_path,
+                    ))
+                tar_file.add(server_conf_temp_path, arcname=server_conf_path)
+                os.remove(server_conf_temp_path)
 
     def rename(self, name):
         self.name = name
