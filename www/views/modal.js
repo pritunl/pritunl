@@ -78,7 +78,7 @@ define([
         message: message
       });
       this.addView(this.loadingView);
-      this.$('form').append(this.loadingView.render().el);
+      this.$('form').after(this.loadingView.render().el);
     },
     clearLoading: function() {
       if (this.loadingView) {
