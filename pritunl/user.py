@@ -140,15 +140,17 @@ class User(Config):
             openssl_lock.release()
 
     def _build_key_archive(self):
+        user_key_path = '%s_%s.key' % (self.org.name, self.name)
+        user_cert_path = '%s_%s.crt' % (self.org.name, self.name)
+
         with tarfile.open(self.key_archive_path, 'w') as tar_file:
-            tar_file.add(self.key_path,
-                arcname='%s_%s.key' % (self.org.name, self.name))
-            tar_file.add(self.cert_path,
-                arcname='%s_%s.crt' % (self.org.name, self.name))
+            tar_file.add(self.key_path, arcname=user_key_path)
+            tar_file.add(self.cert_path, arcname=user_cert_path)
             for server in self.org.get_servers():
+                server_cert_path = '%s_%s_%s.crt' % (
+                    self.org.name, self.name, server.name)
                 server.generate_ca_cert()
-                tar_file.add(server.ca_cert_path, arcname='%s_%s_%s.crt' % (
-                    self.org.name, self.name, server.name))
+                tar_file.add(server.ca_cert_path, arcname=server_cert_path)
 
     def rename(self, name):
         self.name = name
