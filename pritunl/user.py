@@ -140,18 +140,12 @@ class User(Config):
             openssl_lock.release()
 
     def _build_key_archive(self):
-        from server import Server
-        servers = []
-        for server in Server.get_servers():
-            if self.org.id in server.organizations:
-                servers.append(server)
-
         with tarfile.open(self.key_archive_path, 'w') as tar_file:
             tar_file.add(self.key_path,
                 arcname='%s_%s.key' % (self.org.name, self.name))
             tar_file.add(self.cert_path,
                 arcname='%s_%s.crt' % (self.org.name, self.name))
-            for server in servers:
+            for server in self.org.get_servers():
                 server.generate_ca_cert()
                 tar_file.add(server.ca_cert_path, arcname='%s_%s_%s.crt' % (
                     self.org.name, self.name, server.name))
