@@ -1,10 +1,9 @@
 from constants import *
 from pritunl import app_server, openssl_lock
 from config import Config
-from pritunl.organization import Organization
+from organization import Organization
 from event import Event
 from log_entry import LogEntry
-from user import User
 import uuid
 import os
 import shutil
