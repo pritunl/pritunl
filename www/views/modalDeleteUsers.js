@@ -12,6 +12,23 @@ define([
     template: _.template(modalDeleteUsersTemplate),
     title: 'Delete Users',
     okText: 'Delete',
+    initialize: function() {
+      ModalDeleteUsersView.__super__.initialize.call(this);
+      var i;
+      for (i = 0; i < this.collection.models.length; i++) {
+        if (this.collection.models[i].get('type') !== 'server') {
+          continue;
+        }
+        var alertView = new AlertView({
+          type: 'danger',
+          message: 'Warning, deleting server users can break the servers.',
+          animate: false
+        });
+        this.addView(alertView);
+        this.$('form').prepend(alertView.render().el);
+        break;
+      }
+    },
     body: function() {
       var i;
       var nameId;
