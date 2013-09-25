@@ -19,8 +19,8 @@ def user_get(org_id):
             'id': user.id,
             'organization': org.id,
             'name': user.name,
-            'status': False,
             'type': user.type,
+            'status': False,
         }
 
     for name_id in sorted(users_sort):
@@ -39,6 +39,7 @@ def user_post(org_id):
         'id': user.id,
         'organization': org.id,
         'name': user.name,
+        'type': user.type,
         'status': False,
     })
 
