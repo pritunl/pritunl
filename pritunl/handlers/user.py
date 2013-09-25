@@ -60,8 +60,11 @@ def user_delete(org_id, user_id):
 def user_key_archive_get(org_id, user_id):
     org = Organization(org_id)
     user = org.get_user(user_id)
-    archive_path = user._build_key_archive()
+    archive_path = user.build_key_archive()
 
     with open(archive_path, 'r') as archive_file:
-        return flask.Response(response=archive_file.read(),
+        response = flask.Response(response=archive_file.read(),
             mimetype='application/x-tar')
+        response.headers.add('Content-Disposition',
+            'inline; filename="%s.tar"' % user.name)
+        return response
