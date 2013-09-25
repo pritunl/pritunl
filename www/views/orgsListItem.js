@@ -15,7 +15,6 @@ define([
     events: {
       'click .org-title': 'onRename',
       'click .org-del': 'onDelete',
-      'click .download-key': 'onDownloadKey',
       'click .toggle-hidden': 'onToggleHidden'
     },
     initialize: function() {
@@ -62,8 +61,6 @@ define([
         this.addView(alertView);
       }.bind(this));
       this.addView(modal);
-    },
-    onDownloadKey: function() {
     },
     onToggleHidden: function(evt) {
       if (!evt.shiftKey) {
