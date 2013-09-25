@@ -41,8 +41,8 @@ class User(Config):
             '%s.key' % self.id)
         self.cert_path = os.path.join(self.org.path, CERTS_DIR,
             '%s.crt' % self.id)
-        self.key_archive_path = os.path.join(os.path.join(self.org.path,
-            TEMP_DIR, '%s.tar' % self.id))
+        self.key_archive_path = os.path.join(self.org.path,
+            TEMP_DIR, '%s.tar' % self.id)
         self.set_path(os.path.join(self.org.path, USERS_DIR,
             '%s.conf' % self.id))
 
