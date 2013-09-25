@@ -1,35 +1,39 @@
-<form role="form">
-  <div class="name form-group">
-    <label>Name</label>
-    <input type="text" class="form-control" placeholder="Enter name" data-toggle="tooltip" title="Name of VPN server" value="<%= name %>">
-  </div>
-  <div class="network form-group">
-    <label>Network</label>
-    <input type="text" class="form-control" placeholder="Enter network address" data-toggle="tooltip" title="Private network address for VPN clients" value="<%= network %>">
-  </div>
-  <div class="interface form-group">
-    <label>Interface</label>
-    <input type="text" class="form-control" placeholder="Enter tunnel interface" data-toggle="tooltip" title="Tunnel interface for VPN connections" value="<%= interface %>">
-  </div>
-  <div class="port form-group">
-    <label>Port</label>
-    <input type="text" class="form-control" placeholder="Enter port number" data-toggle="tooltip" title="Port number for VPN connections" value="<%= port %>">
-  </div>
-  <div class="protocol form-group">
-    <label>Protocol</label>
-    <select class="form-control" data-toggle="tooltip" title="Protocol for VPN connections">
-      <option value="udp" <%= (protocol === 'udp') ? 'selected' : '' %>>udp</option>
-      <option value="tcp" <%= (protocol === 'tcp') ? 'selected' : '' %>>tcp</option>
-    </select>
-  </div>
-  <div class="local-network-toggle form-group">
-    <label>Local Network Only</label>
-    <div class="selector <%= (local_network) ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Only route traffic destined to the specified local network">
-      <span class="selector-inner glyphicon glyphicon-ok"></span>
+<form class="split" role="form">
+  <div class="left">
+    <div class="name form-group">
+      <label>Name</label>
+      <input type="text" class="form-control" placeholder="Enter name" data-toggle="tooltip" title="Name of VPN server" value="<%= name %>">
+    </div>
+    <div class="network form-group">
+      <label>Network</label>
+      <input type="text" class="form-control" placeholder="Enter network address" data-toggle="tooltip" title="Private network address for VPN clients" value="<%= network %>">
+    </div>
+    <div class="interface form-group">
+      <label>Interface</label>
+      <input type="text" class="form-control" placeholder="Enter tunnel interface" data-toggle="tooltip" title="Tunnel interface for VPN connections" value="<%= interface %>">
+    </div>
+    <div class="port form-group">
+      <label>Port</label>
+      <input type="text" class="form-control" placeholder="Enter port number" data-toggle="tooltip" title="Port number for VPN connections" value="<%= port %>">
     </div>
   </div>
-  <div class="local-network form-group" <%= (local_network) ? '' : 'style="display: none;"' %>>
-    <label>Local Network</label>
-    <input type="text" class="form-control" placeholder="Enter network address" data-toggle="tooltip" title="Local network address routed to VPN clients" value="<%= local_network %>">
+  <div class="right">
+    <div class="protocol form-group">
+      <label>Protocol</label>
+      <select class="form-control" data-toggle="tooltip" title="Protocol for VPN connections">
+        <option value="udp" <%= (protocol === 'udp') ? 'selected' : '' %>>udp</option>
+        <option value="tcp" <%= (protocol === 'tcp') ? 'selected' : '' %>>tcp</option>
+      </select>
+    </div>
+    <div class="local-network-toggle form-group">
+      <label>Local Network Only</label>
+      <div class="selector <%= (local_network) ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Only route traffic destined to the specified local network">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
+    <div class="local-network form-group" <%= (local_network) ? '' : 'style="display: none;"' %>>
+      <label>Local Network</label>
+      <input type="text" class="form-control" placeholder="Enter network address" data-toggle="tooltip" title="Local network address routed to VPN clients" value="<%= local_network %>">
+    </div>
   </div>
 </form>
