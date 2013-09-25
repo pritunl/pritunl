@@ -163,3 +163,17 @@ persist-tun
 verb 0
 mute 5
 """
+
+OVPN_CLIENT_CONF = """client
+dev tun
+proto %s
+remote %s %s
+resolv-retry infinite
+nobind
+persist-tun
+ca %s
+cert %s
+key %s
+verb 3
+mute 5
+"""
