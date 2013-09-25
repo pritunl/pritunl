@@ -55,3 +55,7 @@ def user_delete(org_id, user_id):
     user = org.get_user(user_id)
     user.remove()
     return utils.jsonify({})
+
+@app_server.app.route('/user/<org_id>/<user_id>.tar', methods=['GET'])
+def user_key_archive_get(org_id, user_id):
+    return ''
