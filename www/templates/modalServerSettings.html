@@ -25,6 +25,10 @@
         <option value="tcp" <%= (protocol === 'tcp') ? 'selected' : '' %>>tcp</option>
       </select>
     </div>
+    <div class="public-address form-group">
+      <label>Public IP</label>
+      <input type="text" class="form-control" placeholder="Enter public address" data-toggle="tooltip" title="Public IP address or domain name that VPN clients will connect to" value="">
+    </div>
     <div class="local-network-toggle form-group">
       <label>Local Network Only</label>
       <div class="selector <%= (local_network) ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Only route traffic destined to the specified local network">
