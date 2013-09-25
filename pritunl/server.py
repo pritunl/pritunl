@@ -142,12 +142,6 @@ class Server(Config):
 
         self._generate_ca_cert()
 
-        with open(self.ca_cert_path, 'w') as server_ca_cert:
-            for org_id in self.organizations:
-                ca_path = Organization(org_id).ca_cert.cert_path
-                with open(ca_path, 'r') as org_ca_cert:
-                    server_ca_cert.write(org_ca_cert.read())
-
         if self.local_network:
             push = 'route %s %s' % self._parse_network(
                 self.local_network)
