@@ -63,7 +63,7 @@ define([
       this.addView(modal);
     },
     onToggleHidden: function(evt) {
-      if (!evt.shiftKey) {
+      if (!evt.ctrlKey && !evt.shiftKey) {
         return;
       }
       if (this.usersListView.showHidden) {
