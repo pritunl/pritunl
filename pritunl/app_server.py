@@ -90,6 +90,7 @@ class AppServer(Config):
 
     def _run_wsgi(self):
         import cherrypy.wsgiserver
+        from log_entry import LogEntry
         logger.info('Starting server...')
 
         server = cherrypy.wsgiserver.CherryPyWSGIServer(
@@ -98,12 +99,14 @@ class AppServer(Config):
             server.start()
         except (KeyboardInterrupt, SystemExit), exc:
             signal.signal(signal.SIGINT, signal.SIG_IGN)
+            LogEntry(message='Web server stopped.')
             self.interrupt = True
             logger.info('Stopping server...')
             server.stop()
             self._close_db()
 
     def _run_wsgi_debug(self):
+        from log_entry import LogEntry
         logger.info('Starting debug server...')
 
         # App.run server uses werkzeug logger
@@ -115,6 +118,7 @@ class AppServer(Config):
             self.app.run(host=self.bind_addr, port=self.port, threaded=True)
         finally:
             signal.signal(signal.SIGINT, signal.SIG_IGN)
+            LogEntry(message='Web server stopped.')
             self.interrupt = True
             # Possible data loss here db closing before debug server
             self._close_db()
