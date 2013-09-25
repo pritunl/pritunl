@@ -147,7 +147,7 @@ class Server(Config):
             push = 'redirect-gateway'
 
         with open(self.ovpn_conf_path, 'w') as ovpn_conf:
-            ovpn_conf.write(OVPN_CONF % (
+            ovpn_conf.write(OVPN_SERVER_CONF % (
                 self.port,
                 self.protocol,
                 self.interface,

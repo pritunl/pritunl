@@ -148,7 +148,7 @@ INTERFACE_NOT_VALID_MSG = 'Interface is not valid, must be ' + \
 PROTOCOL_NOT_VALID = 'protocol_not_valid'
 PROTOCOL_NOT_VALID_MSG = 'Protocol is not valid, must be "udp" or "tcp".'
 
-OVPN_CONF = """port %s
+OVPN_SERVER_CONF = """port %s
 proto %s
 dev %s
 ca %s
