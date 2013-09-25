@@ -14,9 +14,9 @@ logger = logging.getLogger(APP_NAME)
 class User(Config):
     str_options = ['name']
 
-    def __init__(self, ca, id=None, name=None, type=None):
+    def __init__(self, org, id=None, name=None, type=None):
         Config.__init__(self)
-        self.ca = ca
+        self.org = org
         self.id = id
 
         if type is not None:
@@ -33,17 +33,17 @@ class User(Config):
         else:
             self._initialized = True
 
-        self.reqs_path = os.path.join(self.ca.path, REQS_DIR,
+        self.reqs_path = os.path.join(self.org.path, REQS_DIR,
             '%s.csr' % self.id)
-        self.ssl_conf_path = os.path.join(self.ca.path, TEMP_DIR,
+        self.ssl_conf_path = os.path.join(self.org.path, TEMP_DIR,
             '%s.conf' % self.id)
-        self.key_path = os.path.join(self.ca.path, KEYS_DIR,
+        self.key_path = os.path.join(self.org.path, KEYS_DIR,
             '%s.key' % self.id)
-        self.cert_path = os.path.join(self.ca.path, CERTS_DIR,
+        self.cert_path = os.path.join(self.org.path, CERTS_DIR,
             '%s.crt' % self.id)
-        self.key_archive_path = os.path.join(os.path.join(self.ca.path,
+        self.key_archive_path = os.path.join(os.path.join(self.org.path,
             TEMP_DIR, '%s.tar' % self.id))
-        self.set_path(os.path.join(self.ca.path, USERS_DIR,
+        self.set_path(os.path.join(self.org.path, USERS_DIR,
             '%s.conf' % self.id))
 
         if name is not None:
@@ -100,7 +100,7 @@ class User(Config):
             openssl_lock.release()
 
     def _create_ssl_conf(self):
-        conf_data = CERT_CONF % (self.ca.id, self.ca.path, self.id)
+        conf_data = CERT_CONF % (self.org.id, self.org.path, self.id)
         with open(self.ssl_conf_path, 'w') as conf_file:
             conf_file.write(conf_data)
 
@@ -191,6 +191,6 @@ class User(Config):
                 'error': error,
             })
 
-        self.ca.generate_crl()
+        self.org.generate_crl()
         Event(type=USERS_UPDATED)
         LogEntry(message='Deleted user.')
