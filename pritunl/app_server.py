@@ -122,7 +122,7 @@ class AppServer(Config):
 
     def _run_server(self):
         from log_entry import LogEntry
-        LogEntry(message='Server started.')
+        LogEntry(message='Web server started.')
         if self.debug:
             self._run_wsgi_debug()
         else:
