@@ -13,13 +13,13 @@ define([
     errorMsg: 'Failed to add server, server error occurred.',
     initialize: function(options) {
       this.model = new ServerModel({
-        name: '',
-        network: '10.' + this._rand(15, 250) + '.' +
+        'name': '',
+        'network': '10.' + this._rand(15, 250) + '.' +
           this._rand(15, 250) + '.0/24',
-        interface: this._get_free_interface(),
-        port: this._rand(10000, 19999),
-        protocol: 'udp',
-        public_ip: options.publicIp || ''
+        'interface': this._get_free_interface(),
+        'port': this._rand(10000, 19999),
+        'protocol': 'udp',
+        'public_address': options.publicIp || ''
       });
       ModalAddServerView.__super__.initialize.call(this);
     },
