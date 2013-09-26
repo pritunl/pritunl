@@ -2,7 +2,7 @@
   <span class="selector-inner glyphicon glyphicon-ok"></span>
 </div>
 <div class="name-container type-<%= type %>">
-  <span class="name-icon glyphicon glyphicon-user"></span>
+  <span class="name-icon glyphicon glyphicon-user" <%= type === 'server' ? 'data-toggle="tooltip" title="Server user"' : '' %>></span>
   <a class="user-name title no-select" data-toggle="tooltip" title="Click to rename this user"><%= name %></a>
 </div>
 
