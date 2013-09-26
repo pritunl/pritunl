@@ -50,6 +50,7 @@ def server_get():
             'port': server.port,
             'protocol': server.protocol,
             'local_network': server.local_network,
+            'public_address': server.public_address,
         }
 
     for name_id in sorted(servers_sort):
@@ -68,6 +69,7 @@ def server_put_post(server_id=None):
     local_network = flask.request.json['local_network']
     if local_network:
         local_network = local_network.encode()
+    public_address = flask.request.json['public_address'].encode()
 
     # Network
     network_split = network.split('/')
@@ -166,6 +168,7 @@ def server_put_post(server_id=None):
             port=port,
             protocol=protocol,
             local_network=local_network,
+            public_address=public_address,
         )
     else:
         ovpn_server = Server(id=server_id)
@@ -175,6 +178,7 @@ def server_put_post(server_id=None):
         ovpn_server.port = port
         ovpn_server.protocol = protocol
         ovpn_server.local_network = local_network
+        ovpn_server.public_address = public_address
         ovpn_server.commit()
 
     return utils.jsonify({})
