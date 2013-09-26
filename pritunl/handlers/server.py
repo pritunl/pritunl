@@ -41,9 +41,9 @@ def server_get():
         servers_dict[name_id] = {
             'id': server.id,
             'name': server.name,
-            'status': 'online',
-            'uptime': 88573,
-            'users_online': 16,
+            'status': 'online' if server.organizations else 'ofline',
+            'uptime': 88573 if server.organizations else None,
+            'users_online': 16 if server.organizations else None,
             'users_total': 32,
             'network': server.network,
             'interface': server.interface,
