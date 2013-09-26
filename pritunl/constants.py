@@ -2,6 +2,8 @@ APP_NAME = 'pritunl'
 APP_NAME_FORMATED = 'Pritunl'
 CONF_FILENAME = '%s.conf' % APP_NAME
 
+PUBLIC_IP_SERVER = 'http://ip.pritunl.com/'
+
 SAVED = 'saved'
 UNSAVED = 'unsaved'
 

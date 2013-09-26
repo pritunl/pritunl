@@ -1,10 +1,13 @@
+from constants import *
+from database import Database
+from config import Config
 import os
 import logging
 import signal
 import time
-from constants import *
-from database import Database
-from config import Config
+import json
+import urllib2
+import threading
 
 logger = None
 
@@ -20,6 +23,19 @@ class AppServer(Config):
         self.app_db = None
         self.mem_db = None
         self.interrupt = False
+
+    def _get_public_ip(self):
+        logger.debug('Getting public ip address...')
+        try:
+            request = urllib2.Request(PUBLIC_IP_SERVER)
+            response = urllib2.urlopen(request, timeout=10)
+            self.public_ip = json.load(response)['ip']
+        except:
+            logger.debug('Failed to get public ip address...')
+            self.public_ip = None
+
+    def _setup_public_ip(self):
+        threading.Thread(target=self._get_public_ip).start()
 
     def _setup_app(self):
         import flask
@@ -84,6 +100,7 @@ class AppServer(Config):
         self._setup_app()
         self._setup_conf()
         self._setup_log()
+        self._setup_public_ip()
         self._setup_db()
         self._setup_handlers()
         self._setup_static_handler()
