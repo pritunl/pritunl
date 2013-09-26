@@ -55,14 +55,22 @@ define([
       this.$('.server-port .status-text').text(
         this.model.get('port') + '/' + this.model.get('protocol'));
 
-      if (this.model.get('status') === 'online') {
+      if (!this.model.get('org_count')) {
+        this.$('.server-stop').hide();
+        this.$('.server-start').show();
+        this.$('.server-start').attr('disabled', 'disabled');
+        this.$('.server-restart').attr('disabled', 'disabled');
+      }
+      else if (this.model.get('status') === 'online') {
         this.$('.server-start').hide();
         this.$('.server-stop').show();
+        this.$('.server-start').removeAttr('disabled');
         this.$('.server-restart').removeAttr('disabled');
       }
       else {
         this.$('.server-stop').hide();
         this.$('.server-start').show();
+        this.$('.server-start').removeAttr('disabled');
         this.$('.server-restart').attr('disabled', 'disabled');
       }
     },

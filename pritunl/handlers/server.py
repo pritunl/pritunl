@@ -51,6 +51,7 @@ def server_get():
             'protocol': server.protocol,
             'local_network': server.local_network,
             'public_address': server.public_address,
+            'org_count': len(server.organizations),
         }
 
     for name_id in sorted(servers_sort):
