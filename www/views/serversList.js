@@ -31,9 +31,16 @@ define([
       ServersListView.__super__.initialize.call(this);
     },
     updateOrgs: function() {
-      this.collection.fetch({
+      this.orgs.fetch({
         error: function() {
-          this.collection.reset();
+          var alertView = new AlertView({
+            type: 'danger',
+            message: 'Failed to load organizations, server error occurred.',
+            dismissable: true
+          });
+          $('.alerts-container').append(alertView.render().el);
+          this.addView(alertView);
+          this.orgs.reset();
         }.bind(this)
       });
     },
