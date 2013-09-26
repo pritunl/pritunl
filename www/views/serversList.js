@@ -2,6 +2,7 @@ define([
   'jquery',
   'underscore',
   'backbone',
+  'models/status',
   'collections/server',
   'collections/org',
   'views/list',
@@ -10,9 +11,9 @@ define([
   'views/modalAddServer',
   'views/modalAttachOrg',
   'text!templates/serversList.html'
-], function($, _, Backbone, ServerCollection, OrgCollection, ListView,
-    AlertView, ServersListItemView, ModalAddServerView, ModalAttachOrgView,
-    serversListTemplate) {
+], function($, _, Backbone, StatusModel, ServerCollection, OrgCollection,
+    ListView, AlertView, ServersListItemView, ModalAddServerView,
+    ModalAttachOrgView, serversListTemplate) {
   'use strict';
   var ServersListView = ListView.extend({
     className: 'servers-list',
@@ -26,6 +27,7 @@ define([
     initialize: function() {
       this.collection = new ServerCollection();
       this.orgs = new OrgCollection();
+      this.statusModel = new StatusModel();
       this.listenTo(window.events, 'servers_updated', this.update);
       this.listenTo(window.events, 'organizations_updated', this.updateOrgs);
       ServersListView.__super__.initialize.call(this);
@@ -45,17 +47,36 @@ define([
       });
     },
     onAddServer: function() {
-      var modal = new ModalAddServerView();
-      this.listenToOnce(modal, 'applied', function() {
-        var alertView = new AlertView({
-          type: 'warning',
-          message: 'Successfully added server.',
-          dismissable: true
-        });
-        $('.alerts-container').append(alertView.render().el);
-        this.addView(alertView);
-      }.bind(this));
-      this.addView(modal);
+      this.$('.servers-add-server').attr('disabled', 'disabled');
+      this.statusModel.fetch({
+        success: function() {
+          var modal = new ModalAddServerView({
+            publicIp: this.statusModel.get('public_ip')
+          });
+          this.listenToOnce(modal, 'applied', function() {
+            var alertView = new AlertView({
+              type: 'warning',
+              message: 'Successfully added server.',
+              dismissable: true
+            });
+            $('.alerts-container').append(alertView.render().el);
+            this.addView(alertView);
+          }.bind(this));
+          this.addView(modal);
+          this.$('.servers-add-server').removeAttr('disabled');
+        }.bind(this),
+        error: function() {
+          var alertView = new AlertView({
+            type: 'danger',
+            message: 'Failed to load server information, ' +
+              'server error occurred.',
+            dismissable: true
+          });
+          $('.alerts-container').append(alertView.render().el);
+          this.addView(alertView);
+          this.$('.servers-add-server').removeAttr('disabled');
+        }.bind(this)
+      });
     },
     onAttachOrg: function() {
       if (this.orgs.models.length) {

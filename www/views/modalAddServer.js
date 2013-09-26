@@ -11,14 +11,15 @@ define([
     okText: 'Add',
     loadingMsg: 'Adding server, this will take a few minutes...',
     errorMsg: 'Failed to add server, server error occurred.',
-    initialize: function() {
+    initialize: function(options) {
       this.model = new ServerModel({
         name: '',
         network: '10.' + this._rand(15, 250) + '.' +
           this._rand(15, 250) + '.0/24',
         interface: this._get_free_interface(),
         port: this._rand(10000, 19999),
-        protocol: 'udp'
+        protocol: 'udp',
+        public_ip: options.publicIp || ''
       });
       ModalAddServerView.__super__.initialize.call(this);
     },
