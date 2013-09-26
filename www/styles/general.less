@@ -82,7 +82,7 @@ ul {
 .modal .modal-dialog {
   width: 600px;
   position: fixed;
-  top: 20%;
+  top: 0;
   .left-calc(~'50% - 300px');
 }
 
@@ -509,6 +509,9 @@ ul {
   margin-right: 7px;
 }
 
+
+
+
 .server-settings-modal .modal .modal-dialog {
   .top-calc(~'50% - 319px');
 }
@@ -521,16 +524,22 @@ ul {
   .top-calc(~'50% - 195px');
 }
 
+.detach-org-modal .modal .modal-dialog {
+  .top-calc(~'50% - 183px');
+}
+
 .add-org-modal .modal .modal-dialog,
 .rename-org-modal .modal .modal-dialog,
 .rename-user-modal .modal .modal-dialog {
   .top-calc(~'50% - 200px');
 }
 
-.delete-org-modal .modal .modal-dialog {
+.delete-org-modal .modal .modal-dialog,
+.delete-server-modal .modal .modal-dialog {
   .top-calc(~'50% - 225px');
 }
 
-.add-user-modal .modal .modal-dialog {
+.add-user-modal .modal .modal-dialog,
+.attach-org-modal .modal .modal-dialog {
   .top-calc(~'50% - 240px');
 }
