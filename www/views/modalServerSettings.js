@@ -50,6 +50,7 @@ define([
       var port = this.$('.port input').val();
       var protocol = this.$('.protocol select').val();
       var localNetwork = null;
+      var publicAddress = this.$('.public-address select').val();
 
       if (!name) {
         this.setAlert('danger', 'Name can not be empty.');
@@ -74,6 +75,10 @@ define([
           return;
         }
       }
+      if (!publicAddress) {
+        this.setAlert('danger', 'Public IP can not be empty.');
+        return;
+      }
       this.locked = true;
       this.setLoading(this.loadingMsg);
       this.model.save({
@@ -82,7 +87,8 @@ define([
         'interface': iface,
         'port': port,
         'protocol': protocol,
-        'local_network': localNetwork
+        'local_network': localNetwork,
+        'public_address': publicAddress
       }, {
         success: function() {
           this.close(true);
