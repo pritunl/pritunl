@@ -159,7 +159,7 @@ class User(Config):
                 with open(server_conf_path, 'w') as ovpn_conf:
                     ovpn_conf.write(OVPN_CLIENT_CONF % (
                         server.protocol,
-                        'localhost', server.port,
+                        server.public_address, server.port,
                         server_cert_arcname,
                         user_cert_arcname,
                         user_key_arcname,
