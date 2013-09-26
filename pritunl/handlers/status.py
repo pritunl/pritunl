@@ -18,4 +18,5 @@ def status_get():
         'users_total': users_count,
         'servers_online': 4,
         'servers_total': 4,
+        'public_ip': app_server.public_ip,
     })
