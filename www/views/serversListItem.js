@@ -58,19 +58,33 @@ define([
       if (!this.model.get('org_count')) {
         this.$('.server-stop').hide();
         this.$('.server-start').show();
+        this.startDisabled = true;
         this.$('.server-start').attr('disabled', 'disabled');
+        this.restartDisabled = true;
         this.$('.server-restart').attr('disabled', 'disabled');
       }
       else if (this.model.get('status') === 'online') {
         this.$('.server-start').hide();
         this.$('.server-stop').show();
-        this.$('.server-start').removeAttr('disabled');
-        this.$('.server-restart').removeAttr('disabled');
+        // Starting and restarting server will also disable buttons
+        // only remove disabled if originally done above
+        if (this.startDisabled) {
+          this.startDisabled = false;
+          this.$('.server-start').removeAttr('disabled');
+        }
+        if (this.restartDisabled) {
+          this.startDisabled = false;
+          this.$('.server-restart').removeAttr('disabled');
+        }
       }
       else {
         this.$('.server-stop').hide();
         this.$('.server-start').show();
-        this.$('.server-start').removeAttr('disabled');
+        if (this.startDisabled) {
+          this.startDisabled = false;
+          this.$('.server-start').removeAttr('disabled');
+        }
+        this.restartDisabled = true;
         this.$('.server-restart').attr('disabled', 'disabled');
       }
     },
