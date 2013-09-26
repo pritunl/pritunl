@@ -35,6 +35,7 @@ define([
     updateOrgs: function() {
       this.orgs.fetch({
         error: function() {
+          this.orgs.reset();
           var alertView = new AlertView({
             type: 'danger',
             message: 'Failed to load organizations, server error occurred.',
@@ -42,7 +43,6 @@ define([
           });
           $('.alerts-container').append(alertView.render().el);
           this.addView(alertView);
-          this.orgs.reset();
         }.bind(this)
       });
     },
