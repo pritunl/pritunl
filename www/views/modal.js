@@ -34,13 +34,14 @@ define([
       $('body').append(this.el);
       return this;
     },
-    setAlert: function(type, message) {
+    setAlert: function(type, message, form) {
       if (this.alertView) {
         if (this.alertView.type !== type ||
             this.alertView.message !== message) {
           this.alertView.close(function() {
-            this.setAlert(type, message);
+            this.setAlert(type, message, form);
           }.bind(this));
+          this.$('.form-group').removeClass('has-warning has-error');
           this.alertView = null;
         }
         else {
@@ -55,11 +56,20 @@ define([
       });
       this.addView(this.alertView);
       this.$('form').prepend(this.alertView.render().el);
+      if (form) {
+        if (type === 'info') {
+          this.$(form).addClass('has-warning');
+        }
+        else {
+          this.$(form).addClass('has-error');
+        }
+      }
     },
     clearAlert: function() {
       if (this.alertView) {
         this.alertView.close();
         this.alertView = null;
+        this.$('.form-group').removeClass('has-warning has-error');
       }
     },
     setLoading: function(message) {

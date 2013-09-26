@@ -19,7 +19,7 @@ define([
         return;
       }
       if (!this.$('input').val()) {
-        this.setAlert('danger', 'Name can not be empty.');
+        this.setAlert('danger', 'Name can not be empty.', '.form-group');
         return;
       }
       this.locked = true;

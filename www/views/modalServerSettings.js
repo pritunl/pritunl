@@ -49,35 +49,37 @@ define([
       var iface = this.$('.interface input').val();
       var port = this.$('.port input').val();
       var protocol = this.$('.protocol select').val();
+      var publicAddress = this.$('.public-address input').val();
       var localNetwork = null;
-      var publicAddress = this.$('.public-address select').val();
 
       if (!name) {
-        this.setAlert('danger', 'Name can not be empty.');
+        this.setAlert('danger', 'Name can not be empty.', '.name');
         return;
       }
       if (!network) {
-        this.setAlert('danger', 'Network can not be empty.');
+        this.setAlert('danger', 'Network can not be empty.', '.network');
         return;
       }
       if (!iface) {
-        this.setAlert('danger', 'Interface can not be empty.');
+        this.setAlert('danger', 'Interface can not be empty.', '.interface');
         return;
       }
       if (!port) {
-        this.setAlert('danger', 'Port can not be empty.');
+        this.setAlert('danger', 'Port can not be empty.', '.port');
+        return;
+      }
+      if (!publicAddress) {
+        this.setAlert('danger', 'Public IP can not be empty.',
+          '.public-address');
         return;
       }
       if (this.getSelect()) {
         localNetwork = this.$('.local-network input').val();
         if (!localNetwork) {
-          this.setAlert('danger', 'Local network can not be empty.');
+          this.setAlert('danger', 'Local network can not be empty.',
+            '.local-network');
           return;
         }
-      }
-      if (!publicAddress) {
-        this.setAlert('danger', 'Public IP can not be empty.');
-        return;
       }
       this.locked = true;
       this.setLoading(this.loadingMsg);

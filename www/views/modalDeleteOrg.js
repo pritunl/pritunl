@@ -30,8 +30,8 @@ define([
         return;
       }
       if (this.$('input').val() !== this.model.get('name')) {
-        this.setAlert('info', 'Name entered doesn\'t match the name' +
-          'of the organization being deleted.');
+        this.setAlert('info', 'Name entered doesn\'t match the name ' +
+          'of the organization being deleted.', '.form-group');
         return;
       }
       this.locked = true;
