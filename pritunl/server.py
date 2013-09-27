@@ -219,10 +219,10 @@ class Server(Config):
             _output[self.id] += line
             self._event_delay(type=SERVER_OUTPUT_UPDATED, resource_id=self.id)
 
-        del _output[self.id]
         del _threads[self.id]
         del _process[self.id]
         del _start_time[self.id]
+        Event(type=SERVERS_UPDATED)
 
     def start(self):
         if not self.organizations:
@@ -235,6 +235,11 @@ class Server(Config):
         _start_time[self.id] = int(time.time()) - 1
         _output[self.id] = ''
         Event(type=SERVERS_UPDATED)
+
+    def stop(self):
+        if not self.status:
+            raise ValueError('Server is not running')
+        _process[self.id].send_signal(signal.SIGINT)
 
     def restart(self):
         if not self.status:
