@@ -6,6 +6,7 @@ from event import Event
 from log_entry import LogEntry
 import uuid
 import os
+import signal
 import time
 import shutil
 import subprocess
@@ -13,6 +14,7 @@ import threading
 
 _threads = {}
 _output = {}
+_process = {}
 _start_time = {}
 
 class Server(Config):
@@ -208,6 +210,7 @@ class Server(Config):
     def _run(self):
         process = subprocess.Popen(['openvpn', self.ovpn_conf_path],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        _process[self.id] = process
 
         while True:
             line = process.stdout.readline()
@@ -218,6 +221,7 @@ class Server(Config):
 
         del _output[self.id]
         del _threads[self.id]
+        del _process[self.id]
         del _start_time[self.id]
 
     def start(self):
@@ -231,6 +235,11 @@ class Server(Config):
         _start_time[self.id] = int(time.time()) - 1
         _output[self.id] = ''
         Event(type=SERVERS_UPDATED)
+
+    def restart(self):
+        if not self.status:
+            raise ValueError('Server is not running')
+        _process[self.id].send_signal(signal.SIGHUP)
 
     def get_output(self):
         if self.id not in _output:
