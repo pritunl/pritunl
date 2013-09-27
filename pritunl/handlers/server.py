@@ -247,4 +247,6 @@ def server_org_delete(server_id, org_id):
 
 @app_server.app.route('/server/<server_id>/<operation>', methods=['PUT'])
 def server_operation_put(server_id, operation):
+    server = Server(server_id)
+    server._generate_ovpn_conf()
     return utils.jsonify({})
