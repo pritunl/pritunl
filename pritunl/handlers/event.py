@@ -13,6 +13,7 @@ def event_get(last_event=None):
             {
                 'id': uuid.uuid4().hex,
                 'type': 'time',
+                'resource_id': None,
                 'time': int(time.time() * 1000),
             },
         ]
@@ -26,7 +27,8 @@ def event_get(last_event=None):
             events.append({
                 'id': event.id,
                 'type': event.type,
-                'time': event.time
+                'resource_id': event.resource_id,
+                'time': event.time,
             })
 
         if len(events):
