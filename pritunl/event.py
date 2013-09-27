@@ -29,7 +29,6 @@ class Event(DatabaseObject):
     @staticmethod
     def clean_database():
         cur_time = int(time.time() * 1000)
-
         events_query = Event.db.get(Event.column_family)
         for event_id in events_query:
             event = events_query[event_id]
