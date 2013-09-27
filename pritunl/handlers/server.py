@@ -251,3 +251,11 @@ def server_operation_put(server_id, operation):
     if operation == START:
         server.start()
     return utils.jsonify({})
+
+@app_server.app.route('/server/<server_id>/output', methods=['GET'])
+def server_output_get(server_id):
+    server = Server(server_id)
+    return utils.jsonify({
+        'id': server.id,
+        'output': server.get_output(),
+    })
