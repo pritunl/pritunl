@@ -181,7 +181,7 @@ def server_put_post(server_id=None):
             }, 400)
 
     if not server_id:
-        ovpn_server = Server(
+        server = Server(
             name=name,
             network=network,
             interface=interface,
@@ -191,22 +191,22 @@ def server_put_post(server_id=None):
             public_address=public_address,
         )
     else:
-        ovpn_server = Server(id=server_id)
-        ovpn_server.name = name
-        ovpn_server.network = network
-        ovpn_server.interface = interface
-        ovpn_server.port = port
-        ovpn_server.protocol = protocol
-        ovpn_server.local_network = local_network
-        ovpn_server.public_address = public_address
-        ovpn_server.commit()
+        server = Server(id=server_id)
+        server.name = name
+        server.network = network
+        server.interface = interface
+        server.port = port
+        server.protocol = protocol
+        server.local_network = local_network
+        server.public_address = public_address
+        server.commit()
 
     return utils.jsonify({})
 
 @app_server.app.route('/server/<server_id>', methods=['DELETE'])
 def server_delete(server_id):
-    ovpn_server = Server(server_id)
-    ovpn_server.remove()
+    server = Server(server_id)
+    server.remove()
     return utils.jsonify({})
 
 @app_server.app.route('/server/<server_id>/organization', methods=['GET'])
@@ -214,15 +214,15 @@ def server_org_get(server_id):
     orgs = []
     orgs_dict = {}
     orgs_sort = []
-    ovpn_server = Server(server_id)
+    server = Server(server_id)
 
-    for org_id in ovpn_server.organizations:
+    for org_id in server.organizations:
         org = Organization(org_id)
         name_id = '%s_%s' % (org.name, org.id)
         orgs_sort.append(name_id)
         orgs_dict[name_id] = {
             'id': org.id,
-            'server': ovpn_server.id,
+            'server': server.id,
             'name': org.name,
         }
 
@@ -234,15 +234,15 @@ def server_org_get(server_id):
 @app_server.app.route('/server/<server_id>/organization/<org_id>',
     methods=['PUT'])
 def server_org_put(server_id, org_id):
-    ovpn_server = Server(server_id)
-    ovpn_server.add_org(org_id)
+    server = Server(server_id)
+    server.add_org(org_id)
     return utils.jsonify({})
 
 @app_server.app.route('/server/<server_id>/organization/<org_id>',
     methods=['DELETE'])
 def server_org_delete(server_id, org_id):
-    ovpn_server = Server(server_id)
-    ovpn_server.remove_org(org_id)
+    server = Server(server_id)
+    server.remove_org(org_id)
     return utils.jsonify({})
 
 @app_server.app.route('/server/<server_id>/<operation>', methods=['PUT'])
