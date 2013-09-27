@@ -82,11 +82,6 @@ define([
 
       // Check for unsorted elements with insertion sort
       while (true) {
-        currentModels = [];
-        for (i = 0; i < this.views.length; i++) {
-          currentModels.push(this.views[i].model.get('id'));
-        }
-
         for (i = 0; i < currentModels.length; i++) {
           newIndex = newModels.indexOf(currentModels[i]);
 
@@ -104,7 +99,7 @@ define([
             }
 
             this.views.splice(newIndex, 0, this.views.splice(i, 1)[0]);
-
+            currentModels.splice(newIndex, 0, currentModels.splice(i, 1)[0]);
             break;
           }
         }
