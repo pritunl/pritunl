@@ -195,6 +195,11 @@ class Server(Config):
         _threads[self.id] = thread
         Event(type=SERVERS_UPDATED)
 
+    def get_output(self):
+        if self.id not in _output:
+            return ''
+        return _output[self.id]
+
     @staticmethod
     def count_servers():
         return len(os.listdir(os.path.join(app_server.data_path, SERVERS_DIR)))
