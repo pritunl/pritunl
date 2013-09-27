@@ -6,6 +6,7 @@ from event import Event
 from log_entry import LogEntry
 import uuid
 import os
+import time
 import shutil
 import subprocess
 import threading
@@ -24,6 +25,8 @@ class Server(Config):
             port=None, protocol=None, local_network=None, public_address=None,
             organizations=[]):
         Config.__init__(self)
+        self._cur_event = None
+        self._last_event = 0
 
         if id is None:
             self._initialized = False
@@ -55,6 +58,24 @@ class Server(Config):
         self._generate_dh_param()
         self.commit()
         LogEntry(message='Created new server.')
+
+    def _event_delay(self, type, resource_id=None):
+        # Min event every 1s max event every 0.2s
+        event_time = time.time()
+        if event_time - self._last_event >= 1:
+            self._last_event = event_time
+            self._cur_event = uuid.uuid4()
+            Event(type=type, resource_id=resource_id)
+            return
+
+        def _target():
+            event_id = uuid.uuid4()
+            self._cur_event = event_id
+            time.sleep(0.2)
+            if self._cur_event == event_id:
+                self._last_event = time.time()
+                Event(type=type, resource_id=resource_id)
+        threading.Thread(target=_target).start()
 
     def remove(self):
         self._remove_primary_user()
@@ -181,6 +202,7 @@ class Server(Config):
             if line == '' and process.poll() is not None:
                 break
             _output[self.id] += line
+            self._event_delay(type=SERVER_OUTPUT_UPDATED, resource_id=self.id)
 
         del _output[self.id]
         del _threads[self.id]
