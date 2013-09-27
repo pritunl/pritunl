@@ -171,7 +171,7 @@ ifconfig-pool-persist %s
 push "%s"
 keepalive 10 120
 persist-tun
-verb 0
+verb 3
 mute 5
 """
 
