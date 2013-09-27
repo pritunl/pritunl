@@ -42,7 +42,7 @@ def server_get():
             'id': server.id,
             'name': server.name,
             'status': 'online' if server.status else 'offline',
-            'uptime': 88573 if server.status else None,
+            'uptime': server.uptime,
             'users_online': 16 if server.status else 0,
             'users_total': 32,
             'network': server.network,

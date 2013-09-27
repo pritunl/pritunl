@@ -13,6 +13,7 @@ import threading
 
 _threads = {}
 _output = {}
+_start_time = {}
 
 class Server(Config):
     str_options = ['name', 'network', 'interface', 'protocol',
@@ -58,6 +59,11 @@ class Server(Config):
             if self.id in _threads:
                 return _threads[self.id].is_alive()
             return False
+        elif name == 'uptime':
+            if self.status and self.id in _start_time:
+                return int(time.time()) - _start_time[self.id]
+            return None
+
         return Config.__getattr__(self, name)
 
     def _initialize(self):
@@ -202,7 +208,6 @@ class Server(Config):
     def _run(self):
         process = subprocess.Popen(['openvpn', self.ovpn_conf_path],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        _output[self.id] = ''
 
         while True:
             line = process.stdout.readline()
@@ -213,6 +218,7 @@ class Server(Config):
 
         del _output[self.id]
         del _threads[self.id]
+        del _start_time[self.id]
 
     def start(self):
         if not self.organizations:
@@ -222,6 +228,8 @@ class Server(Config):
         thread = threading.Thread(target=self._run)
         thread.start()
         _threads[self.id] = thread
+        _start_time[self.id] = int(time.time()) - 1
+        _output[self.id] = ''
         Event(type=SERVERS_UPDATED)
 
     def get_output(self):
