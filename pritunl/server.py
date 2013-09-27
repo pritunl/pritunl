@@ -82,7 +82,7 @@ class Server(Config):
         self.organizations.append(org.id)
         self.commit()
         Event(type=SERVERS_UPDATED)
-        Event(type=SERVER_ORGS_UPDATED)
+        Event(type=SERVER_ORGS_UPDATED, resource_id=self.id)
 
     def _remove_primary_user(self):
         if not self.primary_organization or not self.primary_user:
@@ -106,7 +106,7 @@ class Server(Config):
         self.organizations.remove(org_id)
         self.commit()
         Event(type=SERVERS_UPDATED)
-        Event(type=SERVER_ORGS_UPDATED)
+        Event(type=SERVER_ORGS_UPDATED, resource_id=self.id)
 
     def _generate_dh_param(self):
         args = [
