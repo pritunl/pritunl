@@ -7,6 +7,10 @@ PUBLIC_IP_SERVER = 'http://ip.pritunl.com/'
 SAVED = 'saved'
 UNSAVED = 'unsaved'
 
+START = 'start'
+STOP = 'stop'
+RESTART = 'restart'
+
 NAME_SAFE_CHARS = ['-', '_', '@', '.']
 
 DEFAULT_DB_PATH = '/var/lib/pritunl/pritunl.db'
