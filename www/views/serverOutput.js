@@ -12,6 +12,8 @@ define([
       this.model = new ServerOutputModel({
         id: options.server
       });
+      this.listenTo(window.events, 'server_output_updated:' + options.server,
+        this.update);
     },
     update: function() {
       this.model.fetch({

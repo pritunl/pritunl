@@ -59,6 +59,7 @@ USERS_UPDATED = 'users_updated'
 LOG_UPDATED = 'log_updated'
 SERVERS_UPDATED = 'servers_updated'
 SERVER_ORGS_UPDATED = 'server_organizations_updated'
+SERVER_OUTPUT_UPDATED = 'server_output_updated'
 
 CERT_CONF = """[ default ]
 ca = %s
