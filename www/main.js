@@ -60,6 +60,14 @@
 
 require.config({
   paths: {
+    ace: 'vendor/ace/ace',
+    aceModeSh: 'vendor/ace/mode-sh',
+    aceModeText: 'vendor/ace/mode-text',
+    aceThemeAmbiance: 'vendor/ace/theme-ambiance',
+    aceThemeChrome: 'vendor/ace/theme-chrome',
+    aceThemeGithub: 'vendor/ace/theme-github',
+    aceThemeMonokai: 'vendor/ace/theme-monokai',
+    aceThemeTwilight: 'vendor/ace/theme-twilight',
     backbone: 'vendor/backbone/backbone',
     bootstrap: 'vendor/bootstrap/bootstrap',
     d3: 'vendor/d3/d3',
@@ -71,6 +79,14 @@ require.config({
     initialize: 'init/testing'
   },
   shim: {
+    ace: {exports: 'ace'},
+    aceModeSh: ['ace'],
+    aceModeText: ['ace'],
+    aceThemeAmbiance: ['ace'],
+    aceThemeChrome: ['ace'],
+    aceThemeGithub: ['ace'],
+    aceThemeMonokai: ['ace'],
+    aceThemeTwilight: ['ace'],
     backbone: ['less'],
     bootstrap: ['jquery'],
     d3: {exports: 'd3'},
