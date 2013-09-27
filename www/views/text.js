@@ -19,7 +19,7 @@ define([
       this.editor = Ace.edit(this.el);
       this.editor.setTheme('ace/theme/chrome');
       this.editor.setReadOnly(true);
-      this.editor.setPrintMarginColumn(100);
+      this.editor.setShowPrintMargin(false);
       this.editor.setHighlightActiveLine(false);
       this.editor.setHighlightGutterLine(false);
       this.editor.getSession().setMode('ace/mode/text');
