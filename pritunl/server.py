@@ -8,6 +8,10 @@ import uuid
 import os
 import shutil
 import subprocess
+import threading
+
+_threads = {}
+_output = {}
 
 class Server(Config):
     str_options = ['name', 'network', 'interface', 'protocol',
@@ -166,6 +170,30 @@ class Server(Config):
                 self.ifc_pool_path,
                 push,
             ))
+
+    def _run(self):
+        process = subprocess.Popen(['openvpn', self.ovpn_conf_path],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        _output[self.id] = ''
+
+        while True:
+            line = process.stdout.readline()
+            if line == '' and process.poll() is not None:
+                break
+            _output[self.id] += line
+
+        del _output[self.id]
+        del _threads[self.id]
+
+    def start(self):
+        if not self.organizations:
+            raise ValueError('Server cannot be started without ' + \
+                'any organizations')
+        self._generate_ovpn_conf()
+        thread = threading.Thread(target=self._run)
+        thread.start()
+        _threads[self.id] = thread
+        Event(type=SERVERS_UPDATED)
 
     @staticmethod
     def count_servers():
