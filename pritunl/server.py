@@ -241,6 +241,11 @@ class Server(Config):
             raise ValueError('Server is not running')
         _process[self.id].send_signal(signal.SIGHUP)
 
+    def reload(self):
+        if not self.status:
+            raise ValueError('Server is not running')
+        _process[self.id].send_signal(signal.SIGUSR1)
+
     def get_output(self):
         if self.id not in _output:
             return ''
