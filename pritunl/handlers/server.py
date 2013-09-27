@@ -250,6 +250,8 @@ def server_operation_put(server_id, operation):
     server = Server(server_id)
     if operation == START:
         server.start()
+    if operation == STOP:
+        server.stop()
     elif operation == RESTART:
         server.restart()
     return utils.jsonify({})
