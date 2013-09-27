@@ -42,7 +42,13 @@ define([
 
             // Ignore callback for time events
             if (model.get('type') !== 'time') {
-              this.trigger(model.get('type'));
+              if (model.get('resource_id')) {
+                this.trigger(model.get('type') + ':' +
+                  model.get('resource_id'));
+              }
+              else {
+                this.trigger(model.get('type'));
+              }
             }
           }
 
