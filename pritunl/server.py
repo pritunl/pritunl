@@ -195,6 +195,11 @@ class Server(Config):
         _threads[self.id] = thread
         Event(type=SERVERS_UPDATED)
 
+    def get_status(self):
+        if self.id in _threads:
+            return _threads[self.id].is_alive()
+        return False
+
     def get_output(self):
         if self.id not in _output:
             return ''
