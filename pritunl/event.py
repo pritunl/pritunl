@@ -10,17 +10,18 @@ logger = logging.getLogger(APP_NAME)
 class Event(DatabaseObject):
     db = app_server.mem_db
     column_family = 'events'
-    str_columns = ['type']
+    str_columns = ['type', 'resource_id']
     int_columns = ['time']
-    cached_columns = ['type', 'time']
-    required_columns = ['type', 'time']
+    cached_columns = ['type', 'resource_id', 'time']
+    required_columns = ['type', 'resource_id', 'time']
 
-    def __init__(self, id=None, type=None):
+    def __init__(self, id=None, type=None, resource_id=None):
         DatabaseObject.__init__(self)
 
         if id is None:
             self.id = uuid.uuid4().hex
             self.type = type
+            self.resource_id = resource_id
             self.time = int(time.time() * 1000)
         else:
             self.id = id
