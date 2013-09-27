@@ -53,6 +53,13 @@ class Server(Config):
         if not self._initialized:
             self._initialize()
 
+    def __getattr__(self, name):
+        if name == 'status':
+            if self.id in _threads:
+                return _threads[self.id].is_alive()
+            return False
+        return Config.__getattr__(self, name)
+
     def _initialize(self):
         os.makedirs(os.path.join(self.path, TEMP_DIR))
         self._generate_dh_param()
@@ -216,11 +223,6 @@ class Server(Config):
         thread.start()
         _threads[self.id] = thread
         Event(type=SERVERS_UPDATED)
-
-    def get_status(self):
-        if self.id in _threads:
-            return _threads[self.id].is_alive()
-        return False
 
     def get_output(self):
         if self.id not in _output:
