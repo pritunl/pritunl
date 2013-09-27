@@ -161,6 +161,25 @@ def server_put_post(server_id=None):
         if subnet < 8 or subnet > 30:
             return _local_network_not_valid()
 
+    for server in Server.get_servers():
+        if server.id == server_id:
+            continue
+        elif server.network == network:
+            return utils.jsonify({
+                'error': NETWORK_IN_USE,
+                'error_msg': NETWORK_IN_USE_MSG,
+            }, 400)
+        elif server.interface == interface:
+            return utils.jsonify({
+                'error': INTERFACE_IN_USE,
+                'error_msg': INTERFACE_IN_USE_MSG,
+            }, 400)
+        elif server.port == port and server.protocol == protocol:
+            return utils.jsonify({
+                'error': PORT_PROTOCOL_IN_USE,
+                'error_msg': PORT_PROTOCOL_IN_USE_MSG,
+            }, 400)
+
     if not server_id:
         ovpn_server = Server(
             name=name,

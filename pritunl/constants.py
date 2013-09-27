@@ -150,6 +150,15 @@ INTERFACE_NOT_VALID_MSG = 'Interface is not valid, must be ' + \
 PROTOCOL_NOT_VALID = 'protocol_not_valid'
 PROTOCOL_NOT_VALID_MSG = 'Protocol is not valid, must be "udp" or "tcp".'
 
+NETWORK_IN_USE = 'network_in_use'
+NETWORK_IN_USE_MSG = 'Network address is already in use.'
+
+INTERFACE_IN_USE = 'interface_in_use'
+INTERFACE_IN_USE_MSG = 'Tunnel interface is already in use.'
+
+PORT_PROTOCOL_IN_USE = 'port_protocol_in_use'
+PORT_PROTOCOL_IN_USE_MSG = 'Port and protocol is already in use.'
+
 OVPN_SERVER_CONF = """port %s
 proto %s
 dev %s
