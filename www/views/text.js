@@ -17,10 +17,12 @@ define([
     className: 'text-viewer',
     render: function() {
       this.editor = Ace.edit(this.el);
-      this.editor.setTheme('ace/theme/ambiance');
+      this.editor.setTheme('ace/theme/chrome');
       this.editor.setReadOnly(true);
       this.editor.setPrintMarginColumn(100);
-      this.editor.getSession().setMode('ace/mode/sh');
+      this.editor.setHighlightActiveLine(false);
+      this.editor.setHighlightGutterLine(false);
+      this.editor.getSession().setMode('ace/mode/text');
       this.update();
       return this;
     },
