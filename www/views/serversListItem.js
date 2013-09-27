@@ -36,7 +36,8 @@ define([
       this.$('.server-title a').tooltip({
         container: this.el
       });
-      this.$el.append(this.serverOutputView.render().el);
+      this.$('.server-output-viewer').append(
+        this.serverOutputView.render().el);
       this.$el.append(this.serverOrgsListView.render().el);
       return this;
     },

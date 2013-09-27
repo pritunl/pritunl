@@ -305,7 +305,6 @@ ul {
 .users-list .user .name-container .user-name,
 .server-orgs-list .org .org-name {
   font-size: 18px;
-  line-height: 22px;
   cursor: pointer;
 }
 
@@ -392,10 +391,42 @@ ul {
   background-color: #fff;
 }
 
-.dashboard .status-container table,
-.servers-list .server .server-info table {
+.dashboard .status-container table {
   width: 100%;
   table-layout: fixed;
+}
+
+.servers-list .server .server-info .status-items {
+  margin-right: 11px;
+  width: 300px;
+  float: left;
+}
+
+.servers-list .server .server-info .server-output {
+  border-bottom: 1px solid #cfcfcf;
+}
+
+.servers-list .server .server-info .server-output .server-output-title {
+  color: #4d535c;
+  font-size: 16px;
+  margin: 0;
+  padding-top: 2px;
+  height: 23px;
+}
+
+.servers-list .server .server-info .server-output .server-output-icon {
+  color: #1f83bb;
+  top: 2px;
+  font-size: 18px;
+}
+
+.servers-list .server .server-info .server-output .server-output-viewer {
+  padding: 5px 10px 10px 0;
+}
+
+.servers-list .server .server-info .server-output .text-viewer {
+  height: 262px;
+  border: 1px solid #cfcfcf;
 }
 
 .dashboard .status-container .status-item,
@@ -406,11 +437,17 @@ ul {
 }
 
 .servers-list .server .server-info .status-item {
+  height: 43px;
+  padding: 10px 15px;
+  text-align: left;
   border-bottom: 1px solid #cfcfcf;
 }
 
-.dashboard .status-container .status-item.last,
 .servers-list .server .server-info .status-item.last {
+ border-bottom: 0 none;
+}
+
+.dashboard .status-container .status-item.last {
   border-right: 0 none;
 }
 
@@ -418,11 +455,12 @@ ul {
 .servers-list .server .server-info .status-item .status-title {
   color: #4d535c;
   font-size: 26px;
-  margin: 0 0 10px 0;
+  margin: 0 0 3px 0;
 }
 
 .servers-list .server .server-info .status-item .status-title {
-  font-size: 23px;
+  font-size: 20px;
+  margin: 0;
 }
 
 .dashboard .status-container .status-item .status-icon,
@@ -433,9 +471,8 @@ ul {
 }
 
 .servers-list .server .server-info .status-item .status-icon {
-  font-size: 20px;
+  font-size: 18px;
   margin-right: 0;
-  top: 0;
 }
 
 .dashboard .status-container .servers-status .status-icon {
@@ -443,10 +480,16 @@ ul {
 }
 
 .servers-list .server .server-info .server-port .status-icon {
-  top: -2px;
+  top: 0;
 }
 
-.dashboard .status-container .status-text, {
+.servers-list .server .server-info .status-item .status-text {
+  float: right;
+  position: relative;
+  top: -20px;
+}
+
+.dashboard .status-container .status-text {
   font-size: 16px;
   font-weight: normal;
 }
@@ -542,11 +585,4 @@ ul {
 .add-user-modal .modal .modal-dialog,
 .attach-org-modal .modal .modal-dialog {
   .top-calc(~'50% - 240px');
-}
-
-
-
-
-.text-viewer {
-  height: 250px;
 }
