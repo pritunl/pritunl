@@ -4,10 +4,11 @@ define([
   'backbone',
   'views/alert',
   'views/serverOrgsList',
+  'views/serverOutput',
   'views/modalServerSettings',
   'views/modalDeleteServer',
   'text!templates/serversListItem.html'
-], function($, _, Backbone, AlertView, ServerOrgsListView,
+], function($, _, Backbone, AlertView, ServerOrgsListView, ServerOutputView,
     ModalServerSettingsView, ModalDeleteServerView, serversListItemTemplate) {
   'use strict';
   var ServersListItemView = Backbone.View.extend({
@@ -23,6 +24,10 @@ define([
         server: this.model.get('id')
       });
       this.addView(this.serverOrgsListView);
+      this.serverOutputView = new ServerOutputView({
+        server: this.model.get('id')
+      });
+      this.addView(this.serverOutputView);
       setTimeout((this._updateTime).bind(this), 1000);
     },
     render: function() {
@@ -31,6 +36,7 @@ define([
       this.$('.server-title a').tooltip({
         container: this.el
       });
+      this.$el.append(this.serverOutputView.render().el);
       this.$el.append(this.serverOrgsListView.render().el);
       return this;
     },
