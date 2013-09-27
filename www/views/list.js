@@ -27,6 +27,7 @@ define([
     },
     _onReset: function(collection) {
       var i;
+      var newIndex;
       var modelView;
       var attr;
       var modified;
@@ -76,6 +77,40 @@ define([
 
         if (!modelView.hidden || this.showHidden) {
           modelView.$el.slideDown(250);
+        }
+      }
+
+      // Check for unsorted elements with insertion sort
+      while (true) {
+        currentModels = [];
+        for (i = 0; i < this.views.length; i++) {
+          currentModels.push(this.views[i].model.get('id'));
+        }
+
+        for (i = 0; i < currentModels.length; i++) {
+          newIndex = newModels.indexOf(currentModels[i]);
+
+          if (newIndex < i) {
+            if (newIndex === 0) {
+              if (this.listContainer) {
+                this.$(this.listContainer).prepend(this.views[i].el);
+              }
+              else {
+                this.$el.prepend(this.views[i].el);
+              }
+            }
+            else {
+              this.views[newIndex - 1].$el.after(this.views[i].el);
+            }
+
+            this.views.splice(newIndex, 0, this.views.splice(i, 1)[0]);
+
+            break;
+          }
+        }
+
+        if (i === currentModels.length) {
+          break;
         }
       }
 
