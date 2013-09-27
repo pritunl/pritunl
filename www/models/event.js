@@ -7,8 +7,9 @@ define([
   var EventModel = Backbone.Model.extend({
     defaults: {
       'id': null,
-      'time': null,
-      'type': null
+      'type': null,
+      'resource_id': null,
+      'time': null
     }
   });
 
