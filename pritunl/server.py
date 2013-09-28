@@ -305,6 +305,7 @@ class Server(Config):
         _start_time[self.id] = int(time.time()) - 1
         _output[self.id] = ''
         Event(type=SERVERS_UPDATED)
+        LogEntry(message='Started server "%s".' % self.name)
 
     def stop(self):
         if not self.status:
@@ -313,6 +314,7 @@ class Server(Config):
             'server_id': self.id,
         })
         _process[self.id].send_signal(signal.SIGINT)
+        LogEntry(message='Stopped server "%s".' % self.name)
 
     def restart(self):
         if not self.status:
@@ -321,6 +323,7 @@ class Server(Config):
             'server_id': self.id,
         })
         _process[self.id].send_signal(signal.SIGHUP)
+        LogEntry(message='Restarted server "%s".' % self.name)
 
     def reload(self):
         if not self.status:
@@ -329,6 +332,7 @@ class Server(Config):
             'server_id': self.id,
         })
         _process[self.id].send_signal(signal.SIGUSR1)
+        LogEntry(message='Reloaded server "%s".' % self.name)
 
     def get_output(self):
         if self.id not in _output:
