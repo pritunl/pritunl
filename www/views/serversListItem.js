@@ -62,6 +62,8 @@ define([
         this.model.get('interface'));
       this.$('.server-port .status-text').text(
         this.model.get('port') + '/' + this.model.get('protocol'));
+      this.$('.server-public-address .status-text').text(
+        this.model.get('public_address'));
 
       if (!this.model.get('org_count')) {
         this.$('.server-stop').hide();
