@@ -32,9 +32,9 @@ class AppServer(Config):
             self.public_ip = json.load(response)['ip']
         except:
             logger.debug('Failed to get public ip address...')
-            self.public_ip = None
 
     def _setup_public_ip(self):
+        self.public_ip = None
         threading.Thread(target=self._get_public_ip).start()
 
     def _setup_app(self):
