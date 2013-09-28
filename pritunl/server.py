@@ -53,6 +53,8 @@ class Server(Config):
         self.dh_param_path = os.path.join(self.path, DH_PARAM_NAME)
         self.ifc_pool_path = os.path.join(self.path, IFC_POOL_NAME)
         self.ca_cert_path = os.path.join(self.path, TEMP_DIR, OVPN_CA_NAME)
+        self.ovpn_status_path = os.path.join(self.path, TEMP_DIR,
+            OVPN_STATUS_NAME)
         self.set_path(os.path.join(self.path, 'server.conf'))
 
         if not self._initialized:
@@ -247,6 +249,7 @@ class Server(Config):
                 '%s %s' % self._parse_network(self.network),
                 self.ifc_pool_path,
                 push,
+                self.ovpn_status_path,
             ))
 
     def _run(self):

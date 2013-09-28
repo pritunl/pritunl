@@ -35,6 +35,7 @@ INDEX_NAME = 'index'
 SERIAL_NAME = 'serial'
 CRL_NAME = 'ca.crl'
 OVPN_CONF_NAME = 'openvpn.conf'
+OVPN_STATUS_NAME = 'status'
 OVPN_CA_NAME = 'ca.crt'
 IFC_POOL_NAME = 'ifc_pool'
 DH_PARAM_NAME = 'dh_param.pem'
@@ -176,6 +177,8 @@ ifconfig-pool-persist %s
 push "%s"
 keepalive 10 120
 persist-tun
+status %s 1
+status-version 2
 verb 3
 mute 5
 """
