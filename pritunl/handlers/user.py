@@ -8,9 +8,14 @@ import flask
 @app_server.app.route('/user/<org_id>', methods=['GET'])
 def user_get(org_id):
     org = Organization(org_id)
+    org_servers = org.get_servers()
     users = []
     users_dict = {}
     users_sort = []
+    org_clients = []
+
+    for server in org_servers:
+        org_clients += server.get_clients()
 
     for user in org.get_users():
         name_id = '%s_%s' % (user.name, user.id)
@@ -20,7 +25,7 @@ def user_get(org_id):
             'organization': org.id,
             'name': user.name,
             'type': user.type,
-            'status': False,
+            'status': True if user.id in org_clients else False,
         }
 
     for name_id in sorted(users_sort):
