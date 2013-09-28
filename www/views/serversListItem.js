@@ -149,7 +149,7 @@ define([
       }
 
       $(evt.target).attr('disabled', 'disabled');
-      this.model.save({
+      this.model.clone().save({
         operation: operation
       }, {
         success: function() {
