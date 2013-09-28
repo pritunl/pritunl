@@ -252,10 +252,28 @@ class Server(Config):
                 self.ovpn_status_path,
             ))
 
+    def _status_thread(self):
+        i = 0
+        cur_client_count = 0
+        while not self._interrupt:
+            # Check interrupt every 0.1s check client count every 1s
+            if i == 9:
+                i = 0
+                client_count = len(self.get_clients())
+                if client_count != cur_client_count:
+                    cur_client_count = client_count
+                    Event(type=USERS_UPDATED)
+                    Event(type=SERVERS_UPDATED)
+            else:
+                i += 1
+            time.sleep(0.1)
+
     def _run(self):
         logging.debug('Starting ovpn process. %r' % {
             'server_id': self.id,
         })
+        self._interrupt = False
+        threading.Thread(target=self._status_thread).start()
         process = subprocess.Popen(['openvpn', self.ovpn_conf_path],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         _process[self.id] = process
@@ -267,6 +285,7 @@ class Server(Config):
             _output[self.id] += line
             self._event_delay(type=SERVER_OUTPUT_UPDATED, resource_id=self.id)
 
+        self._interrupt = True
         del _threads[self.id]
         del _process[self.id]
         del _start_time[self.id]
@@ -333,6 +352,7 @@ class Server(Config):
                 bytes_sent = line_split[5]
                 connected_since = line_split[7]
                 clients.append(client_id)
+
         return clients
 
     @staticmethod
