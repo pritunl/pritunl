@@ -9,8 +9,13 @@ def status_get():
     orgs = Organization.get_orgs()
     orgs_count = len(orgs)
 
+    servers_count = 0
+    servers_online_count = 0
     clients_count = 0
     for server in Server.get_servers():
+        servers_count += 1
+        if server.status:
+            servers_online_count += 1
         clients_count += len(server.get_clients())
 
     users_count = 0
@@ -22,7 +27,7 @@ def status_get():
         'orgs_total': orgs_count,
         'users_online': clients_count,
         'users_total': users_count,
-        'servers_online': 4,
-        'servers_total': 4,
+        'servers_online': servers_online_count,
+        'servers_total': servers_count,
         'public_ip': app_server.public_ip,
     })

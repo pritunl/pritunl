@@ -14,6 +14,7 @@ define([
       this.model = new StatusModel();
       this.listenTo(window.events, 'users_updated', this.update);
       this.listenTo(window.events, 'organizations_updated', this.update);
+      this.listenTo(window.events, 'servers_updated', this.update);
     },
     update: function() {
       this.model.fetch({
