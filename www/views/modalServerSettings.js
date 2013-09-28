@@ -69,6 +69,7 @@ define([
       var protocol = this.$('.protocol select').val();
       var publicAddress = this.$('.public-address input').val();
       var localNetwork = null;
+      var debug = this.getDebugSelect();
 
       if (!name) {
         this.setAlert('danger', 'Name can not be empty.', '.name');
@@ -91,7 +92,7 @@ define([
           '.public-address');
         return;
       }
-      if (this.getSelect()) {
+      if (this.getLocalNetworkSelect()) {
         localNetwork = this.$('.local-network input').val();
         if (!localNetwork) {
           this.setAlert('danger', 'Local network can not be empty.',
@@ -108,7 +109,8 @@ define([
         'port': port,
         'protocol': protocol,
         'local_network': localNetwork,
-        'public_address': publicAddress
+        'public_address': publicAddress,
+        'debug': debug
       }, {
         success: function() {
           this.close(true);

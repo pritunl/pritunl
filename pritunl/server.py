@@ -23,12 +23,13 @@ class Server(Config):
     str_options = ['name', 'network', 'interface', 'protocol',
         'local_network', 'public_address', 'primary_organization',
         'primary_user', 'organizations']
+    bool_options = ['debug']
     int_options = ['port']
     list_options = ['organizations']
 
     def __init__(self, id=None, name=None, network=None, interface=None,
             port=None, protocol=None, local_network=None, public_address=None,
-            organizations=[]):
+            debug=None, organizations=[]):
         Config.__init__(self)
         self._cur_event = None
         self._last_event = 0
@@ -43,6 +44,7 @@ class Server(Config):
             self.protocol = protocol
             self.local_network = local_network
             self.public_address = public_address
+            self.debug = debug
             self.organizations = organizations
         else:
             self._initialized = True

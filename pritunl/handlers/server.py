@@ -51,6 +51,7 @@ def server_get():
             'protocol': server.protocol,
             'local_network': server.local_network,
             'public_address': server.public_address,
+            'debug': server.debug,
             'org_count': len(server.organizations),
         }
 
@@ -71,6 +72,7 @@ def server_put_post(server_id=None):
     if local_network:
         local_network = local_network.encode()
     public_address = flask.request.json['public_address'].encode()
+    debug = flask.request.json['debug']
 
     # Network
     network_split = network.split('/')
@@ -189,6 +191,7 @@ def server_put_post(server_id=None):
             protocol=protocol,
             local_network=local_network,
             public_address=public_address,
+            debug=debug,
         )
     else:
         server = Server(id=server_id)
@@ -199,6 +202,7 @@ def server_put_post(server_id=None):
         server.protocol = protocol
         server.local_network = local_network
         server.public_address = public_address
+        server.debug = debug
         server.commit()
 
     return utils.jsonify({})
