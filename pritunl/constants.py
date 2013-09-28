@@ -179,8 +179,8 @@ keepalive 10 120
 persist-tun
 status %s 1
 status-version 2
-verb 3
-mute 5
+verb %s
+mute %s
 """
 
 OVPN_CLIENT_CONF = """client
@@ -193,6 +193,6 @@ persist-tun
 ca %s
 cert %s
 key %s
-verb 3
-mute 5
+verb 2
+mute 3
 """

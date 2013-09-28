@@ -252,6 +252,8 @@ class Server(Config):
                 self.ifc_pool_path,
                 push,
                 self.ovpn_status_path,
+                4 if self.debug else 1,
+                8 if self.debug else 3,
             ))
 
     def _status_thread(self):
