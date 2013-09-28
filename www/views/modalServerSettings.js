@@ -15,16 +15,17 @@ define([
     errorMsg: 'Failed to saving server, server error occurred.',
     events: function() {
       return _.extend(ModalServerSettingsView.__super__.events, {
-        'click .selector': 'onSelect'
+        'click .local-network-toggle .selector': 'onLocalNetworkSelect',
+        'click .debug-toggle .selector': 'onDebugSelect'
       });
     },
     body: function() {
       return this.template(this.model.toJSON());
     },
-    getSelect: function() {
+    getLocalNetworkSelect: function() {
       return this.$('.local-network-toggle .selector').hasClass('selected');
     },
-    setSelect: function(state) {
+    setLocalNetworkSelect: function(state) {
       if (state) {
         this.$('.local-network-toggle .selector').addClass('selected');
         this.$('.local-network-toggle .selector-inner').show();
@@ -37,8 +38,25 @@ define([
       }
       this.trigger('select', this);
     },
-    onSelect: function() {
-      this.setSelect(!this.getSelect());
+    onLocalNetworkSelect: function() {
+      this.setLocalNetworkSelect(!this.getLocalNetworkSelect());
+    },
+    getDebugSelect: function() {
+      return this.$('.debug-toggle .selector').hasClass('selected');
+    },
+    setDebugSelect: function(state) {
+      if (state) {
+        this.$('.debug-toggle .selector').addClass('selected');
+        this.$('.debug-toggle .selector-inner').show();
+      }
+      else {
+        this.$('.debug-toggle .selector').removeClass('selected');
+        this.$('.debug-toggle .selector-inner').hide();
+      }
+      this.trigger('select', this);
+    },
+    onDebugSelect: function() {
+      this.setDebugSelect(!this.getDebugSelect());
     },
     onOk: function() {
       if (this.locked) {

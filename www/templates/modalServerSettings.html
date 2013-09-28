@@ -31,13 +31,20 @@
     </div>
     <div class="local-network-toggle form-group">
       <label>Local Network Only</label>
-      <div class="selector <%= (local_network) ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Only route traffic destined to the specified local network">
+      <div class="selector <%= local_network ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Only route traffic destined to the specified local network">
         <span class="selector-inner glyphicon glyphicon-ok"></span>
       </div>
     </div>
     <div class="local-network form-group" <%= (local_network) ? '' : 'style="display: none;"' %>>
       <label>Local Network</label>
       <input type="text" class="form-control" placeholder="Enter network address" data-toggle="tooltip" title="Local network address routed to VPN clients" value="<%= local_network %>">
+    </div>
+
+    <div class="debug-toggle form-group">
+      <label>Enable Debugging Output</label>
+      <div class="selector <%= false ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Show server debugging information in output">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
     </div>
   </div>
 </form>
