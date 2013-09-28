@@ -17,7 +17,8 @@ define([
     events: {
       'click .server-title a': 'onSettings',
       'click .server-del': 'onDelete',
-      'click .server-restart, .server-start, .server-stop': 'onOperation'
+      'click .server-restart, .server-start, .server-stop': 'onOperation',
+      'click .server-output-clear': 'onClearOutput'
     },
     initialize: function() {
       this.serverOrgsListView = new ServerOrgsListView({
@@ -33,7 +34,7 @@ define([
     render: function() {
       this.$el.html(this.template(this.model.toJSON()));
       this.update();
-      this.$('.server-title a').tooltip({
+      this.$('.server-title a, .server-output-clear').tooltip({
         container: this.el
       });
       this.$('.server-output-viewer').append(
@@ -165,6 +166,19 @@ define([
             type: 'danger',
             message: 'Failed to ' + operation +
               ' the server, server error occurred.',
+            dismissable: true
+          });
+          $('.alerts-container').append(alertView.render().el);
+          this.addView(alertView);
+        }.bind(this)
+      });
+    },
+    onClearOutput: function() {
+      this.serverOutputView.model.destroy({
+        error: function() {
+          var alertView = new AlertView({
+            type: 'danger',
+            message: 'Failed to clear server output, server error occurred.',
             dismissable: true
           });
           $('.alerts-container').append(alertView.render().el);

@@ -263,3 +263,9 @@ def server_output_get(server_id):
         'id': server.id,
         'output': server.get_output(),
     })
+
+@app_server.app.route('/server/<server_id>/output', methods=['DELETE'])
+def server_output_delete(server_id):
+    server = Server(server_id)
+    server.clear_output()
+    return utils.jsonify({})

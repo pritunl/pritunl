@@ -335,6 +335,12 @@ class Server(Config):
             return ''
         return _output[self.id]
 
+    def clear_output(self):
+        if self.id not in _output:
+            return ''
+        _output[self.id] = ''
+        self._event_delay(type=SERVER_OUTPUT_UPDATED, resource_id=self.id)
+
     def get_clients(self):
         if not self.status:
             return []
