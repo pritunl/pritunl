@@ -81,6 +81,7 @@ class User(Config):
                 stderr=subprocess.PIPE)
         finally:
             openssl_lock.release()
+        os.chmod(self.key_path, 0600)
 
     def _cert_create(self):
         openssl_lock.acquire()
