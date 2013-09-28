@@ -17,7 +17,8 @@ define([
       'port': null,
       'protocol': null,
       'local_network': null,
-      'public_address': null
+      'public_address': null,
+      'debug': null
     },
     url: function() {
       var url = '/server';
