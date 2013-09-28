@@ -11,7 +11,9 @@ import time
 import shutil
 import subprocess
 import threading
+import logging
 
+logger = logging.getLogger(APP_NAME)
 _threads = {}
 _output = {}
 _process = {}
@@ -69,6 +71,9 @@ class Server(Config):
         return Config.__getattr__(self, name)
 
     def _initialize(self):
+        logging.info('Initialize new server. %r' % {
+            'server_id': self.id,
+        })
         os.makedirs(os.path.join(self.path, TEMP_DIR))
         self._generate_dh_param()
         self.commit()
@@ -93,6 +98,9 @@ class Server(Config):
         threading.Thread(target=_target).start()
 
     def remove(self):
+        logging.info('Removing server. %r' % {
+            'server_id': self.id,
+        })
         self._remove_primary_user()
         shutil.rmtree(self.path)
         LogEntry(message='Deleted server.')
@@ -104,7 +112,11 @@ class Server(Config):
 
     def _create_primary_user(self):
         if not self.organizations:
-            return
+            raise ValueError('Primary user cannot be created without ' + \
+                'any organizations')
+        logging.debug('Creating primary user. %r' % {
+            'server_id': self.id,
+        })
         org = Organization(self.organizations[0])
         self.primary_organization = org.id
         user = org.new_user(CERT_SERVER, SERVER_USER_PREFIX + self.id)
@@ -116,6 +128,10 @@ class Server(Config):
             raise
 
     def add_org(self, org_id):
+        logging.debug('Adding organization to server. %r' % {
+            'server_id': self.id,
+            'org_id': org_id,
+        })
         org = Organization(org_id)
         if org.id in self.organizations:
             return
@@ -125,22 +141,37 @@ class Server(Config):
         Event(type=SERVER_ORGS_UPDATED, resource_id=self.id)
 
     def _remove_primary_user(self):
-        if not self.primary_organization or not self.primary_user:
-            return
-        org = Organization(self.primary_organization)
-        if not org:
-            return
-        user = org.get_user(self.primary_user)
-        if not user:
-            return
+        logging.debug('Removing primary user. %r' % {
+            'server_id': self.id,
+            'org_id': org_id,
+        })
+
+        primary_organization = self.primary_organization
+        primary_user = self.primary_user
         self.primary_organization = None
         self.primary_user = None
+
+        if not primary_organization or not primary_user:
+            return
+
+        org = Organization(primary_organization)
+        if not org:
+            return
+
+        user = org.get_user(primary_user)
+        if not user:
+            return
+
         if user:
             user.remove()
 
     def remove_org(self, org_id):
         if org_id not in self.organizations:
             return
+        logging.debug('Removing organization from server. %r' % {
+            'server_id': self.id,
+            'org_id': org_id,
+        })
         if self.primary_organization == org_id:
             self._remove_primary_user()
         self.organizations.remove(org_id)
@@ -149,6 +180,9 @@ class Server(Config):
         Event(type=SERVER_ORGS_UPDATED, resource_id=self.id)
 
     def _generate_dh_param(self):
+        logging.debug('Generating server dh params. %r' % {
+            'server_id': self.id,
+        })
         args = [
             'openssl', 'dhparam',
             '-out', self.dh_param_path, str(DH_PARAM_BITS)
@@ -166,6 +200,9 @@ class Server(Config):
         return (address, subnet)
 
     def generate_ca_cert(self):
+        logging.debug('Generating server ca cert. %r' % {
+            'server_id': self.id,
+        })
         with open(self.ca_cert_path, 'w') as server_ca_cert:
             for org_id in self.organizations:
                 ca_path = Organization(org_id).ca_cert.cert_path
@@ -174,7 +211,12 @@ class Server(Config):
 
     def _generate_ovpn_conf(self):
         if not self.organizations:
-            return
+            raise ValueError('Ovpn conf cannot be generated without ' + \
+                'any organizations')
+
+        logging.debug('Generating server ovpn conf. %r' % {
+            'server_id': self.id,
+        })
 
         if not self.primary_organization or not self.primary_user:
             self._create_primary_user()
@@ -208,6 +250,9 @@ class Server(Config):
             ))
 
     def _run(self):
+        logging.debug('Starting ovpn process. %r' % {
+            'server_id': self.id,
+        })
         process = subprocess.Popen(['openvpn', self.ovpn_conf_path],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         _process[self.id] = process
@@ -228,6 +273,9 @@ class Server(Config):
         if not self.organizations:
             raise ValueError('Server cannot be started without ' + \
                 'any organizations')
+        logging.debug('Starting server. %r' % {
+            'server_id': self.id,
+        })
         self._generate_ovpn_conf()
         thread = threading.Thread(target=self._run)
         thread.start()
@@ -239,16 +287,25 @@ class Server(Config):
     def stop(self):
         if not self.status:
             raise ValueError('Server is not running')
+        logging.debug('Stopping server. %r' % {
+            'server_id': self.id,
+        })
         _process[self.id].send_signal(signal.SIGINT)
 
     def restart(self):
         if not self.status:
             raise ValueError('Server is not running')
+        logging.debug('Restarting server. %r' % {
+            'server_id': self.id,
+        })
         _process[self.id].send_signal(signal.SIGHUP)
 
     def reload(self):
         if not self.status:
             raise ValueError('Server is not running')
+        logging.debug('Reloading server. %r' % {
+            'server_id': self.id,
+        })
         _process[self.id].send_signal(signal.SIGUSR1)
 
     def get_output(self):
@@ -258,10 +315,12 @@ class Server(Config):
 
     @staticmethod
     def count_servers():
+        logging.debug('Counting servers.')
         return len(os.listdir(os.path.join(app_server.data_path, SERVERS_DIR)))
 
     @staticmethod
     def get_servers():
+        logging.debug('Getting servers.')
         path = os.path.join(app_server.data_path, SERVERS_DIR)
         servers = []
         if os.path.isdir(path):
