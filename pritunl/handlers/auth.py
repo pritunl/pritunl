@@ -3,8 +3,8 @@ import pritunl.utils as utils
 from pritunl import app_server
 import flask
 
-@app_server.app.route('/login', methods=['POST'])
-def login_post():
+@app_server.app.route('/auth', methods=['POST'])
+def auth_post():
     username = flask.request.json['username']
     password = flask.request.json['password']
 
@@ -15,4 +15,9 @@ def login_post():
         }, 401)
 
     flask.session['id'] = app_server.session_id
+    return utils.jsonify({})
+
+@app_server.app.route('/auth', methods=['DELETE'])
+def auth_delete():
+    flask.session.pop('id', None)
     return utils.jsonify({})
