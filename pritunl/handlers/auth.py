@@ -17,6 +17,15 @@ def auth_post():
     flask.session['id'] = app_server.session_id
     return utils.jsonify({})
 
+@app_server.app.route('/auth', methods=['GET'])
+def auth_get():
+    authenticated = False
+    if 'id' in flask.session and flask.session['id'] == self.session_id:
+        authenticated = True
+    return utils.jsonify({
+        'authenticated': authenticated
+    })
+
 @app_server.app.route('/auth', methods=['DELETE'])
 def auth_delete():
     flask.session.pop('id', None)
