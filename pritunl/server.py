@@ -55,6 +55,7 @@ class Server(Config):
         self.dh_param_path = os.path.join(self.path, DH_PARAM_NAME)
         self.ifc_pool_path = os.path.join(self.path, IFC_POOL_NAME)
         self.ca_cert_path = os.path.join(self.path, TEMP_DIR, OVPN_CA_NAME)
+        self.crl_path = os.path.join(self.path, TEMP_DIR, CRL_NAME)
         self.ovpn_status_path = os.path.join(self.path, TEMP_DIR,
             OVPN_STATUS_NAME)
         self.set_path(os.path.join(self.path, 'server.conf'))
@@ -213,6 +214,16 @@ class Server(Config):
                 with open(ca_path, 'r') as org_ca_cert:
                     server_ca_cert.write(org_ca_cert.read())
 
+    def generate_crl(self):
+        logger.debug('Generating server crl. %r' % {
+            'server_id': self.id,
+        })
+        with open(self.crl_path, 'w') as server_crl:
+            for org_id in self.organizations:
+                crl_path = Organization(org_id).crl_path
+                with open(crl_path, 'r') as org_crl:
+                    server_crl.write(org_crl.read())
+
     def _generate_ovpn_conf(self):
         if not self.organizations:
             raise ValueError('Ovpn conf cannot be generated without ' + \
@@ -232,6 +243,7 @@ class Server(Config):
         primary_user = primary_org.get_user(self.primary_user)
 
         self.generate_ca_cert()
+        self.generate_crl()
 
         if self.local_network:
             push = 'route %s %s' % self._parse_network(
@@ -247,6 +259,7 @@ class Server(Config):
                 self.ca_cert_path,
                 primary_user.cert_path,
                 primary_user.key_path,
+                self.crl_path,
                 self.dh_param_path,
                 '%s %s' % self._parse_network(self.network),
                 self.ifc_pool_path,

@@ -178,6 +178,7 @@ dev %s
 ca %s
 cert %s
 key %s
+crl-verify %s
 dh %s
 server %s
 ifconfig-pool-persist %s
