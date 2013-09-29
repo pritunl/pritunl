@@ -4,6 +4,7 @@ import pritunl.utils as utils
 from pritunl import app_server
 
 @app_server.app.route('/log', methods=['GET'])
+@app_server.auth
 def log_get():
     log_entries = []
 

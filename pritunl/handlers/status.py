@@ -5,6 +5,7 @@ from pritunl.server import Server
 from pritunl import app_server
 
 @app_server.app.route('/status', methods=['GET'])
+@app_server.auth
 def status_get():
     orgs = Organization.get_orgs()
     orgs_count = len(orgs)

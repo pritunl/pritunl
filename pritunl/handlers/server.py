@@ -30,6 +30,7 @@ def _local_network_not_valid():
     }, 400)
 
 @app_server.app.route('/server', methods=['GET'])
+@app_server.auth
 def server_get():
     servers = []
     servers_dict = {}
@@ -62,6 +63,7 @@ def server_get():
 
 @app_server.app.route('/server', methods=['POST'])
 @app_server.app.route('/server/<server_id>', methods=['PUT'])
+@app_server.auth
 def server_put_post(server_id=None):
     name = flask.request.json['name'].encode()
     network = flask.request.json['network'].encode()
@@ -208,12 +210,14 @@ def server_put_post(server_id=None):
     return utils.jsonify({})
 
 @app_server.app.route('/server/<server_id>', methods=['DELETE'])
+@app_server.auth
 def server_delete(server_id):
     server = Server(server_id)
     server.remove()
     return utils.jsonify({})
 
 @app_server.app.route('/server/<server_id>/organization', methods=['GET'])
+@app_server.auth
 def server_org_get(server_id):
     orgs = []
     orgs_dict = {}
@@ -237,6 +241,7 @@ def server_org_get(server_id):
 
 @app_server.app.route('/server/<server_id>/organization/<org_id>',
     methods=['PUT'])
+@app_server.auth
 def server_org_put(server_id, org_id):
     server = Server(server_id)
     server.add_org(org_id)
@@ -244,12 +249,14 @@ def server_org_put(server_id, org_id):
 
 @app_server.app.route('/server/<server_id>/organization/<org_id>',
     methods=['DELETE'])
+@app_server.auth
 def server_org_delete(server_id, org_id):
     server = Server(server_id)
     server.remove_org(org_id)
     return utils.jsonify({})
 
 @app_server.app.route('/server/<server_id>/<operation>', methods=['PUT'])
+@app_server.auth
 def server_operation_put(server_id, operation):
     server = Server(server_id)
     if operation == START:
@@ -261,6 +268,7 @@ def server_operation_put(server_id, operation):
     return utils.jsonify({})
 
 @app_server.app.route('/server/<server_id>/output', methods=['GET'])
+@app_server.auth
 def server_output_get(server_id):
     server = Server(server_id)
     return utils.jsonify({
@@ -269,6 +277,7 @@ def server_output_get(server_id):
     })
 
 @app_server.app.route('/server/<server_id>/output', methods=['DELETE'])
+@app_server.auth
 def server_output_delete(server_id):
     server = Server(server_id)
     server.clear_output()

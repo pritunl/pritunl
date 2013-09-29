@@ -6,6 +6,7 @@ import os
 import flask
 
 @app_server.app.route('/user/<org_id>', methods=['GET'])
+@app_server.auth
 def user_get(org_id):
     org = Organization(org_id)
     org_servers = org.get_servers()
@@ -34,6 +35,7 @@ def user_get(org_id):
     return utils.jsonify(users)
 
 @app_server.app.route('/user/<org_id>', methods=['POST'])
+@app_server.auth
 def user_post(org_id):
     org = Organization(org_id)
     name = flask.request.json['name'].encode()
@@ -49,6 +51,7 @@ def user_post(org_id):
     })
 
 @app_server.app.route('/user/<org_id>/<user_id>', methods=['PUT'])
+@app_server.auth
 def user_put(org_id, user_id):
     org = Organization(org_id)
     user = org.get_user(user_id)
@@ -58,6 +61,7 @@ def user_put(org_id, user_id):
     return utils.jsonify({})
 
 @app_server.app.route('/user/<org_id>/<user_id>', methods=['DELETE'])
+@app_server.auth
 def user_delete(org_id, user_id):
     org = Organization(org_id)
     user = org.get_user(user_id)
@@ -65,6 +69,7 @@ def user_delete(org_id, user_id):
     return utils.jsonify({})
 
 @app_server.app.route('/user/<org_id>/<user_id>.tar', methods=['GET'])
+@app_server.auth
 def user_key_archive_get(org_id, user_id):
     org = Organization(org_id)
     user = org.get_user(user_id)

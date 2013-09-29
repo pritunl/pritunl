@@ -5,6 +5,7 @@ from pritunl import app_server
 import flask
 
 @app_server.app.route('/organization', methods=['GET'])
+@app_server.auth
 def org_get():
     orgs = []
     orgs_dict = {}
@@ -24,6 +25,7 @@ def org_get():
     return utils.jsonify(orgs)
 
 @app_server.app.route('/organization', methods=['POST'])
+@app_server.auth
 def org_post():
     name = flask.request.json['name'].encode()
     name = ''.join(x for x in name if x.isalnum() or x in NAME_SAFE_CHARS)
@@ -35,6 +37,7 @@ def org_post():
     })
 
 @app_server.app.route('/organization/<org_id>', methods=['PUT'])
+@app_server.auth
 def org_put(org_id):
     org = Organization(org_id)
     name = flask.request.json['name'].encode()
@@ -43,6 +46,7 @@ def org_put(org_id):
     return utils.jsonify({})
 
 @app_server.app.route('/organization/<org_id>', methods=['DELETE'])
+@app_server.auth
 def org_delete(org_id):
     org = Organization(org_id)
     org.remove()

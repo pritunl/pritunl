@@ -7,6 +7,7 @@ import uuid
 
 @app_server.app.route('/event', methods=['GET'])
 @app_server.app.route('/event/<int:last_event>', methods=['GET'])
+@app_server.auth
 def event_get(last_event=None):
     if not last_event:
         events = [
