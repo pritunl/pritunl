@@ -1,3 +1,9 @@
+*, *:before, *:after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+ }
+
 body {
   background-color: #efefef;
   overflow-y: scroll;
@@ -110,7 +116,8 @@ ul {
 
 .navbar .navbar-brand,
 .navbar .navbar-brand:hover,
-.navbar .navbar-brand:active {
+.navbar .navbar-brand:active,
+.login .login-header {
   font-family: 'Fredoka One', cursive;
   padding: 13px 15px 0 15px;
   font-size: 28px;
@@ -143,6 +150,84 @@ ul {
   .box-shadow(0 1px 2px rgba(0, 0, 0, 0.05),
     0 1px 3px rgba(0, 0, 0, 0.1) inset);
   .background-clip-padding;
+}
+
+
+
+header.blur {
+  .blur(5px);
+}
+
+#app.blur {
+  .blur(10px);
+}
+
+
+
+.login,
+.login-backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2050;
+}
+
+.login-backdrop {
+  background-color: #000;
+  opacity: 0.75;
+  z-index: 2000;
+}
+
+.login .login-box {
+  position: fixed;
+  width: 374px;
+  margin: 0 auto;
+  opacity: 1;
+  .top-calc(~'50% - 160px');
+  .left-calc(~'50% - 187px');
+}
+
+.login .login-form {
+  background-color: #f9f9f9;
+  padding: 40px 35px;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+.login .login-header {
+  margin: 0;
+  padding: 10px 15px 10px 15px;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+
+.login .form-control {
+  position: relative;
+  font-size: 16px;
+  height: auto;
+  padding: 10px;
+}
+
+.login .form-control:focus {
+  z-index: 2;
+}
+
+.login .form-control[type="text"] {
+  margin-bottom: -1px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.login .form-control[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.login .login-button {
+  margin-top: 13px;
 }
 
 

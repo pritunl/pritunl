@@ -45,6 +45,14 @@
   transition: @property @duration;
 }
 
+.blur(@value) {
+  -webkit-filter: blur(@value);
+  -moz-filter: blur(@value);
+  -ms-filter: blur(@value);
+  -o-filter: blur(@value);
+  filter: blur(@value);
+}
+
 .background-clip-padding {
   -webkit-background-clip: padding;
   -moz-background-clip: padding;
