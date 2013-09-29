@@ -18,6 +18,12 @@ define([
       return url;
     },
     callFetch: function(uuid) {
+      if (!window.authenticated) {
+        setTimeout(function() {
+          this.callFetch(uuid);
+        }.bind(this), 250);
+        return;
+      }
       this.fetch({
         reset: true,
         success: function(collection) {
