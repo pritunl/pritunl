@@ -1,7 +1,6 @@
 from pritunl.constants import *
 import pritunl.utils as utils
 from pritunl import app_server
-import uuid
 import time
 import flask
 
@@ -18,13 +17,13 @@ def auth_post():
             'error_msg': AUTH_NOT_VALID_MSG,
         }, 401)
 
-    flask.session['id'] = uuid.uuid4().hex
+    flask.session['timestamp'] = time.time()
     return utils.jsonify({})
 
 @app_server.app.route('/auth', methods=['GET'])
 def auth_get():
     authenticated = False
-    if 'id' in flask.session:
+    if 'timestamp' in flask.session:
         authenticated = True
     return utils.jsonify({
         'authenticated': authenticated
@@ -32,5 +31,5 @@ def auth_get():
 
 @app_server.app.route('/auth', methods=['DELETE'])
 def auth_delete():
-    flask.session.pop('id', None)
+    flask.session.pop('timestamp', None)
     return utils.jsonify({})

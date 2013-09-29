@@ -152,6 +152,16 @@ define([
   var initialize = function() {
     var _loadUrl = Backbone.History.prototype.loadUrl;
 
+    Backbone.ajax = function(options) {
+      options.complete = function(response) {
+        if (response.status === 401) {
+          window.authenticated = false;
+          Backbone.history.navigate('logout/expired', {trigger: true});
+        }
+      };
+      return Backbone.$.ajax.call(Backbone.$, options);
+    };
+
     Backbone.History.prototype.loadUrl = function() {
       var matched = _loadUrl.apply(this, arguments);
 

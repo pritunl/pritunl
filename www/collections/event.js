@@ -65,11 +65,6 @@ define([
           this.callFetch(uuid);
         }.bind(this),
         error: function(collection, response) {
-          if (response.status === 401) {
-            this.lastEventTime = null;
-            window.authenticated = false;
-            Backbone.history.navigate('logout/expired', {trigger: true});
-          }
           if (uuid !== this.currentLoop) {
             return;
           }

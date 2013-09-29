@@ -48,7 +48,10 @@ class AppServer(Config):
 
     def auth(self, call):
         def _wrapped(*args, **kwargs):
-            if 'id' not in flask.session:
+            if 'timestamp' not in flask.session:
+                raise flask.abort(401)
+            elif time.time() - flask.session['timestamp'] > SESSION_TIMEOUT:
+                flask.session.pop('timestamp', None)
                 raise flask.abort(401)
             return call(*args, **kwargs)
         _wrapped.__name__ = '%s_auth' % call.__name__
