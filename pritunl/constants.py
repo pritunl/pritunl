@@ -137,6 +137,9 @@ subjectKeyIdentifier = hash
 authorityKeyIdentifier = keyid:always
 """
 
+AUTH_NOT_VALID = 'auth_not_valid'
+AUTH_NOT_VALID_MSG = 'Username or password is not valid.'
+
 NETWORK_NOT_VALID = 'network_not_valid'
 NETWORK_NOT_VALID_MSG = 'Network address is not valid, format must be ' + \
     '"10.[0-255].[0-255].0/[8-24]" such as "10.12.32.0/24".'
