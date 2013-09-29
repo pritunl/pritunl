@@ -75,7 +75,7 @@ class Server(Config):
         return Config.__getattr__(self, name)
 
     def _initialize(self):
-        logging.info('Initialize new server. %r' % {
+        logger.info('Initialize new server. %r' % {
             'server_id': self.id,
         })
         os.makedirs(os.path.join(self.path, TEMP_DIR))
@@ -102,7 +102,7 @@ class Server(Config):
         threading.Thread(target=_target).start()
 
     def remove(self):
-        logging.info('Removing server. %r' % {
+        logger.info('Removing server. %r' % {
             'server_id': self.id,
         })
         self._remove_primary_user()
@@ -118,7 +118,7 @@ class Server(Config):
         if not self.organizations:
             raise ValueError('Primary user cannot be created without ' + \
                 'any organizations')
-        logging.debug('Creating primary user. %r' % {
+        logger.debug('Creating primary user. %r' % {
             'server_id': self.id,
         })
         org = Organization(self.organizations[0])
@@ -132,7 +132,7 @@ class Server(Config):
             raise
 
     def add_org(self, org_id):
-        logging.debug('Adding organization to server. %r' % {
+        logger.debug('Adding organization to server. %r' % {
             'server_id': self.id,
             'org_id': org_id,
         })
@@ -145,7 +145,7 @@ class Server(Config):
         Event(type=SERVER_ORGS_UPDATED, resource_id=self.id)
 
     def _remove_primary_user(self):
-        logging.debug('Removing primary user. %r' % {
+        logger.debug('Removing primary user. %r' % {
             'server_id': self.id,
             'org_id': org_id,
         })
@@ -172,7 +172,7 @@ class Server(Config):
     def remove_org(self, org_id):
         if org_id not in self.organizations:
             return
-        logging.debug('Removing organization from server. %r' % {
+        logger.debug('Removing organization from server. %r' % {
             'server_id': self.id,
             'org_id': org_id,
         })
@@ -184,7 +184,7 @@ class Server(Config):
         Event(type=SERVER_ORGS_UPDATED, resource_id=self.id)
 
     def _generate_dh_param(self):
-        logging.debug('Generating server dh params. %r' % {
+        logger.debug('Generating server dh params. %r' % {
             'server_id': self.id,
         })
         args = [
@@ -204,7 +204,7 @@ class Server(Config):
         return (address, subnet)
 
     def generate_ca_cert(self):
-        logging.debug('Generating server ca cert. %r' % {
+        logger.debug('Generating server ca cert. %r' % {
             'server_id': self.id,
         })
         with open(self.ca_cert_path, 'w') as server_ca_cert:
@@ -218,7 +218,7 @@ class Server(Config):
             raise ValueError('Ovpn conf cannot be generated without ' + \
                 'any organizations')
 
-        logging.debug('Generating server ovpn conf. %r' % {
+        logger.debug('Generating server ovpn conf. %r' % {
             'server_id': self.id,
         })
 
@@ -273,7 +273,7 @@ class Server(Config):
             time.sleep(0.1)
 
     def _run(self):
-        logging.debug('Starting ovpn process. %r' % {
+        logger.debug('Starting ovpn process. %r' % {
             'server_id': self.id,
         })
         self._interrupt = False
@@ -299,7 +299,7 @@ class Server(Config):
         if not self.organizations:
             raise ValueError('Server cannot be started without ' + \
                 'any organizations')
-        logging.debug('Starting server. %r' % {
+        logger.debug('Starting server. %r' % {
             'server_id': self.id,
         })
         self._generate_ovpn_conf()
@@ -314,7 +314,7 @@ class Server(Config):
     def stop(self):
         if not self.status:
             raise ValueError('Server is not running')
-        logging.debug('Stopping server. %r' % {
+        logger.debug('Stopping server. %r' % {
             'server_id': self.id,
         })
         _process[self.id].send_signal(signal.SIGINT)
@@ -323,7 +323,7 @@ class Server(Config):
     def restart(self):
         if not self.status:
             raise ValueError('Server is not running')
-        logging.debug('Restarting server. %r' % {
+        logger.debug('Restarting server. %r' % {
             'server_id': self.id,
         })
         _process[self.id].send_signal(signal.SIGHUP)
@@ -332,7 +332,7 @@ class Server(Config):
     def reload(self):
         if not self.status:
             raise ValueError('Server is not running')
-        logging.debug('Reloading server. %r' % {
+        logger.debug('Reloading server. %r' % {
             'server_id': self.id,
         })
         _process[self.id].send_signal(signal.SIGUSR1)
@@ -371,12 +371,12 @@ class Server(Config):
 
     @staticmethod
     def count_servers():
-        logging.debug('Counting servers.')
+        logger.debug('Counting servers.')
         return len(os.listdir(os.path.join(app_server.data_path, SERVERS_DIR)))
 
     @staticmethod
     def get_servers():
-        logging.debug('Getting servers.')
+        logger.debug('Getting servers.')
         path = os.path.join(app_server.data_path, SERVERS_DIR)
         servers = []
         if os.path.isdir(path):
