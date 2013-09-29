@@ -17,6 +17,7 @@ define([
       'keypress input': 'onKeypress'
     },
     initialize: function(options) {
+      this.alert = options.alert;
       this.callback = options.callback;
       this.backdrop = new LoginBackdropView();
       this.addView(this.backdrop);
@@ -30,6 +31,9 @@ define([
       $('header').addClass('blur');
       $('#app').addClass('blur');
       $('body').append(this.backdrop.render().el);
+      if (this.alert) {
+        this.setAlert(this.alert);
+      }
       return this;
     },
     onKeypress: function(evt) {
@@ -69,7 +73,10 @@ define([
       }, {
         success: function() {
           this.callback();
-          this.destroy();
+          this.backdrop.$el.fadeOut(400);
+          this.$el.fadeOut(400, function() {
+            this.destroy();
+          }.bind(this));
         }.bind(this),
         error: function(model, response) {
           this.$('.login-button').removeAttr('disabled');

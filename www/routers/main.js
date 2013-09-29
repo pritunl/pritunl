@@ -18,7 +18,8 @@ define([
       'dashboard': 'dashboard',
       'users': 'users',
       'servers': 'servers',
-      'logout': 'logout'
+      'logout': 'logout',
+      'logout/:alert': 'logout'
     },
     initialize: function(data) {
       this.data = data;
@@ -55,6 +56,7 @@ define([
           return;
         }
         this.loginView = new LoginView({
+          alert: this.logoutAlert,
           callback: function() {
             this.loginView = null;
             window.authenticated = true;
@@ -62,6 +64,7 @@ define([
             this.loginCallback = null;
           }.bind(this)
         });
+        this.logoutAlert = null;
         $('body').append(this.loginView.render().el);
       }.bind(this));
       return false;
@@ -114,7 +117,10 @@ define([
         }.bind(this));
       }.bind(this));
     },
-    logout: function() {
+    logout: function(alert) {
+      if (alert === 'expired') {
+        this.logoutAlert = 'Session has expired, please log in again';
+      }
       var authModel = new AuthModel({
         id: true
       });

@@ -68,7 +68,7 @@ define([
           if (response.status === 401) {
             this.lastEventTime = null;
             window.authenticated = false;
-            Backbone.history.navigate('logout', {trigger: true});
+            Backbone.history.navigate('logout/expired', {trigger: true});
           }
           if (uuid !== this.currentLoop) {
             return;
