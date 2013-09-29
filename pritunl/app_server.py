@@ -9,6 +9,7 @@ import json
 import urllib2
 import threading
 import flask
+import hashlib
 
 logger = None
 
@@ -16,7 +17,7 @@ class AppServer(Config):
     bool_options = ['debug', 'log_debug']
     int_options = ['port']
     path_options = ['log_path', 'db_path', 'www_path', 'data_path']
-    str_options = ['bind_addr']
+    str_options = ['bind_addr', 'password']
 
     def __init__(self):
         Config.__init__(self)
@@ -104,6 +105,27 @@ class AppServer(Config):
         def index_get():
             with open(os.path.join(www_path, 'index.html'), 'r') as fd:
                 return fd.read()
+
+    def _hash_password(self, password):
+        password_hash = hashlib.sha512()
+        password_hash.update(password)
+        password_hash.update(PASSWORD_SALT)
+        return password_hash.hexdigest()
+
+    def check_password(self, password_attempt):
+        if not self.password:
+            if password_attempt == DEFAULT_PASSWORD:
+                return True
+            return False
+
+        password_attempt = self._hash_password(password_attempt)
+        if password_attempt == self.password:
+            return True
+        return False
+
+    def set_password(self, password):
+        self.password = self._hash_password(password)
+        self.commit()
 
     def _setup_all(self):
         self._setup_app()

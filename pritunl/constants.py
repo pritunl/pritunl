@@ -13,6 +13,8 @@ RESTART = 'restart'
 
 NAME_SAFE_CHARS = ['-', '_', '@', '.']
 
+DEFAULT_PASSWORD = 'admin'
+PASSWORD_SALT = '2511cebca93d028393735637bbc8029207731fcf'
 DEFAULT_DB_PATH = '/var/lib/pritunl/pritunl.db'
 DEFAULT_WWW_PATH = '/usr/share/pritunl/www'
 DEFAULT_DATA_PATH = '/var/lib/pritunl'

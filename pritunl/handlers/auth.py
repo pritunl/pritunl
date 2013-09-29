@@ -7,11 +7,11 @@ import flask
 
 @app_server.app.route('/auth', methods=['POST'])
 def auth_post():
-    username = flask.request.json['username']
-    password = flask.request.json['password']
+    username = flask.request.json['username'][:512]
+    password = flask.request.json['password'][:512]
     time.sleep(0.5)
 
-    if username != 'admin' or password != 'admin':
+    if username != 'admin' or not app_server.check_password(password):
         time.sleep(0.5)
         return utils.jsonify({
             'error': AUTH_NOT_VALID,
