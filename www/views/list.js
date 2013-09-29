@@ -80,6 +80,12 @@ define([
         }
       }
 
+      // Update current models
+      currentModels = [];
+      for (i = 0; i < this.views.length; i++) {
+        currentModels.push(this.views[i].model.get('id'));
+      }
+
       // Check for unsorted elements with insertion sort
       while (true) {
         for (i = 0; i < currentModels.length; i++) {
