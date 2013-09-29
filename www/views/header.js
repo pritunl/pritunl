@@ -2,20 +2,14 @@ define([
   'jquery',
   'underscore',
   'backbone',
-  'views/search',
   'text!templates/header.html'
-], function($, _, Backbone, SearchView, headerTemplate) {
+], function($, _, Backbone, headerTemplate) {
   'use strict';
   var HeaderView = Backbone.View.extend({
     tagName: 'header',
     template: _.template(headerTemplate),
-    initialize: function() {
-      this.searchView = new SearchView();
-      this.addView(this.searchView);
-    },
     render: function() {
       this.$el.html(this.template());
-      this.$('.navbar-collapse').append(this.searchView.render().el);
       return this;
     }
   });

@@ -4,11 +4,12 @@ define([
   'backbone',
   'googleAnalytics',
   'models/auth',
+  'views/alert',
   'views/login',
   'views/dashboard',
   'views/users',
   'views/servers'
-], function($, _, Backbone, GoogleAnalytics, AuthModel, LoginView,
+], function($, _, Backbone, GoogleAnalytics, AuthModel, AlertView, LoginView,
     DashboardView, UsersView, ServersView) {
   'use strict';
   var Router = Backbone.Router.extend({
@@ -16,7 +17,8 @@ define([
       '': 'dashboard',
       'dashboard': 'dashboard',
       'users': 'users',
-      'servers': 'servers'
+      'servers': 'servers',
+      'logout': 'logout'
     },
     initialize: function(data) {
       this.data = data;
@@ -105,6 +107,28 @@ define([
           $(this.data.element).fadeIn(400);
         }.bind(this));
       }.bind(this));
+    },
+    logout: function() {
+      var authModel = new AuthModel({
+        id: true
+      });
+      authModel.destroy({
+        success: function() {
+          window.authenticated = false;
+          this.navigate('', {trigger: true});
+        }.bind(this),
+        error: function() {
+          var alertView = new AlertView({
+            type: 'danger',
+            message: 'Failed to logout, server error occurred.',
+            dismissable: true
+          });
+          $('.alerts-container').append(alertView.render().el);
+          if (this.data.view) {
+            this.data.view.addView(alertView);
+          }
+        }.bind(this)
+      });
     }
   });
 
