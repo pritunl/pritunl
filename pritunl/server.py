@@ -256,6 +256,87 @@ class Server(Config):
                 8 if self.debug else 3,
             ))
 
+    def _enable_ip_forwarding(self):
+        try:
+            subprocess.check_call(['sysctl', '-w', 'net.ipv4.ip_forward=1'],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        except subprocess.CalledProcessError:
+            logger.exception('Failed to enable IP forwarding. %r' % {
+                'server_id': self.id,
+            })
+            raise
+
+    def _generate_iptable_rule(self):
+        match_network = '0.0.0.0'
+        if self.local_network:
+            match_network = self._parse_network(self.local_network)[0]
+
+        try:
+            routes = subprocess.check_output(['route', '-n'],
+                stderr=subprocess.PIPE)
+        except subprocess.CalledProcessError:
+            logger.exception('Failed to get IP routes. %r' % {
+                'server_id': self.id,
+            })
+            raise
+
+        primary_interface = None
+        for line in routes.splitlines():
+            line_split = line.split()
+            if line_split[0] == match_network:
+                primary_interface = line_split[7]
+                break
+
+        if not primary_interface and match_network != '0.0.0.0':
+            logger.debug('Failed to find interface for local network ' + \
+                    'route, using default route instead. %r' % {
+                'server_id': self.id,
+            })
+            match_network = '0.0.0.0'
+            for line in routes.splitlines():
+                line_split = line.split()
+                if line_split[0] == match_network:
+                    primary_interface = line_split[7]
+                    break
+
+        return ['-s', self.network, '-o', primary_interface,
+            '-j', 'MASQUERADE']
+
+    def _exists_iptables_rule(self):
+        try:
+            subprocess.check_call(['iptables', '-t', 'nat', '-C',
+                'POSTROUTING'] + self._generate_iptable_rule(),
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        except subprocess.CalledProcessError:
+            return False
+        return True
+
+    def _set_iptables_rule(self):
+        if not self._exists_iptables_rule():
+            try:
+                subprocess.check_call(['iptables', '-t', 'nat', '-A',
+                    'POSTROUTING'] + self._generate_iptable_rule(),
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            except subprocess.CalledProcessError:
+                logger.exception('Failed to apply iptables ' + \
+                    'routing rules. %r' % {
+                        'server_id': self.id,
+                    })
+                raise
+
+    def _clear_iptable_rules(self):
+        if self._exists_iptables_rule():
+            try:
+                subprocess.check_call(['iptables', '-t', 'nat', '-D',
+                    'POSTROUTING'] + self._generate_iptable_rule(),
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            except subprocess.CalledProcessError:
+                logger.exception('Failed to clear iptables ' + \
+                    'routing rules. %r' % {
+                        'server_id': self.id,
+                    })
+                raise
+
     def _status_thread(self):
         i = 0
         cur_client_count = 0
@@ -303,6 +384,8 @@ class Server(Config):
             'server_id': self.id,
         })
         self._generate_ovpn_conf()
+        self._enable_ip_forwarding()
+        self._set_iptables_rule()
         thread = threading.Thread(target=self._run)
         thread.start()
         _threads[self.id] = thread
@@ -318,6 +401,7 @@ class Server(Config):
             'server_id': self.id,
         })
         _process[self.id].send_signal(signal.SIGINT)
+        self._clear_iptable_rules()
         LogEntry(message='Stopped server "%s".' % self.name)
 
     def restart(self):
