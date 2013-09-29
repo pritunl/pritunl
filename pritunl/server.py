@@ -352,6 +352,7 @@ class Server(Config):
             else:
                 i += 1
             time.sleep(0.1)
+        self._clear_iptable_rules()
 
     def _run(self):
         logger.debug('Starting ovpn process. %r' % {
@@ -401,7 +402,6 @@ class Server(Config):
             'server_id': self.id,
         })
         _process[self.id].send_signal(signal.SIGINT)
-        self._clear_iptable_rules()
         LogEntry(message='Stopped server "%s".' % self.name)
 
     def restart(self):
