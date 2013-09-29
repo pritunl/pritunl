@@ -68,8 +68,8 @@ define([
 
       var authModel = new AuthModel();
       authModel.save({
-        username: this.$('.form-control[type="text"]').val(),
-        password: this.$('.form-control[type="password"]').val()
+        username: this.$('.username').val(),
+        password: this.$('.password').val()
       }, {
         success: function() {
           this.callback();
@@ -77,6 +77,8 @@ define([
           this.$el.fadeOut(400, function() {
             this.destroy();
           }.bind(this));
+          $('header').removeClass('blur');
+          $('#app').removeClass('blur');
         }.bind(this),
         error: function(model, response) {
           this.$('.login-button').removeAttr('disabled');
