@@ -3,15 +3,17 @@ define([
   'underscore',
   'backbone',
   'models/auth',
+  'views/alert',
   'views/loginBackdrop',
   'text!templates/login.html'
-], function($, _, Backbone, AuthModel, LoginBackdropView, loginTemplate) {
+], function($, _, Backbone, AuthModel, AlertView, LoginBackdropView,
+    loginTemplate) {
   'use strict';
   var LoginView = Backbone.View.extend({
     className: 'login',
     template: _.template(loginTemplate),
     events: {
-      'click .login-button': 'onLogin',
+      'click .login-button': 'login',
       'keypress input': 'onKeypress'
     },
     initialize: function(options) {
@@ -32,10 +34,34 @@ define([
     },
     onKeypress: function(evt) {
       if (evt.keyCode === 13) {
-        this.onLogin();
+        this.login();
       }
     },
-    onLogin: function() {
+    setAlert: function(message) {
+      if (this.alertView) {
+        if (this.alertView.message !== message) {
+          this.alertView.close(function() {
+            this.setAlert(message);
+          }.bind(this));
+          this.alertView = null;
+        }
+        else {
+          this.alertView.flash();
+        }
+        return;
+      }
+
+      this.alertView = new AlertView({
+        type: 'danger',
+        message: message
+      });
+      this.$('.login-form').prepend(this.alertView.render().el);
+      this.addView(this.alertView);
+      this.$('input').addClass('has-warning');
+    },
+    login: function() {
+      this.$('.login-button').attr('disabled', 'disabled');
+
       var authModel = new AuthModel();
       authModel.save({
         username: this.$('.form-control[type="text"]').val(),
@@ -43,6 +69,16 @@ define([
       }, {
         success: function() {
           this.callback();
+          this.destroy();
+        }.bind(this),
+        error: function(model, response) {
+          this.$('.login-button').removeAttr('disabled');
+          if (response.responseJSON && response.responseJSON.error_msg) {
+            this.setAlert(response.responseJSON.error_msg);
+          }
+          else {
+            this.setAlert('Server error occurred.');
+          }
         }.bind(this)
       });
     }

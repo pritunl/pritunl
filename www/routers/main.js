@@ -51,7 +51,6 @@ define([
         var loginView = new LoginView({
           callback: function() {
             window.authenticated = true;
-            loginView.destroy();
             callback();
           }.bind(this)
         });
