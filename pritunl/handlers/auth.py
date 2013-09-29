@@ -20,7 +20,7 @@ def auth_post():
 @app_server.app.route('/auth', methods=['GET'])
 def auth_get():
     authenticated = False
-    if 'id' in flask.session and flask.session['id'] == self.session_id:
+    if 'id' in flask.session and flask.session['id'] == app_server.session_id:
         authenticated = True
     return utils.jsonify({
         'authenticated': authenticated
