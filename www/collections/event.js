@@ -46,6 +46,10 @@ define([
               this.lastEventTime = model.get('time');
             }
 
+            if (!window.authenticated) {
+              continue;
+            }
+
             // Ignore callback for time events
             if (model.get('type') !== 'time') {
               if (model.get('resource_id')) {
@@ -60,7 +64,12 @@ define([
 
           this.callFetch(uuid);
         }.bind(this),
-        error: function() {
+        error: function(collection, response) {
+          if (response.status === 401) {
+            this.lastEventTime = null;
+            window.authenticated = false;
+            Backbone.history.navigate('logout', {trigger: true});
+          }
           if (uuid !== this.currentLoop) {
             return;
           }
