@@ -50,13 +50,19 @@ define([
           callback();
           return;
         }
-        var loginView = new LoginView({
+        this.loginCallback = callback;
+        if (this.loginView) {
+          return;
+        }
+        this.loginView = new LoginView({
           callback: function() {
+            this.loginView = null;
             window.authenticated = true;
-            callback();
+            this.loginCallback();
+            this.loginCallback = null;
           }.bind(this)
         });
-        $('body').append(loginView.render().el);
+        $('body').append(this.loginView.render().el);
       }.bind(this));
       return false;
     },
