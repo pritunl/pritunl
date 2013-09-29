@@ -15,7 +15,7 @@ logger = None
 
 class AppServer(Config):
     bool_options = ['debug', 'log_debug']
-    int_options = ['port']
+    int_options = ['port', 'session_timeout']
     path_options = ['log_path', 'db_path', 'www_path', 'data_path']
     str_options = ['bind_addr', 'password']
 
@@ -50,7 +50,15 @@ class AppServer(Config):
         def _wrapped(*args, **kwargs):
             if 'timestamp' not in flask.session:
                 raise flask.abort(401)
-            elif time.time() - flask.session['timestamp'] > SESSION_TIMEOUT:
+
+            # Disable session timeout if set to 0
+            if self.session_timeout is not None:
+                session_timeout = self.session_timeout or None
+            else:
+                session_timeout = DEFAULT_SESSION_TIMEOUT
+
+            if session_timeout and time.time() - flask.session[
+                    'timestamp'] > session_timeout:
                 flask.session.pop('timestamp', None)
                 raise flask.abort(401)
             return call(*args, **kwargs)
