@@ -52,10 +52,6 @@ define([
       });
     },
     onOk: function() {
-      if (this.locked) {
-        return;
-      }
-      this.locked = true;
       this.setLoading('Deleting users...');
 
       var i;
@@ -71,7 +67,6 @@ define([
           this.clearLoading();
           this.setAlert('danger',
             'Failed to delete users, server error occurred.');
-          this.locked = false;
         }.bind(this)
       };
       for (i = 0; i < users.length; i++) {

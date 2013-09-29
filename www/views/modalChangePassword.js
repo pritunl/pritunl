@@ -21,9 +21,6 @@ define([
       return this.template();
     },
     onOk: function() {
-      if (this.locked) {
-        return;
-      }
       if (!this.$('.pass').val()) {
         this.setAlert('danger', 'Password can not be empty.', '.form-group');
         return;
@@ -32,7 +29,6 @@ define([
         this.setAlert('danger', 'Passwords do not match.', '.form-group');
         return;
       }
-      this.locked = true;
       this.setLoading('Changing password...');
       this.model.save({
         password: this.$('.pass').val()
@@ -44,7 +40,6 @@ define([
           this.clearLoading();
           this.setAlert('danger',
             'Failed to change password, server error occurred.');
-          this.locked = false;
         }.bind(this)
       });
     }

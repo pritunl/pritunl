@@ -59,9 +59,6 @@ define([
       this.setDebugSelect(!this.getDebugSelect());
     },
     onOk: function() {
-      if (this.locked) {
-        return;
-      }
       var name = this.$('.name input').val();
       var network = this.$('.network input').val();
       var iface = this.$('.interface input').val();
@@ -100,7 +97,6 @@ define([
           return;
         }
       }
-      this.locked = true;
       this.setLoading(this.loadingMsg);
       this.model.save({
         'name': name,
@@ -123,7 +119,6 @@ define([
           else {
             this.setAlert('danger', this.errorMsg);
           }
-          this.locked = false;
         }.bind(this)
       });
     }

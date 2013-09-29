@@ -24,10 +24,6 @@ define([
       });
     },
     onOk: function() {
-      if (this.locked) {
-        return;
-      }
-      this.locked = true;
       this.setLoading('Attaching organization...');
       var model = new ServerOrgModel();
       model.save({
@@ -41,7 +37,6 @@ define([
           this.clearLoading();
           this.setAlert('danger',
             'Failed to attach organization, server error occurred.');
-          this.locked = false;
         }.bind(this)
       });
     }

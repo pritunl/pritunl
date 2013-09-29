@@ -26,15 +26,11 @@ define([
       return this.template();
     },
     onOk: function() {
-      if (this.locked) {
-        return;
-      }
       if (this.$('input').val() !== this.model.get('name')) {
         this.setAlert('info', 'Name entered doesn\'t match the name ' +
           'of the server being deleted.', '.form-group');
         return;
       }
-      this.locked = true;
       this.setLoading('Deleting server...');
       this.model.destroy({
         success: function() {
@@ -43,7 +39,6 @@ define([
         error: function() {
           this.setAlert('danger',
             'Failed to delete server, server error occurred.');
-          this.locked = false;
         }.bind(this)
       });
     }

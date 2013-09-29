@@ -22,14 +22,10 @@ define([
       });
     },
     onOk: function() {
-      if (this.locked) {
-        return;
-      }
       if (!this.$('input').val()) {
         this.setAlert('danger', 'Name can not be empty.', '.form-group');
         return;
       }
-      this.locked = true;
       this.setLoading('Adding user...');
       var userModel = new UserModel();
       userModel.save({
@@ -43,7 +39,6 @@ define([
           this.clearLoading();
           this.setAlert('danger',
             'Failed to add user, server error occurred.');
-          this.locked = false;
         }.bind(this)
       });
     }

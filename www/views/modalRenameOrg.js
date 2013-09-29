@@ -15,14 +15,10 @@ define([
       return this.template(this.model.toJSON());
     },
     onOk: function() {
-      if (this.locked) {
-        return;
-      }
       if (!this.$('input').val()) {
         this.setAlert('danger', 'Name can not be empty.', '.form-group');
         return;
       }
-      this.locked = true;
       this.setLoading('Renaming organization...');
       this.model.save({
         name: this.$('input').val()
@@ -34,7 +30,6 @@ define([
           this.clearLoading();
           this.setAlert('danger',
             'Failed to rename organization, server error occurred.');
-          this.locked = false;
         }.bind(this)
       });
     }

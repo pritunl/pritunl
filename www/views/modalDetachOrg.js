@@ -16,10 +16,6 @@ define([
       return this.template(this.model.toJSON());
     },
     onOk: function() {
-      if (this.locked) {
-        return;
-      }
-      this.locked = true;
       this.setLoading('Detaching organization...');
       this.model.destroy({
         success: function() {
@@ -29,7 +25,6 @@ define([
           this.clearLoading();
           this.setAlert('danger',
             'Failed to detach organization, server error occurred.');
-          this.locked = false;
         }.bind(this)
       });
     }
