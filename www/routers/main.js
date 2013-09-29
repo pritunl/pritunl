@@ -115,7 +115,12 @@ define([
       authModel.destroy({
         success: function() {
           window.authenticated = false;
-          this.navigate('', {trigger: true});
+          if (this.data.view) {
+            Backbone.history.history.back();
+          }
+          else {
+            this.navigate('', {trigger: true});
+          }
         }.bind(this),
         error: function() {
           var alertView = new AlertView({
