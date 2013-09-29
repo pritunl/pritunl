@@ -1,6 +1,7 @@
 from pritunl.constants import *
 import pritunl.utils as utils
 from pritunl import app_server
+import uuid
 import time
 import flask
 
@@ -17,13 +18,13 @@ def auth_post():
             'error_msg': AUTH_NOT_VALID_MSG,
         }, 401)
 
-    flask.session['id'] = app_server.session_id
+    flask.session['id'] = uuid.uuid4().hex
     return utils.jsonify({})
 
 @app_server.app.route('/auth', methods=['GET'])
 def auth_get():
     authenticated = False
-    if 'id' in flask.session and flask.session['id'] == app_server.session_id:
+    if 'id' in flask.session:
         authenticated = True
     return utils.jsonify({
         'authenticated': authenticated

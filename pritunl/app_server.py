@@ -8,7 +8,6 @@ import time
 import json
 import urllib2
 import threading
-import uuid
 import flask
 
 logger = None
@@ -42,15 +41,13 @@ class AppServer(Config):
     def _setup_app(self):
         self.app = flask.Flask(APP_NAME)
         self.app.secret_key = os.urandom(32)
-        self.session_id = uuid.uuid4().hex
 
         global logger
         logger = self.app.logger
 
     def auth(self, call):
         def _wrapped(*args, **kwargs):
-            if 'id' not in flask.session or \
-                     flask.session['id'] != self.session_id:
+            if 'id' not in flask.session:
                 raise flask.abort(401)
             return call(*args, **kwargs)
         _wrapped.__name__ = '%s_auth' % call.__name__
