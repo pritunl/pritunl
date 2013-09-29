@@ -83,6 +83,7 @@ define([
         return;
       }
 
+      this.$('.ok').attr('disabled', 'disabled');
       this.loadingView = new AlertView({
         type: 'info',
         message: message
@@ -95,6 +96,7 @@ define([
         this.loadingView.close();
         this.loadingView = null;
       }
+      this.$('.ok').removeAttr('disabled');
     },
     close: function(triggerApplied) {
       if (triggerApplied) {
