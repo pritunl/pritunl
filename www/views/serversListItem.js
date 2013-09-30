@@ -72,6 +72,7 @@ define([
         this.startDisabled = true;
         this.restartDisabled = true;
         this.$('.server-start, .server-restart').attr('disabled', 'disabled');
+        this.$('.no-org-warning').show();
       }
       else if (this.model.get('status') === 'online') {
         this.$('.server-start').hide();
@@ -86,6 +87,7 @@ define([
           this.startDisabled = false;
           this.$('.server-restart').removeAttr('disabled');
         }
+        this.$('.no-org-warning').hide();
       }
       else {
         this.$('.server-stop').hide();
@@ -96,6 +98,7 @@ define([
         }
         this.restartDisabled = true;
         this.$('.server-restart').attr('disabled', 'disabled');
+        this.$('.no-org-warning').hide();
       }
     },
     onSettings: function() {
