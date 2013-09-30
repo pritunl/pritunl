@@ -206,7 +206,8 @@ verb 2
 mute 3
 """
 
-TLS_VERIFY_SCRIPT = """#!/usr/bin/env python2
+# Script will run in python 2 and 3
+TLS_VERIFY_SCRIPT = """#!/usr/bin/env python
 import os
 import sys
 INDEX_NAME = '%s'
