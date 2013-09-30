@@ -71,6 +71,8 @@ define([
         this.$('.toggle-hidden').removeClass('label-primary');
         this.$('.toggle-hidden').addClass('label-success');
         this.$('.toggle-hidden').tooltip('destroy');
+        this.$('.org-id').hide();
+        this.usersListView.$('.user-id').hide();
       }
       else {
         this.usersListView.showHidden = true;
@@ -80,6 +82,8 @@ define([
           title: 'Showing server users'
         });
         this.$('.toggle-hidden').tooltip('show');
+        this.$('.org-id').show();
+        this.usersListView.$('.user-id').show();
       }
       this.usersListView.update();
     }
