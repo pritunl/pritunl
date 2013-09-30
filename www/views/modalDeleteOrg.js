@@ -16,7 +16,9 @@ define([
       ModalDeleteOrgView.__super__.initialize.call(this);
       var alertView = new AlertView({
         type: 'danger',
-        message: 'Deleting the organization will delete all the users in it.',
+        message: 'Deleting the organization will delete all the users ' +
+          'in it. Any servers that are attached to the organization will ' +
+          'be stopped.',
         animate: false
       });
       this.addView(alertView);
