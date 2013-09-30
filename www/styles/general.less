@@ -399,12 +399,21 @@ header.blur {
 }
 
 .users-list .users-list-title .org-id,
-.users-list .user .name-container .user-id {
+.users-list .user .name-container .user-id,
+.servers-list .server .server-title .server-id,
+.servers-list .server .org .org-id {
   position: relative;
   top: -2px;
   color: #4d535c;
   font-size: 10px;
   display: none;
+}
+
+.users-list.show-hidden .users-list-title .org-id,
+.users-list.show-hidden .user .name-container .user-id,
+.servers-list .server.show-hidden .server-title .server-id,
+.servers-list .server.show-hidden .org .org-id {
+  display: inline;
 }
 
 .server-orgs-list .org .org-name {

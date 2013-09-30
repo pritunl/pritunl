@@ -18,7 +18,8 @@ define([
       'click .server-title a': 'onSettings',
       'click .server-del': 'onDelete',
       'click .server-restart, .server-start, .server-stop': 'onOperation',
-      'click .server-output-clear': 'onClearOutput'
+      'click .server-output-clear': 'onClearOutput',
+      'click .toggle-hidden': 'onToggleHidden'
     },
     initialize: function() {
       this.serverOrgsListView = new ServerOrgsListView({
@@ -207,6 +208,17 @@ define([
       });
       this.$('.server-uptime .status-text').text(
         window.formatUptime(this.model.get('uptime')));
+    },
+    onToggleHidden: function(evt) {
+      if (!evt.ctrlKey && !evt.shiftKey) {
+        return;
+      }
+      if (this.$el.hasClass('show-hidden')) {
+        this.$el.removeClass('show-hidden');
+      }
+      else {
+        this.$el.addClass('show-hidden');
+      }
     }
   });
 

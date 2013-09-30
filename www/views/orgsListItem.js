@@ -11,6 +11,7 @@ define([
     ModalDeleteOrgView, orgsListItemTemplate) {
   'use strict';
   var OrgsListItemView = Backbone.View.extend({
+    className: 'users-list',
     template: _.template(orgsListItemTemplate),
     events: {
       'click .org-title': 'onRename',
@@ -29,7 +30,7 @@ define([
     },
     render: function() {
       this.$el.html(this.template(this.model.toJSON()));
-      this.$('.users-list').append(this.usersListView.render().el);
+      this.$el.append(this.usersListView.render().el);
       this.$('.org-title').tooltip({
         container: this.el
       });
@@ -71,8 +72,7 @@ define([
         this.$('.toggle-hidden').removeClass('label-primary');
         this.$('.toggle-hidden').addClass('label-success');
         this.$('.toggle-hidden').tooltip('destroy');
-        this.$('.org-id').hide();
-        this.usersListView.$('.user-id').hide();
+        this.$el.removeClass('show-hidden');
       }
       else {
         this.usersListView.showHidden = true;
@@ -82,8 +82,7 @@ define([
           title: 'Showing server users'
         });
         this.$('.toggle-hidden').tooltip('show');
-        this.$('.org-id').show();
-        this.usersListView.$('.user-id').show();
+        this.$el.addClass('show-hidden');
       }
       this.usersListView.update();
     }
