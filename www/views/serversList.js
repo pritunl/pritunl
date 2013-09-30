@@ -103,6 +103,17 @@ define([
       });
     },
     _attachOrg: function() {
+      if (!this.orgs.length) {
+        var alertView = new AlertView({
+          type: 'danger',
+          message: 'No organizations exists, an organization must be ' +
+            'created before attaching.',
+          dismissable: true
+        });
+        $('.alerts-container').append(alertView.render().el);
+        this.addView(alertView);
+        return;
+      }
       var modal = new ModalAttachOrgView({
         orgs: this.orgs,
         collection: this.collection
