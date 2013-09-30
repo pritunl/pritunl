@@ -224,8 +224,7 @@ def server_org_get(server_id):
     orgs_sort = []
     server = Server(server_id)
 
-    for org_id in server.organizations:
-        org = Organization(org_id)
+    for org in server.get_orgs():
         name_id = '%s_%s' % (org.name, org.id)
         orgs_sort.append(name_id)
         orgs_dict[name_id] = {

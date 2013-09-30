@@ -121,6 +121,10 @@ class User(Config):
     def _revoke(self, reason):
         if self.id == CA_CERT_ID:
             raise TypeError('Cannot revoke ca cert')
+
+        if not os.path.isfile(self.cert_path):
+            return
+
         openssl_lock.acquire()
         try:
             self._create_ssl_conf()
@@ -139,6 +143,7 @@ class User(Config):
             self._delete_ssl_conf()
         finally:
             openssl_lock.release()
+        self.org.generate_crl()
 
     def build_key_archive(self):
         user_key_arcname = '%s_%s.key' % (self.org.name, self.name)
@@ -215,6 +220,5 @@ class User(Config):
                 'error': error,
             })
 
-        self.org.generate_crl()
         Event(type=USERS_UPDATED)
         LogEntry(message='Deleted user.')

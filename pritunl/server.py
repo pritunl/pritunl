@@ -117,13 +117,13 @@ class Server(Config):
         Event(type=SERVERS_UPDATED)
 
     def _create_primary_user(self):
-        if not self.organizations:
+        if not self.get_orgs():
             raise ValueError('Primary user cannot be created without ' + \
                 'any organizations')
         logger.debug('Creating primary user. %r' % {
             'server_id': self.id,
         })
-        org = Organization(self.organizations[0])
+        org = self.get_orgs()[0]
         self.primary_organization = org.id
         user = org.new_user(CERT_SERVER, SERVER_USER_PREFIX + self.id)
         self.primary_user = user.id
@@ -149,9 +149,7 @@ class Server(Config):
     def _remove_primary_user(self):
         logger.debug('Removing primary user. %r' % {
             'server_id': self.id,
-            'org_id': org_id,
         })
-
         primary_organization = self.primary_organization
         primary_user = self.primary_user
         self.primary_organization = None
@@ -161,9 +159,6 @@ class Server(Config):
             return
 
         org = Organization(primary_organization)
-        if not org:
-            return
-
         user = org.get_user(primary_user)
         if not user:
             return
@@ -184,6 +179,21 @@ class Server(Config):
         self.commit()
         Event(type=SERVERS_UPDATED)
         Event(type=SERVER_ORGS_UPDATED, resource_id=self.id)
+
+    def get_orgs(self):
+        orgs = []
+        for org_id in self.organizations:
+            org = Organization(org_id)
+            if not os.path.isfile(org.ca_cert.cert_path):
+                logger.warning('Removing non existent organization ' + \
+                    'from server. %r' % {
+                        'server_id': self.id,
+                        'org_id': org_id,
+                    })
+                self.remove_org(org_id)
+                continue
+            orgs.append(org)
+        return orgs
 
     def _generate_dh_param(self):
         logger.debug('Generating server dh params. %r' % {
@@ -210,8 +220,8 @@ class Server(Config):
             'server_id': self.id,
         })
         with open(self.ca_cert_path, 'w') as server_ca_cert:
-            for org_id in self.organizations:
-                ca_path = Organization(org_id).ca_cert.cert_path
+            for org in self.get_orgs():
+                ca_path = org.ca_cert.cert_path
                 with open(ca_path, 'r') as org_ca_cert:
                     server_ca_cert.write(org_ca_cert.read())
 
@@ -228,7 +238,7 @@ class Server(Config):
         os.chmod(self.tls_verify_path, 0755)
 
     def _generate_ovpn_conf(self):
-        if not self.organizations:
+        if not self.get_orgs():
             raise ValueError('Ovpn conf cannot be generated without ' + \
                 'any organizations')
 
@@ -394,7 +404,7 @@ class Server(Config):
         Event(type=SERVERS_UPDATED)
 
     def start(self):
-        if not self.organizations:
+        if not self.get_orgs():
             raise ValueError('Server cannot be started without ' + \
                 'any organizations')
         logger.debug('Starting server. %r' % {
