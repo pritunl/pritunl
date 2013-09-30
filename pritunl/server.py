@@ -55,7 +55,8 @@ class Server(Config):
         self.dh_param_path = os.path.join(self.path, DH_PARAM_NAME)
         self.ifc_pool_path = os.path.join(self.path, IFC_POOL_NAME)
         self.ca_cert_path = os.path.join(self.path, TEMP_DIR, OVPN_CA_NAME)
-        self.crl_path = os.path.join(self.path, TEMP_DIR, CRL_NAME)
+        self.tls_verify_path = os.path.join(self.path, TEMP_DIR,
+            TLS_VERIFY_NAME)
         self.ovpn_status_path = os.path.join(self.path, TEMP_DIR,
             OVPN_STATUS_NAME)
         self.set_path(os.path.join(self.path, 'server.conf'))
@@ -214,15 +215,17 @@ class Server(Config):
                 with open(ca_path, 'r') as org_ca_cert:
                     server_ca_cert.write(org_ca_cert.read())
 
-    def generate_crl(self):
-        logger.debug('Generating server crl. %r' % {
+    def _generate_tls_verify(self):
+        logger.debug('Generating tls verify script. %r' % {
             'server_id': self.id,
         })
-        with open(self.crl_path, 'w') as server_crl:
-            for org_id in self.organizations:
-                crl_path = Organization(org_id).crl_path
-                with open(crl_path, 'r') as org_crl:
-                    server_crl.write(org_crl.read())
+
+        with open(self.tls_verify_path, 'w') as tls_verify_file:
+            tls_verify_file.write(TLS_VERIFY_SCRIPT % (
+                INDEX_NAME,
+                os.path.join(app_server.data_path, ORGS_DIR),
+            ))
+        os.chmod(self.tls_verify_path, 0755)
 
     def _generate_ovpn_conf(self):
         if not self.organizations:
@@ -243,7 +246,7 @@ class Server(Config):
         primary_user = primary_org.get_user(self.primary_user)
 
         self.generate_ca_cert()
-        self.generate_crl()
+        self._generate_tls_verify()
 
         if self.local_network:
             push = 'route %s %s' % self._parse_network(
@@ -259,7 +262,7 @@ class Server(Config):
                 self.ca_cert_path,
                 primary_user.cert_path,
                 primary_user.key_path,
-                self.crl_path,
+                self.tls_verify_path,
                 self.dh_param_path,
                 '%s %s' % self._parse_network(self.network),
                 self.ifc_pool_path,
@@ -423,6 +426,7 @@ class Server(Config):
         logger.debug('Restarting server. %r' % {
             'server_id': self.id,
         })
+        self.generate_ca_cert()
         _process[self.id].send_signal(signal.SIGHUP)
         LogEntry(message='Restarted server "%s".' % self.name)
 
@@ -432,6 +436,7 @@ class Server(Config):
         logger.debug('Reloading server. %r' % {
             'server_id': self.id,
         })
+        self.generate_ca_cert()
         _process[self.id].send_signal(signal.SIGUSR1)
         LogEntry(message='Reloaded server "%s".' % self.name)
 
