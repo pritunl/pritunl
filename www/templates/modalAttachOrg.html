@@ -1,18 +1,16 @@
-<form role="form">
-  <div class="org form-group">
-    <label>Select an organization</label>
-    <select class="form-control">
-      <% _.each(orgs, function(org) { %>
-        <option value="<%= org.id %>"><%= org.name %></option>
-      <% }); %>
-    </select>
-  </div>
-  <div class="server form-group">
-    <label>Select a server</label>
-    <select class="form-control">
-      <% _.each(servers, function(server) { %>
-        <option value="<%= server.id %>"><%= server.name %></option>
-      <% }); %>
-    </select>
-  </div>
-</form>
+<div class="org form-group">
+  <label>Select an organization</label>
+  <select class="form-control">
+    <% _.each(orgs, function(org) { %>
+      <option value="<%= org.id %>"><%= org.name %></option>
+    <% }); %>
+  </select>
+</div>
+<div class="server form-group">
+  <label>Select a server</label>
+  <select class="form-control">
+    <% _.each(servers, function(server) { %>
+      <option value="<%= server.id %>"><%= server.name %></option>
+    <% }); %>
+  </select>
+</div>
