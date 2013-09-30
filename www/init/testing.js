@@ -1,3 +1,4 @@
+/*jshint -W098:true */
 define([
   'jquery',
   'underscore',
