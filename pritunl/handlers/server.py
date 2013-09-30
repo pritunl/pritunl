@@ -197,6 +197,11 @@ def server_put_post(server_id=None):
         )
     else:
         server = Server(id=server_id)
+        if server.status:
+            return utils.jsonify({
+                'error': SERVER_NOT_OFFLINE,
+                'error_msg': SERVER_NOT_OFFLINE_MSG,
+            }, 400)
         server.name = name
         server.network = network
         server.interface = interface

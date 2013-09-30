@@ -99,6 +99,15 @@ define([
       }
     },
     onSettings: function() {
+      if (this.model.get('status') !== 'offline') {
+        var alertView = new AlertView({
+          type: 'danger',
+          message: 'Server must be offline to modify settings.',
+          dismissable: true
+        });
+        $('.alerts-container').append(alertView.render().el);
+        return;
+      }
       var modal = new ModalServerSettingsView({
         model: this.model.clone()
       });
