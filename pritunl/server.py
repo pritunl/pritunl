@@ -130,6 +130,11 @@ class Server(Config):
         try:
             self.commit()
         except:
+            logger.exception('Failed to commit server conf ' + \
+                'on primary user creation, removing user. %r' % {
+                    'server_id': self.id,
+                    'user_id': user.id,
+                })
             user.remove()
             raise
 
@@ -140,6 +145,10 @@ class Server(Config):
         })
         org = Organization(org_id)
         if org.id in self.organizations:
+            logger.debug('Organization already on server, skipping. %r' % {
+                'server_id': self.id,
+                'org_id': org.id,
+            })
             return
         self.organizations.append(org.id)
         self.commit()
@@ -161,6 +170,11 @@ class Server(Config):
         org = Organization(primary_organization)
         user = org.get_user(primary_user)
         if not user:
+            logger.debug('Primary user not found, skipping remove. %r' % {
+                'server_id': self.id,
+                'org_id': org.id,
+                'user_id': user.id,
+            })
             return
 
         if user:
@@ -229,7 +243,6 @@ class Server(Config):
         logger.debug('Generating tls verify script. %r' % {
             'server_id': self.id,
         })
-
         with open(self.tls_verify_path, 'w') as tls_verify_file:
             tls_verify_file.write(TLS_VERIFY_SCRIPT % (
                 INDEX_NAME,
@@ -330,6 +343,9 @@ class Server(Config):
 
     def _exists_iptables_rule(self):
         try:
+            logger.debug('Checking for iptables rule. %r' % {
+                'server_id': self.id,
+            })
             subprocess.check_call(['iptables', '-t', 'nat', '-C',
                 'POSTROUTING'] + self._generate_iptable_rule(),
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -339,6 +355,9 @@ class Server(Config):
 
     def _set_iptables_rule(self):
         if not self._exists_iptables_rule():
+            logger.debug('Setting iptables rule. %r' % {
+                'server_id': self.id,
+            })
             try:
                 subprocess.check_call(['iptables', '-t', 'nat', '-A',
                     'POSTROUTING'] + self._generate_iptable_rule(),
@@ -399,6 +418,10 @@ class Server(Config):
                 break
             _output[self.id] += line
             self._event_delay(type=SERVER_OUTPUT_UPDATED, resource_id=self.id)
+
+        logger.debug('Ovpn process has ended. %r' % {
+            'server_id': self.id,
+        })
 
         self._interrupt = True
         del _threads[self.id]
