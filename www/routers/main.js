@@ -149,8 +149,6 @@ define([
   });
 
   var initialize = function() {
-    var _loadUrl = Backbone.History.prototype.loadUrl;
-
     Backbone.ajax = function(options) {
       options.complete = function(response) {
         if (response.status === 401) {

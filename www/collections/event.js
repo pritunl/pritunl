@@ -64,7 +64,7 @@ define([
 
           this.callFetch(uuid);
         }.bind(this),
-        error: function(collection, response) {
+        error: function() {
           if (uuid !== this.currentLoop) {
             return;
           }

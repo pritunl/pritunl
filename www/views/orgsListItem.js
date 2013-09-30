@@ -52,7 +52,6 @@ define([
       });
       this.listenToOnce(modal, 'applied', function() {
         // TODO View is already destroyed
-        return;
         var alertView = new AlertView({
           type: 'warning',
           message: 'Successfully deleted organization.',
