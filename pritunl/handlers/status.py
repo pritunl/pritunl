@@ -21,7 +21,10 @@ def status_get():
 
     users_count = 0
     for org in orgs:
-        users_count += org.count_users()
+        for user in org.get_users():
+            if user.type != CERT_CLIENT:
+                continue
+            users_count += 1
 
     return utils.jsonify({
         'orgs_available': orgs_count,
