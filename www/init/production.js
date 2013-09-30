@@ -1,13 +1,10 @@
 define([
   'jquery',
   'underscore',
-  'backbone',
-  'googleAnalytics'
-], function($, _, Backbone, GoogleAnalytics) {
+  'backbone'
+], function($, _, Backbone) {
   'use strict';
   var initialize = function() {
-    GoogleAnalytics.push(['_setAccount', '']);
-    //GoogleAnalytics.push(['_setDomainName', 'production.pritunl.com']);
   };
 
   return initialize;

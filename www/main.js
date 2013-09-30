@@ -71,7 +71,6 @@ require.config({
     backbone: 'vendor/backbone/backbone',
     bootstrap: 'vendor/bootstrap/bootstrap',
     d3: 'vendor/d3/d3',
-    googleAnalytics: 'vendor/googleAnalytics/googleAnalytics.min',
     jquery: 'vendor/jquery/jquery',
     less: 'vendor/less/less',
     text: 'vendor/requireText/text',
@@ -90,7 +89,6 @@ require.config({
     backbone: ['less'],
     bootstrap: ['jquery'],
     d3: {exports: 'd3'},
-    googleAnalytics: {exports: '_gaq'}
   }
 });
 

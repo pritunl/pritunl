@@ -2,15 +2,14 @@ define([
   'jquery',
   'underscore',
   'backbone',
-  'googleAnalytics',
   'models/auth',
   'views/alert',
   'views/login',
   'views/dashboard',
   'views/users',
   'views/servers'
-], function($, _, Backbone, GoogleAnalytics, AuthModel, AlertView, LoginView,
-    DashboardView, UsersView, ServersView) {
+], function($, _, Backbone, AuthModel, AlertView, LoginView, DashboardView,
+    UsersView, ServersView) {
   'use strict';
   var Router = Backbone.Router.extend({
     routes: {
@@ -160,20 +159,6 @@ define([
         }
       };
       return Backbone.$.ajax.call(Backbone.$, options);
-    };
-
-    Backbone.History.prototype.loadUrl = function() {
-      var matched = _loadUrl.apply(this, arguments);
-
-      var fragment = Backbone.history.getFragment();
-      if (!/^\//.test(fragment)) {
-        fragment = '/' + fragment;
-      }
-
-      // Send all url changes to analytics
-      GoogleAnalytics.push(['_trackPageview', fragment]);
-
-      return matched;
     };
 
     var data = {
