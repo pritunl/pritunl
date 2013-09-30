@@ -123,6 +123,10 @@ class User(Config):
             raise TypeError('Cannot revoke ca cert')
 
         if not os.path.isfile(self.cert_path):
+            logger.warning('Skipping revoke of non existent user. %r' % {
+                'org_id': self.org.id,
+                'user_id': self.id,
+            })
             return
 
         openssl_lock.acquire()
