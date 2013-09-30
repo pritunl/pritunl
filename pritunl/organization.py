@@ -122,6 +122,11 @@ class Organization(Config):
         Event(type=ORGS_UPDATED)
 
     def remove(self):
+        for server in self.get_servers():
+            if server.status:
+                server.stop()
+            server.remove_org(self.id)
+
         shutil.rmtree(self.path)
         LogEntry(message='Deleted organization.')
         Event(type=ORGS_UPDATED)
