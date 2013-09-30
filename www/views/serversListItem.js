@@ -70,9 +70,8 @@ define([
         this.$('.server-stop').hide();
         this.$('.server-start').show();
         this.startDisabled = true;
-        this.$('.server-start').attr('disabled', 'disabled');
         this.restartDisabled = true;
-        this.$('.server-restart').attr('disabled', 'disabled');
+        this.$('.server-start, .server-restart').attr('disabled', 'disabled');
       }
       else if (this.model.get('status') === 'online') {
         this.$('.server-start').hide();
