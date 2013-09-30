@@ -14,6 +14,14 @@ define([
     okText: 'Delete',
     initialize: function() {
       ModalDeleteUsersView.__super__.initialize.call(this);
+      var alertView = new AlertView({
+        type: 'danger',
+        message: 'Deleting users will restart the servers ' +
+         'that the users are authorized to use.',
+        animate: false
+      });
+      this.addView(alertView);
+      this.$('form').prepend(alertView.render().el);
       var i;
       for (i = 0; i < this.collection.models.length; i++) {
         if (this.collection.models[i].get('type') !== 'server') {
