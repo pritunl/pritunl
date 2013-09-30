@@ -38,6 +38,7 @@ TEMP_DIR = 'temp'
 INDEX_NAME = 'index'
 SERIAL_NAME = 'serial'
 CRL_NAME = 'ca.crl'
+TLS_VERIFY_NAME = 'verify.py'
 OVPN_CONF_NAME = 'openvpn.conf'
 OVPN_STATUS_NAME = 'status'
 OVPN_CA_NAME = 'ca.crt'
@@ -178,15 +179,16 @@ dev %s
 ca %s
 cert %s
 key %s
-crl-verify %s
+tls-verify %s
 dh %s
 server %s
 ifconfig-pool-persist %s
 push "%s"
-keepalive 10 120
+keepalive 10 20
 persist-tun
 status %s 1
 status-version 2
+script-security 2
 verb %s
 mute %s
 """
@@ -195,7 +197,6 @@ OVPN_CLIENT_CONF = """client
 dev tun
 proto %s
 remote %s %s
-resolv-retry infinite
 nobind
 persist-tun
 ca %s
@@ -203,4 +204,30 @@ cert %s
 key %s
 verb 2
 mute 3
+"""
+
+TLS_VERIFY_SCRIPT = """#!/usr/bin/env python2
+import os
+import sys
+INDEX_NAME = '%s'
+ORGS_PATH = '%s'
+x509_name = sys.argv[2].split(',')
+x509_name = [x.strip() for x in x509_name]
+org = None
+common_name = None
+for part in x509_name:
+    if part[:2] == 'O=':
+        org = part[2:]
+    elif part[:3] == 'CN=':
+        common_name = part[3:]
+if not org or not common_name:
+    raise AttributeError('Missing organization or common name from args')
+
+with open(os.path.join(ORGS_PATH, org, INDEX_NAME), 'r') as index_file:
+    for line in index_file.readlines():
+        if 'O=%%s' %% org in line and 'CN=%%s' %% common_name in line:
+            if line[0] == 'V':
+                exit(0)
+            raise AttributeError('Common name is not valid')
+raise LookupError('Common name not found')
 """
