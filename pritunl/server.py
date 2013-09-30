@@ -352,6 +352,9 @@ class Server(Config):
 
     def _clear_iptable_rules(self):
         if self._exists_iptables_rule():
+            logger.debug('Clearing iptables rule. %r' % {
+                'server_id': self.id,
+            })
             try:
                 subprocess.check_call(['iptables', '-t', 'nat', '-D',
                     'POSTROUTING'] + self._generate_iptable_rule(),
