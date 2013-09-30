@@ -213,20 +213,23 @@ mute 3
 TLS_VERIFY_SCRIPT = """#!/usr/bin/env python
 import os
 import sys
+import string
 INDEX_NAME = '%s'
 ORGS_PATH = '%s'
-x509_name = sys.argv[2].split(',')
-x509_name = [x.strip() for x in x509_name]
-org = None
-common_name = None
-for part in x509_name:
-    if part[:2] == 'O=':
-        org = part[2:]
-    elif part[:3] == 'CN=':
-        common_name = part[3:]
+arg = sys.argv[2]
+arg = ''.join(x for x in arg if x in (string.letters + string.digits + '='))
+o_index = arg.find('O=')
+cn_index = arg.find('CN=')
+if o_index < 0 or cn_index < 0:
+    raise AttributeError('Missing organization or common name from args')
+if o_index > cn_index:
+    org = arg[o_index + 2:]
+    common_name = arg[3:o_index]
+else:
+    org = arg[2:cn_index]
+    common_name = arg[cn_index + 3:]
 if not org or not common_name:
     raise AttributeError('Missing organization or common name from args')
-
 with open(os.path.join(ORGS_PATH, org, INDEX_NAME), 'r') as index_file:
     for line in index_file.readlines():
         if 'O=%%s' %% org in line and 'CN=%%s' %% common_name in line:
