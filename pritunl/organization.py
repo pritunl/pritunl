@@ -126,10 +126,6 @@ class Organization(Config):
         Event(type=ORGS_UPDATED)
 
     @staticmethod
-    def count_orgs():
-        return len(os.listdir(os.path.join(app_server.data_path, ORGS_DIR)))
-
-    @staticmethod
     def get_orgs():
         path = os.path.join(app_server.data_path, ORGS_DIR)
         orgs = []

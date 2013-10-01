@@ -81,9 +81,16 @@ class Server(Config):
             'server_id': self.id,
         })
         os.makedirs(os.path.join(self.path, TEMP_DIR))
-        self._generate_dh_param()
-        self.commit()
-        LogEntry(message='Created new server.')
+        try:
+            self._generate_dh_param()
+            self.commit()
+            LogEntry(message='Created new server.')
+        except:
+            logger.exception('Failed to create server. %r' % {
+                'server_id': self.id,
+            })
+            shutil.rmtree(self.path)
+            raise
 
     def _event_delay(self, type, resource_id=None):
         # Min event every 1s max event every 0.2s
@@ -526,16 +533,20 @@ class Server(Config):
         return clients
 
     @staticmethod
-    def count_servers():
-        logger.debug('Counting servers.')
-        return len(os.listdir(os.path.join(app_server.data_path, SERVERS_DIR)))
-
-    @staticmethod
     def get_servers():
         logger.debug('Getting servers.')
         path = os.path.join(app_server.data_path, SERVERS_DIR)
         servers = []
         if os.path.isdir(path):
             for server_id in os.listdir(path):
+                server = Server(server_id)
+                try:
+                    server.load()
+                except IOError:
+                    logger.exception('Failed to load server conf, ' +
+                        'ignoring server. %r' % {
+                            'server_id': server_id,
+                        })
+                    continue
                 servers.append(Server(server_id))
         return servers
