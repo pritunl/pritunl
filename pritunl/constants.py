@@ -45,6 +45,8 @@ OVPN_CA_NAME = 'ca.crt'
 IFC_POOL_NAME = 'ifc_pool'
 DH_PARAM_NAME = 'dh_param.pem'
 SERVER_USER_PREFIX = 'server_'
+SERVER_CERT_NAME = 'server.crt'
+SERVER_KEY_NAME = 'server.key'
 
 CA_CERT_ID = 'ca'
 CERT_CA = 'ca'
