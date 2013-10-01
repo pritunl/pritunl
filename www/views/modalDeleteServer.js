@@ -4,12 +4,12 @@ define([
   'backbone',
   'views/modal',
   'views/alert',
-  'text!templates/modalDeleteOrg.html'
-], function($, _, Backbone, ModalView, AlertView, modalDeleteOrgTemplate) {
+  'text!templates/modalDeleteServer.html'
+], function($, _, Backbone, ModalView, AlertView, modalDeleteServerTemplate) {
   'use strict';
   var ModalDeleteServerView = ModalView.extend({
     className: 'delete-server-modal',
-    template: _.template(modalDeleteOrgTemplate),
+    template: _.template(modalDeleteServerTemplate),
     title: 'Delete Server',
     okText: 'Delete',
     initialize: function() {
@@ -20,7 +20,7 @@ define([
         animate: false
       });
       this.addView(alertView);
-      this.$('form').prepend(alertView.render().el);
+      this.$('.modal-body').prepend(alertView.render().el);
     },
     body: function() {
       return this.template();

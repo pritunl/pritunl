@@ -22,7 +22,7 @@ define([
         animate: false
       });
       this.addView(alertView);
-      this.$('form').prepend(alertView.render().el);
+      this.$('.modal-body').prepend(alertView.render().el);
     },
     body: function() {
       return this.template();

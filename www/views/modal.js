@@ -55,7 +55,7 @@ define([
         message: message
       });
       this.addView(this.alertView);
-      this.$('form').prepend(this.alertView.render().el);
+      this.$('.modal-body').prepend(this.alertView.render().el);
       if (form) {
         if (type === 'info') {
           this.$(form).addClass('has-warning');
@@ -89,7 +89,7 @@ define([
         message: message
       });
       this.addView(this.loadingView);
-      this.$('form').after(this.loadingView.render().el);
+      this.$('.modal-body').append(this.loadingView.render().el);
     },
     clearLoading: function() {
       if (this.loadingView) {

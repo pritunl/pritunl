@@ -23,7 +23,7 @@ define([
         animate: false
       });
       this.addView(alertView);
-      this.$('form').prepend(alertView.render().el);
+      this.$('.modal-body').prepend(alertView.render().el);
       for (i = 0; i < this.collection.models.length; i++) {
         if (this.collection.models[i].get('type') !== 'server') {
           continue;
@@ -34,7 +34,7 @@ define([
           animate: false
         });
         this.addView(alertView);
-        this.$('form').prepend(alertView.render().el);
+        this.$('.modal-body').prepend(alertView.render().el);
         break;
       }
     },
