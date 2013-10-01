@@ -173,6 +173,7 @@ class AppServer(Config):
                 except subprocess.CalledProcessError:
                     logger.exception('Failed to generate server ssl cert.')
                     raise
+                os.chmod(self._server_key_path, 0600)
 
     def _run_wsgi(self):
         self._setup_server_cert()
