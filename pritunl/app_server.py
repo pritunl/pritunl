@@ -10,13 +10,15 @@ import urllib2
 import threading
 import flask
 import hashlib
+import subprocess
 
 logger = None
 
 class AppServer(Config):
     bool_options = ['debug', 'log_debug']
     int_options = ['port', 'session_timeout']
-    path_options = ['log_path', 'db_path', 'www_path', 'data_path']
+    path_options = ['log_path', 'db_path', 'www_path', 'data_path',
+        'server_cert_path', 'server_key_path']
     str_options = ['bind_addr', 'password']
 
     def __init__(self):
@@ -147,13 +149,42 @@ class AppServer(Config):
         self._setup_handlers()
         self._setup_static_handler()
 
+    def _setup_server_cert(self):
+        if self.server_cert_path and self.server_key_path:
+            self._server_cert_path = self.server_cert_path
+            self._server_key_path = self.server_key_path
+        else:
+            self._server_cert_path = os.path.join(self.data_path,
+                SERVER_CERT_NAME)
+            self._server_key_path = os.path.join(self.data_path,
+                SERVER_KEY_NAME)
+
+            if not os.path.isfile(self._server_cert_path) or \
+                    not os.path.isfile(self._server_key_path):
+                logger.info('Generating server ssl cert...')
+                try:
+                    subprocess.check_call([
+                        'openssl', 'req', '-batch', '-x509', '-nodes',
+                        '-newkey', 'rsa:4096',
+                        '-days', '3652',
+                        '-keyout', self._server_key_path,
+                        '-out', self._server_cert_path,
+                    ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                except subprocess.CalledProcessError:
+                    logger.exception('Failed to generate server ssl cert.')
+                    raise
+
     def _run_wsgi(self):
+        self._setup_server_cert()
         import cherrypy.wsgiserver
+        import cherrypy.wsgiserver.ssl_builtin
         from log_entry import LogEntry
         logger.info('Starting server...')
 
         server = cherrypy.wsgiserver.CherryPyWSGIServer(
             (self.bind_addr, self.port), self.app)
+        server.ssl_adapter = cherrypy.wsgiserver.ssl_builtin.BuiltinSSLAdapter(
+            self._server_cert_path, self._server_key_path)
         try:
             server.start()
         except (KeyboardInterrupt, SystemExit), exc:
