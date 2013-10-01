@@ -595,6 +595,10 @@ header.blur {
   border-right: 0 none;
 }
 
+.dashboard .status-container .status-item span {
+  vertical-align: top;
+}
+
 .dashboard .status-container .status-item .status-title,
 .servers-list .server .server-info .status-item .status-title {
   color: #4d535c;
@@ -616,7 +620,6 @@ header.blur {
 .servers-list .server .server-info .status-item .status-icon {
   color: #1f83bb;
   font-size: 26px;
-  margin-right: 3px;
 }
 
 .servers-list .server .server-info .status-item .status-icon {
@@ -624,8 +627,12 @@ header.blur {
   margin-right: 0;
 }
 
-.dashboard .status-container .servers-status .status-icon {
-  top: 4px;
+.dashboard .status-container .status-item .status-icon {
+  top: -2px;
+}
+
+.dashboard .status-container .status-item .status-icon.glyphicon-cloud {
+  top: 0;
 }
 
 .servers-list .server .server-info .server-port .status-icon {
