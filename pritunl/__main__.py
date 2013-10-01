@@ -3,7 +3,7 @@ import sys
 import os
 import pritunl
 
-def drivnal_daemon():
+def pritunl_daemon():
     parser = optparse.OptionParser()
     parser.add_option('-d', '--daemon', action='store_true',
         help='Daemonize process')
