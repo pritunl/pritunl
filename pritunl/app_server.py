@@ -15,7 +15,7 @@ import subprocess
 logger = None
 
 class AppServer(Config):
-    bool_options = ['debug', 'log_debug']
+    bool_options = ['debug', 'log_debug', 'auto_start_servers']
     int_options = ['port', 'session_timeout']
     path_options = ['log_path', 'db_path', 'www_path', 'data_path',
         'server_cert_path', 'server_key_path']
@@ -181,6 +181,12 @@ class AppServer(Config):
         from log_entry import LogEntry
         logger.info('Starting server...')
 
+        if self.auto_start_servers != False:
+            from pritunl.server import Server
+            for server in Server.get_servers():
+                if server.get_orgs():
+                    server.start()
+
         server = cherrypy.wsgiserver.CherryPyWSGIServer(
             (self.bind_addr, self.port), self.app)
         server.ssl_adapter = cherrypy.wsgiserver.ssl_builtin.BuiltinSSLAdapter(
@@ -212,7 +218,7 @@ class AppServer(Config):
             self.interrupt = True
             # Possible data loss here db closing before debug server
             self._close_db()
-            logger.info('Stopping server...')
+            logger.info('Stopping debug server...')
 
     def _run_server(self):
         from log_entry import LogEntry
