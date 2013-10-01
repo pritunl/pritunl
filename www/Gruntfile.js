@@ -71,10 +71,17 @@ module.exports = function(grunt) {
             mangle: false
           },
           paths: {
+            ace: 'vendor/ace/ace',
+            aceModeSh: 'vendor/ace/mode-sh',
+            aceModeText: 'vendor/ace/mode-text',
+            aceThemeAmbiance: 'vendor/ace/theme-ambiance',
+            aceThemeChrome: 'vendor/ace/theme-chrome',
+            aceThemeGithub: 'vendor/ace/theme-github',
+            aceThemeMonokai: 'vendor/ace/theme-monokai',
+            aceThemeTwilight: 'vendor/ace/theme-twilight',
             backbone: 'vendor/backbone/backbone.min',
             bootstrap: 'vendor/bootstrap/bootstrap.min',
             d3: 'vendor/d3/d3.min',
-            googleAnalytics: 'vendor/googleAnalytics/googleAnalytics.min',
             jquery: 'vendor/jquery/jquery.min',
             less: 'vendor/less/less.min',
             text: 'vendor/requireText/text',
@@ -95,10 +102,17 @@ module.exports = function(grunt) {
             mangle: false
           },
           paths: {
+            ace: 'vendor/ace/ace',
+            aceModeSh: 'vendor/ace/mode-sh',
+            aceModeText: 'vendor/ace/mode-text',
+            aceThemeAmbiance: 'vendor/ace/theme-ambiance',
+            aceThemeChrome: 'vendor/ace/theme-chrome',
+            aceThemeGithub: 'vendor/ace/theme-github',
+            aceThemeMonokai: 'vendor/ace/theme-monokai',
+            aceThemeTwilight: 'vendor/ace/theme-twilight',
             backbone: 'vendor/backbone/backbone.min',
             bootstrap: 'vendor/bootstrap/bootstrap.min',
             d3: 'vendor/d3/d3.min',
-            googleAnalytics: 'vendor/googleAnalytics/googleAnalytics.min',
             jquery: 'vendor/jquery/jquery.min',
             less: 'vendor/less/less.min',
             text: 'vendor/requireText/text',
@@ -119,12 +133,18 @@ module.exports = function(grunt) {
             mangle: false
           },
           paths: {
+            ace: 'vendor/ace/ace',
+            aceModeSh: 'vendor/ace/mode-sh',
+            aceModeText: 'vendor/ace/mode-text',
+            aceThemeAmbiance: 'vendor/ace/theme-ambiance',
+            aceThemeChrome: 'vendor/ace/theme-chrome',
+            aceThemeGithub: 'vendor/ace/theme-github',
+            aceThemeMonokai: 'vendor/ace/theme-monokai',
+            aceThemeTwilight: 'vendor/ace/theme-twilight',
             backbone: 'vendor/backbone/backbone.min',
             bootstrap: 'vendor/bootstrap/bootstrap.min',
             d3: 'vendor/d3/d3.min',
-            googleAnalytics: 'vendor/googleAnalytics/googleAnalytics.min',
             jquery: 'vendor/jquery/jquery.min',
-            jqueryUi: 'vendor/jqueryUi/jqueryUi.min',
             less: 'vendor/less/less.min',
             text: 'vendor/requireText/text',
             underscore: 'vendor/underscore/underscore.min',
@@ -148,6 +168,20 @@ module.exports = function(grunt) {
     copy: {
       dist: {
         files: {
+          'dist/fonts/fredoka-one.eot': 'fonts/fredoka-one.eot',
+          'dist/fonts/fredoka-one.woff': 'fonts/fredoka-one.woff',
+          'dist/fonts/glyphicons-halflings-regular.eot':
+            'fonts/glyphicons-halflings-regular.eot',
+          'dist/fonts/glyphicons-halflings-regular.svg':
+            'fonts/glyphicons-halflings-regular.svg',
+          'dist/fonts/glyphicons-halflings-regular.ttf':
+            'fonts/glyphicons-halflings-regular.ttf',
+          'dist/fonts/glyphicons-halflings-regular.woff':
+            'fonts/glyphicons-halflings-regular.woff',
+          'dist/fonts/ubuntu-bold.eot': 'fonts/ubuntu-bold.eot',
+          'dist/fonts/ubuntu-bold.woff': 'fonts/ubuntu-bold.woff',
+          'dist/fonts/ubuntu.eot': 'fonts/ubuntu.eot',
+          'dist/fonts/ubuntu.woff': 'fonts/ubuntu.woff',
           'dist/js/require.min.js': 'vendor/require/require.min.js',
           'dist/favicon.ico': 'img/favicon.ico',
           'dist/robots.txt': 'root/robots.txt',
