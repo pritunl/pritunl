@@ -11,4 +11,4 @@ Development Setup
     $ git clone https://github.com/zachhuff386/pritunl.git
     $ cd pritunl
     $ python2 server.py
-    # Open http://localhost:8500/
+    # Open http://localhost:9700/
