@@ -1,18 +1,3 @@
-*, *:before, *:after {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
- }
-
-body {
-  background-color: #efefef;
-  overflow-y: scroll;
-}
-
-ul {
-  padding-left: 30px;
-}
-
 .title {
   font-weight: bold;
   font-family: 'Ubuntu', sans-serif;
@@ -20,7 +5,7 @@ ul {
 
 .title a,
 .title a:hover {
-  color: #4d535c;
+  color: @dark-fg;
 }
 
 .container {
@@ -34,7 +19,7 @@ ul {
 }
 
 .alert.flash {
-  background-color: #fff;
+  background-color: @white-fg;
 }
 
 .alert-dismissable .close {
@@ -44,23 +29,23 @@ ul {
 }
 
 .alert-success {
-  background-color: #daeed1;
-  border-color: #b2df8d;
+  background-color: @alert-success-bg;
+  border-color: @alert-success-border;
 }
 
 .alert-info {
-  background-color: #d4eaf5;
-  border-color: #9ddbe7;
+  background-color: @alert-info-bg;
+  border-color: @alert-info-border;
 }
 
 .alert-warning {
-  background-color: #fff8db;
-  border-color: #f1d997;
+  background-color: @alert-warning-bg;
+  border-color: @alert-warning-border;
 }
 
 .alert-danger {
-  background-color: #eed6d6;
-  border-color: #e0a2ac;
+  background-color: @alert-danger-bg;
+  border-color: @alert-danger-border;
 }
 
 .modal {
@@ -93,7 +78,7 @@ ul {
 }
 
 .modal .modal-dialog .modal-footer {
-  background-color: #f5f5f5;
+  background-color: @light-dark-bg;
   .border-bottom-left-radius(6px);
   .border-bottom-right-radius(6px);
 }
@@ -111,7 +96,7 @@ ul {
 }
 
 .modal .modal-user-list li {
-  color: #777;
+  color: @light-dark-fg;
 }
 
 .navbar .navbar-brand,
@@ -122,7 +107,7 @@ ul {
   padding: 13px 15px 0 15px;
   font-size: 28px;
   cursor: default;
-  color: #ececec;
+  color: @header-fg;
 }
 
 .navbar .change-password {
@@ -134,7 +119,7 @@ ul {
   height: 19px;
   margin-right: 10px;
   padding-left: 1px;
-  border: 1px solid #cfcfcf;
+  border: 1px solid @light-dark-border;
   float: left;
   .border-radius(3px);
 }
@@ -142,7 +127,7 @@ ul {
 .selector .selector-inner {
   font-size: 14px;
   top: auto;
-  color: #858585;
+  color: @checkmark-fg;
   display: none;
 }
 
@@ -158,6 +143,7 @@ ul {
 
 
 
+
 header.blur {
   .blur(5px);
 }
@@ -165,6 +151,15 @@ header.blur {
 #app.blur {
   .blur(10px);
 }
+
+.navbar {
+  border-radius: 0;
+}
+
+.navbar-collapse {
+  padding-right: 0;
+}
+
 
 
 
@@ -179,7 +174,7 @@ header.blur {
 }
 
 .login-backdrop {
-  background-color: #000;
+  background-color: @black-bg;
   opacity: 0.75;
   z-index: 2000;
   cursor: default;
@@ -195,7 +190,7 @@ header.blur {
 }
 
 .login .login-form {
-  background-color: #f9f9f9;
+  background-color: @light-dark2-bg;
   padding: 40px 35px;
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
@@ -240,7 +235,7 @@ header.blur {
 
 .orgs-list .orgs-list-title,
 .servers-list .servers-list-title {
-  color: #4d535c;
+  color: @dark-fg;
   display: inline-block;
   margin-top: 6px;
   margin-bottom: 19px;
@@ -261,8 +256,8 @@ header.blur {
 .orgs-list-container .no-orgs,
 .servers-list .no-servers {
   margin-bottom: 25px;
-  border: 1px solid #cfcfcf;
-  background-color: #f9f9f9;
+  border: 1px solid @light-dark-border;
+  background-color: @light-dark2-bg;
   .border-radius(4px);
   .box-shadow(0 2px 1px rgba(0, 0, 0, 0.05),
     0 -1px 2px rgba(0, 0, 0, 0.05) inset);
@@ -295,9 +290,9 @@ header.blur {
 .servers-list .server .server-header {
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
-  background-color: #fff;
+  background-color: @white-fg;
   padding: 10px 11px 16px 14px;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid @light-dark2-border;
 }
 
 .users-list .users-list-header button,
@@ -316,8 +311,8 @@ header.blur {
   text-align: center;
   font-size: 14px;
   padding: 10px;
-  color: #777;
-  background-color: #f5f5f5;
+  color: @light-dark-fg;
+  background-color: @light-dark-bg;
   display: none;
 }
 
@@ -338,8 +333,8 @@ header.blur {
 .server-orgs-list .org,
 .server-orgs-list .no-orgs {
   height: 40px;
-  background: #fff;
-  border: 1px solid #cfcfcf;
+  background: @white-fg;
+  border: 1px solid @light-dark-border;
   margin-top: 12px;
   .border-radius(3px);
   .box-shadow(0 1px 0 rgba(255, 255, 255, 0.02)
@@ -351,8 +346,8 @@ header.blur {
 .server-orgs-list .no-orgs {
   text-align: center;
   font-size: 14px;
-  color: #777;
-  background-color: #f5f5f5;
+  color: @light-dark-fg;
+  background-color: @light-dark-bg;
   padding-top: 10px;
   display: none;
 }
@@ -376,7 +371,7 @@ header.blur {
   padding-top: 0;
   padding-left: 13px;
   margin-top: 3px;
-  border-left: 1px solid #cfcfcf;
+  border-left: 1px solid @light-dark-border;
 }
 
 .users-list .user .name-container {
@@ -393,13 +388,13 @@ header.blur {
   margin-top: 0;
   margin-right: 6px;
   font-size: 19px;
-  color: #64b3f6;
+  color: @icon-blue-bg;
   vertical-align: text-top;
 }
 
 .users-list .user .name-container.type-server .name-icon,
 .users-list .user .name-container.type-server .user-name {
-  color: #b8b8b8;
+  color: @icon-gray-bg;
 }
 
 .users-list .user .name-container .name-icon {
@@ -423,7 +418,7 @@ header.blur {
 .servers-list .server .server-title .server-id,
 .servers-list .server .org .org-id {
   position: relative;
-  color: #4d535c;
+  color: @dark-fg;
   font-size: 10px;
   display: none;
 }
@@ -449,7 +444,7 @@ header.blur {
 }
 
 .server-orgs-list .org .org-name {
-  color: #428bca;
+  color: @blue-fg;
   cursor: default;
 }
 
@@ -457,17 +452,13 @@ header.blur {
   float: right;
   top: -1px;
   font-size: 20px;
-  color: #4e8bbf;
+  color: @icon-blue2-bg;
   cursor: pointer;
 }
 
 .users-list .user .status-container .download-key:hover {
   text-decoration: none;
-  color: #2a6496;
-}
-
-.users-list .user .status-container .download-key:active {
-  color: #355f82;
+  color: @icon-blue3-bg;
 }
 
 .users-list .user .status-container,
@@ -478,7 +469,7 @@ header.blur {
   height: 28px;
   width: 120px;
   padding: 3px 8px 0 12px;
-  border-left: 1px solid #cfcfcf;
+  border-left: 1px solid @light-dark-border;
 }
 
 .server-orgs-list .org .button-container {
@@ -498,15 +489,15 @@ header.blur {
 
 
 .users-list .user .status-container .status-icon.online {
-  background-color: #47a447;
+  background-color: @green-fg;
 }
 
 .users-list .user .status-container .status-icon.offline {
-  background-color: #d2322d;
+  background-color: @red-fg;
 }
 
 .users-list .user .status-container .status-text {
-  color: #6f7277;
+  color: @gray-fg;
 }
 
 
@@ -515,8 +506,8 @@ header.blur {
 .dashboard .status-container,
 .dashboard .log-container {
   margin-bottom: 25px;
-  border: 1px solid #cfcfcf;
-  background-color: #f9f9f9;
+  border: 1px solid @light-dark-border;
+  background-color: @light-dark2-bg;
   .border-radius(4px);
   .box-shadow(0 2px 1px rgba(0, 0, 0, 0.05),
     0 -1px 2px rgba(0, 0, 0, 0.05) inset);
@@ -528,7 +519,7 @@ header.blur {
 }
 
 .servers-list .server .server-info {
-  background-color: #fff;
+  background-color: @white-fg;
 }
 
 .dashboard .status-container table {
@@ -543,11 +534,11 @@ header.blur {
 }
 
 .servers-list .server .server-info .server-output {
-  border-bottom: 1px solid #cfcfcf;
+  border-bottom: 1px solid @light-dark-border;
 }
 
 .servers-list .server .server-info .server-output .server-output-title {
-  color: #4d535c;
+  color: @dark-fg;
   font-size: 16px;
   margin: 0;
   padding-top: 5px;
@@ -559,21 +550,21 @@ header.blur {
 }
 
 .servers-list .server .server-info .server-output .server-output-icon {
-  color: #1f83bb;
+  color: @icon-blue4-bg;
   top: -1px;
   font-size: 18px;
 }
 
 .servers-list .server .server-info .server-output .server-output-clear {
   float: right;
-  color: #4d535c;
+  color: @dark-fg;
   top: 3px;
   font-size: 12px;
   margin-right: 12px;
 }
 
 .servers-list .server .server-info .server-output .server-output-clear:hover {
-  color: #000;
+  color: @black-bg;
 }
 
 .servers-list .server .server-info .server-output .server-output-viewer {
@@ -582,13 +573,13 @@ header.blur {
 
 .servers-list .server .server-info .server-output .text-viewer {
   height: 262px;
-  border: 1px solid #cfcfcf;
+  border: 1px solid @light-dark-border;
 }
 
 .dashboard .status-container .status-item,
 .servers-list .server .server-info .status-item {
   padding: 20px 0;
-  border-right: 1px solid #cfcfcf;
+  border-right: 1px solid @light-dark-border;
   text-align: center;
 }
 
@@ -596,7 +587,7 @@ header.blur {
   height: 43px;
   padding: 9px 15px;
   text-align: left;
-  border-bottom: 1px solid #cfcfcf;
+  border-bottom: 1px solid @light-dark-border;
 }
 
 .servers-list .server .server-info .status-item.last {
@@ -613,7 +604,7 @@ header.blur {
 
 .dashboard .status-container .status-item .status-title,
 .servers-list .server .server-info .status-item .status-title {
-  color: #4d535c;
+  color: @dark-fg;
   font-size: 26px;
   margin: 0 0 3px 0;
 }
@@ -630,7 +621,7 @@ header.blur {
 
 .dashboard .status-container .status-item .status-icon,
 .servers-list .server .server-info .status-item .status-icon {
-  color: #1f83bb;
+  color: @icon-blue4-bg;
   font-size: 26px;
 }
 
@@ -652,7 +643,7 @@ header.blur {
 }
 
 .servers-list .server .server-info .status-item .status-text {
-  color: #4d535c;
+  color: @dark-fg;
   float: right;
   position: relative;
   top: -21px;
@@ -670,19 +661,19 @@ header.blur {
 }
 
 .dashboard .status-container .status-text .status-num.none {
-  color: #616161;
+  color: @gray2-fg;
 }
 
 .dashboard .status-container .status-text .status-num.error {
-  color: #f00;
+  color: @red2-fg;
 }
 
 .dashboard .status-container .status-text .status-num.warning {
-  color: #f90;
+  color: @orange-fg;
 }
 
 .dashboard .status-container .status-text .status-num.success {
-  color: #3ba51a;
+  color: @green2-fg;
 }
 
 .dashboard .log-container {
@@ -690,17 +681,17 @@ header.blur {
 }
 
 .dashboard .log-container .log-title {
-  color: #4d535c;
+  color: @dark-fg;
   margin: 0;
   font-size: 20px;
   padding-bottom: 17px;
-  border-bottom: 1px solid #cfcfcf;
+  border-bottom: 1px solid @light-dark-border;
 }
 
 .dashboard .log-container .log-entry {
-  color: #4d535c;
+  color: @dark-fg;
   padding: 15px 15px 15px 10px;
-  border-bottom: 1px solid #cfcfcf;
+  border-bottom: 1px solid @light-dark-border;
 }
 
 .dashboard .log-container .log-entry.last {
@@ -712,12 +703,12 @@ header.blur {
 }
 
 .dashboard .log-container .log-entry .log-time {
-  color: #777;
+  color: @light-dark-fg;
   float: right;
 }
 
 .dashboard .log-container .log-entry .log-icon {
-  color: #1f83bb;
+  color: @icon-blue4-bg;
   font-size: 15px;
   margin-right: 7px;
 }
