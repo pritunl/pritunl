@@ -222,7 +222,8 @@ class Server(Config):
         })
         args = [
             'openssl', 'dhparam',
-            '-out', self.dh_param_path, str(DH_PARAM_BITS)
+            '-out', self.dh_param_path,
+            str(app_server.dh_param_bits or DEFAULT_DH_PARAM_BITS)
         ]
         subprocess.check_call(args, stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)

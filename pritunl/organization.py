@@ -92,7 +92,8 @@ class Organization(Config):
         openssl_lock.acquire()
         try:
             conf_path = os.path.join(self.path, TEMP_DIR, 'crl.conf')
-            conf_data = CERT_CONF % (self.id, self.path, CA_CERT_ID)
+            conf_data = CERT_CONF % (self.id, self.path,
+                app_server.key_bits or DEFAULT_KEY_BITS, CA_CERT_ID)
             with open(conf_path, 'w') as conf_file:
                 conf_file.write(conf_data)
             args = [

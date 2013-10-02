@@ -1,5 +1,5 @@
 from constants import *
-from pritunl import openssl_lock
+from pritunl import app_server, openssl_lock
 from config import Config
 from log_entry import LogEntry
 from event import Event
@@ -101,7 +101,8 @@ class User(Config):
             openssl_lock.release()
 
     def _create_ssl_conf(self):
-        conf_data = CERT_CONF % (self.org.id, self.org.path, self.id)
+        conf_data = CERT_CONF % (self.org.id, self.org.path,
+            app_server.key_bits or DEFAULT_KEY_BITS, self.id)
         with open(self.ssl_conf_path, 'w') as conf_file:
             conf_file.write(conf_data)
 

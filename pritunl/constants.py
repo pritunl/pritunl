@@ -21,7 +21,8 @@ DEFAULT_DB_PATH = '/var/lib/pritunl/pritunl.db'
 DEFAULT_WWW_PATH = '/usr/share/pritunl/www'
 DEFAULT_DATA_PATH = '/var/lib/pritunl'
 DEFAULT_LOG_LIMIT = 20
-DH_PARAM_BITS = 2048
+DEFAULT_KEY_BITS = 4096
+DEFAULT_DH_PARAM_BITS = 2048
 
 INFO = 'info'
 WARNING = 'warning'
@@ -74,7 +75,7 @@ ca = %s
 dir = %s
 
 [ req ]
-default_bits = 4096
+default_bits = %s
 default_md = sha1
 encrypt_key = no
 utf8 = yes

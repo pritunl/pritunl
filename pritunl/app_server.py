@@ -16,7 +16,7 @@ logger = None
 
 class AppServer(Config):
     bool_options = ['debug', 'log_debug', 'auto_start_servers']
-    int_options = ['port', 'session_timeout']
+    int_options = ['port', 'session_timeout', 'key_bits', 'dh_param_bits']
     path_options = ['log_path', 'db_path', 'www_path', 'data_path',
         'server_cert_path', 'server_key_path']
     str_options = ['bind_addr', 'password']
