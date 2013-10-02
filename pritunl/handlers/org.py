@@ -30,11 +30,7 @@ def org_post():
     name = flask.request.json['name'].encode()
     name = ''.join(x for x in name if x.isalnum() or x in NAME_SAFE_CHARS)
     org = Organization(name=name)
-
-    return utils.jsonify({
-        'id': org.id,
-        'name': org.name,
-    })
+    return utils.jsonify({})
 
 @app_server.app.route('/organization/<org_id>', methods=['PUT'])
 @app_server.auth
