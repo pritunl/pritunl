@@ -2,10 +2,12 @@
 define([
   'jquery',
   'underscore',
-  'backbone'
-], function($, _, Backbone) {
+  'backbone',
+  'demo/ajax'
+], function($, _, Backbone, demoAjax) {
   'use strict';
   var initialize = function() {
+    Backbone.ajax = demoAjax;
   };
 
   return initialize;
