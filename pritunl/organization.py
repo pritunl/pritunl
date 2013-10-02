@@ -104,6 +104,11 @@ class Organization(Config):
             subprocess.check_call(args, stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE)
             os.remove(conf_path)
+        except subprocess.CalledProcessError:
+            logger.exception('Failed to generate server crl. %r' % {
+                'org_id': self.id,
+            })
+            raise
         finally:
             openssl_lock.release()
 
