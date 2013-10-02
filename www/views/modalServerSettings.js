@@ -14,10 +14,10 @@ define([
     loadingMsg: 'Saving server...',
     errorMsg: 'Failed to saving server, server error occurred.',
     events: function() {
-      return _.extend(ModalServerSettingsView.__super__.events, {
+      return _.extend({
         'click .local-network-toggle .selector': 'onLocalNetworkSelect',
         'click .debug-toggle .selector': 'onDebugSelect'
-      });
+      }, ModalServerSettingsView.__super__.events);
     },
     body: function() {
       return this.template(this.model.toJSON());
