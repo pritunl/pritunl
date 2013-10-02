@@ -79,6 +79,12 @@ class User(Config):
             ]
             subprocess.check_call(args, stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE)
+        except subprocess.CalledProcessError:
+            logger.exception('Failed to create user cert requests. %r' % {
+                'org_id': self.org.id,
+                'user_id': self.id,
+            })
+            raise
         finally:
             openssl_lock.release()
         os.chmod(self.key_path, 0600)
@@ -97,6 +103,12 @@ class User(Config):
             ]
             subprocess.check_call(args, stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE)
+        except subprocess.CalledProcessError:
+            logger.exception('Failed to create user cert. %r' % {
+                'org_id': self.org.id,
+                'user_id': self.id,
+            })
+            raise
         finally:
             openssl_lock.release()
 
@@ -146,6 +158,12 @@ class User(Config):
                 if 'ERROR:Already revoked' not in err_output:
                     raise subprocess.CalledProcessError(returncode, args)
             self._delete_ssl_conf()
+        except subprocess.CalledProcessError:
+            logger.exception('Failed to revoke user cert. %r' % {
+                'org_id': self.org.id,
+                'user_id': self.id,
+            })
+            raise
         finally:
             openssl_lock.release()
         self.org.generate_crl()
@@ -192,6 +210,8 @@ class User(Config):
             os.remove(self.reqs_path)
         except OSError, error:
             logger.debug('Failed to remove user reqs file. %r' % {
+                'org_id': self.org.id,
+                'user_id': self.id,
                 'path': self.reqs_path,
                 'error': error,
             })
@@ -205,6 +225,8 @@ class User(Config):
             os.remove(self.key_path)
         except OSError, error:
             logger.debug('Failed to remove user key file. %r' % {
+                'org_id': self.org.id,
+                'user_id': self.id,
                 'path': self.reqs_path,
                 'error': error,
             })
@@ -213,6 +235,8 @@ class User(Config):
             os.remove(self.cert_path)
         except OSError, error:
             logger.debug('Failed to remove user cert file. %r' % {
+                'org_id': self.org.id,
+                'user_id': self.id,
                 'path': self.reqs_path,
                 'error': error,
             })
@@ -221,6 +245,8 @@ class User(Config):
             os.remove(self.get_path())
         except OSError, error:
             logger.debug('Failed to remove user conf file. %r' % {
+                'org_id': self.org.id,
+                'user_id': self.id,
                 'path': self.reqs_path,
                 'error': error,
             })
