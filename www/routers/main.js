@@ -149,6 +149,7 @@ define([
   });
 
   var initialize = function() {
+    var _ajax = Backbone.ajax;
     Backbone.ajax = function(options) {
       options.complete = function(response) {
         if (response.status === 401) {
@@ -156,7 +157,7 @@ define([
           Backbone.history.navigate('logout/expired', {trigger: true});
         }
       };
-      return Backbone.$.ajax.call(Backbone.$, options);
+      return _ajax.call(Backbone.$, options);
     };
 
     var data = {
