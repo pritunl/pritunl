@@ -158,9 +158,9 @@ define([
   };
   routes['GET=/server'] = serverGet;
 
-  var serverPostPut = function(request, serverId) {
-    serverId = serverId || uuid();
-    demoData.servers[serverId] = _.extend({
+  var serverPost = function(request) {
+    var serverId = uuid();
+    demoData.servers[serverId] = {
       id: serverId,
       name: request.data.name,
       network: request.data.network,
@@ -169,13 +169,29 @@ define([
       protocol: request.data.protocol,
       local_network: request.data.local_network,
       public_address: request.data.public_address,
-      debug: request.data.debug
-    }, demoData.servers[serverId]);
+      debug: request.data.debug,
+      status: 'offline',
+      orgs: [],
+      output: ''
+    };
     event('servers_updated');
     request.response({});
   };
-  routes['POST=/server'] = serverPostPut;
-  routes['PUT=/server/<serverId>'] = serverPostPut;
+  routes['POST=/server'] = serverPost;
+
+  var serverPut = function(request, serverId) {
+    demoData.servers[serverId].name = request.data.name;
+    demoData.servers[serverId].network = request.data.network;
+    demoData.servers[serverId].interface = request.data.interface;
+    demoData.servers[serverId].port = request.data.port;
+    demoData.servers[serverId].protocol = request.data.protocol;
+    demoData.servers[serverId].local_network = request.data.local_network;
+    demoData.servers[serverId].public_address = request.data.public_address;
+    demoData.servers[serverId].debug = request.data.debug;
+    event('servers_updated');
+    request.response({});
+  };
+  routes['PUT=/server/<serverId>'] = serverPut;
 
   var serverDelete = function(request, serverId) {
     delete demoData.servers[serverId];
@@ -201,10 +217,7 @@ define([
   routes['GET=/server/<serverId>/organization'] = serverOrgGet;
 
   var serverOrgPut = function(request, serverId, orgId) {
-    if (!demoData.servers[serverId].orgs) {
-      demoData.servers[serverId].orgs = [orgId];
-    }
-    else if (demoData.servers[serverId].orgs.indexOf(orgId) === -1) {
+    if (demoData.servers[serverId].orgs.indexOf(orgId) === -1) {
       demoData.servers[serverId].orgs.push(orgId);
     }
     event('server_organizations_updated', serverId);
@@ -229,8 +242,6 @@ define([
     }
     else if (operation === 'stop') {
       demoData.servers[serverId].status = 'offline';
-      demoData.servers[serverId].output = demoData.servers[
-        serverId].output || '';
       demoData.servers[serverId].output += demoData.serverOutput.offline;
     }
     else {
@@ -246,7 +257,7 @@ define([
   var serverOutputGet = function(request, serverId) {
     request.response({
       id: serverId,
-      output: demoData.servers[serverId].output || ''
+      output: demoData.servers[serverId].output
     });
   };
   routes['GET=/server/<serverId>/output'] = serverOutputGet;
