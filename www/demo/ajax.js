@@ -229,7 +229,9 @@ define([
     }
     else if (operation === 'stop') {
       demoData.servers[serverId].status = 'offline';
-      demoData.servers[serverId].output = demoData.serverOutput.offline;
+      demoData.servers[serverId].output = demoData.servers[
+        serverId].output || '';
+      demoData.servers[serverId].output += demoData.serverOutput.offline;
     }
     else {
       demoData.servers[serverId].status = 'online';
@@ -240,6 +242,21 @@ define([
     request.response({});
   };
   routes['PUT=/server/<serverId>/<operation>'] = serverOperationPut;
+
+  var serverOutputGet = function(request, serverId) {
+    request.response({
+      id: serverId,
+      output: demoData.servers[serverId].output || ''
+    });
+  };
+  routes['GET=/server/<serverId>/output'] = serverOutputGet;
+
+  var serverOutputDelete = function(request, serverId) {
+    demoData.servers[serverId].output = '';
+    event('server_output_updated', serverId);
+    request.response({});
+  };
+  routes['DELETE=/server/<serverId>/output'] = serverOutputDelete;
 
   var statusGet = function(request) {
     var id;
