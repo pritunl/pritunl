@@ -25,38 +25,26 @@ define([
   var authPost = function(request) {
     if (request.data.username !== demoData.auth.username ||
         request.data.password !== demoData.auth.password) {
-      setTimeout(function() {
-        request.error({
-          responseJSON: {
-            error: 'auth_not_valid',
-            error_msg: 'Username or password is not valid.'
-          },
-          status: 401
-        });
-      }, responseDelay);
+      request.response({
+        error: 'auth_not_valid',
+        error_msg: 'Username or password is not valid.'
+      }, 401);
       return;
     }
-
-    setTimeout(function() {
-      request.success({});
-    }, responseDelay);
+    request.response({});
   };
   routes['POST=/auth'] = authPost;
 
   var authGet = function(request) {
-    setTimeout(function() {
-      request.success({
-        authenticated: demoData.auth.authenticated
-      });
-    }, responseDelay);
+    request.response({
+      authenticated: demoData.auth.authenticated
+    });
   };
   routes['GET=/auth'] = authGet;
 
   var authDelete = function(request) {
     demoData.auth.authenticated = false;
-    setTimeout(function() {
-      request.success({});
-    }, responseDelay);
+    request.response({});
   };
   routes['DELETE=/auth'] = authDelete;
 
@@ -84,12 +72,12 @@ define([
       }
 
       if (events.length) {
-        request.success(events);
+        request.response(events);
       }
       else {
         count += 1;
         if (count > (30 / 0.3)) {
-          request.success([]);
+          request.response([]);
         }
         else {
           checkEvents(request, lastEvent, count);
@@ -100,7 +88,7 @@ define([
 
   var eventGet = function(request, lastEvent) {
     if (!lastEvent) {
-      request.success([{
+      request.response([{
         id: uuid(),
         type: 'time',
         resource_id: null,
@@ -115,9 +103,7 @@ define([
   routes['GET=/event/<int:lastEvent>'] = eventGet;
 
   var logGet = function(request) {
-    setTimeout(function() {
-      request.success(demoData.logEntries);
-    }, responseDelay);
+    request.response(demoData.logEntries);
   };
   routes['GET=/log'] = logGet;
 
@@ -129,9 +115,7 @@ define([
       orgs.push(demoData.orgs[id]);
     }
 
-    setTimeout(function() {
-      request.success(orgs);
-    }, responseDelay);
+    request.response(orgs);
   };
   routes['GET=/organization'] = organizationGet;
 
@@ -142,9 +126,7 @@ define([
       name: request.data.name,
     };
     event('organizations_updated');
-    setTimeout(function() {
-      request.success({});
-    }, responseDelay);
+    request.response({});
   };
   routes['POST=/organization'] = organizationPostPut;
   routes['PUT=/organization/<orgId>'] = organizationPostPut;
@@ -152,9 +134,7 @@ define([
   var organizationDelete = function(request, orgId) {
     delete demoData.orgs[orgId];
     event('organizations_updated');
-    setTimeout(function() {
-      request.success({});
-    }, responseDelay);
+    request.response({});
   };
   routes['DELETE=/organization/<orgId>'] = organizationDelete;
 
@@ -174,9 +154,7 @@ define([
       }, demoData.servers[id]));
     }
 
-    setTimeout(function() {
-      request.success(servers);
-    }, responseDelay);
+    request.response(servers);
   };
   routes['GET=/server'] = serverGet;
 
@@ -194,9 +172,7 @@ define([
       debug: request.data.debug
     }, demoData.servers[serverId]);
     event('servers_updated');
-    setTimeout(function() {
-      request.success({});
-    }, responseDelay);
+    request.response({});
   };
   routes['POST=/server'] = serverPostPut;
   routes['PUT=/server/<serverId>'] = serverPostPut;
@@ -204,18 +180,14 @@ define([
   var serverDelete = function(request, serverId) {
     delete demoData.servers[serverId];
     event('servers_updated');
-    setTimeout(function() {
-      request.success({});
-    }, responseDelay);
+    request.response({});
   };
   routes['DELETE=/server/<serverId>'] = serverDelete;
 
   var serverDelete = function(request, serverId) {
     delete demoData.servers[serverId];
     event('servers_updated');
-    setTimeout(function() {
-      request.success({});
-    }, responseDelay);
+    request.response({});
   };
   routes['DELETE=/server/<serverId>'] = serverDelete;
 
@@ -230,9 +202,7 @@ define([
       demoData.servers[serverId].status = 'online';
     }
     event('servers_updated');
-    setTimeout(function() {
-      request.success({});
-    }, responseDelay);
+    request.response({});
   };
   routes['PUT=/server/<serverId>/<operation>'] = serverOperationPut;
 
@@ -253,17 +223,15 @@ define([
       }
     }
 
-    setTimeout(function() {
-      request.success({
-        orgs_available: orgsCount,
-        orgs_total: orgsCount,
-        users_online: 8,
-        users_total: 32,
-        servers_online: serversOnlineCount,
-        servers_total: serversCount,
-        public_ip: '8.8.8.8',
-      });
-    }, responseDelay);
+    request.response({
+      orgs_available: orgsCount,
+      orgs_total: orgsCount,
+      users_online: 8,
+      users_total: 32,
+      servers_online: serversOnlineCount,
+      servers_total: serversCount,
+      public_ip: '8.8.8.8',
+    });
   };
   routes['GET=/status'] = statusGet;
 
@@ -334,8 +302,32 @@ define([
       ajaxRequest.data = JSON.parse(ajaxRequest.data);
     }
 
+    args.unshift({
+      dataType: ajaxRequest.dataType,
+      contentType: ajaxRequest.contentType,
+      data: ajaxRequest.data,
+      response: function(data, statusCode) {
+        statusCode = statusCode || 200;
+        var status;
+        var jqXHR = {
+          status: statusCode,
+          responseJSON: data
+        };
+        setTimeout(function() {
+          if (statusCode >= 200 && statusCode < 300) {
+            status = 'success';
+            ajaxRequest.success(data, jqXHR);
+          }
+          else {
+            status = 'error';
+            ajaxRequest.success(data, jqXHR);
+          }
+          ajaxRequest.complete(jqXHR, status);
+        }, responseDelay);
+      }
+    });
+
     console.log(type, ajaxRequest.url);
-    args.unshift(ajaxRequest);
     handler.apply(this, args);
   };
 
