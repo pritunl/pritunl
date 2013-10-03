@@ -225,14 +225,18 @@ define([
   var serverOperationPut = function(request, serverId, operation) {
     if (operation === 'start') {
       demoData.servers[serverId].status = 'online';
+      demoData.servers[serverId].output = demoData.serverOutput.online;
     }
     else if (operation === 'stop') {
       demoData.servers[serverId].status = 'offline';
+      demoData.servers[serverId].output = demoData.serverOutput.offline;
     }
     else {
       demoData.servers[serverId].status = 'online';
+      demoData.servers[serverId].output = demoData.serverOutput.online;
     }
     event('servers_updated');
+    event('server_output_updated', serverId);
     request.response({});
   };
   routes['PUT=/server/<serverId>/<operation>'] = serverOperationPut;
