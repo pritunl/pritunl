@@ -184,12 +184,43 @@ define([
   };
   routes['DELETE=/server/<serverId>'] = serverDelete;
 
-  var serverDelete = function(request, serverId) {
-    delete demoData.servers[serverId];
-    event('servers_updated');
+  var serverOrgGet = function(request, serverId) {
+    var i;
+    var orgId;
+    var orgs = [];
+    if (demoData.servers[serverId].orgs) {
+      for (i = 0; i < demoData.servers[serverId].orgs.length; i++) {
+        orgId = demoData.servers[serverId].orgs[i];
+        orgs.push(_.extend({
+          server: serverId
+        }, demoData.orgs[orgId]));
+      }
+    }
+    request.response(orgs);
+  };
+  routes['GET=/server/<serverId>/organization'] = serverOrgGet;
+
+  var serverOrgPut = function(request, serverId, orgId) {
+    if (!demoData.servers[serverId].orgs) {
+      demoData.servers[serverId].orgs = [orgId];
+    }
+    else if (demoData.servers[serverId].orgs.indexOf(orgId) === -1) {
+      demoData.servers[serverId].orgs.push(orgId);
+    }
+    event('server_organizations_updated', serverId);
     request.response({});
   };
-  routes['DELETE=/server/<serverId>'] = serverDelete;
+  routes['PUT=/server/<serverId>/organization/<orgId>'] = serverOrgPut;
+
+  var serverOrgDelete = function(request, serverId, orgId) {
+    var index = demoData.servers[serverId].orgs.indexOf(orgId);
+    if (index !== -1) {
+      demoData.servers[serverId].orgs.splice(index, 1);
+    }
+    event('server_organizations_updated', serverId);
+    request.response({});
+  };
+  routes['DELETE=/server/<serverId>/organization/<orgId>'] = serverOrgDelete;
 
   var serverOperationPut = function(request, serverId, operation) {
     if (operation === 'start') {
@@ -325,7 +356,7 @@ define([
 
     if (!matched) {
       requestObj.response(null, 404);
-      console.error(type, ajaxRequest.url, '404', 'color: #f00');
+      console.error(type, ajaxRequest.url, '404');
       return;
     }
 
