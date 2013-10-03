@@ -293,16 +293,11 @@ define([
       }
     }
 
-    if (!matched) {
-      console.log(type, ajaxRequest.url, '404');
-      return;
-    }
-
     if (ajaxRequest.data && ajaxRequest.dataType === 'json') {
       ajaxRequest.data = JSON.parse(ajaxRequest.data);
     }
 
-    args.unshift({
+    var requestObj = {
       dataType: ajaxRequest.dataType,
       contentType: ajaxRequest.contentType,
       data: ajaxRequest.data,
@@ -325,7 +320,14 @@ define([
           ajaxRequest.complete(jqXHR, status);
         }, responseDelay);
       }
-    });
+    };
+    args.unshift(requestObj);
+
+    if (!matched) {
+      requestObj.response(null, 404);
+      console.error(type, ajaxRequest.url, '404', 'color: #f00');
+      return;
+    }
 
     console.log(type, ajaxRequest.url);
     handler.apply(this, args);
