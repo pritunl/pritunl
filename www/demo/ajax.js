@@ -220,14 +220,25 @@ define([
   routes['DELETE+server'] = serverDelete;
 
   var statusGet = function(request) {
+    var id;
+    var serversCount = 0;
+    var serversOnlineCount = 0;
+
+    for (id in demoData.servers) {
+      serversCount += 1;
+      if (demoData.servers[id].status === 'online') {
+        serversOnlineCount += 1;
+      }
+    }
+
     setTimeout(function() {
       request.success({
         orgs_available: 2,
         orgs_total: 2,
         users_online: 8,
         users_total: 32,
-        servers_online: 2,
-        servers_total: 2,
+        servers_online: serversOnlineCount,
+        servers_total: serversCount,
         public_ip: '8.8.8.8',
       });
     }, responseDelay);
