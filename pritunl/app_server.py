@@ -35,7 +35,7 @@ class AppServer(Config):
             response = urllib2.urlopen(request, timeout=10)
             self.public_ip = json.load(response)['ip']
         except:
-            logger.debug('Failed to get public ip address...')
+            logger.exception('Failed to get public ip address...')
 
     def _setup_public_ip(self):
         self.public_ip = None
