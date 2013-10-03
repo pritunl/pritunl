@@ -180,19 +180,32 @@ define([
   };
   routes['GET+server'] = serverGet;
 
-  var serverPostPut = function(request, serverId) {
-    serverId = serverId || uuid();
-    demoData.servers[serverId] = _.extend({
-      id: serverId,
-      name: request.data.name,
-      network: request.data.network,
-      interface: request.data.interface,
-      port: request.data.port,
-      protocol: request.data.protocol,
-      local_network: request.data.local_network,
-      public_address: request.data.public_address,
-      debug: request.data.debug
-    }, demoData.servers[serverId]);
+  var serverPostPut = function(request, serverId, operation) {
+    if (operation) {
+      if (operation === 'start') {
+        demoData.servers[serverId].status = 'online';
+      }
+      else if (operation === 'stop') {
+        demoData.servers[serverId].status = 'offline';
+      }
+      else {
+        demoData.servers[serverId].status = 'online';
+      }
+    }
+    else {
+      serverId = serverId || uuid();
+      demoData.servers[serverId] = _.extend({
+        id: serverId,
+        name: request.data.name,
+        network: request.data.network,
+        interface: request.data.interface,
+        port: request.data.port,
+        protocol: request.data.protocol,
+        local_network: request.data.local_network,
+        public_address: request.data.public_address,
+        debug: request.data.debug
+      }, demoData.servers[serverId]);
+    }
     event('servers_updated');
     setTimeout(function() {
       request.success({});
