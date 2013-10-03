@@ -65,15 +65,15 @@ def server_get():
 @app_server.app.route('/server/<server_id>', methods=['PUT'])
 @app_server.auth
 def server_put_post(server_id=None):
-    name = flask.request.json['name'].encode()
-    network = flask.request.json['network'].encode()
-    interface = flask.request.json['interface'].encode()
-    port = flask.request.json['port'].encode()
-    protocol = flask.request.json['protocol'].encode().lower()
+    name = flask.request.json['name']
+    network = flask.request.json['network']
+    interface = flask.request.json['interface']
+    port = flask.request.json['port']
+    protocol = flask.request.json['protocol'].lower()
     local_network = flask.request.json['local_network']
     if local_network:
-        local_network = local_network.encode()
-    public_address = flask.request.json['public_address'].encode()
+        local_network = local_network
+    public_address = flask.request.json['public_address']
     debug = flask.request.json['debug']
 
     # Network
