@@ -221,8 +221,13 @@ define([
 
   var statusGet = function(request) {
     var id;
+    var orgsCount = 0;
     var serversCount = 0;
     var serversOnlineCount = 0;
+
+    for (id in demoData.orgs) {
+      orgsCount += 1;
+    }
 
     for (id in demoData.servers) {
       serversCount += 1;
@@ -233,8 +238,8 @@ define([
 
     setTimeout(function() {
       request.success({
-        orgs_available: 2,
-        orgs_total: 2,
+        orgs_available: orgsCount,
+        orgs_total: orgsCount,
         users_online: 8,
         users_total: 32,
         servers_online: serversOnlineCount,
