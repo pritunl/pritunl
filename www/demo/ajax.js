@@ -60,6 +60,15 @@ define([
   };
   routes['DELETE+auth'] = authDelete;
 
+  var event = function(type, resourceId) {
+    demoData.events.push({
+      id: uuid(),
+      type: type,
+      resource_id: resourceId || null,
+      time: Math.round(new Date().getTime() / 1000)
+    });
+  }
+
   var checkEvents = function(request, lastEvent, count) {
     setTimeout(function() {
       var i;
@@ -132,6 +141,7 @@ define([
       id: id,
       name: request.data.name,
     };
+    event('organizations_updated');
     setTimeout(function() {
       request.success({});
     }, responseDelay);
@@ -140,11 +150,21 @@ define([
 
   var organizationPut = function(request, org_id) {
     demoData.orgs[org_id].name = request.data.name;
+    event('organizations_updated');
     setTimeout(function() {
       request.success({});
     }, responseDelay);
   };
   routes['PUT+organization'] = organizationPut;
+
+  var organizationDelete = function(request, org_id) {
+    delete demoData.orgs[org_id];
+    event('organizations_updated');
+    setTimeout(function() {
+      request.success({});
+    }, responseDelay);
+  };
+  routes['DELETE+organization'] = organizationDelete;
 
   var demoAjax = function(request) {
     var url = request.url.split('/');
