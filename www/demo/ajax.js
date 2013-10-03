@@ -271,6 +271,12 @@ define([
   };
   routes['DELETE=/server/<serverId>/output'] = serverOutputDelete;
 
+  var passwordPost = function(request) {
+    demoData.auth.password = request.data.password;
+    request.response({});
+  };
+  routes['POST=/password'] = passwordPost;
+
   var statusGet = function(request) {
     var id;
     var orgsCount = 0;
@@ -376,11 +382,11 @@ define([
         setTimeout(function() {
           if (statusCode >= 200 && statusCode < 300) {
             status = 'success';
-            ajaxRequest.success(data, jqXHR);
+            ajaxRequest.success(data, status, jqXHR);
           }
           else {
             status = 'error';
-            ajaxRequest.success(data, jqXHR);
+            ajaxRequest.error(jqXHR, status, null);
           }
           ajaxRequest.complete(jqXHR, status);
         }, responseDelay);
