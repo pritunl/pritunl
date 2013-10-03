@@ -41,7 +41,7 @@ define([
       request.success({});
     }, responseDelay);
   };
-  routes['POST+auth'] = authPost;
+  routes['POST=/auth'] = authPost;
 
   var authGet = function(request) {
     setTimeout(function() {
@@ -50,7 +50,7 @@ define([
       });
     }, responseDelay);
   };
-  routes['GET+auth'] = authGet;
+  routes['GET=/auth'] = authGet;
 
   var authDelete = function(request) {
     demoData.auth.authenticated = false;
@@ -58,7 +58,7 @@ define([
       request.success({});
     }, responseDelay);
   };
-  routes['DELETE+auth'] = authDelete;
+  routes['DELETE=/auth'] = authDelete;
 
   var event = function(type, resourceId) {
     demoData.events.push({
@@ -99,7 +99,6 @@ define([
   };
 
   var eventGet = function(request, lastEvent) {
-    lastEvent = parseInt(lastEvent, 10);
     if (!lastEvent) {
       request.success([{
         id: uuid(),
@@ -112,14 +111,15 @@ define([
 
     checkEvents(request, lastEvent, 0);
   };
-  routes['GET+event'] = eventGet;
+  routes['GET=/event'] = eventGet;
+  routes['GET=/event/<int:lastEvent>'] = eventGet;
 
   var logGet = function(request) {
     setTimeout(function() {
       request.success(demoData.logEntries);
     }, responseDelay);
   };
-  routes['GET+log'] = logGet;
+  routes['GET=/log'] = logGet;
 
   var organizationGet = function(request) {
     var id;
@@ -133,7 +133,7 @@ define([
       request.success(orgs);
     }, responseDelay);
   };
-  routes['GET+organization'] = organizationGet;
+  routes['GET=/organization'] = organizationGet;
 
   var organizationPostPut = function(request, orgId) {
     orgId = orgId || uuid();
@@ -146,8 +146,8 @@ define([
       request.success({});
     }, responseDelay);
   };
-  routes['POST+organization'] = organizationPostPut;
-  routes['PUT+organization'] = organizationPostPut;
+  routes['POST=/organization'] = organizationPostPut;
+  routes['PUT=/organization/<orgId>'] = organizationPostPut;
 
   var organizationDelete = function(request, orgId) {
     delete demoData.orgs[orgId];
@@ -156,7 +156,7 @@ define([
       request.success({});
     }, responseDelay);
   };
-  routes['DELETE+organization'] = organizationDelete;
+  routes['DELETE=/organization/<orgId>'] = organizationDelete;
 
   var serverGet = function(request) {
     var id;
@@ -178,59 +178,63 @@ define([
       request.success(servers);
     }, responseDelay);
   };
-  routes['GET+server'] = serverGet;
+  routes['GET=/server'] = serverGet;
 
-  var serverPostPut = function(request, serverId, operation) {
-    if (operation) {
-      if (operation === 'start') {
-        demoData.servers[serverId].status = 'online';
-      }
-      else if (operation === 'stop') {
-        demoData.servers[serverId].status = 'offline';
-      }
-      else {
-        demoData.servers[serverId].status = 'online';
-      }
+  var serverPostPut = function(request, serverId) {
+    serverId = serverId || uuid();
+    demoData.servers[serverId] = _.extend({
+      id: serverId,
+      name: request.data.name,
+      network: request.data.network,
+      interface: request.data.interface,
+      port: request.data.port,
+      protocol: request.data.protocol,
+      local_network: request.data.local_network,
+      public_address: request.data.public_address,
+      debug: request.data.debug
+    }, demoData.servers[serverId]);
+    event('servers_updated');
+    setTimeout(function() {
+      request.success({});
+    }, responseDelay);
+  };
+  routes['POST=/server'] = serverPostPut;
+  routes['PUT=/server/<serverId>'] = serverPostPut;
+
+  var serverDelete = function(request, serverId) {
+    delete demoData.servers[serverId];
+    event('servers_updated');
+    setTimeout(function() {
+      request.success({});
+    }, responseDelay);
+  };
+  routes['DELETE=/server/<serverId>'] = serverDelete;
+
+  var serverDelete = function(request, serverId) {
+    delete demoData.servers[serverId];
+    event('servers_updated');
+    setTimeout(function() {
+      request.success({});
+    }, responseDelay);
+  };
+  routes['DELETE=/server/<serverId>'] = serverDelete;
+
+  var serverOperationPut = function(request, serverId, operation) {
+    if (operation === 'start') {
+      demoData.servers[serverId].status = 'online';
+    }
+    else if (operation === 'stop') {
+      demoData.servers[serverId].status = 'offline';
     }
     else {
-      serverId = serverId || uuid();
-      demoData.servers[serverId] = _.extend({
-        id: serverId,
-        name: request.data.name,
-        network: request.data.network,
-        interface: request.data.interface,
-        port: request.data.port,
-        protocol: request.data.protocol,
-        local_network: request.data.local_network,
-        public_address: request.data.public_address,
-        debug: request.data.debug
-      }, demoData.servers[serverId]);
+      demoData.servers[serverId].status = 'online';
     }
     event('servers_updated');
     setTimeout(function() {
       request.success({});
     }, responseDelay);
   };
-  routes['POST+server'] = serverPostPut;
-  routes['PUT+server'] = serverPostPut;
-
-  var serverDelete = function(request, serverId) {
-    delete demoData.servers[serverId];
-    event('servers_updated');
-    setTimeout(function() {
-      request.success({});
-    }, responseDelay);
-  };
-  routes['DELETE+server'] = serverDelete;
-
-  var serverDelete = function(request, serverId) {
-    delete demoData.servers[serverId];
-    event('servers_updated');
-    setTimeout(function() {
-      request.success({});
-    }, responseDelay);
-  };
-  routes['DELETE+server'] = serverDelete;
+  routes['PUT=/server/<serverId>/<operation>'] = serverOperationPut;
 
   var statusGet = function(request) {
     var id;
@@ -261,24 +265,78 @@ define([
       });
     }, responseDelay);
   };
-  routes['GET+status'] = statusGet;
+  routes['GET=/status'] = statusGet;
 
-  var demoAjax = function(request) {
-    var url = request.url.split('/');
-    var method = url.splice(1, 1)[0];
-    var vars = url.splice(1);
-    var type = request.type;
-    vars.unshift(request);
+  var demoAjax = function(ajaxRequest) {
+    var type = ajaxRequest.type;
+    var url = ajaxRequest.url.split('/').splice(1);
+    var i;
+    var args;
+    var route;
+    var routeType;
+    var typeIndex;
+    var matched;
+    var handler;
+    var intChecked;
 
-    if (request.data && request.dataType === 'json') {
-      request.data = JSON.parse(request.data);
+    for (intChecked = 0; intChecked < 2; intChecked++) {
+      for (route in routes) {
+        args = [];
+        matched = true;
+        handler = routes[route];
+        typeIndex = route.indexOf('=');
+        routeType = route.substr(0, typeIndex);
+        route = route.substr(typeIndex + 1).split('/').splice(1);
+
+        if (routeType !== type || url.length !== route.length) {
+          matched = false;
+          continue;
+        }
+
+        for (i = 0; i < url.length; i++) {
+          if (route[i].substr(0, 1) === '<') {
+            if (!intChecked && /^\d+$/.test(url[i])) {
+              if (route[i].substr(0, 5) !== '<int:') {
+                matched = false;
+                break;
+              }
+              args.push(parseInt(url[i], 10));
+            }
+            else if (route[i].substr(0, 5) === '<int:') {
+              matched = false;
+              break;
+            }
+            else {
+              args.push(url[i]);
+            }
+          }
+          else if (url[i] !== route[i]) {
+            matched = false;
+            break;
+          }
+        }
+
+        if (matched) {
+          break;
+        }
+      }
+      if (matched) {
+        break;
+      }
     }
 
-    window.console.log(type, method, vars);
-
-    if (routes[type + '+' + method]) {
-      routes[type + '+' + method].apply(this, vars);
+    if (!matched) {
+      console.log(type, ajaxRequest.url, '404');
+      return;
     }
+
+    if (ajaxRequest.data && ajaxRequest.dataType === 'json') {
+      ajaxRequest.data = JSON.parse(ajaxRequest.data);
+    }
+
+    console.log(type, ajaxRequest.url);
+    args.unshift(ajaxRequest);
+    handler.apply(this, args);
   };
 
   return demoAjax;
