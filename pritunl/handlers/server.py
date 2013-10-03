@@ -37,6 +37,14 @@ def server_get():
     servers_sort = []
 
     for server in Server.get_servers():
+        server_orgs = server.get_orgs()
+        users_count = 0
+        for org in server_orgs:
+            for user in org.get_users():
+                if user.type != CERT_CLIENT:
+                    continue
+                users_count += 1
+
         name_id = '%s_%s' % (server.name, server.id)
         servers_sort.append(name_id)
         servers_dict[name_id] = {
@@ -45,7 +53,7 @@ def server_get():
             'status': 'online' if server.status else 'offline',
             'uptime': server.uptime,
             'users_online': len(server.get_clients()),
-            'users_total': 32,
+            'users_total': users_count,
             'network': server.network,
             'interface': server.interface,
             'port': server.port,
@@ -53,7 +61,7 @@ def server_get():
             'local_network': server.local_network,
             'public_address': server.public_address,
             'debug': server.debug,
-            'org_count': len(server.organizations),
+            'org_count': len(server_orgs),
         }
 
     for name_id in sorted(servers_sort):
