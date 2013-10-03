@@ -150,7 +150,7 @@ define([
         uptime: serverStatus === 'online' ? 109800 : null,
         users_online: serverStatus === 'online' ? 8 : 0,
         users_total: '32',
-        org_count: 4,
+        org_count: demoData.servers[id].orgs.length
       }, demoData.servers[id]));
     }
 
@@ -220,6 +220,7 @@ define([
     if (demoData.servers[serverId].orgs.indexOf(orgId) === -1) {
       demoData.servers[serverId].orgs.push(orgId);
     }
+    event('servers_updated');
     event('server_organizations_updated', serverId);
     request.response({});
   };
@@ -230,6 +231,7 @@ define([
     if (index !== -1) {
       demoData.servers[serverId].orgs.splice(index, 1);
     }
+    event('servers_updated');
     event('server_organizations_updated', serverId);
     request.response({});
   };
