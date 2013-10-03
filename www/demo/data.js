@@ -14,10 +14,13 @@ define([], function() {
 
   var orgs = {};
 
+  var servers = {};
+
   return {
     auth: auth,
     events: events,
     logEntries: logEntries,
     orgs: orgs,
+    servers: servers,
   };
 });

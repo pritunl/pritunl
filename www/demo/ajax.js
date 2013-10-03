@@ -135,10 +135,10 @@ define([
   };
   routes['GET+organization'] = organizationGet;
 
-  var organizationPost = function(request) {
-    var id = uuid();
-    demoData.orgs[id] = {
-      id: id,
+  var organizationPostPut = function(request, orgId) {
+    orgId = orgId || uuid();
+    demoData.orgs[orgId] = {
+      id: orgId,
       name: request.data.name,
     };
     event('organizations_updated');
@@ -146,25 +146,93 @@ define([
       request.success({});
     }, responseDelay);
   };
-  routes['POST+organization'] = organizationPost;
+  routes['POST+organization'] = organizationPostPut;
+  routes['PUT+organization'] = organizationPostPut;
 
-  var organizationPut = function(request, org_id) {
-    demoData.orgs[org_id].name = request.data.name;
-    event('organizations_updated');
-    setTimeout(function() {
-      request.success({});
-    }, responseDelay);
-  };
-  routes['PUT+organization'] = organizationPut;
-
-  var organizationDelete = function(request, org_id) {
-    delete demoData.orgs[org_id];
+  var organizationDelete = function(request, orgId) {
+    delete demoData.orgs[orgId];
     event('organizations_updated');
     setTimeout(function() {
       request.success({});
     }, responseDelay);
   };
   routes['DELETE+organization'] = organizationDelete;
+
+  var serverGet = function(request) {
+    var id;
+    var servers = [];
+    var serverStatus;
+
+    for (id in demoData.servers) {
+      serverStatus = demoData.servers[id].status || 'offline';
+      servers.push(_.extend({
+        status: serverStatus,
+        uptime: serverStatus === 'online' ? 109800 : null,
+        users_online: serverStatus === 'online' ? 8 : 0,
+        users_total: '32',
+        org_count: 4,
+      }, demoData.servers[id]));
+    }
+
+    setTimeout(function() {
+      request.success(servers);
+    }, responseDelay);
+  };
+  routes['GET+server'] = serverGet;
+
+  var serverPostPut = function(request, serverId) {
+    serverId = serverId || uuid();
+    demoData.servers[serverId] = _.extend({
+      id: serverId,
+      name: request.data.name,
+      network: request.data.network,
+      interface: request.data.interface,
+      port: request.data.port,
+      protocol: request.data.protocol,
+      local_network: request.data.local_network,
+      public_address: request.data.public_address,
+      debug: request.data.debug
+    }, demoData.servers[serverId]);
+    event('servers_updated');
+    setTimeout(function() {
+      request.success({});
+    }, responseDelay);
+  };
+  routes['POST+server'] = serverPostPut;
+  routes['PUT+server'] = serverPostPut;
+
+  var serverDelete = function(request, serverId) {
+    delete demoData.servers[serverId];
+    event('servers_updated');
+    setTimeout(function() {
+      request.success({});
+    }, responseDelay);
+  };
+  routes['DELETE+server'] = serverDelete;
+
+  var serverDelete = function(request, serverId) {
+    delete demoData.servers[serverId];
+    event('servers_updated');
+    setTimeout(function() {
+      request.success({});
+    }, responseDelay);
+  };
+  routes['DELETE+server'] = serverDelete;
+
+  var statusGet = function(request) {
+    setTimeout(function() {
+      request.success({
+        orgs_available: 2,
+        orgs_total: 2,
+        users_online: 8,
+        users_total: 32,
+        servers_online: 2,
+        servers_total: 2,
+        public_ip: '8.8.8.8',
+      });
+    }, responseDelay);
+  };
+  routes['GET+status'] = statusGet;
 
   var demoAjax = function(request) {
     var url = request.url.split('/');
