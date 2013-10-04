@@ -303,18 +303,26 @@ define([
   routes['DELETE=/server/<serverId>/output'] = serverOutputDelete;
 
   var statusGet = function(request) {
-    var id;
+    var orgId;
+    var userId;
+    var serverId;
     var orgsCount = 0;
+    var usersCount = 0;
     var serversCount = 0;
     var serversOnlineCount = 0;
 
-    for (id in demoData.orgs) {
+    for (orgId in demoData.orgs) {
       orgsCount += 1;
+      for (userId in demoData.users[orgId]) {
+        if (demoData.users[orgId][userId].type === 'client') {
+          usersCount += 1;
+        }
+      }
     }
 
-    for (id in demoData.servers) {
+    for (serverId in demoData.servers) {
       serversCount += 1;
-      if (demoData.servers[id].status === 'online') {
+      if (demoData.servers[serverId].status === 'online') {
         serversOnlineCount += 1;
       }
     }
@@ -322,8 +330,8 @@ define([
     request.response({
       orgs_available: orgsCount,
       orgs_total: orgsCount,
-      users_online: 8,
-      users_total: 32,
+      users_online: 0,
+      users_total: usersCount,
       servers_online: serversOnlineCount,
       servers_total: serversCount,
       public_ip: '8.8.8.8'
