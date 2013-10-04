@@ -516,26 +516,27 @@ class Server(Config):
     def get_clients(self):
         if not self.status:
             return []
-
         clients = {}
-        with open(self.ovpn_status_path, 'r') as status_file:
-            for line in status_file.readlines():
-                if line[:11] != 'CLIENT_LIST':
-                    continue
-                line_split = line.split(',')
-                client_id = line_split[1]
-                real_address = line_split[2]
-                virt_address = line_split[3]
-                bytes_received = line_split[4]
-                bytes_sent = line_split[5]
-                connected_since = line_split[7]
-                clients[client_id] = {
-                    'real_address': real_address,
-                    'virt_address': virt_address,
-                    'bytes_received': bytes_received,
-                    'bytes_sent': bytes_sent,
-                    'connected_since': connected_since,
-                }
+
+        if os.path.isfile(self.ovpn_status_path):
+            with open(self.ovpn_status_path, 'r') as status_file:
+                for line in status_file.readlines():
+                    if line[:11] != 'CLIENT_LIST':
+                        continue
+                    line_split = line.split(',')
+                    client_id = line_split[1]
+                    real_address = line_split[2]
+                    virt_address = line_split[3]
+                    bytes_received = line_split[4]
+                    bytes_sent = line_split[5]
+                    connected_since = line_split[7]
+                    clients[client_id] = {
+                        'real_address': real_address,
+                        'virt_address': virt_address,
+                        'bytes_received': bytes_received,
+                        'bytes_sent': bytes_sent,
+                        'connected_since': connected_since,
+                    }
 
         return clients
 
