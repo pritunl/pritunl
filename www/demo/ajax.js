@@ -167,19 +167,33 @@ define([
   routes['DELETE=/organization/<orgId>'] = organizationDelete;
 
   var serverGet = function(request) {
-    var id;
+    var i;
+    var orgId;
+    var userId;
+    var serverId;
+    var userCount;
     var servers = [];
     var serverStatus;
 
-    for (id in demoData.servers) {
-      serverStatus = demoData.servers[id].status || 'offline';
+    for (serverId in demoData.servers) {
+      userCount = 0;
+      for (i = 0; i < demoData.servers[serverId].orgs.length; i++) {
+        orgId = demoData.servers[serverId].orgs[i];
+        for (userId in demoData.users[orgId]) {
+          if (demoData.users[orgId][userId].type === 'client') {
+            userCount += 1;
+          }
+        }
+      }
+
+      serverStatus = demoData.servers[serverId].status || 'offline';
       servers.push(_.extend({
         status: serverStatus,
         uptime: serverStatus === 'online' ? 109800 : null,
-        users_online: serverStatus === 'online' ? 8 : 0,
-        users_total: '32',
-        org_count: demoData.servers[id].orgs.length
-      }, demoData.servers[id]));
+        users_online: 0,
+        users_total: userCount,
+        org_count: demoData.servers[serverId].orgs.length
+      }, demoData.servers[serverId]));
     }
 
     request.response(servers);
