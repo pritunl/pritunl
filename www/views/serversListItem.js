@@ -55,8 +55,13 @@ define([
       else {
         this.$('.server-uptime .status-text').text('-');
       }
-      this.$('.server-users .status-num').text(
-        this.model.get('users_online') + '/' + this.model.get('users_total'));
+      if (this.model.get('users_total') === 0) {
+        this.$('.server-users .status-num').text('-/-');
+      }
+      else {
+        this.$('.server-users .status-num').text(this.model.get(
+          'users_online') + '/' + this.model.get('users_total'));
+      }
       this.$('.server-network .status-text').text(
         this.model.get('network'));
       this.$('.server-interface .status-text').text(
