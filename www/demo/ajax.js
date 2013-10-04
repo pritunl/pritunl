@@ -292,7 +292,8 @@ define([
     }
     else {
       demoData.servers[serverId].status = 'online';
-      demoData.servers[serverId].output = demoData.serverOutput.online;
+      demoData.servers[serverId].output += demoData.serverOutput.offline;
+      demoData.servers[serverId].output += demoData.serverOutput.online;
       logEntry('Restarted server "' + demoData.servers[serverId].name + '".');
     }
     event('servers_updated');
