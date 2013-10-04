@@ -517,7 +517,7 @@ class Server(Config):
         if not self.status:
             return []
 
-        clients = []
+        clients = {}
         with open(self.ovpn_status_path, 'r') as status_file:
             for line in status_file.readlines():
                 if line[:11] != 'CLIENT_LIST':
@@ -529,7 +529,13 @@ class Server(Config):
                 bytes_received = line_split[4]
                 bytes_sent = line_split[5]
                 connected_since = line_split[7]
-                clients.append(client_id)
+                clients[client_id] = {
+                    'real_address': real_address,
+                    'virt_address': virt_address,
+                    'bytes_received': bytes_received,
+                    'bytes_sent': bytes_sent,
+                    'connected_since': connected_since,
+                }
 
         return clients
 

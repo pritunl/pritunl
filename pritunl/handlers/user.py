@@ -13,10 +13,15 @@ def user_get(org_id):
     users = []
     users_dict = {}
     users_sort = []
-    org_clients = []
+    clients = {}
 
     for server in org_servers:
-        org_clients += server.get_clients()
+        server_clients = server.get_clients()
+        for client_id in server_clients:
+            client = server_clients[client_id]
+            if client_id not in clients:
+                clients[client_id] = []
+            clients[client_id].append(client['virt_address'])
 
     for user in org.get_users():
         name_id = '%s_%s' % (user.name, user.id)
@@ -26,7 +31,8 @@ def user_get(org_id):
             'organization': org.id,
             'name': user.name,
             'type': user.type,
-            'status': True if user.id in org_clients else False,
+            'status': True if user.id in clients else False,
+            'virt_addresses': clients[client_id] if user.id in clients else [],
         }
 
     for name_id in sorted(users_sort):
