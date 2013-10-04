@@ -380,7 +380,8 @@ define([
       organization: orgId,
       name: request.data.name,
       type: 'client',
-      status: false
+      status: false,
+      virt_addresses: []
     };
 
     event('users_updated');
