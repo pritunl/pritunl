@@ -42,13 +42,7 @@ def user_post(org_id):
     name = ''.join(x for x in name if x.isalnum() or x in NAME_SAFE_CHARS)
     user = org.new_user(CERT_CLIENT, name)
 
-    return utils.jsonify({
-        'id': user.id,
-        'organization': org.id,
-        'name': user.name,
-        'type': user.type,
-        'status': False,
-    })
+    return utils.jsonify({})
 
 @app_server.app.route('/user/<org_id>/<user_id>', methods=['PUT'])
 @app_server.auth
