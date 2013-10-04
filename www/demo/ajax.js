@@ -145,6 +145,19 @@ define([
   routes['PUT=/organization/<orgId>'] = organizationPostPut;
 
   var organizationDelete = function(request, orgId) {
+    var i;
+    var serverId;
+
+    for (serverId in demoData.servers) {
+      for (i = 0; i < demoData.servers[serverId].orgs.length; i++) {
+        if (demoData.servers[serverId].orgs[i] === orgId) {
+          demoData.servers[serverId].orgs.splice(i, 1);
+          event('server_organizations_updated', serverId);
+          break;
+        }
+      }
+    }
+
     delete demoData.orgs[orgId];
     delete demoData.users[orgId];
     event('organizations_updated');
@@ -221,13 +234,11 @@ define([
     var i;
     var orgId;
     var orgs = [];
-    if (demoData.servers[serverId].orgs) {
-      for (i = 0; i < demoData.servers[serverId].orgs.length; i++) {
-        orgId = demoData.servers[serverId].orgs[i];
-        orgs.push(_.extend({
-          server: serverId
-        }, demoData.orgs[orgId]));
-      }
+    for (i = 0; i < demoData.servers[serverId].orgs.length; i++) {
+      orgId = demoData.servers[serverId].orgs[i];
+      orgs.push(_.extend({
+        server: serverId
+      }, demoData.orgs[orgId]));
     }
     request.response(orgs);
   };
@@ -443,6 +454,7 @@ define([
           status: statusCode,
           responseJSON: data
         };
+        console.log(type, ajaxRequest.url, data);
         setTimeout(function() {
           if (statusCode >= 200 && statusCode < 300) {
             status = 'success';
@@ -464,7 +476,6 @@ define([
       return;
     }
 
-    console.log(type, ajaxRequest.url);
     handler.apply(this, args);
   };
 
