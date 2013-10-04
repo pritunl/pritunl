@@ -69,6 +69,8 @@ class AppServer(Config):
 
     def _setup_conf(self):
         self.set_path(self.conf_path)
+        if not os.path.isdir(self.data_path):
+            os.makedirs(self.data_path)
 
     def _setup_log(self):
         if self.log_debug:
