@@ -132,6 +132,7 @@ define([
     if (!orgId) {
       orgId = uuid();
       demoData.users[orgId] = {};
+      logEntry('Created new organization.');
     }
     demoData.orgs[orgId] = {
       id: orgId,
@@ -147,6 +148,7 @@ define([
     delete demoData.orgs[orgId];
     delete demoData.users[orgId];
     event('organizations_updated');
+    logEntry('Deleted organization.');
     request.response({});
   };
   routes['DELETE=/organization/<orgId>'] = organizationDelete;
@@ -188,6 +190,7 @@ define([
       output: ''
     };
     event('servers_updated');
+    logEntry('Created new server.');
     request.response({});
   };
   routes['POST=/server'] = serverPost;
@@ -209,6 +212,7 @@ define([
   var serverDelete = function(request, serverId) {
     delete demoData.servers[serverId];
     event('servers_updated');
+    logEntry('Deleted server.');
     request.response({});
   };
   routes['DELETE=/server/<serverId>'] = serverDelete;
@@ -254,14 +258,17 @@ define([
     if (operation === 'start') {
       demoData.servers[serverId].status = 'online';
       demoData.servers[serverId].output = demoData.serverOutput.online;
+      logEntry('Started server "' + demoData.servers[serverId].name + '".');
     }
     else if (operation === 'stop') {
       demoData.servers[serverId].status = 'offline';
       demoData.servers[serverId].output += demoData.serverOutput.offline;
+      logEntry('Stopped server "' + demoData.servers[serverId].name + '".');
     }
     else {
       demoData.servers[serverId].status = 'online';
       demoData.servers[serverId].output = demoData.serverOutput.online;
+      logEntry('Restarted server "' + demoData.servers[serverId].name + '".');
     }
     event('servers_updated');
     event('server_output_updated', serverId);
@@ -343,6 +350,7 @@ define([
     };
 
     event('users_updated');
+    logEntry('Created new user.');
     request.response({});
   };
   routes['POST=/user/<orgId>'] = userPost;
@@ -357,6 +365,7 @@ define([
   var userDelete = function(request, orgId, userId) {
     delete demoData.users[orgId][userId];
     event('users_updated');
+    logEntry('Deleted user.');
     request.response({});
   };
   routes['DELETE=/user/<orgId>/<userId>'] = userDelete;
