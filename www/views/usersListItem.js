@@ -37,6 +37,11 @@ define([
           this.$('.status-text').text('Offline');
         }
       }
+      this.$('.status-container').tooltip('destroy');
+      this.$('.status-container').tooltip({
+        'title': this.model.get('virt_addresses').length ? 'IP Address: ' +
+          this.model.get('virt_addresses').join(', ') : ''
+      });
     },
     getSelect: function() {
       return this.$('.selector').hasClass('selected');

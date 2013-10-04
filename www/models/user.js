@@ -9,7 +9,9 @@ define([
       'id': null,
       'organization': null,
       'name': null,
-      'status': false
+      'type': null,
+      'status': null,
+      'virt_addresses': null
     },
     url: function() {
       var url = '/user/' + this.get('organization');
