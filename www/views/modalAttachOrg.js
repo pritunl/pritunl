@@ -33,10 +33,14 @@ define([
         success: function() {
           this.close(true);
         }.bind(this),
-        error: function() {
+        error: function(model, response) {
           this.clearLoading();
-          this.setAlert('danger',
-            'Failed to attach organization, server error occurred.');
+          if (response.responseJSON) {
+            this.setAlert('danger', response.responseJSON.error_msg);
+          }
+          else {
+            this.setAlert('danger', this.errorMsg);
+          }
         }.bind(this)
       });
     }
