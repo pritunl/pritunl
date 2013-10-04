@@ -55,7 +55,7 @@ define([
       resource_id: resourceId || null,
       time: Math.round(new Date().getTime() / 1000)
     });
-  }
+  };
 
   var checkEvents = function(request, lastEvent, count) {
     setTimeout(function() {
