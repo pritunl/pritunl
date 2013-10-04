@@ -53,8 +53,17 @@ define([
       id: uuid(),
       type: type,
       resource_id: resourceId || null,
-      time: Math.round(new Date().getTime() / 1000)
+      time: Math.round(new Date().getTime())
     });
+  };
+
+  var logEntry = function(message) {
+    demoData.logs.unshift({
+      id: uuid(),
+      time: Math.round(new Date().getTime() / 1000),
+      message: message
+    });
+    event('logs_updated');
   };
 
   var checkEvents = function(request, lastEvent, count) {
@@ -103,7 +112,7 @@ define([
   routes['GET=/event/<int:lastEvent>'] = eventGet;
 
   var logGet = function(request) {
-    request.response(demoData.logEntries);
+    request.response(demoData.logs);
   };
   routes['GET=/log'] = logGet;
 

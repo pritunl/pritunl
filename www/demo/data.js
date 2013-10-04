@@ -10,7 +10,13 @@ define([], function() {
 
   var events = [];
 
-  var logEntries = [];
+  var logs = [
+    {
+      id: '94bc0d3e2afa44ccb22c56843ac90c08',
+      time: Math.round(new Date().getTime() / 1000),
+      message: 'Web server started.'
+    }
+  ];
 
   var orgs = {};
 
@@ -26,7 +32,7 @@ define([], function() {
   return {
     auth: auth,
     events: events,
-    logEntries: logEntries,
+    logs: logs,
     orgs: orgs,
     servers: servers,
     serverOutput: serverOutput,
