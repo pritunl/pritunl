@@ -21,12 +21,15 @@ define([], function() {
     offline: 'Thu Oct  3 18:08:21 2013 event_wait : Interrupted system call (code=4)\nThu Oct  3 18:08:21 2013 /usr/bin/ip addr del dev tun0 local 10.100.68.1 peer 10.100.68.2\nThu Oct  3 18:08:21 2013 SIGINT[hard,] received, process exiting\n'
   };
 
+  var users = {};
+
   return {
     auth: auth,
     events: events,
     logEntries: logEntries,
     orgs: orgs,
     servers: servers,
-    serverOutput: serverOutput
+    serverOutput: serverOutput,
+    users: users
   };
 });

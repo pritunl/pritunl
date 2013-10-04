@@ -120,7 +120,10 @@ define([
   routes['GET=/organization'] = organizationGet;
 
   var organizationPostPut = function(request, orgId) {
-    orgId = orgId || uuid();
+    if (!orgId) {
+      orgId = uuid();
+      demoData.users[orgId] = {};
+    }
     demoData.orgs[orgId] = {
       id: orgId,
       name: request.data.name,
@@ -133,6 +136,7 @@ define([
 
   var organizationDelete = function(request, orgId) {
     delete demoData.orgs[orgId];
+    delete demoData.users[orgId];
     event('organizations_updated');
     request.response({});
   };
@@ -305,6 +309,48 @@ define([
     request.response({});
   };
   routes['POST=/password'] = passwordPost;
+
+  var userGet = function(request, orgId) {
+    var id;
+    var users = [];
+
+    for (id in demoData.users[orgId]) {
+      users.push(demoData.users[orgId][id]);
+    }
+
+    request.response(users);
+  };
+  routes['GET=/user/<orgId>'] = userGet;
+
+  var userPost = function(request, orgId) {
+    var userId = uuid();
+
+    demoData.users[orgId][userId] = {
+      id: userId,
+      organization: orgId,
+      name: request.data.name,
+      type: 'client',
+      status: false
+    };
+
+    event('users_updated');
+    request.response({});
+  };
+  routes['POST=/user/<orgId>'] = userPost;
+
+  var userPut = function(request, orgId, userId) {
+    demoData.users[orgId][userId].name = request.data.name;
+    event('users_updated');
+    request.response({});
+  };
+  routes['PUT=/user/<orgId>/<userId>'] = userPut;
+
+  var userDelete = function(request, orgId, userId) {
+    delete demoData.users[orgId][userId];
+    event('users_updated');
+    request.response({});
+  };
+  routes['DELETE=/user/<orgId>/<userId>'] = userDelete;
 
   var demoAjax = function(ajaxRequest) {
     var type = ajaxRequest.type;
