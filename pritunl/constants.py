@@ -219,11 +219,11 @@ mute 3
 TLS_VERIFY_SCRIPT = """#!/usr/bin/env python
 import os
 import sys
-import string
+VALID_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789='
 INDEX_NAME = '%s'
 ORGS_PATH = '%s'
 arg = sys.argv[2]
-arg = ''.join(x for x in arg if x in (string.letters + string.digits + '='))
+arg = ''.join(x for x in arg if x in VALID_CHARS)
 o_index = arg.find('O=')
 cn_index = arg.find('CN=')
 if o_index < 0 or cn_index < 0:
