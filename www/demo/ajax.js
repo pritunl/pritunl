@@ -271,12 +271,6 @@ define([
   };
   routes['DELETE=/server/<serverId>/output'] = serverOutputDelete;
 
-  var passwordPost = function(request) {
-    demoData.auth.password = request.data.password;
-    request.response({});
-  };
-  routes['POST=/password'] = passwordPost;
-
   var statusGet = function(request) {
     var id;
     var orgsCount = 0;
@@ -301,10 +295,16 @@ define([
       users_total: 32,
       servers_online: serversOnlineCount,
       servers_total: serversCount,
-      public_ip: '8.8.8.8',
+      public_ip: '8.8.8.8'
     });
   };
   routes['GET=/status'] = statusGet;
+
+  var passwordPost = function(request) {
+    demoData.auth.password = request.data.password;
+    request.response({});
+  };
+  routes['POST=/password'] = passwordPost;
 
   var demoAjax = function(ajaxRequest) {
     var type = ajaxRequest.type;
