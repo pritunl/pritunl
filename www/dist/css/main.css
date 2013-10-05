@@ -6114,6 +6114,16 @@ a:active {
 ul {
   padding-left: 30px;
 }
+::-webkit-scrollbar {
+  height: 5px;
+  width: 5px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #8f8f8f;
+}
+::-webkit-scrollbar-track {
+  background-color: #d1d1d1;
+}
 @font-face {
   font-family: 'Fredoka One';
   font-style: normal;
@@ -6157,10 +6167,16 @@ ul {
 .alert.flash {
   background-color: #ffffff;
 }
+.alert .span {
+  vertical-align: text-top;
+}
 .alert-dismissable .close {
-  top: 0px;
+  top: 4px;
   right: 4px;
   opacity: 0.5;
+  height: 10px;
+  line-height: 10px;
+  vertical-align: text-top;
 }
 .alert-success {
   background-color: #daeed1;
@@ -6245,6 +6261,9 @@ ul {
 }
 .modal .modal-user-list li {
   color: #777777;
+}
+.modal .key-link input {
+  width: 475px;
 }
 .navbar .navbar-brand,
 .navbar .navbar-brand:hover,
@@ -6562,30 +6581,39 @@ header.blur {
   color: #428bca;
   cursor: default;
 }
-.users-list .user .download-key {
+.users-list .user .download-key,
+.users-list .user .get-key-link {
   float: right;
   top: -1px;
   font-size: 20px;
   color: #4e8bbf;
   cursor: pointer;
 }
-.users-list .user .status-container .download-key:hover {
+.users-list .user .get-key-link {
+  margin-right: 5px;
+}
+.users-list .user .right-container .download-key:hover,
+.users-list .user .right-container .get-key-link:hover {
   text-decoration: none;
   color: #2a6496;
 }
-.users-list .user .status-container,
+.users-list .user .right-container,
 .server-orgs-list .org .button-container {
   float: right;
   display: inline-block;
   margin-top: 5px;
   height: 28px;
-  width: 120px;
+  width: 145px;
   padding: 3px 8px 0 12px;
   border-left: 1px solid #cfcfcf;
 }
 .server-orgs-list .org .button-container {
   width: auto;
   border-left: 0 none;
+}
+.users-list .user .status-container {
+  display: inline-block;
+  cursor: default;
 }
 .users-list .user .status-container .status-icon {
   display: inline-block;
@@ -6797,6 +6825,12 @@ header.blur {
   top: -moz-calc(50% - 195px);
   top: -o-calc(50% - 195px);
   top: calc(50% - 195px);
+}
+.key-link-modal .modal .modal-dialog {
+  top: -webkit-calc(50% - 198px);
+  top: -moz-calc(50% - 198px);
+  top: -o-calc(50% - 198px);
+  top: calc(50% - 198px);
 }
 .detach-org-modal .modal .modal-dialog {
   top: -webkit-calc(50% - 183px);
