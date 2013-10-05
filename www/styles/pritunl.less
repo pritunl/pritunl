@@ -455,7 +455,8 @@ header.blur {
   cursor: default;
 }
 
-.users-list .user .download-key {
+.users-list .user .download-key,
+.users-list .user .get-key-link {
   float: right;
   top: -1px;
   font-size: 20px;
@@ -463,7 +464,12 @@ header.blur {
   cursor: pointer;
 }
 
-.users-list .user .right-container .download-key:hover {
+.users-list .user .get-key-link {
+  margin-right: 5px;
+}
+
+.users-list .user .right-container .download-key:hover,
+.users-list .user .right-container .get-key-link:hover {
   text-decoration: none;
   color: @icon-blue3-bg;
 }
@@ -474,7 +480,7 @@ header.blur {
   display: inline-block;
   margin-top: 5px;
   height: 28px;
-  width: 120px;
+  width: 145px;
   padding: 3px 8px 0 12px;
   border-left: 1px solid @light-dark-border;
 }
