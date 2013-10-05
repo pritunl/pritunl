@@ -2,16 +2,20 @@ define([
   'jquery',
   'underscore',
   'backbone',
+  'models/key',
   'views/modalRenameUser',
+  'views/modalKeyLink',
   'text!templates/usersListItem.html'
-], function($, _, Backbone, ModalRenameUserView, usersListItemTemplate) {
+], function($, _, Backbone, KeyModel, ModalRenameUserView, ModalKeyLinkView,
+    usersListItemTemplate) {
   'use strict';
   var UsersListItemView = Backbone.View.extend({
     className: 'user',
     template: _.template(usersListItemTemplate),
     events: {
       'click .selector': 'onSelect',
-      'click .user-name': 'onRename'
+      'click .user-name': 'onRename',
+      'click .get-key-link': 'onGetKeyLink'
     },
     render: function() {
       this.$el.html(this.template(this.model.toJSON()));
@@ -63,6 +67,15 @@ define([
     onRename: function() {
       var modal = new ModalRenameUserView({
         model: this.model.clone()
+      });
+      this.addView(modal);
+    },
+    onGetKeyLink: function() {
+      var modal = new ModalKeyLinkView({
+        model: new KeyModel({
+          'organization': this.model.get('organization'),
+          'user': this.model.get('id')
+        })
       });
       this.addView(modal);
     }
