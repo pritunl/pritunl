@@ -28,7 +28,7 @@ define([
         cancelText: this.cancelText,
         okText: this.okText
       }));
-      this.$('.modal-body').html(this.body());
+      this.$('.modal-body').append(this.body());
       this.$('.modal').modal();
       this.$('[data-toggle="tooltip"]').tooltip();
       $('body').append(this.el);
@@ -72,7 +72,7 @@ define([
         this.$('.form-group').removeClass('has-warning has-error');
       }
     },
-    setLoading: function(message) {
+    setLoading: function(message, noButtonDisable) {
       if (this.loadingView) {
         if (this.loadingView.message !== message) {
           this.loadingView.close(function() {
@@ -83,7 +83,9 @@ define([
         return;
       }
 
-      this.$('.ok').attr('disabled', 'disabled');
+      if (!noButtonDisable) {
+        this.$('.ok').attr('disabled', 'disabled');
+      }
       this.loadingView = new AlertView({
         type: 'info',
         message: message

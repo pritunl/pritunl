@@ -7,8 +7,12 @@
       </div>
       <div class="modal-body"></div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default cancel" data-dismiss="modal"><%= cancelText %></button>
-        <button type="button" class="btn btn-primary ok"><%= okText %></button>
+        <% if (cancelText !== null) { %>
+          <button type="button" class="btn btn-default cancel" data-dismiss="modal"><%= cancelText %></button>
+        <% } %>
+        <% if (okText !== null) { %>
+          <button type="button" class="btn btn-primary ok"><%= okText %></button>
+        <% } %>
       </div>
     </div>
   </div>
