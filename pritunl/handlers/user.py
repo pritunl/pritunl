@@ -32,7 +32,7 @@ def user_get(org_id):
             'name': user.name,
             'type': user.type,
             'status': True if user.id in clients else False,
-            'virt_addresses': clients[client_id] if user.id in clients else [],
+            'virt_addresses': clients[user.id] if user.id in clients else [],
         }
 
     for name_id in sorted(users_sort):
