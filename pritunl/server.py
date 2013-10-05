@@ -314,9 +314,12 @@ class Server(Config):
             raise
 
     def _generate_iptable_rule(self):
+        args = []
         match_network = '0.0.0.0'
+
         if self.local_network:
             match_network = self._parse_network(self.local_network)[0]
+            args += ['-d', self.local_network]
 
         try:
             routes = subprocess.check_output(['route', '-n'],
@@ -346,8 +349,10 @@ class Server(Config):
                     primary_interface = line_split[7]
                     break
 
-        return ['-s', self.network, '-o', primary_interface,
+        args += ['-s', self.network, '-o', primary_interface,
             '-j', 'MASQUERADE']
+
+        return args
 
     def _exists_iptables_rule(self):
         try:
