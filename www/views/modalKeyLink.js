@@ -12,6 +12,11 @@ define([
     title: 'Temporary Key Link',
     cancelText: null,
     okText: 'Close',
+    events: function() {
+      return _.extend({
+        'click input': 'onClickInput'
+      }, ModalKeyLinkView.__super__.events);
+    },
     body: function() {
       this.setLoading('Generating url...', true);
       this.model.fetch({
@@ -26,6 +31,9 @@ define([
         }.bind(this)
       });
       return this.template(this.model.toJSON());
+    },
+    onClickInput: function() {
+      this.$('input').select();
     }
   });
 
