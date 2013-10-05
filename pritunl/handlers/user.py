@@ -2,7 +2,6 @@ from pritunl.constants import *
 from pritunl.organization import Organization
 import pritunl.utils as utils
 from pritunl import app_server
-import os
 import flask
 
 @app_server.app.route('/user/<org_id>', methods=['GET'])
@@ -67,19 +66,3 @@ def user_delete(org_id, user_id):
     user = org.get_user(user_id)
     user.remove()
     return utils.jsonify({})
-
-@app_server.app.route('/user/<org_id>/<user_id>.tar', methods=['GET'])
-@app_server.auth
-def user_key_archive_get(org_id, user_id):
-    org = Organization(org_id)
-    user = org.get_user(user_id)
-    archive_temp_path = user.build_key_archive()
-
-    with open(archive_temp_path, 'r') as archive_file:
-        response = flask.Response(response=archive_file.read(),
-            mimetype='application/x-tar')
-        response.headers.add('Content-Disposition',
-            'inline; filename="%s.tar"' % user.name)
-
-    os.remove(archive_temp_path)
-    return response
