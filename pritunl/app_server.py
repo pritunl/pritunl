@@ -69,6 +69,7 @@ class AppServer(Config):
 
     def _setup_conf(self):
         self.set_path(self.conf_path)
+        data_path = self.data_path or DEFAULT_DATA_PATH
         if not os.path.isdir(self.data_path):
             os.makedirs(self.data_path)
 
@@ -156,10 +157,9 @@ class AppServer(Config):
             self._server_cert_path = self.server_cert_path
             self._server_key_path = self.server_key_path
         else:
-            self._server_cert_path = os.path.join(self.data_path,
-                SERVER_CERT_NAME)
-            self._server_key_path = os.path.join(self.data_path,
-                SERVER_KEY_NAME)
+            data_path = self.data_path or DEFAULT_DATA_PATH
+            self._server_cert_path = os.path.join(data_path, SERVER_CERT_NAME)
+            self._server_key_path = os.path.join(data_path, SERVER_KEY_NAME)
 
             if not os.path.isfile(self._server_cert_path) or \
                     not os.path.isfile(self._server_key_path):

@@ -50,7 +50,8 @@ class Server(Config):
             self._initialized = True
             self.id = id
 
-        self.path = os.path.join(app_server.data_path, SERVERS_DIR, self.id)
+        data_path = app_server.data_path or DEFAULT_DATA_PATH
+        self.path = os.path.join(data_path, SERVERS_DIR, self.id)
         self.ovpn_conf_path = os.path.join(self.path, TEMP_DIR, OVPN_CONF_NAME)
         self.dh_param_path = os.path.join(self.path, DH_PARAM_NAME)
         self.ifc_pool_path = os.path.join(self.path, IFC_POOL_NAME)
@@ -252,9 +253,10 @@ class Server(Config):
             'server_id': self.id,
         })
         with open(self.tls_verify_path, 'w') as tls_verify_file:
+            data_path = app_server.data_path or DEFAULT_DATA_PATH
             tls_verify_file.write(TLS_VERIFY_SCRIPT % (
                 INDEX_NAME,
-                os.path.join(app_server.data_path, ORGS_DIR),
+                os.path.join(data_path, ORGS_DIR),
             ))
         os.chmod(self.tls_verify_path, 0755)
 
@@ -548,7 +550,8 @@ class Server(Config):
     @staticmethod
     def get_servers():
         logger.debug('Getting servers.')
-        path = os.path.join(app_server.data_path, SERVERS_DIR)
+        data_path = app_server.data_path or DEFAULT_DATA_PATH
+        path = os.path.join(data_path, SERVERS_DIR)
         servers = []
         if os.path.isdir(path):
             for server_id in os.listdir(path):
