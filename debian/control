@@ -1,0 +1,24 @@
+Source: pritunl
+Section: utils
+Priority: optional
+Maintainer: Zachary Huff <zach.huff.386@gmail.com>
+Build-Depends: debhelper (>= 8.0.0),
+               python-all (>= 2.7),
+               python-setuptools (>= 0.6b3),
+               python-flask,
+               python-cherrypy3
+Standards-Version: 3.9.4
+Homepage: http://pritunl.com/
+X-Python-Version: >= 2.7
+#Vcs-Git: https://github.com/zachhuff386/pritunl.git
+#Vcs-Browser: https://github.com/zachhuff386/pritunl
+
+Package: pritunl
+Architecture: all
+Depends: python-flask,
+         python-cherrypy3,
+         rsync,
+         ${misc:Depends},
+         ${python:Depends}
+Description: Simple openvpn server
+ Simple openvpn server

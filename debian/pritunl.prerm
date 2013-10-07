@@ -1,0 +1,10 @@
+#!/bin/bash
+if which pyclean >/dev/null 2>&1; then
+    pyclean -p pritunl
+else
+    dpkg -L pritunl | grep \.py$ | while read file
+    do
+        rm -f "${file}"[co] >/dev/null
+    done
+fi
+service pritunl stop || true

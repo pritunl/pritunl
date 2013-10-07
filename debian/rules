@@ -1,0 +1,11 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@ --with python2
+
+build:
+	dh build
+
+clean:
+	dh clean
+	rm -rf pritunl.egg-info build

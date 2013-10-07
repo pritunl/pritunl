@@ -1,0 +1,5 @@
+#!/bin/bash
+if which pycompile >/dev/null 2>&1; then
+    pycompile -p pritunl
+fi
+service pritunl restart || true
