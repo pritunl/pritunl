@@ -34,6 +34,9 @@ define([
       if (this.alert) {
         this.setAlert(this.alert);
       }
+      if (window.demo) {
+        this.$('.username, .password').val('demo');
+      }
       return this;
     },
     onKeypress: function(evt) {

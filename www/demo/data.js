@@ -3,8 +3,8 @@ define([], function() {
   /*jshint -W101:true, -W106:true, -W109:true */
 
   var auth = {
-    username: 'admin',
-    password: 'admin',
+    username: 'demo',
+    password: 'demo',
     authenticated: false
   };
 
