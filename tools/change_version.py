@@ -9,7 +9,7 @@ for line in fileinput.input('../pritunl/__init__.py', inplace=True):
         line = '__version__ = \'%s\'' % VERSION
     print line.rstrip('\n')
 
-for line in fileinput.input('../PKGBUILD', inplace=True):
+for line in fileinput.input('../arch/PKGBUILD', inplace=True):
     if 'pkgver=' in line:
         line = 'pkgver=%s' % VERSION
     print line.rstrip('\n')

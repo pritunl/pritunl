@@ -5,7 +5,7 @@ cd ../build/arch_linux
 
 wget https://github.com/zachhuff386/pritunl/archive/$VERSION.tar.gz
 
-cp ../../PKGBUILD ./
+cp ../../arch/PKGBUILD ./
 
 TAR_SHA256=$(sha256sum $VERSION.tar.gz | cut -d' ' -f1)
 sed -i -e 's/CHANGE_ME/'$TAR_SHA256'/g' PKGBUILD
