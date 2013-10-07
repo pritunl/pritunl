@@ -20,6 +20,7 @@ provides=("${pkgname}")
 conflicts=("${pkgname}")
 source=("${url}/archive/${pkgver}.tar.gz")
 sha256sums=("CHANGE_ME")
+options=("emptydirs")
 backup=(
     "etc/${pkgname}.conf"
     "var/lib/${pkgname}/${pkgname}.db"
@@ -33,5 +34,6 @@ build() {
 
 package() {
     cd "${srcdir}/${pkgname}-${pkgver}"
+    mkdir -p "${pkgdir}/var/lib/${pkgname}"
     python2 setup.py install --root="${pkgdir}" --prefix=/usr --no-upstart
 }
