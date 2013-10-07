@@ -18,6 +18,7 @@ makedepends=(
 )
 provides=("${pkgname}")
 conflicts=("${pkgname}")
+install=${pkgname}.install
 source=("${url}/archive/${pkgver}.tar.gz")
 sha256sums=("CHANGE_ME")
 options=("emptydirs")
