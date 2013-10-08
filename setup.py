@@ -85,7 +85,7 @@ setup(
     license=open('LICENSE').read(),
     zip_safe=False,
     install_requires=[
-        'flask',
+        'flask>=0.6',
         'cherrypy>=3.2.0',
     ],
     data_files=data_files,
