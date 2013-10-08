@@ -1,4 +1,4 @@
-include COPYING LICENSE README.rst server.py vagrantfile
+include COPYING LICENSE README.rst requirements.txt server.py vagrantfile
 graft data
 graft tools
 graft www

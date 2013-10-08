@@ -1,0 +1,2 @@
+flask>=0.6
+cherrypy>=3.2.0
