@@ -8,7 +8,6 @@ import time
 import json
 import urllib2
 import threading
-import flask
 import hashlib
 import subprocess
 
@@ -42,6 +41,7 @@ class AppServer(Config):
         threading.Thread(target=self._get_public_ip).start()
 
     def _setup_app(self):
+        import flask
         self.app = flask.Flask(APP_NAME)
         self.app.secret_key = os.urandom(32)
 
@@ -49,6 +49,7 @@ class AppServer(Config):
         logger = self.app.logger
 
     def auth(self, call):
+        import flask
         def _wrapped(*args, **kwargs):
             if 'timestamp' not in flask.session:
                 raise flask.abort(401)
