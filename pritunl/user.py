@@ -179,8 +179,8 @@ class User(Config):
                 server_cert_arcname = '%s_%s_%s.crt' % (
                     self.org.name, self.name, server.name)
                 server_conf_path = os.path.join(self.org.path,
-                    TEMP_DIR, '%s_%s.conf' % (self.id, server.id))
-                server_conf_arcname = '%s_%s_%s.conf' % (
+                    TEMP_DIR, '%s_%s.ovpn' % (self.id, server.id))
+                server_conf_arcname = '%s_%s_%s.ovpn' % (
                     self.org.name, self.name, server.name)
                 server.generate_ca_cert()
                 tar_file.add(server.ca_cert_path, arcname=server_cert_arcname)
