@@ -7,6 +7,8 @@ Icon?
 ehthumbs.db
 Thumbs.db
 *.pyc
+*.egg
+*.egg-info
 /.vagrant
 /build
 /dist
@@ -14,3 +16,4 @@ Thumbs.db
 /pritunl.egg-info
 /pritunl.db
 /www/node_modules
+/tools/private_key.asc
