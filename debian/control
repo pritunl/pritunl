@@ -19,4 +19,7 @@ Depends: python-flask,
          ${misc:Depends},
          ${python:Depends}
 Description: Simple openvpn server
- Simple openvpn server
+ Pritunl is a simple openvpn server management tool. Multiple organizations,
+ users and openvpn servers can be managed and configured from a simple web
+ interface. Documentation and more information can be found at the home page
+ pritunl.com
