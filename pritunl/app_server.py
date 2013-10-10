@@ -35,6 +35,7 @@ class AppServer(Config):
             self.public_ip = json.load(response)['ip']
         except:
             if retry:
+                logger.debug('Retrying get public ip address...')
                 time.sleep(1)
                 self.get_public_ip()
             else:
