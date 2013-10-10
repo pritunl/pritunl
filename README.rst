@@ -1,6 +1,12 @@
 Pritunl: Simple openvpn server
 ==============================
 
+.. image:: https://pypip.in/v/pritunl/badge.png
+    :target: https://crate.io/packages/pritunl
+
+.. image:: https://pypip.in/d/pritunl/badge.png
+    :target: https://crate.io/packages/pritunl
+
 Simple openvpn server. Currently in development, not ready for use.
 
 Development Setup
