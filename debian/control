@@ -15,7 +15,7 @@ Package: pritunl
 Architecture: all
 Depends: python-flask,
          python-cherrypy3,
-         rsync,
+         openvpn,
          ${misc:Depends},
          ${python:Depends}
 Description: Simple openvpn server
