@@ -27,14 +27,18 @@ class AppServer(Config):
         self.mem_db = None
         self.interrupt = False
 
-    def get_public_ip(self):
+    def get_public_ip(self, retry=False):
         logger.debug('Getting public ip address...')
         try:
             request = urllib2.Request(PUBLIC_IP_SERVER)
             response = urllib2.urlopen(request, timeout=5)
             self.public_ip = json.load(response)['ip']
         except:
-            logger.exception('Failed to get public ip address...')
+            if retry:
+                time.sleep(1)
+                self.get_public_ip()
+            else:
+                logger.exception('Failed to get public ip address...')
 
     def _setup_public_ip(self):
         self.public_ip = None
