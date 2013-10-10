@@ -27,18 +27,18 @@ class AppServer(Config):
         self.mem_db = None
         self.interrupt = False
 
-    def _get_public_ip(self):
+    def get_public_ip(self):
         logger.debug('Getting public ip address...')
         try:
             request = urllib2.Request(PUBLIC_IP_SERVER)
-            response = urllib2.urlopen(request, timeout=10)
+            response = urllib2.urlopen(request, timeout=5)
             self.public_ip = json.load(response)['ip']
         except:
             logger.exception('Failed to get public ip address...')
 
     def _setup_public_ip(self):
         self.public_ip = None
-        threading.Thread(target=self._get_public_ip).start()
+        threading.Thread(target=self.get_public_ip).start()
 
     def _setup_app(self):
         import flask
