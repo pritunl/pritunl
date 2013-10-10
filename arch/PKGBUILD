@@ -9,6 +9,7 @@ license=("AGPL3")
 url="https://github.com/zachhuff386/${pkgname}"
 depends=(
     "python"
+    "python2"
     "python2-flask"
     "python2-cherrypy"
     "net-tools"
