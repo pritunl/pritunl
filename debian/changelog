@@ -1,5 +1,5 @@
-pritunl (0.0.5-0ubuntu1) unstable; urgency=low
+pritunl (0.10.1-0ubuntu1) unstable; urgency=low
 
-  * Alpha release for testing only
+  * Initial beta release
 
- -- Zachary Huff <zach.huff.386@gmail.com>  Sat, 17 Aug 2013 18:40:15 -0400
+ -- Zachary Huff <zach.huff.386@gmail.com>  Thu, 10 Oct 2013 15:28:32 -0400
