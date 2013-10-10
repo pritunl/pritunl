@@ -172,7 +172,8 @@ class User(Config):
         user_key_arcname = '%s_%s.key' % (self.org.name, self.name)
         user_cert_arcname = '%s_%s.crt' % (self.org.name, self.name)
 
-        with tarfile.open(self.key_archive_path, 'w') as tar_file:
+        tar_file = tarfile.open(self.key_archive_path, 'w')
+        try:
             tar_file.add(self.key_path, arcname=user_key_arcname)
             tar_file.add(self.cert_path, arcname=user_cert_arcname)
             for server in self.org.get_servers():
@@ -195,6 +196,8 @@ class User(Config):
                     ))
                 tar_file.add(server_conf_path, arcname=server_conf_arcname)
                 os.remove(server_conf_path)
+        finally:
+            tar_file.close()
 
         return self.key_archive_path
 
