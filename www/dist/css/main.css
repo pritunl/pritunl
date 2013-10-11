@@ -6322,6 +6322,9 @@ header.blur {
   filter: blur(10px);
 }
 .navbar {
+  height: 50px;
+  overflow-x: hidden;
+  overflow-y: hidden;
   border-radius: 0;
 }
 .navbar-collapse {
