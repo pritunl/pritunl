@@ -74,6 +74,7 @@ def server_get():
 @app_server.auth
 def server_put_post(server_id=None):
     name = flask.request.json['name']
+    name = ''.join(x for x in name if x.isalnum() or x in NAME_SAFE_CHARS)
     network = flask.request.json['network']
     interface = flask.request.json['interface']
     port = flask.request.json['port']
