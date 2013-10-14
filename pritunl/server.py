@@ -287,23 +287,28 @@ class Server(Config):
         else:
             push = 'redirect-gateway'
 
+        server_conf = OVPN_SERVER_CONF % (
+            self.port,
+            self.protocol,
+            self.interface,
+            self.ca_cert_path,
+            primary_user.cert_path,
+            primary_user.key_path,
+            self.tls_verify_path,
+            self.dh_param_path,
+            '%s %s' % self._parse_network(self.network),
+            self.ifc_pool_path,
+            push,
+            self.ovpn_status_path,
+            4 if self.debug else 1,
+            8 if self.debug else 3,
+        )
+
+        if self.local_network:
+            server_conf += 'client-to-client\n'
+
         with open(self.ovpn_conf_path, 'w') as ovpn_conf:
-            ovpn_conf.write(OVPN_SERVER_CONF % (
-                self.port,
-                self.protocol,
-                self.interface,
-                self.ca_cert_path,
-                primary_user.cert_path,
-                primary_user.key_path,
-                self.tls_verify_path,
-                self.dh_param_path,
-                '%s %s' % self._parse_network(self.network),
-                self.ifc_pool_path,
-                push,
-                self.ovpn_status_path,
-                4 if self.debug else 1,
-                8 if self.debug else 3,
-            ))
+            ovpn_conf.write(server_conf)
 
     def _enable_ip_forwarding(self):
         try:
