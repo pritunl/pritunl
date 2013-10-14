@@ -6784,6 +6784,12 @@ header.blur {
 .dashboard .status-container .status-text .status-num.success {
   color: #3ba51a;
 }
+.dashboard .status-container .server-version {
+  position: absolute;
+  top: 0;
+  right: 2px;
+  z-index: 5000;
+}
 .dashboard .log-container {
   padding: 20px 20px 5px 20px;
 }
