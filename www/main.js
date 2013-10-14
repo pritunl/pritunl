@@ -88,7 +88,7 @@ require.config({
     aceThemeTwilight: ['ace'],
     backbone: ['less'],
     bootstrap: ['jquery'],
-    d3: {exports: 'd3'},
+    d3: {exports: 'd3'}
   }
 });
 
