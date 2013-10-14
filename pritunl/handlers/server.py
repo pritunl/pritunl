@@ -83,7 +83,9 @@ def server_put_post(server_id=None):
     if local_network:
         local_network = local_network
     public_address = flask.request.json['public_address']
-    debug = flask.request.json['debug']
+    public_address = ''.join(
+        x for x in public_address if x.isalnum() or x == '.')
+    debug = True if flask.request.json['debug'] else False
 
     # Network
     network_split = network.split('/')
