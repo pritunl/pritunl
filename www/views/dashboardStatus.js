@@ -110,8 +110,14 @@ define([
             this.$('.servers-status .status-num').addClass('success');
           }
           this.$('.servers-status .status-num').text(num + '/' + totalNum);
-          this.$('.server-version').text(
-            'v' + this.model.get('server_version'));
+
+          if (this.model.get('server_version')) {
+            this.$('.server-version').text(
+              'v' + this.model.get('server_version'));
+          }
+          else {
+            this.$('.server-version').text('');
+          }
         }.bind(this)
       });
     },

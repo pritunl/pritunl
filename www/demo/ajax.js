@@ -349,6 +349,7 @@ define([
       users_total: usersCount,
       servers_online: serversOnlineCount,
       servers_total: serversCount,
+      server_version: null,
       public_ip: '8.8.8.8'
     });
   };
