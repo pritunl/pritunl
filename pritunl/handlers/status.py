@@ -2,7 +2,7 @@ from pritunl.constants import *
 import pritunl.utils as utils
 from pritunl.organization import Organization
 from pritunl.server import Server
-from pritunl import app_server
+from pritunl import app_server, __version__
 
 @app_server.app.route('/status', methods=['GET'])
 @app_server.auth
@@ -37,4 +37,5 @@ def status_get():
         'servers_online': servers_online_count,
         'servers_total': servers_count,
         'public_ip': app_server.public_ip,
+        'server_version': __version__
     })

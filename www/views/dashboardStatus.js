@@ -110,6 +110,8 @@ define([
             this.$('.servers-status .status-num').addClass('success');
           }
           this.$('.servers-status .status-num').text(num + '/' + totalNum);
+          this.$('.server-version').text(
+            'v' + this.model.get('server_version'));
         }.bind(this)
       });
     },
