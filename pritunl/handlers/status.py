@@ -36,6 +36,6 @@ def status_get():
         'users_total': users_count,
         'servers_online': servers_online_count,
         'servers_total': servers_count,
+        'server_version': __version__,
         'public_ip': app_server.public_ip,
-        'server_version': __version__
     })
