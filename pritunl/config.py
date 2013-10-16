@@ -4,7 +4,8 @@ import logging
 
 logger = logging.getLogger(APP_NAME)
 _RESERVED_ATTRIBUTES = ['bool_options', 'int_options', 'float_options',
-    'path_options', 'str_options', 'list_options', 'all_options']
+    'path_options', 'str_options', 'list_options', 'default_options',
+    'all_options']
 
 class Config:
     bool_options = []
@@ -13,6 +14,7 @@ class Config:
     path_options = []
     str_options = []
     list_options = []
+    default_options = {}
 
     def __init__(self, path=None):
         self.all_options = self.bool_options + self.int_options + \
@@ -35,6 +37,8 @@ class Config:
             if not self._loaded:
                 self.load()
             if name not in self.__dict__:
+                if name in self.default_options:
+                    return self.default_options[name]
                 return [] if name in self.list_options else None
         elif name not in self.__dict__:
             raise AttributeError('Config instance has no attribute %r' % name)
