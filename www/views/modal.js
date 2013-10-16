@@ -106,7 +106,7 @@ define([
 
     },
     clearLoading: function() {
-      this.loading = true;
+      this.loading = false;
       if (this.loadingView) {
         this.loadingView.close();
         this.loadingView = null;
