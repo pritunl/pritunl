@@ -12,6 +12,7 @@ import shutil
 import subprocess
 import threading
 import logging
+import traceback
 
 logger = logging.getLogger(APP_NAME)
 _threads = {}
@@ -451,6 +452,9 @@ class Server(Config):
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 _process[self.id] = process
             except OSError:
+                _output[self.id] += traceback.format_exc()
+                self._event_delay(type=SERVER_OUTPUT_UPDATED,
+                    resource_id=self.id)
                 logger.exception('Failed to start ovpn process. %r' % {
                     'server_id': self.id,
                 })
