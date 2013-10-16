@@ -19,6 +19,15 @@ class AppServer(Config):
     path_options = ['log_path', 'db_path', 'www_path', 'data_path',
         'server_cert_path', 'server_key_path']
     str_options = ['bind_addr', 'password']
+    default_options = {
+        'auto_start_servers': True,
+        'session_timeout': DEFAULT_SESSION_TIMEOUT,
+        'key_bits': DEFAULT_KEY_BITS,
+        'dh_param_path': DEFAULT_DH_PARAM_BITS,
+        'db_path': DEFAULT_DB_PATH,
+        'www_path': DEFAULT_WWW_PATH,
+        'data_path': DEFAULT_DATA_PATH,
+    }
 
     def __init__(self):
         Config.__init__(self)
@@ -60,13 +69,8 @@ class AppServer(Config):
                 raise flask.abort(401)
 
             # Disable session timeout if set to 0
-            if self.session_timeout is not None:
-                session_timeout = self.session_timeout or None
-            else:
-                session_timeout = DEFAULT_SESSION_TIMEOUT
-
-            if session_timeout and time.time() - flask.session[
-                    'timestamp'] > session_timeout:
+            if self.session_timeout and time.time() - flask.session[
+                    'timestamp'] > self.session_timeout:
                 flask.session.pop('timestamp', None)
                 raise flask.abort(401)
             return call(*args, **kwargs)
@@ -75,7 +79,6 @@ class AppServer(Config):
 
     def _setup_conf(self):
         self.set_path(self.conf_path)
-        data_path = self.data_path or DEFAULT_DATA_PATH
         if not os.path.isdir(self.data_path):
             os.makedirs(self.data_path)
 
@@ -105,7 +108,7 @@ class AppServer(Config):
 
     def _setup_db(self):
         self.mem_db = Database(None)
-        self.app_db = Database(self.db_path or DEFAULT_DB_PATH)
+        self.app_db = Database(self.db_path)
 
     def _close_db(self):
         self.mem_db.close()
@@ -115,17 +118,15 @@ class AppServer(Config):
         import handlers
 
     def _setup_static_handler(self):
-        www_path = self.www_path or DEFAULT_WWW_PATH
-
         from werkzeug import SharedDataMiddleware
 
         self.app.wsgi_app = SharedDataMiddleware(self.app.wsgi_app, {
-            '/': os.path.normpath(www_path),
+            '/': os.path.normpath(self.www_path),
         }, cache=False)
 
         @self.app.route('/', methods=['GET'])
         def index_get():
-            with open(os.path.join(www_path, 'index.html'), 'r') as fd:
+            with open(os.path.join(self.www_path, 'index.html'), 'r') as fd:
                 return fd.read()
 
     def _hash_password(self, password):
@@ -190,7 +191,7 @@ class AppServer(Config):
         from log_entry import LogEntry
         logger.info('Starting server...')
 
-        if self.auto_start_servers != False:
+        if self.auto_start_servers:
             from pritunl.server import Server
             for server in Server.get_servers():
                 if server.get_orgs():

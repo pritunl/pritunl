@@ -51,8 +51,7 @@ class Server(Config):
             self._initialized = True
             self.id = id
 
-        data_path = app_server.data_path or DEFAULT_DATA_PATH
-        self.path = os.path.join(data_path, SERVERS_DIR, self.id)
+        self.path = os.path.join(app_server.data_path, SERVERS_DIR, self.id)
         self.ovpn_conf_path = os.path.join(self.path, TEMP_DIR, OVPN_CONF_NAME)
         self.dh_param_path = os.path.join(self.path, DH_PARAM_NAME)
         self.ifc_pool_path = os.path.join(self.path, IFC_POOL_NAME)
@@ -225,7 +224,7 @@ class Server(Config):
         args = [
             'openssl', 'dhparam',
             '-out', self.dh_param_path,
-            str(app_server.dh_param_bits or DEFAULT_DH_PARAM_BITS)
+            str(app_server.dh_param_bits)
         ]
         subprocess.check_call(args, stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)

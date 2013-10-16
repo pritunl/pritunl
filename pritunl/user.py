@@ -114,7 +114,7 @@ class User(Config):
 
     def _create_ssl_conf(self):
         conf_data = CERT_CONF % (self.org.id, self.org.path,
-            app_server.key_bits or DEFAULT_KEY_BITS, self.id)
+            app_server.key_bits, self.id)
         with open(self.ssl_conf_path, 'w') as conf_file:
             conf_file.write(conf_data)
 
