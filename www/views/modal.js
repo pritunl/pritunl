@@ -73,6 +73,11 @@ define([
       }
     },
     setLoading: function(message, noButtonDisable) {
+      if (this.loading) {
+        return;
+      }
+      this.loading = true;
+
       if (this.loadingView) {
         if (this.loadingView.message !== message) {
           this.loadingView.close(function() {
@@ -83,17 +88,25 @@ define([
         return;
       }
 
-      if (!noButtonDisable) {
-        this.$('.ok').attr('disabled', 'disabled');
-      }
-      this.loadingView = new AlertView({
-        type: 'info',
-        message: message
-      });
-      this.addView(this.loadingView);
-      this.$('.modal-body').append(this.loadingView.render().el);
+      setTimeout(function() {
+        if (!this.loading) {
+          return;
+        }
+        this.loading = false;
+        if (!noButtonDisable) {
+          this.$('.ok').attr('disabled', 'disabled');
+        }
+        this.loadingView = new AlertView({
+          type: 'info',
+          message: message
+        });
+        this.addView(this.loadingView);
+        this.$('.modal-body').append(this.loadingView.render().el);
+      }.bind(this), 250);
+
     },
     clearLoading: function() {
+      this.loading = true;
       if (this.loadingView) {
         this.loadingView.close();
         this.loadingView = null;
