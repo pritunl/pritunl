@@ -6,7 +6,7 @@ define([
 ], function($, _, Backbone, dashboardLogItemTemplate) {
   'use strict';
   var DashboardLogItemView = Backbone.View.extend({
-    className: 'log-entry',
+    className: 'log-entry clearfix',
     template: _.template(dashboardLogItemTemplate),
     render: function() {
       this.$el.html(this.template(this.model.toJSON()));
