@@ -71,6 +71,9 @@ define([
       this.addView(modal);
     },
     onGetKeyLink: function() {
+      if (window.demo) {
+        return;
+      }
       var modal = new ModalKeyLinkView({
         model: new KeyModel({
           'organization': this.model.get('organization'),
