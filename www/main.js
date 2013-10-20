@@ -59,6 +59,7 @@
 }());
 
 require.config({
+  waitSeconds: 10,
   paths: {
     ace: 'vendor/ace/ace',
     aceModeSh: 'vendor/ace/mode-sh',
