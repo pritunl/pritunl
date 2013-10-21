@@ -16,6 +16,7 @@ define([
     events: function() {
       return _.extend({
         'click .local-network-toggle .selector': 'onLocalNetworkSelect',
+        'click .lzo-compression-toggle .selector': 'onLzoCompressionSelect',
         'click .debug-toggle .selector': 'onDebugSelect'
       }, ModalServerSettingsView.__super__.events);
     },
@@ -40,6 +41,23 @@ define([
     },
     onLocalNetworkSelect: function() {
       this.setLocalNetworkSelect(!this.getLocalNetworkSelect());
+    },
+    getLzoCompressionSelect: function() {
+      return this.$('.lzo-compression-toggle .selector').hasClass('selected');
+    },
+    setLzoCompressionSelect: function(state) {
+      if (state) {
+        this.$('.lzo-compression-toggle .selector').addClass('selected');
+        this.$('.lzo-compression-toggle .selector-inner').show();
+      }
+      else {
+        this.$('.lzo-compression-toggle .selector').removeClass('selected');
+        this.$('.lzo-compression-toggle .selector-inner').hide();
+      }
+      this.trigger('select', this);
+    },
+    onLzoCompressionSelect: function() {
+      this.setLzoCompressionSelect(!this.getLzoCompressionSelect());
     },
     getDebugSelect: function() {
       return this.$('.debug-toggle .selector').hasClass('selected');

@@ -39,7 +39,12 @@
       <label>Local Network</label>
       <input type="text" class="form-control" placeholder="Enter network address" data-toggle="tooltip" title="Local network address routed to VPN clients" value="<%= local_network %>">
     </div>
-
+    <div class="lzo-compression-toggle form-group">
+      <label>Enable LZO Compression</label>
+      <div class="selector <%= lzo_compression ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Enable LZO compression over VPN tunnel, may improve speed over slow connections">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
     <div class="debug-toggle form-group">
       <label>Enable Debugging Output</label>
       <div class="selector <%= debug ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Show server debugging information in output">
