@@ -37,7 +37,6 @@ define([
         this.$('.local-network-toggle .selector-inner').hide();
         this.$('.local-network').slideUp(250);
       }
-      this.trigger('select', this);
     },
     onLocalNetworkSelect: function() {
       this.setLocalNetworkSelect(!this.getLocalNetworkSelect());
@@ -54,7 +53,6 @@ define([
         this.$('.lzo-compression-toggle .selector').removeClass('selected');
         this.$('.lzo-compression-toggle .selector-inner').hide();
       }
-      this.trigger('select', this);
     },
     onLzoCompressionSelect: function() {
       this.setLzoCompressionSelect(!this.getLzoCompressionSelect());
@@ -71,7 +69,6 @@ define([
         this.$('.debug-toggle .selector').removeClass('selected');
         this.$('.debug-toggle .selector-inner').hide();
       }
-      this.trigger('select', this);
     },
     onDebugSelect: function() {
       this.setDebugSelect(!this.getDebugSelect());
