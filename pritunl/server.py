@@ -305,6 +305,9 @@ class Server(Config):
             8 if self.debug else 3,
         )
 
+        if self.lzo_compression:
+            server_conf += 'comp-lzo\npush "comp-lzo"\n'
+
         if self.local_network:
             server_conf += 'client-to-client\n'
 
