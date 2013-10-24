@@ -211,6 +211,7 @@ define([
       protocol: request.data.protocol,
       local_network: request.data.local_network,
       public_address: request.data.public_address,
+      lzo_compression: request.data.lzo_compression,
       debug: request.data.debug,
       status: 'offline',
       orgs: [],
@@ -230,6 +231,7 @@ define([
     demoData.servers[serverId].protocol = request.data.protocol;
     demoData.servers[serverId].local_network = request.data.local_network;
     demoData.servers[serverId].public_address = request.data.public_address;
+    demoData.servers[serverId].lzo_compression = request.data.lzo_compression;
     demoData.servers[serverId].debug = request.data.debug;
     event('servers_updated');
     request.response({});

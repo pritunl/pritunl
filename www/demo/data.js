@@ -88,6 +88,7 @@ define([], function() {
     '5310c28eacaeb3bd2a172c9db9ee1379': {
       id: '5310c28eacaeb3bd2a172c9db9ee1379',
       debug: false,
+      lzo_compression: false,
       interface: 'tun0',
       local_network: null,
       name: 'server1',
