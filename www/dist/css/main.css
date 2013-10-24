@@ -6260,7 +6260,7 @@ ul {
   color: #777777;
 }
 .modal .key-link input {
-  width: 475px;
+  width: 480px;
 }
 .navbar .navbar-brand,
 .navbar .navbar-brand:hover,
@@ -6828,8 +6828,8 @@ header.blur {
   top: -o-calc(50% - 319px);
   top: calc(50% - 319px);
 }
-.server-settings-modal .local-network-toggle {
-  margin-bottom: 7px;
+.server-settings-modal .local-network {
+  margin-top: -13px;
 }
 .delete-users-modal .modal .modal-dialog {
   top: -webkit-calc(50% - 195px);
