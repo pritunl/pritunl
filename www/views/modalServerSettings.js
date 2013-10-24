@@ -82,6 +82,7 @@ define([
       var publicAddress = this.$('.public-address input').val();
       var localNetwork = null;
       var debug = this.getDebugSelect();
+      var lzoCompression = this.getLzoCompressionSelect();
 
       if (!name) {
         this.setAlert('danger', 'Name can not be empty.', '.name');
@@ -121,6 +122,7 @@ define([
         'protocol': protocol,
         'local_network': localNetwork,
         'public_address': publicAddress,
+        'lzo_compression': lzoCompression,
         'debug': debug
       }, {
         success: function() {
