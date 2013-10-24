@@ -60,6 +60,7 @@ def server_get():
             'protocol': server.protocol,
             'local_network': server.local_network,
             'public_address': server.public_address,
+            'lzo_compression': server.lzo_compression,
             'debug': server.debug,
             'org_count': len(server_orgs),
         }
@@ -86,6 +87,7 @@ def server_put_post(server_id=None):
     public_address = ''.join(
         x for x in public_address if x.isalnum() or x == '.')
     debug = True if flask.request.json['debug'] else False
+    lzo_compression = True if flask.request.json['lzo_compression'] else False
 
     # Network
     network_split = network.split('/')
@@ -204,6 +206,7 @@ def server_put_post(server_id=None):
             protocol=protocol,
             local_network=local_network,
             public_address=public_address,
+            lzo_compression=lzo_compression,
             debug=debug,
         )
     else:
@@ -220,6 +223,7 @@ def server_put_post(server_id=None):
         server.protocol = protocol
         server.local_network = local_network
         server.public_address = public_address
+        server.lzo_compression = lzo_compression
         server.debug = debug
         server.commit()
 
