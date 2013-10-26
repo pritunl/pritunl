@@ -23,7 +23,7 @@ define([
       var virtAddresses = [];
 
       for (serverId in servers) {
-        virtAddresses.push(servers[serverId].virt_address)
+        virtAddresses.push(servers[serverId].virt_address);
       }
 
       return virtAddresses;
