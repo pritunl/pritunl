@@ -6823,13 +6823,16 @@ header.blur {
   float: right;
 }
 .server-settings-modal .modal .modal-dialog {
-  top: -webkit-calc(50% - 319px);
-  top: -moz-calc(50% - 319px);
-  top: -o-calc(50% - 319px);
-  top: calc(50% - 319px);
+  top: -webkit-calc(50% - 340px);
+  top: -moz-calc(50% - 340px);
+  top: -o-calc(50% - 340px);
+  top: calc(50% - 340px);
 }
 .server-settings-modal .local-network {
   margin-top: -13px;
+}
+.server-settings-modal .lzo-compression-toggle {
+  display: none;
 }
 .delete-users-modal .modal .modal-dialog {
   top: -webkit-calc(50% - 195px);
