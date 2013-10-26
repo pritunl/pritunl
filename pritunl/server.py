@@ -558,7 +558,7 @@ class Server(Config):
                 for line in status_file.readlines():
                     if line[:11] != 'CLIENT_LIST':
                         continue
-                    line_split = line.split(',')
+                    line_split = line.strip('\n').split(',')
                     client_id = line_split[1]
                     real_address = line_split[2]
                     virt_address = line_split[3]
