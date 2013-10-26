@@ -55,10 +55,9 @@ define([
       }
       var virtAddresses = this.getVirtAddresses();
       this.$('.status-container').tooltip('destroy');
-      this.$('.status-container').tooltip({
-        'title': virtAddresses.length ? 'IP Address: ' +
-          virtAddresses.join(', ') : ''
-      });
+      this.$('.status-container').attr('title',
+        virtAddresses.length ? 'IP Address: ' + virtAddresses.join(', ') : '');
+      this.$('.status-container').tooltip();
     },
     getSelect: function() {
       return this.$('.selector').hasClass('selected');
