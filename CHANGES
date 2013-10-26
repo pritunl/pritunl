@@ -4,7 +4,6 @@ Pritunl Changelog
 Version 0.10.2
 --------------
 
-Added lzo compression
 Use openvpn client-to-client when using local network
 
 Version 0.10.1
