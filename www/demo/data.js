@@ -119,7 +119,7 @@ define([], function() {
         organization: '55f5c6820e7a7de989916b4cdddf6070',
         status: false,
         type: 'client',
-        virt_addresses: []
+        servers: []
       },
       '9d33758bf6d559e2eb53e7e971248216': {
         id: '9d33758bf6d559e2eb53e7e971248216',
@@ -127,7 +127,7 @@ define([], function() {
         organization: '55f5c6820e7a7de989916b4cdddf6070',
         status: false,
         type: 'client',
-        virt_addresses: []
+        servers: []
       },
       'b5a694ee9411574964d05015add815cd': {
         id: 'b5a694ee9411574964d05015add815cd',
@@ -135,7 +135,7 @@ define([], function() {
         organization: '55f5c6820e7a7de989916b4cdddf6070',
         status: false,
         type: 'client',
-        virt_addresses: []
+        servers: []
       },
       '096b1604409d4fb791d2f11d2f0beddc': {
         id: '096b1604409d4fb791d2f11d2f0beddc',
@@ -143,7 +143,7 @@ define([], function() {
         organization: '55f5c6820e7a7de989916b4cdddf6070',
         status: false,
         type: 'client',
-        virt_addresses: []
+        servers: []
       }
     },
     'adb484e1f3c653dbc2aab10b14265dc6': {
@@ -153,7 +153,7 @@ define([], function() {
         organization: 'adb484e1f3c653dbc2aab10b14265dc6',
         status: false,
         type: 'client',
-        virt_addresses: []
+        servers: []
       },
       'f3b5ad1db481d07aed557d6d34b8cb78': {
         id: 'f3b5ad1db481d07aed557d6d34b8cb78',
@@ -161,7 +161,7 @@ define([], function() {
         organization: 'adb484e1f3c653dbc2aab10b14265dc6',
         status: false,
         type: 'client',
-        virt_addresses: []
+        servers: []
       }
     }
   };

@@ -384,7 +384,7 @@ define([
       name: request.data.name,
       type: 'client',
       status: false,
-      virt_addresses: []
+      servers: []
     };
 
     event('users_updated');
