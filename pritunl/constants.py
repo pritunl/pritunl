@@ -194,7 +194,7 @@ dh %s
 server %s
 ifconfig-pool-persist %s
 push "%s"
-keepalive 10 20
+keepalive 4 10
 persist-tun
 status %s 1
 status-version 2
