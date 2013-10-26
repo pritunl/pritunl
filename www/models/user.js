@@ -11,7 +11,7 @@ define([
       'name': null,
       'type': null,
       'status': null,
-      'virt_addresses': null
+      'servers': null
     },
     url: function() {
       var url = '/user/' + this.get('organization');
