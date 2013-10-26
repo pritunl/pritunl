@@ -17,8 +17,20 @@ define([
       'click .user-name': 'onRename',
       'click .get-key-link': 'onGetKeyLink'
     },
+    getVirtAddresses: function() {
+      var serverId;
+      var servers = this.model.get('servers');
+      var virtAddresses = [];
+
+      for (serverId in servers) {
+        virtAddresses.push(servers[serverId].virt_address)
+      }
+
+      return virtAddresses;
+    },
     render: function() {
-      this.$el.html(this.template(this.model.toJSON()));
+      this.$el.html(this.template(_.extend(
+        {'virt_addresses': this.getVirtAddresses()}, this.model.toJSON())));
       this.$('[data-toggle="tooltip"]').tooltip();
       if (this.model.get('type') !== 'client') {
         this.hidden = true;
@@ -41,10 +53,11 @@ define([
           this.$('.status-text').text('Offline');
         }
       }
+      var virtAddresses = this.getVirtAddresses();
       this.$('.status-container').tooltip('destroy');
       this.$('.status-container').tooltip({
-        'title': this.model.get('virt_addresses').length ? 'IP Address: ' +
-          this.model.get('virt_addresses').join(', ') : ''
+        'title': virtAddresses.length ? 'IP Address: ' +
+          virtAddresses.join(', ') : ''
       });
     },
     getSelect: function() {
