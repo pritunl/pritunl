@@ -37,7 +37,7 @@ define([
         bytesReceived += parseInt(servers[serverId].bytes_received, 10);
       }
 
-      return bytesReceived;
+      return window.formatSize(bytesReceived);
     },
     getBytesSent: function() {
       var serverId;
@@ -48,18 +48,18 @@ define([
         bytesSent += parseInt(servers[serverId].bytes_sent, 10);
       }
 
-      return bytesSent;
+      return window.formatSize(bytesSent);
     },
     _getTooltipText: function() {
-      var bytesReceived = this.getBytesReceived();
       var bytesSent = this.getBytesSent();
+      var bytesReceived = this.getBytesReceived();
       var virtAddresses = this.getVirtAddresses();
       if (!virtAddresses.length) {
         return '';
       }
       var tooltipText = 'IP Address: ' + virtAddresses.join(', ');
-      tooltipText += '\nBytes Received: ' + bytesReceived;
-      tooltipText += '\nBytes Sent: ' + bytesSent;
+      tooltipText += '\nSent: ' + bytesSent;
+      tooltipText += '\nReceived: ' + bytesReceived;
       return tooltipText;
     },
     render: function() {
