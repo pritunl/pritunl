@@ -28,9 +28,43 @@ define([
 
       return virtAddresses;
     },
+    getBytesReceived: function() {
+      var serverId;
+      var servers = this.model.get('servers');
+      var bytesReceived = 0;
+
+      for (serverId in servers) {
+        bytesReceived += parseInt(servers[serverId].bytes_received, 10);
+      }
+
+      return bytesReceived;
+    },
+    getBytesSent: function() {
+      var serverId;
+      var servers = this.model.get('servers');
+      var bytesSent = 0;
+
+      for (serverId in servers) {
+        bytesSent += parseInt(servers[serverId].bytes_sent, 10);
+      }
+
+      return bytesSent;
+    },
+    _getTooltipText: function() {
+      var bytesReceived = this.getBytesReceived();
+      var bytesSent = this.getBytesSent();
+      var virtAddresses = this.getVirtAddresses();
+      if (!virtAddresses.length) {
+        return '';
+      }
+      var tooltipText = 'IP Address: ' + virtAddresses.join(', ');
+      tooltipText += '\nBytes Received: ' + bytesReceived;
+      tooltipText += '\nBytes Sent: ' + bytesSent;
+      return tooltipText;
+    },
     render: function() {
       this.$el.html(this.template(_.extend(
-        {'virt_addresses': this.getVirtAddresses()}, this.model.toJSON())));
+        {'tooltip_text': this._getTooltipText()}, this.model.toJSON())));
       this.$('[data-toggle="tooltip"]').tooltip();
       if (this.model.get('type') !== 'client') {
         this.hidden = true;
@@ -55,8 +89,7 @@ define([
       }
       var virtAddresses = this.getVirtAddresses();
       this.$('.status-container').tooltip('destroy');
-      this.$('.status-container').attr('title',
-        virtAddresses.length ? 'IP Address: ' + virtAddresses.join(', ') : '');
+      this.$('.status-container').attr('title', this._getTooltipText());
       this.$('.status-container').tooltip();
     },
     getSelect: function() {
