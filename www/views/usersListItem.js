@@ -87,7 +87,6 @@ define([
           this.$('.status-text').text('Offline');
         }
       }
-      var virtAddresses = this.getVirtAddresses();
       this.$('.status-container').tooltip('destroy');
       this.$('.status-container').attr('title', this._getTooltipText());
       this.$('.status-container').attr('data-original-title',
