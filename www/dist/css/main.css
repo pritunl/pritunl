@@ -6626,6 +6626,9 @@ header.blur {
   -moz-border-radius: 50%;
   border-radius: 50%;
 }
+.users-list .user .tooltip-inner {
+  white-space: pre-wrap;
+}
 .users-list .user .status-container .status-icon.online {
   background-color: #47a447;
 }
