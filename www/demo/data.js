@@ -117,9 +117,15 @@ define([], function() {
         id: '47402514d02283610f92d681523863a7',
         name: 'user1',
         organization: '55f5c6820e7a7de989916b4cdddf6070',
-        status: false,
+        status: true,
         type: 'client',
-        servers: []
+        servers: [{
+          real_address: '8.8.8.8',
+          virt_address: '10.139.17.32',
+          bytes_received: 55322869,
+          bytes_sent: 24589107,
+          connected_since: 1383170753
+        }]
       },
       '9d33758bf6d559e2eb53e7e971248216': {
         id: '9d33758bf6d559e2eb53e7e971248216',
