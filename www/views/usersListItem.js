@@ -58,8 +58,8 @@ define([
         return '';
       }
       var tooltipText = 'IP Address: ' + virtAddresses.join(', ');
-      tooltipText += '\nSent: ' + bytesSent;
-      tooltipText += '\nReceived: ' + bytesReceived;
+      tooltipText += '\nData Sent: ' + bytesSent;
+      tooltipText += '\nData Received: ' + bytesReceived;
       return tooltipText;
     },
     render: function() {
