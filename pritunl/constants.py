@@ -191,7 +191,7 @@ ca %s
 cert %s
 key %s
 tls-verify %s
-auth-user-pass-verify %s via-file
+#auth-user-pass-verify %s via-file
 dh %s
 server %s
 ifconfig-pool-persist %s
