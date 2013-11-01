@@ -40,7 +40,8 @@ TEMP_DIR = 'temp'
 INDEX_NAME = 'index'
 SERIAL_NAME = 'serial'
 CRL_NAME = 'ca.crl'
-TLS_VERIFY_NAME = 'verify.py'
+TLS_VERIFY_NAME = 'tls_verify.py'
+USER_PASS_VERIFY_NAME = 'user_pass_verify.py'
 OVPN_CONF_NAME = 'openvpn.conf'
 OVPN_STATUS_NAME = 'status'
 OVPN_CA_NAME = 'ca.crt'
@@ -190,6 +191,7 @@ ca %s
 cert %s
 key %s
 tls-verify %s
+auth-user-pass-verify %s via-file
 dh %s
 server %s
 ifconfig-pool-persist %s
@@ -244,4 +246,62 @@ with open(os.path.join(ORGS_PATH, org, INDEX_NAME), 'r') as index_file:
                 exit(0)
             raise AttributeError('Common name is not valid')
 raise LookupError('Common name not found')
+"""
+
+USER_PASS_VERIFY_SCRIPT = """#!/usr/bin/env python
+import os
+import sys
+import time
+import struct
+import hmac
+import hashlib
+import base64
+VALID_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789='
+USERS_DIR = '%s'
+ORGS_PATH = '%s'
+tls_env = os.environ.get('tls_id_0')
+if not tls_env:
+    raise AttributeError('Missing organization or common name from environ')
+tls_env = ''.join(x for x in tls_env if x in VALID_CHARS)
+o_index = tls_env.find('O=')
+cn_index = tls_env.find('CN=')
+if o_index < 0 or cn_index < 0:
+    raise AttributeError('Missing organization or common name from environ')
+if o_index > cn_index:
+    org = tls_env[o_index + 2:]
+    common_name = tls_env[3:o_index]
+else:
+    org = tls_env[2:cn_index]
+    common_name = tls_env[cn_index + 3:]
+if not org or not common_name:
+    raise AttributeError('Missing organization or common name from environ')
+with open(sys.argv[1], 'r') as auth_file:
+    username, password = [x.strip() for x in auth_file.readlines()[:2]]
+secretkey = None
+with open(os.path.join(ORGS_PATH, org, USERS_DIR,
+        '%%s.conf' %% common_name), 'r') as user_conf_file:
+    for line in user_conf_file.readlines():
+        if 'otp=' in line:
+            secretkey = line.strip().replace('otp=', '')
+            break
+if not secretkey:
+    exit(0)
+padding = 8 - len(secretkey) %% 8
+if padding != 8:
+    secretkey = secretkey.ljust(len(secretkey) + padding, '=')
+secretkey = base64.b32decode(secretkey.upper())
+valid_codes = []
+epoch = int(time.time() / 30)
+for offset in xrange(-1, 2):
+    value = struct.pack('>q', epoch + offset)
+    hash = hmac.new(secretkey, value, hashlib.sha1).digest()
+    offset = ord(hash[-1]) & 0x0F
+    truncated_hash = hash[offset:offset + 4]
+    truncated_hash = struct.unpack('>L', truncated_hash)[0]
+    truncated_hash &= 0x7FFFFFFF
+    truncated_hash %%= 1000000
+    valid_codes.append('%%06d' %% truncated_hash)
+if password not in valid_codes:
+    raise TypeError('Common name is not valid')
+exit(0)
 """
