@@ -30,6 +30,7 @@ INFO = 'info'
 WARNING = 'warning'
 ERROR = 'error'
 
+VERSION_NAME = 'version'
 ORGS_DIR = 'organizations'
 SERVERS_DIR = 'servers'
 REQS_DIR = 'reqs'

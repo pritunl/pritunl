@@ -129,6 +129,25 @@ class AppServer(Config):
             with open(os.path.join(self.www_path, 'index.html'), 'r') as fd:
                 return fd.read()
 
+    def _upgrade_data(self):
+        from pritunl import __version__
+        version = '0.10.1'
+        version_path = os.path.join(self.data_path, VERSION_NAME)
+        if os.path.isfile(version_path):
+            with open(version_path, 'r') as version_file:
+                version = version_file.readlines()[0].strip()
+
+        if version == '0.10.1':
+            logger.info('Upgrading data from v0.10.1...')
+            from organization import Organization
+            for org in Organization.get_orgs():
+                for user in org.get_users():
+                    user._upgrade_0_10_2()
+
+        if version != __version__:
+            with open(version_path, 'w') as version_file:
+                version = version_file.write('%s\n' % __version__)
+
     def _hash_password(self, password):
         password_hash = hashlib.sha512()
         password_hash.update(password)
@@ -158,6 +177,7 @@ class AppServer(Config):
         self._setup_db()
         self._setup_handlers()
         self._setup_static_handler()
+        self._upgrade_data()
 
     def _setup_server_cert(self):
         if self.server_cert_path and self.server_key_path:
