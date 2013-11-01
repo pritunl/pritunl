@@ -24,7 +24,7 @@ class Server(Config):
     str_options = ['name', 'network', 'interface', 'protocol',
         'local_network', 'public_address', 'primary_organization',
         'primary_user', 'organizations']
-    bool_options = ['lzo_compression', 'debug']
+    bool_options = ['otp_auth', 'lzo_compression', 'debug']
     int_options = ['port']
     list_options = ['organizations']
 
