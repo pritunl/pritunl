@@ -12,7 +12,7 @@ import logging
 logger = logging.getLogger(APP_NAME)
 
 class User(Config):
-    str_options = ['name', 'otp']
+    str_options = ['name', 'otp_secret']
 
     def __init__(self, org, id=None, name=None, type=None):
         Config.__init__(self)

@@ -281,11 +281,11 @@ secretkey = None
 with open(os.path.join(ORGS_PATH, org, USERS_DIR,
         '%%s.conf' %% common_name), 'r') as user_conf_file:
     for line in user_conf_file.readlines():
-        if 'otp=' in line:
-            secretkey = line.strip().replace('otp=', '')
+        if 'otp_secret=' in line:
+            secretkey = line.strip().replace('otp_secret=', '')
             break
 if not secretkey:
-    exit(0)
+    raise AttributeError('Missing otp_secret in user conf')
 padding = 8 - len(secretkey) %% 8
 if padding != 8:
     secretkey = secretkey.ljust(len(secretkey) + padding, '=')
@@ -302,6 +302,6 @@ for offset in xrange(-1, 2):
     truncated_hash %%= 1000000
     valid_codes.append('%%06d' %% truncated_hash)
 if password not in valid_codes:
-    raise TypeError('Common name is not valid')
+    raise TypeError('Password is invalid')
 exit(0)
 """
