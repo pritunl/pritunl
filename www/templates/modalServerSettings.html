@@ -39,9 +39,9 @@
       <label>Local Network</label>
       <input type="text" class="form-control" placeholder="Enter network address" data-toggle="tooltip" title="Local network address routed to VPN clients" value="<%= local_network %>">
     </div>
-    <div class="lzo-compression-toggle form-group">
-      <label>Enable LZO Compression</label>
-      <div class="selector <%= lzo_compression ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Enable LZO compression over VPN tunnel, may improve speed over slow connections">
+    <div class="otp-auth-toggle form-group">
+      <label>Enable Two-Step Authentication</label>
+      <div class="selector <%= otp_auth ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Enable two-step authentication using Google Authenticator. Verification code is entered as the user password when connecting">
         <span class="selector-inner glyphicon glyphicon-ok"></span>
       </div>
     </div>

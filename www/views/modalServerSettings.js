@@ -16,7 +16,7 @@ define([
     events: function() {
       return _.extend({
         'click .local-network-toggle .selector': 'onLocalNetworkSelect',
-        'click .lzo-compression-toggle .selector': 'onLzoCompressionSelect',
+        'click .otp-auth-toggle .selector': 'onOtpAuthSelect',
         'click .debug-toggle .selector': 'onDebugSelect'
       }, ModalServerSettingsView.__super__.events);
     },
@@ -41,21 +41,21 @@ define([
     onLocalNetworkSelect: function() {
       this.setLocalNetworkSelect(!this.getLocalNetworkSelect());
     },
-    getLzoCompressionSelect: function() {
-      return this.$('.lzo-compression-toggle .selector').hasClass('selected');
+    getOtpAuthSelect: function() {
+      return this.$('.otp-auth-toggle .selector').hasClass('selected');
     },
-    setLzoCompressionSelect: function(state) {
+    setOtpAuthSelect: function(state) {
       if (state) {
-        this.$('.lzo-compression-toggle .selector').addClass('selected');
-        this.$('.lzo-compression-toggle .selector-inner').show();
+        this.$('.otp-auth-toggle .selector').addClass('selected');
+        this.$('.otp-auth-toggle .selector-inner').show();
       }
       else {
-        this.$('.lzo-compression-toggle .selector').removeClass('selected');
-        this.$('.lzo-compression-toggle .selector-inner').hide();
+        this.$('.otp-auth-toggle .selector').removeClass('selected');
+        this.$('.otp-auth-toggle .selector-inner').hide();
       }
     },
-    onLzoCompressionSelect: function() {
-      this.setLzoCompressionSelect(!this.getLzoCompressionSelect());
+    onOtpAuthSelect: function() {
+      this.setOtpAuthSelect(!this.getOtpAuthSelect());
     },
     getDebugSelect: function() {
       return this.$('.debug-toggle .selector').hasClass('selected');
@@ -82,7 +82,7 @@ define([
       var publicAddress = this.$('.public-address input').val();
       var localNetwork = null;
       var debug = this.getDebugSelect();
-      var lzoCompression = this.getLzoCompressionSelect();
+      var otpAuth = this.getOtpAuthSelect();
 
       if (!name) {
         this.setAlert('danger', 'Name can not be empty.', '.name');
@@ -122,7 +122,7 @@ define([
         'protocol': protocol,
         'local_network': localNetwork,
         'public_address': publicAddress,
-        'lzo_compression': lzoCompression,
+        'otp_auth': otpAuth,
         'debug': debug
       }, {
         success: function() {
