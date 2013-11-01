@@ -31,6 +31,7 @@ def user_get(org_id):
             'name': user.name,
             'type': user.type,
             'status': True if user.id in clients else False,
+            'otp_secret': user.otp_secret,
             'servers': clients[user.id] if user.id in clients else {},
         }
 
