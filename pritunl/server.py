@@ -294,8 +294,8 @@ class Server(Config):
         primary_user = primary_org.get_user(self.primary_user)
 
         self.generate_ca_cert()
-        self._generate_user_pass_verify()
         self._generate_tls_verify()
+        self._generate_user_pass_verify()
 
         if self.local_network:
             push = 'route %s %s' % self._parse_network(
