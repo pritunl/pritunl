@@ -5,9 +5,10 @@ define([
   'models/key',
   'views/modalRenameUser',
   'views/modalKeyLink',
+  'views/modalOtpAuth',
   'text!templates/usersListItem.html'
 ], function($, _, Backbone, KeyModel, ModalRenameUserView, ModalKeyLinkView,
-    usersListItemTemplate) {
+    ModalOtpAuthView, usersListItemTemplate) {
   'use strict';
   var UsersListItemView = Backbone.View.extend({
     className: 'user',
@@ -15,7 +16,8 @@ define([
     events: {
       'click .selector': 'onSelect',
       'click .user-name': 'onRename',
-      'click .get-key-link': 'onGetKeyLink'
+      'click .get-key-link': 'onGetKeyLink',
+      'click .get-otp-auth': 'onGetOtpAuth'
     },
     getVirtAddresses: function() {
       var serverId;
@@ -125,6 +127,12 @@ define([
           'organization': this.model.get('organization'),
           'user': this.model.get('id')
         })
+      });
+      this.addView(modal);
+    },
+    onGetOtpAuth: function() {
+      var modal = new ModalOtpAuthView({
+        model: this.model
       });
       this.addView(modal);
     }
