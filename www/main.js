@@ -74,6 +74,7 @@ require.config({
     d3: 'vendor/d3/d3',
     jquery: 'vendor/jquery/jquery',
     less: 'vendor/less/less',
+    qrcode: 'vendor/qrcode/qrcode',
     text: 'vendor/requireText/text',
     underscore: 'vendor/underscore/underscore',
     initialize: 'init/testing'
@@ -89,7 +90,8 @@ require.config({
     aceThemeTwilight: ['ace'],
     backbone: ['less'],
     bootstrap: ['jquery'],
-    d3: {exports: 'd3'}
+    d3: {exports: 'd3'},
+    qrcode: {exports: 'QRCode'}
   }
 });
 

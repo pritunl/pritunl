@@ -84,6 +84,7 @@ module.exports = function(grunt) {
             d3: 'vendor/d3/d3.min',
             jquery: 'vendor/jquery/jquery.min',
             less: 'vendor/less/less.min',
+            qrcode: 'vendor/qrcode/qrcode.min',
             text: 'vendor/requireText/text',
             underscore: 'vendor/underscore/underscore.min',
             initialize: 'init/production'
@@ -115,6 +116,7 @@ module.exports = function(grunt) {
             d3: 'vendor/d3/d3.min',
             jquery: 'vendor/jquery/jquery.min',
             less: 'vendor/less/less.min',
+            qrcode: 'vendor/qrcode/qrcode.min',
             text: 'vendor/requireText/text',
             underscore: 'vendor/underscore/underscore.min',
             initialize: 'init/demo'
@@ -146,6 +148,7 @@ module.exports = function(grunt) {
             d3: 'vendor/d3/d3.min',
             jquery: 'vendor/jquery/jquery.min',
             less: 'vendor/less/less.min',
+            qrcode: 'vendor/qrcode/qrcode.min',
             text: 'vendor/requireText/text',
             underscore: 'vendor/underscore/underscore.min',
             initialize: 'init/production'
@@ -220,6 +223,11 @@ module.exports = function(grunt) {
         'https://raw.github.com/less/less.js/master/dist/less-1.4.2.js',
       'vendor/less/less.min.js':
         'https://raw.github.com/less/less.js/master/dist/less-1.4.2.min.js',
+
+      'vendor/qrcode/qrcode.js':
+        'https://raw.github.com/davidshimjs/qrcodejs/master/qrcode.js',
+      'vendor/qrcode/qrcode.min.js':
+        'https://raw.github.com/davidshimjs/qrcodejs/master/qrcode.min.js',
 
       'vendor/require/require.js':
         'https://raw.github.com/jrburke/requirejs/master/require.js',
