@@ -65,6 +65,7 @@ class User(Config):
         self._cert_request()
         self._generate_otp_secret()
         self.commit()
+        os.chmod(self.get_path(), 0600)
         self._cert_create()
         self._delete_ssl_conf()
         LogEntry(message='Created new user.')
