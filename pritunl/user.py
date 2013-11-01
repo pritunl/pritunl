@@ -8,6 +8,8 @@ import tarfile
 import os
 import subprocess
 import logging
+import hashlib
+import base64
 
 logger = logging.getLogger(APP_NAME)
 
@@ -61,6 +63,7 @@ class User(Config):
     def _initialize(self):
         self._create_ssl_conf()
         self._cert_request()
+        self._generate_otp_secret()
         self.commit()
         self._cert_create()
         self._delete_ssl_conf()
@@ -120,6 +123,16 @@ class User(Config):
 
     def _delete_ssl_conf(self):
         os.remove(self.ssl_conf_path)
+
+    def _generate_otp_secret(self):
+        sha_hash = hashlib.sha512()
+        sha_hash.update(os.urandom(8192))
+        byte_hash = sha_hash.digest()
+        for i in xrange(6):
+            sha_hash = hashlib.sha512()
+            sha_hash.update(byte_hash)
+            byte_hash = sha_hash.digest()
+        self.otp_secret = base64.b32encode(byte_hash)[:DEFAULT_OTP_SECRET_LEN]
 
     def _load_type(self):
         with open(self.cert_path, 'r') as cert_file:
