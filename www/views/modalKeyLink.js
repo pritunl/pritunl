@@ -18,6 +18,9 @@ define([
       }, ModalKeyLinkView.__super__.events);
     },
     body: function() {
+      return this.template();
+    },
+    postRender: function() {
       this.setLoading('Generating url...', true);
       this.model.fetch({
         success: function() {
@@ -30,7 +33,6 @@ define([
           this.setAlert('danger', 'Failed to generate key url.');
         }.bind(this)
       });
-      return this.template(this.model.toJSON());
     },
     onClickInput: function() {
       this.$('input').select();

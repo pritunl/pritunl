@@ -21,6 +21,7 @@ define([
     okText: 'Ok',
     initialize: function() {
       this.render();
+      this.postRender();
     },
     render: function() {
       this.$el.html(this.modalTemplate({
@@ -33,6 +34,8 @@ define([
       this.$('[data-toggle="tooltip"]').tooltip();
       $('body').append(this.el);
       return this;
+    },
+    postRender: function() {
     },
     setAlert: function(type, message, form) {
       if (this.alertView) {
