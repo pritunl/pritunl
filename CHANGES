@@ -4,6 +4,7 @@ Pritunl Changelog
 Version 0.10.2
 --------------
 
+Add time based two-step otp password verification using google authenticator
 Add client sent and received data transfer to status tooltip
 Use openvpn client-to-client when using local network
 
