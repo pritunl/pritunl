@@ -59,6 +59,8 @@ class Server(Config):
         self.ca_cert_path = os.path.join(self.path, TEMP_DIR, OVPN_CA_NAME)
         self.tls_verify_path = os.path.join(self.path, TEMP_DIR,
             TLS_VERIFY_NAME)
+        self.user_pass_verify_path = os.path.join(self.path, TEMP_DIR,
+            USER_PASS_VERIFY_NAME)
         self.ovpn_status_path = os.path.join(self.path, TEMP_DIR,
             OVPN_STATUS_NAME)
         self.set_path(os.path.join(self.path, 'server.conf'))
@@ -261,6 +263,18 @@ class Server(Config):
             ))
         os.chmod(self.tls_verify_path, 0755)
 
+    def _generate_user_pass_verify(self):
+        logger.debug('Generating user pass verify script. %r' % {
+            'server_id': self.id,
+        })
+        with open(self.user_pass_verify_path, 'w') as user_pass_verify_file:
+            data_path = app_server.data_path
+            user_pass_verify_file.write(USER_PASS_VERIFY_SCRIPT % (
+                USERS_DIR,
+                os.path.join(data_path, ORGS_DIR),
+            ))
+        os.chmod(self.user_pass_verify_path, 0755)
+
     def _generate_ovpn_conf(self):
         if not self.get_orgs():
             raise ValueError('Ovpn conf cannot be generated without ' + \
@@ -280,6 +294,7 @@ class Server(Config):
         primary_user = primary_org.get_user(self.primary_user)
 
         self.generate_ca_cert()
+        self._generate_user_pass_verify()
         self._generate_tls_verify()
 
         if self.local_network:
@@ -296,6 +311,7 @@ class Server(Config):
             primary_user.cert_path,
             primary_user.key_path,
             self.tls_verify_path,
+            self.user_pass_verify_path,
             self.dh_param_path,
             '%s %s' % self._parse_network(self.network),
             self.ifc_pool_path,
