@@ -60,6 +60,11 @@ class User(Config):
             return self.type
         return Config.__getattr__(self, name)
 
+    def _upgrade_0_10_2(self):
+        if not self.otp_secret:
+            self._generate_otp_secret()
+            self.commit(0600)
+
     def _initialize(self):
         self._create_ssl_conf()
         self._cert_request()
