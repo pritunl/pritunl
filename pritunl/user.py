@@ -186,14 +186,19 @@ class User(Config):
                 server.generate_ca_cert()
                 tar_file.add(server.ca_cert_path, arcname=server_cert_arcname)
 
+                client_conf = OVPN_CLIENT_CONF % (
+                    server.protocol,
+                    server.public_address, server.port,
+                    server_cert_arcname,
+                    user_cert_arcname,
+                    user_key_arcname,
+                )
+
+                if self.otp:
+                    client_conf += 'auth-user-pass\n'
+
                 with open(server_conf_path, 'w') as ovpn_conf:
-                    ovpn_conf.write(OVPN_CLIENT_CONF % (
-                        server.protocol,
-                        server.public_address, server.port,
-                        server_cert_arcname,
-                        user_cert_arcname,
-                        user_key_arcname,
-                    ))
+                    ovpn_conf.write(client_conf)
                 tar_file.add(server_conf_path, arcname=server_conf_arcname)
                 os.remove(server_conf_path)
         finally:
