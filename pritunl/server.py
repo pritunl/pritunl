@@ -254,7 +254,7 @@ class Server(Config):
             'server_id': self.id,
         })
         with open(self.tls_verify_path, 'w') as tls_verify_file:
-            data_path = app_server.data_path or DEFAULT_DATA_PATH
+            data_path = app_server.data_path
             tls_verify_file.write(TLS_VERIFY_SCRIPT % (
                 INDEX_NAME,
                 os.path.join(data_path, ORGS_DIR),
@@ -578,7 +578,7 @@ class Server(Config):
     @staticmethod
     def get_servers():
         logger.debug('Getting servers.')
-        data_path = app_server.data_path or DEFAULT_DATA_PATH
+        data_path = app_server.data_path
         path = os.path.join(data_path, SERVERS_DIR)
         servers = []
         if os.path.isdir(path):
