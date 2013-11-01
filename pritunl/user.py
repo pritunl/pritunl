@@ -216,7 +216,7 @@ class User(Config):
                     user_key_arcname,
                 )
 
-                if self.otp:
+                if server.otp_auth:
                     client_conf += 'auth-user-pass\n'
 
                 with open(server_conf_path, 'w') as ovpn_conf:

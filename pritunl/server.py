@@ -311,7 +311,6 @@ class Server(Config):
             primary_user.cert_path,
             primary_user.key_path,
             self.tls_verify_path,
-            self.user_pass_verify_path,
             self.dh_param_path,
             '%s %s' % self._parse_network(self.network),
             self.ifc_pool_path,
@@ -320,6 +319,10 @@ class Server(Config):
             4 if self.debug else 1,
             8 if self.debug else 3,
         )
+
+        if self.otp_auth:
+            server_conf += 'auth-user-pass-verify %s via-file\n' % (
+                self.user_pass_verify_path)
 
         if self.lzo_compression:
             server_conf += 'comp-lzo\npush "comp-lzo"\n'
