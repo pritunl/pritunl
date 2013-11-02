@@ -11,6 +11,7 @@ define([
       'name': null,
       'type': null,
       'status': null,
+      'otp_auth': null,
       'otp_secret': null,
       'servers': null
     },
