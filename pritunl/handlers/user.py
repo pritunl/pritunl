@@ -8,13 +8,15 @@ import flask
 @app_server.auth
 def user_get(org_id):
     org = Organization(org_id)
-    org_servers = org.get_servers()
+    otp_auth = False
     users = []
     users_dict = {}
     users_sort = []
     clients = {}
 
-    for server in org_servers:
+    for server in org.get_servers():
+        if server.otp_auth:
+            otp_auth = True
         server_clients = server.get_clients()
         for client_id in server_clients:
             client = server_clients[client_id]
@@ -31,6 +33,7 @@ def user_get(org_id):
             'name': user.name,
             'type': user.type,
             'status': True if user.id in clients else False,
+            'otp_auth': otp_auth,
             'otp_secret': user.otp_secret,
             'servers': clients[user.id] if user.id in clients else {},
         }
