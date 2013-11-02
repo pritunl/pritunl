@@ -6221,13 +6221,20 @@ ul {
 .modal .modal-body .split:after {
   clear: both;
 }
+.modal .modal-body .split .left,
+.modal .modal-body .split .right {
+  margin-right: 20px;
+  width: 238px;
+}
 .modal .modal-body .split .left {
-  margin-left: 20px;
   float: left;
 }
 .modal .modal-body .split .right {
-  margin-right: 20px;
   float: right;
+}
+.modal .modal-body .qrcode {
+  width: 192px;
+  margin: 15px auto 0 auto;
 }
 .modal .modal-dialog {
   width: 600px;
@@ -6261,6 +6268,12 @@ ul {
 }
 .modal .key-link input {
   width: 480px;
+}
+.modal .otp-auth-key {
+  text-align: center;
+}
+.modal .otp-auth-key input {
+  margin: 0 auto;
 }
 .navbar .navbar-brand,
 .navbar .navbar-brand:hover,
@@ -6582,18 +6595,21 @@ header.blur {
   cursor: default;
 }
 .users-list .user .download-key,
-.users-list .user .get-key-link {
+.users-list .user .get-key-link,
+.users-list .user .get-otp-auth {
   float: right;
   top: -1px;
   font-size: 20px;
   color: #4e8bbf;
   cursor: pointer;
 }
-.users-list .user .get-key-link {
+.users-list .user .get-key-link,
+.users-list .user .get-otp-auth {
   margin-right: 5px;
 }
 .users-list .user .right-container .download-key:hover,
-.users-list .user .right-container .get-key-link:hover {
+.users-list .user .right-container .get-key-link:hover,
+.users-list .user .right-container .get-otp-auth:hover {
   text-decoration: none;
   color: #2a6496;
 }
@@ -6603,7 +6619,7 @@ header.blur {
   display: inline-block;
   margin-top: 5px;
   height: 28px;
-  width: 145px;
+  width: 170px;
   padding: 3px 8px 0 12px;
   border-left: 1px solid #cfcfcf;
 }
@@ -6834,9 +6850,6 @@ header.blur {
 .server-settings-modal .local-network {
   margin-top: -13px;
 }
-.server-settings-modal .lzo-compression-toggle {
-  display: none;
-}
 .delete-users-modal .modal .modal-dialog {
   top: -webkit-calc(50% - 195px);
   top: -moz-calc(50% - 195px);
@@ -6877,4 +6890,10 @@ header.blur {
   top: -moz-calc(50% - 240px);
   top: -o-calc(50% - 240px);
   top: calc(50% - 240px);
+}
+.otp-auth-modal .modal .modal-dialog {
+  top: -webkit-calc(50% - 250px);
+  top: -moz-calc(50% - 250px);
+  top: -o-calc(50% - 250px);
+  top: calc(50% - 250px);
 }
