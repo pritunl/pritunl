@@ -10,17 +10,24 @@ define([
   var responseDelay = 150;
 
   var uuid = function() {
+    var i;
     var id = '';
-    id += Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-    id += Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-    id += Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-    id += Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-    id += Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-    id += Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-    id += Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-    id += Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+    for (i = 0; i < 8; i++) {
+      id += Math.floor(
+        (1 + Math.random()) * 0x10000).toString(16).substring(1);
+    }
     return id;
   };
+
+  var secretKey = function() {
+    var i;
+    var key = '';
+    for (i = 0; i < 4; i++) {
+      key += Math.random().toString(36).substr(2, 4).toUpperCase().replace(
+        /0/g, '2').replace(/1/g, '3').replace(/8/g, '6').replace(/9/g, '7');
+    }
+    return key;
+  }
 
   var authPost = function(request) {
     if (request.data.username !== demoData.auth.username ||
@@ -211,6 +218,7 @@ define([
       protocol: request.data.protocol,
       local_network: request.data.local_network,
       public_address: request.data.public_address,
+      otp_auth: request.data.otp_auth,
       lzo_compression: request.data.lzo_compression,
       debug: request.data.debug,
       status: 'offline',
@@ -231,6 +239,7 @@ define([
     demoData.servers[serverId].protocol = request.data.protocol;
     demoData.servers[serverId].local_network = request.data.local_network;
     demoData.servers[serverId].public_address = request.data.public_address;
+    demoData.servers[serverId].otp_auth = request.data.otp_auth;
     demoData.servers[serverId].lzo_compression = request.data.lzo_compression;
     demoData.servers[serverId].debug = request.data.debug;
     event('servers_updated');
@@ -384,6 +393,7 @@ define([
       name: request.data.name,
       type: 'client',
       status: false,
+      otp_secret: secretKey(),
       servers: []
     };
 

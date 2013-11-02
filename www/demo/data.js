@@ -88,6 +88,7 @@ define([], function() {
     '5310c28eacaeb3bd2a172c9db9ee1379': {
       id: '5310c28eacaeb3bd2a172c9db9ee1379',
       debug: false,
+      otp_auth: true,
       lzo_compression: false,
       interface: 'tun0',
       local_network: null,
@@ -119,6 +120,7 @@ define([], function() {
         organization: '55f5c6820e7a7de989916b4cdddf6070',
         status: true,
         type: 'client',
+        otp_secret: 'SF2GFRK5MQ7JB4TN',
         servers: [{
           real_address: '8.8.8.8',
           virt_address: '10.139.17.32',
@@ -133,6 +135,7 @@ define([], function() {
         organization: '55f5c6820e7a7de989916b4cdddf6070',
         status: false,
         type: 'client',
+        otp_secret: 'KBMSQM67TQR7CUYX',
         servers: []
       },
       'b5a694ee9411574964d05015add815cd': {
@@ -141,6 +144,7 @@ define([], function() {
         organization: '55f5c6820e7a7de989916b4cdddf6070',
         status: false,
         type: 'client',
+        otp_secret: 'QF47Z3V2FWWLZRJZ',
         servers: []
       },
       '096b1604409d4fb791d2f11d2f0beddc': {
@@ -149,6 +153,7 @@ define([], function() {
         organization: '55f5c6820e7a7de989916b4cdddf6070',
         status: false,
         type: 'client',
+        otp_secret: 'YJGVC2JG2OZ7X45R',
         servers: []
       }
     },
@@ -159,6 +164,7 @@ define([], function() {
         organization: 'adb484e1f3c653dbc2aab10b14265dc6',
         status: false,
         type: 'client',
+        otp_secret: 'QKKWOXSVCE6ODPFJ',
         servers: []
       },
       'f3b5ad1db481d07aed557d6d34b8cb78': {
@@ -167,6 +173,7 @@ define([], function() {
         organization: 'adb484e1f3c653dbc2aab10b14265dc6',
         status: false,
         type: 'client',
+        otp_secret: 'DZVOQ6QW2R6OIMQA',
         servers: []
       }
     }
