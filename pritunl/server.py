@@ -271,6 +271,8 @@ class Server(Config):
             data_path = app_server.data_path
             user_pass_verify_file.write(USER_PASS_VERIFY_SCRIPT % (
                 USERS_DIR,
+                TEMP_DIR,
+                OTP_JSON_NAME,
                 os.path.join(data_path, ORGS_DIR),
             ))
         os.chmod(self.user_pass_verify_path, 0755)

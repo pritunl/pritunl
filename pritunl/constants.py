@@ -52,6 +52,7 @@ DH_PARAM_NAME = 'dh_param.pem'
 SERVER_USER_PREFIX = 'server_'
 SERVER_CERT_NAME = 'server.crt'
 SERVER_KEY_NAME = 'server.key'
+OTP_JSON_NAME = 'otp.json'
 
 CA_CERT_ID = 'ca'
 CERT_CA = 'ca'
@@ -257,9 +258,14 @@ import struct
 import hmac
 import hashlib
 import base64
+import json
 VALID_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789='
 USERS_DIR = '%s'
+TEMP_DIR = '%s'
+OTP_JSON_NAME = '%s'
 ORGS_PATH = '%s'
+
+# Get org and common_name from environ
 tls_env = os.environ.get('tls_id_0')
 if not tls_env:
     raise AttributeError('Missing organization or common name from environ')
@@ -276,8 +282,12 @@ else:
     common_name = tls_env[cn_index + 3:]
 if not org or not common_name:
     raise AttributeError('Missing organization or common name from environ')
+
+# Get username and password from input file
 with open(sys.argv[1], 'r') as auth_file:
     username, password = [x.strip() for x in auth_file.readlines()[:2]]
+
+# Get secretkey from user conf
 secretkey = None
 with open(os.path.join(ORGS_PATH, org, USERS_DIR,
         '%%s.conf' %% common_name), 'r') as user_conf_file:
@@ -287,6 +297,8 @@ with open(os.path.join(ORGS_PATH, org, USERS_DIR,
             break
 if not secretkey:
     raise AttributeError('Missing otp_secret in user conf')
+
+# Check password with secretkey
 padding = 8 - len(secretkey) %% 8
 if padding != 8:
     secretkey = secretkey.ljust(len(secretkey) + padding, '=')
@@ -303,6 +315,27 @@ for offset in xrange(-1, 2):
     truncated_hash %%= 1000000
     valid_codes.append('%%06d' %% truncated_hash)
 if password not in valid_codes:
-    raise TypeError('Password is invalid')
+    raise TypeError('Authenticator code is invalid')
+
+# Check for double used keys
+otp_json_path = os.path.join(ORGS_PATH, org, TEMP_DIR, OTP_JSON_NAME)
+new_key = ('%%s-%%s' %% (common_name, password)).encode('utf-8')
+sha_hash = hashlib.sha256()
+sha_hash.update(new_key)
+new_key = sha_hash.hexdigest()
+data = {}
+if os.path.isfile(otp_json_path):
+    with open(otp_json_path, 'r') as otp_json_file:
+        data = json.loads(otp_json_file.read().strip())
+cur_time = int(time.time())
+for key, value in data.items():
+    if value + 120 < cur_time:
+        data.pop(key)
+if new_key in data:
+    raise TypeError('Authenticator code has already been used')
+data[new_key] = cur_time
+with open(otp_json_path, 'w') as otp_json_file:
+    otp_json_file.write(json.dumps(data))
+
 exit(0)
 """
