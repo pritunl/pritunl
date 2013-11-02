@@ -393,6 +393,7 @@ define([
       name: request.data.name,
       type: 'client',
       status: false,
+      otp_auth: true,
       otp_secret: secretKey(),
       servers: []
     };

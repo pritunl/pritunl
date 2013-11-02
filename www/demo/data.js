@@ -120,6 +120,7 @@ define([], function() {
         organization: '55f5c6820e7a7de989916b4cdddf6070',
         status: true,
         type: 'client',
+        otp_auth: true,
         otp_secret: 'SF2GFRK5MQ7JB4TN',
         servers: [{
           real_address: '8.8.8.8',
@@ -135,6 +136,7 @@ define([], function() {
         organization: '55f5c6820e7a7de989916b4cdddf6070',
         status: false,
         type: 'client',
+        otp_auth: true,
         otp_secret: 'KBMSQM67TQR7CUYX',
         servers: []
       },
@@ -144,6 +146,7 @@ define([], function() {
         organization: '55f5c6820e7a7de989916b4cdddf6070',
         status: false,
         type: 'client',
+        otp_auth: true,
         otp_secret: 'QF47Z3V2FWWLZRJZ',
         servers: []
       },
@@ -153,6 +156,7 @@ define([], function() {
         organization: '55f5c6820e7a7de989916b4cdddf6070',
         status: false,
         type: 'client',
+        otp_auth: true,
         otp_secret: 'YJGVC2JG2OZ7X45R',
         servers: []
       }
@@ -164,6 +168,7 @@ define([], function() {
         organization: 'adb484e1f3c653dbc2aab10b14265dc6',
         status: false,
         type: 'client',
+        otp_auth: true,
         otp_secret: 'QKKWOXSVCE6ODPFJ',
         servers: []
       },
@@ -173,6 +178,7 @@ define([], function() {
         organization: 'adb484e1f3c653dbc2aab10b14265dc6',
         status: false,
         type: 'client',
+        otp_auth: true,
         otp_secret: 'DZVOQ6QW2R6OIMQA',
         servers: []
       }
