@@ -1,6 +1,7 @@
 from pritunl.constants import *
 from pritunl.server import Server
 from pritunl.organization import Organization
+from event import Event
 import pritunl.utils as utils
 from pritunl import app_server
 import flask
@@ -230,6 +231,8 @@ def server_put_post(server_id=None):
         server.lzo_compression = lzo_compression
         server.debug = debug
         server.commit()
+
+    Event(type=USERS_UPDATED)
 
     return utils.jsonify({})
 
