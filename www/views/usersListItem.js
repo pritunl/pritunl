@@ -94,6 +94,15 @@ define([
       this.$('.status-container').attr('data-original-title',
         this._getTooltipText());
       this.$('.status-container').tooltip();
+
+      if (this.model.get('otp_auth')) {
+        this.$('.right-container').removeClass('no-otp-auth');
+        this.$('.get-otp-auth').removeClass('no-otp-auth');
+      }
+      else {
+        this.$('.right-container').addClass('no-otp-auth');
+        this.$('.get-otp-auth').addClass('no-otp-auth');
+      }
     },
     getSelect: function() {
       return this.$('.selector').hasClass('selected');
