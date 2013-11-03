@@ -227,6 +227,8 @@ import sys
 VALID_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789='
 INDEX_NAME = '%s'
 ORGS_PATH = '%s'
+
+# Get org and common_name from argv
 arg = sys.argv[2]
 arg = ''.join(x for x in arg if x in VALID_CHARS)
 o_index = arg.find('O=')
@@ -241,6 +243,8 @@ else:
     common_name = arg[cn_index + 3:]
 if not org or not common_name:
     raise AttributeError('Missing organization or common name from args')
+
+# Check that common_name is valid
 with open(os.path.join(ORGS_PATH, org, INDEX_NAME), 'r') as index_file:
     for line in index_file.readlines():
         if 'O=%%s' %% org in line and 'CN=%%s' %% common_name in line:
@@ -250,6 +254,7 @@ with open(os.path.join(ORGS_PATH, org, INDEX_NAME), 'r') as index_file:
 raise LookupError('Common name not found')
 """
 
+# Script will run in python 2 and 3
 USER_PASS_VERIFY_SCRIPT = """#!/usr/bin/env python
 import os
 import sys
