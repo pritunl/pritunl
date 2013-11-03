@@ -53,6 +53,7 @@ SERVER_USER_PREFIX = 'server_'
 SERVER_CERT_NAME = 'server.crt'
 SERVER_KEY_NAME = 'server.key'
 OTP_JSON_NAME = 'otp.json'
+AUTH_LOG_NAME = 'auth.log'
 
 CA_CERT_ID = 'ca'
 CERT_CA = 'ca'
@@ -225,8 +226,16 @@ TLS_VERIFY_SCRIPT = """#!/usr/bin/env python
 import os
 import sys
 VALID_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789='
+DATA_PATH = '%s'
+ORGS_DIR = '%s'
+AUTH_LOG_NAME = '%s'
 INDEX_NAME = '%s'
-ORGS_PATH = '%s'
+auth_log_path = os.path.join(DATA_PATH, AUTH_LOG_NAME)
+orgs_path = os.path.join(DATA_PATH, ORGS_DIR)
+
+def log_write(line):
+    with open(auth_log_path, 'a') as auth_log_file:
+        auth_log_file.write('[TIME=%%s]%%s\\n' %% (int(time.time()), line))
 
 # Get org and common_name from argv
 arg = sys.argv[2]
@@ -234,7 +243,8 @@ arg = ''.join(x for x in arg if x in VALID_CHARS)
 o_index = arg.find('O=')
 cn_index = arg.find('CN=')
 if o_index < 0 or cn_index < 0:
-    raise AttributeError('Missing organization or common name from args')
+    log_write('[FAILED] Missing organization or user id from args')
+    raise AttributeError('Missing organization or user id from args')
 if o_index > cn_index:
     org = arg[o_index + 2:]
     common_name = arg[3:o_index]
@@ -242,15 +252,20 @@ else:
     org = arg[2:cn_index]
     common_name = arg[cn_index + 3:]
 if not org or not common_name:
-    raise AttributeError('Missing organization or common name from args')
+    log_write('[FAILED] Missing organization or user id from args')
+    raise AttributeError('Missing organization or user id from args')
 
 # Check that common_name is valid
-with open(os.path.join(ORGS_PATH, org, INDEX_NAME), 'r') as index_file:
+with open(os.path.join(orgs_path, org, INDEX_NAME), 'r') as index_file:
     for line in index_file.readlines():
         if 'O=%%s' %% org in line and 'CN=%%s' %% common_name in line:
             if line[0] == 'V':
                 exit(0)
-            raise AttributeError('Common name is not valid')
+            log_write('[ORG=%%s][UID=%%s][FAILED] User id is not valid' %% (
+                org, common_name))
+            raise AttributeError('User id is not valid')
+log_write('[ORG=%%s][UID=%%s][FAILED] User id not found' %% (
+    org, common_name))
 raise LookupError('Common name not found')
 """
 
@@ -265,20 +280,30 @@ import hashlib
 import base64
 import json
 VALID_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789='
+DATA_PATH = '%s'
+ORGS_DIR = '%s'
 USERS_DIR = '%s'
 TEMP_DIR = '%s'
+AUTH_LOG_NAME = '%s'
 OTP_JSON_NAME = '%s'
-ORGS_PATH = '%s'
+auth_log_path = os.path.join(DATA_PATH, AUTH_LOG_NAME)
+orgs_path = os.path.join(DATA_PATH, ORGS_DIR)
+
+def log_write(line):
+    with open(auth_log_path, 'a') as auth_log_file:
+        auth_log_file.write('[TIME=%%s]%%s\\n' %% (int(time.time()), line))
 
 # Get org and common_name from environ
 tls_env = os.environ.get('tls_id_0')
 if not tls_env:
-    raise AttributeError('Missing organization or common name from environ')
+    log_write('[FAILED] Missing organization or user id from environ')
+    raise AttributeError('Missing organization or user id from environ')
 tls_env = ''.join(x for x in tls_env if x in VALID_CHARS)
 o_index = tls_env.find('O=')
 cn_index = tls_env.find('CN=')
 if o_index < 0 or cn_index < 0:
-    raise AttributeError('Missing organization or common name from environ')
+    log_write('[FAILED] Missing organization or user id from environ')
+    raise AttributeError('Missing organization or user id from environ')
 if o_index > cn_index:
     org = tls_env[o_index + 2:]
     common_name = tls_env[3:o_index]
@@ -286,7 +311,8 @@ else:
     org = tls_env[2:cn_index]
     common_name = tls_env[cn_index + 3:]
 if not org or not common_name:
-    raise AttributeError('Missing organization or common name from environ')
+    log_write('[FAILED] Missing organization or user id from environ')
+    raise AttributeError('Missing organization or user id from environ')
 
 # Get username and password from input file
 with open(sys.argv[1], 'r') as auth_file:
@@ -294,13 +320,15 @@ with open(sys.argv[1], 'r') as auth_file:
 
 # Get secretkey from user conf
 secretkey = None
-with open(os.path.join(ORGS_PATH, org, USERS_DIR,
+with open(os.path.join(orgs_path, org, USERS_DIR,
         '%%s.conf' %% common_name), 'r') as user_conf_file:
     for line in user_conf_file.readlines():
         if 'otp_secret=' in line:
             secretkey = line.strip().replace('otp_secret=', '')
             break
 if not secretkey:
+    log_write('[ORG=%%s][UID=%%s][FAILED] Missing otp_secret in user conf' %% (
+        org, common_name))
     raise AttributeError('Missing otp_secret in user conf')
 
 # Check password with secretkey
@@ -310,20 +338,25 @@ if padding != 8:
 secretkey = base64.b32decode(secretkey.upper())
 valid_codes = []
 epoch = int(time.time() / 30)
-for offset in xrange(-1, 2):
-    value = struct.pack('>q', epoch + offset)
-    hash = hmac.new(secretkey, value, hashlib.sha1).digest()
-    offset = ord(hash[-1]) & 0x0F
-    truncated_hash = hash[offset:offset + 4]
+for epoch_offset in range(-1, 2):
+    value = struct.pack('>q', epoch + epoch_offset)
+    hmac_hash = hmac.new(secretkey, value, hashlib.sha1).digest()
+    if isinstance(hmac_hash, str):
+        offset = ord(hmac_hash[-1]) & 0x0F
+    else:
+        offset = hmac_hash[-1] & 0x0F
+    truncated_hash = hmac_hash[offset:offset + 4]
     truncated_hash = struct.unpack('>L', truncated_hash)[0]
     truncated_hash &= 0x7FFFFFFF
     truncated_hash %%= 1000000
     valid_codes.append('%%06d' %% truncated_hash)
 if password not in valid_codes:
+    log_write('[ORG=%%s][UID=%%s][FAILED] Authenticator code is invalid' %% (
+        org, common_name))
     raise TypeError('Authenticator code is invalid')
 
 # Check for double used keys
-otp_json_path = os.path.join(ORGS_PATH, org, TEMP_DIR, OTP_JSON_NAME)
+otp_json_path = os.path.join(orgs_path, org, TEMP_DIR, OTP_JSON_NAME)
 new_key = ('%%s-%%s' %% (common_name, password)).encode('utf-8')
 sha_hash = hashlib.sha256()
 sha_hash.update(new_key)
@@ -333,14 +366,15 @@ if os.path.isfile(otp_json_path):
     with open(otp_json_path, 'r') as otp_json_file:
         data = json.loads(otp_json_file.read().strip())
 cur_time = int(time.time())
-for key, value in data.items():
+for key, value in list(data.items()):
     if value + 120 < cur_time:
         data.pop(key)
 if new_key in data:
+    log_write(('[ORG=%%s][UID=%%s][FAILED] Authenticator code has ' +
+        'already been used') %% (org, common_name))
     raise TypeError('Authenticator code has already been used')
 data[new_key] = cur_time
 with open(otp_json_path, 'w') as otp_json_file:
     otp_json_file.write(json.dumps(data))
-
 exit(0)
 """
