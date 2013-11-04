@@ -7,6 +7,7 @@ Version 0.10.2
 Add time based two-step otp password verification using google authenticator
 Add client sent and received data transfer to status tooltip
 Use openvpn client-to-client when using local network
+Reduce default dh_param bits length
 User conf data will be automatically upgraded after first launch
 
 Version 0.10.1
