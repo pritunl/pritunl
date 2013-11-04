@@ -14,13 +14,15 @@ import subprocess
 logger = None
 
 class AppServer(Config):
-    bool_options = ['debug', 'log_debug', 'auto_start_servers']
+    bool_options = ['debug', 'log_debug', 'auto_start_servers',
+        'get_public_ip']
     int_options = ['port', 'session_timeout', 'key_bits', 'dh_param_bits']
     path_options = ['log_path', 'db_path', 'www_path', 'data_path',
         'server_cert_path', 'server_key_path']
     str_options = ['bind_addr', 'password']
     default_options = {
         'auto_start_servers': True,
+        'get_public_ip': True,
         'session_timeout': DEFAULT_SESSION_TIMEOUT,
         'key_bits': DEFAULT_KEY_BITS,
         'dh_param_bits': DEFAULT_DH_PARAM_BITS,
@@ -36,7 +38,9 @@ class AppServer(Config):
         self.mem_db = None
         self.interrupt = False
 
-    def get_public_ip(self, retry=False):
+    def load_public_ip(self, retry=False):
+        if not self.get_public_ip:
+            return
         logger.debug('Getting public ip address...')
         try:
             request = urllib2.Request(PUBLIC_IP_SERVER)
@@ -46,13 +50,13 @@ class AppServer(Config):
             if retry:
                 logger.debug('Retrying get public ip address...')
                 time.sleep(1)
-                self.get_public_ip()
+                self.load_public_ip()
             else:
                 logger.exception('Failed to get public ip address...')
 
     def _setup_public_ip(self):
         self.public_ip = None
-        threading.Thread(target=self.get_public_ip).start()
+        threading.Thread(target=self.load_public_ip).start()
 
     def _setup_app(self):
         import flask

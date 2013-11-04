@@ -27,7 +27,7 @@ def status_get():
             users_count += 1
 
     if not app_server.public_ip:
-        app_server.get_public_ip()
+        app_server.load_public_ip()
 
     return utils.jsonify({
         'orgs_available': orgs_count,
