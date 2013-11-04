@@ -119,6 +119,15 @@ class Server(Config):
         logger.info('Removing server. %r' % {
             'server_id': self.id,
         })
+        if self.status:
+            self.force_stop()
+            for i in xrange(20):
+                if not self.status:
+                    break
+                time.sleep(0.1)
+            if self.status:
+                self.force_stop()
+                time.sleep(0.5)
         self._remove_primary_user()
         shutil.rmtree(self.path)
         LogEntry(message='Deleted server.')
@@ -548,7 +557,7 @@ class Server(Config):
     def force_stop(self):
         if not self.status:
             return
-        logger.debug('Forcing stop server. %r' % {
+        logger.info('Forcing stop server. %r' % {
             'server_id': self.id,
         })
         _process[self.id].send_signal(signal.SIGKILL)
