@@ -19,6 +19,7 @@ define([
       'local_network': null,
       'public_address': null,
       'otp_auth': null,
+      'lzo_compression': null,
       'debug': null
     },
     url: function() {
