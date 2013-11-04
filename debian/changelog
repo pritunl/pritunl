@@ -1,3 +1,14 @@
+pritunl (0.10.2-0ubuntu1) unstable; urgency=low
+
+  * Add time based two-step otp password verification using google authenticator
+  * Add client sent and received data transfer to status tooltip
+  * Use openvpn client-to-client when using local network
+  * Reduce default dh_param bits length
+  * Add conf option get_public_ip
+  * User conf data will be automatically upgraded after first launch
+
+ -- Zachary Huff <zach.huff.386@gmail.com>  Mon, 04 Oct 2013 16:34:22 -0400
+
 pritunl (0.10.1-0ubuntu1) unstable; urgency=low
 
   * Initial beta release
