@@ -30,7 +30,7 @@ class Server(Config):
 
     def __init__(self, id=None, name=None, network=None, interface=None,
             port=None, protocol=None, local_network=None, public_address=None,
-            lzo_compression=None, debug=None, organizations=[]):
+            otp_auth=None, lzo_compression=None, debug=None, organizations=[]):
         Config.__init__(self)
         self._cur_event = None
         self._last_event = 0
@@ -45,6 +45,7 @@ class Server(Config):
             self.protocol = protocol
             self.local_network = local_network
             self.public_address = public_address
+            self.otp_auth = otp_auth
             self.lzo_compression = lzo_compression
             self.debug = debug
             self.organizations = organizations
