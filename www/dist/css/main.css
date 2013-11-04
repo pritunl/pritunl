@@ -6607,6 +6607,9 @@ header.blur {
 .users-list .user .get-otp-auth {
   margin-right: 5px;
 }
+.users-list .user .get-otp-auth.no-otp-auth {
+  display: none;
+}
 .users-list .user .right-container .download-key:hover,
 .users-list .user .right-container .get-key-link:hover,
 .users-list .user .right-container .get-otp-auth:hover {
@@ -6622,6 +6625,9 @@ header.blur {
   width: 170px;
   padding: 3px 8px 0 12px;
   border-left: 1px solid #cfcfcf;
+}
+.users-list .user .right-container.no-otp-auth {
+  width: 145px;
 }
 .server-orgs-list .org .button-container {
   width: auto;
