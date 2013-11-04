@@ -545,6 +545,15 @@ class Server(Config):
         _process[self.id].send_signal(signal.SIGINT)
         LogEntry(message='Stopped server "%s".' % self.name)
 
+    def force_stop(self):
+        if not self.status:
+            return
+        logger.debug('Forcing stop server. %r' % {
+            'server_id': self.id,
+        })
+        _process[self.id].send_signal(signal.SIGKILL)
+        LogEntry(message='Stopped server "%s".' % self.name)
+
     def restart(self):
         if not self.status:
             self.start()
