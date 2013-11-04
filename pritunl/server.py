@@ -517,6 +517,8 @@ class Server(Config):
             Event(type=SERVERS_UPDATED)
 
     def start(self):
+        if self.status:
+            return
         if not self.get_orgs():
             raise ValueError('Server cannot be started without ' + \
                 'any organizations')
@@ -536,7 +538,7 @@ class Server(Config):
 
     def stop(self):
         if not self.status:
-            raise ValueError('Server is not running')
+            return
         logger.debug('Stopping server. %r' % {
             'server_id': self.id,
         })
@@ -545,7 +547,7 @@ class Server(Config):
 
     def restart(self):
         if not self.status:
-            raise ValueError('Server is not running')
+            self.start()
         logger.debug('Restarting server. %r' % {
             'server_id': self.id,
         })
@@ -555,7 +557,7 @@ class Server(Config):
 
     def reload(self):
         if not self.status:
-            raise ValueError('Server is not running')
+            self.start()
         logger.debug('Reloading server. %r' % {
             'server_id': self.id,
         })
