@@ -23,7 +23,7 @@ class AppServer(Config):
         'auto_start_servers': True,
         'session_timeout': DEFAULT_SESSION_TIMEOUT,
         'key_bits': DEFAULT_KEY_BITS,
-        'dh_param_path': DEFAULT_DH_PARAM_BITS,
+        'dh_param_bits': DEFAULT_DH_PARAM_BITS,
         'db_path': DEFAULT_DB_PATH,
         'www_path': DEFAULT_WWW_PATH,
         'data_path': DEFAULT_DATA_PATH,
