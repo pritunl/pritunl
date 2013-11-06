@@ -1,6 +1,11 @@
 Pritunl Changelog
 =================
 
+Version 0.10.3
+--------------
+
+Add functionality to generate new two-step authentication keys
+
 Version 0.10.2
 --------------
 
