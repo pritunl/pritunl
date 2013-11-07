@@ -233,6 +233,30 @@ class User(Config):
 
         return self.key_archive_path
 
+    def build_key_inline(self):
+
+        def find_cert_block(file):
+            buffer = [x for x in open(file).readlines()]
+            location = buffer.index("-----BEGIN CERTIFICATE-----\n")
+            return "".join(buffer[location:])
+
+        for server in self.org.get_servers():
+            server.generate_ca_cert()
+
+            client_conf = ""
+            if server.otp_auth:
+                client_conf += 'auth-user-pass\n'
+
+            client_conf += OVPN_CLIENT_CONF_INLINE% (
+                server.protocol,
+                server.public_address, server.port,
+                find_cert_block(server.ca_cert_path),
+                find_cert_block(self.cert_path),
+                open(self.key_path).read(),
+            )
+
+        return client_conf
+
     def rename(self, name):
         self.name = name
         self.commit()

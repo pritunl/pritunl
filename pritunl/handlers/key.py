@@ -23,10 +23,26 @@ def _get_key_archive(org_id, user_id):
     os.remove(archive_temp_path)
     return response
 
+def _get_key_inline(org_id, user_id):
+    org = Organization(org_id)
+    user = org.get_user(user_id)
+    archive = user.build_key_inline()
+
+    response = flask.Response(response=archive, mimetype='application/octet-stream' )
+    response.headers.add('Content-Disposition', 'inline; filename="%s.ovpn"' % user.name)
+
+    return response
+
 @app_server.app.route('/key/<org_id>/<user_id>.tar', methods=['GET'])
 @app_server.auth
 def user_key_archive_get(org_id, user_id):
     return _get_key_archive(org_id, user_id)
+
+@app_server.app.route('/key/<org_id>/<user_id>.ovpn', methods=['GET'])
+@app_server.auth
+def user_key_inline_get(org_id, user_id):
+    """This will return a unified OVPN file, great for iOS devices"""
+    return _get_key_inline(org_id, user_id)
 
 @app_server.app.route('/key/<org_id>/<user_id>', methods=['GET'])
 @app_server.auth
