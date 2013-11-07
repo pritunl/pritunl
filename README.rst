@@ -25,6 +25,10 @@ Development Setup
 Vagrant Setup
 -------------
 
+First make sure you have a precise64 image. This command will fetch one.
+
+``vagrant box add precise64 http://files.vagrantup.com/precise64.box``
+
 .. code-block:: bash
 
     $ git clone https://github.com/zachhuff386/pritunl.git
