@@ -15,7 +15,7 @@ logger = None
 
 class AppServer(Config):
     bool_options = ['debug', 'log_debug', 'auto_start_servers',
-        'get_public_ip']
+        'get_public_ip', 'inline_certs']
     int_options = ['port', 'session_timeout', 'key_bits', 'dh_param_bits']
     path_options = ['log_path', 'db_path', 'www_path', 'data_path',
         'server_cert_path', 'server_key_path']
@@ -23,6 +23,7 @@ class AppServer(Config):
     default_options = {
         'auto_start_servers': True,
         'get_public_ip': True,
+        'inline_certs': False,
         'session_timeout': DEFAULT_SESSION_TIMEOUT,
         'key_bits': DEFAULT_KEY_BITS,
         'dh_param_bits': DEFAULT_DH_PARAM_BITS,
