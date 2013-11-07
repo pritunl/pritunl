@@ -195,7 +195,7 @@ class User(Config):
             openssl_lock.release()
         self.org.generate_crl()
 
-    def build_key_archive(self):
+    def _build_key_archive(self):
         user_key_arcname = '%s_%s.key' % (self.org.name, self.name)
         user_cert_arcname = '%s_%s.crt' % (self.org.name, self.name)
 
@@ -232,6 +232,57 @@ class User(Config):
             tar_file.close()
 
         return self.key_archive_path
+
+    def _get_cert_block(self, cert_path):
+        with open(cert_path) as cert_file:
+            cert_file = cert_file.read()
+            start_index = cert_file.index('-----BEGIN CERTIFICATE-----')
+            end_index = cert_file.index('-----END CERTIFICATE-----') + 25
+            return cert_file[start_index:end_index]
+
+    def _build_inline_key_archive(self):
+        tar_file = tarfile.open(self.key_archive_path, 'w')
+        try:
+            for server in self.org.get_servers():
+                server_conf_path = os.path.join(self.org.path,
+                    TEMP_DIR, '%s_%s.ovpn' % (self.id, server.id))
+                server_conf_arcname = '%s_%s_%s.ovpn' % (
+                    self.org.name, self.name, server.name)
+                server.generate_ca_cert()
+
+                client_conf = OVPN_CLIENT_CONF % (
+                    server.protocol,
+                    server.public_address, server.port,
+                    '[inline]',
+                    '[inline]',
+                    '[inline]',
+                )
+
+                if server.otp_auth:
+                    client_conf += 'auth-user-pass\n'
+
+                client_conf += '<ca>\n%s\n</ca>\n' % self._get_cert_block(
+                    server.ca_cert_path)
+                client_conf += '<cert>\n%s\n</cert>\n' % self._get_cert_block(
+                    self.cert_path)
+                client_conf += '<key>\n%s\n</key>\n' % open(
+                    self.key_path).read().strip()
+
+                with open(server_conf_path, 'w') as ovpn_conf:
+                    os.chmod(server_conf_path, 0600)
+                    ovpn_conf.write(client_conf)
+                tar_file.add(server_conf_path, arcname=server_conf_arcname)
+                os.remove(server_conf_path)
+        finally:
+            tar_file.close()
+
+        return self.key_archive_path
+
+    def build_key_archive(self):
+        if app_server.inline_certs:
+            return self._build_inline_key_archive()
+        else:
+            return self._build_key_archive()
 
     def rename(self, name):
         self.name = name
