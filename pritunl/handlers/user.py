@@ -70,3 +70,12 @@ def user_delete(org_id, user_id):
     user = org.get_user(user_id)
     user.remove()
     return utils.jsonify({})
+
+@app_server.app.route('/user/<org_id>/<user_id>/otp_secret',
+    methods=['DELETE'])
+@app_server.auth
+def user_otp_secret_delete(org_id, user_id):
+    org = Organization(org_id)
+    user = org.get_user(user_id)
+    user.generate_otp_secret()
+    return utils.jsonify({})
