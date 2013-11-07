@@ -143,6 +143,11 @@ class User(Config):
             byte_hash = sha_hash.digest()
         self.otp_secret = base64.b32encode(byte_hash)[:DEFAULT_OTP_SECRET_LEN]
 
+    def generate_otp_secret(self):
+        self._generate_otp_secret()
+        self.commit(0600)
+        Event(type=USERS_UPDATED)
+
     def _load_type(self):
         with open(self.cert_path, 'r') as cert_file:
             cert_data = cert_file.read()
