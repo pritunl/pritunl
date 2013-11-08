@@ -68,7 +68,12 @@ def user_put(org_id, user_id):
 def user_delete(org_id, user_id):
     org = Organization(org_id)
     user = org.get_user(user_id)
+    user_id = user.id
     user.remove()
+    for server in org.get_servers():
+        server_clients = server.get_clients()
+        if user_id in server_clients:
+            server.restart()
     return utils.jsonify({})
 
 @app_server.app.route('/user/<org_id>/<user_id>/otp_secret',

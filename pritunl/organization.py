@@ -113,10 +113,6 @@ class Organization(Config):
         finally:
             openssl_lock.release()
 
-        for server in self.get_servers():
-            if server.status:
-                server.restart()
-
     def rename(self, name):
         self.name = name
         self.commit()
