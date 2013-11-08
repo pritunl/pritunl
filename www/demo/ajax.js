@@ -197,7 +197,7 @@ define([
       servers.push(_.extend({
         status: serverStatus,
         uptime: serverStatus === 'online' ? 109800 : null,
-        users_online: 0,
+        users_online: serverStatus === 'online' && userCount ? 1 : 0,
         users_total: userCount,
         org_count: demoData.servers[serverId].orgs.length
       }, demoData.servers[serverId]));
@@ -356,7 +356,7 @@ define([
     request.response({
       orgs_available: orgsCount,
       orgs_total: orgsCount,
-      users_online: 0,
+      users_online: usersCount ? 1 : 0,
       users_total: usersCount,
       servers_online: serversOnlineCount,
       servers_total: serversCount,
