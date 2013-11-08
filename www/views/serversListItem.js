@@ -147,19 +147,15 @@ define([
     },
     onOperation: function(evt) {
       var operation;
-      var operationPastTense;
 
       if ($(evt.target).hasClass('server-restart')) {
         operation = 'restart';
-        operationPastTense = 'restarted';
       }
       else if ($(evt.target).hasClass('server-start')) {
         operation = 'start';
-        operationPastTense = 'started';
       }
       else if ($(evt.target).hasClass('server-stop')) {
         operation = 'stop';
-        operationPastTense = 'stopped';
       }
       if (!operation) {
         return;
@@ -171,13 +167,6 @@ define([
       }, {
         success: function() {
           $(evt.target).removeAttr('disabled');
-          var alertView = new AlertView({
-            type: 'warning',
-            message: 'Successfully ' + operationPastTense + ' the server.',
-            dismissable: true
-          });
-          $('.alerts-container').append(alertView.render().el);
-          this.addView(alertView);
         }.bind(this),
         error: function() {
           $(evt.target).removeAttr('disabled');
