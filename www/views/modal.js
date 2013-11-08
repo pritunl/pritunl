@@ -105,7 +105,7 @@ define([
         });
         this.addView(this.loadingView);
         this.$('.modal-body').append(this.loadingView.render().el);
-      }.bind(this), 550);
+      }.bind(this), 575);
     },
     clearLoading: function() {
       this.loading = false;
