@@ -80,6 +80,9 @@ define([
         return;
       }
       this.loading = true;
+      if (!noButtonDisable) {
+        this.$('.ok').attr('disabled', 'disabled');
+      }
 
       if (this.loadingView) {
         if (this.loadingView.message !== message) {
@@ -96,9 +99,6 @@ define([
           return;
         }
         this.loading = false;
-        if (!noButtonDisable) {
-          this.$('.ok').attr('disabled', 'disabled');
-        }
         this.loadingView = new AlertView({
           type: 'info',
           message: message
