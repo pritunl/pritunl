@@ -15,6 +15,7 @@ define([
     okText: 'Close',
     events: function() {
       return _.extend({
+        'click .generate-new-key': 'onGenerateNewKey',
         'click input': 'onClickInput'
       }, ModalOtpAuthView.__super__.events);
     },
@@ -31,6 +32,21 @@ define([
           height: 192,
           colorDark : '#10206e',
           colorLight : '#fff'
+      });
+    },
+    onGenerateNewKey: function() {
+      this.$('.generate-new-key').attr('disabled', 'disabled');
+      this.setLoading('Generating new key...');
+      this.model.destroyOtpSecret({
+        success: function() {
+          this.close(true);
+        }.bind(this),
+        error: function() {
+          this.$('.generate-new-key').removeAttr('disabled');
+          this.clearLoading();
+          this.setAlert('danger',
+            'Failed to generate new key, server error occurred.');
+        }.bind(this)
       });
     },
     onClickInput: function() {
