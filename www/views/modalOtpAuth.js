@@ -23,9 +23,20 @@ define([
       return this.template();
     },
     postRender: function() {
+      this.update();
+      this.listenTo(this.model, 'change', this.update);
+    },
+    update: function(model) {
+      // Only event from model will have model argument
+      if (model) {
+        this.$('.generate-new-key').removeAttr('disabled');
+        this.clearLoading();
+        this.setAlert('warning', 'Successfully generated new key.');
+      }
       this.$('input').val(this.model.get('otp_secret'));
       var otpUrl = 'otpauth://totp/' + this.model.get('name') + '@' +
         'pritunl' + '?secret=' + this.model.get('otp_secret');
+      this.$('.qrcode').empty();
       new QRCode(this.$('.qrcode').get(0), {
           text: otpUrl,
           width: 192,
@@ -38,9 +49,6 @@ define([
       this.$('.generate-new-key').attr('disabled', 'disabled');
       this.setLoading('Generating new key...');
       this.model.destroyOtpSecret({
-        success: function() {
-          this.close(true);
-        }.bind(this),
         error: function() {
           this.$('.generate-new-key').removeAttr('disabled');
           this.clearLoading();
