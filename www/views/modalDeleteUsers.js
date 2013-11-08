@@ -15,19 +15,28 @@ define([
     initialize: function() {
       var i;
       var alertView;
+      var removingOnlineUsers = false;
+      var removingServerUsers = false;
       ModalDeleteUsersView.__super__.initialize.call(this);
-      alertView = new AlertView({
-        type: 'danger',
-        message: 'Deleting users will restart the servers ' +
-         'that the users are authorized to use.',
-        animate: false
-      });
-      this.addView(alertView);
-      this.$('.modal-body').prepend(alertView.render().el);
       for (i = 0; i < this.collection.models.length; i++) {
-        if (this.collection.models[i].get('type') !== 'server') {
-          continue;
+        if (this.collection.models[i].get('status')) {
+          removingOnlineUsers = true;
         }
+        if (this.collection.models[i].get('type') === 'server') {
+          removingServerUsers = true;
+        }
+      }
+      if (removingOnlineUsers) {
+        alertView = new AlertView({
+          type: 'danger',
+          message: 'Deleting online users will restart the servers ' +
+           'that the users are connected to.',
+          animate: false
+        });
+        this.addView(alertView);
+        this.$('.modal-body').prepend(alertView.render().el);
+      }
+      if (removingServerUsers) {
         alertView = new AlertView({
           type: 'danger',
           message: 'Warning, deleting server users can break the servers.',
@@ -35,7 +44,6 @@ define([
         });
         this.addView(alertView);
         this.$('.modal-body').prepend(alertView.render().el);
-        break;
       }
     },
     body: function() {
