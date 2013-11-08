@@ -6275,6 +6275,10 @@ ul {
 .modal .otp-auth-key input {
   margin: 0 auto;
 }
+.modal .generate-new-key {
+  margin-top: 10px;
+  width: 192px;
+}
 .navbar .navbar-brand,
 .navbar .navbar-brand:hover,
 .navbar .navbar-brand:active,
@@ -6898,8 +6902,8 @@ header.blur {
   top: calc(50% - 240px);
 }
 .otp-auth-modal .modal .modal-dialog {
-  top: -webkit-calc(50% - 250px);
-  top: -moz-calc(50% - 250px);
-  top: -o-calc(50% - 250px);
-  top: calc(50% - 250px);
+  top: -webkit-calc(50% - 325px);
+  top: -moz-calc(50% - 325px);
+  top: -o-calc(50% - 325px);
+  top: calc(50% - 325px);
 }
