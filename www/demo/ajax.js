@@ -419,6 +419,13 @@ define([
   };
   routes['DELETE=/user/<orgId>/<userId>'] = userDelete;
 
+  var userOtpSecretDelete = function(request, orgId, userId) {
+    demoData.users[orgId][userId].otp_secret = secretKey();
+    event('users_updated');
+    request.response({});
+  };
+  routes['DELETE=/user/<orgId>/<userId>/otp_secret'] = userOtpSecretDelete;
+
   var demoAjax = function(ajaxRequest) {
     var type = ajaxRequest.type;
     var url = ajaxRequest.url.split('/').splice(1);
