@@ -5,6 +5,7 @@ Version 0.10.3
 --------------
 
 Add functionality to generate new two-step authentication keys
+Add support for inline certs
 
 Version 0.10.2
 --------------
