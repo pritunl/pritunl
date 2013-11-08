@@ -23,6 +23,11 @@ define([
       }
 
       return url;
+    },
+    destroyOtpSecret: function(options) {
+      this.destroy(_.extend({
+        url: this.url() + '/otp_secret'
+      }, options));
     }
   });
 
