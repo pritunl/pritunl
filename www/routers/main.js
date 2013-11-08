@@ -54,6 +54,7 @@ define([
         if (this.loginView) {
           return;
         }
+        $('.modal').modal('hide');
         this.loginView = new LoginView({
           alert: this.logoutAlert,
           callback: function() {
