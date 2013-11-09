@@ -41,7 +41,7 @@ define([
           text: otpUrl,
           width: 192,
           height: 192,
-          colorDark : '#10206e',
+          colorDark : '#3276b1',
           colorLight : '#fff'
       });
     },
