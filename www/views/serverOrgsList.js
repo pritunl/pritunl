@@ -16,15 +16,17 @@ define([
       'server error occurred.',
     initialize: function(options) {
       this.collection = new ServerOrgCollection({
-        server: options.server
+        server: options.server.get('id')
       });
-      this.listenTo(window.events,
-        'server_organizations_updated:' + options.server, this.update);
+      this.listenTo(window.events, 'server_organizations_updated:' +
+        options.server.get('id'), this.update);
+      this.server = options.server;
       ServerOrgsListView.__super__.initialize.call(this);
     },
     buildItem: function(model) {
       var modelView = new ServerOrgsListItemView({
-        model: model
+        model: model,
+        server: this.server
       });
       return modelView;
     },

@@ -14,6 +14,9 @@ define([
     events: {
       'click .server-detach-org': 'onDetachOrg'
     },
+    initialize: function(options) {
+      this.server = options.server;
+    },
     render: function() {
       this.$el.html(this.template(this.model.toJSON()));
       return this;
@@ -22,6 +25,15 @@ define([
       this.$('.org-name').text(this.model.get('name'));
     },
     onDetachOrg: function() {
+      if (this.server.get('status') !== 'offline') {
+        var alertView = new AlertView({
+          type: 'danger',
+          message: 'Server must be offline to detach an organization.',
+          dismissable: true
+        });
+        $('.alerts-container').append(alertView.render().el);
+        return;
+      }
       var modal = new ModalDetachOrg({
         model: this.model.clone()
       });

@@ -23,7 +23,7 @@ define([
     },
     initialize: function() {
       this.serverOrgsListView = new ServerOrgsListView({
-        server: this.model.get('id')
+        server: this.model
       });
       this.addView(this.serverOrgsListView);
       this.serverOutputView = new ServerOutputView({
