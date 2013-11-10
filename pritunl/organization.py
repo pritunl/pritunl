@@ -21,8 +21,7 @@ class Organization(Config):
         else:
             self._initialized = True
             self.id = id
-        data_path = app_server.data_path or DEFAULT_DATA_PATH
-        self.path = os.path.join(data_path, ORGS_DIR, self.id)
+        self.path = os.path.join(app_server.data_path, ORGS_DIR, self.id)
 
         self.index_path = os.path.join(self.path, INDEX_NAME)
         self.index_attr_path = os.path.join(self.path, INDEX_NAME + '.attr')
@@ -130,8 +129,7 @@ class Organization(Config):
 
     @staticmethod
     def get_orgs():
-        data_path = app_server.data_path or DEFAULT_DATA_PATH
-        path = os.path.join(data_path, ORGS_DIR)
+        path = os.path.join(app_server.data_path, ORGS_DIR)
         orgs = []
         if os.path.isdir(path):
             for org_id in os.listdir(path):
