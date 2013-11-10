@@ -204,6 +204,9 @@ class Server(Config):
     def remove_org(self, org_id):
         if org_id not in self.organizations:
             return
+        if self.status:
+            raise ValueError('Cannot remove an organization from a ' + \
+                'running server.')
         logger.debug('Removing organization from server. %r' % {
             'server_id': self.id,
             'org_id': org_id,

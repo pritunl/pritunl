@@ -283,6 +283,11 @@ def server_org_put(server_id, org_id):
 @app_server.auth
 def server_org_delete(server_id, org_id):
     server = Server(server_id)
+    if server.status:
+        return utils.jsonify({
+            'error': SERVER_NOT_OFFLINE,
+            'error_msg': SERVER_NOT_OFFLINE_MSG,
+        }, 400)
     server.remove_org(org_id)
     return utils.jsonify({})
 
