@@ -319,6 +319,11 @@ if not org or not common_name:
 # Get username and password from input file
 with open(sys.argv[1], 'r') as auth_file:
     username, password = [x.strip() for x in auth_file.readlines()[:2]]
+password = password[:6]
+if not password.isdigit():
+    log_write('[ORG=%%s][UID=%%s][FAILED] Authenticator code is invalid' %% (
+        org, common_name))
+    raise TypeError('Authenticator code is invalid')
 
 # Get secretkey from user conf
 secretkey = None
