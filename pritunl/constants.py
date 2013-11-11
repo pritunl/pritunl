@@ -184,7 +184,11 @@ PORT_PROTOCOL_IN_USE = 'port_protocol_in_use'
 PORT_PROTOCOL_IN_USE_MSG = 'Port and protocol is already in use.'
 
 SERVER_NOT_OFFLINE = 'server_not_offline'
-SERVER_NOT_OFFLINE_MSG = 'Server must be offline to modify settings.'
+SERVER_NOT_OFFLINE_SETTINGS_MSG = 'Server must be offline to modify settings.'
+SERVER_NOT_OFFLINE_ATTACH_ORG_MSG = 'Server must be offline to attach ' + \
+    'an organization.'
+SERVER_NOT_OFFLINE_DETACH_ORG_MSG = 'Server must be offline to detach ' + \
+    'an organization.'
 
 OVPN_SERVER_CONF = """port %s
 proto %s

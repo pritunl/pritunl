@@ -218,7 +218,7 @@ def server_put_post(server_id=None):
         if server.status:
             return utils.jsonify({
                 'error': SERVER_NOT_OFFLINE,
-                'error_msg': SERVER_NOT_OFFLINE_MSG,
+                'error_msg': SERVER_NOT_OFFLINE_SETTINGS_MSG,
             }, 400)
         server.name = name
         server.network = network
@@ -273,7 +273,7 @@ def server_org_put(server_id, org_id):
     if server.status:
         return utils.jsonify({
             'error': SERVER_NOT_OFFLINE,
-            'error_msg': SERVER_NOT_OFFLINE_MSG,
+            'error_msg': SERVER_NOT_OFFLINE_ATTACH_ORG_MSG,
         }, 400)
     server.add_org(org_id)
     return utils.jsonify({})
@@ -286,7 +286,7 @@ def server_org_delete(server_id, org_id):
     if server.status:
         return utils.jsonify({
             'error': SERVER_NOT_OFFLINE,
-            'error_msg': SERVER_NOT_OFFLINE_MSG,
+            'error_msg': SERVER_NOT_OFFLINE_DETACH_ORG_MSG,
         }, 400)
     server.remove_org(org_id)
     return utils.jsonify({})
