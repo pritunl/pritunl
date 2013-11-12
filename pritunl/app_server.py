@@ -23,7 +23,7 @@ class AppServer(Config):
     default_options = {
         'auto_start_servers': True,
         'get_public_ip': True,
-        'inline_certs': False,
+        'inline_certs': True,
         'session_timeout': DEFAULT_SESSION_TIMEOUT,
         'key_bits': DEFAULT_KEY_BITS,
         'dh_param_bits': DEFAULT_DH_PARAM_BITS,
