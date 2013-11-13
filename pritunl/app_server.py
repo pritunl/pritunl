@@ -276,7 +276,3 @@ class AppServer(Config):
     def run_server(self):
         self._setup_all()
         self._run_server()
-
-    def run_all(self):
-        self._setup_all()
-        self._run_server()

@@ -43,4 +43,4 @@ def pritunl_daemon():
         conf_path = '/etc/pritunl.conf'
 
     pritunl.app_server.conf_path = conf_path
-    pritunl.app_server.run_all()
+    pritunl.app_server.run_server()
