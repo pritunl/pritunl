@@ -116,8 +116,10 @@ class AppServer(Config):
         self.app_db = Database(self.db_path)
 
     def _close_db(self):
-        self.mem_db.close()
-        self.app_db.close()
+        if self.mem_db:
+            self.mem_db.close()
+        if self.app_db:
+            self.app_db.close()
 
     def _setup_handlers(self):
         import handlers
@@ -274,5 +276,8 @@ class AppServer(Config):
             self._run_wsgi()
 
     def run_server(self):
-        self._setup_all()
-        self._run_server()
+        try:
+            self._setup_all()
+            self._run_server()
+        finally:
+            self._close_db()
