@@ -228,7 +228,12 @@ class AppServer(Config):
             self._server_cert_path, self._server_key_path)
         try:
             server.start()
-        except (KeyboardInterrupt, SystemExit), exc:
+        except (KeyboardInterrupt, SystemExit):
+            pass
+        except:
+            logger.exception('Server error occurred')
+            raise
+        finally:
             signal.signal(signal.SIGINT, signal.SIG_IGN)
             LogEntry(message='Web server stopped.')
             self.interrupt = True
@@ -247,6 +252,11 @@ class AppServer(Config):
 
         try:
             self.app.run(host=self.bind_addr, port=self.port, threaded=True)
+        except (KeyboardInterrupt, SystemExit):
+            pass
+        except:
+            logger.exception('Server error occurred')
+            raise
         finally:
             signal.signal(signal.SIGINT, signal.SIG_IGN)
             LogEntry(message='Web server stopped.')
