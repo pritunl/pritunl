@@ -1,3 +1,12 @@
+pritunl (0.10.3-0ubuntu1) unstable; urgency=low
+
+  * Add functionality to generate new two-step authentication keys
+  * Add support for inline certs
+  * Servers will only restart when deleting users that are connected
+  * Add export data handler
+
+ -- Zachary Huff <zach.huff.386@gmail.com>  Thu, 14 Nov 2013 23:02:43 -0400
+
 pritunl (0.10.2-0ubuntu1) unstable; urgency=low
 
   * Add time based two-step otp password verification using google authenticator
@@ -7,7 +16,7 @@ pritunl (0.10.2-0ubuntu1) unstable; urgency=low
   * Add conf option get_public_ip
   * User conf data will be automatically upgraded after first launch
 
- -- Zachary Huff <zach.huff.386@gmail.com>  Mon, 04 Oct 2013 16:34:22 -0400
+ -- Zachary Huff <zach.huff.386@gmail.com>  Mon, 04 Nov 2013 16:34:22 -0400
 
 pritunl (0.10.1-0ubuntu1) unstable; urgency=low
 
