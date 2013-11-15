@@ -1,7 +1,7 @@
 # Maintainer: Zachary Huff <zach.huff.386@gmail.com>
 
 pkgname=pritunl
-pkgver=0.10.2
+pkgver=0.10.3
 pkgrel=1
 pkgdesc="Simple openvpn server"
 arch=("any")
