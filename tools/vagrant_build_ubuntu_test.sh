@@ -6,6 +6,7 @@ mkdir -p /vagrant/build/debian_test
 cd /vagrant/build/debian_test
 
 wget https://github.com/zachhuff386/pritunl/archive/master.tar.gz
+
 tar xfz master.tar.gz
 mv pritunl-master pritunl-$VERSION
 tar cfz $VERSION.tar.gz pritunl-$VERSION
