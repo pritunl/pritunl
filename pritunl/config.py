@@ -178,7 +178,7 @@ class Config:
 
         with open(self._conf_path, 'w') as config:
             if chmod_mode:
-                os.chmod(self._conf_path, 0600)
+                os.chmod(self._conf_path, chmod_mode)
 
             for name in self.all_options:
                 if name not in self.__dict__:
