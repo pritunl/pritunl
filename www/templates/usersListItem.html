@@ -12,7 +12,7 @@
     <div class="status-icon <%= status ? 'online' : 'offline' %>"></div>
     <span class="status-text title"><%= (status) ? 'Online' : 'Offline' %></span>
   </div>
-  <a class="download-key glyphicon glyphicon-download no-select" data-toggle="tooltip" title="<%= window.demo ? 'Key not available in demo' : 'Click to download key' %>" <%= window.demo ? '' : 'href="/key/' + organization + '/' + id + '.tar"' %>></a>
-  <a class="get-key-link glyphicon glyphicon-link no-select" data-toggle="tooltip" title="<%= window.demo ? 'Key not available in demo' : 'Click to generate temporary key url that is downloadable without authenticating' %>"></a>
+  <a class="download-key glyphicon glyphicon-download no-select" data-toggle="tooltip" title="Click to download key" href="<%= window.demo ? '/key/demo.tar' : '/key/' + organization + '/' + id + '.tar' %>"></a>
+  <a class="get-key-link glyphicon glyphicon-link no-select" data-toggle="tooltip" title="<%= window.demo ? 'Temporary key url not available in demo' : 'Click to generate temporary key url that is downloadable without authenticating' %>"></a>
   <a class="get-otp-auth glyphicon glyphicon-qrcode no-select <%= otp_auth ? '' : 'no-otp-auth' %>" data-toggle="tooltip" title="Click to get two-step authentication key"></a>
 </div>
