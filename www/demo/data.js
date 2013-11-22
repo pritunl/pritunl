@@ -98,9 +98,27 @@ define([], function() {
         '55f5c6820e7a7de989916b4cdddf6070',
         'adb484e1f3c653dbc2aab10b14265dc6'
       ],
-      length: 2,
       output: 'Thu Oct  3 18:07:06 2013 OpenVPN 2.3.2 x86_64-unknown-linux-gnu [SSL (OpenSSL)] [LZO] [EPOLL] [eurephia] [MH] [IPv6] built on Jun  7 2013\nThu Oct  3 18:07:06 2013 NOTE: the current --script-security setting may allow this configuration to call user-defined scripts\nThu Oct  3 18:07:06 2013 TUN/TAP device tun0 opened\nThu Oct  3 18:07:06 2013 do_ifconfig, tt->ipv6=0, tt->did_ifconfig_ipv6_setup=0\nThu Oct  3 18:07:06 2013 /usr/bin/ip link set dev tun0 up mtu 1500\nThu Oct  3 18:07:06 2013 /usr/bin/ip addr add dev tun0 local 10.100.68.1 peer 10.100.68.2\nThu Oct  3 18:07:06 2013 UDPv4 link local (bound): [undef]\nThu Oct  3 18:07:06 2013 UDPv4 link remote: [undef]\nThu Oct  3 18:07:06 2013 Initialization Sequence Completed\n',
       port: '16070',
+      protocol: 'udp',
+      public_address: '8.8.8.8',
+      status: 'online'
+    },
+    '8159a073832f4bc481a1de9676326a9e': {
+      id: '8159a073832f4bc481a1de9676326a9e',
+      debug: false,
+      otp_auth: true,
+      lzo_compression: false,
+      interface: 'tun1',
+      local_network: null,
+      name: 'server2',
+      network: '10.113.56.0/24',
+      orgs: [
+        '55f5c6820e7a7de989916b4cdddf6070',
+        'adb484e1f3c653dbc2aab10b14265dc6'
+      ],
+      output: 'Thu Oct  3 18:07:06 2013 OpenVPN 2.3.2 x86_64-unknown-linux-gnu [SSL (OpenSSL)] [LZO] [EPOLL] [eurephia] [MH] [IPv6] built on Jun  7 2013\nThu Oct  3 18:07:06 2013 NOTE: the current --script-security setting may allow this configuration to call user-defined scripts\nThu Oct  3 18:07:06 2013 TUN/TAP device tun0 opened\nThu Oct  3 18:07:06 2013 do_ifconfig, tt->ipv6=0, tt->did_ifconfig_ipv6_setup=0\nThu Oct  3 18:07:06 2013 /usr/bin/ip link set dev tun0 up mtu 1500\nThu Oct  3 18:07:06 2013 /usr/bin/ip addr add dev tun0 local 10.100.68.1 peer 10.100.68.2\nThu Oct  3 18:07:06 2013 UDPv4 link local (bound): [undef]\nThu Oct  3 18:07:06 2013 UDPv4 link remote: [undef]\nThu Oct  3 18:07:06 2013 Initialization Sequence Completed\n',
+      port: '9430',
       protocol: 'udp',
       public_address: '8.8.8.8',
       status: 'online'
