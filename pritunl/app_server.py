@@ -19,7 +19,7 @@ class AppServer(Config):
     int_options = ['port', 'session_timeout', 'key_bits', 'dh_param_bits']
     path_options = ['log_path', 'db_path', 'www_path', 'data_path',
         'server_cert_path', 'server_key_path']
-    str_options = ['bind_addr', 'password']
+    str_options = ['bind_addr', 'password', 'public_ip_server']
     default_options = {
         'auto_start_servers': True,
         'get_public_ip': True,
@@ -30,6 +30,7 @@ class AppServer(Config):
         'db_path': DEFAULT_DB_PATH,
         'www_path': DEFAULT_WWW_PATH,
         'data_path': DEFAULT_DATA_PATH,
+        'public_ip_server': DEFAULT_PUBLIC_IP_SERVER,
     }
 
     def __init__(self):
@@ -39,25 +40,26 @@ class AppServer(Config):
         self.mem_db = None
         self.interrupt = False
 
-    def load_public_ip(self, retry=False):
+    def load_public_ip(self, retry=False, timeout=3):
         if not self.get_public_ip:
             return
         logger.debug('Getting public ip address...')
         try:
-            request = urllib2.Request(PUBLIC_IP_SERVER)
-            response = urllib2.urlopen(request, timeout=5)
+            request = urllib2.Request(self.public_ip_server)
+            response = urllib2.urlopen(request, timeout=timeout)
             self.public_ip = json.load(response)['ip']
         except:
             if retry:
                 logger.debug('Retrying get public ip address...')
                 time.sleep(1)
-                self.load_public_ip()
+                self.load_public_ip(timeout=timeout)
             else:
                 logger.exception('Failed to get public ip address...')
 
     def _setup_public_ip(self):
         self.public_ip = None
-        threading.Thread(target=self.load_public_ip).start()
+        threading.Thread(target=self.load_public_ip,
+            kwargs={'retry': True, 'timeout': 10}).start()
 
     def _setup_app(self):
         import flask

@@ -2,7 +2,6 @@ APP_NAME = 'pritunl'
 APP_NAME_FORMATED = 'Pritunl'
 CONF_FILENAME = '%s.conf' % APP_NAME
 
-PUBLIC_IP_SERVER = 'http://ip.pritunl.com/'
 
 SAVED = 'saved'
 UNSAVED = 'unsaved'
@@ -25,6 +24,7 @@ DEFAULT_LOG_LIMIT = 20
 DEFAULT_KEY_BITS = 4096
 DEFAULT_DH_PARAM_BITS = 1536
 DEFAULT_OTP_SECRET_LEN = 16
+DEFAULT_PUBLIC_IP_SERVER = 'http://ip.pritunl.com/'
 
 INFO = 'info'
 WARNING = 'warning'
