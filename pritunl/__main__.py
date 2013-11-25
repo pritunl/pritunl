@@ -11,7 +11,13 @@ def pritunl_daemon():
         help='Path to create pid file')
     parser.add_option('-c', '--conf', type='string',
         help='Path to configuration file')
+    parser.add_option('--version', action='store_true',
+        help='Print version')
     (options, args) = parser.parse_args()
+
+    if options.version:
+        print '%s v%s' % (pritunl.__title__, pritunl.__version__)
+        sys.exit(0)
 
     if options.daemon:
         pid = os.fork()
