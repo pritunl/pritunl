@@ -3,7 +3,7 @@ VERSION=`cat ../pritunl/__init__.py | grep __version__ | cut -d\' -f2`
 mkdir -p ../build/pip
 cd ../build/pip
 
-wget https://github.com/zachhuff386/pritunl/archive/$VERSION.tar.gz
+wget https://github.com/pritunl/pritunl/archive/$VERSION.tar.gz
 
 mv $VERSION.tar.gz pritunl-$VERSION.tar.gz
 

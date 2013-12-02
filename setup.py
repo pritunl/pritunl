@@ -76,8 +76,8 @@ setup(
     long_description=open('README.rst').read(),
     author='Zachary Huff',
     author_email='zach.huff.386@gmail.com',
-    url='https://github.com/zachhuff386/pritunl',
-    download_url='https://github.com/zachhuff386/pritunl/archive/%s.tar.gz' % (
+    url='https://github.com/pritunl/pritunl',
+    download_url='https://github.com/pritunl/pritunl/archive/%s.tar.gz' % (
         pritunl.__version__),
     keywords='openvpn, vpn, management, server, web interface',
     packages=['pritunl', 'pritunl.handlers'],

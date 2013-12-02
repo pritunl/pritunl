@@ -8,8 +8,8 @@ Build-Depends: debhelper (>= 8.0.0),
 Standards-Version: 3.9.4
 Homepage: http://pritunl.com/
 X-Python-Version: >= 2.7
-#Vcs-Git: https://github.com/zachhuff386/pritunl.git
-#Vcs-Browser: https://github.com/zachhuff386/pritunl
+#Vcs-Git: https://github.com/pritunl/pritunl.git
+#Vcs-Browser: https://github.com/pritunl/pritunl
 
 Package: pritunl
 Architecture: all

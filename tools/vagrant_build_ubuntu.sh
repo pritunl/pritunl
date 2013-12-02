@@ -5,7 +5,7 @@ gpg --import private_key.asc
 mkdir -p /vagrant/build/debian
 cd /vagrant/build/debian
 
-wget https://github.com/zachhuff386/pritunl/archive/$VERSION.tar.gz
+wget https://github.com/pritunl/pritunl/archive/$VERSION.tar.gz
 
 tar xfz $VERSION.tar.gz
 rm -rf pritunl-$VERSION/debian

@@ -6,7 +6,7 @@ pkgrel=1
 pkgdesc="Simple openvpn server"
 arch=("any")
 license=("AGPL3")
-url="https://github.com/zachhuff386/${pkgname}"
+url="https://github.com/pritunl/${pkgname}"
 depends=(
     "python"
     "python2"
