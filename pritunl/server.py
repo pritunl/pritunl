@@ -570,7 +570,9 @@ class Server(Config):
             'server_id': self.id,
         })
         self.generate_ca_cert()
+        _start_time[self.id] = int(time.time()) - 1
         _process[self.id].send_signal(signal.SIGHUP)
+        Event(type=SERVERS_UPDATED)
         LogEntry(message='Restarted server "%s".' % self.name)
 
     def reload(self):
