@@ -8,6 +8,7 @@ define([
     defaults: {
       'id': null,
       'organization': null,
+      'organization_name': null,
       'name': null,
       'type': null,
       'status': null,

@@ -30,6 +30,7 @@ def user_get(org_id):
         users_dict[name_id] = {
             'id': user.id,
             'organization': org.id,
+            'organization_name': org.name,
             'name': user.name,
             'type': user.type,
             'status': True if user.id in clients else False,
