@@ -377,7 +377,9 @@ define([
     var users = [];
 
     for (id in demoData.users[orgId]) {
-      users.push(demoData.users[orgId][id]);
+      users.push(_.extend({
+        organization_name: demoData.orgs[orgId].name
+      }, demoData.users[orgId][id]));
     }
 
     request.response(users);
