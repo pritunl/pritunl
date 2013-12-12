@@ -4,6 +4,7 @@ Pritunl Changelog
 Version 0.10.4
 --------------
 
+Add temporary page to view two-step authentication key
 Add organization name to two-step authentication label
 
 Version 0.10.3
