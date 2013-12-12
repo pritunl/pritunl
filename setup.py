@@ -28,6 +28,7 @@ if not os.path.exists('build'):
 data_files = [
     ('/etc', ['data/etc/pritunl.conf']),
     ('/var/log', ['data/var/pritunl.log']),
+    ('/usr/share/pritunl/www', ['www/key_index.html']),
     ('/usr/share/pritunl/www', ['www/dist/favicon.ico']),
     ('/usr/share/pritunl/www', ['www/dist/index.html']),
     ('/usr/share/pritunl/www', ['www/dist/robots.txt']),
