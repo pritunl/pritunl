@@ -21,12 +21,19 @@ define([
       return this.template();
     },
     postRender: function() {
+      if (!this.model.get('otp_auth')) {
+        this.$('.otp-link').hide();
+      }
       this.setLoading('Generating url...', true);
       this.model.fetch({
         success: function() {
           this.clearLoading();
-          this.$('input').val(window.location.protocol + '//' +
+          this.$('.key-link input').val(window.location.protocol + '//' +
             window.location.host + this.model.get('key_url'));
+          if (this.model.get('otp_auth')) {
+            this.$('.otp-link input').val(window.location.protocol + '//' +
+              window.location.host + this.model.get('otp_url'));
+          }
         }.bind(this),
         error: function() {
           this.clearLoading();

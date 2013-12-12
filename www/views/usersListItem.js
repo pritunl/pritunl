@@ -134,7 +134,8 @@ define([
       var modal = new ModalKeyLinkView({
         model: new KeyModel({
           'organization': this.model.get('organization'),
-          'user': this.model.get('id')
+          'user': this.model.get('id'),
+          'otp_auth': this.model.get('otp_auth')
         })
       });
       this.addView(modal);

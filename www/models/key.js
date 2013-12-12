@@ -9,6 +9,7 @@ define([
       'id': null,
       'organization': null,
       'user': null,
+      'otp_auth': null,
       'url': null
     },
     url: function() {
