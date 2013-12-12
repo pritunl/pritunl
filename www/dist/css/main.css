@@ -6267,7 +6267,8 @@ ul {
 .modal .modal-user-list li {
   color: #777777;
 }
-.modal .key-link input {
+.modal .key-link input,
+.modal .otp-link input {
   width: 480px;
 }
 .modal .otp-auth-key {
