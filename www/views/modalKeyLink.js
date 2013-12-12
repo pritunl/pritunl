@@ -26,7 +26,7 @@ define([
         success: function() {
           this.clearLoading();
           this.$('input').val(window.location.protocol + '//' +
-            window.location.host + this.model.get('url'));
+            window.location.host + this.model.get('key_url'));
         }.bind(this),
         error: function() {
           this.clearLoading();
