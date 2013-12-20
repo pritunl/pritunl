@@ -85,7 +85,7 @@ class BerkeleyBackend:
         return self._client.get(key=key)
 
     def set(self, key, value):
-        self._client.put(key=key, data=value)
+        self._client.put(key=key.encode(), data=value)
 
     def remove(self, key):
         self._client.delete(key=key)
