@@ -30,6 +30,7 @@ def auth_get():
     })
 
 @app_server.app.route('/auth', methods=['DELETE'])
+@app_server.auth
 def auth_delete():
     flask.session.pop('timestamp', None)
     return utils.jsonify({})
