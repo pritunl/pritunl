@@ -22,6 +22,7 @@ def request(method, endpoint, **kwargs):
     return _request(method, BASE_URL + endpoint, headers=HEADERS, **kwargs)
 requests.api.request = request
 
+
 class Session:
     def __init__(self):
         self._session = requests.Session()
@@ -48,6 +49,7 @@ class Session:
 
     def delete(self, endpoint, **kwargs):
         return self._request('delete', endpoint, **kwargs)
+
 
 class Database(unittest.TestCase):
     def setUp(self):
@@ -93,6 +95,34 @@ class Database(unittest.TestCase):
 
             for thread in threads:
                 thread.join()
+
+
+class Auth(unittest.TestCase):
+    def test_auth_get(self):
+        response = requests.get('/auth')
+        data = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('authenticated', data)
+        self.assertFalse(data['authenticated'])
+
+    def test_auth_post(self):
+        session = Session()
+        self.assertEqual(session.response.status_code, 200)
+
+        response = session.get('/auth')
+        data = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('authenticated', data)
+        self.assertTrue(data['authenticated'])
+
+        response = session.delete('/auth')
+        self.assertEqual(response.status_code, 200)
+
+        response = session.get('/auth')
+        data = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('authenticated', data)
+        self.assertFalse(data['authenticated'])
 
 
 if __name__ == '__main__':
