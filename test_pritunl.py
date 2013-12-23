@@ -6,7 +6,7 @@ import json
 import time
 import os
 
-URL = 'http://localhost:9700'
+BASE_URL = 'http://localhost:9700'
 HEADERS = {
     'Content-type': 'application/json',
     'Accept': 'application/json',
@@ -15,33 +15,37 @@ USERNAME = 'admin'
 PASSWORD = 'admin'
 TEMP_DATABSE_PATH = 'pritunl_test.db'
 
+_request = requests.api.request
+def request(method, endpoint, **kwargs):
+    if 'json' in kwargs and kwargs['json']:
+        kwargs['data'] = json.dumps(kwargs.pop('json'))
+    return _request(method, BASE_URL + endpoint, headers=HEADERS, **kwargs)
+requests.api.request = request
+
 class Session:
     def __init__(self):
         data = {
             'username': USERNAME,
             'password': PASSWORD,
         }
-        response = requests.post('%s/auth' % URL, headers=HEADERS,
-            data=json.dumps(data))
+        response = requests.post('/auth', json=data)
         self.cookies = response.cookies
 
-    def _json_request(self, method, endpoint, data=None):
-        response = getattr(requests, method)('%s/%s' % (URL, endpoint),
-            headers=HEADERS, cookies=self.cookies, data=data)
-        return response.json()
+    def _json_request(self, method, endpoint, **kwargs):
+        return getattr(requests, method)(endpoint,
+            cookies=self.cookies, **kwargs)
 
-    def get(self, endpoint):
-        return self._json_request('get', endpoint)
+    def get(self, endpoint, **kwargs):
+        return self._json_request('get', endpoint, **kwargs)
 
-    def post(self, endpoint, data={}):
-        return self._json_request('post', endpoint, data=json.dumps(data))
+    def post(self, endpoint, **kwargs):
+        return self._json_request('post', endpoint, **kwargs)
 
-    def put(self, endpoint, data={}):
-        return self._json_request('put', endpoint, data=json.dumps(data))
+    def put(self, endpoint, **kwargs):
+        return self._json_request('put', endpoint, **kwargs)
 
-    def delete(self, endpoint):
-        return self._json_request('delete', endpoint)
-
+    def delete(self, endpoint, **kwargs):
+        return self._json_request('delete', endpoint, **kwargs)
 
 class Database(unittest.TestCase):
     def setUp(self):
