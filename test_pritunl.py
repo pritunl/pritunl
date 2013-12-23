@@ -24,28 +24,30 @@ requests.api.request = request
 
 class Session:
     def __init__(self):
+        self._session = requests.Session()
         data = {
             'username': USERNAME,
             'password': PASSWORD,
         }
-        response = requests.post('/auth', json=data)
-        self.cookies = response.cookies
+        self.response = self.post('/auth', json=data)
 
-    def _json_request(self, method, endpoint, **kwargs):
-        return getattr(requests, method)(endpoint,
-            cookies=self.cookies, **kwargs)
+    def _request(self, method, endpoint, **kwargs):
+        if 'json' in kwargs and kwargs['json']:
+            kwargs['data'] = json.dumps(kwargs.pop('json'))
+        return getattr(self._session, method)(BASE_URL + endpoint,
+            headers=HEADERS, **kwargs)
 
     def get(self, endpoint, **kwargs):
-        return self._json_request('get', endpoint, **kwargs)
+        return self._request('get', endpoint, **kwargs)
 
     def post(self, endpoint, **kwargs):
-        return self._json_request('post', endpoint, **kwargs)
+        return self._request('post', endpoint, **kwargs)
 
     def put(self, endpoint, **kwargs):
-        return self._json_request('put', endpoint, **kwargs)
+        return self._request('put', endpoint, **kwargs)
 
     def delete(self, endpoint, **kwargs):
-        return self._json_request('delete', endpoint, **kwargs)
+        return self._request('delete', endpoint, **kwargs)
 
 class Database(unittest.TestCase):
     def setUp(self):
