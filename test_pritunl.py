@@ -20,8 +20,6 @@ AUTH_HANDLERS = [
     ('GET', '/event'),
     ('GET', '/key/0/0.tar'),
     ('GET', '/key/0/0'),
-    ('GET', '/key/0.tar'),
-    ('GET', '/key/0.html'),
     ('GET', '/log'),
     ('GET', '/organization'),
     ('POST', '/organization'),
