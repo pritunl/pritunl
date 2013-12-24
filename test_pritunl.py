@@ -14,6 +14,37 @@ HEADERS = {
 USERNAME = 'admin'
 PASSWORD = 'admin'
 TEMP_DATABSE_PATH = 'pritunl_test.db'
+AUTH_HANDLERS = [
+    ('DELETE', '/auth'),
+    ('GET', '/export'),
+    ('GET', '/event'),
+    ('GET', '/key/0/0.tar'),
+    ('GET', '/key/0/0'),
+    ('GET', '/key/0.tar'),
+    ('GET', '/key/0.html'),
+    ('GET', '/log'),
+    ('GET', '/organization'),
+    ('POST', '/organization'),
+    ('PUT', '/organization/0'),
+    ('DELETE', '/organization/0'),
+    ('POST', '/password'),
+    ('GET', '/server'),
+    ('POST', '/server'),
+    ('PUT', '/server/0'),
+    ('DELETE', '/server/0'),
+    ('GET', '/server/0/organization'),
+    ('PUT', '/server/0/organization/0'),
+    ('DELETE', '/server/0/organization/0'),
+    ('PUT', '/server/0/0'),
+    ('GET', '/server/0/output'),
+    ('DELETE', '/server/0/output'),
+    ('GET', '/status'),
+    ('GET', '/user/0'),
+    ('POST', '/user/0'),
+    ('PUT', '/user/0/0'),
+    ('DELETE', '/user/0/0'),
+    ('DELETE', '/user/0/0/otp_secret'),
+]
 
 _request = requests.api.request
 def request(method, endpoint, **kwargs):
@@ -123,6 +154,11 @@ class Auth(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn('authenticated', data)
         self.assertFalse(data['authenticated'])
+
+    def test_auth_handlers(self):
+        for method, endpoint in AUTH_HANDLERS:
+            response = getattr(requests, method.lower())(endpoint)
+            self.assertEqual(response.status_code, 401)
 
 
 if __name__ == '__main__':
