@@ -92,6 +92,9 @@ setup(
     entry_points={
         'console_scripts': ['pritunl = pritunl.__main__:pritunl_daemon'],
     },
+    platforms=[
+        'Linux',
+    ],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
