@@ -81,49 +81,20 @@ class Session:
 
 
 class Database(unittest.TestCase):
-    def setUp(self):
-        if os.path.isfile(TEMP_DATABSE_PATH):
-            os.remove(TEMP_DATABSE_PATH)
-        self._db = database.Database(TEMP_DATABSE_PATH)
+    def test_mem(self):
+        db = database.Database(None)
+        db.set('column_family', 'row', 'column', 'value')
+        value = db.get('column_family', 'row', 'column')
+        self.assertEqual(value, 'value')
+        db.close()
 
-    def tearDown(self):
-        self._db.close()
+    def test_berkeley_db(self):
+        db = database.Database(TEMP_DATABSE_PATH)
+        db.set('column_family', 'row', 'column', 'value')
+        value = db.get('column_family', 'row', 'column')
+        self.assertEqual(value, 'value')
+        db.close()
         os.remove(TEMP_DATABSE_PATH)
-
-    def _fill_column_family(self, num):
-        for i in xrange(5):
-            for x in xrange(5):
-                self._db.set('column_family_%s' % num, 'row_%s' % i,
-                    'column_%s' % x, 'value_%s' % x)
-
-        for i in xrange(5):
-            for x in xrange(5):
-                value = self._db.get('column_family_%s' % num,
-                    'row_%s' % i, 'column_%s' % x)
-                self.assertEqual(value, 'value_%s' % x)
-
-        for i in xrange(5):
-            for x in xrange(5):
-                self._db.remove('column_family_%s' % num,
-                    'row_%s' % i, 'column_%s' % x)
-
-        for i in xrange(5):
-            for x in xrange(5):
-                value = self._db.get('column_family_%s' % num,
-                    'row_%s' % i, 'column_%s' % x)
-                self.assertEqual(value, None)
-
-    def test_database(self):
-        for i in xrange(2):
-            threads = []
-            for x in xrange(300):
-                thread = threading.Thread(target=self._fill_column_family,
-                    args=(x,))
-                thread.start()
-                threads.append(thread)
-
-            for thread in threads:
-                thread.join()
 
 
 class Auth(unittest.TestCase):
