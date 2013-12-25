@@ -1,4 +1,4 @@
-from drivnal import database
+from pritunl import database
 import threading
 import unittest
 import requests
