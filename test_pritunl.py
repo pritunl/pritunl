@@ -81,18 +81,38 @@ class Session:
 
 
 class Database(unittest.TestCase):
+    def _test_db(self, db):
+        db.set('column_family', 'row1', 'column1', 'value1')
+        db.set('column_family', 'row2', 'column2', 'value2')
+        db.set('column_family', 'row3', 'column3', 'value3')
+        value = db.get('column_family', 'row1', 'column1')
+        self.assertEqual(value, 'value1')
+        value = db.get('column_family', 'row2', 'column2')
+        self.assertEqual(value, 'value2')
+        value = db.get('column_family', 'row3', 'column3')
+        self.assertEqual(value, 'value3')
+        value = db.get('column_family', 'row1')
+        self.assertEqual(value, {'column1': 'value1'})
+        value = db.get('column_family')
+        self.assertEqual(value, {
+            'row1': {'column1': 'value1'},
+            'row2': {'column2': 'value2'},
+            'row3': {'column3': 'value3'},
+        })
+        db.remove('column_family', 'row1')
+        db.remove('column_family', 'row2')
+        db.remove('column_family', 'row3')
+        value = db.get('column_family')
+        self.assertEqual(value, {})
+
     def test_mem(self):
         db = database.Database(None)
-        db.set('column_family', 'row', 'column', 'value')
-        value = db.get('column_family', 'row', 'column')
-        self.assertEqual(value, 'value')
+        self._test_db(db)
         db.close()
 
     def test_berkeley_db(self):
         db = database.Database(TEMP_DATABSE_PATH)
-        db.set('column_family', 'row', 'column', 'value')
-        value = db.get('column_family', 'row', 'column')
-        self.assertEqual(value, 'value')
+        self._test_db(db)
         db.close()
         os.remove(TEMP_DATABSE_PATH)
 
