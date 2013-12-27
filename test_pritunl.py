@@ -15,7 +15,6 @@ USERNAME = 'admin'
 PASSWORD = 'admin'
 TEMP_DATABSE_PATH = 'pritunl_test.db'
 AUTH_HANDLERS = [
-    ('DELETE', '/auth'),
     ('GET', '/export'),
     ('GET', '/event'),
     ('GET', '/key/0/0.tar'),
