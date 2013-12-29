@@ -30,7 +30,10 @@ def org_post():
     name = flask.request.json['name']
     name = ''.join(x for x in name if x.isalnum() or x in NAME_SAFE_CHARS)
     org = Organization(name=name)
-    return utils.jsonify({})
+    return utils.jsonify({
+        'id': org.id,
+        'name': org.name,
+    })
 
 @app_server.app.route('/organization/<org_id>', methods=['PUT'])
 @app_server.auth
@@ -39,7 +42,10 @@ def org_put(org_id):
     name = flask.request.json['name']
     name = ''.join(x for x in name if x.isalnum() or x in NAME_SAFE_CHARS)
     org.rename(name)
-    return utils.jsonify({})
+    return utils.jsonify({
+        'id': org.id,
+        'name': org.name,
+    })
 
 @app_server.app.route('/organization/<org_id>', methods=['DELETE'])
 @app_server.auth

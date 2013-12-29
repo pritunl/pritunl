@@ -179,6 +179,7 @@ class Server(Config):
         self.commit()
         Event(type=SERVERS_UPDATED)
         Event(type=SERVER_ORGS_UPDATED, resource_id=self.id)
+        return org
 
     def _remove_primary_user(self):
         logger.debug('Removing primary user. %r' % {

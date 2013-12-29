@@ -227,7 +227,25 @@ def server_put_post(server_id=None):
 
     Event(type=USERS_UPDATED)
 
-    return utils.jsonify({})
+    return utils.jsonify({
+        'id': server.id,
+        'name': server.name,
+        'status': 'online' if server.status else 'offline',
+        'uptime': server.uptime,
+        'users_online': len(server.get_clients()),
+        'users_total': server.user_count,
+        'user_count': server.user_count,
+        'network': server.network,
+        'interface': server.interface,
+        'port': server.port,
+        'protocol': server.protocol,
+        'local_network': server.local_network,
+        'public_address': server.public_address,
+        'otp_auth': True if server.otp_auth else False,
+        'lzo_compression': server.lzo_compression,
+        'debug': True if server.debug else False,
+        'org_count': server.org_count,
+    })
 
 @app_server.app.route('/server/<server_id>', methods=['DELETE'])
 @app_server.auth
@@ -268,8 +286,12 @@ def server_org_put(server_id, org_id):
             'error': SERVER_NOT_OFFLINE,
             'error_msg': SERVER_NOT_OFFLINE_ATTACH_ORG_MSG,
         }, 400)
-    server.add_org(org_id)
-    return utils.jsonify({})
+    org = server.add_org(org_id)
+    return utils.jsonify({
+        'id': org.id,
+        'server': server.id,
+        'name': org.name,
+    })
 
 @app_server.app.route('/server/<server_id>/organization/<org_id>',
     methods=['DELETE'])
@@ -294,7 +316,25 @@ def server_operation_put(server_id, operation):
         server.stop()
     elif operation == RESTART:
         server.restart()
-    return utils.jsonify({})
+    return utils.jsonify({
+        'id': server.id,
+        'name': server.name,
+        'status': 'online' if server.status else 'offline',
+        'uptime': server.uptime,
+        'users_online': len(server.get_clients()),
+        'users_total': server.user_count,
+        'user_count': server.user_count,
+        'network': server.network,
+        'interface': server.interface,
+        'port': server.port,
+        'protocol': server.protocol,
+        'local_network': server.local_network,
+        'public_address': server.public_address,
+        'otp_auth': True if server.otp_auth else False,
+        'lzo_compression': server.lzo_compression,
+        'debug': True if server.debug else False,
+        'org_count': server.org_count,
+    })
 
 @app_server.app.route('/server/<server_id>/output', methods=['GET'])
 @app_server.auth

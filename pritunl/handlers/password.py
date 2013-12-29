@@ -8,4 +8,6 @@ import flask
 def password_post():
     password = flask.request.json['password'][:512]
     app_server.set_password(password)
-    return utils.jsonify({})
+    return utils.jsonify({
+        'password': password,
+    })
