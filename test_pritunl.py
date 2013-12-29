@@ -168,5 +168,24 @@ class Data(unittest.TestCase):
             self.assertRegexpMatches(content_disposition, exp)
 
 
+class Event(unittest.TestCase):
+    def setUp(self):
+        self.session = Session()
+
+    def test_event_get(self):
+        response = self.session.get('/event')
+
+        events = response.json()
+        self.assertEqual(len(events), 1)
+        self.assertIn('id', events[0])
+        self.assertIn('type', events[0])
+        self.assertIn('time', events[0])
+        self.assertIn('resource_id', events[0])
+        self.assertIsInstance(events[0]['id'], basestring)
+        self.assertEqual(events[0]['type'], 'time')
+        self.assertIsInstance(events[0]['time'], int)
+        self.assertEqual(events[0]['resource_id'], None)
+
+
 if __name__ == '__main__':
     unittest.main()
