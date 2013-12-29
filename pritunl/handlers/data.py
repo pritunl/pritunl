@@ -71,7 +71,7 @@ def export_get():
         response = flask.Response(response=archive_file.read(),
             mimetype='application/x-tar')
         response.headers.add('Content-Disposition',
-            'inline; filename="%s.tar"' % data_archive_name)
+            'inline; filename="%s"' % data_archive_name)
 
     os.remove(data_archive_path)
     return response
