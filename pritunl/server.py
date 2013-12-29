@@ -78,6 +78,10 @@ class Server(Config):
             if self.status and self.id in _start_time:
                 return int(time.time()) - _start_time[self.id]
             return None
+        elif name == 'user_count':
+            return self._get_user_count()
+        elif name == 'org_count':
+            return self._get_org_count()
 
         return Config.__getattr__(self, name)
 
@@ -229,6 +233,19 @@ class Server(Config):
                 continue
             orgs.append(org)
         return orgs
+
+    def _get_user_count(self):
+        server_orgs = self.get_orgs()
+        users_count = 0
+        for org in server_orgs:
+            for user in org.get_users():
+                if user.type != CERT_CLIENT:
+                    continue
+                users_count += 1
+        return users_count
+
+    def _get_org_count(self):
+        return len(self.get_orgs())
 
     def _generate_dh_param(self):
         logger.debug('Generating server dh params. %r' % {

@@ -18,7 +18,9 @@ def auth_post():
         }, 401)
 
     flask.session['timestamp'] = time.time()
-    return utils.jsonify({})
+    return utils.jsonify({
+        'authenticated': True
+    })
 
 @app_server.app.route('/auth', methods=['GET'])
 def auth_get():
@@ -32,4 +34,6 @@ def auth_get():
 @app_server.app.route('/auth', methods=['DELETE'])
 def auth_delete():
     flask.session.pop('timestamp', None)
-    return utils.jsonify({})
+    return utils.jsonify({
+        'authenticated': False
+    })
