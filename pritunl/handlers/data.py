@@ -39,8 +39,6 @@ def export_get():
             tar_add(tar_file, org.serial_path)
             tar_add(tar_file, org.crl_path)
             tar_add(tar_file, org.get_path())
-            print os.path.relpath(os.path.join(org.path, TEMP_DIR),
-                    data_path)
             tar_file.add(empty_temp_path,
                 arcname=os.path.relpath(os.path.join(org.path, TEMP_DIR),
                     data_path))
