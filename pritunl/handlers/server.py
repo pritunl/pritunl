@@ -38,14 +38,6 @@ def server_get():
     servers_sort = []
 
     for server in Server.get_servers():
-        server_orgs = server.get_orgs()
-        users_count = 0
-        for org in server_orgs:
-            for user in org.get_users():
-                if user.type != CERT_CLIENT:
-                    continue
-                users_count += 1
-
         name_id = '%s_%s' % (server.name, server.id)
         servers_sort.append(name_id)
         servers_dict[name_id] = {
@@ -54,7 +46,8 @@ def server_get():
             'status': 'online' if server.status else 'offline',
             'uptime': server.uptime,
             'users_online': len(server.get_clients()),
-            'users_total': users_count,
+            'users_total': server.user_count,
+            'user_count': server.user_count,
             'network': server.network,
             'interface': server.interface,
             'port': server.port,
@@ -64,7 +57,7 @@ def server_get():
             'otp_auth': True if server.otp_auth else False,
             'lzo_compression': server.lzo_compression,
             'debug': True if server.debug else False,
-            'org_count': len(server_orgs),
+            'org_count': server.org_count,
         }
 
     for name_id in sorted(servers_sort):
