@@ -149,5 +149,23 @@ class Auth(unittest.TestCase):
             self.assertEqual(response.status_code, 401)
 
 
+class Data(unittest.TestCase):
+    def setUp(self):
+        self.session = Session()
+
+    def test_export_get(self):
+        for endpoint in ['/export', '/export/pritunl.tar']:
+            response = self.session.get(endpoint)
+
+            self.assertEqual(response.status_code, 200)
+
+            content_type = response.headers['content-type']
+            self.assertEqual(content_type, 'application/x-tar')
+
+            content_disposition = response.headers['content-disposition']
+            exp = r'^inline; filename="pritunl_[0-9]+_[0-9]+_[0-9]+_' + \
+                '[0-9]+_[0-9]+_[0-9]+\.tar"$'
+            self.assertRegexpMatches(content_disposition, exp)
+
 if __name__ == '__main__':
     unittest.main()
