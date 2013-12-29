@@ -79,6 +79,11 @@ class Session:
         return self._request('delete', endpoint, **kwargs)
 
 
+class SessionTestCast(unittest.TestCase):
+    def setUp(self):
+        self.session = Session()
+
+
 class Database(unittest.TestCase):
     def _test_db(self, db):
         db.set('column_family', 'row1', 'column1', 'value1')
@@ -149,10 +154,7 @@ class Auth(unittest.TestCase):
             self.assertEqual(response.status_code, 401)
 
 
-class Data(unittest.TestCase):
-    def setUp(self):
-        self.session = Session()
-
+class Data(SessionTestCast):
     def test_export_get(self):
         for endpoint in ['/export', '/export/pritunl.tar']:
             response = self.session.get(endpoint)
@@ -168,10 +170,7 @@ class Data(unittest.TestCase):
             self.assertRegexpMatches(content_disposition, exp)
 
 
-class Event(unittest.TestCase):
-    def setUp(self):
-        self.session = Session()
-
+class Event(SessionTestCast):
     def test_event_get(self):
         response = self.session.get('/event')
 
