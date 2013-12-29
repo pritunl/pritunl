@@ -131,7 +131,11 @@ class Auth(unittest.TestCase):
 
     def test_auth_post(self):
         session = Session()
+        data = session.response.json()
         self.assertEqual(session.response.status_code, 200)
+        self.assertEqual(session.response.status_code, 200)
+        self.assertIn('authenticated', data)
+        self.assertTrue(data['authenticated'])
 
         response = session.get('/auth')
         data = response.json()
@@ -140,7 +144,10 @@ class Auth(unittest.TestCase):
         self.assertTrue(data['authenticated'])
 
         response = session.delete('/auth')
+        data = response.json()
         self.assertEqual(response.status_code, 200)
+        self.assertIn('authenticated', data)
+        self.assertFalse(data['authenticated'])
 
         response = session.get('/auth')
         data = response.json()
