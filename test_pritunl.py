@@ -8,7 +8,6 @@ import os
 
 BASE_URL = 'http://localhost:9700'
 HEADERS = {
-    'Content-type': 'application/json',
     'Accept': 'application/json',
 }
 USERNAME = 'admin'
@@ -45,9 +44,13 @@ AUTH_HANDLERS = [
 
 _request = requests.api.request
 def request(method, endpoint, **kwargs):
+    headers = {
+        'Accept': 'application/json',
+    }
     if 'json' in kwargs and kwargs['json']:
+        headers['Content-Type'] = 'application/json'
         kwargs['data'] = json.dumps(kwargs.pop('json'))
-    return _request(method, BASE_URL + endpoint, headers=HEADERS, **kwargs)
+    return _request(method, BASE_URL + endpoint, headers=headers, **kwargs)
 requests.api.request = request
 
 
@@ -61,10 +64,14 @@ class Session:
         self.response = self.post('/auth', json=data)
 
     def _request(self, method, endpoint, **kwargs):
+        headers = {
+            'Accept': 'application/json',
+        }
         if 'json' in kwargs and kwargs['json']:
+            headers['Content-Type'] = 'application/json'
             kwargs['data'] = json.dumps(kwargs.pop('json'))
         return getattr(self._session, method)(BASE_URL + endpoint,
-            headers=HEADERS, **kwargs)
+            headers=headers, **kwargs)
 
     def get(self, endpoint, **kwargs):
         return self._request('get', endpoint, **kwargs)
@@ -180,6 +187,7 @@ class Data(SessionTestCast):
 class Event(SessionTestCast):
     def test_event_get(self):
         response = self.session.get('/event')
+        self.assertEqual(response.status_code, 200)
 
         events = response.json()
         self.assertEqual(len(events), 1)
