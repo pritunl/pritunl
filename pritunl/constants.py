@@ -27,12 +27,14 @@ DEFAULT_OTP_SECRET_LEN = 16
 DEFAULT_PUBLIC_IP_SERVER = 'http://ip.pritunl.com/'
 DATABASE_CLEAN_INTERVAL = 600
 EVENT_DB_TTL = 61000
+AUTH_BRUTE_FORCE_SLEEP = 0.5
 
 INFO = 'info'
 WARNING = 'warning'
 ERROR = 'error'
 
 VERSION_NAME = 'version'
+AUTH_USER_NAME = 'admin'
 ORGS_DIR = 'organizations'
 SERVERS_DIR = 'servers'
 REQS_DIR = 'reqs'

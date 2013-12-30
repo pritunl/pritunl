@@ -71,15 +71,23 @@ class AppServer(Config):
 
     def auth(self, call):
         import flask
+        from auth_token import AuthToken
         def _wrapped(*args, **kwargs):
-            if 'timestamp' not in flask.session:
-                raise flask.abort(401)
+            if flask.request.json and 'auth_token' in flask.request.json and \
+                    flask.request.json['auth_token']:
+                auth_token = AuthToken(flask.request.json['auth_token'])
+                if not auth_token.valid:
+                    raise flask.abort(401)
 
-            # Disable session timeout if set to 0
-            if self.session_timeout and time.time() - flask.session[
-                    'timestamp'] > self.session_timeout:
-                flask.session.pop('timestamp', None)
-                raise flask.abort(401)
+            else:
+                if 'timestamp' not in flask.session:
+                    raise flask.abort(401)
+
+                # Disable session timeout if set to 0
+                if self.session_timeout and time.time() - flask.session[
+                        'timestamp'] > self.session_timeout:
+                    flask.session.pop('timestamp', None)
+                    raise flask.abort(401)
             return call(*args, **kwargs)
         _wrapped.__name__ = '%s_auth' % call.__name__
         return _wrapped
