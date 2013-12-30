@@ -6,6 +6,7 @@ import time
 import uuid
 
 logger = logging.getLogger(APP_NAME)
+_last_db_clean = int(time.time())
 
 class Event(DatabaseObject):
     db = app_server.mem_db
@@ -28,6 +29,8 @@ class Event(DatabaseObject):
 
     @staticmethod
     def clean_database():
+        global _last_db_clean
+        _last_db_clean = int(time.time())
         cur_time = int(time.time() * 1000)
         events_query = Event.db.get(Event.column_family)
         for event_id in events_query:
@@ -57,6 +60,9 @@ class Event(DatabaseObject):
         logger.debug('Getting events. %r' % {
             'last_time': last_time,
         })
+
+        if int(time.time()) - _last_db_clean > DATABASE_CLEAN_INTERVAL:
+            Event.clean_database()
 
         events_query = Event.db.get(Event.column_family)
         for event_id in events_query:
