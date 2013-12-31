@@ -46,7 +46,7 @@ def server_get():
             'status': 'online' if server.status else 'offline',
             'uptime': server.uptime,
             'users_online': len(server.get_clients()),
-            'users_total': server.user_count,
+            'users_total': server.user_count, # TODO
             'user_count': server.user_count,
             'network': server.network,
             'interface': server.interface,
