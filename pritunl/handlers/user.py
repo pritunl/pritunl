@@ -94,6 +94,22 @@ def user_delete(org_id, user_id):
 
     return utils.jsonify({})
 
+@app_server.app.route('/user/<org_id>/<user_id>/otp_secret', methods=['PUT'])
+@app_server.auth
+def user_otp_secret_put(org_id, user_id):
+    org = Organization(org_id)
+    user = org.get_user(user_id)
+    user.generate_otp_secret()
+    return utils.jsonify({
+        'id': user.id,
+        'organization': org.id,
+        'organization_name': org.name,
+        'name': user.name,
+        'type': user.type,
+        'otp_secret': user.otp_secret,
+    })
+
+# TODO
 @app_server.app.route('/user/<org_id>/<user_id>/otp_secret',
     methods=['DELETE'])
 @app_server.auth
