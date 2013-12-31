@@ -30,12 +30,16 @@ def status_get():
         app_server.load_public_ip()
 
     return utils.jsonify({
-        'orgs_available': orgs_count,
-        'orgs_total': orgs_count,
+        'org_count': orgs_count,
         'users_online': clients_count,
-        'users_total': users_count,
+        'user_count': users_count,
         'servers_online': servers_online_count,
-        'servers_total': servers_count,
+        'server_count': servers_count,
         'server_version': __version__,
         'public_ip': app_server.public_ip,
+
+        'orgs_available': orgs_count, # TODO
+        'orgs_total': orgs_count, # TODO
+        'users_total': users_count, # TODO
+        'servers_total': servers_count, # TODO
     })
