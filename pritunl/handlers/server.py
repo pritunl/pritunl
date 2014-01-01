@@ -43,7 +43,7 @@ def server_get():
         servers_dict[name_id] = {
             'id': server.id,
             'name': server.name,
-            'status': 'online' if server.status else 'offline',
+            'status': server.status,
             'uptime': server.uptime,
             'users_online': len(server.get_clients()),
             'users_total': server.user_count, # TODO
