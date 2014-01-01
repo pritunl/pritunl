@@ -230,7 +230,7 @@ def server_put_post(server_id=None):
     return utils.jsonify({
         'id': server.id,
         'name': server.name,
-        'status': 'online' if server.status else 'offline',
+        'status': server.status,
         'uptime': server.uptime,
         'users_online': len(server.get_clients()),
         'users_total': server.user_count,
@@ -319,7 +319,7 @@ def server_operation_put(server_id, operation):
     return utils.jsonify({
         'id': server.id,
         'name': server.name,
-        'status': 'online' if server.status else 'offline',
+        'status': server.status,
         'uptime': server.uptime,
         'users_online': len(server.get_clients()),
         'users_total': server.user_count,
