@@ -196,8 +196,8 @@ define([
       serverStatus = demoData.servers[serverId].status || 'offline';
       servers.push(_.extend({
         status: serverStatus,
-        uptime: serverStatus === 'online' ? 109800 : null,
-        users_online: serverStatus === 'online' && userCount ? 1 : 0,
+        uptime: serverStatus ? 109800 : null,
+        users_online: serverStatus && userCount ? 1 : 0,
         users_total: userCount,
         org_count: demoData.servers[serverId].orgs.length
       }, demoData.servers[serverId]));
@@ -292,17 +292,17 @@ define([
 
   var serverOperationPut = function(request, serverId, operation) {
     if (operation === 'start') {
-      demoData.servers[serverId].status = 'online';
+      demoData.servers[serverId].status = true;
       demoData.servers[serverId].output = demoData.serverOutput.online;
       logEntry('Started server "' + demoData.servers[serverId].name + '".');
     }
     else if (operation === 'stop') {
-      demoData.servers[serverId].status = 'offline';
+      demoData.servers[serverId].status = false;
       demoData.servers[serverId].output += demoData.serverOutput.offline;
       logEntry('Stopped server "' + demoData.servers[serverId].name + '".');
     }
     else {
-      demoData.servers[serverId].status = 'online';
+      demoData.servers[serverId].status = true;
       demoData.servers[serverId].output += demoData.serverOutput.offline;
       demoData.servers[serverId].output += demoData.serverOutput.online;
       logEntry('Restarted server "' + demoData.servers[serverId].name + '".');
@@ -348,7 +348,7 @@ define([
 
     for (serverId in demoData.servers) {
       serversCount += 1;
-      if (demoData.servers[serverId].status === 'online') {
+      if (demoData.servers[serverId].status) {
         serversOnlineCount += 1;
       }
     }

@@ -102,7 +102,7 @@ define([], function() {
       port: '16070',
       protocol: 'udp',
       public_address: '8.8.8.8',
-      status: 'online'
+      status: true
     },
     '8159a073832f4bc481a1de9676326a9e': {
       id: '8159a073832f4bc481a1de9676326a9e',
@@ -121,7 +121,7 @@ define([], function() {
       port: '9430',
       protocol: 'udp',
       public_address: '8.8.8.8',
-      status: 'online'
+      status: true
     }
   };
 
