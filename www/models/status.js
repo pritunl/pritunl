@@ -6,12 +6,13 @@ define([
   'use strict';
   var StatusModel = Backbone.Model.extend({
     defaults: {
-      'orgs_available': null,
-      'orgs_total': null,
+      'org_count': null,
       'users_online': null,
-      'users_total': null,
+      'user_count': null,
       'servers_online': null,
-      'servers_total': null
+      'server_count': null,
+      'server_version': null,
+      'public_ip': null
     },
     url: function() {
       return '/status';

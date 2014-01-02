@@ -41,34 +41,22 @@ define([
           var num;
           var totalNum;
 
-          num = this.model.get('orgs_available');
-          totalNum = this.model.get('orgs_total');
-          if (totalNum === 0) {
+          num = this.model.get('org_count');
+          if (num === 0) {
             num = '-';
-            totalNum = '-';
             this.$('.orgs-status .status-num').removeClass(
               'error warning success');
             this.$('.orgs-status .status-num').addClass('none');
-          }
-          else if (num === 0) {
-            this.$('.orgs-status .status-num').removeClass(
-              'none warning success');
-            this.$('.orgs-status .status-num').addClass('error');
-          }
-          else if (num < totalNum) {
-            this.$('.orgs-status .status-num').removeClass(
-              'none error success');
-            this.$('.orgs-status .status-num').addClass('warning');
           }
           else {
             this.$('.orgs-status .status-num').removeClass(
               'none error warning');
             this.$('.orgs-status .status-num').addClass('success');
           }
-          this.$('.orgs-status .status-num').text(num + '/' + totalNum);
+          this.$('.orgs-status .status-num').text(num + '/' + num);
 
           num = this.model.get('users_online');
-          totalNum = this.model.get('users_total');
+          totalNum = this.model.get('user_count');
           if (num === 0) {
             if (totalNum === 0) {
               num = '-';
@@ -86,7 +74,7 @@ define([
           this.$('.users-status .status-num').text(num + '/' + totalNum);
 
           num = this.model.get('servers_online');
-          totalNum = this.model.get('servers_total');
+          totalNum = this.model.get('server_count');
           if (totalNum === 0) {
             num = '-';
             totalNum = '-';

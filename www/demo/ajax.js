@@ -354,12 +354,11 @@ define([
     }
 
     request.response({
-      orgs_available: orgsCount,
-      orgs_total: orgsCount,
+      org_count: orgsCount,
       users_online: usersCount ? 1 : 0,
-      users_total: usersCount,
+      user_count: usersCount,
       servers_online: serversOnlineCount,
-      servers_total: serversCount,
+      server_count: serversCount,
       server_version: null,
       public_ip: '8.8.8.8'
     });
