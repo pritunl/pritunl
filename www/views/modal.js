@@ -11,7 +11,11 @@ define([
     modalTemplate: _.template(modalTemplate),
     events: {
       'click .ok': 'onOk',
-      'hidden.bs.modal .modal': 'onRemove'
+      'hidden.bs.modal .modal': 'onRemove',
+      'keyup input': 'onInputChange',
+      'paste input': 'onInputChange',
+      'input input': 'onInputChange',
+      'propertychange input': 'onInputChange'
     },
     title: '',
     cancelText: 'Cancel',
@@ -33,6 +37,9 @@ define([
       this.$('.modal').modal();
       this.$('[data-toggle="tooltip"]').tooltip();
       $('body').append(this.el);
+      if (this.inputMatch) {
+        this.$('.ok').attr('disabled', 'disabled');
+      }
       return this;
     },
     postRender: function() {
@@ -128,6 +135,17 @@ define([
     },
     onRemove: function() {
       this.destroy();
+    },
+    onInputChange: function(evt) {
+      if (!this.inputMatch) {
+        return;
+      }
+      if (this.inputMatchText === $(evt.target).val()) {
+        this.$('.ok').removeAttr('disabled');
+      }
+      else {
+        this.$('.ok').attr('disabled', 'disabled');
+      }
     }
   });
 
