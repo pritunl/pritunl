@@ -12,6 +12,7 @@ define([
     template: _.template(modalDeleteOrgTemplate),
     title: 'Delete Organization',
     okText: 'Delete',
+    inputMatch: true,
     initialize: function() {
       ModalDeleteOrgView.__super__.initialize.call(this);
       var alertView = new AlertView({
@@ -23,16 +24,12 @@ define([
       });
       this.addView(alertView);
       this.$('.modal-body').prepend(alertView.render().el);
+      this.inputMatchText = this.model.get('name');
     },
     body: function() {
       return this.template();
     },
     onOk: function() {
-      if (this.$('input').val() !== this.model.get('name')) {
-        this.setAlert('info', 'Name entered doesn\'t match the name ' +
-          'of the organization being deleted.', '.form-group');
-        return;
-      }
       this.setLoading('Deleting organization...');
       this.model.destroy({
         success: function() {

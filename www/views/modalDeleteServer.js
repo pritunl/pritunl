@@ -12,6 +12,7 @@ define([
     template: _.template(modalDeleteServerTemplate),
     title: 'Delete Server',
     okText: 'Delete',
+    inputMatch: true,
     initialize: function() {
       ModalDeleteServerView.__super__.initialize.call(this);
       var alertView = new AlertView({
@@ -21,16 +22,12 @@ define([
       });
       this.addView(alertView);
       this.$('.modal-body').prepend(alertView.render().el);
+      this.inputMatchText = this.model.get('name');
     },
     body: function() {
       return this.template();
     },
     onOk: function() {
-      if (this.$('input').val() !== this.model.get('name')) {
-        this.setAlert('info', 'Name entered doesn\'t match the name ' +
-          'of the server being deleted.', '.form-group');
-        return;
-      }
       this.setLoading('Deleting server...');
       this.model.destroy({
         success: function() {
