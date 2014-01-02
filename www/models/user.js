@@ -26,7 +26,7 @@ define([
       return url;
     },
     destroyOtpSecret: function(options) {
-      this.destroy(_.extend({
+      this.save(null, _.extend({
         url: this.url() + '/otp_secret'
       }, options));
     }
