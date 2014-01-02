@@ -193,7 +193,7 @@ define([
         }
       }
 
-      serverStatus = demoData.servers[serverId].status || 'offline';
+      serverStatus = demoData.servers[serverId].status;
       servers.push(_.extend({
         status: serverStatus,
         uptime: serverStatus ? 109800 : null,
@@ -221,7 +221,7 @@ define([
       otp_auth: request.data.otp_auth,
       lzo_compression: request.data.lzo_compression,
       debug: request.data.debug,
-      status: 'offline',
+      status: false,
       orgs: [],
       output: ''
     };
