@@ -11,7 +11,7 @@ define([
       'status': null,
       'uptime': null,
       'users_online': null,
-      'users_total': null,
+      'user_count': null,
       'network': null,
       'interface': null,
       'port': null,

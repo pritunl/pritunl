@@ -54,12 +54,12 @@ define([
       else {
         this.$('.server-uptime .status-text').text('-');
       }
-      if (this.model.get('users_total') === 0) {
+      if (this.model.get('user_count') === 0) {
         this.$('.server-users .status-num').text('-/-');
       }
       else {
         this.$('.server-users .status-num').text(this.model.get(
-          'users_online') + '/' + this.model.get('users_total'));
+          'users_online') + '/' + this.model.get('user_count'));
       }
       this.$('.server-network .status-text').text(
         this.model.get('network'));

@@ -198,7 +198,7 @@ define([
         status: serverStatus,
         uptime: serverStatus ? 109800 : null,
         users_online: serverStatus && userCount ? 1 : 0,
-        users_total: userCount,
+        user_count: userCount,
         org_count: demoData.servers[serverId].orgs.length
       }, demoData.servers[serverId]));
     }

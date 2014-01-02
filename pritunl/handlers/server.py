@@ -46,7 +46,6 @@ def server_get():
             'status': server.status,
             'uptime': server.uptime,
             'users_online': len(server.get_clients()),
-            'users_total': server.user_count, # TODO
             'user_count': server.user_count,
             'network': server.network,
             'interface': server.interface,
@@ -233,7 +232,6 @@ def server_put_post(server_id=None):
         'status': server.status,
         'uptime': server.uptime,
         'users_online': len(server.get_clients()),
-        'users_total': server.user_count,
         'user_count': server.user_count,
         'network': server.network,
         'interface': server.interface,
@@ -322,7 +320,6 @@ def server_operation_put(server_id, operation):
         'status': server.status,
         'uptime': server.uptime,
         'users_online': len(server.get_clients()),
-        'users_total': server.user_count,
         'user_count': server.user_count,
         'network': server.network,
         'interface': server.interface,
