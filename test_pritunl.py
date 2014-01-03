@@ -12,8 +12,8 @@ HEADERS = {
 }
 USERNAME = 'admin'
 PASSWORD = 'admin'
-TEST_USER_NAME = 'unittest'
-TEST_ORG_NAME = 'unittest'
+TEST_USER_NAME = 'unittest_user'
+TEST_ORG_NAME = 'unittest_org'
 TEMP_DATABSE_PATH = 'pritunl_test.db'
 AUTH_HANDLERS = [
     ('GET', '/export'),
@@ -100,18 +100,18 @@ class SessionTestCast(unittest.TestCase):
             self.assertEqual(response.status_code, 200)
             data = response.json()
             for org in data:
-                if org['name'] == TEST_USER_NAME:
+                if org['name'] == TEST_ORG_NAME:
                     self.org_id = org['id']
 
         if not self.org_id:
             response = self.session.post('/organization', json={
-                'name': TEST_USER_NAME,
+                'name': TEST_ORG_NAME,
             })
             self.assertEqual(response.status_code, 200)
             data = response.json()
             self.assertIn('id', data)
             self.assertIn('name', data)
-            self.assertEqual(data['name'], TEST_USER_NAME)
+            self.assertEqual(data['name'], TEST_ORG_NAME)
             self.org_id = data['id']
 
         if not self.user_id:
@@ -293,15 +293,43 @@ class Key(SessionTestCast):
         content_type = response.headers['content-type']
         self.assertEqual(content_type, 'text/html; charset=utf-8')
 
-        self.assertIn("text: 'otpauth://totp/", response.text)
+
+        start_index = response.text.find('<h4 class="key-title">') + 22
+        end_index = response.text.find('</h2>', start_index)
+        self.assertNotEqual(start_index, -1)
+        self.assertNotEqual(end_index, -1)
+        key_title = response.text[start_index:end_index]
+        self.assertEqual('%s - %s' % (TEST_ORG_NAME, TEST_USER_NAME),
+            key_title)
+
+
+        start_index = response.text.find(
+            '<input id="key" type="text" readonly value="') + 44
+        end_index = response.text.find('">', start_index)
+        self.assertNotEqual(start_index, -1)
+        self.assertNotEqual(end_index, -1)
+        otp_secret = response.text[start_index:end_index]
+
+        exp = r'^[A-Z0-9]+$'
+        self.assertRegexpMatches(otp_secret, exp)
+
+
+        start_index = response.text.find('<a title="Download Key" href="') + 30
+        end_index = response.text.find('">', start_index)
+        self.assertNotEqual(start_index, -1)
+        self.assertNotEqual(end_index, -1)
+        key_url = response.text[start_index:end_index]
+        self.assertEqual(key_url, data['key_url'])
+
+
         start_index = response.text.find("text: 'otpauth://totp/") + 7
         end_index = response.text.find("',", start_index)
         self.assertNotEqual(start_index, -1)
         self.assertNotEqual(end_index, -1)
         otp_key = response.text[start_index:end_index]
 
-        exp = r'^otpauth://totp/%s@%s\?secret\=[A-Z0-9]+$' % (
-            TEST_USER_NAME, TEST_ORG_NAME)
+        exp = r'^otpauth://totp/%s@%s\?secret\=%s$' % (
+            TEST_USER_NAME, TEST_ORG_NAME, otp_secret)
         self.assertRegexpMatches(otp_key, exp)
 
 
