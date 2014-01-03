@@ -39,7 +39,7 @@ AUTH_HANDLERS = [
     ('POST', '/user/0'),
     ('PUT', '/user/0/0'),
     ('DELETE', '/user/0/0'),
-    ('DELETE', '/user/0/0/otp_secret'),
+    ('PUT', '/user/0/0/otp_secret'),
 ]
 
 _request = requests.api.request
