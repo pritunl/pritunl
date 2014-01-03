@@ -133,6 +133,11 @@ class SessionTestCast(unittest.TestCase):
             self.assertEqual(data['name'], TEST_USER_NAME)
             self.user_id = data['id']
 
+    def _delete_test_data(self):
+        response = self.session.delete('/organization/%s' % self.org_id)
+        self.assertEqual(response.status_code, 200)
+
+
 class Database(unittest.TestCase):
     def _test_db(self, db):
         db.set('column_family', 'row1', 'column1', 'value1')
