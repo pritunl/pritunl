@@ -338,7 +338,7 @@ class Key(SessionTestCast):
 
 
 class Log(SessionTestCast):
-    def test_event_get(self):
+    def test_log_get(self):
         response = self.session.get('/log')
         self.assertEqual(response.status_code, 200)
 
@@ -348,6 +348,61 @@ class Log(SessionTestCast):
             self.assertIn('id', entry)
             self.assertIn('time', entry)
             self.assertIn('message', entry)
+
+
+class Org(SessionTestCast):
+    def test_org_post_put_get_delete(self):
+        response = self.session.post('/organization', json={
+            'name': TEST_ORG_NAME + '2'
+        })
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertIn('id', data)
+        self.assertIn('name', data)
+        self.assertEqual(data['name'], TEST_ORG_NAME + '2')
+        org_id = data['id']
+
+
+        response = self.session.put('/organization/%s' % org_id, json={
+            'name': TEST_ORG_NAME + '3'
+        })
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertIn('id', data)
+        self.assertIn('name', data)
+        self.assertEqual(data['name'], TEST_ORG_NAME + '3')
+
+
+        response = self.session.get('/organization')
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertNotEqual(len(data), 0)
+        test_org_found = False
+        for org in data:
+            self.assertIn('id', org)
+            self.assertIn('name', org)
+            if org['name'] == TEST_ORG_NAME + '3':
+                test_org_found = True
+                self.assertEqual(org['id'], org_id)
+        self.assertTrue(test_org_found)
+
+
+        response = self.session.delete('/organization/%s' % org_id)
+        self.assertEqual(response.status_code, 200)
+
+
+        response = self.session.get('/organization')
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertNotEqual(len(data), 0)
+        for org in data:
+            self.assertIn('id', org)
+            self.assertIn('name', org)
+            self.assertNotEqual(org['name'], TEST_ORG_NAME + '3')
 
 
 if __name__ == '__main__':
