@@ -337,5 +337,18 @@ class Key(SessionTestCast):
         self.assertEqual(response.status_code, 404)
 
 
+class Log(SessionTestCast):
+    def test_event_get(self):
+        response = self.session.get('/log')
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertNotEqual(len(data), 0)
+        for entry in data:
+            self.assertIn('id', entry)
+            self.assertIn('time', entry)
+            self.assertIn('message', entry)
+
+
 if __name__ == '__main__':
     unittest.main()
