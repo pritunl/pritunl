@@ -255,6 +255,59 @@ class Key(SessionTestCast):
         exp = r'^inline; filename="%s.tar"$' % TEST_USER_NAME
         self.assertRegexpMatches(content_disposition, exp)
 
+    def test_user_key_link_get(self):
+        response = self.session.get('/key/%s/%s' % (
+            self.org_id, self.user_id))
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertIn('id', data)
+        self.assertIn('key_url', data)
+        self.assertIn('otp_url', data)
+
+        exp = r'^/key/[a-z0-9]+.tar$'
+        self.assertRegexpMatches(data['key_url'], exp)
+
+        exp = r'^/key/[a-z0-9]+.html$'
+        self.assertRegexpMatches(data['otp_url'], exp)
+
+
+        response = self.session.get(data['key_url'])
+        self.assertEqual(response.status_code, 200)
+
+        content_type = response.headers['content-type']
+        self.assertEqual(content_type, 'application/x-tar')
+
+        content_disposition = response.headers['content-disposition']
+        exp = r'^inline; filename="%s.tar"$' % TEST_USER_NAME
+        self.assertRegexpMatches(content_disposition, exp)
+
+
+        response = self.session.get(data['key_url'])
+        self.assertEqual(response.status_code, 404)
+
+
+        response = self.session.get(data['otp_url'])
+        self.assertEqual(response.status_code, 200)
+
+        content_type = response.headers['content-type']
+        self.assertEqual(content_type, 'text/html; charset=utf-8')
+
+        self.assertIn("text: 'otpauth://totp/", response.text)
+        start_index = response.text.find("text: 'otpauth://totp/") + 7
+        end_index = response.text.find("',", start_index)
+        self.assertNotEqual(start_index, -1)
+        self.assertNotEqual(end_index, -1)
+        otp_key = response.text[start_index:end_index]
+
+        exp = r'^otpauth://totp/%s@%s\?secret\=[A-Z0-9]+$' % (
+            TEST_USER_NAME, TEST_ORG_NAME)
+        self.assertRegexpMatches(otp_key, exp)
+
+
+        response = self.session.get(data['otp_url'])
+        self.assertEqual(response.status_code, 404)
+
 
 if __name__ == '__main__':
     unittest.main()
