@@ -12,6 +12,7 @@ HEADERS = {
 }
 USERNAME = 'admin'
 PASSWORD = 'admin'
+TEST_PASSWORD = 'unittest'
 TEST_USER_NAME = 'unittest_user'
 TEST_ORG_NAME = 'unittest_org'
 TEMP_DATABSE_PATH = 'pritunl_test.db'
@@ -408,6 +409,25 @@ class Org(SessionTestCast):
             self.assertIn('id', org)
             self.assertIn('name', org)
             self.assertNotEqual(org['name'], TEST_ORG_NAME + '3')
+
+
+class Password(SessionTestCast):
+    def test_password_post(self):
+        response = self.session.put('/password', json={
+            'password': TEST_PASSWORD,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        response = self.session.post('/auth/token', json={
+            'username': USERNAME,
+            'password': TEST_PASSWORD,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        response = self.session.put('/password', json={
+            'password': PASSWORD,
+        })
+        self.assertEqual(response.status_code, 200)
 
 
 if __name__ == '__main__':
