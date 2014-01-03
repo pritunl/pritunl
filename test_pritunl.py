@@ -230,16 +230,16 @@ class Event(SessionTestCast):
         response = self.session.get('/event')
         self.assertEqual(response.status_code, 200)
 
-        events = response.json()
-        self.assertEqual(len(events), 1)
-        self.assertIn('id', events[0])
-        self.assertIn('type', events[0])
-        self.assertIn('time', events[0])
-        self.assertIn('resource_id', events[0])
-        self.assertIsInstance(events[0]['id'], basestring)
-        self.assertEqual(events[0]['type'], 'time')
-        self.assertIsInstance(events[0]['time'], int)
-        self.assertEqual(events[0]['resource_id'], None)
+        data = response.json()
+        self.assertEqual(len(data), 1)
+        self.assertIn('id', data[0])
+        self.assertIn('type', data[0])
+        self.assertIn('time', data[0])
+        self.assertIn('resource_id', data[0])
+        self.assertIsInstance(data[0]['id'], basestring)
+        self.assertEqual(data[0]['type'], 'time')
+        self.assertIsInstance(data[0]['time'], int)
+        self.assertEqual(data[0]['resource_id'], None)
 
 
 class Key(SessionTestCast):
