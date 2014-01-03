@@ -12,6 +12,8 @@ HEADERS = {
 }
 USERNAME = 'admin'
 PASSWORD = 'admin'
+TEST_USER_NAME = 'unittest'
+TEST_ORG_NAME = 'unittest'
 TEMP_DATABSE_PATH = 'pritunl_test.db'
 AUTH_HANDLERS = [
     ('GET', '/export'),
@@ -57,11 +59,10 @@ requests.api.request = request
 class Session:
     def __init__(self):
         self._session = requests.Session()
-        data = {
+        self.response = self.post('/auth', json={
             'username': USERNAME,
             'password': PASSWORD,
-        }
-        self.response = self.post('/auth', json=data)
+        })
 
     def _request(self, method, endpoint, **kwargs):
         headers = {
@@ -88,8 +89,49 @@ class Session:
 
 class SessionTestCast(unittest.TestCase):
     def setUp(self):
+        self.org_id = None
+        self.user_id = None
         self.session = Session()
+        self._create_test_data()
 
+    def _create_test_data(self):
+        if not self.org_id:
+            response = self.session.get('/organization')
+            self.assertEqual(response.status_code, 200)
+            data = response.json()
+            for org in data:
+                if org['name'] == TEST_USER_NAME:
+                    self.org_id = org['id']
+
+        if not self.org_id:
+            response = self.session.post('/organization', json={
+                'name': TEST_USER_NAME,
+            })
+            self.assertEqual(response.status_code, 200)
+            data = response.json()
+            self.assertIn('id', data)
+            self.assertIn('name', data)
+            self.assertEqual(data['name'], TEST_USER_NAME)
+            self.org_id = data['id']
+
+        if not self.user_id:
+            response = self.session.get('/user/%s' % self.org_id)
+            self.assertEqual(response.status_code, 200)
+            data = response.json()
+            for user in data:
+                if user['name'] == TEST_USER_NAME:
+                    self.user_id = user['id']
+
+        if not self.user_id:
+            response = self.session.post('/user/%s' % self.org_id, json={
+                'name': TEST_USER_NAME,
+            })
+            self.assertEqual(response.status_code, 200)
+            data = response.json()
+            self.assertIn('id', data)
+            self.assertIn('name', data)
+            self.assertEqual(data['name'], TEST_USER_NAME)
+            self.user_id = data['id']
 
 class Database(unittest.TestCase):
     def _test_db(self, db):
@@ -172,7 +214,6 @@ class Data(SessionTestCast):
     def test_export_get(self):
         for endpoint in ['/export', '/export/pritunl.tar']:
             response = self.session.get(endpoint)
-
             self.assertEqual(response.status_code, 200)
 
             content_type = response.headers['content-type']
@@ -199,6 +240,20 @@ class Event(SessionTestCast):
         self.assertEqual(events[0]['type'], 'time')
         self.assertIsInstance(events[0]['time'], int)
         self.assertEqual(events[0]['resource_id'], None)
+
+
+class Key(SessionTestCast):
+    def test_user_key_archive_get(self):
+        response = self.session.get('/key/%s/%s.tar' % (
+            self.org_id, self.user_id))
+        self.assertEqual(response.status_code, 200)
+
+        content_type = response.headers['content-type']
+        self.assertEqual(content_type, 'application/x-tar')
+
+        content_disposition = response.headers['content-disposition']
+        exp = r'^inline; filename="%s.tar"$' % TEST_USER_NAME
+        self.assertRegexpMatches(content_disposition, exp)
 
 
 if __name__ == '__main__':
