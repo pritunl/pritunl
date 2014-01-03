@@ -359,7 +359,7 @@ class Log(SessionTestCast):
 class Org(SessionTestCast):
     def test_org_post_put_get_delete(self):
         response = self.session.post('/organization', json={
-            'name': TEST_ORG_NAME + '2'
+            'name': TEST_ORG_NAME + '2',
         })
         self.assertEqual(response.status_code, 200)
 
@@ -371,7 +371,7 @@ class Org(SessionTestCast):
 
 
         response = self.session.put('/organization/%s' % org_id, json={
-            'name': TEST_ORG_NAME + '3'
+            'name': TEST_ORG_NAME + '3',
         })
         self.assertEqual(response.status_code, 200)
 
