@@ -9,10 +9,10 @@ logger = logging.getLogger(APP_NAME)
 
 class LogEntry(DatabaseObject):
     column_family = 'log_entries'
-    str_columns = ['type', 'message']
-    int_columns = ['time']
-    cached_columns = ['type', 'message', 'time']
-    required_columns = ['type', 'message', 'time']
+    str_columns = {'type', 'message'}
+    int_columns = {'time'}
+    cached_columns = {'type', 'message', 'time'}
+    required_columns = {'type', 'message', 'time'}
 
     def __init__(self, id=None, type=None, message=None):
         DatabaseObject.__init__(self)

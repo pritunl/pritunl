@@ -21,12 +21,12 @@ _process = {}
 _start_time = {}
 
 class Server(Config):
-    str_options = ['name', 'network', 'interface', 'protocol',
+    str_options = {'name', 'network', 'interface', 'protocol',
         'local_network', 'public_address', 'primary_organization',
-        'primary_user', 'organizations']
-    bool_options = ['otp_auth', 'lzo_compression', 'debug']
-    int_options = ['port']
-    list_options = ['organizations']
+        'primary_user', 'organizations'}
+    bool_options = {'otp_auth', 'lzo_compression', 'debug'}
+    int_options = {'port'}
+    list_options = {'organizations'}
 
     def __init__(self, id=None, name=None, network=None, interface=None,
             port=None, protocol=None, local_network=None, public_address=None,

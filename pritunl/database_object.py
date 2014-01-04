@@ -3,23 +3,23 @@ from pritunl import app_server
 import logging
 
 logger = logging.getLogger(APP_NAME)
-_RESERVED_ATTRIBUTES = ['column_family', 'bool_columns', 'int_columns',
+_RESERVED_ATTRIBUTES = {'column_family', 'bool_columns', 'int_columns',
     'float_columns', 'str_columns', 'cached_columns', 'required_columns',
-    'all_columns', 'id']
+    'all_columns', 'id'}
 
 class DatabaseObject:
     db = app_server.app_db
     column_family = 'column_family'
-    bool_columns = []
-    int_columns = []
-    float_columns = []
-    str_columns = []
-    cached_columns = []
-    required_columns = []
+    bool_columns = set()
+    int_columns = set()
+    float_columns = set()
+    str_columns = set()
+    cached_columns = set()
+    required_columns = set()
 
     def __init__(self):
-        self.all_columns = self.bool_columns + self.int_columns + \
-            self.float_columns + self.str_columns
+        self.all_columns = self.bool_columns | self.int_columns | \
+            self.float_columns | self.str_columns
         self.id = None
 
     def __setattr__(self, name, value):

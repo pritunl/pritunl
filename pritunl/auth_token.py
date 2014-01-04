@@ -10,9 +10,9 @@ logger = logging.getLogger(APP_NAME)
 class AuthToken(DatabaseObject):
     db = app_server.mem_db
     column_family = 'auth_tokens'
-    int_columns = ['time']
-    cached_columns = ['time']
-    required_columns = ['time']
+    int_columns = {'time'}
+    cached_columns = {'time'}
+    required_columns = {'time'}
 
     def __init__(self, id=None):
         DatabaseObject.__init__(self)

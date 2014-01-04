@@ -3,22 +3,22 @@ import os
 import logging
 
 logger = logging.getLogger(APP_NAME)
-_RESERVED_ATTRIBUTES = ['bool_options', 'int_options', 'float_options',
+_RESERVED_ATTRIBUTES = {'bool_options', 'int_options', 'float_options',
     'path_options', 'str_options', 'list_options', 'default_options',
-    'all_options']
+    'all_options'}
 
 class Config:
-    bool_options = []
-    int_options = []
-    float_options = []
-    path_options = []
-    str_options = []
-    list_options = []
+    bool_options = set()
+    int_options = set()
+    float_options = set()
+    path_options = set()
+    str_options = set()
+    list_options = set()
     default_options = {}
 
     def __init__(self, path=None):
-        self.all_options = self.bool_options + self.int_options + \
-            self.float_options + self.path_options + self.str_options
+        self.all_options = self.bool_options | self.int_options | \
+            self.float_options | self.path_options | self.str_options
         self._conf_path = path
         self._loaded = False
         self.set_state(SAVED)
@@ -66,9 +66,9 @@ class Config:
 
     def _decode_bool(self, value):
         value = value.lower()
-        if value in ['true', 't', 'yes', 'y']:
+        if value in {'true', 't', 'yes', 'y'}:
             return True
-        elif value in ['false', 'f', 'no', 'n']:
+        elif value in {'false', 'f', 'no', 'n'}:
             return False
         else:
             raise ValueError('Value is not boolean')

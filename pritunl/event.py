@@ -11,10 +11,10 @@ _last_db_clean = int(time.time())
 class Event(DatabaseObject):
     db = app_server.mem_db
     column_family = 'events'
-    str_columns = ['type', 'resource_id']
-    int_columns = ['time']
-    cached_columns = ['type', 'resource_id', 'time']
-    required_columns = ['type', 'resource_id', 'time']
+    str_columns = {'type', 'resource_id'}
+    int_columns = {'time'}
+    cached_columns = {'type', 'resource_id', 'time'}
+    required_columns = {'type', 'resource_id', 'time'}
 
     def __init__(self, id=None, type=None, resource_id=None):
         DatabaseObject.__init__(self)

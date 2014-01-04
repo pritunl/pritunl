@@ -10,7 +10,7 @@ import shutil
 import subprocess
 
 class Organization(Config):
-    str_options = ['name']
+    str_options = {'name'}
 
     def __init__(self, id=None, name=None):
         Config.__init__(self)
