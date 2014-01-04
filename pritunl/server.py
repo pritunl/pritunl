@@ -658,5 +658,5 @@ class Server(Config):
                             'server_id': server_id,
                         })
                     continue
-                servers.append(Server(server_id))
+                servers.append(server)
         return servers
