@@ -15,6 +15,7 @@ PASSWORD = 'admin'
 TEST_PASSWORD = 'unittest'
 TEST_USER_NAME = 'unittest_user'
 TEST_ORG_NAME = 'unittest_org'
+TEST_SERVER_NAME = 'unittest_server'
 TEMP_DATABSE_PATH = 'pritunl_test.db'
 AUTH_HANDLERS = [
     ('GET', '/export'),
@@ -428,6 +429,128 @@ class Password(SessionTestCast):
             'password': PASSWORD,
         })
         self.assertEqual(response.status_code, 200)
+
+
+class Server(SessionTestCast):
+    def test_server_post_put_get_delete(self):
+        response = self.session.post('/server', json={
+            'name': TEST_SERVER_NAME + '2',
+            'network': '10.254.254.0/24',
+            'interface': 'tun64',
+            'port': 12345,
+            'protocol': 'udp',
+            'local_network': None,
+            'public_address': '8.8.8.8',
+            'debug': True,
+            'otp_auth': False,
+            'lzo_compression': False,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertIn('id', data)
+        exp = r'^[a-z0-9]+$'
+        self.assertRegexpMatches(data['id'], exp)
+        self.assertIn('name', data)
+        self.assertEqual(data['name'], TEST_SERVER_NAME + '2')
+        self.assertIn('network', data)
+        self.assertEqual(data['network'], '10.254.254.0/24')
+        self.assertIn('interface', data)
+        self.assertEqual(data['interface'], 'tun64')
+        self.assertIn('port', data)
+        self.assertEqual(data['port'], 12345)
+        self.assertIn('protocol', data)
+        self.assertEqual(data['protocol'], 'udp')
+        self.assertIn('local_network', data)
+        self.assertIsNone(data['local_network'])
+        self.assertIn('public_address', data)
+        self.assertEqual(data['public_address'], '8.8.8.8')
+        self.assertIn('debug', data)
+        self.assertTrue(data['debug'])
+        self.assertIn('otp_auth', data)
+        self.assertFalse(data['otp_auth'])
+        self.assertIn('lzo_compression', data)
+        self.assertFalse(data['lzo_compression'])
+        server_id = data['id']
+
+
+        response = self.session.put('/server/%s' % server_id, json={
+            'name': TEST_SERVER_NAME + '3',
+        })
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertIn('id', data)
+        self.assertEqual(data['id'], server_id)
+        self.assertIn('name', data)
+        self.assertEqual(data['name'], TEST_SERVER_NAME + '3')
+        self.assertIn('network', data)
+        self.assertEqual(data['network'], '10.254.254.0/24')
+        self.assertIn('interface', data)
+        self.assertEqual(data['interface'], 'tun64')
+        self.assertIn('port', data)
+        self.assertEqual(data['port'], 12345)
+        self.assertIn('protocol', data)
+        self.assertEqual(data['protocol'], 'udp')
+        self.assertIn('local_network', data)
+        self.assertIsNone(data['local_network'])
+        self.assertIn('public_address', data)
+        self.assertEqual(data['public_address'], '8.8.8.8')
+        self.assertIn('debug', data)
+        self.assertTrue(data['debug'])
+        self.assertIn('otp_auth', data)
+        self.assertFalse(data['otp_auth'])
+        self.assertIn('lzo_compression', data)
+        self.assertFalse(data['lzo_compression'])
+
+
+        response = self.session.get('/server')
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertNotEqual(len(data), 0)
+        test_server_found = False
+        for server in data:
+            self.assertIn('id', server)
+            self.assertIn('name', server)
+            self.assertIn('network', server)
+            self.assertIn('interface', server)
+            self.assertIn('port', server)
+            self.assertIn('protocol', server)
+            self.assertIn('local_network', server)
+            self.assertIn('public_address', server)
+            self.assertIn('debug', server)
+            self.assertIn('otp_auth', server)
+            self.assertIn('lzo_compression', server)
+
+            if server['name'] == TEST_SERVER_NAME + '3':
+                test_server_found = True
+                self.assertEqual(server['id'], server_id)
+                self.assertEqual(server['network'], '10.254.254.0/24')
+                self.assertEqual(server['interface'], 'tun64')
+                self.assertEqual(server['port'], 12345)
+                self.assertEqual(server['protocol'], 'udp')
+                self.assertIsNone(server['local_network'])
+                self.assertEqual(server['public_address'], '8.8.8.8')
+                self.assertTrue(server['debug'])
+                self.assertFalse(server['otp_auth'])
+                self.assertFalse(server['lzo_compression'])
+        self.assertTrue(test_server_found)
+
+
+        response = self.session.delete('/server/%s' % server_id)
+        self.assertEqual(response.status_code, 200)
+
+
+        response = self.session.get('/server')
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertNotEqual(len(data), 0)
+        for server in data:
+            self.assertIn('id', server)
+            self.assertIn('name', server)
+            self.assertNotEqual(server['name'], TEST_SERVER_NAME + '3')
 
 
 if __name__ == '__main__':
