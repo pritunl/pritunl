@@ -156,6 +156,9 @@ subjectKeyIdentifier = hash
 authorityKeyIdentifier = keyid:always
 """
 
+MISSING_PARAMS = 'missing_params'
+MISSING_PARAMS_MSG = 'Missing required parameters.'
+
 AUTH_NOT_VALID = 'auth_not_valid'
 AUTH_NOT_VALID_MSG = 'Username or password is not valid.'
 
