@@ -567,7 +567,9 @@ class Server(Config):
         _threads[self.id] = thread
         _start_time[self.id] = int(time.time()) - 1
         _output[self.id] = ''
-        _events[self.id].wait()
+        event = _events[self.id].wait(THREAD_EVENT_TIMEOUT)
+        if not event:
+            raise ValueError('Server thread failed to return start event.')
         _events[self.id].clear()
         if not silent:
             Event(type=SERVERS_UPDATED)
@@ -580,7 +582,9 @@ class Server(Config):
             'server_id': self.id,
         })
         _process[self.id].send_signal(signal.SIGINT)
-        _events[self.id].wait()
+        event = _events[self.id].wait(THREAD_EVENT_TIMEOUT)
+        if not event:
+            raise ValueError('Server thread failed to return stop event.')
         if not silent:
             Event(type=SERVERS_UPDATED)
             LogEntry(message='Stopped server "%s".' % self.name)
