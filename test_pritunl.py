@@ -17,6 +17,7 @@ TEST_USER_NAME = 'unittest_user'
 TEST_ORG_NAME = 'unittest_org'
 TEST_SERVER_NAME = 'unittest_server'
 TEMP_DATABSE_PATH = 'pritunl_test.db'
+UUID_RE = r'^[a-z0-9]+$'
 AUTH_HANDLERS = [
     ('GET', '/export'),
     ('GET', '/event'),
@@ -93,6 +94,7 @@ class SessionTestCast(unittest.TestCase):
     def setUp(self):
         self.org_id = None
         self.user_id = None
+        self.server_id = None
         self.session = Session()
         self._create_test_data()
 
@@ -134,6 +136,25 @@ class SessionTestCast(unittest.TestCase):
             self.assertIn('name', data)
             self.assertEqual(data['name'], TEST_USER_NAME)
             self.user_id = data['id']
+
+        if not self.server_id:
+            response = self.session.get('/server')
+            self.assertEqual(response.status_code, 200)
+            data = response.json()
+            for server in data:
+                if server['name'] == TEST_SERVER_NAME:
+                    self.server_id = server['id']
+
+        if not self.server_id:
+            response = self.session.post('/server', json={
+                'name': TEST_SERVER_NAME,
+            })
+            self.assertEqual(response.status_code, 200)
+            data = response.json()
+            self.assertIn('id', data)
+            self.assertIn('name', data)
+            self.assertEqual(data['name'], TEST_SERVER_NAME)
+            self.server_id = data['id']
 
     def _delete_test_data(self):
         response = self.session.delete('/organization/%s' % self.org_id)
@@ -316,7 +337,6 @@ class Key(SessionTestCast):
         self.assertNotEqual(start_index, -1)
         self.assertNotEqual(end_index, -1)
         otp_secret = response.text[start_index:end_index]
-
         exp = r'^[A-Z0-9]+$'
         self.assertRegexpMatches(otp_secret, exp)
 
@@ -353,6 +373,7 @@ class Log(SessionTestCast):
         self.assertNotEqual(len(data), 0)
         for entry in data:
             self.assertIn('id', entry)
+            self.assertRegexpMatches(entry['id'], UUID_RE)
             self.assertIn('time', entry)
             self.assertIn('message', entry)
 
@@ -366,6 +387,7 @@ class Org(SessionTestCast):
 
         data = response.json()
         self.assertIn('id', data)
+        self.assertRegexpMatches(data['id'], UUID_RE)
         self.assertIn('name', data)
         self.assertEqual(data['name'], TEST_ORG_NAME + '2')
         org_id = data['id']
@@ -390,6 +412,7 @@ class Org(SessionTestCast):
         test_org_found = False
         for org in data:
             self.assertIn('id', org)
+            self.assertRegexpMatches(org['id'], UUID_RE)
             self.assertIn('name', org)
             if org['name'] == TEST_ORG_NAME + '3':
                 test_org_found = True
@@ -449,8 +472,7 @@ class Server(SessionTestCast):
 
         data = response.json()
         self.assertIn('id', data)
-        exp = r'^[a-z0-9]+$'
-        self.assertRegexpMatches(data['id'], exp)
+        self.assertRegexpMatches(data['id'], UUID_RE)
         self.assertIn('name', data)
         self.assertEqual(data['name'], TEST_SERVER_NAME + '2')
         self.assertIn('network', data)
@@ -512,6 +534,7 @@ class Server(SessionTestCast):
         test_server_found = False
         for server in data:
             self.assertIn('id', server)
+            self.assertRegexpMatches(server['id'], UUID_RE)
             self.assertIn('name', server)
             self.assertIn('network', server)
             self.assertIn('interface', server)
@@ -551,6 +574,42 @@ class Server(SessionTestCast):
             self.assertIn('id', server)
             self.assertIn('name', server)
             self.assertNotEqual(server['name'], TEST_SERVER_NAME + '3')
+
+    def test_server_org_put_get_delete(self):
+        response = self.session.put('/server/%s/organization/%s' % (
+            self.server_id, self.org_id))
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertIn('id', data)
+        self.assertRegexpMatches(data['id'], UUID_RE)
+        self.assertIn('server', data)
+        self.assertEqual(data['server'], self.server_id)
+        self.assertIn('name', data)
+        self.assertEqual(data['name'], TEST_ORG_NAME)
+
+
+        response = self.session.get('/server/%s/organization' % self.server_id)
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertNotEqual(len(data), 0)
+        test_server_org_found = False
+        for server_org in data:
+            self.assertIn('id', server_org)
+            self.assertRegexpMatches(server_org['id'], UUID_RE)
+            self.assertIn('server', server_org)
+            self.assertEqual(server_org['server'], self.server_id)
+            self.assertIn('name', server_org)
+            if server_org['name'] == TEST_ORG_NAME:
+                test_server_org_found = True
+                self.assertEqual(server_org['id'], self.org_id)
+        self.assertTrue(test_server_org_found)
+
+
+        response = self.session.delete('/server/%s/organization/%s' % (
+            self.server_id, self.org_id))
+        self.assertEqual(response.status_code, 200)
 
 
 if __name__ == '__main__':
