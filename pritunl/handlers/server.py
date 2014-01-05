@@ -5,6 +5,7 @@ from event import Event
 import pritunl.utils as utils
 from pritunl import app_server
 import flask
+import random
 
 def _network_not_valid():
     return utils.jsonify({
