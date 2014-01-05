@@ -657,6 +657,17 @@ class Server(SessionTestCast):
             self.server_id, self.org_id))
         self.assertEqual(response.status_code, 200)
 
+    def test_server_output_delete_get(self):
+        response = self.session.delete('/server/%s/output' % self.server_id)
+        self.assertEqual(response.status_code, 200)
+
+        response = self.session.get('/server/%s/output' % self.server_id)
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertIn('output', data)
+        self.assertEqual(data['output'], '')
+
 
 if __name__ == '__main__':
     unittest.main()
