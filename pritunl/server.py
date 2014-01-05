@@ -16,6 +16,7 @@ import traceback
 
 logger = logging.getLogger(APP_NAME)
 _threads = {}
+_events = {}
 _output = {}
 _process = {}
 _start_time = {}
@@ -507,6 +508,7 @@ class Server(Config):
                 process = subprocess.Popen(['openvpn', self.ovpn_conf_path],
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 _process[self.id] = process
+                _events[self.id].set()
             except OSError:
                 _output[self.id] += traceback.format_exc()
                 self._event_delay(type=SERVER_OUTPUT_UPDATED,
@@ -541,9 +543,13 @@ class Server(Config):
                 del _start_time[self.id]
             except KeyError:
                 pass
-            Event(type=SERVERS_UPDATED)
+            _events[self.id].set()
+            try:
+                del _events[self.id]
+            except KeyError:
+                pass
 
-    def start(self):
+    def start(self, silent=False):
         if self.status:
             return
         if not self.get_orgs():
@@ -555,22 +561,29 @@ class Server(Config):
         self._generate_ovpn_conf()
         self._enable_ip_forwarding()
         self._set_iptables_rule()
+        _events[self.id] = threading.Event()
         thread = threading.Thread(target=self._run)
         thread.start()
         _threads[self.id] = thread
         _start_time[self.id] = int(time.time()) - 1
         _output[self.id] = ''
-        Event(type=SERVERS_UPDATED)
-        LogEntry(message='Started server "%s".' % self.name)
+        _events[self.id].wait()
+        _events[self.id].clear()
+        if not silent:
+            Event(type=SERVERS_UPDATED)
+            LogEntry(message='Started server "%s".' % self.name)
 
-    def stop(self):
+    def stop(self, silent=False):
         if not self.status:
             return
         logger.debug('Stopping server. %r' % {
             'server_id': self.id,
         })
         _process[self.id].send_signal(signal.SIGINT)
-        LogEntry(message='Stopped server "%s".' % self.name)
+        _events[self.id].wait()
+        if not silent:
+            Event(type=SERVERS_UPDATED)
+            LogEntry(message='Stopped server "%s".' % self.name)
 
     def force_stop(self):
         if not self.status:
@@ -587,10 +600,8 @@ class Server(Config):
         logger.debug('Restarting server. %r' % {
             'server_id': self.id,
         })
-        self.generate_ca_cert()
-        _process[self.id].send_signal(signal.SIGHUP)
-        _start_time[self.id] = int(time.time()) - 1
-        Event(type=SERVERS_UPDATED)
+        self.stop(True)
+        self.start(True)
         LogEntry(message='Restarted server "%s".' % self.name)
 
     def reload(self):
