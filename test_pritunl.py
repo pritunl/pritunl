@@ -611,6 +611,52 @@ class Server(SessionTestCast):
             self.server_id, self.org_id))
         self.assertEqual(response.status_code, 200)
 
+    def test_server_operation_put(self):
+        response = self.session.put('/server/%s/organization/%s' % (
+            self.server_id, self.org_id))
+        self.assertEqual(response.status_code, 200)
+
+
+        response = self.session.put('/server/%s/start' % self.server_id)
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertIn('id', data)
+        self.assertEqual(data['id'], self.server_id)
+        self.assertIn('name', data)
+        self.assertEqual(data['name'], TEST_SERVER_NAME)
+        self.assertIn('status', data)
+        self.assertTrue(data['status'])
+
+
+        response = self.session.put('/server/%s/restart' % self.server_id)
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertIn('id', data)
+        self.assertEqual(data['id'], self.server_id)
+        self.assertIn('name', data)
+        self.assertEqual(data['name'], TEST_SERVER_NAME)
+        self.assertIn('status', data)
+        self.assertTrue(data['status'])
+
+
+        response = self.session.put('/server/%s/stop' % self.server_id)
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertIn('id', data)
+        self.assertEqual(data['id'], self.server_id)
+        self.assertIn('name', data)
+        self.assertEqual(data['name'], TEST_SERVER_NAME)
+        self.assertIn('status', data)
+        self.assertFalse(data['status'])
+
+
+        response = self.session.delete('/server/%s/organization/%s' % (
+            self.server_id, self.org_id))
+        self.assertEqual(response.status_code, 200)
+
 
 if __name__ == '__main__':
     unittest.main()
