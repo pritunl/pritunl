@@ -420,12 +420,12 @@ define([
   };
   routes['DELETE=/user/<orgId>/<userId>'] = userDelete;
 
-  var userOtpSecretDelete = function(request, orgId, userId) {
+  var userOtpSecretPut = function(request, orgId, userId) {
     demoData.users[orgId][userId].otp_secret = secretKey();
     event('users_updated');
     request.response({});
   };
-  routes['DELETE=/user/<orgId>/<userId>/otp_secret'] = userOtpSecretDelete;
+  routes['PUT=/user/<orgId>/<userId>/otp_secret'] = userOtpSecretPut;
 
   var demoAjax = function(ajaxRequest) {
     var type = ajaxRequest.type;
