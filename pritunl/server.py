@@ -174,7 +174,7 @@ class Server(Config):
                 'server_id': self.id,
                 'org_id': org.id,
             })
-            return
+            return org
         self.organizations.append(org.id)
         self.commit()
         Event(type=SERVERS_UPDATED)
