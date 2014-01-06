@@ -5,6 +5,7 @@ from event import Event
 import pritunl.utils as utils
 from pritunl import app_server
 import flask
+import re
 import random
 
 def _network_not_valid():
@@ -128,6 +129,9 @@ def server_put_post(server_id=None):
         interface_def = True
         interface = flask.request.json['interface']
 
+        if not re.match('^[a-z0-9]+$', interface):
+            return _interface_not_valid()
+
         if interface[:3] != 'tun':
             return _interface_not_valid()
 
@@ -136,7 +140,7 @@ def server_put_post(server_id=None):
         except ValueError:
             return _interface_not_valid()
 
-        if interface_num > 64 or interface_num < 0:
+        if interface_num > 64:
             return _interface_not_valid()
 
         interface = interface[:3] + str(interface_num)
