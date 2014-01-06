@@ -46,6 +46,7 @@ AUTH_HANDLERS = [
     ('DELETE', '/user/0/0'),
     ('PUT', '/user/0/0/otp_secret'),
 ]
+RUN_ONLY = []
 
 _request = requests.api.request
 def request(method, endpoint, **kwargs):
@@ -90,12 +91,16 @@ class Session:
         return self._request('delete', endpoint, **kwargs)
 
 
-class SessionTestCast(unittest.TestCase):
+_global_session = Session()
+class SessionTestCase(unittest.TestCase):
     def setUp(self):
+        if RUN_ONLY and self._testMethodName not in RUN_ONLY:
+            self.skipTest('ignore')
+
         self.org_id = None
         self.user_id = None
         self.server_id = None
-        self.session = Session()
+        self.session = _global_session
         self._create_test_data()
 
     def _create_test_data(self):
@@ -161,7 +166,7 @@ class SessionTestCast(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
 
-class Database(unittest.TestCase):
+class Database(SessionTestCase):
     def _test_db(self, db):
         db.set('column_family', 'row1', 'column1', 'value1')
         db.set('column_family', 'row2', 'column2', 'value2')
@@ -198,7 +203,7 @@ class Database(unittest.TestCase):
         os.remove(TEMP_DATABSE_PATH)
 
 
-class Auth(unittest.TestCase):
+class Auth(SessionTestCase):
     def test_auth_get(self):
         response = requests.get('/auth')
         data = response.json()
@@ -238,7 +243,7 @@ class Auth(unittest.TestCase):
             self.assertEqual(response.status_code, 401)
 
 
-class Data(SessionTestCast):
+class Data(SessionTestCase):
     def test_export_get(self):
         for endpoint in ['/export', '/export/pritunl.tar']:
             response = self.session.get(endpoint)
@@ -253,7 +258,7 @@ class Data(SessionTestCast):
             self.assertRegexpMatches(content_disposition, exp)
 
 
-class Event(SessionTestCast):
+class Event(SessionTestCase):
     def test_event_get(self):
         response = self.session.get('/event')
         self.assertEqual(response.status_code, 200)
@@ -270,7 +275,7 @@ class Event(SessionTestCast):
         self.assertEqual(data[0]['resource_id'], None)
 
 
-class Key(SessionTestCast):
+class Key(SessionTestCase):
     def test_user_key_archive_get(self):
         response = self.session.get('/key/%s/%s.tar' % (
             self.org_id, self.user_id))
@@ -364,7 +369,7 @@ class Key(SessionTestCast):
         self.assertEqual(response.status_code, 404)
 
 
-class Log(SessionTestCast):
+class Log(SessionTestCase):
     def test_log_get(self):
         response = self.session.get('/log')
         self.assertEqual(response.status_code, 200)
@@ -378,7 +383,7 @@ class Log(SessionTestCast):
             self.assertIn('message', entry)
 
 
-class Org(SessionTestCast):
+class Org(SessionTestCase):
     def test_org_post_put_get_delete(self):
         response = self.session.post('/organization', json={
             'name': TEST_ORG_NAME + '2',
@@ -435,7 +440,7 @@ class Org(SessionTestCast):
             self.assertNotEqual(org['name'], TEST_ORG_NAME + '3')
 
 
-class Password(SessionTestCast):
+class Password(SessionTestCase):
     def test_password_post(self):
         response = self.session.put('/password', json={
             'password': TEST_PASSWORD,
@@ -454,7 +459,7 @@ class Password(SessionTestCast):
         self.assertEqual(response.status_code, 200)
 
 
-class Server(SessionTestCast):
+class Server(SessionTestCase):
     def test_server_post_put_get_delete(self):
         response = self.session.post('/server', json={
             'name': TEST_SERVER_NAME + '2',
