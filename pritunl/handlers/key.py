@@ -46,7 +46,6 @@ def user_key_link_get(org_id, user_id):
         'user_id': user_id,
         'view_id': view_id,
         'timestamp': time.time(),
-        'count': 0,
     }
 
     conf_urls = []
@@ -58,7 +57,6 @@ def user_key_link_get(org_id, user_id):
                 'user_id': user_id,
                 'server_id': server.id,
                 'timestamp': time.time(),
-                'count': 0,
             }
             conf_urls.append({
                 'server_name': server.name,
@@ -76,7 +74,7 @@ def user_key_link_get(org_id, user_id):
     return utils.jsonify({
         'id': key_id,
         'key_url': '/key/%s.tar' % key_id,
-        'view_url': '/key/%s' % view_id,
+        'view_url': '/k/%s' % view_id,
     })
 
 @app_server.app.route('/key/<key_id>.tar', methods=['GET'])
@@ -89,14 +87,9 @@ def user_linked_key_archive_get(key_id):
     org_id = _key_ids[key_id]['org_id']
     user_id = _key_ids[key_id]['user_id']
 
-    # Fix for android sending two GET requests when downloading
-    _key_ids[key_id]['count'] += 1
-    if _key_ids[key_id]['count'] >= 2:
-        del _key_ids[key_id]
-
     return _get_key_archive(org_id, user_id)
 
-@app_server.app.route('/key/<view_id>', methods=['GET'])
+@app_server.app.route('/k/<view_id>', methods=['GET'])
 def user_linked_key_page_get(view_id):
     if view_id not in _view_ids:
         return flask.abort(404)
@@ -107,7 +100,6 @@ def user_linked_key_page_get(view_id):
     user_id = _view_ids[view_id]['user_id']
     key_id = _view_ids[view_id]['key_id']
     conf_urls = _view_ids[view_id]['conf_urls']
-    del _view_ids[view_id]
 
     org = Organization(org_id)
     user = org.get_user(user_id)
@@ -148,11 +140,6 @@ def user_linked_key_conf_get(conf_id):
     org_id = _conf_ids[conf_id]['org_id']
     user_id = _conf_ids[conf_id]['user_id']
     server_id = _conf_ids[conf_id]['server_id']
-
-    # Fix for android sending two GET requests when downloading
-    _conf_ids[conf_id]['count'] += 1
-    if _conf_ids[conf_id]['count'] >= 2:
-        del _conf_ids[conf_id]
 
     org = Organization(org_id)
     user = org.get_user(user_id)
