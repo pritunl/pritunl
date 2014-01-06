@@ -7,10 +7,8 @@ define([
   var KeyModel = Backbone.Model.extend({
     defaults: {
       'id': null,
-      'organization': null,
-      'user': null,
-      'otp_auth': null,
-      'url': null
+      'key_url': null,
+      'view_url': null
     },
     url: function() {
       return '/key/' + this.get('organization') + '/' + this.get('user');
