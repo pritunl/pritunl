@@ -668,6 +668,73 @@ class Server(SessionTestCast):
         self.assertIn('output', data)
         self.assertEqual(data['output'], '')
 
+    def test_server_put_post_errors(self):
+        response = self.session.put('/server/%s/organization/%s' % (
+            self.server_id, self.org_id))
+        self.assertEqual(response.status_code, 200)
+
+
+        response = self.session.put('/server/%s/start' % self.server_id)
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertIn('id', data)
+        self.assertEqual(data['id'], self.server_id)
+        self.assertIn('status', data)
+        self.assertTrue(data['status'])
+
+
+        response = self.session.put('/server/%s' % self.server_id, json={
+            'name': TEST_SERVER_NAME + '_test',
+        })
+        self.assertEqual(response.status_code, 400)
+
+        data = response.json()
+        self.assertIn('error', data)
+        self.assertEqual(data['error'], 'server_not_offline')
+        self.assertIn('error_msg', data)
+        self.assertEqual(data['error_msg'],
+            'Server must be offline to modify settings.')
+
+
+        response = self.session.put('/server/%s/organization/%s' % (
+            self.server_id, self.org_id))
+        self.assertEqual(response.status_code, 400)
+
+        data = response.json()
+        self.assertIn('error', data)
+        self.assertEqual(data['error'], 'server_not_offline')
+        self.assertIn('error_msg', data)
+        self.assertEqual(data['error_msg'], 'Server must be offline ' + \
+            'to attach an organization.')
+
+
+        response = self.session.delete('/server/%s/organization/%s' % (
+            self.server_id, self.org_id))
+        self.assertEqual(response.status_code, 400)
+
+        data = response.json()
+        self.assertIn('error', data)
+        self.assertEqual(data['error'], 'server_not_offline')
+        self.assertIn('error_msg', data)
+        self.assertEqual(data['error_msg'], 'Server must be offline ' + \
+            'to detach an organization.')
+
+
+        response = self.session.put('/server/%s/stop' % self.server_id)
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertIn('id', data)
+        self.assertEqual(data['id'], self.server_id)
+        self.assertIn('status', data)
+        self.assertFalse(data['status'])
+
+
+        response = self.session.delete('/server/%s/organization/%s' % (
+            self.server_id, self.org_id))
+        self.assertEqual(response.status_code, 200)
+
 
 if __name__ == '__main__':
     unittest.main()
