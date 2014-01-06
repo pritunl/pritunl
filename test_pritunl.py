@@ -790,5 +790,19 @@ class Server(SessionTestCase):
                 'must be "tun[0-64]" example "tun0".')
 
 
+        response = self.session.post('/server', json={
+            'name': TEST_SERVER_NAME + '_test',
+            'protocol': 'a',
+        })
+        self.assertEqual(response.status_code, 400)
+
+        data = response.json()
+        self.assertIn('error', data)
+        self.assertEqual(data['error'], 'protocol_not_valid')
+        self.assertIn('error_msg', data)
+        self.assertEqual(data['error_msg'], 'Protocol is not valid, ' + \
+            'must be "udp" or "tcp".')
+
+
 if __name__ == '__main__':
     unittest.main()
