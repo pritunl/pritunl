@@ -6,6 +6,8 @@ import os
 import flask
 import uuid
 import time
+import random
+import string
 
 _key_ids = {}
 _view_ids = {}
@@ -36,7 +38,8 @@ def user_key_link_get(org_id, user_id):
     org = Organization(org_id)
     servers = org.get_servers()
     key_id = uuid.uuid4().hex
-    view_id = uuid.uuid4().hex
+    view_id = ''.join(random.sample(
+        string.ascii_lowercase + string.ascii_uppercase + string.digits, 5))
 
     _key_ids[key_id] = {
         'org_id': org_id,
