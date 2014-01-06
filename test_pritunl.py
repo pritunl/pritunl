@@ -582,7 +582,7 @@ class Server(SessionTestCast):
 
         data = response.json()
         self.assertIn('id', data)
-        self.assertRegexpMatches(data['id'], UUID_RE)
+        self.assertEqual(data['id'], self.org_id)
         self.assertIn('server', data)
         self.assertEqual(data['server'], self.server_id)
         self.assertIn('name', data)
@@ -616,6 +616,12 @@ class Server(SessionTestCast):
             self.server_id, self.org_id))
         self.assertEqual(response.status_code, 200)
 
+        data = response.json()
+        self.assertIn('id', data)
+        self.assertEqual(data['id'], self.org_id)
+        self.assertIn('server', data)
+        self.assertEqual(data['server'], self.server_id)
+
 
         response = self.session.put('/server/%s/start' % self.server_id)
         self.assertEqual(response.status_code, 200)
@@ -623,8 +629,6 @@ class Server(SessionTestCast):
         data = response.json()
         self.assertIn('id', data)
         self.assertEqual(data['id'], self.server_id)
-        self.assertIn('name', data)
-        self.assertEqual(data['name'], TEST_SERVER_NAME)
         self.assertIn('status', data)
         self.assertTrue(data['status'])
 
@@ -635,8 +639,6 @@ class Server(SessionTestCast):
         data = response.json()
         self.assertIn('id', data)
         self.assertEqual(data['id'], self.server_id)
-        self.assertIn('name', data)
-        self.assertEqual(data['name'], TEST_SERVER_NAME)
         self.assertIn('status', data)
         self.assertTrue(data['status'])
 
@@ -647,8 +649,6 @@ class Server(SessionTestCast):
         data = response.json()
         self.assertIn('id', data)
         self.assertEqual(data['id'], self.server_id)
-        self.assertIn('name', data)
-        self.assertEqual(data['name'], TEST_SERVER_NAME)
         self.assertIn('status', data)
         self.assertFalse(data['status'])
 
@@ -672,6 +672,12 @@ class Server(SessionTestCast):
         response = self.session.put('/server/%s/organization/%s' % (
             self.server_id, self.org_id))
         self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertIn('id', data)
+        self.assertEqual(data['id'], self.org_id)
+        self.assertIn('server', data)
+        self.assertEqual(data['server'], self.server_id)
 
 
         response = self.session.put('/server/%s/start' % self.server_id)
