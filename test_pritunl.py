@@ -770,5 +770,25 @@ class Server(SessionTestCase):
                 'such as "10.12.32.0/24".')
 
 
+        for test_interface in [
+                    'tun-1',
+                    'tun.0',
+                    'tun65',
+                    'tuna',
+                ]:
+            response = self.session.post('/server', json={
+                'name': TEST_SERVER_NAME + '_test',
+                'interface': test_interface,
+            })
+            self.assertEqual(response.status_code, 400)
+
+            data = response.json()
+            self.assertIn('error', data)
+            self.assertEqual(data['error'], 'interface_not_valid')
+            self.assertIn('error_msg', data)
+            self.assertEqual(data['error_msg'], 'Interface is not valid, ' + \
+                'must be "tun[0-64]" example "tun0".')
+
+
 if __name__ == '__main__':
     unittest.main()
