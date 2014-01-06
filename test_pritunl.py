@@ -790,6 +790,24 @@ class Server(SessionTestCase):
                 'must be "tun[0-64]" example "tun0".')
 
 
+        for test_port in [
+                    0,
+                    65536,
+                ]:
+            response = self.session.post('/server', json={
+                'name': TEST_SERVER_NAME + '_test',
+                'port': test_port,
+            })
+            self.assertEqual(response.status_code, 400)
+
+            data = response.json()
+            self.assertIn('error', data)
+            self.assertEqual(data['error'], 'port_not_valid')
+            self.assertIn('error_msg', data)
+            self.assertEqual(data['error_msg'], 'Port number is not ' + \
+                'valid, must be between 1 and 65535.')
+
+
         response = self.session.post('/server', json={
             'name': TEST_SERVER_NAME + '_test',
             'protocol': 'a',
