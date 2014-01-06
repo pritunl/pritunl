@@ -41,8 +41,8 @@ define([
         }.bind(this)
       });
     },
-    onClickInput: function() {
-      this.$('input').select();
+    onClickInput: function(evt) {
+      this.$(evt.target).select();
     }
   });
 
