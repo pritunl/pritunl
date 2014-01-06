@@ -250,12 +250,9 @@ class User(Config):
                     self.org.name, self.name, server.name)
                 server.generate_ca_cert()
 
-                client_conf = OVPN_CLIENT_CONF % (
+                client_conf = OVPN_INLINE_CLIENT_CONF % (
                     server.protocol,
                     server.public_address, server.port,
-                    '[inline]',
-                    '[inline]',
-                    '[inline]',
                 )
 
                 if server.otp_auth:
@@ -283,6 +280,31 @@ class User(Config):
             return self._build_inline_key_archive()
         else:
             return self._build_key_archive()
+
+    def build_key_conf(self, server_id):
+        server = self.org.get_server(server_id)
+        conf_name = '%s_%s_%s.ovpn' % (self.org.name, self.name, server.name)
+        server.generate_ca_cert()
+
+        client_conf = OVPN_INLINE_CLIENT_CONF % (
+            server.protocol,
+            server.public_address, server.port,
+        )
+
+        if server.otp_auth:
+            client_conf += 'auth-user-pass\n'
+
+        client_conf += '<ca>\n%s\n</ca>\n' % self._get_cert_block(
+            server.ca_cert_path)
+        client_conf += '<cert>\n%s\n</cert>\n' % self._get_cert_block(
+            self.cert_path)
+        client_conf += '<key>\n%s\n</key>\n' % open(
+            self.key_path).read().strip()
+
+        return {
+            'name': conf_name,
+            'conf': client_conf,
+        }
 
     def rename(self, name):
         self.name = name

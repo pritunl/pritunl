@@ -231,6 +231,16 @@ verb 2
 mute 3
 """
 
+OVPN_INLINE_CLIENT_CONF = """client
+dev tun
+proto %s
+remote %s %s
+nobind
+persist-tun
+verb 2
+mute 3
+"""
+
 # Script will run in python 2 and 3
 TLS_VERIFY_SCRIPT = """#!/usr/bin/env python
 import os

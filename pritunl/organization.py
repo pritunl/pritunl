@@ -37,6 +37,14 @@ class Organization(Config):
 
         self.ca_cert = User(self, id=CA_CERT_ID)
 
+    def __getattr__(self, name):
+        if name == 'otp_auth':
+            for server in self.get_servers():
+                if server.otp_auth:
+                    return True
+            return False
+        return Config.__getattr__(self, name)
+
     def _initialize(self):
         self._make_dirs()
         self.ca_cert = User(self, type=CERT_CA)
@@ -74,6 +82,12 @@ class Organization(Config):
                     continue
                 users.append(User(self, id=user_id))
         return users
+
+    def get_server(self, server_id):
+        from server import Server
+        server = Server(server_id)
+        if self.id in server.organizations:
+            return server
 
     def get_servers(self):
         from server import Server
