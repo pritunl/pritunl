@@ -136,7 +136,7 @@ def server_put_post(server_id=None):
         except ValueError:
             return _interface_not_valid()
 
-        if interface_num > 64:
+        if interface_num > 64 or interface_num < 0:
             return _interface_not_valid()
 
         interface = interface[:3] + str(interface_num)
