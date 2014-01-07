@@ -4,10 +4,10 @@ Pritunl Changelog
 Version 0.10.4
 --------------
 
-Add temporary page to view two-step authentication key
+Improve support for mobile devices
+Add temporary page to view two-step authentication key and conf links
 Add organization name to two-step authentication label
 Changes to rest api
-Improve support for mobile devices
 
 Version 0.10.3
 --------------
