@@ -851,5 +851,120 @@ class Status(SessionTestCase):
         self.assertIn('public_ip', data)
 
 
+class User(SessionTestCase):
+    def test_user_post_put_get_delete(self):
+        response = self.session.get('/user/%s' % self.org_id)
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        for user in data:
+            self.assertIn('id', user)
+            self.assertRegexpMatches(user['id'], UUID_RE)
+            self.assertIn('organization', user)
+            self.assertIn('organization_name', user)
+            self.assertIn('type', user)
+            self.assertIn('status', user)
+            self.assertIn('otp_auth', user)
+            self.assertIn('otp_secret', user)
+            self.assertIn('servers', user)
+
+    def test_user_get(self):
+        response = self.session.post('/user/%s' % self.org_id, json={
+            'name': TEST_USER_NAME + '2',
+        })
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertIn('id', data)
+        self.assertRegexpMatches(data['id'], UUID_RE)
+        self.assertIn('organization', data)
+        self.assertEqual(data['organization'], self.org_id)
+        self.assertIn('organization_name', data)
+        self.assertEqual(data['organization_name'], TEST_ORG_NAME)
+        self.assertIn('name', data)
+        self.assertEqual(data['name'], TEST_USER_NAME + '2')
+        self.assertIn('type', data)
+        self.assertIn('otp_secret', data)
+        user_id = data['id']
+
+
+        response = self.session.put('/user/%s/%s' % (self.org_id, user_id),
+            json={
+                'name': TEST_USER_NAME + '3',
+            })
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertIn('id', data)
+        self.assertRegexpMatches(data['id'], UUID_RE)
+        self.assertIn('organization', data)
+        self.assertEqual(data['organization'], self.org_id)
+        self.assertIn('organization_name', data)
+        self.assertEqual(data['organization_name'], TEST_ORG_NAME)
+        self.assertIn('name', data)
+        self.assertEqual(data['name'], TEST_USER_NAME + '3')
+        self.assertIn('type', data)
+        self.assertIn('otp_secret', data)
+
+
+        response = self.session.get('/user/%s' % self.org_id)
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertNotEqual(len(data), 0)
+        test_user_found = False
+        for user in data:
+            self.assertIn('id', user)
+            self.assertRegexpMatches(user['id'], UUID_RE)
+            self.assertIn('organization', user)
+            self.assertIn('organization_name', user)
+            self.assertIn('name', user)
+            self.assertIn('type', user)
+            self.assertIn('status', user)
+            self.assertIn('otp_auth', user)
+            self.assertIn('otp_secret', user)
+            self.assertIn('servers', user)
+
+            if user['name'] == TEST_USER_NAME + '3':
+                test_user_found = True
+                self.assertEqual(user['organization'], self.org_id)
+                self.assertEqual(user['organization_name'], TEST_ORG_NAME)
+        self.assertTrue(test_user_found)
+
+        response = self.session.delete('/user/%s/%s' % (self.org_id, user_id))
+        self.assertEqual(response.status_code, 200)
+
+    def test_user_otp_secret_put(self):
+        response = self.session.get('/user/%s' % self.org_id)
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertNotEqual(len(data), 0)
+        orig_otp_secret = None
+        for user in data:
+            self.assertIn('id', user)
+            if user['id'] == self.user_id:
+                orig_otp_secret = user['otp_secret']
+        self.assertIsNotNone(orig_otp_secret)
+
+        response = self.session.put('/user/%s/%s/otp_secret' % (
+            self.org_id, self.user_id))
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertIn('id', data)
+        self.assertEqual(data['id'], self.user_id)
+        self.assertIn('organization', data)
+        self.assertEqual(data['organization'], self.org_id)
+        self.assertIn('organization_name', data)
+        self.assertEqual(data['organization_name'], TEST_ORG_NAME)
+        self.assertIn('name', data)
+        self.assertEqual(data['name'], TEST_USER_NAME)
+        self.assertIn('type', data)
+        self.assertIn('otp_secret', data)
+        self.assertNotEqual(data['otp_secret'], orig_otp_secret)
+        self.assertRegexpMatches(user['otp_secret'], r'^[A-Z0-9]+$')
+
+
 if __name__ == '__main__':
     unittest.main()
