@@ -836,5 +836,20 @@ class Server(SessionTestCase):
             'must be "udp" or "tcp".')
 
 
+class Status(SessionTestCase):
+    def test_status_get(self):
+        response = self.session.get('/status')
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertIn('org_count', data)
+        self.assertIn('users_online', data)
+        self.assertIn('user_count', data)
+        self.assertIn('servers_online', data)
+        self.assertIn('server_count', data)
+        self.assertIn('server_version', data)
+        self.assertIn('public_ip', data)
+
+
 if __name__ == '__main__':
     unittest.main()
