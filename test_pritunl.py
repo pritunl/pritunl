@@ -153,6 +153,7 @@ class SessionTestCase(unittest.TestCase):
         if not self.server_id:
             response = self.session.post('/server', json={
                 'name': TEST_SERVER_NAME,
+                'otp_auth': True,
             })
             self.assertEqual(response.status_code, 200)
             data = response.json()
@@ -250,10 +251,10 @@ class Data(SessionTestCase):
             self.assertEqual(response.status_code, 200)
 
             content_type = response.headers['content-type']
-            self.assertEqual(content_type, 'application/x-tar')
+            self.assertEqual(content_type, 'application/octet-stream')
 
             content_disposition = response.headers['content-disposition']
-            exp = r'^inline; filename="pritunl_[0-9]+_[0-9]+_[0-9]+_' + \
+            exp = r'^attachment; filename="pritunl_[0-9]+_[0-9]+_[0-9]+_' + \
                 '[0-9]+_[0-9]+_[0-9]+\.tar"$'
             self.assertRegexpMatches(content_disposition, exp)
 
@@ -282,13 +283,18 @@ class Key(SessionTestCase):
         self.assertEqual(response.status_code, 200)
 
         content_type = response.headers['content-type']
-        self.assertEqual(content_type, 'application/x-tar')
+        self.assertEqual(content_type, 'application/octet-stream')
 
         content_disposition = response.headers['content-disposition']
-        exp = r'^inline; filename="%s.tar"$' % TEST_USER_NAME
+        exp = r'^attachment; filename="%s.tar"$' % TEST_USER_NAME
         self.assertRegexpMatches(content_disposition, exp)
 
     def test_user_key_link_get(self):
+        response = self.session.put('/server/%s/organization/%s' % (
+            self.server_id, self.org_id))
+        self.assertEqual(response.status_code, 200)
+
+
         response = self.session.get('/key/%s/%s' % (
             self.org_id, self.user_id))
         self.assertEqual(response.status_code, 200)
@@ -296,31 +302,27 @@ class Key(SessionTestCase):
         data = response.json()
         self.assertIn('id', data)
         self.assertIn('key_url', data)
-        self.assertIn('otp_url', data)
+        self.assertIn('view_url', data)
 
         exp = r'^/key/[a-z0-9]+.tar$'
         self.assertRegexpMatches(data['key_url'], exp)
 
-        exp = r'^/key/[a-z0-9]+.html$'
-        self.assertRegexpMatches(data['otp_url'], exp)
+        exp = r'^/k/[a-zA-Z0-9]+$'
+        self.assertRegexpMatches(data['view_url'], exp)
 
 
         response = self.session.get(data['key_url'])
         self.assertEqual(response.status_code, 200)
 
         content_type = response.headers['content-type']
-        self.assertEqual(content_type, 'application/x-tar')
+        self.assertEqual(content_type, 'application/octet-stream')
 
         content_disposition = response.headers['content-disposition']
-        exp = r'^inline; filename="%s.tar"$' % TEST_USER_NAME
+        exp = r'^attachment; filename="%s.tar"$' % TEST_USER_NAME
         self.assertRegexpMatches(content_disposition, exp)
 
 
-        response = self.session.get(data['key_url'])
-        self.assertEqual(response.status_code, 404)
-
-
-        response = self.session.get(data['otp_url'])
+        response = self.session.get(data['view_url'])
         self.assertEqual(response.status_code, 200)
 
         content_type = response.headers['content-type']
@@ -354,6 +356,17 @@ class Key(SessionTestCase):
         self.assertEqual(key_url, data['key_url'])
 
 
+        start_index = response.text.find(
+            '<a class="sm" title="Download Mobile Key" href="') + 48
+        end_index = response.text.find('">', start_index)
+        self.assertNotEqual(start_index, -1)
+        self.assertNotEqual(end_index, -1)
+        conf_url = response.text[start_index:end_index]
+
+        exp = r'^/key/[a-z0-9]+\.ovpn$'
+        self.assertRegexpMatches(conf_url, exp)
+
+
         start_index = response.text.find("text: 'otpauth://totp/") + 7
         end_index = response.text.find("',", start_index)
         self.assertNotEqual(start_index, -1)
@@ -365,8 +378,9 @@ class Key(SessionTestCase):
         self.assertRegexpMatches(otp_key, exp)
 
 
-        response = self.session.get(data['otp_url'])
-        self.assertEqual(response.status_code, 404)
+        response = self.session.delete('/server/%s/organization/%s' % (
+            self.server_id, self.org_id))
+        self.assertEqual(response.status_code, 200)
 
 
 class Log(SessionTestCase):
