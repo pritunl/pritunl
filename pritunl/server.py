@@ -495,6 +495,11 @@ class Server(Config):
                 i += 1
             time.sleep(0.1)
         self._clear_iptable_rules()
+        _events[self.id].set()
+        try:
+            del _events[self.id]
+        except KeyError:
+            pass
 
     def _run(self):
         logger.debug('Starting ovpn process. %r' % {
@@ -530,7 +535,6 @@ class Server(Config):
                 'server_id': self.id,
             })
         finally:
-            self._interrupt = True
             try:
                 del _threads[self.id]
             except KeyError:
@@ -543,11 +547,7 @@ class Server(Config):
                 del _start_time[self.id]
             except KeyError:
                 pass
-            _events[self.id].set()
-            try:
-                del _events[self.id]
-            except KeyError:
-                pass
+            self._interrupt = True
 
     def start(self, silent=False):
         if self.status:
@@ -567,8 +567,7 @@ class Server(Config):
         _threads[self.id] = thread
         _start_time[self.id] = int(time.time()) - 1
         _output[self.id] = ''
-        event = _events[self.id].wait(THREAD_EVENT_TIMEOUT)
-        if not event:
+        if not _events[self.id].wait(THREAD_EVENT_TIMEOUT):
             raise ValueError('Server thread failed to return start event.')
         _events[self.id].clear()
         if not silent:
@@ -582,8 +581,7 @@ class Server(Config):
             'server_id': self.id,
         })
         _process[self.id].send_signal(signal.SIGINT)
-        event = _events[self.id].wait(THREAD_EVENT_TIMEOUT)
-        if not event:
+        if not _events[self.id].wait(THREAD_EVENT_TIMEOUT):
             raise ValueError('Server thread failed to return stop event.')
         if not silent:
             Event(type=SERVERS_UPDATED)
