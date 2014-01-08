@@ -12,6 +12,17 @@ define([
     template: _.template(modalDetachOrgTemplate),
     title: 'Detach Organization',
     okText: 'Detach',
+    initialize: function() {
+      ModalDetachOrgView.__super__.initialize.call(this);
+      var alertView = new AlertView({
+        type: 'danger',
+        message: 'Detaching an organization may require users to ' +
+          're-download their keys.',
+        animate: false
+      });
+      this.addView(alertView);
+      this.$('.modal-body').prepend(alertView.render().el);
+    },
     body: function() {
       return this.template(this.model.toJSON());
     },
