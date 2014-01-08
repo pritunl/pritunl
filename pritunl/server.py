@@ -569,7 +569,8 @@ class Server(Config):
         _output[self.id] = ''
         if not _events[self.id].wait(THREAD_EVENT_TIMEOUT):
             raise ValueError('Server thread failed to return start event.')
-        _events[self.id].clear()
+        if self.id in _events:
+            _events[self.id].clear()
         if not silent:
             Event(type=SERVERS_UPDATED)
             LogEntry(message='Started server "%s".' % self.name)
