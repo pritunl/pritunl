@@ -590,14 +590,18 @@ class Server(Config):
             Event(type=SERVERS_UPDATED)
             LogEntry(message='Stopped server "%s".' % self.name)
 
-    def force_stop(self):
+    def force_stop(self, silent=False):
         if not self.status:
             return
         logger.info('Forcing stop server. %r' % {
             'server_id': self.id,
         })
         _process[self.id].send_signal(signal.SIGKILL)
-        LogEntry(message='Stopped server "%s".' % self.name)
+        if not _events[self.id].wait(THREAD_EVENT_TIMEOUT):
+            raise ValueError('Server thread failed to return stop event.')
+        if not silent:
+            Event(type=SERVERS_UPDATED)
+            LogEntry(message='Stopped server "%s".' % self.name)
 
     def restart(self):
         if not self.status:
@@ -615,7 +619,6 @@ class Server(Config):
         logger.debug('Reloading server. %r' % {
             'server_id': self.id,
         })
-        self.generate_ca_cert()
         _process[self.id].send_signal(signal.SIGUSR1)
         LogEntry(message='Reloaded server "%s".' % self.name)
 
