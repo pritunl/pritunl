@@ -510,7 +510,7 @@ class Server(Config):
             threading.Thread(target=self._status_thread).start()
 
             try:
-                process = subprocess.Popen(['openvpn2', self.ovpn_conf_path],
+                process = subprocess.Popen(['openvpn', self.ovpn_conf_path],
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 _process[self.id] = process
                 _events[self.id].set()
