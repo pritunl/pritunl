@@ -853,22 +853,6 @@ class Status(SessionTestCase):
 
 class User(SessionTestCase):
     def test_user_post_put_get_delete(self):
-        response = self.session.get('/user/%s' % self.org_id)
-        self.assertEqual(response.status_code, 200)
-
-        data = response.json()
-        for user in data:
-            self.assertIn('id', user)
-            self.assertRegexpMatches(user['id'], UUID_RE)
-            self.assertIn('organization', user)
-            self.assertIn('organization_name', user)
-            self.assertIn('type', user)
-            self.assertIn('status', user)
-            self.assertIn('otp_auth', user)
-            self.assertIn('otp_secret', user)
-            self.assertIn('servers', user)
-
-    def test_user_get(self):
         response = self.session.post('/user/%s' % self.org_id, json={
             'name': TEST_USER_NAME + '2',
         })
