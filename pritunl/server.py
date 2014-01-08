@@ -603,7 +603,7 @@ class Server(Config):
             Event(type=SERVERS_UPDATED)
             LogEntry(message='Stopped server "%s".' % self.name)
 
-    def restart(self):
+    def restart(self, silent=False):
         if not self.status:
             self.start()
         logger.debug('Restarting server. %r' % {
@@ -611,7 +611,9 @@ class Server(Config):
         })
         self.stop(True)
         self.start(True)
-        LogEntry(message='Restarted server "%s".' % self.name)
+        if not silent:
+            Event(type=SERVERS_UPDATED)
+            LogEntry(message='Restarted server "%s".' % self.name)
 
     def reload(self):
         if not self.status:
