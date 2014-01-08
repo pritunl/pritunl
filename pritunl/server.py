@@ -510,7 +510,7 @@ class Server(Config):
             threading.Thread(target=self._status_thread).start()
 
             try:
-                process = subprocess.Popen(['openvpn', self.ovpn_conf_path],
+                process = subprocess.Popen(['openvpn2', self.ovpn_conf_path],
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 _process[self.id] = process
                 _events[self.id].set()
@@ -569,8 +569,10 @@ class Server(Config):
         _output[self.id] = ''
         if not _events[self.id].wait(THREAD_EVENT_TIMEOUT):
             raise ValueError('Server thread failed to return start event.')
-        if self.id in _events:
+        try:
             _events[self.id].clear()
+        except KeyError:
+            pass
         if not silent:
             Event(type=SERVERS_UPDATED)
             LogEntry(message='Started server "%s".' % self.name)
