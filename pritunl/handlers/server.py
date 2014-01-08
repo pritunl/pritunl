@@ -276,6 +276,11 @@ def server_put_post(server_id=None):
                     'error_msg': PORT_PROTOCOL_IN_USE_MSG,
                 }, 400)
 
+        if not public_address_def:
+            if not app_server.public_ip:
+                app_server.load_public_ip()
+            public_address = app_server.public_ip
+
         server = Server(
             name=name,
             network=network,
