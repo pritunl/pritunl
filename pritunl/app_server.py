@@ -159,7 +159,7 @@ class AppServer(Config):
             from organization import Organization
             for org in Organization.get_orgs():
                 for user in org.get_users():
-                    user._upgrade_0_10_2()
+                    user._upgrade_0_10_1()
 
         if version != __version__:
             with open(version_path, 'w') as version_file:

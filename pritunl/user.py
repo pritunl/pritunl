@@ -60,7 +60,7 @@ class User(Config):
             return self.type
         return Config.__getattr__(self, name)
 
-    def _upgrade_0_10_2(self):
+    def _upgrade_0_10_1(self):
         if not self.otp_secret:
             logger.debug('Upgrading user from v0.10.1... %r' % {
                 'org_id': self.org.id,
