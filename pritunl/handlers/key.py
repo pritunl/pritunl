@@ -80,6 +80,7 @@ def user_key_link_get(org_id, user_id):
 @app_server.app.route('/key/<key_id>.tar', methods=['GET'])
 def user_linked_key_archive_get(key_id):
     if key_id not in _key_ids:
+        time.sleep(RATE_LIMIT_SLEEP)
         return flask.abort(404)
     elif time.time() - _key_ids[key_id]['timestamp'] > KEY_LINK_TIMEOUT:
         del _key_ids[key_id]
@@ -92,6 +93,7 @@ def user_linked_key_archive_get(key_id):
 @app_server.app.route('/k/<view_id>', methods=['GET'])
 def user_linked_key_page_get(view_id):
     if view_id not in _view_ids:
+        time.sleep(RATE_LIMIT_SLEEP)
         return flask.abort(404)
     elif time.time() - _view_ids[view_id]['timestamp'] > KEY_LINK_TIMEOUT:
         del _view_ids[view_id]
@@ -135,6 +137,7 @@ def user_linked_key_page_get(view_id):
 @app_server.app.route('/key/<conf_id>.ovpn', methods=['GET'])
 def user_linked_key_conf_get(conf_id):
     if conf_id not in _conf_ids:
+        time.sleep(RATE_LIMIT_SLEEP)
         return flask.abort(404)
     elif time.time() - _conf_ids[conf_id]['timestamp'] > KEY_LINK_TIMEOUT:
         del _conf_ids[conf_id]

@@ -9,10 +9,10 @@ import flask
 def auth_post():
     username = flask.request.json['username'][:512]
     password = flask.request.json['password'][:512]
-    time.sleep(AUTH_BRUTE_FORCE_SLEEP)
+    time.sleep(RATE_LIMIT_SLEEP)
 
     if username != AUTH_USER_NAME or not app_server.check_password(password):
-        time.sleep(AUTH_BRUTE_FORCE_SLEEP)
+        time.sleep(RATE_LIMIT_SLEEP)
         return utils.jsonify({
             'error': AUTH_NOT_VALID,
             'error_msg': AUTH_NOT_VALID_MSG,
@@ -43,10 +43,10 @@ def auth_delete():
 def auth_token_post():
     username = flask.request.json['username'][:512]
     password = flask.request.json['password'][:512]
-    time.sleep(AUTH_BRUTE_FORCE_SLEEP)
+    time.sleep(RATE_LIMIT_SLEEP)
 
     if username != AUTH_USER_NAME or not app_server.check_password(password):
-        time.sleep(AUTH_BRUTE_FORCE_SLEEP)
+        time.sleep(RATE_LIMIT_SLEEP)
         return utils.jsonify({
             'error': AUTH_NOT_VALID,
             'error_msg': AUTH_NOT_VALID_MSG,
