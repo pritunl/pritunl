@@ -180,7 +180,7 @@ class Config:
             temp_conf_path = self._conf_path + CONF_TEMP_EXT
             with open(temp_conf_path, 'w') as config:
                 if chmod_mode:
-                    os.chmod(self._conf_path, chmod_mode)
+                    os.chmod(temp_conf_path, chmod_mode)
 
                 for name in self.all_options:
                     if name not in self.__dict__:
