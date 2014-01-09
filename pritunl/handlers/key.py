@@ -127,6 +127,8 @@ def user_linked_key_page_get(view_id):
                 'href="%s">Download Mobile Key (%s)</a><br>\n' % (
                     conf_url['url'], conf_url['server_name'])
         key_page = key_page.replace('<%= conf_links %>', conf_links)
+    else:
+        key_page = key_page.replace('<%= conf_links %>', '')
 
     return key_page
 
