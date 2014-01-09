@@ -33,6 +33,7 @@ define([
       var modified;
       var currentModels = [];
       var newModels = [];
+      var empty = this.views.length ? false : true;
 
       for (i = 0; i < this.views.length; i++) {
         currentModels.push(this.views[i].model.get('id'));
@@ -76,7 +77,12 @@ define([
         }
 
         if (!modelView.hidden || this.showHidden) {
-          modelView.$el.slideDown(250);
+          if (empty) {
+            modelView.$el.show();
+          }
+          else {
+            modelView.$el.slideDown(250);
+          }
         }
       }
 
