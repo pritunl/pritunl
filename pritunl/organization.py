@@ -6,8 +6,8 @@ from log_entry import LogEntry
 from user import User
 import uuid
 import os
-import shutil
 import subprocess
+import utils
 
 class Organization(Config):
     str_options = {'name'}
@@ -137,7 +137,7 @@ class Organization(Config):
                 server.stop()
             server.remove_org(self.id)
 
-        shutil.rmtree(self.path)
+        utils.rmtree(self.path)
         LogEntry(message='Deleted organization.')
         Event(type=ORGS_UPDATED)
 

@@ -8,11 +8,11 @@ import uuid
 import os
 import signal
 import time
-import shutil
 import subprocess
 import threading
 import logging
 import traceback
+import utils
 
 logger = logging.getLogger(APP_NAME)
 _threads = {}
@@ -99,7 +99,7 @@ class Server(Config):
             logger.exception('Failed to create server. %r' % {
                 'server_id': self.id,
             })
-            shutil.rmtree(self.path)
+            utils.rmtree(self.path)
             raise
 
     def _event_delay(self, type, resource_id=None):
@@ -134,7 +134,7 @@ class Server(Config):
                 self.force_stop()
                 time.sleep(0.5)
         self._remove_primary_user()
-        shutil.rmtree(self.path)
+        utils.rmtree(self.path)
         LogEntry(message='Deleted server.')
         Event(type=SERVERS_UPDATED)
 
