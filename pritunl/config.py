@@ -15,6 +15,7 @@ class Config:
     str_options = set()
     list_options = set()
     default_options = {}
+    chmod_mode = None
 
     def __init__(self, path=None):
         self.all_options = self.bool_options | self.int_options | \
@@ -171,7 +172,7 @@ class Config:
             if not merge:
                 raise
 
-    def commit(self, chmod_mode=None):
+    def commit(self):
         logger.debug('Committing config.')
         if not self._loaded:
             self.load(True)
@@ -179,8 +180,8 @@ class Config:
         try:
             temp_conf_path = self._conf_path + CONF_TEMP_EXT
             with open(temp_conf_path, 'w') as config:
-                if chmod_mode:
-                    os.chmod(temp_conf_path, chmod_mode)
+                if self.chmod_mode:
+                    os.chmod(temp_conf_path, self.chmod_mode)
 
                 for name in self.all_options:
                     if name not in self.__dict__:

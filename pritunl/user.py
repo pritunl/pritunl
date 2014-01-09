@@ -15,6 +15,7 @@ logger = logging.getLogger(APP_NAME)
 
 class User(Config):
     str_options = {'name', 'otp_secret', 'type'}
+    chmod_mode = 0600
 
     def __init__(self, org, id=None, name=None, type=None):
         Config.__init__(self)
@@ -61,7 +62,7 @@ class User(Config):
                 'user_id': self.id,
             })
             self._generate_otp_secret()
-            self.commit(0600)
+            self.commit()
 
     def _upgrade_0_10_4(self):
         if not self.type:
@@ -77,13 +78,13 @@ class User(Config):
                     self.type = CERT_SERVER
                 else:
                     self.type = CERT_CLIENT
-            self.commit(0600)
+            self.commit()
 
     def _initialize(self):
         self._create_ssl_conf()
         self._cert_request()
         self._generate_otp_secret()
-        self.commit(0600)
+        self.commit()
         self._cert_create()
         self._delete_ssl_conf()
         LogEntry(message='Created new user.')
@@ -155,7 +156,7 @@ class User(Config):
 
     def generate_otp_secret(self):
         self._generate_otp_secret()
-        self.commit(0600)
+        self.commit()
         Event(type=USERS_UPDATED)
 
     def _revoke(self, reason):
