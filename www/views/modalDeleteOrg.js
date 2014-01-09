@@ -36,6 +36,7 @@ define([
           this.close(true);
         }.bind(this),
         error: function() {
+          this.clearLoading();
           this.setAlert('danger',
             'Failed to delete organization, server error occurred.');
         }.bind(this)
