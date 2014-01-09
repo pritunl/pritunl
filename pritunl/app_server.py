@@ -146,24 +146,36 @@ class AppServer(Config):
             with open(os.path.join(self.www_path, 'index.html'), 'r') as fd:
                 return fd.read()
 
+    def _get_version_int(self, version):
+        return int(''.join([x.zfill(2) for x in version.split('.')]))
+
     def _upgrade_data(self):
         from pritunl import __version__
-        version = '0.10.1'
+        version = self._get_version_int(__version__)
+        cur_version = '0.10.1'
         version_path = os.path.join(self.data_path, VERSION_NAME)
         if os.path.isfile(version_path):
             with open(version_path, 'r') as version_file:
-                version = version_file.readlines()[0].strip()
+                cur_version = version_file.readlines()[0].strip()
+        cur_version = self._get_version_int(cur_version)
 
-        if version == '0.10.1':
-            logger.info('Upgrading data from v0.10.1...')
+        if cur_version < self._get_version_int('0.10.2'):
+            logger.info('Upgrading data to v0.10.2...')
             from organization import Organization
             for org in Organization.get_orgs():
                 for user in org.get_users():
-                    user._upgrade_0_10_1()
+                    user._upgrade_0_10_2()
 
-        if version != __version__:
+        if cur_version < self._get_version_int('0.10.4'):
+            logger.info('Upgrading data to v0.10.4...')
+            from organization import Organization
+            for org in Organization.get_orgs():
+                for user in org.get_users():
+                    user._upgrade_0_10_4()
+
+        if cur_version != version:
             with open(version_path, 'w') as version_file:
-                version = version_file.write('%s\n' % __version__)
+                version_file.write('%s\n' % __version__)
 
     def _hash_password(self, password):
         password_hash = hashlib.sha512()

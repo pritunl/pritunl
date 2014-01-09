@@ -14,7 +14,7 @@ import base64
 logger = logging.getLogger(APP_NAME)
 
 class User(Config):
-    str_options = {'name', 'otp_secret'}
+    str_options = {'name', 'otp_secret', 'type'}
 
     def __init__(self, org, id=None, name=None, type=None):
         Config.__init__(self)
@@ -54,19 +54,29 @@ class User(Config):
         if not self._initialized:
             self._initialize()
 
-    def __getattr__(self, name):
-        if name == 'type':
-            self.type = self._load_type()
-            return self.type
-        return Config.__getattr__(self, name)
-
-    def _upgrade_0_10_1(self):
+    def _upgrade_0_10_2(self):
         if not self.otp_secret:
-            logger.debug('Upgrading user from v0.10.1... %r' % {
+            logger.debug('Upgrading user to v0.10.2... %r' % {
                 'org_id': self.org.id,
                 'user_id': self.id,
             })
             self._generate_otp_secret()
+            self.commit(0600)
+
+    def _upgrade_0_10_4(self):
+        if not self.type:
+            logger.info('Upgrading user to v0.10.4... %r' % {
+                'org_id': self.org.id,
+                'user_id': self.id,
+            })
+            with open(self.cert_path, 'r') as cert_file:
+                cert_data = cert_file.read()
+                if 'CA:TRUE' in cert_data:
+                    self.type = CERT_CA
+                elif 'TLS Web Server Authentication' in cert_data:
+                    self.type = CERT_SERVER
+                else:
+                    self.type = CERT_CLIENT
             self.commit(0600)
 
     def _initialize(self):
@@ -147,16 +157,6 @@ class User(Config):
         self._generate_otp_secret()
         self.commit(0600)
         Event(type=USERS_UPDATED)
-
-    def _load_type(self):
-        with open(self.cert_path, 'r') as cert_file:
-            cert_data = cert_file.read()
-            if 'CA:TRUE' in cert_data:
-                return CERT_CA
-            elif 'TLS Web Server Authentication' in cert_data:
-                return CERT_SERVER
-            else:
-                return  CERT_CLIENT
 
     def _revoke(self, reason):
         if self.id == CA_CERT_ID:
