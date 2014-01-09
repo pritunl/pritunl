@@ -17,7 +17,8 @@ TEST_USER_NAME = 'unittest_user'
 TEST_ORG_NAME = 'unittest_org'
 TEST_SERVER_NAME = 'unittest_server'
 TEMP_DATABSE_PATH = 'pritunl_test.db'
-ENABLE_STRESS_TEST = False
+ENABLE_STANDARD_TESTS = True
+ENABLE_STRESS_TESTS = False
 UUID_RE = r'^[a-z0-9]+$'
 AUTH_HANDLERS = [
     ('GET', '/export'),
@@ -193,11 +194,13 @@ class Database(SessionTestCase):
         value = db.get('column_family')
         self.assertEqual(value, {})
 
+    @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_mem(self):
         db = database.Database(None)
         self._test_db(db)
         db.close()
 
+    @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_berkeley_db(self):
         db = database.Database(TEMP_DATABSE_PATH)
         self._test_db(db)
@@ -206,6 +209,7 @@ class Database(SessionTestCase):
 
 
 class Auth(SessionTestCase):
+    @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_auth_get(self):
         response = requests.get('/auth')
         data = response.json()
@@ -213,6 +217,7 @@ class Auth(SessionTestCase):
         self.assertIn('authenticated', data)
         self.assertFalse(data['authenticated'])
 
+    @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_auth_post(self):
         session = Session()
         data = session.response.json()
@@ -239,6 +244,7 @@ class Auth(SessionTestCase):
         self.assertIn('authenticated', data)
         self.assertFalse(data['authenticated'])
 
+    @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_auth_handlers(self):
         for method, endpoint in AUTH_HANDLERS:
             response = getattr(requests, method.lower())(endpoint)
@@ -246,6 +252,7 @@ class Auth(SessionTestCase):
 
 
 class Data(SessionTestCase):
+    @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_export_get(self):
         for endpoint in ['/export', '/export/pritunl.tar']:
             response = self.session.get(endpoint)
@@ -261,6 +268,7 @@ class Data(SessionTestCase):
 
 
 class Event(SessionTestCase):
+    @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_event_get(self):
         response = self.session.get('/event')
         self.assertEqual(response.status_code, 200)
@@ -278,6 +286,7 @@ class Event(SessionTestCase):
 
 
 class Key(SessionTestCase):
+    @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_user_key_archive_get(self):
         response = self.session.get('/key/%s/%s.tar' % (
             self.org_id, self.user_id))
@@ -290,6 +299,7 @@ class Key(SessionTestCase):
         exp = r'^attachment; filename="%s.tar"$' % TEST_USER_NAME
         self.assertRegexpMatches(content_disposition, exp)
 
+    @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_user_key_link_get(self):
         response = self.session.put('/server/%s/organization/%s' % (
             self.server_id, self.org_id))
@@ -385,6 +395,7 @@ class Key(SessionTestCase):
 
 
 class Log(SessionTestCase):
+    @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_log_get(self):
         response = self.session.get('/log')
         self.assertEqual(response.status_code, 200)
@@ -399,6 +410,7 @@ class Log(SessionTestCase):
 
 
 class Org(SessionTestCase):
+    @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_org_post_put_get_delete(self):
         response = self.session.post('/organization', json={
             'name': TEST_ORG_NAME + '2',
@@ -456,6 +468,7 @@ class Org(SessionTestCase):
 
 
 class Password(SessionTestCase):
+    @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_password_post(self):
         response = self.session.put('/password', json={
             'password': TEST_PASSWORD,
@@ -475,6 +488,7 @@ class Password(SessionTestCase):
 
 
 class Server(SessionTestCase):
+    @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_server_post_put_get_delete(self):
         response = self.session.post('/server', json={
             'name': TEST_SERVER_NAME + '2',
@@ -595,6 +609,7 @@ class Server(SessionTestCase):
             self.assertIn('name', server)
             self.assertNotEqual(server['name'], TEST_SERVER_NAME + '3')
 
+    @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_server_org_put_get_delete(self):
         response = self.session.put('/server/%s/organization/%s' % (
             self.server_id, self.org_id))
@@ -631,6 +646,7 @@ class Server(SessionTestCase):
             self.server_id, self.org_id))
         self.assertEqual(response.status_code, 200)
 
+    @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_server_operation_put(self):
         response = self.session.put('/server/%s/organization/%s' % (
             self.server_id, self.org_id))
@@ -677,6 +693,7 @@ class Server(SessionTestCase):
             self.server_id, self.org_id))
         self.assertEqual(response.status_code, 200)
 
+    @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_server_output_delete_get(self):
         response = self.session.delete('/server/%s/output' % self.server_id)
         self.assertEqual(response.status_code, 200)
@@ -688,6 +705,7 @@ class Server(SessionTestCase):
         self.assertIn('output', data)
         self.assertEqual(data['output'], '')
 
+    @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_server_put_post_errors(self):
         response = self.session.put('/server/%s/organization/%s' % (
             self.server_id, self.org_id))
@@ -838,6 +856,7 @@ class Server(SessionTestCase):
 
 
 class Status(SessionTestCase):
+    @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_status_get(self):
         response = self.session.get('/status')
         self.assertEqual(response.status_code, 200)
@@ -853,6 +872,7 @@ class Status(SessionTestCase):
 
 
 class User(SessionTestCase):
+    @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_user_post_put_get_delete(self):
         response = self.session.post('/user/%s' % self.org_id, json={
             'name': TEST_USER_NAME + '2',
@@ -919,6 +939,7 @@ class User(SessionTestCase):
         response = self.session.delete('/user/%s/%s' % (self.org_id, user_id))
         self.assertEqual(response.status_code, 200)
 
+    @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_user_otp_secret_put(self):
         response = self.session.get('/user/%s' % self.org_id)
         self.assertEqual(response.status_code, 200)
@@ -952,7 +973,7 @@ class User(SessionTestCase):
 
 
 class Stress(SessionTestCase):
-    @unittest.skipUnless(ENABLE_STRESS_TEST, 'Skipping stress test')
+    @unittest.skipUnless(ENABLE_STRESS_TESTS, 'Skipping stress test')
     def test_user_post_stress(self):
         for i in xrange(1000):
             name = '%s_%s' % (TEST_USER_NAME, str(i).zfill(4))
