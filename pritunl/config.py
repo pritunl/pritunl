@@ -176,16 +176,25 @@ class Config:
         if not self._loaded:
             self.load(True)
 
-        with open(self._conf_path, 'w') as config:
-            if chmod_mode:
-                os.chmod(self._conf_path, chmod_mode)
+        try:
+            temp_conf_path = self._conf_path + CONF_TEMP_EXT
+            with open(temp_conf_path, 'w') as config:
+                if chmod_mode:
+                    os.chmod(self._conf_path, chmod_mode)
 
-            for name in self.all_options:
-                if name not in self.__dict__:
-                    continue
-                value = self.__dict__[name]
-                if value is None:
-                    continue
-                config.write(self._encode_line(name, value))
+                for name in self.all_options:
+                    if name not in self.__dict__:
+                        continue
+                    value = self.__dict__[name]
+                    if value is None:
+                        continue
+                    config.write(self._encode_line(name, value))
+            os.rename(temp_conf_path, self._conf_path)
+        except:
+            try:
+                os.remove(temp_conf_path)
+            except OSError:
+                pass
+            raise
 
         self.set_state(SAVED)

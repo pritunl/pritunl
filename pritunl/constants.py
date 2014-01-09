@@ -60,6 +60,7 @@ SERVER_CERT_NAME = 'server.crt'
 SERVER_KEY_NAME = 'server.key'
 OTP_JSON_NAME = 'otp.json'
 AUTH_LOG_NAME = 'auth.log'
+CONF_TEMP_EXT = '.tmp'
 
 CA_CERT_ID = 'ca'
 CERT_CA = 'ca'
