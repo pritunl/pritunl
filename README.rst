@@ -35,3 +35,12 @@ Vagrant Setup
     $ sudo python2 server.py
     # Open http://localhost:6500/
     # Open http://localhost:8080/collectd
+
+Testing
+-------
+
+.. code-block:: bash
+
+    $ git clone https://github.com/pritunl/pritunl.git
+    $ cd pritunl
+    $ python2 test_pritunl.py
