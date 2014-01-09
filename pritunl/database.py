@@ -15,7 +15,6 @@ class RedisBackend:
             port = 6379
         if db is None:
             db = 0
-
         logger.info('Connecting to redis database... %r' % {
             'host': host,
             'port': port,
@@ -23,7 +22,15 @@ class RedisBackend:
         })
 
         import redis
-        self._client = redis.Redis(host=host, port=port, db=db)
+        try:
+            self._client = redis.Redis(host=host, port=port, db=db)
+        except:
+            logger.exception('Failed to open redis database. %r' % {
+                'host': host,
+                'port': port,
+                'db': db,
+            })
+            raise
 
     def close(self):
         pass
@@ -64,7 +71,13 @@ class BerkeleyBackend:
             import bsddb
 
         self._client = bsddb.db.DB()
-        self._client.open(db_path, bsddb.db.DB_HASH, bsddb.db.DB_CREATE)
+        try:
+            self._client.open(db_path, bsddb.db.DB_HASH, bsddb.db.DB_CREATE)
+        except:
+            logger.exception('Failed to open berkeley database. %r' % {
+                'path': db_path,
+            })
+            raise
         self._sync_lock = threading.Lock()
         self._sync_interrupt = False
         self._sync_thread = threading.Thread(target=self._sync_loop)
