@@ -65,7 +65,7 @@ class User(Config):
 
     def _upgrade_0_10_4(self):
         if not self.type:
-            logger.info('Upgrading user to v0.10.4... %r' % {
+            logger.debug('Upgrading user to v0.10.4... %r' % {
                 'org_id': self.org.id,
                 'user_id': self.id,
             })
