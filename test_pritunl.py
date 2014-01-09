@@ -58,7 +58,8 @@ def request(method, endpoint, **kwargs):
     if 'json' in kwargs and kwargs['json']:
         headers['Content-Type'] = 'application/json'
         kwargs['data'] = json.dumps(kwargs.pop('json'))
-    return _request(method, BASE_URL + endpoint, headers=headers, **kwargs)
+    return _request(method, BASE_URL + endpoint, headers=headers,
+        verify=False, **kwargs)
 requests.api.request = request
 
 
@@ -78,7 +79,7 @@ class Session:
             headers['Content-Type'] = 'application/json'
             kwargs['data'] = json.dumps(kwargs.pop('json'))
         return getattr(self._session, method)(BASE_URL + endpoint,
-            headers=headers, **kwargs)
+            headers=headers, verify=False, **kwargs)
 
     def get(self, endpoint, **kwargs):
         return self._request('get', endpoint, **kwargs)
@@ -975,9 +976,22 @@ class User(SessionTestCase):
 class Stress(SessionTestCase):
     @unittest.skipUnless(ENABLE_STRESS_TESTS, 'Skipping stress test')
     def test_user_post_stress(self):
+        response = self.session.post('/organization', json={
+            'name': TEST_ORG_NAME + '_stress',
+        })
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertIn('id', data)
+        self.assertRegexpMatches(data['id'], UUID_RE)
+        self.assertIn('name', data)
+        self.assertEqual(data['name'], TEST_ORG_NAME + '_stress')
+        org_id = data['id']
+
+
         for i in xrange(1000):
             name = '%s_%s' % (TEST_USER_NAME, str(i).zfill(4))
-            response = self.session.post('/user/%s' % self.org_id, json={
+            response = self.session.post('/user/%s' % org_id, json={
                 'name': name,
             })
             self.assertEqual(response.status_code, 200)
@@ -986,9 +1000,10 @@ class Stress(SessionTestCase):
             self.assertIn('id', data)
             self.assertRegexpMatches(data['id'], UUID_RE)
             self.assertIn('organization', data)
-            self.assertEqual(data['organization'], self.org_id)
+            self.assertEqual(data['organization'], org_id)
             self.assertIn('organization_name', data)
-            self.assertEqual(data['organization_name'], TEST_ORG_NAME)
+            self.assertEqual(data['organization_name'],
+                TEST_ORG_NAME + '_stress')
             self.assertIn('name', data)
             self.assertEqual(data['name'], name)
             self.assertIn('type', data)
