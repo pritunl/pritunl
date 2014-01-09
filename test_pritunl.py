@@ -17,6 +17,7 @@ TEST_USER_NAME = 'unittest_user'
 TEST_ORG_NAME = 'unittest_org'
 TEST_SERVER_NAME = 'unittest_server'
 TEMP_DATABSE_PATH = 'pritunl_test.db'
+ENABLE_STRESS_TEST = False
 UUID_RE = r'^[a-z0-9]+$'
 AUTH_HANDLERS = [
     ('GET', '/export'),
@@ -948,6 +949,29 @@ class User(SessionTestCase):
         self.assertIn('otp_secret', data)
         self.assertNotEqual(data['otp_secret'], orig_otp_secret)
         self.assertRegexpMatches(user['otp_secret'], r'^[A-Z0-9]+$')
+
+
+class Stress(SessionTestCase):
+    @unittest.skipUnless(ENABLE_STRESS_TEST, 'Skipping stress test')
+    def test_user_post_stress(self):
+        for i in xrange(1000):
+            name = '%s_%s' % (TEST_USER_NAME, str(i).zfill(4))
+            response = self.session.post('/user/%s' % self.org_id, json={
+                'name': name,
+            })
+            self.assertEqual(response.status_code, 200)
+
+            data = response.json()
+            self.assertIn('id', data)
+            self.assertRegexpMatches(data['id'], UUID_RE)
+            self.assertIn('organization', data)
+            self.assertEqual(data['organization'], self.org_id)
+            self.assertIn('organization_name', data)
+            self.assertEqual(data['organization_name'], TEST_ORG_NAME)
+            self.assertIn('name', data)
+            self.assertEqual(data['name'], name)
+            self.assertIn('type', data)
+            self.assertIn('otp_secret', data)
 
 
 if __name__ == '__main__':
