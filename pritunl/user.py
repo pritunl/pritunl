@@ -55,15 +55,6 @@ class User(Config):
         if not self._initialized:
             self._initialize()
 
-    def _upgrade_0_10_2(self):
-        if not self.otp_secret:
-            logger.debug('Upgrading user to v0.10.2... %r' % {
-                'org_id': self.org.id,
-                'user_id': self.id,
-            })
-            self._generate_otp_secret()
-            self.commit()
-
     def _upgrade_0_10_4(self):
         if not self.type:
             logger.debug('Upgrading user to v0.10.4... %r' % {

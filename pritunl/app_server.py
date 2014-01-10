@@ -152,21 +152,14 @@ class AppServer(Config):
     def _upgrade_data(self):
         from pritunl import __version__
         version = self._get_version_int(__version__)
-        cur_version = '0.10.1'
         version_path = os.path.join(self.data_path, VERSION_NAME)
+        cur_version = None
         if os.path.isfile(version_path):
             with open(version_path, 'r') as version_file:
-                cur_version = version_file.readlines()[0].strip()
-        cur_version = self._get_version_int(cur_version)
+                cur_version = self._get_version_int(
+                    version_file.readlines()[0].strip())
 
-        if cur_version < self._get_version_int('0.10.2'):
-            logger.info('Upgrading data to v0.10.2...')
-            from organization import Organization
-            for org in Organization.get_orgs():
-                for user in org.get_users():
-                    user._upgrade_0_10_2()
-
-        if cur_version < self._get_version_int('0.10.4'):
+        if cur_version and cur_version < self._get_version_int('0.10.4'):
             logger.info('Upgrading data to v0.10.4...')
             from organization import Organization
             for org in Organization.get_orgs():
