@@ -19,6 +19,7 @@ TEST_SERVER_NAME = 'unittest_server'
 TEMP_DATABSE_PATH = 'pritunl_test.db'
 ENABLE_STANDARD_TESTS = True
 ENABLE_STRESS_TESTS = False
+THREADED_STRESS_TEST = True
 UUID_RE = r'^[a-z0-9]+$'
 AUTH_HANDLERS = [
     ('GET', '/export'),
@@ -974,6 +975,25 @@ class User(SessionTestCase):
 
 
 class Stress(SessionTestCase):
+    def _create_user(self, org_id, name):
+        response = self.session.post('/user/%s' % org_id, json={
+            'name': name,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertIn('id', data)
+        self.assertRegexpMatches(data['id'], UUID_RE)
+        self.assertIn('organization', data)
+        self.assertEqual(data['organization'], org_id)
+        self.assertIn('organization_name', data)
+        self.assertEqual(data['organization_name'],
+            TEST_ORG_NAME + '_stress')
+        self.assertIn('name', data)
+        self.assertEqual(data['name'], name)
+        self.assertIn('type', data)
+        self.assertIn('otp_secret', data)
+
     @unittest.skipUnless(ENABLE_STRESS_TESTS, 'Skipping stress test')
     def test_user_post_stress(self):
         response = self.session.post('/organization', json={
@@ -988,26 +1008,26 @@ class Stress(SessionTestCase):
         self.assertEqual(data['name'], TEST_ORG_NAME + '_stress')
         org_id = data['id']
 
+        if THREADED_STRESS_TEST:
+            num = 0
+            for i in xrange(8):
+                threads = []
 
-        for i in xrange(1024):
-            name = '%s_%s' % (TEST_USER_NAME, str(i).zfill(4))
-            response = self.session.post('/user/%s' % org_id, json={
-                'name': name,
-            })
-            self.assertEqual(response.status_code, 200)
+                for x in xrange(128):
+                    name = '%s_%s' % (TEST_USER_NAME, str(num).zfill(4))
+                    thread = threading.Thread(target=self._create_user,
+                        args=(org_id, name))
+                    thread.start()
+                    threads.append(thread)
+                    num += 1
 
-            data = response.json()
-            self.assertIn('id', data)
-            self.assertRegexpMatches(data['id'], UUID_RE)
-            self.assertIn('organization', data)
-            self.assertEqual(data['organization'], org_id)
-            self.assertIn('organization_name', data)
-            self.assertEqual(data['organization_name'],
-                TEST_ORG_NAME + '_stress')
-            self.assertIn('name', data)
-            self.assertEqual(data['name'], name)
-            self.assertIn('type', data)
-            self.assertIn('otp_secret', data)
+                for thread in threads:
+                    thread.join()
+
+        else:
+            for i in xrange(1024):
+                name = '%s_%s' % (TEST_USER_NAME, str(i).zfill(4))
+                self._create_user(org_id, name)
 
 
 if __name__ == '__main__':
