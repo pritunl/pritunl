@@ -17,6 +17,7 @@ DEFAULT_PRIMARY_INTERFACE = 'eth0'
 DEFAULT_SESSION_TIMEOUT = 86400
 DEFAULT_PASSWORD = 'admin'
 PASSWORD_SALT = '2511cebca93d028393735637bbc8029207731fcf'
+DEFAULT_CONF_PATH = '/etc/pritunl.conf'
 DEFAULT_DB_PATH = '/var/lib/pritunl/pritunl.db'
 DEFAULT_WWW_PATH = '/usr/share/pritunl/www'
 DEFAULT_DATA_PATH = '/var/lib/pritunl'
