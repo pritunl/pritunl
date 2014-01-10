@@ -989,7 +989,7 @@ class Stress(SessionTestCase):
         org_id = data['id']
 
 
-        for i in xrange(1000):
+        for i in xrange(1024):
             name = '%s_%s' % (TEST_USER_NAME, str(i).zfill(4))
             response = self.session.post('/user/%s' % org_id, json={
                 'name': name,
