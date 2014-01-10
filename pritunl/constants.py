@@ -211,6 +211,7 @@ dh %s
 server %s
 ifconfig-pool-persist %s
 push "%s"
+max-clients 1024
 keepalive 4 10
 persist-tun
 status %s 1
