@@ -1,4 +1,4 @@
-pritunl (0.10.3-0ubuntu1) unstable; urgency=low
+pritunl (0.10.4-0ubuntu1) unstable; urgency=low
 
   * Improve support for mobile devices
   * Add temporary page to view two-step authentication key and conf links
