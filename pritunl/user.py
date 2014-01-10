@@ -87,7 +87,8 @@ class User(Config):
         self.commit()
         self._cert_create()
         self._delete_ssl_conf()
-        LogEntry(message='Created new user.')
+        if self.type == CERT_CLIENT:
+            LogEntry(message='Created new user "%s".' % self.name)
         Event(type=USERS_UPDATED)
 
     def _cert_request(self):
@@ -313,6 +314,8 @@ class User(Config):
         Event(type=USERS_UPDATED)
 
     def remove(self, reason=UNSPECIFIED):
+        name = self.name
+        type = self.type
         self._revoke(reason)
 
         try:
@@ -361,4 +364,5 @@ class User(Config):
             })
 
         Event(type=USERS_UPDATED)
-        LogEntry(message='Deleted user.')
+        if type == CERT_CLIENT:
+            LogEntry(message='Deleted user "%s".' % name)

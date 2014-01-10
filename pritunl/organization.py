@@ -52,7 +52,7 @@ class Organization(Config):
         self._make_dirs()
         self.ca_cert = User(self, type=CERT_CA)
         self.commit()
-        LogEntry(message='Created new organization.')
+        LogEntry(message='Created new organization "%s".' % self.name)
         Event(type=ORGS_UPDATED)
 
     def _make_dirs(self):
@@ -144,13 +144,15 @@ class Organization(Config):
         Event(type=ORGS_UPDATED)
 
     def remove(self):
+        name = self.name
+
         for server in self.get_servers():
             if server.status:
                 server.stop()
             server.remove_org(self.id)
 
         utils.rmtree(self.path)
-        LogEntry(message='Deleted organization.')
+        LogEntry(message='Deleted organization "%s".' % name)
         Event(type=ORGS_UPDATED)
 
     @staticmethod

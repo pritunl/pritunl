@@ -94,7 +94,7 @@ class Server(Config):
         try:
             self._generate_dh_param()
             self.commit()
-            LogEntry(message='Created new server.')
+            LogEntry(message='Created new server "%s".' % self.name)
         except:
             logger.exception('Failed to create server. %r' % {
                 'server_id': self.id,
@@ -124,6 +124,9 @@ class Server(Config):
         logger.info('Removing server. %r' % {
             'server_id': self.id,
         })
+
+        name = self.name
+
         if self.status:
             self.force_stop()
             for i in xrange(20):
@@ -133,9 +136,10 @@ class Server(Config):
             if self.status:
                 self.force_stop()
                 time.sleep(0.5)
+
         self._remove_primary_user()
         utils.rmtree(self.path)
-        LogEntry(message='Deleted server.')
+        LogEntry(message='Deleted server "%s".' % name)
         Event(type=SERVERS_UPDATED)
 
     def commit(self):
