@@ -427,6 +427,15 @@ define([
   };
   routes['PUT=/user/<orgId>/<userId>/otp_secret'] = userOtpSecretPut;
 
+  var keyGet = function(request, orgId, userId) {
+    request.response({
+      id: uuid(),
+      key_url: '/key/demo.tar',
+      view_url: '/key/demo.html'
+    });
+  };
+  routes['GET=/key/<org_id>/<user_id>'] = keyGet;
+
   var demoAjax = function(ajaxRequest) {
     var type = ajaxRequest.type;
     var url = ajaxRequest.url.split('/').splice(1);
