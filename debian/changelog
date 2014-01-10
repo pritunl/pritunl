@@ -4,6 +4,7 @@ pritunl (0.10.3-0ubuntu1) unstable; urgency=low
   * Add temporary page to view two-step authentication key and conf links
   * Add organization name to two-step authentication label
   * Changes to rest api
+  * User conf data will be automatically upgraded after first launch
 
  -- Zachary Huff <zach.huff.386@gmail.com>  Fri, 10 Jan 2014 12:32:57 -0400
 

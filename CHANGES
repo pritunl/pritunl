@@ -8,6 +8,7 @@ Improve support for mobile devices
 Add temporary page to view two-step authentication key and conf links
 Add organization name to two-step authentication label
 Changes to rest api
+User conf data will be automatically upgraded after first launch
 
 Version 0.10.3 2013-11-14
 -------------------------
