@@ -1,5 +1,14 @@
 pritunl (0.10.3-0ubuntu1) unstable; urgency=low
 
+  * Improve support for mobile devices
+  * Add temporary page to view two-step authentication key and conf links
+  * Add organization name to two-step authentication label
+  * Changes to rest api
+
+ -- Zachary Huff <zach.huff.386@gmail.com>  Fri, 10 Jan 2014 12:32:57 -0400
+
+pritunl (0.10.3-0ubuntu1) unstable; urgency=low
+
   * Add functionality to generate new two-step authentication keys
   * Add support for inline certs
   * Servers will only restart when deleting users that are connected

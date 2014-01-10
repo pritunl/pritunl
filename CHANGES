@@ -1,8 +1,8 @@
 Pritunl Changelog
 =================
 
-Version 0.10.4
---------------
+Version 0.10.4 2014-01-10
+-------------------------
 
 Improve support for mobile devices
 Add temporary page to view two-step authentication key and conf links
