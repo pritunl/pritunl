@@ -247,7 +247,8 @@ class AppServer(Config):
                     server.start()
 
         server = cherrypy.wsgiserver.CherryPyWSGIServer(
-            (self.bind_addr, self.port), self.app)
+            (self.bind_addr, self.port), self.app,
+            server_name=cherrypy.wsgiserver.CherryPyWSGIServer.version)
         server.ssl_adapter = cherrypy.wsgiserver.ssl_builtin.BuiltinSSLAdapter(
             self._server_cert_path, self._server_key_path)
         try:
