@@ -8,6 +8,9 @@ import uuid
 import os
 import subprocess
 import utils
+import logging
+
+logger = logging.getLogger(APP_NAME)
 
 class Organization(Config):
     str_options = {'name'}
@@ -80,7 +83,16 @@ class Organization(Config):
                 user_id = user_id.replace('.crt', '')
                 if user_id == CA_CERT_ID:
                     continue
-                users.append(User(self, id=user_id))
+                user = User(self, id=user_id)
+                try:
+                    user.load()
+                except IOError:
+                    logger.exception('Failed to load user conf, ' +
+                        'ignoring user. %r' % {
+                            'user_id': user_id,
+                        })
+                    continue
+                users.append(user)
         return users
 
     def get_server(self, server_id):
@@ -147,5 +159,14 @@ class Organization(Config):
         orgs = []
         if os.path.isdir(path):
             for org_id in os.listdir(path):
-                orgs.append(Organization(org_id))
+                org = Organization(org_id)
+                try:
+                    org.load()
+                except IOError:
+                    logger.exception('Failed to load organization conf, ' +
+                        'ignoring organization. %r' % {
+                            'org_id': org_id,
+                        })
+                    continue
+                orgs.append(org)
         return orgs
