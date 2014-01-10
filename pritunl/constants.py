@@ -1,3 +1,5 @@
+import string
+
 APP_NAME = 'pritunl'
 APP_NAME_FORMATED = 'Pritunl'
 CONF_FILENAME = '%s.conf' % APP_NAME
@@ -30,6 +32,9 @@ DATABASE_CLEAN_INTERVAL = 600
 EVENT_DB_TTL = 61000
 RATE_LIMIT_SLEEP = 0.5
 SHORT_URL_LEN = 5
+SHORT_URL_CHARS = (string.ascii_lowercase + string.ascii_uppercase +
+    string.digits).replace('l', '').replace('I', '').replace('O', '').replace(
+    '0', '')
 THREAD_EVENT_TIMEOUT = 15
 
 INFO = 'info'

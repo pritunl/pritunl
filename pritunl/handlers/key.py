@@ -7,7 +7,6 @@ import flask
 import uuid
 import time
 import random
-import string
 
 _key_ids = {}
 _view_ids = {}
@@ -38,9 +37,15 @@ def user_key_link_get(org_id, user_id):
     org = Organization(org_id)
     servers = org.get_servers()
     key_id = uuid.uuid4().hex
-    view_id = ''.join(random.sample(
-        string.ascii_lowercase + string.ascii_uppercase + string.digits,
-        SHORT_URL_LEN))
+
+    view_id = None
+    for i in xrange(2048):
+        temp_view_id = ''.join(random.sample(SHORT_URL_CHARS, SHORT_URL_LEN))
+        if temp_view_id not in _view_ids:
+            view_id = temp_view_id
+            break
+    if not view_id:
+        raise AttributeError('Failed to generate random view id')
 
     _key_ids[key_id] = {
         'org_id': org_id,
