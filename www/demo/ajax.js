@@ -139,7 +139,7 @@ define([
     if (!orgId) {
       orgId = uuid();
       demoData.users[orgId] = {};
-      logEntry('Created new organization.');
+      logEntry('Created new organization "' + request.data.name + '".');
     }
     demoData.orgs[orgId] = {
       id: orgId,
@@ -165,10 +165,11 @@ define([
       }
     }
 
+    var name = demoData.orgs[orgId].name;
     delete demoData.orgs[orgId];
     delete demoData.users[orgId];
     event('organizations_updated');
-    logEntry('Deleted organization.');
+    logEntry('Deleted organization "' + name + '".');
     request.response({});
   };
   routes['DELETE=/organization/<orgId>'] = organizationDelete;
@@ -226,7 +227,7 @@ define([
       output: ''
     };
     event('servers_updated');
-    logEntry('Created new server.');
+    logEntry('Created new server "' + request.data.name + '".');
     request.response({});
   };
   routes['POST=/server'] = serverPost;
@@ -248,9 +249,10 @@ define([
   routes['PUT=/server/<serverId>'] = serverPut;
 
   var serverDelete = function(request, serverId) {
+    var name = demoData.servers[serverId].name;
     delete demoData.servers[serverId];
     event('servers_updated');
-    logEntry('Deleted server.');
+    logEntry('Deleted server "' + name + '".');
     request.response({});
   };
   routes['DELETE=/server/<serverId>'] = serverDelete;
@@ -400,7 +402,7 @@ define([
     };
 
     event('users_updated');
-    logEntry('Created new user.');
+    logEntry('Created new user "' + request.data.name + '".');
     request.response({});
   };
   routes['POST=/user/<orgId>'] = userPost;
@@ -413,9 +415,10 @@ define([
   routes['PUT=/user/<orgId>/<userId>'] = userPut;
 
   var userDelete = function(request, orgId, userId) {
+    var name = demoData.users[orgId][userId].name;
     delete demoData.users[orgId][userId];
     event('users_updated');
-    logEntry('Deleted user.');
+    logEntry('Deleted user "' + name + '".');
     request.response({});
   };
   routes['DELETE=/user/<orgId>/<userId>'] = userDelete;

@@ -12,64 +12,69 @@ define([], function() {
 
   var logs = [
     {
+      id: '4eca4b80300347a2a237b1545bcfa728',
+      message: 'Created new server "server2".',
+      time: 1380863023
+    },
+    {
       id: '35e9b53b3e2c0d3bad674bcf4e7f2ba9',
-      message: 'Created new server.',
-      time: 1380862289
-    },
-    {
-      id: '126d5f9d78c7bd399484613f9aaf4383',
-      message: 'Created new user.',
-      time: 1380862267
-    },
-    {
-      id: 'ec21498ea20d9c9def138293a822a39c',
-      message: 'Created new user.',
-      time: 1380862262
+      message: 'Created new server "server1".',
+      time: 1380862905
     },
     {
       id: 'a66f7ec1117ac2708465adf3ab9cd6ec',
-      message: 'Deleted user.',
-      time: 1380862256
+      message: 'Deleted user "user3".',
+      time: 1380862844
+    },
+    {
+      id: '126d5f9d78c7bd399484613f9aaf4383',
+      message: 'Created new user "user3".',
+      time: 1380862712
+    },
+    {
+      id: 'ec21498ea20d9c9def138293a822a39c',
+      message: 'Created new user "user2".',
+      time: 1380862662
     },
     {
       id: '1e743b5234e32164837c89c2b706c1b7',
-      message: 'Created new user.',
-      time: 1380862247
+      message: 'Created new user "user1".',
+      time: 1380862585
     },
     {
       id: '3dd359a679ec9772cc0c209d0d8c4cb4',
-      message: 'Created new organization.',
-      time: 1380862244
+      message: 'Created new organization "org2".',
+      time: 1380862472
     },
     {
       id: 'de50f62440b7bc39caaad622e5b3f402',
-      message: 'Created new user.',
-      time: 1380862233
+      message: 'Created new user "user4".',
+      time: 1380862394
     },
     {
       id: '8e40c42302dbc14df2003febf611571c',
-      message: 'Created new user.',
-      time: 1380862227
+      message: 'Created new user "user3".',
+      time: 1380862243
     },
     {
       id: '9fb1ece8c427767afe7adefa5fdb903f',
-      message: 'Created new user.',
-      time: 1380862223
+      message: 'Created new user "user2".',
+      time: 1380862194
     },
     {
       id: '73cfe76951c4fe94df0d4cb12a6fbce7',
-      message: 'Created new user.',
-      time: 1380862219
+      message: 'Created new user "user1".',
+      time: 1380862042
     },
     {
       id: 'c22c3996cbd8d44da469bae9e99ac57e',
-      message: 'Created new organization.',
-      time: 1380862214
+      message: 'Created new organization "org1".',
+      time: 1380861943
     },
     {
       id: '94bc0d3e2afa44ccb22c56843ac90c08',
       message: 'Web server started.',
-      time: 1380862204
+      time: 1380861803
     }
   ];
 
