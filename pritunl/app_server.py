@@ -166,6 +166,12 @@ class AppServer(Config):
                 for user in org.get_users():
                     user._upgrade_0_10_4()
 
+        if cur_version and cur_version < self._get_version_int('0.10.5'):
+            logger.info('Upgrading data to v0.10.5...')
+            from server import Server
+            for server in Server.get_servers():
+                server._upgrade_0_10_5()
+
         if cur_version != version:
             with open(version_path, 'w') as version_file:
                 version_file.write('%s\n' % __version__)

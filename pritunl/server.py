@@ -90,8 +90,7 @@ class Server(Config):
     def _upgrade_0_10_5(self):
         if self.local_network:
             logger.debug('Upgrading server to v0.10.5... %r' % {
-                'org_id': self.org.id,
-                'user_id': self.id,
+                'server_id': self.id,
             })
             self.local_networks = [self.local_network]
             self.local_network = None
