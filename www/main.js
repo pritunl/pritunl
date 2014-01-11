@@ -75,6 +75,7 @@ require.config({
     jquery: 'vendor/jquery/jquery',
     less: 'vendor/less/less',
     qrcode: 'vendor/qrcode/qrcode',
+    select: 'vendor/select/select',
     text: 'vendor/requireText/text',
     underscore: 'vendor/underscore/underscore',
     initialize: 'init/testing'

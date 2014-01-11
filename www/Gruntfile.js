@@ -85,6 +85,7 @@ module.exports = function(grunt) {
             jquery: 'vendor/jquery/jquery.min',
             less: 'vendor/less/less.min',
             qrcode: 'vendor/qrcode/qrcode.min',
+            select: 'vendor/select/select.min',
             text: 'vendor/requireText/text',
             underscore: 'vendor/underscore/underscore.min',
             initialize: 'init/production'
@@ -117,6 +118,7 @@ module.exports = function(grunt) {
             jquery: 'vendor/jquery/jquery.min',
             less: 'vendor/less/less.min',
             qrcode: 'vendor/qrcode/qrcode.min',
+            select: 'vendor/select/select.min',
             text: 'vendor/requireText/text',
             underscore: 'vendor/underscore/underscore.min',
             initialize: 'init/demo'
@@ -149,6 +151,7 @@ module.exports = function(grunt) {
             jquery: 'vendor/jquery/jquery.min',
             less: 'vendor/less/less.min',
             qrcode: 'vendor/qrcode/qrcode.min',
+            select: 'vendor/select/select.min',
             text: 'vendor/requireText/text',
             underscore: 'vendor/underscore/underscore.min',
             initialize: 'init/production'
@@ -228,6 +231,11 @@ module.exports = function(grunt) {
         'https://raw.github.com/davidshimjs/qrcodejs/master/qrcode.js',
       'vendor/qrcode/qrcode.min.js':
         'https://raw.github.com/davidshimjs/qrcodejs/master/qrcode.min.js',
+
+      'vendor/select/select.js':
+        'https://cdnjs.cloudflare.com/ajax/libs/select2/3.4.5/select2.js',
+      'vendor/select/select.min.js':
+        'https://cdnjs.cloudflare.com/ajax/libs/select2/3.4.5/select2.min.js',
 
       'vendor/require/require.js':
         'https://raw.github.com/jrburke/requirejs/master/require.js',
