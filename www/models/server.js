@@ -16,7 +16,7 @@ define([
       'interface': null,
       'port': null,
       'protocol': null,
-      'local_network': null,
+      'local_networks': null,
       'public_address': null,
       'otp_auth': null,
       'lzo_compression': null,
