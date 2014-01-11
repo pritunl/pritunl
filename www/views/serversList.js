@@ -51,7 +51,8 @@ define([
       this.statusModel.fetch({
         success: function() {
           var modal = new ModalAddServerView({
-            publicIp: this.statusModel.get('public_ip')
+            publicIp: this.statusModel.get('public_ip'),
+            localNetworks: this.statusModel.get('local_networks')
           });
           this.listenToOnce(modal, 'applied', function() {
             var alertView = new AlertView({

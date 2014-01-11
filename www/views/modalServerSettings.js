@@ -2,9 +2,10 @@ define([
   'jquery',
   'underscore',
   'backbone',
+  'select',
   'views/modal',
   'text!templates/modalServerSettings.html'
-], function($, _, Backbone, ModalView, modalServerSettingsTemplate) {
+], function($, _, Backbone, Select, ModalView, modalServerSettingsTemplate) {
   'use strict';
   var ModalServerSettingsView = ModalView.extend({
     className: 'server-settings-modal',
@@ -20,8 +21,25 @@ define([
         'click .debug-toggle .selector': 'onDebugSelect'
       }, ModalServerSettingsView.__super__.events);
     },
+    initialize: function(options) {
+      this.localNetworks = options.localNetworks;
+      ModalServerSettingsView.__super__.initialize.call(this);
+    },
     body: function() {
       return this.template(this.model.toJSON());
+    },
+    postRender: function() {
+      this.$('.local-network input').select2({
+        tags: this.localNetworks,
+        tokenSeparators: [',', ' '],
+        placeholder: 'Select Local Networks',
+        formatNoMatches: function() {
+          return 'Enter Network Address';
+        },
+        width: '200px'
+      });
+      this.$('.local-network input').select2(
+        'val', this.model.get('local_networks'));
     },
     getLocalNetworkSelect: function() {
       return this.$('.local-network-toggle .selector').hasClass('selected');
@@ -80,7 +98,7 @@ define([
       var port = this.$('.port input').val();
       var protocol = this.$('.protocol select').val();
       var publicAddress = this.$('.public-address input').val();
-      var localNetwork = null;
+      var localNetworks = [];
       var debug = this.getDebugSelect();
       var otpAuth = this.getOtpAuthSelect();
 
@@ -106,8 +124,8 @@ define([
         return;
       }
       if (this.getLocalNetworkSelect()) {
-        localNetwork = this.$('.local-network input').val();
-        if (!localNetwork) {
+        localNetworks = this.$('.local-network input').select2('val');
+        if (!localNetworks) {
           this.setAlert('danger', 'Local network can not be empty.',
             '.local-network');
           return;
@@ -120,7 +138,7 @@ define([
         'interface': iface,
         'port': port,
         'protocol': protocol,
-        'local_network': localNetwork,
+        'local_networks': localNetworks,
         'public_address': publicAddress,
         'otp_auth': otpAuth,
         'debug': debug

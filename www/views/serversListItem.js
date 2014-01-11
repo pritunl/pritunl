@@ -2,14 +2,16 @@ define([
   'jquery',
   'underscore',
   'backbone',
+  'models/status',
   'views/alert',
   'views/serverOrgsList',
   'views/serverOutput',
   'views/modalServerSettings',
   'views/modalDeleteServer',
   'text!templates/serversListItem.html'
-], function($, _, Backbone, AlertView, ServerOrgsListView, ServerOutputView,
-    ModalServerSettingsView, ModalDeleteServerView, serversListItemTemplate) {
+], function($, _, Backbone, StatusModel, AlertView, ServerOrgsListView,
+    ServerOutputView, ModalServerSettingsView, ModalDeleteServerView,
+    serversListItemTemplate) {
   'use strict';
   var ServersListItemView = Backbone.View.extend({
     className: 'server',
@@ -22,6 +24,7 @@ define([
       'click .toggle-hidden': 'onToggleHidden'
     },
     initialize: function() {
+      this.statusModel = new StatusModel();
       this.serverOrgsListView = new ServerOrgsListView({
         server: this.model
       });
@@ -115,19 +118,34 @@ define([
         $('.alerts-container').append(alertView.render().el);
         return;
       }
-      var modal = new ModalServerSettingsView({
-        model: this.model.clone()
+      this.statusModel.fetch({
+        success: function() {
+          var modal = new ModalServerSettingsView({
+            localNetworks: this.statusModel.get('local_networks'),
+            model: this.model.clone()
+          });
+          this.listenToOnce(modal, 'applied', function() {
+            var alertView = new AlertView({
+              type: 'warning',
+              message: 'Successfully saved server settings.',
+              dismissable: true
+            });
+            $('.alerts-container').append(alertView.render().el);
+            this.addView(alertView);
+          }.bind(this));
+          this.addView(modal);
+        }.bind(this),
+        error: function() {
+          var alertView = new AlertView({
+            type: 'danger',
+            message: 'Failed to load server information, ' +
+              'server error occurred.',
+            dismissable: true
+          });
+          $('.alerts-container').append(alertView.render().el);
+          this.addView(alertView);
+        }.bind(this)
       });
-      this.listenToOnce(modal, 'applied', function() {
-        var alertView = new AlertView({
-          type: 'warning',
-          message: 'Successfully saved server settings.',
-          dismissable: true
-        });
-        $('.alerts-container').append(alertView.render().el);
-        this.addView(alertView);
-      }.bind(this));
-      this.addView(modal);
     },
     onDelete: function() {
       var modal = new ModalDeleteServerView({
