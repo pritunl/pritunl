@@ -36,6 +36,7 @@ SHORT_URL_CHARS = (string.ascii_lowercase + string.ascii_uppercase +
     string.digits).replace('l', '').replace('I', '').replace('O', '').replace(
     '0', '')
 THREAD_EVENT_TIMEOUT = 15
+IP_REGEX = r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
 
 INFO = 'info'
 WARNING = 'warning'

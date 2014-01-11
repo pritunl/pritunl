@@ -68,20 +68,16 @@ def get_local_networks():
         interface_name = interface_name[0]
         if re.search(r'tun[0-9]+', interface_name) or interface_name == 'lo':
             continue
-        addr = re.findall(r'inet.{0,10}\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}',
-            interface, re.IGNORECASE)
+        addr = re.findall(r'inet.{0,10}' + IP_REGEX, interface, re.IGNORECASE)
         if not addr:
             continue
-        addr = re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}',
-            addr[0], re.IGNORECASE)
+        addr = re.findall(IP_REGEX, addr[0], re.IGNORECASE)
         if not addr:
             continue
-        mask = re.findall(r'mask.{0,10}\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}',
-            interface, re.IGNORECASE)
+        mask = re.findall(r'mask.{0,10}' + IP_REGEX, interface, re.IGNORECASE)
         if not mask:
             continue
-        mask = re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}',
-            mask[0], re.IGNORECASE)
+        mask = re.findall(IP_REGEX, mask[0], re.IGNORECASE)
         if not mask:
             continue
         addr = addr[0]
