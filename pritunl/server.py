@@ -382,22 +382,6 @@ class Server(Config):
             })
             raise
 
-    def _check_output(self, *popenargs, **kwargs):
-        # For python2.6 support
-        if 'stdout' in kwargs:
-            raise ValueError('stdout argument not allowed, ' + \
-                'it will be overridden.')
-        process = subprocess.Popen(stdout=subprocess.PIPE,
-            *popenargs, **kwargs)
-        output, unused_err = process.communicate()
-        retcode = process.poll()
-        if retcode:
-            cmd = kwargs.get('args')
-            if cmd is None:
-                cmd = popenargs[0]
-            raise subprocess.CalledProcessError(retcode, cmd, output=output)
-        return output
-
     def _generate_iptable_rule(self):
         args = []
         match_network = '0.0.0.0'
@@ -407,7 +391,7 @@ class Server(Config):
             args += ['-d', self.local_network]
 
         try:
-            routes = self._check_output(['route', '-n'],
+            routes = utils.check_output(['route', '-n'],
                 stderr=subprocess.PIPE)
         except subprocess.CalledProcessError:
             logger.exception('Failed to get IP routes. %r' % {
