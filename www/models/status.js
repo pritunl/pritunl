@@ -12,7 +12,8 @@ define([
       'servers_online': null,
       'server_count': null,
       'server_version': null,
-      'public_ip': null
+      'public_ip': null,
+      'local_networks': null
     },
     url: function() {
       return '/status';
