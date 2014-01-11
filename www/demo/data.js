@@ -96,7 +96,7 @@ define([], function() {
       otp_auth: true,
       lzo_compression: false,
       interface: 'tun0',
-      local_network: null,
+      local_networks: [],
       name: 'server1',
       network: '10.139.17.0/24',
       orgs: [
@@ -115,7 +115,7 @@ define([], function() {
       otp_auth: true,
       lzo_compression: false,
       interface: 'tun1',
-      local_network: null,
+      local_networks: [],
       name: 'server2',
       network: '10.113.56.0/24',
       orgs: [

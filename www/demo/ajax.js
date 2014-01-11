@@ -217,7 +217,7 @@ define([
       interface: request.data.interface,
       port: request.data.port,
       protocol: request.data.protocol,
-      local_network: request.data.local_network,
+      local_networks: request.data.local_networks,
       public_address: request.data.public_address,
       otp_auth: request.data.otp_auth,
       lzo_compression: request.data.lzo_compression,
@@ -238,7 +238,7 @@ define([
     demoData.servers[serverId].interface = request.data.interface;
     demoData.servers[serverId].port = request.data.port;
     demoData.servers[serverId].protocol = request.data.protocol;
-    demoData.servers[serverId].local_network = request.data.local_network;
+    demoData.servers[serverId].local_networks = request.data.local_networks;
     demoData.servers[serverId].public_address = request.data.public_address;
     demoData.servers[serverId].otp_auth = request.data.otp_auth;
     demoData.servers[serverId].lzo_compression = request.data.lzo_compression;
@@ -362,7 +362,13 @@ define([
       servers_online: serversOnlineCount,
       server_count: serversCount,
       server_version: null,
-      public_ip: '8.8.8.8'
+      public_ip: '8.8.8.8',
+      local_networks: [
+        '10.10.0.0/24',
+        '10.20.1.0/24',
+        '10.30.2.0/24',
+        '192.168.1.0/24'
+      ]
     });
   };
   routes['GET=/status'] = statusGet;
