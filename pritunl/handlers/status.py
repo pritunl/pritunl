@@ -29,6 +29,8 @@ def status_get():
     if not app_server.public_ip:
         app_server.load_public_ip()
 
+    local_networks = utils.get_local_networks()
+
     return utils.jsonify({
         'org_count': orgs_count,
         'users_online': clients_count,
@@ -37,4 +39,5 @@ def status_get():
         'server_count': servers_count,
         'server_version': __version__,
         'public_ip': app_server.public_ip,
+        'local_networks': local_networks,
     })

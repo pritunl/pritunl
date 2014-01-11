@@ -1,6 +1,7 @@
 import flask
 import json
 import subprocess
+import re
 
 def jsonify(data=None, status_code=None):
     if not isinstance(data, basestring):
@@ -57,7 +58,7 @@ def network_addr(ip, subnet):
     return '%s/%s' % (long_to_ip(ip_to_long(ip) & ip_to_long(subnet)),
         subnet_to_cidr(subnet))
 
-def get_network_addr():
+def get_local_networks():
     addresses = []
     output = check_output(['ifconfig'])
     for interface in output.split('\n\n'):
