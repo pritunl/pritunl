@@ -8,6 +8,14 @@
   color: @dark-fg;
 }
 
+.title a.disabled,
+.title a.disabled:hover {
+  color: @light-fg;
+  pointer-events: none;
+  cursor: default;
+  text-decoration: none;
+}
+
 .container {
   width: 940px;
 }

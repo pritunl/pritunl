@@ -109,6 +109,7 @@ define([
       }
     },
     onSettings: function() {
+      this.$('.server-title a').addClass('disabled');
       if (this.model.get('status')) {
         var alertView = new AlertView({
           type: 'danger',
@@ -134,6 +135,7 @@ define([
             this.addView(alertView);
           }.bind(this));
           this.addView(modal);
+          this.$('.server-title a').removeClass('disabled');
         }.bind(this),
         error: function() {
           var alertView = new AlertView({
@@ -144,6 +146,7 @@ define([
           });
           $('.alerts-container').append(alertView.render().el);
           this.addView(alertView);
+          this.$('.server-title a').removeClass('disabled');
         }.bind(this)
       });
     },
