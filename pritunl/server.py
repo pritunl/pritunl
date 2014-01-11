@@ -13,6 +13,7 @@ import threading
 import logging
 import traceback
 import utils
+import re
 
 logger = logging.getLogger(APP_NAME)
 _threads = {}
@@ -23,14 +24,14 @@ _start_time = {}
 
 class Server(Config):
     str_options = {'name', 'network', 'interface', 'protocol',
-        'local_network', 'public_address', 'primary_organization',
+        'local_networks', 'public_address', 'primary_organization',
         'primary_user', 'organizations'}
     bool_options = {'otp_auth', 'lzo_compression', 'debug'}
     int_options = {'port'}
-    list_options = {'organizations'}
+    list_options = {'organizations', 'local_networks'}
 
     def __init__(self, id=None, name=None, network=None, interface=None,
-            port=None, protocol=None, local_network=None, public_address=None,
+            port=None, protocol=None, local_networks=None, public_address=None,
             otp_auth=None, lzo_compression=None, debug=None, organizations=[]):
         Config.__init__(self)
         self._cur_event = None
@@ -44,7 +45,7 @@ class Server(Config):
             self.interface = interface
             self.port = port
             self.protocol = protocol
-            self.local_network = local_network
+            self.local_networks = local_networks
             self.public_address = public_address
             self.otp_auth = otp_auth
             self.lzo_compression = lzo_compression
@@ -336,11 +337,13 @@ class Server(Config):
         self._generate_tls_verify()
         self._generate_user_pass_verify()
 
-        if self.local_network:
-            push = 'route %s %s' % self._parse_network(
-                self.local_network)
+        if self.local_networks:
+            push = ''
+            for network in self.local_networks:
+                push += 'push "route %s %s"\n' % self._parse_network(network)
+            push = push.rstrip()
         else:
-            push = 'redirect-gateway'
+            push = 'push "redirect-gateway"'
 
         server_conf = OVPN_SERVER_CONF % (
             self.port,
@@ -366,7 +369,7 @@ class Server(Config):
         if self.lzo_compression:
             server_conf += 'comp-lzo\npush "comp-lzo"\n'
 
-        if self.local_network:
+        if self.local_networks:
             server_conf += 'client-to-client\n'
 
         with open(self.ovpn_conf_path, 'w') as ovpn_conf:
@@ -382,16 +385,11 @@ class Server(Config):
             })
             raise
 
-    def _generate_iptable_rule(self):
-        args = []
-        match_network = '0.0.0.0'
-
-        if self.local_network:
-            match_network = self._parse_network(self.local_network)[0]
-            args += ['-d', self.local_network]
+    def _generate_iptable_rules(self):
+        iptable_rules = []
 
         try:
-            routes = utils.check_output(['route', '-n'],
+            routes_output = utils.check_output(['route', '-n'],
                 stderr=subprocess.PIPE)
         except subprocess.CalledProcessError:
             logger.exception('Failed to get IP routes. %r' % {
@@ -399,50 +397,65 @@ class Server(Config):
             })
             raise
 
-        primary_interface = None
-        for line in routes.splitlines():
+        routes = {}
+        for line in routes_output.splitlines():
             line_split = line.split()
-            if line_split[0] == match_network:
-                primary_interface = line_split[7]
-                break
+            if len(line_split) < 8 or not re.match(IP_REGEX, line_split[0]):
+                continue
+            routes[line_split[0]] = line_split[7]
 
-        if not primary_interface and match_network != '0.0.0.0':
-            logger.debug('Failed to find interface for local network ' + \
-                    'route, using default route instead. %r' % {
+        if '0.0.0.0' not in routes:
+            logger.error('Failed to find default network interface. %r' % {
                 'server_id': self.id,
             })
-            match_network = '0.0.0.0'
-            for line in routes.splitlines():
-                line_split = line.split()
-                if line_split[0] == match_network:
-                    primary_interface = line_split[7]
-                    break
+            raise ValueError('Failed to find default network interface')
+        default_interface = routes['0.0.0.0']
 
-        args += ['-s', self.network, '-o', primary_interface,
-            '-j', 'MASQUERADE']
+        for network_address in self.local_networks or ['0.0.0.0/0']:
+            args = []
+            network = self._parse_network(network_address)[0]
 
-        return args
+            if network not in routes:
+                logger.debug('Failed to find interface for local network ' + \
+                        'route, using default route. %r' % {
+                    'server_id': self.id,
+                })
+                interface = default_interface
+            else:
+                interface = routes[network]
 
-    def _exists_iptables_rule(self):
-        try:
-            logger.debug('Checking for iptables rule. %r' % {
-                'server_id': self.id,
-            })
-            subprocess.check_call(['iptables', '-t', 'nat', '-C',
-                'POSTROUTING'] + self._generate_iptable_rule(),
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        except subprocess.CalledProcessError:
-            return False
+            if network != '0.0.0.0':
+                args += ['-d', network_address]
+
+            args += ['-s', self.network, '-o', interface, '-j', 'MASQUERADE']
+            iptable_rules.append(args)
+
+        return iptable_rules
+
+    def _exists_iptable_rules(self):
+        logger.debug('Checking for iptable rules. %r' % {
+            'server_id': self.id,
+        })
+        for iptable_rule in self._generate_iptable_rules():
+            try:
+                subprocess.check_call(['iptables', '-t', 'nat', '-C',
+                    'POSTROUTING'] + iptable_rule,
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            except subprocess.CalledProcessError:
+                return False
         return True
 
-    def _set_iptables_rule(self):
-        if not self._exists_iptables_rule():
-            logger.debug('Setting iptables rule. %r' % {
-                'server_id': self.id,
-            })
+    def _set_iptable_rules(self):
+        if self._exists_iptable_rules():
+            return
+
+        logger.debug('Setting iptable rules. %r' % {
+            'server_id': self.id,
+        })
+        for iptable_rule in self._generate_iptable_rules():
             try:
                 subprocess.check_call(['iptables', '-t', 'nat', '-A',
-                    'POSTROUTING'] + self._generate_iptable_rule(),
+                    'POSTROUTING'] + iptable_rule,
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             except subprocess.CalledProcessError:
                 logger.exception('Failed to apply iptables ' + \
@@ -452,13 +465,16 @@ class Server(Config):
                 raise
 
     def _clear_iptable_rules(self):
-        if self._exists_iptables_rule():
-            logger.debug('Clearing iptables rule. %r' % {
-                'server_id': self.id,
-            })
+        if not self._exists_iptable_rules():
+            return
+        logger.debug('Clearing iptable rules. %r' % {
+            'server_id': self.id,
+        })
+
+        for iptable_rule in self._generate_iptable_rules():
             try:
                 subprocess.check_call(['iptables', '-t', 'nat', '-D',
-                    'POSTROUTING'] + self._generate_iptable_rule(),
+                    'POSTROUTING'] + iptable_rule,
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             except subprocess.CalledProcessError:
                 logger.exception('Failed to clear iptables ' + \
@@ -548,7 +564,7 @@ class Server(Config):
         })
         self._generate_ovpn_conf()
         self._enable_ip_forwarding()
-        self._set_iptables_rule()
+        self._set_iptable_rules()
         _events[self.id] = threading.Event()
         thread = threading.Thread(target=self._run)
         thread.start()

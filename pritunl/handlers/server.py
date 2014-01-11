@@ -53,7 +53,7 @@ def server_get():
             'interface': server.interface,
             'port': server.port,
             'protocol': server.protocol,
-            'local_network': server.local_network,
+            'local_networks': server.local_networks,
             'public_address': server.public_address,
             'otp_auth': True if server.otp_auth else False,
             'lzo_compression': server.lzo_compression,
@@ -171,13 +171,13 @@ def server_put_post(server_id=None):
         if port < 1 or port > 65535:
             return _port_not_valid()
 
-    local_network = None
-    local_network_def = False
-    if 'local_network' in flask.request.json:
-        local_network_def = True
-        local_network = flask.request.json['local_network']
+    local_networks = None
+    local_networks_def = False
+    if 'local_networks' in flask.request.json:
+        local_networks_def = True
+        local_networks = flask.request.json['local_networks']
 
-        if local_network:
+        for local_network in local_networks:
             local_network_split = local_network.split('/')
             if len(local_network_split) != 2:
                 return _local_network_not_valid()
@@ -287,7 +287,7 @@ def server_put_post(server_id=None):
             interface=interface,
             port=port,
             protocol=protocol,
-            local_network=local_network,
+            local_networks=local_networks,
             public_address=public_address,
             otp_auth=otp_auth,
             lzo_compression=lzo_compression,
@@ -325,8 +325,8 @@ def server_put_post(server_id=None):
             server.port = port
         if protocol_def:
             server.protocol = protocol
-        if local_network_def:
-            server.local_network = local_network
+        if local_networks_def:
+            server.local_networks = local_networks
         if public_address_def:
             server.public_address = public_address
         if otp_auth_def:
@@ -350,7 +350,7 @@ def server_put_post(server_id=None):
         'interface': server.interface,
         'port': server.port,
         'protocol': server.protocol,
-        'local_network': server.local_network,
+        'local_networks': server.local_networks,
         'public_address': server.public_address,
         'otp_auth': True if server.otp_auth else False,
         'lzo_compression': server.lzo_compression,
@@ -438,7 +438,7 @@ def server_operation_put(server_id, operation):
         'interface': server.interface,
         'port': server.port,
         'protocol': server.protocol,
-        'local_network': server.local_network,
+        'local_networks': server.local_networks,
         'public_address': server.public_address,
         'otp_auth': True if server.otp_auth else False,
         'lzo_compression': server.lzo_compression,

@@ -217,7 +217,7 @@ tls-verify %s
 dh %s
 server %s
 ifconfig-pool-persist %s
-push "%s"
+%s
 max-clients 1024
 keepalive 4 10
 persist-tun
