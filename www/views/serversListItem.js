@@ -109,7 +109,6 @@ define([
       }
     },
     onSettings: function() {
-      this.$('.server-title a').addClass('disabled');
       if (this.model.get('status')) {
         var alertView = new AlertView({
           type: 'danger',
@@ -119,6 +118,7 @@ define([
         $('.alerts-container').append(alertView.render().el);
         return;
       }
+      this.$('.server-title a').addClass('disabled');
       this.statusModel.fetch({
         success: function() {
           var modal = new ModalServerSettingsView({
