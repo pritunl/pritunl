@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+Version 0.10.5
+--------------
+Server conf data will be automatically upgraded after first launch
+
 Version 0.10.4 2014-01-10
 -------------------------
 
