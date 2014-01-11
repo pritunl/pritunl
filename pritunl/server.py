@@ -25,7 +25,7 @@ _start_time = {}
 class Server(Config):
     str_options = {'name', 'network', 'interface', 'protocol',
         'local_networks', 'public_address', 'primary_organization',
-        'primary_user', 'organizations'}
+        'primary_user', 'organizations', 'local_network'}
     bool_options = {'otp_auth', 'lzo_compression', 'debug'}
     int_options = {'port'}
     list_options = {'organizations', 'local_networks'}
@@ -86,6 +86,16 @@ class Server(Config):
             return self._get_org_count()
 
         return Config.__getattr__(self, name)
+
+    def _upgrade_0_10_5(self):
+        if self.local_network:
+            logger.debug('Upgrading server to v0.10.5... %r' % {
+                'org_id': self.org.id,
+                'user_id': self.id,
+            })
+            self.local_networks = [self.local_network]
+            self.local_network = None
+            self.commit()
 
     def _initialize(self):
         logger.info('Initialize new server. %r' % {
