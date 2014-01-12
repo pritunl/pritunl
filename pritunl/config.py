@@ -1,4 +1,5 @@
 from constants import *
+from cache import cache_db
 import os
 import logging
 
@@ -13,6 +14,8 @@ class Config:
     list_options = set()
     default_options = {}
     chmod_mode = None
+    cached = False
+    cache_prefix = None
 
     def __init__(self, path=None):
         self.all_options = self.bool_options | self.int_options | \
@@ -131,9 +134,30 @@ class Config:
 
         return name, value
 
+    def get_cache_key(self, suffix=None):
+        key = ''
+        if self.cache_prefix:
+            key += '%s_' % self.cache_prefix
+        key += self.id
+        if suffix:
+            key += '_%s' % suffix
+        return key
+
+    def clear_cache(self):
+        cache_db.remove(self.get_cache_key('cached'))
+        cache_db.remove(self.get_cache_key())
+
     def load(self, merge=False):
         logger.debug('Loading config.')
         self._loaded = True
+
+        if self.cached:
+            if not hasattr(self, 'id'):
+                raise ValueError('Object ID is required for caching')
+            if cache_db.get(self.get_cache_key('cached')):
+                self.__dict__.update(cache_db.dict_fields(
+                    self.get_cache_key()))
+                return
 
         try:
             with open(self._conf_path) as config:
@@ -157,6 +181,9 @@ class Config:
                         if merge and name in self.__dict__:
                             continue
                         self.__dict__[name] = value
+                        if self.cached:
+                            cache_db.dict_set(self.get_cache_key(),
+                                name, value)
                     except ValueError:
                         logger.warning('Ignoring invalid line. %r' % {
                             'line': line,
@@ -164,6 +191,9 @@ class Config:
         except IOError:
             if not merge:
                 raise
+
+        if self.cached:
+            cache_db.set(self.get_cache_key('cached'), True)
 
     def commit(self):
         logger.debug('Committing config.')
@@ -182,6 +212,8 @@ class Config:
                     value = self.__dict__[name]
                     if value is None:
                         continue
+                    if self.cached:
+                        cache_db.dict_set(self.get_cache_key(), name, value)
                     config.write(self._encode_line(name, value))
             os.rename(temp_conf_path, self._conf_path)
         except:

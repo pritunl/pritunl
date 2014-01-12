@@ -1,5 +1,6 @@
 from constants import *
 from pritunl import app_server, openssl_lock
+from cache import cache_db
 from config import Config
 from event import Event
 from log_entry import LogEntry
@@ -14,6 +15,7 @@ logger = logging.getLogger(APP_NAME)
 
 class Organization(Config):
     str_options = {'name'}
+    cache_prefix = 'org'
 
     def __init__(self, id=None, name=None):
         Config.__init__(self)
@@ -72,27 +74,37 @@ class Organization(Config):
         with open(self.serial_path, 'w') as serial_file:
             serial_file.write('01\n')
 
+    def clear_cache(self):
+        cache_db.remove(self.get_cache_key('users_cached'))
+        cache_db.remove(self.get_cache_key('users'))
+
     def get_user(self, id):
         return User(self, id=id)
 
     def get_users(self):
         users = []
-        certs_path = os.path.join(self.path, CERTS_DIR)
-        if os.path.isdir(certs_path):
-            for user_id in os.listdir(certs_path):
-                user_id = user_id.replace('.crt', '')
-                if user_id == CA_CERT_ID:
-                    continue
-                user = User(self, id=user_id)
-                try:
-                    user.load()
-                except IOError:
-                    logger.exception('Failed to load user conf, ' +
-                        'ignoring user. %r' % {
-                            'user_id': user_id,
-                        })
-                    continue
-                users.append(user)
+
+        if not cache_db.get(self.get_cache_key('users_cached')):
+            certs_path = os.path.join(self.path, CERTS_DIR)
+            if os.path.isdir(certs_path):
+                for cert in os.listdir(certs_path):
+                    user_id = cert.replace('.crt', '')
+                    if user_id == CA_CERT_ID:
+                        continue
+                    cache_db.set_add(self.get_cache_key('users'), user_id)
+            cache_db.set(self.get_cache_key('users_cached'), True)
+
+        for user_id in cache_db.set_elements(self.get_cache_key('users')):
+            user = User(self, id=user_id)
+            try:
+                user.load()
+            except IOError:
+                logger.exception('Failed to load user conf, ' +
+                    'ignoring user. %r' % {
+                        'user_id': user_id,
+                    })
+                continue
+            users.append(user)
         return users
 
     def get_server(self, server_id):
@@ -112,7 +124,9 @@ class Organization(Config):
         return servers
 
     def new_user(self, type, name=None):
-        return User(self, name=name, type=type)
+        user = User(self, name=name, type=type)
+        cache_db.set_add(self.get_cache_key('users'), user.id)
+        return user
 
     def generate_crl(self):
         openssl_lock.acquire()
@@ -154,6 +168,7 @@ class Organization(Config):
         utils.rmtree(self.path)
         LogEntry(message='Deleted organization "%s".' % name)
         Event(type=ORGS_UPDATED)
+        self.clear_cache()
 
     @staticmethod
     def get_orgs():

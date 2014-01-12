@@ -1,5 +1,6 @@
 from constants import *
 from pritunl import app_server, openssl_lock
+from cache import cache_db
 from config import Config
 from log_entry import LogEntry
 from event import Event
@@ -16,6 +17,8 @@ logger = logging.getLogger(APP_NAME)
 class User(Config):
     str_options = {'name', 'otp_secret', 'type'}
     chmod_mode = 0600
+    cached = True
+    cache_prefix = 'user'
 
     def __init__(self, org, id=None, name=None, type=None):
         Config.__init__(self)
@@ -299,12 +302,17 @@ class User(Config):
             'conf': client_conf,
         }
 
+    def clear_cache(self):
+        cache_db.set_remove(self.org.get_cache_key('users'), self.id)
+        Config.clear_cache(self)
+
     def rename(self, name):
         self.name = name
         self.commit()
         Event(type=USERS_UPDATED)
 
     def remove(self, reason=UNSPECIFIED):
+        self.clear_cache()
         name = self.name
         type = self.type
         self._revoke(reason)
