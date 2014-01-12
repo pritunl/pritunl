@@ -7,58 +7,6 @@ import time
 
 logger = logging.getLogger(APP_NAME)
 
-class RedisBackend:
-    def __init__(self, host, port, db):
-        if host is None:
-            host = 'localhost'
-        if port is None:
-            port = 6379
-        if db is None:
-            db = 0
-        logger.info('Connecting to redis database... %r' % {
-            'host': host,
-            'port': port,
-            'db': db,
-        })
-
-        import redis
-        try:
-            self._client = redis.Redis(host=host, port=port, db=db)
-        except:
-            logger.exception('Failed to open redis database. %r' % {
-                'host': host,
-                'port': port,
-                'db': db,
-            })
-            raise
-
-    def close(self):
-        pass
-
-    def get(self, key):
-        value = self._client.get(key)
-        if value == '':
-            return None
-        return value
-
-    def set(self, key, value):
-        if value is None:
-            value = ''
-        if not self._client.set(key, value):
-            raise redis.exceptions.ResponseError(
-                'Database set returned false.')
-
-    def remove(self, key):
-        self._client.delete(key)
-
-    def keys(self, prefix=None):
-        if prefix is not None:
-            prefix = '%s*' % prefix
-        else:
-            prefix = '*'
-        keys = self._client.keys(prefix)
-        return keys
-
 class BerkeleyBackend:
     def __init__(self, db_path):
         logger.info('Opening berkeley database... %r' % {
@@ -146,22 +94,6 @@ class Database:
 
         if db_path is None or db_path == 'none':
             self._db = MemoryBackend()
-        elif db_path.startswith('redis://'):
-            parse = urlparse.urlparse(db_path)
-            if len(parse.netloc.split(':')) > 1:
-                host = parse.netloc.split(':')[0]
-                port = int(parse.netloc.split(':')[1])
-            else:
-                if parse.netloc:
-                    host = parse.netloc
-                else:
-                    host = None
-                port = None
-            if parse.path:
-                db = int(parse.path.replace('/', ''))
-            else:
-                db = None
-            self._db = RedisBackend(host, port, db)
         else:
             self._db = BerkeleyBackend(db_path)
 
