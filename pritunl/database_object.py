@@ -3,9 +3,6 @@ from pritunl import app_server
 import logging
 
 logger = logging.getLogger(APP_NAME)
-_RESERVED_ATTRIBUTES = {'column_family', 'bool_columns', 'int_columns',
-    'float_columns', 'str_columns', 'cached_columns', 'required_columns',
-    'all_columns', 'id'}
 
 class DatabaseObject:
     db = app_server.app_db
@@ -23,7 +20,7 @@ class DatabaseObject:
         self.id = None
 
     def __setattr__(self, name, value):
-        if name not in _RESERVED_ATTRIBUTES and name in self.all_columns:
+        if name != 'all_columns' and name in self.all_columns:
             if name in self.cached_columns:
                 self.__dict__[name] = value
 
@@ -40,9 +37,7 @@ class DatabaseObject:
             self.__dict__[name] = value
 
     def __getattr__(self, name):
-        if name in _RESERVED_ATTRIBUTES:
-            pass
-        elif name in self.all_columns and self.id:
+        if name in self.all_columns and self.id:
             if name in self.cached_columns and name in self.__dict__:
                 return self.__dict__[name]
 
@@ -64,10 +59,7 @@ class DatabaseObject:
                 self.__dict__[name] = value
 
             return value
-        elif name in self.cached_columns or name not in self.__dict__:
-            raise AttributeError('Object instance has no attribute %r' % name)
-
-        return self.__dict__[name]
+        raise AttributeError('Object instance has no attribute %r' % name)
 
     @staticmethod
     def validate(db_obj, row, columns):

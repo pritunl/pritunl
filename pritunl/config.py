@@ -3,9 +3,6 @@ import os
 import logging
 
 logger = logging.getLogger(APP_NAME)
-_RESERVED_ATTRIBUTES = {'bool_options', 'int_options', 'float_options',
-    'path_options', 'str_options', 'list_options', 'default_options',
-    'all_options'}
 
 class Config:
     bool_options = set()
@@ -25,16 +22,12 @@ class Config:
         self.set_state(SAVED)
 
     def __setattr__(self, name, value):
-        if name in _RESERVED_ATTRIBUTES:
-            pass
-        elif name in self.all_options:
+        if name != 'all_options' and name in self.all_options:
             self.set_state(UNSAVED)
         self.__dict__[name] = value
 
     def __getattr__(self, name):
-        if name in _RESERVED_ATTRIBUTES:
-            pass
-        elif name in self.all_options:
+        if name in self.all_options:
             if not self._loaded:
                 self.load()
             if name not in self.__dict__:
