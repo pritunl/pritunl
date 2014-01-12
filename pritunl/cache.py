@@ -26,7 +26,7 @@ class Cache:
                 'val': value,
             }
 
-    def delete(self, key):
+    def remove(self, key):
         self._data.pop(key, None)
 
     def exists(self, key):
