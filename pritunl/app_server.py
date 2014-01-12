@@ -66,6 +66,16 @@ class AppServer(Config):
         self.app = flask.Flask(APP_NAME)
         self.app.secret_key = os.urandom(32)
 
+        @self.app.before_request
+        def before_request():
+          flask.g.start = time.time()
+
+        @self.app.after_request
+        def after_request(response):
+            response.headers.add('X-Execution-Time',
+                int((time.time() - flask.g.start) * 1000))
+            return response
+
         global logger
         logger = self.app.logger
 
