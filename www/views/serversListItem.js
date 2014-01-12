@@ -33,7 +33,12 @@ define([
         server: this.model.get('id')
       });
       this.addView(this.serverOutputView);
-      setTimeout((this._updateTime).bind(this), 1000);
+      setTimeout(function() {
+        this.uptimer = setInterval((this._updateTime).bind(this), 1000);
+      }.bind(this), 1000);
+    },
+    deinitialize: function() {
+      clearInterval(this.uptimer);
     },
     render: function() {
       this.$el.html(this.template(this.model.toJSON()));
@@ -215,7 +220,6 @@ define([
       });
     },
     _updateTime: function() {
-      setTimeout((this._updateTime).bind(this), 1000);
       if (!this.model.get('uptime')) {
         return;
       }
