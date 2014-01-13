@@ -498,7 +498,7 @@ class Server(SessionTestCase):
             'interface': 'tun64',
             'port': 12345,
             'protocol': 'udp',
-            'local_network': None,
+            'local_networks': [],
             'public_address': '8.8.8.8',
             'debug': True,
             'otp_auth': False,
@@ -519,8 +519,8 @@ class Server(SessionTestCase):
         self.assertEqual(data['port'], 12345)
         self.assertIn('protocol', data)
         self.assertEqual(data['protocol'], 'udp')
-        self.assertIn('local_network', data)
-        self.assertIsNone(data['local_network'])
+        self.assertIn('local_networks', data)
+        self.assertEqual(data['local_networks'], [])
         self.assertIn('public_address', data)
         self.assertEqual(data['public_address'], '8.8.8.8')
         self.assertIn('debug', data)
@@ -550,8 +550,8 @@ class Server(SessionTestCase):
         self.assertEqual(data['port'], 12345)
         self.assertIn('protocol', data)
         self.assertEqual(data['protocol'], 'udp')
-        self.assertIn('local_network', data)
-        self.assertIsNone(data['local_network'])
+        self.assertIn('local_networks', data)
+        self.assertEqual(data['local_networks'], [])
         self.assertIn('public_address', data)
         self.assertEqual(data['public_address'], '8.8.8.8')
         self.assertIn('debug', data)
@@ -576,7 +576,7 @@ class Server(SessionTestCase):
             self.assertIn('interface', server)
             self.assertIn('port', server)
             self.assertIn('protocol', server)
-            self.assertIn('local_network', server)
+            self.assertIn('local_networks', server)
             self.assertIn('public_address', server)
             self.assertIn('debug', server)
             self.assertIn('otp_auth', server)
@@ -589,7 +589,7 @@ class Server(SessionTestCase):
                 self.assertEqual(server['interface'], 'tun64')
                 self.assertEqual(server['port'], 12345)
                 self.assertEqual(server['protocol'], 'udp')
-                self.assertIsNone(server['local_network'])
+                self.assertEqual(server['local_networks'], [])
                 self.assertEqual(server['public_address'], '8.8.8.8')
                 self.assertTrue(server['debug'])
                 self.assertFalse(server['otp_auth'])
@@ -871,6 +871,7 @@ class Status(SessionTestCase):
         self.assertIn('server_count', data)
         self.assertIn('server_version', data)
         self.assertIn('public_ip', data)
+        self.assertIn('local_networks', data)
 
 
 class User(SessionTestCase):
