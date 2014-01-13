@@ -155,8 +155,15 @@ class Config:
             if not hasattr(self, 'id'):
                 raise ValueError('Object ID is required for caching')
             if cache_db.get(self.get_cache_key('cached')):
-                self.__dict__.update(cache_db.dict_fields(
-                    self.get_cache_key()))
+                if merge:
+                    for name, value in cache_db.dict_fields(
+                            self.get_cache_key()).iteritems():
+                        if name in self.__dict__:
+                            continue
+                        self.__dict__[name] = value
+                else:
+                    self.__dict__.update(cache_db.dict_fields(
+                        self.get_cache_key()))
                 return
 
         try:
