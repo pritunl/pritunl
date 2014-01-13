@@ -299,6 +299,7 @@ class Server(Config):
             'server_id': self.id,
         })
         with open(self.tls_verify_path, 'w') as tls_verify_file:
+            os.chmod(self.tls_verify_path, 0755)
             data_path = app_server.data_path
             tls_verify_file.write(TLS_VERIFY_SCRIPT % (
                 data_path,
@@ -306,13 +307,13 @@ class Server(Config):
                 AUTH_LOG_NAME,
                 INDEX_NAME,
             ))
-        os.chmod(self.tls_verify_path, 0755)
 
     def _generate_user_pass_verify(self):
         logger.debug('Generating user pass verify script. %r' % {
             'server_id': self.id,
         })
         with open(self.user_pass_verify_path, 'w') as user_pass_verify_file:
+            os.chmod(self.user_pass_verify_path, 0755)
             data_path = app_server.data_path
             user_pass_verify_file.write(USER_PASS_VERIFY_SCRIPT % (
                 data_path,
@@ -322,7 +323,6 @@ class Server(Config):
                 AUTH_LOG_NAME,
                 OTP_JSON_NAME,
             ))
-        os.chmod(self.user_pass_verify_path, 0755)
 
     def _generate_ovpn_conf(self, inline=False):
         if not self.get_orgs():
