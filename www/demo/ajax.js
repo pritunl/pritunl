@@ -7,7 +7,7 @@ define([
   'use strict';
   /* jshint -W106:true */
   var routes = {};
-  var responseDelay = 150;
+  var responseDelay = 75;
 
   var uuid = function() {
     var i;
