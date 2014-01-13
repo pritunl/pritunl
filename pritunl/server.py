@@ -138,7 +138,7 @@ class Server(Config):
         name = self.name
 
         if self.status:
-            self.force_stop()
+            self.stop()
             for i in xrange(20):
                 if not self.status:
                     break
