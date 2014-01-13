@@ -10,6 +10,11 @@ apt-get install -qq -y devscripts debhelper python-all python-setuptools 1> /dev
 # Collectd
 apt-get install -qq -y collectd apache2 librrds-perl libconfig-general-perl libregexp-common-perl 1> /dev/null
 
+# Rng-tools
+apt-get install -qq -y rng-tools
+echo "HRNGDEVICE=/dev/urandom" > /etc/default/rng-tools
+/etc/init.d/rng-tools start
+
 mkdir -p /var/lib/pritunl
 
 cp /vagrant/tools/vagrant_dput.cf /etc/dput.cf
