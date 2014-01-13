@@ -229,13 +229,6 @@ class User(Config):
 
         return self.key_archive_path
 
-    def _get_cert_block(self, cert_path):
-        with open(cert_path) as cert_file:
-            cert_file = cert_file.read()
-            start_index = cert_file.index('-----BEGIN CERTIFICATE-----')
-            end_index = cert_file.index('-----END CERTIFICATE-----') + 25
-            return cert_file[start_index:end_index]
-
     def _build_inline_key_archive(self):
         tar_file = tarfile.open(self.key_archive_path, 'w')
         try:
@@ -254,9 +247,9 @@ class User(Config):
                 if server.otp_auth:
                     client_conf += 'auth-user-pass\n'
 
-                client_conf += '<ca>\n%s\n</ca>\n' % self._get_cert_block(
+                client_conf += '<ca>\n%s\n</ca>\n' % utils.get_cert_block(
                     server.ca_cert_path)
-                client_conf += '<cert>\n%s\n</cert>\n' % self._get_cert_block(
+                client_conf += '<cert>\n%s\n</cert>\n' % utils.get_cert_block(
                     self.cert_path)
                 client_conf += '<key>\n%s\n</key>\n' % open(
                     self.key_path).read().strip()
@@ -290,9 +283,9 @@ class User(Config):
         if server.otp_auth:
             client_conf += 'auth-user-pass\n'
 
-        client_conf += '<ca>\n%s\n</ca>\n' % self._get_cert_block(
+        client_conf += '<ca>\n%s\n</ca>\n' % utils.get_cert_block(
             server.ca_cert_path)
-        client_conf += '<cert>\n%s\n</cert>\n' % self._get_cert_block(
+        client_conf += '<cert>\n%s\n</cert>\n' % utils.get_cert_block(
             self.cert_path)
         client_conf += '<key>\n%s\n</key>\n' % open(
             self.key_path).read().strip()

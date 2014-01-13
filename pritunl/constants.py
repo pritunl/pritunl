@@ -228,6 +228,23 @@ verb %s
 mute %s
 """
 
+OVPN_INLINE_SERVER_CONF = """port %s
+proto %s
+dev %s
+tls-verify %s
+server %s
+ifconfig-pool-persist %s
+%s
+max-clients 1024
+keepalive 4 10
+persist-tun
+status %s 1
+status-version 2
+script-security 2
+verb %s
+mute %s
+"""
+
 OVPN_CLIENT_CONF = """client
 dev tun
 proto %s
