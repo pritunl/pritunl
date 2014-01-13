@@ -134,7 +134,6 @@ class Server(Config):
         logger.info('Removing server. %r' % {
             'server_id': self.id,
         })
-
         name = self.name
 
         if self.status:
