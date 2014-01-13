@@ -186,6 +186,12 @@ class AppServer(Config):
             with open(version_path, 'w') as version_file:
                 version_file.write('%s\n' % __version__)
 
+    def _fill_cache(self):
+        logger.debug('Filling cache...')
+        from organization import Organization
+        for org in Organization.get_orgs():
+            org.get_users()
+
     def _hash_password(self, password):
         password_hash = hashlib.sha512()
         password_hash.update(password)
@@ -216,6 +222,7 @@ class AppServer(Config):
         self._setup_handlers()
         self._setup_static_handler()
         self._upgrade_data()
+        self._fill_cache()
 
     def _setup_server_cert(self):
         if self.server_cert_path and self.server_key_path:
