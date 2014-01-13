@@ -23,12 +23,8 @@ class User(Config):
     def __init__(self, org, id=None, name=None, type=None):
         Config.__init__(self)
         self.org = org
-        self.id = id
 
-        if type is not None:
-            self.type = type
-
-        if self.id is None:
+        if id is None:
             if type == CERT_CA:
                 self.id = CA_CERT_ID
             elif type is None:
@@ -38,6 +34,10 @@ class User(Config):
             self._initialized = False
         else:
             self._initialized = True
+            self.id = id
+
+        if type is not None:
+            self.type = type
 
         self.reqs_path = os.path.join(self.org.path, REQS_DIR,
             '%s.csr' % self.id)
