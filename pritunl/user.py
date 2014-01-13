@@ -11,6 +11,7 @@ import subprocess
 import logging
 import hashlib
 import base64
+import utils
 
 logger = logging.getLogger(APP_NAME)
 
