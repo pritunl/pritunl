@@ -15,6 +15,7 @@ logger = logging.getLogger(APP_NAME)
 
 class Organization(Config):
     str_options = {'name'}
+    cached = True
     cache_prefix = 'org'
 
     def __init__(self, id=None, name=None):
@@ -56,6 +57,7 @@ class Organization(Config):
         self.commit()
         LogEntry(message='Created new organization "%s".' % self.name)
         Event(type=ORGS_UPDATED)
+        cache_db.set_add('orgs', self.id)
 
     def _make_dirs(self):
         os.makedirs(os.path.join(self.path, REQS_DIR))
@@ -75,15 +77,15 @@ class Organization(Config):
             serial_file.write('01\n')
 
     def clear_cache(self):
+        cache_db.set_remove('orgs', self.id)
         cache_db.remove(self.get_cache_key('users_cached'))
         cache_db.remove(self.get_cache_key('users'))
+        Config.clear_cache(self)
 
     def get_user(self, id):
         return User(self, id=id)
 
     def get_users(self):
-        users = []
-
         if not cache_db.get(self.get_cache_key('users_cached')):
             certs_path = os.path.join(self.path, CERTS_DIR)
             if os.path.isdir(certs_path):
@@ -94,6 +96,7 @@ class Organization(Config):
                     cache_db.set_add(self.get_cache_key('users'), user_id)
             cache_db.set(self.get_cache_key('users_cached'), True)
 
+        users = []
         for user_id in cache_db.set_elements(self.get_cache_key('users')):
             user = User(self, id=user_id)
             try:
@@ -172,18 +175,23 @@ class Organization(Config):
 
     @staticmethod
     def get_orgs():
-        path = os.path.join(app_server.data_path, ORGS_DIR)
+        if not cache_db.get('orgs_cached'):
+            path = os.path.join(app_server.data_path, ORGS_DIR)
+            if os.path.isdir(path):
+                for org_id in os.listdir(path):
+                    cache_db.set_add('orgs', org_id)
+            cache_db.set('orgs_cached', True)
+
         orgs = []
-        if os.path.isdir(path):
-            for org_id in os.listdir(path):
-                org = Organization(org_id)
-                try:
-                    org.load()
-                except IOError:
-                    logger.exception('Failed to load organization conf, ' +
-                        'ignoring organization. %r' % {
-                            'org_id': org_id,
-                        })
-                    continue
-                orgs.append(org)
+        for org_id in cache_db.set_elements('orgs'):
+            org = Organization(org_id)
+            try:
+                org.load()
+            except IOError:
+                logger.exception('Failed to load organization conf, ' +
+                    'ignoring organization. %r' % {
+                        'org_id': org_id,
+                    })
+                continue
+            orgs.append(org)
         return orgs
