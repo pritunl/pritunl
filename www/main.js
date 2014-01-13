@@ -104,24 +104,19 @@ require([
     deinitialize: function() {
     },
     addView: function(view) {
-      this.children = this.children || [];
-      var index = this.children.push(view) - 1;
+      this.children = this.children || {};
+      var id = view.cid;
+      this.children[id] = view;
       this.listenToOnce(view, 'destroy', function() {
-        if (this.children[index] !== view) {
-          index = this.children.indexOf(view);
-          if (index === -1) {
-            return;
-          }
-        }
-        this.children[index] = null;
+        this.children[id] = null;
       }.bind(this));
     },
     destroy: function() {
       this.deinitialize();
       if (this.children) {
-        for (var i = 0; i < this.children.length; i++) {
-          if (this.children[i]) {
-            this.children[i].destroy();
+        for (var id in this.children) {
+          if (this.children[id]) {
+            this.children[id].destroy();
           }
         }
       }
