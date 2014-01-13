@@ -16,7 +16,7 @@ define([
     errorMsg: 'Failed to saving server, server error occurred.',
     events: function() {
       return _.extend({
-        'click .local-network-toggle .selector': 'onLocalNetworkSelect',
+        'change .server-mode select': 'onServerMode',
         'click .otp-auth-toggle .selector': 'onOtpAuthSelect',
         'click .debug-toggle .selector': 'onDebugSelect'
       }, ModalServerSettingsView.__super__.events);
@@ -29,6 +29,9 @@ define([
       return this.template(this.model.toJSON());
     },
     postRender: function() {
+      if (this.model.get('local_networks').length) {
+        this.$('.otp-auth-toggle').appendTo('.left');
+      }
       this.$('.local-network input').select2({
         tags: this.localNetworks,
         tokenSeparators: [',', ' '],
@@ -41,23 +44,34 @@ define([
       this.$('.local-network input').select2(
         'val', this.model.get('local_networks'));
     },
-    getLocalNetworkSelect: function() {
-      return this.$('.local-network-toggle .selector').hasClass('selected');
+    getServerMode: function() {
+      return this.$('.server-mode select').val();
     },
-    setLocalNetworkSelect: function(state) {
-      if (state) {
-        this.$('.local-network-toggle .selector').addClass('selected');
-        this.$('.local-network-toggle .selector-inner').show();
+    setServerMode: function(mode) {
+      if (mode === 'lan') {
+        this.$('.server-mode select').val('lan');
         this.$('.local-network').slideDown(250);
+        this.$('.otp-auth-toggle').slideUp(250, function() {
+          this.$('.otp-auth-toggle').appendTo('.left');
+          this.$('.otp-auth-toggle').show();
+        }.bind(this));
       }
       else {
-        this.$('.local-network-toggle .selector').removeClass('selected');
-        this.$('.local-network-toggle .selector-inner').hide();
+        this.$('.server-mode select').val('all');
         this.$('.local-network').slideUp(250);
+        this.$('.otp-auth-toggle').slideUp(250, function() {
+          this.$('.otp-auth-toggle').appendTo('.right');
+          this.$('.otp-auth-toggle').show();
+        }.bind(this));
       }
     },
-    onLocalNetworkSelect: function() {
-      this.setLocalNetworkSelect(!this.getLocalNetworkSelect());
+    onServerMode: function() {
+      if (this.getServerMode() === 'lan') {
+        this.setServerMode('lan');
+      }
+      else {
+        this.setServerMode('all');
+      }
     },
     getOtpAuthSelect: function() {
       return this.$('.otp-auth-toggle .selector').hasClass('selected');
@@ -123,7 +137,7 @@ define([
           '.public-address');
         return;
       }
-      if (this.getLocalNetworkSelect()) {
+      if (this.getServerMode() === 'lan') {
         localNetworks = this.$('.local-network input').select2('val');
         if (!localNetworks) {
           this.setAlert('danger', 'Local network can not be empty.',
