@@ -5,7 +5,7 @@ define([
   'demo/data'
 ], function($, _, Backbone, demoData) {
   'use strict';
-  /*jshint -W106:true */
+  /* jshint -W106:true */
   var routes = {};
   var responseDelay = 150;
 

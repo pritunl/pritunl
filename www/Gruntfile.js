@@ -1,4 +1,4 @@
-/*jshint strict:false */
+/* jshint strict:false */
 var wget = function(files) {
   var dir;
   var cmds = {};

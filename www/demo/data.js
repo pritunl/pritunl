@@ -1,6 +1,6 @@
 define([], function() {
   'use strict';
-  /*jshint -W101:true, -W106:true, -W109:true */
+  /* jshint -W101:true, -W106:true, -W109:true */
 
   var auth = {
     username: 'demo',
