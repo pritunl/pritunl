@@ -72,21 +72,19 @@ class MemoryBackend:
         pass
 
     def get(self, key):
-        if key in self._data:
+        try:
             return self._data[key]
+        except KeyError:
+            pass
 
     def set(self, key, value):
         self._data[key] = value
 
     def remove(self, key):
-        if key in self._data:
-            del self._data[key]
+        self._data.pop(key, None)
 
     def keys(self, prefix):
-        keys = []
-        for key in self._data:
-            keys.append(key)
-        return keys
+        return self._data.keys()
 
 class Database:
     def __init__(self, db_path):
