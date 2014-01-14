@@ -140,7 +140,8 @@ define([
       if (!this.inputMatch) {
         return;
       }
-      if (this.inputMatchText === $(evt.target).val()) {
+      var matchText = this.inputMatchText;
+      if (!matchText || matchText === $(evt.target).val()) {
         this.$('.ok').removeAttr('disabled');
       }
       else {
