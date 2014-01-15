@@ -159,13 +159,13 @@ class Config:
                 raise ValueError('Object ID is required for caching')
             if cache_db.get(self.get_cache_key('cached')):
                 if merge:
-                    for name, value in cache_db.dict_fields(
+                    for name, value in cache_db.dict_get_all(
                             self.get_cache_key()).iteritems():
                         if name in self.__dict__:
                             continue
                         self.__dict__[name] = value
                 else:
-                    self.__dict__.update(cache_db.dict_fields(
+                    self.__dict__.update(cache_db.dict_get_all(
                         self.get_cache_key()))
                 return
 

@@ -99,7 +99,7 @@ class Cache:
         except (KeyError, AttributeError):
             pass
 
-    def dict_fields(self, key):
+    def dict_get_all(self, key):
         try:
             ttl = self._data[key]['ttl']
             if not ttl or int(time.time()) <= ttl:
