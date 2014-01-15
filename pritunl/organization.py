@@ -22,23 +22,19 @@ class Organization(Config):
         Config.__init__(self)
 
         if id is None:
-            self._initialized = False
             self.id = uuid.uuid4().hex
+            self.name = name
         else:
-            self._initialized = True
             self.id = id
-        self.path = os.path.join(app_server.data_path, ORGS_DIR, self.id)
 
+        self.path = os.path.join(app_server.data_path, ORGS_DIR, self.id)
         self.index_path = os.path.join(self.path, INDEX_NAME)
         self.index_attr_path = os.path.join(self.path, INDEX_NAME + '.attr')
         self.serial_path = os.path.join(self.path, SERIAL_NAME)
         self.crl_path = os.path.join(self.path, CRL_NAME)
         self.set_path(os.path.join(self.path, 'ca.conf'))
 
-        if name is not None:
-            self.name = name
-
-        if not self._initialized:
+        if id is None:
             self._initialize()
 
         self.ca_cert = User(self, id=CA_CERT_ID)

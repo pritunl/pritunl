@@ -32,13 +32,10 @@ class User(Config):
                 raise AttributeError('Type must be specified')
             else:
                 self.id = uuid.uuid4().hex
-            self._initialized = False
-        else:
-            self._initialized = True
-            self.id = id
-
-        if type is not None:
+            self.name = name
             self.type = type
+        else:
+            self.id = id
 
         self.reqs_path = os.path.join(self.org.path, REQS_DIR,
             '%s.csr' % self.id)
@@ -53,10 +50,7 @@ class User(Config):
         self.set_path(os.path.join(self.org.path, USERS_DIR,
             '%s.conf' % self.id))
 
-        if name is not None:
-            self.name = name
-
-        if not self._initialized:
+        if id is None:
             self._initialize()
 
     def _upgrade_0_10_4(self):
