@@ -30,29 +30,16 @@ class Server(Config):
     int_options = {'port'}
     list_options = {'organizations', 'local_networks'}
 
-    def __init__(self, id=None, name=None, network=None, interface=None,
-            port=None, protocol=None, local_networks=None, public_address=None,
-            otp_auth=None, lzo_compression=None, debug=None, organizations=[]):
+    def __init__(self, id=None, **kwargs):
         Config.__init__(self)
         self._cur_event = None
         self._last_event = 0
 
         if id is None:
-            self._initialized = False
             self.id = uuid.uuid4().hex
-            self.name = name
-            self.network = network
-            self.interface = interface
-            self.port = port
-            self.protocol = protocol
-            self.local_networks = local_networks
-            self.public_address = public_address
-            self.otp_auth = otp_auth
-            self.lzo_compression = lzo_compression
-            self.debug = debug
-            self.organizations = organizations
+            for name, value in kwargs.iteritems():
+                setattr(self, name, value)
         else:
-            self._initialized = True
             self.id = id
 
         self.path = os.path.join(app_server.data_path, SERVERS_DIR, self.id)
@@ -68,7 +55,7 @@ class Server(Config):
             OVPN_STATUS_NAME)
         self.set_path(os.path.join(self.path, 'server.conf'))
 
-        if not self._initialized:
+        if id is None:
             self._initialize()
 
     def __getattr__(self, name):
@@ -600,8 +587,9 @@ class Server(Config):
         logger.debug('Stopping server. %r' % {
             'server_id': self.id,
         })
+        event = _events[self.id]
         _process[self.id].send_signal(signal.SIGINT)
-        if not _events[self.id].wait(THREAD_EVENT_TIMEOUT):
+        if not event.wait(THREAD_EVENT_TIMEOUT):
             raise ValueError('Server thread failed to return stop event.')
         if not silent:
             Event(type=SERVERS_UPDATED)
