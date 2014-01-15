@@ -36,7 +36,10 @@ class Config:
             if name not in self.__dict__:
                 if name in self.default_options:
                     return self.default_options[name]
-                return [] if name in self.list_options else None
+                if name in self.list_options:
+                    self.__dict__[name] = []
+                else:
+                    return
         elif name not in self.__dict__:
             raise AttributeError('Config instance has no attribute %r' % name)
         return self.__dict__[name]
