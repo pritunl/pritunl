@@ -71,6 +71,7 @@ class CacheObject:
         if not sort_column:
             for row_id in cache_db.list_elements(cls.column_family):
                 row = cls(id=row_id)
+                rows.append(row)
         else:
             sort_values = {}
             for row_id in cache_db.list_elements(cls.column_family):
