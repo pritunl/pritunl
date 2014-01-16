@@ -1,5 +1,5 @@
 from constants import *
-from database import Database
+from database import connect_database
 from config import Config
 import os
 import logging
@@ -36,8 +36,6 @@ class AppServer(Config):
     def __init__(self):
         Config.__init__(self)
         self.app = None
-        self.app_db = None
-        self.mem_db = None
         self.interrupt = False
 
     def load_public_ip(self, retry=False, timeout=3):
@@ -132,14 +130,7 @@ class AppServer(Config):
         logger.addHandler(self.log_handler)
 
     def _setup_db(self):
-        self.mem_db = Database(None)
-        self.app_db = Database(self.db_path)
-
-    def _close_db(self):
-        if self.mem_db:
-            self.mem_db.close()
-        if self.app_db:
-            self.app_db.close()
+        connect_database('sqlite:///%s' % self.db_path)
 
     def _setup_handlers(self):
         import handlers
@@ -159,15 +150,32 @@ class AppServer(Config):
     def _get_version_int(self, version):
         return int(''.join([x.zfill(2) for x in version.split('.')]))
 
+    def _get_data_version(self):
+        version_path = os.path.join(self.data_path, VERSION_NAME)
+        if os.path.isfile(version_path):
+            with open(version_path, 'r') as version_file:
+                return self._get_version_int(
+                    version_file.readlines()[0].strip())
+
+    def _upgrade_db(self):
+        from pritunl import __version__
+        version = self._get_version_int(__version__)
+        cur_version = self._get_data_version()
+
+        if cur_version and cur_version < self._get_version_int('0.10.5'):
+            logger.info('Upgrading database to v0.10.5...')
+            try:
+                os.remove(self.db_path)
+            except OSError:
+                logger.exception('Failed to remove old database. %r' % {
+                    'db_path': self.db_path
+                })
+                raise
+
     def _upgrade_data(self):
         from pritunl import __version__
         version = self._get_version_int(__version__)
-        version_path = os.path.join(self.data_path, VERSION_NAME)
-        cur_version = None
-        if os.path.isfile(version_path):
-            with open(version_path, 'r') as version_file:
-                cur_version = self._get_version_int(
-                    version_file.readlines()[0].strip())
+        cur_version = self._get_data_version()
 
         if cur_version and cur_version < self._get_version_int('0.10.4'):
             logger.info('Upgrading data to v0.10.4...')
@@ -183,6 +191,7 @@ class AppServer(Config):
                 server._upgrade_0_10_5()
 
         if cur_version != version:
+            version_path = os.path.join(self.data_path, VERSION_NAME)
             with open(version_path, 'w') as version_file:
                 version_file.write('%s\n' % __version__)
 
@@ -218,6 +227,7 @@ class AppServer(Config):
         self._setup_conf()
         self._setup_log()
         self._setup_public_ip()
+        self._upgrade_db()
         self._setup_db()
         self._setup_handlers()
         self._setup_static_handler()
@@ -280,7 +290,6 @@ class AppServer(Config):
             self.interrupt = True
             logger.info('Stopping server...')
             server.stop()
-            self._close_db()
 
     def _run_wsgi_debug(self):
         from log_entry import LogEntry
@@ -302,8 +311,6 @@ class AppServer(Config):
             signal.signal(signal.SIGINT, signal.SIG_IGN)
             LogEntry(message='Web server stopped.')
             self.interrupt = True
-            # Possible data loss here db closing before debug server
-            self._close_db()
             logger.info('Stopping debug server...')
 
     def _run_server(self):
@@ -315,8 +322,5 @@ class AppServer(Config):
             self._run_wsgi()
 
     def run_server(self):
-        try:
-            self._setup_all()
-            self._run_server()
-        finally:
-            self._close_db()
+        self._setup_all()
+        self._run_server()
