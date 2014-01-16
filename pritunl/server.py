@@ -385,6 +385,8 @@ class Server(Config):
                 self.dh_param_path).read().strip()
 
         with open(self.ovpn_conf_path, 'w') as ovpn_conf:
+            if inline:
+                os.chmod(self.ovpn_conf_path, 0600)
             ovpn_conf.write(server_conf)
 
     def _enable_ip_forwarding(self):
