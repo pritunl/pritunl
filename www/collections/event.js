@@ -7,13 +7,10 @@ define([
   'use strict';
   var EventCollection = Backbone.Collection.extend({
     model: EventModel,
-    initialize: function() {
-      this.processedEvents = [];
-    },
     url: function() {
       var url = '/event';
-      if (this.lastEventTime) {
-        url += '/' + this.lastEventTime;
+      if (this.cursor) {
+        url += '/' + this.cursor;
       }
       return url;
     },
@@ -35,30 +32,18 @@ define([
 
           for (i = 0; i < collection.models.length; i++) {
             model = collection.models[i];
-
-            if (this.processedEvents.indexOf(model.get('id')) !== -1) {
-              continue;
-            }
-            this.processedEvents.push(model.get('id'));
-
-            if (!this.lastEventTime ||
-                model.get('time') > this.lastEventTime) {
-              this.lastEventTime = model.get('time');
-            }
+            this.cursor = model.get('id');
 
             if (!window.authenticated) {
               continue;
             }
 
-            // Ignore callback for time events
-            if (model.get('type') !== 'time') {
-              if (model.get('resource_id')) {
-                this.trigger(model.get('type') + ':' +
-                  model.get('resource_id'));
-              }
-              else {
-                this.trigger(model.get('type'));
-              }
+            if (model.get('resource_id')) {
+              this.trigger(model.get('type') + ':' +
+                model.get('resource_id'));
+            }
+            else {
+              this.trigger(model.get('type'));
             }
           }
 
