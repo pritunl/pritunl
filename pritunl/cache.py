@@ -11,10 +11,9 @@ class Cache:
             lambda: {'ttl': None, 'val': None})
 
     def _check_ttl(self, key):
-        try:
-            ttl = self._data[key]['ttl']
-        except KeyError:
+        if key not in self._data:
             return
+        ttl = self._data[key]['ttl']
         if ttl and int(time.time()) > ttl:
             self.remove(self, key)
             return True
