@@ -3,6 +3,7 @@ Pritunl Changelog
 
 Version 0.10.5
 --------------
+Changes to api
 Add support for multiple local networks on vpn server
 Cache organizations and users to reduce response times
 Changes to event system
