@@ -57,13 +57,7 @@ class CacheObject:
         raise AttributeError('Object instance has no attribute %r' % name)
 
     def initialize(self):
-        cache_db.set_add(self.column_family, self.id)
-
-    def validate(self):
-        for column in db_obj.required_columns:
-            if getattr(self, column) is None:
-                return False
-        return True
+        cache_db.list_append(self.column_family, self.id)
 
     def expire(self, ttl):
         cache_db.expire(self.column_family, ttl)
@@ -74,23 +68,18 @@ class CacheObject:
 
     @classmethod
     def get_rows(cls, sort_column=None, sort_column_min=None):
+        rows = []
         if not sort_column:
-            rows = set()
-            for row_id in cache_db.set_elements(cls.column_family):
+            for row_id in cache_db.list_elements(cls.column_family):
                 row = cls(id=row_id)
-
-                if row.validate():
-                    rows.add(row)
         else:
-            rows = []
             sort_values = {}
-            for row_id in cache_db.set_elements(cls.column_family):
+            for row_id in cache_db.list_elements(cls.column_family):
                 row = cls(id=row_id)
+
                 sort_value = getattr(row, sort_column)
-
-                if sort_column_min and sort_value < sort_column_min:
+                if sort_column_min and sort_value <= sort_column_min:
                     continue
-
                 sort_values[row_id] = sort_value
 
                 if not rows:
@@ -102,3 +91,9 @@ class CacheObject:
                         rows.insert(i + 1, row)
                         break
         return rows
+
+    @classmethod
+    def get_last_row(cls):
+        row_id = cache_db.list_index(cls.column_family, -1)
+        if row_id:
+            return cls(id=row_id)
