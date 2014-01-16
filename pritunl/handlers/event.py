@@ -7,28 +7,22 @@ import uuid
 import flask
 
 @app_server.app.route('/event', methods=['GET'])
-@app_server.app.route('/event/<int:last_event>', methods=['GET'])
+@app_server.app.route('/event/<cursor>', methods=['GET'])
 @app_server.auth
-def event_get(last_event=None):
+def event_get(cursor=None):
     if app_server.interrupt:
         return flask.abort(503)
 
-    if not last_event:
-        events = [
-            {
-                'id': uuid.uuid4().hex,
-                'type': 'time',
-                'resource_id': None,
-                'time': int(time.time() * 1000),
-            },
-        ]
-        return utils.jsonify(events)
+    if not cursor:
+        event = Event.get_last_row()
+        if event:
+            cursor = event.id
 
     run_time = 0
     while run_time <= 30 and not app_server.interrupt:
         events = []
 
-        for event in Event.get_events(last_event):
+        for event in Event.get_events(cursor):
             events.append({
                 'id': event.id,
                 'type': event.type,

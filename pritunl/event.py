@@ -11,7 +11,7 @@ class Event(CacheObject):
     str_columns = {'type', 'resource_id'}
     int_columns = {'time'}
     cached_columns = {'type', 'resource_id', 'time'}
-    required_columns = {'type', 'resource_id', 'time'}
+    required_columns = {'type', 'time'}
 
     def __init__(self, id=None, type=None, resource_id=None):
         CacheObject.__init__(self)
@@ -20,17 +20,29 @@ class Event(CacheObject):
             self.id = uuid.uuid4().hex
             self.type = type
             self.resource_id = resource_id
-            self.time = int(time.time() * 1000)
+            self.time = int(time.time())
             self.expire(EVENT_DB_TTL)
             self.initialize()
         else:
             self.id = id
 
     @classmethod
-    def get_events(cls, last_time=None):
+    def get_events(cls, cursor=None):
         logger.debug('Getting events. %r' % {
-            'last_time': last_time,
+            'cursor': cursor,
         })
 
-        return cls.get_rows(sort_column='time',
-            sort_column_min=last_time + 1)
+        if cursor:
+            events = []
+            cursor_found = False
+            for event in cls.get_rows():
+                if event.id == cursor:
+                    cursor_found = True
+                    continue
+                if not cursor_found:
+                    continue
+                events.append(event)
+        else:
+            events = cls.get_rows()
+
+        return events
