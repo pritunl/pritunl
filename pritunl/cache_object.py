@@ -66,30 +66,11 @@ class CacheObject:
         cache_db.remove(self.column_family)
 
     @classmethod
-    def get_rows(cls, sort_column=None, sort_column_min=None):
+    def get_rows(cls):
         rows = []
-        if not sort_column:
-            for row_id in cache_db.list_elements(cls.column_family):
-                row = cls(id=row_id)
-                rows.append(row)
-        else:
-            sort_values = {}
-            for row_id in cache_db.list_elements(cls.column_family):
-                row = cls(id=row_id)
-
-                sort_value = getattr(row, sort_column)
-                if sort_column_min and sort_value <= sort_column_min:
-                    continue
-                sort_values[row_id] = sort_value
-
-                if not rows:
-                    rows.append(row)
-                    continue
-
-                for i, sorted_row in enumerate(rows):
-                    if sort_value >= sort_values[sorted_row.id]:
-                        rows.insert(i + 1, row)
-                        break
+        for row_id in cache_db.list_elements(cls.column_family):
+            row = cls(id=row_id)
+            rows.append(row)
         return rows
 
     @classmethod
