@@ -1,15 +1,11 @@
 from constants import *
 from event import Event
-from database_object import DatabaseObject
 from database import Base, Session
-import logging
 import time
 import uuid
 from sqlalchemy import Column, Integer, String
 
-logger = logging.getLogger(APP_NAME)
-
-class LogEntry(Base, DatabaseObject):
+class LogEntry(Base):
     __tablename__ = 'log_entries'
     id = Column(String, primary_key=True)
     type = Column(String)
@@ -22,7 +18,9 @@ class LogEntry(Base, DatabaseObject):
             self.type = type or INFO
             self.time = int(time.time())
             self.message = message
-            self.add()
+            session = Session()
+            session.add(self)
+            session.commit()
             Event(type=LOG_UPDATED)
         else:
             self.id = id
