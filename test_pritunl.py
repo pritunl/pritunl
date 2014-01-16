@@ -1,4 +1,3 @@
-from pritunl import database
 import threading
 import unittest
 import requests
@@ -169,45 +168,6 @@ class SessionTestCase(unittest.TestCase):
     def _delete_test_data(self):
         response = self.session.delete('/organization/%s' % self.org_id)
         self.assertEqual(response.status_code, 200)
-
-
-class Database(SessionTestCase):
-    def _test_db(self, db):
-        db.set('column_family', 'row1', 'column1', 'value1')
-        db.set('column_family', 'row2', 'column2', 'value2')
-        db.set('column_family', 'row3', 'column3', 'value3')
-        value = db.get('column_family', 'row1', 'column1')
-        self.assertEqual(value, 'value1')
-        value = db.get('column_family', 'row2', 'column2')
-        self.assertEqual(value, 'value2')
-        value = db.get('column_family', 'row3', 'column3')
-        self.assertEqual(value, 'value3')
-        value = db.get('column_family', 'row1')
-        self.assertEqual(value, {'column1': 'value1'})
-        value = db.get('column_family')
-        self.assertEqual(value, {
-            'row1': {'column1': 'value1'},
-            'row2': {'column2': 'value2'},
-            'row3': {'column3': 'value3'},
-        })
-        db.remove('column_family', 'row1')
-        db.remove('column_family', 'row2')
-        db.remove('column_family', 'row3')
-        value = db.get('column_family')
-        self.assertEqual(value, {})
-
-    @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
-    def test_mem(self):
-        db = database.Database(None)
-        self._test_db(db)
-        db.close()
-
-    @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
-    def test_berkeley_db(self):
-        db = database.Database(TEMP_DATABSE_PATH)
-        self._test_db(db)
-        db.close()
-        os.remove(TEMP_DATABSE_PATH)
 
 
 class Auth(SessionTestCase):
