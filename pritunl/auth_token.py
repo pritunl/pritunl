@@ -7,7 +7,6 @@ class AuthToken(CacheObject):
     column_family = 'auth_tokens'
     int_columns = {'time'}
     cached_columns = {'time'}
-    required_columns = {'time'}
 
     def __init__(self, id=None):
         CacheObject.__init__(self)

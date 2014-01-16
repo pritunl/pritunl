@@ -11,7 +11,6 @@ class Event(CacheObject):
     str_columns = {'type', 'resource_id'}
     int_columns = {'time'}
     cached_columns = {'type', 'resource_id', 'time'}
-    required_columns = {'type', 'time'}
 
     def __init__(self, id=None, type=None, resource_id=None):
         CacheObject.__init__(self)

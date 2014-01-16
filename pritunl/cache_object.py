@@ -8,7 +8,6 @@ class CacheObject:
     float_columns = set()
     str_columns = set()
     cached_columns = set()
-    required_columns = set()
 
     def __init__(self):
         self.all_columns = self.bool_columns | self.int_columns | \
