@@ -8,7 +8,8 @@ from pritunl import app_server
 def log_get():
     log_entries = []
 
-    for log_entry in LogEntry.get_rows(sort_column='time', sort_desc=True):
+    for log_entry in LogEntry.get_log_entries():
+        print log_entry.time
         log_entries.append({
             'id': log_entry.id,
             'time': log_entry.time,

@@ -1,7 +1,7 @@
 from constants import *
 from event import Event
 from database_object import DatabaseObject
-from database import Base
+from database import Base, Session
 import logging
 import time
 import uuid
@@ -26,3 +26,17 @@ class LogEntry(Base, DatabaseObject):
             Event(type=LOG_UPDATED)
         else:
             self.id = id
+
+    @classmethod
+    def get_log_entries(cls):
+        log_entries = []
+        session = Session()
+        log_entries_query = session.query(cls).order_by(
+            getattr(cls, 'time').desc())
+        for log_entry in log_entries_query:
+            if len(log_entries) >= LOG_LIMIT:
+                session.delete(log_entry)
+                continue
+            log_entries.append(log_entry)
+        session.commit()
+        return log_entries
