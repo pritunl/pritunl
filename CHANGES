@@ -5,7 +5,9 @@ Version 0.10.5
 --------------
 Add support for multiple local networks on vpn server
 Cache organizations and users to reduce response times
+Changes to event system
 Server conf data will be automatically upgraded after first launch
+Log entries will be cleared after first launch for database upgrade
 
 Version 0.10.4 2014-01-10
 -------------------------
