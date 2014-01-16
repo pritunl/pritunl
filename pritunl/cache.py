@@ -2,6 +2,7 @@ from constants import *
 import logging
 import time
 import collections
+import copy
 
 logger = logging.getLogger(APP_NAME)
 
@@ -52,7 +53,43 @@ class Cache:
 
     def set_elements(self, key):
         if self._check_ttl(key) is False:
-            return self._data[key]['val']
+            return copy.deepcopy(self._data[key]['val'])
+        return set()
+
+    def set_add(self, key, element):
+        try:
+            self._data[key]['val'].add(element)
+        except AttributeError:
+            self._data[key]['val'] = {element}
+
+    def set_remove(self, key, element):
+        try:
+            self._data[key]['val'].remove(element)
+        except (KeyError, AttributeError):
+            pass
+
+    def set_elements(self, key):
+        if self._check_ttl(key) is False:
+            return copy.deepcopy(self._data[key]['val'])
+        return set()
+
+    def list_append(self, key, value):
+        try:
+            self._data[key]['val'].append(value)
+        except AttributeError:
+            self._data[key]['val'] = [value]
+
+    def list_pop(self, key):
+        if self._check_ttl(key) is False:
+            return self._data[key]['val'].pop()
+
+    def list_index(self, key, index):
+        if self._check_ttl(key) is False:
+            return self._data[key]['val'][index]
+
+    def list_elements(self, key):
+        if self._check_ttl(key) is False:
+            return copy.deepcopy(self._data[key]['val'])
         return set()
 
     def dict_get(self, key, field):
@@ -78,7 +115,7 @@ class Cache:
 
     def dict_get_all(self, key):
         if self._check_ttl(key) is False:
-            return self._data[key]['val']
+            return copy.deepcopy(self._data[key]['val'])
         return {}
 
 cache_db = Cache()
