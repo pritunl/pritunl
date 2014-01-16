@@ -229,24 +229,6 @@ class Data(SessionTestCase):
             self.assertRegexpMatches(content_disposition, exp)
 
 
-class Event(SessionTestCase):
-    @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
-    def test_event_get(self):
-        response = self.session.get('/event')
-        self.assertEqual(response.status_code, 200)
-
-        data = response.json()
-        self.assertEqual(len(data), 1)
-        self.assertIn('id', data[0])
-        self.assertIn('type', data[0])
-        self.assertIn('time', data[0])
-        self.assertIn('resource_id', data[0])
-        self.assertIsInstance(data[0]['id'], basestring)
-        self.assertEqual(data[0]['type'], 'time')
-        self.assertIsInstance(data[0]['time'], int)
-        self.assertEqual(data[0]['resource_id'], None)
-
-
 class Key(SessionTestCase):
     @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_user_key_archive_get(self):
