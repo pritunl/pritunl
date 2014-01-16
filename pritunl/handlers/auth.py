@@ -60,5 +60,5 @@ def auth_token_post():
 @app_server.app.route('/auth/token/<auth_token>', methods=['DELETE'])
 def auth_token_delete(auth_token):
     auth_token = AuthToken(auth_token)
-    auth_token.delete()
+    auth_token.remove()
     return utils.jsonify({})
