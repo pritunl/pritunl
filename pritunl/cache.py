@@ -126,7 +126,7 @@ class Cache:
         event = threading.Event()
         self._channels[channel]['subs'].add(event)
         try:
-            cursor = self._channels[channel]['msgs'][-1]['id']
+            cursor = id(self._channels[channel]['msgs'][-1])
         except IndexError:
             cursor = None
         while True:
@@ -139,16 +139,13 @@ class Cache:
             messages = copy.copy(self._channels[channel]['msgs'])
             for message in messages:
                 if cursor_found:
-                    yield message['msg']
-                elif message['id'] == cursor:
+                    yield message
+                elif id(message) == cursor:
                     cursor_found = True
-            cursor = messages[-1]['id']
+            cursor = id(messages[-1])
 
     def publish(self, channel, message):
-        self._channels[channel]['msgs'].append({
-            'id': uuid.uuid4(),
-            'msg': message
-        })
+        self._channels[channel]['msgs'].append(message)
         for subscriber in self._channels[channel]['subs'].copy():
             subscriber.set()
 
