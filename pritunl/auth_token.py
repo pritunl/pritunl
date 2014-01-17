@@ -21,4 +21,4 @@ class AuthToken(CacheObject):
     def __getattr__(self, name):
         if name == 'valid':
             return bool(self.time)
-        return CacheDatabaseObject.__getattr__(self, name)
+        return CacheObject.__getattr__(self, name)
