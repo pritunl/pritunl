@@ -36,12 +36,10 @@ class Event(CacheObject):
             events_query = cls.get_rows()
             cursor_found = False
             for event in cls.get_rows():
-                if event.id == cursor:
+                if cursor_found:
+                    events.append(event)
+                elif event.id == cursor:
                     cursor_found = True
-                    continue
-                if not cursor_found:
-                    continue
-                events.append(event)
             if not cursor_found:
                 events = events_query
         else:
