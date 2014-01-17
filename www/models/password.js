@@ -10,6 +10,9 @@ define([
     },
     url: function() {
       return '/password';
+    },
+    isNew: function() {
+      return false;
     }
   });
 
