@@ -2,6 +2,9 @@ from constants import *
 import logging
 import time
 import collections
+import threading
+import uuid
+import copy
 
 logger = logging.getLogger(APP_NAME)
 
@@ -9,6 +12,8 @@ class Cache:
     def __init__(self):
         self._data = collections.defaultdict(
             lambda: {'ttl': None, 'val': None})
+        self._channels = collections.defaultdict(
+            lambda: {'subs': set(), 'msgs': collections.deque(maxlen=10)})
 
     def _check_ttl(self, key):
         if key not in self._data:
@@ -116,5 +121,35 @@ class Cache:
         if self._check_ttl(key) is False:
             return self._data[key]['val'].copy()
         return {}
+
+    def subscribe(self, channel):
+        event = threading.Event()
+        self._channels[channel]['subs'].add(event)
+        try:
+            cursor = self._channels[channel]['msgs'][-1]['id']
+        except IndexError:
+            cursor = None
+        while True:
+            event.wait()
+            event.clear()
+            if not cursor:
+                cursor_found = True
+            else:
+                cursor_found = False
+            messages = copy.copy(self._channels[channel]['msgs'])
+            for message in messages:
+                if cursor_found:
+                    yield message['msg']
+                elif message['id'] == cursor:
+                    cursor_found = True
+            cursor = messages[-1]['id']
+
+    def publish(self, channel, message):
+        self._channels[channel]['msgs'].append({
+            'id': uuid.uuid4(),
+            'msg': message
+        })
+        for subscriber in self._channels[channel]['subs'].copy():
+            subscriber.set()
 
 cache_db = Cache()
