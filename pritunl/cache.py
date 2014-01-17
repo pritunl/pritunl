@@ -93,7 +93,7 @@ class Cache:
 
     def list_elements(self, key):
         if self._check_ttl(key) is False:
-            return self._data[key]['val'].copy()
+            return copy.copy(self._data[key]['val'])
         return []
 
     def dict_get(self, key, field):
