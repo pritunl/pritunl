@@ -60,23 +60,6 @@ class Cache:
             return self._data[key]['val'].copy()
         return set()
 
-    def set_add(self, key, element):
-        try:
-            self._data[key]['val'].add(element)
-        except AttributeError:
-            self._data[key]['val'] = {element}
-
-    def set_remove(self, key, element):
-        try:
-            self._data[key]['val'].remove(element)
-        except (KeyError, AttributeError):
-            pass
-
-    def set_elements(self, key):
-        if self._check_ttl(key) is False:
-            return self._data[key]['val'].copy()
-        return set()
-
     def list_append(self, key, value):
         try:
             self._data[key]['val'].append(value)
