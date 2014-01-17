@@ -2,7 +2,6 @@ from constants import *
 import logging
 import time
 import collections
-import copy
 
 logger = logging.getLogger(APP_NAME)
 
@@ -53,7 +52,7 @@ class Cache:
 
     def set_elements(self, key):
         if self._check_ttl(key) is False:
-            return copy.deepcopy(self._data[key]['val'])
+            return self._data[key]['val'].copy()
         return set()
 
     def set_add(self, key, element):
@@ -70,7 +69,7 @@ class Cache:
 
     def set_elements(self, key):
         if self._check_ttl(key) is False:
-            return copy.deepcopy(self._data[key]['val'])
+            return self._data[key]['val'].copy()
         return set()
 
     def list_append(self, key, value):
@@ -89,7 +88,7 @@ class Cache:
 
     def list_elements(self, key):
         if self._check_ttl(key) is False:
-            return copy.deepcopy(self._data[key]['val'])
+            return self._data[key]['val'].copy()
         return []
 
     def dict_get(self, key, field):
@@ -115,7 +114,7 @@ class Cache:
 
     def dict_get_all(self, key):
         if self._check_ttl(key) is False:
-            return copy.deepcopy(self._data[key]['val'])
+            return self._data[key]['val'].copy()
         return {}
 
 cache_db = Cache()
