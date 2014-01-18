@@ -140,10 +140,10 @@ class Config:
     def get_cache_key(self, suffix=None):
         key = ''
         if self.cache_prefix:
-            key += '%s_' % self.cache_prefix
+            key += '%s-' % self.cache_prefix
         key += self.id
         if suffix:
-            key += '_%s' % suffix
+            key += '-%s' % suffix
         return key
 
     def clear_cache(self):
