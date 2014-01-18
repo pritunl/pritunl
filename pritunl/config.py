@@ -157,7 +157,7 @@ class Config:
         if self.cached:
             if not hasattr(self, 'id'):
                 raise ValueError('Object ID is required for caching')
-            if cache_db.get(self.get_cache_key('cached')):
+            if cache_db.get(self.get_cache_key('cached')) == 't':
                 if merge:
                     for name, value in cache_db.dict_get_all(
                             self.get_cache_key()).iteritems():
@@ -203,7 +203,7 @@ class Config:
                 raise
 
         if self.cached:
-            cache_db.set(self.get_cache_key('cached'), True)
+            cache_db.set(self.get_cache_key('cached'), 't')
 
     def commit(self):
         logger.debug('Committing config.')
