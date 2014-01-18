@@ -16,7 +16,7 @@ class Cache:
             lambda: {'subs': set(), 'msgs': collections.deque(maxlen=10)})
 
     def _validate(self, value):
-        if not isinstance(value, basestring):
+        if value is not None and not isinstance(value, basestring):
             raise TypeError('Value must be string')
 
     def _check_ttl(self, key):
