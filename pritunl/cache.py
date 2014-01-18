@@ -15,6 +15,10 @@ class Cache:
         self._channels = collections.defaultdict(
             lambda: {'subs': set(), 'msgs': collections.deque(maxlen=10)})
 
+    def _validate(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError('Value must be string')
+
     def _check_ttl(self, key):
         if key not in self._data:
             return
@@ -29,6 +33,7 @@ class Cache:
             return self._data[key]['val']
 
     def set(self, key, value):
+        self._validate(value)
         self._data[key]['val'] = value
 
     def remove(self, key):
@@ -44,6 +49,7 @@ class Cache:
         self._data[key]['ttl'] = timeout
 
     def set_add(self, key, element):
+        self._validate(element)
         try:
             self._data[key]['val'].add(element)
         except AttributeError:
@@ -64,6 +70,7 @@ class Cache:
         return set()
 
     def list_append(self, key, value):
+        self._validate(value)
         try:
             self._data[key]['val'].append(value)
         except AttributeError:
@@ -99,6 +106,7 @@ class Cache:
                 pass
 
     def dict_set(self, key, field, value):
+        self._validate(value)
         try:
             self._data[key]['val'][field] = value
         except TypeError:
