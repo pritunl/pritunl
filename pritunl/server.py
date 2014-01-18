@@ -17,7 +17,6 @@ import utils
 import re
 
 logger = logging.getLogger(APP_NAME)
-_output = {}
 
 class Server(Config):
     str_options = {'name', 'network', 'interface', 'protocol',
@@ -64,17 +63,19 @@ class Server(Config):
 
     def __getattr__(self, name):
         if name == 'status':
-            return  cache_db.dict_get(self.get_cache_key(), name) or False
+            return cache_db.dict_get(self.get_cache_key(), name) or False
         elif name == 'uptime':
             if self.status:
                 return int(time.time()) - cache_db.dict_get(
                     self.get_cache_key(), 'start_time')
             return None
+        elif name == 'output':
+            return '\n'.join(cache_db.list_elements(
+                self.get_cache_key('output')))
         elif name == 'user_count':
             return self._get_user_count()
         elif name == 'org_count':
             return self._get_org_count()
-
         return Config.__getattr__(self, name)
 
     def _upgrade_0_10_5(self):
@@ -541,7 +542,8 @@ class Server(Config):
                 process = subprocess.Popen(['openvpn', self.ovpn_conf_path],
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             except OSError:
-                _output[self.id] += traceback.format_exc()
+                cache_db.list_append(self.get_cache_key('output'),
+                    traceback.format_exc())
                 self._event_delay(type=SERVER_OUTPUT_UPDATED,
                     resource_id=self.id)
                 logger.exception('Failed to start ovpn process. %r' % {
@@ -558,9 +560,13 @@ class Server(Config):
 
             while True:
                 line = process.stdout.readline()
-                if line == '' and process.poll() is not None:
-                    break
-                _output[self.id] += line
+                if not line:
+                    if process.poll() is not None:
+                        break
+                    else:
+                        continue
+                cache_db.list_append(self.get_cache_key('output'),
+                    line.rstrip('\n'))
                 self._event_delay(type=SERVER_OUTPUT_UPDATED,
                     resource_id=self.id)
 
@@ -582,7 +588,7 @@ class Server(Config):
         self._generate_ovpn_conf()
         self._enable_ip_forwarding()
         self._set_iptable_rules()
-        _output[self.id] = ''
+        self.clear_output()
 
         threading.Thread(target=self._run_thread).start()
 
@@ -663,14 +669,10 @@ class Server(Config):
             LogEntry(message='Restarted server "%s".' % self.name)
 
     def get_output(self):
-        if self.id not in _output:
-            return ''
-        return _output[self.id]
+        return self.output
 
     def clear_output(self):
-        if self.id not in _output:
-            return ''
-        _output[self.id] = ''
+        cache_db.remove(self.get_cache_key('output'))
         self._event_delay(type=SERVER_OUTPUT_UPDATED, resource_id=self.id)
 
     def get_clients(self):
