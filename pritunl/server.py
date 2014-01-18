@@ -4,6 +4,7 @@ from config import Config
 from organization import Organization
 from event import Event
 from log_entry import LogEntry
+from cache import cache_db
 import uuid
 import os
 import signal
@@ -16,11 +17,7 @@ import utils
 import re
 
 logger = logging.getLogger(APP_NAME)
-_threads = {}
-_events = {}
 _output = {}
-_process = {}
-_start_time = {}
 
 class Server(Config):
     str_options = {'name', 'network', 'interface', 'protocol',
@@ -29,6 +26,7 @@ class Server(Config):
     bool_options = {'otp_auth', 'lzo_compression', 'debug'}
     int_options = {'port'}
     list_options = {'organizations', 'local_networks'}
+    cache_prefix = 'server'
 
     def __init__(self, id=None, **kwargs):
         Config.__init__(self)
@@ -58,14 +56,19 @@ class Server(Config):
         if id is None:
             self._initialize()
 
+    def __setattr__(self, name, value):
+        if name == 'status':
+            cache_db.dict_set(self.get_cache_key(), name, value)
+        else:
+            Config.__setattr__(self, name, value)
+
     def __getattr__(self, name):
         if name == 'status':
-            if self.id in _threads:
-                return _threads[self.id].is_alive()
-            return False
+            return  cache_db.dict_get(self.get_cache_key(), name) or False
         elif name == 'uptime':
-            if self.status and self.id in _start_time:
-                return int(time.time()) - _start_time[self.id]
+            if self.status:
+                return int(time.time()) - cache_db.dict_get(
+                    self.get_cache_key(), 'start_time')
             return None
         elif name == 'user_count':
             return self._get_user_count()
@@ -497,6 +500,18 @@ class Server(Config):
                     })
                 raise
 
+    def _sub_thread(self, process):
+        for message in cache_db.subscribe(self.get_cache_key()):
+            try:
+                if message == 'stop':
+                    process.send_signal(signal.SIGINT)
+                elif message == 'force_stop':
+                    process.send_signal(signal.SIGKILL)
+                elif message == 'stopped':
+                    break
+            except OSError:
+                pass
+
     def _status_thread(self):
         i = 0
         cur_client_count = 0
@@ -513,22 +528,18 @@ class Server(Config):
                 i += 1
             time.sleep(0.1)
         self._clear_iptable_rules()
-        _events[self.id].set()
-        _events.pop(self.id, None)
+        self.status = False
+        cache_db.publish(self.get_cache_key(), 'stopped')
 
-    def _run(self):
+    def _run_thread(self):
         logger.debug('Starting ovpn process. %r' % {
             'server_id': self.id,
         })
         self._interrupt = False
         try:
-            threading.Thread(target=self._status_thread).start()
-
             try:
                 process = subprocess.Popen(['openvpn', self.ovpn_conf_path],
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                _process[self.id] = process
-                _events[self.id].set()
             except OSError:
                 _output[self.id] += traceback.format_exc()
                 self._event_delay(type=SERVER_OUTPUT_UPDATED,
@@ -537,6 +548,13 @@ class Server(Config):
                     'server_id': self.id,
                 })
                 return
+            cache_db.dict_set(self.get_cache_key(), 'start_time',
+                int(time.time() - 1))
+            threading.Thread(target=self._sub_thread,
+                args=(process,)).start()
+            threading.Thread(target=self._status_thread).start()
+            self.status = True
+            cache_db.publish(self.get_cache_key(), 'started')
 
             while True:
                 line = process.stdout.readline()
@@ -550,9 +568,6 @@ class Server(Config):
                 'server_id': self.id,
             })
         finally:
-            _threads.pop(self.id, None)
-            _process.pop(self.id, None)
-            _start_time.pop(self.id, None)
             self._interrupt = True
 
     def start(self, silent=False):
@@ -567,18 +582,19 @@ class Server(Config):
         self._generate_ovpn_conf()
         self._enable_ip_forwarding()
         self._set_iptable_rules()
-        _events[self.id] = threading.Event()
-        thread = threading.Thread(target=self._run)
-        thread.start()
-        _threads[self.id] = thread
-        _start_time[self.id] = int(time.time()) - 1
         _output[self.id] = ''
-        if not _events[self.id].wait(THREAD_EVENT_TIMEOUT):
+
+        threading.Thread(target=self._run_thread).start()
+
+        started = False
+        for message in cache_db.subscribe(self.get_cache_key(),
+                SUB_RESPONSE_TIMEOUT):
+            if message == 'started':
+                started = True
+                break
+        if not started:
             raise ValueError('Server thread failed to return start event.')
-        try:
-            _events[self.id].clear()
-        except KeyError:
-            pass
+
         if not silent:
             Event(type=SERVERS_UPDATED)
             LogEntry(message='Started server "%s".' % self.name)
@@ -589,10 +605,17 @@ class Server(Config):
         logger.debug('Stopping server. %r' % {
             'server_id': self.id,
         })
-        event = _events[self.id]
-        _process[self.id].send_signal(signal.SIGINT)
-        if not event.wait(THREAD_EVENT_TIMEOUT):
+
+        stopped = False
+        cache_db.publish(self.get_cache_key(), 'stop')
+        for message in cache_db.subscribe(self.get_cache_key(),
+                SUB_RESPONSE_TIMEOUT):
+            if message == 'stopped':
+                stopped = True
+                break
+        if not stopped:
             raise ValueError('Server thread failed to return stop event.')
+
         if not silent:
             Event(type=SERVERS_UPDATED)
             LogEntry(message='Stopped server "%s".' % self.name)
@@ -603,14 +626,26 @@ class Server(Config):
         logger.debug('Forcing stop server. %r' % {
             'server_id': self.id,
         })
-        process = _process[self.id]
-        event = _events[self.id]
 
-        process.send_signal(signal.SIGINT)
-        if not event.wait(2):
-            process.send_signal(signal.SIGKILL)
-            if not event.wait(THREAD_EVENT_TIMEOUT):
+        stopped = False
+        cache_db.publish(self.get_cache_key(), 'stop')
+        for message in cache_db.subscribe(self.get_cache_key(), 2):
+            if message == 'stopped':
+                stopped = True
+                break
+
+        if not stopped:
+            stopped = False
+            cache_db.publish(self.get_cache_key(), 'force_stop')
+            for message in cache_db.subscribe(self.get_cache_key(),
+                    SUB_RESPONSE_TIMEOUT):
+                if message == 'stopped':
+                    stopped = True
+                    break
+
+            if not stopped:
                 raise ValueError('Server thread failed to return stop event.')
+
         if not silent:
             Event(type=SERVERS_UPDATED)
             LogEntry(message='Stopped server "%s".' % self.name)
@@ -626,15 +661,6 @@ class Server(Config):
         if not silent:
             Event(type=SERVERS_UPDATED)
             LogEntry(message='Restarted server "%s".' % self.name)
-
-    def reload(self):
-        if not self.status:
-            self.start()
-        logger.debug('Reloading server. %r' % {
-            'server_id': self.id,
-        })
-        _process[self.id].send_signal(signal.SIGUSR1)
-        LogEntry(message='Reloaded server "%s".' % self.name)
 
     def get_output(self):
         if self.id not in _output:
