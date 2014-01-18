@@ -24,7 +24,7 @@ class Cache:
             return
         ttl = self._data[key]['ttl']
         if ttl and int(time.time()) > ttl:
-            self.remove(self, key)
+            self.remove(key)
             return True
         return False
 
