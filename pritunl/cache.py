@@ -105,7 +105,7 @@ class Cache:
             return self._data[key]['val'].copy()
         return {}
 
-    def subscribe(self, channel):
+    def subscribe(self, channel, timeout=None):
         event = threading.Event()
         self._channels[channel]['subs'].add(event)
         try:
@@ -113,7 +113,8 @@ class Cache:
         except IndexError:
             cursor = None
         while True:
-            event.wait()
+            if not event.wait(timeout):
+                break
             event.clear()
             if not cursor:
                 cursor_found = True
