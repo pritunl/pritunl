@@ -76,7 +76,7 @@ class Cache:
 
     def list_elements(self, key):
         if self._check_ttl(key) is False:
-            return copy.copy(self._data[key]['val'])
+            return list(self._data[key]['val'])
         return []
 
     def dict_get(self, key, field):
@@ -109,7 +109,7 @@ class Cache:
         event = threading.Event()
         self._channels[channel]['subs'].add(event)
         try:
-            cursor = id(self._channels[channel]['msgs'][-1])
+            cursor = self._channels[channel]['msgs'][-1][0]
         except IndexError:
             cursor = None
         while True:
@@ -123,13 +123,14 @@ class Cache:
             messages = copy.copy(self._channels[channel]['msgs'])
             for message in messages:
                 if cursor_found:
-                    yield message
-                elif id(message) == cursor:
+                    yield message[1]
+                elif message[0] == cursor:
                     cursor_found = True
-            cursor = id(messages[-1])
+            cursor = messages[-1][0]
 
     def publish(self, channel, message):
-        self._channels[channel]['msgs'].append(message)
+        self._channels[channel]['msgs'].append(
+            (uuid.uuid4().hex, message))
         for subscriber in self._channels[channel]['subs'].copy():
             subscriber.set()
 
