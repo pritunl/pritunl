@@ -82,7 +82,7 @@ class Organization(Config):
         return User(self, id=id)
 
     def get_users(self):
-        if not cache_db.get(self.get_cache_key('users_cached')):
+        if cache_db.get(self.get_cache_key('users_cached')) != 't':
             certs_path = os.path.join(self.path, CERTS_DIR)
             if os.path.isdir(certs_path):
                 for cert in os.listdir(certs_path):
@@ -90,7 +90,7 @@ class Organization(Config):
                     if user_id == CA_CERT_ID:
                         continue
                     cache_db.set_add(self.get_cache_key('users'), user_id)
-            cache_db.set(self.get_cache_key('users_cached'), True)
+            cache_db.set(self.get_cache_key('users_cached'), 't')
 
         users = []
         for user_id in cache_db.set_elements(self.get_cache_key('users')):
@@ -171,12 +171,12 @@ class Organization(Config):
 
     @staticmethod
     def get_orgs():
-        if not cache_db.get('orgs_cached'):
+        if cache_db.get('orgs_cached') != 't':
             path = os.path.join(app_server.data_path, ORGS_DIR)
             if os.path.isdir(path):
                 for org_id in os.listdir(path):
                     cache_db.set_add('orgs', org_id)
-            cache_db.set('orgs_cached', True)
+            cache_db.set('orgs_cached', 't')
 
         orgs = []
         for org_id in cache_db.set_elements('orgs'):
