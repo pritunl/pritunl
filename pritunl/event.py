@@ -51,8 +51,8 @@ class Event(CacheObject):
             else:
                 break
 
+        events = []
         if cursor:
-            events = []
             events_query = cls.get_rows()
             cursor_found = False
             for event in cls.get_rows():
@@ -62,8 +62,10 @@ class Event(CacheObject):
                     cursor_found = True
             if not cursor_found:
                 events = events_query
+        elif block:
+            cursor = cache_db.list_index(cls.column_family, -1)
         else:
-            events = cls.get_rows()
+            return cls.get_rows()
 
         if block and not events:
             new_event = False
@@ -72,6 +74,6 @@ class Event(CacheObject):
                     new_event = True
                     break
             if new_event:
-                return cls.get_events(cursor, False)
+                return cls.get_events(cursor, False, False)
 
         return events

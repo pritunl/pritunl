@@ -13,11 +13,6 @@ def event_get(cursor=None):
     if app_server.interrupt:
         return flask.abort(503)
 
-    if not cursor:
-        event = Event.get_last_row()
-        if event:
-            cursor = event.id
-
     events = []
     for event in Event.get_events(cursor):
         events.append({
