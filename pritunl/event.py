@@ -74,6 +74,6 @@ class Event(CacheObject):
                     new_event = True
                     break
             if new_event:
-                return cls.get_events(cursor, False, False)
+                return cls.get_events(cursor, False)
 
         return events
