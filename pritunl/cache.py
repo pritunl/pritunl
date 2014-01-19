@@ -69,14 +69,28 @@ class Cache:
                 pass
         return set()
 
-    def list_append(self, key, value):
+    def list_lpush(self, key, value):
+        self._validate(value)
+        try:
+            self._data[key]['val'].appendleft(value)
+        except AttributeError:
+            self._data[key]['val'] = collections.deque([value])
+
+    def list_rpush(self, key, value):
         self._validate(value)
         try:
             self._data[key]['val'].append(value)
         except AttributeError:
-            self._data[key]['val'] = [value]
+            self._data[key]['val'] = collections.deque([value])
 
-    def list_pop(self, key):
+    def list_lpop(self, key):
+        if self._check_ttl(key) is False:
+            try:
+                return self._data[key]['val'].popleft()
+            except (AttributeError, IndexError):
+                pass
+
+    def list_rpop(self, key):
         if self._check_ttl(key) is False:
             try:
                 return self._data[key]['val'].pop()
