@@ -4,22 +4,13 @@ import requests
 import json
 import time
 import os
-import sys
-import optparse
 
-parser = optparse.OptionParser()
-parser.add_option('-w', '--url', type='string',
-    help='Pritunl url')
-parser.add_option('-p', '--password', type='string',
-    help='Pritunl password')
-(options, args) = parser.parse_args()
-
-BASE_URL = options.url or 'http://localhost:9701'
+BASE_URL = os.getenv('BASE_URL', 'http://localhost:9700')
 HEADERS = {
     'Accept': 'application/json',
 }
-USERNAME = 'admin'
-PASSWORD = options.password or 'admin'
+USERNAME = os.getenv('USERNAME', 'admin')
+PASSWORD = os.getenv('PASSWORD', 'admin')
 TEST_PASSWORD = 'unittest'
 TEST_USER_NAME = 'unittest_user'
 TEST_ORG_NAME = 'unittest_org'
@@ -983,5 +974,4 @@ class Stress(SessionTestCase):
 
 
 if __name__ == '__main__':
-    del sys.argv[1:]
     unittest.main()
