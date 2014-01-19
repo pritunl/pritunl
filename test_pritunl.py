@@ -30,7 +30,7 @@ AUTH_HANDLERS = [
     ('POST', '/organization'),
     ('PUT', '/organization/0'),
     ('DELETE', '/organization/0'),
-    ('POST', '/password'),
+    ('PUT', '/password'),
     ('GET', '/server'),
     ('POST', '/server'),
     ('PUT', '/server/0'),
