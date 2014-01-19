@@ -57,17 +57,22 @@ class Server(Config):
 
     def __setattr__(self, name, value):
         if name == 'status':
-            cache_db.dict_set(self.get_cache_key(), name, value)
+            if value:
+                cache_db.dict_set(self.get_cache_key(), name, 't')
+            else:
+                cache_db.dict_set(self.get_cache_key(), name, 'f')
         else:
             Config.__setattr__(self, name, value)
 
     def __getattr__(self, name):
         if name == 'status':
-            return cache_db.dict_get(self.get_cache_key(), name) or False
+            if cache_db.dict_get(self.get_cache_key(), name) == 't':
+                return True
+            return False
         elif name == 'uptime':
             if self.status:
-                return int(time.time()) - cache_db.dict_get(
-                    self.get_cache_key(), 'start_time')
+                return int(time.time()) - int(cache_db.dict_get(
+                    self.get_cache_key(), 'start_time'))
             return None
         elif name == 'output':
             return '\n'.join(cache_db.list_elements(
@@ -551,7 +556,7 @@ class Server(Config):
                 })
                 return
             cache_db.dict_set(self.get_cache_key(), 'start_time',
-                int(time.time() - 1))
+                str(int(time.time() - 1)))
             threading.Thread(target=self._sub_thread,
                 args=(process,)).start()
             threading.Thread(target=self._status_thread).start()
