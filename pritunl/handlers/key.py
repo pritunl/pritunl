@@ -54,32 +54,32 @@ def user_key_link_get(org_id, user_id):
     if not view_id:
         raise AttributeError('Failed to generate random view id')
 
+    cache_db.expire(_get_key_key(key_id), KEY_LINK_TIMEOUT)
     cache_db.dict_set(_get_key_key(key_id), 'org_id', org_id)
     cache_db.dict_set(_get_key_key(key_id), 'user_id', user_id)
     cache_db.dict_set(_get_key_key(key_id), 'view_id', view_id)
-    cache_db.expire(_get_key_key(key_id), KEY_LINK_TIMEOUT)
 
     conf_urls = []
     if app_server.inline_certs:
         for server in servers:
             conf_id = uuid.uuid4().hex
 
+            cache_db.expire(_get_conf_key(conf_id), KEY_LINK_TIMEOUT)
             cache_db.dict_set(_get_conf_key(conf_id), 'org_id', org_id)
             cache_db.dict_set(_get_conf_key(conf_id), 'user_id', user_id)
             cache_db.dict_set(_get_conf_key(conf_id), 'server_id', server.id)
-            cache_db.expire(_get_conf_key(conf_id), KEY_LINK_TIMEOUT)
 
             conf_urls.append({
                 'server_name': server.name,
                 'url': '/key/%s.ovpn' % conf_id,
             })
 
+    cache_db.expire(_get_view_key(view_id), KEY_LINK_TIMEOUT)
     cache_db.dict_set(_get_view_key(view_id), 'org_id', org_id)
     cache_db.dict_set(_get_view_key(view_id), 'user_id', user_id)
     cache_db.dict_set(_get_view_key(view_id), 'key_id', key_id)
     cache_db.dict_set(_get_view_key(view_id),
         'conf_urls', json.dumps(conf_urls))
-    cache_db.expire(_get_view_key(view_id), KEY_LINK_TIMEOUT)
 
     return utils.jsonify({
         'id': key_id,
