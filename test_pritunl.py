@@ -15,7 +15,6 @@ TEST_PASSWORD = 'unittest'
 TEST_USER_NAME = 'unittest_user'
 TEST_ORG_NAME = 'unittest_org'
 TEST_SERVER_NAME = 'unittest_server'
-TEMP_DATABSE_PATH = 'pritunl_test.db'
 ENABLE_STANDARD_TESTS = True
 ENABLE_STRESS_TESTS = False
 THREADED_STRESS_TEST = True
