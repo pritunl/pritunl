@@ -118,14 +118,6 @@ class Cache:
         except AttributeError:
             pass
 
-    def dict_exists(self, key, field):
-        if self._check_ttl(key) is False:
-            try:
-                return field in self._data[key]['val']
-            except TypeError:
-                pass
-        return False
-
     def dict_get_keys(self, key):
         if self._check_ttl(key) is False:
             try:
