@@ -18,22 +18,13 @@ def event_get(cursor=None):
         if event:
             cursor = event.id
 
-    run_time = 0
-    while run_time <= 30 and not app_server.interrupt:
-        events = []
+    events = []
+    for event in Event.get_events(cursor):
+        events.append({
+            'id': event.id,
+            'type': event.type,
+            'resource_id': event.resource_id,
+            'time': event.time,
+        })
 
-        for event in Event.get_events(cursor):
-            events.append({
-                'id': event.id,
-                'type': event.type,
-                'resource_id': event.resource_id,
-                'time': event.time,
-            })
-
-        if len(events):
-            return utils.jsonify(events)
-
-        run_time += 0.1
-        time.sleep(0.1)
-
-    return utils.jsonify([])
+    return utils.jsonify(events)

@@ -25,8 +25,12 @@ class Event(CacheObject):
         else:
             self.id = id
 
+    def initialize(self):
+        CacheObject.initialize(self)
+        cache_db.publish(self.column_family, 'new_event')
+
     @classmethod
-    def get_events(cls, cursor=None):
+    def get_events(cls, cursor=None, block=True):
         logger.debug('Getting events. %r' % {
             'cursor': cursor,
         })
@@ -60,5 +64,14 @@ class Event(CacheObject):
                 events = events_query
         else:
             events = cls.get_rows()
+
+        if block and not events:
+            new_event = False
+            for message in cache_db.subscribe(cls.column_family, 30):
+                if message == 'new_event':
+                    new_event = True
+                    break
+            if new_event:
+                return cls.get_events(cursor, False)
 
         return events
