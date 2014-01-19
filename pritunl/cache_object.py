@@ -24,8 +24,7 @@ class CacheObject:
             elif name in self.bool_columns:
                 value = 't' if value else 'f'
 
-            cache_db.dict_set('%s-%s' % (self.column_family, self.id),
-                name, value)
+            cache_db.dict_set(self.get_cache_key(), name, value)
         else:
             self.__dict__[name] = value
 
@@ -34,8 +33,7 @@ class CacheObject:
             if name in self.cached_columns and name in self.__dict__:
                 return self.__dict__[name]
 
-            value = cache_db.dict_get(
-                '%s-%s' % (self.column_family, self.id), name)
+            value = cache_db.dict_get(self.get_cache_key(), name)
 
             if name in self.int_columns:
                 if value:
@@ -55,15 +53,14 @@ class CacheObject:
             return value
         raise AttributeError('Object instance has no attribute %r' % name)
 
+    def get_cache_key(self, suffix=None):
+        key = '%s-%s' % (self.column_family, self.id)
+        if suffix:
+            key += '-%s' % suffix
+        return key
+
     def initialize(self):
-        cache_db.list_append(self.column_family, self.id)
-
-    def expire(self, ttl):
-        cache_db.expire(self.column_family, ttl)
-        cache_db.expire('%s-%s' % (self.column_family, self.id), ttl)
-
-    def remove(self):
-        cache_db.remove(self.column_family)
+        cache_db.list_rpush(self.column_family, self.id)
 
     @classmethod
     def get_rows(cls):
