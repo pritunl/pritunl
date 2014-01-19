@@ -11,7 +11,7 @@ Pritunl: Simple openvpn server
     :target: https://crate.io/packages/pritunl
 
 .. image:: https://drone.io/github.com/pritunl/pritunl/status.png
-    :target: https://crate.io/packages/pritunl
+    :target: https://drone.io/github.com/pritunl/pritunl
 
 `Pritunl <https://github.com/pritunl/pritunl>`_ is a simple openvpn server
 management tool. Multiple organizations, users and openvpn servers can be
