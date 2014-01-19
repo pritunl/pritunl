@@ -547,7 +547,7 @@ class Server(Config):
                 process = subprocess.Popen(['openvpn', self.ovpn_conf_path],
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             except OSError:
-                cache_db.list_append(self.get_cache_key('output'),
+                cache_db.list_rpush(self.get_cache_key('output'),
                     traceback.format_exc())
                 self._event_delay(type=SERVER_OUTPUT_UPDATED,
                     resource_id=self.id)
@@ -570,7 +570,7 @@ class Server(Config):
                         break
                     else:
                         continue
-                cache_db.list_append(self.get_cache_key('output'),
+                cache_db.list_rpush(self.get_cache_key('output'),
                     line.rstrip('\n'))
                 self._event_delay(type=SERVER_OUTPUT_UPDATED,
                     resource_id=self.id)
