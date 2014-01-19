@@ -1,16 +1,23 @@
 from pritunl.constants import *
 from pritunl.organization import Organization
 import pritunl.utils as utils
+from pritunl.cache import cache_db
 from pritunl import app_server
 import os
 import flask
 import uuid
 import time
 import random
+import json
 
-_key_ids = {}
-_view_ids = {}
-_conf_ids = {}
+def _get_key_key(key_id):
+    return 'key_token-%s' % key_id
+
+def _get_view_key(key_id):
+    return 'view_token-%s' % key_id
+
+def _get_conf_key(key_id):
+    return 'conf_token-%s' % key_id
 
 def _get_key_archive(org_id, user_id):
     org = Organization(org_id)
@@ -41,41 +48,38 @@ def user_key_link_get(org_id, user_id):
     view_id = None
     for i in xrange(2048):
         temp_view_id = ''.join(random.sample(SHORT_URL_CHARS, SHORT_URL_LEN))
-        if temp_view_id not in _view_ids:
+        if not cache_db.exists(_get_view_key(temp_view_id)):
             view_id = temp_view_id
             break
     if not view_id:
         raise AttributeError('Failed to generate random view id')
 
-    _key_ids[key_id] = {
-        'org_id': org_id,
-        'user_id': user_id,
-        'view_id': view_id,
-        'timestamp': time.time(),
-    }
+    cache_db.dict_set(_get_key_key(key_id), 'org_id', org_id)
+    cache_db.dict_set(_get_key_key(key_id), 'user_id', user_id)
+    cache_db.dict_set(_get_key_key(key_id), 'view_id', view_id)
+    cache_db.expire(_get_key_key(key_id), KEY_LINK_TIMEOUT)
 
     conf_urls = []
     if app_server.inline_certs:
         for server in servers:
             conf_id = uuid.uuid4().hex
-            _conf_ids[conf_id] = {
-                'org_id': org_id,
-                'user_id': user_id,
-                'server_id': server.id,
-                'timestamp': time.time(),
-            }
+
+            cache_db.dict_set(_get_conf_key(conf_id), 'org_id', org_id)
+            cache_db.dict_set(_get_conf_key(conf_id), 'user_id', user_id)
+            cache_db.dict_set(_get_conf_key(conf_id), 'server_id', server.id)
+            cache_db.expire(_get_conf_key(conf_id), KEY_LINK_TIMEOUT)
+
             conf_urls.append({
                 'server_name': server.name,
                 'url': '/key/%s.ovpn' % conf_id,
             })
 
-    _view_ids[view_id] = {
-        'org_id': org_id,
-        'user_id': user_id,
-        'key_id': key_id,
-        'timestamp': time.time(),
-        'conf_urls': conf_urls,
-    }
+    cache_db.dict_set(_get_view_key(view_id), 'org_id', org_id)
+    cache_db.dict_set(_get_view_key(view_id), 'user_id', user_id)
+    cache_db.dict_set(_get_view_key(view_id), 'key_id', key_id)
+    cache_db.dict_set(_get_view_key(view_id),
+        'conf_urls', json.dumps(conf_urls))
+    cache_db.expire(_get_view_key(view_id), KEY_LINK_TIMEOUT)
 
     return utils.jsonify({
         'id': key_id,
@@ -85,29 +89,29 @@ def user_key_link_get(org_id, user_id):
 
 @app_server.app.route('/key/<key_id>.tar', methods=['GET'])
 def user_linked_key_archive_get(key_id):
-    if key_id not in _key_ids:
+    org_id = cache_db.dict_get(_get_key_key(key_id), 'org_id')
+    user_id = cache_db.dict_get(_get_key_key(key_id), 'user_id')
+
+    # Check for expire
+    if not cache_db.exists(_get_key_key(key_id)):
         time.sleep(RATE_LIMIT_SLEEP)
         return flask.abort(404)
-    elif time.time() - _key_ids[key_id]['timestamp'] > KEY_LINK_TIMEOUT:
-        del _key_ids[key_id]
-        return flask.abort(404)
-    org_id = _key_ids[key_id]['org_id']
-    user_id = _key_ids[key_id]['user_id']
 
     return _get_key_archive(org_id, user_id)
 
 @app_server.app.route('/k/<view_id>', methods=['GET'])
 def user_linked_key_page_get(view_id):
-    if view_id not in _view_ids:
+    org_id = cache_db.dict_get(_get_view_key(view_id), 'org_id')
+    user_id = cache_db.dict_get(_get_view_key(view_id), 'user_id')
+    key_id = cache_db.dict_get(_get_view_key(view_id), 'key_id')
+    conf_urls = cache_db.dict_get(_get_view_key(view_id), 'conf_urls')
+    if conf_urls:
+        conf_urls = json.loads(conf_urls)
+
+    # Check for expire
+    if not cache_db.exists(_get_view_key(view_id)):
         time.sleep(RATE_LIMIT_SLEEP)
         return flask.abort(404)
-    elif time.time() - _view_ids[view_id]['timestamp'] > KEY_LINK_TIMEOUT:
-        del _view_ids[view_id]
-        return flask.abort(404)
-    org_id = _view_ids[view_id]['org_id']
-    user_id = _view_ids[view_id]['user_id']
-    key_id = _view_ids[view_id]['key_id']
-    conf_urls = _view_ids[view_id]['conf_urls']
 
     org = Organization(org_id)
     user = org.get_user(user_id)
@@ -139,15 +143,14 @@ def user_linked_key_page_get(view_id):
 
 @app_server.app.route('/key/<conf_id>.ovpn', methods=['GET'])
 def user_linked_key_conf_get(conf_id):
-    if conf_id not in _conf_ids:
+    org_id = cache_db.dict_get(_get_conf_key(conf_id), 'org_id')
+    user_id = cache_db.dict_get(_get_conf_key(conf_id), 'user_id')
+    server_id = cache_db.dict_get(_get_conf_key(conf_id), 'server_id')
+
+    # Check for expire
+    if not cache_db.exists(_get_conf_key(conf_id)):
         time.sleep(RATE_LIMIT_SLEEP)
         return flask.abort(404)
-    elif time.time() - _conf_ids[conf_id]['timestamp'] > KEY_LINK_TIMEOUT:
-        del _conf_ids[conf_id]
-        return flask.abort(404)
-    org_id = _conf_ids[conf_id]['org_id']
-    user_id = _conf_ids[conf_id]['user_id']
-    server_id = _conf_ids[conf_id]['server_id']
 
     org = Organization(org_id)
     user = org.get_user(user_id)
