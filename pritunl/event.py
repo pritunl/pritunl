@@ -1,5 +1,6 @@
 from constants import *
 from cache_object import CacheObject
+from cache import cache_db
 import logging
 import time
 import uuid
@@ -20,7 +21,6 @@ class Event(CacheObject):
             self.type = type
             self.resource_id = resource_id
             self.time = int(time.time())
-            self.expire(EVENT_DB_TTL)
             self.initialize()
         else:
             self.id = id
@@ -30,6 +30,22 @@ class Event(CacheObject):
         logger.debug('Getting events. %r' % {
             'cursor': cursor,
         })
+
+        while True:
+            # Check for events older then ttl
+            event_id = cache_db.list_index(cls.column_family, 0)
+            if not event_id:
+                break
+            event_time = cache_db.dict_get('%s-%s' % (
+                cls.column_family, event_id), 'time')
+            if int(time.time()) - int(event_time) > EVENT_TTL:
+                event_id = cache_db.list_lpop(cls.column_family)
+                # Expire event to leave time for any get events
+                # iterating event list excepting event to still exists
+                cache_db.expire('%s-%s' % (cls.column_family, event_id),
+                    EVENT_TTL)
+            else:
+                break
 
         if cursor:
             events = []
