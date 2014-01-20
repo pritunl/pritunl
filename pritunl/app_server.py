@@ -15,7 +15,7 @@ logger = None
 
 class AppServer(Config):
     bool_options = {'debug', 'log_debug', 'auto_start_servers',
-        'get_public_ip', 'inline_certs'}
+        'get_public_ip', 'inline_certs', 'ssl'}
     int_options = {'port', 'session_timeout', 'key_bits', 'dh_param_bits'}
     path_options = {'log_path', 'db_path', 'www_path', 'data_path',
         'server_cert_path', 'server_key_path'}
@@ -24,6 +24,7 @@ class AppServer(Config):
         'auto_start_servers': True,
         'get_public_ip': True,
         'inline_certs': True,
+        'ssl': True,
         'session_timeout': DEFAULT_SESSION_TIMEOUT,
         'key_bits': DEFAULT_KEY_BITS,
         'dh_param_bits': DEFAULT_DH_PARAM_BITS,
@@ -275,8 +276,9 @@ class AppServer(Config):
         server = cherrypy.wsgiserver.CherryPyWSGIServer(
             (self.bind_addr, self.port), self.app,
             server_name=cherrypy.wsgiserver.CherryPyWSGIServer.version)
-        server.ssl_adapter = cherrypy.wsgiserver.ssl_builtin.BuiltinSSLAdapter(
-            self._server_cert_path, self._server_key_path)
+        if self.ssl:
+            server.ssl_adapter = cherrypy.wsgiserver.ssl_builtin.BuiltinSSLAdapter(
+                self._server_cert_path, self._server_key_path)
         try:
             server.start()
         except (KeyboardInterrupt, SystemExit):
