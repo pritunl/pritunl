@@ -31,7 +31,10 @@ define([
     update: function() {
     },
     setData: function(data) {
-      this.editor.setValue(data + '\n');
+      if (data) {
+        data += '\n';
+      }
+      this.editor.setValue(data);
       this.editor.navigateFileEnd();
     },
   });
