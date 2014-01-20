@@ -65,7 +65,6 @@ DH_PARAM_NAME = 'dh_param.pem'
 SERVER_USER_PREFIX = 'server_'
 SERVER_CERT_NAME = 'server.crt'
 SERVER_KEY_NAME = 'server.key'
-OTP_JSON_NAME = 'otp.json'
 AUTH_LOG_NAME = 'auth.log'
 CONF_TEMP_EXT = '.tmp'
 
