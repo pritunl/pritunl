@@ -17,7 +17,7 @@ def status_get():
         servers_count += 1
         if server.status:
             servers_online_count += 1
-        clients_count += len(server.get_clients())
+        clients_count += len(server.clients)
 
     users_count = 0
     for org in orgs:

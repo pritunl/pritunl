@@ -15,6 +15,7 @@ import logging
 import traceback
 import utils
 import re
+import json
 
 logger = logging.getLogger(APP_NAME)
 
@@ -61,6 +62,8 @@ class Server(Config):
                 cache_db.dict_set(self.get_cache_key(), name, 't')
             else:
                 cache_db.dict_set(self.get_cache_key(), name, 'f')
+        elif name == 'clients':
+            cache_db.dict_set(self.get_cache_key(), name, json.dumps(value))
         else:
             Config.__setattr__(self, name, value)
 
@@ -74,6 +77,11 @@ class Server(Config):
                 return int(time.time()) - int(cache_db.dict_get(
                     self.get_cache_key(), 'start_time'))
             return None
+        elif name == 'clients':
+            clients = cache_db.dict_get(self.get_cache_key(), name)
+            if self.status and clients:
+                return json.loads(clients)
+            return {}
         elif name == 'output':
             return '\n'.join(cache_db.list_elements(
                 self.get_cache_key('output')))
@@ -524,7 +532,7 @@ class Server(Config):
             # Check interrupt every 0.1s check client count every 1s
             if i == 9:
                 i = 0
-                client_count = len(self.get_clients())
+                client_count = len(self.update_clients())
                 if client_count != cur_client_count:
                     cur_client_count = client_count
                     Event(type=USERS_UPDATED)
@@ -679,9 +687,9 @@ class Server(Config):
         cache_db.remove(self.get_cache_key('output'))
         self._event_delay(type=SERVER_OUTPUT_UPDATED, resource_id=self.id)
 
-    def get_clients(self):
+    def update_clients(self):
         if not self.status:
-            return []
+            return {}
         clients = {}
 
         if os.path.isfile(self.ovpn_status_path):
@@ -704,6 +712,7 @@ class Server(Config):
                         'connected_since': connected_since,
                     }
 
+        self.clients = clients
         return clients
 
     @staticmethod
