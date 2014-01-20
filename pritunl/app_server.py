@@ -39,6 +39,13 @@ class AppServer(Config):
         self.app = None
         self.interrupt = False
 
+    def __getattr__(self, name):
+        if name == 'web_protocol':
+            if self.debug or not self.ssl:
+                return 'http'
+            return 'https'
+        return Config.__getattr__(self, name)
+
     def load_public_ip(self, retry=False, timeout=3):
         if not self.get_public_ip:
             return
