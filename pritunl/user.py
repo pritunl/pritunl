@@ -12,6 +12,9 @@ import logging
 import hashlib
 import base64
 import utils
+import struct
+import hmac
+import time
 
 logger = logging.getLogger(APP_NAME)
 
@@ -148,6 +151,37 @@ class User(Config):
         self._generate_otp_secret()
         self.commit()
         Event(type=USERS_UPDATED)
+
+    def verify_otp_code(self, code):
+        otp_secret = self.otp_secret
+        padding = 8 - len(otp_secret) % 8
+        if padding != 8:
+            otp_secret = otp_secret.ljust(len(otp_secret) + padding, '=')
+        otp_secret = base64.b32decode(otp_secret.upper())
+        valid_codes = []
+        epoch = int(time.time() / 30)
+        for epoch_offset in range(-1, 2):
+            value = struct.pack('>q', epoch + epoch_offset)
+            hmac_hash = hmac.new(otp_secret, value, hashlib.sha1).digest()
+            offset = ord(hmac_hash[-1]) & 0x0F
+            truncated_hash = hmac_hash[offset:offset + 4]
+            truncated_hash = struct.unpack('>L', truncated_hash)[0]
+            truncated_hash &= 0x7FFFFFFF
+            truncated_hash %= 1000000
+            valid_codes.append('%06d' % truncated_hash)
+        if code not in valid_codes:
+            return False
+
+        used_codes = cache_db.dict_get_all(self.get_cache_key('otp'))
+        for auth_time, used_code in used_codes.items():
+            if int(time.time()) - int(auth_time) > 120:
+                cache_db.dict_remove(self.get_cache_key('otp'), auth_time)
+            if used_code == code:
+                return False
+        cache_db.dict_set(self.get_cache_key('otp'),
+            str(int(time.time())), code)
+
+        return True
 
     def _revoke(self, reason):
         if self.id == CA_CERT_ID:
