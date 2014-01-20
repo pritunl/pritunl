@@ -31,7 +31,7 @@ define([
     update: function() {
     },
     setData: function(data) {
-      this.editor.setValue(data);
+      this.editor.setValue(data + '\n');
       this.editor.navigateFileEnd();
     },
   });
