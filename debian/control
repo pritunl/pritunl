@@ -17,6 +17,7 @@ Depends: python-flask,
          python-cherrypy3,
          python-sqlalchemy,
          openvpn,
+         iptables,
          ${misc:Depends},
          ${python:Depends}
 Description: Simple openvpn server
