@@ -79,7 +79,16 @@ class Organization(Config):
         Config.clear_cache(self)
 
     def get_user(self, id):
-        return User(self, id=id)
+        user = User(self, id=id)
+        try:
+            user.load()
+        except IOError:
+            logger.exception('Failed to load user conf. %r' % {
+                    'org_id': self.id,
+                    'user_id': id,
+                })
+            return
+        return user
 
     def get_users(self):
         if cache_db.get(self.get_cache_key('users_cached')) != 't':
@@ -100,6 +109,7 @@ class Organization(Config):
             except IOError:
                 logger.exception('Failed to load user conf, ' +
                     'ignoring user. %r' % {
+                        'org_id': self.id,
                         'user_id': user_id,
                     })
                 continue

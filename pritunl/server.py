@@ -202,7 +202,6 @@ class Server(Config):
             logger.debug('Primary user not found, skipping remove. %r' % {
                 'server_id': self.id,
                 'org_id': org.id,
-                'user_id': user.id,
             })
             return
 
