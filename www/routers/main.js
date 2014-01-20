@@ -69,52 +69,36 @@ define([
       }.bind(this));
       return false;
     },
+    loadPage: function(view) {
+      var curView = this.data.view;
+      this.data.view = view;
+      $(this.data.element).fadeOut(400, function() {
+        if (curView) {
+          curView = curView.destroy();
+        }
+        $(this.data.element).html(this.data.view.render().el);
+        $(this.data.element).fadeIn(400);
+      }.bind(this));
+    },
     dashboard: function() {
       this.auth(function() {
         $('header .navbar .nav li').removeClass('active');
         $('header .dashboard').addClass('active');
-
-        var curView = this.data.view;
-        this.data.view = new DashboardView();
-        $(this.data.element).fadeOut(400, function() {
-          if (curView) {
-            curView = curView.destroy();
-          }
-          $(this.data.element).html(this.data.view.render().el);
-          $(this.data.element).fadeIn(400);
-        }.bind(this));
+        this.loadPage(new DashboardView());
       }.bind(this));
     },
     users: function() {
       this.auth(function() {
         $('header .navbar .nav li').removeClass('active');
         $('header .users').addClass('active');
-
-        var curView = this.data.view;
-        this.data.view = new UsersView();
-        $(this.data.element).fadeOut(400, function() {
-          if (curView) {
-            curView = curView.destroy();
-          }
-          $(this.data.element).html(this.data.view.render().el);
-          $(this.data.element).fadeIn(400);
-        }.bind(this));
+        this.loadPage(new UsersView());
       }.bind(this));
     },
     servers: function() {
       this.auth(function() {
         $('header .navbar .nav li').removeClass('active');
         $('header .servers').addClass('active');
-
-        var curView = this.data.view;
-        this.data.view = new ServersView();
-        $(this.data.element).fadeOut(400, function() {
-          if (curView) {
-            curView = curView.destroy();
-          }
-          $(this.data.element).html(this.data.view.render().el);
-          $(this.data.element).fadeIn(400);
-        }.bind(this));
+        this.loadPage(new ServersView());
       }.bind(this));
     },
     logout: function(alert) {
