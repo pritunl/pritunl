@@ -126,7 +126,7 @@ class Cache:
         except TypeError:
             self._data[key]['val'] = {field: value}
 
-    def dict_remove(self, key, field, value):
+    def dict_remove(self, key, field):
         try:
             self._data[key]['val'].pop(field, None)
         except AttributeError:
