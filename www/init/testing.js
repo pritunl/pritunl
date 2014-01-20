@@ -11,9 +11,18 @@ define([
       var _complete = options.complete;
       options.complete = function(response) {
         if (this.url.substring(0, 6) !== '/event') {
-          console.log('%c' +
-            response.getResponseHeader('X-Execution-Time') + 'ms ' +
-            this.url, 'color: #0066ff');
+          var execTime = response.getResponseHeader('X-Execution-Time');
+          var color;
+          if (execTime > 400) {
+            color = '#ff0000';
+          }
+          else if (execTime > 200) {
+            color = '#ff6b0d';
+          }
+          else {
+            color = '#0066ff';
+          }
+          console.log('%c' + execTime + 'ms ' + this.url, 'color: ' + color);
         }
         _complete(response);
       };
