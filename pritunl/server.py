@@ -51,6 +51,7 @@ class Server(Config):
             USER_PASS_VERIFY_NAME)
         self.ovpn_status_path = os.path.join(self.path, TEMP_DIR,
             OVPN_STATUS_NAME)
+        self.auth_log_path = os.path.join(app_server.data_path, AUTH_LOG_NAME)
         self.set_path(os.path.join(self.path, 'server.conf'))
 
         if id is None:
@@ -247,6 +248,20 @@ class Server(Config):
             orgs.append(org)
         return orgs
 
+    def get_org(self, org_id):
+        for org_id in self.organizations:
+            if org_id != org_id:
+                continue
+            org = Organization(org_id)
+            try:
+                org.load()
+            except IOError:
+                logger.exception('Failed to load org conf. %r' % {
+                        'org_id': org_id,
+                    })
+                return
+            return org
+
     def _get_user_count(self):
         server_orgs = self.get_orgs()
         users_count = 0
@@ -299,10 +314,10 @@ class Server(Config):
             os.chmod(self.tls_verify_path, 0755)
             data_path = app_server.data_path
             tls_verify_file.write(TLS_VERIFY_SCRIPT % (
-                data_path,
-                ORGS_DIR,
-                AUTH_LOG_NAME,
-                INDEX_NAME,
+                self.auth_log_path,
+                app_server.web_protocol,
+                app_server.port,
+                self.id,
             ))
 
     def _generate_user_pass_verify(self):
@@ -313,12 +328,10 @@ class Server(Config):
             os.chmod(self.user_pass_verify_path, 0755)
             data_path = app_server.data_path
             user_pass_verify_file.write(USER_PASS_VERIFY_SCRIPT % (
-                data_path,
-                ORGS_DIR,
-                USERS_DIR,
-                TEMP_DIR,
-                AUTH_LOG_NAME,
-                OTP_JSON_NAME,
+                self.auth_log_path,
+                app_server.web_protocol,
+                app_server.port,
+                self.id,
             ))
 
     def _generate_ovpn_conf(self, inline=False):

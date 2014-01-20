@@ -206,6 +206,18 @@ SERVER_NOT_OFFLINE_ATTACH_ORG_MSG = 'Server must be offline to attach ' + \
 SERVER_NOT_OFFLINE_DETACH_ORG_MSG = 'Server must be offline to detach ' + \
     'an organization.'
 
+SERVER_INVALID = 'server_invalid'
+SERVER_INVALID_MSG = 'Server is not valid.'
+
+ORG_INVALID = 'organization_invalid'
+ORG_INVALID_MSG = 'Organization is not valid.'
+
+USER_INVALID = 'user_invalid'
+USER_INVALID_MSG = 'User is not valid.'
+
+OTP_CODE_INVALID = 'otp_code_invalid'
+OTP_CODE_INVALID_MSG = 'OTP code is not valid.'
+
 OVPN_SERVER_CONF = """port %s
 proto %s
 dev %s
@@ -271,161 +283,171 @@ mute 3
 TLS_VERIFY_SCRIPT = """#!/usr/bin/env python
 import os
 import sys
-VALID_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789='
-DATA_PATH = '%s'
-ORGS_DIR = '%s'
-AUTH_LOG_NAME = '%s'
-INDEX_NAME = '%s'
-auth_log_path = os.path.join(DATA_PATH, AUTH_LOG_NAME)
-orgs_path = os.path.join(DATA_PATH, ORGS_DIR)
+import json
+import time
+import traceback
 
+VALID_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789='
+auth_log_path = '%s'
 def log_write(line):
     with open(auth_log_path, 'a') as auth_log_file:
-        auth_log_file.write('[TIME=%%s]%%s\\n' %% (int(time.time()), line))
+        auth_log_file.write('[TIME=%%s]%%s\\n' %% (
+            int(time.time()), line.rstrip('\\n')))
 
-# Get org and common_name from argv
-arg = sys.argv[2]
-arg = ''.join(x for x in arg if x in VALID_CHARS)
-o_index = arg.find('O=')
-cn_index = arg.find('CN=')
-if o_index < 0 or cn_index < 0:
-    log_write('[FAILED] Missing organization or user id from args')
-    raise AttributeError('Missing organization or user id from args')
-if o_index > cn_index:
-    org = arg[o_index + 2:]
-    common_name = arg[3:o_index]
-else:
-    org = arg[2:cn_index]
-    common_name = arg[cn_index + 3:]
-if not org or not common_name:
-    log_write('[FAILED] Missing organization or user id from args')
-    raise AttributeError('Missing organization or user id from args')
+try:
+    try:
+        from urllib2 import urlopen
+    except ImportError:
+        from urllib.request import urlopen
+    try:
+        from urllib2 import Request
+    except ImportError:
+        from urllib.request import Request
+    try:
+        from urllib2 import HTTPError
+    except ImportError:
+        from urllib.error import HTTPError
+    try:
+        from socket import error as SocketError
+    except ImportError:
+        SocketError = ConnectionResetError
 
-# Check that common_name is valid
-with open(os.path.join(orgs_path, org, INDEX_NAME), 'r') as index_file:
-    for line in index_file.readlines():
-        if 'O=%%s' %% org in line and 'CN=%%s' %% common_name in line:
-            if line[0] == 'V':
-                exit(0)
-            log_write('[ORG=%%s][UID=%%s][FAILED] User id is not valid' %% (
-                org, common_name))
-            raise AttributeError('User id is not valid')
-log_write('[ORG=%%s][UID=%%s][FAILED] User id not found' %% (
-    org, common_name))
-raise LookupError('Common name not found')
+    # Get org and common_name from argv
+    arg = sys.argv[2]
+    arg = ''.join(x for x in arg if x in VALID_CHARS)
+    o_index = arg.find('O=')
+    cn_index = arg.find('CN=')
+    if o_index < 0 or cn_index < 0:
+        log_write('[FAILED] Missing organization or user id from args')
+        exit(1)
+    if o_index > cn_index:
+        org = arg[o_index + 2:]
+        common_name = arg[3:o_index]
+    else:
+        org = arg[2:cn_index]
+        common_name = arg[cn_index + 3:]
+    if not org or not common_name:
+        log_write('[FAILED] Missing organization or user id from args')
+        exit(1)
+
+    try:
+        request = Request('%s://localhost:%s' + \\
+            '/server/%s/tls_verify')
+        request.add_header('Content-Type', 'application/json')
+        response = urlopen(request, json.dumps({
+            'org_id': org,
+            'user_id': common_name,
+        }).encode('utf-8'))
+        response = json.loads(response.read().decode('utf-8'))
+
+        if not response['authenticated']:
+            log_write('[FAILED] Invalid user id or organization id')
+            exit(1)
+    except HTTPError as error:
+        log_write('[FAILED] Verification server returned error: %%s - %%s' %% (
+            error.code, error.reason))
+        exit(1)
+    except SocketError:
+        log_write('[FAILED] Verification server returned socket error')
+        exit(1)
+except SystemExit:
+    raise
+except:
+    log_write('[EXCEPTION] ' + traceback.format_exc())
+    raise
+
+exit(0)
 """
 
 # Script will run in python 2 and 3
 USER_PASS_VERIFY_SCRIPT = """#!/usr/bin/env python
 import os
 import sys
-import time
-import struct
-import hmac
-import hashlib
-import base64
 import json
-VALID_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789='
-DATA_PATH = '%s'
-ORGS_DIR = '%s'
-USERS_DIR = '%s'
-TEMP_DIR = '%s'
-AUTH_LOG_NAME = '%s'
-OTP_JSON_NAME = '%s'
-auth_log_path = os.path.join(DATA_PATH, AUTH_LOG_NAME)
-orgs_path = os.path.join(DATA_PATH, ORGS_DIR)
+import time
+import traceback
 
+VALID_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789='
+auth_log_path = '%s'
 def log_write(line):
     with open(auth_log_path, 'a') as auth_log_file:
-        auth_log_file.write('[TIME=%%s]%%s\\n' %% (int(time.time()), line))
+        auth_log_file.write('[TIME=%%s]%%s\\n' %% (
+            int(time.time()), line.rstrip('\\n')))
 
-# Get org and common_name from environ
-tls_env = os.environ.get('tls_id_0')
-if not tls_env:
-    log_write('[FAILED] Missing organization or user id from environ')
-    raise AttributeError('Missing organization or user id from environ')
-tls_env = ''.join(x for x in tls_env if x in VALID_CHARS)
-o_index = tls_env.find('O=')
-cn_index = tls_env.find('CN=')
-if o_index < 0 or cn_index < 0:
-    log_write('[FAILED] Missing organization or user id from environ')
-    raise AttributeError('Missing organization or user id from environ')
-if o_index > cn_index:
-    org = tls_env[o_index + 2:]
-    common_name = tls_env[3:o_index]
-else:
-    org = tls_env[2:cn_index]
-    common_name = tls_env[cn_index + 3:]
-if not org or not common_name:
-    log_write('[FAILED] Missing organization or user id from environ')
-    raise AttributeError('Missing organization or user id from environ')
+try:
+    try:
+        from urllib2 import urlopen
+    except ImportError:
+        from urllib.request import urlopen
+    try:
+        from urllib2 import Request
+    except ImportError:
+        from urllib.request import Request
+    try:
+        from urllib2 import HTTPError
+    except ImportError:
+        from urllib.error import HTTPError
+    try:
+        from socket import error as SocketError
+    except ImportError:
+        SocketError = ConnectionResetError
 
-# Get username and password from input file
-with open(sys.argv[1], 'r') as auth_file:
-    username, password = [x.strip() for x in auth_file.readlines()[:2]]
-password = password[:6]
-if not password.isdigit():
-    log_write('[ORG=%%s][UID=%%s][FAILED] Authenticator code is invalid' %% (
-        org, common_name))
-    raise TypeError('Authenticator code is invalid')
-
-# Get secretkey from user conf
-secretkey = None
-with open(os.path.join(orgs_path, org, USERS_DIR,
-        '%%s.conf' %% common_name), 'r') as user_conf_file:
-    for line in user_conf_file.readlines():
-        if 'otp_secret=' in line:
-            secretkey = line.strip().replace('otp_secret=', '')
-            break
-if not secretkey:
-    log_write('[ORG=%%s][UID=%%s][FAILED] Missing otp_secret in user conf' %% (
-        org, common_name))
-    raise AttributeError('Missing otp_secret in user conf')
-
-# Check password with secretkey
-padding = 8 - len(secretkey) %% 8
-if padding != 8:
-    secretkey = secretkey.ljust(len(secretkey) + padding, '=')
-secretkey = base64.b32decode(secretkey.upper())
-valid_codes = []
-epoch = int(time.time() / 30)
-for epoch_offset in range(-1, 2):
-    value = struct.pack('>q', epoch + epoch_offset)
-    hmac_hash = hmac.new(secretkey, value, hashlib.sha1).digest()
-    if isinstance(hmac_hash, str):
-        offset = ord(hmac_hash[-1]) & 0x0F
+    # Get org and common_name from environ
+    tls_env = os.environ.get('tls_id_0')
+    if not tls_env:
+        log_write('[FAILED] Missing organization or user id from environ')
+        raise AttributeError('Missing organization or user id from environ')
+    tls_env = ''.join(x for x in tls_env if x in VALID_CHARS)
+    o_index = tls_env.find('O=')
+    cn_index = tls_env.find('CN=')
+    if o_index < 0 or cn_index < 0:
+        log_write('[FAILED] Missing organization or user id from environ')
+        raise AttributeError('Missing organization or user id from environ')
+    if o_index > cn_index:
+        org = tls_env[o_index + 2:]
+        common_name = tls_env[3:o_index]
     else:
-        offset = hmac_hash[-1] & 0x0F
-    truncated_hash = hmac_hash[offset:offset + 4]
-    truncated_hash = struct.unpack('>L', truncated_hash)[0]
-    truncated_hash &= 0x7FFFFFFF
-    truncated_hash %%= 1000000
-    valid_codes.append('%%06d' %% truncated_hash)
-if password not in valid_codes:
-    log_write('[ORG=%%s][UID=%%s][FAILED] Authenticator code is invalid' %% (
-        org, common_name))
-    raise TypeError('Authenticator code is invalid')
+        org = tls_env[2:cn_index]
+        common_name = tls_env[cn_index + 3:]
+    if not org or not common_name:
+        log_write('[FAILED] Missing organization or user id from environ')
+        raise AttributeError('Missing organization or user id from environ')
 
-# Check for double used keys
-otp_json_path = os.path.join(orgs_path, org, TEMP_DIR, OTP_JSON_NAME)
-new_key = ('%%s-%%s' %% (common_name, password)).encode('utf-8')
-sha_hash = hashlib.sha256()
-sha_hash.update(new_key)
-new_key = sha_hash.hexdigest()
-data = {}
-if os.path.isfile(otp_json_path):
-    with open(otp_json_path, 'r') as otp_json_file:
-        data = json.loads(otp_json_file.read().strip())
-cur_time = int(time.time())
-for key, value in list(data.items()):
-    if value + 120 < cur_time:
-        data.pop(key)
-if new_key in data:
-    log_write(('[ORG=%%s][UID=%%s][FAILED] Authenticator code has ' +
-        'already been used') %% (org, common_name))
-    raise TypeError('Authenticator code has already been used')
-data[new_key] = cur_time
-with open(otp_json_path, 'w') as otp_json_file:
-    otp_json_file.write(json.dumps(data))
+    # Get username and password from input file
+    with open(sys.argv[1], 'r') as auth_file:
+        username, password = [x.strip() for x in auth_file.readlines()[:2]]
+    password = password[:6]
+    if not password.isdigit():
+        log_write('[ORG=%%s][UID=%%s][FAILED] Authenticator code invalid' %% (
+            org, common_name))
+        raise TypeError('Authenticator code is invalid')
+
+    try:
+        request = Request('%s://localhost:%s' + \\
+            '/server/%s/otp_verify')
+        request.add_header('Content-Type', 'application/json')
+        response = urlopen(request, json.dumps({
+            'org_id': org,
+            'user_id': common_name,
+            'otp_code': password,
+        }).encode('utf-8'))
+        response = json.loads(response.read().decode('utf-8'))
+
+        if not response['authenticated']:
+            log_write('[FAILED] Invalid user id or organization id')
+            exit(1)
+    except HTTPError as error:
+        log_write('[FAILED] Verification server returned error: %%s - %%s' %% (
+            error.code, error.reason))
+        exit(1)
+    except SocketError:
+        log_write('[FAILED] Verification server returned socket error')
+        exit(1)
+except SystemExit:
+    raise
+except:
+    log_write('[EXCEPTION] ' + traceback.format_exc())
+    raise
+
 exit(0)
 """
