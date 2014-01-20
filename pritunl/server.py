@@ -237,7 +237,7 @@ class Server(Config):
             try:
                 org.load()
             except IOError:
-                logger.exception('Removing non existent organization, ' +
+                logger.exception('Removing non existent organization, ' + \
                     'from server. %r' % {
                         'server_id': self.id,
                         'org_id': org_id,
