@@ -234,8 +234,10 @@ class Server(Config):
         orgs = []
         for org_id in self.organizations:
             org = Organization(org_id)
-            if not os.path.isfile(org.ca_cert.cert_path):
-                logger.warning('Removing non existent organization ' + \
+            try:
+                org.load()
+            except IOError:
+                logger.exception('Removing non existent organization, ' +
                     'from server. %r' % {
                         'server_id': self.id,
                         'org_id': org_id,
