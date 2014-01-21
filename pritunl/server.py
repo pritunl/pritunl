@@ -569,10 +569,7 @@ class Server(Config):
                 process = subprocess.Popen(['openvpn', self.ovpn_conf_path],
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             except OSError:
-                cache_db.list_rpush(self.get_cache_key('output'),
-                    traceback.format_exc())
-                self._event_delay(type=SERVER_OUTPUT_UPDATED,
-                    resource_id=self.id)
+                self.push_output(traceback.format_exc())
                 logger.exception('Failed to start ovpn process. %r' % {
                     'server_id': self.id,
                 })
@@ -592,10 +589,7 @@ class Server(Config):
                         break
                     else:
                         continue
-                cache_db.list_rpush(self.get_cache_key('output'),
-                    line.rstrip('\n'))
-                self._event_delay(type=SERVER_OUTPUT_UPDATED,
-                    resource_id=self.id)
+                self.push_output(line)
 
             logger.debug('Ovpn process has ended. %r' % {
                 'server_id': self.id,
@@ -700,6 +694,10 @@ class Server(Config):
 
     def clear_output(self):
         cache_db.remove(self.get_cache_key('output'))
+        self._event_delay(type=SERVER_OUTPUT_UPDATED, resource_id=self.id)
+
+    def push_output(self, output):
+        cache_db.list_rpush(self.get_cache_key('output'), output.rstrip('\n'))
         self._event_delay(type=SERVER_OUTPUT_UPDATED, resource_id=self.id)
 
     def update_clients(self):
