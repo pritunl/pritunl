@@ -93,8 +93,9 @@ class Session:
         return self._request('delete', endpoint, **kwargs)
 
 
-_global_session = Session()
 class SessionTestCase(unittest.TestCase):
+    session = Session()
+
     def setUp(self):
         if RUN_ONLY and self._testMethodName not in RUN_ONLY:
             self.skipTest('ignore')
@@ -102,7 +103,6 @@ class SessionTestCase(unittest.TestCase):
         self.org_id = None
         self.user_id = None
         self.server_id = None
-        self.session = _global_session
         self._create_test_data()
 
     def _create_test_data(self):
