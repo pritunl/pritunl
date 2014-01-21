@@ -35,6 +35,7 @@ SHORT_URL_CHARS = (string.ascii_lowercase + string.ascii_uppercase +
     string.digits).replace('l', '').replace('I', '').replace('O', '').replace(
     '0', '')
 SUB_RESPONSE_TIMEOUT = 15
+HTTP_REQUEST_TIMEOUT = 10 #TODO
 IP_REGEX = r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
 
 INFO = 'info'
@@ -67,6 +68,8 @@ SERVER_CERT_NAME = 'server.crt'
 SERVER_KEY_NAME = 'server.key'
 AUTH_LOG_NAME = 'auth.log'
 CONF_TEMP_EXT = '.tmp'
+SERVER_NAME = 'server'
+NODE_SERVER_NAME = 'node_server'
 
 CA_CERT_ID = 'ca'
 CERT_CA = 'ca'
