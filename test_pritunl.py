@@ -54,9 +54,9 @@ def request(method, endpoint, **kwargs):
     headers = {
         'Accept': 'application/json',
     }
-    if 'json' in kwargs and kwargs['json']:
+    if 'json_data' in kwargs and kwargs['json_data']:
         headers['Content-Type'] = 'application/json'
-        kwargs['data'] = json.dumps(kwargs.pop('json'))
+        kwargs['data'] = json.dumps(kwargs.pop('json_data'))
     return _request(method, BASE_URL + endpoint, headers=headers,
         verify=False, **kwargs)
 requests.api.request = request
@@ -65,7 +65,7 @@ requests.api.request = request
 class Session:
     def __init__(self):
         self._session = requests.Session()
-        self.response = self.post('/auth', json={
+        self.response = self.post('/auth', json_data={
             'username': USERNAME,
             'password': PASSWORD,
         })
@@ -74,9 +74,9 @@ class Session:
         headers = {
             'Accept': 'application/json',
         }
-        if 'json' in kwargs and kwargs['json']:
+        if 'json_data' in kwargs and kwargs['json_data']:
             headers['Content-Type'] = 'application/json'
-            kwargs['data'] = json.dumps(kwargs.pop('json'))
+            kwargs['data'] = json.dumps(kwargs.pop('json_data'))
         return getattr(self._session, method)(BASE_URL + endpoint,
             headers=headers, verify=False, **kwargs)
 
@@ -115,7 +115,7 @@ class SessionTestCase(unittest.TestCase):
                     self.org_id = org['id']
 
         if not self.org_id:
-            response = self.session.post('/organization', json={
+            response = self.session.post('/organization', json_data={
                 'name': TEST_ORG_NAME,
             })
             self.assertEqual(response.status_code, 200)
@@ -134,7 +134,7 @@ class SessionTestCase(unittest.TestCase):
                     self.user_id = user['id']
 
         if not self.user_id:
-            response = self.session.post('/user/%s' % self.org_id, json={
+            response = self.session.post('/user/%s' % self.org_id, json_data={
                 'name': TEST_USER_NAME,
             })
             self.assertEqual(response.status_code, 200)
@@ -153,7 +153,7 @@ class SessionTestCase(unittest.TestCase):
                     self.server_id = server['id']
 
         if not self.server_id:
-            response = self.session.post('/server', json={
+            response = self.session.post('/server', json_data={
                 'name': TEST_SERVER_NAME,
                 'otp_auth': True,
             })
@@ -355,7 +355,7 @@ class Log(SessionTestCase):
 class Org(SessionTestCase):
     @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_org_post_put_get_delete(self):
-        response = self.session.post('/organization', json={
+        response = self.session.post('/organization', json_data={
             'name': TEST_ORG_NAME + '2',
         })
         self.assertEqual(response.status_code, 200)
@@ -368,7 +368,7 @@ class Org(SessionTestCase):
         org_id = data['id']
 
 
-        response = self.session.put('/organization/%s' % org_id, json={
+        response = self.session.put('/organization/%s' % org_id, json_data={
             'name': TEST_ORG_NAME + '3',
         })
         self.assertEqual(response.status_code, 200)
@@ -413,18 +413,18 @@ class Org(SessionTestCase):
 class Password(SessionTestCase):
     @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_password_post(self):
-        response = self.session.put('/password', json={
+        response = self.session.put('/password', json_data={
             'password': TEST_PASSWORD,
         })
         self.assertEqual(response.status_code, 200)
 
-        response = self.session.post('/auth/token', json={
+        response = self.session.post('/auth/token', json_data={
             'username': USERNAME,
             'password': TEST_PASSWORD,
         })
         self.assertEqual(response.status_code, 200)
 
-        response = self.session.put('/password', json={
+        response = self.session.put('/password', json_data={
             'password': PASSWORD,
         })
         self.assertEqual(response.status_code, 200)
@@ -433,7 +433,7 @@ class Password(SessionTestCase):
 class Server(SessionTestCase):
     @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_server_post_put_get_delete(self):
-        response = self.session.post('/server', json={
+        response = self.session.post('/server', json_data={
             'name': TEST_SERVER_NAME + '2',
             'network': '10.254.254.0/24',
             'interface': 'tun64',
@@ -473,7 +473,7 @@ class Server(SessionTestCase):
         server_id = data['id']
 
 
-        response = self.session.put('/server/%s' % server_id, json={
+        response = self.session.put('/server/%s' % server_id, json_data={
             'name': TEST_SERVER_NAME + '3',
         })
         self.assertEqual(response.status_code, 200)
@@ -671,7 +671,7 @@ class Server(SessionTestCase):
         self.assertTrue(data['status'])
 
 
-        response = self.session.put('/server/%s' % self.server_id, json={
+        response = self.session.put('/server/%s' % self.server_id, json_data={
             'name': TEST_SERVER_NAME + '_test',
         })
         self.assertEqual(response.status_code, 400)
@@ -731,7 +731,7 @@ class Server(SessionTestCase):
                     '10.255.254.1/24',
                     '10.254.254.0/24a',
                 ]:
-            response = self.session.post('/server', json={
+            response = self.session.post('/server', json_data={
                 'name': TEST_SERVER_NAME + '_test',
                 'network': test_network,
             })
@@ -752,7 +752,7 @@ class Server(SessionTestCase):
                     'tun65',
                     'tuna',
                 ]:
-            response = self.session.post('/server', json={
+            response = self.session.post('/server', json_data={
                 'name': TEST_SERVER_NAME + '_test',
                 'interface': test_interface,
             })
@@ -770,7 +770,7 @@ class Server(SessionTestCase):
                     0,
                     65536,
                 ]:
-            response = self.session.post('/server', json={
+            response = self.session.post('/server', json_data={
                 'name': TEST_SERVER_NAME + '_test',
                 'port': test_port,
             })
@@ -784,7 +784,7 @@ class Server(SessionTestCase):
                 'valid, must be between 1 and 65535.')
 
 
-        response = self.session.post('/server', json={
+        response = self.session.post('/server', json_data={
             'name': TEST_SERVER_NAME + '_test',
             'protocol': 'a',
         })
@@ -818,7 +818,7 @@ class Status(SessionTestCase):
 class User(SessionTestCase):
     @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_user_post_put_get_delete(self):
-        response = self.session.post('/user/%s' % self.org_id, json={
+        response = self.session.post('/user/%s' % self.org_id, json_data={
             'name': TEST_USER_NAME + '2',
         })
         self.assertEqual(response.status_code, 200)
@@ -838,7 +838,7 @@ class User(SessionTestCase):
 
 
         response = self.session.put('/user/%s/%s' % (self.org_id, user_id),
-            json={
+            json_data={
                 'name': TEST_USER_NAME + '3',
             })
         self.assertEqual(response.status_code, 200)
@@ -918,7 +918,7 @@ class User(SessionTestCase):
 
 class Stress(SessionTestCase):
     def _create_user(self, org_id, name):
-        response = self.session.post('/user/%s' % org_id, json={
+        response = self.session.post('/user/%s' % org_id, json_data={
             'name': name,
         })
         self.assertEqual(response.status_code, 200)
@@ -938,7 +938,7 @@ class Stress(SessionTestCase):
 
     @unittest.skipUnless(ENABLE_STRESS_TESTS, 'Skipping stress test')
     def test_user_post_stress(self):
-        response = self.session.post('/organization', json={
+        response = self.session.post('/organization', json_data={
             'name': TEST_ORG_NAME + '_stress',
         })
         self.assertEqual(response.status_code, 200)
