@@ -1,6 +1,7 @@
 from pritunl.constants import *
 from pritunl.server import Server
 from pritunl.organization import Organization
+from pritunl.log_entry import LogEntry
 from event import Event
 import pritunl.utils as utils
 from pritunl import app_server
@@ -504,12 +505,16 @@ def server_tls_verify_get(server_id):
         }, 401)
     org = server.get_org(org_id)
     if not org:
+        LogEntry(message='User failed authentication, ' +
+            'invalid organization "%s".' % server.name)
         return utils.jsonify({
             'error': ORG_INVALID,
             'error_msg': ORG_INVALID_MSG,
         }, 401)
     user = org.get_user(user_id)
     if not user:
+        LogEntry(message='User failed authentication, ' +
+            'invalid user "%s".' % server.name)
         return utils.jsonify({
             'error': USER_INVALID,
             'error_msg': USER_INVALID_MSG,
@@ -534,17 +539,23 @@ def server_otp_verify_get(server_id):
         }, 401)
     org = server.get_org(org_id)
     if not org:
+        LogEntry(message='User failed authentication, ' +
+            'invalid organization "%s".' % server.name)
         return utils.jsonify({
             'error': ORG_INVALID,
             'error_msg': ORG_INVALID_MSG,
         }, 401)
     user = org.get_user(user_id)
     if not user:
+        LogEntry(message='User failed authentication, ' +
+            'invalid user "%s".' % server.name)
         return utils.jsonify({
             'error': USER_INVALID,
             'error_msg': USER_INVALID_MSG,
         }, 401)
     if not user.verify_otp_code(otp_code):
+        LogEntry(message='User failed two-step authentication "%s".' % (
+            user.name))
         return utils.jsonify({
             'error': OTP_CODE_INVALID,
             'error_msg': OTP_CODE_INVALID_MSG,
