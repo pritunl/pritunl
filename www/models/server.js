@@ -8,6 +8,7 @@ define([
     defaults: {
       'id': null,
       'name': null,
+      'type': null,
       'status': null,
       'uptime': null,
       'users_online': null,
@@ -18,6 +19,9 @@ define([
       'protocol': null,
       'local_networks': null,
       'public_address': null,
+      'node_ip': null,
+      'node_port': null,
+      'node_key': null,
       'otp_auth': null,
       'lzo_compression': null,
       'debug': null
