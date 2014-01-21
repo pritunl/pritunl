@@ -304,10 +304,10 @@ class AppServer(Config):
             raise
         finally:
             signal.signal(signal.SIGINT, signal.SIG_IGN)
-            LogEntry(message='Web server stopped.')
             self.interrupt = True
             logger.info('Stopping server...')
             server.stop()
+            LogEntry(message='Web server stopped.')
 
     def _run_wsgi_debug(self):
         from log_entry import LogEntry
@@ -327,9 +327,9 @@ class AppServer(Config):
             raise
         finally:
             signal.signal(signal.SIGINT, signal.SIG_IGN)
-            LogEntry(message='Web server stopped.')
             self.interrupt = True
             logger.info('Stopping debug server...')
+            LogEntry(message='Web server stopped.')
 
     def _run_server(self):
         from log_entry import LogEntry
