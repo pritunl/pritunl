@@ -4,6 +4,7 @@ import json
 import subprocess
 import re
 import urllib2
+import httplib
 import socket
 
 def jsonify(data=None, status_code=None):
@@ -135,6 +136,8 @@ class request:
                 reason=error.reason,
                 content=error.read(),
             )
+        except Exception as error:
+            raise httplib.HTTPException(error)
 
     @classmethod
     def get(cls, url, **kwargs):
