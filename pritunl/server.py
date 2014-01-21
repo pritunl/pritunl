@@ -27,6 +27,7 @@ class Server(Config):
     int_options = {'port'}
     list_options = {'organizations', 'local_networks'}
     cache_prefix = 'server'
+    type = 'server'
 
     def __init__(self, id=None, **kwargs):
         Config.__init__(self)
@@ -729,14 +730,21 @@ class Server(Config):
         return clients
 
     @staticmethod
+    def get_server(id):
+        from node_server import NodeServer
+        if os.path.isfile(os.path.join(app_server.data_path, SERVERS_DIR,
+                id, NODE_SERVER_NAME)):
+            return NodeServer(id=id)
+        return Server(id=id)
+
+    @staticmethod
     def get_servers():
         logger.debug('Getting servers.')
-        data_path = app_server.data_path
-        path = os.path.join(data_path, SERVERS_DIR)
+        path = os.path.join(app_server.data_path, SERVERS_DIR)
         servers = []
         if os.path.isdir(path):
             for server_id in os.listdir(path):
-                server = Server(server_id)
+                server = Server.get_server(id=server_id)
                 try:
                     server.load()
                 except IOError:

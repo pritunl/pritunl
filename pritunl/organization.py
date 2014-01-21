@@ -118,7 +118,7 @@ class Organization(Config):
 
     def get_server(self, server_id):
         from server import Server
-        server = Server(server_id)
+        server = Server.get_server(id=server_id)
         if self.id in server.organizations:
             return server
 
