@@ -1,5 +1,6 @@
 from pritunl.constants import *
 from pritunl.server import Server
+from pritunl.node_server import NodeServer
 from pritunl.organization import Organization
 from pritunl.log_entry import LogEntry
 from event import Event
@@ -46,6 +47,7 @@ def server_get():
         servers_dict[name_id] = {
             'id': server.id,
             'name': server.name,
+            'type': server.type,
             'status': server.status,
             'uptime': server.uptime,
             'users_online': len(server.clients),
@@ -61,6 +63,10 @@ def server_get():
             'debug': True if server.debug else False,
             'org_count': server.org_count,
         }
+        if server.type == NODE_SERVER_NAME:
+            servers_dict[name_id]['node_ip'] = server.node_ip
+            servers_dict[name_id]['node_port'] = server.node_port
+            servers_dict[name_id]['node_key'] = server.node_key
 
     for name_id in sorted(servers_sort):
         servers.append(servers_dict[name_id])
@@ -87,6 +93,13 @@ def server_put_post(server_id=None):
         name_def = True
         name = flask.request.json['name']
         name = ''.join(x for x in name if x.isalnum() or x in NAME_SAFE_CHARS)
+
+    type = SERVER_NAME
+    type_def = False
+    if 'type' in flask.request.json:
+        type_def = True
+        if flask.request.json['type'] == NODE_SERVER_NAME:
+            type = NODE_SERVER_NAME
 
     network = None
     network_def = False
@@ -232,6 +245,32 @@ def server_put_post(server_id=None):
         lzo_compression = True if flask.request.json[
             'lzo_compression'] else False
 
+    node_ip = None
+    node_ip_def = False
+    if 'node_ip' in flask.request.json:
+        node_ip_def = True
+        node_ip = flask.request.json['node_ip']
+
+    node_port = None
+    node_port_def = False
+    if 'node_port' in flask.request.json:
+        node_port_def = True
+        node_port = flask.request.json['node_port']
+
+        try:
+            node_port = int(node_port)
+        except ValueError:
+            return _port_not_valid()
+
+        if node_port < 1 or node_port > 65535:
+            return _port_not_valid()
+
+    node_key = None
+    node_key_def = False
+    if 'node_key' in flask.request.json:
+        node_key_def = True
+        node_key = flask.request.json['node_key']
+
     if not server_id:
         if not name_def:
             return utils.jsonify({
@@ -282,20 +321,37 @@ def server_put_post(server_id=None):
                 app_server.load_public_ip()
             public_address = app_server.public_ip
 
-        server = Server(
-            name=name,
-            network=network,
-            interface=interface,
-            port=port,
-            protocol=protocol,
-            local_networks=local_networks,
-            public_address=public_address,
-            otp_auth=otp_auth,
-            lzo_compression=lzo_compression,
-            debug=debug,
-        )
+        if type == NODE_SERVER_NAME:
+            server = NodeServer(
+                name=name,
+                network=network,
+                interface=interface,
+                port=port,
+                protocol=protocol,
+                local_networks=local_networks,
+                public_address=public_address,
+                otp_auth=otp_auth,
+                lzo_compression=lzo_compression,
+                debug=debug,
+                node_ip=node_ip,
+                node_port=node_port,
+                node_key=node_key,
+            )
+        else:
+            server = Server(
+                name=name,
+                network=network,
+                interface=interface,
+                port=port,
+                protocol=protocol,
+                local_networks=local_networks,
+                public_address=public_address,
+                otp_auth=otp_auth,
+                lzo_compression=lzo_compression,
+                debug=debug,
+            )
     else:
-        server = Server(id=server_id)
+        server = Server.get_server(id=server_id)
         if server.status:
             return utils.jsonify({
                 'error': SERVER_NOT_OFFLINE,
@@ -336,13 +392,20 @@ def server_put_post(server_id=None):
             server.lzo_compression = lzo_compression
         if debug_def:
             server.debug = debug
+        if node_ip_def:
+            server.node_ip = node_ip
+        if node_port_def:
+            server.node_port = node_port
+        if node_key_def:
+            server.node_key = node_key
         server.commit()
 
     Event(type=USERS_UPDATED)
 
-    return utils.jsonify({
+    response = {
         'id': server.id,
         'name': server.name,
+        'type': server.type,
         'status': server.status,
         'uptime': server.uptime,
         'users_online': len(server.clients),
@@ -357,12 +420,17 @@ def server_put_post(server_id=None):
         'lzo_compression': server.lzo_compression,
         'debug': True if server.debug else False,
         'org_count': server.org_count,
-    })
+    }
+    if server.type == NODE_SERVER_NAME:
+        response['node_ip'] = server.node_ip
+        response['node_port'] = server.node_port
+        response['node_key'] = server.node_key
+    return utils.jsonify(response)
 
 @app_server.app.route('/server/<server_id>', methods=['DELETE'])
 @app_server.auth
 def server_delete(server_id):
-    server = Server(server_id)
+    server = Server.get_server(id=server_id)
     server.remove()
     return utils.jsonify({})
 
@@ -372,7 +440,7 @@ def server_org_get(server_id):
     orgs = []
     orgs_dict = {}
     orgs_sort = []
-    server = Server(server_id)
+    server = Server.get_server(id=server_id)
 
     for org in server.get_orgs():
         name_id = '%s_%s' % (org.name, org.id)
@@ -392,7 +460,7 @@ def server_org_get(server_id):
     methods=['PUT'])
 @app_server.auth
 def server_org_put(server_id, org_id):
-    server = Server(server_id)
+    server = Server.get_server(id=server_id)
     if server.status:
         return utils.jsonify({
             'error': SERVER_NOT_OFFLINE,
@@ -409,7 +477,7 @@ def server_org_put(server_id, org_id):
     methods=['DELETE'])
 @app_server.auth
 def server_org_delete(server_id, org_id):
-    server = Server(server_id)
+    server = Server.get_server(id=server_id)
     if server.status:
         return utils.jsonify({
             'error': SERVER_NOT_OFFLINE,
@@ -421,16 +489,18 @@ def server_org_delete(server_id, org_id):
 @app_server.app.route('/server/<server_id>/<operation>', methods=['PUT'])
 @app_server.auth
 def server_operation_put(server_id, operation):
-    server = Server(server_id)
+    server = Server.get_server(id=server_id)
     if operation == START:
         server.start()
     if operation == STOP:
         server.stop()
     elif operation == RESTART:
         server.restart()
-    return utils.jsonify({
+
+    response = {
         'id': server.id,
         'name': server.name,
+        'type': server.type,
         'status': server.status,
         'uptime': server.uptime,
         'users_online': len(server.clients),
@@ -445,12 +515,17 @@ def server_operation_put(server_id, operation):
         'lzo_compression': server.lzo_compression,
         'debug': True if server.debug else False,
         'org_count': server.org_count,
-    })
+    }
+    if server.type == NODE_SERVER_NAME:
+        response['node_ip'] = server.node_ip
+        response['node_port'] = server.node_port
+        response['node_key'] = server.node_key
+    return utils.jsonify(response)
 
 @app_server.app.route('/server/<server_id>/output', methods=['GET'])
 @app_server.auth
 def server_output_get(server_id):
-    server = Server(server_id)
+    server = Server.get_server(id=server_id)
     return utils.jsonify({
         'id': server.id,
         'output': server.get_output(),
@@ -459,7 +534,7 @@ def server_output_get(server_id):
 @app_server.app.route('/server/<server_id>/output', methods=['DELETE'])
 @app_server.auth
 def server_output_delete(server_id):
-    server = Server(server_id)
+    server = Server.get_server(id=server_id)
     server.clear_output()
     return utils.jsonify({})
 
