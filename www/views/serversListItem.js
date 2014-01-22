@@ -49,6 +49,17 @@ define([
       this.$('.server-output-viewer').append(
         this.serverOutputView.render().el);
       this.$el.append(this.serverOrgsListView.render().el);
+
+      if (this.model.get('type') === 'node_server') {
+        this.$('.server-label').hide();
+        this.$('.server-output-viewer').addClass('node-output');
+        this.$('.server-public-address').removeClass('last');
+      }
+      else {
+        this.$('.node-label').hide();
+        this.$('.server-node-host').hide();
+      }
+
       return this;
     },
     update: function() {
@@ -77,6 +88,8 @@ define([
         this.model.get('port') + '/' + this.model.get('protocol'));
       this.$('.server-public-address .status-text').text(
         this.model.get('public_address'));
+      this.$('.server-node-host .status-text').text(
+        this.model.get('node_ip'));
 
       if (!this.model.get('org_count')) {
         this.$('.server-stop').hide();
