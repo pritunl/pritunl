@@ -572,7 +572,8 @@ class Server(Config):
                 client_count = len(self.update_clients())
                 if client_count != cur_client_count:
                     cur_client_count = client_count
-                    Event(type=USERS_UPDATED)
+                    for org in self.get_orgs():
+                        Event(type=USERS_UPDATED, resource_id=org.id)
                     Event(type=SERVERS_UPDATED)
             else:
                 i += 1

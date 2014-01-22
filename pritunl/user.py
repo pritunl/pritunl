@@ -91,7 +91,7 @@ class User(Config):
         self._delete_ssl_conf()
         if self.type == CERT_CLIENT:
             LogEntry(message='Created new user "%s".' % self.name)
-        Event(type=USERS_UPDATED)
+        Event(type=USERS_UPDATED, resource_id=self.org.id)
 
     def _cert_request(self):
         openssl_lock.acquire()
@@ -160,7 +160,7 @@ class User(Config):
     def generate_otp_secret(self):
         self._generate_otp_secret()
         self.commit()
-        Event(type=USERS_UPDATED)
+        Event(type=USERS_UPDATED, resource_id=self.org.id)
 
     def verify_otp_code(self, code):
         otp_secret = self.otp_secret
@@ -341,7 +341,7 @@ class User(Config):
     def rename(self, name):
         self.name = name
         self.commit()
-        Event(type=USERS_UPDATED)
+        Event(type=USERS_UPDATED, resource_id=self.org.id)
 
     def remove(self, reason=UNSPECIFIED):
         self.clear_cache()
@@ -394,6 +394,6 @@ class User(Config):
                 'error': error,
             })
 
-        Event(type=USERS_UPDATED)
+        Event(type=USERS_UPDATED, resource_id=self.org.id)
         if type == CERT_CLIENT:
             LogEntry(message='Deleted user "%s".' % name)

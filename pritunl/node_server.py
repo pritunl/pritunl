@@ -127,7 +127,8 @@ class NodeServer(Server):
         client_count = len(self.clients)
         self.clients = clients
         if self.status and client_count != len(clients):
-            Event(type=USERS_UPDATED)
+            for org in self.get_orgs():
+                Event(type=USERS_UPDATED, resource_id=org.id)
             Event(type=SERVERS_UPDATED)
 
     def otp_verify(self, org_id, user_id, otp_code):

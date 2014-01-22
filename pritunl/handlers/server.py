@@ -378,7 +378,8 @@ def server_put_post(server_id=None):
             server.node_key = node_key
         server.commit()
 
-    Event(type=USERS_UPDATED)
+    for org in server.get_orgs():
+        Event(type=USERS_UPDATED, resource_id=org.id)
     return utils.jsonify(server.dict())
 
 @app_server.app.route('/server/<server_id>', methods=['DELETE'])
