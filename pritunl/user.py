@@ -56,6 +56,16 @@ class User(Config):
         if id is None:
             self._initialize()
 
+    def dict(self):
+        return {
+            'id': self.id,
+            'organization': self.org.id,
+            'organization_name': self.org.name,
+            'name': self.name,
+            'type': self.type,
+            'otp_secret': self.otp_secret,
+        }
+
     def _upgrade_0_10_4(self):
         if not self.type:
             logger.debug('Upgrading user to v0.10.4... %r' % {

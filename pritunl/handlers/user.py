@@ -31,19 +31,13 @@ def user_get(org_id, page=None):
             clients[client_id][server.id] = client
 
     for user in org.get_users():
+        is_client = user.id in clients
         name_id = '%s_%s' % (user.name, user.id)
         users_sort.append(name_id)
-        users_dict[name_id] = {
-            'id': user.id,
-            'organization': org.id,
-            'organization_name': org.name,
-            'name': user.name,
-            'type': user.type,
-            'status': True if user.id in clients else False,
-            'otp_auth': otp_auth,
-            'otp_secret': user.otp_secret,
-            'servers': clients[user.id] if user.id in clients else {},
-        }
+        users_dict[name_id] = user.dict()
+        users_dict[name_id]['status'] = True if is_client else False
+        users_dict[name_id]['otp_auth'] = otp_auth
+        users_dict[name_id]['servers'] = clients[user.id] if is_client else {}
         if user.type == CERT_CLIENT:
             user_count_total += 1
 
@@ -81,14 +75,7 @@ def user_post(org_id):
     name = ''.join(x for x in name if x.isalnum() or x in NAME_SAFE_CHARS)
     user = org.new_user(CERT_CLIENT, name)
 
-    return utils.jsonify({
-        'id': user.id,
-        'organization': org.id,
-        'organization_name': org.name,
-        'name': user.name,
-        'type': user.type,
-        'otp_secret': user.otp_secret,
-    })
+    return utils.jsonify(user.dict())
 
 @app_server.app.route('/user/<org_id>/<user_id>', methods=['PUT'])
 @app_server.auth
@@ -99,14 +86,7 @@ def user_put(org_id, user_id):
     name = ''.join(x for x in name if x.isalnum() or x in NAME_SAFE_CHARS)
     user.rename(name)
 
-    return utils.jsonify({
-        'id': user.id,
-        'organization': org.id,
-        'organization_name': org.name,
-        'name': user.name,
-        'type': user.type,
-        'otp_secret': user.otp_secret,
-    })
+    return utils.jsonify(user.dict())
 
 @app_server.app.route('/user/<org_id>/<user_id>', methods=['DELETE'])
 @app_server.auth
@@ -129,11 +109,4 @@ def user_otp_secret_put(org_id, user_id):
     org = Organization.get_org(id=org_id)
     user = org.get_user(user_id)
     user.generate_otp_secret()
-    return utils.jsonify({
-        'id': user.id,
-        'organization': org.id,
-        'organization_name': org.name,
-        'name': user.name,
-        'type': user.type,
-        'otp_secret': user.otp_secret,
-    })
+    return utils.jsonify(user.dict())
