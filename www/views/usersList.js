@@ -21,7 +21,8 @@ define([
       this.collection = new UserCollection({
         org: options.org
       });
-      this.listenTo(window.events, 'users_updated', this.update);
+      this.listenTo(window.events, 'users_updated:' +
+        this.collection.org, this.update);
       this.listenTo(window.events, 'organizations_updated', this.update);
       this.constructor.__super__.initialize.call(this);
     },
