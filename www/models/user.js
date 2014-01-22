@@ -29,6 +29,10 @@ define([
       this.save(null, _.extend({
         url: this.url() + '/otp_secret'
       }, options));
+    },
+    parse: function(response) {
+      this.hidden = response.type !== 'client';
+      return response;
     }
   });
 
