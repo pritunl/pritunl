@@ -28,7 +28,7 @@ define([
       this.collection = new OrgCollection();
       this.listenTo(window.events, 'organizations_updated', this.update);
       this.selected = [];
-      OrgsListView.__super__.initialize.call(this);
+      this.constructor.__super__.initialize.call(this);
     },
     onAddOrg: function() {
       var modal = new ModalAddOrgView();

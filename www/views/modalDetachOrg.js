@@ -13,7 +13,7 @@ define([
     title: 'Detach Organization',
     okText: 'Detach',
     initialize: function() {
-      ModalDetachOrgView.__super__.initialize.call(this);
+      this.constructor.__super__.initialize.call(this);
       var alertView = new AlertView({
         type: 'danger',
         message: 'Detaching an organization may require users to ' +

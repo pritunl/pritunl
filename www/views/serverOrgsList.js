@@ -21,7 +21,7 @@ define([
       this.listenTo(window.events, 'server_organizations_updated:' +
         options.server.get('id'), this.update);
       this.server = options.server;
-      ServerOrgsListView.__super__.initialize.call(this);
+      this.constructor.__super__.initialize.call(this);
     },
     buildItem: function(model) {
       var modelView = new ServerOrgsListItemView({

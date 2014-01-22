@@ -17,7 +17,7 @@ define([
     initialize: function() {
       this.collection = new LogCollection();
       this.listenTo(window.events, 'log_updated', this.update);
-      DashboardLogView.__super__.initialize.call(this);
+      this.constructor.__super__.initialize.call(this);
     },
     buildItem: function(model) {
       var modelView = new DashboardLogItemView({

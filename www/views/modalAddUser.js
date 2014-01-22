@@ -14,7 +14,7 @@ define([
     okText: 'Add',
     initialize: function(options) {
       this.orgs = options.orgs;
-      ModalAddUserView.__super__.initialize.call(this);
+      this.constructor.__super__.initialize.call(this);
     },
     body: function() {
       return this.template({

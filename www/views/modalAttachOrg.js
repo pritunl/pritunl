@@ -15,7 +15,7 @@ define([
     okText: 'Attach',
     initialize: function(options) {
       this.orgs = options.orgs;
-      ModalAttachOrgView.__super__.initialize.call(this);
+      this.constructor.__super__.initialize.call(this);
     },
     body: function() {
       return this.template({

@@ -19,7 +19,7 @@ define([
         'change .server-mode select': 'onServerMode',
         'click .otp-auth-toggle .selector': 'onOtpAuthSelect',
         'click .debug-toggle .selector': 'onDebugSelect'
-      }, ModalServerSettingsView.__super__.events);
+      }, this.constructor.__super__.events);
     },
     initialize: function(options) {
       this.localNetworks = options.localNetworks;

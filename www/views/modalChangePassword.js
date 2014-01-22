@@ -15,7 +15,7 @@ define([
     okText: 'Change',
     initialize: function() {
       this.model = new PasswordModel();
-      ModalChangePasswordView.__super__.initialize.call(this);
+      this.constructor.__super__.initialize.call(this);
     },
     body: function() {
       return this.template();

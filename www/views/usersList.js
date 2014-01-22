@@ -23,7 +23,7 @@ define([
       });
       this.listenTo(window.events, 'users_updated', this.update);
       this.listenTo(window.events, 'organizations_updated', this.update);
-      UsersListView.__super__.initialize.call(this);
+      this.constructor.__super__.initialize.call(this);
     },
     removeItem: function(view) {
       if (view.getSelect()) {

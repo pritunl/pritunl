@@ -22,7 +22,7 @@ define([
         'public_address': options.publicIp || '',
         'local_networks': []
       });
-      ModalAddServerView.__super__.initialize.call(this, options);
+      this.constructor.__super__.initialize.call(this, options);
     },
     _rand: function(min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;

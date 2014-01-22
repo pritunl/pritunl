@@ -17,7 +17,7 @@ define([
       return _.extend({
         'click .generate-new-key': 'onGenerateNewKey',
         'click input': 'onClickInput'
-      }, ModalOtpAuthView.__super__.events);
+      }, this.constructor.__super__.events);
     },
     body: function() {
       return this.template();
