@@ -3,15 +3,21 @@ from pritunl.organization import Organization
 import pritunl.utils as utils
 from pritunl import app_server
 import flask
+import math
 
 @app_server.app.route('/user/<org_id>', methods=['GET'])
+@app_server.app.route('/user/<org_id>/<int:page>', methods=['GET'])
 @app_server.auth
-def user_get(org_id):
+def user_get(org_id, page=None):
+    page = flask.request.args.get('page', None)
+    page = int(page) if page else page
     org = Organization.get_org(id=org_id)
     otp_auth = False
     users = []
+    server_users = []
     users_dict = {}
     users_sort = []
+    user_count_total = 0
     clients = {}
 
     for server in org.get_servers():
@@ -38,11 +44,34 @@ def user_get(org_id):
             'otp_secret': user.otp_secret,
             'servers': clients[user.id] if user.id in clients else {},
         }
+        if user.type == CERT_CLIENT:
+            user_count_total += 1
 
+    cur_page = 0
+    user_count = 0
+    page_total = user_count_total / USER_PAGE_COUNT
+    page = min(page, page_total)
     for name_id in sorted(users_sort):
+        if page is not None:
+            cur_page = user_count / USER_PAGE_COUNT
+            if users_dict[name_id]['type'] == CERT_CLIENT:
+                user_count += 1
+                if cur_page > page:
+                    break
+            if cur_page != page:
+                    continue
         users.append(users_dict[name_id])
 
-    return utils.jsonify(users)
+    if page is not None:
+        if user_count_total and not user_count_total % USER_PAGE_COUNT:
+            page_total -= 1
+        return utils.jsonify({
+            'page': page,
+            'page_total': page_total,
+            'users': users,
+        })
+    else:
+        return utils.jsonify(users)
 
 @app_server.app.route('/user/<org_id>', methods=['POST'])
 @app_server.auth

@@ -36,6 +36,7 @@ SHORT_URL_CHARS = (string.ascii_lowercase + string.ascii_uppercase +
     '0', '')
 SUB_RESPONSE_TIMEOUT = 15
 HTTP_REQUEST_TIMEOUT = 10 #TODO
+USER_PAGE_COUNT = 20
 IP_REGEX = r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
 
 INFO = 'info'
