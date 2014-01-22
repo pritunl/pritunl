@@ -20,6 +20,13 @@ class NodeServer(Server):
     int_options = Server.int_options | {'node_port'}
     type = NODE_SERVER_NAME
 
+    def dict(self):
+        server_dict = Server.dict(self)
+        server_dict['node_ip'] = self.node_ip
+        server_dict['node_port'] = self.node_port
+        server_dict['node_key'] = self.node_key
+        return server_dict
+
     def _initialize(self):
         Server._initialize(self)
         with open(os.path.join(self.path, NODE_SERVER_NAME), 'w'):

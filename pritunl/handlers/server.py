@@ -44,29 +44,7 @@ def server_get():
     for server in Server.get_servers():
         name_id = '%s_%s' % (server.name, server.id)
         servers_sort.append(name_id)
-        servers_dict[name_id] = {
-            'id': server.id,
-            'name': server.name,
-            'type': server.type,
-            'status': server.status,
-            'uptime': server.uptime,
-            'users_online': len(server.clients),
-            'user_count': server.user_count,
-            'network': server.network,
-            'interface': server.interface,
-            'port': server.port,
-            'protocol': server.protocol,
-            'local_networks': server.local_networks,
-            'public_address': server.public_address,
-            'otp_auth': True if server.otp_auth else False,
-            'lzo_compression': server.lzo_compression,
-            'debug': True if server.debug else False,
-            'org_count': server.org_count,
-        }
-        if server.type == NODE_SERVER_NAME:
-            servers_dict[name_id]['node_ip'] = server.node_ip
-            servers_dict[name_id]['node_port'] = server.node_port
-            servers_dict[name_id]['node_key'] = server.node_key
+        servers_dict[name_id] = server.dict()
 
     for name_id in sorted(servers_sort):
         servers.append(servers_dict[name_id])
@@ -401,31 +379,7 @@ def server_put_post(server_id=None):
         server.commit()
 
     Event(type=USERS_UPDATED)
-
-    response = {
-        'id': server.id,
-        'name': server.name,
-        'type': server.type,
-        'status': server.status,
-        'uptime': server.uptime,
-        'users_online': len(server.clients),
-        'user_count': server.user_count,
-        'network': server.network,
-        'interface': server.interface,
-        'port': server.port,
-        'protocol': server.protocol,
-        'local_networks': server.local_networks,
-        'public_address': server.public_address,
-        'otp_auth': True if server.otp_auth else False,
-        'lzo_compression': server.lzo_compression,
-        'debug': True if server.debug else False,
-        'org_count': server.org_count,
-    }
-    if server.type == NODE_SERVER_NAME:
-        response['node_ip'] = server.node_ip
-        response['node_port'] = server.node_port
-        response['node_key'] = server.node_key
-    return utils.jsonify(response)
+    return utils.jsonify(server.dict())
 
 @app_server.app.route('/server/<server_id>', methods=['DELETE'])
 @app_server.auth
@@ -497,30 +451,7 @@ def server_operation_put(server_id, operation):
     elif operation == RESTART:
         server.restart()
 
-    response = {
-        'id': server.id,
-        'name': server.name,
-        'type': server.type,
-        'status': server.status,
-        'uptime': server.uptime,
-        'users_online': len(server.clients),
-        'user_count': server.user_count,
-        'network': server.network,
-        'interface': server.interface,
-        'port': server.port,
-        'protocol': server.protocol,
-        'local_networks': server.local_networks,
-        'public_address': server.public_address,
-        'otp_auth': True if server.otp_auth else False,
-        'lzo_compression': server.lzo_compression,
-        'debug': True if server.debug else False,
-        'org_count': server.org_count,
-    }
-    if server.type == NODE_SERVER_NAME:
-        response['node_ip'] = server.node_ip
-        response['node_port'] = server.node_port
-        response['node_key'] = server.node_key
-    return utils.jsonify(response)
+    return utils.jsonify(server.dict())
 
 @app_server.app.route('/server/<server_id>/output', methods=['GET'])
 @app_server.auth

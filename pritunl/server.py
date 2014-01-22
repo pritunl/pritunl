@@ -93,6 +93,27 @@ class Server(Config):
             return self._get_org_count()
         return Config.__getattr__(self, name)
 
+    def dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'type': self.type,
+            'status': self.status,
+            'uptime': self.uptime,
+            'users_online': len(self.clients),
+            'user_count': self.user_count,
+            'network': self.network,
+            'interface': self.interface,
+            'port': self.port,
+            'protocol': self.protocol,
+            'local_networks': self.local_networks,
+            'public_address': self.public_address,
+            'otp_auth': True if self.otp_auth else False,
+            'lzo_compression': self.lzo_compression,
+            'debug': True if self.debug else False,
+            'org_count': self.org_count,
+        }
+
     def _upgrade_0_10_5(self):
         if self.local_network:
             logger.debug('Upgrading server to v0.10.5... %r' % {
