@@ -755,8 +755,17 @@ class Server(Config):
         from node_server import NodeServer
         if os.path.isfile(os.path.join(app_server.data_path, SERVERS_DIR,
                 id, NODE_SERVER_NAME)):
-            return NodeServer(id=id)
-        return Server(id=id)
+            server = NodeServer(id=id)
+        else:
+            server = Server(id=id)
+        try:
+            server.load()
+        except IOError:
+            logger.exception('Failed to load server conf. %r' % {
+                    'server_id': server_id,
+                })
+            return
+        return server
 
     @staticmethod
     def get_servers():
@@ -766,13 +775,6 @@ class Server(Config):
         if os.path.isdir(path):
             for server_id in os.listdir(path):
                 server = Server.get_server(id=server_id)
-                try:
-                    server.load()
-                except IOError:
-                    logger.exception('Failed to load server conf, ' +
-                        'ignoring server. %r' % {
-                            'server_id': server_id,
-                        })
-                    continue
-                servers.append(server)
+                if server:
+                    servers.append(server)
         return servers
