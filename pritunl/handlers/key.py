@@ -20,7 +20,7 @@ def _get_conf_key(key_id):
     return 'conf_token-%s' % key_id
 
 def _get_key_archive(org_id, user_id):
-    org = Organization(org_id)
+    org = Organization.get_org(id=org_id)
     user = org.get_user(user_id)
     archive_temp_path = user.build_key_archive()
 
@@ -41,7 +41,7 @@ def user_key_archive_get(org_id, user_id):
 @app_server.app.route('/key/<org_id>/<user_id>', methods=['GET'])
 @app_server.auth
 def user_key_link_get(org_id, user_id):
-    org = Organization(org_id)
+    org = Organization.get_org(id=org_id)
     servers = org.get_servers()
     key_id = uuid.uuid4().hex
 
@@ -113,7 +113,7 @@ def user_linked_key_page_get(view_id):
         time.sleep(RATE_LIMIT_SLEEP)
         return flask.abort(404)
 
-    org = Organization(org_id)
+    org = Organization.get_org(id=org_id)
     user = org.get_user(user_id)
 
     key_page = open(os.path.join(app_server.www_path,
@@ -152,7 +152,7 @@ def user_linked_key_conf_get(conf_id):
         time.sleep(RATE_LIMIT_SLEEP)
         return flask.abort(404)
 
-    org = Organization(org_id)
+    org = Organization.get_org(id=org_id)
     user = org.get_user(user_id)
     key_conf = user.build_key_conf(server_id)
 

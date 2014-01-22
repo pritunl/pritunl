@@ -202,7 +202,7 @@ class Server(Config):
             'server_id': self.id,
             'org_id': org_id,
         })
-        org = Organization(org_id)
+        org = Organization.get_org(id=org_id)
         if org.id in self.organizations:
             logger.debug('Organization already on server, skipping. %r' % {
                 'server_id': self.id,
@@ -227,7 +227,7 @@ class Server(Config):
         if not primary_organization or not primary_user:
             return
 
-        org = Organization(primary_organization)
+        org = Organization.get_org(id=primary_organization)
         user = org.get_user(primary_user)
         if not user:
             logger.debug('Primary user not found, skipping remove. %r' % {
@@ -256,7 +256,7 @@ class Server(Config):
     def get_orgs(self):
         orgs = []
         for org_id in self.organizations:
-            org = Organization(org_id)
+            org = Organization.get_org(id=org_id)
             try:
                 org.load()
             except IOError:
@@ -274,7 +274,7 @@ class Server(Config):
         for org_id in self.organizations:
             if org_id != org_id:
                 continue
-            org = Organization(org_id)
+            org = Organization.get_org(id=org_id)
             try:
                 org.load()
             except IOError:
@@ -371,7 +371,7 @@ class Server(Config):
         if not os.path.isfile(self.dh_param_path):
             self._generate_dh_param()
 
-        primary_org = Organization(self.primary_organization)
+        primary_org = Organization.get_org(id=self.primary_organization)
         primary_user = primary_org.get_user(self.primary_user)
 
         self.generate_ca_cert()

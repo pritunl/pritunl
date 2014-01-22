@@ -7,7 +7,7 @@ import flask
 @app_server.app.route('/user/<org_id>', methods=['GET'])
 @app_server.auth
 def user_get(org_id):
-    org = Organization(org_id)
+    org = Organization.get_org(id=org_id)
     otp_auth = False
     users = []
     users_dict = {}
@@ -47,7 +47,7 @@ def user_get(org_id):
 @app_server.app.route('/user/<org_id>', methods=['POST'])
 @app_server.auth
 def user_post(org_id):
-    org = Organization(org_id)
+    org = Organization.get_org(id=org_id)
     name = flask.request.json['name']
     name = ''.join(x for x in name if x.isalnum() or x in NAME_SAFE_CHARS)
     user = org.new_user(CERT_CLIENT, name)
@@ -64,7 +64,7 @@ def user_post(org_id):
 @app_server.app.route('/user/<org_id>/<user_id>', methods=['PUT'])
 @app_server.auth
 def user_put(org_id, user_id):
-    org = Organization(org_id)
+    org = Organization.get_org(id=org_id)
     user = org.get_user(user_id)
     name = flask.request.json['name']
     name = ''.join(x for x in name if x.isalnum() or x in NAME_SAFE_CHARS)
@@ -82,7 +82,7 @@ def user_put(org_id, user_id):
 @app_server.app.route('/user/<org_id>/<user_id>', methods=['DELETE'])
 @app_server.auth
 def user_delete(org_id, user_id):
-    org = Organization(org_id)
+    org = Organization.get_org(id=org_id)
     user = org.get_user(user_id)
     user_id = user.id
     user.remove()
@@ -97,7 +97,7 @@ def user_delete(org_id, user_id):
 @app_server.app.route('/user/<org_id>/<user_id>/otp_secret', methods=['PUT'])
 @app_server.auth
 def user_otp_secret_put(org_id, user_id):
-    org = Organization(org_id)
+    org = Organization.get_org(id=org_id)
     user = org.get_user(user_id)
     user.generate_otp_secret()
     return utils.jsonify({

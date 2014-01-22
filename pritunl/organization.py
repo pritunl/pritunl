@@ -180,6 +180,18 @@ class Organization(Config):
         self.clear_cache()
 
     @staticmethod
+    def get_org(id):
+        org = Organization(id=id)
+        try:
+            org.load()
+        except IOError:
+            logger.exception('Failed to load organization conf. %r' % {
+                'org_id': id,
+            })
+            return
+        return org
+
+    @staticmethod
     def get_orgs():
         if cache_db.get('orgs_cached') != 't':
             path = os.path.join(app_server.data_path, ORGS_DIR)
@@ -190,14 +202,7 @@ class Organization(Config):
 
         orgs = []
         for org_id in cache_db.set_elements('orgs'):
-            org = Organization(org_id)
-            try:
-                org.load()
-            except IOError:
-                logger.exception('Failed to load organization conf, ' +
-                    'ignoring organization. %r' % {
-                        'org_id': org_id,
-                    })
-                continue
-            orgs.append(org)
+            org = Organization.get_org(id=org_id)
+            if org:
+                orgs.append(org)
         return orgs

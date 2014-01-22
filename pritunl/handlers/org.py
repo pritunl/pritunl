@@ -38,7 +38,7 @@ def org_post():
 @app_server.app.route('/organization/<org_id>', methods=['PUT'])
 @app_server.auth
 def org_put(org_id):
-    org = Organization(org_id)
+    org = Organization.get_org(id=org_id)
     name = flask.request.json['name']
     name = ''.join(x for x in name if x.isalnum() or x in NAME_SAFE_CHARS)
     org.rename(name)
@@ -50,6 +50,6 @@ def org_put(org_id):
 @app_server.app.route('/organization/<org_id>', methods=['DELETE'])
 @app_server.auth
 def org_delete(org_id):
-    org = Organization(org_id)
+    org = Organization.get_org(id=org_id)
     org.remove()
     return utils.jsonify({})
