@@ -16,6 +16,7 @@ TEST_USER_NAME = 'unittest_user'
 TEST_ORG_NAME = 'unittest_org'
 TEST_SERVER_NAME = 'unittest_server'
 ENABLE_STANDARD_TESTS = True
+ENABLE_EXTENDED_TESTS = False
 ENABLE_STRESS_TESTS = False
 THREADED_STRESS_TEST = True
 UUID_RE = r'^[a-z0-9]+$'
@@ -229,7 +230,7 @@ class Auth(SessionTestCase):
 
 
 class Data(SessionTestCase):
-    @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
+    @unittest.skipUnless(ENABLE_EXTENDED_TESTS, 'Skipping test')
     def test_export_get(self):
         for endpoint in ['/export', '/export/pritunl.tar']:
             response = self.session.get(endpoint)
