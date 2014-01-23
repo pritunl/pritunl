@@ -293,8 +293,9 @@ class AppServer(Config):
             (self.bind_addr, self.port), self.app,
             server_name=cherrypy.wsgiserver.CherryPyWSGIServer.version)
         if self.ssl:
-            server.ssl_adapter = cherrypy.wsgiserver.ssl_builtin.BuiltinSSLAdapter(
-                self._server_cert_path, self._server_key_path)
+            server.ssl_adapter = \
+                cherrypy.wsgiserver.ssl_builtin.BuiltinSSLAdapter(
+                    self._server_cert_path, self._server_key_path)
         try:
             server.start()
         except (KeyboardInterrupt, SystemExit):
