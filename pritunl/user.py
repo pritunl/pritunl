@@ -100,7 +100,7 @@ class User(Config):
         Event(type=SERVERS_UPDATED)
 
     def _cert_request(self):
-        self._openssl_locks[self.id].acquire()
+        _openssl_locks[self.id].acquire()
         try:
             args = [
                 'openssl', 'req', '-new', '-batch',
@@ -118,7 +118,7 @@ class User(Config):
             })
             raise
         finally:
-            self._openssl_locks[self.id].release()
+            _openssl_locks[self.id].release()
         os.chmod(self.key_path, 0600)
 
     def _cert_create(self):
@@ -210,7 +210,7 @@ class User(Config):
             })
             return
 
-        self._openssl_locks[self.id].acquire()
+        _openssl_locks[self.id].acquire()
         try:
             self._create_ssl_conf()
             args = ['openssl', 'ca', '-batch',
@@ -233,7 +233,7 @@ class User(Config):
             })
             raise
         finally:
-            self._openssl_locks[self.id].release()
+            _openssl_locks[self.id].release()
         self.org.generate_crl()
 
     def _build_key_archive(self):
