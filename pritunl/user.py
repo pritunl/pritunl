@@ -92,6 +92,7 @@ class User(Config):
         if self.type == CERT_CLIENT:
             LogEntry(message='Created new user "%s".' % self.name)
         Event(type=USERS_UPDATED, resource_id=self.org.id)
+        Event(type=SERVERS_UPDATED)
 
     def _cert_request(self):
         openssl_lock.acquire()
@@ -116,7 +117,6 @@ class User(Config):
         os.chmod(self.key_path, 0600)
 
     def _cert_create(self):
-        openssl_lock.acquire()
         try:
             args = ['openssl', 'ca', '-batch']
             if self.type == CERT_CA:
@@ -135,14 +135,15 @@ class User(Config):
                 'user_id': self.id,
             })
             raise
-        finally:
-            openssl_lock.release()
 
     def _create_ssl_conf(self):
-        conf_data = CERT_CONF % (self.org.id, self.org.path,
-            app_server.key_bits, self.id)
         with open(self.ssl_conf_path, 'w') as conf_file:
-            conf_file.write(conf_data)
+            conf_file.write(CERT_CONF % (
+                self.org.id,
+                self.org.path,
+                app_server.key_bits,
+                self.id,
+            ))
 
     def _delete_ssl_conf(self):
         os.remove(self.ssl_conf_path)

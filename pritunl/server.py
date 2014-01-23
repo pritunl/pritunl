@@ -1,5 +1,5 @@
 from constants import *
-from pritunl import app_server, openssl_lock
+from pritunl import app_server
 from config import Config
 from organization import Organization
 from event import Event
