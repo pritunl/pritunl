@@ -14,10 +14,7 @@ def org_get():
     for org in Organization.get_orgs():
         name_id = '%s_%s' % (org.name, org.id)
         orgs_sort.append(name_id)
-        orgs_dict[name_id] = {
-            'id': org.id,
-            'name': org.name,
-        }
+        orgs_dict[name_id] = org.dict()
 
     for name_id in sorted(orgs_sort):
         orgs.append(orgs_dict[name_id])
@@ -30,10 +27,7 @@ def org_post():
     name = flask.request.json['name']
     name = ''.join(x for x in name if x.isalnum() or x in NAME_SAFE_CHARS)
     org = Organization(name=name)
-    return utils.jsonify({
-        'id': org.id,
-        'name': org.name,
-    })
+    return utils.jsonify(org.dict())
 
 @app_server.app.route('/organization/<org_id>', methods=['PUT'])
 @app_server.auth
@@ -42,10 +36,7 @@ def org_put(org_id):
     name = flask.request.json['name']
     name = ''.join(x for x in name if x.isalnum() or x in NAME_SAFE_CHARS)
     org.rename(name)
-    return utils.jsonify({
-        'id': org.id,
-        'name': org.name,
-    })
+    return utils.jsonify(org.dict())
 
 @app_server.app.route('/organization/<org_id>', methods=['DELETE'])
 @app_server.auth

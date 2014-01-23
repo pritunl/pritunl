@@ -47,6 +47,12 @@ class Organization(Config):
             return False
         return Config.__getattr__(self, name)
 
+    def dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+        }
+
     def _initialize(self):
         self._make_dirs()
         self.ca_cert = User(self, type=CERT_CA)
