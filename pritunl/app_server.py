@@ -89,12 +89,11 @@ class AppServer(Config):
         import flask
         from auth_token import AuthToken
         def _wrapped(*args, **kwargs):
-            if flask.request.json and 'auth_token' in flask.request.json and \
-                    flask.request.json['auth_token']:
-                auth_token = AuthToken(flask.request.json['auth_token'])
+            auth_token = flask.request.headers.get('X-Auth-Token', None)
+            if auth_token:
+                auth_token = AuthToken(auth_token)
                 if not auth_token.valid:
                     raise flask.abort(401)
-
             else:
                 if 'timestamp' not in flask.session:
                     raise flask.abort(401)
