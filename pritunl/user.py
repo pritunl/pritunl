@@ -56,7 +56,7 @@ class User(Config):
             '%s.conf' % self.id))
 
         if id not in _openssl_locks:
-            _openssl_locks[id] = threading.Lock()
+            _openssl_locks[self.id] = threading.Lock()
 
         if id is None:
             self._initialize()
