@@ -288,7 +288,12 @@ class AppServer(Config):
             from pritunl.server import Server
             for server in Server.get_servers():
                 if server.get_orgs():
-                    server.start()
+                    try:
+                        server.start()
+                    except:
+                        logger.exception('Failed to auto start server. %r' % {
+                            'server_id': server.id,
+                        })
 
         server = cherrypy.wsgiserver.CherryPyWSGIServer(
             (self.bind_addr, self.port), self.app,
