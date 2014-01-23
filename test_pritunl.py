@@ -955,7 +955,7 @@ class Stress(SessionTestCase):
             for i in xrange(8):
                 threads = []
 
-                for x in xrange(128):
+                for x in xrange(512):
                     name = '%s_%s' % (TEST_USER_NAME, str(num).zfill(4))
                     thread = threading.Thread(target=self._create_user,
                         args=(org_id, name))
@@ -967,7 +967,7 @@ class Stress(SessionTestCase):
                     thread.join()
 
         else:
-            for i in xrange(1024):
+            for i in xrange(4096):
                 name = '%s_%s' % (TEST_USER_NAME, str(i).zfill(4))
                 self._create_user(org_id, name)
 
