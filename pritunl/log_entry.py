@@ -25,6 +25,13 @@ class LogEntry(Base):
         else:
             self.id = id
 
+    def dict(self):
+        return {
+            'id': self.id,
+            'time': self.time,
+            'message': self.message,
+        }
+
     @classmethod
     def get_log_entries(cls):
         log_entries = []
