@@ -1,5 +1,5 @@
 from constants import *
-from pritunl import app_server, openssl_lock
+from pritunl import app_server
 from cache import cache_db
 from config import Config
 from log_entry import LogEntry
@@ -15,8 +15,10 @@ import utils
 import struct
 import hmac
 import time
+import threading
 
 logger = logging.getLogger(APP_NAME)
+_openssl_locks = {}
 
 class User(Config):
     str_options = {'name', 'otp_secret', 'type'}
@@ -52,6 +54,9 @@ class User(Config):
             TEMP_DIR, '%s.tar' % self.id)
         self.set_path(os.path.join(self.org.path, USERS_DIR,
             '%s.conf' % self.id))
+
+        if id not in _openssl_locks:
+            _openssl_locks[id] = threading.Lock()
 
         if id is None:
             self._initialize()
@@ -95,7 +100,7 @@ class User(Config):
         Event(type=SERVERS_UPDATED)
 
     def _cert_request(self):
-        openssl_lock.acquire()
+        self._openssl_locks[self.id].acquire()
         try:
             args = [
                 'openssl', 'req', '-new', '-batch',
@@ -113,7 +118,7 @@ class User(Config):
             })
             raise
         finally:
-            openssl_lock.release()
+            self._openssl_locks[self.id].release()
         os.chmod(self.key_path, 0600)
 
     def _cert_create(self):
@@ -205,7 +210,7 @@ class User(Config):
             })
             return
 
-        openssl_lock.acquire()
+        self._openssl_locks[self.id].acquire()
         try:
             self._create_ssl_conf()
             args = ['openssl', 'ca', '-batch',
@@ -228,7 +233,7 @@ class User(Config):
             })
             raise
         finally:
-            openssl_lock.release()
+            self._openssl_locks[self.id].release()
         self.org.generate_crl()
 
     def _build_key_archive(self):
