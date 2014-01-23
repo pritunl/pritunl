@@ -138,7 +138,6 @@ class Organization(Config):
         return user
 
     def generate_crl(self):
-        openssl_lock.acquire()
         try:
             conf_path = os.path.join(self.path, TEMP_DIR, 'crl.conf')
             conf_data = CERT_CONF % (self.id, self.path,
@@ -158,8 +157,6 @@ class Organization(Config):
                 'org_id': self.id,
             })
             raise
-        finally:
-            openssl_lock.release()
 
     def rename(self, name):
         self.name = name
