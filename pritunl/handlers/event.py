@@ -15,11 +15,6 @@ def event_get(cursor=None):
 
     events = []
     for event in Event.get_events(cursor):
-        events.append({
-            'id': event.id,
-            'type': event.type,
-            'resource_id': event.resource_id,
-            'time': event.time,
-        })
+        events.append(event.dict())
 
     return utils.jsonify(events)

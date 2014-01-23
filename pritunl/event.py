@@ -25,6 +25,14 @@ class Event(CacheObject):
         else:
             self.id = id
 
+    def dict(self):
+        return {
+            'id': self.id,
+            'type': self.type,
+            'resource_id': self.resource_id,
+            'time': self.time,
+        }
+
     def initialize(self):
         CacheObject.initialize(self)
         cache_db.publish(self.column_family, 'new_event')
