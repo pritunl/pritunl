@@ -256,9 +256,10 @@ class AppServer(Config):
             self._server_cert_path = self.server_cert_path
             self._server_key_path = self.server_key_path
         else:
-            data_path = self.data_path or DEFAULT_DATA_PATH
-            self._server_cert_path = os.path.join(data_path, SERVER_CERT_NAME)
-            self._server_key_path = os.path.join(data_path, SERVER_KEY_NAME)
+            self._server_cert_path = os.path.join(self.data_path,
+                SERVER_CERT_NAME)
+            self._server_key_path = os.path.join(self.data_path,
+                SERVER_KEY_NAME)
 
             if not os.path.isfile(self._server_cert_path) or \
                     not os.path.isfile(self._server_key_path):
