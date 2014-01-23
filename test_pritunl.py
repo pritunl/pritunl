@@ -49,6 +49,16 @@ AUTH_HANDLERS = [
 ]
 RUN_ONLY = []
 
+def _log_request(method, endpoint, start_time):
+    response_time = int((time.time() - start_time) * 1000)
+    if response_time > 400:
+        color = '\033[91m'
+    elif response_time > 200:
+        color = '\033[93m'
+    else:
+        color = '\033[92m'
+    print '%s%sms:%s:%s\033[0m' % (color, response_time, method, endpoint)
+
 _request = requests.api.request
 def request(method, endpoint, **kwargs):
     headers = {
@@ -57,8 +67,11 @@ def request(method, endpoint, **kwargs):
     if 'json_data' in kwargs and kwargs['json_data']:
         headers['Content-Type'] = 'application/json'
         kwargs['data'] = json.dumps(kwargs.pop('json_data'))
-    return _request(method, BASE_URL + endpoint, headers=headers,
+    start_time = time.time()
+    response = _request(method, BASE_URL + endpoint, headers=headers,
         verify=False, **kwargs)
+    _log_request(method, endpoint, start_time)
+    return response
 requests.api.request = request
 
 
@@ -77,8 +90,11 @@ class Session:
         if 'json_data' in kwargs and kwargs['json_data']:
             headers['Content-Type'] = 'application/json'
             kwargs['data'] = json.dumps(kwargs.pop('json_data'))
-        return getattr(self._session, method)(BASE_URL + endpoint,
+        start_time = time.time()
+        response = getattr(self._session, method)(BASE_URL + endpoint,
             headers=headers, verify=False, **kwargs)
+        _log_request(method, endpoint, start_time)
+        return response
 
     def get(self, endpoint, **kwargs):
         return self._request('get', endpoint, **kwargs)
