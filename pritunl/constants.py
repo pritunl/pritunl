@@ -171,27 +171,27 @@ authorityKeyIdentifier = keyid:always
 MISSING_PARAMS = 'missing_params'
 MISSING_PARAMS_MSG = 'Missing required parameters.'
 
-AUTH_NOT_VALID = 'auth_not_valid'
-AUTH_NOT_VALID_MSG = 'Username or password is not valid.'
+AUTH_INVALID = 'auth_invalid'
+AUTH_INVALID_MSG = 'Username or password is not valid.'
 
-NETWORK_NOT_VALID = 'network_not_valid'
-NETWORK_NOT_VALID_MSG = 'Network address is not valid, format must be ' + \
+NETWORK_INVALID = 'network_invalid'
+NETWORK_INVALID_MSG = 'Network address is not valid, format must be ' + \
     '"10.[0-255].[0-255].0/[8-24]" such as "10.12.32.0/24".'
 
-LOCAL_NETWORK_NOT_VALID = 'local_network_not_valid'
-LOCAL_NETWORK_NOT_VALID_MSG = 'Local network address is not valid, ' + \
+LOCAL_NETWORK_INVALID = 'local_network_invalid'
+LOCAL_NETWORK_INVALID_MSG = 'Local network address is not valid, ' + \
     'format must be "[0-255].[0-255].[0-255].[0-254]/[8-30]" such as ' + \
     '"10.0.0.0/8".'
 
-PORT_NOT_VALID = 'port_not_valid'
-PORT_NOT_VALID_MSG = 'Port number is not valid, must be between 1 and 65535.'
+PORT_INVALID = 'port_invalid'
+PORT_INVALID_MSG = 'Port number is not valid, must be between 1 and 65535.'
 
-INTERFACE_NOT_VALID = 'interface_not_valid'
-INTERFACE_NOT_VALID_MSG = 'Interface is not valid, must be ' + \
+INTERFACE_INVALID = 'interface_invalid'
+INTERFACE_INVALID_MSG = 'Interface is not valid, must be ' + \
     '"tun[0-64]" example "tun0".'
 
-PROTOCOL_NOT_VALID = 'protocol_not_valid'
-PROTOCOL_NOT_VALID_MSG = 'Protocol is not valid, must be "udp" or "tcp".'
+PROTOCOL_INVALID = 'protocol_invalid'
+PROTOCOL_INVALID_MSG = 'Protocol is not valid, must be "udp" or "tcp".'
 
 NETWORK_IN_USE = 'network_in_use'
 NETWORK_IN_USE_MSG = 'Network address is already in use.'

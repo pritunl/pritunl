@@ -14,8 +14,8 @@ def auth_post():
     if username != AUTH_USER_NAME or not app_server.check_password(password):
         time.sleep(RATE_LIMIT_SLEEP)
         return utils.jsonify({
-            'error': AUTH_NOT_VALID,
-            'error_msg': AUTH_NOT_VALID_MSG,
+            'error': AUTH_INVALID,
+            'error_msg': AUTH_INVALID_MSG,
         }, 401)
 
     flask.session['timestamp'] = time.time()
@@ -48,8 +48,8 @@ def auth_token_post():
     if username != AUTH_USER_NAME or not app_server.check_password(password):
         time.sleep(RATE_LIMIT_SLEEP)
         return utils.jsonify({
-            'error': AUTH_NOT_VALID,
-            'error_msg': AUTH_NOT_VALID_MSG,
+            'error': AUTH_INVALID,
+            'error_msg': AUTH_INVALID_MSG,
         }, 401)
 
     auth_token = AuthToken()

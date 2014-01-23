@@ -10,28 +10,28 @@ import flask
 import re
 import random
 
-def _network_not_valid():
+def _network_invalid():
     return utils.jsonify({
-        'error': NETWORK_NOT_VALID,
-        'error_msg': NETWORK_NOT_VALID_MSG,
+        'error': NETWORK_INVALID,
+        'error_msg': NETWORK_INVALID_MSG,
     }, 400)
 
-def _interface_not_valid():
+def _interface_invalid():
         return utils.jsonify({
-            'error': INTERFACE_NOT_VALID,
-            'error_msg': INTERFACE_NOT_VALID_MSG,
+            'error': INTERFACE_INVALID,
+            'error_msg': INTERFACE_INVALID_MSG,
         }, 400)
 
-def _port_not_valid():
+def _port_invalid():
         return utils.jsonify({
-            'error': PORT_NOT_VALID,
-            'error_msg': PORT_NOT_VALID_MSG,
+            'error': PORT_INVALID,
+            'error_msg': PORT_INVALID_MSG,
         }, 400)
 
-def _local_network_not_valid():
+def _local_network_invalid():
     return utils.jsonify({
-        'error': LOCAL_NETWORK_NOT_VALID,
-        'error_msg': LOCAL_NETWORK_NOT_VALID_MSG,
+        'error': LOCAL_NETWORK_INVALID,
+        'error_msg': LOCAL_NETWORK_INVALID_MSG,
     }, 400)
 
 @app_server.app.route('/server', methods=['GET'])
@@ -87,33 +87,33 @@ def server_put_post(server_id=None):
 
         network_split = network.split('/')
         if len(network_split) != 2:
-            return _network_not_valid()
+            return _network_invalid()
 
         address = network_split[0].split('.')
         if len(address) != 4:
-            return _network_not_valid()
+            return _network_invalid()
         for i, value in enumerate(address):
             try:
                 address[i] = int(value)
             except ValueError:
-                return _network_not_valid()
+                return _network_invalid()
         if address[0] != 10:
-            return _network_not_valid()
+            return _network_invalid()
 
         if address[1] > 255 or address[1] < 0 or \
                 address[2] > 255 or address[2] < 0:
-            return _network_not_valid()
+            return _network_invalid()
 
         if address[3] != 0:
-            return _network_not_valid()
+            return _network_invalid()
 
         try:
             subnet = int(network_split[1])
         except ValueError:
-            return _network_not_valid()
+            return _network_invalid()
 
         if subnet < 8 or subnet > 24:
-            return _network_not_valid()
+            return _network_invalid()
 
     interface = None
     interface_def = False
@@ -122,18 +122,18 @@ def server_put_post(server_id=None):
         interface = flask.request.json['interface']
 
         if not re.match('^[a-z0-9]+$', interface):
-            return _interface_not_valid()
+            return _interface_invalid()
 
         if interface[:3] != 'tun':
-            return _interface_not_valid()
+            return _interface_invalid()
 
         try:
             interface_num = int(interface[3:])
         except ValueError:
-            return _interface_not_valid()
+            return _interface_invalid()
 
         if interface_num > 64:
-            return _interface_not_valid()
+            return _interface_invalid()
 
         interface = interface[:3] + str(interface_num)
 
@@ -145,8 +145,8 @@ def server_put_post(server_id=None):
 
         if protocol not in {'udp', 'tcp'}:
             return utils.jsonify({
-                'error': PROTOCOL_NOT_VALID,
-                'error_msg': PROTOCOL_NOT_VALID_MSG,
+                'error': PROTOCOL_INVALID,
+                'error_msg': PROTOCOL_INVALID_MSG,
             }, 400)
 
     port = None
@@ -158,10 +158,10 @@ def server_put_post(server_id=None):
         try:
             port = int(port)
         except ValueError:
-            return _port_not_valid()
+            return _port_invalid()
 
         if port < 1 or port > 65535:
-            return _port_not_valid()
+            return _port_invalid()
 
     local_networks = None
     local_networks_def = False
@@ -172,29 +172,29 @@ def server_put_post(server_id=None):
         for local_network in local_networks:
             local_network_split = local_network.split('/')
             if len(local_network_split) != 2:
-                return _local_network_not_valid()
+                return _local_network_invalid()
 
             address = local_network_split[0].split('.')
             if len(address) != 4:
-                return _local_network_not_valid()
+                return _local_network_invalid()
             for i, value in enumerate(address):
                 try:
                     address[i] = int(value)
                 except ValueError:
-                    return _local_network_not_valid()
+                    return _local_network_invalid()
             if address[0] > 255 or address[0] < 0 or \
                     address[1] > 255 or address[1] < 0 or \
                     address[2] > 255 or address[2] < 0 or \
                     address[3] > 254 or address[3] < 0:
-                return _local_network_not_valid()
+                return _local_network_invalid()
 
             try:
                 subnet = int(local_network_split[1])
             except ValueError:
-                return _local_network_not_valid()
+                return _local_network_invalid()
 
             if subnet < 8 or subnet > 30:
-                return _local_network_not_valid()
+                return _local_network_invalid()
 
     public_address = None
     public_address_def = False
@@ -238,10 +238,10 @@ def server_put_post(server_id=None):
         try:
             node_port = int(node_port)
         except ValueError:
-            return _port_not_valid()
+            return _port_invalid()
 
         if node_port < 1 or node_port > 65535:
-            return _port_not_valid()
+            return _port_invalid()
 
     node_key = None
     node_key_def = False

@@ -33,7 +33,7 @@ define([
     if (request.data.username !== demoData.auth.username ||
         request.data.password !== demoData.auth.password) {
       request.response({
-        error: 'auth_not_valid',
+        error: 'auth_invalid',
         error_msg: 'Username or password is not valid.'
       }, 401);
       return;

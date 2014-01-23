@@ -739,7 +739,7 @@ class Server(SessionTestCase):
 
             data = response.json()
             self.assertIn('error', data)
-            self.assertEqual(data['error'], 'network_not_valid')
+            self.assertEqual(data['error'], 'network_invalid')
             self.assertIn('error_msg', data)
             self.assertEqual(data['error_msg'], 'Network address is not ' + \
                 'valid, format must be "10.[0-255].[0-255].0/[8-24]" ' + \
@@ -760,7 +760,7 @@ class Server(SessionTestCase):
 
             data = response.json()
             self.assertIn('error', data)
-            self.assertEqual(data['error'], 'interface_not_valid')
+            self.assertEqual(data['error'], 'interface_invalid')
             self.assertIn('error_msg', data)
             self.assertEqual(data['error_msg'], 'Interface is not valid, ' + \
                 'must be "tun[0-64]" example "tun0".')
@@ -778,7 +778,7 @@ class Server(SessionTestCase):
 
             data = response.json()
             self.assertIn('error', data)
-            self.assertEqual(data['error'], 'port_not_valid')
+            self.assertEqual(data['error'], 'port_invalid')
             self.assertIn('error_msg', data)
             self.assertEqual(data['error_msg'], 'Port number is not ' + \
                 'valid, must be between 1 and 65535.')
@@ -792,7 +792,7 @@ class Server(SessionTestCase):
 
         data = response.json()
         self.assertIn('error', data)
-        self.assertEqual(data['error'], 'protocol_not_valid')
+        self.assertEqual(data['error'], 'protocol_invalid')
         self.assertIn('error_msg', data)
         self.assertEqual(data['error_msg'], 'Protocol is not valid, ' + \
             'must be "udp" or "tcp".')
