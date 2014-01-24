@@ -229,7 +229,7 @@ def server_put_post(server_id=None):
         node_ip_def = True
         node_ip = flask.request.json['node_ip']
 
-    node_port = 9800
+    node_port = None
     node_port_def = False
     if 'node_port' in flask.request.json:
         node_port_def = True
@@ -371,12 +371,13 @@ def server_put_post(server_id=None):
             server.lzo_compression = lzo_compression
         if debug_def:
             server.debug = debug
-        if node_ip_def:
-            server.node_ip = node_ip
-        if node_port_def:
-            server.node_port = node_port
-        if node_key_def:
-            server.node_key = node_key
+        if server.type == NODE_SERVER_NAME:
+            if node_ip_def:
+                server.node_ip = node_ip
+            if node_port_def:
+                server.node_port = node_port
+            if node_key_def:
+                server.node_key = node_key
         server.commit()
 
     for org in server.get_orgs():
