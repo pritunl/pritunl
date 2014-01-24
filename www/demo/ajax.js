@@ -73,18 +73,32 @@ define([
     event('logs_updated');
   };
 
-  var checkEvents = function(request, lastEvent, count) {
+  var checkEvents = function(request, cursor, count) {
     setTimeout(function() {
       var i;
       var event;
       var events = [];
+      if (cursor === undefined) {
+        if (demoData.events.length) {
+          cursor = demoData.events[demoData.events.length - 1].id;
+        }
+        else {
+          cursor = null;
+        }
+      }
+      if (count === undefined) {
+        count = 0;
+      }
+      var cursorFound = cursor ? false : true;
 
       for (i = 0; i < demoData.events.length; i++) {
         event = demoData.events[i];
-        if (event.time <= lastEvent) {
-          continue;
+        if (cursorFound) {
+          events.push(event);
         }
-        events.push(event);
+        else if (event.id === cursor) {
+          cursorFound = true;
+        }
       }
 
       if (events.length) {
@@ -92,31 +106,21 @@ define([
       }
       else {
         count += 1;
-        if (count > (30 / 0.3)) {
+        if (count > (30 / 0.1)) {
           request.response([]);
         }
         else {
-          checkEvents(request, lastEvent, count);
+          checkEvents(request, cursor, count);
         }
       }
-    }, 300);
+    }, 100);
   };
 
-  var eventGet = function(request, lastEvent) {
-    if (!lastEvent) {
-      request.response([{
-        id: uuid(),
-        type: 'time',
-        resource_id: null,
-        time: Math.round(new Date().getTime() / 1000)
-      }]);
-      return;
-    }
-
-    checkEvents(request, lastEvent, 0);
+  var eventGet = function(request, cursor) {
+    checkEvents(request, cursor);
   };
   routes['GET=/event'] = eventGet;
-  routes['GET=/event/<int:lastEvent>'] = eventGet;
+  routes['GET=/event/<cursor>'] = eventGet;
 
   var logGet = function(request) {
     request.response(demoData.logs);
@@ -213,6 +217,7 @@ define([
     demoData.servers[serverId] = {
       id: serverId,
       name: request.data.name,
+      type: request.data.type,
       network: request.data.network,
       interface: request.data.interface,
       port: request.data.port,
@@ -222,6 +227,9 @@ define([
       otp_auth: request.data.otp_auth,
       lzo_compression: request.data.lzo_compression,
       debug: request.data.debug,
+      node_ip: request.data.node_ip,
+      node_port: request.data.node_port,
+      node_key: request.data.node_key,
       status: false,
       orgs: [],
       output: ''
@@ -243,6 +251,9 @@ define([
     demoData.servers[serverId].otp_auth = request.data.otp_auth;
     demoData.servers[serverId].lzo_compression = request.data.lzo_compression;
     demoData.servers[serverId].debug = request.data.debug;
+    demoData.servers[serverId].node_ip = request.data.node_ip;
+    demoData.servers[serverId].node_port = request.data.node_port;
+    demoData.servers[serverId].node_key = request.data.node_key;
     event('servers_updated');
     request.response({});
   };
@@ -389,7 +400,11 @@ define([
       }, demoData.users[orgId][id]));
     }
 
-    request.response(users);
+    request.response({
+        page: 0,
+        page_total: 0,
+        users: users
+    });
   };
   routes['GET=/user/<orgId>'] = userGet;
 
@@ -503,7 +518,8 @@ define([
       }
     }
 
-    if (ajaxRequest.data && ajaxRequest.dataType === 'json') {
+    if (ajaxRequest.data && ajaxRequest.dataType === 'json' &&
+        typeof ajaxRequest.data === 'string') {
       ajaxRequest.data = JSON.parse(ajaxRequest.data);
     }
 

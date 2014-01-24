@@ -98,6 +98,7 @@ define([], function() {
       interface: 'tun0',
       local_networks: [],
       name: 'server1',
+      type: 'server',
       network: '10.139.17.0/24',
       orgs: [
         '55f5c6820e7a7de989916b4cdddf6070',
@@ -117,6 +118,7 @@ define([], function() {
       interface: 'tun1',
       local_networks: [],
       name: 'server2',
+      type: 'server',
       network: '10.113.56.0/24',
       orgs: [
         '55f5c6820e7a7de989916b4cdddf6070',

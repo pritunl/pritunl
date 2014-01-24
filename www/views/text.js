@@ -31,7 +31,7 @@ define([
     update: function() {
     },
     setData: function(data) {
-      if (data) {
+      if (data && data.slice(-1) !== '\n') {
         data += '\n';
       }
       this.editor.setValue(data);
