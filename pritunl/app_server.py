@@ -277,7 +277,8 @@ class AppServer(Config):
                 os.chmod(self._server_key_path, 0600)
 
     def _run_wsgi(self):
-        self._setup_server_cert()
+        if self.ssl:
+            self._setup_server_cert()
         import cherrypy.wsgiserver
         import cherrypy.wsgiserver.ssl_builtin
         from log_entry import LogEntry
