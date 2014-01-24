@@ -22,6 +22,7 @@ define([
     listErrorMsg: 'Failed to load servers, server error occurred.',
     events: {
       'click .servers-add-server': 'onAddServer',
+      'click .servers-add-node-server': 'onAddNodeServer',
       'click .servers-attach-org': 'onAttachOrg'
     },
     initialize: function() {
@@ -46,11 +47,12 @@ define([
         }.bind(this)
       });
     },
-    onAddServer: function() {
+    _addServer: function(type) {
       this.$('.servers-add-server').attr('disabled', 'disabled');
       this.statusModel.fetch({
         success: function() {
           var modal = new ModalAddServerView({
+            type: type,
             publicIp: this.statusModel.get('public_ip'),
             localNetworks: this.statusModel.get('local_networks')
           });
@@ -78,6 +80,12 @@ define([
           this.$('.servers-add-server').removeAttr('disabled');
         }.bind(this)
       });
+    },
+    onAddServer: function() {
+      this._addServer('server');
+    },
+    onAddNodeServer: function() {
+      this._addServer('node_server');
     },
     onAttachOrg: function() {
       if (this.orgs.models.length) {
