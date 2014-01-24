@@ -11,7 +11,7 @@ define([
       var _complete = options.complete;
       options.complete = function(response) {
         if (this.url.substring(0, 6) !== '/event') {
-          var execTime = response.getResponseHeader('X-Execution-Time');
+          var execTime = response.getResponseHeader('Execution-Time');
           var color;
           if (execTime > 400) {
             color = '#ff0000';
