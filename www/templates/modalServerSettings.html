@@ -1,5 +1,9 @@
 <div class="split">
   <div class="left">
+    <div class="node-host form-group" <%= type === 'node_server' ? '' : 'style="display: none;"' %>>
+      <label>Node Host</label>
+      <input type="text" class="form-control" placeholder="Enter node host" data-toggle="tooltip" title="Node server host" value="<%= node_port ? node_ip + ':' + node_port : node_ip %>">
+    </div>
     <div class="name form-group">
       <label>Name</label>
       <input type="text" class="form-control" placeholder="Enter name" data-toggle="tooltip" title="Name of VPN server" value="<%= name %>">
@@ -10,7 +14,7 @@
     </div>
     <div class="interface form-group">
       <label>Interface</label>
-      <input type="text" class="form-control" placeholder="Enter tunnel interface" data-toggle="tooltip" title="Tunnel interface that will be created for VPN connections" value="<%= interface %>">
+      <input type="text" class="form-control" placeholder="Enter tunnel interface" data-toggle="tooltip" title="Tunnel interface that will be created for VPN connections" spellcheck="false" value="<%= interface %>">
     </div>
     <div class="port form-group">
       <label>Port</label>
@@ -18,6 +22,10 @@
     </div>
   </div>
   <div class="right">
+    <div class="node-key form-group" <%= type === 'node_server' ? '' : 'style="display: none;"' %>>
+      <label>Node API Key</label>
+      <input type="text" class="form-control" placeholder="Enter api key" data-toggle="tooltip" title="Node server API key" spellcheck="false" value="<%= node_key %>">
+    </div>
     <div class="protocol form-group">
       <label>Protocol</label>
       <select class="form-control" data-toggle="tooltip" title="Protocol for VPN connections">

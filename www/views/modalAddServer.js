@@ -14,6 +14,7 @@ define([
     initialize: function(options) {
       this.model = new ServerModel({
         'name': '',
+        'type': options.type,
         'network': '10.' + this._rand(15, 250) + '.' +
           this._rand(15, 250) + '.0/24',
         'interface': this._get_free_interface(),

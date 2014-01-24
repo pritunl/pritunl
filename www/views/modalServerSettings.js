@@ -112,6 +112,13 @@ define([
       var port = this.$('.port input').val();
       var protocol = this.$('.protocol select').val();
       var publicAddress = this.$('.public-address input').val();
+      var nodeHost = this.$('.node-host input').val().split(':');
+      var nodeIP = nodeHost[0];
+      var nodePort = null;
+      if (nodeHost.length > 1) {
+        nodePort = parseInt(nodeHost[1], 10);
+      }
+      var nodeKey = this.$('.node-key input').val();
       var localNetworks = [];
       var debug = this.getDebugSelect();
       var otpAuth = this.getOtpAuthSelect();
@@ -145,9 +152,10 @@ define([
           return;
         }
       }
-      this.setLoading(this.loadingMsg);
-      this.model.save({
+
+      var data = {
         'name': name,
+        'type': this.model.get('type'),
         'network': network,
         'interface': iface,
         'port': port,
@@ -156,7 +164,25 @@ define([
         'public_address': publicAddress,
         'otp_auth': otpAuth,
         'debug': debug
-      }, {
+      };
+
+      if (this.model.get('type') === 'node_server') {
+        if (!nodeIP) {
+          this.setAlert('danger', 'Node host cannot be empty.', '.node-host');
+          return;
+        }
+        if (!nodeKey) {
+          this.setAlert('danger', 'Node api key cannot be empty.',
+            '.node-key');
+          return;
+        }
+        data['node_ip'] = nodeIP;
+        data['node_port'] = nodePort;
+        data['node_key'] = nodeKey;
+      }
+
+      this.setLoading(this.loadingMsg);
+      this.model.save(data, {
         success: function() {
           this.close(true);
         }.bind(this),
