@@ -64,8 +64,8 @@ define([
     },
     getOptions: function() {
       return {
-        'page': this.collection.getPage(),
-      }
+        'page': this.collection.getPage()
+      };
     },
     prevPage: function() {
       this.collection.prevPage();

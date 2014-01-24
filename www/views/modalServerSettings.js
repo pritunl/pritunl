@@ -176,9 +176,9 @@ define([
             '.node-key');
           return;
         }
-        data['node_ip'] = nodeIP;
-        data['node_port'] = nodePort;
-        data['node_key'] = nodeKey;
+        data.node_ip = nodeIP;
+        data.node_port = nodePort;
+        data.node_key = nodeKey;
       }
 
       this.setLoading(this.loadingMsg);
