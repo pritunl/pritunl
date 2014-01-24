@@ -62,6 +62,10 @@ class CacheObject:
     def initialize(self):
         cache_db.list_rpush(self.column_family, self.id)
 
+    def remove(self):
+        cache_db.list_remove(self.column_family, self.id)
+        cache_db.remove(self.get_cache_key())
+
     @classmethod
     def get_rows(cls):
         rows = []
