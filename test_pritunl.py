@@ -65,6 +65,8 @@ def request(method, endpoint, **kwargs):
     headers = {
         'Accept': 'application/json',
     }
+    if 'headers' in kwargs:
+        headers.update(kwargs.pop('headers'))
     if 'json_data' in kwargs and kwargs['json_data']:
         headers['Content-Type'] = 'application/json'
         kwargs['data'] = json.dumps(kwargs.pop('json_data'))
@@ -88,6 +90,8 @@ class Session:
         headers = {
             'Accept': 'application/json',
         }
+        if 'headers' in kwargs:
+            headers.update(kwargs.pop('headers'))
         if 'json_data' in kwargs and kwargs['json_data']:
             headers['Content-Type'] = 'application/json'
             kwargs['data'] = json.dumps(kwargs.pop('json_data'))
@@ -228,6 +232,46 @@ class Auth(SessionTestCase):
             response = getattr(requests, method.lower())(endpoint)
             self.assertEqual(response.status_code, 401)
 
+
+class AuthToken(SessionTestCase):
+    @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
+    def test_auth_token_get_post_delete(self):
+        response = requests.get('/auth')
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn('authenticated', data)
+        self.assertFalse(data['authenticated'])
+
+        response = requests.post('/auth/token', json_data={
+            'username': USERNAME,
+            'password': PASSWORD,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn('auth_token', data)
+        self.assertRegexpMatches(data['auth_token'], UUID_RE)
+        auth_token = data['auth_token']
+
+        response = requests.get('/auth', headers={
+            'Auth-Token': auth_token,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn('authenticated', data)
+        self.assertTrue(data['authenticated'])
+
+        response = requests.delete('/auth/token/%s' % auth_token)
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data, {})
+
+        response = requests.get('/auth', headers={
+            'Auth-Token': auth_token,
+        })
+        data = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('authenticated', data)
+        self.assertFalse(data['authenticated'])
 
 class Data(SessionTestCase):
     @unittest.skipUnless(ENABLE_EXTENDED_TESTS, 'Skipping test')
