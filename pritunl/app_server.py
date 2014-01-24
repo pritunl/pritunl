@@ -300,7 +300,8 @@ class AppServer(Config):
         if self.ssl:
             server.ssl_adapter = \
                 cherrypy.wsgiserver.ssl_builtin.BuiltinSSLAdapter(
-                    self._server_cert_path, self._server_key_path)
+                    self._server_cert_path, self._server_key_path,
+                    request_queue_size=SERVER_REQUEST_QUEUE_SIZE)
         try:
             server.start()
         except (KeyboardInterrupt, SystemExit):
