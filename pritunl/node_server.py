@@ -18,6 +18,9 @@ logger = logging.getLogger(APP_NAME)
 class NodeServer(Server):
     str_options = Server.str_options | {'node_ip', 'node_key'}
     int_options = Server.int_options | {'node_port'}
+    default_options = dict(Server.default_options.items() + {
+        'node_port': 9800,
+    }.items())
     type = NODE_SERVER_NAME
 
     def dict(self):
