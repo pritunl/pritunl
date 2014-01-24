@@ -229,19 +229,20 @@ def server_put_post(server_id=None):
         node_ip_def = True
         node_ip = flask.request.json['node_ip']
 
-    node_port = None
+    node_port = 9800
     node_port_def = False
     if 'node_port' in flask.request.json:
         node_port_def = True
         node_port = flask.request.json['node_port']
 
-        try:
-            node_port = int(node_port)
-        except ValueError:
-            return _port_invalid()
+        if node_port is not None:
+            try:
+                node_port = int(node_port)
+            except ValueError:
+                return _port_invalid()
 
-        if node_port < 1 or node_port > 65535:
-            return _port_invalid()
+            if node_port < 1 or node_port > 65535:
+                return _port_invalid()
 
     node_key = None
     node_key_def = False
