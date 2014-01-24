@@ -89,7 +89,7 @@ class AppServer(Config):
         import flask
         from auth_token import AuthToken
         def _wrapped(*args, **kwargs):
-            auth_token = flask.request.headers.get('X-Auth-Token', None)
+            auth_token = flask.request.args.get('auth_token', None)
             if auth_token:
                 auth_token = AuthToken(auth_token)
                 if not auth_token.valid:
