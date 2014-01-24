@@ -122,6 +122,7 @@ class User(Config):
         os.chmod(self.key_path, 0600)
 
     def _cert_create(self):
+        _openssl_locks[self.id].acquire()
         try:
             args = ['openssl', 'ca', '-batch']
             if self.type == CERT_CA:
@@ -140,6 +141,8 @@ class User(Config):
                 'user_id': self.id,
             })
             raise
+        finally:
+            _openssl_locks[self.id].release()
 
     def _create_ssl_conf(self):
         with open(self.ssl_conf_path, 'w') as conf_file:
