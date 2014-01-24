@@ -52,12 +52,20 @@ RUN_ONLY = []
 
 def _log_request(method, endpoint, start_time):
     response_time = int((time.time() - start_time) * 1000)
-    if response_time > 400:
-        color = '\033[91m'
-    elif response_time > 200:
-        color = '\033[93m'
+    if endpoint.startswith('/auth'):
+        if response_time > 1400:
+            color = '\033[92m'
+        elif response_time > 1200:
+            color = '\033[93m'
+        else:
+            color = '\033[92m'
     else:
-        color = '\033[92m'
+        if response_time > 400:
+            color = '\033[91m'
+        elif response_time > 200:
+            color = '\033[93m'
+        else:
+            color = '\033[92m'
     print '%s%sms:%s:%s\033[0m' % (color, response_time, method, endpoint)
 
 _request = requests.api.request
@@ -125,6 +133,42 @@ class SessionTestCase(unittest.TestCase):
         self.user_id = None
         self.server_id = None
         self._create_test_data()
+        self._clean_test_data()
+
+    def _clean_test_data(self):
+        response = self.session.get('/organization')
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        for org in data:
+            if org['name'] in {TEST_ORG_NAME + '2', TEST_ORG_NAME + '3'}:
+                response = self.session.delete('/organization/%s' % org['id'])
+                self.assertEqual(response.status_code, 200)
+
+        response = self.session.get('/user/%s' % self.org_id)
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        for user in data:
+            if user['name'] == {TEST_USER_NAME + '2', TEST_USER_NAME + '3'}:
+                response = self.session.delete('/user/%s/%s' % (
+                    self.org_id, user['id']))
+                self.assertEqual(response.status_code, 200)
+
+        response = self.session.get('/server')
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        for server in data:
+            if server['name'] == {TEST_SERVER_NAME + '2',
+                    TEST_SERVER_NAME + '3'}:
+                response = self.session.delete('/server/%s' % server['id'])
+                self.assertEqual(response.status_code, 200)
+
+        response = self.session.get('/server/%s/organization' % self.server_id)
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        for server_org in data:
+            response = self.session.delete('/server/%s/organization/%s' % (
+                self.server_id, server_org['id']))
+            self.assertEqual(response.status_code, 200)
 
     def _create_test_data(self):
         if not self.org_id:
@@ -204,25 +248,30 @@ class Auth(SessionTestCase):
         session = Session()
         data = session.response.json()
         self.assertEqual(session.response.status_code, 200)
-        self.assertEqual(session.response.status_code, 200)
         self.assertIn('authenticated', data)
         self.assertTrue(data['authenticated'])
+
 
         response = session.get('/auth')
-        data = response.json()
         self.assertEqual(response.status_code, 200)
+
+        data = response.json()
         self.assertIn('authenticated', data)
         self.assertTrue(data['authenticated'])
 
+
         response = session.delete('/auth')
-        data = response.json()
         self.assertEqual(response.status_code, 200)
+
+        data = response.json()
         self.assertIn('authenticated', data)
         self.assertFalse(data['authenticated'])
 
+
         response = session.get('/auth')
-        data = response.json()
         self.assertEqual(response.status_code, 200)
+
+        data = response.json()
         self.assertIn('authenticated', data)
         self.assertFalse(data['authenticated'])
 
@@ -232,25 +281,27 @@ class Auth(SessionTestCase):
             response = getattr(requests, method.lower())(endpoint)
             self.assertEqual(response.status_code, 401)
 
-
-class AuthToken(SessionTestCase):
     @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_auth_token_get_post_delete(self):
         response = requests.get('/auth')
         self.assertEqual(response.status_code, 200)
+
         data = response.json()
         self.assertIn('authenticated', data)
         self.assertFalse(data['authenticated'])
+
 
         response = requests.post('/auth/token', json_data={
             'username': USERNAME,
             'password': PASSWORD,
         })
         self.assertEqual(response.status_code, 200)
+
         data = response.json()
         self.assertIn('auth_token', data)
         self.assertRegexpMatches(data['auth_token'], UUID_RE)
         auth_token = data['auth_token']
+
 
         response = requests.get('/auth', headers={
             'Auth-Token': auth_token,
@@ -260,16 +311,20 @@ class AuthToken(SessionTestCase):
         self.assertIn('authenticated', data)
         self.assertTrue(data['authenticated'])
 
+
         response = requests.delete('/auth/token/%s' % auth_token)
         self.assertEqual(response.status_code, 200)
+
         data = response.json()
         self.assertEqual(data, {})
+
 
         response = requests.get('/auth', headers={
             'Auth-Token': auth_token,
         })
-        data = response.json()
         self.assertEqual(response.status_code, 200)
+
+        data = response.json()
         self.assertIn('authenticated', data)
         self.assertFalse(data['authenticated'])
 
@@ -741,8 +796,6 @@ class Server(SessionTestCase):
         self.assertIn('error', data)
         self.assertEqual(data['error'], 'server_not_offline')
         self.assertIn('error_msg', data)
-        self.assertEqual(data['error_msg'],
-            'Server must be offline to modify settings.')
 
 
         response = self.session.put('/server/%s/organization/%s' % (
@@ -753,8 +806,6 @@ class Server(SessionTestCase):
         self.assertIn('error', data)
         self.assertEqual(data['error'], 'server_not_offline')
         self.assertIn('error_msg', data)
-        self.assertEqual(data['error_msg'], 'Server must be offline ' + \
-            'to attach an organization.')
 
 
         response = self.session.delete('/server/%s/organization/%s' % (
@@ -765,8 +816,6 @@ class Server(SessionTestCase):
         self.assertIn('error', data)
         self.assertEqual(data['error'], 'server_not_offline')
         self.assertIn('error_msg', data)
-        self.assertEqual(data['error_msg'], 'Server must be offline ' + \
-            'to detach an organization.')
 
 
         response = self.session.put('/server/%s/stop' % self.server_id)
@@ -802,10 +851,6 @@ class Server(SessionTestCase):
             self.assertIn('error', data)
             self.assertEqual(data['error'], 'network_invalid')
             self.assertIn('error_msg', data)
-            self.assertEqual(data['error_msg'], 'Network address is not ' + \
-                'valid, format must be "10.[0-255].[0-255].0/[8-24]" ' + \
-                'such as "10.12.32.0/24".')
-
 
         for test_interface in [
                     'tun-1',
@@ -823,8 +868,6 @@ class Server(SessionTestCase):
             self.assertIn('error', data)
             self.assertEqual(data['error'], 'interface_invalid')
             self.assertIn('error_msg', data)
-            self.assertEqual(data['error_msg'], 'Interface is not valid, ' + \
-                'must be "tun[0-64]" example "tun0".')
 
 
         for test_port in [
@@ -841,8 +884,6 @@ class Server(SessionTestCase):
             self.assertIn('error', data)
             self.assertEqual(data['error'], 'port_invalid')
             self.assertIn('error_msg', data)
-            self.assertEqual(data['error_msg'], 'Port number is not ' + \
-                'valid, must be between 1 and 65535.')
 
 
         response = self.session.post('/server', json_data={
@@ -855,8 +896,6 @@ class Server(SessionTestCase):
         self.assertIn('error', data)
         self.assertEqual(data['error'], 'protocol_invalid')
         self.assertIn('error_msg', data)
-        self.assertEqual(data['error_msg'], 'Protocol is not valid, ' + \
-            'must be "udp" or "tcp".')
 
 
 class Status(SessionTestCase):
