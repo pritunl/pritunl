@@ -17,3 +17,4 @@ Thumbs.db
 /pritunl.db
 /www/node_modules
 /tools/private_key.asc
+/tools/development_pritunl.conf
