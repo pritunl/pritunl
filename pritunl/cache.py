@@ -112,6 +112,22 @@ class Cache:
                 pass
         return []
 
+    def list_remove(self, key, value, count=0):
+        def _remove():
+            try:
+                self._data[key]['val'].remove(value)
+            except (AttributeError, ValueError):
+                return True
+
+        if count:
+            for i in xrange(count):
+                if _remove():
+                    break
+        else:
+            while True:
+                if _remove():
+                    break
+
     def dict_get(self, key, field):
         if self._check_ttl(key) is False:
             try:
