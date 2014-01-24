@@ -277,21 +277,22 @@ class Auth(SessionTestCase):
 
     @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_auth_post_error(self):
-        for username, password in {
-                    ('admin', 'test'),
-                    ('test', 'admin'),
-                    ('test', 'test'),
-                }:
-            response = requests.post('/auth', json_data={
-                'username': username,
-                'password': password,
-            })
-            self.assertEqual(response.status_code, 401)
+        for endpoint in {'/auth', '/auth/token'}:
+            for username, password in {
+                        ('admin', 'test'),
+                        ('test', 'admin'),
+                        ('test', 'test'),
+                    }:
+                response = requests.post(endpoint, json_data={
+                    'username': username,
+                    'password': password,
+                })
+                self.assertEqual(response.status_code, 401)
 
-            data = response.json()
-            self.assertIn('error', data)
-            self.assertEqual(data['error'], 'auth_invalid')
-            self.assertIn('error_msg', data)
+                data = response.json()
+                self.assertIn('error', data)
+                self.assertEqual(data['error'], 'auth_invalid')
+                self.assertIn('error_msg', data)
 
     @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_auth_handlers(self):
