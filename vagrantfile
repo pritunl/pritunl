@@ -11,6 +11,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     auto_correct: true
   config.vm.network :forwarded_port, guest: 80, host: 8080,
     auto_correct: true
-  config.vm.network :forwarded_port, guest: 9800, host: 9800,
+  config.vm.network :forwarded_port, guest: 9900, host: 9900,
     auto_correct: true, protocol: "udp"
 end
