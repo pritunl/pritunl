@@ -55,8 +55,8 @@ class User(Config):
         self.set_path(os.path.join(self.org.path, USERS_DIR,
             '%s.conf' % self.id))
 
-        if id not in _openssl_locks:
-            _openssl_locks[self.id] = threading.Lock()
+        if self.org.id not in _openssl_locks:
+            _openssl_locks[self.org.id] = threading.Lock()
 
         if id is None:
             self._initialize()
@@ -100,7 +100,7 @@ class User(Config):
         Event(type=SERVERS_UPDATED)
 
     def _cert_request(self):
-        _openssl_locks[self.id].acquire()
+        _openssl_locks[self.org.id].acquire()
         try:
             args = [
                 'openssl', 'req', '-new', '-batch',
@@ -118,11 +118,11 @@ class User(Config):
             })
             raise
         finally:
-            _openssl_locks[self.id].release()
+            _openssl_locks[self.org.id].release()
         os.chmod(self.key_path, 0600)
 
     def _cert_create(self):
-        _openssl_locks[self.id].acquire()
+        _openssl_locks[self.org.id].acquire()
         try:
             args = ['openssl', 'ca', '-batch']
             if self.type == CERT_CA:
@@ -142,7 +142,7 @@ class User(Config):
             })
             raise
         finally:
-            _openssl_locks[self.id].release()
+            _openssl_locks[self.org.id].release()
 
     def _create_ssl_conf(self):
         with open(self.ssl_conf_path, 'w') as conf_file:
@@ -213,7 +213,7 @@ class User(Config):
             })
             return
 
-        _openssl_locks[self.id].acquire()
+        _openssl_locks[self.org.id].acquire()
         try:
             self._create_ssl_conf()
             args = ['openssl', 'ca', '-batch',
@@ -236,7 +236,7 @@ class User(Config):
             })
             raise
         finally:
-            _openssl_locks[self.id].release()
+            _openssl_locks[self.org.id].release()
         self.org.generate_crl()
 
     def _build_key_archive(self):
