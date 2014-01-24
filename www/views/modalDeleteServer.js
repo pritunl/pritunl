@@ -14,7 +14,7 @@ define([
     okText: 'Delete',
     inputMatch: true,
     initialize: function() {
-      this.constructor.__super__.initialize.call(this);
+      ModalDeleteServerView.__super__.initialize.call(this);
       var alertView = new AlertView({
         type: 'danger',
         message: 'Deleting the server will delete all the users in it.',

@@ -17,7 +17,7 @@ define([
       var alertView;
       var removingOnlineUsers = false;
       var removingServerUsers = false;
-      this.constructor.__super__.initialize.call(this);
+      ModalDeleteUsersView.__super__.initialize.call(this);
       for (i = 0; i < this.collection.models.length; i++) {
         if (this.collection.models[i].get('status')) {
           removingOnlineUsers = true;

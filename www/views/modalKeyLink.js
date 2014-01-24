@@ -15,7 +15,7 @@ define([
     events: function() {
       return _.extend({
         'click input': 'onClickInput'
-      }, this.constructor.__super__.events);
+      }, ModalKeyLinkView.__super__.events);
     },
     body: function() {
       return this.template();

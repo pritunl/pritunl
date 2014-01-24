@@ -31,7 +31,7 @@ define([
       this.statusModel = new StatusModel();
       this.listenTo(window.events, 'servers_updated', this.update);
       this.listenTo(window.events, 'organizations_updated', this.updateOrgs);
-      this.constructor.__super__.initialize.call(this);
+      ServersListView.__super__.initialize.call(this);
     },
     updateOrgs: function() {
       this.orgs.fetch({
