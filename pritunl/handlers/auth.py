@@ -26,7 +26,12 @@ def auth_post():
 @app_server.app.route('/auth', methods=['GET'])
 def auth_get():
     authenticated = False
-    if 'timestamp' in flask.session:
+    auth_token = flask.request.headers.get('Auth-Token', None)
+    if auth_token:
+        auth_token = AuthToken(auth_token)
+        if auth_token.valid:
+            authenticated = True
+    elif 'timestamp' in flask.session:
         authenticated = True
     return utils.jsonify({
         'authenticated': authenticated,

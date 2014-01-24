@@ -763,7 +763,7 @@ class Server(Config):
             server.load()
         except IOError:
             logger.exception('Failed to load server conf. %r' % {
-                    'server_id': server_id,
+                    'server_id': id,
                 })
             return
         return server
