@@ -19,12 +19,9 @@ def status_get():
             servers_online_count += 1
         clients_count += len(server.clients)
 
-    users_count = 0
+    user_count = 0
     for org in orgs:
-        for user in org.get_users():
-            if user.type != CERT_CLIENT:
-                continue
-            users_count += 1
+        user_count += org.user_count
 
     if not app_server.public_ip:
         app_server.load_public_ip()
@@ -34,7 +31,7 @@ def status_get():
     return utils.jsonify({
         'org_count': orgs_count,
         'users_online': clients_count,
-        'user_count': users_count,
+        'user_count': user_count,
         'servers_online': servers_online_count,
         'server_count': servers_count,
         'server_version': __version__,

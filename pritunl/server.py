@@ -288,10 +288,7 @@ class Server(Config):
         server_orgs = self.get_orgs()
         users_count = 0
         for org in server_orgs:
-            for user in org.get_users():
-                if user.type != CERT_CLIENT:
-                    continue
-                users_count += 1
+            users_count += org.user_count
         return users_count
 
     def _get_org_count(self):

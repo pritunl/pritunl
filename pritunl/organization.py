@@ -45,6 +45,8 @@ class Organization(Config):
                 if server.otp_auth:
                     return True
             return False
+        elif name == 'user_count':
+            return self._get_user_count()
         return Config.__getattr__(self, name)
 
     def dict(self):
@@ -57,9 +59,9 @@ class Organization(Config):
         self._make_dirs()
         self.ca_cert = User(self, type=CERT_CA)
         self.commit()
+        cache_db.set_add('orgs', self.id)
         LogEntry(message='Created new organization "%s".' % self.name)
         Event(type=ORGS_UPDATED)
-        cache_db.set_add('orgs', self.id)
 
     def _make_dirs(self):
         os.makedirs(os.path.join(self.path, REQS_DIR))
@@ -96,7 +98,26 @@ class Organization(Config):
             return
         return user
 
-    def get_users(self):
+    def sort_users_cache(self):
+        user_count = 0
+        users_dict = {}
+        users_sort = []
+        for user_id in cache_db.set_elements(self.get_cache_key('users')):
+            user = User(self, id=user_id)
+            name_id = '%s_%s' % (user.name, user_id)
+            if user.type == CERT_CLIENT:
+                user_count += 1
+            users_dict[name_id] = user_id
+            users_sort.append(name_id)
+        cache_db.set(self.get_cache_key('user_count'), str(user_count))
+        cache_db.remove(self.get_cache_key('users_sorted_temp'))
+        for name_id in sorted(users_sort):
+            cache_db.list_rpush(self.get_cache_key('users_sorted_temp'),
+                users_dict[name_id])
+        cache_db.rename(self.get_cache_key('users_sorted_temp'),
+            self.get_cache_key('users_sorted'))
+
+    def _cache_users(self):
         if cache_db.get(self.get_cache_key('users_cached')) != 't':
             cache_db.remove(self.get_cache_key('users'))
             certs_path = os.path.join(self.path, CERTS_DIR)
@@ -106,10 +127,21 @@ class Organization(Config):
                     if user_id == CA_CERT_ID:
                         continue
                     cache_db.set_add(self.get_cache_key('users'), user_id)
+            self.sort_users_cache()
             cache_db.set(self.get_cache_key('users_cached'), 't')
 
-        users = []
-        for user_id in cache_db.set_elements(self.get_cache_key('users')):
+    def _get_user_count(self):
+        try:
+            user_count = int(cache_db.get(self.get_cache_key('user_count')))
+        except TypeError:
+            self._cache_users()
+            user_count = int(cache_db.get(self.get_cache_key('user_count')))
+        return user_count
+
+    def iter_users(self):
+        self._cache_users()
+        for user_id in cache_db.list_elements(self.get_cache_key(
+                'users_sorted')):
             user = User(self, id=user_id)
             try:
                 user.load()
@@ -120,8 +152,7 @@ class Organization(Config):
                         'user_id': user_id,
                     })
                 continue
-            users.append(user)
-        return users
+            yield user
 
     def get_server(self, server_id):
         from server import Server
@@ -140,9 +171,7 @@ class Organization(Config):
         return servers
 
     def new_user(self, type, name=None):
-        user = User(self, name=name, type=type)
-        cache_db.set_add(self.get_cache_key('users'), user.id)
-        return user
+        return User(self, name=name, type=type)
 
     def generate_crl(self):
         try:

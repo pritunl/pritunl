@@ -94,6 +94,8 @@ class User(Config):
         self.commit()
         self._cert_create()
         self._delete_ssl_conf()
+        cache_db.set_add(self.org.get_cache_key('users'), self.id)
+        self.org.sort_users_cache()
         if self.type == CERT_CLIENT:
             LogEntry(message='Created new user "%s".' % self.name)
         Event(type=USERS_UPDATED, resource_id=self.org.id)
@@ -345,11 +347,14 @@ class User(Config):
 
     def clear_cache(self):
         cache_db.set_remove(self.org.get_cache_key('users'), self.id)
+        cache_db.list_remove(self.org.get_cache_key('users_sorted'), self.id)
+        cache_db.decrement(self.org.get_cache_key('user_count'))
         Config.clear_cache(self)
 
     def rename(self, name):
         self.name = name
         self.commit()
+        self.org.sort_users_cache()
         Event(type=USERS_UPDATED, resource_id=self.org.id)
 
     def remove(self, reason=UNSPECIFIED):

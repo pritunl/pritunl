@@ -197,7 +197,7 @@ class AppServer(Config):
             logger.info('Upgrading data to v0.10.4...')
             from organization import Organization
             for org in Organization.get_orgs():
-                for user in org.get_users():
+                for user in org.iter_users():
                     user._upgrade_0_10_4()
 
         if cur_version and cur_version < self._get_version_int('0.10.5'):
@@ -215,7 +215,7 @@ class AppServer(Config):
         logger.debug('Filling cache...')
         from organization import Organization
         for org in Organization.get_orgs():
-            org.get_users()
+            org._cache_users()
 
     def _hash_password(self, password):
         password_hash = hashlib.sha512()

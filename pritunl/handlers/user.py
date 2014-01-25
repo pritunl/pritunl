@@ -13,11 +13,6 @@ def user_get(org_id, page=None):
     page = int(page) if page else page
     org = Organization.get_org(id=org_id)
     otp_auth = False
-    users = []
-    server_users = []
-    users_dict = {}
-    users_sort = []
-    user_count_total = 0
     clients = {}
 
     for server in org.get_servers():
@@ -30,35 +25,38 @@ def user_get(org_id, page=None):
                 clients[client_id] = {}
             clients[client_id][server.id] = client
 
-    for user in org.get_users():
-        is_client = user.id in clients
-        name_id = '%s_%s' % (user.name, user.id)
-        users_sort.append(name_id)
-        users_dict[name_id] = user.dict()
-        users_dict[name_id]['status'] = True if is_client else False
-        users_dict[name_id]['otp_auth'] = otp_auth
-        users_dict[name_id]['servers'] = clients[user.id] if is_client else {}
-        if user.type == CERT_CLIENT:
-            user_count_total += 1
-
-    cur_page = 0
-    user_count = 0
-    page_total = user_count_total / USER_PAGE_COUNT
-    page = min(page, page_total)
-    for name_id in sorted(users_sort):
-        if page is not None:
-            cur_page = user_count / USER_PAGE_COUNT
-            if users_dict[name_id]['type'] == CERT_CLIENT:
-                user_count += 1
-                if cur_page > page:
-                    break
-            if cur_page != page:
+    for i in xrange(2):
+        users = []
+        cur_page = 0
+        user_count = 0
+        for user in org.iter_users():
+            if page is not None:
+                cur_page = user_count / USER_PAGE_COUNT
+                if user.type == CERT_CLIENT:
+                    user_count += 1
+                    if cur_page > page:
+                        break
+                if cur_page != page:
                     continue
-        users.append(users_dict[name_id])
+
+            is_client = user.id in clients
+            user_dict = user.dict()
+            user_dict['status'] = True if is_client else False
+            user_dict['otp_auth'] = otp_auth
+            user_dict['servers'] = clients[user.id] if is_client else {}
+            users.append(user_dict)
+
+        page_total = user_count / USER_PAGE_COUNT
+        if page > page_total:
+            page = page_total
+            continue
+        else:
+            break
 
     if page is not None:
-        if user_count_total and not user_count_total % USER_PAGE_COUNT:
+        if user_count and not user_count % USER_PAGE_COUNT:
             page_total -= 1
+
         return utils.jsonify({
             'page': page,
             'page_total': page_total,
