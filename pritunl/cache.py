@@ -40,13 +40,13 @@ class Cache:
         try:
             self._data[key]['val'] = str(int(self.get(key)) + 1)
         except (TypeError, ValueError):
-            self._data[key]['val'] = 1
+            self._data[key]['val'] = '1'
 
     def decrement(self, key):
         try:
             self._data[key]['val'] = str(int(self.get(key)) - 1)
         except (TypeError, ValueError):
-            self._data[key]['val'] = 0
+            self._data[key]['val'] = '0'
 
     def remove(self, key):
         self._data.pop(key, None)
