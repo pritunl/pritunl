@@ -25,41 +25,19 @@ def user_get(org_id, page=None):
                 clients[client_id] = {}
             clients[client_id][server.id] = client
 
-    for i in xrange(2):
-        users = []
-        cur_page = 0
-        user_count = 0
-        for user in org.iter_users():
-            if page is not None:
-                cur_page = user_count / USER_PAGE_COUNT
-                if user.type == CERT_CLIENT:
-                    user_count += 1
-                    if cur_page > page:
-                        break
-                if cur_page != page:
-                    continue
-
-            is_client = user.id in clients
-            user_dict = user.dict()
-            user_dict['status'] = True if is_client else False
-            user_dict['otp_auth'] = otp_auth
-            user_dict['servers'] = clients[user.id] if is_client else {}
-            users.append(user_dict)
-
-        page_total = user_count / USER_PAGE_COUNT
-        if page > page_total:
-            page = page_total
-            continue
-        else:
-            break
+    users = []
+    for user in org.iter_users(page):
+        is_client = user.id in clients
+        user_dict = user.dict()
+        user_dict['status'] = True if is_client else False
+        user_dict['otp_auth'] = otp_auth
+        user_dict['servers'] = clients[user.id] if is_client else {}
+        users.append(user_dict)
 
     if page is not None:
-        if user_count and not user_count % USER_PAGE_COUNT:
-            page_total -= 1
-
         return utils.jsonify({
             'page': page,
-            'page_total': page_total,
+            'page_total': org.page_total,
             'users': users,
         })
     else:

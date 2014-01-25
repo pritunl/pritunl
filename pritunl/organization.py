@@ -47,6 +47,8 @@ class Organization(Config):
             return False
         elif name == 'user_count':
             return self._get_user_count()
+        elif name == 'page_total':
+            return int(cache_db.get(self.get_cache_key('users_page_total')))
         return Config.__getattr__(self, name)
 
     def dict(self):
@@ -103,15 +105,34 @@ class Organization(Config):
             name_id = '%s_%s' % (user.name, user_id)
             if user.type == CERT_CLIENT:
                 user_count += 1
-            users_dict[name_id] = user_id
+            users_dict[name_id] = (user_id, user.type)
             users_sort.append(name_id)
+
         cache_db.set(self.get_cache_key('user_count'), str(user_count))
         cache_db.remove(self.get_cache_key('users_sorted_temp'))
+        cache_db.remove(self.get_cache_key('users_page_index_temp'))
+
+        cur_page = 0
+        user_count = 0
+        client_count = 0
         for name_id in sorted(users_sort):
+            if users_dict[name_id][1] == CERT_CLIENT:
+                page = client_count / USER_PAGE_COUNT
+                if page != cur_page:
+                    cur_page = page
+                    cache_db.dict_set(
+                        self.get_cache_key('users_page_index_temp'),
+                        str(cur_page), str(user_count))
+                client_count += 1
+            user_count += 1
             cache_db.list_rpush(self.get_cache_key('users_sorted_temp'),
-                users_dict[name_id])
+                users_dict[name_id][0])
+
+        cache_db.rename(self.get_cache_key('users_page_index_temp'),
+            self.get_cache_key('users_page_index'))
         cache_db.rename(self.get_cache_key('users_sorted_temp'),
             self.get_cache_key('users_sorted'))
+        cache_db.set(self.get_cache_key('users_page_total'), str(cur_page))
 
     def _cache_users(self):
         if cache_db.get(self.get_cache_key('users_cached')) != 't':
@@ -134,13 +155,35 @@ class Organization(Config):
             user_count = int(cache_db.get(self.get_cache_key('user_count')))
         return user_count
 
-    def iter_users(self):
+    def iter_users(self, page=None):
         self._cache_users()
-        for user_id in cache_db.list_elements(self.get_cache_key(
-                'users_sorted')):
-            user = User.get_user(self, id=user_id)
-            if user:
-                yield user
+        if page is not None:
+            page_total = self.page_total
+            page = min(page, page_total)
+            if page == 0:
+                page_index_s = 0
+            else:
+                page_index_s = int(cache_db.dict_get(self.get_cache_key(
+                    'users_page_index'), str(page)))
+
+            if page == page_total:
+                page_index_e = None
+            else:
+                page_index_e = int(cache_db.dict_get(self.get_cache_key(
+                'users_page_index'), str(page + 1)))
+
+            for user_id in cache_db.list_iter_range(
+                    self.get_cache_key('users_sorted'),
+                    page_index_s, page_index_e):
+                user = User.get_user(self, id=user_id)
+                if user:
+                    yield user
+        else:
+            for user_id in cache_db.list_iter(
+                    self.get_cache_key('users_sorted')):
+                user = User.get_user(self, id=user_id)
+                if user:
+                    yield user
 
     def get_server(self, server_id):
         from server import Server
