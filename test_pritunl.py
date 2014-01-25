@@ -277,12 +277,12 @@ class Auth(SessionTestCase):
 
     @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_auth_post_error(self):
-        for endpoint in {'/auth', '/auth/token'}:
-            for username, password in {
+        for endpoint in ['/auth', '/auth/token']:
+            for username, password in [
                         ('admin', 'test'),
                         ('test', 'admin'),
                         ('test', 'test'),
-                    }:
+                    ]:
                 response = requests.post(endpoint, json_data={
                     'username': username,
                     'password': password,
