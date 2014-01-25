@@ -67,12 +67,10 @@ class CacheObject:
         cache_db.remove(self.get_cache_key())
 
     @classmethod
-    def get_rows(cls):
-        rows = []
+    def iter_rows(cls):
         for row_id in cache_db.list_elements(cls.column_family):
             row = cls(id=row_id)
-            rows.append(row)
-        return rows
+            yield row
 
     @classmethod
     def get_last_row(cls):

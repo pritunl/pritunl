@@ -61,19 +61,14 @@ class Event(CacheObject):
 
         events = []
         if cursor:
-            events_query = cls.get_rows()
-            cursor_found = False
-            for event in cls.get_rows():
-                if cursor_found:
-                    events.append(event)
-                elif event.id == cursor:
-                    cursor_found = True
-            if not cursor_found:
-                events = events_query
+            for event in cls.iter_rows():
+                events.append(event)
+                if event.id == cursor:
+                    events = []
         elif block:
             cursor = cache_db.list_index(cls.column_family, -1)
         else:
-            return cls.get_rows()
+            return list(cls.iter_rows())
 
         if block and not events:
             new_event = False
