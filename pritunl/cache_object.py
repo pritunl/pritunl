@@ -68,7 +68,7 @@ class CacheObject:
 
     @classmethod
     def iter_rows(cls):
-        for row_id in cache_db.list_elements(cls.column_family):
+        for row_id in cache_db.list_iter(cls.column_family):
             row = cls(id=row_id)
             yield row
 

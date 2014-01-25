@@ -294,7 +294,7 @@ class Organization(Config):
     @classmethod
     def iter_orgs(cls):
         cls._cache_orgs()
-        for org_id in cache_db.list_elements('orgs_sorted'):
+        for org_id in cache_db.list_iter('orgs_sorted'):
             org = Organization.get_org(id=org_id)
             if org:
                 yield org

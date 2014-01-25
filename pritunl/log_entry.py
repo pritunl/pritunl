@@ -92,5 +92,5 @@ class LogEntry(CacheObject):
             cache_db.set('log_entries_cached', 't')
             return
 
-        for log_entry_id in cache_db.list_elements('log_entries'):
+        for log_entry_id in cache_db.list_iter('log_entries'):
             yield cls(id=log_entry_id)
