@@ -98,6 +98,7 @@ class Organization(Config):
 
     def get_users(self):
         if cache_db.get(self.get_cache_key('users_cached')) != 't':
+            cache_db.remove(self.get_cache_key('users'))
             certs_path = os.path.join(self.path, CERTS_DIR)
             if os.path.isdir(certs_path):
                 for cert in os.listdir(certs_path):
@@ -197,6 +198,7 @@ class Organization(Config):
     @staticmethod
     def get_orgs():
         if cache_db.get('orgs_cached') != 't':
+            cache_db.remove('orgs')
             path = os.path.join(app_server.data_path, ORGS_DIR)
             if os.path.isdir(path):
                 for org_id in os.listdir(path):
