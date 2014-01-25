@@ -36,6 +36,18 @@ class Cache:
         self._validate(value)
         self._data[key]['val'] = value
 
+    def increment(self, key):
+        try:
+            self._data[key]['val'] = str(int(self.get(key)) + 1)
+        except (TypeError, ValueError):
+            self._data[key]['val'] = 1
+
+    def decrement(self, key):
+        try:
+            self._data[key]['val'] = str(int(self.get(key)) - 1)
+        except (TypeError, ValueError):
+            self._data[key]['val'] = 0
+
     def remove(self, key):
         self._data.pop(key, None)
 
@@ -132,6 +144,14 @@ class Cache:
             while True:
                 if _remove():
                     break
+
+    def list_length(self, key):
+        if self._check_ttl(key) is False:
+            try:
+                return len(self._data[key]['val'])
+            except TypeError:
+                pass
+        return 0
 
     def dict_get(self, key, field):
         if self._check_ttl(key) is False:
