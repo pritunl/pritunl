@@ -411,3 +411,16 @@ class User(Config):
         Event(type=USERS_UPDATED, resource_id=self.org.id)
         if type == CERT_CLIENT:
             LogEntry(message='Deleted user "%s".' % name)
+
+    @staticmethod
+    def get_user(org, id):
+        user = User(org, id=id)
+        try:
+            user.load()
+        except IOError:
+            logger.exception('Failed to load user conf. %r' % {
+                'org_id': org.id,
+                'user_id': id,
+            })
+            return
+        return user

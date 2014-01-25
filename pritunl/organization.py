@@ -142,7 +142,7 @@ class Organization(Config):
         self._cache_users()
         for user_id in cache_db.list_elements(self.get_cache_key(
                 'users_sorted')):
-            user = User(self, id=user_id)
+            user = User.get_user(self, id=user_id)
             try:
                 user.load()
             except IOError:
