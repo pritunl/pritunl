@@ -41,7 +41,7 @@ class Organization(Config):
 
     def __getattr__(self, name):
         if name == 'otp_auth':
-            for server in self.get_servers():
+            for server in self.iter_servers():
                 if server.otp_auth:
                     return True
             return False
@@ -148,15 +148,11 @@ class Organization(Config):
         if self.id in server.organizations:
             return server
 
-    def get_servers(self):
+    def iter_servers(self):
         from server import Server
-        servers = []
-
-        for server in Server.get_servers():
+        for server in Server.iter_servers():
             if self.id in server.organizations:
-                servers.append(server)
-
-        return servers
+                yield server
 
     def new_user(self, type, name=None):
         return User(self, name=name, type=type)
@@ -191,7 +187,7 @@ class Organization(Config):
     def remove(self):
         name = self.name
 
-        for server in self.get_servers():
+        for server in self.iter_servers():
             if server.status:
                 server.stop()
             server.remove_org(self.id)

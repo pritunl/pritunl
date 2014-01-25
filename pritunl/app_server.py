@@ -203,7 +203,7 @@ class AppServer(Config):
         if cur_version and cur_version < self._get_version_int('0.10.5'):
             logger.info('Upgrading data to v0.10.5...')
             from server import Server
-            for server in Server.get_servers():
+            for server in Server.iter_servers():
                 server._upgrade_0_10_5()
 
         if cur_version != version:
@@ -286,7 +286,7 @@ class AppServer(Config):
 
         if self.auto_start_servers:
             from pritunl.server import Server
-            for server in Server.get_servers():
+            for server in Server.iter_servers():
                 if server.org_count:
                     try:
                         server.start()

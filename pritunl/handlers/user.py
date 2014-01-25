@@ -15,7 +15,7 @@ def user_get(org_id, page=None):
     otp_auth = False
     clients = {}
 
-    for server in org.get_servers():
+    for server in org.iter_servers():
         if server.otp_auth:
             otp_auth = True
         server_clients = server.clients
@@ -94,7 +94,7 @@ def user_delete(org_id, user_id):
     user_id = user.id
     user.remove()
 
-    for server in org.get_servers():
+    for server in org.iter_servers():
         server_clients = server.clients
         if user_id in server_clients:
             server.restart()

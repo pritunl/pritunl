@@ -766,7 +766,7 @@ class Server(Config):
         return server
 
     @staticmethod
-    def get_servers():
+    def iter_servers():
         logger.debug('Getting servers.')
         path = os.path.join(app_server.data_path, SERVERS_DIR)
         servers = []

@@ -62,7 +62,7 @@ def export_get():
             tar_add(tar_file, org.ca_cert.key_archive_path)
             tar_add(tar_file, org.ca_cert.get_path())
 
-        for server in Server.get_servers():
+        for server in Server.iter_servers():
             tar_add(tar_file, server.dh_param_path)
             tar_add(tar_file, server.ifc_pool_path)
             tar_add(tar_file, server.get_path())

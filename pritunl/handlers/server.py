@@ -41,7 +41,7 @@ def server_get():
     servers_dict = {}
     servers_sort = []
 
-    for server in Server.get_servers():
+    for server in Server.iter_servers():
         name_id = '%s_%s' % (server.name, server.id)
         servers_sort.append(name_id)
         servers_dict[name_id] = server.dict()
@@ -58,7 +58,7 @@ def server_put_post(server_id=None):
     network_used = set()
     interface_used = set()
     port_used = set()
-    for server in Server.get_servers():
+    for server in Server.iter_servers():
         if server.id == server_id:
             continue
         network_used.add(server.network)

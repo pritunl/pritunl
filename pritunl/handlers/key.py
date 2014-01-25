@@ -42,7 +42,6 @@ def user_key_archive_get(org_id, user_id):
 @app_server.auth
 def user_key_link_get(org_id, user_id):
     org = Organization.get_org(id=org_id)
-    servers = org.get_servers()
     key_id = uuid.uuid4().hex
 
     view_id = None
@@ -61,7 +60,7 @@ def user_key_link_get(org_id, user_id):
 
     conf_urls = []
     if app_server.inline_certs:
-        for server in servers:
+        for server in org.iter_servers():
             conf_id = uuid.uuid4().hex
 
             cache_db.expire(_get_conf_key(conf_id), KEY_LINK_TIMEOUT)

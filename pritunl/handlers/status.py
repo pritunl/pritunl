@@ -12,7 +12,7 @@ def status_get():
     servers_online_count = 0
     clients_count = 0
 
-    for server in Server.get_servers():
+    for server in Server.iter_servers():
         servers_count += 1
         if server.status:
             servers_online_count += 1
