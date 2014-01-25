@@ -196,7 +196,7 @@ class AppServer(Config):
         if cur_version and cur_version < self._get_version_int('0.10.4'):
             logger.info('Upgrading data to v0.10.4...')
             from organization import Organization
-            for org in Organization.get_orgs():
+            for org in Organization.iter_orgs():
                 for user in org.iter_users():
                     user._upgrade_0_10_4()
 
@@ -214,7 +214,7 @@ class AppServer(Config):
     def _fill_cache(self):
         logger.debug('Filling cache...')
         from organization import Organization
-        for org in Organization.get_orgs():
+        for org in Organization.iter_orgs():
             org._cache_users()
 
     def _hash_password(self, password):
@@ -287,7 +287,7 @@ class AppServer(Config):
         if self.auto_start_servers:
             from pritunl.server import Server
             for server in Server.get_servers():
-                if server.get_orgs():
+                if server.org_count:
                     try:
                         server.start()
                     except:

@@ -37,7 +37,7 @@ class Organization(Config):
         if id is None:
             self._initialize()
 
-        self.ca_cert = User(self, id=CA_CERT_ID)
+        self.ca_cert = User.get_user(self, id=CA_CERT_ID)
 
     def __getattr__(self, name):
         if name == 'otp_auth':
@@ -60,6 +60,7 @@ class Organization(Config):
         self.ca_cert = User(self, type=CERT_CA)
         self.commit()
         cache_db.set_add('orgs', self.id)
+        self.sort_orgs_cache()
         LogEntry(message='Created new organization "%s".' % self.name)
         Event(type=ORGS_UPDATED)
 
@@ -82,28 +83,23 @@ class Organization(Config):
 
     def clear_cache(self):
         cache_db.set_remove('orgs', self.id)
+        cache_db.list_remove(self.get_cache_key('orgs_sorted'), self.id)
+        cache_db.decrement(self.get_cache_key('org_count'))
         cache_db.remove(self.get_cache_key('users_cached'))
         cache_db.remove(self.get_cache_key('users'))
         Config.clear_cache(self)
 
     def get_user(self, id):
-        user = User(self, id=id)
-        try:
-            user.load()
-        except IOError:
-            logger.exception('Failed to load user conf. %r' % {
-                    'org_id': self.id,
-                    'user_id': id,
-                })
-            return
-        return user
+        return User.get_user(self, id=id)
 
     def sort_users_cache(self):
         user_count = 0
         users_dict = {}
         users_sort = []
         for user_id in cache_db.set_elements(self.get_cache_key('users')):
-            user = User(self, id=user_id)
+            user = User.get_user(self, id=user_id)
+            if not user:
+                continue
             name_id = '%s_%s' % (user.name, user_id)
             if user.type == CERT_CLIENT:
                 user_count += 1
@@ -143,16 +139,8 @@ class Organization(Config):
         for user_id in cache_db.list_elements(self.get_cache_key(
                 'users_sorted')):
             user = User.get_user(self, id=user_id)
-            try:
-                user.load()
-            except IOError:
-                logger.exception('Failed to load user conf, ' +
-                    'ignoring user. %r' % {
-                        'org_id': self.id,
-                        'user_id': user_id,
-                    })
-                continue
-            yield user
+            if user:
+                yield user
 
     def get_server(self, server_id):
         from server import Server
@@ -197,6 +185,7 @@ class Organization(Config):
     def rename(self, name):
         self.name = name
         self.commit()
+        self.sort_orgs_cache()
         Event(type=ORGS_UPDATED)
 
     def remove(self):
@@ -212,8 +201,8 @@ class Organization(Config):
         Event(type=ORGS_UPDATED)
         self.clear_cache()
 
-    @staticmethod
-    def get_org(id):
+    @classmethod
+    def get_org(cls, id):
         org = Organization(id=id)
         try:
             org.load()
@@ -224,19 +213,49 @@ class Organization(Config):
             return
         return org
 
-    @staticmethod
-    def get_orgs():
+    @classmethod
+    def sort_orgs_cache(cls):
+        org_count = 0
+        orgs_dict = {}
+        orgs_sort = []
+        for org_id in cache_db.set_elements('orgs'):
+            org = Organization.get_org(id=org_id)
+            if not org:
+                continue
+            name_id = '%s_%s' % (org.name, org_id)
+            org_count += 1
+            orgs_dict[name_id] = org_id
+            orgs_sort.append(name_id)
+        cache_db.set('org_count', str(org_count))
+        cache_db.remove('orgs_sorted_temp')
+        for name_id in sorted(orgs_sort):
+            cache_db.list_rpush('orgs_sorted_temp', orgs_dict[name_id])
+        cache_db.rename('orgs_sorted_temp', 'orgs_sorted')
+
+    @classmethod
+    def _cache_orgs(cls):
         if cache_db.get('orgs_cached') != 't':
             cache_db.remove('orgs')
             path = os.path.join(app_server.data_path, ORGS_DIR)
             if os.path.isdir(path):
                 for org_id in os.listdir(path):
                     cache_db.set_add('orgs', org_id)
+            cls.sort_orgs_cache()
             cache_db.set('orgs_cached', 't')
 
-        orgs = []
-        for org_id in cache_db.set_elements('orgs'):
+    @classmethod
+    def get_org_count(cls):
+        try:
+            org_count = int(cache_db.get('org_count'))
+        except TypeError:
+            self._cache_orgs()
+            org_count = int(cache_db.get('org_count'))
+        return org_count
+
+    @classmethod
+    def iter_orgs(cls):
+        cls._cache_orgs()
+        for org_id in cache_db.list_elements('orgs_sorted'):
             org = Organization.get_org(id=org_id)
             if org:
-                orgs.append(org)
-        return orgs
+                yield org

@@ -7,12 +7,11 @@ from pritunl import app_server, __version__
 @app_server.app.route('/status', methods=['GET'])
 @app_server.auth
 def status_get():
-    orgs = Organization.get_orgs()
-    orgs_count = len(orgs)
-
+    orgs_count = 0
     servers_count = 0
     servers_online_count = 0
     clients_count = 0
+
     for server in Server.get_servers():
         servers_count += 1
         if server.status:
@@ -20,7 +19,8 @@ def status_get():
         clients_count += len(server.clients)
 
     user_count = 0
-    for org in orgs:
+    for org in Organization.iter_orgs():
+        orgs_count += 1
         user_count += org.user_count
 
     if not app_server.public_ip:

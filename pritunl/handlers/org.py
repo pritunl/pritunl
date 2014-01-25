@@ -8,16 +8,9 @@ import flask
 @app_server.auth
 def org_get():
     orgs = []
-    orgs_dict = {}
-    orgs_sort = []
 
-    for org in Organization.get_orgs():
-        name_id = '%s_%s' % (org.name, org.id)
-        orgs_sort.append(name_id)
-        orgs_dict[name_id] = org.dict()
-
-    for name_id in sorted(orgs_sort):
-        orgs.append(orgs_dict[name_id])
+    for org in Organization.iter_orgs():
+        orgs.append(org.dict())
 
     return utils.jsonify(orgs)
 

@@ -176,13 +176,13 @@ class Server(Config):
         Event(type=SERVERS_UPDATED)
 
     def _create_primary_user(self):
-        if not self.get_orgs():
+        if not self.org_count:
             raise ValueError('Primary user cannot be created without ' + \
                 'any organizations')
         logger.debug('Creating primary user. %r' % {
             'server_id': self.id,
         })
-        org = self.get_orgs()[0]
+        org = self.iter_orgs().next()
         self.primary_organization = org.id
         user = org.new_user(CERT_SERVER, SERVER_USER_PREFIX + self.id)
         self.primary_user = user.id
@@ -253,22 +253,20 @@ class Server(Config):
         Event(type=SERVERS_UPDATED)
         Event(type=SERVER_ORGS_UPDATED, resource_id=self.id)
 
-    def get_orgs(self):
-        orgs = []
+    def iter_orgs(self):
+        orgs_dict = {}
+        orgs_sort = []
+
         for org_id in self.organizations:
             org = Organization.get_org(id=org_id)
-            try:
-                org.load()
-            except IOError:
-                logger.exception('Removing non existent organization, ' + \
-                    'from server. %r' % {
-                        'server_id': self.id,
-                        'org_id': org_id,
-                    })
-                self.remove_org(org_id)
+            if not org:
                 continue
-            orgs.append(org)
-        return orgs
+            name_id = '%s_%s' % (org.name, org.id)
+            orgs_dict[name_id] = org
+            orgs_sort.append(name_id)
+
+        for name_id in sorted(orgs_sort):
+            yield orgs_dict[name_id]
 
     def get_org(self, org_id):
         for org_id in self.organizations:
@@ -285,14 +283,16 @@ class Server(Config):
             return org
 
     def _get_user_count(self):
-        server_orgs = self.get_orgs()
         users_count = 0
-        for org in server_orgs:
+        for org in self.iter_orgs():
             users_count += org.user_count
         return users_count
 
     def _get_org_count(self):
-        return len(self.get_orgs())
+        org_count = 0
+        for org in self.iter_orgs():
+            org_count += 1
+        return org_count
 
     def _generate_dh_param(self):
         logger.debug('Generating server dh params. %r' % {
@@ -320,7 +320,7 @@ class Server(Config):
             'server_id': self.id,
         })
         with open(self.ca_cert_path, 'w') as server_ca_cert:
-            for org in self.get_orgs():
+            for org in self.iter_orgs():
                 ca_path = org.ca_cert.cert_path
                 with open(ca_path, 'r') as org_ca_cert:
                     server_ca_cert.write(org_ca_cert.read())
@@ -354,7 +354,7 @@ class Server(Config):
             ))
 
     def _generate_ovpn_conf(self, inline=False):
-        if not self.get_orgs():
+        if not self.org_count:
             raise ValueError('Ovpn conf cannot be generated without ' + \
                 'any organizations')
 
@@ -569,7 +569,7 @@ class Server(Config):
                 client_count = len(self.update_clients())
                 if client_count != cur_client_count:
                     cur_client_count = client_count
-                    for org in self.get_orgs():
+                    for org in self.iter_orgs():
                         Event(type=USERS_UPDATED, resource_id=org.id)
                     Event(type=SERVERS_UPDATED)
             else:
@@ -620,7 +620,7 @@ class Server(Config):
     def start(self, silent=False):
         if self.status:
             return
-        if not self.get_orgs():
+        if not self.org_count:
             raise ValueError('Server cannot be started without ' + \
                 'any organizations')
         logger.debug('Starting server. %r' % {

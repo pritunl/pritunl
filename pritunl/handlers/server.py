@@ -380,7 +380,7 @@ def server_put_post(server_id=None):
                 server.node_key = node_key
         server.commit()
 
-    for org in server.get_orgs():
+    for org in server.iter_orgs():
         Event(type=USERS_UPDATED, resource_id=org.id)
     return utils.jsonify(server.dict())
 
@@ -395,22 +395,13 @@ def server_delete(server_id):
 @app_server.auth
 def server_org_get(server_id):
     orgs = []
-    orgs_dict = {}
-    orgs_sort = []
     server = Server.get_server(id=server_id)
-
-    for org in server.get_orgs():
-        name_id = '%s_%s' % (org.name, org.id)
-        orgs_sort.append(name_id)
-        orgs_dict[name_id] = {
+    for org in server.iter_orgs():
+        orgs.append({
             'id': org.id,
             'server': server.id,
             'name': org.name,
-        }
-
-    for name_id in sorted(orgs_sort):
-        orgs.append(orgs_dict[name_id])
-
+        })
     return utils.jsonify(orgs)
 
 @app_server.app.route('/server/<server_id>/organization/<org_id>',

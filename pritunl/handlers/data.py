@@ -33,7 +33,7 @@ def export_get():
         tar_add(tar_file, os.path.join(data_path, SERVER_KEY_NAME))
         tar_add(tar_file, os.path.join(data_path, VERSION_NAME))
 
-        for org in Organization.get_orgs():
+        for org in Organization.iter_orgs():
             tar_add(tar_file, org.index_path)
             tar_add(tar_file, org.index_attr_path)
             tar_add(tar_file, org.serial_path)
