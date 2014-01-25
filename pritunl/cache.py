@@ -5,6 +5,7 @@ import collections
 import threading
 import uuid
 import copy
+import itertools
 
 logger = logging.getLogger(APP_NAME)
 
@@ -15,9 +16,13 @@ class Cache:
         self._channels = collections.defaultdict(
             lambda: {'subs': set(), 'msgs': collections.deque(maxlen=10)})
 
-    def _validate(self, value):
+    def _validate(self, key, value=None, field=None):
+        if key is not None and not isinstance(key, basestring):
+            raise TypeError('Key must be string')
         if value is not None and not isinstance(value, basestring):
             raise TypeError('Value must be string')
+        if field is not None and not isinstance(field, basestring):
+            raise TypeError('Field must be string')
 
     def _check_ttl(self, key):
         if key not in self._data:
@@ -29,56 +34,66 @@ class Cache:
         return False
 
     def get(self, key):
+        self._validate(key)
         if self._check_ttl(key) is False:
             return self._data[key]['val']
 
     def set(self, key, value):
-        self._validate(value)
+        self._validate(key, value)
         self._data[key]['val'] = value
 
     def increment(self, key):
+        self._validate(key)
         try:
             self._data[key]['val'] = str(int(self.get(key)) + 1)
         except (TypeError, ValueError):
             self._data[key]['val'] = '1'
 
     def decrement(self, key):
+        self._validate(key)
         try:
             self._data[key]['val'] = str(int(self.get(key)) - 1)
         except (TypeError, ValueError):
             self._data[key]['val'] = '0'
 
     def remove(self, key):
+        self._validate(key)
         self._data.pop(key, None)
 
     def rename(self, key, new_key):
+        self._validate(key)
+        self._validate(new_key)
         if self._check_ttl(key) is False:
             self._data[new_key]['val'] = self._data[key]['val']
         self.remove(key)
 
     def exists(self, key):
+        self._validate(key)
         if self._check_ttl(key) is False:
             return True
         return False
 
     def expire(self, key, ttl):
+        self._validate(key)
         timeout = int(time.time()) + ttl
         self._data[key]['ttl'] = timeout
 
     def set_add(self, key, element):
-        self._validate(element)
+        self._validate(key, element)
         try:
             self._data[key]['val'].add(element)
         except AttributeError:
             self._data[key]['val'] = {element}
 
     def set_remove(self, key, element):
+        self._validate(key, element)
         try:
             self._data[key]['val'].remove(element)
         except (KeyError, AttributeError):
             pass
 
     def set_elements(self, key):
+        self._validate(key)
         if self._check_ttl(key) is False:
             try:
                 return self._data[key]['val'].copy()
@@ -87,20 +102,21 @@ class Cache:
         return set()
 
     def list_lpush(self, key, value):
-        self._validate(value)
+        self._validate(key, value)
         try:
             self._data[key]['val'].appendleft(value)
         except AttributeError:
             self._data[key]['val'] = collections.deque([value])
 
     def list_rpush(self, key, value):
-        self._validate(value)
+        self._validate(key, value)
         try:
             self._data[key]['val'].append(value)
         except AttributeError:
             self._data[key]['val'] = collections.deque([value])
 
     def list_lpop(self, key):
+        self._validate(key)
         if self._check_ttl(key) is False:
             try:
                 return self._data[key]['val'].popleft()
@@ -108,6 +124,7 @@ class Cache:
                 pass
 
     def list_rpop(self, key):
+        self._validate(key)
         if self._check_ttl(key) is False:
             try:
                 return self._data[key]['val'].pop()
@@ -115,6 +132,7 @@ class Cache:
                 pass
 
     def list_index(self, key, index):
+        self._validate(key)
         if self._check_ttl(key) is False:
             try:
                 return self._data[key]['val'][index]
@@ -122,6 +140,7 @@ class Cache:
                 pass
 
     def list_elements(self, key):
+        self._validate(key)
         if self._check_ttl(key) is False:
             try:
                 return list(self._data[key]['val'])
@@ -129,7 +148,27 @@ class Cache:
                 pass
         return []
 
+    def list_iter(self, key):
+        self._validate(key)
+        if self._check_ttl(key) is False:
+            try:
+                for value in copy.copy(self._data[key]['val']):
+                    yield value
+            except TypeError:
+                pass
+
+    def list_iter_range(self, key, start, stop=None):
+        self._validate(key)
+        if self._check_ttl(key) is False:
+            try:
+                for value in itertools.islice(
+                        copy.copy(self._data[key]['val']), start, stop):
+                    yield value
+            except TypeError:
+                pass
+
     def list_remove(self, key, value, count=0):
+        self._validate(key, value)
         def _remove():
             try:
                 self._data[key]['val'].remove(value)
@@ -146,6 +185,7 @@ class Cache:
                     break
 
     def list_length(self, key):
+        self._validate(key)
         if self._check_ttl(key) is False:
             try:
                 return len(self._data[key]['val'])
@@ -154,6 +194,7 @@ class Cache:
         return 0
 
     def dict_get(self, key, field):
+        self._validate(key, None, field)
         if self._check_ttl(key) is False:
             try:
                 return self._data[key]['val'][field]
@@ -161,19 +202,21 @@ class Cache:
                 pass
 
     def dict_set(self, key, field, value):
-        self._validate(value)
+        self._validate(key, value, field)
         try:
             self._data[key]['val'][field] = value
         except TypeError:
             self._data[key]['val'] = {field: value}
 
     def dict_remove(self, key, field):
+        self._validate(key, None, field)
         try:
             self._data[key]['val'].pop(field, None)
         except AttributeError:
             pass
 
     def dict_get_keys(self, key):
+        self._validate(key)
         if self._check_ttl(key) is False:
             try:
                 return set(self._data[key]['val'].keys())
@@ -182,6 +225,7 @@ class Cache:
         return set()
 
     def dict_get_all(self, key):
+        self._validate(key)
         if self._check_ttl(key) is False:
             try:
                 return self._data[key]['val'].copy()
@@ -190,6 +234,7 @@ class Cache:
         return {}
 
     def subscribe(self, channel, timeout=None):
+        self._validate(channel)
         event = threading.Event()
         self._channels[channel]['subs'].add(event)
         try:
@@ -213,6 +258,7 @@ class Cache:
             cursor = messages[-1][0]
 
     def publish(self, channel, message):
+        self._validate(channel, message)
         self._channels[channel]['msgs'].append(
             (uuid.uuid4().hex, message))
         for subscriber in self._channels[channel]['subs'].copy():
