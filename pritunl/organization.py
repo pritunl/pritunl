@@ -85,8 +85,8 @@ class Organization(Config):
 
     def clear_cache(self):
         cache_db.set_remove('orgs', self.id)
-        cache_db.list_remove(self.get_cache_key('orgs_sorted'), self.id)
-        cache_db.decrement(self.get_cache_key('org_count'))
+        cache_db.list_remove('orgs_sorted', self.id)
+        cache_db.decrement('org_count')
         cache_db.remove(self.get_cache_key('users_cached'))
         cache_db.remove(self.get_cache_key('users'))
         Config.clear_cache(self)
@@ -228,6 +228,7 @@ class Organization(Config):
         Event(type=ORGS_UPDATED)
 
     def remove(self):
+        self.clear_cache()
         name = self.name
 
         for server in self.iter_servers():
@@ -238,7 +239,6 @@ class Organization(Config):
         utils.rmtree(self.path)
         LogEntry(message='Deleted organization "%s".' % name)
         Event(type=ORGS_UPDATED)
-        self.clear_cache()
 
     @classmethod
     def get_org(cls, id):
