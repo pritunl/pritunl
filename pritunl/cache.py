@@ -39,6 +39,11 @@ class Cache:
     def remove(self, key):
         self._data.pop(key, None)
 
+    def rename(self, key, new_key):
+        if self._check_ttl(key) is False:
+            self._data[new_key]['val'] = self._data[key]['val']
+        self.remove(key)
+
     def exists(self, key):
         if self._check_ttl(key) is False:
             return True
