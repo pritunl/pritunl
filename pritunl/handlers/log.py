@@ -8,7 +8,7 @@ from pritunl import app_server
 def log_get():
     log_entries = []
 
-    for log_entry in LogEntry.get_log_entries():
+    for log_entry in LogEntry.iter_log_entries():
         log_entries.append(log_entry.dict())
 
     return utils.jsonify(log_entries)
