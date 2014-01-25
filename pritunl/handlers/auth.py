@@ -9,7 +9,6 @@ import flask
 def auth_post():
     username = flask.request.json['username'][:512]
     password = flask.request.json['password'][:512]
-    time.sleep(RATE_LIMIT_SLEEP)
 
     if username != AUTH_USER_NAME or not app_server.check_password(password):
         time.sleep(RATE_LIMIT_SLEEP)
@@ -48,7 +47,6 @@ def auth_delete():
 def auth_token_post():
     username = flask.request.json['username'][:512]
     password = flask.request.json['password'][:512]
-    time.sleep(RATE_LIMIT_SLEEP)
 
     if username != AUTH_USER_NAME or not app_server.check_password(password):
         time.sleep(RATE_LIMIT_SLEEP)

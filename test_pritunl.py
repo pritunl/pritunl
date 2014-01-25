@@ -52,20 +52,12 @@ RUN_ONLY = []
 
 def _log_request(method, endpoint, start_time):
     response_time = int((time.time() - start_time) * 1000)
-    if endpoint.startswith('/auth'):
-        if response_time > 1400:
-            color = '\033[92m'
-        elif response_time > 1200:
-            color = '\033[93m'
-        else:
-            color = '\033[92m'
+    if response_time > 400:
+        color = '\033[91m'
+    elif response_time > 200:
+        color = '\033[93m'
     else:
-        if response_time > 400:
-            color = '\033[91m'
-        elif response_time > 200:
-            color = '\033[93m'
-        else:
-            color = '\033[92m'
+        color = '\033[92m'
     print '%s%sms:%s:%s\033[0m' % (color, response_time, method, endpoint)
 
 _request = requests.api.request
