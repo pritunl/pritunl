@@ -11,6 +11,7 @@ import math
 def user_get(org_id, page=None):
     page = flask.request.args.get('page', None)
     page = int(page) if page else page
+    prefix = flask.request.args.get('prefix', None)
     org = Organization.get_org(id=org_id)
     otp_auth = False
     clients = {}
@@ -26,7 +27,7 @@ def user_get(org_id, page=None):
             clients[client_id][server.id] = client
 
     users = []
-    for user in org.iter_users(page):
+    for user in org.iter_users(page, prefix):
         is_client = user.id in clients
         user_dict = user.dict()
         user_dict['status'] = True if is_client else False
@@ -38,6 +39,11 @@ def user_get(org_id, page=None):
         return utils.jsonify({
             'page': page,
             'page_total': org.page_total,
+            'users': users,
+        })
+    elif prefix is not None:
+        return utils.jsonify({
+            'prefix': prefix,
             'users': users,
         })
     else:
