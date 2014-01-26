@@ -100,7 +100,7 @@ class Organization(Config):
         users_sort = []
         for user_id in cache_db.set_elements(self.get_cache_key('users')):
             user = User.get_user(self, id=user_id)
-            if not user:
+            if not user or user.type == CERT_CLIENT:
                 continue
             name_id = '%s_%s' % (user.name, user_id)
             if user.type == CERT_CLIENT:
