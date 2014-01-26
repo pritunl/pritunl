@@ -9,14 +9,20 @@ class CacheTrie(object):
         self.prefix = prefix
         self.key = key
 
+    def get_cache_key(self, suffix=None):
+        key = '%s_%s' % (self.prefix, self.key)
+        if suffix is not None:
+            key += '_' + suffix
+        return key
+
     def get_nodes(self):
-        return cache_db.set_elements('%s_%s' % (self.prefix, self.key))
+        return cache_db.set_elements(self.get_cache_key())
 
     def add_value(self, value):
-        cache_db.set_add('%s_%s_values' % (self.prefix, self.key), value)
+        cache_db.set_add(self.get_cache_key('values'), value)
 
     def get_values(self):
-        return cache_db.set_elements('%s_%s_values' % (self.prefix, self.key))
+        return cache_db.set_elements(self.get_cache_key('values'))
 
     def add_key(self, key, value):
         prefix = self.prefix + '_'
@@ -31,27 +37,18 @@ class CacheTrie(object):
     def _get_iter(self, item):
         return self[item].chain()
 
-    def _yield_values(self):
-        yield self.get_values()
-
-    def chain(self):
-        chains = map(lambda key: CacheTrie(self.prefix, key).chain(),
-            self.get_nodes())
-        chains.append(self._yield_values())
-        return itertools.chain(*chains)
+    def chain(self, values):
+        prefix = self.prefix
+        for node_key in self.get_nodes():
+            CacheTrie(prefix, node_key).chain(values)
+        values.update(self.get_values())
 
     def get_prefix(self, prefix):
         values = set()
-        prefix_node = CacheTrie(self.prefix, prefix)
-        for node_values in prefix_node.chain():
-            values.update(node_values)
+        CacheTrie(self.prefix, prefix).chain(values)
         return values
 
     def iter_prefix(self, prefix):
         values = set()
-        prefix_node = CacheTrie(self.prefix, prefix)
-        for node_values in prefix_node.chain():
-            for value in node_values:
-                if value not in values:
-                    yield value
-                    values.add(value)
+        for value in CacheTrie(self.prefix, prefix).chain(set()):
+            yield value
