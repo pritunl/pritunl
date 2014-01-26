@@ -41,13 +41,11 @@ class CacheTrie(object):
         for node_key in self.get_nodes():
             CacheTrie(prefix, node_key).chain(values)
         values.update(self.get_values())
-
-    def get_prefix(self, prefix):
-        values = set()
-        CacheTrie(self.prefix, prefix).chain(values)
         return values
 
+    def get_prefix(self, prefix):
+        return CacheTrie(self.prefix, prefix).chain(set())
+
     def iter_prefix(self, prefix):
-        values = set()
         for value in CacheTrie(self.prefix, prefix).chain(set()):
             yield value
