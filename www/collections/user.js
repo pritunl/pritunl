@@ -21,6 +21,8 @@ define([
         this.pageTotal = response.page_total;
       }
       else {
+        // Convert miliseconds to seconds
+        this.setSearchTime(response.search_time / 1000);
         this.setSearch(response.search);
       }
       return response.users;
@@ -46,6 +48,12 @@ define([
     },
     clearSearch: function() {
       this.search = null;
+    },
+    setSearchTime: function(time) {
+      this.searchTime = time;
+    },
+    getSearchTime: function() {
+      return this.searchTime.toFixed(4);
     },
     isLastPage: function() {
       return this.page === this.pageTotal;

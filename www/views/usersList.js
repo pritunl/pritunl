@@ -48,17 +48,27 @@ define([
       else {
         this.$('.no-users').slideUp(250);
       }
-      if (this.collection.getSearch() || !this.collection.getPage()) {
+      if (this.collection.getSearch()) {
         this.$('.prev-page').hide();
-      }
-      else {
-        this.$('.prev-page').show();
-      }
-      if (this.collection.getSearch() || this.collection.isLastPage()) {
         this.$('.next-page').hide();
+        this.$('.search-time').text('search processed in ' +
+          this.collection.getSearchTime() + ' seconds')
+        this.$('.search-time').show();
       }
       else {
-        this.$('.next-page').show();
+        this.$('.search-time').hide();
+        if (!this.collection.getPage()) {
+          this.$('.prev-page').hide();
+        }
+        else {
+          this.$('.prev-page').show();
+        }
+        if (this.collection.isLastPage()) {
+          this.$('.next-page').hide();
+        }
+        else {
+          this.$('.next-page').show();
+        }
       }
     },
     getOptions: function() {
