@@ -16,7 +16,11 @@ define([
     events: {
       'click .org-title': 'onRename',
       'click .org-del': 'onDelete',
-      'click .toggle-hidden': 'onToggleHidden'
+      'click .toggle-hidden': 'onToggleHidden',
+      'keydown .org-search': 'onSearch',
+      'paste .org-search': 'onSearch',
+      'input .org-search': 'onSearch',
+      'propertychange .org-search': 'onSearch'
     },
     initialize: function() {
       this.usersListView = new UsersListView({
@@ -27,6 +31,7 @@ define([
     },
     update: function() {
       this.$('.org-title').text(this.model.get('name'));
+      this.$('.user-count').text(this.model.get('user_count') + ' users');
     },
     render: function() {
       this.$el.html(this.template(this.model.toJSON()));
@@ -84,6 +89,20 @@ define([
         this.$el.addClass('show-hidden');
       }
       this.usersListView.update();
+    },
+    onSearch: function(evt) {
+      var term = $(evt.target).val();
+      this.curSearchTerm = term;
+
+      setTimeout(function() {
+        if (term !== this.curSearchTerm) {
+          return;
+        }
+        if (this.curSearchTerm === '') {
+          term = null;
+        }
+        this.usersListView.search(term);
+      }.bind(this), 100);
     }
   });
 

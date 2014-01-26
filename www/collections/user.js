@@ -16,8 +16,13 @@ define([
       return '/user/' + this.org;
     },
     parse: function(response) {
-      this.setPage(response.page);
-      this.pageTotal = response.page_total;
+      if (response.page !== undefined) {
+        this.setPage(response.page);
+        this.pageTotal = response.page_total;
+      }
+      else {
+        this.setSearch(response.search);
+      }
       return response.users;
     },
     setPage: function(page) {
@@ -32,6 +37,15 @@ define([
     },
     prevPage: function() {
       this.page -= 1;
+    },
+    setSearch: function(term) {
+      this.search = term;
+    },
+    getSearch: function() {
+      return this.search;
+    },
+    clearSearch: function() {
+      this.search = null;
     },
     isLastPage: function() {
       return this.page === this.pageTotal;

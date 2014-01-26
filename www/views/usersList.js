@@ -62,9 +62,16 @@ define([
       }
     },
     getOptions: function() {
-      return {
-        'page': this.collection.getPage()
-      };
+      if (this.collection.getSearch()) {
+        return {
+          'search': this.collection.getSearch()
+        };
+      }
+      else {
+        return {
+          'page': this.collection.getPage()
+        };
+      }
     },
     prevPage: function() {
       this.collection.prevPage();
@@ -72,6 +79,10 @@ define([
     },
     nextPage: function() {
       this.collection.nextPage();
+      this.update();
+    },
+    search: function(term) {
+      this.collection.setSearch(term);
       this.update();
     }
   });
