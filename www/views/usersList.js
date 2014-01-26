@@ -48,13 +48,13 @@ define([
       else {
         this.$('.no-users').slideUp(250);
       }
-      if (!this.collection.getPage()) {
+      if (this.collection.getSearch() || !this.collection.getPage()) {
         this.$('.prev-page').hide();
       }
       else {
         this.$('.prev-page').show();
       }
-      if (this.collection.isLastPage()) {
+      if (this.collection.getSearch() || this.collection.isLastPage()) {
         this.$('.next-page').hide();
       }
       else {
