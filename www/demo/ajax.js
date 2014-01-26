@@ -128,7 +128,6 @@ define([
   routes['GET=/log'] = logGet;
 
   var organizationGet = function(request) {
-    var i;
     var id;
     var userId;
     var orgs = [];
