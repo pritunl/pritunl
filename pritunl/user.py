@@ -102,6 +102,7 @@ class User(Config):
         self.org.sort_users_cache()
         if self.type == CERT_CLIENT:
             LogEntry(message='Created new user "%s".' % self.name)
+        Event(type=ORGS_UPDATED)
         Event(type=USERS_UPDATED, resource_id=self.org.id)
         Event(type=SERVERS_UPDATED)
 
@@ -414,6 +415,7 @@ class User(Config):
                 'error': error,
             })
 
+        Event(type=ORGS_UPDATED)
         Event(type=USERS_UPDATED, resource_id=self.org.id)
         if type == CERT_CLIENT:
             LogEntry(message='Deleted user "%s".' % name)
