@@ -4,6 +4,7 @@ import pritunl.utils as utils
 from pritunl import app_server
 import flask
 import math
+import time
 
 @app_server.app.route('/user/<org_id>', methods=['GET'])
 @app_server.app.route('/user/<org_id>/<int:page>', methods=['GET'])
@@ -44,6 +45,7 @@ def user_get(org_id, page=None):
     elif search is not None:
         return utils.jsonify({
             'search': search,
+            'search_time':  int((time.time() - flask.g.start) * 1000),
             'users': users,
         })
     else:
