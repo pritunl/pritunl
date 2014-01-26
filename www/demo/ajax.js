@@ -128,11 +128,24 @@ define([
   routes['GET=/log'] = logGet;
 
   var organizationGet = function(request) {
+    var i;
     var id;
+    var userId;
     var orgs = [];
+    var userCount;
 
     for (id in demoData.orgs) {
-      orgs.push(demoData.orgs[id]);
+      userCount = 0;
+
+      for (userId in demoData.users[id]) {
+        if (demoData.users[id][userId].type === 'client') {
+          userCount += 1;
+        }
+      }
+
+      orgs.push(_.extend({
+        user_count: userCount
+      }, demoData.orgs[id]));
     }
 
     request.response(orgs);
