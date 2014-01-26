@@ -1,6 +1,5 @@
 from constants import *
 from cache import cache_db
-import itertools
 
 class CacheTrie(object):
     __slots__ = ('prefix', 'key')
