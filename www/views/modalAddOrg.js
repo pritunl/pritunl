@@ -31,7 +31,7 @@ define([
         error: function() {
           this.clearLoading();
           this.setAlert('danger',
-            'Failed to add user, server error occurred.');
+            'Failed to add organization, server error occurred.');
         }.bind(this)
       });
     }
