@@ -11,8 +11,10 @@ import os
 import subprocess
 import utils
 import logging
+import threading
 
 logger = logging.getLogger(APP_NAME)
+_openssl_locks = {}
 
 class Organization(Config):
     str_options = {'name'}
@@ -34,6 +36,9 @@ class Organization(Config):
         self.serial_path = os.path.join(self.path, SERIAL_NAME)
         self.crl_path = os.path.join(self.path, CRL_NAME)
         self.set_path(os.path.join(self.path, 'ca.conf'))
+
+        if self.id not in _openssl_locks:
+            _openssl_locks[self.id] = threading.Lock()
 
         if id is None:
             self._initialize()
@@ -219,6 +224,7 @@ class Organization(Config):
         return User(self, name=name, type=type)
 
     def generate_crl(self):
+        _openssl_locks[self.id].acquire()
         try:
             conf_path = os.path.join(self.path, TEMP_DIR, 'crl.conf')
             conf_data = CERT_CONF % (self.id, self.path,
@@ -238,6 +244,8 @@ class Organization(Config):
                 'org_id': self.id,
             })
             raise
+        finally:
+            _openssl_locks[self.id].release()
 
     def rename(self, name):
         self.name = name

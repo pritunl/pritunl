@@ -219,9 +219,9 @@ class User(Config):
             })
             return
 
+        self._create_ssl_conf()
         _openssl_locks[self.org.id].acquire()
         try:
-            self._create_ssl_conf()
             args = ['openssl', 'ca', '-batch',
                 '-config', self.ssl_conf_path,
                 '-revoke', self.cert_path,
@@ -234,7 +234,6 @@ class User(Config):
                 err_output = proc.communicate()[1]
                 if 'ERROR:Already revoked' not in err_output:
                     raise subprocess.CalledProcessError(returncode, args)
-            self._delete_ssl_conf()
         except subprocess.CalledProcessError:
             logger.exception('Failed to revoke user cert. %r' % {
                 'org_id': self.org.id,
@@ -243,6 +242,7 @@ class User(Config):
             raise
         finally:
             _openssl_locks[self.org.id].release()
+        self._delete_ssl_conf()
         self.org.generate_crl()
 
     def _build_key_archive(self):
