@@ -1,6 +1,7 @@
 from constants import *
 from pritunl import app_server
 from cache import cache_db
+from cache_trie import CacheTrie
 from config import Config
 from event import Event
 from log_entry import LogEntry
@@ -98,11 +99,14 @@ class Organization(Config):
         user_count = 0
         users_dict = {}
         users_sort = []
+        users_trie = CacheTrie(self.get_cache_key('users_trie'))
+
         for user_id in cache_db.set_elements(self.get_cache_key('users')):
             user = User.get_user(self, id=user_id)
-            if not user or user.type == CERT_CA:
+            if not user:
                 continue
             name_id = '%s_%s' % (user.name, user_id)
+            users_trie.add_key(user.name, user_id)
             if user.type == CERT_CLIENT:
                 user_count += 1
             users_dict[name_id] = (user_id, user.type)
@@ -155,7 +159,7 @@ class Organization(Config):
             user_count = int(cache_db.get(self.get_cache_key('user_count')))
         return user_count
 
-    def iter_users(self, page=None):
+    def iter_users(self, page=None, prefix=None):
         self._cache_users()
         if page is not None:
             page_total = self.page_total
@@ -178,6 +182,20 @@ class Organization(Config):
                 user = User.get_user(self, id=user_id)
                 if user:
                     yield user
+        elif prefix is not None:
+            users_dict = {}
+            users_sort = []
+            users_trie = CacheTrie(self.get_cache_key('users_trie'))
+            for user_id in users_trie.iter_prefix(prefix):
+                user = User.get_user(self, id=user_id)
+                if not user:
+                    continue
+                name_id = '%s_%s' % (user.name, user_id)
+                users_dict[name_id] = user
+                users_sort.append(name_id)
+
+            for name_id in sorted(users_sort)[:USER_PAGE_COUNT]:
+                yield users_dict[name_id]
         else:
             for user_id in cache_db.list_iter(
                     self.get_cache_key('users_sorted')):
