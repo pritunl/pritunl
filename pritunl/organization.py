@@ -61,6 +61,7 @@ class Organization(Config):
         return {
             'id': self.id,
             'name': self.name,
+            'user_count': self.user_count,
         }
 
     def _initialize(self):
