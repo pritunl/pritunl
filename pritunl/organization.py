@@ -14,7 +14,6 @@ import logging
 import threading
 
 logger = logging.getLogger(APP_NAME)
-_openssl_locks = {}
 
 class Organization(Config):
     str_options = {'name'}
@@ -32,14 +31,7 @@ class Organization(Config):
             self.id = id
 
         self.path = os.path.join(app_server.data_path, ORGS_DIR, self.id)
-        self.index_path = os.path.join(self.path, INDEX_NAME)
-        self.index_attr_path = os.path.join(self.path, INDEX_NAME + '.attr')
-        self.serial_path = os.path.join(self.path, SERIAL_NAME)
-        self.crl_path = os.path.join(self.path, CRL_NAME)
         self.set_path(os.path.join(self.path, 'ca.conf'))
-
-        if self.id not in _openssl_locks:
-            _openssl_locks[self.id] = threading.Lock()
 
         if id is None:
             self._initialize()
@@ -78,18 +70,8 @@ class Organization(Config):
         os.makedirs(os.path.join(self.path, REQS_DIR))
         os.makedirs(os.path.join(self.path, KEYS_DIR), 0700)
         os.makedirs(os.path.join(self.path, CERTS_DIR))
-        os.makedirs(os.path.join(self.path, INDEXED_CERTS_DIR))
         os.makedirs(os.path.join(self.path, USERS_DIR))
         os.makedirs(os.path.join(self.path, TEMP_DIR))
-
-        with open(self.index_path, 'a'):
-            os.utime(self.index_path, None)
-
-        with open(self.index_attr_path, 'a'):
-            os.utime(self.index_attr_path, None)
-
-        with open(self.serial_path, 'w') as serial_file:
-            serial_file.write('01\n')
 
     def clear_cache(self):
         cache_db.set_remove('orgs', self.id)
@@ -241,30 +223,6 @@ class Organization(Config):
 
     def new_user(self, type, name=None):
         return User(self, name=name, type=type)
-
-    def generate_crl(self):
-        _openssl_locks[self.id].acquire()
-        try:
-            conf_path = os.path.join(self.path, TEMP_DIR, 'crl.conf')
-            conf_data = CERT_CONF % (self.id, self.path,
-                app_server.key_bits, CA_CERT_ID)
-            with open(conf_path, 'w') as conf_file:
-                conf_file.write(conf_data)
-            args = [
-                'openssl', 'ca', '-gencrl', '-batch',
-                '-config', conf_path,
-                '-out', self.crl_path
-            ]
-            subprocess.check_call(args, stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE)
-            os.remove(conf_path)
-        except subprocess.CalledProcessError:
-            logger.exception('Failed to generate server crl. %r' % {
-                'org_id': self.id,
-            })
-            raise
-        finally:
-            _openssl_locks[self.id].release()
 
     def rename(self, name):
         self.name = name
