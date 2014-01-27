@@ -247,7 +247,6 @@ class User(Config):
         finally:
             _openssl_locks[self.org.id].release()
         self._delete_ssl_conf()
-        self.org.generate_crl()
 
     def _build_key_archive(self):
         user_key_arcname = '%s_%s.key' % (self.org.name, self.name)
