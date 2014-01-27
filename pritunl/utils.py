@@ -19,7 +19,7 @@ def jsonify(data=None, status_code=None):
     return response
 
 def rmtree(path):
-    subprocess.check_call(['rm', '-r', path])
+    subprocess.check_call(['rm', '-rf', path])
 
 def check_output(*popenargs, **kwargs):
     # For python2.6 support
