@@ -168,7 +168,7 @@ class Organization(Config):
             user_count = int(cache_db.get(self.get_cache_key('user_count')))
         return user_count
 
-    def iter_users(self, page=None, prefix=None):
+    def iter_users(self, page=None, prefix=None, prefix_limit=None):
         self._cache_users()
         if page is not None:
             page_total = self.page_total
@@ -204,12 +204,17 @@ class Organization(Config):
                 users_sort.append(name_id)
 
             user_count = 0
+            search_more = False
             for name_id in sorted(users_sort):
                 yield users_dict[name_id]
-                if users_dict[name_id].type == CERT_CLIENT:
-                    user_count += 1
-                    if user_count >= 25:
-                        break
+                if prefix_limit:
+                    if users_dict[name_id].type == CERT_CLIENT:
+                        user_count += 1
+                        if user_count >= prefix_limit:
+                            search_more = True
+                            break
+            if prefix_limit and not search_more:
+                yield None
         else:
             for user_id in cache_db.list_iter(
                     self.get_cache_key('users_sorted')):

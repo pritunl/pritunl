@@ -17,7 +17,8 @@ define([
       'click .prev-page': 'prevPage',
       'click .next-page': 'nextPage',
       'click .link.first': 'firstPage',
-      'click .link.last': 'lastPage'
+      'click .link.last': 'lastPage',
+      'click .search-more': 'searchMore'
     },
     initialize: function(options) {
       this.collection = new UserCollection({
@@ -57,12 +58,19 @@ define([
         this.$('.search-time').text('search processed in ' +
           this.collection.getSearchTime() + ' seconds')
         this.$('.search-time').show();
+        if (this.collection.getSearchMore()) {
+          this.$('.search-more').show();
+        }
+        else {
+          this.$('.search-more').hide();
+        }
       }
       else {
         var curPage = this.collection.getPage();
         var pageTotal = this.collection.getPageTotal();
 
         this.$('.search-time').hide();
+        this.$('.search-more').hide();
         if (!this.collection.getPage()) {
           this.$('.pages').addClass('padded-left');
           this.$('.prev-page').hide();
@@ -120,9 +128,13 @@ define([
     },
     getOptions: function() {
       if (this.collection.getSearch()) {
-        return {
+        var options = {
           'search': this.collection.getSearch()
         };
+        if (this.collection.getSearchLimit()) {
+          options.limit = this.collection.getSearchLimit()
+        }
+        return options;
       }
       else {
         return {
@@ -147,7 +159,12 @@ define([
       this.update();
     },
     search: function(term) {
+      this.collection.setSearchLimit(null);
       this.collection.setSearch(term);
+      this.update();
+    },
+    searchMore: function() {
+      this.collection.setSearchLimit(this.collection.getSearchLimit() + 20);
       this.update();
     }
   });

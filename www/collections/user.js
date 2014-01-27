@@ -21,9 +21,11 @@ define([
         this.pageTotal = response.page_total;
       }
       else {
+        this.setSearch(response.search);
         // Convert miliseconds to seconds
         this.setSearchTime(response.search_time / 1000);
-        this.setSearch(response.search);
+        this.setSearchMore(response.search_more);
+        this.setSearchLimit(response.search_limit);
       }
       return response.users;
     },
@@ -57,6 +59,18 @@ define([
     },
     getSearchTime: function() {
       return this.searchTime.toFixed(4);
+    },
+    setSearchLimit: function(limit) {
+      this.searchLimit = limit;
+    },
+    getSearchLimit: function() {
+      return this.searchLimit;
+    },
+    setSearchMore: function(more) {
+      this.searchMore = more;
+    },
+    getSearchMore: function() {
+      return this.searchMore;
     },
     isLastPage: function() {
       return this.page === this.pageTotal;

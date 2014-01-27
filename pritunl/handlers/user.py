@@ -13,8 +13,10 @@ def user_get(org_id, page=None):
     page = flask.request.args.get('page', None)
     page = int(page) if page else page
     search = flask.request.args.get('search', None)
+    limit = int(flask.request.args.get('limit', USER_PAGE_COUNT))
     org = Organization.get_org(id=org_id)
     otp_auth = False
+    search_more = True
     clients = {}
 
     for server in org.iter_servers():
@@ -28,7 +30,10 @@ def user_get(org_id, page=None):
             clients[client_id][server.id] = client
 
     users = []
-    for user in org.iter_users(page, search):
+    for user in org.iter_users(page=page, prefix=search, prefix_limit=limit):
+        if user is None:
+            search_more = False
+            break
         is_client = user.id in clients
         user_dict = user.dict()
         user_dict['status'] = True if is_client else False
@@ -45,6 +50,8 @@ def user_get(org_id, page=None):
     elif search is not None:
         return utils.jsonify({
             'search': search,
+            'search_more': search_more,
+            'search_limit': limit,
             'search_time':  int((time.time() - flask.g.start) * 1000),
             'users': users,
         })
