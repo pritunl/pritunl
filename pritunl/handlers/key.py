@@ -23,14 +23,14 @@ def _get_key_archive(org_id, user_id):
     org = Organization.get_org(id=org_id)
     user = org.get_user(user_id)
     archive_temp_path = user.build_key_archive()
-
-    with open(archive_temp_path, 'r') as archive_file:
-        response = flask.Response(response=archive_file.read(),
-            mimetype='application/octet-stream')
-        response.headers.add('Content-Disposition',
-            'attachment; filename="%s.tar"' % user.name)
-
-    os.remove(archive_temp_path)
+    try:
+        with open(archive_temp_path, 'r') as archive_file:
+            response = flask.Response(response=archive_file.read(),
+                mimetype='application/octet-stream')
+            response.headers.add('Content-Disposition',
+                'attachment; filename="%s.tar"' % user.name)
+    finally:
+        user.clean_key_archive()
     return response
 
 @app_server.app.route('/key/<org_id>/<user_id>.tar', methods=['GET'])
