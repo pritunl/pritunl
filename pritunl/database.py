@@ -13,6 +13,7 @@ logger = logging.getLogger(APP_NAME)
 
 Session = sessionmaker()
 Base = declarative_base()
+db_lock = threading.Lock()
 
 def connect_database(sql_connection):
     from log_entry import LogEntry

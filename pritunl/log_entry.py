@@ -1,7 +1,7 @@
 from constants import *
 from event import Event
 from cache_object import CacheObject
-from database import Base, Session
+from database import Base, Session, db_lock
 from cache import cache_db
 import time
 import uuid
@@ -62,13 +62,17 @@ class LogEntry(CacheObject):
         }
 
     def initialize(self, log_entry_sql):
-        session = Session()
-        while cache_db.list_length(self.column_family) >= LOG_LIMIT:
-            log_entry_id = cache_db.list_index(self.column_family, -1)
-            LogEntry(id=log_entry_id).remove(session)
-        session.add(log_entry_sql)
-        cache_db.list_lpush(self.column_family, self.id)
-        session.commit()
+        db_lock.acquire()
+        try:
+            session = Session()
+            while cache_db.list_length(self.column_family) >= LOG_LIMIT:
+                log_entry_id = cache_db.list_index(self.column_family, -1)
+                LogEntry(id=log_entry_id).remove(session)
+            session.add(log_entry_sql)
+            cache_db.list_lpush(self.column_family, self.id)
+            session.commit()
+        finally:
+            db_lock.release()
         Event(type=LOG_UPDATED)
 
     def remove(self, session):
