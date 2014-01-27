@@ -403,7 +403,36 @@ header.blur {
   margin-top: 10px;
   margin-right: 2px;
   text-align: right;
-  color: #9c9c9c;
+  color: @light2-fg;
+}
+
+.users-list .pages {
+  margin-top: 16px;
+  text-align: center;
+  color: @light2-fg;
+}
+
+.users-list .pages.padded {
+  margin-left: 105px;
+}
+
+.users-list .pages .links {
+  display: inline-block;
+}
+
+.users-list .pages .link,
+.users-list .pages .link:hover {
+  padding: 0 4px;
+  cursor: pointer;
+  color: @light2-fg;
+}
+
+.users-list .pages .link.current,
+.users-list .pages .link.current:hover {
+  cursor: default;
+  color: @dark2-fg;
+  font-weight: bold;
+  text-decoration: none;
 }
 
 .users-list-container,

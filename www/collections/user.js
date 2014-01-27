@@ -40,6 +40,9 @@ define([
     prevPage: function() {
       this.page -= 1;
     },
+    getPageTotal: function() {
+      return this.pageTotal;
+    },
     setSearch: function(term) {
       this.search = term;
     },
