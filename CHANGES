@@ -9,6 +9,9 @@ Cache organizations and users to reduce response times
 Changes to event system
 Add support for node servers
 Organization openssl crl is no longer generated
+Add pages to user list
+Add search to user list
+Add support for node servers
 Server conf data will be automatically upgraded after first launch
 Log entries will be cleared after first launch for database upgrade
 
