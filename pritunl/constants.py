@@ -52,10 +52,11 @@ REQS_DIR = 'reqs'
 KEYS_DIR = 'keys'
 CERTS_DIR = 'certs'
 USERS_DIR = 'users'
-INDEXED_CERTS_DIR = 'indexed_certs'
 TEMP_DIR = 'temp'
 EMPTY_TEMP_DIR = 'empty_temp'
+OPENSSL_NAME = 'openssl.conf'
 INDEX_NAME = 'index'
+INDEX_ATTR_NAME = 'index.attr'
 SERIAL_NAME = 'serial'
 CRL_NAME = 'ca.crl'
 TLS_VERIFY_NAME = 'tls_verify.py'
@@ -78,15 +79,6 @@ CERT_CA = 'ca'
 CERT_SERVER = 'server'
 CERT_CLIENT = 'client'
 
-UNSPECIFIED = 'unspecified'
-KEY_COMPROMISE = 'keyCompromise'
-CA_COMPROMISE = 'CACompromise'
-AFFILIATION_CHANGED = 'affiliationChanged'
-SUPERSEDED = 'superseded'
-CESSATION_OF_OPERATION = 'cessationOfOperation'
-CERTIFICATE_HOLD = 'certificateHold'
-REMOVE_FROM_CRL = 'removeFromCRL'
-
 ORGS_UPDATED = 'organizations_updated'
 USERS_UPDATED = 'users_updated'
 LOG_UPDATED = 'log_updated'
@@ -96,6 +88,7 @@ SERVER_OUTPUT_UPDATED = 'server_output_updated'
 
 CERT_CONF = """[ default ]
 ca = %s
+root = %s
 dir = %s
 
 [ req ]
@@ -132,9 +125,9 @@ default_ca = root_ca
 [ root_ca ]
 database = $dir/index
 serial = $dir/serial
-new_certs_dir = $dir/indexed_certs
-certificate = $dir/certs/ca.crt
-private_key = $dir/keys/ca.key
+new_certs_dir = $dir
+certificate = $root/certs/ca.crt
+private_key = $root/keys/ca.key
 default_days = 3652
 default_crl_days = 365
 default_md = sha1

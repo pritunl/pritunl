@@ -19,7 +19,6 @@ import time
 import threading
 
 logger = logging.getLogger(APP_NAME)
-_openssl_locks = {}
 
 class User(Config):
     str_options = {'name', 'otp_secret', 'type'}
@@ -48,19 +47,20 @@ class User(Config):
 
         self.reqs_path = os.path.join(self.org.path, REQS_DIR,
             '%s.csr' % self.id)
-        self.ssl_conf_path = os.path.join(self.org.path, TEMP_DIR,
-            '%s.conf' % self.id)
         self.key_path = os.path.join(self.org.path, KEYS_DIR,
             '%s.key' % self.id)
         self.cert_path = os.path.join(self.org.path, CERTS_DIR,
             '%s.crt' % self.id)
-        self.key_archive_path = os.path.join(self.org.path,
-            TEMP_DIR, '%s.tar' % self.id)
+        self.temp_key_archive_path = os.path.join(self.org.path,
+            TEMP_DIR, '%s_%s.tar' % (self.id, uuid.uuid4().hex))
         self.set_path(os.path.join(self.org.path, USERS_DIR,
             '%s.conf' % self.id))
 
-        if self.org.id not in _openssl_locks:
-            _openssl_locks[self.org.id] = threading.Lock()
+        self.temp_path = os.path.join(self.org.path, TEMP_DIR, self.id)
+        self.ssl_conf_path = os.path.join(self.temp_path, OPENSSL_NAME)
+        self.index_path = os.path.join(self.temp_path, INDEX_NAME)
+        self.index_attr_path = os.path.join(self.temp_path, INDEX_ATTR_NAME)
+        self.serial_path = os.path.join(self.temp_path, SERIAL_NAME)
 
         if id is None:
             self._initialize()
@@ -92,12 +92,12 @@ class User(Config):
             self.commit()
 
     def _initialize(self):
-        self._create_ssl_conf()
+        self._setup_openssl()
         self._cert_request()
         self._generate_otp_secret()
         self.commit()
         self._cert_create()
-        self._delete_ssl_conf()
+        self._clean_openssl()
         if self.type != CERT_CA:
             cache_db.set_add(self.org.get_cache_key('users'), self.id)
             users_trie = CacheTrie(self.org.get_cache_key('users_trie'))
@@ -109,8 +109,32 @@ class User(Config):
         Event(type=USERS_UPDATED, resource_id=self.org.id)
         Event(type=SERVERS_UPDATED)
 
+    def _setup_openssl(self):
+        if not os.path.exists(self.temp_path):
+            os.makedirs(self.temp_path)
+
+        with open(self.index_path, 'a'):
+            os.utime(self.index_path, None)
+
+        with open(self.index_attr_path, 'a'):
+            os.utime(self.index_attr_path, None)
+
+        with open(self.serial_path, 'w') as serial_file:
+            serial_file.write('01\n')
+
+        with open(self.ssl_conf_path, 'w') as conf_file:
+            conf_file.write(CERT_CONF % (
+                self.org.id,
+                self.org.path,
+                self.temp_path,
+                app_server.key_bits,
+                self.id,
+            ))
+
+    def _clean_openssl(self):
+        utils.rmtree(self.temp_path)
+
     def _cert_request(self):
-        _openssl_locks[self.org.id].acquire()
         try:
             args = [
                 'openssl', 'req', '-new', '-batch',
@@ -127,12 +151,9 @@ class User(Config):
                 'user_id': self.id,
             })
             raise
-        finally:
-            _openssl_locks[self.org.id].release()
         os.chmod(self.key_path, 0600)
 
     def _cert_create(self):
-        _openssl_locks[self.org.id].acquire()
         try:
             args = ['openssl', 'ca', '-batch']
             if self.type == CERT_CA:
@@ -151,20 +172,6 @@ class User(Config):
                 'user_id': self.id,
             })
             raise
-        finally:
-            _openssl_locks[self.org.id].release()
-
-    def _create_ssl_conf(self):
-        with open(self.ssl_conf_path, 'w') as conf_file:
-            conf_file.write(CERT_CONF % (
-                self.org.id,
-                self.org.path,
-                app_server.key_bits,
-                self.id,
-            ))
-
-    def _delete_ssl_conf(self):
-        os.remove(self.ssl_conf_path)
 
     def _generate_otp_secret(self):
         sha_hash = hashlib.sha512()
@@ -212,47 +219,11 @@ class User(Config):
 
         return True
 
-    def _revoke(self, reason):
-        if self.id == CA_CERT_ID:
-            raise TypeError('Cannot revoke ca cert')
-
-        if not os.path.isfile(self.cert_path):
-            logger.warning('Skipping revoke of non existent user. %r' % {
-                'org_id': self.org.id,
-                'user_id': self.id,
-            })
-            return
-
-        self._create_ssl_conf()
-        _openssl_locks[self.org.id].acquire()
-        try:
-            args = ['openssl', 'ca', '-batch',
-                '-config', self.ssl_conf_path,
-                '-revoke', self.cert_path,
-                '-crl_reason', reason
-            ]
-            proc = subprocess.Popen(args, stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE)
-            returncode = proc.wait()
-            if returncode != 0:
-                err_output = proc.communicate()[1]
-                if 'ERROR:Already revoked' not in err_output:
-                    raise subprocess.CalledProcessError(returncode, args)
-        except subprocess.CalledProcessError:
-            logger.exception('Failed to revoke user cert. %r' % {
-                'org_id': self.org.id,
-                'user_id': self.id,
-            })
-            raise
-        finally:
-            _openssl_locks[self.org.id].release()
-        self._delete_ssl_conf()
-
     def _build_key_archive(self):
         user_key_arcname = '%s_%s.key' % (self.org.name, self.name)
         user_cert_arcname = '%s_%s.crt' % (self.org.name, self.name)
 
-        tar_file = tarfile.open(self.key_archive_path, 'w')
+        tar_file = tarfile.open(self.temp_key_archive_path, 'w')
         try:
             tar_file.add(self.key_path, arcname=user_key_arcname)
             tar_file.add(self.cert_path, arcname=user_cert_arcname)
@@ -284,10 +255,10 @@ class User(Config):
         finally:
             tar_file.close()
 
-        return self.key_archive_path
+        return self.temp_key_archive_path
 
     def _build_inline_key_archive(self):
-        tar_file = tarfile.open(self.key_archive_path, 'w')
+        tar_file = tarfile.open(self.temp_key_archive_path, 'w')
         try:
             for server in self.org.iter_servers():
                 server_conf_path = os.path.join(self.org.path,
@@ -319,13 +290,19 @@ class User(Config):
         finally:
             tar_file.close()
 
-        return self.key_archive_path
+        return self.temp_key_archive_path
 
     def build_key_archive(self):
         if app_server.inline_certs:
             return self._build_inline_key_archive()
         else:
             return self._build_key_archive()
+
+    def clean_key_archive(self):
+        try:
+            os.remove(self.temp_key_archive_path)
+        except OSError:
+            pass
 
     def build_key_conf(self, server_id):
         server = self.org.get_server(server_id)
@@ -368,11 +345,10 @@ class User(Config):
         self.org.sort_users_cache()
         Event(type=USERS_UPDATED, resource_id=self.org.id)
 
-    def remove(self, reason=UNSPECIFIED):
+    def remove(self):
         self.clear_cache()
         name = self.name
         type = self.type
-        self._revoke(reason)
 
         try:
             os.remove(self.reqs_path)
@@ -383,11 +359,6 @@ class User(Config):
                 'path': self.reqs_path,
                 'error': error,
             })
-
-        try:
-            os.remove(self.ssl_conf_path)
-        except OSError, error:
-            pass
 
         try:
             os.remove(self.key_path)
@@ -418,6 +389,8 @@ class User(Config):
                 'path': self.reqs_path,
                 'error': error,
             })
+
+        self._clean_openssl()
 
         Event(type=ORGS_UPDATED)
         Event(type=USERS_UPDATED, resource_id=self.org.id)
