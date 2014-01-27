@@ -165,7 +165,7 @@ define([
       this.update();
     },
     searchMore: function() {
-      this.collection.setSearchLimit(this.collection.getSearchLimit() + 20);
+      this.collection.setSearchLimit(this.collection.getSearchLimit() + 10);
       this.update();
     }
   });
