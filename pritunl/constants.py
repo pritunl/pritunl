@@ -35,7 +35,7 @@ SHORT_URL_CHARS = (string.ascii_lowercase + string.ascii_uppercase +
     string.digits).replace('l', '').replace('I', '').replace('O', '').replace(
     '0', '')
 SUB_RESPONSE_TIMEOUT = 15
-HTTP_REQUEST_TIMEOUT = 10 #TODO
+HTTP_REQUEST_TIMEOUT = 45
 SERVER_REQUEST_QUEUE_SIZE = 512
 USER_PAGE_COUNT = 10
 IP_REGEX = r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
