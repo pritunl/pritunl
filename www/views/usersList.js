@@ -64,17 +64,19 @@ define([
 
         this.$('.search-time').hide();
         if (!this.collection.getPage()) {
-          this.$('.pages').addClass('padded');
+          this.$('.pages').addClass('padded-left');
           this.$('.prev-page').hide();
         }
         else {
-          this.$('.pages').removeClass('padded');
+          this.$('.pages').removeClass('padded-left');
           this.$('.prev-page').show();
         }
         if (this.collection.isLastPage()) {
+          this.$('.pages').addClass('padded-right');
           this.$('.next-page').hide();
         }
         else {
+          this.$('.pages').removeClass('padded-right');
           this.$('.next-page').show();
         }
 
