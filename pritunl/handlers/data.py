@@ -34,32 +34,20 @@ def export_get():
         tar_add(tar_file, os.path.join(data_path, VERSION_NAME))
 
         for org in Organization.iter_orgs():
-            tar_add(tar_file, org.index_path)
-            tar_add(tar_file, org.index_attr_path)
-            tar_add(tar_file, org.serial_path)
-            tar_add(tar_file, org.crl_path)
             tar_add(tar_file, org.get_path())
             tar_file.add(empty_temp_path,
                 arcname=os.path.relpath(os.path.join(org.path, TEMP_DIR),
                     data_path))
 
-            indexed_certs_path = os.path.join(org.path, INDEXED_CERTS_DIR)
-            for path in os.listdir(indexed_certs_path):
-                tar_add(tar_file, os.path.join(indexed_certs_path, path))
-
             for user in org.iter_users():
                 tar_add(tar_file, user.reqs_path)
-                tar_add(tar_file, user.ssl_conf_path)
                 tar_add(tar_file, user.key_path)
                 tar_add(tar_file, user.cert_path)
-                tar_add(tar_file, user.key_archive_path)
                 tar_add(tar_file, user.get_path())
 
             tar_add(tar_file, org.ca_cert.reqs_path)
-            tar_add(tar_file, org.ca_cert.ssl_conf_path)
             tar_add(tar_file, org.ca_cert.key_path)
             tar_add(tar_file, org.ca_cert.cert_path)
-            tar_add(tar_file, org.ca_cert.key_archive_path)
             tar_add(tar_file, org.ca_cert.get_path())
 
         for server in Server.iter_servers():
