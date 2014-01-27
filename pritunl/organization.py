@@ -200,8 +200,13 @@ class Organization(Config):
                 users_dict[name_id] = user
                 users_sort.append(name_id)
 
-            for name_id in sorted(users_sort)[:USER_PAGE_COUNT]:
+            user_count = 0
+            for name_id in sorted(users_sort):
                 yield users_dict[name_id]
+                if users_dict[name_id].type == CERT_CLIENT:
+                    user_count += 1
+                    if user_count >= 25:
+                        break
         else:
             for user_id in cache_db.list_iter(
                     self.get_cache_key('users_sorted')):
