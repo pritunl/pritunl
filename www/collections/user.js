@@ -22,8 +22,7 @@ define([
       }
       else {
         this.setSearch(response.search);
-        // Convert miliseconds to seconds
-        this.setSearchTime(response.search_time / 1000);
+        this.setSearchTime(response.search_time);
         this.setSearchMore(response.search_more);
         this.setSearchCount(response.search_count);
         this.setSearchLimit(response.search_limit);
