@@ -8,6 +8,7 @@ Add support for multiple local networks on vpn server
 Cache organizations and users to reduce response times
 Changes to event system
 Add support for node servers
+Organization openssl crl is no longer generated
 Server conf data will be automatically upgraded after first launch
 Log entries will be cleared after first launch for database upgrade
 
