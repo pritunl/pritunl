@@ -13,6 +13,7 @@ Add pages to user list
 Add search to user list
 Add support for node servers
 Server conf data will be automatically upgraded after first launch
+Organization data will be automatically upgraded after first launch
 Log entries will be cleared after first launch for database upgrade
 
 Version 0.10.4 2014-01-10
