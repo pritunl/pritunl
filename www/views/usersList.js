@@ -55,7 +55,8 @@ define([
         this.$('.prev-page').hide();
         this.$('.next-page').hide();
         this.$('.pages').hide();
-        this.$('.search-time').text('search processed in ' +
+        this.$('.search-time').text('search found ' +
+          this.collection.getSearchCount() + ' results in ' +
           this.collection.getSearchTime() + ' seconds')
         this.$('.search-time').show();
         if (this.collection.getSearchMore()) {

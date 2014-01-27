@@ -52,6 +52,7 @@ def user_get(org_id, page=None):
             'search': search,
             'search_more': search_more,
             'search_limit': limit,
+            'search_count': org.get_last_prefix_len(),
             'search_time':  int((time.time() - flask.g.start) * 1000),
             'users': users,
         })

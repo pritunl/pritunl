@@ -25,6 +25,7 @@ define([
         // Convert miliseconds to seconds
         this.setSearchTime(response.search_time / 1000);
         this.setSearchMore(response.search_more);
+        this.setSearchCount(response.search_count);
         this.setSearchLimit(response.search_limit);
       }
       return response.users;
@@ -71,6 +72,12 @@ define([
     },
     getSearchMore: function() {
       return this.searchMore;
+    },
+    setSearchCount: function(count) {
+      this.searchCount = count;
+    },
+    getSearchCount: function() {
+      return this.searchCount;
     },
     isLastPage: function() {
       return this.page === this.pageTotal;

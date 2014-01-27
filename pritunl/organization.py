@@ -23,6 +23,7 @@ class Organization(Config):
 
     def __init__(self, id=None, name=None):
         Config.__init__(self)
+        self._last_prefix_len = None
 
         if id is None:
             self.id = uuid.uuid4().hex
@@ -205,6 +206,7 @@ class Organization(Config):
 
             user_count = 0
             search_more = False
+            self._last_prefix_len = len(users_sort)
             for name_id in sorted(users_sort):
                 yield users_dict[name_id]
                 if prefix_limit:
@@ -221,6 +223,9 @@ class Organization(Config):
                 user = User.get_user(self, id=user_id)
                 if user:
                     yield user
+
+    def get_last_prefix_len(self):
+        return self._last_prefix_len
 
     def get_server(self, server_id):
         from server import Server
