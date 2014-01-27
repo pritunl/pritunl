@@ -249,7 +249,7 @@ class NodeServer(Server):
                 'status_code': response.status_code,
                 'reason': response.reason,
             })
-            raise ValueError('Node server returned error.')
+            raise ValueError('Node server returned error')
 
         self._interrupt = False
         cache_db.dict_set(self.get_cache_key(), 'start_time',
@@ -284,7 +284,7 @@ class NodeServer(Server):
                 'status_code': response.status_code,
                 'reason': response.reason,
             })
-            raise ValueError('Node server returned error.')
+            raise ValueError('Node server returned error')
         self.status = False
 
         if not silent:

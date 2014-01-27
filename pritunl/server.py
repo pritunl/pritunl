@@ -576,8 +576,6 @@ class Server(Config):
                 i += 1
             time.sleep(0.1)
         self._clear_iptable_rules()
-        self.status = False
-        cache_db.publish(self.get_cache_key(), 'stopped')
 
     def _run_thread(self):
         logger.debug('Starting ovpn process. %r' % {
@@ -593,12 +591,15 @@ class Server(Config):
                 logger.exception('Failed to start ovpn process. %r' % {
                     'server_id': self.id,
                 })
+                cache_db.publish(self.get_cache_key(), 'stopped')
                 return
             cache_db.dict_set(self.get_cache_key(), 'start_time',
                 str(int(time.time() - 1)))
-            threading.Thread(target=self._sub_thread,
-                args=(process,)).start()
-            threading.Thread(target=self._status_thread).start()
+            sub_thread = threading.Thread(target=self._sub_thread,
+                args=(process,))
+            sub_thread.start()
+            status_thread = threading.Thread(target=self._status_thread)
+            status_thread.start()
             self.status = True
             cache_db.publish(self.get_cache_key(), 'started')
 
@@ -611,11 +612,22 @@ class Server(Config):
                         continue
                 self.push_output(line)
 
+            self._interrupt = True
+            status_thread.join()
+
+            self.status = False
+            cache_db.publish(self.get_cache_key(), 'stopped')
+            if process.returncode != 0:
+                Event(type=SERVERS_UPDATED)
+                LogEntry(message='Server stopped unexpectedly "%s".' % (
+                    self.name))
+
             logger.debug('Ovpn process has ended. %r' % {
                 'server_id': self.id,
             })
-        finally:
+        except:
             self._interrupt = True
+            cache_db.publish(self.get_cache_key(), 'stopped')
 
     def start(self, silent=False):
         if self.status:
@@ -639,8 +651,10 @@ class Server(Config):
             if message == 'started':
                 started = True
                 break
+            elif message == 'stopped':
+                raise ValueError('Server failed to start')
         if not started:
-            raise ValueError('Server thread failed to return start event.')
+            raise ValueError('Server thread failed to return start event')
 
         if not silent:
             Event(type=SERVERS_UPDATED)
@@ -661,7 +675,7 @@ class Server(Config):
                 stopped = True
                 break
         if not stopped:
-            raise ValueError('Server thread failed to return stop event.')
+            raise ValueError('Server thread failed to return stop event')
 
         if not silent:
             Event(type=SERVERS_UPDATED)
@@ -691,7 +705,7 @@ class Server(Config):
                     break
 
             if not stopped:
-                raise ValueError('Server thread failed to return stop event.')
+                raise ValueError('Server thread failed to return stop event')
 
         if not silent:
             Event(type=SERVERS_UPDATED)
