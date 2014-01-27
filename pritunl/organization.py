@@ -22,7 +22,7 @@ class Organization(Config):
 
     def __init__(self, id=None, name=None):
         Config.__init__(self)
-        self._last_prefix_len = None
+        self._last_prefix_count = None
 
         if id is None:
             self.id = uuid.uuid4().hex
@@ -177,18 +177,21 @@ class Organization(Config):
         elif prefix is not None:
             users_dict = {}
             users_sort = []
+            prefix_count = 0
             users_trie = CacheTrie(self.get_cache_key('users_trie'))
             for user_id in users_trie.iter_prefix(prefix):
                 user = User.get_user(self, id=user_id)
                 if not user:
                     continue
+                if user.type == CERT_CLIENT:
+                    prefix_count  += 1
                 name_id = '%s_%s' % (user.name, user_id)
                 users_dict[name_id] = user
                 users_sort.append(name_id)
+            self._last_prefix_count = prefix_count
 
             user_count = 0
             search_more = False
-            self._last_prefix_len = len(users_sort)
             for name_id in sorted(users_sort):
                 yield users_dict[name_id]
                 if prefix_limit:
@@ -206,8 +209,8 @@ class Organization(Config):
                 if user:
                     yield user
 
-    def get_last_prefix_len(self):
-        return self._last_prefix_len
+    def get_last_prefix_count(self):
+        return self._last_prefix_count
 
     def get_server(self, server_id):
         from server import Server
