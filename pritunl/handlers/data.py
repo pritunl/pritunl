@@ -29,6 +29,8 @@ def export_get():
 
     tar_file = tarfile.open(data_archive_path, 'w')
     try:
+        tar_add(tar_file, os.path.join(data_path, AUTH_LOG_NAME))
+        tar_add(tar_file, os.path.join(data_path, 'pritunl.db'))
         tar_add(tar_file, os.path.join(data_path, SERVER_CERT_NAME))
         tar_add(tar_file, os.path.join(data_path, SERVER_KEY_NAME))
         tar_add(tar_file, os.path.join(data_path, VERSION_NAME))
@@ -57,14 +59,21 @@ def export_get():
             tar_file.add(empty_temp_path,
                 arcname=os.path.relpath(os.path.join(server.path, TEMP_DIR),
                     data_path))
-    finally:
+
         tar_file.close()
 
-    with open(data_archive_path, 'r') as archive_file:
-        response = flask.Response(response=archive_file.read(),
-            mimetype='application/octet-stream')
-        response.headers.add('Content-Disposition',
-            'attachment; filename="%s"' % data_archive_name)
-
-    os.remove(data_archive_path)
-    return response
+        with open(data_archive_path, 'r') as archive_file:
+            response = flask.Response(response=archive_file.read(),
+                mimetype='application/octet-stream')
+            response.headers.add('Content-Disposition',
+                'attachment; filename="%s"' % data_archive_name)
+        return response
+    finally:
+        try:
+            tar_file.close()
+        except OSError:
+            pass
+        try:
+            os.remove(data_archive_path)
+        except OSError:
+            pass
