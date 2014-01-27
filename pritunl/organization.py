@@ -105,14 +105,12 @@ class Organization(Config):
         user_count = 0
         users_dict = {}
         users_sort = []
-        users_trie = CacheTrie(self.get_cache_key('users_trie'))
 
         for user_id in cache_db.set_elements(self.get_cache_key('users')):
             user = User.get_user(self, id=user_id)
             if not user:
                 continue
             name_id = '%s_%s' % (user.name, user_id)
-            users_trie.add_key(user.name, user_id)
             if user.type == CERT_CLIENT:
                 user_count += 1
             users_dict[name_id] = (user_id, user.type)
@@ -146,6 +144,7 @@ class Organization(Config):
 
     def _cache_users(self):
         if cache_db.get(self.get_cache_key('users_cached')) != 't':
+            users_trie = CacheTrie(self.get_cache_key('users_trie'))
             cache_db.remove(self.get_cache_key('users'))
             certs_path = os.path.join(self.path, CERTS_DIR)
             if os.path.isdir(certs_path):
@@ -153,6 +152,10 @@ class Organization(Config):
                     user_id = cert.replace('.crt', '')
                     if user_id == CA_CERT_ID:
                         continue
+                    user = User.get_user(self, id=user_id)
+                    if not user:
+                        continue
+                    users_trie.add_key(user.name, user_id)
                     cache_db.set_add(self.get_cache_key('users'), user_id)
             self.sort_users_cache()
             cache_db.set(self.get_cache_key('users_cached'), 't')

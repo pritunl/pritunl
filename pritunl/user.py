@@ -1,6 +1,7 @@
 from constants import *
 from pritunl import app_server
 from cache import cache_db
+from cache_trie import CacheTrie
 from config import Config
 from log_entry import LogEntry
 from event import Event
@@ -99,6 +100,8 @@ class User(Config):
         self._delete_ssl_conf()
         if self.type != CERT_CA:
             cache_db.set_add(self.org.get_cache_key('users'), self.id)
+            users_trie = CacheTrie(self.org.get_cache_key('users_trie'))
+            users_trie.add_key(self.name, self.id)
         self.org.sort_users_cache()
         if self.type == CERT_CLIENT:
             LogEntry(message='Created new user "%s".' % self.name)
@@ -356,6 +359,8 @@ class User(Config):
             cache_db.list_remove(self.org.get_cache_key('users_sorted'),
                 self.id)
             cache_db.decrement(self.org.get_cache_key('user_count'))
+            users_trie = CacheTrie(self.org.get_cache_key('users_trie'))
+            users_trie.remove_key(self.name, self.id)
         Config.clear_cache(self)
 
     def rename(self, name):
