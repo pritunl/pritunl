@@ -102,7 +102,7 @@ define([
           term = null;
         }
         this.usersListView.search(term);
-      }.bind(this), 100);
+      }.bind(this), 50);
     }
   });
 
