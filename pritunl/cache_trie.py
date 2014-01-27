@@ -33,6 +33,16 @@ class CacheTrie(object):
             cache_db.set_add(name + cur_key, new_key)
             cur_key = new_key
 
+    def remove_key(self, key, value):
+        name = self.name + '_'
+        cur_key = self.key
+        new_key = cur_key
+        for char in key:
+            new_key += char
+            cache_db.set_remove(name + new_key + '_values', value)
+            cache_db.set_remove(name + cur_key, new_key)
+            cur_key = new_key
+
     def _get_iter(self, item):
         return self[item].chain()
 
