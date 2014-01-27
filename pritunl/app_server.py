@@ -206,6 +206,10 @@ class AppServer(Config):
             for server in Server.iter_servers():
                 server._upgrade_0_10_5()
 
+            from organization import Organization
+            for org in Organization.iter_orgs():
+                org._upgrade_0_10_5()
+
         if cur_version != version:
             version_path = os.path.join(self.data_path, VERSION_NAME)
             with open(version_path, 'w') as version_file:

@@ -57,6 +57,25 @@ class Organization(Config):
             'user_count': self.user_count,
         }
 
+    def _upgrade_0_10_5(self):
+        logger.debug('Upgrading org to v0.10.5... %r' % {
+            'org_id': self.id,
+        })
+        for path in [
+                os.path.join(self.path, INDEX_NAME),
+                os.path.join(self.path, INDEX_NAME + '.old'),
+                os.path.join(self.path, INDEX_ATTR_NAME),
+                os.path.join(self.path, INDEX_ATTR_NAME + '.old'),
+                os.path.join(self.path, SERIAL_NAME),
+                os.path.join(self.path, SERIAL_NAME + '.old'),
+                os.path.join(self.path, 'ca.crl'),
+            ]:
+            try:
+                os.remove(path)
+            except OSError:
+                pass
+        utils.rmtree(os.path.join(self.path, 'indexed_certs'))
+
     def _initialize(self):
         self._make_dirs()
         self.ca_cert = User(self, type=CERT_CA)
