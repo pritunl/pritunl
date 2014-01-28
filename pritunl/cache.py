@@ -1,17 +1,63 @@
 from constants import *
+import Queue
 import time
 import collections
 import threading
 import uuid
 import copy
 import itertools
+import json
+import os
+
+TRANSACTION_METHODS = {
+    'set',
+    'increment',
+    'decrement',
+    'remove',
+    'rename',
+    'expire',
+    'set_add',
+    'set_remove',
+    'list_lpush',
+    'list_rpush',
+    'list_lpop',
+    'list_rpop',
+    'list_index',
+    'list_remove',
+    'dict_set',
+    'dict_remove',
+}
 
 class Cache:
-    def __init__(self):
+    def __init__(self, persist=False):
+        self._path = None
+        self._set_queue = Queue.Queue()
         self._data = collections.defaultdict(
             lambda: {'ttl': None, 'val': None})
         self._channels = collections.defaultdict(
             lambda: {'subs': set(), 'msgs': collections.deque(maxlen=10)})
+        self._commit_log = []
+        if persist:
+            threading.Thread(target=self._export_thread).start()
+
+    def _put_queue(self):
+        if self._data:
+            self._set_queue.put('set')
+
+    def _export_thread(self):
+        from pritunl import app_server
+        while not app_server.interrupt:
+            try:
+                self._set_queue.get(timeout=5)
+            except Queue.Empty:
+                continue
+            # Attempt to get more db sets form queue to reduce export calls
+            for i in xrange(30):
+                try:
+                    self._set_queue.get(timeout=0.01)
+                except Queue.Empty:
+                    pass
+            self.export_data()
 
     def _validate(self, value):
         if value is not None and not isinstance(value, basestring):
@@ -26,6 +72,12 @@ class Cache:
             return True
         return False
 
+    def set_path(self, path):
+        self._path = path
+
+    def get_path(self, path):
+        return self._path
+
     def get(self, key):
         if self._check_ttl(key) is False:
             return self._data[key]['val']
@@ -33,26 +85,31 @@ class Cache:
     def set(self, key, value):
         self._validate(value)
         self._data[key]['val'] = value
+        self._put_queue()
 
     def increment(self, key):
         try:
             self._data[key]['val'] = str(int(self.get(key)) + 1)
         except (TypeError, ValueError):
             self._data[key]['val'] = '1'
+        self._put_queue()
 
     def decrement(self, key):
         try:
             self._data[key]['val'] = str(int(self.get(key)) - 1)
         except (TypeError, ValueError):
             self._data[key]['val'] = '0'
+        self._put_queue()
 
     def remove(self, key):
         self._data.pop(key, None)
+        self._put_queue()
 
     def rename(self, key, new_key):
         if self._check_ttl(key) is False:
             self._data[new_key]['val'] = self._data[key]['val']
         self.remove(key)
+        self._put_queue()
 
     def exists(self, key):
         if self._check_ttl(key) is False:
@@ -62,6 +119,7 @@ class Cache:
     def expire(self, key, ttl):
         timeout = int(time.time()) + ttl
         self._data[key]['ttl'] = timeout
+        self._put_queue()
 
     def set_add(self, key, element):
         self._validate(element)
@@ -69,12 +127,14 @@ class Cache:
             self._data[key]['val'].add(element)
         except AttributeError:
             self._data[key]['val'] = {element}
+        self._put_queue()
 
     def set_remove(self, key, element):
         try:
             self._data[key]['val'].remove(element)
         except (KeyError, AttributeError):
             pass
+        self._put_queue()
 
     def set_elements(self, key):
         if self._check_ttl(key) is False:
@@ -90,6 +150,7 @@ class Cache:
             self._data[key]['val'].appendleft(value)
         except AttributeError:
             self._data[key]['val'] = collections.deque([value])
+        self._put_queue()
 
     def list_rpush(self, key, value):
         self._validate(value)
@@ -97,20 +158,29 @@ class Cache:
             self._data[key]['val'].append(value)
         except AttributeError:
             self._data[key]['val'] = collections.deque([value])
+        self._put_queue()
 
     def list_lpop(self, key):
+        data = None
         if self._check_ttl(key) is False:
             try:
-                return self._data[key]['val'].popleft()
+                data = self._data[key]['val'].popleft()
             except (AttributeError, IndexError):
                 pass
+        if data:
+            self._put_queue()
+            return data
 
     def list_rpop(self, key):
+        data = None
         if self._check_ttl(key) is False:
             try:
-                return self._data[key]['val'].pop()
+                data = self._data[key]['val'].pop()
             except (AttributeError, IndexError):
                 pass
+        if data:
+            self._put_queue()
+            return data
 
     def list_index(self, key, index):
         if self._check_ttl(key) is False:
@@ -160,6 +230,7 @@ class Cache:
             while True:
                 if _remove():
                     break
+        self._put_queue()
 
     def list_length(self, key):
         if self._check_ttl(key) is False:
@@ -182,12 +253,14 @@ class Cache:
             self._data[key]['val'][field] = value
         except TypeError:
             self._data[key]['val'] = {field: value}
+        self._put_queue()
 
     def dict_remove(self, key, field):
         try:
             self._data[key]['val'].pop(field, None)
         except AttributeError:
             pass
+        self._put_queue()
 
     def dict_get_keys(self, key):
         if self._check_ttl(key) is False:
@@ -234,4 +307,86 @@ class Cache:
         for subscriber in self._channels[channel]['subs'].copy():
             subscriber.set()
 
+    def transaction(self):
+        return CacheTransaction(self)
+
+    def _apply_trans(self, trans):
+        for call in trans[1]:
+            getattr(self, call[0])(*call[1], **call[2])
+        try:
+            self._commit_log.remove(trans)
+        except ValueError:
+            pass
+        self._put_queue()
+
+    def export_data(self):
+        if not self._path:
+            return
+        temp_path = self._path + '.tmp'
+        try:
+            with open(temp_path, 'w') as db_file:
+                data = []
+
+                for key in self._data:
+                    key_ttl = self._data[key]['ttl']
+                    key_val = self._data[key]['val']
+                    key_type = type(key_val).__name__
+                    if key_type == 'set' or key_type == 'deque':
+                        key_val = list(key_val)
+                    data.append((key, key_type, key_ttl, key_val))
+
+                db_file.write(json.dumps({
+                    'data': data,
+                    'commit_log': self._commit_log,
+                }))
+            os.rename(temp_path, self._path)
+        except:
+            try:
+                os.remove(temp_path)
+            except OSError:
+                pass
+            raise
+
+    def import_data(self):
+        if os.path.isfile(self._path):
+            with open(self._path, 'r') as db_file:
+                import_data = json.loads(db_file.read().encode())
+                data = import_data['data']
+
+                for key_data in data:
+                    key = key_data[0]
+                    key_type = key_data[1]
+                    key_ttl = key_data[2]
+                    key_val = key_data[3]
+
+                    if key_type == 'set':
+                        key_val = set(key_val)
+                    elif key_type == 'deque':
+                        key_val = collections.deque(key_val)
+
+                    self._data[key]['ttl'] = key_ttl
+                    self._data[key]['val'] = key_val
+
+                for tran in import_data['commit_log']:
+                    self._apply_trans(tran)
+
+class CacheTransaction:
+    def __init__(self, cache):
+        self._cache = cache
+        self._trans = []
+
+    def __getattr__(self, name):
+        if name in TRANSACTION_METHODS:
+            def serialize(*args, **kwargs):
+                self._trans.append((name, args, kwargs))
+            return serialize
+        return getattr(self._cache, name)
+
+    def commit(self):
+        trans = (uuid.uuid4().hex, self._trans)
+        self._cache._commit_log.append(trans)
+        self._cache._apply_trans(trans)
+        self._trans = []
+
 cache_db = Cache()
+persist_db = Cache(persist=True)
