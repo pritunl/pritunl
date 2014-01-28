@@ -107,42 +107,52 @@ class Organization(Config):
         user_count = 0
         users_dict = {}
         users_sort = []
+        temp_suffix = 'temp_' + uuid.uuid4().hex
+        temp_users_sorted_key = 'users_sorted_' + temp_suffix
+        users_page_index_key = 'users_page_index_' + temp_suffix
 
-        for user_id in cache_db.set_elements(self.get_cache_key('users')):
-            user = User.get_user(self, id=user_id)
-            if not user:
-                continue
-            name_id = '%s_%s' % (user.name, user_id)
-            if user.type == CERT_CLIENT:
+        try:
+            for user_id in cache_db.set_elements(self.get_cache_key('users')):
+                user = User.get_user(self, id=user_id)
+                if not user:
+                    continue
+                name_id = '%s_%s' % (user.name, user_id)
+                if user.type == CERT_CLIENT:
+                    user_count += 1
+                users_dict[name_id] = (user_id, user.type)
+                users_sort.append(name_id)
+
+            cache_db.set(self.get_cache_key('user_count'), str(user_count))
+
+            cur_page = 0
+            user_count = 0
+            client_count = 0
+            for name_id in sorted(users_sort):
+                if users_dict[name_id][1] == CERT_CLIENT:
+                    page = client_count / USER_PAGE_COUNT
+                    if page != cur_page:
+                        cur_page = page
+                        cache_db.dict_set(self.get_cache_key(users_page_index_key),
+                            str(cur_page), str(user_count))
+                    client_count += 1
                 user_count += 1
-            users_dict[name_id] = (user_id, user.type)
-            users_sort.append(name_id)
+                cache_db.list_rpush(self.get_cache_key(temp_users_sorted_key),
+                    users_dict[name_id][0])
 
-        cache_db.set(self.get_cache_key('user_count'), str(user_count))
-        cache_db.remove(self.get_cache_key('users_sorted_temp'))
-        cache_db.remove(self.get_cache_key('users_page_index_temp'))
-
-        cur_page = 0
-        user_count = 0
-        client_count = 0
-        for name_id in sorted(users_sort):
-            if users_dict[name_id][1] == CERT_CLIENT:
-                page = client_count / USER_PAGE_COUNT
-                if page != cur_page:
-                    cur_page = page
-                    cache_db.dict_set(
-                        self.get_cache_key('users_page_index_temp'),
-                        str(cur_page), str(user_count))
-                client_count += 1
-            user_count += 1
-            cache_db.list_rpush(self.get_cache_key('users_sorted_temp'),
-                users_dict[name_id][0])
-
-        cache_db.rename(self.get_cache_key('users_page_index_temp'),
-            self.get_cache_key('users_page_index'))
-        cache_db.rename(self.get_cache_key('users_sorted_temp'),
-            self.get_cache_key('users_sorted'))
-        cache_db.set(self.get_cache_key('users_page_total'), str(cur_page))
+            cache_db.lock_acquire(self.get_cache_key('sort'))
+            try:
+                cache_db.rename(self.get_cache_key(users_page_index_key),
+                    self.get_cache_key('users_page_index'))
+                cache_db.rename(self.get_cache_key(temp_users_sorted_key),
+                    self.get_cache_key('users_sorted'))
+                cache_db.set(self.get_cache_key('users_page_total'),
+                    str(cur_page))
+            finally:
+                cache_db.lock_release(self.get_cache_key('sort'))
+        except:
+            cache_db.remove(self.get_cache_key(users_page_index_key))
+            cache_db.remove(self.get_cache_key(temp_users_sorted_key))
+            raise
 
     def _cache_users(self):
         if cache_db.get(self.get_cache_key('users_cached')) != 't':
@@ -185,7 +195,7 @@ class Organization(Config):
                 page_index_e = None
             else:
                 page_index_e = int(cache_db.dict_get(self.get_cache_key(
-                'users_page_index'), str(page + 1)))
+                    'users_page_index'), str(page + 1)))
 
             for user_id in cache_db.list_iter_range(
                     self.get_cache_key('users_sorted'),
