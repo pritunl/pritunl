@@ -107,6 +107,8 @@ class Organization(Config):
         user_count = 0
         users_dict = {}
         users_sort = []
+
+        # Create temp uuid key to prevent multiple threads modifying same key
         temp_suffix = 'temp_' + uuid.uuid4().hex
         temp_users_sorted_key = 'users_sorted_' + temp_suffix
         users_page_index_key = 'users_page_index_' + temp_suffix
@@ -292,19 +294,26 @@ class Organization(Config):
         org_count = 0
         orgs_dict = {}
         orgs_sort = []
-        for org_id in cache_db.set_elements('orgs'):
-            org = Organization.get_org(id=org_id)
-            if not org:
-                continue
-            name_id = '%s_%s' % (org.name, org_id)
-            org_count += 1
-            orgs_dict[name_id] = org_id
-            orgs_sort.append(name_id)
-        cache_db.set('org_count', str(org_count))
-        cache_db.remove('orgs_sorted_temp')
-        for name_id in sorted(orgs_sort):
-            cache_db.list_rpush('orgs_sorted_temp', orgs_dict[name_id])
-        cache_db.rename('orgs_sorted_temp', 'orgs_sorted')
+
+        # Create temp uuid key to prevent multiple threads modifying same key
+        temp_orgs_sorted_key = 'orgs_sorted_temp_' + uuid.uuid4().hex
+
+        try:
+            for org_id in cache_db.set_elements('orgs'):
+                org = Organization.get_org(id=org_id)
+                if not org:
+                    continue
+                name_id = '%s_%s' % (org.name, org_id)
+                org_count += 1
+                orgs_dict[name_id] = org_id
+                orgs_sort.append(name_id)
+            cache_db.set('org_count', str(org_count))
+            for name_id in sorted(orgs_sort):
+                cache_db.list_rpush(temp_orgs_sorted_key, orgs_dict[name_id])
+            cache_db.rename(temp_orgs_sorted_key, 'orgs_sorted')
+        except:
+            cache_db.remove(self.get_cache_key(temp_orgs_sorted_key))
+            raise
 
     @classmethod
     def _cache_orgs(cls):
