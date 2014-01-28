@@ -385,8 +385,8 @@ class CacheTransaction:
     def commit(self):
         trans = (uuid.uuid4().hex, self._trans)
         self._cache._commit_log.append(trans)
-        self._cache._apply_trans(trans)
         self._trans = []
+        self._cache._apply_trans(trans)
 
 cache_db = Cache()
 persist_db = Cache(persist=True)
