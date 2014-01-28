@@ -8,12 +8,13 @@ class CacheObject:
     float_columns = set()
     str_columns = set()
     cached_columns = set()
-    db = cache_db
+    db_instance = cache_db
 
     def __init__(self):
         self.all_columns = self.bool_columns | self.int_columns | \
             self.float_columns | self.str_columns
         self.id = None
+        self._trans = None
 
     def __setattr__(self, name, value):
         if name != 'all_columns' and name in self.all_columns:
@@ -52,7 +53,15 @@ class CacheObject:
                 self.__dict__[name] = value
 
             return value
+        elif name == 'db':
+            return self._trans or self.db_instance
         raise AttributeError('Object instance has no attribute %r' % name)
+
+    def transaction_start(self):
+        self._trans = self.db.transaction()
+
+    def transaction_commit(self):
+        self._trans.commit()
 
     def get_cache_key(self, suffix=None):
         key = '%s-%s' % (self.column_family, self.id)
@@ -69,12 +78,12 @@ class CacheObject:
 
     @classmethod
     def iter_rows(cls):
-        for row_id in cls.db.list_iter(cls.column_family):
+        for row_id in cls.db_instance.list_iter(cls.column_family):
             row = cls(id=row_id)
             yield row
 
     @classmethod
     def get_last_row(cls):
-        row_id = cls.db.list_index(cls.column_family, -1)
+        row_id = cls.db_instance.list_index(cls.column_family, -1)
         if row_id:
             return cls(id=row_id)

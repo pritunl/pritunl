@@ -35,7 +35,7 @@ class Event(CacheObject):
 
     def initialize(self):
         CacheObject.initialize(self)
-        cache_db.publish(self.column_family, 'new_event')
+        self.db.publish(self.column_family, 'new_event')
 
     @classmethod
     def get_events(cls, cursor=None, block=True):
@@ -45,16 +45,16 @@ class Event(CacheObject):
 
         while True:
             # Check for events older then ttl
-            event_id = cache_db.list_index(cls.column_family, 0)
+            event_id = cls.db_instance.list_index(cls.column_family, 0)
             if not event_id:
                 break
-            event_time = cache_db.dict_get('%s-%s' % (
+            event_time = cls.db_instance.dict_get('%s-%s' % (
                 cls.column_family, event_id), 'time')
             if int(time.time()) - int(event_time) > EVENT_TTL:
-                event_id = cache_db.list_lpop(cls.column_family)
+                event_id = cls.db_instance.list_lpop(cls.column_family)
                 # Expire event to leave time for any get events
                 # iterating event list excepting event to still exists
-                cache_db.expire('%s-%s' % (cls.column_family, event_id),
+                cls.db_instance.expire('%s-%s' % (cls.column_family, event_id),
                     EVENT_TTL)
             else:
                 break
@@ -66,13 +66,13 @@ class Event(CacheObject):
                 if event.id == cursor:
                     events = []
         elif block:
-            cursor = cache_db.list_index(cls.column_family, -1)
+            cursor = cls.db_instance.list_index(cls.column_family, -1)
         else:
             return list(cls.iter_rows())
 
         if block and not events:
             new_event = False
-            for message in cache_db.subscribe(cls.column_family, 30):
+            for message in cls.db_instance.subscribe(cls.column_family, 30):
                 if message == 'new_event':
                     new_event = True
                     break

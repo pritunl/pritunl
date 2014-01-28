@@ -10,17 +10,19 @@ class LogEntry(CacheObject):
     str_columns = {'type', 'message'}
     int_columns = {'time'}
     cached_columns = {'type', 'message', 'time'}
-    db = persist_db
+    db_instance = persist_db
 
     def __init__(self, id=None, type=None, message=None):
         CacheObject.__init__(self)
 
         if id is None:
+            self.transaction_start()
             self.id = uuid.uuid4().hex
             self.type = type or INFO
             self.time = int(time.time())
             self.message = message
             self.initialize()
+            self.transaction_commit()
         else:
             self.id = id
 
@@ -40,7 +42,9 @@ class LogEntry(CacheObject):
         Event(type=LOG_UPDATED)
 
     def remove(self):
+        self.transaction_start()
         CacheObject.remove(self)
+        self.transaction_commit()
 
     def cache(self):
         self.id = log_entry.id
@@ -50,5 +54,5 @@ class LogEntry(CacheObject):
 
     @classmethod
     def iter_log_entries(cls):
-        for log_entry_id in cls.db.list_iter('log_entries'):
+        for log_entry_id in cls.db_instance.list_iter('log_entries'):
             yield cls(id=log_entry_id)
