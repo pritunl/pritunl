@@ -405,18 +405,35 @@ define([
   var userGet = function(request, orgId) {
     var id;
     var users = [];
+    var start = (new Date).getTime();
 
     for (id in demoData.users[orgId]) {
+      if (request.data.search &&
+          demoData.users[orgId][id].name.indexOf(request.data.search) !== 0) {
+        continue;
+      }
       users.push(_.extend({
         organization_name: demoData.orgs[orgId].name
       }, demoData.users[orgId][id]));
     }
 
-    request.response({
-        page: 0,
-        page_total: 0,
-        users: users
-    });
+    if (request.data.search) {
+      request.response({
+          search: request.data.search,
+          search_more: false,
+          search_limit: request.data.limit,
+          search_count: users.length,
+          search_time: ((new Date).getTime() - start + 10) / 1000,
+          users: users
+      });
+    }
+    else {
+      request.response({
+          page: 0,
+          page_total: 0,
+          users: users
+      });
+    }
   };
   routes['GET=/user/<orgId>'] = userGet;
 
@@ -434,7 +451,7 @@ define([
       servers: []
     };
 
-    event('users_updated');
+    event('users_updated', orgId);
     logEntry('Created new user "' + request.data.name + '".');
     request.response({});
   };
@@ -442,7 +459,7 @@ define([
 
   var userPut = function(request, orgId, userId) {
     demoData.users[orgId][userId].name = request.data.name;
-    event('users_updated');
+    event('users_updated', orgId);
     request.response({});
   };
   routes['PUT=/user/<orgId>/<userId>'] = userPut;
@@ -450,7 +467,7 @@ define([
   var userDelete = function(request, orgId, userId) {
     var name = demoData.users[orgId][userId].name;
     delete demoData.users[orgId][userId];
-    event('users_updated');
+    event('users_updated', orgId);
     logEntry('Deleted user "' + name + '".');
     request.response({});
   };
@@ -458,7 +475,7 @@ define([
 
   var userOtpSecretPut = function(request, orgId, userId) {
     demoData.users[orgId][userId].otp_secret = secretKey();
-    event('users_updated');
+    event('users_updated', orgId);
     request.response({});
   };
   routes['PUT=/user/<orgId>/<userId>/otp_secret'] = userOtpSecretPut;
