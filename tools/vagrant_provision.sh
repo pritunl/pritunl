@@ -2,7 +2,7 @@
 apt-get update -qq 1> /dev/null
 
 # Dev requirements
-apt-get install -qq -y python-flask python-cherrypy3 python-sqlalchemy python-objgraph openvpn htop 1> /dev/null
+apt-get install -qq -y python-flask python-cherrypy3 python-objgraph openvpn htop 1> /dev/null
 
 # Build requirements
 apt-get install -qq -y devscripts debhelper python-all python-setuptools 1> /dev/null

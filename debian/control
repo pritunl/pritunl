@@ -15,7 +15,6 @@ Package: pritunl
 Architecture: all
 Depends: python-flask,
          python-cherrypy3,
-         python-sqlalchemy,
          openvpn,
          iptables,
          ${misc:Depends},

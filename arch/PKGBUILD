@@ -12,7 +12,6 @@ depends=(
     "python2"
     "python2-flask"
     "python2-cherrypy"
-    "python2-sqlalchemy"
     "net-tools"
     "iproute2"
     "openvpn"
