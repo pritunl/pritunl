@@ -3,6 +3,7 @@ import Queue
 import time
 import collections
 import threading
+import thread
 import uuid
 import copy
 import itertools
@@ -37,6 +38,7 @@ class Cache:
         self._channels = collections.defaultdict(
             lambda: {'subs': set(), 'msgs': collections.deque(maxlen=10)})
         self._commit_log = []
+        self._locks = collections.defaultdict(lambda: threading.Lock())
         if persist:
             threading.Thread(target=self._export_thread).start()
 
@@ -306,6 +308,19 @@ class Cache:
             (uuid.uuid4().hex, message))
         for subscriber in self._channels[channel]['subs'].copy():
             subscriber.set()
+
+    def lock_acquire(self, key):
+        return self._locks[key].acquire()
+
+    def lock_release(self, key):
+        try:
+            self._locks[key].release()
+        except thread.error:
+            pass
+
+    def lock_remove(self, key):
+        self.lock_release(key)
+        self._locks.pop(key, None)
 
     def transaction(self):
         return CacheTransaction(self)
