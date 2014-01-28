@@ -8,6 +8,7 @@ class CacheObject:
     float_columns = set()
     str_columns = set()
     cached_columns = set()
+    db = cache_db
 
     def __init__(self):
         self.all_columns = self.bool_columns | self.int_columns | \
@@ -24,7 +25,7 @@ class CacheObject:
             elif name in self.bool_columns:
                 value = 't' if value else 'f'
 
-            cache_db.dict_set(self.get_cache_key(), name, value)
+            self.db.dict_set(self.get_cache_key(), name, value)
         else:
             self.__dict__[name] = value
 
@@ -33,7 +34,7 @@ class CacheObject:
             if name in self.cached_columns and name in self.__dict__:
                 return self.__dict__[name]
 
-            value = cache_db.dict_get(self.get_cache_key(), name)
+            value = self.db.dict_get(self.get_cache_key(), name)
 
             if name in self.int_columns:
                 if value:
@@ -60,20 +61,20 @@ class CacheObject:
         return key
 
     def initialize(self):
-        cache_db.list_rpush(self.column_family, self.id)
+        self.db.list_rpush(self.column_family, self.id)
 
     def remove(self):
-        cache_db.list_remove(self.column_family, self.id)
-        cache_db.remove(self.get_cache_key())
+        self.db.list_remove(self.column_family, self.id)
+        self.db.remove(self.get_cache_key())
 
     @classmethod
     def iter_rows(cls):
-        for row_id in cache_db.list_iter(cls.column_family):
+        for row_id in cls.db.list_iter(cls.column_family):
             row = cls(id=row_id)
             yield row
 
     @classmethod
     def get_last_row(cls):
-        row_id = cache_db.list_index(cls.column_family, -1)
+        row_id = cls.db.list_index(cls.column_family, -1)
         if row_id:
             return cls(id=row_id)

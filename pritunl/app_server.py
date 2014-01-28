@@ -1,5 +1,5 @@
 from constants import *
-from database import connect_database
+from cache import persist_db
 from config import Config
 import os
 import logging
@@ -146,7 +146,8 @@ class AppServer(Config):
         logger.addHandler(self.log_handler)
 
     def _setup_db(self):
-        connect_database('sqlite:///%s' % self.db_path)
+        persist_db.set_path(self.db_path)
+        persist_db.import_data()
 
     def _setup_handlers(self):
         import handlers
@@ -183,10 +184,7 @@ class AppServer(Config):
             try:
                 os.remove(self.db_path)
             except OSError:
-                logger.exception('Failed to remove old database. %r' % {
-                    'db_path': self.db_path
-                })
-                raise
+                pass
 
     def _upgrade_data(self):
         from pritunl import __version__
