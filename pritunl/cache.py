@@ -350,7 +350,7 @@ class Cache:
     def import_data(self):
         if os.path.isfile(self._path):
             with open(self._path, 'r') as db_file:
-                import_data = json.loads(db_file.read().encode())
+                import_data = json.loads(db_file.read())
                 data = import_data['data']
 
                 for key_data in data:
