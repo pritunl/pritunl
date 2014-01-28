@@ -39,7 +39,7 @@ class LogEntry(CacheObject):
         self.db.list_lpush(self.column_family, self.id)
         Event(type=LOG_UPDATED)
 
-    def remove(self, session):
+    def remove(self):
         CacheObject.remove(self)
 
     def cache(self):
