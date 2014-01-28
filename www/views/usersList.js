@@ -44,6 +44,17 @@ define([
       this.listenTo(modelView, 'select', this.onSelect);
       return modelView;
     },
+    addPageElem: function(page, curPage) {
+      var pageElem = $('<a class="link page">' + (page + 1) + '</a>');
+      this.$('.pages .link.last').before(pageElem);
+      if (page === curPage) {
+        pageElem.addClass('current');
+      }
+      pageElem.one('click', function() {
+        this.collection.setPage(page);
+        this.update();
+      }.bind(this));
+    },
     resetItems: function(views) {
       if (!views.length) {
         this.$('.no-users').slideDown(250);
@@ -57,7 +68,7 @@ define([
         this.$('.pages').hide();
         this.$('.search-time').text('search found ' +
           this.collection.getSearchCount() + ' results in ' +
-          this.collection.getSearchTime() + ' seconds')
+          this.collection.getSearchTime() + ' seconds');
         this.$('.search-time').show();
         if (this.collection.getSearchMore()) {
           this.$('.search-more').show();
@@ -96,22 +107,12 @@ define([
           this.$('.pages').show();
           var i;
           var page = Math.max(0, curPage - 7);
-          var pageElem;
           this.$('.pages .link.page').remove();
           this.$('.pages .link.first').removeClass('current');
           this.$('.pages .link.last').removeClass('current');
           for (i = 0; i < 15; i++) {
             if (page > 0) {
-              pageElem = $('<a class="link page">' + (page + 1) + '</a>');
-              this.$('.pages .link.last').before(pageElem);
-              if (page === curPage) {
-                pageElem.addClass('current');
-              }
-              pageElem.one('click', function(evt) {
-                var pageNum = parseInt($(evt.target).text()) - 1;
-                this.collection.setPage(pageNum);
-                this.update();
-              }.bind(this));
+              this.addPageElem(page, curPage);
             }
             page += 1;
             if (page > pageTotal - 1) {
@@ -133,7 +134,7 @@ define([
           'search': this.collection.getSearch()
         };
         if (this.collection.getSearchLimit()) {
-          options.limit = this.collection.getSearchLimit()
+          options.limit = this.collection.getSearchLimit();
         }
         return options;
       }
