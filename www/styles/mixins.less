@@ -53,6 +53,17 @@
   filter: blur(@value);
 }
 
+.clearfix() {
+  &:before,
+  &:after {
+    content: " ";
+    display: table;
+  }
+  &:after {
+    clear: both;
+  }
+}
+
 .background-clip-padding {
   -webkit-background-clip: padding;
   -moz-background-clip: padding;
