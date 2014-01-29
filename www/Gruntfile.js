@@ -47,7 +47,7 @@ module.exports = function(grunt) {
         options: {
           name: 'main',
           optimize: 'uglify2',
-          out: 'dist/js/main.js',
+          out: 'vendor/dist/js/main.js',
           mainConfigFile: 'main.js',
           generateSourceMaps: true,
           preserveLicenseComments: false,
@@ -80,7 +80,7 @@ module.exports = function(grunt) {
         options: {
           name: 'main',
           optimize: 'uglify2',
-          out: 'dist/js/main.js',
+          out: 'vendor/dist/js/main.js',
           mainConfigFile: 'main.js',
           generateSourceMaps: false,
           preserveLicenseComments: true,
@@ -113,7 +113,7 @@ module.exports = function(grunt) {
         options: {
           name: 'main',
           optimize: 'uglify2',
-          out: 'dist/js/main.js',
+          out: 'vendor/dist/js/main.js',
           mainConfigFile: 'main.js',
           generateSourceMaps: false,
           preserveLicenseComments: true,
@@ -150,7 +150,7 @@ module.exports = function(grunt) {
           paths: ['styles']
         },
         files: {
-          'dist/css/main.css': 'styles/main.less'
+          'vendor/dist/css/main.css': 'styles/main.less'
         }
       }
     },
@@ -158,24 +158,24 @@ module.exports = function(grunt) {
     copy: {
       dist: {
         files: {
-          'dist/fonts/fredoka-one.eot': 'fonts/fredoka-one.eot',
-          'dist/fonts/fredoka-one.woff': 'fonts/fredoka-one.woff',
-          'dist/fonts/glyphicons-halflings-regular.eot':
+          'vendor/dist/fonts/fredoka-one.eot': 'fonts/fredoka-one.eot',
+          'vendor/dist/fonts/fredoka-one.woff': 'fonts/fredoka-one.woff',
+          'vendor/dist/fonts/glyphicons-halflings-regular.eot':
             'fonts/glyphicons-halflings-regular.eot',
-          'dist/fonts/glyphicons-halflings-regular.svg':
+          'vendor/dist/fonts/glyphicons-halflings-regular.svg':
             'fonts/glyphicons-halflings-regular.svg',
-          'dist/fonts/glyphicons-halflings-regular.ttf':
+          'vendor/dist/fonts/glyphicons-halflings-regular.ttf':
             'fonts/glyphicons-halflings-regular.ttf',
-          'dist/fonts/glyphicons-halflings-regular.woff':
+          'vendor/dist/fonts/glyphicons-halflings-regular.woff':
             'fonts/glyphicons-halflings-regular.woff',
-          'dist/fonts/ubuntu-bold.eot': 'fonts/ubuntu-bold.eot',
-          'dist/fonts/ubuntu-bold.woff': 'fonts/ubuntu-bold.woff',
-          'dist/fonts/ubuntu.eot': 'fonts/ubuntu.eot',
-          'dist/fonts/ubuntu.woff': 'fonts/ubuntu.woff',
-          'dist/js/require.min.js': 'vendor/require/require.min.js',
-          'dist/favicon.ico': 'img/favicon.ico',
-          'dist/robots.txt': 'root/robots.txt',
-          'dist/index.html': 'root/index.html'
+          'vendor/dist/fonts/ubuntu-bold.eot': 'fonts/ubuntu-bold.eot',
+          'vendor/dist/fonts/ubuntu-bold.woff': 'fonts/ubuntu-bold.woff',
+          'vendor/dist/fonts/ubuntu.eot': 'fonts/ubuntu.eot',
+          'vendor/dist/fonts/ubuntu.woff': 'fonts/ubuntu.woff',
+          'vendor/dist/js/require.min.js': 'vendor/require/require.min.js',
+          'vendor/dist/favicon.ico': 'img/favicon.ico',
+          'vendor/dist/robots.txt': 'root/robots.txt',
+          'vendor/dist/index.html': 'root/index.html'
         }
       }
     }
