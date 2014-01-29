@@ -213,7 +213,7 @@ class AppServer(Config):
                 version_file.write('%s\n' % __version__)
 
     def _fill_cache(self):
-        logger.debug('Filling cache...')
+        logger.info('Preloading cache...')
         from organization import Organization
         for org in Organization.iter_orgs():
             org._cache_users()
