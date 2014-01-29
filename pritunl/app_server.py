@@ -146,8 +146,7 @@ class AppServer(Config):
         logger.addHandler(self.log_handler)
 
     def _setup_db(self):
-        persist_db.set_path(self.db_path)
-        persist_db.import_data()
+        persist_db.setup_persist(self.db_path)
 
     def _setup_handlers(self):
         import handlers

@@ -30,7 +30,7 @@ TRANSACTION_METHODS = {
 }
 
 class Cache:
-    def __init__(self, persist=False):
+    def __init__(self):
         self._path = None
         self._set_queue = Queue.Queue()
         self._data = collections.defaultdict(
@@ -39,8 +39,6 @@ class Cache:
             lambda: {'subs': set(), 'msgs': collections.deque(maxlen=10)})
         self._commit_log = []
         self._locks = collections.defaultdict(lambda: threading.Lock())
-        if persist:
-            threading.Thread(target=self._export_thread).start()
 
     def _put_queue(self):
         if self._data:
@@ -74,11 +72,10 @@ class Cache:
             return True
         return False
 
-    def set_path(self, path):
+    def setup_persist(self, path):
         self._path = path
-
-    def get_path(self, path):
-        return self._path
+        persist_db.import_data()
+        threading.Thread(target=self._export_thread).start()
 
     def get(self, key):
         if self._check_ttl(key) is False:
@@ -404,4 +401,4 @@ class CacheTransaction:
         self._cache._apply_trans(trans)
 
 cache_db = Cache()
-persist_db = Cache(persist=True)
+persist_db = Cache()
