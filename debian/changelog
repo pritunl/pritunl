@@ -1,3 +1,20 @@
+pritunl (0.10.5-0ubuntu1) unstable; urgency=low
+
+  * Changes to api
+  * Add support for multiple local networks on vpn server
+  * Cache organizations and users to reduce response times
+  * Changes to event system
+  * Add support for node servers
+  * Organization openssl crl is no longer generated
+  * Add pages to user list
+  * Add search to user list
+  * Add support for node servers
+  * Server conf data will be automatically upgraded after first launch
+  * Organization data will be automatically upgraded after first launch
+  * Log entries will be cleared after first launch for database upgrade
+
+ -- Zachary Huff <zach.huff.386@gmail.com>  Wed, 29 Jan 2014 01:29:32 -0400
+
 pritunl (0.10.4-0ubuntu1) unstable; urgency=low
 
   * Improve support for mobile devices
