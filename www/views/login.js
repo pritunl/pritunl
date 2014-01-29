@@ -77,9 +77,14 @@ define([
         success: function() {
           this.callback();
           this.backdrop.$el.fadeOut(400);
-          this.$el.fadeOut(400, function() {
-            this.destroy();
-          }.bind(this));
+          this.$('.login-box').animate({
+            top: '-50%'
+          }, {
+            duration: 400,
+            complete: function() {
+              this.destroy();
+            }.bind(this)
+          });
           $('header').removeClass('blur');
           $('#app').removeClass('blur');
         }.bind(this),
