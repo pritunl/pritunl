@@ -23,7 +23,6 @@ TRANSACTION_METHODS = {
     'list_rpush',
     'list_lpop',
     'list_rpop',
-    'list_index',
     'list_remove',
     'dict_set',
     'dict_remove',
