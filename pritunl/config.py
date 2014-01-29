@@ -150,7 +150,9 @@ class Config:
         cache_db.remove(self.get_cache_key())
 
     def load(self, merge=False):
-        logger.debug('Loading config.')
+        logger.debug('Loading config. %r' % {
+            'path': self._conf_path,
+        })
         self._loaded = True
 
         if self.cached:
