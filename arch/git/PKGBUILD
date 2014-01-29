@@ -1,12 +1,13 @@
 # Maintainer: Zachary Huff <zach.huff.386@gmail.com>
 
 pkgname=pritunl-git
+_pkgname=pritunl
 pkgver=0.0.0
 pkgrel=1
 pkgdesc="Simple openvpn server (git version)"
 arch=("any")
 license=("AGPL3")
-url="https://github.com/pritunl/${pkgname}"
+url="https://github.com/${_pkgname}/${_pkgname}"
 depends=(
     "python"
     "python2"
@@ -21,29 +22,29 @@ makedepends=(
     "python2-distribute"
 )
 provides=("${pkgname}")
-conflicts=("${pkgname}")
-install=${pkgname}.install
+conflicts=("${_pkgname}")
+install=${_pkgname}.install
 source=("git+${url}.git")
 sha256sums=("SKIP")
 options=("emptydirs")
 backup=(
-    "etc/${pkgname}.conf"
-    "var/lib/${pkgname}/${pkgname}.db"
-    "var/log/${pkgname}.log"
+    "etc/${_pkgname}.conf"
+    "var/lib/${_pkgname}/${_pkgname}.db"
+    "var/log/${_pkgname}.log"
 )
 
 pkgver() {
-  cd "$srcdir/$pkgname"
+  cd "$srcdir/$_pkgname"
   git rev-parse --short HEAD
 }
 
 build() {
-    cd "${srcdir}/${pkgname}"
+    cd "${srcdir}/${_pkgname}"
     python2 setup.py build
 }
 
 package() {
-    cd "${srcdir}/${pkgname}"
-    mkdir -p "${pkgdir}/var/lib/${pkgname}"
+    cd "${srcdir}/${_pkgname}"
+    mkdir -p "${pkgdir}/var/lib/${_pkgname}"
     python2 setup.py install --root="${pkgdir}" --prefix=/usr --no-upstart
 }
