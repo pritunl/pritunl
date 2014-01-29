@@ -3,7 +3,7 @@
 pkgname=pritunl
 pkgver=0.0.0
 pkgrel=1
-pkgdesc="Simple openvpn server"
+pkgdesc="Simple openvpn server (git version)"
 arch=("any")
 license=("AGPL3")
 url="https://github.com/pritunl/${pkgname}"
