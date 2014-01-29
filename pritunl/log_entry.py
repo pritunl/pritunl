@@ -36,8 +36,9 @@ class LogEntry(CacheObject):
     def initialize(self):
         while self.db.list_length(self.column_family) >= LOG_LIMIT:
             log_entry_id = self.db.list_index(self.column_family, -1)
-            if log_entry_id:
-                LogEntry(id=log_entry_id).remove()
+            if not log_entry_id:
+                break
+            LogEntry(id=log_entry_id).remove()
         self.db.list_lpush(self.column_family, self.id)
         Event(type=LOG_UPDATED)
 
