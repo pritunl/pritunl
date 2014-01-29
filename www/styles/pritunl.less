@@ -409,8 +409,15 @@ header.blur {
 .users-list .search-more {
   cursor: pointer;
   margin-top: -20px;
-  display: block;
   text-align: center;
+}
+
+.users-list .prev-page,
+.users-list .next-page,
+.users-list .pages,
+.users-list .search-time,
+.users-list .search-more {
+  display: none;
 }
 
 .users-list .pages {
@@ -475,6 +482,7 @@ header.blur {
 
 .users-list .user,
 .users-list .no-users,
+.users-list .loading,
 .server-orgs-list .org,
 .server-orgs-list .no-orgs {
   height: 40px;
@@ -488,6 +496,7 @@ header.blur {
 }
 
 .users-list .no-users,
+.users-list .loading,
 .server-orgs-list .no-orgs {
   text-align: center;
   font-size: 14px;
@@ -495,6 +504,11 @@ header.blur {
   background-color: @light-dark-bg;
   padding-top: 10px;
   display: none;
+}
+
+
+.users-list .loading {
+  display: block;
 }
 
 .users-list .org-title,

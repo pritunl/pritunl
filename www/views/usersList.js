@@ -18,7 +18,7 @@ define([
       'click .next-page': 'nextPage',
       'click .link.first': 'firstPage',
       'click .link.last': 'lastPage',
-      'click .search-more': 'searchMore'
+      'click .search-more a': 'searchMore'
     },
     initialize: function(options) {
       this.collection = new UserCollection({
@@ -56,6 +56,7 @@ define([
       }.bind(this));
     },
     resetItems: function(views) {
+      this.$('.loading').slideUp(250);
       if (!views.length) {
         this.$('.no-users').slideDown(250);
       }
