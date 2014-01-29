@@ -1,0 +1,49 @@
+# Maintainer: Zachary Huff <zach.huff.386@gmail.com>
+
+pkgname=pritunl
+pkgver=0.0.0
+pkgrel=1
+pkgdesc="Simple openvpn server"
+arch=("any")
+license=("AGPL3")
+url="https://github.com/pritunl/${pkgname}"
+depends=(
+    "python"
+    "python2"
+    "python2-flask"
+    "python2-cherrypy"
+    "net-tools"
+    "iproute2"
+    "openvpn"
+)
+makedepends=(
+    "git"
+    "python2-distribute"
+)
+provides=("${pkgname}")
+conflicts=("${pkgname}")
+install=${pkgname}.install
+source=("git+${url}.git")
+sha256sums=("SKIP")
+options=("emptydirs")
+backup=(
+    "etc/${pkgname}.conf"
+    "var/lib/${pkgname}/${pkgname}.db"
+    "var/log/${pkgname}.log"
+)
+
+pkgver() {
+  cd "$srcdir/$pkgname"
+  git rev-parse --short HEAD
+}
+
+build() {
+    cd "${srcdir}/${pkgname}"
+    python2 setup.py build
+}
+
+package() {
+    cd "${srcdir}/${pkgname}"
+    mkdir -p "${pkgdir}/var/lib/${pkgname}"
+    python2 setup.py install --root="${pkgdir}" --prefix=/usr --no-upstart
+}
