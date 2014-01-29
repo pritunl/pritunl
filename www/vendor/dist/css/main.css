@@ -7008,8 +7008,14 @@ header.blur {
 .users-list .search-more {
   cursor: pointer;
   margin-top: -20px;
-  display: block;
   text-align: center;
+}
+.users-list .prev-page,
+.users-list .next-page,
+.users-list .pages,
+.users-list .search-time,
+.users-list .search-more {
+  display: none;
 }
 .users-list .pages {
   margin-top: 16px;
@@ -7061,6 +7067,7 @@ header.blur {
 }
 .users-list .user,
 .users-list .no-users,
+.users-list .loading,
 .server-orgs-list .org,
 .server-orgs-list .no-orgs {
   height: 40px;
@@ -7079,6 +7086,7 @@ header.blur {
   background-clip: padding-box;
 }
 .users-list .no-users,
+.users-list .loading,
 .server-orgs-list .no-orgs {
   text-align: center;
   font-size: 14px;
@@ -7086,6 +7094,9 @@ header.blur {
   background-color: #f5f5f5;
   padding-top: 10px;
   display: none;
+}
+.users-list .loading {
+  display: block;
 }
 .users-list .org-title,
 .servers-list .server .server-title a {
@@ -7111,7 +7122,7 @@ header.blur {
 }
 .users-list .user .name-container .name-icon,
 .server-orgs-list .org .name-container .name-icon {
-  top: 2px;
+  top: 3px;
   margin-top: 0;
   margin-right: 6px;
   font-size: 19px;
@@ -7123,7 +7134,7 @@ header.blur {
   color: #b8b8b8;
 }
 .users-list .user .name-container .name-icon {
-  top: 1px;
+  top: 2px;
 }
 .users-list .user .name-container .user-name {
   position: relative;
@@ -7168,7 +7179,6 @@ header.blur {
 .users-list .user .get-key-link,
 .users-list .user .get-otp-auth {
   float: right;
-  top: -1px;
   font-size: 20px;
   color: #4e8bbf;
   cursor: pointer;
@@ -7276,7 +7286,7 @@ header.blur {
 }
 .servers-list .server .server-info .server-output .server-output-icon {
   color: #1f83bb;
-  top: -1px;
+  top: 0;
   font-size: 18px;
 }
 .servers-list .server .server-info .server-output .server-output-clear {
@@ -7332,6 +7342,7 @@ header.blur {
   margin: 0;
 }
 .servers-list .server .server-info .status-item .status-title span {
+  top: 2px;
   vertical-align: text-top;
 }
 .dashboard .status-container .status-item .status-icon,
@@ -7342,9 +7353,6 @@ header.blur {
 .servers-list .server .server-info .status-item .status-icon {
   font-size: 18px;
   margin-right: 0;
-}
-.dashboard .status-container .status-item .status-icon {
-  top: -2px;
 }
 .dashboard .status-container .status-item .status-icon.glyphicon-cloud {
   top: 0;
@@ -7412,6 +7420,7 @@ header.blur {
   font-size: 15px;
   margin-right: 7px;
   float: left;
+  top: 3px;
 }
 .dashboard .log-container .log-entry .log-msg {
   float: left;
