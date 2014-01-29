@@ -57,7 +57,7 @@ class AppServer(Config):
         except:
             if retry:
                 logger.debug('Retrying get public ip address...')
-                time.sleep(1)
+                time.sleep(5)
                 self.load_public_ip(timeout=timeout)
             else:
                 logger.exception('Failed to get public ip address...')
@@ -74,7 +74,7 @@ class AppServer(Config):
 
         @self.app.before_request
         def before_request():
-          flask.g.start = time.time()
+            flask.g.start = time.time()
 
         @self.app.after_request
         def after_request(response):
@@ -313,10 +313,10 @@ class AppServer(Config):
             raise
         finally:
             signal.signal(signal.SIGINT, signal.SIG_IGN)
-            self.interrupt = True
             logger.info('Stopping server...')
-            server.stop()
             LogEntry(message='Web server stopped.')
+            self.interrupt = True
+            server.stop()
 
     def _run_wsgi_debug(self):
         from log_entry import LogEntry
@@ -336,9 +336,9 @@ class AppServer(Config):
             raise
         finally:
             signal.signal(signal.SIGINT, signal.SIG_IGN)
-            self.interrupt = True
             logger.info('Stopping debug server...')
             LogEntry(message='Web server stopped.')
+            self.interrupt = True
 
     def _run_server(self):
         from log_entry import LogEntry
