@@ -1,6 +1,11 @@
 Pritunl Changelog
 =================
 
+Version 0.10.6
+--------------
+
+Change password hash function
+
 Version 0.10.5 2014-01-29
 -------------------------
 
