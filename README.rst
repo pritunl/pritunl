@@ -10,7 +10,7 @@ Pritunl: Simple openvpn server
 .. image:: http://gitshields.com/v1/license-AGPLv3-blue.png
     :target: https://crate.io/packages/pritunl
 
-.. image:: https://drone.io/github.com/pritunl/pritunl/status.png
+.. image:: http://gitshields.com/v1/drone/pritunl-pritunl-brightgreen-red.png
     :target: https://drone.io/github.com/pritunl/pritunl
 
 `Pritunl <https://github.com/pritunl/pritunl>`_ is a simple openvpn server
