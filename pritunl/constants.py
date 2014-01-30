@@ -1,4 +1,5 @@
 import string
+import os
 
 APP_NAME = 'pritunl'
 APP_NAME_FORMATED = 'Pritunl'
@@ -17,12 +18,12 @@ NAME_SAFE_CHARS = ['-', '_', '@', '.']
 KEY_LINK_TIMEOUT = 86400
 DEFAULT_PRIMARY_INTERFACE = 'eth0'
 DEFAULT_SESSION_TIMEOUT = 86400
-DEFAULT_PASSWORD = 'admin'
-PASSWORD_SALT = '2511cebca93d028393735637bbc8029207731fcf'
-DEFAULT_CONF_PATH = '/etc/pritunl.conf'
-DEFAULT_DB_PATH = '/var/lib/pritunl/pritunl.db'
-DEFAULT_WWW_PATH = '/usr/share/pritunl/www'
+DEFAULT_CONF_DIR_PATH = '/etc/pritunl'
 DEFAULT_DATA_PATH = '/var/lib/pritunl'
+DEFAULT_CONF_PATH = os.path.join(DEFAULT_CONF_DIR_PATH, 'pritunl.conf')
+DEFAULT_DB_PATH = os.path.join(DEFAULT_DATA_PATH, 'pritunl.db')
+DEFAULT_WWW_PATH = '/usr/share/pritunl/www'
+DEFAULT_PASSWORD_PATH = os.path.join(DEFAULT_CONF_DIR_PATH, 'user.db')
 DEFAULT_KEY_BITS = 4096
 DEFAULT_DH_PARAM_BITS = 1536
 DEFAULT_OTP_SECRET_LEN = 16
