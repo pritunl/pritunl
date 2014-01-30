@@ -10,6 +10,7 @@ import urllib2
 import threading
 import hashlib
 import subprocess
+from passlib.apache import HtpasswdFile
 
 logger = None
 
@@ -18,8 +19,8 @@ class AppServer(Config):
         'get_public_ip', 'inline_certs', 'ssl'}
     int_options = {'port', 'session_timeout', 'key_bits', 'dh_param_bits'}
     path_options = {'log_path', 'db_path', 'www_path', 'data_path',
-        'server_cert_path', 'server_key_path'}
-    str_options = {'bind_addr', 'password', 'public_ip_server'}
+        'server_cert_path', 'server_key_path', 'password_path'}
+    str_options = {'bind_addr', 'public_ip_server'}
     default_options = {
         'auto_start_servers': True,
         'get_public_ip': True,
@@ -32,6 +33,7 @@ class AppServer(Config):
         'www_path': DEFAULT_WWW_PATH,
         'data_path': DEFAULT_DATA_PATH,
         'public_ip_server': DEFAULT_PUBLIC_IP_SERVER,
+        'password_path': DEFAULT_PASSWORD_PATH,
     }
 
     def __init__(self):
@@ -148,6 +150,15 @@ class AppServer(Config):
     def _setup_db(self):
         persist_db.setup_persist(self.db_path)
 
+    def _setup_default_user(self):
+        try:
+            ht = HtpasswdFile(self.password_path)
+        except:
+            ht = HtpasswdFile(self.password_path, new=True)
+        if not ht.users():
+            ht.set_password("admin", "admin")
+            ht.save()
+
     def _setup_handlers(self):
         import handlers
 
@@ -218,26 +229,14 @@ class AppServer(Config):
         for org in Organization.iter_orgs():
             org._cache_users()
 
-    def _hash_password(self, password):
-        password_hash = hashlib.sha512()
-        password_hash.update(password)
-        password_hash.update(PASSWORD_SALT)
-        return password_hash.hexdigest()
+    def check_password(self, username_attempt, password_attempt):
+        ht = HtpasswdFile(self.password_path)
+        return ht.check_password(username_attempt, password_attempt)
 
-    def check_password(self, password_attempt):
-        if not self.password:
-            if password_attempt == DEFAULT_PASSWORD:
-                return True
-            return False
-
-        password_attempt = self._hash_password(password_attempt)
-        if password_attempt == self.password:
-            return True
-        return False
-
-    def set_password(self, password):
-        self.password = self._hash_password(password)
-        self.commit()
+    def set_password(self, username, password):
+        ht = HtpasswdFile(self.password_path)
+        ht.set_password(username, password)
+        ht.save()
 
     def _setup_all(self):
         self._setup_app()
@@ -249,6 +248,7 @@ class AppServer(Config):
         self._setup_handlers()
         self._setup_static_handler()
         self._upgrade_data()
+        self._setup_default_user()
         self._fill_cache()
 
     def _setup_server_cert(self):
