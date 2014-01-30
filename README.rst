@@ -3,7 +3,7 @@ Pritunl: Simple openvpn server
 
 .. image:: http://gitshields.com/v1/pypi/pritunl/version/7d0ce8.png
     :target: https://crate.io/packages/pritunl
-S
+
 .. image:: http://gitshields.com/v1/pypi/pritunl/month_down/ff4a20.png
     :target: https://crate.io/packages/pritunl
 
