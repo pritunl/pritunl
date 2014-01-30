@@ -251,9 +251,11 @@ class AppServer(Config):
 
         pass_ver, pass_salt, pass_hash = self.password_data
         if pass_ver == 0:
-            return self._hash_password_v0(pass_salt, pass_hash)
+            return self._hash_password_v0(
+                pass_salt, password_attempt) == pass_hash
         elif pass_ver == 1:
-            return self._hash_password_v1(pass_salt, pass_hash)
+            return self._hash_password_v1(
+                pass_salt, password_attempt) == pass_hash
         return False
 
     def set_password(self, password):
