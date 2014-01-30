@@ -1,13 +1,13 @@
 Pritunl: Simple openvpn server
 ==============================
 
-.. image:: https://pypip.in/v/pritunl/badge.png
+.. image:: http://gitshields.com/v1/pypi/pritunl-ver-brightgreen.png
     :target: https://crate.io/packages/pritunl
 
-.. image:: https://pypip.in/d/pritunl/badge.png
+.. image:: http://gitshields.com/v1/pypi/pritunl-mdl-e84d0c.png
     :target: https://crate.io/packages/pritunl
 
-.. image:: https://pypip.in/license/pritunl/badge.png
+.. image:: http://gitshields.com/v1/license-AGPLv3-blue.png
     :target: https://crate.io/packages/pritunl
 
 .. image:: https://drone.io/github.com/pritunl/pritunl/status.png
