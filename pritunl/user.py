@@ -24,6 +24,7 @@ class User(Config):
     str_options = {'name', 'otp_secret', 'type'}
     default_options = {
         'name': 'undefined',
+        'type': CERT_CLIENT,
     }
     chmod_mode = 0600
     cached = True
@@ -173,6 +174,13 @@ class User(Config):
             })
             raise
 
+    def load(self, *args, **kwargs):
+        Config.load(self, *args, **kwargs)
+        if not self.otp_secret:
+            logger.info('User otp secret missing generating new one. %r' % {
+                self._generate_otp_secret()
+            })
+
     def _generate_otp_secret(self):
         sha_hash = hashlib.sha512()
         sha_hash.update(os.urandom(8192))
@@ -182,10 +190,10 @@ class User(Config):
             sha_hash.update(byte_hash)
             byte_hash = sha_hash.digest()
         self.otp_secret = base64.b32encode(byte_hash)[:DEFAULT_OTP_SECRET_LEN]
+        self.commit()
 
     def generate_otp_secret(self):
         self._generate_otp_secret()
-        self.commit()
         Event(type=USERS_UPDATED, resource_id=self.org.id)
 
     def verify_otp_code(self, code):
