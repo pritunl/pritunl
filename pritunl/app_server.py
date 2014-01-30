@@ -227,13 +227,13 @@ class AppServer(Config):
 
     def _hash_password_v0(self, salt, password):
         password_hash = hashlib.sha512()
-        password_hash.update(password)
+        password_hash.update(password[:PASSWORD_LEN_LIMIT])
         password_hash.update(salt)
         return password_hash.hexdigest()
 
     def _hash_password_v1(self, salt, password):
         pass_hash = hashlib.sha512()
-        pass_hash.update(password)
+        pass_hash.update(password[:PASSWORD_LEN_LIMIT])
         pass_hash.update(base64.b64decode(salt))
         hash_digest = pass_hash.digest()
 

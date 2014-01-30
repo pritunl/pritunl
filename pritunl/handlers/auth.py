@@ -7,8 +7,8 @@ import flask
 
 @app_server.app.route('/auth', methods=['POST'])
 def auth_post():
-    username = flask.request.json['username'][:512]
-    password = flask.request.json['password'][:512]
+    username = flask.request.json['username']
+    password = flask.request.json['password']
 
     if username != AUTH_USER_NAME or not app_server.check_password(password):
         time.sleep(RATE_LIMIT_SLEEP)
