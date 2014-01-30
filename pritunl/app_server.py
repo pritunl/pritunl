@@ -10,6 +10,7 @@ import urllib2
 import threading
 import hashlib
 import subprocess
+import base64
 
 logger = None
 
@@ -44,6 +45,12 @@ class AppServer(Config):
             if self.debug or not self.ssl:
                 return 'http'
             return 'https'
+        elif name == 'password_data':
+            if self.password[:2] == '1$':
+                pass_split = self.password.split('$')
+                return (1, pass_split[1], pass_split[2])
+            else:
+                return (0, PASSWORD_SALT_V0, self.password)
         return Config.__getattr__(self, name)
 
     def load_public_ip(self, retry=False, timeout=3):
@@ -218,11 +225,23 @@ class AppServer(Config):
         for org in Organization.iter_orgs():
             org._cache_users()
 
-    def _hash_password(self, password):
+    def _hash_password_v0(self, salt, password):
         password_hash = hashlib.sha512()
         password_hash.update(password)
-        password_hash.update(PASSWORD_SALT)
+        password_hash.update(salt)
         return password_hash.hexdigest()
+
+    def _hash_password_v1(self, salt, password):
+        pass_hash = hashlib.sha512()
+        pass_hash.update(password)
+        pass_hash.update(base64.b64decode(salt))
+        hash_digest = pass_hash.digest()
+
+        for i in xrange(5):
+            pass_hash = hashlib.sha512()
+            pass_hash.update(hash_digest)
+            hash_digest = pass_hash.digest()
+        return base64.b64encode(hash_digest)
 
     def check_password(self, password_attempt):
         if not self.password:
@@ -230,13 +249,17 @@ class AppServer(Config):
                 return True
             return False
 
-        password_attempt = self._hash_password(password_attempt)
-        if password_attempt == self.password:
-            return True
+        pass_ver, pass_salt, pass_hash = self.password_data
+        if pass_ver == 0:
+            return self._hash_password_v0(pass_salt, pass_hash)
+        elif pass_ver == 1:
+            return self._hash_password_v1(pass_salt, pass_hash)
         return False
 
     def set_password(self, password):
-        self.password = self._hash_password(password)
+        salt = base64.b64encode(os.urandom(8))
+        pass_hash = self._hash_password_v1(salt, password)
+        self.password = '1$%s$%s' % (salt, pass_hash)
         self.commit()
 
     def _setup_all(self):
