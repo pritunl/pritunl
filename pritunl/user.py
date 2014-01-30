@@ -177,7 +177,7 @@ class User(Config):
     def load(self, *args, **kwargs):
         Config.load(self, *args, **kwargs)
         if not self.otp_secret:
-            logger.info('User otp secret missing generating new one. %r' % {
+            logger.debug('User otp secret missing generating new one. %r' % {
                 self._generate_otp_secret()
             })
 
