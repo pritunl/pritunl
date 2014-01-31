@@ -10,7 +10,7 @@ def auth_post():
     username = flask.request.json['username']
     password = flask.request.json['password']
 
-    if username != AUTH_USER_NAME or not app_server.check_password(password):
+    if not app_server.check_auth(username, password):
         time.sleep(RATE_LIMIT_SLEEP)
         return utils.jsonify({
             'error': AUTH_INVALID,
@@ -48,7 +48,7 @@ def auth_token_post():
     username = flask.request.json['username']
     password = flask.request.json['password']
 
-    if username != AUTH_USER_NAME or not app_server.check_password(password):
+    if not app_server.check_auth(username, password):
         time.sleep(RATE_LIMIT_SLEEP)
         return utils.jsonify({
             'error': AUTH_INVALID,

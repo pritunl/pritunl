@@ -20,12 +20,13 @@ class AppServer(Config):
     int_options = {'port', 'session_timeout', 'key_bits', 'dh_param_bits'}
     path_options = {'log_path', 'db_path', 'www_path', 'data_path',
         'server_cert_path', 'server_key_path'}
-    str_options = {'bind_addr', 'password', 'public_ip_server'}
+    str_options = {'bind_addr', 'username', 'password', 'public_ip_server'}
     default_options = {
         'auto_start_servers': True,
         'get_public_ip': True,
         'inline_certs': True,
         'ssl': True,
+        'username': DEFAULT_USERNAME,
         'session_timeout': DEFAULT_SESSION_TIMEOUT,
         'key_bits': DEFAULT_KEY_BITS,
         'dh_param_bits': DEFAULT_DH_PARAM_BITS,
@@ -243,19 +244,22 @@ class AppServer(Config):
             hash_digest = pass_hash.digest()
         return base64.b64encode(hash_digest)
 
-    def check_password(self, password_attempt):
+    def check_auth(self, username, password):
+        if username != self.username:
+            return False
+
         if not self.password:
-            if password_attempt == DEFAULT_PASSWORD:
+            if password == DEFAULT_PASSWORD:
                 return True
             return False
 
         pass_ver, pass_salt, pass_hash = self.password_data
         if pass_ver == 0:
             return self._hash_password_v0(
-                pass_salt, password_attempt) == pass_hash
+                pass_salt, password) == pass_hash
         elif pass_ver == 1:
             return self._hash_password_v1(
-                pass_salt, password_attempt) == pass_hash
+                pass_salt, password) == pass_hash
         return False
 
     def set_password(self, password):
