@@ -18,10 +18,9 @@ define([
     parse: function(response) {
       if (response.page !== undefined) {
         this.setPage(response.page);
-        this.pageTotal = response.page_total;
+        this.setPageTotal(response.page_total);
       }
       else {
-        this.setSearch(response.search);
         this.setSearchTime(response.search_time);
         this.setSearchMore(response.search_more);
         this.setSearchCount(response.search_count);
@@ -41,6 +40,9 @@ define([
     },
     prevPage: function() {
       this.page -= 1;
+    },
+    setPageTotal: function(total) {
+      this.pageTotal = total;
     },
     getPageTotal: function() {
       return this.pageTotal;

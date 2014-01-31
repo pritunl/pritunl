@@ -61,7 +61,10 @@ define([
     _removeItem: function(view, slide) {
       this._hideItem(view, slide, (this.removeItem).bind(this));
     },
-    _onReset: function(collection) {
+    _onReset: function(collection, options) {
+      if (this.ignore(options)) {
+        return;
+      }
       var i;
       var newIndex;
       var modelView;
@@ -300,6 +303,8 @@ define([
           this.collection.reset();
         }.bind(this)
       });
+    },
+    ignore: function(options) {
     },
     getOptions: function() {
     },

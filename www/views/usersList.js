@@ -154,6 +154,15 @@ define([
         };
       }
     },
+    ignore: function(options) {
+      var search = this.collection.getSearch();
+      if (search && search !== options.data.search) {
+        return true;
+      }
+      else if (!search && options.data.search) {
+        return true;
+      }
+    },
     prevPage: function() {
       this.collection.prevPage();
       this.update();

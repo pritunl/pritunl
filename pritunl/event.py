@@ -53,7 +53,7 @@ class Event(CacheObject):
             if int(time.time()) - int(event_time) > EVENT_TTL:
                 event_id = cls.db_instance.list_lpop(cls.column_family)
                 # Expire event to leave time for any get events
-                # iterating event list excepting event to still exists
+                # iterating event list expecting event to still exist
                 cls.db_instance.expire('%s-%s' % (cls.column_family, event_id),
                     EVENT_TTL)
             else:
