@@ -62,6 +62,7 @@ SERIAL_NAME = 'serial'
 TLS_VERIFY_NAME = 'tls_verify.py'
 USER_PASS_VERIFY_NAME = 'user_pass_verify.py'
 CLIENT_CONNECT_NAME = 'client_connect.py'
+CLIENT_DISCONNECT_NAME = 'client_disconnect.py'
 OVPN_CONF_NAME = 'openvpn.conf'
 OVPN_STATUS_NAME = 'status'
 OVPN_CA_NAME = 'ca.crt'
@@ -224,6 +225,7 @@ cert %s
 key %s
 tls-verify %s
 client-connect %s
+client-disconnect %s
 dh %s
 server %s
 ifconfig-pool-persist %s
@@ -243,6 +245,7 @@ proto %s
 dev %s
 tls-verify %s
 client-connect %s
+client-disconnect %s
 server %s
 ifconfig-pool-persist %s
 %s

@@ -32,6 +32,7 @@ class Server(Config):
     def __init__(self, id=None, **kwargs):
         Config.__init__(self)
         self._cur_event = None
+        self._cur_client_count = 0
         self._last_event = 0
 
         if id is None:
@@ -50,6 +51,10 @@ class Server(Config):
             TLS_VERIFY_NAME)
         self.user_pass_verify_path = os.path.join(self.path, TEMP_DIR,
             USER_PASS_VERIFY_NAME)
+        self.client_connect_path = os.path.join(self.path, TEMP_DIR,
+            CLIENT_CONNECT_NAME)
+        self.client_disconnect_path = os.path.join(self.path, TEMP_DIR,
+            CLIENT_DISCONNECT_NAME)
         self.ovpn_status_path = os.path.join(self.path, TEMP_DIR,
             OVPN_STATUS_NAME)
         self.auth_log_path = os.path.join(app_server.data_path, AUTH_LOG_NAME)
@@ -325,33 +330,24 @@ class Server(Config):
                 with open(ca_path, 'r') as org_ca_cert:
                     server_ca_cert.write(org_ca_cert.read())
 
-    def _generate_tls_verify(self):
-        logger.debug('Generating tls verify script. %r' % {
+    def _generate_scripts(self):
+        logger.debug('Generating openvpn scripts. %r' % {
             'server_id': self.id,
         })
-        with open(self.tls_verify_path, 'w') as tls_verify_file:
-            os.chmod(self.tls_verify_path, 0755)
-            data_path = app_server.data_path
-            tls_verify_file.write(TLS_VERIFY_SCRIPT % (
-                self.auth_log_path,
-                app_server.web_protocol,
-                app_server.port,
-                self.id,
-            ))
-
-    def _generate_user_pass_verify(self):
-        logger.debug('Generating user pass verify script. %r' % {
-            'server_id': self.id,
-        })
-        with open(self.user_pass_verify_path, 'w') as user_pass_verify_file:
-            os.chmod(self.user_pass_verify_path, 0755)
-            data_path = app_server.data_path
-            user_pass_verify_file.write(USER_PASS_VERIFY_SCRIPT % (
-                self.auth_log_path,
-                app_server.web_protocol,
-                app_server.port,
-                self.id,
-            ))
+        for script, script_path in [
+                    (TLS_VERIFY_SCRIPT, self.tls_verify_path),
+                    (USER_PASS_VERIFY_SCRIPT, self.user_pass_verify_path),
+                    (CLIENT_CONNECT_SCRIPT, self.client_connect_path),
+                    (CLIENT_DISCONNECT_SCRIPT, self.client_disconnect_path),
+                ]:
+            with open(script_path, 'w') as script_file:
+                os.chmod(script_path, 0755)
+                script_file.write(script % (
+                    self.auth_log_path,
+                    app_server.web_protocol,
+                    app_server.port,
+                    self.id,
+                ))
 
     def _generate_ovpn_conf(self, inline=False):
         if not self.org_count:
@@ -372,8 +368,7 @@ class Server(Config):
         primary_user = primary_org.get_user(self.primary_user)
 
         self.generate_ca_cert()
-        self._generate_tls_verify()
-        self._generate_user_pass_verify()
+        self._generate_scripts()
 
         if self.local_networks:
             push = ''
@@ -392,6 +387,8 @@ class Server(Config):
                 primary_user.cert_path,
                 primary_user.key_path,
                 self.tls_verify_path,
+                self.client_connect_path,
+                self.client_disconnect_path,
                 self.dh_param_path,
                 '%s %s' % self._parse_network(self.network),
                 self.ifc_pool_path,
@@ -406,6 +403,8 @@ class Server(Config):
                 self.protocol,
                 self.interface,
                 self.tls_verify_path,
+                self.client_connect_path,
+                self.client_disconnect_path,
                 '%s %s' % self._parse_network(self.network),
                 self.ifc_pool_path,
                 push,
@@ -566,12 +565,7 @@ class Server(Config):
             # Check interrupt every 0.1s check client count every 1s
             if i == 9:
                 i = 0
-                client_count = len(self.update_clients())
-                if client_count != cur_client_count:
-                    cur_client_count = client_count
-                    for org in self.iter_orgs():
-                        Event(type=USERS_UPDATED, resource_id=org.id)
-                    Event(type=SERVERS_UPDATED)
+                self.update_clients()
             else:
                 i += 1
             time.sleep(0.1)
@@ -591,7 +585,7 @@ class Server(Config):
                 logger.exception('Failed to start ovpn process. %r' % {
                     'server_id': self.id,
                 })
-                cache_db.publish(self.get_cache_key(), 'stopped')
+                self.publish('stopped')
                 return
             cache_db.dict_set(self.get_cache_key(), 'start_time',
                 str(int(time.time() - 1)))
@@ -601,7 +595,7 @@ class Server(Config):
             status_thread = threading.Thread(target=self._status_thread)
             status_thread.start()
             self.status = True
-            cache_db.publish(self.get_cache_key(), 'started')
+            self.publish('started')
 
             while True:
                 line = process.stdout.readline()
@@ -616,7 +610,7 @@ class Server(Config):
             status_thread.join()
 
             self.status = False
-            cache_db.publish(self.get_cache_key(), 'stopped')
+            self.publish('stopped')
             if process.returncode != 0:
                 Event(type=SERVERS_UPDATED)
                 LogEntry(message='Server stopped unexpectedly "%s".' % (
@@ -627,7 +621,10 @@ class Server(Config):
             })
         except:
             self._interrupt = True
-            cache_db.publish(self.get_cache_key(), 'stopped')
+            self.publish('stopped')
+
+    def publish(self, message):
+        cache_db.publish(self.get_cache_key(), message)
 
     def start(self, silent=False):
         if self.status:
@@ -668,7 +665,7 @@ class Server(Config):
         })
 
         stopped = False
-        cache_db.publish(self.get_cache_key(), 'stop')
+        self.publish('stop')
         for message in cache_db.subscribe(self.get_cache_key(),
                 SUB_RESPONSE_TIMEOUT):
             if message == 'stopped':
@@ -689,7 +686,7 @@ class Server(Config):
         })
 
         stopped = False
-        cache_db.publish(self.get_cache_key(), 'stop')
+        self.publish('stop')
         for message in cache_db.subscribe(self.get_cache_key(), 2):
             if message == 'stopped':
                 stopped = True
@@ -697,7 +694,7 @@ class Server(Config):
 
         if not stopped:
             stopped = False
-            cache_db.publish(self.get_cache_key(), 'force_stop')
+            self.publish('force_stop')
             for message in cache_db.subscribe(self.get_cache_key(),
                     SUB_RESPONSE_TIMEOUT):
                 if message == 'stopped':
@@ -758,6 +755,13 @@ class Server(Config):
                         'bytes_sent': bytes_sent,
                         'connected_since': connected_since,
                     }
+
+        client_count = len(clients)
+        if client_count != self._cur_client_count:
+            self._cur_client_count = client_count
+            for org in self.iter_orgs():
+                Event(type=USERS_UPDATED, resource_id=org.id)
+            Event(type=SERVERS_UPDATED)
 
         self.clients = clients
         return clients
