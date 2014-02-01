@@ -4,6 +4,7 @@ Pritunl Changelog
 Version 0.10.6
 --------------
 
+Add username to pritunl conf
 Change password hash function
 
 Version 0.10.5 2014-01-29
