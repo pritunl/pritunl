@@ -170,8 +170,6 @@ class NodeServer(Server):
         primary_user = primary_org.get_user(self.primary_user)
 
         self.generate_ca_cert()
-        self._generate_tls_verify()
-        self._generate_user_pass_verify()
 
         if self.local_networks:
             push = ''
@@ -185,6 +183,8 @@ class NodeServer(Server):
             self.port,
             self.protocol,
             self.interface,
+            '%s',
+            '%s',
             '%s',
             '%s %s' % self._parse_network(self.network),
             '%s',
