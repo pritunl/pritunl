@@ -235,6 +235,7 @@ class NodeServer(Server):
                     'network': self.network,
                     'local_networks': self.local_networks,
                     'ovpn_conf': ovpn_conf,
+                    'server_ver': NODE_SERVER_VER,
                 },
             )
         except:
