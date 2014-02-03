@@ -114,7 +114,7 @@ class request:
     def _request(cls, method, url, json_data=None, headers={},
             timeout=socket._GLOBAL_DEFAULT_TIMEOUT):
         data = None
-        request = urllib2.Request(url)
+        request = urllib2.Request(url, headers=headers)
         request.get_method = lambda: method
 
         if json_data is not None:
