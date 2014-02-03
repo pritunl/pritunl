@@ -258,6 +258,7 @@ def server_put_post(server_id=None):
             }, 400)
 
         if not network_def:
+            network_def = True
             for i in xrange(5000):
                 rand_network = '10.%s.%s.0/24' % (
                     random.randint(15,250), random.randint(15,250))
@@ -271,6 +272,7 @@ def server_put_post(server_id=None):
                 }, 400)
 
         if not interface_def:
+            interface_def = True
             for i in xrange(64):
                 rand_interface = 'tun%s' % i
                 if rand_interface not in interface_used:
@@ -283,6 +285,7 @@ def server_put_post(server_id=None):
                 }, 400)
 
         if not port_def:
+            port_def = True
             rand_ports = range(10000, 19999)
             random.shuffle(rand_ports)
             for rand_port in rand_ports:
@@ -296,10 +299,31 @@ def server_put_post(server_id=None):
                 }, 400)
 
         if not public_address_def:
+            public_address_def = True
             if not app_server.public_ip:
                 app_server.load_public_ip()
             public_address = app_server.public_ip
 
+    if network_def:
+        if network in network_used:
+            return utils.jsonify({
+                'error': NETWORK_IN_USE,
+                'error_msg': NETWORK_IN_USE_MSG,
+            }, 400)
+    if interface_def:
+        if interface in interface_used:
+            return utils.jsonify({
+                'error': INTERFACE_IN_USE,
+                'error_msg': INTERFACE_IN_USE_MSG,
+            }, 400)
+    if port_def:
+        if '%s%s' % (port, protocol) in port_used:
+            return utils.jsonify({
+                'error': PORT_PROTOCOL_IN_USE,
+                'error_msg': PORT_PROTOCOL_IN_USE_MSG,
+            }, 400)
+
+    if not server_id:
         if type == NODE_SERVER_NAME:
             server = NodeServer(
                 name=name,
@@ -339,25 +363,10 @@ def server_put_post(server_id=None):
         if name_def:
             server.name = name
         if network_def:
-            if network in network_used:
-                return utils.jsonify({
-                    'error': NETWORK_IN_USE,
-                    'error_msg': NETWORK_IN_USE_MSG,
-                }, 400)
             server.network = network
         if interface_def:
-            if interface in interface_used:
-                return utils.jsonify({
-                    'error': INTERFACE_IN_USE,
-                    'error_msg': INTERFACE_IN_USE_MSG,
-                }, 400)
             server.interface = interface
         if port_def:
-            if '%s%s' % (port, protocol) in port_used:
-                return utils.jsonify({
-                    'error': PORT_PROTOCOL_IN_USE,
-                    'error_msg': PORT_PROTOCOL_IN_USE_MSG,
-                }, 400)
             server.port = port
         if protocol_def:
             server.protocol = protocol
