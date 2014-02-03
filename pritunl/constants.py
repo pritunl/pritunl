@@ -4,7 +4,6 @@ APP_NAME = 'pritunl'
 APP_NAME_FORMATED = 'Pritunl'
 CONF_FILENAME = '%s.conf' % APP_NAME
 
-
 SAVED = 'saved'
 UNSAVED = 'unsaved'
 
