@@ -1,4 +1,4 @@
-Pritunl: Simple openvpn server
+pritunl: simple openvpn server
 ==============================
 
 .. image:: http://gitshields.com/v2/pypi/pritunl/version/7d0ce8.png
