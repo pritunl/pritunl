@@ -36,7 +36,8 @@ SHORT_URL_CHARS = (string.ascii_lowercase + string.ascii_uppercase +
     string.digits).replace('l', '').replace('I', '').replace('O', '').replace(
     '0', '')
 SUB_RESPONSE_TIMEOUT = 10
-HTTP_REQUEST_TIMEOUT = 45
+HTTP_REQUEST_TIMEOUT = 10
+HTTP_COM_REQUEST_TIMEOUT = 45
 SERVER_REQUEST_QUEUE_SIZE = 512
 USER_PAGE_COUNT = 10
 NODE_SERVER_VER = 1
@@ -207,6 +208,12 @@ SERVER_NOT_OFFLINE_DETACH_ORG_MSG = 'Server must be offline to detach ' + \
 
 SERVER_INVALID = 'server_invalid'
 SERVER_INVALID_MSG = 'Server is not valid.'
+
+NODE_API_KEY_INVLID = 'node_api_key_invlid'
+NODE_API_KEY_INVLID_MSG = 'Node server api key is invalid.'
+
+NODE_CONNECTION_ERROR = 'node_connection_error'
+NODE_CONNECTION_ERROR_MSG = 'Failed to connect to node server.'
 
 ORG_INVALID = 'organization_invalid'
 ORG_INVALID_MSG = 'Organization is not valid.'

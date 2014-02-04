@@ -1,4 +1,5 @@
 from pritunl.constants import *
+from pritunl.exceptions import *
 from pritunl.organization import Organization
 import pritunl.utils as utils
 from pritunl.cache import cache_db
@@ -51,7 +52,7 @@ def user_key_link_get(org_id, user_id):
             view_id = temp_view_id
             break
     if not view_id:
-        raise AttributeError('Failed to generate random view id')
+        raise KeyLinkError('Failed to generate random view id')
 
     cache_db.expire(_get_key_key(key_id), KEY_LINK_TIMEOUT)
     cache_db.dict_set(_get_key_key(key_id), 'org_id', org_id)

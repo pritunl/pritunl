@@ -1,4 +1,5 @@
 from constants import *
+from exceptions import *
 from pritunl import app_server
 from config import Config
 from organization import Organization
@@ -182,8 +183,10 @@ class Server(Config):
 
     def _create_primary_user(self):
         if not self.org_count:
-            raise ValueError('Primary user cannot be created without ' + \
-                'any organizations')
+            raise ServerMissingOrg('Primary user cannot be created ' + \
+                'without any organizations', {
+                    'server_id': self.id,
+                })
         logger.debug('Creating primary user. %r' % {
             'server_id': self.id,
         })
@@ -351,8 +354,10 @@ class Server(Config):
 
     def _generate_ovpn_conf(self, inline=False):
         if not self.org_count:
-            raise ValueError('Ovpn conf cannot be generated without ' + \
-                'any organizations')
+            raise ServerMissingOrg('Ovpn conf cannot be generated without ' + \
+                'any organizations', {
+                    'server_id': self.id,
+                })
 
         logger.debug('Generating server ovpn conf. %r' % {
             'server_id': self.id,
@@ -468,10 +473,9 @@ class Server(Config):
             routes[line_split[0]] = line_split[7]
 
         if '0.0.0.0' not in routes:
-            logger.error('Failed to find default network interface. %r' % {
+            raise IptablesError('Failed to find default network interface', {
                 'server_id': self.id,
             })
-            raise ValueError('Failed to find default network interface')
         default_interface = routes['0.0.0.0']
 
         for network_address in self.local_networks or ['0.0.0.0/0']:
@@ -630,8 +634,10 @@ class Server(Config):
         if self.status:
             return
         if not self.org_count:
-            raise ValueError('Server cannot be started without ' + \
-                'any organizations')
+            raise ServerMissingOrg('Server cannot be started without ' + \
+                'any organizations', {
+                    'server_id': self.id,
+                })
         logger.debug('Starting server. %r' % {
             'server_id': self.id,
         })
@@ -649,9 +655,14 @@ class Server(Config):
                 started = True
                 break
             elif message == 'stopped':
-                raise ValueError('Server failed to start')
+                raise ServerStartError('Server failed to start', {
+                    'server_id': self.id,
+                })
         if not started:
-            raise ValueError('Server thread failed to return start event')
+            raise ServerStartError('Server thread failed to return ' + \
+                'start event', {
+                    'server_id': self.id,
+                })
 
         if not silent:
             Event(type=SERVERS_UPDATED)
@@ -672,7 +683,10 @@ class Server(Config):
                 stopped = True
                 break
         if not stopped:
-            raise ValueError('Server thread failed to return stop event')
+            raise ServerStopError('Server thread failed to return ' + \
+                'stop event', {
+                    'server_id': self.id,
+                })
 
         if not silent:
             Event(type=SERVERS_UPDATED)
@@ -702,7 +716,10 @@ class Server(Config):
                     break
 
             if not stopped:
-                raise ValueError('Server thread failed to return stop event')
+                raise ServerStopError('Server thread failed to return ' + \
+                    'stop event', {
+                        'server_id': self.id,
+                    })
 
         if not silent:
             Event(type=SERVERS_UPDATED)

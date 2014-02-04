@@ -1,4 +1,5 @@
 from constants import *
+from exceptions import *
 from pritunl import app_server
 from server import Server
 from organization import Organization
@@ -35,10 +36,11 @@ class NodeServer(Server):
         with open(os.path.join(self.path, NODE_SERVER_NAME), 'w'):
             pass
 
-    def _request(self, method, endpoint='', json_data=None):
+    def _request(self, method, endpoint='', timeout=HTTP_REQUEST_TIMEOUT,
+            json_data=None):
         return getattr(utils.request, method)(
             self._get_node_url() + endpoint,
-            timeout=HTTP_REQUEST_TIMEOUT,
+            timeout=timeout,
             headers={
                 'API-Key': self.node_key,
             },
@@ -56,7 +58,7 @@ class NodeServer(Server):
         try:
             while not self._interrupt and not app_server.interrupt:
                 response = self._request('put', endpoint='/com',
-                    json_data=responses)
+                    timeout=HTTP_COM_REQUEST_TIMEOUT, json_data=responses)
                 if response.status_code == 200:
                     pass
                 elif response.status_code == 410:
@@ -160,8 +162,10 @@ class NodeServer(Server):
 
     def _generate_ovpn_conf(self):
         if not self.org_count:
-            raise ValueError('Ovpn conf cannot be generated without ' + \
-                'any organizations')
+            raise ServerMissingOrg('Ovpn conf cannot be generated without ' + \
+                'any organizations', {
+                    'server_id': self.id,
+                })
 
         logger.debug('Generating node server ovpn conf. %r' % {
             'server_id': self.id,
@@ -226,8 +230,10 @@ class NodeServer(Server):
         if self.status:
             return
         if not self.org_count:
-            raise ValueError('Server cannot be started without ' + \
-                'any organizations')
+            raise ServerMissingOrg('Server cannot be started without ' + \
+                'any organizations', {
+                    'server_id': self.id,
+                })
 
         logger.debug('Starting node server. %r' % {
             'server_id': self.id,
@@ -242,18 +248,22 @@ class NodeServer(Server):
                 'server_ver': NODE_SERVER_VER,
             })
         except:
-            logger.exception('Failed to start node server. %r' % {
+            raise NodeConnectionError('Failed to connect to node server', {
                 'server_id': self.id,
             })
-            raise
 
-        if response.status_code != 200:
-            logger.error('Failed to start node server. %r' % {
+        if response.status_code == 401:
+            raise InvalidNodeAPIKey('Invalid node server api key', {
                 'server_id': self.id,
                 'status_code': response.status_code,
                 'reason': response.reason,
             })
-            raise ValueError('Node server returned error')
+        elif response.status_code != 200:
+            raise ServerStartError('Failed to start node server', {
+                'server_id': self.id,
+                'status_code': response.status_code,
+                'reason': response.reason,
+            })
 
         self._interrupt = False
         cache_db.dict_set(self.get_cache_key(), 'start_time',
@@ -274,18 +284,16 @@ class NodeServer(Server):
         try:
             response = self._request('delete')
         except:
-            logger.exception('Failed to stop node server. %r' % {
+            raise NodeConnectionError('Failed to connect to node server', {
                 'server_id': self.id,
             })
-            raise
 
         if response.status_code != 200:
-            logger.error('Failed to stop node server. %r' % {
+            raise ServerStopError('Failed to stop node server', {
                 'server_id': self.id,
                 'status_code': response.status_code,
                 'reason': response.reason,
             })
-            raise ValueError('Node server returned error')
         self.status = False
 
         if not silent:

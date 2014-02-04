@@ -1,4 +1,5 @@
 from pritunl.constants import *
+from pritunl.exceptions import *
 from pritunl.server import Server
 from pritunl.node_server import NodeServer
 from pritunl.organization import Organization
@@ -447,12 +448,24 @@ def server_org_delete(server_id, org_id):
 @app_server.auth
 def server_operation_put(server_id, operation):
     server = Server.get_server(id=server_id)
-    if operation == START:
-        server.start()
-    if operation == STOP:
-        server.stop()
-    elif operation == RESTART:
-        server.restart()
+
+    try:
+        if operation == START:
+            server.start()
+        if operation == STOP:
+            server.stop()
+        elif operation == RESTART:
+            server.restart()
+    except NodeConnectionError:
+        return utils.jsonify({
+            'error': NODE_CONNECTION_ERROR,
+            'error_msg': NODE_CONNECTION_ERROR_MSG,
+        }, 400)
+    except InvalidNodeAPIKey:
+        return utils.jsonify({
+            'error': NODE_API_KEY_INVLID,
+            'error_msg': NODE_API_KEY_INVLID_MSG,
+        }, 400)
 
     return utils.jsonify(server.dict())
 
