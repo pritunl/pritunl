@@ -55,7 +55,8 @@ class NodeServer(Server):
 
         try:
             while not self._interrupt and not app_server.interrupt:
-                response = self._request('put', '/com', json_data=responses)
+                response = self._request('put', endpoint='/com',
+                    json_data=responses)
                 if response.status_code == 200:
                     pass
                 elif response.status_code == 410:
