@@ -206,14 +206,23 @@ define([
         success: function() {
           $(evt.target).removeAttr('disabled');
         }.bind(this),
-        error: function() {
+        error: function(model, response) {
           $(evt.target).removeAttr('disabled');
-          var alertView = new AlertView({
-            type: 'danger',
-            message: 'Failed to ' + operation +
-              ' the server, server error occurred.',
-            dismissable: true
-          });
+          if (response.responseJSON) {
+            var alertView = new AlertView({
+              type: 'danger',
+              message: response.responseJSON.error_msg,
+              dismissable: true
+            });
+          }
+          else {
+            var alertView = new AlertView({
+              type: 'danger',
+              message: 'Failed to ' + operation +
+                ' the server, server error occurred.',
+              dismissable: true
+            });
+          }
           $('.alerts-container').append(alertView.render().el);
           this.addView(alertView);
         }.bind(this)
