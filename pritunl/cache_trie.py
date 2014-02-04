@@ -43,9 +43,6 @@ class CacheTrie(object):
             cache_db.set_remove(name + cur_key, new_key)
             cur_key = new_key
 
-    def _get_iter(self, item):
-        return self[item].chain()
-
     def chain(self, values):
         name = self.name
         for node_key in self.get_nodes():
