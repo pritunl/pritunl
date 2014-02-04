@@ -35,8 +35,18 @@ class NodeServer(Server):
         with open(os.path.join(self.path, NODE_SERVER_NAME), 'w'):
             pass
 
+    def _request(self, method, endpoint='', json_data=None):
+        return getattr(utils.request, method)(
+            self._get_node_url() + endpoint,
+            timeout=HTTP_REQUEST_TIMEOUT,
+            headers={
+                'API-Key': self.node_key,
+            },
+            json_data=json_data,
+        )
+
     def _get_node_url(self):
-        return 'http://%s:%s/server/%s' % (
+        return 'https://%s:%s/server/%s' % (
             self.node_ip, self.node_port, self.id)
 
     def _com_thread(self):
@@ -45,11 +55,7 @@ class NodeServer(Server):
 
         try:
             while not self._interrupt and not app_server.interrupt:
-                response = utils.request.put(
-                    '%s/com' % self._get_node_url(),
-                    timeout=HTTP_REQUEST_TIMEOUT,
-                    json_data=responses,
-                )
+                response = self._request('put', '/com', json_data=responses)
                 if response.status_code == 200:
                     pass
                 elif response.status_code == 410:
@@ -228,16 +234,12 @@ class NodeServer(Server):
         ovpn_conf = self._generate_ovpn_conf()
 
         try:
-            response = utils.request.post(
-                self._get_node_url(),
-                timeout=HTTP_REQUEST_TIMEOUT,
-                json_data={
-                    'network': self.network,
-                    'local_networks': self.local_networks,
-                    'ovpn_conf': ovpn_conf,
-                    'server_ver': NODE_SERVER_VER,
-                },
-            )
+            response = self._request('post', json_data={
+                'network': self.network,
+                'local_networks': self.local_networks,
+                'ovpn_conf': ovpn_conf,
+                'server_ver': NODE_SERVER_VER,
+            })
         except:
             logger.exception('Failed to start node server. %r' % {
                 'server_id': self.id,
@@ -269,10 +271,7 @@ class NodeServer(Server):
         self._interrupt = True
 
         try:
-            response = utils.request.delete(
-                self._get_node_url(),
-                timeout=HTTP_REQUEST_TIMEOUT,
-            )
+            response = self._request('delete')
         except:
             logger.exception('Failed to stop node server. %r' % {
                 'server_id': self.id,
