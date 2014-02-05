@@ -57,48 +57,49 @@ class NodeServer(Server):
 
         try:
             while not self._interrupt and not app_server.interrupt:
-                response = self._request('put', endpoint='/com',
-                    timeout=HTTP_COM_REQUEST_TIMEOUT, json_data=responses)
-                if response.status_code == 200:
-                    pass
-                elif response.status_code == 410:
-                    break
-                else:
-                    logger.exception('Error with node server connection ' + \
-                        'occurred. %r' % {
-                            'server_id': self.id,
-                            'status_code': response.status_code,
-                            'reason': response.reason,
-                        })
-                    LogEntry(message='Error with node server connection ' + \
-                        'occurred "%s".' % self.name)
-                    trigger_event = True
-                    break
-                calls = response.json()
-                responses = []
-
-                for call in calls:
-                    try:
-                        responses.append({
-                            'id': call['id'],
-                            'response': getattr(self, call['command'])(
-                                *call['args']),
-                        })
-                    except:
-                        logger.exception('Node server com thread call ' + \
-                            'failed. %s' % {
+                try:
+                    response = self._request('put', endpoint='/com',
+                        timeout=HTTP_COM_REQUEST_TIMEOUT, json_data=responses)
+                    if response.status_code == 200:
+                        pass
+                    elif response.status_code == 410:
+                        break
+                    else:
+                        logger.exception('Error with node server ' + \
+                            'connection occurred. %r' % {
                                 'server_id': self.id,
-                                'call_id': call['id'],
-                                'call_command': call['command'],
-                                'call_args': call['args'],
+                                'status_code': response.status_code,
+                                'reason': response.reason,
                             })
-        except httplib.HTTPException:
-            logger.exception('Lost connection with node server. %r' % {
-                'server_id': self.id,
-            })
-            LogEntry(message='Lost connection with node server "%s".' % (
-                self.name))
-            trigger_event = True
+                        LogEntry(message='Error with node server ' + \
+                            'connection occurred "%s".' % self.name)
+                        trigger_event = True
+                        break
+                    calls = response.json()
+                    responses = []
+
+                    for call in calls:
+                        try:
+                            responses.append({
+                                'id': call['id'],
+                                'response': getattr(self, call['command'])(
+                                    *call['args']),
+                            })
+                        except:
+                            logger.exception('Node server com thread call ' + \
+                                'failed. %s' % {
+                                    'server_id': self.id,
+                                    'call_id': call['id'],
+                                    'call_command': call['command'],
+                                    'call_args': call['args'],
+                                })
+                except httplib.HTTPException:
+                    logger.exception('Lost connection with node server. %r' % {
+                        'server_id': self.id,
+                    })
+                    LogEntry(message='Lost connection with node ' + \
+                        'server "%s".' % self.name)
+                    trigger_event = True
         finally:
             self.status = False
             if trigger_event:
@@ -134,6 +135,32 @@ class NodeServer(Server):
                 user.name))
             return False
         return True
+
+    def client_connect(self, org_id, user_id):
+        org = self.get_org(org_id)
+        if not org:
+            LogEntry(message='User failed authentication, ' +
+                'invalid organization "%s".' % server.name)
+            return
+        user = org.get_user(user_id)
+        if not user:
+            LogEntry(message='User failed authentication, ' +
+                'invalid user "%s".' % server.name)
+            return
+        return
+
+    def client_disconnect(self, org_id, user_id):
+        org = self.get_org(org_id)
+        if not org:
+            LogEntry(message='User failed authentication, ' +
+                'invalid organization "%s".' % server.name)
+            return
+        user = org.get_user(user_id)
+        if not user:
+            LogEntry(message='User failed authentication, ' +
+                'invalid user "%s".' % server.name)
+            return
+        return
 
     def update_clients(self, clients):
         client_count = len(self.clients)

@@ -626,6 +626,7 @@ class Server(Config):
         except:
             self._interrupt = True
             self.publish('stopped')
+            raise
 
     def publish(self, message):
         cache_db.publish(self.get_cache_key(), message)
