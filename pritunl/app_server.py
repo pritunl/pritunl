@@ -118,7 +118,7 @@ class AppServer(Config):
     def local_only(self, call):
         import flask
         def _wrapped(*args, **kwargs):
-            if flask.request.remote_addr != '127.0.0.1':
+            if flask.request.remote_addr not in ['127.0.0.1', '::1']:
                 raise flask.abort(401)
             return call(*args, **kwargs)
         _wrapped.__name__ = '%s_local_only' % call.__name__
