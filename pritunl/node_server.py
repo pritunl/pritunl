@@ -143,23 +143,6 @@ class NodeServer(Server):
                 Event(type=USERS_UPDATED, resource_id=org.id)
             Event(type=SERVERS_UPDATED)
 
-    def otp_verify(self, org_id, user_id, otp_code):
-        org = self.get_org(org_id)
-        if not org:
-            LogEntry(message='User failed authentication, ' +
-                'invalid organization "%s".' % server.name)
-            return False
-        user = org.get_user(user_id)
-        if not user:
-            LogEntry(message='User failed authentication, ' +
-                'invalid user "%s".' % server.name)
-            return False
-        if not user.verify_otp_code(otp_code):
-            LogEntry(message='User failed two-step authentication "%s".' % (
-                user.name))
-            return False
-        return True
-
     def _generate_ovpn_conf(self):
         if not self.org_count:
             raise ServerMissingOrg('Ovpn conf cannot be generated without ' + \
