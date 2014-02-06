@@ -417,6 +417,8 @@ class Cache:
 
                 if 'timers' in import_data:
                     for key in import_data['timers']:
+                        if key not in self._data:
+                            continue
                         ttl = self._data[key]['ttl']
                         if not ttl:
                             continue
