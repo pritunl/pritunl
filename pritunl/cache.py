@@ -67,7 +67,7 @@ class Cache:
         if key not in self._data:
             return
         ttl = self._data[key]['ttl']
-        if ttl and int(time.time()) > ttl:
+        if ttl and int(time.time() * 1000) > ttl:
             self.remove(key)
             return True
         return False
@@ -126,16 +126,16 @@ class Cache:
         return False
 
     def expire(self, key, ttl):
-        timeout = int(time.time()) + ttl
-        self._data[key]['ttl'] = timeout
+        ttl_time = int(time.time() * 1000) + (ttl * 1000)
 
         cur_timer = self._timers.pop(key, None)
-        timer = threading.Timer(ttl + 1, self._check_ttl_timer, (key,))
+        timer = threading.Timer(ttl + 0.01, self._check_ttl_timer, (key,))
         self._timers[key] = timer
         if cur_timer:
             cur_timer.cancel()
         timer.start()
 
+        self._data[key]['ttl'] = ttl_time
         self._put_queue()
 
     def set_add(self, key, element):
@@ -366,20 +366,26 @@ class Cache:
             return
         temp_path = self._path + '.tmp'
         try:
-            with open(temp_path, 'w') as db_file:
-                data = []
+            data = self._data.copy()
+            timers = self._timers.keys()
+            commit_log = copy.copy(self._commit_log)
 
-                for key in self._data:
-                    key_ttl = self._data[key]['ttl']
-                    key_val = self._data[key]['val']
+            with open(temp_path, 'w') as db_file:
+                export_data = []
+
+                for key in data:
+                    key_ttl = data[key]['ttl']
+                    key_val = data[key]['val']
                     key_type = type(key_val).__name__
                     if key_type == 'set' or key_type == 'deque':
                         key_val = list(key_val)
-                    data.append((key, key_type, key_ttl, key_val))
+                    export_data.append((key, key_type, key_ttl, key_val))
 
                 db_file.write(json.dumps({
-                    'data': data,
-                    'commit_log': self._commit_log,
+                    'ver': 1,
+                    'data': export_data,
+                    'timers': timers,
+                    'commit_log': commit_log,
                 }))
             os.rename(temp_path, self._path)
         except:
@@ -409,8 +415,24 @@ class Cache:
                     self._data[key]['ttl'] = key_ttl
                     self._data[key]['val'] = key_val
 
-                for tran in import_data['commit_log']:
-                    self._apply_trans(tran)
+                if 'timers' in import_data:
+                    for key in import_data['timers']:
+                        ttl = self._data[key]['ttl']
+                        if not ttl:
+                            continue
+                        ttl -= int(time.time() * 1000)
+                        ttl = ttl / 1000.0
+                        if ttl >= 0:
+                            timer = threading.Timer(ttl + 0.01,
+                                self._check_ttl_timer, (key,))
+                            self._timers[key] = timer
+                            timer.start()
+                        else:
+                            self._check_ttl(key)
+
+                if 'commit_log' in import_data:
+                    for tran in import_data['commit_log']:
+                        self._apply_trans(tran)
 
 class CacheTransaction:
     def __init__(self, cache):
