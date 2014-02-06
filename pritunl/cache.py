@@ -40,7 +40,7 @@ class Cache:
         self._locks = collections.defaultdict(lambda: threading.Lock())
 
     def _put_queue(self):
-        if self._data:
+        if self._path:
             self._set_queue.put('set')
 
     def _export_thread(self):
