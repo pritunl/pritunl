@@ -1,5 +1,5 @@
 from constants import *
-from cache import persist_db
+from cache import cache_db, persist_db
 from config import Config
 import os
 import logging
@@ -244,7 +244,19 @@ class AppServer(Config):
             hash_digest = pass_hash.digest()
         return base64.b64encode(hash_digest)
 
-    def check_auth(self, username, password):
+    def check_auth(self, username, password, remote_addr=None):
+        if remote_addr:
+            cache_key = 'ip_' + remote_addr
+            count = cache_db.list_length(cache_key)
+            if count and count > 10:
+                import flask
+                raise flask.abort(403)
+
+            key_exists = cache_db.exists(cache_key)
+            cache_db.list_rpush(cache_key, '')
+            if not key_exists:
+                cache_db.expire(cache_key, 20)
+
         if username != self.username:
             return False
 

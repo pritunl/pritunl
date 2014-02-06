@@ -9,9 +9,9 @@ import flask
 def auth_post():
     username = flask.request.json['username']
     password = flask.request.json['password']
+    remote_addr = flask.request.remote_addr
 
-    if not app_server.check_auth(username, password):
-        time.sleep(RATE_LIMIT_SLEEP)
+    if not app_server.check_auth(username, password, remote_addr):
         return utils.jsonify({
             'error': AUTH_INVALID,
             'error_msg': AUTH_INVALID_MSG,
@@ -47,9 +47,9 @@ def auth_delete():
 def auth_token_post():
     username = flask.request.json['username']
     password = flask.request.json['password']
+    remote_addr = flask.request.remote_addr
 
-    if not app_server.check_auth(username, password):
-        time.sleep(RATE_LIMIT_SLEEP)
+    if not app_server.check_auth(username, password, remote_addr):
         return utils.jsonify({
             'error': AUTH_INVALID,
             'error_msg': AUTH_INVALID_MSG,
