@@ -34,6 +34,7 @@ class Cache:
         self._set_queue = Queue.Queue()
         self._data = collections.defaultdict(
             lambda: {'ttl': None, 'val': None})
+        self._timers = {}
         self._channels = collections.defaultdict(
             lambda: {'subs': set(), 'msgs': collections.deque(maxlen=10)})
         self._commit_log = []
@@ -70,6 +71,10 @@ class Cache:
             self.remove(key)
             return True
         return False
+
+    def _check_ttl_timer(self, key):
+        self._timers.pop(key, None)
+        self._check_ttl(key)
 
     def setup_persist(self, path):
         self._path = path
@@ -123,6 +128,14 @@ class Cache:
     def expire(self, key, ttl):
         timeout = int(time.time()) + ttl
         self._data[key]['ttl'] = timeout
+
+        cur_timer = self._timers.pop(key, None)
+        timer = threading.Timer(ttl + 1, self._check_ttl_timer, (key,))
+        self._timers[key] = timer
+        if cur_timer:
+            cur_timer.cancel()
+        timer.start()
+
         self._put_queue()
 
     def set_add(self, key, element):
