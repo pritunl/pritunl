@@ -51,9 +51,19 @@ class NodeServer(Server):
         return 'https://%s:%s/server/%s' % (
             self.node_ip, self.node_port, self.id)
 
+    def _sub_thread(self):
+        for message in cache_db.subscribe(self.get_cache_key()):
+            try:
+                if message == 'stop':
+                    self._interrupt = True
+                elif message == 'stopped':
+                    break
+            except OSError:
+                pass
+
     def _com_thread(self):
-        responses = []
         trigger_event = False
+        responses = []
 
         try:
             while not self._interrupt and not app_server.interrupt:
@@ -99,12 +109,11 @@ class NodeServer(Server):
                     })
                     LogEntry(message='Lost connection with node ' + \
                         'server "%s".' % self.name)
-                    trigger_event = True
         finally:
             self.status = False
+            self.publish('stopped')
             if trigger_event:
                 Event(type=SERVERS_UPDATED)
-                LogEntry(message='Stopped server "%s".' % self.name)
 
     def tls_verify(self, org_id, user_id):
         org = self.get_org(org_id)
@@ -257,7 +266,7 @@ class NodeServer(Server):
                 'ovpn_conf': ovpn_conf,
                 'server_ver': NODE_SERVER_VER,
             })
-        except:
+        except httplib.HTTPException:
             raise NodeConnectionError('Failed to connect to node server', {
                 'server_id': self.id,
             })
@@ -275,12 +284,13 @@ class NodeServer(Server):
                 'reason': response.reason,
             })
 
-        self._interrupt = False
         cache_db.dict_set(self.get_cache_key(), 'start_time',
             str(int(time.time() - 1)))
         self.clear_output()
-        threading.Thread(target=self._com_thread).start()
+        self._interrupt = False
         self.status = True
+        threading.Thread(target=self._com_thread).start()
+        threading.Thread(target=self._sub_thread).start()
 
         if not silent:
             Event(type=SERVERS_UPDATED)
@@ -289,22 +299,33 @@ class NodeServer(Server):
     def stop(self, silent=False):
         if not self.status:
             return
-        self._interrupt = True
 
         try:
             response = self._request('delete')
-        except:
-            raise NodeConnectionError('Failed to connect to node server', {
+            if response.status_code != 200:
+                raise ServerStopError('Failed to stop node server', {
+                    'server_id': self.id,
+                    'status_code': response.status_code,
+                    'reason': response.reason,
+                })
+        except httplib.HTTPException:
+            logger.exception('Failed to delete stopped node server', {
                 'server_id': self.id,
             })
 
-        if response.status_code != 200:
-            raise ServerStopError('Failed to stop node server', {
-                'server_id': self.id,
-                'status_code': response.status_code,
-                'reason': response.reason,
-            })
-        self.status = False
+        if self.status:
+            stopped = False
+            self.publish('stop')
+            for message in cache_db.subscribe(self.get_cache_key(),
+                    HTTP_COM_REQUEST_TIMEOUT + 3):
+                if message == 'stopped':
+                    stopped = True
+                    break
+            if not stopped:
+                raise ServerStopError('Server thread failed to return ' + \
+                    'stop event', {
+                        'server_id': self.id,
+                    })
 
         if not silent:
             Event(type=SERVERS_UPDATED)
