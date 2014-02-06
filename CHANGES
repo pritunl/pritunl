@@ -7,6 +7,7 @@ Version 0.10.6
 Add username to pritunl conf
 Change password hash function
 Add openvpn user connect and disconnect scripts
+Improve node server support
 
 Version 0.10.5 2014-01-29
 -------------------------
