@@ -86,17 +86,23 @@ class Cache:
         self._put_queue()
 
     def increment(self, key):
-        try:
-            self._data[key]['val'] = str(int(self.get(key)) + 1)
-        except (TypeError, ValueError):
+        if key not in self._data:
             self._data[key]['val'] = '1'
+        else:
+            try:
+                self._data[key]['val'] = str(int(self.get(key)) + 1)
+            except (TypeError, ValueError):
+                self._data[key]['val'] = '1'
         self._put_queue()
 
     def decrement(self, key):
-        try:
-            self._data[key]['val'] = str(int(self.get(key)) - 1)
-        except (TypeError, ValueError):
+        if key not in self._data:
             self._data[key]['val'] = '0'
+        else:
+            try:
+                self._data[key]['val'] = str(int(self.get(key)) - 1)
+            except (TypeError, ValueError):
+                self._data[key]['val'] = '0'
         self._put_queue()
 
     def remove(self, key):
@@ -121,10 +127,13 @@ class Cache:
 
     def set_add(self, key, element):
         self._validate(element)
-        try:
-            self._data[key]['val'].add(element)
-        except AttributeError:
+        if key not in self._data:
             self._data[key]['val'] = {element}
+        else:
+            try:
+                self._data[key]['val'].add(element)
+            except AttributeError:
+                self._data[key]['val'] = {element}
         self._put_queue()
 
     def set_remove(self, key, element):
@@ -144,18 +153,24 @@ class Cache:
 
     def list_lpush(self, key, value):
         self._validate(value)
-        try:
-            self._data[key]['val'].appendleft(value)
-        except AttributeError:
+        if key not in self._data:
             self._data[key]['val'] = collections.deque([value])
+        else:
+            try:
+                self._data[key]['val'].appendleft(value)
+            except AttributeError:
+                self._data[key]['val'] = collections.deque([value])
         self._put_queue()
 
     def list_rpush(self, key, value):
         self._validate(value)
-        try:
-            self._data[key]['val'].append(value)
-        except AttributeError:
+        if key not in self._data:
             self._data[key]['val'] = collections.deque([value])
+        else:
+            try:
+                self._data[key]['val'].append(value)
+            except AttributeError:
+                self._data[key]['val'] = collections.deque([value])
         self._put_queue()
 
     def list_lpop(self, key):
@@ -247,10 +262,13 @@ class Cache:
 
     def dict_set(self, key, field, value):
         self._validate(value)
-        try:
-            self._data[key]['val'][field] = value
-        except TypeError:
+        if key not in self._data:
             self._data[key]['val'] = {field: value}
+        else:
+            try:
+                self._data[key]['val'][field] = value
+            except TypeError:
+                self._data[key]['val'] = {field: value}
         self._put_queue()
 
     def dict_remove(self, key, field):
