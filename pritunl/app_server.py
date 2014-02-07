@@ -165,6 +165,10 @@ class AppServer(Config):
     def _get_version_int(self, version):
         return int(''.join([x.zfill(2) for x in version.split('.')]))
 
+    def _get_version(self):
+        from pritunl import __version__
+        return self._get_version_int(__version__)
+
     def _get_data_version(self):
         version_path = os.path.join(self.data_path, VERSION_NAME)
         if os.path.isfile(version_path):
@@ -173,8 +177,7 @@ class AppServer(Config):
                     version_file.readlines()[0].strip())
 
     def _upgrade_db(self):
-        from pritunl import __version__
-        version = self._get_version_int(__version__)
+        version = self._get_version()
         cur_version = self._get_data_version()
 
         if cur_version and cur_version < self._get_version_int('0.10.5'):
@@ -185,8 +188,7 @@ class AppServer(Config):
                 pass
 
     def _upgrade_data(self):
-        from pritunl import __version__
-        version = self._get_version_int(__version__)
+        version = self._get_version()
         cur_version = self._get_data_version()
 
         if cur_version and cur_version < self._get_version_int('0.10.4'):
