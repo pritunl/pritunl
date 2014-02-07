@@ -6,6 +6,7 @@ import re
 import urllib2
 import httplib
 import socket
+import time
 
 def jsonify(data=None, status_code=None):
     if not isinstance(data, basestring):
@@ -17,6 +18,36 @@ def jsonify(data=None, status_code=None):
     if status_code is not None:
         response.status_code = status_code
     return response
+
+def get_remote_addr():
+    return flask.request.remote_addr
+
+def check_auth():
+    from pritunl import app_server
+    from auth_token import AuthToken
+    auth_token = flask.request.headers.get('Auth-Token', None)
+    if auth_token:
+        auth_token = AuthToken(auth_token)
+        if not auth_token.valid:
+            return False
+    else:
+        if not flask.session:
+            return False
+
+        if not flask.session.get('auth'):
+            flask.session.clear()
+            return False
+
+        if not app_server.ssl and flask.session.get(
+                'source') != get_remote_addr():
+            flask.session.clear()
+            return False
+
+        if app_server.session_timeout and int(time.time()) - \
+                flask.session['timestamp'] > app_server.session_timeout:
+            flask.session.clear()
+            return False
+    return True
 
 def rmtree(path):
     subprocess.check_call(['rm', '-rf', path])

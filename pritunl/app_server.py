@@ -1,6 +1,10 @@
 from constants import *
 from cache import cache_db, persist_db
 from config import Config
+import utils
+import flask
+import cherrypy.wsgiserver
+import cherrypy.wsgiserver.ssl_builtin
 import os
 import logging
 import signal
@@ -43,7 +47,7 @@ class AppServer(Config):
 
     def __getattr__(self, name):
         if name == 'web_protocol':
-            if self.debug or not self.ssl:
+            if not self.ssl:
                 return 'http'
             return 'https'
         elif name == 'password_data':
@@ -52,6 +56,9 @@ class AppServer(Config):
                 return (1, pass_split[1], pass_split[2])
             else:
                 return (0, PASSWORD_SALT_V0, self.password)
+        elif name == 'ssl':
+            if self.debug:
+                return False
         return Config.__getattr__(self, name)
 
     def load_public_ip(self, retry=False, timeout=3):
@@ -76,7 +83,6 @@ class AppServer(Config):
             kwargs={'retry': True, 'timeout': 10}).start()
 
     def _setup_app(self):
-        import flask
         self.app = flask.Flask(APP_NAME)
         self.app.secret_key = os.urandom(32)
 
@@ -94,31 +100,16 @@ class AppServer(Config):
         logger = self.app.logger
 
     def auth(self, call):
-        import flask
-        from auth_token import AuthToken
         def _wrapped(*args, **kwargs):
-            auth_token = flask.request.headers.get('Auth-Token', None)
-            if auth_token:
-                auth_token = AuthToken(auth_token)
-                if not auth_token.valid:
-                    raise flask.abort(401)
-            else:
-                if 'timestamp' not in flask.session:
-                    raise flask.abort(401)
-
-                # Disable session timeout if set to 0
-                if self.session_timeout and time.time() - flask.session[
-                        'timestamp'] > self.session_timeout:
-                    flask.session.pop('timestamp', None)
-                    raise flask.abort(401)
+            if not utils.check_auth():
+                raise flask.abort(401)
             return call(*args, **kwargs)
         _wrapped.__name__ = '%s_auth' % call.__name__
         return _wrapped
 
     def local_only(self, call):
-        import flask
         def _wrapped(*args, **kwargs):
-            if flask.request.remote_addr not in ['127.0.0.1', '::1']:
+            if utils.get_remote_addr() not in ('127.0.0.1', '::1'):
                 raise flask.abort(401)
             return call(*args, **kwargs)
         _wrapped.__name__ = '%s_local_only' % call.__name__
@@ -244,12 +235,11 @@ class AppServer(Config):
             hash_digest = pass_hash.digest()
         return base64.b64encode(hash_digest)
 
-    def check_auth(self, username, password, remote_addr=None):
+    def check_account(self, username, password, remote_addr=None):
         if remote_addr:
             cache_key = 'ip_' + remote_addr
             count = cache_db.list_length(cache_key)
             if count and count > 10:
-                import flask
                 raise flask.abort(403)
 
             key_exists = cache_db.exists(cache_key)
@@ -321,8 +311,6 @@ class AppServer(Config):
     def _run_wsgi(self):
         if self.ssl:
             self._setup_server_cert()
-        import cherrypy.wsgiserver
-        import cherrypy.wsgiserver.ssl_builtin
         from log_entry import LogEntry
         logger.info('Starting server...')
 

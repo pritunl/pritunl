@@ -9,36 +9,31 @@ import flask
 def auth_post():
     username = flask.request.json['username']
     password = flask.request.json['password']
-    remote_addr = flask.request.remote_addr
+    remote_addr = utils.get_remote_addr()
 
-    if not app_server.check_auth(username, password, remote_addr):
+    if not app_server.check_account(username, password, remote_addr):
         return utils.jsonify({
             'error': AUTH_INVALID,
             'error_msg': AUTH_INVALID_MSG,
         }, 401)
 
-    flask.session['timestamp'] = time.time()
+    flask.session['auth'] = True
+    flask.session['timestamp'] = int(time.time())
+    if not app_server.ssl:
+        flask.session['source'] = remote_addr
     return utils.jsonify({
         'authenticated': True,
     })
 
 @app_server.app.route('/auth', methods=['GET'])
 def auth_get():
-    authenticated = False
-    auth_token = flask.request.headers.get('Auth-Token', None)
-    if auth_token:
-        auth_token = AuthToken(auth_token)
-        if auth_token.valid:
-            authenticated = True
-    elif 'timestamp' in flask.session:
-        authenticated = True
     return utils.jsonify({
-        'authenticated': authenticated,
+        'authenticated': utils.check_auth(),
     })
 
 @app_server.app.route('/auth', methods=['DELETE'])
 def auth_delete():
-    flask.session.pop('timestamp', None)
+    flask.session.clear()
     return utils.jsonify({
         'authenticated': False,
     })
@@ -47,9 +42,9 @@ def auth_delete():
 def auth_token_post():
     username = flask.request.json['username']
     password = flask.request.json['password']
-    remote_addr = flask.request.remote_addr
+    remote_addr = utils.get_remote_addr()
 
-    if not app_server.check_auth(username, password, remote_addr):
+    if not app_server.check_account(username, password, remote_addr):
         return utils.jsonify({
             'error': AUTH_INVALID,
             'error_msg': AUTH_INVALID_MSG,
