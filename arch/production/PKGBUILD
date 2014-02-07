@@ -18,6 +18,8 @@ depends=(
 )
 makedepends=(
     "python2-distribute"
+    "python2-flask"
+    "python2-cherrypy"
 )
 provides=("${pkgname}")
 conflicts=("${pkgname}")
