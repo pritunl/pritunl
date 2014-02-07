@@ -337,12 +337,12 @@ class Server(Config):
         logger.debug('Generating openvpn scripts. %r' % {
             'server_id': self.id,
         })
-        for script, script_path in [
+        for script, script_path in (
                     (TLS_VERIFY_SCRIPT, self.tls_verify_path),
                     (USER_PASS_VERIFY_SCRIPT, self.user_pass_verify_path),
                     (CLIENT_CONNECT_SCRIPT, self.client_connect_path),
                     (CLIENT_DISCONNECT_SCRIPT, self.client_disconnect_path),
-                ]:
+                ):
             with open(script_path, 'w') as script_file:
                 os.chmod(script_path, 0755)
                 script_file.write(script % (

@@ -61,7 +61,7 @@ class Organization(Config):
         logger.debug('Upgrading org to v0.10.5... %r' % {
             'org_id': self.id,
         })
-        for path in [
+        for path in (
                 os.path.join(self.path, INDEX_NAME),
                 os.path.join(self.path, INDEX_NAME + '.old'),
                 os.path.join(self.path, INDEX_ATTR_NAME),
@@ -69,7 +69,7 @@ class Organization(Config):
                 os.path.join(self.path, SERIAL_NAME),
                 os.path.join(self.path, SERIAL_NAME + '.old'),
                 os.path.join(self.path, 'ca.crl'),
-            ]:
+            ):
             try:
                 os.remove(path)
             except OSError:

@@ -279,12 +279,12 @@ class Auth(SessionTestCase):
 
     @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_auth_post_error(self):
-        for endpoint in ['/auth', '/auth/token']:
-            for username, password in [
+        for endpoint in ('/auth', '/auth/token'):
+            for username, password in (
                         ('admin', 'test'),
                         ('test', 'admin'),
                         ('test', 'test'),
-                    ]:
+                    ):
                 response = requests.post(endpoint, json_data={
                     'username': username,
                     'password': password,
@@ -352,7 +352,7 @@ class Auth(SessionTestCase):
 class Data(SessionTestCase):
     @unittest.skipUnless(ENABLE_EXTENDED_TESTS, 'Skipping test')
     def test_export_get(self):
-        for endpoint in ['/export', '/export/pritunl.tar']:
+        for endpoint in ('/export', '/export/pritunl.tar'):
             response = self.session.get(endpoint)
             self.assertEqual(response.status_code, 200)
 
@@ -854,14 +854,14 @@ class Server(SessionTestCase):
         self.assertEqual(response.status_code, 200)
 
 
-        for test_network in [
+        for test_network in (
                     '10.254.254.024',
                     '10254.254.0/24',
                     '10a.254.254.0/24',
                     '11.254.254.0/24',
                     '10.255.254.1/24',
                     '10.254.254.0/24a',
-                ]:
+                ):
             response = self.session.post('/server', json_data={
                 'name': TEST_SERVER_NAME + '_test',
                 'network': test_network,
@@ -873,12 +873,12 @@ class Server(SessionTestCase):
             self.assertEqual(data['error'], 'network_invalid')
             self.assertIn('error_msg', data)
 
-        for test_interface in [
+        for test_interface in (
                     'tun-1',
                     'tun.0',
                     'tun65',
                     'tuna',
-                ]:
+                ):
             response = self.session.post('/server', json_data={
                 'name': TEST_SERVER_NAME + '_test',
                 'interface': test_interface,
@@ -891,10 +891,7 @@ class Server(SessionTestCase):
             self.assertIn('error_msg', data)
 
 
-        for test_port in [
-                    0,
-                    65536,
-                ]:
+        for test_port in (0, 65536):
             response = self.session.post('/server', json_data={
                 'name': TEST_SERVER_NAME + '_test',
                 'port': test_port,
