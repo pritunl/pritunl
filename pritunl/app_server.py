@@ -209,6 +209,7 @@ class AppServer(Config):
                 org._upgrade_0_10_5()
 
         if cur_version != version:
+            from pritunl import __version__
             version_path = os.path.join(self.data_path, VERSION_NAME)
             with open(version_path, 'w') as version_file:
                 version_file.write('%s\n' % __version__)
