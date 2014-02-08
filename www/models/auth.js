@@ -11,7 +11,7 @@ define([
       'password': null
     },
     url: function() {
-      return '/auth';
+      return '/auth/session';
     }
   });
 

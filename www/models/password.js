@@ -9,7 +9,7 @@ define([
       'password': null
     },
     url: function() {
-      return '/password';
+      return '/auth';
     },
     isNew: function() {
       return false;
