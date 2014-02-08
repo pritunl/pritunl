@@ -21,6 +21,7 @@ ENABLE_STRESS_TESTS = False
 THREADED_STRESS_TEST = True
 UUID_RE = r'^[a-z0-9]+$'
 AUTH_HANDLERS = [
+    ('PUT', '/auth'),
     ('GET', '/export'),
     ('GET', '/event'),
     ('GET', '/key/0/0.tar'),
@@ -30,7 +31,6 @@ AUTH_HANDLERS = [
     ('POST', '/organization'),
     ('PUT', '/organization/0'),
     ('DELETE', '/organization/0'),
-    ('PUT', '/password'),
     ('GET', '/server'),
     ('POST', '/server'),
     ('PUT', '/server/0'),
@@ -91,7 +91,7 @@ requests.api.request = request
 class Session:
     def __init__(self):
         self._session = requests.Session()
-        self.response = self.post('/auth', json_data={
+        self.response = self.post('/auth/session', json_data={
             'username': USERNAME,
             'password': PASSWORD,
         })
@@ -238,15 +238,37 @@ class SessionTestCase(unittest.TestCase):
 
 class Auth(SessionTestCase):
     @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
-    def test_auth_get(self):
-        response = requests.get('/auth')
+    def test_auth_put(self):
+        response = self.session.put('/auth', json_data={
+            'username': USERNAME,
+            'password': TEST_PASSWORD,
+        })
+        self.assertEqual(response.status_code, 200)
+
+
+        response = self.session.post('/auth/token', json_data={
+            'username': USERNAME,
+            'password': TEST_PASSWORD,
+        })
+        self.assertEqual(response.status_code, 200)
+
+
+        response = self.session.put('/auth', json_data={
+            'username': USERNAME,
+            'password': PASSWORD,
+        })
+        self.assertEqual(response.status_code, 200)
+
+    @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
+    def test_auth_session_get(self):
+        response = requests.get('/auth/session')
         data = response.json()
         self.assertEqual(response.status_code, 200)
         self.assertIn('authenticated', data)
         self.assertFalse(data['authenticated'])
 
     @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
-    def test_auth_post(self):
+    def test_auth_session_delete(self):
         session = Session()
         data = session.response.json()
         self.assertEqual(session.response.status_code, 200)
@@ -254,7 +276,7 @@ class Auth(SessionTestCase):
         self.assertTrue(data['authenticated'])
 
 
-        response = session.get('/auth')
+        response = session.get('/auth/session')
         self.assertEqual(response.status_code, 200)
 
         data = response.json()
@@ -262,7 +284,7 @@ class Auth(SessionTestCase):
         self.assertTrue(data['authenticated'])
 
 
-        response = session.delete('/auth')
+        response = session.delete('/auth/session')
         self.assertEqual(response.status_code, 200)
 
         data = response.json()
@@ -270,7 +292,7 @@ class Auth(SessionTestCase):
         self.assertFalse(data['authenticated'])
 
 
-        response = session.get('/auth')
+        response = session.get('/auth/session')
         self.assertEqual(response.status_code, 200)
 
         data = response.json()
@@ -279,7 +301,7 @@ class Auth(SessionTestCase):
 
     @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_auth_post_error(self):
-        for endpoint in ('/auth', '/auth/token'):
+        for endpoint in ('/auth/session', '/auth/token'):
             for username, password in (
                         ('admin', 'test'),
                         ('test', 'admin'),
@@ -304,7 +326,7 @@ class Auth(SessionTestCase):
 
     @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_auth_token_get_post_delete(self):
-        response = requests.get('/auth')
+        response = requests.get('/auth/session')
         self.assertEqual(response.status_code, 200)
 
         data = response.json()
@@ -324,7 +346,7 @@ class Auth(SessionTestCase):
         auth_token = data['auth_token']
 
 
-        response = requests.get('/auth', headers={
+        response = requests.get('/auth/session', headers={
             'Auth-Token': auth_token,
         })
         self.assertEqual(response.status_code, 200)
@@ -340,7 +362,7 @@ class Auth(SessionTestCase):
         self.assertEqual(data, {})
 
 
-        response = requests.get('/auth', headers={
+        response = requests.get('/auth/session', headers={
             'Auth-Token': auth_token,
         })
         self.assertEqual(response.status_code, 200)
@@ -545,26 +567,6 @@ class Org(SessionTestCase):
             self.assertIn('id', org)
             self.assertIn('name', org)
             self.assertNotEqual(org['name'], TEST_ORG_NAME + '3')
-
-
-class Password(SessionTestCase):
-    @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
-    def test_password_post(self):
-        response = self.session.put('/password', json_data={
-            'password': TEST_PASSWORD,
-        })
-        self.assertEqual(response.status_code, 200)
-
-        response = self.session.post('/auth/token', json_data={
-            'username': USERNAME,
-            'password': TEST_PASSWORD,
-        })
-        self.assertEqual(response.status_code, 200)
-
-        response = self.session.put('/password', json_data={
-            'password': PASSWORD,
-        })
-        self.assertEqual(response.status_code, 200)
 
 
 class Server(SessionTestCase):
