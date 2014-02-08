@@ -11,7 +11,7 @@ START = 'start'
 STOP = 'stop'
 RESTART = 'restart'
 
-NAME_SAFE_CHARS = ('-', '=', '_', '@', '.', ':', '/')
+NAME_SAFE_CHARS = {'-', '=', '_', '@', '.', ':', '/'}
 
 KEY_LINK_TIMEOUT = 86400
 DEFAULT_PRIMARY_INTERFACE = 'eth0'
