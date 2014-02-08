@@ -57,12 +57,16 @@ class Config:
         self._conf_path = path
 
     def _encode_line(self, name, value):
+        return '%s=%s\n' % (name, self._encode_value(name, value))
+
+    def _encode_value(self, name, value):
         if name in self.bool_options:
             value = 'true' if value else 'false'
         elif name in self.list_options:
             value = ','.join(value)
-
-        return '%s=%s\n' % (name, value)
+        else:
+            value = str(value)
+        return value
 
     def _decode_bool(self, value):
         value = value.lower()
@@ -91,22 +95,11 @@ class Config:
     def _decode_list(self, value):
         return filter(None, value.split(','))
 
-    def _decode_line(self, line):
-        line_split = line.split('=')
-        name = line_split[0]
-        value = '='.join(line_split[1:])
-
+    def _decode_value(self, name, value):
         if value:
-            if name not in self.all_options:
-                raise ValueError('Unknown option')
-
-            if not value:
-                raise ValueError('Empty option')
-
             if name in self.list_options:
                 values = self._decode_list(value)
 
-                decoder = None
                 if name in self.int_options:
                     decoder = self._decode_int
                 elif name in self.float_options:
@@ -115,6 +108,8 @@ class Config:
                     decoder = self._decode_bool
                 elif name in self.path_options:
                     decoder = self._decode_path
+                else:
+                    decoder = None
 
                 if decoder:
                     for i, value in enumerate(values):
@@ -131,10 +126,16 @@ class Config:
                 value = self._decode_bool(value)
             elif name in self.path_options:
                 value = self._decode_path(value)
-
+            else:
+                raise ValueError('Unknown option')
         else:
             value = [] if name in self.list_options else None
+        return value
 
+    def _decode_line(self, line):
+        line_split = line.split('=')
+        name = line_split[0]
+        value = self._decode_value(name, '='.join(line_split[1:]))
         return name, value
 
     def get_cache_key(self, suffix=None):
@@ -164,10 +165,15 @@ class Config:
                             self.get_cache_key()).iteritems():
                         if name in self.__dict__:
                             continue
-                        self.__dict__[name] = value
+                        if name in self.all_options:
+                            self.__dict__[name] = self._decode_value(
+                                name, value)
                 else:
-                    self.__dict__.update(cache_db.dict_get_all(
-                        self.get_cache_key()))
+                    for name, value in cache_db.dict_get_all(
+                            self.get_cache_key()).iteritems():
+                        if name in self.all_options:
+                            self.__dict__[name] = self._decode_value(
+                                name, value)
                 return
 
         try:
@@ -194,7 +200,7 @@ class Config:
                         self.__dict__[name] = value
                         if self.cached:
                             cache_db.dict_set(self.get_cache_key(),
-                                name, value)
+                                name, self._encode_value(name, value))
                     except ValueError:
                         logger.warning('Ignoring invalid line. %r' % {
                             'line': line,
@@ -221,11 +227,15 @@ class Config:
                     if name not in self.__dict__:
                         continue
                     value = self.__dict__[name]
-                    if value is None:
-                        continue
-                    if self.cached:
-                        cache_db.dict_set(self.get_cache_key(), name, value)
-                    config.write(self._encode_line(name, value))
+                    if value is None or value == []:
+                        if self.cached:
+                            cache_db.dict_remove(self.get_cache_key(), name)
+                    else:
+                        if self.cached:
+                            cache_db.dict_set(self.get_cache_key(),
+                                name, self._encode_value(name, value))
+                        config.write(self._encode_line(name, value))
+
             os.rename(temp_conf_path, self._conf_path)
         except:
             try:
