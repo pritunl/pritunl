@@ -142,7 +142,7 @@ class SessionTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         data = response.json()
         for org in data:
-            if org['name'] in {TEST_ORG_NAME + '2', TEST_ORG_NAME + '3'}:
+            if org['name'] in (TEST_ORG_NAME + '2', TEST_ORG_NAME + '3'):
                 response = self.session.delete('/organization/%s' % org['id'])
                 self.assertEqual(response.status_code, 200)
 
@@ -150,7 +150,7 @@ class SessionTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         data = response.json()
         for user in data:
-            if user['name'] == {TEST_USER_NAME + '2', TEST_USER_NAME + '3'}:
+            if user['name'] in (TEST_USER_NAME + '2', TEST_USER_NAME + '3'):
                 response = self.session.delete('/user/%s/%s' % (
                     self.org_id, user['id']))
                 self.assertEqual(response.status_code, 200)
@@ -159,8 +159,8 @@ class SessionTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         data = response.json()
         for server in data:
-            if server['name'] == {TEST_SERVER_NAME + '2',
-                    TEST_SERVER_NAME + '3'}:
+            if server['name'] in (TEST_SERVER_NAME + '2',
+                    TEST_SERVER_NAME + '3'):
                 response = self.session.delete('/server/%s' % server['id'])
                 self.assertEqual(response.status_code, 200)
 
