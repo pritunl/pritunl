@@ -220,6 +220,10 @@ class AppServer(Config):
         for org in Organization.iter_orgs():
             org._cache_users()
 
+        from server import Server
+        for server in Server.iter_servers():
+            server.load()
+
     def _hash_password_v0(self, salt, password):
         password_hash = hashlib.sha512()
         password_hash.update(password[:PASSWORD_LEN_LIMIT])

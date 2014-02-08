@@ -27,6 +27,7 @@ class Server(Config):
     bool_options = {'otp_auth', 'lzo_compression', 'debug'}
     int_options = {'port'}
     list_options = {'organizations', 'local_networks'}
+    cached = True
     cache_prefix = 'server'
     type = 'server'
 
