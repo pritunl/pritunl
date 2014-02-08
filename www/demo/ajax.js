@@ -239,7 +239,7 @@ define([
       otp_auth: request.data.otp_auth,
       lzo_compression: request.data.lzo_compression,
       debug: request.data.debug,
-      node_ip: request.data.node_ip,
+      node_host: request.data.node_host,
       node_port: request.data.node_port,
       node_key: request.data.node_key,
       status: false,
@@ -263,7 +263,7 @@ define([
     demoData.servers[serverId].otp_auth = request.data.otp_auth;
     demoData.servers[serverId].lzo_compression = request.data.lzo_compression;
     demoData.servers[serverId].debug = request.data.debug;
-    demoData.servers[serverId].node_ip = request.data.node_ip;
+    demoData.servers[serverId].node_host = request.data.node_host;
     demoData.servers[serverId].node_port = request.data.node_port;
     demoData.servers[serverId].node_key = request.data.node_key;
     event('servers_updated');

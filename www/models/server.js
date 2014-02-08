@@ -19,7 +19,7 @@ define([
       'protocol': null,
       'local_networks': null,
       'public_address': null,
-      'node_ip': null,
+      'node_host': null,
       'node_port': null,
       'node_key': null,
       'otp_auth': null,

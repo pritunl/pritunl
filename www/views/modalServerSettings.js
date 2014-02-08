@@ -113,11 +113,11 @@ define([
       var protocol = this.$('.protocol select').val();
       var publicAddress = this.$('.public-address input').val();
       var nodeHost = this.$('.node-host input').val().split(':');
-      var nodeIP = nodeHost[0];
       var nodePort = null;
       if (nodeHost.length > 1) {
         nodePort = parseInt(nodeHost[1], 10);
       }
+      nodeHost = nodeHost[0];
       var nodeKey = this.$('.node-key input').val();
       var localNetworks = [];
       var debug = this.getDebugSelect();
@@ -167,7 +167,7 @@ define([
       };
 
       if (this.model.get('type') === 'node_server') {
-        if (!nodeIP) {
+        if (!nodeHost) {
           this.setAlert('danger', 'Node host cannot be empty.', '.node-host');
           return;
         }
@@ -176,9 +176,11 @@ define([
             '.node-key');
           return;
         }
-        data.node_ip = nodeIP;
-        data.node_port = nodePort;
-        data.node_key = nodeKey;
+        _.extend(data, {
+          'node_host': nodeHost,
+          'node_port': nodePort,
+          'node_key': nodeKey
+        });
       }
 
       this.setLoading(this.loadingMsg);

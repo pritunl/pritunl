@@ -89,7 +89,7 @@ define([
       this.$('.server-public-address .status-text').text(
         this.model.get('public_address'));
       this.$('.server-node-host .status-text').text(
-        this.model.get('node_ip'));
+        this.model.get('node_host'));
 
       if (!this.model.get('org_count')) {
         this.$('.server-stop').hide();
