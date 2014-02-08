@@ -5,13 +5,30 @@ from pritunl import app_server
 import time
 import flask
 
-@app_server.app.route('/auth', methods=['POST'])
-def auth_post():
+@app_server.app.route('/auth', methods=['PUT'])
+@app_server.auth
+def auth_put():
+    username = flask.request.json.get('username')
+    password = flask.request.json['password']
+
+    utils.set_auth(username, password)
+    return utils.jsonify({
+        'authenticated': True,
+    })
+
+@app_server.app.route('/auth/session', methods=['GET'])
+def auth_get():
+    return utils.jsonify({
+        'authenticated': utils.check_session(),
+    })
+
+@app_server.app.route('/auth/session', methods=['POST'])
+def auth_session_post():
     username = flask.request.json['username']
     password = flask.request.json['password']
     remote_addr = utils.get_remote_addr()
 
-    if not app_server.check_account(username, password, remote_addr):
+    if not utils.check_auth(username, password, remote_addr):
         return utils.jsonify({
             'error': AUTH_INVALID,
             'error_msg': AUTH_INVALID_MSG,
@@ -25,13 +42,7 @@ def auth_post():
         'authenticated': True,
     })
 
-@app_server.app.route('/auth', methods=['GET'])
-def auth_get():
-    return utils.jsonify({
-        'authenticated': utils.check_auth(),
-    })
-
-@app_server.app.route('/auth', methods=['DELETE'])
+@app_server.app.route('/auth/session', methods=['DELETE'])
 def auth_delete():
     flask.session.clear()
     return utils.jsonify({
@@ -44,7 +55,7 @@ def auth_token_post():
     password = flask.request.json['password']
     remote_addr = utils.get_remote_addr()
 
-    if not app_server.check_account(username, password, remote_addr):
+    if not utils.check_auth(username, password, remote_addr):
         return utils.jsonify({
             'error': AUTH_INVALID,
             'error_msg': AUTH_INVALID_MSG,

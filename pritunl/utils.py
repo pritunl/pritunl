@@ -1,4 +1,5 @@
 from constants import *
+from cache import cache_db, persist_db
 import flask
 import json
 import subprocess
@@ -7,6 +8,9 @@ import urllib2
 import httplib
 import socket
 import time
+import base64
+import hashlib
+import os
 
 def jsonify(data=None, status_code=None):
     if not isinstance(data, basestring):
@@ -22,7 +26,7 @@ def jsonify(data=None, status_code=None):
 def get_remote_addr():
     return flask.request.remote_addr
 
-def check_auth():
+def check_session():
     from pritunl import app_server
     from auth_token import AuthToken
     auth_token = flask.request.headers.get('Auth-Token', None)
@@ -197,3 +201,74 @@ class request:
     @classmethod
     def delete(cls, url, **kwargs):
         return cls._request('DELETE', url, **kwargs)
+
+
+
+def _hash_password_v0(salt, password):
+    pass_hash = hashlib.sha512()
+    pass_hash.update(password[:PASSWORD_LEN_LIMIT])
+    pass_hash.update(base64.b64decode(salt))
+    return base64.b64encode(pass_hash.digest())
+
+def _hash_password_v1(salt, password):
+    pass_hash = hashlib.sha512()
+    pass_hash.update(password[:PASSWORD_LEN_LIMIT])
+    pass_hash.update(base64.b64decode(salt))
+    hash_digest = pass_hash.digest()
+
+    for i in xrange(5):
+        pass_hash = hashlib.sha512()
+        pass_hash.update(hash_digest)
+        hash_digest = pass_hash.digest()
+    return base64.b64encode(hash_digest)
+
+def _get_password_data():
+    password = persist_db.dict_get('auth', 'password')
+    if not password:
+        return None, None, None
+    pass_split = password.split('$')
+    return (int(pass_split[0]), pass_split[1], pass_split[2])
+
+def check_auth(username, password, remote_addr=None):
+    if remote_addr:
+        cache_key = 'ip_' + remote_addr
+        count = cache_db.list_length(cache_key)
+        if count and count > 10:
+            raise flask.abort(403)
+
+        key_exists = cache_db.exists(cache_key)
+        cache_db.list_rpush(cache_key, '')
+        if not key_exists:
+            cache_db.expire(cache_key, 20)
+
+    db_username = persist_db.dict_get('auth', 'username') or DEFAULT_USERNAME
+    if username != db_username:
+        return False
+
+    db_password = persist_db.dict_get('auth', 'password')
+    if not db_password:
+        if password == DEFAULT_PASSWORD:
+            return True
+        return False
+
+    pass_ver, pass_salt, db_pass_hash = db_password.split('$')
+    if pass_ver == '0':
+        pass_hash = _hash_password_v0(pass_salt, password)
+    elif pass_ver == '1':
+        pass_hash = _hash_password_v1(pass_salt, password)
+    else:
+        return False
+    return pass_hash == db_pass_hash
+
+def set_auth(username=None, password=None):
+    tran = persist_db.transaction()
+    if username:
+        tran.dict_set('auth', 'username', username)
+    if password:
+        salt = base64.b64encode(os.urandom(8))
+        pass_hash = _hash_password_v1(salt, password)
+        tran.dict_set('auth', 'password', '1$%s$%s' % (salt, pass_hash))
+    tran.commit()
+
+def get_auth():
+    return persist_db.dict_get('auth', 'username')
