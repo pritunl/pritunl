@@ -4,6 +4,7 @@ Pritunl Changelog
 Version 0.10.6
 --------------
 
+Changes to api
 Move password to db
 Change password hash function
 Add openvpn user connect and disconnect scripts
