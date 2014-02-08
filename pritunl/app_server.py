@@ -12,7 +12,6 @@ import time
 import json
 import urllib2
 import threading
-import hashlib
 import subprocess
 import base64
 
@@ -24,13 +23,12 @@ class AppServer(Config):
     int_options = {'port', 'session_timeout', 'key_bits', 'dh_param_bits'}
     path_options = {'log_path', 'db_path', 'www_path', 'data_path',
         'server_cert_path', 'server_key_path'}
-    str_options = {'bind_addr', 'username', 'password', 'public_ip_server'}
+    str_options = {'bind_addr', 'password', 'public_ip_server'}
     default_options = {
         'auto_start_servers': True,
         'get_public_ip': True,
         'inline_certs': True,
         'ssl': True,
-        'username': DEFAULT_USERNAME,
         'session_timeout': DEFAULT_SESSION_TIMEOUT,
         'key_bits': DEFAULT_KEY_BITS,
         'dh_param_bits': DEFAULT_DH_PARAM_BITS,
@@ -101,7 +99,7 @@ class AppServer(Config):
 
     def auth(self, call):
         def _wrapped(*args, **kwargs):
-            if not utils.check_auth():
+            if not utils.check_session():
                 raise flask.abort(401)
             return call(*args, **kwargs)
         _wrapped.__name__ = '%s_auth' % call.__name__
@@ -208,6 +206,18 @@ class AppServer(Config):
             for org in Organization.iter_orgs():
                 org._upgrade_0_10_5()
 
+        if cur_version and cur_version < self._get_version_int('0.10.6'):
+            logger.info('Upgrading data to v0.10.6...')
+            if self.password:
+                from cache import persist_db
+                logger.info('Upgrading config to v0.10.6...')
+                salt = base64.b64encode(PASSWORD_SALT_V0)
+                password = base64.b64encode(self.password.decode('hex'))
+                persist_db.dict_set('auth', 'password',
+                    '0$%s$%s' % (salt, password))
+                self.password = None
+                self.commit()
+
         if cur_version != version:
             from pritunl import __version__
             version_path = os.path.join(self.data_path, VERSION_NAME)
@@ -223,59 +233,6 @@ class AppServer(Config):
         from server import Server
         for server in Server.iter_servers():
             server.load()
-
-    def _hash_password_v0(self, salt, password):
-        password_hash = hashlib.sha512()
-        password_hash.update(password[:PASSWORD_LEN_LIMIT])
-        password_hash.update(salt)
-        return password_hash.hexdigest()
-
-    def _hash_password_v1(self, salt, password):
-        pass_hash = hashlib.sha512()
-        pass_hash.update(password[:PASSWORD_LEN_LIMIT])
-        pass_hash.update(base64.b64decode(salt))
-        hash_digest = pass_hash.digest()
-
-        for i in xrange(5):
-            pass_hash = hashlib.sha512()
-            pass_hash.update(hash_digest)
-            hash_digest = pass_hash.digest()
-        return base64.b64encode(hash_digest)
-
-    def check_account(self, username, password, remote_addr=None):
-        if remote_addr:
-            cache_key = 'ip_' + remote_addr
-            count = cache_db.list_length(cache_key)
-            if count and count > 10:
-                raise flask.abort(403)
-
-            key_exists = cache_db.exists(cache_key)
-            cache_db.list_rpush(cache_key, '')
-            if not key_exists:
-                cache_db.expire(cache_key, 20)
-
-        if username != self.username:
-            return False
-
-        if not self.password:
-            if password == DEFAULT_PASSWORD:
-                return True
-            return False
-
-        pass_ver, pass_salt, pass_hash = self.password_data
-        if pass_ver == 0:
-            return self._hash_password_v0(
-                pass_salt, password) == pass_hash
-        elif pass_ver == 1:
-            return self._hash_password_v1(
-                pass_salt, password) == pass_hash
-        return False
-
-    def set_password(self, password):
-        salt = base64.b64encode(os.urandom(8))
-        pass_hash = self._hash_password_v1(salt, password)
-        self.password = '1$%s$%s' % (salt, pass_hash)
-        self.commit()
 
     def _setup_all(self):
         self._setup_app()
