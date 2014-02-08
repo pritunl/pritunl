@@ -237,6 +237,7 @@ dh %s
 server %s
 ifconfig-pool-persist %s
 %s
+cipher AES-256-CBC
 max-clients 1024
 keepalive 4 10
 persist-tun
@@ -256,6 +257,7 @@ client-disconnect %s
 server %s
 ifconfig-pool-persist %s
 %s
+cipher AES-256-CBC
 max-clients 1024
 keepalive 4 10
 persist-tun
