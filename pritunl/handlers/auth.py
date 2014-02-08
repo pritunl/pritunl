@@ -13,7 +13,7 @@ def auth_put():
 
     utils.set_auth(username, password)
     return utils.jsonify({
-        'authenticated': True,
+        'username': utils.get_auth(),
     })
 
 @app_server.app.route('/auth/session', methods=['GET'])
