@@ -4,10 +4,11 @@ Pritunl Changelog
 Version 0.10.6
 --------------
 
-Add username to pritunl conf
+Move password to db
 Change password hash function
 Add openvpn user connect and disconnect scripts
 Improve node server support
+Pritunl conf will be automatically upgraded after first launch
 
 Version 0.10.5 2014-01-29
 -------------------------
