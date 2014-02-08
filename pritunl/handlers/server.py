@@ -301,8 +301,6 @@ def server_put_post(server_id=None):
 
         if not public_address_def:
             public_address_def = True
-            if not app_server.public_ip:
-                app_server.load_public_ip()
             public_address = app_server.public_ip
 
     if network_def:

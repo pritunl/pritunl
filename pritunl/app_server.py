@@ -44,6 +44,7 @@ class AppServer(Config):
         Config.__init__(self)
         self.app = None
         self.interrupt = False
+        self.public_ip = None
 
     def __getattr__(self, name):
         if name == 'web_protocol':
@@ -61,26 +62,25 @@ class AppServer(Config):
                 return False
         return Config.__getattr__(self, name)
 
-    def load_public_ip(self, retry=False, timeout=3):
-        if not self.get_public_ip:
-            return
-        logger.debug('Getting public ip address...')
-        try:
-            request = urllib2.Request(self.public_ip_server)
-            response = urllib2.urlopen(request, timeout=timeout)
-            self.public_ip = json.load(response)['ip']
-        except:
-            if retry:
+    def load_public_ip(self, attempts=1, timeout=5):
+        for i in xrange(attempts):
+            if not self.get_public_ip or self.public_ip:
+                return
+            if i != 0:
+                time.sleep(3)
                 logger.debug('Retrying get public ip address...')
-                time.sleep(5)
-                self.load_public_ip(timeout=timeout)
-            else:
+            logger.debug('Getting public ip address...')
+            try:
+                request = urllib2.Request(self.public_ip_server)
+                response = urllib2.urlopen(request, timeout=timeout)
+                self.public_ip = json.load(response)['ip']
+                break
+            except:
                 logger.exception('Failed to get public ip address...')
 
     def _setup_public_ip(self):
-        self.public_ip = None
         threading.Thread(target=self.load_public_ip,
-            kwargs={'retry': True, 'timeout': 10}).start()
+            kwargs={'attempts': 5}).start()
 
     def _setup_app(self):
         self.app = flask.Flask(APP_NAME)
