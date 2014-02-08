@@ -221,11 +221,11 @@ def server_put_post(server_id=None):
         lzo_compression = True if flask.request.json[
             'lzo_compression'] else False
 
-    node_ip = None
-    node_ip_def = False
-    if 'node_ip' in flask.request.json:
-        node_ip_def = True
-        node_ip = utils.filter_str(flask.request.json['node_ip'])
+    node_host = None
+    node_host_def = False
+    if 'node_host' in flask.request.json:
+        node_host_def = True
+        node_host = utils.filter_str(flask.request.json['node_host'])
 
     node_port = None
     node_port_def = False
@@ -332,7 +332,7 @@ def server_put_post(server_id=None):
                 otp_auth=otp_auth,
                 lzo_compression=lzo_compression,
                 debug=debug,
-                node_ip=node_ip,
+                node_host=node_host,
                 node_port=node_port,
                 node_key=node_key,
             )
@@ -377,8 +377,8 @@ def server_put_post(server_id=None):
         if debug_def:
             server.debug = debug
         if server.type == NODE_SERVER_NAME:
-            if node_ip_def:
-                server.node_ip = node_ip
+            if node_host_def:
+                server.node_host = node_host
             if node_port_def:
                 server.node_port = node_port
             if node_key_def:

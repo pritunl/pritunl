@@ -17,7 +17,7 @@ import time
 logger = logging.getLogger(APP_NAME)
 
 class NodeServer(Server):
-    str_options = Server.str_options | {'node_ip', 'node_key'}
+    str_options = Server.str_options | {'node_host', 'node_key'}
     int_options = Server.int_options | {'node_port'}
     default_options = dict(Server.default_options.items() + {
         'node_port': 9800,
@@ -26,9 +26,11 @@ class NodeServer(Server):
 
     def dict(self):
         server_dict = Server.dict(self)
-        server_dict['node_ip'] = self.node_ip
-        server_dict['node_port'] = self.node_port
-        server_dict['node_key'] = self.node_key
+        server_dict.update({
+            'node_host': self.node_host,
+            'node_hostnode_port': self.node_port,
+            'node_key': self.node_key,
+        })
         return server_dict
 
     def _initialize(self):
@@ -49,7 +51,7 @@ class NodeServer(Server):
 
     def _get_node_url(self):
         return 'https://%s:%s/server/%s' % (
-            self.node_ip, self.node_port, self.id)
+            self.node_host, self.node_port, self.id)
 
     def _sub_thread(self):
         for message in cache_db.subscribe(self.get_cache_key()):
