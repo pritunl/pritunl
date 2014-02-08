@@ -245,6 +245,10 @@ class Auth(SessionTestCase):
         })
         self.assertEqual(response.status_code, 200)
 
+        data = response.json()
+        self.assertIn('username', data)
+        self.assertEqual(data['username'], USERNAME)
+
 
         response = self.session.post('/auth/token', json_data={
             'username': USERNAME,
@@ -258,6 +262,10 @@ class Auth(SessionTestCase):
             'password': PASSWORD,
         })
         self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertIn('username', data)
+        self.assertEqual(data['username'], USERNAME)
 
     @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_auth_session_get(self):
