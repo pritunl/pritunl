@@ -8,7 +8,7 @@ import flask
 @app_server.app.route('/auth', methods=['PUT'])
 @app_server.auth
 def auth_put():
-    username = flask.request.json.get('username')
+    username = utils.filter_str(flask.request.json.get('username'))
     password = flask.request.json['password']
 
     utils.set_auth(username, password)

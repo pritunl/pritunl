@@ -70,9 +70,9 @@ class Config:
 
     def _decode_bool(self, value):
         value = value.lower()
-        if value in {'true', 't', 'yes', 'y'}:
+        if value in ('true', 't', 'yes', 'y'):
             return True
-        elif value in {'false', 'f', 'no', 'n'}:
+        elif value in ('false', 'f', 'no', 'n'):
             return False
         else:
             raise ValueError('Value is not boolean')

@@ -70,8 +70,7 @@ def server_put_post(server_id=None):
     name_def = False
     if 'name' in flask.request.json:
         name_def = True
-        name = flask.request.json['name']
-        name = ''.join(x for x in name if x.isalnum() or x in NAME_SAFE_CHARS)
+        name = utils.filter_str(flask.request.json['name'])
 
     type = SERVER_NAME
     type_def = False
@@ -144,7 +143,7 @@ def server_put_post(server_id=None):
         protocol_def = True
         protocol = flask.request.json['protocol'].lower()
 
-        if protocol not in {'udp', 'tcp'}:
+        if protocol not in ('udp', 'tcp'):
             return utils.jsonify({
                 'error': PROTOCOL_INVALID,
                 'error_msg': PROTOCOL_INVALID_MSG,
@@ -201,9 +200,7 @@ def server_put_post(server_id=None):
     public_address_def = False
     if 'public_address' in flask.request.json:
         public_address_def = True
-        public_address = flask.request.json['public_address']
-        public_address = ''.join(
-            x for x in public_address if x.isalnum() or x == '.')
+        public_address = utils.filter_str(flask.request.json['public_address'])
 
     debug = False
     debug_def = False
@@ -228,7 +225,7 @@ def server_put_post(server_id=None):
     node_ip_def = False
     if 'node_ip' in flask.request.json:
         node_ip_def = True
-        node_ip = flask.request.json['node_ip']
+        node_ip = utils.filter_str(flask.request.json['node_ip'])
 
     node_port = None
     node_port_def = False
@@ -249,7 +246,7 @@ def server_put_post(server_id=None):
     node_key_def = False
     if 'node_key' in flask.request.json:
         node_key_def = True
-        node_key = flask.request.json['node_key']
+        node_key = utils.filter_str(flask.request.json['node_key'])
 
     if not server_id:
         if not name_def:

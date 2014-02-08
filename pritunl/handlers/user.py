@@ -63,8 +63,7 @@ def user_get(org_id, page=None):
 @app_server.auth
 def user_post(org_id):
     org = Organization.get_org(id=org_id)
-    name = flask.request.json['name']
-    name = ''.join(x for x in name if x.isalnum() or x in NAME_SAFE_CHARS)
+    name = utils.filter_str(flask.request.json['name'])
     user = org.new_user(CERT_CLIENT, name)
 
     return utils.jsonify(user.dict())
@@ -74,8 +73,7 @@ def user_post(org_id):
 def user_put(org_id, user_id):
     org = Organization.get_org(id=org_id)
     user = org.get_user(user_id)
-    name = flask.request.json['name']
-    name = ''.join(x for x in name if x.isalnum() or x in NAME_SAFE_CHARS)
+    name = utils.filter_str(flask.request.json['name'])
     user.rename(name)
 
     return utils.jsonify(user.dict())

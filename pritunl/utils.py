@@ -133,6 +133,9 @@ def get_cert_block(cert_path):
         end_index = cert_file.index('-----END CERTIFICATE-----') + 25
         return cert_file[start_index:end_index]
 
+def filter_str(in_str):
+    return ''.join(x for x in in_str if x.isalnum() or x in NAME_SAFE_CHARS)
+
 class Response:
     def __init__(self, url, headers, status_code, reason, content):
         self.url = url

@@ -8,17 +8,14 @@ import flask
 @app_server.auth
 def org_get():
     orgs = []
-
     for org in Organization.iter_orgs():
         orgs.append(org.dict())
-
     return utils.jsonify(orgs)
 
 @app_server.app.route('/organization', methods=['POST'])
 @app_server.auth
 def org_post():
-    name = flask.request.json['name']
-    name = ''.join(x for x in name if x.isalnum() or x in NAME_SAFE_CHARS)
+    name = utils.filter_str(flask.request.json['name'])
     org = Organization(name=name)
     return utils.jsonify(org.dict())
 
@@ -26,8 +23,7 @@ def org_post():
 @app_server.auth
 def org_put(org_id):
     org = Organization.get_org(id=org_id)
-    name = flask.request.json['name']
-    name = ''.join(x for x in name if x.isalnum() or x in NAME_SAFE_CHARS)
+    name = utils.filter_str(flask.request.json['name'])
     org.rename(name)
     return utils.jsonify(org.dict())
 
