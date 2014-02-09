@@ -215,7 +215,7 @@ class Organization(Config):
                 if not user:
                     continue
                 if user.type == CERT_CLIENT:
-                    prefix_count  += 1
+                    prefix_count += 1
                 name_id = '%s_%s' % (user.name, user_id)
                 users_dict[name_id] = user
                 users_sort.append(name_id)
@@ -225,12 +225,11 @@ class Organization(Config):
             search_more = False
             for name_id in sorted(users_sort):
                 yield users_dict[name_id]
-                if prefix_limit:
-                    if users_dict[name_id].type == CERT_CLIENT:
-                        user_count += 1
-                        if user_count >= prefix_limit:
-                            search_more = True
-                            break
+                if prefix_limit and users_dict[name_id].type == CERT_CLIENT:
+                    user_count += 1
+                    if user_count >= prefix_limit:
+                        search_more = True
+                        break
             if prefix_limit and not search_more:
                 yield None
         else:
