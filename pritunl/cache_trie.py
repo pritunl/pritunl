@@ -29,9 +29,9 @@ class CacheTrie(object):
         new_key = cur_key
         for char in key:
             new_key += char
-            cache_db.set_add(name + new_key + '_values', value)
             cache_db.set_add(name + cur_key, new_key)
             cur_key = new_key
+        cache_db.set_add(name + cur_key + '_values', value)
 
     def remove_key(self, key, value):
         name = self.name + '_'
@@ -39,15 +39,17 @@ class CacheTrie(object):
         new_key = cur_key
         for char in key:
             new_key += char
-            cache_db.set_remove(name + new_key + '_values', value)
             cache_db.set_remove(name + cur_key, new_key)
             cur_key = new_key
+        cache_db.set_remove(name + cur_key + '_values', value)
 
     def chain(self, values):
         name = self.name
         for node_key in self.get_nodes():
             CacheTrie(name, node_key).chain(values)
-        values.update(self.get_values())
+        node_values = self.get_values()
+        if node_values:
+            values.update(node_values)
         return values
 
     def get_prefix(self, prefix):
