@@ -140,14 +140,17 @@ class SessionTestCase(unittest.TestCase):
     def _clean_test_data(self):
         response = self.session.get('/organization')
         self.assertEqual(response.status_code, 200)
+
         data = response.json()
         for org in data:
             if org['name'] in (TEST_ORG_NAME + '2', TEST_ORG_NAME + '3'):
                 response = self.session.delete('/organization/%s' % org['id'])
                 self.assertEqual(response.status_code, 200)
 
+
         response = self.session.get('/user/%s' % self.org_id)
         self.assertEqual(response.status_code, 200)
+
         data = response.json()
         for user in data:
             if user['name'] in (TEST_USER_NAME + '2', TEST_USER_NAME + '3'):
@@ -155,8 +158,10 @@ class SessionTestCase(unittest.TestCase):
                     self.org_id, user['id']))
                 self.assertEqual(response.status_code, 200)
 
+
         response = self.session.get('/server')
         self.assertEqual(response.status_code, 200)
+
         data = response.json()
         for server in data:
             if server['name'] in (TEST_SERVER_NAME + '2',
@@ -164,8 +169,10 @@ class SessionTestCase(unittest.TestCase):
                 response = self.session.delete('/server/%s' % server['id'])
                 self.assertEqual(response.status_code, 200)
 
+
         response = self.session.get('/server/%s/organization' % self.server_id)
         self.assertEqual(response.status_code, 200)
+
         data = response.json()
         for server_org in data:
             response = self.session.delete('/server/%s/organization/%s' % (
@@ -176,48 +183,58 @@ class SessionTestCase(unittest.TestCase):
         if not self.org_id:
             response = self.session.get('/organization')
             self.assertEqual(response.status_code, 200)
+
             data = response.json()
             for org in data:
                 if org['name'] == TEST_ORG_NAME:
                     self.org_id = org['id']
+
 
         if not self.org_id:
             response = self.session.post('/organization', json_data={
                 'name': TEST_ORG_NAME,
             })
             self.assertEqual(response.status_code, 200)
+
             data = response.json()
             self.assertIn('id', data)
             self.assertIn('name', data)
             self.assertEqual(data['name'], TEST_ORG_NAME)
             self.org_id = data['id']
 
+
         if not self.user_id:
             response = self.session.get('/user/%s' % self.org_id)
             self.assertEqual(response.status_code, 200)
+
             data = response.json()
             for user in data:
                 if user['name'] == TEST_USER_NAME:
                     self.user_id = user['id']
+
 
         if not self.user_id:
             response = self.session.post('/user/%s' % self.org_id, json_data={
                 'name': TEST_USER_NAME,
             })
             self.assertEqual(response.status_code, 200)
+
             data = response.json()
             self.assertIn('id', data)
             self.assertIn('name', data)
             self.assertEqual(data['name'], TEST_USER_NAME)
             self.user_id = data['id']
 
+
         if not self.server_id:
             response = self.session.get('/server')
             self.assertEqual(response.status_code, 200)
+
             data = response.json()
             for server in data:
                 if server['name'] == TEST_SERVER_NAME:
                     self.server_id = server['id']
+
 
         if not self.server_id:
             response = self.session.post('/server', json_data={
@@ -225,6 +242,7 @@ class SessionTestCase(unittest.TestCase):
                 'otp_auth': True,
             })
             self.assertEqual(response.status_code, 200)
+
             data = response.json()
             self.assertIn('id', data)
             self.assertIn('name', data)
@@ -270,6 +288,7 @@ class Auth(SessionTestCase):
     @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_auth_session_get(self):
         response = requests.get('/auth/session')
+
         data = response.json()
         self.assertEqual(response.status_code, 200)
         self.assertIn('authenticated', data)
