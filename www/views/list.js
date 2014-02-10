@@ -304,7 +304,7 @@ define([
         }.bind(this)
       });
     },
-    ignore: function(options) {
+    ignore: function() {
     },
     getOptions: function() {
     },

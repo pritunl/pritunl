@@ -207,16 +207,17 @@ define([
           $(evt.target).removeAttr('disabled');
         }.bind(this),
         error: function(model, response) {
+          var alertView;
           $(evt.target).removeAttr('disabled');
           if (response.responseJSON) {
-            var alertView = new AlertView({
+            alertView = new AlertView({
               type: 'danger',
               message: response.responseJSON.error_msg,
               dismissable: true
             });
           }
           else {
-            var alertView = new AlertView({
+            alertView = new AlertView({
               type: 'danger',
               message: 'Failed to ' + operation +
                 ' the server, server error occurred.',
