@@ -14,14 +14,16 @@ define([
     title: 'Change Password',
     okText: 'Change',
     initialize: function() {
-      this.model = new PasswordModel();
+      this.model = new PasswordModel({
+        username: window.username
+      });
       ModalChangePasswordView.__super__.initialize.call(this);
     },
     body: function() {
-      return this.template();
+      return this.template(this.model.toJSON());
     },
     onInputChange: function() {
-      var pass = this.$('.pass').val();
+      var pass = this.$('.pass input').val();
       if (pass && (
             pass.length < 8 || !pass.match(/[0-9]/) ||
             (
@@ -29,24 +31,33 @@ define([
               (!pass.match(/[a-z]/) || !pass.match(/[A-Z]/))
             )
           )) {
-        this.setAlert('warning', 'Weak password.', '.form-group');
+        this.setAlert('warning', 'Weak password.', '.pass');
       }
       else {
         this.clearAlert();
       }
     },
     onOk: function() {
-      if (!this.$('.pass').val()) {
-        this.setAlert('danger', 'Password can not be empty.', '.form-group');
+      var username = this.$('.username input').val();
+      var password = this.$('.pass input').val();
+      var verifyPassword = this.$('.verify-pass input').val();
+
+      if (!username) {
+        this.setAlert('danger', 'Username can not be empty.', '.username');
         return;
       }
-      if (this.$('.pass').val() !== this.$('.verify-pass').val()) {
-        this.setAlert('danger', 'Passwords do not match.', '.form-group');
+      if (!password) {
+        this.setAlert('danger', 'Password can not be empty.', '.pass');
+        return;
+      }
+      if (password !== verifyPassword) {
+        this.setAlert('danger', 'Passwords do not match.', '.verify-pass');
         return;
       }
       this.setLoading('Changing password...');
       this.model.save({
-        password: this.$('.pass').val()
+        username: username,
+        password: password
       }, {
         success: function() {
           this.close(true);

@@ -82,11 +82,13 @@ define([
     },
     login: function() {
       this.$('.login-button').attr('disabled', 'disabled');
+      var username = this.$('.username').val();
+      var password = this.$('.password').val();
 
       var authModel = new AuthModel();
       authModel.save({
-        username: this.$('.username').val(),
-        password: this.$('.password').val()
+        username: username,
+        password: password
       }, {
         success: function(model) {
           this.callback();
@@ -96,6 +98,7 @@ define([
           }, {
             duration: 400,
             complete: function() {
+              window.username = username;
               this.destroy();
               if (model.get('default_password')) {
                 this.changePassword();

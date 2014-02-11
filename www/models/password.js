@@ -6,6 +6,7 @@ define([
   'use strict';
   var PasswordModel = Backbone.Model.extend({
     defaults: {
+      'username': null,
       'password': null
     },
     url: function() {
