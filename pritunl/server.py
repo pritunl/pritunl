@@ -146,7 +146,7 @@ class Server(Config):
             self.commit()
 
     def _initialize(self):
-        logger.info('Initialize new server. %r' % {
+        logger.debug('Initialize new server. %r' % {
             'server_id': self.id,
         })
         os.makedirs(os.path.join(self.path, TEMP_DIR))
@@ -180,7 +180,7 @@ class Server(Config):
         threading.Thread(target=_target).start()
 
     def remove(self):
-        logger.info('Removing server. %r' % {
+        logger.debug('Removing server. %r' % {
             'server_id': self.id,
         })
         name = self.name
