@@ -11,6 +11,8 @@ Change password hash function
 Improve ovpn iptables rules
 Add openvpn user connect and disconnect scripts
 Improve node server support
+Add dns servers to server options
+Add dh param bits to server options
 Pritunl conf will be automatically upgraded after first launch
 
 Version 0.10.5 2014-01-29
