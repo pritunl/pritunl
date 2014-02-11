@@ -20,6 +20,21 @@ define([
     body: function() {
       return this.template();
     },
+    onInputChange: function() {
+      var pass = this.$('.pass').val();
+      if (pass && (
+            pass.length < 8 || !pass.match(/[0-9]/) ||
+            (
+              !pass.match(/[^a-zA-Z0-9]/) &&
+              (!pass.match(/[a-z]/) || !pass.match(/[A-Z]/))
+            )
+          )) {
+        this.setAlert('warning', 'Weak password.', '.form-group');
+      }
+      else {
+        this.clearAlert();
+      }
+    },
     onOk: function() {
       if (!this.$('.pass').val()) {
         this.setAlert('danger', 'Password can not be empty.', '.form-group');
