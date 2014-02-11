@@ -7067,6 +7067,7 @@ header.blur {
 }
 .users-list .user,
 .users-list .no-users,
+.users-list .no-users-search,
 .users-list .loading,
 .server-orgs-list .org,
 .server-orgs-list .no-orgs {
@@ -7086,6 +7087,7 @@ header.blur {
   background-clip: padding-box;
 }
 .users-list .no-users,
+.users-list .no-users-search,
 .users-list .loading,
 .server-orgs-list .no-orgs {
   text-align: center;
@@ -7355,7 +7357,7 @@ header.blur {
   margin-right: 0;
 }
 .dashboard .status-container .status-item .status-icon.glyphicon-cloud {
-  top: 0;
+  top: 4px;
 }
 .servers-list .server .server-info .server-port .status-icon {
   top: 0;
@@ -7430,10 +7432,10 @@ header.blur {
   float: right;
 }
 .server-settings-modal .modal .modal-dialog {
-  top: -webkit-calc(50% - 358px);
-  top: -moz-calc(50% - 358px);
-  top: -o-calc(50% - 358px);
-  top: calc(50% - 358px);
+  top: -webkit-calc(50% - 366px);
+  top: -moz-calc(50% - 366px);
+  top: -o-calc(50% - 366px);
+  top: calc(50% - 366px);
 }
 .server-settings-modal .modal .form-group {
   margin: 0 0 15px 0;
@@ -7478,12 +7480,17 @@ header.blur {
   top: calc(50% - 225px);
 }
 .add-user-modal .modal .modal-dialog,
-.attach-org-modal .modal .modal-dialog,
-.change-password-modal .modal .modal-dialog {
+.attach-org-modal .modal .modal-dialog {
   top: -webkit-calc(50% - 240px);
   top: -moz-calc(50% - 240px);
   top: -o-calc(50% - 240px);
   top: calc(50% - 240px);
+}
+.change-password-modal .modal .modal-dialog {
+  top: -webkit-calc(50% - 279px);
+  top: -moz-calc(50% - 279px);
+  top: -o-calc(50% - 279px);
+  top: calc(50% - 279px);
 }
 .otp-auth-modal .modal .modal-dialog {
   top: -webkit-calc(50% - 325px);
