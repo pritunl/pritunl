@@ -29,10 +29,22 @@ def _port_invalid():
             'error_msg': PORT_INVALID_MSG,
         }, 400)
 
+def _dh_param_bits_invalid():
+        return utils.jsonify({
+            'error': DH_PARAM_BITS,
+            'error_msg': DH_PARAM_BITS_MSG,
+        }, 400)
+
 def _local_network_invalid():
     return utils.jsonify({
         'error': LOCAL_NETWORK_INVALID,
         'error_msg': LOCAL_NETWORK_INVALID_MSG,
+    }, 400)
+
+def _dns_server_invalid():
+    return utils.jsonify({
+        'error': DNS_SERVER_INVALID,
+        'error_msg': DNS_SERVER_INVALID_MSG,
     }, 400)
 
 @app_server.app.route('/server', methods=['GET'])
@@ -163,6 +175,20 @@ def server_put_post(server_id=None):
         if port < 1 or port > 65535:
             return _port_invalid()
 
+    dh_param_bits = None
+    dh_param_bits_def = False
+    if 'dh_param_bits' in flask.request.json:
+        dh_param_bits_def = True
+        dh_param_bits = flask.request.json['dh_param_bits']
+
+        try:
+            dh_param_bits = int(dh_param_bits)
+        except ValueError:
+            return _dh_param_bits_invalid()
+
+        if dh_param_bits not in {1024, 1536, 2048, 3072, 4096}:
+            return _dh_param_bits_invalid()
+
     local_networks = None
     local_networks_def = False
     if 'local_networks' in flask.request.json:
@@ -195,6 +221,16 @@ def server_put_post(server_id=None):
 
             if subnet < 8 or subnet > 30:
                 return _local_network_invalid()
+
+    dns_servers = None
+    dns_servers_def = False
+    if 'dns_servers' in flask.request.json:
+        dns_servers_def = True
+        dns_servers = flask.request.json['dns_servers']
+
+        for dns_server in dns_servers:
+            if not re.match(IP_REGEX, dns_server):
+                return _dns_server_invalid()
 
     public_address = None
     public_address_def = False
@@ -296,6 +332,10 @@ def server_put_post(server_id=None):
                     'error_msg': PORT_PROTOCOL_IN_USE_MSG,
                 }, 400)
 
+        if not dh_param_bits_def:
+            dh_param_bits_def = True
+            dh_param_bits = DEFAULT_DH_PARAM_BITS
+
         if not public_address_def:
             public_address_def = True
             public_address = app_server.public_ip
@@ -327,7 +367,9 @@ def server_put_post(server_id=None):
                 interface=interface,
                 port=port,
                 protocol=protocol,
+                dh_param_bits=dh_param_bits,
                 local_networks=local_networks,
+                dns_servers=dns_servers,
                 public_address=public_address,
                 otp_auth=otp_auth,
                 lzo_compression=lzo_compression,
@@ -343,7 +385,9 @@ def server_put_post(server_id=None):
                 interface=interface,
                 port=port,
                 protocol=protocol,
+                dh_param_bits=dh_param_bits,
                 local_networks=local_networks,
+                dns_servers=dns_servers,
                 public_address=public_address,
                 otp_auth=otp_auth,
                 lzo_compression=lzo_compression,
@@ -366,8 +410,12 @@ def server_put_post(server_id=None):
             server.port = port
         if protocol_def:
             server.protocol = protocol
+        if dh_param_bits_def:
+            server.dh_param_bits = dh_param_bits
         if local_networks_def:
             server.local_networks = local_networks
+        if dns_servers_def:
+            server.dns_servers = dns_servers
         if public_address_def:
             server.public_address = public_address
         if otp_auth_def:

@@ -180,8 +180,17 @@ LOCAL_NETWORK_INVALID_MSG = 'Local network address is not valid, ' + \
     'format must be "[0-255].[0-255].[0-255].[0-254]/[8-30]" such as ' + \
     '"10.0.0.0/8".'
 
+DNS_SERVER_INVALID = 'dns_server_invalid'
+DNS_SERVER_INVALID_MSG = 'DNS server is not valid, ' + \
+    'format must be "[0-255].[0-255].[0-255].[0-255]" such as ' + \
+    '"8.8.8.8".'
+
 PORT_INVALID = 'port_invalid'
 PORT_INVALID_MSG = 'Port number is not valid, must be between 1 and 65535.'
+
+DH_PARAM_BITS = 'dh_param_bits'
+DH_PARAM_BITS_MSG = 'DH param bits are not valid, must 1024, 1536, 2048, ' + \
+    '2048, 3072 or 4096.'
 
 INTERFACE_INVALID = 'interface_invalid'
 INTERFACE_INVALID_MSG = 'Interface is not valid, must be ' + \

@@ -23,10 +23,10 @@ logger = logging.getLogger(APP_NAME)
 class Server(Config):
     str_options = {'name', 'network', 'interface', 'protocol',
         'local_networks', 'public_address', 'primary_organization',
-        'primary_user', 'organizations', 'local_network'}
+        'primary_user', 'organizations', 'local_network', 'dns_servers'}
     bool_options = {'otp_auth', 'lzo_compression', 'debug'}
-    int_options = {'port'}
-    list_options = {'organizations', 'local_networks'}
+    int_options = {'port', 'dh_param_bits'}
+    list_options = {'organizations', 'local_networks', 'dns_servers'}
     cached = True
     cache_prefix = 'server'
     type = 'server'
@@ -36,6 +36,7 @@ class Server(Config):
         self._cur_event = None
         self._cur_client_count = 0
         self._last_event = 0
+        self._rebuild_dh_params = False
 
         if id is None:
             self.id = uuid.uuid4().hex
@@ -71,10 +72,14 @@ class Server(Config):
                 cache_db.dict_set(self.get_cache_key(), name, 't')
             else:
                 cache_db.dict_set(self.get_cache_key(), name, 'f')
+            return
         elif name == 'clients':
             cache_db.dict_set(self.get_cache_key(), name, json.dumps(value))
-        else:
-            Config.__setattr__(self, name, value)
+            return
+        elif name == 'dh_param_bits':
+            if self.dh_param_bits != value:
+                self._rebuild_dh_params = True
+        Config.__setattr__(self, name, value)
 
     def __getattr__(self, name):
         if name == 'status':
@@ -113,7 +118,9 @@ class Server(Config):
             'interface': self.interface,
             'port': self.port,
             'protocol': self.protocol,
+            'dh_param_bits': self.dh_param_bits,
             'local_networks': self.local_networks,
+            'dns_servers': self.dns_servers,
             'public_address': self.public_address,
             'otp_auth': True if self.otp_auth else False,
             'lzo_compression': self.lzo_compression,
@@ -128,6 +135,14 @@ class Server(Config):
             })
             self.local_networks = [self.local_network]
             self.local_network = None
+            self.commit()
+
+    def _upgrade_0_10_6(self):
+        if not self.dh_param_bits:
+            logger.debug('Upgrading server to v0.10.6... %r' % {
+                'server_id': self.id,
+            })
+            self.dh_param_bits = app_server.dh_param_bits
             self.commit()
 
     def _initialize(self):
@@ -179,6 +194,8 @@ class Server(Config):
         Event(type=SERVERS_UPDATED)
 
     def commit(self):
+        if self._rebuild_dh_params:
+            self._generate_dh_param()
         Config.commit(self)
         Event(type=SERVERS_UPDATED)
 
@@ -307,10 +324,11 @@ class Server(Config):
         logger.debug('Generating server dh params. %r' % {
             'server_id': self.id,
         })
+        self._rebuild_dh_params = False
         args = [
             'openssl', 'dhparam',
             '-out', self.dh_param_path,
-            str(app_server.dh_param_bits)
+            str(self.dh_param_bits)
         ]
         subprocess.check_call(args, stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
@@ -376,13 +394,15 @@ class Server(Config):
         self.generate_ca_cert()
         self._generate_scripts()
 
+        push = ''
         if self.local_networks:
-            push = ''
             for network in self.local_networks:
                 push += 'push "route %s %s"\n' % self._parse_network(network)
-            push = push.rstrip()
         else:
-            push = 'push "redirect-gateway"'
+            push += 'push "redirect-gateway"\n'
+        for dns_server in self.dns_servers:
+            push += 'push "dhcp-option DNS %s"\n' % dns_server
+        push = push.rstrip()
 
         if not inline:
             server_conf = OVPN_SERVER_CONF % (
