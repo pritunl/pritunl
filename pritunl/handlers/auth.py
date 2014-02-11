@@ -38,9 +38,13 @@ def auth_session_post():
     flask.session['timestamp'] = int(time.time())
     if not app_server.ssl:
         flask.session['source'] = remote_addr
-    return utils.jsonify({
+
+    data = {
         'authenticated': True,
-    })
+    }
+    if password == DEFAULT_PASSWORD:
+        data['default_password'] = True
+    return utils.jsonify(data)
 
 @app_server.app.route('/auth/session', methods=['DELETE'])
 def auth_delete():
