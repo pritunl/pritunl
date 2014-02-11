@@ -30,6 +30,7 @@ define([
   }
 
   var authPut = function(request) {
+    demoData.auth.username = request.data.username;
     demoData.auth.password = request.data.password;
     request.response({});
   };
