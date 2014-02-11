@@ -1,5 +1,6 @@
 from constants import *
 from cache import cache_db
+import re
 
 class CacheTrie(object):
     __slots__ = ('name', 'key')
@@ -32,6 +33,10 @@ class CacheTrie(object):
             cache_db.set_add(name + cur_key, new_key)
             cur_key = new_key
         cache_db.set_add(name + cur_key + '_values', value)
+
+    def add_key_terms(self, key, value):
+        for term in re.split('[^a-zA-Z0-9]', key):
+            self.add_key(term, value)
 
     def remove_key(self, key, value):
         name = self.name + '_'

@@ -102,7 +102,7 @@ class User(Config):
         if self.type != CERT_CA:
             cache_db.set_add(self.org.get_cache_key('users'), self.id)
             users_trie = CacheTrie(self.org.get_cache_key('users_trie'))
-            users_trie.add_key(self.name, self.id)
+            users_trie.add_key_terms(self.name, self.id)
         self.org.sort_users_cache()
         if self.type == CERT_CLIENT:
             LogEntry(message='Created new user "%s".' % self.name)

@@ -169,7 +169,7 @@ class Organization(Config):
                     user = User.get_user(self, id=user_id)
                     if not user:
                         continue
-                    users_trie.add_key(user.name, user_id)
+                    users_trie.add_key_terms(user.name, user_id)
                     cache_db.set_add(self.get_cache_key('users'), user_id)
             self.sort_users_cache()
             cache_db.set(self.get_cache_key('users_cached'), 't')
