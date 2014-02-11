@@ -17,6 +17,7 @@ define([
     events: function() {
       return _.extend({
         'change .server-mode select': 'onServerMode',
+        'change .dh-param-bits select': 'onDhParamBits',
         'click .otp-auth-toggle .selector': 'onOtpAuthSelect',
         'click .debug-toggle .selector': 'onDebugSelect'
       }, ModalServerSettingsView.__super__.events);
@@ -73,6 +74,20 @@ define([
         this.setServerMode('all');
       }
     },
+    onDhParamBits: function(evt) {
+      var val = $(evt.target).val();
+      if (val > 2048) {
+        this.setAlert('danger', 'Using dh parameters larger then 2048 can ' +
+          'take several hours to generate.', '.dh-param-bits');
+      }
+      else if (val > 1536) {
+        this.setAlert('warning', 'Using dh parameters larger then 1536 can ' +
+          'take several minutes to generate.', '.dh-param-bits');
+      }
+      else {
+        this.clearAlert();
+      }
+    },
     getOtpAuthSelect: function() {
       return this.$('.otp-auth-toggle .selector').hasClass('selected');
     },
@@ -106,12 +121,22 @@ define([
       this.setDebugSelect(!this.getDebugSelect());
     },
     onOk: function() {
+      var i;
       var name = this.$('.name input').val();
       var network = this.$('.network input').val();
       var iface = this.$('.interface input').val();
       var port = this.$('.port input').val();
       var protocol = this.$('.protocol select').val();
+      var dhParamBits = parseInt(this.$('.dh-param-bits select').val(), 10);
       var publicAddress = this.$('.public-address input').val();
+      var dnsServers = [];
+      var dnsServersTemp = this.$('.dns-servers input').val().split(',');
+      for (i = 0; i < dnsServersTemp.length; i++) {
+        dnsServersTemp[i] = $.trim(dnsServersTemp[i]);
+        if (dnsServersTemp[i]) {
+          dnsServers.push(dnsServersTemp[i]);
+        }
+      }
       var nodeHost = this.$('.node-host input').val().split(':');
       var nodePort = null;
       if (nodeHost.length > 1) {
@@ -160,7 +185,9 @@ define([
         'interface': iface,
         'port': port,
         'protocol': protocol,
+        'dh_param_bits': dhParamBits,
         'local_networks': localNetworks,
+        'dns_servers': dnsServers,
         'public_address': publicAddress,
         'otp_auth': otpAuth,
         'debug': debug

@@ -67,7 +67,7 @@ define([
       this.addView(this.alertView);
       this.$('.modal-body').prepend(this.alertView.render().el);
       if (form) {
-        if (type === 'info') {
+        if (type === 'info' || type === 'warning') {
           this.$(form).addClass('has-warning');
         }
         else {

@@ -20,8 +20,10 @@ define([
         'interface': this._get_free_interface(),
         'port': this._rand(10000, 19999),
         'protocol': 'udp',
+        'dh_param_bits': 1536,
         'public_address': options.publicIp || '',
-        'local_networks': []
+        'local_networks': [],
+        'dns_servers': ['8.8.8.8']
       });
       ModalAddServerView.__super__.initialize.call(this, options);
     },
