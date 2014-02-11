@@ -5,9 +5,10 @@ define([
   'models/auth',
   'views/alert',
   'views/loginBackdrop',
+  'views/modalChangePassword',
   'text!templates/login.html'
 ], function($, _, Backbone, AuthModel, AlertView, LoginBackdropView,
-    loginTemplate) {
+    ModalChangePasswordView, loginTemplate) {
   'use strict';
   var LoginView = Backbone.View.extend({
     className: 'login',
@@ -66,6 +67,19 @@ define([
       this.addView(this.alertView);
       this.$('input').addClass('has-warning');
     },
+    changePassword: function() {
+      var modal = new ModalChangePasswordView();
+      this.listenToOnce(modal, 'applied', function() {
+        var alertView = new AlertView({
+          type: 'warning',
+          message: 'Successfully changed password.',
+          dismissable: true
+        });
+        $('.alerts-container').append(alertView.render().el);
+        this.addView(alertView);
+      }.bind(this));
+      this.addView(modal);
+    },
     login: function() {
       this.$('.login-button').attr('disabled', 'disabled');
 
@@ -74,7 +88,7 @@ define([
         username: this.$('.username').val(),
         password: this.$('.password').val()
       }, {
-        success: function() {
+        success: function(model) {
           this.callback();
           this.backdrop.$el.fadeOut(400);
           this.$('.login-box').animate({
@@ -83,6 +97,9 @@ define([
             duration: 400,
             complete: function() {
               this.destroy();
+              if (model.get('default_password')) {
+                this.changePassword();
+              }
             }.bind(this)
           });
           $('header').removeClass('blur');
