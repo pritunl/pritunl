@@ -529,36 +529,8 @@ def server_output_delete(server_id):
     return utils.jsonify({})
 
 @app_server.app.route('/server/<server_id>/tls_verify', methods=['POST'])
-def server_tls_verify_get(server_id):
-    org_id = flask.request.json['org_id']
-    user_id = flask.request.json['user_id']
-
-    server = Server(server_id)
-    if not server:
-        return utils.jsonify({
-            'error': SERVER_INVALID,
-            'error_msg': SERVER_INVALID_MSG,
-        }, 401)
-    org = server.get_org(org_id)
-    if not org:
-        return utils.jsonify({
-            'error': ORG_INVALID,
-            'error_msg': ORG_INVALID_MSG,
-        }, 401)
-    user = org.get_user(user_id)
-    if not user:
-        return utils.jsonify({
-            'error': USER_INVALID,
-            'error_msg': USER_INVALID_MSG,
-        }, 401)
-
-    return utils.jsonify({
-        'authenticated': True,
-    })
-
-@app_server.app.route('/server/<server_id>/tls_verify', methods=['POST'])
 @app_server.local_only
-def server_tls_verify_get(server_id):
+def server_tls_verify_post(server_id):
     org_id = flask.request.json['org_id']
     user_id = flask.request.json['user_id']
 
@@ -591,7 +563,7 @@ def server_tls_verify_get(server_id):
 
 @app_server.app.route('/server/<server_id>/otp_verify', methods=['POST'])
 @app_server.local_only
-def server_otp_verify_get(server_id):
+def server_otp_verify_post(server_id):
     org_id = flask.request.json['org_id']
     user_id = flask.request.json['user_id']
     otp_code = flask.request.json['otp_code']
@@ -632,7 +604,7 @@ def server_otp_verify_get(server_id):
 
 @app_server.app.route('/server/<server_id>/client_connect', methods=['POST'])
 @app_server.local_only
-def server_client_connect_get(server_id):
+def server_client_connect_post(server_id):
     org_id = flask.request.json['org_id']
     user_id = flask.request.json['user_id']
 
@@ -662,7 +634,7 @@ def server_client_connect_get(server_id):
 @app_server.app.route('/server/<server_id>/client_disconnect',
     methods=['POST'])
 @app_server.local_only
-def server_client_disconnect_get(server_id):
+def server_client_disconnect_post(server_id):
     org_id = flask.request.json['org_id']
     user_id = flask.request.json['user_id']
 
