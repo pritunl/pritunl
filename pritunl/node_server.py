@@ -203,13 +203,15 @@ class NodeServer(Server):
 
         self.generate_ca_cert()
 
+        push = ''
         if self.local_networks:
-            push = ''
             for network in self.local_networks:
                 push += 'push "route %s %s"\n' % self._parse_network(network)
-            push = push.rstrip()
         else:
-            push = 'push "redirect-gateway"'
+            push += 'push "redirect-gateway"\n'
+        for dns_server in self.dns_servers:
+            push += 'push "dhcp-option DNS %s"\n' % dns_server
+        push = push.rstrip()
 
         server_conf = OVPN_INLINE_SERVER_CONF % (
             self.port,
