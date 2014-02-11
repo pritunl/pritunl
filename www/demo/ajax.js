@@ -29,7 +29,13 @@ define([
     return key;
   }
 
-  var authPost = function(request) {
+  var authPut = function(request) {
+    demoData.auth.password = request.data.password;
+    request.response({});
+  };
+  routes['PUT=/auth'] = authPut;
+
+  var authSessionPost = function(request) {
     if (request.data.username !== demoData.auth.username ||
         request.data.password !== demoData.auth.password) {
       request.response({
@@ -40,20 +46,20 @@ define([
     }
     request.response({});
   };
-  routes['POST=/auth'] = authPost;
+  routes['POST=/auth/session'] = authSessionPost;
 
-  var authGet = function(request) {
+  var authSessionGet = function(request) {
     request.response({
       authenticated: demoData.auth.authenticated
     });
   };
-  routes['GET=/auth'] = authGet;
+  routes['GET=/auth/session'] = authSessionGet;
 
-  var authDelete = function(request) {
+  var authSessionDelete = function(request) {
     demoData.auth.authenticated = false;
     request.response({});
   };
-  routes['DELETE=/auth'] = authDelete;
+  routes['DELETE=/auth/session'] = authSessionDelete;
 
   var event = function(type, resourceId) {
     demoData.events.push({
@@ -399,12 +405,6 @@ define([
     });
   };
   routes['GET=/status'] = statusGet;
-
-  var passwordPost = function(request) {
-    demoData.auth.password = request.data.password;
-    request.response({});
-  };
-  routes['POST=/password'] = passwordPost;
 
   var userGet = function(request, orgId) {
     var id;
