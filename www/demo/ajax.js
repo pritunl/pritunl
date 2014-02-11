@@ -234,7 +234,9 @@ define([
       interface: request.data.interface,
       port: request.data.port,
       protocol: request.data.protocol,
+      dh_param_bits: request.data.dh_param_bits,
       local_networks: request.data.local_networks,
+      dns_servers: request.data.dns_servers,
       public_address: request.data.public_address,
       otp_auth: request.data.otp_auth,
       lzo_compression: request.data.lzo_compression,
@@ -258,7 +260,9 @@ define([
     demoData.servers[serverId].interface = request.data.interface;
     demoData.servers[serverId].port = request.data.port;
     demoData.servers[serverId].protocol = request.data.protocol;
+    demoData.servers[serverId].dh_param_bits = request.data.dh_param_bits;
     demoData.servers[serverId].local_networks = request.data.local_networks;
+    demoData.servers[serverId].dns_servers = request.data.dns_servers;
     demoData.servers[serverId].public_address = request.data.public_address;
     demoData.servers[serverId].otp_auth = request.data.otp_auth;
     demoData.servers[serverId].lzo_compression = request.data.lzo_compression;
