@@ -7,6 +7,7 @@ Version 0.10.6
 Changes to api
 Add rate limiting to auth attempts per ip
 Move password to db
+Add username to change password interface
 Change password hash function
 Improve ovpn iptables rules
 Add openvpn user connect and disconnect scripts
