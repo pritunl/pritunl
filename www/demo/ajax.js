@@ -51,6 +51,7 @@ define([
 
   var authSessionGet = function(request) {
     request.response({
+      username: demoData.auth.username,
       authenticated: demoData.auth.authenticated
     });
   };
