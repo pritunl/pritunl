@@ -89,7 +89,7 @@ define([
       else {
         this._addServer('server');
       }
-      $(evt.target).text('Add Node Server');
+      $(evt.target).text('Add Server');
     },
     onOverServer: function(evt) {
       if (evt.ctrlKey || evt.shiftKey) {
