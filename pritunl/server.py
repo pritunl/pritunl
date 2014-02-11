@@ -77,7 +77,7 @@ class Server(Config):
             cache_db.dict_set(self.get_cache_key(), name, json.dumps(value))
             return
         elif name == 'dh_param_bits':
-            if self.dh_param_bits != value:
+            if not self._loaded or self.dh_param_bits != value:
                 self._rebuild_dh_params = True
         Config.__setattr__(self, name, value)
 
