@@ -18,6 +18,7 @@ import base64
 logger = None
 
 class AppServer(Config):
+    # deprecated = password, dh_param_bits
     bool_options = {'debug', 'log_debug', 'auto_start_servers',
         'get_public_ip', 'inline_certs', 'ssl'}
     int_options = {'port', 'session_timeout', 'key_bits', 'dh_param_bits'}
@@ -217,6 +218,10 @@ class AppServer(Config):
                     '0$%s$%s' % (salt, password))
                 self.password = None
                 self.commit()
+
+            from server import Server
+            for server in Server.iter_servers():
+                server._upgrade_0_10_6()
 
         if cur_version != version:
             from pritunl import __version__
