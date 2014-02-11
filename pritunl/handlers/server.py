@@ -193,7 +193,7 @@ def server_put_post(server_id=None):
     local_networks_def = False
     if 'local_networks' in flask.request.json:
         local_networks_def = True
-        local_networks = flask.request.json['local_networks'] || []
+        local_networks = flask.request.json['local_networks'] or []
 
         for local_network in local_networks:
             local_network_split = local_network.split('/')
@@ -226,7 +226,7 @@ def server_put_post(server_id=None):
     dns_servers_def = False
     if 'dns_servers' in flask.request.json:
         dns_servers_def = True
-        dns_servers = flask.request.json['dns_servers'] || []
+        dns_servers = flask.request.json['dns_servers'] or []
 
         for dns_server in dns_servers:
             if not re.match(IP_REGEX, dns_server):
