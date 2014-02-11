@@ -22,7 +22,8 @@ define([
     listErrorMsg: 'Failed to load servers, server error occurred.',
     events: {
       'click .servers-add-server': 'onAddServer',
-      'click .servers-add-node-server': 'onAddNodeServer',
+      'mouseover .servers-add-server': 'onOverServer',
+      'mouseout .servers-add-server': 'onOutServer',
       'click .servers-attach-org': 'onAttachOrg'
     },
     initialize: function() {
@@ -81,11 +82,22 @@ define([
         }.bind(this)
       });
     },
-    onAddServer: function() {
-      this._addServer('server');
+    onAddServer: function(evt) {
+      if ($(evt.target).text() === 'Add Node Server') {
+        this._addServer('node_server');
+      }
+      else {
+        this._addServer('server');
+      }
+      $(evt.target).text('Add Node Server');
     },
-    onAddNodeServer: function() {
-      this._addServer('node_server');
+    onOverServer: function(evt) {
+      if (evt.ctrlKey || evt.shiftKey) {
+        $(evt.target).text('Add Node Server');
+      }
+    },
+    onOutServer: function(evt) {
+      $(evt.target).text('Add Server');
     },
     onAttachOrg: function() {
       if (this.orgs.models.length) {
