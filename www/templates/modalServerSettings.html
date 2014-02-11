@@ -16,15 +16,29 @@
       <label>Interface</label>
       <input type="text" class="form-control" placeholder="Enter tunnel interface" data-toggle="tooltip" title="Tunnel interface that will be created for VPN connections" spellcheck="false" value="<%= interface %>">
     </div>
-    <div class="port form-group">
-      <label>Port</label>
-      <input type="text" class="form-control" placeholder="Enter port number" data-toggle="tooltip" title="Port number for VPN connections" value="<%= port %>">
+    <div class="dh-param-bits form-group">
+      <label>DH Param Bits</label>
+      <select class="form-control" data-toggle="tooltip" title="Size of DH parameters">
+        <option value="1024" <%= (dh_param_bits === 1024) ? 'selected' : '' %>>1024</option>
+        <option value="1536" <%= (dh_param_bits === 1536) ? 'selected' : '' %>>1536</option>
+        <option value="2048" <%= (dh_param_bits === 2048) ? 'selected' : '' %>>2048</option>
+        <option value="3072" <%= (dh_param_bits === 3072) ? 'selected' : '' %>>3072</option>
+        <option value="4096" <%= (dh_param_bits === 4096) ? 'selected' : '' %>>4096</option>
+      </select>
+    </div>
+    <div class="dns-servers form-group">
+      <label>DNS Server</label>
+      <input type="text" class="form-control" placeholder="Enter DNS server" data-toggle="tooltip" title="Optional, DNS server for clients" value="<%= dns_servers.join(', ') %>">
     </div>
   </div>
   <div class="right">
     <div class="node-key form-group" <%= type === 'node_server' ? '' : 'style="display: none;"' %>>
       <label>Node API Key</label>
       <input type="text" class="form-control" placeholder="Enter api key" data-toggle="tooltip" title="Node server API key" spellcheck="false" value="<%= node_key %>">
+    </div>
+    <div class="port form-group">
+      <label>Port</label>
+      <input type="text" class="form-control" placeholder="Enter port number" data-toggle="tooltip" title="Port number for VPN connections" value="<%= port %>">
     </div>
     <div class="protocol form-group">
       <label>Protocol</label>
