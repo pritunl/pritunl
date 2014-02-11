@@ -20,6 +20,7 @@ def auth_put():
 def auth_get():
     return utils.jsonify({
         'authenticated': utils.check_session(),
+        'username': utils.get_auth(),
     })
 
 @app_server.app.route('/auth/session', methods=['POST'])

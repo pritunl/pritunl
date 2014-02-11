@@ -31,6 +31,7 @@ define([
       var authModel = new AuthModel();
       authModel.fetch({
         success: function(model) {
+          window.username = model.get('username') || window.username;
           if (model.get('authenticated')) {
             window.authenticated = true;
             callback(true);
