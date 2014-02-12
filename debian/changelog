@@ -1,3 +1,19 @@
+pritunl (0.10.6-0ubuntu1) unstable; urgency=low
+
+  * Changes to api
+  * Add rate limiting to auth attempts per ip
+  * Move password to db
+  * Add username to change password interface
+  * Change password hash function
+  * Improve ovpn iptables rules
+  * Add openvpn user connect and disconnect scripts
+  * Improve node server support
+  * Add dns servers to server options
+  * Add dh param bits to server options
+  * Pritunl conf will be automatically upgraded after first launch
+
+ -- Zachary Huff <zach.huff.386@gmail.com>  Wed, 12 Feb 2014 02:05:57 -0400
+
 pritunl (0.10.5-0ubuntu1) unstable; urgency=low
 
   * Changes to api
