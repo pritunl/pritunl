@@ -28,7 +28,7 @@ class NodeServer(Server):
         server_dict = Server.dict(self)
         server_dict.update({
             'node_host': self.node_host,
-            'node_hostnode_port': self.node_port,
+            'node_port': self.node_port,
             'node_key': self.node_key,
         })
         return server_dict
