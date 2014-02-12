@@ -902,6 +902,7 @@ class Server(SessionTestCase):
             self.assertEqual(data['error'], 'network_invalid')
             self.assertIn('error_msg', data)
 
+
         for test_interface in (
                     'tun-1',
                     'tun.0',
@@ -931,6 +932,30 @@ class Server(SessionTestCase):
             self.assertIn('error', data)
             self.assertEqual(data['error'], 'port_invalid')
             self.assertIn('error_msg', data)
+
+
+        response = self.session.post('/server', json_data={
+            'name': TEST_SERVER_NAME + '_test',
+            'dh_param_bits': 512,
+        })
+        self.assertEqual(response.status_code, 400)
+
+        data = response.json()
+        self.assertIn('error', data)
+        self.assertEqual(data['error'], 'dh_param_bits_invalid')
+        self.assertIn('error_msg', data)
+
+
+        response = self.session.post('/server', json_data={
+            'name': TEST_SERVER_NAME + '_test',
+            'dns_servers': ['8.8.8.a'],
+        })
+        self.assertEqual(response.status_code, 400)
+
+        data = response.json()
+        self.assertIn('error', data)
+        self.assertEqual(data['error'], 'dns_server_invalid')
+        self.assertIn('error_msg', data)
 
 
         response = self.session.post('/server', json_data={
