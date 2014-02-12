@@ -338,11 +338,12 @@ class User(Config):
         }
 
     def clear_cache(self):
+        if self.type == CERT_CLIENT:
+            cache_db.decrement(self.org.get_cache_key('user_count'))
         if self.type != CERT_CA:
             cache_db.set_remove(self.org.get_cache_key('users'), self.id)
             cache_db.list_remove(self.org.get_cache_key('users_sorted'),
                 self.id)
-            cache_db.decrement(self.org.get_cache_key('user_count'))
             users_trie = CacheTrie(self.org.get_cache_key('users_trie'))
             users_trie.remove_key(self.name, self.id)
         Config.clear_cache(self)
