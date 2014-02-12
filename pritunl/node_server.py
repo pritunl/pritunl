@@ -265,6 +265,7 @@ class NodeServer(Server):
 
         try:
             response = self._request('post', json_data={
+                'interface': self.interface,
                 'network': self.network,
                 'local_networks': self.local_networks,
                 'ovpn_conf': ovpn_conf,
