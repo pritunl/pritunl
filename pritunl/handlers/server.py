@@ -31,8 +31,8 @@ def _port_invalid():
 
 def _dh_param_bits_invalid():
         return utils.jsonify({
-            'error': DH_PARAM_BITS,
-            'error_msg': DH_PARAM_BITS_MSG,
+            'error': DH_PARAM_BITS_INVALID,
+            'error_msg': DH_PARAM_BITS_INVALID_MSG,
         }, 400)
 
 def _local_network_invalid():
