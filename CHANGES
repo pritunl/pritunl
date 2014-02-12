@@ -1,8 +1,8 @@
 Pritunl Changelog
 =================
 
-Version 0.10.6
---------------
+Version 0.10.6 2014-02-12
+-------------------------
 
 Changes to api
 Add rate limiting to auth attempts per ip
