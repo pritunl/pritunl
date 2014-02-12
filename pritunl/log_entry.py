@@ -47,12 +47,6 @@ class LogEntry(CacheObject):
         CacheObject.remove(self)
         self.transaction_commit()
 
-    def cache(self):
-        self.id = log_entry.id
-        self.type = log_entry.type
-        self.time = log_entry.time
-        self.message = log_entry.message
-
     @classmethod
     def iter_log_entries(cls):
         for log_entry_id in cls.db_instance.list_iter('log_entries'):
