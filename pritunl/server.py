@@ -862,7 +862,7 @@ class Server(Config):
     def iter_servers(cls):
         cls._cache_servers()
         for server_id in cache_db.list_iter('servers'):
-            server_id = server_id.split('_')
+            server_id = server_id.split('_', 1)
             server = cls.get_server(id=server_id[0], type=server_id[1])
             if server:
                 yield server
