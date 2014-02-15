@@ -153,6 +153,7 @@ class Server(Config):
         try:
             self._generate_dh_param()
             self.commit()
+            cache_db.set_add('servers', '%s_%s' % (self.id, self.type))
             LogEntry(message='Created new server "%s".' % self.name)
         except:
             logger.exception('Failed to create server. %r' % {
@@ -160,6 +161,10 @@ class Server(Config):
             })
             utils.rmtree(self.path)
             raise
+
+    def clear_cache(self):
+        cache_db.set_remove('servers', '%s_%s' % (self.id, self.type))
+        Config.clear_cache(self)
 
     def _event_delay(self, type, resource_id=None):
         # Min event every 1s max event every 0.2s
@@ -183,6 +188,7 @@ class Server(Config):
         logger.debug('Removing server. %r' % {
             'server_id': self.id,
         })
+        self.clear_cache()
         name = self.name
 
         if self.status:
@@ -813,11 +819,33 @@ class Server(Config):
         self.clients = clients
         return clients
 
-    @staticmethod
-    def get_server(id):
+    @classmethod
+    def _cache_servers(cls):
+        if cache_db.get('servers_cached') != 't':
+            cache_db.remove('servers')
+            path = os.path.join(app_server.data_path, SERVERS_DIR)
+            if os.path.isdir(path):
+                for server_id in os.listdir(path):
+                    if os.path.isfile(os.path.join(path, server_id,
+                            NODE_SERVER)):
+                        server_id += '_' + NODE_SERVER
+                    else:
+                        server_id += '_' + SERVER
+                    cache_db.set_add('servers', server_id)
+            cache_db.set('servers_cached', 't')
+
+    @classmethod
+    def get_server(cls, id, type=None):
         from node_server import NodeServer
-        if os.path.isfile(os.path.join(app_server.data_path, SERVERS_DIR,
-                id, NODE_SERVER_NAME)):
+
+        if not type:
+            if os.path.isfile(os.path.join(app_server.data_path, SERVERS_DIR,
+                    id, NODE_SERVER)):
+                type = NODE_SERVER
+            else:
+                type = SERVER
+
+        if type == NODE_SERVER:
             server = NodeServer(id=id)
         else:
             server = Server(id=id)
@@ -830,14 +858,11 @@ class Server(Config):
             return
         return server
 
-    @staticmethod
-    def iter_servers():
-        logger.debug('Getting servers.')
-        path = os.path.join(app_server.data_path, SERVERS_DIR)
-        servers = []
-        if os.path.isdir(path):
-            for server_id in os.listdir(path):
-                server = Server.get_server(id=server_id)
-                if server:
-                    servers.append(server)
-        return servers
+    @classmethod
+    def iter_servers(cls):
+        cls._cache_servers()
+        for server_id in cache_db.list_iter('servers'):
+            server_id = server_id.split('_')
+            server = cls.get_server(id=server_id[0], type=server_id[1])
+            if server:
+                yield server

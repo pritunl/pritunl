@@ -84,12 +84,12 @@ def server_put_post(server_id=None):
         name_def = True
         name = utils.filter_str(flask.request.json['name'])
 
-    type = SERVER_NAME
+    type = SERVER
     type_def = False
     if 'type' in flask.request.json:
         type_def = True
-        if flask.request.json['type'] == NODE_SERVER_NAME:
-            type = NODE_SERVER_NAME
+        if flask.request.json['type'] == NODE_SERVER:
+            type = NODE_SERVER
 
     network = None
     network_def = False
@@ -360,7 +360,7 @@ def server_put_post(server_id=None):
             }, 400)
 
     if not server_id:
-        if type == NODE_SERVER_NAME:
+        if type == NODE_SERVER:
             server = NodeServer(
                 name=name,
                 network=network,
@@ -424,7 +424,7 @@ def server_put_post(server_id=None):
             server.lzo_compression = lzo_compression
         if debug_def:
             server.debug = debug
-        if server.type == NODE_SERVER_NAME:
+        if server.type == NODE_SERVER:
             if node_host_def:
                 server.node_host = node_host
             if node_port_def:

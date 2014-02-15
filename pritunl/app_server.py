@@ -297,7 +297,7 @@ class AppServer(Config):
         server = cherrypy.wsgiserver.CherryPyWSGIServer(
             (self.bind_addr, self.port), self.app,
             request_queue_size=SERVER_REQUEST_QUEUE_SIZE,
-            server_name=cherrypy.wsgiserver.CherryPyWSGIServer.version)
+            SERVER=cherrypy.wsgiserver.CherryPyWSGIServer.version)
         if self.ssl:
             server.ssl_adapter = \
                 cherrypy.wsgiserver.ssl_builtin.BuiltinSSLAdapter(

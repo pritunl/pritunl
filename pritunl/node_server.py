@@ -22,7 +22,7 @@ class NodeServer(Server):
     default_options = dict(Server.default_options.items() + {
         'node_port': 9800,
     }.items())
-    type = NODE_SERVER_NAME
+    type = NODE_SERVER
 
     def dict(self):
         server_dict = Server.dict(self)
@@ -35,7 +35,7 @@ class NodeServer(Server):
 
     def _initialize(self):
         Server._initialize(self)
-        with open(os.path.join(self.path, NODE_SERVER_NAME), 'w'):
+        with open(os.path.join(self.path, NODE_SERVER), 'w'):
             pass
 
     def _request(self, method, endpoint='', timeout=HTTP_REQUEST_TIMEOUT,

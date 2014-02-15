@@ -70,7 +70,7 @@ def user_key_link_get(org_id, user_id):
             cache_db.dict_set(_get_conf_key(conf_id), 'server_id', server.id)
 
             conf_urls.append({
-                'server_name': server.name,
+                'SERVER': server.name,
                 'url': '/key/%s.ovpn' % conf_id,
             })
 
@@ -136,7 +136,7 @@ def user_linked_key_page_get(view_id):
     for conf_url in conf_urls:
         conf_links += '<a class="sm" title="Download Mobile Key" ' + \
             'href="%s">Download Mobile Key (%s)</a><br>\n' % (
-                conf_url['url'], conf_url['server_name'])
+                conf_url['url'], conf_url['SERVER'])
     key_page = key_page.replace('<%= conf_links %>', conf_links)
 
     return key_page
