@@ -156,6 +156,14 @@ class Cache:
             pass
         self._put_queue()
 
+    def set_exists(self, key, element):
+        if self._check_ttl(key) is False:
+            try:
+                return element in self._data[key]['val']
+            except (TypeError, AttributeError):
+                pass
+        return False
+
     def set_elements(self, key):
         if self._check_ttl(key) is False:
             try:
