@@ -839,8 +839,7 @@ class Server(Config):
         from node_server import NodeServer
 
         if not type:
-            if os.path.isfile(os.path.join(app_server.data_path, SERVERS_DIR,
-                    id, NODE_SERVER)):
+            if cache_db.set_exists('servers', id + '_' + NODE_SERVER):
                 type = NODE_SERVER
             else:
                 type = SERVER
