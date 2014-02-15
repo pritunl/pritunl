@@ -1,6 +1,11 @@
 Pritunl Changelog
 =================
 
+Version 0.10.7
+--------------
+
+Improve server caching
+
 Version 0.10.6 2014-02-12
 -------------------------
 
