@@ -5,12 +5,16 @@ from pritunl import app_server
 import flask
 
 @app_server.app.route('/organization', methods=['GET'])
+@app_server.app.route('/organization/<org_id>', methods=['GET'])
 @app_server.auth
-def org_get():
-    orgs = []
-    for org in Organization.iter_orgs():
-        orgs.append(org.dict())
-    return utils.jsonify(orgs)
+def org_get(org_id=None):
+    if org_id:
+        return utils.jsonify(Organization.get_org(id=org_id).dict())
+    else:
+        orgs = []
+        for org in Organization.iter_orgs():
+            orgs.append(org.dict())
+        return utils.jsonify(orgs)
 
 @app_server.app.route('/organization', methods=['POST'])
 @app_server.auth
