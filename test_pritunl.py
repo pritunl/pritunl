@@ -24,30 +24,31 @@ AUTH_HANDLERS = [
     ('PUT', '/auth'),
     ('GET', '/export'),
     ('GET', '/event'),
-    ('GET', '/key/0/0.tar'),
-    ('GET', '/key/0/0'),
+    ('GET', '/key/a1/a1.tar'),
+    ('GET', '/key/a1/a1'),
     ('GET', '/log'),
     ('GET', '/organization'),
+    ('GET', '/organization/a1'),
     ('POST', '/organization'),
-    ('PUT', '/organization/0'),
-    ('DELETE', '/organization/0'),
+    ('PUT', '/organization/a1'),
+    ('DELETE', '/organization/a1'),
     ('GET', '/server'),
-    ('GET', '/server/0'),
+    ('GET', '/server/a1'),
     ('POST', '/server'),
-    ('PUT', '/server/0'),
-    ('DELETE', '/server/0'),
-    ('GET', '/server/0/organization'),
-    ('PUT', '/server/0/organization/0'),
-    ('DELETE', '/server/0/organization/0'),
-    ('PUT', '/server/0/0'),
-    ('GET', '/server/0/output'),
-    ('DELETE', '/server/0/output'),
+    ('PUT', '/server/a1'),
+    ('DELETE', '/server/a1'),
+    ('GET', '/server/a1/organization'),
+    ('PUT', '/server/a1/organization/a1'),
+    ('DELETE', '/server/a1/organization/a1'),
+    ('PUT', '/server/a1/a1'),
+    ('GET', '/server/a1/output'),
+    ('DELETE', '/server/a1/output'),
     ('GET', '/status'),
-    ('GET', '/user/0'),
-    ('POST', '/user/0'),
-    ('PUT', '/user/0/0'),
-    ('DELETE', '/user/0/0'),
-    ('PUT', '/user/0/0/otp_secret'),
+    ('GET', '/user/a1'),
+    ('POST', '/user/a1'),
+    ('PUT', '/user/a1/a1'),
+    ('DELETE', '/user/a1/a1'),
+    ('PUT', '/user/a1/a1/otp_secret'),
 ]
 RUN_ONLY = []
 
@@ -545,6 +546,16 @@ class Log(SessionTestCase):
 
 class Org(SessionTestCase):
     @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
+    def test_org_get(self):
+        response = self.session.get('/organization/%s' % self.org_id)
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertIn('id', data)
+        self.assertEqual(data['id'], self.org_id)
+        self.assertIn('name', data)
+        self.assertEqual(data['name'], TEST_ORG_NAME)
+
     def test_org_post_put_get_delete(self):
         response = self.session.post('/organization', json_data={
             'name': TEST_ORG_NAME + '2',
