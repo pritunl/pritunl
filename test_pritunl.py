@@ -45,6 +45,8 @@ AUTH_HANDLERS = [
     ('DELETE', '/server/a1/output'),
     ('GET', '/status'),
     ('GET', '/user/a1'),
+    ('GET', '/user/a1/1'),
+    ('GET', '/user/a1/a1'),
     ('POST', '/user/a1'),
     ('PUT', '/user/a1/a1'),
     ('DELETE', '/user/a1/a1'),
@@ -1030,6 +1032,17 @@ class Status(SessionTestCase):
 
 class User(SessionTestCase):
     @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
+    def test_user_get(self):
+        response = self.session.get('/user/%s/%s' % (
+            self.org_id, self.user_id))
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertIn('id', data)
+        self.assertEqual(data['id'], self.user_id)
+        self.assertIn('name', data)
+        self.assertEqual(data['name'], TEST_USER_NAME)
+
     def test_user_post_put_get_delete(self):
         response = self.session.post('/user/%s' % self.org_id, json_data={
             'name': TEST_USER_NAME + '2',
