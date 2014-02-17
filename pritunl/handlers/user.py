@@ -7,57 +7,62 @@ import math
 import time
 
 @app_server.app.route('/user/<org_id>', methods=['GET'])
+@app_server.app.route('/user/<org_id>/<user_id>', methods=['GET'])
 @app_server.app.route('/user/<org_id>/<int:page>', methods=['GET'])
 @app_server.auth
-def user_get(org_id, page=None):
-    page = flask.request.args.get('page', None)
-    page = int(page) if page else page
-    search = flask.request.args.get('search', None)
-    limit = int(flask.request.args.get('limit', USER_PAGE_COUNT))
+def user_get(org_id, user_id=None, page=None):
     org = Organization.get_org(id=org_id)
-    otp_auth = False
-    search_more = True
-    clients = {}
-
-    for server in org.iter_servers():
-        if server.otp_auth:
-            otp_auth = True
-        server_clients = server.clients
-        for client_id in server_clients:
-            client = server_clients[client_id]
-            if client_id not in clients:
-                clients[client_id] = {}
-            clients[client_id][server.id] = client
-
-    users = []
-    for user in org.iter_users(page=page, prefix=search, prefix_limit=limit):
-        if user is None:
-            search_more = False
-            break
-        is_client = user.id in clients
-        user_dict = user.dict()
-        user_dict['status'] = True if is_client else False
-        user_dict['otp_auth'] = otp_auth
-        user_dict['servers'] = clients[user.id] if is_client else {}
-        users.append(user_dict)
-
-    if page is not None:
-        return utils.jsonify({
-            'page': page,
-            'page_total': org.page_total,
-            'users': users,
-        })
-    elif search is not None:
-        return utils.jsonify({
-            'search': search,
-            'search_more': search_more,
-            'search_limit': limit,
-            'search_count': org.get_last_prefix_count(),
-            'search_time':  round((time.time() - flask.g.start), 4),
-            'users': users,
-        })
+    if user_id:
+        return utils.jsonify(org.get_user(user_id).dict())
     else:
-        return utils.jsonify(users)
+        page = flask.request.args.get('page', None)
+        page = int(page) if page else page
+        search = flask.request.args.get('search', None)
+        limit = int(flask.request.args.get('limit', USER_PAGE_COUNT))
+        otp_auth = False
+        search_more = True
+        clients = {}
+
+        for server in org.iter_servers():
+            if server.otp_auth:
+                otp_auth = True
+            server_clients = server.clients
+            for client_id in server_clients:
+                client = server_clients[client_id]
+                if client_id not in clients:
+                    clients[client_id] = {}
+                clients[client_id][server.id] = client
+
+        users = []
+        for user in org.iter_users(page=page, prefix=search,
+                prefix_limit=limit):
+            if user is None:
+                search_more = False
+                break
+            is_client = user.id in clients
+            user_dict = user.dict()
+            user_dict['status'] = True if is_client else False
+            user_dict['otp_auth'] = otp_auth
+            user_dict['servers'] = clients[user.id] if is_client else {}
+            users.append(user_dict)
+
+        if page is not None:
+            return utils.jsonify({
+                'page': page,
+                'page_total': org.page_total,
+                'users': users,
+            })
+        elif search is not None:
+            return utils.jsonify({
+                'search': search,
+                'search_more': search_more,
+                'search_limit': limit,
+                'search_count': org.get_last_prefix_count(),
+                'search_time':  round((time.time() - flask.g.start), 4),
+                'users': users,
+            })
+        else:
+            return utils.jsonify(users)
 
 @app_server.app.route('/user/<org_id>', methods=['POST'])
 @app_server.auth
