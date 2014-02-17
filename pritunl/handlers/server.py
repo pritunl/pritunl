@@ -48,21 +48,25 @@ def _dns_server_invalid():
     }, 400)
 
 @app_server.app.route('/server', methods=['GET'])
+@app_server.app.route('/server/<server_id>', methods=['GET'])
 @app_server.auth
-def server_get():
-    servers = []
-    servers_dict = {}
-    servers_sort = []
+def server_get(server_id=None):
+    if server_id:
+        return utils.jsonify(Server.get_server(server_id).dict())
+    else:
+        servers = []
+        servers_dict = {}
+        servers_sort = []
 
-    for server in Server.iter_servers():
-        name_id = '%s_%s' % (server.name, server.id)
-        servers_sort.append(name_id)
-        servers_dict[name_id] = server.dict()
+        for server in Server.iter_servers():
+            name_id = '%s_%s' % (server.name, server.id)
+            servers_sort.append(name_id)
+            servers_dict[name_id] = server.dict()
 
-    for name_id in sorted(servers_sort):
-        servers.append(servers_dict[name_id])
+        for name_id in sorted(servers_sort):
+            servers.append(servers_dict[name_id])
 
-    return utils.jsonify(servers)
+        return utils.jsonify(servers)
 
 @app_server.app.route('/server', methods=['POST'])
 @app_server.app.route('/server/<server_id>', methods=['PUT'])
