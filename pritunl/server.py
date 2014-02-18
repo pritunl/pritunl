@@ -736,26 +736,17 @@ class Server(Config):
         })
 
         stopped = False
-        self.publish('stop')
-        for message in cache_db.subscribe(self.get_cache_key(), 2):
+        self.publish('force_stop')
+        for message in cache_db.subscribe(self.get_cache_key(),
+                SUB_RESPONSE_TIMEOUT):
             if message == 'stopped':
                 stopped = True
                 break
-
         if not stopped:
-            stopped = False
-            self.publish('force_stop')
-            for message in cache_db.subscribe(self.get_cache_key(),
-                    SUB_RESPONSE_TIMEOUT):
-                if message == 'stopped':
-                    stopped = True
-                    break
-
-            if not stopped:
-                raise ServerStopError('Server thread failed to return ' + \
-                    'stop event', {
-                        'server_id': self.id,
-                    })
+            raise ServerStopError('Server thread failed to return ' + \
+                'stop event', {
+                    'server_id': self.id,
+                })
 
         if not silent:
             Event(type=SERVERS_UPDATED)
