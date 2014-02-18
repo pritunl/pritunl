@@ -37,7 +37,7 @@ backup=(
 
 pkgver() {
   cd "$srcdir/$_pkgname"
-  git rev-parse --short HEAD
+  git log -1 --format=%at
 }
 
 build() {
