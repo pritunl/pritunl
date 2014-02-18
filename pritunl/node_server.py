@@ -74,6 +74,9 @@ class NodeServer(Server):
                         timeout=HTTP_COM_REQUEST_TIMEOUT, json_data=responses)
                     if response.status_code == 200:
                         pass
+                    elif response.status_code == 404:
+                        trigger_event = True
+                        break
                     elif response.status_code == 410:
                         break
                     else:
