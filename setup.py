@@ -25,34 +25,37 @@ for arg in copy.copy(sys.argv):
 if not os.path.exists('build'):
     os.mkdir('build')
 
+main_css_path = os.path.join('www/vendor/dist/css',
+    os.listdir('www/vendor/dist/css')[0])
+main_js_path = os.path.join('www/vendor/dist/js',
+    sorted(os.listdir('www/vendor/dist/js'))[0])
+
 data_files = [
     ('/etc', ['data/etc/pritunl.conf']),
     ('/var/log', ['data/var/pritunl.log']),
-    ('/usr/share/pritunl/www', ['www/key_index.html']),
-    ('/usr/share/pritunl/www', ['www/vendor/dist/favicon.ico']),
-    ('/usr/share/pritunl/www', ['www/vendor/dist/index.html']),
-    ('/usr/share/pritunl/www', ['www/vendor/dist/robots.txt']),
-    ('/usr/share/pritunl/www/fonts',
-        ['www/vendor/dist/fonts/fredoka-one.eot']),
-    ('/usr/share/pritunl/www/fonts',
-        ['www/vendor/dist/fonts/fredoka-one.woff']),
-    ('/usr/share/pritunl/www/fonts',
-        ['www/vendor/dist/fonts/glyphicons-halflings-regular.eot']),
-    ('/usr/share/pritunl/www/fonts',
-        ['www/vendor/dist/fonts/glyphicons-halflings-regular.svg']),
-    ('/usr/share/pritunl/www/fonts',
-        ['www/vendor/dist/fonts/glyphicons-halflings-regular.ttf']),
-    ('/usr/share/pritunl/www/fonts',
-        ['www/vendor/dist/fonts/glyphicons-halflings-regular.woff']),
-    ('/usr/share/pritunl/www/fonts',
-        ['www/vendor/dist/fonts/ubuntu-bold.eot']),
-    ('/usr/share/pritunl/www/fonts',
-        ['www/vendor/dist/fonts/ubuntu-bold.woff']),
-    ('/usr/share/pritunl/www/fonts', ['www/vendor/dist/fonts/ubuntu.eot']),
-    ('/usr/share/pritunl/www/fonts', ['www/vendor/dist/fonts/ubuntu.woff']),
-    ('/usr/share/pritunl/www/css', ['www/vendor/dist/css/main.css']),
-    ('/usr/share/pritunl/www/js', ['www/vendor/dist/js/main.js']),
-    ('/usr/share/pritunl/www/js', ['www/vendor/dist/js/require.min.js']),
+    ('/usr/share/pritunl/www', [
+        'www/key_index.html',
+        'www/vendor/dist/favicon.ico',
+        'www/vendor/dist/index.html',
+        'www/vendor/dist/robots.txt',
+    ]),
+    ('/usr/share/pritunl/www/css', [main_css_path]),
+    ('/usr/share/pritunl/www/fonts', [
+        'www/vendor/dist/fonts/fredoka-one.eot',
+        'www/vendor/dist/fonts/fredoka-one.woff',
+        'www/vendor/dist/fonts/glyphicons-halflings-regular.eot',
+        'www/vendor/dist/fonts/glyphicons-halflings-regular.svg',
+        'www/vendor/dist/fonts/glyphicons-halflings-regular.ttf',
+        'www/vendor/dist/fonts/glyphicons-halflings-regular.woff',
+        'www/vendor/dist/fonts/ubuntu.eot',
+        'www/vendor/dist/fonts/ubuntu.woff',
+        'www/vendor/dist/fonts/ubuntu-bold.eot',
+        'www/vendor/dist/fonts/ubuntu-bold.woff',
+    ]),
+    ('/usr/share/pritunl/www/js', [
+        main_js_path,
+        'www/vendor/dist/js/require.min.js',
+    ]),
 ]
 
 patch_files = []
