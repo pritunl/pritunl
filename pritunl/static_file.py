@@ -32,19 +32,16 @@ class StaticFile:
         )
 
     def set_cache(self):
-        cache_db.dict_set(self.get_cache_key(),
-            'data', self.data or '')
-        cache_db.dict_set(self.get_cache_key(),
-            'mime_type', self.mime_type or '')
-        cache_db.dict_set(self.get_cache_key(),
-            'last_modified', self.last_modified)
-        cache_db.dict_set(self.get_cache_key(),
-            'etag', self.etag or '')
+        cache_db.dict_set(self.get_cache_key(), 'data', self.data or '')
+        cache_db.dict_set(self.get_cache_key(), 'mime_type',
+            self.mime_type or '')
+        cache_db.dict_set(self.get_cache_key(), 'last_modified',
+            self.last_modified)
+        cache_db.dict_set(self.get_cache_key(), 'etag', self.etag or '')
 
     def get_cache(self):
         self.data = cache_db.dict_get(self.get_cache_key(), 'data')
-        self.mime_type = cache_db.dict_get(self.get_cache_key(),
-            'mime_type')
+        self.mime_type = cache_db.dict_get(self.get_cache_key(), 'mime_type')
         self.last_modified = cache_db.dict_get(self.get_cache_key(),
             'last_modified')
         self.etag = cache_db.dict_get(self.get_cache_key(), 'etag')
