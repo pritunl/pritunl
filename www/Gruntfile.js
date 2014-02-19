@@ -247,7 +247,7 @@ module.exports = function(grunt) {
           'vendor/dist/fonts/ubuntu.woff': 'fonts/ubuntu.woff',
           'vendor/dist/js/require.min.js': 'vendor/require/require.min.js',
           'vendor/dist/favicon.ico': 'img/favicon.ico',
-          'vendor/dist/index.html': 'root/index.html'
+          'vendor/dist/index.html': 'root/demo_index.html'
         }
       }
     },
