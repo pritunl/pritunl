@@ -4,6 +4,7 @@ Pritunl Changelog
 Version 0.10.7
 --------------
 
+Changes to api
 Improve server caching
 Cache static file data to reduce disk io usage
 
