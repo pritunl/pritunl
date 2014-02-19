@@ -5,6 +5,7 @@ Version 0.10.7
 --------------
 
 Improve server caching
+Cache static file data to reduce disk io usage
 
 Version 0.10.6 2014-02-12
 -------------------------
