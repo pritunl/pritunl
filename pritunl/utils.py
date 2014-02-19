@@ -19,6 +19,7 @@ def jsonify(data=None, status_code=None):
     response.headers.add('Cache-Control',
         'no-cache, no-store, must-revalidate')
     response.headers.add('Pragma', 'no-cache')
+    response.headers.add('Expires', 0)
     if status_code is not None:
         response.status_code = status_code
     return response

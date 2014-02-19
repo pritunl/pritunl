@@ -154,12 +154,18 @@ class AppServer(Config):
 
         self.app.wsgi_app = SharedDataMiddleware(self.app.wsgi_app, {
             '/': os.path.normpath(self.www_path),
-        }, cache=False)
+        }, cache=not self.debug)
 
         @self.app.route('/', methods=['GET'])
         def index_get():
             with open(os.path.join(self.www_path, 'index.html'), 'r') as fd:
-                return fd.read()
+                data = fd.read()
+            response = flask.Response(response=data)
+            response.headers.add('Cache-Control',
+                'no-cache, no-store, must-revalidate')
+            response.headers.add('Pragma', 'no-cache')
+            response.headers.add('Expires', 0)
+            return response
 
     def _get_version_int(self, version):
         return int(''.join([x.zfill(2) for x in version.split('.')]))
