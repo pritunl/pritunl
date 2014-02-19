@@ -2,10 +2,10 @@ pritunl: simple openvpn server
 ==============================
 
 .. image:: http://gitshields.com/v2/pypi/pritunl/version/7d0ce8.png
-    :target: https://crate.io/packages/pritunl
+    :target: https://pypi.python.org/pypi/pritunl
 
 .. image:: http://gitshields.com/v2/pypi/pritunl/month_down/ff4a20.png
-    :target: https://crate.io/packages/pritunl
+    :target: https://pypi.python.org/pypi/pritunl
 
 .. image:: http://gitshields.com/v2/text/license/AGPLv3/blue.png
     :target: https://www.gnu.org/licenses/agpl-3.0.html
