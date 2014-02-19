@@ -149,24 +149,6 @@ class AppServer(Config):
     def _setup_handlers(self):
         import handlers
 
-    def _setup_static_handler(self):
-        from werkzeug import SharedDataMiddleware
-
-        self.app.wsgi_app = SharedDataMiddleware(self.app.wsgi_app, {
-            '/': os.path.normpath(self.www_path),
-        }, cache=not self.debug)
-
-        @self.app.route('/', methods=['GET'])
-        def index_get():
-            with open(os.path.join(self.www_path, 'index.html'), 'r') as fd:
-                data = fd.read()
-            response = flask.Response(response=data)
-            response.headers.add('Cache-Control',
-                'no-cache, no-store, must-revalidate')
-            response.headers.add('Pragma', 'no-cache')
-            response.headers.add('Expires', 0)
-            return response
-
     def _get_version_int(self, version):
         return int(''.join([x.zfill(2) for x in version.split('.')]))
 
@@ -253,7 +235,6 @@ class AppServer(Config):
         self._upgrade_db()
         self._setup_db()
         self._setup_handlers()
-        self._setup_static_handler()
         self._upgrade_data()
         self._fill_cache()
 
