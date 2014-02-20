@@ -155,14 +155,15 @@ class Server(Config):
         os.makedirs(os.path.join(self.path, TEMP_DIR))
         try:
             self._generate_dh_param()
-            self.commit()
             cache_db.set_add('servers', '%s_%s' % (self.id, self.type))
             self.sort_servers_cache()
+            self.commit()
             LogEntry(message='Created new server "%s".' % self.name)
         except:
             logger.exception('Failed to create server. %r' % {
                 'server_id': self.id,
             })
+            self.clear_cache()
             utils.rmtree(self.path)
             raise
 
