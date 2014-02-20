@@ -78,12 +78,18 @@ class Organization(Config):
 
     def _initialize(self):
         self._make_dirs()
-        self.ca_cert = User(self, type=CERT_CA)
-        self.commit()
-        cache_db.set_add('orgs', self.id)
-        self.sort_orgs_cache()
-        LogEntry(message='Created new organization "%s".' % self.name)
-        Event(type=ORGS_UPDATED)
+        try:
+            self.ca_cert = User(self, type=CERT_CA)
+            cache_db.set_add('orgs', self.id)
+            self.commit()
+            LogEntry(message='Created new organization "%s".' % self.name)
+        except:
+            logger.exception('Failed to create organization. %r' % {
+                'org_id': self.id,
+            })
+            self.clear_cache()
+            utils.rmtree(self.path)
+            raise
 
     def _make_dirs(self):
         os.makedirs(os.path.join(self.path, REQS_DIR))
@@ -260,8 +266,6 @@ class Organization(Config):
     def rename(self, name):
         self.name = name
         self.commit()
-        self.sort_orgs_cache()
-        Event(type=ORGS_UPDATED)
 
     def remove(self):
         self.clear_cache()
@@ -274,6 +278,11 @@ class Organization(Config):
 
         utils.rmtree(self.path)
         LogEntry(message='Deleted organization "%s".' % name)
+        Event(type=ORGS_UPDATED)
+
+    def commit(self):
+        Config.commit(self)
+        self.sort_orgs_cache()
         Event(type=ORGS_UPDATED)
 
     @classmethod
