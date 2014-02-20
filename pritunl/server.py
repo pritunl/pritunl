@@ -157,6 +157,7 @@ class Server(Config):
             self._generate_dh_param()
             self.commit()
             cache_db.set_add('servers', '%s_%s' % (self.id, self.type))
+            self.sort_servers_cache()
             LogEntry(message='Created new server "%s".' % self.name)
         except:
             logger.exception('Failed to create server. %r' % {
@@ -167,6 +168,7 @@ class Server(Config):
 
     def clear_cache(self):
         cache_db.set_remove('servers', '%s_%s' % (self.id, self.type))
+        cache_db.list_remove('servers_sorted', '%s_%s' % (self.id, self.type))
         Config.clear_cache(self)
 
     def _event_delay(self, type, resource_id=None):
