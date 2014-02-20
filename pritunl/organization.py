@@ -311,7 +311,7 @@ class Organization(Config):
                 cache_db.list_rpush(temp_orgs_sorted_key, orgs_dict[name_id])
             cache_db.rename(temp_orgs_sorted_key, 'orgs_sorted')
         except:
-            cache_db.remove(self.get_cache_key(temp_orgs_sorted_key))
+            cache_db.remove(temp_orgs_sorted_key)
             raise
 
     @classmethod
