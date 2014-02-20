@@ -80,7 +80,7 @@ class Server(Config):
         elif name == 'dh_param_bits':
             if not self._loaded or self.dh_param_bits != value:
                 self._rebuild_dh_params = True
-        elif name == 'name' and self.name != value:
+        elif name == 'name' and (not self._loaded or self.name != value):
             self._resort = True
         Config.__setattr__(self, name, value)
 
@@ -157,7 +157,6 @@ class Server(Config):
             self._generate_dh_param()
             self.commit()
             cache_db.set_add('servers', '%s_%s' % (self.id, self.type))
-            self.sort_servers_cache()
             LogEntry(message='Created new server "%s".' % self.name)
         except:
             logger.exception('Failed to create server. %r' % {
