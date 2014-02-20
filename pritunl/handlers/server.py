@@ -59,12 +59,7 @@ def server_get(server_id=None):
         servers_sort = []
 
         for server in Server.iter_servers():
-            name_id = '%s_%s' % (server.name, server.id)
-            servers_sort.append(name_id)
-            servers_dict[name_id] = server.dict()
-
-        for name_id in sorted(servers_sort):
-            servers.append(servers_dict[name_id])
+            servers.append(server.dict())
 
         return utils.jsonify(servers)
 

@@ -811,6 +811,30 @@ class Server(Config):
         return clients
 
     @classmethod
+    def sort_servers_cache(cls):
+        servers_dict = {}
+        servers_sort = []
+
+        # Create temp uuid key to prevent multiple threads modifying same key
+        temp_sorted_key = 'servers_sorted_temp_' + uuid.uuid4().hex
+
+        try:
+            for server_id_type in cache_db.set_elements('servers'):
+                server_id, server_type = server_id_type.split('_', 1)
+                server = Server.get_server(id=server_id, type=server_type)
+                if not server:
+                    continue
+                name_id = '%s_%s' % (server.name, server_id)
+                servers_dict[name_id] = server_id_type
+                servers_sort.append(name_id)
+            for name_id in sorted(servers_sort):
+                cache_db.list_rpush(temp_sorted_key, servers_dict[name_id])
+            cache_db.rename(temp_sorted_key, 'servers_sorted')
+        except:
+            cache_db.remove(temp_sorted_key)
+            raise
+
+    @classmethod
     def _cache_servers(cls):
         if cache_db.get('servers_cached') != 't':
             cache_db.remove('servers')
@@ -823,6 +847,7 @@ class Server(Config):
                     else:
                         server_id += '_' + SERVER
                     cache_db.set_add('servers', server_id)
+            cls.sort_servers_cache()
             cache_db.set('servers_cached', 't')
 
     @classmethod
@@ -851,8 +876,8 @@ class Server(Config):
     @classmethod
     def iter_servers(cls):
         cls._cache_servers()
-        for server_id in cache_db.list_iter('servers'):
-            server_id = server_id.split('_', 1)
-            server = cls.get_server(id=server_id[0], type=server_id[1])
+        for server_id_type in cache_db.list_iter('servers_sorted'):
+            server_id, server_type = server_id_type.split('_', 1)
+            server = cls.get_server(id=server_id, type=server_type)
             if server:
                 yield server
