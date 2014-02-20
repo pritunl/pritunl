@@ -37,6 +37,7 @@ class Server(Config):
         self._cur_client_count = 0
         self._last_event = 0
         self._rebuild_dh_params = False
+        self._resort = False
 
         if id is None:
             self.id = uuid.uuid4().hex
@@ -79,6 +80,8 @@ class Server(Config):
         elif name == 'dh_param_bits':
             if not self._loaded or self.dh_param_bits != value:
                 self._rebuild_dh_params = True
+        elif name == 'name' and self.name != value:
+            self._resort = True
         Config.__setattr__(self, name, value)
 
     def __getattr__(self, name):
@@ -154,6 +157,7 @@ class Server(Config):
             self._generate_dh_param()
             self.commit()
             cache_db.set_add('servers', '%s_%s' % (self.id, self.type))
+            self.sort_servers_cache()
             LogEntry(message='Created new server "%s".' % self.name)
         except:
             logger.exception('Failed to create server. %r' % {
@@ -203,6 +207,8 @@ class Server(Config):
         if self._rebuild_dh_params:
             self._generate_dh_param()
         Config.commit(self)
+        if self._resort:
+            self.sort_servers_cache()
         Event(type=SERVERS_UPDATED)
 
     def _create_primary_user(self):
