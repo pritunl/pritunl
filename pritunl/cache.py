@@ -299,7 +299,7 @@ class Cache:
             pass
         self._put_queue()
 
-    def dict_get_keys(self, key):
+    def dict_keys(self, key):
         if self._check_ttl(key) is False:
             try:
                 return set(self._data[key]['val'].keys())
