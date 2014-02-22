@@ -75,6 +75,7 @@ require.config({
     jquery: 'vendor/jquery/jquery',
     less: 'vendor/less/less',
     qrcode: 'vendor/qrcode/qrcode',
+    rickshaw: 'vendor/rickshaw/rickshaw',
     select: 'vendor/select/select',
     text: 'vendor/requireText/text',
     underscore: 'vendor/underscore/underscore',
@@ -92,6 +93,7 @@ require.config({
     backbone: ['less'],
     bootstrap: ['jquery'],
     d3: {exports: 'd3'},
+    rickshaw: {deps: ['d3'], exports: 'Rickshaw'},
     qrcode: {exports: 'QRCode'}
   }
 });
