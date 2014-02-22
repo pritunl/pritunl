@@ -816,31 +816,27 @@ class Server(Config):
         # Store bytes send recv into time periods
         if bytes_recv_t != 0 or bytes_sent_t != 0:
             date = datetime.datetime.utcnow()
-            date -= datetime.timedelta(microseconds=date.microsecond)
+            date -= datetime.timedelta(microseconds=date.microsecond,
+                seconds=date.second)
 
-            date_1m = date - datetime.timedelta(seconds=date.second)
-            timestamp_1m = date_1m.strftime('%s')
-            timestamp_1m_min = int((date_1m - datetime.timedelta(
+            timestamp_1m = date.strftime('%s')
+            timestamp_1m_min = int((date - datetime.timedelta(
                 hours=6)).strftime('%s'))
-            date_5m = date - datetime.timedelta(
-                minutes=date.minute % 5, seconds=date.second)
+            date_5m = date - datetime.timedelta(minutes=date.minute % 5)
             timestamp_5m = date_5m.strftime('%s')
             timestamp_5m_min = int((date_5m - datetime.timedelta(
                 days=1)).strftime('%s'))
-            date_30m = date - datetime.timedelta(
-                minutes=date.minute % 30, seconds=date.second)
+            date_30m = date - datetime.timedelta(minutes=date.minute % 30)
             timestamp_30m = date_30m.strftime('%s')
             timestamp_30m_min = int((date_30m - datetime.timedelta(
                 days=7)).strftime('%s'))
             date_2h = date - datetime.timedelta(
-                hours=date.hour % 2, minutes=date.minute,
-                seconds=date.second)
+                hours=date.hour % 2, minutes=date.minute)
             timestamp_2h = date_2h.strftime('%s')
             timestamp_2h_min = int((date_2h - datetime.timedelta(
                 days=30)).strftime('%s'))
             date_1d = date - datetime.timedelta(
-                hours=date.hour, minutes=date.minute,
-                seconds=date.second)
+                hours=date.hour, minutes=date.minute)
             timestamp_1d = date_1d.strftime('%s')
             timestamp_1d_min = int((date_1d - datetime.timedelta(
                 days=365)).strftime('%s'))
