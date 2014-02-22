@@ -5,11 +5,12 @@ from config import Config
 from organization import Organization
 from event import Event
 from log_entry import LogEntry
-from cache import cache_db
+from cache import cache_db, persist_db
 import uuid
 import os
 import signal
 import time
+import datetime
 import subprocess
 import threading
 import logging
@@ -166,6 +167,7 @@ class Server(Config):
     def clear_cache(self):
         cache_db.set_remove('servers', '%s_%s' % (self.id, self.type))
         cache_db.list_remove('servers_sorted', '%s_%s' % (self.id, self.type))
+        cache_db.remove(self.get_cache_key('clients'))
         Config.clear_cache(self)
 
     def _event_delay(self, type, resource_id=None):
@@ -604,13 +606,13 @@ class Server(Config):
         i = 0
         cur_client_count = 0
         while not self._interrupt:
-            # Check interrupt every 0.1s check client count every 1s
-            if i == 9:
+            time.sleep(0.1)
+            # Check interrupt every 0.1s check client count every 5s
+            if i == 49:
                 i = 0
                 self.update_clients()
             else:
                 i += 1
-            time.sleep(0.1)
         self._clear_iptables_rules()
 
     def _run_thread(self):
@@ -798,10 +800,93 @@ class Server(Config):
                     clients[client_id] = {
                         'real_address': real_address,
                         'virt_address': virt_address,
-                        'bytes_received': bytes_received,
-                        'bytes_sent': bytes_sent,
-                        'connected_since': connected_since,
+                        'bytes_received': int(bytes_received),
+                        'bytes_sent': int(bytes_sent),
+                        'connected_since': int(connected_since),
                     }
+
+        for client_id in cache_db.dict_keys(self.get_cache_key('clients')):
+            if client_id not in clients:
+                cache_db.dict_remove(self.get_cache_key('clients'), client_id)
+
+        bytes_received_t = 0
+        bytes_sent_t = 0
+        for client_id in clients:
+            bytes_received = clients[client_id]['bytes_received']
+            bytes_sent = clients[client_id]['bytes_sent']
+            prev_bytes_received = 0
+            prev_bytes_sent = 0
+            client_prev = cache_db.dict_get(self.get_cache_key('clients'),
+                client_id)
+            cache_db.dict_set(self.get_cache_key('clients'), client_id,
+                '%s,%s' % (bytes_received, bytes_sent))
+
+            if client_prev:
+                client_prev = client_prev.split(',')
+                prev_bytes_received = int(client_prev[0])
+                prev_bytes_sent = int(client_prev[1])
+
+            if prev_bytes_received > bytes_received or \
+                    prev_bytes_sent > bytes_sent:
+                prev_bytes_received = 0
+                prev_bytes_sent = 0
+
+            bytes_received_t += bytes_received - prev_bytes_received
+            bytes_sent_t += bytes_sent - prev_bytes_sent
+
+        if bytes_received_t != 0 or bytes_sent_t != 0:
+            date = datetime.datetime.fromtimestamp(int(time.time()))
+
+            date_1m = date - datetime.timedelta(seconds=date.second)
+            timestamp_1m = date_1m.strftime('%s')
+            timestamp_1m_min = int((date_1m - datetime.timedelta(
+                hours=6)).strftime('%s'))
+            date_5m = date - datetime.timedelta(
+                minutes=date.minute % 5, seconds=date.second)
+            timestamp_5m = date_5m.strftime('%s')
+            timestamp_5m_min = int((date_5m - datetime.timedelta(
+                days=1)).strftime('%s'))
+            date_30m = date - datetime.timedelta(
+                minutes=date.minute % 30, seconds=date.second)
+            timestamp_30m = date_30m.strftime('%s')
+            timestamp_30m_min = int((date_30m - datetime.timedelta(
+                days=7)).strftime('%s'))
+            date_2h = date - datetime.timedelta(
+                hours=date.hour % 2, minutes=date.minute,
+                seconds=date.second)
+            timestamp_2h = date_2h.strftime('%s')
+            timestamp_2h_min = int((date_2h - datetime.timedelta(
+                days=30)).strftime('%s'))
+            date_1d = date - datetime.timedelta(
+                hours=date.hour, minutes=date.minute,
+                seconds=date.second)
+            timestamp_1d = date_1d.strftime('%s')
+            timestamp_1d_min = int((date_1d - datetime.timedelta(
+                days=365)).strftime('%s'))
+
+            for period, timestamp, timestamp_min in (
+                        ('1m', timestamp_1m, timestamp_1m_min),
+                        ('5m', timestamp_5m, timestamp_5m_min),
+                        ('30m', timestamp_30m, timestamp_30m_min),
+                        ('2h', timestamp_2h, timestamp_2h_min),
+                        ('1d', timestamp_1d, timestamp_1d_min),
+                    ):
+                bytes_received = bytes_received_t
+                bytes_sent = bytes_sent_t
+                prev_bandwidth = persist_db.dict_get(
+                    'bandwidth-%s-%s' % (period, self.id), timestamp)
+                if prev_bandwidth:
+                    prev_bandwidth = prev_bandwidth.split(',')
+                    bytes_received += int(prev_bandwidth[0])
+                    bytes_sent += int(prev_bandwidth[1])
+                persist_db.dict_set('bandwidth-%s-%s' % (period, self.id),
+                    timestamp, '%s,%s' % (bytes_received, bytes_sent))
+
+                for timestamp_p in persist_db.dict_keys('bandwidth-%s-%s' % (
+                            period, self.id)):
+                    if int(timestamp_p) <= timestamp_min:
+                        persist_db.dict_remove('bandwidth-%s-%s' % (
+                            period, self.id), timestamp_p)
 
         client_count = len(clients)
         if client_count != self._cur_client_count:
