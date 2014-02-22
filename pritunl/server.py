@@ -807,10 +807,12 @@ class Server(Config):
                         'connected_since': int(connected_since),
                     }
 
+        # Remove client no longer connected
         for client_id in cache_db.dict_keys(self.get_cache_key('clients')):
             if client_id not in clients:
                 cache_db.dict_remove(self.get_cache_key('clients'), client_id)
 
+        # Get total bytes send and recv for all clients
         bytes_received_t = 0
         bytes_sent_t = 0
         for client_id in clients:
@@ -836,6 +838,7 @@ class Server(Config):
             bytes_received_t += bytes_received - prev_bytes_received
             bytes_sent_t += bytes_sent - prev_bytes_sent
 
+        # Store bytes send recv into time periods
         if bytes_received_t != 0 or bytes_sent_t != 0:
             date = datetime.datetime.fromtimestamp(int(time.time()))
 
