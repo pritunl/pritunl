@@ -168,6 +168,8 @@ class Server(Config):
         cache_db.set_remove('servers', '%s_%s' % (self.id, self.type))
         cache_db.list_remove('servers_sorted', '%s_%s' % (self.id, self.type))
         cache_db.remove(self.get_cache_key('clients'))
+        for period in ('1m', '5m', '30m', '2h', '1d'):
+            persist_db.remove(self.get_cache_key('bandwidth-%s' % period))
         Config.clear_cache(self)
 
     def _event_delay(self, type, resource_id=None):
