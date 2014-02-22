@@ -796,13 +796,13 @@ class Server(Config):
                     client_id = line_split[1]
                     real_address = line_split[2]
                     virt_address = line_split[3]
-                    bytes_received = line_split[4]
+                    bytes_recv = line_split[4]
                     bytes_sent = line_split[5]
                     connected_since = line_split[7]
                     clients[client_id] = {
                         'real_address': real_address,
                         'virt_address': virt_address,
-                        'bytes_received': int(bytes_received),
+                        'bytes_received': int(bytes_recv),
                         'bytes_sent': int(bytes_sent),
                         'connected_since': int(connected_since),
                     }
@@ -813,33 +813,33 @@ class Server(Config):
                 cache_db.dict_remove(self.get_cache_key('clients'), client_id)
 
         # Get total bytes send and recv for all clients
-        bytes_received_t = 0
+        bytes_recv_t = 0
         bytes_sent_t = 0
         for client_id in clients:
-            bytes_received = clients[client_id]['bytes_received']
+            bytes_recv = clients[client_id]['bytes_received']
             bytes_sent = clients[client_id]['bytes_sent']
-            prev_bytes_received = 0
+            prev_bytes_recv = 0
             prev_bytes_sent = 0
             client_prev = cache_db.dict_get(self.get_cache_key('clients'),
                 client_id)
             cache_db.dict_set(self.get_cache_key('clients'), client_id,
-                '%s,%s' % (bytes_received, bytes_sent))
+                '%s,%s' % (bytes_recv, bytes_sent))
 
             if client_prev:
                 client_prev = client_prev.split(',')
-                prev_bytes_received = int(client_prev[0])
+                prev_bytes_recv = int(client_prev[0])
                 prev_bytes_sent = int(client_prev[1])
 
-            if prev_bytes_received > bytes_received or \
+            if prev_bytes_recv > bytes_recv or \
                     prev_bytes_sent > bytes_sent:
-                prev_bytes_received = 0
+                prev_bytes_recv = 0
                 prev_bytes_sent = 0
 
-            bytes_received_t += bytes_received - prev_bytes_received
+            bytes_recv_t += bytes_recv - prev_bytes_recv
             bytes_sent_t += bytes_sent - prev_bytes_sent
 
         # Store bytes send recv into time periods
-        if bytes_received_t != 0 or bytes_sent_t != 0:
+        if bytes_recv_t != 0 or bytes_sent_t != 0:
             date = datetime.datetime.fromtimestamp(int(time.time()))
 
             date_1m = date - datetime.timedelta(seconds=date.second)
@@ -876,17 +876,17 @@ class Server(Config):
                         ('2h', timestamp_2h, timestamp_2h_min),
                         ('1d', timestamp_1d, timestamp_1d_min),
                     ):
-                bytes_received = bytes_received_t
+                bytes_recv = bytes_recv_t
                 bytes_sent = bytes_sent_t
                 prev_bandwidth = persist_db.dict_get(
                     self.get_cache_key('bandwidth-%s' % period), timestamp)
                 if prev_bandwidth:
                     prev_bandwidth = prev_bandwidth.split(',')
-                    bytes_received += int(prev_bandwidth[0])
+                    bytes_recv += int(prev_bandwidth[0])
                     bytes_sent += int(prev_bandwidth[1])
                 persist_db.dict_set(self.get_cache_key(
                     'bandwidth-%s' % period), timestamp,
-                    '%s,%s' % (bytes_received, bytes_sent))
+                    '%s,%s' % (bytes_recv, bytes_sent))
 
                 for timestamp_p in persist_db.dict_keys(self.get_cache_key(
                         'bandwidth-%s' % period)):
