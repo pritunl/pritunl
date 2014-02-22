@@ -35,7 +35,6 @@ class Server(Config):
     def __init__(self, id=None, **kwargs):
         Config.__init__(self)
         self._cur_event = None
-        self._cur_client_count = 0
         self._last_event = 0
         self._rebuild_dh_params = False
 
@@ -612,7 +611,7 @@ class Server(Config):
             # Check interrupt every 0.1s check client count every 5s
             if i == 49:
                 i = 0
-                self.update_clients()
+                self._read_clients()
             else:
                 i += 1
         self._clear_iptables_rules()
@@ -870,11 +869,8 @@ class Server(Config):
                         persist_db.dict_remove(self.get_cache_key(
                             'bandwidth-%s' % period), timestamp_p)
 
-    def update_clients(self):
-        if not self.status:
-            return {}
+    def _read_clients(self):
         clients = {}
-
         if os.path.isfile(self.ovpn_status_path):
             with open(self.ovpn_status_path, 'r') as status_file:
                 for line in status_file.readlines():
@@ -894,17 +890,18 @@ class Server(Config):
                         'bytes_sent': int(bytes_sent),
                         'connected_since': int(connected_since),
                     }
+        self.update_clients(clients)
 
+    def update_clients(self, clients):
+        if not self.status:
+            return
         self._update_clients_bandwidth(clients)
-        client_count = len(clients)
-        if client_count != self._cur_client_count:
-            self._cur_client_count = client_count
+        client_count = len(self.clients)
+        self.clients = clients
+        if client_count != len(clients):
             for org in self.iter_orgs():
                 Event(type=USERS_UPDATED, resource_id=org.id)
             Event(type=SERVERS_UPDATED)
-
-        self.clients = clients
-        return clients
 
     @classmethod
     def sort_servers_cache(cls):

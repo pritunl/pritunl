@@ -176,14 +176,6 @@ class NodeServer(Server):
             return
         return
 
-    def update_clients(self, clients):
-        client_count = len(self.clients)
-        self.clients = clients
-        if self.status and client_count != len(clients):
-            for org in self.iter_orgs():
-                Event(type=USERS_UPDATED, resource_id=org.id)
-            Event(type=SERVERS_UPDATED)
-
     def _generate_ovpn_conf(self):
         if not self.org_count:
             raise ServerMissingOrg('Ovpn conf cannot be generated without ' + \
