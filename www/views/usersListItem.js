@@ -36,7 +36,7 @@ define([
       var bytesReceived = 0;
 
       for (serverId in servers) {
-        bytesReceived += parseInt(servers[serverId].bytes_received, 10);
+        bytesReceived += servers[serverId].bytes_received;
       }
 
       return window.formatSize(bytesReceived);
@@ -47,7 +47,7 @@ define([
       var bytesSent = 0;
 
       for (serverId in servers) {
-        bytesSent += parseInt(servers[serverId].bytes_sent, 10);
+        bytesSent += servers[serverId].bytes_sent;
       }
 
       return window.formatSize(bytesSent);
