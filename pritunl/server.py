@@ -874,19 +874,20 @@ class Server(Config):
                 bytes_received = bytes_received_t
                 bytes_sent = bytes_sent_t
                 prev_bandwidth = persist_db.dict_get(
-                    'bandwidth-%s-%s' % (period, self.id), timestamp)
+                    self.get_cache_key('bandwidth-%s' % period), timestamp)
                 if prev_bandwidth:
                     prev_bandwidth = prev_bandwidth.split(',')
                     bytes_received += int(prev_bandwidth[0])
                     bytes_sent += int(prev_bandwidth[1])
-                persist_db.dict_set('bandwidth-%s-%s' % (period, self.id),
-                    timestamp, '%s,%s' % (bytes_received, bytes_sent))
+                persist_db.dict_set(self.get_cache_key(
+                    'bandwidth-%s' % period), timestamp,
+                    '%s,%s' % (bytes_received, bytes_sent))
 
-                for timestamp_p in persist_db.dict_keys('bandwidth-%s-%s' % (
-                            period, self.id)):
+                for timestamp_p in persist_db.dict_keys(self.get_cache_key(
+                        'bandwidth-%s' % period)):
                     if int(timestamp_p) <= timestamp_min:
-                        persist_db.dict_remove('bandwidth-%s-%s' % (
-                            period, self.id), timestamp_p)
+                        persist_db.dict_remove(self.get_cache_key(
+                            'bandwidth-%s' % period), timestamp_p)
 
         client_count = len(clients)
         if client_count != self._cur_client_count:
