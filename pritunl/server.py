@@ -815,7 +815,8 @@ class Server(Config):
 
         # Store bytes send recv into time periods
         if bytes_recv_t != 0 or bytes_sent_t != 0:
-            date = datetime.datetime.fromtimestamp(int(time.time()))
+            date = datetime.datetime.utcnow()
+            date -= datetime.timedelta(microseconds=date.microsecond)
 
             date_1m = date - datetime.timedelta(seconds=date.second)
             timestamp_1m = date_1m.strftime('%s')
