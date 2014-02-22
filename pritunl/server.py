@@ -782,31 +782,7 @@ class Server(Config):
         cache_db.list_rpush(self.get_cache_key('output'), output.rstrip('\n'))
         self._event_delay(type=SERVER_OUTPUT_UPDATED, resource_id=self.id)
 
-    def update_clients(self):
-        if not self.status:
-            return {}
-        clients = {}
-
-        if os.path.isfile(self.ovpn_status_path):
-            with open(self.ovpn_status_path, 'r') as status_file:
-                for line in status_file.readlines():
-                    if line[:11] != 'CLIENT_LIST':
-                        continue
-                    line_split = line.strip('\n').split(',')
-                    client_id = line_split[1]
-                    real_address = line_split[2]
-                    virt_address = line_split[3]
-                    bytes_recv = line_split[4]
-                    bytes_sent = line_split[5]
-                    connected_since = line_split[7]
-                    clients[client_id] = {
-                        'real_address': real_address,
-                        'virt_address': virt_address,
-                        'bytes_received': int(bytes_recv),
-                        'bytes_sent': int(bytes_sent),
-                        'connected_since': int(connected_since),
-                    }
-
+    def _update_clients_bandwidth(self, clients):
         # Remove client no longer connected
         for client_id in cache_db.dict_keys(self.get_cache_key('clients')):
             if client_id not in clients:
@@ -894,6 +870,32 @@ class Server(Config):
                         persist_db.dict_remove(self.get_cache_key(
                             'bandwidth-%s' % period), timestamp_p)
 
+    def update_clients(self):
+        if not self.status:
+            return {}
+        clients = {}
+
+        if os.path.isfile(self.ovpn_status_path):
+            with open(self.ovpn_status_path, 'r') as status_file:
+                for line in status_file.readlines():
+                    if line[:11] != 'CLIENT_LIST':
+                        continue
+                    line_split = line.strip('\n').split(',')
+                    client_id = line_split[1]
+                    real_address = line_split[2]
+                    virt_address = line_split[3]
+                    bytes_recv = line_split[4]
+                    bytes_sent = line_split[5]
+                    connected_since = line_split[7]
+                    clients[client_id] = {
+                        'real_address': real_address,
+                        'virt_address': virt_address,
+                        'bytes_received': int(bytes_recv),
+                        'bytes_sent': int(bytes_sent),
+                        'connected_since': int(connected_since),
+                    }
+
+        self._update_clients_bandwidth(clients)
         client_count = len(clients)
         if client_count != self._cur_client_count:
             self._cur_client_count = client_count
