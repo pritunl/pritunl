@@ -6,12 +6,13 @@ define([
   'views/alert',
   'views/serverOrgsList',
   'views/serverOutput',
+  'views/serverBandwidth',
   'views/modalServerSettings',
   'views/modalDeleteServer',
   'text!templates/serversListItem.html'
 ], function($, _, Backbone, StatusModel, AlertView, ServerOrgsListView,
-    ServerOutputView, ModalServerSettingsView, ModalDeleteServerView,
-    serversListItemTemplate) {
+    ServerOutputView, ServerBandwidthView, ModalServerSettingsView,
+    ModalDeleteServerView, serversListItemTemplate) {
   'use strict';
   var ServersListItemView = Backbone.View.extend({
     className: 'server',
@@ -20,6 +21,8 @@ define([
       'click .server-title a': 'onSettings',
       'click .server-del': 'onDelete',
       'click .server-restart, .server-start, .server-stop': 'onOperation',
+      'click .server-output-btn': 'onServerOutput',
+      'click .server-graph-btn': 'onServerGraph',
       'click .server-output-clear': 'onClearOutput',
       'click .toggle-hidden': 'onToggleHidden'
     },
@@ -33,12 +36,23 @@ define([
         server: this.model.get('id')
       });
       this.addView(this.serverOutputView);
+      this.serverBandwidthView = new ServerBandwidthView({
+        server: this.model.get('id')
+      });
+      this.addView(this.serverBandwidthView);
       setTimeout(function() {
         this.uptimer = setInterval((this._updateTime).bind(this), 1000);
       }.bind(this), 1000);
     },
     deinitialize: function() {
       clearInterval(this.uptimer);
+    },
+    formatDate: function(epochTime) {
+        var dateString = new Date(epochTime * 1000).toUTCString();
+        var dateArray = dateString.split(' ');
+        dateArray[0] = dateArray[0].replace(',', '');
+
+        return dateArray[2] + ', ' + dateArray[1] + ' ' + dateArray[3];
     },
     render: function() {
       this.$el.html(this.template(this.model.toJSON()));
@@ -48,6 +62,8 @@ define([
       });
       this.$('.server-output-viewer').append(
         this.serverOutputView.render().el);
+      this.$('.server-graph-viewer').append(
+        this.serverBandwidthView.render().el);
       this.$el.append(this.serverOrgsListView.render().el);
 
       if (this.model.get('type') === 'node_server') {
@@ -241,6 +257,22 @@ define([
           this.addView(alertView);
         }.bind(this)
       });
+    },
+    onServerOutput: function() {
+      this.$('.server-output-btn').removeClass('btn-default');
+      this.$('.server-output-btn').addClass('btn-primary');
+      this.$('.server-graph-btn').removeClass('btn-primary');
+      this.$('.server-graph-btn').addClass('btn-default');
+      this.serverBandwidthView.setState(false);
+      this.serverOutputView.setState(true);
+    },
+    onServerGraph: function() {
+      this.$('.server-output-btn').removeClass('btn-primary');
+      this.$('.server-output-btn').addClass('btn-default');
+      this.$('.server-graph-btn').removeClass('btn-default');
+      this.$('.server-graph-btn').addClass('btn-primary');
+      this.serverOutputView.setState(false);
+      this.serverBandwidthView.setState(true);
     },
     _updateTime: function() {
       if (!this.model.get('uptime')) {
