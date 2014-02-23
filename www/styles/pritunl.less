@@ -723,46 +723,66 @@ header.blur {
   border-bottom: 1px solid @light-dark-border;
 }
 
-.servers-list .server .server-info .server-output .server-output-title {
+.servers-list .server .server-info .server-output-title {
   color: @dark-fg;
   font-size: 16px;
   margin: 0;
-  padding-top: 5px;
+  padding-top: 4px;
   height: 24px;
 }
 
-.servers-list .server .server-info .server-output .server-output-title span {
-  vertical-align: text-top;
+.servers-list .server .server-info .server-output-title .btn {
+  padding: 0 5px;
 }
 
-.servers-list .server .server-info .server-output .server-output-icon {
-  color: @icon-blue4-bg;
-  top: 0;
-  font-size: 18px;
-}
-
-.servers-list .server .server-info .server-output .server-output-clear {
+.servers-list .server .server-info .server-output-clear {
   float: right;
   color: @dark-fg;
-  top: 3px;
+  top: 4px;
   font-size: 12px;
   margin-right: 12px;
 }
 
-.servers-list .server .server-info .server-output .server-output-clear:hover {
+.servers-list .server .server-info .server-output-clear:hover {
   color: @black-bg;
 }
 
-.servers-list .server .server-info .server-output .server-output-viewer {
+.servers-list .server .server-info .server-output-viewer {
   padding: 5px 10px 10px 0;
 }
 
-.servers-list .server .server-info .server-output .text-viewer {
+.servers-list .server .server-info .server-graph-viewer {
+  margin: 5px 10px 10px 311px;
+  overflow: hidden;
+  display: none;
+}
+
+.servers-list .server .server-info .server-graph-viewer .server-graph-recv,
+.servers-list .server .server-info .server-graph-viewer .server-graph-sent {
+  width: 587px;
+  height: 130px;
+  border: 1px solid @light-dark-border;
+}
+
+.servers-list .server .server-info .server-graph-viewer .server-graph-sent {
+  margin-top: 2px;
+}
+
+.servers-list .server .server-info .server-graph-viewer .detail .dot,
+.servers-list .server .server-info .server-graph-viewer .detail .item {
+  display: none;
+}
+
+.servers-list .server .server-info .server-graph-viewer .detail .x_label {
+  opacity: 0.8;
+}
+
+.servers-list .server .server-info .text-viewer {
   height: 262px;
   border: 1px solid @light-dark-border;
 }
 
-.servers-list .server .server-info .server-output .node-output .text-viewer {
+.servers-list .server .server-info .node-output .text-viewer {
   height: 305px;
 }
 
