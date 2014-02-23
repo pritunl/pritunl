@@ -609,7 +609,7 @@ class Server(Config):
         while not self._interrupt:
             time.sleep(0.1)
             # Check interrupt every 0.1s check client count every 5s
-            if i == 49:
+            if i == SERVER_STATUS_RATE * 5:
                 i = 0
                 self._read_clients()
             else:
