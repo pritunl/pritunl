@@ -34,9 +34,8 @@ define([
       this.model = new ServerBandwidthModel({
         id: options.server
       });
+      this.model.setPeriod('1m');
       this.state = false;
-      this.recvPeriod = '1m';
-      this.sentPeriod = '1m';
       this.listenTo(window.events, 'server_bandwidth_updated:' +
         options.server, this.update);
     },
@@ -82,8 +81,8 @@ define([
       return this.state;
     },
     updateGraph: function() {
-      var dataRecv = this.model.getGraphData(this.recvPeriod, 'received');
-      var dataSent = this.model.getGraphData(this.sentPeriod, 'sent');
+      var dataRecv = this.model.getGraphData('received');
+      var dataSent = this.model.getGraphData('sent');
       if (!dataRecv || !dataSent) {
         return;
       }

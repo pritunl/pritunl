@@ -6,23 +6,25 @@ define([
   'use strict';
   var ServerBandwidthModel = Backbone.Model.extend({
     defaults: {
-      '1m': null,
-      '5m': null,
-      '30m': null,
-      '2h': null,
-      '1d': null
+      'received': null,
+      'sent': null
     },
     url: function() {
-      return '/server/' + this.get('id') + '/bandwidth';
+      return '/server/' + this.get('id') + '/bandwidth/' + this.getPeriod();
     },
-    getGraphData: function(period, type) {
+    getPeriod: function() {
+      return this.period;
+    },
+    setPeriod: function(period) {
+      this.period = period;
+    },
+    getGraphData: function(type) {
       var i;
       var points = [];
-      var data = this.get(period);
+      var data = this.get(type);
       if (!data) {
         return null;
       }
-      data = data[type];
       var max = 0;
       for (i = 0; i < data.length; i++) {
         max = Math.max(data[i][1], max);
