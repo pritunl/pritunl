@@ -31,7 +31,7 @@ DEFAULT_PUBLIC_IP_SERVER = 'http://ip.pritunl.com/json'
 LOG_LIMIT = 100
 EVENT_TTL = 60
 RATE_LIMIT_SLEEP = 0.5
-SERVER_STATUS_RATE = 5
+SERVER_STATUS_RATE = 10
 SHORT_URL_LEN = 5
 SHORT_URL_CHARS = (string.ascii_lowercase + string.ascii_uppercase +
     string.digits).replace('l', '').replace('I', '').replace('O', '').replace(
