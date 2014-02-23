@@ -44,6 +44,7 @@ AUTH_HANDLERS = [
     ('GET', '/server/a1/output'),
     ('DELETE', '/server/a1/output'),
     ('GET', '/server/a1/bandwidth'),
+    ('GET', '/server/a1/bandwidth/1m'),
     ('GET', '/status'),
     ('GET', '/user/a1'),
     ('GET', '/user/a1/1'),
@@ -860,25 +861,55 @@ class Server(SessionTestCase):
 
     @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_server_bandwidth_get(self):
+        lengths = {
+            '1m': 360,
+            '5m': 288,
+            '30m': 336,
+            '2h': 360,
+            '1d': 365,
+        }
+
         response = self.session.get('/server/%s/bandwidth' % self.server_id)
         self.assertEqual(response.status_code, 200)
 
         data = response.json()
         self.assertIn('1m', data)
-        self.assertEqual(len(data['1m']['received']), 360)
-        self.assertEqual(len(data['1m']['sent']), 360)
+        self.assertIn('received', data['1m'])
+        self.assertEqual(len(data['1m']['received']), lengths['1m'])
+        self.assertIn('sent', data['1m'])
+        self.assertEqual(len(data['1m']['sent']), lengths['1m'])
         self.assertIn('5m', data)
-        self.assertEqual(len(data['5m']['received']), 288)
-        self.assertEqual(len(data['5m']['sent']), 288)
+        self.assertIn('received', data['5m'])
+        self.assertEqual(len(data['5m']['received']), lengths['5m'])
+        self.assertIn('sent', data['5m'])
+        self.assertEqual(len(data['5m']['sent']), lengths['5m'])
         self.assertIn('30m', data)
-        self.assertEqual(len(data['30m']['received']), 336)
-        self.assertEqual(len(data['30m']['sent']), 336)
+        self.assertIn('received', data['30m'])
+        self.assertEqual(len(data['30m']['received']), lengths['30m'])
+        self.assertIn('sent', data['30m'])
+        self.assertEqual(len(data['30m']['sent']), lengths['30m'])
         self.assertIn('2h', data)
-        self.assertEqual(len(data['2h']['received']), 360)
-        self.assertEqual(len(data['2h']['sent']), 360)
+        self.assertIn('received', data['2h'])
+        self.assertEqual(len(data['2h']['received']), lengths['2h'])
+        self.assertIn('sent', data['2h'])
+        self.assertEqual(len(data['2h']['sent']), lengths['2h'])
         self.assertIn('1d', data)
-        self.assertEqual(len(data['1d']['received']), 365)
-        self.assertEqual(len(data['1d']['sent']), 365)
+        self.assertIn('received', data['1d'])
+        self.assertEqual(len(data['1d']['received']), lengths['1d'])
+        self.assertIn('sent', data['1d'])
+        self.assertEqual(len(data['1d']['sent']), lengths['1d'])
+
+
+        for period in ('1m', '5m', '30m', '2h', '1d'):
+            response = self.session.get('/server/%s/bandwidth/%s' % (
+                self.server_id, period))
+            self.assertEqual(response.status_code, 200)
+
+            data = response.json()
+            self.assertIn('received', data)
+            self.assertEqual(len(data['received']), lengths[period])
+            self.assertIn('sent', data)
+            self.assertEqual(len(data['sent']), lengths[period])
 
     @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_server_put_post_errors(self):
