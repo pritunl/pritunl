@@ -835,8 +835,8 @@ class Server(Config):
                 data_p['received'].append((timestamp, bytes_recv))
                 data_p['sent'].append((timestamp, bytes_sent))
 
-        if period:
-            return data[period]
+        if len(periods) == 1:
+            return data[periods[0]]
         else:
             return data
 
