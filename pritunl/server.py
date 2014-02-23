@@ -942,6 +942,8 @@ class Server(Config):
                         persist_db.dict_remove(self.get_cache_key(
                             'bandwidth-%s' % period), timestamp_p)
 
+            Event(type=SERVER_BANDWIDTH_UPDATED, resource_id=self.id)
+
     def _read_clients(self):
         clients = {}
         if os.path.isfile(self.ovpn_status_path):
