@@ -73,12 +73,12 @@ define([
     loadPage: function(view) {
       var curView = this.data.view;
       this.data.view = view;
-      $(this.data.element).fadeOut(400, function() {
+      $(this.data.element).fadeOut(200, function() {
         if (curView) {
           curView = curView.destroy();
         }
         $(this.data.element).html(this.data.view.render().el);
-        $(this.data.element).fadeIn(400);
+        $(this.data.element).fadeIn(200);
       }.bind(this));
     },
     dashboard: function() {
