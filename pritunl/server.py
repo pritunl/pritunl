@@ -781,6 +781,82 @@ class Server(Config):
         cache_db.list_rpush(self.get_cache_key('output'), output.rstrip('\n'))
         self._event_delay(type=SERVER_OUTPUT_UPDATED, resource_id=self.id)
 
+    def get_bandwidth(self):
+        data = {
+            '1m': {
+                'received': [],
+                'sent': [],
+            },
+            '5m': {
+                'received': [],
+                'sent': [],
+            },
+            '30m': {
+                'received': [],
+                'sent': [],
+            },
+            '2h': {
+                'received': [],
+                'sent': [],
+            },
+            '1d': {
+                'received': [],
+                'sent': [],
+            },
+        }
+        date = datetime.datetime.utcnow()
+        date -= datetime.timedelta(microseconds=date.microsecond,
+            seconds=date.second)
+
+        date_1m = date
+        date_cur_1m = date_1m - datetime.timedelta(hours=6)
+        step_1m = datetime.timedelta(minutes=1)
+
+        date_5m = date - datetime.timedelta(minutes=date.minute % 5)
+        date_cur_5m = date - datetime.timedelta(days=1)
+        step_5m = datetime.timedelta(minutes=5)
+
+        date_30m = date - datetime.timedelta(minutes=date.minute % 30)
+        date_cur_30m = date_30m - datetime.timedelta(days=7)
+        step_30m = datetime.timedelta(minutes=30)
+
+        date_2h = date - datetime.timedelta(minutes=date.minute,
+            hours=date.hour % 2)
+        date_cur_2h = date - datetime.timedelta(days=30)
+        step_2h = datetime.timedelta(hours=2)
+
+        date_1d = date - datetime.timedelta(minutes=date.minute,
+            hours=date.hour)
+        date_cur_1d = date - datetime.timedelta(days=365)
+        step_1d = datetime.timedelta(days=1)
+
+        for period, date_p, date_cur_p, step_p in (
+                    ('1m', date_1m, date_cur_1m, step_1m),
+                    ('5m', date_5m, date_cur_5m, step_5m),
+                    ('30m', date_30m, date_cur_30m, step_30m),
+                    ('2h', date_2h, date_cur_2h, step_2h),
+                    ('1d', date_1d, date_cur_1d, step_1d),
+                ):
+            data_p = data[period]
+            while date_cur_p < date_p:
+                date_cur_p += step_p
+
+                timestamp = int(date_cur_p.strftime('%s'))
+                bandwidth = persist_db.dict_get(self.get_cache_key(
+                    'bandwidth-%s' % period), str(timestamp))
+                if bandwidth:
+                    bandwidth = bandwidth.split(',')
+                    bytes_recv = int(bandwidth[0])
+                    bytes_sent = int(bandwidth[1])
+                else:
+                    bytes_recv = 0
+                    bytes_sent = 0
+
+                data_p['received'].append((timestamp, bytes_recv))
+                data_p['sent'].append((timestamp, bytes_sent))
+
+        return data
+
     def _update_clients_bandwidth(self, clients):
         # Remove client no longer connected
         for client_id in cache_db.dict_keys(self.get_cache_key('clients')):
