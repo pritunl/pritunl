@@ -528,10 +528,12 @@ def server_output_delete(server_id):
     return utils.jsonify({})
 
 @app_server.app.route('/server/<server_id>/bandwidth', methods=['GET'])
+@app_server.app.route('/server/<server_id>/bandwidth/<period>',
+    methods=['GET'])
 @app_server.auth
-def server_bandwidth_get(server_id):
+def server_bandwidth_get(server_id, period=None):
     server = Server.get_server(id=server_id)
-    return utils.jsonify(server.get_bandwidth())
+    return utils.jsonify(server.get_bandwidth(period=period))
 
 @app_server.app.route('/server/<server_id>/tls_verify', methods=['POST'])
 @app_server.local_only
