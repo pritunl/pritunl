@@ -12,7 +12,7 @@ define([
   var BandwidthHover = Rickshaw.Class.create(Rickshaw.Graph.HoverDetail, {
     initialize: function(args) {
       _.extend(args, {
-        xFormatter: function(x, y, z) {
+        xFormatter: function(x) {
           // Pad length for rickshaw width calc
           return window.formatTime(x) + '#####';
         },
