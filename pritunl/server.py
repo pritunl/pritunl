@@ -814,7 +814,9 @@ class Server(Config):
 
             data_p = {
                 'received': [],
+                'received_total': 0,
                 'sent': [],
+                'sent_total': 0,
             }
             data[period] = data_p
             cache_key = self.get_cache_key('bandwidth-%s' % period)
@@ -833,7 +835,9 @@ class Server(Config):
                     bytes_sent = 0
 
                 data_p['received'].append((timestamp, bytes_recv))
+                data_p['received_total'] += bytes_recv
                 data_p['sent'].append((timestamp, bytes_sent))
+                data_p['sent_total'] += bytes_sent
 
         if len(periods) == 1:
             return data[periods[0]]
@@ -896,7 +900,9 @@ class Server(Config):
 
             data_p = {
                 'received': [],
+                'received_total': 0,
                 'sent': [],
+                'sent_total': 0,
             }
             data[period] = data_p
 
@@ -908,7 +914,9 @@ class Server(Config):
                 bytes_sent = bandwidth_rand(bytes_sent)
 
                 data_p['received'].append((timestamp, bytes_recv))
+                data_p['received_total'] += bytes_recv
                 data_p['sent'].append((timestamp, bytes_sent))
+                data_p['sent_total'] += bytes_sent
 
         if len(periods) == 1:
             path = os.path.join(app_server.data_path,
