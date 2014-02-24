@@ -954,8 +954,7 @@ class Server(Config):
                 prev_bytes_recv = int(client_prev[0])
                 prev_bytes_sent = int(client_prev[1])
 
-            if prev_bytes_recv > bytes_recv or \
-                    prev_bytes_sent > bytes_sent:
+            if prev_bytes_recv > bytes_recv or prev_bytes_sent > bytes_sent:
                 prev_bytes_recv = 0
                 prev_bytes_sent = 0
 
