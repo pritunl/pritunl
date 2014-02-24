@@ -12,15 +12,17 @@ define([
   var BandwidthHover = Rickshaw.Class.create(Rickshaw.Graph.HoverDetail, {
     initialize: function(args) {
       _.extend(args, {
-        xFormatter: function(x) {
-          return window.formatTime(x);
+        xFormatter: function(x, y, z) {
+          // Pad length for rickshaw width calc
+          return window.formatTime(x) + '#####';
         },
         yFormatter: function(y) {
           return window.formatSize(y);
         },
         onRender: function(args) {
           $(this.graph.element).find('.detail .x_label').html(
-            args.formattedXValue + '<br>' +
+            args.formattedXValue.replace('#####', '') +
+            ' (' + args.detail[0].series.period  + ')<br>' +
             args.detail[0].name + ': ' + args.detail[0].formattedYValue);
         }
       });
@@ -105,6 +107,7 @@ define([
         stroke: true,
         max: dataRecv.max * 1.05,
         series: [{
+          period: this.getPeriod(),
           name: 'Inbound',
           color: 'rgba(44, 127, 184, 0.05)',
           stroke: '#2c7fb8',
@@ -128,6 +131,7 @@ define([
         stroke: true,
         max: dataSent.max * 1.05,
         series: [{
+          period: this.getPeriod(),
           name: 'Outbound',
           color: 'rgba(44, 127, 184, 0.05)',
           stroke: '#2c7fb8',
