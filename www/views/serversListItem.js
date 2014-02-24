@@ -69,7 +69,7 @@ define([
 
       if (this.model.get('type') === 'node_server') {
         this.$('.server-label').hide();
-        this.$('.server-output-viewer').addClass('node-output');
+        this.$el.addClass('node-server');
         this.$('.server-public-address').removeClass('last');
       }
       else {

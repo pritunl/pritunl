@@ -764,11 +764,22 @@ header.blur {
   display: none;
 }
 
-.servers-list .server .server-info .server-graph-viewer .server-graph-recv,
-.servers-list .server .server-info .server-graph-viewer .server-graph-sent {
+.servers-list .server .server-info .server-graph-recv,
+.servers-list .server .server-info .server-graph-sent {
   width: 587px;
   height: 130px;
   border: 1px solid @light-dark-border;
+}
+
+.servers-list .node-server .server-info .server-graph-recv,
+.servers-list .node-server .server-info  .server-graph-sent {
+  width: 587px;
+  height: 151px;
+  border: 1px solid @light-dark-border;
+}
+
+.servers-list .node-server .server-info  .server-graph-sent {
+  height: 152px;
 }
 
 .servers-list .server .server-info .server-graph-viewer .server-graph-sent {
@@ -789,7 +800,7 @@ header.blur {
   border: 1px solid @light-dark-border;
 }
 
-.servers-list .server .server-info .node-output .text-viewer {
+.servers-list .node-server .server-info .text-viewer {
   height: 305px;
 }
 

@@ -101,8 +101,8 @@ define([
 
       var graphRecv = new Rickshaw.Graph({
         element: this.$('.server-graph-recv')[0],
-        width: 585,
-        height: 129,
+        width: this.$('.server-graph-recv').width(),
+        height: this.$('.server-graph-recv').height(),
         renderer: 'area',
         stroke: true,
         max: dataRecv.max * 1.05,
@@ -125,8 +125,8 @@ define([
 
       var graphSent = new Rickshaw.Graph({
         element: this.$('.server-graph-sent')[0],
-        width: 585,
-        height: 129,
+        width: this.$('.server-graph-sent').width(),
+        height: this.$('.server-graph-sent').height(),
         renderer: 'area',
         stroke: true,
         max: dataSent.max * 1.05,
