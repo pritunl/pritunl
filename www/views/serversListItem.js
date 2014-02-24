@@ -24,6 +24,7 @@ define([
       'click .server-output-btn': 'onServerOutput',
       'click .server-graph-btn': 'onServerGraph',
       'click .server-output-clear': 'onClearOutput',
+      'click .server-graph-period': 'onServerGraphPeriod',
       'click .toggle-hidden': 'onToggleHidden'
     },
     initialize: function() {
@@ -258,11 +259,35 @@ define([
         }.bind(this)
       });
     },
+    onServerGraphPeriod: function(evt) {
+      this.$('.server-graph-period').removeClass('btn-primary');
+      this.$('.server-graph-period').addClass('btn-default');
+      $(evt.target).removeClass('btn-default');
+      $(evt.target).addClass('btn-primary');
+
+      if ($(evt.target).hasClass('graph-1m')) {
+        this.serverBandwidthView.setPeriod('1m');
+      }
+      else if ($(evt.target).hasClass('graph-5m')) {
+        this.serverBandwidthView.setPeriod('5m');
+      }
+      else if ($(evt.target).hasClass('graph-30m')) {
+        this.serverBandwidthView.setPeriod('30m');
+      }
+      else if ($(evt.target).hasClass('graph-2h')) {
+        this.serverBandwidthView.setPeriod('2h');
+      }
+      else if ($(evt.target).hasClass('graph-1d')) {
+        this.serverBandwidthView.setPeriod('1d');
+      }
+    },
     onServerOutput: function() {
       this.$('.server-output-btn').removeClass('btn-default');
       this.$('.server-output-btn').addClass('btn-primary');
       this.$('.server-graph-btn').removeClass('btn-primary');
       this.$('.server-graph-btn').addClass('btn-default');
+      this.$('.server-graph-period').hide();
+      this.$('.server-output-clear').show();
       this.serverBandwidthView.setState(false);
       this.serverOutputView.setState(true);
     },
@@ -271,6 +296,8 @@ define([
       this.$('.server-output-btn').addClass('btn-default');
       this.$('.server-graph-btn').removeClass('btn-default');
       this.$('.server-graph-btn').addClass('btn-primary');
+      this.$('.server-output-clear').hide();
+      this.$('.server-graph-period').show();
       this.serverOutputView.setState(false);
       this.serverBandwidthView.setState(true);
     },

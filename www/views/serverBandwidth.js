@@ -80,6 +80,16 @@ define([
     getState: function() {
       return this.state;
     },
+    setPeriod: function(period) {
+      if (this.getPeriod() === period) {
+        return;
+      }
+      this.model.setPeriod(period);
+      this.update();
+    },
+    getPeriod: function() {
+      return this.model.getPeriod();
+    },
     updateGraph: function() {
       var dataRecv = this.model.getGraphData('received');
       var dataSent = this.model.getGraphData('sent');
