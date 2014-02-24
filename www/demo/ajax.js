@@ -365,6 +365,11 @@ define([
   };
   routes['DELETE=/server/<serverId>/output'] = serverOutputDelete;
 
+  var serverBandwidthGet = function(request, serverId, period) {
+    request.response(demoData.serverBandwidth[period]);
+  };
+  routes['GET=/server/<serverId>/bandwidth/<period>'] = serverBandwidthGet;
+
   var statusGet = function(request) {
     var orgId;
     var userId;
