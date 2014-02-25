@@ -234,7 +234,7 @@ class Organization(Config):
             else:
                 users = users_trie.get_prefix(prefix)
 
-            for user_id in users_trie.iter_prefix(prefix):
+            for user_id in users:
                 user = User.get_user(self, id=user_id)
                 if not user:
                     continue
