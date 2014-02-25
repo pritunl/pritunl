@@ -96,6 +96,7 @@ define([
       var passDelCount = 0;
       // Number of view removes that have been passed without slide animation
       var passAddCount = 0;
+      var slide = this.views.length ? true : false;
 
       for (i = 0; i < collection.models.length; i++) {
         newModels.push(collection.models[i].get('id'));
@@ -154,7 +155,7 @@ define([
       for (i = 0; i < this.views.length; i++) {
         if (newModels.indexOf(this.views[i].model.get('id')) === -1) {
           // Remove item from dom and array
-          if (delSlideCount >= delSlide || passDelCount < passDel) {
+          if (!slide || delSlideCount >= delSlide || passDelCount < passDel) {
             this._removeItem(this.views[i], false);
             passDelCount += 1;
           }
@@ -191,7 +192,7 @@ define([
         }
 
         if (!modelView.model.hidden || this.showHidden) {
-          if (addSlideCount >= addSlide || passAddCount < passAdd) {
+          if (!slide || addSlideCount >= addSlide || passAddCount < passAdd) {
             this._showItem(modelView, false);
             passAddCount += 1;
           }
@@ -289,10 +290,22 @@ define([
       this.resetItems(views);
     },
     update: function() {
+      var loading = true;
+
+      setTimeout(function() {
+        if (!loading) {
+          return;
+        }
+        this.loading = false;
+        this.$('.loading').slideDown(250);
+      }.bind(this), 400);
+
       this.collection.fetch({
         data: this.getOptions(),
         reset: true,
         error: function() {
+          loading = false;
+          this.$('.loading').slideUp(250);
           var alertView = new AlertView({
             type: 'danger',
             message: this.listErrorMsg,
@@ -301,6 +314,10 @@ define([
           $('.alerts-container').append(alertView.render().el);
           this.addView(alertView);
           this.collection.reset();
+        }.bind(this),
+        success: function() {
+          loading = false;
+          this.$('.loading').slideUp(250);
         }.bind(this)
       });
     },

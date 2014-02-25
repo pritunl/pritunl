@@ -56,7 +56,6 @@ define([
       }.bind(this));
     },
     resetItems: function(views) {
-      this.$('.loading').slideUp(250);
       if (views.length) {
         this.$('.no-users').slideUp(250);
         this.$('.no-users-search').slideUp(250);
