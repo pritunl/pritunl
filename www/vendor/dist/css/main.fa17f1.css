@@ -7426,7 +7426,7 @@ header.blur {
   display: none;
 }
 .users-list .loading {
-  display: block;
+  display: none;
 }
 .users-list .org-title,
 .servers-list .server .server-title a {
