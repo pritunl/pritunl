@@ -9,6 +9,10 @@ class CacheTrie(object):
         self.name = name
         self.key = key
 
+    def clear_cache(self):
+        cache_db.remove(self.get_cache_key())
+        cache_db.remove(self.get_cache_key('values'))
+
     def get_cache_key(self, suffix=None):
         key = '%s_%s' % (self.name, self.key)
         if suffix is not None:

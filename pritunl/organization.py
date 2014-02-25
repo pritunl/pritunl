@@ -104,6 +104,7 @@ class Organization(Config):
         cache_db.decrement('org_count')
         cache_db.remove(self.get_cache_key('users_cached'))
         cache_db.remove(self.get_cache_key('users'))
+        CacheTrie(self.get_cache_key('users_trie')).clear_cache()
         Config.clear_cache(self)
 
     def get_user(self, id):
