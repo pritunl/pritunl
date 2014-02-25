@@ -174,7 +174,6 @@ class Organization(Config):
 
     def _cache_users(self):
         if cache_db.get(self.get_cache_key('users_cached')) != 't':
-            users_trie = CacheTrie(self.get_cache_key('users_trie'))
             cache_db.remove(self.get_cache_key('users'))
             certs_path = os.path.join(self.path, CERTS_DIR)
             if os.path.isdir(certs_path):
@@ -185,7 +184,7 @@ class Organization(Config):
                     user = User.get_user(self, id=user_id)
                     if not user:
                         continue
-                    users_trie.add_key_terms(user.name, user_id)
+                    user._add_cache_trie_key()
                     cache_db.set_add(self.get_cache_key('users'), user_id)
             self.sort_users_cache()
             cache_db.set(self.get_cache_key('users_cached'), 't')
@@ -234,22 +233,24 @@ class Organization(Config):
             else:
                 users = users_trie.get_prefix(prefix)
 
-            for user_id in users:
-                user = User.get_user(self, id=user_id)
-                if not user:
-                    continue
-                if user.type == CERT_CLIENT:
+            for user_data in users:
+                user_id, user_type, user_name = user_data.split('-', 2)
+                if user_type == CERT_CLIENT:
                     prefix_count += 1
-                name_id = '%s_%s' % (user.name, user_id)
-                users_dict[name_id] = user
+                name_id = user_name + '_' + user_id
+                users_dict[name_id] = (user_id, user_type, user_name)
                 users_sort.append(name_id)
             self._last_prefix_count = prefix_count
 
             user_count = 0
             search_more = False
             for name_id in sorted(users_sort):
-                yield users_dict[name_id]
-                if prefix_limit and users_dict[name_id].type == CERT_CLIENT:
+                user_id, user_type, user_name = users_dict[name_id]
+                user = User.get_user(self, id=user_id)
+                if not user:
+                    continue
+                yield user
+                if prefix_limit and user_type == CERT_CLIENT:
                     user_count += 1
                     if user_count >= prefix_limit:
                         search_more = True

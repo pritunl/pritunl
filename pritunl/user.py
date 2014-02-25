@@ -101,14 +101,23 @@ class User(Config):
         self._clean_openssl()
         if self.type != CERT_CA:
             cache_db.set_add(self.org.get_cache_key('users'), self.id)
-            users_trie = CacheTrie(self.org.get_cache_key('users_trie'))
-            users_trie.add_key_terms(self.name, self.id)
+            self._add_cache_trie_key()
         self.org.sort_users_cache()
         if self.type == CERT_CLIENT:
             LogEntry(message='Created new user "%s".' % self.name)
         Event(type=ORGS_UPDATED)
         Event(type=USERS_UPDATED, resource_id=self.org.id)
         Event(type=SERVERS_UPDATED)
+
+    def _add_cache_trie_key(self):
+        users_trie = CacheTrie(self.org.get_cache_key('users_trie'))
+        users_trie.add_key_terms(self.name, '%s-%s-%s' % (
+            self.id, self.type, self.name))
+
+    def _remove_cache_trie_key(self):
+        users_trie = CacheTrie(self.org.get_cache_key('users_trie'))
+        users_trie.remove_key(self.name, '%s-%s-%s' % (
+            self.id, self.type, self.name))
 
     def _setup_openssl(self):
         if not os.path.exists(self.temp_path):
@@ -344,13 +353,14 @@ class User(Config):
             cache_db.set_remove(self.org.get_cache_key('users'), self.id)
             cache_db.list_remove(self.org.get_cache_key('users_sorted'),
                 self.id)
-            users_trie = CacheTrie(self.org.get_cache_key('users_trie'))
-            users_trie.remove_key(self.name, self.id)
+            self._remove_cache_trie_key()
         Config.clear_cache(self)
 
     def rename(self, name):
+        self._remove_cache_trie_key()
         self.name = name
         self.commit()
+        self._add_cache_trie_key()
         self.org.sort_users_cache()
         Event(type=USERS_UPDATED, resource_id=self.org.id)
 
