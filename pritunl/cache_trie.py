@@ -28,21 +28,21 @@ class CacheTrie(object):
         name = self.name + '_'
         cur_key = self.key
         new_key = cur_key
-        for char in key:
+        for char in key.lower():
             new_key += char
             cache_db.set_add(name + cur_key, new_key)
             cur_key = new_key
         cache_db.set_add(name + cur_key + '_values', value)
 
     def add_key_terms(self, key, value):
-        for term in re.split('[^a-zA-Z0-9]', key):
+        for term in re.split('[^a-z0-9]', key.lower()):
             self.add_key(term, value)
 
     def remove_key(self, key, value):
         name = self.name + '_'
         cur_key = self.key
         new_key = cur_key
-        for char in key:
+        for char in key.lower():
             new_key += char
             cache_db.set_remove(name + cur_key, new_key)
             cur_key = new_key
@@ -58,8 +58,8 @@ class CacheTrie(object):
         return values
 
     def get_prefix(self, prefix):
-        return CacheTrie(self.name, prefix).chain(set())
+        return CacheTrie(self.name, prefix.lower()).chain(set())
 
     def iter_prefix(self, prefix):
-        for value in CacheTrie(self.name, prefix).chain(set()):
+        for value in CacheTrie(self.name, prefix.lower()).chain(set()):
             yield value
