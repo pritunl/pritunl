@@ -1,6 +1,7 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.organization import Organization
+from pritunl.static_file import StaticFile
 import pritunl.utils as utils
 from pritunl.cache import cache_db
 from pritunl import app_server
@@ -116,8 +117,8 @@ def user_linked_key_page_get(view_id):
     org = Organization.get_org(id=org_id)
     user = org.get_user(user_id)
 
-    key_page = open(os.path.join(app_server.www_path,
-        'key_index.html'), 'r').read()
+    key_page = StaticFile(os.path.join(
+        app_server.www_path, KEY_INDEX_NAME)).data
     key_page = key_page.replace('<%= user_name %>', '%s - %s' % (
         org.name, user.name))
     key_page = key_page.replace('<%= user_key_url %>', '/key/%s.tar' % (
