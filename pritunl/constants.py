@@ -36,7 +36,6 @@ SHORT_URL_LEN = 5
 SHORT_URL_CHARS = (string.ascii_lowercase + string.ascii_uppercase +
     string.digits).replace('l', '').replace('I', '').replace('O', '').replace(
     '0', '')
-PRECACHE_TRIE_CHARS = 'abcdefghijklmnopqrstuvwxyz0123456789'
 SUB_RESPONSE_TIMEOUT = 10
 HTTP_REQUEST_TIMEOUT = 10
 HTTP_COM_REQUEST_TIMEOUT = 60

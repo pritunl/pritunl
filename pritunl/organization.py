@@ -12,7 +12,6 @@ import subprocess
 import utils
 import logging
 import threading
-import json
 
 logger = logging.getLogger(APP_NAME)
 
@@ -105,7 +104,6 @@ class Organization(Config):
         cache_db.decrement('org_count')
         cache_db.remove(self.get_cache_key('users_cached'))
         cache_db.remove(self.get_cache_key('users'))
-        cache_db.remove(self.get_cache_key('users_prefix_cache'))
         Config.clear_cache(self)
 
     def get_user(self, id):
@@ -159,18 +157,10 @@ class Organization(Config):
                     str(cur_page))
             finally:
                 cache_db.lock_release(self.get_cache_key('sort'))
-            self._precache_users_trie()
         except:
             cache_db.remove(self.get_cache_key(users_page_index_key))
             cache_db.remove(self.get_cache_key(temp_users_sorted_key))
             raise
-
-    def _precache_users_trie(self):
-        users_trie = CacheTrie(self.get_cache_key('users_trie'))
-        for prefix in PRECACHE_TRIE_CHARS:
-            users = users_trie.get_prefix(prefix)
-            cache_db.dict_set(self.get_cache_key('users_prefix_cache'),
-                prefix, json.dumps(list(users)))
 
     def _cache_users(self):
         if cache_db.get(self.get_cache_key('users_cached')) != 't':
@@ -226,14 +216,7 @@ class Organization(Config):
             prefix_count = 0
             users_trie = CacheTrie(self.get_cache_key('users_trie'))
 
-            prefix_cache = cache_db.dict_get(
-                self.get_cache_key('users_prefix_cache'), prefix)
-            if prefix_cache:
-                users = json.loads(prefix_cache)
-            else:
-                users = users_trie.get_prefix(prefix)
-
-            for user_data in users:
+            for user_data in users_trie.iter_prefix(prefix):
                 user_id, user_type, user_name = user_data.split('-', 2)
                 if user_type == CERT_CLIENT:
                     prefix_count += 1
