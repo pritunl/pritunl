@@ -61,8 +61,8 @@ class StaticFile:
             os.path.getmtime(self.path))
         file_size = int(os.path.getsize(self.path))
 
-        with open(self.path, 'r') as fd:
-            self.data = fd.read()
+        with open(self.path, 'r') as static_file:
+            self.data = static_file.read()
 
         self.mime_type = mimetypes.guess_type(file_basename)[0] or 'text/plain'
         self.last_modified = http_date(file_mtime)
