@@ -59,6 +59,10 @@
         border-radius: 6px;
       }
 
+      .key-box.key-deleted {
+        display: none;
+      }
+
       .key-box .key-header {
         margin: 0;
         padding: 10px 15px;
@@ -138,10 +142,11 @@
         text-align: center;
       }
 
+      .key-box .key-body button,
       .key-box .key-body a {
         margin-top: 15px;
         margin-bottom: 4px;
-        min-width: 210px;
+        min-width: 260px;
         color: #fff;
         background-color: #d9534f;
         border-color: #d43f3a;
@@ -166,6 +171,10 @@
         text-decoration: none;
       }
 
+      .key-box .key-body button {
+        margin-top: 11px;
+      }
+
       .key-box .key-body a.sm {
         padding: 3px 5px;
         font-size: 12px;
@@ -173,6 +182,8 @@
         margin-bottom: 0;
       }
 
+      .key-box .key-body button:hover,
+      .key-box .key-body button:active,
       .key-box .key-body a:hover,
       .key-box .key-body a:active {
         background-color: #d2322d;
@@ -192,7 +203,7 @@
     </style>
   </head>
   <body>
-    <div class="key-box">
+    <div id="key-box" class="key-box">
       <h2 class="key-header">pritunl user key</h2>
       <div class="key-body">
         <h4 class="key-title">demo_org - demo_user</h2>
@@ -201,6 +212,14 @@
         <div id="qrcode"></div>
         <a title="Download Key" href="/key/demo.tar">Download Key</a><br>
         <a class="sm" title="Download Mobile Key" href="/key/demo.ovpn">Download Mobile Key (server1)</a><br>
+        <button onclick="deleteKey()">Delete Temporary Key Link</button><br>
+      </div>
+    </div>
+
+    <div id="key-deleted-box" class="key-box key-deleted">
+      <h2 class="key-header">pritunl user key</h2>
+      <div class="key-body">
+        <h4 class="key-title">Key Deleted</h2>
       </div>
     </div>
 
@@ -227,6 +246,11 @@
         document.getElementById('otp-label').style.display = 'none';
         document.getElementById('qrcode').style.display = 'none';
       }
+
+      var deleteKey = function() {
+        document.getElementById('key-box').style.display = 'none';
+        document.getElementById('key-deleted-box').style.display = 'block';
+      };
     </script>
   </body>
 </html>
