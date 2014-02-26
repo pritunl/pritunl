@@ -480,7 +480,7 @@ class Key(SessionTestCase):
 
 
         start_index = response.text.find('<h4 class="key-title">') + 22
-        end_index = response.text.find('</h2>', start_index)
+        end_index = response.text.find('</h4>', start_index)
         self.assertNotEqual(start_index, -1)
         self.assertNotEqual(end_index, -1)
         key_title = response.text[start_index:end_index]
