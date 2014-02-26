@@ -71,6 +71,7 @@ def user_key_link_get(org_id, user_id):
             cache_db.dict_set(_get_conf_key(conf_id), 'server_id', server.id)
 
             conf_urls.append({
+                'id': conf_id,
                 'server_name': server.name,
                 'url': '/key/%s.ovpn' % conf_id,
             })
@@ -133,6 +134,8 @@ def user_linked_key_page_get(view_id):
         key_page = key_page.replace('<%= user_otp_key %>', '')
         key_page = key_page.replace('<%= user_otp_url %>', '')
 
+    key_page = key_page.replace('<%= view_id %>', view_id)
+
     conf_links = ''
     for conf_url in conf_urls:
         conf_links += '<a class="sm" title="Download Mobile Key" ' + \
@@ -141,6 +144,18 @@ def user_linked_key_page_get(view_id):
     key_page = key_page.replace('<%= conf_links %>', conf_links)
 
     return key_page
+
+@app_server.app.route('/k/<view_id>', methods=['DELETE'])
+def user_linked_key_page_delete_get(view_id):
+    key_id = cache_db.dict_get(_get_view_key(view_id), 'key_id')
+    if key_id:
+        cache_db.remove(_get_key_key(key_id))
+    conf_urls = cache_db.dict_get(_get_view_key(view_id), 'conf_urls')
+    if conf_urls:
+        for conf_url in json.loads(conf_urls):
+            cache_db.remove(_get_conf_key(conf_url['id']))
+    cache_db.remove(_get_view_key(view_id))
+    return utils.jsonify({})
 
 @app_server.app.route('/key/<conf_id>.ovpn', methods=['GET'])
 def user_linked_key_conf_get(conf_id):
