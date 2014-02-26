@@ -74,7 +74,7 @@ class StaticFile:
         if not self.last_modified:
             flask.abort(404)
         response = flask.Response(response=self.data, mimetype=self.mime_type)
-        if app_server.static_cache and self.cache:
+        if app_server.static_cache and not app_server.debug and self.cache:
             response.headers.add('Cache-Control',
                 'max-age=%s, public' % STATIC_CACHE_TIME)
             response.headers.add('ETag', '"%s"' % self.etag)

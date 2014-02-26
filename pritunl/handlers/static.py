@@ -21,5 +21,5 @@ def root_static_get():
 @app_server.app.route('/s/<path:file_path>', methods=['GET'])
 def static_get(file_path):
     file_path = os.path.join(app_server.www_path, file_path)
-    static_file = StaticFile(file_path, cache=not app_server.debug)
+    static_file = StaticFile(file_path, cache=True)
     return static_file.get_response()
