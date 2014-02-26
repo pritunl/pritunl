@@ -420,7 +420,8 @@ define([
 
     for (id in demoData.users[orgId]) {
       if (request.data.search &&
-          demoData.users[orgId][id].name.indexOf(request.data.search) !== 0) {
+          demoData.users[orgId][id].name.toLowerCase().indexOf(
+            request.data.search.toLowerCase()) !== 0) {
         continue;
       }
       users.push(_.extend({
