@@ -60,7 +60,7 @@ def _log_request(method, endpoint, start_time):
     if endpoint.startswith('/event'):
         return
     response_time = int((time.time() - start_time) * 1000)
-    if endpoint.startswith('/auth'):
+    if endpoint.startswith('/auth') or endpoint.startswith('/k/'):
         if response_time > 900:
             color = '\033[92m'
         elif response_time > 700:
@@ -439,7 +439,7 @@ class Key(SessionTestCase):
         self.assertRegexpMatches(content_disposition, exp)
 
     @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
-    def test_user_key_link_get(self):
+    def test_user_key_link_get_delete(self):
         response = self.session.put('/server/%s/organization/%s' % (
             self.server_id, self.org_id))
         self.assertEqual(response.status_code, 200)
@@ -534,6 +534,14 @@ class Key(SessionTestCase):
         self.assertNotEqual(end_index, -1)
         delete_link = response.text[start_index:end_index]
         self.assertEqual(data['view_url'], delete_link)
+
+
+        response = self.session.delete(data['view_url'])
+        self.assertEqual(response.status_code, 200)
+
+
+        response = self.session.get(data['view_url'])
+        self.assertEqual(response.status_code, 404)
 
 
         response = self.session.delete('/server/%s/organization/%s' % (
