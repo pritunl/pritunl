@@ -17,7 +17,7 @@ define([
           return window.formatTime(x) + '#####';
         },
         yFormatter: function(y) {
-          return window.formatSize(y);
+          return window.formatSize(y, 2);
         },
         onRender: function(args) {
           $(this.graph.element).find('.detail .x_label').html(
