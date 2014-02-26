@@ -47,12 +47,13 @@ class StaticFile:
         self.etag = cache_db.dict_get(self.get_cache_key(), 'etag')
 
     def load_file(self):
-        if cache_db.exists(self.get_cache_key()):
+        if app_server.static_cache and cache_db.exists(self.get_cache_key()):
             self.get_cache()
             return
 
         if not os.path.isfile(self.path):
-            self.set_cache()
+            if app_server.static_cache:
+                self.set_cache()
             return
 
         file_basename = os.path.basename(self.path)
@@ -66,13 +67,14 @@ class StaticFile:
         self.mime_type = mimetypes.guess_type(file_basename)[0] or 'text/plain'
         self.last_modified = http_date(file_mtime)
         self.etag = self.generate_etag(file_basename, file_size, file_mtime)
-        self.set_cache()
+        if app_server.static_cache:
+            self.set_cache()
 
     def get_response(self):
         if not self.last_modified:
             flask.abort(404)
         response = flask.Response(response=self.data, mimetype=self.mime_type)
-        if self.cache:
+        if app_server.static_cache and self.cache:
             response.headers.add('Cache-Control',
                 'max-age=%s, public' % STATIC_CACHE_TIME)
             response.headers.add('ETag', '"%s"' % self.etag)
