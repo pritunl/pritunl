@@ -528,6 +528,14 @@ class Key(SessionTestCase):
         self.assertRegexpMatches(otp_key, exp)
 
 
+        start_index = response.text.find("xmlhttp.open('DELETE', '") + 24
+        end_index = response.text.find("', false);", start_index)
+        self.assertNotEqual(start_index, -1)
+        self.assertNotEqual(end_index, -1)
+        delete_link = response.text[start_index:end_index]
+        self.assertEqual(data['view_url'], delete_link)
+
+
         response = self.session.delete('/server/%s/organization/%s' % (
             self.server_id, self.org_id))
         self.assertEqual(response.status_code, 200)
