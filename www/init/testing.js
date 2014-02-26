@@ -13,10 +13,10 @@ define([
         if (this.url.substring(0, 6) !== '/event') {
           var execTime = response.getResponseHeader('Execution-Time');
           var color;
-          if (execTime > 400) {
+          if (execTime > 200) {
             color = '#ff0000';
           }
-          else if (execTime > 200) {
+          else if (execTime > 100) {
             color = '#ff6b0d';
           }
           else {
