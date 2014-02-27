@@ -31,6 +31,8 @@ class AppServer(Config):
         'inline_certs': True,
         'ssl': True,
         'static_cache': True,
+        'bind_addr': DEFAULT_BIND_ADDR,
+        'port': DEFAULT_PORT,
         'session_timeout': DEFAULT_SESSION_TIMEOUT,
         'key_bits': DEFAULT_KEY_BITS,
         'dh_param_bits': DEFAULT_DH_PARAM_BITS,
