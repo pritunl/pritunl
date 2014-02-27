@@ -18,8 +18,8 @@ define([
       return _.extend({
         'change .server-mode select': 'onServerMode',
         'change .dh-param-bits select': 'onDhParamBits',
-        'click .otp-auth-toggle .selector': 'onOtpAuthSelect',
-        'click .debug-toggle .selector': 'onDebugSelect'
+        'click .otp-auth-toggle': 'onOtpAuthSelect',
+        'click .debug-toggle': 'onDebugSelect'
       }, ModalServerSettingsView.__super__.events);
     },
     initialize: function(options) {
