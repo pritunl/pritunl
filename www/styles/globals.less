@@ -33,6 +33,12 @@ ul {
   background-color: @scrollbar-track-bg;
 }
 
+.form-control[disabled],
+.form-control[readonly],
+fieldset[disabled] .form-control {
+  cursor: default;
+}
+
 .label-purple {
   background-color: #a722c0;
 }
