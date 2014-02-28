@@ -9,6 +9,7 @@ Improve server caching
 Add server bandwidth graphs
 Cache static file data to reduce disk io usage
 Add handler to delete temporary key links
+Read conf options from environment variables
 
 Version 0.10.6 2014-02-12
 -------------------------
