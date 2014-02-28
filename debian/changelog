@@ -1,3 +1,14 @@
+pritunl (0.10.7-0ubuntu1) unstable; urgency=low
+
+  * Changes to api
+  * Improve server caching
+  * Add server bandwidth graphs
+  * Cache static file data to reduce disk io usage
+  * Add handler to delete temporary key links
+  * Read conf options from environment variables
+
+ -- Zachary Huff <zach.huff.386@gmail.com>  Thu, 27 Feb 2014 20:17:14 -0400
+
 pritunl (0.10.6-0ubuntu1) unstable; urgency=low
 
   * Changes to api
