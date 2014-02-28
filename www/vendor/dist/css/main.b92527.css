@@ -6932,6 +6932,10 @@ a:hover,
 a:active {
   outline: 0;
 }
+select:-moz-focusring {
+  color: transparent;
+  text-shadow: 0 0 0 #555;
+}
 ul {
   padding-left: 30px;
 }
@@ -6944,6 +6948,11 @@ ul {
 }
 ::-webkit-scrollbar-track {
   background-color: #d1d1d1;
+}
+.form-control[disabled],
+.form-control[readonly],
+fieldset[disabled] .form-control {
+  cursor: default;
 }
 .label-purple {
   background-color: #a722c0;
@@ -7092,6 +7101,10 @@ ul {
 }
 .modal .form-control {
   width: 200px;
+}
+.modal .toggle-form,
+.modal .toggle-form label {
+  cursor: pointer;
 }
 .modal .modal-user-list li {
   color: #777777;
