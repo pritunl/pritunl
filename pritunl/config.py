@@ -16,6 +16,7 @@ class Config:
     chmod_mode = None
     cached = False
     cache_prefix = None
+    read_env = False
 
     def __init__(self, path=None):
         self.all_options = self.bool_options | self.int_options | \
@@ -43,6 +44,14 @@ class Config:
         elif name not in self.__dict__:
             raise AttributeError('Config instance has no attribute %r' % name)
         return self.__dict__[name]
+
+    def _set_value(self, name, value, merge=False):
+        if merge and name in self.__dict__:
+            return
+        self.__dict__[name] = value
+        if self.cached:
+            cache_db.dict_set(self.get_cache_key(),
+                name, self._encode_value(name, value))
 
     def get_state(self):
         return self._state
@@ -195,19 +204,21 @@ class Config:
 
                     try:
                         name, value = self._decode_line(line)
-                        if merge and name in self.__dict__:
-                            continue
-                        self.__dict__[name] = value
-                        if self.cached:
-                            cache_db.dict_set(self.get_cache_key(),
-                                name, self._encode_value(name, value))
+                        self._set_value(name, value, merge)
                     except ValueError:
                         logger.warning('Ignoring invalid line. %r' % {
                             'line': line,
                         })
         except IOError:
-            if not merge:
+            if not merge and not self.read_env:
                 raise
+
+        if self.read_env:
+            for name in self.all_options:
+                value = os.getenv(('%s_%s' % (ENV_PREFIX, name)).upper())
+                if not value:
+                    continue
+                self._set_value(name, self._decode_value(name, value), merge)
 
         if self.cached:
             cache_db.set(self.get_cache_key('cached'), 't')

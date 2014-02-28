@@ -45,9 +45,6 @@ def pritunl_daemon():
         print '##############################################################'
 
     if options.conf:
-        conf_path = options.conf
-    else:
-        conf_path = DEFAULT_CONF_PATH
+        pritunl.app_server.conf_path = options.conf
 
-    pritunl.app_server.conf_path = conf_path
     pritunl.app_server.run_server()

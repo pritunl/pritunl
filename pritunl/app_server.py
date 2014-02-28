@@ -41,12 +41,14 @@ class AppServer(Config):
         'data_path': DEFAULT_DATA_PATH,
         'public_ip_server': DEFAULT_PUBLIC_IP_SERVER,
     }
+    read_env = True
 
     def __init__(self):
         Config.__init__(self)
         self.app = None
         self.interrupt = False
         self.public_ip = None
+        self.conf_path = DEFAULT_CONF_PATH
 
     def __getattr__(self, name):
         if name == 'web_protocol':
