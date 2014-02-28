@@ -7,7 +7,7 @@ pritunl (0.10.7-0ubuntu1) unstable; urgency=low
   * Add handler to delete temporary key links
   * Read conf options from environment variables
 
- -- Zachary Huff <zach.huff.386@gmail.com>  Thu, 27 Feb 2014 20:17:14 -0400
+ -- Zachary Huff <zach.huff.386@gmail.com>  Fri, 28 Feb 2014 05:30:34 -0400
 
 pritunl (0.10.6-0ubuntu1) unstable; urgency=low
 
