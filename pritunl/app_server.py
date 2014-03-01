@@ -14,6 +14,7 @@ import urllib2
 import threading
 import subprocess
 import base64
+import socket
 
 logger = None
 
@@ -49,6 +50,10 @@ class AppServer(Config):
         self.interrupt = False
         self.public_ip = None
         self.conf_path = DEFAULT_CONF_PATH
+        try:
+            self.localhost = socket.gethostbyname('localhost')
+        except:
+            self.localhost = '127.0.0.1'
 
     def __getattr__(self, name):
         if name == 'web_protocol':
@@ -114,7 +119,7 @@ class AppServer(Config):
     def local_only(self, call):
         def _wrapped(*args, **kwargs):
             remote_addr = utils.get_remote_addr()
-            if remote_addr not in ('127.0.0.1', '::1'):
+            if remote_addr not in ('127.0.0.1', '::1', self.localhost):
                 logger.error('Local only handler auth error. %r' % {
                     'remote_addr': remote_addr,
                 })
