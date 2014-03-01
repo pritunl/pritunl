@@ -38,8 +38,10 @@ define([
       });
       this.model.setPeriod('1m');
       this.state = false;
-      this.listenTo(window.events, 'server_bandwidth_updated:' +
-        options.server, this.update);
+      this.interval = setInterval((this.update).bind(this), 15000);
+    },
+    deinitialize: function() {
+      clearInterval(this.interval);
     },
     render: function() {
       this.$el.html(this.template());
