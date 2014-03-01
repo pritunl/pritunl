@@ -94,7 +94,6 @@ LOG_UPDATED = 'log_updated'
 SERVERS_UPDATED = 'servers_updated'
 SERVER_ORGS_UPDATED = 'server_organizations_updated'
 SERVER_OUTPUT_UPDATED = 'server_output_updated'
-SERVER_BANDWIDTH_UPDATED = 'server_bandwidth_updated'
 
 CERT_CONF = """[ default ]
 ca = %s
