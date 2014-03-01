@@ -18,7 +18,7 @@ cd pritunl-$VERSION
 debuild -S
 sed -i -e 's/0ubuntu1/0ubuntu1~quantal/g' debian/changelog
 debuild -S
-sed -i -e 's/0ubuntu1~raring/0ubuntu1~saucy/g' debian/changelog
+sed -i -e 's/0ubuntu1~quantal/0ubuntu1~saucy/g' debian/changelog
 debuild -S
 
 cd ..
