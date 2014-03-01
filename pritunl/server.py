@@ -490,7 +490,7 @@ class Server(Config):
         rules = []
 
         try:
-            routes_output = utils.check_output(['route', '-n'],
+            routes_output = subprocess.check_output(['route', '-n'],
                 stderr=subprocess.PIPE)
         except subprocess.CalledProcessError:
             logger.exception('Failed to get IP routes. %r' % {

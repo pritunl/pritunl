@@ -57,22 +57,6 @@ def check_session():
 def rmtree(path):
     subprocess.check_call(['rm', '-rf', path])
 
-def check_output(*popenargs, **kwargs):
-    # For python2.6 support
-    if 'stdout' in kwargs:
-        raise ValueError('stdout argument not allowed, ' + \
-            'it will be overridden.')
-    process = subprocess.Popen(stdout=subprocess.PIPE,
-        *popenargs, **kwargs)
-    output, unused_err = process.communicate()
-    retcode = process.poll()
-    if retcode:
-        cmd = kwargs.get('args')
-        if cmd is None:
-            cmd = popenargs[0]
-        raise subprocess.CalledProcessError(retcode, cmd, output=output)
-    return output
-
 def ip_to_long(ip_str):
     ip = ip_str.split('.')
     ip.reverse()
@@ -100,7 +84,7 @@ def network_addr(ip, subnet):
 
 def get_local_networks():
     addresses = []
-    output = check_output(['ifconfig'])
+    output = subprocess.check_output(['ifconfig'])
     for interface in output.split('\n\n'):
         interface_name = re.findall(r'[a-z0-9]+', interface, re.IGNORECASE)
         if not interface_name:
