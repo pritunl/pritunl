@@ -50,10 +50,6 @@ class AppServer(Config):
         self.interrupt = False
         self.public_ip = None
         self.conf_path = DEFAULT_CONF_PATH
-        try:
-            self.localhost_ip = socket.gethostbyname('localhost')
-        except:
-            self.localhost_ip = '127.0.0.1'
 
     def __getattr__(self, name):
         if name == 'web_protocol':
@@ -69,6 +65,16 @@ class AppServer(Config):
         elif name == 'ssl':
             if self.debug:
                 return False
+        elif name == 'localhost_ip':
+            localhost_ip = cache_db.get('localhost_ip')
+            if not localhost_ip:
+                try:
+                    localhost_ip = socket.gethostbyname('localhost')
+                except:
+                    localhost_ip = '127.0.0.1'
+                cache_db.expire('localhost_ip', LOCALHOST_IP_TTL)
+                cache_db.set('localhost_ip', localhost_ip)
+            return localhost_ip
         return Config.__getattr__(self, name)
 
     def load_public_ip(self, attempts=1, timeout=5):
