@@ -115,7 +115,7 @@ class AppServer(Config):
         def _wrapped(*args, **kwargs):
             remote_addr = utils.get_remote_addr()
             if remote_addr not in ('127.0.0.1', '::1'):
-                logger.exception('Local only handler auth error. %r' % {
+                logger.error('Local only handler auth error. %r' % {
                     'remote_addr': remote_addr,
                 })
                 raise flask.abort(401)
