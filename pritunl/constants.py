@@ -254,7 +254,7 @@ server %s
 ifconfig-pool-persist %s
 %s
 max-clients 1024
-keepalive 5 20
+keepalive 10 30
 persist-tun
 status %s 1
 status-version 2
@@ -273,7 +273,7 @@ server %s
 ifconfig-pool-persist %s
 %s
 max-clients 1024
-keepalive 5 20
+keepalive 10 30
 persist-tun
 status %s 1
 status-version 2
