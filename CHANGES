@@ -1,6 +1,11 @@
 Pritunl Changelog
 =================
 
+Version 0.10.8
+--------------
+
+Fix openvpn authentication issue
+
 Version 0.10.7 2014-02-28
 -------------------------
 
