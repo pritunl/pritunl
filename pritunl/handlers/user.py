@@ -21,9 +21,11 @@ def user_get(org_id, user_id=None, page=None):
         limit = int(flask.request.args.get('limit', USER_PAGE_COUNT))
         otp_auth = False
         search_more = True
+        server_count = 0
         clients = {}
 
         for server in org.iter_servers():
+            server_count += 1
             if server.otp_auth:
                 otp_auth = True
             server_clients = server.clients
@@ -50,6 +52,7 @@ def user_get(org_id, user_id=None, page=None):
             return utils.jsonify({
                 'page': page,
                 'page_total': org.page_total,
+                'server_count': server_count,
                 'users': users,
             })
         elif search is not None:
@@ -59,6 +62,7 @@ def user_get(org_id, user_id=None, page=None):
                 'search_limit': limit,
                 'search_count': org.get_last_prefix_count(),
                 'search_time':  round((time.time() - flask.g.start), 4),
+                'server_count': server_count,
                 'users': users,
             })
         else:
