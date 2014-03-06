@@ -68,7 +68,6 @@ define([
       var i;
       var newIndex;
       var modelView;
-      var modified;
       var currentModels = [];
       var newModels = [];
       // Num of views currently visible

@@ -99,7 +99,7 @@ define([
           'status_tooltip': this._getStatusTooltip(),
           'download_tooltip': this._getDownloadTooltip(),
           'key_link': this._getKeyLink(),
-          'key_link_tooltip': this._getKeyLinkTooltip(),
+          'key_link_tooltip': this._getKeyLinkTooltip()
         }, this.model.toJSON())));
       this.$('[data-toggle="tooltip"]').tooltip();
       return this;
