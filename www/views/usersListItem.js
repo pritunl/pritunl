@@ -73,11 +73,11 @@ define([
       }
     },
     _getKeyLink: function() {
-      if (window.demo) {
-        return '../key/demo.tar';
-      }
-      else if (!this.model.get('has_key')) {
+      if (!this.model.get('has_key')) {
         return '';
+      }
+      else if (window.demo) {
+        return '../key/demo.tar';
       }
       else {
         return '/key/' + this.model.get('organization') + '/' +
