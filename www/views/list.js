@@ -68,7 +68,6 @@ define([
       var i;
       var newIndex;
       var modelView;
-      var attr;
       var modified;
       var currentModels = [];
       var newModels = [];
@@ -240,18 +239,8 @@ define([
 
       // Check for modified data
       for (i = 0; i < collection.models.length; i++) {
-        modified = false;
-
         // Check each attr for modified data
-        for (attr in collection.models[i].attributes) {
-          if (collection.models[i].get(attr) !==
-              this.views[i].model.get(attr)) {
-            modified = true;
-            break;
-          }
-        }
-
-        if (!modified) {
+        if (!this.isItemChanged(this.views[i].model, collection.models[i])) {
           continue;
         }
 
@@ -331,6 +320,15 @@ define([
     buildItem: function() {
     },
     resetItems: function() {
+    },
+    isItemChanged: function(model, newModel) {
+      var attr;
+      for (attr in newModel.attributes) {
+        if (model.get(attr) !== newModel.get(attr)) {
+          return true;
+        }
+      }
+      return false;
     }
   });
 
