@@ -52,7 +52,7 @@ define([
 
       return window.formatSize(bytesSent);
     },
-    _getTooltipText: function() {
+    _getStatusTooltip: function() {
       var bytesSent = this.getBytesSent();
       var bytesReceived = this.getBytesReceived();
       var virtAddresses = this.getVirtAddresses();
@@ -64,9 +64,43 @@ define([
       tooltipText += '\nData Received: ' + bytesReceived;
       return tooltipText;
     },
+    _getDownloadTooltip: function() {
+      if (this.model.get('has_key')) {
+        return 'Click to download key';
+      }
+      else {
+        return 'Organization must be attached to server to download key';
+      }
+    },
+    _getKeyLink: function() {
+      if (window.demo) {
+        return '../key/demo.tar';
+      }
+      else if (!this.model.get('has_key')) {
+        return '';
+      }
+      else {
+        return '/key/' + this.model.get('organization') + '/' +
+          this.model.get('id') + '.tar';
+      }
+    },
+    _getKeyLinkTooltip: function() {
+      if (this.model.get('has_key')) {
+        return 'Click to generate temporary key url that is downloadable ' +
+          'without authenticating';
+      }
+      else {
+        return 'Organization must be attached to server to generate key link';
+      }
+    },
     render: function() {
       this.$el.html(this.template(_.extend(
-        {'tooltip_text': this._getTooltipText()}, this.model.toJSON())));
+        {
+          'status_tooltip': this._getStatusTooltip(),
+          'download_tooltip': this._getDownloadTooltip(),
+          'key_link': this._getKeyLink(),
+          'key_link_tooltip': this._getKeyLinkTooltip(),
+        }, this.model.toJSON())));
       this.$('[data-toggle="tooltip"]').tooltip();
       return this;
     },
@@ -86,11 +120,24 @@ define([
           this.$('.status-text').text('Offline');
         }
       }
+
       this.$('.status-container').tooltip('destroy');
-      this.$('.status-container').attr('title', this._getTooltipText());
+      this.$('.status-container').attr('title', this._getStatusTooltip());
       this.$('.status-container').attr('data-original-title',
-        this._getTooltipText());
+        this._getStatusTooltip());
       this.$('.status-container').tooltip();
+
+      this.$('.download-key').tooltip('destroy');
+      this.$('.download-key').attr('title', this._getDownloadTooltip());
+      this.$('.download-key').attr('data-original-title',
+        this._getDownloadTooltip());
+      this.$('.download-key').tooltip();
+
+      this.$('.get-key-link').tooltip('destroy');
+      this.$('.get-key-link').attr('title', this._getKeyLinkTooltip());
+      this.$('.get-key-link').attr('data-original-title',
+        this._getKeyLinkTooltip());
+      this.$('.get-key-link').tooltip();
 
       if (this.model.get('otp_auth')) {
         this.$('.right-container').removeClass('no-otp-auth');
@@ -125,6 +172,9 @@ define([
       this.addView(modal);
     },
     onGetKeyLink: function() {
+      if (!this.model.get('has_key')) {
+        return;
+      }
       var modal = new ModalKeyLinkView({
         model: new KeyModel({
           'organization': this.model.get('organization'),

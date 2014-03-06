@@ -16,6 +16,8 @@ define([
       return '/user/' + this.org;
     },
     parse: function(response) {
+      var hasKey = response.server_count ? true : false;
+
       if (response.page !== undefined) {
         this.setPage(response.page);
         this.setPageTotal(response.page_total);
@@ -26,6 +28,11 @@ define([
         this.setSearchCount(response.search_count);
         this.setSearchLimit(response.search_limit);
       }
+
+      for (var i = 0; i < response.users.length; i++) {
+        response.users[i].has_key = hasKey;
+      }
+
       return response.users;
     },
     setPage: function(page) {
