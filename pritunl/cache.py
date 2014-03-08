@@ -52,7 +52,7 @@ class Cache:
             except Queue.Empty:
                 continue
             # Attempt to get more db sets form queue to reduce export calls
-            for i in xrange(30):
+            for i in xrange(50):
                 try:
                     self._set_queue.get(timeout=0.01)
                 except Queue.Empty:
@@ -69,8 +69,8 @@ class Cache:
         ttl = self._data[key]['ttl']
         if ttl and int(time.time() * 1000) > ttl:
             self.remove(key)
-            return True
-        return False
+            return False
+        return True
 
     def _check_ttl_timer(self, key):
         self._timers.pop(key, None)
@@ -82,7 +82,7 @@ class Cache:
         threading.Thread(target=self._export_thread).start()
 
     def get(self, key):
-        if self._check_ttl(key) is False:
+        if self._check_ttl(key):
             return self._data[key]['val']
 
     def set(self, key, value):
@@ -115,13 +115,13 @@ class Cache:
         self._put_queue()
 
     def rename(self, key, new_key):
-        if self._check_ttl(key) is False:
+        if self._check_ttl(key):
             self._data[new_key]['val'] = self._data[key]['val']
         self.remove(key)
         self._put_queue()
 
     def exists(self, key):
-        if self._check_ttl(key) is False:
+        if self._check_ttl(key):
             return True
         return False
 
@@ -157,7 +157,7 @@ class Cache:
         self._put_queue()
 
     def set_exists(self, key, element):
-        if self._check_ttl(key) is False:
+        if self._check_ttl(key):
             try:
                 return element in self._data[key]['val']
             except (TypeError, AttributeError):
@@ -165,7 +165,7 @@ class Cache:
         return False
 
     def set_elements(self, key):
-        if self._check_ttl(key) is False:
+        if self._check_ttl(key):
             try:
                 return self._data[key]['val'].copy()
             except AttributeError:
@@ -196,7 +196,7 @@ class Cache:
 
     def list_lpop(self, key):
         data = None
-        if self._check_ttl(key) is False:
+        if self._check_ttl(key):
             try:
                 data = self._data[key]['val'].popleft()
             except (AttributeError, IndexError):
@@ -207,7 +207,7 @@ class Cache:
 
     def list_rpop(self, key):
         data = None
-        if self._check_ttl(key) is False:
+        if self._check_ttl(key):
             try:
                 data = self._data[key]['val'].pop()
             except (AttributeError, IndexError):
@@ -217,14 +217,14 @@ class Cache:
             return data
 
     def list_index(self, key, index):
-        if self._check_ttl(key) is False:
+        if self._check_ttl(key):
             try:
                 return self._data[key]['val'][index]
             except (AttributeError, IndexError):
                 pass
 
     def list_elements(self, key):
-        if self._check_ttl(key) is False:
+        if self._check_ttl(key):
             try:
                 return list(self._data[key]['val'])
             except TypeError:
@@ -232,7 +232,7 @@ class Cache:
         return []
 
     def list_iter(self, key):
-        if self._check_ttl(key) is False:
+        if self._check_ttl(key):
             try:
                 for value in copy.copy(self._data[key]['val']):
                     yield value
@@ -240,7 +240,7 @@ class Cache:
                 pass
 
     def list_iter_range(self, key, start, stop=None):
-        if self._check_ttl(key) is False:
+        if self._check_ttl(key):
             try:
                 for value in itertools.islice(
                         copy.copy(self._data[key]['val']), start, stop):
@@ -267,7 +267,7 @@ class Cache:
         self._put_queue()
 
     def list_length(self, key):
-        if self._check_ttl(key) is False:
+        if self._check_ttl(key):
             try:
                 return len(self._data[key]['val'])
             except TypeError:
@@ -275,7 +275,7 @@ class Cache:
         return 0
 
     def dict_get(self, key, field):
-        if self._check_ttl(key) is False:
+        if self._check_ttl(key):
             try:
                 return self._data[key]['val'][field]
             except (TypeError, KeyError):
@@ -300,7 +300,7 @@ class Cache:
         self._put_queue()
 
     def dict_keys(self, key):
-        if self._check_ttl(key) is False:
+        if self._check_ttl(key):
             try:
                 return set(self._data[key]['val'].keys())
             except AttributeError:
@@ -308,7 +308,7 @@ class Cache:
         return set()
 
     def dict_get_all(self, key):
-        if self._check_ttl(key) is False:
+        if self._check_ttl(key):
             try:
                 return self._data[key]['val'].copy()
             except AttributeError:
