@@ -5,6 +5,7 @@ Version 0.10.8
 --------------
 
 Fix openvpn authentication issue
+Disable download key when no servers are attached to a user
 
 Version 0.10.7 2014-02-28
 -------------------------
