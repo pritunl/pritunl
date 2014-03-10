@@ -74,7 +74,6 @@ def user_post(org_id):
     org = Organization.get_org(id=org_id)
     name = utils.filter_str(flask.request.json['name'])
     user = org.new_user(CERT_CLIENT, name)
-
     return utils.jsonify(user.dict())
 
 @app_server.app.route('/user/<org_id>/<user_id>', methods=['PUT'])
@@ -84,7 +83,6 @@ def user_put(org_id, user_id):
     user = org.get_user(user_id)
     name = utils.filter_str(flask.request.json['name'])
     user.rename(name)
-
     return utils.jsonify(user.dict())
 
 @app_server.app.route('/user/<org_id>/<user_id>', methods=['DELETE'])
