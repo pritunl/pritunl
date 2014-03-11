@@ -13,6 +13,7 @@ import json
 import utils
 import threading
 import time
+import websocket
 
 logger = logging.getLogger(APP_NAME)
 
@@ -49,9 +50,9 @@ class NodeServer(Server):
             json_data=json_data,
         )
 
-    def _get_node_url(self):
-        return 'https://%s:%s/server/%s' % (
-            self.node_host, self.node_port, self.id)
+    def _get_node_url(self, scheme='https'):
+        return '%s://%s:%s/server/%s' % (
+            scheme, self.node_host, self.node_port, self.id)
 
     def _sub_thread(self):
         for message in cache_db.subscribe(self.get_cache_key()):
@@ -63,62 +64,60 @@ class NodeServer(Server):
             except OSError:
                 pass
 
-    def _com_thread(self):
-        trigger_event = False
+    def _com_on_message(self, ws, message):
         responses = []
-
-        try:
-            while not self._interrupt and not app_server.interrupt:
-                try:
-                    response = self._request('put', endpoint='/com',
-                        timeout=HTTP_COM_REQUEST_TIMEOUT, json_data=responses)
-                    if response.status_code == 200:
-                        pass
-                    elif response.status_code == 404:
-                        trigger_event = True
-                        break
-                    elif response.status_code == 410:
-                        break
-                    else:
-                        logger.exception('Error with node server ' + \
-                            'connection occurred. %r' % {
-                                'server_id': self.id,
-                                'status_code': response.status_code,
-                                'reason': response.reason,
-                            })
-                        LogEntry(message='Error with node server ' + \
-                            'connection occurred "%s".' % self.name)
-                        trigger_event = True
-                        break
-                    calls = response.json()
-                    responses = []
-
-                    for call in calls:
-                        try:
-                            responses.append({
-                                'id': call['id'],
-                                'response': getattr(self, call['command'])(
-                                    *call['args']),
-                            })
-                        except:
-                            logger.exception('Node server com thread call ' + \
-                                'failed. %s' % {
-                                    'server_id': self.id,
-                                    'call_id': call['id'],
-                                    'call_command': call['command'],
-                                    'call_args': call['args'],
-                                })
-                except httplib.HTTPException:
-                    logger.exception('Lost connection with node server. %r' % {
+        for call in json.loads(message):
+            try:
+                responses.append({
+                    'id': call['id'],
+                    'response': getattr(self, call['command'])(
+                        *call['args']),
+                })
+            except:
+                logger.exception('Node server com thread call ' + \
+                    'failed. %s' % {
                         'server_id': self.id,
+                        'call_id': call['id'],
+                        'call_command': call['command'],
+                        'call_args': call['args'],
                     })
-                    LogEntry(message='Lost connection with node ' + \
-                        'server "%s".' % self.name)
-        finally:
-            self.status = False
-            self.publish('stopped')
-            if trigger_event:
-                Event(type=SERVERS_UPDATED)
+        ws.send(json.dumps(responses))
+
+    def _com_on_error(self, ws, error):
+        if not isinstance(error, websocket.WebSocketException):
+            return
+        logger.exception('Error with node server ' + \
+            'connection occurred. %r' % {
+                'server_id': self.id,
+                'error': error.message,
+            })
+        LogEntry(message='Error with node server ' + \
+            'connection occurred "%s".' % self.name)
+        self.publish('trigger_event')
+
+    def _com_on_close(self, ws):
+        self.status = False
+        self.publish('stopped')
+        if ws.trigger_event:
+            Event(type=SERVERS_UPDATED)
+
+    def _com_thread(self):
+        ws = websocket.WebSocketApp('%s/com' % self._get_node_url('wss'),
+            header=['API-Key: %s' % self.node_key],
+            on_close=self._com_on_close, on_message=self._com_on_message,
+            on_error=self._com_on_error)
+        ws.trigger_event = True
+        threading.Thread(target=ws.run_forever).start()
+
+        for message in cache_db.subscribe(self.get_cache_key()):
+            try:
+                if message == 'stop':
+                    ws.trigger_event = False
+                    ws.close()
+                elif message == 'stopped':
+                    break
+            except OSError:
+                pass
 
     def tls_verify(self, org_id, user_id):
         org = self.get_org(org_id)
@@ -290,7 +289,6 @@ class NodeServer(Server):
         self._interrupt = False
         self.status = True
         threading.Thread(target=self._com_thread).start()
-        threading.Thread(target=self._sub_thread).start()
 
         if not silent:
             Event(type=SERVERS_UPDATED)
@@ -300,32 +298,18 @@ class NodeServer(Server):
         if not self.status:
             return
 
-        try:
-            response = self._request('delete')
-            if response.status_code != 200:
-                raise ServerStopError('Failed to stop node server', {
+        stopped = False
+        self.publish('stop')
+        for message in cache_db.subscribe(self.get_cache_key(),
+                SUB_RESPONSE_TIMEOUT):
+            if message == 'stopped':
+                stopped = True
+                break
+        if not stopped:
+            raise ServerStopError('Server thread failed to return ' + \
+                'stop event', {
                     'server_id': self.id,
-                    'status_code': response.status_code,
-                    'reason': response.reason,
                 })
-        except httplib.HTTPException:
-            logger.exception('Failed to delete stopped node server', {
-                'server_id': self.id,
-            })
-
-        if self.status:
-            stopped = False
-            self.publish('stop')
-            for message in cache_db.subscribe(self.get_cache_key(),
-                    HTTP_COM_REQUEST_TIMEOUT + 3):
-                if message == 'stopped':
-                    stopped = True
-                    break
-            if not stopped:
-                raise ServerStopError('Server thread failed to return ' + \
-                    'stop event', {
-                        'server_id': self.id,
-                    })
 
         if not silent:
             Event(type=SERVERS_UPDATED)
