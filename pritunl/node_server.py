@@ -94,7 +94,6 @@ class NodeServer(Server):
             })
         LogEntry(message='Error with node server ' + \
             'connection occurred "%s".' % self.name)
-        self.publish('trigger_event')
 
     def _com_on_close(self, ws):
         self.status = False
