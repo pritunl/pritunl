@@ -42,7 +42,7 @@ class NodeServer(Server):
     def _request(self, method, endpoint='', timeout=HTTP_REQUEST_TIMEOUT,
             json_data=None):
         return getattr(utils.request, method)(
-            self._get_node_url() + endpoint,
+            self._get_node_url(endpoint=endpoint),
             timeout=timeout,
             headers={
                 'API-Key': self.node_key,
@@ -50,9 +50,9 @@ class NodeServer(Server):
             json_data=json_data,
         )
 
-    def _get_node_url(self, scheme='https'):
-        return '%s://%s:%s/server/%s' % (
-            scheme, self.node_host, self.node_port, self.id)
+    def _get_node_url(self, scheme='https', endpoint=''):
+        return '%s://%s:%s/server/%s%s' % (
+            scheme, self.node_host, self.node_port, self.id, endpoint)
 
     def _sub_thread(self):
         for message in cache_db.subscribe(self.get_cache_key()):
@@ -102,7 +102,7 @@ class NodeServer(Server):
             Event(type=SERVERS_UPDATED)
 
     def _com_thread(self):
-        ws = websocket.WebSocketApp('%s/com' % self._get_node_url('wss'),
+        ws = websocket.WebSocketApp(self._get_node_url('wss', '/com'),
             header=['API-Key: %s' % self.node_key],
             on_close=self._com_on_close, on_message=self._com_on_message,
             on_error=self._com_on_error)
