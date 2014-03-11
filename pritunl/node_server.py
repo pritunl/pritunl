@@ -84,7 +84,8 @@ class NodeServer(Server):
         ws.send(json.dumps(responses))
 
     def _com_on_error(self, ws, error):
-        if not isinstance(error, websocket.WebSocketException):
+        if isinstance(error, websocket.WebSocketConnectionClosedException) or \
+                not isinstance(error, websocket.WebSocketException):
             return
         logger.exception('Error with node server ' + \
             'connection occurred. %r' % {
