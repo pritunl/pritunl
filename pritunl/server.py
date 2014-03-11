@@ -763,6 +763,7 @@ class Server(Config):
     def restart(self, silent=False):
         if not self.status:
             self.start()
+            return
         logger.debug('Restarting server. %r' % {
             'server_id': self.id,
         })
