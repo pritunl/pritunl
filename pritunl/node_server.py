@@ -54,16 +54,6 @@ class NodeServer(Server):
         return '%s://%s:%s/server/%s%s' % (
             scheme, self.node_host, self.node_port, self.id, endpoint)
 
-    def _sub_thread(self):
-        for message in cache_db.subscribe(self.get_cache_key()):
-            try:
-                if message == 'stop':
-                    self._interrupt = True
-                elif message == 'stopped':
-                    break
-            except OSError:
-                pass
-
     def _com_on_message(self, ws, message):
         responses = []
         for call in json.loads(message):
