@@ -94,8 +94,10 @@ class AppServer(Config):
                 logger.exception('Failed to get public ip address...')
 
     def _setup_public_ip(self):
-        threading.Thread(target=self.load_public_ip,
-            kwargs={'attempts': 5}).start()
+        thread = threading.Thread(target=self.load_public_ip,
+            kwargs={'attempts': 5})
+        thread.setDaemon(True)
+        thread.start()
 
     def _setup_app(self):
         self.app = flask.Flask(APP_NAME)

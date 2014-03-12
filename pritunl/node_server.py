@@ -122,8 +122,12 @@ class NodeServer(Server):
                 except OSError:
                     pass
 
-        threading.Thread(target=com_thread).start()
-        threading.Thread(target=sub_thread).start()
+        thread = threading.Thread(target=com_thread)
+        thread.setDaemon(True)
+        thread.start()
+        thread = threading.Thread(target=sub_thread)
+        thread.setDaemon(True)
+        thread.start()
 
     def tls_verify(self, org_id, user_id):
         org = self.get_org(org_id)
