@@ -95,29 +95,45 @@ class NodeServer(Server):
         LogEntry(message='Error with node server ' + \
             'connection occurred "%s".' % self.name)
 
-    def _com_on_close(self, ws):
-        self.status = False
-        self.publish('stopped')
-        if ws.trigger_event:
-            Event(type=SERVERS_UPDATED)
+    def _start_server_threads(self):
+        thread_data = {
+            'state': True,
+            'ws': None,
+        }
 
-    def _com_thread(self):
-        ws = websocket.WebSocketApp(self._get_node_url('wss', '/com'),
-            header=['API-Key: %s' % self.node_key],
-            on_close=self._com_on_close, on_message=self._com_on_message,
-            on_error=self._com_on_error)
-        ws.trigger_event = True
-        threading.Thread(target=ws.run_forever).start()
+        def com_thread():
+            ws = websocket.WebSocketApp(
+                self._get_node_url('wss', '/com'),
+                header=['API-Key: %s' % self.node_key],
+                on_message=self._com_on_message,
+                on_error=self._com_on_error,
+            )
+            thread_data['ws'] = ws
+            ws.run_forever(ping_interval=SOCKET_PING_INTERVAL,
+                timeout=SOCKET_TIMEOUT)
+            self.status = False
+            self.publish('stopped')
 
-        for message in cache_db.subscribe(self.get_cache_key()):
-            try:
-                if message == 'stop':
-                    ws.trigger_event = False
-                    ws.close()
-                elif message == 'stopped':
-                    break
-            except OSError:
-                pass
+            if thread_data['state']:
+                LogEntry(message='Node server stopped unexpectedly "%s".' % (
+                    self.name))
+                Event(type=SERVERS_UPDATED)
+
+        def sub_thread():
+            for message in cache_db.subscribe(self.get_cache_key()):
+                try:
+                    if message == 'stop':
+                        thread_data['state'] = False
+                        ws = thread_data.get('ws')
+                        if ws:
+                            ws.close()
+                    elif message == 'stopped':
+                        break
+                except OSError:
+                    pass
+
+        threading.Thread(target=com_thread).start()
+        threading.Thread(target=sub_thread).start()
 
     def tls_verify(self, org_id, user_id):
         org = self.get_org(org_id)
@@ -288,7 +304,7 @@ class NodeServer(Server):
         self.clear_output()
         self._interrupt = False
         self.status = True
-        threading.Thread(target=self._com_thread).start()
+        self._start_server_threads()
 
         if not silent:
             Event(type=SERVERS_UPDATED)
