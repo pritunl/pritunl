@@ -615,7 +615,7 @@ class WebSocket(object):
                     self._cont_data[1] += frame.data
                 else:
                     self._cont_data = [frame.opcode, frame.data]
-                
+
                 if frame.fin:
                     data = self._cont_data
                     self._cont_data = None
@@ -821,10 +821,11 @@ class WebSocketApp(object):
 
     def _send_ping(self, interval):
         while self.keep_running:
-            time.sleep(interval)
             self.sock.ping()
+            time.sleep(interval)
 
-    def run_forever(self, sockopt=None, sslopt=None, ping_interval=0):
+    def run_forever(self, sockopt=None, sslopt=None, ping_interval=0,
+                    timeout=None):
         """
         run event loop for WebSocket framework.
         This loop is infinite loop and is alive during websocket is available.
@@ -833,6 +834,8 @@ class WebSocketApp(object):
         sslopt: ssl socket optional dict.
         ping_interval: automatically send "ping" command every specified period(second)
             if set to 0, not send automatically.
+        timeout: socket timeout time. This value is integer.
+            if you set None for this value, it means "use default_timeout value"
         """
         if sockopt is None:
             sockopt = []
@@ -844,6 +847,7 @@ class WebSocketApp(object):
 
         try:
             self.sock = WebSocket(self.get_mask_key, sockopt=sockopt, sslopt=sslopt)
+            self.sock.settimeout(timeout if timeout is not None else default_timeout)
             self.sock.connect(self.url, header=self.header)
             self._callback(self.on_open)
 
