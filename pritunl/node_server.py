@@ -39,11 +39,10 @@ class NodeServer(Server):
         with open(os.path.join(self.path, NODE_SERVER), 'w'):
             pass
 
-    def _request(self, method, endpoint='', timeout=HTTP_REQUEST_TIMEOUT,
-            json_data=None):
+    def _request(self, method, endpoint='', json_data=None):
         return getattr(utils.request, method)(
             self._get_node_url(endpoint=endpoint),
-            timeout=timeout,
+            timeout=HTTP_REQUEST_TIMEOUT,
             headers={
                 'API-Key': self.node_key,
             },
