@@ -17,6 +17,7 @@ import struct
 import hmac
 import time
 import threading
+import json
 
 logger = logging.getLogger(APP_NAME)
 
@@ -236,6 +237,14 @@ class User(Config):
 
         return True
 
+    def _get_key_info_str(self, user_name, org_name, server_name):
+        return json.dumps({
+            'version': CLIENT_CONF_VER,
+            'user': user_name,
+            'organization': org_name,
+            'server': server_name,
+        })
+
     def _build_key_archive(self):
         user_key_arcname = '%s_%s.key' % (self.org.name, self.name)
         user_cert_arcname = '%s_%s.crt' % (self.org.name, self.name)
@@ -255,6 +264,8 @@ class User(Config):
                 tar_file.add(server.ca_cert_path, arcname=server_cert_arcname)
 
                 client_conf = OVPN_CLIENT_CONF % (
+                    self._get_key_info_str(
+                        self.name, self.org.name, server.name),
                     server.protocol,
                     server.public_address, server.port,
                     server_cert_arcname,
@@ -285,6 +296,8 @@ class User(Config):
                 server.generate_ca_cert()
 
                 client_conf = OVPN_INLINE_CLIENT_CONF % (
+                    self._get_key_info_str(
+                        self.name, self.org.name, server.name),
                     server.protocol,
                     server.public_address, server.port,
                 )
@@ -327,6 +340,7 @@ class User(Config):
         server.generate_ca_cert()
 
         client_conf = OVPN_INLINE_CLIENT_CONF % (
+            self._get_key_info_str(self.name, self.org.name, server.name),
             server.protocol,
             server.public_address, server.port,
         )

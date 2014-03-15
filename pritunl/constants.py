@@ -46,6 +46,7 @@ SOCKET_TIMEOUT = 10
 SERVER_REQUEST_QUEUE_SIZE = 512
 USER_PAGE_COUNT = 10
 NODE_SERVER_VER = 1
+CLIENT_CONF_VER = 1
 STATIC_CACHE_TIME = 43200
 LOCALHOST_IP_TTL = 30
 IP_REGEX = r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
@@ -283,7 +284,8 @@ verb %s
 mute %s
 """
 
-OVPN_CLIENT_CONF = """client
+OVPN_CLIENT_CONF = """# %s
+client
 dev tun
 proto %s
 remote %s %s
@@ -296,7 +298,8 @@ verb 2
 mute 3
 """
 
-OVPN_INLINE_CLIENT_CONF = """client
+OVPN_INLINE_CLIENT_CONF = """# %s
+client
 dev tun
 proto %s
 remote %s %s
