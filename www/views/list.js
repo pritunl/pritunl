@@ -108,20 +108,20 @@ define([
         if (this.views[i].visible) {
           curVisible += 1;
           if (newModels.indexOf(this.views[i].model.get('id')) === -1 ||
-              (this.views[i].model.hidden && !this.showHidden)) {
+              (this.views[i].model.get('hidden') && !this.showHidden)) {
             delTotal += 1;
           }
         }
       }
 
       for (i = 0; i < collection.models.length; i++) {
-        if (!collection.models[i].hidden || this.showHidden) {
+        if (!collection.models[i].get('hidden') || this.showHidden) {
           newVisible += 1;
         }
         if (currentModels.indexOf(collection.models[i].get('id')) !== -1) {
           continue;
         }
-        if (!collection.models[i].hidden || this.showHidden) {
+        if (!collection.models[i].get('hidden') || this.showHidden) {
           addTotal += 1;
         }
       }
@@ -189,7 +189,7 @@ define([
           this.views[i - 1].$el.after(modelView.el);
         }
 
-        if (!modelView.model.hidden || this.showHidden) {
+        if (!modelView.model.get('hidden') || this.showHidden) {
           if (!slide || addSlideCount >= addSlide || passAddCount < passAdd) {
             this._showItem(modelView, false);
             passAddCount += 1;
@@ -250,7 +250,7 @@ define([
 
       var views = [];
       for (i = 0; i < this.views.length; i++) {
-        if (this.views[i].model.hidden) {
+        if (this.views[i].model.get('hidden')) {
           if (this.showHidden) {
             if (addSlideCount >= addSlide || passAddCount < passAdd) {
               this._showItem(this.views[i], false);

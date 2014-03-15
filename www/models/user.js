@@ -31,7 +31,7 @@ define([
       }, options));
     },
     parse: function(response) {
-      this.hidden = response.type !== 'client';
+      this.set({'hidden': response.type !== 'client'});
       return response;
     }
   });
