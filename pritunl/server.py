@@ -656,6 +656,9 @@ class Server(Config):
             self._interrupt = True
             status_thread.join()
 
+            cache_db.remove(self.get_cache_key('clients'))
+            cache_db.dict_remove(self.get_cache_key(), 'clients')
+
             self.status = False
             self.publish('stopped')
             if process.returncode != 0:
