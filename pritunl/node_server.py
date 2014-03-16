@@ -122,10 +122,10 @@ class NodeServer(Server):
                     pass
 
         thread = threading.Thread(target=com_thread)
-        thread.setDaemon(True)
+        thread.daemon = True
         thread.start()
         thread = threading.Thread(target=sub_thread)
-        thread.setDaemon(True)
+        thread.daemon = True
         thread.start()
 
     def tls_verify(self, org_id, user_id):

@@ -853,7 +853,7 @@ class WebSocketApp(object):
 
             if ping_interval:
                 thread = threading.Thread(target=self._send_ping, args=(ping_interval,))
-                thread.setDaemon(True)
+                thread.daemon = True
                 thread.start()
 
             while self.keep_running:
