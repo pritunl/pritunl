@@ -417,6 +417,13 @@ define([
     var id;
     var users = [];
     var start = (new Date).getTime();
+    var serverCount = 0;
+
+    for (id in demoData.servers) {
+      if (demoData.servers[id].orgs.indexOf(orgId) !== -1) {
+        serverCount += 1;
+      }
+    }
 
     for (id in demoData.users[orgId]) {
       if (request.data.search &&
@@ -436,6 +443,7 @@ define([
           search_limit: request.data.limit,
           search_count: users.length,
           search_time: ((new Date).getTime() - start + 10) / 1000,
+          server_count: serverCount,
           users: users
       });
     }
@@ -443,6 +451,7 @@ define([
       request.response({
           page: 0,
           page_total: 0,
+          server_count: serverCount,
           users: users
       });
     }
