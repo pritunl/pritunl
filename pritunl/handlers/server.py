@@ -96,35 +96,36 @@ def server_put_post(server_id=None):
         network_def = True
         network = flask.request.json['network']
 
-        network_split = network.split('/')
-        if len(network_split) != 2:
-            return _network_invalid()
+        if network not in SAFE_PUB_SUBNETS:
+            network_split = network.split('/')
+            if len(network_split) != 2:
+                return _network_invalid()
 
-        address = network_split[0].split('.')
-        if len(address) != 4:
-            return _network_invalid()
-        for i, value in enumerate(address):
+            address = network_split[0].split('.')
+            if len(address) != 4:
+                return _network_invalid()
+            for i, value in enumerate(address):
+                try:
+                    address[i] = int(value)
+                except ValueError:
+                    return _network_invalid()
+            if address[0] != 10:
+                return _network_invalid()
+
+            if address[1] > 255 or address[1] < 0 or \
+                    address[2] > 255 or address[2] < 0:
+                return _network_invalid()
+
+            if address[3] != 0:
+                return _network_invalid()
+
             try:
-                address[i] = int(value)
+                subnet = int(network_split[1])
             except ValueError:
                 return _network_invalid()
-        if address[0] != 10:
-            return _network_invalid()
 
-        if address[1] > 255 or address[1] < 0 or \
-                address[2] > 255 or address[2] < 0:
-            return _network_invalid()
-
-        if address[3] != 0:
-            return _network_invalid()
-
-        try:
-            subnet = int(network_split[1])
-        except ValueError:
-            return _network_invalid()
-
-        if subnet < 8 or subnet > 24:
-            return _network_invalid()
+            if subnet < 8 or subnet > 24:
+                return _network_invalid()
 
     interface = None
     interface_def = False

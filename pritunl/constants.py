@@ -50,6 +50,7 @@ CLIENT_CONF_VER = 1
 STATIC_CACHE_TIME = 43200
 LOCALHOST_IP_TTL = 30
 IP_REGEX = r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
+SAFE_PUB_SUBNETS = {'50.203.224.0/24'}
 
 INFO = 'info'
 WARNING = 'warning'
