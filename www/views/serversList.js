@@ -52,10 +52,23 @@ define([
       this.$('.servers-add-server').attr('disabled', 'disabled');
       this.statusModel.fetch({
         success: function() {
+          var i;
+          var usedNetworks = [];
+          var usedPorts = [];
+          var usedInterfaces = [];
+          for (i = 0; i < this.collection.models.length; i++) {
+            usedNetworks.push(this.collection.models[i].get('network'));
+            usedPorts.push(this.collection.models[i].get('port'));
+            usedInterfaces.push(this.collection.models[i].get('interface'));
+          }
+
           var modal = new ModalAddServerView({
             type: type,
             publicIp: this.statusModel.get('public_ip'),
-            localNetworks: this.statusModel.get('local_networks')
+            localNetworks: this.statusModel.get('local_networks'),
+            usedNetworks: usedNetworks,
+            usedPorts: usedPorts,
+            usedInterfaces: usedInterfaces
           });
           this.listenToOnce(modal, 'applied', function() {
             var alertView = new AlertView({
