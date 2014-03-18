@@ -253,7 +253,7 @@ client-connect %s
 client-disconnect %s
 dh %s
 server %s
-ifconfig-pool-persist %s
+ifconfig-pool-persist %s 604800
 %s
 max-clients 1024
 keepalive 10 30
@@ -272,7 +272,7 @@ tls-verify %s
 client-connect %s
 client-disconnect %s
 server %s
-ifconfig-pool-persist %s
+ifconfig-pool-persist %s 604800
 %s
 max-clients 1024
 keepalive 10 30
