@@ -118,7 +118,7 @@ class AppServer(Config):
                 self.server_state = data.get('server', OK)
             except:
                 logger.exception('Failed to check notifications...')
-            time.sleep(600)
+            time.sleep(NOTIFICATION_CHECK_RATE)
 
     def _setup_public_ip(self):
         thread = threading.Thread(target=self.load_public_ip,
