@@ -255,7 +255,8 @@ class AppServer(Config):
             if self.password:
                 from cache import persist_db
                 logger.info('Upgrading config to v0.10.6...')
-                salt = base64.b64encode(PASSWORD_SALT_V0)
+                salt = base64.b64encode(
+                    '2511cebca93d028393735637bbc8029207731fcf')
                 password = base64.b64encode(self.password.decode('hex'))
                 persist_db.dict_set('auth', 'password',
                     '0$%s$%s' % (salt, password))
