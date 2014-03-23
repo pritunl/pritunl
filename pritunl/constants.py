@@ -11,6 +11,9 @@ START = 'start'
 STOP = 'stop'
 RESTART = 'restart'
 
+OK = 'ok'
+DISABLED = 'disabled'
+
 NAME_SAFE_CHARS = {'-', '=', '_', '@', '.', ':', '/'}
 
 KEY_LINK_TIMEOUT = 86400
@@ -30,6 +33,7 @@ DEFAULT_KEY_BITS = 4096
 DEFAULT_DH_PARAM_BITS = 1536
 DEFAULT_OTP_SECRET_LEN = 16
 DEFAULT_PUBLIC_IP_SERVER = 'http://ip.pritunl.com/json'
+DEFAULT_NOTIFICATION_SERVER = 'http://pritunl.com/notifications'
 ENV_PREFIX = APP_NAME
 LOG_LIMIT = 100
 EVENT_TTL = 60
