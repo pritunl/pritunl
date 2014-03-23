@@ -21,15 +21,18 @@ logger = None
 class AppServer(Config):
     # deprecated = password, dh_param_bits
     bool_options = {'debug', 'log_debug', 'auto_start_servers',
-        'get_public_ip', 'inline_certs', 'ssl', 'static_cache'}
+        'get_public_ip', 'get_notifications', 'inline_certs', 'ssl',
+        'static_cache'}
     int_options = {'port', 'session_timeout', 'key_bits', 'dh_param_bits'}
     path_options = {'log_path', 'db_path', 'www_path', 'data_path',
         'server_cert_path', 'server_key_path'}
-    str_options = {'bind_addr', 'password', 'public_ip_server'}
+    str_options = {'bind_addr', 'password', 'public_ip_server',
+        'notification_server'}
     default_options = {
         'auto_start_servers': True,
         'get_public_ip': True,
         'inline_certs': True,
+        'get_notifications': True,
         'ssl': True,
         'static_cache': True,
         'bind_addr': DEFAULT_BIND_ADDR,
@@ -41,6 +44,7 @@ class AppServer(Config):
         'www_path': DEFAULT_WWW_PATH,
         'data_path': DEFAULT_DATA_PATH,
         'public_ip_server': DEFAULT_PUBLIC_IP_SERVER,
+        'notification_server': DEFAULT_NOTIFICATION_SERVER,
     }
     read_env = True
 
@@ -50,6 +54,10 @@ class AppServer(Config):
         self.interrupt = False
         self.public_ip = None
         self.conf_path = DEFAULT_CONF_PATH
+        self.update = False
+        self.www_state = DISABLED
+        self.vpn_state = OK
+        self.notification = 'The web interface has been remotely disabled due to a vulnerability discovered. Please update to the latest version to fix the vulnerability and enable access to the web interface.'
 
     def __getattr__(self, name):
         if name == 'web_protocol':
@@ -93,11 +101,35 @@ class AppServer(Config):
             except:
                 logger.exception('Failed to get public ip address...')
 
+    def _check_notifications(self):
+        logger.debug('Checking notifications...')
+        while True:
+            try:
+                request = urllib2.Request(self.notification_server + \
+                    '/%s.json' % self._get_version())
+                response = urllib2.urlopen(request, timeout=15)
+                data = json.load(response)
+
+                self.update = data.get('update', False)
+                self.notification = data.get('message', '')
+                self.www_state = data.get('www', OK)
+                self.vpn_state = data.get('vpn', OK)
+                self.server_state = data.get('server', OK)
+            except:
+                logger.exception('Failed to check notifications...')
+            time.sleep(600)
+
     def _setup_public_ip(self):
         thread = threading.Thread(target=self.load_public_ip,
             kwargs={'attempts': 5})
         thread.daemon = True
         thread.start()
+
+    def _setup_notifications(self):
+        if self.get_notifications:
+            thread = threading.Thread(target=self._check_notifications)
+            thread.daemon = True
+            thread.start()
 
     def _setup_app(self):
         self.app = flask.Flask(APP_NAME)
@@ -254,6 +286,7 @@ class AppServer(Config):
         self._setup_conf()
         self._setup_log()
         self._setup_public_ip()
+        self._setup_notifications()
         self._upgrade_db()
         self._setup_db()
         self._setup_handlers()
