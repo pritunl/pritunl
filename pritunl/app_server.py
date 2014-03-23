@@ -55,9 +55,10 @@ class AppServer(Config):
         self.public_ip = None
         self.conf_path = DEFAULT_CONF_PATH
         self.update = False
-        self.www_state = DISABLED
+        self.notification = ''
+        self.www_state = OK
         self.vpn_state = OK
-        self.notification = 'The web interface has been remotely disabled due to a vulnerability discovered. Please update to the latest version to fix the vulnerability and enable access to the web interface.'
+        self.server_state = OK
 
     def __getattr__(self, name):
         if name == 'web_protocol':
