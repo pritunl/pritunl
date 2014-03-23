@@ -1,8 +1,8 @@
 Pritunl Changelog
 =================
 
-Version 0.10.8
---------------
+Version 0.10.8 2014-03-23
+-------------------------
 
 Fix openvpn authentication issue
 Disable download key when no servers are attached to a user
