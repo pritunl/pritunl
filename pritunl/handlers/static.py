@@ -14,12 +14,10 @@ def root_static_get():
         cache = False
     else:
         cache = True
-    file_path = os.path.join(app_server.www_path, file_name)
-    static_file = StaticFile(file_path, cache=cache)
+    static_file = StaticFile(app_server.www_path, file_name, cache=cache)
     return static_file.get_response()
 
 @app_server.app.route('/s/<path:file_path>', methods=['GET'])
 def static_get(file_path):
-    file_path = os.path.join(app_server.www_path, file_path)
-    static_file = StaticFile(file_path, cache=True)
+    static_file = StaticFile(app_server.www_path, file_path, cache=True)
     return static_file.get_response()

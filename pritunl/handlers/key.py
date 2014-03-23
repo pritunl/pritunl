@@ -118,8 +118,8 @@ def user_linked_key_page_get(view_id):
     org = Organization.get_org(id=org_id)
     user = org.get_user(user_id)
 
-    key_page = StaticFile(os.path.join(
-        app_server.www_path, KEY_INDEX_NAME), cache=False).data
+    key_page = StaticFile(app_server.www_path, KEY_INDEX_NAME,
+        cache=False).data
     key_page = key_page.replace('<%= user_name %>', '%s - %s' % (
         org.name, user.name))
     key_page = key_page.replace('<%= user_key_url %>', '/key/%s.tar' % (

@@ -11,7 +11,10 @@ import mimetypes
 import flask
 
 class StaticFile:
-    def __init__(self, path, cache=True):
+    def __init__(self, root, path, cache=True):
+        path = os.path.normpath(os.path.join(root, path))
+        if os.path.commonprefix([root, path]) != root:
+            raise ValueError('Static path is not a prefix of root path')
         self.path = path
         self.cache = cache
         self.data = None
