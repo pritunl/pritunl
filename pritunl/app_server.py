@@ -58,7 +58,6 @@ class AppServer(Config):
         self.notification = ''
         self.www_state = OK
         self.vpn_state = OK
-        self.server_state = OK
 
     def __getattr__(self, name):
         if name == 'web_protocol':
@@ -103,19 +102,18 @@ class AppServer(Config):
                 logger.exception('Failed to get public ip address...')
 
     def _check_notifications(self):
-        logger.debug('Checking notifications...')
         while True:
+            logger.debug('Checking notifications...')
             try:
                 request = urllib2.Request(self.notification_server + \
                     '/%s.json' % self._get_version())
-                response = urllib2.urlopen(request, timeout=15)
+                response = urllib2.urlopen(request, timeout=60)
                 data = json.load(response)
 
                 self.update = data.get('update', False)
                 self.notification = data.get('message', '')
                 self.www_state = data.get('www', OK)
                 self.vpn_state = data.get('vpn', OK)
-                self.server_state = data.get('server', OK)
             except:
                 logger.exception('Failed to check notifications...')
             time.sleep(NOTIFICATION_CHECK_RATE)
