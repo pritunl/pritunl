@@ -1,4 +1,8 @@
-PKGNAME=pritunl
+pre_remove() {
+    systemctl stop pritunl || true
+    systemctl disable pritunl || true
+}
+
 post_remove() {
     rm -rf /var/lib/pritunl
 }
