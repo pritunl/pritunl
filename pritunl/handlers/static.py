@@ -1,4 +1,5 @@
 from pritunl.constants import *
+from pritunl.exceptions import *
 from pritunl.static_file import StaticFile
 from pritunl import app_server
 import os
@@ -19,5 +20,8 @@ def root_static_get():
 
 @app_server.app.route('/s/<path:file_path>', methods=['GET'])
 def static_get(file_path):
-    static_file = StaticFile(app_server.www_path, file_path, cache=True)
+    try:
+        static_file = StaticFile(app_server.www_path, file_path, cache=True)
+    except InvalidStaticFile:
+        return flask.abort(404)
     return static_file.get_response()
