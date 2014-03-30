@@ -55,6 +55,19 @@ STATIC_CACHE_TIME = 43200
 LOCALHOST_IP_TTL = 30
 IP_REGEX = r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
 SAFE_PUB_SUBNETS = {'50.203.224.0/24'}
+STATIC_FILE_EXTENSIONS = {
+    '.css',
+    '.eot',
+    '.html',
+    '.ico',
+    '.js',
+    '.less',
+    '.png',
+    '.svg',
+    '.ttf',
+    '.txt',
+    '.woff',
+}
 
 INFO = 'info'
 WARNING = 'warning'

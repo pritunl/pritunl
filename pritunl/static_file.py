@@ -12,9 +12,12 @@ import flask
 
 class StaticFile:
     def __init__(self, root, path, cache=True):
+        path = '/'.join([x for x in path.split('/') if x and x != '..'])
         path = os.path.normpath(os.path.join(root, path))
         if os.path.commonprefix([root, path]) != root:
             raise ValueError('Static path is not a prefix of root path')
+        if os.path.splitext(path)[1] not in STATIC_FILE_EXTENSIONS:
+            raise ValueError('Static path file extension is invalid')
         self.path = path
         self.cache = cache
         self.data = None
