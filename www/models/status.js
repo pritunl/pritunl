@@ -13,7 +13,8 @@ define([
       'server_count': null,
       'server_version': null,
       'public_ip': null,
-      'local_networks': null
+      'local_networks': null,
+      'notification': null
     },
     url: function() {
       return '/status';
