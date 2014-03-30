@@ -105,7 +105,7 @@ class AppServer(Config):
             logger.debug('Checking notifications...')
             try:
                 request = urllib2.Request(self.notification_server + \
-                    '/%s.json' % self._get_version())
+                    '/%s' % self._get_version())
                 response = urllib2.urlopen(request, timeout=60)
                 data = json.load(response)
 
