@@ -21,9 +21,10 @@ define([
         },
         onRender: function(args) {
           $(this.graph.element).find('.detail .x_label').html(
-            args.formattedXValue.replace('#####', '') +
-            ' (' + args.detail[0].series.period  + ')<br>' +
-            args.detail[0].name + ': ' + args.detail[0].formattedYValue);
+            $('<span>').text(args.formattedXValue.replace('#####', '') +
+            ' (' + args.detail[0].series.period  + ')').html() + '<br>' +
+            $('<span>').text(args.detail[0].name + ': ' +
+              args.detail[0].formattedYValue).html());
         }
       });
       Rickshaw.Graph.HoverDetail.prototype.initialize.call(this, args);
