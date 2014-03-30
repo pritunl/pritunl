@@ -1098,6 +1098,7 @@ class Status(SessionTestCase):
         self.assertIn('server_version', data)
         self.assertIn('public_ip', data)
         self.assertIn('local_networks', data)
+        self.assertIn('notification', data)
 
 
 class User(SessionTestCase):
