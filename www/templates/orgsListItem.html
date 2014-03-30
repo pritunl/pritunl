@@ -1,12 +1,12 @@
 <div class="users-list-header">
   <div class="label label-success toggle-hidden no-select">Organization</div>
   <h2 class="users-list-title title">
-    <a class="org-title no-select" data-toggle="tooltip" title="Click to rename this organization"><%= name %></a>
-    <span class="org-id title">(<%= id %>)</span>
+    <a class="org-title no-select" data-toggle="tooltip" title="Click to rename this organization"><%- name %></a>
+    <span class="org-id title">(<%- id %>)</span>
   </h2>
   <button type="button" class="org-del btn btn-danger btn-sm">Delete Organization</button>
   <input type="text" class="org-search form-control" placeholder="Search for user">
   <div class="user-count label label-default no-select">
-    <%= user_count %> users
+    <%- user_count %> users
   </div>
 </div>

@@ -1,76 +1,76 @@
 <div class="split">
   <div class="left">
-    <div class="node-host form-group" <%= type === 'node_server' ? '' : 'style="display: none;"' %>>
+    <div class="node-host form-group" <%- type === 'node_server' ? '' : 'style="display: none;"' %>>
       <label>Node Host</label>
-      <input type="text" class="form-control" placeholder="Enter node host" data-toggle="tooltip" title="Node server host" value="<%= node_port ? node_host + ':' + node_port : node_host %>">
+      <input type="text" class="form-control" placeholder="Enter node host" data-toggle="tooltip" title="Node server host" value="<%- node_port ? node_host + ':' + node_port : node_host %>">
     </div>
     <div class="name form-group">
       <label>Name</label>
-      <input type="text" class="form-control" placeholder="Enter name" data-toggle="tooltip" title="Name of VPN server" value="<%= name %>">
+      <input type="text" class="form-control" placeholder="Enter name" data-toggle="tooltip" title="Name of VPN server" value="<%- name %>">
     </div>
     <div class="network form-group">
       <label>Network</label>
-      <input type="text" class="form-control" placeholder="Enter network address" data-toggle="tooltip" title="Network address for the private network that will be created for VPN clients" value="<%= network %>">
+      <input type="text" class="form-control" placeholder="Enter network address" data-toggle="tooltip" title="Network address for the private network that will be created for VPN clients" value="<%- network %>">
     </div>
     <div class="interface form-group">
       <label>Interface</label>
-      <input type="text" class="form-control" placeholder="Enter tunnel interface" data-toggle="tooltip" title="Tunnel interface that will be created for VPN connections" spellcheck="false" value="<%= interface %>">
+      <input type="text" class="form-control" placeholder="Enter tunnel interface" data-toggle="tooltip" title="Tunnel interface that will be created for VPN connections" spellcheck="false" value="<%- interface %>">
     </div>
     <div class="dh-param-bits form-group">
       <label>DH Param Bits</label>
       <select class="form-control" data-toggle="tooltip" title="Size of DH parameters">
-        <option value="1024" <%= (dh_param_bits === 1024) ? 'selected' : '' %>>1024</option>
-        <option value="1536" <%= (dh_param_bits === 1536) ? 'selected' : '' %>>1536</option>
-        <option value="2048" <%= (dh_param_bits === 2048) ? 'selected' : '' %>>2048</option>
-        <option value="3072" <%= (dh_param_bits === 3072) ? 'selected' : '' %>>3072</option>
-        <option value="4096" <%= (dh_param_bits === 4096) ? 'selected' : '' %>>4096</option>
+        <option value="1024" <%- (dh_param_bits === 1024) ? 'selected' : '' %>>1024</option>
+        <option value="1536" <%- (dh_param_bits === 1536) ? 'selected' : '' %>>1536</option>
+        <option value="2048" <%- (dh_param_bits === 2048) ? 'selected' : '' %>>2048</option>
+        <option value="3072" <%- (dh_param_bits === 3072) ? 'selected' : '' %>>3072</option>
+        <option value="4096" <%- (dh_param_bits === 4096) ? 'selected' : '' %>>4096</option>
       </select>
     </div>
     <div class="dns-servers form-group">
       <label>DNS Server</label>
-      <input type="text" class="form-control" placeholder="Enter DNS server" data-toggle="tooltip" title="Optional, DNS server for clients" value="<%= dns_servers.join(', ') %>">
+      <input type="text" class="form-control" placeholder="Enter DNS server" data-toggle="tooltip" title="Optional, DNS server for clients" value="<%- dns_servers.join(', ') %>">
     </div>
   </div>
   <div class="right">
-    <div class="node-key form-group" <%= type === 'node_server' ? '' : 'style="display: none;"' %>>
+    <div class="node-key form-group" <%- type === 'node_server' ? '' : 'style="display: none;"' %>>
       <label>Node API Key</label>
-      <input type="text" class="form-control" placeholder="Enter api key" data-toggle="tooltip" title="Node server API key" spellcheck="false" value="<%= node_key %>">
+      <input type="text" class="form-control" placeholder="Enter api key" data-toggle="tooltip" title="Node server API key" spellcheck="false" value="<%- node_key %>">
     </div>
     <div class="port form-group">
       <label>Port</label>
-      <input type="text" class="form-control" placeholder="Enter port number" data-toggle="tooltip" title="Port number for VPN connections" value="<%= port %>">
+      <input type="text" class="form-control" placeholder="Enter port number" data-toggle="tooltip" title="Port number for VPN connections" value="<%- port %>">
     </div>
     <div class="protocol form-group">
       <label>Protocol</label>
       <select class="form-control" data-toggle="tooltip" title="Protocol for VPN connections">
-        <option value="udp" <%= (protocol === 'udp') ? 'selected' : '' %>>udp</option>
-        <option value="tcp" <%= (protocol === 'tcp') ? 'selected' : '' %>>tcp</option>
+        <option value="udp" <%- (protocol === 'udp') ? 'selected' : '' %>>udp</option>
+        <option value="tcp" <%- (protocol === 'tcp') ? 'selected' : '' %>>tcp</option>
       </select>
     </div>
     <div class="public-address form-group">
       <label>Public IP</label>
-      <input type="text" class="form-control" placeholder="Enter public address" data-toggle="tooltip" title="Public IP address or domain name of the VPN server" value="<%= public_address %>">
+      <input type="text" class="form-control" placeholder="Enter public address" data-toggle="tooltip" title="Public IP address or domain name of the VPN server" value="<%- public_address %>">
     </div>
     <div class="server-mode form-group">
       <label>Server Mode</label>
       <select class="form-control" data-toggle="tooltip" title="Forward all of users internet traffic or only specified local networks">
-        <option value="all" <%= local_networks.length ? '' : 'selected' %>>All Traffic</option>
-        <option value="lan" <%= local_networks.length ? 'selected' : '' %>>Local Traffic Only</option>
+        <option value="all" <%- local_networks.length ? '' : 'selected' %>>All Traffic</option>
+        <option value="lan" <%- local_networks.length ? 'selected' : '' %>>Local Traffic Only</option>
       </select>
     </div>
-    <div class="local-network form-group" <%= (local_networks.length) ? '' : 'style="display: none;"' %>>
+    <div class="local-network form-group" <%- (local_networks.length) ? '' : 'style="display: none;"' %>>
       <label>Local Networks</label>
       <input type="text">
     </div>
     <div class="otp-auth-toggle toggle-form form-group">
       <label>Enable Two-Step Authentication</label>
-      <div class="selector <%= otp_auth ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Enable two-step authentication using Google Authenticator. Verification code is entered as the user password when connecting">
+      <div class="selector <%- otp_auth ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Enable two-step authentication using Google Authenticator. Verification code is entered as the user password when connecting">
         <span class="selector-inner glyphicon glyphicon-ok"></span>
       </div>
     </div>
     <div class="debug-toggle toggle-form form-group">
       <label>Enable Debugging Output</label>
-      <div class="selector <%= debug ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Show server debugging information in output">
+      <div class="selector <%- debug ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Show server debugging information in output">
         <span class="selector-inner glyphicon glyphicon-ok"></span>
       </div>
     </div>
