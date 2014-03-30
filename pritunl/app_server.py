@@ -54,7 +54,6 @@ class AppServer(Config):
         self.interrupt = False
         self.public_ip = None
         self.conf_path = DEFAULT_CONF_PATH
-        self.update = False
         self.notification = ''
         self.www_state = OK
         self.vpn_state = OK
@@ -110,7 +109,6 @@ class AppServer(Config):
                 response = urllib2.urlopen(request, timeout=60)
                 data = json.load(response)
 
-                self.update = data.get('update', False)
                 self.notification = data.get('message', '')
                 self.www_state = data.get('www', OK)
                 self.vpn_state = data.get('vpn', OK)
