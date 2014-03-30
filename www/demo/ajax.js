@@ -408,7 +408,8 @@ define([
         '10.20.1.0/24',
         '10.30.2.0/24',
         '192.168.1.0/24'
-      ]
+      ],
+      notification: ''
     });
   };
   routes['GET=/status'] = statusGet;
