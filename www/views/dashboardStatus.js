@@ -4,17 +4,30 @@ define([
   'backbone',
   'models/status',
   'views/alert',
+  'views/modalNotification',
   'text!templates/dashboardStatus.html'
-], function($, _, Backbone, StatusModel, AlertView, dashboardStatusTemplate) {
+], function($, _, Backbone, StatusModel, AlertView, ModalNotificationView,
+    dashboardStatusTemplate) {
   'use strict';
   var DashboardStatusView = Backbone.View.extend({
     className: 'status-container',
     template: _.template(dashboardStatusTemplate),
     initialize: function() {
+      this.notified = false;
       this.model = new StatusModel();
       this.listenTo(window.events, 'users_updated', this.update);
       this.listenTo(window.events, 'organizations_updated', this.update);
       this.listenTo(window.events, 'servers_updated', this.update);
+    },
+    onNotification: function() {
+      if (this.notified) {
+        return;
+      }
+      this.notified = true;
+      var modal = new ModalNotificationView({
+        model: this.model.clone()
+      });
+      this.addView(modal);
     },
     update: function() {
       this.model.fetch({
@@ -40,6 +53,10 @@ define([
         success: function() {
           var num;
           var totalNum;
+
+          if (this.model.get('notification')) {
+            this.onNotification();
+          }
 
           num = this.model.get('org_count');
           if (num === 0) {
