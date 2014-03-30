@@ -34,4 +34,5 @@ def status_get():
         'server_version': __version__,
         'public_ip': app_server.public_ip,
         'local_networks': local_networks,
+        'notification': app_server.notification,
     })
