@@ -32,3 +32,6 @@ class NodeConnectionError(ServerError):
 
 class IptablesError(ServerError):
     pass
+
+class InvalidStaticFile(ServerError):
+    pass

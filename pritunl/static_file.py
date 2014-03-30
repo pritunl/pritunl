@@ -1,4 +1,5 @@
 from constants import *
+from exceptions import *
 from pritunl import app_server
 from cache import cache_db
 from werkzeug.http import http_date
@@ -15,9 +16,11 @@ class StaticFile:
         path = '/'.join([x for x in path.split('/') if x and x != '..'])
         path = os.path.normpath(os.path.join(root, path))
         if os.path.commonprefix([root, path]) != root:
-            raise ValueError('Static path is not a prefix of root path')
+            raise InvalidStaticFile('Static path is not a prefix of root path',
+                {'path': path})
         if os.path.splitext(path)[1] not in STATIC_FILE_EXTENSIONS:
-            raise ValueError('Static path file extension is invalid')
+            raise InvalidStaticFile('Static path file extension is invalid',
+                {'path': path})
         self.path = path
         self.cache = cache
         self.data = None
