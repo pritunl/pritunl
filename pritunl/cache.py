@@ -379,6 +379,7 @@ class Cache:
             commit_log = copy.copy(self._commit_log)
 
             with open(temp_path, 'w') as db_file:
+                os.chmod(temp_path, 0600)
                 export_data = []
 
                 for key in data:
