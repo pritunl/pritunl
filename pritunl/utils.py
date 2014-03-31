@@ -11,6 +11,7 @@ import time
 import base64
 import hashlib
 import os
+import hmac
 
 def jsonify(data=None, status_code=None):
     if not isinstance(data, basestring):
@@ -30,8 +31,45 @@ def get_remote_addr():
 def check_session():
     from pritunl import app_server
     from auth_token import AuthToken
+    from auth_secret import AuthSecret
     auth_token = flask.request.headers.get('Auth-Token', None)
-    if auth_token:
+    auth_signature = flask.request.headers.get('Auth-Signature', None)
+    if auth_signature:
+        auth_timestamp = flask.request.headers.get('Auth-Timestamp', None)
+        auth_nonce = flask.request.headers.get('Auth-Nonce', None)
+        if not auth_token or not auth_timestamp or not auth_nonce:
+            return False
+
+        try:
+            if abs(int(auth_timestamp) - int(time.time())) > AUTH_TIME_WINDOW:
+                return False
+        except ValueError:
+            return False
+
+        cache_key = 'auth_nonce-%s-%s' % (auth_token, auth_nonce)
+        if cache_db.exists(cache_key):
+            return False
+        cache_db.expire(cache_key, int(AUTH_TIME_WINDOW * 1.1))
+        cache_db.set(cache_key, auth_timestamp)
+
+        auth_secret = AuthSecret(auth_token)
+        if not auth_secret.valid:
+            return False
+        auth_secret = auth_secret.secret
+
+        auth_string = '&'.join([
+            auth_token, auth_timestamp, auth_nonce, flask.request.method,
+            flask.request.path] +
+            ([flask.request.data] if flask.request.data else []))
+
+        if len(auth_string) > AUTH_SIG_STRING_MAX_LEN:
+            return False
+
+        auth_test_signature = base64.b64encode(
+            hmac.new(auth_secret, auth_string, hashlib.sha1).digest())
+        if auth_signature != auth_test_signature:
+            return False
+    elif auth_token:
         auth_token = AuthToken(auth_token)
         if not auth_token.valid:
             return False
