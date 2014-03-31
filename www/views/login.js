@@ -3,12 +3,13 @@ define([
   'underscore',
   'backbone',
   'models/auth',
+  'models/authSession',
   'views/alert',
   'views/loginBackdrop',
   'views/modalChangePassword',
   'text!templates/login.html'
-], function($, _, Backbone, AuthModel, AlertView, LoginBackdropView,
-    ModalChangePasswordView, loginTemplate) {
+], function($, _, Backbone, AuthModel, AuthSessionModel, AlertView,
+    LoginBackdropView, ModalChangePasswordView, loginTemplate) {
   'use strict';
   var LoginView = Backbone.View.extend({
     className: 'login',
@@ -18,14 +19,24 @@ define([
       'keypress input': 'onKeypress'
     },
     initialize: function(options) {
+      if (window.loginViewLock) {
+        this.active = false;
+        this.destroy();
+        return;
+      }
+      window.loginViewLock = true;
+      this.active = true;
       this.alert = options.alert;
       this.callback = options.callback;
+      this.showChangePassword = options.showChangePassword;
       this.backdrop = new LoginBackdropView();
       this.addView(this.backdrop);
     },
     deinitialize: function() {
-      $('header').removeClass('blur');
-      $('#app').removeClass('blur');
+      if (this.active) {
+        $('header').removeClass('blur');
+        $('#app').removeClass('blur');
+      }
     },
     render: function() {
       this.$el.html(this.template());
@@ -67,42 +78,64 @@ define([
       this.addView(this.alertView);
       this.$('input').addClass('has-warning');
     },
-    changePassword: function() {
-      var modal = new ModalChangePasswordView();
-      this.listenToOnce(modal, 'applied', function() {
-        var alertView = new AlertView({
-          type: 'warning',
-          message: 'Successfully changed password.',
-          dismissable: true
-        });
-        $('.alerts-container').append(alertView.render().el);
-        this.addView(alertView);
-      }.bind(this));
-      this.addView(modal);
+    changePassword: function(username, password) {
+      var model = new AuthModel({
+        username: username,
+        password: password
+      });
+      model.fetch({
+        success: function() {
+          var modal = new ModalChangePasswordView({
+            model: model
+          });
+          this.listenToOnce(modal, 'applied', function() {
+            var alertView = new AlertView({
+              type: 'warning',
+              message: 'Successfully changed password.',
+              dismissable: true
+            });
+            $('.alerts-container').append(alertView.render().el);
+            this.addView(alertView);
+          }.bind(this));
+          this.addView(modal);
+        }.bind(this),
+        error: function() {
+          var alertView = new AlertView({
+            type: 'danger',
+            message: 'Failed to load auth authentication, ' +
+              'server error occurred.',
+            dismissable: true
+          });
+          $('.alerts-container').append(alertView.render().el);
+          this.addView(alertView);
+        }.bind(this)
+      });
     },
-    login: function() {
+    login: function(complete) {
       this.$('.login-button').attr('disabled', 'disabled');
       var username = this.$('.username').val();
       var password = this.$('.password').val();
 
-      var authModel = new AuthModel();
-      authModel.save({
+      var authSessionModel = new AuthSessionModel();
+      authSessionModel.save({
         username: username,
         password: password
       }, {
         success: function(model) {
-          this.callback();
+          if (this.callback) {
+            this.callback();
+          }
           this.backdrop.$el.fadeOut(400);
           this.$('.login-box').animate({
             top: '-50%'
           }, {
             duration: 400,
             complete: function() {
-              window.username = username;
               this.destroy();
-              if (model.get('default_password')) {
-                this.changePassword();
+              if (model.get('default_password') || this.showChangePassword) {
+                this.changePassword(username, password);
               }
+              window.loginViewLock = false;
             }.bind(this)
           });
           $('header').removeClass('blur');
