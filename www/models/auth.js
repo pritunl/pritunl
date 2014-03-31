@@ -24,20 +24,20 @@ define([
 
       if (response.token) {
         tokenData = response.token.split('$');
-        hash = new sjcl.hash.sha256();
+        hash = new SJCL.hash.sha256();
         hash.update(this.get('username') + '$' + this.get('password'));
-        hash.update(sjcl.codec.base64.toBits(tokenData[1]));
+        hash.update(SJCL.codec.base64.toBits(tokenData[1]));
         hashDigest = hash.finalize();
 
         for (i = 0; i < 5; i++) {
-          hashDigest = sjcl.hash.sha256.hash(hashDigest);
+          hashDigest = SJCL.hash.sha256.hash(hashDigest);
         }
 
-        cipher = new sjcl.cipher.aes(hashDigest)
-        tokenEnc = sjcl.codec.base64.toBits(tokenData[2]);
-        response.token = sjcl.codec.utf8String.fromBits(
+        cipher = new SJCL.cipher.aes(hashDigest);
+        tokenEnc = SJCL.codec.base64.toBits(tokenData[2]);
+        response.token = SJCL.codec.utf8String.fromBits(
             cipher.decrypt(tokenEnc.slice(0, 4))) +
-          sjcl.codec.utf8String.fromBits(
+          SJCL.codec.utf8String.fromBits(
             cipher.decrypt(tokenEnc.slice(4, 8)));
       }
 
