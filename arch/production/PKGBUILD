@@ -12,6 +12,7 @@ depends=(
     "python2"
     "python2-flask"
     "python2-cherrypy"
+    "python-crypto"
     "net-tools"
     "iproute2"
     "openvpn"
@@ -20,6 +21,7 @@ makedepends=(
     "python2-distribute"
     "python2-flask"
     "python2-cherrypy"
+    "python-crypto"
 )
 provides=("${pkgname}")
 conflicts=("${pkgname}")

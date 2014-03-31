@@ -92,6 +92,7 @@ setup(
     install_requires=[
         'flask>=0.6',
         'cherrypy>=3.2.0',
+        'pycrypto>=2.4.1',
     ],
     data_files=data_files,
     entry_points={
