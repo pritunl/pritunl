@@ -18,7 +18,7 @@ def auth_put():
     token = flask.request.json.get('token')
 
     utils.set_auth(username, password, token)
-    return utils.jsonify({})
+    return utils.jsonify(utils.get_auth())
 
 @app_server.app.route('/auth/session', methods=['GET'])
 def auth_get():
