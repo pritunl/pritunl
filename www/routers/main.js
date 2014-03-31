@@ -2,14 +2,14 @@ define([
   'jquery',
   'underscore',
   'backbone',
-  'models/auth',
+  'models/authSession',
   'views/alert',
   'views/login',
   'views/dashboard',
   'views/users',
   'views/servers'
-], function($, _, Backbone, AuthModel, AlertView, LoginView, DashboardView,
-    UsersView, ServersView) {
+], function($, _, Backbone, AuthSessionModel, AlertView, LoginView,
+    DashboardView, UsersView, ServersView) {
   'use strict';
   var Router = Backbone.Router.extend({
     routes: {
@@ -28,10 +28,9 @@ define([
         callback(true);
         return;
       }
-      var authModel = new AuthModel();
-      authModel.fetch({
+      var authSessionModel = new AuthSessionModel();
+      authSessionModel.fetch({
         success: function(model) {
-          window.username = model.get('username') || window.username;
           if (model.get('authenticated')) {
             window.authenticated = true;
             callback(true);
@@ -66,7 +65,12 @@ define([
           }.bind(this)
         });
         this.logoutAlert = null;
-        $('body').append(this.loginView.render().el);
+        if (this.loginView.active) {
+          $('body').append(this.loginView.render().el);
+        }
+        else {
+          this.loginView = null;
+        }
       }.bind(this));
       return false;
     },
@@ -106,10 +110,10 @@ define([
       if (alert === 'expired') {
         this.logoutAlert = 'Session has expired, please log in again';
       }
-      var authModel = new AuthModel({
+      var authSessionModel = new AuthSessionModel({
         id: true
       });
-      authModel.destroy({
+      authSessionModel.destroy({
         success: function() {
           window.authenticated = false;
           if (this.data.view) {
