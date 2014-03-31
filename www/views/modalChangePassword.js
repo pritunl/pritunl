@@ -24,8 +24,8 @@ define([
       return this.template(this.model.toJSON());
     },
     update: function() {
-      this.$('.token input').val(this.model.get('token'));
-      this.$('.secret input').val(this.model.get('secret'));
+      this.$('.api-token input').val(this.model.get('token'));
+      this.$('.api-secret input').val(this.model.get('secret'));
     },
     onInputChange: function() {
       var pass = this.$('.pass input').val();
