@@ -79,7 +79,7 @@ def auth_token_delete(token):
     return utils.jsonify({})
 
 @app_server.app.route('/auth/secret', methods=['POST'])
-def auth_token_post():
+def auth_secret_post():
     username = flask.request.json['username']
     password = flask.request.json['password']
     remote_addr = utils.get_remote_addr()
@@ -97,7 +97,7 @@ def auth_token_post():
     })
 
 @app_server.app.route('/auth/secret/<auth_token>', methods=['DELETE'])
-def auth_token_delete(token):
+def auth_secret_delete(token):
     auth_secret = AuthSecret(token)
     auth_secret.remove()
     return utils.jsonify({})
