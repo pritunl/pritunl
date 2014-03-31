@@ -2,11 +2,13 @@ define([
   'jquery',
   'underscore',
   'backbone',
+  'models/auth',
   'views/alert',
+  'views/login',
   'views/modalChangePassword',
   'text!templates/header.html'
-], function($, _, Backbone, AlertView, ModalChangePasswordView,
-    headerTemplate) {
+], function($, _, Backbone, AuthModel, AlertView, LoginView,
+    ModalChangePasswordView, headerTemplate) {
   'use strict';
   var HeaderView = Backbone.View.extend({
     tagName: 'header',
@@ -19,17 +21,13 @@ define([
       return this;
     },
     changePassword: function() {
-      var modal = new ModalChangePasswordView();
-      this.listenToOnce(modal, 'applied', function() {
-        var alertView = new AlertView({
-          type: 'warning',
-          message: 'Successfully changed password.',
-          dismissable: true
-        });
-        $('.alerts-container').append(alertView.render().el);
-        this.addView(alertView);
-      }.bind(this));
-      this.addView(modal);
+      var loginView = new LoginView({
+        showChangePassword: true
+      });
+      if (loginView.active) {
+        $('body').append(loginView.render().el);
+        this.addView(loginView);
+      }
     }
   });
 
