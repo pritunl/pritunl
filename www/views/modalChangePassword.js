@@ -2,21 +2,18 @@ define([
   'jquery',
   'underscore',
   'backbone',
-  'models/password',
   'views/modal',
   'text!templates/modalChangePassword.html'
-], function($, _, Backbone, PasswordModel, ModalView,
-    modalChangePasswordTemplate) {
+], function($, _, Backbone, ModalView, modalChangePasswordTemplate) {
   'use strict';
   var ModalChangePasswordView = ModalView.extend({
     className: 'change-password-modal',
     template: _.template(modalChangePasswordTemplate),
     title: 'Change Password',
     okText: 'Change',
-    initialize: function() {
-      this.model = new PasswordModel({
-        username: window.username
-      });
+    initialize: function(options) {
+      // TODO
+      // console.log(this.model.get('token'));
       ModalChangePasswordView.__super__.initialize.call(this);
     },
     body: function() {
