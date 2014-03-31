@@ -111,7 +111,7 @@ define([
         }.bind(this)
       });
     },
-    login: function(complete) {
+    login: function() {
       this.$('.login-button').attr('disabled', 'disabled');
       var username = this.$('.username').val();
       var password = this.$('.password').val();

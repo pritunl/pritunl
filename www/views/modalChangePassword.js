@@ -11,7 +11,7 @@ define([
     template: _.template(modalChangePasswordTemplate),
     title: 'Change Password',
     okText: 'Change',
-    initialize: function(options) {
+    initialize: function() {
       // TODO
       // console.log(this.model.get('token'));
       ModalChangePasswordView.__super__.initialize.call(this);
