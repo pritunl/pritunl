@@ -9,7 +9,8 @@ define([
     defaults: {
       'username': null,
       'password': null,
-      'token': null
+      'token': null,
+      'secret': null
     },
     url: function() {
       return '/auth';
