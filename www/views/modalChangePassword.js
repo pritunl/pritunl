@@ -11,9 +11,12 @@ define([
     template: _.template(modalChangePasswordTemplate),
     title: 'Change Password',
     okText: 'Change',
+    events: function() {
+      return _.extend({
+        'click .right input': 'onClickInput'
+      }, ModalChangePasswordView.__super__.events);
+    },
     initialize: function() {
-      // TODO
-      // console.log(this.model.get('token'));
       ModalChangePasswordView.__super__.initialize.call(this);
     },
     body: function() {
@@ -65,6 +68,9 @@ define([
             'Failed to change password, server error occurred.');
         }.bind(this)
       });
+    },
+    onClickInput: function(evt) {
+      this.$(evt.target).select();
     }
   });
 
