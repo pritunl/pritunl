@@ -13,6 +13,7 @@ define([
     okText: 'Change',
     events: function() {
       return _.extend({
+        'click .generate-new-api-key': 'onGenerateNewKey',
         'click .right input': 'onClickInput'
       }, ModalChangePasswordView.__super__.events);
     },
@@ -21,6 +22,10 @@ define([
     },
     body: function() {
       return this.template(this.model.toJSON());
+    },
+    update: function() {
+      this.$('.token input').val(this.model.get('token'));
+      this.$('.secret input').val(this.model.get('secret'));
     },
     onInputChange: function() {
       var pass = this.$('.pass input').val();
@@ -36,6 +41,24 @@ define([
       else {
         this.clearAlert();
       }
+    },
+    onGenerateNewKey: function() {
+      this.setLoading('Generating new api key...');
+      this.model.save({
+        token: null,
+        secret: null
+      }, {
+        success: function() {
+          this.clearLoading();
+          this.setAlert('danger', 'Successfully generated a new api key.');
+          this.update();
+        }.bind(this),
+        error: function() {
+          this.clearLoading();
+          this.setAlert('danger',
+            'Failed to change password, server error occurred.');
+        }.bind(this)
+      });
     },
     onOk: function() {
       var username = this.$('.username input').val();
