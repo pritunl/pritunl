@@ -122,6 +122,7 @@ module.exports = function(grunt) {
             qrcode: 'vendor/qrcode/qrcode.min',
             rickshaw: 'vendor/rickshaw/rickshaw.min',
             select: 'vendor/select/select.min',
+            sjcl: 'vendor/sjcl/sjcl.min',
             text: 'vendor/requireText/text',
             underscore: 'vendor/underscore/underscore.min',
             initialize: 'init/production'
@@ -156,6 +157,7 @@ module.exports = function(grunt) {
             qrcode: 'vendor/qrcode/qrcode.min',
             rickshaw: 'vendor/rickshaw/rickshaw.min',
             select: 'vendor/select/select.min',
+            sjcl: 'vendor/sjcl/sjcl.min',
             text: 'vendor/requireText/text',
             underscore: 'vendor/underscore/underscore.min',
             initialize: 'init/demo'
@@ -190,6 +192,7 @@ module.exports = function(grunt) {
             qrcode: 'vendor/qrcode/qrcode.min',
             rickshaw: 'vendor/rickshaw/rickshaw.min',
             select: 'vendor/select/select.min',
+            sjcl: 'vendor/sjcl/sjcl.min',
             text: 'vendor/requireText/text',
             underscore: 'vendor/underscore/underscore.min',
             initialize: 'init/production'

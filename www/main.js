@@ -77,6 +77,7 @@ require.config({
     qrcode: 'vendor/qrcode/qrcode',
     rickshaw: 'vendor/rickshaw/rickshaw',
     select: 'vendor/select/select',
+    sjcl: 'vendor/sjcl/sjcl.min',
     text: 'vendor/requireText/text',
     underscore: 'vendor/underscore/underscore',
     initialize: 'init/testing'
@@ -94,6 +95,7 @@ require.config({
     bootstrap: ['jquery'],
     d3: {exports: 'd3'},
     rickshaw: {deps: ['d3'], exports: 'Rickshaw'},
+    sjcl: {exports: 'sjcl'},
     qrcode: {exports: 'QRCode'}
   }
 });
