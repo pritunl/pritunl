@@ -346,4 +346,5 @@ def get_auth():
     return {
         'username': persist_db.dict_get('auth', 'username'),
         'token': persist_db.dict_get('auth', 'token_enc'),
+        'secret': persist_db.dict_get('auth', 'token_enc'),
     }
