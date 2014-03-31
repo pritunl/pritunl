@@ -1,5 +1,6 @@
 from constants import *
 from cache import cache_db, persist_db
+import Crypto.Cipher.AES
 import flask
 import json
 import subprocess
@@ -12,6 +13,7 @@ import base64
 import hashlib
 import os
 import hmac
+import uuid
 
 def jsonify(data=None, status_code=None):
     if not isinstance(data, basestring):
@@ -31,7 +33,6 @@ def get_remote_addr():
 def check_session():
     from pritunl import app_server
     from auth_token import AuthToken
-    from auth_secret import AuthSecret
     auth_token = flask.request.headers.get('Auth-Token', None)
     auth_signature = flask.request.headers.get('Auth-Signature', None)
     if auth_signature:
@@ -46,16 +47,18 @@ def check_session():
         except ValueError:
             return False
 
-        cache_key = 'auth_nonce-%s-%s' % (auth_token, auth_nonce)
+        cache_key = 'auth_nonce-%s' % auth_nonce
         if cache_db.exists(cache_key):
             return False
         cache_db.expire(cache_key, int(AUTH_TIME_WINDOW * 1.1))
         cache_db.set(cache_key, auth_timestamp)
 
-        auth_secret = AuthSecret(auth_token)
-        if not auth_secret.valid:
+        auth_token_hash = persist_db.dict_get('auth', 'token')
+        auth_secret = persist_db.dict_get('auth', 'secret')
+        if not auth_token_hash or not auth_secret:
             return False
-        auth_secret = auth_secret.secret
+        if not _test_password_hash(auth_token_hash, auth_token):
+            return False
 
         auth_string = '&'.join([
             auth_token, auth_timestamp, auth_nonce, flask.request.method,
@@ -236,7 +239,7 @@ def _hash_password_v0(salt, password):
     pass_hash = hashlib.sha512()
     pass_hash.update(password[:PASSWORD_LEN_LIMIT])
     pass_hash.update(base64.b64decode(salt))
-    return base64.b64encode(pass_hash.digest())
+    return pass_hash.digest()
 
 def _hash_password_v1(salt, password):
     pass_hash = hashlib.sha512()
@@ -248,7 +251,19 @@ def _hash_password_v1(salt, password):
         pass_hash = hashlib.sha512()
         pass_hash.update(hash_digest)
         hash_digest = pass_hash.digest()
-    return base64.b64encode(hash_digest)
+    return hash_digest
+
+def _hash_password_v2(salt, password):
+    pass_hash = hashlib.sha256()
+    pass_hash.update(password[:PASSWORD_LEN_LIMIT])
+    pass_hash.update(base64.b64decode(salt))
+    hash_digest = pass_hash.digest()
+
+    for i in xrange(5):
+        pass_hash = hashlib.sha256()
+        pass_hash.update(hash_digest)
+        hash_digest = pass_hash.digest()
+    return hash_digest
 
 def _get_password_data():
     password = persist_db.dict_get('auth', 'password')
@@ -256,6 +271,19 @@ def _get_password_data():
         return None, None, None
     pass_split = password.split('$')
     return (int(pass_split[0]), pass_split[1], pass_split[2])
+
+def _test_password_hash(pass_data, test_pass):
+    pass_ver, pass_salt, pass_hash = pass_data.split('$')
+    if pass_ver == '0':
+        hash_func = _hash_password_v0
+    elif pass_ver == '1':
+        hash_func = _hash_password_v1
+    elif pass_ver == '2':
+        hash_func = _hash_password_v2
+    else:
+        return False
+    test_hash = base64.b64encode(hash_func(pass_salt, test_pass))
+    return pass_hash == test_hash
 
 def check_auth(username, password, remote_addr=None):
     if remote_addr:
@@ -278,25 +306,44 @@ def check_auth(username, password, remote_addr=None):
         if password == DEFAULT_PASSWORD:
             return True
         return False
+    return _test_password_hash(db_password, password)
 
-    pass_ver, pass_salt, db_pass_hash = db_password.split('$')
-    if pass_ver == '0':
-        pass_hash = _hash_password_v0(pass_salt, password)
-    elif pass_ver == '1':
-        pass_hash = _hash_password_v1(pass_salt, password)
-    else:
-        return False
-    return pass_hash == db_pass_hash
+def set_auth(username, password, token=None):
+    if not password:
+        raise ValueError('Password cannot be blank')
 
-def set_auth(username=None, password=None):
     tran = persist_db.transaction()
     if username:
         tran.dict_set('auth', 'username', username)
-    if password:
-        salt = base64.b64encode(os.urandom(8))
-        pass_hash = _hash_password_v1(salt, password)
-        tran.dict_set('auth', 'password', '1$%s$%s' % (salt, pass_hash))
+
+    salt = base64.b64encode(os.urandom(8))
+    pass_hash = base64.b64encode(_hash_password_v1(salt, password))
+    tran.dict_set('auth', 'password', '1$%s$%s' % (salt, pass_hash))
+
+    if not token:
+        regex = re.compile(r'[\W_]+')
+        token = re.sub(regex, '', base64.b64encode(os.urandom(64)))[:32]
+        secret = re.sub(regex, '', base64.b64encode(os.urandom(64)))[:32]
+        tran.dict_set('auth', 'secret', secret)
+
+    token_salt = base64.b64encode(os.urandom(8))
+    token_hash = base64.b64encode(_hash_password_v1(token_salt, token))
+    tran.dict_set('auth', 'token', '1$%s$%s' % (token_salt, token_hash))
+
+    username = username or tran.dict_get('auth', 'username')
+    token_key_salt = base64.b64encode(os.urandom(8))
+    token_key_hash = _hash_password_v2(token_key_salt,
+        '%s$%s' % (username, password))
+    token_key = token_key_hash
+
+    aes_cipher = Crypto.Cipher.AES.new(token_key)
+    token_enc = base64.b64encode(aes_cipher.encrypt(token))
+    tran.dict_set('auth', 'token_enc', '2$%s$%s' % (token_key_salt, token_enc))
+
     tran.commit()
 
 def get_auth():
-    return persist_db.dict_get('auth', 'username')
+    return {
+        'username': persist_db.dict_get('auth', 'username'),
+        'token': persist_db.dict_get('auth', 'token_enc'),
+    }
