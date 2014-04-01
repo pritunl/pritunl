@@ -1,6 +1,12 @@
 Pritunl Changelog
 =================
 
+Version 0.10.9
+--------------
+
+Change API authentication system
+Previous API authentication method has been removed
+
 Version 0.10.8 2014-03-23
 -------------------------
 
