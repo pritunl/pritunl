@@ -44,6 +44,8 @@ define([
       });
       this.$('.local-network input').select2(
         'val', this.model.get('local_networks'));
+      this.$('.network .label').tooltip();
+      this.updateMaxHosts();
     },
     getServerMode: function() {
       return this.$('.server-mode select').val();
@@ -119,6 +121,42 @@ define([
     },
     onDebugSelect: function() {
       this.setDebugSelect(!this.getDebugSelect());
+    },
+    onInputChange: function(evt) {
+      if ($(evt.target).parent().hasClass('network')) {
+        this.updateMaxHosts();
+      }
+    },
+    updateMaxHosts: function() {
+      var value = this.$('.network input').val().split('/');
+      var maxHosts = {
+        8: '16m',
+        9: '8m',
+        10: '4m',
+        11: '2m',
+        12: '1m',
+        13: '524k',
+        14: '262k',
+        15: '131k',
+        16: '65k',
+        17: '32k',
+        18: '16k',
+        19: '8k',
+        20: '4k',
+        21: '2k',
+        22: '1k',
+        23: '509',
+        24: '253',
+      };
+      if (value.length === 2) {
+        var max = maxHosts[value[1]];
+        if (max) {
+          this.$('.network .label').text(max + ' Users');
+          this.$('.network .label').show();;
+          return
+        }
+      }
+      this.$('.network .label').hide();
     },
     onOk: function() {
       var i;
