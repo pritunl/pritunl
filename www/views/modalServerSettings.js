@@ -152,8 +152,8 @@ define([
         var max = maxHosts[value[1]];
         if (max) {
           this.$('.network .label').text(max + ' Users');
-          this.$('.network .label').show();;
-          return
+          this.$('.network .label').show();
+          return;
         }
       }
       this.$('.network .label').hide();
