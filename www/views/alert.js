@@ -18,6 +18,10 @@ define([
       this.render();
     },
     render: function() {
+      if (!window.authenticated) {
+        this.destroy();
+        return this;
+      }
       this.$el.html(this.template({
         type: this.type,
         message: this.message,
