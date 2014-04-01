@@ -50,7 +50,7 @@ def check_session():
         cache_key = 'auth_nonce-%s' % auth_nonce
         if cache_db.exists(cache_key):
             return False
-        cache_db.expire(cache_key, int(AUTH_TIME_WINDOW * 1.1))
+        cache_db.expire(cache_key, int(AUTH_TIME_WINDOW * 2.1))
         cache_db.set(cache_key, auth_timestamp)
 
         auth_token_hash = persist_db.dict_get('auth', 'token')
