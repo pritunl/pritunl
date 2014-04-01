@@ -1,5 +1,4 @@
 from pritunl.constants import *
-from pritunl.auth_token import AuthToken
 import pritunl.utils as utils
 from pritunl import app_server
 import time
