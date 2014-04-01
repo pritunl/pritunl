@@ -22,6 +22,7 @@ THREADED_STRESS_TEST = True
 UUID_RE = r'^[a-z0-9]+$'
 AUTH_HANDLERS = [
     ('PUT', '/auth'),
+    ('GET', '/auth'),
     ('GET', '/export'),
     ('GET', '/event'),
     ('GET', '/key/a1/a1.tar'),
