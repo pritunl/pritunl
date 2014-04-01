@@ -68,8 +68,8 @@ def check_session():
         if len(auth_string) > AUTH_SIG_STRING_MAX_LEN:
             return False
 
-        auth_test_signature = base64.b64encode(
-            hmac.new(auth_secret, auth_string, hashlib.sha1).digest())
+        auth_test_signature = base64.b64encode(hmac.new(
+            auth_secret.encode(), auth_string, hashlib.sha256).digest())
         if auth_signature != auth_test_signature:
             return False
     else:
