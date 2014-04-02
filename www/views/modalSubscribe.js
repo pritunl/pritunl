@@ -27,7 +27,7 @@ define([
         success: function() {
           var checkout = window.StripeCheckout.configure({
             key: 'pk_test_cex9CxHTANzcSdOdeoqhgMy9',
-            image: 'https://s3.amazonaws.com/pritunl/logo_stripe.svg',
+            image: 'https://s3.amazonaws.com/pritunl/logo_stripe.png',
             name: 'Pritunl Enterprise',
             description: 'Enterprise Plan ($2.50/month)',
             amount: 250,
