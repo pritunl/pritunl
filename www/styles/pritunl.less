@@ -1041,6 +1041,49 @@ header.blur {
   margin-bottom: 0;
 }
 
+.subscribe-modal .modal .subscribe-info {
+  margin: 0 auto;
+  width: 300px;
+  text-align: center;
+}
+
+.subscribe-modal .modal .subscribe-info button {
+  margin: 5px 0;
+}
+
+.subscribe-modal .modal .subscribe-list {
+  border: 1px solid @gray3-fg;
+  border-radius: 6px;
+  list-style-type: none;
+  padding: 0;
+  text-align: left;
+  box-shadow: 0px 0px 14px @gray4-fg;
+  margin-top: 5px;
+  margin-bottom: 15px;
+}
+
+.subscribe-modal .modal .subscribe-list li {
+  border-top: 1px solid @light-fg;
+  padding: 20px;
+}
+
+.subscribe-modal .modal .subscribe-list li:first-child {
+  border-top: none;
+}
+
+.subscribe-modal .modal .subscribe-list li .glyphicon {
+  margin-right: 15px;
+  font-size: 18px;
+  color: @blue-fg;
+}
+
+.subscribe-modal .modal .subscribe-list li .subscribe-feature {
+  color: @gray2-fg;
+  font-weight: bold;
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 18px;
+}
+
 .delete-users-modal .modal .modal-dialog {
   .top-calc(~'50% - 195px');
 }
@@ -1079,4 +1122,8 @@ header.blur {
 
 .notification-modal .modal .modal-dialog {
   .top-calc(~'50% - 146px');
+}
+
+.subscribe-modal .modal .modal-dialog {
+  .top-calc(~'50% - 330px');
 }
