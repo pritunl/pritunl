@@ -229,6 +229,15 @@ require([
     return bytes;
   };
 
+  $.getCachedScript = function(url, options) {
+    options = $.extend(options || {}, {
+      dataType: 'script',
+      cache: true,
+      url: url
+    });
+    return $.ajax(options);
+  };
+
   $.fn.roll = function(timeout, complete) {
     var timer;
 
