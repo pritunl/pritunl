@@ -18,6 +18,7 @@ import traceback
 import utils
 import re
 import json
+import ipaddress
 
 logger = logging.getLogger(APP_NAME)
 
@@ -162,6 +163,43 @@ class Server(Config):
             self.clear_cache()
             utils.rmtree(self.path)
             raise
+
+    def build_ip_pool(self):
+        start = time.time()
+        ip_pool = ipaddress.IPv4Network(self.network).iterhosts()
+        ip_pool.next()
+
+        user_ip_pool = {}
+        users = set()
+        for org in self.iter_orgs():
+            for user in org.iter_users():
+                if user.type == CERT_CLIENT:
+                    users.add(org.id + '-' + user.id)
+
+        for user_id in set(user_ip_pool.keys()) - users:
+            user_ip_pool.pop(user_id)
+
+        cur_ip_pool = set()
+        for ip_set in user_ip_pool.values():
+            cur_ip_pool.add(ip_set[0])
+            cur_ip_pool.add(ip_set[1])
+
+        for user_id in users - set(user_ip_pool.keys()):
+            while True:
+                try:
+                    local_ip_addr = str(ip_pool.next())
+                    if local_ip_addr not in cur_ip_pool:
+                        break
+                except StopIteration:
+                    return
+            while True:
+                try:
+                    remote_ip_addr = str(ip_pool.next())
+                    if remote_ip_addr not in cur_ip_pool:
+                        break
+                except StopIteration:
+                    return
+            user_ip_pool[user_id] = (local_ip_addr, remote_ip_addr)
 
     def clear_cache(self):
         cache_db.set_remove('servers', '%s_%s' % (self.id, self.type))
