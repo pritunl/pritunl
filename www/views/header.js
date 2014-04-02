@@ -86,12 +86,14 @@ define([
             amount: 250,
             panelLabel: 'Subscribe',
             allowRememberMe: false,
+            opened: function() {
+              this.onEnterpriseUpgradeLock = false;
+            }.bind(this),
             token: function(token, args) {
               console.log(token, args);
             }
           });
           checkout.open();
-          this.onEnterpriseUpgradeLock = false;
         }.bind(this),
         error: function() {
           var alertView = new AlertView({
