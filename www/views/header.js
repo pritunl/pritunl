@@ -72,20 +72,37 @@ define([
       return this;
     },
     onEnterpriseUpgrade: function() {
-      $.getScript('https://checkout.stripe.com/checkout.js', function() {
-        var handler = window.StripeCheckout.configure({
-          key: 'pk_test_cex9CxHTANzcSdOdeoqhgMy9',
-          image: stripeImg,
-          name: 'Pritunl Enterprise',
-          description: 'Enterprise Plan ($2.50/month)',
-          amount: 250,
-          panelLabel: 'Subscribe',
-          allowRememberMe: false,
-          token: function(token, args) {
-            console.log(token, args);
-          }
-        });
-        handler.open();
+      if (this.onEnterpriseUpgradeLock) {
+        return;
+      }
+      this.onEnterpriseUpgradeLock = true;
+      $.getCachedScript('https://checkout.stripe.com/checkout.js', {
+        success: function() {
+          var checkout = window.StripeCheckout.configure({
+            key: 'pk_test_cex9CxHTANzcSdOdeoqhgMy9',
+            image: stripeImg,
+            name: 'Pritunl Enterprise',
+            description: 'Enterprise Plan ($2.50/month)',
+            amount: 250,
+            panelLabel: 'Subscribe',
+            allowRememberMe: false,
+            token: function(token, args) {
+              console.log(token, args);
+            }
+          });
+          checkout.open();
+          this.onEnterpriseUpgradeLock = false;
+        }.bind(this),
+        error: function() {
+          var alertView = new AlertView({
+            type: 'danger',
+            message: 'Failed to load upgrade checkout, try again later.',
+            dismissable: true
+          });
+          $('.alerts-container').append(alertView.render().el);
+          this.addView(alertView);
+          this.onEnterpriseUpgradeLock = false;
+        }.bind(this)
       });
     },
     changePassword: function() {
