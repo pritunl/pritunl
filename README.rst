@@ -1,5 +1,5 @@
-pritunl: simple openvpn server
-==============================
+pritunl: simple vpn server
+==========================
 
 .. image:: http://gitshields.com/v2/pypi/pritunl/version/7d0ce8.png
     :target: https://pypi.python.org/pypi/pritunl
@@ -40,7 +40,6 @@ Vagrant Setup
     $ cd /vagrant
     $ sudo python2 server.py
     # Open http://localhost:6500/
-    # Open http://localhost:8080/collectd
 
 Testing
 -------
