@@ -2,13 +2,13 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <button type="button" class="close" aria-hidden="true">&times;</button>
         <h4 class="modal-title title"><%- title %></h4>
       </div>
       <div class="modal-body"></div>
       <div class="modal-footer">
         <% if (cancelText !== null) { %>
-          <button type="button" class="btn btn-default cancel" data-dismiss="modal"><%- cancelText %></button>
+          <button type="button" class="btn btn-default cancel"><%- cancelText %></button>
         <% } %>
         <% if (okText !== null) { %>
           <button type="button" class="btn btn-primary ok"><%- okText %></button>

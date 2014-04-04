@@ -10,6 +10,7 @@ define([
   var ModalView = Backbone.View.extend({
     modalTemplate: _.template(modalTemplate),
     events: {
+      'click .close, .cancel': 'dismiss',
       'click .ok': 'onOk',
       'hidden.bs.modal .modal': 'onRemove',
       'keyup input': 'onInputChange',
@@ -19,6 +20,7 @@ define([
     },
     title: '',
     cancelText: 'Cancel',
+    safeClose: false,
     body: function() {
       return '';
     },
@@ -34,7 +36,10 @@ define([
         okText: this.okText
       }));
       this.$('.modal-body').append(this.body());
-      this.$('.modal').modal();
+      this.$('.modal').modal({
+        backdrop: this.safeClose ? 'static' : true,
+        keyboard: this.safeClose ? false : true,
+      });
       this.$('[data-toggle="tooltip"]').tooltip();
       $('body').append(this.el);
       if (this.inputMatch) {
@@ -82,13 +87,17 @@ define([
         this.$('.form-group').removeClass('has-warning has-error');
       }
     },
-    setLoading: function(message, noButtonDisable) {
+    setLoading: function(message, noButtonDisable, timeout) {
       if (this.loading) {
         return;
       }
       this.loading = true;
+
       if (!noButtonDisable) {
         this.$('.ok').attr('disabled', 'disabled');
+      }
+      if (timeout === undefined) {
+        timeout = 575;
       }
 
       if (this.loadingView) {
@@ -112,7 +121,7 @@ define([
         });
         this.addView(this.loadingView);
         this.$('.modal-body').append(this.loadingView.render().el);
-      }.bind(this), 575);
+      }.bind(this), timeout);
     },
     clearLoading: function() {
       this.loading = false;
@@ -122,7 +131,18 @@ define([
       }
       this.$('.ok').removeAttr('disabled');
     },
+    dismiss: function() {
+      if (this.safeClose && this.lockClose) {
+        return;
+      }
+      this.clearAlert();
+      this.clearLoading();
+      this.$('.modal').modal('hide');
+    },
     close: function(triggerApplied) {
+      if (this.safeClose && this.lockClose) {
+        return;
+      }
       if (triggerApplied) {
         this.trigger('applied');
       }
