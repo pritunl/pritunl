@@ -40,6 +40,7 @@ define([
       this.lock();
       $.getCachedScript('https://checkout.stripe.com/checkout.js', {
         success: function() {
+          var ordered = false;
           var checkout = window.StripeCheckout.configure({
             key: 'pk_test_cex9CxHTANzcSdOdeoqhgMy9',
             image: 'https://s3.amazonaws.com/pritunl/logo_stripe.png',
@@ -49,9 +50,14 @@ define([
             panelLabel: 'Subscribe',
             allowRememberMe: false,
             closed: function() {
-              this.unlock();
+              setTimeout(function() {
+                if (!ordered) {
+                  this.unlock();
+                }
+              }.bind(this), 250)
             }.bind(this),
             token: function(token) {
+              ordered = true;
               this.lock();
               this.setLoading('Order processing, please wait...', true, 0);
               $.ajax({
