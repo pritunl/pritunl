@@ -13,6 +13,7 @@ define([
     title: 'Enterprise Upgrade',
     cancelText: null,
     okText: 'Close',
+    safeClose: true,
     events: function() {
       return _.extend({
         'click .subscribe-checkout': 'onCheckout'
@@ -21,8 +22,22 @@ define([
     body: function() {
       return this.template();
     },
-    onCheckout: function(evt) {
+    lock: function() {
+      this.lockClose = true;
+      this.$('.ok').attr('disabled', 'disabled');
       this.$('.subscribe-checkout').attr('disabled', 'disabled');
+      this.$('.subscribe-activate').attr('disabled', 'disabled');
+    },
+    unlock: function(noCheckout) {
+      this.lockClose = false;
+      this.$('.ok').removeAttr('disabled');
+      if (!noCheckout) {
+        this.$('.subscribe-checkout').removeAttr('disabled');
+      }
+      this.$('.subscribe-activate').removeAttr('disabled');
+    },
+    onCheckout: function(evt) {
+      this.lock();
       $.getCachedScript('https://checkout.stripe.com/checkout.js', {
         success: function() {
           var checkout = window.StripeCheckout.configure({
@@ -33,24 +48,46 @@ define([
             amount: 250,
             panelLabel: 'Subscribe',
             allowRememberMe: false,
-            opened: function() {
-              this.$('.subscribe-checkout').removeAttr('disabled');
+            closed: function() {
+              this.unlock();
             }.bind(this),
-            token: function(token, args) {
-              console.log(token, args);
-            }
+            token: function(token) {
+              this.lock();
+              this.setLoading('Order processing, please wait...', true, 0);
+              $.ajax({
+                type: 'POST',
+                url: 'https://app.pritunl.com/subscription',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify({
+                  'card': token.id,
+                  'email': token.email,
+                }),
+                success: function(response) {
+                  this.setAlert('success', response.msg);
+                  this.clearLoading();
+                  this.unlock(true);
+                }.bind(this),
+                error: function(response) {
+                  if (response.responseJSON) {
+                    this.setAlert('danger', response.responseJSON.error_msg);
+                  }
+                  else {
+                    this.setAlert('danger', 'Unknown error occured, ' +
+                      'please try again later.');
+                  }
+                  this.clearLoading();
+                  this.unlock();
+                }.bind(this)
+              });
+            }.bind(this)
           });
           checkout.open();
         }.bind(this),
         error: function() {
-          var alertView = new AlertView({
-            type: 'danger',
-            message: 'Failed to load upgrade checkout, try again later.',
-            dismissable: true
-          });
-          $('.alerts-container').append(alertView.render().el);
-          this.addView(alertView);
-          this.$('.subscribe-checkout').removeAttr('disabled');
+          this.setAlert('danger', 'Failed to load upgrade checkout, ' +
+            'please try again later.');
+          this.unlock();
         }.bind(this)
       });
     }
