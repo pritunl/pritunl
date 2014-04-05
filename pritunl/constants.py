@@ -33,6 +33,7 @@ DEFAULT_DH_PARAM_BITS = 1536
 DEFAULT_OTP_SECRET_LEN = 16
 DEFAULT_PUBLIC_IP_SERVER = 'http://ip.pritunl.com/json'
 DEFAULT_NOTIFICATION_SERVER = 'http://ip.pritunl.com/notification'
+ENTERPRISE_SERVER = 'https://app.pritunl.com/subscription'
 NOTIFICATION_CHECK_RATE = 3600
 ENV_PREFIX = APP_NAME
 LOG_LIMIT = 100
