@@ -36,7 +36,7 @@ define([
       }
       this.$('.subscribe-activate').removeAttr('disabled');
     },
-    onCheckout: function(evt) {
+    onCheckout: function() {
       this.lock();
       $.getCachedScript('https://checkout.stripe.com/checkout.js', {
         success: function() {
@@ -54,7 +54,7 @@ define([
                 if (!ordered) {
                   this.unlock();
                 }
-              }.bind(this), 250)
+              }.bind(this), 250);
             }.bind(this),
             token: function(token) {
               ordered = true;
