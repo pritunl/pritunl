@@ -101,6 +101,9 @@ define([
             this.showCheckout(options);
           }.bind(this),
           error: function() {
+            this.setAlert('danger', 'Failed to load upgrade checkout data, ' +
+              'please try again later.');
+            this.unlock();
           }.bind(this)
       });
     },
