@@ -61,7 +61,7 @@ define([
                 dataType: 'json',
                 data: JSON.stringify({
                   'card': token.id,
-                  'email': token.email,
+                  'email': token.email
                 }),
                 success: function(response) {
                   this.setAlert('success', response.msg);
