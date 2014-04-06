@@ -16,7 +16,14 @@
   border-bottom-right-radius: @radius;
 }
 
-.box-shadow(...) {
+.box-shadow(@shadow) {
+  -webkit-box-shadow: @shadow;
+  -moz-box-shadow: @shadow;
+  -o-box-shadow: @shadow;
+  box-shadow: @shadow;
+}
+
+.box-shadow2(...) {
   @args: ~`"@{arguments}".replace(/[\[\]]/g, '')`;
   -webkit-box-shadow: @args;
   -moz-box-shadow: @args;
