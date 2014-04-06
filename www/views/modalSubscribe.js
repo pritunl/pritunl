@@ -116,6 +116,8 @@ define([
         this.$('.subscribe-activate-form').slideDown(200);
         this.$('.subscribe-checkout').hide(200);
         this.$('.subscribe-cancel').show(200);
+        this.$('.subscribe-activate').hide(200);
+        this.$('.subscribe-submit').show(200);
       }
     },
     onCancel: function() {
@@ -123,6 +125,8 @@ define([
       this.$('.subscribe-info').slideDown(200);
       this.$('.subscribe-cancel').hide(200);
       this.$('.subscribe-checkout').show(200);
+      this.$('.subscribe-submit').hide(200);
+      this.$('.subscribe-activate').show(200);
       this.activateActive = false;
     }
   });
