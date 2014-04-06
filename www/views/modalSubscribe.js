@@ -25,8 +25,8 @@ define([
       return this.template();
     },
     postRender: function() {
-      // Precache checkout
-      this.setupCheckout();
+      // Precache checkout delay to prevent lag
+      setTimeout((this.setupCheckout).bind(this), 200);
     },
     lock: function() {
       this.lockClose = true;
@@ -67,7 +67,7 @@ define([
                 if (!ordered) {
                   this.unlock();
                 }
-              }.bind(this), 200);
+              }.bind(this), 100);
             }.bind(this),
             token: function(token) {
               ordered = true;
