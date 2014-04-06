@@ -24,6 +24,10 @@ define([
     body: function() {
       return this.template();
     },
+    postRender: function() {
+      // Precache checkout
+      this.setupCheckout();
+    },
     lock: function() {
       this.lockClose = true;
       this.$('.ok').attr('disabled', 'disabled');
@@ -38,17 +42,32 @@ define([
       }
       this.$('.subscribe-activate').removeAttr('disabled');
     },
-    showCheckout: function(options) {
+    setupCheckout: function() {
+      this.checkout = undefined;
+      $.ajax({
+          type: 'GET',
+          url: 'https://app.pritunl.com/checkout',
+          success: function(options) {
+            this.configCheckout(options);
+          }.bind(this),
+          error: function() {
+            this.setAlert('danger', 'Failed to load upgrade checkout data, ' +
+              'please try again later.');
+            this.checkout = null;
+          }.bind(this)
+      });
+    },
+    configCheckout: function(options) {
       $.getCachedScript('https://checkout.stripe.com/checkout.js', {
         success: function() {
           var ordered = false;
-          var checkout = window.StripeCheckout.configure(_.extend({
+          this.checkout = window.StripeCheckout.configure(_.extend({
             closed: function() {
               setTimeout(function() {
                 if (!ordered) {
                   this.unlock();
                 }
-              }.bind(this), 250);
+              }.bind(this), 200);
             }.bind(this),
             token: function(token) {
               ordered = true;
@@ -82,30 +101,32 @@ define([
               });
             }.bind(this)
           }, options));
-          checkout.open();
         }.bind(this),
         error: function() {
           this.setAlert('danger', 'Failed to load upgrade checkout, ' +
             'please try again later.');
-          this.unlock();
+          this.checkout = null;
         }.bind(this)
       });
+    },
+    openCheckout: function() {
+      if (this.checkout === undefined) {
+        setTimeout((this.openCheckout).bind(this), 10);
+      }
+      else if (this.checkout === null) {
+        this.unlock();
+      }
+      else {
+        this.checkout.open();
+      }
     },
     onCheckout: function() {
       this.lock();
       this.clearAlert();
-      $.ajax({
-          type: 'GET',
-          url: 'https://app.pritunl.com/checkout',
-          success: function(options) {
-            this.showCheckout(options);
-          }.bind(this),
-          error: function() {
-            this.setAlert('danger', 'Failed to load upgrade checkout data, ' +
-              'please try again later.');
-            this.unlock();
-          }.bind(this)
-      });
+      if (this.checkout === null) {
+        this.setupCheckout();
+      }
+      this.openCheckout();
     },
     onActivate: function() {
       if (this.activateActive) {
