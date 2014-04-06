@@ -38,20 +38,11 @@ define([
       }
       this.$('.subscribe-activate').removeAttr('disabled');
     },
-    onCheckout: function() {
-      this.lock();
-      this.clearAlert();
+    showCheckout: function(options) {
       $.getCachedScript('https://checkout.stripe.com/checkout.js', {
         success: function() {
           var ordered = false;
-          var checkout = window.StripeCheckout.configure({
-            key: 'pk_test_cex9CxHTANzcSdOdeoqhgMy9',
-            image: 'https://s3.amazonaws.com/pritunl/logo_stripe.png',
-            name: 'Pritunl Enterprise',
-            description: 'Enterprise Plan ($2.50/month)',
-            amount: 250,
-            panelLabel: 'Subscribe',
-            allowRememberMe: false,
+          var checkout = window.StripeCheckout.configure(_.extend({
             closed: function() {
               setTimeout(function() {
                 if (!ordered) {
@@ -90,7 +81,7 @@ define([
                 }.bind(this)
               });
             }.bind(this)
-          });
+          }, options));
           checkout.open();
         }.bind(this),
         error: function() {
@@ -98,6 +89,19 @@ define([
             'please try again later.');
           this.unlock();
         }.bind(this)
+      });
+    },
+    onCheckout: function() {
+      this.lock();
+      this.clearAlert();
+      $.ajax({
+          type: 'GET',
+          url: 'https://app.pritunl.com/checkout',
+          success: function(options) {
+            this.showCheckout(options);
+          }.bind(this),
+          error: function() {
+          }.bind(this)
       });
     },
     onActivate: function() {
