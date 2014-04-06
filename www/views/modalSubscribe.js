@@ -16,7 +16,9 @@ define([
     safeClose: true,
     events: function() {
       return _.extend({
-        'click .subscribe-checkout': 'onCheckout'
+        'click .subscribe-checkout': 'onCheckout',
+        'click .subscribe-activate': 'onActivate',
+        'click .subscribe-cancel': 'onCancel'
       }, ModalSubscribeView.__super__.events);
     },
     body: function() {
@@ -96,6 +98,24 @@ define([
           this.unlock();
         }.bind(this)
       });
+    },
+    onActivate: function() {
+      if (this.activateActive) {
+      }
+      else {
+        this.activateActive = true;
+        this.$('.subscribe-info').slideUp(200);
+        this.$('.subscribe-activate-form').slideDown(200);
+        this.$('.subscribe-checkout').hide(200);
+        this.$('.subscribe-cancel').show(200);
+      }
+    },
+    onCancel: function() {
+      this.$('.subscribe-activate-form').slideUp(200);
+      this.$('.subscribe-info').slideDown(200);
+      this.$('.subscribe-cancel').hide(200);
+      this.$('.subscribe-checkout').show(200);
+      this.activateActive = false;
     }
   });
 
