@@ -40,6 +40,7 @@ define([
     },
     onCheckout: function() {
       this.lock();
+      this.clearAlert();
       $.getCachedScript('https://checkout.stripe.com/checkout.js', {
         success: function() {
           var ordered = false;
