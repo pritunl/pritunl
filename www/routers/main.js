@@ -22,6 +22,18 @@ define([
     },
     initialize: function(data) {
       this.data = data;
+      this.listenTo(window.events, 'subscription_active',
+        this.onSubscriptionActive);
+      this.listenTo(window.events, 'subscription_inactive',
+        this.onSubscriptionInactive);
+    },
+    onSubscriptionActive: function() {
+      window.enterprise = true;
+      $('body').addClass('enterprise');
+    },
+    onSubscriptionInactive: function() {
+      window.enterprise = false;
+      $('body').removeClass('enterprise');
     },
     checkAuth: function(callback) {
       if (window.authenticated) {
