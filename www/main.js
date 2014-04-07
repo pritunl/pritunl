@@ -275,7 +275,6 @@ require([
   $(document).on('dblclick mousedown', '.no-select', false);
 
   var init = function() {
-
     window.events = new EventCollection();
     window.events.start();
 
