@@ -3,9 +3,11 @@ define([
   'underscore',
   'backbone',
   'qrcode',
+  'models/subscription',
   'views/modal',
   'text!templates/modalSubscribe.html'
-], function($, _, Backbone, QRCode, ModalView, modalSubscribeTemplate) {
+], function($, _, Backbone, QRCode, SubscriptionModel, ModalView,
+    modalSubscribeTemplate) {
   'use strict';
   var ModalSubscribeView = ModalView.extend({
     className: 'subscribe-modal',
@@ -18,6 +20,7 @@ define([
       return _.extend({
         'click .subscribe-checkout': 'onCheckout',
         'click .subscribe-activate': 'onActivate',
+        'click .subscribe-submit': 'onSubmit',
         'click .subscribe-cancel': 'onCancel'
       }, ModalSubscribeView.__super__.events);
     },
@@ -129,17 +132,34 @@ define([
       this.openCheckout();
     },
     onActivate: function() {
-      if (this.activateActive) {
-      }
-      else {
-        this.activateActive = true;
-        this.$('.subscribe-info').slideUp(200);
-        this.$('.subscribe-activate-form').slideDown(200);
-        this.$('.subscribe-checkout').hide(200);
-        this.$('.subscribe-cancel').show(200);
-        this.$('.subscribe-activate').hide(200);
-        this.$('.subscribe-submit').show(200);
-      }
+      this.activateActive = true;
+      this.$('.subscribe-info').slideUp(200);
+      this.$('.subscribe-activate-form').slideDown(200);
+      this.$('.subscribe-checkout').hide(200);
+      this.$('.subscribe-cancel').show(200);
+      this.$('.subscribe-activate').hide(200);
+      this.$('.subscribe-submit').show(200);
+    },
+    onSubmit: function() {
+      this.$('.subscribe-submit').attr('disabled', 'disabled');
+      var model = new SubscriptionModel();
+      model.save({
+        'license': this.$('.subscribe-activate-form textarea').val()
+      }, {
+        success: function() {
+          this.close(true);
+        }.bind(this),
+        error: function(model, response) {
+          if (response.responseJSON) {
+            this.setAlert('danger', response.responseJSON.error_msg);
+          }
+          else {
+            this.setAlert('danger', 'Unknown server error occured, ' +
+              'please try again later.');
+          }
+          this.$('.subscribe-submit').removeAttr('disabled');
+        }.bind(this)
+      });
     },
     onCancel: function() {
       this.$('.subscribe-activate-form').slideUp(200);
