@@ -12,6 +12,7 @@ def subscription_get():
     return utils.jsonify({
         'active': app_server.sub_active,
         'status': app_server.sub_status,
+        'amount': app_server.sub_amount,
         'period_end': app_server.sub_period_end,
         'cancel_at_period_end': app_server.sub_cancel_at_period_end,
     })
@@ -49,6 +50,7 @@ def subscription_post():
     return utils.jsonify({
         'active': app_server.sub_active,
         'status': app_server.sub_status,
+        'amount': app_server.sub_amount,
         'period_end': app_server.sub_period_end,
         'cancel_at_period_end': app_server.sub_cancel_at_period_end,
     })
@@ -77,6 +79,7 @@ def subscription_put():
     return utils.jsonify({
         'active': app_server.sub_active,
         'status': app_server.sub_status,
+        'amount': app_server.sub_amount,
         'period_end': app_server.sub_period_end,
         'cancel_at_period_end': app_server.sub_cancel_at_period_end,
     })
