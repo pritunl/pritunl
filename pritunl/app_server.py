@@ -1,5 +1,6 @@
 from constants import *
 from cache import cache_db, persist_db
+from event import Event
 from config import Config
 import utils
 import flask
@@ -165,10 +166,9 @@ class AppServer(Config):
         thread.start()
 
     def _setup_updates(self):
-        if self.get_notifications:
-            thread = threading.Thread(target=self._check_updates)
-            thread.daemon = True
-            thread.start()
+        thread = threading.Thread(target=self._check_updates)
+        thread.daemon = True
+        thread.start()
 
     def _setup_app(self):
         self.app = flask.Flask(APP_NAME)
