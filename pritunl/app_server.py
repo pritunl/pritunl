@@ -60,6 +60,7 @@ class AppServer(Config):
         self.vpn_state = OK
         self.sub_active = False
         self.sub_status = None
+        self.sub_amount = None
         self.sub_period_end = None
         self.sub_cancel_at_period_end = None
 
@@ -111,6 +112,7 @@ class AppServer(Config):
         if not license:
             self.sub_active = False
             self.sub_status = None
+            self.sub_amount = None
             self.sub_period_end = None
             self.sub_cancel_at_period_end = None
         else:
@@ -124,11 +126,13 @@ class AppServer(Config):
             data = {
                 'active': data.get('active', True),
                 'status': data.get('status', 'active'),
+                'amount': data.get('amount'),
                 'period_end': data.get('period_end'),
                 'cancel_at_period_end': data.get('cancel_at_period_end'),
             }
             self.sub_active = data['active']
             self.sub_status = data['status']
+            self.sub_amount = data['amount']
             self.sub_period_end = data['period_end']
             self.sub_cancel_at_period_end = data['cancel_at_period_end']
         if cur_sub_active is not None and cur_sub_active != self.sub_active:
