@@ -23,6 +23,15 @@ define([
     },
     onEnterpriseUpgrade: function() {
       var modal = new ModalSubscribeView();
+      this.listenToOnce(modal, 'applied', function() {
+        var alertView = new AlertView({
+          type: 'success',
+          message: 'Welcome to Pritunl Enterprise.',
+          dismissable: true
+        });
+        $('.alerts-container').append(alertView.render().el);
+        this.addView(alertView);
+      }.bind(this));
       this.addView(modal);
     },
     changePassword: function() {
