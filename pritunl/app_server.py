@@ -105,30 +105,36 @@ class AppServer(Config):
                 logger.exception('Failed to get public ip address...')
 
     def update_subscription(self):
+        cur_sub_active = self.sub_active
         license = persist_db.get('license')
         if not license:
             self.sub_active = False
             self.sub_status = None
             self.sub_period_end = None
             self.sub_cancel_at_period_end = None
-            return
-        try:
-            response = utils.request.get(SUBSCRIPTION_SERVER,
-                json_data={'license': license})
-            data = response.json()
-        except:
-            logger.exception('Failed to check subscription status...')
-            data = {}
-        data = {
-            'active': data.get('active', True),
-            'status': data.get('status', 'active'),
-            'period_end': data.get('period_end'),
-            'cancel_at_period_end': data.get('cancel_at_period_end'),
-        }
-        self.sub_active = data['active']
-        self.sub_status = data['status']
-        self.sub_period_end = data['period_end']
-        self.sub_cancel_at_period_end = data['cancel_at_period_end']
+        else:
+            try:
+                response = utils.request.get(SUBSCRIPTION_SERVER,
+                    json_data={'license': license})
+                data = response.json()
+            except:
+                logger.exception('Failed to check subscription status...')
+                data = {}
+            data = {
+                'active': data.get('active', True),
+                'status': data.get('status', 'active'),
+                'period_end': data.get('period_end'),
+                'cancel_at_period_end': data.get('cancel_at_period_end'),
+            }
+            self.sub_active = data['active']
+            self.sub_status = data['status']
+            self.sub_period_end = data['period_end']
+            self.sub_cancel_at_period_end = data['cancel_at_period_end']
+        if cur_sub_active is not None and cur_sub_active != self.sub_active:
+            if self.sub_active:
+                Event(type=SUBSCRIPTION_ACTIVE)
+            else:
+                Event(type=SUBSCRIPTION_INACTIVE)
 
     def _check_updates(self):
         while True:
