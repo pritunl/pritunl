@@ -24,7 +24,9 @@ define([
           }
           console.log('%c' + execTime + 'ms ' + this.url, 'color: ' + color);
         }
-        _complete(response);
+        if (_complete) {
+          _complete(response);
+        }
       };
       return _ajax.call(Backbone.$, options);
     };
