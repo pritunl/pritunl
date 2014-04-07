@@ -134,12 +134,13 @@ require([
   'jquery',
   'underscore',
   'backbone',
+  'models/subscription',
   'collections/event',
   'views/header',
   'routers/main',
   'initialize'
-], function($, _, Backbone, EventCollection, HeaderView, mainRouter,
-    initialize) {
+], function($, _, Backbone, SubscriptionModel, EventCollection, HeaderView,
+    mainRouter, initialize) {
   'use strict';
 
   initialize();
@@ -273,11 +274,29 @@ require([
 
   $(document).on('dblclick mousedown', '.no-select', false);
 
-  window.events = new EventCollection();
-  window.events.start();
+  var init = function() {
 
-  var headerView = new HeaderView();
-  $('body').prepend(headerView.render().el);
+    window.events = new EventCollection();
+    window.events.start();
 
-  mainRouter.initialize();
+    var headerView = new HeaderView();
+    $('body').prepend(headerView.render().el);
+
+    mainRouter.initialize();
+  }
+
+  var model = new SubscriptionModel();
+  model.fetch({
+    url: '/subscription/state',
+    success: function(model) {
+      window.enterprise = model.get('active');
+      if (window.enterprise) {
+        $('body').addClass('enterprise');
+      }
+      init();
+    },
+    error: function() {
+      init();
+    }
+  });
 });
