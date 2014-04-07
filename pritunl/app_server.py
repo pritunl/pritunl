@@ -57,6 +57,10 @@ class AppServer(Config):
         self.notification = ''
         self.www_state = OK
         self.vpn_state = OK
+        self.sub_active = False
+        self.sub_status = None
+        self.sub_period_end = None
+        self.sub_cancel_at_period_end = None
 
     def __getattr__(self, name):
         if name == 'web_protocol':
@@ -100,21 +104,53 @@ class AppServer(Config):
             except:
                 logger.exception('Failed to get public ip address...')
 
-    def _check_notifications(self):
-        while True:
-            logger.debug('Checking notifications...')
-            try:
-                request = urllib2.Request(self.notification_server + \
-                    '/%s' % self._get_version())
-                response = urllib2.urlopen(request, timeout=60)
-                data = json.load(response)
+    def update_subscription(self):
+        license = persist_db.get('license')
+        if not license:
+            self.sub_active = False
+            self.sub_status = None
+            self.sub_period_end = None
+            self.sub_cancel_at_period_end = None
+            return
+        try:
+            response = utils.request.get(SUBSCRIPTION_SERVER,
+                json_data={'license': license})
+            data = response.json()
+        except:
+            logger.exception('Failed to check subscription status...')
+            data = {}
+        data = {
+            'active': data.get('active', True),
+            'status': data.get('status', 'active'),
+            'period_end': data.get('period_end'),
+            'cancel_at_period_end': data.get('cancel_at_period_end'),
+        }
+        self.sub_active = data['active']
+        self.sub_status = data['status']
+        self.sub_period_end = data['period_end']
+        self.sub_cancel_at_period_end = data['cancel_at_period_end']
 
-                self.notification = data.get('message', '')
-                self.www_state = data.get('www', OK)
-                self.vpn_state = data.get('vpn', OK)
+    def _check_updates(self):
+        while True:
+            if self.get_notifications:
+                logger.debug('Checking notifications...')
+                try:
+                    request = urllib2.Request(self.notification_server + \
+                        '/%s' % self._get_version())
+                    response = urllib2.urlopen(request, timeout=60)
+                    data = json.load(response)
+
+                    self.notification = data.get('message', '')
+                    self.www_state = data.get('www', OK)
+                    self.vpn_state = data.get('vpn', OK)
+                except:
+                    logger.exception('Failed to check notifications.')
+            logger.debug('Checking subscription status...')
+            try:
+                self.update_subscription()
             except:
-                logger.exception('Failed to check notifications...')
-            time.sleep(NOTIFICATION_CHECK_RATE)
+                logger.exception('Failed to check subscription status.')
+            time.sleep(UPDATE_CHECK_RATE)
 
     def _setup_public_ip(self):
         thread = threading.Thread(target=self.load_public_ip,
@@ -122,9 +158,9 @@ class AppServer(Config):
         thread.daemon = True
         thread.start()
 
-    def _setup_notifications(self):
+    def _setup_updates(self):
         if self.get_notifications:
-            thread = threading.Thread(target=self._check_notifications)
+            thread = threading.Thread(target=self._check_updates)
             thread.daemon = True
             thread.start()
 
@@ -284,7 +320,7 @@ class AppServer(Config):
         self._setup_conf()
         self._setup_log()
         self._setup_public_ip()
-        self._setup_notifications()
+        self._setup_updates()
         self._upgrade_db()
         self._setup_db()
         self._setup_handlers()

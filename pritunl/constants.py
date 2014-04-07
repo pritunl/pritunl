@@ -33,8 +33,8 @@ DEFAULT_DH_PARAM_BITS = 1536
 DEFAULT_OTP_SECRET_LEN = 16
 DEFAULT_PUBLIC_IP_SERVER = 'http://ip.pritunl.com/json'
 DEFAULT_NOTIFICATION_SERVER = 'http://ip.pritunl.com/notification'
-ENTERPRISE_SERVER = 'https://app.pritunl.com/subscription'
-NOTIFICATION_CHECK_RATE = 3600
+SUBSCRIPTION_SERVER = 'https://app.pritunl.com/subscription'
+UPDATE_CHECK_RATE = 3600
 ENV_PREFIX = APP_NAME
 LOG_LIMIT = 100
 EVENT_TTL = 60
@@ -262,6 +262,10 @@ USER_INVALID_MSG = 'User is not valid.'
 
 OTP_CODE_INVALID = 'otp_code_invalid'
 OTP_CODE_INVALID_MSG = 'OTP code is not valid.'
+
+SUBSCRIPTION_SERVER_ERROR = 'subscription_server_error'
+SUBSCRIPTION_SERVER_ERROR_MSG = 'Unable to connect to ' + \
+    'subscription server, please try again later.'
 
 OVPN_SERVER_CONF = """port %s
 proto %s
