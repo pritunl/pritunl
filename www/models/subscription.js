@@ -11,6 +11,7 @@ define([
       'email': null,
       'active': null,
       'status': null,
+      'amount': null,
       'period_end': null,
       'cancel_at_period_end': null
     },
