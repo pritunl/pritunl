@@ -16,6 +16,13 @@ def subscription_get():
         'cancel_at_period_end': app_server.sub_cancel_at_period_end,
     })
 
+@app_server.app.route('/subscription/state', methods=['GET'])
+def subscription_state_get():
+    app_server.update_subscription()
+    return utils.jsonify({
+        'active': app_server.sub_active,
+    })
+
 @app_server.app.route('/subscription', methods=['POST'])
 @app_server.auth
 def subscription_post():
