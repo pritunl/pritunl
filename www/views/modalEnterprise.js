@@ -31,6 +31,15 @@ define([
       setTimeout((this.setupUserVoice).bind(this), 200);
       setTimeout((this.setupCheckout).bind(this), 200);
     },
+    update: function() {
+      this.$('.enterprise-item.status').text(
+        this.model.get('status').charAt(0).toUpperCase() +
+        this.model.get('status').slice(1));
+      this.$('.enterprise-item.amount').text(
+        (this.model.get('amount') / 100).toFixed(2));
+      this.$('.enterprise-item.renew').text(
+        window.formatTime(this.model.get('period_end'), 'date'));
+    },
     lock: function() {
       this.lockClose = true;
       this.$('.ok').attr('disabled', 'disabled');
@@ -108,6 +117,7 @@ define([
                     'updated successfully.');
                   this.clearLoading();
                   this.unlock(true);
+                  this.update();
                 }.bind(this),
                 error: function(response) {
                   if (response.responseJSON) {
@@ -165,10 +175,11 @@ define([
       this.model.save({
         cancel: true
       }, {
-        success: function(model) {
+        success: function() {
           this.setAlert('info', 'Subscription successfully canceled, ' +
             'subscription will stay active until the end of the ' +
             'current period.');
+          this.update();
         }.bind(this),
         error: function() {
           this.setAlert('danger', 'Unknown server error occured, ' +

@@ -2,19 +2,19 @@
   <ul class="enterprise-list">
     <li>
       <span class="enterprise-label">Status:</span>
-      <span class="enterprise-item"><%- status.charAt(0).toUpperCase() + status.slice(1) %></span>
+      <span class="enterprise-item status"><%- status.charAt(0).toUpperCase() + status.slice(1) %></span>
     </li>
     <li>
       <span class="enterprise-label">Plan:</span>
-      <span class="enterprise-item">Enterprise</span>
+      <span class="enterprise-item plan">Enterprise</span>
     </li>
     <li>
       <span class="enterprise-label">Amount:</span>
-      <span class="enterprise-item">$<%- (amount / 100).toFixed(2) %></span>
+      <span class="enterprise-item amount">$<%- (amount / 100).toFixed(2) %></span>
     </li>
     <li>
       <span class="enterprise-label">Renew:</span>
-      <span class="enterprise-item"><%- window.formatTime(period_end, 'date') %></span>
+      <span class="enterprise-item renew"><%- window.formatTime(period_end, 'date') %></span>
     </li>
   </ul>
 </div>
