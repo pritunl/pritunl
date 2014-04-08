@@ -27,15 +27,20 @@ define([
       return this.template(this.model.toJSON());
     },
     postRender: function() {
+      this.update();
       // Precache checkout and uservoice with delay to prevent animation lag
       setTimeout((this.setupUserVoice).bind(this), 200);
       setTimeout((this.setupCheckout).bind(this), 200);
     },
     update: function() {
-      this.$('.enterprise-item.status').text(
-        this.model.get('status').charAt(0).toUpperCase() +
-        this.model.get('status').slice(1));
-      this.$('.enterprise-item.amount').text(
+      var statusText = this.model.getTextStatus();
+      var colors = ['default-text', 'error-text',
+        'warning-text', 'success-text'];
+      colors.splice(colors.indexOf(statusText[1]), 1);
+      this.$('.enterprise-item.status').text(statusText[0]);
+      this.$('.enterprise-item.status').removeClass(colors.join(' '));
+      this.$('.enterprise-item.status').addClass(statusText[1]);
+      this.$('.enterprise-item.amount').text('$' +
         (this.model.get('amount') / 100).toFixed(2));
       this.$('.enterprise-item.renew').text(
         window.formatTime(this.model.get('period_end'), 'date'));
