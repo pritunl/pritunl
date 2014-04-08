@@ -156,7 +156,7 @@ require([
     return days + 'd ' + hours + 'h ' + minutes + 'm ' + seconds + 's';
   };
 
-  window.formatTime = function(time, short) {
+  window.formatTime = function(time, type) {
     var abbrev = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
       'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     var date = new Date(0);
@@ -183,7 +183,7 @@ require([
     if (minutes.length < 2) {
       minutes = '0' + minutes;
     }
-    if (short) {
+    if (type === 'short') {
       if (curDate.getDate() === date.getDate() &&
           curDate.getMonth() === date.getMonth() &&
           curDate.getFullYear() === date.getFullYear()) {
@@ -195,6 +195,9 @@ require([
           time += ' ' + year;
         }
       }
+    }
+    else if (type === 'date') {
+      time = month + ' ' + day;
     }
     else {
       time = hours + ':' + minutes + ' ' + meridiem + ' - ' +
