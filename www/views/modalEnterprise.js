@@ -26,7 +26,7 @@ define([
       return this.template(this.model.toJSON());
     },
     postRender: function() {
-      // Precache checkout and uservoice with delay to prevent lag
+      // Precache checkout and uservoice with delay to prevent animation lag
       setTimeout((this.setupUserVoice).bind(this), 200);
       setTimeout((this.setupCheckout).bind(this), 200);
     },
