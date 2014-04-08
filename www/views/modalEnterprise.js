@@ -20,6 +20,7 @@ define([
       return _.extend({
         'click .enterprise-update': 'onCheckout',
         'click .enterprise-remove': 'onRemoveLicense',
+        'click .enterprise-cancel': 'onCancelLicense'
       }, ModalSubscribeView.__super__.events);
     },
     body: function() {
@@ -96,18 +97,15 @@ define([
             token: function(token) {
               ordered = true;
               this.lock();
-              this.setLoading('Order processing, please wait...', true, 0);
-              $.ajax({
-                type: 'POST',
-                url: 'https://app.pritunl.com/subscription',
-                contentType: 'application/json',
-                dataType: 'json',
-                data: JSON.stringify({
-                  'card': token.id,
-                  'email': token.email
-                }),
-                success: function(response) {
-                  this.setAlert('success', response.msg);
+              this.setLoading('Updating payment information, please wait...',
+                true, 0);
+              this.model.save({
+                card: token.id,
+                email: token.email
+              }, {
+                success: function() {
+                  this.setAlert('success', 'Payment information ' +
+                    'updated successfully.');
                   this.clearLoading();
                   this.unlock(true);
                 }.bind(this),
@@ -156,6 +154,22 @@ define([
       this.model.destroy({
         success: function() {
           this.close(true);
+        }.bind(this),
+        error: function() {
+          this.setAlert('danger', 'Unknown server error occured, ' +
+            'please try again later.');
+        }.bind(this)
+      })
+    },
+    onCancelLicense: function() {
+      this.model.save({
+        cancel: true
+      }, {
+        success: function(model) {
+          console.log(model);
+          this.setAlert('info', 'Subscription successfully canceled, ' +
+            'subscription will stay active until the end of the ' +
+            'current period.');
         }.bind(this),
         error: function() {
           this.setAlert('danger', 'Unknown server error occured, ' +
