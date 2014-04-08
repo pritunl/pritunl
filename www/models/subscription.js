@@ -20,6 +20,21 @@ define([
     },
     url: function() {
       return '/subscription';
+    },
+    getTextStatus: function() {
+      var status = this.get('status');
+      if (status === 'canceled') {
+        return ['Inactive', 'error-text'];
+      }
+      else if (this.get('cancel_at_period_end')) {
+        return ['Canceled', 'error-text'];
+      }
+      else if (status === 'past_due') {
+        return ['Past Due', 'warning-text'];
+      }
+      else {
+        return ['Active', 'success-text'];
+      }
     }
   });
 
