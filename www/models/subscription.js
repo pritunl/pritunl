@@ -15,6 +15,9 @@ define([
       'period_end': null,
       'cancel_at_period_end': null
     },
+    isNew: function() {
+      return this.get('active') == null;
+    },
     url: function() {
       return '/subscription';
     }
