@@ -39,8 +39,8 @@ define([
           var selectors = '.orgs-status .status-num, ' +
             '.users-status .status-num, ' +
             '.servers-status .status-num';
-          this.$(selectors).removeClass('none warning success');
-          this.$(selectors).addClass('error');
+          this.$(selectors).removeClass('none-text warning-text success-text');
+          this.$(selectors).addClass('error-text');
 
           var alertView = new AlertView({
             type: 'danger',
@@ -62,13 +62,13 @@ define([
           if (num === 0) {
             num = '-';
             this.$('.orgs-status .status-num').removeClass(
-              'error warning success');
-            this.$('.orgs-status .status-num').addClass('none');
+              'error-text warning-text success-text');
+            this.$('.orgs-status .status-num').addClass('none-text');
           }
           else {
             this.$('.orgs-status .status-num').removeClass(
-              'none error warning');
-            this.$('.orgs-status .status-num').addClass('success');
+              'none-text error-text warning-text');
+            this.$('.orgs-status .status-num').addClass('success-text');
           }
           this.$('.orgs-status .status-num').text(num + '/' + num);
 
@@ -80,13 +80,13 @@ define([
               totalNum = '-';
             }
             this.$('.users-status .status-num').removeClass(
-              'error warning success');
-            this.$('.users-status .status-num').addClass('none');
+              'error-text warning-text success-text');
+            this.$('.users-status .status-num').addClass('none-text');
           }
           else {
             this.$('.users-status .status-num').removeClass(
-              'none error warning');
-            this.$('.users-status .status-num').addClass('success');
+              'none-text error-text warning-text');
+            this.$('.users-status .status-num').addClass('success-text');
           }
           this.$('.users-status .status-num').text(num + '/' + totalNum);
 
@@ -96,23 +96,23 @@ define([
             num = '-';
             totalNum = '-';
             this.$('.servers-status .status-num').removeClass(
-              'error warning success');
-            this.$('.servers-status .status-num').addClass('none');
+              'error-text warning-text success-text');
+            this.$('.servers-status .status-num').addClass('none-text');
           }
           else if (num === 0) {
             this.$('.servers-status .status-num').removeClass(
-              'none warning success');
-            this.$('.servers-status .status-num').addClass('error');
+              'none-text warning-text success-text');
+            this.$('.servers-status .status-num').addClass('error-text');
           }
           else if (num < totalNum) {
             this.$('.servers-status .status-num').removeClass(
-              'none error success');
-            this.$('.servers-status .status-num').addClass('warning');
+              'none-text error-text success-text');
+            this.$('.servers-status .status-num').addClass('warning-text');
           }
           else {
             this.$('.servers-status .status-num').removeClass(
-              'none error warning');
-            this.$('.servers-status .status-num').addClass('success');
+              'none-text error-text warning-text');
+            this.$('.servers-status .status-num').addClass('success-text');
           }
           this.$('.servers-status .status-num').text(num + '/' + totalNum);
 
