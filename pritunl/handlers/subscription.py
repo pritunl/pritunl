@@ -9,7 +9,9 @@ import re
 @app_server.auth
 def subscription_get():
     app_server.update_subscription()
+    # TODO
     return utils.jsonify({
+        'license': bool(persist_db.get('license')),
         'active': app_server.sub_active,
         'status': app_server.sub_status,
         'amount': app_server.sub_amount,
@@ -47,7 +49,9 @@ def subscription_post():
 
     persist_db.set('license', license)
     app_server.update_subscription()
+    # TODO
     return utils.jsonify({
+        'license': True,
         'active': app_server.sub_active,
         'status': app_server.sub_status,
         'amount': app_server.sub_amount,
@@ -87,7 +91,9 @@ def subscription_put():
         return utils.jsonify(response.json(), response.status_code)
 
     app_server.update_subscription()
+    # TODO
     return utils.jsonify({
+        'license': bool(persist_db.get('license')),
         'active': app_server.sub_active,
         'status': app_server.sub_status,
         'amount': app_server.sub_amount,
