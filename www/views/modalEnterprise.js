@@ -18,7 +18,7 @@ define([
     safeClose: true,
     events: function() {
       return _.extend({
-        'click .enterprise-update': 'onCheckout',
+        'click .enterprise-update, .enterprise-reactivate': 'onCheckout',
         'click .enterprise-remove': 'onRemoveLicense',
         'click .enterprise-cancel': 'onCancelLicense'
       }, ModalSubscribeView.__super__.events);
@@ -33,31 +33,41 @@ define([
       setTimeout((this.setupCheckout).bind(this), 200);
     },
     update: function() {
-      var statusText = this.model.getTextStatus();
+      var statusData = this.model.getStatusData();
+      this.checkoutPath = statusData[2];
+      this.checkoutLoading = statusData[3];
+      this.checkoutCompleted = statusData[4];
       var colors = ['default-text', 'error-text',
         'warning-text', 'success-text'];
-      colors.splice(colors.indexOf(statusText[1]), 1);
-      this.$('.enterprise-item.status').text(statusText[0]);
+      colors.splice(colors.indexOf(statusData[1]), 1);
+      this.$('.enterprise-item.status').text(statusData[0]);
       this.$('.enterprise-item.status').removeClass(colors.join(' '));
-      this.$('.enterprise-item.status').addClass(statusText[1]);
+      this.$('.enterprise-item.status').addClass(statusData[1]);
       this.$('.enterprise-item.amount').text('$' +
         (this.model.get('amount') / 100).toFixed(2));
       this.$('.enterprise-item.renew').text(
         window.formatTime(this.model.get('period_end'), 'date'));
+
+      if (statusData[0] === 'Inactive' || statusData[0] === 'Canceled') {
+        this.$('.enterprise-cancel').hide();
+        this.$('.enterprise-reactivate').show();
+        this.$('.enterprise-update').attr('disabled', 'disabled');
+      }
+      else {
+        this.$('.enterprise-reactivate').hide();
+        this.$('.enterprise-cancel').show();
+        this.$('.enterprise-update').removeAttr('disabled');
+      }
     },
     lock: function() {
       this.lockClose = true;
       this.$('.ok').attr('disabled', 'disabled');
-      this.$('.subscribe-checkout').attr('disabled', 'disabled');
-      this.$('.subscribe-activate').attr('disabled', 'disabled');
+      this.$('.enterprise-buttons button').attr('disabled', 'disabled');
     },
-    unlock: function(noCheckout) {
+    unlock: function() {
       this.lockClose = false;
       this.$('.ok').removeAttr('disabled');
-      if (!noCheckout) {
-        this.$('.subscribe-checkout').removeAttr('disabled');
-      }
-      this.$('.subscribe-activate').removeAttr('disabled');
+      this.$('.enterprise-buttons button').removeAttr('disabled');
     },
     setupUserVoice: function() {
       $.getCachedScript('//widget.uservoice.com/Vp7EFBMcYhZHI91VAtHeyg.js', {
@@ -81,11 +91,11 @@ define([
         }.bind(this)
       });
     },
-    setupCheckout: function() {
+    openCheckout: function(optionsPath) {
       this.checkout = undefined;
       $.ajax({
           type: 'GET',
-          url: 'https://app.pritunl.com/checkout_update',
+          url: 'https://app.pritunl.com/' + optionsPath,
           success: function(options) {
             this.configCheckout(options);
           }.bind(this),
@@ -100,7 +110,7 @@ define([
       $.getCachedScript('https://checkout.stripe.com/checkout.js', {
         success: function() {
           var ordered = false;
-          this.checkout = window.StripeCheckout.configure(_.extend({
+          var checkout = window.StripeCheckout.configure(_.extend({
             closed: function() {
               setTimeout(function() {
                 if (!ordered) {
@@ -111,17 +121,15 @@ define([
             token: function(token) {
               ordered = true;
               this.lock();
-              this.setLoading('Updating payment information, please wait...',
-                true, 0);
+              this.setLoading(this.checkoutLoading, true, 0);
               this.model.save({
                 card: token.id,
                 email: token.email
               }, {
                 success: function() {
-                  this.setAlert('success', 'Payment information ' +
-                    'updated successfully.');
+                  this.setAlert('success', this.checkoutCompleted);
                   this.clearLoading();
-                  this.unlock(true);
+                  this.unlock();
                   this.update();
                 }.bind(this),
                 error: function(response) {
@@ -129,7 +137,7 @@ define([
                     this.setAlert('danger', response.responseJSON.error_msg);
                   }
                   else {
-                    this.setAlert('danger', 'Unknown error occured, ' +
+                    this.setAlert('danger', 'Server error occured, ' +
                       'please try again later.');
                   }
                   this.clearLoading();
@@ -138,56 +146,67 @@ define([
               });
             }.bind(this)
           }, options));
+          checkout.open();
         }.bind(this),
         error: function() {
-          this.setAlert('danger', 'Failed to load upgrade checkout, ' +
+          this.setAlert('danger', 'Failed to load checkout, ' +
             'please try again later.');
           this.checkout = null;
         }.bind(this)
       });
     },
-    openCheckout: function() {
-      if (this.checkout === undefined) {
-        setTimeout((this.openCheckout).bind(this), 10);
-      }
-      else if (this.checkout === null) {
-        this.unlock();
-      }
-      else {
-        this.checkout.open();
-      }
+    setupCheckout: function() {
+      $.getCachedScript('https://checkout.stripe.com/checkout.js');
     },
     onCheckout: function() {
       this.lock();
       this.clearAlert();
-      if (this.checkout === null) {
-        this.setupCheckout();
-      }
-      this.openCheckout();
+      this.openCheckout(this.checkoutPath);
     },
     onRemoveLicense: function() {
+      if (this.$('.enterprise-remove').text() === 'Remove License') {
+        this.$('.enterprise-remove').text('Are you sure?');
+        setTimeout(function() {
+          this.$('.enterprise-remove').text('Remove License');
+        }, 5000);
+        return;
+      }
+      this.lock();
+      this.$('.enterprise-remove').text('Remove License');
       this.model.destroy({
         success: function() {
+          this.unlock();
           this.close(true);
         }.bind(this),
         error: function() {
-          this.setAlert('danger', 'Unknown server error occured, ' +
+          this.unlock();
+          this.setAlert('danger', 'Server error occured, ' +
             'please try again later.');
         }.bind(this)
       })
     },
     onCancelLicense: function() {
+      if (this.$('.enterprise-cancel').text() === 'Cancel Subscription') {
+        this.$('.enterprise-cancel').text('Are you sure?');
+        setTimeout(function() {
+          this.$('.enterprise-cancel').text('Cancel Subscription');
+        }, 5000);
+        return;
+      }
+      this.lock();
       this.model.save({
         cancel: true
       }, {
         success: function() {
+          this.unlock();
           this.setAlert('info', 'Subscription successfully canceled, ' +
             'subscription will stay active until the end of the ' +
             'current period.');
           this.update();
         }.bind(this),
         error: function() {
-          this.setAlert('danger', 'Unknown server error occured, ' +
+          this.unlock();
+          this.setAlert('danger', 'Server error occured, ' +
             'please try again later.');
         }.bind(this)
       })
