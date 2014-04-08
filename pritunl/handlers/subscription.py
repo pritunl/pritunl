@@ -39,11 +39,11 @@ def subscription_post():
         return utils.jsonify({
             'error': SUBSCRIPTION_SERVER_ERROR,
             'error_msg': SUBSCRIPTION_SERVER_ERROR_MSG,
-        }, 400)
+        }, 500)
     data = response.json()
 
-    if 'error' in data:
-        return utils.jsonify(data, 400);
+    if response.status_code != 200:
+        return utils.jsonify(data, response.status_code);
 
     persist_db.set('license', license)
     app_server.update_subscription()
@@ -58,22 +58,33 @@ def subscription_post():
 @app_server.app.route('/subscription', methods=['PUT'])
 @app_server.auth
 def subscription_put():
-    card = flask.request.json['card']
-    email = flask.request.json['email']
+    card = flask.request.json.get('card')
+    email = flask.request.json.get('email')
+    cancel = flask.request.json.get('cancel')
 
     try:
-        response = utils.request.get(SUBSCRIPTION_SERVER,
-            json_data={
-                'license': persist_db.get('license'),
-                'card': card,
-                'email': email,
-            },
-        )
+        if cancel:
+            response = utils.request.delete(SUBSCRIPTION_SERVER,
+                json_data={
+                    'license': persist_db.get('license'),
+                },
+            )
+        else:
+            response = utils.request.put(SUBSCRIPTION_SERVER,
+                json_data={
+                    'license': persist_db.get('license'),
+                    'card': card,
+                    'email': email,
+                },
+            )
     except httplib.HTTPException:
         return utils.jsonify({
             'error': SUBSCRIPTION_SERVER_ERROR,
             'error_msg': SUBSCRIPTION_SERVER_ERROR_MSG,
-        }, 400)
+        }, 500)
+
+    if response.status_code != 200:
+        return utils.jsonify(response.json(), response.status_code)
 
     app_server.update_subscription()
     return utils.jsonify({
