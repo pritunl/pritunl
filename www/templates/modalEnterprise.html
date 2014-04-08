@@ -1,0 +1,26 @@
+<div class="enterprise-info form-group">
+  <ul class="enterprise-list">
+    <li>
+      <span class="enterprise-label">Status:</span>
+      <span class="enterprise-item"><%- status.charAt(0).toUpperCase() + status.slice(1) %></span>
+    </li>
+    <li>
+      <span class="enterprise-label">Plan:</span>
+      <span class="enterprise-item">Enterprise</span>
+    </li>
+    <li>
+      <span class="enterprise-label">Amount:</span>
+      <span class="enterprise-item">$<%- (amount / 100).toFixed(2) %></span>
+    </li>
+    <li>
+      <span class="enterprise-label">Renew:</span>
+      <span class="enterprise-item"><%- window.formatTime(period_end, 'date') %></span>
+    </li>
+  </ul>
+</div>
+<div class="enterprise-buttons form-group">
+  <button type="button" class="enterprise-update btn btn-primary btn-lg">Update Payment Info</button>
+  <button type="button" class="enterprise-remove btn btn-warning btn-lg">Remove License</button><br>
+  <button type="button" class="enterprise-cancel btn btn-danger btn-lg first">Cancel Subscription</button>
+  <button type="button" id="trigger-uservoice" class="enterprise-support btn btn-info btn-lg">Contact Support</button><br>
+</div>
