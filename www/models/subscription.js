@@ -21,19 +21,35 @@ define([
     url: function() {
       return '/subscription';
     },
-    getTextStatus: function() {
+    parse: function(response) {
+      this.unset('cancel');
+      return response;
+    },
+    getStatusData: function() {
+      var loadMsg;
+      var completeMsg;
       var status = this.get('status');
       if (status === 'canceled') {
-        return ['Inactive', 'error-text'];
+        loadMsg = 'Reactivating subscription, please wait...';
+        completeMsg = 'Subscription successfully reactivated.';
+        return ['Inactive', 'error-text', 'checkout_reactivate',
+          loadMsg, completeMsg];
       }
       else if (this.get('cancel_at_period_end')) {
-        return ['Canceled', 'error-text'];
+        loadMsg = 'Reactivating subscription, please wait...';
+        completeMsg = 'Subscription successfully reactivated, you will '+
+          'not be charged until the end of the current subscription period.';
+        return ['Canceled', 'error-text', 'checkout_renew',
+          loadMsg, completeMsg];
       }
       else if (status === 'past_due') {
-        return ['Past Due', 'warning-text'];
+        loadMsg = 'Reactivating subscription, please wait...';
+        completeMsg = 'Subscription successfully reactivated.';
+        return ['Past Due', 'warning-text', 'checkout_reactivate',
+          loadMsg, completeMsg];
       }
       else {
-        return ['Active', 'success-text'];
+        return ['Active', 'success-text', 'checkout_update', null, null];
       }
     }
   });
