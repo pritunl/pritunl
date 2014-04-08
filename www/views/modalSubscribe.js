@@ -54,7 +54,7 @@ define([
             this.configCheckout(options);
           }.bind(this),
           error: function() {
-            this.setAlert('danger', 'Failed to load upgrade checkout data, ' +
+            this.setAlert('danger', 'Failed to load checkout data, ' +
               'please try again later.');
             this.checkout = null;
           }.bind(this)
