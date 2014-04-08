@@ -9,15 +9,7 @@ import re
 @app_server.auth
 def subscription_get():
     app_server.update_subscription()
-    # TODO
-    return utils.jsonify({
-        'license': bool(persist_db.get('license')),
-        'active': app_server.sub_active,
-        'status': app_server.sub_status,
-        'amount': app_server.sub_amount,
-        'period_end': app_server.sub_period_end,
-        'cancel_at_period_end': app_server.sub_cancel_at_period_end,
-    })
+    return utils.jsonify(app_server.subscription_dict())
 
 @app_server.app.route('/subscription/state', methods=['GET'])
 def subscription_state_get():
@@ -49,15 +41,7 @@ def subscription_post():
 
     persist_db.set('license', license)
     app_server.update_subscription()
-    # TODO
-    return utils.jsonify({
-        'license': True,
-        'active': app_server.sub_active,
-        'status': app_server.sub_status,
-        'amount': app_server.sub_amount,
-        'period_end': app_server.sub_period_end,
-        'cancel_at_period_end': app_server.sub_cancel_at_period_end,
-    })
+    return utils.jsonify(app_server.subscription_dict())
 
 @app_server.app.route('/subscription', methods=['PUT'])
 @app_server.auth
@@ -91,15 +75,7 @@ def subscription_put():
         return utils.jsonify(response.json(), response.status_code)
 
     app_server.update_subscription()
-    # TODO
-    return utils.jsonify({
-        'license': bool(persist_db.get('license')),
-        'active': app_server.sub_active,
-        'status': app_server.sub_status,
-        'amount': app_server.sub_amount,
-        'period_end': app_server.sub_period_end,
-        'cancel_at_period_end': app_server.sub_cancel_at_period_end,
-    })
+    return utils.jsonify(app_server.subscription_dict())
 
 @app_server.app.route('/subscription', methods=['DELETE'])
 @app_server.auth

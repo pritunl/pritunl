@@ -106,7 +106,7 @@ class AppServer(Config):
             except:
                 logger.exception('Failed to get public ip address...')
 
-    def update_subscription(self):
+    def subscription_update(self):
         cur_sub_active = self.sub_active
         license = persist_db.get('license')
         if not license:
@@ -122,7 +122,7 @@ class AppServer(Config):
                 # License key invalid
                 if response.status_code == 401:
                     persist_db.remove('license')
-                    self.update_subscription()
+                    self.subscription_update()
                     return
                 data = response.json()
             except:
@@ -138,6 +138,16 @@ class AppServer(Config):
                 Event(type=SUBSCRIPTION_ACTIVE)
             else:
                 Event(type=SUBSCRIPTION_INACTIVE)
+
+    def subscription_dict(self):
+        return {
+            'license': bool(persist_db.get('license')),
+            'active': self.sub_active,
+            'status': self.sub_status,
+            'amount': self.sub_amount,
+            'period_end': self.sub_period_end,
+            'cancel_at_period_end': self.sub_cancel_at_period_end,
+        }
 
     def _check_updates(self):
         while True:
@@ -156,7 +166,7 @@ class AppServer(Config):
                     logger.exception('Failed to check notifications.')
             logger.debug('Checking subscription status...')
             try:
-                self.update_subscription()
+                self.subscription_update()
             except:
                 logger.exception('Failed to check subscription status.')
             time.sleep(UPDATE_CHECK_RATE)
