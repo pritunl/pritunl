@@ -8,12 +8,12 @@ import re
 @app_server.app.route('/subscription', methods=['GET'])
 @app_server.auth
 def subscription_get():
-    app_server.update_subscription()
+    app_server.subscription_update()
     return utils.jsonify(app_server.subscription_dict())
 
 @app_server.app.route('/subscription/state', methods=['GET'])
 def subscription_state_get():
-    app_server.update_subscription()
+    app_server.subscription_update()
     return utils.jsonify({
         'active': app_server.sub_active,
     })
@@ -40,7 +40,7 @@ def subscription_post():
         return utils.jsonify(data, response.status_code);
 
     persist_db.set('license', license)
-    app_server.update_subscription()
+    app_server.subscription_update()
     return utils.jsonify(app_server.subscription_dict())
 
 @app_server.app.route('/subscription', methods=['PUT'])
@@ -74,12 +74,12 @@ def subscription_put():
     if response.status_code != 200:
         return utils.jsonify(response.json(), response.status_code)
 
-    app_server.update_subscription()
+    app_server.subscription_update()
     return utils.jsonify(app_server.subscription_dict())
 
 @app_server.app.route('/subscription', methods=['DELETE'])
 @app_server.auth
 def subscription_delete():
     persist_db.remove('license')
-    app_server.update_subscription()
+    app_server.subscription_update()
     return utils.jsonify({})
