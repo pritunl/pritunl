@@ -72,7 +72,8 @@ define([
 
       this.alertView = new AlertView({
         type: 'danger',
-        message: message
+        message: message,
+        force: true
       });
       this.$('.login-form').prepend(this.alertView.render().el);
       this.addView(this.alertView);

@@ -15,10 +15,11 @@ define([
       this.message = options.message;
       this.dismissable = options.dismissable;
       this.animate = options.animate === false ? false : true;
+      this.force = options.force;
       this.render();
     },
     render: function() {
-      if (!window.authenticated) {
+      if (!this.force && !window.authenticated) {
         this.destroy();
         return this;
       }
