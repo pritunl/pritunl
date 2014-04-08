@@ -166,7 +166,6 @@ define([
         cancel: true
       }, {
         success: function(model) {
-          console.log(model);
           this.setAlert('info', 'Subscription successfully canceled, ' +
             'subscription will stay active until the end of the ' +
             'current period.');
