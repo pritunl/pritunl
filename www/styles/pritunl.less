@@ -1053,10 +1053,16 @@ header.blur {
   margin-bottom: 0;
 }
 
-.subscribe-modal .modal .subscribe-info {
+.subscribe-modal .modal .subscribe-info,
+.enterprise-modal .modal .enterprise-info {
   margin: 0 auto;
   width: 300px;
   text-align: center;
+}
+
+.enterprise-modal .modal .enterprise-info {
+  width: 280px;
+  text-align: left;
 }
 
 .subscribe-modal .modal .subscribe-activate-form {
@@ -1064,12 +1070,22 @@ header.blur {
   text-align: center;
 }
 
-.subscribe-modal .modal .subscribe-activate-form label {
+.enterprise-modal .modal .enterprise-info .enterprise-item {
+  float: right;
+  text-align: right;
+}
+
+.subscribe-modal .modal .subscribe-activate-form label,
+.enterprise-modal .modal .enterprise-list span {
   text-align: center;
   color: @gray2-fg;
   font-weight: bold;
   font-family: 'Ubuntu', sans-serif;
   font-size: 19px;
+}
+
+.enterprise-modal .modal .enterprise-list span {
+  font-size: 22px;
 }
 
 .subscribe-modal .modal .subscribe-activate-form textarea {
@@ -1079,7 +1095,8 @@ header.blur {
   .box-shadow(0px 0px 14px @gray4-fg);
 }
 
-.subscribe-modal .modal .subscribe-buttons {
+.subscribe-modal .modal .subscribe-buttons,
+.enterprise-modal .modal .enterprise-buttons {
   text-align: center;
 }
 
@@ -1088,14 +1105,12 @@ header.blur {
   display: none;
 }
 
-.subscribe-modal .modal .subscribe-buttons button {
+.subscribe-modal .modal .subscribe-buttons button,
+.enterprise-modal .modal .enterprise-buttons button {
   margin: 5px 0;
   width: 220px;
-  margin-left: 10px;
-}
-
-.subscribe-modal .modal .subscribe-buttons button:first-child {
-  margin-left: 0;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 .subscribe-modal .modal .subscribe-list {
@@ -1107,6 +1122,10 @@ header.blur {
   margin-top: 5px;
   margin-bottom: 15px;
   .box-shadow(0px 0px 14px @gray4-fg);
+}
+
+.enterprise-modal .modal .enterprise-list {
+  list-style-type: none;
 }
 
 .subscribe-modal .modal .subscribe-list li {
