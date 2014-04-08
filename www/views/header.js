@@ -38,6 +38,10 @@ define([
       this.addView(modal);
     },
     onEnterpriseSettings: function() {
+      if (this.onEnterpriseSettingsLock) {
+        return;
+      }
+      this.onEnterpriseSettingsLock = true;
       var model = new SubscriptionModel();
       model.fetch({
         success: function() {
@@ -54,7 +58,19 @@ define([
             this.addView(alertView);
           }.bind(this));
           this.addView(modal);
+          this.onEnterpriseSettingsLock = false;
         }.bind(this),
+        error: function() {
+          var alertView = new AlertView({
+            type: 'danger',
+            message: 'Failed to load subscription information, ' +
+              'server error occurred.',
+            dismissable: true
+          });
+          $('.alerts-container').append(alertView.render().el);
+          this.addView(alertView);
+          this.onEnterpriseSettingsLock = false;
+        }.bind(this)
       })
     },
     changePassword: function() {
