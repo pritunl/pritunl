@@ -95,7 +95,7 @@ define([
                     this.setAlert('danger', response.responseJSON.error_msg);
                   }
                   else {
-                    this.setAlert('danger', 'Unknown error occured, ' +
+                    this.setAlert('danger', 'Server error occured, ' +
                       'please try again later.');
                   }
                   this.clearLoading();
@@ -154,7 +154,7 @@ define([
             this.setAlert('danger', response.responseJSON.error_msg);
           }
           else {
-            this.setAlert('danger', 'Unknown server error occured, ' +
+            this.setAlert('danger', 'Server error occured, ' +
               'please try again later.');
           }
           this.$('.subscribe-submit').removeAttr('disabled');
