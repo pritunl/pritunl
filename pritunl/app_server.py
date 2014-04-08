@@ -119,6 +119,10 @@ class AppServer(Config):
             try:
                 response = utils.request.get(SUBSCRIPTION_SERVER,
                     json_data={'license': license})
+                if response.status_code == 401:
+                    persist_db.remove('license')
+                    self.update_subscription()
+                    return
                 data = response.json()
             except:
                 logger.exception('Failed to check subscription status...')
