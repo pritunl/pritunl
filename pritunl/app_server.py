@@ -119,6 +119,7 @@ class AppServer(Config):
             try:
                 response = utils.request.get(SUBSCRIPTION_SERVER,
                     json_data={'license': license})
+                # License key invalid
                 if response.status_code == 401:
                     persist_db.remove('license')
                     self.update_subscription()
@@ -127,18 +128,11 @@ class AppServer(Config):
             except:
                 logger.exception('Failed to check subscription status...')
                 data = {}
-            data = {
-                'active': data.get('active', True),
-                'status': data.get('status', 'active'),
-                'amount': data.get('amount'),
-                'period_end': data.get('period_end'),
-                'cancel_at_period_end': data.get('cancel_at_period_end'),
-            }
-            self.sub_active = data['active']
-            self.sub_status = data['status']
-            self.sub_amount = data['amount']
-            self.sub_period_end = data['period_end']
-            self.sub_cancel_at_period_end = data['cancel_at_period_end']
+            self.sub_active = data.get('active', True)
+            self.sub_status = data.get('status', 'unknown')
+            self.sub_amount = data.get('amount')
+            self.sub_period_end = data.get('period_end')
+            self.sub_cancel_at_period_end = data.get('cancel_at_period_end')
         if cur_sub_active is not None and cur_sub_active != self.sub_active:
             if self.sub_active:
                 Event(type=SUBSCRIPTION_ACTIVE)
