@@ -121,7 +121,7 @@ class AppServer(Config):
                 response = utils.request.get(SUBSCRIPTION_SERVER,
                     json_data={'license': license})
                 # License key invalid
-                if response.status_code == 401:
+                if response.status_code == 470:
                     persist_db.remove('license')
                     self.subscription_update()
                     return
