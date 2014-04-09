@@ -50,7 +50,11 @@ define([
           loadMsg, completeMsg];
       }
       else {
-        return ['Active', 'success-text', 'checkout_update', null, null];
+        loadMsg = 'Updating payment information, please wait...';
+        completeMsg = 'Payment information successfully updated, you will '+
+          'not be charged until the end of the current subscription period.';
+        return ['Active', 'success-text', 'checkout_update',
+          loadMsg, completeMsg];
       }
     }
   });
