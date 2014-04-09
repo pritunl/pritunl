@@ -39,7 +39,8 @@ define([
           var selectors = '.orgs-status .status-num, ' +
             '.users-status .status-num, ' +
             '.servers-status .status-num';
-          this.$(selectors).removeClass('default-text warning-text success-text');
+          this.$(selectors).removeClass(
+            'default-text warning-text success-text');
           this.$(selectors).addClass('error-text');
 
           var alertView = new AlertView({

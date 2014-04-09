@@ -183,7 +183,7 @@ define([
           this.setAlert('danger', 'Server error occured, ' +
             'please try again later.');
         }.bind(this)
-      })
+      });
     },
     onCancelLicense: function() {
       if (this.$('.enterprise-cancel').text() === 'Cancel Subscription') {
@@ -209,7 +209,7 @@ define([
           this.setAlert('danger', 'Server error occured, ' +
             'please try again later.');
         }.bind(this)
-      })
+      });
     }
   });
 

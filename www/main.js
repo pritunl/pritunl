@@ -285,7 +285,7 @@ require([
     $('body').prepend(headerView.render().el);
 
     mainRouter.initialize();
-  }
+  };
 
   var model = new SubscriptionModel();
   model.fetch({
