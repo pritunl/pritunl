@@ -135,7 +135,7 @@ define([
                   this.unlock();
                   this.update();
                 }.bind(this),
-                error: function(response) {
+                error: function(model, response) {
                   if (response.responseJSON) {
                     this.setAlert('danger', response.responseJSON.error_msg);
                   }
