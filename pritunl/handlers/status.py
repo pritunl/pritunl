@@ -25,6 +25,15 @@ def status_get():
 
     local_networks = utils.get_local_networks()
 
+    if app_server.openssl_heartbleed:
+        notification = 'You are running an outdated version of openssl ' + \
+            'containting the heartbleed bug. This could allow an attacker ' + \
+            'to compromise your servers SSL keys and gain access to your ' + \
+            'server. Please upgrade your openssl package and restart the ' + \
+            'pritunl service.'
+    else:
+        notification = app_server.notification
+
     return utils.jsonify({
         'org_count': orgs_count,
         'users_online': clients_count,
@@ -34,5 +43,5 @@ def status_get():
         'server_version': __version__,
         'public_ip': app_server.public_ip,
         'local_networks': local_networks,
-        'notification': app_server.notification,
+        'notification': notification,
     })

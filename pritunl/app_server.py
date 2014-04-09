@@ -63,6 +63,7 @@ class AppServer(Config):
         self.sub_amount = None
         self.sub_period_end = None
         self.sub_cancel_at_period_end = None
+        self.openssl_heartbleed = not utils.check_openssl()
 
     def __getattr__(self, name):
         if name == 'web_protocol':
