@@ -292,6 +292,9 @@ define([
       this.serverOutputView.setState(true);
     },
     onServerGraph: function() {
+      if (!window.enterprise) {
+        return;
+      }
       this.$('.server-output-btn').removeClass('btn-primary');
       this.$('.server-output-btn').addClass('btn-default');
       this.$('.server-graph-btn').removeClass('btn-default');
