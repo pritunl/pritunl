@@ -65,9 +65,14 @@ define([
       this.$('.enterprise-buttons button').attr('disabled', 'disabled');
     },
     unlock: function() {
+      var notSel = '';
       this.lockClose = false;
       this.$('.ok').removeAttr('disabled');
-      this.$('.enterprise-buttons button').removeAttr('disabled');
+      var statusData = this.model.getStatusData();
+      if (statusData[0] === 'Inactive' || statusData[0] === 'Canceled') {
+        notSel = ':not(.enterprise-update)';
+      }
+      this.$('.enterprise-buttons button' + notSel).removeAttr('disabled');
     },
     setupUserVoice: function() {
       $.getCachedScript('//widget.uservoice.com/Vp7EFBMcYhZHI91VAtHeyg.js', {
@@ -92,7 +97,6 @@ define([
       });
     },
     openCheckout: function(optionsPath) {
-      this.checkout = undefined;
       $.ajax({
           type: 'GET',
           url: 'https://app.pritunl.com/' + optionsPath,
@@ -102,7 +106,6 @@ define([
           error: function() {
             this.setAlert('danger', 'Failed to load checkout data, ' +
               'please try again later.');
-            this.checkout = null;
           }.bind(this)
       });
     },
@@ -151,7 +154,6 @@ define([
         error: function() {
           this.setAlert('danger', 'Failed to load checkout, ' +
             'please try again later.');
-          this.checkout = null;
         }.bind(this)
       });
     },
