@@ -80,7 +80,7 @@ define([
             post_idea_enabled: false
           }]);
           window.UserVoice.push(['identify', {
-            plan: 'enterprise',
+            plan: 'enterprise'
           }]);
           window.UserVoice.push(['addTrigger', '#trigger-uservoice',
             {mode: 'contact'}]);
