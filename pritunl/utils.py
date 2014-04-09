@@ -160,6 +160,16 @@ def filter_str(in_str):
         return in_str
     return ''.join(x for x in in_str if x.isalnum() or x in NAME_SAFE_CHARS)
 
+def check_openssl():
+    try:
+        # Check for unpatched heartbleed
+        openssl_ver = subprocess.check_output(['openssl', 'version'])
+        if openssl_ver.strip() in OPENSSL_HEARTBLEED:
+            return False
+    except:
+        pass
+    return True
+
 class Response:
     def __init__(self, url, headers, status_code, reason, content):
         self.url = url

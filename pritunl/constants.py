@@ -121,6 +121,23 @@ SERVER_OUTPUT_UPDATED = 'server_output_updated'
 SUBSCRIPTION_ACTIVE = 'subscription_active'
 SUBSCRIPTION_INACTIVE = 'subscription_inactive'
 
+OPENSSL_HEARTBLEED = {
+    'OpenSSL 1.0.1-fips 14 Mar 2012',
+    'OpenSSL 1.0.1 14 Mar 2012',
+    'OpenSSL 1.0.1a-fips 19 Apr 2012',
+    'OpenSSL 1.0.1a 19 Apr 2012',
+    'OpenSSL 1.0.1b-fips 26 Apr 2012',
+    'OpenSSL 1.0.1b 26 Apr 2012',
+    'OpenSSL 1.0.1c-fips 10 May 2012',
+    'OpenSSL 1.0.1c 10 May 2012',
+    'OpenSSL 1.0.1d-fips 5 Feb 2013',
+    'OpenSSL 1.0.1d 5 Feb 2013',
+    'OpenSSL 1.0.1e-fips 11 Feb 2013',
+    'OpenSSL 1.0.1e 11 Feb 2013',
+    'OpenSSL 1.0.1f-fips 6 Jan 2014',
+    'OpenSSL 1.0.1f 6 Jan 2014',
+}
+
 CERT_CONF = """[ default ]
 ca = %s
 root = %s
