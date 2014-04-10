@@ -296,6 +296,9 @@ ORG_INVALID_MSG = 'Organization is not valid.'
 USER_INVALID = 'user_invalid'
 USER_INVALID_MSG = 'User is not valid.'
 
+USER_TYPE_INVALID = 'user_type_invalid'
+USER_TYPE_INVALID_MSG = 'User type is not valid.'
+
 OTP_CODE_INVALID = 'otp_code_invalid'
 OTP_CODE_INVALID_MSG = 'OTP code is not valid.'
 

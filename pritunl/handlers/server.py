@@ -657,6 +657,11 @@ def server_client_connect_post(server_id):
             'error': USER_INVALID,
             'error_msg': USER_INVALID_MSG,
         }, 401)
+    if user.type != CERT_CLIENT:
+        return utils.jsonify({
+            'error': USER_TYPE_INVALID,
+            'error_msg': USER_TYPE_INVALID_MSG,
+        }, 401)
 
     return utils.jsonify({
         'client_conf': None,
