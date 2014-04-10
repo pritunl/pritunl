@@ -23,7 +23,7 @@ import ipaddress
 logger = logging.getLogger(APP_NAME)
 
 class Server(Config):
-    str_options = {'name', 'network', 'interface', 'protocol',
+    str_options = {'name', 'network', 'interface', 'protocol', 'mode',
         'local_networks', 'public_address', 'primary_organization',
         'primary_user', 'organizations', 'local_network', 'dns_servers'}
     bool_options = {'otp_auth', 'lzo_compression', 'debug'}
@@ -120,6 +120,7 @@ class Server(Config):
             'port': self.port,
             'protocol': self.protocol,
             'dh_param_bits': self.dh_param_bits,
+            'mode': self.mode,
             'local_networks': self.local_networks,
             'dns_servers': self.dns_servers,
             'public_address': self.public_address,
