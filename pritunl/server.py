@@ -236,19 +236,19 @@ class Server(Config):
             for user_id in users - cache_db.dict_keys(cache_key):
                 while True:
                     try:
-                        remote_ip_addr = str(ip_pool.next())
+                        local_ip_addr = str(ip_pool.next())
                         if not cache_db.set_exists(set_cache_key,
-                                remote_ip_addr):
-                            cache_db.set_add(set_cache_key, remote_ip_addr)
+                                local_ip_addr):
+                            cache_db.set_add(set_cache_key, local_ip_addr)
                             break
                     except StopIteration:
                         return
                 while True:
                     try:
-                        local_ip_addr = str(ip_pool.next())
+                        remote_ip_addr = str(ip_pool.next())
                         if not cache_db.set_exists(set_cache_key,
-                                local_ip_addr):
-                            cache_db.set_add(set_cache_key, local_ip_addr)
+                                remote_ip_addr):
+                            cache_db.set_add(set_cache_key, remote_ip_addr)
                             break
                     except StopIteration:
                         return
@@ -259,8 +259,9 @@ class Server(Config):
         finally:
             cache_db.lock_release(cache_key)
 
-    def get_ip_set(self, user_id):
-        ip_set = cache_db.dict_get(self.get_cache_key('ip_pool'), user_id)
+    def get_ip_set(self, org_id, user_id):
+        ip_set = cache_db.dict_get(self.get_cache_key('ip_pool'),
+            org_id + '-' + user_id)
         if ip_set:
             return ip_set.split('-')
         return None, None

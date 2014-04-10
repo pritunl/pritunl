@@ -663,8 +663,7 @@ def server_client_connect_post(server_id):
             'error_msg': USER_TYPE_INVALID_MSG,
         }, 401)
 
-    local_ip_addr, remote_ip_addr = server.get_ip_set(user_id)
-
+    local_ip_addr, remote_ip_addr = server.get_ip_set(org.id, user_id)
     if local_ip_addr and remote_ip_addr:
         client_conf = 'ifconfig-push %s %s' % (local_ip_addr, remote_ip_addr)
     else:
