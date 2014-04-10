@@ -49,7 +49,6 @@ class Server(Config):
         self.path = os.path.join(app_server.data_path, SERVERS_DIR, self.id)
         self.ovpn_conf_path = os.path.join(self.path, TEMP_DIR, OVPN_CONF_NAME)
         self.dh_param_path = os.path.join(self.path, DH_PARAM_NAME)
-        self.ifc_pool_path = os.path.join(self.path, IFC_POOL_NAME)
         self.ca_cert_path = os.path.join(self.path, TEMP_DIR, OVPN_CA_NAME)
         self.tls_verify_path = os.path.join(self.path, TEMP_DIR,
             TLS_VERIFY_NAME)
@@ -483,7 +482,6 @@ class Server(Config):
                 self.client_disconnect_path,
                 self.dh_param_path,
                 '%s %s' % self._parse_network(self.network),
-                self.ifc_pool_path,
                 push,
                 self.ovpn_status_path,
                 4 if self.debug else 1,
@@ -498,7 +496,6 @@ class Server(Config):
                 self.client_connect_path,
                 self.client_disconnect_path,
                 '%s %s' % self._parse_network(self.network),
-                self.ifc_pool_path,
                 push,
                 self.ovpn_status_path,
                 4 if self.debug else 1,

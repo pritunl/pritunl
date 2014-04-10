@@ -54,7 +54,6 @@ def export_get():
 
         for server in Server.iter_servers():
             tar_add(tar_file, server.dh_param_path)
-            tar_add(tar_file, server.ifc_pool_path)
             tar_add(tar_file, server.get_path())
             tar_add(tar_file, os.path.join(server.path, NODE_SERVER))
             tar_file.add(empty_temp_path,
