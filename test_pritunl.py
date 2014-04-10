@@ -589,6 +589,7 @@ class Server(SessionTestCase):
             'port': 12345,
             'protocol': 'udp',
             'dh_param_bits': 1024,
+            'mode': 'local_traffic',
             'local_networks': ['10.0.0.0/24'],
             'dns_servers': ['8.8.4.4'],
             'public_address': '8.8.8.8',
@@ -613,6 +614,8 @@ class Server(SessionTestCase):
         self.assertEqual(data['protocol'], 'udp')
         self.assertIn('dh_param_bits', data)
         self.assertEqual(data['dh_param_bits'], 1024)
+        self.assertIn('mode', data)
+        self.assertEqual(data['mode'], 'local_traffic')
         self.assertIn('local_networks', data)
         self.assertEqual(data['local_networks'], ['10.0.0.0/24'])
         self.assertIn('dns_servers', data)
@@ -648,6 +651,8 @@ class Server(SessionTestCase):
         self.assertEqual(data['protocol'], 'udp')
         self.assertIn('dh_param_bits', data)
         self.assertEqual(data['dh_param_bits'], 1024)
+        self.assertIn('mode', data)
+        self.assertEqual(data['mode'], 'local_traffic')
         self.assertIn('local_networks', data)
         self.assertEqual(data['local_networks'], ['10.0.0.0/24'])
         self.assertIn('dns_servers', data)
@@ -677,6 +682,7 @@ class Server(SessionTestCase):
             self.assertIn('port', server)
             self.assertIn('protocol', server)
             self.assertIn('dh_param_bits', server)
+            self.assertIn('mode', server)
             self.assertIn('local_networks', server)
             self.assertIn('dns_servers', server)
             self.assertIn('public_address', server)
@@ -692,6 +698,7 @@ class Server(SessionTestCase):
                 self.assertEqual(server['port'], 12345)
                 self.assertEqual(server['protocol'], 'udp')
                 self.assertEqual(server['dh_param_bits'], 1024)
+                self.assertEqual(server['mode'], 'local_traffic')
                 self.assertEqual(server['local_networks'], ['10.0.0.0/24'])
                 self.assertEqual(server['dns_servers'], ['8.8.4.4'])
                 self.assertEqual(server['public_address'], '8.8.8.8')
@@ -992,6 +999,18 @@ class Server(SessionTestCase):
         data = response.json()
         self.assertIn('error', data)
         self.assertEqual(data['error'], 'dh_param_bits_invalid')
+        self.assertIn('error_msg', data)
+
+
+        response = self.session.post('/server', json_data={
+            'name': TEST_SERVER_NAME + '_test',
+            'mode': 'test',
+        })
+        self.assertEqual(response.status_code, 400)
+
+        data = response.json()
+        self.assertIn('error', data)
+        self.assertEqual(data['error'], 'mode_invalid')
         self.assertIn('error_msg', data)
 
 
