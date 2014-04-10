@@ -307,6 +307,14 @@ class Cache:
                 pass
         return set()
 
+    def dict_values(self, key):
+        if self._check_ttl(key):
+            try:
+                return set(self._data[key]['val'].values())
+            except AttributeError:
+                pass
+        return set()
+
     def dict_get_all(self, key):
         if self._check_ttl(key):
             try:
