@@ -663,8 +663,15 @@ def server_client_connect_post(server_id):
             'error_msg': USER_TYPE_INVALID_MSG,
         }, 401)
 
+    local_ip_addr, remote_ip_addr = server.get_ip_set(user_id)
+
+    if local_ip_addr and remote_ip_addr:
+        client_conf = 'ifconfig-push %s %s' % (local_ip_addr, remote_ip_addr)
+    else:
+        client_conf = ''
+
     return utils.jsonify({
-        'client_conf': None,
+        'client_conf': client_conf,
     })
 
 @app_server.app.route('/server/<server_id>/client_disconnect',
