@@ -161,7 +161,15 @@ class Server(Config):
             else:
                 self.mode = VPN_TRAFFIC
             self.commit()
+
         self.update_ip_pool()
+
+        try:
+            ifc_pool_path = os.path.join(self.path, 'ifc_pool')
+            if os.path.exists(ifc_pool_path):
+                os.remove(ifc_pool_path)
+        except:
+            pass
 
     def _initialize(self):
         logger.debug('Initialize new server. %r' % {
