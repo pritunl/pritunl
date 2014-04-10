@@ -284,13 +284,6 @@ class AppServer(Config):
         version = self._get_version()
         cur_version = self._get_data_version()
 
-        if cur_version and cur_version < self._get_version_int('0.10.4'):
-            logger.info('Upgrading data to v0.10.4...')
-            from organization import Organization
-            for org in Organization.iter_orgs():
-                for user in org.iter_users():
-                    user._upgrade_0_10_4()
-
         if cur_version and cur_version < self._get_version_int('0.10.5'):
             logger.info('Upgrading data to v0.10.5...')
             from server import Server
@@ -317,6 +310,13 @@ class AppServer(Config):
             from server import Server
             for server in Server.iter_servers():
                 server._upgrade_0_10_6()
+
+        if cur_version and cur_version < self._get_version_int('0.10.9'):
+            logger.info('Upgrading data to v0.10.9...')
+            from organization import Organization
+            for org in Organization.iter_orgs():
+                for user in org.iter_users():
+                    user._upgrade_0_10_9()
 
         if cur_version != version:
             from pritunl import __version__

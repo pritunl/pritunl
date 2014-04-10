@@ -25,7 +25,6 @@ class User(Config):
     str_options = {'name', 'otp_secret', 'type'}
     default_options = {
         'name': 'undefined',
-        'type': CERT_CLIENT,
     }
     chmod_mode = 0600
     cached = True
@@ -77,9 +76,9 @@ class User(Config):
             'otp_secret': self.otp_secret,
         }
 
-    def _upgrade_0_10_4(self):
+    def _upgrade_0_10_9(self):
         if not self.type:
-            logger.debug('Upgrading user to v0.10.4... %r' % {
+            logger.debug('Upgrading user to v0.10.9... %r' % {
                 'org_id': self.org.id,
                 'user_id': self.id,
             })
