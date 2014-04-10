@@ -147,6 +147,17 @@ class Server(Config):
             self.dh_param_bits = app_server.dh_param_bits
             self.commit()
 
+    def _upgrade_0_10_9(self):
+        if not self.mode:
+            logger.debug('Upgrading server to v0.10.9... %r' % {
+                'server_id': self.id,
+            })
+            if self.local_networks:
+                self.mode = LOCAL_TRAFFIC
+            else:
+                self.mode = VPN_TRAFFIC
+            self.commit()
+
     def _initialize(self):
         logger.debug('Initialize new server. %r' % {
             'server_id': self.id,
