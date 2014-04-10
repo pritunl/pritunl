@@ -189,6 +189,18 @@ def server_put_post(server_id=None):
         if dh_param_bits not in {1024, 1536, 2048, 3072, 4096}:
             return _dh_param_bits_invalid()
 
+    mode = None
+    mode_def = False
+    if 'mode' in flask.request.json:
+        mode_def = True
+        mode = flask.request.json['mode']
+
+        if mode not in (ALL_TRAFFIC, LOCAL_TRAFFIC, VPN_TRAFFIC):
+            return utils.jsonify({
+                'error': MODE_INVALID,
+                'error_msg': MODE_INVALID_MSG,
+            }, 400)
+
     local_networks = None
     local_networks_def = False
     if 'local_networks' in flask.request.json:
@@ -336,6 +348,13 @@ def server_put_post(server_id=None):
             dh_param_bits_def = True
             dh_param_bits = DEFAULT_DH_PARAM_BITS
 
+        if not mode_def:
+            mode_def = True
+            if local_networks_def and local_networks:
+                mode = LOCAL_TRAFFIC
+            else:
+                mode = ALL_TRAFFIC
+
         if not public_address_def:
             public_address_def = True
             public_address = app_server.public_ip
@@ -368,6 +387,7 @@ def server_put_post(server_id=None):
                 port=port,
                 protocol=protocol,
                 dh_param_bits=dh_param_bits,
+                mode=mode,
                 local_networks=local_networks,
                 dns_servers=dns_servers,
                 public_address=public_address,
@@ -386,6 +406,7 @@ def server_put_post(server_id=None):
                 port=port,
                 protocol=protocol,
                 dh_param_bits=dh_param_bits,
+                mode=mode,
                 local_networks=local_networks,
                 dns_servers=dns_servers,
                 public_address=public_address,
@@ -412,6 +433,8 @@ def server_put_post(server_id=None):
             server.protocol = protocol
         if dh_param_bits_def:
             server.dh_param_bits = dh_param_bits
+        if mode_def:
+            server.mode = mode
         if local_networks_def:
             server.local_networks = local_networks
         if dns_servers_def:
