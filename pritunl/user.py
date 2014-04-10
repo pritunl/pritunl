@@ -99,12 +99,18 @@ class User(Config):
         self.commit()
         self._cert_create()
         self._clean_openssl()
+
         if self.type != CERT_CA:
             cache_db.set_add(self.org.get_cache_key('users'), self.id)
             self._add_cache_trie_key()
+
         self.org.sort_users_cache()
         if self.type == CERT_CLIENT:
             LogEntry(message='Created new user "%s".' % self.name)
+
+        for server in self.org.iter_servers():
+            server.update_ip_pool()
+
         Event(type=ORGS_UPDATED)
         Event(type=USERS_UPDATED, resource_id=self.org.id)
         Event(type=SERVERS_UPDATED)
@@ -423,6 +429,9 @@ class User(Config):
             })
 
         self._clean_openssl()
+
+        for server in self.org.iter_servers():
+            server.update_ip_pool()
 
         Event(type=ORGS_UPDATED)
         Event(type=USERS_UPDATED, resource_id=self.org.id)
