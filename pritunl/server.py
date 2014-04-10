@@ -459,9 +459,11 @@ class Server(Config):
         self._generate_scripts()
 
         push = ''
-        if self.local_networks:
+        if self.mode == LOCAL_TRAFFIC:
             for network in self.local_networks:
                 push += 'push "route %s %s"\n' % self._parse_network(network)
+        elif self.mode == VPN_TRAFFIC:
+            pass
         else:
             push += 'push "redirect-gateway"\n'
         for dns_server in self.dns_servers:
@@ -510,7 +512,7 @@ class Server(Config):
         if self.lzo_compression:
             server_conf += 'comp-lzo\npush "comp-lzo"\n'
 
-        if self.local_networks:
+        if self.mode in (LOCAL_TRAFFIC, VPN_TRAFFIC):
             server_conf += 'client-to-client\n'
 
         if inline:
