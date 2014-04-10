@@ -49,6 +49,7 @@ class Server(Config):
         self.path = os.path.join(app_server.data_path, SERVERS_DIR, self.id)
         self.ovpn_conf_path = os.path.join(self.path, TEMP_DIR, OVPN_CONF_NAME)
         self.dh_param_path = os.path.join(self.path, DH_PARAM_NAME)
+        self.ip_pool_path = os.path.join(self.path, IP_POOL_NAME)
         self.ca_cert_path = os.path.join(self.path, TEMP_DIR, OVPN_CA_NAME)
         self.tls_verify_path = os.path.join(self.path, TEMP_DIR,
             TLS_VERIFY_NAME)
@@ -129,6 +130,10 @@ class Server(Config):
             'org_count': self.org_count,
         }
 
+    def load(self, *args, **kwargs):
+        Config.load(self, *args, **kwargs)
+        self._load_ip_pool()
+
     def _upgrade_0_10_5(self):
         if self.local_network:
             logger.debug('Upgrading server to v0.10.5... %r' % {
@@ -156,6 +161,7 @@ class Server(Config):
             else:
                 self.mode = VPN_TRAFFIC
             self.commit()
+        self.update_ip_pool()
 
     def _initialize(self):
         logger.debug('Initialize new server. %r' % {
@@ -175,42 +181,81 @@ class Server(Config):
             utils.rmtree(self.path)
             raise
 
-    def build_ip_pool(self):
-        start = time.time()
-        ip_pool = ipaddress.IPv4Network(self.network).iterhosts()
-        ip_pool.next()
+    def _load_ip_pool(self):
+        if cache_db.get(self.get_cache_key('ip_pool_cached')) == 't':
+            return
 
-        user_ip_pool = {}
-        users = set()
-        for org in self.iter_orgs():
-            for user in org.iter_users():
-                if user.type == CERT_CLIENT:
-                    users.add(org.id + '-' + user.id)
+        if os.path.exists(self.ip_pool_path):
+            with open(self.ip_pool_path, 'r') as ip_pool_file:
+                pool = json.loads(ip_pool_file.read())
 
-        for user_id in set(user_ip_pool.keys()) - users:
-            user_ip_pool.pop(user_id)
+            cache_key = self.get_cache_key('ip_pool')
+            set_cache_key = self.get_cache_key('ip_pool_set')
+            for key, value in pool.iteritems():
+                cache_db.dict_set(cache_key, key, value)
+                local_ip_addr, remote_ip_addr = value.split('-')
+                cache_db.set_add(set_cache_key, local_ip_addr)
+                cache_db.set_add(set_cache_key, remote_ip_addr)
 
-        cur_ip_pool = set()
-        for ip_set in user_ip_pool.values():
-            cur_ip_pool.add(ip_set[0])
-            cur_ip_pool.add(ip_set[1])
+        cache_db.set(self.get_cache_key('ip_pool_cached'), 't')
 
-        for user_id in users - set(user_ip_pool.keys()):
-            while True:
-                try:
-                    local_ip_addr = str(ip_pool.next())
-                    if local_ip_addr not in cur_ip_pool:
-                        break
-                except StopIteration:
-                    return
-            while True:
-                try:
-                    remote_ip_addr = str(ip_pool.next())
-                    if remote_ip_addr not in cur_ip_pool:
-                        break
-                except StopIteration:
-                    return
-            user_ip_pool[user_id] = (local_ip_addr, remote_ip_addr)
+    def _commit_ip_pool(self):
+        with open(self.ip_pool_path, 'w') as ip_pool_file:
+            ip_pool_file.write(json.dumps(
+                cache_db.dict_get_all(self.get_cache_key('ip_pool'))))
+
+    def update_ip_pool(self):
+        cache_key = self.get_cache_key('ip_pool')
+        set_cache_key = self.get_cache_key('ip_pool_set')
+        cache_db.lock_acquire(cache_key)
+        try:
+            ip_pool = ipaddress.IPv4Network(self.network).iterhosts()
+            ip_pool.next()
+
+            users = set()
+            for org in self.iter_orgs():
+                for user in org.iter_users():
+                    if user.type == CERT_CLIENT:
+                        users.add(org.id + '-' + user.id)
+
+            for user_id in cache_db.dict_keys(cache_key) - users:
+                ip_set = cache_db.dict_get(cache_key, user_id)
+                local_ip_addr, remote_ip_addr = ip_set.split('-')
+                cache_db.set_remove(set_cache_key, local_ip_addr)
+                cache_db.set_remove(set_cache_key, remote_ip_addr)
+                cache_db.dict_remove(cache_key, user_id)
+
+            for user_id in users - cache_db.dict_keys(cache_key):
+                while True:
+                    try:
+                        remote_ip_addr = str(ip_pool.next())
+                        if not cache_db.set_exists(set_cache_key,
+                                remote_ip_addr):
+                            cache_db.set_add(set_cache_key, remote_ip_addr)
+                            break
+                    except StopIteration:
+                        return
+                while True:
+                    try:
+                        local_ip_addr = str(ip_pool.next())
+                        if not cache_db.set_exists(set_cache_key,
+                                local_ip_addr):
+                            cache_db.set_add(set_cache_key, local_ip_addr)
+                            break
+                    except StopIteration:
+                        return
+
+                cache_db.dict_set(cache_key, user_id,
+                    local_ip_addr + '-' + remote_ip_addr)
+            self._commit_ip_pool()
+        finally:
+            cache_db.lock_release(cache_key)
+
+    def get_ip_set(self, user_id):
+        ip_set = cache_db.dict_get(self.get_cache_key('ip_pool'), user_id)
+        if ip_set:
+            return ip_set.split('-')
+        return None, None
 
     def clear_cache(self):
         cache_db.set_remove('servers', '%s_%s' % (self.id, self.type))
@@ -298,6 +343,7 @@ class Server(Config):
             return org
         self.organizations.append(org.id)
         self.commit()
+        self.update_ip_pool()
         Event(type=SERVERS_UPDATED)
         Event(type=SERVER_ORGS_UPDATED, resource_id=self.id)
         Event(type=USERS_UPDATED, resource_id=org_id)
@@ -338,6 +384,7 @@ class Server(Config):
             self._remove_primary_user()
         self.organizations.remove(org_id)
         self.commit()
+        self.update_ip_pool()
         Event(type=SERVERS_UPDATED)
         Event(type=SERVER_ORGS_UPDATED, resource_id=self.id)
         Event(type=USERS_UPDATED, resource_id=org_id)
