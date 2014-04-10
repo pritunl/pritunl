@@ -313,6 +313,10 @@ class AppServer(Config):
 
         if cur_version and cur_version < self._get_version_int('0.10.9'):
             logger.info('Upgrading data to v0.10.9...')
+            from server import Server
+            for server in Server.iter_servers():
+                server._upgrade_0_10_9()
+
             from organization import Organization
             for org in Organization.iter_orgs():
                 for user in org.iter_users():
