@@ -40,23 +40,31 @@ define([
       var colors = ['default-text', 'error-text',
         'warning-text', 'success-text'];
       colors.splice(colors.indexOf(statusData[1]), 1);
-      this.$('.enterprise-item.status').text(statusData[0]);
-      this.$('.enterprise-item.status').removeClass(colors.join(' '));
-      this.$('.enterprise-item.status').addClass(statusData[1]);
-      this.$('.enterprise-item.amount').text('$' +
+      this.$('.status .enterprise-item').text(statusData[0]);
+      this.$('.status .enterprise-item').removeClass(colors.join(' '));
+      this.$('.status .enterprise-item').addClass(statusData[1]);
+      this.$('.amount .enterprise-item').text('$' +
         (this.model.get('amount') / 100).toFixed(2));
-      this.$('.enterprise-item.renew').text(
+      this.$('.renew .enterprise-item').text(
         window.formatTime(this.model.get('period_end'), 'date'));
 
       if (statusData[0] === 'Inactive' || statusData[0] === 'Canceled') {
         this.$('.enterprise-cancel').hide();
         this.$('.enterprise-reactivate').show();
         this.$('.enterprise-update').attr('disabled', 'disabled');
+        this.$('.renew .enterprise-label').text('Plan Ends:');
       }
       else {
         this.$('.enterprise-reactivate').hide();
         this.$('.enterprise-cancel').show();
         this.$('.enterprise-update').removeAttr('disabled');
+        this.$('.renew .enterprise-label').text('Renew:');
+      }
+      if (statusData[0] === 'Inactive') {
+        this.$('.renew').hide();
+      }
+      else {
+        this.$('.renew').show();
       }
     },
     lock: function() {
