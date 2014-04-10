@@ -64,9 +64,9 @@ class CacheObject:
         self._trans.commit()
 
     def get_cache_key(self, suffix=None):
-        key = '%s-%s' % (self.column_family, self.id)
+        key = self.column_family + '-' + self.id
         if suffix:
-            key += '-%s' % suffix
+            key += '-' + suffix
         return key
 
     def initialize(self):

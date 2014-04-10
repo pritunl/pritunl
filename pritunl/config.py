@@ -150,7 +150,7 @@ class Config:
     def get_cache_key(self, suffix=None):
         if not self.cache_prefix:
             raise AttributeError('Cached config object requires cache_prefix')
-        key = '%s-%s' % (self.cache_prefix, self.id)
+        key = self.cache_prefix + '-' + self.id
         if suffix:
             key += '-%s' % suffix
         return key
