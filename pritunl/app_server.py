@@ -317,6 +317,7 @@ class AppServer(Config):
             for org in Organization.iter_orgs():
                 for user in org.iter_users():
                     user._upgrade_0_10_9()
+                org.sort_users_cache()
 
         if cur_version != version:
             from pritunl import __version__
