@@ -104,8 +104,13 @@ SERVER_KEY_NAME = 'server.key'
 AUTH_LOG_NAME = 'auth.log'
 KEY_INDEX_NAME = 'key_index.html'
 CONF_TEMP_EXT = '.tmp'
+
 SERVER = 'server'
 NODE_SERVER = 'node_server'
+
+ALL_TRAFFIC = 'all_traffic'
+LOCAL_TRAFFIC = 'local_traffic'
+VPN_TRAFFIC = 'vpn_traffic'
 
 CA_CERT_ID = 'ca'
 CERT_CA = 'ca'
@@ -248,6 +253,10 @@ PORT_INVALID_MSG = 'Port number is not valid, must be between 1 and 65535.'
 DH_PARAM_BITS_INVALID = 'dh_param_bits_invalid'
 DH_PARAM_BITS_INVALID_MSG = 'DH param bits are not valid, must ' + \
     '1024, 1536, 2048, 2048, 3072 or 4096.'
+
+MODE_INVALID = 'mode_invalid'
+MODE_INVALID_MSG = 'Mode is not valid, must be "all_traffic" or ' + \
+    '"local_traffic" or "vpn_traffic".'
 
 INTERFACE_INVALID = 'interface_invalid'
 INTERFACE_INVALID_MSG = 'Interface is not valid, must be ' + \
