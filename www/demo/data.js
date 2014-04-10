@@ -96,6 +96,7 @@ define([], function() {
       otp_auth: true,
       lzo_compression: false,
       interface: 'tun0',
+      mode: 'all_traffic',
       local_networks: [],
       dns_servers: [
         '8.8.4.4'
@@ -120,6 +121,7 @@ define([], function() {
       otp_auth: true,
       lzo_compression: false,
       interface: 'tun1',
+      mode: 'all_traffic',
       local_networks: [],
       dns_servers: [
         '8.8.4.4'

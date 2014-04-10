@@ -243,6 +243,7 @@ define([
       port: request.data.port,
       protocol: request.data.protocol,
       dh_param_bits: request.data.dh_param_bits,
+      mode: request.data.mode,
       local_networks: request.data.local_networks,
       dns_servers: request.data.dns_servers,
       public_address: request.data.public_address,
@@ -269,6 +270,7 @@ define([
     demoData.servers[serverId].port = request.data.port;
     demoData.servers[serverId].protocol = request.data.protocol;
     demoData.servers[serverId].dh_param_bits = request.data.dh_param_bits;
+    demoData.servers[serverId].mode = request.data.mode;
     demoData.servers[serverId].local_networks = request.data.local_networks;
     demoData.servers[serverId].dns_servers = request.data.dns_servers;
     demoData.servers[serverId].public_address = request.data.public_address;
