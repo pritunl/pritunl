@@ -51,8 +51,7 @@ define([
       return this.$('.server-mode select').val();
     },
     setServerMode: function(mode) {
-      if (mode === 'lan') {
-        this.$('.server-mode select').val('lan');
+      if (mode === 'local_traffic') {
         this.$('.local-network').slideDown(250);
         this.$('.otp-auth-toggle').slideUp(250, function() {
           this.$('.otp-auth-toggle').appendTo('.left');
@@ -60,7 +59,6 @@ define([
         }.bind(this));
       }
       else {
-        this.$('.server-mode select').val('all');
         this.$('.local-network').slideUp(250);
         this.$('.otp-auth-toggle').slideUp(250, function() {
           this.$('.otp-auth-toggle').appendTo('.right');
@@ -69,12 +67,7 @@ define([
       }
     },
     onServerMode: function() {
-      if (this.getServerMode() === 'lan') {
-        this.setServerMode('lan');
-      }
-      else {
-        this.setServerMode('all');
-      }
+      this.setServerMode(this.getServerMode());
     },
     onDhParamBits: function(evt) {
       var val = $(evt.target).val();
@@ -166,6 +159,7 @@ define([
       var port = this.$('.port input').val();
       var protocol = this.$('.protocol select').val();
       var dhParamBits = parseInt(this.$('.dh-param-bits select').val(), 10);
+      var mode = this.$('.server-mode select').val();
       var publicAddress = this.$('.public-address input').val();
       var dnsServers = [];
       var dnsServersTemp = this.$('.dns-servers input').val().split(',');
@@ -207,7 +201,7 @@ define([
           '.public-address');
         return;
       }
-      if (this.getServerMode() === 'lan') {
+      if (this.getServerMode() === 'local_traffic') {
         localNetworks = this.$('.local-network input').select2('val');
         if (!localNetworks) {
           this.setAlert('danger', 'Local network can not be empty.',
@@ -224,6 +218,7 @@ define([
         'port': port,
         'protocol': protocol,
         'dh_param_bits': dhParamBits,
+        'mode': mode,
         'local_networks': localNetworks,
         'dns_servers': dnsServers,
         'public_address': publicAddress,
