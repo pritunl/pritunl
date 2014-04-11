@@ -180,6 +180,7 @@ virt_address: "10.54.0.2"
         servers: [{
           id: '5310c28eacaeb3bd2a172c9db9ee1379',
           name: 'server1',
+          status: true,
           local_address: '10.54.0.2',
           remote_address: '10.54.0.3',
           real_address: '8.8.8.8',
@@ -200,6 +201,7 @@ virt_address: "10.54.0.2"
         servers: [{
           id: '5310c28eacaeb3bd2a172c9db9ee1379',
           name: 'server1',
+          status: false,
           local_address: '10.54.0.4',
           remote_address: '10.54.0.5'
         }]
@@ -215,6 +217,7 @@ virt_address: "10.54.0.2"
         servers: [{
           id: '5310c28eacaeb3bd2a172c9db9ee1379',
           name: 'server1',
+          status: false,
           local_address: '10.54.0.6',
           remote_address: '10.54.0.7'
         }]
@@ -230,6 +233,7 @@ virt_address: "10.54.0.2"
         servers: [{
           id: '5310c28eacaeb3bd2a172c9db9ee1379',
           name: 'server1',
+          status: false,
           local_address: '10.54.0.8',
           remote_address: '10.54.0.9'
         }]
@@ -247,6 +251,7 @@ virt_address: "10.54.0.2"
         servers: [{
           id: '5310c28eacaeb3bd2a172c9db9ee1379',
           name: 'server1',
+          status: false,
           local_address: '10.54.0.10',
           remote_address: '10.54.0.11'
         }]
@@ -262,6 +267,7 @@ virt_address: "10.54.0.2"
         servers: [{
           id: '5310c28eacaeb3bd2a172c9db9ee1379',
           name: 'server1',
+          status: false,
           local_address: '10.54.0.12',
           remote_address: '10.54.0.13'
         }]
