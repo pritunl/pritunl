@@ -34,6 +34,8 @@ define([
     onSubscriptionInactive: function() {
       window.enterprise = false;
       $('body').removeClass('enterprise');
+      $('input.org-search').val('');
+      $('input.org-search').trigger('keydown');
     },
     checkAuth: function(callback) {
       if (window.authenticated) {
