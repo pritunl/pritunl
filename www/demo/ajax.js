@@ -472,7 +472,12 @@ define([
       status: false,
       otp_auth: true,
       otp_secret: secretKey(),
-      servers: []
+      servers: [{
+        id: '5310c28eacaeb3bd2a172c9db9ee1379',
+        name: 'server1',
+        local_address: '10.54.0.12',
+        remote_address: '10.54.0.13'
+      }]
     };
 
     event('users_updated', orgId);
