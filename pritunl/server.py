@@ -508,6 +508,13 @@ class Server(Config):
             self._generate_dh_param()
 
         primary_org = Organization.get_org(id=self.primary_organization)
+        if not primary_org:
+            self._create_primary_user()
+        primary_org = Organization.get_org(id=self.primary_organization)
+
+        primary_user = primary_org.get_user(self.primary_user)
+        if not primary_user:
+            self._create_primary_user()
         primary_user = primary_org.get_user(self.primary_user)
 
         self.generate_ca_cert()
