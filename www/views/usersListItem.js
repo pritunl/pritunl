@@ -20,34 +20,40 @@ define([
       'click .get-otp-auth': 'onGetOtpAuth'
     },
     getVirtAddresses: function() {
-      var serverId;
+      var i;
       var servers = this.model.get('servers');
       var virtAddresses = [];
 
-      for (serverId in servers) {
-        virtAddresses.push(servers[serverId].virt_address);
+      for (i = 0; i < servers.length; i++) {
+        if (servers[i].virt_address) {
+          virtAddresses.push(servers[i].virt_address);
+        }
       }
 
       return virtAddresses;
     },
     getBytesReceived: function() {
-      var serverId;
+      var i;
       var servers = this.model.get('servers');
       var bytesReceived = 0;
 
-      for (serverId in servers) {
-        bytesReceived += servers[serverId].bytes_received;
+      for (i = 0; i < servers.length; i++) {
+        if (servers[i].bytes_received) {
+          bytesReceived += servers[i].bytes_received;
+        }
       }
 
       return window.formatSize(bytesReceived);
     },
     getBytesSent: function() {
-      var serverId;
+      var i;
       var servers = this.model.get('servers');
       var bytesSent = 0;
 
-      for (serverId in servers) {
-        bytesSent += servers[serverId].bytes_sent;
+      for (i = 0; i < servers.length; i++) {
+        if (servers[i].bytes_sent) {
+          bytesSent += servers[i].bytes_sent;
+        }
       }
 
       return window.formatSize(bytesSent);
