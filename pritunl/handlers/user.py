@@ -23,8 +23,10 @@ def user_get(org_id, user_id=None, page=None):
         search_more = True
         server_count = 0
         clients = {}
+        servers = []
 
         for server in org.iter_servers():
+            servers.append(server)
             server_count += 1
             if server.otp_auth:
                 otp_auth = True
@@ -45,7 +47,22 @@ def user_get(org_id, user_id=None, page=None):
             user_dict = user.dict()
             user_dict['status'] = True if is_client else False
             user_dict['otp_auth'] = otp_auth
-            user_dict['servers'] = clients[user.id] if is_client else {}
+            server_data = []
+            for server in servers:
+                local_ip_addr, remote_ip_addr = server.get_ip_set(
+                    org_id, user.id)
+                data = {
+                    'id': server.id,
+                    'name': server.name,
+                    'local_address': local_ip_addr,
+                    'remote_address': remote_ip_addr,
+                }
+                if is_client:
+                    client_data = clients[user.id].get(server.id)
+                    if client_data:
+                        data.update(client_data)
+                server_data.append(data)
+            user_dict['servers'] = server_data
             users.append(user_dict)
 
         if page is not None:
