@@ -45,7 +45,7 @@ def user_get(org_id, user_id=None, page=None):
                 break
             is_client = user.id in clients
             user_dict = user.dict()
-            user_dict['status'] = True if is_client else False
+            user_dict['status'] = is_client
             user_dict['otp_auth'] = otp_auth
             server_data = []
             for server in servers:
@@ -54,6 +54,7 @@ def user_get(org_id, user_id=None, page=None):
                 data = {
                     'id': server.id,
                     'name': server.name,
+                    'status': is_client and server.id in clients[user.id],
                     'local_address': local_ip_addr,
                     'remote_address': remote_ip_addr,
                 }
