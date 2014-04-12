@@ -1,7 +1,7 @@
 define([
   'jquery',
   'underscore',
-  'backbone',,
+  'backbone',
   'text!templates/userServersListItem.html'
 ], function($, _, Backbone, userServersListItemTemplate) {
   'use strict';
