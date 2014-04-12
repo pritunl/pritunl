@@ -609,9 +609,32 @@ header.blur {
   margin-top: 5px;
 }
 
-.users-list .user-server .name-container {
-  margin-top: 4px;
+.users-list .user-server .info-container {
+  margin-top: 5px;
   float: left;
+  cursor: default;
+}
+
+.users-list .user-server .info-container .title {
+  display: inline-block;
+}
+
+.users-list .user-server .info-container .server-name .title {
+  padding-right: 20px;
+}
+
+.users-list .user-server .info-container .server-addr .title {
+  width: 115px;
+}
+
+
+.users-list .user-server .info-container .server-sent .title,
+.users-list .user-server .info-container .server-recv .title {
+  width: 80px;
+}
+
+.users-list .user-server .info-container .server-time .title {
+  width: 110px;
 }
 
 .server-orgs-list .org .name-container {
@@ -810,14 +833,14 @@ header.blur {
 
 .users-list .user-servers .user-server {
   color: @dark-fg;
-  font-size: 16px;
+  font-size: 15px;
   height: 32px;
   border-top: 1px solid @light-dark-border;
 }
 
 .users-list .user-servers .no-servers {
   color: @dark-fg;
-  font-size: 16px;
+  font-size: 15px;
   padding: 4px 0;
   display: none;
 }
@@ -828,7 +851,7 @@ header.blur {
 
 .users-list .user-servers .user-server .glyphicon {
   top: 3px;
-  margin-right: 3px;
+  margin-right: 0;
 }
 
 
