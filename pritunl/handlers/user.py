@@ -57,6 +57,11 @@ def user_get(org_id, user_id=None, page=None):
                     'status': is_client and server.id in clients[user.id],
                     'local_address': local_ip_addr,
                     'remote_address': remote_ip_addr,
+                    'real_address': None,
+                    'virt_address': None,
+                    'bytes_received': None,
+                    'bytes_sent': None,
+                    'connected_since': None,
                 }
                 if is_client:
                     client_data = clients[user.id].get(server.id)
