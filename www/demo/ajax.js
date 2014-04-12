@@ -477,7 +477,12 @@ define([
         name: 'server1',
         status: false,
         local_address: '10.54.0.12',
-        remote_address: '10.54.0.13'
+        remote_address: '10.54.0.13',
+        real_address: null,
+        virt_address: null,
+        bytes_received: null,
+        bytes_sent: null,
+        connected_since: null
       }]
     };
 
