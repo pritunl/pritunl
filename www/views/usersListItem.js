@@ -64,17 +64,6 @@ define([
 
       return window.formatSize(bytesSent);
     },
-    _getStatusTooltip: function() {
-      var bytesSent = this.getBytesSent();
-      var bytesReceived = this.getBytesReceived();
-      var virtAddresses = this.getVirtAddresses();
-      if (!virtAddresses.length) {
-        return '';
-      }
-      var tooltipText = 'Data Sent: ' + bytesSent;
-      tooltipText += '\nData Received: ' + bytesReceived;
-      return tooltipText;
-    },
     _getDownloadTooltip: function() {
       if (this.model.get('has_key')) {
         return 'Click to download key';
@@ -107,7 +96,6 @@ define([
     render: function() {
       this.$el.html(this.template(_.extend(
         {
-          'status_tooltip': this._getStatusTooltip(),
           'download_tooltip': this._getDownloadTooltip(),
           'key_link': this._getKeyLink(),
           'key_link_tooltip': this._getKeyLinkTooltip()
@@ -132,13 +120,6 @@ define([
           this.$('.user .status-text').text('Offline');
         }
       }
-
-      this.$('.user .status-container').tooltip('destroy');
-      this.$('.user .status-container').attr('title',
-        this._getStatusTooltip());
-      this.$('.user .status-container').attr('data-original-title',
-        this._getStatusTooltip());
-      this.$('.user .status-container').tooltip();
 
       this.$('.download-key').tooltip('destroy');
       this.$('.download-key').attr('title', this._getDownloadTooltip());
