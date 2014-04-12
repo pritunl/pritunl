@@ -1,18 +1,20 @@
-<div class="selector no-select">
-  <span class="selector-inner glyphicon glyphicon-ok"></span>
-</div>
-<div class="name-container type-<%- type %>">
-  <span class="name-icon glyphicon glyphicon-user" <%= type === 'server' ? 'data-toggle="tooltip" title="Server user"' : '' %>></span>
-  <a class="user-name title no-select" data-toggle="tooltip" title="Click to rename this user"><%- name %></a>
-  <span class="user-id title">(<%- id %>)</span>
-</div>
-
-<div class="right-container <%- otp_auth ? '' : 'no-otp-auth' %>">
-  <div class="status-container" data-toggle="tooltip" title="<%- status_tooltip %>">
-    <div class="status-icon <%- status ? 'online' : 'offline' %>"></div>
-    <span class="status-text title"><%- (status) ? 'Online' : 'Offline' %></span>
+<div class="user">
+  <div class="selector no-select">
+    <span class="selector-inner glyphicon glyphicon-ok"></span>
   </div>
-  <a class="download-key glyphicon glyphicon-download no-select" data-toggle="tooltip" title="<%- download_tooltip %>" <%= key_link ? 'href="' : '' %><%- key_link ? key_link : '' %><%= key_link ? '"' : '' %>></a>
-  <a class="get-key-link glyphicon glyphicon-link no-select" data-toggle="tooltip" title="<%- key_link_tooltip %>"></a>
-  <a class="get-otp-auth glyphicon glyphicon-qrcode no-select <%- otp_auth ? '' : 'no-otp-auth' %>" data-toggle="tooltip" title="Click to get two-step authentication key"></a>
+  <div class="name-container type-<%- type %>">
+    <span class="name-icon glyphicon glyphicon-user" <%= type === 'server' ? 'data-toggle="tooltip" title="Server user"' : '' %>></span>
+    <a class="user-name title no-select" data-toggle="tooltip" title="Click to rename this user"><%- name %></a>
+    <span class="user-id title">(<%- id %>)</span>
+  </div>
+
+  <div class="right-container <%- otp_auth ? '' : 'no-otp-auth' %>">
+    <div class="status-container" data-toggle="tooltip" title="<%- status_tooltip %>">
+      <div class="status-icon <%- status ? 'online' : 'offline' %>"></div>
+      <span class="status-text title"><%- status ? 'Online' : 'Offline' %></span>
+    </div>
+    <a class="download-key glyphicon glyphicon-download no-select" data-toggle="tooltip" title="<%- download_tooltip %>" <%= key_link ? 'href="' : '' %><%- key_link ? key_link : '' %><%= key_link ? '"' : '' %>></a>
+    <a class="get-key-link glyphicon glyphicon-link no-select" data-toggle="tooltip" title="<%- key_link_tooltip %>"></a>
+    <a class="get-otp-auth glyphicon glyphicon-qrcode no-select <%- otp_auth ? '' : 'no-otp-auth' %>" data-toggle="tooltip" title="Click to get two-step authentication key"></a>
+  </div>
 </div>
