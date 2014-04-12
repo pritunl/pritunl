@@ -51,6 +51,10 @@ define([
           type: 'GET',
           url: 'https://app.pritunl.com/checkout',
           success: function(options) {
+            if (options.amount) {
+              this.$('.subscribe-checkout').text('Subscribe $' +
+                (options.amount / 100).toFixed(2))
+            }
             this.configCheckout(options);
           }.bind(this),
           error: function() {
