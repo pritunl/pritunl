@@ -18,7 +18,7 @@ define([
       'click .user-name': 'onRename',
       'click .get-key-link': 'onGetKeyLink',
       'click .get-otp-auth': 'onGetOtpAuth',
-      'click .toggle-servers ': 'onToggleServers',
+      'click .toggle-servers ': 'onToggleServers'
     },
     initialize: function() {
       this.serverList = new UserServersListView({
