@@ -17,7 +17,7 @@ define([
       this.$('.server-name .title').text(this.model.get('name'));
 
       var addr = this.model.get('virt_address') || this.model.get(
-        'remote_address');
+        'local_address');
       if (addr) {
         this.$('.server-addr .title').text(addr);
         this.$('.server-addr').show();
