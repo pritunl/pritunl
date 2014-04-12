@@ -20,11 +20,11 @@
     <div class="dh-param-bits form-group">
       <label>DH Param Bits</label>
       <select class="form-control" data-toggle="tooltip" title="Size of DH parameters">
-        <option value="1024" <%= (dh_param_bits === 1024) ? 'selected' : '' %>>1024</option>
-        <option value="1536" <%= (dh_param_bits === 1536) ? 'selected' : '' %>>1536</option>
-        <option value="2048" <%= (dh_param_bits === 2048) ? 'selected' : '' %>>2048</option>
-        <option value="3072" <%= (dh_param_bits === 3072) ? 'selected' : '' %>>3072</option>
-        <option value="4096" <%= (dh_param_bits === 4096) ? 'selected' : '' %>>4096</option>
+        <option value="1024" <%= dh_param_bits === 1024 ? 'selected' : '' %>>1024</option>
+        <option value="1536" <%= dh_param_bits === 1536 ? 'selected' : '' %>>1536</option>
+        <option value="2048" <%= dh_param_bits === 2048 ? 'selected' : '' %>>2048</option>
+        <option value="3072" <%= dh_param_bits === 3072 ? 'selected' : '' %>>3072</option>
+        <option value="4096" <%= dh_param_bits === 4096 ? 'selected' : '' %>>4096</option>
       </select>
     </div>
     <div class="dns-servers form-group">
