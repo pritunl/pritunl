@@ -9,11 +9,50 @@ define([
     className: 'user-server',
     template: _.template(userServersListItemTemplate),
     render: function() {
-      this.$el.html(this.template(this.model.toJSON()));
+      this.$el.html(this.template());
+      this.update();
       return this;
     },
     update: function() {
-      this.$('.server-name').text(this.model.get('name'));
+      this.$('.server-name .title').text(this.model.get('name'));
+
+      var addr = this.model.get('virt_address') || this.model.get(
+        'remote_address');
+      if (addr) {
+        this.$('.server-addr .title').text(addr);
+        this.$('.server-addr').show();
+      }
+      else {
+        this.$('.server-addr').hide();
+      }
+
+      if (this.model.get('bytes_sent')) {
+        this.$('.server-sent .title').text(
+          window.formatSize(this.model.get('bytes_sent')));
+        this.$('.server-sent').show();
+      }
+      else {
+        this.$('.server-sent').hide();
+      }
+
+      if (this.model.get('bytes_received')) {
+        this.$('.server-recv .title').text(
+          window.formatSize(this.model.get('bytes_received')));
+        this.$('.server-recv').show();
+      }
+      else {
+        this.$('.server-recv').hide();
+      }
+
+      if (this.model.get('connected_since')) {
+        this.$('.server-time .title').text(
+          window.formatTime(this.model.get('connected_since'), 'short'));
+        this.$('.server-time').show();
+      }
+      else {
+        this.$('.server-time').hide();
+      }
+
       if (this.model.get('status')) {
         if (!this.$('.status-icon').hasClass('online')) {
           this.$('.status-icon').removeClass('offline');

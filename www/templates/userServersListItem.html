@@ -1,10 +1,28 @@
-<div class="name-container">
-  <span class="name-icon glyphicon glyphicon-signal"></span>
-  <span class="server-name title"><%- name %></span>
+<div class="info-container">
+  <span class="server-item server-name">
+    <span class="name-icon glyphicon glyphicon-dashboard"></span>
+    <span class="title"></span>
+  </span>
+  <span class="server-item server-addr">
+    <span class="name-icon glyphicon glyphicon-record"></span>
+    <span class="title"></span>
+  </span>
+  <span class="server-item server-sent">
+    <span class="name-icon glyphicon glyphicon-upload"></span>
+    <span class="title"></span>
+  </span>
+  <span class="server-item server-recv">
+    <span class="name-icon glyphicon glyphicon-download"></span>
+    <span class="title"></span>
+  </span>
+  <span class="server-item server-time">
+    <span class="name-icon glyphicon glyphicon-time"></span>
+    <span class="title"></span>
+  </span>
 </div>
 <div class="right-container">
   <div class="status-container">
-    <div class="status-icon <%- status ? 'online' : 'offline' %>"></div>
-    <span class="status-text title"><%- status ? 'Online' : 'Offline' %></span>
+    <div class="status-icon"></div>
+    <span class="status-text title"></span>
   </div>
 </div>
