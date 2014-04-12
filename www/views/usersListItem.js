@@ -6,18 +6,23 @@ define([
   'views/modalRenameUser',
   'views/modalKeyLink',
   'views/modalOtpAuth',
+  'views/userServersList',
   'text!templates/usersListItem.html'
 ], function($, _, Backbone, KeyModel, ModalRenameUserView, ModalKeyLinkView,
-    ModalOtpAuthView, usersListItemTemplate) {
+    ModalOtpAuthView, UserServersListView, usersListItemTemplate) {
   'use strict';
   var UsersListItemView = Backbone.View.extend({
-    className: 'user',
     template: _.template(usersListItemTemplate),
     events: {
       'click .selector': 'onSelect',
       'click .user-name': 'onRename',
       'click .get-key-link': 'onGetKeyLink',
       'click .get-otp-auth': 'onGetOtpAuth'
+    },
+    initialize: function() {
+      this.serverList = new UserServersListView({
+        models: this.model.get('servers')
+      });
     },
     getVirtAddresses: function() {
       var i;
@@ -108,30 +113,32 @@ define([
           'key_link_tooltip': this._getKeyLinkTooltip()
         }, this.model.toJSON())));
       this.$('[data-toggle="tooltip"]').tooltip();
+      this.$el.append(this.serverList.render().el);
       return this;
     },
     update: function() {
       this.$('.user-name').text(this.model.get('name'));
       if (this.model.get('status')) {
-        if (!this.$('.status-icon').hasClass('online')) {
-          this.$('.status-icon').removeClass('offline');
-          this.$('.status-icon').addClass('online');
-          this.$('.status-text').text('Online');
+        if (!this.$('.user .status-icon').hasClass('online')) {
+          this.$('.user .status-icon').removeClass('offline');
+          this.$('.user .status-icon').addClass('online');
+          this.$('.user .status-text').text('Online');
         }
       }
       else {
-        if (!this.$('.status-icon').hasClass('offline')) {
-          this.$('.status-icon').removeClass('online');
-          this.$('.status-icon').addClass('offline');
-          this.$('.status-text').text('Offline');
+        if (!this.$('.user .status-icon').hasClass('offline')) {
+          this.$('.user .status-icon').removeClass('online');
+          this.$('.user .status-icon').addClass('offline');
+          this.$('.user .status-text').text('Offline');
         }
       }
 
-      this.$('.status-container').tooltip('destroy');
-      this.$('.status-container').attr('title', this._getStatusTooltip());
-      this.$('.status-container').attr('data-original-title',
+      this.$('.user .status-container').tooltip('destroy');
+      this.$('.user .status-container').attr('title',
         this._getStatusTooltip());
-      this.$('.status-container').tooltip();
+      this.$('.user .status-container').attr('data-original-title',
+        this._getStatusTooltip());
+      this.$('.user .status-container').tooltip();
 
       this.$('.download-key').tooltip('destroy');
       this.$('.download-key').attr('title', this._getDownloadTooltip());
@@ -153,6 +160,8 @@ define([
         this.$('.right-container').addClass('no-otp-auth');
         this.$('.get-otp-auth').addClass('no-otp-auth');
       }
+
+      this.serverList.update(this.model.get('servers'));
     },
     getSelect: function() {
       return this.$('.selector').hasClass('selected');
