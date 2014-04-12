@@ -18,6 +18,7 @@ define([
       'port': null,
       'protocol': null,
       'dh_param_bits': null,
+      'mode': null,
       'local_networks': null,
       'dns_servers': null,
       'public_address': null,
