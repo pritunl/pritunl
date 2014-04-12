@@ -729,6 +729,7 @@ class Server(Config):
             else:
                 i += 1
         self._clear_iptables_rules()
+        self.update_clients({}, force=True)
 
     def _run_thread(self):
         logger.debug('Starting ovpn process. %r' % {
@@ -1155,13 +1156,13 @@ class Server(Config):
                     }
         self.update_clients(clients)
 
-    def update_clients(self, clients):
-        if not self.status:
+    def update_clients(self, clients, force=False):
+        if not force and not self.status:
             return
         self._update_clients_bandwidth(clients)
         client_count = len(self.clients)
         self.clients = clients
-        if client_count != len(clients):
+        if force or client_count != len(clients):
             for org in self.iter_orgs():
                 Event(type=USERS_UPDATED, resource_id=org.id)
             Event(type=SERVERS_UPDATED)
