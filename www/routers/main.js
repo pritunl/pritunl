@@ -30,6 +30,7 @@ define([
     onSubscriptionActive: function() {
       window.enterprise = true;
       $('body').addClass('enterprise');
+
       $('.user .tooltip-inner:contains(' +
         '"Show additional user information")').parent().remove();
       $('.user .tooltip-inner:contains(' +
