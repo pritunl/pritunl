@@ -686,7 +686,8 @@ header.blur {
 
 .users-list .user .download-key,
 .users-list .user .get-key-link,
-.users-list .user .get-otp-auth {
+.users-list .user .get-otp-auth,
+.users-list .user .toggle-servers {
   float: right;
   font-size: 20px;
   color: @icon-blue2-bg;
@@ -698,13 +699,23 @@ header.blur {
   margin-right: 5px;
 }
 
+.users-list .user .toggle-servers {
+  display: none;
+  margin-left: 5px;
+}
+
+.enterprise .users-list .user .toggle-servers {
+  display: block;
+}
+
 .users-list .user .get-otp-auth.no-otp-auth {
   display: none;
 }
 
 .users-list .user .right-container .download-key:hover,
 .users-list .user .right-container .get-key-link:hover,
-.users-list .user .right-container .get-otp-auth:hover {
+.users-list .user .right-container .get-otp-auth:hover,
+.users-list .user .right-container .toggle-servers:hover {
   text-decoration: none;
   color: @icon-blue3-bg;
 }
@@ -721,6 +732,10 @@ header.blur {
   border-left: 1px solid @light-dark-border;
 }
 
+.enterprise .users-list .right-container {
+  width: 195px;
+}
+
 .users-list .user-server .right-container {
   width: 81px;
   height: auto;
@@ -731,6 +746,10 @@ header.blur {
 
 .users-list .user .right-container.no-otp-auth {
   width: 145px;
+}
+
+.enterprise .users-list .user .right-container.no-otp-auth {
+  width: 170px;
 }
 
 .server-orgs-list .org .button-container {
@@ -783,6 +802,7 @@ header.blur {
   margin-left: 3px;
   margin-right: 3px;
   padding: 3px 10px;
+  display: none;
   .border-bottom-left-radius(4px);
   .border-bottom-right-radius(4px);
   .box-shadow(inset 0px 12px 8px -14px rgba(0, 0, 0, 0.53));

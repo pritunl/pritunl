@@ -17,7 +17,8 @@ define([
       'click .selector': 'onSelect',
       'click .user-name': 'onRename',
       'click .get-key-link': 'onGetKeyLink',
-      'click .get-otp-auth': 'onGetOtpAuth'
+      'click .get-otp-auth': 'onGetOtpAuth',
+      'click .toggle-servers ': 'onToggleServers',
     },
     initialize: function() {
       this.serverList = new UserServersListView({
@@ -204,6 +205,26 @@ define([
         model: this.model
       });
       this.addView(modal);
+    },
+    onToggleServers: function() {
+      var tooltipText;
+      if (this.$('.toggle-servers').hasClass('glyphicon-chevron-down')) {
+        this.$('.toggle-servers').removeClass('glyphicon-chevron-down');
+        this.$('.toggle-servers').addClass('glyphicon-chevron-up');
+        this.$('.user-servers').slideDown(200);
+        tooltipText = 'Hide additional user information';
+      }
+      else {
+        this.$('.toggle-servers').removeClass('glyphicon-chevron-up');
+        this.$('.toggle-servers').addClass('glyphicon-chevron-down');
+        this.$('.user-servers').slideUp(200);
+        tooltipText = 'Show additional user information';
+      }
+
+      this.$('.toggle-servers').tooltip('destroy');
+      this.$('.toggle-servers').attr('title', tooltipText);
+      this.$('.toggle-servers').attr('data-original-title', tooltipText);
+      this.$('.toggle-servers').tooltip();
     }
   });
 
