@@ -71,8 +71,7 @@ define([
       if (!virtAddresses.length) {
         return '';
       }
-      var tooltipText = 'IP Address: ' + virtAddresses.join(', ');
-      tooltipText += '\nData Sent: ' + bytesSent;
+      var tooltipText = 'Data Sent: ' + bytesSent;
       tooltipText += '\nData Received: ' + bytesReceived;
       return tooltipText;
     },
