@@ -73,8 +73,8 @@
 
 .select2-container-multi .select2-choices {
   padding: 2px 3px 0 0;
-  border-radius: 4px;
   background-image: none;
+  .border-radius(4px);
 }
 
 .select2-search-choice-close {
@@ -283,7 +283,7 @@ header.blur {
   height: 50px;
   overflow-x: hidden;
   overflow-y: hidden;
-  border-radius: 0;
+  .border-radius(0);
 }
 
 .navbar-collapse {
@@ -579,7 +579,6 @@ header.blur {
   display: none;
 }
 
-
 .users-list .loading {
   display: none;
 }
@@ -599,7 +598,7 @@ header.blur {
 .users-list .user .name-container,
 .server-orgs-list .org .name-container {
   float: left;
-  height: 28px;
+  height: auto;
   padding-top: 0;
   padding-left: 13px;
   margin-top: 3px;
@@ -608,6 +607,11 @@ header.blur {
 
 .users-list .user .name-container {
   margin-top: 5px;
+}
+
+.users-list .user-server .name-container {
+  margin-top: 4px;
+  float: left;
 }
 
 .server-orgs-list .org .name-container {
@@ -705,7 +709,7 @@ header.blur {
   color: @icon-blue3-bg;
 }
 
-.users-list .user .right-container,
+.users-list .right-container,
 .server-orgs-list .org .button-container {
   float: right;
   display: inline-block;
@@ -713,7 +717,16 @@ header.blur {
   height: 28px;
   width: 170px;
   padding: 3px 8px 0 12px;
+  white-space: nowrap;
   border-left: 1px solid @light-dark-border;
+}
+
+.users-list .user-server .right-container {
+  width: 81px;
+  height: auto;
+  margin-top: 4px;
+  border-left: none;
+  padding: 0;
 }
 
 .users-list .user .right-container.no-otp-auth {
@@ -725,12 +738,12 @@ header.blur {
   border-left: 0 none;
 }
 
-.users-list .user .status-container {
+.users-list .status-container {
   display: inline-block;
   cursor: default;
 }
 
-.users-list .user .status-container .status-icon {
+.users-list .status-container .status-icon {
   display: inline-block;
   position: relative;
   top: 3px;
@@ -740,23 +753,63 @@ header.blur {
   .border-radius(50%);
 }
 
+.users-list .user-server .status-container .status-icon {
+  top: 1px;
+  width: 14px;
+  height: 14px;
+}
+
 .users-list .user .tooltip-inner {
     white-space: pre-wrap;
 }
 
 
-.users-list .user .status-container .status-icon.online {
+.users-list .status-container .status-icon.online {
   background-color: @green-fg;
 }
 
-.users-list .user .status-container .status-icon.offline {
+.users-list .status-container .status-icon.offline {
   background-color: @red-fg;
 }
 
-.users-list .user .status-container .status-text {
+.users-list .status-container .status-text {
   color: @gray-fg;
 }
 
+.users-list .user-servers {
+  border: 1px solid @light-dark-border;
+  border-top: none;
+  background: #FFF;
+  margin-left: 3px;
+  margin-right: 3px;
+  padding: 3px 10px;
+  .border-bottom-left-radius(4px);
+  .border-bottom-right-radius(4px);
+  .box-shadow(inset 0px 12px 8px -14px rgba(0, 0, 0, 0.53));
+}
+
+.users-list .user-servers .user-server {
+  color: @dark-fg;
+  font-size: 16px;
+  height: 32px;
+  border-top: 1px solid @light-dark-border;
+}
+
+.users-list .user-servers .no-servers {
+  color: @dark-fg;
+  font-size: 16px;
+  padding: 4px 0;
+  display: none;
+}
+
+.users-list .user-servers .user-server:first-child {
+  border-top: none;
+}
+
+.users-list .user-servers .user-server .glyphicon {
+  top: 3px;
+  margin-right: 3px;
+}
 
 
 
@@ -1088,7 +1141,7 @@ header.blur {
 .subscribe-modal .modal .subscribe-activate-form textarea {
   resize: none;
   font-family: 'Lucida Console', Monaco, monospace;
-  border-radius: 4px;
+  .border-radius(4px);
   .box-shadow(0px 0px 14px @gray4-fg);
 }
 
@@ -1116,12 +1169,12 @@ header.blur {
 
 .subscribe-modal .modal .subscribe-list {
   border: 1px solid @gray3-fg;
-  border-radius: 6px;
   list-style-type: none;
   padding: 0;
   text-align: left;
   margin-top: 5px;
   margin-bottom: 15px;
+  .border-radius(6px);
   .box-shadow(0px 0px 14px @gray4-fg);
 }
 
