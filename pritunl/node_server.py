@@ -102,6 +102,7 @@ class NodeServer(Server):
                 timeout=SOCKET_TIMEOUT)
             self.status = False
             self.publish('stopped')
+            self.update_clients({}, force=True)
 
             if thread_data['state']:
                 LogEntry(message='Node server stopped unexpectedly "%s".' % (
@@ -202,14 +203,23 @@ class NodeServer(Server):
             self._generate_dh_param()
 
         primary_org = Organization.get_org(id=self.primary_organization)
+        if not primary_org:
+            self._create_primary_user()
+        primary_org = Organization.get_org(id=self.primary_organization)
+
+        primary_user = primary_org.get_user(self.primary_user)
+        if not primary_user:
+            self._create_primary_user()
         primary_user = primary_org.get_user(self.primary_user)
 
         self.generate_ca_cert()
 
         push = ''
-        if self.local_networks:
+        if self.mode == LOCAL_TRAFFIC:
             for network in self.local_networks:
                 push += 'push "route %s %s"\n' % self._parse_network(network)
+        elif self.mode == VPN_TRAFFIC:
+            pass
         else:
             push += 'push "redirect-gateway"\n'
         for dns_server in self.dns_servers:
@@ -224,7 +234,6 @@ class NodeServer(Server):
             '%s',
             '%s',
             '%s %s' % self._parse_network(self.network),
-            '%s',
             push,
             '%s',
             4 if self.debug else 1,
