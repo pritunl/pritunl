@@ -24,6 +24,7 @@ define([
         'port': this._get_free_port(),
         'protocol': 'udp',
         'dh_param_bits': 1536,
+        'mode': 'all_traffic',
         'public_address': options.publicIp || '',
         'local_networks': [],
         'dns_servers': ['8.8.8.8']
