@@ -30,12 +30,26 @@ define([
     onSubscriptionActive: function() {
       window.enterprise = true;
       $('body').addClass('enterprise');
+      $('.user .tooltip-inner:contains(' +
+        '"Show additional user information")').parent().remove();
+      $('.user .tooltip-inner:contains(' +
+        '"Hide additional user information")').parent().remove();
+      var tooltipText = 'Show additional user information';
+      $('.toggle-servers').tooltip('destroy');
+      $('.toggle-servers').attr('title', tooltipText);
+      $('.toggle-servers').attr('data-original-title', tooltipText);
+      $('.toggle-servers').tooltip();
     },
     onSubscriptionInactive: function() {
-      window.enterprise = false;
-      $('body').removeClass('enterprise');
+      $('.user-servers').hide();
+      $('.toggle-servers').removeClass('glyphicon-chevron-up');
+      $('.toggle-servers').addClass('glyphicon-chevron-down');
+
       $('input.org-search').val('');
       $('input.org-search').trigger('keydown');
+
+      window.enterprise = false;
+      $('body').removeClass('enterprise');
     },
     checkAuth: function(callback) {
       if (window.authenticated) {
