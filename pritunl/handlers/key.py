@@ -18,6 +18,9 @@ def _get_key_key(key_id):
 def _get_view_key(key_id):
     return 'view_token-%s' % key_id
 
+def _get_uri_key(key_id):
+    return 'uri_token-%s' % key_id
+
 def _get_conf_key(key_id):
     return 'conf_token-%s' % key_id
 
@@ -47,18 +50,26 @@ def user_key_link_get(org_id, user_id):
     key_id = uuid.uuid4().hex
 
     view_id = None
-    for i in xrange(2048):
-        temp_view_id = ''.join(random.sample(SHORT_URL_CHARS, SHORT_URL_LEN))
-        if not cache_db.exists(_get_view_key(temp_view_id)):
-            view_id = temp_view_id
-            break
-    if not view_id:
-        raise KeyLinkError('Failed to generate random view id')
+    uri_id = None
+    for i in xrange(2):
+        for i in xrange(2048):
+            temp_id = ''.join(random.sample(SHORT_URL_CHARS, SHORT_URL_LEN))
+            if not view_id:
+                if not cache_db.exists(_get_view_key(temp_id)):
+                    view_id = temp_id
+                    break
+            else:
+                if not cache_db.exists(_get_uri_key(temp_id)):
+                    uri_id = temp_id
+                    break
+        if not view_id and not uri_id:
+            raise KeyLinkError('Failed to generate random id')
 
     cache_db.expire(_get_key_key(key_id), KEY_LINK_TIMEOUT)
     cache_db.dict_set(_get_key_key(key_id), 'org_id', org_id)
     cache_db.dict_set(_get_key_key(key_id), 'user_id', user_id)
     cache_db.dict_set(_get_key_key(key_id), 'view_id', view_id)
+    cache_db.dict_set(_get_key_key(key_id), 'uri_id', uri_id)
 
     conf_urls = []
     if app_server.inline_certs:
@@ -80,13 +91,19 @@ def user_key_link_get(org_id, user_id):
     cache_db.dict_set(_get_view_key(view_id), 'org_id', org_id)
     cache_db.dict_set(_get_view_key(view_id), 'user_id', user_id)
     cache_db.dict_set(_get_view_key(view_id), 'key_id', key_id)
+    cache_db.dict_set(_get_view_key(view_id), 'uri_id', uri_id)
     cache_db.dict_set(_get_view_key(view_id),
         'conf_urls', json.dumps(conf_urls))
+
+    cache_db.expire(_get_uri_key(uri_id), KEY_LINK_TIMEOUT)
+    cache_db.dict_set(_get_uri_key(uri_id), 'org_id', org_id)
+    cache_db.dict_set(_get_uri_key(uri_id), 'user_id', user_id)
 
     return utils.jsonify({
         'id': key_id,
         'key_url': '/key/%s.tar' % key_id,
         'view_url': '/k/%s' % view_id,
+        'uri_url': '/ku/%s' % uri_id,
     })
 
 @app_server.app.route('/key/<key_id>.tar', methods=['GET'])
@@ -150,12 +167,35 @@ def user_linked_key_page_delete_get(view_id):
     key_id = cache_db.dict_get(_get_view_key(view_id), 'key_id')
     if key_id:
         cache_db.remove(_get_key_key(key_id))
+    uri_id = cache_db.dict_get(_get_view_key(view_id), 'uri_id')
+    if uri_id:
+        cache_db.remove(_get_uri_key(uri_id))
     conf_urls = cache_db.dict_get(_get_view_key(view_id), 'conf_urls')
     if conf_urls:
         for conf_url in json.loads(conf_urls):
             cache_db.remove(_get_conf_key(conf_url['id']))
     cache_db.remove(_get_view_key(view_id))
     return utils.jsonify({})
+
+@app_server.app.route('/ku/<uri_id>', methods=['GET'])
+def user_uri_key_page_get(uri_id):
+    org_id = cache_db.dict_get(_get_uri_key(uri_id), 'org_id')
+    user_id = cache_db.dict_get(_get_uri_key(uri_id), 'user_id')
+
+    # Check for expire
+    if not cache_db.exists(_get_uri_key(uri_id)):
+        time.sleep(RATE_LIMIT_SLEEP)
+        return flask.abort(404)
+
+    org = Organization.get_org(id=org_id)
+    user = org.get_user(user_id)
+
+    keys = {}
+    for server in org.iter_servers():
+        key = user.build_key_conf(server.id)
+        keys[key['name']] = key['conf']
+
+    return utils.jsonify(keys)
 
 @app_server.app.route('/key/<conf_id>.ovpn', methods=['GET'])
 def user_linked_key_conf_get(conf_id):
