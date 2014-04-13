@@ -1,4 +1,5 @@
 import string
+import datetime
 
 APP_NAME = 'pritunl'
 APP_NAME_FORMATED = 'Pritunl'
@@ -150,6 +151,7 @@ OPENSSL_HEARTBLEED = {
     'OpenSSL 1.0.2-beta1-fips 24 Feb 2014',
     'OpenSSL 1.0.2-beta1 24 Feb 2014',
 }
+OPENSSL_HEARTBLEED_BUILD_DATE = datetime.date(2014, 4, 7)
 
 CERT_CONF = """[ default ]
 ca = %s

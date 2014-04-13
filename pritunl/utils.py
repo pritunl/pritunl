@@ -14,6 +14,7 @@ import hashlib
 import os
 import hmac
 import uuid
+import datetime
 
 def jsonify(data=None, status_code=None):
     if not isinstance(data, basestring):
@@ -163,8 +164,17 @@ def filter_str(in_str):
 def check_openssl():
     try:
         # Check for unpatched heartbleed
-        openssl_ver = subprocess.check_output(['openssl', 'version'])
-        if openssl_ver.strip() in OPENSSL_HEARTBLEED:
+        openssl_ver = subprocess.check_output(['openssl', 'version', '-a'])
+        version, build_date = openssl_ver.split('\n')[0:2]
+
+        build_date = build_date.replace('built on:', '').strip()
+        build_date = build_date.split()
+        build_date = ' '.join([build_date[1],
+            build_date[2].zfill(2), build_date[5]])
+        build_date = datetime.datetime.strptime(build_date, '%b %d %Y').date()
+
+        if version in OPENSSL_HEARTBLEED and \
+                build_date < OPENSSL_HEARTBLEED_BUILD_DATE:
             return False
     except:
         pass
