@@ -11,6 +11,7 @@ define([
     render: function() {
       this.$el.html(this.template());
       this.update();
+      this.$('.server-item').tooltip();
       return this;
     },
     update: function() {
