@@ -119,7 +119,8 @@ class AppServer(Config):
         else:
             try:
                 response = utils.request.get(SUBSCRIPTION_SERVER,
-                    json_data={'license': license})
+                    json_data={'license': license},
+                    timeout=HTTP_REQUEST_TIMEOUT)
                 # License key invalid
                 if response.status_code == 470:
                     persist_db.remove('license')
