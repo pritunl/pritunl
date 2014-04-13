@@ -43,10 +43,6 @@ define([
       this.$('.status .enterprise-item').text(statusData[0]);
       this.$('.status .enterprise-item').removeClass(colors.join(' '));
       this.$('.status .enterprise-item').addClass(statusData[1]);
-      this.$('.amount .enterprise-item').text('$' +
-        (this.model.get('amount') / 100).toFixed(2));
-      this.$('.renew .enterprise-item').text(
-        window.formatTime(this.model.get('period_end'), 'date'));
 
       if (statusData[0] === 'Inactive' || statusData[0] === 'Canceled') {
         this.$('.enterprise-cancel').hide();
@@ -60,11 +56,23 @@ define([
         this.$('.enterprise-update').removeAttr('disabled');
         this.$('.renew .enterprise-label').text('Renew:');
       }
-      if (statusData[0] === 'Inactive') {
-        this.$('.renew').hide();
+
+      if (this.model.get('amount')) {
+        this.$('.amount .enterprise-item').text('$' +
+          (this.model.get('amount') / 100).toFixed(2));
+        this.$('.amount').show();
       }
       else {
+        this.$('.amount').hide();
+      }
+
+      if (this.model.get('period_end') && statusData[0] !== 'Inactive') {
+        this.$('.renew .enterprise-item').text(
+          window.formatTime(this.model.get('period_end'), 'date'));
         this.$('.renew').show();
+      }
+      else {
+        this.$('.renew').hide();
       }
     },
     lock: function() {
