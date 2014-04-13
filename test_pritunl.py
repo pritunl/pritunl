@@ -61,7 +61,8 @@ def _log_request(method, endpoint, start_time):
     if endpoint.startswith('/event'):
         return
     response_time = int((time.time() - start_time) * 1000)
-    if endpoint.startswith('/auth') or endpoint.startswith('/k/'):
+    if endpoint.startswith('/auth') or endpoint.startswith('/key/') \
+            or endpoint.startswith('/k/') or endpoint.startswith('/ku/'):
         if response_time > 900:
             color = '\033[92m'
         elif response_time > 700:
@@ -389,12 +390,16 @@ class Key(SessionTestCase):
         self.assertIn('id', data)
         self.assertIn('key_url', data)
         self.assertIn('view_url', data)
+        self.assertIn('uri_url', data)
 
         exp = r'^/key/[a-z0-9]+.tar$'
         self.assertRegexpMatches(data['key_url'], exp)
 
         exp = r'^/k/[a-zA-Z0-9]+$'
         self.assertRegexpMatches(data['view_url'], exp)
+
+        exp = r'^/ku/[a-zA-Z0-9]+$'
+        self.assertRegexpMatches(data['uri_url'], exp)
 
 
         response = self.session.get(data['key_url'])
@@ -414,7 +419,6 @@ class Key(SessionTestCase):
         content_type = response.headers['content-type']
         self.assertEqual(content_type, 'text/html; charset=utf-8')
 
-
         start_index = response.text.find('<h4 class="key-title">') + 22
         end_index = response.text.find('</h4>', start_index)
         self.assertNotEqual(start_index, -1)
@@ -422,7 +426,6 @@ class Key(SessionTestCase):
         key_title = response.text[start_index:end_index]
         self.assertEqual('%s - %s' % (TEST_ORG_NAME, TEST_USER_NAME),
             key_title)
-
 
         start_index = response.text.find(
             '<input id="key" type="text" readonly value="') + 44
@@ -433,14 +436,12 @@ class Key(SessionTestCase):
         exp = r'^[A-Z0-9]+$'
         self.assertRegexpMatches(otp_secret, exp)
 
-
         start_index = response.text.find('<a title="Download Key" href="') + 30
         end_index = response.text.find('">', start_index)
         self.assertNotEqual(start_index, -1)
         self.assertNotEqual(end_index, -1)
         key_url = response.text[start_index:end_index]
         self.assertEqual(key_url, data['key_url'])
-
 
         start_index = response.text.find(
             '<a class="sm" title="Download Mobile Key" href="') + 48
@@ -452,7 +453,6 @@ class Key(SessionTestCase):
         exp = r'^/key/[a-z0-9]+\.ovpn$'
         self.assertRegexpMatches(conf_url, exp)
 
-
         start_index = response.text.find("text: 'otpauth://totp/") + 7
         end_index = response.text.find("',", start_index)
         self.assertNotEqual(start_index, -1)
@@ -463,13 +463,19 @@ class Key(SessionTestCase):
             TEST_USER_NAME, TEST_ORG_NAME, otp_secret)
         self.assertRegexpMatches(otp_key, exp)
 
-
         start_index = response.text.find("xmlhttp.open('DELETE', '") + 24
         end_index = response.text.find("', false);", start_index)
         self.assertNotEqual(start_index, -1)
         self.assertNotEqual(end_index, -1)
         delete_link = response.text[start_index:end_index]
         self.assertEqual(data['view_url'], delete_link)
+
+
+        response = self.session.get(data['uri_url'])
+        self.assertEqual(response.status_code, 200)
+
+        content_type = response.headers['content-type']
+        self.assertEqual(content_type, 'application/json')
 
 
         response = self.session.delete(data['view_url'])
