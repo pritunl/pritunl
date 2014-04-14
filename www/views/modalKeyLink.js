@@ -29,6 +29,15 @@ define([
             window.location.host + this.model.get('key_url'));
           this.$('.otp-link input').val(window.location.protocol + '//' +
             window.location.host + this.model.get('view_url'));
+          var uriProtocol;
+          if (window.location.protocol === 'http') {
+            uriProtocol = 'pt';
+          }
+          else {
+            uriProtocol = 'pts';
+          }
+          this.$('.uri-link input').val(uriProtocol + '://' +
+            window.location.host + this.model.get('uri_url'));
         }.bind(this),
         error: function() {
           this.clearLoading();
