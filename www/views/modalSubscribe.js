@@ -74,7 +74,7 @@ define([
                 if (!ordered) {
                   this.unlock();
                 }
-              }.bind(this), 100);
+              }.bind(this), 250);
             }.bind(this),
             token: function(token) {
               ordered = true;
