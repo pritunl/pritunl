@@ -86,11 +86,10 @@ define([
     },
     _getKeyLinkTooltip: function() {
       if (this.model.get('has_key')) {
-        return 'Click to generate temporary key url that is downloadable ' +
-          'without authenticating';
+        return 'Get key links';
       }
       else {
-        return 'Organization must be attached to server to generate key link';
+        return 'Organization must be attached to server to get key links';
       }
     },
     render: function() {
