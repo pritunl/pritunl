@@ -6,6 +6,7 @@ Version 0.10.9
 
 Add static IP addresses for vpn clients
 Add update notifications
+Add additional user information
 Change API authentication system
 Previous API authentication method has been removed
 
