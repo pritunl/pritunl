@@ -7,7 +7,7 @@ Version 0.10.9
 Add static IP addresses for vpn clients
 Add update notifications
 Add additional user information
-Change API authentication system
+Change API authentication system with token and secret
 Previous API authentication method has been removed
 
 Version 0.10.8 2014-03-23
