@@ -77,6 +77,11 @@ define([
               }.bind(this), 250);
             }.bind(this),
             token: function(token) {
+              if (window.demo) {
+                this.unlock(true);
+                this.onSubmit();
+                return;
+              }
               ordered = true;
               this.lock();
               this.setLoading('Order processing, please wait...', true, 0);
