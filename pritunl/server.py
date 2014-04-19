@@ -256,6 +256,9 @@ class Server(Config):
                 cache_db.dict_set(cache_key, user_id,
                     local_ip_addr + '-' + remote_ip_addr)
             self._commit_ip_pool()
+
+            for org in self.iter_orgs():
+                Event(type=USERS_UPDATED, resource_id=org.id)
         finally:
             cache_db.lock_release(cache_key)
 
