@@ -5,7 +5,18 @@ define([], function() {
   var auth = {
     username: 'demo',
     password: 'demo',
+    token: 'DJjo4uivruHONGWjhoPEuGJgzzTnQXoI',
+    secret: 'k1wS8Ph9e2SNc9z6I35BlhVmufxSPopI',
     authenticated: false
+  };
+
+  var subscription = {
+    license: true,
+    active: true,
+    status: 'active',
+    amount: 250,
+    period_end: Math.floor(new Date().getTime() / 1000) + 2592000,
+    cancel_at_period_end: false
   };
 
   var events = [];
@@ -290,6 +301,7 @@ define([], function() {
 
   return {
     auth: auth,
+    subscription: subscription,
     events: events,
     logs: logs,
     orgs: orgs,
