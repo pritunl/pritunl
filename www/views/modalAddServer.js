@@ -11,6 +11,7 @@ define([
     okText: 'Add',
     loadingMsg: 'Adding server, this will take several minutes...',
     errorMsg: 'Failed to add server, server error occurred.',
+    safeClose: true,
     initialize: function(options) {
       this.usedNetworks = options.usedNetworks;
       this.usedPorts = options.usedPorts;
