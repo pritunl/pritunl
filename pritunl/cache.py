@@ -36,7 +36,7 @@ class Cache:
             lambda: {'ttl': None, 'val': None})
         self._timers = {}
         self._channels = collections.defaultdict(
-            lambda: {'subs': set(), 'msgs': collections.deque(maxlen=10)})
+            lambda: {'subs': set(), 'msgs': collections.deque(maxlen=64)})
         self._commit_log = []
         self._locks = collections.defaultdict(lambda: threading.Lock())
 
@@ -327,24 +327,27 @@ class Cache:
         event = threading.Event()
         self._channels[channel]['subs'].add(event)
         try:
-            cursor = self._channels[channel]['msgs'][-1][0]
-        except IndexError:
-            cursor = None
-        while True:
-            if not event.wait(timeout):
-                break
-            event.clear()
-            if not cursor:
-                cursor_found = True
-            else:
-                cursor_found = False
-            messages = copy.copy(self._channels[channel]['msgs'])
-            for message in messages:
-                if cursor_found:
-                    yield message[1]
-                elif message[0] == cursor:
+            try:
+                cursor = self._channels[channel]['msgs'][-1][0]
+            except IndexError:
+                cursor = None
+            while True:
+                if not event.wait(timeout):
+                    break
+                event.clear()
+                if not cursor:
                     cursor_found = True
-            cursor = messages[-1][0]
+                else:
+                    cursor_found = False
+                messages = copy.copy(self._channels[channel]['msgs'])
+                for message in messages:
+                    if cursor_found:
+                        yield message[1]
+                    elif message[0] == cursor:
+                        cursor_found = True
+                cursor = messages[-1][0]
+        finally:
+            self._channels[channel]['subs'].remove(event)
 
     def publish(self, channel, message):
         self._channels[channel]['msgs'].append(
