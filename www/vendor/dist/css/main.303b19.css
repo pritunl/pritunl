@@ -6957,6 +6957,18 @@ fieldset[disabled] .form-control {
 .label-purple {
   background-color: #a722c0;
 }
+.default-text {
+  color: #616161 !important;
+}
+.error-text {
+  color: #ff0000 !important;
+}
+.warning-text {
+  color: #ff9900 !important;
+}
+.success-text {
+  color: #3ba51a !important;
+}
 @font-face {
   font-family: 'Fredoka One';
   font-style: normal;
@@ -7039,8 +7051,10 @@ fieldset[disabled] .form-control {
 }
 .select2-container-multi .select2-choices {
   padding: 2px 3px 0 0;
-  border-radius: 4px;
   background-image: none;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
 }
 .select2-search-choice-close {
   top: 3px;
@@ -7110,8 +7124,15 @@ fieldset[disabled] .form-control {
   color: #777777;
 }
 .modal .key-link input,
-.modal .otp-link input {
+.modal .otp-link input,
+.modal .uri-link input {
   width: 480px;
+}
+.modal .uri-link {
+  display: none;
+}
+.enterprise .modal .uri-link {
+  display: block;
 }
 .modal .otp-auth-key {
   text-align: center;
@@ -7123,6 +7144,23 @@ fieldset[disabled] .form-control {
   margin-top: 15px;
   width: 192px;
 }
+.modal .generate-new-api-key {
+  margin-top: 25px;
+  margin-left: 42px;
+  width: 200px;
+}
+.modal .modal-body .split .api-key-info {
+  width: 264px;
+}
+.modal .api-token,
+.modal .api-secret {
+  width: 284px;
+}
+.modal .api-token input,
+.modal .api-secret input {
+  font-family: 'Lucida Console', Monaco, monospace;
+  width: 100%;
+}
 .navbar .navbar-brand,
 .navbar .navbar-brand:hover,
 .navbar .navbar-brand:active,
@@ -7133,7 +7171,41 @@ fieldset[disabled] .form-control {
   cursor: default;
   color: #ececec;
 }
-.navbar .change-password {
+.enterprise .login .login-header {
+  display: none;
+}
+.login .login-header.enterprise-header {
+  display: none;
+}
+.enterprise .login .login-header.enterprise-header {
+  display: block;
+}
+.enterprise .navbar .navbar-brand.brand {
+  display: none;
+}
+.navbar .enterprise-brand.enterprise-brand {
+  display: none;
+}
+.enterprise .navbar .enterprise-brand.enterprise-brand {
+  display: block;
+}
+.navbar .enterprise-upgrade a {
+  padding-top: 13px;
+}
+.navbar .enterprise-upgrade span {
+  background-color: #910000;
+  padding: 4px;
+}
+.enterprise .navbar .enterprise-upgrade {
+  display: none;
+}
+.navbar .enterprise-settings {
+  display: none;
+}
+.enterprise .navbar .enterprise-settings {
+  display: block;
+}
+.navbar .nav a {
   cursor: pointer;
 }
 .selector {
@@ -7183,6 +7255,8 @@ header.blur {
   height: 50px;
   overflow-x: hidden;
   overflow-y: hidden;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
   border-radius: 0;
 }
 .navbar-collapse {
@@ -7300,6 +7374,10 @@ header.blur {
   width: 150px;
   height: 30px;
   margin-right: 2px;
+  display: none;
+}
+.enterprise .users-list .org-search {
+  display: block;
 }
 .users-list .users-list-title,
 .servers-list .server .server-title {
@@ -7451,7 +7529,7 @@ header.blur {
 .users-list .user .name-container,
 .server-orgs-list .org .name-container {
   float: left;
-  height: 28px;
+  height: auto;
   padding-top: 0;
   padding-left: 13px;
   margin-top: 3px;
@@ -7459,6 +7537,28 @@ header.blur {
 }
 .users-list .user .name-container {
   margin-top: 5px;
+}
+.users-list .user-server .info-container {
+  margin-top: 5px;
+  float: left;
+  cursor: default;
+}
+.users-list .user-server .info-container .title {
+  display: inline-block;
+}
+.users-list .user-server .info-container .server-name .title {
+  min-width: 130px;
+  padding-right: 2px;
+}
+.users-list .user-server .info-container .server-addr .title {
+  width: 115px;
+}
+.users-list .user-server .info-container .server-sent .title,
+.users-list .user-server .info-container .server-recv .title {
+  width: 80px;
+}
+.users-list .user-server .info-container .server-time .title {
+  width: 110px;
 }
 .server-orgs-list .org .name-container {
   border-left: 0 none;
@@ -7520,26 +7620,38 @@ header.blur {
 }
 .users-list .user .download-key,
 .users-list .user .get-key-link,
-.users-list .user .get-otp-auth {
+.users-list .user .get-otp-auth,
+.users-list .user .get-uri-auth,
+.users-list .user .toggle-servers {
   float: right;
   font-size: 20px;
   color: #4e8bbf;
   cursor: pointer;
 }
 .users-list .user .get-key-link,
-.users-list .user .get-otp-auth {
+.users-list .user .get-otp-auth,
+.users-list .user .get-uri-auth {
   margin-right: 5px;
+}
+.users-list .user .toggle-servers {
+  display: none;
+  margin-left: 5px;
+}
+.enterprise .users-list .user .toggle-servers {
+  display: block;
 }
 .users-list .user .get-otp-auth.no-otp-auth {
   display: none;
 }
 .users-list .user .right-container .download-key:hover,
 .users-list .user .right-container .get-key-link:hover,
-.users-list .user .right-container .get-otp-auth:hover {
+.users-list .user .right-container .get-otp-auth:hover,
+.users-list .user .right-container .get-uri-auth:hover,
+.users-list .user .right-container .toggle-servers:hover {
   text-decoration: none;
   color: #2a6496;
 }
-.users-list .user .right-container,
+.users-list .right-container,
 .server-orgs-list .org .button-container {
   float: right;
   display: inline-block;
@@ -7547,20 +7659,34 @@ header.blur {
   height: 28px;
   width: 170px;
   padding: 3px 8px 0 12px;
+  white-space: nowrap;
   border-left: 1px solid #cfcfcf;
+}
+.enterprise .users-list .right-container {
+  width: 195px;
+}
+.users-list .user-server .right-container {
+  width: 81px;
+  height: auto;
+  margin-top: 4px;
+  border-left: none;
+  padding: 0;
 }
 .users-list .user .right-container.no-otp-auth {
   width: 145px;
+}
+.enterprise .users-list .user .right-container.no-otp-auth {
+  width: 170px;
 }
 .server-orgs-list .org .button-container {
   width: auto;
   border-left: 0 none;
 }
-.users-list .user .status-container {
+.users-list .status-container {
   display: inline-block;
   cursor: default;
 }
-.users-list .user .status-container .status-icon {
+.users-list .status-container .status-icon {
   display: inline-block;
   position: relative;
   top: 3px;
@@ -7571,17 +7697,60 @@ header.blur {
   -moz-border-radius: 50%;
   border-radius: 50%;
 }
+.users-list .user-server .status-container .status-icon {
+  top: 1px;
+  width: 14px;
+  height: 14px;
+}
 .users-list .user .tooltip-inner {
   white-space: pre-wrap;
 }
-.users-list .user .status-container .status-icon.online {
+.users-list .status-container .status-icon.online {
   background-color: #47a447;
 }
-.users-list .user .status-container .status-icon.offline {
+.users-list .status-container .status-icon.offline {
   background-color: #d2322d;
 }
-.users-list .user .status-container .status-text {
+.users-list .status-container .status-text {
   color: #6f7277;
+}
+.users-list .user-servers {
+  border: 1px solid #cfcfcf;
+  border-top: none;
+  background: #FFF;
+  margin-left: 3px;
+  margin-right: 3px;
+  padding: 3px 10px;
+  display: none;
+  -webkit-border-bottom-left-radius: 4px;
+  -moz-border-bottom-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  -webkit-border-bottom-right-radius: 4px;
+  -moz-border-bottom-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  -webkit-box-shadow: inset 0px 12px 8px -14px rgba(0, 0, 0, 0.53);
+  -moz-box-shadow: inset 0px 12px 8px -14px rgba(0, 0, 0, 0.53);
+  -o-box-shadow: inset 0px 12px 8px -14px rgba(0, 0, 0, 0.53);
+  box-shadow: inset 0px 12px 8px -14px rgba(0, 0, 0, 0.53);
+}
+.users-list .user-servers .user-server {
+  color: #4d535c;
+  font-size: 15px;
+  height: 32px;
+  border-top: 1px solid #cfcfcf;
+}
+.users-list .user-servers .no-servers {
+  color: #4d535c;
+  font-size: 15px;
+  padding: 4px 0;
+  display: none;
+}
+.users-list .user-servers .user-server:first-child {
+  border-top: none;
+}
+.users-list .user-servers .user-server .glyphicon {
+  top: 3px;
+  margin-right: 0;
 }
 .dashboard .status-container,
 .dashboard .log-container {
@@ -7627,6 +7796,12 @@ header.blur {
 }
 .servers-list .server .server-info .server-output-title .btn {
   padding: 0 5px;
+}
+.servers-list .server .server-info .server-graph-btn {
+  display: none;
+}
+.enterprise .servers-list .server .server-info .server-graph-btn {
+  display: inline-block;
 }
 .servers-list .server .server-info .server-output-clear {
   float: right;
@@ -7749,18 +7924,6 @@ header.blur {
   position: relative;
   top: 1px;
 }
-.dashboard .status-container .status-text .status-num.none {
-  color: #616161;
-}
-.dashboard .status-container .status-text .status-num.error {
-  color: #ff0000;
-}
-.dashboard .status-container .status-text .status-num.warning {
-  color: #ff9900;
-}
-.dashboard .status-container .status-text .status-num.success {
-  color: #3ba51a;
-}
 .dashboard .status-container .server-version {
   position: absolute;
   top: -1px;
@@ -7803,6 +7966,11 @@ header.blur {
   color: #777777;
   float: right;
 }
+.notification-modal .notification {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+}
 .server-settings-modal .modal .modal-dialog {
   top: -webkit-calc(50% - 366px);
   top: -moz-calc(50% - 366px);
@@ -7812,11 +7980,114 @@ header.blur {
 .server-settings-modal .modal .form-group {
   margin: 0 0 15px 0;
 }
+.server-settings-modal .modal .network {
+  position: relative;
+}
+.server-settings-modal .modal .network .label {
+  cursor: default;
+  position: absolute;
+  top: 34px;
+  right: 47px;
+}
 .server-settings-modal .modal .left .otp-auth-toggle {
   margin-top: 17px;
 }
 .server-settings-modal .modal .right .otp-auth-toggle label {
   margin-bottom: 0;
+}
+.subscribe-modal .modal .subscribe-info,
+.enterprise-modal .modal .enterprise-info {
+  margin: 0 auto;
+  width: 305px;
+  text-align: center;
+}
+.enterprise-modal .modal .enterprise-info {
+  width: 280px;
+  text-align: left;
+}
+.subscribe-modal .modal .subscribe-activate-form {
+  display: none;
+  text-align: center;
+}
+.enterprise-modal .modal .enterprise-info .enterprise-item {
+  float: right;
+  text-align: right;
+}
+.subscribe-modal .modal .subscribe-activate-form label,
+.enterprise-modal .modal .enterprise-list span {
+  text-align: center;
+  color: #616161;
+  font-weight: bold;
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 19px;
+}
+.enterprise-modal .modal .enterprise-list span {
+  font-size: 22px;
+}
+.subscribe-modal .modal .subscribe-activate-form textarea {
+  resize: none;
+  font-family: 'Lucida Console', Monaco, monospace;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-shadow: 0px 0px 14px #b6b6b6;
+  -moz-box-shadow: 0px 0px 14px #b6b6b6;
+  -o-box-shadow: 0px 0px 14px #b6b6b6;
+  box-shadow: 0px 0px 14px #b6b6b6;
+}
+.subscribe-modal .modal .subscribe-buttons,
+.enterprise-modal .modal .enterprise-buttons {
+  margin: 5px 5px 10px 5px;
+  text-align: center;
+}
+.subscribe-modal .modal .subscribe-buttons .subscribe-cancel,
+.subscribe-modal .modal .subscribe-buttons .subscribe-submit {
+  display: none;
+}
+.subscribe-modal .modal .subscribe-buttons button,
+.enterprise-modal .modal .enterprise-buttons button {
+  margin: 5px;
+  width: 225px;
+}
+.enterprise-modal .modal .enterprise-buttons .enterprise-reactivate {
+  display: none;
+}
+.subscribe-modal .modal .subscribe-list {
+  border: 1px solid #c5c5c5;
+  list-style-type: none;
+  padding: 0;
+  text-align: left;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  -webkit-box-shadow: 0px 0px 14px #b6b6b6;
+  -moz-box-shadow: 0px 0px 14px #b6b6b6;
+  -o-box-shadow: 0px 0px 14px #b6b6b6;
+  box-shadow: 0px 0px 14px #b6b6b6;
+}
+.enterprise-modal .modal .enterprise-list {
+  padding-left: 0;
+  list-style-type: none;
+}
+.subscribe-modal .modal .subscribe-list li {
+  border-top: 1px solid #b8b8b8;
+  padding: 16px 20px;
+}
+.subscribe-modal .modal .subscribe-list li:first-child {
+  border-top: none;
+}
+.subscribe-modal .modal .subscribe-list li .glyphicon {
+  margin-right: 15px;
+  font-size: 18px;
+  color: #428bca;
+}
+.subscribe-modal .modal .subscribe-list li .subscribe-feature {
+  color: #616161;
+  font-weight: bold;
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 18px;
 }
 .delete-users-modal .modal .modal-dialog {
   top: -webkit-calc(50% - 195px);
@@ -7869,4 +8140,22 @@ header.blur {
   top: -moz-calc(50% - 325px);
   top: -o-calc(50% - 325px);
   top: calc(50% - 325px);
+}
+.notification-modal .modal .modal-dialog {
+  top: -webkit-calc(50% - 158px);
+  top: -moz-calc(50% - 158px);
+  top: -o-calc(50% - 158px);
+  top: calc(50% - 158px);
+}
+.subscribe-modal .modal .modal-dialog {
+  top: -webkit-calc(50% - 384px);
+  top: -moz-calc(50% - 384px);
+  top: -o-calc(50% - 384px);
+  top: calc(50% - 384px);
+}
+.enterprise-modal .modal .modal-dialog {
+  top: -webkit-calc(50% - 315px);
+  top: -moz-calc(50% - 315px);
+  top: -o-calc(50% - 315px);
+  top: calc(50% - 315px);
 }
