@@ -245,32 +245,28 @@ class Server(Config):
                 cache_db.set_remove(set_cache_key, remote_ip_addr)
                 cache_db.dict_remove(cache_key, user_id)
 
-            for user_id in users - cache_db.dict_keys(cache_key):
-                while True:
-                    try:
+            try:
+                for user_id in users - cache_db.dict_keys(cache_key):
+                    while True:
                         local_ip_addr = str(ip_pool.next())
                         if not cache_db.set_exists(set_cache_key,
                                 local_ip_addr):
                             cache_db.set_add(set_cache_key, local_ip_addr)
                             break
-                    except StopIteration:
-                        return
-                while True:
-                    try:
+                    while True:
                         remote_ip_addr = str(ip_pool.next())
                         if not cache_db.set_exists(set_cache_key,
                                 remote_ip_addr):
                             cache_db.set_add(set_cache_key, remote_ip_addr)
                             break
-                    except StopIteration:
-                        return
-
-                cache_db.dict_set(cache_key, user_id,
-                    local_ip_addr + '-' + remote_ip_addr)
-            self._commit_ip_pool()
-
-            for org in self.iter_orgs():
-                Event(type=USERS_UPDATED, resource_id=org.id)
+                    cache_db.dict_set(cache_key, user_id,
+                        local_ip_addr + '-' + remote_ip_addr)
+            except StopIteration:
+                pass
+            finally:
+                self._commit_ip_pool()
+                for org in self.iter_orgs():
+                    Event(type=USERS_UPDATED, resource_id=org.id)
         finally:
             cache_db.lock_release(cache_key)
 
@@ -316,6 +312,7 @@ class Server(Config):
         })
         self.clear_cache()
         name = self.name
+        orgs = list(self.iter_orgs())
 
         if self.status:
             self.force_stop(True)
@@ -324,6 +321,8 @@ class Server(Config):
         utils.rmtree(self.path)
         LogEntry(message='Deleted server "%s".' % name)
         Event(type=SERVERS_UPDATED)
+        for org in orgs:
+            Event(type=USERS_UPDATED, resource_id=org.id)
 
     def commit(self):
         if self._rebuild_dh_params:
