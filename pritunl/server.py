@@ -68,6 +68,7 @@ class Server(Config):
             self._initialize()
 
     def __setattr__(self, name, value):
+        reset_pool = False
         if name == 'status':
             if value:
                 cache_db.dict_set(self.get_cache_key(), name, 't')
@@ -80,7 +81,13 @@ class Server(Config):
         elif name == 'dh_param_bits':
             if not self._loaded or self.dh_param_bits != value:
                 self._rebuild_dh_params = True
+        elif name == 'network':
+            reset_pool = self.network != value
         Config.__setattr__(self, name, value)
+        if reset_pool:
+            cache_db.remove(self.get_cache_key('ip_pool'))
+            cache_db.remove(self.get_cache_key('ip_pool_set'))
+            self.update_ip_pool()
 
     def __getattr__(self, name):
         if name == 'status':
@@ -192,25 +199,34 @@ class Server(Config):
     def _load_ip_pool(self):
         if cache_db.get(self.get_cache_key('ip_pool_cached')) == 't':
             return
+        reset = False
 
         if os.path.exists(self.ip_pool_path):
             with open(self.ip_pool_path, 'r') as ip_pool_file:
                 pool = json.loads(ip_pool_file.read())
 
-            cache_key = self.get_cache_key('ip_pool')
-            set_cache_key = self.get_cache_key('ip_pool_set')
-            for key, value in pool.iteritems():
-                cache_db.dict_set(cache_key, key, value)
-                local_ip_addr, remote_ip_addr = value.split('-')
-                cache_db.set_add(set_cache_key, local_ip_addr)
-                cache_db.set_add(set_cache_key, remote_ip_addr)
+            network = pool.pop('network', None)
+            if network == self.network:
+                cache_key = self.get_cache_key('ip_pool')
+                set_cache_key = self.get_cache_key('ip_pool_set')
+                for key, value in pool.iteritems():
+                    cache_db.dict_set(cache_key, key, value)
+                    local_ip_addr, remote_ip_addr = value.split('-')
+                    cache_db.set_add(set_cache_key, local_ip_addr)
+                    cache_db.set_add(set_cache_key, remote_ip_addr)
+            else:
+                reset = True
 
         cache_db.set(self.get_cache_key('ip_pool_cached'), 't')
 
+        if reset:
+            self.update_ip_pool()
+
     def _commit_ip_pool(self):
         with open(self.ip_pool_path, 'w') as ip_pool_file:
-            ip_pool_file.write(json.dumps(
-                cache_db.dict_get_all(self.get_cache_key('ip_pool'))))
+            pool = cache_db.dict_get_all(self.get_cache_key('ip_pool'))
+            pool['network'] = self.network
+            ip_pool_file.write(json.dumps(pool))
 
     def update_ip_pool(self):
         cache_key = self.get_cache_key('ip_pool')
@@ -273,6 +289,9 @@ class Server(Config):
         cache_db.set_remove('servers', '%s_%s' % (self.id, self.type))
         cache_db.list_remove('servers_sorted', '%s_%s' % (self.id, self.type))
         cache_db.remove(self.get_cache_key('clients'))
+        cache_db.remove(self.get_cache_key('ip_pool'))
+        cache_db.remove(self.get_cache_key('ip_pool_set'))
+        cache_db.remove(self.get_cache_key('ip_pool_cached'))
         for period in ('1m', '5m', '30m', '2h', '1d'):
             persist_db.remove(self.get_cache_key('bandwidth-%s' % period))
         Config.clear_cache(self)
