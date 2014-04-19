@@ -38,6 +38,7 @@ class Server(Config):
         self._cur_event = None
         self._last_event = 0
         self._rebuild_dh_params = False
+        self._reset_ip_pool = False
 
         if id is None:
             self.id = uuid.uuid4().hex
@@ -68,7 +69,6 @@ class Server(Config):
             self._initialize()
 
     def __setattr__(self, name, value):
-        reset_pool = False
         if name == 'status':
             cache_db.dict_set(self.get_cache_key(), name,
                 't' if value else 'f')
@@ -80,12 +80,8 @@ class Server(Config):
             if not self._loaded or self.dh_param_bits != value:
                 self._rebuild_dh_params = True
         elif name == 'network':
-            reset_pool = self._loaded and self.network != value
+            self._reset_ip_pool = self._loaded and self.network != value
         Config.__setattr__(self, name, value)
-        if reset_pool:
-            cache_db.remove(self.get_cache_key('ip_pool'))
-            cache_db.remove(self.get_cache_key('ip_pool_set'))
-            self.update_ip_pool()
 
     def __getattr__(self, name):
         if name == 'status':
@@ -331,6 +327,10 @@ class Server(Config):
     def commit(self):
         if self._rebuild_dh_params:
             self._generate_dh_param()
+        if self._reset_ip_pool:
+            cache_db.remove(self.get_cache_key('ip_pool'))
+            cache_db.remove(self.get_cache_key('ip_pool_set'))
+            self.update_ip_pool()
         Config.commit(self)
         self.sort_servers_cache()
         Event(type=SERVERS_UPDATED)
