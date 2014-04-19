@@ -747,7 +747,6 @@ class Server(Config):
             else:
                 i += 1
         self._clear_iptables_rules()
-        self.update_clients({}, force=True)
 
     def _run_thread(self):
         logger.debug('Starting ovpn process. %r' % {
@@ -792,6 +791,7 @@ class Server(Config):
 
             self.status = False
             self.publish('stopped')
+            self.update_clients({}, force=True)
             if process.returncode != 0:
                 Event(type=SERVERS_UPDATED)
                 LogEntry(message='Server stopped unexpectedly "%s".' % (
@@ -1195,7 +1195,8 @@ class Server(Config):
         if force or client_count != len(clients):
             for org in self.iter_orgs():
                 Event(type=USERS_UPDATED, resource_id=org.id)
-            Event(type=SERVERS_UPDATED)
+            if not force:
+                Event(type=SERVERS_UPDATED)
 
     @classmethod
     def sort_servers_cache(cls):
