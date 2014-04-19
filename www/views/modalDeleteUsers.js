@@ -72,22 +72,31 @@ define([
       this.setLoading('Deleting users...');
 
       var i;
+      var model;
       var users = this.collection.models.slice(0);
+      var error = false;
       var count = users.length;
       var destroyData = {
         success: function() {
-          if (--count < 1) {
+          if (--count < 1 && !error) {
             this.close(true);
           }
         }.bind(this),
         error: function() {
-          this.clearLoading();
-          this.setAlert('danger',
-            'Failed to delete users, server error occurred.');
+          if (!error) {
+            error = true;
+            this.clearLoading();
+            this.setAlert('danger',
+              'Failed to delete users, server error occurred.');
+          }
         }.bind(this)
       };
+      if (!count) {
+        this.close();
+      }
       for (i = 0; i < users.length; i++) {
-        users[i].destroy(destroyData);
+        model = users[i].clone();
+        model.destroy(destroyData);
       }
     }
   });
