@@ -85,10 +85,8 @@ class NodeServer(Server):
             'connection occurred "%s".' % self.name)
 
     def _start_server_threads(self):
-        thread_data = {
-            'state': True,
-            'ws': None,
-        }
+        self._state = True
+        self._ws = None
 
         def com_thread():
             ws = websocket.WebSocketApp(
@@ -97,14 +95,14 @@ class NodeServer(Server):
                 on_message=self._com_on_message,
                 on_error=self._com_on_error,
             )
-            thread_data['ws'] = ws
+            self._ws = ws
             ws.run_forever(ping_interval=SOCKET_PING_INTERVAL,
                 timeout=SOCKET_TIMEOUT)
             self.status = False
             self.publish('stopped')
             self.update_clients({}, force=True)
 
-            if thread_data['state']:
+            if self._state:
                 LogEntry(message='Node server stopped unexpectedly "%s".' % (
                     self.name))
                 Event(type=SERVERS_UPDATED)
@@ -113,10 +111,9 @@ class NodeServer(Server):
             for message in cache_db.subscribe(self.get_cache_key()):
                 try:
                     if message == 'stop':
-                        thread_data['state'] = False
-                        ws = thread_data.get('ws')
-                        if ws:
-                            ws.close()
+                        self._state = False
+                        if self._ws:
+                            self._ws.close()
                     elif message == 'stopped':
                         break
                 except OSError:
