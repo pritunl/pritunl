@@ -19,12 +19,12 @@ define([
       'propertychange input': 'onInputChange'
     },
     title: '',
+    okText: 'Ok',
     cancelText: 'Cancel',
     safeClose: false,
     body: function() {
       return '';
     },
-    okText: 'Ok',
     initialize: function() {
       this.render();
       this.postRender();
