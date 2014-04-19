@@ -23,7 +23,7 @@ define([
       var cipher;
       var tokenEnc;
 
-      if (response.token) {
+      if (response.token && !window.demo) {
         tokenData = response.token.split('$');
         hash = new SJCL.hash.sha256();
         hash.update(this.get('username') + '$' + this.get('password'));
