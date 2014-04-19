@@ -262,76 +262,84 @@ class NodeServer(Server):
         return server_conf
 
     def start(self, silent=False):
-        if self.status:
-            return
-        if not self.org_count:
-            raise ServerMissingOrg('Server cannot be started without ' + \
-                'any organizations', {
+        cache_db.lock_acquire(self.get_cache_key('op_lock'))
+        try:
+            if self.status:
+                return
+            if not self.org_count:
+                raise ServerMissingOrg('Server cannot be started without ' + \
+                    'any organizations', {
+                        'server_id': self.id,
+                    })
+
+            logger.debug('Starting node server. %r' % {
+                'server_id': self.id,
+            })
+            ovpn_conf = self._generate_ovpn_conf()
+
+            try:
+                response = self._request('post', json_data={
+                    'interface': self.interface,
+                    'network': self.network,
+                    'local_networks': self.local_networks,
+                    'ovpn_conf': ovpn_conf,
+                    'server_ver': NODE_SERVER_VER,
+                })
+            except httplib.HTTPException:
+                raise NodeConnectionError('Failed to connect to node server', {
                     'server_id': self.id,
                 })
 
-        logger.debug('Starting node server. %r' % {
-            'server_id': self.id,
-        })
-        ovpn_conf = self._generate_ovpn_conf()
+            if response.status_code == 401:
+                raise InvalidNodeAPIKey('Invalid node server api key', {
+                    'server_id': self.id,
+                    'status_code': response.status_code,
+                    'reason': response.reason,
+                })
+            elif response.status_code != 200:
+                raise ServerStartError('Failed to start node server', {
+                    'server_id': self.id,
+                    'status_code': response.status_code,
+                    'reason': response.reason,
+                })
 
-        try:
-            response = self._request('post', json_data={
-                'interface': self.interface,
-                'network': self.network,
-                'local_networks': self.local_networks,
-                'ovpn_conf': ovpn_conf,
-                'server_ver': NODE_SERVER_VER,
-            })
-        except httplib.HTTPException:
-            raise NodeConnectionError('Failed to connect to node server', {
-                'server_id': self.id,
-            })
+            cache_db.dict_set(self.get_cache_key(), 'start_time',
+                str(int(time.time() - 1)))
+            self.clear_output()
+            self._interrupt = False
+            self.status = True
+            self._start_server_threads()
 
-        if response.status_code == 401:
-            raise InvalidNodeAPIKey('Invalid node server api key', {
-                'server_id': self.id,
-                'status_code': response.status_code,
-                'reason': response.reason,
-            })
-        elif response.status_code != 200:
-            raise ServerStartError('Failed to start node server', {
-                'server_id': self.id,
-                'status_code': response.status_code,
-                'reason': response.reason,
-            })
-
-        cache_db.dict_set(self.get_cache_key(), 'start_time',
-            str(int(time.time() - 1)))
-        self.clear_output()
-        self._interrupt = False
-        self.status = True
-        self._start_server_threads()
-
-        if not silent:
-            Event(type=SERVERS_UPDATED)
-            LogEntry(message='Started server "%s".' % self.name)
+            if not silent:
+                Event(type=SERVERS_UPDATED)
+                LogEntry(message='Started server "%s".' % self.name)
+        finally:
+            cache_db.lock_release(self.get_cache_key('op_lock'))
 
     def stop(self, silent=False):
-        if not self.status:
-            return
+        cache_db.lock_acquire(self.get_cache_key('op_lock'))
+        try:
+            if not self.status:
+                return
 
-        stopped = False
-        self.publish('stop')
-        for message in cache_db.subscribe(self.get_cache_key(),
-                SUB_RESPONSE_TIMEOUT):
-            if message == 'stopped':
-                stopped = True
-                break
-        if not stopped:
-            raise ServerStopError('Server thread failed to return ' + \
-                'stop event', {
-                    'server_id': self.id,
-                })
+            stopped = False
+            self.publish('stop')
+            for message in cache_db.subscribe(self.get_cache_key(),
+                    SUB_RESPONSE_TIMEOUT):
+                if message == 'stopped':
+                    stopped = True
+                    break
+            if not stopped:
+                raise ServerStopError('Server thread failed to return ' + \
+                    'stop event', {
+                        'server_id': self.id,
+                    })
 
-        if not silent:
-            Event(type=SERVERS_UPDATED)
-            LogEntry(message='Stopped server "%s".' % self.name)
+            if not silent:
+                Event(type=SERVERS_UPDATED)
+                LogEntry(message='Stopped server "%s".' % self.name)
+        finally:
+            cache_db.lock_release(self.get_cache_key('op_lock'))
 
     def force_stop(self, silent=False):
         self.stop(silent)
