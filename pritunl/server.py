@@ -62,7 +62,7 @@ class Server(Config):
         self.ovpn_status_path = os.path.join(self.path, TEMP_DIR,
             OVPN_STATUS_NAME)
         self.auth_log_path = os.path.join(app_server.data_path, AUTH_LOG_NAME)
-        self.set_path(os.path.join(self.path, 'server.conf'))
+        self.set_path(os.path.join(self.path, SERVER_CONF_NAME))
 
         if id is None:
             self._initialize()
@@ -1228,6 +1228,9 @@ class Server(Config):
             path = os.path.join(app_server.data_path, SERVERS_DIR)
             if os.path.isdir(path):
                 for server_id in os.listdir(path):
+                    if not os.path.isfile(os.path.join(path, server_id,
+                            SERVER_CONF_NAME)):
+                        continue
                     if os.path.isfile(os.path.join(path, server_id,
                             NODE_SERVER)):
                         server_id += '_' + NODE_SERVER
