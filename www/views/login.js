@@ -79,7 +79,7 @@ define([
       this.addView(this.alertView);
       this.$('input').addClass('has-warning');
     },
-    changePassword: function(username, password) {
+    changePassword: function(username, password, initial) {
       var model = new AuthModel({
         username: username,
         password: password
@@ -87,6 +87,7 @@ define([
       model.fetch({
         success: function() {
           var modal = new ModalChangePasswordView({
+            initial: initial,
             model: model
           });
           this.listenToOnce(modal, 'applied', function() {
@@ -132,9 +133,13 @@ define([
           }, {
             duration: 400,
             complete: function() {
+              var initial;
               this.destroy();
               if (model.get('default_password') || this.showChangePassword) {
-                this.changePassword(username, password);
+                if (!this.showChangePassword) {
+                  initial = true;
+                }
+                this.changePassword(username, password, initial);
               }
               window.loginViewLock = false;
             }.bind(this)
