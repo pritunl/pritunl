@@ -29,10 +29,27 @@ define([
     return key;
   }
 
+  var authGet = function(request) {
+    request.response({
+      username: demoData.auth.username,
+      token: demoData.auth.token,
+      secret: demoData.auth.secret
+    });
+  };
+  routes['GET=/auth'] = authGet;
+
   var authPut = function(request) {
     demoData.auth.username = request.data.username;
     demoData.auth.password = request.data.password;
-    request.response({});
+    if (!request.data.token) {
+      demoData.auth.token = uuid();
+      demoData.auth.secret = uuid();
+    }
+    request.response({
+      username: demoData.auth.username,
+      token: demoData.auth.token,
+      secret: demoData.auth.secret
+    });
   };
   routes['PUT=/auth'] = authPut;
 
@@ -62,6 +79,43 @@ define([
     request.response({});
   };
   routes['DELETE=/auth/session'] = authSessionDelete;
+
+  var subscriptionGet = function(request) {
+    request.response(demoData.subscription);
+  };
+  routes['GET=/subscription'] = subscriptionGet;
+
+  var subscriptionStateGet = function(request) {
+    request.response({active: demoData.subscription.active});
+  };
+  routes['GET=/subscription/state'] = subscriptionStateGet;
+
+  var subscriptionPost = function(request) {
+    demoData.subscription.license = true;
+    demoData.subscription.active = true;
+    event('subscription_active');
+    request.response(demoData.subscription);
+  };
+  routes['POST=/subscription'] = subscriptionPost;
+
+  var subscriptionPut = function(request) {
+    if (request.data.cancel) {
+      demoData.subscription.cancel_at_period_end = true;
+    }
+    else {
+      demoData.subscription.cancel_at_period_end = false;
+    }
+    request.response(demoData.subscription);
+  };
+  routes['PUT=/subscription'] = subscriptionPut;
+
+  var subscriptionDelete = function(request) {
+    demoData.subscription.license = false;
+    demoData.subscription.active = false;
+    event('subscription_inactive');
+    request.response(demoData.subscription);
+  };
+  routes['DELETE=/subscription'] = subscriptionDelete;
 
   var event = function(type, resourceId) {
     demoData.events.push({
@@ -608,7 +662,9 @@ define([
             status = 'error';
             ajaxRequest.error(jqXHR, status, null);
           }
-          ajaxRequest.complete(jqXHR, status);
+          if (ajaxRequest.complete) {
+            ajaxRequest.complete(jqXHR, status);
+          }
         }, responseDelay);
       }
     };
