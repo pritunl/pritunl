@@ -310,12 +310,11 @@ class Server(Config):
         logger.debug('Removing server. %r' % {
             'server_id': self.id,
         })
-        self.clear_cache()
         name = self.name
         orgs = list(self.iter_orgs())
-
         if self.status:
             self.force_stop(True)
+        self.clear_cache()
 
         self._remove_primary_user()
         utils.rmtree(self.path)
