@@ -140,7 +140,7 @@ define([
             token: function(token) {
               ordered = true;
               this.lock();
-              this.setLoading(this.checkoutLoading, true, 0);
+              this.setLoading(this.checkoutLoading, true, 100);
               this.model.save({
                 card: token.id,
                 email: token.email
