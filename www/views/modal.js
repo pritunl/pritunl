@@ -29,6 +29,10 @@ define([
       this.render();
       this.postRender();
     },
+    deinitialize: function() {
+      this.$('.modal').modal('hide');
+      $('.modal-backdrop').remove();
+    },
     render: function() {
       this.$el.html(this.modalTemplate({
         title: this.title,
