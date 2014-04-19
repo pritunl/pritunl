@@ -277,9 +277,12 @@ class Server(Config):
             return ip_set.split('-')
         return None, None
 
-    def clear_cache(self):
+    def _clear_list_cache(self):
         cache_db.set_remove('servers', '%s_%s' % (self.id, self.type))
         cache_db.list_remove('servers_sorted', '%s_%s' % (self.id, self.type))
+
+    def clear_cache(self):
+        self._clear_list_cache()
         cache_db.remove(self.get_cache_key('clients'))
         cache_db.remove(self.get_cache_key('ip_pool'))
         cache_db.remove(self.get_cache_key('ip_pool_set'))
@@ -310,8 +313,10 @@ class Server(Config):
         logger.debug('Removing server. %r' % {
             'server_id': self.id,
         })
+        self._clear_list_cache()
         name = self.name
         orgs = list(self.iter_orgs())
+
         if self.status:
             self.force_stop(True)
         self.clear_cache()
