@@ -725,8 +725,10 @@ class Server(Config):
         for message in cache_db.subscribe(self.get_cache_key()):
             try:
                 if message == 'stop':
+                    self._state = False
                     process.send_signal(signal.SIGINT)
                 elif message == 'force_stop':
+                    self._state = False
                     process.send_signal(signal.SIGKILL)
                 elif message == 'stopped':
                     break
@@ -751,6 +753,7 @@ class Server(Config):
             'server_id': self.id,
         })
         self._interrupt = False
+        self._state = True
         try:
             try:
                 process = subprocess.Popen(['openvpn', self.ovpn_conf_path],
@@ -790,7 +793,7 @@ class Server(Config):
             self.status = False
             self.publish('stopped')
             self.update_clients({}, force=True)
-            if process.returncode != 0:
+            if self._state:
                 Event(type=SERVERS_UPDATED)
                 LogEntry(message='Server stopped unexpectedly "%s".' % (
                     self.name))
