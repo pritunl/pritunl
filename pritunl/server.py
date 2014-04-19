@@ -791,90 +791,102 @@ class Server(Config):
         cache_db.publish(self.get_cache_key(), message)
 
     def start(self, silent=False):
-        if self.status:
-            return
-        if not self.org_count:
-            raise ServerMissingOrg('Server cannot be started without ' + \
-                'any organizations', {
-                    'server_id': self.id,
-                })
-        logger.debug('Starting server. %r' % {
-            'server_id': self.id,
-        })
-        self._generate_ovpn_conf()
-        self._enable_ip_forwarding()
-        self._set_iptables_rules()
-        self.clear_output()
+        cache_db.lock_acquire(self.get_cache_key('op_lock'))
+        try:
+            if self.status:
+                return
+            if not self.org_count:
+                raise ServerMissingOrg('Server cannot be started without ' + \
+                    'any organizations', {
+                        'server_id': self.id,
+                    })
+            logger.debug('Starting server. %r' % {
+                'server_id': self.id,
+            })
+            self._generate_ovpn_conf()
+            self._enable_ip_forwarding()
+            self._set_iptables_rules()
+            self.clear_output()
 
-        threading.Thread(target=self._run_thread).start()
+            threading.Thread(target=self._run_thread).start()
 
-        started = False
-        for message in cache_db.subscribe(self.get_cache_key(),
-                SUB_RESPONSE_TIMEOUT):
-            if message == 'started':
-                started = True
-                break
-            elif message == 'stopped':
-                raise ServerStartError('Server failed to start', {
-                    'server_id': self.id,
-                })
-        if not started:
-            raise ServerStartError('Server thread failed to return ' + \
-                'start event', {
-                    'server_id': self.id,
-                })
+            started = False
+            for message in cache_db.subscribe(self.get_cache_key(),
+                    SUB_RESPONSE_TIMEOUT):
+                if message == 'started':
+                    started = True
+                    break
+                elif message == 'stopped':
+                    raise ServerStartError('Server failed to start', {
+                        'server_id': self.id,
+                    })
+            if not started:
+                raise ServerStartError('Server thread failed to return ' + \
+                    'start event', {
+                        'server_id': self.id,
+                    })
 
-        if not silent:
-            Event(type=SERVERS_UPDATED)
-            LogEntry(message='Started server "%s".' % self.name)
+            if not silent:
+                Event(type=SERVERS_UPDATED)
+                LogEntry(message='Started server "%s".' % self.name)
+        finally:
+            cache_db.lock_release(self.get_cache_key('op_lock'))
 
     def stop(self, silent=False):
-        if not self.status:
-            return
-        logger.debug('Stopping server. %r' % {
-            'server_id': self.id,
-        })
+        cache_db.lock_acquire(self.get_cache_key('op_lock'))
+        try:
+            if not self.status:
+                return
+            logger.debug('Stopping server. %r' % {
+                'server_id': self.id,
+            })
 
-        stopped = False
-        self.publish('stop')
-        for message in cache_db.subscribe(self.get_cache_key(),
-                SUB_RESPONSE_TIMEOUT):
-            if message == 'stopped':
-                stopped = True
-                break
-        if not stopped:
-            raise ServerStopError('Server thread failed to return ' + \
-                'stop event', {
-                    'server_id': self.id,
-                })
+            stopped = False
+            self.publish('stop')
+            for message in cache_db.subscribe(self.get_cache_key(),
+                    SUB_RESPONSE_TIMEOUT):
+                if message == 'stopped':
+                    stopped = True
+                    break
+            if not stopped:
+                raise ServerStopError('Server thread failed to return ' + \
+                    'stop event', {
+                        'server_id': self.id,
+                    })
 
-        if not silent:
-            Event(type=SERVERS_UPDATED)
-            LogEntry(message='Stopped server "%s".' % self.name)
+            if not silent:
+                Event(type=SERVERS_UPDATED)
+                LogEntry(message='Stopped server "%s".' % self.name)
+        finally:
+            cache_db.lock_release(self.get_cache_key('op_lock'))
 
     def force_stop(self, silent=False):
-        if not self.status:
-            return
-        logger.debug('Forcing stop server. %r' % {
-            'server_id': self.id,
-        })
+        cache_db.lock_acquire(self.get_cache_key('op_lock'))
+        try:
+            if not self.status:
+                return
+            logger.debug('Forcing stop server. %r' % {
+                'server_id': self.id,
+            })
 
-        stopped = False
-        self.publish('force_stop')
-        for message in cache_db.subscribe(self.get_cache_key(),
-                SUB_RESPONSE_TIMEOUT):
-            if message == 'stopped':
-                stopped = True
-                break
-        if not stopped:
-            raise ServerStopError('Server thread failed to return ' + \
-                'stop event', {
-                    'server_id': self.id,
-                })
+            stopped = False
+            self.publish('force_stop')
+            for message in cache_db.subscribe(self.get_cache_key(),
+                    SUB_RESPONSE_TIMEOUT):
+                if message == 'stopped':
+                    stopped = True
+                    break
+            if not stopped:
+                raise ServerStopError('Server thread failed to return ' + \
+                    'stop event', {
+                        'server_id': self.id,
+                    })
 
-        if not silent:
-            Event(type=SERVERS_UPDATED)
-            LogEntry(message='Stopped server "%s".' % self.name)
+            if not silent:
+                Event(type=SERVERS_UPDATED)
+                LogEntry(message='Stopped server "%s".' % self.name)
+        finally:
+            cache_db.lock_release(self.get_cache_key('op_lock'))
 
     def restart(self, silent=False):
         if not self.status:
