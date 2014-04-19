@@ -80,7 +80,7 @@ class Server(Config):
             if not self._loaded or self.dh_param_bits != value:
                 self._rebuild_dh_params = True
         elif name == 'network':
-            reset_pool = self.network != value
+            reset_pool = self._loaded and self.network != value
         Config.__setattr__(self, name, value)
         if reset_pool:
             cache_db.remove(self.get_cache_key('ip_pool'))
