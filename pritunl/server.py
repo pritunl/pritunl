@@ -70,10 +70,8 @@ class Server(Config):
     def __setattr__(self, name, value):
         reset_pool = False
         if name == 'status':
-            if value:
-                cache_db.dict_set(self.get_cache_key(), name, 't')
-            else:
-                cache_db.dict_set(self.get_cache_key(), name, 'f')
+            cache_db.dict_set(self.get_cache_key(), name,
+                't' if value else 'f')
             return
         elif name == 'clients':
             cache_db.dict_set(self.get_cache_key(), name, json.dumps(value))
@@ -91,9 +89,7 @@ class Server(Config):
 
     def __getattr__(self, name):
         if name == 'status':
-            if cache_db.dict_get(self.get_cache_key(), name) == 't':
-                return True
-            return False
+            return cache_db.dict_get(self.get_cache_key(), name) == 't'
         elif name == 'uptime':
             if self.status:
                 return int(time.time()) - int(cache_db.dict_get(
