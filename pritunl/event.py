@@ -39,10 +39,6 @@ class Event(CacheObject):
 
     @classmethod
     def get_events(cls, cursor=None, block=True):
-        logger.debug('Getting events. %r' % {
-            'cursor': cursor,
-        })
-
         while True:
             # Check for events older then ttl
             event_id = cls.db_instance.list_index(cls.column_family, 0)
@@ -60,23 +56,28 @@ class Event(CacheObject):
                 break
 
         events = []
-        if cursor:
-            for event in cls.iter_rows():
-                events.append(event)
-                if event.id == cursor:
-                    events = []
-        elif block:
+        events_set = set()
+        if not cursor and block:
             cursor = cls.db_instance.list_index(cls.column_family, -1)
         else:
-            return list(cls.iter_rows())
+            for event in cls.iter_rows():
+                # Skip duplicate events
+                if event.resource_id:
+                    key = event.type + '-' + event.resource_id
+                else:
+                    key = event.type
+                if key not in events_set:
+                    events_set.add(key)
+                    events.append(event)
+
+                if cursor and event.id == cursor:
+                    events = []
+                    events_set = set()
 
         if block and not events:
             new_event = False
             for message in cls.db_instance.subscribe(cls.column_family, 30):
                 if message == 'new_event':
-                    new_event = True
-                    break
-            if new_event:
-                return cls.get_events(cursor, False)
+                    return cls.get_events(cursor, False)
 
         return events
