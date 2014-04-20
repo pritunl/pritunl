@@ -80,8 +80,8 @@ setup(
     version=pritunl.__version__,
     description='Simple openvpn server',
     long_description=open('README.rst').read(),
-    author='Zachary Huff',
-    author_email='zach.huff.386@gmail.com',
+    author='Pritunl',
+    author_email='contact@pritunl.com',
     url='https://github.com/pritunl/pritunl',
     download_url='https://github.com/pritunl/pritunl/archive/%s.tar.gz' % (
         pritunl.__version__),
