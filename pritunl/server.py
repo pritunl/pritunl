@@ -1195,6 +1195,8 @@ class Server(Config):
     def update_clients(self, clients, force=False):
         if not force and not self.status:
             return
+        # Openvpn will create an undef client while a client connects
+        clients.pop('UNDEF', None)
         self._update_clients_bandwidth(clients)
         client_count = len(self.clients)
         self.clients = clients
