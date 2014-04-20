@@ -12,7 +12,7 @@ depends=(
     "python2"
     "python2-flask"
     "python2-cherrypy"
-    "python-crypto"
+    "python2-crypto"
     "net-tools"
     "iproute2"
     "openvpn"
