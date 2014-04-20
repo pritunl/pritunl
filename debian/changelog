@@ -2,14 +2,14 @@ pritunl (0.10.9-0ubuntu1) unstable; urgency=low
 
   * TESTING
 
- -- Pritunl <contact@pritunl.com>  Fri, 18 Apr 2014 21:58:32 -0400
+ -- Zachary Huff <zach.huff.386@gmail.com>  Fri, 18 Apr 2014 21:58:32 -0400
 
 pritunl (0.10.8-0ubuntu1) unstable; urgency=low
 
   * Fix openvpn authentication issue
   * Disable download key when no servers are attached to a user
 
- -- Pritunl <contact@pritunl.com>  Sun, 23 Mar 2014 13:45:58 -0400
+ -- Zachary Huff <zach.huff.386@gmail.com>  Sun, 23 Mar 2014 13:45:58 -0400
 
 pritunl (0.10.7-0ubuntu1) unstable; urgency=low
 
@@ -20,7 +20,7 @@ pritunl (0.10.7-0ubuntu1) unstable; urgency=low
   * Add handler to delete temporary key links
   * Read conf options from environment variables
 
- -- Pritunl <contact@pritunl.com>  Fri, 28 Feb 2014 05:30:34 -0400
+ -- Zachary Huff <zach.huff.386@gmail.com>  Fri, 28 Feb 2014 05:30:34 -0400
 
 pritunl (0.10.6-0ubuntu1) unstable; urgency=low
 
@@ -36,7 +36,7 @@ pritunl (0.10.6-0ubuntu1) unstable; urgency=low
   * Add dh param bits to server options
   * Pritunl conf will be automatically upgraded after first launch
 
- -- Pritunl <contact@pritunl.com>  Wed, 12 Feb 2014 02:05:57 -0400
+ -- Zachary Huff <zach.huff.386@gmail.com>  Wed, 12 Feb 2014 02:05:57 -0400
 
 pritunl (0.10.5-0ubuntu1) unstable; urgency=low
 
@@ -53,7 +53,7 @@ pritunl (0.10.5-0ubuntu1) unstable; urgency=low
   * Organization data will be automatically upgraded after first launch
   * Log entries will be cleared after first launch for database upgrade
 
- -- Pritunl <contact@pritunl.com>  Wed, 29 Jan 2014 01:29:32 -0400
+ -- Zachary Huff <zach.huff.386@gmail.com>  Wed, 29 Jan 2014 01:29:32 -0400
 
 pritunl (0.10.4-0ubuntu1) unstable; urgency=low
 
@@ -63,7 +63,7 @@ pritunl (0.10.4-0ubuntu1) unstable; urgency=low
   * Changes to rest api
   * User conf data will be automatically upgraded after first launch
 
- -- Pritunl <contact@pritunl.com>  Fri, 10 Jan 2014 12:32:57 -0400
+ -- Zachary Huff <zach.huff.386@gmail.com>  Fri, 10 Jan 2014 12:32:57 -0400
 
 pritunl (0.10.3-0ubuntu1) unstable; urgency=low
 
@@ -72,7 +72,7 @@ pritunl (0.10.3-0ubuntu1) unstable; urgency=low
   * Servers will only restart when deleting users that are connected
   * Add export data handler
 
- -- Pritunl <contact@pritunl.com>  Thu, 14 Nov 2013 23:02:43 -0400
+ -- Zachary Huff <zach.huff.386@gmail.com>  Thu, 14 Nov 2013 23:02:43 -0400
 
 pritunl (0.10.2-0ubuntu1) unstable; urgency=low
 
@@ -83,10 +83,10 @@ pritunl (0.10.2-0ubuntu1) unstable; urgency=low
   * Add conf option get_public_ip
   * User conf data will be automatically upgraded after first launch
 
- -- Pritunl <contact@pritunl.com>  Mon, 04 Nov 2013 16:34:22 -0400
+ -- Zachary Huff <zach.huff.386@gmail.com>  Mon, 04 Nov 2013 16:34:22 -0400
 
 pritunl (0.10.1-0ubuntu1) unstable; urgency=low
 
   * Initial beta release
 
- -- Pritunl <contact@pritunl.com>  Thu, 10 Oct 2013 15:28:32 -0400
+ -- Zachary Huff <zach.huff.386@gmail.com>  Thu, 10 Oct 2013 15:28:32 -0400
