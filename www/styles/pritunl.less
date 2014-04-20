@@ -153,14 +153,6 @@
   width: 480px;
 }
 
-.modal .uri-link {
-  display: none;
-}
-
-.enterprise .modal .uri-link {
-  display: block;
-}
-
 .modal .otp-auth-key {
   text-align: center;
 }
@@ -739,9 +731,17 @@ header.blur {
   margin-right: 5px;
 }
 
+.users-list .user .get-key-link {
+  display: none;
+}
+
 .users-list .user .toggle-servers {
   display: none;
   margin-left: 5px;
+}
+
+.enterprise .users-list .user .get-key-link {
+  display: block;
 }
 
 .enterprise .users-list .user .toggle-servers {
@@ -767,7 +767,7 @@ header.blur {
   display: inline-block;
   margin-top: 5px;
   height: 28px;
-  width: 170px;
+  width: 145px;
   padding: 3px 8px 0 12px;
   white-space: nowrap;
   border-left: 1px solid @light-dark-border;
@@ -786,7 +786,7 @@ header.blur {
 }
 
 .users-list .user .right-container.no-otp-auth {
-  width: 145px;
+  width: 120px;
 }
 
 .enterprise .users-list .user .right-container.no-otp-auth {
