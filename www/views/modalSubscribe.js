@@ -30,6 +30,7 @@ define([
     postRender: function() {
       // Precache checkout delay to prevent lag
       setTimeout((this.setupCheckout).bind(this), 200);
+      this.$('li').tooltip();
     },
     lock: function() {
       this.lockClose = true;
