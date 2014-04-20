@@ -435,7 +435,7 @@ try:
         }).encode('utf-8'))
         response = json.loads(response.read().decode('utf-8'))
 
-        if not response['authenticated']:
+        if not response.get('authenticated'):
             log_write('[FAILED] Invalid user id or organization id')
             exit(1)
     except HTTPError as error:
@@ -528,7 +528,7 @@ try:
         }).encode('utf-8'))
         response = json.loads(response.read().decode('utf-8'))
 
-        if not response['authenticated']:
+        if not response.get('authenticated'):
             log_write('[FAILED] Invalid user id or organization id')
             exit(1)
     except HTTPError as error:
