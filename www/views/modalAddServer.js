@@ -28,7 +28,7 @@ define([
         'mode': 'all_traffic',
         'public_address': options.publicIp || '',
         'local_networks': [],
-        'dns_servers': ['8.8.8.8']
+        'dns_servers': []
       });
       ModalAddServerView.__super__.initialize.call(this, options);
     },
