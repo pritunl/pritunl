@@ -13,10 +13,9 @@ pritunl: simple vpn server
 .. image:: http://gitshields.com/v2/drone/github.com/pritunl/pritunl/brightgreen-red.png
     :target: https://drone.io/github.com/pritunl/pritunl
 
-`Pritunl <https://github.com/pritunl/pritunl>`_ is a simple openvpn server
-management tool. Multiple organizations, users and openvpn servers can be
-managed and configured from a simple web interface. Documentation and more
-information can be found at the home page `pritunl.com <http://pritunl.com>`_
+`Pritunl <https://github.com/pritunl/pritunl>`_ is an open source vpn server.
+Documentation and more information can be found at the home page
+`pritunl.com <http://pritunl.com>`_
 
 Development Setup
 -----------------
@@ -41,8 +40,8 @@ Vagrant Setup
     $ sudo python2 server.py
     # Open http://localhost:6500/
 
-Testing
--------
+Unittest
+--------
 
 .. code-block:: bash
 
