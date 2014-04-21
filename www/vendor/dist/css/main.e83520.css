@@ -7128,12 +7128,6 @@ fieldset[disabled] .form-control {
 .modal .uri-link input {
   width: 480px;
 }
-.modal .uri-link {
-  display: none;
-}
-.enterprise .modal .uri-link {
-  display: block;
-}
 .modal .otp-auth-key {
   text-align: center;
 }
@@ -7633,9 +7627,15 @@ header.blur {
 .users-list .user .get-uri-auth {
   margin-right: 5px;
 }
+.users-list .user .get-key-link {
+  display: none;
+}
 .users-list .user .toggle-servers {
   display: none;
   margin-left: 5px;
+}
+.enterprise .users-list .user .get-key-link {
+  display: block;
 }
 .enterprise .users-list .user .toggle-servers {
   display: block;
@@ -7657,7 +7657,7 @@ header.blur {
   display: inline-block;
   margin-top: 5px;
   height: 28px;
-  width: 170px;
+  width: 145px;
   padding: 3px 8px 0 12px;
   white-space: nowrap;
   border-left: 1px solid #cfcfcf;
@@ -7673,7 +7673,7 @@ header.blur {
   padding: 0;
 }
 .users-list .user .right-container.no-otp-auth {
-  width: 145px;
+  width: 120px;
 }
 .enterprise .users-list .user .right-container.no-otp-auth {
   width: 170px;
