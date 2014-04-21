@@ -322,7 +322,7 @@ dh %s
 server %s
 %s
 max-clients 1024
-keepalive 10 60
+keepalive 10 %s
 persist-tun
 status %s 1
 status-version 2
@@ -340,7 +340,7 @@ client-disconnect %s
 server %s
 %s
 max-clients 1024
-keepalive 10 60
+keepalive 10 %s
 persist-tun
 status %s 1
 status-version 2
