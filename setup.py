@@ -78,7 +78,7 @@ for file_name in patch_files:
 setup(
     name='pritunl',
     version=pritunl.__version__,
-    description='Simple openvpn server',
+    description='Pritunl vpn server',
     long_description=open('README.rst').read(),
     author='Pritunl',
     author_email='contact@pritunl.com',
