@@ -151,6 +151,11 @@ define([
       this.$('.subscribe-submit').show(200);
     },
     onSubmit: function() {
+      if (!this.$('.subscribe-activate-form textarea').val()) {
+        this.setAlert('danger', 'License can not be empty.',
+          '.subscribe-activate-form textarea');
+        return;
+      }
       this.$('.subscribe-submit').attr('disabled', 'disabled');
       var model = new SubscriptionModel();
       model.save({
