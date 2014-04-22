@@ -436,9 +436,7 @@ class Server(Config):
             yield orgs_dict[name_id]
 
     def get_org(self, org_id):
-        for org_id in self.organizations:
-            if org_id != org_id:
-                continue
+        if org_id in self.organizations:
             org = Organization.get_org(id=org_id)
             try:
                 org.load()
