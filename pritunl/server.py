@@ -245,13 +245,17 @@ class Server(Config):
                 for user_id in users - cache_db.dict_keys(cache_key):
                     while True:
                         local_ip_addr = str(ip_pool.next())
-                        if not cache_db.set_exists(set_cache_key,
+                        ip_addr_endpoint = local_ip_addr.split('.')[-1]
+                        if ip_addr_endpoint in VALID_IP_ENDPOINTS and \
+                                not cache_db.set_exists(set_cache_key,
                                 local_ip_addr):
                             cache_db.set_add(set_cache_key, local_ip_addr)
                             break
                     while True:
                         remote_ip_addr = str(ip_pool.next())
-                        if not cache_db.set_exists(set_cache_key,
+                        ip_addr_endpoint = remote_ip_addr.split('.')[-1]
+                        if ip_addr_endpoint in VALID_IP_ENDPOINTS and \
+                                not cache_db.set_exists(set_cache_key,
                                 remote_ip_addr):
                             cache_db.set_add(set_cache_key, remote_ip_addr)
                             break
