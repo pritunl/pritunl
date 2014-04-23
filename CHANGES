@@ -1,8 +1,8 @@
 Pritunl Changelog
 =================
 
-Version 0.10.9
---------------
+Version 0.10.9 2014-04-23
+-------------------------
 
 Add static IP addresses for vpn clients
 Add update notifications
