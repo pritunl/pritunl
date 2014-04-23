@@ -52,18 +52,22 @@ define([
     },
     setServerMode: function(mode) {
       if (mode === 'local_traffic') {
-        this.$('.local-network').slideDown(250);
-        this.$('.otp-auth-toggle').slideUp(250, function() {
-          this.$('.otp-auth-toggle').appendTo('.left');
-          this.$('.otp-auth-toggle').show();
-        }.bind(this));
+        if (!this.$('.otp-auth-toggle').parent().hasClass('left')) {
+          this.$('.local-network').slideDown(250);
+          this.$('.otp-auth-toggle').slideUp(250, function() {
+            this.$('.otp-auth-toggle').appendTo('.left');
+            this.$('.otp-auth-toggle').show();
+          }.bind(this));
+        }
       }
       else {
-        this.$('.local-network').slideUp(250);
-        this.$('.otp-auth-toggle').slideUp(250, function() {
-          this.$('.otp-auth-toggle').appendTo('.right');
-          this.$('.otp-auth-toggle').show();
-        }.bind(this));
+        if (!this.$('.otp-auth-toggle').parent().hasClass('right')) {
+          this.$('.local-network').slideUp(250);
+          this.$('.otp-auth-toggle').slideUp(250, function() {
+            this.$('.otp-auth-toggle').appendTo('.right');
+            this.$('.otp-auth-toggle').show();
+          }.bind(this));
+        }
       }
     },
     onServerMode: function() {
