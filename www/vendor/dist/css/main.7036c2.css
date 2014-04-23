@@ -8148,10 +8148,10 @@ header.blur {
   top: calc(50% - 158px);
 }
 .subscribe-modal .modal .modal-dialog {
-  top: -webkit-calc(50% - 344px);
-  top: -moz-calc(50% - 344px);
-  top: -o-calc(50% - 344px);
-  top: calc(50% - 344px);
+  top: -webkit-calc(50% - 324px);
+  top: -moz-calc(50% - 324px);
+  top: -o-calc(50% - 324px);
+  top: calc(50% - 324px);
 }
 .enterprise-modal .modal .modal-dialog {
   top: -webkit-calc(50% - 315px);
