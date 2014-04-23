@@ -38,7 +38,7 @@ Vagrant Setup
     $ vagrant ssh
     $ cd /vagrant
     $ sudo python2 server.py
-    # Open http://localhost:6500/
+    # Open http://localhost:9700/
 
 Unittest
 --------
