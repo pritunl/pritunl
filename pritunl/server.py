@@ -495,6 +495,9 @@ class Server(Config):
         logger.debug('Generating openvpn scripts. %r' % {
             'server_id': self.id,
         })
+        auth_host = app_server.bind_addr
+        if auth_host == '0.0.0.0':
+            auth_host = 'localhost'
         for script, script_path in (
                     (TLS_VERIFY_SCRIPT, self.tls_verify_path),
                     (USER_PASS_VERIFY_SCRIPT, self.user_pass_verify_path),
@@ -506,6 +509,7 @@ class Server(Config):
                 script_file.write(script % (
                     self.auth_log_path,
                     app_server.web_protocol,
+                    auth_host,
                     app_server.port,
                     self.id,
                 ))

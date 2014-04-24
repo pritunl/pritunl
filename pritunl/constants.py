@@ -435,7 +435,7 @@ try:
         exit(1)
 
     try:
-        request = Request('%s://localhost:%s' + \\
+        request = Request('%s://%s:%s' + \\
             '/server/%s/tls_verify')
         request.add_header('Content-Type', 'application/json')
         response = urlopen(request, json.dumps({
@@ -527,7 +527,7 @@ try:
         raise TypeError('Authenticator code is invalid')
 
     try:
-        request = Request('%s://localhost:%s' + \\
+        request = Request('%s://%s:%s' + \\
             '/server/%s/otp_verify')
         request.add_header('Content-Type', 'application/json')
         response = urlopen(request, json.dumps({
@@ -611,7 +611,7 @@ try:
         raise AttributeError('Missing organization or user id from environ')
 
     try:
-        request = Request('%s://localhost:%s' + \\
+        request = Request('%s://%s:%s' + \\
             '/server/%s/client_connect')
         request.add_header('Content-Type', 'application/json')
         response = urlopen(request, json.dumps({
@@ -694,7 +694,7 @@ try:
         raise AttributeError('Missing organization or user id from environ')
 
     try:
-        request = Request('%s://localhost:%s' + \\
+        request = Request('%s://%s:%s' + \\
             '/server/%s/client_disconnect')
         request.add_header('Content-Type', 'application/json')
         response = urlopen(request, json.dumps({
