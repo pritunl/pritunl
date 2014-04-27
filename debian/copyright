@@ -3,11 +3,11 @@ Upstream-Name: pritunl
 Source: http://pritunl.com/
 
 Files: *
-Copyright: 2013 Zachary Huff
+Copyright: 2013-2014 Pritunl
 License: AGPL-3.0+
 
 Files: debian/*
-Copyright: 2013 Zachary Huff
+Copyright: 2013-2014 Pritunl
 License: AGPL-3.0+
 
 License: AGPL-3.0+
