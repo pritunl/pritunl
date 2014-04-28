@@ -17,16 +17,15 @@ cd pritunl-$VERSION
 
 debuild -S
 sed -i -e 's/0ubuntu1/0ubuntu1~precise/g' debian/changelog
+sed -i -e 's/trusty;/precise;/g' debian/changelog
 debuild -S
-sed -i -e 's/0ubuntu1~precise/0ubuntu1~quantal/g' debian/changelog
-debuild -S
-sed -i -e 's/0ubuntu1~quantal/0ubuntu1~saucy/g' debian/changelog
+sed -i -e 's/0ubuntu1~precise/0ubuntu1~saucy/g' debian/changelog
+sed -i -e 's/precise;/saucy;/g' debian/changelog
 debuild -S
 
 cd ..
 
 echo '\n\nRUN COMMANDS BELOW TO UPLOAD:'
-echo 'sudo dput ppa:pritunl/ppa/ubuntu/trusty ../build/debian/pritunl_'$VERSION'-0ubuntu1_source.changes'
-echo 'sudo dput ppa:pritunl/ppa/ubuntu/precise ../build/debian/pritunl_'$VERSION'-0ubuntu1~precise_source.changes'
-echo 'sudo dput ppa:pritunl/ppa/ubuntu/quantal ../build/debian/pritunl_'$VERSION'-0ubuntu1~quantal_source.changes'
-echo 'sudo dput ppa:pritunl/ppa/ubuntu/saucy ../build/debian/pritunl_'$VERSION'-0ubuntu1~saucy_source.changes'
+echo 'sudo dput ppa:pritunl ../build/debian/pritunl_'$VERSION'-0ubuntu1_source.changes'
+echo 'sudo dput ppa:pritunl ../build/debian/pritunl_'$VERSION'-0ubuntu1~precise_source.changes'
+echo 'sudo dput ppa:pritunl ../build/debian/pritunl_'$VERSION'-0ubuntu1~saucy_source.changes'
