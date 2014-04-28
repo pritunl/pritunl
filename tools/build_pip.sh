@@ -13,4 +13,3 @@ python2 setup.py register
 
 echo 'MD5: '`md5sum ./build/pip/pritunl-$VERSION.tar.gz | cut -d' ' -f1`
 echo 'UPLOAD: ../build/pip/pritunl-'$VERSION'.tar.gz'
-
