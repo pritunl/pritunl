@@ -6954,6 +6954,18 @@ ul {
 fieldset[disabled] .form-control {
   cursor: default;
 }
+.alert,
+.label,
+.btn,
+.form-control,
+.modal-content,
+.select2-drop,
+.select2-container-multi .select2-choices .select2-search-choice,
+.rickshaw_graph .detail .x_label {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+}
 .label-purple {
   background-color: #a722c0;
 }
@@ -7052,9 +7064,6 @@ fieldset[disabled] .form-control {
 .select2-container-multi .select2-choices {
   padding: 2px 3px 0 0;
   background-image: none;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
 }
 .select2-search-choice-close {
   top: 3px;
@@ -7100,12 +7109,6 @@ fieldset[disabled] .form-control {
 }
 .modal .modal-dialog .modal-footer {
   background-color: #f5f5f5;
-  -webkit-border-bottom-left-radius: 6px;
-  -moz-border-bottom-left-radius: 6px;
-  border-bottom-left-radius: 6px;
-  -webkit-border-bottom-right-radius: 6px;
-  -moz-border-bottom-right-radius: 6px;
-  border-bottom-right-radius: 6px;
 }
 .modal label {
   font-weight: normal;
@@ -7209,9 +7212,6 @@ fieldset[disabled] .form-control {
   padding-left: 1px;
   border: 1px solid #cfcfcf;
   float: left;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
 }
 .selector .selector-inner {
   font-size: 14px;
@@ -7288,14 +7288,10 @@ header.blur {
 .login .login-form {
   background-color: #f9f9f9;
   padding: 40px 35px;
-  border-bottom-left-radius: 6px;
-  border-bottom-right-radius: 6px;
 }
 .login .login-header {
   margin: 0;
   padding: 10px 15px 10px 15px;
-  border-top-left-radius: 6px;
-  border-top-right-radius: 6px;
 }
 .login .form-control {
   position: relative;
@@ -7308,13 +7304,9 @@ header.blur {
 }
 .login .form-control[type="text"] {
   margin-bottom: -1px;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
 }
 .login .form-control[type="password"] {
   margin-bottom: 10px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
 }
 .login .login-button {
   margin-top: 13px;
@@ -7339,9 +7331,6 @@ header.blur {
   margin-bottom: 25px;
   border: 1px solid #cfcfcf;
   background-color: #f9f9f9;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
   -webkit-box-shadow: 0 2px 1px rgba(0, 0, 0, 0.05), 0 -1px 2px rgba(0, 0, 0, 0.05) inset;
   -moz-box-shadow: 0 2px 1px rgba(0, 0, 0, 0.05), 0 -1px 2px rgba(0, 0, 0, 0.05) inset;
   -o-box-shadow: 0 2px 1px rgba(0, 0, 0, 0.05), 0 -1px 2px rgba(0, 0, 0, 0.05) inset;
@@ -7387,8 +7376,6 @@ header.blur {
 }
 .users-list .users-list-header,
 .servers-list .server .server-header {
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
   background-color: #ffffff;
   padding: 10px 11px 16px 14px;
   border-bottom: 1px solid #cccccc;
@@ -7488,9 +7475,6 @@ header.blur {
   background: #ffffff;
   border: 1px solid #cfcfcf;
   margin-top: 12px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
   -webkit-box-shadow: 0, 1px, 0, rgba(255, 255, 255, 0.02), 0, 1px, 3px, rgba(0, 0, 0, 0.08), inset;
   -moz-box-shadow: 0, 1px, 0, rgba(255, 255, 255, 0.02), 0, 1px, 3px, rgba(0, 0, 0, 0.08), inset;
   -o-box-shadow: 0, 1px, 0, rgba(255, 255, 255, 0.02), 0, 1px, 3px, rgba(0, 0, 0, 0.08), inset;
@@ -7685,6 +7669,7 @@ header.blur {
 .users-list .status-container {
   display: inline-block;
   cursor: default;
+  float: left;
 }
 .users-list .status-container .status-icon {
   display: inline-block;
@@ -7722,12 +7707,6 @@ header.blur {
   margin-right: 3px;
   padding: 3px 10px;
   display: none;
-  -webkit-border-bottom-left-radius: 4px;
-  -moz-border-bottom-left-radius: 4px;
-  border-bottom-left-radius: 4px;
-  -webkit-border-bottom-right-radius: 4px;
-  -moz-border-bottom-right-radius: 4px;
-  border-bottom-right-radius: 4px;
   -webkit-box-shadow: inset 0px 12px 8px -14px rgba(0, 0, 0, 0.53);
   -moz-box-shadow: inset 0px 12px 8px -14px rgba(0, 0, 0, 0.53);
   -o-box-shadow: inset 0px 12px 8px -14px rgba(0, 0, 0, 0.53);
@@ -7757,9 +7736,6 @@ header.blur {
   margin-bottom: 25px;
   border: 1px solid #cfcfcf;
   background-color: #f9f9f9;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
   -webkit-box-shadow: 0 2px 1px rgba(0, 0, 0, 0.05), 0 -1px 2px rgba(0, 0, 0, 0.05) inset;
   -moz-box-shadow: 0 2px 1px rgba(0, 0, 0, 0.05), 0 -1px 2px rgba(0, 0, 0, 0.05) inset;
   -o-box-shadow: 0 2px 1px rgba(0, 0, 0, 0.05), 0 -1px 2px rgba(0, 0, 0, 0.05) inset;
@@ -8027,9 +8003,6 @@ header.blur {
 .subscribe-modal .modal .subscribe-activate-form textarea {
   resize: none;
   font-family: 'Lucida Console', Monaco, monospace;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
   -webkit-box-shadow: 0px 0px 14px #b6b6b6;
   -moz-box-shadow: 0px 0px 14px #b6b6b6;
   -o-box-shadow: 0px 0px 14px #b6b6b6;
@@ -8059,9 +8032,6 @@ header.blur {
   text-align: left;
   margin-top: 5px;
   margin-bottom: 15px;
-  -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
-  border-radius: 6px;
   -webkit-box-shadow: 0px 0px 14px #b6b6b6;
   -moz-box-shadow: 0px 0px 14px #b6b6b6;
   -o-box-shadow: 0px 0px 14px #b6b6b6;
