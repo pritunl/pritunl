@@ -1,6 +1,11 @@
 Pritunl Changelog
 =================
 
+Version 0.10.10
+---------------
+
+Fix issue with bind address
+
 Version 0.10.9 2014-04-23
 -------------------------
 
