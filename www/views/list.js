@@ -95,6 +95,7 @@ define([
       // Number of view removes that have been passed without slide animation
       var passAddCount = 0;
       var slide = this.views.length ? true : false;
+      var scroll = $(document).scrollTop();
 
       for (i = 0; i < collection.models.length; i++) {
         newModels.push(collection.models[i].get('id'));
@@ -276,6 +277,7 @@ define([
         views.push(this.views[i]);
       }
       this.resetItems(views);
+      $(document).scrollTop(scroll);
     },
     update: function() {
       var loading = true;
