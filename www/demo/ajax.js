@@ -573,7 +573,8 @@ define([
     request.response({
       id: uuid(),
       key_url: '/key/demo.tar',
-      view_url: '/key/demo.html'
+      view_url: '/key/demo.html',
+      uri_url: '/k/demo'
     });
   };
   routes['GET=/key/<org_id>/<user_id>'] = keyGet;
