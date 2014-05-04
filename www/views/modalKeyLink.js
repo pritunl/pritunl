@@ -25,10 +25,10 @@ define([
       this.model.fetch({
         success: function() {
           this.clearLoading();
-          this.$('.key-link input').val(window.location.protocol + '//' +
-            window.location.host + this.model.get('key_url'));
-          this.$('.otp-link input').val(window.location.protocol + '//' +
-            window.location.host + this.model.get('view_url'));
+          var keyLink = window.location.protocol + '//' +
+            window.location.host + this.model.get('key_url');
+          var otpLink = window.location.protocol + '//' +
+            window.location.host + this.model.get('view_url');
           var uriProtocol;
           if (window.location.protocol === 'http') {
             uriProtocol = 'pt';
@@ -36,8 +36,15 @@ define([
           else {
             uriProtocol = 'pts';
           }
-          this.$('.uri-link input').val(uriProtocol + '://' +
-            window.location.host + this.model.get('uri_url'));
+          var uriLink = uriProtocol + '://' +
+            window.location.host + this.model.get('uri_url');
+
+          this.$('.key-link input').val(keyLink);
+          this.$('.key-link a').attr('href', keyLink);
+          this.$('.otp-link input').val(otpLink);
+          this.$('.otp-link a').attr('href', otpLink);
+          this.$('.uri-link input').val(uriLink);
+          this.$('.uri-link a').attr('href', uriLink);
         }.bind(this),
         error: function() {
           this.clearLoading();
