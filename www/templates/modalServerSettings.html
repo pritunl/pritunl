@@ -54,7 +54,7 @@
     </div>
     <div class="server-mode form-group">
       <label>Server Mode</label>
-      <select class="form-control" data-toggle="tooltip" title="Forward all of users internet traffic or only specified local networks">
+      <select class="form-control" data-toggle="tooltip" title="Forward all of clients internet traffic, only specified local networks or only traffic sent between vpn clients">
         <option value="all_traffic" <%= mode === 'all_traffic' ? 'selected' : '' %>>All Traffic</option>
         <option value="local_traffic" <%= mode === 'local_traffic' ? 'selected' : '' %>>Local Traffic Only</option>
         <option value="vpn_traffic" <%= mode === 'vpn_traffic' ? 'selected' : '' %>>VPN Traffic Only</option>
