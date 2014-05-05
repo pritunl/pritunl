@@ -706,21 +706,16 @@ header.blur {
   cursor: default;
 }
 
-.users-list .user .download-key,
-.users-list .user .get-key-link,
-.users-list .user .get-otp-auth,
-.users-list .user .get-uri-auth,
-.users-list .user .toggle-servers {
-  float: right;
+.users-list .right-container a {
+  display: inline-block;
   font-size: 20px;
   color: @icon-blue2-bg;
   cursor: pointer;
+  margin-left: 3px;
 }
 
-.users-list .user .get-key-link,
-.users-list .user .get-otp-auth,
-.users-list .user .get-uri-auth {
-  margin-right: 5px;
+.users-list .right-container a:hover {
+  text-decoration: none;
 }
 
 .users-list .user .get-key-link {
@@ -729,15 +724,11 @@ header.blur {
 
 .users-list .user .toggle-servers {
   display: none;
-  margin-left: 5px;
 }
 
-.enterprise .users-list .user .get-key-link {
-  display: block;
-}
-
+.enterprise .users-list .user .get-key-link,
 .enterprise .users-list .user .toggle-servers {
-  display: block;
+  display: inline-block;
 }
 
 .users-list .user .get-otp-auth.no-otp-auth {
@@ -759,41 +750,27 @@ header.blur {
   display: inline-block;
   margin-top: 5px;
   height: 28px;
-  width: 145px;
   padding: 3px 8px 0 12px;
   white-space: nowrap;
   border-left: 1px solid @light-dark-border;
 }
 
-.enterprise .users-list .right-container {
-  width: 195px;
-}
-
 .users-list .user-server .right-container {
-  width: 81px;
   height: auto;
   margin-top: 5px;
   border-left: none;
   padding: 0;
 }
 
-.users-list .user .right-container.no-otp-auth {
-  width: 120px;
-}
-
-.enterprise .users-list .user .right-container.no-otp-auth {
-  width: 170px;
-}
-
 .server-orgs-list .org .button-container {
-  width: auto;
   border-left: 0 none;
 }
 
 .users-list .status-container {
   display: inline-block;
   cursor: default;
-  float: left;
+  position: relative;
+  top: -4px;
 }
 
 .users-list .status-container .status-icon {
