@@ -302,7 +302,7 @@ class Cache:
     def dict_keys(self, key):
         if self._check_ttl(key):
             try:
-                return set(self._data[key]['val'].keys())
+                return set(self._data[key]['val'])
             except AttributeError:
                 pass
         return set()
