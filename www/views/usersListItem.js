@@ -18,7 +18,9 @@ define([
       'click .user-name': 'onRename',
       'click .get-key-link': 'onGetKeyLink',
       'click .get-otp-auth': 'onGetOtpAuth',
-      'click .toggle-servers ': 'onToggleServers'
+      'click .disable-user': 'onDisableUser',
+      'click .enable-user': 'onEnableUser',
+      'click .toggle-servers': 'onToggleServers'
     },
     initialize: function() {
       this.serverList = new UserServersListView({
@@ -101,23 +103,38 @@ define([
         }, this.model.toJSON())));
       this.$('[data-toggle="tooltip"]').tooltip();
       this.$el.append(this.serverList.render().el);
+      if (this.model.get('disabled')) {
+        this.$('.disable-user').hide();
+      }
+      else {
+        this.$('.enable-user').hide();
+      }
       return this;
     },
     update: function() {
       this.$('.user-name').text(this.model.get('name'));
-      if (this.model.get('status')) {
-        if (!this.$('.user .status-icon').hasClass('online')) {
+      if (this.model.get('disabled')) {
+        this.$('.user .status-icon').removeClass('online');
+        this.$('.user .status-icon').removeClass('offline');
+        this.$('.user .status-icon').addClass('disabled');
+        this.$('.user .status-text').text('Disabled');
+        this.$('.disable-user').hide();
+        this.$('.enable-user').show();
+      }
+      else {
+        if (this.model.get('status')) {
           this.$('.user .status-icon').removeClass('offline');
           this.$('.user .status-icon').addClass('online');
           this.$('.user .status-text').text('Online');
         }
-      }
-      else {
-        if (!this.$('.user .status-icon').hasClass('offline')) {
+        else {
           this.$('.user .status-icon').removeClass('online');
           this.$('.user .status-icon').addClass('offline');
           this.$('.user .status-text').text('Offline');
         }
+        this.$('.user .status-icon').removeClass('disabled');
+        this.$('.enable-user').hide();
+        this.$('.disable-user').show();
       }
 
       this.$('.download-key').tooltip('destroy');
@@ -184,6 +201,52 @@ define([
         model: this.model
       });
       this.addView(modal);
+    },
+    onDisableUser: function() {
+      if (this.$('.disable-user').hasClass('disabled')) {
+        return;
+      }
+      this.$('.disable-user').addClass('disabled');
+      this.model.save({
+        name: undefined,
+        disabled: true
+      }, {
+        success: function() {
+          this.$('.disable-user').removeClass('disabled');
+        }.bind(this),
+        error: function() {
+          var alertView = new AlertView({
+            type: 'danger',
+            message: 'Failed to disable user, server error occurred.',
+            dismissable: true
+          });
+          $('.alerts-container').append(alertView.render().el);
+          this.addView(alertView);
+        }.bind(this)
+      });
+    },
+    onEnableUser: function() {
+      if (this.$('.enable-user').hasClass('disabled')) {
+        return;
+      }
+      this.$('.enable-user').addClass('disabled');
+      this.model.save({
+        name: undefined,
+        disabled: false
+      }, {
+        success: function() {
+          this.$('.enable-user').removeClass('disabled');
+        }.bind(this),
+        error: function() {
+          var alertView = new AlertView({
+            type: 'danger',
+            message: 'Failed to disable user, server error occurred.',
+            dismissable: true
+          });
+          $('.alerts-container').append(alertView.render().el);
+          this.addView(alertView);
+        }.bind(this)
+      });
     },
     onToggleServers: function() {
       var tooltipText;

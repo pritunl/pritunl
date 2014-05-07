@@ -707,11 +707,16 @@ header.blur {
 }
 
 .users-list .right-container a {
-  display: inline-block;
   font-size: 20px;
   color: @icon-blue2-bg;
   cursor: pointer;
   margin-left: 3px;
+}
+
+.users-list .right-container a.disabled {
+  pointer-events: none;
+  cursor: not-allowed;
+  opacity: .65;
 }
 
 .users-list .right-container a:hover {
@@ -760,6 +765,7 @@ header.blur {
   margin-top: 5px;
   border-left: none;
   padding: 0;
+  width: 77px;
 }
 
 .server-orgs-list .org .button-container {
@@ -771,6 +777,7 @@ header.blur {
   cursor: default;
   position: relative;
   top: -4px;
+  width: 83px;
 }
 
 .users-list .status-container .status-icon {
@@ -800,6 +807,10 @@ header.blur {
 
 .users-list .status-container .status-icon.offline {
   background-color: @red-fg;
+}
+
+.users-list .status-container .status-icon.disabled {
+  background-color: @gray-bg;
 }
 
 .users-list .status-container .status-text {

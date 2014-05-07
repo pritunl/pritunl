@@ -10,13 +10,14 @@
 
   <div class="right-container <%- otp_auth ? '' : 'no-otp-auth' %>">
     <div class="status-container">
-      <div class="status-icon <%- status ? 'online' : 'offline' %>"></div>
-      <span class="status-text title"><%- status ? 'Online' : 'Offline' %></span>
+      <div class="status-icon <%- disabled ? 'disabled' : (status ? 'online' : 'offline') %>"></div>
+      <span class="status-text title"><%- disabled ? 'Disabled' : (status ? 'Online' : 'Offline') %></span>
     </div>
     <a class="get-otp-auth glyphicon glyphicon-qrcode no-select <%- otp_auth ? '' : 'no-otp-auth' %>" data-toggle="tooltip" title="Get two-step authentication key"></a>
     <a class="get-key-link glyphicon glyphicon-link no-select" data-toggle="tooltip" title="<%- key_link_tooltip %>"></a>
     <a class="download-key glyphicon glyphicon-download no-select" data-toggle="tooltip" title="<%- download_tooltip %>" <%= key_link ? 'href="' : '' %><%- key_link ? key_link : '' %><%= key_link ? '"' : '' %>></a>
-    <a class="disable-user glyphicon glyphicon glyphicon-ban-circle no-select" data-toggle="tooltip" title="Disable user"></a>
+    <a class="disable-user glyphicon glyphicon glyphicon-ban-circle no-select" data-toggle="tooltip" title="Disable user and restart the servers user is connected to"></a>
+    <a class="enable-user glyphicon glyphicon glyphicon-ok-circle no-select" data-toggle="tooltip" title="Enable user"></a>
     <a class="toggle-servers glyphicon glyphicon glyphicon-chevron-down no-select" data-toggle="tooltip" title="Show additional user information"></a>
   </div>
 </div>
