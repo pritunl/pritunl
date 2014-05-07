@@ -22,9 +22,11 @@ import json
 logger = logging.getLogger(APP_NAME)
 
 class User(Config):
-    str_options = {'name', 'otp_secret', 'type', 'disabled'}
+    str_options = {'name', 'otp_secret', 'type'}
+    bool_options = {'disabled'}
     default_options = {
         'name': 'undefined',
+        'disabled': False,
     }
     chmod_mode = 0600
     cached = True
@@ -74,6 +76,7 @@ class User(Config):
             'name': self.name,
             'type': self.type,
             'otp_secret': self.otp_secret,
+            'disabled': self.disabled,
         }
 
     def _upgrade_0_10_9(self):

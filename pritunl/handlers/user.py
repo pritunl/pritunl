@@ -1,5 +1,6 @@
 from pritunl.constants import *
 from pritunl.organization import Organization
+from pritunl.event import Event
 import pritunl.utils as utils
 from pritunl import app_server
 import flask
@@ -104,8 +105,24 @@ def user_post(org_id):
 def user_put(org_id, user_id):
     org = Organization.get_org(id=org_id)
     user = org.get_user(user_id)
-    name = utils.filter_str(flask.request.json['name'])
-    user.rename(name)
+    name = flask.request.json.get('name')
+    if name:
+        name = utils.filter_str(name)
+
+    disabled = flask.request.json.get('disabled')
+    if disabled is not None:
+        user.disabled = disabled
+
+    if name:
+        user.rename(name)
+    else:
+        user.commit()
+        Event(type=USERS_UPDATED, resource_id=user.org.id)
+
+        for server in org.iter_servers():
+            server_clients = server.clients
+            if user_id in server_clients:
+                server.restart()
     return utils.jsonify(user.dict())
 
 @app_server.app.route('/user/<org_id>/<user_id>', methods=['DELETE'])
