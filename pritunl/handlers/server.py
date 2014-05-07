@@ -587,6 +587,13 @@ def server_tls_verify_post(server_id):
             'error': USER_INVALID,
             'error_msg': USER_INVALID_MSG,
         }, 401)
+    if user.disabled:
+        LogEntry(message='User failed authentication, ' +
+            'disabled user "%s".' % server.name)
+        return utils.jsonify({
+            'error': USER_INVALID,
+            'error_msg': USER_INVALID_MSG,
+        }, 401)
 
     return utils.jsonify({
         'authenticated': True,

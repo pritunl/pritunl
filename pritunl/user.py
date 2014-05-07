@@ -22,7 +22,7 @@ import json
 logger = logging.getLogger(APP_NAME)
 
 class User(Config):
-    str_options = {'name', 'otp_secret', 'type'}
+    str_options = {'name', 'otp_secret', 'type', 'disabled'}
     default_options = {
         'name': 'undefined',
     }
