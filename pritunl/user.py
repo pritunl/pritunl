@@ -214,7 +214,18 @@ class User(Config):
         self._generate_otp_secret()
         Event(type=USERS_UPDATED, resource_id=self.org.id)
 
-    def verify_otp_code(self, code):
+    def verify_otp_code(self, code, remote_ip=None):
+        if remote_ip:
+            otp_cache = cache_db.get(self.get_cache_key('otp_cache'))
+            if otp_cache:
+                cur_code, cur_remote_ip = otp_cache.split(',')
+                if cur_code == code and cur_remote_ip == remote_ip:
+                    cache_db.expire(self.get_cache_key('otp_cache'),
+                        OTP_CACHE_TTL)
+                    return True
+                else:
+                    cache_db.remove(self.get_cache_key('otp_cache'))
+
         otp_secret = self.otp_secret
         padding = 8 - len(otp_secret) % 8
         if padding != 8:
@@ -240,9 +251,12 @@ class User(Config):
                 cache_db.dict_remove(self.get_cache_key('otp'), auth_time)
             if used_code == code:
                 return False
+
         cache_db.dict_set(self.get_cache_key('otp'),
             str(int(time.time())), code)
-
+        cache_db.expire(self.get_cache_key('otp_cache'), OTP_CACHE_TTL)
+        cache_db.set(self.get_cache_key('otp_cache'),
+            ','.join((code, remote_ip)))
         return True
 
     def _get_key_info_str(self, user_name, org_name, server_name):
@@ -376,6 +390,8 @@ class User(Config):
             cache_db.list_remove(self.org.get_cache_key('users_sorted'),
                 self.id)
             self._remove_cache_trie_key()
+        cache_db.remove(self.get_cache_key('otp'))
+        cache_db.remove(self.get_cache_key('otp_cache'))
         Config.clear_cache(self)
 
     def rename(self, name):

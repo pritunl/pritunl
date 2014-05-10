@@ -605,6 +605,7 @@ def server_otp_verify_post(server_id):
     org_id = flask.request.json['org_id']
     user_id = flask.request.json['user_id']
     otp_code = flask.request.json['otp_code']
+    remote_ip = flask.request.json.get('remote_ip')
 
     server = Server(server_id)
     if not server:
@@ -628,7 +629,7 @@ def server_otp_verify_post(server_id):
             'error': USER_INVALID,
             'error_msg': USER_INVALID_MSG,
         }, 401)
-    if not user.verify_otp_code(otp_code):
+    if not user.verify_otp_code(otp_code, remote_ip):
         LogEntry(message='User failed two-step authentication "%s".' % (
             user.name))
         return utils.jsonify({
