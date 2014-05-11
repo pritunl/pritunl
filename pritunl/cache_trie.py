@@ -48,9 +48,15 @@ class CacheTrie(object):
         new_key = cur_key
         for char in key.lower():
             new_key += char
-            cache_db.set_remove(name + cur_key, new_key)
+            name_key = name + cur_key
+            cache_db.set_remove(name_key, new_key)
+            if not cache_db.set_length(name_key):
+                cache_db.remove(name_key)
             cur_key = new_key
-        cache_db.set_remove(name + cur_key + '_values', value)
+        name_key = name + cur_key + '_values'
+        cache_db.set_remove(name_key, value)
+        if not cache_db.set_length(name_key):
+            cache_db.remove(name_key)
 
     def chain(self, values):
         name = self.name
