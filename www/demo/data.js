@@ -176,6 +176,7 @@ define([], function() {
         type: 'client',
         otp_auth: true,
         otp_secret: 'SF2GFRK5MQ7JB4TN',
+        disabled: false,
         servers: [{
           id: '5310c28eacaeb3bd2a172c9db9ee1379',
           name: 'server1',
@@ -197,6 +198,7 @@ define([], function() {
         type: 'client',
         otp_auth: true,
         otp_secret: 'KBMSQM67TQR7CUYX',
+        disabled: false,
         servers: [{
           id: '5310c28eacaeb3bd2a172c9db9ee1379',
           name: 'server1',
@@ -218,6 +220,7 @@ define([], function() {
         type: 'client',
         otp_auth: true,
         otp_secret: 'QF47Z3V2FWWLZRJZ',
+        disabled: false,
         servers: [{
           id: '5310c28eacaeb3bd2a172c9db9ee1379',
           name: 'server1',
@@ -239,6 +242,7 @@ define([], function() {
         type: 'client',
         otp_auth: true,
         otp_secret: 'YJGVC2JG2OZ7X45R',
+        disabled: false,
         servers: [{
           id: '5310c28eacaeb3bd2a172c9db9ee1379',
           name: 'server1',
@@ -262,6 +266,7 @@ define([], function() {
         type: 'client',
         otp_auth: true,
         otp_secret: 'QKKWOXSVCE6ODPFJ',
+        disabled: false,
         servers: [{
           id: '5310c28eacaeb3bd2a172c9db9ee1379',
           name: 'server1',
@@ -283,6 +288,7 @@ define([], function() {
         type: 'client',
         otp_auth: true,
         otp_secret: 'DZVOQ6QW2R6OIMQA',
+        disabled: false,
         servers: [{
           id: '5310c28eacaeb3bd2a172c9db9ee1379',
           name: 'server1',
