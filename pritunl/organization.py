@@ -101,6 +101,7 @@ class Organization(Config):
     def clear_cache(self):
         for user in self.iter_users():
             user.clear_cache(org_data=False)
+        self.ca_cert.clear_cache(org_data=False)
         cache_db.set_remove('orgs', self.id)
         cache_db.list_remove('orgs_sorted', self.id)
         cache_db.decrement('org_count')
