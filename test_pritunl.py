@@ -1074,6 +1074,8 @@ class User(SessionTestCase):
         self.assertEqual(data['id'], self.user_id)
         self.assertIn('name', data)
         self.assertEqual(data['name'], TEST_USER_NAME)
+        self.assertIn('disabled', data)
+        self.assertFalse(data['disabled'])
 
     def test_user_post_put_get_delete(self):
         response = self.session.post('/user/%s' % self.org_id, json_data={
@@ -1090,6 +1092,8 @@ class User(SessionTestCase):
         self.assertEqual(data['organization_name'], TEST_ORG_NAME)
         self.assertIn('name', data)
         self.assertEqual(data['name'], TEST_USER_NAME + '2')
+        self.assertIn('disabled', data)
+        self.assertFalse(data['disabled'])
         self.assertIn('type', data)
         self.assertIn('otp_secret', data)
         user_id = data['id']
@@ -1098,6 +1102,7 @@ class User(SessionTestCase):
         response = self.session.put('/user/%s/%s' % (self.org_id, user_id),
             json_data={
                 'name': TEST_USER_NAME + '3',
+                'disabled': True,
             })
         self.assertEqual(response.status_code, 200)
 
@@ -1110,6 +1115,29 @@ class User(SessionTestCase):
         self.assertEqual(data['organization_name'], TEST_ORG_NAME)
         self.assertIn('name', data)
         self.assertEqual(data['name'], TEST_USER_NAME + '3')
+        self.assertIn('disabled', data)
+        self.assertTrue(data['disabled'])
+        self.assertIn('type', data)
+        self.assertIn('otp_secret', data)
+
+
+        response = self.session.put('/user/%s/%s' % (self.org_id, user_id),
+            json_data={
+                'disabled': False,
+            })
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertIn('id', data)
+        self.assertRegexpMatches(data['id'], UUID_RE)
+        self.assertIn('organization', data)
+        self.assertEqual(data['organization'], self.org_id)
+        self.assertIn('organization_name', data)
+        self.assertEqual(data['organization_name'], TEST_ORG_NAME)
+        self.assertIn('name', data)
+        self.assertEqual(data['name'], TEST_USER_NAME + '3')
+        self.assertIn('disabled', data)
+        self.assertFalse(data['disabled'])
         self.assertIn('type', data)
         self.assertIn('otp_secret', data)
 
@@ -1126,6 +1154,7 @@ class User(SessionTestCase):
             self.assertIn('organization', user)
             self.assertIn('organization_name', user)
             self.assertIn('name', user)
+            self.assertIn('disabled', user)
             self.assertIn('type', user)
             self.assertIn('status', user)
             self.assertIn('otp_auth', user)
@@ -1134,6 +1163,7 @@ class User(SessionTestCase):
 
             if user['name'] == TEST_USER_NAME + '3':
                 test_user_found = True
+                self.assertFalse(user['disabled'])
                 self.assertEqual(user['organization'], self.org_id)
                 self.assertEqual(user['organization_name'], TEST_ORG_NAME)
         self.assertTrue(test_user_found)
@@ -1168,6 +1198,8 @@ class User(SessionTestCase):
         self.assertEqual(data['organization_name'], TEST_ORG_NAME)
         self.assertIn('name', data)
         self.assertEqual(data['name'], TEST_USER_NAME)
+        self.assertIn('disabled', data)
+        self.assertFalse(data['disabled'])
         self.assertIn('type', data)
         self.assertIn('otp_secret', data)
         self.assertNotEqual(data['otp_secret'], orig_otp_secret)
