@@ -192,6 +192,14 @@ class User(Config):
             })
             raise
 
+    def get_cache_key(self, suffix=None):
+        if not self.cache_prefix:
+            raise AttributeError('Cached config object requires cache_prefix')
+        key = self.cache_prefix + '-' + self.org.id + '_' + self.id
+        if suffix:
+            key += '-%s' % suffix
+        return key
+
     def load(self, *args, **kwargs):
         Config.load(self, *args, **kwargs)
         if not self.otp_secret:
