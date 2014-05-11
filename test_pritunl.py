@@ -1080,6 +1080,7 @@ class User(SessionTestCase):
     def test_user_post_put_get_delete(self):
         response = self.session.post('/user/%s' % self.org_id, json_data={
             'name': TEST_USER_NAME + '2',
+            'disabled': True,
         })
         self.assertEqual(response.status_code, 200)
 
@@ -1093,7 +1094,7 @@ class User(SessionTestCase):
         self.assertIn('name', data)
         self.assertEqual(data['name'], TEST_USER_NAME + '2')
         self.assertIn('disabled', data)
-        self.assertFalse(data['disabled'])
+        self.assertTrue(data['disabled'])
         self.assertIn('type', data)
         self.assertIn('otp_secret', data)
         user_id = data['id']
@@ -1102,7 +1103,6 @@ class User(SessionTestCase):
         response = self.session.put('/user/%s/%s' % (self.org_id, user_id),
             json_data={
                 'name': TEST_USER_NAME + '3',
-                'disabled': True,
             })
         self.assertEqual(response.status_code, 200)
 
