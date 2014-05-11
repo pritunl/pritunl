@@ -232,7 +232,6 @@ class NodeServer(Server):
             '%s',
             '%s %s' % self._parse_network(self.network),
             push,
-            '120' if self.otp_auth else '60',
             '%s',
             4 if self.debug else 1,
             8 if self.debug else 3,
