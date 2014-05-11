@@ -6,6 +6,7 @@ Version 0.10.10
 
 Add user setting to temporarily disable a user
 Improve caching
+Changes to interface design
 Fix issue with bind address
 
 Version 0.10.9 2014-04-23
