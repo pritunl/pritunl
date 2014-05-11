@@ -172,6 +172,14 @@ class Cache:
                 pass
         return set()
 
+    def set_length(self, key):
+        if self._check_ttl(key):
+            try:
+                return len(self._data[key]['val'])
+            except TypeError:
+                pass
+        return 0
+
     def list_lpush(self, key, value):
         self._validate(value)
         if key not in self._data:
