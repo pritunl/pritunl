@@ -30,6 +30,16 @@ define([
       this.selected = [];
       OrgsListView.__super__.initialize.call(this);
     },
+    removeItem: function(view) {
+      var i;
+      var views = view.usersListView.views;
+      for (i = 0; i < views.length; i++) {
+        if (views[i].getSelect()) {
+          views[i].setSelect(false);
+        }
+      }
+      view.destroy();
+    },
     onAddOrg: function() {
       var modal = new ModalAddOrgView();
       this.listenToOnce(modal, 'applied', function() {
