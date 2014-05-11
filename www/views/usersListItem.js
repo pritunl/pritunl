@@ -3,13 +3,15 @@ define([
   'underscore',
   'backbone',
   'models/key',
+  'views/alert',
   'views/modalRenameUser',
   'views/modalKeyLink',
   'views/modalOtpAuth',
   'views/userServersList',
   'text!templates/usersListItem.html'
-], function($, _, Backbone, KeyModel, ModalRenameUserView, ModalKeyLinkView,
-    ModalOtpAuthView, UserServersListView, usersListItemTemplate) {
+], function($, _, Backbone, KeyModel, AlertView, ModalRenameUserView,
+    ModalKeyLinkView, ModalOtpAuthView, UserServersListView,
+    usersListItemTemplate) {
   'use strict';
   var UsersListItemView = Backbone.View.extend({
     template: _.template(usersListItemTemplate),
