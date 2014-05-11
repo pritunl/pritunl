@@ -547,7 +547,12 @@ define([
   routes['POST=/user/<orgId>'] = userPost;
 
   var userPut = function(request, orgId, userId) {
-    demoData.users[orgId][userId].name = request.data.name;
+    if (request.data.name) {
+      demoData.users[orgId][userId].name = request.data.name;
+    }
+    if (request.data.disabled !== undefined) {
+      demoData.users[orgId][userId].disabled = request.data.disabled;
+    }
     event('users_updated', orgId);
     request.response({});
   };
