@@ -99,11 +99,17 @@ class Organization(Config):
         os.makedirs(os.path.join(self.path, TEMP_DIR))
 
     def clear_cache(self):
+        for user in self.iter_users():
+            user.clear_cache(org_data=False)
         cache_db.set_remove('orgs', self.id)
         cache_db.list_remove('orgs_sorted', self.id)
         cache_db.decrement('org_count')
         cache_db.remove(self.get_cache_key('users_cached'))
         cache_db.remove(self.get_cache_key('users'))
+        cache_db.remove(self.get_cache_key('user_count'))
+        cache_db.remove(self.get_cache_key('users_sorted'))
+        cache_db.remove(self.get_cache_key('users_page_index'))
+        cache_db.remove(self.get_cache_key('users_page_total'))
         CacheTrie(self.get_cache_key('users_trie')).clear_cache()
         Config.clear_cache(self)
 

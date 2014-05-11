@@ -382,13 +382,15 @@ class User(Config):
             'conf': client_conf,
         }
 
-    def clear_cache(self):
-        if self.type == CERT_CLIENT:
-            cache_db.decrement(self.org.get_cache_key('user_count'))
+    def clear_cache(self, org_data=True):
+        if org_data:
+            if self.type == CERT_CLIENT:
+                cache_db.decrement(self.org.get_cache_key('user_count'))
+            if self.type != CERT_CA:
+                cache_db.set_remove(self.org.get_cache_key('users'), self.id)
+                cache_db.list_remove(self.org.get_cache_key('users_sorted'),
+                    self.id)
         if self.type != CERT_CA:
-            cache_db.set_remove(self.org.get_cache_key('users'), self.id)
-            cache_db.list_remove(self.org.get_cache_key('users_sorted'),
-                self.id)
             self._remove_cache_trie_key()
         cache_db.remove(self.get_cache_key('otp'))
         cache_db.remove(self.get_cache_key('otp_cache'))
