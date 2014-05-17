@@ -554,7 +554,6 @@ class Server(Config):
             push += 'push "redirect-gateway"\n'
         for dns_server in self.dns_servers:
             push += 'push "dhcp-option DNS %s"\n' % dns_server
-        push = push.rstrip()
 
         if not inline:
             server_conf = OVPN_SERVER_CONF % (
@@ -569,7 +568,6 @@ class Server(Config):
                 self.client_disconnect_path,
                 self.dh_param_path,
                 '%s %s' % self._parse_network(self.network),
-                push,
                 self.ovpn_status_path,
                 4 if self.debug else 1,
                 8 if self.debug else 3,
@@ -583,7 +581,6 @@ class Server(Config):
                 self.client_connect_path,
                 self.client_disconnect_path,
                 '%s %s' % self._parse_network(self.network),
-                push,
                 self.ovpn_status_path,
                 4 if self.debug else 1,
                 8 if self.debug else 3,
@@ -598,6 +595,9 @@ class Server(Config):
 
         if self.mode in (LOCAL_TRAFFIC, VPN_TRAFFIC):
             server_conf += 'client-to-client\n'
+
+        if push:
+            server_conf += push
 
         if inline:
             server_conf += '<ca>\n%s\n</ca>\n' % utils.get_cert_block(

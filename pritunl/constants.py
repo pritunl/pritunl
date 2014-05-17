@@ -330,7 +330,6 @@ client-connect %s
 client-disconnect %s
 dh %s
 server %s
-%s
 max-clients 1024
 keepalive 10 60
 persist-tun
@@ -348,7 +347,6 @@ tls-verify %s
 client-connect %s
 client-disconnect %s
 server %s
-%s
 max-clients 1024
 keepalive 10 60
 persist-tun
