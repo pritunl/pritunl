@@ -360,7 +360,8 @@ def set_auth(username, password, token=None):
 
 def get_auth():
     return {
-        'username': persist_db.dict_get('auth', 'username'),
+        'username': persist_db.dict_get(
+            'auth', 'username') or DEFAULT_USERNAME,
         'token': persist_db.dict_get('auth', 'token_enc'),
         'secret': persist_db.dict_get('auth', 'secret'),
     }
