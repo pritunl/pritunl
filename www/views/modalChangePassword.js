@@ -58,7 +58,7 @@ define([
       }, {
         success: function() {
           this.clearLoading();
-          this.setAlert('danger', 'Successfully generated a new api key.');
+          this.setAlert('warning', 'Successfully generated a new api key.');
           this.update();
         }.bind(this),
         error: function() {
