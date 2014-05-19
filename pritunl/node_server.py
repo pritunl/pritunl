@@ -139,7 +139,7 @@ class NodeServer(Server):
             return False
         return True
 
-    def otp_verify(self, org_id, user_id, otp_code):
+    def otp_verify(self, org_id, user_id, otp_code, remote_ip=None):
         org = self.get_org(org_id)
         if not org:
             LogEntry(message='User failed authentication, ' +
@@ -150,7 +150,7 @@ class NodeServer(Server):
             LogEntry(message='User failed authentication, ' +
                 'invalid user "%s".' % server.name)
             return False
-        if not user.verify_otp_code(otp_code):
+        if not user.verify_otp_code(otp_code, remote_ip):
             LogEntry(message='User failed two-step authentication "%s".' % (
                 user.name))
             return False
