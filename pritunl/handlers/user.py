@@ -97,7 +97,8 @@ def user_get(org_id, user_id=None, page=None):
 def user_post(org_id):
     org = Organization.get_org(id=org_id)
     name = utils.filter_str(flask.request.json['name'])
-    user = org.new_user(CERT_CLIENT, name)
+    email = utils.filter_str(flask.request.json['email'])
+    user = org.new_user(type=CERT_CLIENT, name=name, email=email)
 
     disabled = flask.request.json.get('disabled')
     if disabled is not None:
@@ -111,9 +112,17 @@ def user_post(org_id):
 def user_put(org_id, user_id):
     org = Organization.get_org(id=org_id)
     user = org.get_user(user_id)
+
     name = flask.request.json.get('name')
     if name:
         name = utils.filter_str(name)
+
+    if 'email' in flask.request.json:
+        email = flask.request.json['email']
+        if email:
+            user.email = utils.filter_str(email)
+        else:
+            user.email = None
 
     disabled = flask.request.json.get('disabled')
     if disabled is not None:
@@ -125,10 +134,11 @@ def user_put(org_id, user_id):
         user.commit()
         Event(type=USERS_UPDATED, resource_id=user.org.id)
 
-        for server in org.iter_servers():
-            server_clients = server.clients
-            if user_id in server_clients:
-                server.restart()
+        if disabled:
+            for server in org.iter_servers():
+                server_clients = server.clients
+                if user_id in server_clients:
+                    server.restart()
     return utils.jsonify(user.dict())
 
 @app_server.app.route('/user/<org_id>/<user_id>', methods=['DELETE'])

@@ -15,7 +15,11 @@ RESTART = 'restart'
 OK = 'ok'
 DISABLED = 'disabled'
 
-NAME_SAFE_CHARS = {'-', '=', '_', '@', '.', ':', '/'}
+NAME_SAFE_CHARS = {
+    '-', '=', '_', '@', '.', ':', '/',
+    '!', '#', '$', '%', '&', '*', '+',
+    '?', '^', '`', '{', '|', '}', '~',
+}
 
 KEY_LINK_TIMEOUT = 86400
 DEFAULT_BIND_ADDR = '0.0.0.0'
