@@ -270,8 +270,8 @@ class Organization(Config):
             if self.id in server.organizations:
                 yield server
 
-    def new_user(self, type, name=None):
-        return User(self, name=name, type=type)
+    def new_user(self, type, name=None, email=None):
+        return User(self, name=name, email=email, type=type)
 
     def rename(self, name):
         self.name = name

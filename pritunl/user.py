@@ -22,7 +22,7 @@ import json
 logger = logging.getLogger(APP_NAME)
 
 class User(Config):
-    str_options = {'name', 'otp_secret', 'type'}
+    str_options = {'name', 'email', 'otp_secret', 'type'}
     bool_options = {'disabled'}
     default_options = {
         'name': 'undefined',
@@ -32,7 +32,7 @@ class User(Config):
     cached = True
     cache_prefix = 'user'
 
-    def __init__(self, org, id=None, name=None, type=None):
+    def __init__(self, org, id=None, name=None, email=None, type=None):
         Config.__init__(self)
         self.org = org
 
@@ -44,6 +44,7 @@ class User(Config):
             else:
                 self.id = uuid.uuid4().hex
             self.name = name
+            self.email = email
             self.type = type
         else:
             self.id = id
@@ -74,6 +75,7 @@ class User(Config):
             'organization': self.org.id,
             'organization_name': self.org.name,
             'name': self.name,
+            'email': self.email,
             'type': self.type,
             'otp_secret': self.otp_secret,
             'disabled': self.disabled,
