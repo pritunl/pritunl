@@ -17,7 +17,7 @@ define([
       'click .org-title': 'onRename',
       'click .org-del': 'onDelete',
       'click .toggle-hidden': 'onToggleHidden',
-      'keydown .org-search': 'onSearch',
+      'keyup .org-search': 'onSearch',
       'paste .org-search': 'onSearch',
       'input .org-search': 'onSearch',
       'propertychange .org-search': 'onSearch'
