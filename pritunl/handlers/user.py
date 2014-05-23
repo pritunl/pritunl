@@ -97,7 +97,9 @@ def user_get(org_id, user_id=None, page=None):
 def user_post(org_id):
     org = Organization.get_org(id=org_id)
     name = utils.filter_str(flask.request.json['name'])
-    email = utils.filter_str(flask.request.json['email'])
+    email = None
+    if 'email' in flask.request.json:
+        email = utils.filter_str(flask.request.json['email'])
     user = org.new_user(type=CERT_CLIENT, name=name, email=email)
 
     disabled = flask.request.json.get('disabled')
