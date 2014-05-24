@@ -10,6 +10,7 @@ define([
       'organization': null,
       'organization_name': null,
       'name': null,
+      'email': null,
       'type': null,
       'status': null,
       'otp_auth': null,
