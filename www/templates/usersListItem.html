@@ -4,7 +4,7 @@
   </div>
   <div class="name-container type-<%- type %>">
     <span class="name-icon glyphicon glyphicon-user" <%= type === 'server' ? 'data-toggle="tooltip" title="Server user"' : '' %>></span>
-    <a class="user-name title no-select" data-toggle="tooltip" title="Click to rename this user"><%- name %></a>
+    <a class="user-name title no-select" data-toggle="tooltip" title="Click to rename this user"><%- name %><%- email ? ' (' + email + ')' : '' %></a>
     <span class="user-id title">(<%- id %>)</span>
   </div>
 
