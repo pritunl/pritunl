@@ -1,12 +1,16 @@
-<div class="form-group">
+<div class="form-group name">
   <label>Name</label>
   <input type="text" class="form-control" placeholder="Enter name" data-toggle="tooltip" title="Name of user">
 </div>
-<div class="form-group">
+<div class="form-group org">
   <label>Select an organization</label>
   <select class="form-control">
     <% _.each(orgs, function(org) { %>
       <option value="<%- org.id %>"><%- org.name %></option>
     <% }); %>
   </select>
+</div>
+<div class="form-group email">
+  <label>Email (optional)</label>
+  <input type="email" class="form-control" placeholder="Enter email address" data-toggle="tooltip" title="User email address">
 </div>
