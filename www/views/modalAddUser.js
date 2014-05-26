@@ -22,15 +22,24 @@ define([
       });
     },
     onOk: function() {
-      if (!this.$('input').val()) {
+      var name = this.$('.name input').val();
+      var org = this.$('.org select').val();
+      var email = this.$('.email input').val();
+
+      if (!name) {
         this.setAlert('danger', 'Name can not be empty.', '.form-group');
         return;
       }
+      if (!email) {
+        email = null;
+      }
+
       this.setLoading('Adding user...');
       var userModel = new UserModel();
       userModel.save({
-        organization: this.$('select').val(),
-        name: this.$('input').val()
+        organization: org,
+        name: name,
+        email: email
       }, {
         success: function() {
           this.close(true);

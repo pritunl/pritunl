@@ -15,13 +15,21 @@ define([
       return this.template(this.model.toJSON());
     },
     onOk: function() {
-      if (!this.$('input').val()) {
+      var name = this.$('.name input').val();
+      var email = this.$('.email input').val();
+
+      if (!name) {
         this.setAlert('danger', 'Name can not be empty.', '.form-group');
         return;
       }
+      if (!email) {
+        email = null;
+      }
+
       this.setLoading('Renaming user...');
       this.model.save({
-        name: this.$('input').val()
+        name: name,
+        email: email
       }, {
         success: function() {
           this.close(true);
