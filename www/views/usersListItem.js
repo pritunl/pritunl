@@ -114,7 +114,9 @@ define([
       return this;
     },
     update: function() {
-      this.$('.user-name').text(this.model.get('name'));
+      var email = this.model.get('email');
+      this.$('.user-name').text(
+        this.model.get('name') + (email ? ' (' + email + ')' : ''));
       if (this.model.get('disabled')) {
         this.$('.user .status-icon').removeClass('online');
         this.$('.user .status-icon').removeClass('offline');
