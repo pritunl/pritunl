@@ -5,6 +5,7 @@ Version 0.10.10
 ---------------
 
 Add user setting to temporarily disable a user
+Add email to user
 Improve caching
 Changes to interface design
 Fix issue with bind address
