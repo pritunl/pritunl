@@ -1,6 +1,7 @@
 from pritunl.constants import *
 from pritunl.organization import Organization
 from pritunl.event import Event
+from pritunl.log_entry import LogEntry
 import pritunl.utils as utils
 from pritunl import app_server
 import flask
@@ -136,11 +137,15 @@ def user_put(org_id, user_id):
         user.commit()
         Event(type=USERS_UPDATED, resource_id=user.org.id)
 
-        if disabled:
-            for server in org.iter_servers():
-                server_clients = server.clients
-                if user_id in server_clients:
-                    server.restart()
+    if disabled:
+        if user.type == CERT_CLIENT:
+            LogEntry(message='Disabled user "%s".' % user.name)
+
+        for server in org.iter_servers():
+            server_clients = server.clients
+            if user_id in server_clients:
+                server.restart()
+
     return utils.jsonify(user.dict())
 
 @app_server.app.route('/user/<org_id>/<user_id>', methods=['DELETE'])
