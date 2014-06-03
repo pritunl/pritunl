@@ -145,6 +145,8 @@ def user_put(org_id, user_id):
             server_clients = server.clients
             if user_id in server_clients:
                 server.restart()
+    elif disabled == False and user.type == CERT_CLIENT:
+        LogEntry(message='Enabled user "%s".' % user.name)
 
     return utils.jsonify(user.dict())
 
