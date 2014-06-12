@@ -42,6 +42,7 @@ def check_session():
         if not auth_token or not auth_timestamp or not auth_nonce or \
                 not auth_signature:
             return False
+        auth_nonce = auth_nonce[:32]
 
         try:
             if abs(int(auth_timestamp) - int(time.time())) > AUTH_TIME_WINDOW:
@@ -52,8 +53,6 @@ def check_session():
         cache_key = 'auth_nonce-%s' % auth_nonce
         if cache_db.exists(cache_key):
             return False
-        cache_db.expire(cache_key, int(AUTH_TIME_WINDOW * 2.1))
-        cache_db.set(cache_key, auth_timestamp)
 
         auth_token_hash = persist_db.dict_get('auth', 'token')
         auth_secret = persist_db.dict_get('auth', 'secret')
@@ -74,6 +73,10 @@ def check_session():
             auth_secret.encode(), auth_string, hashlib.sha256).digest())
         if auth_signature != auth_test_signature:
             auth_valid = False
+
+        if auth_valid:
+            cache_db.expire(cache_key, int(AUTH_TIME_WINDOW * 2.1))
+            cache_db.set(cache_key, auth_timestamp)
     else:
         if not flask.session:
             return False
