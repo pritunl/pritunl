@@ -33,6 +33,7 @@ def get_remote_addr():
 
 def check_session():
     from pritunl import app_server
+    auth_valid = True
     auth_token = flask.request.headers.get('Auth-Token', None)
     if auth_token:
         auth_timestamp = flask.request.headers.get('Auth-Timestamp', None)
@@ -59,7 +60,7 @@ def check_session():
         if not auth_token_hash or not auth_secret:
             return False
         if not _test_password_hash(auth_token_hash, auth_token):
-            return False
+            auth_valid = False
 
         auth_string = '&'.join([
             auth_token, auth_timestamp, auth_nonce, flask.request.method,
@@ -72,7 +73,7 @@ def check_session():
         auth_test_signature = base64.b64encode(hmac.new(
             auth_secret.encode(), auth_string, hashlib.sha256).digest())
         if auth_signature != auth_test_signature:
-            return False
+            auth_valid = False
     else:
         if not flask.session:
             return False
@@ -90,7 +91,7 @@ def check_session():
                 flask.session['timestamp'] > app_server.session_timeout:
             flask.session.clear()
             return False
-    return True
+    return auth_valid
 
 def rmtree(path):
     subprocess.check_call(['rm', '-rf', path])
