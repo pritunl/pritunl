@@ -9,8 +9,8 @@ define([
   var ModalChangePasswordView = ModalView.extend({
     className: 'change-password-modal',
     template: _.template(modalChangePasswordTemplate),
-    title: 'Change Password',
-    okText: 'Change',
+    title: 'Settings',
+    okText: 'Save',
     events: function() {
       return _.extend({
         'click .generate-new-api-key': 'onGenerateNewKey',
