@@ -21,7 +21,7 @@ define([
       this.initial = options.initial;
       if (this.initial) {
         this.title = 'Initial Setup';
-        this.okText = 'Setup Account';
+        this.okText = 'Save';
         this.cancelText = 'Setup Later';
       }
       ModalChangePasswordView.__super__.initialize.call(this);
