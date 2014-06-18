@@ -28,7 +28,7 @@ define([
       this.active = true;
       this.alert = options.alert;
       this.callback = options.callback;
-      this.showChangePassword = options.showChangePassword;
+      this.showSettings = options.showSettings;
       this.backdrop = new LoginBackdropView();
       this.addView(this.backdrop);
     },
@@ -135,8 +135,8 @@ define([
             complete: function() {
               var initial;
               this.destroy();
-              if (model.get('default_password') || this.showChangePassword) {
-                if (!this.showChangePassword) {
+              if (model.get('default_password') || this.showSettings) {
+                if (!this.showSettings) {
                   initial = true;
                 }
                 this.changePassword(username, password, initial);

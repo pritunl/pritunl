@@ -17,7 +17,7 @@ define([
     template: _.template(headerTemplate),
     events: {
       'click .enterprise-upgrade a, .enterprise-settings a': 'onEnterprise',
-      'click .change-password a': 'changePassword'
+      'click .change-password a': 'openSettings'
     },
     render: function() {
       this.$el.html(this.template());
@@ -80,9 +80,9 @@ define([
       }.bind(this));
       this.addView(modal);
     },
-    changePassword: function() {
+    openSettings: function() {
       var loginView = new LoginView({
-        showChangePassword: true
+        showSettings: true
       });
       if (loginView.active) {
         $('body').append(loginView.render().el);
