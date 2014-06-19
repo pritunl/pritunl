@@ -79,7 +79,7 @@ define([
       this.addView(this.alertView);
       this.$('input').addClass('has-warning');
     },
-    changePassword: function(username, password, initial) {
+    openSettings: function(username, password, initial) {
       var model = new AuthModel({
         username: username,
         password: password
@@ -139,7 +139,7 @@ define([
                 if (!this.showSettings) {
                   initial = true;
                 }
-                this.changePassword(username, password, initial);
+                this.openSettings(username, password, initial);
               }
               window.loginViewLock = false;
             }.bind(this)
