@@ -6,10 +6,10 @@ define([
   'models/authSession',
   'views/alert',
   'views/loginBackdrop',
-  'views/modalChangePassword',
+  'views/modalSettings',
   'text!templates/login.html'
 ], function($, _, Backbone, AuthModel, AuthSessionModel, AlertView,
-    LoginBackdropView, ModalChangePasswordView, loginTemplate) {
+    LoginBackdropView, ModalSettingsView, loginTemplate) {
   'use strict';
   var LoginView = Backbone.View.extend({
     className: 'login',
@@ -86,7 +86,7 @@ define([
       });
       model.fetch({
         success: function() {
-          var modal = new ModalChangePasswordView({
+          var modal = new ModalSettingsView({
             initial: initial,
             model: model
           });

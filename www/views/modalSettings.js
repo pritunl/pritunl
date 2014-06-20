@@ -3,19 +3,19 @@ define([
   'underscore',
   'backbone',
   'views/modal',
-  'text!templates/modalChangePassword.html'
-], function($, _, Backbone, ModalView, modalChangePasswordTemplate) {
+  'text!templates/modalSettings.html'
+], function($, _, Backbone, ModalView, modalSettingsTemplate) {
   'use strict';
-  var ModalChangePasswordView = ModalView.extend({
+  var ModalSettingsView = ModalView.extend({
     className: 'change-password-modal',
-    template: _.template(modalChangePasswordTemplate),
+    template: _.template(modalSettingsTemplate),
     title: 'Settings',
     okText: 'Save',
     events: function() {
       return _.extend({
         'click .generate-new-api-key': 'onGenerateNewKey',
         'click .right input': 'onClickInput'
-      }, ModalChangePasswordView.__super__.events);
+      }, ModalSettingsView.__super__.events);
     },
     initialize: function(options) {
       this.initial = options.initial;
@@ -24,7 +24,7 @@ define([
         this.okText = 'Save';
         this.cancelText = 'Setup Later';
       }
-      ModalChangePasswordView.__super__.initialize.call(this);
+      ModalSettingsView.__super__.initialize.call(this);
     },
     body: function() {
       return this.template(_.extend({
@@ -105,5 +105,5 @@ define([
     }
   });
 
-  return ModalChangePasswordView;
+  return ModalSettingsView;
 });
