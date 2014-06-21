@@ -7,7 +7,7 @@ define([
 ], function($, _, Backbone, ModalView, modalSettingsTemplate) {
   'use strict';
   var ModalSettingsView = ModalView.extend({
-    className: 'change-password-modal',
+    className: 'settings-modal',
     template: _.template(modalSettingsTemplate),
     title: 'Settings',
     okText: 'Save',
