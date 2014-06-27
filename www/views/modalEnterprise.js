@@ -3,13 +3,11 @@ define([
   'underscore',
   'backbone',
   'qrcode',
-  'models/subscription',
   'views/modal',
   'text!templates/modalEnterprise.html'
-], function($, _, Backbone, QRCode, SubscriptionModel, ModalView,
-    modalEnterpriseTemplate) {
+], function($, _, Backbone, QRCode, ModalView, modalEnterpriseTemplate) {
   'use strict';
-  var ModalSubscribeView = ModalView.extend({
+  var ModalEnterpriseView = ModalView.extend({
     className: 'enterprise-modal',
     template: _.template(modalEnterpriseTemplate),
     title: 'Enterprise Information',
@@ -21,7 +19,7 @@ define([
         'click .enterprise-update, .enterprise-reactivate': 'onCheckout',
         'click .enterprise-remove': 'onRemoveLicense',
         'click .enterprise-cancel': 'onCancelLicense'
-      }, ModalSubscribeView.__super__.events);
+      }, ModalEnterpriseView.__super__.events);
     },
     body: function() {
       return this.template(this.model.toJSON());
@@ -231,5 +229,5 @@ define([
     }
   });
 
-  return ModalSubscribeView;
+  return ModalEnterpriseView;
 });
