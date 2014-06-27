@@ -25,7 +25,8 @@ logger = logging.getLogger(APP_NAME)
 class Server(Config):
     str_options = {'name', 'network', 'interface', 'protocol', 'mode',
         'local_networks', 'public_address', 'primary_organization',
-        'primary_user', 'organizations', 'local_network', 'dns_servers'}
+        'primary_user', 'organizations', 'local_network', 'dns_servers',
+        'search_domain'}
     bool_options = {'otp_auth', 'lzo_compression', 'debug'}
     int_options = {'port', 'dh_param_bits'}
     list_options = {'organizations', 'local_networks', 'dns_servers'}
@@ -554,6 +555,8 @@ class Server(Config):
             push += 'push "redirect-gateway"\n'
         for dns_server in self.dns_servers:
             push += 'push "dhcp-option DNS %s"\n' % dns_server
+        if self.search_domain:
+            push += 'push "dhcp-option DOMAIN %s"\n' % self.search_domain
 
         if not inline:
             server_conf = OVPN_SERVER_CONF % (
