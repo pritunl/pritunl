@@ -177,19 +177,23 @@
   width: 200px;
 }
 
-.modal .modal-body .split .api-key-info {
+.modal .modal-body .split .settings-right,
+.modal .modal-body .split .postmark-right {
   width: 264px;
 }
-
-.modal .api-token,
-.modal .api-secret {
-  width: 284px;
+.modal .modal-body .split .settings-left input,
+.modal .modal-body .split .postmark-left input {
+  width: 250px;
 }
-
-.modal .api-token input,
-.modal .api-secret input {
+.modal .modal-body .split .settings-right input,
+.modal .modal-body .split .postmark-right input {
+  width: 284px;
   font-family: 'Lucida Console', Monaco, monospace;
-  width: 100%;
+}
+.settings-modal .postmark-logo {
+  margin: 10px 0 10px 211px;
+  border: 1px solid #c0a700;
+  width: 135px;
 }
 
 .navbar .navbar-brand,
@@ -1270,6 +1274,21 @@ header.blur {
 
 .settings-modal .modal .modal-dialog {
   .top-calc(~'50% - 279px');
+}
+
+
+
+.settings-modal .from-addr input,
+.settings-modal .postmark-api-key input {
+  width: 255px;
+}
+.settings-modal .postmark-logo {
+  margin: 10px 0 10px 211px;
+  border: 1px solid #c0a700;
+  width: 135px;
+}
+.settings-modal .postmark-right {
+  margin-right: 18px;
 }
 
 .otp-auth-modal .modal .modal-dialog {
