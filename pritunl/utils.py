@@ -368,4 +368,6 @@ def get_auth():
             'auth', 'username') or DEFAULT_USERNAME,
         'token': persist_db.dict_get('auth', 'token_enc'),
         'secret': persist_db.dict_get('auth', 'secret'),
+        'email_from': persist_db.dict_get('auth', 'email_from'),
+        'email_api_key': persist_db.dict_get('auth', 'email_api_key'),
     }
