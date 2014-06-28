@@ -10,7 +10,9 @@ define([
       'username': null,
       'password': null,
       'token': null,
-      'secret': null
+      'secret': null,
+      'email_from': null,
+      'email_api_key': null
     },
     url: function() {
       return '/auth';
