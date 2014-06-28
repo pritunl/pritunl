@@ -15,6 +15,9 @@ class KeyLinkError(UserError):
 class EmailError(BaseError):
     pass
 
+class EmailNotConfiguredError(BaseError):
+    pass
+
 class EmailFromInvalid(EmailError):
     pass
 

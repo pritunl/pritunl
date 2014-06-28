@@ -394,17 +394,24 @@ class User(Config):
         }
 
     def send_key_email(self, key_link_domain):
-        key_link = self.org.create_user_key_link(self.id)
+        email_from = persist_db.dict_get('auth', 'email_from')
+        email_api_key = persist_db.dict_get('auth', 'email_api_key')
 
+        if not email_from or not email_api_key:
+            raise EmailNotConfiguredError('Email not configured', {
+                'org_id': self.org.id,
+                'user_id': self.id,
+            })
+
+        key_link = self.org.create_user_key_link(self.id)
         response = utils.request.post(POSTMARK_SERVER,
             headers={
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'X-Postmark-Server-Token':
-                    persist_db.dict_get('auth', 'email_api_key'),
+                'X-Postmark-Server-Token': email_api_key,
             },
             json_data={
-                'From': persist_db.dict_get('auth', 'email_from'),
+                'From': email_from,
                 'To': self.email,
                 'Subject': 'Pritunl VPN Key',
                 'TextBody':  'Your vpn key and configuration can be ' +

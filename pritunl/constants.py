@@ -320,6 +320,10 @@ USER_TYPE_INVALID_MSG = 'User type is not valid.'
 OTP_CODE_INVALID = 'otp_code_invalid'
 OTP_CODE_INVALID_MSG = 'OTP code is not valid.'
 
+EMAIL_NOT_CONFIGURED = 'email_not_configured'
+EMAIL_NOT_CONFIGURED_MSG = 'Required email settings have not been ' + \
+    'configured, please open settings and configure email.'
+
 EMAIL_FROM_INVALID = 'email_from_invalid'
 EMAIL_FROM_INVALID_MSG = 'Postmark sender signature not defined ' + \
     'for from address.'

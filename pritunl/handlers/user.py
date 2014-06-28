@@ -153,6 +153,11 @@ def user_put(org_id, user_id):
     if send_key_email and user.email:
         try:
             user.send_key_email(send_key_email)
+        except EmailNotConfiguredError:
+            return utils.jsonify({
+                'error': EMAIL_NOT_CONFIGURED,
+                'error_msg': EMAIL_NOT_CONFIGURED_MSG,
+            }, 400)
         except EmailFromInvalid:
             return utils.jsonify({
                 'error': EMAIL_FROM_INVALID,
