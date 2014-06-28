@@ -65,12 +65,17 @@ define([
             this.close(true);
           }
         }.bind(this),
-        error: function() {
+        error: function(model, response) {
           if (!error) {
             error = true;
             this.clearLoading();
-            this.setAlert('danger',
-              'Failed to email users, server error occurred.');
+            if (response.responseJSON) {
+              this.setAlert('danger', response.responseJSON.error_msg);
+            }
+            else {
+              this.setAlert('danger',
+                'Failed to email users, server error occurred.');
+            }
           }
         }.bind(this)
       };
