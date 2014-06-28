@@ -59,6 +59,8 @@ define([
       var users = this.collection.models.slice(0);
       var error = false;
       var count = users.length;
+      var linkDomain = window.location.protocol + '//' +
+            window.location.host;
       var saveData = {
         success: function() {
           if (--count < 1 && !error) {
@@ -85,7 +87,7 @@ define([
       for (i = 0; i < users.length; i++) {
         model = users[i].clone();
         model.save({
-          send_key_email: true
+          send_key_email: linkDomain
         }, saveData);
       }
     }
