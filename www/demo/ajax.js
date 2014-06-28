@@ -33,7 +33,9 @@ define([
     request.response({
       username: demoData.auth.username,
       token: demoData.auth.token,
-      secret: demoData.auth.secret
+      secret: demoData.auth.secret,
+      email_from: demoData.auth.email_from,
+      email_api_key: demoData.auth.email_api_key
     });
   };
   routes['GET=/auth'] = authGet;
@@ -41,6 +43,8 @@ define([
   var authPut = function(request) {
     demoData.auth.username = request.data.username;
     demoData.auth.password = request.data.password;
+    demoData.auth.email_from = request.data.email_from;
+    demoData.auth.email_api_key = request.data.email_api_key;
     if (!request.data.token) {
       demoData.auth.token = uuid();
       demoData.auth.secret = uuid();
