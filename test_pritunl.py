@@ -15,6 +15,8 @@ TEST_PASSWORD = 'unittest'
 TEST_USER_NAME = 'unittest_user'
 TEST_ORG_NAME = 'unittest_org'
 TEST_SERVER_NAME = 'unittest_server'
+TEST_EMAIL_FROM = 'test_email_from'
+TEST_EMAIL_API_KEY = 'test_email_api_key'
 ENABLE_STANDARD_TESTS = True
 ENABLE_EXTENDED_TESTS = False
 ENABLE_STRESS_TESTS = False
@@ -269,8 +271,23 @@ class Auth(SessionTestCase):
         response = self.session.put('/auth', json_data={
             'username': USERNAME,
             'password': TEST_PASSWORD,
+            'email_from': TEST_EMAIL_FROM,
+            'email_api_key': TEST_EMAIL_API_KEY,
         })
         self.assertEqual(response.status_code, 200)
+
+
+        response = self.session.get('/auth')
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertIn('username', data)
+        self.assertIn('token', data)
+        self.assertIn('secret', data)
+        self.assertIn('email_from', data)
+        self.assertEqual(data['email_from'], TEST_EMAIL_FROM)
+        self.assertIn('email_api_key', data)
+        self.assertEqual(data['email_api_key'], TEST_EMAIL_API_KEY)
 
 
         response = self.session.put('/auth', json_data={
