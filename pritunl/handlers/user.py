@@ -1,4 +1,5 @@
 from pritunl.constants import *
+from pritunl.exceptions import *
 from pritunl.organization import Organization
 from pritunl.event import Event
 from pritunl.log_entry import LogEntry
@@ -147,6 +148,22 @@ def user_put(org_id, user_id):
                 server.restart()
     elif disabled == False and user.type == CERT_CLIENT:
         LogEntry(message='Enabled user "%s".' % user.name)
+
+    send_key_email = flask.request.json.get('send_key_email', False)
+    if send_key_email:
+        try:
+            # TODO
+            user.send_key_email('http://localhost:9700')
+        except EmailFromInvalid:
+            return utils.jsonify({
+                'error': EMAIL_FROM_INVALID,
+                'error_msg': EMAIL_FROM_INVALID_MSG,
+            }, 400)
+        except EmailApiKeyInvalid:
+            return utils.jsonify({
+                'error': EMAIL_API_KEY_INVALID,
+                'error_msg': EMAIL_API_KEY_INVALID_MSG,
+            }, 400)
 
     return utils.jsonify(user.dict())
 
