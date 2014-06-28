@@ -72,24 +72,27 @@ define([
       var username = this.$('.username input').val();
       var password = this.$('.pass input').val();
       var verifyPassword = this.$('.verify-pass input').val();
+      var emailFromAddr = this.$('.email-from-addr input').val();
+      var emailApiKey = this.$('.email-api-key input').val();
+      var modelAttr = {
+        username: username,
+        email_from: emailFromAddr,
+        email_api_key: emailApiKey
+      };
 
       if (!username) {
         this.setAlert('danger', 'Username can not be empty.', '.username');
         return;
       }
-      if (!password) {
-        this.setAlert('danger', 'Password can not be empty.', '.pass');
-        return;
-      }
-      if (password !== verifyPassword) {
-        this.setAlert('danger', 'Passwords do not match.', '.verify-pass');
-        return;
+      if (password) {
+        if (password !== verifyPassword) {
+          this.setAlert('danger', 'Passwords do not match.', '.verify-pass');
+          return;
+        }
+        modelAttr.password = password;
       }
       this.setLoading('Changing password...');
-      this.model.save({
-        username: username,
-        password: password
-      }, {
+      this.model.save(modelAttr, {
         success: function() {
           this.close(true);
         }.bind(this),
