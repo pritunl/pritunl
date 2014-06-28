@@ -150,7 +150,7 @@ def user_put(org_id, user_id):
         LogEntry(message='Enabled user "%s".' % user.name)
 
     send_key_email = flask.request.json.get('send_key_email')
-    if send_key_email:
+    if send_key_email and user.email:
         try:
             user.send_key_email(send_key_email)
         except EmailFromInvalid:
