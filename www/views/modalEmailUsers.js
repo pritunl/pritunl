@@ -12,6 +12,23 @@ define([
     template: _.template(modalEmailUsersTemplate),
     title: 'Email Users',
     okText: 'Send',
+    initialize: function() {
+      var i;
+      ModalEmailUsersView.__super__.initialize.call(this);
+      for (i = 0; i < this.collection.models.length; i++) {
+        if (!this.collection.models[i].get('email')) {
+          var alertView = new AlertView({
+            type: 'warning',
+            message: 'Warning, not all of selected users have an email ' +
+              'address configured and will not receive a key email.',
+            animate: false
+          });
+          this.addView(alertView);
+          this.$('.modal-body').prepend(alertView.render().el);
+          break;
+        }
+      }
+    },
     body: function() {
       var i;
       var nameId;
