@@ -25,13 +25,18 @@ define([
       var name = this.$('.name input').val();
       var org = this.$('.org select').val();
       var email = this.$('.email input').val();
+      var emailReg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
 
       if (!name) {
-        this.setAlert('danger', 'Name can not be empty.', '.form-group');
+        this.setAlert('danger', 'Name can not be empty.', '.form-group.name');
         return;
       }
       if (!email) {
         email = null;
+      }
+      else if (!emailReg.test(email)) {
+        this.setAlert('danger', 'Email is not valid.', '.form-group.email');
+        return;
       }
 
       this.setLoading('Adding user...');
