@@ -20,8 +20,14 @@ def auth_put():
     email_api_key = flask.request.json.get('email_api_key')
 
     utils.set_auth(username, password, token)
-    persist_db.dict_set('auth', 'email_from', email_from)
-    persist_db.dict_set('auth', 'email_api_key', email_api_key)
+    if email_from:
+        persist_db.dict_set('auth', 'email_from', email_from)
+    else:
+        persist_db.dict_remove('auth', 'email_from')
+    if email_api_key:
+        persist_db.dict_set('auth', 'email_api_key', email_api_key)
+    else:
+        persist_db.dict_remove('auth', 'email_api_key')
     return utils.jsonify(utils.get_auth())
 
 @app_server.app.route('/auth/session', methods=['GET'])
