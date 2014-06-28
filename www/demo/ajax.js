@@ -526,6 +526,7 @@ define([
       id: userId,
       organization: orgId,
       name: request.data.name,
+      email: request.data.email,
       type: 'client',
       status: false,
       otp_auth: true,
@@ -553,6 +554,9 @@ define([
   var userPut = function(request, orgId, userId) {
     if (request.data.name) {
       demoData.users[orgId][userId].name = request.data.name;
+    }
+    if (request.data.email !== undefined) {
+      demoData.users[orgId][userId].email = request.data.email;
     }
     if (request.data.disabled !== undefined) {
       demoData.users[orgId][userId].disabled = request.data.disabled;
