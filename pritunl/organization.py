@@ -12,6 +12,8 @@ import subprocess
 import utils
 import logging
 import threading
+import random
+import json
 
 logger = logging.getLogger(APP_NAME)
 
@@ -254,6 +256,71 @@ class Organization(Config):
                 user = User.get_user(self, id=user_id)
                 if user:
                     yield user
+
+    def create_user_key_link(self, user_id):
+        key_id = uuid.uuid4().hex
+        key_id_key = 'key_token-%s' % key_id
+
+        view_id = None
+        uri_id = None
+        for i in xrange(2):
+            for i in xrange(2048):
+                temp_id = ''.join(random.sample(
+                    SHORT_URL_CHARS, SHORT_URL_LEN))
+                if not view_id:
+                    if not cache_db.exists('view_token-%s' % temp_id):
+                        view_id = temp_id
+                        break
+                else:
+                    if not cache_db.exists('uri_token-%s' % temp_id):
+                        uri_id = temp_id
+                        break
+            if not view_id and not uri_id:
+                raise KeyLinkError('Failed to generate random id')
+        view_id_key = 'view_token-%s' % view_id
+        uri_id_key = 'uri_token-%s' % uri_id
+
+        cache_db.expire(key_id_key, KEY_LINK_TIMEOUT)
+        cache_db.dict_set(key_id_key, 'org_id', self.id)
+        cache_db.dict_set(key_id_key, 'user_id', user_id)
+        cache_db.dict_set(key_id_key, 'view_id', view_id)
+        cache_db.dict_set(key_id_key, 'uri_id', uri_id)
+
+        conf_urls = []
+        if app_server.inline_certs:
+            for server in self.iter_servers():
+                conf_id = uuid.uuid4().hex
+                conf_id_key = 'conf_token-%s' % conf_id
+
+                cache_db.expire(conf_id_key, KEY_LINK_TIMEOUT)
+                cache_db.dict_set(conf_id_key, 'org_id', self.id)
+                cache_db.dict_set(conf_id_key, 'user_id', user_id)
+                cache_db.dict_set(conf_id_key, 'server_id', server.id)
+
+                conf_urls.append({
+                    'id': conf_id,
+                    'server_name': server.name,
+                    'url': '/key/%s.ovpn' % conf_id,
+                })
+
+        cache_db.expire(view_id_key, KEY_LINK_TIMEOUT)
+        cache_db.dict_set(view_id_key, 'org_id', self.id)
+        cache_db.dict_set(view_id_key, 'user_id', user_id)
+        cache_db.dict_set(view_id_key, 'key_id', key_id)
+        cache_db.dict_set(view_id_key, 'uri_id', uri_id)
+        cache_db.dict_set(view_id_key,
+            'conf_urls', json.dumps(conf_urls))
+
+        cache_db.expire(uri_id_key, KEY_LINK_TIMEOUT)
+        cache_db.dict_set(uri_id_key, 'org_id', self.id)
+        cache_db.dict_set(uri_id_key, 'user_id', user_id)
+
+        return {
+            'id': key_id,
+            'key_url': '/key/%s.tar' % key_id,
+            'view_url': '/k/%s' % view_id,
+            'uri_url': '/ku/%s' % uri_id,
+        }
 
     def get_last_prefix_count(self):
         return self._last_prefix_count
