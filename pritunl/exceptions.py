@@ -11,10 +11,14 @@ class UserError(BaseError):
 class KeyLinkError(UserError):
     pass
 
-class EmailFromInvalid(UserError):
+
+class EmailError(BaseError):
     pass
 
-class EmailApiKeyInvalid(UserError):
+class EmailFromInvalid(EmailError):
+    pass
+
+class EmailApiKeyInvalid(EmailError):
     pass
 
 
