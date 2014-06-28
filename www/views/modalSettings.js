@@ -74,6 +74,7 @@ define([
       var verifyPassword = this.$('.verify-pass input').val();
       var emailFromAddr = this.$('.email-from-addr input').val();
       var emailApiKey = this.$('.email-api-key input').val();
+      var emailReg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
       var modelAttr = {
         username: username,
         email_from: emailFromAddr,
@@ -90,6 +91,11 @@ define([
           return;
         }
         modelAttr.password = password;
+      }
+      if (emailFromAddr && !emailReg.test(emailFromAddr)) {
+        this.setAlert('danger', 'From email is not valid.',
+          '.email-from-addr');
+        return;
       }
       this.setLoading('Saving settings...');
       this.model.save(modelAttr, {
