@@ -1,4 +1,5 @@
 from pritunl.constants import *
+from pritunl.cache import persist_db
 import pritunl.utils as utils
 from pritunl import app_server
 import time
@@ -15,8 +16,12 @@ def auth_put():
     username = utils.filter_str(flask.request.json.get('username'))
     password = flask.request.json['password']
     token = flask.request.json.get('token')
+    email_from = flask.request.json.get('email_from')
+    email_api_key = flask.request.json.get('email_api_key')
 
     utils.set_auth(username, password, token)
+    persist_db.dict_set('auth', 'email_from', email_from)
+    persist_db.dict_set('auth', 'email_api_key', email_api_key)
     return utils.jsonify(utils.get_auth())
 
 @app_server.app.route('/auth/session', methods=['GET'])
