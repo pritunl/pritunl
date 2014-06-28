@@ -30,7 +30,7 @@ define([
           var otpLink = window.location.protocol + '//' +
             window.location.host + this.model.get('view_url');
           var uriProtocol;
-          if (window.location.protocol === 'http') {
+          if (window.location.protocol.replace(':', '') === 'http') {
             uriProtocol = 'pt';
           }
           else {
