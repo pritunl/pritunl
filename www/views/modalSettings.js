@@ -91,7 +91,7 @@ define([
         }
         modelAttr.password = password;
       }
-      this.setLoading('Changing password...');
+      this.setLoading('Saving settings...');
       this.model.save(modelAttr, {
         success: function() {
           this.close(true);
@@ -99,7 +99,7 @@ define([
         error: function() {
           this.clearLoading();
           this.setAlert('danger',
-            'Failed to change password, server error occurred.');
+            'Failed to save settings, server error occurred.');
         }.bind(this)
       });
     },
