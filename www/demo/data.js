@@ -7,6 +7,8 @@ define([], function() {
     password: 'demo',
     token: 'DJjo4uivruHONGWjhoPEuGJgzzTnQXoI',
     secret: 'k1wS8Ph9e2SNc9z6I35BlhVmufxSPopI',
+    email_from: null,
+    email_api_key: null,
     authenticated: false
   };
 
