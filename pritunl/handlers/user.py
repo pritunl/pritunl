@@ -149,11 +149,10 @@ def user_put(org_id, user_id):
     elif disabled == False and user.type == CERT_CLIENT:
         LogEntry(message='Enabled user "%s".' % user.name)
 
-    send_key_email = flask.request.json.get('send_key_email', False)
+    send_key_email = flask.request.json.get('send_key_email')
     if send_key_email:
         try:
-            # TODO
-            user.send_key_email('http://localhost:9700')
+            user.send_key_email(send_key_email)
         except EmailFromInvalid:
             return utils.jsonify({
                 'error': EMAIL_FROM_INVALID,
