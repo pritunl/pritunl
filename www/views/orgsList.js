@@ -10,10 +10,11 @@ define([
   'views/modalAddOrg',
   'views/modalAddUser',
   'views/modalDeleteUsers',
+  'views/modalEmailUsers',
   'text!templates/orgsList.html'
 ], function($, _, Backbone, OrgCollection, UserCollection, ListView,
     OrgsListItemView, AlertView, ModalAddOrgView, ModalAddUserView,
-    ModalDeleteUsersView, orgsListTemplate) {
+    ModalDeleteUsersView, ModalEmailUsersView, orgsListTemplate) {
   'use strict';
   var OrgsListView = ListView.extend({
     listContainer: '.orgs-list-container',
@@ -22,7 +23,8 @@ define([
     events: {
       'click .orgs-add-org': 'onAddOrg',
       'click .orgs-add-user': 'onAddUser',
-      'click .orgs-del-selected': 'onDelSelected'
+      'click .orgs-del-selected': 'onDelSelected',
+      'click .orgs-email-selected': 'onEmailSelected'
     },
     initialize: function() {
       this.collection = new OrgCollection();
@@ -90,6 +92,28 @@ define([
       }.bind(this));
       this.addView(modal);
     },
+    onEmailSelected: function() {
+      var i;
+      var models = [];
+
+      for (i = 0; i < this.selected.length; i++) {
+        models.push(this.selected[i].model);
+      }
+
+      var modal = new ModalEmailUsersView({
+        collection: new UserCollection(models)
+      });
+      this.listenToOnce(modal, 'applied', function() {
+        var alertView = new AlertView({
+          type: 'warning',
+          message: 'Successfully emailed selected users.',
+          dismissable: true
+        });
+        $('.alerts-container').append(alertView.render().el);
+        this.addView(alertView);
+      }.bind(this));
+      this.addView(modal);
+    },
     onSelect: function(view) {
       var i;
 
@@ -105,10 +129,12 @@ define([
       }
 
       if (this.selected.length) {
-        this.$('.orgs-del-selected').removeAttr('disabled');
+        this.$('.orgs-email-selected, .orgs-del-selected').removeAttr(
+          'disabled');
       }
       else {
-        this.$('.orgs-del-selected').attr('disabled', 'disabled');
+        this.$('.orgs-email-selected, .orgs-del-selected').attr(
+          'disabled', 'disabled');
       }
     },
     buildItem: function(model) {
