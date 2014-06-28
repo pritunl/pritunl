@@ -39,6 +39,7 @@ DEFAULT_OTP_SECRET_LEN = 16
 DEFAULT_PUBLIC_IP_SERVER = 'http://ip.pritunl.com/json'
 DEFAULT_NOTIFICATION_SERVER = 'http://ip.pritunl.com/notification'
 SUBSCRIPTION_SERVER = 'https://app.pritunl.com/subscription'
+POSTMARK_SERVER = 'https://api.postmarkapp.com/email'
 UPDATE_CHECK_RATE = 3600
 ENV_PREFIX = APP_NAME
 LOG_LIMIT = 100
@@ -318,6 +319,13 @@ USER_TYPE_INVALID_MSG = 'User type is not valid.'
 
 OTP_CODE_INVALID = 'otp_code_invalid'
 OTP_CODE_INVALID_MSG = 'OTP code is not valid.'
+
+EMAIL_FROM_INVALID = 'email_from_invalid'
+EMAIL_FROM_INVALID_MSG = 'Postmark sender signature not defined ' + \
+    'for from address.'
+
+EMAIL_API_KEY_INVALID = 'email_api_key_invalid'
+EMAIL_API_KEY_INVALID_MSG = 'Postmark email api key invalid.'
 
 SUBSCRIPTION_SERVER_ERROR = 'subscription_server_error'
 SUBSCRIPTION_SERVER_ERROR_MSG = 'Unable to connect to ' + \
