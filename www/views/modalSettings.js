@@ -64,7 +64,7 @@ define([
         error: function() {
           this.clearLoading();
           this.setAlert('danger',
-            'Failed to change password, server error occurred.');
+            'Failed to generated a new api key, server error occurred.');
         }.bind(this)
       });
     },
