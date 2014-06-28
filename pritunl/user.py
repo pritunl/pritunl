@@ -1,6 +1,7 @@
 from constants import *
+from exceptions import *
 from pritunl import app_server
-from cache import cache_db
+from cache import cache_db, persist_db
 from cache_trie import CacheTrie
 from config import Config
 from log_entry import LogEntry
@@ -391,6 +392,59 @@ class User(Config):
             'name': conf_name,
             'conf': client_conf,
         }
+
+    def send_key_email(self, key_link_domain):
+        key_link = self.org.create_user_key_link(self.id)
+
+        response = utils.request.post(POSTMARK_SERVER,
+            headers={
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-Postmark-Server-Token':
+                    persist_db.dict_get('auth', 'email_api_key'),
+            },
+            json_data={
+                'From': persist_db.dict_get('auth', 'email_from'),
+                'To': self.email,
+                'Subject': 'Pritunl VPN Key',
+                'TextBody':  'Your vpn key and configuration can be ' +
+                    'downloaded from the temporary link below:\n\n' +
+                    key_link_domain + key_link['view_url'],
+            },
+        )
+        response = response.json()
+        error_code = response.get('ErrorCode')
+        error_msg = response.get('Message')
+
+        if error_code == 0:
+            pass
+        elif error_code == 10:
+            raise EmailApiKeyInvalid('Email api key invalid', {
+                'org_id': self.org.id,
+                'user_id': self.id,
+                'error_code': error_code,
+                'error_msg': error_msg,
+            })
+        elif error_code == 400:
+            raise EmailFromInvalid('Email from invalid', {
+                'org_id': self.org.id,
+                'user_id': self.id,
+                'error_code': error_code,
+                'error_msg': error_msg,
+            })
+        else:
+            logger.error('Unknown send user email error. %r' % {
+                'org_id': self.org.id,
+                'user_id': self.id,
+                'error_code': error_code,
+                'error_msg': error_msg,
+            })
+            raise EmailError('Unknown send user email error.', {
+                'org_id': self.org.id,
+                'user_id': self.id,
+                'error_code': error_code,
+                'error_msg': error_msg,
+            })
 
     def clear_cache(self, org_data=True):
         if org_data:
