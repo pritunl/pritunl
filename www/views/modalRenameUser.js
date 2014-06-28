@@ -9,8 +9,8 @@ define([
   var ModalRenameUserView = ModalView.extend({
     className: 'rename-user-modal',
     template: _.template(modalRenameUserTemplate),
-    title: 'Rename User',
-    okText: 'Rename',
+    title: 'Modify User',
+    okText: 'Save',
     body: function() {
       return this.template(this.model.toJSON());
     },
@@ -26,7 +26,7 @@ define([
         email = null;
       }
 
-      this.setLoading('Renaming user...');
+      this.setLoading('Modifying user...');
       this.model.save({
         name: name,
         email: email
@@ -37,7 +37,7 @@ define([
         error: function() {
           this.clearLoading();
           this.setAlert('danger',
-            'Failed to rename user, server error occurred.');
+            'Failed to modify user, server error occurred.');
         }.bind(this)
       });
     }
