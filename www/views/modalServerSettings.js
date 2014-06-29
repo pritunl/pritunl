@@ -173,6 +173,7 @@ define([
           dnsServers.push(dnsServersTemp[i]);
         }
       }
+      var searchDomain = this.$('.search-domain input').val();
       var nodeHost = this.$('.node-host input').val().split(':');
       var nodePort = null;
       if (nodeHost.length > 1) {
@@ -213,6 +214,9 @@ define([
           return;
         }
       }
+      if (!searchDomain) {
+        searchDomain = null;
+      }
 
       var data = {
         'name': name,
@@ -225,6 +229,7 @@ define([
         'mode': mode,
         'local_networks': localNetworks,
         'dns_servers': dnsServers,
+        'search_domain': searchDomain,
         'public_address': publicAddress,
         'otp_auth': otpAuth,
         'debug': debug

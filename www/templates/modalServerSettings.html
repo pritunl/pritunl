@@ -45,7 +45,7 @@
     </div>
     <div class="search-domain form-group">
       <label>DNS Search Domain</label>
-      <input type="text" class="form-control" placeholder="Enter DNS search domain" data-toggle="tooltip" title="Optional, DNS search domain for clients" value="">
+      <input type="text" class="form-control" placeholder="Enter DNS search domain" data-toggle="tooltip" title="Optional, DNS search domain for clients" value="<%- search_domain || '' %>">
     </div>
     <div class="node-key form-group" <%= type === 'node_server' ? '' : 'style="display: none;"' %>>
       <label>Node API Key</label>
