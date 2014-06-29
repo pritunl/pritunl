@@ -17,6 +17,16 @@
       <label>Interface</label>
       <input type="text" class="form-control" placeholder="Enter tunnel interface" data-toggle="tooltip" title="Tunnel interface that will be created for VPN connections" spellcheck="false" value="<%- interface %>">
     </div>
+    <div class="port-protocol form-group">
+      <label>Port</label>
+      <label>Protocol</label>
+      <br>
+      <input type="text" class="port form-control" placeholder="Enter port number" data-toggle="tooltip" title="Port number for VPN connections" value="<%- port %>">
+      <select class="protocol form-control" data-toggle="tooltip" title="Protocol for VPN connections">
+        <option value="udp" <%= protocol === 'udp' ? 'selected' : '' %>>udp</option>
+        <option value="tcp" <%= protocol === 'tcp' ? 'selected' : '' %>>tcp</option>
+      </select>
+    </div>
     <div class="dh-param-bits form-group">
       <label>DH Param Bits</label>
       <select class="form-control" data-toggle="tooltip" title="Size of DH parameters">
@@ -27,26 +37,15 @@
         <option value="4096" <%= dh_param_bits === 4096 ? 'selected' : '' %>>4096</option>
       </select>
     </div>
+  </div>
+  <div class="right">
     <div class="dns-servers form-group">
       <label>DNS Server</label>
       <input type="text" class="form-control" placeholder="Enter DNS server" data-toggle="tooltip" title="Optional, DNS server for clients" value="<%- dns_servers.join(', ') %>">
     </div>
-  </div>
-  <div class="right">
     <div class="node-key form-group" <%= type === 'node_server' ? '' : 'style="display: none;"' %>>
       <label>Node API Key</label>
       <input type="text" class="form-control" placeholder="Enter api key" data-toggle="tooltip" title="Node server API key" spellcheck="false" value="<%- node_key %>">
-    </div>
-    <div class="port form-group">
-      <label>Port</label>
-      <input type="text" class="form-control" placeholder="Enter port number" data-toggle="tooltip" title="Port number for VPN connections" value="<%- port %>">
-    </div>
-    <div class="protocol form-group">
-      <label>Protocol</label>
-      <select class="form-control" data-toggle="tooltip" title="Protocol for VPN connections">
-        <option value="udp" <%= protocol === 'udp' ? 'selected' : '' %>>udp</option>
-        <option value="tcp" <%= protocol === 'tcp' ? 'selected' : '' %>>tcp</option>
-      </select>
     </div>
     <div class="public-address form-group">
       <label>Public IP</label>

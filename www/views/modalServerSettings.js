@@ -160,8 +160,8 @@ define([
       var name = this.$('.name input').val();
       var network = this.$('.network input').val();
       var iface = this.$('.interface input').val();
-      var port = this.$('.port input').val();
-      var protocol = this.$('.protocol select').val();
+      var port = this.$('input.port').val();
+      var protocol = this.$('select.protocol').val();
       var dhParamBits = parseInt(this.$('.dh-param-bits select').val(), 10);
       var mode = this.$('.server-mode select').val();
       var publicAddress = this.$('.public-address input').val();
@@ -197,7 +197,7 @@ define([
         return;
       }
       if (!port) {
-        this.setAlert('danger', 'Port can not be empty.', '.port');
+        this.setAlert('danger', 'Port can not be empty.', 'input.port');
         return;
       }
       if (!publicAddress) {
