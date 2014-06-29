@@ -43,6 +43,10 @@
       <label>DNS Server</label>
       <input type="text" class="form-control" placeholder="Enter DNS server" data-toggle="tooltip" title="Optional, DNS server for clients" value="<%- dns_servers.join(', ') %>">
     </div>
+    <div class="search-domain form-group">
+      <label>DNS Search Domain</label>
+      <input type="text" class="form-control" placeholder="Enter DNS search domain" data-toggle="tooltip" title="Optional, DNS search domain for clients" value="">
+    </div>
     <div class="node-key form-group" <%= type === 'node_server' ? '' : 'style="display: none;"' %>>
       <label>Node API Key</label>
       <input type="text" class="form-control" placeholder="Enter api key" data-toggle="tooltip" title="Node server API key" spellcheck="false" value="<%- node_key %>">
