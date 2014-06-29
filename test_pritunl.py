@@ -615,6 +615,7 @@ class Server(SessionTestCase):
             'mode': 'local_traffic',
             'local_networks': ['10.0.0.0/24'],
             'dns_servers': ['8.8.4.4'],
+            'search_domain': 'pritunl.com',
             'public_address': '8.8.8.8',
             'debug': True,
             'otp_auth': False,
@@ -643,6 +644,8 @@ class Server(SessionTestCase):
         self.assertEqual(data['local_networks'], ['10.0.0.0/24'])
         self.assertIn('dns_servers', data)
         self.assertEqual(data['dns_servers'], ['8.8.4.4'])
+        self.assertIn('search_domain', data)
+        self.assertEqual(data['search_domain'], 'pritunl.com')
         self.assertIn('public_address', data)
         self.assertEqual(data['public_address'], '8.8.8.8')
         self.assertIn('debug', data)
@@ -682,6 +685,8 @@ class Server(SessionTestCase):
         self.assertEqual(data['dns_servers'], ['8.8.4.4'])
         self.assertIn('public_address', data)
         self.assertEqual(data['public_address'], '8.8.8.8')
+        self.assertIn('search_domain', data)
+        self.assertEqual(data['search_domain'], 'pritunl.com')
         self.assertIn('debug', data)
         self.assertTrue(data['debug'])
         self.assertIn('otp_auth', data)
@@ -708,6 +713,7 @@ class Server(SessionTestCase):
             self.assertIn('mode', server)
             self.assertIn('local_networks', server)
             self.assertIn('dns_servers', server)
+            self.assertIn('search_domain', server)
             self.assertIn('public_address', server)
             self.assertIn('debug', server)
             self.assertIn('otp_auth', server)
@@ -724,6 +730,7 @@ class Server(SessionTestCase):
                 self.assertEqual(server['mode'], 'local_traffic')
                 self.assertEqual(server['local_networks'], ['10.0.0.0/24'])
                 self.assertEqual(server['dns_servers'], ['8.8.4.4'])
+                self.assertEqual(server['search_domain'], 'pritunl.com')
                 self.assertEqual(server['public_address'], '8.8.8.8')
                 self.assertTrue(server['debug'])
                 self.assertFalse(server['otp_auth'])
