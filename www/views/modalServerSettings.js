@@ -30,7 +30,7 @@ define([
       return this.template(this.model.toJSON());
     },
     postRender: function() {
-      if (this.model.get('local_networks').length) {
+      if (this.model.get('mode') === 'local_traffic') {
         this.$('.otp-auth-toggle').appendTo('.left');
       }
       this.$('.local-network input').select2({
