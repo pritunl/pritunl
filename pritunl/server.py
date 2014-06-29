@@ -123,6 +123,7 @@ class Server(Config):
             'mode': self.mode,
             'local_networks': self.local_networks,
             'dns_servers': self.dns_servers,
+            'search_domain': self.search_domain,
             'public_address': self.public_address,
             'otp_auth': True if self.otp_auth else False,
             'lzo_compression': self.lzo_compression,
