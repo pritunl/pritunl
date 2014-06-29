@@ -244,6 +244,12 @@ def server_put_post(server_id=None):
             if not re.match(IP_REGEX, dns_server):
                 return _dns_server_invalid()
 
+    search_domain = None
+    search_domain_def = False
+    if 'search_domain' in flask.request.json:
+        search_domain_def = True
+        search_domain = utils.filter_str(flask.request.json['search_domain'])
+
     public_address = None
     public_address_def = False
     if 'public_address' in flask.request.json:
@@ -390,6 +396,7 @@ def server_put_post(server_id=None):
                 mode=mode,
                 local_networks=local_networks,
                 dns_servers=dns_servers,
+                search_domain=search_domain,
                 public_address=public_address,
                 otp_auth=otp_auth,
                 lzo_compression=lzo_compression,
@@ -409,6 +416,7 @@ def server_put_post(server_id=None):
                 mode=mode,
                 local_networks=local_networks,
                 dns_servers=dns_servers,
+                search_domain=search_domain,
                 public_address=public_address,
                 otp_auth=otp_auth,
                 lzo_compression=lzo_compression,
@@ -439,6 +447,8 @@ def server_put_post(server_id=None):
             server.local_networks = local_networks
         if dns_servers_def:
             server.dns_servers = dns_servers
+        if search_domain_def:
+            server.search_domain = search_domain
         if public_address_def:
             server.public_address = public_address
         if otp_auth_def:
