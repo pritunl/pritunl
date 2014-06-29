@@ -3,7 +3,7 @@
   <ul class="modal-user-list">
     <% _.each(users, function(user) { %>
       <li class="user-<%- user.id %>">
-        <%- user.name %>
+        <%- user.name %><%- user.email ? ' (' + user.email + ')' : '' %>
       </li>
     <% }); %>
   </ul>

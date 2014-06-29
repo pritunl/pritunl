@@ -52,12 +52,14 @@ define([
       });
     },
     setUserText: function(model, color, text) {
-        this.$('.user-' + model.get('id')).removeClass(
-          'primary-text-light error-text-light warning-text-light ' +
-          'success-text-light');
-        this.$('.user-' + model.get('id')).addClass(color);
-        this.$('.user-' + model.get('id')).text(
-          model.get('name') + ' - ' + text);
+      var email = model.get('email');
+      this.$('.user-' + model.get('id')).removeClass(
+        'primary-text-light error-text-light warning-text-light ' +
+        'success-text-light');
+      this.$('.user-' + model.get('id')).addClass(color);
+      this.$('.user-' + model.get('id')).text(
+        model.get('name') + (email ? ' (' + email + ')' : '') +
+        ' - ' + text);
     },
     onOk: function() {
       if (this.$('.ok').text() === 'Close') {
