@@ -103,15 +103,6 @@ define([
       var modal = new ModalEmailUsersView({
         collection: new UserCollection(models)
       });
-      this.listenToOnce(modal, 'applied', function() {
-        var alertView = new AlertView({
-          type: 'warning',
-          message: 'Successfully emailed selected users.',
-          dismissable: true
-        });
-        $('.alerts-container').append(alertView.render().el);
-        this.addView(alertView);
-      }.bind(this));
       this.addView(modal);
     },
     onSelect: function(view) {
