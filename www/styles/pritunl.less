@@ -74,6 +74,7 @@
 .select2-container-multi .select2-choices {
   padding: 2px 3px 0 0;
   background-image: none;
+  .border-radius(@border-radius);
 }
 
 .select2-search-choice-close {
@@ -121,6 +122,8 @@
 
 .modal .modal-dialog .modal-footer {
   background-color: @light-dark-bg;
+  .border-bottom-left-radius(@border-radius);
+  .border-bottom-right-radius(@border-radius);
 }
 
 .modal label {
@@ -269,6 +272,7 @@
   padding-left: 1px;
   border: 1px solid @light-dark-border;
   float: left;
+  .border-radius(@border-radius);
 }
 
 .selector .selector-inner {
@@ -336,6 +340,7 @@ header.blur {
   margin: 0 auto;
   opacity: 1;
   border: 1px solid rgba(0, 0, 0, 0.2);
+  .border-radius(@border-radius);
   .box-shadow(0 5px 15px rgba(0, 0, 0, 0.5));
   .top-calc(~'50% - 164px');
   .left-calc(~'50% - 187px');
@@ -344,11 +349,15 @@ header.blur {
 .login .login-form {
   background-color: @light-dark2-bg;
   padding: 40px 35px;
+  .border-bottom-left-radius(@border-radius);
+  .border-bottom-right-radius(@border-radius);
 }
 
 .login .login-header {
   margin: 0;
   padding: 10px 15px 10px 15px;
+  .border-top-left-radius(@border-radius);
+  .border-top-right-radius(@border-radius);
 }
 
 .login .form-control {
@@ -364,10 +373,14 @@ header.blur {
 
 .login .form-control[type="text"] {
   margin-bottom: -1px;
+  .border-bottom-left-radius(0);
+  .border-bottom-right-radius(0);
 }
 
 .login .form-control[type="password"] {
   margin-bottom: 10px;
+  .border-top-left-radius(0);
+  .border-top-right-radius(0);
 }
 
 .login .login-button {
@@ -408,6 +421,7 @@ header.blur {
   margin-bottom: 25px;
   border: 1px solid @light-dark-border;
   background-color: @light-dark2-bg;
+  .border-radius(@border-radius);
   .box-shadow2(0 2px 1px rgba(0, 0, 0, 0.05),
     0 -1px 2px rgba(0, 0, 0, 0.05) inset);
   .background-clip-padding;
@@ -461,6 +475,8 @@ header.blur {
   background-color: @white-fg;
   padding: 10px 11px 16px 14px;
   border-bottom: 1px solid @light-dark2-border;
+  .border-top-left-radius(@border-radius);
+  .border-top-right-radius(@border-radius);
 }
 
 .users-list .users-list-header button,
@@ -578,6 +594,7 @@ header.blur {
   background: @white-fg;
   border: 1px solid @light-dark-border;
   margin-top: 12px;
+  .border-radius(@border-radius);
   .box-shadow2(0 1px 0 rgba(255, 255, 255, 0.02)
     0 1px 3px rgba(0, 0, 0, 0.08) inset);
   .background-clip-padding;
@@ -843,6 +860,8 @@ header.blur {
   margin-right: 3px;
   padding: 3px 10px;
   display: none;
+  .border-bottom-left-radius(@border-radius);
+  .border-bottom-right-radius(@border-radius);
   .box-shadow(inset 0px 12px 8px -14px rgba(0, 0, 0, 0.53));
 }
 
@@ -876,6 +895,7 @@ header.blur {
   margin-bottom: 25px;
   border: 1px solid @light-dark-border;
   background-color: @light-dark2-bg;
+  .border-radius(@border-radius);
   .box-shadow2(0 2px 1px rgba(0, 0, 0, 0.05),
     0 -1px 2px rgba(0, 0, 0, 0.05) inset);
   .background-clip-padding;
@@ -1198,6 +1218,7 @@ header.blur {
 .subscribe-modal .modal .subscribe-activate-form textarea {
   resize: none;
   font-family: 'Lucida Console', Monaco, monospace;
+  .border-radius(@border-radius);
   .box-shadow(0px 0px 14px @gray4-fg);
 }
 
@@ -1229,6 +1250,7 @@ header.blur {
   text-align: left;
   margin-top: 5px;
   margin-bottom: 15px;
+  .border-radius(@border-radius);
   .box-shadow(0px 0px 14px @gray4-fg);
 }
 
