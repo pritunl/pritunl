@@ -175,7 +175,7 @@ define([], function() {
       '47402514d02283610f92d681523863a7': {
         id: '47402514d02283610f92d681523863a7',
         name: 'user1',
-        email: null,
+        email: 'user1@pritunl.com',
         organization: '55f5c6820e7a7de989916b4cdddf6070',
         status: true,
         type: 'client',
@@ -198,7 +198,7 @@ define([], function() {
       '9d33758bf6d559e2eb53e7e971248216': {
         id: '9d33758bf6d559e2eb53e7e971248216',
         name: 'user2',
-        email: null,
+        email: 'user2@pritunl.com',
         organization: '55f5c6820e7a7de989916b4cdddf6070',
         status: false,
         type: 'client',
@@ -221,7 +221,7 @@ define([], function() {
       'b5a694ee9411574964d05015add815cd': {
         id: 'b5a694ee9411574964d05015add815cd',
         name: 'user3',
-        email: null,
+        email: 'user3@pritunl.com',
         organization: '55f5c6820e7a7de989916b4cdddf6070',
         status: false,
         type: 'client',
@@ -244,7 +244,7 @@ define([], function() {
       '096b1604409d4fb791d2f11d2f0beddc': {
         id: '096b1604409d4fb791d2f11d2f0beddc',
         name: 'user4',
-        email: null,
+        email: 'user4@pritunl.com',
         organization: '55f5c6820e7a7de989916b4cdddf6070',
         status: false,
         type: 'client',
@@ -269,7 +269,7 @@ define([], function() {
       '8834d44e44011e9aaede036e5ed6d483': {
         id: '8834d44e44011e9aaede036e5ed6d483',
         name: 'user1',
-        email: null,
+        email: 'user1@pritunl.com',
         organization: 'adb484e1f3c653dbc2aab10b14265dc6',
         status: false,
         type: 'client',
@@ -292,7 +292,7 @@ define([], function() {
       'f3b5ad1db481d07aed557d6d34b8cb78': {
         id: 'f3b5ad1db481d07aed557d6d34b8cb78',
         name: 'user2',
-        email: null,
+        email: 'user2@pritunl.com',
         organization: 'adb484e1f3c653dbc2aab10b14265dc6',
         status: false,
         type: 'client',
