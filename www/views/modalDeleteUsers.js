@@ -84,6 +84,8 @@ define([
         }.bind(this),
         error: function() {
           if (!error) {
+            this.$('.ok').hide();
+            this.$('.cancel').text('Close');
             error = true;
             this.clearLoading();
             this.setAlert('danger',
