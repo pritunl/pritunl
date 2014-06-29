@@ -3,9 +3,8 @@ define([
   'underscore',
   'backbone',
   'views/modal',
-  'views/alert',
   'text!templates/modalDeleteServer.html'
-], function($, _, Backbone, ModalView, AlertView, modalDeleteServerTemplate) {
+], function($, _, Backbone, ModalView, modalDeleteServerTemplate) {
   'use strict';
   var ModalDeleteServerView = ModalView.extend({
     className: 'delete-server-modal',
@@ -15,13 +14,6 @@ define([
     inputMatch: true,
     initialize: function() {
       ModalDeleteServerView.__super__.initialize.call(this);
-      var alertView = new AlertView({
-        type: 'danger',
-        message: 'Deleting the server will delete all the users in it.',
-        animate: false
-      });
-      this.addView(alertView);
-      this.$('.modal-body').prepend(alertView.render().el);
       this.inputMatchText = this.model.get('name');
     },
     body: function() {
