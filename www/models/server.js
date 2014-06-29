@@ -21,6 +21,7 @@ define([
       'mode': null,
       'local_networks': null,
       'dns_servers': null,
+      'search_domain': null,
       'public_address': null,
       'node_host': null,
       'node_port': null,
