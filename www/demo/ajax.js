@@ -304,6 +304,7 @@ define([
       mode: request.data.mode,
       local_networks: request.data.local_networks,
       dns_servers: request.data.dns_servers,
+      search_domain: request.data.search_domain,
       public_address: request.data.public_address,
       otp_auth: request.data.otp_auth,
       lzo_compression: request.data.lzo_compression,
@@ -331,6 +332,7 @@ define([
     demoData.servers[serverId].mode = request.data.mode;
     demoData.servers[serverId].local_networks = request.data.local_networks;
     demoData.servers[serverId].dns_servers = request.data.dns_servers;
+    demoData.servers[serverId].search_domain = request.data.search_domain;
     demoData.servers[serverId].public_address = request.data.public_address;
     demoData.servers[serverId].otp_auth = request.data.otp_auth;
     demoData.servers[serverId].lzo_compression = request.data.lzo_compression;

@@ -114,6 +114,7 @@ define([], function() {
       dns_servers: [
         '8.8.4.4'
       ],
+      search_domain: null,
       name: 'server1',
       type: 'server',
       network: '10.54.0.0/24',
@@ -139,6 +140,7 @@ define([], function() {
       dns_servers: [
         '8.8.4.4'
       ],
+      search_domain: null,
       name: 'server2',
       type: 'server',
       network: '10.113.56.0/24',
