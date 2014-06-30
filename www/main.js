@@ -80,7 +80,7 @@ require.config({
     sjcl: 'vendor/sjcl/sjcl.min',
     text: 'vendor/requireText/text',
     underscore: 'vendor/underscore/underscore',
-    initialize: 'init/demo'
+    initialize: 'init/testing'
   },
   shim: {
     ace: {exports: 'ace'},
