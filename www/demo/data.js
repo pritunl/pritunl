@@ -118,6 +118,7 @@ define([], function() {
       name: 'server1',
       type: 'server',
       network: '10.54.0.0/24',
+      uptime: 109800,
       orgs: [
         '55f5c6820e7a7de989916b4cdddf6070',
         'adb484e1f3c653dbc2aab10b14265dc6'
@@ -144,6 +145,7 @@ define([], function() {
       name: 'server2',
       type: 'server',
       network: '10.113.56.0/24',
+      uptime: 109900,
       orgs: [
         '55f5c6820e7a7de989916b4cdddf6070',
         'adb484e1f3c653dbc2aab10b14265dc6'
