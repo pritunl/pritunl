@@ -93,7 +93,7 @@ define([
         }.bind(this)
       });
     },
-    onAddServer: function(evt) {
+    onAddServer: function() {
       this._addServer('server');
     },
     onAttachOrg: function() {
