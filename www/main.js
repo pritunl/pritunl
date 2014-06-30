@@ -80,7 +80,7 @@ require.config({
     sjcl: 'vendor/sjcl/sjcl.min',
     text: 'vendor/requireText/text',
     underscore: 'vendor/underscore/underscore',
-    initialize: 'init/testing'
+    initialize: 'init/demo'
   },
   shim: {
     ace: {exports: 'ace'},
@@ -240,6 +240,15 @@ require([
       url: url
     });
     return $.ajax(options);
+  };
+
+  var append = $.fn.append;
+  $.fn.append = function() {
+    if (this[0].className === 'alerts-container' &&
+        $(this).children().length > 2) {
+      $(this).children().first().find('.close').click();
+    }
+    return append.apply(this, arguments);
   };
 
   $.fn.roll = function(timeout, complete) {
