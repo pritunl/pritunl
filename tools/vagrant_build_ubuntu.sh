@@ -26,6 +26,6 @@ debuild -S
 cd ..
 
 echo '\n\nRUN COMMANDS BELOW TO UPLOAD:'
-echo 'sudo dput ppa:pritunl ../build/debian/pritunl_'$VERSION'-0ubuntu1_source.changes'
-echo 'sudo dput ppa:pritunl ../build/debian/pritunl_'$VERSION'-0ubuntu1~precise_source.changes'
-echo 'sudo dput ppa:pritunl ../build/debian/pritunl_'$VERSION'-0ubuntu1~saucy_source.changes'
+echo 'sudo dput ppa:pritunl/ppa ../build/debian/pritunl_'$VERSION'-0ubuntu1_source.changes'
+echo 'sudo dput ppa:pritunl/ppa ../build/debian/pritunl_'$VERSION'-0ubuntu1~precise_source.changes'
+echo 'sudo dput ppa:pritunl/ppa ../build/debian/pritunl_'$VERSION'-0ubuntu1~saucy_source.changes'
