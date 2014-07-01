@@ -1,3 +1,16 @@
+pritunl (0.10.10-0ubuntu1) trusty; urgency=low
+
+  * Add user setting to temporarily disable a user
+  * Add email to user
+  * Improve caching
+  * Changes to interface design
+  * Fix issue with bind address
+  * Cache OTP codes for client IP addresses to allow reconnecting
+  * Add search domain to server settings
+  * Email user key links with Postmark integration
+
+ -- Zachary Huff <zach.huff.386@gmail.com>  Tue, 01 Jul 2014 15:03:02 -0400
+
 pritunl (0.10.9-0ubuntu1) trusty; urgency=low
 
   * Add static IP addresses for vpn clients
