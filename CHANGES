@@ -11,6 +11,7 @@ Changes to interface design
 Fix issue with bind address
 Cache OTP codes for client IP addresses to allow reconnecting
 Add search domain to server settings
+Email user key links with Postmark integration
 
 Version 0.10.9 2014-04-23
 -------------------------
