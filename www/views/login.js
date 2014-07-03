@@ -93,7 +93,7 @@ define([
           this.listenToOnce(modal, 'applied', function() {
             var alertView = new AlertView({
               type: 'warning',
-              message: 'Successfully changed password.',
+              message: 'Successfully saved settings.',
               dismissable: true
             });
             $('.alerts-container').append(alertView.render().el);
@@ -104,7 +104,7 @@ define([
         error: function() {
           var alertView = new AlertView({
             type: 'danger',
-            message: 'Failed to load auth authentication, ' +
+            message: 'Failed to load authentication data, ' +
               'server error occurred.',
             dismissable: true
           });
