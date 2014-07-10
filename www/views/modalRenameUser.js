@@ -34,7 +34,8 @@ define([
       this.setLoading('Modifying user...');
       this.model.save({
         name: name,
-        email: email
+        email: email,
+        disabled: null
       }, {
         success: function() {
           this.close(true);
