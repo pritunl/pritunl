@@ -5,7 +5,6 @@ import copy
 import shlex
 import shutil
 import fileinput
-import pritunl
 
 PATCH_DIR = 'build'
 INSTALL_UPSTART = True
@@ -77,7 +76,7 @@ for file_name in patch_files:
 
 setup(
     name='pritunl',
-    version=pritunl.__version__,
+    version='0.10.10',
     description='Pritunl vpn server',
     long_description=open('README.rst').read(),
     author='Pritunl',
