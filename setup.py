@@ -90,7 +90,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'flask>=0.6',
-        'cherrypy>=3.2.0',
+        'cherrypy==3.2.4',
         'pycrypto>=2.4.1',
     ],
     data_files=data_files,
