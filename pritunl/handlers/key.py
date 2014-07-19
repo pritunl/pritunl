@@ -88,8 +88,8 @@ def user_linked_key_page_get(view_id):
 
     conf_links = ''
     for conf_url in conf_urls:
-        conf_links += '<a class="sm" title="Download Mobile Key" ' + \
-            'href="%s">Download Mobile Key (%s)</a><br>\n' % (
+        conf_links += '<a class="sm" title="Download Key" ' + \
+            'href="%s">Download Key (%s)</a><br>\n' % (
                 conf_url['url'], conf_url['server_name'])
     key_page = key_page.replace('<%= conf_links %>', conf_links)
 
