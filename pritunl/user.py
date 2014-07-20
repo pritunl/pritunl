@@ -414,9 +414,14 @@ class User(Config):
                 'From': email_from,
                 'To': self.email,
                 'Subject': 'Pritunl VPN Key',
-                'TextBody':  'Your vpn key and configuration can be ' +
-                    'downloaded from the temporary link below:\n\n' +
-                    key_link_domain + key_link['view_url'],
+                'TextBody':  'Your vpn key can be downloaded from the ' +
+                    'temporary link below. You may also directly import ' +
+                    'your keys in the Pritunl client using the temporary ' +
+                    'URI link.\n\n' +
+                    'Key Link: ' + key_link_domain + key_link['view_url'] +
+                    '\nURI Key Link: ' +
+                    key_link_domain.replace('http', 'pt', 1) +
+                    key_link['uri_url'],
             },
         )
         response = response.json()
