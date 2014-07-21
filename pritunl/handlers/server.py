@@ -570,7 +570,7 @@ def server_bandwidth_get(server_id, period=None):
     return utils.jsonify(server.get_bandwidth(period=period))
 
 @app_server.app.route('/server/<server_id>/tls_verify', methods=['POST'])
-@app_server.local_only
+@app_server.local_auth
 def server_tls_verify_post(server_id):
     org_id = flask.request.json['org_id']
     user_id = flask.request.json['user_id']
@@ -610,7 +610,7 @@ def server_tls_verify_post(server_id):
     })
 
 @app_server.app.route('/server/<server_id>/otp_verify', methods=['POST'])
-@app_server.local_only
+@app_server.local_auth
 def server_otp_verify_post(server_id):
     org_id = flask.request.json['org_id']
     user_id = flask.request.json['user_id']
@@ -652,7 +652,7 @@ def server_otp_verify_post(server_id):
     })
 
 @app_server.app.route('/server/<server_id>/client_connect', methods=['POST'])
-@app_server.local_only
+@app_server.local_auth
 def server_client_connect_post(server_id):
     org_id = flask.request.json['org_id']
     user_id = flask.request.json['user_id']
@@ -693,7 +693,7 @@ def server_client_connect_post(server_id):
 
 @app_server.app.route('/server/<server_id>/client_disconnect',
     methods=['POST'])
-@app_server.local_only
+@app_server.local_auth
 def server_client_disconnect_post(server_id):
     org_id = flask.request.json['org_id']
     user_id = flask.request.json['user_id']

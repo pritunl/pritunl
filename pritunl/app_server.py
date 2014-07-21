@@ -16,6 +16,7 @@ import threading
 import subprocess
 import base64
 import socket
+import uuid
 
 logger = None
 
@@ -64,6 +65,7 @@ class AppServer(Config):
         self.sub_period_end = None
         self.sub_cancel_at_period_end = None
         self.openssl_heartbleed = not utils.check_openssl()
+        self.local_api_key = uuid.uuid4().hex
 
     def __getattr__(self, name):
         if name == 'web_protocol':
@@ -209,17 +211,14 @@ class AppServer(Config):
         _wrapped.__name__ = '%s_auth' % call.__name__
         return _wrapped
 
-    def local_only(self, call):
+    def local_auth(self, call):
         def _wrapped(*args, **kwargs):
-            remote_addr = utils.get_remote_addr()
-            if remote_addr not in ('127.0.0.1', '::1', self.localhost_ip,
-                    self.bind_addr):
-                logger.error('Local only handler auth error. %r' % {
-                    'remote_addr': remote_addr,
-                })
+            api_key = flask.request.headers.get('API-Key', None)
+            if api_key != self.local_api_key:
+                logger.error('Local auth error, invalid api key.')
                 raise flask.abort(401)
             return call(*args, **kwargs)
-        _wrapped.__name__ = '%s_local_only' % call.__name__
+        _wrapped.__name__ = '%s_local_auth' % call.__name__
         return _wrapped
 
     def _setup_conf(self):

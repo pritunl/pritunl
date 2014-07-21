@@ -509,6 +509,7 @@ class Server(Config):
             with open(script_path, 'w') as script_file:
                 os.chmod(script_path, 0755)
                 script_file.write(script % (
+                    app_server.local_api_key,
                     self.auth_log_path,
                     app_server.web_protocol,
                     auth_host,

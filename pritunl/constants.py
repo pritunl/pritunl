@@ -407,6 +407,7 @@ import time
 import traceback
 
 VALID_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789='
+api_key = '%s'
 auth_log_path = '%s'
 def log_write(line):
     with open(auth_log_path, 'a') as auth_log_file:
@@ -452,6 +453,7 @@ try:
     try:
         request = Request('%s://%s:%s' + \\
             '/server/%s/tls_verify')
+        request.add_header('API-Key', api_key)
         request.add_header('Content-Type', 'application/json')
         response = urlopen(request, json.dumps({
             'org_id': org,
@@ -487,6 +489,7 @@ import time
 import traceback
 
 VALID_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789='
+api_key = '%s'
 auth_log_path = '%s'
 def log_write(line):
     with open(auth_log_path, 'a') as auth_log_file:
@@ -545,6 +548,7 @@ try:
     try:
         request = Request('%s://%s:%s' + \\
             '/server/%s/otp_verify')
+        request.add_header('API-Key', api_key)
         request.add_header('Content-Type', 'application/json')
         response = urlopen(request, json.dumps({
             'org_id': org,
@@ -582,6 +586,7 @@ import time
 import traceback
 
 VALID_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789='
+api_key = '%s'
 auth_log_path = '%s'
 def log_write(line):
     with open(auth_log_path, 'a') as auth_log_file:
@@ -630,6 +635,7 @@ try:
     try:
         request = Request('%s://%s:%s' + \\
             '/server/%s/client_connect')
+        request.add_header('API-Key', api_key)
         request.add_header('Content-Type', 'application/json')
         response = urlopen(request, json.dumps({
             'org_id': org,
@@ -665,6 +671,7 @@ import time
 import traceback
 
 VALID_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789='
+api_key = '%s'
 auth_log_path = '%s'
 def log_write(line):
     with open(auth_log_path, 'a') as auth_log_file:
@@ -713,6 +720,7 @@ try:
     try:
         request = Request('%s://%s:%s' + \\
             '/server/%s/client_disconnect')
+        request.add_header('API-Key', api_key)
         request.add_header('Content-Type', 'application/json')
         response = urlopen(request, json.dumps({
             'org_id': org,
