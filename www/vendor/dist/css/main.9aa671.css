@@ -7701,13 +7701,9 @@ header.blur {
 .users-list .right-container a:hover {
   text-decoration: none;
 }
-.users-list .user .get-key-link {
-  display: none;
-}
 .users-list .user .toggle-servers {
   display: none;
 }
-.enterprise .users-list .user .get-key-link,
 .enterprise .users-list .user .toggle-servers {
   display: inline-block;
 }
