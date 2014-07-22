@@ -87,7 +87,7 @@ class AppServer(Config):
         for i in xrange(attempts):
             if not self.get_public_ip or self.public_ip:
                 return
-            if i != 0:
+            if i:
                 time.sleep(3)
                 logger.debug('Retrying get public ip address...')
             logger.debug('Getting public ip address...')
