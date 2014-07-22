@@ -461,7 +461,7 @@ class Key(SessionTestCase):
         self.assertEqual(key_url, data['key_url'])
 
         start_index = response.text.find(
-            '<a class="sm" title="Download Key" href="') + 48
+            '<a class="sm" title="Download Key" href="') + 41
         end_index = response.text.find('">', start_index)
         self.assertNotEqual(start_index, -1)
         self.assertNotEqual(end_index, -1)
