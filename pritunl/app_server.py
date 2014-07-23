@@ -224,7 +224,8 @@ class AppServer(Config):
             self.log_level = logging.INFO
 
         if self.log_path:
-            self.log_handler = logging.FileHandler(self.log_path)
+            self.log_handler = logging.handlers.RotatingFileHandler(
+                self.log_path, maxBytes=1000000, backupCount=1)
         else:
             self.log_handler = logging.StreamHandler()
 
