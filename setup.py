@@ -31,7 +31,10 @@ main_js_path = os.path.join('www/vendor/dist/js',
 
 data_files = [
     ('/etc', ['data/etc/pritunl.conf']),
-    ('/var/log', ['data/var/pritunl.log']),
+    ('/var/log', [
+        'data/var/pritunl.log',
+        'data/var/pritunl.log.1',
+    ]),
     ('/usr/share/pritunl/www', [
         'www/key_index.html',
         'www/vendor/dist/favicon.ico',
