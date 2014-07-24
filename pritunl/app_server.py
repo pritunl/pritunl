@@ -97,8 +97,9 @@ class AppServer(Config):
                 self.public_ip = json.load(response)['ip']
                 break
             except:
-                if i:
-                    logger.exception('Failed to get public ip address...')
+                pass
+        if not self.public_ip:
+            logger.exception('Failed to get public ip address...')
 
     def subscription_update(self):
         cur_sub_active = self.sub_active
