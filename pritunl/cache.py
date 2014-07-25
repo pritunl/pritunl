@@ -36,17 +36,15 @@ class Cache:
             lambda: {'ttl': None, 'val': None})
         self._timers = {}
         self._channels = collections.defaultdict(
-            lambda: {'subs': set(), 'msgs': collections.deque(maxlen=64)})
+            lambda: {'subs': set(), 'msgs': collections.deque(maxlen=128)})
         self._commit_log = []
-        self._locks = collections.defaultdict(lambda: threading.Lock())
 
     def _put_queue(self):
         if self._path:
             self._set_queue.put('set')
 
     def _export_thread(self):
-        from pritunl import app_server
-        while not app_server.interrupt:
+        while True:
             try:
                 self._set_queue.get(timeout=5)
             except Queue.Empty:
@@ -63,73 +61,45 @@ class Cache:
         if value is not None and not isinstance(value, basestring):
             raise TypeError('Value must be string')
 
-    def _check_ttl(self, key):
-        if key not in self._data:
-            return
-        ttl = self._data[key]['ttl']
-        if ttl and int(time.time() * 1000) > ttl:
-            self.remove(key)
-            return False
-        return True
-
-    def _check_ttl_timer(self, key):
-        self._timers.pop(key, None)
-        self._check_ttl(key)
-
-    def setup_persist(self, path):
+    def persist(self, path, auto_export=True):
+        if self._path:
+            raise ValueError('Persist is already set')
         self._path = path
-        persist_db.import_data()
-        threading.Thread(target=self._export_thread).start()
-
-    def get(self, key):
-        if self._check_ttl(key):
-            return self._data[key]['val']
+        self.import_data()
+        if auto_export:
+            thread = threading.Thread(target=self._export_thread)
+            thread.daemon = True
+            thread.start()
 
     def set(self, key, value):
         self._validate(value)
         self._data[key]['val'] = value
         self._put_queue()
 
-    def increment(self, key):
-        if key not in self._data:
-            self._data[key]['val'] = '1'
-        else:
-            try:
-                self._data[key]['val'] = str(int(self.get(key)) + 1)
-            except (TypeError, ValueError):
-                self._data[key]['val'] = '1'
-        self._put_queue()
+    def get(self, key):
+        data = self._data.get(key)
+        if data:
+            return data['val']
 
-    def decrement(self, key):
-        if key not in self._data:
-            self._data[key]['val'] = '0'
-        else:
-            try:
-                self._data[key]['val'] = str(int(self.get(key)) - 1)
-            except (TypeError, ValueError):
-                self._data[key]['val'] = '0'
-        self._put_queue()
+    def exists(self, key):
+        return key in self._data
+
+    def rename(self, key, new_key):
+        data = self._data.get(key)
+        if data:
+            self._data[new_key]['val'] = data['val']
+            self.remove(key)
+            self._put_queue()
 
     def remove(self, key):
         self._data.pop(key, None)
         self._put_queue()
 
-    def rename(self, key, new_key):
-        if self._check_ttl(key):
-            self._data[new_key]['val'] = self._data[key]['val']
-        self.remove(key)
-        self._put_queue()
-
-    def exists(self, key):
-        if self._check_ttl(key):
-            return True
-        return False
-
     def expire(self, key, ttl):
         ttl_time = int(time.time() * 1000) + (ttl * 1000)
 
         cur_timer = self._timers.pop(key, None)
-        timer = threading.Timer(ttl + 0.01, self._check_ttl_timer, (key,))
+        timer = threading.Timer(ttl, self.remove, (key,))
         self._timers[key] = timer
         if cur_timer:
             cur_timer.cancel()
@@ -138,195 +108,241 @@ class Cache:
         self._data[key]['ttl'] = ttl_time
         self._put_queue()
 
+    def increment(self, key):
+        data = self._data.get(key)
+        if data:
+            try:
+                data['val'] = str(int(data['val']) + 1)
+            except (TypeError, ValueError):
+                data['val'] = '1'
+        else:
+            self._data[key]['val'] = '1'
+        self._put_queue()
+
+    def decrement(self, key):
+        data = self._data.get(key)
+        if data:
+            try:
+                data['val'] = str(int(data['val']) - 1)
+            except (TypeError, ValueError):
+                data['val'] = '-1'
+        else:
+            self._data[key]['val'] = '-1'
+        self._put_queue()
+
+    def keys(self):
+        return set(self._data)
+
     def set_add(self, key, element):
         self._validate(element)
-        if key not in self._data:
-            self._data[key]['val'] = {element}
-        else:
+        data = self._data.get(key)
+        if data:
             try:
-                self._data[key]['val'].add(element)
+                data['val'].add(element)
             except AttributeError:
-                self._data[key]['val'] = {element}
+                data['val'] = {element}
+        else:
+            self._data[key]['val'] = {element}
         self._put_queue()
 
     def set_remove(self, key, element):
-        try:
-            self._data[key]['val'].remove(element)
-        except (KeyError, AttributeError):
-            pass
-        self._put_queue()
+        data = self._data.get(key)
+        if data:
+            try:
+                data['val'].remove(element)
+                self._put_queue()
+            except (KeyError, AttributeError):
+                pass
 
     def set_exists(self, key, element):
-        if self._check_ttl(key):
+        data = self._data.get(key)
+        if data:
             try:
-                return element in self._data[key]['val']
+                return element in data['val']
             except (TypeError, AttributeError):
                 pass
         return False
 
     def set_elements(self, key):
-        if self._check_ttl(key):
+        data = self._data.get(key)
+        if data:
             try:
-                return self._data[key]['val'].copy()
+                return data['val'].copy()
             except AttributeError:
                 pass
         return set()
 
     def set_length(self, key):
-        if self._check_ttl(key):
+        data = self._data.get(key)
+        if data:
             try:
-                return len(self._data[key]['val'])
+                return len(data['val'])
             except TypeError:
                 pass
         return 0
 
     def list_lpush(self, key, value):
         self._validate(value)
-        if key not in self._data:
-            self._data[key]['val'] = collections.deque([value])
-        else:
+        data = self._data.get(key)
+        if data:
             try:
-                self._data[key]['val'].appendleft(value)
+                data['val'].appendleft(value)
             except AttributeError:
-                self._data[key]['val'] = collections.deque([value])
+                data['val'] = collections.deque([value])
+        else:
+            self._data[key]['val'] = collections.deque([value])
         self._put_queue()
 
     def list_rpush(self, key, value):
         self._validate(value)
-        if key not in self._data:
-            self._data[key]['val'] = collections.deque([value])
-        else:
+        data = self._data.get(key)
+        if data:
             try:
-                self._data[key]['val'].append(value)
+                data['val'].append(value)
             except AttributeError:
-                self._data[key]['val'] = collections.deque([value])
+                data['val'] = collections.deque([value])
+        else:
+            self._data[key]['val'] = collections.deque([value])
         self._put_queue()
 
     def list_lpop(self, key):
-        data = None
-        if self._check_ttl(key):
+        value = None
+        data = self._data.get(key)
+        if data:
             try:
-                data = self._data[key]['val'].popleft()
+                value = data['val'].popleft()
             except (AttributeError, IndexError):
                 pass
-        if data:
+        if value:
             self._put_queue()
-            return data
+            return value
 
     def list_rpop(self, key):
-        data = None
-        if self._check_ttl(key):
+        value = None
+        data = self._data.get(key)
+        if data:
             try:
-                data = self._data[key]['val'].pop()
+                value = data['val'].pop()
             except (AttributeError, IndexError):
                 pass
-        if data:
+        if value:
             self._put_queue()
-            return data
+            return value
 
     def list_index(self, key, index):
-        if self._check_ttl(key):
+        data = self._data.get(key)
+        if data:
             try:
-                return self._data[key]['val'][index]
+                return data['val'][index]
             except (AttributeError, IndexError):
                 pass
 
     def list_elements(self, key):
-        if self._check_ttl(key):
+        data = self._data.get(key)
+        if data:
             try:
-                return list(self._data[key]['val'])
+                return list(data['val'])
             except TypeError:
                 pass
         return []
 
     def list_iter(self, key):
-        if self._check_ttl(key):
+        data = self._data.get(key)
+        if data:
             try:
-                for value in copy.copy(self._data[key]['val']):
+                for value in copy.copy(data['val']):
                     yield value
             except TypeError:
                 pass
 
     def list_iter_range(self, key, start, stop=None):
-        if self._check_ttl(key):
+        data = self._data.get(key)
+        if data:
             try:
                 for value in itertools.islice(
-                        copy.copy(self._data[key]['val']), start, stop):
+                        copy.copy(data['val']), start, stop):
                     yield value
             except TypeError:
                 pass
 
-    def list_remove(self, key, value, count=0):
+    def list_remove(self, key, value, count=1):
         self._validate(value)
-        def _remove():
-            try:
-                self._data[key]['val'].remove(value)
-            except (AttributeError, ValueError):
-                return True
-
-        if count:
-            for i in xrange(count):
-                if _remove():
-                    break
-        else:
-            while True:
-                if _remove():
-                    break
-        self._put_queue()
+        data = self._data.get(key)
+        if data:
+            if count:
+                try:
+                    [data['val'].remove(value) for i in xrange(count)]
+                except (AttributeError, ValueError):
+                    pass
+            else:
+                try:
+                    while True:
+                        data['val'].remove(value)
+                except (AttributeError, ValueError):
+                    pass
+            self._put_queue()
 
     def list_length(self, key):
-        if self._check_ttl(key):
+        data = self._data.get(key)
+        if data:
             try:
-                return len(self._data[key]['val'])
+                return len(data['val'])
             except TypeError:
                 pass
         return 0
 
-    def dict_get(self, key, field):
-        if self._check_ttl(key):
-            try:
-                return self._data[key]['val'][field]
-            except (TypeError, KeyError):
-                pass
-
     def dict_set(self, key, field, value):
         self._validate(value)
-        if key not in self._data:
-            self._data[key]['val'] = {field: value}
-        else:
+        data = self._data.get(key)
+        if data:
             try:
-                self._data[key]['val'][field] = value
+                data['val'][field] = value
             except TypeError:
-                self._data[key]['val'] = {field: value}
+                data['val'] = {field: value}
+        else:
+            self._data[key]['val'] = {field: value}
         self._put_queue()
+
+    def dict_get(self, key, field):
+        data = self._data.get(key)
+        if data:
+            try:
+                return data['val'].get(field)
+            except TypeError:
+                pass
 
     def dict_remove(self, key, field):
-        try:
-            self._data[key]['val'].pop(field, None)
-        except AttributeError:
-            pass
-        self._put_queue()
+        data = self._data.get(key)
+        if data:
+            try:
+                data['val'].pop(field, None)
+            except AttributeError:
+                pass
+            self._put_queue()
 
     def dict_keys(self, key):
-        if self._check_ttl(key):
+        data = self._data.get(key)
+        if data:
             try:
-                return set(self._data[key]['val'])
+                return set(data['val'])
             except AttributeError:
                 pass
         return set()
 
     def dict_values(self, key):
-        if self._check_ttl(key):
+        data = self._data.get(key)
+        if data:
             try:
-                return set(self._data[key]['val'].values())
+                return set(data['val'].values())
             except AttributeError:
                 pass
         return set()
 
     def dict_get_all(self, key):
-        if self._check_ttl(key):
+        data = self._data.get(key)
+        if data:
             try:
-                return self._data[key]['val'].copy()
+                return data['val'].copy()
             except AttributeError:
                 pass
         return {}
@@ -363,21 +379,8 @@ class Cache:
         for subscriber in self._channels[channel]['subs'].copy():
             subscriber.set()
 
-    def lock_acquire(self, key):
-        return self._locks[key].acquire()
-
-    def lock_release(self, key):
-        try:
-            self._locks[key].release()
-        except thread.error:
-            pass
-
-    def lock_remove(self, key):
-        self.lock_release(key)
-        self._locks.pop(key, None)
-
     def transaction(self):
-        return CacheTransaction(self)
+        return TunlDBTransaction(self)
 
     def _apply_trans(self, trans):
         for call in trans[1]:
@@ -391,7 +394,7 @@ class Cache:
     def export_data(self):
         if not self._path:
             return
-        temp_path = self._path + '.tmp'
+        temp_path = self._path + '_%s.tmp' % uuid.uuid4().hex
         try:
             data = self._data.copy()
             timers = self._timers.keys()
@@ -440,8 +443,10 @@ class Cache:
                     elif key_type == 'deque':
                         key_val = collections.deque(key_val)
 
-                    self._data[key]['ttl'] = key_ttl
-                    self._data[key]['val'] = key_val
+                    self._data[key] = {
+                        'ttl': key_ttl,
+                        'val': key_val,
+                    }
 
                 if 'timers' in import_data:
                     for key in import_data['timers']:
@@ -453,12 +458,11 @@ class Cache:
                         ttl -= int(time.time() * 1000)
                         ttl = ttl / 1000.0
                         if ttl >= 0:
-                            timer = threading.Timer(ttl + 0.01,
-                                self._check_ttl_timer, (key,))
+                            timer = threading.Timer(ttl, self.remove, (key,))
                             self._timers[key] = timer
                             timer.start()
                         else:
-                            self._check_ttl(key)
+                            self.remove(key)
 
                 if 'commit_log' in import_data:
                     for tran in import_data['commit_log']:
