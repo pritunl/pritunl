@@ -38,6 +38,7 @@ class Cache:
         self._channels = collections.defaultdict(
             lambda: {'subs': set(), 'msgs': collections.deque(maxlen=128)})
         self._commit_log = []
+        self._locks = collections.defaultdict(lambda: threading.Lock())
 
     def _put_queue(self):
         if self._path:
@@ -380,7 +381,20 @@ class Cache:
             subscriber.set()
 
     def transaction(self):
-        return TunlDBTransaction(self)
+        return CacheTransaction(self)
+
+    def lock_acquire(self, key):
+        return self._locks[key].acquire()
+
+    def lock_release(self, key):
+        try:
+            self._locks[key].release()
+        except thread.error:
+            pass
+
+    def lock_remove(self, key):
+        self.lock_release(key)
+        self._locks.pop(key, None)
 
     def _apply_trans(self, trans):
         for call in trans[1]:
