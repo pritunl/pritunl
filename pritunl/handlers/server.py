@@ -186,7 +186,7 @@ def server_put_post(server_id=None):
         except ValueError:
             return _dh_param_bits_invalid()
 
-        if dh_param_bits not in {1024, 1536, 2048, 3072, 4096}:
+        if dh_param_bits not in VALID_DH_PARAM_BITS:
             return _dh_param_bits_invalid()
 
     mode = None
