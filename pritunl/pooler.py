@@ -83,7 +83,7 @@ class Pooler:
 
     def _fill_servers(self):
         try:
-            for dh_param_bits in ('1536', '2048'):
+            for dh_param_bits in app_server.dh_param_bits_pool:
                 dh_pool_size = cache_db.set_length(
                     'dh_pool_%s' % dh_param_bits)
 

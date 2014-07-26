@@ -30,7 +30,8 @@ class AppServer(Config):
     path_options = {'log_path', 'db_path', 'www_path', 'data_path',
         'server_cert_path', 'server_key_path'}
     str_options = {'bind_addr', 'password', 'public_ip_server',
-        'notification_server'}
+        'notification_server', 'dh_param_bits_pool'}
+    list_options = {'dh_param_bits_pool'}
     default_options = {
         'auto_start_servers': True,
         'get_public_ip': True,
@@ -45,6 +46,7 @@ class AppServer(Config):
         'dh_param_bits': DEFAULT_DH_PARAM_BITS,
         'user_pool_size': DEFAULT_USER_POOL_SIZE,
         'server_pool_size': DEFAULT_SERVER_POOL_SIZE,
+        'dh_param_bits_pool': DEFAULT_DH_PARAM_BITS_POOL,
         'db_path': DEFAULT_DB_PATH,
         'www_path': DEFAULT_WWW_PATH,
         'data_path': DEFAULT_DATA_PATH,
