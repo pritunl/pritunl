@@ -39,7 +39,8 @@ define([
       var curView;
       var select = false;
       var lastSelected = this.lastSelected;
-      if (lastSelected && shiftKey && lastSelected.getSelect()) {
+      if (lastSelected && shiftKey && lastSelected.getSelect() &&
+          lastSelected !== view) {
         for (i = 0; i < this.views.length; i++) {
           curView = this.views[i];
 
