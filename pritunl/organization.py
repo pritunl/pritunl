@@ -175,6 +175,8 @@ class Organization(Config):
     def _cache_users(self):
         if cache_db.get(self.get_cache_key('users_cached')) != 't':
             cache_db.remove(self.get_cache_key('users'))
+            cache_db.remove(self.get_cache_key('users_client_pool'))
+            cache_db.remove(self.get_cache_key('users_server_pool'))
             certs_path = os.path.join(self.path, CERTS_DIR)
             if os.path.isdir(certs_path):
                 for cert in os.listdir(certs_path):
@@ -185,7 +187,15 @@ class Organization(Config):
                     if not user:
                         continue
                     user._add_cache_trie_key()
-                    cache_db.set_add(self.get_cache_key('users'), user_id)
+                    if user.type == CERT_CLIENT_POOL:
+                        cache_db.set_add(
+                            self.get_cache_key('users_client_pool'), user_id)
+                    elif user.type == CERT_SERVER_POOL:
+                        cache_db.set_add(
+                            self.get_cache_key('users_server_pool'), user_id)
+                    else:
+                        cache_db.set_add(
+                            self.get_cache_key('users'), user_id)
             self.sort_users_cache()
             cache_db.set(self.get_cache_key('users_cached'), 't')
 

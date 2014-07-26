@@ -50,25 +50,29 @@ class User(Config):
         else:
             self.id = id
 
-        self.reqs_path = os.path.join(self.org.path, REQS_DIR,
-            '%s.csr' % self.id)
-        self.key_path = os.path.join(self.org.path, KEYS_DIR,
-            '%s.key' % self.id)
-        self.cert_path = os.path.join(self.org.path, CERTS_DIR,
-            '%s.crt' % self.id)
-        self.temp_key_archive_path = os.path.join(self.org.path,
-            TEMP_DIR, '%s_%s.tar' % (self.id, uuid.uuid4().hex))
-        self.set_path(os.path.join(self.org.path, USERS_DIR,
-            '%s.conf' % self.id))
-
-        self.temp_path = os.path.join(self.org.path, TEMP_DIR, self.id)
-        self.ssl_conf_path = os.path.join(self.temp_path, OPENSSL_NAME)
-        self.index_path = os.path.join(self.temp_path, INDEX_NAME)
-        self.index_attr_path = os.path.join(self.temp_path, INDEX_ATTR_NAME)
-        self.serial_path = os.path.join(self.temp_path, SERIAL_NAME)
-
         if id is None:
             self._initialize()
+
+    def __setattr__(self, name, value):
+        if name == 'id':
+            self.reqs_path = os.path.join(self.org.path, REQS_DIR,
+                '%s.csr' % value)
+            self.key_path = os.path.join(self.org.path, KEYS_DIR,
+                '%s.key' % value)
+            self.cert_path = os.path.join(self.org.path, CERTS_DIR,
+                '%s.crt' % value)
+            self.temp_key_archive_path = os.path.join(self.org.path,
+                TEMP_DIR, '%s_%s.tar' % (value, uuid.uuid4().hex))
+            self.set_path(os.path.join(self.org.path, USERS_DIR,
+                '%s.conf' % value))
+
+            self.temp_path = os.path.join(self.org.path, TEMP_DIR, value)
+            self.ssl_conf_path = os.path.join(self.temp_path, OPENSSL_NAME)
+            self.index_path = os.path.join(self.temp_path, INDEX_NAME)
+            self.index_attr_path = os.path.join(
+                self.temp_path, INDEX_ATTR_NAME)
+            self.serial_path = os.path.join(self.temp_path, SERIAL_NAME)
+        Config.__setattr__(self, name, value)
 
     def dict(self):
         return {
@@ -99,27 +103,45 @@ class User(Config):
             self.commit()
 
     def _initialize(self):
-        self._setup_openssl()
-        self._cert_request()
-        self._generate_otp_secret()
-        self.commit()
-        self._cert_create()
-        self._clean_openssl()
+        pool_user_id = None
+        if self.type == CERT_CLIENT:
+            pool_user_id = cache_db.set_pop(
+                self.org.get_cache_key('users_client_pool'))
+        elif self.type == CERT_SERVER:
+            pool_user_id = cache_db.set_pop(
+                self.org.get_cache_key('users_server_pool'))
 
-        if self.type != CERT_CA:
+        if pool_user_id:
+            self.id = pool_user_id
+            self.commit()
+        else:
+            self._setup_openssl()
+            self._cert_request()
+            self._generate_otp_secret()
+            self.commit()
+            self._cert_create()
+            self._clean_openssl()
+
+        if self.type == CERT_CLIENT_POOL:
+            cache_db.set_add(
+                self.org.get_cache_key('users_client_pool'), self.id)
+        elif self.type == CERT_SERVER_POOL:
+            cache_db.set_add(
+                self.org.get_cache_key('users_server_pool'), self.id)
+        elif self.type != CERT_CA:
             cache_db.set_add(self.org.get_cache_key('users'), self.id)
             self._add_cache_trie_key()
 
-        self.org.sort_users_cache()
-        if self.type == CERT_CLIENT:
-            LogEntry(message='Created new user "%s".' % self.name)
+            self.org.sort_users_cache()
+            if self.type == CERT_CLIENT:
+                LogEntry(message='Created new user "%s".' % self.name)
 
-            for server in self.org.iter_servers():
-                server.update_ip_pool()
+                for server in self.org.iter_servers():
+                    server.update_ip_pool()
 
-        Event(type=ORGS_UPDATED)
-        Event(type=USERS_UPDATED, resource_id=self.org.id)
-        Event(type=SERVERS_UPDATED)
+            Event(type=ORGS_UPDATED)
+            Event(type=USERS_UPDATED, resource_id=self.org.id)
+            Event(type=SERVERS_UPDATED)
 
     def _add_cache_trie_key(self):
         users_trie = CacheTrie(self.org.get_cache_key('users_trie'))
@@ -163,7 +185,7 @@ class User(Config):
                 '-config', self.ssl_conf_path,
                 '-out', self.reqs_path,
                 '-keyout', self.key_path,
-                '-reqexts', '%s_req_ext' % self.type,
+                '-reqexts', '%s_req_ext' % self.type.replace('_pool', ''),
             ]
             subprocess.check_call(args, stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE)
@@ -184,7 +206,7 @@ class User(Config):
                 '-config', self.ssl_conf_path,
                 '-in', self.reqs_path,
                 '-out', self.cert_path,
-                '-extensions', '%s_ext' % self.type,
+                '-extensions', '%s_ext' % self.type.replace('_pool', ''),
             ]
             subprocess.check_call(args, stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE)

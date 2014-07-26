@@ -124,6 +124,8 @@ CA_CERT_ID = 'ca'
 CERT_CA = 'ca'
 CERT_SERVER = 'server'
 CERT_CLIENT = 'client'
+CERT_SERVER_POOL = 'server_pool'
+CERT_CLIENT_POOL = 'client_pool'
 
 ORGS_UPDATED = 'organizations_updated'
 USERS_UPDATED = 'users_updated'
