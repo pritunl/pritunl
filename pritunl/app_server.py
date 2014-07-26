@@ -336,6 +336,10 @@ class AppServer(Config):
         for server in Server.iter_servers():
             server.load()
 
+    def _setup_pooler(self):
+        from pooler import Pooler
+        Pooler().start()
+
     def _setup_all(self):
         self._setup_app()
         self._setup_conf()
@@ -347,6 +351,7 @@ class AppServer(Config):
         self._setup_handlers()
         self._upgrade_data()
         self._fill_cache()
+        self._setup_pooler()
 
     def _setup_server_cert(self):
         if self.server_cert_path and self.server_key_path:
