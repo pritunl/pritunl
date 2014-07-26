@@ -112,6 +112,7 @@ class User(Config):
                 self.org.get_cache_key('users_server_pool'))
 
         if pool_user_id:
+            cache_db.publish('users_pool', 'update')
             self.id = pool_user_id
             self.commit()
         else:

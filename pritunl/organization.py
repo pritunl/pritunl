@@ -48,6 +48,12 @@ class Organization(Config):
             return False
         elif name == 'user_count':
             return self._get_user_count()
+        elif name == 'client_pool_count':
+            self._cache_users()
+            return cache_db.set_length(self.get_cache_key('users_client_pool'))
+        elif name == 'server_pool_size':
+            self._cache_users()
+            return cache_db.set_length(self.get_cache_key('users_server_pool'))
         elif name == 'page_total':
             return int(cache_db.get(self.get_cache_key('users_page_total')))
         return Config.__getattr__(self, name)
@@ -84,6 +90,7 @@ class Organization(Config):
             self.ca_cert = User(self, type=CERT_CA)
             cache_db.set_add('orgs', self.id)
             self.commit()
+            cache_db.publish('users_pool', 'update')
             LogEntry(message='Created new organization "%s".' % self.name)
         except:
             logger.exception('Failed to create organization. %r' % {
@@ -109,6 +116,8 @@ class Organization(Config):
         cache_db.decrement('org_count')
         cache_db.remove(self.get_cache_key('users_cached'))
         cache_db.remove(self.get_cache_key('users'))
+        cache_db.remove(self.get_cache_key('users_client_pool'))
+        cache_db.remove(self.get_cache_key('users_server_pool'))
         cache_db.remove(self.get_cache_key('user_count'))
         cache_db.remove(self.get_cache_key('users_sorted'))
         cache_db.remove(self.get_cache_key('users_page_index'))
