@@ -19,6 +19,7 @@ TRANSACTION_METHODS = {
     'expire',
     'set_add',
     'set_remove',
+    'set_pop',
     'list_lpush',
     'list_rpush',
     'list_lpop',
