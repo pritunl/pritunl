@@ -40,8 +40,8 @@ class Pooler:
         try:
             pass
         except:
-            logger.exception('Error filling servers pool.')
-            time.sleep(30)
+            logger.exception('Error filling servers pool, retying...')
+            time.sleep(3)
             self._fill_servers()
 
     def _fill_servers_thread(self):
