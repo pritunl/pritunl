@@ -155,6 +155,17 @@ class Cache:
             except (KeyError, AttributeError):
                 pass
 
+    def set_pop(self, key):
+        value = None
+        data = self._data.get(key)
+        if data:
+            try:
+                value = data['val'].pop()
+                self._put_queue()
+            except (KeyError, AttributeError):
+                pass
+        return value
+
     def set_exists(self, key, element):
         data = self._data.get(key)
         if data:
@@ -212,11 +223,10 @@ class Cache:
         if data:
             try:
                 value = data['val'].popleft()
+                self._put_queue()
             except (AttributeError, IndexError):
                 pass
-        if value:
-            self._put_queue()
-            return value
+        return value
 
     def list_rpop(self, key):
         value = None
@@ -224,11 +234,10 @@ class Cache:
         if data:
             try:
                 value = data['val'].pop()
+                self._put_queue()
             except (AttributeError, IndexError):
                 pass
-        if value:
-            self._put_queue()
-            return value
+        return value
 
     def list_index(self, key, index):
         data = self._data.get(key)
