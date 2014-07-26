@@ -466,13 +466,19 @@ class Server(Config):
             'server_id': self.id,
         })
         self._rebuild_dh_params = False
-        args = [
-            'openssl', 'dhparam',
-            '-out', self.dh_param_path,
-            str(self.dh_param_bits),
-        ]
-        subprocess.check_call(args, stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE)
+
+        dh_pool_path = cache_db.set_pop('dh_pool_%s' % self.dh_param_bits)
+        if dh_pool_path:
+            cache_db.publish('servers_pool', 'update')
+            os.rename(dh_pool_path, self.dh_param_path)
+        else:
+            args = [
+                'openssl', 'dhparam',
+                '-out', self.dh_param_path,
+                str(self.dh_param_bits),
+            ]
+            subprocess.check_call(args, stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE)
 
     def _parse_network(self, network):
         network_split = network.split('/')
