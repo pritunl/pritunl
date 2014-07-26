@@ -469,7 +469,7 @@ class Server(Config):
         args = [
             'openssl', 'dhparam',
             '-out', self.dh_param_path,
-            str(self.dh_param_bits)
+            str(self.dh_param_bits),
         ]
         subprocess.check_call(args, stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
