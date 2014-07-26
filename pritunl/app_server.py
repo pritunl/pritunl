@@ -25,7 +25,8 @@ class AppServer(Config):
     bool_options = {'debug', 'log_debug', 'auto_start_servers',
         'get_public_ip', 'get_notifications', 'inline_certs', 'ssl',
         'static_cache'}
-    int_options = {'port', 'session_timeout', 'key_bits', 'dh_param_bits'}
+    int_options = {'port', 'session_timeout', 'key_bits', 'dh_param_bits',
+        'user_pool_size', 'server_pool_size'}
     path_options = {'log_path', 'db_path', 'www_path', 'data_path',
         'server_cert_path', 'server_key_path'}
     str_options = {'bind_addr', 'password', 'public_ip_server',
@@ -42,6 +43,8 @@ class AppServer(Config):
         'session_timeout': DEFAULT_SESSION_TIMEOUT,
         'key_bits': DEFAULT_KEY_BITS,
         'dh_param_bits': DEFAULT_DH_PARAM_BITS,
+        'user_pool_size': DEFAULT_USER_POOL_SIZE,
+        'server_pool_size': DEFAULT_SERVER_POOL_SIZE,
         'db_path': DEFAULT_DB_PATH,
         'www_path': DEFAULT_WWW_PATH,
         'data_path': DEFAULT_DATA_PATH,
