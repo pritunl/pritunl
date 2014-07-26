@@ -34,8 +34,31 @@ define([
       }
       view.destroy();
     },
-    onSelect: function(view) {
-      this.trigger('select', view);
+    onSelect: function(view, shiftKey) {
+      var i;
+      var curView;
+      var select = false;
+      var lastSelected = this.lastSelected;
+      if (lastSelected && shiftKey && lastSelected.getSelect()) {
+        for (i = 0; i < this.views.length; i++) {
+          curView = this.views[i];
+
+          if (!select && (curView === lastSelected || curView === view)) {
+            select = true;
+          }
+          else if (select && (curView === lastSelected || curView === view)) {
+            break;
+          }
+
+          if (select) {
+            this.views[i].setSelect(true);
+          }
+        }
+      }
+      else {
+        this.trigger('select', view);
+      }
+      this.lastSelected = view;
     },
     buildItem: function(model) {
       var modelView = new UsersListItemView({

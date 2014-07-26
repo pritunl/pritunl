@@ -167,7 +167,7 @@ define([
     getSelect: function() {
       return this.$('.selector').hasClass('selected');
     },
-    setSelect: function(state) {
+    setSelect: function(state, shiftKey) {
       if (state) {
         this.$('.selector').addClass('selected');
         this.$('.selector-inner').show();
@@ -176,10 +176,10 @@ define([
         this.$('.selector').removeClass('selected');
         this.$('.selector-inner').hide();
       }
-      this.trigger('select', this);
+      this.trigger('select', this, shiftKey);
     },
-    onSelect: function() {
-      this.setSelect(!this.getSelect());
+    onSelect: function(evt) {
+      this.setSelect(!this.getSelect(), evt.shiftKey);
     },
     onRename: function() {
       var modal = new ModalRenameUserView({
