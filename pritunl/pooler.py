@@ -6,6 +6,9 @@ from organization import Organization
 import logging
 import time
 import threading
+import uuid
+import subprocess
+import os
 
 logger = logging.getLogger(APP_NAME)
 
@@ -13,6 +16,48 @@ class Pooler:
     def __init__(self):
         self._users_thread = None
         self._servers_thread = None
+
+        self.dh_pool_path = os.path.join(app_server.data_path, DH_POOL_DIR)
+        if not os.path.exists(self.dh_pool_path):
+            os.makedirs(self.dh_pool_path)
+
+        for dh_param in os.listdir(self.dh_pool_path):
+            dh_param_path = os.path.join(self.dh_pool_path, dh_param)
+
+            dh_param_split = dh_param.split('_')
+            if len(dh_param_split) != 2:
+                logger.warning(
+                    'Invalid dh param name in pool, skipping... %r' % {
+                        'path': dh_param_path
+                    })
+                continue
+
+            dh_param_bits, dh_param_id = dh_param_split
+            try:
+                dh_param_bits = int(dh_param_bits)
+            except ValueError:
+                logger.warning(
+                    'Invalid dh param size in pool, skipping... %r' % {
+                        'path': dh_param_path
+                    })
+                continue
+
+            if dh_param_bits not in VALID_DH_PARAM_BITS:
+                logger.warning(
+                    'Unknown dh param size in pool, skipping... %r' % {
+                        'path': dh_param_path
+                    })
+                continue
+
+            if len(dh_param_id) != 32 or not dh_param_id.isalnum() or \
+                    not dh_param_id.islower():
+                logger.warning(
+                    'Invalid dh param id in pool, skipping... %r' % {
+                        'path': dh_param_path
+                    })
+                continue
+
+            cache_db.set_add('dh_pool_%s' % dh_param_bits, dh_param_path)
 
     def _fill_users(self):
         try:
@@ -38,7 +83,30 @@ class Pooler:
 
     def _fill_servers(self):
         try:
-            pass
+            for dh_param_bits in ('1536', '2048'):
+                dh_pool_size = cache_db.set_length(
+                    'dh_pool_%s' % dh_param_bits)
+
+                for _ in xrange(app_server.server_pool_size - dh_pool_size):
+                    dh_param_path = os.path.join(self.dh_pool_path,
+                        '%s_%s' % (dh_param_bits, uuid.uuid4().hex))
+                    try:
+                        args = [
+                            'openssl', 'dhparam',
+                            '-out', dh_param_path,
+                            dh_param_bits,
+                        ]
+                        subprocess.check_call(args, stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
+                    except:
+                        try:
+                            os.remove(dh_param_path)
+                        except:
+                            pass
+                        raise
+
+                    cache_db.set_add(
+                        'dh_pool_%s' % dh_param_bits, dh_param_path)
         except:
             logger.exception('Error filling servers pool, retying...')
             time.sleep(3)
