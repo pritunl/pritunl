@@ -24,7 +24,7 @@ class AppServer(Config):
     # deprecated = password, dh_param_bits
     bool_options = {'debug', 'log_debug', 'auto_start_servers',
         'get_public_ip', 'get_notifications', 'inline_certs', 'ssl',
-        'static_cache'}
+        'static_cache', 'pooler'}
     int_options = {'port', 'session_timeout', 'key_bits', 'dh_param_bits',
         'user_pool_size', 'server_pool_size'}
     path_options = {'log_path', 'db_path', 'www_path', 'data_path',
@@ -44,6 +44,7 @@ class AppServer(Config):
         'session_timeout': DEFAULT_SESSION_TIMEOUT,
         'key_bits': DEFAULT_KEY_BITS,
         'dh_param_bits': DEFAULT_DH_PARAM_BITS,
+        'pooler': True,
         'user_pool_size': DEFAULT_USER_POOL_SIZE,
         'server_pool_size': DEFAULT_SERVER_POOL_SIZE,
         'dh_param_bits_pool': DEFAULT_DH_PARAM_BITS_POOL,
@@ -339,8 +340,9 @@ class AppServer(Config):
             server.load()
 
     def _setup_pooler(self):
-        from pooler import Pooler
-        Pooler().start()
+        if self.pooler:
+            from pooler import Pooler
+            Pooler().start()
 
     def _setup_all(self):
         self._setup_app()
