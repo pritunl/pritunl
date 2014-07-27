@@ -214,7 +214,6 @@ class Organization(Config):
                     user = User.get_user(self, id=user_id)
                     if not user:
                         continue
-                    user._add_cache_trie_key()
                     if user.type == CERT_CLIENT_POOL:
                         cache_db.set_add(
                             self.get_cache_key('users_client_pool'), user_id)
@@ -222,6 +221,7 @@ class Organization(Config):
                         cache_db.set_add(
                             self.get_cache_key('users_server_pool'), user_id)
                     else:
+                        user._add_cache_trie_key()
                         cache_db.set_add(
                             self.get_cache_key('users'), user_id)
             self.sort_users_cache()
