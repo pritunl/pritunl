@@ -44,6 +44,9 @@ define([
         backdrop: this.safeClose ? 'static' : true,
         keyboard: this.safeClose ? false : true,
       });
+      this.$('.modal').one('shown.bs.modal', function() {
+        this.$('[autofocus]').focus();
+      }.bind(this));
       this.$('[data-toggle="tooltip"]').tooltip();
       $('body').append(this.el);
       if (this.inputMatch) {
