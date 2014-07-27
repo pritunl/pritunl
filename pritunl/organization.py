@@ -34,13 +34,16 @@ class Organization(Config):
         else:
             self.id = id
 
-        self.path = os.path.join(app_server.data_path, ORGS_DIR, self.id)
-        self.set_path(os.path.join(self.path, 'ca.conf'))
-
         if id is None:
             self._initialize()
 
         self.ca_cert = User.get_user(self, id=CA_CERT_ID)
+
+    def __setattr__(self, name, value):
+        if name == 'id':
+            self.path = os.path.join(app_server.data_path, ORGS_DIR, value)
+            self.set_path(os.path.join(self.path, 'ca.conf'))
+        Config.__setattr__(self, name, value)
 
     def __getattr__(self, name):
         if name == 'otp_auth':
