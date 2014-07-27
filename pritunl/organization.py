@@ -124,12 +124,15 @@ class Organization(Config):
         os.makedirs(os.path.join(self.path, TEMP_DIR))
 
     def clear_cache(self):
-        for user in self.iter_users():
-            user.clear_cache(org_data=False)
-        self.ca_cert.clear_cache(org_data=False)
         cache_db.set_remove('orgs', self.id)
         cache_db.list_remove('orgs_sorted', self.id)
-        cache_db.decrement('org_count')
+        if not self.pool:
+            cache_db.decrement('org_count')
+        for user in self.iter_users():
+            user.clear_cache(org_data=False)
+        for user in self.iter_users_pool():
+            user.clear_cache(org_data=False)
+        self.ca_cert.clear_cache(org_data=False)
         cache_db.remove(self.get_cache_key('users_cached'))
         cache_db.remove(self.get_cache_key('users'))
         cache_db.remove(self.get_cache_key('users_client_pool'))
@@ -288,6 +291,13 @@ class Organization(Config):
         else:
             for user_id in cache_db.list_iter(
                     self.get_cache_key('users_sorted')):
+                user = User.get_user(self, id=user_id)
+                if user:
+                    yield user
+
+    def iter_users_pool(self):
+        for pool in ('users_client_pool', 'users_server_pool'):
+            for user_id in cache_db.set_iter(self.get_cache_key(pool)):
                 user = User.get_user(self, id=user_id)
                 if user:
                     yield user
