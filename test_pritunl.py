@@ -167,6 +167,7 @@ class SessionTestCase(unittest.TestCase):
                 response = self.session.delete('/user/%s/%s' % (
                     self.org_id, user['id']))
                 self.assertEqual(response.status_code, 200)
+                time.sleep(0.1)
 
 
         response = self.session.get('/server')
@@ -228,6 +229,7 @@ class SessionTestCase(unittest.TestCase):
                 'name': TEST_USER_NAME,
             })
             self.assertEqual(response.status_code, 200)
+            time.sleep(0.1)
 
             data = response.json()
             self.assertIn('id', data)
@@ -1107,6 +1109,7 @@ class User(SessionTestCase):
             'disabled': True,
         })
         self.assertEqual(response.status_code, 200)
+        time.sleep(0.1)
 
         data = response.json()
         self.assertIn('id', data)
@@ -1129,6 +1132,7 @@ class User(SessionTestCase):
                 'name': TEST_USER_NAME + '3',
             })
         self.assertEqual(response.status_code, 200)
+        time.sleep(0.1)
 
         data = response.json()
         self.assertIn('id', data)
@@ -1150,6 +1154,7 @@ class User(SessionTestCase):
                 'disabled': False,
             })
         self.assertEqual(response.status_code, 200)
+        time.sleep(0.1)
 
         data = response.json()
         self.assertIn('id', data)
@@ -1194,6 +1199,7 @@ class User(SessionTestCase):
 
         response = self.session.delete('/user/%s/%s' % (self.org_id, user_id))
         self.assertEqual(response.status_code, 200)
+        time.sleep(0.1)
 
     @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_user_otp_secret_put(self):
@@ -1212,6 +1218,7 @@ class User(SessionTestCase):
         response = self.session.put('/user/%s/%s/otp_secret' % (
             self.org_id, self.user_id))
         self.assertEqual(response.status_code, 200)
+        time.sleep(0.1)
 
         data = response.json()
         self.assertIn('id', data)
@@ -1236,6 +1243,7 @@ class Stress(SessionTestCase):
             'name': name,
         })
         self.assertEqual(response.status_code, 200)
+        time.sleep(0.1)
 
         data = response.json()
         self.assertIn('id', data)
