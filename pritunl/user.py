@@ -553,7 +553,7 @@ class User(Config):
 
         if type == CERT_CLIENT:
             for server in self.org.iter_servers():
-                server.update_ip_pool()
+                server.update_ip_pool(silent=True)
 
         Event(type=ORGS_UPDATED)
         Event(type=USERS_UPDATED, resource_id=self.org.id)
