@@ -222,11 +222,14 @@ class Server(Config):
             pool['network'] = self.network
             ip_pool_file.write(json.dumps(pool))
 
-    def update_ip_pool(self, silent=False):
+    def update_ip_pool(self, reset=False, silent=False):
         cache_key = self.get_cache_key('ip_pool')
         set_cache_key = self.get_cache_key('ip_pool_set')
         cache_db.lock_acquire(cache_key)
         try:
+            if reset:
+                cache_db.remove(cache_key)
+                cache_db.remove(set_cache_key)
             ip_pool = ipaddress.IPv4Network(self.network).iterhosts()
             ip_pool.next()
 
@@ -331,11 +334,9 @@ class Server(Config):
     def commit(self):
         if self._rebuild_dh_params:
             self._generate_dh_param()
-        if self._reset_ip_pool:
-            cache_db.remove(self.get_cache_key('ip_pool'))
-            cache_db.remove(self.get_cache_key('ip_pool_set'))
-            self.queue_update_ip_pool(server_id=self.id)
         Config.commit(self)
+        if self._reset_ip_pool:
+            self.queue_update_ip_pool(server_id=self.id, reset=True)
         self.sort_servers_cache()
         Event(type=SERVERS_UPDATED)
 
@@ -1302,19 +1303,20 @@ class Server(Config):
             while True:
                 for msg in cache_db.subscribe('ip_pool_queue'):
                     if msg[:6] == 'update':
-                        _, org_id, server_id = msg.split(':')
+                        _, org_id, server_id, reset = msg.split(':')
+                        reset = True if reset == 't' else False
                         if org_id:
                             org = Organization.get_org(id=org_id)
                             if org:
                                 for server in org.iter_servers():
-                                    server.update_ip_pool()
+                                    server.update_ip_pool(reset=reset)
                         if server_id:
                             server = Server.get_server(id=server_id)
                             if server:
-                                server.update_ip_pool()
+                                server.update_ip_pool(reset=reset)
                         if not org_id and not server_id:
                             for server in cls.iter_servers():
-                                server.update_ip_pool()
+                                server.update_ip_pool(reset=reset)
         except:
             logger.exception('Exception in ip pool queue.')
 
@@ -1325,5 +1327,6 @@ class Server(Config):
         thread.start()
 
     @classmethod
-    def queue_update_ip_pool(cls, org_id='', server_id=''):
-        cache_db.publish('ip_pool_queue', 'update:%s:%s' % (org_id, server_id))
+    def queue_update_ip_pool(cls, org_id='', server_id='', reset=False):
+        cache_db.publish('ip_pool_queue',
+            'update:%s:%s:%s' % (org_id, server_id, 't' if reset else 'f'))
