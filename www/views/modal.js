@@ -16,12 +16,14 @@ define([
       'keyup input': 'onInputChange',
       'paste input': 'onInputChange',
       'input input': 'onInputChange',
+      'keypress .modal': 'onKeydown',
       'shown.bs.modal .modal': 'onModalShown',
       'propertychange input': 'onInputChange'
     },
     title: '',
     okText: 'Ok',
     cancelText: 'Cancel',
+    enterOk: true,
     safeClose: false,
     body: function() {
       return '';
@@ -154,6 +156,11 @@ define([
       this.clearAlert();
       this.clearLoading();
       this.$('.modal').modal('hide');
+    },
+    onKeydown: function(evt) {
+      if (evt.keyCode === 13 && this.enterOk) {
+        this.onOk();
+      }
     },
     onModalShown: function() {
       this.$('[autofocus]').focus();
