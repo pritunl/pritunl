@@ -8,7 +8,7 @@ Improve email key links
 Add additional non-enterprise features
 Fix issues with authentication script errors
 Add rotating log files
-Pre-pool certs and dh params for instant user and server creation
+Pre-pool certs and dh params for instant org, user and server creation
 
 Version 0.10.10 2014-07-01
 --------------------------
