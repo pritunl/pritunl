@@ -8,7 +8,6 @@ define([
 ], function($, _, Backbone, UserModel, ModalView, modalAddUserTemplate) {
   'use strict';
   var lastOrg;
-
   var ModalAddUserView = ModalView.extend({
     className: 'add-user-modal',
     template: _.template(modalAddUserTemplate),
