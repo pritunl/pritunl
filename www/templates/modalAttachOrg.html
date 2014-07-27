@@ -10,7 +10,7 @@
   <label>Select a server</label>
   <select class="form-control">
     <% _.each(servers, function(server) { %>
-      <option value="<%- server.id %>"><%- server.name %></option>
+      <option value="<%- server.id %>" <%= (lastServer === server.id) ? 'selected' : '' %>><%- server.name %></option>
     <% }); %>
   </select>
 </div>

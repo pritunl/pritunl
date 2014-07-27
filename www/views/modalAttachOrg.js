@@ -8,6 +8,7 @@ define([
 ], function($, _, Backbone, ServerOrgModel, ModalView,
     modalAttachOrgTemplate) {
   'use strict';
+  var lastServer;
   var ModalAttachOrgView = ModalView.extend({
     className: 'attach-org-modal',
     template: _.template(modalAttachOrgTemplate),
@@ -20,15 +21,18 @@ define([
     body: function() {
       return this.template({
         orgs: this.orgs.toJSON(),
-        servers: this.collection.toJSON()
+        servers: this.collection.toJSON(),
+        lastServer: lastServer
       });
     },
     onOk: function() {
       this.setLoading('Attaching organization...');
       var model = new ServerOrgModel();
+      var server = this.$('.server select').val();
+      lastServer = server;
       model.save({
         id: this.$('.org select').val(),
-        server: this.$('.server select').val()
+        server: server
       }, {
         success: function() {
           this.close(true);
