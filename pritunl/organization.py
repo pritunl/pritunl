@@ -495,3 +495,33 @@ class Organization(Config):
             org = Organization.get_org(id=org_id)
             if org:
                 yield org
+
+    @classmethod
+    def _sort_users_queue_thread(cls):
+        try:
+            for msg in cache_db.subscribe('sort_users_queue'):
+                if msg == 'update':
+                    while True:
+                        org_id = cache_db.set_pop('sort_users_queues')
+                        if not org_id:
+                            break
+                        org = Organization.get_org(id=org_id)
+                        if org:
+                            org.sort_users_cache()
+                            Event(type=ORGS_UPDATED)
+                            Event(type=USERS_UPDATED, resource_id=org.id)
+                            Event(type=SERVERS_UPDATED)
+        except:
+            logger.exception('Exception in sort users queue.')
+            cls._ip_pool_queue_thread()
+
+    @classmethod
+    def setup_sort_users_queue(cls):
+        thread = threading.Thread(target=cls._sort_users_queue_thread)
+        thread.daemon = True
+        thread.start()
+
+    def queue_sort_users_cache(self):
+        # Remove overlap sort users updates
+        cache_db.set_add('sort_users_queues', self.id)
+        cache_db.publish('sort_users_queue', 'update')

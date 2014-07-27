@@ -349,6 +349,9 @@ class AppServer(Config):
         from server import Server
         Server.setup_ip_pool_queue()
 
+        from organization import Organization
+        Organization.setup_sort_users_queue()
+
     def _setup_all(self):
         self._setup_app()
         self._setup_conf()
