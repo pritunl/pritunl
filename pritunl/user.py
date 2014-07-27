@@ -554,10 +554,12 @@ class User(Config):
         user = User(org, id=id)
         try:
             user.load()
-        except IOError:
-            logger.exception('Failed to load user conf. %r' % {
-                'org_id': org.id,
-                'user_id': id,
-            })
+        except IOError as exception:
+            # File not found will happen when cached user list update is queued
+            if exception.errno != 2:
+                logger.exception('Failed to load user conf. %r' % {
+                    'org_id': org.id,
+                    'user_id': id,
+                })
             return
         return user
