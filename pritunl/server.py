@@ -1301,30 +1301,35 @@ class Server(Config):
     def _ip_pool_queue_thread(cls):
         try:
             for msg in cache_db.subscribe('ip_pool_queue'):
-                if msg[:6] == 'update':
-                    _, org_id, server_id, reset = msg.split(':')
-                    reset = True if reset == 't' else False
-                    if org_id:
-                        org = Organization.get_org(id=org_id)
-                        if org:
-                            for server in org.iter_servers():
+                if msg == 'update':
+                    while True:
+                        operation = cache_db.set_pop('ip_pool_queues')
+                        if not operation:
+                            break
+                        org_id, server_id, reset = operation.split(':')
+                        reset = True if reset == 't' else False
+                        if org_id:
+                            org = Organization.get_org(id=org_id)
+                            if org:
+                                for server in org.iter_servers():
+                                    try:
+                                        server.update_ip_pool(reset=reset)
+                                    except:
+                                        logger.exception(
+                                            'Update ip pool error.')
+                        if server_id:
+                            server = Server.get_server(id=server_id)
+                            if server:
                                 try:
                                     server.update_ip_pool(reset=reset)
                                 except:
-                                    logger.debug('Update ip pool error.')
-                    if server_id:
-                        server = Server.get_server(id=server_id)
-                        if server:
-                            try:
-                                server.update_ip_pool(reset=reset)
-                            except:
-                                logger.debug('Update ip pool error.')
-                    if not org_id and not server_id:
-                        for server in cls.iter_servers():
-                            try:
-                                server.update_ip_pool(reset=reset)
-                            except:
-                                logger.debug('Update ip pool error.')
+                                    logger.exception('Update ip pool error.')
+                        if not org_id and not server_id:
+                            for server in cls.iter_servers():
+                                try:
+                                    server.update_ip_pool(reset=reset)
+                                except:
+                                    logger.exception('Update ip pool error.')
         except:
             logger.exception('Exception in ip pool queue.')
             cls._ip_pool_queue_thread()
@@ -1337,5 +1342,7 @@ class Server(Config):
 
     @classmethod
     def queue_update_ip_pool(cls, org_id='', server_id='', reset=False):
-        cache_db.publish('ip_pool_queue',
-            'update:%s:%s:%s' % (org_id, server_id, 't' if reset else 'f'))
+        # Remove overlap ip pool updates
+        cache_db.set_add('ip_pool_queues',
+            '%s:%s:%s' % (org_id, server_id, 't' if reset else 'f'))
+        cache_db.publish('ip_pool_queue', 'update')
