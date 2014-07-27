@@ -16,7 +16,7 @@ define([
       'keyup input': 'onInputChange',
       'paste input': 'onInputChange',
       'input input': 'onInputChange',
-      'keypress .modal': 'onKeydown',
+      'keypress .modal': 'onKeypress',
       'shown.bs.modal .modal': 'onModalShown',
       'propertychange input': 'onInputChange'
     },
@@ -157,7 +157,7 @@ define([
       this.clearLoading();
       this.$('.modal').modal('hide');
     },
-    onKeydown: function(evt) {
+    onKeypress: function(evt) {
       if (evt.keyCode === 13 && this.enterOk) {
         this.onOk();
       }
