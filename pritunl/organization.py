@@ -90,13 +90,24 @@ class Organization(Config):
         utils.rmtree(os.path.join(self.path, 'indexed_certs'))
 
     def _initialize(self):
-        self._make_dirs()
+        pool_org_id = None
+        if not self.pool:
+            pool_org_id = cache_db.set_pop('orgs_pool')
+        if pool_org_id:
+            self.id = pool_org_id
+        else:
+            self._make_dirs()
         try:
-            self.ca_cert = User(self, type=CERT_CA)
-            cache_db.set_add('orgs', self.id)
+            if not pool_org_id:
+                self.ca_cert = User(self, type=CERT_CA)
+            if self.pool:
+                cache_db.set_add('orgs_pool', self.id)
+            else:
+                cache_db.set_add('orgs', self.id)
             self.commit()
             cache_db.publish('users_pool', 'update')
-            LogEntry(message='Created new organization "%s".' % self.name)
+            if not self.pool:
+                LogEntry(message='Created new organization "%s".' % self.name)
         except:
             logger.exception('Failed to create organization. %r' % {
                 'org_id': self.id,
@@ -383,8 +394,9 @@ class Organization(Config):
 
     def commit(self):
         Config.commit(self)
-        self.sort_orgs_cache()
-        Event(type=ORGS_UPDATED)
+        if not self.pool:
+            self.sort_orgs_cache()
+            Event(type=ORGS_UPDATED)
 
     @classmethod
     def get_org(cls, id):
