@@ -505,6 +505,7 @@ class User(Config):
 
     def remove(self):
         self.clear_cache()
+        self.org.sort_users_cache()
         name = self.name
         type = self.type
 
