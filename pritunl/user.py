@@ -489,7 +489,7 @@ class User(Config):
                 cache_db.set_remove(self.org.get_cache_key('users'), self.id)
                 cache_db.list_remove(self.org.get_cache_key('users_sorted'),
                     self.id)
-        if self.type != CERT_CA:
+        if self.type in (CERT_CLIENT, CERT_SERVER):
             self._remove_cache_trie_key()
         cache_db.remove(self.get_cache_key('otp'))
         cache_db.remove(self.get_cache_key('otp_cache'))
