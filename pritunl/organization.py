@@ -19,16 +19,18 @@ logger = logging.getLogger(APP_NAME)
 
 class Organization(Config):
     str_options = {'name'}
+    bool_options = {'pool'}
     cached = True
     cache_prefix = 'org'
 
-    def __init__(self, id=None, name=None):
+    def __init__(self, id=None, name=None, pool=None):
         Config.__init__(self)
         self._last_prefix_count = None
 
         if id is None:
             self.id = uuid.uuid4().hex
             self.name = name
+            self.pool = pool
         else:
             self.id = id
 
