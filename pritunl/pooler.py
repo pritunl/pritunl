@@ -9,6 +9,7 @@ import threading
 import uuid
 import subprocess
 import os
+import itertools
 
 logger = logging.getLogger(APP_NAME)
 
@@ -61,16 +62,22 @@ class Pooler:
 
     def _fill_users(self):
         try:
-            for org in Organization.iter_orgs():
+            for _ in xrange(app_server.org_pool_size -
+                    Organization.get_org_pool_count()):
+                Organization(pool=True)
+
+            for org in itertools.chain(
+                    Organization.iter_orgs(), Organization.iter_orgs_pool()):
                 for _ in xrange(
                         app_server.user_pool_size - org.client_pool_count):
                     org.new_user(type=CERT_CLIENT_POOL)
                 for _ in xrange(
                         app_server.server_pool_size - org.server_pool_size):
                     org.new_user(type=CERT_SERVER_POOL)
+
         except:
             # Exception can occur when org is deleted whiling filling
-            logger.exception('Error filling users pool, retying...')
+            logger.debug('Error filling users pool, retying...')
             time.sleep(3)
             self._fill_users()
 
