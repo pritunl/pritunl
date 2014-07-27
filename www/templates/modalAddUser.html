@@ -6,7 +6,7 @@
   <label>Select an organization</label>
   <select class="form-control">
     <% _.each(orgs, function(org) { %>
-      <option value="<%- org.id %>"><%- org.name %></option>
+      <option value="<%- org.id %>" <%= (lastOrg === org.id) ? 'selected' : '' %>><%- org.name %></option>
     <% }); %>
   </select>
 </div>

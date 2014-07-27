@@ -7,6 +7,8 @@ define([
   'text!templates/modalAddUser.html'
 ], function($, _, Backbone, UserModel, ModalView, modalAddUserTemplate) {
   'use strict';
+  var lastOrg;
+
   var ModalAddUserView = ModalView.extend({
     className: 'add-user-modal',
     template: _.template(modalAddUserTemplate),
@@ -18,7 +20,8 @@ define([
     },
     body: function() {
       return this.template({
-        orgs: this.orgs.toJSON()
+        orgs: this.orgs.toJSON(),
+        lastOrg: lastOrg
       });
     },
     onOk: function() {
@@ -38,6 +41,7 @@ define([
         this.setAlert('danger', 'Email is not valid.', '.form-group.email');
         return;
       }
+      lastOrg = org;
 
       this.setLoading('Adding user...');
       var userModel = new UserModel();
