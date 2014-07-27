@@ -222,7 +222,7 @@ class Server(Config):
             pool['network'] = self.network
             ip_pool_file.write(json.dumps(pool))
 
-    def update_ip_pool(self):
+    def update_ip_pool(self, silent=False):
         cache_key = self.get_cache_key('ip_pool')
         set_cache_key = self.get_cache_key('ip_pool_set')
         cache_db.lock_acquire(cache_key)
@@ -264,8 +264,9 @@ class Server(Config):
                 pass
             finally:
                 self._commit_ip_pool()
-                for org in self.iter_orgs():
-                    Event(type=USERS_UPDATED, resource_id=org.id)
+                if not silent:
+                    for org in self.iter_orgs():
+                        Event(type=USERS_UPDATED, resource_id=org.id)
         finally:
             cache_db.lock_release(cache_key)
 
