@@ -502,12 +502,17 @@ class Organization(Config):
             for msg in cache_db.subscribe('sort_users_queue'):
                 if msg == 'update':
                     while True:
-                        org_id = cache_db.set_pop('sort_users_queues')
-                        if not org_id:
+                        operation = cache_db.set_pop('sort_users_queues')
+                        if not operation:
                             break
+                        org_id, update_ip_pool = operation.split(':')
+                        update_ip_pool = True if update_ip_pool == 't' \
+                            else False
                         org = Organization.get_org(id=org_id)
                         if org:
                             org.sort_users_cache()
+                            if update_ip_pool:
+                                org.update_ip_pool()
                             Event(type=ORGS_UPDATED)
                             Event(type=USERS_UPDATED, resource_id=org.id)
                             Event(type=SERVERS_UPDATED)
@@ -521,7 +526,8 @@ class Organization(Config):
         thread.daemon = True
         thread.start()
 
-    def queue_sort_users_cache(self):
+    def queue_sort_users_cache(self, update_ip_pool=False):
         # Remove overlap sort users updates
-        cache_db.set_add('sort_users_queues', self.id)
+        cache_db.set_add('sort_users_queues',
+            '%s:%s' % (self.id, 't' if update_ip_pool else 'f'))
         cache_db.publish('sort_users_queue', 'update')

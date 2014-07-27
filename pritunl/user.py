@@ -133,10 +133,9 @@ class User(Config):
             cache_db.set_add(self.org.get_cache_key('users'), self.id)
             self._add_cache_trie_key()
 
-            self.org.queue_sort_users_cache()
+            self.org.queue_sort_users_cache(update_ip_pool=True)
             if self.type == CERT_CLIENT:
                 LogEntry(message='Created new user "%s".' % self.name)
-                self.org.update_ip_pool()
 
     def _add_cache_trie_key(self):
         users_trie = CacheTrie(self.org.get_cache_key('users_trie'))
@@ -499,9 +498,9 @@ class User(Config):
 
     def remove(self):
         self.clear_cache()
-        self.org.queue_sort_users_cache()
         name = self.name
         type = self.type
+        self.org.queue_sort_users_cache(update_ip_pool=(type == CERT_CLIENT))
 
         try:
             os.remove(self.reqs_path)
@@ -544,9 +543,6 @@ class User(Config):
             })
 
         self._clean_openssl()
-
-        if type == CERT_CLIENT:
-            self.org.update_ip_pool()
 
         Event(type=ORGS_UPDATED)
         Event(type=USERS_UPDATED, resource_id=self.org.id)
