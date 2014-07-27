@@ -382,6 +382,10 @@ class Organization(Config):
             if self.id in server.organizations:
                 yield server
 
+    def update_ip_pool(self):
+        from server import Server
+        Server.queue_update_ip_pool(org_id=self.id)
+
     def new_user(self, type, name=None, email=None):
         return User(self, name=name, email=email, type=type)
 

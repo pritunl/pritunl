@@ -136,9 +136,7 @@ class User(Config):
             self.org.sort_users_cache()
             if self.type == CERT_CLIENT:
                 LogEntry(message='Created new user "%s".' % self.name)
-
-                for server in self.org.iter_servers():
-                    server.update_ip_pool(silent=True)
+                self.org.update_ip_pool()
 
             Event(type=ORGS_UPDATED)
             Event(type=USERS_UPDATED, resource_id=self.org.id)
@@ -552,8 +550,7 @@ class User(Config):
         self._clean_openssl()
 
         if type == CERT_CLIENT:
-            for server in self.org.iter_servers():
-                server.update_ip_pool(silent=True)
+            self.org.update_ip_pool()
 
         Event(type=ORGS_UPDATED)
         Event(type=USERS_UPDATED, resource_id=self.org.id)
