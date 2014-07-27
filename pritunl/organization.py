@@ -450,10 +450,16 @@ class Organization(Config):
     def _cache_orgs(cls):
         if cache_db.get('orgs_cached') != 't':
             cache_db.remove('orgs')
+            cache_db.remove('orgs_pool')
             path = os.path.join(app_server.data_path, ORGS_DIR)
             if os.path.isdir(path):
                 for org_id in os.listdir(path):
-                    cache_db.set_add('orgs', org_id)
+                    org = Organization.get_org(id=org_id)
+                    if org:
+                        if org.pool:
+                            cache_db.set_add('orgs_pool', org_id)
+                        else:
+                            cache_db.set_add('orgs', org_id)
             cls.sort_orgs_cache()
             cache_db.set('orgs_cached', 't')
 
@@ -467,9 +473,21 @@ class Organization(Config):
         return org_count
 
     @classmethod
+    def get_org_pool_count(cls):
+        return cache_db.set_length('orgs_pool')
+
+    @classmethod
     def iter_orgs(cls):
         cls._cache_orgs()
         for org_id in cache_db.list_iter('orgs_sorted'):
+            org = Organization.get_org(id=org_id)
+            if org:
+                yield org
+
+    @classmethod
+    def iter_orgs_pool(cls):
+        cls._cache_orgs()
+        for org_id in cache_db.set_iter('orgs_pool'):
             org = Organization.get_org(id=org_id)
             if org:
                 yield org
