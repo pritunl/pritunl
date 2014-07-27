@@ -97,7 +97,17 @@ def check_session():
     return auth_valid
 
 def rmtree(path):
-    subprocess.check_call(['rm', '-rf', path])
+    logged = False
+    for _ in xrange(10):
+        try:
+            subprocess.check_call(['rm', '-rf', path])
+            return
+        except subprocess.CalledProcessError:
+            time.sleep(0.01)
+            if not logged:
+                logged = True
+                logger.exception('Remove tree error, retrying...')
+    raise
 
 def ip_to_long(ip_str):
     ip = ip_str.split('.')
