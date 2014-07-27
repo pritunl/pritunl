@@ -16,6 +16,7 @@ define([
       'keyup input': 'onInputChange',
       'paste input': 'onInputChange',
       'input input': 'onInputChange',
+      'shown.bs.modal .modal': 'onModalShown',
       'propertychange input': 'onInputChange'
     },
     title: '',
@@ -44,9 +45,6 @@ define([
         backdrop: this.safeClose ? 'static' : true,
         keyboard: this.safeClose ? false : true,
       });
-      this.$('.modal').one('shown.bs.modal', function() {
-        this.$('[autofocus]').focus();
-      }.bind(this));
       this.$('[data-toggle="tooltip"]').tooltip();
       $('body').append(this.el);
       if (this.inputMatch) {
@@ -156,6 +154,9 @@ define([
       this.clearAlert();
       this.clearLoading();
       this.$('.modal').modal('hide');
+    },
+    onModalShown: function() {
+      this.$('[autofocus]').focus();
     },
     onOk: function() {
       this.close();
