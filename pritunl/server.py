@@ -1300,25 +1300,34 @@ class Server(Config):
     @classmethod
     def _ip_pool_queue_thread(cls):
         try:
-            while True:
-                for msg in cache_db.subscribe('ip_pool_queue'):
-                    if msg[:6] == 'update':
-                        _, org_id, server_id, reset = msg.split(':')
-                        reset = True if reset == 't' else False
-                        if org_id:
-                            org = Organization.get_org(id=org_id)
-                            if org:
-                                for server in org.iter_servers():
+            for msg in cache_db.subscribe('ip_pool_queue'):
+                if msg[:6] == 'update':
+                    _, org_id, server_id, reset = msg.split(':')
+                    reset = True if reset == 't' else False
+                    if org_id:
+                        org = Organization.get_org(id=org_id)
+                        if org:
+                            for server in org.iter_servers():
+                                try:
                                     server.update_ip_pool(reset=reset)
-                        if server_id:
-                            server = Server.get_server(id=server_id)
-                            if server:
+                                except:
+                                    logger.debug('Update ip pool error.')
+                    if server_id:
+                        server = Server.get_server(id=server_id)
+                        if server:
+                            try:
                                 server.update_ip_pool(reset=reset)
-                        if not org_id and not server_id:
-                            for server in cls.iter_servers():
+                            except:
+                                logger.debug('Update ip pool error.')
+                    if not org_id and not server_id:
+                        for server in cls.iter_servers():
+                            try:
                                 server.update_ip_pool(reset=reset)
+                            except:
+                                logger.debug('Update ip pool error.')
         except:
             logger.exception('Exception in ip pool queue.')
+            cls._ip_pool_queue_thread()
 
     @classmethod
     def setup_ip_pool_queue(cls):
