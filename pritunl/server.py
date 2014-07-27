@@ -334,7 +334,7 @@ class Server(Config):
         if self._reset_ip_pool:
             cache_db.remove(self.get_cache_key('ip_pool'))
             cache_db.remove(self.get_cache_key('ip_pool_set'))
-            self.update_ip_pool()
+            self.queue_update_ip_pool(server_id=self.id)
         Config.commit(self)
         self.sort_servers_cache()
         Event(type=SERVERS_UPDATED)
@@ -377,7 +377,7 @@ class Server(Config):
             return org
         self.organizations.append(org.id)
         self.commit()
-        self.update_ip_pool()
+        self.queue_update_ip_pool(server_id=self.id)
         Event(type=SERVERS_UPDATED)
         Event(type=SERVER_ORGS_UPDATED, resource_id=self.id)
         Event(type=USERS_UPDATED, resource_id=org_id)
@@ -418,7 +418,7 @@ class Server(Config):
             self._remove_primary_user()
         self.organizations.remove(org_id)
         self.commit()
-        self.update_ip_pool()
+        self.queue_update_ip_pool(server_id=self.id)
         Event(type=SERVERS_UPDATED)
         Event(type=SERVER_ORGS_UPDATED, resource_id=self.id)
         Event(type=USERS_UPDATED, resource_id=org_id)
@@ -1295,3 +1295,35 @@ class Server(Config):
             server = cls.get_server(id=server_id, type=server_type)
             if server:
                 yield server
+
+    @classmethod
+    def _ip_pool_queue_thread(cls):
+        try:
+            while True:
+                for msg in cache_db.subscribe('ip_pool_queue'):
+                    if msg[:6] == 'update':
+                        _, org_id, server_id = msg.split(':')
+                        if org_id:
+                            org = Organization.get_org(id=org_id)
+                            if org:
+                                for server in org.iter_servers():
+                                    server.update_ip_pool()
+                        if server_id:
+                            server = Server.get_server(id=server_id)
+                            if server:
+                                server.update_ip_pool()
+                        if not org_id and not server_id:
+                            for server in cls.iter_servers():
+                                server.update_ip_pool()
+        except:
+            logger.exception('Exception in ip pool queue.')
+
+    @classmethod
+    def setup_ip_pool_queue(cls):
+        thread = threading.Thread(target=cls._ip_pool_queue_thread)
+        thread.daemon = True
+        thread.start()
+
+    @classmethod
+    def queue_update_ip_pool(cls, org_id='', server_id=''):
+        cache_db.publish('ip_pool_queue', 'update:%s:%s' % (org_id, server_id))
