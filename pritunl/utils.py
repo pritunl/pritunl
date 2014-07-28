@@ -15,6 +15,9 @@ import os
 import hmac
 import uuid
 import datetime
+import logging
+
+logger = logging.getLogger(APP_NAME)
 
 def jsonify(data=None, status_code=None):
     if not isinstance(data, basestring):
