@@ -46,7 +46,10 @@ class CacheTrie(object):
                 if not keys[cur_key]:
                     keys.pop(cur_key, None)
             cur_key = new_key
-        values[cur_key].remove(value)
+        try:
+            values[cur_key].remove(value)
+        except KeyError:
+            pass
         if not values[cur_key]:
             values.pop(cur_key, None)
 
