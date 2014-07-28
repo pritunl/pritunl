@@ -11,6 +11,7 @@ Add rotating log files
 Pre-pool certs and dh params for instant org, user and server creation
 Queue cache updates for faster org and server changes
 Improve interface usability
+Add bulk add users
 
 Version 0.10.10 2014-07-01
 --------------------------
