@@ -48,6 +48,7 @@ define([
             select = true;
           }
           else if (select && (curView === lastSelected || curView === view)) {
+            this.views[i].setSelect(true);
             break;
           }
 
@@ -56,9 +57,7 @@ define([
           }
         }
       }
-      else {
-        this.trigger('select', view);
-      }
+      this.trigger('select', view);
       this.lastSelected = view;
     },
     buildItem: function(model) {
