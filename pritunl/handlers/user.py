@@ -98,18 +98,34 @@ def user_get(org_id, user_id=None, page=None):
 @app_server.auth
 def user_post(org_id):
     org = Organization.get_org(id=org_id)
-    name = utils.filter_str(flask.request.json['name'])
-    email = None
-    if 'email' in flask.request.json:
-        email = utils.filter_str(flask.request.json['email'])
-    user = org.new_user(type=CERT_CLIENT, name=name, email=email)
 
-    disabled = flask.request.json.get('disabled')
-    if disabled is not None:
-        user.disabled = disabled
-        user.commit()
+    if isinstance(flask.request.json, list):
+        users = []
+        for user_data in flask.request.json:
+            name = utils.filter_str(user_data['name'])
+            email = utils.filter_str(user_data.get('email'))
+            user = org.new_user(type=CERT_CLIENT, name=name, email=email)
 
-    return utils.jsonify(user.dict())
+            disabled = user_data.get('disabled')
+            if disabled is not None:
+                user.disabled = disabled
+                user.commit()
+
+            users.append(user.dict())
+        return utils.jsonify(users)
+    else:
+        name = utils.filter_str(flask.request.json['name'])
+        email = None
+        if 'email' in flask.request.json:
+            email = utils.filter_str(flask.request.json['email'])
+        user = org.new_user(type=CERT_CLIENT, name=name, email=email)
+
+        disabled = flask.request.json.get('disabled')
+        if disabled is not None:
+            user.disabled = disabled
+            user.commit()
+
+        return utils.jsonify(user.dict())
 
 @app_server.app.route('/user/<org_id>/<user_id>', methods=['PUT'])
 @app_server.auth
