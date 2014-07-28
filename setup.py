@@ -6,6 +6,7 @@ import shlex
 import shutil
 import fileinput
 
+VERSION = '0.10.10'
 PATCH_DIR = 'build'
 INSTALL_UPSTART = True
 INSTALL_SYSTEMD = True
@@ -79,14 +80,14 @@ for file_name in patch_files:
 
 setup(
     name='pritunl',
-    version='0.10.10',
+    version=VERSION,
     description='Pritunl vpn server',
     long_description=open('README.rst').read(),
     author='Pritunl',
     author_email='contact@pritunl.com',
     url='https://github.com/pritunl/pritunl',
     download_url='https://github.com/pritunl/pritunl/archive/%s.tar.gz' % (
-        pritunl.__version__),
+        VERSION),
     keywords='openvpn, vpn, management, server, web interface',
     packages=['pritunl', 'pritunl.handlers'],
     license=open('LICENSE').read(),
