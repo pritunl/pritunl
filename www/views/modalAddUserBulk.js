@@ -42,7 +42,7 @@ define([
         }
         if (userLine[1] && !emailReg.test(userLine[1])) {
           this.setAlert('danger', 'Email "' + userLine[1] + '" not valid.',
-            '.users textarea');
+            '.form-group.users');
           return;
         }
         model.addUser(userLine[0], userLine[1])
