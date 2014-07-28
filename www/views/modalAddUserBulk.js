@@ -45,7 +45,7 @@ define([
             '.form-group.users');
           return;
         }
-        model.addUser(userLine[0], userLine[1])
+        model.addUser(userLine[0], userLine[1]);
       }
       lastOrg = org;
 
