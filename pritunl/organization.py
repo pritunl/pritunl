@@ -280,12 +280,12 @@ class Organization(Config):
                 user = User.get_user(self, id=user_id)
                 if not user:
                     continue
-                yield user
                 if prefix_limit and user_type == CERT_CLIENT:
                     user_count += 1
-                    if user_count >= prefix_limit:
+                    if user_count > prefix_limit:
                         search_more = True
                         break
+                yield user
             if prefix_limit and not search_more:
                 yield None
         else:
