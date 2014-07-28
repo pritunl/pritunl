@@ -7061,6 +7061,9 @@ fieldset[disabled] .form-control {
   background-color: #eed6d6;
   border-color: #e0a2ac;
 }
+.header-button {
+  margin-top: 2px;
+}
 .select2-drop {
   margin-top: -3px;
 }
@@ -7236,6 +7239,9 @@ fieldset[disabled] .form-control {
 .enterprise .navbar .enterprise-settings {
   display: block;
 }
+.enterprise-clear .navbar .enterprise-settings {
+  display: none;
+}
 .navbar .nav a {
   cursor: pointer;
 }
@@ -7392,6 +7398,12 @@ header.blur {
 .servers-list .servers-list-buttons {
   float: right;
   display: block;
+}
+.orgs-list .orgs-add-user-bulk {
+  display: none;
+}
+.enterprise .orgs-list .orgs-add-user-bulk {
+  display: inline-block;
 }
 .orgs-list .orgs-email-selected {
   display: none;
@@ -8100,6 +8112,11 @@ header.blur {
   -moz-box-shadow: 0px 0px 14px #b6b6b6;
   -o-box-shadow: 0px 0px 14px #b6b6b6;
   box-shadow: 0px 0px 14px #b6b6b6;
+}
+.add-user-bulk-modal .modal textarea {
+  width: 100%;
+  resize: none;
+  font-family: 'Lucida Console', Monaco, monospace;
 }
 .subscribe-modal .modal .subscribe-buttons,
 .enterprise-modal .modal .enterprise-buttons {
