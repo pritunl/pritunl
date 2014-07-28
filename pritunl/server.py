@@ -949,6 +949,8 @@ class Server(Config):
         self._event_delay(type=SERVER_OUTPUT_UPDATED, resource_id=self.id)
 
     def push_output(self, output):
+        if not app_server.server_log_lines:
+            return
         cache_db.list_rpush(self.get_cache_key('output'), output.rstrip('\n'))
         clear_lines = cache_db.list_length(self.get_cache_key('output')) - \
             app_server.server_log_lines
