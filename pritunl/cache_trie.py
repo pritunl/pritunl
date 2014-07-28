@@ -1,6 +1,12 @@
 from constants import *
 from cache import cache_db
+import collections
 import re
+
+_keys = collections.defaultdict(
+    lambda: collections.defaultdict(lambda: collections.Counter()))
+_values = collections.defaultdict(
+    lambda: collections.defaultdict(lambda: set()))
 
 class CacheTrie(object):
     __slots__ = ('name', 'key')
@@ -10,62 +16,55 @@ class CacheTrie(object):
         self.key = key
 
     def clear_cache(self):
-        cache_db.remove(self.get_cache_key())
-        cache_db.remove(self.get_cache_key('values'))
-
-    def get_cache_key(self, suffix=None):
-        key = '%s_%s' % (self.name, self.key)
-        if suffix is not None:
-            key += '_' + suffix
-        return key
-
-    def get_nodes(self):
-        return cache_db.set_elements(self.get_cache_key())
-
-    def add_value(self, value):
-        cache_db.set_add(self.get_cache_key('values'), value)
-
-    def get_values(self):
-        return cache_db.set_elements(self.get_cache_key('values'))
+        _keys.pop(self.name, None)
+        _values.pop(self.name, None)
 
     def add_key(self, key, value):
-        name = self.name + '_'
+        keys = _keys[self.name]
         cur_key = self.key
         new_key = cur_key
         for char in key.lower():
             new_key += char
-            cache_db.set_add(name + cur_key, new_key)
+            keys[cur_key][new_key] += 1
             cur_key = new_key
-        cache_db.set_add(name + cur_key + '_values', value)
+        _values[self.name][cur_key].add(value)
 
     def add_key_terms(self, key, value):
         for term in re.split('[^a-z0-9]', key.lower()):
             self.add_key(term, value)
 
     def remove_key(self, key, value):
-        name = self.name + '_'
+        keys = _keys[self.name]
+        values = _values[self.name]
         cur_key = self.key
         new_key = cur_key
         for char in key.lower():
             new_key += char
-            name_key = name + cur_key
-            cache_db.set_remove(name_key, new_key)
-            if not cache_db.set_length(name_key):
-                cache_db.remove(name_key)
+            keys[cur_key][new_key] -= 1
+            if not keys[cur_key][new_key]:
+                keys[cur_key].pop(new_key, None)
+                if not keys[cur_key]:
+                    keys.pop(cur_key, None)
             cur_key = new_key
-        name_key = name + cur_key + '_values'
-        cache_db.set_remove(name_key, value)
-        if not cache_db.set_length(name_key):
-            cache_db.remove(name_key)
+        values[cur_key].remove(value)
+        if not values[cur_key]:
+            values.pop(cur_key, None)
 
-    def chain(self, values):
+    def remove_key_terms(self, key, value):
+        for term in re.split('[^a-z0-9]', key.lower()):
+            self.remove_key(term, value)
+
+    def chain(self, node_values):
         name = self.name
-        for node_key in self.get_nodes():
-            CacheTrie(name, node_key).chain(values)
-        node_values = self.get_values()
-        if node_values:
-            values.update(node_values)
-        return values
+        key = self.key
+        keys = _keys[name]
+        values = _values[name]
+        if key in keys:
+            for node_key in keys[key]:
+                CacheTrie(name, node_key).chain(node_values)
+        if key in values:
+            node_values.update(values[key])
+        return node_values
 
     def get_prefix(self, prefix):
         return CacheTrie(self.name, prefix.lower()).chain(set())
