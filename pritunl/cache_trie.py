@@ -32,6 +32,7 @@ class CacheTrie(object):
     def add_key_terms(self, key, value):
         for term in re.split('[^a-z0-9]', key.lower()):
             self.add_key(term, value)
+        self.add_key(key, value)
 
     def remove_key(self, key, value):
         keys = _keys[self.name]
@@ -56,6 +57,7 @@ class CacheTrie(object):
     def remove_key_terms(self, key, value):
         for term in re.split('[^a-z0-9]', key.lower()):
             self.remove_key(term, value)
+        self.remove_key(key, value)
 
     def chain(self, node_values):
         name = self.name
