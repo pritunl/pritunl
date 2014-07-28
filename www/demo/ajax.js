@@ -523,33 +523,65 @@ define([
   routes['GET=/user/<orgId>'] = userGet;
 
   var userPost = function(request, orgId) {
-    var userId = uuid();
+    var i;
+    var userId;
 
-    demoData.users[orgId][userId] = {
-      id: userId,
-      organization: orgId,
-      name: request.data.name,
-      email: request.data.email,
-      type: 'client',
-      status: false,
-      otp_auth: true,
-      otp_secret: secretKey(),
-      servers: [{
-        id: '5310c28eacaeb3bd2a172c9db9ee1379',
-        name: 'server1',
+    if (request.data instanceof Array) {
+      for (i = 0; i < request.data.length; i++) {
+        userId = uuid()
+        demoData.users[orgId][userId] = {
+          id: userId,
+          organization: orgId,
+          name: request.data[i].name,
+          email: request.data[i].email,
+          type: 'client',
+          status: false,
+          otp_auth: true,
+          otp_secret: secretKey(),
+          servers: [{
+            id: '5310c28eacaeb3bd2a172c9db9ee1379',
+            name: 'server1',
+            status: false,
+            local_address: '10.54.0.12',
+            remote_address: '10.54.0.13',
+            real_address: null,
+            virt_address: null,
+            bytes_received: null,
+            bytes_sent: null,
+            connected_since: null
+          }]
+        };
+        logEntry('Created new user "' + request.data[i].name + '".');
+      }
+    }
+    else {
+      userId = uuid();
+      demoData.users[orgId][userId] = {
+        id: userId,
+        organization: orgId,
+        name: request.data.name,
+        email: request.data.email,
+        type: 'client',
         status: false,
-        local_address: '10.54.0.12',
-        remote_address: '10.54.0.13',
-        real_address: null,
-        virt_address: null,
-        bytes_received: null,
-        bytes_sent: null,
-        connected_since: null
-      }]
-    };
+        otp_auth: true,
+        otp_secret: secretKey(),
+        servers: [{
+          id: '5310c28eacaeb3bd2a172c9db9ee1379',
+          name: 'server1',
+          status: false,
+          local_address: '10.54.0.12',
+          remote_address: '10.54.0.13',
+          real_address: null,
+          virt_address: null,
+          bytes_received: null,
+          bytes_sent: null,
+          connected_since: null
+        }]
+      };
+      logEntry('Created new user "' + request.data.name + '".');
+    }
 
     event('users_updated', orgId);
-    logEntry('Created new user "' + request.data.name + '".');
     request.response({});
   };
   routes['POST=/user/<orgId>'] = userPost;
