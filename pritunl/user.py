@@ -144,7 +144,7 @@ class User(Config):
 
     def _remove_cache_trie_key(self):
         users_trie = CacheTrie(self.org.get_cache_key('users_trie'))
-        users_trie.remove_key(self.name, '%s-%s-%s' % (
+        users_trie.remove_key_terms(self.name, '%s-%s-%s' % (
             self.id, self.type, self.name))
 
     def _setup_openssl(self):
