@@ -111,26 +111,32 @@ class Cache:
         self._put_queue()
 
     def increment(self, key):
+        value = '1'
         data = self._data.get(key)
         if data:
             try:
-                data['val'] = str(int(data['val']) + 1)
+                value = str(int(data['val']) + 1)
+                data['val'] = value
             except (TypeError, ValueError):
-                data['val'] = '1'
+                data['val'] = value
         else:
-            self._data[key]['val'] = '1'
+            self._data[key]['val'] = value
         self._put_queue()
+        return value
 
     def decrement(self, key):
+        value = '-1'
         data = self._data.get(key)
         if data:
             try:
-                data['val'] = str(int(data['val']) - 1)
+                value = str(int(data['val']) - 1)
+                data['val'] = value
             except (TypeError, ValueError):
-                data['val'] = '-1'
+                data['val'] = value
         else:
-            self._data[key]['val'] = '-1'
+            self._data[key]['val'] = value
         self._put_queue()
+        return value
 
     def keys(self):
         return set(self._data)
