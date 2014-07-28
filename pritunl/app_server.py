@@ -112,6 +112,8 @@ class AppServer(Config):
             logger.exception('Failed to get public ip address...')
 
     def subscription_update(self):
+        if SUB_OFF:
+            return
         cur_sub_active = self.sub_active
         license = persist_db.get('license')
         if not license:

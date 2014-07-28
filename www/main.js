@@ -300,9 +300,15 @@ require([
   model.fetch({
     url: '/subscription/state',
     success: function(model) {
-      window.enterprise = model.get('active');
-      if (window.enterprise) {
-        $('body').addClass('enterprise');
+      if (model.get('disabled')) {
+        window.enterprise = true;
+        $('body').addClass('enterprise enterprise-clear');
+      }
+      else {
+        window.enterprise = model.get('active');
+        if (window.enterprise) {
+          $('body').addClass('enterprise');
+        }
       }
       init();
     },
