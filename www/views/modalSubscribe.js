@@ -15,6 +15,7 @@ define([
     title: 'Enterprise Upgrade',
     cancelText: null,
     okText: 'Close',
+    enterOk: false,
     safeClose: true,
     events: function() {
       return _.extend({
