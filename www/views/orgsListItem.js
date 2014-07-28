@@ -17,10 +17,7 @@ define([
       'click .org-title': 'onRename',
       'click .org-del': 'onDelete',
       'click .toggle-hidden': 'onToggleHidden',
-      'keyup .org-search': 'onSearch',
-      'paste .org-search': 'onSearch',
-      'input .org-search': 'onSearch',
-      'propertychange .org-search': 'onSearch'
+      'input .org-search': 'onSearch'
     },
     initialize: function() {
       this.usersListView = new UsersListView({
@@ -91,18 +88,7 @@ define([
       this.usersListView.update();
     },
     onSearch: function(evt) {
-      var term = $(evt.target).val();
-      this.curSearchTerm = term;
-
-      setTimeout(function() {
-        if (term !== this.curSearchTerm) {
-          return;
-        }
-        if (this.curSearchTerm === '') {
-          term = null;
-        }
-        this.usersListView.search(term);
-      }.bind(this), 50);
+      this.usersListView.search($(evt.target).val() || null);
     }
   });
 
