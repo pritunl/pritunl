@@ -154,11 +154,11 @@ define([
         this.trigger('applied');
       }
       this.clearAlert();
-      this.clearLoading();
       this.$('.modal').modal('hide');
     },
     onKeypress: function(evt) {
-      if (evt.keyCode === 13 && this.enterOk) {
+      if (evt.keyCode === 13 && this.enterOk &&
+          !this.$('.ok').attr('disabled')) {
         this.onOk();
       }
     },
