@@ -168,6 +168,10 @@ define([
       return this.$('.selector').hasClass('selected');
     },
     setSelect: function(state, shiftKey) {
+      if (state === this.getSelect()) {
+        return;
+      }
+
       if (state) {
         this.$('.selector').addClass('selected');
         this.$('.selector-inner').show();
