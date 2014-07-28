@@ -9,12 +9,14 @@ define([
   'views/alert',
   'views/modalAddOrg',
   'views/modalAddUser',
+  'views/modalAddUserBulk',
   'views/modalDeleteUsers',
   'views/modalEmailUsers',
   'text!templates/orgsList.html'
 ], function($, _, Backbone, OrgCollection, UserCollection, ListView,
     OrgsListItemView, AlertView, ModalAddOrgView, ModalAddUserView,
-    ModalDeleteUsersView, ModalEmailUsersView, orgsListTemplate) {
+    ModalAddUserBulkView, ModalDeleteUsersView, ModalEmailUsersView,
+    orgsListTemplate) {
   'use strict';
   var OrgsListView = ListView.extend({
     listContainer: '.orgs-list-container',
@@ -23,6 +25,7 @@ define([
     events: {
       'click .orgs-add-org': 'onAddOrg',
       'click .orgs-add-user': 'onAddUser',
+      'click .orgs-add-user-bulk': 'onAddUserBulk',
       'click .orgs-del-selected': 'onDelSelected',
       'click .orgs-email-selected': 'onEmailSelected'
     },
@@ -63,6 +66,21 @@ define([
         var alertView = new AlertView({
           type: 'warning',
           message: 'Successfully added user.',
+          dismissable: true
+        });
+        $('.alerts-container').append(alertView.render().el);
+        this.addView(alertView);
+      }.bind(this));
+      this.addView(modal);
+    },
+    onAddUserBulk: function() {
+      var modal = new ModalAddUserBulkView({
+        orgs: this.collection
+      });
+      this.listenToOnce(modal, 'applied', function() {
+        var alertView = new AlertView({
+          type: 'warning',
+          message: 'Successfully added users.',
           dismissable: true
         });
         $('.alerts-container').append(alertView.render().el);
