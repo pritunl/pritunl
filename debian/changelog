@@ -4,7 +4,7 @@ pritunl (0.10.11-0ubuntu1) trusty; urgency=low
   * Add additional non-enterprise features
   * Fix issues with authentication script errors
   * Add rotating log files
-  * Pre-pool certs and dh params for instant org, user and server creation
+  * Pre-pool certs for instant org and user creation
   * Queue cache updates for faster org and server changes
   * Improve interface usability
   * Add bulk add users
