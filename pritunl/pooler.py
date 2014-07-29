@@ -71,8 +71,8 @@ class Pooler:
                 for _ in xrange(
                         app_server.user_pool_size - org.client_pool_count):
                     org.new_user(type=CERT_CLIENT_POOL)
-                for _ in xrange(
-                        app_server.server_pool_size - org.server_pool_size):
+                for _ in xrange(app_server.server_user_pool_size -
+                        org.server_pool_size):
                     org.new_user(type=CERT_SERVER_POOL)
 
         except:
