@@ -1,3 +1,17 @@
+pritunl (0.10.11-0ubuntu1) trusty; urgency=low
+
+  * Improve email key links
+  * Add additional non-enterprise features
+  * Fix issues with authentication script errors
+  * Add rotating log files
+  * Pre-pool certs and dh params for instant org, user and server creation
+  * Queue cache updates for faster org and server changes
+  * Improve interface usability
+  * Add bulk add users
+  * Improve search performance
+
+ -- Zachary Huff <zach.huff.386@gmail.com>  Tue, 29 Jul 2014 01:22:12 -0400
+
 pritunl (0.10.10-0ubuntu1) trusty; urgency=low
 
   * Add user setting to temporarily disable a user

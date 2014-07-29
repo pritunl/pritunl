@@ -1,6 +1,6 @@
 from constants import *
 __title__ = APP_NAME
-__version__ = '0.10.10'
+__version__ = '0.10.11'
 __author__ = 'Pritunl'
 __license__ = 'AGPL'
 __copyright__ = 'Copyright 2013-2014 Pritunl'
