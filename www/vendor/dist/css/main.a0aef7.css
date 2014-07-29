@@ -6934,16 +6934,6 @@ select:-moz-focusring {
 ul {
   padding-left: 30px;
 }
-::-webkit-scrollbar {
-  height: 8px;
-  width: 8px;
-}
-::-webkit-scrollbar-thumb {
-  background-color: #8f8f8f;
-}
-::-webkit-scrollbar-track {
-  background-color: #d1d1d1;
-}
 .form-control[disabled],
 .form-control[readonly],
 fieldset[disabled] .form-control {
