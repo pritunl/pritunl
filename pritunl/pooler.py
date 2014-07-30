@@ -15,7 +15,7 @@ logger = logging.getLogger(APP_NAME)
 
 class Pooler:
     def __init__(self):
-        self._users_thread = None
+        self._orgs_users_thread = None
         self._servers_thread = None
 
         self.dh_pool_path = os.path.join(app_server.data_path, DH_POOL_DIR)
@@ -60,60 +60,83 @@ class Pooler:
 
             cache_db.set_add('dh_pool_%s' % dh_param_bits, dh_param_path)
 
-    def _fill_users(self):
+    def _fill_orgs_pool(self):
+        for _ in xrange(app_server.org_pool_size -
+                Organization.get_org_pool_count()):
+            Organization(pool=True)
+
+    def _file_users_pool(self):
+        end = True
+        for org in itertools.chain(Organization.iter_orgs(),
+                Organization.iter_orgs_pool()):
+            if app_server.user_pool_size - org.client_pool_count > 0:
+                org.new_user(type=CERT_CLIENT_POOL)
+                end = False
+            if app_server.server_user_pool_size - org.server_pool_size > 0:
+                org.new_user(type=CERT_SERVER_POOL)
+                end = False
+        if not end:
+            self._file_users_pool()
+
+    def _fill_orgs_users(self):
+        retry = False
         try:
-            for _ in xrange(app_server.org_pool_size -
-                    Organization.get_org_pool_count()):
-                Organization(pool=True)
+            self._fill_orgs_pool()
+        except:
+            logger.exception('Error filling orgs pool, retying...')
+            retry = True
 
-            for org in itertools.chain(
-                    Organization.iter_orgs(), Organization.iter_orgs_pool()):
-                for _ in xrange(
-                        app_server.user_pool_size - org.client_pool_count):
-                    org.new_user(type=CERT_CLIENT_POOL)
-                for _ in xrange(app_server.server_user_pool_size -
-                        org.server_pool_size):
-                    org.new_user(type=CERT_SERVER_POOL)
-
+        try:
+            self._file_users_pool()
         except:
             # Exception can occur when org is deleted whiling filling
             logger.debug('Error filling users pool, retying...')
-            time.sleep(3)
-            self._fill_users()
+            retry = True
 
-    def _fill_users_thread(self):
-        self._fill_users()
+        if retry:
+            time.sleep(3)
+            self._fill_orgs_users()
+
+    def _fill_orgs_users_thread(self):
+        self._fill_orgs_users()
 
         for msg in cache_db.subscribe('users_pool'):
             if msg == 'update':
-                self._fill_users()
+                self._fill_orgs_users()
+
+    def _fill_servers_pool(self):
+        end = True
+        for dh_param_bits in app_server.dh_param_bits_pool:
+            dh_pool_size = cache_db.set_length(
+                'dh_pool_%s' % dh_param_bits)
+
+            if app_server.server_pool_size - dh_pool_size:
+                dh_param_path = os.path.join(self.dh_pool_path,
+                    '%s_%s' % (dh_param_bits, uuid.uuid4().hex))
+                try:
+                    args = [
+                        'openssl', 'dhparam',
+                        '-out', dh_param_path,
+                        dh_param_bits,
+                    ]
+                    subprocess.check_call(args, stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE)
+                except:
+                    try:
+                        os.remove(dh_param_path)
+                    except:
+                        pass
+                    raise
+
+                cache_db.set_add(
+                    'dh_pool_%s' % dh_param_bits, dh_param_path)
+                end = False
+        if not end:
+            self._fill_servers_pool()
 
     def _fill_servers(self):
         try:
-            for dh_param_bits in app_server.dh_param_bits_pool:
-                dh_pool_size = cache_db.set_length(
-                    'dh_pool_%s' % dh_param_bits)
-
-                for _ in xrange(app_server.server_pool_size - dh_pool_size):
-                    dh_param_path = os.path.join(self.dh_pool_path,
-                        '%s_%s' % (dh_param_bits, uuid.uuid4().hex))
-                    try:
-                        args = [
-                            'openssl', 'dhparam',
-                            '-out', dh_param_path,
-                            dh_param_bits,
-                        ]
-                        subprocess.check_call(args, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
-                    except:
-                        try:
-                            os.remove(dh_param_path)
-                        except:
-                            pass
-                        raise
-
-                    cache_db.set_add(
-                        'dh_pool_%s' % dh_param_bits, dh_param_path)
+            self._fill_servers_pool()
         except:
             logger.exception('Error filling servers pool, retying...')
             time.sleep(3)
@@ -127,12 +150,12 @@ class Pooler:
                 self._fill_servers()
 
     def start(self):
-        if self._users_thread or self._servers_thread:
+        if self._orgs_users_thread or self._servers_thread:
             return
-        self._users_thread = threading.Thread(
-            target=self._fill_users_thread)
-        self._users_thread.daemon = True
-        self._users_thread.start()
+        self._orgs_users_thread = threading.Thread(
+            target=self._fill_orgs_users_thread)
+        self._orgs_users_thread.daemon = True
+        self._orgs_users_thread.start()
         self._servers_thread = threading.Thread(
             target=self._fill_servers_thread)
         self._servers_thread.daemon = True
