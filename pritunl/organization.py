@@ -105,7 +105,7 @@ class Organization(Config):
             else:
                 cache_db.set_add('orgs', self.id)
             self.commit()
-            cache_db.publish('users_pool', 'update')
+            cache_db.publish('pooler', 'update')
             if not self.pool:
                 LogEntry(message='Created new organization "%s".' % self.name)
         except:

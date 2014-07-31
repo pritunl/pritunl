@@ -70,10 +70,13 @@ class Pooler:
         end = True
         for org in itertools.chain(Organization.iter_orgs(),
                 Organization.iter_orgs_pool()):
-            if app_server.user_pool_size - org.client_pool_count > 0:
+            if not cache_db.set_length('openssl_tasks') and \
+                    app_server.user_pool_size - org.client_pool_count > 0:
                 end = False
                 org.new_user(type=CERT_CLIENT_POOL)
-            if app_server.server_user_pool_size - org.server_pool_size > 0:
+            if not cache_db.set_length('openssl_tasks') and \
+                    app_server.server_user_pool_size - \
+                    org.server_pool_size > 0:
                 end = False
                 org.new_user(type=CERT_SERVER_POOL)
         if not end:
@@ -101,18 +104,18 @@ class Pooler:
     def _fill_orgs_users_thread(self):
         self._fill_orgs_users()
 
-        for msg in cache_db.subscribe('users_pool'):
+        for msg in cache_db.subscribe('pooler'):
             if msg == 'update':
                 self._fill_orgs_users()
 
     def _fill_servers_pool_listener(self, cache_key, dh_param_path, process):
-        for msg in cache_db.subscribe('dh_pooler'):
-            if msg == 'poll':
+        for msg in cache_db.subscribe('pooler'):
+            if msg == 'update':
                 if process.poll() is not None:
                     break
-                elif cache_db.set_length('dh_param_tasks') and \
+                elif cache_db.set_length('openssl_tasks') and \
                         cache_db.set_exists(cache_key, dh_param_path):
-                    # There is a running dhparam process started by the user
+                    # There is a running openssl process started by the user
                     # which takes priority over the pooler's dhparam process
                     if process.poll() is None:
                         process.terminate()
@@ -159,7 +162,7 @@ class Pooler:
 
                 logger.error('Openssl dhparam returned ' + \
                     'error exit code %r.' % exit_code)
-            cache_db.publish('dh_pooler', 'poll')
+            cache_db.publish('pooler', 'update')
 
     def _fill_servers_pool(self):
         end = True
@@ -167,7 +170,7 @@ class Pooler:
             dh_pool_size = cache_db.set_length('dh_pool_%s' % dh_param_bits)
 
             if app_server.server_pool_size - dh_pool_size and not \
-                    cache_db.set_length('dh_param_tasks'):
+                    cache_db.set_length('openssl_tasks'):
                 end = False
                 self._gen_dh_params(dh_param_bits)
         if not end:
@@ -184,7 +187,7 @@ class Pooler:
     def _fill_servers_thread(self):
         self._fill_servers()
 
-        for msg in cache_db.subscribe('servers_pool'):
+        for msg in cache_db.subscribe('pooler'):
             if msg == 'update':
                 self._fill_servers()
 

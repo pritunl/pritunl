@@ -480,17 +480,18 @@ class Server(Config):
                     self._generate_dh_param()
                     return
                 for msg in cache_db.subscribe('dh_pool', timeout=10):
-                    if msg == 'poll':
+                    if msg == 'update':
                         break
             if not os.path.exists(dh_pool_path):
                 self._generate_dh_param()
                 return
             os.rename(dh_pool_path, self.dh_param_path)
+            cache_db.publish('pooler', 'update')
         else:
+            task_id = uuid.uuid4().hex
             try:
-                task_id = uuid.uuid4().hex
-                cache_db.set_add('dh_param_tasks', task_id)
-                cache_db.publish('dh_pooler', 'poll')
+                cache_db.set_add('openssl_tasks', task_id)
+                cache_db.publish('pooler', 'update')
 
                 args = [
                     'openssl', 'dhparam',
@@ -500,9 +501,8 @@ class Server(Config):
                 subprocess.check_call(args, stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE)
             finally:
-                cache_db.set_remove('dh_param_tasks', task_id)
-                cache_db.publish('dh_pooler', 'poll')
-        cache_db.publish('servers_pool', 'update')
+                cache_db.set_remove('openssl_tasks', task_id)
+                cache_db.publish('pooler', 'update')
 
     def _parse_network(self, network):
         network_split = network.split('/')

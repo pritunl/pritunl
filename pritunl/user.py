@@ -112,15 +112,22 @@ class User(Config):
                 self.org.get_cache_key('users_server_pool'))
 
         if pool_user_id:
-            cache_db.publish('users_pool', 'update')
+            cache_db.publish('pooler', 'update')
             self.id = pool_user_id
             self.commit()
         else:
             self._setup_openssl()
-            self._cert_request()
-            self._generate_otp_secret()
-            self.commit()
-            self._cert_create()
+            task_id = uuid.uuid4().hex
+            try:
+                cache_db.set_add('openssl_tasks', task_id)
+                cache_db.publish('pooler', 'update')
+                self._cert_request()
+                self._generate_otp_secret()
+                self.commit()
+                self._cert_create()
+            finally:
+                cache_db.set_remove('openssl_tasks', task_id)
+                cache_db.publish('pooler', 'update')
             self._clean_openssl()
 
         if self.type == CERT_CLIENT_POOL:
