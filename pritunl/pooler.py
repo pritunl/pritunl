@@ -58,6 +58,7 @@ class Pooler:
                     })
                 continue
 
+            cache_db.dict_set('dh_pool_state', dh_param_path, COMPLETE)
             cache_db.set_add('dh_pool_%s' % dh_param_bits, dh_param_path)
 
     def _fill_orgs_pool(self):
@@ -65,18 +66,18 @@ class Pooler:
                 Organization.get_org_pool_count()):
             Organization(pool=True)
 
-    def _file_users_pool(self):
+    def _fill_users_pool(self):
         end = True
         for org in itertools.chain(Organization.iter_orgs(),
                 Organization.iter_orgs_pool()):
             if app_server.user_pool_size - org.client_pool_count > 0:
+                end = False
                 org.new_user(type=CERT_CLIENT_POOL)
-                end = False
             if app_server.server_user_pool_size - org.server_pool_size > 0:
-                org.new_user(type=CERT_SERVER_POOL)
                 end = False
+                org.new_user(type=CERT_SERVER_POOL)
         if not end:
-            self._file_users_pool()
+            self._fill_users_pool()
 
     def _fill_orgs_users(self):
         retry = False
@@ -87,7 +88,7 @@ class Pooler:
             retry = True
 
         try:
-            self._file_users_pool()
+            self._fill_users_pool()
         except:
             # Exception can occur when org is deleted whiling filling
             logger.debug('Error filling users pool, retying...')
@@ -104,33 +105,71 @@ class Pooler:
             if msg == 'update':
                 self._fill_orgs_users()
 
+    def _fill_servers_pool_listener(self, cache_key, dh_param_path, process):
+        for msg in cache_db.subscribe('dh_pooler'):
+            if msg == 'poll':
+                if process.poll() is not None:
+                    break
+                elif cache_db.set_length('dh_param_tasks') and \
+                        cache_db.set_exists(cache_key, dh_param_path):
+                    # There is a running dhparam process started by the user
+                    # which takes priority over the pooler's dhparam process
+                    if process.poll() is None:
+                        process.terminate()
+                        time.sleep(0.3)
+                        if process.poll() is None:
+                            process.kill()
+
+    def _gen_dh_params(self, dh_param_bits):
+        exit_code = None
+        cache_key = 'dh_pool_%s' % dh_param_bits
+        dh_param_path = os.path.join(self.dh_pool_path,
+            '%s_%s' % (dh_param_bits, uuid.uuid4().hex))
+        try:
+            cache_db.dict_set('dh_pool_state', dh_param_path, PENDING)
+            cache_db.set_add(cache_key, dh_param_path)
+
+            args = [
+                'openssl', 'dhparam',
+                '-out', dh_param_path,
+                dh_param_bits,
+            ]
+            process = subprocess.Popen(args, stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE)
+
+            listener_thread = threading.Thread(
+                target=self._fill_servers_pool_listener,
+                args=(cache_key, dh_param_path, process),
+            )
+            listener_thread.daemon = True
+            listener_thread.start()
+
+            exit_code = process.wait()
+        finally:
+            if exit_code == 0:
+                cache_db.dict_set('dh_pool_state', dh_param_path, COMPLETE)
+            else:
+                cache_db.set_remove(cache_key, dh_param_path)
+                cache_db.dict_remove('dh_pool_state', dh_param_path)
+
+                try:
+                    os.remove(dh_param_path)
+                except:
+                    pass
+
+                logger.error('Openssl dhparam returned ' + \
+                    'error exit code %r.' % exit_code)
+            cache_db.publish('dh_pooler', 'poll')
+
     def _fill_servers_pool(self):
         end = True
         for dh_param_bits in app_server.dh_param_bits_pool:
-            dh_pool_size = cache_db.set_length(
-                'dh_pool_%s' % dh_param_bits)
+            dh_pool_size = cache_db.set_length('dh_pool_%s' % dh_param_bits)
 
-            if app_server.server_pool_size - dh_pool_size:
-                dh_param_path = os.path.join(self.dh_pool_path,
-                    '%s_%s' % (dh_param_bits, uuid.uuid4().hex))
-                try:
-                    args = [
-                        'openssl', 'dhparam',
-                        '-out', dh_param_path,
-                        dh_param_bits,
-                    ]
-                    subprocess.check_call(args, stdout=subprocess.PIPE,
-                        stderr=subprocess.PIPE)
-                except:
-                    try:
-                        os.remove(dh_param_path)
-                    except:
-                        pass
-                    raise
-
-                cache_db.set_add(
-                    'dh_pool_%s' % dh_param_bits, dh_param_path)
+            if app_server.server_pool_size - dh_pool_size and not \
+                    cache_db.set_length('dh_param_tasks'):
                 end = False
+                self._gen_dh_params(dh_param_bits)
         if not end:
             self._fill_servers_pool()
 
