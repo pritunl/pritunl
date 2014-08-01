@@ -93,11 +93,11 @@ class Organization(Config):
         pool_org_id = None
         if not self.pool:
             pool_org_id = cache_db.set_pop('orgs_pool')
-        if pool_org_id:
-            self.id = pool_org_id
-        else:
-            self._make_dirs()
         try:
+            if pool_org_id:
+                self.id = pool_org_id
+            else:
+                self._make_dirs()
             if not pool_org_id:
                 self.ca_cert = User(self, type=CERT_CA)
             if self.pool:

@@ -75,6 +75,7 @@ class AppServer(Config):
         self.sub_amount = None
         self.sub_period_end = None
         self.sub_cancel_at_period_end = None
+        self.pooler_instance = None
         self.openssl_heartbleed = not utils.check_openssl()
         self.local_api_key = uuid.uuid4().hex
 
@@ -349,7 +350,8 @@ class AppServer(Config):
     def _setup_pooler(self):
         if self.pooler:
             from pooler import Pooler
-            Pooler().start()
+            self.pooler_instance = Pooler()
+            self.pooler_instance.start()
 
     def _setup_queues(self):
         from server import Server
@@ -401,7 +403,6 @@ class AppServer(Config):
     def _run_wsgi(self):
         if self.ssl:
             self._setup_server_cert()
-        from log_entry import LogEntry
         logger.info('Starting server...')
 
         if self.auto_start_servers:
@@ -433,12 +434,9 @@ class AppServer(Config):
         finally:
             signal.signal(signal.SIGINT, signal.SIG_IGN)
             logger.info('Stopping server...')
-            LogEntry(message='Web server stopped.')
-            self.interrupt = True
-            server.stop()
+            self._on_exit()
 
     def _run_wsgi_debug(self):
-        from log_entry import LogEntry
         logger.info('Starting debug server...')
 
         # App.run server uses werkzeug logger
@@ -456,8 +454,12 @@ class AppServer(Config):
         finally:
             signal.signal(signal.SIGINT, signal.SIG_IGN)
             logger.info('Stopping debug server...')
-            LogEntry(message='Web server stopped.')
-            self.interrupt = True
+            self._on_exit()
+
+    def _on_exit(self):
+        from log_entry import LogEntry
+        LogEntry(message='Web server stopped.')
+        self.interrupt = True
 
     def _run_server(self):
         from log_entry import LogEntry

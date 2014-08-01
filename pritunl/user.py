@@ -119,15 +119,17 @@ class User(Config):
             self._setup_openssl()
             task_id = uuid.uuid4().hex
             try:
-                cache_db.set_add('openssl_tasks', task_id)
-                cache_db.publish('pooler', 'update')
+                if self.type in (CERT_CLIENT, CERT_SERVER):
+                    cache_db.set_add('openssl_tasks', task_id)
+                    cache_db.publish('pooler', 'update')
                 self._cert_request()
                 self._generate_otp_secret()
                 self.commit()
                 self._cert_create()
             finally:
-                cache_db.set_remove('openssl_tasks', task_id)
-                cache_db.publish('pooler', 'update')
+                if self.type in (CERT_CLIENT, CERT_SERVER):
+                    cache_db.set_remove('openssl_tasks', task_id)
+                    cache_db.publish('pooler', 'update')
             self._clean_openssl()
 
         if self.type == CERT_CLIENT_POOL:

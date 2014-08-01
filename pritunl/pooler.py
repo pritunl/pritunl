@@ -106,7 +106,10 @@ class Pooler:
 
         for msg in cache_db.subscribe('pooler'):
             if msg == 'update':
+                time.sleep(1)
                 self._fill_orgs_users()
+            elif msg == 'stop':
+                return
 
     def _fill_servers_pool_listener(self, cache_key, dh_param_path, process):
         for msg in cache_db.subscribe('pooler'):
@@ -122,6 +125,9 @@ class Pooler:
                         time.sleep(0.3)
                         if process.poll() is None:
                             process.kill()
+            elif msg == 'stop':
+                process.kill()
+                return
 
     def _gen_dh_params(self, dh_param_bits):
         exit_code = None
@@ -189,7 +195,10 @@ class Pooler:
 
         for msg in cache_db.subscribe('pooler'):
             if msg == 'update':
+                time.sleep(2)
                 self._fill_servers()
+            elif msg == 'stop':
+                return
 
     def start(self):
         if self._orgs_users_thread or self._servers_thread:
@@ -202,3 +211,6 @@ class Pooler:
             target=self._fill_servers_thread)
         self._servers_thread.daemon = True
         self._servers_thread.start()
+
+    def stop(self):
+        cache_db.publish('pooler', 'stop')
