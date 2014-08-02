@@ -1,6 +1,11 @@
 Pritunl Changelog
 =================
 
+Version 0.10.12
+---------------
+
+Pre-pool dh params for instant server creation
+
 Version 0.10.11 2014-07-29
 --------------------------
 
