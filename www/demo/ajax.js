@@ -90,7 +90,10 @@ define([
   routes['GET=/subscription'] = subscriptionGet;
 
   var subscriptionStateGet = function(request) {
-    request.response({active: demoData.subscription.active});
+    request.response({
+      active: demoData.subscription.active,
+      disabled: true
+    });
   };
   routes['GET=/subscription/state'] = subscriptionStateGet;
 
