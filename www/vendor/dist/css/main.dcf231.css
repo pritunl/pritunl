@@ -7195,23 +7195,35 @@ fieldset[disabled] .form-control {
   cursor: default;
   color: #ececec;
 }
-.enterprise .login .login-header {
+.login .login-header.enterprise-header {
   display: none;
 }
-.login .login-header.enterprise-header {
+.enterprise .login .login-header {
   display: none;
 }
 .enterprise .login .login-header.enterprise-header {
   display: block;
 }
+.enterprise-clear .login .login-header {
+  display: block;
+}
+.enterprise-clear .login .login-header.enterprise-header {
+  display: none;
+}
+.navbar .navbar-brand.enterprise-brand {
+  display: none;
+}
 .enterprise .navbar .navbar-brand.brand {
   display: none;
 }
-.navbar .enterprise-brand.enterprise-brand {
-  display: none;
-}
-.enterprise .navbar .enterprise-brand.enterprise-brand {
+.enterprise .navbar .navbar-brand.enterprise-brand {
   display: block;
+}
+.enterprise-clear .navbar .navbar-brand.brand {
+  display: block;
+}
+.enterprise-clear .navbar .navbar-brand.enterprise-brand {
+  display: none;
 }
 .navbar .enterprise-upgrade a {
   padding-top: 13px;
