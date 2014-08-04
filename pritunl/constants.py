@@ -402,6 +402,10 @@ cert %s
 key %s
 verb 2
 mute 3
+nobind
+reneg-sec 604800
+sndbuf 100000
+rcvbuf 100000
 """
 
 OVPN_INLINE_CLIENT_CONF = """# %s
@@ -413,6 +417,10 @@ nobind
 persist-tun
 verb 2
 mute 3
+nobind
+reneg-sec 604800
+sndbuf 100000
+rcvbuf 100000
 """
 
 # Script will run in python 2 and 3
