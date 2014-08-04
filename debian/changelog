@@ -1,3 +1,10 @@
+pritunl (0.10.12-0ubuntu1) trusty; urgency=low
+
+  * Pre-pool dh params for instant server creation
+  * Improve client configurations
+
+ -- Zachary Huff <zach.huff.386@gmail.com>  Mon, 04 Aug 2014 13:31:04 -0400
+
 pritunl (0.10.11-0ubuntu1) trusty; urgency=low
 
   * Improve email key links
