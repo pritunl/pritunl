@@ -28,8 +28,10 @@ TRANSACTION_METHODS = {
     'dict_set',
     'dict_remove',
 }
+CHANNEL_TTL = 120
+CHANNEL_BUFFER = 128
 
-class Cache:
+class TunlDB:
     def __init__(self):
         self._path = None
         self._set_queue = Queue.Queue()
@@ -37,9 +39,9 @@ class Cache:
             lambda: {'ttl': None, 'val': None})
         self._timers = {}
         self._channels = collections.defaultdict(
-            lambda: {'subs': set(), 'msgs': collections.deque(maxlen=128)})
+            lambda: {'subs': set(), 'msgs': collections.deque(
+                maxlen=CHANNEL_BUFFER), 'timer': None})
         self._commit_log = []
-        self._locks = collections.defaultdict(lambda: threading.Lock())
 
     def _put_queue(self):
         if self._path:
@@ -101,10 +103,11 @@ class Cache:
         ttl_time = int(time.time() * 1000) + (ttl * 1000)
 
         cur_timer = self._timers.pop(key, None)
-        timer = threading.Timer(ttl, self.remove, (key,))
-        self._timers[key] = timer
         if cur_timer:
             cur_timer.cancel()
+        timer = threading.Timer(ttl, self.remove, (key,))
+        timer.daemon = True
+        self._timers[key] = timer
         timer.start()
 
         self._data[key]['ttl'] = ttl_time
@@ -383,6 +386,14 @@ class Cache:
                 pass
         return {}
 
+    def _clear_channel(self, channel):
+        if not self._channels[channel]['subs']:
+            self._channels.pop(channel, None)
+        else:
+            self._channels[channel]['timer'] = None
+            self._channels[channel]['msgs'] = collections.deque(
+                maxlen=CHANNEL_BUFFER)
+
     def subscribe(self, channel, timeout=None):
         event = threading.Event()
         self._channels[channel]['subs'].add(event)
@@ -392,44 +403,47 @@ class Cache:
             except IndexError:
                 cursor = None
             while True:
-                if not event.wait(timeout):
-                    break
-                event.clear()
                 if not cursor:
                     cursor_found = True
                 else:
                     cursor_found = False
+                if not event.wait(timeout):
+                    break
+                event.clear()
                 messages = copy.copy(self._channels[channel]['msgs'])
                 for message in messages:
                     if cursor_found:
                         yield message[1]
                     elif message[0] == cursor:
                         cursor_found = True
-                cursor = messages[-1][0]
+                if not cursor_found:
+                    for message in messages:
+                        yield message[1]
+                try:
+                    cursor = messages[-1][0]
+                except IndexError:
+                    cursor = None
         finally:
-            self._channels[channel]['subs'].remove(event)
+            try:
+                self._channels[channel]['subs'].remove(event)
+            except KeyError:
+                pass
 
     def publish(self, channel, message):
-        self._channels[channel]['msgs'].append(
-            (uuid.uuid4().hex, message))
+        cur_timer = self._channels[channel]['timer']
+        if cur_timer:
+            cur_timer.cancel()
+        timer = threading.Timer(CHANNEL_TTL, self._clear_channel, (channel,))
+        timer.daemon = True
+        self._channels[channel]['timer'] = timer
+        timer.start()
+
+        self._channels[channel]['msgs'].append((uuid.uuid4().hex, message))
         for subscriber in self._channels[channel]['subs'].copy():
             subscriber.set()
 
     def transaction(self):
-        return CacheTransaction(self)
-
-    def lock_acquire(self, key):
-        return self._locks[key].acquire()
-
-    def lock_release(self, key):
-        try:
-            self._locks[key].release()
-        except thread.error:
-            pass
-
-    def lock_remove(self, key):
-        self.lock_release(key)
-        self._locks.pop(key, None)
+        return TunlDBTransaction(self)
 
     def _apply_trans(self, trans):
         for call in trans[1]:
@@ -508,6 +522,7 @@ class Cache:
                         ttl = ttl / 1000.0
                         if ttl >= 0:
                             timer = threading.Timer(ttl, self.remove, (key,))
+                            timer.daemon = True
                             self._timers[key] = timer
                             timer.start()
                         else:
@@ -517,7 +532,7 @@ class Cache:
                     for tran in import_data['commit_log']:
                         self._apply_trans(tran)
 
-class CacheTransaction:
+class TunlDBTransaction:
     def __init__(self, cache):
         self._cache = cache
         self._trans = []
@@ -535,5 +550,5 @@ class CacheTransaction:
         self._trans = []
         self._cache._apply_trans(trans)
 
-cache_db = Cache()
-persist_db = Cache()
+cache_db = TunlDB()
+persist_db = TunlDB()
