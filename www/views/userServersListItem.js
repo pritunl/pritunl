@@ -27,6 +27,15 @@ define([
         this.$('.server-addr').hide();
       }
 
+      var addrReal = this.model.get('real_address');
+      if (addrReal) {
+        this.$('.server-real-addr .title').text(addrReal.split(':')[0]);
+        this.$('.server-real-addr').show();
+      }
+      else {
+        this.$('.server-real-addr').hide();
+      }
+
       if (this.model.get('bytes_sent')) {
         this.$('.server-sent .title').text(
           window.formatSize(this.model.get('bytes_sent')));
