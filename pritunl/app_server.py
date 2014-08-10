@@ -5,7 +5,6 @@ from config import Config
 import utils
 import flask
 import cherrypy.wsgiserver
-import cherrypy.wsgiserver.ssl_builtin
 import os
 import logging
 import logging.handlers
@@ -19,7 +18,24 @@ import base64
 import socket
 import uuid
 
+try:
+    import OpenSSL
+    import cherrypy.wsgiserver.ssl_pyopenssl
+    SSLAdapter = cherrypy.wsgiserver.ssl_pyopenssl.pyOpenSSLAdapter
+except ImportError:
+    import cherrypy.wsgiserver.ssl_builtin
+    SSLAdapter = cherrypy.wsgiserver.ssl_builtin.BuiltinSSLAdapter
+
 logger = None
+
+class HTTPConnectionPatch(cherrypy.wsgiserver.HTTPConnection):
+    def __init__(self, server, sock,
+            makefile=cherrypy.wsgiserver.CP_fileobject):
+        self.server = server
+        self.socket = sock
+        self.rfile = makefile(sock, "rb", self.rbufsize)
+        self.wfile = makefile(sock, "wb", self.wbufsize)
+        self.requests_seen = 0
 
 class AppServer(Config):
     # deprecated = password, dh_param_bits
@@ -421,9 +437,9 @@ class AppServer(Config):
             request_queue_size=SERVER_REQUEST_QUEUE_SIZE,
             server_name=cherrypy.wsgiserver.CherryPyWSGIServer.version)
         if self.ssl:
-            server.ssl_adapter = \
-                cherrypy.wsgiserver.ssl_builtin.BuiltinSSLAdapter(
-                    self._server_cert_path, self._server_key_path)
+            server.ConnectionClass = HTTPConnectionPatch
+            server.ssl_adapter = SSLAdapter(
+                self._server_cert_path, self._server_key_path)
         try:
             server.start()
         except (KeyboardInterrupt, SystemExit):
