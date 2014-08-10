@@ -15,7 +15,6 @@ def subscription_get():
 def subscription_state_get():
     app_server.subscription_update()
     return utils.jsonify({
-        'disabled': SUB_OFF,
         'active': app_server.sub_active,
     })
 
