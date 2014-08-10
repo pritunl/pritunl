@@ -7,7 +7,8 @@ Build-Depends: debhelper (>= 8.0.0),
                python-setuptools (>= 0.6b3),
                python-flask,
                python-cherrypy3,
-               python-crypto
+               python-crypto,
+               python-openssl
 Standards-Version: 3.9.4
 Homepage: http://pritunl.com/
 X-Python-Version: >= 2.7
@@ -19,6 +20,7 @@ Architecture: all
 Depends: python-flask,
          python-cherrypy3,
          python-crypto,
+         python-openssl,
          openvpn,
          iptables,
          ${misc:Depends},
