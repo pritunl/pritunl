@@ -55,7 +55,7 @@ define([
           success: function(options) {
             if (options.amount) {
               this.$('.subscribe-checkout').text('Subscribe $' +
-                (options.amount / 100).toFixed(2));
+                (options.amount / 100) + '/month');
             }
             this.configCheckout(options);
           }.bind(this),
@@ -93,6 +93,7 @@ define([
                 contentType: 'application/json',
                 dataType: 'json',
                 data: JSON.stringify({
+                  'plan': 'enterprise0',
                   'card': token.id,
                   'email': token.email
                 }),
