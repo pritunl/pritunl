@@ -35,6 +35,7 @@ backup=(
     "etc/${pkgname}.conf"
     "var/lib/${pkgname}/${pkgname}.db"
     "var/log/${pkgname}.log"
+    "var/log/${pkgname}.log.1"
 )
 
 build() {

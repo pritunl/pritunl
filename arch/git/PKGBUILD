@@ -37,6 +37,7 @@ backup=(
     "etc/${_pkgname}.conf"
     "var/lib/${_pkgname}/${_pkgname}.db"
     "var/log/${_pkgname}.log"
+    "var/log/${pkgname}.log.1"
 )
 
 pkgver() {
