@@ -33,8 +33,8 @@ class HTTPConnectionPatch(cherrypy.wsgiserver.HTTPConnection):
             makefile=cherrypy.wsgiserver.CP_fileobject):
         self.server = server
         self.socket = sock
-        self.rfile = makefile(sock, "rb", self.rbufsize)
-        self.wfile = makefile(sock, "wb", self.wbufsize)
+        self.rfile = makefile(sock, 'rb', self.rbufsize)
+        self.wfile = makefile(sock, 'wb', self.wbufsize)
         self.requests_seen = 0
 
 class AppServer(Config):
