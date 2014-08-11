@@ -47,3 +47,10 @@ python2 setup.py install --root="$RPM_BUILD_ROOT" --prefix=/usr --no-upstart
 /var/lib/%{pkgname}
 /var/log/%{pkgname}.log
 /var/log/%{pkgname}.log.1
+
+%preun
+systemctl stop pritunl || true
+systemctl disable pritunl || true
+
+%postun
+rm -rf /var/lib/%{pkgname}
