@@ -1,6 +1,7 @@
 from pritunl.constants import *
 from pritunl.cache import persist_db
 import pritunl.utils as utils
+import pritunl.mongo as mongo
 from pritunl import app_server
 import time
 import flask
@@ -16,18 +17,30 @@ def auth_put():
     username = utils.filter_str(flask.request.json.get('username'))
     password = flask.request.json['password']
     token = flask.request.json.get('token')
-    email_from = flask.request.json.get('email_from')
     email_api_key = flask.request.json.get('email_api_key')
+    doc = {}
 
     utils.set_auth(username, password, token)
-    if email_from:
-        persist_db.dict_set('auth', 'email_from', email_from)
-    else:
-        persist_db.dict_remove('auth', 'email_from')
-    if email_api_key:
-        persist_db.dict_set('auth', 'email_api_key', email_api_key)
-    else:
-        persist_db.dict_remove('auth', 'email_api_key')
+    if 'email_from' in flask.request.json:
+        email_from = flask.request.json['email_from']
+        if email_from:
+            doc['email_from'] = email_from
+        else:
+            doc['email_from'] = None
+    if 'email_api_key' in flask.request.json:
+        email_api_key = flask.request.json['email_api_key']
+        if email_api_key:
+            doc['email_api_key'] = email_api_key
+        else:
+            doc['email_api_key'] = None
+    if doc:
+        system = mongo.get_collection('system')
+        system.update({
+            '_id': 'email',
+        }, {
+            '$set': doc,
+        }, upsert=True)
+
     return utils.jsonify(utils.get_auth())
 
 @app_server.app.route('/auth/session', methods=['GET'])

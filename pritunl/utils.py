@@ -317,6 +317,8 @@ def _test_password_hash(pass_data, test_pass):
     return pass_hash == test_hash
 
 def check_auth(username, password, remote_addr=None):
+    import mongo
+
     if remote_addr:
         cache_key = 'ip_' + remote_addr
         count = cache_db.list_length(cache_key)
@@ -328,57 +330,75 @@ def check_auth(username, password, remote_addr=None):
         if not key_exists:
             cache_db.expire(cache_key, 20)
 
-    db_username = persist_db.dict_get('auth', 'username') or DEFAULT_USERNAME
-    if username != db_username:
-        return False
+    administrators = mongo.get_collection('administrators')
+    administrators_count = None
 
-    db_password = persist_db.dict_get('auth', 'password')
-    if not db_password:
-        if password == DEFAULT_PASSWORD:
+    doc = administrators.find_one({'username': username})
+    if not doc:
+        if username == DEFAULT_USERNAME and password == DEFAULT_PASSWORD and \
+                not administrators.find_one():
             return True
-        return False
-    return _test_password_hash(db_password, password)
+        else:
+            return False
+
+    return _test_password_hash(doc['password'], password)
 
 def set_auth(username, password, token=None):
+    import mongo
+
     if not password:
         raise ValueError('Password cannot be blank')
 
-    tran = persist_db.transaction()
+    administrators = mongo.get_collection('administrators')
+    doc = administrators.find_one() or {
+        'username': DEFAULT_USERNAME,
+        'password': DEFAULT_PASSWORD,
+    }
+
     if username:
-        tran.dict_set('auth', 'username', username)
+        doc['username'] = username
+
 
     salt = base64.b64encode(os.urandom(8))
     pass_hash = base64.b64encode(_hash_password_v1(salt, password))
-    tran.dict_set('auth', 'password', '1$%s$%s' % (salt, pass_hash))
+    doc['password'] = '1$%s$%s' % (salt, pass_hash)
 
     if not token:
         regex = re.compile(r'[\W_]+')
         token = re.sub(regex, '', base64.b64encode(os.urandom(64)))[:32]
         secret = re.sub(regex, '', base64.b64encode(os.urandom(64)))[:32]
-        tran.dict_set('auth', 'secret', secret)
+        doc['secret'] = secret
 
     token_salt = base64.b64encode(os.urandom(8))
     token_hash = base64.b64encode(_hash_password_v1(token_salt, token))
-    tran.dict_set('auth', 'token', '1$%s$%s' % (token_salt, token_hash))
+    doc['token'] = '1$%s$%s' % (token_salt, token_hash)
 
-    username = username or tran.dict_get('auth', 'username')
     token_key_salt = base64.b64encode(os.urandom(8))
     token_key_hash = _hash_password_v2(token_key_salt,
-        '%s$%s' % (username, password))
+        '%s$%s' % (doc['username'], password))
     token_key = token_key_hash
 
     aes_cipher = Crypto.Cipher.AES.new(token_key)
     token_enc = base64.b64encode(aes_cipher.encrypt(token))
-    tran.dict_set('auth', 'token_enc', '2$%s$%s' % (token_key_salt, token_enc))
+    doc['token_enc'] = '2$%s$%s' % (token_key_salt, token_enc)
 
-    tran.commit()
+    administrators.save(doc)
 
 def get_auth():
+    import mongo
+
+    administrators = mongo.get_collection('administrators')
+    administrators_doc = administrators.find_one() or {
+        'username': DEFAULT_USERNAME,
+        'password': DEFAULT_PASSWORD,
+    }
+    system = mongo.get_collection('system')
+    email_doc = system.find_one('email') or {}
+
     return {
-        'username': persist_db.dict_get(
-            'auth', 'username') or DEFAULT_USERNAME,
-        'token': persist_db.dict_get('auth', 'token_enc'),
-        'secret': persist_db.dict_get('auth', 'secret'),
-        'email_from': persist_db.dict_get('auth', 'email_from'),
-        'email_api_key': persist_db.dict_get('auth', 'email_api_key'),
+        'username': administrators_doc.get('username'),
+        'token': administrators_doc.get('token_enc'),
+        'secret': administrators_doc.get('secret'),
+        'email_from': email_doc.get('email_from'),
+        'email_api_key': email_doc.get('email_api_key'),
     }
