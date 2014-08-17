@@ -166,12 +166,10 @@ def get_local_networks():
         addresses.append(network_addr(addr, mask))
     return addresses
 
-def get_cert_block(cert_path):
-    with open(cert_path) as cert_file:
-        cert_file = cert_file.read()
-        start_index = cert_file.index('-----BEGIN CERTIFICATE-----')
-        end_index = cert_file.index('-----END CERTIFICATE-----') + 25
-        return cert_file[start_index:end_index]
+def get_cert_block(cert_data):
+    start_index = cert_data.index('-----BEGIN CERTIFICATE-----')
+    end_index = cert_data.index('-----END CERTIFICATE-----') + 25
+    return cert_data[start_index:end_index]
 
 def filter_str(in_str):
     if not in_str:
