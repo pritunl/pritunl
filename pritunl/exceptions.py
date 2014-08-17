@@ -48,3 +48,7 @@ class IptablesError(ServerError):
 
 class InvalidStaticFile(ServerError):
     pass
+
+
+class NotFound(BaseError):
+    pass
