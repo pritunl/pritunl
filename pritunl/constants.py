@@ -134,12 +134,14 @@ ALL_TRAFFIC = 'all_traffic'
 LOCAL_TRAFFIC = 'local_traffic'
 VPN_TRAFFIC = 'vpn_traffic'
 
-CA_CERT_ID = 'ca'
 CERT_CA = 'ca'
 CERT_SERVER = 'server'
 CERT_CLIENT = 'client'
 CERT_SERVER_POOL = 'server_pool'
 CERT_CLIENT_POOL = 'client_pool'
+
+ORG_DEFAULT = 'default'
+ORG_POOL = 'pool'
 
 ORGS_UPDATED = 'organizations_updated'
 USERS_UPDATED = 'users_updated'
@@ -186,10 +188,6 @@ OPENSSL_HEARTBLEED = {
 OPENSSL_HEARTBLEED_BUILD_DATE = datetime.date(2014, 4, 7)
 
 CERT_CONF = """[ default ]
-ca = %s
-root = %s
-dir = %s
-
 [ req ]
 default_bits = %s
 default_md = sha1
@@ -200,7 +198,7 @@ prompt = no
 distinguished_name = req_dn
 
 [ req_dn ]
-organizationName = $ca
+organizationName = %s
 commonName = %s
 
 [ ca_req_ext ]
@@ -222,11 +220,11 @@ subjectKeyIdentifier = hash
 default_ca = root_ca
 
 [ root_ca ]
-database = $dir/index
-serial = $dir/serial
-new_certs_dir = $dir
-certificate = $root/certs/ca.crt
-private_key = $root/keys/ca.key
+database = %s
+serial = %s
+new_certs_dir = %s
+certificate = %s
+private_key = %s
 default_days = 3652
 default_crl_days = 365
 default_md = sha1
