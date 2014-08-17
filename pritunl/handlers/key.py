@@ -15,15 +15,11 @@ import json
 def _get_key_archive(org_id, user_id):
     org = Organization.get_org(id=org_id)
     user = org.get_user(user_id)
-    archive_temp_path = user.build_key_archive()
-    try:
-        with open(archive_temp_path, 'r') as archive_file:
-            response = flask.Response(response=archive_file.read(),
-                mimetype='application/octet-stream')
-            response.headers.add('Content-Disposition',
-                'attachment; filename="%s.tar"' % user.name)
-    finally:
-        user.clean_key_archive()
+    key_archive = user.build_key_archive()
+    response = flask.Response(response=key_archive,
+        mimetype='application/octet-stream')
+    response.headers.add('Content-Disposition',
+        'attachment; filename="%s.tar"' % user.name)
     return response
 
 @app_server.app.route('/key/<org_id>/<user_id>.tar', methods=['GET'])
