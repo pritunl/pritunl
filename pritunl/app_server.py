@@ -39,6 +39,8 @@ class HTTPConnectionPatch(cherrypy.wsgiserver.HTTPConnection):
 
 class AppServer(Config):
     # deprecated = password, dh_param_bits
+    # auto_start_servers, get_public_ip, get_notifications, inline_certs
+    # static_cache, pooler,
     bool_options = {'debug', 'log_debug', 'auto_start_servers',
         'get_public_ip', 'get_notifications', 'inline_certs', 'ssl',
         'static_cache', 'pooler'}
@@ -48,7 +50,7 @@ class AppServer(Config):
     path_options = {'log_path', 'db_path', 'www_path', 'data_path',
         'server_cert_path', 'server_key_path'}
     str_options = {'bind_addr', 'password', 'public_ip_server',
-        'notification_server', 'dh_param_bits_pool'}
+        'notification_server', 'dh_param_bits_pool', 'mongodb_url'}
     list_options = {'dh_param_bits_pool'}
     default_options = {
         'auto_start_servers': True,
@@ -241,10 +243,20 @@ class AppServer(Config):
         _wrapped.__name__ = '%s_local_auth' % call.__name__
         return _wrapped
 
+    def get_temp_path(self):
+        temp_path = os.path.join(self.temp_path, uuid.uuid4().hex)
+        return temp_path
+
     def _setup_conf(self):
         self.set_path(self.conf_path)
         if not os.path.isdir(self.data_path):
             os.makedirs(self.data_path)
+
+    def _setup_temp_path(self):
+        # TODO
+        self.temp_path = 'tmp/pritunl'
+        if not os.path.isdir(self.temp_path):
+            os.makedirs(self.temp_path)
 
     def _setup_log(self):
         if self.log_debug:
@@ -302,91 +314,16 @@ class AppServer(Config):
             except OSError:
                 pass
 
-    def _upgrade_data(self):
-        version = self._get_version()
-        cur_version = self._get_data_version()
-
-        if cur_version and cur_version < self._get_version_int('0.10.5'):
-            logger.info('Upgrading data to v0.10.5...')
-            from server import Server
-            for server in Server.iter_servers():
-                server._upgrade_0_10_5()
-
-            from organization import Organization
-            for org in Organization.iter_orgs():
-                org._upgrade_0_10_5()
-
-        if cur_version and cur_version < self._get_version_int('0.10.6'):
-            logger.info('Upgrading data to v0.10.6...')
-            if self.password:
-                from cache import persist_db
-                logger.info('Upgrading config to v0.10.6...')
-                salt = base64.b64encode(
-                    '2511cebca93d028393735637bbc8029207731fcf')
-                password = base64.b64encode(self.password.decode('hex'))
-                persist_db.dict_set('auth', 'password',
-                    '0$%s$%s' % (salt, password))
-                self.password = None
-                self.commit()
-
-            from server import Server
-            for server in Server.iter_servers():
-                server._upgrade_0_10_6()
-
-        if cur_version and cur_version < self._get_version_int('0.10.9'):
-            logger.info('Upgrading data to v0.10.9...')
-            from server import Server
-            for server in Server.iter_servers():
-                server._upgrade_0_10_9()
-
-            from organization import Organization
-            for org in Organization.iter_orgs():
-                for user in org.iter_users():
-                    user._upgrade_0_10_9()
-                org.sort_users_cache()
-
-        if cur_version != version:
-            from pritunl import __version__
-            version_path = os.path.join(self.data_path, VERSION_NAME)
-            with open(version_path, 'w') as version_file:
-                version_file.write('%s\n' % __version__)
-
-    def _fill_cache(self):
-        logger.info('Preloading cache...')
-        from organization import Organization
-        for org in Organization.iter_orgs():
-            org._cache_users()
-
-        from server import Server
-        for server in Server.iter_servers():
-            server.load()
-
-    def _setup_pooler(self):
-        if self.pooler:
-            from pooler import Pooler
-            self.pooler_instance = Pooler()
-            self.pooler_instance.start()
-
-    def _setup_queues(self):
-        from server import Server
-        Server.setup_ip_pool_queue()
-
-        from organization import Organization
-        Organization.setup_sort_users_queue()
-
     def _setup_all(self):
         self._setup_app()
         self._setup_conf()
+        self._setup_temp_path()
         self._setup_log()
         self._setup_public_ip()
         self._setup_updates()
         self._upgrade_db()
         self._setup_db()
         self._setup_handlers()
-        self._upgrade_data()
-        self._fill_cache()
-        self._setup_pooler()
-        self._setup_queues()
 
     def _setup_server_cert(self):
         if self.server_cert_path and self.server_key_path:
