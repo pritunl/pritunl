@@ -1,11 +1,12 @@
 from constants import *
 from exceptions import *
 from pritunl import app_server
-from config import Config
 from organization import Organization
 from event import Event
 from log_entry import LogEntry
+from mongo_object import MongoObject
 from cache import cache_db, persist_db
+import mongo
 import uuid
 import os
 import signal
@@ -22,77 +23,94 @@ import ipaddress
 
 logger = logging.getLogger(APP_NAME)
 
-class Server(Config):
-    str_options = {'name', 'network', 'interface', 'protocol', 'mode',
-        'local_networks', 'public_address', 'primary_organization',
-        'primary_user', 'organizations', 'local_network', 'dns_servers',
-        'search_domain'}
-    bool_options = {'otp_auth', 'lzo_compression', 'debug'}
-    int_options = {'port', 'dh_param_bits'}
-    list_options = {'organizations', 'local_networks', 'dns_servers'}
-    cached = True
-    cache_prefix = 'server'
-    type = 'server'
+class Server(MongoObject):
+    fields = {
+        'name',
+        'network',
+        'interface',
+        'port',
+        'protocol',
+        'dh_param_bits',
+        'mode',
+        'local_networks',
+        'dns_servers',
+        'search_domain',
+        'public_address',
+        'otp_auth',
+        'lzo_compression',
+        'debug',
+        'organizations',
+        'primary_organization',
+        'primary_user',
+        'ca_certificate',
+        'dh_params',
 
-    def __init__(self, id=None, **kwargs):
-        Config.__init__(self)
+        'instance_id',
+        'status',
+        'uptime',
+        'users_online',
+    }
+    fields_default = {
+        'dns_servers': [],
+        'otp_auth': False,
+        'lzo_compression': False,
+        'debug': False,
+        'organizations': [],
+        'status': False,
+        'users_online': 0,
+    }
+    cache_prefix = 'server'
+
+    def __init__(self, name=None, network=None, interface=None, port=None,
+            protocol=None, dh_param_bits=None, mode=None, local_networks=None,
+            dns_servers=None, search_domain=None, public_address=None,
+            otp_auth=None, lzo_compression=None, debug=None, **kwargs):
+        MongoObject.__init__(self, **kwargs)
+
         self._cur_event = None
         self._last_event = 0
-        self._rebuild_dh_params = False
-        self._reset_ip_pool = False
 
-        if id is None:
-            self.id = uuid.uuid4().hex
-            for name, value in kwargs.iteritems():
-                setattr(self, name, value)
-        else:
-            self.id = id
+        if name is not None:
+            self.name = name
+        if network is not None:
+            self.network = network
+        if interface is not None:
+            self.interface = interface
+        if port is not None:
+            self.port = port
+        if protocol is not None:
+            self.protocol = protocol
+        if dh_param_bits is not None:
+            self.dh_param_bits = dh_param_bits
+        if mode is not None:
+            self.mode = mode
+        if local_networks is not None:
+            self.local_networks = local_networks
+        if dns_servers is not None:
+            self.dns_servers = dns_servers
+        if search_domain is not None:
+            self.search_domain = search_domain
+        if public_address is not None:
+            self.public_address = public_address
+        if otp_auth is not None:
+            self.otp_auth = otp_auth
+        if lzo_compression is not None:
+            self.lzo_compression = lzo_compression
+        if debug is not None:
+            self.debug = debug
 
-        self.path = os.path.join(app_server.data_path, SERVERS_DIR, self.id)
-        self.ovpn_conf_path = os.path.join(self.path, TEMP_DIR, OVPN_CONF_NAME)
-        self.dh_param_path = os.path.join(self.path, DH_PARAM_NAME)
-        self.ip_pool_path = os.path.join(self.path, IP_POOL_NAME)
-        self.ca_cert_path = os.path.join(self.path, TEMP_DIR, OVPN_CA_NAME)
-        self.tls_verify_path = os.path.join(self.path, TEMP_DIR,
-            TLS_VERIFY_NAME)
-        self.user_pass_verify_path = os.path.join(self.path, TEMP_DIR,
-            USER_PASS_VERIFY_NAME)
-        self.client_connect_path = os.path.join(self.path, TEMP_DIR,
-            CLIENT_CONNECT_NAME)
-        self.client_disconnect_path = os.path.join(self.path, TEMP_DIR,
-            CLIENT_DISCONNECT_NAME)
-        self.ovpn_status_path = os.path.join(self.path, TEMP_DIR,
-            OVPN_STATUS_NAME)
-        self.auth_log_path = os.path.join(app_server.data_path, AUTH_LOG_NAME)
-        self.set_path(os.path.join(self.path, SERVER_CONF_NAME))
-
-        if id is None:
-            self._initialize()
+    @staticmethod
+    def get_collection():
+        return mongo.get_collection('servers')
 
     def __setattr__(self, name, value):
-        if name == 'status':
-            cache_db.dict_set(self.get_cache_key(), name,
-                't' if value else 'f')
-            return
-        elif name == 'clients':
+        if name == 'clients':
             cache_db.dict_set(self.get_cache_key(), name, json.dumps(value))
             return
-        elif name == 'dh_param_bits':
-            if not self._loaded or self.dh_param_bits != value:
-                self._rebuild_dh_params = True
-        elif name == 'network':
-            self._reset_ip_pool = self._loaded and self.network != value
-        Config.__setattr__(self, name, value)
+        MongoObject.__setattr__(self, name, value)
 
     def __getattr__(self, name):
-        if name == 'status':
-            return cache_db.dict_get(self.get_cache_key(), name) == 't'
-        elif name == 'uptime':
-            if self.status:
-                return int(time.time()) - int(cache_db.dict_get(
-                    self.get_cache_key(), 'start_time'))
-            return None
-        elif name == 'clients':
+        if name == 'clients':
             clients = cache_db.dict_get(self.get_cache_key(), name)
             if self.status and clients:
                 return json.loads(clients)
@@ -104,13 +122,12 @@ class Server(Config):
             return self._get_user_count()
         elif name == 'org_count':
             return self._get_org_count()
-        return Config.__getattr__(self, name)
+        return MongoObject.__getattr__(self, name)
 
     def dict(self):
         return {
             'id': self.id,
             'name': self.name,
-            'type': self.type,
             'status': self.status,
             'uptime': self.uptime,
             'users_online': len(self.clients),
@@ -131,168 +148,19 @@ class Server(Config):
             'org_count': self.org_count,
         }
 
-    def load(self, *args, **kwargs):
-        Config.load(self, *args, **kwargs)
-        self._load_ip_pool()
+    def initialize(self):
+        self.generate_dh_param()
 
-    def _upgrade_0_10_5(self):
-        if self.local_network:
-            logger.debug('Upgrading server to v0.10.5... %r' % {
-                'server_id': self.id,
-            })
-            self.local_networks = [self.local_network]
-            self.local_network = None
-            self.commit()
-
-    def _upgrade_0_10_6(self):
-        if not self.dh_param_bits:
-            logger.debug('Upgrading server to v0.10.6... %r' % {
-                'server_id': self.id,
-            })
-            self.dh_param_bits = app_server.dh_param_bits
-            self.commit()
-
-    def _upgrade_0_10_9(self):
-        if not self.mode:
-            logger.debug('Upgrading server to v0.10.9... %r' % {
-                'server_id': self.id,
-            })
-            if self.local_networks:
-                self.mode = LOCAL_TRAFFIC
-            else:
-                self.mode = VPN_TRAFFIC
-            self.commit()
-
-        self.update_ip_pool()
-
-        try:
-            ifc_pool_path = os.path.join(self.path, 'ifc_pool')
-            if os.path.exists(ifc_pool_path):
-                os.remove(ifc_pool_path)
-        except:
-            pass
-
-    def _initialize(self):
-        logger.debug('Initialize new server. %r' % {
-            'server_id': self.id,
-        })
-        os.makedirs(os.path.join(self.path, TEMP_DIR))
-        try:
-            self._generate_dh_param()
-            cache_db.set_add('servers', '%s_%s' % (self.id, self.type))
-            self.commit()
-            LogEntry(message='Created new server "%s".' % self.name)
-        except:
-            logger.exception('Failed to create server. %r' % {
-                'server_id': self.id,
-            })
-            self.clear_cache()
-            utils.rmtree(self.path)
-            raise
-
-    def _load_ip_pool(self):
-        if cache_db.get(self.get_cache_key('ip_pool_cached')) == 't':
-            return
-        reset = False
-
-        if os.path.exists(self.ip_pool_path):
-            with open(self.ip_pool_path, 'r') as ip_pool_file:
-                pool = json.loads(ip_pool_file.read())
-
-            network = pool.pop('network', None)
-            if network == self.network:
-                cache_key = self.get_cache_key('ip_pool')
-                set_cache_key = self.get_cache_key('ip_pool_set')
-                for key, value in pool.iteritems():
-                    cache_db.dict_set(cache_key, key, value)
-                    local_ip_addr, remote_ip_addr = value.split('-')
-                    cache_db.set_add(set_cache_key, local_ip_addr)
-                    cache_db.set_add(set_cache_key, remote_ip_addr)
-            else:
-                reset = True
-
-        cache_db.set(self.get_cache_key('ip_pool_cached'), 't')
-
-        if reset:
-            self.update_ip_pool()
-
-    def _commit_ip_pool(self):
-        with open(self.ip_pool_path, 'w') as ip_pool_file:
-            pool = cache_db.dict_get_all(self.get_cache_key('ip_pool'))
-            pool['network'] = self.network
-            ip_pool_file.write(json.dumps(pool))
-
-    def update_ip_pool(self, reset=False, silent=False):
-        cache_key = self.get_cache_key('ip_pool')
-        set_cache_key = self.get_cache_key('ip_pool_set')
-        cache_db.lock_acquire(cache_key)
-        try:
-            if reset:
-                cache_db.remove(cache_key)
-                cache_db.remove(set_cache_key)
-            ip_pool = ipaddress.IPv4Network(self.network).iterhosts()
-            ip_pool.next()
-
-            users = set()
-            for org in self.iter_orgs():
-                for user in org.iter_users():
-                    if user.type == CERT_CLIENT:
-                        users.add(org.id + '-' + user.id)
-
-            for user_id in cache_db.dict_keys(cache_key) - users:
-                ip_set = cache_db.dict_get(cache_key, user_id)
-                local_ip_addr, remote_ip_addr = ip_set.split('-')
-                cache_db.set_remove(set_cache_key, local_ip_addr)
-                cache_db.set_remove(set_cache_key, remote_ip_addr)
-                cache_db.dict_remove(cache_key, user_id)
-
-            try:
-                for user_id in users - cache_db.dict_keys(cache_key):
-                    while True:
-                        remote_ip_addr = str(ip_pool.next())
-                        ip_addr_endpoint = remote_ip_addr.split('.')[-1]
-                        if ip_addr_endpoint not in VALID_IP_ENDPOINTS:
-                            continue
-                        local_ip_addr = str(ip_pool.next())
-
-                        if not cache_db.set_exists(set_cache_key,
-                                local_ip_addr) and not cache_db.set_exists(
-                                set_cache_key, remote_ip_addr):
-                            cache_db.set_add(set_cache_key, local_ip_addr)
-                            cache_db.set_add(set_cache_key, remote_ip_addr)
-                            break
-                    cache_db.dict_set(cache_key, user_id,
-                        local_ip_addr + '-' + remote_ip_addr)
-            except StopIteration:
-                pass
-            finally:
-                self._commit_ip_pool()
-                if not silent:
-                    for org in self.iter_orgs():
-                        Event(type=USERS_UPDATED, resource_id=org.id)
-        finally:
-            cache_db.lock_release(cache_key)
+    def get_cache_key(self, suffix=None):
+        if not self.cache_prefix:
+            raise AttributeError('Cached config object requires cache_prefix')
+        key = self.cache_prefix + '-' + self.id
+        if suffix:
+            key += '-%s' % suffix
+        return key
 
     def get_ip_set(self, org_id, user_id):
-        ip_set = cache_db.dict_get(self.get_cache_key('ip_pool'),
-            org_id + '-' + user_id)
-        if ip_set:
-            return ip_set.split('-')
         return None, None
-
-    def _clear_list_cache(self):
-        cache_db.set_remove('servers', '%s_%s' % (self.id, self.type))
-        cache_db.list_remove('servers_sorted', '%s_%s' % (self.id, self.type))
-
-    def clear_cache(self):
-        self._clear_list_cache()
-        cache_db.remove(self.get_cache_key('clients'))
-        cache_db.remove(self.get_cache_key('ip_pool'))
-        cache_db.remove(self.get_cache_key('ip_pool_set'))
-        cache_db.remove(self.get_cache_key('ip_pool_cached'))
-        for period in ('1m', '5m', '30m', '2h', '1d'):
-            persist_db.remove(self.get_cache_key('bandwidth-%s' % period))
-        Config.clear_cache(self)
 
     def _event_delay(self, type, resource_id=None):
         # Min event every 1s max event every 0.2s
@@ -313,143 +181,85 @@ class Server(Config):
         threading.Thread(target=_target).start()
 
     def remove(self):
-        logger.debug('Removing server. %r' % {
-            'server_id': self.id,
-        })
-        self._clear_list_cache()
-        name = self.name
-        orgs = list(self.iter_orgs())
-
-        if self.status:
-            self.force_stop(True)
-        self.clear_cache()
-
         self._remove_primary_user()
-        utils.rmtree(self.path)
-        LogEntry(message='Deleted server "%s".' % name)
-        Event(type=SERVERS_UPDATED)
-        for org in orgs:
-            Event(type=USERS_UPDATED, resource_id=org.id)
-
-    def commit(self):
-        if self._rebuild_dh_params:
-            self._generate_dh_param()
-        Config.commit(self)
-        if self._reset_ip_pool:
-            self.queue_update_ip_pool(server_id=self.id, reset=True)
-        self.sort_servers_cache()
-        Event(type=SERVERS_UPDATED)
+        MongoObject.remove(self)
 
     def _create_primary_user(self):
-        if not self.org_count:
+        logger.debug('Creating primary user. %r' % {
+            'server_id': self.id,
+        })
+
+        orgs = self.iter_orgs()
+        if not orgs:
             raise ServerMissingOrg('Primary user cannot be created ' + \
                 'without any organizations', {
                     'server_id': self.id,
                 })
-        logger.debug('Creating primary user. %r' % {
-            'server_id': self.id,
-        })
-        org = self.iter_orgs().next()
-        self.primary_organization = org.id
-        user = org.new_user(CERT_SERVER, SERVER_USER_PREFIX + self.id)
-        self.primary_user = user.id
-        try:
-            self.commit()
-        except:
-            logger.exception('Failed to commit server conf ' + \
-                'on primary user creation, removing user. %r' % {
-                    'server_id': self.id,
-                    'user_id': user.id,
-                })
-            user.remove()
-            raise
+        org = orgs.next()
+        user = org.new_user(name=SERVER_USER_PREFIX + self.id,
+            type=CERT_SERVER)
 
-    def add_org(self, org_id):
-        logger.debug('Adding organization to server. %r' % {
-            'server_id': self.id,
-            'org_id': org_id,
-        })
-        org = Organization.get_org(id=org_id)
-        if org.id in self.organizations:
-            logger.debug('Organization already on server, skipping. %r' % {
-                'server_id': self.id,
-                'org_id': org.id,
-            })
-            return org
-        self.organizations.append(org.id)
+        self.primary_organization = org.id
+        self.primary_user = user.id
         self.commit()
-        self.queue_update_ip_pool(server_id=self.id)
-        Event(type=SERVERS_UPDATED)
-        Event(type=SERVER_ORGS_UPDATED, resource_id=self.id)
-        Event(type=USERS_UPDATED, resource_id=org_id)
-        return org
+
+        user.commit()
 
     def _remove_primary_user(self):
         logger.debug('Removing primary user. %r' % {
             'server_id': self.id,
         })
-        primary_organization = self.primary_organization
-        primary_user = self.primary_user
+
+        if not self.primary_organization or not self.primary_user:
+            return
+
+        org = Organization.get_org(id=self.primary_organization)
+        if org:
+            user = org.get_user(id=self.primary_user)
+            if user:
+                user.remove()
+
         self.primary_organization = None
         self.primary_user = None
 
-        if not primary_organization or not primary_user:
-            return
-
-        org = Organization.get_org(id=primary_organization)
-        user = org.get_user(primary_user)
-        if not user:
-            logger.debug('Primary user not found, skipping remove. %r' % {
+    def add_org(self, org):
+        logger.debug('Adding organization to server. %r' % {
+            'server_id': self.id,
+            'org_id': org.id,
+        })
+        if org.id in self.organizations:
+            logger.debug('Organization already on server, skipping. %r' % {
                 'server_id': self.id,
                 'org_id': org.id,
             })
             return
+        self.organizations.append(org.id)
+        self.generate_ca_cert()
 
-        if user:
-            user.remove()
-
-    def remove_org(self, org_id):
-        if org_id not in self.organizations:
+    def remove_org(self, org):
+        if org.id not in self.organizations:
             return
         logger.debug('Removing organization from server. %r' % {
             'server_id': self.id,
-            'org_id': org_id,
+            'org_id': org.id,
         })
-        if self.primary_organization == org_id:
+        if self.primary_organization == org.id:
             self._remove_primary_user()
-        self.organizations.remove(org_id)
-        self.commit()
-        self.queue_update_ip_pool(server_id=self.id)
-        Event(type=SERVERS_UPDATED)
-        Event(type=SERVER_ORGS_UPDATED, resource_id=self.id)
-        Event(type=USERS_UPDATED, resource_id=org_id)
+        try:
+            self.organizations.remove(org.id)
+        except ValueError:
+            pass
+        self.generate_ca_cert()
 
     def iter_orgs(self):
-        orgs_dict = {}
-        orgs_sort = []
-
         for org_id in self.organizations:
             org = Organization.get_org(id=org_id)
-            if not org:
-                continue
-            name_id = '%s_%s' % (org.name, org.id)
-            orgs_dict[name_id] = org
-            orgs_sort.append(name_id)
-
-        for name_id in sorted(orgs_sort):
-            yield orgs_dict[name_id]
+            if org:
+                yield org
 
     def get_org(self, org_id):
         if org_id in self.organizations:
-            org = Organization.get_org(id=org_id)
-            try:
-                org.load()
-            except IOError:
-                logger.exception('Failed to load org conf. %r' % {
-                        'org_id': org_id,
-                    })
-                return
-            return org
+            return Organization.get_org(id=org_id)
 
     def _get_user_count(self):
         users_count = 0
@@ -458,51 +268,28 @@ class Server(Config):
         return users_count
 
     def _get_org_count(self):
-        org_count = 0
-        for org in self.iter_orgs():
-            org_count += 1
-        return org_count
+        return len(self.organizations)
 
-    def _generate_dh_param(self):
+    def generate_dh_param(self):
         logger.debug('Generating server dh params. %r' % {
             'server_id': self.id,
         })
-        self._rebuild_dh_params = False
 
-        dh_pool_path = cache_db.set_pop('dh_pool_%s' % self.dh_param_bits)
-        if dh_pool_path:
-            while True:
-                dh_state = cache_db.dict_get('dh_pool_state', dh_pool_path)
-                if dh_state == COMPLETE:
-                    cache_db.dict_remove('dh_pool_state', dh_pool_path)
-                    break
-                elif dh_state != PENDING:
-                    self._generate_dh_param()
-                    return
-                for msg in cache_db.subscribe('dh_pool', timeout=10):
-                    if msg == 'update':
-                        break
-            if not os.path.exists(dh_pool_path):
-                self._generate_dh_param()
-                return
-            os.rename(dh_pool_path, self.dh_param_path)
-            cache_db.publish('pooler', 'update')
-        else:
-            task_id = uuid.uuid4().hex
-            try:
-                cache_db.set_add('openssl_tasks', task_id)
-                cache_db.publish('pooler', 'update')
+        temp_path = app_server.get_temp_path()
+        dh_param_path = os.path.join(temp_path, DH_PARAM_NAME)
 
-                args = [
-                    'openssl', 'dhparam',
-                    '-out', self.dh_param_path,
-                    str(self.dh_param_bits),
-                ]
-                subprocess.check_call(args, stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE)
-            finally:
-                cache_db.set_remove('openssl_tasks', task_id)
-                cache_db.publish('pooler', 'update')
+        try:
+            os.makedirs(temp_path)
+            args = [
+                'openssl', 'dhparam',
+                '-out', dh_param_path,
+                str(self.dh_param_bits),
+            ]
+            subprocess.check_call(args, stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE)
+            self.read_file('dh_params', dh_param_path)
+        finally:
+            utils.rmtree(temp_path)
 
     def _parse_network(self, network):
         network_split = network.split('/')
@@ -514,46 +301,12 @@ class Server(Config):
         return (address, subnet)
 
     def generate_ca_cert(self):
-        logger.debug('Generating server ca cert. %r' % {
-            'server_id': self.id,
-        })
-        with open(self.ca_cert_path, 'w') as server_ca_cert:
-            for org in self.iter_orgs():
-                ca_path = org.ca_cert.cert_path
-                with open(ca_path, 'r') as org_ca_cert:
-                    server_ca_cert.write(org_ca_cert.read())
+        ca_certificate = ''
+        for org in self.iter_orgs():
+            ca_certificate += org.ca_certificate
+        self.ca_certificate = ca_certificate
 
-    def _generate_scripts(self):
-        logger.debug('Generating openvpn scripts. %r' % {
-            'server_id': self.id,
-        })
-        auth_host = app_server.bind_addr
-        if auth_host == '0.0.0.0':
-            auth_host = 'localhost'
-        for script, script_path in (
-                    (TLS_VERIFY_SCRIPT, self.tls_verify_path),
-                    (USER_PASS_VERIFY_SCRIPT, self.user_pass_verify_path),
-                    (CLIENT_CONNECT_SCRIPT, self.client_connect_path),
-                    (CLIENT_DISCONNECT_SCRIPT, self.client_disconnect_path),
-                ):
-            with open(script_path, 'w') as script_file:
-                os.chmod(script_path, 0755)
-                script_file.write(script % (
-                    app_server.local_api_key,
-                    self.auth_log_path,
-                    app_server.web_protocol,
-                    auth_host,
-                    app_server.port,
-                    self.id,
-                ))
-
-    def _generate_ovpn_conf(self, inline=False):
-        if not self.org_count:
-            raise ServerMissingOrg('Ovpn conf cannot be generated without ' + \
-                'any organizations', {
-                    'server_id': self.id,
-                })
-
+    def _generate_ovpn_conf(self, temp_path):
         logger.debug('Generating server ovpn conf. %r' % {
             'server_id': self.id,
         })
@@ -561,21 +314,49 @@ class Server(Config):
         if not self.primary_organization or not self.primary_user:
             self._create_primary_user()
 
-        if not os.path.isfile(self.dh_param_path):
-            self._generate_dh_param()
-
         primary_org = Organization.get_org(id=self.primary_organization)
         if not primary_org:
             self._create_primary_user()
-        primary_org = Organization.get_org(id=self.primary_organization)
+            primary_org = Organization.get_org(id=self.primary_organization)
 
         primary_user = primary_org.get_user(self.primary_user)
         if not primary_user:
             self._create_primary_user()
-        primary_user = primary_org.get_user(self.primary_user)
+            primary_org = Organization.get_org(id=self.primary_organization)
+            primary_user = primary_org.get_user(self.primary_user)
 
-        self.generate_ca_cert()
-        self._generate_scripts()
+        tls_verify_path = os.path.join(temp_path,
+            TLS_VERIFY_NAME)
+        user_pass_verify_path = os.path.join(temp_path,
+            USER_PASS_VERIFY_NAME)
+        client_connect_path = os.path.join(temp_path,
+            CLIENT_CONNECT_NAME)
+        client_disconnect_path = os.path.join(temp_path,
+            CLIENT_DISCONNECT_NAME)
+        ovpn_status_path = os.path.join(temp_path,
+            OVPN_STATUS_NAME)
+        ovpn_conf_path = os.path.join(temp_path,
+            OVPN_CONF_NAME)
+
+        auth_host = app_server.bind_addr
+        if auth_host == '0.0.0.0':
+            auth_host = 'localhost'
+        for script, script_path in (
+                    (TLS_VERIFY_SCRIPT, tls_verify_path),
+                    (USER_PASS_VERIFY_SCRIPT, user_pass_verify_path),
+                    (CLIENT_CONNECT_SCRIPT, client_connect_path),
+                    (CLIENT_DISCONNECT_SCRIPT, client_disconnect_path),
+                ):
+            with open(script_path, 'w') as script_file:
+                os.chmod(script_path, 0755) # TODO
+                script_file.write(script % (
+                    app_server.local_api_key,
+                    '/dev/null', # TODO
+                    app_server.web_protocol,
+                    auth_host,
+                    app_server.port,
+                    self.id,
+                ))
 
         push = ''
         if self.mode == LOCAL_TRAFFIC:
@@ -590,40 +371,22 @@ class Server(Config):
         if self.search_domain:
             push += 'push "dhcp-option DOMAIN %s"\n' % self.search_domain
 
-        if not inline:
-            server_conf = OVPN_SERVER_CONF % (
-                self.port,
-                self.protocol,
-                self.interface,
-                self.ca_cert_path,
-                primary_user.cert_path,
-                primary_user.key_path,
-                self.tls_verify_path,
-                self.client_connect_path,
-                self.client_disconnect_path,
-                self.dh_param_path,
-                '%s %s' % self._parse_network(self.network),
-                self.ovpn_status_path,
-                4 if self.debug else 1,
-                8 if self.debug else 3,
-            )
-        else:
-            server_conf = OVPN_INLINE_SERVER_CONF % (
-                self.port,
-                self.protocol,
-                self.interface,
-                self.tls_verify_path,
-                self.client_connect_path,
-                self.client_disconnect_path,
-                '%s %s' % self._parse_network(self.network),
-                self.ovpn_status_path,
-                4 if self.debug else 1,
-                8 if self.debug else 3,
-            )
+        server_conf = OVPN_INLINE_SERVER_CONF % (
+            self.port,
+            self.protocol,
+            self.interface,
+            tls_verify_path,
+            client_connect_path,
+            client_disconnect_path,
+            '%s %s' % self._parse_network(self.network),
+            ovpn_status_path,
+            4 if self.debug else 1,
+            8 if self.debug else 3,
+        )
 
         if self.otp_auth:
             server_conf += 'auth-user-pass-verify %s via-file\n' % (
-                self.user_pass_verify_path)
+                user_pass_verify_path)
 
         if self.lzo_compression:
             server_conf += 'comp-lzo\npush "comp-lzo"\n'
@@ -634,19 +397,15 @@ class Server(Config):
         if push:
             server_conf += push
 
-        if inline:
-            server_conf += '<ca>\n%s\n</ca>\n' % utils.get_cert_block(
-                self.ca_cert_path)
-            server_conf += '<cert>\n%s\n</cert>\n' % utils.get_cert_block(
-                primary_user.cert_path)
-            server_conf += '<key>\n%s\n</key>\n' % open(
-                primary_user.key_path).read().strip()
-            server_conf += '<dh>\n%s\n</dh>\n' % open(
-                self.dh_param_path).read().strip()
+        server_conf += '<ca>\n%s\n</ca>\n' % utils.get_cert_block(
+            self.ca_certificate)
+        server_conf += '<cert>\n%s\n</cert>\n' % utils.get_cert_block(
+            primary_user.certificate)
+        server_conf += '<key>\n%s\n</key>\n' % primary_user.private_key
+        server_conf += '<dh>\n%s\n</dh>\n' % self.dh_params
 
-        with open(self.ovpn_conf_path, 'w') as ovpn_conf:
-            if inline:
-                os.chmod(self.ovpn_conf_path, 0600)
+        with open(ovpn_conf_path, 'w') as ovpn_conf:
+            os.chmod(ovpn_conf_path, 0600)
             ovpn_conf.write(server_conf)
 
     def _enable_ip_forwarding(self):
@@ -778,28 +537,30 @@ class Server(Config):
             except OSError:
                 pass
 
-    def _status_thread(self):
+    def _status_thread(self, temp_path):
         i = 0
         cur_client_count = 0
+        ovpn_status_path = os.path.join(temp_path, OVPN_STATUS_NAME)
         while not self._interrupt:
             time.sleep(0.1)
             # Check interrupt every 0.1s check client count every 5s
             if i == SERVER_STATUS_RATE * 5:
                 i = 0
-                self._read_clients()
+                self._read_clients(ovpn_status_path)
             else:
                 i += 1
         self._clear_iptables_rules()
 
-    def _run_thread(self):
+    def _run_thread(self, temp_path):
         logger.debug('Starting ovpn process. %r' % {
             'server_id': self.id,
         })
         self._interrupt = False
         self._state = True
         try:
+            ovpn_conf_path = os.path.join(temp_path, OVPN_CONF_NAME)
             try:
-                process = subprocess.Popen(['openvpn', self.ovpn_conf_path],
+                process = subprocess.Popen(['openvpn', ovpn_conf_path],
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             except OSError:
                 self.push_output(traceback.format_exc())
@@ -813,9 +574,11 @@ class Server(Config):
             sub_thread = threading.Thread(target=self._sub_thread,
                 args=(process,))
             sub_thread.start()
-            status_thread = threading.Thread(target=self._status_thread)
+            status_thread = threading.Thread(target=self._status_thread,
+                args=(temp_path,))
             status_thread.start()
             self.status = True
+            self.commit()
             self.publish('started')
 
             while True:
@@ -834,6 +597,7 @@ class Server(Config):
             cache_db.dict_remove(self.get_cache_key(), 'clients')
 
             self.status = False
+            self.commit()
             self.publish('stopped')
             self.update_clients({}, force=True)
             if self._state:
@@ -852,49 +616,42 @@ class Server(Config):
     def publish(self, message):
         cache_db.publish(self.get_cache_key(), message)
 
-    def start(self, silent=False):
-        cache_db.lock_acquire(self.get_cache_key('op_lock'))
-        try:
-            if self.status:
-                return
-            if not self.org_count:
-                raise ServerMissingOrg('Server cannot be started without ' + \
-                    'any organizations', {
-                        'server_id': self.id,
-                    })
-            logger.debug('Starting server. %r' % {
-                'server_id': self.id,
-            })
-            self._generate_ovpn_conf()
-            self._enable_ip_forwarding()
-            self._set_iptables_rules()
-            self.clear_output()
+    def start(self):
+        temp_path = app_server.get_temp_path()
 
-            threading.Thread(target=self._run_thread).start()
+        if not self.org_count:
+            raise ServerMissingOrg('Server cannot be started ' + \
+                'without any organizations', {
+                    'server_id': self.id,
+                })
 
-            started = False
-            for message in cache_db.subscribe(self.get_cache_key(),
-                    SUB_RESPONSE_TIMEOUT):
-                if message == 'started':
-                    started = True
-                    break
-                elif message == 'stopped':
-                    raise ServerStartError('Server failed to start', {
-                        'server_id': self.id,
-                    })
-            if not started:
-                raise ServerStartError('Server thread failed to return ' + \
-                    'start event', {
-                        'server_id': self.id,
-                    })
+        os.makedirs(temp_path)
 
-            if not silent:
-                Event(type=SERVERS_UPDATED)
-                LogEntry(message='Started server "%s".' % self.name)
-        finally:
-            cache_db.lock_release(self.get_cache_key('op_lock'))
+        ovpn_conf_path = self._generate_ovpn_conf(temp_path)
+        self._enable_ip_forwarding()
+        self._set_iptables_rules()
+        self.clear_output()
 
-    def stop(self, silent=False):
+        threading.Thread(target=self._run_thread,
+            args=(temp_path,)).start()
+
+        started = False
+        for message in cache_db.subscribe(self.get_cache_key(),
+                SUB_RESPONSE_TIMEOUT):
+            if message == 'started':
+                started = True
+                break
+            elif message == 'stopped':
+                raise ServerStartError('Server failed to start', {
+                    'server_id': self.id,
+                })
+        if not started:
+            raise ServerStartError('Server thread failed to return ' + \
+                'start event', {
+                    'server_id': self.id,
+                })
+
+    def stop(self):
         cache_db.lock_acquire(self.get_cache_key('op_lock'))
         try:
             if not self.status:
@@ -915,14 +672,10 @@ class Server(Config):
                     'stop event', {
                         'server_id': self.id,
                     })
-
-            if not silent:
-                Event(type=SERVERS_UPDATED)
-                LogEntry(message='Stopped server "%s".' % self.name)
         finally:
             cache_db.lock_release(self.get_cache_key('op_lock'))
 
-    def force_stop(self, silent=False):
+    def force_stop(self):
         cache_db.lock_acquire(self.get_cache_key('op_lock'))
         try:
             if not self.status:
@@ -943,25 +696,18 @@ class Server(Config):
                     'stop event', {
                         'server_id': self.id,
                     })
-
-            if not silent:
-                Event(type=SERVERS_UPDATED)
-                LogEntry(message='Stopped server "%s".' % self.name)
         finally:
             cache_db.lock_release(self.get_cache_key('op_lock'))
 
-    def restart(self, silent=False):
+    def restart(self):
         if not self.status:
             self.start()
             return
         logger.debug('Restarting server. %r' % {
             'server_id': self.id,
         })
-        self.stop(True)
-        self.start(True)
-        if not silent:
-            Event(type=SERVERS_UPDATED)
-            LogEntry(message='Restarted server "%s".' % self.name)
+        self.stop()
+        self.start()
 
     def get_output(self):
         return self.output
@@ -1213,10 +959,10 @@ class Server(Config):
                         persist_db.dict_remove(self.get_cache_key(
                             'bandwidth-%s' % period), timestamp_p)
 
-    def _read_clients(self):
+    def _read_clients(self, ovpn_status_path):
         clients = {}
-        if os.path.isfile(self.ovpn_status_path):
-            with open(self.ovpn_status_path, 'r') as status_file:
+        if os.path.isfile(ovpn_status_path):
+            with open(ovpn_status_path, 'r') as status_file:
                 for line in status_file.readlines():
                     if line[:11] != 'CLIENT_LIST':
                         continue
@@ -1245,132 +991,22 @@ class Server(Config):
         client_count = len(self.clients)
         self.clients = clients
         if force or client_count != len(clients):
-            for org in self.iter_orgs():
-                Event(type=USERS_UPDATED, resource_id=org.id)
+            for org_id in self.organizations:
+                Event(type=USERS_UPDATED, resource_id=org_id)
             if not force:
                 Event(type=SERVERS_UPDATED)
 
     @classmethod
-    def sort_servers_cache(cls):
-        servers_dict = {}
-        servers_sort = []
-
-        # Create temp uuid key to prevent multiple threads modifying same key
-        temp_sorted_key = 'servers_sorted_temp_' + uuid.uuid4().hex
-
-        try:
-            for server_id_type in cache_db.set_elements('servers'):
-                server_id, server_type = server_id_type.split('_', 1)
-                server = Server.get_server(id=server_id, type=server_type)
-                if not server:
-                    continue
-                name_id = '%s_%s' % (server.name, server_id)
-                servers_dict[name_id] = server_id_type
-                servers_sort.append(name_id)
-            for name_id in sorted(servers_sort):
-                cache_db.list_rpush(temp_sorted_key, servers_dict[name_id])
-            cache_db.rename(temp_sorted_key, 'servers_sorted')
-        except:
-            cache_db.remove(temp_sorted_key)
-            raise
-
-    @classmethod
-    def _cache_servers(cls):
-        if cache_db.get('servers_cached') != 't':
-            cache_db.remove('servers')
-            path = os.path.join(app_server.data_path, SERVERS_DIR)
-            if os.path.isdir(path):
-                for server_id in os.listdir(path):
-                    if not os.path.isfile(os.path.join(path, server_id,
-                            SERVER_CONF_NAME)):
-                        continue
-                    if os.path.isfile(os.path.join(path, server_id,
-                            NODE_SERVER)):
-                        server_id += '_' + NODE_SERVER
-                    else:
-                        server_id += '_' + SERVER
-                    cache_db.set_add('servers', server_id)
-            cls.sort_servers_cache()
-            cache_db.set('servers_cached', 't')
-
-    @classmethod
-    def get_server(cls, id, type=None):
-        from node_server import NodeServer
-
-        if not type:
-            if cache_db.set_exists('servers', id + '_' + NODE_SERVER):
-                type = NODE_SERVER
-            else:
-                type = SERVER
-
-        if type == NODE_SERVER:
-            server = NodeServer(id=id)
-        else:
-            server = Server(id=id)
-        try:
-            server.load()
-        except IOError:
-            logger.exception('Failed to load server conf. %r' % {
-                    'server_id': id,
-                })
-            return
+    def new_server(cls, **kwargs):
+        server = cls(**kwargs)
+        server.initialize()
         return server
 
     @classmethod
+    def get_server(cls, id):
+        return cls(id=id)
+
+    @classmethod
     def iter_servers(cls):
-        cls._cache_servers()
-        for server_id_type in cache_db.list_iter('servers_sorted'):
-            server_id, server_type = server_id_type.split('_', 1)
-            server = cls.get_server(id=server_id, type=server_type)
-            if server:
-                yield server
-
-    @classmethod
-    def _ip_pool_queue_thread(cls):
-        try:
-            for msg in cache_db.subscribe('ip_pool_queue'):
-                if msg == 'update':
-                    while True:
-                        operation = cache_db.set_pop('ip_pool_queues')
-                        if not operation:
-                            break
-                        org_id, server_id, reset = operation.split(':')
-                        reset = True if reset == 't' else False
-                        if org_id:
-                            org = Organization.get_org(id=org_id)
-                            if org:
-                                for server in org.iter_servers():
-                                    try:
-                                        server.update_ip_pool(reset=reset)
-                                    except:
-                                        logger.exception(
-                                            'Update ip pool error.')
-                        if server_id:
-                            server = Server.get_server(id=server_id)
-                            if server:
-                                try:
-                                    server.update_ip_pool(reset=reset)
-                                except:
-                                    logger.exception('Update ip pool error.')
-                        if not org_id and not server_id:
-                            for server in cls.iter_servers():
-                                try:
-                                    server.update_ip_pool(reset=reset)
-                                except:
-                                    logger.exception('Update ip pool error.')
-        except:
-            logger.exception('Exception in ip pool queue.')
-            cls._ip_pool_queue_thread()
-
-    @classmethod
-    def setup_ip_pool_queue(cls):
-        thread = threading.Thread(target=cls._ip_pool_queue_thread)
-        thread.daemon = True
-        thread.start()
-
-    @classmethod
-    def queue_update_ip_pool(cls, org_id='', server_id='', reset=False):
-        # Remove overlap ip pool updates
-        cache_db.set_add('ip_pool_queues',
-            '%s:%s:%s' % (org_id, server_id, 't' if reset else 'f'))
-        cache_db.publish('ip_pool_queue', 'update')
+        for doc in cls.get_collection().find().sort('name'):
+            yield cls(doc=doc)
