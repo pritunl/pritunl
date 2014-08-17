@@ -8,11 +8,20 @@ class MongoObject:
     fields_default = {}
 
     def __init__(self, id=None, doc=None, spec=None):
+        self._changed = set()
         self.id = id
+
         if id or doc or spec:
+            self._exists = True
             self.load(doc=doc, spec=spec)
         else:
+            self._exists = False
             self.id = str(bson.ObjectId())
+
+    def __setattr__(self, name, value):
+        if name != 'fields' and name in self.fields:
+            self._changed.add(name)
+        self.__dict__[name] = value
 
     def __getattr__(self, name):
         if name in self.fields:
@@ -45,13 +54,29 @@ class MongoObject:
         doc['id'] = str(doc.pop('_id'))
         self.__dict__.update(doc)
 
-    def commit(self):
-        doc = self.fields_default.copy()
-        doc['_id'] = bson.ObjectId(self.id)
-        for field in self.fields:
-            if field in self.__dict__:
+    def commit(self, fields=None):
+        if fields:
+            if isinstance(fields, basestring):
+                fields = (fields,)
+        elif self._exists:
+            fields = self._changed
+
+        if fields:
+            doc = {}
+            for field in fields:
                 doc[field] = self.__dict__[field]
-        self.get_collection().save(doc)
+            self.get_collection().update({
+                '_id': bson.ObjectId(self.id)
+            }, {
+                '$set': doc
+            }, upsert=True)
+        else:
+            doc = self.fields_default.copy()
+            doc['_id'] = bson.ObjectId(self.id)
+            for field in self.fields:
+                if field in self.__dict__:
+                    doc[field] = self.__dict__[field]
+            self.get_collection().save(doc)
 
     def remove(self):
         self.get_collection().remove(bson.ObjectId(self.id))
