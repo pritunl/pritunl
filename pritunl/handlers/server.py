@@ -1,7 +1,6 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.server import Server
-from pritunl.node_server import NodeServer
 from pritunl.organization import Organization
 from pritunl.log_entry import LogEntry
 from event import Event
@@ -82,13 +81,6 @@ def server_put_post(server_id=None):
     if 'name' in flask.request.json:
         name_def = True
         name = utils.filter_str(flask.request.json['name'])
-
-    type = SERVER
-    type_def = False
-    if 'type' in flask.request.json:
-        type_def = True
-        if flask.request.json['type'] == NODE_SERVER:
-            type = NODE_SERVER
 
     network = None
     network_def = False
@@ -275,33 +267,6 @@ def server_put_post(server_id=None):
         lzo_compression = True if flask.request.json[
             'lzo_compression'] else False
 
-    node_host = None
-    node_host_def = False
-    if 'node_host' in flask.request.json:
-        node_host_def = True
-        node_host = utils.filter_str(flask.request.json['node_host'])
-
-    node_port = None
-    node_port_def = False
-    if 'node_port' in flask.request.json:
-        node_port_def = True
-        node_port = flask.request.json['node_port']
-
-        if node_port is not None:
-            try:
-                node_port = int(node_port)
-            except ValueError:
-                return _port_invalid()
-
-            if node_port < 1 or node_port > 65535:
-                return _port_invalid()
-
-    node_key = None
-    node_key_def = False
-    if 'node_key' in flask.request.json:
-        node_key_def = True
-        node_key = utils.filter_str(flask.request.json['node_key'])
-
     if not server_id:
         if not name_def:
             return utils.jsonify({
@@ -385,43 +350,22 @@ def server_put_post(server_id=None):
             }, 400)
 
     if not server_id:
-        if type == NODE_SERVER:
-            server = NodeServer(
-                name=name,
-                network=network,
-                interface=interface,
-                port=port,
-                protocol=protocol,
-                dh_param_bits=dh_param_bits,
-                mode=mode,
-                local_networks=local_networks,
-                dns_servers=dns_servers,
-                search_domain=search_domain,
-                public_address=public_address,
-                otp_auth=otp_auth,
-                lzo_compression=lzo_compression,
-                debug=debug,
-                node_host=node_host,
-                node_port=node_port,
-                node_key=node_key,
-            )
-        else:
-            server = Server(
-                name=name,
-                network=network,
-                interface=interface,
-                port=port,
-                protocol=protocol,
-                dh_param_bits=dh_param_bits,
-                mode=mode,
-                local_networks=local_networks,
-                dns_servers=dns_servers,
-                search_domain=search_domain,
-                public_address=public_address,
-                otp_auth=otp_auth,
-                lzo_compression=lzo_compression,
-                debug=debug,
-            )
+        server = Server.new_server(
+            name=name,
+            network=network,
+            interface=interface,
+            port=port,
+            protocol=protocol,
+            dh_param_bits=dh_param_bits,
+            mode=mode,
+            local_networks=local_networks,
+            dns_servers=dns_servers,
+            search_domain=search_domain,
+            public_address=public_address,
+            otp_auth=otp_auth,
+            lzo_compression=lzo_compression,
+            debug=debug,
+        )
     else:
         server = Server.get_server(id=server_id)
         if server.status:
@@ -439,8 +383,9 @@ def server_put_post(server_id=None):
             server.port = port
         if protocol_def:
             server.protocol = protocol
-        if dh_param_bits_def:
+        if dh_param_bits_def and server.dh_param_bits != dh_param_bits:
             server.dh_param_bits = dh_param_bits
+            server.generate_dh_param()
         if mode_def:
             server.mode = mode
         if local_networks_def:
@@ -457,15 +402,10 @@ def server_put_post(server_id=None):
             server.lzo_compression = lzo_compression
         if debug_def:
             server.debug = debug
-        if server.type == NODE_SERVER:
-            if node_host_def:
-                server.node_host = node_host
-            if node_port_def:
-                server.node_port = node_port
-            if node_key_def:
-                server.node_key = node_key
-        server.commit()
+    server.commit()
 
+    LogEntry(message='Created server "%s".' % server.name)
+    Event(type=SERVERS_UPDATED)
     for org in server.iter_orgs():
         Event(type=USERS_UPDATED, resource_id=org.id)
     return utils.jsonify(server.dict())
@@ -475,6 +415,10 @@ def server_put_post(server_id=None):
 def server_delete(server_id):
     server = Server.get_server(id=server_id)
     server.remove()
+    LogEntry(message='Deleted server "%s".' % server.name)
+    Event(type=SERVERS_UPDATED)
+    for org in server.iter_orgs():
+        Event(type=USERS_UPDATED, resource_id=org.id)
     return utils.jsonify({})
 
 @app_server.app.route('/server/<server_id>/organization', methods=['GET'])
@@ -495,12 +439,17 @@ def server_org_get(server_id):
 @app_server.auth
 def server_org_put(server_id, org_id):
     server = Server.get_server(id=server_id)
+    org = Organization.get_org(id=org_id)
     if server.status:
         return utils.jsonify({
             'error': SERVER_NOT_OFFLINE,
             'error_msg': SERVER_NOT_OFFLINE_ATTACH_ORG_MSG,
         }, 400)
-    org = server.add_org(org_id)
+    server.add_org(org)
+    server.commit()
+    Event(type=SERVERS_UPDATED)
+    Event(type=SERVER_ORGS_UPDATED, resource_id=server.id)
+    Event(type=USERS_UPDATED, resource_id=org.id)
     return utils.jsonify({
         'id': org.id,
         'server': server.id,
@@ -512,12 +461,17 @@ def server_org_put(server_id, org_id):
 @app_server.auth
 def server_org_delete(server_id, org_id):
     server = Server.get_server(id=server_id)
+    org = Organization.get_org(id=org_id)
     if server.status:
         return utils.jsonify({
             'error': SERVER_NOT_OFFLINE,
             'error_msg': SERVER_NOT_OFFLINE_DETACH_ORG_MSG,
         }, 400)
-    server.remove_org(org_id)
+    server.remove_org(org)
+    server.commit()
+    Event(type=SERVERS_UPDATED)
+    Event(type=SERVER_ORGS_UPDATED, resource_id=server.id)
+    Event(type=USERS_UPDATED, resource_id=org.id)
     return utils.jsonify({})
 
 @app_server.app.route('/server/<server_id>/<operation>', methods=['PUT'])
@@ -525,23 +479,16 @@ def server_org_delete(server_id, org_id):
 def server_operation_put(server_id, operation):
     server = Server.get_server(id=server_id)
 
-    try:
-        if operation == START:
-            server.start()
-        if operation == STOP:
-            server.stop()
-        elif operation == RESTART:
-            server.restart()
-    except NodeConnectionError:
-        return utils.jsonify({
-            'error': NODE_CONNECTION_ERROR,
-            'error_msg': NODE_CONNECTION_ERROR_MSG,
-        }, 400)
-    except InvalidNodeAPIKey:
-        return utils.jsonify({
-            'error': NODE_API_KEY_INVLID,
-            'error_msg': NODE_API_KEY_INVLID_MSG,
-        }, 400)
+    if operation == START:
+        server.start()
+        LogEntry(message='Started server "%s".' % server.name)
+    if operation == STOP:
+        server.stop()
+        LogEntry(message='Stopped server "%s".' % server.name)
+    elif operation == RESTART:
+        server.restart()
+        LogEntry(message='Restarted server "%s".' % server.name)
+    Event(type=SERVERS_UPDATED)
 
     return utils.jsonify(server.dict())
 

@@ -86,7 +86,7 @@ def user_get(org_id, user_id=None, page=None):
                 'search': search,
                 'search_more': search_more,
                 'search_limit': limit,
-                'search_count': org.get_last_prefix_count(),
+                'search_count': 10, # TODO
                 'search_time':  round((time.time() - flask.g.start), 4),
                 'server_count': server_count,
                 'users': users,
@@ -98,34 +98,35 @@ def user_get(org_id, user_id=None, page=None):
 @app_server.auth
 def user_post(org_id):
     org = Organization.get_org(id=org_id)
+    users = []
 
     if isinstance(flask.request.json, list):
-        users = []
-        for user_data in flask.request.json:
-            name = utils.filter_str(user_data['name'])
-            email = utils.filter_str(user_data.get('email'))
-            user = org.new_user(type=CERT_CLIENT, name=name, email=email)
-
-            disabled = user_data.get('disabled')
-            if disabled is not None:
-                user.disabled = disabled
-                user.commit()
-
-            users.append(user.dict())
-        return utils.jsonify(users)
+        users_data = flask.request.json
     else:
-        name = utils.filter_str(flask.request.json['name'])
-        email = None
-        if 'email' in flask.request.json:
-            email = utils.filter_str(flask.request.json['email'])
+        users_data = [flask.request.json]
+
+    for user_data in users_data:
+        name = utils.filter_str(user_data['name'])
+        email = utils.filter_str(user_data.get('email'))
         user = org.new_user(type=CERT_CLIENT, name=name, email=email)
 
-        disabled = flask.request.json.get('disabled')
+        disabled = user_data.get('disabled')
         if disabled is not None:
             user.disabled = disabled
-            user.commit()
 
-        return utils.jsonify(user.dict())
+        user.commit()
+        users.append(user.dict())
+
+    Event(type=ORGS_UPDATED)
+    Event(type=USERS_UPDATED, resource_id=org.id)
+    Event(type=SERVERS_UPDATED)
+
+    if isinstance(flask.request.json, list):
+        LogEntry(message='Created %s new users.' % len(flask.request.json))
+        return utils.jsonify(users)
+    else:
+        LogEntry(message='Created new user "%s".' % users[0]['name'])
+        return utils.jsonify(users[0])
 
 @app_server.app.route('/user/<org_id>/<user_id>', methods=['PUT'])
 @app_server.auth
@@ -133,26 +134,18 @@ def user_put(org_id, user_id):
     org = Organization.get_org(id=org_id)
     user = org.get_user(user_id)
 
-    name = flask.request.json.get('name')
-    if name:
-        name = utils.filter_str(name)
+    if 'name' in flask.request.json:
+        user.name = utils.filter_str(flask.request.json['name']) or None
 
     if 'email' in flask.request.json:
-        email = flask.request.json['email']
-        if email:
-            user.email = utils.filter_str(email)
-        else:
-            user.email = None
+        user.email = utils.filter_str(flask.request.json['email']) or None
 
     disabled = flask.request.json.get('disabled')
     if disabled is not None:
         user.disabled = disabled
 
-    if name:
-        user.rename(name)
-    else:
-        user.commit()
-        Event(type=USERS_UPDATED, resource_id=user.org.id)
+    user.commit()
+    Event(type=USERS_UPDATED, resource_id=user.org.id)
 
     if disabled:
         if user.type == CERT_CLIENT:
@@ -192,13 +185,18 @@ def user_put(org_id, user_id):
 def user_delete(org_id, user_id):
     org = Organization.get_org(id=org_id)
     user = org.get_user(user_id)
-    user_id = user.id
+    name = user.name
     user.remove()
+
+    Event(type=ORGS_UPDATED)
+    Event(type=USERS_UPDATED, resource_id=org.id)
 
     for server in org.iter_servers():
         server_clients = server.clients
         if user_id in server_clients:
             server.restart()
+
+    LogEntry(message='Deleted user "%s".' % name)
 
     return utils.jsonify({})
 
@@ -208,4 +206,6 @@ def user_otp_secret_put(org_id, user_id):
     org = Organization.get_org(id=org_id)
     user = org.get_user(user_id)
     user.generate_otp_secret()
+    user.commit()
+    Event(type=USERS_UPDATED, resource_id=org.id)
     return utils.jsonify(user.dict())
