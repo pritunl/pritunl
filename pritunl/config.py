@@ -12,6 +12,7 @@ class Config:
     path_options = set()
     str_options = set()
     list_options = set()
+    ignore_options = set()
     default_options = {}
     chmod_mode = None
     cached = False
@@ -105,6 +106,11 @@ class Config:
         return filter(None, value.split(','))
 
     def _decode_value(self, name, value):
+        if name in self.ignore_options:
+            return
+        elif name not in self.all_options:
+            raise ValueError('Unknown option')
+
         if value:
             if name in self.list_options:
                 values = self._decode_list(value)
@@ -135,8 +141,6 @@ class Config:
                 value = self._decode_bool(value)
             elif name in self.path_options:
                 value = self._decode_path(value)
-            else:
-                raise ValueError('Unknown option')
         else:
             value = [] if name in self.list_options else None
         return value
