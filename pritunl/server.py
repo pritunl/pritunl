@@ -201,7 +201,7 @@ class Server(MongoObject):
 
         self.primary_organization = org.id
         self.primary_user = user.id
-        self.commit()
+        self.commit(('primary_organization', 'primary_user'))
 
         user.commit()
 
@@ -578,7 +578,7 @@ class Server(MongoObject):
                 args=(temp_path,))
             status_thread.start()
             self.status = True
-            self.commit()
+            self.commit('status')
             self.publish('started')
 
             while True:
@@ -597,7 +597,7 @@ class Server(MongoObject):
             cache_db.dict_remove(self.get_cache_key(), 'clients')
 
             self.status = False
-            self.commit()
+            self.commit('status')
             self.publish('stopped')
             self.update_clients({}, force=True)
             if self._state:
