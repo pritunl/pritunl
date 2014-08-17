@@ -37,12 +37,6 @@ class ServerStartError(ServerError):
 class ServerStopError(ServerError):
     pass
 
-class InvalidNodeAPIKey(ServerError):
-    pass
-
-class NodeConnectionError(ServerError):
-    pass
-
 class IptablesError(ServerError):
     pass
 
