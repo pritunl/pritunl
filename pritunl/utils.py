@@ -395,6 +395,6 @@ def get_auth():
         'username': administrators_doc.get('username'),
         'token': administrators_doc.get('token_enc'),
         'secret': administrators_doc.get('secret'),
-        'email_from': system_conf.get('email.from_addr'),
-        'email_api_key': system_conf.get('email.api_key'),
+        'email_from': system_conf.get('email', 'from_addr'),
+        'email_api_key': system_conf.get('email', 'api_key'),
     }

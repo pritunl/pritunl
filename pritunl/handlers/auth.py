@@ -23,10 +23,10 @@ def auth_put():
     utils.set_auth(username, password, token)
     if 'email_from' in flask.request.json:
         email_from = flask.request.json['email_from']
-        system_conf.set('email.from_addr', email_from or None)
+        system_conf.set('email', 'from_addr', email_from or None)
     if 'email_api_key' in flask.request.json:
         email_api_key = flask.request.json['email_api_key']
-        system_conf.set('email.api_key', email_api_key or None)
+        system_conf.set('email', 'api_key', email_api_key or None)
     system_conf.commit()
 
     return utils.jsonify(utils.get_auth())

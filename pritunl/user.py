@@ -296,8 +296,8 @@ class User(MongoObject):
 
     def send_key_email(self, key_link_domain):
         system_conf = SystemConf()
-        from_addr = system_conf.get('email.from_addr')
-        api_key = system_conf.get('email.api_key')
+        from_addr = system_conf.get('email', 'from_addr')
+        api_key = system_conf.get('email', 'api_key')
 
         if not from_addr or not api_key:
             raise EmailNotConfiguredError('Email not configured', {
