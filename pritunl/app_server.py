@@ -222,6 +222,10 @@ class AppServer(Config):
         thread.daemon = True
         thread.start()
 
+    def _setup_db(self):
+        from mongo import setup_mongo
+        setup_mongo()
+
     def _setup_app(self):
         self.app = flask.Flask(APP_NAME)
         self.app.secret_key = os.urandom(32)
@@ -304,6 +308,7 @@ class AppServer(Config):
     def _setup_all(self):
         self._setup_app()
         self._setup_conf()
+        self._setup_db()
         self._setup_temp_path()
         self._setup_log()
         self._setup_public_ip()
