@@ -294,8 +294,10 @@ class User(MongoObject):
         }
 
     def send_key_email(self, key_link_domain):
-        email_from = persist_db.dict_get('auth', 'email_from')
-        email_api_key = persist_db.dict_get('auth', 'email_api_key')
+        system = mongo.get_collection('system')
+        email_doc = system.find_one('email') or {}
+        email_from = email_doc.get('email_from')
+        email_api_key = email_doc.get('email_api_key')
 
         if not email_from or not email_api_key:
             raise EmailNotConfiguredError('Email not configured', {
