@@ -1,7 +1,7 @@
 from constants import *
 from exceptions import *
 from pritunl import app_server
-from cache import cache_db, persist_db
+from cache import cache_db
 from cache_trie import CacheTrie
 from log_entry import LogEntry
 from event import Event

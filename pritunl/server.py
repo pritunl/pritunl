@@ -5,7 +5,7 @@ from organization import Organization
 from event import Event
 from log_entry import LogEntry
 from mongo_object import MongoObject
-from cache import cache_db, persist_db
+from cache import cache_db
 import mongo
 import uuid
 import os
