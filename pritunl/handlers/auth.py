@@ -1,4 +1,5 @@
 from pritunl.constants import *
+from pritunl.system_conf import SystemConf
 import pritunl.utils as utils
 import pritunl.mongo as mongo
 from pritunl import app_server
@@ -17,28 +18,16 @@ def auth_put():
     password = flask.request.json['password']
     token = flask.request.json.get('token')
     email_api_key = flask.request.json.get('email_api_key')
-    doc = {}
+    system_conf = SystemConf()
 
     utils.set_auth(username, password, token)
     if 'email_from' in flask.request.json:
         email_from = flask.request.json['email_from']
-        if email_from:
-            doc['email_from'] = email_from
-        else:
-            doc['email_from'] = None
+        system_conf.set('email.from_addr', email_from or None)
     if 'email_api_key' in flask.request.json:
         email_api_key = flask.request.json['email_api_key']
-        if email_api_key:
-            doc['email_api_key'] = email_api_key
-        else:
-            doc['email_api_key'] = None
-    if doc:
-        system = mongo.get_collection('system')
-        system.update({
-            '_id': 'email',
-        }, {
-            '$set': doc,
-        }, upsert=True)
+        system_conf.set('email.api_key', email_api_key or None)
+    system_conf.commit()
 
     return utils.jsonify(utils.get_auth())
 

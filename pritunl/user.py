@@ -5,6 +5,7 @@ from cache import cache_db
 from cache_trie import CacheTrie
 from log_entry import LogEntry
 from event import Event
+from system_conf import SystemConf
 from mongo_object import MongoObject
 import mongo
 import uuid
@@ -294,12 +295,11 @@ class User(MongoObject):
         }
 
     def send_key_email(self, key_link_domain):
-        system = mongo.get_collection('system')
-        email_doc = system.find_one('email') or {}
-        email_from = email_doc.get('email_from')
-        email_api_key = email_doc.get('email_api_key')
+        system_conf = SystemConf()
+        from_addr = system_conf.get('email.from_addr')
+        api_key = system_conf.get('email.api_key')
 
-        if not email_from or not email_api_key:
+        if not from_addr or not api_key:
             raise EmailNotConfiguredError('Email not configured', {
                 'org_id': self.org.id,
                 'user_id': self.id,
@@ -310,10 +310,10 @@ class User(MongoObject):
             headers={
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'X-Postmark-Server-Token': email_api_key,
+                'X-Postmark-Server-Token': api_key,
             },
             json_data={
-                'From': email_from,
+                'From': from_addr,
                 'To': self.email,
                 'Subject': 'Pritunl VPN Key',
                 'TextBody':  'Your vpn key can be downloaded from the ' +

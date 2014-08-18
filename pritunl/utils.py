@@ -381,6 +381,7 @@ def set_auth(username, password, token=None):
     administrators.save(doc)
 
 def get_auth():
+    from system_conf import SystemConf
     import mongo
 
     administrators = mongo.get_collection('administrators')
@@ -388,13 +389,12 @@ def get_auth():
         'username': DEFAULT_USERNAME,
         'password': DEFAULT_PASSWORD,
     }
-    system = mongo.get_collection('system')
-    email_doc = system.find_one('email') or {}
+    system_conf = SystemConf()
 
     return {
         'username': administrators_doc.get('username'),
         'token': administrators_doc.get('token_enc'),
         'secret': administrators_doc.get('secret'),
-        'email_from': email_doc.get('email_from'),
-        'email_api_key': email_doc.get('email_api_key'),
+        'email_from': system_conf.get('email.from_addr'),
+        'email_api_key': system_conf.get('email.api_key'),
     }
