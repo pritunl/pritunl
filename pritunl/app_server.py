@@ -1,5 +1,5 @@
 from constants import *
-from cache import cache_db, persist_db
+from cache import cache_db
 from event import Event
 from config import Config
 import utils
@@ -38,22 +38,47 @@ class HTTPConnectionPatch(cherrypy.wsgiserver.HTTPConnection):
         self.requests_seen = 0
 
 class AppServer(Config):
-    # deprecated = password, dh_param_bits
-    # auto_start_servers, get_public_ip, get_notifications, inline_certs
-    # static_cache, pooler,
-    bool_options = {'debug', 'log_debug', 'auto_start_servers',
-        'get_public_ip', 'get_notifications', 'inline_certs', 'ssl',
-        'static_cache', 'pooler'}
-    int_options = {'port', 'session_timeout', 'key_bits', 'dh_param_bits',
-        'org_pool_size', 'user_pool_size', 'server_user_pool_size',
-        'server_pool_size', 'server_log_lines'}
-    path_options = {'log_path', 'db_path', 'www_path', 'data_path',
-        'server_cert_path', 'server_key_path'}
-    str_options = {'bind_addr', 'password', 'public_ip_server',
-        'notification_server', 'dh_param_bits_pool', 'mongodb_url'}
-    list_options = {'dh_param_bits_pool'}
+    bool_options = {
+        'debug',
+        'get_public_ip',
+        'get_notifications',
+        'ssl',
+        'static_cache',
+    }
+    int_options = {
+        'port',
+    }
+    path_options = {
+        'log_path',
+        'www_path',
+        'server_cert_path',
+        'server_key_path',
+    }
+    str_options = {
+        'bind_addr',
+        'public_ip_server',
+        'notification_server',
+        'mongodb_url',
+    }
+    ignore_options = {
+        'log_debug',
+        'auto_start_servers',
+        'inline_certs',
+        'pooler',
+        'session_timeout',
+        'key_bits',
+        'dh_param_bits',
+        'org_pool_size',
+        'user_pool_size',
+        'server_user_pool_size',
+        'server_pool_size',
+        'server_log_lines',
+        'db_path',
+        'data_path',
+        'password',
+        'dh_param_bits_pool',
+    }
     default_options = {
-        'auto_start_servers': True,
         'get_public_ip': True,
         'inline_certs': True,
         'get_notifications': True,
@@ -61,19 +86,8 @@ class AppServer(Config):
         'static_cache': True,
         'bind_addr': DEFAULT_BIND_ADDR,
         'port': DEFAULT_PORT,
-        'session_timeout': DEFAULT_SESSION_TIMEOUT,
-        'key_bits': DEFAULT_KEY_BITS,
-        'dh_param_bits': DEFAULT_DH_PARAM_BITS,
         'pooler': True,
-        'org_pool_size': DEFAULT_ORG_POOL_SIZE,
-        'user_pool_size': DEFAULT_USER_POOL_SIZE,
-        'server_user_pool_size': DEFAULT_SERVER_USER_POOL_SIZE,
-        'server_pool_size': DEFAULT_SERVER_POOL_SIZE,
-        'dh_param_bits_pool': DEFAULT_DH_PARAM_BITS_POOL,
-        'server_log_lines': DEFAULT_SERVER_LOG_LINES,
-        'db_path': DEFAULT_DB_PATH,
         'www_path': DEFAULT_WWW_PATH,
-        'data_path': DEFAULT_DATA_PATH,
         'public_ip_server': DEFAULT_PUBLIC_IP_SERVER,
         'notification_server': DEFAULT_NOTIFICATION_SERVER,
     }
@@ -133,7 +147,7 @@ class AppServer(Config):
 
     def subscription_update(self):
         cur_sub_active = self.sub_active
-        license = persist_db.get('license')
+        license = None # TODO
         if not license:
             self.sub_active = False
             self.sub_status = None
@@ -147,7 +161,7 @@ class AppServer(Config):
                     timeout=HTTP_REQUEST_TIMEOUT)
                 # License key invalid
                 if response.status_code == 470:
-                    persist_db.remove('license')
+                    #persist_db.remove('license')
                     self.subscription_update()
                     return
                 data = response.json()
@@ -167,7 +181,7 @@ class AppServer(Config):
 
     def subscription_dict(self):
         return {
-            'license': bool(persist_db.get('license')),
+            'license': bool(None), # TODO
             'active': self.sub_active,
             'status': self.sub_status,
             'amount': self.sub_amount,
@@ -249,8 +263,6 @@ class AppServer(Config):
 
     def _setup_conf(self):
         self.set_path(self.conf_path)
-        if not os.path.isdir(self.data_path):
-            os.makedirs(self.data_path)
 
     def _setup_temp_path(self):
         # TODO
@@ -259,11 +271,7 @@ class AppServer(Config):
             os.makedirs(self.temp_path)
 
     def _setup_log(self):
-        if self.log_debug:
-            self.log_level = logging.DEBUG
-        else:
-            self.log_level = logging.INFO
-
+        self.log_level = logging.INFO
         if self.log_path:
             self.log_handler = logging.handlers.RotatingFileHandler(
                 self.log_path, maxBytes=1000000, backupCount=1)
@@ -283,9 +291,6 @@ class AppServer(Config):
 
         logger.addHandler(self.log_handler)
 
-    def _setup_db(self):
-        persist_db.persist(self.db_path)
-
     def _setup_handlers(self):
         import handlers
 
@@ -296,24 +301,6 @@ class AppServer(Config):
         from pritunl import __version__
         return self._get_version_int(__version__)
 
-    def _get_data_version(self):
-        version_path = os.path.join(self.data_path, VERSION_NAME)
-        if os.path.isfile(version_path):
-            with open(version_path, 'r') as version_file:
-                return self._get_version_int(
-                    version_file.readlines()[0].strip())
-
-    def _upgrade_db(self):
-        version = self._get_version()
-        cur_version = self._get_data_version()
-
-        if cur_version and cur_version < self._get_version_int('0.10.5'):
-            logger.info('Upgrading database to v0.10.5...')
-            try:
-                os.remove(self.db_path)
-            except OSError:
-                pass
-
     def _setup_all(self):
         self._setup_app()
         self._setup_conf()
@@ -321,8 +308,6 @@ class AppServer(Config):
         self._setup_log()
         self._setup_public_ip()
         self._setup_updates()
-        self._upgrade_db()
-        self._setup_db()
         self._setup_handlers()
 
     def _setup_server_cert(self):
