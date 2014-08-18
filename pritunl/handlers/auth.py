@@ -1,5 +1,4 @@
 from pritunl.constants import *
-from pritunl.cache import persist_db
 import pritunl.utils as utils
 import pritunl.mongo as mongo
 from pritunl import app_server
