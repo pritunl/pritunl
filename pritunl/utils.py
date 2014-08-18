@@ -309,6 +309,7 @@ def _test_password_hash(pass_data, test_pass):
         hash_func = _hash_password_v2
     else:
         return False
+
     test_hash = base64.b64encode(hash_func(pass_salt, test_pass))
     return pass_hash == test_hash
 
