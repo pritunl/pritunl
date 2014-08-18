@@ -1,5 +1,5 @@
 from constants import *
-from cache import persist_db
+from cache import cache_db
 from event import Event
 from cache_object import CacheObject
 import time
@@ -10,7 +10,7 @@ class LogEntry(CacheObject):
     str_columns = {'type', 'message'}
     int_columns = {'time'}
     cached_columns = {'type', 'message', 'time'}
-    db_instance = persist_db
+    db_instance = cache_db # TODO
 
     def __init__(self, id=None, type=None, message=None):
         CacheObject.__init__(self)
