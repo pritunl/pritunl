@@ -81,7 +81,7 @@ class Organization(MongoObject):
         return User.get_user(self, id=id)
 
     def find_user(self, name=None, type=None):
-        return User.get_user(self, name=name, type=type)
+        return User.find_user(self, name=name, type=type)
 
     def _get_otp_auth(self):
         from server import Server
