@@ -1,7 +1,6 @@
 from pritunl.constants import *
 import pritunl.utils as utils
 from pritunl import app_server
-from pritunl.cache import persist_db
 import flask
 import re
 
@@ -39,7 +38,7 @@ def subscription_post():
     if response.status_code != 200:
         return utils.jsonify(data, response.status_code);
 
-    persist_db.set('license', license)
+    #persist_db.set('license', license)
     app_server.subscription_update()
     return utils.jsonify(app_server.subscription_dict())
 
@@ -54,13 +53,13 @@ def subscription_put():
         if cancel:
             response = utils.request.delete(SUBSCRIPTION_SERVER,
                 json_data={
-                    'license': persist_db.get('license'),
+                    'license': None, # TODO
                 },
             )
         else:
             response = utils.request.put(SUBSCRIPTION_SERVER,
                 json_data={
-                    'license': persist_db.get('license'),
+                    'license': None, # TODO
                     'card': card,
                     'email': email,
                 },
@@ -80,6 +79,6 @@ def subscription_put():
 @app_server.app.route('/subscription', methods=['DELETE'])
 @app_server.auth
 def subscription_delete():
-    persist_db.remove('license')
+    #persist_db.remove('license')
     app_server.subscription_update()
     return utils.jsonify({})
