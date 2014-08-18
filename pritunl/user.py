@@ -360,9 +360,9 @@ class User(MongoObject):
                 'error_msg': error_msg,
             })
 
-    @staticmethod
-    def get_user(org, id):
-        user = User(org, id=id)
+    @classmethod
+    def get_user(cls, org, id):
+        user = cls(org, id=id)
         return user
 
     @classmethod
@@ -374,5 +374,5 @@ class User(MongoObject):
             spec['name'] = name
         if type is not None:
             spec['type'] = type
-        user = User(org, spec=spec)
+        user = cls(org, spec=spec)
         return user
