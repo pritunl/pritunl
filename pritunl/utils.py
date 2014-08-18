@@ -96,8 +96,8 @@ def check_session():
             flask.session.clear()
             return False
 
-        if app_server.session_timeout and int(time.time()) - \
-                flask.session['timestamp'] > app_server.session_timeout:
+        if SESSION_TIMEOUT and int(time.time()) - \
+                flask.session['timestamp'] > SESSION_TIMEOUT:
             flask.session.clear()
             return False
     return auth_valid

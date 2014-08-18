@@ -42,6 +42,7 @@ DEFAULT_NOTIFICATION_SERVER = 'http://ip.pritunl.com/notification'
 SUBSCRIPTION_SERVER = 'https://app.pritunl.com/subscription'
 POSTMARK_SERVER = 'https://api.postmarkapp.com/email'
 UPDATE_CHECK_RATE = 3600
+SESSION_TIMEOUT = 86400
 ENV_PREFIX = APP_NAME
 LOG_LIMIT = 50
 EVENT_TTL = 60
