@@ -566,4 +566,3 @@ class TunlDBTransaction:
         self._cache._apply_trans(trans)
 
 cache_db = TunlDB()
-persist_db = TunlDB()
