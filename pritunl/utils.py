@@ -1,5 +1,5 @@
 from constants import *
-from cache import cache_db, persist_db
+from cache import cache_db
 import Crypto.Cipher.AES
 import flask
 import json
@@ -54,11 +54,14 @@ def check_session():
             return False
 
         cache_key = 'auth_nonce-%s' % auth_nonce
-        if cache_db.exists(cache_key):
+        if cache_db.exists(cache_key): # TODO
             return False
 
-        auth_token_hash = persist_db.dict_get('auth', 'token')
-        auth_secret = persist_db.dict_get('auth', 'secret')
+        administrators = mongo.get_collection('administrators')
+        doc = administrators.find_one() or {}
+
+        auth_token_hash = doc.get('token')
+        auth_secret = doc.get('secret')
         if not auth_token_hash or not auth_secret:
             return False
         if not _test_password_hash(auth_token_hash, auth_token):
@@ -296,13 +299,6 @@ def _hash_password_v2(salt, password):
         hash_digest = pass_hash.digest()
     return hash_digest
 
-def _get_password_data():
-    password = persist_db.dict_get('auth', 'password')
-    if not password:
-        return None, None, None
-    pass_split = password.split('$')
-    return (int(pass_split[0]), pass_split[1], pass_split[2])
-
 def _test_password_hash(pass_data, test_pass):
     pass_ver, pass_salt, pass_hash = pass_data.split('$')
     if pass_ver == '0':
@@ -357,7 +353,6 @@ def set_auth(username, password, token=None):
 
     if username:
         doc['username'] = username
-
 
     salt = base64.b64encode(os.urandom(8))
     pass_hash = base64.b64encode(_hash_password_v1(salt, password))
