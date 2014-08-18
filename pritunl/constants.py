@@ -390,7 +390,7 @@ key %s
 verb 2
 mute 3
 nobind
-reneg-sec 604800
+reneg-sec 2592000
 sndbuf 100000
 rcvbuf 100000
 """
@@ -405,7 +405,7 @@ persist-tun
 verb 2
 mute 3
 nobind
-reneg-sec 604800
+reneg-sec 2592000
 sndbuf 100000
 rcvbuf 100000
 """
