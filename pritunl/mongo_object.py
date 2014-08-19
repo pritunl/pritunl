@@ -8,7 +8,7 @@ class MongoObject:
     fields_default = {}
 
     def __init__(self, id=None, doc=None, spec=None):
-        self._changed = set()
+        self.changed = set()
         self.id = id
 
         if id or doc or spec:
@@ -20,7 +20,7 @@ class MongoObject:
 
     def __setattr__(self, name, value):
         if name != 'fields' and name in self.fields:
-            self._changed.add(name)
+            self.changed.add(name)
         self.__dict__[name] = value
 
     def __getattr__(self, name):
@@ -59,16 +59,16 @@ class MongoObject:
             if isinstance(fields, basestring):
                 fields = (fields,)
         elif self._exists:
-            fields = self._changed
+            fields = self.changed
 
         if fields:
             doc = {}
             for field in fields:
                 doc[field] = self.__dict__[field]
             self.get_collection().update({
-                '_id': bson.ObjectId(self.id)
+                '_id': bson.ObjectId(self.id),
             }, {
-                '$set': doc
+                '$set': doc,
             }, upsert=True)
         else:
             doc = self.fields_default.copy()
@@ -77,6 +77,9 @@ class MongoObject:
                 if field in self.__dict__:
                     doc[field] = self.__dict__[field]
             self.get_collection().save(doc)
+
+        self._exists = True
+        self.changed = set()
 
     def remove(self):
         self.get_collection().remove(bson.ObjectId(self.id))
