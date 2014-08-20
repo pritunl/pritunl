@@ -1,6 +1,5 @@
 from constants import *
 from cache import cache_db
-import Crypto.Cipher.AES
 import flask
 import json
 import subprocess
@@ -33,74 +32,6 @@ def jsonify(data=None, status_code=None):
 
 def get_remote_addr():
     return flask.request.remote_addr
-
-def check_session():
-    from pritunl import app_server
-    auth_valid = True
-    auth_token = flask.request.headers.get('Auth-Token', None)
-    if auth_token:
-        auth_timestamp = flask.request.headers.get('Auth-Timestamp', None)
-        auth_nonce = flask.request.headers.get('Auth-Nonce', None)
-        auth_signature = flask.request.headers.get('Auth-Signature', None)
-        if not auth_token or not auth_timestamp or not auth_nonce or \
-                not auth_signature:
-            return False
-        auth_nonce = auth_nonce[:32]
-
-        try:
-            if abs(int(auth_timestamp) - int(time.time())) > AUTH_TIME_WINDOW:
-                return False
-        except ValueError:
-            return False
-
-        cache_key = 'auth_nonce-%s' % auth_nonce
-        if cache_db.exists(cache_key): # TODO
-            return False
-
-        administrators = mongo.get_collection('administrators')
-        doc = administrators.find_one() or {}
-
-        auth_token_hash = doc.get('token')
-        auth_secret = doc.get('secret')
-        if not auth_token_hash or not auth_secret:
-            return False
-        if not _test_password_hash(auth_token_hash, auth_token):
-            auth_valid = False
-
-        auth_string = '&'.join([
-            auth_token, auth_timestamp, auth_nonce, flask.request.method,
-            flask.request.path] +
-            ([flask.request.data] if flask.request.data else []))
-
-        if len(auth_string) > AUTH_SIG_STRING_MAX_LEN:
-            return False
-
-        auth_test_signature = base64.b64encode(hmac.new(
-            auth_secret.encode(), auth_string, hashlib.sha256).digest())
-        if auth_signature != auth_test_signature:
-            auth_valid = False
-
-        if auth_valid:
-            cache_db.expire(cache_key, int(AUTH_TIME_WINDOW * 2.1))
-            cache_db.set(cache_key, auth_timestamp)
-    else:
-        if not flask.session:
-            return False
-
-        if not flask.session.get('auth'):
-            flask.session.clear()
-            return False
-
-        if not app_server.ssl and flask.session.get(
-                'source') != get_remote_addr():
-            flask.session.clear()
-            return False
-
-        if SESSION_TIMEOUT and int(time.time()) - \
-                flask.session['timestamp'] > SESSION_TIMEOUT:
-            flask.session.clear()
-            return False
-    return auth_valid
 
 def rmtree(path):
     logged = False
@@ -268,133 +199,103 @@ class request:
         return cls._request('DELETE', url, **kwargs)
 
 
+def check_session():
+    from administrator import Administrator
 
-def _hash_password_v0(salt, password):
-    pass_hash = hashlib.sha512()
-    pass_hash.update(password[:PASSWORD_LEN_LIMIT])
-    pass_hash.update(base64.b64decode(salt))
-    return pass_hash.digest()
+    auth_token = flask.request.headers.get('Auth-Token', None)
+    if auth_token:
+        auth_timestamp = flask.request.headers.get('Auth-Timestamp', None)
+        auth_nonce = flask.request.headers.get('Auth-Nonce', None)
+        auth_signature = flask.request.headers.get('Auth-Signature', None)
+        if not auth_token or not auth_timestamp or not auth_nonce or \
+                not auth_signature:
+            return False
+        auth_nonce = auth_nonce[:32]
 
-def _hash_password_v1(salt, password):
-    pass_hash = hashlib.sha512()
-    pass_hash.update(password[:PASSWORD_LEN_LIMIT])
-    pass_hash.update(base64.b64decode(salt))
-    hash_digest = pass_hash.digest()
+        try:
+            if abs(int(auth_timestamp) - int(time.time())) > AUTH_TIME_WINDOW:
+                return False
+        except ValueError:
+            return False
 
-    for i in xrange(5):
-        pass_hash = hashlib.sha512()
-        pass_hash.update(hash_digest)
-        hash_digest = pass_hash.digest()
-    return hash_digest
+        # TODO
+        cache_key = 'auth_nonce-%s' % auth_nonce
+        if cache_db.exists(cache_key):
+            return False
 
-def _hash_password_v2(salt, password):
-    pass_hash = hashlib.sha256()
-    pass_hash.update(password[:PASSWORD_LEN_LIMIT])
-    pass_hash.update(base64.b64decode(salt))
-    hash_digest = pass_hash.digest()
+        administrator = Administrator.find_user(token=auth_token)
+        if not administrator:
+            return False
 
-    for i in xrange(5):
-        pass_hash = hashlib.sha256()
-        pass_hash.update(hash_digest)
-        hash_digest = pass_hash.digest()
-    return hash_digest
+        auth_string = '&'.join([
+            auth_token, auth_timestamp, auth_nonce, flask.request.method,
+            flask.request.path] +
+            ([flask.request.data] if flask.request.data else []))
 
-def _test_password_hash(pass_data, test_pass):
-    pass_ver, pass_salt, pass_hash = pass_data.split('$')
-    if pass_ver == '0':
-        hash_func = _hash_password_v0
-    elif pass_ver == '1':
-        hash_func = _hash_password_v1
-    elif pass_ver == '2':
-        hash_func = _hash_password_v2
+        if len(auth_string) > AUTH_SIG_STRING_MAX_LEN:
+            return False
+
+        auth_test_signature = base64.b64encode(hmac.new(
+            administrator.secret.encode(), auth_string,
+            hashlib.sha256).digest())
+        if auth_signature != auth_test_signature:
+            return False
+
+        # TODO
+        cache_db.expire(cache_key, int(AUTH_TIME_WINDOW * 2.1))
+        cache_db.set(cache_key, auth_timestamp)
+
+        flask.request.administrator = administrator
     else:
-        return False
+        from pritunl import app_server
+        if not flask.session:
+            print 'error0'
+            return False
 
-    test_hash = base64.b64encode(hash_func(pass_salt, test_pass))
-    return pass_hash == test_hash
+        admin_id = flask.session.get('admin_id')
+        if not admin_id:
+            print 'error1'
+            return False
+
+        administrator = Administrator.get_user(id=admin_id)
+        if not administrator:
+            print 'error2'
+            return False
+
+        if not app_server.ssl and flask.session.get(
+                'source') != get_remote_addr():
+            flask.session.clear()
+            print 'error3'
+            return False
+
+        if SESSION_TIMEOUT and int(time.time()) - \
+                flask.session['timestamp'] > SESSION_TIMEOUT:
+            flask.session.clear()
+            print 'error4'
+            return False
+
+        flask.request.administrator = administrator
+    return True
 
 def check_auth(username, password, remote_addr=None):
-    import mongo
+    from administrator import Administrator
 
     if remote_addr:
+        # TODO
         cache_key = 'ip_' + remote_addr
         count = cache_db.list_length(cache_key)
         if count and count > 10:
             raise flask.abort(403)
 
+        # TODO
         key_exists = cache_db.exists(cache_key)
         cache_db.list_rpush(cache_key, '')
         if not key_exists:
             cache_db.expire(cache_key, 20)
 
-    administrators = mongo.get_collection('administrators')
-    administrators_count = None
-
-    doc = administrators.find_one({'username': username})
-    if not doc:
-        if username == DEFAULT_USERNAME and password == DEFAULT_PASSWORD and \
-                not administrators.find_one():
-            return True
-        else:
-            return False
-
-    return _test_password_hash(doc['password'], password)
-
-def set_auth(username, password, token=None):
-    import mongo
-
-    if not password:
-        raise ValueError('Password cannot be blank')
-
-    administrators = mongo.get_collection('administrators')
-    doc = administrators.find_one() or {
-        'username': DEFAULT_USERNAME,
-        'password': DEFAULT_PASSWORD,
-    }
-
-    if username:
-        doc['username'] = username
-
-    salt = base64.b64encode(os.urandom(8))
-    pass_hash = base64.b64encode(_hash_password_v1(salt, password))
-    doc['password'] = '1$%s$%s' % (salt, pass_hash)
-
-    if not token:
-        regex = re.compile(r'[\W_]+')
-        token = re.sub(regex, '', base64.b64encode(os.urandom(64)))[:32]
-        secret = re.sub(regex, '', base64.b64encode(os.urandom(64)))[:32]
-        doc['secret'] = secret
-
-    token_salt = base64.b64encode(os.urandom(8))
-    token_hash = base64.b64encode(_hash_password_v1(token_salt, token))
-    doc['token'] = '1$%s$%s' % (token_salt, token_hash)
-
-    token_key_salt = base64.b64encode(os.urandom(8))
-    token_key_hash = _hash_password_v2(token_key_salt,
-        '%s$%s' % (doc['username'], password))
-    token_key = token_key_hash
-
-    aes_cipher = Crypto.Cipher.AES.new(token_key)
-    token_enc = base64.b64encode(aes_cipher.encrypt(token))
-    doc['token_enc'] = '2$%s$%s' % (token_key_salt, token_enc)
-
-    administrators.save(doc)
-
-def get_auth():
-    from system_conf import SystemConf
-    import mongo
-
-    administrators = mongo.get_collection('administrators')
-    administrators_doc = administrators.find_one() or {
-        'username': DEFAULT_USERNAME,
-        'password': DEFAULT_PASSWORD,
-    }
-    system_conf = SystemConf()
-
-    return {
-        'username': administrators_doc.get('username'),
-        'token': administrators_doc.get('token_enc'),
-        'secret': administrators_doc.get('secret'),
-        'email_from': system_conf.get('email', 'from_addr'),
-        'email_api_key': system_conf.get('email', 'api_key'),
-    }
+    administrator = Administrator.find_user(username=username)
+    if not administrator:
+        return
+    if not administrator.test_password(password):
+        return
+    return administrator
