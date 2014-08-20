@@ -8,7 +8,8 @@ define([
     defaults: {
       'authenticated': null,
       'username': null,
-      'password': null
+      'password': null,
+      'default': null
     },
     url: function() {
       return '/auth/session';
