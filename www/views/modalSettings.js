@@ -21,7 +21,6 @@ define([
       this.initial = options.initial;
       if (this.initial) {
         this.title = 'Initial Setup';
-        this.okText = 'Save';
         this.cancelText = 'Setup Later';
       }
       ModalSettingsView.__super__.initialize.call(this);
