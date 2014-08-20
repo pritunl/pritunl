@@ -13,13 +13,13 @@ class MongoObject(object):
         mongo_object.id = id
 
         if id or doc or spec:
-            mongo_object._exists = True
+            mongo_object.exists = True
             try:
                 mongo_object.load(doc=doc, spec=spec)
             except NotFound:
                 return None
         else:
-            mongo_object._exists = False
+            mongo_object.exists = False
             mongo_object.id = str(bson.ObjectId())
         return mongo_object
 
@@ -63,7 +63,7 @@ class MongoObject(object):
         if fields:
             if isinstance(fields, basestring):
                 fields = (fields,)
-        elif self._exists:
+        elif self.exists:
             fields = self.changed
 
         if fields:
@@ -83,7 +83,7 @@ class MongoObject(object):
                     doc[field] = self.__dict__[field]
             self.get_collection().save(doc)
 
-        self._exists = True
+        self.exists = True
         self.changed = set()
 
     def remove(self):
