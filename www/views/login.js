@@ -28,7 +28,6 @@ define([
       this.active = true;
       this.alert = options.alert;
       this.callback = options.callback;
-      this.showSettings = options.showSettings;
       this.backdrop = new LoginBackdropView();
       this.addView(this.backdrop);
     },
@@ -79,15 +78,12 @@ define([
       this.addView(this.alertView);
       this.$('input').addClass('has-warning');
     },
-    openSettings: function(username, password, initial) {
-      var model = new AuthModel({
-        username: username,
-        password: password
-      });
+    openSettings: function() {
+      var model = new AuthModel();
       model.fetch({
         success: function() {
           var modal = new ModalSettingsView({
-            initial: initial,
+            initial: true,
             model: model
           });
           this.listenToOnce(modal, 'applied', function() {
@@ -135,11 +131,8 @@ define([
             complete: function() {
               var initial;
               this.destroy();
-              if (model.get('default_password') || this.showSettings) {
-                if (!this.showSettings) {
-                  initial = true;
-                }
-                this.openSettings(username, password, initial);
+              if (model.get('default')) {
+                this.openSettings();
               }
               window.loginViewLock = false;
             }.bind(this)
