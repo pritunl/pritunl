@@ -3,20 +3,25 @@ from exceptions import *
 import bson
 import os
 
-class MongoObject:
+class MongoObject(object):
     fields = set()
     fields_default = {}
 
-    def __init__(self, id=None, doc=None, spec=None):
-        self.changed = set()
-        self.id = id
+    def __new__(cls, id=None, doc=None, spec=None, **kwargs):
+        mongo_object = object.__new__(cls)
+        mongo_object.changed = set()
+        mongo_object.id = id
 
         if id or doc or spec:
-            self._exists = True
-            self.load(doc=doc, spec=spec)
+            mongo_object._exists = True
+            try:
+                mongo_object.load(doc=doc, spec=spec)
+            except NotFound:
+                return None
         else:
-            self._exists = False
-            self.id = str(bson.ObjectId())
+            mongo_object._exists = False
+            mongo_object.id = str(bson.ObjectId())
+        return mongo_object
 
     def __setattr__(self, name, value):
         if name != 'fields' and name in self.fields:
