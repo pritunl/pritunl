@@ -5,12 +5,13 @@ define([
   'models/auth',
   'models/subscription',
   'views/alert',
-  'views/login',
+  'views/modalSettings',
   'views/modalSubscribe',
   'views/modalEnterprise',
   'text!templates/header.html'
-], function($, _, Backbone, AuthModel, SubscriptionModel, AlertView, LoginView,
-    ModalSubscribeView, ModalEnterpriseView, headerTemplate) {
+], function($, _, Backbone, AuthModel, SubscriptionModel, AlertView,
+    ModalSettingsView, ModalSubscribeView, ModalEnterpriseView,
+    headerTemplate) {
   'use strict';
   var HeaderView = Backbone.View.extend({
     tagName: 'header',
@@ -81,13 +82,34 @@ define([
       this.addView(modal);
     },
     openSettings: function() {
-      var loginView = new LoginView({
-        showSettings: true
+      var model = new AuthModel();
+      model.fetch({
+        success: function() {
+          var modal = new ModalSettingsView({
+            model: model
+          });
+          this.listenToOnce(modal, 'applied', function() {
+            var alertView = new AlertView({
+              type: 'warning',
+              message: 'Successfully saved settings.',
+              dismissable: true
+            });
+            $('.alerts-container').append(alertView.render().el);
+            this.addView(alertView);
+          }.bind(this));
+          this.addView(modal);
+        }.bind(this),
+        error: function() {
+          var alertView = new AlertView({
+            type: 'danger',
+            message: 'Failed to load authentication data, ' +
+              'server error occurred.',
+            dismissable: true
+          });
+          $('.alerts-container').append(alertView.render().el);
+          this.addView(alertView);
+        }.bind(this)
       });
-      if (loginView.active) {
-        $('body').append(loginView.render().el);
-        this.addView(loginView);
-      }
     }
   });
 
