@@ -33,6 +33,7 @@ def setup_mongo():
         Administrator(
             username=DEFAULT_USERNAME,
             password=DEFAULT_PASSWORD,
+            default=True,
         ).commit()
 
 def get_collection(name):
