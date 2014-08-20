@@ -249,29 +249,24 @@ def check_session():
     else:
         from pritunl import app_server
         if not flask.session:
-            print 'error0'
             return False
 
         admin_id = flask.session.get('admin_id')
         if not admin_id:
-            print 'error1'
             return False
 
         administrator = Administrator.get_user(id=admin_id)
         if not administrator:
-            print 'error2'
             return False
 
         if not app_server.ssl and flask.session.get(
                 'source') != get_remote_addr():
             flask.session.clear()
-            print 'error3'
             return False
 
         if SESSION_TIMEOUT and int(time.time()) - \
                 flask.session['timestamp'] > SESSION_TIMEOUT:
             flask.session.clear()
-            print 'error4'
             return False
 
         flask.request.administrator = administrator
