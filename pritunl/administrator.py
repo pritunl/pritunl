@@ -13,21 +13,25 @@ class Administrator(MongoObject):
         'password',
         'token',
         'secret',
+        'default',
     }
 
-    def __init__(self, username=None, password=None, **kwargs):
+    def __init__(self, username=None, password=None, default=None, **kwargs):
         MongoObject.__init__(self, **kwargs)
 
         if username is not None:
             self.username = username
         if password is not None:
             self.password = password
+        if default is not None:
+            self.default = default
 
     def dict(self):
         return {
             'username': self.username,
             'token': self.token,
             'secret': self.secret,
+            'default': self.default,
         }
 
     def _hash_password(self, salt, password):
@@ -62,6 +66,9 @@ class Administrator(MongoObject):
                 self._hash_password(salt, self.password))
             pass_hash = '1$%s$%s' % (salt, pass_hash)
             self.password = pass_hash
+
+            if self.default and self.exists:
+                self.default = None
 
         if not self.token :
             self.generate_token()
