@@ -28,5 +28,12 @@ def setup_mongo():
     collections['organizations'].ensure_index('type')
     collections['servers'].ensure_index('name')
 
+    from administrator import Administrator
+    if not Administrator.get_collection().find_one():
+        Administrator(
+            username=DEFAULT_USERNAME,
+            password=DEFAULT_PASSWORD,
+        ).commit()
+
 def get_collection(name):
     return collections[name]
