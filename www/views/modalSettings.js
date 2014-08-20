@@ -52,9 +52,10 @@ define([
     },
     onGenerateNewKey: function() {
       this.setLoading('Generating new api key...');
+      this.model.clear();
       this.model.save({
-        token: null,
-        secret: null
+        token: true,
+        secret: true
       }, {
         success: function() {
           this.clearLoading();
@@ -98,6 +99,7 @@ define([
         return;
       }
       this.setLoading('Saving settings...');
+      this.model.clear();
       this.model.save(modelAttr, {
         success: function() {
           this.close(true);
