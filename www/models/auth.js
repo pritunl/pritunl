@@ -10,6 +10,7 @@ define([
       'password': null,
       'token': null,
       'secret': null,
+      'default': null,
       'email_from': null,
       'email_api_key': null
     },

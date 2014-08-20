@@ -31,6 +31,7 @@ class Administrator(MongoObject):
             'username': self.username,
             'token': self.token,
             'secret': self.secret,
+            'default': self.default,
         }
 
     def _hash_password(self, salt, password):
