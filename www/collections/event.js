@@ -38,6 +38,11 @@ define([
               continue;
             }
 
+            if (model.get('type') === 'reload') {
+              location.reload();
+              return;
+            }
+
             this.trigger(model.get('type'));
             if (model.get('resource_id')) {
               this.trigger(model.get('type') + ':' +
