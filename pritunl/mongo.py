@@ -28,6 +28,10 @@ def setup_mongo():
     ])
     collections['organizations'].ensure_index('type')
     collections['servers'].ensure_index('name')
+    collections['auth_nonces'].ensure_index([
+        ('token', pymongo.ASCENDING),
+        ('nonce', pymongo.ASCENDING),
+    ], unique=True)
     collections['auth_nonces'].ensure_index('timestamp',
         expireAfterSeconds=AUTH_TIME_WINDOW * 2.1)
 

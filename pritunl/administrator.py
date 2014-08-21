@@ -12,6 +12,7 @@ import flask
 import time
 import datetime
 import hmac
+import pymongo
 
 class Administrator(MongoObject):
     fields = {
@@ -143,11 +144,14 @@ class Administrator(MongoObject):
             if auth_signature != auth_test_signature:
                 return False
 
-            cls.get_nonces_collection().insert({
-                'token': auth_token,
-                'nonce': auth_nonce,
-                'timestamp': datetime.datetime.utcnow(),
-            })
+            try:
+                cls.get_nonces_collection().insert({
+                    'token': auth_token,
+                    'nonce': auth_nonce,
+                    'timestamp': datetime.datetime.utcnow(),
+                })
+            except pymongo.errors.DuplicateKeyError:
+                return False
 
             flask.request.administrator = administrator
         else:
