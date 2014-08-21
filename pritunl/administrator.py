@@ -10,6 +10,8 @@ import re
 import hashlib
 import flask
 import time
+import datetime
+import hmac
 
 class Administrator(MongoObject):
     fields = {
@@ -37,6 +39,10 @@ class Administrator(MongoObject):
             'secret': self.secret,
             'default': self.default,
         }
+
+    @staticmethod
+    def get_nonces_collection():
+        return mongo.get_collection('auth_nonces')
 
     def _hash_password(self, salt, password):
         pass_hash = hashlib.sha512()
@@ -119,11 +125,6 @@ class Administrator(MongoObject):
             except ValueError:
                 return False
 
-            # TODO
-            cache_key = 'auth_nonce-%s' % auth_nonce
-            if cache_db.exists(cache_key):
-                return False
-
             administrator = cls.find_user(token=auth_token)
             if not administrator:
                 return False
@@ -142,9 +143,11 @@ class Administrator(MongoObject):
             if auth_signature != auth_test_signature:
                 return False
 
-            # TODO
-            cache_db.expire(cache_key, int(AUTH_TIME_WINDOW * 2.1))
-            cache_db.set(cache_key, auth_timestamp)
+            cls.get_nonces_collection().insert({
+                'token': auth_token,
+                'nonce': auth_nonce,
+                'timestamp': datetime.datetime.utcnow(),
+            })
 
             flask.request.administrator = administrator
         else:

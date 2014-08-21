@@ -15,6 +15,7 @@ def setup_mongo():
         'users': database.users,
         'organizations': database.organizations,
         'servers': database.servers,
+        'auth_nonces': database.auth_nonces,
     })
     collections['administrators'].ensure_index('username', unique=True)
     collections['users'].ensure_index([
@@ -27,6 +28,8 @@ def setup_mongo():
     ])
     collections['organizations'].ensure_index('type')
     collections['servers'].ensure_index('name')
+    collections['auth_nonces'].ensure_index('timestamp',
+        expireAfterSeconds=AUTH_TIME_WINDOW * 2.1)
 
     from administrator import Administrator
     if not Administrator.get_collection().find_one():
