@@ -9,7 +9,7 @@ import base64
 collections = {}
 
 def setup_mongo():
-    prefix = app_server.mongodb_collection_prefix or 'test_'
+    prefix = app_server.mongodb_collection_prefix or ''
     client = pymongo.MongoClient(app_server.mongodb_url)
     database = client.get_default_database()
     cur_collections = database.collection_names()
