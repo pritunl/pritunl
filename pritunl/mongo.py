@@ -8,9 +8,15 @@ collections = {}
 def setup_mongo():
     client = pymongo.MongoClient(app_server.mongodb_url)
     database = client.get_default_database()
+    cur_collections = database.collection_names()
+
+    if 'log_entries' not in cur_collections:
+        database.create_collection('log_entries', capped=True,
+            size=LOG_LIMIT * 256 * 2, max=LOG_LIMIT)
 
     collections.update({
         'system': database.system,
+        'log_entries': database.log_entries,
         'administrators': database.administrators,
         'users': database.users,
         'organizations': database.organizations,
@@ -18,6 +24,9 @@ def setup_mongo():
         'auth_nonces': database.auth_nonces,
         'auth_limiter': database.auth_limiter,
     })
+    collections['log_entries'].ensure_index([
+        ('time', pymongo.DESCENDING),
+    ])
     collections['administrators'].ensure_index('username', unique=True)
     collections['users'].ensure_index([
         ('org_id', pymongo.ASCENDING),
