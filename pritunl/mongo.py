@@ -36,5 +36,15 @@ def setup_mongo():
             default=True,
         ).commit()
 
+    from system_conf import SystemConf
+    system_conf = SystemConf()
+    secret_key = system_conf.get('app', 'cookie_secret')
+    if not secret_key:
+        secret_key = re.sub(r'[\W_]+', '',
+            base64.b64encode(os.urandom(128)))[:64]
+        system_conf.set('app', 'cookie_secret', secret_key)
+        system_conf.commit()
+    app_server.app.secret_key = secret_key.encode()
+
 def get_collection(name):
     return collections[name]

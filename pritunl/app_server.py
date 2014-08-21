@@ -228,7 +228,6 @@ class AppServer(Config):
 
     def _setup_app(self):
         self.app = flask.Flask(APP_NAME)
-        self.app.secret_key = os.urandom(32)
 
         @self.app.before_request
         def before_request():
