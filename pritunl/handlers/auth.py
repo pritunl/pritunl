@@ -48,7 +48,7 @@ def auth_put():
 @app_server.app.route('/auth/session', methods=['GET'])
 def auth_get():
     return utils.jsonify({
-        'authenticated': utils.check_session(),
+        'authenticated': Administrator.check_session(),
     })
 
 @app_server.app.route('/auth/session', methods=['POST'])
@@ -56,7 +56,7 @@ def auth_session_post():
     username = flask.request.json['username']
     password = flask.request.json['password']
     remote_addr = utils.get_remote_addr()
-    administrator = utils.check_auth(username, password, remote_addr)
+    administrator = Administrator.check_auth(username, password, remote_addr)
 
     if not administrator:
         return utils.jsonify({

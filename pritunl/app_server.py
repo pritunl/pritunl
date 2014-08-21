@@ -243,8 +243,9 @@ class AppServer(Config):
         logger = self.app.logger
 
     def auth(self, call):
+        from administrator import Administrator
         def _wrapped(*args, **kwargs):
-            if not utils.check_session():
+            if not Administrator.check_session():
                 raise flask.abort(401)
             return call(*args, **kwargs)
         _wrapped.__name__ = '%s_auth' % call.__name__
