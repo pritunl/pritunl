@@ -26,9 +26,7 @@ define([
       ModalSettingsView.__super__.initialize.call(this);
     },
     body: function() {
-      return this.template(_.extend({
-        initial: this.initial
-      }, this.model.toJSON()));
+      return this.template(this.model.toJSON());
     },
     update: function() {
       this.$('.api-token input').val(this.model.get('token'));
