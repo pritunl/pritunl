@@ -1,7 +1,6 @@
 from constants import *
 from exceptions import *
 from mongo_object import MongoObject
-from cache import cache_db
 import utils
 import mongo
 import base64
@@ -44,6 +43,10 @@ class Administrator(MongoObject):
     @staticmethod
     def get_nonces_collection():
         return mongo.get_collection('auth_nonces')
+
+    @staticmethod
+    def get_limiter_collection():
+        return mongo.get_collection('auth_limiter')
 
     def _hash_password(self, salt, password):
         pass_hash = hashlib.sha512()
@@ -183,17 +186,25 @@ class Administrator(MongoObject):
     @classmethod
     def check_auth(cls, username, password, remote_addr=None):
         if remote_addr:
-            # TODO
-            cache_key = 'ip_' + remote_addr
-            count = cache_db.list_length(cache_key)
-            if count and count > 10:
-                raise flask.abort(403)
+            doc = cls.get_limiter_collection().find_and_modify({
+                '_id': remote_addr,
+            }, {
+                '$inc': {'count': 1},
+                '$setOnInsert': {'timestamp': datetime.datetime.utcnow()},
+            }, new=True, upsert=True)
 
-            # TODO
-            key_exists = cache_db.exists(cache_key)
-            cache_db.list_rpush(cache_key, '')
-            if not key_exists:
-                cache_db.expire(cache_key, 20)
+            if datetime.datetime.utcnow() > doc['timestamp'] + \
+                    datetime.timedelta(minutes=1):
+                doc = {
+                    'count': 1,
+                    'timestamp': datetime.datetime.utcnow(),
+                }
+                cls.get_limiter_collection().update({
+                    '_id': remote_addr,
+                }, doc, upsert=True)
+
+            if doc['count'] > AUTH_LIMITER_COUNT_MAX:
+                raise flask.abort(403)
 
         administrator = cls.find_user(username=username)
         if not administrator:
