@@ -2,27 +2,31 @@ from constants import *
 from exceptions import *
 from pritunl import app_server
 import pymongo
+import re
+import os
+import base64
 
 collections = {}
 
 def setup_mongo():
+    prefix = app_server.mongodb_collection_prefix or 'test_'
     client = pymongo.MongoClient(app_server.mongodb_url)
     database = client.get_default_database()
     cur_collections = database.collection_names()
 
     if 'log_entries' not in cur_collections:
-        database.create_collection('log_entries', capped=True,
+        database.create_collection(prefix + 'log_entries', capped=True,
             size=LOG_LIMIT * LOG_AVG_SIZE * 2, max=LOG_LIMIT)
 
     collections.update({
-        'system': database.system,
-        'log_entries': database.log_entries,
-        'administrators': database.administrators,
-        'users': database.users,
-        'organizations': database.organizations,
-        'servers': database.servers,
-        'auth_nonces': database.auth_nonces,
-        'auth_limiter': database.auth_limiter,
+        'system': getattr(database, prefix + 'system'),
+        'log_entries': getattr(database, prefix + 'log_entries'),
+        'administrators': getattr(database, prefix + 'administrators'),
+        'users': getattr(database, prefix + 'users'),
+        'organizations': getattr(database, prefix + 'organizations'),
+        'servers': getattr(database, prefix + 'servers'),
+        'auth_nonces': getattr(database, prefix + 'auth_nonces'),
+        'auth_limiter': getattr(database, prefix + 'auth_limiter'),
     })
     collections['log_entries'].ensure_index([
         ('time', pymongo.DESCENDING),

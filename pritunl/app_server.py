@@ -58,6 +58,7 @@ class AppServer(Config):
         'public_ip_server',
         'notification_server',
         'mongodb_url',
+        'mongodb_collection_prefix',
     }
     ignore_options = {
         'log_debug',
