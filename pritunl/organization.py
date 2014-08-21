@@ -72,16 +72,16 @@ class Organization(MongoObject):
         return mongo.get_collection('organizations')
 
     def initialize(self):
-        ca_user = User(self, type=CERT_CA)
+        ca_user = User(org=self, type=CERT_CA)
         ca_user.initialize()
         self.ca_private_key = ca_user.private_key
         self.ca_certificate = ca_user.certificate
 
     def get_user(self, id):
-        return User.get_user(self, id=id)
+        return User.get_user(org=self, id=id)
 
     def find_user(self, name=None, type=None):
-        return User.find_user(self, name=name, type=type)
+        return User.find_user(org=self, name=name, type=type)
 
     def _get_otp_auth(self):
         from server import Server
@@ -181,7 +181,7 @@ class Organization(MongoObject):
             yield Server(doc=doc)
 
     def new_user(self, **kwargs):
-        user = User(self, **kwargs)
+        user = User(org=self, **kwargs)
         user.initialize()
         return user
 
