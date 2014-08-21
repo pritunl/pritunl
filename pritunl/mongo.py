@@ -33,9 +33,9 @@ def setup_mongo():
         ('token', pymongo.ASCENDING),
         ('nonce', pymongo.ASCENDING),
     ], unique=True)
-    collections['auth_nonces'].ensure_index('timestamp',
+    collections['auth_nonces'].ensure_index('time',
         expireAfterSeconds=AUTH_NONCE_TIME_WINDOW * 2.1)
-    collections['auth_limiter'].ensure_index('timestamp',
+    collections['auth_limiter'].ensure_index('time',
         expireAfterSeconds=AUTH_LIMITER_TTL)
 
     from administrator import Administrator

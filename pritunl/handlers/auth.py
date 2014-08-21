@@ -65,7 +65,7 @@ def auth_session_post():
         }, 401)
 
     flask.session['admin_id'] = administrator.id
-    flask.session['timestamp'] = int(time.time())
+    flask.session['time'] = int(time.time())
     if not app_server.ssl:
         flask.session['source'] = remote_addr
 
