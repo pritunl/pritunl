@@ -95,7 +95,7 @@ class User(MongoObject):
 
             with open(ssl_conf_path, 'w') as conf_file:
                 conf_file.write(CERT_CONF % (
-                    app_server.key_bits,
+                    CERT_KEY_BITS,
                     self.org.id,
                     self.id,
                     index_path,
