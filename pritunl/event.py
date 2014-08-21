@@ -1,6 +1,5 @@
 from constants import *
 from cache_object import CacheObject
-from cache import cache_db
 import logging
 import time
 import uuid
