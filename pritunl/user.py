@@ -295,11 +295,9 @@ class User(MongoObject):
         }
 
     def send_key_email(self, key_link_domain):
-        system_conf = SystemConf()
-        from_addr = system_conf.get('email', 'from_addr')
-        api_key = system_conf.get('email', 'api_key')
+        settings = SystemConf()
 
-        if not from_addr or not api_key:
+        if not settings.email_from_addr or not settings.email_api_key:
             raise EmailNotConfiguredError('Email not configured', {
                 'org_id': self.org.id,
                 'user_id': self.id,
@@ -310,10 +308,10 @@ class User(MongoObject):
             headers={
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'X-Postmark-Server-Token': api_key,
+                'X-Postmark-Server-Token': settings.email_api_key,
             },
             json_data={
-                'From': from_addr,
+                'From': settings.email_from_addr,
                 'To': self.email,
                 'Subject': 'Pritunl VPN Key',
                 'TextBody':  'Your vpn key can be downloaded from the ' +

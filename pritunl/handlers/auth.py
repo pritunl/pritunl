@@ -1,6 +1,6 @@
 from pritunl.constants import *
 from pritunl.administrator import Administrator
-from pritunl.system_conf import SystemConf
+from pritunl.settings import Settings
 import pritunl.utils as utils
 import pritunl.mongo as mongo
 from pritunl import app_server
@@ -10,19 +10,16 @@ import flask
 @app_server.app.route('/auth', methods=['GET'])
 @app_server.auth
 def auth_get():
-    system_conf = SystemConf()
+    settings = Settings()
     response = flask.request.administrator.dict()
-    response.update({
-        'email_from': system_conf.get('email', 'from_addr'),
-        'email_api_key': system_conf.get('email', 'api_key'),
-    })
+    response.update(settings.dict())
     return utils.jsonify(response)
 
 @app_server.app.route('/auth', methods=['PUT'])
 @app_server.auth
 def auth_put():
     administrator = flask.request.administrator
-    system_conf = SystemConf()
+    settings = Settings()
 
     if 'username' in flask.request.json and flask.request.json['username']:
         administrator.username = utils.filter_str(
@@ -36,19 +33,16 @@ def auth_put():
 
     if 'email_from' in flask.request.json:
         email_from = flask.request.json['email_from']
-        system_conf.set('email', 'from_addr', email_from or None)
+        settings.set('email', 'from_addr', email_from or None)
     if 'email_api_key' in flask.request.json:
         email_api_key = flask.request.json['email_api_key']
-        system_conf.set('email', 'api_key', email_api_key or None)
+        settings.set('email', 'api_key', email_api_key or None)
 
-    system_conf.commit()
+    settings.commit()
     administrator.commit()
 
     response = flask.request.administrator.dict()
-    response.update({
-        'email_from': system_conf.get('email', 'from_addr'),
-        'email_api_key': system_conf.get('email', 'api_key'),
-    })
+    response.update(settings.dict())
     return utils.jsonify(response)
 
 @app_server.app.route('/auth/session', methods=['GET'])
