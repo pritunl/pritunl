@@ -12,7 +12,7 @@ def setup_mongo():
 
     if 'log_entries' not in cur_collections:
         database.create_collection('log_entries', capped=True,
-            size=LOG_LIMIT * 256 * 2, max=LOG_LIMIT)
+            size=LOG_LIMIT * LOG_AVG_SIZE * 2, max=LOG_LIMIT)
 
     collections.update({
         'system': database.system,
