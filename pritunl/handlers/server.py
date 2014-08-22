@@ -523,7 +523,7 @@ def server_tls_verify_post(server_id):
     org_id = flask.request.json['org_id']
     user_id = flask.request.json['user_id']
 
-    server = Server(server_id)
+    server = Server.get_server(server_id)
     if not server:
         return utils.jsonify({
             'error': SERVER_INVALID,
@@ -532,7 +532,7 @@ def server_tls_verify_post(server_id):
     org = server.get_org(org_id)
     if not org:
         LogEntry(message='User failed authentication, ' +
-            'invalid organization "%s".' % server.name)
+            'invalid organization on server "%s".' % server.name)
         return utils.jsonify({
             'error': ORG_INVALID,
             'error_msg': ORG_INVALID_MSG,
@@ -540,7 +540,7 @@ def server_tls_verify_post(server_id):
     user = org.get_user(user_id)
     if not user:
         LogEntry(message='User failed authentication, ' +
-            'invalid user "%s".' % server.name)
+            'invalid user on server "%s".' % server.name)
         return utils.jsonify({
             'error': USER_INVALID,
             'error_msg': USER_INVALID_MSG,
@@ -565,7 +565,7 @@ def server_otp_verify_post(server_id):
     otp_code = flask.request.json['otp_code']
     remote_ip = flask.request.json.get('remote_ip')
 
-    server = Server(server_id)
+    server = Server.get_server(server_id)
     if not server:
         return utils.jsonify({
             'error': SERVER_INVALID,
@@ -574,7 +574,7 @@ def server_otp_verify_post(server_id):
     org = server.get_org(org_id)
     if not org:
         LogEntry(message='User failed authentication, ' +
-            'invalid organization "%s".' % server.name)
+            'invalid organization on server "%s".' % server.name)
         return utils.jsonify({
             'error': ORG_INVALID,
             'error_msg': ORG_INVALID_MSG,
@@ -582,7 +582,7 @@ def server_otp_verify_post(server_id):
     user = org.get_user(user_id)
     if not user:
         LogEntry(message='User failed authentication, ' +
-            'invalid user "%s".' % server.name)
+            'invalid user on server "%s".' % server.name)
         return utils.jsonify({
             'error': USER_INVALID,
             'error_msg': USER_INVALID_MSG,
