@@ -14,7 +14,7 @@ define([
     },
     update: function() {
       this.$('.log-msg').text(this.model.get('message'));
-      this.$('.log-time').text(window.formatTime(this.model.get('time')));
+      this.$('.log-time').text(window.formatTime(this.model.get('timestamp')));
     }
   });
 

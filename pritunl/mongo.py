@@ -29,7 +29,7 @@ def setup_mongo():
         'auth_limiter': getattr(database, prefix + 'auth_limiter'),
     })
     collections['log_entries'].ensure_index([
-        ('time', pymongo.DESCENDING),
+        ('timestamp', pymongo.DESCENDING),
     ])
     collections['administrators'].ensure_index('username', unique=True)
     collections['users'].ensure_index([
@@ -46,9 +46,9 @@ def setup_mongo():
         ('token', pymongo.ASCENDING),
         ('nonce', pymongo.ASCENDING),
     ], unique=True)
-    collections['auth_nonces'].ensure_index('time',
+    collections['auth_nonces'].ensure_index('timestamp',
         expireAfterSeconds=AUTH_NONCE_TIME_WINDOW * 2.1)
-    collections['auth_limiter'].ensure_index('time',
+    collections['auth_limiter'].ensure_index('timestamp',
         expireAfterSeconds=AUTH_LIMITER_TTL)
 
     from administrator import Administrator

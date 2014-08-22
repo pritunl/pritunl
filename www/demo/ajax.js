@@ -129,14 +129,14 @@ define([
       id: uuid(),
       type: type,
       resource_id: resourceId || null,
-      time: Math.round(new Date().getTime())
+      timestamp: Math.round(new Date().getTime())
     });
   };
 
   var logEntry = function(message) {
     demoData.logs.unshift({
       id: uuid(),
-      time: Math.round(new Date().getTime() / 1000),
+      timestamp: Math.round(new Date().getTime() / 1000),
       message: message
     });
     event('logs_updated');

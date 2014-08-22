@@ -9,7 +9,7 @@ define([
       'id': null,
       'type': null,
       'resource_id': null,
-      'time': null
+      'timestamp': null
     }
   });
 

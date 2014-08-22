@@ -9,8 +9,8 @@ logger = logging.getLogger(APP_NAME)
 class Event(CacheObject):
     column_family = 'events'
     str_columns = {'type', 'resource_id'}
-    int_columns = {'time'}
-    cached_columns = {'type', 'resource_id', 'time'}
+    int_columns = {'timestamp'}
+    cached_columns = {'type', 'resource_id', 'timestamp'}
 
     def __init__(self, id=None, type=None, resource_id=None):
         CacheObject.__init__(self)
@@ -19,7 +19,7 @@ class Event(CacheObject):
             self.id = uuid.uuid4().hex
             self.type = type
             self.resource_id = resource_id
-            self.time = int(time.time())
+            self.timestamp = int(time.time())
             self.initialize()
         else:
             self.id = id
@@ -29,7 +29,7 @@ class Event(CacheObject):
             'id': self.id,
             'type': self.type,
             'resource_id': self.resource_id,
-            'time': self.time,
+            'timestamp': self.timestamp,
         }
 
     def initialize(self):
@@ -44,7 +44,7 @@ class Event(CacheObject):
             if not event_id:
                 break
             event_time = cls.db_instance.dict_get('%s-%s' % (
-                cls.column_family, event_id), 'time')
+                cls.column_family, event_id), 'timestamp')
             if int(time.time()) - int(event_time) > EVENT_TTL:
                 event_id = cls.db_instance.list_lpop(cls.column_family)
                 # Expire event to leave time for any get events

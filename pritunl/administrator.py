@@ -151,7 +151,7 @@ class Administrator(MongoObject):
                 cls.get_nonces_collection().insert({
                     'token': auth_token,
                     'nonce': auth_nonce,
-                    'time': datetime.datetime.utcnow(),
+                    'timestamp': datetime.datetime.utcnow(),
                 })
             except pymongo.errors.DuplicateKeyError:
                 return False
@@ -176,7 +176,7 @@ class Administrator(MongoObject):
                 return False
 
             if SESSION_TIMEOUT and int(time.time()) - \
-                    flask.session['time'] > SESSION_TIMEOUT:
+                    flask.session['timestamp'] > SESSION_TIMEOUT:
                 flask.session.clear()
                 return False
 
@@ -190,14 +190,14 @@ class Administrator(MongoObject):
                 '_id': remote_addr,
             }, {
                 '$inc': {'count': 1},
-                '$setOnInsert': {'time': datetime.datetime.utcnow()},
+                '$setOnInsert': {'timestamp': datetime.datetime.utcnow()},
             }, new=True, upsert=True)
 
-            if datetime.datetime.utcnow() > doc['time'] + \
+            if datetime.datetime.utcnow() > doc['timestamp'] + \
                     datetime.timedelta(minutes=1):
                 doc = {
                     'count': 1,
-                    'time': datetime.datetime.utcnow(),
+                    'timestamp': datetime.datetime.utcnow(),
                 }
                 cls.get_limiter_collection().update({
                     '_id': remote_addr,

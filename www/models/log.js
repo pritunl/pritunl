@@ -7,7 +7,7 @@ define([
   var LogModel = Backbone.Model.extend({
     defaults: {
       'id': null,
-      'date': null,
+      'timestamp': null,
       'message': null
     },
     url: function() {

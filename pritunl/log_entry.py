@@ -8,7 +8,7 @@ import pymongo
 
 class LogEntry(MongoObject):
     fields = {
-        'time',
+        'timestamp',
         'message',
     }
 
@@ -19,13 +19,13 @@ class LogEntry(MongoObject):
             self.message = message
 
         if not self.exists:
-            self.time = datetime.datetime.now()
+            self.timestamp = datetime.datetime.now()
             self.commit()
 
     def dict(self):
         return {
             'id': self.id,
-            'time': self.time.strftime('%s'),
+            'timestamp': self.time.strftime('%s'),
             'message': self.message,
         }
 
@@ -40,5 +40,5 @@ class LogEntry(MongoObject):
     @classmethod
     def iter_log_entries(cls):
         for doc in cls.get_collection().find().sort(
-                'time', pymongo.DESCENDING):
+                'timestamp', pymongo.DESCENDING):
             yield cls(doc=doc)
