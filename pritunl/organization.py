@@ -134,21 +134,20 @@ class Organization(MongoObject):
         cache_db.dict_set(key_id_key, 'uri_id', uri_id)
 
         conf_urls = []
-        if app_server.inline_certs:
-            for server in self.iter_servers():
-                conf_id = uuid.uuid4().hex
-                conf_id_key = 'conf_token-%s' % conf_id
+        for server in self.iter_servers():
+            conf_id = uuid.uuid4().hex
+            conf_id_key = 'conf_token-%s' % conf_id
 
-                cache_db.expire(conf_id_key, KEY_LINK_TIMEOUT)
-                cache_db.dict_set(conf_id_key, 'org_id', self.id)
-                cache_db.dict_set(conf_id_key, 'user_id', user_id)
-                cache_db.dict_set(conf_id_key, 'server_id', server.id)
+            cache_db.expire(conf_id_key, KEY_LINK_TIMEOUT)
+            cache_db.dict_set(conf_id_key, 'org_id', self.id)
+            cache_db.dict_set(conf_id_key, 'user_id', user_id)
+            cache_db.dict_set(conf_id_key, 'server_id', server.id)
 
-                conf_urls.append({
-                    'id': conf_id,
-                    'server_name': server.name,
-                    'url': '/key/%s.ovpn' % conf_id,
-                })
+            conf_urls.append({
+                'id': conf_id,
+                'server_name': server.name,
+                'url': '/key/%s.ovpn' % conf_id,
+            })
 
         cache_db.expire(view_id_key, KEY_LINK_TIMEOUT)
         cache_db.dict_set(view_id_key, 'org_id', self.id)
