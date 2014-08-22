@@ -360,8 +360,7 @@ class User(MongoObject):
 
     @classmethod
     def get_user(cls, org, id):
-        user = cls(org, id=id)
-        return user
+        return cls(org=org, id=id)
 
     @classmethod
     def find_user(cls, org, name=None, type=None):
