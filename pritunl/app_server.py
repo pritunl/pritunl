@@ -80,7 +80,6 @@ class AppServer(Config):
     }
     default_options = {
         'get_public_ip': True,
-        'inline_certs': True,
         'get_notifications': True,
         'ssl': True,
         'static_cache': True,
