@@ -58,7 +58,7 @@ class Server(MongoObject):
         'debug': False,
         'organizations': [],
         'status': False,
-        'clients': [],
+        'clients': {},
         'users_online': 0,
     }
     cache_prefix = 'server'
@@ -880,6 +880,7 @@ class Server(MongoObject):
             return data
 
     def _update_clients_bandwidth(self, clients):
+        return
         # Remove client no longer connected
         for client_id in cache_db.dict_keys(self.get_cache_key('clients')):
             if client_id not in clients:
