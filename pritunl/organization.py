@@ -188,7 +188,7 @@ class Organization(MongoObject):
         for server in self.iter_servers():
             if server.status:
                 server.stop()
-            server.remove_org(self.id)
+            server.remove_org(self)
             server.commit()
         MongoObject.remove(self)
         User.get_collection().remove({'org_id': self.id})
