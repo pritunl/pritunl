@@ -109,7 +109,7 @@ class AppServer(Config):
         self.sub_cancel_at_period_end = None
         self.pooler_instance = None
         self.openssl_heartbleed = not utils.check_openssl()
-        self.local_api_key = uuid.uuid4().hex
+        self.server_api_key = None
 
     def __getattr__(self, name):
         if name == 'web_protocol':
@@ -251,14 +251,14 @@ class AppServer(Config):
         _wrapped.__name__ = '%s_auth' % call.__name__
         return _wrapped
 
-    def local_auth(self, call):
+    def server_auth(self, call):
         def _wrapped(*args, **kwargs):
             api_key = flask.request.headers.get('API-Key', None)
-            if api_key != self.local_api_key:
+            if api_key != self.server_api_key:
                 logger.error('Local auth error, invalid api key.')
                 raise flask.abort(401)
             return call(*args, **kwargs)
-        _wrapped.__name__ = '%s_local_auth' % call.__name__
+        _wrapped.__name__ = '%s_server_auth' % call.__name__
         return _wrapped
 
     def get_temp_path(self):
