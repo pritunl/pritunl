@@ -315,37 +315,29 @@ class AppServer(Config):
         self._setup_handlers()
 
     def _setup_server_cert(self):
-        if self.server_cert_path and self.server_key_path:
-            self._server_cert_path = self.server_cert_path
-            self._server_key_path = self.server_key_path
-        else:
-            self._server_cert_path = os.path.join(self.data_path,
-                SERVER_CERT_NAME)
-            self._server_key_path = os.path.join(self.data_path,
-                SERVER_KEY_NAME)
-
-            if not os.path.isfile(self._server_cert_path) or \
-                    not os.path.isfile(self._server_key_path):
-                logger.info('Generating server ssl cert...')
-                try:
-                    subprocess.check_call([
-                        'openssl', 'req', '-batch', '-x509', '-nodes',
-                        '-newkey', 'rsa:4096',
-                        '-days', '3652',
-                        '-keyout', self._server_key_path,
-                        '-out', self._server_cert_path,
-                    ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                except subprocess.CalledProcessError:
-                    logger.exception('Failed to generate server ssl cert.')
-                    raise
-                os.chmod(self._server_key_path, 0600)
+        if not os.path.isfile(self.server_cert_path) or \
+                not os.path.isfile(self.server_key_path):
+            logger.info('Generating server ssl cert...')
+            try:
+                subprocess.check_call([
+                    'openssl', 'req', '-batch', '-x509', '-nodes',
+                    '-newkey', 'rsa:4096',
+                    '-days', '3652',
+                    '-keyout', self.server_key_path,
+                    '-out', self.server_cert_path,
+                ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            except subprocess.CalledProcessError:
+                logger.exception('Failed to generate server ssl cert.')
+                raise
+            os.chmod(self.server_key_path, 0600)
 
     def _run_wsgi(self):
         if self.ssl:
             self._setup_server_cert()
         logger.info('Starting server...')
 
-        if self.auto_start_servers:
+        #if self.auto_start_servers: TODO
+        if False:
             from pritunl.server import Server
             for server in Server.iter_servers():
                 if server.org_count:
@@ -363,7 +355,7 @@ class AppServer(Config):
         if self.ssl:
             server.ConnectionClass = HTTPConnectionPatch
             server.ssl_adapter = SSLAdapter(
-                self._server_cert_path, self._server_key_path)
+                self.server_cert_path, self.server_key_path)
         try:
             server.start()
         except (KeyboardInterrupt, SystemExit):
