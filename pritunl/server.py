@@ -48,6 +48,7 @@ class Server(MongoObject):
         'instance_id',
         'status',
         'uptime',
+        'clients',
         'users_online',
     }
     fields_default = {
@@ -57,6 +58,7 @@ class Server(MongoObject):
         'debug': False,
         'organizations': [],
         'status': False,
+        'clients': [],
         'users_online': 0,
     }
     cache_prefix = 'server'
@@ -350,7 +352,7 @@ class Server(MongoObject):
             with open(script_path, 'w') as script_file:
                 os.chmod(script_path, 0755) # TODO
                 script_file.write(script % (
-                    app_server.local_api_key,
+                    app_server.server_api_key,
                     '/dev/null', # TODO
                     app_server.web_protocol,
                     auth_host,
@@ -990,6 +992,7 @@ class Server(MongoObject):
         self._update_clients_bandwidth(clients)
         client_count = len(self.clients)
         self.clients = clients
+        self.commit('clients')
         if force or client_count != len(clients):
             for org_id in self.organizations:
                 Event(type=USERS_UPDATED, resource_id=org_id)
