@@ -719,11 +719,11 @@ class Server(MongoObject):
         self._event_delay(type=SERVER_OUTPUT_UPDATED, resource_id=self.id)
 
     def push_output(self, output):
-        if not app_server.server_log_lines:
+        if not SERVER_LOG_LINES:
             return
         cache_db.list_rpush(self.get_cache_key('output'), output.rstrip('\n'))
         clear_lines = cache_db.list_length(self.get_cache_key('output')) - \
-            app_server.server_log_lines
+            SERVER_LOG_LINES
         for _ in xrange(clear_lines):
             cache_db.list_lpop(self.get_cache_key('output'))
         self._event_delay(type=SERVER_OUTPUT_UPDATED, resource_id=self.id)
