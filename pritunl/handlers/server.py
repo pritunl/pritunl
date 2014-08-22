@@ -426,7 +426,6 @@ def server_delete(server_id):
 def server_org_get(server_id):
     orgs = []
     server = Server.get_server(id=server_id)
-    print 'test'
     for org in server.iter_orgs():
         orgs.append({
             'id': org.id,

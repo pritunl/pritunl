@@ -105,19 +105,8 @@ class Server(MongoObject):
     def get_collection():
         return mongo.get_collection('servers')
 
-    def __setattr__(self, name, value):
-        if name == 'clients':
-            cache_db.dict_set(self.get_cache_key(), name, json.dumps(value))
-            return
-        MongoObject.__setattr__(self, name, value)
-
     def __getattr__(self, name):
-        if name == 'clients':
-            clients = cache_db.dict_get(self.get_cache_key(), name)
-            if self.status and clients:
-                return json.loads(clients)
-            return {}
-        elif name == 'output':
+        if name == 'output':
             return '\n'.join(cache_db.list_elements(
                 self.get_cache_key('output')))
         elif name == 'user_count':
