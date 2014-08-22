@@ -30,14 +30,11 @@ class MongoObject(object):
 
     def __getattr__(self, name):
         if name in self.fields:
-            if name not in self.__dict__:
-                if name in self.fields_default:
-                    return self.fields_default[name]
-                return
-        elif name not in self.__dict__:
-            raise AttributeError(
-                'MongoObject instance has no attribute %r' % name)
-        return self.__dict__[name]
+            if name in self.fields_default:
+                return self.fields_default[name]
+            return
+        raise AttributeError(
+            'MongoObject instance has no attribute %r' % name)
 
     @staticmethod
     def get_collection():
@@ -65,6 +62,11 @@ class MongoObject(object):
                 fields = (fields,)
         elif self.exists:
             fields = self.changed
+            for field in self.fields:
+                value = self.__dict__.get(field)
+                if value and not isinstance(self.__dict__[field], (
+                        bool, int, long, float, basestring)):
+                    fields.add(field)
 
         if fields:
             doc = {}
