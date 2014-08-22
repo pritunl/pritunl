@@ -191,13 +191,14 @@ class Server(MongoObject):
             'server_id': self.id,
         })
 
-        orgs = self.iter_orgs()
-        if not orgs:
+        try:
+            org = self.iter_orgs().next()
+        except StopIteration:
             raise ServerMissingOrg('Primary user cannot be created ' + \
                 'without any organizations', {
                     'server_id': self.id,
                 })
-        org = orgs.next()
+
         user = org.new_user(name=SERVER_USER_PREFIX + self.id,
             type=CERT_SERVER)
 
