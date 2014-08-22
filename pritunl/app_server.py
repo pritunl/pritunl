@@ -336,18 +336,6 @@ class AppServer(Config):
             self._setup_server_cert()
         logger.info('Starting server...')
 
-        #if self.auto_start_servers: TODO
-        if False:
-            from pritunl.server import Server
-            for server in Server.iter_servers():
-                if server.org_count:
-                    try:
-                        server.start()
-                    except:
-                        logger.exception('Failed to auto start server. %r' % {
-                            'server_id': server.id,
-                        })
-
         server = cherrypy.wsgiserver.CherryPyWSGIServer(
             (self.bind_addr, self.port), self.app,
             request_queue_size=SERVER_REQUEST_QUEUE_SIZE,
