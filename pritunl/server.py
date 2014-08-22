@@ -225,31 +225,35 @@ class Server(MongoObject):
         self.primary_organization = None
         self.primary_user = None
 
-    def add_org(self, org):
+    def add_org(self, org_id):
+        if not isinstance(org_id, basestring):
+            org_id = org_id.id
         logger.debug('Adding organization to server. %r' % {
             'server_id': self.id,
-            'org_id': org.id,
+            'org_id': org_id,
         })
-        if org.id in self.organizations:
+        if org_id in self.organizations:
             logger.debug('Organization already on server, skipping. %r' % {
                 'server_id': self.id,
-                'org_id': org.id,
+                'org_id': org_id,
             })
             return
-        self.organizations.append(org.id)
+        self.organizations.append(org_id)
         self.generate_ca_cert()
 
-    def remove_org(self, org):
-        if org.id not in self.organizations:
+    def remove_org(self, org_id):
+        if not isinstance(org_id, basestring):
+            org_id = org_id.id
+        if org_id not in self.organizations:
             return
         logger.debug('Removing organization from server. %r' % {
             'server_id': self.id,
-            'org_id': org.id,
+            'org_id': org_id,
         })
-        if self.primary_organization == org.id:
+        if self.primary_organization == org_id:
             self._remove_primary_user()
         try:
-            self.organizations.remove(org.id)
+            self.organizations.remove(org_id)
         except ValueError:
             pass
         self.generate_ca_cert()
@@ -259,6 +263,14 @@ class Server(MongoObject):
             org = Organization.get_org(id=org_id)
             if org:
                 yield org
+            else:
+                logger.error('Removing non-existent organization ' +
+                    'from server. %r' % {
+                        'server_id': self.id,
+                        'org_id': org_id,
+                    })
+                self.remove_org(org_id)
+                self.commit('organizations')
 
     def get_org(self, org_id):
         if org_id in self.organizations:
