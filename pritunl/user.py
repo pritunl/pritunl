@@ -371,5 +371,4 @@ class User(MongoObject):
             spec['name'] = name
         if type is not None:
             spec['type'] = type
-        user = cls(org, spec=spec)
-        return user
+        return cls(org, spec=spec)
