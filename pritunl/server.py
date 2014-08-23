@@ -4,6 +4,7 @@ from pritunl import app_server
 from organization import Organization
 from event import Event
 from log_entry import LogEntry
+from server_bandwidth import ServerBandwidth
 from mongo_object import MongoObject
 from cache import cache_db
 import mongo
@@ -730,68 +731,9 @@ class Server(MongoObject):
             cache_db.list_lpop(self.get_cache_key('output'))
         self._event_delay(type=SERVER_OUTPUT_UPDATED, resource_id=self.id)
 
-    def get_bandwidth(self, period=None):
-        data = {}
-        date = datetime.datetime.utcnow()
-        date -= datetime.timedelta(microseconds=date.microsecond,
-            seconds=date.second)
-        periods = (period,) if period else ('1m', '5m', '30m', '2h', '1d')
-
-        for period in periods:
-            if period == '1m':
-                date_end = date
-                date_cur = date_end - datetime.timedelta(hours=6)
-                date_step = datetime.timedelta(minutes=1)
-            elif period == '5m':
-                date_end = date - datetime.timedelta(minutes=date.minute % 5)
-                date_cur = date_end - datetime.timedelta(days=1)
-                date_step = datetime.timedelta(minutes=5)
-            elif period == '30m':
-                date_end = date - datetime.timedelta(minutes=date.minute % 30)
-                date_cur = date_end - datetime.timedelta(days=7)
-                date_step = datetime.timedelta(minutes=30)
-            elif period == '2h':
-                date_end = date - datetime.timedelta(minutes=date.minute,
-                    hours=date.hour % 2)
-                date_cur = date_end - datetime.timedelta(days=30)
-                date_step = datetime.timedelta(hours=2)
-            elif period == '1d':
-                date_end = date - datetime.timedelta(minutes=date.minute,
-                    hours=date.hour)
-                date_cur = date_end - datetime.timedelta(days=365)
-                date_step = datetime.timedelta(days=1)
-
-            data_p = {
-                'received': [],
-                'received_total': 0,
-                'sent': [],
-                'sent_total': 0,
-            }
-            data[period] = data_p
-            cache_key = self.get_cache_key('bandwidth-%s' % period)
-
-            while date_cur < date_end:
-                date_cur += date_step
-
-                timestamp = int(date_cur.strftime('%s'))
-                bandwidth = persist_db.dict_get(cache_key, str(timestamp))
-                if bandwidth:
-                    bandwidth = bandwidth.split(',')
-                    bytes_recv = int(bandwidth[0])
-                    bytes_sent = int(bandwidth[1])
-                else:
-                    bytes_recv = 0
-                    bytes_sent = 0
-
-                data_p['received'].append((timestamp, bytes_recv))
-                data_p['received_total'] += bytes_recv
-                data_p['sent'].append((timestamp, bytes_sent))
-                data_p['sent_total'] += bytes_sent
-
-        if len(periods) == 1:
-            return data[periods[0]]
-        else:
-            return data
+    def get_bandwidth(self, period):
+        server_bandwidth = ServerBandwidth(self.id)
+        return server_bandwidth.get_bandwidth(period)
 
     def get_bandwidth_random(self, period=None):
         # Generate random bandwidth data for demo and write to file
@@ -880,7 +822,6 @@ class Server(MongoObject):
             return data
 
     def _update_clients_bandwidth(self, clients):
-        return
         # Remove client no longer connected
         for client_id in cache_db.dict_keys(self.get_cache_key('clients')):
             if client_id not in clients:
@@ -911,58 +852,10 @@ class Server(MongoObject):
             bytes_recv_t += bytes_recv - prev_bytes_recv
             bytes_sent_t += bytes_sent - prev_bytes_sent
 
-        # Store bytes send recv into time periods
         if bytes_recv_t != 0 or bytes_sent_t != 0:
-            date = datetime.datetime.utcnow()
-            date -= datetime.timedelta(microseconds=date.microsecond,
-                seconds=date.second)
-
-            timestamp_1m = date.strftime('%s')
-            timestamp_1m_min = int((date - datetime.timedelta(
-                hours=6)).strftime('%s'))
-            date_5m = date - datetime.timedelta(minutes=date.minute % 5)
-            timestamp_5m = date_5m.strftime('%s')
-            timestamp_5m_min = int((date_5m - datetime.timedelta(
-                days=1)).strftime('%s'))
-            date_30m = date - datetime.timedelta(minutes=date.minute % 30)
-            timestamp_30m = date_30m.strftime('%s')
-            timestamp_30m_min = int((date_30m - datetime.timedelta(
-                days=7)).strftime('%s'))
-            date_2h = date - datetime.timedelta(
-                hours=date.hour % 2, minutes=date.minute)
-            timestamp_2h = date_2h.strftime('%s')
-            timestamp_2h_min = int((date_2h - datetime.timedelta(
-                days=30)).strftime('%s'))
-            date_1d = date - datetime.timedelta(
-                hours=date.hour, minutes=date.minute)
-            timestamp_1d = date_1d.strftime('%s')
-            timestamp_1d_min = int((date_1d - datetime.timedelta(
-                days=365)).strftime('%s'))
-
-            for period, timestamp, timestamp_min in (
-                        ('1m', timestamp_1m, timestamp_1m_min),
-                        ('5m', timestamp_5m, timestamp_5m_min),
-                        ('30m', timestamp_30m, timestamp_30m_min),
-                        ('2h', timestamp_2h, timestamp_2h_min),
-                        ('1d', timestamp_1d, timestamp_1d_min),
-                    ):
-                bytes_recv = bytes_recv_t
-                bytes_sent = bytes_sent_t
-                prev_bandwidth = persist_db.dict_get(
-                    self.get_cache_key('bandwidth-%s' % period), timestamp)
-                if prev_bandwidth:
-                    prev_bandwidth = prev_bandwidth.split(',')
-                    bytes_recv += int(prev_bandwidth[0])
-                    bytes_sent += int(prev_bandwidth[1])
-                persist_db.dict_set(self.get_cache_key(
-                    'bandwidth-%s' % period), timestamp,
-                    '%s,%s' % (bytes_recv, bytes_sent))
-
-                for timestamp_p in persist_db.dict_keys(self.get_cache_key(
-                        'bandwidth-%s' % period)):
-                    if int(timestamp_p) <= timestamp_min:
-                        persist_db.dict_remove(self.get_cache_key(
-                            'bandwidth-%s' % period), timestamp_p)
+            server_bandwidth = ServerBandwidth(self.id)
+            server_bandwidth.add_bandwidth(
+                datetime.datetime.utcnow(), bytes_recv_t, bytes_sent_t)
 
     def _read_clients(self, ovpn_status_path):
         clients = {}

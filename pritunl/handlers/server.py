@@ -508,7 +508,6 @@ def server_output_delete(server_id):
     server.clear_output()
     return utils.jsonify({})
 
-@app_server.app.route('/server/<server_id>/bandwidth', methods=['GET'])
 @app_server.app.route('/server/<server_id>/bandwidth/<period>',
     methods=['GET'])
 @app_server.auth

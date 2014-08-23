@@ -25,6 +25,7 @@ def setup_mongo():
         'users': getattr(database, prefix + 'users'),
         'organizations': getattr(database, prefix + 'organizations'),
         'servers': getattr(database, prefix + 'servers'),
+        'servers_bandwidth': getattr(database, prefix + 'servers_bandwidth'),
         'auth_nonces': getattr(database, prefix + 'auth_nonces'),
         'auth_limiter': getattr(database, prefix + 'auth_limiter'),
     })
@@ -42,6 +43,11 @@ def setup_mongo():
     ])
     collections['organizations'].ensure_index('type')
     collections['servers'].ensure_index('name')
+    collections['servers_bandwidth'].ensure_index([
+        ('server_id', pymongo.ASCENDING),
+        ('period', pymongo.ASCENDING),
+        ('timestamp', pymongo.ASCENDING),
+    ])
     collections['auth_nonces'].ensure_index([
         ('token', pymongo.ASCENDING),
         ('nonce', pymongo.ASCENDING),
