@@ -74,6 +74,9 @@ def user_get(org_id, user_id=None, page=None):
             user_dict['servers'] = server_data
             users.append(user_dict)
 
+        for server in servers:
+            # Query all user ip addrs using $in
+
         if page is not None:
             return utils.jsonify({
                 'page': page,

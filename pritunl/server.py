@@ -47,6 +47,7 @@ class Server(MongoObject):
         'dh_params',
 
         'instance_id',
+        'ping_timestamp',
         'status',
         'uptime',
         'clients',
@@ -62,7 +63,6 @@ class Server(MongoObject):
         'clients': {},
         'users_online': 0,
     }
-    cache_prefix = 'server'
 
     def __init__(self, name=None, network=None, interface=None, port=None,
             protocol=None, dh_param_bits=None, mode=None, local_networks=None,
