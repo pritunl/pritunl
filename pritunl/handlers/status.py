@@ -18,11 +18,7 @@ def status_get():
             servers_online_count += 1
         clients_count += len(server.clients)
 
-    user_count = 0
-    for org in Organization.iter_orgs():
-        orgs_count += 1
-        user_count += org.user_count
-
+    user_count = Organization.get_user_count_multi()
     local_networks = utils.get_local_networks()
 
     if app_server.openssl_heartbleed:
