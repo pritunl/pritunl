@@ -73,7 +73,6 @@ class Server(MongoObject):
 
         self._cur_event = None
         self._last_event = 0
-        self._user_count = None
 
         if name is not None:
             self.name = name
@@ -108,16 +107,6 @@ class Server(MongoObject):
     def get_collection():
         return mongo.get_collection('servers')
 
-    def __getattr__(self, name):
-        if name == 'output':
-            return '\n'.join(cache_db.list_elements(
-                self.get_cache_key('output')))
-        elif name == 'user_count':
-            if self._user_count is None:
-                self._get_user_count()
-            return self._user_count
-        return MongoObject.__getattr__(self, name)
-
     def dict(self):
         return {
             'id': self.id,
@@ -140,6 +129,14 @@ class Server(MongoObject):
             'lzo_compression': self.lzo_compression,
             'debug': True if self.debug else False,
         }
+
+    @property
+    def user_count(self):
+        return Organization.get_user_count_multi(org_ids=self.organizations)
+
+    @property
+    def output(self):
+        return '\n'.join(cache_db.list_elements(self.get_cache_key('output')))
 
     def initialize(self):
         self.generate_dh_param()
@@ -266,10 +263,6 @@ class Server(MongoObject):
     def get_org(self, org_id):
         if org_id in self.organizations:
             return Organization.get_org(id=org_id)
-
-    def _get_user_count(self):
-        self._user_count = Organization.get_user_count_multi(
-            org_ids=self.organizations)
 
     def generate_dh_param(self):
         logger.debug('Generating server dh params. %r' % {
