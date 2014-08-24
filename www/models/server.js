@@ -23,9 +23,6 @@ define([
       'dns_servers': null,
       'search_domain': null,
       'public_address': null,
-      'node_host': null,
-      'node_port': null,
-      'node_key': null,
       'otp_auth': null,
       'lzo_compression': null,
       'debug': null
