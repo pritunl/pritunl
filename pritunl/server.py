@@ -63,6 +63,7 @@ class Server(MongoObject):
         'clients': {},
         'users_online': 0,
     }
+    cache_prefix = 'server'
 
     def __init__(self, name=None, network=None, interface=None, port=None,
             protocol=None, dh_param_bits=None, mode=None, local_networks=None,
@@ -72,6 +73,7 @@ class Server(MongoObject):
 
         self._cur_event = None
         self._last_event = 0
+        self._user_count = None
 
         if name is not None:
             self.name = name
@@ -111,9 +113,9 @@ class Server(MongoObject):
             return '\n'.join(cache_db.list_elements(
                 self.get_cache_key('output')))
         elif name == 'user_count':
-            return self._get_user_count()
-        elif name == 'org_count':
-            return self._get_org_count()
+            if self._user_count is None:
+                self._get_user_count()
+            return self._user_count
         return MongoObject.__getattr__(self, name)
 
     def dict(self):
@@ -137,7 +139,6 @@ class Server(MongoObject):
             'otp_auth': True if self.otp_auth else False,
             'lzo_compression': self.lzo_compression,
             'debug': True if self.debug else False,
-            'org_count': self.org_count,
         }
 
     def initialize(self):
@@ -270,10 +271,7 @@ class Server(MongoObject):
         users_count = 0
         for org in self.iter_orgs():
             users_count += org.user_count
-        return users_count
-
-    def _get_org_count(self):
-        return len(self.organizations)
+        self._user_count = users_count
 
     def generate_dh_param(self):
         logger.debug('Generating server dh params. %r' % {
