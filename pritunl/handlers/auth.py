@@ -11,14 +11,14 @@ import flask
 @app_server.auth
 def auth_get():
     settings = Settings()
-    response = flask.request.administrator.dict()
+    response = flask.g.administrator.dict()
     response.update(settings.dict())
     return utils.jsonify(response)
 
 @app_server.app.route('/auth', methods=['PUT'])
 @app_server.auth
 def auth_put():
-    administrator = flask.request.administrator
+    administrator = flask.g.administrator
     settings = Settings()
 
     if 'username' in flask.request.json and flask.request.json['username']:
@@ -41,7 +41,7 @@ def auth_put():
     settings.commit()
     administrator.commit()
 
-    response = flask.request.administrator.dict()
+    response = flask.g.administrator.dict()
     response.update(settings.dict())
     return utils.jsonify(response)
 
