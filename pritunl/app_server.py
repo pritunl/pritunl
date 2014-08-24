@@ -230,12 +230,14 @@ class AppServer(Config):
 
         @self.app.before_request
         def before_request():
+            flask.g.query_count = 0
             flask.g.start = time.time()
 
         @self.app.after_request
         def after_request(response):
             response.headers.add('Execution-Time',
                 int((time.time() - flask.g.start) * 1000))
+            response.headers.add('Query-Count', flask.g.query_count)
             return response
 
         global logger
