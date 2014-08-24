@@ -41,6 +41,10 @@ class Administrator(MongoObject):
         }
 
     @staticmethod
+    def get_collection():
+        return mongo.get_collection('administrators')
+
+    @staticmethod
     def get_nonces_collection():
         return mongo.get_collection('auth_nonces')
 
@@ -90,10 +94,6 @@ class Administrator(MongoObject):
             self.generate_secret()
 
         MongoObject.commit(self, *args, **kwargs)
-
-    @staticmethod
-    def get_collection():
-        return mongo.get_collection('administrators')
 
     @classmethod
     def get_user(cls, id):
