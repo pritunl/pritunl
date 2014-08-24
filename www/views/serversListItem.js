@@ -30,7 +30,8 @@ define([
     initialize: function() {
       this.statusModel = new StatusModel();
       this.serverOrgsListView = new ServerOrgsListView({
-        server: this.model
+        server: this.model,
+        serverView: this
       });
       this.addView(this.serverOrgsListView);
       this.serverOutputView = new ServerOutputView({
@@ -108,16 +109,20 @@ define([
       this.$('.server-node-host .status-text').text(
         this.model.get('node_host'));
 
-      if (!this.model.get('org_count')) {
+      this.updateButtons();
+    },
+    updateButtons: function() {
+      if (this.buttonLock) {
         this.$('.server-stop').hide();
+        this.$('.server-restart').hide();
         this.$('.server-start').show();
         this.startDisabled = true;
-        this.restartDisabled = true;
-        this.$('.server-start, .server-restart').attr('disabled', 'disabled');
+        this.$('.server-start').attr('disabled', 'disabled');
         this.$('.no-org-warning').show();
       }
       else if (this.model.get('status')) {
         this.$('.server-start').hide();
+        this.$('.server-restart').show();
         this.$('.server-stop').show();
         // Starting and restarting server will also disable buttons
         // only remove disabled if originally done above
@@ -125,23 +130,22 @@ define([
           this.startDisabled = false;
           this.$('.server-start').removeAttr('disabled');
         }
-        if (this.restartDisabled) {
-          this.startDisabled = false;
-          this.$('.server-restart').removeAttr('disabled');
-        }
         this.$('.no-org-warning').hide();
       }
       else {
         this.$('.server-stop').hide();
+        this.$('.server-restart').hide();
         this.$('.server-start').show();
         if (this.startDisabled) {
           this.startDisabled = false;
           this.$('.server-start').removeAttr('disabled');
         }
-        this.restartDisabled = true;
-        this.$('.server-restart').attr('disabled', 'disabled');
         this.$('.no-org-warning').hide();
       }
+    },
+    setButtonState: function(state) {
+      this.buttonLock = !state;
+      this.updateButtons();
     },
     onSettings: function() {
       if (this.model.get('status')) {

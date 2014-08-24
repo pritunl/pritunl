@@ -21,6 +21,7 @@ define([
       this.listenTo(window.events, 'server_organizations_updated:' +
         options.server.get('id'), this.update);
       this.server = options.server;
+      this.serverView = options.serverView;
       ServerOrgsListView.__super__.initialize.call(this);
     },
     buildItem: function(model) {
@@ -37,6 +38,7 @@ define([
       else {
         this.$('.no-orgs').slideUp(250);
       }
+      this.serverView.setButtonState(views.length)
     }
   });
 
