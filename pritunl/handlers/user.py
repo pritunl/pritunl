@@ -76,6 +76,7 @@ def user_get(org_id, user_id=None, page=None):
 
         for server in servers:
             # Query all user ip addrs using $in
+            pass
 
         if page is not None:
             return utils.jsonify({
