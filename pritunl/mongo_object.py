@@ -57,6 +57,7 @@ class MongoObject(object):
         self.__dict__.update(doc)
 
     def commit(self, fields=None):
+        doc = {}
         if fields:
             if isinstance(fields, basestring):
                 fields = (fields,)
@@ -64,12 +65,10 @@ class MongoObject(object):
             fields = self.changed
             for field in self.fields:
                 value = self.__dict__.get(field)
-                if value and not isinstance(self.__dict__[field], (
-                        bool, int, long, float, basestring)):
-                    fields.add(field)
-
-        if fields:
-            doc = {}
+                if value and isinstance(value, (list, dict)):
+                    fields.remove(field)
+                    doc[field] = value
+        if fields or doc:
             for field in fields:
                 doc[field] = self.__dict__[field]
             self.get_collection().update({
