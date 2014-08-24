@@ -268,10 +268,8 @@ class Server(MongoObject):
             return Organization.get_org(id=org_id)
 
     def _get_user_count(self):
-        users_count = 0
-        for org in self.iter_orgs():
-            users_count += org.user_count
-        self._user_count = users_count
+        self._user_count = Organization.get_user_count_multi(
+            org_ids=self.organizations)
 
     def generate_dh_param(self):
         logger.debug('Generating server dh params. %r' % {
@@ -622,7 +620,7 @@ class Server(MongoObject):
     def start(self):
         temp_path = app_server.get_temp_path()
 
-        if not self.org_count:
+        if not self.organizations:
             raise ServerMissingOrg('Server cannot be started ' + \
                 'without any organizations', {
                     'server_id': self.id,
