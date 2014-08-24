@@ -212,3 +212,12 @@ class Organization(MongoObject):
     def iter_orgs(cls, type=ORG_DEFAULT):
         for doc in cls.get_collection().find({'type': type}).sort('name'):
             yield cls(doc=doc)
+
+    @classmethod
+    def get_user_count_multi(cls, org_ids=None, type=CERT_CLIENT):
+        spec = {
+            'type': type,
+        }
+        if org_ids is not None:
+            spec['org_id'] = {'$in': org_ids}
+        return User.get_collection().find(spec).count()
