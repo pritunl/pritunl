@@ -28,7 +28,6 @@ class Organization(MongoObject):
 
     def __init__(self, name=None, type=None, **kwargs):
         MongoObject.__init__(self, **kwargs)
-        self._cached = {}
 
         if name is not None:
             self.name = name
@@ -44,48 +43,27 @@ class Organization(MongoObject):
 
     @property
     def otp_auth(self):
-        if 'otp_auth' in self._cached:
-            value = self._cached['otp_auth']
-        else:
-            value = self._get_otp_auth()
-            self._cached['otp_auth'] = value
-        return value
+        from server import Server
+        return bool(Server.get_collection().find_one({
+            'organizations': self.id,
+            'otp_auth': True,
+        }))
 
     @property
     def user_count(self):
-        if 'user_count' in self._cached:
-            value = self._cached['user_count']
-        else:
-            value = self._get_user_count()
-            self._cached['user_count'] = value
-        return value
+        return self._get_user_count(type=CERT_CLIENT)
 
     @property
     def server_user_count(self):
-        if 'server_user_count' in self._cached:
-            value = self._cached['server_user_count']
-        else:
-            value = self._get_user_count(type=CERT_SERVER)
-            self._cached['server_user_count'] = value
-        return value
+        return self._get_user_count(type=CERT_SERVER)
 
     @property
     def user_pool_count(self):
-        if 'user_pool_count' in self._cached:
-            value = self._cached['user_pool_count']
-        else:
-            value = self._get_user_count(type=CERT_CLIENT_POOL)
-            self._cached['user_pool_count'] = value
-        return value
+        return self._get_user_count(type=CERT_CLIENT_POOL)
 
     @property
     def server_user_pool_count(self):
-        if 'server_user_pool_count' in self._cached:
-            value = self._cached['server_user_pool_count']
-        else:
-            value = self._get_user_count(type=CERT_SERVER_POOL)
-            self._cached['server_user_pool_count'] = value
-        return value
+        return self._get_user_count(type=CERT_SERVER_POOL)
 
     @property
     def page_total(self):
@@ -108,13 +86,6 @@ class Organization(MongoObject):
 
     def find_user(self, name=None, type=None):
         return User.find_user(org=self, name=name, type=type)
-
-    def _get_otp_auth(self):
-        from server import Server
-        return bool(Server.get_collection().find_one({
-            'organizations': self.id,
-            'otp_auth': True,
-        }))
 
     def _get_user_count(self, type=CERT_CLIENT):
         return User.get_collection().find({
