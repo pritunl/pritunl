@@ -282,8 +282,7 @@ define([
       serverStatus = demoData.servers[serverId].status;
       servers.push(_.extend({
         users_online: serverStatus && userCount ? 1 : 0,
-        user_count: userCount,
-        org_count: demoData.servers[serverId].orgs.length
+        user_count: userCount
       }, demoData.servers[serverId]));
     }
 
