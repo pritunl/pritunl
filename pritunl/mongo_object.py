@@ -66,7 +66,8 @@ class MongoObject(object):
             for field in self.fields:
                 value = self.__dict__.get(field)
                 if value and isinstance(value, (list, dict)):
-                    fields.remove(field)
+                    if field in fields:
+                        fields.remove(field)
                     doc[field] = value
         if fields or doc:
             for field in fields:
