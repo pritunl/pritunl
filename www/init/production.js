@@ -15,17 +15,21 @@ define([
           if (!execTime) {
             return;
           }
+          var queryCount = response.getResponseHeader('Query-Count');
+          if (!execTime || !queryCount) {
+            return;
+          }
           var color;
-          if (execTime > 200) {
+          if (execTime > 200 || queryCount > 5) {
             color = '#ff0000';
           }
-          else if (execTime > 100) {
+          else if (execTime > 100 || queryCount > 3) {
             color = '#ff6b0d';
           }
           else {
             color = '#0066ff';
           }
-          console.log('%c' + execTime + 'ms ' + this.url, 'color: ' + color);
+          console.log('%c' + execTime + 'ms ' + queryCount + 'db ' + this.url, 'color: ' + color);
         }
         if (_complete) {
           _complete(response);
