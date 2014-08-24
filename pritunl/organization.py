@@ -28,37 +28,12 @@ class Organization(MongoObject):
 
     def __init__(self, name=None, type=None, **kwargs):
         MongoObject.__init__(self, **kwargs)
+        self._cached = {}
 
         if name is not None:
             self.name = name
         if type is not None:
             self.type = type
-
-    def __getattr__(self, name):
-        if name == 'otp_auth':
-            value = self._get_otp_auth()
-            self.otp_auth = value
-            return value
-        elif name == 'user_count':
-            value = self._get_user_count()
-            self.user_count = value
-            return value
-        elif name == 'server_user_count':
-            value = self._get_user_count(type=CERT_SERVER)
-            self.server_user_count = value
-            return value
-        elif name == 'user_pool_count':
-            value = self._get_user_count(type=CERT_CLIENT_POOL)
-            self.user_pool_count = value
-            return value
-        elif name == 'server_user_pool_count':
-            value = self._get_user_count(type=CERT_SERVER_POOL)
-            self.server_user_pool_count = value
-            return value
-        elif name == 'page_total':
-            # TODO
-            return 0
-        return MongoObject.__getattr__(self, name)
 
     def dict(self):
         return {
@@ -66,6 +41,56 @@ class Organization(MongoObject):
             'name': self.name,
             'user_count': self.user_count,
         }
+
+    @property
+    def otp_auth(self):
+        if 'otp_auth' in self._cached:
+            value = self._cached['otp_auth']
+        else:
+            value = self._get_otp_auth()
+            self._cached['otp_auth'] = value
+        return value
+
+    @property
+    def user_count(self):
+        if 'user_count' in self._cached:
+            value = self._cached['user_count']
+        else:
+            value = self._get_user_count()
+            self._cached['user_count'] = value
+        return value
+
+    @property
+    def server_user_count(self):
+        if 'server_user_count' in self._cached:
+            value = self._cached['server_user_count']
+        else:
+            value = self._get_user_count(type=CERT_SERVER)
+            self._cached['server_user_count'] = value
+        return value
+
+    @property
+    def user_pool_count(self):
+        if 'user_pool_count' in self._cached:
+            value = self._cached['user_pool_count']
+        else:
+            value = self._get_user_count(type=CERT_CLIENT_POOL)
+            self._cached['user_pool_count'] = value
+        return value
+
+    @property
+    def server_user_pool_count(self):
+        if 'server_user_pool_count' in self._cached:
+            value = self._cached['server_user_pool_count']
+        else:
+            value = self._get_user_count(type=CERT_SERVER_POOL)
+            self._cached['server_user_pool_count'] = value
+        return value
+
+    @property
+    def page_total(self):
+        # TODO
+        return 0
 
     @staticmethod
     def get_collection():
