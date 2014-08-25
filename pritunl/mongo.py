@@ -47,8 +47,13 @@ def setup_mongo():
         database.create_collection(prefix + 'log_entries', capped=True,
             size=LOG_LIMIT * LOG_AVG_SIZE * 2, max=LOG_LIMIT)
 
+    if prefix + 'messages' not in cur_collections:
+        database.create_collection(prefix + 'messages', capped=True,
+            size=100000)
+
     collections.update({
         'system': getattr(database, prefix + 'system'),
+        'messages': getattr(database, prefix + 'messages'),
         'log_entries': getattr(database, prefix + 'log_entries'),
         'administrators': getattr(database, prefix + 'administrators'),
         'users': getattr(database, prefix + 'users'),
