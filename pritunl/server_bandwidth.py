@@ -140,4 +140,3 @@ class ServerBandwidth:
         time_block = cls(spec=spec)
         if not time_block:
             time_block = cls()
-
