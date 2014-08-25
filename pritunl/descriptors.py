@@ -7,3 +7,10 @@ class cached_property(object):
             return self
         obj.__dict__[self.func.__name__] = value = self.func(obj)
         return value
+
+class static_property(object):
+    def __init__(self, func):
+        self.func = func
+
+    def __get__(self, obj, objtype):
+        return self.func(objtype)
