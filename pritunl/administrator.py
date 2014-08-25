@@ -1,5 +1,6 @@
 from constants import *
 from exceptions import *
+from descriptors import *
 from mongo_object import MongoObject
 import utils
 import mongo
@@ -40,16 +41,16 @@ class Administrator(MongoObject):
             'default': self.default,
         }
 
-    @staticmethod
-    def get_collection():
+    @static_property
+    def collection(cls):
         return mongo.get_collection('administrators')
 
-    @staticmethod
-    def get_nonces_collection():
+    @static_property
+    def nonces_collection(cls):
         return mongo.get_collection('auth_nonces')
 
-    @staticmethod
-    def get_limiter_collection():
+    @static_property
+    def limiter_collection(cls):
         return mongo.get_collection('auth_limiter')
 
     def _hash_password(self, salt, password):
@@ -148,7 +149,7 @@ class Administrator(MongoObject):
                 return False
 
             try:
-                cls.get_nonces_collection().insert({
+                cls.nonces_collection.insert({
                     'token': auth_token,
                     'nonce': auth_nonce,
                     'timestamp': datetime.datetime.utcnow(),
@@ -186,7 +187,7 @@ class Administrator(MongoObject):
     @classmethod
     def check_auth(cls, username, password, remote_addr=None):
         if remote_addr:
-            doc = cls.get_limiter_collection().find_and_modify({
+            doc = cls.limiter_collection.find_and_modify({
                 '_id': remote_addr,
             }, {
                 '$inc': {'count': 1},
@@ -199,7 +200,7 @@ class Administrator(MongoObject):
                     'count': 1,
                     'timestamp': datetime.datetime.utcnow(),
                 }
-                cls.get_limiter_collection().update({
+                cls.limiter_collection.update({
                     '_id': remote_addr,
                 }, doc, upsert=True)
 

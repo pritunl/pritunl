@@ -1,5 +1,6 @@
 from constants import *
 from exceptions import *
+from descriptors import *
 from pritunl import app_server
 from cache import cache_db
 from cache_trie import CacheTrie
@@ -52,8 +53,8 @@ class User(MongoObject):
         if type is not None:
             self.type = type
 
-    @staticmethod
-    def get_collection():
+    @static_property
+    def collection(cls):
         return mongo.get_collection('users')
 
     def dict(self):

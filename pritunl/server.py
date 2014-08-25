@@ -104,8 +104,8 @@ class Server(MongoObject):
         if debug is not None:
             self.debug = debug
 
-    @staticmethod
-    def get_collection():
+    @static_property
+    def collection(cls):
         return mongo.get_collection('servers')
 
     def dict(self):
@@ -897,5 +897,5 @@ class Server(MongoObject):
 
     @classmethod
     def iter_servers(cls):
-        for doc in cls.get_collection().find().sort('name'):
+        for doc in cls.collection.find().sort('name'):
             yield cls(doc=doc)

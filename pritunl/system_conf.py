@@ -1,5 +1,6 @@
 from constants import *
 from exceptions import *
+from descriptors import *
 import mongo
 import collections
 
@@ -8,12 +9,12 @@ class SystemConf():
         self._cached = {}
         self._changed = collections.defaultdict(lambda: {})
 
-    @staticmethod
-    def get_collection():
+    @static_property
+    def collection(cls):
         return mongo.get_collection('system')
 
     def _load_doc(self, group):
-        doc = self.get_collection().find_one(group) or {}
+        doc = self.collection.find_one(group) or {}
         self._cached[group] = doc
 
     def get(self, group, field):
@@ -25,7 +26,7 @@ class SystemConf():
         self._changed[group][field] = value
 
     def commit(self):
-        collection = self.get_collection()
+        collection = self.collection
         for group in self._changed:
             doc = self._changed[group]
             if not doc:

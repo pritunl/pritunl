@@ -1,4 +1,5 @@
 from constants import *
+from descriptors import *
 from event import Event
 from mongo_object import MongoObject
 import mongo
@@ -29,8 +30,8 @@ class LogEntry(MongoObject):
             'message': self.message,
         }
 
-    @staticmethod
-    def get_collection():
+    @static_property
+    def collection(cls):
         return mongo.get_collection('log_entries')
 
     def commit(self, *args, **kwargs):
@@ -39,6 +40,6 @@ class LogEntry(MongoObject):
 
     @classmethod
     def iter_log_entries(cls):
-        for doc in cls.get_collection().find().sort(
+        for doc in cls.collection.find().sort(
                 'timestamp', pymongo.DESCENDING):
             yield cls(doc=doc)

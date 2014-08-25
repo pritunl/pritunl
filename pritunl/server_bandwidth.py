@@ -1,4 +1,6 @@
 from constants import *
+from exceptions import *
+from descriptors import *
 import mongo
 import time
 import pymongo
@@ -7,8 +9,8 @@ class ServerBandwidth:
     def __init__(self, server_id):
         self.server_id = server_id
 
-    @staticmethod
-    def get_collection():
+    @static_property
+    def collection(cls):
         return mongo.get_collection('servers_bandwidth')
 
     def _get_period_timestamp(self, period, timestamp):
@@ -52,7 +54,7 @@ class ServerBandwidth:
                 minutes=timestamp.minute) - datetime.timedelta(days=365)
 
     def add_bandwidth(self, timestamp, received, sent):
-        bulk = self.get_collection().initialize_unordered_bulk_op()
+        bulk = self.collection.initialize_unordered_bulk_op()
 
         for period in ('1m', '5m', '30m', '2h', '1d'):
             bulk.find({
@@ -108,7 +110,7 @@ class ServerBandwidth:
             'period': period,
         }
 
-        for doc in self.get_collection().find(spec).sort('timestamp'):
+        for doc in self.collection.find(spec).sort('timestamp'):
             if date_cur > doc['timestamp']:
                 continue
             while date_cur < doc['timestamp']:

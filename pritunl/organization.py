@@ -44,7 +44,7 @@ class Organization(MongoObject):
     @property
     def otp_auth(self):
         from server import Server
-        return bool(Server.get_collection().find_one({
+        return bool(Server.collection.find_one({
             'organizations': self.id,
             'otp_auth': True,
         }))
@@ -70,8 +70,8 @@ class Organization(MongoObject):
         # TODO
         return 0
 
-    @staticmethod
-    def get_collection():
+    @static_property
+    def collection(cls):
         return mongo.get_collection('organizations')
 
     def initialize(self):
@@ -88,7 +88,7 @@ class Organization(MongoObject):
         return User.find_user(org=self, name=name, type=type)
 
     def _get_user_count(self, type=CERT_CLIENT):
-        return User.get_collection().find({
+        return User.collection.find({
             'org_id': self.id,
             'type': type,
         }).count()
@@ -98,7 +98,7 @@ class Organization(MongoObject):
             'org_id': self.id,
             'type': CERT_CLIENT,
         }
-        for doc in User.get_collection().find(spec).sort('name'):
+        for doc in User.collection.find(spec).sort('name'):
             yield User(self, doc=doc)
 
     def create_user_key_link(self, user_id):
@@ -173,7 +173,7 @@ class Organization(MongoObject):
 
     def iter_servers(self):
         from server import Server
-        for doc in Server.get_collection().find({'organizations': self.id}):
+        for doc in Server.collection.find({'organizations': self.id}):
             yield Server(doc=doc)
 
     def new_user(self, **kwargs):
@@ -188,7 +188,7 @@ class Organization(MongoObject):
             server.remove_org(self)
             server.commit()
         MongoObject.remove(self)
-        User.get_collection().remove({'org_id': self.id})
+        User.collection.remove({'org_id': self.id})
 
     @classmethod
     def new_org(cls, **kwargs):
@@ -202,11 +202,11 @@ class Organization(MongoObject):
 
     @classmethod
     def get_org_count(cls, type=ORG_DEFAULT):
-        return cls.get_collection().find({'type': type}).count()
+        return cls.collection.find({'type': type}).count()
 
     @classmethod
     def iter_orgs(cls, type=ORG_DEFAULT):
-        for doc in cls.get_collection().find({'type': type}).sort('name'):
+        for doc in cls.collection.find({'type': type}).sort('name'):
             yield cls(doc=doc)
 
     @classmethod
@@ -216,4 +216,4 @@ class Organization(MongoObject):
         }
         if org_ids is not None:
             spec['org_id'] = {'$in': org_ids}
-        return User.get_collection().find(spec).count()
+        return User.collection.find(spec).count()

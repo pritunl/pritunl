@@ -1,5 +1,6 @@
 from constants import *
 from exceptions import *
+from descriptors import *
 from mongo_dict import MongoDict
 from mongo_list import MongoList
 import bson
@@ -58,8 +59,8 @@ class MongoObject(object):
         raise AttributeError(
             'MongoObject instance has no attribute %r' % name)
 
-    @staticmethod
-    def get_collection():
+    @static_property
+    def collection(cls):
         raise TypeError('Database collection must be specified')
 
     def load(self, doc=None, spec=None):
@@ -70,7 +71,7 @@ class MongoObject(object):
                 spec = {
                     '_id': bson.ObjectId(self.id),
                 }
-            doc = self.get_collection().find_one(spec)
+            doc = self.collection.find_one(spec)
             if not doc:
                 raise NotFound('Document not found', {
                     'spec': spec,
