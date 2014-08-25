@@ -1,7 +1,22 @@
 from constants import *
 from exceptions import *
+from mongo_dict import MongoDict
+from mongo_list import MongoList
 import bson
+import json
 import os
+
+class JSONEncoderPatched(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, (MongoDict, MongoList)):
+            return obj.data
+        return json.JSONEncoder.default(self, obj)
+dumps_orig = json.dumps
+def dumps_patched(*args, **kwargs):
+    if not kwargs.get('cls'):
+        kwargs['cls'] = JSONEncoderPatched
+    return dumps_orig(*args, **kwargs)
+json.dumps = dumps_patched
 
 class MongoObject(object):
     fields = set()
@@ -25,7 +40,14 @@ class MongoObject(object):
 
     def __setattr__(self, name, value):
         if name != 'fields' and name in self.fields:
-            self.changed.add(name)
+            if isinstance(value, list) and not isinstance(
+                    value, MongoList):
+                value = MongoList(value)
+            elif isinstance(value, dict) and not isinstance(
+                    value, MongoDict):
+                value = MongoDict(value)
+            else:
+                self.changed.add(name)
         self.__dict__[name] = value
 
     def __getattr__(self, name):
@@ -54,7 +76,12 @@ class MongoObject(object):
                     'spec': spec,
                 })
         doc['id'] = str(doc.pop('_id'))
-        self.__dict__.update(doc)
+        for key, value in doc.iteritems():
+            if isinstance(value, list):
+                value = MongoList(value, changed=False)
+            elif isinstance(value, dict):
+                value = MongoDict(value, changed=False)
+            self.__dict__[key] = value
 
     def commit(self, fields=None):
         doc = {}
@@ -65,10 +92,12 @@ class MongoObject(object):
             fields = self.changed
             for field in self.fields:
                 value = self.__dict__.get(field)
-                if value and isinstance(value, (list, dict)):
-                    if field in fields:
-                        fields.remove(field)
-                    doc[field] = value
+                if value is not None and isinstance(value, (
+                        MongoList, MongoDict)):
+                    if value.changed:
+                        if field in fields:
+                            fields.remove(field)
+                        doc[field] = value
         if fields or doc:
             for field in fields:
                 doc[field] = self.__dict__[field]
