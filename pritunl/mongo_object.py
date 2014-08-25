@@ -102,7 +102,7 @@ class MongoObject(object):
         if fields or doc:
             for field in fields:
                 doc[field] = self.__dict__[field]
-            self.get_collection().update({
+            self.collection.update({
                 '_id': bson.ObjectId(self.id),
             }, {
                 '$set': doc,
@@ -113,13 +113,13 @@ class MongoObject(object):
             for field in self.fields:
                 if field in self.__dict__:
                     doc[field] = self.__dict__[field]
-            self.get_collection().save(doc)
+            self.collection.save(doc)
 
         self.exists = True
         self.changed = set()
 
     def remove(self):
-        self.get_collection().remove(bson.ObjectId(self.id))
+        self.collection.remove(bson.ObjectId(self.id))
 
     def read_file(self, field, path):
         with open(path, 'r') as field_file:
