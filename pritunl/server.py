@@ -1,5 +1,6 @@
 from constants import *
 from exceptions import *
+from descriptors import *
 from pritunl import app_server
 from organization import Organization
 from event import Event
@@ -130,11 +131,11 @@ class Server(MongoObject):
             'debug': True if self.debug else False,
         }
 
-    @property
+    @cached_property
     def user_count(self):
         return Organization.get_user_count_multi(org_ids=self.organizations)
 
-    @property
+    @cached_property
     def output(self):
         return '\n'.join(cache_db.list_elements(self.get_cache_key('output')))
 
