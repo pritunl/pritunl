@@ -34,8 +34,7 @@ def user_get(org_id, user_id=None, page=None):
             if server.otp_auth:
                 otp_auth = True
             server_clients = server.clients
-            for client_id in server_clients:
-                client = server_clients[client_id]
+            for client, client_id in server_clients.iteritems():
                 if client_id not in clients:
                     clients[client_id] = {}
                 clients[client_id][server.id] = client
