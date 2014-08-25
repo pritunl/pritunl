@@ -67,17 +67,6 @@ define([
       this.$('.server-graph-viewer').append(
         this.serverBandwidthView.render().el);
       this.$el.append(this.serverOrgsListView.render().el);
-
-      if (this.model.get('type') === 'node_server') {
-        this.$('.server-label').hide();
-        this.$el.addClass('node-server');
-        this.$('.server-public-address').removeClass('last');
-      }
-      else {
-        this.$('.node-label').hide();
-        this.$('.server-node-host').hide();
-      }
-
       return this;
     },
     update: function() {
@@ -106,8 +95,6 @@ define([
         this.model.get('port') + '/' + this.model.get('protocol'));
       this.$('.server-public-address .status-text').text(
         this.model.get('public_address'));
-      this.$('.server-node-host .status-text').text(
-        this.model.get('node_host'));
 
       this.updateButtons();
     },

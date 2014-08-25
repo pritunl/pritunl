@@ -174,13 +174,6 @@ define([
         }
       }
       var searchDomain = this.$('.search-domain input').val();
-      var nodeHost = this.$('.node-host input').val().split(':');
-      var nodePort = null;
-      if (nodeHost.length > 1) {
-        nodePort = parseInt(nodeHost[1], 10);
-      }
-      nodeHost = nodeHost[0];
-      var nodeKey = this.$('.node-key input').val();
       var localNetworks = [];
       var debug = this.getDebugSelect();
       var otpAuth = this.getOtpAuthSelect();
@@ -234,23 +227,6 @@ define([
         'otp_auth': otpAuth,
         'debug': debug
       };
-
-      if (this.model.get('type') === 'node_server') {
-        if (!nodeHost) {
-          this.setAlert('danger', 'Node host cannot be empty.', '.node-host');
-          return;
-        }
-        if (!nodeKey) {
-          this.setAlert('danger', 'Node api key cannot be empty.',
-            '.node-key');
-          return;
-        }
-        _.extend(data, {
-          'node_host': nodeHost,
-          'node_port': nodePort,
-          'node_key': nodeKey
-        });
-      }
 
       this.setLoading(this.loadingMsg);
       this.model.save(data, {

@@ -1,9 +1,5 @@
 <div class="split">
   <div class="left">
-    <div class="node-host form-group" <%= type === 'node_server' ? '' : 'style="display: none;"' %>>
-      <label>Node Host</label>
-      <input type="text" class="form-control" placeholder="Enter node host" data-toggle="tooltip" title="Node server host" value="<%- node_port ? node_host + ':' + node_port : node_host %>">
-    </div>
     <div class="name form-group">
       <label>Name</label>
       <input type="text" class="form-control" placeholder="Enter name" data-toggle="tooltip" title="Name of VPN server" value="<%- name %>" autofocus>
@@ -39,10 +35,6 @@
     </div>
   </div>
   <div class="right">
-    <div class="node-key form-group" <%= type === 'node_server' ? '' : 'style="display: none;"' %>>
-      <label>Node API Key</label>
-      <input type="text" class="form-control" placeholder="Enter api key" data-toggle="tooltip" title="Node server API key" spellcheck="false" value="<%- node_key %>">
-    </div>
     <div class="dns-servers form-group">
       <label>DNS Server</label>
       <input type="text" class="form-control" placeholder="Enter DNS server" data-toggle="tooltip" title="Optional, DNS server for clients" value="<%- dns_servers.join(', ') %>">
