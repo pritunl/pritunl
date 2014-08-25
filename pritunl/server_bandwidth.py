@@ -52,24 +52,28 @@ class ServerBandwidth:
                 minutes=timestamp.minute) - datetime.timedelta(days=365)
 
     def add_bandwidth(self, timestamp, received, sent):
+        bulk = self.get_collection().initialize_unordered_bulk_op()
+
         for period in ('1m', '5m', '30m', '2h', '1d'):
-            self.get_collection().update({
+            bulk.find({
                 'server_id': self.server_id,
                 'period': period,
                 'timestamp': self._get_period_timestamp(period, timestamp),
-            }, {'$inc': {
+            }).upsert().update({'$inc': {
                 'received': received,
                 'sent': sent,
-            }}, upsert=True)
+            }})
 
         for period in ('1m', '5m', '30m', '2h', '1d'):
-            self.get_collection().remove({
+            bulk.find({
                 'server_id': self.server_id,
                 'period': period,
                 'timestamp': {
                     '$lt': self._get_period_max_timestamp(period, timestamp),
                 },
-            })
+            }).remove()
+
+        bulk.execute()
 
     def get_bandwidth(self, period):
         date_end = self._get_period_timestamp(
