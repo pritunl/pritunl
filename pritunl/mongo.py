@@ -43,7 +43,7 @@ def setup_mongo():
     database = client.get_default_database()
     cur_collections = database.collection_names()
 
-    if 'log_entries' not in cur_collections:
+    if prefix + 'log_entries' not in cur_collections:
         database.create_collection(prefix + 'log_entries', capped=True,
             size=LOG_LIMIT * LOG_AVG_SIZE * 2, max=LOG_LIMIT)
 
