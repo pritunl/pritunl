@@ -2,6 +2,7 @@ from constants import *
 from exceptions import *
 from descriptors import *
 import mongo
+import pymongo
 import time
 import datetime
 
@@ -24,7 +25,7 @@ class Messenger:
         try:
             cursor_id = self.collection.find({
                 'channel': self.channel,
-            }).sort('$natural', -1)[0]['_id']
+            }).sort('$natural', pymongo.DESCENDING)[0]['_id']
         except IndexError:
             cursor_id = None
         while True:
@@ -34,8 +35,8 @@ class Messenger:
                 }
                 if cursor_id:
                     spec['_id'] = {'$gt': cursor_id}
-                cursor = self.collection.find(spec,
-                    tailable=True, await_data=True)
+                cursor = self.collection.find(spec, tailable=True,
+                    await_data=True).sort('$natural', pymongo.DESCENDING)
                 while cursor.alive:
                     for doc in cursor:
                         cursor_id = doc['_id']
