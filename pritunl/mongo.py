@@ -66,6 +66,7 @@ def setup_mongo():
     collections['log_entries'].ensure_index([
         ('timestamp', pymongo.DESCENDING),
     ])
+    collections['messages'].ensure_index('channel')
     collections['administrators'].ensure_index('username', unique=True)
     collections['users'].ensure_index([
         ('org_id', pymongo.ASCENDING),
@@ -92,7 +93,7 @@ def setup_mongo():
         expireAfterSeconds=AUTH_LIMITER_TTL)
 
     from administrator import Administrator
-    if not Administrator.get_collection().find_one():
+    if not Administrator.collection.find_one():
         Administrator(
             username=DEFAULT_USERNAME,
             password=DEFAULT_PASSWORD,
