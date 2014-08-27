@@ -13,8 +13,9 @@ import logging
 logger = logging.getLogger(APP_NAME)
 
 class MongoTransaction:
-    def __init__(self, id=None):
+    def __init__(self, id=None, priority=NORMAL):
         self.action_sets = []
+        self.priority = priority
 
         if id is None:
             self.id = bson.ObjectId()
@@ -185,14 +186,17 @@ class MongoTransaction:
         if len(collection_bulks):
             raise ValueError('Uncommited bulks')
 
-        self.collection.insert({
+        doc = {
             '_id': self.id,
             'timestamp': datetime.datetime.utcnow(),
             'state': PENDING,
+            'priority': self.priority,
             'attempts': 1,
             'actions': bson.Binary(bson.BSON.encode(
                 {'data': self.action_sets})),
-        }, upsert=True)
+        }
+
+        self.collection.insert(doc, upsert=True)
 
         try:
             self._run_actions()

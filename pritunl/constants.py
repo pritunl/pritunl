@@ -19,9 +19,9 @@ PENDING = 'pending'
 ROLLBACK = 'rollback'
 COMPLETE = 'complete'
 
-LOW = 'low'
-NORMAL = 'normal'
-HIGH = 'high'
+LOW = 0
+NORMAL = 1
+HIGH = 2
 
 BULK_EXECUTE = 'bulk_execute'
 
