@@ -9,14 +9,17 @@ import collections
 import datetime
 import bson
 import logging
+import threading
 
 logger = logging.getLogger(APP_NAME)
 
 class MongoTransaction:
-    def __init__(self, id=None, lock_id=None, priority=NORMAL):
+    def __init__(self, id=None, lock_id=None, priority=NORMAL,
+            ttl=MONGO_TRAN_TTL):
         self.action_sets = []
-        self.priority = priority
         self.lock_id
+        self.priority = priority
+        self.ttl = tll
 
         if id is None:
             self.id = bson.ObjectId()
@@ -95,7 +98,8 @@ class MongoTransaction:
             'state': ROLLBACK,
         }, {
             '$set': {
-                'timestamp': datetime.datetime.utcnow(),
+                'ttl_timestamp': datetime.datetime.utcnow() + \
+                    datetime.timedelta(seconds=self.ttl),
             },
             '$inc': {
                 'attempts': 1,
@@ -139,7 +143,8 @@ class MongoTransaction:
             'state': PENDING,
         }, {
             '$set': {
-                'timestamp': datetime.datetime.utcnow(),
+                'ttl_timestamp': datetime.datetime.utcnow() + \
+                    datetime.timedelta(seconds=self.ttl),
             },
             '$inc': {
                 'attempts': 1,
@@ -189,9 +194,11 @@ class MongoTransaction:
 
         doc = {
             '_id': self.id,
-            'timestamp': datetime.datetime.utcnow(),
             'state': PENDING,
             'priority': self.priority,
+            'ttl': self.ttl,
+            'ttl_timestamp': datetime.datetime.utcnow() + \
+                datetime.timedelta(seconds=self.ttl),
             'attempts': 1,
             'actions': bson.Binary(bson.BSON.encode(
                 {'data': self.action_sets})),

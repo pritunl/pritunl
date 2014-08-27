@@ -68,7 +68,7 @@ def setup_mongo():
     collections['transaction'].ensure_index('state')
     collections['transaction'].ensure_index('lock_id', unique=True)
     collections['transaction'].ensure_index([
-        ('timestamp', pymongo.ASCENDING),
+        ('ttl_timestamp', pymongo.ASCENDING),
         ('state', pymongo.ASCENDING),
         ('priority', pymongo.DESCENDING),
     ])
