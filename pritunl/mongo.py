@@ -52,6 +52,7 @@ def setup_mongo():
             size=100000)
 
     collections.update({
+        'transaction': getattr(database, prefix + 'transaction'),
         'system': getattr(database, prefix + 'system'),
         'messages': getattr(database, prefix + 'messages'),
         'log_entries': getattr(database, prefix + 'log_entries'),
@@ -63,6 +64,7 @@ def setup_mongo():
         'auth_nonces': getattr(database, prefix + 'auth_nonces'),
         'auth_limiter': getattr(database, prefix + 'auth_limiter'),
     })
+    collections['transaction'].ensure_index('state')
     collections['log_entries'].ensure_index([
         ('timestamp', pymongo.DESCENDING),
     ])
