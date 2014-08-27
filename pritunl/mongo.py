@@ -65,6 +65,7 @@ def setup_mongo():
         'auth_limiter': getattr(database, prefix + 'auth_limiter'),
     })
     collections['transaction'].ensure_index('state')
+    collections['transaction'].ensure_index('lock_id', unique=True)
     collections['transaction'].ensure_index([
         ('timestamp', pymongo.ASCENDING),
         ('state', pymongo.ASCENDING),
