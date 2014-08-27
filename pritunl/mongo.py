@@ -61,6 +61,7 @@ def setup_mongo():
         'organizations': getattr(database, prefix + 'organizations'),
         'servers': getattr(database, prefix + 'servers'),
         'servers_bandwidth': getattr(database, prefix + 'servers_bandwidth'),
+        'servers_ip_pool': getattr(database, prefix + 'servers_ip_pool'),
         'auth_nonces': getattr(database, prefix + 'auth_nonces'),
         'auth_limiter': getattr(database, prefix + 'auth_limiter'),
     })
