@@ -16,7 +16,7 @@ RUNNING = 'running'
 PAUSED = 'paused'
 
 PENDING = 'pending'
-COMMITTED = 'committed'
+ROLLBACK = 'rollback'
 COMPLETE = 'complete'
 
 LOW = 'low'
@@ -24,6 +24,18 @@ NORMAL = 'normal'
 HIGH = 'high'
 
 BULK_EXECUTE = 'bulk_execute'
+
+MONGO_ACTION_METHODS = {
+    'update',
+    'remove',
+    'find',
+    'find_one',
+    'find_and_modify',
+    'replace_one',
+    'update_one',
+    'remove_one',
+    'upsert',
+}
 
 OK = 'ok'
 DISABLED = 'disabled'
@@ -77,6 +89,7 @@ AUTH_NONCE_TIME_WINDOW = 300
 AUTH_LIMITER_TTL = 60
 AUTH_LIMITER_COUNT_MAX = 30
 OTP_CACHE_TTL = 43200
+MONGO_TRAN_MAX_ATTEMPTS = 10
 IP_REGEX = r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
 SAFE_PUB_SUBNETS = {'50.203.224.0/24'}
 VALID_DH_PARAM_BITS = (1024, 1536, 2048, 3072, 4096)
