@@ -19,6 +19,12 @@ PENDING = 'pending'
 COMMITTED = 'committed'
 COMPLETE = 'complete'
 
+LOW = 'low'
+NORMAL = 'normal'
+HIGH = 'high'
+
+BULK_EXECUTE = 'bulk_execute'
+
 OK = 'ok'
 DISABLED = 'disabled'
 
