@@ -13,9 +13,10 @@ import logging
 logger = logging.getLogger(APP_NAME)
 
 class MongoTransaction:
-    def __init__(self, id=None, priority=NORMAL):
+    def __init__(self, id=None, lock_id=None, priority=NORMAL):
         self.action_sets = []
         self.priority = priority
+        self.lock_id
 
         if id is None:
             self.id = bson.ObjectId()
@@ -195,6 +196,9 @@ class MongoTransaction:
             'actions': bson.Binary(bson.BSON.encode(
                 {'data': self.action_sets})),
         }
+
+        if self.lock_id:
+            doc['lock_id'] = self.lock_id
 
         self.collection.insert(doc, upsert=True)
 
