@@ -13,21 +13,21 @@ import logging
 logger = logging.getLogger(APP_NAME)
 
 class MongoTransactionCollection:
-    def __init__(self, parent_actions, parent_data=None):
-        self._parent_actions = parent_actions
-        self._parent_data = parent_data
+    def __init__(self, actions, data=None):
+        self._actions = actions
+        self._data = data
 
     def __getattr__(self, name):
         if name in MONGO_ACTION_METHODS:
-            return MongoTransactionAction(self._parent_actions, name)
-        elif name == 'bulk' and self._parent_data:
-            self._parent_data[1] = True
-            return lambda: MongoTransactionCollection(self._parent_actions)
-        elif name == 'rollback' and self._parent_data:
-            return lambda: MongoTransactionCollection(self._parent_data[3])
-        elif name == BULK_EXECUTE and self._parent_data:
-            self._parent_data[2] = BULK_EXECUTE
-            return lambda: MongoTransactionCollection(self._parent_actions)
+            return MongoTransactionAction(self._actions, name)
+        elif name == 'bulk' and self._data:
+            self._data[1] = True
+            return lambda: MongoTransactionCollection(self._actions)
+        elif name == 'rollback' and self._data:
+            return lambda: MongoTransactionCollection(self._data[3])
+        elif name == BULK_EXECUTE and self._data:
+            self._data[2] = BULK_EXECUTE
+            return lambda: MongoTransactionCollection(self._actions)
         else:
             raise AttributeError('MongoTransactionCollection ' +
                 'instance has no attribute %r' % name)

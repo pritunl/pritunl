@@ -12,18 +12,16 @@ import logging
 logger = logging.getLogger(APP_NAME)
 
 class MongoTransactionAction:
-    def __init__(self, parent_actions, func):
-        self._parent_actions = parent_actions
+    def __init__(self, actions, func):
+        self._actions = actions
         self._func = func
-        self._actions = []
 
     def __call__(self, *args, **kwargs):
         from mongo_transaction_collection import MongoTransactionCollection
-        self._parent_actions.append([
-            self._func, # func
-            args, # args
-            kwargs, # kwargs
-            self._actions, # child_actions
+        self._actions.append([
+            self._func,
+            args or '',
+            kwargs or '',
         ])
         return MongoTransactionCollection(self._actions)
 
