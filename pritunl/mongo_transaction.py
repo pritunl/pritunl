@@ -56,6 +56,7 @@ class MongoTransaction:
                 False, # bulk
                 [], # actions
                 [], # rollback_actions
+                [], # post_actions
             ]
             self.action_sets.append(data)
             return MongoTransactionCollection(data[2], data)
@@ -70,7 +71,8 @@ class MongoTransaction:
         tran_str = ''
 
         for action_set in self.action_sets:
-            collection_name, bulk, actions, rollback_actions = action_set
+            collection_name, bulk, actions, rollback_actions, post_actions = \
+                action_set
 
             if actions == BULK_EXECUTE:
                 tran_str += '%s_collection.bulk_execute()\n' % collection_name
@@ -82,6 +84,10 @@ class MongoTransaction:
             if rollback_actions:
                 tran_str += '%s_collection.rollback()\n' % collection_name
                 tran_str = self._str_actions(tran_str, rollback_actions)
+
+            if post_actions:
+                tran_str += '%s_collection.post()\n' % collection_name
+                tran_str = self._str_actions(tran_str, post_actions)
 
         return tran_str.strip()
 
@@ -102,9 +108,83 @@ class MongoTransaction:
             tran_str += ')\n'
         return tran_str
 
+    def _run_collection_actions(self, obj, actions):
+        for action in actions:
+            func, args, kwargs = action
+            obj = getattr(obj, func)(*args or [], **kwargs or {})
+
+    def _run_actions(self):
+        collection_bulks = collections.defaultdict(
+            lambda: collection.initialize_ordered_bulk_op())
+
+        for action_set in self.action_sets:
+            collection_name, bulk, actions, _, _ = action_set
+            collection = mongo.get_collection(collection_name)
+
+            if bulk:
+                collection = collection_bulks[collection_name]
+            elif actions == BULK_EXECUTE:
+                collection = collection_bulks.pop(collection_name)
+                collection.execute()
+                continue
+
+            self._run_collection_actions(collection, actions)
+
+    def run_actions(self, update_db=True):
+        if update_db:
+            doc = self.collection.find_and_modify({
+                '_id': self.id,
+                'state': PENDING,
+            }, {
+                '$set': {
+                    'ttl_timestamp': datetime.datetime.utcnow() + \
+                        datetime.timedelta(seconds=self.ttl),
+                },
+                '$inc': {
+                    'attempts': 1,
+                },
+            })
+
+            if not doc:
+                return
+            elif doc['attempts'] > MONGO_TRAN_MAX_ATTEMPTS:
+                response = self.collection.update({
+                    '_id': self.id,
+                    'state': PENDING,
+                }, {
+                    '$set': {
+                        'state': ROLLBACK,
+                    },
+                })
+                if response['updatedExisting']:
+                    self.rollback_actions()
+                return
+
+        try:
+            self._run_actions()
+        except:
+            logger.exception('Error occured running ' +
+                'transaction actions. %r' % {
+                    'transaction_id': str(self.id),
+                    'attempts': doc['attempts'],
+                })
+            raise
+
+        response = self.collection.update({
+            '_id': self.id,
+            'state': PENDING,
+        }, {
+            '$set': {
+                'state': COMMITTED,
+            },
+        })
+        if not response['updatedExisting']:
+            return
+        self.run_post_actions()
+
     def _rollback_actions(self):
         for action_set in self.action_sets:
-            collection_name, _, _, rollback_actions = action_set
+            collection_name, _, _, rollback_actions, _ = action_set
             collection = mongo.get_collection(collection_name)
 
             self._run_collection_actions(collection, rollback_actions)
@@ -117,9 +197,6 @@ class MongoTransaction:
             '$set': {
                 'ttl_timestamp': datetime.datetime.utcnow() + \
                     datetime.timedelta(seconds=self.ttl),
-            },
-            '$inc': {
-                'attempts': 1,
             },
         })
 
@@ -137,64 +214,33 @@ class MongoTransaction:
 
         self.collection.remove(self.id)
 
-    def _run_collection_actions(self, obj, actions):
-        for action in actions:
-            func, args, kwargs = action
-            obj = getattr(obj, func)(*args or [], **kwargs or {})
-
-    def _run_actions(self):
-        collection_bulks = collections.defaultdict(
-            lambda: collection.initialize_ordered_bulk_op())
-
+    def _run_post_actions(self):
         for action_set in self.action_sets:
-            collection_name, bulk, actions, _ = action_set
+            collection_name, _, _, _, post_actions = action_set
             collection = mongo.get_collection(collection_name)
 
-            if bulk:
-                collection = collection_bulks[collection_name]
-            elif actions == BULK_EXECUTE:
-                collection = collection_bulks.pop(collection_name)
-                collection.execute()
-                continue
+            self._run_collection_actions(collection, post_actions)
 
-            self._run_collection_actions(collection, actions)
-
-    def run_actions(self):
-        doc = self.collection.find_and_modify({
+    def run_post_actions(self):
+        response = self.collection.update({
             '_id': self.id,
-            'state': PENDING,
+            'state': COMMITTED,
         }, {
             '$set': {
                 'ttl_timestamp': datetime.datetime.utcnow() + \
                     datetime.timedelta(seconds=self.ttl),
             },
-            '$inc': {
-                'attempts': 1,
-            },
         })
 
-        if not doc:
-            return
-        elif doc['attempts'] > MONGO_TRAN_MAX_ATTEMPTS:
-            response = self.collection.update({
-                '_id': self.id,
-                'state': PENDING,
-            }, {
-                '$set': {
-                    'state': ROLLBACK,
-                },
-            })
-            if response['updatedExisting']:
-                self.rollback_actions()
+        if not response['updatedExisting']:
             return
 
         try:
-            self._run_actions()
+            self._run_post_actions()
         except:
             logger.exception('Error occured running ' +
-                'transaction actions retry. %r' % {
+                'transaction post actions. %r' % {
                     'transaction_id': str(self.id),
-                    'attempts': doc['attempts'],
                 })
             raise
 
@@ -217,10 +263,6 @@ class MongoTransaction:
         }, upsert=True)
 
         try:
-            self._run_actions()
-            self.collection.remove(self.id)
+            self.run_actions(False)
         except:
-            logger.exception('Error occured running ' +
-                'transaction actions initial. %r' % {
-                    'transaction_id': str(self.id),
-                })
+            pass
