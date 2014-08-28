@@ -17,14 +17,18 @@ class MongoTransaction:
     def __init__(self, id=None, lock_id=None, priority=NORMAL,
             ttl=MONGO_TRAN_TTL):
         self.action_sets = []
-        self.lock_id
         self.priority = priority
-        self.ttl = tll
+        self.ttl = ttl
 
         if id is None:
             self.id = bson.ObjectId()
         else:
             self.id = id
+
+        if lock_id is None:
+            self.lock_id = bson.ObjectId()
+        else:
+            self.lock_id = lock_id
 
     def __getattr__(self, name):
         if name.endswith('_collection'):
