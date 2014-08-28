@@ -3,9 +3,9 @@ from exceptions import *
 from descriptors import *
 from pritunl import app_server
 from mongo_object import MongoObject
+from vpn_ipv4_network import VpnIPv4Network
 from cache import cache_db
 import mongo
-import ipaddress
 
 logger = logging.getLogger(APP_NAME)
 
@@ -29,8 +29,7 @@ class ServerIpPool:
         if response.get('updatedExisting'):
             return
 
-        ip_pool = ipaddress.IPv4Network(network).iterhosts()
-        ip_pool.next()
+        ip_pool = VpnIPv4Network(self.server.network)
 
         try:
             doc = self.collection.find({
@@ -38,34 +37,25 @@ class ServerIpPool:
             }).sort('_id', pymongo.DESCENDING)[0]
             if doc:
                 last_addr = doc['_id']
-                for addr in ip_pool:
-                    if int(addr) == last_addr:
+                for remote_ip_addr, local_ip_addr in ip_pool:
+                    if int(remote_ip_addr) == last_addr:
                         break
         except IndexError:
             pass
 
-        try:
-            while True:
-                remote_ip_addr = ip_pool.next()
-                ip_addr_endpoint = str(remote_ip_addr).split('.')[-1]
-                if ip_addr_endpoint not in VALID_IP_ENDPOINTS:
-                    continue
-                local_ip_addr = ip_pool.next()
-
-                try:
-                    self.collection.insert({
-                        '_id': int(remote_ip_addr),
-                        'server_id': self.server.id,
-                        'org_id': org_id,
-                        'user_id': user_id,
-                        'remote_addr': int(remote_ip_addr),
-                        'local_addr': int(remote_ip_addr),
-                    })
-                    break
-                except pymongo.errors.DuplicateKeyError:
-                    pass
-        except StopIteration:
-            pass
+        for remote_ip_addr, local_ip_addr in ip_pool:
+            try:
+                self.collection.insert({
+                    '_id': int(remote_ip_addr),
+                    'server_id': self.server.id,
+                    'org_id': org_id,
+                    'user_id': user_id,
+                    'remote_addr': str(remote_ip_addr),
+                    'local_addr': str(remote_ip_addr),
+                })
+                break
+            except pymongo.errors.DuplicateKeyError:
+                pass
 
     def unassign_ip_addr(self, org_id, user_id):
         self.collection.update({
