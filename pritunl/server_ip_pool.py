@@ -18,7 +18,7 @@ class ServerIpPool:
         return mongo.get_collection('servers_ip_pool')
 
     def assign_ip_addr(self, org_id, user_id):
-        response = servers_ip_pool_db.update({
+        response = self.collection.update({
             'server_id': self.server.id,
             'org_id': {'$exists': False},
             'user_id': {'$exists': False},
@@ -33,7 +33,7 @@ class ServerIpPool:
         ip_pool.next()
 
         try:
-            doc = servers_ip_pool_db.find({
+            doc = self.collection.find({
                 'server_id': self.server.id,
             }).sort('_id', pymongo.DESCENDING)[0]
             if doc:
@@ -53,7 +53,7 @@ class ServerIpPool:
                 local_ip_addr = ip_pool.next()
 
                 try:
-                    servers_ip_pool_db.insert({
+                    self.collection.insert({
                         '_id': int(remote_ip_addr),
                         'server_id': self.server.id,
                         'org_id': org_id,
@@ -68,7 +68,7 @@ class ServerIpPool:
             pass
 
     def unassign_ip_addr(self, org_id, user_id):
-        servers_ip_pool_db.update({
+        self.collection.update({
             'server_id': self.server.id,
             'org_id': org_id,
             'user_id': user_id,
