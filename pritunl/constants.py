@@ -16,6 +16,7 @@ RUNNING = 'running'
 PAUSED = 'paused'
 
 PENDING = 'pending'
+COMMITTED = 'committed'
 ROLLBACK = 'rollback'
 COMPLETE = 'complete'
 
