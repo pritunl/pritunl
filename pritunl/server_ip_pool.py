@@ -76,3 +76,14 @@ class ServerIpPool:
             'org_id': '',
             'user_id': '',
         }})
+
+    def get_ip_addr(self, org_id, user_id):
+        doc = self.collection.find_one({
+            'server_id': self.server.id,
+            'org_id': org_id,
+            'user_id': user_id,
+        })
+        if doc:
+            return ipaddress.IPv4Address(doc['remote_addr']), \
+                ipaddress.IPv4Address(doc['local_addr'])
+        return None, None
