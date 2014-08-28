@@ -25,6 +25,8 @@ class MongoTransactionCollection:
             return lambda: MongoTransactionCollection(self._actions)
         elif name == 'rollback' and self._data:
             return lambda: MongoTransactionCollection(self._data[3])
+        elif name == 'post' and self._data:
+            return lambda: MongoTransactionCollection(self._data[4])
         elif name == BULK_EXECUTE and self._data:
             self._data[2] = BULK_EXECUTE
             return lambda: MongoTransactionCollection(self._actions)
