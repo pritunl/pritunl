@@ -65,7 +65,6 @@ def setup_mongo():
         'auth_nonces': getattr(database, prefix + 'auth_nonces'),
         'auth_limiter': getattr(database, prefix + 'auth_limiter'),
     })
-    collections['transaction'].ensure_index('state')
     collections['transaction'].ensure_index('lock_id', unique=True)
     collections['transaction'].ensure_index([
         ('ttl_timestamp', pymongo.ASCENDING),
