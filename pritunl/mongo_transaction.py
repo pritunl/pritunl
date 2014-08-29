@@ -166,7 +166,6 @@ class MongoTransaction:
             logger.exception('Error occured running ' +
                 'transaction actions. %r' % {
                     'transaction_id': str(self.id),
-                    'attempts': doc['attempts'],
                 })
             raise
 
