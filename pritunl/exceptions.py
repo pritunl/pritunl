@@ -43,6 +43,9 @@ class IptablesError(ServerError):
 class InvalidStaticFile(ServerError):
     pass
 
+class ServerNetworkLocked(ServerError):
+    pass
+
 
 class NotFound(BaseError):
     pass
