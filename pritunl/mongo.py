@@ -92,6 +92,16 @@ def setup_mongo():
         ('period', pymongo.ASCENDING),
         ('timestamp', pymongo.ASCENDING),
     ])
+    collections['servers_ip_pool'].ensure_index([
+        ('server_id', pymongo.ASCENDING),
+        ('org_id', pymongo.ASCENDING),
+        ('user_id', pymongo.ASCENDING),
+        ('network', pymongo.ASCENDING),
+    ])
+    collections['servers_ip_pool'].ensure_index([
+        ('org_id', pymongo.ASCENDING),
+        ('user_id', pymongo.ASCENDING),
+    ])
     collections['auth_nonces'].ensure_index([
         ('token', pymongo.ASCENDING),
         ('nonce', pymongo.ASCENDING),
