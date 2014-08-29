@@ -2,7 +2,7 @@ from constants import *
 from exceptions import *
 import UserDict
 
-class MongoDict(UserDict.UserDict):
+class MongoDict(UserDict.UserDict, object):
     __class__ = dict
 
     def __init__(self, initdict=None, changed=True, **kwargs):
