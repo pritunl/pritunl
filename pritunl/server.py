@@ -158,6 +158,20 @@ class Server(MongoObject):
     def get_ip_set(self, org_id, user_id):
         return self.ip_pool.get_ip_addr(org_id, user_id)
 
+    def assign_ip_addr(self, org_id, user_id):
+        if not self.network_lock:
+            self.ip_pool.assign_ip_addr(org_id, user_id)
+        else:
+            # TODO
+            pass
+
+    def unassign_ip_addr(self, org_id, user_id):
+        if not self.network_lock:
+            self.ip_pool.unassign_ip_addr(org_id, user_id)
+        else:
+            # TODO
+            pass
+
     def _event_delay(self, type, resource_id=None):
         # Min event every 1s max event every 0.2s
         event_time = time.time()
