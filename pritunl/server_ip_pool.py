@@ -83,8 +83,14 @@ class ServerIpPool:
         server_id = self.server.id
         pool_end = False
 
-        tran = MongoTransaction()
+        tran = MongoTransaction(lock_id=server_id)
         ip_pool = VpnIPv4Network(network).iterhost_sets()
+
+        tran.collection('servers').update({
+            '_id': bson.ObjectId(server_id),
+        }, {'$set': {
+            'network_lock': True,
+        }})
 
         for org in self.server.iter_orgs():
             org_id = org.id
