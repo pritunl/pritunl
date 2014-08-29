@@ -152,6 +152,15 @@ class User(MongoObject):
         finally:
             utils.rmtree(temp_path)
 
+        # TODO
+        self.assign_ip_addr()
+
+    def remove(self):
+        # TODO
+        self.unassign_ip_addr()
+
+        MongoObject.remove(self)
+
     def get_cache_key(self, suffix=None):
         if not self.cache_prefix:
             raise AttributeError('Cached config object requires cache_prefix')
@@ -159,6 +168,14 @@ class User(MongoObject):
         if suffix:
             key += '-%s' % suffix
         return key
+
+    def assign_ip_addr(self):
+        for server in self.org.iter_servers():
+            server.assign_ip_addr(self.org.id, self.id)
+
+    def unassign_ip_addr(self):
+        for server in self.org.iter_servers():
+            server.unassign_ip_addr(self.org.id, self.id)
 
     def generate_otp_secret(self):
         sha_hash = hashlib.sha512()
