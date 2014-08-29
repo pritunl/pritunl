@@ -191,10 +191,11 @@ class Server(MongoObject):
         threading.Thread(target=_target).start()
 
     def commit(self, *args, **kwargs):
-        if self.network != self._orig_network:
-            self.network_lock = True
+        if self.network != self._orig_network and self.network_lock:
+            raise ServerNetworkLocked('Server network is locked')
         MongoObject.commit(self, *args, **kwargs)
         if self.network != self._orig_network:
+            # TODO
             self.ip_pool.assign_ip_pool(self._orig_network)
 
     def remove(self):
