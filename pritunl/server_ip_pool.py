@@ -97,7 +97,7 @@ class ServerIpPool:
                     break
                 doc_id = int(remote_ip_addr)
 
-                tran.servers_ip_pool_collection.bulk().find({
+                tran.collection('servers_ip_pool').bulk().find({
                     '_id': doc_id,
                 }).upsert().update({'$set': {
                     '_id': doc_id,
@@ -112,25 +112,25 @@ class ServerIpPool:
             if pool_end:
                 break
 
-        tran.servers_ip_pool_collection.bulk_execute()
+        tran.collection('servers_ip_pool').bulk_execute()
 
-        tran.servers_ip_pool_collection.rollback().remove({
+        tran.collection('servers_ip_pool').rollback().remove({
             'server_id': server_id,
         })
 
-        tran.servers_ip_pool_collection.rollback().update({
+        tran.collection('servers_ip_pool').rollback().update({
             '_id': bson.ObjectId(server_id),
         }, {'$set': {
             'network_lock': False,
         }})
 
         if old_network:
-            tran.servers_ip_pool_collection.post().remove({
+            tran.collection('servers_ip_pool').post().remove({
                 'network': old_network,
                 'server_id': server_id,
             })
 
-        tran.servers_collection.post().update({
+        tran.collection('servers').post().update({
             '_id': bson.ObjectId(server_id),
         }, {'$set': {
             'network_lock': False,
