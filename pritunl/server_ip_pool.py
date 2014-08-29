@@ -11,6 +11,7 @@ import bson
 import logging
 import pymongo
 import ipaddress
+import collections
 
 logger = logging.getLogger(APP_NAME)
 
@@ -151,6 +152,17 @@ class ServerIpPool:
             'user_id': user_id,
         })
         if doc:
-            return str(ipaddress.IPv4Address(doc['local_addr'])), \
-                str(ipaddress.IPv4Address(doc['remote_addr']))
+            return doc['local_addr'], doc['remote_addr']
         return None, None
+
+    @classmethod
+    def multi_get_ip_addr(cls, org_id, user_ids):
+        ip_addrs = collections.defaultdict(lambda: {})
+        spec = {
+            'org_id': org_id,
+            'user_id': {'$in': user_ids},
+        }
+
+        for doc in cls.collection.find(spec):
+            yield doc['user_id'], doc['server_id'], \
+                doc['local_addr'], doc['remote_addr']
