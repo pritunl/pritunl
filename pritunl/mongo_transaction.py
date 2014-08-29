@@ -49,22 +49,8 @@ class MongoTransaction:
         else:
             self.lock_id = lock_id
 
-    def __getattr__(self, name):
-        if name.endswith('_collection'):
-            data = [
-                name[:-11], # collection_name
-                False, # bulk
-                [], # actions
-                [], # rollback_actions
-                [], # post_actions
-            ]
-            self.action_sets.append(data)
-            return MongoTransactionCollection(data[2], data)
-        raise AttributeError(
-            'MongoTransaction instance has no attribute %r' % name)
-
     @static_property
-    def collection(cls):
+    def transaction_collection(cls):
         return mongo.get_collection('transaction')
 
     def __str__(self):
@@ -90,6 +76,17 @@ class MongoTransaction:
                 tran_str = self._str_actions(tran_str, post_actions)
 
         return tran_str.strip()
+
+    def collection(self, name):
+        data = [
+            name, # collection_name
+            False, # bulk
+            [], # actions
+            [], # rollback_actions
+            [], # post_actions
+        ]
+        self.action_sets.append(data)
+        return MongoTransactionCollection(data[2], data)
 
     def _str_actions(self, tran_str, actions):
         for action in actions:
@@ -132,7 +129,7 @@ class MongoTransaction:
 
     def run_actions(self, update_db=True):
         if update_db:
-            doc = self.collection.find_and_modify({
+            doc = self.transaction_collection.find_and_modify({
                 '_id': self.id,
                 'state': PENDING,
             }, {
@@ -148,7 +145,7 @@ class MongoTransaction:
             if not doc:
                 return
             elif doc['attempts'] > MONGO_TRAN_MAX_ATTEMPTS:
-                response = self.collection.update({
+                response = self.transaction_collection.update({
                     '_id': self.id,
                     'state': PENDING,
                 }, {
@@ -169,7 +166,7 @@ class MongoTransaction:
                 })
             raise
 
-        response = self.collection.update({
+        response = self.transaction_collection.update({
             '_id': self.id,
             'state': PENDING,
         }, {
@@ -189,7 +186,7 @@ class MongoTransaction:
             self._run_collection_actions(collection, rollback_actions)
 
     def rollback_actions(self):
-        response = self.collection.update({
+        response = self.transaction_collection.update({
             '_id': self.id,
             'state': ROLLBACK,
         }, {
@@ -211,7 +208,7 @@ class MongoTransaction:
                 })
             raise
 
-        self.collection.remove(self.id)
+        self.transaction_collection.remove(self.id)
 
     def _run_post_actions(self):
         for action_set in self.action_sets:
@@ -221,7 +218,7 @@ class MongoTransaction:
             self._run_collection_actions(collection, post_actions)
 
     def run_post_actions(self):
-        response = self.collection.update({
+        response = self.transaction_collection.update({
             '_id': self.id,
             'state': COMMITTED,
         }, {
@@ -243,13 +240,13 @@ class MongoTransaction:
                 })
             raise
 
-        self.collection.remove(self.id)
+        self.transaction_collection.remove(self.id)
 
     def commit(self):
         actions_json = json.dumps(self.action_sets, default=json_default)
         actions_json_zlib = zlib.compress(actions_json)
 
-        self.collection.insert({
+        self.transaction_collection.insert({
             '_id': self.id,
             'state': PENDING,
             'priority': self.priority,
