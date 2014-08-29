@@ -3,11 +3,13 @@ from pritunl.exceptions import *
 from pritunl.organization import Organization
 from pritunl.event import Event
 from pritunl.log_entry import LogEntry
+from pritunl.server_ip_pool import ServerIpPool
 import pritunl.utils as utils
 from pritunl import app_server
 import flask
 import math
 import time
+import collections
 
 @app_server.app.route('/user/<org_id>', methods=['GET'])
 @app_server.app.route('/user/<org_id>/<user_id>', methods=['GET'])
@@ -40,38 +42,50 @@ def user_get(org_id, user_id=None, page=None):
                 clients[client_id][server.id] = client
 
         users = []
+        users_id = []
+        users_server_data = collections.defaultdict(lambda: {})
         for user in org.iter_users(page=page, prefix=search,
                 prefix_limit=limit):
+            user_id = user.id
+            users_id.append(user_id)
             if user is None:
                 search_more = False
                 break
-            is_client = user.id in clients
+            is_client = user_id in clients
             user_dict = user.dict()
             user_dict['status'] = is_client
             user_dict['otp_auth'] = otp_auth
             server_data = []
             for server in servers:
-                local_ip_addr, remote_ip_addr = server.get_ip_set(
-                    org_id, user.id)
+                server_id = server.id
+                user_status = is_client and server_id in clients[user_id]
                 data = {
-                    'id': server.id,
+                    'id': server_id,
                     'name': server.name,
-                    'status': is_client and server.id in clients[user.id],
-                    'local_address': local_ip_addr,
-                    'remote_address': remote_ip_addr,
+                    'status': user_status,
+                    'local_address': None,
+                    'remote_address': None,
                     'real_address': None,
                     'virt_address': None,
                     'bytes_received': None,
                     'bytes_sent': None,
                     'connected_since': None,
                 }
-                if is_client:
-                    client_data = clients[user.id].get(server.id)
-                    if client_data:
-                        data.update(client_data)
+                users_server_data[user_id][server_id] = data
+                if user_status:
+                    data.update(clients[user_id][server_id])
                 server_data.append(data)
             user_dict['servers'] = server_data
             users.append(user_dict)
+
+        ip_addrs_iter = ServerIpPool.multi_get_ip_addr(org_id, users_id)
+        for user_id, server_id, local_addr, remote_addr in ip_addrs_iter:
+            user_server_data = users_server_data[user_id].get(server_id)
+            if user_server_data:
+                if not user_server_data['local_address']:
+                    user_server_data['local_address'] = local_addr
+                if not user_server_data['remote_address']:
+                    user_server_data['remote_address'] = remote_addr
 
         if page is not None:
             return utils.jsonify({
