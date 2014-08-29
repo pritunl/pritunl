@@ -6,6 +6,7 @@ from organization import Organization
 from event import Event
 from log_entry import LogEntry
 from server_bandwidth import ServerBandwidth
+from server_ip_pool import ServerIpPool
 from mongo_object import MongoObject
 from cache import cache_db
 import mongo
@@ -29,6 +30,7 @@ class Server(MongoObject):
     fields = {
         'name',
         'network',
+        'network_lock',
         'interface',
         'port',
         'protocol',
@@ -55,6 +57,7 @@ class Server(MongoObject):
         'users_online',
     }
     fields_default = {
+        'network_lock': False,
         'dns_servers': [],
         'otp_auth': False,
         'lzo_compression': False,
@@ -74,6 +77,8 @@ class Server(MongoObject):
 
         self._cur_event = None
         self._last_event = 0
+        self._orig_network = self.network
+        self.ip_pool = ServerIpPool(self)
 
         if name is not None:
             self.name = name
@@ -151,7 +156,7 @@ class Server(MongoObject):
         return key
 
     def get_ip_set(self, org_id, user_id):
-        return None, None
+        return self.ip_pool.get_ip_addr(org_id, user_id)
 
     def _event_delay(self, type, resource_id=None):
         # Min event every 1s max event every 0.2s
@@ -170,6 +175,13 @@ class Server(MongoObject):
                 self._last_event = time.time()
                 Event(type=type, resource_id=resource_id)
         threading.Thread(target=_target).start()
+
+    def commit(self, *args, **kwargs):
+        if self.network != self._orig_network:
+            self.network_lock = True
+        MongoObject.commit(self, *args, **kwargs)
+        if self.network != self._orig_network:
+            self.ip_pool.assign_ip_pool(self._orig_network)
 
     def remove(self):
         self._remove_primary_user()
