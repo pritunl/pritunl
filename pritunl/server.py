@@ -7,6 +7,7 @@ from event import Event
 from log_entry import LogEntry
 from server_bandwidth import ServerBandwidth
 from server_ip_pool import ServerIpPool
+from ip_pool_queue import IpPoolQueue
 from mongo_object import MongoObject
 from cache import cache_db
 import mongo
@@ -57,7 +58,6 @@ class Server(MongoObject):
         'users_online',
     }
     fields_default = {
-        'network_lock': False,
         'dns_servers': [],
         'otp_auth': False,
         'lzo_compression': False,
@@ -192,11 +192,18 @@ class Server(MongoObject):
 
     def commit(self, *args, **kwargs):
         if self.network != self._orig_network and self.network_lock:
-            raise ServerNetworkLocked('Server network is locked')
+            raise ServerNetworkLocked('Server network is locked', {
+                'server_id': self.id,
+                'lock_id': self.network_lock,
+            })
         MongoObject.commit(self, *args, **kwargs)
         if self.network != self._orig_network:
-            # TODO
-            self.ip_pool.assign_ip_pool(self._orig_network)
+            ip_pool_queue = IpPoolQueue(
+                server_id=self.id,
+                network=self.network,
+                old_network=self._orig_network,
+            )
+            ip_pool_queue.start()
 
     def remove(self):
         self._remove_primary_user()
