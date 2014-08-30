@@ -79,19 +79,12 @@ class ServerIpPool:
             'user_id': '',
         }})
 
-    def assign_ip_pool(self, old_network=None):
-        network = self.server.network
+    def assign_ip_pool(self, network):
         server_id = self.server.id
         pool_end = False
 
-        tran = MongoTransaction(lock_id=server_id)
         ip_pool = VpnIPv4Network(network).iterhost_sets()
-
-        tran.collection('servers').update({
-            '_id': bson.ObjectId(server_id),
-        }, {'$set': {
-            'network_lock': True,
-        }})
+        bulk = self.collection.initialize_unordered_bulk_op()
 
         for org in self.server.iter_orgs():
             org_id = org.id
@@ -104,7 +97,7 @@ class ServerIpPool:
                     break
                 doc_id = int(remote_ip_addr)
 
-                tran.collection('servers_ip_pool').bulk().find({
+                bulk.find({
                     '_id': doc_id,
                 }).upsert().update({'$set': {
                     '_id': doc_id,
@@ -119,31 +112,7 @@ class ServerIpPool:
             if pool_end:
                 break
 
-        tran.collection('servers_ip_pool').bulk_execute()
-
-        tran.collection('servers_ip_pool').rollback().remove({
-            'server_id': server_id,
-        })
-
-        tran.collection('servers_ip_pool').rollback().update({
-            '_id': bson.ObjectId(server_id),
-        }, {'$set': {
-            'network_lock': False,
-        }})
-
-        if old_network:
-            tran.collection('servers_ip_pool').post().remove({
-                'network': old_network,
-                'server_id': server_id,
-            })
-
-        tran.collection('servers').post().update({
-            '_id': bson.ObjectId(server_id),
-        }, {'$set': {
-            'network_lock': False,
-        }})
-
-        tran.commit()
+        bulk.execute()
 
     def get_ip_addr(self, org_id, user_id):
         doc = self.collection.find_one({
