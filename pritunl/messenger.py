@@ -36,7 +36,7 @@ class Messenger:
                 if cursor_id:
                     spec['_id'] = {'$gt': cursor_id}
                 cursor = self.collection.find(spec, tailable=True,
-                    await_data=True).sort('$natural', pymongo.DESCENDING)
+                    await_data=True).sort('$natural', pymongo.ASCENDING)
                 while cursor.alive:
                     for doc in cursor:
                         cursor_id = doc['_id']
