@@ -78,15 +78,8 @@ class MongoTransaction:
         return tran_str.strip()
 
     def collection(self, name):
-        data = [
-            name, # collection_name
-            False, # bulk
-            [], # actions
-            [], # rollback_actions
-            [], # post_actions
-        ]
-        self.action_sets.append(data)
-        return MongoTransactionCollection(data[2], data)
+        return MongoTransactionCollection(collection_name=name,
+            action_sets=self.action_sets)
 
     def _str_actions(self, tran_str, actions):
         for action in actions:

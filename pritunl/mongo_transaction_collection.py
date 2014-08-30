@@ -13,23 +13,41 @@ import logging
 logger = logging.getLogger(APP_NAME)
 
 class MongoTransactionCollection:
-    def __init__(self, actions, data=None):
+    def __init__(self, actions=None, collection_name=None, action_sets=None):
         self._actions = actions
-        self._data = data
+        self._collection_name = collection_name
+        self._action_sets = action_sets
+
+    def append_action_set(self):
+        data = [
+            self._collection_name, # collection_name
+            False, # bulk
+            [], # actions
+            [], # rollback_actions
+            [], # post_actions
+        ]
+        self._action_sets.append(data)
+        return data
 
     def __getattr__(self, name):
         if name in MONGO_ACTION_METHODS:
-            return MongoTransactionAction(self._actions, name)
-        elif name == 'bulk' and self._data:
-            self._data[1] = True
-            return lambda: MongoTransactionCollection(self._actions)
-        elif name == 'rollback' and self._data:
-            return lambda: MongoTransactionCollection(self._data[3])
-        elif name == 'post' and self._data:
-            return lambda: MongoTransactionCollection(self._data[4])
-        elif name == BULK_EXECUTE and self._data:
-            self._data[2] = BULK_EXECUTE
-            return lambda: MongoTransactionCollection(self._actions)
+            if not self._actions:
+                actions = self.append_action_set()[2]
+            else:
+                actions = self._actions
+            return MongoTransactionAction(actions, name)
+        elif name == 'bulk' and self._action_sets:
+            data = self.append_action_set()
+            data[1] = True
+            return lambda: MongoTransactionCollection(data[2])
+        elif name == 'rollback' and self._action_sets:
+            data = self.append_action_set()
+            return lambda: MongoTransactionCollection(data[3])
+        elif name == 'post' and self._action_sets:
+            return lambda: MongoTransactionCollection(
+                self.append_action_set()[4])
+        elif name == BULK_EXECUTE and self._action_sets:
+            self.append_action_set()[2] = BULK_EXECUTE
         else:
             raise AttributeError('MongoTransactionCollection ' +
                 'instance has no attribute %r' % name)
