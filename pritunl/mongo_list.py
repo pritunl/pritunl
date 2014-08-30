@@ -2,7 +2,7 @@ from constants import *
 from exceptions import *
 import UserList
 
-class MongoList(UserList.UserList):
+class MongoList(UserList.UserList, object):
     __class__ = list
 
     def __init__(self, initlist=None, changed=True, **kwargs):
