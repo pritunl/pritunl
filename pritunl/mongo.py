@@ -53,6 +53,7 @@ def setup_mongo():
 
     collections.update({
         'transaction': getattr(database, prefix + 'transaction'),
+        'queue': getattr(database, prefix + 'queue'),
         'system': getattr(database, prefix + 'system'),
         'messages': getattr(database, prefix + 'messages'),
         'log_entries': getattr(database, prefix + 'log_entries'),
