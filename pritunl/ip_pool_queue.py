@@ -21,7 +21,7 @@ class IpPoolQueue(Queue):
     def __init__(self, server_id=None,
             network=None, old_network=None, **kwargs):
         Queue.__init__(self, **kwargs)
-        self.queue_type = 'ip_pool_queue'
+        self.queue_type = 'ip_pool'
 
         if server_id is not None:
             self.server_id = server_id
@@ -97,4 +97,4 @@ class IpPoolQueue(Queue):
             'network_lock': '',
         }})
 
-queue_types['ip_pool_queue'] = IpPoolQueue
+queue_types['ip_pool'] = IpPoolQueue
