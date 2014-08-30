@@ -84,7 +84,7 @@ class MongoObject(object):
                 value = MongoDict(value, changed=False)
             setattr(self, key, value)
 
-    def commit(self, fields=None):
+    def commit(self, fields=None, transaction=None):
         doc = {}
         if fields:
             if isinstance(fields, basestring):
@@ -103,10 +103,17 @@ class MongoObject(object):
                         if field in fields:
                             fields.remove(field)
                         doc[field] = value
+
+        if transaction:
+            collection = transaction.collection(
+                self.collection.collection_name)
+        else:
+            collection = self.collection
+
         if fields or doc:
             for field in fields:
                 doc[field] = getattr(self, field)
-            self.collection.update({
+            collection.update({
                 '_id': bson.ObjectId(self.id),
             }, {
                 '$set': doc,
@@ -117,7 +124,9 @@ class MongoObject(object):
             for field in self.fields:
                 if hasattr(self, field):
                     doc[field] = getattr(self, field)
-            self.collection.save(doc)
+            collection.update({
+                '_id': bson.ObjectId(self.id),
+            }, doc, upsert=True)
 
         self.exists = True
         self.changed = set()
