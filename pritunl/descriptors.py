@@ -5,7 +5,8 @@ class cached_property(object):
     def __get__(self, obj, objtype):
         if obj is None:
             return self
-        obj.__dict__[self.func.__name__] = value = self.func(obj)
+        value = self.func(obj)
+        setattr(obj, self.func.__name__, value)
         return value
 
 class cached_static_property(object):
