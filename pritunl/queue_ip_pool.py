@@ -11,7 +11,7 @@ import bson
 
 logger = logging.getLogger(APP_NAME)
 
-class IpPoolQueue(Queue):
+class QueueIpPool(Queue):
     fields = {
         'server_id',
         'network',
@@ -98,4 +98,4 @@ class IpPoolQueue(Queue):
             'network_lock': '',
         }})
 
-queue_types['ip_pool'] = IpPoolQueue
+queue_types['ip_pool'] = QueueIpPool
