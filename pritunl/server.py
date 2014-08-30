@@ -7,8 +7,9 @@ from event import Event
 from log_entry import LogEntry
 from server_bandwidth import ServerBandwidth
 from server_ip_pool import ServerIpPool
-from ip_pool_queue import IpPoolQueue
+from queue_ip_pool import QueueIpPool
 from mongo_object import MongoObject
+from mongo_transaction import MongoTransaction
 from cache import cache_db
 import mongo
 import uuid
@@ -191,19 +192,26 @@ class Server(MongoObject):
         threading.Thread(target=_target).start()
 
     def commit(self, *args, **kwargs):
-        if self.network != self._orig_network and self.network_lock:
-            raise ServerNetworkLocked('Server network is locked', {
-                'server_id': self.id,
-                'lock_id': self.network_lock,
-            })
-        MongoObject.commit(self, *args, **kwargs)
+        transaction = MongoTransaction()
+
         if self.network != self._orig_network:
-            ip_pool_queue = IpPoolQueue(
-                server_id=self.id,
-                network=self.network,
-                old_network=self._orig_network,
-            )
-            ip_pool_queue.start()
+            if self.network_lock:
+                raise ServerNetworkLocked('Server network is locked', {
+                    'server_id': self.id,
+                    'lock_id': self.network_lock,
+                })
+            else:
+                queue_ip_pool = QueueIpPool(
+                    server_id=self.id,
+                    network=self.network,
+                    old_network=self._orig_network,
+                )
+                queue_ip_pool.start(transaction=transaction)
+                self.network_lock = queue_ip_pool.id
+
+        MongoObject.commit(self, transaction=transaction, *args, **kwargs)
+
+        transaction.commit()
 
     def remove(self):
         self._remove_primary_user()
