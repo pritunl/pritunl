@@ -50,6 +50,7 @@ class IpPoolQueue(Queue):
             raise ServerNetworkLocked('Server network is locked', {
                 'server_id': server.id,
                 'queue_id': self.id,
+                'queue_type': self.queue_type,
             })
 
         server.ip_pool.assign_ip_pool(self.network)
