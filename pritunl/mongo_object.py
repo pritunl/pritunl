@@ -49,7 +49,7 @@ class MongoObject(object):
                 value = MongoDict(value)
             else:
                 self.changed.add(name)
-        self.__dict__[name] = value
+        object.__setattr__(self, name, value)
 
     def __getattr__(self, name):
         if name in self.fields:
@@ -82,7 +82,7 @@ class MongoObject(object):
                 value = MongoList(value, changed=False)
             elif isinstance(value, dict):
                 value = MongoDict(value, changed=False)
-            self.__dict__[key] = value
+            setattr(self, key, value)
 
     def commit(self, fields=None):
         doc = {}
@@ -92,7 +92,11 @@ class MongoObject(object):
         elif self.exists:
             fields = self.changed
             for field in self.fields:
-                value = self.__dict__.get(field)
+                if hasattr(self, field):
+                    value = getattr(self, field)
+                else:
+                    value = None
+
                 if value is not None and isinstance(value, (
                         MongoList, MongoDict)):
                     if value.changed:
@@ -101,7 +105,7 @@ class MongoObject(object):
                         doc[field] = value
         if fields or doc:
             for field in fields:
-                doc[field] = self.__dict__[field]
+                doc[field] = getattr(self, field)
             self.collection.update({
                 '_id': bson.ObjectId(self.id),
             }, {
@@ -111,8 +115,8 @@ class MongoObject(object):
             doc = self.fields_default.copy()
             doc['_id'] = bson.ObjectId(self.id)
             for field in self.fields:
-                if field in self.__dict__:
-                    doc[field] = self.__dict__[field]
+                if hasattr(self, field):
+                    doc[field] = getattr(self, field)
             self.collection.save(doc)
 
         self.exists = True
