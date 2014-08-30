@@ -192,9 +192,10 @@ class Server(MongoObject):
         threading.Thread(target=_target).start()
 
     def commit(self, *args, **kwargs):
-        transaction = MongoTransaction()
+        transaction = None
 
         if self.network != self._orig_network:
+            transaction = MongoTransaction()
             if self.network_lock:
                 raise ServerNetworkLocked('Server network is locked', {
                     'server_id': self.id,
@@ -211,7 +212,8 @@ class Server(MongoObject):
 
         MongoObject.commit(self, transaction=transaction, *args, **kwargs)
 
-        transaction.commit()
+        if transaction:
+            transaction.commit()
 
     def remove(self):
         self._remove_primary_user()
