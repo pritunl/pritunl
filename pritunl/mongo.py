@@ -76,6 +76,8 @@ def setup_mongo():
         ('state', pymongo.ASCENDING),
         ('priority', pymongo.DESCENDING),
     ])
+    collections['queue'].ensure_index('runner_id')
+    collections['queue'].ensure_index('ttl_timestamp')
     collections['log_entries'].ensure_index([
         ('timestamp', pymongo.DESCENDING),
     ])
