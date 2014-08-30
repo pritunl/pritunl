@@ -37,10 +37,10 @@ class Queue(MongoObject):
     def collection(cls):
         return mongo.get_collection('queue')
 
-    def start(self):
+    def start(self, transaction=None):
         self.ttl_timestamp = datetime.datetime.utcnow() + \
                 datetime.timedelta(seconds=self.ttl)
-        self.commit()
+        self.commit(transaction=transaction)
         Messenger('queue').publish('queue_update')
 
     def claim(self):
