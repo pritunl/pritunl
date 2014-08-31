@@ -85,6 +85,7 @@ class ServerIpPool:
 
         ip_pool = VpnIPv4Network(network).iterhost_sets()
         bulk = self.collection.initialize_unordered_bulk_op()
+        bulk_empty = True
 
         for org in self.server.iter_orgs():
             org_id = org.id
@@ -108,11 +109,13 @@ class ServerIpPool:
                     'remote_addr': str(remote_ip_addr),
                     'local_addr': str(local_ip_addr),
                 }})
+                bulk_empty = False
 
             if pool_end:
                 break
 
-        bulk.execute()
+        if not bulk_empty:
+            bulk.execute()
 
     def get_ip_addr(self, org_id, user_id):
         doc = self.collection.find_one({
