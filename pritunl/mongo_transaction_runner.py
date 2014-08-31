@@ -15,9 +15,6 @@ import time
 logger = logging.getLogger(APP_NAME)
 
 class MongoTransactionRunner:
-    def __init__(self):
-        pass
-
     @static_property
     def collection(cls):
         return mongo.get_collection('transaction')
