@@ -277,4 +277,3 @@ class MongoTransaction(MongoObject):
             logger.exception('Error running transaction. %r' % {
                 'transaction_id': self.id,
             })
-            pass
