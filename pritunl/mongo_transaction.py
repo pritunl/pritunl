@@ -261,6 +261,14 @@ class MongoTransaction(MongoObject):
 
         self.transaction_collection.remove(self.id)
 
+    def run(self):
+        if self.state == PENDING:
+            self.run_actions()
+        elif self.state == ROLLBACK:
+            self.rollback_actions()
+        elif self.state == COMMITTED:
+            self.run_post_actions()
+
     def commit(self):
         actions_json = json.dumps(self.action_sets, default=json_default)
         actions_json_zlib = zlib.compress(actions_json)
