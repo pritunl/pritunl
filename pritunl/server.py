@@ -8,7 +8,7 @@ from log_entry import LogEntry
 from messenger import Messenger
 from server_bandwidth import ServerBandwidth
 from server_ip_pool import ServerIpPool
-from queue_ip_pool import QueueIpPool
+from queue_assign_ip_pool import QueueAssignIpPool
 from mongo_object import MongoObject
 from mongo_transaction import MongoTransaction
 from cache import cache_db
@@ -203,7 +203,7 @@ class Server(MongoObject):
                     'lock_id': self.network_lock,
                 })
             else:
-                queue_ip_pool = QueueIpPool(
+                queue_ip_pool = QueueAssignIpPool(
                     server_id=self.id,
                     network=self.network,
                     old_network=self._orig_network,
