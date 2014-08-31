@@ -32,22 +32,42 @@ def json_default(obj):
         return {'__OBJ__': ['DATE', time.mktime(obj.timetuple()) + (obj.microsecond / 1000000.)]}
     return obj
 
-class MongoTransaction:
-    def __init__(self, id=None, lock_id=None, priority=NORMAL,
-            ttl=MONGO_TRAN_TTL):
-        self.action_sets = []
-        self.priority = priority
-        self.ttl = ttl
+class MongoTransaction(MongoObject):
+    fields = {
+        'state',
+        'priority',
+        'lock_id',
+        'ttl',
+        'ttl_timestamp',
+        'attempts',
+        'actions',
+    }
+    fields_default = {
+        'state': PENDING,
+        'priority': NORMAL,
+        'attemps': 0,
+        'ttl': MONGO_TRAN_TTL,
+    }
 
-        if id is None:
-            self.id = bson.ObjectId()
-        else:
-            self.id = id
+    def __init__(self, lock_id=None, priority=None,
+            ttl=None, **kwargs):
+        MongoObject.__init__(self, **kwargs)
 
-        if lock_id is None:
-            self.lock_id = bson.ObjectId()
-        else:
+        if lock_id is not None:
             self.lock_id = lock_id
+        if self.lock_id is None:
+            self.lock_id = bson.ObjectId()
+
+        if priority is not None:
+            self.priority = priority
+
+        if ttl is not None:
+            self.ttl = ttl
+
+        if self.actions:
+            actions_json = zlib.decompress(self.actions)
+            self.action_set = json.loads(actions_json,
+                object_hook=object_hook_handler)
 
     @static_property
     def transaction_collection(cls):
