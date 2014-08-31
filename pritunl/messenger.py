@@ -5,6 +5,7 @@ import mongo
 import pymongo
 import time
 import datetime
+import bson
 
 class Messenger:
     def __init__(self, channel):
@@ -14,12 +15,20 @@ class Messenger:
     def collection(cls):
         return mongo.get_collection('messages')
 
-    def publish(self, message):
-        self.collection.insert({
+    def publish(self, message, transaction=None):
+        if transaction:
+            collection = transaction.collection(
+                self.collection.collection_name)
+        else:
+            collection = self.collection
+
+        collection.update({
+            '_id': bson.ObjectId(),
+        }, {
             'time': datetime.datetime.utcnow(),
             'channel': self.channel,
             'message': message,
-        })
+        }, upsert=True)
 
     def subscribe(self):
         try:
