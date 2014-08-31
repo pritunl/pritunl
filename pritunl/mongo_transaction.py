@@ -274,4 +274,7 @@ class MongoTransaction(MongoObject):
         try:
             self.run_actions(False)
         except:
+            logger.exception('Error running transaction. %r' % {
+                'transaction_id': self.id,
+            })
             pass
