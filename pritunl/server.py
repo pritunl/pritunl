@@ -213,9 +213,9 @@ class Server(MongoObject):
 
         MongoObject.commit(self, transaction=transaction, *args, **kwargs)
 
-        Messenger('queue').publish('queue_updated', transaction=transaction)
-
         if transaction:
+            Messenger('queue').publish('queue_updated',
+                transaction=transaction)
             transaction.commit()
 
     def remove(self):
