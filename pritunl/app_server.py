@@ -304,6 +304,11 @@ class AppServer(Config):
         queue_runner = QueueRunner()
         queue_runner.start()
 
+    def _setup_transaction_runner(self):
+        from mongo_transaction_runner import MongoTransactionRunner
+        mongo_transaction_runner = MongoTransactionRunner()
+        mongo_transaction_runner.start()
+
     def _get_version_int(self, version):
         return int(''.join([x.zfill(2) for x in version.split('.')]))
 
@@ -321,6 +326,7 @@ class AppServer(Config):
         self._setup_updates()
         self._setup_handlers()
         self._setup_queue_runner()
+        self._setup_transaction_runner()
 
     def _setup_server_cert(self):
         if not os.path.isfile(self.server_cert_path) or \
