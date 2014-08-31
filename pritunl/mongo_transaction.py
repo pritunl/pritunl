@@ -30,7 +30,9 @@ def json_default(obj):
         return {'__OBJ__': ['OID', str(obj)]}
     elif isinstance(obj, datetime.datetime):
         return {'__OBJ__': ['DATE', time.mktime(obj.timetuple()) + (obj.microsecond / 1000000.)]}
-    return obj
+    elif isinstance(obj, (MongoList, MongoDict)):
+        return obj.data
+    raise TypeError(repr(obj) + ' is not JSON serializable')
 
 class MongoTransaction(MongoObject):
     fields = {
