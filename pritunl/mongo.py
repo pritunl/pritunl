@@ -6,13 +6,22 @@ import re
 import os
 import base64
 import flask
+import random
 
 collections = {}
+_mongo_errors = (
+    pymongo.errors.AutoReconnect,
+    pymongo.errors.ConnectionFailure,
+    pymongo.errors.ExecutionTimeout,
+    pymongo.errors.WTimeoutError,
+)
 
 insert_orig = pymongo.collection.Collection.insert
 def insert(self, *args, **kwargs):
     if flask.ctx.has_request_context():
         flask.g.query_count += 1
+    if RANDOM_ERROR_RATE and random.random() <= RANDOM_ERROR_RATE:
+        raise random.choice(_mongo_errors)('Test error')
     return insert_orig(self, *args, **kwargs)
 pymongo.collection.Collection.insert = insert
 
@@ -20,6 +29,8 @@ update_orig = pymongo.collection.Collection.update
 def update(self, *args, **kwargs):
     if flask.ctx.has_request_context():
         flask.g.query_count += 1
+    if RANDOM_ERROR_RATE and random.random() <= RANDOM_ERROR_RATE:
+        raise random.choice(_mongo_errors)('Test error')
     return update_orig(self, *args, **kwargs)
 pymongo.collection.Collection.update = update
 
@@ -27,6 +38,8 @@ remove_orig = pymongo.collection.Collection.remove
 def remove(self, *args, **kwargs):
     if flask.ctx.has_request_context():
         flask.g.query_count += 1
+    if RANDOM_ERROR_RATE and random.random() <= RANDOM_ERROR_RATE:
+        raise random.choice(_mongo_errors)('Test error')
     return remove_orig(self, *args, **kwargs)
 pymongo.collection.Collection.remove = remove
 
@@ -34,6 +47,8 @@ find_orig = pymongo.collection.Collection.find
 def find(self, *args, **kwargs):
     if flask.ctx.has_request_context():
         flask.g.query_count += 1
+    if RANDOM_ERROR_RATE and random.random() <= RANDOM_ERROR_RATE:
+        raise random.choice(_mongo_errors)('Test error')
     return find_orig(self, *args, **kwargs)
 pymongo.collection.Collection.find = find
 
