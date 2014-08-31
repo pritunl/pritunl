@@ -70,8 +70,10 @@ class MongoTransaction(MongoObject):
 
         if self.actions:
             actions_json = zlib.decompress(self.actions)
-            self.action_set = json.loads(actions_json,
+            self.action_sets = json.loads(actions_json,
                 object_hook=object_hook_handler)
+        else:
+            self.action_sets = []
 
     @static_property
     def transaction_collection(cls):
