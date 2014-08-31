@@ -1,6 +1,8 @@
 from constants import *
 from exceptions import *
 from descriptors import *
+from mongo_list import MongoList
+from mongo_dict import MongoDict
 from mongo_object import MongoObject
 from mongo_transaction_collection import MongoTransactionCollection
 import mongo
