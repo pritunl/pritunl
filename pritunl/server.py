@@ -5,6 +5,7 @@ from pritunl import app_server
 from organization import Organization
 from event import Event
 from log_entry import LogEntry
+from messenger import Messenger
 from server_bandwidth import ServerBandwidth
 from server_ip_pool import ServerIpPool
 from queue_ip_pool import QueueIpPool
@@ -211,6 +212,8 @@ class Server(MongoObject):
                 self.network_lock = queue_ip_pool.id
 
         MongoObject.commit(self, transaction=transaction, *args, **kwargs)
+
+        Messenger('queue').publish('queue_updated', transaction=transaction)
 
         if transaction:
             transaction.commit()
