@@ -30,7 +30,11 @@ def user_get(org_id, user_id=None, page=None):
         clients = {}
         servers = []
 
-        for server in org.iter_servers():
+        fields = (
+            'name',
+            'clients',
+        )
+        for server in org.iter_servers(fields=fields):
             servers.append(server)
             server_count += 1
             if server.otp_auth:
