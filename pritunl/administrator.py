@@ -153,7 +153,7 @@ class Administrator(MongoObject):
                     'token': auth_token,
                     'nonce': auth_nonce,
                     'timestamp': datetime.datetime.utcnow(),
-                })
+                }, w=0)
             except pymongo.errors.DuplicateKeyError:
                 return False
 
