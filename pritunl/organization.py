@@ -46,10 +46,12 @@ class Organization(MongoObject):
     @property
     def otp_auth(self):
         from server import Server
-        return bool(Server.collection.find_one({
+        return bool(Server.collection.find({
             'organizations': self.id,
             'otp_auth': True,
-        }))
+        }, {
+            '_id': True,
+        }).limit(1).count())
 
     @property
     def user_count(self):
