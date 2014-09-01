@@ -176,9 +176,14 @@ class Organization(MongoObject):
         if server and self.id in server.organizations:
             return server
 
-    def iter_servers(self):
+    def iter_servers(self, fields=None):
         from server import Server
-        for doc in Server.collection.find({'organizations': self.id}):
+        spec = {
+            'organizations': self.id,
+        }
+        if fields:
+            fields = {key: True for key in fields}
+        for doc in Server.collection.find(spec, fields):
             yield Server(doc=doc)
 
     def new_user(self, **kwargs):
