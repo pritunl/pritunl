@@ -51,4 +51,4 @@ class Messenger:
                         cursor_id = doc['_id']
                         yield doc
             except pymongo.errors.AutoReconnect:
-                time.sleep(0.1)
+                time.sleep(0.2)
