@@ -44,8 +44,17 @@ def user_get(org_id, user_id=None, page=None):
         users = []
         users_id = []
         users_server_data = collections.defaultdict(lambda: {})
+        fields = (
+            'organization',
+            'organization_name',
+            'name',
+            'email',
+            'type',
+            'otp_secret',
+            'disabled',
+        )
         for user in org.iter_users(page=page, prefix=search,
-                prefix_limit=limit):
+                prefix_limit=limit, fields=fields):
             user_id = user.id
             users_id.append(user_id)
             if user is None:
