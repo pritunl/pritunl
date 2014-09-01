@@ -122,6 +122,9 @@ class ServerIpPool:
             'server_id': self.server.id,
             'org_id': org_id,
             'user_id': user_id,
+        }, {
+            'local_addr': True,
+            'remote_addr': True,
         })
         if doc:
             return doc['local_addr'], doc['remote_addr']
