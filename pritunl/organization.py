@@ -95,12 +95,15 @@ class Organization(MongoObject):
             'type': type,
         }).count()
 
-    def iter_users(self, page=None, prefix=None, prefix_limit=None):
+    def iter_users(self, page=None, prefix=None, prefix_limit=None,
+            fields=None):
         spec = {
             'org_id': self.id,
             'type': CERT_CLIENT,
         }
-        for doc in User.collection.find(spec).sort('name'):
+        if fields:
+            fields = {key: True for key in fields}
+        for doc in User.collection.find(spec, fields).sort('name'):
             yield User(self, doc=doc)
 
     def create_user_key_link(self, user_id):
