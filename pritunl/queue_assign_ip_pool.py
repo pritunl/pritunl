@@ -31,14 +31,17 @@ class QueueAssignIpPool(Queue):
         if old_network is not None:
             self.old_network = old_network
 
-    def task(self):
+    @cached_property
+    def server(self):
         from server import Server
-        server = Server.get_server(id=self.server_id)
-        if not server:
+        return Server.get_server(id=self.server_id)
+
+    def task(self):
+        if not self.server:
             return
 
-        response = server.collection.update({
-            '_id': bson.ObjectId(server.id),
+        response = self.server.collection.update({
+            '_id': bson.ObjectId(self.server.id),
             '$or': [
                 {'network_lock': self.id},
                 {'network_lock': {'$exists': False}},
@@ -49,55 +52,51 @@ class QueueAssignIpPool(Queue):
         }})
         if not response['updatedExisting']:
             raise ServerNetworkLocked('Server network is locked', {
-                'server_id': server.id,
+                'server_id': self.server.id,
                 'queue_id': self.id,
                 'queue_type': self.queue_type,
             })
 
-        server.ip_pool.assign_ip_pool(self.network)
+        self.server.ip_pool.assign_ip_pool(self.network)
 
     def post_task(self):
-        from server import Server
-        server = Server.get_server(id=self.server_id)
-        if not server:
+        if not self.server:
             return
 
-        server.ip_pool.collection.remove({
+        self.server.ip_pool.collection.remove({
             'network': self.old_network,
             'server_id': self.server_id,
         })
 
-        server.collection.update({
-            '_id': bson.ObjectId(server.id),
+        self.server.collection.update({
+            '_id': bson.ObjectId(self.server_id),
             'network_lock': self.id,
         }, {'$unset': {
             'network_lock': '',
         }})
 
-        for org_id in server.organizations:
+        for org_id in self.server.organizations:
             Event(type=USERS_UPDATED, resource_id=org_id)
         Event(type=SERVERS_UPDATED)
 
     def rollback_task(self):
-        from server import Server
-        server = Server.get_server(id=self.server_id)
-        if not server:
+        if not self.server:
             return
 
-        server.ip_pool.collection.remove({
+        self.server.ip_pool.collection.remove({
             'network': self.network,
             'server_id': self.server_id,
         })
 
-        server.collection.update({
-            '_id': bson.ObjectId(server.id),
+        self.server.collection.update({
+            '_id': bson.ObjectId(self.server_id),
             'network': self.network,
         }, {'$set': {
             'network': self.old_network,
         }})
 
-        server.collection.update({
-            '_id': bson.ObjectId(server.id),
+        self.server.collection.update({
+            '_id': bson.ObjectId(self.server_id),
             'network_lock': self.id,
         }, {'$unset': {
             'network_lock': '',
