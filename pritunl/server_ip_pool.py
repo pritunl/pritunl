@@ -121,6 +121,41 @@ class ServerIpPool:
         if not bulk_empty:
             bulk.execute()
 
+    def sync_ip_pool(self):
+        bulk = self.collection.initialize_unordered_bulk_op()
+        bulk_empty = True
+
+        dup_user_ips = self.collection.aggregate([
+            {'$match': {
+                'server_id': self.server.id,
+            }},
+            {'$project': {
+                'user_id': 1,
+            }},
+            {'$group': {
+                '_id': {
+                    'user_id': '$user_id',
+                },
+                'ids': {'$addToSet': '$_id'},
+                'count': {'$sum': 1},
+            }},
+            {'$match': {
+                'count': {'$gt': 1},
+            }},
+        ])
+        for dup_user_ip in dup_user_ips['result']:
+            for doc_id in dup_user_ip['ids'][1:]:
+                bulk.find({
+                    '_id': doc_id,
+                }).update({'$unset': {
+                    'org_id': '',
+                    'user_id': '',
+                }})
+                bulk_empty = False
+
+        if not bulk_empty:
+            bulk.execute()
+
     def get_ip_addr(self, org_id, user_id):
         doc = self.collection.find_one({
             'server_id': self.server.id,
