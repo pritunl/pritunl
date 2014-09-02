@@ -96,7 +96,7 @@ class Organization(MongoObject):
             'org_id': self.id,
             'type': type,
         }, {
-            '_id': True
+            '_id': True,
         }).count()
 
     def iter_users(self, page=None, prefix=None, prefix_limit=None,
