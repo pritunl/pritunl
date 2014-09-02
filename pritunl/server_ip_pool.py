@@ -122,12 +122,13 @@ class ServerIpPool:
             bulk.execute()
 
     def sync_ip_pool(self):
+        server_id = self.server.id
         bulk = self.collection.initialize_unordered_bulk_op()
         bulk_empty = True
 
         dup_user_ips = self.collection.aggregate([
             {'$match': {
-                'server_id': self.server.id,
+                'server_id': server_id,
             }},
             {'$project': {
                 'user_id': 1,
@@ -152,6 +153,32 @@ class ServerIpPool:
                     'user_id': '',
                 }})
                 bulk_empty = False
+
+        user_ids = self.users_collection.find({
+            'org_id': {'$in': self.server.organizations},
+            'type': CERT_CLIENT,
+        }, {
+            'user_id': True,
+        }).distinct('_id')
+        user_ids = set([str(x) for x in user_ids])
+
+        user_ip_ids = self.collection.find({
+            'server_id': server_id,
+        }, {
+            'user_id': True,
+        }).distinct('user_id')
+        user_ip_ids = set(user_ip_ids)
+
+        for user_id in user_ip_ids - user_ids:
+            bulk.find({
+                'server_id': server_id,
+                'network': self.server.network,
+                'user_id': user_id,
+            }).update({'$unset': {
+                'org_id': '',
+                'user_id': '',
+            }})
+            bulk_empty = False
 
         if not bulk_empty:
             bulk.execute()
