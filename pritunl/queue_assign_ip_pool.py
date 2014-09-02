@@ -101,7 +101,6 @@ class QueueAssignIpPool(Queue):
     def complete(self):
         for org_id in self.server.organizations:
             Event(type=USERS_UPDATED, resource_id=org_id)
-        Event(type=SERVERS_UPDATED)
 
         Queue.complete(self)
 
