@@ -75,10 +75,6 @@ class QueueAssignIpPool(Queue):
             'network_lock': '',
         }})
 
-        for org_id in self.server.organizations:
-            Event(type=USERS_UPDATED, resource_id=org_id)
-        Event(type=SERVERS_UPDATED)
-
     def rollback_task(self):
         if not self.server:
             return
@@ -101,5 +97,12 @@ class QueueAssignIpPool(Queue):
         }, {'$unset': {
             'network_lock': '',
         }})
+
+    def complete(self):
+        for org_id in self.server.organizations:
+            Event(type=USERS_UPDATED, resource_id=org_id)
+        Event(type=SERVERS_UPDATED)
+
+        Queue.complete(self)
 
 queue_types['ip_pool'] = QueueAssignIpPool
