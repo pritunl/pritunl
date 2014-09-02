@@ -183,6 +183,13 @@ class ServerIpPool:
         if not bulk_empty:
             bulk.execute()
 
+        for user_id in user_ids - user_ip_ids:
+            doc = self.users_collection.find_one(bson.ObjectId(user_id), {
+                'org_id': True,
+            })
+            if doc:
+                self.assign_ip_addr(doc['org_id'], user_id)
+
     def get_ip_addr(self, org_id, user_id):
         doc = self.collection.find_one({
             'server_id': self.server.id,
