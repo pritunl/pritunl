@@ -23,6 +23,10 @@ class ServerIpPool:
     def collection(cls):
         return mongo.get_collection('servers_ip_pool')
 
+    @static_property
+    def users_collection(cls):
+        return mongo.get_collection('users')
+
     def assign_ip_addr(self, org_id, user_id):
         network = self.server.network
         server_id = self.server.id
