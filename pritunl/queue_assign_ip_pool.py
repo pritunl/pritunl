@@ -1,6 +1,7 @@
 from constants import *
 from exceptions import *
 from descriptors import *
+from event import Event
 from queue import Queue
 from queue import queue_types
 from mongo_object import MongoObject
@@ -72,6 +73,10 @@ class QueueAssignIpPool(Queue):
         }, {'$unset': {
             'network_lock': '',
         }})
+
+        for org_id in server.organizations:
+            Event(type=USERS_UPDATED, resource_id=org_id)
+        Event(type=SERVERS_UPDATED)
 
     def rollback_task(self):
         from server import Server
