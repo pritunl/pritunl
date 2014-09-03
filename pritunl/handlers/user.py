@@ -57,8 +57,8 @@ def user_get(org_id, user_id=None, page=None):
             'otp_secret',
             'disabled',
         )
-        for user in org.iter_users(page=page, prefix=search,
-                prefix_limit=limit, fields=fields):
+        for user in org.iter_users(page=page, search=search,
+                search_limit=limit, fields=fields):
             user_id = user.id
             users_id.append(user_id)
             if user is None:
