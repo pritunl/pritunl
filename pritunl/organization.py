@@ -33,6 +33,7 @@ class Organization(MongoObject):
 
     def __init__(self, name=None, type=None, **kwargs):
         MongoObject.__init__(self, **kwargs)
+        self.last_search_count = None
 
         if name is not None:
             self.name = name
@@ -122,8 +123,12 @@ class Organization(MongoObject):
         ]
         skip = page * USER_PAGE_COUNT if page else 0
 
-        for doc in User.collection.find(spec, fields).sort(sort).skip(
-                skip).limit(limit):
+        cursor = User.collection.find(spec, fields).sort(
+            sort).skip(skip).limit(limit)
+
+        self.last_search_count = cursor.count()
+
+        for doc in cursor:
             yield User(self, doc=doc)
 
     def create_user_key_link(self, user_id):
