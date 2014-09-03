@@ -9,6 +9,7 @@ from messenger import Messenger
 from server_bandwidth import ServerBandwidth
 from server_ip_pool import ServerIpPool
 from queue_assign_ip_addr import QueueAssignIpAddr
+from queue_unassign_ip_addr import QueueUnassignIpAddr
 from queue_assign_ip_pool import QueueAssignIpPool
 from mongo_object import MongoObject
 from mongo_transaction import MongoTransaction
@@ -172,8 +173,8 @@ class Server(MongoObject):
         if not self.network_lock:
             self.ip_pool.unassign_ip_addr(org_id, user_id)
         else:
-            # TODO
-            pass
+            QueueUnassignIpAddr(server_id=self.id, org_id=org_id,
+                user_id=user_id).start()
 
     def _event_delay(self, type, resource_id=None):
         # Min event every 1s max event every 0.2s
