@@ -154,6 +154,11 @@ class ServerIpPool:
                 }})
                 bulk_empty = False
 
+        bulk.find({
+            'server_id': server_id,
+            'network': {'$ne': self.server.network},
+        }).remove()
+
         user_ids = self.users_collection.find({
             'org_id': {'$in': self.server.organizations},
             'type': CERT_CLIENT,
