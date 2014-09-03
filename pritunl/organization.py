@@ -126,7 +126,8 @@ class Organization(MongoObject):
         cursor = User.collection.find(spec, fields).sort(
             sort).skip(skip).limit(limit)
 
-        self.last_search_count = cursor.count()
+        if search:
+            self.last_search_count = cursor.count()
 
         for doc in cursor:
             yield User(self, doc=doc)
