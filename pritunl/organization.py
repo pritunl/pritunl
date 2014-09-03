@@ -17,6 +17,9 @@ import logging
 import threading
 import random
 import json
+import math
+import re
+import pymongo
 
 logger = logging.getLogger(APP_NAME)
 
@@ -71,8 +74,7 @@ class Organization(MongoObject):
 
     @property
     def page_total(self):
-        # TODO
-        return 0
+        return math.floor(float(self.user_count) / USER_PAGE_COUNT)
 
     @static_property
     def collection(cls):
