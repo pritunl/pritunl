@@ -101,15 +101,29 @@ class Organization(MongoObject):
             '_id': True,
         }).count()
 
-    def iter_users(self, page=None, prefix=None, prefix_limit=None,
+    def iter_users(self, page=None, search=None, search_limit=None,
             fields=None):
         spec = {
             'org_id': self.id,
-            'type': CERT_CLIENT,
+            'type': {'$in': [CERT_CLIENT, CERT_SERVER]},
         }
         if fields:
             fields = {key: True for key in fields}
-        for doc in User.collection.find(spec, fields).sort('name'):
+
+        if search:
+            spec['name'] = {'$regex': '.*%s.*' % search}
+            limit = search_limit or USER_PAGE_COUNT
+        else:
+            limit = USER_PAGE_COUNT
+
+        sort = [
+            ('type', pymongo.ASCENDING),
+            ('name', pymongo.ASCENDING),
+        ]
+        skip = page * USER_PAGE_COUNT if page else 0
+
+        for doc in User.collection.find(spec, fields).sort(sort).skip(
+                skip).limit(limit):
             yield User(self, doc=doc)
 
     def create_user_key_link(self, user_id):
