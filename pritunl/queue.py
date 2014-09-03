@@ -81,6 +81,9 @@ class Queue(MongoObject):
                 self.post_task()
             elif self.state == ROLLBACK:
                 self.rollback_task()
+
+            self.complete_task()
+
             self.complete()
         except:
             logger.exception('Error running task in queue. %r' % {
@@ -98,6 +101,9 @@ class Queue(MongoObject):
         pass
 
     def rollback_task(self):
+        pass
+
+    def complete_task(self):
         pass
 
     @classmethod
