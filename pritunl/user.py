@@ -151,7 +151,15 @@ class User(MongoObject):
             self.read_file('certificate', cert_path)
         finally:
             utils.rmtree(temp_path)
-        self.assign_ip_addr()
+
+        # If assign ip addr fails it will be corrected in ip sync task
+        try:
+            self.assign_ip_addr()
+        except:
+            logger.exception('Failed to assign users ip address. %r' % {
+                'org_id': self.org.id,
+                'user_id': self.id,
+            })
 
     def remove(self):
         self.unassign_ip_addr()
