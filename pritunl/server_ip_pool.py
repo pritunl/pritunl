@@ -124,7 +124,11 @@ class ServerIpPool:
     def sync_ip_pool(self):
         server_id = self.server.id
         bulk = self.collection.initialize_unordered_bulk_op()
-        bulk_empty = True
+
+        bulk.find({
+            'server_id': server_id,
+            'network': {'$ne': self.server.network},
+        }).remove()
 
         dup_user_ips = self.collection.aggregate([
             {'$match': {
@@ -152,12 +156,6 @@ class ServerIpPool:
                     'org_id': '',
                     'user_id': '',
                 }})
-                bulk_empty = False
-
-        bulk.find({
-            'server_id': server_id,
-            'network': {'$ne': self.server.network},
-        }).remove()
 
         user_ids = self.users_collection.find({
             'org_id': {'$in': self.server.organizations},
@@ -183,10 +181,8 @@ class ServerIpPool:
                 'org_id': '',
                 'user_id': '',
             }})
-            bulk_empty = False
 
-        if not bulk_empty:
-            bulk.execute()
+        bulk.execute()
 
         for user_id in user_ids - user_ip_ids:
             doc = self.users_collection.find_one(bson.ObjectId(user_id), {
