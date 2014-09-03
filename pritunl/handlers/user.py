@@ -112,7 +112,7 @@ def user_get(org_id, user_id=None, page=None):
                 'search': search,
                 'search_more': search_more,
                 'search_limit': limit,
-                'search_count': 10, # TODO
+                'search_count': org.last_search_count,
                 'search_time':  round((time.time() - flask.g.start), 4),
                 'server_count': server_count,
                 'users': users,
