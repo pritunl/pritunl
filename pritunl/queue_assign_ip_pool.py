@@ -98,10 +98,8 @@ class QueueAssignIpPool(Queue):
             'network_lock': '',
         }})
 
-    def complete(self):
+    def complete_task(self):
         for org_id in self.server.organizations:
             Event(type=USERS_UPDATED, resource_id=org_id)
-
-        Queue.complete(self)
 
 queue_types['ip_pool'] = QueueAssignIpPool
