@@ -151,14 +151,10 @@ class User(MongoObject):
             self.read_file('certificate', cert_path)
         finally:
             utils.rmtree(temp_path)
-
-        # TODO
         self.assign_ip_addr()
 
     def remove(self):
-        # TODO
         self.unassign_ip_addr()
-
         MongoObject.remove(self)
 
     def get_cache_key(self, suffix=None):
