@@ -61,9 +61,6 @@ def user_get(org_id, user_id=None, page=None):
                 search_limit=limit, fields=fields):
             user_id = user.id
             users_id.append(user_id)
-            if user is None:
-                search_more = False
-                break
             is_client = user_id in clients
             user_dict = user.dict()
             user_dict['status'] = is_client
@@ -110,7 +107,7 @@ def user_get(org_id, user_id=None, page=None):
         elif search is not None:
             return utils.jsonify({
                 'search': search,
-                'search_more': search_more,
+                'search_more': limit < org.last_search_count,
                 'search_limit': limit,
                 'search_count': org.last_search_count,
                 'search_time':  round((time.time() - flask.g.start), 4),
