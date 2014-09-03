@@ -3,6 +3,7 @@ from exceptions import *
 from descriptors import *
 from queue import Queue
 from queue import queue_types
+from event import Event
 from mongo_object import MongoObject
 import mongo
 import pymongo
