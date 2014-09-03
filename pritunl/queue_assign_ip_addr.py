@@ -50,4 +50,8 @@ class QueueAssignIpAddr(Queue):
                 'queue_type': self.queue_type,
             })
 
+    def complete(self):
+        Event(type=USERS_UPDATED, resource_id=self.org_id)
+        Queue.complete(self)
+
 queue_types['assign_ip_addr'] = QueueAssignIpAddr
