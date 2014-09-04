@@ -101,22 +101,29 @@ def server_put_post(server_id=None):
                     address[i] = int(value)
                 except ValueError:
                     return _network_invalid()
-            if address[0] != 10:
-                return _network_invalid()
-
-            if address[1] > 255 or address[1] < 0 or \
-                    address[2] > 255 or address[2] < 0:
-                return _network_invalid()
-
-            if address[3] != 0:
-                return _network_invalid()
 
             try:
                 subnet = int(network_split[1])
             except ValueError:
                 return _network_invalid()
 
-            if subnet < 8 or subnet > 24:
+            if address[0] == 10:
+                if address[1] > 255 or address[1] < 0 or \
+                        address[2] > 255 or address[2] < 0:
+                    return _network_invalid()
+
+                if subnet not in (8, 16, 24):
+                    return _network_invalid()
+            elif address[0] == 192 and address[1] == 168:
+                if address[2] > 255 or address[2] < 0:
+                    return _network_invalid()
+
+                if subnet != 24:
+                    return _network_invalid()
+            else:
+                return _network_invalid()
+
+            if address[3] != 0:
                 return _network_invalid()
 
     interface = None
