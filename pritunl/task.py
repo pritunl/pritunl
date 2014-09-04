@@ -16,13 +16,13 @@ logger = logging.getLogger(APP_NAME)
 class Task(MongoObject):
     fields = {
         'run_time',
-        'attemps',
+        'attempts',
         'type',
         'ttl',
         'ttl_timestamp',
     }
     fields_default = {
-        'attemps': 0,
+        'attempts': 0,
         'ttl': MONGO_TASK_TTL,
     }
 
@@ -52,9 +52,9 @@ class Task(MongoObject):
         if not self.claim():
             return
         try:
-            self.attemps += 1
-            if self.attemps <= MONGO_TASK_MAX_ATTEMPTS:
-                self.commit('attemps')
+            self.attempts += 1
+            if self.attempts <= MONGO_TASK_MAX_ATTEMPTS:
+                self.commit('attempts')
                 self.task()
 
             self.complete()
