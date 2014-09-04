@@ -22,7 +22,7 @@ class QueueAssignIpAddr(Queue):
     def __init__(self, server_id=None,
             org_id=None, user_id=None, **kwargs):
         Queue.__init__(self, **kwargs)
-        self.queue_type = 'assign_ip_addr'
+        self.type = 'assign_ip_addr'
 
         if server_id is not None:
             self.server_id = server_id
@@ -48,7 +48,7 @@ class QueueAssignIpAddr(Queue):
             raise ServerNetworkLocked('Server network is locked', {
                 'server_id': server.id,
                 'queue_id': self.id,
-                'queue_type': self.queue_type,
+                'queue_type': self.type,
             })
 
         server.ip_pool.assign_ip_addr(self.org_id, self.user_id)
