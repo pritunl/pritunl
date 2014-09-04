@@ -50,7 +50,7 @@ class MongoTransaction(MongoObject):
     fields_default = {
         'state': PENDING,
         'priority': NORMAL,
-        'attemps': 0,
+        'attempts': 0,
         'ttl': MONGO_TRAN_TTL,
     }
 

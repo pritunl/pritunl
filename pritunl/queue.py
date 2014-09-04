@@ -17,7 +17,7 @@ class Queue(MongoObject):
     fields = {
         'state',
         'priority',
-        'attemps',
+        'attempts',
         'type',
         'ttl',
         'ttl_timestamp',
@@ -25,7 +25,7 @@ class Queue(MongoObject):
     fields_default = {
         'state': PENDING,
         'priority': NORMAL,
-        'attemps': 0,
+        'attempts': 0,
         'ttl': MONGO_QUEUE_TTL,
     }
 
@@ -62,12 +62,12 @@ class Queue(MongoObject):
             return
         try:
             if self.state == PENDING:
-                self.attemps += 1
-                if self.attemps > MONGO_QUEUE_MAX_ATTEMPTS:
+                self.attempts += 1
+                if self.attempts > MONGO_QUEUE_MAX_ATTEMPTS:
                     self.state = ROLLBACK
                     self.commit('state')
                 else:
-                    self.commit('attemps')
+                    self.commit('attempts')
 
                     self.task()
 
