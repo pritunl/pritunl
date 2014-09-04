@@ -34,7 +34,6 @@ class ServerIpPool:
         response = self.collection.update({
             'network': network,
             'server_id': server_id,
-            'org_id': {'$exists': False},
             'user_id': {'$exists': False},
         }, {'$set': {
             'org_id': org_id,
@@ -76,7 +75,6 @@ class ServerIpPool:
         self.collection.update({
             'server_id': self.server.id,
             'network': self.server.network,
-            'org_id': org_id,
             'user_id': user_id,
         }, {'$unset': {
             'org_id': '',
@@ -194,7 +192,7 @@ class ServerIpPool:
     def get_ip_addr(self, org_id, user_id):
         doc = self.collection.find_one({
             'server_id': self.server.id,
-            'org_id': org_id,
+            'network': self.server.network,
             'user_id': user_id,
         }, {
             'local_addr': True,
@@ -208,7 +206,6 @@ class ServerIpPool:
     def multi_get_ip_addr(cls, org_id, user_ids):
         ip_addrs = collections.defaultdict(lambda: {})
         spec = {
-            'org_id': org_id,
             'user_id': {'$in': user_ids},
         }
         proj = {
