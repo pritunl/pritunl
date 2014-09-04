@@ -41,6 +41,7 @@ class QueueRunner(object):
                 spec = {
                     'ttl_timestamp': {'$lt': datetime.datetime.utcnow()},
                 }
+
                 for queue_item in Queue.iter_queues(spec):
                     Queue.collection.update({
                         '_id': bson.ObjectId(queue_item.id),
