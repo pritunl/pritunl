@@ -52,7 +52,8 @@ class QueueRunner(object):
                     queue_item.run()
             except:
                 logger.exception('Error in queue check thread.')
-            time.sleep(3)
+
+            time.sleep(MONGO_QUEUE_TTL)
 
     def start(self):
         thread = threading.Thread(target=self.watch_thread)
