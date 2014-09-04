@@ -18,7 +18,7 @@ class Queue(MongoObject):
         'state',
         'priority',
         'attemps',
-        'queue_type',
+        'type',
         'ttl',
         'ttl_timestamp',
     }
@@ -88,7 +88,7 @@ class Queue(MongoObject):
         except:
             logger.exception('Error running task in queue. %r' % {
                 'queue_id': self.id,
-                'queue_type': self.queue_type,
+                'queue_type': self.type,
             })
 
     def complete(self):
@@ -109,4 +109,4 @@ class Queue(MongoObject):
     @classmethod
     def iter_queues(cls, spec={}):
         for doc in cls.collection.find(spec).sort('priority'):
-            yield queue_types[doc['queue_type']](doc=doc)
+            yield queue_types[doc['type']](doc=doc)
