@@ -11,7 +11,7 @@ import datetime
 import mimetypes
 import flask
 
-class StaticFile:
+class StaticFile(object):
     def __init__(self, root, path, cache=True):
         path = '/'.join([x for x in path.split('/') if x and x != '..'])
         path = os.path.normpath(os.path.join(root, path))
