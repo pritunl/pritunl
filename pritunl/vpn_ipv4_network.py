@@ -9,7 +9,7 @@ class VpnIPv4Network(ipaddress.IPv4Network):
         bcast = int(self.broadcast) - 1
         found = False
 
-        for i in xrange(255):
+        for _ in xrange(255):
             ip_addr_endpoint = str(ipaddress.IPAddress(
                 cur, version=self._version)).split('.')[-1]
             if ip_addr_endpoint in VALID_IP_ENDPOINTS:
