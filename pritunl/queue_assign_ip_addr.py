@@ -3,11 +3,7 @@ from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.queue import Queue, add_queue
 from pritunl.event import Event
-from pritunl.mongo_object import MongoObject
-import pritunl.mongo as mongo
-import pymongo
 import logging
-import bson
 
 logger = logging.getLogger(APP_NAME)
 
@@ -31,12 +27,12 @@ class QueueAssignIpAddr(Queue):
             self.user_id = user_id
 
     def task(self):
-        from server import Server
+        from pritunl.server import Server
         server = Server.get_server(id=self.server_id)
         if not server:
             return
 
-        for i in xrange(5):
+        for _ in xrange(5):
             if server.network_lock:
                 time.sleep(2)
                 server.load()
