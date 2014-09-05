@@ -22,7 +22,7 @@ class MongoTransactionRunner:
     def check_thread(self):
         while True:
             spec = {
-                'timestamp': {'$lt': datetime.datetime.utcnow()},
+                'ttl_timestamp': {'$lt': datetime.datetime.utcnow()},
             }
 
             for doc in self.collection.find(spec).sort('priority'):
