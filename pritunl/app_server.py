@@ -309,6 +309,11 @@ class AppServer(Config):
         mongo_transaction_runner = MongoTransactionRunner()
         mongo_transaction_runner.start()
 
+    def _setup_task_runner(self):
+        from task_runner import TaskRunner
+        task_runner = TaskRunner()
+        task_runner.start()
+
     def _get_version_int(self, version):
         return int(''.join([x.zfill(2) for x in version.split('.')]))
 
@@ -327,6 +332,7 @@ class AppServer(Config):
         self._setup_handlers()
         self._setup_queue_runner()
         self._setup_transaction_runner()
+        self._setup_task_runner()
 
     def _setup_server_cert(self):
         if not os.path.isfile(self.server_cert_path) or \
