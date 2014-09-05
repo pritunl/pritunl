@@ -43,11 +43,6 @@ class TaskRunner:
                         task = TaskClass()
                         self.run_task(task)
 
-                for hour in ('all', cur_time.hour):
-                    for TaskClass in _tasks[hour][cur_time.minute]:
-                        task = TaskClass()
-                        self.run_task(task)
-
             time.sleep(30)
 
     def check_thread(self):
