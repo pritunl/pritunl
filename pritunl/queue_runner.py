@@ -38,18 +38,20 @@ class QueueRunner(object):
     def check_thread(self):
         while True:
             try:
+                cur_timestamp = datetime.datetime.utcnow()
                 spec = {
-                    'ttl_timestamp': {'$lt': datetime.datetime.utcnow()},
+                    'ttl_timestamp': {'$lt': cur_timestamp},
                 }
 
                 for queue_item in Queue.iter_queues(spec):
-                    Queue.collection.update({
+                    self.random_sleep()
+                    response = Queue.collection.update({
                         '_id': bson.ObjectId(queue_item.id),
+                        'ttl_timestamp': {'$lt': cur_timestamp},
                     }, {'$unset': {
                         'runner_id': '',
                     }})
 
-                    self.random_sleep()
                     queue_item.run()
             except:
                 logger.exception('Error in queue check thread.')
