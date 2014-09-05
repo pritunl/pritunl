@@ -2,10 +2,8 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 import pritunl.mongo as mongo
-import time
-import pymongo
 
-class ServerBandwidth:
+class ServerBandwidth(object):
     def __init__(self, server_id):
         self.server_id = server_id
 
@@ -139,6 +137,6 @@ class ServerBandwidth:
             'server_id': self.server_id,
             'timestamp': timestamp,
         }
-        time_block = cls(spec=spec)
+        time_block = ServerBandwidth(spec=spec)
         if not time_block:
-            time_block = cls()
+            time_block = ServerBandwidth()
