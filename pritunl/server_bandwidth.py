@@ -131,12 +131,3 @@ class ServerBandwidth(object):
             date_cur += date_step
 
         return data
-
-    def get_time_block(self, timestamp):
-        spec = {
-            'server_id': self.server_id,
-            'timestamp': timestamp,
-        }
-        time_block = ServerBandwidth(spec=spec)
-        if not time_block:
-            time_block = ServerBandwidth()
