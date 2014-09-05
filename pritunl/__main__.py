@@ -1,8 +1,8 @@
-from constants import *
+from pritunl.constants import *
+import pritunl
 import optparse
 import sys
 import os
-import pritunl
 
 def pritunl_daemon():
     parser = optparse.OptionParser()

@@ -1,12 +1,12 @@
-from constants import *
-from exceptions import *
-from descriptors import *
-from mongo_list import MongoList
-from mongo_dict import MongoDict
-from mongo_object import MongoObject
-from mongo_transaction_collection import MongoTransactionCollection
-from json_helpers import *
-import mongo
+from pritunl.constants import *
+from pritunl.exceptions import *
+from pritunl.descriptors import *
+from pritunl.mongo_list import MongoList
+from pritunl.mongo_dict import MongoDict
+from pritunl.mongo_object import MongoObject
+from pritunl.mongo_transaction_collection import MongoTransactionCollection
+from pritunl.json_helpers import *
+import pritunl.mongo as mongo
 import pymongo
 import collections
 import datetime

@@ -1,12 +1,12 @@
-from constants import *
-from exceptions import *
-from descriptors import *
+from pritunl.constants import *
+from pritunl.exceptions import *
+from pritunl.descriptors import *
+from pritunl.mongo_object import MongoObject
+from pritunl.mongo_transaction import MongoTransaction
+from pritunl.vpn_ipv4_network import VpnIPv4Network
+from pritunl.cache import cache_db
 from pritunl import app_server
-from mongo_object import MongoObject
-from mongo_transaction import MongoTransaction
-from vpn_ipv4_network import VpnIPv4Network
-from cache import cache_db
-import mongo
+import pritunl.mongo as mongo
 import bson
 import logging
 import pymongo

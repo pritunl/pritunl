@@ -1,18 +1,18 @@
-from constants import *
-from exceptions import *
-from descriptors import *
+from pritunl.constants import *
+from pritunl.exceptions import *
+from pritunl.descriptors import *
+from pritunl.cache import cache_db
+from pritunl.cache_trie import CacheTrie
+from pritunl.event import Event
+from pritunl.log_entry import LogEntry
+from pritunl.user import User
+from pritunl.mongo_object import MongoObject
 from pritunl import app_server
-from cache import cache_db
-from cache_trie import CacheTrie
-from event import Event
-from log_entry import LogEntry
-from user import User
-from mongo_object import MongoObject
-import mongo
+import pritunl.utils as utils
+import pritunl.mongo as mongo
 import uuid
 import os
 import subprocess
-import utils
 import logging
 import threading
 import random

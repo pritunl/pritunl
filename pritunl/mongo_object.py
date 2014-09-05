@@ -1,8 +1,8 @@
-from constants import *
-from exceptions import *
-from descriptors import *
-from mongo_dict import MongoDict
-from mongo_list import MongoList
+from pritunl.constants import *
+from pritunl.exceptions import *
+from pritunl.descriptors import *
+from pritunl.mongo_dict import MongoDict
+from pritunl.mongo_list import MongoList
 import bson
 import json
 import os

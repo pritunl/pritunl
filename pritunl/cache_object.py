@@ -1,5 +1,5 @@
-from constants import *
-from cache import cache_db
+from pritunl.constants import *
+from pritunl.cache import cache_db
 
 class CacheObject:
     column_family = 'column_family'

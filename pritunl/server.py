@@ -1,19 +1,21 @@
-from constants import *
-from exceptions import *
-from descriptors import *
+from pritunl.constants import *
+from pritunl.exceptions import *
+from pritunl.descriptors import *
+from pritunl.organization import Organization
+from pritunl.event import Event
+from pritunl.log_entry import LogEntry
+from pritunl.messenger import Messenger
+from pritunl.server_bandwidth import ServerBandwidth
+from pritunl.server_ip_pool import ServerIpPool
+from pritunl.queue_assign_ip_addr import QueueAssignIpAddr
+from pritunl.queue_unassign_ip_addr import QueueUnassignIpAddr
+from pritunl.queue_assign_ip_pool import QueueAssignIpPool
+from pritunl.mongo_object import MongoObject
+from pritunl.mongo_transaction import MongoTransaction
+from pritunl.cache import cache_db
 from pritunl import app_server
-from organization import Organization
-from event import Event
-from log_entry import LogEntry
-from messenger import Messenger
-from server_bandwidth import ServerBandwidth
-from server_ip_pool import ServerIpPool
-from queue_assign_ip_addr import QueueAssignIpAddr
-from queue_unassign_ip_addr import QueueUnassignIpAddr
-from queue_assign_ip_pool import QueueAssignIpPool
-from mongo_object import MongoObject
-from mongo_transaction import MongoTransaction
-from cache import cache_db
+import pritunl.utils as utils
+import pritunl.ipaddress as ipaddress
 import mongo
 import uuid
 import os
@@ -24,10 +26,8 @@ import subprocess
 import threading
 import logging
 import traceback
-import utils
 import re
 import json
-import ipaddress
 
 logger = logging.getLogger(APP_NAME)
 

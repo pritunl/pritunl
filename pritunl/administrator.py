@@ -1,9 +1,9 @@
-from constants import *
-from exceptions import *
-from descriptors import *
-from mongo_object import MongoObject
-import utils
-import mongo
+from pritunl.constants import *
+from pritunl.exceptions import *
+from pritunl.descriptors import *
+from pritunl.mongo_object import MongoObject
+import pritunl.utils as utils
+import pritunl.mongo as mongo
 import base64
 import os
 import re

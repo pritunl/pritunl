@@ -1,5 +1,5 @@
-from constants import *
-from cache_object import CacheObject
+from pritunl.constants import *
+from pritunl.cache_object import CacheObject
 import logging
 import time
 import uuid

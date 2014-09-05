@@ -1,5 +1,5 @@
-from constants import *
-from exceptions import *
+from pritunl.constants import *
+from pritunl.exceptions import *
 import UserDict
 
 class MongoDict(UserDict.UserDict, object):

@@ -1,5 +1,5 @@
-from constants import *
-from exceptions import *
+from pritunl.constants import *
+from pritunl.exceptions import *
 from pritunl import app_server
 import pymongo
 import re

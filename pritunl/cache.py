@@ -1,4 +1,4 @@
-from constants import *
+from pritunl.constants import *
 import Queue
 import time
 import collections

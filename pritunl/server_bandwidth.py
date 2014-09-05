@@ -1,7 +1,7 @@
-from constants import *
-from exceptions import *
-from descriptors import *
-import mongo
+from pritunl.constants import *
+from pritunl.exceptions import *
+from pritunl.descriptors import *
+import pritunl.mongo as mongo
 import time
 import pymongo
 

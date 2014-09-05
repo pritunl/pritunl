@@ -1,7 +1,7 @@
-from constants import *
-from exceptions import *
+from pritunl.constants import *
+from pritunl.exceptions import *
+from pritunl.cache import cache_db
 from pritunl import app_server
-from cache import cache_db
 from werkzeug.http import http_date
 import os
 import sys

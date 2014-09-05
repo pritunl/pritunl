@@ -1,10 +1,10 @@
-from constants import *
-from exceptions import *
-from descriptors import *
-from event import Event
-from queue import Queue, add_queue
-from mongo_object import MongoObject
-import mongo
+from pritunl.constants import *
+from pritunl.exceptions import *
+from pritunl.descriptors import *
+from pritunl.event import Event
+from pritunl.queue import Queue, add_queue
+from pritunl.mongo_object import MongoObject
+import pritunl.mongo as mongo
 import pymongo
 import logging
 import bson

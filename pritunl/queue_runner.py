@@ -1,9 +1,9 @@
-from constants import *
-from exceptions import *
-from descriptors import *
-from queue import Queue
-from messenger import Messenger
-import mongo
+from pritunl.constants import *
+from pritunl.exceptions import *
+from pritunl.descriptors import *
+from pritunl.queue import Queue
+from pritunl.messenger import Messenger
+import pritunl.mongo as mongo
 import pymongo
 import random
 import bson

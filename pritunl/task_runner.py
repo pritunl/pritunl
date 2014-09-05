@@ -1,9 +1,9 @@
-from constants import *
-from exceptions import *
-from descriptors import *
-from mongo_object import MongoObject
-from task import Task, _tasks
-import mongo
+from pritunl.constants import *
+from pritunl.exceptions import *
+from pritunl.descriptors import *
+from pritunl.mongo_object import MongoObject
+from pritunl.task import Task, _tasks
+import pritunl.mongo as mongo
 import pymongo
 import collections
 import datetime

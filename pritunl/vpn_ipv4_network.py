@@ -1,7 +1,7 @@
-from constants import *
-from exceptions import *
-from descriptors import *
-import ipaddress
+from pritunl.constants import *
+from pritunl.exceptions import *
+from pritunl.descriptors import *
+import pritunl.ipaddress as ipaddress
 
 class VpnIPv4Network(ipaddress.IPv4Network):
     def iterhost_sets(self):

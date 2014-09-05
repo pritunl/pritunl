@@ -1,6 +1,6 @@
-from constants import *
-from exceptions import *
-from descriptors import *
+from pritunl.constants import *
+from pritunl.exceptions import *
+from pritunl.descriptors import *
 import datetime
 import bson
 import time

@@ -1,7 +1,7 @@
-from constants import *
-from event import Event
-from config import Config
-import utils
+from pritunl.constants import *
+from pritunl.event import Event
+from pritunl.config import Config
+import pritunl.utils as utils
 import flask
 import cherrypy.wsgiserver
 import os
