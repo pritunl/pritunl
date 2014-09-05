@@ -59,14 +59,14 @@ class Administrator(MongoObject):
         pass_hash.update(base64.b64decode(salt))
         hash_digest = pass_hash.digest()
 
-        for i in xrange(10):
+        for _ in xrange(10):
             pass_hash = hashlib.sha512()
             pass_hash.update(hash_digest)
             hash_digest = pass_hash.digest()
         return hash_digest
 
     def test_password(self, test_pass):
-        pass_ver, pass_salt, pass_hash = self.password.split('$')
+        _, pass_salt, pass_hash = self.password.split('$')
         test_hash = base64.b64encode(self._hash_password(pass_salt, test_pass))
         return pass_hash == test_hash
 
@@ -89,7 +89,7 @@ class Administrator(MongoObject):
             if self.default and self.exists:
                 self.default = None
 
-        if not self.token :
+        if not self.token:
             self.generate_token()
         if not self.secret:
             self.generate_secret()
