@@ -12,7 +12,7 @@ import logging
 
 logger = logging.getLogger(APP_NAME)
 
-class MongoTransactionCollection:
+class MongoTransactionCollection(object):
     def __init__(self, actions=None, collection_name=None, action_sets=None):
         self._actions = actions
         self._collection_name = collection_name
