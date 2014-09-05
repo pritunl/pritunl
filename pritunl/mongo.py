@@ -104,6 +104,7 @@ def setup_mongo():
     collections['queue'].ensure_index('runner_id')
     collections['queue'].ensure_index('ttl_timestamp')
     collections['task'].ensure_index('type', unique=True)
+    collections['task'].ensure_index('ttl_timestamp')
     collections['log_entries'].ensure_index([
         ('timestamp', pymongo.DESCENDING),
     ])
