@@ -11,7 +11,6 @@ import logging
 import random
 import json
 import math
-import re
 import pymongo
 
 logger = logging.getLogger(APP_NAME)
