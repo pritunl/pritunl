@@ -5,6 +5,7 @@ from mongo_list import MongoList
 from mongo_dict import MongoDict
 from mongo_object import MongoObject
 from mongo_transaction_collection import MongoTransactionCollection
+from json_helpers import *
 import mongo
 import pymongo
 import collections
@@ -17,25 +18,6 @@ import json
 import time
 
 logger = logging.getLogger(APP_NAME)
-
-def object_hook_handler(obj):
-    object_data = obj.get('__OBJ__')
-    if object_data:
-        object_type, object_data = object_data
-        if object_type == 'OID':
-            return bson.ObjectId(object_data)
-        elif object_type == 'DATE':
-            return datetime.datetime.fromtimestamp(object_data)
-    return obj
-
-def json_default(obj):
-    if isinstance(obj, bson.ObjectId):
-        return {'__OBJ__': ['OID', str(obj)]}
-    elif isinstance(obj, datetime.datetime):
-        return {'__OBJ__': ['DATE', time.mktime(obj.timetuple()) + (obj.microsecond / 1000000.)]}
-    elif isinstance(obj, (MongoList, MongoDict)):
-        return obj.data
-    raise TypeError(repr(obj) + ' is not JSON serializable')
 
 class MongoTransaction(MongoObject):
     fields = {
