@@ -28,6 +28,7 @@ class Task(MongoObject):
 
     def __init__(self, **kwargs):
         MongoObject.__init__(self, **kwargs)
+        self.exists = True
         self.runner_id = bson.ObjectId()
 
     @static_property
