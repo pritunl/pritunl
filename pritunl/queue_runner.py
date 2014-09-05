@@ -45,6 +45,7 @@ class QueueRunner(object):
 
                 for queue_item in Queue.iter_queues(spec):
                     self.random_sleep()
+
                     response = Queue.collection.update({
                         '_id': bson.ObjectId(queue_item.id),
                         'ttl_timestamp': {'$lt': cur_timestamp},
