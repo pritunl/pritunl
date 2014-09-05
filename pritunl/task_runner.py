@@ -66,8 +66,8 @@ class TaskRunner:
                 }, {'$unset': {
                     'runner_id': '',
                 }})
-
-                self.run_task(task_item)
+                if response['updatedExisting']:
+                    self.run_task(task_item)
 
             time.sleep(MONGO_TASK_TTL)
 
