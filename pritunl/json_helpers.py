@@ -3,6 +3,7 @@ from exceptions import *
 from descriptors import *
 import datetime
 import bson
+import time
 
 def object_hook_handler(obj):
     object_data = obj.get('__OBJ__')
