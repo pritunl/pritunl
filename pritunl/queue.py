@@ -39,7 +39,7 @@ class Queue(MongoObject):
 
     def start(self, transaction=None):
         self.ttl_timestamp = datetime.datetime.utcnow() + \
-                datetime.timedelta(seconds=self.ttl)
+            datetime.timedelta(seconds=self.ttl)
         self.commit(transaction=transaction)
         Messenger('queue').publish('queue_update')
 
