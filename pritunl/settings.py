@@ -12,7 +12,7 @@ class Settings(SystemConf):
 
     def __getattr__(self, name):
         if name in self.fields:
-            return self.get(self.fields[name])
+            return self.get(*self.fields[name])
         if name not in self.__dict__:
             raise AttributeError(
                 'Settings instance has no attribute %r' % name)
