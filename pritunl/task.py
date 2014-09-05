@@ -9,9 +9,25 @@ import random
 import bson
 import datetime
 import logging
+import collections
 
-task_types = {}
+_task_types = {}
+_tasks = collections.defaultdict(lambda: collections.defaultdict(lambda: []))
 logger = logging.getLogger(APP_NAME)
+
+def add_task(task_type, TaskClass, hours=None, minutes=None):
+    if hours is None:
+        hours = ('all',)
+    elif isinstance(hours, int):
+        hours = (hours,)
+    if isinstance(minutes, int):
+        minutes = (minutes,)
+
+    for hour in hours:
+        for minute in minutes:
+            _tasks[hour][minute].append(TaskClass)
+
+    _task_types[task_type] = TaskClass
 
 class Task(MongoObject):
     fields = {
@@ -74,4 +90,4 @@ class Task(MongoObject):
     @classmethod
     def iter_tasks(cls, spec={}):
         for doc in cls.collection.find(spec):
-            yield task_types[doc['type']](doc=doc)
+            yield _task_types[doc['type']](doc=doc)
