@@ -15,7 +15,7 @@ _task_types = {}
 _tasks = collections.defaultdict(lambda: collections.defaultdict(lambda: []))
 logger = logging.getLogger(APP_NAME)
 
-def add_task(task_type, TaskClass, hours=None, minutes=None):
+def add_task(task_type, task_cls, hours=None, minutes=None):
     if hours is None:
         hours = ('all',)
     elif isinstance(hours, int):
@@ -25,9 +25,9 @@ def add_task(task_type, TaskClass, hours=None, minutes=None):
 
     for hour in hours:
         for minute in minutes:
-            _tasks[hour][minute].append(TaskClass)
+            _tasks[hour][minute].append(task_cls)
 
-    _task_types[task_type] = TaskClass
+    _task_types[task_type] = task_cls
 
 class Task(MongoObject):
     fields = {
