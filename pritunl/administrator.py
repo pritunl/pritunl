@@ -156,8 +156,6 @@ class Administrator(MongoObject):
                 }, w=0)
             except pymongo.errors.DuplicateKeyError:
                 return False
-
-            flask.g.administrator = administrator
         else:
             from pritunl import app_server
             if not flask.session:
@@ -181,7 +179,9 @@ class Administrator(MongoObject):
                 flask.session.clear()
                 return False
 
-            flask.g.administrator = administrator
+            flask.session['timestamp'] = int(time.time())
+
+        flask.g.administrator = administrator
         return True
 
     @classmethod
