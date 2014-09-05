@@ -1,8 +1,6 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.system_conf import SystemConf
-from pritunl.mongo_object import MongoObject
-import pritunl.mongo as mongo
 
 class Settings(SystemConf):
     fields = {
