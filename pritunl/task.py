@@ -1,11 +1,9 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
-from pritunl.messenger import Messenger
 from pritunl.mongo_object import MongoObject
 import pritunl.mongo as mongo
 import pymongo
-import random
 import bson
 import datetime
 import logging
