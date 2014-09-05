@@ -2,19 +2,12 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.cache import cache_db
-from pritunl.cache_trie import CacheTrie
-from pritunl.event import Event
-from pritunl.log_entry import LogEntry
 from pritunl.user import User
 from pritunl.mongo_object import MongoObject
 from pritunl import app_server
-import pritunl.utils as utils
 import pritunl.mongo as mongo
 import uuid
-import os
-import subprocess
 import logging
-import threading
 import random
 import json
 import math
@@ -49,7 +42,7 @@ class Organization(MongoObject):
 
     @property
     def otp_auth(self):
-        from server import Server
+        from pritunl.server import Server
         return bool(Server.collection.find({
             'organizations': self.id,
             'otp_auth': True,
@@ -138,8 +131,8 @@ class Organization(MongoObject):
 
         view_id = None
         uri_id = None
-        for i in xrange(2):
-            for i in xrange(2048):
+        for _ in xrange(2):
+            for _ in xrange(2048):
                 temp_id = ''.join(random.sample(
                     SHORT_URL_CHARS, SHORT_URL_LEN))
                 if not view_id:
@@ -197,13 +190,13 @@ class Organization(MongoObject):
         }
 
     def get_server(self, server_id):
-        from server import Server
+        from pritunl.server import Server
         server = Server.get_server(id=server_id)
         if server and self.id in server.organizations:
             return server
 
     def iter_servers(self, fields=None):
-        from server import Server
+        from pritunl.server import Server
         spec = {
             'organizations': self.id,
         }
