@@ -52,8 +52,8 @@ class QueueRunner(object):
                     }, {'$unset': {
                         'runner_id': '',
                     }})
-
-                    queue_item.run()
+                    if response['updatedExisting']:
+                        queue_item.run()
             except:
                 logger.exception('Error in queue check thread.')
 
