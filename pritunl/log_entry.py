@@ -3,8 +3,6 @@ from pritunl.descriptors import *
 from pritunl.event import Event
 from pritunl.mongo_object import MongoObject
 import pritunl.mongo as mongo
-import time
-import uuid
 import pymongo
 
 class LogEntry(MongoObject):
