@@ -1,13 +1,7 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
-from pritunl.mongo_object import MongoObject
 from pritunl.mongo_transaction_action import MongoTransactionAction
-import pritunl.mongo as mongo
-import pymongo
-import collections
-import datetime
-import bson
 import logging
 
 logger = logging.getLogger(APP_NAME)
