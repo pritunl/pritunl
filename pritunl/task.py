@@ -93,6 +93,6 @@ class Task(MongoObject):
         pass
 
     @classmethod
-    def iter_tasks(cls, spec={}):
-        for doc in cls.collection.find(spec):
+    def iter_tasks(cls, spec=None):
+        for doc in cls.collection.find(spec or {}):
             yield _task_types[doc['type']](doc=doc)
