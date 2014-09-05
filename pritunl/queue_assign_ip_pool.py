@@ -2,8 +2,7 @@ from constants import *
 from exceptions import *
 from descriptors import *
 from event import Event
-from queue import Queue
-from queue import queue_types
+from queue import Queue, add_queue
 from mongo_object import MongoObject
 import mongo
 import pymongo
