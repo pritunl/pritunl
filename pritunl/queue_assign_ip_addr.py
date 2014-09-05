@@ -1,8 +1,7 @@
 from constants import *
 from exceptions import *
 from descriptors import *
-from queue import Queue
-from queue import queue_types
+from queue import Queue, add_queue
 from event import Event
 from mongo_object import MongoObject
 import mongo
@@ -56,4 +55,4 @@ class QueueAssignIpAddr(Queue):
     def complete_task(self):
         Event(type=USERS_UPDATED, resource_id=self.org_id)
 
-queue_types['assign_ip_addr'] = QueueAssignIpAddr
+add_queue('assign_ip_addr', QueueAssignIpAddr)

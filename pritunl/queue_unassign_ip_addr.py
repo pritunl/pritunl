@@ -1,8 +1,7 @@
 from constants import *
 from exceptions import *
 from descriptors import *
-from queue import Queue
-from queue import queue_types
+from queue import Queue, add_queue
 from event import Event
 from mongo_object import MongoObject
 import mongo
@@ -53,4 +52,4 @@ class QueueUnassignIpAddr(Queue):
 
         server.ip_pool.unassign_ip_addr(self.org_id, self.user_id)
 
-queue_types['unassign_ip_addr'] = QueueUnassignIpAddr
+add_queue('unassign_ip_addr', QueueUnassignIpAddr)
