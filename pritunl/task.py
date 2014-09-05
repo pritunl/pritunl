@@ -52,18 +52,23 @@ class Task(MongoObject):
         return mongo.get_collection('task')
 
     def claim(self):
-        response = self.collection.update({
-            '_id': bson.ObjectId(self.id),
-            '$or': [
-                {'runner_id': self.runner_id},
-                {'runner_id': {'$exists': False}},
-            ],
-        }, {'$set': {
-            'runner_id': self.runner_id,
-            'ttl_timestamp': datetime.datetime.utcnow() + \
-                datetime.timedelta(seconds=self.ttl),
-        }})
-        return response['updatedExisting']
+        try:
+            response = self.collection.update({
+                '_id': bson.ObjectId(self.id),
+                '$or': [
+                    {'runner_id': self.runner_id},
+                    {'runner_id': {'$exists': False}},
+                ],
+            }, {'$set': {
+                'runner_id': self.runner_id,
+                'type': self.type,
+                'ttl': self.ttl,
+                'ttl_timestamp': datetime.datetime.utcnow() + \
+                    datetime.timedelta(seconds=self.ttl),
+            }}, upsert=True)
+        except pymongo.errors.DuplicateKeyError:
+            return False
+        return response.get('updatedExisting') or response.get('upserted')
 
     def run(self):
         if not self.claim():
