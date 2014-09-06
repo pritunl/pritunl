@@ -7,7 +7,7 @@ import time
 import datetime
 import bson
 
-class Messenger:
+class Messenger(object):
     def __init__(self, channel):
         self.channel = channel
 
