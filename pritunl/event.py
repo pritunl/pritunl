@@ -3,6 +3,7 @@ from pritunl.messenger import Messenger
 import logging
 import time
 import uuid
+import bson
 
 logger = logging.getLogger(APP_NAME)
 
@@ -12,7 +13,7 @@ class Event(object):
         messenger.publish((type, resource_id))
 
     @staticmethod
-    def get_events(self, cursor=None):
+    def get_events(cursor=None):
         events = []
         events_dict = {}
         messenger = Messenger('events')
