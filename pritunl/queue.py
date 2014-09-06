@@ -4,8 +4,6 @@ from pritunl.descriptors import *
 from pritunl.messenger import Messenger
 from pritunl.mongo_object import MongoObject
 import pritunl.mongo as mongo
-import pymongo
-import random
 import bson
 import datetime
 import logging
@@ -110,6 +108,6 @@ class Queue(MongoObject):
         pass
 
     @classmethod
-    def iter_queues(cls, spec={}):
-        for doc in cls.collection.find(spec).sort('priority'):
+    def iter_queues(cls, spec=None):
+        for doc in cls.collection.find(spec or {}).sort('priority'):
             yield queue_types[doc['type']](doc=doc)
