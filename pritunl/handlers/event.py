@@ -36,6 +36,5 @@ def event_get(cursor=None):
         event.pop('channel')
 
         events.append(event)
-        break
 
     return utils.jsonify(events)
