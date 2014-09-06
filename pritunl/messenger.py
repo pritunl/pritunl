@@ -30,7 +30,8 @@ class Messenger(object):
             'message': message,
         }, upsert=True)
 
-    def subscribe(self, cursor_id=None):
+    def subscribe(self, cursor_id=None, timeout=None):
+        start_time = time.time()
         if cursor_id is None:
             try:
                 cursor_id = self.collection.find({
@@ -51,5 +52,7 @@ class Messenger(object):
                     for doc in cursor:
                         cursor_id = doc['_id']
                         yield doc
+                    if timeout and time.time() - start_time >= timeout:
+                        return
             except pymongo.errors.AutoReconnect:
                 time.sleep(0.2)
