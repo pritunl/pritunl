@@ -30,7 +30,7 @@ class Messenger(object):
             'message': message,
         }, upsert=True)
 
-    def subscribe(self, cursor_id=None, timeout=None):
+    def subscribe(self, cursor_id=None, timeout=None, yield_delay=None):
         start_time = time.time()
         if cursor_id is None:
             try:
@@ -52,6 +52,21 @@ class Messenger(object):
                     for doc in cursor:
                         cursor_id = doc['_id']
                         yield doc
+
+                        if yield_delay:
+                            time.sleep(yield_delay)
+
+                            spec = {
+                                '_id': {'$gt': cursor_id},
+                                'channel': self.channel,
+                            }
+                            cursor = self.collection.find(spec).sort(
+                                '$natural', pymongo.ASCENDING)
+
+                            for doc in cursor:
+                                yield doc
+
+                            return
                     if timeout and time.time() - start_time >= timeout:
                         return
             except pymongo.errors.AutoReconnect:
