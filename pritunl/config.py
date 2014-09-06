@@ -5,7 +5,7 @@ import logging
 
 logger = logging.getLogger(APP_NAME)
 
-class Config:
+class Config(object):
     bool_options = set()
     int_options = set()
     float_options = set()
@@ -103,7 +103,7 @@ class Config:
         return value
 
     def _decode_list(self, value):
-        return filter(None, value.split(','))
+        return [x for x in value.split(',') if x]
 
     def _decode_value(self, name, value):
         if name in self.ignore_options:
