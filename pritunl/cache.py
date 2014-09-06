@@ -301,7 +301,7 @@ class TunlDB(object):
         if data:
             if count:
                 try:
-                    [data['val'].remove(value) for i in xrange(count)]
+                    [data['val'].remove(value) for _ in xrange(count)]
                 except (AttributeError, ValueError):
                     pass
             else:
