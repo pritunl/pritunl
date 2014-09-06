@@ -18,7 +18,10 @@ class Event(object):
         events_dict = {}
         messenger = Messenger('events')
 
-        for event in messenger.subscribe(cursor_id=bson.ObjectId(cursor),
+        if cursor is not None:
+            cursor = bson.ObjectId(cursor)
+
+        for event in messenger.subscribe(cursor_id=cursor,
                 timeout=10, yield_delay=0.03):
             event_type, resource_id = event.pop('message')
             if (event_type, resource_id) in events_dict:
