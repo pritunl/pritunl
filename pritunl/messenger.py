@@ -30,13 +30,14 @@ class Messenger(object):
             'message': message,
         }, upsert=True)
 
-    def subscribe(self):
-        try:
-            cursor_id = self.collection.find({
-                'channel': self.channel,
-            }).sort('$natural', pymongo.DESCENDING)[0]['_id']
-        except IndexError:
-            cursor_id = None
+    def subscribe(self, cursor_id=None):
+        if cursor_id is None:
+            try:
+                cursor_id = self.collection.find({
+                    'channel': self.channel,
+                }).sort('$natural', pymongo.DESCENDING)[0]['_id']
+            except IndexError:
+                cursor_id = None
         while True:
             try:
                 spec = {
