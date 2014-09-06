@@ -19,7 +19,7 @@ def event_get(cursor=None):
     messenger = Messenger('events')
 
     for event in messenger.subscribe(cursor_id=bson.ObjectId(cursor),
-            timeout=10):
+            timeout=10, yield_delay=0.03):
         event_type, resource_id = event.pop('message')
         if (event_type, resource_id) in events_dict:
             old_event = events_dict[(event_type, resource_id)]
