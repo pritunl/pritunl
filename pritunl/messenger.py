@@ -25,7 +25,7 @@ class Messenger(object):
         collection.update({
             '_id': bson.ObjectId(),
         }, {
-            'time': datetime.datetime.utcnow(),
+            'timestamp': datetime.datetime.utcnow(),
             'channel': self.channel,
             'message': message,
         }, upsert=True)
