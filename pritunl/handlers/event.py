@@ -5,7 +5,6 @@ from pritunl import app_server
 import time
 import uuid
 import flask
-import bson
 
 @app_server.app.route('/event', methods=['GET'])
 @app_server.app.route('/event/<cursor>', methods=['GET'])
