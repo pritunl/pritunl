@@ -661,6 +661,9 @@ class Server(MongoObject):
         cache_db.publish(self.get_cache_key(), message)
 
     def start(self):
+        if self.status:
+            return
+
         temp_path = app_server.get_temp_path()
 
         if not self.organizations:
