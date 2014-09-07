@@ -24,4 +24,4 @@ def json_default(obj):
         return {'__OBJ__': ['OID', str(obj)]}
     elif isinstance(obj, datetime.datetime):
         return {'__OBJ__': ['DATE', time.mktime(obj.timetuple()) + (obj.microsecond / 1000000.)]}
-    return obj
+    raise TypeError(repr(obj) + ' is not JSON serializable')
