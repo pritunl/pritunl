@@ -1,4 +1,5 @@
 from pritunl.constants import *
+import pritunl.patches
 __title__ = APP_NAME
 __version__ = '0.10.12'
 __author__ = 'Pritunl'
