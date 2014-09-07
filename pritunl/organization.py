@@ -58,14 +58,6 @@ class Organization(MongoObject):
         return self._get_user_count(type=CERT_SERVER)
 
     @property
-    def user_pool_count(self):
-        return self._get_user_count(type=CERT_CLIENT_POOL)
-
-    @property
-    def server_user_pool_count(self):
-        return self._get_user_count(type=CERT_SERVER_POOL)
-
-    @property
     def page_total(self):
         return math.floor(float(self.user_count) / USER_PAGE_COUNT)
 
