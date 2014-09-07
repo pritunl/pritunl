@@ -67,7 +67,7 @@ class TaskRunner:
             time.sleep(MONGO_TASK_TTL)
 
     def start(self):
-        from task_test import TaskTest
+        from pritunl.task_sync_ip_pool import TaskSyncIpPool
 
         thread = threading.Thread(target=self.run_thread)
         thread.daemon = True
