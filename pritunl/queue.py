@@ -42,7 +42,7 @@ class Queue(MongoObject):
         self.ttl_timestamp = datetime.datetime.utcnow() + \
             datetime.timedelta(seconds=self.ttl)
         self.commit(transaction=transaction)
-        Messenger('queue').publish((PENDING, self.id))
+        Messenger('queue').publish((PENDING, self.id), transaction=transaction)
 
     def claim(self):
         response = self.collection.update({
