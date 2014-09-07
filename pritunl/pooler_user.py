@@ -17,17 +17,25 @@ import collections
 logger = logging.getLogger(APP_NAME)
 
 class PoolerUser(object):
+    @static_property
+    def collection(cls):
+        return mongo.get_collection('users')
+
+    @static_property
+    def org_collection(cls):
+        return mongo.get_collection('organizations')
+
     def check_users_pool(self):
         orgs_count = LeastCommonCounter()
 
-        org_ids = mongo.get_collection('organizations').find({}, {
+        org_ids = self.org_collection.find({}, {
             '_id': True,
         }).distinct('_id')
 
         for org_id in org_ids:
             orgs_count[str(org_id)] = 0
 
-        pools = mongo.get_collection('users').aggregate([
+        pools = self.collection.aggregate([
             {'$match': {
                 'type': CERT_CLIENT_POOL,
             }},
