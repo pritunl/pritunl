@@ -1,5 +1,4 @@
 from pritunl.constants import *
-from pritunl.event import Event
 from pritunl.config import Config
 import pritunl.utils as utils
 import flask
@@ -173,6 +172,7 @@ class AppServer(Config):
             self.sub_period_end = data.get('period_end')
             self.sub_cancel_at_period_end = data.get('cancel_at_period_end')
         if cur_sub_active is not None and cur_sub_active != self.sub_active:
+            from pritunl.event import Event
             if self.sub_active:
                 Event(type=SUBSCRIPTION_ACTIVE)
             else:
