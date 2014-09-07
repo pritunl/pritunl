@@ -23,7 +23,11 @@ class QueueRunner(object):
         while True:
             try:
                 for msg in messenger.subscribe():
-                    break
+                    try:
+                        if msg['message'][0] == PENDING:
+                            break
+                    except TypeError:
+                        pass
 
                 spec = {
                     'runner_id': {'$exists': False},
