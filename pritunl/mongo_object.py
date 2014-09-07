@@ -11,7 +11,7 @@ class JSONEncoderPatched(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, (MongoDict, MongoList)):
             return obj.data
-        return json.JSONEncoder.default(self, obj)
+        raise TypeError(repr(obj) + ' is not JSON serializable')
 dumps_orig = json.dumps
 def dumps_patched(*args, **kwargs):
     if not kwargs.get('cls'):
