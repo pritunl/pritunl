@@ -221,10 +221,6 @@ class Organization(MongoObject):
         return cls(id=id)
 
     @classmethod
-    def get_org_count(cls, type=ORG_DEFAULT):
-        return cls.collection.find({'type': type}).count()
-
-    @classmethod
     def iter_orgs(cls, type=ORG_DEFAULT):
         for doc in cls.collection.find({'type': type}).sort('name'):
             yield cls(doc=doc)
