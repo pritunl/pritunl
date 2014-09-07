@@ -3,7 +3,7 @@ from pritunl.exceptions import *
 from pritunl.server import Server
 from pritunl.organization import Organization
 from pritunl.log_entry import LogEntry
-from event import Event
+from pritunl.event import Event
 import pritunl.utils as utils
 from pritunl import app_server
 import flask
