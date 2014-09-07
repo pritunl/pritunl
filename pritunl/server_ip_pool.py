@@ -131,14 +131,13 @@ class ServerIpPool:
         dup_user_ips = self.collection.aggregate([
             {'$match': {
                 'server_id': server_id,
+                'user_id': {'$exists': True},
             }},
             {'$project': {
                 'user_id': 1,
             }},
             {'$group': {
-                '_id': {
-                    'user_id': '$user_id',
-                },
+                '_id': '$user_id',
                 'ids': {'$addToSet': '$_id'},
                 'count': {'$sum': 1},
             }},
