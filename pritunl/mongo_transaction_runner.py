@@ -34,7 +34,7 @@ class MongoTransactionRunner:
                         'transaction_id': str(doc['_id']),
                     })
 
-            time.sleep(3)
+            time.sleep(MONGO_TRAN_TTL)
 
     def start(self):
         thread = threading.Thread(target=self.check_thread)
