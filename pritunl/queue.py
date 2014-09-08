@@ -38,11 +38,31 @@ class Queue(MongoObject):
     def collection(cls):
         return mongo.get_collection('queue')
 
-    def start(self, transaction=None):
+    def start(self, transaction=None, block=False, block_timeout=30):
         self.ttl_timestamp = datetime.datetime.utcnow() + \
             datetime.timedelta(seconds=self.ttl)
         self.commit(transaction=transaction)
-        Messenger('queue').publish((PENDING, self.id), transaction=transaction)
+        messenger = Messenger('queue')
+
+        if block:
+            if transaction:
+                raise TypeError('Cannot use transaction when blocking')
+            cursor_id = messenger.get_cursor_id()
+
+        messenger.publish([PENDING, self.id], transaction=transaction)
+
+        if block:
+            for msg in messenger.subscribe(cursor_id=cursor_id,
+                    timeout=block_timeout):
+                try:
+                    if msg['message'] == [COMPLETE, self.id]:
+                        return
+                except TypeError:
+                    pass
+            raise QueueTimeout('Blocking queue timed out.', {
+                'queue_id': self.id,
+                'queue_type': self.type,
+            })
 
     def claim(self):
         response = self.collection.update({
