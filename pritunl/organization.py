@@ -198,7 +198,7 @@ class Organization(MongoObject):
 
     def new_user(self, **kwargs):
         user = User(org=self, **kwargs)
-        user.initialize()
+        user.queue_initialize()
         return user
 
     def remove(self):
