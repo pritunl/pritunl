@@ -72,6 +72,14 @@ class MongoObject(object):
                 value = MongoDict(value, changed=False)
             setattr(self, key, value)
 
+    def export(self):
+        doc = self.fields_default.copy()
+        doc['_id'] = bson.ObjectId(self.id)
+        for field in self.fields:
+            if hasattr(self, field):
+                doc[field] = getattr(self, field)
+        return doc
+
     def commit(self, fields=None, transaction=None):
         doc = {}
         if fields:
