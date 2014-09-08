@@ -96,7 +96,7 @@ class MongoObject(object):
                     if value.changed:
                         if field in fields:
                             fields.remove(field)
-                        doc[field] = value.data
+                        doc[field] = value
 
         if transaction:
             collection = transaction.collection(
@@ -106,10 +106,7 @@ class MongoObject(object):
 
         if fields or doc:
             for field in fields:
-                value = getattr(self, field)
-                if isinstance(value, (MongoList, MongoDict)):
-                    value = value.data
-                doc[field] = value
+                doc[field] = getattr(self, field)
             collection.update({
                 '_id': bson.ObjectId(self.id),
             }, {
@@ -120,10 +117,7 @@ class MongoObject(object):
             doc['_id'] = bson.ObjectId(self.id)
             for field in self.fields:
                 if hasattr(self, field):
-                    value = getattr(self, field)
-                    if isinstance(value, (MongoList, MongoDict)):
-                        value = value.data
-                    doc[field] = value
+                    doc[field] = getattr(self, field)
             collection.update({
                 '_id': bson.ObjectId(self.id),
             }, doc, upsert=True)
