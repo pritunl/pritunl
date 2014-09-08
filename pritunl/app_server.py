@@ -340,7 +340,7 @@ class AppServer(Config):
             logger.info('Generating server ssl cert...')
             try:
                 subprocess.check_call([
-                    'openssl', 'req', '-batch', '-x509', '-nodes',
+                    'openssl', 'req', '-batch', '-x509', '-nodes', '-sha256',
                     '-newkey', 'rsa:4096',
                     '-days', '3652',
                     '-keyout', self.server_key_path,
