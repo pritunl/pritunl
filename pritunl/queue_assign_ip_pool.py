@@ -17,7 +17,7 @@ class QueueAssignIpPool(Queue):
         'network',
         'old_network',
     } | Queue.fields
-    type = 'ip_pool'
+    type = 'assign_ip_pool'
 
     def __init__(self, server_id=None,
             network=None, old_network=None, **kwargs):
@@ -101,4 +101,4 @@ class QueueAssignIpPool(Queue):
         for org_id in self.server.organizations:
             Event(type=USERS_UPDATED, resource_id=org_id)
 
-add_queue('ip_pool', QueueAssignIpPool)
+add_queue('assign_ip_pool', QueueAssignIpPool)
