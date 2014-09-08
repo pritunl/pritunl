@@ -30,15 +30,17 @@ class Messenger(object):
             'message': message,
         }, upsert=True)
 
+    def get_cursor_id(self):
+        try:
+            return self.collection.find({
+                'channel': self.channel,
+            }).sort('$natural', pymongo.DESCENDING)[0]['_id']
+        except IndexError:
+            pass
+
     def subscribe(self, cursor_id=None, timeout=None, yield_delay=None):
         start_time = time.time()
-        if cursor_id is None:
-            try:
-                cursor_id = self.collection.find({
-                    'channel': self.channel,
-                }).sort('$natural', pymongo.DESCENDING)[0]['_id']
-            except IndexError:
-                cursor_id = None
+        cursor_id = cursor_id or self.get_cursor_id()
         while True:
             try:
                 spec = {
