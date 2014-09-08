@@ -25,17 +25,18 @@ class PoolerUser(object):
     def org_collection(cls):
         return mongo.get_collection('organizations')
 
-    def check_users_pool(self):
+    @classmethod
+    def fill_pool(cls):
         orgs_count = LeastCommonCounter()
 
-        org_ids = self.org_collection.find({}, {
+        org_ids = cls.org_collection.find({}, {
             '_id': True,
         }).distinct('_id')
 
         for org_id in org_ids:
             orgs_count[str(org_id)] = 0
 
-        pools = self.collection.aggregate([
+        pools = cls.collection.aggregate([
             {'$match': {
                 'type': CERT_CLIENT_POOL,
             }},
