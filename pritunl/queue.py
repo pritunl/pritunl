@@ -97,8 +97,8 @@ class Queue(MongoObject):
                     self.state = COMMITTED
                     self.commit('state')
 
-            if not self.claim():
-                return
+                if not self.claim():
+                    return
 
             if self.state == COMMITTED:
                 self.post_task()
