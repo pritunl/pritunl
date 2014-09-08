@@ -41,7 +41,8 @@ class User(MongoObject):
         'disabled': False,
     }
 
-    def __init__(self, org, name=None, email=None, type=None, **kwargs):
+    def __init__(self, org, name=None, email=None, type=None, disabled=None,
+            **kwargs):
         MongoObject.__init__(self, **kwargs)
 
         self.org = org
@@ -52,6 +53,8 @@ class User(MongoObject):
             self.email = email
         if type is not None:
             self.type = type
+        if disabled is not None:
+            self.disabled = disabled
 
     @static_property
     def collection(cls):
