@@ -94,7 +94,7 @@ class Queue(MongoObject):
 
     def complete(self):
         messenger = Messenger('queue')
-        messenger.publish((COMPLETE, self.id))
+        messenger.publish([COMPLETE, self.id])
         self.remove()
 
     def task(self):
