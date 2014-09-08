@@ -73,7 +73,7 @@ class User(MongoObject):
             'disabled': self.disabled,
         }
 
-    def _initialize(self):
+    def initialize(self):
         temp_path = app_server.get_temp_path()
         index_path = os.path.join(temp_path, INDEX_NAME)
         index_attr_path = os.path.join(temp_path, INDEX_ATTR_NAME)
