@@ -14,11 +14,11 @@ class QueueAssignIpAddr(Queue):
         'org_id',
         'user_id',
     } | Queue.fields
+    type = 'assign_ip_addr'
 
     def __init__(self, server_id=None,
             org_id=None, user_id=None, **kwargs):
         Queue.__init__(self, **kwargs)
-        self.type = 'assign_ip_addr'
 
         if server_id is not None:
             self.server_id = server_id

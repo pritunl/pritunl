@@ -17,11 +17,11 @@ class QueueAssignIpPool(Queue):
         'network',
         'old_network',
     } | Queue.fields
+    type = 'ip_pool'
 
     def __init__(self, server_id=None,
             network=None, old_network=None, **kwargs):
         Queue.__init__(self, **kwargs)
-        self.type = 'ip_pool'
 
         if server_id is not None:
             self.server_id = server_id
