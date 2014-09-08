@@ -7,6 +7,7 @@ from pritunl.log_entry import LogEntry
 from pritunl.event import Event
 from pritunl.system_conf import SystemConf
 from pritunl.mongo_object import MongoObject
+from pritunl.queue_init_user import QueueInitUser
 from pritunl import app_server
 import pritunl.mongo as mongo
 import pritunl.utils as utils
@@ -72,7 +73,7 @@ class User(MongoObject):
             'disabled': self.disabled,
         }
 
-    def initialize(self):
+    def _initialize(self):
         temp_path = app_server.get_temp_path()
         index_path = os.path.join(temp_path, INDEX_NAME)
         index_attr_path = os.path.join(temp_path, INDEX_ATTR_NAME)
@@ -163,6 +164,12 @@ class User(MongoObject):
                 'org_id': self.org.id,
                 'user_id': self.id,
             })
+
+    def queue_initialize(self):
+        queue = QueueInitUser(org_doc=self.org.export(),
+            user_doc=self.export())
+        queue.start(block=True)
+        self.load()
 
     def remove(self):
         self.unassign_ip_addr()
