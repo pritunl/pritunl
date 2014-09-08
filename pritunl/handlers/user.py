@@ -134,8 +134,6 @@ def user_post(org_id):
         disabled = user_data.get('disabled')
         user = org.new_user(type=CERT_CLIENT, name=name, email=email,
             disabled=disabled)
-
-        user.commit()
         users.append(user.dict())
 
     Event(type=ORGS_UPDATED)
