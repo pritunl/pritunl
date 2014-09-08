@@ -29,9 +29,11 @@ class Queue(MongoObject):
         'attempts': 0,
         'ttl': MONGO_QUEUE_TTL,
     }
+    type = None
 
     def __init__(self, **kwargs):
         MongoObject.__init__(self, **kwargs)
+        self.type = self.type
         self.runner_id = bson.ObjectId()
 
     @static_property
