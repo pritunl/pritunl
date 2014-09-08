@@ -5,7 +5,6 @@ from pritunl.queue import Queue, add_queue
 from pritunl.event import Event
 from pritunl import app_server
 import logging
-import time
 
 logger = logging.getLogger(APP_NAME)
 
