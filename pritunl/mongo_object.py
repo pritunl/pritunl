@@ -115,7 +115,7 @@ class MongoObject(object):
             }, {
                 '$set': doc,
             }, upsert=True)
-        else:
+        elif not self.exists:
             doc = self.fields_default.copy()
             doc['_id'] = bson.ObjectId(self.id)
             for field in self.fields:
