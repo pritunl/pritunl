@@ -2,7 +2,7 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 import UserList
 
-class MongoList(UserList.UserList, object):
+class MongoList(UserList.UserList):
     __class__ = list
 
     def __init__(self, initlist=None, changed=True, **kwargs):
