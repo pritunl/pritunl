@@ -49,3 +49,10 @@ class ServerNetworkLocked(ServerError):
 
 class NotFound(BaseError):
     pass
+
+
+class QueueError(BaseError):
+    pass
+
+class QueueTimeout(QueueError):
+    pass
