@@ -131,11 +131,9 @@ def user_post(org_id):
     for user_data in users_data:
         name = utils.filter_str(user_data['name'])
         email = utils.filter_str(user_data.get('email'))
-        user = org.new_user(type=CERT_CLIENT, name=name, email=email)
-
         disabled = user_data.get('disabled')
-        if disabled is not None:
-            user.disabled = disabled
+        user = org.new_user(type=CERT_CLIENT, name=name, email=email,
+            disabled=disabled)
 
         user.commit()
         users.append(user.dict())
