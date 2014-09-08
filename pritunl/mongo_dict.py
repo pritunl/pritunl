@@ -2,7 +2,7 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 import UserDict
 
-class MongoDict(UserDict.UserDict, object):
+class MongoDict(UserDict.UserDict):
     __class__ = dict
 
     def __init__(self, initdict=None, changed=True, **kwargs):
