@@ -81,8 +81,9 @@ class MongoObject(object):
                 doc[field] = getattr(self, field)
         return doc
 
-    def commit(self, fields=None, transaction=None):
+    def get_commit_doc(self, fields=None):
         doc = {}
+
         if fields:
             if isinstance(fields, basestring):
                 fields = (fields,)
@@ -99,29 +100,33 @@ class MongoObject(object):
                             fields.remove(field)
                         doc[field] = value
 
-        if transaction:
-            collection = transaction.collection(
-                self.collection.collection_name)
-        else:
-            collection = self.collection
-
         if fields or doc:
             for field in fields:
                 doc[field] = getattr(self, field)
-            collection.update({
-                '_id': bson.ObjectId(self.id),
-            }, {
-                '$set': doc,
-            }, upsert=True)
         elif not self.exists:
             doc = self.fields_default.copy()
             doc['_id'] = bson.ObjectId(self.id)
             for field in self.fields:
                 if hasattr(self, field):
                     doc[field] = getattr(self, field)
+
+        return doc
+
+    def commit(self, fields=None, transaction=None):
+        doc = self.get_commit_doc(fields=fields)
+
+        if transaction:
+            collection = transaction.collection(
+                self.collection.collection_name)
+        else:
+            collection = self.collection
+
+        if doc:
             collection.update({
                 '_id': bson.ObjectId(self.id),
-            }, doc, upsert=True)
+            }, {
+                '$set': doc,
+            }, upsert=True)
 
         self.exists = True
         self.changed = set()
