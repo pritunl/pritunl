@@ -100,9 +100,11 @@ class Queue(MongoObject):
         return response['updatedExisting']
 
     @classmethod
-    def reserve(cls, reserve_id, reserve_data, reserve_timeout=30):
+    def reserve(cls, reserve_id, reserve_data, block=False, block_timeout=30):
         messenger = Messenger('queue')
-        cursor_id = messenger.get_cursor_id()
+
+        if block:
+            cursor_id = messenger.get_cursor_id()
 
         doc = cls.collection.find_and_modify({
             'state': PENDING,
@@ -114,17 +116,20 @@ class Queue(MongoObject):
         if not doc:
             return
 
-        for msg in messenger.subscribe(cursor_id=cursor_id,
-                timeout=reserve_timeout):
-            try:
-                if msg['message'] == [COMPLETE, doc['_id']]:
-                    return doc
-            except TypeError:
-                pass
-        raise QueueTimeout('Blocking reserve timed out.', {
-            'queue_id': str(doc['_id']),
-            'queue_type': doc['type'],
-        })
+        if block:
+            for msg in messenger.subscribe(cursor_id=cursor_id,
+                    timeout=block_timeout):
+                try:
+                    if msg['message'] == [COMPLETE, doc['_id']]:
+                        return doc
+                except TypeError:
+                    pass
+            raise QueueTimeout('Blocking queue reserve timed out.', {
+                'queue_id': str(doc['_id']),
+                'queue_type': doc['type'],
+            })
+        else:
+            return doc
 
     def run(self):
         try:
