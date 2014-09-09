@@ -199,8 +199,19 @@ class Organization(MongoObject):
         for doc in Server.collection.find(spec, fields):
             yield Server(doc=doc)
 
-    def new_user(self, **kwargs):
-        user = User(org=self, **kwargs)
+    def new_user(self, type=CERT_CLIENT, **kwargs):
+        # First attempt to get user from pool then attempt to get
+        # unfinished queued user in pool then queue a new user init
+        if type in (CERT_SERVER, CERT_CLIENT):
+            user = User.reserve_pooled_user(org=self, type=type, **kwargs)
+
+            if not user:
+                user = User.reserve_queued_user(org=self, type=type, **kwargs)
+
+            if user:
+                return user
+
+        user = User(org=self, type=type, **kwargs)
         user.queue_initialize()
         return user
 
