@@ -8,6 +8,7 @@ from pritunl.event import Event
 from pritunl.system_conf import SystemConf
 from pritunl.mongo_object import MongoObject
 from pritunl.queue_init_user import QueueInitUser
+from pritunl.queue_init_user_pooled import QueueInitUserPooled
 from pritunl import app_server
 import pritunl.mongo as mongo
 import pritunl.utils as utils
@@ -167,8 +168,12 @@ class User(MongoObject):
             })
 
     def queue_initialize(self):
-        queue = QueueInitUser(org_doc=self.org.export(),
-            user_doc=self.export())
+        if self.type in (CERT_SERVER_POOL, CERT_CLIENT_POOL):
+            queue = QueueInitUserPooled(org_doc=self.org.export(),
+                user_doc=self.export())
+        else:
+            queue = QueueInitUser(org_doc=self.org.export(),
+                user_doc=self.export())
         queue.start(block=True)
         self.load()
 
