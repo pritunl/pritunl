@@ -118,7 +118,7 @@ class Queue(MongoObject):
                 timeout=reserve_timeout):
             try:
                 if msg['message'] == [COMPLETE, doc['_id']]:
-                    return
+                    return doc
             except TypeError:
                 pass
         raise QueueTimeout('Blocking reserve timed out.', {
