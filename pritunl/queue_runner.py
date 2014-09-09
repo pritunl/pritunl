@@ -14,9 +14,19 @@ import time
 
 logger = logging.getLogger(APP_NAME)
 
+# TODO add queue threads
+
 class QueueRunner(object):
     def random_sleep(self):
         time.sleep(random.randint(0, 10) / 1000.)
+
+    def run_waiting_queues(self):
+        spec = {
+            'runner_id': {'$exists': False},
+        }
+        for queue_item in Queue.iter_queues(spec):
+            self.random_sleep()
+            queue_item.run()
 
     def watch_thread(self):
         messenger = Messenger('queue')
@@ -25,16 +35,9 @@ class QueueRunner(object):
                 for msg in messenger.subscribe():
                     try:
                         if msg['message'][0] == PENDING:
-                            break
+                            self.run_waiting_queues()
                     except TypeError:
                         pass
-
-                spec = {
-                    'runner_id': {'$exists': False},
-                }
-                for queue_item in Queue.iter_queues(spec):
-                    self.random_sleep()
-                    queue_item.run()
             except:
                 logger.exception('Error in queue watch thread.')
                 time.sleep(0.5)
