@@ -27,9 +27,11 @@ class QueueInitUser(Queue):
     def user(self):
         from pritunl.user import User
         from pritunl.organization import Organization
+
         org = Organization(doc=self.org_doc)
         user = User(org=org, doc=self.user_doc)
         user.exists = False
+
         return user
 
     def task(self):
