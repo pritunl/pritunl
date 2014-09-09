@@ -40,6 +40,7 @@ class User(MongoObject):
     fields_default = {
         'name': 'undefined',
         'disabled': False,
+        'type': CERT_CLIENT,
     }
 
     def __init__(self, org, name=None, email=None, type=None, disabled=None,
