@@ -120,7 +120,7 @@ class Queue(MongoObject):
             for msg in messenger.subscribe(cursor_id=cursor_id,
                     timeout=block_timeout):
                 try:
-                    if msg['message'] == [COMPLETE, doc['_id']]:
+                    if msg['message'] == [COMPLETE, str(doc['_id'])]:
                         return doc
                 except TypeError:
                     pass
