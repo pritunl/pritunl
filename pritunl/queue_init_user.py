@@ -13,10 +13,10 @@ class QueueInitUser(Queue):
         'org_doc',
         'user_doc',
     } | Queue.fields
+    type = 'init_user'
 
     def __init__(self, org_doc=None, user_doc=None, **kwargs):
         Queue.__init__(self, **kwargs)
-        self.type = 'init_user'
 
         if org_doc is not None:
             self.org_doc = org_doc
