@@ -396,6 +396,19 @@ class User(MongoObject):
                 'error_msg': error_msg,
             })
 
+    @staticmethod
+    def new_pooled_user(org, type):
+        type = {
+            CERT_SERVER: CERT_SERVER_POOL,
+            CERT_CLIENT: CERT_CLIENT_POOL,
+        }[type]
+        def create_user():
+            user = org.new_user(type=type)
+            user.commit()
+        thread = threading.Thread(target=create_user)
+        thread.daemon = True
+        thread.start()
+
     @classmethod
     def get_user(cls, org, id):
         return cls(org=org, id=id)
