@@ -43,6 +43,13 @@ class Queue(MongoObject):
     def collection(cls):
         return mongo.get_collection('queue')
 
+    @cached_property
+    def has_post_work(self):
+        return any((
+            self.post_task.__doc__ != 'not_overridden',
+            self.complete_task.__doc__ != 'not_overridden',
+        ))
+
     def start(self, transaction=None, block=False, block_timeout=30):
         self.ttl_timestamp = datetime.datetime.utcnow() + \
             datetime.timedelta(seconds=self.ttl)
@@ -126,12 +133,14 @@ class Queue(MongoObject):
         pass
 
     def post_task(self):
+        """not_overridden"""
         pass
 
     def rollback_task(self):
         pass
 
     def complete_task(self):
+        """not_overridden"""
         pass
 
     @classmethod
