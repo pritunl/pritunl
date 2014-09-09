@@ -28,28 +28,6 @@ class PoolerUser(object):
     def org_collection(cls):
         return mongo.get_collection('organizations')
 
-    def claim_user(self, name=None, email=None, type=None, disabled=None):
-        doc_update = {
-            'type': CERT_CLIENT,
-        }
-
-        if name is not None:
-            doc_update['name'] = name
-        if email is not None:
-            doc_update['email'] = email
-        if type is not None:
-            doc_update['type'] = type
-        if disabled is not None:
-            doc_update['disabled'] = disabled
-
-        doc = self.collection.find_and_modify({
-            'org_id': self.org_id,
-            'type': CERT_CLIENT_POOL,
-        }, doc_update)
-
-        if doc:
-            return doc
-
     @classmethod
     def fill_pool(cls):
         orgs_count = LeastCommonCounter()
