@@ -102,7 +102,6 @@ class Queue(MongoObject):
     @classmethod
     def reserve(cls, reserve_id, reserve_data, reserve_timeout=30):
         messenger = Messenger('queue')
-
         cursor_id = messenger.get_cursor_id()
 
         doc = cls.collection.find_and_modify({
