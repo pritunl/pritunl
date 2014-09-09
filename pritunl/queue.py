@@ -21,6 +21,7 @@ class Queue(MongoObject):
         'attempts',
         'type',
         'reserve_id',
+        'reserve_data',
         'ttl',
         'ttl_timestamp',
     }
