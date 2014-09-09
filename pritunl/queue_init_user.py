@@ -36,6 +36,6 @@ class QueueInitUser(Queue):
 
     def task(self):
         self.user.initialize()
-        user.commit()
+        self.user.commit()
 
 add_queue('init_user', QueueInitUser)
