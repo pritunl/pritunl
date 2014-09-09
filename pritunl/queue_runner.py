@@ -16,7 +16,7 @@ logger = logging.getLogger(APP_NAME)
 
 class QueueRunner(object):
     def random_sleep(self):
-        time.sleep(random.randint(0, 50) / 1000.)
+        time.sleep(random.randint(0, 10) / 1000.)
 
     def watch_thread(self):
         messenger = Messenger('queue')
