@@ -112,18 +112,22 @@ class Queue(MongoObject):
 
                     self.task()
 
-                    self.state = COMMITTED
-                    self.commit('state')
+                    if self.has_post_work:
+                        self.state = COMMITTED
+                        if not self.claim_commit('state'):
+                            return
 
-                if not self.claim():
+            if self.has_post_work or self.state == ROLLBACK:
+                if not self.claimed and not self.claim_commit():
                     return
 
-            if self.state == COMMITTED:
-                self.post_task()
-            elif self.state == ROLLBACK:
-                self.rollback_task()
+                if self.state == COMMITTED:
+                    self.post_task()
+                elif self.state == ROLLBACK:
+                    self.rollback_task()
 
-            self.complete_task()
+                if self.has_post_work:
+                    self.complete_task()
 
             if self.claimed:
                 self.complete()
