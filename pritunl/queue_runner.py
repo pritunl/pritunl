@@ -42,25 +42,28 @@ class QueueRunner(object):
                 logger.exception('Error in queue watch thread.')
                 time.sleep(0.5)
 
+    def run_timeout_queues(self):
+        cur_timestamp = datetime.datetime.utcnow()
+        spec = {
+            'ttl_timestamp': {'$lt': cur_timestamp},
+        }
+
+        for queue_item in Queue.iter_queues(spec):
+            self.random_sleep()
+
+            response = Queue.collection.update({
+                '_id': bson.ObjectId(queue_item.id),
+                'ttl_timestamp': {'$lt': cur_timestamp},
+            }, {'$unset': {
+                'runner_id': '',
+            }})
+            if response['updatedExisting']:
+                queue_item.run()
+
     def check_thread(self):
         while True:
             try:
-                cur_timestamp = datetime.datetime.utcnow()
-                spec = {
-                    'ttl_timestamp': {'$lt': cur_timestamp},
-                }
-
-                for queue_item in Queue.iter_queues(spec):
-                    self.random_sleep()
-
-                    response = Queue.collection.update({
-                        '_id': bson.ObjectId(queue_item.id),
-                        'ttl_timestamp': {'$lt': cur_timestamp},
-                    }, {'$unset': {
-                        'runner_id': '',
-                    }})
-                    if response['updatedExisting']:
-                        queue_item.run()
+                self.run_timeout_queues()
             except:
                 logger.exception('Error in queue check thread.')
 
