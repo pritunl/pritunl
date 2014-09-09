@@ -99,16 +99,16 @@ class Queue(MongoObject):
         return response['updatedExisting']
 
     def run(self):
-        if not self.claim():
-            return
         try:
             if self.state == PENDING:
                 self.attempts += 1
                 if self.attempts > MONGO_QUEUE_MAX_ATTEMPTS:
                     self.state = ROLLBACK
-                    self.commit('state')
+                    if not self.claim_commit('state'):
+                        return
                 else:
-                    self.commit('attempts')
+                    if not self.claim_commit('attempts'):
+                        return
 
                     self.task()
 
@@ -125,7 +125,8 @@ class Queue(MongoObject):
 
             self.complete_task()
 
-            self.complete()
+            if self.claimed:
+                self.complete()
         except:
             logger.exception('Error running task in queue. %r' % {
                 'queue_id': self.id,
