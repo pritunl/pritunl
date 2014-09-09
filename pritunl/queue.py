@@ -38,6 +38,7 @@ class Queue(MongoObject):
         self.type = self.type
         self.reserve_id = self.reserve_id
         self.runner_id = bson.ObjectId()
+        self.claimed = False
 
     @static_property
     def collection(cls):
@@ -76,18 +77,25 @@ class Queue(MongoObject):
                 'queue_type': self.type,
             })
 
-    def claim(self):
+    def claim_commit(self, fields=None):
+        doc = self.get_commit_doc(fields=fields)
+
+        doc['runner_id'] = self.runner_id
+        doc['ttl_timestamp'] = datetime.datetime.utcnow() + \
+            datetime.timedelta(seconds=self.ttl)
+
         response = self.collection.update({
             '_id': bson.ObjectId(self.id),
             '$or': [
                 {'runner_id': self.runner_id},
                 {'runner_id': {'$exists': False}},
             ],
-        }, {'$set': {
-            'runner_id': self.runner_id,
-            'ttl_timestamp': datetime.datetime.utcnow() + \
-                datetime.timedelta(seconds=self.ttl),
-        }})
+        }, {
+            '$set': doc
+        })
+
+        self.claimed = response['updatedExisting']
+
         return response['updatedExisting']
 
     def run(self):
