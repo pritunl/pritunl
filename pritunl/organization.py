@@ -209,6 +209,7 @@ class Organization(MongoObject):
                 user = User.reserve_queued_user(org=self, type=type, **kwargs)
 
             if user:
+                User.new_pooled_user(org=self, type=type)
                 return user
 
         user = User(org=self, type=type, **kwargs)
