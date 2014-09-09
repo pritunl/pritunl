@@ -22,6 +22,9 @@ class Organization(MongoObject):
         'ca_private_key',
         'ca_certificate',
     }
+    fields_default = {
+        'type': ORG_DEFAULT,
+    }
 
     def __init__(self, name=None, type=None, **kwargs):
         MongoObject.__init__(self, **kwargs)
