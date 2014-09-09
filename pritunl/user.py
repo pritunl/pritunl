@@ -410,6 +410,31 @@ class User(MongoObject):
         thread.start()
 
     @classmethod
+    def reserve_pooled_user(cls, org, name=None, email=None,
+            type=CERT_CLIENT, disabled=None):
+        doc = {}
+
+        if name is not None:
+            doc['name'] = name
+        if email is not None:
+            doc['email'] = email
+        if type is not None:
+            doc['type'] = type
+        if disabled is not None:
+            doc['disabled'] = disabled
+
+        doc = cls.collection.find_and_modify({
+            'org_id': org.id,
+            'type': {
+                CERT_SERVER: CERT_SERVER_POOL,
+                CERT_CLIENT: CERT_CLIENT_POOL,
+            }[type],
+        }, {'$set': doc})
+
+        if doc:
+            return User(org=org, doc=doc)
+
+    @classmethod
     def get_user(cls, org, id):
         return cls(org=org, id=id)
 
