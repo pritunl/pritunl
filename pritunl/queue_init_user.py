@@ -23,13 +23,17 @@ class QueueInitUser(Queue):
         if user_doc is not None:
             self.user_doc = user_doc
 
-    def task(self):
+    @cached_property
+    def user(self):
         from pritunl.user import User
         from pritunl.organization import Organization
-
         org = Organization(doc=self.org_doc)
         user = User(org=org, doc=self.user_doc)
-        user.initialize()
+        user.exists = False
+        return user
+
+    def task(self):
+        self.user.initialize()
         user.commit()
 
 add_queue('init_user', QueueInitUser)
