@@ -31,10 +31,8 @@ class QueueInitUser(Queue):
     @cached_property
     def user(self):
         from pritunl.user import User
-
         user = User(org=self.org, doc=self.user_doc)
         user.exists = False
-
         return user
 
     def task(self):
