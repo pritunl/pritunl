@@ -124,7 +124,7 @@ class Queue(MongoObject):
                         return doc
                 except TypeError:
                     pass
-            raise QueueTimeout('Blocking queue reserve timed out.', {
+            raise QueueTimeout('Blocking queue reserve timed out', {
                 'queue_id': str(doc['_id']),
                 'queue_type': doc['type'],
             })
