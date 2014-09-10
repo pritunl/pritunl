@@ -62,7 +62,7 @@ class Organization(MongoObject):
 
     @property
     def page_total(self):
-        return math.floor(float(self.user_count) / USER_PAGE_COUNT)
+        return math.floor(max(0, float(self.user_count - 1)) / USER_PAGE_COUNT)
 
     @static_property
     def collection(cls):
