@@ -56,3 +56,6 @@ class QueueError(BaseError):
 
 class QueueTimeout(QueueError):
     pass
+
+class QueueTaskError(QueueError):
+    pass
