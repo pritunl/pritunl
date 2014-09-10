@@ -38,4 +38,9 @@ class QueueInitUser(Queue):
         self.user.initialize()
         self.user.commit()
 
+    def repeat_task(self):
+        Event(type=ORGS_UPDATED)
+        Event(type=USERS_UPDATED, resource_id=self.org.id)
+        Event(type=SERVERS_UPDATED)
+
 add_queue('init_user', QueueInitUser)
