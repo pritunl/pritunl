@@ -52,6 +52,15 @@ def find(self, *args, **kwargs):
     return find_orig(self, *args, **kwargs)
 pymongo.collection.Collection.find = find
 
+find_and_modify_orig = pymongo.collection.Collection.find_and_modify
+def find_and_modify(self, *args, **kwargs):
+    if flask.ctx.has_request_context():
+        flask.g.write_count += 1
+    if RANDOM_ERROR_RATE and random.random() <= RANDOM_ERROR_RATE:
+        raise random.choice(_mongo_errors)('Test error')
+    return find_and_modify_orig(self, *args, **kwargs)
+pymongo.collection.Collection.find_and_modify = find_and_modify
+
 aggregate_orig = pymongo.collection.Collection.aggregate
 def aggregate(self, *args, **kwargs):
     if flask.ctx.has_request_context():
