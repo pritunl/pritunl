@@ -71,6 +71,7 @@ class MongoObject(object):
             elif isinstance(value, dict):
                 value = MongoDict(value, changed=False)
             setattr(self, key, value)
+        self.exists = True
         self.changed = set()
 
     def export(self):
