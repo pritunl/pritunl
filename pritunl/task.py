@@ -33,7 +33,6 @@ def add_task(task_cls, hours=None, minutes=None):
 
 class Task(MongoObject):
     fields = {
-        'run_time',
         'attempts',
         'type',
         'ttl',
