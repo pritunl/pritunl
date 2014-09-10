@@ -145,6 +145,9 @@ class Queue(MongoObject):
 
                     self.task()
 
+                    if self.attempts > 1:
+                        self.repeat_task()
+
                     if self.has_post_work:
                         self.state = COMMITTED
                         if not self.claim_commit('state'):
@@ -176,6 +179,9 @@ class Queue(MongoObject):
         self.remove()
 
     def task(self):
+        pass
+
+    def repeat_task(self):
         pass
 
     def post_task(self):
