@@ -1,6 +1,7 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
+from pritunl.queue_init_user import QueueInitUser
 from pritunl.queue import Queue, add_queue
 from pritunl.event import Event
 from pritunl import app_server
@@ -8,20 +9,11 @@ import logging
 
 logger = logging.getLogger(APP_NAME)
 
-class QueueInitUserPooled(Queue):
-    fields = {
-        'org_doc',
-        'user_doc',
-    } | Queue.fields
+class QueueInitUserPooled(QueueInitUser):
     type = 'init_user_pooled'
 
-    def __init__(self, org_doc=None, user_doc=None, **kwargs):
-        Queue.__init__(self, **kwargs)
-
-        if org_doc is not None:
-            self.org_doc = org_doc
-        if user_doc is not None:
-            self.user_doc = user_doc
+    def __init__(self, **kwargs):
+        QueueInitUser.__init__(self, **kwargs)
 
         org_id = str(self.org_doc['_id'])
         user_type = str(self.user_doc['type'])
@@ -30,17 +22,6 @@ class QueueInitUserPooled(Queue):
             CERT_SERVER_POOL: CERT_SERVER,
             CERT_CLIENT_POOL: CERT_CLIENT,
         }[user_type]
-
-    @cached_property
-    def user(self):
-        from pritunl.user import User
-        from pritunl.organization import Organization
-
-        org = Organization(doc=self.org_doc)
-        user = User(org=org, doc=self.user_doc)
-        user.exists = False
-
-        return user
 
     def task(self):
         self.user.initialize()
