@@ -68,6 +68,7 @@ class TaskRunner:
 
     def start(self):
         from pritunl.task_sync_ip_pool import TaskSyncIpPool
+        from pritunl.task_clean_users import TaskCleanUsers
 
         thread = threading.Thread(target=self.run_thread)
         thread.daemon = True
