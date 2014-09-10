@@ -1,9 +1,11 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
+from pritunl.descriptors import *
 from pritunl.cache import cache_db
 from pritunl.least_common_counter import LeastCommonCounter
 from pritunl import app_server
 import pritunl.mongo as mongo
+import pritunl.utils as utils
 import logging
 import time
 import threading
@@ -26,6 +28,14 @@ class PoolerUser(object):
     @static_property
     def org_collection(cls):
         return mongo.get_collection('organizations')
+
+    @classmethod
+    def fill_new_org_pool(cls, org):
+        user_types = utils.roundrobin([CERT_CLIENT_POOL] * USER_POOL_SIZE,
+            [CERT_SERVER_POOL] * SERVER_USER_POOL_SIZE)
+
+        for user_type in user_types:
+            user = org.new_user(type=user_type, block=False)
 
     @classmethod
     def fill_pool(cls):
