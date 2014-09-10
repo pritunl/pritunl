@@ -21,4 +21,4 @@ class TaskSyncIpPool(Task):
                     'task_id': self.id,
                 })
 
-add_task('sync_ip_pool', TaskSyncIpPool, minutes=0)
+add_task(TaskSyncIpPool, minutes=0)

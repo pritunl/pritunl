@@ -30,4 +30,4 @@ class TaskCleanUsers(Task):
             'org_id': {'$nin': org_ids},
         })
 
-add_task('clean_users', TaskCleanUsers, hours=5, minutes=17)
+add_task(TaskCleanUsers, hours=5, minutes=17)

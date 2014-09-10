@@ -13,7 +13,7 @@ _task_types = {}
 _tasks = collections.defaultdict(lambda: collections.defaultdict(lambda: []))
 logger = logging.getLogger(APP_NAME)
 
-def add_task(task_type, task_cls, hours=None, minutes=None):
+def add_task(task_cls, hours=None, minutes=None):
     if hours is not None or minutes is not None:
         if hours is None:
             hours = ('all',)
@@ -29,7 +29,7 @@ def add_task(task_type, task_cls, hours=None, minutes=None):
             for minute in minutes:
                 _tasks[hour][minute].append(task_cls)
 
-    _task_types[task_type] = task_cls
+    _task_types[task_cls.type] = task_cls
 
 class Task(MongoObject):
     fields = {
