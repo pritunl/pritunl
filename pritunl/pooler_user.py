@@ -1,7 +1,6 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.cache import cache_db
-from pritunl.organization import Organization
 from pritunl.least_common_counter import LeastCommonCounter
 from pritunl import app_server
 import pritunl.mongo as mongo
@@ -30,6 +29,7 @@ class PoolerUser(object):
 
     @classmethod
     def fill_pool(cls):
+        from pritunl.organization import Organization
         orgs_count = LeastCommonCounter()
 
         org_ids = cls.org_collection.find({}, {
