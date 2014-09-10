@@ -403,11 +403,9 @@ class User(MongoObject):
             CERT_CLIENT: CERT_CLIENT_POOL,
         }[type]
 
-        def create_user():
-            user = org.new_user(type=type)
-            user.commit()
-
-        thread = threading.Thread(target=create_user)
+        thread = threading.Thread(target=org.new_user, kwargs={
+            'type': type,
+        })
         thread.daemon = True
         thread.start()
 
