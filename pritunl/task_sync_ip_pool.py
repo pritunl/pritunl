@@ -9,9 +9,7 @@ import time
 logger = logging.getLogger(APP_NAME)
 
 class TaskSyncIpPool(Task):
-    def __init__(self, **kwargs):
-        Task.__init__(self, **kwargs)
-        self.type = 'sync_ip_pool'
+    type = 'sync_ip_pool'
 
     def task(self):
         for server in Server.iter_servers():
