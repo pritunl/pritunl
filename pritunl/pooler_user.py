@@ -72,4 +72,3 @@ class PoolerUser(object):
             org = Organization.get_org(id=org_id)
             for _ in xrange(USER_POOL_SIZE - count):
                 user = org.new_user(type=CERT_CLIENT_POOL)
-                user.commit()
