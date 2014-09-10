@@ -24,12 +24,15 @@ class QueueInitUser(Queue):
             self.user_doc = user_doc
 
     @cached_property
+    def org(self):
+        from pritunl.organization import Organization
+        return Organization(doc=self.org_doc)
+
+    @cached_property
     def user(self):
         from pritunl.user import User
-        from pritunl.organization import Organization
 
-        org = Organization(doc=self.org_doc)
-        user = User(org=org, doc=self.user_doc)
+        user = User(org=self.org, doc=self.user_doc)
         user.exists = False
 
         return user
