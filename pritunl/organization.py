@@ -70,8 +70,7 @@ class Organization(MongoObject):
 
     def initialize(self):
         ca_user = User(org=self, type=CERT_CA)
-        ca_user.initialize()
-        ca_user.commit()
+        ca_user.queue_initialize()
         self.ca_private_key = ca_user.private_key
         self.ca_certificate = ca_user.certificate
 
