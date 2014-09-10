@@ -71,6 +71,12 @@ class Queue(MongoObject):
                 try:
                     if msg['message'] == [COMPLETE, self.id]:
                         return
+                    elif msg['message'] == [ERROR, self.id]:
+                        raise QueueTaskError('Error occured running ' +
+                            'queue task', {
+                                'queue_id': self.id,
+                                'queue_type': self.type,
+                            })
                 except TypeError:
                     pass
             raise QueueTimeout('Blocking queue timed out.', {
@@ -122,6 +128,12 @@ class Queue(MongoObject):
                 try:
                     if msg['message'] == [COMPLETE, str(doc['_id'])]:
                         return doc
+                    elif msg['message'] == [ERROR, str(doc['_id'])]:
+                        raise QueueTaskError('Error occured running ' +
+                            'queue task', {
+                                'queue_id': str(doc['_id']),
+                                'queue_type': doc['type'],
+                            })
                 except TypeError:
                     pass
             raise QueueTimeout('Blocking queue reserve timed out', {
@@ -172,6 +184,8 @@ class Queue(MongoObject):
                 'queue_id': self.id,
                 'queue_type': self.type,
             })
+            messenger = Messenger('queue')
+            messenger.publish([ERROR, self.id])
 
     def complete(self):
         messenger = Messenger('queue')
