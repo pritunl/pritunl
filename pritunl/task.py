@@ -14,16 +14,20 @@ _tasks = collections.defaultdict(lambda: collections.defaultdict(lambda: []))
 logger = logging.getLogger(APP_NAME)
 
 def add_task(task_type, task_cls, hours=None, minutes=None):
-    if hours is None:
-        hours = ('all',)
-    elif isinstance(hours, int):
-        hours = (hours,)
-    if isinstance(minutes, int):
-        minutes = (minutes,)
+    if hours is not None or minutes is not None:
+        if hours is None:
+            hours = ('all',)
+        elif isinstance(hours, int):
+            hours = (hours,)
 
-    for hour in hours:
-        for minute in minutes:
-            _tasks[hour][minute].append(task_cls)
+        if minutes is None:
+            minutes = (0,)
+        elif isinstance(minutes, int):
+            minutes = (minutes,)
+
+        for hour in hours:
+            for minute in minutes:
+                _tasks[hour][minute].append(task_cls)
 
     _task_types[task_type] = task_cls
 
