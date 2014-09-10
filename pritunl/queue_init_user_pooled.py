@@ -1,0 +1,80 @@
+from pritunl.constants import *
+from pritunl.exceptions import *
+from pritunl.descriptors import *
+from pritunl.queue import Queue, add_queue
+from pritunl.event import Event
+from pritunl import app_server
+import logging
+
+logger = logging.getLogger(APP_NAME)
+
+class QueueInitUserPooled(Queue):
+    fields = {
+        'org_doc',
+        'user_doc',
+    } | Queue.fields
+    type = 'init_user_pooled'
+
+    def __init__(self, org_doc=None, user_doc=None, **kwargs):
+        Queue.__init__(self, **kwargs)
+
+        if org_doc is not None:
+            self.org_doc = org_doc
+        if user_doc is not None:
+            self.user_doc = user_doc
+
+        org_id = str(self.org_doc['_id'])
+        user_type = str(self.user_doc['type'])
+
+        self.reserve_id = org_id + '-' + {
+            CERT_SERVER_POOL: CERT_SERVER,
+            CERT_CLIENT_POOL: CERT_CLIENT,
+        }[user_type]
+
+    @cached_property
+    def user(self):
+        from pritunl.user import User
+        from pritunl.organization import Organization
+
+        org = Organization(doc=self.org_doc)
+        user = User(org=org, doc=self.user_doc)
+        user.exists = False
+
+        return user
+
+    def task(self):
+        self.user.initialize()
+
+    def complete_task(self):
+        self.load()
+        if self.reserve_data:
+            for field, value in self.reserve_data.items():
+                setattr(self.user, field, value)
+        self.user.commit()
+
+    @classmethod
+    def reserve_queued_user(cls, org, name=None, email=None, type=None,
+            disabled=None, block=False):
+        from pritunl.user import User
+        from pritunl.organization import Organization
+
+        reserve_id = org.id + '-' + type
+        reserve_data = {}
+
+        if name is not None:
+            reserve_data['name'] = name
+        if email is not None:
+            reserve_data['email'] = email
+        if type is not None:
+            reserve_data['type'] = type
+        if disabled is not None:
+            reserve_data['disabled'] = disabled
+
+        doc = cls.reserve(reserve_id, reserve_data, block=block)
+        if not doc:
+            return
+
+        org = Organization(doc=doc['org_doc'])
+        return User(org=org, doc=doc['user_doc'])
+
+add_queue('init_user_pooled', QueueInitUserPooled)
