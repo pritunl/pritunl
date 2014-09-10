@@ -39,9 +39,11 @@ class Task(MongoObject):
         'attempts': 0,
         'ttl': MONGO_TASK_TTL,
     }
+    type = None
 
     def __init__(self, **kwargs):
         MongoObject.__init__(self, **kwargs)
+        self.type = self.type
         self.exists = True
         self.runner_id = bson.ObjectId()
 
