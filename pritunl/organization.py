@@ -237,7 +237,9 @@ class Organization(MongoObject):
             server.remove_org(self)
             server.commit()
         MongoObject.remove(self)
-        User.collection.remove({'org_id': self.id})
+        User.collection.remove({
+            'org_id': self.id,
+        })
 
     @classmethod
     def new_org(cls, **kwargs):
