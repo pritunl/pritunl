@@ -216,7 +216,7 @@ class Server(MongoObject):
         MongoObject.commit(self, transaction=transaction, *args, **kwargs)
 
         if transaction:
-            Messenger('queue').publish('queue_updated',
+            Messenger().publish('queue', 'queue_updated',
                 transaction=transaction)
             transaction.commit()
 

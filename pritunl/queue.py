@@ -56,17 +56,17 @@ class Queue(MongoObject):
         self.ttl_timestamp = datetime.datetime.utcnow() + \
             datetime.timedelta(seconds=self.ttl)
         self.commit(transaction=transaction)
-        messenger = Messenger('queue')
+        messenger = Messenger()
 
         if block:
             if transaction:
                 raise TypeError('Cannot use transaction when blocking')
-            cursor_id = messenger.get_cursor_id()
+            cursor_id = messenger.get_cursor_id('queue')
 
-        messenger.publish([PENDING, self.id], transaction=transaction)
+        messenger.publish('queue', [PENDING, self.id], transaction=transaction)
 
         if block:
-            for msg in messenger.subscribe(cursor_id=cursor_id,
+            for msg in messenger.subscribe('queue', cursor_id=cursor_id,
                     timeout=block_timeout):
                 try:
                     if msg['message'] == [COMPLETE, self.id]:
@@ -107,10 +107,10 @@ class Queue(MongoObject):
 
     @classmethod
     def reserve(cls, reserve_id, reserve_data, block=False, block_timeout=30):
-        messenger = Messenger('queue')
+        messenger = Messenger()
 
         if block:
-            cursor_id = messenger.get_cursor_id()
+            cursor_id = messenger.get_cursor_id('queue')
 
         doc = cls.collection.find_and_modify({
             'state': PENDING,
@@ -123,7 +123,7 @@ class Queue(MongoObject):
             return
 
         if block:
-            for msg in messenger.subscribe(cursor_id=cursor_id,
+            for msg in messenger.subscribe('queue', cursor_id=cursor_id,
                     timeout=block_timeout):
                 try:
                     if msg['message'] == [COMPLETE, str(doc['_id'])]:
@@ -184,12 +184,10 @@ class Queue(MongoObject):
                 'queue_id': self.id,
                 'queue_type': self.type,
             })
-            messenger = Messenger('queue')
-            messenger.publish([ERROR, self.id])
+            Messenger().publish('queue', [ERROR, self.id])
 
     def complete(self):
-        messenger = Messenger('queue')
-        messenger.publish([COMPLETE, self.id])
+        Messenger().publish('queue', [COMPLETE, self.id])
         self.remove()
 
     def task(self):

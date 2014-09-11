@@ -8,14 +8,11 @@ import datetime
 import bson
 
 class Messenger(object):
-    def __init__(self, channel):
-        self.channel = channel
-
     @cached_static_property
     def collection(cls):
         return mongo.get_collection('messages')
 
-    def publish(self, message, transaction=None):
+    def publish(self, channel, message, transaction=None):
         if transaction:
             collection = transaction.collection(
                 self.collection.collection_name)
@@ -30,7 +27,7 @@ class Messenger(object):
             'message': message,
         }, upsert=True)
 
-    def get_cursor_id(self):
+    def get_cursor_id(self, channel):
         try:
             return self.collection.find({
                 'channel': self.channel,
@@ -38,7 +35,8 @@ class Messenger(object):
         except IndexError:
             pass
 
-    def subscribe(self, cursor_id=None, timeout=None, yield_delay=None):
+    def subscribe(self, channel, cursor_id=None, timeout=None,
+            yield_delay=None):
         start_time = time.time()
         cursor_id = cursor_id or self.get_cursor_id()
         while True:

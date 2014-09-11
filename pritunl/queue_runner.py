@@ -27,10 +27,10 @@ class QueueRunner(object):
             queue_item.run()
 
     def watch_thread(self):
-        messenger = Messenger('queue')
+        messenger = Messenger()
         while True:
             try:
-                for msg in messenger.subscribe():
+                for msg in messenger.subscribe('queue'):
                     try:
                         if msg['message'][0] == PENDING:
                             self.run_waiting_queues()
