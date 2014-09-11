@@ -109,7 +109,7 @@ class ServerBandwidth(object):
         }
         project = {
             'timestamp': True,
-            'received' True,
+            'received': True,
             'sent': True,
         }
 
