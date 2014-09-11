@@ -55,7 +55,7 @@ class Messenger(object):
     def get_cursor_id(self, channels):
         try:
             return self.collection.find({
-                'channel': self.channel,
+                'channel': channels,
             }).sort('$natural', pymongo.DESCENDING)[0]['_id']
         except IndexError:
             pass
