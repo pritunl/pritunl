@@ -134,7 +134,7 @@ class ServerIpPool:
                 'user_id': {'$exists': True},
             }},
             {'$project': {
-                'user_id': 1,
+                'user_id': True,
             }},
             {'$group': {
                 '_id': '$user_id',
