@@ -58,7 +58,7 @@ class MongoTransaction(MongoObject):
         else:
             self.action_sets = []
 
-    @static_property
+    @cached_static_property
     def transaction_collection(cls):
         return mongo.get_collection('transaction')
 

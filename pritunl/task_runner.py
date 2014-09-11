@@ -21,7 +21,7 @@ class TaskRunner:
     def random_sleep(self):
         time.sleep(random.randint(0, 50) / 1000.)
 
-    @static_property
+    @cached_static_property
     def collection(cls):
         return mongo.get_collection('task')
 

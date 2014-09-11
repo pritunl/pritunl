@@ -11,11 +11,11 @@ logger = logging.getLogger(APP_NAME)
 class TaskCleanUsers(Task):
     type = 'clean_users'
 
-    @static_property
+    @cached_static_property
     def collection(cls):
         return mongo.get_collection('users')
 
-    @static_property
+    @cached_static_property
     def org_collection(cls):
         return mongo.get_collection('organizations')
 

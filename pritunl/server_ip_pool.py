@@ -19,11 +19,11 @@ class ServerIpPool:
     def __init__(self, server):
         self.server = server
 
-    @static_property
+    @cached_static_property
     def collection(cls):
         return mongo.get_collection('servers_ip_pool')
 
-    @static_property
+    @cached_static_property
     def users_collection(cls):
         return mongo.get_collection('users')
 

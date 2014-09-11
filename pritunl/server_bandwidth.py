@@ -7,7 +7,7 @@ class ServerBandwidth(object):
     def __init__(self, server_id):
         self.server_id = server_id
 
-    @static_property
+    @cached_static_property
     def collection(cls):
         return mongo.get_collection('servers_bandwidth')
 

@@ -113,7 +113,7 @@ class Server(MongoObject):
         if debug is not None:
             self.debug = debug
 
-    @static_property
+    @cached_static_property
     def collection(cls):
         return mongo.get_collection('servers')
 

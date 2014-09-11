@@ -49,7 +49,7 @@ class Task(MongoObject):
         self.type = self.type
         self.runner_id = bson.ObjectId()
 
-    @static_property
+    @cached_static_property
     def collection(cls):
         return mongo.get_collection('task')
 

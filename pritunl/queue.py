@@ -41,7 +41,7 @@ class Queue(MongoObject):
         self.runner_id = bson.ObjectId()
         self.claimed = False
 
-    @static_property
+    @cached_static_property
     def collection(cls):
         return mongo.get_collection('queue')
 

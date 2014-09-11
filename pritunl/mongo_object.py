@@ -47,7 +47,7 @@ class MongoObject(object):
         raise AttributeError(
             'MongoObject instance has no attribute %r' % name)
 
-    @static_property
+    @cached_static_property
     def collection(cls):
         raise TypeError('Database collection must be specified')
 

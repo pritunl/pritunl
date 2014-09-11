@@ -28,7 +28,7 @@ class LogEntry(MongoObject):
             'message': self.message,
         }
 
-    @static_property
+    @cached_static_property
     def collection(cls):
         return mongo.get_collection('log_entries')
 

@@ -41,15 +41,15 @@ class Administrator(MongoObject):
             'default': self.default,
         }
 
-    @static_property
+    @cached_static_property
     def collection(cls):
         return mongo.get_collection('administrators')
 
-    @static_property
+    @cached_static_property
     def nonces_collection(cls):
         return mongo.get_collection('auth_nonces')
 
-    @static_property
+    @cached_static_property
     def limiter_collection(cls):
         return mongo.get_collection('auth_limiter')
 

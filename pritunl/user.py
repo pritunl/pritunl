@@ -59,7 +59,7 @@ class User(MongoObject):
         if disabled is not None:
             self.disabled = disabled
 
-    @static_property
+    @cached_static_property
     def collection(cls):
         return mongo.get_collection('users')
 

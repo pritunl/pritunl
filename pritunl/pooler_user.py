@@ -21,11 +21,11 @@ class PoolerUser(object):
     def __init__(self, org=None):
         self.org_id = org.id
 
-    @static_property
+    @cached_static_property
     def collection(cls):
         return mongo.get_collection('users')
 
-    @static_property
+    @cached_static_property
     def org_collection(cls):
         return mongo.get_collection('organizations')
 

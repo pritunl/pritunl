@@ -66,7 +66,7 @@ class Organization(MongoObject):
     def page_total(self):
         return math.floor(max(0, float(self.user_count - 1)) / USER_PAGE_COUNT)
 
-    @static_property
+    @cached_static_property
     def collection(cls):
         return mongo.get_collection('organizations')
 
