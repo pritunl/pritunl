@@ -53,10 +53,16 @@ class Messenger(object):
             self.collection.insert(docs)
 
     def get_cursor_id(self, channels):
+        spec = {}
+
+        if isinstance(channels, str):
+            spec['channel'] = channels
+        else:
+            spec['channel'] = {'$in': channels}
+
         try:
-            return self.collection.find({
-                'channel': channels,
-            }).sort('$natural', pymongo.DESCENDING)[0]['_id']
+            return self.collection.find(spec).sort(
+                '$natural', pymongo.DESCENDING)[0]['_id']
         except IndexError:
             pass
 
