@@ -7,7 +7,7 @@ import collections
 class SystemConf():
     def __init__(self):
         self._cached = {}
-        self._changed = collections.defaultdict(lambda: {})
+        self._changed = collections.defaultdict(dict)
 
     @static_property
     def collection(cls):

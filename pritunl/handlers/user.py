@@ -47,7 +47,7 @@ def user_get(org_id, user_id=None, page=None):
 
         users = []
         users_id = []
-        users_server_data = collections.defaultdict(lambda: {})
+        users_server_data = collections.defaultdict(dict)
         fields = (
             'organization',
             'organization_name',

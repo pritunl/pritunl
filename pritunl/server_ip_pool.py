@@ -203,7 +203,7 @@ class ServerIpPool:
 
     @classmethod
     def multi_get_ip_addr(cls, org_id, user_ids):
-        ip_addrs = collections.defaultdict(lambda: {})
+        ip_addrs = collections.defaultdict(dict)
         spec = {
             'user_id': {'$in': user_ids},
         }
