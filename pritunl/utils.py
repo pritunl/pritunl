@@ -15,6 +15,7 @@ import hmac
 import uuid
 import datetime
 import logging
+import itertools
 
 logger = logging.getLogger(APP_NAME)
 
@@ -128,6 +129,18 @@ def check_openssl():
     except:
         pass
     return True
+
+def roundrobin(*iterables):
+    # Recipe credited to George Sakkis
+    pending = len(iterables)
+    nexts = itertools.cycle(iter(it).next for it in iterables)
+    while pending:
+        try:
+            for next in nexts:
+                yield next()
+        except StopIteration:
+            pending -= 1
+            nexts = itertools.cycle(itertools.islice(nexts, pending))
 
 class Response:
     def __init__(self, url, headers, status_code, reason, content):
