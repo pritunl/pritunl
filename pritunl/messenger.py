@@ -52,7 +52,7 @@ class Messenger(object):
                     })
             self.collection.insert(docs)
 
-    def get_cursor_id(self, channel):
+    def get_cursor_id(self, channels):
         try:
             return self.collection.find({
                 'channel': self.channel,
@@ -60,19 +60,24 @@ class Messenger(object):
         except IndexError:
             pass
 
-    def subscribe(self, channel, cursor_id=None, timeout=None,
+    def subscribe(self, channels, cursor_id=None, timeout=None,
             yield_delay=None):
         start_time = time.time()
-        cursor_id = cursor_id or self.get_cursor_id()
+        cursor_id = cursor_id or self.get_cursor_id(channels)
         while True:
             try:
-                spec = {
-                    'channel': self.channel,
-                }
+                spec = {}
+
+                if isinstance(channels, str):
+                    spec['channel'] = channels
+                else:
+                    spec['channel'] = {'$in': channels}
+
                 if cursor_id:
                     spec['_id'] = {'$gt': cursor_id}
                 cursor = self.collection.find(spec, tailable=True,
                     await_data=True).sort('$natural', pymongo.ASCENDING)
+
                 while cursor.alive:
                     for doc in cursor:
                         cursor_id = doc['_id']
@@ -83,7 +88,7 @@ class Messenger(object):
 
                             spec = {
                                 '_id': {'$gt': cursor_id},
-                                'channel': self.channel,
+                                'channel': channels,
                             }
                             cursor = self.collection.find(spec).sort(
                                 '$natural', pymongo.ASCENDING)
