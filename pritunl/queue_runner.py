@@ -70,10 +70,7 @@ class QueueRunner(object):
             time.sleep(MONGO_QUEUE_TTL)
 
     def start(self):
-        thread = threading.Thread(target=self.watch_thread)
-        thread.daemon = True
-        thread.start()
-
-        thread = threading.Thread(target=self.check_thread)
-        thread.daemon = True
-        thread.start()
+        for target in (self.watch_thread, self.check_thread):
+            thread = threading.Thread(target=target)
+            thread.daemon = True
+            thread.start()
