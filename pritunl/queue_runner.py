@@ -14,8 +14,6 @@ import time
 
 logger = logging.getLogger(APP_NAME)
 
-# TODO add queue threads
-
 class QueueRunner(object):
     def random_sleep(self):
         time.sleep(random.randint(0, 10) / 1000.)
