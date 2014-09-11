@@ -53,7 +53,13 @@ class Task(MongoObject):
     def collection(cls):
         return mongo.get_collection('task')
 
-    def claim(self):
+    def claim_commit(self, fields=None):
+        doc = self.get_commit_doc(fields=fields)
+
+        doc['runner_id'] = self.runner_id
+        doc['ttl_timestamp'] = datetime.datetime.utcnow() + \
+            datetime.timedelta(seconds=self.ttl)
+
         try:
             response = self.collection.update({
                 '_id': bson.ObjectId(self.id),
@@ -61,16 +67,16 @@ class Task(MongoObject):
                     {'runner_id': self.runner_id},
                     {'runner_id': {'$exists': False}},
                 ],
-            }, {'$set': {
-                'runner_id': self.runner_id,
-                'type': self.type,
-                'ttl': self.ttl,
-                'ttl_timestamp': datetime.datetime.utcnow() + \
-                    datetime.timedelta(seconds=self.ttl),
-            }}, upsert=True)
+            }, {
+                '$set': doc,
+            }, upsert=True)
+            claimed = bool(response.get('updatedExisting') or response.get(
+                'upserted'))
         except pymongo.errors.DuplicateKeyError:
-            return False
-        return response.get('updatedExisting') or response.get('upserted')
+            claimed = False
+
+        self.claimed = claimed
+        return claimed
 
     def run(self):
         if not self.claim():
