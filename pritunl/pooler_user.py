@@ -35,7 +35,7 @@ class PoolerUser(object):
             [CERT_SERVER_POOL] * SERVER_USER_POOL_SIZE)
 
         for user_type in user_types:
-            user = org.new_user(type=user_type, block=False)
+            org.new_user(type=user_type, block=False)
 
     @classmethod
     def fill_pool(cls):
