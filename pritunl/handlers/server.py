@@ -66,15 +66,10 @@ def server_get(server_id=None):
 @app_server.app.route('/server/<server_id>', methods=['PUT'])
 @app_server.auth
 def server_put_post(server_id=None):
-    network_used = set()
-    interface_used = set()
-    port_used = set()
-    for server in Server.iter_servers():
-        if server.id == server_id:
-            continue
-        network_used.add(server.network)
-        interface_used.add(server.interface)
-        port_used.add('%s%s' % (server.port, server.protocol))
+    used_resources = Server.get_used_resources()
+    network_used = used_resources['networks']
+    interface_used = used_resources['interfaces']
+    port_used = used_resources['ports']
 
     name = None
     name_def = False
