@@ -9,8 +9,7 @@ logger = logging.getLogger(APP_NAME)
 
 class Event(object):
     def __init__(self, type, resource_id=None):
-        messenger = Messenger()
-        messenger.publish('events', (type, resource_id))
+        Messenger().publish('events', (type, resource_id))
 
     @staticmethod
     def get_events(cursor=None):
