@@ -116,11 +116,13 @@ class ServerBandwidth(object):
         for doc in self.collection.find(spec, project).sort('timestamp'):
             if date_cur > doc['timestamp']:
                 continue
+
             while date_cur < doc['timestamp']:
                 timestamp = int(date_cur.strftime('%s'))
                 data['received'].append((timestamp, 0))
                 data['sent'].append((timestamp, 0))
                 date_cur += date_step
+
             timestamp = int(doc['timestamp'].strftime('%s'))
             received = doc['received']
             sent = doc['sent']
