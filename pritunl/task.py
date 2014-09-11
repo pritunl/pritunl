@@ -10,7 +10,7 @@ import logging
 import collections
 
 _task_types = {}
-_tasks = collections.defaultdict(lambda: collections.defaultdict(lambda: []))
+_tasks = collections.defaultdict(lambda: collections.defaultdict(list))
 logger = logging.getLogger(APP_NAME)
 
 def add_task(task_cls, hours=None, minutes=None):
