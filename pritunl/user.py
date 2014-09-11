@@ -167,15 +167,16 @@ class User(MongoObject):
                 'user_id': self.id,
             })
 
-    def queue_initialize(self):
+    def queue_initialize(self, block):
         if self.type in (CERT_SERVER_POOL, CERT_CLIENT_POOL):
             queue = QueueInitUserPooled(org_doc=self.org.export(),
                 user_doc=self.export())
         else:
             queue = QueueInitUser(org_doc=self.org.export(),
                 user_doc=self.export())
-        queue.start(block=True)
-        self.load()
+        queue.start(block=block)
+        if block:
+            self.load()
 
     def remove(self):
         self.unassign_ip_addr()
