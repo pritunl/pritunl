@@ -953,13 +953,16 @@ class Server(MongoObject):
             {'$project': {
                 'network': True,
                 'interface': True,
-                'port': True,
+                'port_protocol': {'$concat': [
+                    {'$substr': ['$port', 0, 5]},
+                    '$protocol',
+                ]},
             }},
             {'$group': {
                 '_id': None,
                 'networks': {'$addToSet': '$network'},
                 'interfaces': {'$addToSet': '$interface'},
-                'ports': {'$addToSet': '$port'},
+                'ports': {'$addToSet': '$port_protocol'},
             }},
         ])['result'][0]
         used_resources.pop('_id')
