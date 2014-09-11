@@ -39,8 +39,8 @@ class TaskRunner:
                 self._last_run = cur_time.minute
 
                 for hour in ('all', cur_time.hour):
-                    for TaskClass in _tasks[hour][cur_time.minute]:
-                        task = TaskClass()
+                    for task_cls in _tasks[hour][cur_time.minute]:
+                        task = task_cls()
                         self.run_task(task)
 
             time.sleep(30)
