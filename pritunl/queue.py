@@ -98,7 +98,7 @@ class Queue(MongoObject):
                 {'runner_id': {'$exists': False}},
             ],
         }, {
-            '$set': doc
+            '$set': doc,
         })
 
         self.claimed = response['updatedExisting']
