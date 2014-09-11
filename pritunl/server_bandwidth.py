@@ -107,8 +107,13 @@ class ServerBandwidth(object):
             'server_id': self.server_id,
             'period': period,
         }
+        project = {
+            'timestamp': True,
+            'received' True,
+            'sent': True,
+        }
 
-        for doc in self.collection.find(spec).sort('timestamp'):
+        for doc in self.collection.find(spec, project).sort('timestamp'):
             if date_cur > doc['timestamp']:
                 continue
             while date_cur < doc['timestamp']:
