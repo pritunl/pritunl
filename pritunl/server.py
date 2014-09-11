@@ -948,6 +948,24 @@ class Server(MongoObject):
         return cls(id=id)
 
     @classmethod
+    def get_used_resources(cls):
+        used_resources = cls.collection.aggregate([
+            {'$project': {
+                'network': True,
+                'interface': True,
+                'port': True,
+            }},
+            {'$group': {
+                '_id': None,
+                'networks': {'$addToSet': '$network'},
+                'interfaces': {'$addToSet': '$interface'},
+                'ports': {'$addToSet': '$port'},
+            }},
+        ])['result'][0]
+        used_resources.pop('_id')
+        return {key: set(val) for key, val in used_resources.items()}
+
+    @classmethod
     def iter_servers(cls):
         for doc in cls.collection.find().sort('name'):
             yield cls(doc=doc)
