@@ -86,7 +86,7 @@ class Organization(MongoObject):
                     'org': self,
                 })
             thread.daemon = True
-            #thread.start()
+            thread.start()
 
     def get_user(self, id):
         return User.get_user(org=self, id=id)
