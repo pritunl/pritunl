@@ -18,9 +18,6 @@ import collections
 logger = logging.getLogger(APP_NAME)
 
 class PoolerUser(object):
-    def __init__(self, org=None):
-        self.org_id = org.id
-
     @cached_static_property
     def collection(cls):
         return mongo.get_collection('users')
