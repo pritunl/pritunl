@@ -12,20 +12,45 @@ class Messenger(object):
     def collection(cls):
         return mongo.get_collection('messages')
 
-    def publish(self, channel, message, transaction=None):
+    def publish(self, channels, message, transaction=None):
         if transaction:
-            collection = transaction.collection(
+            tran_collection = transaction.collection(
                 self.collection.collection_name)
-        else:
-            collection = self.collection
 
-        collection.update({
-            '_id': bson.ObjectId(),
-        }, {
-            'timestamp': datetime.datetime.utcnow(),
-            'channel': self.channel,
-            'message': message,
-        }, upsert=True)
+            if isinstance(channels, str):
+                tran_collection.update({
+                    '_id': bson.ObjectId(),
+                }, {
+                    'timestamp': datetime.datetime.utcnow(),
+                    'channel': channels,
+                    'message': message,
+                }, upsert=True)
+            else:
+                for channel in channels:
+                    tran_collection.bulk().find({
+                        '_id': bson.ObjectId(),
+                    }).upsert().update({
+                        'timestamp': datetime.datetime.utcnow(),
+                        'channel': channel,
+                        'message': message,
+                    })
+                tran_collection.bulk_execute()
+        else:
+            if not isinstance(channels, str):
+                docs = {
+                    'timestamp': datetime.datetime.utcnow(),
+                    'channel': channels,
+                    'message': message,
+                }
+            else:
+                docs = []
+                for channel in channels:
+                    docs.append({
+                        'timestamp': datetime.datetime.utcnow(),
+                        'channel': channel,
+                        'message': message,
+                    })
+            self.collection.insert(docs)
 
     def get_cursor_id(self, channel):
         try:
