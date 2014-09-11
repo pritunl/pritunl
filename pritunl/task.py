@@ -79,12 +79,11 @@ class Task(MongoObject):
         return claimed
 
     def run(self):
-        if not self.claim():
-            return
         try:
             self.attempts += 1
             if self.attempts <= MONGO_TASK_MAX_ATTEMPTS:
-                self.commit('attempts')
+                if not self.claim_commit():
+                    return
                 self.task()
 
             self.complete()
