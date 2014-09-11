@@ -60,8 +60,8 @@ def setup_mongo():
     collections['messages'].ensure_index('channel')
     collections['administrators'].ensure_index('username', unique=True)
     collections['users'].ensure_index([
-        ('org_id', pymongo.ASCENDING),
         ('type', pymongo.ASCENDING),
+        ('org_id', pymongo.ASCENDING),
     ])
     collections['users'].ensure_index([
         ('org_id', pymongo.ASCENDING),
