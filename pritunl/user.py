@@ -406,7 +406,7 @@ class User(MongoObject):
 
         thread = threading.Thread(target=org.new_user, kwargs={
             'type': type,
-            'block': True,
+            'block': False,
         })
         thread.daemon = True
         thread.start()
