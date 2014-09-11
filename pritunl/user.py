@@ -431,7 +431,9 @@ class User(MongoObject):
                 CERT_SERVER: CERT_SERVER_POOL,
                 CERT_CLIENT: CERT_CLIENT_POOL,
             }[type],
-        }, {'$set': doc})
+        }, {
+            '$set': doc,
+        })
 
         if doc:
             return User(org=org, doc=doc)
