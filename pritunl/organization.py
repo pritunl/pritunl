@@ -251,7 +251,11 @@ class Organization(MongoObject):
 
     @classmethod
     def iter_orgs(cls, type=ORG_DEFAULT):
-        for doc in cls.collection.find({'type': type}).sort('name'):
+        spec = {}
+        if type is not None:
+            spec['type'] = type
+
+        for doc in cls.collection.find(spec).sort('name'):
             yield cls(doc=doc)
 
     @classmethod
