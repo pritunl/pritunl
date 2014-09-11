@@ -3,6 +3,7 @@ from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.cache import cache_db
 from pritunl.user import User
+from pritunl.pooler_user import PoolerUser
 from pritunl.mongo_object import MongoObject
 from pritunl import app_server
 import pritunl.mongo as mongo
@@ -12,6 +13,7 @@ import random
 import json
 import math
 import pymongo
+import threading
 
 logger = logging.getLogger(APP_NAME)
 
@@ -73,6 +75,18 @@ class Organization(MongoObject):
         ca_user.queue_initialize(block=True)
         self.ca_private_key = ca_user.private_key
         self.ca_certificate = ca_user.certificate
+
+    def commit(self, *args, **kwargs):
+        exists = self.exists
+        MongoObject.commit(self, *args, **kwargs)
+
+        if not exists:
+            thread = threading.Thread(target=PoolerUser.fill_new_org_pool,
+                kwargs={
+                    'org': self,
+                })
+            thread.daemon = True
+            #thread.start()
 
     def get_user(self, id):
         return User.get_user(org=self, id=id)
