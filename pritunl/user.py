@@ -437,9 +437,9 @@ class User(MongoObject):
             return User(org=org, doc=doc)
 
     @staticmethod
-    def reserve_queued_user(org, **kwargs):
+    def reserve_queued_user(org, block, **kwargs):
         return QueueInitUserPooled.reserve_queued_user(
-            org, block=True, **kwargs)
+            org, block=block, **kwargs)
 
     @classmethod
     def get_user(cls, org, id):
