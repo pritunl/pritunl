@@ -5,6 +5,7 @@ from pritunl.cache import cache_db
 from pritunl.user import User
 from pritunl.pooler_user import PoolerUser
 from pritunl.mongo_object import MongoObject
+from pritunl.queue_init_org_pooled import QueueInitOrgPooled
 from pritunl import app_server
 import pritunl.mongo as mongo
 import uuid
@@ -70,11 +71,23 @@ class Organization(MongoObject):
     def collection(cls):
         return mongo.get_collection('organizations')
 
-    def initialize(self):
+    def initialize(self, queue_user_init=True):
         ca_user = User(org=self, type=CERT_CA)
-        ca_user.queue_initialize(block=True)
+
+        if queue_user_init:
+            ca_user.queue_initialize(block=True)
+        else:
+            ca_user.initialize()
+            ca_user.commit()
+
         self.ca_private_key = ca_user.private_key
         self.ca_certificate = ca_user.certificate
+
+    def queue_initialize(self, block):
+        if self.type != ORG_POOL:
+            raise TypeError('Only pool orgs can be queued')
+        queue = QueueInitOrgPooled(org_doc=self.export())
+        queue.start(block=block)
 
     def commit(self, *args, **kwargs):
         exists = self.exists
