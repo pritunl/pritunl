@@ -32,6 +32,8 @@ class Organization(MongoObject):
     def __init__(self, name=None, type=None, **kwargs):
         MongoObject.__init__(self, **kwargs)
         self.last_search_count = None
+        self.processes = []
+        self.stopped = False
 
         if name is not None:
             self.name = name
