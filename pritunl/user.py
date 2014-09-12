@@ -440,7 +440,7 @@ class User(MongoObject):
         })
 
         if doc:
-            return User(org=org, doc=doc)
+            return cls(org=org, doc=doc)
 
     @staticmethod
     def reserve_queued_user(org, block, **kwargs):
