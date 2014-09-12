@@ -42,6 +42,7 @@ class Queue(MongoObject):
         self.reserve_id = self.reserve_id
         self.runner_id = bson.ObjectId()
         self.claimed = False
+        self.stopped = False
 
         if priority is not None:
             self.priority = priority
@@ -191,13 +192,15 @@ class Queue(MongoObject):
             if self.claimed:
                 self.complete()
         except:
-            logger.exception('Error running task in queue. %r' % {
-                'queue_id': self.id,
-                'queue_type': self.type,
-            })
-            Messenger().publish('queue', [ERROR, self.id])
-            if not self.retry:
-                self.remove()
+            if not self.stopped:
+                logger.exception('Error running task in queue. %r' % {
+                    'queue_id': self.id,
+                    'queue_type': self.type,
+                })
+                Messenger().publish('queue', [ERROR, self.id])
+
+    def stop(self):
+        self.stopped = self.stop_task()
 
     def complete(self):
         Messenger().publish('queue', [COMPLETE, self.id])
@@ -215,6 +218,9 @@ class Queue(MongoObject):
 
     def rollback_task(self):
         pass
+
+    def stop_task(self):
+        return True
 
     def complete_task(self):
         """not_overridden"""
