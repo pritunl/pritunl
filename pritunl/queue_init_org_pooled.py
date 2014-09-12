@@ -32,8 +32,8 @@ class QueueInitOrgPooled(Queue):
 
     def task(self):
         self.org.initialize(queue_user_init=False)
-
         self.load()
+
         if self.reserve_data:
             for field, value in self.reserve_data.items():
                 setattr(self.org, field, value)
@@ -48,6 +48,7 @@ class QueueInitOrgPooled(Queue):
             return False
 
         self.org.stopped = True
+
         for process in copy.copy(self.org.processes):
             if not process[1]:
                 process[1] = True
