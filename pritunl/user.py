@@ -167,10 +167,10 @@ class User(MongoObject):
                 'user_id': self.id,
             })
 
-    def queue_initialize(self, block):
+    def queue_initialize(self, block, priority=NORMAL):
         if self.type in (CERT_SERVER_POOL, CERT_CLIENT_POOL):
             queue = QueueInitUserPooled(org_doc=self.org.export(),
-                user_doc=self.export())
+                user_doc=self.export(), priority=priority)
         else:
             retry = True
             if self.type == CERT_CA:
