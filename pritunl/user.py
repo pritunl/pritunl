@@ -50,6 +50,7 @@ class User(MongoObject):
 
         self.org = org
         self.org_id = org.id
+
         if name is not None:
             self.name = name
         if email is not None:
