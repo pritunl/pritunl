@@ -75,7 +75,8 @@ class Organization(MongoObject):
         ca_user = User(org=self, type=CERT_CA)
 
         if queue_user_init:
-            ca_user.queue_initialize(block=True)
+            ca_user.queue_initialize(block=True,
+                priority=HIGH if self.type == ORG_DEFAULT else None)
         else:
             ca_user.initialize()
             ca_user.commit()
