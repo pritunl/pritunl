@@ -84,10 +84,10 @@ class Organization(MongoObject):
         self.ca_private_key = ca_user.private_key
         self.ca_certificate = ca_user.certificate
 
-    def queue_initialize(self, block):
+    def queue_initialize(self, block, priority=NORMAL):
         if self.type != ORG_POOL:
             raise TypeError('Only pool orgs can be queued')
-        queue = QueueInitOrgPooled(org_doc=self.export())
+        queue = QueueInitOrgPooled(org_doc=self.export(), priority=priority)
         queue.start(block=block)
 
     def commit(self, *args, **kwargs):
