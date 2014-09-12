@@ -44,4 +44,4 @@ class QueueInitUser(Queue):
         Event(type=USERS_UPDATED, resource_id=self.org.id)
         Event(type=SERVERS_UPDATED)
 
-add_queue('init_user', QueueInitUser)
+add_queue(QueueInitUser)
