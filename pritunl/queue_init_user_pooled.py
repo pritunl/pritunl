@@ -26,7 +26,6 @@ class QueueInitUserPooled(QueueInitUser):
     def task(self):
         self.user.initialize()
 
-    def complete_task(self):
         self.load()
         if self.reserve_data:
             for field, value in self.reserve_data.items():
