@@ -255,10 +255,58 @@ class Organization(MongoObject):
         })
 
     @classmethod
-    def new_org(cls, **kwargs):
-        org = cls(**kwargs)
-        org.initialize()
-        return org
+    def new_pooled_org(cls):
+        thread = threading.Thread(target=cls.new_org, kwargs={
+            'type': ORG_POOL,
+            'block': False,
+        })
+        thread.daemon = True
+        thread.start()
+
+    @classmethod
+    def reserve_pooled_org(cls, name=None, type=ORG_DEFAULT):
+        doc = {}
+
+        if name is not None:
+            doc['name'] = name
+        if type is not None:
+            doc['type'] = type
+
+        doc = cls.collection.find_and_modify({
+            'type': ORG_POOL,
+        }, {
+            '$set': doc,
+        })
+
+        if doc:
+            return cls(doc=doc)
+
+    @staticmethod
+    def reserve_queued_org(block, **kwargs):
+        return QueueInitOrgPooled.reserve_queued_org(
+            block=block, **kwargs)
+
+    @classmethod
+    def new_org(cls, type=ORG_DEFAULT, block=True, **kwargs):
+        if type == ORG_DEFAULT:
+            org = cls.reserve_pooled_org(type=type, **kwargs)
+
+            if not org:
+                org = cls.reserve_queued_org(type=type,
+                    block=block, **kwargs)
+
+            if org:
+                cls.new_pooled_org()
+                return org
+
+            org = cls(type=type, **kwargs)
+            org.initialize()
+            org.commit()
+            return org
+        else:
+            org = cls(type=type, **kwargs)
+            org.queue_initialize(block=block)
+            return org
 
     @classmethod
     def get_org(cls, id):
