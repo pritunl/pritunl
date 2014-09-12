@@ -172,8 +172,12 @@ class User(MongoObject):
             queue = QueueInitUserPooled(org_doc=self.org.export(),
                 user_doc=self.export())
         else:
+            retry = True
+            if self.type == CERT_CA:
+                retry = False
+
             queue = QueueInitUser(org_doc=self.org.export(),
-                user_doc=self.export())
+                user_doc=self.export(), priority=priority, retry=retry)
         queue.start(block=block)
         if block:
             self.load()
