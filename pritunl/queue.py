@@ -18,6 +18,7 @@ class Queue(MongoObject):
     fields = {
         'state',
         'priority',
+        'retry',
         'attempts',
         'type',
         'reserve_id',
@@ -28,13 +29,14 @@ class Queue(MongoObject):
     fields_default = {
         'state': PENDING,
         'priority': NORMAL,
+        'retry': True,
         'attempts': 0,
         'ttl': MONGO_QUEUE_TTL,
     }
     type = None
     reserve_id = None
 
-    def __init__(self, priority=None, **kwargs):
+    def __init__(self, priority=None, retry=None, **kwargs):
         MongoObject.__init__(self, **kwargs)
         self.type = self.type
         self.reserve_id = self.reserve_id
@@ -43,6 +45,8 @@ class Queue(MongoObject):
 
         if priority is not None:
             self.priority = priority
+        if retry is not None:
+            self.retry = retry
 
     @cached_static_property
     def collection(cls):
@@ -150,7 +154,11 @@ class Queue(MongoObject):
         try:
             if self.state == PENDING:
                 self.attempts += 1
-                if self.attempts > MONGO_QUEUE_MAX_ATTEMPTS:
+
+                if self.attempts > 1 and not self.retry:
+                    self.remove()
+                    return
+                elif self.attempts > MONGO_QUEUE_MAX_ATTEMPTS:
                     self.state = ROLLBACK
                     if not self.claim_commit('state'):
                         return
