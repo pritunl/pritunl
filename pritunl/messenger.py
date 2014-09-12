@@ -36,7 +36,7 @@ class Messenger(object):
                     })
                 tran_collection.bulk_execute()
         else:
-            if not isinstance(channels, str):
+            if isinstance(channels, str):
                 docs = {
                     'timestamp': datetime.datetime.utcnow(),
                     'channel': channels,
