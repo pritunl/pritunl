@@ -34,12 +34,15 @@ class Queue(MongoObject):
     type = None
     reserve_id = None
 
-    def __init__(self, **kwargs):
+    def __init__(self, priority=None, **kwargs):
         MongoObject.__init__(self, **kwargs)
         self.type = self.type
         self.reserve_id = self.reserve_id
         self.runner_id = bson.ObjectId()
         self.claimed = False
+
+        if priority is not None:
+            self.priority = priority
 
     @cached_static_property
     def collection(cls):
