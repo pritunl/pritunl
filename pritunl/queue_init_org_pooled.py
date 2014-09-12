@@ -32,15 +32,14 @@ class QueueInitOrgPooled(Queue):
     def task(self):
         self.org.initialize(queue_user_init=False)
 
-    def repeat_task(self):
-        Event(type=ORGS_UPDATED)
-
-    def complete_task(self):
         self.load()
         if self.reserve_data:
             for field, value in self.reserve_data.items():
                 setattr(self.org, field, value)
         self.org.commit()
+
+    def repeat_task(self):
+        Event(type=ORGS_UPDATED)
 
     @classmethod
     def reserve_queued_org(cls, name=None, type=None, block=False):
