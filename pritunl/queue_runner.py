@@ -11,12 +11,44 @@ import datetime
 import logging
 import threading
 import time
+import bson
+import copy
 
 logger = logging.getLogger(APP_NAME)
+running_queues = []
+running_queues_high = []
 
 class QueueRunner(object):
     def random_sleep(self):
         time.sleep(random.randint(0, 10) / 1000.)
+
+    def run_queue_item(self, queue_item):
+        def stop():
+            if queue_item.priority == HIGH:
+                for running_queue in copy.copy(running_queues):
+                    running_queue.stop()
+
+        thread = threading.Thread(target=stop)
+        thread.daemon = True
+        thread.start()
+
+        def run():
+            if queue_item.priority == HIGH:
+                running_queues_high.append(queue_item)
+            else:
+                running_queues.append(queue_item)
+            queue_item.run()
+            try:
+                if queue_item.priority == HIGH:
+                    running_queues_high.remove(queue_item)
+                else:
+                    running_queues.remove(queue_item)
+            except ValueError:
+                pass
+
+        thread = threading.Thread(target=run)
+        thread.daemon = True
+        thread.start()
 
     def run_waiting_queues(self):
         spec = {
@@ -24,7 +56,7 @@ class QueueRunner(object):
         }
         for queue_item in Queue.iter_queues(spec):
             self.random_sleep()
-            queue_item.run()
+            self.run_queue_item(queue_item)
 
     def watch_thread(self):
         messenger = Messenger()
@@ -57,7 +89,7 @@ class QueueRunner(object):
                 'runner_id': '',
             }})
             if response['updatedExisting']:
-                queue_item.run()
+                self.run_queue_item(queue_item)
 
     def check_thread(self):
         while True:
