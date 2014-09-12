@@ -52,4 +52,4 @@ class QueueAssignIpAddr(Queue):
     def complete_task(self):
         Event(type=USERS_UPDATED, resource_id=self.org_id)
 
-add_queue('assign_ip_addr', QueueAssignIpAddr)
+add_queue(QueueAssignIpAddr)

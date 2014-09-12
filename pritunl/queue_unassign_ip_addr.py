@@ -52,4 +52,4 @@ class QueueUnassignIpAddr(Queue):
 
         server.ip_pool.unassign_ip_addr(self.org_id, self.user_id)
 
-add_queue('unassign_ip_addr', QueueUnassignIpAddr)
+add_queue(QueueUnassignIpAddr)

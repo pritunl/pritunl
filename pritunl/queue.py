@@ -11,8 +11,8 @@ import logging
 queue_types = {}
 logger = logging.getLogger(APP_NAME)
 
-def add_queue(queue_type, QueueClass):
-    queue_types[queue_type] = QueueClass
+def add_queue(queue_cls):
+    queue_types[queue_cls.type] = queue_cls
 
 class Queue(MongoObject):
     fields = {

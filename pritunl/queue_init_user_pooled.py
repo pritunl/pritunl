@@ -57,4 +57,4 @@ class QueueInitUserPooled(QueueInitUser):
         org = Organization(doc=doc['org_doc'])
         return User(org=org, doc=doc['user_doc'])
 
-add_queue('init_user_pooled', QueueInitUserPooled)
+add_queue(QueueInitUserPooled)

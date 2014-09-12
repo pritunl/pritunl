@@ -58,4 +58,4 @@ class QueueInitOrgPooled(Queue):
 
         return Organization(doc=doc['org_doc'])
 
-add_queue('init_org_pooled', QueueInitOrgPooled)
+add_queue(QueueInitOrgPooled)
