@@ -196,6 +196,8 @@ class Queue(MongoObject):
                 'queue_type': self.type,
             })
             Messenger().publish('queue', [ERROR, self.id])
+            if not self.retry:
+                self.remove()
 
     def complete(self):
         Messenger().publish('queue', [COMPLETE, self.id])
