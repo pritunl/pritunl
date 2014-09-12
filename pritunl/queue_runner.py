@@ -28,6 +28,7 @@ class QueueRunner(object):
 
     def watch_thread(self):
         messenger = Messenger()
+
         while True:
             try:
                 for msg in messenger.subscribe('queue'):
