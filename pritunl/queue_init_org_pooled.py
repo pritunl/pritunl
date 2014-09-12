@@ -5,6 +5,7 @@ from pritunl.queue import Queue, add_queue
 from pritunl.event import Event
 from pritunl import app_server
 import logging
+import copy
 
 logger = logging.getLogger(APP_NAME)
 
@@ -40,6 +41,18 @@ class QueueInitOrgPooled(Queue):
 
     def repeat_task(self):
         Event(type=ORGS_UPDATED)
+
+    def stop_task(self):
+        self.load()
+        if self.reserve_data:
+            return False
+
+        self.org.stopped = True
+        for process in copy.copy(self.org.processes):
+            if not process[1]:
+                process[1] = True
+                process[0].kill() # TODO test process[0].terminate()
+        return True
 
     @classmethod
     def reserve_queued_org(cls, name=None, type=None, block=False):
