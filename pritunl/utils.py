@@ -35,16 +35,13 @@ def get_remote_addr():
     return flask.request.remote_addr
 
 def rmtree(path):
-    logged = False
-    for _ in xrange(10):
+    for _ in xrange(5):
         try:
-            subprocess.check_call(['rm', '-rf', path])
+            subprocess.check_call(['rm', '-rf', path],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             return
         except subprocess.CalledProcessError:
             time.sleep(0.01)
-            if not logged:
-                logged = True
-                logger.exception('Remove tree error, retrying...')
     raise
 
 def ip_to_long(ip_str):
