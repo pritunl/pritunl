@@ -21,9 +21,11 @@ ROLLBACK = 'rollback'
 COMPLETE = 'complete'
 ERROR = 'error'
 
-LOW = 0
-NORMAL = 1
-HIGH = 2
+VERY_LOW = 0
+LOW = 1
+NORMAL = 2
+HIGH = 3
+VERY_HIGH = 4
 
 BULK_EXECUTE = 'bulk_execute'
 
