@@ -33,7 +33,6 @@ class Organization(MongoObject):
         MongoObject.__init__(self, **kwargs)
         self.last_search_count = None
         self.processes = []
-        self.stopped = False
         self.running = threading.Event()
         self.running.set()
 
