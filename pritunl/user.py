@@ -76,12 +76,32 @@ class User(MongoObject):
             'disabled': self.disabled,
         }
 
-    def _check_queue_stop(self):
-        if self.org.stopped:
+    def _wait_status(self):
+        if not self.org.running:
             raise QueueStopped('User init queue stopped', {
                 'org_id': self.org.id,
                 'user_id': self.id,
             })
+        self.org.running.wait()
+
+    def _exec(self, args):
+        while True:
+            self._wait_status()
+
+            process = subprocess.Popen(args, stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE)
+            process_data = [process, False]
+            self.org.processes.append(process_data)
+
+            return_code = process.wait()
+            self.org.processes.remove(process_data)
+
+            if return_code:
+                if not process_data[1]:
+                    raise ValueError('Popen returned ' +
+                        'error exit code %r' % return_code)
+            else:
+                break
 
     def initialize(self):
         temp_path = app_server.get_temp_path()
@@ -120,14 +140,12 @@ class User(MongoObject):
                     ca_key_path,
                 ))
 
-            self._check_queue_stop()
+            self._wait_status()
 
             if self.type != CERT_CA:
                 self.org.write_file('ca_certificate', ca_cert_path, chmod=0600)
                 self.org.write_file('ca_private_key', ca_key_path, chmod=0600)
                 self.generate_otp_secret()
-
-            self._check_queue_stop()
 
             try:
                 args = [
@@ -137,35 +155,14 @@ class User(MongoObject):
                     '-keyout', key_path,
                     '-reqexts', '%s_req_ext' % self.type.replace('_pool', ''),
                 ]
-                process = subprocess.Popen(args, stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE)
-                process_data = [process, False]
-                self.org.processes.append(process_data)
-
-                return_code = process.wait()
-                self.org.processes.remove(process_data)
-
-                if return_code:
-                    if not process_data[1]:
-                        logger.error('Failed to create user cert '
-                            'requests. %r' % {
-                                'org_id': self.org.id,
-                                'user_id': self.id,
-                                'return_code': return_code,
-                            })
-                        raise ValueError('Openssl popen returned ' +
-                            'error exit code %r' % return_code)
-                    else:
-                        self._check_queue_stop()
-            except OSError:
+                self._exec(args)
+            except (OSError, ValueError):
                 logger.exception('Failed to create user cert requests. %r' % {
                     'org_id': self.org.id,
                     'user_id': self.id,
                 })
                 raise
             self.read_file('private_key', key_path)
-
-            self._check_queue_stop()
 
             try:
                 args = ['openssl', 'ca', '-batch']
@@ -177,26 +174,8 @@ class User(MongoObject):
                     '-out', cert_path,
                     '-extensions', '%s_ext' % self.type.replace('_pool', ''),
                 ]
-                process = subprocess.Popen(args, stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE)
-                process_data = [process, False]
-                self.org.processes.append(process_data)
-
-                return_code = process.wait()
-                self.org.processes.remove(process_data)
-
-                if return_code:
-                    if not process_data[1]:
-                        logger.error('Failed to create user cert. %r' % {
-                            'org_id': self.org.id,
-                            'user_id': self.id,
-                            'return_code': return_code,
-                        })
-                        raise ValueError('Openssl popen returned ' +
-                            'error exit code %r' % return_code)
-                    else:
-                        self._check_queue_stop()
-            except OSError:
+                self._exec(args)
+            except (OSError, ValueError):
                 logger.exception('Failed to create user cert. %r' % {
                     'org_id': self.org.id,
                     'user_id': self.id,
@@ -209,7 +188,7 @@ class User(MongoObject):
             except subprocess.CalledProcessError:
                 pass
 
-        self._check_queue_stop()
+        self._wait_status()
 
         # If assign ip addr fails it will be corrected in ip sync task
         try:
