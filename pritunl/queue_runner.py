@@ -17,6 +17,8 @@ import collections
 
 logger = logging.getLogger(APP_NAME)
 running_queues = collections.defaultdict(set)
+thread_limit = threading.Semaphore(MONGO_QUEUE_THREAD_LIMIT)
+print_lock = threading.Lock()
 
 class QueueRunner(object):
     def random_sleep(self):
@@ -30,6 +32,7 @@ class QueueRunner(object):
                 for running_queue in copy.copy(running_queues[queue_priority]):
                     if running_queue.pause():
                         paused_queues.add(running_queue)
+                        thread_limit.release()
 
         thread = threading.Thread(target=pause)
         thread.daemon = True
@@ -38,7 +41,11 @@ class QueueRunner(object):
         def run():
             try:
                 running_queues[queue_item.priority].add(queue_item)
+                thread_limit.acquire()
+
                 queue_item.run()
+
+                thread_limit.release()
 
                 try:
                     running_queues[queue_item.priority].remove(queue_item)
@@ -46,6 +53,7 @@ class QueueRunner(object):
                     pass
             finally:
                 for paused_queue in paused_queues:
+                    thread_limit.acquire()
                     paused_queue.resume()
 
         thread = threading.Thread(target=run)
