@@ -55,6 +55,9 @@ class QueueInitOrgPooled(Queue):
                 process[0].kill() # TODO test process[0].terminate()
         return True
 
+    def resume_task(self):
+        self.org.running.set()
+
     @classmethod
     def reserve_queued_org(cls, name=None, type=None, block=False):
         from pritunl.organization import Organization
