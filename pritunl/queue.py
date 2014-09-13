@@ -44,6 +44,7 @@ class Queue(MongoObject):
         self.runner_id = bson.ObjectId()
         self.claimed = False
         self.running = True
+        self.state_lock = threading.Lock()
 
         if priority is not None:
             self.priority = priority
@@ -201,24 +202,36 @@ class Queue(MongoObject):
                 Messenger().publish('queue', [ERROR, self.id])
 
     def pause(self):
-        if not self.running:
-            return False
-        if self.pause_task():
-            self.running = False
-        return not self.running
+        self.state_lock.acquire()
+        try:
+            if not self.running:
+                return False
+            if self.pause_task():
+                self.running = False
+            return not self.running
+        finally:
+            self.state_lock.release()
 
     def resume(self):
-        if self.running != False:
-            return False
-        if self.resume_task():
-            self.running = True
-        return self.running
+        self.state_lock.acquire()
+        try:
+            if self.running != False:
+                return False
+            if self.resume_task():
+                self.running = True
+            return self.running
+        finally:
+            self.state_lock.release()
 
     def stop(self):
-        if self.running and self.stop_task():
-            self.running = None
-            return True
-        return False
+        self.state_lock.acquire()
+        try:
+            if self.running and self.stop_task():
+                self.running = None
+                return True
+            return False
+        finally:
+            self.state_lock.release()
 
     def complete(self):
         Messenger().publish('queue', [COMPLETE, self.id])
