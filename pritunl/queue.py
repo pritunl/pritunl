@@ -212,7 +212,9 @@ class Queue(MongoObject):
         self.resume_task()
 
     def stop(self):
-        self.stopped = self.stop_task()
+        if not self.stopped:
+            self.stopped = self.stop_task()
+        return self.stopped
 
     def complete(self):
         Messenger().publish('queue', [COMPLETE, self.id])
