@@ -13,10 +13,10 @@ import threading
 import time
 import bson
 import copy
+import collections
 
 logger = logging.getLogger(APP_NAME)
-running_queues = []
-running_queues_high = []
+running_queues = collections.defaultdict(set)
 
 class QueueRunner(object):
     def random_sleep(self):
@@ -24,8 +24,8 @@ class QueueRunner(object):
 
     def run_queue_item(self, queue_item):
         def stop():
-            if queue_item.priority == HIGH:
-                for running_queue in copy.copy(running_queues):
+            for queue_priority in xrange(queue_item.priority):
+                for running_queue in copy.copy(running_queues[queue_priority]):
                     running_queue.stop()
 
         thread = threading.Thread(target=stop)
@@ -33,17 +33,11 @@ class QueueRunner(object):
         thread.start()
 
         def run():
-            if queue_item.priority == HIGH:
-                running_queues_high.append(queue_item)
-            else:
-                running_queues.append(queue_item)
+            running_queues[queue_item.priority].add(queue_item)
             queue_item.run()
             try:
-                if queue_item.priority == HIGH:
-                    running_queues_high.remove(queue_item)
-                else:
-                    running_queues.remove(queue_item)
-            except ValueError:
+                running_queues[queue_item.priority].remove(queue_item)
+            except KeyError:
                 pass
 
         thread = threading.Thread(target=run)
