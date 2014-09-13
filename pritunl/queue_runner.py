@@ -47,6 +47,7 @@ class QueueRunner(object):
                     running_queues[queue_item.priority].remove(queue_item)
                 except KeyError:
                     pass
+
                 thread_limit.release()
 
                 for paused_queue in paused_queues:
