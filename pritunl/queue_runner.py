@@ -23,23 +23,30 @@ class QueueRunner(object):
         time.sleep(random.randint(0, 10) / 1000.)
 
     def run_queue_item(self, queue_item):
-        def stop():
+        paused_queues = set()
+
+        def pause():
             for queue_priority in xrange(queue_item.priority):
                 for running_queue in copy.copy(running_queues[queue_priority]):
-                    running_queue.stop()
+                    if running_queue.pause():
+                        paused_queues.add(running_queue)
 
-        thread = threading.Thread(target=stop)
+        thread = threading.Thread(target=pause)
         thread.daemon = True
         thread.start()
 
         def run():
-            running_queues[queue_item.priority].add(queue_item)
-            queue_item.run()
-
             try:
-                running_queues[queue_item.priority].remove(queue_item)
-            except KeyError:
-                pass
+                running_queues[queue_item.priority].add(queue_item)
+                queue_item.run()
+
+                try:
+                    running_queues[queue_item.priority].remove(queue_item)
+                except KeyError:
+                    pass
+            finally:
+                for paused_queue in paused_queues:
+                    paused_queue.resume()
 
         thread = threading.Thread(target=run)
         thread.daemon = True
