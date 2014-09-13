@@ -43,6 +43,8 @@ class Queue(MongoObject):
         self.runner_id = bson.ObjectId()
         self.claimed = False
         self.stopped = False
+        self.running = threading.Event()
+        self.running.set()
 
         if priority is not None:
             self.priority = priority
@@ -199,6 +201,15 @@ class Queue(MongoObject):
                 })
                 Messenger().publish('queue', [ERROR, self.id])
 
+    def pause(self):
+        paused = self.pause_task()
+        if paused:
+            self.running.clear()
+        return paused
+
+    def resume(self):
+        self.resume_task()
+
     def stop(self):
         self.stopped = self.stop_task()
 
@@ -221,6 +232,12 @@ class Queue(MongoObject):
 
     def stop_task(self):
         return False
+
+    def pause_task(self):
+        return False
+
+    def resume_task(self):
+        pass
 
     def complete_task(self):
         """not_overridden"""
