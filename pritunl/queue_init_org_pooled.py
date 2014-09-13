@@ -42,12 +42,12 @@ class QueueInitOrgPooled(Queue):
     def repeat_task(self):
         Event(type=ORGS_UPDATED)
 
-    def stop_task(self):
+    def pause_task(self):
         self.load()
         if self.reserve_data:
             return False
 
-        self.org.stopped = True
+        self.org.running.clear()
 
         for process in copy.copy(self.org.processes):
             if not process[1]:
