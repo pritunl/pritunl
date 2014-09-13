@@ -220,7 +220,7 @@ class Queue(MongoObject):
         pass
 
     def stop_task(self):
-        return True
+        return False
 
     def complete_task(self):
         """not_overridden"""
