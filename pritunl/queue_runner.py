@@ -18,7 +18,6 @@ import collections
 logger = logging.getLogger(APP_NAME)
 running_queues = collections.defaultdict(set)
 thread_limit = threading.Semaphore(MONGO_QUEUE_THREAD_LIMIT)
-print_lock = threading.Lock()
 
 class QueueRunner(object):
     def random_sleep(self):
