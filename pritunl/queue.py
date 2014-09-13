@@ -193,7 +193,7 @@ class Queue(MongoObject):
             if self.claimed:
                 self.complete()
         except:
-            if not self.stopped:
+            if self.running is not None:
                 logger.exception('Error running task in queue. %r' % {
                     'queue_id': self.id,
                     'queue_type': self.type,
