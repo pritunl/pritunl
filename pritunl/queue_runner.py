@@ -38,19 +38,17 @@ class QueueRunner(object):
         thread.start()
 
         def run():
+            thread_limit.acquire()
+            running_queues[queue_item.priority].add(queue_item)
             try:
-                running_queues[queue_item.priority].add(queue_item)
-                thread_limit.acquire()
-
                 queue_item.run()
-
-                thread_limit.release()
-
+            finally:
                 try:
                     running_queues[queue_item.priority].remove(queue_item)
                 except KeyError:
                     pass
-            finally:
+                thread_limit.release()
+
                 for paused_queue in paused_queues:
                     thread_limit.acquire()
                     paused_queue.resume()
