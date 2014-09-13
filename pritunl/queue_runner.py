@@ -35,6 +35,7 @@ class QueueRunner(object):
         def run():
             running_queues[queue_item.priority].add(queue_item)
             queue_item.run()
+
             try:
                 running_queues[queue_item.priority].remove(queue_item)
             except KeyError:
