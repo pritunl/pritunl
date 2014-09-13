@@ -28,7 +28,7 @@ class Queue(MongoObject):
     }
     fields_default = {
         'state': PENDING,
-        'priority': NORMAL,
+        'priority': LOW,
         'retry': True,
         'attempts': 0,
         'ttl': MONGO_QUEUE_TTL,
