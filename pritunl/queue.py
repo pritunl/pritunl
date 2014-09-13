@@ -203,12 +203,16 @@ class Queue(MongoObject):
                 Messenger().publish('queue', [ERROR, self.id])
 
     def pause(self):
+        if not self.running.is_set():
+            return True
         paused = self.pause_task()
         if paused:
             self.running.clear()
         return paused
 
     def resume(self):
+        if self.running.is_set():
+            return True
         self.resume_task()
 
     def stop(self):
