@@ -34,6 +34,8 @@ class Organization(MongoObject):
         self.last_search_count = None
         self.processes = []
         self.stopped = False
+        self.running = threading.Event()
+        self.running.set()
 
         if name is not None:
             self.name = name
