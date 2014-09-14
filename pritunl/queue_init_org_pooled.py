@@ -13,6 +13,7 @@ class QueueInitOrgPooled(Queue):
     fields = {
         'org_doc',
     } | Queue.fields
+    cpu_type = NORMAL_CPU
     type = 'init_org_pooled'
 
     def __init__(self, org_doc=None, **kwargs):
