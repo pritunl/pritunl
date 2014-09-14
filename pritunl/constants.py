@@ -33,6 +33,9 @@ HIGH_CPU = 2
 
 BULK_EXECUTE = 'bulk_execute'
 
+LOG_DEBUG_TYPES = {
+}
+
 MONGO_ACTION_METHODS = {
     'update',
     'remove',
