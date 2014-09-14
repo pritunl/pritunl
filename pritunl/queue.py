@@ -1,6 +1,7 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
+from pritunl.queue_com import QueueCom
 from pritunl.messenger import Messenger
 from pritunl.mongo_object import MongoObject
 import pritunl.mongo as mongo
@@ -44,7 +45,7 @@ class Queue(MongoObject):
         self.reserve_id = self.reserve_id
         self.runner_id = bson.ObjectId()
         self.claimed = False
-        self.running = True
+        self.queue_com = QueueCom()
         self.state_lock = threading.Lock()
 
         if priority is not None:
@@ -195,7 +196,7 @@ class Queue(MongoObject):
             if self.claimed:
                 self.complete()
         except:
-            if self.running is not None:
+            if self.queue_com.running is not None:
                 logger.exception('Error running task in queue. %r' % {
                     'queue_id': self.id,
                     'queue_type': self.type,
@@ -205,30 +206,30 @@ class Queue(MongoObject):
     def pause(self):
         self.state_lock.acquire()
         try:
-            if not self.running:
+            if not self.queue_com.running:
                 return False
             if self.pause_task():
-                self.running = False
-            return not self.running
+                self.queue_com.running = False
+            return not self.queue_com.running
         finally:
             self.state_lock.release()
 
     def resume(self):
         self.state_lock.acquire()
         try:
-            if self.running != False:
+            if self.queue_com.running != False:
                 return False
             if self.resume_task():
-                self.running = True
-            return self.running
+                self.queue_com.running = True
+            return self.queue_com.running
         finally:
             self.state_lock.release()
 
     def stop(self):
         self.state_lock.acquire()
         try:
-            if self.running and self.stop_task():
-                self.running = None
+            if self.queue_com.running and self.stop_task():
+                self.queue_com.running = None
                 return True
             return False
         finally:
