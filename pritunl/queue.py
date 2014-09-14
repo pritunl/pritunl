@@ -35,6 +35,7 @@ class Queue(MongoObject):
         'ttl': MONGO_QUEUE_TTL,
     }
     type = None
+    cpu_type = NORMAL_CPU
     reserve_id = None
 
     def __init__(self, priority=None, retry=None, **kwargs):
