@@ -16,8 +16,13 @@ import copy
 import collections
 
 logger = logging.getLogger(APP_NAME)
-running_queues = collections.defaultdict(set)
-thread_limit = threading.Semaphore(MONGO_QUEUE_THREAD_LIMIT)
+running_queues = collections.defaultdict(
+    lambda: collections.defaultdict(set))
+thread_limits = [
+    threading.Semaphore(4),
+    threading.Semaphore(2),
+    threading.Semaphore(1),
+]
 
 class QueueRunner(object):
     def random_sleep(self):
@@ -28,30 +33,33 @@ class QueueRunner(object):
 
         def pause():
             for queue_priority in xrange(min(NORMAL, queue_item.priority)):
-                for running_queue in copy.copy(running_queues[queue_priority]):
+                for running_queue in copy.copy(
+                        running_queues[queue_item.cpu_type][queue_priority]):
                     if running_queue.pause():
                         paused_queues.add(running_queue)
-                        thread_limit.release()
+                        thread_limits[queue_item.cpu_type].release()
 
         thread = threading.Thread(target=pause)
         thread.daemon = True
         thread.start()
 
         def run():
-            thread_limit.acquire()
-            running_queues[queue_item.priority].add(queue_item)
+            thread_limits[queue_item.cpu_type].acquire()
+            running_queues[queue_item.cpu_type][queue_item.priority].add(
+                queue_item)
             try:
                 queue_item.run()
             finally:
                 try:
-                    running_queues[queue_item.priority].remove(queue_item)
+                    running_queues[queue_item.cpu_type][
+                        queue_item.priority].remove(queue_item)
                 except KeyError:
                     pass
 
-                thread_limit.release()
+                thread_limits[queue_item.cpu_type].release()
 
                 for paused_queue in paused_queues:
-                    thread_limit.acquire()
+                    thread_limits[queue_item.cpu_type].acquire()
                     paused_queue.resume()
 
         thread = threading.Thread(target=run)
