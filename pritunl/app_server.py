@@ -1,5 +1,6 @@
 from pritunl.constants import *
 from pritunl.config import Config
+from pritunl.log_filter import LogFilter
 import pritunl.utils as utils
 import flask
 import cherrypy.wsgiserver
@@ -288,6 +289,8 @@ class AppServer(Config):
         global logger
         if not logger:
             logger = logging.getLogger(APP_NAME)
+
+        logger.addFilter(LogFilter())
 
         logger.setLevel(self.log_level)
         self.log_handler.setLevel(self.log_level)
