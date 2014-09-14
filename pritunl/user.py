@@ -77,12 +77,7 @@ class User(MongoObject):
         }
 
     def _wait_status(self):
-        if not self.org.running:
-            raise QueueStopped('User init queue stopped', {
-                'org_id': self.org.id,
-                'user_id': self.id,
-            })
-        self.org.running.wait()
+        self.org.queue_com.wait_status()
 
     def _exec(self, args):
         while True:
