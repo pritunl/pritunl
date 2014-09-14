@@ -3,6 +3,7 @@ from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.cache import cache_db
 from pritunl.user import User
+from pritunl.queue_com import QueueCom
 from pritunl.pooler_user import PoolerUser
 from pritunl.mongo_object import MongoObject
 from pritunl.queue_init_org_pooled import QueueInitOrgPooled
@@ -33,8 +34,7 @@ class Organization(MongoObject):
         MongoObject.__init__(self, **kwargs)
         self.last_search_count = None
         self.processes = []
-        self.running = threading.Event()
-        self.running.set()
+        self.queue_com = QueueCom()
 
         if name is not None:
             self.name = name
