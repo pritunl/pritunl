@@ -1,6 +1,7 @@
 from pritunl.constants import *
 from pritunl.config import Config
 from pritunl.log_filter import LogFilter
+from pritunl.log_formatter import LogFormatter
 import pritunl.utils as utils
 import flask
 import cherrypy.wsgiserver
@@ -295,7 +296,7 @@ class AppServer(Config):
         logger.setLevel(self.log_level)
         self.log_handler.setLevel(self.log_level)
 
-        self.log_handler.setFormatter(logging.Formatter(
+        self.log_handler.setFormatter(LogFormatter(
             '[%(asctime)s][%(levelname)s][%(module)s][%(lineno)d] ' +
             '%(message)s'))
 
