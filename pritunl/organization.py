@@ -91,7 +91,7 @@ class Organization(MongoObject):
         if self.type != ORG_POOL:
             raise TypeError('Only pool orgs can be queued')
         queue = QueueInitOrgPooled(org_doc=self.export(), priority=priority)
-        queue.start(block=block, block_timeout=120)
+        queue.start(block=block)
 
     def commit(self, *args, **kwargs):
         exists = self.exists
