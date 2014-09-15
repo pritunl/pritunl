@@ -112,23 +112,31 @@ class Queue(MongoObject):
         messenger.publish('queue', [PENDING, self.id], transaction=transaction)
 
         if block:
-            for msg in messenger.subscribe('queue', cursor_id=cursor_id,
-                    timeout=block_timeout):
-                try:
-                    if msg['message'] == [COMPLETE, self.id]:
-                        return
-                    elif msg['message'] == [ERROR, self.id]:
-                        raise QueueTaskError('Error occured running ' +
-                            'queue task', {
-                                'queue_id': self.id,
-                                'queue_type': self.type,
-                            })
-                except TypeError:
-                    pass
-            raise QueueTimeout('Blocking queue timed out.', {
-                'queue_id': self.id,
-                'queue_type': self.type,
-            })
+            last_update = time.time()
+            while True:
+                for msg in messenger.subscribe('queue', cursor_id=cursor_id,
+                        timeout=block_timeout):
+                    cursor_id = msg['_id']
+                    try:
+                        if msg['message'] == [COMPLETE, self.id]:
+                            return
+                        elif msg['message'] == [UPDATE, self.id]:
+                            last_update = time.time()
+                            break
+                        elif msg['message'] == [ERROR, self.id]:
+                            raise QueueTaskError('Error occured running ' +
+                                'queue task', {
+                                    'queue_id': self.id,
+                                    'queue_type': self.type,
+                                })
+                    except TypeError:
+                        pass
+
+                if (time.time() - last_update) >= block_timeout:
+                    raise QueueTimeout('Blocking queue timed out.', {
+                        'queue_id': self.id,
+                        'queue_type': self.type,
+                    })
 
     def claim_commit(self, fields=None):
         doc = self.get_commit_doc(fields=fields)
