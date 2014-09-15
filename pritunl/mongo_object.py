@@ -115,11 +115,11 @@ class MongoObject(object):
         if self.exists:
             for field in self.fields_required:
                 if doc.get(field, True) is None:
-                    raise ValueError('Required field is missing')
+                    raise ValueError('Required %r field is missing' % field)
         else:
             for field in self.fields_required:
                 if doc.get(field) is None:
-                    raise ValueError('Required field is missing')
+                    raise ValueError('Required %r field is missing' % field)
         return doc
 
     def commit(self, fields=None, transaction=None):
