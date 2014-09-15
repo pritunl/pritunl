@@ -76,9 +76,6 @@ class User(MongoObject):
             'disabled': self.disabled,
         }
 
-    def _wait_status(self):
-        self.org.queue_com.wait_status()
-
     def initialize(self):
         temp_path = app_server.get_temp_path()
         index_path = os.path.join(temp_path, INDEX_NAME)
@@ -116,7 +113,7 @@ class User(MongoObject):
                     ca_key_path,
                 ))
 
-            self._wait_status()
+            self.org.queue_com.wait_status()
 
             if self.type != CERT_CA:
                 self.org.write_file('ca_certificate', ca_cert_path, chmod=0600)
@@ -164,7 +161,7 @@ class User(MongoObject):
             except subprocess.CalledProcessError:
                 pass
 
-        self._wait_status()
+        self.org.queue_com.wait_status()
 
         # If assign ip addr fails it will be corrected in ip sync task
         try:
