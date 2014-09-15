@@ -102,6 +102,9 @@ class Organization(MongoObject):
         queue = QueueInitOrgPooled(org_doc=self.export(), priority=priority)
         queue.start(block=block)
 
+        if block:
+            self.load()
+
     def commit(self, *args, **kwargs):
         exists = self.exists
         MongoObject.commit(self, *args, **kwargs)
