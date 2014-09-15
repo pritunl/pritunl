@@ -69,4 +69,14 @@ class QueueDhParam(Queue):
             'dh_params': self.dh_params,
         })
 
+    def pause_task(self):
+        if self.reserve_data:
+            return False
+        self.load()
+        if self.reserve_data:
+            return False
+
+        self.queue_com.popen_kill_all()
+        return True
+
 add_queue(QueueDhParam)
