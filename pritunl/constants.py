@@ -14,6 +14,7 @@ RESTART = 'restart'
 
 RUNNING = 'running'
 PAUSED = 'paused'
+STOPPED = 'stopped'
 
 PENDING = 'pending'
 COMMITTED = 'committed'
