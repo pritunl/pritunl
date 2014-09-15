@@ -280,7 +280,7 @@ class AppServer(Config):
             os.makedirs(self.temp_path)
 
     def _setup_log(self):
-        self.log_level = logging.INFO
+        self.log_level = logging.DEBUG
         if self.log_path:
             self.log_handler = logging.handlers.RotatingFileHandler(
                 self.log_path, maxBytes=1000000, backupCount=1)
