@@ -79,4 +79,7 @@ class QueueDhParam(Queue):
         self.queue_com.popen_kill_all()
         return True
 
+    def repeat_task(self):
+        Event(type=SERVERS_UPDATED)
+
 add_queue(QueueDhParam)
