@@ -247,6 +247,12 @@ class Queue(MongoObject):
                     'queue_type': self.type,
                 })
                 Messenger().publish('queue', [ERROR, self.id])
+        finally:
+            self.queue_com.state_lock.acquire()
+            try:
+                self.queue_com.state = COMPLETE
+            finally:
+                self.queue_com.state_lock.release()
 
     def pause(self):
         self.queue_com.state_lock.acquire()
