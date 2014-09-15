@@ -176,6 +176,11 @@ class Queue(MongoObject):
         if self.claimed:
             self.keep_alive()
 
+            logger.debug('Queue claimed', 'queue',
+                queue_id=self.id,
+                queue_type=self.type,
+            )
+
         return response['updatedExisting']
 
     @classmethod
