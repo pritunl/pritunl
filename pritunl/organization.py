@@ -8,6 +8,7 @@ from pritunl.pooler_user import PoolerUser
 from pritunl.mongo_object import MongoObject
 from pritunl.queue_init_org_pooled import QueueInitOrgPooled
 from pritunl import app_server
+import pritunl.logger as logger
 import pritunl.mongo as mongo
 import uuid
 import logging
@@ -16,8 +17,6 @@ import json
 import math
 import pymongo
 import threading
-
-logger = logging.getLogger(APP_NAME)
 
 class Organization(MongoObject):
     fields = {
@@ -84,6 +83,11 @@ class Organization(MongoObject):
             ca_user.initialize()
             ca_user.commit()
 
+        logger.debug('Init ca_user', 'organization',
+            org_id=self.id,
+            user_id=ca_user.id,
+        )
+
         self.ca_private_key = ca_user.private_key
         self.ca_certificate = ca_user.certificate
 
@@ -98,6 +102,10 @@ class Organization(MongoObject):
         MongoObject.commit(self, *args, **kwargs)
 
         if not exists:
+            logger.debug('Fill new org pool', 'organization',
+                org_id=self.id,
+            )
+
             thread = threading.Thread(target=PoolerUser.fill_new_org_pool,
                 kwargs={
                     'org': self,
@@ -239,15 +247,36 @@ class Organization(MongoObject):
                 user = User.reserve_queued_user(org=self, type=type,
                     block=block, **kwargs)
 
+                if user:
+                    logger.debug('Reserved queued user', 'organization',
+                        org_id=self.id,
+                        user_id=user.id,
+                    )
+            else:
+                logger.debug('Reserved pooled user', 'organization',
+                    org_id=self.id,
+                    user_id=user.id,
+                )
+
             if user:
                 User.new_pooled_user(org=self, type=type)
                 return user
 
         user = User(org=self, type=type, **kwargs)
         user.queue_initialize(block=block)
+
+        logger.debug('Queued user init', 'organization',
+            org_id=self.id,
+            user_id=user.id,
+        )
+
         return user
 
     def remove(self):
+        logger.debug('Remove org', 'organization',
+            org_id=self.id,
+        )
+
         for server in self.iter_servers():
             if server.status:
                 server.stop()
@@ -266,6 +295,10 @@ class Organization(MongoObject):
         })
         thread.daemon = True
         thread.start()
+
+        logger.debug('Queued pooled org', 'organization',
+            org_id=self.id,
+        )
 
     @classmethod
     def reserve_pooled_org(cls, name=None, type=ORG_DEFAULT):
@@ -299,6 +332,15 @@ class Organization(MongoObject):
                 org = cls.reserve_queued_org(type=type,
                     block=block, **kwargs)
 
+                if org:
+                    logger.debug('Reserved queued org', 'organization',
+                        org_id=org.id,
+                    )
+            else:
+                logger.debug('Reserved pooled org', 'organization',
+                    org_id=org.id,
+                )
+
             if org:
                 cls.new_pooled_org()
                 return org
@@ -306,10 +348,20 @@ class Organization(MongoObject):
             org = cls(type=type, **kwargs)
             org.initialize()
             org.commit()
+
+            logger.debug('Org init', 'organization',
+                org_id=org.id,
+            )
+
             return org
         else:
             org = cls(type=type, **kwargs)
             org.queue_initialize(block=block)
+
+            logger.debug('Queue org init', 'organization',
+                org_id=org.id,
+            )
+
             return org
 
     @classmethod
