@@ -88,7 +88,9 @@ class QueueRunner(object):
         spec = {
             'runner_id': {'$exists': False},
         }
+
         self.random_sleep()
+
         for queue_item in Queue.iter_queues(spec):
             self.run_queue_item(queue_item)
 
@@ -119,13 +121,13 @@ class QueueRunner(object):
         }
 
         for queue_item in Queue.iter_queues(spec):
-
             response = Queue.collection.update({
                 '_id': bson.ObjectId(queue_item.id),
                 'ttl_timestamp': {'$lt': cur_timestamp},
             }, {'$unset': {
                 'runner_id': '',
             }})
+
             if response['updatedExisting']:
                 self.run_queue_item(queue_item)
 
