@@ -34,4 +34,3 @@ class PoolerOrg(object):
 
         for _ in xrange(ORG_POOL_SIZE - org_pool_count):
             org = Organization.new_org(type=ORG_POOL)
-            org.commit()
