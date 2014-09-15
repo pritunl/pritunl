@@ -55,7 +55,7 @@ class QueueInitOrgPooled(Queue):
         for process in copy.copy(self.org.queue_com.processes):
             if not process[1]:
                 process[1] = True
-                process[0].kill() # TODO test process[0].terminate()
+                process[0].kill()
         return True
 
     def resume_task(self):
