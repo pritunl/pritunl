@@ -32,6 +32,18 @@ class QueueInitUserPooled(QueueInitUser):
                 setattr(self.user, field, value)
         self.user.commit()
 
+    def pause_task(self):
+        if self.reserve_data:
+            return False
+        self.load()
+        if self.reserve_data:
+            return False
+
+        self.org.running.clear()
+        self.org.queue_com.popen_kill_all()
+
+        return True
+
     @classmethod
     def reserve_queued_user(cls, org, name=None, email=None, type=None,
             disabled=None, block=False):
