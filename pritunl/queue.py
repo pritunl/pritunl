@@ -196,7 +196,7 @@ class Queue(MongoObject):
             if self.claimed:
                 self.complete()
         except:
-            if self.queue_com.running is not None:
+            if self.queue_com.state is not STOPPED:
                 logger.exception('Error running task in queue. %r' % {
                     'queue_id': self.id,
                     'queue_type': self.type,
@@ -204,36 +204,34 @@ class Queue(MongoObject):
                 Messenger().publish('queue', [ERROR, self.id])
 
     def pause(self):
-        self.state_lock.acquire()
+        self.queue_com.state_lock.acquire()
         try:
-            if not self.queue_com.running:
-                return False
-            if self.pause_task():
-                self.queue_com.running = False
-            return not self.queue_com.running
-        finally:
-            self.state_lock.release()
-
-    def resume(self):
-        self.state_lock.acquire()
-        try:
-            if self.queue_com.running != False:
-                return False
-            if self.resume_task():
-                self.queue_com.running = True
-            return self.queue_com.running
-        finally:
-            self.state_lock.release()
-
-    def stop(self):
-        self.state_lock.acquire()
-        try:
-            if self.queue_com.running and self.stop_task():
-                self.queue_com.running = None
+            if self.queue_com.state == RUNNING and self.pause_task():
+                self.queue_com.state = PAUSED
                 return True
             return False
         finally:
-            self.state_lock.release()
+            self.queue_com.state_lock.release()
+
+    def resume(self):
+        self.queue_com.state_lock.acquire()
+        try:
+            if self.queue_com.state == PAUSED and self.resume_task():
+                self.queue_com.state = RUNNING
+                return True
+            return False
+        finally:
+            self.queue_com.state_lock.release()
+
+    def stop(self):
+        self.queue_com.state_lock.acquire()
+        try:
+            if self.queue_com.state == RUNNING and self.stop_task():
+                self.queue_com.state = STOPPED
+                return True
+            return False
+        finally:
+            self.queue_com.state_lock.release()
 
     def complete(self):
         Messenger().publish('queue', [COMPLETE, self.id])
