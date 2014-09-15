@@ -4,6 +4,7 @@ from pritunl.descriptors import *
 from pritunl.queue_com import QueueCom
 from pritunl.messenger import Messenger
 from pritunl.mongo_object import MongoObject
+import pritunl.logger as logger
 import pritunl.mongo as mongo
 import bson
 import datetime
@@ -12,7 +13,6 @@ import threading
 import time
 
 queue_types = {}
-logger = logging.getLogger(APP_NAME)
 
 def add_queue(queue_cls):
     queue_types[queue_cls.type] = queue_cls
@@ -80,8 +80,18 @@ class Queue(MongoObject):
                     datetime.timedelta(seconds=self.ttl),
             }})
             if response['updatedExisting']:
+                logger.debug('Queue keep alive updated', 'queue',
+                    queue_id=self.id,
+                    queue_type=self.type,
+                )
+
                 messenger.publish('queue', [UPDATE, self.id])
             else:
+                logger.debug('Queue keep alive lost reserve', 'queue',
+                    queue_id=self.id,
+                    queue_type=self.type,
+                )
+
                 self.queue_com.state_lock.acquire()
                 try:
                     self.queue_com.state = STOPPED
@@ -91,6 +101,11 @@ class Queue(MongoObject):
                     'queue_id': self.id,
                     'queue_type': self.type,
                     })
+
+        logger.debug('Queue keep alive thread ended', 'queue',
+            queue_id=self.id,
+            queue_type=self.type,
+        )
 
     def keep_alive(self):
         if self.keep_alive_thread:
@@ -207,6 +222,11 @@ class Queue(MongoObject):
                 self.attempts += 1
 
                 if self.attempts > 1 and not self.retry:
+                    logger.debug('Non retry queue exceeded attemps', 'queue',
+                        queue_id=self.id,
+                        queue_type=self.type,
+                    )
+
                     self.remove()
                     return
                 elif self.attempts > MONGO_QUEUE_MAX_ATTEMPTS:
@@ -217,6 +237,10 @@ class Queue(MongoObject):
                     if not self.claim_commit('attempts'):
                         return
 
+                    logger.debug('Starting queue task', 'queue',
+                        queue_id=self.id,
+                        queue_type=self.type,
+                    )
                     self.task()
 
                     if self.attempts > 1:
@@ -232,11 +256,26 @@ class Queue(MongoObject):
                     return
 
                 if self.state == COMMITTED:
+                    logger.debug('Starting queue post_task', 'queue',
+                        queue_id=self.id,
+                        queue_type=self.type,
+                    )
+
                     self.post_task()
                 elif self.state == ROLLBACK:
+                    logger.debug('Starting queue rollback_task', 'queue',
+                        queue_id=self.id,
+                        queue_type=self.type,
+                    )
+
                     self.rollback_task()
 
                 if self.has_post_work:
+                    logger.debug('Starting queue complete_task', 'queue',
+                        queue_id=self.id,
+                        queue_type=self.type,
+                    )
+
                     self.complete_task()
 
             if self.claimed:
