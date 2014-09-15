@@ -388,6 +388,7 @@ class AppServer(Config):
         # App.run server uses werkzeug logger
         werkzeug_logger = logging.getLogger('werkzeug')
         werkzeug_logger.setLevel(logging.DEBUG)
+        werkzeug_logger.addFilter(self.log_filter)
         werkzeug_logger.addHandler(self.log_handler)
 
         try:
