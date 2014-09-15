@@ -1,7 +1,8 @@
 class BaseError(Exception):
-    def __init__(self, message, data):
-        self.__dict__.update(data)
-        message = '%s. %r' % (message, data)
+    def __init__(self, message, data=None):
+        if data:
+            self.__dict__.update(data)
+            message = '%s. %r' % (message, data)
         Exception.__init__(self, message)
 
 
