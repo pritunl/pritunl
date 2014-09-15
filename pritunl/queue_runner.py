@@ -73,8 +73,8 @@ class QueueRunner(object):
         spec = {
             'runner_id': {'$exists': False},
         }
+        self.random_sleep()
         for queue_item in Queue.iter_queues(spec):
-            self.random_sleep()
             self.run_queue_item(queue_item)
 
     def watch_thread(self):
