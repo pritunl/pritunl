@@ -6,10 +6,13 @@ import logging
 logger = logging.getLogger(APP_NAME)
 
 def _log(log_level, log_msg, log_type, **kwargs):
-    getattr(logger, log_level)(log_msg, extra={
-            'type': log_type,
-            'data': kwargs,
-        })
+    if log_level == 'exception':
+        getattr(logger, log_level)(log_msg)
+    else:
+        getattr(logger, log_level)(log_msg, extra={
+                'type': log_type,
+                'data': kwargs,
+            })
 
 def debug(log_msg, log_type=None, **kwargs):
     _log('debug', log_msg, log_type, **kwargs)
