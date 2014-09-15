@@ -21,6 +21,7 @@ COMMITTED = 'committed'
 ROLLBACK = 'rollback'
 COMPLETE = 'complete'
 ERROR = 'error'
+UPDATE = 'update'
 
 VERY_LOW = 0
 LOW = 1
