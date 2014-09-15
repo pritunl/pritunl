@@ -40,6 +40,13 @@ class QueueRunner(object):
                         paused_queues.add(running_queue)
                         thread_limits[queue_item.cpu_type].release()
 
+                        logger.debug('Puase queue item', 'queue',
+                            queue_id=queue_item.id,
+                            queue_type=queue_item.type,
+                            queue_priority=queue_item.priority,
+                            queue_cpu_type=queue_item.cpu_type,
+                        )
+
         def run():
             thread_limits[queue_item.cpu_type].acquire()
             try:
@@ -60,6 +67,13 @@ class QueueRunner(object):
         if queue_item.id in queues:
             return
         queues.add(queue_item.id)
+
+        logger.debug('Add queue item for run', 'queue',
+            queue_id=queue_item.id,
+            queue_type=queue_item.type,
+            queue_priority=queue_item.priority,
+            queue_cpu_type=queue_item.cpu_type,
+        )
 
         if queue_item.priority >= NORMAL:
             thread = threading.Thread(target=pause)
