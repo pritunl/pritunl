@@ -44,6 +44,8 @@ class QueueInitOrgPooled(Queue):
         Event(type=ORGS_UPDATED)
 
     def pause_task(self):
+        if self.reserve_data:
+            return False
         self.load()
         if self.reserve_data:
             return False
