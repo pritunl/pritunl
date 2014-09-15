@@ -51,11 +51,8 @@ class QueueInitOrgPooled(Queue):
             return False
 
         self.org.running.clear()
+        self.org.queue_com.popen_kill_all()
 
-        for process in copy.copy(self.org.queue_com.processes):
-            if not process[1]:
-                process[1] = True
-                process[0].kill()
         return True
 
     def resume_task(self):
