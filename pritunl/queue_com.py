@@ -40,3 +40,15 @@ class QueueCom(object):
                         'error exit code %r' % return_code)
             else:
                 break
+
+    def popen_term_all(self):
+        for process in copy.copy(self.processes):
+            if not process[1]:
+                process[1] = True
+                process[0].terminate()
+
+    def popen_kill_all(self):
+        for process in copy.copy(self.processes):
+            if not process[1]:
+                process[1] = True
+                process[0].kill()
