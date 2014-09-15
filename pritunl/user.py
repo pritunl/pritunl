@@ -186,6 +186,7 @@ class User(MongoObject):
 
             queue = QueueInitUser(org_doc=self.org.export(),
                 user_doc=self.export(), priority=priority, retry=retry)
+
         queue.start(block=block)
         if block:
             self.load()
