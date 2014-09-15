@@ -29,6 +29,7 @@ class QueueRunner(object):
         time.sleep(random.randint(0, 10) / 1000.)
 
     def run_queue_item(self, queue_item):
+        queues = running_queues[queue_item.cpu_type][queue_item.priority]
         paused_queues = set()
 
         def pause():
@@ -39,20 +40,14 @@ class QueueRunner(object):
                         paused_queues.add(running_queue)
                         thread_limits[queue_item.cpu_type].release()
 
-        thread = threading.Thread(target=pause)
-        thread.daemon = True
-        thread.start()
-
         def run():
             thread_limits[queue_item.cpu_type].acquire()
-            running_queues[queue_item.cpu_type][queue_item.priority].add(
-                queue_item)
             try:
                 queue_item.run()
             finally:
                 try:
                     running_queues[queue_item.cpu_type][
-                        queue_item.priority].remove(queue_item)
+                        queue_item.priority].remove(queue_item.id)
                 except KeyError:
                     pass
 
@@ -61,6 +56,14 @@ class QueueRunner(object):
                 for paused_queue in paused_queues:
                     thread_limits[queue_item.cpu_type].acquire()
                     paused_queue.resume()
+
+        if queue_item.id in queues:
+            return
+        queues.add(queue_item.id)
+
+        thread = threading.Thread(target=pause)
+        thread.daemon = True
+        thread.start()
 
         thread = threading.Thread(target=run)
         thread.daemon = True
