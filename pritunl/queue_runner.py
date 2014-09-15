@@ -61,9 +61,10 @@ class QueueRunner(object):
             return
         queues.add(queue_item.id)
 
-        thread = threading.Thread(target=pause)
-        thread.daemon = True
-        thread.start()
+        if queue_item.priority >= NORMAL:
+            thread = threading.Thread(target=pause)
+            thread.daemon = True
+            thread.start()
 
         thread = threading.Thread(target=run)
         thread.daemon = True
