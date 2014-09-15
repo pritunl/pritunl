@@ -79,25 +79,6 @@ class User(MongoObject):
     def _wait_status(self):
         self.org.queue_com.wait_status()
 
-    def _exec(self, args):
-        while True:
-            self._wait_status()
-
-            process = subprocess.Popen(args, stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE)
-            process_data = [process, False]
-            self.org.processes.append(process_data)
-
-            return_code = process.wait()
-            self.org.processes.remove(process_data)
-
-            if return_code:
-                if not process_data[1]:
-                    raise ValueError('Popen returned ' +
-                        'error exit code %r' % return_code)
-            else:
-                break
-
     def initialize(self):
         temp_path = app_server.get_temp_path()
         index_path = os.path.join(temp_path, INDEX_NAME)
@@ -150,7 +131,7 @@ class User(MongoObject):
                     '-keyout', key_path,
                     '-reqexts', '%s_req_ext' % self.type.replace('_pool', ''),
                 ]
-                self._exec(args)
+                self.org.queue_com.popen(args)
             except (OSError, ValueError):
                 logger.exception('Failed to create user cert requests. %r' % {
                     'org_id': self.org.id,
@@ -169,7 +150,7 @@ class User(MongoObject):
                     '-out', cert_path,
                     '-extensions', '%s_ext' % self.type.replace('_pool', ''),
                 ]
-                self._exec(args)
+                self.org.queue_com.popen(args)
             except (OSError, ValueError):
                 logger.exception('Failed to create user cert. %r' % {
                     'org_id': self.org.id,
