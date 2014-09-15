@@ -46,7 +46,7 @@ class Queue(MongoObject):
         self.runner_id = bson.ObjectId()
         self.claimed = False
         self.queue_com = QueueCom()
-        self.state_lock = threading.Lock()
+        self.keep_alive_thread = None
 
         if priority is not None:
             self.priority = priority
@@ -63,6 +63,40 @@ class Queue(MongoObject):
             self.post_task.__doc__ != 'not_overridden',
             self.complete_task.__doc__ != 'not_overridden',
         ))
+
+    def _keep_alive_loop(self):
+        messenger = Messenger()
+
+        while True:
+            time.sleep(self.ttl - 5)
+            if self.queue_com.state in (COMPLETE, STOPPED):
+                break
+            response = self.collection.update({
+                '_id': bson.ObjectId(self.id),
+                'runner_id': self.runner_id,
+            }, {'$set': {
+                'ttl_timestamp': datetime.datetime.utcnow() + \
+                    datetime.timedelta(seconds=self.ttl),
+            }})
+            if response['updatedExisting']:
+                messenger.publish('queue', [UPDATE, self.id])
+            else:
+                self.queue_com.state_lock.acquire()
+                try:
+                    self.queue_com.state = STOPPED
+                finally:
+                    self.queue_com.state_lock.release()
+                raise QueueStopped('Lost reserve, queue stopped', {
+                    'queue_id': self.id,
+                    'queue_type': self.type,
+                    })
+
+    def keep_alive(self):
+        if self.keep_alive_thread:
+            return
+        self.keep_alive_thread = threading.Thread(target=self._keep_alive_loop)
+        self.keep_alive_thread.daemon = True
+        self.keep_alive_thread.start()
 
     def start(self, transaction=None, block=False, block_timeout=30):
         self.ttl_timestamp = datetime.datetime.utcnow() + \
