@@ -52,7 +52,7 @@ class QueueInitOrgPooled(Queue):
 
         self.org.running.clear()
 
-        for process in copy.copy(self.org.processes):
+        for process in copy.copy(self.org.queue_com.processes):
             if not process[1]:
                 process[1] = True
                 process[0].kill() # TODO test process[0].terminate()
