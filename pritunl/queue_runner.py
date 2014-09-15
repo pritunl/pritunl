@@ -104,7 +104,12 @@ class QueueRunner(object):
                     except TypeError:
                         pass
             except:
-                logger.exception('Error in queue watch thread.')
+                logger.exception('Error in queue watch thread.', 'queue',
+                    queue_id=queue_item.id,
+                    queue_type=queue_item.type,
+                    queue_priority=queue_item.priority,
+                    queue_cpu_type=queue_item.cpu_type,
+                )
                 time.sleep(0.5)
 
     def run_timeout_queues(self):
