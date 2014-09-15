@@ -10,6 +10,7 @@ import os
 class MongoObject(object):
     fields = set()
     fields_default = {}
+    fields_required = {}
 
     def __new__(cls, id=None, doc=None, spec=None, **kwargs):
         mongo_object = object.__new__(cls)
@@ -111,6 +112,14 @@ class MongoObject(object):
                 if hasattr(self, field):
                     doc[field] = getattr(self, field)
 
+        if self.exists:
+            for field in self.fields_required:
+                if doc.get(field, True) is None:
+                    raise ValueError('Required field is missing')
+        else:
+            for field in self.fields_required:
+                if doc.get(field) is None:
+                    raise ValueError('Required field is missing')
         return doc
 
     def commit(self, fields=None, transaction=None):
