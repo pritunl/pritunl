@@ -25,8 +25,8 @@ class QueueInitUserPooled(QueueInitUser):
 
     def task(self):
         self.user.initialize()
-
         self.load()
+
         if self.reserve_data:
             for field, value in self.reserve_data.items():
                 setattr(self.user, field, value)
