@@ -157,6 +157,9 @@ class Queue(MongoObject):
 
         self.claimed = response['updatedExisting']
 
+        if self.claimed:
+            self.keep_alive()
+
         return response['updatedExisting']
 
     @classmethod
