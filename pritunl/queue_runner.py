@@ -33,7 +33,7 @@ class QueueRunner(object):
         paused_queues = set()
 
         def pause():
-            for queue_priority in xrange(min(NORMAL, queue_item.priority)):
+            for queue_priority in xrange(queue_item.priority):
                 for running_queue in copy.copy(
                         running_queues[queue_item.cpu_type][queue_priority]):
                     if running_queue.pause():
