@@ -13,7 +13,7 @@ class QueueCom(object):
         self.last_check = time.time()
 
     def wait_status(self):
-        if not self.running:
+        if self.state in (COMPLETE, STOPPED):
             raise QueueStopped('Queue stopped', {
                 'queue_id': self.id,
                 'queue_type': self.type,
