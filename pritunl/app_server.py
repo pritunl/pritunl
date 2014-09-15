@@ -290,7 +290,8 @@ class AppServer(Config):
         if not logger:
             logger = logging.getLogger(APP_NAME)
 
-        logger.addFilter(LogFilter())
+        self.log_filter = LogFilter()
+        logger.addFilter(self.log_filter)
 
         logger.setLevel(logging.DEBUG)
         self.log_handler.setLevel(logging.DEBUG)
