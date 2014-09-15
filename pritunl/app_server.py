@@ -280,7 +280,6 @@ class AppServer(Config):
             os.makedirs(self.temp_path)
 
     def _setup_log(self):
-        self.log_level = logging.DEBUG
         if self.log_path:
             self.log_handler = logging.handlers.RotatingFileHandler(
                 self.log_path, maxBytes=1000000, backupCount=1)
@@ -293,8 +292,8 @@ class AppServer(Config):
 
         logger.addFilter(LogFilter())
 
-        logger.setLevel(self.log_level)
-        self.log_handler.setLevel(self.log_level)
+        logger.setLevel(logging.DEBUG)
+        self.log_handler.setLevel(logging.DEBUG)
 
         self.log_handler.setFormatter(LogFormatter(
             '[%(asctime)s][%(levelname)s][%(module)s][%(lineno)d] ' +
@@ -387,7 +386,7 @@ class AppServer(Config):
 
         # App.run server uses werkzeug logger
         werkzeug_logger = logging.getLogger('werkzeug')
-        werkzeug_logger.setLevel(self.log_level)
+        werkzeug_logger.setLevel(logging.DEBUG)
         werkzeug_logger.addHandler(self.log_handler)
 
         try:
