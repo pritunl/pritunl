@@ -96,4 +96,19 @@ class QueueDhParam(Queue):
     def repeat_task(self):
         Event(type=SERVERS_UPDATED)
 
+    @classmethod
+    def reserve_queued_dh_param(cls, server, block=False):
+        from pritunl.server import Server
+
+        reserve_id = server.dh_param_bits
+        reserve_data = {
+            'server_id': server.id,
+        }
+
+        doc = cls.reserve(reserve_id, reserve_data, block=block)
+        if not doc:
+            return
+
+        return server
+
 add_queue(QueueDhParam)
