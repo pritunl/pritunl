@@ -109,6 +109,9 @@ class QueueDhParam(Queue):
         if not doc:
             return
 
+        if block:
+            server.load()
+
         return server
 
 add_queue(QueueDhParam)
