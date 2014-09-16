@@ -115,10 +115,3 @@ class QueueDhParam(Queue):
         return server
 
 add_queue(QueueDhParam)
-
-# import time
-# import threading
-# def test():
-#     time.sleep(1)
-#     QueueDhParam(dh_param_bits=1024).start()
-# threading.Thread(target=test).start()
