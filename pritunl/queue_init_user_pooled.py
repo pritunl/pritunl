@@ -44,6 +44,9 @@ class QueueInitUserPooled(QueueInitUser):
 
         return True
 
+    def resume_task(self):
+        self.org.running.set()
+
     @classmethod
     def reserve_queued_user(cls, org, name=None, email=None, type=None,
             disabled=None, block=False):
