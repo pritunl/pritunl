@@ -12,6 +12,7 @@ class QueueDhParam(Queue):
     fields = {
         'dh_param_bits',
     } | Queue.fields
+    cpu_type = HIGH_CPU
     type = 'dh_param'
 
     def __init__(self, dh_param_bits=None, **kwargs):
