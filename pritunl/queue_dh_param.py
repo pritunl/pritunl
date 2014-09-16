@@ -67,7 +67,7 @@ class QueueDhParam(Queue):
             if response['updatedExisting']:
                 return
 
-        self.collection.insert({
+        self.dh_params_collection.insert({
             'dh_param_bits': self.dh_param_bits,
             'dh_params': self.dh_params,
         })
