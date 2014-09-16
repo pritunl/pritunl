@@ -65,5 +65,9 @@ class PoolerDhParams(object):
         for dh_param_bits in utils.roundrobin(*new_dh_params):
             queue = QueueDhParams(dh_param_bits=dh_param_bits)
             queue.start()
+            logger.debug('Queue dh params', 'server',
+                queue_id=queue.id,
+                dh_param_bits=dh_param_bits,
+            )
 
 PoolerDhParams.fill_pool()
