@@ -23,7 +23,7 @@ class QueueDhParam(Queue):
             self.dh_param_bits = dh_param_bits
 
     @cached_static_property
-    def collection(cls):
+    def dh_params_collection(cls):
         return mongo.get_collection('dh_params')
 
     @cached_static_property
