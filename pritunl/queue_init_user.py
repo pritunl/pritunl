@@ -13,6 +13,7 @@ class QueueInitUser(Queue):
         'org_doc',
         'user_doc',
     } | Queue.fields
+    cpu_type = NORMAL_CPU
     type = 'init_user'
 
     def __init__(self, org_doc=None, user_doc=None, **kwargs):
