@@ -3,6 +3,7 @@ from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.cache import cache_db
 from pritunl.least_common_counter import LeastCommonCounter
+from pritunl.queue_dh_params import QueueDhParams
 from pritunl import app_server
 import pritunl.mongo as mongo
 import pritunl.utils as utils
@@ -62,6 +63,7 @@ class PoolerDhParams(object):
             new_dh_params.append([dh_param_bits] * (SERVER_POOL_SIZE - count))
 
         for dh_param_bits in utils.roundrobin(*new_dh_params):
-            pass
+            queue = QueueDhParams(dh_param_bits=dh_param_bits)
+            queue.start()
 
 PoolerDhParams.fill_pool()
