@@ -2,9 +2,11 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.queue import Queue, add_queue
+from pritunl.queue_com import QueueCom
 from pritunl.event import Event
 from pritunl import app_server
 import pritunl.logger as logger
+import pritunl.mongo as mongo
 
 class QueueDhParam(Queue):
     fields = {
