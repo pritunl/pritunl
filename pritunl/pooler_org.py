@@ -22,15 +22,25 @@ class PoolerOrg(object):
     def collection(cls):
         return mongo.get_collection('organizations')
 
+    @cached_static_property
+    def queue_collection(cls):
+        return mongo.get_collection('queue')
+
     @classmethod
     def fill_pool(cls):
         from pritunl.organization import Organization
 
-        org_pool_count = mongo.get_collection('organizations').find({
+        org_pool_count = cls.collection.find({
             'type': ORG_POOL,
         }, {
             '_id': True,
         }).count()
 
+        org_pool_count += cls.queue_collection.find({
+            'type': 'init_org_pooled',
+        }, {
+            '_id': True,
+        }).count()
+
         for _ in xrange(ORG_POOL_SIZE - org_pool_count):
-            org = Organization.new_org(type=ORG_POOL)
+            org = Organization.new_org(type=ORG_POOL, block=False)
