@@ -26,6 +26,10 @@ class PoolerUser(object):
     def org_collection(cls):
         return mongo.get_collection('organizations')
 
+    @cached_static_property
+    def queue_collection(cls):
+        return mongo.get_collection('queue')
+
     @classmethod
     def fill_new_org_pool(cls, org):
         user_types = utils.roundrobin([CERT_CLIENT_POOL] * USER_POOL_SIZE,
