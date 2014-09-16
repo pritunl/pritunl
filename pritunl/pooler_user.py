@@ -69,9 +69,9 @@ class PoolerUser(object):
                 },
                 'count': {'$sum': 1},
             }},
-        ])
+        ])['result']
 
-        for pool in pools['result']:
+        for pool in pools:
             orgs_count[pool['_id']['org_id'], pool['_id']['type']] += pool[
                 'count']
 
