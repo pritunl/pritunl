@@ -67,7 +67,16 @@ class QueueDhParam(Queue):
             })
 
             if response['updatedExisting']:
+                logger.debug('Reserved queued server dh params', 'server',
+                    queue_id=self.id,
+                    dh_param_bits=self.dh_param_bits,
+                )
                 return
+
+        logger.debug('Adding pooled server dh params', 'server',
+            queue_id=self.id,
+            dh_param_bits=self.dh_param_bits,
+        )
 
         self.dh_params_collection.insert({
             'dh_param_bits': self.dh_param_bits,
