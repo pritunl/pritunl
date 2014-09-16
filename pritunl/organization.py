@@ -99,6 +99,7 @@ class Organization(MongoObject):
     def queue_initialize(self, block, priority=LOW):
         if self.type != ORG_POOL:
             raise TypeError('Only pool orgs can be queued')
+
         queue = QueueInitOrgPooled(org_doc=self.export(), priority=priority)
         queue.start(block=block)
 
