@@ -304,9 +304,7 @@ class Organization(MongoObject):
         thread.daemon = True
         thread.start()
 
-        logger.debug('Queued pooled org', 'organization',
-            org_id=self.id,
-        )
+        logger.debug('Queued pooled org', 'organization')
 
     @classmethod
     def reserve_pooled_org(cls, name=None, type=ORG_DEFAULT):
