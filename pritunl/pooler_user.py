@@ -52,7 +52,7 @@ class PoolerUser(object):
 
         pools = cls.collection.aggregate([
             {'$match': {
-                'type': {'$in': [CERT_CLIENT_POOL, CERT_SERVER_POOL]},
+                'type': {'$in': (CERT_CLIENT_POOL, CERT_SERVER_POOL)},
             }},
             {'$project': {
                 'org_id': True,
