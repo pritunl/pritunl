@@ -10,7 +10,7 @@ import pritunl.mongo as mongo
 import pritunl.utils as utils
 import os
 
-class QueueDhParam(Queue):
+class QueueDhParams(Queue):
     fields = {
         'dh_param_bits',
     } | Queue.fields
