@@ -114,4 +114,4 @@ class QueueDhParams(Queue):
 
         return server
 
-add_queue(QueueDhParam)
+add_queue(QueueDhParams)
