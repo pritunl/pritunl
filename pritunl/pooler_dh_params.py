@@ -68,5 +68,3 @@ class PoolerDhParams(object):
                 queue_id=queue.id,
                 dh_param_bits=dh_param_bits,
             )
-
-PoolerDhParams.fill_pool()
