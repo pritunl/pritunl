@@ -5,6 +5,7 @@ from pritunl.cache import cache_db
 from pritunl.least_common_counter import LeastCommonCounter
 from pritunl.queue_dh_params import QueueDhParams
 from pritunl import app_server
+import pritunl.logger as logger
 import pritunl.mongo as mongo
 import pritunl.utils as utils
 import logging
@@ -15,8 +16,6 @@ import subprocess
 import os
 import itertools
 import collections
-
-logger = logging.getLogger(APP_NAME)
 
 class PoolerDhParams(object):
     @cached_static_property
