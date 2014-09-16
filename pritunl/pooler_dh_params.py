@@ -22,6 +22,10 @@ class PoolerDhParams(object):
     def collection(cls):
         return mongo.get_collection('dh_params')
 
+    @cached_static_property
+    def queue_collection(cls):
+        return mongo.get_collection('queue')
+
     @classmethod
     def fill_pool(cls):
         from pritunl.organization import Organization
@@ -45,6 +49,23 @@ class PoolerDhParams(object):
 
             for pool in pools:
                 dh_param_counts[pool['_id']] = pool['count']
+
+            pools = cls.queue_collection.aggregate([
+                {'$match': {
+                    'type': 'dh_params',
+                    'dh_param_bits': {'$in': DH_PARAM_BITS_POOL},
+                }},
+                {'$project': {
+                    'dh_param_bits': True,
+                }},
+                {'$group': {
+                    '_id': '$dh_param_bits',
+                    'count': {'$sum': 1},
+                }},
+            ])['result']
+
+            for pool in pools:
+                dh_param_counts[pool['_id']] += pool['count']
         else:
             dh_param_counts = LeastCommonCounter()
 
@@ -55,6 +76,15 @@ class PoolerDhParams(object):
             }).count()
 
             dh_param_counts[DH_PARAM_BITS_POOL[0]] = pool_count
+
+            pool_count = cls.queue_collection.find({
+                'type': 'dh_params',
+                'dh_param_bits': DH_PARAM_BITS_POOL[0],
+            }, {
+                '_id': True
+            }).count()
+
+            dh_param_counts[DH_PARAM_BITS_POOL[0]] += pool_count
 
         new_dh_params = []
 
