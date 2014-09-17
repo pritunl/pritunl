@@ -272,7 +272,8 @@ class Organization(MongoObject):
                 return user
 
         user = User(org=self, type=type, **kwargs)
-        user.queue_initialize(block=block)
+        user.queue_initialize(block=block,
+            priority=HIGH if type in (CERT_SERVER, CERT_CLIENT) else None)
 
         logger.debug('Queued user init', 'organization',
             org_id=self.id,
