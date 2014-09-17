@@ -949,8 +949,11 @@ class Server(MongoObject):
         return cls(id=id)
 
     @classmethod
-    def get_used_resources(cls):
+    def get_used_resources(cls, ignore_server_id):
         used_resources = cls.collection.aggregate([
+            {'$match': {
+                '_id': {'$ne': bson.ObjectId(ignore_server_id)},
+            }},
             {'$project': {
                 'network': True,
                 'interface': True,
