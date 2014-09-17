@@ -112,6 +112,7 @@ class QueueDhParams(Queue):
 
         self.queue_com.running.clear()
         self.queue_com.popen_kill_all()
+
         return True
 
     @classmethod
