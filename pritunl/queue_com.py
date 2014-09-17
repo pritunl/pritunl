@@ -7,7 +7,7 @@ import subprocess
 
 class QueueCom(object):
     def __init__(self):
-        self.state = RUNNING
+        self.state = None
         self.state_lock = threading.Lock()
         self.running = threading.Event()
         self.running.set()
