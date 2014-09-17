@@ -89,6 +89,8 @@ class User(MongoObject):
         ca_cert_path = os.path.join(temp_path, '%s.crt' % ca_name)
         ca_key_path = os.path.join(temp_path, '%s.key' % ca_name)
 
+        self.org.queue_com.wait_status()
+
         try:
             os.makedirs(temp_path)
 
