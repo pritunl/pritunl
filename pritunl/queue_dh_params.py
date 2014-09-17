@@ -107,6 +107,24 @@ class QueueDhParams(Queue):
         )
 
         self.queue_com.popen_kill_all()
+
+    @classmethod
+    def reserve_pooled_dh_param(cls, server):
+        doc = cls.dh_params_collection.find_and_modify({
+            'dh_param_bits': server.dh_param_bits,
+        }, {'$set': {
+            'dh_param_bits': None,
+        }})
+
+        if not doc:
+            return False
+
+        logger.debug('Reserved pooled dh params', 'server',
+            server_id=server.id,
+            dh_param_bits=server.dh_param_bits,
+        )
+
+        server.dh_params = doc['dh_params']
         return True
 
     @classmethod
