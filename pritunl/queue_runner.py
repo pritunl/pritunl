@@ -15,58 +15,39 @@ import time
 import bson
 import copy
 import collections
+from Queue import PriorityQueue
 
-running_queues = collections.defaultdict(
-    lambda: collections.defaultdict(set))
-thread_limits = [
-    threading.Semaphore(4),
-    threading.Semaphore(2),
-    threading.Semaphore(1),
-]
+running_queues = {}
+runner_queues = [PriorityQueue() for _ in xrange(3)]
+thread_limits = [threading.Semaphore(x) for x in (4, 2, 1)]
 
 class QueueRunner(object):
     def random_sleep(self):
         time.sleep(random.randint(0, 10) / 1000.)
 
     def run_queue_item(self, queue_item):
-        queues = running_queues[queue_item.cpu_type][queue_item.priority]
-        paused_queues = set()
-
         def pause():
-            for queue_priority in xrange(queue_item.priority):
-                for running_queue in copy.copy(
-                        running_queues[queue_item.cpu_type][queue_priority]):
-                    if running_queue.pause():
-                        paused_queues.add(running_queue)
-                        thread_limits[queue_item.cpu_type].release()
+            for running_queue in running_queues.values():
+                if running_queue.priority >= queue_item.priority:
+                    continue
 
-                        logger.debug('Puase queue item', 'queue',
-                            queue_id=queue_item.id,
-                            queue_type=queue_item.type,
-                            queue_priority=queue_item.priority,
-                            queue_cpu_type=queue_item.cpu_type,
-                        )
+                if running_queue.pause():
+                    logger.debug('Puase queue item', 'queue',
+                        queue_id=running_queue.id,
+                        queue_type=running_queue.type,
+                        queue_priority=running_queue.priority,
+                        queue_cpu_type=running_queue.cpu_type,
+                    )
 
-        def run():
-            thread_limits[queue_item.cpu_type].acquire()
-            try:
-                queue_item.run()
-            finally:
-                try:
-                    running_queues[queue_item.cpu_type][
-                        queue_item.priority].remove(queue_item.id)
-                except KeyError:
-                    pass
+                    runner_queues[running_queue.cpu_type].put((
+                        abs(running_queue.priority - 4),
+                        running_queue,
+                    ))
+                    thread_limits[running_queue.cpu_type].release()
 
-                thread_limits[queue_item.cpu_type].release()
-
-                for paused_queue in paused_queues:
-                    thread_limits[queue_item.cpu_type].acquire()
-                    paused_queue.resume()
-
-        if queue_item.id in queues:
+        if queue_item.id in running_queues:
             return
-        queues.add(queue_item.id)
+        running_queues[queue_item.id] = queue_item
 
         logger.debug('Add queue item for run', 'queue',
             queue_id=queue_item.id,
@@ -75,14 +56,15 @@ class QueueRunner(object):
             queue_cpu_type=queue_item.cpu_type,
         )
 
+        runner_queues[queue_item.cpu_type].put((
+            abs(queue_item.priority - 4),
+            queue_item,
+        ))
+
         if queue_item.priority >= NORMAL:
             thread = threading.Thread(target=pause)
             thread.daemon = True
             thread.start()
-
-        thread = threading.Thread(target=run)
-        thread.daemon = True
-        thread.start()
 
     def run_waiting_queues(self):
         spec = {
