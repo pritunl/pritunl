@@ -317,25 +317,15 @@ class Server(MongoObject):
             return Organization.get_org(id=org_id)
 
     def generate_dh_param(self):
-        logger.debug('Generating server dh params. %r' % {
-            'server_id': self.id,
-        })
+        reserved = QueueDhParams.reserve_pooled_dh_param(server=self)
+        if reserved:
+            return
 
-        temp_path = app_server.get_temp_path()
-        dh_param_path = os.path.join(temp_path, DH_PARAM_NAME)
+        reserved = QueueDhParams.reserve_queued_dh_param(server=self)
+        if reserved:
+            return
 
-        try:
-            os.makedirs(temp_path)
-            args = [
-                'openssl', 'dhparam',
-                '-out', dh_param_path,
-                str(self.dh_param_bits),
-            ]
-            subprocess.check_call(args, stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE)
-            self.read_file('dh_params', dh_param_path)
-        finally:
-            utils.rmtree(temp_path)
+        self.queue_dh_params()
 
     def _parse_network(self, network):
         network_split = network.split('/')
