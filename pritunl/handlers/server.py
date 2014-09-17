@@ -66,7 +66,7 @@ def server_get(server_id=None):
 @app_server.app.route('/server/<server_id>', methods=['PUT'])
 @app_server.auth
 def server_put_post(server_id=None):
-    used_resources = Server.get_used_resources()
+    used_resources = Server.get_used_resources(server_id)
     network_used = used_resources['networks']
     interface_used = used_resources['interfaces']
     port_used = used_resources['ports']
