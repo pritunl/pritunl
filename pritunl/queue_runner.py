@@ -13,7 +13,6 @@ import logging
 import threading
 import time
 import bson
-import copy
 import collections
 from Queue import PriorityQueue
 
