@@ -4,6 +4,7 @@ from pritunl.descriptors import *
 import time
 import threading
 import subprocess
+import copy
 
 class QueueCom(object):
     def __init__(self):
