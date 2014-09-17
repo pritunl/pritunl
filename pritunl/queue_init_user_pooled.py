@@ -39,13 +39,13 @@ class QueueInitUserPooled(QueueInitUser):
         if self.reserve_data:
             return False
 
-        self.org.running.clear()
+        self.org.queue_com.running.clear()
         self.org.queue_com.popen_kill_all()
 
         return True
 
     def resume_task(self):
-        self.org.running.set()
+        self.org.queue_com.running.set()
 
     @classmethod
     def reserve_queued_user(cls, org, name=None, email=None, type=None,
