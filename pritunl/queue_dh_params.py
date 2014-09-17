@@ -130,8 +130,6 @@ class QueueDhParams(Queue):
 
     @classmethod
     def reserve_queued_dh_param(cls, server, block=False):
-        from pritunl.server import Server
-
         reserve_id = server.dh_param_bits
         reserve_data = {
             'server_id': server.id,
