@@ -117,6 +117,29 @@ class QueueRunner(object):
 
             time.sleep(MONGO_QUEUE_TTL)
 
+    def runner_thread(self, cpu_priority, thread_limit, runner_queue):
+        def run(queue_item):
+            release = True
+            try:
+                if queue_item.queue_com.state == None:
+                    logger.debug('Run queue item', 'queue_runner')
+                    queue_item.run()
+                elif queue_item.queue_com.state == PAUSED:
+                    release = False
+                    queue_item.resume()
+            finally:
+                running_queues.pop(queue_item.id, None)
+                if release:
+                    thread_limit.release()
+
+        while True:
+            thread_limit.acquire()
+            priority, queue_item = runner_queue.get()
+
+            thread = threading.Thread(target=run, args=(queue_item,))
+            thread.daemon = True
+            thread.start()
+
     def start(self):
         for target in (self.watch_thread, self.check_thread):
             thread = threading.Thread(target=target)
