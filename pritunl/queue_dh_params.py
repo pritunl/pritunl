@@ -71,9 +71,9 @@ class QueueDhParams(Queue):
             response = self.server_collection.update({
                 '_id': bson.ObjectId(self.server_id),
                 'dh_param_bits': self.dh_param_bits,
-            }, {
+            }, {'$set': {
                 'dh_params': self.dh_params,
-            })
+            }})
 
             if response['updatedExisting']:
                 logger.debug('Reserved queued server dh params', 'server',
