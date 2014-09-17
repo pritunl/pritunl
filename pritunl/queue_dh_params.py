@@ -99,6 +99,11 @@ class QueueDhParams(Queue):
         if self.reserve_data:
             return False
 
+        logger.debug('Pausing queued dh params', 'server',
+            queue_id=self.id,
+            dh_param_bits=self.dh_param_bits,
+        )
+
         self.queue_com.popen_kill_all()
         return True
 
@@ -116,6 +121,10 @@ class QueueDhParams(Queue):
 
         doc = cls.reserve(reserve_id, reserve_data, block=block)
         if not doc:
+            logger.debug('Reserved queued dh params', 'server',
+                queue_id=str(doc['_id']),
+                dh_param_bits=doc['dh_param_bits'],
+            )
             return
 
         if block:
