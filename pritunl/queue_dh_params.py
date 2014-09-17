@@ -109,9 +109,6 @@ class QueueDhParams(Queue):
         self.queue_com.popen_kill_all()
         return True
 
-    def repeat_task(self):
-        Event(type=SERVERS_UPDATED)
-
     @classmethod
     def reserve_queued_dh_param(cls, server, block=False):
         from pritunl.server import Server
