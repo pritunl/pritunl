@@ -84,7 +84,7 @@ class QueueDhParams(Queue):
                 Event(type=SERVERS_UPDATED)
                 return
 
-        logger.debug('Adding pooled server dh params', 'server',
+        logger.debug('Adding pooled dh params', 'server',
             queue_id=self.id,
             dh_param_bits=self.dh_param_bits,
         )
