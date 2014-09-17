@@ -12,15 +12,18 @@ import os
 
 class QueueDhParams(Queue):
     fields = {
+        'server_id',
         'dh_param_bits',
     } | Queue.fields
     cpu_type = HIGH_CPU
     type = 'dh_params'
 
-    def __init__(self, dh_param_bits=None, **kwargs):
+    def __init__(self, server_id=None, dh_param_bits=None, **kwargs):
         Queue.__init__(self, **kwargs)
         self.queue_com = QueueCom()
 
+        if server_id is not None:
+            self.server_id = server_id
         if dh_param_bits is not None:
             self.dh_param_bits = dh_param_bits
 
