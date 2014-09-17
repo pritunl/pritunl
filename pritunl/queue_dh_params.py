@@ -150,11 +150,11 @@ class QueueDhParams(Queue):
                 server_id=server.id,
                 dh_param_bits=server.dh_param_bits,
             )
-            return
+            return False
 
         if block:
             server.load()
 
-        return server
+        return True
 
 add_queue(QueueDhParams)
