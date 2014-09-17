@@ -119,7 +119,7 @@ class QueueDhParams(Queue):
         self.queue_com.running.set()
 
     @classmethod
-    def reserve_pooled_dh_param(cls, server):
+    def reserve_pooled_dh_params(cls, server):
         doc = cls.dh_params_collection.find_and_modify({
             'dh_param_bits': server.dh_param_bits,
         }, {'$set': {
@@ -138,7 +138,7 @@ class QueueDhParams(Queue):
         return True
 
     @classmethod
-    def reserve_queued_dh_param(cls, server, block=False):
+    def reserve_queued_dh_params(cls, server, block=False):
         reserve_id = server.dh_param_bits
         reserve_data = {
             'server_id': server.id,

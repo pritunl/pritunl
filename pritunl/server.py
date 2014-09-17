@@ -317,11 +317,11 @@ class Server(MongoObject):
             return Organization.get_org(id=org_id)
 
     def generate_dh_param(self):
-        reserved = QueueDhParams.reserve_pooled_dh_param(server=self)
+        reserved = QueueDhParams.reserve_pooled_dh_params(server=self)
         if reserved:
             return
 
-        reserved = QueueDhParams.reserve_queued_dh_param(server=self)
+        reserved = QueueDhParams.reserve_queued_dh_params(server=self)
         if reserved:
             return
 
