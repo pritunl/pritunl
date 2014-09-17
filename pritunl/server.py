@@ -968,8 +968,18 @@ class Server(MongoObject):
                 'interfaces': {'$addToSet': '$interface'},
                 'ports': {'$addToSet': '$port_protocol'},
             }},
-        ])['result'][0]
-        used_resources.pop('_id')
+        ])['result']
+
+        if not used_resources:
+            used_resources = {
+                'networks': set(),
+                'interfaces': set(),
+                'ports': set(),
+            }
+        else:
+            used_resources = used_resources[0]
+            used_resources.pop('_id')
+
         return {key: set(val) for key, val in used_resources.items()}
 
     @classmethod
