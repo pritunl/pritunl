@@ -115,6 +115,9 @@ class QueueDhParams(Queue):
 
         return True
 
+    def resume_task(self):
+        self.queue_com.running.set()
+
     @classmethod
     def reserve_pooled_dh_param(cls, server):
         doc = cls.dh_params_collection.find_and_modify({
