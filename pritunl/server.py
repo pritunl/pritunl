@@ -29,6 +29,7 @@ import logging
 import traceback
 import re
 import json
+import bson
 
 logger = logging.getLogger(APP_NAME)
 
