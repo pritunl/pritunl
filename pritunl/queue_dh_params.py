@@ -107,6 +107,7 @@ class QueueDhParams(Queue):
         )
 
         self.queue_com.popen_kill_all()
+        return True
 
     @classmethod
     def reserve_pooled_dh_param(cls, server):
