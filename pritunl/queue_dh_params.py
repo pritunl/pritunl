@@ -47,6 +47,8 @@ class QueueDhParams(Queue):
             dh_param_bits=self.dh_param_bits,
         )
 
+        self.queue_com.wait_status()
+
         temp_path = app_server.get_temp_path()
         dh_param_path = os.path.join(temp_path, DH_PARAM_NAME)
 
@@ -61,6 +63,8 @@ class QueueDhParams(Queue):
             self.read_file('dh_params', dh_param_path)
         finally:
             utils.rmtree(temp_path)
+
+        self.queue_com.wait_status()
 
         if not self.server_id:
             self.load()
