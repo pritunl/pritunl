@@ -110,6 +110,7 @@ class QueueDhParams(Queue):
             dh_param_bits=self.dh_param_bits,
         )
 
+        self.queue_com.running.clear()
         self.queue_com.popen_kill_all()
         return True
 
