@@ -141,6 +141,15 @@ class QueueRunner(object):
             thread.start()
 
     def start(self):
+        for cpu_priority in (LOW_CPU, NORMAL_CPU, HIGH_CPU):
+            thread = threading.Thread(target=self.runner_thread, args=(
+                cpu_priority,
+                thread_limits[cpu_priority],
+                runner_queues[cpu_priority],
+            ))
+            thread.daemon = True
+            thread.start()
+
         for target in (self.watch_thread, self.check_thread):
             thread = threading.Thread(target=target)
             thread.daemon = True
