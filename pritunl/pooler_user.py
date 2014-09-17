@@ -75,6 +75,28 @@ class PoolerUser(object):
             orgs_count[pool['_id']['org_id'], pool['_id']['type']] += pool[
                 'count']
 
+        pools = cls.queue_collection.aggregate([
+            {'$match': {
+                'type': 'init_user_pooled',
+                'user_doc.type': {'$in': (CERT_CLIENT_POOL, CERT_SERVER_POOL)},
+            }},
+            {'$project': {
+                'user_doc.org_id': True,
+                'user_doc.type': True,
+            }},
+            {'$group': {
+                '_id': {
+                    'org_id': '$user_doc.org_id',
+                    'type': '$user_doc.type',
+                },
+                'count': {'$sum': 1},
+            }},
+        ])['result']
+
+        for pool in pools:
+            orgs_count[pool['_id']['org_id'], pool['_id']['type']] += pool[
+                'count']
+
         new_users = []
 
         for org_id_user_type, count in orgs_count.least_common():
