@@ -9,6 +9,7 @@ import pritunl.logger as logger
 import pritunl.mongo as mongo
 import pritunl.utils as utils
 import os
+import bson
 
 class QueueDhParams(Queue):
     fields = {
