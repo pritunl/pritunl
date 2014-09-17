@@ -61,9 +61,14 @@ class QueueDhParams(Queue):
         finally:
             utils.rmtree(temp_path)
 
-        if self.reserve_data:
+        if not self.server_id:
+            self.load()
+            if self.reserve_data:
+                self.server_id = self.reserve_data['server_id']
+
+        if self.server_id:
             response = self.server_collection.update({
-                'server_id': self.reserve_data['server_id'],
+                '_id': bson.ObjectId(self.server_id),
                 'dh_param_bits': self.dh_param_bits,
             }, {
                 'dh_params': self.dh_params,
