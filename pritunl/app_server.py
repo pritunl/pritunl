@@ -295,7 +295,7 @@ class AppServer(Config):
         logger.addHandler(self.log_handler)
 
     def _setup_handlers(self):
-        import handlers
+        import pritunl.handlers
 
     def _setup_queue_runner(self):
         from pritunl.queue_runner import QueueRunner
