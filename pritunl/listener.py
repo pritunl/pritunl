@@ -31,7 +31,7 @@ def listener_thread():
                     except:
                         logger.exception('Error in listener callback')
         except:
-            logger.exception('Error in listener watch thread.')
+            logger.exception('Error in listener thread.')
             time.sleep(0.3)
 
 def start():
