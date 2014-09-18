@@ -36,7 +36,7 @@ class QueueUnassignIpAddr(Queue):
         if not server:
             return
 
-        for i in xrange(5):
+        for _ in xrange(5):
             if server.network_lock:
                 time.sleep(2)
                 server.load()
