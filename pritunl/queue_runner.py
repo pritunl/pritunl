@@ -4,6 +4,7 @@ from pritunl.descriptors import *
 from pritunl.queue import Queue
 import pritunl.logger as logger
 import pritunl.mongo as mongo
+import pritunl.listener as listener
 import pymongo
 import random
 import bson
@@ -139,7 +140,8 @@ class QueueRunner(object):
             thread.daemon = True
             thread.start()
 
-        for target in (self.watch_thread, self.check_thread):
-            thread = threading.Thread(target=target)
-            thread.daemon = True
-            thread.start()
+        thread = threading.Thread(target=self.check_thread)
+        thread.daemon = True
+        thread.start()
+
+        listener.add_listener('queue', self.on_queue_msg)
