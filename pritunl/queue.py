@@ -222,6 +222,8 @@ class Queue(MongoObject):
             return doc
 
     def run(self):
+        self.queue_com.state = RUNNING
+
         try:
             if self.state == PENDING:
                 self.attempts += 1
