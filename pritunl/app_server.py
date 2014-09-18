@@ -312,6 +312,10 @@ class AppServer(Config):
         task_runner = TaskRunner()
         task_runner.start()
 
+    def _setup_listener(self):
+        import pritunl.listener as listener
+        listener.start()
+
     def _get_version_int(self, version):
         return int(''.join([x.zfill(2) for x in version.split('.')]))
 
@@ -331,6 +335,7 @@ class AppServer(Config):
         self._setup_queue_runner()
         self._setup_transaction_runner()
         self._setup_task_runner()
+        self._setup_listener()
 
     def _setup_server_cert(self):
         if not os.path.isfile(self.server_cert_path) or \
