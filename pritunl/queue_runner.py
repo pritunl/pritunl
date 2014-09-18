@@ -73,7 +73,7 @@ class QueueRunner(object):
         for queue_item in Queue.iter_queues(spec):
             self.run_queue_item(queue_item)
 
-    def on_queue_msh(self, msg):
+    def on_queue_msg(self, msg):
         try:
             if msg['message'][0] == PENDING:
                 self.run_waiting_queues()
