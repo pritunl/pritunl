@@ -14,8 +14,6 @@ import json
 import urllib2
 import threading
 import subprocess
-import base64
-import socket
 import uuid
 
 try:
