@@ -300,17 +300,17 @@ class AppServer(Config):
         import handlers
 
     def _setup_queue_runner(self):
-        from queue_runner import QueueRunner
+        from pritunl.queue_runner import QueueRunner
         queue_runner = QueueRunner()
         queue_runner.start()
 
     def _setup_transaction_runner(self):
-        from mongo_transaction_runner import MongoTransactionRunner
+        from pritunl.mongo_transaction_runner import MongoTransactionRunner
         mongo_transaction_runner = MongoTransactionRunner()
         mongo_transaction_runner.start()
 
     def _setup_task_runner(self):
-        from task_runner import TaskRunner
+        from pritunl.task_runner import TaskRunner
         task_runner = TaskRunner()
         task_runner.start()
 
@@ -398,12 +398,12 @@ class AppServer(Config):
             self._on_exit()
 
     def _on_exit(self):
-        from log_entry import LogEntry
+        from prutunl.log_entry import LogEntry
         LogEntry(message='Web server stopped.')
         self.interrupt = True
 
     def _run_server(self):
-        from log_entry import LogEntry
+        from pritunl.log_entry import LogEntry
         LogEntry(message='Web server started.')
         if self.debug:
             self._run_wsgi_debug()
