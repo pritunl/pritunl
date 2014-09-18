@@ -21,9 +21,6 @@ runner_queues = [PriorityQueue() for _ in xrange(3)]
 thread_limits = [threading.Semaphore(x) for x in (4, 2, 1)]
 
 class QueueRunner(object):
-    def random_sleep(self):
-        time.sleep(random.randint(0, 10) / 1000.)
-
     def run_queue_item(self, queue_item):
         def pause():
             for running_queue in running_queues.values():
