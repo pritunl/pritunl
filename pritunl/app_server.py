@@ -218,7 +218,7 @@ class AppServer(Config):
         thread.start()
 
     def _setup_db(self):
-        from mongo import setup_mongo
+        from pritunl.mongo import setup_mongo
         setup_mongo()
 
     def _setup_app(self):
