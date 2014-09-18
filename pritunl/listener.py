@@ -8,10 +8,12 @@ import pymongo
 import random
 import bson
 import datetime
+import logging
 import threading
 import time
 import collections
 
+logger = logging.getLogger(APP_NAME)
 _channels = collections.defaultdict(set)
 
 def add_listener(channel, callback):
