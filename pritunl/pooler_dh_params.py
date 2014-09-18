@@ -8,14 +8,6 @@ from pritunl import app_server
 import pritunl.logger as logger
 import pritunl.mongo as mongo
 import pritunl.utils as utils
-import logging
-import time
-import threading
-import uuid
-import subprocess
-import os
-import itertools
-import collections
 
 class PoolerDhParams(object):
     @cached_static_property
