@@ -106,7 +106,10 @@ class QueueRunner(object):
         release = True
         try:
             if queue_item.queue_com.state == None:
-                logger.debug('Run queue item', 'queue_runner')
+                logger.debug('Run queue item', 'queue_runner',
+                    queue_id=queue_item.id,
+                    queue_type=queue_item.type,
+                )
                 queue_item.run()
             elif queue_item.queue_com.state == PAUSED:
                 release = False
