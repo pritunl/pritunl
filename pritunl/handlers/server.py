@@ -285,7 +285,7 @@ def server_put_post(server_id=None):
             network_def = True
             for i in xrange(5000):
                 rand_network = '10.%s.%s.0/24' % (
-                    random.randint(15,250), random.randint(15,250))
+                    random.randint(15, 250), random.randint(15, 250))
                 if rand_network not in network_used:
                     network = rand_network
                     break
