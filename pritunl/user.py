@@ -214,7 +214,7 @@ class User(MongoObject):
         sha_hash = hashlib.sha512()
         sha_hash.update(os.urandom(8192))
         byte_hash = sha_hash.digest()
-        for i in xrange(6):
+        for _ in xrange(6):
             sha_hash = hashlib.sha512()
             sha_hash.update(byte_hash)
             byte_hash = sha_hash.digest()
