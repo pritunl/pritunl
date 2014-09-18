@@ -69,6 +69,7 @@ PASSWORD_LEN_LIMIT = 128
 DEFAULT_CONF_PATH = '/etc/pritunl.conf'
 DEFAULT_WWW_PATH = '/usr/share/pritunl/www'
 DEFAULT_OTP_SECRET_LEN = 16
+DEFAULT_DH_PARAM_BITS = 1536
 DEFAULT_PUBLIC_IP_SERVER = 'http://ip.pritunl.com/json'
 DEFAULT_NOTIFICATION_SERVER = 'http://ip.pritunl.com/notification'
 SUBSCRIPTION_SERVER = 'https://app.pritunl.com/subscription'
