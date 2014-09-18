@@ -2,9 +2,6 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.cache import cache_db
-from pritunl.cache_trie import CacheTrie
-from pritunl.log_entry import LogEntry
-from pritunl.event import Event
 from pritunl.system_conf import SystemConf
 from pritunl.mongo_object import MongoObject
 from pritunl.queue_init_user import QueueInitUser
@@ -12,7 +9,6 @@ from pritunl.queue_init_user_pooled import QueueInitUserPooled
 from pritunl import app_server
 import pritunl.mongo as mongo
 import pritunl.utils as utils
-import uuid
 import tarfile
 import os
 import subprocess
