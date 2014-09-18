@@ -2,7 +2,6 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.queue import Queue
-from pritunl.messenger import Messenger
 import pritunl.logger as logger
 import pritunl.mongo as mongo
 import pymongo
