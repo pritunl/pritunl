@@ -73,20 +73,12 @@ class QueueRunner(object):
         for queue_item in Queue.iter_queues(spec):
             self.run_queue_item(queue_item)
 
-    def watch_thread(self):
-        messenger = Messenger()
-
-        while True:
-            try:
-                for msg in messenger.subscribe('queue'):
-                    try:
-                        if msg['message'][0] == PENDING:
-                            self.run_waiting_queues()
-                    except TypeError:
-                        pass
-            except:
-                logger.exception('Error in queue watch thread', 'queue')
-                time.sleep(0.5)
+    def on_queue_msh(self, msg):
+        try:
+            if msg['message'][0] == PENDING:
+                self.run_waiting_queues()
+        except TypeError:
+            pass
 
     def run_timeout_queues(self):
         cur_timestamp = datetime.datetime.utcnow()
