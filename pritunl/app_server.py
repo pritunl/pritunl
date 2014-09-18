@@ -401,17 +401,18 @@ class AppServer(Config):
             self._on_exit()
 
     def _on_exit(self):
-        from prutunl.log_entry import LogEntry
-        LogEntry(message='Web server stopped.')
         self.interrupt = True
 
     def _run_server(self):
         from pritunl.log_entry import LogEntry
         LogEntry(message='Web server started.')
-        if self.debug:
-            self._run_wsgi_debug()
-        else:
-            self._run_wsgi()
+        try:
+            if self.debug:
+                self._run_wsgi_debug()
+            else:
+                self._run_wsgi()
+        finally:
+            LogEntry(message='Web server stopped.')
 
     def run_server(self):
         self._setup_all()
