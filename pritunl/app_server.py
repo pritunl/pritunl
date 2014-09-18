@@ -116,12 +116,6 @@ class AppServer(Config):
             if not self.ssl:
                 return 'http'
             return 'https'
-        elif name == 'password_data':
-            if self.password[:2] == '1$':
-                pass_split = self.password.split('$')
-                return (1, pass_split[1], pass_split[2])
-            else:
-                return (0, PASSWORD_SALT_V0, self.password)
         elif name == 'ssl':
             if self.debug:
                 return False
