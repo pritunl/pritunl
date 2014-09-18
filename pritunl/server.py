@@ -153,6 +153,15 @@ class Server(MongoObject):
     def initialize(self):
         self.generate_dh_param()
 
+    def queue_dh_params(self, block=False):
+        queue = QueueDhParams(server_id=self.id,
+            dh_param_bits=self.dh_param_bits, priority=HIGH)
+        self.dh_params = None
+
+        queue.start(block=block)
+        if block:
+            self.load()
+
     def get_cache_key(self, suffix=None):
         if not self.cache_prefix:
             raise AttributeError('Cached config object requires cache_prefix')
