@@ -28,8 +28,6 @@ class PoolerDhParams(object):
 
     @classmethod
     def fill_pool(cls):
-        from pritunl.organization import Organization
-
         if len(DH_PARAM_BITS_POOL) > 1:
             dh_param_counts = LeastCommonCounter(
                 {x: 0 for x in DH_PARAM_BITS_POOL})
