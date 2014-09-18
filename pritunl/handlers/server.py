@@ -54,8 +54,6 @@ def server_get(server_id=None):
         return utils.jsonify(Server.get_server(server_id).dict())
     else:
         servers = []
-        servers_dict = {}
-        servers_sort = []
 
         for server in Server.iter_servers():
             servers.append(server.dict())
