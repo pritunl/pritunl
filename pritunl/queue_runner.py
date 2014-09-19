@@ -62,14 +62,6 @@ class QueueRunner(object):
             thread.daemon = True
             thread.start()
 
-    def run_waiting_queues(self):
-        spec = {
-            'runner_id': {'$exists': False},
-        }
-
-        for queue_item in Queue.iter_queues(spec):
-            self.add_queue_item(queue_item)
-
     def on_queue_msg(self, msg):
         try:
             if msg['message'][0] == PENDING:
