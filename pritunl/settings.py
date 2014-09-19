@@ -2,11 +2,6 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 
-SETTINGS_RESERVED = {
-    'collection',
-    'commit',
-}
-
 class Settings(object):
     @cached_static_property
     def collection(cls):
