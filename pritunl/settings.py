@@ -30,6 +30,12 @@ class SettingsGroup(object):
 
         return doc
 
+class SettingsTest(SettingsGroup):
+    group = 'test'
+    fields = {
+        'option': 'default',
+    }
+
 class Settings(object):
     @cached_static_property
     def collection(cls):
