@@ -103,7 +103,7 @@ class QueueRunner(object):
 
             time.sleep(MONGO_QUEUE_TTL)
 
-    def run_queue_item(self, queue_item):
+    def run_queue_item(self, queue_item, thread_limit):
         release = True
         try:
             if queue_item.queue_com.state == None:
@@ -126,7 +126,7 @@ class QueueRunner(object):
             priority, queue_item = runner_queue.get()
 
             thread = threading.Thread(target=self.run_queue_item,
-                args=(queue_item,))
+                args=(queue_item, thread_limit))
             thread.daemon = True
             thread.start()
 
