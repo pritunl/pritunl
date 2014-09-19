@@ -7,6 +7,7 @@ from pritunl.mongo_object import MongoObject
 from pritunl.mongo_transaction_collection import MongoTransactionCollection
 from pritunl.json_helpers import *
 import pritunl.mongo as mongo
+import pritunl.listener as listener
 import pymongo
 import collections
 import datetime
