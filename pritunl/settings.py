@@ -7,6 +7,10 @@ class Settings(object):
     def collection(cls):
         return mongo.get_collection('system')
 
+    @cached_property
+    def test(self):
+        return SettingsTest()
+
     def commit(self, all_fields=False):
         docs = []
 
