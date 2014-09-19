@@ -12,11 +12,15 @@ class Messenger(object):
     def collection(cls):
         return mongo.get_collection('messages')
 
-    def publish(self, channels, message, transaction=None):
+    def publish(self, channels, message, extra=None, transaction=None):
         doc = {
             'timestamp': datetime.datetime.utcnow(),
             'message': message,
         }
+
+        if extra:
+            for key, val in extra.items():
+                doc[key] = val
 
         if transaction:
             tran_collection = transaction.collection(
