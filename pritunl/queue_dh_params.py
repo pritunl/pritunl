@@ -129,6 +129,8 @@ class QueueDhParams(Queue):
         if not doc:
             return False
 
+        cls.dh_params_collection.remove(doc['_id'])
+
         logger.debug('Reserved pooled dh params', 'server',
             server_id=server.id,
             dh_param_bits=server.dh_param_bits,
