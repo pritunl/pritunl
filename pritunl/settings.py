@@ -1,6 +1,7 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
+from pritunl.settings_test import SettingsTest
 
 class Settings(object):
     @cached_static_property
