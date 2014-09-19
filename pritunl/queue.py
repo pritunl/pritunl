@@ -125,7 +125,12 @@ class Queue(MongoObject):
                 raise TypeError('Cannot use transaction when blocking')
             cursor_id = messenger.get_cursor_id('queue')
 
-        messenger.publish('queue', [PENDING, self.id], transaction=transaction)
+        extra = {
+            'queue_doc': self.export()
+        }
+
+        messenger.publish('queue', [PENDING, self.id], extra=extra,
+            transaction=transaction)
 
         if block:
             last_update = time.time()
