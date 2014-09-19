@@ -59,6 +59,11 @@ NAME_SAFE_CHARS = {
     '?', '^', '`', '{', '|', '}', '~',
 }
 
+SETTINGS_RESERVED = {
+    'collection',
+    'commit',
+}
+
 KEY_LINK_TIMEOUT = 86400
 DEFAULT_BIND_ADDR = '0.0.0.0'
 DEFAULT_PORT = 9700
