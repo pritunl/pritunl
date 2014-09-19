@@ -5,6 +5,7 @@ from pritunl.descriptors import *
 class SettingsGroup(object):
     group = None
     fields = set()
+
     def __init__(self):
         self.changed = set()
 
