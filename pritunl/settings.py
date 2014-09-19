@@ -1,23 +1,23 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
-from pritunl.system_conf import SystemConf
+from pritunl.descriptors import *
 
-class Settings(SystemConf):
-    fields = {
-        'email_from': ('email', 'from_addr'),
-        'email_api_key': ('email', 'api_key'),
-    }
+SETTINGS_RESERVED = {
+    'collection',
+    'commit',
+}
 
-    def __getattr__(self, name):
-        if name in self.fields:
-            return self.get(*self.fields[name])
-        if name not in self.__dict__:
-            raise AttributeError(
-                'Settings instance has no attribute %r' % name)
-        return self.__dict__[name]
+class Settings(object):
+    @cached_static_property
+    def collection(cls):
+        return mongo.get_collection('system')
 
-    def dict(self):
-        data = {}
-        for field in self.fields:
-            data[field] = self.get(*self.fields[field])
-        return data
+    def commit(self, all_fields=False):
+        docs = []
+
+        for group in dir(self):
+            if group[0] == '_' or group in SETTINGS_RESERVED:
+                continue
+            docs.append(getattr(self, group).get_commit_doc(all_fields))
+
+settings = Settings()
