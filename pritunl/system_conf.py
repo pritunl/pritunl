@@ -4,7 +4,7 @@ from pritunl.descriptors import *
 import pritunl.mongo as mongo
 import collections
 
-class SystemConf():
+class SystemConf(object):
     def __init__(self):
         self._cached = {}
         self._changed = collections.defaultdict(dict)
