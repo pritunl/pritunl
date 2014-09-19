@@ -13,43 +13,40 @@ class Messenger(object):
         return mongo.get_collection('messages')
 
     def publish(self, channels, message, transaction=None):
+        doc = {
+            'timestamp': datetime.datetime.utcnow(),
+            'message': message,
+        }
+
         if transaction:
             tran_collection = transaction.collection(
                 self.collection.collection_name)
 
             if isinstance(channels, str):
+                doc['channel'] = channels
                 tran_collection.update({
                     '_id': bson.ObjectId(),
-                }, {
-                    'timestamp': datetime.datetime.utcnow(),
-                    'channel': channels,
-                    'message': message,
-                }, upsert=True)
+                }, doc, upsert=True)
             else:
                 for channel in channels:
+                    doc_copy = doc.copy()
+                    doc_copy['channel'] = channel
+
                     tran_collection.bulk().find({
                         '_id': bson.ObjectId(),
-                    }).upsert().update({
-                        'timestamp': datetime.datetime.utcnow(),
-                        'channel': channel,
-                        'message': message,
-                    })
+                    }).upsert().update(doc_copy)
                 tran_collection.bulk_execute()
         else:
             if isinstance(channels, str):
-                docs = {
-                    'timestamp': datetime.datetime.utcnow(),
-                    'channel': channels,
-                    'message': message,
-                }
+                doc['channel'] = channels
+                docs = doc
             else:
                 docs = []
                 for channel in channels:
-                    docs.append({
-                        'timestamp': datetime.datetime.utcnow(),
-                        'channel': channel,
-                        'message': message,
-                    })
+                    doc_copy = doc.copy()
+                    doc_copy['channel'] = channel
+
+                    docs.append(doc_copy)
             self.collection.insert(docs)
 
     def get_cursor_id(self, channels):
