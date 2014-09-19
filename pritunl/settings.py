@@ -14,9 +14,15 @@ class Settings(object):
         return SettingsTest()
 
     def commit(self, all_fields=False):
-        docs = []
+        bulk = self.collection.initialize_unordered_bulk_op()
 
         for group in dir(self):
             if group[0] == '_' or group in SETTINGS_RESERVED:
                 continue
-            docs.append(getattr(self, group).get_commit_doc(all_fields))
+            doc = getattr(self, group).get_commit_doc(all_fields)
+
+            bulk.find({
+                '_id': doc['_id'],
+            }).upsert().update({'$set': doc})
+
+        bulk.execute()
