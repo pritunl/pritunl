@@ -405,14 +405,20 @@ class AppServer(Config):
 
     def _run_server(self):
         from pritunl.log_entry import LogEntry
-        LogEntry(message='Web server started.')
+        if self.debug:
+            LogEntry(message='Web debug server started.')
+        else:
+            LogEntry(message='Web server started.')
         try:
             if self.debug:
                 self._run_wsgi_debug()
             else:
                 self._run_wsgi()
         finally:
-            LogEntry(message='Web server stopped.')
+            if self.debug:
+                LogEntry(message='Web debug server stopped.')
+            else:
+                LogEntry(message='Web server stopped.')
 
     def run_server(self):
         self._setup_all()
