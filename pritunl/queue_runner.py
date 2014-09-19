@@ -68,7 +68,7 @@ class QueueRunner(object):
         }
 
         for queue_item in Queue.iter_queues(spec):
-            self.run_queue_item(queue_item)
+            self.add_queue_item(queue_item)
 
     def on_queue_msg(self, msg):
         try:
