@@ -45,7 +45,6 @@ class Messenger(object):
                 for channel in channels:
                     doc_copy = doc.copy()
                     doc_copy['channel'] = channel
-
                     docs.append(doc_copy)
             self.collection.insert(docs)
 
