@@ -14,5 +14,3 @@ class Settings(object):
             if group[0] == '_' or group in SETTINGS_RESERVED:
                 continue
             docs.append(getattr(self, group).get_commit_doc(all_fields))
-
-settings = Settings()
