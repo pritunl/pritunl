@@ -73,7 +73,8 @@ class QueueRunner(object):
     def on_queue_msg(self, msg):
         try:
             if msg['message'][0] == PENDING:
-                self.run_waiting_queues()
+                queue_item = Queue.get_queue(doc=msg['queue_doc'])
+                self.add_queue_item(queue_item)
         except TypeError:
             pass
 
