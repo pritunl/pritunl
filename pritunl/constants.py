@@ -62,6 +62,7 @@ NAME_SAFE_CHARS = {
 SETTINGS_RESERVED = {
     'collection',
     'commit',
+    'on_msg',
 }
 
 KEY_LINK_TIMEOUT = 86400
