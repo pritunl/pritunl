@@ -14,6 +14,9 @@ class Settings(object):
     def test(self):
         return SettingsTest()
 
+    def start(self):
+        listener.add_listener('setting', self.on_msg)
+
     def on_msg(self, msg):
         setattr(getattr(self, msg[0]), msg[1], msg[2])
 
