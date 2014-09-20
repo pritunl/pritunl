@@ -31,7 +31,7 @@ class MongoTransactionRunner:
                     tran.run()
                 except:
                     logger.exception('Failed to run transaction. %r' % {
-                        'transaction_id': str(doc['_id']),
+                        'transaction_id': str(doc['id']),
                     })
 
             time.sleep(MONGO_TRAN_TTL)
