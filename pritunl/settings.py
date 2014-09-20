@@ -36,7 +36,9 @@ class Settings(object):
 
                 bulk.find({
                     '_id': doc['_id'],
-                }).upsert().update({'$set': doc})
+                }).upsert().update({
+                    '$set': doc,
+                })
 
             bulk.execute()
         else:
