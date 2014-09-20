@@ -1,6 +1,5 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
-import UserDict
 
 class MongoDict(object):
     __class__ = dict
