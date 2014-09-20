@@ -11,19 +11,13 @@ import random
 collections = {}
 
 def setup_mongo():
+    from pritunl.settings import settings
+
     prefix = app_server.mongodb_collection_prefix or ''
     client = pymongo.MongoClient(app_server.mongodb_url,
         connectTimeoutMS=500) # TODO
     database = client.get_default_database()
     cur_collections = database.collection_names()
-
-    if prefix + 'log_entries' not in cur_collections:
-        database.create_collection(prefix + 'log_entries', capped=True,
-            size=LOG_LIMIT * LOG_AVG_SIZE * 2, max=LOG_LIMIT)
-
-    if prefix + 'messages' not in cur_collections:
-        database.create_collection(prefix + 'messages', capped=True,
-            size=100000)
 
     collections.update({
         'transaction': getattr(database, prefix + 'transaction'),
@@ -43,8 +37,18 @@ def setup_mongo():
         'auth_limiter': getattr(database, prefix + 'auth_limiter'),
     })
 
+    settings.load()
+
     for collection_name, collection in collections.items():
         collection.collection_name = collection_name
+
+    if prefix + 'log_entries' not in cur_collections:
+        database.create_collection(prefix + 'log_entries', capped=True,
+            size=LOG_LIMIT * LOG_AVG_SIZE * 2, max=LOG_LIMIT)
+
+    if prefix + 'messages' not in cur_collections:
+        database.create_collection(prefix + 'messages', capped=True,
+            size=100000)
 
     collections['transaction'].ensure_index('lock_id', unique=True)
     collections['transaction'].ensure_index([
