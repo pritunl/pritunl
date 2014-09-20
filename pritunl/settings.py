@@ -8,6 +8,9 @@ import pritunl.mongo as mongo
 import pritunl.listener as listener
 
 class Settings(object):
+    def __init__(self):
+        self._listening = False
+
     @cached_static_property
     def collection(cls):
         return mongo.get_collection('system')
@@ -67,4 +70,8 @@ class Settings(object):
                 setattr(group, field, val)
 
     def start(self):
-        listener.add_listener('setting', self.on_msg)
+        self.load()
+        if not self._listening:
+            self.commit(all_fields=True)
+            self._listening = True
+            listener.add_listener('setting', self.on_msg)
