@@ -53,5 +53,4 @@ class Settings(object):
                     }).upsert().update({'$set': doc})
 
             collection.bulk_execute()
-
             transaction.commit()
