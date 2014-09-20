@@ -22,6 +22,8 @@ class Settings(object):
         setattr(getattr(self, msg[0]), msg[1], msg[2])
 
     def commit(self, all_fields=False):
+        has_docs = False
+
         if all_fields:
             bulk = self.collection.initialize_unordered_bulk_op()
 
@@ -46,9 +48,13 @@ class Settings(object):
                 doc = getattr(self, group).get_commit_doc(False)
 
                 if doc:
+                    has_docs = True
                     collection.bulk().find({
                         '_id': doc['_id'],
                     }).upsert().update({'$set': doc})
+
+            if not has_docs:
+                return
 
             collection.bulk_execute()
             transaction.commit()
