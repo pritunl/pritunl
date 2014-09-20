@@ -3,6 +3,7 @@ from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings_test import SettingsTest
 import pritunl.mongo as mongo
+import pritunl.listener as listener
 
 class Settings(object):
     @cached_static_property
@@ -12,6 +13,9 @@ class Settings(object):
     @cached_property
     def test(self):
         return SettingsTest()
+
+    def on_msg(self, msg):
+        setattr(getattr(self, msg[0]), msg[1], msg[2])
 
     def commit(self, all_fields=False):
         bulk = self.collection.initialize_unordered_bulk_op()
