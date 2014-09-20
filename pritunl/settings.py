@@ -20,8 +20,10 @@ class Settings(object):
         docs = msg['message']
 
         for doc in docs:
-            group = getattr(self, doc.pop('_id'))
+            group = getattr(self, doc['_id'])
             for field, val in doc.items():
+                if field == '_id':
+                    continue
                 setattr(group, field, val)
 
     def commit(self, all_fields=False):
