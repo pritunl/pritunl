@@ -55,7 +55,7 @@ class Settings(object):
         transaction.commit()
 
     def load(self):
-        groups = set(dir(self))
+        groups = set(dir(self)) - SETTINGS_RESERVED
         for doc in self.collection.find():
             group_name = doc.pop('_id')
             if group_name not in groups:
