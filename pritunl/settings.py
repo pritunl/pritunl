@@ -65,6 +65,7 @@ class Settings(object):
             group_name = doc.pop('_id')
             if group_name not in groups:
                 continue
+
             group = getattr(self, group_name)
             for field, val in doc.items():
                 setattr(group, field, val)
