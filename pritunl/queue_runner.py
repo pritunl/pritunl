@@ -62,7 +62,7 @@ class QueueRunner(object):
             thread.daemon = True
             thread.start()
 
-    def on_queue_msg(self, msg):
+    def on_msg(self, msg):
         try:
             if msg['message'][0] == PENDING:
                 self.add_queue_item(Queue.get_queue(doc=msg['queue_doc']))
@@ -136,4 +136,4 @@ class QueueRunner(object):
         thread.daemon = True
         thread.start()
 
-        listener.add_listener('queue', self.on_queue_msg)
+        listener.add_listener('queue', self.on_msg)
