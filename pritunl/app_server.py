@@ -1,7 +1,5 @@
 from pritunl.constants import *
 from pritunl.config import Config
-from pritunl.log_filter import LogFilter
-from pritunl.log_formatter import LogFormatter
 import pritunl.utils as utils
 import flask
 import cherrypy.wsgiserver
@@ -272,6 +270,9 @@ class AppServer(Config):
             os.makedirs(self.temp_path)
 
     def _setup_log(self):
+        from pritunl.log_filter import LogFilter
+        from pritunl.log_formatter import LogFormatter
+
         if self.log_path:
             self.log_handler = logging.handlers.RotatingFileHandler(
                 self.log_path, maxBytes=1000000, backupCount=1)
