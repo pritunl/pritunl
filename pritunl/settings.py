@@ -24,13 +24,34 @@ class Settings(object):
     def commit(self, all_fields=False):
         bulk = self.collection.initialize_unordered_bulk_op()
 
-        for group in dir(self):
-            if group[0] == '_' or group in SETTINGS_RESERVED:
-                continue
-            doc = getattr(self, group).get_commit_doc(all_fields)
+        if all_fields:
+            bulk = self.collection.initialize_unordered_bulk_op()
 
-            bulk.find({
-                '_id': doc['_id'],
-            }).upsert().update({'$set': doc})
+            for group in dir(self):
+                if group[0] == '_' or group in SETTINGS_RESERVED:
+                    continue
+                doc = getattr(self, group).get_commit_doc(all_fields)
 
-        bulk.execute()
+                bulk.find({
+                    '_id': doc['_id'],
+                }).upsert().update({'$set': doc})
+
+            bulk.execute()
+        else:
+            transaction = MongoTransaction()
+            collection = transaction.collection(
+                self.collection.collection_name)
+
+            for group in dir(self):
+                if group[0] == '_' or group in SETTINGS_RESERVED:
+                    continue
+                doc = getattr(self, group).get_commit_doc(False)
+
+                if doc:
+                    collection.bulk().find({
+                        '_id': doc['_id'],
+                    }).upsert().update({'$set': doc})
+
+            collection.bulk_execute()
+
+            transaction.commit()
