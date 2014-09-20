@@ -16,7 +16,13 @@ class Settings(object):
         return SettingsTest()
 
     def on_msg(self, msg):
-        setattr(getattr(self, msg[0]), msg[1], msg[2])
+        docs = msg['message']
+        for doc in docs:
+            group = getattr(self, doc.pop('_id'))
+            for field, val in doc.items():
+                if field == '_id':
+                    continue
+                setattr(group, field, val)
 
     def commit(self, all_fields=False):
         has_docs = False
