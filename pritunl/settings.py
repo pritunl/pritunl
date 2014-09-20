@@ -54,5 +54,15 @@ class Settings(object):
         collection.bulk_execute()
         transaction.commit()
 
+    def load(self):
+        groups = set(dir(self))
+        for doc in self.collection.find():
+            group_name = doc.pop('_id')
+            if group_name not in groups:
+                continue
+            group = getattr(self, group_name)
+            for field, val in doc.items():
+                setattr(group, field, val)
+
     def start(self):
         listener.add_listener('setting', self.on_msg)
