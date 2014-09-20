@@ -63,6 +63,7 @@ SETTINGS_RESERVED = {
     'collection',
     'commit',
     'on_msg',
+    'start',
 }
 
 KEY_LINK_TIMEOUT = 86400
