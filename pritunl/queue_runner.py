@@ -22,25 +22,6 @@ thread_limits = [threading.Semaphore(x) for x in (4, 2, 1)]
 
 class QueueRunner(object):
     def add_queue_item(self, queue_item):
-        def pause():
-            for running_queue in running_queues.values():
-                if running_queue.priority >= queue_item.priority:
-                    continue
-
-                if running_queue.pause():
-                    logger.debug('Puase queue item', 'queue',
-                        queue_id=running_queue.id,
-                        queue_type=running_queue.type,
-                        queue_priority=running_queue.priority,
-                        queue_cpu_type=running_queue.cpu_type,
-                    )
-
-                    runner_queues[running_queue.cpu_type].put((
-                        abs(running_queue.priority - 4),
-                        running_queue,
-                    ))
-                    thread_limits[running_queue.cpu_type].release()
-
         if queue_item.id in running_queues:
             return
         running_queues[queue_item.id] = queue_item
@@ -58,9 +39,23 @@ class QueueRunner(object):
         ))
 
         if queue_item.priority >= NORMAL:
-            thread = threading.Thread(target=pause)
-            thread.daemon = True
-            thread.start()
+            for running_queue in running_queues.values():
+                if running_queue.priority >= queue_item.priority:
+                    continue
+
+                if running_queue.pause():
+                    logger.debug('Puase queue item', 'queue',
+                        queue_id=running_queue.id,
+                        queue_type=running_queue.type,
+                        queue_priority=running_queue.priority,
+                        queue_cpu_type=running_queue.cpu_type,
+                    )
+
+                    runner_queues[running_queue.cpu_type].put((
+                        abs(running_queue.priority - 4),
+                        running_queue,
+                    ))
+                    thread_limits[running_queue.cpu_type].release()
 
     def on_msg(self, msg):
         try:
