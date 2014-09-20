@@ -48,7 +48,9 @@ class Settings(object):
                     has_docs = True
                     collection.bulk().find({
                         '_id': doc['_id'],
-                    }).upsert().update({'$set': doc})
+                    }).upsert().update({
+                        '$set': doc,
+                    })
 
             if not has_docs:
                 return
