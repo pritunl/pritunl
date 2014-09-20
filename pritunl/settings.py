@@ -39,6 +39,8 @@ class Settings(object):
 
             bulk.execute()
         else:
+            docs = []
+            messenger = Messenger()
             transaction = MongoTransaction()
             collection = transaction.collection(
                 self.collection.collection_name)
@@ -55,6 +57,9 @@ class Settings(object):
                     }).upsert().update({
                         '$set': doc,
                     })
+                    docs.append(doc)
+
+            messenger.publish('setting', docs)
 
             if not has_docs:
                 return
