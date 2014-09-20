@@ -22,8 +22,6 @@ class Settings(object):
         setattr(getattr(self, msg[0]), msg[1], msg[2])
 
     def commit(self, all_fields=False):
-        bulk = self.collection.initialize_unordered_bulk_op()
-
         if all_fields:
             bulk = self.collection.initialize_unordered_bulk_op()
 
