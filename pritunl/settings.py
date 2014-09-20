@@ -18,6 +18,7 @@ class Settings(object):
 
     def on_msg(self, msg):
         docs = msg['message']
+
         for doc in docs:
             group = getattr(self, doc.pop('_id'))
             for field, val in doc.items():
