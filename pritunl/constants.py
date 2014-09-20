@@ -62,6 +62,7 @@ NAME_SAFE_CHARS = {
 SETTINGS_RESERVED = {
     'collection',
     'commit',
+    'load',
     'on_msg',
     'start',
 }
