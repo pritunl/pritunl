@@ -28,4 +28,5 @@ class SettingsGroup(object):
         for field in self.fields if all_fields else self.changed:
             doc[field] = getattr(self, field)
 
-        return doc
+        if len(doc) > 1:
+            return doc
