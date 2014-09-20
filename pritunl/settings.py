@@ -59,7 +59,7 @@ class Settings(object):
                     })
                     docs.append(doc)
 
-            messenger.publish('setting', docs)
+            messenger.publish('setting', docs, transaction=transaction)
 
             if not has_docs:
                 return
