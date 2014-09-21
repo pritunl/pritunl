@@ -55,7 +55,19 @@ class Settings(object):
         transaction.commit()
 
     def load(self):
-        from pritunl.settings_test import SettingsTest
+        for module_name in os.listdir(os.path.dirname(__file__)):
+            if module_name[:9] != 'settings_' or \
+                    module_name == 'settings_group.py' or \
+                    module_name[-3:] != '.py':
+                continue
+            module_name = module_name[:-3]
+            module = __import__('pritunl.' + module_name,
+                locals(), globals())
+
+            cls = getattr(getattr(module, module_name),
+                ''.join([x.capitalize() for x in module_name.split('_')]))
+
+            setattr(self, cls.group, cls())
 
         groups = set(dir(self)) - SETTINGS_RESERVED
         for doc in self.collection.find():
