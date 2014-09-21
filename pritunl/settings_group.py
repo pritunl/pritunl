@@ -2,6 +2,11 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 
+def add_to_settings(cls):
+    from pritunl.settings import settings
+    setattr(settings, cls.group, cls())
+    return cls
+
 class SettingsGroup(object):
     group = None
     fields = {}
