@@ -224,8 +224,6 @@ class AppServer(Config):
         from pritunl.mongo import setup_mongo
         setup_mongo()
 
-        from pritunl.settings import settings
-
     def _setup_app(self):
         self.app = flask.Flask(APP_NAME)
 
