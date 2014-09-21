@@ -15,10 +15,6 @@ class Settings(object):
     def collection(cls):
         return mongo.get_collection('system')
 
-    @cached_property
-    def test(self):
-        return SettingsTest()
-
     def on_msg(self, msg):
         docs = msg['message']
 
