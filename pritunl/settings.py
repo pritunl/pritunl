@@ -1,7 +1,6 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
-from pritunl.settings_test import SettingsTest
 from pritunl.messenger import Messenger
 from pritunl.mongo_transaction import MongoTransaction
 import pritunl.mongo as mongo
