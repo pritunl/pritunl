@@ -53,7 +53,6 @@ class AppServer(Config):
     str_options = {
         'bind_addr',
         'public_ip_server',
-        'notification_server',
         'mongodb_url',
         'mongodb_collection_prefix',
     }
@@ -84,8 +83,6 @@ class AppServer(Config):
         'port': DEFAULT_PORT,
         'pooler': True,
         'www_path': DEFAULT_WWW_PATH,
-        'public_ip_server': DEFAULT_PUBLIC_IP_SERVER,
-        'notification_server': DEFAULT_NOTIFICATION_SERVER,
     }
     read_env = True
 
@@ -118,6 +115,8 @@ class AppServer(Config):
         return Config.__getattr__(self, name)
 
     def load_public_ip(self, attempts=1, timeout=5):
+        from pritunl.settings import settings
+
         for i in xrange(attempts):
             if not self.get_public_ip or self.public_ip:
                 return
@@ -126,7 +125,8 @@ class AppServer(Config):
                 logger.debug('Retrying get public ip address...')
             logger.debug('Getting public ip address...')
             try:
-                request = urllib2.Request(self.public_ip_server)
+                request = urllib2.Request(
+                    settings.app.public_ip_server)
                 response = urllib2.urlopen(request, timeout=timeout)
                 self.public_ip = json.load(response)['ip']
                 break
@@ -148,7 +148,7 @@ class AppServer(Config):
             try:
                 response = utils.request.get(SUBSCRIPTION_SERVER,
                     json_data={'license': license},
-                    timeout=HTTP_REQUEST_TIMEOUT)
+                    timeout=max(settings.app.http_request_timeout, 10))
                 # License key invalid
                 if response.status_code == 470:
                     #persist_db.remove('license')
@@ -181,11 +181,18 @@ class AppServer(Config):
         }
 
     def _check_updates(self):
+        from pritunl.settings import settings
+
         while True:
+            if not settings.app.update_check_rate:
+                time.sleep(60)
+                continue
+
             if self.get_notifications:
                 logger.debug('Checking notifications...')
                 try:
-                    request = urllib2.Request(self.notification_server + \
+                    request = urllib2.Request(
+                        settings.app.notification_server +
                         '/%s' % self._get_version())
                     response = urllib2.urlopen(request, timeout=60)
                     data = json.load(response)
@@ -200,7 +207,7 @@ class AppServer(Config):
                 self.subscription_update()
             except:
                 logger.exception('Failed to check subscription status.')
-            time.sleep(UPDATE_CHECK_RATE)
+            time.sleep(settings.app.update_check_rate)
 
     def _setup_public_ip(self):
         thread = threading.Thread(target=self.load_public_ip,
@@ -216,6 +223,8 @@ class AppServer(Config):
     def _setup_db(self):
         from pritunl.mongo import setup_mongo
         setup_mongo()
+
+        from pritunl.settings import settings
 
     def _setup_app(self):
         self.app = flask.Flask(APP_NAME)
@@ -356,13 +365,15 @@ class AppServer(Config):
             os.chmod(self.server_key_path, 0600)
 
     def _run_wsgi(self):
+        from pritunl.settings import settings
+
         if self.ssl:
             self._setup_server_cert()
         logger.info('Starting server...')
 
         server = cherrypy.wsgiserver.CherryPyWSGIServer(
             (self.bind_addr, self.port), self.app,
-            request_queue_size=SERVER_REQUEST_QUEUE_SIZE,
+            request_queue_size=settings.app.request_queue_size,
             server_name=cherrypy.wsgiserver.CherryPyWSGIServer.version)
         if self.ssl:
             server.ConnectionClass = HTTPConnectionPatch

@@ -1,5 +1,6 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
+from pritunl.settings import settings
 from pritunl.organization import Organization
 from pritunl.static_file import StaticFile
 import pritunl.utils as utils
@@ -41,7 +42,7 @@ def user_linked_key_archive_get(key_id):
 
     # Check for expire
     if not cache_db.exists(key_id_key):
-        time.sleep(RATE_LIMIT_SLEEP)
+        time.sleep(settings.app.rate_limit_sleep)
         return flask.abort(404)
 
     return _get_key_archive(org_id, user_id)
@@ -58,7 +59,7 @@ def user_linked_key_page_get(view_id):
 
     # Check for expire
     if not cache_db.exists(view_id_key):
-        time.sleep(RATE_LIMIT_SLEEP)
+        time.sleep(settings.app.rate_limit_sleep)
         return flask.abort(404)
 
     org = Organization.get_org(id=org_id)
@@ -119,7 +120,7 @@ def user_uri_key_page_get(uri_id):
 
     # Check for expire
     if not cache_db.exists(uri_id_key):
-        time.sleep(RATE_LIMIT_SLEEP)
+        time.sleep(settings.app.rate_limit_sleep)
         return flask.abort(404)
 
     org = Organization.get_org(id=org_id)
@@ -141,7 +142,7 @@ def user_linked_key_conf_get(conf_id):
 
     # Check for expire
     if not cache_db.exists(conf_id_key):
-        time.sleep(RATE_LIMIT_SLEEP)
+        time.sleep(settings.app.rate_limit_sleep)
         return flask.abort(404)
 
     org = Organization.get_org(id=org_id)

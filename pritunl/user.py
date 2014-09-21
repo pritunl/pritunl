@@ -1,6 +1,7 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
+from pritunl.settings import settings
 from pritunl.cache import cache_db
 from pritunl.system_conf import SystemConf
 from pritunl.mongo_object import MongoObject
@@ -101,7 +102,7 @@ class User(MongoObject):
 
             with open(ssl_conf_path, 'w') as conf_file:
                 conf_file.write(CERT_CONF % (
-                    CERT_KEY_BITS,
+                    settings.user.cert_key_bits,
                     self.org.id,
                     self.id,
                     index_path,
@@ -214,7 +215,8 @@ class User(MongoObject):
             sha_hash = hashlib.sha512()
             sha_hash.update(byte_hash)
             byte_hash = sha_hash.digest()
-        self.otp_secret = base64.b32encode(byte_hash)[:DEFAULT_OTP_SECRET_LEN]
+        self.otp_secret = base64.b32encode(
+            byte_hash)[:settings.user.otp_secret_len]
 
     def verify_otp_code(self, code, remote_ip=None):
         if remote_ip:
@@ -223,7 +225,7 @@ class User(MongoObject):
                 cur_code, cur_remote_ip = otp_cache.split(',')
                 if cur_code == code and cur_remote_ip == remote_ip:
                     cache_db.expire(self.get_cache_key('otp_cache'),
-                        OTP_CACHE_TTL)
+                        settings.user.otp_cache_ttl)
                     return True
                 else:
                     cache_db.remove(self.get_cache_key('otp_cache'))
@@ -256,7 +258,8 @@ class User(MongoObject):
 
         cache_db.dict_set(self.get_cache_key('otp'),
             str(int(time.time())), code)
-        cache_db.expire(self.get_cache_key('otp_cache'), OTP_CACHE_TTL)
+        cache_db.expire(self.get_cache_key('otp_cache'),
+            settings.user.otp_cache_ttl)
         cache_db.set(self.get_cache_key('otp_cache'),
             ','.join((code, remote_ip)))
         return True

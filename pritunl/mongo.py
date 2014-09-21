@@ -44,8 +44,9 @@ def setup_mongo():
     settings.commit(True)
 
     if prefix + 'log_entries' not in cur_collections:
+        log_limit = settings.app.log_entry_limit
         database.create_collection(prefix + 'log_entries', capped=True,
-            size=LOG_LIMIT * LOG_AVG_SIZE * 2, max=LOG_LIMIT)
+            size=log_limit * 256 * 2, max=log_limit)
 
     if prefix + 'messages' not in cur_collections:
         database.create_collection(prefix + 'messages', capped=True,
@@ -95,9 +96,9 @@ def setup_mongo():
         ('nonce', pymongo.ASCENDING),
     ], unique=True)
     collections['auth_nonces'].ensure_index('timestamp',
-        expireAfterSeconds=AUTH_NONCE_TIME_WINDOW * 2.1)
+        expireAfterSeconds=settings.app.auth_time_window * 2.1)
     collections['auth_limiter'].ensure_index('timestamp',
-        expireAfterSeconds=AUTH_LIMITER_TTL)
+        expireAfterSeconds=settings.app.auth_limiter_ttl)
 
     from administrator import Administrator
     if not Administrator.collection.find_one():

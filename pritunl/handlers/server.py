@@ -1,5 +1,6 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
+from pritunl.settings import settings
 from pritunl.server import Server
 from pritunl.organization import Organization
 from pritunl.log_entry import LogEntry
@@ -322,7 +323,7 @@ def server_put_post(server_id=None):
 
         if not dh_param_bits_def:
             dh_param_bits_def = True
-            dh_param_bits = DEFAULT_DH_PARAM_BITS
+            dh_param_bits = settings.vpn.default_dh_param_bits
 
         if not mode_def:
             mode_def = True

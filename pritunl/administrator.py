@@ -1,6 +1,7 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
+from pritunl.settings import settings
 from pritunl.mongo_object import MongoObject
 import pritunl.utils as utils
 import pritunl.mongo as mongo
@@ -55,7 +56,7 @@ class Administrator(MongoObject):
 
     def _hash_password(self, salt, password):
         pass_hash = hashlib.sha512()
-        pass_hash.update(password[:PASSWORD_LEN_LIMIT])
+        pass_hash.update(password[:settings.app.password_len_limit])
         pass_hash.update(base64.b64decode(salt))
         hash_digest = pass_hash.digest()
 
@@ -125,7 +126,7 @@ class Administrator(MongoObject):
 
             try:
                 if abs(int(auth_timestamp) - int(time.time())) > \
-                        AUTH_TIME_WINDOW:
+                        settings.app.auth_time_window:
                     return False
             except ValueError:
                 return False
@@ -174,8 +175,9 @@ class Administrator(MongoObject):
                 flask.session.clear()
                 return False
 
-            if SESSION_TIMEOUT and int(time.time()) - \
-                    flask.session['timestamp'] > SESSION_TIMEOUT:
+            session_timeout = settings.app.session_timeout
+            if session_timeout and int(time.time()) - \
+                    flask.session['timestamp'] > session_timeout:
                 flask.session.clear()
                 return False
 
@@ -204,7 +206,7 @@ class Administrator(MongoObject):
                     '_id': remote_addr,
                 }, doc, upsert=True)
 
-            if doc['count'] > AUTH_LIMITER_COUNT_MAX:
+            if doc['count'] > settings.app.auth_limiter_count_max:
                 raise flask.abort(403)
 
         administrator = cls.find_user(username=username)

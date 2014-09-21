@@ -1,6 +1,7 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
+from pritunl.settings import settings
 from pritunl.cache import cache_db
 from pritunl.user import User
 from pritunl.queue_com import QueueCom
@@ -175,7 +176,7 @@ class Organization(MongoObject):
         for _ in xrange(2):
             for _ in xrange(2048):
                 temp_id = ''.join(random.sample(
-                    SHORT_URL_CHARS, SHORT_URL_LEN))
+                    SHORT_URL_CHARS, settings.app.short_url_length))
                 if not view_id:
                     if not cache_db.exists('view_token-%s' % temp_id):
                         view_id = temp_id
@@ -189,7 +190,7 @@ class Organization(MongoObject):
         view_id_key = 'view_token-%s' % view_id
         uri_id_key = 'uri_token-%s' % uri_id
 
-        cache_db.expire(key_id_key, KEY_LINK_TIMEOUT)
+        cache_db.expire(key_id_key, settings.app.key_link_timeout)
         cache_db.dict_set(key_id_key, 'org_id', self.id)
         cache_db.dict_set(key_id_key, 'user_id', user_id)
         cache_db.dict_set(key_id_key, 'view_id', view_id)
@@ -200,7 +201,7 @@ class Organization(MongoObject):
             conf_id = uuid.uuid4().hex
             conf_id_key = 'conf_token-%s' % conf_id
 
-            cache_db.expire(conf_id_key, KEY_LINK_TIMEOUT)
+            cache_db.expire(conf_id_key, settings.app.key_link_timeout)
             cache_db.dict_set(conf_id_key, 'org_id', self.id)
             cache_db.dict_set(conf_id_key, 'user_id', user_id)
             cache_db.dict_set(conf_id_key, 'server_id', server.id)
@@ -211,7 +212,7 @@ class Organization(MongoObject):
                 'url': '/key/%s.ovpn' % conf_id,
             })
 
-        cache_db.expire(view_id_key, KEY_LINK_TIMEOUT)
+        cache_db.expire(view_id_key, settings.app.key_link_timeout)
         cache_db.dict_set(view_id_key, 'org_id', self.id)
         cache_db.dict_set(view_id_key, 'user_id', user_id)
         cache_db.dict_set(view_id_key, 'key_id', key_id)
@@ -219,7 +220,7 @@ class Organization(MongoObject):
         cache_db.dict_set(view_id_key,
             'conf_urls', json.dumps(conf_urls))
 
-        cache_db.expire(uri_id_key, KEY_LINK_TIMEOUT)
+        cache_db.expire(uri_id_key, settings.app.key_link_timeout)
         cache_db.dict_set(uri_id_key, 'org_id', self.id)
         cache_db.dict_set(uri_id_key, 'user_id', user_id)
 

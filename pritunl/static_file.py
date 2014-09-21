@@ -1,5 +1,6 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
+from pritunl.settings import settings
 from pritunl.cache import cache_db
 from pritunl import app_server
 from werkzeug.http import http_date
@@ -85,7 +86,7 @@ class StaticFile(object):
         response = flask.Response(response=self.data, mimetype=self.mime_type)
         if app_server.static_cache and not app_server.debug and self.cache:
             response.headers.add('Cache-Control',
-                'max-age=%s, public' % STATIC_CACHE_TIME)
+                'max-age=%s, public' % settings.app.static_cache_time)
             response.headers.add('ETag', '"%s"' % self.etag)
         else:
             response.headers.add('Cache-Control',

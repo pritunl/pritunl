@@ -1,6 +1,7 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
+from pritunl.settings import settings
 from pritunl.organization import Organization
 from pritunl.event import Event
 from pritunl.log_entry import LogEntry
@@ -591,7 +592,7 @@ class Server(MongoObject):
         while not self._interrupt:
             time.sleep(0.1)
             # Check interrupt every 0.1s check client count every 5s
-            if i == SERVER_STATUS_RATE * 5:
+            if i >= server.vpn.status_update_rate * 10:
                 i = 0
                 self._read_clients(ovpn_status_path)
             else:
@@ -767,11 +768,12 @@ class Server(MongoObject):
         self._event_delay(type=SERVER_OUTPUT_UPDATED, resource_id=self.id)
 
     def push_output(self, output):
-        if not SERVER_LOG_LINES:
+        log_lines = settings.vpn.log_lines
+        if not log_lines:
             return
         cache_db.list_rpush(self.get_cache_key('output'), output.rstrip('\n'))
         clear_lines = cache_db.list_length(self.get_cache_key('output')) - \
-            SERVER_LOG_LINES
+            log_lines
         for _ in xrange(clear_lines):
             cache_db.list_lpop(self.get_cache_key('output'))
         self._event_delay(type=SERVER_OUTPUT_UPDATED, resource_id=self.id)
