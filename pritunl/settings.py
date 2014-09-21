@@ -32,7 +32,7 @@ class Settings(object):
         messenger = Messenger()
         transaction = MongoTransaction()
         collection = transaction.collection(
-            self.collection.collection_name)
+            self.collection.name_str)
 
         for group in dir(self):
             if group[0] == '_' or group in SETTINGS_RESERVED:

@@ -127,7 +127,7 @@ class MongoObject(object):
 
         if transaction:
             collection = transaction.collection(
-                self.collection.collection_name)
+                self.collection.name_str)
         else:
             collection = self.collection
 

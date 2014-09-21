@@ -24,7 +24,7 @@ class Messenger(object):
 
         if transaction:
             tran_collection = transaction.collection(
-                self.collection.collection_name)
+                self.collection.name_str)
 
             if isinstance(channels, str):
                 doc['channel'] = channels
