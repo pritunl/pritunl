@@ -12,7 +12,7 @@ def object_hook_handler(obj):
     if object_data:
         object_type, object_data = object_data
         if object_type == 'OID':
-            return bson.ObjectId(object_id)
+            return bson.ObjectId(object_data)
         elif object_type == 'DATE':
             return datetime.datetime.fromtimestamp(object_data)
     return obj
