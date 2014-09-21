@@ -76,3 +76,5 @@ class Settings(object):
             self.commit(all_fields=True)
             self._listening = True
             listener.add_listener('setting', self.on_msg)
+
+settings = Settings()
