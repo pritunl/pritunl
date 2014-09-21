@@ -55,6 +55,8 @@ class Settings(object):
         transaction.commit()
 
     def load(self):
+        from pritunl.settings_test import SettingsTest
+
         groups = set(dir(self)) - SETTINGS_RESERVED
         for doc in self.collection.find():
             group_name = doc.pop('_id')
