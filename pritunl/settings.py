@@ -1,8 +1,6 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
-from pritunl.messenger import Messenger
-from pritunl.mongo_transaction import MongoTransaction
 import pritunl.mongo as mongo
 import pritunl.listener as listener
 import importlib
@@ -27,6 +25,9 @@ class Settings(object):
                 setattr(group, field, val)
 
     def commit(self, all_fields=False):
+        from pritunl.mongo_transaction import MongoTransaction
+        from pritunl.messenger import Messenger
+
         docs = []
         has_docs = False
         messenger = Messenger()
