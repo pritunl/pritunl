@@ -37,10 +37,10 @@ def setup_mongo():
         'auth_limiter': getattr(database, prefix + 'auth_limiter'),
     })
 
-    settings.load()
-
     for collection_name, collection in collections.items():
         collection.name_str = collection_name
+
+    settings.load()
 
     if prefix + 'log_entries' not in cur_collections:
         database.create_collection(prefix + 'log_entries', capped=True,
