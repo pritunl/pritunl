@@ -40,7 +40,7 @@ def setup_mongo():
     for collection_name, collection in collections.items():
         collection.name_str = collection_name
 
-    settings.load()
+    settings.start()
     settings.commit(True)
 
     if prefix + 'log_entries' not in cur_collections:
