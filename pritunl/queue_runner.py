@@ -19,7 +19,11 @@ from Queue import PriorityQueue
 
 running_queues = {}
 runner_queues = [PriorityQueue() for _ in xrange(3)]
-thread_limits = [threading.Semaphore(x) for x in (4, 2, 1)]
+thread_limits = [threading.Semaphore(x) for x in (
+    settings.app.queue_low_thread_limit,
+    settings.app.queue_med_thread_limit,
+    settings.app.queue_high_thread_limit,
+)]
 
 class QueueRunner(object):
     def add_queue_item(self, queue_item):

@@ -30,4 +30,7 @@ class SettingsApp(SettingsGroup):
         'server_api_key': None,
         'email_from_addr': None,
         'email_api_key': None,
+        'queue_low_thread_limit': 4,
+        'queue_med_thread_limit': 2,
+        'queue_high_thread_limit': 1,
     }
