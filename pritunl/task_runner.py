@@ -1,6 +1,7 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
+from pritunl.settings import settings
 from pritunl.mongo_object import MongoObject
 from pritunl.task import Task, _tasks
 import pritunl.mongo as mongo
@@ -64,7 +65,7 @@ class TaskRunner:
                 if response['updatedExisting']:
                     self.run_task(task_item)
 
-            time.sleep(MONGO_TASK_TTL)
+            time.sleep(settings.mongo.task_ttl)
 
     def start(self):
         from pritunl.task_sync_ip_pool import TaskSyncIpPool

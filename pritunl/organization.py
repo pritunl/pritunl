@@ -73,7 +73,8 @@ class Organization(MongoObject):
 
     @property
     def page_total(self):
-        return math.floor(max(0, float(self.user_count - 1)) / USER_PAGE_COUNT)
+        return math.floor(max(0, float(self.user_count - 1)) /
+            settings.user.page_count)
 
     @cached_static_property
     def collection(cls):
@@ -143,20 +144,22 @@ class Organization(MongoObject):
             'org_id': self.id,
             'type': {'$in': [CERT_CLIENT, CERT_SERVER]},
         }
+        page_count = settings.user.page_count
+
         if fields:
             fields = {key: True for key in fields}
 
         if search:
             spec['name'] = {'$regex': '.*%s.*' % search}
-            limit = search_limit or USER_PAGE_COUNT
+            limit = search_limit or page_count
         else:
-            limit = USER_PAGE_COUNT
+            limit = page_count
 
         sort = [
             ('type', pymongo.ASCENDING),
             ('name', pymongo.ASCENDING),
         ]
-        skip = page * USER_PAGE_COUNT if page else 0
+        skip = page * page_count if page else 0
 
         cursor = User.collection.find(spec, fields).sort(
             sort).skip(skip).limit(limit)

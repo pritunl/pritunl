@@ -1,6 +1,7 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
+from pritunl.settings import settings
 from pritunl.mongo_list import MongoList
 from pritunl.mongo_dict import MongoDict
 from pritunl.mongo_object import MongoObject
@@ -34,7 +35,7 @@ class MongoTransaction(MongoObject):
         'state': PENDING,
         'priority': NORMAL,
         'attempts': 0,
-        'ttl': MONGO_TRAN_TTL,
+        'ttl': settings.mongo.tran_ttl,
     }
 
     def __init__(self, lock_id=None, priority=None,
@@ -147,7 +148,7 @@ class MongoTransaction(MongoObject):
 
             if not doc:
                 return
-            elif doc['attempts'] > MONGO_TRAN_MAX_ATTEMPTS:
+            elif doc['attempts'] > settings.mongo.tran_max_attempts:
                 response = self.transaction_collection.update({
                     '_id': self.id,
                     'state': PENDING,

@@ -1,6 +1,7 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
+from pritunl.settings import settings
 from pritunl.mongo_object import MongoObject
 from pritunl.mongo_transaction import MongoTransaction
 import pritunl.mongo as mongo
@@ -34,7 +35,7 @@ class MongoTransactionRunner:
                         'transaction_id': str(doc['id']),
                     })
 
-            time.sleep(MONGO_TRAN_TTL)
+            time.sleep(settings.mongo.tran_ttl)
 
     def start(self):
         thread = threading.Thread(target=self.check_thread)

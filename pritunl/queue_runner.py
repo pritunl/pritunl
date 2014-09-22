@@ -1,6 +1,7 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
+from pritunl.settings import settings
 from pritunl.queue import Queue
 import pritunl.logger as logger
 import pritunl.mongo as mongo
@@ -88,7 +89,7 @@ class QueueRunner(object):
             except:
                 logger.exception('Error in queue check thread.')
 
-            time.sleep(MONGO_QUEUE_TTL)
+            time.sleep(settings.mongo.queue_ttl)
 
     def run_queue_item(self, queue_item, thread_limit):
         release = True

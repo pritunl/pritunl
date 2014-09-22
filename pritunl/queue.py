@@ -1,6 +1,7 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
+from pritunl.settings import settings
 from pritunl.queue_com import QueueCom
 from pritunl.messenger import Messenger
 from pritunl.mongo_object import MongoObject
@@ -34,7 +35,7 @@ class Queue(MongoObject):
         'priority': LOW,
         'retry': True,
         'attempts': 0,
-        'ttl': MONGO_QUEUE_TTL,
+        'ttl': settings.mongo.queue_ttl,
     }
     type = None
     cpu_type = NORMAL_CPU
@@ -241,7 +242,7 @@ class Queue(MongoObject):
 
                     self.remove()
                     return
-                elif self.attempts > MONGO_QUEUE_MAX_ATTEMPTS:
+                elif self.attempts > settings.mongo.queue_max_attempts:
                     self.state = ROLLBACK
                     if not self.claim_commit('state'):
                         return

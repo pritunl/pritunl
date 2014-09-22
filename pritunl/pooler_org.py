@@ -1,6 +1,7 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
+from pritunl.settings import settings
 from pritunl.cache import cache_db
 from pritunl.least_common_counter import LeastCommonCounter
 from pritunl import app_server
@@ -42,5 +43,5 @@ class PoolerOrg(object):
             '_id': True,
         }).count()
 
-        for _ in xrange(ORG_POOL_SIZE - org_pool_count):
+        for _ in xrange(settings.app.org_pool_size - org_pool_count):
             org = Organization.new_org(type=ORG_POOL, block=False)

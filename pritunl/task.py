@@ -1,6 +1,7 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
+from pritunl.settings import settings
 from pritunl.mongo_object import MongoObject
 import pritunl.mongo as mongo
 import pymongo
@@ -40,7 +41,7 @@ class Task(MongoObject):
     }
     fields_default = {
         'attempts': 0,
-        'ttl': MONGO_TASK_TTL,
+        'ttl': settings.mongo.task_ttl,
     }
     type = None
 
@@ -81,7 +82,7 @@ class Task(MongoObject):
     def run(self):
         try:
             self.attempts += 1
-            if self.attempts <= MONGO_TASK_MAX_ATTEMPTS:
+            if self.attempts <= settings.mongo.task_max_attempts:
                 if not self.claim_commit():
                     return
                 self.task()

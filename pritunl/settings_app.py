@@ -21,4 +21,9 @@ class SettingsApp(SettingsGroup):
         'auth_time_window': 300,
         'auth_limiter_ttl': 60,
         'auth_limiter_count_max': 30,
+        'org_pool_size': 1,
+        'user_pool_size': 6,
+        'server_pool_size': 2,
+        'server_user_pool_size': 2,
+        'dh_param_bits_pool': [1536],
     }

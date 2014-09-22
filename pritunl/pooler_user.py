@@ -1,6 +1,7 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
+from pritunl.settings import settings
 from pritunl.cache import cache_db
 from pritunl.least_common_counter import LeastCommonCounter
 from pritunl import app_server
@@ -32,8 +33,10 @@ class PoolerUser(object):
 
     @classmethod
     def fill_new_org_pool(cls, org):
-        user_types = utils.roundrobin([CERT_CLIENT_POOL] * USER_POOL_SIZE,
-            [CERT_SERVER_POOL] * SERVER_USER_POOL_SIZE)
+        user_types = utils.roundrobin(
+            [CERT_CLIENT_POOL] * settings.app.user_pool_size,
+            [CERT_SERVER_POOL] * settings.app.server_user_pool_size,
+        )
 
         for user_type in user_types:
             org.new_user(type=user_type, block=False)
@@ -45,8 +48,8 @@ class PoolerUser(object):
         orgs = {}
         orgs_count = LeastCommonCounter()
         type_to_size = {
-            CERT_CLIENT_POOL: USER_POOL_SIZE,
-            CERT_SERVER_POOL: SERVER_USER_POOL_SIZE,
+            CERT_CLIENT_POOL: settings.app.user_pool_size,
+            CERT_SERVER_POOL: settings.app.server_user_pool_size,
         }
 
         for org in Organization.iter_orgs(type=None):

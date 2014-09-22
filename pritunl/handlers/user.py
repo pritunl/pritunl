@@ -1,5 +1,6 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
+from pritunl.settings import settings
 from pritunl.organization import Organization
 from pritunl.event import Event
 from pritunl.log_entry import LogEntry
@@ -23,7 +24,7 @@ def user_get(org_id, user_id=None, page=None):
         page = flask.request.args.get('page', None)
         page = int(page) if page else page
         search = flask.request.args.get('search', None)
-        limit = int(flask.request.args.get('limit', USER_PAGE_COUNT))
+        limit = int(flask.request.args.get('limit', settings.user.page_count))
         otp_auth = False
         search_more = True
         server_count = 0
