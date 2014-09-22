@@ -6,6 +6,7 @@ from pritunl.settings_group import SettingsGroup
 class SettingsApp(SettingsGroup):
     group = 'app'
     fields = {
+        'settings_check_interval': 600,
         'key_link_timeout': 86400,
         'password_len_limit': 128,
         'public_ip_server': 'http://ip.pritunl.com/json',
