@@ -7,7 +7,7 @@ import os
 
 class Settings(object):
     def __init__(self):
-        self._listening = False
+        self._running = False
 
     @cached_static_property
     def collection(cls):
@@ -57,6 +57,17 @@ class Settings(object):
         transaction.commit()
 
     def load(self):
+        groups = set(dir(self)) - SETTINGS_RESERVED
+        for doc in self.collection.find():
+            group_name = doc.pop('_id')
+            if group_name not in groups:
+                continue
+
+            group = getattr(self, group_name)
+            for field, val in doc.items():
+                setattr(group, field, val)
+
+    def _import_all(self):
         for module_name in os.listdir(os.path.dirname(__file__)):
             if module_name[:9] != 'settings_' or \
                     module_name == 'settings_group.py' or \
@@ -71,23 +82,32 @@ class Settings(object):
 
             setattr(self, cls.group, cls())
 
-        groups = set(dir(self)) - SETTINGS_RESERVED
-        for doc in self.collection.find():
-            group_name = doc.pop('_id')
-            if group_name not in groups:
-                continue
+    def _check(self):
+        try:
+            self.load()
+        except:
+            logger.exception('Auto settings check failed')
+        self._start_check()
 
-            group = getattr(self, group_name)
-            for field, val in doc.items():
-                setattr(group, field, val)
+    def _start_check(self):
+        thread = threading.Timer(self.app.settings_check_interval,
+            self._check)
+        thread.daemon = True
+        thread.start()
 
     def start(self):
         import pritunl.listener as listener
 
+        if self._running:
+            return
+        self._running = True
+
         self.load()
-        if not self._listening:
-            self.commit(all_fields=True)
-            self._listening = True
-            listener.add_listener('setting', self.on_msg)
+        self._import_all()
+
+        self.commit(all_fields=True)
+        listener.add_listener('setting', self.on_msg)
+
+        self._start_check()
 
 settings = Settings()
