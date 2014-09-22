@@ -2,7 +2,6 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 import pritunl.mongo as mongo
-import pritunl.listener as listener
 import importlib
 import os
 
@@ -83,6 +82,8 @@ class Settings(object):
                 setattr(group, field, val)
 
     def start(self):
+        import pritunl.listener as listener
+
         self.load()
         if not self._listening:
             self.commit(all_fields=True)
