@@ -1,6 +1,6 @@
 from pritunl.constants import *
 from pritunl.administrator import Administrator
-from pritunl.settings import Settings
+from pritunl.settings import settings
 import pritunl.utils as utils
 import pritunl.mongo as mongo
 from pritunl import app_server
@@ -10,16 +10,17 @@ import flask
 @app_server.app.route('/auth', methods=['GET'])
 @app_server.auth
 def auth_get():
-    settings = Settings()
     response = flask.g.administrator.dict()
-    response.update(settings.dict())
+    response.update({
+        'email_from': settings.app.email_from_addr,
+        'email_api_key': settings.app.email_api_key,
+    })
     return utils.jsonify(response)
 
 @app_server.app.route('/auth', methods=['PUT'])
 @app_server.auth
 def auth_put():
     administrator = flask.g.administrator
-    settings = Settings()
 
     if 'username' in flask.request.json and flask.request.json['username']:
         administrator.username = utils.filter_str(
@@ -31,18 +32,25 @@ def auth_put():
     if 'secret' in flask.request.json and flask.request.json['secret']:
         administrator.generate_secret()
 
+    settings_commit = False
     if 'email_from' in flask.request.json:
+        settings_commit = True
         email_from = flask.request.json['email_from']
-        settings.set('email', 'from_addr', email_from or None)
+        settings.app.email_from_addr = email_from or None
     if 'email_api_key' in flask.request.json:
+        settings_commit = True
         email_api_key = flask.request.json['email_api_key']
-        settings.set('email', 'api_key', email_api_key or None)
+        settings.app.email_api_key = email_api_key or None
+    if settings_commit:
+        settings.commit()
 
-    settings.commit()
     administrator.commit()
 
     response = flask.g.administrator.dict()
-    response.update(settings.dict())
+    response.update({
+        'email_from': settings.app.email_from_addr,
+        'email_api_key': settings.app.email_api_key,
+    })
     return utils.jsonify(response)
 
 @app_server.app.route('/auth/session', methods=['GET'])

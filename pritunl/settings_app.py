@@ -26,4 +26,8 @@ class SettingsApp(SettingsGroup):
         'server_pool_size': 2,
         'server_user_pool_size': 2,
         'dh_param_bits_pool': [1536],
+        'cookie_secret': None,
+        'server_api_key': None,
+        'email_from_addr': None,
+        'email_api_key': None,
     }

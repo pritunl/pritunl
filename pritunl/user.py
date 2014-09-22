@@ -3,7 +3,6 @@ from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings import settings
 from pritunl.cache import cache_db
-from pritunl.system_conf import SystemConf
 from pritunl.mongo_object import MongoObject
 from pritunl.queue_init_user import QueueInitUser
 from pritunl.queue_init_user_pooled import QueueInitUserPooled
@@ -345,9 +344,7 @@ class User(MongoObject):
         }
 
     def send_key_email(self, key_link_domain):
-        settings = SystemConf()
-
-        if not settings.email_from_addr or not settings.email_api_key:
+        if not settings.app.email_from_addr or not settings.app.email_api_key:
             raise EmailNotConfiguredError('Email not configured', {
                 'org_id': self.org.id,
                 'user_id': self.id,
@@ -358,10 +355,10 @@ class User(MongoObject):
             headers={
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'X-Postmark-Server-Token': settings.email_api_key,
+                'X-Postmark-Server-Token': settings.app.email_api_key,
             },
             json_data={
-                'From': settings.email_from_addr,
+                'From': settings.app.email_from_addr,
                 'To': self.email,
                 'Subject': 'Pritunl VPN Key',
                 'TextBody':  'Your vpn key can be downloaded from the ' +
