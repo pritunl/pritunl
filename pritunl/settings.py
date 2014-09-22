@@ -4,6 +4,7 @@ from pritunl.descriptors import *
 import pritunl.mongo as mongo
 import importlib
 import os
+import threading
 
 class Settings(object):
     def __init__(self):
