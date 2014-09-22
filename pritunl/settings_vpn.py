@@ -10,4 +10,5 @@ class SettingsVpn(SettingsGroup):
         'log_lines': 1024,
         'status_update_rate': 5,
         'http_request_timeout': 10,
+        'safe_pub_subnets': ['50.203.224.0/24'],
     }

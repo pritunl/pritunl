@@ -82,7 +82,7 @@ def server_put_post(server_id=None):
         network_def = True
         network = flask.request.json['network']
 
-        if network not in SAFE_PUB_SUBNETS:
+        if network not in settings.vpn.safe_pub_subnets:
             network_split = network.split('/')
             if len(network_split) != 2:
                 return _network_invalid()
