@@ -1,6 +1,13 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 import UserList
+import abc
+
+class ListMeta(abc.ABCMeta):
+    def __instancecheck__(cls, other):
+        if isinstance(other, list):
+            return True
+        return False
 
 class MongoList(UserList.UserList):
     __class__ = list

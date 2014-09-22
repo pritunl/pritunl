@@ -1,5 +1,12 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
+import abc
+
+class DictMeta(abc.ABCMeta):
+    def __instancecheck__(cls, other):
+        if isinstance(other, dict):
+            return True
+        return False
 
 class MongoDict(object):
     __class__ = dict
