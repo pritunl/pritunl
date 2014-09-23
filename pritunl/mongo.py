@@ -29,6 +29,7 @@ def setup_mongo():
         'administrators': getattr(database, prefix + 'administrators'),
         'users': getattr(database, prefix + 'users'),
         'organizations': getattr(database, prefix + 'organizations'),
+        'hosts': getattr(database, prefix + 'hosts'),
         'servers': getattr(database, prefix + 'servers'),
         'servers_bandwidth': getattr(database, prefix + 'servers_bandwidth'),
         'servers_ip_pool': getattr(database, prefix + 'servers_ip_pool'),
