@@ -57,3 +57,7 @@ class Host(MongoObject):
 
         if self.name is None:
             self.name = utils.random_name()
+
+    @cached_static_property
+    def collection(cls):
+        return mongo.get_collection('hosts')
