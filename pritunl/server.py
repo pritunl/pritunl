@@ -592,7 +592,7 @@ class Server(MongoObject):
         while not self._interrupt:
             time.sleep(0.1)
             # Check interrupt every 0.1s check client count every 5s
-            if i >= server.vpn.status_update_rate * 10:
+            if i >= settings.vpn.status_update_rate * 10:
                 i = 0
                 self._read_clients(ovpn_status_path)
             else:
