@@ -86,9 +86,7 @@ def setup_mongo():
         ('server_id', pymongo.ASCENDING),
         ('user_id', pymongo.ASCENDING),
     ])
-    collections['servers_ip_pool'].ensure_index([
-        ('user_id', pymongo.ASCENDING),
-    ])
+    collections['servers_ip_pool'].ensure_index('user_id')
     collections['dh_params'].ensure_index('dh_param_bits')
     collections['auth_nonces'].ensure_index([
         ('token', pymongo.ASCENDING),
