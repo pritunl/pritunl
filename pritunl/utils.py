@@ -16,6 +16,7 @@ import uuid
 import datetime
 import logging
 import itertools
+import random
 
 logger = logging.getLogger(APP_NAME)
 
@@ -138,6 +139,13 @@ def roundrobin(*iterables):
         except StopIteration:
             pending -= 1
             nexts = itertools.cycle(itertools.islice(nexts, pending))
+
+def random_name():
+    return '%s-%s-%s' % (
+        random.choice(RANDOM_ADJS),
+        random.choice(RANDOM_NOUNS),
+        random.randint(1000, 9999),
+    )
 
 class Response:
     def __init__(self, url, headers, status_code, reason, content):

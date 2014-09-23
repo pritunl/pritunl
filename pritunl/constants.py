@@ -357,6 +357,37 @@ SUBSCRIPTION_SERVER_ERROR = 'subscription_server_error'
 SUBSCRIPTION_SERVER_ERROR_MSG = 'Unable to connect to ' + \
     'subscription server, please try again later.'
 
+RANDOM_ONE = [
+    'snowy',
+    'restless',
+    'calm',
+    'ancient',
+    'summer',
+    'evening',
+    'guarded',
+    'lively',
+    'thawing',
+    'autumn',
+    'thriving',
+    'patient',
+    'winter',
+]
+RANDOM_TWO = [
+    'waterfall',
+    'meadow',
+    'skies',
+    'waves',
+    'fields',
+    'stars',
+    'dreams',
+    'refuge',
+    'forest',
+    'plains',
+    'waters',
+    'plateau',
+    'thunder',
+]
+
 OVPN_SERVER_CONF = """port %s
 proto %s
 dev %s
