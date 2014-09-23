@@ -144,25 +144,31 @@ class Organization(MongoObject):
             'org_id': self.id,
             'type': {'$in': [CERT_CLIENT, CERT_SERVER]},
         }
+        limit = None
+        skip = None
         page_count = settings.user.page_count
 
         if fields:
             fields = {key: True for key in fields}
 
-        if search:
+        if search is not None:
             spec['name'] = {'$regex': '.*%s.*' % search}
             limit = search_limit or page_count
-        else:
+        elif page is not None:
             limit = page_count
+            skip = page * page_count if page else 0
 
         sort = [
             ('type', pymongo.ASCENDING),
             ('name', pymongo.ASCENDING),
         ]
-        skip = page * page_count if page else 0
 
-        cursor = User.collection.find(spec, fields).sort(
-            sort).skip(skip).limit(limit)
+        cursor = User.collection.find(spec, fields).sort(sort)
+
+        if skip is not None:
+            cursor = cursor.skip(page * page_count if page else 0)
+        if limit is not None:
+            cursor = cursor.limit(limit)
 
         if search:
             self.last_search_count = cursor.count()
