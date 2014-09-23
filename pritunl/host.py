@@ -61,3 +61,13 @@ class Host(MongoObject):
     @cached_static_property
     def collection(cls):
         return mongo.get_collection('hosts')
+
+    def dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'status': self.status,
+            'uptime': self.uptime,
+            'users_online': len(self.clients),
+            'user_count': self.user_count,
+        }
