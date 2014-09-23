@@ -13,6 +13,7 @@ import urllib2
 import threading
 import subprocess
 import uuid
+import hashlib
 
 try:
     import OpenSSL
@@ -103,6 +104,7 @@ class AppServer(Config):
         self.pooler_instance = None
         self.openssl_heartbleed = not utils.check_openssl()
         self.server_api_key = None
+        self.host_id = hashlib.sha1(str(uuid.getnode())).hexdigest()
 
     def __getattr__(self, name):
         if name == 'web_protocol':
