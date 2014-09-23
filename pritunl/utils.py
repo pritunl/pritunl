@@ -142,8 +142,8 @@ def roundrobin(*iterables):
 
 def random_name():
     return '%s-%s-%s' % (
-        random.choice(RANDOM_ADJS),
-        random.choice(RANDOM_NOUNS),
+        random.choice(RANDOM_ONE),
+        random.choice(RANDOM_TWO),
         random.randint(1000, 9999),
     )
 
