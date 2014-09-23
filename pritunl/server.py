@@ -224,6 +224,9 @@ class Server(MongoObject):
                 )
                 queue_ip_pool.start(transaction=transaction)
                 self.network_lock = queue_ip_pool.id
+        elif self.organizations.changed:
+            # TODO update ip pool
+            pass
 
         MongoObject.commit(self, transaction=transaction, *args, **kwargs)
 
