@@ -103,8 +103,8 @@ class Settings(object):
             return
         self._running = True
 
-        self.load()
         self._import_all()
+        self.load()
 
         self.commit(all_fields=True)
         listener.add_listener('setting', self.on_msg)
