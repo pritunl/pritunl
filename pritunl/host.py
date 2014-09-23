@@ -47,7 +47,6 @@ class Host(MongoObject):
         'status': False,
         'users_online': 0,
     }
-    cache_prefix = 'server'
 
     def __init__(self, name=None):
         MongoObject.__init__(self, **kwargs)
