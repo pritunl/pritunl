@@ -85,7 +85,6 @@ def setup_mongo():
     collections['servers_ip_pool'].ensure_index([
         ('server_id', pymongo.ASCENDING),
         ('user_id', pymongo.ASCENDING),
-        ('network', pymongo.ASCENDING),
     ])
     collections['servers_ip_pool'].ensure_index([
         ('user_id', pymongo.ASCENDING),
