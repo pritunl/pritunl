@@ -45,7 +45,7 @@ class Host(MongoObject):
         'status': OFFLINE,
     }
 
-    def __init__(self, name=None):
+    def __init__(self, name=None, **kwargs):
         MongoObject.__init__(self, **kwargs)
 
         if name is not None:
