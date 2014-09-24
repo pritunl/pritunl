@@ -104,6 +104,15 @@ class Host(MongoObject):
         thread.start()
 
     @classmethod
+    def get_host(cls, id):
+        return cls(id=id)
+
+    @classmethod
+    def iter_hosts(cls):
+        for doc in cls.collection.find().sort('name'):
+            yield cls(doc=doc)
+
+    @classmethod
     def init_host(cls):
         host = cls()
         host.id = app_server.host_id
