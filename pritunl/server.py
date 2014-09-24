@@ -60,7 +60,7 @@ class Server(MongoObject):
         'instance_id',
         'ping_timestamp',
         'status',
-        'uptime',
+        'start_timestamp',
         'clients',
         'users_online',
     }
@@ -629,7 +629,8 @@ class Server(MongoObject):
                 args=(temp_path,))
             status_thread.start()
             self.status = True
-            self.commit('status')
+            self.start_timestamp = datetime.datetime.now()
+            self.commit(('status', 'start_timestamp'))
             self.publish('started')
 
             while True:
@@ -648,7 +649,8 @@ class Server(MongoObject):
             cache_db.dict_remove(self.get_cache_key(), 'clients')
 
             self.status = False
-            self.commit('status')
+            self.start_timestamp = None
+            self.commit(('status', 'start_timestamp'))
             self.publish('stopped')
             self.update_clients({}, force=True)
             if self._state:
