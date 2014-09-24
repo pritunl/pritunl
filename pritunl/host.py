@@ -75,3 +75,18 @@ class Host(MongoObject):
             'user_count': self.user_count,
             'users_online': self.users_online,
         }
+
+    @classmethod
+    def init_host(cls):
+        host = cls()
+        host.id = app_server.host_id
+        try:
+            host.load()
+        except NotFound:
+            pass
+        host.status = ONLINE
+        host.users_online = 0
+
+        host.commit()
+
+        return host
