@@ -12,11 +12,11 @@ import flask
 def org_get(org_id=None):
     if org_id:
         return utils.jsonify(Organization.get_org(id=org_id).dict())
-    else:
-        orgs = []
-        for org in Organization.iter_orgs():
-            orgs.append(org.dict())
-        return utils.jsonify(orgs)
+
+    orgs = []
+    for org in Organization.iter_orgs():
+        orgs.append(org.dict())
+    return utils.jsonify(orgs)
 
 @app_server.app.route('/organization', methods=['POST'])
 @app_server.auth
