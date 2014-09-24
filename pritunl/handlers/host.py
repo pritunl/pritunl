@@ -18,15 +18,24 @@ import collections
 def host_get(host_id=None):
     if host_id:
         return tils.jsonify(Host.get_host(id=host_id).dict())
-    return utils.jsonify({})
 
-@app_server.app.route('/host', methods=['POST'])
+    hosts = []
+
+    for host in Host.iter_hosts():
+        hosts.append(host.dict())
+
+    return utils.jsonify(hosts)
+
 @app_server.app.route('/host/<host_id>', methods=['PUT'])
 @app_server.auth
-def host_put_post(host_id=None):
-    if host_id:
-        return tils.jsonify(Host.get_host(id=host_id).dict())
-    return utils.jsonify({})
+def host_put(host_id=None):
+    host = Host.get_host(id=host_id)
+
+    host.name = utils.filter_str(flask.request.json['name'])
+    host.commit()
+    Event(type=HOSTS_UPDATED)
+
+    return utils.jsonify(host.dict())
 
 @app_server.app.route('/host/<host_id>', methods=['DELETE'])
 @app_server.auth
