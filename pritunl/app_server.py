@@ -329,6 +329,7 @@ class AppServer(Config):
     def _setup_host(self):
         from pritunl.host import Host
         host = Host.init_host()
+        host.keep_alive()
 
     def _get_version_int(self, version):
         return int(''.join([x.zfill(2) for x in version.split('.')]))
