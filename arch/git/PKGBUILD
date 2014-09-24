@@ -6,7 +6,7 @@ pkgver=0.0.0
 pkgrel=1
 pkgdesc="Pritunl vpn server (git version)"
 arch=("any")
-license=("AGPL3")
+license=("custom")
 url="https://github.com/${_pkgname}/${_pkgname}"
 depends=(
     "python"
