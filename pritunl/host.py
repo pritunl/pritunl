@@ -59,6 +59,14 @@ class Host(MongoObject):
         if self.name is None:
             self.name = utils.random_name()
 
+    @cached_property
+    def user_count(self):
+        return 0
+
+    @cached_property
+    def users_online(self):
+        return 0
+
     @cached_static_property
     def collection(cls):
         return mongo.get_collection('hosts')
