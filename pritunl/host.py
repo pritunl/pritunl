@@ -82,6 +82,27 @@ class Host(MongoObject):
             'users_online': self.users_online,
         }
 
+    def _keep_alive_thread(self):
+        while True:
+            time.sleep(settings.app.host_ttl - 10)
+
+            try:
+                self.collection.update({
+                    '_id': self.id,
+                }, {'$set': {
+                    'ping_timestamp': datetime.datetime.utcnow(),
+                }})
+            except:
+                logger.exception('Error in host keep alive update. %s' % {
+                    'host_id': self.id,
+                    'host_name': self.name,
+                })
+
+    def keep_alive(self):
+        thread = threading.Thread(target=self._keep_alive_thread)
+        thread.daemon = True
+        thread.start()
+
     @classmethod
     def init_host(cls):
         host = cls()
