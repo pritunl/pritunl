@@ -53,13 +53,13 @@ def _dns_server_invalid():
 def server_get(server_id=None):
     if server_id:
         return utils.jsonify(Server.get_server(server_id).dict())
-    else:
-        servers = []
 
-        for server in Server.iter_servers():
-            servers.append(server.dict())
+    servers = []
 
-        return utils.jsonify(servers)
+    for server in Server.iter_servers():
+        servers.append(server.dict())
+
+    return utils.jsonify(servers)
 
 @app_server.app.route('/server', methods=['POST'])
 @app_server.app.route('/server/<server_id>', methods=['PUT'])
