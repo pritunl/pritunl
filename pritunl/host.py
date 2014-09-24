@@ -86,6 +86,7 @@ class Host(MongoObject):
             pass
         host.status = ONLINE
         host.users_online = 0
+        host.start_timestamp = datetime.datetime.utcnow()
 
         host.commit()
 
