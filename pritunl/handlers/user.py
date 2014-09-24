@@ -20,103 +20,103 @@ def user_get(org_id, user_id=None, page=None):
     org = Organization.get_org(id=org_id)
     if user_id:
         return utils.jsonify(org.get_user(user_id).dict())
+
+    page = flask.request.args.get('page', None)
+    page = int(page) if page else page
+    search = flask.request.args.get('search', None)
+    limit = int(flask.request.args.get('limit', settings.user.page_count))
+    otp_auth = False
+    search_more = True
+    server_count = 0
+    clients = {}
+    servers = []
+
+    fields = (
+        'name',
+        'clients',
+    )
+    for server in org.iter_servers(fields=fields):
+        servers.append(server)
+        server_count += 1
+        if server.otp_auth:
+            otp_auth = True
+        server_clients = server.clients
+        for client, client_id in server_clients.iteritems():
+            if client_id not in clients:
+                clients[client_id] = {}
+            clients[client_id][server.id] = client
+
+    users = []
+    users_id = []
+    users_server_data = collections.defaultdict(dict)
+    fields = (
+        'organization',
+        'organization_name',
+        'name',
+        'email',
+        'type',
+        'otp_secret',
+        'disabled',
+    )
+    for user in org.iter_users(page=page, search=search,
+            search_limit=limit, fields=fields):
+        user_id = user.id
+        users_id.append(user_id)
+        is_client = user_id in clients
+        user_dict = user.dict()
+        user_dict['status'] = is_client
+        user_dict['otp_auth'] = otp_auth
+        server_data = []
+        for server in servers:
+            server_id = server.id
+            user_status = is_client and server_id in clients[user_id]
+            data = {
+                'id': server_id,
+                'name': server.name,
+                'status': user_status,
+                'local_address': None,
+                'remote_address': None,
+                'real_address': None,
+                'virt_address': None,
+                'bytes_received': None,
+                'bytes_sent': None,
+                'connected_since': None,
+            }
+            users_server_data[user_id][server_id] = data
+            if user_status:
+                data.update(clients[user_id][server_id])
+            server_data.append(data)
+        user_dict['servers'] = server_data
+        users.append(user_dict)
+
+    ip_addrs_iter = ServerIpPool.multi_get_ip_addr(org_id, users_id)
+    for user_id, server_id, local_addr, remote_addr in ip_addrs_iter:
+        user_server_data = users_server_data[user_id].get(server_id)
+        if user_server_data:
+            if not user_server_data['local_address']:
+                user_server_data['local_address'] = local_addr
+            if not user_server_data['remote_address']:
+                user_server_data['remote_address'] = remote_addr
+
+    if page is not None:
+        return utils.jsonify({
+            'page': page,
+            'page_total': org.page_total,
+            'server_count': server_count,
+            'users': users,
+        })
+    elif search is not None:
+        return utils.jsonify({
+            'search': search,
+            'search_more': limit < org.last_search_count,
+            'search_limit': limit,
+            'search_count': org.last_search_count,
+            'search_time':  round((time.time() - flask.g.start), 4),
+            'server_count': server_count,
+            'users': users,
+        })
     else:
-        page = flask.request.args.get('page', None)
-        page = int(page) if page else page
-        search = flask.request.args.get('search', None)
-        limit = int(flask.request.args.get('limit', settings.user.page_count))
-        otp_auth = False
-        search_more = True
-        server_count = 0
-        clients = {}
-        servers = []
-
-        fields = (
-            'name',
-            'clients',
-        )
-        for server in org.iter_servers(fields=fields):
-            servers.append(server)
-            server_count += 1
-            if server.otp_auth:
-                otp_auth = True
-            server_clients = server.clients
-            for client, client_id in server_clients.iteritems():
-                if client_id not in clients:
-                    clients[client_id] = {}
-                clients[client_id][server.id] = client
-
-        users = []
-        users_id = []
-        users_server_data = collections.defaultdict(dict)
-        fields = (
-            'organization',
-            'organization_name',
-            'name',
-            'email',
-            'type',
-            'otp_secret',
-            'disabled',
-        )
-        for user in org.iter_users(page=page, search=search,
-                search_limit=limit, fields=fields):
-            user_id = user.id
-            users_id.append(user_id)
-            is_client = user_id in clients
-            user_dict = user.dict()
-            user_dict['status'] = is_client
-            user_dict['otp_auth'] = otp_auth
-            server_data = []
-            for server in servers:
-                server_id = server.id
-                user_status = is_client and server_id in clients[user_id]
-                data = {
-                    'id': server_id,
-                    'name': server.name,
-                    'status': user_status,
-                    'local_address': None,
-                    'remote_address': None,
-                    'real_address': None,
-                    'virt_address': None,
-                    'bytes_received': None,
-                    'bytes_sent': None,
-                    'connected_since': None,
-                }
-                users_server_data[user_id][server_id] = data
-                if user_status:
-                    data.update(clients[user_id][server_id])
-                server_data.append(data)
-            user_dict['servers'] = server_data
-            users.append(user_dict)
-
-        ip_addrs_iter = ServerIpPool.multi_get_ip_addr(org_id, users_id)
-        for user_id, server_id, local_addr, remote_addr in ip_addrs_iter:
-            user_server_data = users_server_data[user_id].get(server_id)
-            if user_server_data:
-                if not user_server_data['local_address']:
-                    user_server_data['local_address'] = local_addr
-                if not user_server_data['remote_address']:
-                    user_server_data['remote_address'] = remote_addr
-
-        if page is not None:
-            return utils.jsonify({
-                'page': page,
-                'page_total': org.page_total,
-                'server_count': server_count,
-                'users': users,
-            })
-        elif search is not None:
-            return utils.jsonify({
-                'search': search,
-                'search_more': limit < org.last_search_count,
-                'search_limit': limit,
-                'search_count': org.last_search_count,
-                'search_time':  round((time.time() - flask.g.start), 4),
-                'server_count': server_count,
-                'users': users,
-            })
-        else:
-            return utils.jsonify(users)
+        return utils.jsonify(users)
 
 @app_server.app.route('/user/<org_id>', methods=['POST'])
 @app_server.auth
