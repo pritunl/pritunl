@@ -40,11 +40,9 @@ class Host(MongoObject):
         'ping_timestamp',
         'status',
         'uptime',
-        'users_online',
     }
     fields_default = {
         'status': OFFLINE,
-        'users_online': 0,
     }
 
     def __init__(self, name=None):
