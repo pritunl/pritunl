@@ -77,7 +77,7 @@ class Host(MongoObject):
             'id': self.id,
             'name': self.name,
             'status': self.status,
-            'start_timestamp': self.start_timestamp,
+            'uptime': self.uptime,
             'user_count': self.user_count,
             'users_online': self.users_online,
         }
