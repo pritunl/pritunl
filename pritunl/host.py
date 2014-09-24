@@ -72,6 +72,6 @@ class Host(MongoObject):
             'name': self.name,
             'status': self.status,
             'uptime': self.uptime,
-            'users_online': len(self.clients),
             'user_count': self.user_count,
+            'users_online': self.users_online,
         }
