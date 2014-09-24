@@ -66,7 +66,7 @@ class Queue(MongoObject):
             self.complete_task.__doc__ != 'not_overridden',
         ))
 
-    def _keep_alive_loop(self):
+    def _keep_alive_thread(self):
         messenger = Messenger()
 
         while True:
@@ -111,7 +111,8 @@ class Queue(MongoObject):
     def keep_alive(self):
         if self.keep_alive_thread:
             return
-        self.keep_alive_thread = threading.Thread(target=self._keep_alive_loop)
+        self.keep_alive_thread = threading.Thread(
+            target=self._keep_alive_thread)
         self.keep_alive_thread.daemon = True
         self.keep_alive_thread.start()
 
