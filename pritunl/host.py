@@ -66,6 +66,12 @@ class Host(MongoObject):
     def collection(cls):
         return mongo.get_collection('hosts')
 
+    @property
+    def uptime(self):
+        if not self.start_timestamp:
+            return
+        return max((datetime.datetime.now() - self.start_timestamp).seconds, 1)
+
     def dict(self):
         return {
             'id': self.id,
