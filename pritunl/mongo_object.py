@@ -48,6 +48,13 @@ class MongoObject(object):
         raise AttributeError(
             'MongoObject instance has no attribute %r' % name)
 
+    @property
+    def _id(self):
+        id = self.id
+        if len(id) == 24:
+            return bson.ObjectId(id)
+        return id
+
     @cached_static_property
     def collection(cls):
         raise TypeError('Database collection must be specified')
@@ -58,7 +65,7 @@ class MongoObject(object):
         if not doc:
             if not spec:
                 spec = {
-                    '_id': bson.ObjectId(self.id),
+                    '_id': self._id,
                 }
             doc = self.collection.find_one(spec)
             if not doc:
@@ -77,7 +84,7 @@ class MongoObject(object):
 
     def export(self):
         doc = self.fields_default.copy()
-        doc['_id'] = bson.ObjectId(self.id)
+        doc['_id'] = self._id
         for field in self.fields:
             if hasattr(self, field):
                 doc[field] = getattr(self, field)
@@ -107,7 +114,7 @@ class MongoObject(object):
                 doc[field] = getattr(self, field)
         elif not self.exists:
             doc = self.fields_default.copy()
-            doc['_id'] = bson.ObjectId(self.id)
+            doc['_id'] = self._id
             for field in self.fields:
                 if hasattr(self, field):
                     doc[field] = getattr(self, field)
@@ -133,7 +140,7 @@ class MongoObject(object):
 
         if doc:
             collection.update({
-                '_id': bson.ObjectId(self.id),
+                '_id': self._id,
             }, {
                 '$set': doc,
             }, upsert=True)
@@ -142,7 +149,7 @@ class MongoObject(object):
         self.changed = set()
 
     def remove(self):
-        self.collection.remove(bson.ObjectId(self.id))
+        self.collection.remove(self._id)
 
     def read_file(self, field, path):
         with open(path, 'r') as field_file:
