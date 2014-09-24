@@ -116,10 +116,12 @@ class Host(MongoObject):
     def init_host(cls):
         host = cls()
         host.id = app_server.host_id
+
         try:
             host.load()
         except NotFound:
             pass
+
         host.status = ONLINE
         host.users_online = 0
         host.start_timestamp = datetime.datetime.utcnow()
