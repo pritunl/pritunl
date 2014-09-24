@@ -77,6 +77,7 @@ def setup_mongo():
         ('name', pymongo.ASCENDING),
     ])
     collections['organizations'].ensure_index('type')
+    collections['hosts'].ensure_index('name')
     collections['servers'].ensure_index('name')
     collections['servers_bandwidth'].ensure_index([
         ('server_id', pymongo.ASCENDING),
