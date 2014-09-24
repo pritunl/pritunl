@@ -143,6 +143,12 @@ class Server(MongoObject):
             'debug': True if self.debug else False,
         }
 
+    @property
+    def uptime(self):
+        if not self.start_timestamp:
+            return
+        return max((datetime.datetime.now() - self.start_timestamp).seconds, 1)
+
     @cached_property
     def user_count(self):
         return Organization.get_user_count_multi(org_ids=self.organizations)
