@@ -82,6 +82,11 @@ class Host(MongoObject):
             'users_online': self.users_online,
         }
 
+    def remove(self):
+        if self.status == ONLINE:
+            raise HostError('Host must be offline to remove')
+        MongoObject.remove(self)
+
     def _keep_alive_thread(self):
         while True:
             time.sleep(settings.app.host_ttl - 10)
