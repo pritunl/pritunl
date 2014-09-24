@@ -23,6 +23,9 @@ COMPLETE = 'complete'
 ERROR = 'error'
 UPDATE = 'update'
 
+ONLINE = 'online'
+OFFLINE = 'offline'
+
 VERY_LOW = 0
 LOW = 1
 NORMAL = 2
