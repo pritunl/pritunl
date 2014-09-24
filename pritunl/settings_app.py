@@ -34,4 +34,5 @@ class SettingsApp(SettingsGroup):
         'queue_low_thread_limit': 4,
         'queue_med_thread_limit': 2,
         'queue_high_thread_limit': 1,
+        'host_ttl': 40,
     }
