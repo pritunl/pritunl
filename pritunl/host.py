@@ -39,7 +39,7 @@ class Host(MongoObject):
         'name',
         'ping_timestamp',
         'status',
-        'uptime',
+        'start_timestamp',
     }
     fields_default = {
         'status': OFFLINE,
@@ -71,7 +71,7 @@ class Host(MongoObject):
             'id': self.id,
             'name': self.name,
             'status': self.status,
-            'uptime': self.uptime,
+            'start_timestamp': self.start_timestamp,
             'user_count': self.user_count,
             'users_online': self.users_online,
         }
