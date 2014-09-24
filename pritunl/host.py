@@ -50,9 +50,6 @@ class Host(MongoObject):
     def __init__(self, name=None):
         MongoObject.__init__(self, **kwargs)
 
-        self.id = app_server.host_id
-        self.exists = True
-
         if name is not None:
             self.name = name
 
