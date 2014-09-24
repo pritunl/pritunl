@@ -11,12 +11,15 @@ def status_get():
     servers_count = 0
     servers_online_count = 0
     clients_count = 0
+    clients = set()
 
     for server in Server.iter_servers():
         servers_count += 1
         if server.status:
             servers_online_count += 1
-        clients_count += len(server.clients)
+        # MongoDict doesnt support set(server.clients)
+        clients = clients | set(server.clients.keys())
+    clients_count = len(clients)
 
     user_count = Organization.get_user_count_multi()
     local_networks = utils.get_local_networks()
