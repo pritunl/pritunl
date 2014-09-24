@@ -43,7 +43,7 @@ class Host(MongoObject):
         'users_online',
     }
     fields_default = {
-        'status': False,
+        'status': OFFLINE,
         'users_online': 0,
     }
 
