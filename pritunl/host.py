@@ -88,7 +88,25 @@ class Host(MongoObject):
         MongoObject.remove(self)
 
     def _keep_alive_thread(self):
+        last_update = None
+        proc_stat = None
+
         while True:
+            timestamp = datetime.datetime.utcnow()
+            timestamp -= datetime.timedelta(microseconds=timestamp.microsecond,
+                seconds=timestamp.second)
+            if timestamp != last_update:
+                last_update = timestamp
+
+                old_proc_stat = proc_stat
+                with open('/proc/stat') as stat_file:
+                    proc_stat = stat_file.readline().split()[1:]
+
+                if old_proc_stat:
+                    deltas = [int(x) - int(y) for x, y in zip(proc_stat, old_proc_stat)]
+                    total = sum(deltas)
+                    cpu_usage = 100 * (float(total - deltas[3]) / total)
+
             time.sleep(settings.app.host_ttl - 10)
 
             try:
