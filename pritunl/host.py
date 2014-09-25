@@ -144,7 +144,7 @@ class Host(MongoObject):
                         cpu_usage = self._calc_cpu_usage(
                             last_proc_stat, proc_stat)
                         mem_usage = self._get_mem_usage()
-                        self.usage.add_usage(timestamp, cpu_usage,mem_usage)
+                        self.usage.add_period(timestamp, cpu_usage,mem_usage)
 
                 time.sleep(settings.app.host_ttl - 10)
 
