@@ -132,5 +132,6 @@ class Host(MongoObject):
         host.start_timestamp = datetime.datetime.utcnow()
 
         host.commit()
+        Event(type=HOSTS_UPDATED)
 
         return host
