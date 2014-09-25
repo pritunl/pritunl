@@ -77,7 +77,7 @@ class HostUsage(object):
 
         bulk.execute()
 
-    def get_usage(self, period):
+    def get_period(self, period):
         date_end = self._get_period_timestamp(
             period, datetime.datetime.utcnow())
 
