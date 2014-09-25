@@ -268,7 +268,7 @@ class MongoTransaction(MongoObject):
                 datetime.timedelta(seconds=self.ttl),
             'attempts': 1,
             'actions': bson.Binary(actions_json_zlib),
-        }, upsert=True)
+        })
 
         try:
             self.run_actions(False)
