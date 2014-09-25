@@ -30,6 +30,7 @@ def setup_mongo():
         'users': getattr(database, prefix + 'users'),
         'organizations': getattr(database, prefix + 'organizations'),
         'hosts': getattr(database, prefix + 'hosts'),
+        'hosts_usage': getattr(database, prefix + 'hosts_usage'),
         'servers': getattr(database, prefix + 'servers'),
         'servers_bandwidth': getattr(database, prefix + 'servers_bandwidth'),
         'servers_ip_pool': getattr(database, prefix + 'servers_ip_pool'),
@@ -78,6 +79,10 @@ def setup_mongo():
     ])
     collections['organizations'].ensure_index('type')
     collections['hosts'].ensure_index('name')
+    collections['hosts_usage'].ensure_index([
+        ('host_id', pymongo.ASCENDING),
+        ('timestamp', pymongo.ASCENDING),
+    ])
     collections['servers'].ensure_index('name')
     collections['servers_bandwidth'].ensure_index([
         ('server_id', pymongo.ASCENDING),
