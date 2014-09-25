@@ -76,3 +76,66 @@ class HostUsage(object):
             }).remove()
 
         bulk.execute()
+
+    def get_usage(self, period):
+        date_end = self._get_period_timestamp(
+            period, datetime.datetime.utcnow())
+
+        if period == '1m':
+            date_start = date_end - datetime.timedelta(hours=6)
+            date_step = datetime.timedelta(minutes=1)
+        elif period == '5m':
+            date_start = date_end - datetime.timedelta(days=1)
+            date_step = datetime.timedelta(minutes=5)
+        elif period == '30m':
+            date_start = date_end - datetime.timedelta(days=7)
+            date_step = datetime.timedelta(minutes=30)
+        elif period == '2h':
+            date_start = date_end - datetime.timedelta(days=30)
+            date_step = datetime.timedelta(hours=2)
+        elif period == '1d':
+            date_start = date_end - datetime.timedelta(days=365)
+            date_step = datetime.timedelta(days=1)
+        date_cur = date_start
+
+        data = {
+            'cpu_usage': [],
+            'mem_usage': [],
+        }
+
+        results = self.collection.aggregate([
+            {'$match': {
+                'host_id': self.host_id,
+                'period': period,
+            }},
+            {'$project': {
+                'timestamp': True,
+                'cpu_usage': {'$divide': ['$cpu_usage', '$count']},
+                'mem_usage': {'$divide': ['$mem_usage', '$count']},
+            }},
+            {'$sort': {
+                'timestamp': pymongo.ASCENDING,
+            }}
+        ])['result']
+
+        for doc in results:
+            if date_cur > doc['timestamp']:
+                continue
+
+            while date_cur < doc['timestamp']:
+                timestamp = int(date_cur.strftime('%s'))
+                data['cpu_usage'].append((timestamp, 0))
+                data['mem_usage'].append((timestamp, 0))
+                date_cur += date_step
+
+            timestamp = int(doc['timestamp'].strftime('%s'))
+            data['cpu_usage'].append((timestamp, doc['cpu_usage']))
+            data['mem_usage'].append((timestamp, doc['mem_usage']))
+
+        while date_cur <= date_end:
+            timestamp = int(date_cur.strftime('%s'))
+            data['cpu_usage'].append((timestamp, 0))
+            data['mem_usage'].append((timestamp, 0))
+            date_cur += date_step
+
+        return data
