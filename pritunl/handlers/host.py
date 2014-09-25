@@ -17,7 +17,7 @@ import collections
 @app_server.auth
 def host_get(host_id=None):
     if host_id:
-        return tils.jsonify(Host.get_host(id=host_id).dict())
+        return utils.jsonify(Host.get_host(id=host_id).dict())
 
     hosts = []
 
