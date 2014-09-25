@@ -83,6 +83,7 @@ class Server(MongoObject):
             dns_servers=None, search_domain=None, public_address=None,
             otp_auth=None, lzo_compression=None, debug=None, **kwargs):
         MongoObject.__init__(self, **kwargs)
+        self.bandwidth = ServerBandwidth(self.id)
 
         self._cur_event = None
         self._last_event = 0
@@ -791,10 +792,6 @@ class Server(MongoObject):
             cache_db.list_lpop(self.get_cache_key('output'))
         self._event_delay(type=SERVER_OUTPUT_UPDATED, resource_id=self.id)
 
-    def get_bandwidth(self, period):
-        server_bandwidth = ServerBandwidth(self.id)
-        return server_bandwidth.get_bandwidth(period)
-
     def get_bandwidth_random(self, period=None):
         # Generate random bandwidth data for demo and write to file
         import json
@@ -913,8 +910,7 @@ class Server(MongoObject):
             bytes_sent_t += bytes_sent - prev_bytes_sent
 
         if bytes_recv_t != 0 or bytes_sent_t != 0:
-            server_bandwidth = ServerBandwidth(self.id)
-            server_bandwidth.add_bandwidth(
+            self.bandwidth.add_data(
                 datetime.datetime.utcnow(), bytes_recv_t, bytes_sent_t)
 
     def _read_clients(self, ovpn_status_path):

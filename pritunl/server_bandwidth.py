@@ -51,7 +51,7 @@ class ServerBandwidth(object):
                 hours=timestamp.hour,
                 minutes=timestamp.minute) - datetime.timedelta(days=365)
 
-    def add_bandwidth(self, timestamp, received, sent):
+    def add_data(self, timestamp, received, sent):
         bulk = self.collection.initialize_unordered_bulk_op()
 
         for period in ('1m', '5m', '30m', '2h', '1d'):
@@ -75,7 +75,7 @@ class ServerBandwidth(object):
 
         bulk.execute()
 
-    def get_bandwidth(self, period):
+    def get_period(self, period):
         date_end = self._get_period_timestamp(
             period, datetime.datetime.utcnow())
 
