@@ -40,7 +40,7 @@ def host_put(host_id=None):
 
 @app_server.app.route('/host/<host_id>', methods=['DELETE'])
 @app_server.auth
-def host_delete(org_id, user_id):
+def host_delete(host_id):
     host = Host.get_host(id=host_id)
     host.remove()
 
