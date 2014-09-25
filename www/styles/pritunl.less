@@ -388,7 +388,8 @@ header.blur {
 
 
 .orgs-list .orgs-list-title,
-.servers-list .servers-list-title {
+.servers-list .servers-list-title,
+.hosts-list .hosts-list-title {
   color: @dark-fg;
   display: inline-block;
   margin-top: 6px;
@@ -397,7 +398,8 @@ header.blur {
 }
 
 .orgs-list .orgs-list-buttons,
-.servers-list .servers-list-buttons {
+.servers-list .servers-list-buttons,
+.hosts-list .hosts-list-buttons {
   float: right;
   display: block;
 }
@@ -405,6 +407,7 @@ header.blur {
 
 .users-list,
 .servers-list .server,
+.hosts-list .host,
 .orgs-list-container .no-orgs,
 .servers-list .no-servers {
   margin-bottom: 25px;
@@ -417,7 +420,8 @@ header.blur {
 }
 
 .users-list .label,
-.servers-list .server .label {
+.servers-list .server .label,
+.hosts-list .host .label {
   cursor: default;
   margin-top: 1px;
   margin-right: 14px;
@@ -441,7 +445,8 @@ header.blur {
 
 
 .users-list .users-list-title,
-.servers-list .server .server-title {
+.servers-list .server .server-title,
+.hosts-list .host .host-title {
   margin: 0;
   display: inline-block;
   line-height: 16px;
@@ -450,12 +455,14 @@ header.blur {
 }
 
 .users-list .users-list-title a,
-.servers-list .server .server-title a {
+.servers-list .server .server-title a,
+.hosts-list .host .host-title a {
   font-size: 19px;
 }
 
 .users-list .users-list-header,
-.servers-list .server .server-header {
+.servers-list .server .server-header,
+.hosts-list .host .host-header {
   background-color: @white-fg;
   padding: 10px 11px 16px 14px;
   border-bottom: 1px solid @light-dark2-border;
@@ -464,7 +471,8 @@ header.blur {
 }
 
 .users-list .users-list-header button,
-.servers-list .server .server-header button {
+.servers-list .server .server-header button,
+.hosts-list .host .host-header button {
   margin-left: 10px;
   float: right;
 }
@@ -601,7 +609,8 @@ header.blur {
 }
 
 .users-list .org-title,
-.servers-list .server .server-title a {
+.servers-list .server .server-title a,
+.hosts-list .host .host-title a {
   cursor: pointer;
 }
 
@@ -701,6 +710,7 @@ header.blur {
 .users-list .users-list-title .org-id,
 .users-list .user .name-container .user-id,
 .servers-list .server .server-title .server-id,
+.hosts-list .host .host-title .host-id,
 .servers-list .server .org .org-id {
   position: relative;
   color: @dark-fg;
@@ -717,13 +727,15 @@ header.blur {
 }
 
 .users-list .users-list-title .org-id,
-.servers-list .server .server-title .server-id {
+.servers-list .server .server-title .server-id,
+.hosts-list .host .host-title .host-id {
   top: -2px;
 }
 
 .users-list.show-hidden .users-list-title .org-id,
 .users-list.show-hidden .user .name-container .user-id,
 .servers-list .server.show-hidden .server-title .server-id,
+.hosts-list .host.show-hidden .host-title .host-id,
 .servers-list .server.show-hidden .org .org-id {
   display: inline;
 }
@@ -884,7 +896,8 @@ header.blur {
   margin-bottom: 15px;
 }
 
-.servers-list .server .server-info {
+.servers-list .server .server-info,
+.hosts-list .host .host-info {
   background-color: @white-fg;
 }
 
@@ -893,10 +906,15 @@ header.blur {
   table-layout: fixed;
 }
 
-.servers-list .server .server-info .status-items {
+.servers-list .server .server-info .status-items,
+.hosts-list .host .host-info .status-items {
   margin-right: 11px;
   width: 300px;
   float: left;
+}
+
+.hosts-list .host .host-info .status-items {
+  float: none;
 }
 
 .servers-list .server .server-info .server-output {
@@ -970,20 +988,23 @@ header.blur {
 }
 
 .dashboard .status-container .status-item,
-.servers-list .server .server-info .status-item {
+.servers-list .server .server-info .status-item,
+.hosts-list .host .host-info .status-item {
   padding: 20px 0;
   border-right: 1px solid @light-dark-border;
   text-align: center;
 }
 
-.servers-list .server .server-info .status-item {
+.servers-list .server .server-info .status-item,
+.hosts-list .host .host-info .status-item {
   height: 43px;
   padding: 9px 12px;
   text-align: left;
   border-bottom: 1px solid @light-dark-border;
 }
 
-.servers-list .server .server-info .status-item.last {
+.servers-list .server .server-info .status-item.last,
+.hosts-list .host .host-info .status-item.last {
  border-bottom: 0 none;
 }
 
@@ -996,30 +1017,35 @@ header.blur {
 }
 
 .dashboard .status-container .status-item .status-title,
-.servers-list .server .server-info .status-item .status-title {
+.servers-list .server .server-info .status-item .status-title,
+.hosts-list .host .host-info .status-item .status-title {
   color: @dark-fg;
   font-size: 26px;
   margin: 0 0 3px 0;
 }
 
-.servers-list .server .server-info .status-item .status-title {
+.servers-list .server .server-info .status-item .status-title,
+.hosts-list .host .host-info .status-item .status-title {
   font-size: 20px;
   height: 22px;
   margin: 0;
 }
 
-.servers-list .server .server-info .status-item .status-title span {
+.servers-list .server .server-info .status-item .status-title span,
+.hosts-list .host .host-info .status-item .status-title span {
   top: 2px;
   vertical-align: text-top;
 }
 
 .dashboard .status-container .status-item .status-icon,
-.servers-list .server .server-info .status-item .status-icon {
+.servers-list .server .server-info .status-item .status-icon,
+.hosts-list .host .host-info .status-item .status-icon {
   color: @icon-blue4-bg;
   font-size: 26px;
 }
 
-.servers-list .server .server-info .status-item .status-icon {
+.servers-list .server .server-info .status-item .status-icon,
+.hosts-list .host .host-info .status-item .status-icon {
   font-size: 18px;
   margin-right: 0;
 }
@@ -1028,11 +1054,13 @@ header.blur {
   top: 4px;
 }
 
-.servers-list .server .server-info .server-port .status-icon {
+.servers-list .server .server-info .server-port .status-icon,
+.hosts-list .host .host-info .host-port .status-icon {
   top: 0;
 }
 
-.servers-list .server .server-info .status-item .status-text {
+.servers-list .server .server-info .status-item .status-text,
+.hosts-list .host .host-info .status-item .status-text {
   color: @dark-fg;
   float: right;
   position: relative;
