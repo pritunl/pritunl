@@ -26,6 +26,10 @@ class EmailApiKeyInvalid(EmailError):
     pass
 
 
+class HostError(BaseError):
+    pass
+
+
 class ServerError(BaseError):
     pass
 
