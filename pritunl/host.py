@@ -48,6 +48,7 @@ class Host(MongoObject):
 
     def __init__(self, name=None, **kwargs):
         MongoObject.__init__(self, **kwargs)
+        self.host_usage = HostUsage(host_id=self.id)
 
         if name is not None:
             self.name = name
@@ -125,7 +126,6 @@ class Host(MongoObject):
     def _keep_alive_thread(self):
         last_update = None
         proc_stat = None
-        host_usage = HostUsage(host_id=self.id)
 
         while True:
             try:
@@ -144,7 +144,8 @@ class Host(MongoObject):
                         cpu_usage = self._calc_cpu_usage(
                             last_proc_stat, proc_stat)
                         mem_usage = self._get_mem_usage()
-                        host_usage.add_usage(timestamp, cpu_usage,mem_usage)
+                        self.host_usage.add_usage(
+                            timestamp, cpu_usage,mem_usage)
 
                 time.sleep(settings.app.host_ttl - 10)
 
