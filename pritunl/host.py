@@ -3,6 +3,7 @@ from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings import settings
 from pritunl.organization import Organization
+from pritunl.host_usage import HostUsage
 from pritunl.event import Event
 from pritunl.log_entry import LogEntry
 from pritunl.messenger import Messenger
@@ -91,9 +92,40 @@ class Host(MongoObject):
             raise HostError('Host must be offline to remove')
         MongoObject.remove(self)
 
+    def _get_proc_stat(self):
+        try:
+            with open('/proc/stat') as stat_file:
+                return stat_file.readline().split()[1:]
+        except:
+            logger.exception('Failed to read proc stat. %r' % {
+                'host_id': self.id,
+            })
+
+    def _calc_cpu_usage(self, last_proc_stat, proc_stat):
+        try:
+            deltas = [int(x) - int(y) for x, y in zip(
+                proc_stat, last_proc_stat)]
+            total = sum(deltas)
+            return 100 * (float(total - deltas[3]) / total)
+        except:
+            logger.exception('Failed to calculate cpu usage')
+        return 0
+
+    def _get_mem_usage(self):
+        try:
+            free = subprocess.check_output(['free']).split()
+            return float(free[15]) / float(free[7])
+        except:
+            logger.exception(
+                'Failed to get memory usage. %r' % {
+                    'host_id': self.id,
+                })
+        return 0
+
     def _keep_alive_thread(self):
         last_update = None
         proc_stat = None
+        host_usage = HostUsage(host_id=self.id)
 
         while True:
             try:
@@ -105,47 +137,14 @@ class Host(MongoObject):
                 if timestamp != last_update:
                     last_update = timestamp
 
-                    old_proc_stat = proc_stat
-                    with open('/proc/stat') as stat_file:
-                        proc_stat = stat_file.readline().split()[1:]
+                    last_proc_stat = proc_stat
+                    proc_stat = self._get_proc_stat()
 
-                    if old_proc_stat:
-                        deltas = [int(x) - int(y) for x, y in zip(proc_stat, old_proc_stat)]
-                        total = sum(deltas)
-                        cpu_usage = 100 * (float(total - deltas[3]) / total)
-
-                        mem_usage = 0
-                        try:
-                            free = subprocess.check_output(['free']).split()
-                            mem_usage = float(free[15]) / float(free[7])
-                        except (ValueError, IndexError,
-                                subprocess.CalledProcessError):
-                            logger.exception(
-                                'Failed to get memory usage. %r' % {
-                                    'host_id': self.id,
-                                })
-
-                        self.usage_collection.update({
-                            'timestamp': timestamp,
-                            'period': '1m',
-                            'host_id': self.id,
-                        }, {'$set': {
-                            'cpu_usage': cpu_usage,
-                            'mem_usage': mem_usage,
-                        }}, upsert=True)
-
-                        timestamp -= datetime.timedelta(
-                            minutes=timestamp.minute % 5)
-
-                        self.usage_collection.update({
-                            'timestamp': timestamp,
-                            'period': '5m',
-                            'host_id': self.id,
-                        }, {'$inc': {
-                            'cpu_usage': cpu_usage,
-                            'mem_usage': mem_usage,
-                            'count': 1,
-                        }}, upsert=True)
+                    if last_proc_stat and proc_stat:
+                        cpu_usage = self._calc_cpu_usage(
+                            last_proc_stat, proc_stat)
+                        mem_usage = self._get_mem_usage()
+                        host_usage.add_usage(timestamp, cpu_usage,mem_usage)
 
                 time.sleep(settings.app.host_ttl - 10)
 
