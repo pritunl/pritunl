@@ -66,6 +66,10 @@ class Host(MongoObject):
     def collection(cls):
         return mongo.get_collection('hosts')
 
+    @cached_static_property
+    def usage_collection(cls):
+        return mongo.get_collection('hosts_usage')
+
     @property
     def uptime(self):
         if not self.start_timestamp:
@@ -92,24 +96,59 @@ class Host(MongoObject):
         proc_stat = None
 
         while True:
-            timestamp = datetime.datetime.utcnow()
-            timestamp -= datetime.timedelta(microseconds=timestamp.microsecond,
-                seconds=timestamp.second)
-            if timestamp != last_update:
-                last_update = timestamp
-
-                old_proc_stat = proc_stat
-                with open('/proc/stat') as stat_file:
-                    proc_stat = stat_file.readline().split()[1:]
-
-                if old_proc_stat:
-                    deltas = [int(x) - int(y) for x, y in zip(proc_stat, old_proc_stat)]
-                    total = sum(deltas)
-                    cpu_usage = 100 * (float(total - deltas[3]) / total)
-
-            time.sleep(settings.app.host_ttl - 10)
-
             try:
+                timestamp = datetime.datetime.utcnow()
+                timestamp -= datetime.timedelta(
+                    microseconds=timestamp.microsecond,
+                    seconds=timestamp.second,
+                )
+                if timestamp != last_update:
+                    last_update = timestamp
+
+                    old_proc_stat = proc_stat
+                    with open('/proc/stat') as stat_file:
+                        proc_stat = stat_file.readline().split()[1:]
+
+                    if old_proc_stat:
+                        deltas = [int(x) - int(y) for x, y in zip(proc_stat, old_proc_stat)]
+                        total = sum(deltas)
+                        cpu_usage = 100 * (float(total - deltas[3]) / total)
+
+                        mem_usage = 0
+                        try:
+                            free = subprocess.check_output(['free']).split()
+                            mem_usage = float(free[15]) / float(free[7])
+                        except (ValueError, IndexError,
+                                subprocess.CalledProcessError):
+                            logger.exception(
+                                'Failed to get memory usage. %r' % {
+                                    'host_id': self.id,
+                                })
+
+                        self.usage_collection.update({
+                            'timestamp': timestamp,
+                            'period': '1m',
+                            'host_id': self.id,
+                        }, {'$set': {
+                            'cpu_usage': cpu_usage,
+                            'mem_usage': mem_usage,
+                        }}, upsert=True)
+
+                        timestamp -= datetime.timedelta(
+                            minutes=timestamp.minute % 5)
+
+                        self.usage_collection.update({
+                            'timestamp': timestamp,
+                            'period': '5m',
+                            'host_id': self.id,
+                        }, {'$inc': {
+                            'cpu_usage': cpu_usage,
+                            'mem_usage': mem_usage,
+                            'count': 1,
+                        }}, upsert=True)
+
+                time.sleep(settings.app.host_ttl - 10)
+
                 self.collection.update({
                     '_id': self.id,
                 }, {'$set': {
