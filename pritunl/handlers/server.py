@@ -517,7 +517,7 @@ def server_output_delete(server_id):
 @app_server.app.route('/server/<server_id>/bandwidth/<period>',
     methods=['GET'])
 @app_server.auth
-def server_bandwidth_get(server_id, period=None):
+def server_bandwidth_get(server_id, period):
     server = Server.get_server(id=server_id)
     return utils.jsonify(server.get_bandwidth(period=period))
 
