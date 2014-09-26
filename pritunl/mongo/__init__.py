@@ -1,6 +1,5 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
-from pritunl import app_server
 import pymongo
 import re
 import os
@@ -11,6 +10,7 @@ import random
 collections = {}
 
 def setup_mongo():
+    from pritunl import app_server
     from pritunl.settings import settings
 
     prefix = app_server.mongodb_collection_prefix or ''
