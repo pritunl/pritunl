@@ -142,3 +142,57 @@ class HostUsage(object):
             date_cur += date_step
 
         return data
+
+    def get_period_random(self, period):
+        # Generate random bandwidth data for demo and write to file
+        import json
+        import random
+        data = {}
+        date = datetime.datetime.utcnow()
+        date -= datetime.timedelta(microseconds=date.microsecond,
+            seconds=date.second)
+
+        if period == '1m':
+            date_end = date
+            date_cur = date_end - datetime.timedelta(hours=6)
+            date_step = datetime.timedelta(minutes=1)
+        elif period == '5m':
+            date_end = date - datetime.timedelta(minutes=date.minute % 5)
+            date_cur = date_end - datetime.timedelta(days=1)
+            date_step = datetime.timedelta(minutes=5)
+        elif period == '30m':
+            date_end = date - datetime.timedelta(minutes=date.minute % 30)
+            date_cur = date_end - datetime.timedelta(days=7)
+            date_step = datetime.timedelta(minutes=30)
+        elif period == '2h':
+            date_end = date - datetime.timedelta(minutes=date.minute,
+                hours=date.hour % 2)
+            date_cur = date_end - datetime.timedelta(days=30)
+            date_step = datetime.timedelta(hours=2)
+        elif period == '1d':
+            date_end = date - datetime.timedelta(minutes=date.minute,
+                hours=date.hour)
+            date_cur = date_end - datetime.timedelta(days=365)
+            date_step = datetime.timedelta(days=1)
+
+        cpu = 30
+        mem = 40
+        usage_rand = lambda x: random.randint(
+            max(x - 5, 0), min(x + 5, 100))
+
+        data = {
+            'cpu': [],
+            'mem': [],
+        }
+
+        while date_cur < date_end:
+            date_cur += date_step
+
+            timestamp = int(date_cur.strftime('%s'))
+            cpu = usage_rand(cpu)
+            mem = usage_rand(mem)
+
+            data['cpu'].append((timestamp, cpu))
+            data['mem'].append((timestamp, mem))
+
+        return data
