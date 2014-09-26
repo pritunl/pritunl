@@ -17,7 +17,8 @@ class MongoTransactionAction:
         self._func = func
 
     def __call__(self, *args, **kwargs):
-        from mongo_transaction_collection import MongoTransactionCollection
+        from pritunl.mongo.transaction_collection import \
+            MongoTransactionCollection
         self._actions.append([
             self._func,
             args or '',

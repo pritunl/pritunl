@@ -104,7 +104,7 @@ def setup_mongo():
     collections['auth_limiter'].ensure_index('timestamp',
         expireAfterSeconds=settings.app.auth_limiter_ttl)
 
-    from administrator import Administrator
+    from pritunl.administrator import Administrator
     if not Administrator.collection.find_one():
         Administrator(
             username=DEFAULT_USERNAME,
