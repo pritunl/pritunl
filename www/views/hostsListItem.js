@@ -14,6 +14,9 @@ define([
     template: _.template(hostsListItemTemplate),
     events: {
       'click .host-title a': 'onSettings',
+      'click .host-cpu-usage-btn': 'onCpuUsageGraph',
+      'click .host-mem-usage-btn': 'onMemUsageGraph',
+      'click .graph-period': 'onGraphPeriod'
     },
     initialize: function() {
       this.hostUsageView = new HostUsageView({
