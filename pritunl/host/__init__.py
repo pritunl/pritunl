@@ -5,7 +5,7 @@ from pritunl.settings import settings
 from pritunl.organization import Organization
 from pritunl.host.usage import HostUsage
 from pritunl.event import Event
-from pritunl.log_entry import LogEntry
+from pritunl.logger.entry import LogEntry
 from pritunl.messenger import Messenger
 from pritunl.server_bandwidth import ServerBandwidth
 from pritunl.server_ip_pool import ServerIpPool

@@ -274,8 +274,8 @@ class AppServer(Config):
             os.makedirs(self.temp_path)
 
     def _setup_log(self):
-        from pritunl.log_filter import LogFilter
-        from pritunl.log_formatter import LogFormatter
+        from pritunl.logger.filter import LogFilter
+        from pritunl.logger.formatter import LogFormatter
 
         if self.log_path:
             self.log_handler = logging.handlers.RotatingFileHandler(
@@ -417,7 +417,7 @@ class AppServer(Config):
         self.interrupt = True
 
     def _run_server(self):
-        from pritunl.log_entry import LogEntry
+        from pritunl.logger.entry import LogEntry
         if self.debug:
             LogEntry(message='Web debug server started.')
         else:

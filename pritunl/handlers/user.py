@@ -3,7 +3,7 @@ from pritunl.exceptions import *
 from pritunl.settings import settings
 from pritunl.organization import Organization
 from pritunl.event import Event
-from pritunl.log_entry import LogEntry
+from pritunl.logger.entry import LogEntry
 from pritunl.server_ip_pool import ServerIpPool
 import pritunl.utils as utils
 from pritunl import app_server

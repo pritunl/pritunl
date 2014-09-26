@@ -1,7 +1,7 @@
 from pritunl.constants import *
 from pritunl.organization import Organization
 from pritunl.event import Event
-from pritunl.log_entry import LogEntry
+from pritunl.logger.entry import LogEntry
 import pritunl.utils as utils
 from pritunl import app_server
 import flask

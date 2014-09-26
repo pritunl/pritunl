@@ -1,5 +1,5 @@
 from pritunl.constants import *
-from pritunl.log_entry import LogEntry
+from pritunl.logger.entry import LogEntry
 import pritunl.utils as utils
 from pritunl import app_server
 
