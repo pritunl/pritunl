@@ -37,7 +37,6 @@ class HTTPConnectionPatch(cherrypy.wsgiserver.HTTPConnection):
 class AppServer(Config):
     bool_options = {
         'debug',
-        'get_notifications',
         'ssl',
         'static_cache',
     }
@@ -74,7 +73,6 @@ class AppServer(Config):
         'dh_param_bits_pool',
     }
     default_options = {
-        'get_notifications': True,
         'ssl': True,
         'static_cache': True,
         'bind_addr': DEFAULT_BIND_ADDR,
@@ -187,20 +185,20 @@ class AppServer(Config):
                 time.sleep(60)
                 continue
 
-            if self.get_notifications:
-                logger.debug('Checking notifications...')
-                try:
-                    request = urllib2.Request(
-                        settings.app.notification_server +
-                        '/%s' % self._get_version())
-                    response = urllib2.urlopen(request, timeout=60)
-                    data = json.load(response)
+            logger.debug('Checking notifications...')
+            try:
+                request = urllib2.Request(
+                    settings.app.notification_server +
+                    '/%s' % self._get_version())
+                response = urllib2.urlopen(request, timeout=60)
+                data = json.load(response)
 
-                    self.notification = data.get('message', '')
-                    self.www_state = data.get('www', OK)
-                    self.vpn_state = data.get('vpn', OK)
-                except:
-                    logger.exception('Failed to check notifications.')
+                self.notification = data.get('message', '')
+                self.www_state = data.get('www', OK)
+                self.vpn_state = data.get('vpn', OK)
+            except:
+                logger.exception('Failed to check notifications.')
+
             logger.debug('Checking subscription status...')
             try:
                 self.subscription_update()
