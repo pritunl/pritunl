@@ -1,8 +1,12 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
+from pritunl import app_server
 import pritunl.mongo as mongo
 import pymongo
+import os
+import json
+import random
 
 class HostUsage(object):
     def __init__(self, host_id):
@@ -145,8 +149,6 @@ class HostUsage(object):
 
     def get_period_random(self, period):
         # Generate random bandwidth data for demo and write to file
-        import json
-        import random
         data = {}
         date = datetime.datetime.utcnow()
         date -= datetime.timedelta(microseconds=date.microsecond,
