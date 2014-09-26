@@ -94,6 +94,28 @@ define([
 
       this.$('.host-title a').removeClass('disabled');
     },
+    onGraphPeriod: function(evt) {
+      this.$('.graph-period').removeClass('btn-primary');
+      this.$('.graph-period').addClass('btn-default');
+      $(evt.target).removeClass('btn-default');
+      $(evt.target).addClass('btn-primary');
+
+      if ($(evt.target).hasClass('graph-1m')) {
+        this.hostUsageView.setPeriod('1m');
+      }
+      else if ($(evt.target).hasClass('graph-5m')) {
+        this.hostUsageView.setPeriod('5m');
+      }
+      else if ($(evt.target).hasClass('graph-30m')) {
+        this.hostUsageView.setPeriod('30m');
+      }
+      else if ($(evt.target).hasClass('graph-2h')) {
+        this.hostUsageView.setPeriod('2h');
+      }
+      else if ($(evt.target).hasClass('graph-1d')) {
+        this.hostUsageView.setPeriod('1d');
+      }
+    },
     onDelete: function() {
       var modal = new ModalDeleteHostView({
         model: this.model.clone()
