@@ -3,9 +3,10 @@ define([
   'underscore',
   'backbone',
   'views/alert',
+  'views/hostUsage',
   'views/modalHostSettings',
   'text!templates/hostsListItem.html'
-], function($, _, Backbone, AlertView, ModalHostSettingsView,
+], function($, _, Backbone, AlertView, HostUsageView, ModalHostSettingsView,
     hostsListItemTemplate) {
   'use strict';
   var HostListItemView = Backbone.View.extend({
@@ -15,6 +16,10 @@ define([
       'click .host-title a': 'onSettings',
     },
     initialize: function() {
+      this.hostUsageView = new HostUsageView({
+        host: this.model.get('id')
+      });
+      this.addView(this.hostUsageView);
       setTimeout(function() {
         this.uptimer = setInterval((this._updateTime).bind(this), 1000);
       }.bind(this), 1000);
@@ -25,6 +30,8 @@ define([
     render: function() {
       this.$el.html(this.template(this.model.toJSON()));
       this.update();
+      this.$('.host-graph-viewer').append(
+        this.hostUsageView.render().el);
       return this;
     },
     update: function() {
