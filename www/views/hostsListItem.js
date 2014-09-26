@@ -61,6 +61,20 @@ define([
         this.$('.host-del').attr('disabled', 'disabled');
       }
     },
+    onCpuUsageGraph: function() {
+      this.$('.host-mem-usage-btn').removeClass('btn-primary');
+      this.$('.host-mem-usage-btn').addClass('btn-default');
+      this.$('.host-cpu-usage-btn').removeClass('btn-default');
+      this.$('.host-cpu-usage-btn').addClass('btn-primary');
+      this.hostUsageView.setType('cpu');
+    },
+    onMemUsageGraph: function() {
+      this.$('.host-cpu-usage-btn').removeClass('btn-primary');
+      this.$('.host-cpu-usage-btn').addClass('btn-default');
+      this.$('.host-mem-usage-btn').removeClass('btn-default');
+      this.$('.host-mem-usage-btn').addClass('btn-primary');
+      this.hostUsageView.setType('mem');
+    },
     onSettings: function() {
       this.$('.host-title a').addClass('disabled');
 
