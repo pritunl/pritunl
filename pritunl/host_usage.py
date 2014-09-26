@@ -148,7 +148,6 @@ class HostUsage(object):
         return data
 
     def get_period_random(self, period):
-        # Generate random bandwidth data for demo and write to file
         data = {}
         date = datetime.datetime.utcnow()
         date -= datetime.timedelta(microseconds=date.microsecond,
@@ -197,4 +196,14 @@ class HostUsage(object):
             data['cpu'].append((timestamp, cpu))
             data['mem'].append((timestamp, mem))
 
+        return data
+
+    def write_periods_random(self):
+        data = {}
+        for period in ('1m', '5m', '30m', '2h', '1d'):
+            data[period] = self.get_period_random(period)
+
+        path = os.path.join(app_server.temp_path, 'demo_usage')
+        with open(path, 'w') as demo_file:
+            demo_file.write(json.dumps(data))
         return data
