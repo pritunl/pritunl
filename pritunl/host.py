@@ -41,6 +41,7 @@ class Host(MongoObject):
         'ping_timestamp',
         'status',
         'start_timestamp',
+        'public_address',
     }
     fields_default = {
         'status': OFFLINE,
