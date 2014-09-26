@@ -112,7 +112,7 @@ class Host(MongoObject):
             deltas = [int(x) - int(y) for x, y in zip(
                 proc_stat, last_proc_stat)]
             total = sum(deltas)
-            return 100 * (float(total - deltas[3]) / total)
+            return float(total - deltas[3]) / total
         except:
             logger.exception('Failed to calculate cpu usage')
         return 0
