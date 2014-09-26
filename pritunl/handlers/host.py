@@ -48,3 +48,9 @@ def host_delete(host_id):
     Event(type=HOSTS_UPDATED)
 
     return utils.jsonify({})
+
+@app_server.app.route('/host/<host_id>/usage/<period>', methods=['GET'])
+@app_server.auth
+def host_usage_get(host_id, period):
+    host = Host.get_host(id=host_id)
+    return utils.jsonify(host.usage.get_period(period))
