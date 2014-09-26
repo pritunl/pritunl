@@ -130,6 +130,7 @@ class ServerBandwidth(object):
             data['sent'].append((timestamp, sent))
             data['received_total'] += received
             data['sent_total'] += sent
+            date_cur += date_step
 
         while date_cur <= date_end:
             timestamp = int(date_cur.strftime('%s'))
