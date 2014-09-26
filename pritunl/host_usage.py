@@ -53,6 +53,8 @@ class HostUsage(object):
                 minutes=timestamp.minute) - datetime.timedelta(days=365)
 
     def add_period(self, timestamp, cpu_usage, mem_usage):
+        cpu_usage = round(cpu_usage, 4)
+        mem_usage = round(mem_usage, 4)
         bulk = self.collection.initialize_unordered_bulk_op()
 
         for period in ('1m', '5m', '30m', '2h', '1d'):
