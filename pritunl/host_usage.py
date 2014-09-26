@@ -126,18 +126,18 @@ class HostUsage(object):
 
             while date_cur < doc['timestamp']:
                 timestamp = int(date_cur.strftime('%s'))
-                data['cpu_usage'].append((timestamp, 0))
-                data['mem_usage'].append((timestamp, 0))
+                data['cpu'].append((timestamp, 0))
+                data['mem'].append((timestamp, 0))
                 date_cur += date_step
 
             timestamp = int(doc['timestamp'].strftime('%s'))
-            data['cpu_usage'].append((timestamp, doc['cpu_usage']))
-            data['mem_usage'].append((timestamp, doc['mem_usage']))
+            data['cpu'].append((timestamp, doc['cpu']))
+            data['mem'].append((timestamp, doc['mem']))
 
         while date_cur <= date_end:
             timestamp = int(date_cur.strftime('%s'))
-            data['cpu_usage'].append((timestamp, 0))
-            data['mem_usage'].append((timestamp, 0))
+            data['cpu'].append((timestamp, 0))
+            data['mem'].append((timestamp, 0))
             date_cur += date_step
 
         return data
