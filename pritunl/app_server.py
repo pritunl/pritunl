@@ -37,7 +37,6 @@ class HTTPConnectionPatch(cherrypy.wsgiserver.HTTPConnection):
 class AppServer(Config):
     bool_options = {
         'debug',
-        'get_public_ip',
         'get_notifications',
         'ssl',
         'static_cache',
@@ -53,7 +52,6 @@ class AppServer(Config):
     }
     str_options = {
         'bind_addr',
-        'public_ip_server',
         'mongodb_url',
         'mongodb_collection_prefix',
     }
@@ -76,7 +74,6 @@ class AppServer(Config):
         'dh_param_bits_pool',
     }
     default_options = {
-        'get_public_ip': True,
         'get_notifications': True,
         'ssl': True,
         'static_cache': True,
@@ -120,7 +117,7 @@ class AppServer(Config):
         from pritunl.settings import settings
 
         for i in xrange(attempts):
-            if not self.get_public_ip or self.public_ip:
+            if self.public_ip:
                 return
             if i:
                 time.sleep(3)
