@@ -177,8 +177,8 @@ class HostUsage(object):
 
         cpu = 30
         mem = 40
-        usage_rand = lambda x: random.randint(
-            max(x - 5, 0), min(x + 5, 100))
+        usage_rand = lambda x: round(random.uniform(
+            max(x - 0.05, 0), min(x + 0.05, 1)), 4)
 
         data = {
             'cpu': [],
