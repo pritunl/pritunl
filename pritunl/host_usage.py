@@ -64,8 +64,8 @@ class HostUsage(object):
                 'timestamp': self._get_period_timestamp(period, timestamp),
             }).upsert().update({'$inc': {
                 'count': 1,
-                'cpu_usage': cpu_usage,
-                'mem_usage': mem_usage,
+                'cpu': cpu_usage,
+                'mem': mem_usage,
             }})
 
         for period in ('1m', '5m', '30m', '2h', '1d'):
@@ -101,8 +101,8 @@ class HostUsage(object):
         date_cur = date_start
 
         data = {
-            'cpu_usage': [],
-            'mem_usage': [],
+            'cpu': [],
+            'mem': [],
         }
 
         results = self.collection.aggregate([
@@ -112,8 +112,8 @@ class HostUsage(object):
             }},
             {'$project': {
                 'timestamp': True,
-                'cpu_usage': {'$divide': ['$cpu_usage', '$count']},
-                'mem_usage': {'$divide': ['$mem_usage', '$count']},
+                'cpu': {'$divide': ['$cpu', '$count']},
+                'mem': {'$divide': ['$mem', '$count']},
             }},
             {'$sort': {
                 'timestamp': pymongo.ASCENDING,
