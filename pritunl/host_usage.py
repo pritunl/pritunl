@@ -133,6 +133,7 @@ class HostUsage(object):
             timestamp = int(doc['timestamp'].strftime('%s'))
             data['cpu'].append((timestamp, doc['cpu']))
             data['mem'].append((timestamp, doc['mem']))
+            date_cur += date_step
 
         while date_cur <= date_end:
             timestamp = int(date_cur.strftime('%s'))
