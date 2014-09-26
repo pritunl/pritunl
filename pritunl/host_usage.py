@@ -175,8 +175,8 @@ class HostUsage(object):
             date_cur = date_end - datetime.timedelta(days=365)
             date_step = datetime.timedelta(days=1)
 
-        cpu = 30
-        mem = 40
+        cpu = 0.3
+        mem = 0.4
         usage_rand = lambda x: round(random.uniform(
             max(x - 0.05, 0), min(x + 0.05, 1)), 4)
 
