@@ -2,8 +2,8 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.task import Task, add_task
+import pritunl.mongo as mongo
 import logging
-import mongo
 
 logger = logging.getLogger(APP_NAME)
 
