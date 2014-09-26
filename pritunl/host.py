@@ -49,6 +49,10 @@ class Host(MongoObject):
 
     def __init__(self, name=None, **kwargs):
         MongoObject.__init__(self, **kwargs)
+
+        if 'id' not in kwargs and 'doc' not in kwargs and 'spec' not in kwargs:
+            self.id = app_server.host_id
+
         self.usage = HostUsage(self.id)
 
         if name is not None:
@@ -177,7 +181,6 @@ class Host(MongoObject):
     @classmethod
     def init_host(cls):
         host = cls()
-        host.id = app_server.host_id
 
         try:
             host.load()
