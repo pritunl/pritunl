@@ -18,7 +18,7 @@ from pritunl.cache import cache_db
 from pritunl import app_server
 import pritunl.utils as utils
 import pritunl.ipaddress as ipaddress
-import mongo
+import pritunl.mongo as mongo
 import uuid
 import os
 import signal
