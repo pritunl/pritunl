@@ -1,7 +1,7 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
-from pritunl.mongo_transaction_action import MongoTransactionAction
+from pritunl.mongo.transaction_action import MongoTransactionAction
 import logging
 
 logger = logging.getLogger(APP_NAME)

@@ -308,7 +308,7 @@ class AppServer(Config):
         queue_runner.start()
 
     def _setup_transaction_runner(self):
-        from pritunl.mongo_transaction_runner import MongoTransactionRunner
+        from pritunl.mongo.transaction_runner import MongoTransactionRunner
         mongo_transaction_runner = MongoTransactionRunner()
         mongo_transaction_runner.start()
 

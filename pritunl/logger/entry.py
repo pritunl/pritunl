@@ -1,7 +1,7 @@
 from pritunl.constants import *
 from pritunl.descriptors import *
 from pritunl.event import Event
-from pritunl.mongo_object import MongoObject
+from pritunl.mongo.object import MongoObject
 import pritunl.mongo as mongo
 import pymongo
 

@@ -25,7 +25,7 @@ class Settings(object):
                 setattr(group, field, val)
 
     def commit(self, all_fields=False):
-        from pritunl.mongo_transaction import MongoTransaction
+        from pritunl.mongo.transaction import MongoTransaction
         from pritunl.messenger import Messenger
 
         docs = []

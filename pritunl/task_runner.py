@@ -2,7 +2,7 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings import settings
-from pritunl.mongo_object import MongoObject
+from pritunl.mongo.object import MongoObject
 from pritunl.task import Task, _tasks
 import pritunl.mongo as mongo
 import pymongo

@@ -2,10 +2,10 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings import settings
-from pritunl.mongo_list import MongoList
-from pritunl.mongo_dict import MongoDict
-from pritunl.mongo_object import MongoObject
-from pritunl.mongo_transaction_collection import MongoTransactionCollection
+from pritunl.mongo.list import MongoList
+from pritunl.mongo.dict import MongoDict
+from pritunl.mongo.object import MongoObject
+from pritunl.mongo.transaction_collection import MongoTransactionCollection
 from pritunl.json_helpers import *
 import pritunl.mongo as mongo
 import pritunl.listener as listener

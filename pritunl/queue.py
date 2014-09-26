@@ -4,7 +4,7 @@ from pritunl.descriptors import *
 from pritunl.settings import settings
 from pritunl.queue_com import QueueCom
 from pritunl.messenger import Messenger
-from pritunl.mongo_object import MongoObject
+from pritunl.mongo.object import MongoObject
 import pritunl.logger as logger
 import pritunl.mongo as mongo
 import bson

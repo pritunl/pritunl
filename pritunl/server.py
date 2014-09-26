@@ -12,8 +12,8 @@ from pritunl.queue_assign_ip_addr import QueueAssignIpAddr
 from pritunl.queue_unassign_ip_addr import QueueUnassignIpAddr
 from pritunl.queue_assign_ip_pool import QueueAssignIpPool
 from pritunl.queue_dh_params import QueueDhParams
-from pritunl.mongo_object import MongoObject
-from pritunl.mongo_transaction import MongoTransaction
+from pritunl.mongo.object import MongoObject
+from pritunl.mongo.transaction import MongoTransaction
 from pritunl.cache import cache_db
 from pritunl import app_server
 import pritunl.utils as utils
