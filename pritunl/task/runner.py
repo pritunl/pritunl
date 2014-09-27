@@ -13,6 +13,8 @@ import logging
 import threading
 import time
 import random
+import os
+import importlib
 logger = logging.getLogger(APP_NAME)
 
 class TaskRunner:
@@ -68,10 +70,17 @@ class TaskRunner:
             time.sleep(settings.mongo.task_ttl)
 
     def start(self):
-        from pritunl.task.sync_ip_pool import TaskSyncIpPool
-        from pritunl.task.clean_users import TaskCleanUsers
-        from pritunl.task.clean_ip_pool import TaskCleanIpPool
-        from pritunl.task.pooler import TaskPooler
+        for module_name in os.listdir(os.path.dirname(__file__)):
+            if module_name == '__init__.py' or \
+                    module_name == 'runner.py' or \
+                    module_name[-3:] != '.py':
+                continue
+
+            module_name = module_name[:-3]
+            cls_name = 'Task' + ''.join([x.capitalize()
+                for x in module_name.split('_')])
+            module = __import__('pritunl.task.' + module_name,
+                fromlist=(cls_name,))
 
         for target in (self.run_thread, self.check_thread):
             thread = threading.Thread(target=target)
