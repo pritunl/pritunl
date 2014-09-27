@@ -8,10 +8,10 @@ from pritunl.logger.entry import LogEntry
 from pritunl.messenger import Messenger
 from pritunl.server_bandwidth import ServerBandwidth
 from pritunl.server_ip_pool import ServerIpPool
-from pritunl.queue_assign_ip_addr import QueueAssignIpAddr
-from pritunl.queue_unassign_ip_addr import QueueUnassignIpAddr
-from pritunl.queue_assign_ip_pool import QueueAssignIpPool
-from pritunl.queue_dh_params import QueueDhParams
+from pritunl.queue.assign_ip_addr import QueueAssignIpAddr
+from pritunl.queue.unassign_ip_addr import QueueUnassignIpAddr
+from pritunl.queue.assign_ip_pool import QueueAssignIpPool
+from pritunl.queue.dh_params import QueueDhParams
 from pritunl.mongo.object import MongoObject
 from pritunl.mongo.transaction import MongoTransaction
 from pritunl.cache import cache_db

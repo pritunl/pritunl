@@ -4,7 +4,7 @@ from pritunl.descriptors import *
 from pritunl.settings import settings
 from pritunl.cache import cache_db
 from pritunl.least_common_counter import LeastCommonCounter
-from pritunl.queue_dh_params import QueueDhParams
+from pritunl.queue.dh_params import QueueDhParams
 from pritunl import app_server
 import pritunl.logger as logger
 import pritunl.mongo as mongo

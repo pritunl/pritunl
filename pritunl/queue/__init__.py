@@ -2,7 +2,7 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings import settings
-from pritunl.queue_com import QueueCom
+from pritunl.queue.com import QueueCom
 from pritunl.messenger import Messenger
 from pritunl.mongo.object import MongoObject
 import pritunl.logger as logger

@@ -303,7 +303,7 @@ class AppServer(Config):
         import pritunl.handlers
 
     def _setup_queue_runner(self):
-        from pritunl.queue_runner import QueueRunner
+        from pritunl.queue.runner import QueueRunner
         queue_runner = QueueRunner()
         queue_runner.start()
 

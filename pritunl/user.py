@@ -4,8 +4,8 @@ from pritunl.descriptors import *
 from pritunl.settings import settings
 from pritunl.cache import cache_db
 from pritunl.mongo.object import MongoObject
-from pritunl.queue_init_user import QueueInitUser
-from pritunl.queue_init_user_pooled import QueueInitUserPooled
+from pritunl.queue.init_user import QueueInitUser
+from pritunl.queue.init_user_pooled import QueueInitUserPooled
 from pritunl import app_server
 import pritunl.mongo as mongo
 import pritunl.utils as utils
