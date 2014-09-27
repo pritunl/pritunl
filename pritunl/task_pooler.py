@@ -2,9 +2,9 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.task import Task, add_task
-from pritunl.pooler_user import PoolerUser
-from pritunl.pooler_org import PoolerOrg
-from pritunl.pooler_dh_params import PoolerDhParams
+from pritunl.pooler.user import PoolerUser
+from pritunl.pooler.org import PoolerOrg
+from pritunl.pooler.dh_params import PoolerDhParams
 import logging
 import time
 

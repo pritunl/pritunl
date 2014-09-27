@@ -5,7 +5,7 @@ from pritunl.settings import settings
 from pritunl.cache import cache_db
 from pritunl.user import User
 from pritunl.queue_com import QueueCom
-from pritunl.pooler_user import PoolerUser
+from pritunl.pooler.user import PoolerUser
 from pritunl.mongo.object import MongoObject
 from pritunl.queue_init_org_pooled import QueueInitOrgPooled
 from pritunl import app_server
