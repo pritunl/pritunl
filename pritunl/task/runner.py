@@ -68,10 +68,10 @@ class TaskRunner:
             time.sleep(settings.mongo.task_ttl)
 
     def start(self):
-        from pritunl.task_sync_ip_pool import TaskSyncIpPool
-        from pritunl.task_clean_users import TaskCleanUsers
-        from pritunl.task_clean_ip_pool import TaskCleanIpPool
-        from pritunl.task_pooler import TaskPooler
+        from pritunl.task.sync_ip_pool import TaskSyncIpPool
+        from pritunl.task.clean_users import TaskCleanUsers
+        from pritunl.task.clean_ip_pool import TaskCleanIpPool
+        from pritunl.task.pooler import TaskPooler
 
         for target in (self.run_thread, self.check_thread):
             thread = threading.Thread(target=target)

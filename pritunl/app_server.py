@@ -313,7 +313,7 @@ class AppServer(Config):
         mongo_transaction_runner.start()
 
     def _setup_task_runner(self):
-        from pritunl.task_runner import TaskRunner
+        from pritunl.task.runner import TaskRunner
         task_runner = TaskRunner()
         task_runner.start()
 
