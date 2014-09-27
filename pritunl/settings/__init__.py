@@ -1,10 +1,25 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
-import pritunl.mongo as mongo
 import importlib
 import os
 import threading
+
+module_classes = []
+
+for module_name in os.listdir(os.path.dirname(__file__)):
+    if module_name == '__init__.py' or \
+            module_name == 'group.py' or \
+            module_name[-3:] != '.py':
+        continue
+
+    module_name = module_name[:-3]
+    cls_name = 'Settings' + ''.join([x.capitalize()
+        for x in module_name.split('_')])
+    module = __import__('pritunl.settings.' + module_name,
+        fromlist=(cls_name,))
+    cls = getattr(module, cls_name)
+    module_classes.append(cls)
 
 class Settings(object):
     def __init__(self):
@@ -12,6 +27,7 @@ class Settings(object):
 
     @cached_static_property
     def collection(cls):
+        import pritunl.mongo as mongo
         return mongo.get_collection('system')
 
     def on_msg(self, msg):
@@ -68,19 +84,8 @@ class Settings(object):
             for field, val in doc.items():
                 setattr(group, field, val)
 
-    def _import_all(self):
-        for module_name in os.listdir(os.path.dirname(__file__)):
-            if module_name[:9] != 'settings_' or \
-                    module_name == 'settings_group.py' or \
-                    module_name[-3:] != '.py':
-                continue
-            module_name = module_name[:-3]
-            module = __import__('pritunl.' + module_name,
-                locals(), globals())
-
-            cls = getattr(getattr(module, module_name),
-                ''.join([x.capitalize() for x in module_name.split('_')]))
-
+    def _init_modules(self):
+        for cls in module_classes:
             setattr(self, cls.group, cls())
 
     def _check(self):
@@ -103,7 +108,7 @@ class Settings(object):
             return
         self._running = True
 
-        self._import_all()
+        self._init_modules()
         self.load()
 
         self.commit(all_fields=True)
