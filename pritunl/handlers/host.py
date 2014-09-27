@@ -4,7 +4,7 @@ from pritunl.settings import settings
 from pritunl.host import Host
 from pritunl.event import Event
 from pritunl.logger.entry import LogEntry
-from pritunl.serverip_pool import ServerIpPool
+from pritunl.server.ip_pool import ServerIpPool
 import pritunl.utils as utils
 from pritunl import app_server
 import flask

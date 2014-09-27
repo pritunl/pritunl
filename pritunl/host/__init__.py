@@ -7,8 +7,8 @@ from pritunl.host.usage import HostUsage
 from pritunl.event import Event
 from pritunl.logger.entry import LogEntry
 from pritunl.messenger import Messenger
-from pritunl.serverbandwidth import ServerBandwidth
-from pritunl.serverip_pool import ServerIpPool
+from pritunl.server.bandwidth import ServerBandwidth
+from pritunl.server.ip_pool import ServerIpPool
 from pritunl.queue.assign_ip_addr import QueueAssignIpAddr
 from pritunl.queue.unassign_ip_addr import QueueUnassignIpAddr
 from pritunl.queue.assign_ip_pool import QueueAssignIpPool
