@@ -115,19 +115,36 @@ class MongoTransaction(MongoObject):
             obj = getattr(obj, func)(*args or [], **kwargs or {})
 
     def _run_actions(self):
-        collection_bulks = collections.defaultdict(
-            lambda: collection.initialize_ordered_bulk_op())
+        has_bulk = mongo.has_bulk
+
+        if has_bulk:
+            collection_bulks = collections.defaultdict(
+                lambda: collection.initialize_ordered_bulk_op())
 
         for action_set in self.action_sets:
             collection_name, bulk, actions, _, _ = action_set
             collection = mongo.get_collection(collection_name)
 
-            if bulk:
-                collection = collection_bulks[collection_name]
-            elif actions == BULK_EXECUTE:
-                collection = collection_bulks.pop(collection_name)
-                collection.execute()
-                continue
+            if has_bulk:
+                if bulk:
+                    collection = collection_bulks[collection_name]
+                elif actions == BULK_EXECUTE:
+                    collection = collection_bulks.pop(collection_name)
+                    collection.execute()
+                    continue
+            else:
+                if bulk:
+                    new_action = actions[0]
+                    for action in actions[1:]:
+                        if action[0] == 'upsert':
+                            new_action[2] = {'upsert': True}
+                        elif action[0] == 'update':
+                            new_action[1].append(action[1][0])
+                        elif action[0] == 'remove':
+                            new_action[0] = 'remove'
+                    actions = [new_action]
+                elif actions == BULK_EXECUTE:
+                    continue
 
             self._run_collection_actions(collection, actions)
 
