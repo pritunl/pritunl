@@ -516,17 +516,10 @@ def server_host_put(server_id, host_id):
 @app_server.auth
 def server_host_delete(server_id, host_id):
     server = Server.get_server(id=server_id)
-    org = Organization.get_org(id=host_id)
-    if server.status:
-        return utils.jsonify({
-            'error': SERVER_NOT_OFFLINE,
-            'error_msg': SERVER_NOT_OFFLINE_DETACH_ORG_MSG,
-        }, 400)
-    server.remove_org(org)
+    host = Host.get_host(id=host_id)
+    server.remove_host(host)
     server.commit()
-    Event(type=SERVERS_UPDATED)
-    Event(type=SERVER_ORGS_UPDATED, resource_id=server.id)
-    Event(type=USERS_UPDATED, resource_id=org.id)
+    Event(type=HOSTS_UPDATED, resource_id=server.id)
     return utils.jsonify({})
 
 @app_server.app.route('/server/<server_id>/<operation>', methods=['PUT'])
