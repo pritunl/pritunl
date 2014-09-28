@@ -42,6 +42,7 @@ class Host(MongoObject):
         'status',
         'start_timestamp',
         'public_address',
+        'auto_public_address',
     }
     fields_default = {
         'status': OFFLINE,
@@ -91,6 +92,7 @@ class Host(MongoObject):
             'uptime': self.uptime,
             'user_count': self.user_count,
             'users_online': self.users_online,
+            'public_address': self.public_address or self.auto_public_address,
         }
 
     def remove(self):
@@ -190,6 +192,7 @@ class Host(MongoObject):
         host.status = ONLINE
         host.users_online = 0
         host.start_timestamp = datetime.datetime.utcnow()
+        host.auto_public_address = app_server.public_ip
 
         host.commit()
         Event(type=HOSTS_UPDATED)
