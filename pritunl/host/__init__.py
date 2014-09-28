@@ -96,7 +96,7 @@ class Host(MongoObject):
             'uptime': self.uptime,
             'user_count': self.user_count,
             'users_online': self.users_online,
-            'public_address': self.public_address or self.auto_public_address,
+            'public_address': self.public_addr,
         }
 
     def remove(self):
