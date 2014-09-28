@@ -550,11 +550,13 @@ header.blur {
 }
 
 .users-list-container,
-.server-orgs-list {
+.server-orgs-list,
+.server-hosts-list {
   padding: 0 13px 13px 13px;
 }
 
 .orgs-list-container .no-orgs,
+.hosts-list-container .no-hosts,
 .servers-list .no-servers {
   text-align: center;
   font-size: 14px;
@@ -581,7 +583,9 @@ header.blur {
 .users-list .no-users-search,
 .users-list .loading,
 .server-orgs-list .org,
-.server-orgs-list .no-orgs {
+.server-orgs-list .no-orgs,
+.server-hosts-list .host,
+.server-hosts-list .no-hosts {
   height: 40px;
   background: @white-fg;
   border: 1px solid @light-dark-border;
@@ -592,10 +596,15 @@ header.blur {
   .background-clip-padding;
 }
 
+.server-hosts-list .no-hosts {
+  margin-top: 0;
+}
+
 .users-list .no-users,
 .users-list .no-users-search,
 .users-list .loading,
-.server-orgs-list .no-orgs {
+.server-orgs-list .no-orgs,
+.server-hosts-list .no-hosts {
   text-align: center;
   font-size: 14px;
   color: @light-dark-fg;
@@ -622,7 +631,8 @@ header.blur {
 
 
 .users-list .user .name-container,
-.server-orgs-list .org .name-container {
+.server-orgs-list .org .name-container,
+.server-hosts-list .host .name-container {
   float: left;
   height: auto;
   padding-top: 0;
@@ -667,12 +677,14 @@ header.blur {
   white-space: nowrap;
 }
 
-.server-orgs-list .org .name-container {
+.server-orgs-list .org .name-container,
+.server-hosts-list .org .name-container {
   border-left: 0 none;
 }
 
 .users-list .user .name-container .name-icon,
-.server-orgs-list .org .name-container .name-icon {
+.server-orgs-list .org .name-container .name-icon,
+.server-hosts-list .org .name-container .name-icon {
   top: 3px;
   margin-top: 0;
   margin-right: 6px;
@@ -701,7 +713,8 @@ header.blur {
 }
 
 .users-list .user .name-container .user-name,
-.server-orgs-list .org .org-name {
+.server-orgs-list .org .org-name,
+.server-hosts-list .host .host-name {
   font-size: 18px;
   cursor: pointer;
   vertical-align: text-top;
@@ -740,7 +753,8 @@ header.blur {
   display: inline;
 }
 
-.server-orgs-list .org .org-name {
+.server-orgs-list .org .org-name,
+.server-hosts-list .host .host-name {
   color: @blue-fg;
   cursor: default;
 }
@@ -776,7 +790,8 @@ header.blur {
 }
 
 .users-list .right-container,
-.server-orgs-list .org .button-container {
+.server-orgs-list .org .button-container,
+.server-hosts-list .host .button-container {
   float: right;
   display: inline-block;
   margin-top: 5px;
@@ -794,7 +809,8 @@ header.blur {
   width: 77px;
 }
 
-.server-orgs-list .org .button-container {
+.server-orgs-list .org .button-container,
+.server-hosts-list .host .button-container {
   border-left: 0 none;
 }
 
