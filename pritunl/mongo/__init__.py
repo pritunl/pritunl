@@ -6,6 +6,7 @@ import os
 import base64
 import flask
 import random
+import logging
 
 has_bulk = all((
     hasattr(pymongo.collection.Collection, 'initialize_ordered_bulk_op'),
@@ -16,6 +17,14 @@ collections = {}
 def setup_mongo():
     from pritunl import app_server
     from pritunl.settings import settings
+
+    logger = logging.getLogger(APP_NAME)
+
+    if not pymongo.has_c():
+        logger.warning('Failed to load pymongo c bindings')
+
+    if not bson.has_c():
+        logger.warning('Failed to load bson c bindings')
 
     prefix = app_server.mongodb_collection_prefix or ''
     client = pymongo.MongoClient(app_server.mongodb_url,
