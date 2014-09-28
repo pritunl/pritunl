@@ -238,7 +238,14 @@ class ServerIpPool:
         spec = {
             'user_id': {'$in': user_ids},
         }
+        project = {
+            '_id': False,
+            'user_id': True,
+            'server_id': True,
+            'local_addr': True,
+            'remote_addr': True,
+        }
 
-        for doc in cls.collection.find(spec):
+        for doc in cls.collection.find(spec, project):
             yield doc['user_id'], doc['server_id'], \
                 doc['local_addr'], doc['remote_addr']
