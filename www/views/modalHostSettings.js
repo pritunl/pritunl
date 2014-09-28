@@ -9,7 +9,7 @@ define([
   var ModalHostSettingsView = ModalView.extend({
     className: 'host-settings-modal',
     template: _.template(modalHostSettingsTemplate),
-    title: 'Rename Host',
+    title: 'Host Settings',
     okText: 'Save',
     body: function() {
       return this.template(this.model.toJSON());
