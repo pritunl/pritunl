@@ -5,15 +5,18 @@ define([
   'models/status',
   'collections/server',
   'collections/org',
+  'collections/host',
   'views/list',
   'views/alert',
   'views/serversListItem',
   'views/modalAddServer',
   'views/modalAttachOrg',
+  'views/modalAttachHost',
   'text!templates/serversList.html'
 ], function($, _, Backbone, StatusModel, ServerCollection, OrgCollection,
-    ListView, AlertView, ServersListItemView, ModalAddServerView,
-    ModalAttachOrgView, serversListTemplate) {
+    HostCollection, ListView, AlertView, ServersListItemView,
+    ModalAddServerView, ModalAttachOrgView, ModalAttachHostView,
+    serversListTemplate) {
   'use strict';
   var ServersListView = ListView.extend({
     className: 'servers-list',
@@ -22,14 +25,17 @@ define([
     listErrorMsg: 'Failed to load servers, server error occurred.',
     events: {
       'click .servers-add-server': 'onAddServer',
-      'click .servers-attach-org': 'onAttachOrg'
+      'click .servers-attach-org': 'onAttachOrg',
+      'click .servers-attach-host': 'onAttachHost'
     },
     initialize: function() {
       this.collection = new ServerCollection();
       this.orgs = new OrgCollection();
+      this.hosts = new HostCollection();
       this.statusModel = new StatusModel();
       this.listenTo(window.events, 'servers_updated', this.update);
       this.listenTo(window.events, 'organizations_updated', this.updateOrgs);
+      this.listenTo(window.events, 'hosts_updated', this.updateHosts);
       ServersListView.__super__.initialize.call(this);
     },
     updateOrgs: function() {
@@ -39,6 +45,20 @@ define([
           var alertView = new AlertView({
             type: 'danger',
             message: 'Failed to load organizations, server error occurred.',
+            dismissable: true
+          });
+          $('.alerts-container').append(alertView.render().el);
+          this.addView(alertView);
+        }.bind(this)
+      });
+    },
+    updateHosts: function() {
+      this.hosts.fetch({
+        error: function() {
+          this.hosts.reset();
+          var alertView = new AlertView({
+            type: 'danger',
+            message: 'Failed to load hosts, server error occurred.',
             dismissable: true
           });
           $('.alerts-container').append(alertView.render().el);
@@ -147,6 +167,56 @@ define([
       }.bind(this));
       this.addView(modal);
     },
+    onAttachHost: function() {
+      if (this.hosts.models.length) {
+        this._attachHost();
+        return;
+      }
+      this.$('.servers-attach-host').attr('disabled', 'disabled');
+      this.hosts.fetch({
+        success: function() {
+          this._attachHost();
+          this.$('.servers-attach-host').removeAttr('disabled');
+        }.bind(this),
+        error: function() {
+          this.hosts.reset();
+          var alertView = new AlertView({
+            type: 'danger',
+            message: 'Failed to load hosts, server error occurred.',
+            dismissable: true
+          });
+          $('.alerts-container').append(alertView.render().el);
+          this.addView(alertView);
+          this.$('.servers-attach-host').removeAttr('disabled');
+        }.bind(this)
+      });
+    },
+    _attachHost: function() {
+      if (!this.hosts.length) {
+        var alertView = new AlertView({
+          type: 'danger',
+          message: 'No hosts exists, a host must be created before attaching.',
+          dismissable: true
+        });
+        $('.alerts-container').append(alertView.render().el);
+        this.addView(alertView);
+        return;
+      }
+      var modal = new ModalAttachHostView({
+        hosts: this.hosts,
+        collection: this.collection
+      });
+      this.listenToOnce(modal, 'applied', function() {
+        var alertView = new AlertView({
+          type: 'warning',
+          message: 'Successfully attached host.',
+          dismissable: true
+        });
+        $('.alerts-container').append(alertView.render().el);
+        this.addView(alertView);
+      }.bind(this));
+      this.addView(modal);
+    },
     buildItem: function(model) {
       var modelView = new ServersListItemView({
         model: model
@@ -157,10 +227,12 @@ define([
     resetItems: function(views) {
       if (!views.length) {
         this.$('.servers-attach-org').attr('disabled', 'disabled');
+        this.$('.servers-attach-host').attr('disabled', 'disabled');
         this.$('.no-servers').slideDown(250);
       }
       else {
         this.$('.servers-attach-org').removeAttr('disabled');
+        this.$('.servers-attach-host').removeAttr('disabled');
         this.$('.no-servers').slideUp(250);
       }
     }
