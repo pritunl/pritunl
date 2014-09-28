@@ -7,6 +7,10 @@ import base64
 import flask
 import random
 
+has_bulk = all((
+    hasattr(pymongo.collection.Collection, 'initialize_ordered_bulk_op'),
+    hasattr(pymongo.collection.Collection, 'initialize_unordered_bulk_op'),
+))
 collections = {}
 
 def setup_mongo():
