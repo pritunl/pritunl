@@ -20,12 +20,15 @@ def dumps_patched(*args, **kwargs):
     return dumps_orig(*args, **kwargs)
 json.dumps = dumps_patched
 
-_mongo_errors = (
-    pymongo.errors.AutoReconnect,
-    pymongo.errors.ConnectionFailure,
-    pymongo.errors.ExecutionTimeout,
-    pymongo.errors.WTimeoutError,
-)
+_mongo_errors = []
+for error_attr in (
+            'AutoReconnect',
+            'ConnectionFailure',
+            'ExecutionTimeout',
+            'WTimeoutError',
+        ):
+    if hasattr(pymongo.errors, error_attr):
+        _mongo_errors.append(getattr(pymongo.errors, error_attr))
 
 insert_orig = pymongo.collection.Collection.insert
 def insert(self, *args, **kwargs):
