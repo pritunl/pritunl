@@ -16,10 +16,12 @@ define([
     },
     onOk: function() {
       var name = this.$('.name input').val() || null;
+      var publicAddress = this.$('.public-address input').val() || null;
 
       this.setLoading('Saving host...');
       this.model.save({
-        name: name
+        name: name,
+        public_address: publicAddress
       }, {
         success: function() {
           this.close(true);
