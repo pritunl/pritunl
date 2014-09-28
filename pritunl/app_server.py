@@ -1,4 +1,5 @@
 from pritunl.constants import *
+import pritunl.patches
 from pritunl.config import Config
 import pritunl.utils as utils
 import flask
@@ -438,3 +439,5 @@ class AppServer(Config):
     def run_server(self):
         self._setup_all()
         self._run_server()
+
+app_server = AppServer()
