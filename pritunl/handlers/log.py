@@ -1,7 +1,7 @@
 from pritunl.constants import *
 from pritunl.logger.entry import LogEntry
 import pritunl.utils as utils
-from pritunl import app_server
+from pritunl.app_server import app_server
 
 @app_server.app.route('/log', methods=['GET'])
 @app_server.auth

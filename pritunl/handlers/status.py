@@ -2,7 +2,8 @@ from pritunl.constants import *
 import pritunl.utils as utils
 from pritunl.organization import Organization
 from pritunl.server import Server
-from pritunl import app_server, __version__
+from pritunl.app_server import app_server
+from pritunl import __version__
 
 @app_server.app.route('/status', methods=['GET'])
 @app_server.auth

@@ -15,7 +15,7 @@ has_bulk = all((
 collections = {}
 
 def setup_mongo():
-    from pritunl import app_server
+    from pritunl.app_server import app_server
     from pritunl.settings import settings
 
     logger = logging.getLogger(APP_NAME)

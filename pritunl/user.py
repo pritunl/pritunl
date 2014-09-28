@@ -6,7 +6,7 @@ from pritunl.cache import cache_db
 from pritunl.mongo.object import MongoObject
 from pritunl.queue.init_user import QueueInitUser
 from pritunl.queue.init_user_pooled import QueueInitUserPooled
-from pritunl import app_server
+from pritunl.app_server import app_server
 import pritunl.mongo as mongo
 import pritunl.utils as utils
 import tarfile

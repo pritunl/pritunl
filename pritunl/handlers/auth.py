@@ -3,7 +3,7 @@ from pritunl.administrator import Administrator
 from pritunl.settings import settings
 import pritunl.utils as utils
 import pritunl.mongo as mongo
-from pritunl import app_server
+from pritunl.app_server import app_server
 import time
 import flask
 

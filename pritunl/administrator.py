@@ -158,7 +158,7 @@ class Administrator(MongoObject):
             except pymongo.errors.DuplicateKeyError:
                 return False
         else:
-            from pritunl import app_server
+            from pritunl.app_server import app_server
             if not flask.session:
                 return False
 

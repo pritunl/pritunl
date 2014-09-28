@@ -1,7 +1,7 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
-from pritunl import app_server
+from pritunl.app_server import app_server
 import pritunl.mongo as mongo
 import pymongo
 import os

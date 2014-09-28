@@ -3,7 +3,7 @@ from pritunl.organization import Organization
 from pritunl.event import Event
 from pritunl.logger.entry import LogEntry
 import pritunl.utils as utils
-from pritunl import app_server
+from pritunl.app_server import app_server
 import flask
 
 @app_server.app.route('/organization', methods=['GET'])

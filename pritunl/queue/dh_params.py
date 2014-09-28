@@ -4,7 +4,7 @@ from pritunl.descriptors import *
 from pritunl.queue import Queue, add_queue
 from pritunl.queue.com import QueueCom
 from pritunl.event import Event
-from pritunl import app_server
+from pritunl.app_server import app_server
 import pritunl.logger as logger
 import pritunl.mongo as mongo
 import pritunl.utils as utils

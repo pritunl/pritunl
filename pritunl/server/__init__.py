@@ -15,7 +15,7 @@ from pritunl.queue.dh_params import QueueDhParams
 from pritunl.mongo.object import MongoObject
 from pritunl.mongo.transaction import MongoTransaction
 from pritunl.cache import cache_db
-from pritunl import app_server
+from pritunl.app_server import app_server
 import pritunl.utils as utils
 import pritunl.ipaddress as ipaddress
 import pritunl.mongo as mongo

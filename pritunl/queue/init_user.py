@@ -3,7 +3,7 @@ from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.queue import Queue, add_queue
 from pritunl.event import Event
-from pritunl import app_server
+from pritunl.app_server import app_server
 import logging
 
 logger = logging.getLogger(APP_NAME)

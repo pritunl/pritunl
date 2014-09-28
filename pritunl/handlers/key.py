@@ -5,7 +5,7 @@ from pritunl.organization import Organization
 from pritunl.static_file import StaticFile
 import pritunl.utils as utils
 from pritunl.cache import cache_db
-from pritunl import app_server
+from pritunl.app_server import app_server
 import os
 import flask
 import uuid

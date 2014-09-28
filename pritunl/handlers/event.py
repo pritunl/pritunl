@@ -1,7 +1,7 @@
 from pritunl.constants import *
 from pritunl.event import Event
 import pritunl.utils as utils
-from pritunl import app_server
+from pritunl.app_server import app_server
 import time
 import uuid
 import flask

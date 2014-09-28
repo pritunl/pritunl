@@ -2,7 +2,7 @@ from pritunl.constants import *
 from pritunl.organization import Organization
 from pritunl.server import Server
 import pritunl.utils as utils
-from pritunl import app_server
+from pritunl.app_server import app_server
 import os
 import flask
 import tarfile

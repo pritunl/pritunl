@@ -1,7 +1,7 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.static_file import StaticFile
-from pritunl import app_server
+from pritunl.app_server import app_server
 import os
 import flask
 

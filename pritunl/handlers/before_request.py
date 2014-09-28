@@ -1,6 +1,6 @@
 from pritunl.constants import *
 import pritunl.utils as utils
-from pritunl import app_server
+from pritunl.app_server import app_server
 import flask
 import re
 

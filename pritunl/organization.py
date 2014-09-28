@@ -8,7 +8,7 @@ from pritunl.queue.com import QueueCom
 from pritunl.pooler.user import PoolerUser
 from pritunl.mongo.object import MongoObject
 from pritunl.queue.init_org_pooled import QueueInitOrgPooled
-from pritunl import app_server
+from pritunl.app_server import app_server
 import pritunl.logger as logger
 import pritunl.mongo as mongo
 import uuid

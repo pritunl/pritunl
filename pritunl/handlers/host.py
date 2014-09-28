@@ -6,7 +6,7 @@ from pritunl.event import Event
 from pritunl.logger.entry import LogEntry
 from pritunl.server.ip_pool import ServerIpPool
 import pritunl.utils as utils
-from pritunl import app_server
+from pritunl.app_server import app_server
 import flask
 import math
 import time
