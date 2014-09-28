@@ -207,10 +207,12 @@ class AppServer(Config):
             time.sleep(settings.app.update_check_rate)
 
     def _setup_public_ip(self):
-        thread = threading.Thread(target=self.load_public_ip,
-            kwargs={'attempts': 5})
-        thread.daemon = True
-        thread.start()
+        self.load_public_ip()
+        if not self.public_ip:
+            thread = threading.Thread(target=self.load_public_ip,
+                kwargs={'attempts': 5})
+            thread.daemon = True
+            thread.start()
 
     def _setup_updates(self):
         thread = threading.Thread(target=self._check_updates)
