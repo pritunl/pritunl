@@ -59,29 +59,40 @@ class HostUsage(object):
     def add_period(self, timestamp, cpu_usage, mem_usage):
         cpu_usage = round(cpu_usage, 4)
         mem_usage = round(mem_usage, 4)
-        bulk = self.collection.initialize_unordered_bulk_op()
+
+        if mongo.has_bulk:
+            bulk = self.collection.initialize_unordered_bulk_op()
+        else:
+            bulk = None
 
         for period in ('1m', '5m', '30m', '2h', '1d'):
-            bulk.find({
+            spec = {
                 'host_id': self.host_id,
                 'period': period,
                 'timestamp': self._get_period_timestamp(period, timestamp),
-            }).upsert().update({'$inc': {
+            }
+            doc = {'$inc': {
                 'count': 1,
                 'cpu': cpu_usage,
                 'mem': mem_usage,
-            }})
-
-        for period in ('1m', '5m', '30m', '2h', '1d'):
-            bulk.find({
+            }}
+            rem_spec = {
                 'host_id': self.host_id,
                 'period': period,
                 'timestamp': {
                     '$lt': self._get_period_max_timestamp(period, timestamp),
                 },
-            }).remove()
+            }
 
-        bulk.execute()
+            if bulk:
+                bulk.find(spec).upsert().update(doc)
+                bulk.fint(rem_spec).remove()
+            else:
+                self.collection.update(spec, doc, upsert=True)
+                self.collection.remove(rem_spec)
+
+        if bulk:
+            bulk.execute()
 
     def get_period(self, period):
         date_end = self._get_period_timestamp(
