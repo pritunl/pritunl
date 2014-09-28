@@ -3,6 +3,7 @@ from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings import settings
 from pritunl.organization import Organization
+from pritunl.host import Host
 from pritunl.event import Event
 from pritunl.logger.entry import LogEntry
 from pritunl.messenger import Messenger
