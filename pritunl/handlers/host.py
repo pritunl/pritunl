@@ -35,6 +35,9 @@ def host_put(host_id=None):
         host.name = utils.filter_str(
             flask.request.json['name']) or utils.random_name()
 
+    if 'public_address' in flask.request.json:
+        host.public_address = flask.request.json['public_address']
+
     host.commit()
     Event(type=HOSTS_UPDATED)
 
