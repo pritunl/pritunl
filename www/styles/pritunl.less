@@ -913,15 +913,12 @@ header.blur {
   float: left;
 }
 
-.hosts-list .host .host-info .status-items {
-  float: none;
-}
-
 .servers-list .server .server-info .server-output {
   border-bottom: 1px solid @light-dark-border;
 }
 
-.servers-list .server .server-info .server-output-title {
+.servers-list .server .server-info .server-output-title,
+.hosts-list .host .host-info .host-usage-title {
   color: @dark-fg;
   font-size: 16px;
   margin: 0;
@@ -930,7 +927,8 @@ header.blur {
   height: 24px;
 }
 
-.servers-list .server .server-info .server-output-title .btn {
+.servers-list .server .server-info .server-output-title .btn,
+.hosts-list .host .host-info .host-usage-title .btn {
   padding: 0 5px;
 }
 
@@ -942,10 +940,15 @@ header.blur {
   margin-right: 2px;
 }
 
-.servers-list .server .server-info .server-graph-period {
+.servers-list .server .server-info .server-graph-period,
+.hosts-list .host .host-info .graph-period {
   margin-left: 4px;
   float: right;
   display: none;
+}
+
+.hosts-list .host .host-info .graph-period {
+  display: block;
 }
 
 .servers-list .server .server-info .server-output-clear:hover {
@@ -956,17 +959,33 @@ header.blur {
   padding: 5px 10px 10px 0;
 }
 
-.servers-list .server .server-info .server-graph-viewer {
+.servers-list .server .server-info .server-graph-viewer,
+.hosts-list .host .host-info .host-graph-viewer {
   margin: 5px 10px 10px 311px;
   overflow: hidden;
   display: none;
 }
 
+.hosts-list .host .host-info .host-graph-viewer {
+  display: block;
+}
+
 .servers-list .server .server-info .server-graph-recv,
-.servers-list .server .server-info .server-graph-sent {
+.servers-list .server .server-info .server-graph-sent,
+.hosts-list .host .host-info .host-graph-cpu,
+.hosts-list .host .host-info .host-graph-mem {
   width: 587px;
   height: 130px;
   border: 1px solid @light-dark-border;
+}
+
+.hosts-list .host .host-info .host-graph-cpu,
+.hosts-list .host .host-info .host-graph-mem {
+  height: 133px;
+}
+
+.hosts-list .host .host-info .host-graph-mem {
+  display: none;
 }
 
 .servers-list .server .server-info .server-graph-viewer .server-graph-sent {
@@ -974,11 +993,14 @@ header.blur {
 }
 
 .servers-list .server .server-info .server-graph-viewer .detail .dot,
-.servers-list .server .server-info .server-graph-viewer .detail .item {
+.servers-list .server .server-info .server-graph-viewer .detail .item,
+.hosts-list .host .host-info .host-graph-viewer .detail .dot,
+.hosts-list .host .host-info .host-graph-viewer .detail .item {
   display: none;
 }
 
-.servers-list .server .server-info .server-graph-viewer .detail .x_label {
+.servers-list .server .server-info .server-graph-viewer .detail .x_label,
+.hosts-list .host .host-info .host-graph-viewer .detail .x_label {
   opacity: 0.8;
 }
 
