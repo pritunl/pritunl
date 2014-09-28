@@ -10,7 +10,8 @@ define([
       'status': null,
       'uptime': null,
       'user_count': null,
-      'users_online': null
+      'users_online': null,
+      'public_address': null,
     },
     url: function() {
       var url = '/host';
