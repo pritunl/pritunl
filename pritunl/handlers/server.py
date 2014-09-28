@@ -500,21 +500,15 @@ def server_host_get(server_id):
 @app_server.auth
 def server_host_put(server_id, host_id):
     server = Server.get_server(id=server_id)
-    org = Host.get_host(id=host_id)
-    if server.status:
-        return utils.jsonify({
-            'error': SERVER_NOT_OFFLINE,
-            'error_msg': SERVER_NOT_OFFLINE_ATTACH_ORG_MSG,
-        }, 400)
-    server.add_host(org)
+    host = Host.get_host(id=host_id)
+    server.add_host(host)
     server.commit()
-    Event(type=SERVERS_UPDATED)
-    Event(type=SERVER_ORGS_UPDATED, resource_id=server.id)
-    Event(type=USERS_UPDATED, resource_id=org.id)
+    Event(type=HOSTS_UPDATED, resource_id=server.id)
     return utils.jsonify({
-        'id': org.id,
+        'id': host.id,
         'server': server.id,
-        'name': org.name,
+        'name': host.name,
+        'public_address': host.public_addr,
     })
 
 @app_server.app.route('/server/<server_id>/host/<host_id>',
