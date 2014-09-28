@@ -535,7 +535,6 @@ def server_host_delete(server_id, host_id):
     Event(type=USERS_UPDATED, resource_id=org.id)
     return utils.jsonify({})
 
-
 @app_server.app.route('/server/<server_id>/<operation>', methods=['PUT'])
 @app_server.auth
 def server_operation_put(server_id, operation):
