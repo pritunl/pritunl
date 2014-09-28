@@ -6,6 +6,7 @@ from pritunl.mongo.list import MongoList
 import bson
 import json
 import os
+import copy
 
 class MongoObject(object):
     fields = set()
@@ -43,7 +44,14 @@ class MongoObject(object):
     def __getattr__(self, name):
         if name in self.fields:
             if name in self.fields_default:
-                return self.fields_default[name]
+                value = self.fields_default[name]
+                if isinstance(value, list):
+                    value = MongoList(copy.copy(value), changed=False)
+                    object.__setattr__(self, name, value)
+                elif isinstance(value, dict):
+                    value = MongoDict(value.copy(), changed=False)
+                    object.__setattr__(self, name, value)
+                return value
             return
         raise AttributeError(
             'MongoObject instance has no attribute %r' % name)
