@@ -338,6 +338,54 @@ class Server(MongoObject):
         if org_id in self.organizations:
             return Organization.get_org(id=org_id)
 
+    def add_host(self, host_id):
+        if not isinstance(host_id, basestring):
+            host_id = host_id.id
+        logger.debug('Adding host to server. %r' % {
+            'server_id': self.id,
+            'host_id': host_id,
+        })
+        if host_id in self.hosts:
+            logger.debug('Host already on server, skipping. %r' % {
+                'server_id': self.id,
+                'host_id': host_id,
+            })
+            return
+        self.hosts.append(host_id)
+
+    def remove_host(self, host_id):
+        if not isinstance(host_id, basestring):
+            host_id = host_id.id
+        if host_id not in self.hosts:
+            return
+        logger.debug('Removing host from server. %r' % {
+            'server_id': self.id,
+            'host_id': host_id,
+        })
+        try:
+            self.hosts.remove(host_id)
+        except ValueError:
+            pass
+
+    def iter_hosts(self):
+        for host_id in self.hosts:
+            host = Host.get_host(id=host_id)
+            if host:
+                yield host
+            else:
+                logger.error('Removing non-existent host ' +
+                    'from server. %r' % {
+                        'server_id': self.id,
+                        'host_id': host_id,
+                    })
+                # TODO event
+                self.remove_host(host_id)
+                self.commit('hosts')
+
+    def get_host(self, host_id):
+        if host_id in self.hosts:
+            return Host.get_host(id=host_id)
+
     def generate_dh_param(self):
         reserved = QueueDhParams.reserve_pooled_dh_params(server=self)
         if not reserved:
