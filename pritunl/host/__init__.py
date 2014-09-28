@@ -197,7 +197,8 @@ class Host(MongoObject):
         host.status = ONLINE
         host.users_online = 0
         host.start_timestamp = datetime.datetime.utcnow()
-        host.auto_public_address = app_server.public_ip
+        if app_server.public_ip:
+            host.auto_public_address = app_server.public_ip
 
         host.commit()
         Event(type=HOSTS_UPDATED)
