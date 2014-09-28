@@ -159,6 +159,7 @@ class Host(MongoObject):
                     '_id': self.id,
                 }, {'$set': {
                     'ping_timestamp': datetime.datetime.utcnow(),
+                    'auto_public_address': app_server.public_ip,
                 }})
             except:
                 logger.exception('Error in host keep alive update. %s' % {
