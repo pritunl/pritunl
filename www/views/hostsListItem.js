@@ -58,6 +58,9 @@ define([
       else {
         this.$('.host-del').attr('disabled', 'disabled');
       }
+
+      this.$('.host-public-address .status-text').text(
+        this.model.get('public_address'));
     },
     onCpuUsageGraph: function() {
       this.$('.host-mem-usage-btn').removeClass('btn-primary');
