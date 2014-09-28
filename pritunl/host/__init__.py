@@ -84,6 +84,10 @@ class Host(MongoObject):
             return
         return max((datetime.datetime.now() - self.start_timestamp).seconds, 1)
 
+    @property
+    def public_addr(self):
+        return self.public_address or self.auto_public_address
+
     def dict(self):
         return {
             'id': self.id,
