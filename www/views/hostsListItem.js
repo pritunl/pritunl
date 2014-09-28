@@ -144,13 +144,13 @@ define([
         return;
       }
       if (this.$el.hasClass('show-hidden')) {
-        this.$('.toggle-hidden').removeClass('label-success');
-        this.$('.toggle-hidden').addClass('label-primary');
+        this.$('.toggle-hidden').removeClass('label-warning');
+        this.$('.toggle-hidden').addClass('label-danger');
         this.$el.removeClass('show-hidden');
       }
       else {
-        this.$('.toggle-hidden').addClass('label-success');
-        this.$('.toggle-hidden').removeClass('label-primary');
+        this.$('.toggle-hidden').addClass('label-warning');
+        this.$('.toggle-hidden').removeClass('label-danger');
         this.$el.addClass('show-hidden');
       }
     }
