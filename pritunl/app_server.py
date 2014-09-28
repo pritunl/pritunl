@@ -231,12 +231,15 @@ class AppServer(Config):
         def before_request():
             flask.g.query_count = 0
             flask.g.write_count = 0
+            flask.g.query_time = 0
             flask.g.start = time.time()
 
         @self.app.after_request
         def after_request(response):
             response.headers.add('Execution-Time',
                 int((time.time() - flask.g.start) * 1000))
+            response.headers.add('Query-Time',
+                int(flask.g.query_time * 1000))
             response.headers.add('Query-Count', flask.g.query_count)
             response.headers.add('Write-Count', flask.g.write_count)
             return response
