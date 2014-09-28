@@ -49,13 +49,8 @@ define([
       else {
         this.$('.host-uptime .status-text').text('-');
       }
-      if (this.model.get('user_count') === 0) {
-        this.$('.host-users .status-num').text('-/-');
-      }
-      else {
-        this.$('.host-users .status-num').text(this.model.get(
-          'users_online') + '/' + this.model.get('user_count'));
-      }
+      this.$('.host-users .status-num').text(this.model.get(
+        'users_online') + '/' + this.model.get('user_count'));
 
       if (this.model.get('status') === 'offline') {
         this.$('.host-del').removeAttr('disabled');
