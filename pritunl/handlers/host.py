@@ -39,7 +39,7 @@ def host_put(host_id=None):
         host.public_address = utils.filter_str(
             flask.request.json['public_address'])
 
-    host.commit()
+    host.commit(host.changed)
     Event(type=HOSTS_UPDATED)
 
     return utils.jsonify(host.dict())

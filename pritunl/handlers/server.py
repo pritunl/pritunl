@@ -409,7 +409,7 @@ def server_put_post(server_id=None):
             server.lzo_compression = lzo_compression
         if debug_def:
             server.debug = debug
-    server.commit()
+    server.commit(server.changed)
 
     LogEntry(message='Created server "%s".' % server.name)
     Event(type=SERVERS_UPDATED)
@@ -453,7 +453,7 @@ def server_org_put(server_id, org_id):
             'error_msg': SERVER_NOT_OFFLINE_ATTACH_ORG_MSG,
         }, 400)
     server.add_org(org)
-    server.commit()
+    server.commit(server.changed)
     Event(type=SERVERS_UPDATED)
     Event(type=SERVER_ORGS_UPDATED, resource_id=server.id)
     Event(type=USERS_UPDATED, resource_id=org.id)
@@ -475,7 +475,7 @@ def server_org_delete(server_id, org_id):
             'error_msg': SERVER_NOT_OFFLINE_DETACH_ORG_MSG,
         }, 400)
     server.remove_org(org)
-    server.commit()
+    server.commit(server.changed)
     Event(type=SERVERS_UPDATED)
     Event(type=SERVER_ORGS_UPDATED, resource_id=server.id)
     Event(type=USERS_UPDATED, resource_id=org.id)

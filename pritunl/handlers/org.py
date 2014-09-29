@@ -34,7 +34,7 @@ def org_put(org_id):
     org = Organization.get_org(id=org_id)
     name = utils.filter_str(flask.request.json['name'])
     org.name = name
-    org.commit()
+    org.commit(org.changed)
     Event(type=ORGS_UPDATED)
     return utils.jsonify(org.dict())
 
