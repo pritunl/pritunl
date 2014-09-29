@@ -332,6 +332,10 @@ class AppServer(Config):
         host = Host.init_host()
         host.keep_alive()
 
+    def _end_host(self):
+        from pritunl.host import Host
+        host = Host.deinit_host()
+
     def _get_version_int(self, version):
         return int(''.join([x.zfill(2) for x in version.split('.')]))
 
@@ -420,6 +424,7 @@ class AppServer(Config):
             self._on_exit()
 
     def _on_exit(self):
+        self._end_host()
         self.interrupt = True
 
     def _run_server(self):
