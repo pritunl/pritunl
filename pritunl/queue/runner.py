@@ -84,7 +84,10 @@ class QueueRunner(object):
             }})
 
             if response['updatedExisting']:
-                self.run_queue_item(queue_item)
+                runner_queues[queue_item.cpu_type].put((
+                    abs(queue_item.priority - 4),
+                    queue_item,
+                ))
 
     def check_thread(self):
         while True:
