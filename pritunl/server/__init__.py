@@ -302,6 +302,7 @@ class Server(MongoObject):
             })
             return
         self.organizations.append(org_id)
+        self.changed.add('organizations')
         self.generate_ca_cert()
 
     def remove_org(self, org_id):
@@ -319,6 +320,7 @@ class Server(MongoObject):
             self.organizations.remove(org_id)
         except ValueError:
             pass
+        self.changed.add('organizations')
         self.generate_ca_cert()
 
     def iter_orgs(self):
@@ -367,6 +369,7 @@ class Server(MongoObject):
             self.hosts.remove(host_id)
         except ValueError:
             pass
+        self.changed.add('hosts')
 
     def iter_hosts(self):
         for host_id in self.hosts:
