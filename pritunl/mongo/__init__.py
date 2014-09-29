@@ -1,6 +1,7 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 import pymongo
+import bson
 import re
 import os
 import base64
