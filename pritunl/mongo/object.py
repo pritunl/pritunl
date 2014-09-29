@@ -1,8 +1,6 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
-from pritunl.mongo.dict import MongoDict
-from pritunl.mongo.list import MongoList
 import bson
 import json
 import os
@@ -31,14 +29,7 @@ class MongoObject(object):
 
     def __setattr__(self, name, value):
         if name != 'fields' and name in self.fields:
-            if isinstance(value, list) and not isinstance(
-                    value, MongoList):
-                value = MongoList(value)
-            elif isinstance(value, dict) and not isinstance(
-                    value, MongoDict):
-                value = MongoDict(value)
-            else:
-                self.changed.add(name)
+            self.changed.add(name)
         object.__setattr__(self, name, value)
 
     def __getattr__(self, name):
@@ -46,11 +37,11 @@ class MongoObject(object):
             if name in self.fields_default:
                 value = self.fields_default[name]
                 if isinstance(value, list):
-                    value = MongoList(copy.copy(value), changed=False)
-                    object.__setattr__(self, name, value)
+                    value = copy.copy(value)
+                    setattr(self, name, value)
                 elif isinstance(value, dict):
-                    value = MongoDict(value.copy(), changed=False)
-                    object.__setattr__(self, name, value)
+                    value = value.copy()
+                    setattr(self, name, value)
                 return value
             return
         raise AttributeError(
@@ -82,10 +73,6 @@ class MongoObject(object):
                 })
         doc['id'] = str(doc.pop('_id'))
         for key, value in doc.iteritems():
-            if isinstance(value, list):
-                value = MongoList(value, changed=False)
-            elif isinstance(value, dict):
-                value = MongoDict(value, changed=False)
             setattr(self, key, value)
         self.exists = True
         self.changed = set()
@@ -105,17 +92,7 @@ class MongoObject(object):
             if isinstance(fields, basestring):
                 fields = (fields,)
         elif self.exists:
-            fields = self.changed
-            for field in self.fields:
-                if not hasattr(self, field):
-                    continue
-                value = getattr(self, field)
-
-                if isinstance(value, (MongoList, MongoDict)):
-                    if value.changed:
-                        if field in fields:
-                            fields.remove(field)
-                        doc[field] = value
+            fields = self.fields
 
         if fields or doc:
             for field in fields:
