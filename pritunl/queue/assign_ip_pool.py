@@ -98,6 +98,9 @@ class QueueAssignIpPool(Queue):
         }})
 
     def complete_task(self):
+        if not self.server:
+            return
+
         for org_id in self.server.organizations:
             Event(type=USERS_UPDATED, resource_id=org_id)
 
