@@ -2,6 +2,7 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings import settings
+from pritunl.app_server import app_server
 import pritunl.host.usage_utils as usage_utils
 import threading
 import logging
