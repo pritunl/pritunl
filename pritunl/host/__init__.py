@@ -162,6 +162,7 @@ class Host(MongoObject):
                 self.collection.update({
                     '_id': self.id,
                 }, {'$set': {
+                    'status': ONLINE,
                     'ping_timestamp': datetime.datetime.utcnow(),
                     'auto_public_address': app_server.public_ip,
                 }})
