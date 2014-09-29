@@ -204,3 +204,19 @@ class Host(MongoObject):
         Event(type=HOSTS_UPDATED)
 
         return host
+
+    @classmethod
+    def deinit_host(cls):
+        host = cls()
+
+        try:
+            host.load()
+        except NotFound:
+            pass
+
+        cls.collection.update({
+            '_id': host.id,
+        }, {'$set': {
+            'status': OFFLINE,
+            'ping_timestamp': None,
+        }})
