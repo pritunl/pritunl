@@ -4,7 +4,9 @@ from pritunl.descriptors import *
 import importlib
 import os
 import threading
+import logging
 
+logger = logging.getLogger(APP_NAME)
 module_classes = []
 
 for module_name in os.listdir(os.path.dirname(__file__)):
