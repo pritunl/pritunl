@@ -9,17 +9,18 @@ import random
 import flask
 import time
 
-class JSONEncoderPatched(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, (MongoDict, MongoList)):
-            return obj.data
-        raise TypeError(repr(obj) + ' is not JSON serializable')
-dumps_orig = json.dumps
-def dumps_patched(*args, **kwargs):
-    if not kwargs.get('cls'):
-        kwargs['cls'] = JSONEncoderPatched
-    return dumps_orig(*args, **kwargs)
-json.dumps = dumps_patched
+# For MongoDict MongoList
+# class JSONEncoderPatched(json.JSONEncoder):
+#     def default(self, obj):
+#         if isinstance(obj, (MongoDict, MongoList)):
+#             return obj.data
+#         raise TypeError(repr(obj) + ' is not JSON serializable')
+# dumps_orig = json.dumps
+# def dumps_patched(*args, **kwargs):
+#     if not kwargs.get('cls'):
+#         kwargs['cls'] = JSONEncoderPatched
+#     return dumps_orig(*args, **kwargs)
+# json.dumps = dumps_patched
 
 _mongo_errors = []
 for error_attr in (
