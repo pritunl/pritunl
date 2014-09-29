@@ -502,8 +502,8 @@ def server_host_put(server_id, host_id):
     server = Server.get_server(id=server_id)
     host = Host.get_host(id=host_id)
     server.add_host(host)
-    server.commit()
-    Event(type=HOSTS_UPDATED, resource_id=server.id)
+    server.commit(server.changed)
+    Event(type=SERVER_HOSTS_UPDATED, resource_id=server.id)
     return utils.jsonify({
         'id': host.id,
         'server': server.id,
@@ -518,8 +518,8 @@ def server_host_delete(server_id, host_id):
     server = Server.get_server(id=server_id)
     host = Host.get_host(id=host_id)
     server.remove_host(host)
-    server.commit()
-    Event(type=HOSTS_UPDATED, resource_id=server.id)
+    server.commit(server.changed)
+    Event(type=SERVER_HOSTS_UPDATED, resource_id=server.id)
     return utils.jsonify({})
 
 @app_server.app.route('/server/<server_id>/<operation>', methods=['PUT'])
