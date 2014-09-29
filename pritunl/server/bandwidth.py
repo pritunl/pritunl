@@ -82,7 +82,7 @@ class ServerBandwidth(object):
 
             if bulk:
                 bulk.find(spec).upsert().update(doc)
-                bulk.fint(rem_spec).remove()
+                bulk.find(rem_spec).remove()
             else:
                 self.collection.update(spec, doc, upsert=True)
                 self.collection.remove(rem_spec)
