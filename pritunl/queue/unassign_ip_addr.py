@@ -28,7 +28,7 @@ class QueueUnassignIpAddr(Queue):
             self.user_id = user_id
 
     def task(self):
-        from server import Server
+        from pritunl.server import Server
         server = Server.get_server(id=self.server_id)
         if not server:
             return

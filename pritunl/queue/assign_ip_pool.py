@@ -32,7 +32,7 @@ class QueueAssignIpPool(Queue):
 
     @cached_property
     def server(self):
-        from server import Server
+        from pritunl.server import Server
         return Server.get_server(id=self.server_id)
 
     def task(self):
