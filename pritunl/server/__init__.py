@@ -355,6 +355,7 @@ class Server(MongoObject):
             })
             return
         self.hosts.append(host_id)
+        self.changed.add('hosts')
 
     def remove_host(self, host_id):
         if not isinstance(host_id, basestring):
