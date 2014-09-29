@@ -1,12 +1,53 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
+from pritunl.settings import settings
 from pritunl.app_server import app_server
 import pritunl.mongo as mongo
 import pymongo
 import os
 import json
 import random
+
+def get_period_timestamp(period, timestamp):
+    timestamp -= datetime.timedelta(microseconds=timestamp.microsecond,
+            seconds=timestamp.second)
+
+    if period == '1m':
+        return timestamp
+    elif period == '5m':
+        return timestamp - datetime.timedelta(
+            minutes=timestamp.minute % 5)
+    elif period == '30m':
+        return timestamp - datetime.timedelta(
+            minutes=timestamp.minute % 30)
+    elif period == '2h':
+        return timestamp - datetime.timedelta(
+            hours=timestamp.hour % 2, minutes=timestamp.minute)
+    elif period == '1d':
+        return timestamp - datetime.timedelta(
+            hours=timestamp.hour, minutes=timestamp.minute)
+
+def get_period_max_timestamp(period, timestamp):
+    timestamp -= datetime.timedelta(microseconds=timestamp.microsecond,
+            seconds=timestamp.second)
+
+    if period == '1m':
+        return timestamp - datetime.timedelta(hours=6)
+    elif period == '5m':
+        return timestamp - datetime.timedelta(
+            minutes=timestamp.minute % 5) - datetime.timedelta(days=1)
+    elif period == '30m':
+        return timestamp - datetime.timedelta(
+            minutes=timestamp.minute % 30) - datetime.timedelta(days=7)
+    elif period == '2h':
+        return timestamp - datetime.timedelta(
+            hours=timestamp.hour % 2,
+            minutes=timestamp.minute) - datetime.timedelta(days=30)
+    elif period == '1d':
+        return timestamp - datetime.timedelta(
+            hours=timestamp.hour,
+            minutes=timestamp.minute) - datetime.timedelta(days=365)
 
 class HostUsage(object):
     def __init__(self, host_id):
@@ -15,46 +56,6 @@ class HostUsage(object):
     @cached_static_property
     def collection(cls):
         return mongo.get_collection('hosts_usage')
-
-    def _get_period_timestamp(self, period, timestamp):
-        timestamp -= datetime.timedelta(microseconds=timestamp.microsecond,
-                seconds=timestamp.second)
-
-        if period == '1m':
-            return timestamp
-        elif period == '5m':
-            return timestamp - datetime.timedelta(
-                minutes=timestamp.minute % 5)
-        elif period == '30m':
-            return timestamp - datetime.timedelta(
-                minutes=timestamp.minute % 30)
-        elif period == '2h':
-            return timestamp - datetime.timedelta(
-                hours=timestamp.hour % 2, minutes=timestamp.minute)
-        elif period == '1d':
-            return timestamp - datetime.timedelta(
-                hours=timestamp.hour, minutes=timestamp.minute)
-
-    def _get_period_max_timestamp(self, period, timestamp):
-        timestamp -= datetime.timedelta(microseconds=timestamp.microsecond,
-                seconds=timestamp.second)
-
-        if period == '1m':
-            return timestamp - datetime.timedelta(hours=6)
-        elif period == '5m':
-            return timestamp - datetime.timedelta(
-                minutes=timestamp.minute % 5) - datetime.timedelta(days=1)
-        elif period == '30m':
-            return timestamp - datetime.timedelta(
-                minutes=timestamp.minute % 30) - datetime.timedelta(days=7)
-        elif period == '2h':
-            return timestamp - datetime.timedelta(
-                hours=timestamp.hour % 2,
-                minutes=timestamp.minute) - datetime.timedelta(days=30)
-        elif period == '1d':
-            return timestamp - datetime.timedelta(
-                hours=timestamp.hour,
-                minutes=timestamp.minute) - datetime.timedelta(days=365)
 
     def add_period(self, timestamp, cpu_usage, mem_usage):
         cpu_usage = round(cpu_usage, 4)
@@ -69,7 +70,7 @@ class HostUsage(object):
             spec = {
                 'host_id': self.host_id,
                 'period': period,
-                'timestamp': self._get_period_timestamp(period, timestamp),
+                'timestamp': get_period_timestamp(period, timestamp),
             }
             doc = {'$inc': {
                 'count': 1,
@@ -80,7 +81,7 @@ class HostUsage(object):
                 'host_id': self.host_id,
                 'period': period,
                 'timestamp': {
-                    '$lt': self._get_period_max_timestamp(period, timestamp),
+                    '$lt': get_period_max_timestamp(period, timestamp),
                 },
             }
 
@@ -95,8 +96,7 @@ class HostUsage(object):
             bulk.execute()
 
     def get_period(self, period):
-        date_end = self._get_period_timestamp(
-            period, datetime.datetime.utcnow())
+        date_end = get_period_timestamp(period, datetime.datetime.utcnow())
 
         if period == '1m':
             date_start = date_end - datetime.timedelta(hours=6)
