@@ -328,12 +328,12 @@ class AppServer(Config):
         listener.start()
 
     def _setup_host(self):
-        from pritunl.host import Host
+        from pritunl.host.host import Host
         host = Host.init_host()
         host.keep_alive()
 
     def _end_host(self):
-        from pritunl.host import Host
+        from pritunl.host.host import Host
         host = Host.deinit_host()
 
     def _get_version_int(self, version):
