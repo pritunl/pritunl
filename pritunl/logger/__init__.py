@@ -4,13 +4,13 @@ from pritunl.descriptors import *
 
 import logging
 
-logger = logging.getLogger(APP_NAME)
+_logger = logging.getLogger(APP_NAME)
 
 def _log(log_level, log_msg, log_type, **kwargs):
     if log_level == 'exception':
-        getattr(logger, log_level)(log_msg)
+        getattr(_logger, log_level)(log_msg)
     else:
-        getattr(logger, log_level)(log_msg, extra={
+        getattr(_logger, log_level)(log_msg, extra={
                 'type': log_type,
                 'data': kwargs,
             })
