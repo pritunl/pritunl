@@ -4,12 +4,10 @@ from pritunl.descriptors import *
 from pritunl.settings import settings
 from pritunl.app_server import app_server
 from pritunl.host import usage_utils
+from pritunl import logger
 
 import threading
-import logging
 import time
-
-logger = logging.getLogger(APP_NAME)
 
 def _keep_alive_thread(host):
     last_update = None

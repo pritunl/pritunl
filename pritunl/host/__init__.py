@@ -11,12 +11,10 @@ from pritunl.app_server import app_server
 from pritunl.host import keep_alive
 from pritunl import utils
 from pritunl import mongo
+from pritunl import logger
 
 import signal
 import datetime
-import logging
-
-logger = logging.getLogger(APP_NAME)
 
 class Host(MongoObject):
     fields = {
