@@ -1,9 +1,4 @@
-from pritunl.constants import *
-from pritunl.exceptions import *
-from pritunl.descriptors import *
-from pritunl.settings import settings
 from pritunl.organization import Organization
-from pritunl.host.host import Host
 from pritunl.event import Event
 from pritunl.logger.entry import LogEntry
 from pritunl.messenger import Messenger
@@ -16,10 +11,18 @@ from pritunl.queue.dh_params import QueueDhParams
 from pritunl.mongo.object import MongoObject
 from pritunl.mongo.transaction import MongoTransaction
 from pritunl.cache import cache_db
+
+
+from pritunl.constants import *
+from pritunl.exceptions import *
+from pritunl.descriptors import *
+from pritunl.settings import settings
 from pritunl.app_server import app_server
+from pritunl import ipaddress
+from pritunl import host
 from pritunl import utils
-import pritunl.ipaddress as ipaddress
-import pritunl.mongo as mongo
+from pritunl import mongo
+
 import uuid
 import os
 import signal
@@ -374,9 +377,9 @@ class Server(MongoObject):
 
     def iter_hosts(self):
         for host_id in self.hosts:
-            host = Host.get_host(id=host_id)
-            if host:
-                yield host
+            hst = host.get_host(id=host_id)
+            if hst:
+                yield hst
             else:
                 logger.error('Removing non-existent host ' +
                     'from server. %r' % {
@@ -389,7 +392,7 @@ class Server(MongoObject):
 
     def get_host(self, host_id):
         if host_id in self.hosts:
-            return Host.get_host(id=host_id)
+            return host.get_host(id=host_id)
 
     def generate_dh_param(self):
         reserved = QueueDhParams.reserve_pooled_dh_params(server=self)

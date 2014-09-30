@@ -85,47 +85,43 @@ class Host(MongoObject):
     def keep_alive(self):
         keep_alive.start_keep_alive(self)
 
-    @classmethod
-    def get_host(cls, id):
-        return cls(id=id)
+def get_host(id):
+    return Host(id=id)
 
-    @classmethod
-    def iter_hosts(cls):
-        for doc in cls.collection.find().sort('name'):
-            yield cls(doc=doc)
+def iter_hosts():
+    for doc in Host.collection.find().sort('name'):
+        yield Host(doc=doc)
 
-    @classmethod
-    def init_host(cls):
-        host = cls()
+def init_host():
+    hst = Host()
 
-        try:
-            host.load()
-        except NotFound:
-            pass
+    try:
+        hst.load()
+    except NotFound:
+        pass
 
-        host.status = ONLINE
-        host.users_online = 0
-        host.start_timestamp = datetime.datetime.utcnow()
-        if app_server.public_ip:
-            host.auto_public_address = app_server.public_ip
+    hst.status = ONLINE
+    hst.users_online = 0
+    hst.start_timestamp = datetime.datetime.utcnow()
+    if app_server.public_ip:
+        hst.auto_public_address = app_server.public_ip
 
-        host.commit()
-        Event(type=HOSTS_UPDATED)
+    hst.commit()
+    Event(type=HOSTS_UPDATED)
 
-        return host
+    return hst
 
-    @classmethod
-    def deinit_host(cls):
-        host = cls()
+def deinit_host():
+    hst = Host()
 
-        try:
-            host.load()
-        except NotFound:
-            pass
+    try:
+        hst.load()
+    except NotFound:
+        pass
 
-        cls.collection.update({
-            '_id': host.id,
-        }, {'$set': {
-            'status': OFFLINE,
-            'ping_timestamp': None,
-        }})
+    Host.collection.update({
+        '_id': hst.id,
+    }, {'$set': {
+        'status': OFFLINE,
+        'ping_timestamp': None,
+    }})

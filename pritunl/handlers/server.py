@@ -1,13 +1,16 @@
-from pritunl.constants import *
-from pritunl.exceptions import *
-from pritunl.settings import settings
 from pritunl.server import Server
-from pritunl.host.host import Host
 from pritunl.organization import Organization
 from pritunl.logger.entry import LogEntry
 from pritunl.event import Event
-from pritunl import utils
+
+from pritunl.constants import *
+from pritunl.exceptions import *
+from pritunl.descriptors import *
+from pritunl.settings import settings
 from pritunl.app_server import app_server
+from pritunl import host
+from pritunl import utils
+
 import flask
 import re
 import random
@@ -486,12 +489,12 @@ def server_org_delete(server_id, org_id):
 def server_host_get(server_id):
     hosts = []
     server = Server.get_server(id=server_id)
-    for host in server.iter_hosts():
+    for hst in server.iter_hosts():
         hosts.append({
-            'id': host.id,
+            'id': hst.id,
             'server': server.id,
-            'name': host.name,
-            'public_address': host.public_addr,
+            'name': hst.name,
+            'public_address': hst.public_addr,
         })
     return utils.jsonify(hosts)
 
@@ -500,15 +503,15 @@ def server_host_get(server_id):
 @app_server.auth
 def server_host_put(server_id, host_id):
     server = Server.get_server(id=server_id)
-    host = Host.get_host(id=host_id)
-    server.add_host(host)
+    hst = host.get_host(id=host_id)
+    server.add_host(hst)
     server.commit(server.changed)
     Event(type=SERVER_HOSTS_UPDATED, resource_id=server.id)
     return utils.jsonify({
-        'id': host.id,
+        'id': hst.id,
         'server': server.id,
-        'name': host.name,
-        'public_address': host.public_addr,
+        'name': hst.name,
+        'public_address': hst.public_addr,
     })
 
 @app_server.app.route('/server/<server_id>/host/<host_id>',
@@ -516,8 +519,8 @@ def server_host_put(server_id, host_id):
 @app_server.auth
 def server_host_delete(server_id, host_id):
     server = Server.get_server(id=server_id)
-    host = Host.get_host(id=host_id)
-    server.remove_host(host)
+    hst = host.get_host(id=host_id)
+    server.remove_host(hst)
     server.commit(server.changed)
     Event(type=SERVER_HOSTS_UPDATED, resource_id=server.id)
     return utils.jsonify({})
