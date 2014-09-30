@@ -374,9 +374,11 @@ class Queue(MongoObject):
 def get(doc):
     return queue_types[doc['type']](doc=doc)
 
-def start(queue_type, *args, **kwargs):
+def start(queue_type, transaction=None, block=False, block_timeout=30,
+        *args, **kwargs):
     que = queue_types[queue_type](*args, **kwargs)
-    que.start()
+    que.start(transaction=transaction, block=block,
+        block_timeout=block_timeout)
     return que
 
 def iter_queues(spec=None):
