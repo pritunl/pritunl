@@ -3,7 +3,7 @@ from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings import settings
 from pritunl.mongo.object import MongoObject
-import pritunl.utils as utils
+from pritunl import utils
 import pritunl.mongo as mongo
 import base64
 import os

@@ -8,7 +8,7 @@ from pritunl.queue.init_user import QueueInitUser
 from pritunl.queue.init_user_pooled import QueueInitUserPooled
 from pritunl.app_server import app_server
 import pritunl.mongo as mongo
-import pritunl.utils as utils
+from pritunl import utils
 import tarfile
 import os
 import subprocess

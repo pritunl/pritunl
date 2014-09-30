@@ -1,5 +1,5 @@
 from pritunl.constants import *
-import pritunl.utils as utils
+from pritunl import utils
 from pritunl.organization import Organization
 from pritunl.server import Server
 from pritunl.app_server import app_server

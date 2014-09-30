@@ -3,7 +3,7 @@ from pritunl.exceptions import *
 from pritunl.settings import settings
 from pritunl.organization import Organization
 from pritunl.static_file import StaticFile
-import pritunl.utils as utils
+from pritunl import utils
 from pritunl.cache import cache_db
 from pritunl.app_server import app_server
 import os

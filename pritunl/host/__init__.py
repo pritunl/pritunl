@@ -7,7 +7,7 @@ from pritunl.event import Event
 from pritunl.mongo.object import MongoObject
 from pritunl.app_server import app_server
 from pritunl.host import keep_alive
-import pritunl.utils as utils
+from pritunl import utils
 import pritunl.mongo as mongo
 import signal
 import datetime

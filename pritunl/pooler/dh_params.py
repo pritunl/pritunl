@@ -8,7 +8,7 @@ from pritunl.queue.dh_params import QueueDhParams
 from pritunl.app_server import app_server
 import pritunl.logger as logger
 import pritunl.mongo as mongo
-import pritunl.utils as utils
+from pritunl import utils
 
 class PoolerDhParams(object):
     @cached_static_property

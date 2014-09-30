@@ -1,7 +1,7 @@
 from pritunl.constants import *
 import pritunl.patches
 from pritunl.config import Config
-import pritunl.utils as utils
+from pritunl import utils
 import flask
 import cherrypy.wsgiserver
 import os

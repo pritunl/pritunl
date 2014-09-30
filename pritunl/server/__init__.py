@@ -17,7 +17,7 @@ from pritunl.mongo.object import MongoObject
 from pritunl.mongo.transaction import MongoTransaction
 from pritunl.cache import cache_db
 from pritunl.app_server import app_server
-import pritunl.utils as utils
+from pritunl import utils
 import pritunl.ipaddress as ipaddress
 import pritunl.mongo as mongo
 import uuid

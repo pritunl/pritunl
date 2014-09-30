@@ -1,7 +1,7 @@
 from pritunl.constants import *
 from pritunl.administrator import Administrator
 from pritunl.settings import settings
-import pritunl.utils as utils
+from pritunl import utils
 import pritunl.mongo as mongo
 from pritunl.app_server import app_server
 import time

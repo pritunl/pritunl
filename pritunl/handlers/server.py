@@ -6,7 +6,7 @@ from pritunl.host.host import Host
 from pritunl.organization import Organization
 from pritunl.logger.entry import LogEntry
 from pritunl.event import Event
-import pritunl.utils as utils
+from pritunl import utils
 from pritunl.app_server import app_server
 import flask
 import re
