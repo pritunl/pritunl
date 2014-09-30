@@ -14,6 +14,7 @@ from pritunl import utils
 import os
 import bson
 
+@add_queue
 class QueueDhParams(Queue):
     fields = {
         'server_id',
@@ -161,5 +162,3 @@ class QueueDhParams(Queue):
             server.load()
 
         return True
-
-add_queue(QueueDhParams)

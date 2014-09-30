@@ -10,6 +10,7 @@ from pritunl import logger
 
 import copy
 
+@add_queue
 class QueueInitOrgPooled(Queue):
     fields = {
         'org_doc',
@@ -75,5 +76,3 @@ class QueueInitOrgPooled(Queue):
             return
 
         return Organization(doc=doc['org_doc'])
-
-add_queue(QueueInitOrgPooled)

@@ -9,6 +9,7 @@ from pritunl.settings import settings
 from pritunl import logger
 from pritunl import mongo
 
+@add_queue
 class QueueUnassignIpAddr(Queue):
     fields = {
         'server_id',
@@ -49,5 +50,3 @@ class QueueUnassignIpAddr(Queue):
             })
 
         server.ip_pool.unassign_ip_addr(self.org_id, self.user_id)
-
-add_queue(QueueUnassignIpAddr)

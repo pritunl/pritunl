@@ -7,6 +7,7 @@ from pritunl.descriptors import *
 from pritunl.app_server import app_server
 from pritunl import logger
 
+@add_queue
 class QueueInitUserPooled(QueueInitUser):
     type = 'init_user_pooled'
 
@@ -69,5 +70,3 @@ class QueueInitUserPooled(QueueInitUser):
 
         org = Organization(doc=doc['org_doc'])
         return User(org=org, doc=doc['user_doc'])
-
-add_queue(QueueInitUserPooled)

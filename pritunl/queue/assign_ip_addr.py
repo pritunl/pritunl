@@ -10,6 +10,7 @@ from pritunl import logger
 
 import time
 
+@add_queue
 class QueueAssignIpAddr():
     fields = {
         'server_id',
@@ -53,5 +54,3 @@ class QueueAssignIpAddr():
 
     def complete_task(self):
         Event(type=USERS_UPDATED, resource_id=self.org_id)
-
-add_queue(QueueAssignIpAddr)

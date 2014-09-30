@@ -8,6 +8,7 @@ from pritunl.descriptors import *
 from pritunl.app_server import app_server
 from pritunl import logger
 
+@add_queue
 class QueueInitUser(Queue):
     fields = {
         'org_doc',
@@ -44,5 +45,3 @@ class QueueInitUser(Queue):
         Event(type=ORGS_UPDATED)
         Event(type=USERS_UPDATED, resource_id=self.org.id)
         Event(type=SERVERS_UPDATED)
-
-add_queue(QueueInitUser)

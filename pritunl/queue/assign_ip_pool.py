@@ -12,6 +12,7 @@ from pritunl import mongo
 import pymongo
 import bson
 
+@add_queue
 class QueueAssignIpPool(Queue):
     fields = {
         'server_id',
@@ -104,5 +105,3 @@ class QueueAssignIpPool(Queue):
 
         for org_id in self.server.organizations:
             Event(type=USERS_UPDATED, resource_id=org_id)
-
-add_queue(QueueAssignIpPool)
