@@ -1,14 +1,17 @@
+from pritunl.mongo.object import MongoObject
+from pritunl.event import Event
+
+from pritunl.host.usage import HostUsage
+
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings import settings
-from pritunl.host.usage import HostUsage
-from pritunl.event import Event
-from pritunl.mongo.object import MongoObject
 from pritunl.app_server import app_server
 from pritunl.host import keep_alive
 from pritunl import utils
-import pritunl.mongo as mongo
+from pritunl import mongo
+
 import signal
 import datetime
 import logging
