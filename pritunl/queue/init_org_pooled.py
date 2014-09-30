@@ -1,13 +1,14 @@
+from pritunl.event import Event
+
+from pritunl.queue import Queue, add_queue
+
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
-from pritunl.queue import Queue, add_queue
-from pritunl.event import Event
 from pritunl.app_server import app_server
-import logging
-import copy
+from pritunl import logger
 
-logger = logging.getLogger(APP_NAME)
+import copy
 
 class QueueInitOrgPooled(Queue):
     fields = {

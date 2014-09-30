@@ -1,21 +1,22 @@
+from pritunl.queue import Queue
+
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings import settings
-from pritunl.queue import Queue
-import pritunl.logger as logger
-import pritunl.mongo as mongo
-import pritunl.listener as listener
+from pritunl import logger
+from pritunl import mongo
+from pritunl import listener
+
+from Queue import PriorityQueue
 import pymongo
 import random
 import bson
 import datetime
-import logging
 import threading
 import time
 import bson
 import collections
-from Queue import PriorityQueue
 
 running_queues = {}
 runner_queues = [PriorityQueue() for _ in xrange(3)]

@@ -1,13 +1,16 @@
+from pritunl.event import Event
+
+from pritunl.queue.com import QueueCom
+from pritunl.queue import Queue, add_queue
+
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
-from pritunl.queue import Queue, add_queue
-from pritunl.queue.com import QueueCom
-from pritunl.event import Event
 from pritunl.app_server import app_server
-import pritunl.logger as logger
-import pritunl.mongo as mongo
+from pritunl import logger
+from pritunl import mongo
 from pritunl import utils
+
 import os
 import bson
 

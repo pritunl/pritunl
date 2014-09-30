@@ -1,15 +1,16 @@
+from pritunl.event import Event
+from pritunl.mongo.object import MongoObject
+
+from pritunl.queue import Queue, add_queue
+
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
-from pritunl.event import Event
-from pritunl.queue import Queue, add_queue
-from pritunl.mongo.object import MongoObject
-import pritunl.mongo as mongo
-import pymongo
-import logging
-import bson
+from pritunl import logger
+from pritunl import mongo
 
-logger = logging.getLogger(APP_NAME)
+import pymongo
+import bson
 
 class QueueAssignIpPool(Queue):
     fields = {

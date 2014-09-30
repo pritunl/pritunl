@@ -1,12 +1,11 @@
+from pritunl.queue.init_user import QueueInitUser
+from pritunl.queue import add_queue
+
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
-from pritunl.queue.init_user import QueueInitUser
-from pritunl.queue import add_queue
 from pritunl.app_server import app_server
-import logging
-
-logger = logging.getLogger(APP_NAME)
+from pritunl import logger
 
 class QueueInitUserPooled(QueueInitUser):
     type = 'init_user_pooled'

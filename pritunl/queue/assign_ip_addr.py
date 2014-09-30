@@ -1,14 +1,16 @@
+from pritunl.event import Event
+
+from pritunl.queue import Queue, add_queue
+
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
-from pritunl.queue import Queue, add_queue
-from pritunl.event import Event
-import logging
+from pritunl.settings import settings
+from pritunl import logger
+
 import time
 
-logger = logging.getLogger(APP_NAME)
-
-class QueueAssignIpAddr(Queue):
+class QueueAssignIpAddr():
     fields = {
         'server_id',
         'org_id',
