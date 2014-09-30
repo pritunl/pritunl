@@ -374,6 +374,11 @@ class Queue(MongoObject):
 def get(doc):
     return queue_types[doc['type']](doc=doc)
 
+def start(queue_type, *args, **kwargs):
+    que = queue_types[queue_type](*args, **kwargs)
+    que.start()
+    return que
+
 def iter_queues(spec=None):
     for doc in Queue.collection.find(spec or {}).sort('priority'):
         yield queue_types[doc['type']](doc=doc)
