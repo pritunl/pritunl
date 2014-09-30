@@ -377,5 +377,5 @@ def iter_queues(spec=None):
     for doc in Queue.collection.find(spec or {}).sort('priority'):
         yield queue_types[doc['type']](doc=doc)
 
-def add_queue(queue_cls):
-    queue_types[queue_cls.type] = queue_cls
+def add_queue(cls):
+    queue_types[cls.type] = cls
