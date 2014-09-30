@@ -3,6 +3,7 @@ from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings import settings
 from pritunl.app_server import app_server
+from pritunl.host import usage_utils
 from pritunl import mongo
 
 import pymongo
@@ -31,7 +32,8 @@ class HostUsage(object):
             spec = {
                 'host_id': self.host_id,
                 'period': period,
-                'timestamp': get_period_timestamp(period, timestamp),
+                'timestamp': usage_utils.get_period_timestamp(
+                    period, timestamp),
             }
             doc = {'$inc': {
                 'count': 1,
@@ -42,7 +44,8 @@ class HostUsage(object):
                 'host_id': self.host_id,
                 'period': period,
                 'timestamp': {
-                    '$lt': get_period_max_timestamp(period, timestamp),
+                    '$lt': usage_utils.get_period_max_timestamp(
+                        period, timestamp),
                 },
             }
 
@@ -57,7 +60,8 @@ class HostUsage(object):
             bulk.execute()
 
     def get_period(self, period):
-        date_end = get_period_timestamp(period, datetime.datetime.utcnow())
+        date_end = usage_utils.get_period_timestamp(
+            period, datetime.datetime.utcnow())
 
         if period == '1m':
             date_start = date_end - datetime.timedelta(hours=6)
@@ -179,43 +183,3 @@ class HostUsage(object):
         with open(path, 'w') as demo_file:
             demo_file.write(json.dumps(data))
         return data
-
-def get_period_timestamp(period, timestamp):
-    timestamp -= datetime.timedelta(microseconds=timestamp.microsecond,
-            seconds=timestamp.second)
-
-    if period == '1m':
-        return timestamp
-    elif period == '5m':
-        return timestamp - datetime.timedelta(
-            minutes=timestamp.minute % 5)
-    elif period == '30m':
-        return timestamp - datetime.timedelta(
-            minutes=timestamp.minute % 30)
-    elif period == '2h':
-        return timestamp - datetime.timedelta(
-            hours=timestamp.hour % 2, minutes=timestamp.minute)
-    elif period == '1d':
-        return timestamp - datetime.timedelta(
-            hours=timestamp.hour, minutes=timestamp.minute)
-
-def get_period_max_timestamp(period, timestamp):
-    timestamp -= datetime.timedelta(microseconds=timestamp.microsecond,
-            seconds=timestamp.second)
-
-    if period == '1m':
-        return timestamp - datetime.timedelta(hours=6)
-    elif period == '5m':
-        return timestamp - datetime.timedelta(
-            minutes=timestamp.minute % 5) - datetime.timedelta(days=1)
-    elif period == '30m':
-        return timestamp - datetime.timedelta(
-            minutes=timestamp.minute % 30) - datetime.timedelta(days=7)
-    elif period == '2h':
-        return timestamp - datetime.timedelta(
-            hours=timestamp.hour % 2,
-            minutes=timestamp.minute) - datetime.timedelta(days=30)
-    elif period == '1d':
-        return timestamp - datetime.timedelta(
-            hours=timestamp.hour,
-            minutes=timestamp.minute) - datetime.timedelta(days=365)

@@ -8,6 +8,46 @@ import subprocess
 
 logger = logging.getLogger(APP_NAME)
 
+def get_period_timestamp(period, timestamp):
+    timestamp -= datetime.timedelta(microseconds=timestamp.microsecond,
+            seconds=timestamp.second)
+
+    if period == '1m':
+        return timestamp
+    elif period == '5m':
+        return timestamp - datetime.timedelta(
+            minutes=timestamp.minute % 5)
+    elif period == '30m':
+        return timestamp - datetime.timedelta(
+            minutes=timestamp.minute % 30)
+    elif period == '2h':
+        return timestamp - datetime.timedelta(
+            hours=timestamp.hour % 2, minutes=timestamp.minute)
+    elif period == '1d':
+        return timestamp - datetime.timedelta(
+            hours=timestamp.hour, minutes=timestamp.minute)
+
+def get_period_max_timestamp(period, timestamp):
+    timestamp -= datetime.timedelta(microseconds=timestamp.microsecond,
+            seconds=timestamp.second)
+
+    if period == '1m':
+        return timestamp - datetime.timedelta(hours=6)
+    elif period == '5m':
+        return timestamp - datetime.timedelta(
+            minutes=timestamp.minute % 5) - datetime.timedelta(days=1)
+    elif period == '30m':
+        return timestamp - datetime.timedelta(
+            minutes=timestamp.minute % 30) - datetime.timedelta(days=7)
+    elif period == '2h':
+        return timestamp - datetime.timedelta(
+            hours=timestamp.hour % 2,
+            minutes=timestamp.minute) - datetime.timedelta(days=30)
+    elif period == '1d':
+        return timestamp - datetime.timedelta(
+            hours=timestamp.hour,
+            minutes=timestamp.minute) - datetime.timedelta(days=365)
+
 def get_proc_stat():
     try:
         with open('/proc/stat') as stat_file:
