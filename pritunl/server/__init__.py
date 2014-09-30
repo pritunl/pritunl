@@ -92,6 +92,7 @@ class Server(MongoObject):
         self._cur_event = None
         self._last_event = 0
         self._orig_network = self.network
+        self._orgs_changed = False
         self.ip_pool = ServerIpPool(self)
 
         if name is not None:
@@ -237,7 +238,7 @@ class Server(MongoObject):
                 )
                 queue_ip_pool.start(transaction=transaction)
                 self.network_lock = queue_ip_pool.id
-        elif self.organizations.changed:
+        elif self._orgs_changed:
             # TODO update ip pool
             pass
 
@@ -307,6 +308,7 @@ class Server(MongoObject):
         self.organizations.append(org_id)
         self.changed.add('organizations')
         self.generate_ca_cert()
+        self._orgs_changed = True
 
     def remove_org(self, org_id):
         if not isinstance(org_id, basestring):
@@ -325,6 +327,7 @@ class Server(MongoObject):
             pass
         self.changed.add('organizations')
         self.generate_ca_cert()
+        self._orgs_changed = True
 
     def iter_orgs(self):
         for org_id in self.organizations:
