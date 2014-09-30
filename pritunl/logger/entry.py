@@ -1,8 +1,11 @@
-from pritunl.constants import *
-from pritunl.descriptors import *
 from pritunl.event import Event
 from pritunl.mongo.object import MongoObject
-import pritunl.mongo as mongo
+
+from pritunl.constants import *
+from pritunl.exceptions import *
+from pritunl.descriptors import *
+from pritunl import mongo
+
 import pymongo
 
 class LogEntry(MongoObject):

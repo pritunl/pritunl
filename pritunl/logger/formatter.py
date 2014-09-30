@@ -1,6 +1,7 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
+
 import logging
 
 class LogFormatter(logging.Formatter):
