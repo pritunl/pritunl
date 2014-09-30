@@ -370,15 +370,12 @@ class Queue(MongoObject):
         """not_overridden"""
         pass
 
-    @classmethod
-    def get_queue(cls, doc):
-        return queue_types[doc['type']](doc=doc)
+def get_queue(doc):
+    return queue_types[doc['type']](doc=doc)
 
-    @classmethod
-    def iter_queues(cls, spec=None):
-        for doc in cls.collection.find(spec or {}).sort('priority'):
-            yield queue_types[doc['type']](doc=doc)
-
+def iter_queues(spec=None):
+    for doc in Queue.collection.find(spec or {}).sort('priority'):
+        yield queue_types[doc['type']](doc=doc)
 
 def add_queue(queue_cls):
     queue_types[queue_cls.type] = queue_cls

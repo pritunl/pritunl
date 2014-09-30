@@ -62,23 +62,23 @@ class QueueRunner(object):
                     thread_limits[running_queue.cpu_type].release()
 
     def on_msg(self, msg):
-        from pritunl.queue import Queue
+        from pritunl import queue
 
         try:
             if msg['message'][0] == PENDING:
-                self.add_queue_item(Queue.get_queue(doc=msg['queue_doc']))
+                self.add_queue_item(queue.get_queue(doc=msg['queue_doc']))
         except TypeError:
             pass
 
     def run_timeout_queues(self):
-        from pritunl.queue import Queue
+        from pritunl import queue
 
         cur_timestamp = datetime.datetime.utcnow()
         spec = {
             'ttl_timestamp': {'$lt': cur_timestamp},
         }
 
-        for queue_item in Queue.iter_queues(spec):
+        for queue_item in queue.iter_queues(spec):
             response = Queue.collection.update({
                 '_id': bson.ObjectId(queue_item.id),
                 'ttl_timestamp': {'$lt': cur_timestamp},
