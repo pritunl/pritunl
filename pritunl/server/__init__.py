@@ -4,14 +4,9 @@ from pritunl.logger.entry import LogEntry
 from pritunl.messenger import Messenger
 from pritunl.server.bandwidth import ServerBandwidth
 from pritunl.server.ip_pool import ServerIpPool
-from pritunl.queue.assign_ip_addr import QueueAssignIpAddr
-from pritunl.queue.unassign_ip_addr import QueueUnassignIpAddr
-from pritunl.queue.assign_ip_pool import QueueAssignIpPool
-from pritunl.queue.dh_params import QueueDhParams
 from pritunl.mongo.object import MongoObject
 from pritunl.mongo.transaction import MongoTransaction
 from pritunl.cache import cache_db
-
 
 from pritunl.constants import *
 from pritunl.exceptions import *
@@ -170,11 +165,10 @@ class Server(MongoObject):
         self.generate_dh_param()
 
     def queue_dh_params(self, block=False):
-        queue = QueueDhParams(server_id=self.id,
+        queue.start('dh_params', block=block, server_id=self.id,
             dh_param_bits=self.dh_param_bits, priority=HIGH)
         self.dh_params = None
 
-        queue.start(block=block)
         if block:
             self.load()
 
@@ -193,15 +187,15 @@ class Server(MongoObject):
         if not self.network_lock:
             self.ip_pool.assign_ip_addr(org_id, user_id)
         else:
-            QueueAssignIpAddr(server_id=self.id, org_id=org_id,
-                user_id=user_id).start()
+            queue.start('assign_ip_addr', server_id=self.id, org_id=org_id,
+                user_id=user_id)
 
     def unassign_ip_addr(self, org_id, user_id):
         if not self.network_lock:
             self.ip_pool.unassign_ip_addr(org_id, user_id)
         else:
-            QueueUnassignIpAddr(server_id=self.id, org_id=org_id,
-                user_id=user_id).start()
+            queue.start('unassign_ip_addr', server_id=self.id, org_id=org_id,
+                user_id=user_id)
 
     def _event_delay(self, type, resource_id=None):
         # Min event every 1s max event every 0.2s
@@ -232,12 +226,12 @@ class Server(MongoObject):
                     'lock_id': self.network_lock,
                 })
             else:
-                queue_ip_pool = QueueAssignIpPool(
+                queue.start('assign_ip_pool',
+                    transaction=transaction,
                     server_id=self.id,
                     network=self.network,
                     old_network=self._orig_network,
                 )
-                queue_ip_pool.start(transaction=transaction)
                 self.network_lock = queue_ip_pool.id
         elif self._orgs_changed:
             # TODO update ip pool
@@ -405,9 +399,8 @@ class Server(MongoObject):
             reserved = queue.reserve('queued_dh_params', server=self)
 
         if reserved:
-            queue = QueueDhParams(dh_param_bits=self.dh_param_bits,
+            queue.start('dh_params', dh_param_bits=self.dh_param_bits,
                 priority=LOW)
-            queue.start()
             return
 
         self.queue_dh_params()

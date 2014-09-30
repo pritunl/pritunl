@@ -1,7 +1,6 @@
 from pritunl.user import User
 from pritunl.pooler.user import PoolerUser
 from pritunl.mongo.object import MongoObject
-from pritunl.queue.init_org_pooled import QueueInitOrgPooled
 
 from pritunl.constants import *
 from pritunl.exceptions import *
@@ -104,8 +103,8 @@ class Organization(MongoObject):
         if self.type != ORG_POOL:
             raise TypeError('Only pool orgs can be queued')
 
-        queue = QueueInitOrgPooled(org_doc=self.export(), priority=priority)
-        queue.start(block=block)
+        queue.start('init_org_pooled', block=block,
+            org_doc=self.export(), priority=priority)
 
         if block:
             self.load()

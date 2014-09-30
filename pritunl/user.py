@@ -4,8 +4,6 @@ from pritunl.descriptors import *
 from pritunl.settings import settings
 from pritunl.cache import cache_db
 from pritunl.mongo.object import MongoObject
-from pritunl.queue.init_user import QueueInitUser
-from pritunl.queue.init_user_pooled import QueueInitUserPooled
 from pritunl.app_server import app_server
 import pritunl.mongo as mongo
 from pritunl import utils
@@ -172,17 +170,17 @@ class User(MongoObject):
 
     def queue_initialize(self, block, priority=LOW):
         if self.type in (CERT_SERVER_POOL, CERT_CLIENT_POOL):
-            queue = QueueInitUserPooled(org_doc=self.org.export(),
-                user_doc=self.export(), priority=priority)
+            queue.start('init_user_pooled', block=block,
+                org_doc=self.org.export(), user_doc=self.export(),
+                priority=priority)
         else:
             retry = True
             if self.type == CERT_CA:
                 retry = False
 
-            queue = QueueInitUser(org_doc=self.org.export(),
+            queue.start('init_user', block=block, org_doc=self.org.export(),
                 user_doc=self.export(), priority=priority, retry=retry)
 
-        queue.start(block=block)
         if block:
             self.load()
 

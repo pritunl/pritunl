@@ -4,11 +4,11 @@ from pritunl.descriptors import *
 from pritunl.settings import settings
 from pritunl.cache import cache_db
 from pritunl.least_common_counter import LeastCommonCounter
-from pritunl.queue.dh_params import QueueDhParams
 from pritunl.app_server import app_server
 import pritunl.logger as logger
 import pritunl.mongo as mongo
 from pritunl import utils
+from pritunl import queue
 
 class PoolerDhParams(object):
     @cached_static_property
@@ -85,8 +85,7 @@ class PoolerDhParams(object):
                 settings.app.server_pool_size - count))
 
         for dh_param_bits in utils.roundrobin(*new_dh_params):
-            queue = QueueDhParams(dh_param_bits=dh_param_bits, priority=LOW)
-            queue.start()
+            queue.start('dh_params', dh_param_bits=dh_param_bits, priority=LOW)
             logger.debug('Queue dh params', 'server',
                 queue_id=queue.id,
                 dh_param_bits=dh_param_bits,
