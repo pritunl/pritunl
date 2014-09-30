@@ -19,6 +19,7 @@ import threading
 import time
 
 queue_types = {}
+reserve_types = {}
 
 class Queue(MongoObject):
     fields = {
@@ -380,3 +381,12 @@ def iter_queues(spec=None):
 def add_queue(cls):
     queue_types[cls.type] = cls
     return cls
+
+def add_reserve(reserve_type):
+    def add_reserve_wrap(func):
+        reserve_types[reserve_type] = func
+        return func
+    return add_reserve_wrap
+
+def reserve(reserve_type, *args, **kwargs):
+    return reserve_types[reserve_type](*args, **kwargs)
