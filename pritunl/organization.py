@@ -1,16 +1,18 @@
+from pritunl.user import User
+from pritunl.pooler.user import PoolerUser
+from pritunl.mongo.object import MongoObject
+from pritunl.queue.init_org_pooled import QueueInitOrgPooled
+
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings import settings
-from pritunl.cache import cache_db
-from pritunl.user import User
-from pritunl.queue.com import QueueCom
-from pritunl.pooler.user import PoolerUser
-from pritunl.mongo.object import MongoObject
-from pritunl.queue.init_org_pooled import QueueInitOrgPooled
 from pritunl.app_server import app_server
-import pritunl.logger as logger
-import pritunl.mongo as mongo
+from pritunl.cache import cache_db
+from pritunl import logger
+from pritunl import mongo
+from pritunl import queue
+
 import uuid
 import logging
 import random
@@ -39,7 +41,7 @@ class Organization(MongoObject):
         MongoObject.__init__(self, **kwargs)
         self.last_search_count = None
         self.processes = []
-        self.queue_com = QueueCom()
+        self.queue_com = queue.QueueCom()
 
         if name is not None:
             self.name = name

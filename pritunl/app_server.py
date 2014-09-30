@@ -309,8 +309,8 @@ class AppServer(Config):
         import pritunl.handlers
 
     def _setup_queue_runner(self):
-        from pritunl.queue.runner import QueueRunner
-        queue_runner = QueueRunner()
+        from pritunl import queue
+        queue_runner = queue.QueueRunner()
         queue_runner.start()
 
     def _setup_transaction_runner(self):

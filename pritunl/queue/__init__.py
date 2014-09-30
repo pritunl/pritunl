@@ -2,6 +2,7 @@ from pritunl.messenger import Messenger
 from pritunl.mongo.object import MongoObject
 
 from pritunl.queue.com import QueueCom
+from pritunl.queue.runner import QueueRunner
 
 from pritunl.constants import *
 from pritunl.exceptions import *

@@ -1,5 +1,3 @@
-from pritunl.queue import Queue
-
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
@@ -64,6 +62,8 @@ class QueueRunner(object):
                     thread_limits[running_queue.cpu_type].release()
 
     def on_msg(self, msg):
+        from pritunl.queue import Queue
+
         try:
             if msg['message'][0] == PENDING:
                 self.add_queue_item(Queue.get_queue(doc=msg['queue_doc']))
@@ -71,6 +71,8 @@ class QueueRunner(object):
             pass
 
     def run_timeout_queues(self):
+        from pritunl.queue import Queue
+
         cur_timestamp = datetime.datetime.utcnow()
         spec = {
             'ttl_timestamp': {'$lt': cur_timestamp},
