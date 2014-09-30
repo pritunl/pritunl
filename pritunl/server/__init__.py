@@ -22,6 +22,7 @@ from pritunl import ipaddress
 from pritunl import host
 from pritunl import utils
 from pritunl import mongo
+from pritunl import queue
 
 import uuid
 import os
@@ -399,9 +400,9 @@ class Server(MongoObject):
             return host.get_host(id=host_id)
 
     def generate_dh_param(self):
-        reserved = QueueDhParams.reserve_pooled_dh_params(server=self)
+        reserved = queue.reserve('pooled_dh_params', server=self)
         if not reserved:
-            reserved = QueueDhParams.reserve_queued_dh_params(server=self)
+            reserved = queue.reserve('queued_dh_params', server=self)
 
         if reserved:
             queue = QueueDhParams(dh_param_bits=self.dh_param_bits,

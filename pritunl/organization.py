@@ -265,7 +265,7 @@ class Organization(MongoObject):
             user = User.reserve_pooled_user(org=self, type=type, **kwargs)
 
             if not user:
-                user = User.reserve_queued_user(org=self, type=type,
+                user = queue.reserve('queued_user', org=self, type=type,
                     block=block, **kwargs)
 
                 if user:
@@ -338,18 +338,13 @@ class Organization(MongoObject):
         if doc:
             return cls(doc=doc)
 
-    @staticmethod
-    def reserve_queued_org(block, **kwargs):
-        return QueueInitOrgPooled.reserve_queued_org(
-            block=block, **kwargs)
-
     @classmethod
     def new_org(cls, type=ORG_DEFAULT, block=True, **kwargs):
         if type == ORG_DEFAULT:
             org = cls.reserve_pooled_org(type=type, **kwargs)
 
             if not org:
-                org = cls.reserve_queued_org(type=type,
+                org = queue.reserve('queued_org', block=block, type=type,
                     block=block, **kwargs)
 
                 if org:

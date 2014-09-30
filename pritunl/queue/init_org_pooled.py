@@ -1,6 +1,6 @@
 from pritunl.event import Event
 
-from pritunl.queue import Queue, add_queue
+from pritunl.queue import Queue, add_queue, add_reserve
 
 from pritunl.constants import *
 from pritunl.exceptions import *
@@ -60,19 +60,19 @@ class QueueInitOrgPooled(Queue):
     def resume_task(self):
         self.org.running.set()
 
-    @classmethod
-    def reserve_queued_org(cls, name=None, type=None, block=False):
-        from pritunl.organization import Organization
+@add_reserve('queued_org')
+def reserve_queued_org(name=None, type=None, block=False):
+    from pritunl.organization import Organization
 
-        reserve_data = {}
+    reserve_data = {}
 
-        if name is not None:
-            reserve_data['name'] = name
-        if type is not None:
-            reserve_data['type'] = type
+    if name is not None:
+        reserve_data['name'] = name
+    if type is not None:
+        reserve_data['type'] = type
 
-        doc = cls.reserve(type, reserve_data, block=block)
-        if not doc:
-            return
+    doc = QueueInitOrgPooled.reserve(type, reserve_data, block=block)
+    if not doc:
+        return
 
-        return Organization(doc=doc['org_doc'])
+    return Organization(doc=doc['org_doc'])

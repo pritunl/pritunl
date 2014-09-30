@@ -1,7 +1,7 @@
 from pritunl.event import Event
 
 from pritunl.queue.com import QueueCom
-from pritunl.queue import Queue, add_queue
+from pritunl.queue import Queue, add_queue, add_reserve
 
 from pritunl.constants import *
 from pritunl.exceptions import *
@@ -122,43 +122,43 @@ class QueueDhParams(Queue):
     def resume_task(self):
         self.queue_com.running.set()
 
-    @classmethod
-    def reserve_pooled_dh_params(cls, server):
-        doc = cls.dh_params_collection.find_and_modify({
-            'dh_param_bits': server.dh_param_bits,
-        }, {'$set': {
-            'dh_param_bits': None,
-        }})
+@add_reserve('pooled_dh_params')
+def reserve_pooled_dh_params(server):
+    doc = QueueDhParams.dh_params_collection.find_and_modify({
+        'dh_param_bits': server.dh_param_bits,
+    }, {'$set': {
+        'dh_param_bits': None,
+    }})
 
-        if not doc:
-            return False
+    if not doc:
+        return False
 
-        cls.dh_params_collection.remove(doc['_id'])
+    QueueDhParams.dh_params_collection.remove(doc['_id'])
 
-        logger.debug('Reserved pooled dh params', 'server',
+    logger.debug('Reserved pooled dh params', 'server',
+        server_id=server.id,
+        dh_param_bits=server.dh_param_bits,
+    )
+
+    server.dh_params = doc['dh_params']
+    return True
+
+@add_reserve('queued_dh_params')
+def reserve_queued_dh_params(server, block=False):
+    reserve_id = server.dh_param_bits
+    reserve_data = {
+        'server_id': server.id,
+    }
+
+    doc = QueueDhParams.reserve(reserve_id, reserve_data, block=block)
+    if not doc:
+        logger.debug('Reserved queued dh params', 'server',
             server_id=server.id,
             dh_param_bits=server.dh_param_bits,
         )
+        return False
 
-        server.dh_params = doc['dh_params']
-        return True
+    if block:
+        server.load()
 
-    @classmethod
-    def reserve_queued_dh_params(cls, server, block=False):
-        reserve_id = server.dh_param_bits
-        reserve_data = {
-            'server_id': server.id,
-        }
-
-        doc = cls.reserve(reserve_id, reserve_data, block=block)
-        if not doc:
-            logger.debug('Reserved queued dh params', 'server',
-                server_id=server.id,
-                dh_param_bits=server.dh_param_bits,
-            )
-            return False
-
-        if block:
-            server.load()
-
-        return True
+    return True

@@ -46,27 +46,27 @@ class QueueInitUserPooled(QueueInitUser):
     def resume_task(self):
         self.org.queue_com.running.set()
 
-    @classmethod
-    def reserve_queued_user(cls, org, name=None, email=None, type=None,
-            disabled=None, block=False):
-        from pritunl.user import User
-        from pritunl.organization import Organization
+@reserve('queued_user')
+def reserve_queued_user(org, name=None, email=None, type=None,
+        disabled=None, block=False):
+    from pritunl.user import User
+    from pritunl.organization import Organization
 
-        reserve_id = org.id + '-' + type
-        reserve_data = {}
+    reserve_id = org.id + '-' + type
+    reserve_data = {}
 
-        if name is not None:
-            reserve_data['name'] = name
-        if email is not None:
-            reserve_data['email'] = email
-        if type is not None:
-            reserve_data['type'] = type
-        if disabled is not None:
-            reserve_data['disabled'] = disabled
+    if name is not None:
+        reserve_data['name'] = name
+    if email is not None:
+        reserve_data['email'] = email
+    if type is not None:
+        reserve_data['type'] = type
+    if disabled is not None:
+        reserve_data['disabled'] = disabled
 
-        doc = cls.reserve(reserve_id, reserve_data, block=block)
-        if not doc:
-            return
+    doc = QueueInitUserPooled.reserve(reserve_id, reserve_data, block=block)
+    if not doc:
+        return
 
-        org = Organization(doc=doc['org_doc'])
-        return User(org=org, doc=doc['user_doc'])
+    org = Organization(doc=doc['org_doc'])
+    return User(org=org, doc=doc['user_doc'])
