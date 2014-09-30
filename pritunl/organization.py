@@ -345,7 +345,7 @@ class Organization(MongoObject):
 
             if not org:
                 org = queue.reserve('queued_org', block=block, type=type,
-                    block=block, **kwargs)
+                    **kwargs)
 
                 if org:
                     logger.debug('Reserved queued org', 'organization',
