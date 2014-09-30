@@ -1,25 +1,25 @@
-from pritunl.constants import *
-from pritunl.exceptions import *
-from pritunl.descriptors import *
-from pritunl.settings import settings
 from pritunl.mongo.list import MongoList
 from pritunl.mongo.dict import MongoDict
 from pritunl.mongo.object import MongoObject
 from pritunl.mongo.transaction_collection import MongoTransactionCollection
-from pritunl.json_helpers import *
-import pritunl.mongo as mongo
-import pritunl.listener as listener
+
+from pritunl.constants import *
+from pritunl.exceptions import *
+from pritunl.descriptors import *
+from pritunl.settings import settings
+from pritunl import json_helpers
+from pritunl import mongo
+from pritunl import listener
+from pritunl import logger
+
 import pymongo
 import collections
 import datetime
 import bson
-import logging
 import threading
 import zlib
 import json
 import time
-
-logger = logging.getLogger(APP_NAME)
 
 class MongoTransaction(MongoObject):
     fields = {
@@ -56,7 +56,7 @@ class MongoTransaction(MongoObject):
         if self.actions:
             actions_json = zlib.decompress(self.actions)
             self.action_sets = json.loads(actions_json,
-                object_hook=object_hook_handler)
+                object_hook=json_helpers.object_hook_handler)
         else:
             self.action_sets = []
 
@@ -272,7 +272,8 @@ class MongoTransaction(MongoObject):
             self.run_post_actions()
 
     def commit(self):
-        actions_json = json.dumps(self.action_sets, default=json_default)
+        actions_json = json.dumps(self.action_sets,
+            default=json_helpers.json_default)
         actions_json_zlib = zlib.compress(actions_json)
 
         self.transaction_collection.insert({

@@ -1,19 +1,19 @@
+from pritunl.mongo.transaction import MongoTransaction
+from pritunl.mongo.object import MongoObject
+
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings import settings
-from pritunl.mongo.object import MongoObject
-from pritunl.mongo.transaction import MongoTransaction
-import pritunl.mongo as mongo
+from pritunl import mongo
+from pritunl import logger
+
 import pymongo
 import collections
 import datetime
 import bson
-import logging
 import threading
 import time
-
-logger = logging.getLogger(APP_NAME)
 
 class MongoTransactionRunner:
     @cached_static_property

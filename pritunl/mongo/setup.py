@@ -1,8 +1,11 @@
+from pritunl.mongo import collections
+
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings import settings
-from pritunl.mongo import collections
+from pritunl import logger
+
 import pymongo
 import bson
 import re
@@ -10,9 +13,6 @@ import os
 import base64
 import flask
 import random
-import logging
-
-logger = logging.getLogger(APP_NAME)
 
 def setup_mongo():
     from pritunl.app_server import app_server

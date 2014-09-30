@@ -1,15 +1,14 @@
+from pritunl.mongo.object import MongoObject
+
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
-from pritunl.mongo.object import MongoObject
-import pritunl.mongo as mongo
+from pritunl import mongo
+
 import pymongo
 import collections
 import datetime
 import bson
-import logging
-
-logger = logging.getLogger(APP_NAME)
 
 class MongoTransactionAction:
     def __init__(self, actions, func):

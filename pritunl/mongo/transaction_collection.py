@@ -1,10 +1,8 @@
+from pritunl.mongo.transaction_action import MongoTransactionAction
+
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
-from pritunl.mongo.transaction_action import MongoTransactionAction
-import logging
-
-logger = logging.getLogger(APP_NAME)
 
 class MongoTransactionCollection(object):
     def __init__(self, actions=None, collection_name=None, action_sets=None):
