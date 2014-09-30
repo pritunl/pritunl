@@ -371,7 +371,7 @@ class Queue(MongoObject):
         """not_overridden"""
         pass
 
-def get_queue(doc):
+def get(doc):
     return queue_types[doc['type']](doc=doc)
 
 def iter_queues(spec=None):
