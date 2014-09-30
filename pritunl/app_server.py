@@ -280,8 +280,7 @@ class AppServer(Config):
             os.makedirs(self.temp_path)
 
     def _setup_log(self):
-        from pritunl.logger.filter import LogFilter
-        from pritunl.logger.formatter import LogFormatter
+        from pritunl import logger
 
         if self.log_path:
             self.log_handler = logging.handlers.RotatingFileHandler(
@@ -293,13 +292,13 @@ class AppServer(Config):
         if not logger:
             logger = logging.getLogger(APP_NAME)
 
-        self.log_filter = LogFilter()
+        self.log_filter = logger.LogFilter()
         logger.addFilter(self.log_filter)
 
         logger.setLevel(logging.DEBUG)
         self.log_handler.setLevel(logging.DEBUG)
 
-        self.log_handler.setFormatter(LogFormatter(
+        self.log_handler.setFormatter(logger.LogFormatter(
             '[%(asctime)s][%(levelname)s][%(module)s][%(lineno)d] ' +
             '%(message)s'))
 
