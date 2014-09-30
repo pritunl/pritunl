@@ -379,3 +379,4 @@ def iter_queues(spec=None):
 
 def add_queue(cls):
     queue_types[cls.type] = cls
+    return cls
