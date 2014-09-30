@@ -310,8 +310,7 @@ class AppServer(Config):
 
     def _setup_queue_runner(self):
         from pritunl import queue
-        queue_runner = queue.QueueRunner()
-        queue_runner.start()
+        queue.start_runner()
 
     def _setup_transaction_runner(self):
         from pritunl.mongo.transaction_runner import MongoTransactionRunner
