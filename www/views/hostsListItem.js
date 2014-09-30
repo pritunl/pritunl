@@ -16,7 +16,8 @@ define([
       'click .host-title a': 'onSettings',
       'click .host-cpu-usage-btn': 'onCpuUsageGraph',
       'click .host-mem-usage-btn': 'onMemUsageGraph',
-      'click .graph-period': 'onGraphPeriod'
+      'click .graph-period': 'onGraphPeriod',
+      'click .toggle-hidden': 'onToggleHidden'
     },
     initialize: function() {
       this.hostUsageView = new HostUsageView({
