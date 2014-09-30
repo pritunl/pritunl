@@ -339,6 +339,7 @@ class Server(MongoObject):
                     })
                 self.remove_org(org_id)
                 self.commit('organizations')
+                Event(type=SERVER_ORGS_UPDATED, resource_id=self.id)
 
     def get_org(self, org_id):
         if org_id in self.organizations:
@@ -386,9 +387,9 @@ class Server(MongoObject):
                         'server_id': self.id,
                         'host_id': host_id,
                     })
-                # TODO event
                 self.remove_host(host_id)
                 self.commit('hosts')
+                Event(type=SERVER_HOSTS_UPDATED, resource_id=self.id)
 
     def get_host(self, host_id):
         if host_id in self.hosts:
