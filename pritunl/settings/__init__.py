@@ -45,11 +45,12 @@ class Settings(object):
     def commit(self, all_fields=False):
         from pritunl.messenger import Messenger
         from pritunl import mongo
+        from pritunl import transaction
 
         docs = []
         has_docs = False
         messenger = Messenger()
-        transaction = mongo.MongoTransaction()
+        transaction = transaction.Transaction()
         collection = transaction.collection(
             self.collection.name_str)
 
