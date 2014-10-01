@@ -6,6 +6,7 @@ from pritunl.cache import cache_db
 from pritunl.app_server import app_server
 from pritunl import mongo
 from pritunl import utils
+from pritunl import queue
 import tarfile
 import os
 import subprocess
