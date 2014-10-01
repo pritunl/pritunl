@@ -1,5 +1,4 @@
 from pritunl.event import Event
-from pritunl.mongo.object import MongoObject
 
 from pritunl.queue import Queue, add_queue
 

@@ -3,7 +3,6 @@ from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings import settings
 from pritunl.cache import cache_db
-from pritunl.mongo.object import MongoObject
 from pritunl.app_server import app_server
 from pritunl import mongo
 from pritunl import utils
@@ -21,7 +20,7 @@ import json
 
 logger = logging.getLogger(APP_NAME)
 
-class User(MongoObject):
+class User(mongo.MongoObject):
     fields = {
         'org_id',
         'name',
@@ -40,7 +39,7 @@ class User(MongoObject):
 
     def __init__(self, org, name=None, email=None, type=None, disabled=None,
             **kwargs):
-        MongoObject.__init__(self, **kwargs)
+        mongo.MongoObject.__init__(self, **kwargs)
 
         self.org = org
         self.org_id = org.id
@@ -186,7 +185,7 @@ class User(MongoObject):
 
     def remove(self):
         self.unassign_ip_addr()
-        MongoObject.remove(self)
+        mongo.MongoObject.remove(self)
 
     def get_cache_key(self, suffix=None):
         if not self.cache_prefix:

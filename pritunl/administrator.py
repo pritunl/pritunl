@@ -2,7 +2,6 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings import settings
-from pritunl.mongo.object import MongoObject
 from pritunl import utils
 from pritunl import mongo
 import base64
@@ -15,7 +14,7 @@ import datetime
 import hmac
 import pymongo
 
-class Administrator(MongoObject):
+class Administrator(mongo.MongoObject):
     fields = {
         'username',
         'password',
@@ -25,7 +24,7 @@ class Administrator(MongoObject):
     }
 
     def __init__(self, username=None, password=None, default=None, **kwargs):
-        MongoObject.__init__(self, **kwargs)
+        mongo.MongoObject.__init__(self, **kwargs)
 
         if username is not None:
             self.username = username
@@ -95,7 +94,7 @@ class Administrator(MongoObject):
         if not self.secret:
             self.generate_secret()
 
-        MongoObject.commit(self, *args, **kwargs)
+        mongo.MongoObject.commit(self, *args, **kwargs)
 
     @classmethod
     def get_user(cls, id):

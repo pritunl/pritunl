@@ -1,5 +1,4 @@
 from pritunl.event import Event
-from pritunl.mongo.object import MongoObject
 
 from pritunl.constants import *
 from pritunl.exceptions import *
@@ -8,14 +7,14 @@ from pritunl import mongo
 
 import pymongo
 
-class LogEntry(MongoObject):
+class LogEntry(mongo.MongoObject):
     fields = {
         'timestamp',
         'message',
     }
 
     def __init__(self, message=None, **kwargs):
-        MongoObject.__init__(self, **kwargs)
+        mongo.MongoObject.__init__(self, **kwargs)
 
         if message is not None:
             self.message = message

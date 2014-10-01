@@ -1,8 +1,8 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
-from pritunl.mongo.dict import MongoDict
-from pritunl.mongo.list import MongoList
+from pritunl import mongo
+
 import datetime
 import bson
 import time
@@ -18,7 +18,7 @@ def object_hook_handler(obj):
     return obj
 
 def json_default(obj):
-    if isinstance(obj, (MongoDict, MongoList)):
+    if isinstance(obj, (mongo.MongoDict, mongo.MongoList)):
         return obj.data
     elif isinstance(obj, bson.ObjectId):
         return {'__OBJ__': ['OID', str(obj)]}

@@ -1,5 +1,4 @@
 from pritunl.messenger import Messenger
-from pritunl.mongo.object import MongoObject
 
 from pritunl.queue.com import QueueCom
 from pritunl.queue.runner import start_runner
@@ -21,7 +20,7 @@ import time
 queue_types = {}
 reserve_types = {}
 
-class Queue(MongoObject):
+class Queue(mongo.MongoObject):
     fields = {
         'state',
         'priority',
@@ -45,7 +44,7 @@ class Queue(MongoObject):
     reserve_id = None
 
     def __init__(self, priority=None, retry=None, **kwargs):
-        MongoObject.__init__(self, **kwargs)
+        mongo.MongoObject.__init__(self, **kwargs)
         self.type = self.type
         self.reserve_id = self.reserve_id
         self.runner_id = bson.ObjectId()

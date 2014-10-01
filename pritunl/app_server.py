@@ -220,8 +220,8 @@ class AppServer(Config):
         thread.start()
 
     def _setup_db(self):
-        from pritunl.mongo import setup_mongo
-        setup_mongo()
+        from pritunl import mongo
+        mongo.setup_mongo()
 
     def _setup_app(self):
         self.app = flask.Flask(APP_NAME)
@@ -287,9 +287,8 @@ class AppServer(Config):
         queue.start_runner()
 
     def _setup_transaction_runner(self):
-        from pritunl.mongo.transaction_runner import MongoTransactionRunner
-        mongo_transaction_runner = MongoTransactionRunner()
-        mongo_transaction_runner.start()
+        from pritunl import mongo
+        mongo.start_runner()
 
     def _setup_task_runner(self):
         from pritunl.task.runner import TaskRunner

@@ -1,4 +1,3 @@
-from pritunl.mongo.object import MongoObject
 from pritunl.event import Event
 
 from pritunl.host.usage import HostUsage
@@ -16,7 +15,7 @@ from pritunl import logger
 import signal
 import datetime
 
-class Host(MongoObject):
+class Host(mongo.MongoObject):
     fields = {
         'name',
         'ping_timestamp',
@@ -30,7 +29,7 @@ class Host(MongoObject):
     }
 
     def __init__(self, name=None, **kwargs):
-        MongoObject.__init__(self, **kwargs)
+        mongo.MongoObject.__init__(self, **kwargs)
 
         self.usage = HostUsage(self.id)
 

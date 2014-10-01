@@ -1,6 +1,5 @@
 from pritunl.user import User
 from pritunl.pooler.user import PoolerUser
-from pritunl.mongo.object import MongoObject
 
 from pritunl.constants import *
 from pritunl.exceptions import *
@@ -20,7 +19,7 @@ import math
 import pymongo
 import threading
 
-class Organization(MongoObject):
+class Organization(mongo.MongoObject):
     fields = {
         'name',
         'type',
@@ -37,7 +36,7 @@ class Organization(MongoObject):
     }
 
     def __init__(self, name=None, type=None, **kwargs):
-        MongoObject.__init__(self, **kwargs)
+        mongo.MongoObject.__init__(self, **kwargs)
         self.last_search_count = None
         self.processes = []
         self.queue_com = queue.QueueCom()

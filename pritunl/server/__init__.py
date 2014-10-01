@@ -3,7 +3,6 @@ from pritunl.event import Event
 from pritunl.messenger import Messenger
 from pritunl.server.bandwidth import ServerBandwidth
 from pritunl.server.ip_pool import ServerIpPool
-from pritunl.mongo.object import MongoObject
 from pritunl.mongo.transaction import MongoTransaction
 from pritunl.cache import cache_db
 
@@ -34,7 +33,7 @@ import bson
 
 logger = logging.getLogger(APP_NAME)
 
-class Server(MongoObject):
+class Server(mongo.MongoObject):
     fields = {
         'name',
         'network',
@@ -82,7 +81,7 @@ class Server(MongoObject):
             protocol=None, dh_param_bits=None, mode=None, local_networks=None,
             dns_servers=None, search_domain=None, public_address=None,
             otp_auth=None, lzo_compression=None, debug=None, **kwargs):
-        MongoObject.__init__(self, **kwargs)
+        mongo.MongoObject.__init__(self, **kwargs)
         self.bandwidth = ServerBandwidth(self.id)
 
         self._cur_event = None
@@ -237,7 +236,8 @@ class Server(MongoObject):
             # TODO update ip pool
             pass
 
-        MongoObject.commit(self, transaction=transaction, *args, **kwargs)
+        mongo.MongoObject.commit(self, transaction=transaction,
+            *args, **kwargs)
 
         if transaction:
             Messenger().publish('queue', 'queue_updated',
@@ -246,7 +246,7 @@ class Server(MongoObject):
 
     def remove(self):
         self._remove_primary_user()
-        MongoObject.remove(self)
+        mongo.MongoObject.remove(self)
 
     def _create_primary_user(self):
         logger.debug('Creating primary user. %r' % {

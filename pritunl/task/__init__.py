@@ -2,7 +2,6 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings import settings
-from pritunl.mongo.object import MongoObject
 from pritunl import mongo
 import pymongo
 import bson
@@ -32,7 +31,7 @@ def add_task(task_cls, hours=None, minutes=None):
 
     _task_types[task_cls.type] = task_cls
 
-class Task(MongoObject):
+class Task(mongo.MongoObject):
     fields = {
         'attempts',
         'type',
@@ -46,7 +45,7 @@ class Task(MongoObject):
     type = None
 
     def __init__(self, **kwargs):
-        MongoObject.__init__(self, **kwargs)
+        mongo.MongoObject.__init__(self, **kwargs)
         self.type = self.type
         self.runner_id = bson.ObjectId()
 
