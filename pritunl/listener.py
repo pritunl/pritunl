@@ -2,7 +2,7 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.messenger import Messenger
-import pritunl.mongo as mongo
+from pritunl import mongo
 import pymongo
 import random
 import bson

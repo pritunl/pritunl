@@ -2,7 +2,7 @@ from pritunl.constants import *
 from pritunl.administrator import Administrator
 from pritunl.settings import settings
 from pritunl import utils
-import pritunl.mongo as mongo
+from pritunl import mongo
 from pritunl.app_server import app_server
 import time
 import flask

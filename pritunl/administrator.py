@@ -4,7 +4,7 @@ from pritunl.descriptors import *
 from pritunl.settings import settings
 from pritunl.mongo.object import MongoObject
 from pritunl import utils
-import pritunl.mongo as mongo
+from pritunl import mongo
 import base64
 import os
 import re

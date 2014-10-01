@@ -3,7 +3,7 @@ from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings import settings
 from pritunl.mongo.object import MongoObject
-import pritunl.mongo as mongo
+from pritunl import mongo
 import pymongo
 import bson
 import datetime

@@ -29,7 +29,7 @@ class Settings(object):
 
     @cached_static_property
     def collection(cls):
-        import pritunl.mongo as mongo
+        from pritunl import mongo
         return mongo.get_collection('system')
 
     def on_msg(self, msg):

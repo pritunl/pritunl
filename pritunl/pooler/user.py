@@ -5,7 +5,7 @@ from pritunl.settings import settings
 from pritunl.cache import cache_db
 from pritunl.least_common_counter import LeastCommonCounter
 from pritunl.app_server import app_server
-import pritunl.mongo as mongo
+from pritunl import mongo
 from pritunl import utils
 import logging
 import time
