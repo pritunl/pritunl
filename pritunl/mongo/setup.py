@@ -3,6 +3,7 @@ from pritunl.mongo import collections
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
+from pritunl.app_server import app_server
 from pritunl.settings import settings
 from pritunl import logger
 
@@ -15,11 +16,6 @@ import flask
 import random
 
 def setup_mongo():
-    from pritunl.app_server import app_server
-    from pritunl.settings import settings
-
-    logger = logging.getLogger(APP_NAME)
-
     # TODO move this
     if not pymongo.has_c():
         logger.warning('Failed to load pymongo c bindings')
