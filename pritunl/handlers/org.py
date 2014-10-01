@@ -23,7 +23,6 @@ def org_get(org_id=None):
 def org_post():
     name = utils.filter_str(flask.request.json['name'])
     org = Organization.new_org(name=name, type=ORG_DEFAULT)
-    org.commit()
     logger.LogEntry(message='Created new organization "%s".' % org.name)
     Event(type=ORGS_UPDATED)
     return utils.jsonify(org.dict())
