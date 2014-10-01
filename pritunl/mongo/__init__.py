@@ -26,7 +26,6 @@ def get_collection(name):
 def setup_mongo():
     from pritunl.app_server import app_server
     from pritunl.settings import settings
-    from pritunl.mongo import collections
     from pritunl import logger
 
     # TODO move this
