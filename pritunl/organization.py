@@ -10,6 +10,7 @@ from pritunl.cache import cache_db
 from pritunl import logger
 from pritunl import mongo
 from pritunl import queue
+from pritunl import pooler
 
 import uuid
 import logging
@@ -110,7 +111,7 @@ class Organization(mongo.MongoObject):
 
     def commit(self, *args, **kwargs):
         exists = self.exists
-        MongoObject.commit(self, *args, **kwargs)
+        mongo.MongoObject.commit(self, *args, **kwargs)
 
         if not exists:
             logger.debug('Fill new org pool', 'organization',
@@ -302,7 +303,7 @@ class Organization(mongo.MongoObject):
                 server.stop()
             server.remove_org(self)
             server.commit()
-        MongoObject.remove(self)
+        mongo.MongoObject.remove(self)
         User.collection.remove({
             'org_id': self.id,
         })
