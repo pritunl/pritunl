@@ -220,8 +220,8 @@ class AppServer(Config):
         thread.start()
 
     def _setup_db(self):
-        from pritunl import mongo
-        mongo.setup_mongo()
+        from pritunl import setup
+        setup.setup_mongo()
 
     def _setup_app(self):
         self.app = flask.Flask(APP_NAME)
@@ -287,8 +287,8 @@ class AppServer(Config):
         queue.start_runner()
 
     def _setup_transaction_runner(self):
-        from pritunl import mongo
-        mongo.start_runner()
+        from pritunl import transaction
+        transaction.start_runner()
 
     def _setup_task_runner(self):
         from pritunl.task.runner import TaskRunner
@@ -400,11 +400,10 @@ class AppServer(Config):
         self.interrupt = True
 
     def _run_server(self):
-        from pritunl.logger.entry import LogEntry
         if self.debug:
-            LogEntry(message='Web debug server started.')
+            logger.LogEntry(message='Web debug server started.')
         else:
-            LogEntry(message='Web server started.')
+            logger.LogEntry(message='Web server started.')
         try:
             if self.debug:
                 self._run_wsgi_debug()
@@ -412,9 +411,9 @@ class AppServer(Config):
                 self._run_wsgi()
         finally:
             if self.debug:
-                LogEntry(message='Web debug server stopped.')
+                logger.LogEntry(message='Web debug server stopped.')
             else:
-                LogEntry(message='Web server stopped.')
+                logger.LogEntry(message='Web server stopped.')
 
     def run_server(self):
         self._setup_all()
