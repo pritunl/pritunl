@@ -1,3 +1,8 @@
+from pritunl.mongo.object import MongoObject
+from pritunl.mongo.dict import MongoDict
+from pritunl.mongo.list import MongoList
+from pritunl.mongo.setup import setup_mongo
+
 import pymongo
 
 has_bulk = all((
