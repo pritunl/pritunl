@@ -2,6 +2,7 @@ from pritunl.constants import *
 import pritunl.patches
 from pritunl.config import Config
 from pritunl import utils
+from pritunl import logger
 import flask
 import cherrypy.wsgiserver
 import os
@@ -23,8 +24,6 @@ try:
 except ImportError:
     import cherrypy.wsgiserver.ssl_builtin
     SSLAdapter = cherrypy.wsgiserver.ssl_builtin.BuiltinSSLAdapter
-
-logger = None
 
 class HTTPConnectionPatch(cherrypy.wsgiserver.HTTPConnection):
     def __init__(self, server, sock,
@@ -244,9 +243,6 @@ class AppServer(Config):
             response.headers.add('Write-Count', flask.g.write_count)
             return response
 
-        global logger
-        logger = self.app.logger
-
     def auth(self, call):
         from administrator import Administrator
         def _wrapped(*args, **kwargs):
@@ -281,28 +277,7 @@ class AppServer(Config):
 
     def _setup_log(self):
         from pritunl import logger
-
-        if self.log_path:
-            self.log_handler = logging.handlers.RotatingFileHandler(
-                self.log_path, maxBytes=1000000, backupCount=1)
-        else:
-            self.log_handler = logging.StreamHandler()
-
-        global logger
-        if not logger:
-            logger = logging.getLogger(APP_NAME)
-
-        self.log_filter = logger.LogFilter()
-        logger.addFilter(self.log_filter)
-
-        logger.setLevel(logging.DEBUG)
-        self.log_handler.setLevel(logging.DEBUG)
-
-        self.log_handler.setFormatter(logger.LogFormatter(
-            '[%(asctime)s][%(levelname)s][%(module)s][%(lineno)d] ' +
-            '%(message)s'))
-
-        logger.addHandler(self.log_handler)
+        logger.setup_logger()
 
     def _setup_handlers(self):
         import pritunl.handlers
@@ -406,8 +381,8 @@ class AppServer(Config):
         # App.run server uses werkzeug logger
         werkzeug_logger = logging.getLogger('werkzeug')
         werkzeug_logger.setLevel(logging.DEBUG)
-        werkzeug_logger.addFilter(self.log_filter)
-        werkzeug_logger.addHandler(self.log_handler)
+        werkzeug_logger.addFilter(logger.log_filter)
+        werkzeug_logger.addHandler(logger.log_handler)
 
         try:
             self.app.run(host=self.bind_addr, port=self.port, threaded=True)
