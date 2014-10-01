@@ -35,7 +35,7 @@ class LogEntry(mongo.MongoObject):
         return mongo.get_collection('log_entries')
 
     def commit(self, *args, **kwargs):
-        MongoObject.commit(self, *args, **kwargs)
+        mongo.MongoObject.commit(self, *args, **kwargs)
         Event(type=LOG_UPDATED)
 
     @classmethod
