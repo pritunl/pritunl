@@ -3,9 +3,9 @@ from pritunl.exceptions import *
 from pritunl.settings import settings
 from pritunl.organization import Organization
 from pritunl.event import Event
-from pritunl.logger.entry import LogEntry
 from pritunl.server.ip_pool import ServerIpPool
 from pritunl import utils
+from pritunl import logger
 from pritunl.app_server import app_server
 import flask
 import math
@@ -142,10 +142,11 @@ def user_post(org_id):
     Event(type=SERVERS_UPDATED)
 
     if isinstance(flask.request.json, list):
-        LogEntry(message='Created %s new users.' % len(flask.request.json))
+        logger.LogEntry(message='Created %s new users.' % len(
+            flask.request.json))
         return utils.jsonify(users)
     else:
-        LogEntry(message='Created new user "%s".' % users[0]['name'])
+        logger.LogEntry(message='Created new user "%s".' % users[0]['name'])
         return utils.jsonify(users[0])
 
 @app_server.app.route('/user/<org_id>/<user_id>', methods=['PUT'])
@@ -169,14 +170,14 @@ def user_put(org_id, user_id):
 
     if disabled:
         if user.type == CERT_CLIENT:
-            LogEntry(message='Disabled user "%s".' % user.name)
+            logger.LogEntry(message='Disabled user "%s".' % user.name)
 
         for server in org.iter_servers():
             server_clients = server.clients
             if user_id in server_clients:
                 server.restart()
     elif disabled == False and user.type == CERT_CLIENT:
-        LogEntry(message='Enabled user "%s".' % user.name)
+        logger.LogEntry(message='Enabled user "%s".' % user.name)
 
     send_key_email = flask.request.json.get('send_key_email')
     if send_key_email and user.email:
@@ -216,7 +217,7 @@ def user_delete(org_id, user_id):
         if user_id in server_clients:
             server.restart()
 
-    LogEntry(message='Deleted user "%s".' % name)
+    logger.LogEntry(message='Deleted user "%s".' % name)
 
     return utils.jsonify({})
 

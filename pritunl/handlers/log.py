@@ -1,6 +1,6 @@
 from pritunl.constants import *
-from pritunl.logger.entry import LogEntry
 from pritunl import utils
+from pritunl import logger
 from pritunl.app_server import app_server
 
 @app_server.app.route('/log', methods=['GET'])
@@ -8,7 +8,7 @@ from pritunl.app_server import app_server
 def log_get():
     log_entries = []
 
-    for log_entry in LogEntry.iter_log_entries():
+    for log_entry in logger.LogEntry.iter_log_entries():
         log_entries.append(log_entry.dict())
 
     return utils.jsonify(log_entries)

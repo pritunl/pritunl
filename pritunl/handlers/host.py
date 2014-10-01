@@ -1,5 +1,4 @@
 from pritunl.event import Event
-from pritunl.logger.entry import LogEntry
 from pritunl.server.ip_pool import ServerIpPool
 
 from pritunl.constants import *
@@ -9,6 +8,7 @@ from pritunl.settings import settings
 from pritunl.app_server import app_server
 from pritunl import host
 from pritunl import utils
+from pritunl import logger
 
 import flask
 import math
@@ -53,7 +53,7 @@ def host_delete(host_id):
     hst = host.get_host(id=host_id)
     hst.remove()
 
-    LogEntry(message='Deleted host "%s".' % hst.name)
+    logger.LogEntry(message='Deleted host "%s".' % hst.name)
     Event(type=HOSTS_UPDATED)
 
     return utils.jsonify({})

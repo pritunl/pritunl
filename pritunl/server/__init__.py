@@ -1,6 +1,5 @@
 from pritunl.organization import Organization
 from pritunl.event import Event
-from pritunl.logger.entry import LogEntry
 from pritunl.messenger import Messenger
 from pritunl.server.bandwidth import ServerBandwidth
 from pritunl.server.ip_pool import ServerIpPool
@@ -14,6 +13,7 @@ from pritunl.descriptors import *
 from pritunl.settings import settings
 from pritunl.app_server import app_server
 from pritunl import ipaddress
+from pritunl import logger
 from pritunl import host
 from pritunl import utils
 from pritunl import mongo
@@ -718,7 +718,7 @@ class Server(MongoObject):
             self.update_clients({}, force=True)
             if self._state:
                 Event(type=SERVERS_UPDATED)
-                LogEntry(message='Server stopped unexpectedly "%s".' % (
+                logger.LogEntry(message='Server stopped unexpectedly "%s".' % (
                     self.name))
 
             logger.debug('Ovpn process has ended. %r' % {

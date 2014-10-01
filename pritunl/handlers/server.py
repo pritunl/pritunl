@@ -1,6 +1,5 @@
 from pritunl.server import Server
 from pritunl.organization import Organization
-from pritunl.logger.entry import LogEntry
 from pritunl.event import Event
 
 from pritunl.constants import *
@@ -10,6 +9,7 @@ from pritunl.settings import settings
 from pritunl.app_server import app_server
 from pritunl import host
 from pritunl import utils
+from pritunl import logger
 
 import flask
 import re
@@ -414,7 +414,7 @@ def server_put_post(server_id=None):
             server.debug = debug
     server.commit(server.changed)
 
-    LogEntry(message='Created server "%s".' % server.name)
+    logger.LogEntry(message='Created server "%s".' % server.name)
     Event(type=SERVERS_UPDATED)
     for org in server.iter_orgs():
         Event(type=USERS_UPDATED, resource_id=org.id)
@@ -425,7 +425,7 @@ def server_put_post(server_id=None):
 def server_delete(server_id):
     server = Server.get_server(id=server_id)
     server.remove()
-    LogEntry(message='Deleted server "%s".' % server.name)
+    logger.LogEntry(message='Deleted server "%s".' % server.name)
     Event(type=SERVERS_UPDATED)
     for org in server.iter_orgs():
         Event(type=USERS_UPDATED, resource_id=org.id)
@@ -532,13 +532,13 @@ def server_operation_put(server_id, operation):
 
     if operation == START:
         server.start()
-        LogEntry(message='Started server "%s".' % server.name)
+        logger.LogEntry(message='Started server "%s".' % server.name)
     if operation == STOP:
         server.stop()
-        LogEntry(message='Stopped server "%s".' % server.name)
+        logger.LogEntry(message='Stopped server "%s".' % server.name)
     elif operation == RESTART:
         server.restart()
-        LogEntry(message='Restarted server "%s".' % server.name)
+        logger.LogEntry(message='Restarted server "%s".' % server.name)
     Event(type=SERVERS_UPDATED)
 
     return utils.jsonify(server.dict())
@@ -580,7 +580,7 @@ def server_tls_verify_post(server_id):
         }, 401)
     org = server.get_org(org_id)
     if not org:
-        LogEntry(message='User failed authentication, ' +
+        logger.LogEntry(message='User failed authentication, ' +
             'invalid organization on server "%s".' % server.name)
         return utils.jsonify({
             'error': ORG_INVALID,
@@ -588,14 +588,14 @@ def server_tls_verify_post(server_id):
         }, 401)
     user = org.get_user(user_id)
     if not user:
-        LogEntry(message='User failed authentication, ' +
+        logger.LogEntry(message='User failed authentication, ' +
             'invalid user on server "%s".' % server.name)
         return utils.jsonify({
             'error': USER_INVALID,
             'error_msg': USER_INVALID_MSG,
         }, 401)
     if user.disabled:
-        LogEntry(message='User failed authentication, ' +
+        logger.LogEntry(message='User failed authentication, ' +
             'disabled user "%s".' % server.name)
         return utils.jsonify({
             'error': USER_INVALID,
@@ -622,7 +622,7 @@ def server_otp_verify_post(server_id):
         }, 401)
     org = server.get_org(org_id)
     if not org:
-        LogEntry(message='User failed authentication, ' +
+        logger.LogEntry(message='User failed authentication, ' +
             'invalid organization on server "%s".' % server.name)
         return utils.jsonify({
             'error': ORG_INVALID,
@@ -630,14 +630,14 @@ def server_otp_verify_post(server_id):
         }, 401)
     user = org.get_user(user_id)
     if not user:
-        LogEntry(message='User failed authentication, ' +
+        logger.LogEntry(message='User failed authentication, ' +
             'invalid user on server "%s".' % server.name)
         return utils.jsonify({
             'error': USER_INVALID,
             'error_msg': USER_INVALID_MSG,
         }, 401)
     if not user.verify_otp_code(otp_code, remote_ip):
-        LogEntry(message='User failed two-step authentication "%s".' % (
+        logger.LogEntry(message='User failed two-step authentication "%s".' % (
             user.name))
         return utils.jsonify({
             'error': OTP_CODE_INVALID,
