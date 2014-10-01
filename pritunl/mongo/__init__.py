@@ -1,9 +1,10 @@
-from pritunl.constants import *
-from pritunl.exceptions import *
-from pritunl.descriptors import *
 from pritunl.mongo.object import MongoObject
 from pritunl.mongo.dict import MongoDict
 from pritunl.mongo.list import MongoList
+
+from pritunl.constants import *
+from pritunl.exceptions import *
+from pritunl.descriptors import *
 
 import pymongo
 import bson
@@ -12,8 +13,6 @@ import os
 import base64
 import flask
 import random
-
-import pymongo
 
 has_bulk = all((
     hasattr(pymongo.collection.Collection, 'initialize_ordered_bulk_op'),
