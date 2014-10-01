@@ -276,8 +276,10 @@ class AppServer(Config):
             os.makedirs(self.temp_path)
 
     def _setup_log(self):
-        from pritunl import logger
         logger.setup_logger()
+        self.app.logger.setLevel(logging.DEBUG)
+        self.app.logger.addFilter(logger.log_filter)
+        self.app.logger.addHandler(logger.log_handler)
 
     def _setup_handlers(self):
         import pritunl.handlers
