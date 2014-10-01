@@ -398,9 +398,3 @@ def add_reserve(reserve_type):
 
 def reserve(reserve_type, *args, **kwargs):
     return reserve_types[reserve_type](*args, **kwargs)
-
-for module_name in os.listdir(os.path.dirname(__file__)):
-    if module_name in ('__init__.py', 'com.py', 'runner.py') or \
-            module_name[-3:] != '.py':
-        continue
-    __import__('pritunl.queue.' + module_name[:-3])

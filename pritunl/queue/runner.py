@@ -128,6 +128,8 @@ def _runner_thread(cpu_priority, thread_limit, runner_queue):
         thread.start()
 
 def start_runner():
+    from pritunl import queues
+
     for cpu_priority in (LOW_CPU, NORMAL_CPU, HIGH_CPU):
         thread = threading.Thread(target=_runner_thread, args=(
             cpu_priority,
