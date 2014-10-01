@@ -3,7 +3,6 @@ from pritunl.event import Event
 from pritunl.messenger import Messenger
 from pritunl.server.bandwidth import ServerBandwidth
 from pritunl.server.ip_pool import ServerIpPool
-from pritunl.mongo.transaction import MongoTransaction
 from pritunl.cache import cache_db
 
 from pritunl.constants import *
@@ -17,6 +16,7 @@ from pritunl import host
 from pritunl import utils
 from pritunl import mongo
 from pritunl import queue
+from pritunl import transaction
 
 import uuid
 import os
@@ -215,18 +215,18 @@ class Server(mongo.MongoObject):
         threading.Thread(target=_target).start()
 
     def commit(self, *args, **kwargs):
-        transaction = None
+        tran = None
 
         if self.network != self._orig_network:
-            transaction = MongoTransaction()
+            tran = transaction.Transaction()
             if self.network_lock:
                 raise ServerNetworkLocked('Server network is locked', {
                     'server_id': self.id,
                     'lock_id': self.network_lock,
                 })
             else:
-                queue.start('assign_ip_pool',
-                    transaction=transaction,
+                queue_ip_pool = queue.start('assign_ip_pool',
+                    transaction=tran,
                     server_id=self.id,
                     network=self.network,
                     old_network=self._orig_network,
@@ -236,13 +236,13 @@ class Server(mongo.MongoObject):
             # TODO update ip pool
             pass
 
-        mongo.MongoObject.commit(self, transaction=transaction,
+        mongo.MongoObject.commit(self, transaction=tran,
             *args, **kwargs)
 
-        if transaction:
+        if tran:
             Messenger().publish('queue', 'queue_updated',
-                transaction=transaction)
-            transaction.commit()
+                transaction=tran)
+            tran.commit()
 
     def remove(self):
         self._remove_primary_user()
