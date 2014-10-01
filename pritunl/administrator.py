@@ -2,6 +2,7 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings import settings
+from pritunl.app_server import app_server
 from pritunl import utils
 from pritunl import mongo
 import base64
@@ -157,7 +158,6 @@ class Administrator(mongo.MongoObject):
             except pymongo.errors.DuplicateKeyError:
                 return False
         else:
-            from pritunl.app_server import app_server
             if not flask.session:
                 return False
 

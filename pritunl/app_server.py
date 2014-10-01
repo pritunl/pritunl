@@ -3,6 +3,7 @@ import pritunl.patches
 from pritunl.config import Config
 from pritunl import utils
 from pritunl import logger
+from pritunl.settings import settings
 import flask
 import cherrypy.wsgiserver
 import os
@@ -112,8 +113,6 @@ class AppServer(Config):
         return Config.__getattr__(self, name)
 
     def load_public_ip(self, attempts=1, timeout=5):
-        from pritunl.settings import settings
-
         for i in xrange(attempts):
             if self.public_ip:
                 return
@@ -178,8 +177,6 @@ class AppServer(Config):
         }
 
     def _check_updates(self):
-        from pritunl.settings import settings
-
         while True:
             if not settings.app.update_check_rate:
                 time.sleep(60)

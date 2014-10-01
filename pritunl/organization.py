@@ -1,5 +1,4 @@
 from pritunl.user import User
-from pritunl.pooler.user import PoolerUser
 
 from pritunl.constants import *
 from pritunl.exceptions import *

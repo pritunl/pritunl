@@ -5,6 +5,7 @@ from pritunl.task import Task, add_task
 from pritunl.pooler.user import PoolerUser
 from pritunl.pooler.org import PoolerOrg
 from pritunl.pooler.dh_params import PoolerDhParams
+from pritunl import pooler
 import logging
 import time
 

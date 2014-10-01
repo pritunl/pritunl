@@ -1,7 +1,6 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
-from pritunl.mongo.transaction import MongoTransaction
 from pritunl.vpn_ipv4_network import VpnIPv4Network
 from pritunl.cache import cache_db
 from pritunl.app_server import app_server
