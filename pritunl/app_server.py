@@ -141,10 +141,6 @@ class AppServer():
         thread.daemon = True
         thread.start()
 
-    def _setup_db(self):
-        from pritunl import setup
-        setup.setup_mongo()
-
     def _setup_app(self):
         self.app = flask.Flask(APP_NAME)
 
