@@ -15,12 +15,6 @@ class SettingsGroup(SettingsGroupBase):
             self.changed.add(name)
         object.__setattr__(self, name, value)
 
-    def __getattr__(self, name):
-        if name in self.fields:
-            return self.fields[name]
-        raise AttributeError(
-            'SettingsGroup instance has no attribute %r' % name)
-
     def get_commit_doc(self, all_fields):
         doc = {
             '_id': self.group,

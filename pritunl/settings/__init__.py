@@ -10,9 +10,13 @@ logger = logging.getLogger(APP_NAME)
 module_classes = []
 
 for module_name in os.listdir(os.path.dirname(__file__)):
-    if module_name == '__init__.py' or \
-            module_name == 'group.py' or \
-            module_name[-3:] != '.py':
+    if module_name in (
+                '__init__.py',
+                'group.py',
+                'group_base.py',
+                'group_file.py',
+                'group_local.py',
+            ) or module_name[-3:] != '.py':
         continue
 
     module_name = module_name[:-3]
@@ -27,6 +31,14 @@ class Settings(object):
     def __init__(self):
         self._running = False
 
+        self._init_modules()
+        for group in self.groups:
+            group_cls = getattr(self, group)
+            if group_cls.type != 'file':
+                continue
+
+            group_cls.load()
+
     @cached_static_property
     def collection(cls):
         from pritunl import mongo
@@ -34,7 +46,14 @@ class Settings(object):
 
     @cached_property
     def groups(self):
-        return set(dir(self)) - SETTINGS_RESERVED
+        groups = set()
+
+        for group in set(dir(self)) - SETTINGS_RESERVED:
+            if group[0] == '_':
+                continue
+            groups.add(group)
+
+        return groups
 
     def on_msg(self, msg):
         docs = msg['message']
@@ -116,7 +135,6 @@ class Settings(object):
             return
         self._running = True
 
-        self._init_modules()
         self.load()
 
         self.commit(all_fields=True)
