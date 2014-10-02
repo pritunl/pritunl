@@ -120,7 +120,8 @@ class Organization(mongo.MongoObject):
                 org_id=self.id,
             )
 
-            thread = threading.Thread(target=PoolerUser.fill_new_org_pool,
+            thread = threading.Thread(
+                target=pooler.fill('new_user'),
                 kwargs={
                     'org': self,
                 })
