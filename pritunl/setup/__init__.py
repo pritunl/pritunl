@@ -19,8 +19,8 @@ def setup_mongo():
     if not bson.has_c():
         logger.warning('Failed to load bson c bindings')
 
-    prefix = app_server.mongodb_collection_prefix or ''
-    client = pymongo.MongoClient(app_server.mongodb_url,
+    prefix = settings.conf.mongodb_collection_prefix or ''
+    client = pymongo.MongoClient(settings.conf.mongodb_url,
         connectTimeoutMS=500) # TODO
     database = client.get_default_database()
     cur_collections = database.collection_names()
