@@ -58,10 +58,12 @@ class Settings(object):
         collection = transaction.collection(
             self.collection.name_str)
 
-        for group in dir(self):
-            if group[0] == '_' or group in SETTINGS_RESERVED:
+        for group in self.groups:
+            group_cls = getattr(self, group)
+            if group_cls.type != 'default':
                 continue
-            doc = getattr(self, group).get_commit_doc(all_fields)
+
+            doc = group_cls.get_commit_doc(all_fields)
 
             if doc:
                 has_docs = True
