@@ -55,32 +55,14 @@ class AppServer():
 
     def __getattr__(self, name):
         if name == 'web_protocol':
-            if not self.ssl:
+            if not settings.conf.ssl:
                 return 'http'
             return 'https'
         elif name == 'ssl':
-            if self.debug:
+            if settings.conf.debug:
                 return False
-        return Config.__getattr__(self, name)
-
-    def load_public_ip(self, attempts=1, timeout=5):
-        for i in xrange(attempts):
-            if self.public_ip:
-                return
-            if i:
-                time.sleep(3)
-                logger.debug('Retrying get public ip address...')
-            logger.debug('Getting public ip address...')
-            try:
-                request = urllib2.Request(
-                    settings.app.public_ip_server)
-                response = urllib2.urlopen(request, timeout=timeout)
-                self.public_ip = json.load(response)['ip']
-                break
-            except:
-                pass
-        if not self.public_ip:
-            logger.exception('Failed to get public ip address...')
+        raise AttributeError('%s instance has no attribute %r' % (
+            self.__class__.__name__, name))
 
     def subscription_update(self):
         cur_sub_active = self.sub_active
@@ -153,14 +135,6 @@ class AppServer():
             except:
                 logger.exception('Failed to check subscription status.')
             time.sleep(settings.app.update_check_rate)
-
-    def _setup_public_ip(self):
-        self.load_public_ip()
-        if not self.public_ip:
-            thread = threading.Thread(target=self.load_public_ip,
-                kwargs={'attempts': 5})
-            thread.daemon = True
-            thread.start()
 
     def _setup_updates(self):
         thread = threading.Thread(target=self._check_updates)
