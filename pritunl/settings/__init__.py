@@ -32,6 +32,10 @@ class Settings(object):
         from pritunl import mongo
         return mongo.get_collection('system')
 
+    @cached_property
+    def groups(self):
+        return set(dir(self)) - SETTINGS_RESERVED
+
     def on_msg(self, msg):
         docs = msg['message']
 
@@ -77,10 +81,9 @@ class Settings(object):
         transaction.commit()
 
     def load(self):
-        groups = set(dir(self)) - SETTINGS_RESERVED
         for doc in self.collection.find():
             group_name = doc.pop('_id')
-            if group_name not in groups:
+            if group_name not in self.groups:
                 continue
 
             group = getattr(self, group_name)
