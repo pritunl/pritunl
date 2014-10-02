@@ -55,8 +55,7 @@ class Organization(mongo.MongoObject):
 
     @property
     def otp_auth(self):
-        from pritunl.server import Server
-        return bool(Server.collection.find({
+        return bool(self.server_collection.find({
             'organizations': self.id,
             'otp_auth': True,
         }, {
@@ -79,6 +78,10 @@ class Organization(mongo.MongoObject):
     @cached_static_property
     def collection(cls):
         return mongo.get_collection('organizations')
+
+    @cached_static_property
+    def server_collection(cls):
+        return mongo.get_collection('servers')
 
     def initialize(self, queue_user_init=True):
         ca_user = User(org=self, type=CERT_CA)
