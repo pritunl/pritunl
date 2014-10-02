@@ -35,59 +35,10 @@ class HTTPConnectionPatch(cherrypy.wsgiserver.HTTPConnection):
         self.wfile = makefile(sock, 'wb', self.wbufsize)
         self.requests_seen = 0
 
-class AppServer(Config):
-    bool_options = {
-        'debug',
-        'ssl',
-        'static_cache',
-    }
-    int_options = {
-        'port',
-    }
-    path_options = {
-        'log_path',
-        'www_path',
-        'server_cert_path',
-        'server_key_path',
-    }
-    str_options = {
-        'bind_addr',
-        'mongodb_url',
-        'mongodb_collection_prefix',
-    }
-    ignore_options = {
-        'log_debug',
-        'auto_start_servers',
-        'inline_certs',
-        'pooler',
-        'session_timeout',
-        'key_bits',
-        'dh_param_bits',
-        'org_pool_size',
-        'user_pool_size',
-        'server_user_pool_size',
-        'server_pool_size',
-        'server_log_lines',
-        'db_path',
-        'data_path',
-        'password',
-        'dh_param_bits_pool',
-    }
-    default_options = {
-        'ssl': True,
-        'static_cache': True,
-        'bind_addr': DEFAULT_BIND_ADDR,
-        'port': DEFAULT_PORT,
-        'pooler': True,
-        'www_path': DEFAULT_WWW_PATH,
-    }
-    read_env = True
-
+class AppServer():
     def __init__(self):
-        Config.__init__(self)
         self.app = None
         self.interrupt = False
-        self.public_ip = None
         self.conf_path = DEFAULT_CONF_PATH
         self.notification = ''
         self.www_state = OK
