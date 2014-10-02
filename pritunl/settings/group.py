@@ -1,10 +1,11 @@
+from pritunl.settings.group_base import SettingsGroupBase
+
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 
-class SettingsGroup(object):
-    group = None
-    fields = {}
+class SettingsGroup(SettingsGroupBase):
+    type = 'default'
 
     def __init__(self):
         self.changed = set()
