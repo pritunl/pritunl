@@ -5,6 +5,7 @@ from pritunl.logger.entry import LogEntry
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
+from pritunl.settings import settings
 
 import logging
 
@@ -43,14 +44,14 @@ def exception(log_msg, log_type=None, **kwargs):
     _log('exception', log_msg, log_type, **kwargs)
 
 def setup_logger():
-    from pritunl.app_server import app_server
+    # TODO move to setup
     global _logger_setup
     global log_filter
     global log_handler
 
-    if app_server.log_path:
+    if settings.conf.log_path:
         log_handler = logging.handlers.RotatingFileHandler(
-            app_server.log_path, maxBytes=1000000, backupCount=1)
+            settings.conf.log_path, maxBytes=1000000, backupCount=1)
     else:
         log_handler = logging.StreamHandler()
 

@@ -39,7 +39,7 @@ def _keep_alive_thread(host):
             }, {'$set': {
                 'status': ONLINE,
                 'ping_timestamp': datetime.datetime.utcnow(),
-                'auto_public_address': app_server.public_ip,
+                'auto_public_address': settings.local.public_ip,
             }})
         except:
             logger.exception('Error in host keep alive update. %s' % {

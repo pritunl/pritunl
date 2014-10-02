@@ -1,5 +1,6 @@
 from pritunl.constants import *
 from pritunl import utils
+from pritunl.settings import settings
 from pritunl.organization import Organization
 from pritunl.server import Server
 from pritunl.app_server import app_server
@@ -40,7 +41,7 @@ def status_get():
         'servers_online': servers_online_count,
         'server_count': servers_count,
         'server_version': __version__,
-        'public_ip': app_server.public_ip,
+        'public_ip': settings.local.public_ip,
         'local_networks': local_networks,
         'notification': notification,
     })

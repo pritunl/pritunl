@@ -2,7 +2,6 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.settings import settings
 from pritunl.cache import cache_db
-from pritunl.app_server import app_server
 from werkzeug.http import http_date
 import os
 import sys
@@ -57,12 +56,13 @@ class StaticFile(object):
         self.etag = cache_db.dict_get(self.get_cache_key(), 'etag')
 
     def load_file(self):
-        if app_server.static_cache and cache_db.exists(self.get_cache_key()):
+        if settings.conf.static_cache and cache_db.exists(
+                self.get_cache_key()):
             self.get_cache()
             return
 
         if not os.path.isfile(self.path):
-            if app_server.static_cache:
+            if settings.conf.static_cache:
                 self.set_cache()
             return
 
@@ -77,14 +77,15 @@ class StaticFile(object):
         self.mime_type = mimetypes.guess_type(file_basename)[0] or 'text/plain'
         self.last_modified = http_date(file_mtime)
         self.etag = self.generate_etag(file_basename, file_size, file_mtime)
-        if app_server.static_cache:
+        if settings.conf.static_cache:
             self.set_cache()
 
     def get_response(self):
         if not self.last_modified:
             flask.abort(404)
         response = flask.Response(response=self.data, mimetype=self.mime_type)
-        if app_server.static_cache and not app_server.debug and self.cache:
+        if settings.conf.static_cache and \
+                not settings.conf.debug and self.cache:
             response.headers.add('Cache-Control',
                 'max-age=%s, public' % settings.app.static_cache_time)
             response.headers.add('ETag', '"%s"' % self.etag)

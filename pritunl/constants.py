@@ -63,6 +63,7 @@ NAME_SAFE_CHARS = {
 }
 
 SETTINGS_RESERVED = {
+    'groups',
     'collection',
     'commit',
     'load',

@@ -338,7 +338,7 @@ def server_put_post(server_id=None):
 
         if not public_address_def:
             public_address_def = True
-            public_address = app_server.public_ip
+            public_address = settings.local.public_ip
 
     if network_def:
         if network in network_used:

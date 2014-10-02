@@ -103,8 +103,8 @@ def init_host():
     hst.status = ONLINE
     hst.users_online = 0
     hst.start_timestamp = datetime.datetime.utcnow()
-    if app_server.public_ip:
-        hst.auto_public_address = app_server.public_ip
+    if settings.local.public_ip:
+        hst.auto_public_address = settings.local.public_ip
 
     hst.commit()
     Event(type=HOSTS_UPDATED)

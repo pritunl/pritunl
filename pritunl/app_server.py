@@ -330,37 +330,37 @@ class AppServer(Config):
         self._setup_host()
 
     def _setup_server_cert(self):
-        if not os.path.isfile(self.server_cert_path) or \
-                not os.path.isfile(self.server_key_path):
+        if not os.path.isfile(settings.conf.server_cert_path) or \
+                not os.path.isfile(settings.conf.server_key_path):
             logger.info('Generating server ssl cert...')
             try:
                 subprocess.check_call([
                     'openssl', 'req', '-batch', '-x509', '-nodes', '-sha256',
                     '-newkey', 'rsa:4096',
                     '-days', '3652',
-                    '-keyout', self.server_key_path,
-                    '-out', self.server_cert_path,
+                    '-keyout', settings.conf.server_key_path,
+                    '-out', settings.conf.server_cert_path,
                 ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             except subprocess.CalledProcessError:
                 logger.exception('Failed to generate server ssl cert.')
                 raise
-            os.chmod(self.server_key_path, 0600)
+            os.chmod(settings.conf.server_key_path, 0600)
 
     def _run_wsgi(self):
         from pritunl.settings import settings
 
-        if self.ssl:
+        if settings.conf.ssl:
             self._setup_server_cert()
         logger.info('Starting server...')
 
         server = cherrypy.wsgiserver.CherryPyWSGIServer(
-            (self.bind_addr, self.port), self.app,
+            (settings.conf.bind_addr, settings.conf.port), self.app,
             request_queue_size=settings.app.request_queue_size,
             server_name=cherrypy.wsgiserver.CherryPyWSGIServer.version)
-        if self.ssl:
+        if settings.conf.ssl:
             server.ConnectionClass = HTTPConnectionPatch
             server.ssl_adapter = SSLAdapter(
-                self.server_cert_path, self.server_key_path)
+                settings.conf.server_cert_path, settings.conf.server_key_path)
         try:
             server.start()
         except (KeyboardInterrupt, SystemExit):
@@ -383,7 +383,8 @@ class AppServer(Config):
         werkzeug_logger.addHandler(logger.log_handler)
 
         try:
-            self.app.run(host=self.bind_addr, port=self.port, threaded=True)
+            self.app.run(host=settings.conf.bind_addr,
+                port=settings.conf.port, threaded=True)
         except (KeyboardInterrupt, SystemExit):
             pass
         except:
@@ -399,17 +400,17 @@ class AppServer(Config):
         self.interrupt = True
 
     def _run_server(self):
-        if self.debug:
+        if settings.conf.debug:
             logger.LogEntry(message='Web debug server started.')
         else:
             logger.LogEntry(message='Web server started.')
         try:
-            if self.debug:
+            if settings.conf.debug:
                 self._run_wsgi_debug()
             else:
                 self._run_wsgi()
         finally:
-            if self.debug:
+            if settings.conf.debug:
                 logger.LogEntry(message='Web debug server stopped.')
             else:
                 logger.LogEntry(message='Web server stopped.')
