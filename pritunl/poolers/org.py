@@ -19,15 +19,12 @@ import os
 import itertools
 import collections
 
-def collection():
-    return mongo.get_collection('organizations')
-
-def queue_collection():
-    return mongo.get_collection('queue')
-
 @pooler.add_pooler('org')
 def fill_org():
     from pritunl.organization import Organization
+
+    collection = mongo.get_collection('organizations')
+    queue_collection = mongo.get_collection('queue')
 
     org_pool_count = collection.find({
         'type': ORG_POOL,

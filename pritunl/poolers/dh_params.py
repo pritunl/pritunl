@@ -10,14 +10,11 @@ from pritunl import mongo
 from pritunl import utils
 from pritunl import queue
 
-def collection():
-    return mongo.get_collection('dh_params')
-
-def queue_collection():
-    return mongo.get_collection('queue')
-
 @pooler.add_pooler('dh_params')
 def fill_dh_params():
+    collection = mongo.get_collection('dh_params')
+    queue_collection = mongo.get_collection('queue')
+
     dh_param_bits_pool = settings.app.dh_param_bits_pool
     if len(dh_param_bits_pool) > 1:
         dh_param_counts = LeastCommonCounter(

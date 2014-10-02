@@ -16,18 +16,13 @@ import os
 import itertools
 import collections
 
-def collection():
-    return mongo.get_collection('users')
-
-def org_collection():
-    return mongo.get_collection('organizations')
-
-def queue_collection():
-    return mongo.get_collection('queue')
-
 @pooler.add_pooler('user')
 def fill_user():
     from pritunl.organization import Organization
+
+    collection = mongo.get_collection('users')
+    org_collection = mongo.get_collection('organizations')
+    queue_collection = mongo.get_collection('queue')
 
     orgs = {}
     orgs_count = LeastCommonCounter()
