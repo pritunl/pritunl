@@ -236,14 +236,17 @@ class AppServer():
         return self._get_version_int(__version__)
 
     def _setup_all(self):
+        from pritunl import setup
+
         self._setup_app()
         self._setup_conf()
-        self._setup_db()
+        setup.setup_mongo()
         self._setup_temp_path()
         self._setup_log()
-        self._setup_public_ip()
+        setup.setup_public_ip()
         self._setup_updates()
         self._setup_handlers()
+        setup.setup_poolers()
         self._setup_queue_runner()
         self._setup_transaction_runner()
         self._setup_task_runner()
