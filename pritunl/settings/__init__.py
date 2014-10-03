@@ -1,7 +1,6 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
-from pritunl import logger
 
 import importlib
 import os
@@ -93,7 +92,7 @@ class Settings(object):
         collection.bulk_execute()
         transaction.commit()
 
-    def load(self):
+    def load_mongo(self):
         for cls in module_classes:
             if cls.type != GROUP_MONGO:
                 continue
