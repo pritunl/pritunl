@@ -4,8 +4,8 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 
-class SettingsGroup(SettingsGroupBase):
-    type = 'default'
+class SettingsGroupMongo(SettingsGroupBase):
+    type = GROUP_MONGO
 
     def __init__(self):
         self.changed = set()
