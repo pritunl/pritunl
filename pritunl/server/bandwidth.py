@@ -1,8 +1,9 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
-from pritunl.app_server import app_server
+from pritunl.settings import settings
 from pritunl import mongo
+
 import pymongo
 import os
 import json
@@ -230,7 +231,7 @@ class ServerBandwidth(object):
         for period in ('1m', '5m', '30m', '2h', '1d'):
             data[period] = self.get_period_random(period)
 
-        path = os.path.join(app_server.temp_path, 'demo_bandwidth')
+        path = os.path.join(settings.conf.temp_path, 'demo_bandwidth')
         with open(path, 'w') as demo_file:
             demo_file.write(json.dumps(data))
         return data

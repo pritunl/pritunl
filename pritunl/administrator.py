@@ -2,7 +2,6 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings import settings
-from pritunl.app_server import app_server
 from pritunl import utils
 from pritunl import mongo
 import base64
@@ -169,7 +168,7 @@ class Administrator(mongo.MongoObject):
             if not administrator:
                 return False
 
-            if not app_server.ssl and flask.session.get(
+            if not settings.conf.ssl and flask.session.get(
                     'source') != utils.get_remote_addr():
                 flask.session.clear()
                 return False

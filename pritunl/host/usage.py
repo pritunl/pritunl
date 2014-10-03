@@ -179,7 +179,7 @@ class HostUsage(object):
         for period in ('1m', '5m', '30m', '2h', '1d'):
             data[period] = self.get_period_random(period)
 
-        path = os.path.join(app_server.temp_path, 'demo_usage')
+        path = os.path.join(settings.conf.temp_path, 'demo_usage')
         with open(path, 'w') as demo_file:
             demo_file.write(json.dumps(data))
         return data

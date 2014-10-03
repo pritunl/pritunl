@@ -6,7 +6,6 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings import settings
-from pritunl.app_server import app_server
 from pritunl.host import keep_alive
 from pritunl import utils
 from pritunl import mongo
@@ -34,7 +33,7 @@ class Host(mongo.MongoObject):
         self.usage = HostUsage(self.id)
 
         if 'id' not in kwargs and 'doc' not in kwargs and 'spec' not in kwargs:
-            self.id = app_server.host_id
+            self.id = settings.local.host_id
 
         if name is not None:
             self.name = name

@@ -26,7 +26,7 @@ def status_get():
     user_count = Organization.get_user_count_multi()
     local_networks = utils.get_local_networks()
 
-    if app_server.openssl_heartbleed:
+    if settings.local.openssl_heartbleed:
         notification = 'You are running an outdated version of openssl ' + \
             'containting the heartbleed bug. This could allow an attacker ' + \
             'to compromise your server. Please upgrade your openssl ' + \
