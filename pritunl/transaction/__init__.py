@@ -1,5 +1,4 @@
 from pritunl.transaction.collection import TransactionCollection
-from pritunl.transaction.runner import start_runner
 
 from pritunl.constants import *
 from pritunl.exceptions import *
