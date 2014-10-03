@@ -121,10 +121,12 @@ class Organization(mongo.MongoObject):
             )
 
             thread = threading.Thread(
-                target=pooler.fill('new_user'),
-                kwargs={
-                    'org': self,
-                })
+                target=pooler.fill,
+                args=(
+                    'new_user',
+                    self,
+                ),
+            )
             thread.daemon = True
             thread.start()
 
