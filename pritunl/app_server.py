@@ -95,57 +95,9 @@ class AppServer():
             'cancel_at_period_end': self.sub_cancel_at_period_end,
         }
 
-    def _check_updates(self):
-        while True:
-            if not settings.app.update_check_rate:
-                time.sleep(60)
-                continue
-
-            logger.debug('Checking notifications...')
-            try:
-                request = urllib2.Request(
-                    settings.app.notification_server +
-                    '/%s' % self._get_version())
-                response = urllib2.urlopen(request, timeout=60)
-                data = json.load(response)
-
-                self.notification = data.get('message', '')
-                self.www_state = data.get('www', OK)
-                self.vpn_state = data.get('vpn', OK)
-            except:
-                logger.exception('Failed to check notifications.')
-
-            logger.debug('Checking subscription status...')
-            try:
-                self.subscription_update()
-            except:
-                logger.exception('Failed to check subscription status.')
-            time.sleep(settings.app.update_check_rate)
-
-    def _setup_updates(self):
-        thread = threading.Thread(target=self._check_updates)
-        thread.daemon = True
-        thread.start()
-
     def _setup_app(self):
-        self.app = flask.Flask(APP_NAME)
-
-        @self.app.before_request
-        def before_request():
-            flask.g.query_count = 0
-            flask.g.write_count = 0
-            flask.g.query_time = 0
-            flask.g.start = time.time()
-
-        @self.app.after_request
-        def after_request(response):
-            response.headers.add('Execution-Time',
-                int((time.time() - flask.g.start) * 1000))
-            response.headers.add('Query-Time',
-                int(flask.g.query_time * 1000))
-            response.headers.add('Query-Count', flask.g.query_count)
-            response.headers.add('Write-Count', flask.g.write_count)
-            return response
+        from pritunl.app import app
+        self.app = app
 
     def auth(self, call):
         from administrator import Administrator
