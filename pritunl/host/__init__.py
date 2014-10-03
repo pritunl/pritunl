@@ -6,13 +6,14 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings import settings
-from pritunl.host import keep_alive
 from pritunl import utils
 from pritunl import mongo
 from pritunl import logger
 
 import signal
 import datetime
+
+host = None
 
 class Host(mongo.MongoObject):
     fields = {
@@ -81,9 +82,6 @@ class Host(mongo.MongoObject):
             raise HostError('Host must be offline to remove')
         MongoObject.remove(self)
 
-    def keep_alive(self):
-        keep_alive.start_keep_alive(self)
-
 def get_host(id):
     return Host(id=id)
 
@@ -92,34 +90,26 @@ def iter_hosts():
         yield Host(doc=doc)
 
 def init_host():
-    hst = Host()
+    global host
+    host = Host()
 
     try:
-        hst.load()
+        host.load()
     except NotFound:
         pass
 
-    hst.status = ONLINE
-    hst.users_online = 0
-    hst.start_timestamp = datetime.datetime.utcnow()
+    host.status = ONLINE
+    host.users_online = 0
+    host.start_timestamp = datetime.datetime.utcnow()
     if settings.local.public_ip:
-        hst.auto_public_address = settings.local.public_ip
+        host.auto_public_address = settings.local.public_ip
 
-    hst.commit()
+    host.commit()
     Event(type=HOSTS_UPDATED)
 
-    return hst
-
 def deinit_host():
-    hst = Host()
-
-    try:
-        hst.load()
-    except NotFound:
-        pass
-
     Host.collection.update({
-        '_id': hst.id,
+        '_id': host.id,
     }, {'$set': {
         'status': OFFLINE,
         'ping_timestamp': None,
