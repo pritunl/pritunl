@@ -7,6 +7,7 @@ from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings import settings
 from pritunl.app_server import app_server
+from pritunl import auth
 from pritunl import host
 from pritunl import utils
 from pritunl import logger
@@ -567,7 +568,7 @@ def server_bandwidth_get(server_id, period):
     return utils.jsonify(server.bandwidth.get_period(period))
 
 @app_server.app.route('/server/<server_id>/tls_verify', methods=['POST'])
-@app_server.server_auth
+@auth.server_auth
 def server_tls_verify_post(server_id):
     org_id = flask.request.json['org_id']
     user_id = flask.request.json['user_id']
@@ -607,7 +608,7 @@ def server_tls_verify_post(server_id):
     })
 
 @app_server.app.route('/server/<server_id>/otp_verify', methods=['POST'])
-@app_server.server_auth
+@auth.server_auth
 def server_otp_verify_post(server_id):
     org_id = flask.request.json['org_id']
     user_id = flask.request.json['user_id']
@@ -649,7 +650,7 @@ def server_otp_verify_post(server_id):
     })
 
 @app_server.app.route('/server/<server_id>/client_connect', methods=['POST'])
-@app_server.server_auth
+@auth.server_auth
 def server_client_connect_post(server_id):
     org_id = flask.request.json['org_id']
     user_id = flask.request.json['user_id']
@@ -690,7 +691,7 @@ def server_client_connect_post(server_id):
 
 @app_server.app.route('/server/<server_id>/client_disconnect',
     methods=['POST'])
-@app_server.server_auth
+@auth.server_auth
 def server_client_disconnect_post(server_id):
     org_id = flask.request.json['org_id']
     user_id = flask.request.json['user_id']
