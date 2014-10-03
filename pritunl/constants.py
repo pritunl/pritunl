@@ -155,6 +155,10 @@ CERT_CLIENT_POOL = 'client_pool'
 ORG_DEFAULT = 'default'
 ORG_POOL = 'pool'
 
+GROUP_MONGO = 'mongo'
+GROUP_FILE = 'file'
+GROUP_LOCAL = 'local'
+
 ORGS_UPDATED = 'organizations_updated'
 USERS_UPDATED = 'users_updated'
 LOG_UPDATED = 'log_updated'
