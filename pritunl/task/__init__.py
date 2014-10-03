@@ -3,15 +3,15 @@ from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings import settings
 from pritunl import mongo
+from pritunl import logger
+
 import pymongo
 import bson
 import datetime
-import logging
 import collections
 
 _task_types = {}
-_tasks = collections.defaultdict(lambda: collections.defaultdict(list))
-logger = logging.getLogger(APP_NAME)
+tasks = collections.defaultdict(lambda: collections.defaultdict(list))
 
 def add_task(task_cls, hours=None, minutes=None):
     if hours is not None or minutes is not None:
@@ -27,7 +27,7 @@ def add_task(task_cls, hours=None, minutes=None):
 
         for hour in hours:
             for minute in minutes:
-                _tasks[hour][minute].append(task_cls)
+                tasks[hour][minute].append(task_cls)
 
     _task_types[task_cls.type] = task_cls
 
@@ -99,7 +99,6 @@ class Task(mongo.MongoObject):
     def task(self):
         pass
 
-    @classmethod
-    def iter_tasks(cls, spec=None):
-        for doc in cls.collection.find(spec or {}):
-            yield _task_types[doc['type']](doc=doc)
+def iter_tasks(spec=None):
+    for doc in Task.collection.find(spec or {}):
+        yield _task_types[doc['type']](doc=doc)
