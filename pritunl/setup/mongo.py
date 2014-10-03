@@ -50,8 +50,7 @@ def setup_mongo():
     for collection_name, collection in mongo.collections.items():
         collection.name_str = collection_name
 
-    settings.start()
-    settings.commit(True)
+    settings.init()
 
     if prefix + 'log_entries' not in cur_collections:
         log_limit = settings.app.log_entry_limit
