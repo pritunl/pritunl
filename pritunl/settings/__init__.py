@@ -117,31 +117,8 @@ class Settings(object):
                 group_cls.load()
             setattr(self, cls.group, group_cls)
 
-    def _check(self):
-        try:
-            self.load()
-        except:
-            logger.exception('Auto settings check failed')
-        self._start_check()
-
-    def _start_check(self):
-        thread = threading.Timer(self.app.settings_check_interval,
-            self._check)
-        thread.daemon = True
-        thread.start()
-
-    def start(self):
-        import pritunl.listener as listener
-
-        if self._running:
-            return
-        self._running = True
-
-        self.load()
-
+    def init(self):
+        self.load_mongo()
         self.commit(all_fields=True)
-        listener.add_listener('setting', self.on_msg)
-
-        self._start_check()
 
 settings = Settings()
