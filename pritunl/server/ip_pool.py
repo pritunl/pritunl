@@ -1,17 +1,17 @@
+from pritunl.vpn_ipv4_network import VpnIPv4Network
+from pritunl.cache import cache_db
+
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
-from pritunl.vpn_ipv4_network import VpnIPv4Network
-from pritunl.cache import cache_db
 from pritunl.app_server import app_server
 from pritunl import mongo
-import pritunl.ipaddress as ipaddress
+from pritunl import ipaddress
+from pritunl import logger
+
 import bson
-import logging
 import pymongo
 import collections
-
-logger = logging.getLogger(APP_NAME)
 
 class ServerIpPool:
     def __init__(self, server):
