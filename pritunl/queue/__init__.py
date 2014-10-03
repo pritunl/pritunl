@@ -1,7 +1,6 @@
 from pritunl.messenger import Messenger
 
 from pritunl.queue.com import QueueCom
-from pritunl.queue.runner import start_runner
 
 from pritunl.constants import *
 from pritunl.exceptions import *
