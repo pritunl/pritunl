@@ -42,7 +42,7 @@ def auth_put():
         email_api_key = flask.request.json['email_api_key']
         settings.app.email_api_key = email_api_key or None
     if settings_commit:
-        settings.commit(settings.changed)
+        settings.commit()
 
     administrator.commit(administrator.changed)
 
