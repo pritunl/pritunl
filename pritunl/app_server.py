@@ -108,111 +108,20 @@ class AppServer():
         _wrapped.__name__ = '%s_auth' % call.__name__
         return _wrapped
 
-    def server_auth(self, call):
-        def _wrapped(*args, **kwargs):
-            api_key = flask.request.headers.get('API-Key', None)
-            if api_key != self.server_api_key:
-                logger.error('Local auth error, invalid api key.')
-                raise flask.abort(401)
-            return call(*args, **kwargs)
-        _wrapped.__name__ = '%s_server_auth' % call.__name__
-        return _wrapped
-
     def get_temp_path(self):
-        temp_path = os.path.join(self.temp_path, uuid.uuid4().hex)
-        return temp_path
-
-    def _setup_conf(self):
-        self.set_path(self.conf_path)
-
-    def _setup_temp_path(self):
-        # TODO
-        self.temp_path = 'tmp/pritunl'
-        if not os.path.isdir(self.temp_path):
-            os.makedirs(self.temp_path)
-
-    def _setup_log(self):
-        logger.setup_logger()
-        self.app.logger.setLevel(logging.DEBUG)
-        self.app.logger.addFilter(logger.log_filter)
-        self.app.logger.addHandler(logger.log_handler)
-
-    def _setup_handlers(self):
-        import pritunl.handlers
-
-    def _setup_queue_runner(self):
-        from pritunl import queue
-        queue.start_runner()
-
-    def _setup_transaction_runner(self):
-        from pritunl import transaction
-        transaction.start_runner()
-
-    def _setup_task_runner(self):
-        from pritunl.task.runner import TaskRunner
-        task_runner = TaskRunner()
-        task_runner.start()
-
-    def _setup_listener(self):
-        import pritunl.listener as listener
-        listener.start()
-
-    def _setup_host(self):
-        from pritunl import host
-        hst = host.init_host()
-        hst.keep_alive()
+        return os.path.join(settings.conf.temp_path, uuid.uuid4().hex)
 
     def _end_host(self):
         from pritunl import host
         host.deinit_host()
 
-    def _get_version_int(self, version):
-        return int(''.join([x.zfill(2) for x in version.split('.')]))
-
-    def _get_version(self):
-        from pritunl import __version__
-        return self._get_version_int(__version__)
-
     def _setup_all(self):
         from pritunl import setup
 
         self._setup_app()
-        self._setup_conf()
-        setup.setup_mongo()
-        self._setup_temp_path()
-        self._setup_log()
-        setup.setup_public_ip()
-        self._setup_updates()
-        self._setup_handlers()
-        setup.setup_poolers()
-        self._setup_queue_runner()
-        self._setup_transaction_runner()
-        self._setup_task_runner()
-        self._setup_listener()
-        self._setup_host()
-
-    def _setup_server_cert(self):
-        if not os.path.isfile(settings.conf.server_cert_path) or \
-                not os.path.isfile(settings.conf.server_key_path):
-            logger.info('Generating server ssl cert...')
-            try:
-                subprocess.check_call([
-                    'openssl', 'req', '-batch', '-x509', '-nodes', '-sha256',
-                    '-newkey', 'rsa:4096',
-                    '-days', '3652',
-                    '-keyout', settings.conf.server_key_path,
-                    '-out', settings.conf.server_cert_path,
-                ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            except subprocess.CalledProcessError:
-                logger.exception('Failed to generate server ssl cert.')
-                raise
-            os.chmod(settings.conf.server_key_path, 0600)
+        setup.setup_all()
 
     def _run_wsgi(self):
-        from pritunl.settings import settings
-
-        if settings.conf.ssl:
-            self._setup_server_cert()
         logger.info('Starting server...')
 
         server = cherrypy.wsgiserver.CherryPyWSGIServer(
