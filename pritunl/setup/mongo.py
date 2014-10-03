@@ -1,3 +1,5 @@
+from pritunl.administrator import Administrator
+
 from pritunl.app_server import app_server
 from pritunl.settings import settings
 from pritunl import logger
@@ -110,7 +112,6 @@ def setup_mongo():
     mongo.collections['auth_limiter'].ensure_index('timestamp',
         expireAfterSeconds=settings.app.auth_limiter_ttl)
 
-    from pritunl.administrator import Administrator
     if not Administrator.collection.find_one():
         Administrator(
             username=DEFAULT_USERNAME,
@@ -126,10 +127,10 @@ def setup_mongo():
         settings.commit()
     app_server.app.secret_key = secret_key.encode()
 
-    server_api_key = settings.app.email_api_key
+    server_api_key = settings.app.server_api_key
     if not server_api_key:
         server_api_key = re.sub(r'[\W_]+', '',
             base64.b64encode(os.urandom(128)))[:64]
-        settings.app.email_api_key = server_api_key
+        settings.app.server_api_key = server_api_key
         settings.commit()
     app_server.server_api_key = server_api_key
