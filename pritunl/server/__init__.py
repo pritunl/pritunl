@@ -464,9 +464,9 @@ class Server(mongo.MongoObject):
             with open(script_path, 'w') as script_file:
                 os.chmod(script_path, 0755) # TODO
                 script_file.write(script % (
-                    app_server.server_api_key,
+                    settings.app.server_api_key,
                     '/dev/null', # TODO
-                    app_server.web_protocol,
+                    'https' if settings.conf.ssl else 'http',
                     auth_host,
                     app_server.port,
                     self.id,
