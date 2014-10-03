@@ -1,19 +1,19 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
+from pritunl import logger
+
 import importlib
 import os
 import threading
-import logging
 
-logger = logging.getLogger(APP_NAME)
 module_classes = []
 
 for module_name in os.listdir(os.path.dirname(__file__)):
     if module_name in (
                 '__init__.py',
-                'group.py',
                 'group_base.py',
+                'group_mongo.py',
                 'group_file.py',
                 'group_local.py',
             ) or module_name[-3:] != '.py':
@@ -30,14 +30,8 @@ for module_name in os.listdir(os.path.dirname(__file__)):
 class Settings(object):
     def __init__(self):
         self._running = False
-
+        self._loaded = False
         self._init_modules()
-        for group in self.groups:
-            group_cls = getattr(self, group)
-            if group_cls.type != 'file':
-                continue
-
-            group_cls.load()
 
     @cached_static_property
     def collection(cls):
@@ -48,10 +42,8 @@ class Settings(object):
     def groups(self):
         groups = set()
 
-        for group in set(dir(self)) - SETTINGS_RESERVED:
-            if group[0] == '_':
-                continue
-            groups.add(group)
+        for cls in module_classes:
+            groups.add(cls.group)
 
         return groups
 
@@ -79,7 +71,7 @@ class Settings(object):
 
         for group in self.groups:
             group_cls = getattr(self, group)
-            if group_cls.type != 'default':
+            if group_cls.type != GROUP_MONGO:
                 continue
 
             doc = group_cls.get_commit_doc(all_fields)
@@ -102,6 +94,11 @@ class Settings(object):
         transaction.commit()
 
     def load(self):
+        for cls in module_classes:
+            if cls.type != GROUP_MONGO:
+                continue
+            setattr(self, cls.group, cls())
+
         for doc in self.collection.find():
             group_name = doc.pop('_id')
             if group_name not in self.groups:
@@ -110,10 +107,16 @@ class Settings(object):
             group = getattr(self, group_name)
             for field, val in doc.items():
                 setattr(group, field, val)
+        self._loaded = True
 
     def _init_modules(self):
         for cls in module_classes:
-            setattr(self, cls.group, cls())
+            if cls.type == GROUP_MONGO:
+                continue
+            group_cls = cls()
+            if group_cls.type == GROUP_FILE:
+                group_cls.load()
+            setattr(self, cls.group, group_cls)
 
     def _check(self):
         try:

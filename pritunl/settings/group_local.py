@@ -5,4 +5,4 @@ from pritunl.exceptions import *
 from pritunl.descriptors import *
 
 class SettingsGroupLocal(SettingsGroupBase):
-    type = 'local'
+    type = GROUP_LOCAL

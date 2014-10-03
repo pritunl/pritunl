@@ -8,7 +8,7 @@ import json
 import os
 
 class SettingsGroupFile(SettingsGroupBase):
-    type = 'file'
+    type = GROUP_FILE
     path = None
 
     def load(self):

@@ -1,9 +1,10 @@
+from pritunl.settings.group_mongo import SettingsGroupMongo
+
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
-from pritunl.settings.group import SettingsGroup
 
-class SettingsUser(SettingsGroup):
+class SettingsUser(SettingsGroupMongo):
     group = 'user'
     fields = {
         'otp_secret_len': 16,

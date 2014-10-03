@@ -1,7 +1,8 @@
+from pritunl.settings.group_file import SettingsGroupFile
+
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
-from pritunl.settings.group_file import SettingsGroupFile
 
 class SettingsConf(SettingsGroupFile):
     group = 'conf'
@@ -12,6 +13,7 @@ class SettingsConf(SettingsGroupFile):
         'static_cache': True,
         'port': 9700,
         'pooler': True,
+        'temp_path': 'tmp/pritunl',
         'log_path': '/var/log/pritunl.log',
         'www_path': '/usr/share/pritunl/www',
         'server_cert_path': '/etc/pritunl.crt',
