@@ -1,4 +1,3 @@
-from pritunl.vpn_ipv4_network import VpnIPv4Network
 from pritunl.cache import cache_db
 
 from pritunl.constants import *
@@ -40,7 +39,7 @@ class ServerIpPool:
         if response.get('updatedExisting'):
             return
 
-        ip_pool = VpnIPv4Network(network).iterhost_sets()
+        ip_pool = ipaddress.VpnIPv4Network(network).iterhost_sets()
 
         try:
             doc = self.collection.find({
@@ -83,7 +82,7 @@ class ServerIpPool:
         server_id = self.server.id
         pool_end = False
 
-        ip_pool = VpnIPv4Network(network).iterhost_sets()
+        ip_pool = ipaddress.VpnIPv4Network(network).iterhost_sets()
 
         if mongo.has_bulk:
             bulk = self.collection.initialize_unordered_bulk_op()

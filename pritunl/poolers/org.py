@@ -1,5 +1,3 @@
-from pritunl.least_common_counter import LeastCommonCounter
-
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *

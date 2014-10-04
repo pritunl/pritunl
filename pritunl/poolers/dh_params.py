@@ -1,5 +1,3 @@
-from pritunl.least_common_counter import LeastCommonCounter
-
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
@@ -17,7 +15,7 @@ def fill_dh_params():
 
     dh_param_bits_pool = settings.app.dh_param_bits_pool
     if len(dh_param_bits_pool) > 1:
-        dh_param_counts = LeastCommonCounter(
+        dh_param_counts = utils.LeastCommonCounter(
             {x: 0 for x in dh_param_bits_pool})
 
         pools = collection.aggregate([
@@ -53,7 +51,7 @@ def fill_dh_params():
         for pool in pools:
             dh_param_counts[pool['_id']] += pool['count']
     else:
-        dh_param_counts = LeastCommonCounter()
+        dh_param_counts = utils.LeastCommonCounter()
 
         pool_count = collection.find({
             'dh_param_bits': dh_param_bits_pool[0],

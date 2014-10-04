@@ -1,5 +1,3 @@
-from pritunl.least_common_counter import LeastCommonCounter
-
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
@@ -25,7 +23,7 @@ def fill_user():
     queue_collection = mongo.get_collection('queue')
 
     orgs = {}
-    orgs_count = LeastCommonCounter()
+    orgs_count = utils.LeastCommonCounter()
     type_to_size = {
         CERT_CLIENT_POOL: settings.app.user_pool_size,
         CERT_SERVER_POOL: settings.app.server_user_pool_size,
