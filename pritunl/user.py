@@ -7,10 +7,10 @@ from pritunl.app_server import app_server
 from pritunl import mongo
 from pritunl import utils
 from pritunl import queue
+from pritunl import logger
 import tarfile
 import os
 import subprocess
-import logging
 import hashlib
 import base64
 import struct
@@ -18,8 +18,6 @@ import hmac
 import time
 import threading
 import json
-
-logger = logging.getLogger(APP_NAME)
 
 class User(mongo.MongoObject):
     fields = {

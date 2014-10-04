@@ -17,6 +17,7 @@ from pritunl import mongo
 from pritunl import queue
 from pritunl import transaction
 from pritunl import event
+from pritunl import logger
 
 import uuid
 import os
@@ -25,13 +26,10 @@ import time
 import datetime
 import subprocess
 import threading
-import logging
 import traceback
 import re
 import json
 import bson
-
-logger = logging.getLogger(APP_NAME)
 
 class Server(mongo.MongoObject):
     fields = {
