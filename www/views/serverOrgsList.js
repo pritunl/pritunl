@@ -38,7 +38,7 @@ define([
       else {
         this.$('.no-orgs').slideUp(250);
       }
-      this.serverView.setButtonState(views.length)
+      this.serverView.updateButtons();
     }
   });
 

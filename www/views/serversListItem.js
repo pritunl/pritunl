@@ -106,13 +106,37 @@ define([
       this.updateButtons();
     },
     updateButtons: function() {
-      if (this.buttonLock) {
+      var buttonLock = true;
+      var orgsCount = this.serverOrgsListView.views.length;
+      var hostsCount = this.serverHostsListView.views.length;
+      if (!orgsCount && hostsCount) {
+        this.$('.no-host-warning').hide();
+        this.$('.no-org-host-warning').hide();
+        this.$('.no-org-warning').show();
+      }
+      else if (orgsCount && !hostsCount) {
+        this.$('.no-org-warning').hide();
+        this.$('.no-org-host-warning').hide();
+        this.$('.no-host-warning').show();
+      }
+      else if (!orgsCount && !hostsCount) {
+        this.$('.no-org-warning').hide();
+        this.$('.no-host-warning').hide();
+        this.$('.no-org-host-warning').show();
+      }
+      else {
+        this.$('.no-org-warning').hide();
+        this.$('.no-host-warning').hide();
+        this.$('.no-org-host-warning').hide();
+        buttonLock = false;
+      }
+
+      if (buttonLock) {
         this.$('.server-stop').hide();
         this.$('.server-restart').hide();
         this.$('.server-start').show();
         this.startDisabled = true;
         this.$('.server-start').attr('disabled', 'disabled');
-        this.$('.no-org-warning').show();
       }
       else if (this.model.get('status')) {
         this.$('.server-start').hide();
@@ -124,7 +148,6 @@ define([
           this.startDisabled = false;
           this.$('.server-start').removeAttr('disabled');
         }
-        this.$('.no-org-warning').hide();
       }
       else {
         this.$('.server-stop').hide();
@@ -134,12 +157,7 @@ define([
           this.startDisabled = false;
           this.$('.server-start').removeAttr('disabled');
         }
-        this.$('.no-org-warning').hide();
       }
-    },
-    setButtonState: function(state) {
-      this.buttonLock = !state;
-      this.updateButtons();
     },
     onSettings: function() {
       if (this.model.get('status')) {
