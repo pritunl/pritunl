@@ -1,6 +1,5 @@
 from pritunl.constants import *
 import pritunl.patches
-from pritunl.config import Config
 from pritunl import utils
 from pritunl import logger
 from pritunl.settings import settings
