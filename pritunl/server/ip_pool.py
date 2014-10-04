@@ -230,19 +230,18 @@ class ServerIpPool:
             return doc['local_addr'], doc['remote_addr']
         return None, None
 
-    @classmethod
-    def multi_get_ip_addr(cls, org_id, user_ids):
-        spec = {
-            'user_id': {'$in': user_ids},
-        }
-        project = {
-            '_id': False,
-            'user_id': True,
-            'server_id': True,
-            'local_addr': True,
-            'remote_addr': True,
-        }
+def multi_get_ip_addr(cls, org_id, user_ids):
+    spec = {
+        'user_id': {'$in': user_ids},
+    }
+    project = {
+        '_id': False,
+        'user_id': True,
+        'server_id': True,
+        'local_addr': True,
+        'remote_addr': True,
+    }
 
-        for doc in cls.collection.find(spec, project):
-            yield doc['user_id'], doc['server_id'], \
-                doc['local_addr'], doc['remote_addr']
+    for doc in cls.collection.find(spec, project):
+        yield doc['user_id'], doc['server_id'], \
+            doc['local_addr'], doc['remote_addr']

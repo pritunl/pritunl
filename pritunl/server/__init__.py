@@ -1,8 +1,9 @@
 from pritunl.organization import Organization
 from pritunl.messenger import Messenger
+from pritunl.cache import cache_db
+
 from pritunl.server.bandwidth import ServerBandwidth
 from pritunl.server.ip_pool import ServerIpPool
-from pritunl.cache import cache_db
 
 from pritunl.constants import *
 from pritunl.exceptions import *
@@ -917,51 +918,47 @@ class Server(mongo.MongoObject):
             if not force:
                 event.Event(type=SERVERS_UPDATED)
 
-    @classmethod
-    def new_server(cls, **kwargs):
-        server = cls(**kwargs)
-        server.initialize()
-        return server
+def new_server(**kwargs):
+    server = Server(**kwargs)
+    server.initialize()
+    return server
 
-    @classmethod
-    def get_server(cls, id):
-        return cls(id=id)
+def get_server(id):
+    return Server(id=id)
 
-    @classmethod
-    def get_used_resources(cls, ignore_server_id):
-        used_resources = cls.collection.aggregate([
-            {'$match': {
-                '_id': {'$ne': bson.ObjectId(ignore_server_id)},
-            }},
-            {'$project': {
-                'network': True,
-                'interface': True,
-                'port_protocol': {'$concat': [
-                    {'$substr': ['$port', 0, 5]},
-                    '$protocol',
-                ]},
-            }},
-            {'$group': {
-                '_id': None,
-                'networks': {'$addToSet': '$network'},
-                'interfaces': {'$addToSet': '$interface'},
-                'ports': {'$addToSet': '$port_protocol'},
-            }},
-        ])['result']
+def get_used_resources(ignore_server_id):
+    used_resources = Server.collection.aggregate([
+        {'$match': {
+            '_id': {'$ne': bson.ObjectId(ignore_server_id)},
+        }},
+        {'$project': {
+            'network': True,
+            'interface': True,
+            'port_protocol': {'$concat': [
+                {'$substr': ['$port', 0, 5]},
+                '$protocol',
+            ]},
+        }},
+        {'$group': {
+            '_id': None,
+            'networks': {'$addToSet': '$network'},
+            'interfaces': {'$addToSet': '$interface'},
+            'ports': {'$addToSet': '$port_protocol'},
+        }},
+    ])['result']
 
-        if not used_resources:
-            used_resources = {
-                'networks': set(),
-                'interfaces': set(),
-                'ports': set(),
-            }
-        else:
-            used_resources = used_resources[0]
-            used_resources.pop('_id')
+    if not used_resources:
+        used_resources = {
+            'networks': set(),
+            'interfaces': set(),
+            'ports': set(),
+        }
+    else:
+        used_resources = used_resources[0]
+        used_resources.pop('_id')
 
-        return {key: set(val) for key, val in used_resources.items()}
+    return {key: set(val) for key, val in used_resources.items()}
 
-    @classmethod
-    def iter_servers(cls):
-        for doc in cls.collection.find().sort('name'):
-            yield cls(doc=doc)
+def iter_servers():
+    for doc in Server.collection.find().sort('name'):
+        yield Server(doc=doc)
