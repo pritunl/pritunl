@@ -1,5 +1,4 @@
 from pritunl.organization import Organization
-from pritunl.event import Event
 from pritunl.messenger import Messenger
 from pritunl.server.bandwidth import ServerBandwidth
 from pritunl.server.ip_pool import ServerIpPool
@@ -17,6 +16,7 @@ from pritunl import utils
 from pritunl import mongo
 from pritunl import queue
 from pritunl import transaction
+from pritunl import event
 
 import uuid
 import os
@@ -202,7 +202,7 @@ class Server(mongo.MongoObject):
         if event_time - self._last_event >= 1:
             self._last_event = event_time
             self._cur_event = uuid.uuid4()
-            Event(type=type, resource_id=resource_id)
+            event.Event(type=type, resource_id=resource_id)
             return
 
         def _target():
@@ -211,7 +211,7 @@ class Server(mongo.MongoObject):
             time.sleep(0.2)
             if self._cur_event == event_id:
                 self._last_event = time.time()
-                Event(type=type, resource_id=resource_id)
+                event.Event(type=type, resource_id=resource_id)
         threading.Thread(target=_target).start()
 
     def commit(self, *args, **kwargs):
@@ -337,7 +337,7 @@ class Server(mongo.MongoObject):
                     })
                 self.remove_org(org_id)
                 self.commit('organizations')
-                Event(type=SERVER_ORGS_UPDATED, resource_id=self.id)
+                event.Event(type=SERVER_ORGS_UPDATED, resource_id=self.id)
 
     def get_org(self, org_id):
         if org_id in self.organizations:
@@ -387,7 +387,7 @@ class Server(mongo.MongoObject):
                     })
                 self.remove_host(host_id)
                 self.commit('hosts')
-                Event(type=SERVER_HOSTS_UPDATED, resource_id=self.id)
+                event.Event(type=SERVER_HOSTS_UPDATED, resource_id=self.id)
 
     def get_host(self, host_id):
         if host_id in self.hosts:
@@ -717,7 +717,7 @@ class Server(mongo.MongoObject):
             self.publish('stopped')
             self.update_clients({}, force=True)
             if self._state:
-                Event(type=SERVERS_UPDATED)
+                event.Event(type=SERVERS_UPDATED)
                 logger.LogEntry(message='Server stopped unexpectedly "%s".' % (
                     self.name))
 
@@ -915,9 +915,9 @@ class Server(mongo.MongoObject):
         self.commit('clients')
         if force or client_count != len(clients):
             for org_id in self.organizations:
-                Event(type=USERS_UPDATED, resource_id=org_id)
+                event.Event(type=USERS_UPDATED, resource_id=org_id)
             if not force:
-                Event(type=SERVERS_UPDATED)
+                event.Event(type=SERVERS_UPDATED)
 
     @classmethod
     def new_server(cls, **kwargs):

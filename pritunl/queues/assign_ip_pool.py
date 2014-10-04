@@ -1,5 +1,3 @@
-from pritunl.event import Event
-
 from pritunl.queue import Queue, add_queue
 
 from pritunl.constants import *
@@ -7,6 +5,7 @@ from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl import logger
 from pritunl import mongo
+from pritunl import event
 
 import pymongo
 import bson
@@ -103,4 +102,4 @@ class QueueAssignIpPool(Queue):
             return
 
         for org_id in self.server.organizations:
-            Event(type=USERS_UPDATED, resource_id=org_id)
+            event.Event(type=USERS_UPDATED, resource_id=org_id)

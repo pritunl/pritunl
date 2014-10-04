@@ -1,14 +1,14 @@
 from pritunl.event import Event
 
 from pritunl.queue import Queue, add_queue
+from pritunl.server import Server
 
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings import settings
 from pritunl import logger
-
-import pritunl.server
+from pritunl import event
 
 import time
 
@@ -33,7 +33,6 @@ class QueueAssignIpAddr():
             self.user_id = user_id
 
     def task(self):
-        from pritunl.server import Server
         server = Server.get_server(id=self.server_id)
         if not server:
             return
@@ -55,4 +54,4 @@ class QueueAssignIpAddr():
         server.ip_pool.assign_ip_addr(self.org_id, self.user_id)
 
     def complete_task(self):
-        Event(type=USERS_UPDATED, resource_id=self.org_id)
+        event.Event(type=USERS_UPDATED, resource_id=self.org_id)

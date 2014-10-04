@@ -1,5 +1,3 @@
-from pritunl.event import Event
-
 from pritunl.host.usage import HostUsage
 
 from pritunl.constants import *
@@ -9,6 +7,7 @@ from pritunl.settings import settings
 from pritunl import utils
 from pritunl import mongo
 from pritunl import logger
+from pritunl import event
 
 import signal
 import datetime
@@ -105,7 +104,7 @@ def init_host():
         host.auto_public_address = settings.local.public_ip
 
     host.commit()
-    Event(type=HOSTS_UPDATED)
+    event.Event(type=HOSTS_UPDATED)
 
 def deinit_host():
     Host.collection.update({

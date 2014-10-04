@@ -1,5 +1,3 @@
-from pritunl.event import Event
-
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
@@ -35,8 +33,9 @@ class LogEntry(mongo.MongoObject):
         return mongo.get_collection('log_entries')
 
     def commit(self, *args, **kwargs):
+        from pritunl import event
         mongo.MongoObject.commit(self, *args, **kwargs)
-        Event(type=LOG_UPDATED)
+        event.Event(type=LOG_UPDATED)
 
     @classmethod
     def iter_log_entries(cls):

@@ -1,6 +1,5 @@
 from pritunl.server import Server
 from pritunl.organization import Organization
-from pritunl.event import Event
 
 from pritunl.constants import *
 from pritunl.exceptions import *
@@ -11,6 +10,7 @@ from pritunl import auth
 from pritunl import host
 from pritunl import utils
 from pritunl import logger
+from pritunl import event
 
 import flask
 import re
@@ -416,9 +416,9 @@ def server_put_post(server_id=None):
     server.commit(server.changed)
 
     logger.LogEntry(message='Created server "%s".' % server.name)
-    Event(type=SERVERS_UPDATED)
+    event.Event(type=SERVERS_UPDATED)
     for org in server.iter_orgs():
-        Event(type=USERS_UPDATED, resource_id=org.id)
+        event.Event(type=USERS_UPDATED, resource_id=org.id)
     return utils.jsonify(server.dict())
 
 @app_server.app.route('/server/<server_id>', methods=['DELETE'])
@@ -427,9 +427,9 @@ def server_delete(server_id):
     server = Server.get_server(id=server_id)
     server.remove()
     logger.LogEntry(message='Deleted server "%s".' % server.name)
-    Event(type=SERVERS_UPDATED)
+    event.Event(type=SERVERS_UPDATED)
     for org in server.iter_orgs():
-        Event(type=USERS_UPDATED, resource_id=org.id)
+        event.Event(type=USERS_UPDATED, resource_id=org.id)
     return utils.jsonify({})
 
 @app_server.app.route('/server/<server_id>/organization', methods=['GET'])
@@ -458,9 +458,9 @@ def server_org_put(server_id, org_id):
         }, 400)
     server.add_org(org)
     server.commit(server.changed)
-    Event(type=SERVERS_UPDATED)
-    Event(type=SERVER_ORGS_UPDATED, resource_id=server.id)
-    Event(type=USERS_UPDATED, resource_id=org.id)
+    event.Event(type=SERVERS_UPDATED)
+    event.Event(type=SERVER_ORGS_UPDATED, resource_id=server.id)
+    event.Event(type=USERS_UPDATED, resource_id=org.id)
     return utils.jsonify({
         'id': org.id,
         'server': server.id,
@@ -480,9 +480,9 @@ def server_org_delete(server_id, org_id):
         }, 400)
     server.remove_org(org)
     server.commit(server.changed)
-    Event(type=SERVERS_UPDATED)
-    Event(type=SERVER_ORGS_UPDATED, resource_id=server.id)
-    Event(type=USERS_UPDATED, resource_id=org.id)
+    event.Event(type=SERVERS_UPDATED)
+    event.Event(type=SERVER_ORGS_UPDATED, resource_id=server.id)
+    event.Event(type=USERS_UPDATED, resource_id=org.id)
     return utils.jsonify({})
 
 @app_server.app.route('/server/<server_id>/host', methods=['GET'])
@@ -507,7 +507,7 @@ def server_host_put(server_id, host_id):
     hst = host.get_host(id=host_id)
     server.add_host(hst)
     server.commit(server.changed)
-    Event(type=SERVER_HOSTS_UPDATED, resource_id=server.id)
+    event.Event(type=SERVER_HOSTS_UPDATED, resource_id=server.id)
     return utils.jsonify({
         'id': hst.id,
         'server': server.id,
@@ -523,7 +523,7 @@ def server_host_delete(server_id, host_id):
     hst = host.get_host(id=host_id)
     server.remove_host(hst)
     server.commit(server.changed)
-    Event(type=SERVER_HOSTS_UPDATED, resource_id=server.id)
+    event.Event(type=SERVER_HOSTS_UPDATED, resource_id=server.id)
     return utils.jsonify({})
 
 @app_server.app.route('/server/<server_id>/<operation>', methods=['PUT'])
@@ -540,7 +540,7 @@ def server_operation_put(server_id, operation):
     elif operation == RESTART:
         server.restart()
         logger.LogEntry(message='Restarted server "%s".' % server.name)
-    Event(type=SERVERS_UPDATED)
+    event.Event(type=SERVERS_UPDATED)
 
     return utils.jsonify(server.dict())
 

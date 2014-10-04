@@ -2,10 +2,10 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.settings import settings
 from pritunl.organization import Organization
-from pritunl.event import Event
 from pritunl.server.ip_pool import ServerIpPool
 from pritunl import utils
 from pritunl import logger
+from pritunl import event
 from pritunl.app_server import app_server
 import flask
 import math
@@ -137,9 +137,9 @@ def user_post(org_id):
             disabled=disabled)
         users.append(user.dict())
 
-    Event(type=ORGS_UPDATED)
-    Event(type=USERS_UPDATED, resource_id=org.id)
-    Event(type=SERVERS_UPDATED)
+    event.Event(type=ORGS_UPDATED)
+    event.Event(type=USERS_UPDATED, resource_id=org.id)
+    event.Event(type=SERVERS_UPDATED)
 
     if isinstance(flask.request.json, list):
         logger.LogEntry(message='Created %s new users.' % len(
@@ -166,7 +166,7 @@ def user_put(org_id, user_id):
         user.disabled = disabled
 
     user.commit()
-    Event(type=USERS_UPDATED, resource_id=user.org.id)
+    event.Event(type=USERS_UPDATED, resource_id=user.org.id)
 
     if disabled:
         if user.type == CERT_CLIENT:
@@ -209,8 +209,8 @@ def user_delete(org_id, user_id):
     name = user.name
     user.remove()
 
-    Event(type=ORGS_UPDATED)
-    Event(type=USERS_UPDATED, resource_id=org.id)
+    event.Event(type=ORGS_UPDATED)
+    event.Event(type=USERS_UPDATED, resource_id=org.id)
 
     for server in org.iter_servers():
         server_clients = server.clients
@@ -228,5 +228,5 @@ def user_otp_secret_put(org_id, user_id):
     user = org.get_user(user_id)
     user.generate_otp_secret()
     user.commit()
-    Event(type=USERS_UPDATED, resource_id=org.id)
+    event.Event(type=USERS_UPDATED, resource_id=org.id)
     return utils.jsonify(user.dict())

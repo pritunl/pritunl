@@ -1,5 +1,3 @@
-from pritunl.event import Event
-
 from pritunl.queue import Queue, add_queue, add_reserve
 
 from pritunl.constants import *
@@ -7,6 +5,7 @@ from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.app_server import app_server
 from pritunl import logger
+from pritunl import event
 
 import copy
 
@@ -43,7 +42,7 @@ class QueueInitOrgPooled(Queue):
         self.org.commit()
 
     def repeat_task(self):
-        Event(type=ORGS_UPDATED)
+        event.Event(type=ORGS_UPDATED)
 
     def pause_task(self):
         if self.reserve_data:

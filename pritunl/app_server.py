@@ -79,11 +79,11 @@ class AppServer():
             self.sub_period_end = data.get('period_end')
             self.sub_cancel_at_period_end = data.get('cancel_at_period_end')
         if cur_sub_active is not None and cur_sub_active != self.sub_active:
-            from pritunl.event import Event
+            from pritunl import event
             if self.sub_active:
-                Event(type=SUBSCRIPTION_ACTIVE)
+                event.Event(type=SUBSCRIPTION_ACTIVE)
             else:
-                Event(type=SUBSCRIPTION_INACTIVE)
+                event.Event(type=SUBSCRIPTION_INACTIVE)
 
     def subscription_dict(self):
         return {

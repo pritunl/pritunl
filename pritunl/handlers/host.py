@@ -1,4 +1,3 @@
-from pritunl.event import Event
 from pritunl.server.ip_pool import ServerIpPool
 
 from pritunl.constants import *
@@ -9,6 +8,7 @@ from pritunl.app_server import app_server
 from pritunl import host
 from pritunl import utils
 from pritunl import logger
+from pritunl import event
 
 import flask
 import math
@@ -43,7 +43,7 @@ def host_put(host_id=None):
             flask.request.json['public_address'])
 
     hst.commit(hst.changed)
-    Event(type=HOSTS_UPDATED)
+    event.Event(type=HOSTS_UPDATED)
 
     return utils.jsonify(host.dict())
 
@@ -54,7 +54,7 @@ def host_delete(host_id):
     hst.remove()
 
     logger.LogEntry(message='Deleted host "%s".' % hst.name)
-    Event(type=HOSTS_UPDATED)
+    event.Event(type=HOSTS_UPDATED)
 
     return utils.jsonify({})
 

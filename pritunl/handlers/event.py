@@ -1,6 +1,6 @@
 from pritunl.constants import *
-from pritunl.event import Event
 from pritunl import utils
+from pritunl import event
 from pritunl.app_server import app_server
 import time
 import uuid
@@ -13,4 +13,4 @@ def event_get(cursor=None):
     if app_server.interrupt:
         return flask.abort(503)
 
-    return utils.jsonify(Event.get_events(cursor=cursor))
+    return utils.jsonify(event.get_events(cursor=cursor))

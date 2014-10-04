@@ -1,5 +1,3 @@
-from pritunl.event import Event
-
 from pritunl.queue import Queue, add_queue
 
 from pritunl.constants import *
@@ -7,6 +5,7 @@ from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.app_server import app_server
 from pritunl import logger
+from pritunl import event
 
 @add_queue
 class QueueInitUser(Queue):
@@ -42,6 +41,6 @@ class QueueInitUser(Queue):
         self.user.commit()
 
     def repeat_task(self):
-        Event(type=ORGS_UPDATED)
-        Event(type=USERS_UPDATED, resource_id=self.org.id)
-        Event(type=SERVERS_UPDATED)
+        event.Event(type=ORGS_UPDATED)
+        event.Event(type=USERS_UPDATED, resource_id=self.org.id)
+        event.Event(type=SERVERS_UPDATED)

@@ -1,8 +1,8 @@
 from pritunl.constants import *
 from pritunl.organization import Organization
-from pritunl.event import Event
 from pritunl import logger
 from pritunl import utils
+from pritunl import event
 from pritunl.app_server import app_server
 import flask
 
@@ -24,7 +24,7 @@ def org_post():
     name = utils.filter_str(flask.request.json['name'])
     org = Organization.new_org(name=name, type=ORG_DEFAULT)
     logger.LogEntry(message='Created new organization "%s".' % org.name)
-    Event(type=ORGS_UPDATED)
+    event.Event(type=ORGS_UPDATED)
     return utils.jsonify(org.dict())
 
 @app_server.app.route('/organization/<org_id>', methods=['PUT'])
@@ -34,7 +34,7 @@ def org_put(org_id):
     name = utils.filter_str(flask.request.json['name'])
     org.name = name
     org.commit(org.changed)
-    Event(type=ORGS_UPDATED)
+    event.Event(type=ORGS_UPDATED)
     return utils.jsonify(org.dict())
 
 @app_server.app.route('/organization/<org_id>', methods=['DELETE'])
@@ -44,5 +44,5 @@ def org_delete(org_id):
     name = org.name
     org.remove()
     logger.LogEntry(message='Deleted organization "%s".' % name)
-    Event(type=ORGS_UPDATED)
+    event.Event(type=ORGS_UPDATED)
     return utils.jsonify({})

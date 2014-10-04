@@ -1,5 +1,3 @@
-from pritunl.event import Event
-
 from pritunl.queue import Queue, add_queue
 
 from pritunl.constants import *

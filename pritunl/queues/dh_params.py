@@ -1,5 +1,3 @@
-from pritunl.event import Event
-
 from pritunl.queue.com import QueueCom
 from pritunl.queue import Queue, add_queue, add_reserve
 
@@ -10,6 +8,7 @@ from pritunl.app_server import app_server
 from pritunl import logger
 from pritunl import mongo
 from pritunl import utils
+from pritunl import event
 
 import os
 import bson
@@ -89,7 +88,7 @@ class QueueDhParams(Queue):
                     dh_param_bits=self.dh_param_bits,
                 )
 
-                Event(type=SERVERS_UPDATED)
+                event.Event(type=SERVERS_UPDATED)
                 return
 
         logger.debug('Adding pooled dh params', 'server',
