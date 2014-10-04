@@ -1,0 +1,67 @@
+from pritunl.constants import *
+from pritunl.exceptions import *
+from pritunl.descriptors import *
+
+import subprocess
+import time
+import datetime
+import itertools
+import random
+
+def rmtree(path):
+    for _ in xrange(5):
+        try:
+            subprocess.check_call(['rm', '-rf', path],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            return
+        except subprocess.CalledProcessError:
+            time.sleep(0.01)
+    raise
+
+def filter_str(in_str):
+    if not in_str:
+        return in_str
+    return ''.join(x for x in in_str if x.isalnum() or x in NAME_SAFE_CHARS)
+
+def get_cert_block(cert_data):
+    start_index = cert_data.index('-----BEGIN CERTIFICATE-----')
+    end_index = cert_data.index('-----END CERTIFICATE-----') + 25
+    return cert_data[start_index:end_index]
+
+def check_openssl():
+    try:
+        # Check for unpatched heartbleed
+        openssl_ver = subprocess.check_output(['openssl', 'version', '-a'])
+        version, build_date = openssl_ver.split('\n')[0:2]
+
+        build_date = build_date.replace('built on:', '').strip()
+        build_date = build_date.split()
+        build_date = ' '.join([build_date[1],
+            build_date[2].zfill(2), build_date[5]])
+        build_date = datetime.datetime.strptime(build_date, '%b %d %Y').date()
+
+        if version in OPENSSL_HEARTBLEED and \
+                build_date < OPENSSL_HEARTBLEED_BUILD_DATE:
+            return False
+    except:
+        pass
+    return True
+
+def roundrobin(*iterables):
+    # Recipe credited to George Sakkis
+    pending = len(iterables)
+    nexts = itertools.cycle(iter(it).next for it in iterables)
+    while pending:
+        try:
+            for next in nexts:
+                yield next()
+        except StopIteration:
+            pending -= 1
+            nexts = itertools.cycle(itertools.islice(nexts, pending))
+
+def random_name():
+    return '%s-%s-%s' % (
+        random.choice(RANDOM_ONE),
+        random.choice(RANDOM_TWO),
+        random.randint(1000, 9999),
+    )
