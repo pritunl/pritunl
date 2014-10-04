@@ -99,9 +99,9 @@ class AppServer():
         self.app = app
 
     def auth(self, call):
-        from pritunl import administrator
+        from pritunl import auth
         def _wrapped(*args, **kwargs):
-            if not administrator.check_session():
+            if not auth.check_session():
                 raise flask.abort(401)
             return call(*args, **kwargs)
         _wrapped.__name__ = '%s_auth' % call.__name__

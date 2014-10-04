@@ -1,6 +1,6 @@
 from pritunl.constants import *
 from pritunl.settings import settings
-from pritunl import administrator
+from pritunl import auth
 from pritunl import utils
 from pritunl import mongo
 from pritunl.app_server import app_server
@@ -64,7 +64,7 @@ def auth_session_post():
     username = flask.request.json['username']
     password = flask.request.json['password']
     remote_addr = utils.get_remote_addr()
-    admin = administrator.check_auth(username, password, remote_addr)
+    admin = auth.check_auth(username, password, remote_addr)
 
     if not admin:
         return utils.jsonify({
