@@ -1,4 +1,3 @@
-from pritunl.server import Server
 from pritunl.organization import Organization
 
 from pritunl.constants import *
@@ -11,6 +10,7 @@ from pritunl import host
 from pritunl import utils
 from pritunl import logger
 from pritunl import event
+from pritunl import server
 
 import flask
 import re
@@ -57,12 +57,12 @@ def _dns_server_invalid():
 @app_server.auth
 def server_get(server_id=None):
     if server_id:
-        return utils.jsonify(Server.get_server(server_id).dict())
+        return utils.jsonify(server.get_server(server_id).dict())
 
     servers = []
 
-    for server in Server.iter_servers():
-        servers.append(server.dict())
+    for svr in Server.iter_servers():
+        servers.append(svr.dict())
 
     return utils.jsonify(servers)
 
@@ -70,7 +70,7 @@ def server_get(server_id=None):
 @app_server.app.route('/server/<server_id>', methods=['PUT'])
 @app_server.auth
 def server_put_post(server_id=None):
-    used_resources = Server.get_used_resources(server_id)
+    used_resources = server.get_used_resources(server_id)
     network_used = used_resources['networks']
     interface_used = used_resources['interfaces']
     port_used = used_resources['ports']
@@ -361,7 +361,7 @@ def server_put_post(server_id=None):
             }, 400)
 
     if not server_id:
-        server = Server.new_server(
+        svr = server.new_server(
             name=name,
             network=network,
             interface=interface,
@@ -378,57 +378,57 @@ def server_put_post(server_id=None):
             debug=debug,
         )
     else:
-        server = Server.get_server(id=server_id)
-        if server.status:
+        svr = server.get_server(id=server_id)
+        if svr.status:
             return utils.jsonify({
                 'error': SERVER_NOT_OFFLINE,
                 'error_msg': SERVER_NOT_OFFLINE_SETTINGS_MSG,
             }, 400)
         if name_def:
-            server.name = name
+            svr.name = name
         if network_def:
-            server.network = network
+            svr.network = network
         if interface_def:
-            server.interface = interface
+            svr.interface = interface
         if port_def:
-            server.port = port
+            svr.port = port
         if protocol_def:
-            server.protocol = protocol
-        if dh_param_bits_def and server.dh_param_bits != dh_param_bits:
-            server.dh_param_bits = dh_param_bits
-            server.generate_dh_param()
+            svr.protocol = protocol
+        if dh_param_bits_def and svr.dh_param_bits != dh_param_bits:
+            svr.dh_param_bits = dh_param_bits
+            svr.generate_dh_param()
         if mode_def:
-            server.mode = mode
+            svr.mode = mode
         if local_networks_def:
-            server.local_networks = local_networks
+            svr.local_networks = local_networks
         if dns_servers_def:
-            server.dns_servers = dns_servers
+            svr.dns_servers = dns_servers
         if search_domain_def:
-            server.search_domain = search_domain
+            svr.search_domain = search_domain
         if public_address_def:
-            server.public_address = public_address
+            svr.public_address = public_address
         if otp_auth_def:
-            server.otp_auth = otp_auth
+            svr.otp_auth = otp_auth
         if lzo_compression_def:
-            server.lzo_compression = lzo_compression
+            svr.lzo_compression = lzo_compression
         if debug_def:
-            server.debug = debug
-    server.commit(server.changed)
+            svr.debug = debug
+    svr.commit(svr.changed)
 
-    logger.LogEntry(message='Created server "%s".' % server.name)
+    logger.LogEntry(message='Created server "%s".' % svr.name)
     event.Event(type=SERVERS_UPDATED)
-    for org in server.iter_orgs():
+    for org in svr.iter_orgs():
         event.Event(type=USERS_UPDATED, resource_id=org.id)
-    return utils.jsonify(server.dict())
+    return utils.jsonify(svr.dict())
 
 @app_server.app.route('/server/<server_id>', methods=['DELETE'])
 @app_server.auth
 def server_delete(server_id):
-    server = Server.get_server(id=server_id)
-    server.remove()
-    logger.LogEntry(message='Deleted server "%s".' % server.name)
+    svr = Server.get_server(id=server_id)
+    svr.remove()
+    logger.LogEntry(message='Deleted server "%s".' % svr.name)
     event.Event(type=SERVERS_UPDATED)
-    for org in server.iter_orgs():
+    for org in svr.iter_orgs():
         event.Event(type=USERS_UPDATED, resource_id=org.id)
     return utils.jsonify({})
 
@@ -436,11 +436,11 @@ def server_delete(server_id):
 @app_server.auth
 def server_org_get(server_id):
     orgs = []
-    server = Server.get_server(id=server_id)
-    for org in server.iter_orgs():
+    svr = server.get_server(id=server_id)
+    for org in svr.iter_orgs():
         orgs.append({
             'id': org.id,
-            'server': server.id,
+            'server': svr.id,
             'name': org.name,
         })
     return utils.jsonify(orgs)
@@ -449,21 +449,21 @@ def server_org_get(server_id):
     methods=['PUT'])
 @app_server.auth
 def server_org_put(server_id, org_id):
-    server = Server.get_server(id=server_id)
+    svr = server.get_server(id=server_id)
     org = Organization.get_org(id=org_id)
-    if server.status:
+    if svr.status:
         return utils.jsonify({
             'error': SERVER_NOT_OFFLINE,
             'error_msg': SERVER_NOT_OFFLINE_ATTACH_ORG_MSG,
         }, 400)
-    server.add_org(org)
-    server.commit(server.changed)
+    svr.add_org(org)
+    svr.commit(svr.changed)
     event.Event(type=SERVERS_UPDATED)
-    event.Event(type=SERVER_ORGS_UPDATED, resource_id=server.id)
+    event.Event(type=SERVER_ORGS_UPDATED, resource_id=svr.id)
     event.Event(type=USERS_UPDATED, resource_id=org.id)
     return utils.jsonify({
         'id': org.id,
-        'server': server.id,
+        'server': svr.id,
         'name': org.name,
     })
 
@@ -471,17 +471,17 @@ def server_org_put(server_id, org_id):
     methods=['DELETE'])
 @app_server.auth
 def server_org_delete(server_id, org_id):
-    server = Server.get_server(id=server_id)
+    svr = server.get_server(id=server_id)
     org = Organization.get_org(id=org_id)
-    if server.status:
+    if svr.status:
         return utils.jsonify({
             'error': SERVER_NOT_OFFLINE,
             'error_msg': SERVER_NOT_OFFLINE_DETACH_ORG_MSG,
         }, 400)
-    server.remove_org(org)
-    server.commit(server.changed)
+    svr.remove_org(org)
+    svr.commit(svr.changed)
     event.Event(type=SERVERS_UPDATED)
-    event.Event(type=SERVER_ORGS_UPDATED, resource_id=server.id)
+    event.Event(type=SERVER_ORGS_UPDATED, resource_id=svr.id)
     event.Event(type=USERS_UPDATED, resource_id=org.id)
     return utils.jsonify({})
 
@@ -489,11 +489,11 @@ def server_org_delete(server_id, org_id):
 @app_server.auth
 def server_host_get(server_id):
     hosts = []
-    server = Server.get_server(id=server_id)
-    for hst in server.iter_hosts():
+    svr = server.get_server(id=server_id)
+    for hst in svr.iter_hosts():
         hosts.append({
             'id': hst.id,
-            'server': server.id,
+            'server': svr.id,
             'name': hst.name,
             'public_address': hst.public_addr,
         })
@@ -503,14 +503,14 @@ def server_host_get(server_id):
     methods=['PUT'])
 @app_server.auth
 def server_host_put(server_id, host_id):
-    server = Server.get_server(id=server_id)
+    svr = server.get_server(id=server_id)
     hst = host.get_host(id=host_id)
-    server.add_host(hst)
-    server.commit(server.changed)
-    event.Event(type=SERVER_HOSTS_UPDATED, resource_id=server.id)
+    svr.add_host(hst)
+    svr.commit(svr.changed)
+    event.Event(type=SERVER_HOSTS_UPDATED, resource_id=svr.id)
     return utils.jsonify({
         'id': hst.id,
-        'server': server.id,
+        'server': svr.id,
         'name': hst.name,
         'public_address': hst.public_addr,
     })
@@ -519,53 +519,53 @@ def server_host_put(server_id, host_id):
     methods=['DELETE'])
 @app_server.auth
 def server_host_delete(server_id, host_id):
-    server = Server.get_server(id=server_id)
+    svr = server.get_server(id=server_id)
     hst = host.get_host(id=host_id)
-    server.remove_host(hst)
-    server.commit(server.changed)
-    event.Event(type=SERVER_HOSTS_UPDATED, resource_id=server.id)
+    svr.remove_host(hst)
+    svr.commit(svr.changed)
+    event.Event(type=SERVER_HOSTS_UPDATED, resource_id=svr.id)
     return utils.jsonify({})
 
 @app_server.app.route('/server/<server_id>/<operation>', methods=['PUT'])
 @app_server.auth
 def server_operation_put(server_id, operation):
-    server = Server.get_server(id=server_id)
+    svr = server.get_server(id=server_id)
 
     if operation == START:
-        server.start()
-        logger.LogEntry(message='Started server "%s".' % server.name)
+        svr.start()
+        logger.LogEntry(message='Started server "%s".' % svr.name)
     if operation == STOP:
-        server.stop()
-        logger.LogEntry(message='Stopped server "%s".' % server.name)
+        svr.stop()
+        logger.LogEntry(message='Stopped server "%s".' % svr.name)
     elif operation == RESTART:
-        server.restart()
-        logger.LogEntry(message='Restarted server "%s".' % server.name)
+        svr.restart()
+        logger.LogEntry(message='Restarted server "%s".' % svr.name)
     event.Event(type=SERVERS_UPDATED)
 
-    return utils.jsonify(server.dict())
+    return utils.jsonify(svr.dict())
 
 @app_server.app.route('/server/<server_id>/output', methods=['GET'])
 @app_server.auth
 def server_output_get(server_id):
-    server = Server.get_server(id=server_id)
+    svr = server.get_server(id=server_id)
     return utils.jsonify({
-        'id': server.id,
-        'output': server.get_output(),
+        'id': svr.id,
+        'output': svr.get_output(),
     })
 
 @app_server.app.route('/server/<server_id>/output', methods=['DELETE'])
 @app_server.auth
 def server_output_delete(server_id):
-    server = Server.get_server(id=server_id)
-    server.clear_output()
+    svr = server.get_server(id=server_id)
+    svr.clear_output()
     return utils.jsonify({})
 
 @app_server.app.route('/server/<server_id>/bandwidth/<period>',
     methods=['GET'])
 @app_server.auth
 def server_bandwidth_get(server_id, period):
-    server = Server.get_server(id=server_id)
-    return utils.jsonify(server.bandwidth.get_period(period))
+    svr = server.get_server(id=server_id)
+    return utils.jsonify(svr.bandwidth.get_period(period))
 
 @app_server.app.route('/server/<server_id>/tls_verify', methods=['POST'])
 @auth.server_auth
@@ -573,16 +573,16 @@ def server_tls_verify_post(server_id):
     org_id = flask.request.json['org_id']
     user_id = flask.request.json['user_id']
 
-    server = Server.get_server(server_id)
-    if not server:
+    svr = server.get_server(server_id)
+    if not svr:
         return utils.jsonify({
             'error': SERVER_INVALID,
             'error_msg': SERVER_INVALID_MSG,
         }, 401)
-    org = server.get_org(org_id)
+    org = svr.get_org(org_id)
     if not org:
         logger.LogEntry(message='User failed authentication, ' +
-            'invalid organization on server "%s".' % server.name)
+            'invalid organization on server "%s".' % svr.name)
         return utils.jsonify({
             'error': ORG_INVALID,
             'error_msg': ORG_INVALID_MSG,
@@ -590,14 +590,14 @@ def server_tls_verify_post(server_id):
     user = org.get_user(user_id)
     if not user:
         logger.LogEntry(message='User failed authentication, ' +
-            'invalid user on server "%s".' % server.name)
+            'invalid user on server "%s".' % svr.name)
         return utils.jsonify({
             'error': USER_INVALID,
             'error_msg': USER_INVALID_MSG,
         }, 401)
     if user.disabled:
         logger.LogEntry(message='User failed authentication, ' +
-            'disabled user "%s".' % server.name)
+            'disabled user "%s".' % svr.name)
         return utils.jsonify({
             'error': USER_INVALID,
             'error_msg': USER_INVALID_MSG,
@@ -615,16 +615,16 @@ def server_otp_verify_post(server_id):
     otp_code = flask.request.json['otp_code']
     remote_ip = flask.request.json.get('remote_ip')
 
-    server = Server.get_server(server_id)
-    if not server:
+    svr = server.get_server(server_id)
+    if not svr:
         return utils.jsonify({
             'error': SERVER_INVALID,
             'error_msg': SERVER_INVALID_MSG,
         }, 401)
-    org = server.get_org(org_id)
+    org = svr.get_org(org_id)
     if not org:
         logger.LogEntry(message='User failed authentication, ' +
-            'invalid organization on server "%s".' % server.name)
+            'invalid organization on server "%s".' % svr.name)
         return utils.jsonify({
             'error': ORG_INVALID,
             'error_msg': ORG_INVALID_MSG,
@@ -632,7 +632,7 @@ def server_otp_verify_post(server_id):
     user = org.get_user(user_id)
     if not user:
         logger.LogEntry(message='User failed authentication, ' +
-            'invalid user on server "%s".' % server.name)
+            'invalid user on server "%s".' % svr.name)
         return utils.jsonify({
             'error': USER_INVALID,
             'error_msg': USER_INVALID_MSG,
@@ -655,13 +655,13 @@ def server_client_connect_post(server_id):
     org_id = flask.request.json['org_id']
     user_id = flask.request.json['user_id']
 
-    server = Server(server_id)
-    if not server:
+    svr = server.get_server(id=server_id)
+    if not svr:
         return utils.jsonify({
             'error': SERVER_INVALID,
             'error_msg': SERVER_INVALID_MSG,
         }, 401)
-    org = server.get_org(org_id)
+    org = svr.get_org(org_id)
     if not org:
         return utils.jsonify({
             'error': ORG_INVALID,
@@ -679,7 +679,7 @@ def server_client_connect_post(server_id):
             'error_msg': USER_TYPE_INVALID_MSG,
         }, 401)
 
-    local_ip_addr, remote_ip_addr = server.get_ip_set(org.id, user_id)
+    local_ip_addr, remote_ip_addr = svr.get_ip_set(org.id, user_id)
     if local_ip_addr and remote_ip_addr:
         client_conf = 'ifconfig-push %s %s' % (local_ip_addr, remote_ip_addr)
     else:
@@ -696,13 +696,13 @@ def server_client_disconnect_post(server_id):
     org_id = flask.request.json['org_id']
     user_id = flask.request.json['user_id']
 
-    server = Server(server_id)
-    if not server:
+    svr = server.get_server(id=server_id)
+    if not svr:
         return utils.jsonify({
             'error': SERVER_INVALID,
             'error_msg': SERVER_INVALID_MSG,
         }, 401)
-    org = server.get_org(org_id)
+    org = svr.get_org(org_id)
     if not org:
         return utils.jsonify({
             'error': ORG_INVALID,

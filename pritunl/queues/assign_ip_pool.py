@@ -6,6 +6,7 @@ from pritunl.descriptors import *
 from pritunl import logger
 from pritunl import mongo
 from pritunl import event
+from pritunl import server
 
 import pymongo
 import bson
@@ -32,8 +33,7 @@ class QueueAssignIpPool(Queue):
 
     @cached_property
     def server(self):
-        from pritunl.server import Server
-        return Server.get_server(id=self.server_id)
+        return server.get_server(id=self.server_id)
 
     def task(self):
         if not self.server:

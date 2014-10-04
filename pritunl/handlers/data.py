@@ -1,7 +1,7 @@
 from pritunl.constants import *
 from pritunl.organization import Organization
-from pritunl.server import Server
 from pritunl import utils
+from pritunl import server
 from pritunl.app_server import app_server
 import os
 import flask
@@ -52,13 +52,13 @@ def export_get():
             tar_add(tar_file, org.ca_cert.cert_path)
             tar_add(tar_file, org.ca_cert.get_path())
 
-        for server in Server.iter_servers():
-            tar_add(tar_file, server.dh_param_path)
-            tar_add(tar_file, server.ip_pool_path)
-            tar_add(tar_file, server.get_path())
-            tar_add(tar_file, os.path.join(server.path, NODE_SERVER))
+        for svr in server.iter_servers():
+            tar_add(tar_file, svr.dh_param_path)
+            tar_add(tar_file, svr.ip_pool_path)
+            tar_add(tar_file, svr.get_path())
+            tar_add(tar_file, os.path.join(svr.path, NODE_SERVER))
             tar_file.add(empty_temp_path,
-                arcname=os.path.relpath(os.path.join(server.path, TEMP_DIR),
+                arcname=os.path.relpath(os.path.join(svr.path, TEMP_DIR),
                     data_path))
 
         tar_file.close()

@@ -1,5 +1,4 @@
 from pritunl.queue import Queue, add_queue
-from pritunl.server import Server
 
 from pritunl.constants import *
 from pritunl.exceptions import *
@@ -7,6 +6,7 @@ from pritunl.descriptors import *
 from pritunl.settings import settings
 from pritunl import logger
 from pritunl import event
+from pritunl import server
 
 import time
 
@@ -31,25 +31,25 @@ class QueueAssignIpAddr():
             self.user_id = user_id
 
     def task(self):
-        server = Server.get_server(id=self.server_id)
-        if not server:
+        svr = server.get_server(id=self.server_id)
+        if not svr:
             return
 
         for _ in xrange(5):
-            if server.network_lock:
+            if svr.network_lock:
                 time.sleep(2)
-                server.load()
+                svr.load()
             else:
                 break
 
-        if server.network_lock:
+        if svr.network_lock:
             raise ServerNetworkLocked('Server network is locked', {
-                'server_id': server.id,
+                'server_id': svr.id,
                 'queue_id': self.id,
                 'queue_type': self.type,
             })
 
-        server.ip_pool.assign_ip_addr(self.org_id, self.user_id)
+        svr.ip_pool.assign_ip_addr(self.org_id, self.user_id)
 
     def complete_task(self):
         event.Event(type=USERS_UPDATED, resource_id=self.org_id)

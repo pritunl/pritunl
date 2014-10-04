@@ -2,7 +2,7 @@ from pritunl.constants import *
 from pritunl import utils
 from pritunl.settings import settings
 from pritunl.organization import Organization
-from pritunl.server import Server
+from pritunl import server
 from pritunl.app_server import app_server
 from pritunl import __version__
 
@@ -15,12 +15,12 @@ def status_get():
     clients_count = 0
     clients = set()
 
-    for server in Server.iter_servers():
+    for svr in server.iter_servers():
         servers_count += 1
-        if server.status:
+        if svr.status:
             servers_online_count += 1
-        # MongoDict doesnt support set(server.clients)
-        clients = clients | set(server.clients.keys())
+        # MongoDict doesnt support set(svr.clients)
+        clients = clients | set(svr.clients.keys())
     clients_count = len(clients)
 
     user_count = Organization.get_user_count_multi()

@@ -9,6 +9,7 @@ from pritunl import logger
 from pritunl import mongo
 from pritunl import utils
 from pritunl import event
+from pritunl import server
 
 import os
 import bson
@@ -41,8 +42,7 @@ class QueueDhParams(Queue):
 
     @cached_property
     def server(self):
-        from pritunl.server import Server
-        return Server(doc=self.server_doc)
+        return server.Server(doc=self.server_doc)
 
     def task(self):
         logger.debug('Generating server dh params', 'server',
@@ -122,9 +122,9 @@ class QueueDhParams(Queue):
         self.queue_com.running.set()
 
 @add_reserve('pooled_dh_params')
-def reserve_pooled_dh_params(server):
+def reserve_pooled_dh_params(svr):
     doc = QueueDhParams.dh_params_collection.find_and_modify({
-        'dh_param_bits': server.dh_param_bits,
+        'dh_param_bits': svr.dh_param_bits,
     }, {'$set': {
         'dh_param_bits': None,
     }})
@@ -135,29 +135,29 @@ def reserve_pooled_dh_params(server):
     QueueDhParams.dh_params_collection.remove(doc['_id'])
 
     logger.debug('Reserved pooled dh params', 'server',
-        server_id=server.id,
-        dh_param_bits=server.dh_param_bits,
+        server_id=svr.id,
+        dh_param_bits=svr.dh_param_bits,
     )
 
-    server.dh_params = doc['dh_params']
+    svr.dh_params = doc['dh_params']
     return True
 
 @add_reserve('queued_dh_params')
-def reserve_queued_dh_params(server, block=False):
-    reserve_id = server.dh_param_bits
+def reserve_queued_dh_params(svr, block=False):
+    reserve_id = svr.dh_param_bits
     reserve_data = {
-        'server_id': server.id,
+        'server_id': svr.id,
     }
 
     doc = QueueDhParams.reserve(reserve_id, reserve_data, block=block)
     if not doc:
         logger.debug('Reserved queued dh params', 'server',
-            server_id=server.id,
-            dh_param_bits=server.dh_param_bits,
+            server_id=svr.id,
+            dh_param_bits=svr.dh_param_bits,
         )
         return False
 
     if block:
-        server.load()
+        svr.load()
 
     return True

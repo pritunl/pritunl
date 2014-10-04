@@ -247,20 +247,22 @@ class Organization(mongo.MongoObject):
         }
 
     def get_server(self, server_id):
-        from pritunl.server import Server
-        server = Server.get_server(id=server_id)
-        if server and self.id in server.organizations:
-            return server
+        # TODO move to server
+        from pritunl import server
+        svr = server.get_server(id=server_id)
+        if svr and self.id in svr.organizations:
+            return svr
 
     def iter_servers(self, fields=None):
-        from pritunl.server import Server
+        # TODO move to server
+        from pritunl import server
         spec = {
             'organizations': self.id,
         }
         if fields:
             fields = {key: True for key in fields}
-        for doc in Server.collection.find(spec, fields):
-            yield Server(doc=doc)
+        for doc in server.Server.collection.find(spec, fields):
+            yield server.Server(doc=doc)
 
     def new_user(self, type=CERT_CLIENT, block=True, **kwargs):
         # First attempt to get user from pool then attempt to get

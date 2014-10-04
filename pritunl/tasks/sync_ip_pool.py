@@ -1,10 +1,9 @@
-from pritunl.server import Server
-
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl import task
 from pritunl import logger
+from pritunl import server
 
 import time
 
@@ -12,12 +11,12 @@ class TaskSyncIpPool(task.Task):
     type = 'sync_ip_pool'
 
     def task(self):
-        for server in Server.iter_servers():
+        for svr in server.iter_servers():
             try:
-                server.ip_pool.sync_ip_pool()
+                svr.ip_pool.sync_ip_pool()
             except:
                 logger.exception('Failed to sync server IP pool. %r' % {
-                    'server_id': server.id,
+                    'server_id': svr.id,
                     'task_id': self.id,
                 })
 

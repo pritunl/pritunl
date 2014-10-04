@@ -6,6 +6,7 @@ from pritunl.descriptors import *
 from pritunl.settings import settings
 from pritunl import logger
 from pritunl import mongo
+from pritunl import server
 
 @add_queue
 class QueueUnassignIpAddr(Queue):
@@ -28,23 +29,22 @@ class QueueUnassignIpAddr(Queue):
             self.user_id = user_id
 
     def task(self):
-        from pritunl.server import Server
-        server = Server.get_server(id=self.server_id)
-        if not server:
+        svr = server.get_server(id=self.server_id)
+        if not svr:
             return
 
         for _ in xrange(5):
-            if server.network_lock:
+            if svr.network_lock:
                 time.sleep(2)
-                server.load()
+                svr.load()
             else:
                 break
 
-        if server.network_lock:
+        if svr.network_lock:
             raise ServerNetworkLocked('Server network is locked', {
-                'server_id': server.id,
+                'server_id': svr.id,
                 'queue_id': self.id,
                 'queue_type': self.type,
             })
 
-        server.ip_pool.unassign_ip_addr(self.org_id, self.user_id)
+        svr.ip_pool.unassign_ip_addr(self.org_id, self.user_id)

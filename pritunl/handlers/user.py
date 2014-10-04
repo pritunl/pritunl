@@ -2,10 +2,10 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.settings import settings
 from pritunl.organization import Organization
-from pritunl.server.ip_pool import ServerIpPool
 from pritunl import utils
 from pritunl import logger
 from pritunl import event
+from pritunl import server
 from pritunl.app_server import app_server
 import flask
 import math
@@ -35,16 +35,16 @@ def user_get(org_id, user_id=None, page=None):
         'name',
         'clients',
     )
-    for server in org.iter_servers(fields=fields):
-        servers.append(server)
+    for svr in org.iter_servers(fields=fields):
+        servers.append(svr)
         server_count += 1
-        if server.otp_auth:
+        if svr.otp_auth:
             otp_auth = True
-        server_clients = server.clients
+        server_clients = svr.clients
         for client, client_id in server_clients.iteritems():
             if client_id not in clients:
                 clients[client_id] = {}
-            clients[client_id][server.id] = client
+            clients[client_id][svr.id] = client
 
     users = []
     users_id = []
@@ -67,12 +67,12 @@ def user_get(org_id, user_id=None, page=None):
         user_dict['status'] = is_client
         user_dict['otp_auth'] = otp_auth
         server_data = []
-        for server in servers:
-            server_id = server.id
+        for svr in servers:
+            server_id = svr.id
             user_status = is_client and server_id in clients[user_id]
             data = {
                 'id': server_id,
-                'name': server.name,
+                'name': svr.name,
                 'status': user_status,
                 'local_address': None,
                 'remote_address': None,
@@ -89,7 +89,7 @@ def user_get(org_id, user_id=None, page=None):
         user_dict['servers'] = server_data
         users.append(user_dict)
 
-    ip_addrs_iter = ServerIpPool.multi_get_ip_addr(org_id, users_id)
+    ip_addrs_iter = server.multi_get_ip_addr(org_id, users_id)
     for user_id, server_id, local_addr, remote_addr in ip_addrs_iter:
         user_server_data = users_server_data[user_id].get(server_id)
         if user_server_data:
@@ -172,10 +172,10 @@ def user_put(org_id, user_id):
         if user.type == CERT_CLIENT:
             logger.LogEntry(message='Disabled user "%s".' % user.name)
 
-        for server in org.iter_servers():
-            server_clients = server.clients
+        for svr in org.iter_servers():
+            server_clients = svr.clients
             if user_id in server_clients:
-                server.restart()
+                svr.restart()
     elif disabled == False and user.type == CERT_CLIENT:
         logger.LogEntry(message='Enabled user "%s".' % user.name)
 
@@ -212,10 +212,10 @@ def user_delete(org_id, user_id):
     event.Event(type=ORGS_UPDATED)
     event.Event(type=USERS_UPDATED, resource_id=org.id)
 
-    for server in org.iter_servers():
-        server_clients = server.clients
+    for svr in org.iter_servers():
+        server_clients = svr.clients
         if user_id in server_clients:
-            server.restart()
+            svr.restart()
 
     logger.LogEntry(message='Deleted user "%s".' % name)
 
