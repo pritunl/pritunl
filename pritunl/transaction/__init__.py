@@ -7,7 +7,7 @@ from pritunl.settings import settings
 from pritunl import mongo
 from pritunl import listener
 from pritunl import logger
-from pritunl import json_helpers
+from pritunl import utils
 
 import pymongo
 import collections
@@ -53,7 +53,7 @@ class Transaction(mongo.MongoObject):
         if self.actions:
             actions_json = zlib.decompress(self.actions)
             self.action_sets = json.loads(actions_json,
-                object_hook=json_helpers.object_hook_handler)
+                object_hook=utils.json_object_hook_handler)
         else:
             self.action_sets = []
 
@@ -270,7 +270,7 @@ class Transaction(mongo.MongoObject):
 
     def commit(self):
         actions_json = json.dumps(self.action_sets,
-            default=json_helpers.json_default)
+            default=utils.json_default)
         actions_json_zlib = zlib.compress(actions_json)
 
         self.transaction_collection.insert({
