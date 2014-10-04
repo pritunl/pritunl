@@ -4,6 +4,7 @@ from pritunl.descriptors import *
 from pritunl.settings import settings
 from pritunl import utils
 from pritunl import mongo
+
 import base64
 import os
 import re
@@ -96,120 +97,116 @@ class Administrator(mongo.MongoObject):
 
         mongo.MongoObject.commit(self, *args, **kwargs)
 
-    @classmethod
-    def get_user(cls, id):
-        return cls(id=id)
+def get_user(id):
+    return Administrator(id=id)
 
-    @classmethod
-    def find_user(cls, username=None, token=None):
-        spec = {}
+def find_user(username=None, token=None):
+    spec = {}
 
-        if username is not None:
-            spec['username'] = username
-        if token is not None:
-            spec['token'] = token
+    if username is not None:
+        spec['username'] = username
+    if token is not None:
+        spec['token'] = token
 
-        return cls(spec=spec)
+    return Administrator(spec=spec)
 
-    @classmethod
-    def check_session(cls):
-        auth_token = flask.request.headers.get('Auth-Token', None)
-        if auth_token:
-            auth_timestamp = flask.request.headers.get('Auth-Timestamp', None)
-            auth_nonce = flask.request.headers.get('Auth-Nonce', None)
-            auth_signature = flask.request.headers.get('Auth-Signature', None)
-            if not auth_token or not auth_timestamp or not auth_nonce or \
-                    not auth_signature:
+def check_session():
+    auth_token = flask.request.headers.get('Auth-Token', None)
+    if auth_token:
+        auth_timestamp = flask.request.headers.get('Auth-Timestamp', None)
+        auth_nonce = flask.request.headers.get('Auth-Nonce', None)
+        auth_signature = flask.request.headers.get('Auth-Signature', None)
+        if not auth_token or not auth_timestamp or not auth_nonce or \
+                not auth_signature:
+            return False
+        auth_nonce = auth_nonce[:32]
+
+        try:
+            if abs(int(auth_timestamp) - int(time.time())) > \
+                    settings.app.auth_time_window:
                 return False
-            auth_nonce = auth_nonce[:32]
+        except ValueError:
+            return False
 
-            try:
-                if abs(int(auth_timestamp) - int(time.time())) > \
-                        settings.app.auth_time_window:
-                    return False
-            except ValueError:
-                return False
-
-            administrator = cls.find_user(token=auth_token)
-            if not administrator:
-                return False
-
-            auth_string = '&'.join([
-                auth_token, auth_timestamp, auth_nonce, flask.request.method,
-                flask.request.path] +
-                ([flask.request.data] if flask.request.data else []))
-
-            if len(auth_string) > AUTH_SIG_STRING_MAX_LEN:
-                return False
-
-            auth_test_signature = base64.b64encode(hmac.new(
-                administrator.secret.encode(), auth_string,
-                hashlib.sha256).digest())
-            if auth_signature != auth_test_signature:
-                return False
-
-            try:
-                cls.nonces_collection.insert({
-                    'token': auth_token,
-                    'nonce': auth_nonce,
-                    'timestamp': datetime.datetime.utcnow(),
-                }, w=0)
-            except pymongo.errors.DuplicateKeyError:
-                return False
-        else:
-            if not flask.session:
-                return False
-
-            admin_id = flask.session.get('admin_id')
-            if not admin_id:
-                return False
-
-            administrator = cls.get_user(id=admin_id)
-            if not administrator:
-                return False
-
-            if not settings.conf.ssl and flask.session.get(
-                    'source') != utils.get_remote_addr():
-                flask.session.clear()
-                return False
-
-            session_timeout = settings.app.session_timeout
-            if session_timeout and int(time.time()) - \
-                    flask.session['timestamp'] > session_timeout:
-                flask.session.clear()
-                return False
-
-            flask.session['timestamp'] = int(time.time())
-
-        flask.g.administrator = administrator
-        return True
-
-    @classmethod
-    def check_auth(cls, username, password, remote_addr=None):
-        if remote_addr:
-            doc = cls.limiter_collection.find_and_modify({
-                '_id': remote_addr,
-            }, {
-                '$inc': {'count': 1},
-                '$setOnInsert': {'timestamp': datetime.datetime.utcnow()},
-            }, new=True, upsert=True)
-
-            if datetime.datetime.utcnow() > doc['timestamp'] + \
-                    datetime.timedelta(minutes=1):
-                doc = {
-                    'count': 1,
-                    'timestamp': datetime.datetime.utcnow(),
-                }
-                cls.limiter_collection.update({
-                    '_id': remote_addr,
-                }, doc, upsert=True)
-
-            if doc['count'] > settings.app.auth_limiter_count_max:
-                raise flask.abort(403)
-
-        administrator = cls.find_user(username=username)
+        administrator = find_user(token=auth_token)
         if not administrator:
-            return
-        if not administrator.test_password(password):
-            return
-        return administrator
+            return False
+
+        auth_string = '&'.join([
+            auth_token, auth_timestamp, auth_nonce, flask.request.method,
+            flask.request.path] +
+            ([flask.request.data] if flask.request.data else []))
+
+        if len(auth_string) > AUTH_SIG_STRING_MAX_LEN:
+            return False
+
+        auth_test_signature = base64.b64encode(hmac.new(
+            administrator.secret.encode(), auth_string,
+            hashlib.sha256).digest())
+        if auth_signature != auth_test_signature:
+            return False
+
+        try:
+            Administrator.nonces_collection.insert({
+                'token': auth_token,
+                'nonce': auth_nonce,
+                'timestamp': datetime.datetime.utcnow(),
+            }, w=0)
+        except pymongo.errors.DuplicateKeyError:
+            return False
+    else:
+        if not flask.session:
+            return False
+
+        admin_id = flask.session.get('admin_id')
+        if not admin_id:
+            return False
+
+        administrator = get_user(id=admin_id)
+        if not administrator:
+            return False
+
+        if not settings.conf.ssl and flask.session.get(
+                'source') != utils.get_remote_addr():
+            flask.session.clear()
+            return False
+
+        session_timeout = settings.app.session_timeout
+        if session_timeout and int(time.time()) - \
+                flask.session['timestamp'] > session_timeout:
+            flask.session.clear()
+            return False
+
+        flask.session['timestamp'] = int(time.time())
+
+    flask.g.administrator = administrator
+    return True
+
+def check_auth(username, password, remote_addr=None):
+    if remote_addr:
+        doc = Administrator.limiter_collection.find_and_modify({
+            '_id': remote_addr,
+        }, {
+            '$inc': {'count': 1},
+            '$setOnInsert': {'timestamp': datetime.datetime.utcnow()},
+        }, new=True, upsert=True)
+
+        if datetime.datetime.utcnow() > doc['timestamp'] + \
+                datetime.timedelta(minutes=1):
+            doc = {
+                'count': 1,
+                'timestamp': datetime.datetime.utcnow(),
+            }
+            Administrator.limiter_collection.update({
+                '_id': remote_addr,
+            }, doc, upsert=True)
+
+        if doc['count'] > settings.app.auth_limiter_count_max:
+            raise flask.abort(403)
+
+    administrator = find_user(username=username)
+    if not administrator:
+        return
+    if not administrator.test_password(password):
+        return
+    return administrator
