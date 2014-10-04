@@ -1,9 +1,8 @@
-from pritunl.administrator import Administrator
-
 from pritunl.app_server import app_server
 from pritunl.settings import settings
 from pritunl import logger
 from pritunl import mongo
+from pritunl import administrator
 
 import pymongo
 import bson
@@ -111,8 +110,8 @@ def setup_mongo():
     mongo.collections['auth_limiter'].ensure_index('timestamp',
         expireAfterSeconds=settings.app.auth_limiter_ttl)
 
-    if not Administrator.collection.find_one():
-        Administrator(
+    if not administrator.Administrator.collection.find_one():
+        administrator.Administrator(
             username=DEFAULT_USERNAME,
             password=DEFAULT_PASSWORD,
             default=True,

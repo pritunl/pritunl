@@ -1,16 +1,15 @@
-from administrator import Administrator
-
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings import settings
 from pritunl import logger
+from pritunl import administrator
 
 import flask
 
 def session_auth(call):
     def _wrapped(*args, **kwargs):
-        if not Administrator.check_session():
+        if not administrator.check_session():
             raise flask.abort(401)
         return call(*args, **kwargs)
     _wrapped.__name__ = '%s_session_auth' % call.__name__

@@ -1,6 +1,6 @@
 from pritunl.constants import *
-from pritunl.administrator import Administrator
 from pritunl.settings import settings
+from pritunl import administrator
 from pritunl import utils
 from pritunl import mongo
 from pritunl.app_server import app_server
@@ -20,17 +20,17 @@ def auth_get():
 @app_server.app.route('/auth', methods=['PUT'])
 @app_server.auth
 def auth_put():
-    administrator = flask.g.administrator
+    admin = flask.g.administrator
 
     if 'username' in flask.request.json and flask.request.json['username']:
-        administrator.username = utils.filter_str(
+        admin.username = utils.filter_str(
             flask.request.json['username'])
     if 'password' in flask.request.json and flask.request.json['password']:
-        administrator.password = flask.request.json['password']
+        admin.password = flask.request.json['password']
     if 'token' in flask.request.json and flask.request.json['token']:
-        administrator.generate_token()
+        admin.generate_token()
     if 'secret' in flask.request.json and flask.request.json['secret']:
-        administrator.generate_secret()
+        admin.generate_secret()
 
     settings_commit = False
     if 'email_from' in flask.request.json:
@@ -44,7 +44,7 @@ def auth_put():
     if settings_commit:
         settings.commit()
 
-    administrator.commit(administrator.changed)
+    admin.commit(admin.changed)
 
     response = flask.g.administrator.dict()
     response.update({
@@ -56,7 +56,7 @@ def auth_put():
 @app_server.app.route('/auth/session', methods=['GET'])
 def auth_get():
     return utils.jsonify({
-        'authenticated': Administrator.check_session(),
+        'authenticated': administrator.check_session(),
     })
 
 @app_server.app.route('/auth/session', methods=['POST'])
@@ -64,22 +64,22 @@ def auth_session_post():
     username = flask.request.json['username']
     password = flask.request.json['password']
     remote_addr = utils.get_remote_addr()
-    administrator = Administrator.check_auth(username, password, remote_addr)
+    admin = administrator.check_auth(username, password, remote_addr)
 
-    if not administrator:
+    if not admin:
         return utils.jsonify({
             'error': AUTH_INVALID,
             'error_msg': AUTH_INVALID_MSG,
         }, 401)
 
-    flask.session['admin_id'] = administrator.id
+    flask.session['admin_id'] = admin.id
     flask.session['timestamp'] = int(time.time())
     if not app_server.ssl:
         flask.session['source'] = remote_addr
 
     return utils.jsonify({
         'authenticated': True,
-        'default': administrator.default,
+        'default': admin.default,
     })
 
 @app_server.app.route('/auth/session', methods=['DELETE'])
