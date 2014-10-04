@@ -2,8 +2,8 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.settings import settings
 from pritunl.organization import Organization
-from pritunl.static_file import StaticFile
 from pritunl import utils
+from pritunl import static
 from pritunl.settings import settings
 from pritunl.cache import cache_db
 from pritunl.app_server import app_server
@@ -66,7 +66,7 @@ def user_linked_key_page_get(view_id):
     org = Organization.get_org(id=org_id)
     user = org.get_user(user_id)
 
-    key_page = StaticFile(settings.conf.www_path, KEY_INDEX_NAME,
+    key_page = static.StaticFile(settings.conf.www_path, KEY_INDEX_NAME,
         cache=False).data
     key_page = key_page.replace('<%= user_name %>', '%s - %s' % (
         org.name, user.name))
