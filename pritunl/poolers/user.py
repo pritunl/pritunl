@@ -5,6 +5,7 @@ from pritunl.settings import settings
 from pritunl import pooler
 from pritunl import mongo
 from pritunl import utils
+from pritunl import organization
 
 import time
 import threading
@@ -16,8 +17,6 @@ import collections
 
 @pooler.add_pooler('user')
 def fill_user():
-    from pritunl.organization import Organization
-
     collection = mongo.get_collection('users')
     org_collection = mongo.get_collection('organizations')
     queue_collection = mongo.get_collection('queue')
@@ -29,7 +28,7 @@ def fill_user():
         CERT_SERVER_POOL: settings.app.server_user_pool_size,
     }
 
-    for org in Organization.iter_orgs(type=None):
+    for org in organization.iter_orgs(type=None):
         orgs[org.id] = org
         orgs_count[str(org.id), CERT_CLIENT_POOL] = 0
         orgs_count[str(org.id), CERT_SERVER_POOL] = 0

@@ -1,5 +1,3 @@
-from pritunl.organization import Organization
-
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
@@ -11,6 +9,7 @@ from pritunl import utils
 from pritunl import logger
 from pritunl import event
 from pritunl import server
+from pritunl import organization
 
 import flask
 import re
@@ -450,7 +449,7 @@ def server_org_get(server_id):
 @app_server.auth
 def server_org_put(server_id, org_id):
     svr = server.get_server(id=server_id)
-    org = Organization.get_org(id=org_id)
+    org = organization.get_org(id=org_id)
     if svr.status:
         return utils.jsonify({
             'error': SERVER_NOT_OFFLINE,
@@ -472,7 +471,7 @@ def server_org_put(server_id, org_id):
 @app_server.auth
 def server_org_delete(server_id, org_id):
     svr = server.get_server(id=server_id)
-    org = Organization.get_org(id=org_id)
+    org = organization.get_org(id=org_id)
     if svr.status:
         return utils.jsonify({
             'error': SERVER_NOT_OFFLINE,

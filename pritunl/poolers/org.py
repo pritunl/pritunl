@@ -8,6 +8,7 @@ from pritunl import pooler
 from pritunl import mongo
 from pritunl import utils
 from pritunl import logger
+from pritunl import organization
 
 import time
 import threading
@@ -19,8 +20,6 @@ import collections
 
 @pooler.add_pooler('org')
 def fill_org():
-    from pritunl.organization import Organization
-
     collection = mongo.get_collection('organizations')
     queue_collection = mongo.get_collection('queue')
 
@@ -37,4 +36,4 @@ def fill_org():
     }).count()
 
     for _ in xrange(settings.app.org_pool_size - org_pool_count):
-        org = Organization.new_org(type=ORG_POOL, block=False)
+        org = organization.new_org(type=ORG_POOL, block=False)

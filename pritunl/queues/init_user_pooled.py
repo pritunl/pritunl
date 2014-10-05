@@ -1,5 +1,4 @@
 from pritunl.user import User
-from pritunl.organization import Organization
 
 from pritunl.queues.init_user import QueueInitUser
 from pritunl.queue import add_queue, add_reserve
@@ -9,6 +8,7 @@ from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.app_server import app_server
 from pritunl import logger
+from pritunl import organization
 
 @add_queue
 class QueueInitUserPooled(QueueInitUser):
@@ -68,5 +68,5 @@ def reserve_queued_user(org, name=None, email=None, type=None,
     if not doc:
         return
 
-    org = Organization(doc=doc['org_doc'])
+    org = organization.Organization(doc=doc['org_doc'])
     return User(org=org, doc=doc['user_doc'])

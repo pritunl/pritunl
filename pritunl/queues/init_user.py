@@ -6,6 +6,7 @@ from pritunl.descriptors import *
 from pritunl.app_server import app_server
 from pritunl import logger
 from pritunl import event
+from pritunl import organization
 
 @add_queue
 class QueueInitUser(Queue):
@@ -26,8 +27,7 @@ class QueueInitUser(Queue):
 
     @cached_property
     def org(self):
-        from pritunl.organization import Organization
-        return Organization(doc=self.org_doc)
+        return organization.Organization(doc=self.org_doc)
 
     @cached_property
     def user(self):

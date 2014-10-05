@@ -1,11 +1,11 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.settings import settings
-from pritunl.organization import Organization
 from pritunl import utils
 from pritunl import logger
 from pritunl import event
 from pritunl import server
+from pritunl import organization
 from pritunl.app_server import app_server
 import flask
 import math
@@ -17,7 +17,7 @@ import collections
 @app_server.app.route('/user/<org_id>/<int:page>', methods=['GET'])
 @app_server.auth
 def user_get(org_id, user_id=None, page=None):
-    org = Organization.get_org(id=org_id)
+    org = organization.get_org(id=org_id)
     if user_id:
         return utils.jsonify(org.get_user(user_id).dict())
 
@@ -121,7 +121,7 @@ def user_get(org_id, user_id=None, page=None):
 @app_server.app.route('/user/<org_id>', methods=['POST'])
 @app_server.auth
 def user_post(org_id):
-    org = Organization.get_org(id=org_id)
+    org = organization.get_org(id=org_id)
     users = []
 
     if isinstance(flask.request.json, list):
@@ -152,7 +152,7 @@ def user_post(org_id):
 @app_server.app.route('/user/<org_id>/<user_id>', methods=['PUT'])
 @app_server.auth
 def user_put(org_id, user_id):
-    org = Organization.get_org(id=org_id)
+    org = organization.get_org(id=org_id)
     user = org.get_user(user_id)
 
     if 'name' in flask.request.json:
@@ -204,7 +204,7 @@ def user_put(org_id, user_id):
 @app_server.app.route('/user/<org_id>/<user_id>', methods=['DELETE'])
 @app_server.auth
 def user_delete(org_id, user_id):
-    org = Organization.get_org(id=org_id)
+    org = organization.get_org(id=org_id)
     user = org.get_user(user_id)
     name = user.name
     user.remove()
@@ -224,7 +224,7 @@ def user_delete(org_id, user_id):
 @app_server.app.route('/user/<org_id>/<user_id>/otp_secret', methods=['PUT'])
 @app_server.auth
 def user_otp_secret_put(org_id, user_id):
-    org = Organization.get_org(id=org_id)
+    org = organization.get_org(id=org_id)
     user = org.get_user(user_id)
     user.generate_otp_secret()
     user.commit()

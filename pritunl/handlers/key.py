@@ -1,9 +1,9 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.settings import settings
-from pritunl.organization import Organization
 from pritunl import utils
 from pritunl import static
+from pritunl import organization
 from pritunl.settings import settings
 from pritunl.cache import cache_db
 from pritunl.app_server import app_server
@@ -15,7 +15,7 @@ import random
 import json
 
 def _get_key_archive(org_id, user_id):
-    org = Organization.get_org(id=org_id)
+    org = organization.get_org(id=org_id)
     user = org.get_user(user_id)
     key_archive = user.build_key_archive()
     response = flask.Response(response=key_archive,
@@ -32,7 +32,7 @@ def user_key_archive_get(org_id, user_id):
 @app_server.app.route('/key/<org_id>/<user_id>', methods=['GET'])
 @app_server.auth
 def user_key_link_get(org_id, user_id):
-    org = Organization.get_org(id=org_id)
+    org = organization.get_org(id=org_id)
     return utils.jsonify(org.create_user_key_link(user_id))
 
 @app_server.app.route('/key/<key_id>.tar', methods=['GET'])
@@ -63,7 +63,7 @@ def user_linked_key_page_get(view_id):
         time.sleep(settings.app.rate_limit_sleep)
         return flask.abort(404)
 
-    org = Organization.get_org(id=org_id)
+    org = organization.get_org(id=org_id)
     user = org.get_user(user_id)
 
     key_page = static.StaticFile(settings.conf.www_path, KEY_INDEX_NAME,
@@ -124,7 +124,7 @@ def user_uri_key_page_get(uri_id):
         time.sleep(settings.app.rate_limit_sleep)
         return flask.abort(404)
 
-    org = Organization.get_org(id=org_id)
+    org = organization.get_org(id=org_id)
     user = org.get_user(user_id)
 
     keys = {}
@@ -146,7 +146,7 @@ def user_linked_key_conf_get(conf_id):
         time.sleep(settings.app.rate_limit_sleep)
         return flask.abort(404)
 
-    org = Organization.get_org(id=org_id)
+    org = organization.get_org(id=org_id)
     user = org.get_user(user_id)
     key_conf = user.build_key_conf(server_id)
 

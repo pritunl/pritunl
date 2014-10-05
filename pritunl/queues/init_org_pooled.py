@@ -6,6 +6,7 @@ from pritunl.descriptors import *
 from pritunl.app_server import app_server
 from pritunl import logger
 from pritunl import event
+from pritunl import organization
 
 import copy
 
@@ -27,8 +28,7 @@ class QueueInitOrgPooled(Queue):
 
     @cached_property
     def org(self):
-        from pritunl.organization import Organization
-        org = Organization(doc=self.org_doc)
+        org = organization.Organization(doc=self.org_doc)
         org.exists = False
         return org
 
@@ -61,8 +61,6 @@ class QueueInitOrgPooled(Queue):
 
 @add_reserve('queued_org')
 def reserve_queued_org(name=None, type=None, block=False):
-    from pritunl.organization import Organization
-
     reserve_data = {}
 
     if name is not None:
@@ -74,4 +72,4 @@ def reserve_queued_org(name=None, type=None, block=False):
     if not doc:
         return
 
-    return Organization(doc=doc['org_doc'])
+    return organization.Organization(doc=doc['org_doc'])

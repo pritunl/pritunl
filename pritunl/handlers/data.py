@@ -1,7 +1,7 @@
 from pritunl.constants import *
-from pritunl.organization import Organization
 from pritunl import utils
 from pritunl import server
+from pritunl import organization
 from pritunl.app_server import app_server
 import os
 import flask
@@ -35,7 +35,7 @@ def export_get():
         tar_add(tar_file, os.path.join(data_path, SERVER_KEY_NAME))
         tar_add(tar_file, os.path.join(data_path, VERSION_NAME))
 
-        for org in Organization.iter_orgs():
+        for org in organization.iter_orgs():
             tar_add(tar_file, org.get_path())
             tar_file.add(empty_temp_path,
                 arcname=os.path.relpath(os.path.join(org.path, TEMP_DIR),

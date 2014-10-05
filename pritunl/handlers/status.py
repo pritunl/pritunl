@@ -1,8 +1,8 @@
 from pritunl.constants import *
 from pritunl import utils
 from pritunl.settings import settings
-from pritunl.organization import Organization
 from pritunl import server
+from pritunl import organization
 from pritunl.app_server import app_server
 from pritunl import __version__
 
@@ -23,7 +23,7 @@ def status_get():
         clients = clients | set(svr.clients.keys())
     clients_count = len(clients)
 
-    user_count = Organization.get_user_count_multi()
+    user_count = organization.get_user_count_multi()
     local_networks = utils.get_local_networks()
 
     if settings.local.openssl_heartbleed:

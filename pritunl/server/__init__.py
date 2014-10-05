@@ -1,4 +1,3 @@
-from pritunl.organization import Organization
 from pritunl.cache import cache_db
 
 from pritunl.server.bandwidth import ServerBandwidth
@@ -19,6 +18,7 @@ from pritunl import transaction
 from pritunl import event
 from pritunl import logger
 from pritunl import messenger
+from pritunl import organization
 
 import uuid
 import os
@@ -153,7 +153,7 @@ class Server(mongo.MongoObject):
 
     @cached_property
     def user_count(self):
-        return Organization.get_user_count_multi(org_ids=self.organizations)
+        return organization.get_user_count_multi(org_ids=self.organizations)
 
     @cached_property
     def output(self):
@@ -277,7 +277,7 @@ class Server(mongo.MongoObject):
         if not self.primary_organization or not self.primary_user:
             return
 
-        org = Organization.get_org(id=self.primary_organization)
+        org = organization.get_org(id=self.primary_organization)
         if org:
             user = org.get_user(id=self.primary_user)
             if user:
@@ -325,7 +325,7 @@ class Server(mongo.MongoObject):
 
     def iter_orgs(self):
         for org_id in self.organizations:
-            org = Organization.get_org(id=org_id)
+            org = organization.get_org(id=org_id)
             if org:
                 yield org
             else:
@@ -340,7 +340,7 @@ class Server(mongo.MongoObject):
 
     def get_org(self, org_id):
         if org_id in self.organizations:
-            return Organization.get_org(id=org_id)
+            return organization.get_org(id=org_id)
 
     def add_host(self, host_id):
         if not isinstance(host_id, basestring):
@@ -427,15 +427,15 @@ class Server(mongo.MongoObject):
         if not self.primary_organization or not self.primary_user:
             self._create_primary_user()
 
-        primary_org = Organization.get_org(id=self.primary_organization)
+        primary_org = organization.get_org(id=self.primary_organization)
         if not primary_org:
             self._create_primary_user()
-            primary_org = Organization.get_org(id=self.primary_organization)
+            primary_org = organization.get_org(id=self.primary_organization)
 
         primary_user = primary_org.get_user(self.primary_user)
         if not primary_user:
             self._create_primary_user()
-            primary_org = Organization.get_org(id=self.primary_organization)
+            primary_org = organization.get_org(id=self.primary_organization)
             primary_user = primary_org.get_user(self.primary_user)
 
         tls_verify_path = os.path.join(temp_path,
