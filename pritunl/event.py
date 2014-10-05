@@ -1,10 +1,8 @@
-from pritunl.messenger import Messenger
-
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl import logger
-from pritunl import Messenger
+from pritunl import messenger
 
 import time
 import uuid
