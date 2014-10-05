@@ -30,12 +30,13 @@ def _keep_alive_thread():
                     cpu_usage = host.usage_utils.calc_cpu_usage(
                         last_proc_stat, proc_stat)
                     mem_usage = host.usage_utils.get_mem_usage()
-                    host.host.usage.add_period(timestamp, cpu_usage, mem_usage)
+                    settings.local.host.usage.add_period(timestamp,
+                        cpu_usage, mem_usage)
 
             time.sleep(settings.app.host_ttl - 10)
 
-            host.host.collection.update({
-                '_id': host.host.id,
+            settings.local.host.collection.update({
+                '_id': settings.local.host.id,
             }, {'$set': {
                 'status': ONLINE,
                 'ping_timestamp': datetime.datetime.utcnow(),
@@ -43,8 +44,8 @@ def _keep_alive_thread():
             }})
         except:
             logger.exception('Error in host keep alive update. %s' % {
-                'host_id': host.host.id,
-                'host_name': host.host.name,
+                'host_id': settings.local.host.id,
+                'host_name': settings.local.host.name,
             })
 
 def start_host():
