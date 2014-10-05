@@ -1,6 +1,4 @@
-import os
-
-for module_name in os.listdir(os.path.dirname(__file__)):
-    if module_name == '__init__.py' or module_name[-3:] != '.py':
-        continue
-    __import__('pritunl.tasks.' + module_name[:-3])
+import pritunl.tasks.clean_ip_pool
+import pritunl.tasks.clean_users
+import pritunl.tasks.pooler
+import pritunl.tasks.sync_ip_pool
