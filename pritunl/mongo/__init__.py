@@ -1,6 +1,6 @@
-from pritunl.mongo.object import MongoObject
 from pritunl.mongo.dict import MongoDict
 from pritunl.mongo.list import MongoList
+from pritunl.mongo.object import MongoObject
 
 import pymongo
 
@@ -12,3 +12,12 @@ collections = {}
 
 def get_collection(name):
     return collections[name]
+
+__all__ = (
+    'MongoDict',
+    'MongoList',
+    'MongoObject',
+    'has_bulk',
+    'collections',
+    'get_collection',
+)
