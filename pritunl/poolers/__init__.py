@@ -1,6 +1,5 @@
-import os
+from pritunl.poolers import dh_params
+from pritunl.poolers import org
+from pritunl.poolers import user
 
-for module_name in os.listdir(os.path.dirname(__file__)):
-    if module_name == '__init__.py' or module_name[-3:] != '.py':
-        continue
-    __import__('pritunl.poolers.' + module_name[:-3])
+__all__ = ()
