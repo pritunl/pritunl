@@ -13,24 +13,6 @@ import collections
 _task_types = {}
 tasks = collections.defaultdict(lambda: collections.defaultdict(list))
 
-def add_task(task_cls, hours=None, minutes=None):
-    if hours is not None or minutes is not None:
-        if hours is None:
-            hours = ('all',)
-        elif isinstance(hours, int):
-            hours = (hours,)
-
-        if minutes is None:
-            minutes = (0,)
-        elif isinstance(minutes, int):
-            minutes = (minutes,)
-
-        for hour in hours:
-            for minute in minutes:
-                tasks[hour][minute].append(task_cls)
-
-    _task_types[task_cls.type] = task_cls
-
 class Task(mongo.MongoObject):
     fields = {
         'attempts',
@@ -102,3 +84,27 @@ class Task(mongo.MongoObject):
 def iter_tasks(spec=None):
     for doc in Task.collection.find(spec or {}):
         yield _task_types[doc['type']](doc=doc)
+
+def add_task(task_cls, hours=None, minutes=None):
+    if hours is not None or minutes is not None:
+        if hours is None:
+            hours = ('all',)
+        elif isinstance(hours, int):
+            hours = (hours,)
+
+        if minutes is None:
+            minutes = (0,)
+        elif isinstance(minutes, int):
+            minutes = (minutes,)
+
+        for hour in hours:
+            for minute in minutes:
+                tasks[hour][minute].append(task_cls)
+
+    _task_types[task_cls.type] = task_cls
+
+__all__ = (
+    'Task',
+    'iter_tasks',
+    'add_task',
+)
