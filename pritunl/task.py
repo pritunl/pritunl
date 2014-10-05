@@ -102,9 +102,3 @@ def add_task(task_cls, hours=None, minutes=None):
                 tasks[hour][minute].append(task_cls)
 
     _task_types[task_cls.type] = task_cls
-
-__all__ = (
-    'Task',
-    'iter_tasks',
-    'add_task',
-)

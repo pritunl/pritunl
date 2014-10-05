@@ -8,8 +8,3 @@ def add_pooler(fill_type):
 
 def fill(fill_type, *args, **kwargs):
     pooler_types[fill_type](*args, **kwargs)
-
-__all__ = (
-    'add_pooler',
-    'fill',
-)

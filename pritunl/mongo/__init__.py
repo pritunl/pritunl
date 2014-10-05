@@ -12,12 +12,3 @@ collections = {}
 
 def get_collection(name):
     return collections[name]
-
-__all__ = (
-    'MongoDict',
-    'MongoList',
-    'MongoObject',
-    'has_bulk',
-    'collections',
-    'get_collection',
-)

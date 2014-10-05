@@ -41,15 +41,3 @@ def critical(log_msg, log_type=None, **kwargs):
 
 def exception(log_msg, log_type=None, **kwargs):
     _log('exception', log_msg, log_type, **kwargs)
-
-__all__ = (
-    'debug',
-    'info',
-    'warning',
-    'error',
-    'critical',
-    'exception',
-    'LogFilter',
-    'LogFormatter',
-    'LogEntry',
-)
