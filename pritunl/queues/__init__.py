@@ -1,6 +1,7 @@
-import os
-
-for module_name in os.listdir(os.path.dirname(__file__)):
-    if module_name == '__init__.py' or module_name[-3:] != '.py':
-        continue
-    __import__('pritunl.queues.' + module_name[:-3])
+from pritunl.queues.assign_ip_addr import QueueAssignIpAddr
+from pritunl.queues.assign_ip_pool import QueueAssignIpPool
+from pritunl.queues.dh_params import QueueDhParams
+from pritunl.queues.init_org_pooled import QueueInitOrgPooled
+from pritunl.queues.init_user import QueueInitUser
+from pritunl.queues.init_user_pooled import QueueInitUserPooled
+from pritunl.queues.unassign_ip_addr import QueueUnassignIpAddr
