@@ -4,6 +4,7 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl import logger
+from pritunl import Messenger
 
 import time
 import uuid
@@ -11,12 +12,11 @@ import bson
 
 class Event(object):
     def __init__(self, type, resource_id=None):
-        Messenger().publish('events', (type, resource_id))
+        messenger.publish('events', (type, resource_id))
 
 def get_events(cursor=None):
     events = []
     events_dict = {}
-    messenger = Messenger()
 
     if cursor is not None:
         cursor = bson.ObjectId(cursor)

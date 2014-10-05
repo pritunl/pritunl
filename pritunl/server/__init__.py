@@ -1,5 +1,4 @@
 from pritunl.organization import Organization
-from pritunl.messenger import Messenger
 from pritunl.cache import cache_db
 
 from pritunl.server.bandwidth import ServerBandwidth
@@ -19,6 +18,7 @@ from pritunl import queue
 from pritunl import transaction
 from pritunl import event
 from pritunl import logger
+from pritunl import messenger
 
 import uuid
 import os
@@ -239,7 +239,7 @@ class Server(mongo.MongoObject):
             *args, **kwargs)
 
         if tran:
-            Messenger().publish('queue', 'queue_updated',
+            messenger.publish('queue', 'queue_updated',
                 transaction=tran)
             tran.commit()
 

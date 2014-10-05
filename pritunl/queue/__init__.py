@@ -1,5 +1,3 @@
-from pritunl.messenger import Messenger
-
 from pritunl.queue.com import QueueCom
 
 from pritunl.constants import *
@@ -9,6 +7,7 @@ from pritunl.settings import settings
 from pritunl.queue import com
 from pritunl import logger
 from pritunl import mongo
+from pritunl import messenger
 
 import bson
 import datetime
@@ -70,8 +69,6 @@ class Queue(mongo.MongoObject):
         ))
 
     def _keep_alive_thread(self):
-        messenger = Messenger()
-
         while True:
             time.sleep(self.ttl - 5)
             if self.queue_com.state in (COMPLETE, STOPPED):
@@ -123,7 +120,6 @@ class Queue(mongo.MongoObject):
         self.ttl_timestamp = datetime.datetime.utcnow() + \
             datetime.timedelta(seconds=self.ttl)
         self.commit(transaction=transaction)
-        messenger = Messenger()
 
         if block:
             if transaction:
@@ -195,8 +191,6 @@ class Queue(mongo.MongoObject):
 
     @classmethod
     def reserve(cls, reserve_id, reserve_data, block=False, block_timeout=30):
-        messenger = Messenger()
-
         if block:
             cursor_id = messenger.get_cursor_id('queue')
 
@@ -303,7 +297,7 @@ class Queue(mongo.MongoObject):
                     'queue_id': self.id,
                     'queue_type': self.type,
                 })
-                Messenger().publish('queue', [ERROR, self.id])
+                messenger.publish('queue', [ERROR, self.id])
         finally:
             self.queue_com.state_lock.acquire()
             try:
@@ -342,7 +336,7 @@ class Queue(mongo.MongoObject):
             self.queue_com.state_lock.release()
 
     def complete(self):
-        Messenger().publish('queue', [COMPLETE, self.id])
+        messenger.publish('queue', [COMPLETE, self.id])
         self.remove()
 
     def task(self):

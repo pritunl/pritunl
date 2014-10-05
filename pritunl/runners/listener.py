@@ -1,10 +1,9 @@
-from pritunl.messenger import Messenger
-
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl import listener
 from pritunl import logger
+from pritunl import messenger
 
 import pymongo
 import random
@@ -15,8 +14,6 @@ import threading
 import time
 
 def listener_thread():
-    messenger = Messenger()
-
     while True:
         try:
             for msg in messenger.subscribe(listener.channels.keys()):

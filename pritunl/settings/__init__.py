@@ -57,13 +57,12 @@ class Settings(object):
                 setattr(group, field, val)
 
     def commit(self, all_fields=False):
-        from pritunl.messenger import Messenger
+        from pritunl import messenger
         from pritunl import mongo
         from pritunl import transaction
 
         docs = []
         has_docs = False
-        messenger = Messenger()
         transaction = transaction.Transaction()
         collection = transaction.collection(
             self.collection.name_str)
