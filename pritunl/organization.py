@@ -313,94 +313,88 @@ class Organization(mongo.MongoObject):
             'org_id': self.id,
         })
 
-    @classmethod
-    def new_pooled_org(cls):
-        thread = threading.Thread(target=cls.new_org, kwargs={
-            'type': ORG_POOL,
-            'block': False,
-        })
-        thread.daemon = True
-        thread.start()
+def new_pooled_org():
+    thread = threading.Thread(target=Organization.new_org, kwargs={
+        'type': ORG_POOL,
+        'block': False,
+    })
+    thread.daemon = True
+    thread.start()
 
-        logger.debug('Queued pooled org', 'organization')
+    logger.debug('Queued pooled org', 'organization')
 
-    @classmethod
-    def reserve_pooled_org(cls, name=None, type=ORG_DEFAULT):
-        doc = {}
+def reserve_pooled_org(name=None, type=ORG_DEFAULT):
+    doc = {}
 
-        if name is not None:
-            doc['name'] = name
-        if type is not None:
-            doc['type'] = type
+    if name is not None:
+        doc['name'] = name
+    if type is not None:
+        doc['type'] = type
 
-        doc = cls.collection.find_and_modify({
-            'type': ORG_POOL,
-        }, {
-            '$set': doc,
-        })
+    doc = Organization.collection.find_and_modify({
+        'type': ORG_POOL,
+    }, {
+        '$set': doc,
+    })
 
-        if doc:
-            return cls(doc=doc)
+    if doc:
+        return Organization(doc=doc)
 
-    @classmethod
-    def new_org(cls, type=ORG_DEFAULT, block=True, **kwargs):
-        if type == ORG_DEFAULT:
-            org = cls.reserve_pooled_org(type=type, **kwargs)
+def new_org(type=ORG_DEFAULT, block=True, **kwargs):
+    if type == ORG_DEFAULT:
+        org = Organization.reserve_pooled_org(type=type, **kwargs)
 
-            if not org:
-                org = queue.reserve('queued_org', block=block, type=type,
-                    **kwargs)
-
-                if org:
-                    logger.debug('Reserved queued org', 'organization',
-                        org_id=org.id,
-                    )
-            else:
-                logger.debug('Reserved pooled org', 'organization',
-                    org_id=org.id,
-                )
+        if not org:
+            org = queue.reserve('queued_org', block=block, type=type,
+                **kwargs)
 
             if org:
-                cls.new_pooled_org()
-                return org
-
-            org = cls(type=type, **kwargs)
-            org.initialize()
-            org.commit()
-
-            logger.debug('Org init', 'organization',
-                org_id=org.id,
-            )
-
-            return org
+                logger.debug('Reserved queued org', 'organization',
+                    org_id=org.id,
+                )
         else:
-            org = cls(type=type, **kwargs)
-            org.queue_initialize(block=block)
-
-            logger.debug('Queue org init', 'organization',
+            logger.debug('Reserved pooled org', 'organization',
                 org_id=org.id,
             )
 
+        if org:
+            Organization.new_pooled_org()
             return org
 
-    @classmethod
-    def get_org(cls, id):
-        return cls(id=id)
+        org = Organization(type=type, **kwargs)
+        org.initialize()
+        org.commit()
 
-    @classmethod
-    def iter_orgs(cls, type=ORG_DEFAULT):
-        spec = {}
-        if type is not None:
-            spec['type'] = type
+        logger.debug('Org init', 'organization',
+            org_id=org.id,
+        )
 
-        for doc in cls.collection.find(spec).sort('name'):
-            yield cls(doc=doc)
+        return org
+    else:
+        org = Organization(type=type, **kwargs)
+        org.queue_initialize(block=block)
 
-    @classmethod
-    def get_user_count_multi(cls, org_ids=None, type=CERT_CLIENT):
-        spec = {
-            'type': type,
-        }
-        if org_ids is not None:
-            spec['org_id'] = {'$in': org_ids}
-        return User.collection.find(spec).count()
+        logger.debug('Queue org init', 'organization',
+            org_id=org.id,
+        )
+
+        return org
+
+def get_org(id):
+    return Organization(id=id)
+
+def iter_orgs(type=ORG_DEFAULT):
+    spec = {}
+    if type is not None:
+        spec['type'] = type
+
+    for doc in Organization.collection.find(spec).sort('name'):
+        yield Organization(doc=doc)
+
+def get_user_count_multi(org_ids=None, type=CERT_CLIENT):
+    spec = {
+        'type': type,
+    }
+    if org_ids is not None:
+        spec['org_id'] = {'$in': org_ids}
+    return User.collection.find(spec).count()
