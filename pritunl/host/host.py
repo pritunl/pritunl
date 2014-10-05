@@ -12,8 +12,6 @@ from pritunl import event
 import signal
 import datetime
 
-host = None
-
 class Host(mongo.MongoObject):
     fields = {
         'name',
@@ -89,26 +87,25 @@ def iter_hosts():
         yield Host(doc=doc)
 
 def init_host():
-    global host
-    host = Host()
+    settings.local.host = Host()
 
     try:
-        host.load()
+        settings.local.host.load()
     except NotFound:
         pass
 
-    host.status = ONLINE
-    host.users_online = 0
-    host.start_timestamp = datetime.datetime.utcnow()
+    settings.local.host.status = ONLINE
+    settings.local.host.users_online = 0
+    settings.local.host.start_timestamp = datetime.datetime.utcnow()
     if settings.local.public_ip:
-        host.auto_public_address = settings.local.public_ip
+        settings.local.host.auto_public_address = settings.local.public_ip
 
-    host.commit()
+    settings.local.host.commit()
     event.Event(type=HOSTS_UPDATED)
 
 def deinit_host():
     Host.collection.update({
-        '_id': host.id,
+        '_id': settings.local.host.id,
     }, {'$set': {
         'status': OFFLINE,
         'ping_timestamp': None,

@@ -2,7 +2,6 @@ from pritunl.host.host import *
 from pritunl.host.usage import HostUsage
 
 __all__ = (
-    'host',
     'Host',
     'get_host',
     'iter_hosts',
