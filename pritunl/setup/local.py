@@ -3,7 +3,7 @@ from pritunl import __version__
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
-from pritunl.settings import settings
+from pritunl import settings
 from pritunl import utils
 
 import hashlib

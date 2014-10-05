@@ -3,7 +3,7 @@ from pritunl.host.host import Host
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
-from pritunl.settings import settings
+from pritunl import settings
 from pritunl import event
 
 import datetime

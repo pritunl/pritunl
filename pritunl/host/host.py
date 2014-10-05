@@ -3,7 +3,7 @@ from pritunl.host.usage import HostUsage
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
-from pritunl.settings import settings
+from pritunl import settings
 from pritunl import utils
 from pritunl import mongo
 from pritunl import logger

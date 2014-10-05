@@ -1,5 +1,5 @@
 from pritunl.app_server import app_server
-from pritunl.settings import settings
+from pritunl import settings
 from pritunl import logger
 from pritunl import mongo
 from pritunl import auth

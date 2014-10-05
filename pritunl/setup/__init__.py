@@ -9,7 +9,7 @@ from pritunl.setup.poolers import setup_poolers
 from pritunl.setup.host import setup_host
 from pritunl.setup.runners import setup_runners
 from pritunl.setup.server_cert import setup_server_cert
-from pritunl.settings import settings
+from pritunl import settings
 
 def setup_all():
     setup_local()

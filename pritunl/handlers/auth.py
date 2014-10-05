@@ -1,5 +1,5 @@
 from pritunl.constants import *
-from pritunl.settings import settings
+from pritunl import settings
 from pritunl import auth
 from pritunl import utils
 from pritunl import mongo

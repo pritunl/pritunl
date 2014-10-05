@@ -1,6 +1,5 @@
-from pritunl.constants import *
 from pritunl import utils
-from pritunl.settings import settings
+from pritunl import settings
 from pritunl import server
 from pritunl import organization
 from pritunl.app_server import app_server
