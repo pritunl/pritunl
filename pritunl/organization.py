@@ -247,14 +247,12 @@ class Organization(mongo.MongoObject):
         }
 
     def get_server(self, server_id):
-        # TODO move to server
         from pritunl import server
         svr = server.get_server(id=server_id)
         if svr and self.id in svr.organizations:
             return svr
 
     def iter_servers(self, fields=None):
-        # TODO move to server
         from pritunl import server
         spec = {
             'organizations': self.id,
