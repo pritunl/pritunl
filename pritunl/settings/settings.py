@@ -8,7 +8,6 @@ import threading
 import sys
 
 module_classes = []
-test_var = 'TEST'
 
 for module_name in os.listdir(os.path.dirname(__file__)):
     if module_name in (
