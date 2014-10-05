@@ -8,9 +8,8 @@ import time
 import datetime
 import bson
 
-collection = mongo.get_collection('messages')
-
 def publish(channels, message, extra=None, transaction=None):
+    collection = mongo.get_collection('messages')
     doc = {
         'timestamp': datetime.datetime.utcnow(),
         'message': message,
@@ -51,6 +50,7 @@ def publish(channels, message, extra=None, transaction=None):
         collection.insert(docs)
 
 def get_cursor_id(channels):
+    collection = mongo.get_collection('messages')
     spec = {}
 
     if isinstance(channels, str):
@@ -66,6 +66,7 @@ def get_cursor_id(channels):
 
 def subscribe(channels, cursor_id=None, timeout=None,
         yield_delay=None):
+    collection = mongo.get_collection('messages')
     start_time = time.time()
     cursor_id = cursor_id or get_cursor_id(channels)
     while True:
