@@ -1,5 +1,3 @@
-from pritunl.user import User
-
 from pritunl.queues.init_user import QueueInitUser
 from pritunl.queue import add_queue, add_reserve
 
@@ -69,4 +67,4 @@ def reserve_queued_user(org, name=None, email=None, type=None,
         return
 
     org = organization.Organization(doc=doc['org_doc'])
-    return User(org=org, doc=doc['user_doc'])
+    return user.User(org=org, doc=doc['user_doc'])

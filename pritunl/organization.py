@@ -1,5 +1,3 @@
-from pritunl.user import User
-
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
@@ -10,6 +8,7 @@ from pritunl import logger
 from pritunl import mongo
 from pritunl import queue
 from pritunl import pooler
+from pritunl import user
 
 import uuid
 import logging
@@ -84,7 +83,7 @@ class Organization(mongo.MongoObject):
         return mongo.get_collection('servers')
 
     def initialize(self, queue_user_init=True):
-        ca_user = User(org=self, type=CERT_CA)
+        ca_user = user.User(org=self, type=CERT_CA)
 
         if queue_user_init:
             ca_user.queue_initialize(block=True,
@@ -131,13 +130,13 @@ class Organization(mongo.MongoObject):
             thread.start()
 
     def get_user(self, id):
-        return User.get_user(org=self, id=id)
+        return user.get_user(org=self, id=id)
 
     def find_user(self, name=None, type=None):
-        return User.find_user(org=self, name=name, type=type)
+        return user.find_user(org=self, name=name, type=type)
 
     def _get_user_count(self, type=CERT_CLIENT):
-        return User.collection.find({
+        return user.User.collection.find({
             'org_id': self.id,
             'type': type,
         }, {
@@ -169,7 +168,7 @@ class Organization(mongo.MongoObject):
             ('name', pymongo.ASCENDING),
         ]
 
-        cursor = User.collection.find(spec, fields).sort(sort)
+        cursor = user.User.collection.find(spec, fields).sort(sort)
 
         if skip is not None:
             cursor = cursor.skip(page * page_count if page else 0)
@@ -180,7 +179,7 @@ class Organization(mongo.MongoObject):
             self.last_search_count = cursor.count()
 
         for doc in cursor:
-            yield User(self, doc=doc)
+            yield user.User(self, doc=doc)
 
     def create_user_key_link(self, user_id):
         key_id = uuid.uuid4().hex
@@ -266,7 +265,7 @@ class Organization(mongo.MongoObject):
         # First attempt to get user from pool then attempt to get
         # unfinished queued user in pool then queue a new user init
         if type in (CERT_SERVER, CERT_CLIENT):
-            user = User.reserve_pooled_user(org=self, type=type, **kwargs)
+            user = user.reserve_pooled_user(org=self, type=type, **kwargs)
 
             if not user:
                 user = queue.reserve('queued_user', org=self, type=type,
@@ -284,10 +283,10 @@ class Organization(mongo.MongoObject):
                 )
 
             if user:
-                User.new_pooled_user(org=self, type=type)
+                user.new_pooled_user(org=self, type=type)
                 return user
 
-        user = User(org=self, type=type, **kwargs)
+        user = user.User(org=self, type=type, **kwargs)
         user.queue_initialize(block=block,
             priority=HIGH if type in (CERT_SERVER, CERT_CLIENT) else None)
 
@@ -309,7 +308,7 @@ class Organization(mongo.MongoObject):
             server.remove_org(self)
             server.commit()
         mongo.MongoObject.remove(self)
-        User.collection.remove({
+        user.User.collection.remove({
             'org_id': self.id,
         })
 
@@ -397,4 +396,4 @@ def get_user_count_multi(org_ids=None, type=CERT_CLIENT):
     }
     if org_ids is not None:
         spec['org_id'] = {'$in': org_ids}
-    return User.collection.find(spec).count()
+    return user.User.collection.find(spec).count()

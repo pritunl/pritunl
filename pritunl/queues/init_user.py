@@ -7,6 +7,7 @@ from pritunl.app_server import app_server
 from pritunl import logger
 from pritunl import event
 from pritunl import organization
+from pritunl import user
 
 @add_queue
 class QueueInitUser(Queue):
@@ -31,8 +32,7 @@ class QueueInitUser(Queue):
 
     @cached_property
     def user(self):
-        from pritunl.user import User
-        user = User(org=self.org, doc=self.user_doc)
+        user = user.User(org=self.org, doc=self.user_doc)
         user.exists = False
         return user
 
