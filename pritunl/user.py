@@ -1,13 +1,15 @@
+from pritunl.cache import cache_db
+
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl.settings import settings
-from pritunl.cache import cache_db
 from pritunl.app_server import app_server
 from pritunl import mongo
 from pritunl import utils
 from pritunl import queue
 from pritunl import logger
+
 import tarfile
 import os
 import subprocess
@@ -401,58 +403,54 @@ class User(mongo.MongoObject):
                 'error_msg': error_msg,
             })
 
-    @staticmethod
-    def new_pooled_user(org, type):
-        type = {
+def new_pooled_user(org, type):
+    type = {
+        CERT_SERVER: CERT_SERVER_POOL,
+        CERT_CLIENT: CERT_CLIENT_POOL,
+    }[type]
+
+    thread = threading.Thread(target=org.new_user, kwargs={
+        'type': type,
+        'block': False,
+    })
+    thread.daemon = True
+    thread.start()
+
+def reserve_pooled_user(org, name=None, email=None,
+        type=CERT_CLIENT, disabled=None):
+    doc = {}
+
+    if name is not None:
+        doc['name'] = name
+    if email is not None:
+        doc['email'] = email
+    if type is not None:
+        doc['type'] = type
+    if disabled is not None:
+        doc['disabled'] = disabled
+
+    doc = User.collection.find_and_modify({
+        'org_id': org.id,
+        'type': {
             CERT_SERVER: CERT_SERVER_POOL,
             CERT_CLIENT: CERT_CLIENT_POOL,
-        }[type]
+        }[type],
+    }, {
+        '$set': doc,
+    })
 
-        thread = threading.Thread(target=org.new_user, kwargs={
-            'type': type,
-            'block': False,
-        })
-        thread.daemon = True
-        thread.start()
+    if doc:
+        return User(org=org, doc=doc)
 
-    @classmethod
-    def reserve_pooled_user(cls, org, name=None, email=None,
-            type=CERT_CLIENT, disabled=None):
-        doc = {}
+def get_user(org, id):
+    return User(org=org, id=id)
 
-        if name is not None:
-            doc['name'] = name
-        if email is not None:
-            doc['email'] = email
-        if type is not None:
-            doc['type'] = type
-        if disabled is not None:
-            doc['disabled'] = disabled
-
-        doc = cls.collection.find_and_modify({
-            'org_id': org.id,
-            'type': {
-                CERT_SERVER: CERT_SERVER_POOL,
-                CERT_CLIENT: CERT_CLIENT_POOL,
-            }[type],
-        }, {
-            '$set': doc,
-        })
-
-        if doc:
-            return cls(org=org, doc=doc)
-
-    @classmethod
-    def get_user(cls, org, id):
-        return cls(org=org, id=id)
-
-    @classmethod
-    def find_user(cls, org, name=None, type=None):
-        spec = {
-            'org_id': org.id,
-        }
-        if name is not None:
-            spec['name'] = name
-        if type is not None:
-            spec['type'] = type
-        return cls(org, spec=spec)
+def find_user(org, name=None, type=None):
+    spec = {
+        'org_id': org.id,
+    }
+    if name is not None:
+        spec['name'] = name
+    if type is not None:
+        spec['type'] = type
+    return User(org, spec=spec)
