@@ -31,7 +31,7 @@ def status_get():
             'to compromise your server. Please upgrade your openssl ' + \
             'package and restart the pritunl service.'
     else:
-        notification = app_server.notification
+        notification = settings.local.notification
 
     return utils.jsonify({
         'org_count': orgs_count,
