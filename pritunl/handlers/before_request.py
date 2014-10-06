@@ -1,5 +1,6 @@
 from pritunl.constants import *
 from pritunl import utils
+from pritunl import settings
 from pritunl.app_server import app_server
 import flask
 import re
@@ -14,8 +15,9 @@ def _is_vpn_path(path):
 
 @app_server.app.before_request
 def before_request():
-    if app_server.www_state == DISABLED and \
+    if settings.local.www_state == DISABLED and \
             not _is_vpn_path(flask.request.path):
-        raise flask.abort(401, app_server.notification)
-    elif app_server.vpn_state == DISABLED and _is_vpn_path(flask.request.path):
-        raise flask.abort(401, app_server.notification)
+        raise flask.abort(401, settings.local.notification)
+    elif settings.local.vpn_state == DISABLED and _is_vpn_path(
+            flask.request.path):
+        raise flask.abort(401, settings.local.notification)
