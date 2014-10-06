@@ -1,5 +1,3 @@
-from pritunl.queue import Queue, add_queue
-
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
@@ -7,21 +5,22 @@ from pritunl import settings
 from pritunl import logger
 from pritunl import event
 from pritunl import server
+from pritunl import queue
 
 import time
 
-@add_queue
-class QueueAssignIpAddr():
+@queue.add_queue
+class QueueAssignIpAddr(queue.Queue):
     fields = {
         'server_id',
         'org_id',
         'user_id',
-    } | Queue.fields
+    } | queue.Queue.fields
     type = 'assign_ip_addr'
 
     def __init__(self, server_id=None,
             org_id=None, user_id=None, **kwargs):
-        Queue.__init__(self, **kwargs)
+        queue.Queue.__init__(self, **kwargs)
 
         if server_id is not None:
             self.server_id = server_id

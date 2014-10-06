@@ -1,5 +1,3 @@
-from pritunl.queue import Queue, add_queue
-
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
@@ -7,22 +5,23 @@ from pritunl import logger
 from pritunl import mongo
 from pritunl import event
 from pritunl import server
+from pritunl import queue
 
 import pymongo
 import bson
 
-@add_queue
-class QueueAssignIpPool(Queue):
+@queue.add_queue
+class QueueAssignIpPool(queue.Queue):
     fields = {
         'server_id',
         'network',
         'old_network',
-    } | Queue.fields
+    } | queue.Queue.fields
     type = 'assign_ip_pool'
 
     def __init__(self, server_id=None,
             network=None, old_network=None, **kwargs):
-        Queue.__init__(self, **kwargs)
+        queue.Queue.__init__(self, **kwargs)
 
         if server_id is not None:
             self.server_id = server_id

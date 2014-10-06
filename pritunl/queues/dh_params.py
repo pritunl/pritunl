@@ -1,6 +1,3 @@
-from pritunl.queue.com import QueueCom
-from pritunl.queue import Queue, add_queue, add_reserve
-
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
@@ -10,21 +7,22 @@ from pritunl import mongo
 from pritunl import utils
 from pritunl import event
 from pritunl import server
+from pritunl import queue
 
 import os
 import bson
 
-@add_queue
-class QueueDhParams(Queue):
+@queue.add_queue
+class QueueDhParams(queue.Queue):
     fields = {
         'server_id',
         'dh_param_bits',
-    } | Queue.fields
+    } | queue.Queue.fields
     cpu_type = HIGH_CPU
     type = 'dh_params'
 
     def __init__(self, server_id=None, dh_param_bits=None, **kwargs):
-        Queue.__init__(self, **kwargs)
+        queue.Queue.__init__(self, **kwargs)
         self.queue_com = QueueCom()
 
         if server_id is not None:
@@ -121,7 +119,7 @@ class QueueDhParams(Queue):
     def resume_task(self):
         self.queue_com.running.set()
 
-@add_reserve('pooled_dh_params')
+@queue.add_reserve('pooled_dh_params')
 def reserve_pooled_dh_params(svr):
     doc = QueueDhParams.dh_params_collection.find_and_modify({
         'dh_param_bits': svr.dh_param_bits,
@@ -142,7 +140,7 @@ def reserve_pooled_dh_params(svr):
     svr.dh_params = doc['dh_params']
     return True
 
-@add_reserve('queued_dh_params')
+@queue.add_reserve('queued_dh_params')
 def reserve_queued_dh_params(svr, block=False):
     reserve_id = svr.dh_param_bits
     reserve_data = {

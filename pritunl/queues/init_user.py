@@ -1,5 +1,3 @@
-from pritunl.queue import Queue, add_queue
-
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
@@ -8,18 +6,19 @@ from pritunl import logger
 from pritunl import event
 from pritunl import organization
 from pritunl import user
+from pritunl import queue
 
-@add_queue
-class QueueInitUser(Queue):
+@queue.add_queue
+class QueueInitUser(queue.Queue):
     fields = {
         'org_doc',
         'user_doc',
-    } | Queue.fields
+    } | queue.Queue.fields
     cpu_type = NORMAL_CPU
     type = 'init_user'
 
     def __init__(self, org_doc=None, user_doc=None, **kwargs):
-        Queue.__init__(self, **kwargs)
+        queue.Queue.__init__(self, **kwargs)
 
         if org_doc is not None:
             self.org_doc = org_doc

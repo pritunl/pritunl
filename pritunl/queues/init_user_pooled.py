@@ -1,5 +1,4 @@
 from pritunl.queues.init_user import QueueInitUser
-from pritunl.queue import add_queue, add_reserve
 
 from pritunl.constants import *
 from pritunl.exceptions import *
@@ -7,8 +6,9 @@ from pritunl.descriptors import *
 from pritunl.app_server import app_server
 from pritunl import logger
 from pritunl import organization
+from pritunl import queue
 
-@add_queue
+@queue.add_queue
 class QueueInitUserPooled(QueueInitUser):
     type = 'init_user_pooled'
 
@@ -47,7 +47,7 @@ class QueueInitUserPooled(QueueInitUser):
     def resume_task(self):
         self.org.queue_com.running.set()
 
-@add_reserve('queued_user')
+@queue.add_reserve('queued_user')
 def reserve_queued_user(org, name=None, email=None, type=None,
         disabled=None, block=False):
     reserve_id = org.id + '-' + type

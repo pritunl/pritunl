@@ -1,5 +1,3 @@
-from pritunl.queue import Queue, add_queue, add_reserve
-
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
@@ -7,19 +5,20 @@ from pritunl.app_server import app_server
 from pritunl import logger
 from pritunl import event
 from pritunl import organization
+from pritunl import queue
 
 import copy
 
-@add_queue
-class QueueInitOrgPooled(Queue):
+@queue.add_queue
+class QueueInitOrgPooled(queue.Queue):
     fields = {
         'org_doc',
-    } | Queue.fields
+    } | queue.Queue.fields
     cpu_type = NORMAL_CPU
     type = 'init_org_pooled'
 
     def __init__(self, org_doc=None, **kwargs):
-        Queue.__init__(self, **kwargs)
+        queue.Queue.__init__(self, **kwargs)
 
         if org_doc is not None:
             self.org_doc = org_doc
@@ -59,7 +58,7 @@ class QueueInitOrgPooled(Queue):
     def resume_task(self):
         self.org.running.set()
 
-@add_reserve('queued_org')
+@queue.add_reserve('queued_org')
 def reserve_queued_org(name=None, type=None, block=False):
     reserve_data = {}
 
