@@ -60,7 +60,7 @@ def server_get(server_id=None):
 
     servers = []
 
-    for svr in Server.iter_servers():
+    for svr in server.iter_servers():
         servers.append(svr.dict())
 
     return utils.jsonify(servers)
@@ -423,7 +423,7 @@ def server_put_post(server_id=None):
 @app_server.app.route('/server/<server_id>', methods=['DELETE'])
 @app_server.auth
 def server_delete(server_id):
-    svr = Server.get_server(id=server_id)
+    svr = server.get_server(id=server_id)
     svr.remove()
     logger.LogEntry(message='Deleted server "%s".' % svr.name)
     event.Event(type=SERVERS_UPDATED)
