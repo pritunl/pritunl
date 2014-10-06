@@ -28,10 +28,10 @@ class Host(mongo.MongoObject):
     def __init__(self, name=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
-        self.usage = HostUsage(self.id)
-
         if 'id' not in kwargs and 'doc' not in kwargs and 'spec' not in kwargs:
             self.id = settings.local.host_id
+
+        self.usage = HostUsage(self.id)
 
         if name is not None:
             self.name = name
