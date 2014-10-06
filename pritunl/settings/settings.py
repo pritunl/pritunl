@@ -1,3 +1,10 @@
+from pritunl.settings.app import SettingsApp
+from pritunl.settings.conf import SettingsConf
+from pritunl.settings.local import SettingsLocal
+from pritunl.settings.mongo import SettingsMongo
+from pritunl.settings.user import SettingsUser
+from pritunl.settings.vpn import SettingsVpn
+
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
@@ -7,26 +14,14 @@ import os
 import threading
 import sys
 
-module_classes = []
-
-for module_name in os.listdir(os.path.dirname(__file__)):
-    if module_name in (
-                '__init__.py',
-                'group_base.py',
-                'group_mongo.py',
-                'group_file.py',
-                'group_local.py',
-                'settings.py',
-            ) or module_name[-3:] != '.py':
-        continue
-
-    module_name = module_name[:-3]
-    cls_name = 'Settings' + ''.join([x.capitalize()
-        for x in module_name.split('_')])
-    module = __import__('pritunl.settings.' + module_name,
-        fromlist=(cls_name,))
-    cls = getattr(module, cls_name)
-    module_classes.append(cls)
+module_classes = (
+    SettingsApp,
+    SettingsConf,
+    SettingsLocal,
+    SettingsMongo,
+    SettingsUser,
+    SettingsVpn,
+)
 
 class Settings(object):
     def __init__(self):
