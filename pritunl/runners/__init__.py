@@ -4,6 +4,7 @@ from pritunl.runners.transaction import start_transaction
 from pritunl.runners.task import start_task
 from pritunl.runners.queue import start_queue
 from pritunl.runners.host import start_host
+from pritunl.runners.subscription import start_subscription
 from pritunl.runners.listener import start_listener
 
 def start_all():
@@ -13,5 +14,6 @@ def start_all():
     start_task()
     start_queue()
     start_host()
+    start_subscription()
 
     start_listener()
