@@ -16,5 +16,4 @@ print '# |__/                                                       #'
 print '#                                                            #'
 print '##############################################################'
 
-pritunl.app_server.conf_path = './tools/development_pritunl.conf'
-pritunl.app_server.run_server()
+pritunl.init_server('./tools/development_pritunl.conf')

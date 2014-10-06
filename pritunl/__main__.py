@@ -1,6 +1,3 @@
-from pritunl.constants import *
-from pritunl.exceptions import *
-from pritunl.descriptors import *
 import pritunl
 
 import optparse
@@ -47,7 +44,4 @@ def pritunl_daemon():
         print '#                                                            #'
         print '##############################################################'
 
-    if options.conf:
-        pritunl.app_server.conf_path = options.conf
-
-    pritunl.app_server.run_server()
+    pritunl.init_server(options.conf)
