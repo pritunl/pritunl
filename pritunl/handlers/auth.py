@@ -3,12 +3,13 @@ from pritunl import settings
 from pritunl import auth
 from pritunl import utils
 from pritunl import mongo
-from pritunl.app_server import app_server
+from pritunl import app
+from pritunl import auth
 import time
 import flask
 
-@app_server.app.route('/auth', methods=['GET'])
-@app_server.auth
+@app.app.route('/auth', methods=['GET'])
+@auth.session_auth
 def auth_get():
     response = flask.g.administrator.dict()
     response.update({
@@ -17,8 +18,8 @@ def auth_get():
     })
     return utils.jsonify(response)
 
-@app_server.app.route('/auth', methods=['PUT'])
-@app_server.auth
+@app.app.route('/auth', methods=['PUT'])
+@auth.session_auth
 def auth_put():
     admin = flask.g.administrator
 
@@ -53,13 +54,13 @@ def auth_put():
     })
     return utils.jsonify(response)
 
-@app_server.app.route('/auth/session', methods=['GET'])
+@app.app.route('/auth/session', methods=['GET'])
 def auth_get():
     return utils.jsonify({
         'authenticated': auth.administrator.check_session(),
     })
 
-@app_server.app.route('/auth/session', methods=['POST'])
+@app.app.route('/auth/session', methods=['POST'])
 def auth_session_post():
     username = flask.request.json['username']
     password = flask.request.json['password']
@@ -82,7 +83,7 @@ def auth_session_post():
         'default': admin.default,
     })
 
-@app_server.app.route('/auth/session', methods=['DELETE'])
+@app.app.route('/auth/session', methods=['DELETE'])
 def auth_delete():
     flask.session.clear()
     return utils.jsonify({

@@ -2,7 +2,7 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl import settings
-from pritunl.app_server import app_server
+from pritunl import app
 from pritunl import auth
 from pritunl import host
 from pritunl import utils
@@ -10,6 +10,7 @@ from pritunl import logger
 from pritunl import event
 from pritunl import server
 from pritunl import organization
+from pritunl import auth
 
 import flask
 import re
@@ -51,9 +52,9 @@ def _dns_server_invalid():
         'error_msg': DNS_SERVER_INVALID_MSG,
     }, 400)
 
-@app_server.app.route('/server', methods=['GET'])
-@app_server.app.route('/server/<server_id>', methods=['GET'])
-@app_server.auth
+@app.app.route('/server', methods=['GET'])
+@app.app.route('/server/<server_id>', methods=['GET'])
+@auth.session_auth
 def server_get(server_id=None):
     if server_id:
         return utils.jsonify(server.get_server(server_id).dict())
@@ -65,9 +66,9 @@ def server_get(server_id=None):
 
     return utils.jsonify(servers)
 
-@app_server.app.route('/server', methods=['POST'])
-@app_server.app.route('/server/<server_id>', methods=['PUT'])
-@app_server.auth
+@app.app.route('/server', methods=['POST'])
+@app.app.route('/server/<server_id>', methods=['PUT'])
+@auth.session_auth
 def server_put_post(server_id=None):
     used_resources = server.get_used_resources(server_id)
     network_used = used_resources['networks']
@@ -420,8 +421,8 @@ def server_put_post(server_id=None):
         event.Event(type=USERS_UPDATED, resource_id=org.id)
     return utils.jsonify(svr.dict())
 
-@app_server.app.route('/server/<server_id>', methods=['DELETE'])
-@app_server.auth
+@app.app.route('/server/<server_id>', methods=['DELETE'])
+@auth.session_auth
 def server_delete(server_id):
     svr = server.get_server(id=server_id)
     svr.remove()
@@ -431,8 +432,8 @@ def server_delete(server_id):
         event.Event(type=USERS_UPDATED, resource_id=org.id)
     return utils.jsonify({})
 
-@app_server.app.route('/server/<server_id>/organization', methods=['GET'])
-@app_server.auth
+@app.app.route('/server/<server_id>/organization', methods=['GET'])
+@auth.session_auth
 def server_org_get(server_id):
     orgs = []
     svr = server.get_server(id=server_id)
@@ -444,9 +445,9 @@ def server_org_get(server_id):
         })
     return utils.jsonify(orgs)
 
-@app_server.app.route('/server/<server_id>/organization/<org_id>',
+@app.app.route('/server/<server_id>/organization/<org_id>',
     methods=['PUT'])
-@app_server.auth
+@auth.session_auth
 def server_org_put(server_id, org_id):
     svr = server.get_server(id=server_id)
     org = organization.get_org(id=org_id)
@@ -466,9 +467,9 @@ def server_org_put(server_id, org_id):
         'name': org.name,
     })
 
-@app_server.app.route('/server/<server_id>/organization/<org_id>',
+@app.app.route('/server/<server_id>/organization/<org_id>',
     methods=['DELETE'])
-@app_server.auth
+@auth.session_auth
 def server_org_delete(server_id, org_id):
     svr = server.get_server(id=server_id)
     org = organization.get_org(id=org_id)
@@ -484,8 +485,8 @@ def server_org_delete(server_id, org_id):
     event.Event(type=USERS_UPDATED, resource_id=org.id)
     return utils.jsonify({})
 
-@app_server.app.route('/server/<server_id>/host', methods=['GET'])
-@app_server.auth
+@app.app.route('/server/<server_id>/host', methods=['GET'])
+@auth.session_auth
 def server_host_get(server_id):
     hosts = []
     svr = server.get_server(id=server_id)
@@ -498,9 +499,9 @@ def server_host_get(server_id):
         })
     return utils.jsonify(hosts)
 
-@app_server.app.route('/server/<server_id>/host/<host_id>',
+@app.app.route('/server/<server_id>/host/<host_id>',
     methods=['PUT'])
-@app_server.auth
+@auth.session_auth
 def server_host_put(server_id, host_id):
     svr = server.get_server(id=server_id)
     hst = host.get_host(id=host_id)
@@ -514,9 +515,9 @@ def server_host_put(server_id, host_id):
         'public_address': hst.public_addr,
     })
 
-@app_server.app.route('/server/<server_id>/host/<host_id>',
+@app.app.route('/server/<server_id>/host/<host_id>',
     methods=['DELETE'])
-@app_server.auth
+@auth.session_auth
 def server_host_delete(server_id, host_id):
     svr = server.get_server(id=server_id)
     hst = host.get_host(id=host_id)
@@ -525,8 +526,8 @@ def server_host_delete(server_id, host_id):
     event.Event(type=SERVER_HOSTS_UPDATED, resource_id=svr.id)
     return utils.jsonify({})
 
-@app_server.app.route('/server/<server_id>/<operation>', methods=['PUT'])
-@app_server.auth
+@app.app.route('/server/<server_id>/<operation>', methods=['PUT'])
+@auth.session_auth
 def server_operation_put(server_id, operation):
     svr = server.get_server(id=server_id)
 
@@ -543,8 +544,8 @@ def server_operation_put(server_id, operation):
 
     return utils.jsonify(svr.dict())
 
-@app_server.app.route('/server/<server_id>/output', methods=['GET'])
-@app_server.auth
+@app.app.route('/server/<server_id>/output', methods=['GET'])
+@auth.session_auth
 def server_output_get(server_id):
     svr = server.get_server(id=server_id)
     return utils.jsonify({
@@ -552,21 +553,21 @@ def server_output_get(server_id):
         'output': svr.get_output(),
     })
 
-@app_server.app.route('/server/<server_id>/output', methods=['DELETE'])
-@app_server.auth
+@app.app.route('/server/<server_id>/output', methods=['DELETE'])
+@auth.session_auth
 def server_output_delete(server_id):
     svr = server.get_server(id=server_id)
     svr.clear_output()
     return utils.jsonify({})
 
-@app_server.app.route('/server/<server_id>/bandwidth/<period>',
+@app.app.route('/server/<server_id>/bandwidth/<period>',
     methods=['GET'])
-@app_server.auth
+@auth.session_auth
 def server_bandwidth_get(server_id, period):
     svr = server.get_server(id=server_id)
     return utils.jsonify(svr.bandwidth.get_period(period))
 
-@app_server.app.route('/server/<server_id>/tls_verify', methods=['POST'])
+@app.app.route('/server/<server_id>/tls_verify', methods=['POST'])
 @auth.server_auth
 def server_tls_verify_post(server_id):
     org_id = flask.request.json['org_id']
@@ -606,7 +607,7 @@ def server_tls_verify_post(server_id):
         'authenticated': True,
     })
 
-@app_server.app.route('/server/<server_id>/otp_verify', methods=['POST'])
+@app.app.route('/server/<server_id>/otp_verify', methods=['POST'])
 @auth.server_auth
 def server_otp_verify_post(server_id):
     org_id = flask.request.json['org_id']
@@ -648,7 +649,7 @@ def server_otp_verify_post(server_id):
         'authenticated': True,
     })
 
-@app_server.app.route('/server/<server_id>/client_connect', methods=['POST'])
+@app.app.route('/server/<server_id>/client_connect', methods=['POST'])
 @auth.server_auth
 def server_client_connect_post(server_id):
     org_id = flask.request.json['org_id']
@@ -688,7 +689,7 @@ def server_client_connect_post(server_id):
         'client_conf': client_conf,
     })
 
-@app_server.app.route('/server/<server_id>/client_disconnect',
+@app.app.route('/server/<server_id>/client_disconnect',
     methods=['POST'])
 @auth.server_auth
 def server_client_disconnect_post(server_id):

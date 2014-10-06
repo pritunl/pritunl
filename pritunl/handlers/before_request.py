@@ -1,7 +1,8 @@
 from pritunl.constants import *
 from pritunl import utils
 from pritunl import settings
-from pritunl.app_server import app_server
+from pritunl import app
+from pritunl import auth
 import flask
 import re
 
@@ -13,7 +14,7 @@ def _is_vpn_path(path):
         return True
     return False
 
-@app_server.app.before_request
+@app.app.before_request
 def before_request():
     if settings.local.www_state == DISABLED and \
             not _is_vpn_path(flask.request.path):

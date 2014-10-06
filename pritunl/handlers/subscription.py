@@ -1,25 +1,26 @@
 from pritunl.constants import *
 from pritunl import utils
-from pritunl.app_server import app_server
+from pritunl import app
 from pritunl import subscription
 from pritunl import settings
+from pritunl import auth
 import flask
 import re
 
-@app_server.app.route('/subscription', methods=['GET'])
-@app_server.auth
+@app.app.route('/subscription', methods=['GET'])
+@auth.session_auth
 def subscription_get():
     subscription.update()
     return utils.jsonify(subscription.dict())
 
-@app_server.app.route('/subscription/state', methods=['GET'])
+@app.app.route('/subscription/state', methods=['GET'])
 def subscription_state_get():
     return utils.jsonify({
         'active': settings.local.sub_active,
     })
 
-@app_server.app.route('/subscription', methods=['POST'])
-@app_server.auth
+@app.app.route('/subscription', methods=['POST'])
+@auth.session_auth
 def subscription_post():
     license = flask.request.json['license']
     license = license.lower().replace('begin license', '').replace(
@@ -45,8 +46,8 @@ def subscription_post():
     subscription.update_license(license)
     return utils.jsonify(subscription.dict())
 
-@app_server.app.route('/subscription', methods=['PUT'])
-@app_server.auth
+@app.app.route('/subscription', methods=['PUT'])
+@auth.session_auth
 def subscription_put():
     card = flask.request.json.get('card')
     email = flask.request.json.get('email')
@@ -79,8 +80,8 @@ def subscription_put():
     subscription.update()
     return utils.jsonify(subscription.dict())
 
-@app_server.app.route('/subscription', methods=['DELETE'])
-@app_server.auth
+@app.app.route('/subscription', methods=['DELETE'])
+@auth.session_auth
 def subscription_delete():
     subscription.update_license(None)
     return utils.jsonify({})

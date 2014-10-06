@@ -2,11 +2,12 @@ from pritunl import utils
 from pritunl import settings
 from pritunl import server
 from pritunl import organization
-from pritunl.app_server import app_server
+from pritunl import app
+from pritunl import auth
 from pritunl import __version__
 
-@app_server.app.route('/status', methods=['GET'])
-@app_server.auth
+@app.app.route('/status', methods=['GET'])
+@auth.session_auth
 def status_get():
     orgs_count = 0
     servers_count = 0

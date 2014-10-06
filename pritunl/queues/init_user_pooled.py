@@ -3,7 +3,7 @@ from pritunl.queues.init_user import QueueInitUser
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
-from pritunl.app_server import app_server
+from pritunl import app
 from pritunl import logger
 from pritunl import organization
 from pritunl import queue

@@ -1,4 +1,4 @@
-from pritunl.app_server import app_server
+from pritunl import app
 from pritunl import settings
 from pritunl import logger
 from pritunl import mongo
@@ -123,7 +123,7 @@ def setup_mongo():
             base64.b64encode(os.urandom(128)))[:64]
         settings.app.cookie_secret = secret_key
         settings.commit()
-    app_server.app.secret_key = secret_key.encode()
+    app.app.secret_key = secret_key.encode()
 
     server_api_key = settings.app.server_api_key
     if not server_api_key:
@@ -131,4 +131,3 @@ def setup_mongo():
             base64.b64encode(os.urandom(128)))[:64]
         settings.app.server_api_key = server_api_key
         settings.commit()
-    app_server.server_api_key = server_api_key

@@ -2,20 +2,21 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl import settings
-from pritunl.app_server import app_server
+from pritunl import app
 from pritunl import host
 from pritunl import utils
 from pritunl import logger
 from pritunl import event
+from pritunl import auth
 
 import flask
 import math
 import time
 import collections
 
-@app_server.app.route('/host', methods=['GET'])
-@app_server.app.route('/host/<host_id>', methods=['GET'])
-@app_server.auth
+@app.app.route('/host', methods=['GET'])
+@app.app.route('/host/<host_id>', methods=['GET'])
+@auth.session_auth
 def host_get(host_id=None):
     if host_id:
         return utils.jsonify(host.get_host(id=host_id).dict())
@@ -27,8 +28,8 @@ def host_get(host_id=None):
 
     return utils.jsonify(hosts)
 
-@app_server.app.route('/host/<host_id>', methods=['PUT'])
-@app_server.auth
+@app.app.route('/host/<host_id>', methods=['PUT'])
+@auth.session_auth
 def host_put(host_id=None):
     hst = host.get_host(id=host_id)
 
@@ -45,8 +46,8 @@ def host_put(host_id=None):
 
     return utils.jsonify(host.dict())
 
-@app_server.app.route('/host/<host_id>', methods=['DELETE'])
-@app_server.auth
+@app.app.route('/host/<host_id>', methods=['DELETE'])
+@auth.session_auth
 def host_delete(host_id):
     hst = host.get_host(id=host_id)
     hst.remove()
@@ -56,8 +57,8 @@ def host_delete(host_id):
 
     return utils.jsonify({})
 
-@app_server.app.route('/host/<host_id>/usage/<period>', methods=['GET'])
-@app_server.auth
+@app.app.route('/host/<host_id>/usage/<period>', methods=['GET'])
+@auth.session_auth
 def host_usage_get(host_id, period):
     hst = host.get_host(id=host_id)
     return utils.jsonify(hst.usage.get_period(period))

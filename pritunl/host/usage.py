@@ -2,7 +2,7 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl import settings
-from pritunl.app_server import app_server
+from pritunl import app
 from pritunl.host import usage_utils
 from pritunl import mongo
 

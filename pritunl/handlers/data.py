@@ -2,7 +2,8 @@ from pritunl.constants import *
 from pritunl import utils
 from pritunl import server
 from pritunl import organization
-from pritunl.app_server import app_server
+from pritunl import app
+from pritunl import auth
 import os
 import flask
 import tarfile
@@ -12,9 +13,9 @@ def tar_add(tar_file, path):
     if os.path.exists(path):
         tar_file.add(path, arcname=os.path.relpath(path, app_server.data_path))
 
-@app_server.app.route('/export', methods=['GET'])
-@app_server.app.route('/export/%s.tar' % APP_NAME, methods=['GET'])
-@app_server.auth
+@app.app.route('/export', methods=['GET'])
+@app.app.route('/export/%s.tar' % APP_NAME, methods=['GET'])
+@auth.session_auth
 def export_get():
     data_path = app_server.data_path
     temp_path = os.path.join(data_path, TEMP_DIR)

@@ -13,10 +13,6 @@ def init_server(path=None):
         conf_path = path
 
     from pritunl import app
-    from pritunl.app_server import app_server
-    app_server.app = app.app
-
     from pritunl import setup
     setup.setup_all()
-
-    app_server.run_server()
+    app.run_server()

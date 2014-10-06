@@ -6,7 +6,8 @@ from pritunl import static
 from pritunl import organization
 from pritunl import settings
 from pritunl.cache import cache_db
-from pritunl.app_server import app_server
+from pritunl import app
+from pritunl import auth
 import os
 import flask
 import uuid
@@ -24,18 +25,18 @@ def _get_key_archive(org_id, user_id):
         'attachment; filename="%s.tar"' % user.name)
     return response
 
-@app_server.app.route('/key/<org_id>/<user_id>.tar', methods=['GET'])
-@app_server.auth
+@app.app.route('/key/<org_id>/<user_id>.tar', methods=['GET'])
+@auth.session_auth
 def user_key_archive_get(org_id, user_id):
     return _get_key_archive(org_id, user_id)
 
-@app_server.app.route('/key/<org_id>/<user_id>', methods=['GET'])
-@app_server.auth
+@app.app.route('/key/<org_id>/<user_id>', methods=['GET'])
+@auth.session_auth
 def user_key_link_get(org_id, user_id):
     org = organization.get_org(id=org_id)
     return utils.jsonify(org.create_user_key_link(user_id))
 
-@app_server.app.route('/key/<key_id>.tar', methods=['GET'])
+@app.app.route('/key/<key_id>.tar', methods=['GET'])
 def user_linked_key_archive_get(key_id):
     key_id_key = 'key_token-%s' % key_id
     org_id = cache_db.dict_get(key_id_key, 'org_id')
@@ -48,7 +49,7 @@ def user_linked_key_archive_get(key_id):
 
     return _get_key_archive(org_id, user_id)
 
-@app_server.app.route('/k/<view_id>', methods=['GET'])
+@app.app.route('/k/<view_id>', methods=['GET'])
 def user_linked_key_page_get(view_id):
     view_id_key = 'view_token-%s' % view_id
     org_id = cache_db.dict_get(view_id_key, 'org_id')
@@ -93,7 +94,7 @@ def user_linked_key_page_get(view_id):
 
     return key_page
 
-@app_server.app.route('/k/<view_id>', methods=['DELETE'])
+@app.app.route('/k/<view_id>', methods=['DELETE'])
 def user_linked_key_page_delete_get(view_id):
     view_id_key = 'view_token-%s' % view_id
 
@@ -113,7 +114,7 @@ def user_linked_key_page_delete_get(view_id):
     cache_db.remove(view_id_key)
     return utils.jsonify({})
 
-@app_server.app.route('/ku/<uri_id>', methods=['GET'])
+@app.app.route('/ku/<uri_id>', methods=['GET'])
 def user_uri_key_page_get(uri_id):
     uri_id_key = 'uri_token-%s' % uri_id
     org_id = cache_db.dict_get(uri_id_key, 'org_id')
@@ -134,7 +135,7 @@ def user_uri_key_page_get(uri_id):
 
     return utils.jsonify(keys)
 
-@app_server.app.route('/key/<conf_id>.ovpn', methods=['GET'])
+@app.app.route('/key/<conf_id>.ovpn', methods=['GET'])
 def user_linked_key_conf_get(conf_id):
     conf_id_key = 'conf_token-%s' % conf_id
     org_id = cache_db.dict_get(conf_id_key, 'org_id')

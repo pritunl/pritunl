@@ -4,7 +4,7 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl import settings
-from pritunl.app_server import app_server
+from pritunl import app
 from pritunl import mongo
 from pritunl import utils
 from pritunl import queue

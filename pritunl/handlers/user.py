@@ -6,16 +6,17 @@ from pritunl import logger
 from pritunl import event
 from pritunl import server
 from pritunl import organization
-from pritunl.app_server import app_server
+from pritunl import app
+from pritunl import auth
 import flask
 import math
 import time
 import collections
 
-@app_server.app.route('/user/<org_id>', methods=['GET'])
-@app_server.app.route('/user/<org_id>/<user_id>', methods=['GET'])
-@app_server.app.route('/user/<org_id>/<int:page>', methods=['GET'])
-@app_server.auth
+@app.app.route('/user/<org_id>', methods=['GET'])
+@app.app.route('/user/<org_id>/<user_id>', methods=['GET'])
+@app.app.route('/user/<org_id>/<int:page>', methods=['GET'])
+@auth.session_auth
 def user_get(org_id, user_id=None, page=None):
     org = organization.get_org(id=org_id)
     if user_id:
@@ -118,8 +119,8 @@ def user_get(org_id, user_id=None, page=None):
     else:
         return utils.jsonify(users)
 
-@app_server.app.route('/user/<org_id>', methods=['POST'])
-@app_server.auth
+@app.app.route('/user/<org_id>', methods=['POST'])
+@auth.session_auth
 def user_post(org_id):
     org = organization.get_org(id=org_id)
     users = []
@@ -149,8 +150,8 @@ def user_post(org_id):
         logger.LogEntry(message='Created new user "%s".' % users[0]['name'])
         return utils.jsonify(users[0])
 
-@app_server.app.route('/user/<org_id>/<user_id>', methods=['PUT'])
-@app_server.auth
+@app.app.route('/user/<org_id>/<user_id>', methods=['PUT'])
+@auth.session_auth
 def user_put(org_id, user_id):
     org = organization.get_org(id=org_id)
     user = org.get_user(user_id)
@@ -201,8 +202,8 @@ def user_put(org_id, user_id):
 
     return utils.jsonify(user.dict())
 
-@app_server.app.route('/user/<org_id>/<user_id>', methods=['DELETE'])
-@app_server.auth
+@app.app.route('/user/<org_id>/<user_id>', methods=['DELETE'])
+@auth.session_auth
 def user_delete(org_id, user_id):
     org = organization.get_org(id=org_id)
     user = org.get_user(user_id)
@@ -221,8 +222,8 @@ def user_delete(org_id, user_id):
 
     return utils.jsonify({})
 
-@app_server.app.route('/user/<org_id>/<user_id>/otp_secret', methods=['PUT'])
-@app_server.auth
+@app.app.route('/user/<org_id>/<user_id>/otp_secret', methods=['PUT'])
+@auth.session_auth
 def user_otp_secret_put(org_id, user_id):
     org = organization.get_org(id=org_id)
     user = org.get_user(user_id)
