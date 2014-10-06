@@ -15,21 +15,31 @@ define([
           if (!execTime) {
             return;
           }
+          var queryTime = response.getResponseHeader('Query-Time');
+          if (!queryTime) {
+            return;
+          }
           var queryCount = response.getResponseHeader('Query-Count');
-          if (!execTime || !queryCount) {
+          if (!queryCount) {
+            return;
+          }
+          var writeCount = response.getResponseHeader('Write-Count');
+          if (!queryCount) {
             return;
           }
           var color;
-          if (execTime > 200 || queryCount > 5) {
+          if (execTime > 200) {
             color = '#ff0000';
           }
-          else if (execTime > 100 || queryCount > 4) {
+          else if (execTime > 100) {
             color = '#ff6b0d';
           }
           else {
             color = '#0066ff';
           }
-          console.log('%c' + execTime + 'ms ' + queryCount + 'db ' + this.url, 'color: ' + color);
+          console.log('%c' + execTime + 'ms ' + queryTime + 'ms ' +
+            queryCount + 'dbq ' + writeCount + 'dbw ' + this.url,
+            'color: ' + color);
         }
         if (_complete) {
           _complete(response);
