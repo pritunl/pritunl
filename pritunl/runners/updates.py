@@ -39,6 +39,9 @@ def _check_updates():
         time.sleep(settings.app.update_check_rate)
 
 def start_updates():
+    settings.local.notification = ''
+    settings.local.www_state = OK
+    settings.local.vpn_state = OK
     thread = threading.Thread(target=_check_updates)
     thread.daemon = True
     thread.start()
