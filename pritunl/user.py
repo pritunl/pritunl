@@ -71,7 +71,7 @@ class User(mongo.MongoObject):
         }
 
     def initialize(self):
-        temp_path = app_server.get_temp_path()
+        temp_path = utils.get_temp_path()
         index_path = os.path.join(temp_path, INDEX_NAME)
         index_attr_path = os.path.join(temp_path, INDEX_ATTR_NAME)
         serial_path = os.path.join(temp_path, SERIAL_NAME)
@@ -270,7 +270,7 @@ class User(mongo.MongoObject):
         })
 
     def build_key_archive(self):
-        temp_path = app_server.get_temp_path()
+        temp_path = utils.get_temp_path()
         key_archive_path = os.path.join(temp_path, '%s.tar' % self.id)
 
         try:

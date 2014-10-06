@@ -50,7 +50,7 @@ class QueueDhParams(queue.Queue):
 
         self.queue_com.wait_status()
 
-        temp_path = app_server.get_temp_path()
+        temp_path = utils.get_temp_path()
         dh_param_path = os.path.join(temp_path, DH_PARAM_NAME)
 
         try:

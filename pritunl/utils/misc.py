@@ -7,6 +7,8 @@ import time
 import datetime
 import itertools
 import random
+import uuid
+import os
 
 def rmtree(path):
     for _ in xrange(5):
@@ -27,6 +29,9 @@ def get_cert_block(cert_data):
     start_index = cert_data.index('-----BEGIN CERTIFICATE-----')
     end_index = cert_data.index('-----END CERTIFICATE-----') + 25
     return cert_data[start_index:end_index]
+
+def get_temp_path():
+    return os.path.join(settings.conf.temp_path, uuid.uuid4().hex)
 
 def check_openssl():
     try:

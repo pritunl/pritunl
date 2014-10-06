@@ -734,7 +734,7 @@ class Server(mongo.MongoObject):
         if self.status:
             return
 
-        temp_path = app_server.get_temp_path()
+        temp_path = utils.get_temp_path()
 
         if not self.organizations:
             raise ServerMissingOrg('Server cannot be started ' + \
