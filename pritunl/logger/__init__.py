@@ -1,6 +1,6 @@
 from pritunl.logger.filter import LogFilter
 from pritunl.logger.formatter import LogFormatter
-from pritunl.logger.entry import LogEntry
+from pritunl.logger.entry import *
 
 from pritunl.constants import *
 from pritunl.exceptions import *
