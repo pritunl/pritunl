@@ -10,7 +10,4 @@ import flask
 @app_server.app.route('/event/<cursor>', methods=['GET'])
 @app_server.auth
 def event_get(cursor=None):
-    if app_server.interrupt:
-        return flask.abort(503)
-
     return utils.jsonify(event.get_events(cursor=cursor))
