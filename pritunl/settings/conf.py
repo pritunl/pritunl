@@ -3,10 +3,11 @@ from pritunl.settings.group_file import SettingsGroupFile
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
+from pritunl import conf_path
 
 class SettingsConf(SettingsGroupFile):
     group = 'conf'
-    path = 'test.conf'
+    path = conf_path
     fields = {
         'debug': False,
         'ssl': True,
