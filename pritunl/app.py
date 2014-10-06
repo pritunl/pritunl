@@ -2,6 +2,7 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl import logger
+from pritunl import settings
 
 import flask
 import cherrypy.wsgiserver
@@ -52,3 +53,71 @@ def after_request(response):
     response.headers.add('Query-Count', flask.g.query_count)
     response.headers.add('Write-Count', flask.g.write_count)
     return response
+
+def _end_host():
+    from pritunl import host
+    host.deinit_host()
+
+def _run_wsgi():
+    logger.info('Starting server...')
+
+    server = cherrypy.wsgiserver.CherryPyWSGIServer(
+        (settings.conf.bind_addr, settings.conf.port), app,
+        request_queue_size=settings.app.request_queue_size,
+        server_name=cherrypy.wsgiserver.CherryPyWSGIServer.version)
+    if settings.conf.ssl:
+        server.ConnectionClass = HTTPConnectionPatch
+        server.ssl_adapter = SSLAdapter(
+            settings.conf.server_cert_path, settings.conf.server_key_path)
+    try:
+        server.start()
+    except (KeyboardInterrupt, SystemExit):
+        pass
+    except:
+        logger.exception('Server error occurred')
+        raise
+    finally:
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
+        logger.info('Stopping server...')
+        self._on_exit()
+
+def _run_wsgi_debug():
+    logger.info('Starting debug server...')
+
+    # App.run server uses werkzeug logger
+    werkzeug_logger = logging.getLogger('werkzeug')
+    werkzeug_logger.setLevel(logging.DEBUG)
+    werkzeug_logger.addFilter(logger.log_filter)
+    werkzeug_logger.addHandler(logger.log_handler)
+
+    try:
+        app.run(host=settings.conf.bind_addr,
+            port=settings.conf.port, threaded=True)
+    except (KeyboardInterrupt, SystemExit):
+        pass
+    except:
+        logger.exception('Server error occurred')
+        raise
+    finally:
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
+        logger.info('Stopping debug server...')
+        _on_exit()
+
+def _on_exit():
+    _end_host()
+
+def run_server():
+    if settings.conf.debug:
+        logger.LogEntry(message='Web debug server started.')
+    else:
+        logger.LogEntry(message='Web server started.')
+    try:
+        if settings.conf.debug:
+            _run_wsgi_debug()
+        else:
+            _run_wsgi()
+    finally:
+        if settings.conf.debug:
+            logger.LogEntry(message='Web debug server stopped.')
+        else:
+            logger.LogEntry(message='Web server stopped.')
