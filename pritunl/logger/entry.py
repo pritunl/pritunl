@@ -37,8 +37,7 @@ class LogEntry(mongo.MongoObject):
         mongo.MongoObject.commit(self, *args, **kwargs)
         event.Event(type=LOG_UPDATED)
 
-    @classmethod
-    def iter_log_entries(cls):
-        for doc in cls.collection.find().sort(
-                'timestamp', pymongo.DESCENDING):
-            yield cls(doc=doc)
+def iter_log_entries():
+    for doc in LogEntry.collection.find().sort(
+            'timestamp', pymongo.DESCENDING):
+        yield LogEntry(doc=doc)
