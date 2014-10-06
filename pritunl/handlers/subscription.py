@@ -1,20 +1,21 @@
 from pritunl.constants import *
 from pritunl import utils
 from pritunl.app_server import app_server
+from pritunl import subscription
+from pritunl import settings
 import flask
 import re
 
 @app_server.app.route('/subscription', methods=['GET'])
 @app_server.auth
 def subscription_get():
-    app_server.subscription_update()
-    return utils.jsonify(app_server.subscription_dict())
+    subscription.update()
+    return utils.jsonify(subscription.dict())
 
 @app_server.app.route('/subscription/state', methods=['GET'])
 def subscription_state_get():
-    app_server.subscription_update()
     return utils.jsonify({
-        'active': app_server.sub_active,
+        'active': settings.local.sub_active,
     })
 
 @app_server.app.route('/subscription', methods=['POST'])
@@ -27,7 +28,10 @@ def subscription_post():
 
     try:
         response = utils.request.get(SUBSCRIPTION_SERVER,
-            json_data={'license': license})
+            json_data={
+                'license': license,
+            },
+        )
     except httplib.HTTPException:
         return utils.jsonify({
             'error': SUBSCRIPTION_SERVER_ERROR,
@@ -36,11 +40,10 @@ def subscription_post():
     data = response.json()
 
     if response.status_code != 200:
-        return utils.jsonify(data, response.status_code);
+        return utils.jsonify(data, response.status_code)
 
-    #persist_db.set('license', license)
-    app_server.subscription_update()
-    return utils.jsonify(app_server.subscription_dict())
+    subscription.update_license(license)
+    return utils.jsonify(subscription.dict())
 
 @app_server.app.route('/subscription', methods=['PUT'])
 @app_server.auth
@@ -53,13 +56,13 @@ def subscription_put():
         if cancel:
             response = utils.request.delete(SUBSCRIPTION_SERVER,
                 json_data={
-                    'license': None, # TODO
+                    'license': settings.app.license,
                 },
             )
         else:
             response = utils.request.put(SUBSCRIPTION_SERVER,
                 json_data={
-                    'license': None, # TODO
+                    'license': settings.app.license,
                     'card': card,
                     'email': email,
                 },
@@ -73,12 +76,11 @@ def subscription_put():
     if response.status_code != 200:
         return utils.jsonify(response.json(), response.status_code)
 
-    app_server.subscription_update()
-    return utils.jsonify(app_server.subscription_dict())
+    subscription.update()
+    return utils.jsonify(subscription.dict())
 
 @app_server.app.route('/subscription', methods=['DELETE'])
 @app_server.auth
 def subscription_delete():
-    #persist_db.remove('license')
-    app_server.subscription_update()
+    subscription.update_license(None)
     return utils.jsonify({})
