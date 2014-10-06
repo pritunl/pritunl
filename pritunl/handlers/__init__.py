@@ -1,6 +1,13 @@
-import os
-
-for module_name in os.listdir(os.path.dirname(__file__)):
-    if module_name == '__init__.py' or module_name[-3:] != '.py':
-        continue
-    __import__('pritunl.handlers.' + module_name[:-3])
+import pritunl.handlers.auth
+import pritunl.handlers.before_request
+import pritunl.handlers.data
+import pritunl.handlers.event
+import pritunl.handlers.host
+import pritunl.handlers.key
+import pritunl.handlers.log
+import pritunl.handlers.org
+import pritunl.handlers.server
+import pritunl.handlers.static
+import pritunl.handlers.status
+import pritunl.handlers.subscription
+import pritunl.handlers.user
