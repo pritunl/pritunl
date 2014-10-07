@@ -10,7 +10,7 @@ pritunl: enterprise vpn server
 .. image:: http://gitshields.com/v2/drone/github.com/pritunl/pritunl/brightgreen-red.png
     :target: https://drone.io/github.com/pritunl/pritunl
 
-`Pritunl <https://github.com/pritunl/pritunl>`_ is an open source vpn server.
+`Pritunl <https://github.com/pritunl/pritunl>`_ is an enterprise vpn server.
 Documentation and more information can be found at the home page
 `pritunl.com <http://pritunl.com>`_
 
