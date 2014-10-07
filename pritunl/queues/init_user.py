@@ -31,9 +31,9 @@ class QueueInitUser(queue.Queue):
 
     @cached_property
     def user(self):
-        user = user.User(org=self.org, doc=self.user_doc)
-        user.exists = False
-        return user
+        usr = user.User(org=self.org, doc=self.user_doc)
+        usr.exists = False
+        return usr
 
     def task(self):
         self.user.initialize()
