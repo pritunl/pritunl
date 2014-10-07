@@ -550,7 +550,7 @@ def server_output_get(server_id):
     svr = server.get_server(id=server_id)
     return utils.jsonify({
         'id': svr.id,
-        'output': svr.get_output(),
+        'output': svr.output,
     })
 
 @app.app.route('/server/<server_id>/output', methods=['DELETE'])
