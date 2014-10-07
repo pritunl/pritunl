@@ -1,4 +1,5 @@
 from pritunl.setup.local import setup_local
+from pritunl.setup.clear_temp import setup_clear_temp
 from pritunl.setup.app import setup_app
 from pritunl.setup.mongo import setup_mongo
 from pritunl.setup.temp_path import setup_temp_path
@@ -13,6 +14,7 @@ from pritunl import settings
 
 def setup_all():
     setup_local()
+    setup_clear_temp()
     setup_app()
     setup_mongo()
     setup_temp_path()
