@@ -1,5 +1,5 @@
-pritunl: vpn server
-===================
+pritunl: enterprise vpn server
+==============================
 
 .. image:: http://gitshields.com/v2/pypi/pritunl/version/7d0ce8.png
     :target: https://pypi.python.org/pypi/pritunl
