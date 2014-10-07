@@ -14,6 +14,9 @@ pritunl: vpn server
 Documentation and more information can be found at the home page
 `pritunl.com <http://pritunl.com>`_
 
+.. image:: www/img/logo_full.png
+    :target: http://pritunl.com
+
 Development Setup
 -----------------
 
