@@ -164,7 +164,28 @@ class Server(mongo.MongoObject):
 
     @cached_property
     def output(self):
-        return '\n'.join(cache_db.list_elements(self.get_cache_key('output')))
+        output = self.output_collection.aggregate([
+            {'$match': {
+                'server_id': self.id,
+            }},
+            {'$project': {
+                '_id': False,
+                'timestamp': True,
+                'output': True,
+            }},
+            {'$sort': {
+                'timestamp': pymongo.ASCENDING,
+            }},
+            {'$group': {
+                '_id': None,
+                'output': {'$push': '$output'},
+            }},
+        ])['result']
+
+        if output:
+            output = output[0]['output']
+
+        return '\n'.join(output)
 
     def initialize(self):
         self.generate_dh_param()
