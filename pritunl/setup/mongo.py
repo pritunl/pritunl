@@ -11,6 +11,7 @@ import os
 import base64
 import flask
 import random
+import time
 
 def setup_mongo():
     # TODO move this to utils
@@ -21,8 +22,18 @@ def setup_mongo():
         logger.warning('Failed to load bson c bindings')
 
     prefix = settings.conf.mongodb_collection_prefix or ''
-    client = pymongo.MongoClient(settings.conf.mongodb_url,
-        connectTimeoutMS=500) # TODO
+    last_error = time.time() - 24
+    while True:
+        try:
+            client = pymongo.MongoClient(settings.conf.mongodb_url,
+                connectTimeoutMS=2000)
+            break
+        except pymongo.errors.ConnectionFailure:
+            time.sleep(0.5)
+            if time.time() - last_error > 30:
+                last_error = time.time()
+                logger.exception('Error connecting to mongodb server')
+
     database = client.get_default_database()
     cur_collections = database.collection_names()
 
