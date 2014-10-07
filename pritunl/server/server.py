@@ -31,6 +31,7 @@ import traceback
 import re
 import json
 import bson
+import pymongo
 
 class Server(mongo.MongoObject):
     fields = {
@@ -825,14 +826,37 @@ class Server(mongo.MongoObject):
         self._event_delay(type=SERVER_OUTPUT_UPDATED, resource_id=self.id)
 
     def push_output(self, output):
-        log_lines = settings.vpn.log_lines
-        if not log_lines:
-            return
-        cache_db.list_rpush(self.get_cache_key('output'), output.rstrip('\n'))
-        clear_lines = cache_db.list_length(self.get_cache_key('output')) - \
-            log_lines
-        for _ in xrange(clear_lines):
-            cache_db.list_lpop(self.get_cache_key('output'))
+        self.output_collection.insert({
+            'server_id': self.id,
+            'timestamp': datetime.datetime.utcnow(),
+            'output': output.rstrip('\n'),
+        })
+
+        doc_ids = self.output_collection.aggregate([
+            {'$match': {
+                'server_id': self.id,
+            }},
+            {'$project': {
+                '_id': True,
+                'timestamp': True,
+            }},
+            {'$sort': {
+                'timestamp': pymongo.DESCENDING,
+            }},
+            {'$skip': 10000},
+            {'$group': {
+                '_id': None,
+                'doc_ids': {'$push': '$_id'},
+            }},
+        ])['result']
+
+        if doc_ids:
+            doc_ids = doc_ids[0]['doc_ids']
+
+            self.output_collection.remove({
+                '_id': {'$in': doc_ids},
+            })
+
         self._event_delay(type=SERVER_OUTPUT_UPDATED, resource_id=self.id)
 
     def _update_clients_bandwidth(self, clients):
