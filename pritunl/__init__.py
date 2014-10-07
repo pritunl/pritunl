@@ -1,3 +1,4 @@
+from pritunl import patches
 from pritunl.constants import *
 
 __title__ = APP_NAME
