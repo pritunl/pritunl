@@ -125,6 +125,10 @@ class Server(mongo.MongoObject):
     def collection(cls):
         return mongo.get_collection('servers')
 
+    @cached_static_property
+    def output_collection(cls):
+        return mongo.get_collection('servers_output')
+
     def dict(self):
         return {
             'id': self.id,
