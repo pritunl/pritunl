@@ -265,37 +265,37 @@ class Organization(mongo.MongoObject):
         # First attempt to get user from pool then attempt to get
         # unfinished queued user in pool then queue a new user init
         if type in (CERT_SERVER, CERT_CLIENT):
-            user = user.reserve_pooled_user(org=self, type=type, **kwargs)
+            usr = user.reserve_pooled_user(org=self, type=type, **kwargs)
 
-            if not user:
-                user = queue.reserve('queued_user', org=self, type=type,
+            if not usr:
+                usr = queue.reserve('queued_user', org=self, type=type,
                     block=block, **kwargs)
 
-                if user:
+                if usr:
                     logger.debug('Reserved queued user', 'organization',
                         org_id=self.id,
-                        user_id=user.id,
+                        user_id=usr.id,
                     )
             else:
                 logger.debug('Reserved pooled user', 'organization',
                     org_id=self.id,
-                    user_id=user.id,
+                    user_id=usr.id,
                 )
 
-            if user:
+            if usr:
                 user.new_pooled_user(org=self, type=type)
-                return user
+                return usr
 
-        user = user.User(org=self, type=type, **kwargs)
-        user.queue_initialize(block=block,
+        usr = user.User(org=self, type=type, **kwargs)
+        usr.queue_initialize(block=block,
             priority=HIGH if type in (CERT_SERVER, CERT_CLIENT) else None)
 
         logger.debug('Queued user init', 'organization',
             org_id=self.id,
-            user_id=user.id,
+            user_id=usr.id,
         )
 
-        return user
+        return usr
 
     def remove(self):
         logger.debug('Remove org', 'organization',
