@@ -847,7 +847,9 @@ class Server(mongo.MongoObject):
         return self.output
 
     def clear_output(self):
-        cache_db.remove(self.get_cache_key('output'))
+        self.output_collection.remove({
+            'server_id': self.id,
+        })
         self._event_delay(type=SERVER_OUTPUT_UPDATED, resource_id=self.id)
 
     def push_output(self, output):
