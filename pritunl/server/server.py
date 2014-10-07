@@ -82,7 +82,6 @@ class Server(mongo.MongoObject):
             dns_servers=None, search_domain=None, public_address=None,
             otp_auth=None, lzo_compression=None, debug=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
-        self.bandwidth = ServerBandwidth(self.id)
 
         self._cur_event = None
         self._last_event = 0
@@ -128,6 +127,10 @@ class Server(mongo.MongoObject):
     @cached_static_property
     def output_collection(cls):
         return mongo.get_collection('servers_output')
+
+    @cached_static_property
+    def bandwidth(cls):
+        return ServerBandwidth(self.id)
 
     def dict(self):
         return {
