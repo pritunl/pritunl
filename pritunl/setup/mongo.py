@@ -49,6 +49,7 @@ def setup_mongo():
         'hosts': getattr(database, prefix + 'hosts'),
         'hosts_usage': getattr(database, prefix + 'hosts_usage'),
         'servers': getattr(database, prefix + 'servers'),
+        'servers_output': getattr(database, prefix + 'servers_output'),
         'servers_bandwidth': getattr(database, prefix + 'servers_bandwidth'),
         'servers_ip_pool': getattr(database, prefix + 'servers_ip_pool'),
         'dh_params': getattr(database, prefix + 'dh_params'),
