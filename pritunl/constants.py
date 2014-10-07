@@ -89,6 +89,7 @@ SHORT_URL_CHARS = (string.ascii_lowercase + string.ascii_uppercase +
     string.digits).replace('l', '').replace('I', '').replace('O', '').replace(
     '0', '')
 SUB_RESPONSE_TIMEOUT = 10
+VPN_START_TIMEOUT = 30
 NODE_SERVER_VER = 1
 CLIENT_CONF_VER = 1
 AUTH_SIG_STRING_MAX_LEN = 10240
