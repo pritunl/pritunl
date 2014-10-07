@@ -7,6 +7,7 @@ import pymongo
 import random
 import flask
 import time
+import bson
 
 # For MongoDict MongoList
 # class JSONEncoderPatched(json.JSONEncoder):
@@ -79,7 +80,10 @@ pymongo.collection.Collection.remove = remove
 
 find_orig = pymongo.collection.Collection.find
 def find(self, *args, **kwargs):
-    if flask.ctx.has_request_context():
+    if flask.ctx.has_request_context() and \
+            not (args and \
+            isinstance(args[0], bson.SON) and \
+            'count' in args[0]):
         flask.g.query_count += 1
         start = time.time()
     else:
