@@ -14,7 +14,6 @@ import random
 import time
 
 def setup_mongo():
-    # TODO move this to utils
     if not pymongo.has_c():
         logger.warning('Failed to load pymongo c bindings')
 
