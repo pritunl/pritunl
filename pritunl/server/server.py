@@ -843,9 +843,6 @@ class Server(mongo.MongoObject):
         self.stop()
         self.start()
 
-    def get_output(self):
-        return self.output
-
     def clear_output(self):
         self.output_collection.remove({
             'server_id': self.id,
