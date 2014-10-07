@@ -18,6 +18,7 @@ from pritunl import transaction
 from pritunl import event
 from pritunl import messenger
 from pritunl import organization
+from pritunl import listener
 
 import uuid
 import os
@@ -86,6 +87,8 @@ class Server(mongo.MongoObject):
         self._last_event = 0
         self._orig_network = self.network
         self._orgs_changed = False
+        self._clients = None
+        self._temp_path = utils.get_temp_path()
         self.ip_pool = ServerIpPool(self)
 
         if name is not None:
@@ -418,7 +421,7 @@ class Server(mongo.MongoObject):
             ca_certificate += org.ca_certificate
         self.ca_certificate = ca_certificate
 
-    def _generate_ovpn_conf(self, temp_path):
+    def _generate_ovpn_conf(self):
         logger.debug('Generating server ovpn conf. %r' % {
             'server_id': self.id,
         })
@@ -437,20 +440,20 @@ class Server(mongo.MongoObject):
             primary_org = organization.get_org(id=self.primary_organization)
             primary_user = primary_org.get_user(self.primary_user)
 
-        tls_verify_path = os.path.join(temp_path,
+        tls_verify_path = os.path.join(self._temp_path,
             TLS_VERIFY_NAME)
-        user_pass_verify_path = os.path.join(temp_path,
+        user_pass_verify_path = os.path.join(self._temp_path,
             USER_PASS_VERIFY_NAME)
-        client_connect_path = os.path.join(temp_path,
+        client_connect_path = os.path.join(self._temp_path,
             CLIENT_CONNECT_NAME)
-        client_disconnect_path = os.path.join(temp_path,
+        client_disconnect_path = os.path.join(self._temp_path,
             CLIENT_DISCONNECT_NAME)
-        ovpn_status_path = os.path.join(temp_path,
+        ovpn_status_path = os.path.join(self._temp_path,
             OVPN_STATUS_NAME)
-        ovpn_conf_path = os.path.join(temp_path,
+        ovpn_conf_path = os.path.join(self._temp_path,
             OVPN_CONF_NAME)
 
-        auth_host = app_server.bind_addr
+        auth_host = settings.conf.bind_addr
         if auth_host == '0.0.0.0':
             auth_host = 'localhost'
         for script, script_path in (
@@ -466,7 +469,7 @@ class Server(mongo.MongoObject):
                     '/dev/null', # TODO
                     'https' if settings.conf.ssl else 'http',
                     auth_host,
-                    app_server.port,
+                    settings.conf.port,
                     self.id,
                 ))
 
@@ -635,8 +638,10 @@ class Server(mongo.MongoObject):
                         })
                     raise
 
-    def _sub_thread(self, process):
-        for message in cache_db.subscribe(self.get_cache_key()):
+    def _sub_thread(self, cursor_id, process):
+        for msg in self.subscribe(cursor_id=cursor_id):
+            message = msg['message']
+
             try:
                 if message == 'stop':
                     self._state = False
@@ -649,10 +654,10 @@ class Server(mongo.MongoObject):
             except OSError:
                 pass
 
-    def _status_thread(self, temp_path):
+    def _status_thread(self):
         i = 0
         cur_client_count = 0
-        ovpn_status_path = os.path.join(temp_path, OVPN_STATUS_NAME)
+        ovpn_status_path = os.path.join(self._temp_path, OVPN_STATUS_NAME)
         while not self._interrupt:
             time.sleep(0.1)
             # Check interrupt every 0.1s check client count every 5s
@@ -663,14 +668,18 @@ class Server(mongo.MongoObject):
                 i += 1
         self._clear_iptables_rules()
 
-    def _run_thread(self, temp_path):
+    def _run_thread(self):
         logger.debug('Starting ovpn process. %r' % {
             'server_id': self.id,
         })
+        cursor_id = self.get_cursor_id()
+
         self._interrupt = False
         self._state = True
+        self._clients = {}
+
         try:
-            ovpn_conf_path = os.path.join(temp_path, OVPN_CONF_NAME)
+            ovpn_conf_path = os.path.join(self._temp_path, OVPN_CONF_NAME)
             try:
                 process = subprocess.Popen(['openvpn', ovpn_conf_path],
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -681,13 +690,11 @@ class Server(mongo.MongoObject):
                 })
                 self.publish('stopped')
                 return
-            cache_db.dict_set(self.get_cache_key(), 'start_time',
-                str(int(time.time() - 1)))
+
             sub_thread = threading.Thread(target=self._sub_thread,
-                args=(process,))
+                args=(cursor_id, process))
             sub_thread.start()
-            status_thread = threading.Thread(target=self._status_thread,
-                args=(temp_path,))
+            status_thread = threading.Thread(target=self._status_thread)
             status_thread.start()
             self.status = True
             self.start_timestamp = datetime.datetime.now()
@@ -706,9 +713,6 @@ class Server(mongo.MongoObject):
             self._interrupt = True
             status_thread.join()
 
-            cache_db.remove(self.get_cache_key('clients'))
-            cache_db.dict_remove(self.get_cache_key(), 'clients')
-
             self.status = False
             self.start_timestamp = None
             self.commit(('status', 'start_timestamp'))
@@ -723,18 +727,27 @@ class Server(mongo.MongoObject):
                 'server_id': self.id,
             })
         except:
-            self._interrupt = True
-            self.publish('stopped')
-            raise
+            messenger.publish('server_instance', 'stopped', {
+                'server_id': self.id,
+            })
 
-    def publish(self, message):
-        cache_db.publish(self.get_cache_key(), message)
+    def get_cursor_id(self):
+        return messenger.get_cursor_id('servers')
 
-    def start(self):
+    def publish(self, message, transaction=None):
+        messenger.publish('servers', message, extra={
+            'server_id': self.id,
+        }, transaction=transaction)
+
+    def subscribe(self, cursor_id=None, timeout=None):
+        for msg in messenger.subscribe('servers', cursor_id=cursor_id,
+                timeout=timeout):
+            if msg.get('server_id') == self.id:
+                yield msg
+
+    def start(self, timeout=VPN_OP_TIMEOUT):
         if self.status:
             return
-
-        temp_path = utils.get_temp_path()
 
         if not self.organizations:
             raise ServerMissingOrg('Server cannot be started ' + \
@@ -742,79 +755,57 @@ class Server(mongo.MongoObject):
                     'server_id': self.id,
                 })
 
-        os.makedirs(temp_path)
+        os.makedirs(self._temp_path)
 
-        ovpn_conf_path = self._generate_ovpn_conf(temp_path)
+        ovpn_conf_path = self._generate_ovpn_conf()
         self._enable_ip_forwarding()
         self._set_iptables_rules()
         self.clear_output()
+        cursor_id = self.get_cursor_id()
 
-        threading.Thread(target=self._run_thread,
-            args=(temp_path,)).start()
+        threading.Thread(target=self._run_thread).start()
 
-        started = False
-        for message in cache_db.subscribe(self.get_cache_key(),
-                SUB_RESPONSE_TIMEOUT):
+        for msg in self.subscribe(cursor_id=cursor_id, timeout=timeout):
+            message = msg['message']
             if message == 'started':
-                started = True
-                break
+                self.status = True
+                return
             elif message == 'stopped':
                 raise ServerStartError('Server failed to start', {
                     'server_id': self.id,
                 })
-        if not started:
-            raise ServerStartError('Server thread failed to return ' + \
-                'start event', {
-                    'server_id': self.id,
-                })
 
-    def stop(self):
-        cache_db.lock_acquire(self.get_cache_key('op_lock'))
-        try:
-            if not self.status:
-                return
-            logger.debug('Stopping server. %r' % {
+        raise ServerStartError('Server start timed out', {
                 'server_id': self.id,
             })
 
-            stopped = False
-            self.publish('stop')
-            for message in cache_db.subscribe(self.get_cache_key(),
-                    SUB_RESPONSE_TIMEOUT):
-                if message == 'stopped':
-                    stopped = True
-                    break
-            if not stopped:
-                raise ServerStopError('Server thread failed to return ' + \
-                    'stop event', {
-                        'server_id': self.id,
-                    })
-        finally:
-            cache_db.lock_release(self.get_cache_key('op_lock'))
+    def stop(self, timeout=VPN_OP_TIMEOUT, force=False):
+        # TODO may need locking
+        if not self.status:
+            return
 
-    def force_stop(self):
-        cache_db.lock_acquire(self.get_cache_key('op_lock'))
-        try:
-            if not self.status:
-                return
-            logger.debug('Forcing stop server. %r' % {
-                'server_id': self.id,
-            })
+        logger.debug('Stopping server. %r' % {
+            'server_id': self.id,
+        })
+        cursor_id = self.get_cursor_id()
 
-            stopped = False
+        if force:
             self.publish('force_stop')
-            for message in cache_db.subscribe(self.get_cache_key(),
-                    SUB_RESPONSE_TIMEOUT):
-                if message == 'stopped':
-                    stopped = True
-                    break
-            if not stopped:
-                raise ServerStopError('Server thread failed to return ' + \
-                    'stop event', {
-                        'server_id': self.id,
-                    })
-        finally:
-            cache_db.lock_release(self.get_cache_key('op_lock'))
+        else:
+            self.publish('stop')
+
+        for msg in self.subscribe(cursor_id=cursor_id, timeout=timeout):
+            message = msg['message']
+            if message == 'stopped':
+                self.status = False
+                return
+
+        raise ServerStopError('Server stop timed out', {
+                'server_id': self.id,
+            })
+
+    def force_stop(self, timeout=VPN_OP_TIMEOUT):
+        self.stop(timeout=timeout, force=True)
 
     def restart(self):
         if not self.status:
@@ -846,9 +837,9 @@ class Server(mongo.MongoObject):
 
     def _update_clients_bandwidth(self, clients):
         # Remove client no longer connected
-        for client_id in cache_db.dict_keys(self.get_cache_key('clients')):
+        for client_id in self._clients.iterkeys():
             if client_id not in clients:
-                cache_db.dict_remove(self.get_cache_key('clients'), client_id)
+                del self._clients[client_id]
 
         # Get total bytes send and recv for all clients
         bytes_recv_t = 0
@@ -856,17 +847,9 @@ class Server(mongo.MongoObject):
         for client_id in clients:
             bytes_recv = clients[client_id]['bytes_received']
             bytes_sent = clients[client_id]['bytes_sent']
-            prev_bytes_recv = 0
-            prev_bytes_sent = 0
-            client_prev = cache_db.dict_get(self.get_cache_key('clients'),
-                client_id)
-            cache_db.dict_set(self.get_cache_key('clients'), client_id,
-                '%s,%s' % (bytes_recv, bytes_sent))
-
-            if client_prev:
-                client_prev = client_prev.split(',')
-                prev_bytes_recv = int(client_prev[0])
-                prev_bytes_sent = int(client_prev[1])
+            prev_bytes_recv, prev_bytes_sent = self._clients.get(
+                client_id, (0, 0))
+            self._clients[client_id] = (bytes_recv, bytes_sent)
 
             if prev_bytes_recv > bytes_recv or prev_bytes_sent > bytes_sent:
                 prev_bytes_recv = 0
