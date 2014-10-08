@@ -78,13 +78,15 @@ def get_cursor_id(channels):
     else:
         spec['channel'] = {'$in': channels}
 
-    try:
-        return collection.find(spec).sort(
-            '$natural', pymongo.DESCENDING)[0]['_id']
-    except IndexError:
-        publish(channels, None)
-        return collection.find(spec).sort(
-            '$natural', pymongo.DESCENDING)[0]['_id']
+    for i in xrange(2):
+        try:
+            return collection.find(spec).sort(
+                '$natural', pymongo.DESCENDING)[0]['_id']
+        except IndexError:
+            if i:
+                raise
+            else:
+                publish(channels, None)
 
 def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None):
     collection = mongo.get_collection('messages')
