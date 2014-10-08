@@ -23,7 +23,7 @@ class QueueDhParams(queue.Queue):
 
     def __init__(self, server_id=None, dh_param_bits=None, **kwargs):
         queue.Queue.__init__(self, **kwargs)
-        self.queue_com = QueueCom()
+        self.queue_com = queue.QueueCom()
 
         if server_id is not None:
             self.server_id = server_id
