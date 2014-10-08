@@ -23,6 +23,7 @@ def publish(channels, message, extra=None, transaction=None):
         tran_collection = transaction.collection(collection.name_str)
 
         if isinstance(channels, str):
+            # TODO
             doc['channel'] = channels
             tran_collection.update({
                 '_id': bson.ObjectId(),
@@ -46,7 +47,7 @@ def publish(channels, message, extra=None, transaction=None):
                 doc_copy = doc.copy()
                 doc_copy['channel'] = channel
                 docs.append(doc_copy)
-        collection.insert(docs)
+        collection.insert(docs, manipulate=False)
 
 def get_cursor_id(channels):
     collection = mongo.get_collection('messages')
