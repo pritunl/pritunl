@@ -9,6 +9,8 @@ class SettingsVpn(SettingsGroupMongo):
     fields = {
         'default_dh_param_bits': 1536,
         'log_lines': 10000,
+        'server_ping': 3,
+        'server_ping_ttl': 6,
         'status_update_rate': 3,
         'http_request_timeout': 10,
         'safe_pub_subnets': ['50.203.224.0/24'],
