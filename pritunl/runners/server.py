@@ -6,6 +6,8 @@ from pritunl import mongo
 from pritunl import logger
 from pritunl import transaction
 from pritunl import event
+from pritunl import server
+from pritunl import listener
 
 import pymongo
 import collections
@@ -13,6 +15,16 @@ import datetime
 import bson
 import threading
 import time
+
+def _on_msg(msg):
+    if msg['message'] != 'start':
+        return
+
+    try:
+        svr = server.get_server(msg['server_id'])
+        svr.run()
+    except:
+        logger.exception('Failed to run server.')
 
 def _server_check_thread():
     collection = mongo.get_collection('servers')
@@ -24,12 +36,16 @@ def _server_check_thread():
                     '$lt': datetime.datetime.utcnow() - datetime.timedelta(
                         seconds=settings.vpn.server_ping_ttl),
                 },
-            }, {'$set': {
-                'status': False,
-                'instance_id': None,
-                'start_timestamp': False,
-                'ping_timestamp': False,
-            }})
+            }, {
+                '$set': {
+                    'status': False,
+                    'start_timestamp': False,
+                    'ping_timestamp': False,
+                },
+                '$unset': {
+                    'instance_id': '',
+                },
+            })
 
             if response['updatedExisting']:
                 event.Event(type=SERVERS_UPDATED)
@@ -42,3 +58,5 @@ def start_server():
     thread = threading.Thread(target=_server_check_thread)
     thread.daemon = True
     thread.start()
+
+    listener.add_listener('servers', _on_msg)
