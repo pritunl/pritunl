@@ -24,16 +24,10 @@ class ServerOutput(object):
         })
         event.Event(type=SERVER_OUTPUT_UPDATED, resource_id=self.server_id)
 
-    def push_output(self, output):
-        self.collection.insert({
-            'server_id': self.server_id,
-            'timestamp': datetime.datetime.utcnow(),
-            'output': output.rstrip('\n'),
-        })
-
-        doc_ids = self.collection.aggregate([
+    def prune_output(self):
+        doc_ids = self.output_collection.aggregate([
             {'$match': {
-                'server_id': self.server_id,
+                'server_id': self.id,
             }},
             {'$project': {
                 '_id': True,
@@ -52,10 +46,17 @@ class ServerOutput(object):
         if doc_ids:
             doc_ids = doc_ids[0]['doc_ids']
 
-            self.collection.remove({
+            self.output_collection.remove({
                 '_id': {'$in': doc_ids},
             })
 
+    def push_output(self, output):
+        self.collection.insert({
+            'server_id': self.server_id,
+            'timestamp': datetime.datetime.utcnow(),
+            'output': output.rstrip('\n'),
+        })
+        self.prune_output()
         event.Event(type=SERVER_OUTPUT_UPDATED, resource_id=self.server_id)
 
     def get_output(self):
