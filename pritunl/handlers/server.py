@@ -550,14 +550,14 @@ def server_output_get(server_id):
     svr = server.get_server(id=server_id)
     return utils.jsonify({
         'id': svr.id,
-        'output': svr.output,
+        'output': svr.output.get_output(),
     })
 
 @app.app.route('/server/<server_id>/output', methods=['DELETE'])
 @auth.session_auth
 def server_output_delete(server_id):
     svr = server.get_server(id=server_id)
-    svr.clear_output()
+    svr.output.clear_output()
     return utils.jsonify({})
 
 @app.app.route('/server/<server_id>/bandwidth/<period>',
