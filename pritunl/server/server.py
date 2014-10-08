@@ -714,13 +714,10 @@ class Server(mongo.MongoObject):
                 target=self._keep_alive_thread, args=(process,))
             keep_alive_thread.start()
             self.status = True
-            self._instance_id = str(bson.ObjectId())
-            self.instance_id = self._instance_id
             self.start_timestamp = datetime.datetime.now()
             self.ping_timestamp = datetime.datetime.now()
             self.commit((
                 'status',
-                'instance_id',
                 'start_timestamp',
                 'ping_timestamp',
             ))
@@ -748,6 +745,7 @@ class Server(mongo.MongoObject):
 
             self.status = False
             self.start_timestamp = None
+            self.unset('instance_id')
             self.commit(('status', 'start_timestamp'))
             self.publish('stopped')
             self.update_clients({}, force=True)
@@ -781,15 +779,16 @@ class Server(mongo.MongoObject):
             if msg.get('server_id') == self.id:
                 yield msg
 
-    def start(self, timeout=VPN_OP_TIMEOUT):
-        if self.status:
-            return
+    def run(self):
+        response = self.collection.update({
+            '_id': bson.ObjectId(self.id),
+            'instance_id': {'$exists': False},
+        }, {'$set': {
+            'instance_id': self._instance_id,
+        }})
 
-        if not self.organizations:
-            raise ServerMissingOrg('Server cannot be started ' + \
-                'without any organizations', {
-                    'server_id': self.id,
-                })
+        if not response['updatedExisting']:
+            return
 
         os.makedirs(self._temp_path)
 
@@ -797,14 +796,33 @@ class Server(mongo.MongoObject):
         self._enable_ip_forwarding()
         self._set_iptables_rules()
         self.output.clear_output()
-        cursor_id = self.get_cursor_id()
 
         threading.Thread(target=self._run_thread).start()
+
+    def start(self, timeout=VPN_OP_TIMEOUT):
+        if self.status:
+            return
+
+        if self.instance_id:
+            raise ServerInstanceSet('Server instance already set. %r', {
+                    'server_id': self.id,
+                })
+
+        if not self.organizations:
+            raise ServerMissingOrg('Server cannot be started ' + \
+                'without any organizations', {
+                    'server_id': self.id,
+                })
+
+        cursor_id = self.get_cursor_id()
+
+        self.publish('start')
 
         for msg in self.subscribe(cursor_id=cursor_id, timeout=timeout):
             message = msg['message']
             if message == 'started':
                 self.status = True
+                self.instance_id = True
                 return
             elif message == 'stopped':
                 raise ServerStartError('Server failed to start', {
@@ -834,6 +852,7 @@ class Server(mongo.MongoObject):
             message = msg['message']
             if message == 'stopped':
                 self.status = False
+                self.instance_id = None
                 return
 
         raise ServerStopError('Server stop timed out', {
