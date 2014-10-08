@@ -90,6 +90,7 @@ class Server(mongo.MongoObject):
         self._orgs_changed = False
         self._clients = None
         self._temp_path = utils.get_temp_path()
+        self._instance_id = str(bson.ObjectId())
         self.ip_pool = ServerIpPool(self)
 
         if name is not None:
@@ -655,8 +656,18 @@ class Server(mongo.MongoObject):
                 i += 1
         self._clear_iptables_rules()
 
-    def _keep_alive_thread(self):
+    def _keep_alive_thread(self, process):
         while not self._interrupt:
+            self.load()
+            if self._instance_id != self.instance_id:
+                logger.info('Server instance removed, stopping server. %r' % {
+                    'server_id': self.id,
+                    'instance_id': self._instance_id,
+                })
+                process.send_signal(signal.SIGINT)
+                time.sleep(0.5)
+                continue
+
             self.ping_timestamp = datetime.datetime.now()
             try:
                 self.commit('ping_timestamp')
@@ -695,10 +706,11 @@ class Server(mongo.MongoObject):
             status_thread = threading.Thread(target=self._status_thread)
             status_thread.start()
             keep_alive_thread = threading.Thread(
-                target=self._keep_alive_thread)
+                target=self._keep_alive_thread, args=(process,))
             keep_alive_thread.start()
             self.status = True
-            self.instance_id = str(bson.ObjectId())
+            self._instance_id = str(bson.ObjectId())
+            self.instance_id = self._instance_id
             self.start_timestamp = datetime.datetime.now()
             self.ping_timestamp = datetime.datetime.now()
             self.commit((
@@ -725,6 +737,9 @@ class Server(mongo.MongoObject):
 
             self._interrupt = True
             status_thread.join()
+
+            if self._instance_id != self.instance_id:
+                return
 
             self.status = False
             self.start_timestamp = None
