@@ -166,6 +166,10 @@ class Server(mongo.MongoObject):
         return organization.get_user_count_multi(org_ids=self.organizations)
 
     @cached_property
+    def bandwidth(self):
+        return ServerBandwidth(self.id)
+
+    @cached_property
     def output(self):
         output = self.output_collection.aggregate([
             {'$match': {
