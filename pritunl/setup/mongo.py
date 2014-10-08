@@ -101,6 +101,10 @@ def setup_mongo():
         ('timestamp', pymongo.ASCENDING),
     ])
     mongo.collections['servers'].ensure_index('name')
+    mongo.collections['servers_output'].ensure_index([
+        ('server_id', pymongo.ASCENDING),
+        ('timestamp', pymongo.ASCENDING),
+    ])
     mongo.collections['servers_bandwidth'].ensure_index([
         ('server_id', pymongo.ASCENDING),
         ('period', pymongo.ASCENDING),
