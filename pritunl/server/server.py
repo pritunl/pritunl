@@ -657,6 +657,7 @@ class Server(mongo.MongoObject):
         self._clear_iptables_rules()
 
     def _keep_alive_thread(self, process):
+        exit_attempts = 0
         while not self._interrupt:
             self.load()
             if self._instance_id != self.instance_id:
@@ -664,7 +665,11 @@ class Server(mongo.MongoObject):
                     'server_id': self.id,
                     'instance_id': self._instance_id,
                 })
-                process.send_signal(signal.SIGINT)
+                if exit_attempts > 2:
+                    process.send_signal(signal.SIGKILL)
+                else:
+                    process.send_signal(signal.SIGINT)
+                exit_attempts += 1
                 time.sleep(0.5)
                 continue
 
