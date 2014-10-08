@@ -25,9 +25,9 @@ class ServerOutput(object):
         event.Event(type=SERVER_OUTPUT_UPDATED, resource_id=self.server_id)
 
     def prune_output(self):
-        doc_ids = self.output_collection.aggregate([
+        doc_ids = self.collection.aggregate([
             {'$match': {
-                'server_id': self.id,
+                'server_id': self.server_id,
             }},
             {'$project': {
                 '_id': True,
@@ -36,7 +36,7 @@ class ServerOutput(object):
             {'$sort': {
                 'timestamp': pymongo.DESCENDING,
             }},
-            {'$skip': 10000},
+            {'$skip': settings.vpn.log_lines},
             {'$group': {
                 '_id': None,
                 'doc_ids': {'$push': '$_id'},
@@ -46,7 +46,7 @@ class ServerOutput(object):
         if doc_ids:
             doc_ids = doc_ids[0]['doc_ids']
 
-            self.output_collection.remove({
+            self.collection.remove({
                 '_id': {'$in': doc_ids},
             })
 
