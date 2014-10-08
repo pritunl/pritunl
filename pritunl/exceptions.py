@@ -33,6 +33,9 @@ class HostError(BaseError):
 class ServerError(BaseError):
     pass
 
+class ServerInstanceSet(ServerError):
+    pass
+
 class ServerMissingOrg(ServerError):
     pass
 
