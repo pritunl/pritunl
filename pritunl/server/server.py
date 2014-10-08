@@ -647,7 +647,7 @@ class Server(mongo.MongoObject):
         ovpn_status_path = os.path.join(self._temp_path, OVPN_STATUS_NAME)
         while not self._interrupt:
             time.sleep(0.1)
-            # Check interrupt every 0.1s check client count every 5s
+            # Check interrupt every 0.1s
             if i >= settings.vpn.status_update_rate * 10:
                 i = 0
                 self._read_clients(ovpn_status_path)
@@ -698,6 +698,7 @@ class Server(mongo.MongoObject):
                 target=self._keep_alive_thread)
             keep_alive_thread.start()
             self.status = True
+            self.instance_id = str(bson.ObjectId())
             self.start_timestamp = datetime.datetime.now()
             self.ping_timestamp = datetime.datetime.now()
             self.commit((
