@@ -15,6 +15,7 @@ class MongoObject(object):
     def __new__(cls, id=None, doc=None, spec=None, **kwargs):
         mongo_object = object.__new__(cls)
         mongo_object.changed = set()
+        mongo_object.unseted = set()
         mongo_object.id = id
 
         if id or doc or spec:
@@ -115,8 +116,12 @@ class MongoObject(object):
                     raise ValueError('Required %r field is missing' % field)
         return doc
 
+    def unset(self, field):
+        self.unseted.add(field)
+
     def commit(self, fields=None, transaction=None):
         doc = self.get_commit_doc(fields=fields)
+        unset = {x: '' for x in self.unseted}
 
         if transaction:
             collection = transaction.collection(
@@ -124,15 +129,24 @@ class MongoObject(object):
         else:
             collection = self.collection
 
-        if doc:
+        if doc or unset:
+            update_doc = {}
+
+            if doc:
+                for field in self.unseted:
+                    doc.pop(field, None)
+                update_doc['$set'] = doc
+
+            if unset:
+                update_doc['$unset'] = unset
+
             collection.update({
                 '_id': self._id,
-            }, {
-                '$set': doc,
-            }, upsert=True)
+            }, update_doc, upsert=True)
 
         self.exists = True
         self.changed = set()
+        self.unseted = set()
 
     def remove(self):
         self.collection.remove(self._id)
