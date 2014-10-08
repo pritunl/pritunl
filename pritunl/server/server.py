@@ -655,6 +655,17 @@ class Server(mongo.MongoObject):
                 i += 1
         self._clear_iptables_rules()
 
+    def _keep_alive_thread(self):
+        while not self._interrupt:
+            self.ping_timestamp = datetime.datetime.now()
+            try:
+                self.commit('ping_timestamp')
+            except:
+                logger.exception('Failed to update server ping. %r' % {
+                    'server_id': self.id,
+                })
+            time.sleep(5)
+
     def _run_thread(self):
         logger.debug('Starting ovpn process. %r' % {
             'server_id': self.id,
@@ -683,9 +694,18 @@ class Server(mongo.MongoObject):
             sub_thread.start()
             status_thread = threading.Thread(target=self._status_thread)
             status_thread.start()
+            keep_alive_thread = threading.Thread(
+                target=self._keep_alive_thread)
+            keep_alive_thread.start()
             self.status = True
             self.start_timestamp = datetime.datetime.now()
-            self.commit(('status', 'start_timestamp'))
+            self.ping_timestamp = datetime.datetime.now()
+            self.commit((
+                'status',
+                'instance_id',
+                'start_timestamp',
+                'ping_timestamp',
+            ))
             self.publish('started')
 
             while True:
