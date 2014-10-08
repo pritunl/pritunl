@@ -664,7 +664,7 @@ class Server(mongo.MongoObject):
                 logger.exception('Failed to update server ping. %r' % {
                     'server_id': self.id,
                 })
-            time.sleep(5)
+            time.sleep(settings.vpn.server_ping)
 
     def _run_thread(self):
         logger.debug('Starting ovpn process. %r' % {

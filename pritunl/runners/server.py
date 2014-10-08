@@ -19,11 +19,10 @@ def _server_check_thread():
 
     while True:
         try:
-            time.sleep(30)
             response = collection.update({
                 'ping_timestamp': {
                     '$lt': datetime.datetime.utcnow() - datetime.timedelta(
-                        seconds=10),
+                        seconds=settings.vpn.server_ping_ttl),
                 },
             }, {'$set': {
                 'status': False,
@@ -37,7 +36,7 @@ def _server_check_thread():
         except:
             logger.exception('Error checking server states.')
 
-        time.sleep(5)
+        time.sleep(settings.vpn.server_ping)
 
 def start_server():
     thread = threading.Thread(target=_server_check_thread)
