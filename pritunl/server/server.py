@@ -167,28 +167,7 @@ class Server(mongo.MongoObject):
 
     @cached_property
     def output(self):
-        output = self.output_collection.aggregate([
-            {'$match': {
-                'server_id': self.id,
-            }},
-            {'$project': {
-                '_id': False,
-                'timestamp': True,
-                'output': True,
-            }},
-            {'$sort': {
-                'timestamp': pymongo.ASCENDING,
-            }},
-            {'$group': {
-                '_id': None,
-                'output': {'$push': '$output'},
-            }},
-        ])['result']
-
-        if output:
-            output = output[0]['output']
-
-        return '\n'.join(output)
+        return ServerOutput(self.id)
 
     def initialize(self):
         self.generate_dh_param()
@@ -225,24 +204,6 @@ class Server(mongo.MongoObject):
         else:
             queue.start('unassign_ip_addr', server_id=self.id, org_id=org_id,
                 user_id=user_id)
-
-    def _event_delay(self, type, resource_id=None):
-        # Min event every 1s max event every 0.2s
-        event_time = time.time()
-        if event_time - self._last_event >= 1:
-            self._last_event = event_time
-            self._cur_event = uuid.uuid4()
-            event.Event(type=type, resource_id=resource_id)
-            return
-
-        def _target():
-            event_id = uuid.uuid4()
-            self._cur_event = event_id
-            time.sleep(0.2)
-            if self._cur_event == event_id:
-                self._last_event = time.time()
-                event.Event(type=type, resource_id=resource_id)
-        threading.Thread(target=_target).start()
 
     def commit(self, *args, **kwargs):
         tran = None
@@ -713,7 +674,7 @@ class Server(mongo.MongoObject):
                 process = subprocess.Popen(['openvpn', ovpn_conf_path],
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             except OSError:
-                self.push_output(traceback.format_exc())
+                self.output.push_output(traceback.format_exc())
                 logger.exception('Failed to start ovpn process. %r' % {
                     'server_id': self.id,
                 })
@@ -737,7 +698,7 @@ class Server(mongo.MongoObject):
                         break
                     else:
                         continue
-                self.push_output(line)
+                self.output.push_output(line)
 
             self._interrupt = True
             status_thread.join()
@@ -789,7 +750,7 @@ class Server(mongo.MongoObject):
         ovpn_conf_path = self._generate_ovpn_conf()
         self._enable_ip_forwarding()
         self._set_iptables_rules()
-        self.clear_output()
+        self.output.clear_output()
         cursor_id = self.get_cursor_id()
 
         threading.Thread(target=self._run_thread).start()
@@ -845,46 +806,6 @@ class Server(mongo.MongoObject):
         })
         self.stop()
         self.start()
-
-    def clear_output(self):
-        self.output_collection.remove({
-            'server_id': self.id,
-        })
-        self._event_delay(type=SERVER_OUTPUT_UPDATED, resource_id=self.id)
-
-    def push_output(self, output):
-        self.output_collection.insert({
-            'server_id': self.id,
-            'timestamp': datetime.datetime.utcnow(),
-            'output': output.rstrip('\n'),
-        })
-
-        doc_ids = self.output_collection.aggregate([
-            {'$match': {
-                'server_id': self.id,
-            }},
-            {'$project': {
-                '_id': True,
-                'timestamp': True,
-            }},
-            {'$sort': {
-                'timestamp': pymongo.DESCENDING,
-            }},
-            {'$skip': 10000},
-            {'$group': {
-                '_id': None,
-                'doc_ids': {'$push': '$_id'},
-            }},
-        ])['result']
-
-        if doc_ids:
-            doc_ids = doc_ids[0]['doc_ids']
-
-            self.output_collection.remove({
-                '_id': {'$in': doc_ids},
-            })
-
-        self._event_delay(type=SERVER_OUTPUT_UPDATED, resource_id=self.id)
 
     def _update_clients_bandwidth(self, clients):
         # Remove client no longer connected
