@@ -128,10 +128,6 @@ class Server(mongo.MongoObject):
     def output_collection(cls):
         return mongo.get_collection('servers_output')
 
-    @cached_static_property
-    def bandwidth(cls):
-        return ServerBandwidth(self.id)
-
     def dict(self):
         return {
             'id': self.id,
