@@ -20,8 +20,7 @@ def publish(channels, message, extra=None, transaction=None):
             doc[key] = val
 
     if transaction:
-        tran_collection = transaction.collection(
-            collection.name_str)
+        tran_collection = transaction.collection(collection.name_str)
 
         if isinstance(channels, str):
             doc['channel'] = channels
@@ -64,8 +63,7 @@ def get_cursor_id(channels):
     except IndexError:
         pass
 
-def subscribe(channels, cursor_id=None, timeout=None,
-        yield_delay=None):
+def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None):
     collection = mongo.get_collection('messages')
     start_time = time.time()
     cursor_id = cursor_id or get_cursor_id(channels)
