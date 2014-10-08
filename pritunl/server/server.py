@@ -716,7 +716,12 @@ class Server(mongo.MongoObject):
                         break
                     else:
                         continue
-                self.output.push_output(line)
+                try:
+                    self.output.push_output(line)
+                except:
+                    logger.exception('Failed to push vpn output. %r', {
+                        'server_id': self.id,
+                    })
 
             self._interrupt = True
             status_thread.join()
@@ -735,6 +740,9 @@ class Server(mongo.MongoObject):
                 'server_id': self.id,
             })
         except:
+            logger.exception('Server error occurred while running. %r', {
+                'server_id': self.id,
+            })
             messenger.publish('server_instance', 'stopped', {
                 'server_id': self.id,
             })
