@@ -48,6 +48,7 @@ def setup_mongo():
         'messages': getattr(database, prefix + 'messages'),
         'administrators': getattr(database, prefix + 'administrators'),
         'users': getattr(database, prefix + 'users'),
+        'users_key_link': getattr(database, prefix + 'users_key_link'),
         'organizations': getattr(database, prefix + 'organizations'),
         'hosts': getattr(database, prefix + 'hosts'),
         'hosts_usage': getattr(database, prefix + 'hosts_usage'),
@@ -99,6 +100,8 @@ def setup_mongo():
         ('org_id', pymongo.ASCENDING),
         ('name', pymongo.ASCENDING),
     ])
+    mongo.collections['users_key_link'].ensure_index('key_id')
+    mongo.collections['users_key_link'].ensure_index('short_id', unique=True)
     mongo.collections['organizations'].ensure_index('type')
     mongo.collections['hosts'].ensure_index('name')
     mongo.collections['hosts_usage'].ensure_index([
