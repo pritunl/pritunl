@@ -217,15 +217,35 @@ class User(mongo.MongoObject):
 
     def verify_otp_code(self, code, remote_ip=None):
         if remote_ip:
-            otp_cache = cache_db.get(self.get_cache_key('otp_cache'))
-            if otp_cache:
-                cur_code, cur_remote_ip = otp_cache.split(',')
-                if cur_code == code and cur_remote_ip == remote_ip:
-                    cache_db.expire(self.get_cache_key('otp_cache'),
-                        settings.user.otp_cache_ttl)
-                    return True
-                else:
-                    cache_db.remove(self.get_cache_key('otp_cache'))
+            doc = self.otp_cache_collection.find_one({
+                '_id': bson.ObjectId(self.id),
+            })
+
+            if doc:
+                _, hash_salt, cur_otp_hash = doc['otp_hash'].split('$')
+                hash_salt = base64.b64decode(hash_salt)
+            else:
+                hash_salt = os.urandom(8)
+                cur_otp_hash = None
+
+            otp_hash = hashlib.sha512()
+            otp_hash.update(str(code) + remote_ip)
+            otp_hash.update(hash_salt)
+            otp_hash = base64.b64encode(otp_hash.digest())
+
+            if otp_hash == cur_otp_hash:
+                self.otp_cache_collection.update({
+                    '_id': bson.ObjectId(self.id),
+                }, {'$currentDate': {
+                    'timestamp': True,
+                }})
+                return True
+
+            otp_hash = '$'.join((
+                '1',
+                base64.b64encode(hash_salt),
+                otp_hash,
+            ))
 
         otp_secret = self.otp_secret
         padding = 8 - len(otp_secret) % 8
