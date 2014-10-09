@@ -20,6 +20,7 @@ import hmac
 import time
 import threading
 import json
+import bson
 
 class User(mongo.MongoObject):
     fields = {
