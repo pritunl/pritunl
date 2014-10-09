@@ -58,6 +58,7 @@ def setup_mongo():
         'dh_params': getattr(database, prefix + 'dh_params'),
         'auth_nonces': getattr(database, prefix + 'auth_nonces'),
         'auth_limiter': getattr(database, prefix + 'auth_limiter'),
+        'otp_cache': getattr(database, prefix + 'otp_cache'),
     })
 
     if prefix + 'log_entries' not in cur_collections:
