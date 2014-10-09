@@ -2,9 +2,9 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl import utils
-from pritunl import logger
 from pritunl import app
 from pritunl import auth
+from pritunl import logger
 
 @app.app.route('/log', methods=['GET'])
 @auth.session_auth
