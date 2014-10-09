@@ -269,7 +269,7 @@
 
       var deleteKey = function() {
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open('DELETE', '/k/<%= view_id %>', false);
+        xmlhttp.open('DELETE', '/k/<%= short_id %>', false);
         xmlhttp.send();
         if (xmlhttp.status === 200) {
           document.getElementById('key-box').style.display = 'none';
