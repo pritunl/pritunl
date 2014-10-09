@@ -58,6 +58,10 @@ class User(mongo.MongoObject):
     def collection(cls):
         return mongo.get_collection('users')
 
+    @cached_static_property
+    def otp_cache_collection(cls):
+        return mongo.get_collection('otp_cache')
+
     def dict(self):
         return {
             'id': self.id,
