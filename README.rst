@@ -1,10 +1,10 @@
 pritunl: enterprise vpn server
 ==============================
 
-.. image:: http://gitshields.com/v2/pypi/pritunl/version/7d0ce8.png
+.. image:: http://gitshields.com/v2/pypi/pritunl/version/43617e.png
     :target: https://pypi.python.org/pypi/pritunl
 
-.. image:: http://gitshields.com/v2/pypi/pritunl/month_down/ff4a20.png
+.. image:: http://gitshields.com/v2/pypi/pritunl/month_down/754e8c.png
     :target: https://pypi.python.org/pypi/pritunl
 
 .. image:: http://gitshields.com/v2/drone/github.com/pritunl/pritunl/brightgreen-red.png
