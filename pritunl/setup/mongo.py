@@ -129,6 +129,8 @@ def setup_mongo():
         expireAfterSeconds=settings.app.auth_time_window * 2.1)
     mongo.collections['auth_limiter'].ensure_index('timestamp',
         expireAfterSeconds=settings.app.auth_limiter_ttl)
+    mongo.collections['otp_cache'].ensure_index('timestamp',
+        expireAfterSeconds=settings.user.otp_cache_ttl)
 
     if not auth.Administrator.collection.find_one():
         auth.Administrator(
