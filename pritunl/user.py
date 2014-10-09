@@ -238,7 +238,7 @@ class User(mongo.MongoObject):
                 cur_otp_hash = None
 
             otp_hash = hashlib.sha512()
-            otp_hash.update(str(code) + remote_ip)
+            otp_hash.update(code + remote_ip)
             otp_hash.update(hash_salt)
             otp_hash = base64.b64encode(otp_hash.digest())
 
@@ -296,7 +296,7 @@ class User(mongo.MongoObject):
                 '$currentDate': {
                     'timestamp': True,
                 },
-            })
+            }, upsert=True)
 
         return True
 
