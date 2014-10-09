@@ -691,6 +691,13 @@ class Server(mongo.MongoObject):
         self._clients = {}
 
         try:
+            os.makedirs(self._temp_path)
+
+            ovpn_conf_path = self._generate_ovpn_conf()
+            self._enable_ip_forwarding()
+            self._set_iptables_rules()
+            self.output.clear_output()
+
             ovpn_conf_path = os.path.join(self._temp_path, OVPN_CONF_NAME)
             try:
                 process = subprocess.Popen(['openvpn', ovpn_conf_path],
@@ -793,13 +800,6 @@ class Server(mongo.MongoObject):
         if not response['updatedExisting']:
             return
 
-        os.makedirs(self._temp_path)
-
-        ovpn_conf_path = self._generate_ovpn_conf()
-        self._enable_ip_forwarding()
-        self._set_iptables_rules()
-        self.output.clear_output()
-
         threading.Thread(target=self._run_thread).start()
 
     def start(self, timeout=VPN_OP_TIMEOUT):
@@ -853,7 +853,11 @@ class Server(mongo.MongoObject):
 
         for msg in self.subscribe(cursor_id=cursor_id, timeout=timeout):
             message = msg['message']
-            if message == 'stopped':
+            if message == 'started':
+                self.status = True
+                self.instance_id = True
+                return
+            elif message == 'stopped':
                 self.status = False
                 self.instance_id = None
                 return
