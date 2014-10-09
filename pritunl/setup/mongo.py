@@ -36,13 +36,16 @@ def setup_mongo():
     database = client.get_default_database()
     cur_collections = database.collection_names()
 
+    if prefix + 'messages' not in cur_collections:
+        database.create_collection(prefix + 'messages', capped=True,
+            size=100000)
+
     mongo.collections.update({
         'transaction': getattr(database, prefix + 'transaction'),
         'queue': getattr(database, prefix + 'queue'),
         'task': getattr(database, prefix + 'task'),
         'system': getattr(database, prefix + 'system'),
         'messages': getattr(database, prefix + 'messages'),
-        'log_entries': getattr(database, prefix + 'log_entries'),
         'administrators': getattr(database, prefix + 'administrators'),
         'users': getattr(database, prefix + 'users'),
         'organizations': getattr(database, prefix + 'organizations'),
@@ -57,19 +60,19 @@ def setup_mongo():
         'auth_limiter': getattr(database, prefix + 'auth_limiter'),
     })
 
-    for collection_name, collection in mongo.collections.items():
-        collection.name_str = collection_name
-
-    settings.init()
-
     if prefix + 'log_entries' not in cur_collections:
         log_limit = settings.app.log_entry_limit
         database.create_collection(prefix + 'log_entries', capped=True,
             size=log_limit * 256 * 2, max=log_limit)
 
-    if prefix + 'messages' not in cur_collections:
-        database.create_collection(prefix + 'messages', capped=True,
-            size=100000)
+    mongo.collections.update({
+        'log_entries': getattr(database, prefix + 'log_entries'),
+    })
+
+    for collection_name, collection in mongo.collections.items():
+        collection.name_str = collection_name
+
+    settings.init()
 
     mongo.collections['transaction'].ensure_index('lock_id', unique=True)
     mongo.collections['transaction'].ensure_index([
