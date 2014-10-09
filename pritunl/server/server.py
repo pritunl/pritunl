@@ -743,8 +743,13 @@ class Server(mongo.MongoObject):
 
             self.status = False
             self.start_timestamp = None
+            self.ping_timestamp = None
             self.unset('instance_id')
-            self.commit(('status', 'start_timestamp'))
+            self.commit((
+                'status',
+                'start_timestamp',
+                'ping_timestamp',
+            ))
             self.publish('stopped')
             self.update_clients({}, force=True)
             if self._state:
