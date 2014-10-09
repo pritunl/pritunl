@@ -5,7 +5,6 @@ from pritunl import utils
 from pritunl import static
 from pritunl import organization
 from pritunl import settings
-from pritunl.cache import cache_db
 from pritunl import app
 from pritunl import auth
 from pritunl import mongo
