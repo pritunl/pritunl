@@ -82,6 +82,10 @@ class Organization(mongo.MongoObject):
     def server_collection(cls):
         return mongo.get_collection('servers')
 
+    @cached_static_property
+    def key_link_collection(cls):
+        return mongo.get_collection('users_key_link')
+
     def initialize(self, queue_user_init=True):
         ca_user = user.User(org=self, type=CERT_CA)
 
@@ -182,67 +186,39 @@ class Organization(mongo.MongoObject):
             yield user.User(self, doc=doc)
 
     def create_user_key_link(self, user_id):
-        key_id = uuid.uuid4().hex
-        key_id_key = 'key_token-%s' % key_id
-
-        view_id = None
-        uri_id = None
-        for _ in xrange(2):
-            for _ in xrange(2048):
-                temp_id = ''.join(random.sample(
+        success = False
+        for _ in xrange(256):
+            key_id = uuid.uuid4().hex
+            short_id = ''.join(random.sample(
                     SHORT_URL_CHARS, settings.app.short_url_length))
-                if not view_id:
-                    if not cache_db.exists('view_token-%s' % temp_id):
-                        view_id = temp_id
-                        break
-                else:
-                    if not cache_db.exists('uri_token-%s' % temp_id):
-                        uri_id = temp_id
-                        break
-            if not view_id and not uri_id:
-                raise KeyLinkError('Failed to generate random id')
-        view_id_key = 'view_token-%s' % view_id
-        uri_id_key = 'uri_token-%s' % uri_id
 
-        cache_db.expire(key_id_key, settings.app.key_link_timeout)
-        cache_db.dict_set(key_id_key, 'org_id', self.id)
-        cache_db.dict_set(key_id_key, 'user_id', user_id)
-        cache_db.dict_set(key_id_key, 'view_id', view_id)
-        cache_db.dict_set(key_id_key, 'uri_id', uri_id)
+            try:
+                self.key_link_collection.update({
+                    'org_id': self.id,
+                    'user_id': user_id,
+                }, {
+                    '$set': {
+                        'key_id': key_id,
+                        'short_id': short_id,
+                    },
+                    '$currentDate': {
+                        'timestamp': True,
+                    },
+                }, upsert=True)
+            except pymongo.errors.DuplicateKeyError:
+                continue
 
-        conf_urls = []
-        for server in self.iter_servers():
-            conf_id = uuid.uuid4().hex
-            conf_id_key = 'conf_token-%s' % conf_id
+            success = True
+            break
 
-            cache_db.expire(conf_id_key, settings.app.key_link_timeout)
-            cache_db.dict_set(conf_id_key, 'org_id', self.id)
-            cache_db.dict_set(conf_id_key, 'user_id', user_id)
-            cache_db.dict_set(conf_id_key, 'server_id', server.id)
-
-            conf_urls.append({
-                'id': conf_id,
-                'server_name': server.name,
-                'url': '/key/%s.ovpn' % conf_id,
-            })
-
-        cache_db.expire(view_id_key, settings.app.key_link_timeout)
-        cache_db.dict_set(view_id_key, 'org_id', self.id)
-        cache_db.dict_set(view_id_key, 'user_id', user_id)
-        cache_db.dict_set(view_id_key, 'key_id', key_id)
-        cache_db.dict_set(view_id_key, 'uri_id', uri_id)
-        cache_db.dict_set(view_id_key,
-            'conf_urls', json.dumps(conf_urls))
-
-        cache_db.expire(uri_id_key, settings.app.key_link_timeout)
-        cache_db.dict_set(uri_id_key, 'org_id', self.id)
-        cache_db.dict_set(uri_id_key, 'user_id', user_id)
+        if not success:
+            raise KeyLinkError('Failed to generate random key short id')
 
         return {
             'id': key_id,
             'key_url': '/key/%s.tar' % key_id,
-            'view_url': '/k/%s' % view_id,
-            'uri_url': '/ku/%s' % uri_id,
+            'view_url': '/k/%s' % short_id,
+            'uri_url': '/ku/%s' % short_id,
         }
 
     def get_server(self, server_id):
