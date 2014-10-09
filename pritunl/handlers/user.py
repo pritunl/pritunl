@@ -35,6 +35,7 @@ def user_get(org_id, user_id=None, page=None):
     fields = (
         'name',
         'clients',
+        'otp_auth',
     )
     for svr in org.iter_servers(fields=fields):
         servers.append(svr)
