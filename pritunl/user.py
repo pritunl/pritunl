@@ -273,12 +273,18 @@ class User(mongo.MongoObject):
             if used_code == code:
                 return False
 
-        cache_db.dict_set(self.get_cache_key('otp'),
-            str(int(time.time())), code)
-        cache_db.expire(self.get_cache_key('otp_cache'),
-            settings.user.otp_cache_ttl)
-        cache_db.set(self.get_cache_key('otp_cache'),
-            ','.join((code, remote_ip)))
+        if remote_ip:
+            self.otp_cache_collection.update({
+                '_id': bson.ObjectId(self.id),
+            }, {
+                '$set': {
+                    'otp_hash': otp_hash,
+                },
+                '$currentDate': {
+                    'timestamp': True,
+                },
+            })
+
         return True
 
     def _get_key_info_str(self, user_name, org_name, server_name):
