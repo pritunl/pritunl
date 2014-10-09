@@ -104,6 +104,7 @@ def setup_mongo():
         ('timestamp', pymongo.ASCENDING),
     ])
     mongo.collections['servers'].ensure_index('name')
+    mongo.collections['servers'].ensure_index('ping_timestamp')
     mongo.collections['servers_output'].ensure_index([
         ('server_id', pymongo.ASCENDING),
         ('timestamp', pymongo.ASCENDING),
