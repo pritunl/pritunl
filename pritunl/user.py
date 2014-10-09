@@ -59,6 +59,10 @@ class User(mongo.MongoObject):
         return mongo.get_collection('users')
 
     @cached_static_property
+    def otp_collection(cls):
+        return mongo.get_collection('otp')
+
+    @cached_static_property
     def otp_cache_collection(cls):
         return mongo.get_collection('otp_cache')
 
@@ -270,12 +274,16 @@ class User(mongo.MongoObject):
         if code not in valid_codes:
             return False
 
-        used_codes = cache_db.dict_get_all(self.get_cache_key('otp'))
-        for auth_time, used_code in used_codes.items():
-            if int(time.time()) - int(auth_time) > 120:
-                cache_db.dict_remove(self.get_cache_key('otp'), auth_time)
-            if used_code == code:
-                return False
+        response = self.otp_collection.update({
+            '_id': {
+                'user_id': self.id,
+                'code': code,
+            },
+        }, {'$currentDate': {
+            'timestamp': True,
+        }}, upsert=True)
+        if response['updatedExisting']:
+            return False
 
         if remote_ip:
             self.otp_cache_collection.update({
