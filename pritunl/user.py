@@ -315,8 +315,8 @@ class User(mongo.MongoObject):
             tar_file = tarfile.open(key_archive_path, 'w')
             try:
                 for server in self.org.iter_servers():
-                    server_conf_path = os.path.join(self.org.path,
-                        TEMP_DIR, '%s_%s.ovpn' % (self.id, server.id))
+                    server_conf_path = os.path.join(temp_path,
+                        '%s_%s.ovpn' % (self.id, server.id))
                     server_conf_arcname = '%s_%s_%s.ovpn' % (
                         self.org.name, self.name, server.name)
                     server.generate_ca_cert()
@@ -332,11 +332,11 @@ class User(mongo.MongoObject):
                         client_conf += 'auth-user-pass\n'
 
                     client_conf += '<ca>\n%s\n</ca>\n' % utils.get_cert_block(
-                        server.ca_cert_path)
-                    client_conf += '<cert>\n%s\n' + \
-                        '</cert>\n' % utils.get_cert_block(self.cert_path)
-                    client_conf += '<key>\n%s\n</key>\n' % open(
-                        self.key_path).read().strip()
+                        server.ca_certificate)
+                    client_conf += ('<cert>\n%s\n' + \
+                        '</cert>\n') % utils.get_cert_block(self.certificate)
+                    client_conf += '<key>\n%s\n</key>\n' % (
+                        self.private_key.strip())
 
                     with open(server_conf_path, 'w') as ovpn_conf:
                         os.chmod(server_conf_path, 0600)
