@@ -58,6 +58,7 @@ def setup_mongo():
         'dh_params': getattr(database, prefix + 'dh_params'),
         'auth_nonces': getattr(database, prefix + 'auth_nonces'),
         'auth_limiter': getattr(database, prefix + 'auth_limiter'),
+        'otp': getattr(database, prefix + 'otp'),
         'otp_cache': getattr(database, prefix + 'otp_cache'),
     })
 
@@ -129,6 +130,8 @@ def setup_mongo():
         expireAfterSeconds=settings.app.auth_time_window * 2.1)
     mongo.collections['auth_limiter'].ensure_index('timestamp',
         expireAfterSeconds=settings.app.auth_limiter_ttl)
+    mongo.collections['otp'].ensure_index('timestamp',
+        expireAfterSeconds=120)
     mongo.collections['otp_cache'].ensure_index('timestamp',
         expireAfterSeconds=settings.user.otp_cache_ttl)
 
