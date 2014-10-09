@@ -1,5 +1,3 @@
-from pritunl.cache import cache_db
-
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
