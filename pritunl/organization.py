@@ -3,7 +3,6 @@ from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl import settings
 from pritunl import app
-from pritunl.cache import cache_db
 from pritunl import logger
 from pritunl import mongo
 from pritunl import queue
