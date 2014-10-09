@@ -1,5 +1,3 @@
-from pritunl.cache import cache_db
-
 from pritunl.server.output import ServerOutput
 from pritunl.server.bandwidth import ServerBandwidth
 from pritunl.server.ip_pool import ServerIpPool
