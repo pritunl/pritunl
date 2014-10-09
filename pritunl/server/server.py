@@ -803,6 +803,8 @@ class Server(mongo.MongoObject):
         threading.Thread(target=self._run_thread).start()
 
     def start(self, timeout=VPN_OP_TIMEOUT):
+        cursor_id = self.get_cursor_id()
+
         if self.status:
             return
 
@@ -816,8 +818,6 @@ class Server(mongo.MongoObject):
                 'without any organizations', {
                     'server_id': self.id,
                 })
-
-        cursor_id = self.get_cursor_id()
 
         self.publish('start')
 
@@ -837,14 +837,14 @@ class Server(mongo.MongoObject):
             })
 
     def stop(self, timeout=VPN_OP_TIMEOUT, force=False):
-        # TODO may need locking
+        cursor_id = self.get_cursor_id()
+
         if not self.status:
             return
 
         logger.debug('Stopping server. %r' % {
             'server_id': self.id,
         })
-        cursor_id = self.get_cursor_id()
 
         if force:
             self.publish('force_stop')
