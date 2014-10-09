@@ -129,6 +129,9 @@ def setup_mongo():
         ('token', pymongo.ASCENDING),
         ('nonce', pymongo.ASCENDING),
     ], unique=True)
+
+    mongo.collections['users_key_link'].ensure_index('timestamp',
+        expireAfterSeconds=settings.app.key_link_timeout)
     mongo.collections['auth_nonces'].ensure_index('timestamp',
         expireAfterSeconds=settings.app.auth_time_window * 2.1)
     mongo.collections['auth_limiter'].ensure_index('timestamp',
