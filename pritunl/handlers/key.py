@@ -8,6 +8,8 @@ from pritunl import settings
 from pritunl.cache import cache_db
 from pritunl import app
 from pritunl import auth
+from pritunl import mongo
+
 import os
 import flask
 import uuid
@@ -38,41 +40,37 @@ def user_key_link_get(org_id, user_id):
 
 @app.app.route('/key/<key_id>.tar', methods=['GET'])
 def user_linked_key_archive_get(key_id):
-    key_id_key = 'key_token-%s' % key_id
-    org_id = cache_db.dict_get(key_id_key, 'org_id')
-    user_id = cache_db.dict_get(key_id_key, 'user_id')
+    collection = mongo.get_collection('users_key_link')
+    doc = collection.find_one({
+        'key_id': key_id,
+    })
 
-    # Check for expire
-    if not cache_db.exists(key_id_key):
+    if not doc:
         time.sleep(settings.app.rate_limit_sleep)
         return flask.abort(404)
 
-    return _get_key_archive(org_id, user_id)
+    return _get_key_archive(doc['org_id'], doc['user_id'])
 
-@app.app.route('/k/<view_id>', methods=['GET'])
-def user_linked_key_page_get(view_id):
-    view_id_key = 'view_token-%s' % view_id
-    org_id = cache_db.dict_get(view_id_key, 'org_id')
-    user_id = cache_db.dict_get(view_id_key, 'user_id')
-    key_id = cache_db.dict_get(view_id_key, 'key_id')
-    conf_urls = cache_db.dict_get(view_id_key, 'conf_urls')
-    if conf_urls:
-        conf_urls = json.loads(conf_urls)
+@app.app.route('/k/<short_id>', methods=['GET'])
+def user_linked_key_page_get(short_id):
+    collection = mongo.get_collection('users_key_link')
+    doc = collection.find_one({
+        'short_id': short_id,
+    })
 
-    # Check for expire
-    if not cache_db.exists(view_id_key):
+    if not doc:
         time.sleep(settings.app.rate_limit_sleep)
         return flask.abort(404)
 
-    org = organization.get_org(id=org_id)
-    user = org.get_user(user_id)
+    org = organization.get_org(id=doc['org_id'])
+    user = org.get_user(id=doc['user_id'])
 
     key_page = static.StaticFile(settings.conf.www_path, KEY_INDEX_NAME,
         cache=False).data
     key_page = key_page.replace('<%= user_name %>', '%s - %s' % (
         org.name, user.name))
     key_page = key_page.replace('<%= user_key_url %>', '/key/%s.tar' % (
-        key_id))
+        doc['key_id']))
 
     if org.otp_auth:
         key_page = key_page.replace('<%= user_otp_key %>', user.otp_secret)
@@ -83,50 +81,38 @@ def user_linked_key_page_get(view_id):
         key_page = key_page.replace('<%= user_otp_key %>', '')
         key_page = key_page.replace('<%= user_otp_url %>', '')
 
-    key_page = key_page.replace('<%= view_id %>', view_id)
+    key_page = key_page.replace('<%= short_id %>', doc['short_id'])
 
     conf_links = ''
-    for conf_url in conf_urls:
+    for server in org.iter_servers():
         conf_links += '<a class="sm" title="Download Key" ' + \
-            'href="%s">Download Key (%s)</a><br>\n' % (
-                conf_url['url'], conf_url['server_name'])
+            'href="/key/%s/%s.key">Download Key (%s)</a><br>\n' % (
+                doc['key_id'], server.id, server.name)
     key_page = key_page.replace('<%= conf_links %>', conf_links)
 
     return key_page
 
-@app.app.route('/k/<view_id>', methods=['DELETE'])
-def user_linked_key_page_delete_get(view_id):
-    view_id_key = 'view_token-%s' % view_id
-
-    key_id = cache_db.dict_get(view_id_key, 'key_id')
-    if key_id:
-        cache_db.remove('key_token-%s' % key_id)
-
-    uri_id = cache_db.dict_get(view_id_key, 'uri_id')
-    if uri_id:
-        cache_db.remove('uri_token-%s' % uri_id)
-
-    conf_urls = cache_db.dict_get(view_id_key, 'conf_urls')
-    if conf_urls:
-        for conf_url in json.loads(conf_urls):
-            cache_db.remove('conf_token-%s' % conf_url['id'])
-
-    cache_db.remove(view_id_key)
+@app.app.route('/k/<short_id>', methods=['DELETE'])
+def user_linked_key_page_delete_get(short_id):
+    collection = mongo.get_collection('users_key_link')
+    collection.remove({
+        'short_id': short_id,
+    })
     return utils.jsonify({})
 
-@app.app.route('/ku/<uri_id>', methods=['GET'])
-def user_uri_key_page_get(uri_id):
-    uri_id_key = 'uri_token-%s' % uri_id
-    org_id = cache_db.dict_get(uri_id_key, 'org_id')
-    user_id = cache_db.dict_get(uri_id_key, 'user_id')
+@app.app.route('/ku/<short_id>', methods=['GET'])
+def user_uri_key_page_get(short_id):
+    collection = mongo.get_collection('users_key_link')
+    doc = collection.find_one({
+        'short_id': short_id,
+    })
 
-    # Check for expire
-    if not cache_db.exists(uri_id_key):
+    if not doc:
         time.sleep(settings.app.rate_limit_sleep)
         return flask.abort(404)
 
-    org = organization.get_org(id=org_id)
-    user = org.get_user(user_id)
+    org = organization.get_org(id=doc['org_id'])
+    user = org.get_user(id=doc['user_id'])
 
     keys = {}
     for server in org.iter_servers():
@@ -135,20 +121,19 @@ def user_uri_key_page_get(uri_id):
 
     return utils.jsonify(keys)
 
-@app.app.route('/key/<conf_id>.ovpn', methods=['GET'])
-def user_linked_key_conf_get(conf_id):
-    conf_id_key = 'conf_token-%s' % conf_id
-    org_id = cache_db.dict_get(conf_id_key, 'org_id')
-    user_id = cache_db.dict_get(conf_id_key, 'user_id')
-    server_id = cache_db.dict_get(conf_id_key, 'server_id')
+@app.app.route('/key/<key_id>/<server_id>.key', methods=['GET'])
+def user_linked_key_conf_get(key_id, server_id):
+    collection = mongo.get_collection('users_key_link')
+    doc = collection.find_one({
+        'key_id': key_id,
+    })
 
-    # Check for expire
-    if not cache_db.exists(conf_id_key):
+    if not doc:
         time.sleep(settings.app.rate_limit_sleep)
         return flask.abort(404)
 
-    org = organization.get_org(id=org_id)
-    user = org.get_user(user_id)
+    org = organization.get_org(id=doc['org_id'])
+    user = org.get_user(id=doc['user_id'])
     key_conf = user.build_key_conf(server_id)
 
     response = flask.Response(response=key_conf['conf'],
