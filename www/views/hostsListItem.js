@@ -4,16 +4,18 @@ define([
   'backbone',
   'views/alert',
   'views/hostUsage',
+  'views/modalDeleteHost',
   'views/modalHostSettings',
   'text!templates/hostsListItem.html'
-], function($, _, Backbone, AlertView, HostUsageView, ModalHostSettingsView,
-    hostsListItemTemplate) {
+], function($, _, Backbone, AlertView, HostUsageView, ModalDeleteHostView,
+    ModalHostSettingsView, hostsListItemTemplate) {
   'use strict';
   var HostListItemView = Backbone.View.extend({
     className: 'host',
     template: _.template(hostsListItemTemplate),
     events: {
       'click .host-title a': 'onSettings',
+      'click .host-del': 'onDelete',
       'click .host-cpu-usage-btn': 'onCpuUsageGraph',
       'click .host-mem-usage-btn': 'onMemUsageGraph',
       'click .graph-period': 'onGraphPeriod',
