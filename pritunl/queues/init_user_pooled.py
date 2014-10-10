@@ -7,6 +7,7 @@ from pritunl import app
 from pritunl import logger
 from pritunl import organization
 from pritunl import queue
+from pritunl import user
 
 @queue.add_queue
 class QueueInitUserPooled(QueueInitUser):
