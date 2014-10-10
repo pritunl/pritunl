@@ -79,7 +79,7 @@ def _run_wsgi():
     finally:
         signal.signal(signal.SIGINT, signal.SIG_IGN)
         logger.info('Stopping server...')
-        self._on_exit()
+        _on_exit()
 
 def _run_wsgi_debug():
     logger.info('Starting debug server...')
