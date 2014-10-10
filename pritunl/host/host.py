@@ -77,4 +77,4 @@ class Host(mongo.MongoObject):
     def remove(self):
         if self.status == ONLINE:
             raise HostError('Host must be offline to remove')
-        MongoObject.remove(self)
+        mongo.MongoObject.remove(self)
