@@ -25,6 +25,14 @@ define([
       this.$('.host-name').text(this.model.get('name'));
       this.$('.host-public-address').text(
         '(' + this.model.get('public_address') + ')');
+      if (this.model.get('status') === 'online') {
+        this.$('.host-offline').addClass('host-online');
+        this.$('.host-offline').removeClass('host-offline');
+      }
+      else {
+        this.$('.host-online').addClass('host-offline');
+        this.$('.host-online').removeClass('host-online');
+      }
     },
     onDetach: function() {
       var modal = new ModalDetachHost({
