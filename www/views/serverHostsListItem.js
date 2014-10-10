@@ -22,7 +22,9 @@ define([
       return this;
     },
     update: function() {
-      this.$('.org-name').text(this.model.get('name'));
+      this.$('.host-name').text(this.model.get('name'));
+      this.$('.host-public-address').text(
+        '(' + this.model.get('public_address') + ')');
     },
     onDetach: function() {
       var modal = new ModalDetachHost({
