@@ -48,16 +48,18 @@ def _on_msg(msg):
         logger.exception('Failed to run server.')
 
 def _server_check_thread():
+    checked_hosts = set()
     collection = mongo.get_collection('servers')
 
     while True:
         try:
-            doc = collection.find_and_modify({
+            spec = {
                 'ping_timestamp': {
                     '$lt': datetime.datetime.utcnow() - datetime.timedelta(
                         seconds=settings.vpn.server_ping_ttl),
                 },
-            }, {
+            }
+            doc = {
                 '$set': {
                     'clients': {},
                 },
@@ -65,12 +67,20 @@ def _server_check_thread():
                     'host_id': '',
                     'instance_id': '',
                 },
-            }, fields={
+            }
+            project = {
                 '_id': True,
+                'hosts': True,
                 'organizations': True,
-            })
+            }
+
+            if checked_hosts:
+                spec['_id'] = {'$nin': list(checked_hosts)}
+
+            doc = collection.find_and_modify(spec, doc, fields=project)
 
             if doc:
+                checked_hosts.add(doc['_id'])
                 messenger.publish('servers', 'start', extra={
                     'server_id': str(doc['_id']),
                     'send_events': True,
@@ -79,6 +89,7 @@ def _server_check_thread():
         except:
             logger.exception('Error checking server states.')
 
+        checked_hosts = set()
         time.sleep(settings.vpn.server_ping)
 
 def start_server():
