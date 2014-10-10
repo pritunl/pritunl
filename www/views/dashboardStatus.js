@@ -117,13 +117,17 @@ define([
           }
           this.$('.servers-status .status-num').text(num + '/' + totalNum);
 
+          var serverInfo = '';
           if (this.model.get('server_version')) {
-            this.$('.server-version').text(
-              'v' + this.model.get('server_version'));
+            serverInfo += 'v' + this.model.get('server_version');
           }
-          else {
-            this.$('.server-version').text('');
+          if (this.model.get('current_host')) {
+            if (serverInfo) {
+              serverInfo += ' ';
+            }
+            serverInfo += this.model.get('current_host').substr(0, 6);
           }
+          this.$('.server-info').text(serverInfo);
         }.bind(this)
       });
     },
