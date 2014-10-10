@@ -680,7 +680,7 @@ class Server(mongo.MongoObject):
                 })
             time.sleep(settings.vpn.server_ping)
 
-    def _run_thread(self):
+    def _run_thread(self, send_events):
         logger.debug('Starting ovpn process. %r' % {
             'server_id': self.id,
         })
@@ -727,6 +727,12 @@ class Server(mongo.MongoObject):
                 'ping_timestamp',
             ))
             self.publish('started')
+
+            if send_events:
+                event.Event(type=SERVERS_UPDATED)
+                event.Event(type=SERVER_HOSTS_UPDATED, resource_id=self.id)
+                for org_id in self.organizations:
+                    event.Event(type=USERS_UPDATED, resource_id=org_id)
 
             while True:
                 line = process.stdout.readline()
