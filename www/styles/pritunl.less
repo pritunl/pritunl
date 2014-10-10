@@ -648,6 +648,16 @@ header.blur {
   border-left: none;
 }
 
+.server-hosts-list .host .host-online,
+.server-hosts-list .host .host-offline {
+  padding: 5px 12px;
+  margin-right: 4px;
+}
+
+.server-hosts-list .host .host-offline {
+  display: none;
+}
+
 .users-list .user .name-container {
   margin-top: 5px;
 }
@@ -1132,7 +1142,8 @@ header.blur {
   top: 1px;
 }
 
-.dashboard .status-container .server-version {
+.dashboard .status-container .server-info {
+  color: @gray5-fg;
   position: absolute;
   top: -1px;
   right: 2px;
