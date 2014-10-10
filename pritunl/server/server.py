@@ -151,7 +151,8 @@ class Server(mongo.MongoObject):
     def uptime(self):
         if not self.start_timestamp:
             return
-        return max((datetime.datetime.now() - self.start_timestamp).seconds, 1)
+        return max((datetime.datetime.utcnow() -
+            self.start_timestamp).seconds, 1)
 
     @cached_property
     def user_count(self):
@@ -671,7 +672,7 @@ class Server(mongo.MongoObject):
                 time.sleep(0.5)
                 continue
 
-            self.ping_timestamp = datetime.datetime.now()
+            self.ping_timestamp = datetime.datetime.utcnow()
             try:
                 self.commit('ping_timestamp')
             except:
@@ -801,6 +802,7 @@ class Server(mongo.MongoObject):
             'instance_id': {'$exists': False},
         }, {'$set': {
             'instance_id': self._instance_id,
+            'ping_timestamp': datetime.datetime.utcnow(),
         }})
 
         if not response['updatedExisting']:
