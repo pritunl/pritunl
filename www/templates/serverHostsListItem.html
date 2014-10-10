@@ -5,5 +5,6 @@
   <span class="host-id title">(<%- id %>)</span>
 </div>
 <div class="button-container">
+  <div class="<%- status === 'online' ? 'host-online' : 'host-offline' %> label label-success no-select">Online</div>
   <button type="button" class="server-detach-host btn btn-danger btn-xs">Detach Host</button>
 </div>
