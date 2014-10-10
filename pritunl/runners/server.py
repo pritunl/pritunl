@@ -33,7 +33,7 @@ def _server_check_thread():
 
     while True:
         try:
-            response = collection.update({
+            doc = collection.find_and_modify({
                 'ping_timestamp': {
                     '$lt': datetime.datetime.utcnow() - datetime.timedelta(
                         seconds=settings.vpn.server_ping_ttl),
@@ -41,16 +41,24 @@ def _server_check_thread():
             }, {
                 '$set': {
                     'status': False,
-                    'start_timestamp': False,
-                    'ping_timestamp': False,
+                    'start_timestamp': None,
+                    'ping_timestamp': None,
+                    'clients': {},
                 },
                 '$unset': {
+                    'host_id': '',
                     'instance_id': '',
                 },
+            }, fields={
+                '_id': True,
+                'organizations': True,
             })
 
-            if response['updatedExisting']:
+            if doc:
+                server_id = str(doc['_id'])
                 event.Event(type=SERVERS_UPDATED)
+                event.Event(type=SERVER_HOSTS_UPDATED, resource_id=server_id)
+                continue
         except:
             logger.exception('Error checking server states.')
 
