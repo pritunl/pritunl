@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 apt-get install -qq -y python-software-properties 1> /dev/null
 
-add-apt-repository -y ppa:pritunl/pritunl-testing
+add-apt-repository -y ppa:pritunl/pritunl-testing 1> /dev/null
 
 apt-get update -qq 1> /dev/null
 
@@ -11,17 +11,7 @@ apt-get install -qq -y python-pip python-flask python-cherrypy3 python-crypto py
 # Build requirements
 apt-get install -qq -y devscripts debhelper python-all python-setuptools 1> /dev/null
 
-# Collectd
-apt-get install -qq -y collectd apache2 librrds-perl libconfig-general-perl libregexp-common-perl 1> /dev/null
-
 # Rng-tools
-apt-get install -qq -y rng-tools
+apt-get install -qq -y rng-tools 1> /dev/null
 echo "HRNGDEVICE=/dev/urandom" > /etc/default/rng-tools
 /etc/init.d/rng-tools start
-
-mkdir -p /var/lib/pritunl
-
-cp /vagrant/tools/vagrant_dput.cf /etc/dput.cf
-cp /vagrant/tools/vagrant_collection3.conf /etc/apache2/conf.d/collection3.conf
-
-service apache2 restart 1> /dev/null
