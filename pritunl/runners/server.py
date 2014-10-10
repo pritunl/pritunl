@@ -23,9 +23,11 @@ def _on_msg(msg):
 
     try:
         svr = server.get_server(msg['server_id'])
+
         if settings.local.host_id not in svr.hosts:
             return
-        svr.run()
+
+        svr.run(send_events=msg.get('send_events'))
     except:
         logger.exception('Failed to run server.')
 
