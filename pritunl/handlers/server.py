@@ -490,10 +490,12 @@ def server_org_delete(server_id, org_id):
 def server_host_get(server_id):
     hosts = []
     svr = server.get_server(id=server_id)
+    svr_hst_id = svr.host_id
     for hst in svr.iter_hosts():
         hosts.append({
             'id': hst.id,
             'server': svr.id,
+            'status': ONLINE if svr_hst_id == hst.id else OFFLINE,
             'name': hst.name,
             'public_address': hst.public_addr,
         })
@@ -511,6 +513,7 @@ def server_host_put(server_id, host_id):
     return utils.jsonify({
         'id': hst.id,
         'server': svr.id,
+        'status': ONLINE if svr_hst_id == hst.id else OFFLINE,
         'name': hst.name,
         'public_address': hst.public_addr,
     })
@@ -541,6 +544,7 @@ def server_operation_put(server_id, operation):
         svr.restart()
         logger.LogEntry(message='Restarted server "%s".' % svr.name)
     event.Event(type=SERVERS_UPDATED)
+    event.Event(type=SERVER_HOSTS_UPDATED, resource_id=svr.id)
 
     return utils.jsonify(svr.dict())
 
