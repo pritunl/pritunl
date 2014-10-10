@@ -44,6 +44,7 @@ def status_get():
         'servers_online': servers_online_count,
         'server_count': servers_count,
         'server_version': __version__,
+        'current_host': settings.local.host_id,
         'public_ip': settings.local.public_ip,
         'local_networks': local_networks,
         'notification': notification,
