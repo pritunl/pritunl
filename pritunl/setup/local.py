@@ -19,6 +19,10 @@ def setup_local():
     else:
         settings.local.host_id = uuid.uuid4().hex
 
+        dir_path = os.path.dirname(settings.conf.uuid_path)
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+
         with open(settings.conf.uuid_path, 'w') as uuid_file:
             uuid_file.write(settings.local.host_id)
 
