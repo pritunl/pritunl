@@ -8,6 +8,7 @@ from pritunl import transaction
 from pritunl import event
 from pritunl import server
 from pritunl import listener
+from pritunl import messenger
 
 import pymongo
 import collections
@@ -40,9 +41,6 @@ def _server_check_thread():
                 },
             }, {
                 '$set': {
-                    'status': False,
-                    'start_timestamp': None,
-                    'ping_timestamp': None,
                     'clients': {},
                 },
                 '$unset': {
@@ -55,12 +53,10 @@ def _server_check_thread():
             })
 
             if doc:
-                server_id = str(doc['_id'])
-                event.Event(type=SERVERS_UPDATED)
-                event.Event(type=SERVER_HOSTS_UPDATED, resource_id=server_id)
-                for org_id in doc['organizations']:
-                    event.Event(type=USERS_UPDATED, resource_id=org_id)
-
+                messenger.publish('servers', 'start', extra={
+                    'server_id': str(doc['_id']),
+                    'send_events': True,
+                })
                 continue
         except:
             logger.exception('Error checking server states.')
