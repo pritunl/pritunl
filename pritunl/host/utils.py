@@ -39,3 +39,4 @@ def deinit_host():
         'status': OFFLINE,
         'ping_timestamp': None,
     }})
+    event.Event(type=HOSTS_UPDATED)
