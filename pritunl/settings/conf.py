@@ -17,6 +17,7 @@ class SettingsConf(SettingsGroupFile):
         'temp_path': 'tmp/pritunl',
         'log_path': '/var/log/pritunl.log',
         'www_path': '/usr/share/pritunl/www',
+        'uuid_path': '/var/lib/pritunl/pritunl.uuid',
         'server_cert_path': '/var/lib/pritunl/pritunl.crt',
         'server_key_path': '/var/lib/pritunl/pritunl.key',
         'bind_addr': '0.0.0.0',
