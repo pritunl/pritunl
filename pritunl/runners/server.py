@@ -16,6 +16,8 @@ import datetime
 import bson
 import threading
 import time
+import random
+import hashlib
 
 def _on_msg(msg):
     if msg['message'] != 'start':
@@ -23,9 +25,23 @@ def _on_msg(msg):
 
     try:
         svr = server.get_server(msg['server_id'])
-
         if settings.local.host_id not in svr.hosts:
             return
+
+        prefered_host = msg.get('prefered_host')
+
+        # When server start msg is received from check_thread it is
+        # possible for multiple servers to send the start message.
+        # Attempt to choose a random host based on the current time in
+        # seconds so that all servers will choose the same random host
+        # if selected in the same one second window
+        if not prefered_host:
+            rand_hash = hashlib.sha256(str(int(time.time()))).digest()
+            rand_gen = random.Random(rand_hash)
+            prefered_host = svr.hosts[rand_gen.randint(0, len(svr.hosts) - 1)]
+
+        if settings.local.host_id != prefered_host:
+            time.sleep(0.1)
 
         svr.run(send_events=msg.get('send_events'))
     except:
