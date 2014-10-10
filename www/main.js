@@ -246,7 +246,11 @@ require([
   $.fn.append = function() {
     if (this[0].className === 'alerts-container' &&
         $(this).children().length > 2) {
-      $(this).children().first().find('.close').click();
+      setTimeout(function() {
+        for (var i = 0; i < $(this).children().length - 2; i++) {
+          $(this).children().first().find('.close').click();
+        }
+      }.bind(this), 200);
     }
     return append.apply(this, arguments);
   };
