@@ -626,7 +626,8 @@ class Server(mongo.MongoObject):
                         })
                     raise
 
-    def _sub_thread(self, cursor_id, process):
+    def _sub_thread(self, semaphore, cursor_id, process):
+        semaphore.release()
         for msg in self.subscribe(cursor_id=cursor_id):
             message = msg['message']
 
@@ -659,7 +660,8 @@ class Server(mongo.MongoObject):
             except OSError:
                 pass
 
-    def _status_thread(self):
+    def _status_thread(self, semaphore):
+        semaphore.release()
         i = 0
         cur_client_count = 0
         ovpn_status_path = os.path.join(self._temp_path, OVPN_STATUS_NAME)
@@ -673,7 +675,8 @@ class Server(mongo.MongoObject):
                 i += 1
         self._clear_iptables_rules()
 
-    def _keep_alive_thread(self, process):
+    def _keep_alive_thread(self, semaphore, process):
+        semaphore.release()
         exit_attempts = 0
         while not self._interrupt:
             self.load()
@@ -729,14 +732,16 @@ class Server(mongo.MongoObject):
                 self.publish('stopped')
                 return
 
+            semaphore = threading.Semaphore(3)
+            for _ in xrange(3):
+                semaphore.acquire()
+
             sub_thread = threading.Thread(target=self._sub_thread,
-                args=(cursor_id, process))
+                args=(semaphore, cursor_id, process))
             sub_thread.start()
-            status_thread = threading.Thread(target=self._status_thread)
+            status_thread = threading.Thread(target=self._status_thread,
+                args=(semaphore,))
             status_thread.start()
-            keep_alive_thread = threading.Thread(
-                target=self._keep_alive_thread, args=(process,))
-            keep_alive_thread.start()
             self.status = True
             self.host_id = settings.local.host_id
             self.start_timestamp = datetime.datetime.utcnow()
@@ -747,6 +752,14 @@ class Server(mongo.MongoObject):
                 'start_timestamp',
                 'ping_timestamp',
             ))
+            keep_alive_thread = threading.Thread(
+                target=self._keep_alive_thread, args=(semaphore, process))
+            keep_alive_thread.start()
+
+            # Wait for all three threads to start
+            for _ in xrange(3):
+                semaphore.acquire()
+
             self.publish('started')
 
             if send_events:
@@ -785,7 +798,6 @@ class Server(mongo.MongoObject):
                 'start_timestamp',
                 'ping_timestamp',
             ))
-            self.publish('stopped')
             self.update_clients({}, force=True)
             if self._state:
                 event.Event(type=SERVERS_UPDATED)
@@ -795,7 +807,9 @@ class Server(mongo.MongoObject):
             logger.debug('Ovpn process has ended. %r' % {
                 'server_id': self.id,
             })
+            self.publish('stopped')
         except:
+            self._interrupt = True
             logger.exception('Server error occurred while running. %r', {
                 'server_id': self.id,
             })
