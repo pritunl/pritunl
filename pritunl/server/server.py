@@ -57,6 +57,7 @@ class Server(mongo.MongoObject):
         'dh_params',
 
         'instance_id',
+        'host_id',
         'ping_timestamp',
         'status',
         'start_timestamp',
@@ -720,10 +721,12 @@ class Server(mongo.MongoObject):
                 target=self._keep_alive_thread, args=(process,))
             keep_alive_thread.start()
             self.status = True
-            self.start_timestamp = datetime.datetime.now()
-            self.ping_timestamp = datetime.datetime.now()
+            self.host_id = settings.local.host_id
+            self.start_timestamp = datetime.datetime.utcnow()
+            self.ping_timestamp = datetime.datetime.utcnow()
             self.commit((
                 'status',
+                'host_id',
                 'start_timestamp',
                 'ping_timestamp',
             ))
@@ -758,6 +761,7 @@ class Server(mongo.MongoObject):
             self.status = False
             self.start_timestamp = None
             self.ping_timestamp = None
+            self.unset('host_id')
             self.unset('instance_id')
             self.commit((
                 'status',
@@ -796,7 +800,7 @@ class Server(mongo.MongoObject):
             if msg.get('server_id') == self.id:
                 yield msg
 
-    def run(self):
+    def run(self, send_events=False):
         response = self.collection.update({
             '_id': bson.ObjectId(self.id),
             'instance_id': {'$exists': False},
@@ -808,7 +812,7 @@ class Server(mongo.MongoObject):
         if not response['updatedExisting']:
             return
 
-        threading.Thread(target=self._run_thread).start()
+        threading.Thread(target=self._run_thread, args=(send_events,)).start()
 
     def start(self, timeout=VPN_OP_TIMEOUT):
         cursor_id = self.get_cursor_id()
@@ -833,7 +837,8 @@ class Server(mongo.MongoObject):
             message = msg['message']
             if message == 'started':
                 self.status = True
-                self.instance_id = True
+                self.host_id = None
+                self.instance_id = None
                 return
             elif message == 'stopped':
                 raise ServerStartError('Server failed to start', {
@@ -863,10 +868,12 @@ class Server(mongo.MongoObject):
             message = msg['message']
             if message == 'started':
                 self.status = True
-                self.instance_id = True
+                self.host_id = None
+                self.instance_id = None
                 return
             elif message == 'stopped':
                 self.status = False
+                self.host_id = None
                 self.instance_id = None
                 return
 
