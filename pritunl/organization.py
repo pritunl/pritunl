@@ -288,7 +288,7 @@ class Organization(mongo.MongoObject):
         })
 
 def new_pooled_org():
-    thread = threading.Thread(target=Organization.new_org, kwargs={
+    thread = threading.Thread(target=new_org, kwargs={
         'type': ORG_POOL,
         'block': False,
     })
@@ -316,7 +316,7 @@ def reserve_pooled_org(name=None, type=ORG_DEFAULT):
 
 def new_org(type=ORG_DEFAULT, block=True, **kwargs):
     if type == ORG_DEFAULT:
-        org = Organization.reserve_pooled_org(type=type, **kwargs)
+        org = reserve_pooled_org(type=type, **kwargs)
 
         if not org:
             org = queue.reserve('queued_org', block=block, type=type,
@@ -332,7 +332,7 @@ def new_org(type=ORG_DEFAULT, block=True, **kwargs):
             )
 
         if org:
-            Organization.new_pooled_org()
+            new_pooled_org()
             return org
 
         org = Organization(type=type, **kwargs)
