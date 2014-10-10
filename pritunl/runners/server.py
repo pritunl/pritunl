@@ -58,6 +58,9 @@ def _server_check_thread():
                 server_id = str(doc['_id'])
                 event.Event(type=SERVERS_UPDATED)
                 event.Event(type=SERVER_HOSTS_UPDATED, resource_id=server_id)
+                for org_id in doc['organizations']:
+                    event.Event(type=USERS_UPDATED, resource_id=org_id)
+
                 continue
         except:
             logger.exception('Error checking server states.')
