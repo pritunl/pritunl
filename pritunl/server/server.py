@@ -31,6 +31,7 @@ import re
 import json
 import bson
 import pymongo
+import random
 
 class Server(mongo.MongoObject):
     fields = {
@@ -820,10 +821,13 @@ class Server(mongo.MongoObject):
     def get_cursor_id(self):
         return messenger.get_cursor_id('servers')
 
-    def publish(self, message, transaction=None):
-        messenger.publish('servers', message, extra={
+    def publish(self, message, transaction=None, extra=None):
+        extra = extra or {}
+        extra.update({
             'server_id': self.id,
-        }, transaction=transaction)
+        })
+        messenger.publish('servers', message,
+            extra=extra, transaction=transaction)
 
     def subscribe(self, cursor_id=None, timeout=None):
         for msg in messenger.subscribe('servers', cursor_id=cursor_id,
@@ -862,7 +866,9 @@ class Server(mongo.MongoObject):
                     'server_id': self.id,
                 })
 
-        self.publish('start')
+        self.publish('start', extra={
+            'prefered_host': random.choice(self.hosts),
+        })
 
         for msg in self.subscribe(cursor_id=cursor_id, timeout=timeout):
             message = msg['message']
