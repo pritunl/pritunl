@@ -633,10 +633,27 @@ class Server(mongo.MongoObject):
             try:
                 if message == 'stop':
                     self._state = False
-                    process.send_signal(signal.SIGINT)
+
+                    terminated = False
+                    for _ in xrange(100):
+                        process.send_signal(signal.SIGINT)
+                        for _ in xrange(4):
+                            if process.poll() is not None:
+                                terminated = True
+                                break
+                            time.sleep(0.0025)
+                        if terminated:
+                            break
+
+                    if not terminated:
+                        for _ in xrange(10):
+                            process.send_signal(signal.SIGKILL)
+                            time.sleep(0.01)
                 elif message == 'force_stop':
                     self._state = False
-                    process.send_signal(signal.SIGKILL)
+                    for _ in xrange(10):
+                        process.send_signal(signal.SIGKILL)
+                        time.sleep(0.01)
                 elif message == 'stopped':
                     break
             except OSError:
