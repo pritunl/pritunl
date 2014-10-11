@@ -63,6 +63,11 @@ def setup_mongo():
         'otp_cache': getattr(database, prefix + 'otp_cache'),
     })
 
+    for collection_name, collection in mongo.collections.items():
+        collection.name_str = collection_name
+
+    settings.init()
+
     if prefix + 'log_entries' not in cur_collections:
         log_limit = settings.app.log_entry_limit
         database.create_collection(prefix + 'log_entries', capped=True,
@@ -71,11 +76,6 @@ def setup_mongo():
     mongo.collections.update({
         'log_entries': getattr(database, prefix + 'log_entries'),
     })
-
-    for collection_name, collection in mongo.collections.items():
-        collection.name_str = collection_name
-
-    settings.init()
 
     mongo.collections['transaction'].ensure_index('lock_id', unique=True)
     mongo.collections['transaction'].ensure_index([
