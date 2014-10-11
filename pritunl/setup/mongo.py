@@ -25,7 +25,7 @@ def setup_mongo():
     while True:
         try:
             client = pymongo.MongoClient(settings.conf.mongodb_url,
-                connectTimeoutMS=2000)
+                connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
             break
         except pymongo.errors.ConnectionFailure:
             time.sleep(0.5)
