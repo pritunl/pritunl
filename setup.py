@@ -65,6 +65,7 @@ patch_files = []
 if INSTALL_UPSTART:
     patch_files.append('%s/pritunl.conf' % PATCH_DIR)
     data_files.append(('/etc/init', ['%s/pritunl.conf' % PATCH_DIR]))
+    data_files.append(('/etc/init.d', ['data/init.d/pritunl.sh']))
     shutil.copy('data/init/pritunl.conf', '%s/pritunl.conf' % PATCH_DIR)
 if INSTALL_SYSTEMD:
     patch_files.append('%s/pritunl.service' % PATCH_DIR)
