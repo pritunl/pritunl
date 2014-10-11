@@ -509,6 +509,7 @@ def server_host_put(server_id, host_id):
     hst = host.get_host(id=host_id)
     svr.add_host(hst)
     svr.commit(svr.changed)
+    svr_hst_id = svr.host_id
     event.Event(type=SERVER_HOSTS_UPDATED, resource_id=svr.id)
     return utils.jsonify({
         'id': hst.id,
