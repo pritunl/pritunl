@@ -1,28 +1,51 @@
 import subprocess
 import os
 import time
+import signal
+import sys
 
-nodes = [
-    'node0',
-    'node1',
-    'node2',
-    'node3',
-]
-processes = []
+nodes = sys.argv[1:]
+exit_handled = False
+
+for node in nodes:
+    with open('var/%s.output' % node, 'w') as node_file:
+        pass
+
+def signal_handler(signum=None, frame=None):
+    global exit_handled
+    if exit_handled:
+        return
+    exit_handled = True
+
+    print 'Exiting...'
+
+    processes = []
+    for node in nodes:
+        process = subprocess.Popen(
+            ('screen -d -m /bin/bash -c \'vagrant ssh %s -c ' +
+                '"cd /vagrant; sudo killall python2"\'') % node,
+            shell=True,
+        )
+        processes.append(process)
+
+    for process in processes:
+        process.wait()
+
+    time.sleep(1)
+
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGTERM, signal_handler)
 
 try:
     for node in nodes:
-        process_output = open('./var/%s.output' % node, 'wb')
-        process = subprocess.Popen([
-                'vagrant',
-                'ssh',
-                node,
-                '-c', 'cd /vagrant; sudo python2 -u server.py',
-            ],
-            stdout=process_output,
-            stderr=process_output,
+        subprocess.check_call(
+            ('screen -d -m /bin/bash -c \'vagrant ssh %s -c ' +
+                '"cd /vagrant; sudo python2 -u server.py"' +
+                ' > var/%s.output\'') % (node, node),
+            shell=True,
         )
-        processes.append(process)
 
     print '##############################################################'
     print '#                                                            #'
@@ -43,22 +66,5 @@ try:
 
     while True:
         time.sleep(1)
-
 finally:
-    print 'Exiting...'
-    for node in nodes:
-        process = subprocess.Popen([
-                'vagrant',
-                'ssh',
-                node,
-                '-c', 'sudo killall -q python2 | true',
-            ],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-        processes.append(process)
-
-    for process in processes:
-        process.wait()
-
-    subprocess.check_call(['reset'])
+    signal_handler()
