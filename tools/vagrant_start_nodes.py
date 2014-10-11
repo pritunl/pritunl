@@ -23,7 +23,9 @@ def signal_handler(signum=None, frame=None):
     for node in nodes:
         process = subprocess.Popen(
             ('screen -d -m /bin/bash -c \'vagrant ssh %s -c ' +
-                '"cd /vagrant; sudo killall python2"\'') % node,
+                '"sudo killall openvpn; ' +
+                'sudo killall python2; '
+                'sudo killall -s9 python2"\'') % node,
             shell=True,
         )
         processes.append(process)
