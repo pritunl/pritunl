@@ -6,7 +6,6 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl import settings
-from pritunl import app
 from pritunl import ipaddress
 from pritunl import logger
 from pritunl import host
