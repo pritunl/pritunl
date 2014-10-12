@@ -740,6 +740,9 @@ class Server(mongo.MongoObject):
             status_thread = threading.Thread(target=self._status_thread,
                 args=(semaphore,))
             status_thread.start()
+            keep_alive_thread = threading.Thread(
+                target=self._keep_alive_thread, args=(semaphore, process))
+            keep_alive_thread.start()
             self.status = True
             self.host_id = settings.local.host_id
             self.start_timestamp = datetime.datetime.utcnow()
@@ -750,9 +753,6 @@ class Server(mongo.MongoObject):
                 'start_timestamp',
                 'ping_timestamp',
             ))
-            keep_alive_thread = threading.Thread(
-                target=self._keep_alive_thread, args=(semaphore, process))
-            keep_alive_thread.start()
 
             # Wait for all three threads to start
             for _ in xrange(3):
