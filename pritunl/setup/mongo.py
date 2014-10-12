@@ -35,7 +35,7 @@ def setup_mongo():
 
     if prefix + 'messages' not in cur_collections:
         database.create_collection(prefix + 'messages', capped=True,
-            size=100000, max=2048)
+            size=100000, max=1024)
 
     mongo.collections.update({
         'transaction': getattr(database, prefix + 'transaction'),
