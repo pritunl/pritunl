@@ -18,7 +18,6 @@ from pritunl import messenger
 from pritunl import organization
 from pritunl import listener
 
-import uuid
 import os
 import signal
 import time
@@ -27,7 +26,6 @@ import subprocess
 import threading
 import traceback
 import re
-import json
 import bson
 import pymongo
 import random
