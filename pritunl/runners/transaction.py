@@ -5,6 +5,7 @@ from pritunl import settings
 from pritunl import mongo
 from pritunl import logger
 from pritunl import transaction
+from pritunl import utils
 
 import pymongo
 import collections
@@ -18,7 +19,7 @@ def _check_thread():
 
     while True:
         spec = {
-            'ttl_timestamp': {'$lt': datetime.datetime.utcnow()},
+            'ttl_timestamp': {'$lt': utils.now()},
         }
 
         for doc in collection.find(spec).sort('priority'):

@@ -77,7 +77,7 @@ class Queue(mongo.MongoObject):
                 '_id': bson.ObjectId(self.id),
                 'runner_id': self.runner_id,
             }, {'$set': {
-                'ttl_timestamp': datetime.datetime.utcnow() + \
+                'ttl_timestamp': utils.now() + \
                     datetime.timedelta(seconds=self.ttl),
             }})
             if response['updatedExisting']:
@@ -117,7 +117,7 @@ class Queue(mongo.MongoObject):
         self.keep_alive_thread.start()
 
     def start(self, transaction=None, block=False, block_timeout=30):
-        self.ttl_timestamp = datetime.datetime.utcnow() + \
+        self.ttl_timestamp = utils.now() + \
             datetime.timedelta(seconds=self.ttl)
         self.commit(transaction=transaction)
 
@@ -164,7 +164,7 @@ class Queue(mongo.MongoObject):
         doc = self.get_commit_doc(fields=fields)
 
         doc['runner_id'] = self.runner_id
-        doc['ttl_timestamp'] = datetime.datetime.utcnow() + \
+        doc['ttl_timestamp'] = utils.now() + \
             datetime.timedelta(seconds=self.ttl)
 
         response = self.collection.update({

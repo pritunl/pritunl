@@ -6,6 +6,7 @@ from pritunl.descriptors import *
 from pritunl import settings
 from pritunl import app
 from pritunl import mongo
+from pritunl import utils
 
 import pymongo
 import os
@@ -61,8 +62,7 @@ class HostUsage(object):
             bulk.execute()
 
     def get_period(self, period):
-        date_end = usage_utils.get_period_timestamp(
-            period, datetime.datetime.utcnow())
+        date_end = usage_utils.get_period_timestamp(period, utils.now())
 
         if period == '1m':
             date_start = date_end - datetime.timedelta(hours=6)
@@ -126,7 +126,7 @@ class HostUsage(object):
 
     def get_period_random(self, period):
         data = {}
-        date = datetime.datetime.utcnow()
+        date = utils.now()
         date -= datetime.timedelta(microseconds=date.microsecond,
             seconds=date.second)
 

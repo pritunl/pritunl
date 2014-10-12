@@ -6,6 +6,7 @@ from pritunl import settings
 from pritunl import logger
 from pritunl import mongo
 from pritunl import auth
+from pritunl import utils
 
 import pymongo
 import bson
@@ -76,6 +77,7 @@ def setup_mongo():
     mongo.collections.update({
         'log_entries': getattr(database, prefix + 'log_entries'),
     })
+    mongo.collections['log_entries'].name_str = 'log_entries'
 
     mongo.collections['transaction'].ensure_index('lock_id', unique=True)
     mongo.collections['transaction'].ensure_index([

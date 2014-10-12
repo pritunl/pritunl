@@ -8,6 +8,7 @@ from pritunl import mongo
 from pritunl import queue
 from pritunl import pooler
 from pritunl import user
+from pritunl import utils
 
 import uuid
 import logging
@@ -195,15 +196,11 @@ class Organization(mongo.MongoObject):
                 self.key_link_collection.update({
                     'org_id': self.id,
                     'user_id': user_id,
-                }, {
-                    '$set': {
-                        'key_id': key_id,
-                        'short_id': short_id,
-                    },
-                    '$currentDate': {
-                        'timestamp': True,
-                    },
-                }, upsert=True)
+                }, {'$set': {
+                    'key_id': key_id,
+                    'short_id': short_id,
+                    'timestamp': utils.now(),
+                }}, upsert=True)
             except pymongo.errors.DuplicateKeyError:
                 continue
 

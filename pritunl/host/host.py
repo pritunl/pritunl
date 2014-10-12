@@ -57,8 +57,7 @@ class Host(mongo.MongoObject):
     def uptime(self):
         if not self.start_timestamp:
             return
-        return max((
-            datetime.datetime.utcnow() - self.start_timestamp).seconds, 1)
+        return max((utils.now() - self.start_timestamp).seconds, 1)
 
     @property
     def public_addr(self):

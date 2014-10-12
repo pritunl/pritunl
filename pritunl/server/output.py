@@ -4,6 +4,7 @@ from pritunl.descriptors import *
 from pritunl import settings
 from pritunl import mongo
 from pritunl import event
+from pritunl import utils
 
 import pymongo
 import os
@@ -53,7 +54,7 @@ class ServerOutput(object):
     def push_output(self, output):
         self.collection.insert({
             'server_id': self.server_id,
-            'timestamp': datetime.datetime.utcnow(),
+            'timestamp': utils.now(),
             'output': output.rstrip('\n'),
         })
         self.prune_output()

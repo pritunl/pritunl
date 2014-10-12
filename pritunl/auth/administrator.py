@@ -150,7 +150,7 @@ def check_session():
             Administrator.nonces_collection.insert({
                 'token': auth_token,
                 'nonce': auth_nonce,
-                'timestamp': datetime.datetime.utcnow(),
+                'timestamp': utils.now(),
             }, w=0)
         except pymongo.errors.DuplicateKeyError:
             return False
@@ -188,14 +188,13 @@ def check_auth(username, password, remote_addr=None):
             '_id': remote_addr,
         }, {
             '$inc': {'count': 1},
-            '$setOnInsert': {'timestamp': datetime.datetime.utcnow()},
+            '$setOnInsert': {'timestamp': utils.now()},
         }, new=True, upsert=True)
 
-        if datetime.datetime.utcnow() > doc['timestamp'] + \
-                datetime.timedelta(minutes=1):
+        if utils.now() > doc['timestamp'] + datetime.timedelta(minutes=1):
             doc = {
                 'count': 1,
-                'timestamp': datetime.datetime.utcnow(),
+                'timestamp': utils.now(),
             }
             Administrator.limiter_collection.update({
                 '_id': remote_addr,

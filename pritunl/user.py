@@ -243,8 +243,8 @@ class User(mongo.MongoObject):
             if otp_hash == cur_otp_hash:
                 self.otp_cache_collection.update({
                     '_id': bson.ObjectId(self.id),
-                }, {'$currentDate': {
-                    'timestamp': True,
+                }, {'$set': {
+                    'timestamp': utils.now(),
                 }})
                 return True
 
@@ -278,8 +278,8 @@ class User(mongo.MongoObject):
                 'user_id': self.id,
                 'code': code,
             },
-        }, {'$currentDate': {
-            'timestamp': True,
+        }, {'$set': {
+            'timestamp': utils.now(),
         }}, upsert=True)
         if response['updatedExisting']:
             return False
@@ -287,14 +287,10 @@ class User(mongo.MongoObject):
         if remote_ip:
             self.otp_cache_collection.update({
                 '_id': bson.ObjectId(self.id),
-            }, {
-                '$set': {
-                    'otp_hash': otp_hash,
-                },
-                '$currentDate': {
-                    'timestamp': True,
-                },
-            }, upsert=True)
+            }, {'$set': {
+                'otp_hash': otp_hash,
+                'timestamp': utils.now(),
+            }}, upsert=True)
 
         return True
 

@@ -5,6 +5,7 @@ from pritunl import settings
 from pritunl import app
 from pritunl import host
 from pritunl import logger
+from pritunl import utils
 
 import threading
 import time
@@ -15,7 +16,7 @@ def _keep_alive_thread():
 
     while True:
         try:
-            timestamp = datetime.datetime.utcnow()
+            timestamp = utils.now()
             timestamp -= datetime.timedelta(
                 microseconds=timestamp.microsecond,
                 seconds=timestamp.second,
@@ -39,7 +40,7 @@ def _keep_alive_thread():
                 '_id': settings.local.host.id,
             }, {'$set': {
                 'status': ONLINE,
-                'ping_timestamp': datetime.datetime.utcnow(),
+                'ping_timestamp': utils.now(),
                 'auto_public_address': settings.local.public_ip,
             }})
         except:

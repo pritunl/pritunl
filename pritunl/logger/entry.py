@@ -2,6 +2,7 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl import mongo
+from pritunl import utils
 
 import pymongo
 
@@ -18,7 +19,7 @@ class LogEntry(mongo.MongoObject):
             self.message = message
 
         if not self.exists:
-            self.timestamp = datetime.datetime.now()
+            self.timestamp = utils.now()
             self.commit()
 
     def dict(self):

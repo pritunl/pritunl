@@ -5,6 +5,7 @@ from pritunl import settings
 from pritunl import mongo
 from pritunl import logger
 from pritunl import task
+from pritunl import utils
 
 import pymongo
 import collections
@@ -29,7 +30,7 @@ def run_thread():
     last_run = None
 
     while True:
-        cur_time = datetime.datetime.utcnow()
+        cur_time = utils.now()
 
         if cur_time.minute != last_run:
             last_run = cur_time.minute
@@ -45,7 +46,7 @@ def check_thread():
     collection = mongo.get_collection('task')
 
     while True:
-        cur_timestamp = datetime.datetime.utcnow()
+        cur_timestamp = utils.now()
         spec = {
             'ttl_timestamp': {'$lt': cur_timestamp},
         }

@@ -92,8 +92,7 @@ class ServerBandwidth(object):
             bulk.execute()
 
     def get_period(self, period):
-        date_end = self._get_period_timestamp(
-            period, datetime.datetime.utcnow())
+        date_end = self._get_period_timestamp(utils.now())
 
         if period == '1m':
             date_start = date_end - datetime.timedelta(hours=6)
@@ -158,7 +157,7 @@ class ServerBandwidth(object):
 
     def get_period_random(self, period):
         data = {}
-        date = datetime.datetime.utcnow()
+        date = utils.now()
         date -= datetime.timedelta(microseconds=date.microsecond,
             seconds=date.second)
 

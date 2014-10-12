@@ -5,6 +5,7 @@ from pritunl import settings
 from pritunl import logger
 from pritunl import mongo
 from pritunl import listener
+from pritunl import utils
 
 from Queue import PriorityQueue
 import pymongo
@@ -72,7 +73,7 @@ def _on_msg(msg):
 def run_timeout_queues():
     from pritunl import queue
 
-    cur_timestamp = datetime.datetime.utcnow()
+    cur_timestamp = utils.now()
     spec = {
         'ttl_timestamp': {'$lt': cur_timestamp},
     }

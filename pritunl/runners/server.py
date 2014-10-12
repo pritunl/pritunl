@@ -9,6 +9,7 @@ from pritunl import event
 from pritunl import server
 from pritunl import listener
 from pritunl import messenger
+from pritunl import utils
 
 import pymongo
 import collections
@@ -55,7 +56,7 @@ def _server_check_thread():
         try:
             spec = {
                 'ping_timestamp': {
-                    '$lt': datetime.datetime.utcnow() - datetime.timedelta(
+                    '$lt': utils.now() - datetime.timedelta(
                         seconds=settings.vpn.server_ping_ttl),
                 },
             }

@@ -4,6 +4,7 @@ from pritunl.descriptors import *
 from pritunl import settings
 from pritunl import mongo
 from pritunl import logger
+from pritunl import utils
 
 import pymongo
 import bson
@@ -39,7 +40,7 @@ class Task(mongo.MongoObject):
         doc = self.get_commit_doc(fields=fields)
 
         doc['runner_id'] = self.runner_id
-        doc['ttl_timestamp'] = datetime.datetime.utcnow() + \
+        doc['ttl_timestamp'] = utils.now() + \
             datetime.timedelta(seconds=self.ttl)
 
         try:

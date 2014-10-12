@@ -150,8 +150,7 @@ class Server(mongo.MongoObject):
     def uptime(self):
         if not self.start_timestamp:
             return
-        return max((datetime.datetime.utcnow() -
-            self.start_timestamp).seconds, 1)
+        return max((utils.now() - self.start_timestamp).seconds, 1)
 
     @cached_property
     def user_count(self):
@@ -691,7 +690,7 @@ class Server(mongo.MongoObject):
                 time.sleep(0.5)
                 continue
 
-            self.ping_timestamp = datetime.datetime.utcnow()
+            self.ping_timestamp = utils.now()
             try:
                 self.commit('ping_timestamp')
             except:
@@ -745,8 +744,8 @@ class Server(mongo.MongoObject):
             keep_alive_thread.start()
             self.status = True
             self.host_id = settings.local.host_id
-            self.start_timestamp = datetime.datetime.utcnow()
-            self.ping_timestamp = datetime.datetime.utcnow()
+            self.start_timestamp = utils.now()
+            self.ping_timestamp = utils.now()
             self.commit((
                 'status',
                 'host_id',
@@ -838,7 +837,7 @@ class Server(mongo.MongoObject):
             'instance_id': {'$exists': False},
         }, {'$set': {
             'instance_id': self._instance_id,
-            'ping_timestamp': datetime.datetime.utcnow(),
+            'ping_timestamp': utils.now(),
         }})
 
         if not response['updatedExisting']:
@@ -952,8 +951,7 @@ class Server(mongo.MongoObject):
             bytes_sent_t += bytes_sent - prev_bytes_sent
 
         if bytes_recv_t != 0 or bytes_sent_t != 0:
-            self.bandwidth.add_data(
-                datetime.datetime.utcnow(), bytes_recv_t, bytes_sent_t)
+            self.bandwidth.add_data(utils.now(), bytes_recv_t, bytes_sent_t)
 
     def _read_clients(self, ovpn_status_path):
         clients = {}
