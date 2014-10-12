@@ -64,6 +64,8 @@ def setup_mongo():
     for collection_name, collection in mongo.collections.items():
         collection.name_str = collection_name
 
+    utils.sync_time()
+
     settings.init()
 
     if prefix + 'log_entries' not in cur_collections:
