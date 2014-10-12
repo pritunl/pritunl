@@ -1,14 +1,11 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
-from pritunl import app
 from pritunl import mongo
 from pritunl import ipaddress
-from pritunl import logger
 
 import bson
 import pymongo
-import collections
 
 class ServerIpPool:
     def __init__(self, server):
