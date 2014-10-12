@@ -17,12 +17,6 @@ import random
 import time
 
 def setup_mongo():
-    if not pymongo.has_c():
-        logger.warning('Failed to load pymongo c bindings')
-
-    if not bson.has_c():
-        logger.warning('Failed to load bson c bindings')
-
     prefix = settings.conf.mongodb_collection_prefix or ''
     last_error = time.time() - 24
     while True:
