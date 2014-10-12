@@ -21,8 +21,7 @@ def setup_logger():
     logger.log_handler.setLevel(logging.DEBUG)
 
     logger.log_handler.setFormatter(logger.LogFormatter(
-        '[%(asctime)s][%(levelname)s] ' +
-        '%(message)s'))
+        '[%(asctime)s][%(levelname)s] %(message)s'))
 
     logger.logger.addHandler(logger.log_handler)
 

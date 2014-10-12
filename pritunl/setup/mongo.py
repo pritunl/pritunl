@@ -133,6 +133,7 @@ def setup_mongo():
         ('nonce', pymongo.ASCENDING),
     ], unique=True)
 
+    # TODO check and remove current index when changed
     mongo.collections['users_key_link'].ensure_index('timestamp',
         expireAfterSeconds=settings.app.key_link_timeout)
     mongo.collections['auth_nonces'].ensure_index('timestamp',
