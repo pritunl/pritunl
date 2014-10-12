@@ -38,6 +38,7 @@ def setup_mongo():
             size=100000, max=1024)
 
     mongo.collections.update({
+        'time_sync': getattr(database, prefix + 'time_sync'),
         'transaction': getattr(database, prefix + 'transaction'),
         'queue': getattr(database, prefix + 'queue'),
         'task': getattr(database, prefix + 'task'),
