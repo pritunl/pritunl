@@ -7,7 +7,6 @@ from pritunl import logger
 
 import threading
 import time
-import datetime
 
 def _time_sync_thread():
     while True:
