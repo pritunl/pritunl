@@ -19,7 +19,6 @@ def now():
 
 def sync_time():
     collection = mongo.get_collection('time_sync')
-    collection.remove()
 
     nounce = bson.ObjectId()
     collection.insert({
@@ -32,6 +31,8 @@ def sync_time():
         'nounce': nounce,
     })
     settings.local.mongo_time = doc['_id'].generation_time.replace(tzinfo=None)
+
+    collection.remove(doc['_id'])
 
 def rmtree(path):
     for _ in xrange(5):
