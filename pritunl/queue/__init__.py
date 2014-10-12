@@ -8,6 +8,7 @@ from pritunl.queue import com
 from pritunl import logger
 from pritunl import mongo
 from pritunl import messenger
+from pritunl import utils
 
 import bson
 import datetime
