@@ -6,17 +6,10 @@ from pritunl import settings
 
 import flask
 import cherrypy.wsgiserver
-import os
 import logging
 import logging.handlers
 import signal
 import time
-import json
-import urllib2
-import threading
-import subprocess
-import uuid
-import hashlib
 
 try:
     import OpenSSL
