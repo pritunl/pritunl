@@ -2,6 +2,7 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl import settings
+from pritunl import mongo
 
 import subprocess
 import time
@@ -10,6 +11,27 @@ import itertools
 import random
 import uuid
 import os
+import bson
+
+def now():
+    return settings.local.mongo_time + (
+        datetime.datetime.utcnow() - settings.local.mongo_time_start)
+
+def sync_time():
+    collection = mongo.get_collection('time_sync')
+    collection.remove()
+
+    nounce = bson.ObjectId()
+    collection.insert({
+        'nounce': nounce,
+    }, manipulate=False)
+
+    settings.local.mongo_time_start = datetime.datetime.utcnow()
+
+    doc = collection.find_one({
+        'nounce': nounce,
+    })
+    settings.local.mongo_time = doc['_id'].generation_time.replace(tzinfo=None)
 
 def rmtree(path):
     for _ in xrange(5):
