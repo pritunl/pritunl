@@ -2,6 +2,7 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 from pritunl import mongo
+from pritunl import utils
 
 import pymongo
 import time
@@ -12,34 +13,30 @@ def publish(channels, message, extra=None, transaction=None):
     collection = mongo.get_collection('messages')
     doc = {
         'message': message,
+        'timestamp': utils.now(),
     }
 
     if extra:
         for key, val in extra.items():
             doc[key] = val
 
-    if transaction:
-        collection = transaction.collection(collection.name_str)
-
-    # ObjectId and timestamp must be set by server and ObjectId order must
-    # match $natural order. Docs sent in order on client are not guaranteed
-    # to match $natural order on server. Nonce is added to force an insert
-    # from upsert to allow the use of $currentDate.
+    # ObjectId must be set by server and ObjectId order must match $natural
+    # order. Docs sent in order on client are not guaranteed to match $natural
+    # order on server. Nonce is added to force an insert from upsert where
+    # insert is not supported.
     # When using inserts manipulate=False must be set to prevent pymongo
     # from setting ObjectId locally.
-    if isinstance(channels, str):
-        doc['channel'] = channels
+    if transaction:
+        tran_collection = transaction.collection(collection.name_str)
 
-        collection.update({
-            'nonce': bson.ObjectId(),
-        }, {
-            '$set': doc,
-            '$currentDate': {
-                'timestamp': True,
-            },
-        }, upsert=True)
-    else:
-        if transaction:
+        if isinstance(channels, str):
+            doc['channel'] = channels
+            tran_collection.update({
+                'nonce': bson.ObjectId(),
+            }, {
+                '$set': doc,
+            }, upsert=True)
+        else:
             for channel in channels:
                 doc_copy = doc.copy()
                 doc_copy['channel'] = channel
@@ -48,26 +45,19 @@ def publish(channels, message, extra=None, transaction=None):
                     'nonce': bson.ObjectId(),
                 }).upsert().update({
                     '$set': doc_copy,
-                    '$currentDate': {
-                        'timestamp': True,
-                    },
                 })
             tran_collection.bulk_execute()
+    else:
+        if isinstance(channels, str):
+            doc['channel'] = channels
+            collection.insert(doc, manipulate=False)
         else:
-            bulk = collection.initialize_ordered_bulk_op()
+            docs = []
             for channel in channels:
                 doc_copy = doc.copy()
                 doc_copy['channel'] = channel
-
-                bulk.find({
-                    'nonce': bson.ObjectId(),
-                }).upsert().update({
-                    '$set': doc_copy,
-                    '$currentDate': {
-                        'timestamp': True,
-                    },
-                })
-            bulk.execute()
+                docs.append(doc_copy)
+            collection.insert(docs, manipulate=False)
 
 def get_cursor_id(channels):
     collection = mongo.get_collection('messages')
