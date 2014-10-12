@@ -2,7 +2,6 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.descriptors import *
 
-import json
 import pymongo
 import random
 import flask
