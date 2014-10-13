@@ -24,18 +24,22 @@ Development Setup
 
     $ git clone https://github.com/pritunl/pritunl.git
     $ cd pritunl
-    $ python2 server.py
-    # Open http://localhost:9700/
+    $ vagrant up
+    $ foreman start
+    # Open node0 http://localhost:9700/
+    # Open node1 http://localhost:9701/
+    # Open node2 http://localhost:9702/
+    # Open node3 http://localhost:9703/
 
-Vagrant Setup
--------------
+Development Setup (Single Node)
+-------------------------------
 
 .. code-block:: bash
 
     $ git clone https://github.com/pritunl/pritunl.git
     $ cd pritunl
-    $ vagrant up
-    $ vagrant ssh
+    $ vagrant up node0 mongodb
+    $ vagrant ssh node0
     $ cd /vagrant
     $ sudo python2 server.py
     # Open http://localhost:9700/
