@@ -9,10 +9,6 @@
       <span class="label label-default no-select" toggle="tooltip" title="Maximum number of users for this subnet"></span>
       <input type="text" class="form-control" placeholder="Enter network address" data-toggle="tooltip" title="Network address for the private network that will be created for VPN clients" value="<%- network %>">
     </div>
-    <div class="interface form-group">
-      <label>Interface</label>
-      <input type="text" class="form-control" placeholder="Enter tunnel interface" data-toggle="tooltip" title="Tunnel interface that will be created for VPN connections" spellcheck="false" value="<%- interface %>">
-    </div>
     <div class="port-protocol form-group">
       <label>Port</label>
       <label>Protocol</label>
@@ -42,10 +38,6 @@
     <div class="search-domain form-group">
       <label>DNS Search Domain</label>
       <input type="text" class="form-control" placeholder="Enter DNS search domain" data-toggle="tooltip" title="Optional, DNS search domain for clients" value="<%- search_domain || '' %>">
-    </div>
-    <div class="public-address form-group">
-      <label>Public IP</label>
-      <input type="text" class="form-control" placeholder="Enter public address" data-toggle="tooltip" title="Public IP address or domain name of the VPN server" value="<%- public_address %>">
     </div>
     <div class="server-mode form-group">
       <label>Server Mode</label>
