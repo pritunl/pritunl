@@ -402,6 +402,21 @@ class User(mongo.MongoObject):
                     key_link['uri_url'],
             },
         )
+
+        # TODO
+        # <script type="application/ld+json">
+        # {
+        #   "@context": "http://schema.org",
+        #   "@type": "EmailMessage",
+        #   "action": {
+        #     "@type": "ViewAction",
+        #     "url": "%s",
+        #     "name": "View Key"
+        #   },
+        #   "description": "View Pritunl key and configuration information"
+        # }
+        # </script>
+
         response = response.json()
         error_code = response.get('ErrorCode')
         error_msg = response.get('Message')
