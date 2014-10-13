@@ -14,7 +14,6 @@ define([
       'users_online': null,
       'user_count': null,
       'network': null,
-      'interface': null,
       'port': null,
       'protocol': null,
       'dh_param_bits': null,
@@ -22,7 +21,6 @@ define([
       'local_networks': null,
       'dns_servers': null,
       'search_domain': null,
-      'public_address': null,
       'otp_auth': null,
       'lzo_compression': null,
       'debug': null
