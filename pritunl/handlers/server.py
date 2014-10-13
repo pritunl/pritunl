@@ -317,6 +317,7 @@ def server_put_post(server_id=None):
             lzo_compression=lzo_compression,
             debug=debug,
         )
+        svr.commit()
     else:
         svr = server.get_server(id=server_id)
         if svr.status:
@@ -349,7 +350,7 @@ def server_put_post(server_id=None):
             svr.lzo_compression = lzo_compression
         if debug_def:
             svr.debug = debug
-    svr.commit(svr.changed)
+        svr.commit(svr.changed)
 
     logger.LogEntry(message='Created server "%s".' % svr.name)
     event.Event(type=SERVERS_UPDATED)
