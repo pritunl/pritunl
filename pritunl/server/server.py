@@ -92,8 +92,6 @@ class Server(mongo.MongoObject):
             self.name = name
         if network is not None:
             self.network = network
-        if interface is not None:
-            self.interface = interface
         if port is not None:
             self.port = port
         if protocol is not None:
@@ -108,8 +106,6 @@ class Server(mongo.MongoObject):
             self.dns_servers = dns_servers
         if search_domain is not None:
             self.search_domain = search_domain
-        if public_address is not None:
-            self.public_address = public_address
         if otp_auth is not None:
             self.otp_auth = otp_auth
         if lzo_compression is not None:
