@@ -575,6 +575,9 @@ class Server(mongo.MongoObject):
                 '-m', 'state', '--state', 'ESTABLISHED,RELATED',
                 '-j', 'ACCEPT'])
 
+        rules = [x + ['-m', 'comment', '--comment', 'pritunl_%s' % self.id]
+            for x in rules]
+
         return rules
 
     def _exists_iptables_rules(self, rule):
