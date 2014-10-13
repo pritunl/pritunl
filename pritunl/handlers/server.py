@@ -22,12 +22,6 @@ def _network_invalid():
         'error_msg': NETWORK_INVALID_MSG,
     }, 400)
 
-def _interface_invalid():
-        return utils.jsonify({
-            'error': INTERFACE_INVALID,
-            'error_msg': INTERFACE_INVALID_MSG,
-        }, 400)
-
 def _port_invalid():
         return utils.jsonify({
             'error': PORT_INVALID,
@@ -72,7 +66,6 @@ def server_get(server_id=None):
 def server_put_post(server_id=None):
     used_resources = server.get_used_resources(server_id)
     network_used = used_resources['networks']
-    interface_used = used_resources['interfaces']
     port_used = used_resources['ports']
 
     name = None
@@ -129,28 +122,6 @@ def server_put_post(server_id=None):
 
             if address[3] != 0:
                 return _network_invalid()
-
-    interface = None
-    interface_def = False
-    if 'interface' in flask.request.json:
-        interface_def = True
-        interface = flask.request.json['interface']
-
-        if not re.match('^[a-z0-9]+$', interface):
-            return _interface_invalid()
-
-        if interface[:3] != 'tun':
-            return _interface_invalid()
-
-        try:
-            interface_num = int(interface[3:])
-        except ValueError:
-            return _interface_invalid()
-
-        if interface_num > 64:
-            return _interface_invalid()
-
-        interface = interface[:3] + str(interface_num)
 
     protocol = 'udp'
     protocol_def = False
@@ -253,12 +224,6 @@ def server_put_post(server_id=None):
         search_domain_def = True
         search_domain = utils.filter_str(flask.request.json['search_domain'])
 
-    public_address = None
-    public_address_def = False
-    if 'public_address' in flask.request.json:
-        public_address_def = True
-        public_address = utils.filter_str(flask.request.json['public_address'])
-
     debug = False
     debug_def = False
     if 'debug' in flask.request.json:
@@ -299,19 +264,6 @@ def server_put_post(server_id=None):
                     'error_msg': NETWORK_IN_USE_MSG,
                 }, 400)
 
-        if not interface_def:
-            interface_def = True
-            for i in xrange(64):
-                rand_interface = 'tun%s' % i
-                if rand_interface not in interface_used:
-                    interface = rand_interface
-                    break
-            if not interface:
-                return utils.jsonify({
-                    'error': INTERFACE_IN_USE,
-                    'error_msg': INTERFACE_IN_USE_MSG,
-                }, 400)
-
         if not port_def:
             port_def = True
             rand_ports = range(10000, 19999)
@@ -337,21 +289,11 @@ def server_put_post(server_id=None):
             else:
                 mode = ALL_TRAFFIC
 
-        if not public_address_def:
-            public_address_def = True
-            public_address = settings.local.public_ip
-
     if network_def:
         if network in network_used:
             return utils.jsonify({
                 'error': NETWORK_IN_USE,
                 'error_msg': NETWORK_IN_USE_MSG,
-            }, 400)
-    if interface_def:
-        if interface in interface_used:
-            return utils.jsonify({
-                'error': INTERFACE_IN_USE,
-                'error_msg': INTERFACE_IN_USE_MSG,
             }, 400)
     if port_def:
         if '%s%s' % (port, protocol) in port_used:
@@ -364,7 +306,6 @@ def server_put_post(server_id=None):
         svr = server.new_server(
             name=name,
             network=network,
-            interface=interface,
             port=port,
             protocol=protocol,
             dh_param_bits=dh_param_bits,
@@ -372,7 +313,6 @@ def server_put_post(server_id=None):
             local_networks=local_networks,
             dns_servers=dns_servers,
             search_domain=search_domain,
-            public_address=public_address,
             otp_auth=otp_auth,
             lzo_compression=lzo_compression,
             debug=debug,
@@ -388,8 +328,6 @@ def server_put_post(server_id=None):
             svr.name = name
         if network_def:
             svr.network = network
-        if interface_def:
-            svr.interface = interface
         if port_def:
             svr.port = port
         if protocol_def:
@@ -405,8 +343,6 @@ def server_put_post(server_id=None):
             svr.dns_servers = dns_servers
         if search_domain_def:
             svr.search_domain = search_domain
-        if public_address_def:
-            svr.public_address = public_address
         if otp_auth_def:
             svr.otp_auth = otp_auth
         if lzo_compression_def:
