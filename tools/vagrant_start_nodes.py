@@ -24,7 +24,8 @@ def signal_handler(signum=None, frame=None):
         process = subprocess.Popen(
             ('screen -d -m /bin/bash -c \'vagrant ssh %s -c ' +
                 '"sudo killall openvpn; ' +
-                'sudo killall python2; '
+                'sudo killall -s2 python2; ' +
+                'sleep 1; ' +
                 'sudo killall -s9 python2"\'') % node,
             shell=True,
         )
@@ -32,8 +33,6 @@ def signal_handler(signum=None, frame=None):
 
     for process in processes:
         process.wait()
-
-    time.sleep(1)
 
     sys.exit(0)
 
