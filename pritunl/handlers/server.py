@@ -438,8 +438,7 @@ def server_host_get(server_id):
         })
     return utils.jsonify(hosts)
 
-@app.app.route('/server/<server_id>/host/<host_id>',
-    methods=['PUT'])
+@app.app.route('/server/<server_id>/host/<host_id>', methods=['PUT'])
 @auth.session_auth
 def server_host_put(server_id, host_id):
     svr = server.get_server(id=server_id)
@@ -456,8 +455,7 @@ def server_host_put(server_id, host_id):
         'public_address': hst.public_addr,
     })
 
-@app.app.route('/server/<server_id>/host/<host_id>',
-    methods=['DELETE'])
+@app.app.route('/server/<server_id>/host/<host_id>', methods=['DELETE'])
 @auth.session_auth
 def server_host_delete(server_id, host_id):
     svr = server.get_server(id=server_id)
