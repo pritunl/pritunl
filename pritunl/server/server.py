@@ -927,19 +927,6 @@ class Server(mongo.MongoObject):
         else:
             self.publish('stop')
 
-        for msg in self.subscribe(cursor_id=cursor_id, timeout=timeout):
-            message = msg['message']
-            if message == 'started':
-                self.status = True
-                self.host_id = None
-                self.instance_id = None
-                return
-            elif message == 'stopped':
-                self.status = False
-                self.host_id = None
-                self.instance_id = None
-                return
-
         stopped = 0
         instances_count = self.instances_count
         for _ in xrange(2):
