@@ -51,14 +51,11 @@ class Server(mongo.MongoObject):
         'primary_user',
         'ca_certificate',
         'dh_params',
-
-        'instance_id',
-        'host_id',
-        'ping_timestamp',
         'status',
         'start_timestamp',
-        'clients',
-        'users_online',
+        'instance_count',
+        'instance_count_cur',
+        'instances',
     }
     fields_default = {
         'dns_servers': [],
@@ -68,8 +65,8 @@ class Server(mongo.MongoObject):
         'organizations': [],
         'hosts': [],
         'status': False,
-        'clients': {},
-        'users_online': 0,
+        'instance_count': 1,
+        'instance_count_cur': 0,
     }
     cache_prefix = 'server'
 
