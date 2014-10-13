@@ -159,12 +159,10 @@ define([
       var i;
       var name = this.$('.name input').val();
       var network = this.$('.network input').val();
-      var iface = this.$('.interface input').val();
       var port = this.$('input.port').val();
       var protocol = this.$('select.protocol').val();
       var dhParamBits = parseInt(this.$('.dh-param-bits select').val(), 10);
       var mode = this.$('.server-mode select').val();
-      var publicAddress = this.$('.public-address input').val();
       var dnsServers = [];
       var dnsServersTemp = this.$('.dns-servers input').val().split(',');
       for (i = 0; i < dnsServersTemp.length; i++) {
@@ -186,17 +184,8 @@ define([
         this.setAlert('danger', 'Network can not be empty.', '.network');
         return;
       }
-      if (!iface) {
-        this.setAlert('danger', 'Interface can not be empty.', '.interface');
-        return;
-      }
       if (!port) {
         this.setAlert('danger', 'Port can not be empty.', 'input.port');
-        return;
-      }
-      if (!publicAddress) {
-        this.setAlert('danger', 'Public IP can not be empty.',
-          '.public-address');
         return;
       }
       if (this.getServerMode() === 'local_traffic') {
@@ -215,7 +204,6 @@ define([
         'name': name,
         'type': this.model.get('type'),
         'network': network,
-        'interface': iface,
         'port': port,
         'protocol': protocol,
         'dh_param_bits': dhParamBits,
@@ -223,7 +211,6 @@ define([
         'local_networks': localNetworks,
         'dns_servers': dnsServers,
         'search_domain': searchDomain,
-        'public_address': publicAddress,
         'otp_auth': otpAuth,
         'debug': debug
       };
