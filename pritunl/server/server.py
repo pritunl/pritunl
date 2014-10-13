@@ -869,7 +869,6 @@ class Server(mongo.MongoObject):
                 })
         self.status = True
         self.start_timestamp = start_timestamp
-        self.output.clear_output()
 
         started = 0
         stopped = 0
