@@ -713,7 +713,6 @@ class Server(mongo.MongoObject):
             ovpn_conf_path = self._generate_ovpn_conf()
             self._enable_ip_forwarding()
             self._set_iptables_rules()
-            self.output.clear_output()
 
             ovpn_conf_path = os.path.join(self._temp_path, OVPN_CONF_NAME)
             try:
@@ -870,6 +869,7 @@ class Server(mongo.MongoObject):
                 })
         self.status = True
         self.start_timestamp = start_timestamp
+        self.output.clear_output()
 
         started = 0
         stopped = 0
