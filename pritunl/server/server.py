@@ -73,10 +73,10 @@ class Server(mongo.MongoObject):
     }
     cache_prefix = 'server'
 
-    def __init__(self, name=None, network=None, port=None,
-            protocol=None, dh_param_bits=None, mode=None, local_networks=None,
-            dns_servers=None, search_domain=None,
-            otp_auth=None, lzo_compression=None, debug=None, **kwargs):
+    def __init__(self, name=None, network=None, port=None, protocol=None,
+            dh_param_bits=None, mode=None, local_networks=None,
+            dns_servers=None, search_domain=None, otp_auth=None,
+            lzo_compression=None, debug=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         self._cur_event = None
