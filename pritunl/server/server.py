@@ -67,6 +67,7 @@ class Server(mongo.MongoObject):
         'status': False,
         'instance_count': 1,
         'instance_count_cur': 0,
+        'instances': [],
     }
     cache_prefix = 'server'
 
