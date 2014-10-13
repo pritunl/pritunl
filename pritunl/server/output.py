@@ -55,7 +55,8 @@ class ServerOutput(object):
         self.collection.insert({
             'server_id': self.server_id,
             'timestamp': utils.now(),
-            'output': output.rstrip('\n'),
+            'output': '[%s] %s' % (
+                settings.local.host.name, output.rstrip('\n')),
         })
         self.prune_output()
         event.Event(type=SERVER_OUTPUT_UPDATED, resource_id=self.server_id)
