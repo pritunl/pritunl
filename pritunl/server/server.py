@@ -53,9 +53,9 @@ class Server(mongo.MongoObject):
         'dh_params',
         'status',
         'start_timestamp',
-        'instance_count',
-        'instance_count_cur',
+        'replica_count',
         'instances',
+        'instances_count',
     }
     fields_default = {
         'dns_servers': [],
@@ -65,9 +65,9 @@ class Server(mongo.MongoObject):
         'organizations': [],
         'hosts': [],
         'status': False,
-        'instance_count': 1,
-        'instance_count_cur': 0,
+        'replica_count': 1,
         'instances': [],
+        'instances_count': 0,
     }
     cache_prefix = 'server'
 
@@ -669,23 +669,27 @@ class Server(mongo.MongoObject):
         semaphore.release()
         exit_attempts = 0
         while not self._interrupt:
-            self.load()
-            if self._instance_id != self.instance_id:
-                logger.info('Server instance removed, stopping server. %r' % {
-                    'server_id': self.id,
-                    'instance_id': self._instance_id,
-                })
-                if exit_attempts > 2:
-                    process.send_signal(signal.SIGKILL)
-                else:
-                    process.send_signal(signal.SIGINT)
-                exit_attempts += 1
-                time.sleep(0.5)
-                continue
-
-            self.ping_timestamp = utils.now()
             try:
-                self.commit('ping_timestamp')
+                response = self.collection.update({
+                    '_id': bson.ObjectId(self.id),
+                    'instances.instance_id': self._instance_id,
+                }, {'$set': {
+                    'instances.$.ping_timestamp': utils.now(),
+                }})
+
+                if not response['updatedExisting']:
+                    logger.info('Server instance removed, ' +
+                            'stopping server. %r' % {
+                        'server_id': self.id,
+                        'instance_id': self._instance_id,
+                    })
+                    if exit_attempts > 2:
+                        process.send_signal(signal.SIGKILL)
+                    else:
+                        process.send_signal(signal.SIGINT)
+                    exit_attempts += 1
+                    time.sleep(0.5)
+                    continue
             except:
                 logger.exception('Failed to update server ping. %r' % {
                     'server_id': self.id,
@@ -735,16 +739,6 @@ class Server(mongo.MongoObject):
             keep_alive_thread = threading.Thread(
                 target=self._keep_alive_thread, args=(semaphore, process))
             keep_alive_thread.start()
-            self.status = True
-            self.host_id = settings.local.host_id
-            self.start_timestamp = utils.now()
-            self.ping_timestamp = utils.now()
-            self.commit((
-                'status',
-                'host_id',
-                'start_timestamp',
-                'ping_timestamp',
-            ))
 
             # Wait for all three threads to start
             for _ in xrange(3):
@@ -775,20 +769,6 @@ class Server(mongo.MongoObject):
             self._interrupt = True
             status_thread.join()
 
-            if self._instance_id != self.instance_id:
-                return
-
-            self.status = False
-            self.start_timestamp = None
-            self.ping_timestamp = None
-            self.unset('host_id')
-            self.unset('instance_id')
-            self.commit((
-                'status',
-                'start_timestamp',
-                'ping_timestamp',
-            ))
-            self.update_clients({}, force=True)
             if self._state:
                 event.Event(type=SERVERS_UPDATED)
                 logger.LogEntry(message='Server stopped unexpectedly "%s".' % (
@@ -803,9 +783,23 @@ class Server(mongo.MongoObject):
             logger.exception('Server error occurred while running. %r', {
                 'server_id': self.id,
             })
-            messenger.publish('server_instance', 'stopped', {
-                'server_id': self.id,
+        finally:
+            response = self.collection.update({
+                '_id': bson.ObjectId(self.id),
+                'instances.instance_id': self._instance_id,
+            }, {
+                '$pop': {
+                    'instances': {
+                        'instance_id': self._instance_id,
+                    },
+                },
+                '$inc': {
+                    'instances_count': -1,
+                },
             })
+
+            if not response['updatedExisting']:
+                self.publish('stopped')
 
     def get_cursor_id(self):
         return messenger.get_cursor_id('servers')
@@ -827,11 +821,20 @@ class Server(mongo.MongoObject):
     def run(self, send_events=False):
         response = self.collection.update({
             '_id': bson.ObjectId(self.id),
-            'instance_id': {'$exists': False},
-        }, {'$set': {
-            'instance_id': self._instance_id,
-            'ping_timestamp': utils.now(),
-        }})
+            'instances_count': {'$lt': self.replica_count},
+        }, {
+            '$push': {
+                'instances': {
+                    'instance_id': self._instance_id,
+                    'host_id': settings.local.host_id,
+                    'ping_timestamp': utils.now(),
+                    'clients': {},
+                },
+            },
+            '$inc': {
+                'instances_count': 1,
+            },
+        })
 
         if not response['updatedExisting']:
             return
@@ -844,46 +847,80 @@ class Server(mongo.MongoObject):
         if self.status:
             return
 
-        if self.instance_id:
-            raise ServerInstanceSet('Server instance already set. %r', {
-                    'server_id': self.id,
-                })
-
         if not self.organizations:
             raise ServerMissingOrg('Server cannot be started ' + \
                 'without any organizations', {
                     'server_id': self.id,
                 })
 
-        self.publish('start', extra={
-            'prefered_host': random.choice(self.hosts),
-        })
+        start_timestamp = utils.now()
+        response = self.collection.update({
+            '_id': bson.ObjectId(self.id),
+            'status': False,
+            'instances_count': 0,
+        }, {'$set': {
+            'status': True,
+            'start_timestamp': start_timestamp,
+        }})
 
-        for msg in self.subscribe(cursor_id=cursor_id, timeout=timeout):
-            message = msg['message']
-            if message == 'started':
-                self.status = True
-                self.host_id = None
-                self.instance_id = None
-                return
-            elif message == 'stopped':
-                raise ServerStartError('Server failed to start', {
+        if not response['updatedExisting']:
+            raise ServerInstanceSet('Server instances already running. %r', {
                     'server_id': self.id,
                 })
+        self.status = True
+        self.start_timestamp = start_timestamp
 
-        raise ServerStartError('Server start timed out', {
-                'server_id': self.id,
+        started = 0
+        stopped = 0
+        try:
+            self.publish('start', extra={
+                'prefered_host': random.choice(self.hosts),
             })
+
+            for msg in self.subscribe(cursor_id=cursor_id, timeout=timeout):
+                message = msg['message']
+                if message == 'started':
+                    started += 1
+                    if started + stopped >= self.replica_count:
+                        break
+                elif message == 'stopped':
+                    stopped += 1
+                    if started + stopped >= self.replica_count:
+                        break
+
+            if not started:
+                if stopped:
+                    raise ServerStartError('Server failed to start', {
+                        'server_id': self.id,
+                    })
+                else:
+                    raise ServerStartError('Server start timed out', {
+                            'server_id': self.id,
+                        })
+            self.instances_count = started
+        except:
+            self.publish('force_stop')
+            self.collection.update({
+                '_id': bson.ObjectId(self.id),
+            }, {'$set': {
+                'status': False,
+                'instances': [],
+                'instances_count': 0,
+            }})
+            self.status = False
+            self.instances = []
+            self.instances_count = 0
+            raise
 
     def stop(self, timeout=VPN_OP_TIMEOUT, force=False):
         cursor_id = self.get_cursor_id()
 
-        if not self.status:
-            return
-
         logger.debug('Stopping server. %r' % {
             'server_id': self.id,
         })
+
+        if not self.status:
+            return
 
         if force:
             self.publish('force_stop')
@@ -903,9 +940,47 @@ class Server(mongo.MongoObject):
                 self.instance_id = None
                 return
 
-        raise ServerStopError('Server stop timed out', {
-                'server_id': self.id,
-            })
+        stopped = 0
+        instances_count = self.instances_count
+        for _ in xrange(2):
+            for msg in self.subscribe(cursor_id=cursor_id,
+                    timeout=(timeout / 2)):
+                message = msg['message']
+                if message == 'stopped':
+                    stopped += 1
+
+                    if stopped >= instances_count:
+                        break
+
+            if stopped >= instances_count:
+                break
+
+            self.load()
+
+            stopped = self.replica_count - self.instances_count
+            instances_count = self.instances_count
+
+            if stopped >= instances_count:
+                break
+
+        if stopped >= instances_count:
+            self.status = False
+
+            response = self.collection.update({
+                '_id': bson.ObjectId(self.id),
+                'status': True,
+            }, {'$set': {
+                'status': False,
+                'start_timestamp': None,
+            }})
+
+            if not response['updatedExisting']:
+                self.status = False
+                self.start_timestamp = None
+        else:
+            raise ServerStopError('Server stop timed out', {
+                    'server_id': self.id,
+                })
 
     def force_stop(self, timeout=VPN_OP_TIMEOUT):
         self.stop(timeout=timeout, force=True)
@@ -975,11 +1050,17 @@ class Server(mongo.MongoObject):
         # Openvpn will create an undef client while a client connects
         clients.pop('UNDEF', None)
         self._update_clients_bandwidth(clients)
-        client_count = len(self.clients)
-        self.clients = clients
-        self.commit('clients')
-        if force or client_count != len(clients):
+
+        response = self.collection.update({
+            '_id': bson.ObjectId(self.id),
+            'instances.instance_id': self._instance_id,
+        }, {'$set': {
+            'instances.$.clients': clients,
+        }})
+
+        if force or self._client_count != len(clients):
             for org_id in self.organizations:
                 event.Event(type=USERS_UPDATED, resource_id=org_id)
             if not force:
                 event.Event(type=SERVERS_UPDATED)
+        self._client_count = len(clients)
