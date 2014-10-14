@@ -29,6 +29,9 @@ def _on_msg(msg):
         if settings.local.host_id not in svr.hosts:
             return
 
+        if settings.local.host_id in [x['host_id'] for x in svr.instances]:
+            return
+
         prefered_host = msg.get('prefered_host')
 
         # When server start msg is received from check_thread it is
