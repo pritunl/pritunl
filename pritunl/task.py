@@ -12,7 +12,8 @@ import datetime
 import collections
 
 _task_types = {}
-tasks = collections.defaultdict(lambda: collections.defaultdict(list))
+tasks = collections.defaultdict(
+    lambda: collections.defaultdict(lambda: collections.defaultdict(list)))
 
 class Task(mongo.MongoObject):
     fields = {
