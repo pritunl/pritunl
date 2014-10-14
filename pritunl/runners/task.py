@@ -32,15 +32,17 @@ def run_thread():
     while True:
         cur_time = utils.now()
 
-        if cur_time.minute != last_run:
-            last_run = cur_time.minute
+        if int(time.mktime(cur_time.timetuple())) != last_run:
+            last_run = int(time.mktime(cur_time.timetuple()))
 
             for hour in ('all', cur_time.hour):
-                for task_cls in task.tasks[hour][cur_time.minute]:
-                    tsk = task_cls()
-                    run_task(tsk)
+                for minute in ('all', cur_time.minute):
+                    for second in ('all', cur_time.second):
+                        for task_cls in task.tasks[hour][minute][second]:
+                            tsk = task_cls()
+                            run_task(tsk)
 
-        time.sleep(30)
+        time.sleep(0.5)
 
 def check_thread():
     collection = mongo.get_collection('task')
