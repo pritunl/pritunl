@@ -7,10 +7,6 @@ import sys
 nodes = sys.argv[1:]
 exit_handled = False
 
-for node in nodes:
-    with open('var/%s.output' % node, 'w') as node_file:
-        pass
-
 def signal_handler(signum=None, frame=None):
     global exit_handled
     if exit_handled:
