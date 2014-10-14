@@ -30,12 +30,27 @@ define([
     },
     update: function() {
     },
+    scrollBottom: function(count) {
+      if (count === undefined) {
+        count = 0;
+      }
+      else if (count >= 10) {
+        return;
+      }
+      count += 1;
+
+      this.$('.ace_scrollbar').scrollTop(
+        this.$('.ace_scrollbar')[0].scrollHeight);
+      setTimeout(function() {
+        this.scrollBottom(count);
+      }.bind(this), 25);
+    },
     setData: function(data) {
       if (data && data.slice(-1) !== '\n') {
         data += '\n';
       }
       this.editor.setValue(data);
-      this.editor.navigateFileEnd();
+      this.scrollBottom();
     },
   });
 
