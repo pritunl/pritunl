@@ -39,8 +39,7 @@ def run_thread():
                 for minute in ('all', cur_time.minute):
                     for second in ('all', cur_time.second):
                         for task_cls in task.tasks[hour][minute][second]:
-                            tsk = task_cls()
-                            run_task(tsk)
+                            run_task(task_cls())
 
         time.sleep(0.5)
 
