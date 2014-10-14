@@ -49,7 +49,7 @@ define([
       if (data && data.slice(-1) !== '\n') {
         data += '\n';
       }
-      this.editor.setValue(data);
+      this.editor.setValue(data, 1);
       this.scrollBottom();
     },
   });
