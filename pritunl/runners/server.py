@@ -49,48 +49,70 @@ def _on_msg(msg):
         logger.exception('Failed to run server.')
 
 def _server_check_thread():
-    checked_hosts = set()
     collection = mongo.get_collection('servers')
 
     while True:
         try:
-            spec = {
-                'ping_timestamp': {
-                    '$lt': utils.now() - datetime.timedelta(
-                        seconds=settings.vpn.server_ping_ttl),
-                },
-            }
-            doc = {
-                '$set': {
-                    'clients': {},
-                },
-                '$unset': {
-                    'host_id': '',
-                    'instance_id': '',
-                },
-            }
-            project = {
+            timestamp_spec = utils.now() - datetime.timedelta(
+                seconds=settings.vpn.server_ping_ttl)
+
+            docs = collection.find({
+                'status': True,
+                'instances.ping_timestamp': {'$lt': timestamp_spec},
+            }, {
                 '_id': True,
-                'hosts': True,
-                'organizations': True,
-            }
+                'instances': True,
+            })
 
-            if checked_hosts:
-                spec['_id'] = {'$nin': list(checked_hosts)}
+            for doc in docs:
+                for instance in doc['instances']:
+                    if instance['ping_timestamp'] < timestamp_spec:
+                        collection.update({
+                            '_id': doc['_id'],
+                            'instances.instance_id': instance['instance_id'],
+                        }, {
+                            '$pull': {
+                                'instances': {
+                                    'instance_id': instance['instance_id'],
+                                },
+                            },
+                            '$inc': {
+                                'instances_count': -1,
+                            },
+                        })
 
-            doc = collection.find_and_modify(spec, doc, fields=project)
+            response = collection.aggregate([
+                {'$match': {
+                    'status': True,
+                }},
+                {'$project': {
+                    '_id': True,
+                    'hosts': True,
+                    'instances': True,
+                    'offline_instances_count': {
+                        '$subtract': [
+                            '$replica_count',
+                            '$instances_count',
+                        ],
+                    }
+                }},
+                {'$match': {
+                    'offline_instances_count': {'$gt': 0},
+                }},
+            ])['result']
 
-            if doc:
-                checked_hosts.add(doc['_id'])
+            for doc in response:
+                active_hosts = set([x['host_id'] for x in doc['instances']])
+                prefered_host = random.choice(
+                    list(set(doc['hosts']) - active_hosts))
                 messenger.publish('servers', 'start', extra={
                     'server_id': str(doc['_id']),
                     'send_events': True,
+                    'prefered_host': prefered_host,
                 })
-                continue
         except:
             logger.exception('Error checking server states.')
 
-        checked_hosts = set()
         time.sleep(settings.vpn.server_ping)
 
 def start_server():
