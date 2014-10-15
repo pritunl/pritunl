@@ -97,8 +97,11 @@ def _server_check_thread():
 
             for doc in response:
                 active_hosts = set([x['host_id'] for x in doc['instances']])
-                prefered_host = random.choice(
-                    list(set(doc['hosts']) - active_hosts))
+                hosts = list(set(doc['hosts']) - active_hosts)
+                if not hosts:
+                    continue
+                prefered_host = random.choice(hosts)
+
                 messenger.publish('servers', 'start', extra={
                     'server_id': str(doc['_id']),
                     'send_events': True,
