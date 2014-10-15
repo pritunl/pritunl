@@ -119,9 +119,10 @@ class MongoObject(object):
     def unset(self, field):
         self.unseted.add(field)
 
-    def commit(self, fields=None, transaction=None):
+    def commit(self, fields=None, transaction=None, spec=None):
         doc = self.get_commit_doc(fields=fields)
         unset = {x: '' for x in self.unseted}
+        response = False
 
         if transaction:
             collection = transaction.collection(
@@ -132,6 +133,11 @@ class MongoObject(object):
         if doc or unset:
             update_doc = {}
 
+            if spec is None:
+                spec = {
+                    '_id': self._id,
+                }
+
             if doc:
                 for field in self.unseted:
                     doc.pop(field, None)
@@ -140,13 +146,14 @@ class MongoObject(object):
             if unset:
                 update_doc['$unset'] = unset
 
-            collection.update({
-                '_id': self._id,
-            }, update_doc, upsert=True)
+            response = collection.update(
+                spec, update_doc, upsert=True)['updatedExisting']
 
         self.exists = True
         self.changed = set()
         self.unseted = set()
+
+        return response
 
     def remove(self):
         self.collection.remove(self._id)
