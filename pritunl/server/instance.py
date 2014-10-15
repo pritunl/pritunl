@@ -204,3 +204,114 @@ class ServerInstance(object):
                 'server_id': self.server.id,
             })
             raise
+
+    def generate_iptables_rules(self):
+        rules = []
+
+        try:
+            routes_output = subprocess.check_output(['route', '-n'],
+                stderr=subprocess.PIPE)
+        except subprocess.CalledProcessError:
+            logger.exception('Failed to get IP routes. %r' % {
+                'server_id': self.server.id,
+            })
+            raise
+
+        routes = {}
+        for line in routes_output.splitlines():
+            line_split = line.split()
+            if len(line_split) < 8 or not re.match(IP_REGEX, line_split[0]):
+                continue
+            routes[line_split[0]] = line_split[7]
+
+        if '0.0.0.0' not in routes:
+            raise IptablesError('Failed to find default network interface', {
+                'server_id': self.server.id,
+            })
+        default_interface = routes['0.0.0.0']
+
+        rules.append(['INPUT', '-i', self.interface, '-j', 'ACCEPT'])
+        rules.append(['FORWARD', '-i', self.interface, '-j', 'ACCEPT'])
+
+        interfaces = set()
+        for network_address in self.server.local_networks or ['0.0.0.0/0']:
+            args = ['POSTROUTING', '-t', 'nat']
+            network = utils.parse_network(network_address)[0]
+
+            if network not in routes:
+                logger.debug('Failed to find interface for local network ' + \
+                        'route, using default route. %r' % {
+                    'server_id': self.server.id,
+                })
+                interface = default_interface
+            else:
+                interface = routes[network]
+            interfaces.add(interface)
+
+            if network != '0.0.0.0':
+                args += ['-d', network_address]
+
+            args += [
+                '-s', self.server.network,
+                '-o', interface,
+                '-j', 'MASQUERADE',
+            ]
+            rules.append(args)
+
+        for interface in interfaces:
+            rules.append([
+                'FORWARD',
+                '-i', interface,
+                '-o', self.interface,
+                '-m', 'state',
+                '--state', 'ESTABLISHED,RELATED',
+                '-j', 'ACCEPT',
+            ])
+            rules.append([
+                'FORWARD',
+                '-i', self.interface,
+                '-o', interface,
+                '-m', 'state',
+                '--state', 'ESTABLISHED,RELATED',
+                '-j', 'ACCEPT',
+            ])
+
+        comment = [
+            '-m', 'comment',
+            '--comment', 'pritunl_%s' % self.id,
+        ]
+        rules = [x + comment for x in rules]
+
+        return rules
+
+    def exists_iptables_rules(self, rule):
+        logger.debug('Checking for iptables rule. %r' % {
+            'server_id': self.id,
+            'rule': rule,
+        })
+
+        try:
+            subprocess.check_call(['iptables', '-C'] + rule,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        except subprocess.CalledProcessError:
+            return False
+
+        return True
+
+    def set_iptables_rules(self):
+        logger.debug('Setting iptables rules. %r' % {
+            'server_id': self.id,
+        })
+
+        for rule in self.generate_iptables_rules():
+            if not self.exists_iptables_rules(rule):
+                try:
+                    subprocess.check_call(['iptables', '-A'] + rule,
+                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                except subprocess.CalledProcessError:
+                    logger.exception('Failed to apply iptables ' + \
+                        'routing rule. %r' % {
+                            'server_id': self.id,
+                            'rule': rule,
+                        })
+                    raise
