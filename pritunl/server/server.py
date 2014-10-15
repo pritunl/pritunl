@@ -842,7 +842,9 @@ class Server(mongo.MongoObject):
         if not response['updatedExisting']:
             return
 
-        threading.Thread(target=self._run_thread, args=(send_events,)).start()
+        thread = threading.Thread(target=self._run_thread, args=(send_events,))
+        thread.daemon = True
+        thread.start()
 
     def start(self, timeout=VPN_OP_TIMEOUT):
         cursor_id = self.get_cursor_id()
