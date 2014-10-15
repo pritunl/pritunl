@@ -69,3 +69,16 @@ class ServerInstance(object):
                 timeout=timeout):
             if msg.get('server_id') == self.server.id:
                 yield msg
+
+    def resources_acquire(self):
+        if self.resource_lock:
+            raise TypeError('Server resource lock already set')
+        self.resource_lock = _resource_locks[self.server.id]
+        self.resource_lock.acquire()
+        self.interface = _interfaces.pop()
+
+    def resources_release(self):
+        if self.resource_lock:
+            self.resource_lock.release()
+            self.interface.add(self.interface)
+            self.interface = None
