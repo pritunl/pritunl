@@ -420,6 +420,20 @@ class ServerInstance(object):
 
         return terminated
 
+    def start_openvpn(self):
+        process = None
+        ovpn_conf_path = os.path.join(self._temp_path, OVPN_CONF_NAME)
+
+        try:
+            return subprocess.Popen(['openvpn', ovpn_conf_path],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        except OSError:
+            self.server.output.push_output(traceback.format_exc())
+            logger.exception('Failed to start ovpn process. %r' % {
+                'server_id': self.id,
+            })
+            self.publish('error')
+
     def _sub_thread(self, cursor_id, process):
         self.thread_semaphores.release()
 
