@@ -433,6 +433,22 @@ class ServerInstance(object):
             })
             self.publish('error')
 
+    def read_openvpn(self, process):
+        while True:
+            line = process.stdout.readline()
+            if not line:
+                if process.poll() is not None:
+                    break
+                else:
+                    continue
+
+            try:
+                self.server.output.push_output(line)
+            except:
+                logger.exception('Failed to push vpn output. %r', {
+                    'server_id': self.server.id,
+                })
+
     def _sub_thread(self, cursor_id, process):
         self.thread_semaphores.release()
 
