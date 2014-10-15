@@ -82,3 +82,110 @@ class ServerInstance(object):
             self.resource_lock.release()
             self.interface.add(self.interface)
             self.interface = None
+
+    def generate_ovpn_conf(self):
+        logger.debug('Generating server ovpn conf. %r' % {
+            'server_id': self.id,
+        })
+
+        if not self.server.primary_organization or \
+                not self.server.primary_user:
+            self.server.create_primary_user()
+
+        primary_org = organization.get_org(
+            id=self.server.primary_organization)
+        if not primary_org:
+            self.server.create_primary_user()
+            primary_org = organization.get_org(
+                id=self.server.primary_organization)
+
+        primary_user = primary_org.get_user(self.server.primary_user)
+        if not primary_user:
+            self.server.create_primary_user()
+            primary_org = organization.get_org(
+                id=self.server.primary_organization)
+            primary_user = primary_org.get_user(self.server.primary_user)
+
+        tls_verify_path = os.path.join(self._temp_path,
+            TLS_VERIFY_NAME)
+        user_pass_verify_path = os.path.join(self._temp_path,
+            USER_PASS_VERIFY_NAME)
+        client_connect_path = os.path.join(self._temp_path,
+            CLIENT_CONNECT_NAME)
+        client_disconnect_path = os.path.join(self._temp_path,
+            CLIENT_DISCONNECT_NAME)
+        ovpn_status_path = os.path.join(self._temp_path,
+            OVPN_STATUS_NAME)
+        ovpn_conf_path = os.path.join(self._temp_path,
+            OVPN_CONF_NAME)
+
+        auth_host = settings.conf.bind_addr
+        if auth_host == '0.0.0.0':
+            auth_host = 'localhost'
+        for script, script_path in (
+                    (TLS_VERIFY_SCRIPT, tls_verify_path),
+                    (USER_PASS_VERIFY_SCRIPT, user_pass_verify_path),
+                    (CLIENT_CONNECT_SCRIPT, client_connect_path),
+                    (CLIENT_DISCONNECT_SCRIPT, client_disconnect_path),
+                ):
+            with open(script_path, 'w') as script_file:
+                os.chmod(script_path, 0755) # TODO
+                script_file.write(script % (
+                    settings.app.server_api_key,
+                    '/dev/null', # TODO
+                    'https' if settings.conf.ssl else 'http',
+                    auth_host,
+                    settings.conf.port,
+                    self.server.id,
+                ))
+
+        push = ''
+        if self.server.server.mode == LOCAL_TRAFFIC:
+            for network in self.server.local_networks:
+                push += 'push "route %s %s"\n' % utils.parse_network(network)
+        elif self.server.mode == VPN_TRAFFIC:
+            pass
+        else:
+            push += 'push "redirect-gateway"\n'
+        for dns_server in self.server.dns_servers:
+            push += 'push "dhcp-option DNS %s"\n' % dns_server
+        if self.server.search_domain:
+            push += 'push "dhcp-option DOMAIN %s"\n' % (
+                self.server.search_domain)
+
+        server_conf = OVPN_INLINE_SERVER_CONF % (
+            self.server.port,
+            self.server.protocol,
+            self.interface,
+            tls_verify_path,
+            client_connect_path,
+            client_disconnect_path,
+            '%s %s' % utils.parse_network(self.server.network),
+            ovpn_status_path,
+            4 if self.server.debug else 1,
+            8 if self.server.debug else 3,
+        )
+
+        if self.server.otp_auth:
+            server_conf += 'auth-user-pass-verify %s via-file\n' % (
+                user_pass_verify_path)
+
+        if self.server.lzo_compression:
+            server_conf += 'comp-lzo\npush "comp-lzo"\n'
+
+        if self.server.mode in (LOCAL_TRAFFIC, VPN_TRAFFIC):
+            server_conf += 'client-to-client\n'
+
+        if push:
+            server_conf += push
+
+        server_conf += '<ca>\n%s\n</ca>\n' % utils.get_cert_block(
+            self.server.ca_certificate)
+        server_conf += '<cert>\n%s\n</cert>\n' % utils.get_cert_block(
+            primary_user.certificate)
+        server_conf += '<key>\n%s\n</key>\n' % primary_user.private_key
+        server_conf += '<dh>\n%s\n</dh>\n' % self.server.dh_params
+
+        with open(ovpn_conf_path, 'w') as ovpn_conf:
+            os.chmod(ovpn_conf_path, 0600)
+            ovpn_conf.write(server_conf)
