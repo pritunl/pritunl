@@ -443,10 +443,6 @@ class ServerInstance(object):
     def _status_thread(self, semaphore):
         self.thread_semaphores.release()
 
-        i = 0
-        cur_client_count = 0
-        ovpn_status_path = os.path.join(self._temp_path, OVPN_STATUS_NAME)
-
         while not self.interrupt:
             self.read_clients(ovpn_status_path)
             time.sleep(settings.vpn.status_update_rate)
