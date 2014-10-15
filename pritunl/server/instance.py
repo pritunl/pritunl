@@ -482,3 +482,22 @@ class ServerInstance(object):
                     'server_id': self.server.id,
                 })
             time.sleep(settings.vpn.server_ping)
+
+    def start_threads(self, cursor_id, process):
+        thread = threading.Thread(target=self._sub_thread,
+            args=(cursor_id, process))
+        thread.daemon = True
+        thread.start()
+
+        thread = threading.Thread(target=self._status_thread)
+        thread.daemon = True
+        thread.start()
+
+        thread = threading.Thread(target=self._keep_alive_thread,
+            args=(process,))
+        thread.daemon = True
+        thread.start()
+
+        # Wait for all three threads to start
+        for _ in xrange(3):
+            self.thread_semaphores.acquire()
