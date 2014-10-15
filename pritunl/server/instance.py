@@ -300,7 +300,7 @@ class ServerInstance(object):
 
     def set_iptables_rules(self):
         logger.debug('Setting iptables rules. %r' % {
-            'server_id': self.id,
+            'server_id': self.server.id,
         })
 
         for rule in self.generate_iptables_rules():
@@ -311,7 +311,7 @@ class ServerInstance(object):
                 except subprocess.CalledProcessError:
                     logger.exception('Failed to apply iptables ' + \
                         'routing rule. %r' % {
-                            'server_id': self.id,
+                            'server_id': self.server.id,
                             'rule': rule,
                         })
                     raise
