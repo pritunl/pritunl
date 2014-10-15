@@ -623,6 +623,8 @@ class Server(mongo.MongoObject):
     def _sub_thread(self, semaphore, cursor_id, process):
         semaphore.release()
         for msg in self.subscribe(cursor_id=cursor_id):
+            if self._interrupt:
+                return
             message = msg['message']
 
             try:
