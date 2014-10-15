@@ -649,8 +649,6 @@ class Server(mongo.MongoObject):
                     for _ in xrange(10):
                         process.send_signal(signal.SIGKILL)
                         time.sleep(0.01)
-                elif message == 'stopped':
-                    break
             except OSError:
                 pass
 
