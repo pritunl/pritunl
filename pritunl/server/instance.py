@@ -189,3 +189,18 @@ class ServerInstance(object):
         with open(ovpn_conf_path, 'w') as ovpn_conf:
             os.chmod(ovpn_conf_path, 0600)
             ovpn_conf.write(server_conf)
+
+    def enable_ip_forwarding(self):
+        logger.debug('Enabling ip forwarding. %r' % {
+            'server_id': self.id,
+            'rule': rule,
+        })
+
+        try:
+            subprocess.check_call(['sysctl', '-w', 'net.ipv4.ip_forward=1'],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        except subprocess.CalledProcessError:
+            logger.exception('Failed to enable IP forwarding. %r' % {
+                'server_id': self.server.id,
+            })
+            raise
