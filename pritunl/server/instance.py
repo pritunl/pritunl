@@ -30,6 +30,7 @@ import bson
 import pymongo
 import random
 import collections
+import select
 
 _resource_locks = collections.defaultdict(threading.Lock)
 _interfaces = set(['tun%s' % x for x in xrange(128)])
@@ -281,36 +282,59 @@ class ServerInstance(object):
         return rules
 
     def exists_iptables_rules(self, rule):
-        logger.debug('Checking for iptables rule. %r' % {
-            'server_id': self.server.id,
-            'rule': rule,
-        })
-
-        try:
-            subprocess.check_call(['iptables', '-C'] + rule,
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        except subprocess.CalledProcessError:
-            return False
-
-        return True
+        cmd = ['iptables', '-C'] + rule
+        return (cmd, subprocess.Popen(cmd,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE))
 
     def set_iptables_rules(self):
         logger.debug('Setting iptables rules. %r' % {
             'server_id': self.server.id,
         })
 
+        processes = {}
+        poller = select.epoll()
+
         for rule in self.generate_iptables_rules():
-            if not self.exists_iptables_rules(rule):
-                try:
-                    subprocess.check_call(['iptables', '-A'] + rule,
-                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                except subprocess.CalledProcessError:
-                    logger.exception('Failed to apply iptables ' + \
-                        'routing rule. %r' % {
-                            'server_id': self.server.id,
-                            'rule': rule,
-                        })
-                    raise
+            cmd, process = self.exists_iptables_rules(rule)
+            fileno = process.stdout.fileno()
+
+            processes[fileno] = (cmd, process, ['iptables', '-A'] + rule)
+            poller.register(fileno, select.EPOLLHUP)
+
+        try:
+            while True:
+                for fd, event in poller.poll(timeout=8):
+                    cmd, process, next_cmd = processes.pop(fd)
+                    poller.unregister(fd)
+
+                    if next_cmd:
+                        if process.poll():
+                            process = subprocess.Popen(next_cmd,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE,
+                            )
+                            fileno = process.stdout.fileno()
+
+                            processes[fileno] = (next_cmd, process, None)
+                            poller.register(fileno, select.EPOLLHUP)
+                    else:
+                        retcode = process.poll()
+                        if retcode:
+                            std_out, err_out = process.communicate()
+                            raise subprocess.CalledProcessError(
+                                retcode, cmd, output=err_out)
+
+                    if not processes:
+                        return
+
+        except subprocess.CalledProcessError as error:
+            logger.exception('Failed to apply iptables ' + \
+                'routing rule. %r' % {
+                    'server_id': self.server.id,
+                    'rule': rule,
+                    'output': error.output,
+                })
+            raise
 
     def clear_iptables_rules(self):
         logger.debug('Clearing iptables rules. %r' % {
