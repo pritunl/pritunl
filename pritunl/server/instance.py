@@ -315,3 +315,78 @@ class ServerInstance(object):
                             'rule': rule,
                         })
                     raise
+
+    def update_clients_bandwidth(self, clients):
+        # Remove client no longer connected
+        for client_id in self.clients.iterkeys():
+            if client_id not in clients:
+                del self.clients[client_id]
+
+        # Get total bytes send and recv for all clients
+        bytes_recv_t = 0
+        bytes_sent_t = 0
+        for client_id in clients:
+            bytes_recv = clients[client_id]['bytes_received']
+            bytes_sent = clients[client_id]['bytes_sent']
+            prev_bytes_recv, prev_bytes_sent = self.clients.get(
+                client_id, (0, 0))
+            self.clients[client_id] = (bytes_recv, bytes_sent)
+
+            if prev_bytes_recv > bytes_recv or prev_bytes_sent > bytes_sent:
+                prev_bytes_recv = 0
+                prev_bytes_sent = 0
+
+            bytes_recv_t += bytes_recv - prev_bytes_recv
+            bytes_sent_t += bytes_sent - prev_bytes_sent
+
+        if bytes_recv_t != 0 or bytes_sent_t != 0:
+            self.server.bandwidth.add_data(
+                utils.now(), bytes_recv_t, bytes_sent_t)
+
+    def update_clients(self, clients):
+        # Openvpn will create an undef client while a client connects
+        clients.pop('UNDEF', None)
+
+        response = self.collection.update({
+            '_id': bson.ObjectId(self.id),
+            'instances.instance_id': self._instance_id,
+        }, {'$set': {
+            'instances.$.clients': clients,
+        }})
+
+        if not response['updatedExisting']:
+            return
+
+        self.update_clients_bandwidth(clients)
+
+        if self.client_count != len(clients):
+            for org_id in self.server.organizations:
+                event.Event(type=USERS_UPDATED, resource_id=org_id)
+            if not force:
+                event.Event(type=SERVERS_UPDATED)
+            self.client_count = len(clients)
+
+    def read_clients(self):
+        path = os.path.join(self._temp_path, OVPN_STATUS_NAME)
+        clients = {}
+
+        if os.path.isfile(path):
+            with open(path, 'r') as status_file:
+                for line in status_file.readlines():
+                    if line[:11] != 'CLIENT_LIST':
+                        continue
+                    line_split = line.strip('\n').split(',')
+                    client_id = line_split[1]
+                    real_address = line_split[2]
+                    virt_address = line_split[3]
+                    bytes_recv = line_split[4]
+                    bytes_sent = line_split[5]
+                    connected_since = line_split[7]
+                    clients[client_id] = {
+                        'real_address': real_address,
+                        'virt_address': virt_address,
+                        'bytes_received': int(bytes_recv),
+                        'bytes_sent': int(bytes_sent),
+                        'connected_since': int(connected_since),
+                    }
+        self.update_clients(clients)
