@@ -45,9 +45,6 @@ class ServerInstance(object):
         self.client_count = 0
         self.interface = None
         self._temp_path = utils.get_temp_path()
-        self.thread_semaphores = threading.Semaphore(3)
-        for _ in xrange(3):
-            self.thread_semaphores.acquire()
 
     @cached_static_property
     def collection(cls):
@@ -468,8 +465,6 @@ class ServerInstance(object):
                 })
 
     def _sub_thread(self, cursor_id, process):
-        self.thread_semaphores.release()
-
         for msg in self.subscribe(cursor_id=cursor_id):
             if self.interrupt:
                 return
@@ -488,15 +483,11 @@ class ServerInstance(object):
                 pass
 
     def _status_thread(self):
-        self.thread_semaphores.release()
-
         while not self.interrupt:
             self.read_clients()
             time.sleep(settings.vpn.status_update_rate)
 
     def _keep_alive_thread(self, process):
-        self.thread_semaphores.release()
-
         exit_attempts = 0
 
         while not self.interrupt:
@@ -540,10 +531,6 @@ class ServerInstance(object):
             args=(process,))
         thread.daemon = True
         thread.start()
-
-        # Wait for all three threads to start
-        for _ in xrange(3):
-            self.thread_semaphores.acquire()
 
     def _run_thread(self, send_events):
         logger.debug('Starting ovpn process. %r' % {
