@@ -390,3 +390,66 @@ class ServerInstance(object):
                         'connected_since': int(connected_since),
                     }
         self.update_clients(clients)
+
+    def _sub_thread(self, cursor_id, process):
+        self.thread_semaphores.release()
+
+        for msg in self.subscribe(cursor_id=cursor_id):
+            if self.interrupt:
+                return
+            message = msg['message']
+
+            try:
+                if message == 'stop':
+                    if self.stop_process(process):
+                        self.clean_exit = True
+                elif message == 'force_stop':
+                    self.clean_exit = True
+                    for _ in xrange(10):
+                        process.send_signal(signal.SIGKILL)
+                        time.sleep(0.01)
+            except OSError:
+                pass
+
+    def _status_thread(self, semaphore):
+        self.thread_semaphores.release()
+
+        i = 0
+        cur_client_count = 0
+        ovpn_status_path = os.path.join(self._temp_path, OVPN_STATUS_NAME)
+
+        while not self.interrupt:
+            self.read_clients(ovpn_status_path)
+            time.sleep(settings.vpn.status_update_rate)
+
+    def _keep_alive_thread(self, semaphore, process):
+        self.thread_semaphores.release()
+
+        exit_attempts = 0
+
+        while not self.interrupt:
+            try:
+                response = self.collection.update({
+                    '_id': bson.ObjectId(self.server.id),
+                    'instances.instance_id': self.instance_id,
+                }, {'$set': {
+                    'instances.$.ping_timestamp': utils.now(),
+                }})
+
+                if not response['updatedExisting']:
+                    logger.info('Server instance removed, ' +
+                            'stopping server. %r' % {
+                        'server_id': self.server.id,
+                        'instance_id': self.instance_id,
+                    })
+
+                    if self.stop_process(process):
+                        break
+                    else:
+                        time.sleep(0.1)
+                        continue
+            except:
+                logger.exception('Failed to update server ping. %r' % {
+                    'server_id': self.server.id,
+                })
+            time.sleep(settings.vpn.server_ping)
