@@ -29,6 +29,9 @@ import re
 import bson
 import pymongo
 import random
+import collections
+
+_resource_lock = collections.defaultdict(threading.Lock)
 
 class Server(mongo.MongoObject):
     fields = {
