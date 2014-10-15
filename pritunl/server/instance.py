@@ -458,6 +458,7 @@ class ServerInstance(object):
                 if process.poll() is not None:
                     break
                 else:
+                    time.sleep(0.05)
                     continue
 
             try:
