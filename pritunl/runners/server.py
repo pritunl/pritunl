@@ -29,8 +29,9 @@ def _on_msg(msg):
         if settings.local.host_id not in svr.hosts:
             return
 
-        if settings.local.host_id in [x['host_id'] for x in svr.instances]:
-            return
+        for instance in svr.instances:
+            if instance['host_id'] == settings.local.host_id:
+                return
 
         prefered_host = msg.get('prefered_host')
 
