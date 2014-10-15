@@ -60,7 +60,6 @@ def _server_check_thread():
                 seconds=settings.vpn.server_ping_ttl)
 
             docs = collection.find({
-                'status': True,
                 'instances.ping_timestamp': {'$lt': timestamp_spec},
             }, {
                 '_id': True,
