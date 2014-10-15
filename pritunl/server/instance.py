@@ -316,6 +316,24 @@ class ServerInstance(object):
                         })
                     raise
 
+    def clear_iptables_rules(self):
+        logger.debug('Clearing iptables rules. %r' % {
+            'server_id': self.server.id,
+        })
+
+        for rule in self.generate_iptables_rules():
+            if self.exists_iptables_rules(rule):
+                try:
+                    subprocess.check_call(['iptables', '-D'] + rule,
+                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                except subprocess.CalledProcessError:
+                    logger.exception('Failed to clear iptables ' + \
+                        'routing rule. %r' % {
+                            'server_id': self.server.id,
+                            'rule': rule,
+                        })
+                    raise
+
     def update_clients_bandwidth(self, clients):
         # Remove client no longer connected
         for client_id in self.clients.iterkeys():
