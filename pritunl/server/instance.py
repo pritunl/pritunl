@@ -273,11 +273,12 @@ class ServerInstance(object):
                 '-j', 'ACCEPT',
             ])
 
-        comment = [
+        extra_args = [
+            '--wait',
             '-m', 'comment',
             '--comment', 'pritunl_%s' % self.server.id,
         ]
-        rules = [x + comment for x in rules]
+        rules = [x + extra_args for x in rules]
 
         return rules
 
