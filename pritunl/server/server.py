@@ -870,26 +870,26 @@ class Server(mongo.MongoObject):
         self.status = True
         self.start_timestamp = start_timestamp
 
-        started = 0
-        stopped = 0
+        started = False
+        stopped_count = 0
         try:
+            prefered_host = random.choice(self.hosts)
             self.publish('start', extra={
-                'prefered_host': random.choice(self.hosts),
+                'prefered_host': prefered_host,
             })
 
             for msg in self.subscribe(cursor_id=cursor_id, timeout=timeout):
                 message = msg['message']
                 if message == 'started':
-                    started += 1
-                    if started + stopped >= self.replica_count:
-                        break
+                    started = True
+                    break
                 elif message == 'stopped':
-                    stopped += 1
-                    if started + stopped >= self.replica_count:
+                    stopped_count += 1
+                    if stopped_count >= self.replica_count:
                         break
 
             if not started:
-                if stopped:
+                if stopped_count:
                     raise ServerStartError('Server failed to start', {
                         'server_id': self.id,
                     })
@@ -922,52 +922,26 @@ class Server(mongo.MongoObject):
         if not self.status:
             return
 
+        response = self.collection.update({
+            '_id': bson.ObjectId(self.id),
+            'status': True,
+        }, {'$set': {
+            'status': False,
+            'start_timestamp': None,
+            'instances': [],
+            'instances_count': 0,
+        }})
+
+        if not response['updatedExisting']:
+            raise ServerStopError('Server not running', {
+                    'server_id': self.id,
+                })
+        self.status = False
+
         if force:
             self.publish('force_stop')
         else:
             self.publish('stop')
-
-        stopped = 0
-        instances_count = self.instances_count
-        for _ in xrange(2):
-            for msg in self.subscribe(cursor_id=cursor_id,
-                    timeout=(timeout / 2)):
-                message = msg['message']
-                if message == 'stopped':
-                    stopped += 1
-
-                    if stopped >= instances_count:
-                        break
-
-            if stopped >= instances_count:
-                break
-
-            self.load()
-
-            stopped = self.replica_count - self.instances_count
-            instances_count = self.instances_count
-
-            if stopped >= instances_count:
-                break
-
-        if stopped >= instances_count:
-            self.status = False
-
-            response = self.collection.update({
-                '_id': bson.ObjectId(self.id),
-                'status': True,
-            }, {'$set': {
-                'status': False,
-                'start_timestamp': None,
-            }})
-
-            if not response['updatedExisting']:
-                self.status = False
-                self.start_timestamp = None
-        else:
-            raise ServerStopError('Server stop timed out', {
-                    'server_id': self.id,
-                })
 
     def force_stop(self, timeout=VPN_OP_TIMEOUT):
         self.stop(timeout=timeout, force=True)
