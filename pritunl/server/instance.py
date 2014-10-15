@@ -575,7 +575,7 @@ class ServerInstance(object):
                 for org_id in self.server.organizations:
                     event.Event(type=USERS_UPDATED, resource_id=org_id)
 
-            self.read_openvpn()
+            self.openvpn_watch(process)
 
             self.interrupt = True
             self.clear_iptables_rules()
