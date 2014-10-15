@@ -77,6 +77,7 @@ def _server_check_thread():
             response = collection.aggregate([
                 {'$match': {
                     'status': True,
+                    'start_timestamp': {'$lt': timestamp_spec},
                 }},
                 {'$project': {
                     '_id': True,
