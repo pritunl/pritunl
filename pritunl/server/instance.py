@@ -80,12 +80,12 @@ class ServerInstance(object):
     def resources_release(self):
         if self.resource_lock:
             self.resource_lock.release()
-            self.interface.add(self.interface)
+            _interfaces.add(self.interface)
             self.interface = None
 
     def generate_ovpn_conf(self):
         logger.debug('Generating server ovpn conf. %r' % {
-            'server_id': self.id,
+            'server_id': self.server.id,
         })
 
         if not self.server.primary_organization or \
@@ -140,7 +140,7 @@ class ServerInstance(object):
                 ))
 
         push = ''
-        if self.server.server.mode == LOCAL_TRAFFIC:
+        if self.server.mode == LOCAL_TRAFFIC:
             for network in self.server.local_networks:
                 push += 'push "route %s %s"\n' % utils.parse_network(network)
         elif self.server.mode == VPN_TRAFFIC:
@@ -192,8 +192,7 @@ class ServerInstance(object):
 
     def enable_ip_forwarding(self):
         logger.debug('Enabling ip forwarding. %r' % {
-            'server_id': self.id,
-            'rule': rule,
+            'server_id': self.server.id,
         })
 
         try:
@@ -278,7 +277,7 @@ class ServerInstance(object):
 
         comment = [
             '-m', 'comment',
-            '--comment', 'pritunl_%s' % self.id,
+            '--comment', 'pritunl_%s' % self.server.id,
         ]
         rules = [x + comment for x in rules]
 
@@ -286,7 +285,7 @@ class ServerInstance(object):
 
     def exists_iptables_rules(self, rule):
         logger.debug('Checking for iptables rule. %r' % {
-            'server_id': self.id,
+            'server_id': self.server.id,
             'rule': rule,
         })
 
@@ -366,8 +365,8 @@ class ServerInstance(object):
         clients.pop('UNDEF', None)
 
         response = self.collection.update({
-            '_id': bson.ObjectId(self.id),
-            'instances.instance_id': self._instance_id,
+            '_id': bson.ObjectId(self.server.id),
+            'instances.instance_id': self.instance_id,
         }, {'$set': {
             'instances.$.clients': clients,
         }})
@@ -438,7 +437,7 @@ class ServerInstance(object):
 
         return terminated
 
-    def start_openvpn(self):
+    def openvpn_start(self):
         ovpn_conf_path = os.path.join(self._temp_path, OVPN_CONF_NAME)
 
         try:
@@ -451,7 +450,7 @@ class ServerInstance(object):
             })
             self.publish('error')
 
-    def read_openvpn(self, process):
+    def openvpn_watch(self, process):
         while True:
             line = process.stdout.readline()
             if not line:
@@ -488,14 +487,14 @@ class ServerInstance(object):
             except OSError:
                 pass
 
-    def _status_thread(self, semaphore):
+    def _status_thread(self):
         self.thread_semaphores.release()
 
         while not self.interrupt:
-            self.read_clients(ovpn_status_path)
+            self.read_clients()
             time.sleep(settings.vpn.status_update_rate)
 
-    def _keep_alive_thread(self, semaphore, process):
+    def _keep_alive_thread(self, process):
         self.thread_semaphores.release()
 
         exit_attempts = 0
@@ -548,7 +547,7 @@ class ServerInstance(object):
 
     def _run_thread(self, send_events):
         logger.debug('Starting ovpn process. %r' % {
-            'server_id': self.id,
+            'server_id': self.server.id,
         })
 
         self.resources_acquire()
@@ -561,7 +560,7 @@ class ServerInstance(object):
             self.enable_ip_forwarding()
             self.set_iptables_rules()
 
-            process = self.start_openvpn()
+            process = self.openvpn_start()
             if not process:
                 return
 
