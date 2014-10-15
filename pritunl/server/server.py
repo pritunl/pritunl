@@ -788,7 +788,7 @@ class Server(mongo.MongoObject):
                 '_id': bson.ObjectId(self.id),
                 'instances.instance_id': self._instance_id,
             }, {
-                '$pop': {
+                '$pull': {
                     'instances': {
                         'instance_id': self._instance_id,
                     },
