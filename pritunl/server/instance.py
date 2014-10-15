@@ -545,3 +545,92 @@ class ServerInstance(object):
         # Wait for all three threads to start
         for _ in xrange(3):
             self.thread_semaphores.acquire()
+
+    def _run_thread(self, send_events):
+        logger.debug('Starting ovpn process. %r' % {
+            'server_id': self.id,
+        })
+
+        self.resources_acquire()
+        try:
+            cursor_id = self.get_cursor_id()
+
+            os.makedirs(self._temp_path)
+            ovpn_conf_path = self.generate_ovpn_conf()
+
+            self.enable_ip_forwarding()
+            self.set_iptables_rules()
+
+            process = self.start_openvpn()
+            if not process:
+                return
+
+            self.start_threads(cursor_id, process)
+
+            self.publish('started')
+
+            if send_events:
+                event.Event(type=SERVERS_UPDATED)
+                event.Event(type=SERVER_HOSTS_UPDATED,
+                    resource_id=self.server.id)
+                for org_id in self.server.organizations:
+                    event.Event(type=USERS_UPDATED, resource_id=org_id)
+
+            self.read_openvpn()
+
+            self.interrupt = True
+            self.clear_iptables_rules()
+            self.resources_release()
+
+            if not self.clean_exit:
+                event.Event(type=SERVERS_UPDATED)
+                logger.LogEntry(message='Server stopped unexpectedly "%s".' % (
+                    self.server.name))
+        except:
+            self.interrupt = True
+            if self.resource_lock:
+                self.clear_iptables_rules()
+            self.resources_release()
+
+            logger.exception('Server error occurred while running. %r', {
+                'server_id': self.server.id,
+            })
+        finally:
+            self.collection.update({
+                '_id': bson.ObjectId(self.server.id),
+                'instances.instance_id': self.instance_id,
+            }, {
+                '$pull': {
+                    'instances': {
+                        'instance_id': self.instance_id,
+                    },
+                },
+                '$inc': {
+                    'instances_count': -1,
+                },
+            })
+
+    def run(self, send_events=False):
+        response = self.collection.update({
+            '_id': bson.ObjectId(self.server.id),
+            'instances_count': {'$lt': self.server.replica_count},
+        }, {
+            '$push': {
+                'instances': {
+                    'instance_id': self.instance_id,
+                    'host_id': settings.local.host_id,
+                    'ping_timestamp': utils.now(),
+                    'clients': {},
+                },
+            },
+            '$inc': {
+                'instances_count': 1,
+            },
+        })
+
+        if not response['updatedExisting']:
+            return
+
+        thread = threading.Thread(target=self._run_thread, args=(send_events,))
+        thread.daemon = True
+        thread.start()
