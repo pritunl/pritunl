@@ -644,6 +644,8 @@ class Server(mongo.MongoObject):
 
                     if not terminated:
                         for _ in xrange(10):
+                            if process.poll() is not None:
+                                break
                             process.send_signal(signal.SIGKILL)
                             time.sleep(0.01)
                 elif message == 'force_stop':
