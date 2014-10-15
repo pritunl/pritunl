@@ -391,6 +391,35 @@ class ServerInstance(object):
                     }
         self.update_clients(clients)
 
+    def stop_process(self, process):
+        terminated = False
+
+        for _ in xrange(100):
+            process.send_signal(signal.SIGINT)
+            for _ in xrange(4):
+                if process.poll() is not None:
+                    terminated = True
+                    break
+                time.sleep(0.0025)
+            if terminated:
+                break
+
+        if not terminated:
+            for _ in xrange(10):
+                if process.poll() is not None:
+                    terminated = True
+                    break
+                process.send_signal(signal.SIGKILL)
+                time.sleep(0.01)
+
+        if not terminated:
+            logger.error('Failed to stop server process. %r' % {
+                'server_id': self.server.id,
+                'instance_id': self.instance_id,
+            })
+
+        return terminated
+
     def _sub_thread(self, cursor_id, process):
         self.thread_semaphores.release()
 
