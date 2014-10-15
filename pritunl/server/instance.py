@@ -429,7 +429,7 @@ class ServerInstance(object):
         except OSError:
             self.server.output.push_output(traceback.format_exc())
             logger.exception('Failed to start ovpn process. %r' % {
-                'server_id': self.id,
+                'server_id': self.server.id,
             })
             self.publish('error')
 
