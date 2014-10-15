@@ -421,7 +421,6 @@ class ServerInstance(object):
         return terminated
 
     def start_openvpn(self):
-        process = None
         ovpn_conf_path = os.path.join(self._temp_path, OVPN_CONF_NAME)
 
         try:
