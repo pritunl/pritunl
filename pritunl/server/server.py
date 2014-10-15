@@ -726,7 +726,7 @@ class Server(mongo.MongoObject):
                 logger.exception('Failed to start ovpn process. %r' % {
                     'server_id': self.id,
                 })
-                self.publish('stopped')
+                self.publish('error')
                 return
 
             semaphore = threading.Semaphore(3)
