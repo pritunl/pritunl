@@ -34,6 +34,15 @@ def network_addr(ip, subnet):
     return '%s/%s' % (long_to_ip(ip_to_long(ip) & ip_to_long(subnet)),
         subnet_to_cidr(subnet))
 
+def parse_network(network):
+    network_split = network.split('/')
+    address = network_split[0]
+    cidr = int(network_split[1])
+    subnet = ('255.' * (cidr / 8)) + str(
+        int(('1' * (cidr % 8)).ljust(8, '0'), 2))
+    subnet += '.0' * (3 - subnet.count('.'))
+    return (address, subnet)
+
 def get_local_networks():
     addresses = []
     output = subprocess.check_output(['ifconfig'])
