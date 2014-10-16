@@ -440,29 +440,11 @@ verb %s
 mute %s
 """
 
-OVPN_CLIENT_CONF = """# %s
-client
-dev tun
-proto %s
-remote %s %s
-nobind
-persist-tun
-ca %s
-cert %s
-key %s
-verb 2
-mute 3
-nobind
-reneg-sec 2592000
-sndbuf 100000
-rcvbuf 100000
-"""
-
 OVPN_INLINE_CLIENT_CONF = """# %s
 client
 dev tun
 proto %s
-remote %s %s
+%s
 nobind
 persist-tun
 verb 2
