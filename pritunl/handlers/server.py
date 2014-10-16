@@ -427,15 +427,17 @@ def server_org_delete(server_id, org_id):
 def server_host_get(server_id):
     hosts = []
     svr = server.get_server(id=server_id)
-    svr_hst_id = svr.host_id
+    active_hosts = set([x['host_id'] for x in svr.instances])
+
     for hst in svr.iter_hosts():
         hosts.append({
             'id': hst.id,
             'server': svr.id,
-            'status': ONLINE if svr_hst_id == hst.id else OFFLINE,
+            'status': ONLINE if hst.id in active_hosts else OFFLINE,
             'name': hst.name,
             'public_address': hst.public_addr,
         })
+
     return utils.jsonify(hosts)
 
 @app.app.route('/server/<server_id>/host/<host_id>', methods=['PUT'])
@@ -445,12 +447,12 @@ def server_host_put(server_id, host_id):
     hst = host.get_host(id=host_id)
     svr.add_host(hst)
     svr.commit(svr.changed)
-    svr_hst_id = svr.host_id
     event.Event(type=SERVER_HOSTS_UPDATED, resource_id=svr.id)
+
     return utils.jsonify({
         'id': hst.id,
         'server': svr.id,
-        'status': ONLINE if svr_hst_id == hst.id else OFFLINE,
+        'status': OFFLINE,
         'name': hst.name,
         'public_address': hst.public_addr,
     })
