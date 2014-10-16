@@ -119,6 +119,10 @@ class Server(mongo.MongoObject):
     def collection(cls):
         return mongo.get_collection('servers')
 
+    @cached_static_property
+    def user_collection(cls):
+        return mongo.get_collection('users')
+
     def dict(self):
         return {
             'id': self.id,
@@ -232,22 +236,37 @@ class Server(mongo.MongoObject):
             tran.commit()
 
     def remove(self):
-        self._remove_primary_user()
+        self.remove_primary_user()
         mongo.MongoObject.remove(self)
 
-    def _remove_primary_user(self):
+    def create_primary_user(self):
+        logger.debug('Creating primary user. %r' % {
+            'server_id': self.id,
+        })
+
+        try:
+            org = self.iter_orgs().next()
+        except StopIteration:
+            raise ServerMissingOrg('Primary user cannot be created ' + \
+                'without any organizations', {
+                    'server_id': self.id,
+                })
+
+        user = org.new_user(name=SERVER_USER_PREFIX + self.id,
+            type=CERT_SERVER, server_id=self.id)
+
+        self.primary_organization = org.id
+        self.primary_user = user.id
+        self.commit(('primary_organization', 'primary_user'))
+
+    def remove_primary_user(self):
         logger.debug('Removing primary user. %r' % {
             'server_id': self.id,
         })
 
-        if not self.primary_organization or not self.primary_user:
-            return
-
-        org = organization.get_org(id=self.primary_organization)
-        if org:
-            user = org.get_user(id=self.primary_user)
-            if user:
-                user.remove()
+        self.user_collection.remove({
+            'server_id': self.id,
+        })
 
         self.primary_organization = None
         self.primary_user = None
@@ -280,7 +299,7 @@ class Server(mongo.MongoObject):
             'org_id': org_id,
         })
         if self.primary_organization == org_id:
-            self._remove_primary_user()
+            self.remove_primary_user()
         try:
             self.organizations.remove(org_id)
         except ValueError:
