@@ -294,8 +294,9 @@ class ServerInstance(object):
 
         processes = {}
         poller = select.epoll()
+        self.iptables_rules = self.generate_iptables_rules()
 
-        for rule in self.generate_iptables_rules():
+        for rule in self.iptables_rules:
             cmd, process = self.exists_iptables_rules(rule)
             fileno = process.stdout.fileno()
 
