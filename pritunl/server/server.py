@@ -253,7 +253,7 @@ class Server(mongo.MongoObject):
                 })
 
         user = org.new_user(name=SERVER_USER_PREFIX + self.id,
-            type=CERT_SERVER, server_id=self.id)
+            type=CERT_SERVER, resource_id=self.id)
 
         self.primary_organization = org.id
         self.primary_user = user.id
@@ -265,7 +265,7 @@ class Server(mongo.MongoObject):
         })
 
         self.user_collection.remove({
-            'server_id': self.id,
+            'resource_id': self.id,
         })
 
         self.primary_organization = None
