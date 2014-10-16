@@ -31,8 +31,7 @@ class User(mongo.MongoObject):
         'disabled',
         'private_key',
         'certificate',
-        'server_id',
-        'host_id',
+        'resource_id',
     }
     fields_default = {
         'name': 'undefined',
@@ -41,7 +40,7 @@ class User(mongo.MongoObject):
     }
 
     def __init__(self, org, name=None, email=None, type=None, disabled=None,
-            server_id=None, host_id=None, **kwargs):
+            resource_id=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         self.org = org
@@ -55,10 +54,8 @@ class User(mongo.MongoObject):
             self.type = type
         if disabled is not None:
             self.disabled = disabled
-        if server_id is not None:
-            self.server_id = server_id
-        if host_id is not None:
-            self.host_id = host_id
+        if resource_id is not None:
+            self.resource_id = resource_id
 
     @cached_static_property
     def collection(cls):
@@ -494,7 +491,7 @@ def new_pooled_user(org, type):
     thread.start()
 
 def reserve_pooled_user(org, name=None, email=None,
-        type=CERT_CLIENT, disabled=None, server_id=None, host_id=None):
+        type=CERT_CLIENT, disabled=None, resource_id=None):
     doc = {}
 
     if name is not None:
@@ -505,10 +502,8 @@ def reserve_pooled_user(org, name=None, email=None,
         doc['type'] = type
     if disabled is not None:
         doc['disabled'] = disabled
-    if server_id is not None:
-        doc['server_id'] = server_id
-    if host_id is not None:
-        doc['host_id'] = host_id
+    if resource_id is not None:
+        doc['resource_id'] = resource_id
 
     doc = User.collection.find_and_modify({
         'org_id': org.id,
