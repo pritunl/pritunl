@@ -65,6 +65,10 @@ class User(mongo.MongoObject):
     def otp_cache_collection(cls):
         return mongo.get_collection('otp_cache')
 
+    @cached_static_property
+    def host_collection(cls):
+        return mongo.get_collection('hosts')
+
     def dict(self):
         return {
             'id': self.id,
@@ -302,6 +306,21 @@ class User(mongo.MongoObject):
             'server': server_name,
         })
 
+    def get_key_removes(self, server):
+        remotes = ''
+        spec = {
+            '_id': {'$in':server.hosts},
+        }
+        project = {
+            '_id': False,
+            'public_address': True,
+        }
+
+        for doc in self.host_collection.find(spec, project):
+            remotes += 'remote %s %s\n' % (doc['public_address'], server.port)
+
+        return remotes.rstrip('\n')
+
     def build_key_archive(self):
         temp_path = utils.get_temp_path()
         key_archive_path = os.path.join(temp_path, '%s.tar' % self.id)
@@ -321,7 +340,7 @@ class User(mongo.MongoObject):
                         self._get_key_info_str(
                             self.name, self.org.name, server.name),
                         server.protocol,
-                        server.public_address, server.port,
+                        self.get_key_removes(server),
                     )
 
                     if server.otp_auth:
@@ -357,7 +376,7 @@ class User(mongo.MongoObject):
         client_conf = OVPN_INLINE_CLIENT_CONF % (
             self._get_key_info_str(self.name, self.org.name, server.name),
             server.protocol,
-            server.public_address, server.port,
+            self.get_key_removes(server),
         )
 
         if server.otp_auth:
