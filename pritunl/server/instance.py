@@ -359,7 +359,7 @@ class ServerInstance(object):
 
     def update_clients_bandwidth(self, clients):
         # Remove client no longer connected
-        for client_id in self.clients.iterkeys():
+        for client_id in self.clients.keys():
             if client_id not in clients:
                 del self.clients[client_id]
 
