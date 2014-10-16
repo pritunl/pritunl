@@ -35,7 +35,7 @@
 }
 
 .alert-dismissable .close {
-  top: 4px;
+  top: 5px;
   right: 4px;
   opacity: 0.5;
   padding: 5px;
@@ -962,7 +962,8 @@ header.blur {
   float: left;
 }
 
-.servers-list .server .server-info .server-output {
+.servers-list .server .server-info .server-output,
+.servers-list .server .server-info .server-output-link {
   border-bottom: 1px solid @light-dark-border;
 }
 
@@ -978,15 +979,20 @@ header.blur {
 
 .servers-list .server .server-info .server-output-title .btn,
 .hosts-list .host .host-info .host-usage-title .btn {
-  padding: 0 5px;
+  padding: 0 4px;
 }
 
-.servers-list .server .server-info .server-output-clear {
+.servers-list .server .server-info .server-output-clear,
+.servers-list .server .server-info .server-output-link-clear {
   float: right;
   color: @dark-fg;
   top: 4px;
   font-size: 12px;
   margin-right: 2px;
+}
+
+.servers-list .server .server-info .server-output-link-clear {
+  display: none;
 }
 
 .servers-list .server .server-info .server-graph-period,
@@ -1000,12 +1006,18 @@ header.blur {
   display: block;
 }
 
-.servers-list .server .server-info .server-output-clear:hover {
+.servers-list .server .server-info .server-output-clear:hover,
+.servers-list .server .server-info .server-output-link-clear:hover {
   color: @black-bg;
 }
 
-.servers-list .server .server-info .server-output-viewer {
+.servers-list .server .server-info .server-output-viewer,
+.servers-list .server .server-info .server-output-link-viewer {
   padding: 5px 10px 10px 0;
+}
+
+.servers-list .server .server-info .server-output-link-viewer {
+  display: none;
 }
 
 .servers-list .server .server-info .server-graph-viewer,
