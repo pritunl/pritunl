@@ -434,7 +434,11 @@ class ServerInstance(object):
         terminated = False
 
         for _ in xrange(100):
-            process.send_signal(signal.SIGINT)
+            try:
+                process.send_signal(signal.SIGINT)
+            except OSError as error:
+                if error.errno != 3:
+                    raise
             for _ in xrange(4):
                 if process.poll() is not None:
                     terminated = True
@@ -448,7 +452,11 @@ class ServerInstance(object):
                 if process.poll() is not None:
                     terminated = True
                     break
-                process.send_signal(signal.SIGKILL)
+                try:
+                    process.send_signal(signal.SIGKILL)
+                except OSError as error:
+                    if error.errno != 3:
+                        raise
                 time.sleep(0.01)
 
         if not terminated:
