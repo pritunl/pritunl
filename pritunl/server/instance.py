@@ -628,6 +628,7 @@ class ServerInstance(object):
     def run(self, send_events=False):
         response = self.collection.update({
             '_id': bson.ObjectId(self.server.id),
+            'status': True,
             'instances_count': {'$lt': self.server.replica_count},
         }, {
             '$push': {
