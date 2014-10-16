@@ -45,7 +45,7 @@ def user_get(org_id, user_id=None, page=None):
         if svr.otp_auth:
             otp_auth = True
         for instance in svr.instances:
-            for client, client_id in instance['clients'].iteritems():
+            for client_id, client in instance['clients'].iteritems():
                 if client_id not in clients:
                     clients[client_id] = {}
                 clients[client_id][svr.id] = client
