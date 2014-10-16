@@ -50,7 +50,7 @@ class QueueInitUserPooled(QueueInitUser):
 
 @queue.add_reserve('queued_user')
 def reserve_queued_user(org, name=None, email=None, type=None,
-        disabled=None, block=False):
+        disabled=None, resource_id=None, block=False):
     reserve_id = org.id + '-' + type
     reserve_data = {}
 
@@ -62,6 +62,8 @@ def reserve_queued_user(org, name=None, email=None, type=None,
         reserve_data['type'] = type
     if disabled is not None:
         reserve_data['disabled'] = disabled
+    if resource_id is not None:
+        reserve_data['resource_id'] = resource_id
 
     doc = QueueInitUserPooled.reserve(reserve_id, reserve_data, block=block)
     if not doc:
