@@ -1,4 +1,5 @@
 from pritunl.server.output import ServerOutput
+from pritunl.server.output_link import ServerOutputLink
 from pritunl.server.bandwidth import ServerBandwidth
 from pritunl.server.ip_pool import ServerIpPool
 
@@ -168,6 +169,10 @@ class Server(mongo.MongoObject):
     @cached_property
     def output(self):
         return ServerOutput(self.id)
+
+    @cached_property
+    def output_link(self):
+        return ServerOutputLink(self.id)
 
     def initialize(self):
         self.generate_dh_param()

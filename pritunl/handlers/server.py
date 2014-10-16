@@ -502,6 +502,22 @@ def server_output_delete(server_id):
     svr.output.clear_output()
     return utils.jsonify({})
 
+@app.app.route('/server/<server_id>/link_output', methods=['GET'])
+@auth.session_auth
+def server_link_output_get(server_id):
+    svr = server.get_server(id=server_id)
+    return utils.jsonify({
+        'id': svr.id,
+        'output': svr.output_link.get_output(),
+    })
+
+@app.app.route('/server/<server_id>/link_output', methods=['DELETE'])
+@auth.session_auth
+def server_link_output_delete(server_id):
+    svr = server.get_server(id=server_id)
+    svr.output_link.clear_output()
+    return utils.jsonify({})
+
 @app.app.route('/server/<server_id>/bandwidth/<period>',
     methods=['GET'])
 @auth.session_auth

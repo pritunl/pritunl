@@ -171,6 +171,7 @@ SERVERS_UPDATED = 'servers_updated'
 SERVER_ORGS_UPDATED = 'server_organizations_updated'
 SERVER_HOSTS_UPDATED = 'server_hosts_updated'
 SERVER_OUTPUT_UPDATED = 'server_output_updated'
+SERVER_LINK_OUTPUT_UPDATED = 'server_link_output_updated'
 SUBSCRIPTION_ACTIVE = 'subscription_active'
 SUBSCRIPTION_INACTIVE = 'subscription_inactive'
 
