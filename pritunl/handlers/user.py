@@ -36,7 +36,7 @@ def user_get(org_id, user_id=None, page=None):
 
     fields = (
         'name',
-        'clients',
+        'instances',
         'otp_auth',
     )
     for svr in org.iter_servers(fields=fields):
@@ -44,11 +44,11 @@ def user_get(org_id, user_id=None, page=None):
         server_count += 1
         if svr.otp_auth:
             otp_auth = True
-        server_clients = svr.clients
-        for client, client_id in server_clients.iteritems():
-            if client_id not in clients:
-                clients[client_id] = {}
-            clients[client_id][svr.id] = client
+        for instance in svr.instances:
+            for client, client_id in instance['clients'].iteritems():
+                if client_id not in clients:
+                    clients[client_id] = {}
+                clients[client_id][svr.id] = client
 
     users = []
     users_id = []
@@ -176,10 +176,10 @@ def user_put(org_id, user_id):
         if user.type == CERT_CLIENT:
             logger.LogEntry(message='Disabled user "%s".' % user.name)
 
-        for svr in org.iter_servers():
-            server_clients = svr.clients
-            if user_id in server_clients:
-                svr.restart()
+        for svr in org.iter_servers(fields=('instances',)):
+            for instance in svr.instances:
+                if user_id in instance['clients']:
+                    svr.restart()
     elif disabled == False and user.type == CERT_CLIENT:
         logger.LogEntry(message='Enabled user "%s".' % user.name)
 
@@ -216,10 +216,10 @@ def user_delete(org_id, user_id):
     event.Event(type=ORGS_UPDATED)
     event.Event(type=USERS_UPDATED, resource_id=org.id)
 
-    for svr in org.iter_servers():
-        server_clients = svr.clients
-        if user_id in server_clients:
-            svr.restart()
+    for svr in org.iter_servers(fields=('instances',)):
+        for instance in svr.instances:
+            if user_id in instance['clients']:
+                svr.restart()
 
     logger.LogEntry(message='Deleted user "%s".' % name)
 
