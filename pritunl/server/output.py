@@ -19,11 +19,14 @@ class ServerOutput(object):
     def collection(cls):
         return mongo.get_collection('servers_output')
 
+    def send_event(self):
+        event.Event(type=SERVER_OUTPUT_UPDATED, resource_id=self.server_id)
+
     def clear_output(self):
         self.collection.remove({
             'server_id': self.server_id,
         })
-        event.Event(type=SERVER_OUTPUT_UPDATED, resource_id=self.server_id)
+        self.send_event()
 
     def prune_output(self):
         doc_ids = self.collection.aggregate([
@@ -51,15 +54,17 @@ class ServerOutput(object):
                 '_id': {'$in': doc_ids},
             })
 
-    def push_output(self, output):
+    def push_output(self, output, label=None):
+        label = label or settings.local.host.name
+
         self.collection.insert({
             'server_id': self.server_id,
             'timestamp': utils.now(),
-            'output': '[%s] %s' % (
-                settings.local.host.name, output.rstrip('\n')),
+            'output': '[%s] %s' % (label, output.rstrip('\n')),
         })
+
         self.prune_output()
-        event.Event(type=SERVER_OUTPUT_UPDATED, resource_id=self.server_id)
+        self.send_event()
 
     def get_output(self):
         output = self.collection.aggregate([
