@@ -12,6 +12,7 @@ import random
 import uuid
 import os
 import bson
+import signal
 
 def now():
     return settings.local.mongo_time + (
@@ -94,3 +95,34 @@ def random_name():
         random.choice(RANDOM_TWO),
         random.randint(1000, 9999),
     )
+
+def stop_process(process):
+    terminated = False
+
+    for _ in xrange(100):
+        try:
+            process.send_signal(signal.SIGINT)
+        except OSError as error:
+            if error.errno != 3:
+                raise
+        for _ in xrange(4):
+            if process.poll() is not None:
+                terminated = True
+                break
+            time.sleep(0.0025)
+        if terminated:
+            break
+
+    if not terminated:
+        for _ in xrange(10):
+            if process.poll() is not None:
+                terminated = True
+                break
+            try:
+                process.send_signal(signal.SIGKILL)
+            except OSError as error:
+                if error.errno != 3:
+                    raise
+            time.sleep(0.01)
+
+    return terminated
