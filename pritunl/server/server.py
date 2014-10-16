@@ -125,7 +125,7 @@ class Server(mongo.MongoObject):
             'name': self.name,
             'status': self.status,
             'uptime': self.uptime,
-            'users_online': len(self.clients),
+            'users_online': self.users_online,
             'user_count': self.user_count,
             'network': self.network,
             'port': self.port,
@@ -145,6 +145,13 @@ class Server(mongo.MongoObject):
         if not self.start_timestamp:
             return
         return max((utils.now() - self.start_timestamp).seconds, 1)
+
+    @cached_property
+    def users_online(self):
+        clients = set()
+        for instance in self.instances:
+            clients = clients |set(instance['clients'])
+        return len(clients)
 
     @cached_property
     def user_count(self):
