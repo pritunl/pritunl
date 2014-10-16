@@ -534,12 +534,6 @@ class ServerInstance(object):
                 }})
 
                 if not response['updatedExisting']:
-                    logger.info('Server instance removed, ' +
-                            'stopping server. %r' % {
-                        'server_id': self.server.id,
-                        'instance_id': self.instance_id,
-                    })
-
                     if self.stop_process(process):
                         break
                     else:
