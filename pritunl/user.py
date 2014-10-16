@@ -19,6 +19,7 @@ import time
 import threading
 import json
 import bson
+import random
 
 class User(mongo.MongoObject):
     fields = {
@@ -307,7 +308,7 @@ class User(mongo.MongoObject):
         })
 
     def get_key_removes(self, server):
-        remotes = ''
+        remotes = []
         spec = {
             '_id': {'$in':server.hosts},
         }
@@ -317,9 +318,12 @@ class User(mongo.MongoObject):
         }
 
         for doc in self.host_collection.find(spec, project):
-            remotes += 'remote %s %s\n' % (doc['public_address'], server.port)
+            remotes.append('remote %s %s' % (
+                doc['public_address'], server.port))
 
-        return remotes.rstrip('\n')
+        random.shuffle(remotes)
+
+        return '\n'.join(remotes)
 
     def build_key_archive(self):
         temp_path = utils.get_temp_path()
