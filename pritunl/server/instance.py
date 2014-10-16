@@ -45,6 +45,7 @@ class ServerInstance(object):
         self.clients = {}
         self.client_count = 0
         self.interface = None
+        self.primary_user = None
         self.iptables_rules = []
         self._temp_path = utils.get_temp_path()
 
@@ -98,12 +99,12 @@ class ServerInstance(object):
             primary_org = organization.get_org(
                 id=self.server.primary_organization)
 
-        primary_user = primary_org.get_user(self.server.primary_user)
-        if not primary_user:
+        self.primary_user = primary_org.get_user(self.server.primary_user)
+        if not self.primary_user:
             self.server.create_primary_user()
             primary_org = organization.get_org(
                 id=self.server.primary_organization)
-            primary_user = primary_org.get_user(self.server.primary_user)
+            self.primary_user = primary_org.get_user(self.server.primary_user)
 
         tls_verify_path = os.path.join(self._temp_path,
             TLS_VERIFY_NAME)
@@ -181,8 +182,8 @@ class ServerInstance(object):
         server_conf += '<ca>\n%s\n</ca>\n' % utils.get_cert_block(
             self.server.ca_certificate)
         server_conf += '<cert>\n%s\n</cert>\n' % utils.get_cert_block(
-            primary_user.certificate)
-        server_conf += '<key>\n%s\n</key>\n' % primary_user.private_key
+            self.primary_user.certificate)
+        server_conf += '<key>\n%s\n</key>\n' % self.primary_user.private_key
         server_conf += '<dh>\n%s\n</dh>\n' % self.server.dh_params
 
         with open(ovpn_conf_path, 'w') as ovpn_conf:
