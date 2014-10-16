@@ -147,7 +147,12 @@ class MongoObject(object):
                 update_doc['$unset'] = unset
 
             response = collection.update(
-                spec, update_doc, upsert=True)['updatedExisting']
+                spec, update_doc, upsert=True)
+
+            if transaction:
+                response = True
+            else:
+                response = response['updatedExisting']
 
         self.exists = True
         self.changed = set()
