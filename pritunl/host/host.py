@@ -53,6 +53,10 @@ class Host(mongo.MongoObject):
     def collection(cls):
         return mongo.get_collection('hosts')
 
+    @cached_static_property
+    def user_collection(cls):
+        return mongo.get_collection('users')
+
     @property
     def uptime(self):
         if not self.start_timestamp:
@@ -74,7 +78,36 @@ class Host(mongo.MongoObject):
             'public_address': self.public_addr,
         }
 
+    def get_link_user(self, org_id):
+        from pritunl import organization
+
+        logger.debug('Creating host link user. %r' % {
+            'host_id': self.id,
+        })
+
+        org = organization.get_org(id=org_id)
+        usr = org.find_user(resource_id=self.id)
+
+        if not usr:
+            usr = org.new_user(name=HOST_USER_PREFIX + self.id,
+                type=CERT_SERVER, resource_id=self.id)
+
+        return usr
+
+    def remove_link_user(self):
+        logger.debug('Removing host link user. %r' % {
+            'host_id': self.id,
+        })
+
+        self.user_collection.remove({
+            'resource_id': self.id,
+        })
+
     def remove(self):
         if self.status == ONLINE:
             raise HostError('Host must be offline to remove')
+
+        self.user_collection.remove({
+            'resource_id': self.id,
+        })
         mongo.MongoObject.remove(self)
