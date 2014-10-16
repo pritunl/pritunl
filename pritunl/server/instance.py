@@ -646,5 +646,4 @@ class ServerInstance(object):
             return
 
         thread = threading.Thread(target=self._run_thread, args=(send_events,))
-        thread.daemon = True
         thread.start()
