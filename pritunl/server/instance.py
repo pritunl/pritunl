@@ -43,6 +43,8 @@ class ServerInstance(object):
         self.interrupt = False
         self.clean_exit = False
         self.clients = {}
+        self.cur_clients = set()
+        self.ignore_clients = set()
         self.client_count = 0
         self.interface = None
         self.primary_user = None
@@ -52,6 +54,10 @@ class ServerInstance(object):
     @cached_static_property
     def collection(cls):
         return mongo.get_collection('servers')
+
+    @cached_static_property
+    def user_collection(cls):
+        return mongo.get_collection('users')
 
     def get_cursor_id(self):
         return messenger.get_cursor_id('servers')
@@ -387,6 +393,28 @@ class ServerInstance(object):
     def update_clients(self, clients):
         # Openvpn will create an undef client while a client connects
         clients.pop('UNDEF', None)
+
+        new_clients_set = set(clients)
+
+        new_clients = new_clients_set - self.cur_clients
+        cursor = self.user_collection.find({
+            '_id': {'$in': [bson.ObjectId(x) for x in new_clients]},
+        }, {
+            'type': True,
+        })
+
+        for doc in cursor:
+            if doc['type'] != CERT_CLIENT:
+                self.ignore_clients.add(str(doc['_id']))
+
+        rem_clients = self.cur_clients - new_clients_set
+        for client_id in rem_clients:
+            self.cur_clients.remove(client_id)
+            if client_id in self.ignore_clients:
+                self.ignore_clients.remove(client_id)
+
+        for client_id in self.ignore_clients:
+            clients.pop(client_id, None)
 
         response = self.collection.update({
             '_id': bson.ObjectId(self.server.id),
