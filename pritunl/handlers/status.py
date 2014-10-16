@@ -18,12 +18,13 @@ def status_get():
     clients_count = 0
     clients = set()
 
-    for svr in server.iter_servers():
+    for svr in server.iter_servers(fields=('instances',)):
         servers_count += 1
         if svr.status:
             servers_online_count += 1
         # MongoDict doesnt support set(svr.clients)
-        clients = clients | set(svr.clients.keys())
+        for instance in svr.instances:
+            clients = clients |set(instance['clients'])
     clients_count = len(clients)
 
     user_count = organization.get_user_count_multi()
