@@ -45,6 +45,7 @@ class ServerInstance(object):
         self.clients = {}
         self.client_count = 0
         self.interface = None
+        self.iptables_rules = []
         self._temp_path = utils.get_temp_path()
 
     @cached_static_property
