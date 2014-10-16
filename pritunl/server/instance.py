@@ -342,33 +342,17 @@ class ServerInstance(object):
             'server_id': self.server.id,
         })
 
-        processes = {}
-        poller = select.epoll()
+        processes = []
 
-        for rule in self.generate_iptables_rules():
-            cmd, process = self.exists_iptables_rules(rule)
-            fileno = process.stdout.fileno()
+        for rule in self.iptables_rules:
+            process = subprocess.Popen(['iptables', '-D'] + rule,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            processes.append(process)
 
-            processes[fileno] = (cmd, process, ['iptables', '-D'] + rule)
-            poller.register(fileno, select.EPOLLHUP)
-
-        while True:
-            for fd, event in poller.poll(timeout=8):
-                cmd, process, next_cmd = processes.pop(fd)
-                poller.unregister(fd)
-
-                if next_cmd and process.poll():
-                    process = subprocess.Popen(next_cmd,
-                        stdout=subprocess.PIPE,
-                        stderr=subprocess.PIPE,
-                    )
-                    fileno = process.stdout.fileno()
-
-                    processes[fileno] = (next_cmd, process, None)
-                    poller.register(fileno, select.EPOLLHUP)
-
-                if not processes:
-                    return
+        for process in processes:
+            process.wait()
 
     def update_clients_bandwidth(self, clients):
         # Remove client no longer connected
