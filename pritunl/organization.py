@@ -136,8 +136,9 @@ class Organization(mongo.MongoObject):
     def get_user(self, id):
         return user.get_user(org=self, id=id)
 
-    def find_user(self, name=None, type=None):
-        return user.find_user(org=self, name=name, type=type)
+    def find_user(self, name=None, type=None, resource_id=None):
+        return user.find_user(org=self, name=name, type=type,
+            resource_id=resource_id)
 
     def _get_user_count(self, type=CERT_CLIENT):
         return user.User.collection.find({
