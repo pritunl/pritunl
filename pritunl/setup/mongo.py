@@ -94,6 +94,7 @@ def setup_mongo():
     ])
     mongo.collections['messages'].ensure_index('channel')
     mongo.collections['administrators'].ensure_index('username', unique=True)
+    mongo.collections['users'].ensure_index('resource_id')
     mongo.collections['users'].ensure_index([
         ('type', pymongo.ASCENDING),
         ('org_id', pymongo.ASCENDING),
