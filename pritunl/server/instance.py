@@ -461,40 +461,15 @@ class ServerInstance(object):
                     }
         self.update_clients(clients)
 
-    def stop_process(self, process):
-        terminated = False
-
-        for _ in xrange(100):
-            try:
-                process.send_signal(signal.SIGINT)
-            except OSError as error:
-                if error.errno != 3:
-                    raise
-            for _ in xrange(4):
-                if process.poll() is not None:
-                    terminated = True
-                    break
-                time.sleep(0.0025)
-            if terminated:
-                break
-
-        if not terminated:
-            for _ in xrange(10):
-                if process.poll() is not None:
-                    terminated = True
-                    break
-                try:
-                    process.send_signal(signal.SIGKILL)
-                except OSError as error:
-                    if error.errno != 3:
-                        raise
-                time.sleep(0.01)
+    def stop_process(self):
+        terminated = utils.stop_process(self.process)
 
         if not terminated:
             logger.error('Failed to stop server process. %r' % {
                 'server_id': self.server.id,
                 'instance_id': self.instance_id,
             })
+            return False
 
         return terminated
 
