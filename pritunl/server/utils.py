@@ -57,6 +57,8 @@ def get_used_resources(ignore_server_id):
 
     return {key: set(val) for key, val in used_resources.items()}
 
-def iter_servers():
-    for doc in Server.collection.find().sort('name'):
+def iter_servers(fields=None):
+    if fields:
+        fields = {key: True for key in fields}
+    for doc in Server.collection.find({}, fields).sort('name'):
         yield Server(doc=doc)
