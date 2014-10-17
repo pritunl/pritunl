@@ -631,11 +631,6 @@ def server_client_connect_post(server_id):
             'error': USER_INVALID,
             'error_msg': USER_INVALID_MSG,
         }, 401)
-    if user.type != CERT_CLIENT:
-        return utils.jsonify({
-            'error': USER_TYPE_INVALID,
-            'error_msg': USER_TYPE_INVALID_MSG,
-        }, 401)
 
     local_ip_addr, remote_ip_addr = svr.get_ip_set(org.id, user_id)
     if local_ip_addr and remote_ip_addr:
