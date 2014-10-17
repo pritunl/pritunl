@@ -517,7 +517,7 @@ class Server(mongo.MongoObject):
             self.instances_count = 0
             raise
 
-    def stop(self, timeout=VPN_OP_TIMEOUT, force=False):
+    def stop(self, force=False):
         cursor_id = self.get_cursor_id()
 
         logger.debug('Stopping server. %r' % {
@@ -548,8 +548,8 @@ class Server(mongo.MongoObject):
         else:
             self.publish('stop')
 
-    def force_stop(self, timeout=VPN_OP_TIMEOUT):
-        self.stop(timeout=timeout, force=True)
+    def force_stop(self):
+        self.stop(force=True)
 
     def restart(self):
         if not self.status:
