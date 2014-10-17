@@ -173,7 +173,6 @@ class ServerIpPool:
 
         user_ids = self.users_collection.find({
             'org_id': {'$in': self.server.organizations},
-            'type': CERT_CLIENT,
         }, {
             'user_id': True,
         }).distinct('_id')
