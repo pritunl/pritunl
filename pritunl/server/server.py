@@ -226,7 +226,7 @@ class Server(mongo.MongoObject):
 
         for doc in self.host_collection.find(spec, project):
             remotes.append('remote %s %s' % (
-                doc['public_address'], server.port))
+                doc['public_address'], self.port))
 
         random.shuffle(remotes)
 
