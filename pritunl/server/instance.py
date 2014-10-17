@@ -34,7 +34,6 @@ import collections
 import select
 
 _resource_locks = collections.defaultdict(threading.Lock)
-_interfaces = set(['tun%s' % x for x in xrange(128)])
 
 class ServerInstance(object):
     def __init__(self, server):
@@ -82,12 +81,12 @@ class ServerInstance(object):
             raise TypeError('Server resource lock already set')
         self.resource_lock = _resource_locks[self.server.id]
         self.resource_lock.acquire()
-        self.interface = _interfaces.pop()
+        self.interface = utils.tun_interface_acquire()
 
     def resources_release(self):
         if self.resource_lock:
             self.resource_lock.release()
-            _interfaces.add(self.interface)
+            utils.tun_interface_release(self.interface)
             self.interface = None
 
     def generate_ovpn_conf(self):
