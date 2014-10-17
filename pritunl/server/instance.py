@@ -48,6 +48,7 @@ class ServerInstance(object):
         self.client_count = 0
         self.interface = None
         self.primary_user = None
+        self.process = None
         self.iptables_rules = []
         self._temp_path = utils.get_temp_path()
 
@@ -485,11 +486,11 @@ class ServerInstance(object):
             })
             self.publish('error')
 
-    def openvpn_watch(self, process):
+    def openvpn_watch(self):
         while True:
-            line = process.stdout.readline()
+            line = self.process.stdout.readline()
             if not line:
-                if process.poll() is not None:
+                if self.process.poll() is not None:
                     break
                 else:
                     time.sleep(0.05)
@@ -502,7 +503,7 @@ class ServerInstance(object):
                     'server_id': self.server.id,
                 })
 
-    def _sub_thread(self, cursor_id, process):
+    def _sub_thread(self, cursor_id):
         for msg in self.subscribe(cursor_id=cursor_id):
             if self.interrupt:
                 return
@@ -510,12 +511,12 @@ class ServerInstance(object):
 
             try:
                 if message == 'stop':
-                    if self.stop_process(process):
+                    if self.stop_process():
                         self.clean_exit = True
                 elif message == 'force_stop':
                     self.clean_exit = True
                     for _ in xrange(10):
-                        process.send_signal(signal.SIGKILL)
+                        self.process.send_signal(signal.SIGKILL)
                         time.sleep(0.01)
             except OSError:
                 pass
@@ -536,7 +537,7 @@ class ServerInstance(object):
         self.link_instances[host_id] = instance_link
         instance_link.start()
 
-    def _keep_alive_thread(self, process):
+    def _keep_alive_thread(self):
         exit_attempts = 0
 
         while not self.interrupt:
@@ -548,8 +549,8 @@ class ServerInstance(object):
                     'instances.$.ping_timestamp': utils.now(),
                 }})
 
-                if not response['updatedExisting']:
-                    if self.stop_process(process):
+                if not doc:
+                    if self.stop_process():
                         break
                     else:
                         time.sleep(0.1)
@@ -560,9 +561,8 @@ class ServerInstance(object):
                 })
             time.sleep(settings.vpn.server_ping)
 
-    def start_threads(self, cursor_id, process):
-        thread = threading.Thread(target=self._sub_thread,
-            args=(cursor_id, process))
+    def start_threads(self, cursor_id):
+        thread = threading.Thread(target=self._sub_thread, args=(cursor_id,))
         thread.daemon = True
         thread.start()
 
@@ -590,11 +590,11 @@ class ServerInstance(object):
             self.enable_ip_forwarding()
             self.set_iptables_rules()
 
-            process = self.openvpn_start()
-            if not process:
+            self.process = self.openvpn_start()
+            if not self.process:
                 return
 
-            self.start_threads(cursor_id, process)
+            self.start_threads(cursor_id)
 
             self.publish('started')
 
@@ -605,7 +605,7 @@ class ServerInstance(object):
                 for org_id in self.server.organizations:
                     event.Event(type=USERS_UPDATED, resource_id=org_id)
 
-            self.openvpn_watch(process)
+            self.openvpn_watch()
 
             self.interrupt = True
             self.clear_iptables_rules()
