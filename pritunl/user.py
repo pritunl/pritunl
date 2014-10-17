@@ -499,7 +499,7 @@ def reserve_pooled_user(org, name=None, email=None,
 def get_user(org, id):
     return User(org=org, id=id)
 
-def find_user(org, name=None, type=None):
+def find_user(org, name=None, type=None, resource_id=None):
     spec = {
         'org_id': org.id,
     }
@@ -507,4 +507,6 @@ def find_user(org, name=None, type=None):
         spec['name'] = name
     if type is not None:
         spec['type'] = type
+    if resource_id is not None:
+        spec['resource_id'] = resource_id
     return User(org, spec=spec)
