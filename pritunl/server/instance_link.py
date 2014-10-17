@@ -187,6 +187,8 @@ class ServerInstanceLink(object):
     def openvpn_start(self):
         ovpn_conf_path = os.path.join(self._temp_path, OVPN_CONF_NAME)
 
+        self.set_iptables_rules()
+
         try:
             self.process = subprocess.Popen(['openvpn', ovpn_conf_path],
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
