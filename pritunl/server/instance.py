@@ -92,6 +92,9 @@ class ServerInstance(object):
             self.interface = None
 
     def generate_ovpn_conf(self):
+        # TODO
+        from pritunl.server.utils import get_server
+
         logger.debug('Generating server ovpn conf. %r' % {
             'server_id': self.server.id,
         })
@@ -160,6 +163,14 @@ class ServerInstance(object):
         if self.server.search_domain:
             push += 'push "dhcp-option DOMAIN %s"\n' % (
                 self.server.search_domain)
+
+        for link_svr_id in self.server.links.iterkeys():
+            link_svr = get_server(id=link_svr_id)
+            push += 'push "route %s %s"\n' % utils.parse_network(
+                link_svr.network)
+            for local_network in link_svr.local_networks:
+                push += 'push "route %s %s"\n' % utils.parse_network(
+                    local_network)
 
         server_conf = OVPN_INLINE_SERVER_CONF % (
             self.server.port,
