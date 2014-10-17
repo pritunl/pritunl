@@ -33,20 +33,16 @@ import collections
 import select
 
 class ServerInstanceLink(object):
-    def __init__(self, server, linked_server, host_id=None):
+    def __init__(self, server, linked_server, linked_host=None):
         self.server = server
         self.linked_server = linked_server
-        self.stop_event = threading.Event()
-
-        if host_id:
-            self.host = host.get_host(id=host_id)
-        else:
-            self.host = None
-
-        self.user = settings.local.host.get_link_user(
-            self.linked_server.organizations[0])
+        self.linked_host = linked_host
 
         self.process = None
+        self.interface = None
+        self.stop_event = threading.Event()
+        self.user = settings.local.host.get_link_user(
+            self.linked_server.organizations[0])
         self._temp_path = utils.get_temp_path()
 
     @cached_static_property
@@ -56,15 +52,23 @@ class ServerInstanceLink(object):
     def generate_client_conf(self):
         os.makedirs(self._temp_path)
         ovpn_conf_path = os.path.join(self._temp_path, OVPN_CONF_NAME)
+        self.interface = utils.tun_interface_acquire()
 
-        client_conf = OVPN_INLINE_CLIENT_CONF % (
-            '{}',
+        if self.linked_host:
+            remotes = 'remote %s %s' % (
+                self.host.public_address,
+                self.linked_server.port,
+            )
+        else:
+            remotes = self.linked_server.get_key_remotes()
+
+        client_conf = OVPN_INLINE_LINK_CONF % (
+            self.interface,
             self.linked_server.protocol,
-            'remote %s %s' % (self.host.public_address,
-                self.linked_server.port),
+            remotes,
+            4 if self.server.debug else 1,
+            8 if self.server.debug else 3,
         )
-
-        client_conf += 'route-nopull\n'
 
         client_conf += '<ca>\n%s\n</ca>\n' % utils.get_cert_block(
             self.server.ca_certificate)
@@ -103,7 +107,12 @@ class ServerInstanceLink(object):
                     continue
 
             try:
-                label = settings.local.host.name + '->' + self.host.name
+                if self.linked_host:
+                    label = settings.local.host.name + \
+                        '->' + self.linked_host.name
+                else:
+                    label = self.server.name + '<->' + \
+                        self.linked_server.name
                 self.server.output_link.push_output(line, label=label)
             except:
                 logger.exception('Failed to push link vpn output. %r', {
@@ -114,10 +123,15 @@ class ServerInstanceLink(object):
         try:
             self.stop_event.wait()
         finally:
-            if not utils.stop_process(self.process):
-                logger.error('Failed to stop openvpn link process. %r' % {
-                    'server_id': self.server.id,
-                })
+            try:
+                if not utils.stop_process(self.process):
+                    logger.error('Failed to stop openvpn link process. %r' % {
+                        'server_id': self.server.id,
+                    })
+            finally:
+                if self.interface:
+                    utils.tun_interface_release(self.interface)
+                    self.interface = None
 
     def start(self):
         ovpn_conf_path = self.generate_client_conf()
