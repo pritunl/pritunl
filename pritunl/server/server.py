@@ -2,6 +2,7 @@ from pritunl.server.output import ServerOutput
 from pritunl.server.output_link import ServerOutputLink
 from pritunl.server.bandwidth import ServerBandwidth
 from pritunl.server.ip_pool import ServerIpPool
+from pritunl.server.instance import ServerInstance
 
 from pritunl.constants import *
 from pritunl.exceptions import *
