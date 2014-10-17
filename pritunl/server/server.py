@@ -439,7 +439,8 @@ class Server(mongo.MongoObject):
             if msg.get('server_id') == self.id:
                 yield msg
 
-    def start(self, timeout=VPN_OP_TIMEOUT):
+    def start(self, timeout=None):
+        timeout = timeout or settings.vpn.op_timeout
         cursor_id = self.get_cursor_id()
 
         if self.status:

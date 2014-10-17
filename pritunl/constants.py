@@ -89,7 +89,6 @@ SHORT_URL_CHARS = (string.ascii_lowercase + string.ascii_uppercase +
     string.digits).replace('l', '').replace('I', '').replace('O', '').replace(
     '0', '')
 SUB_RESPONSE_TIMEOUT = 10
-VPN_OP_TIMEOUT = 10
 CLIENT_CONF_VER = 1
 MONGO_MESSAGES_SIZE = 100000
 MONGO_MESSAGES_MAX = 2048
