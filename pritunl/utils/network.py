@@ -6,6 +6,14 @@ import flask
 import subprocess
 import re
 
+_interfaces = set(['tun%s' % x for x in xrange(128)])
+
+def tun_interface_acquire():
+    return _interfaces.pop()
+
+def tun_interface_release(interface):
+    _interfaces.add(interface)
+
 def get_remote_addr():
     return flask.request.remote_addr
 
