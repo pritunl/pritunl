@@ -84,14 +84,8 @@ class Server(mongo.MongoObject):
             lzo_compression=None, debug=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
-        self._cur_event = None
-        self._last_event = 0
         self._orig_network = self.network
         self._orgs_changed = False
-        self._clients = None
-        self._client_count = 0
-        self._temp_path = utils.get_temp_path()
-        self._instance_id = str(bson.ObjectId())
         self.ip_pool = ServerIpPool(self)
 
         if name is not None:
