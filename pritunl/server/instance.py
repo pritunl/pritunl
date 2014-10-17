@@ -50,6 +50,7 @@ class ServerInstance(object):
         self.primary_user = None
         self.process = None
         self.iptables_rules = []
+        self.link_instances = {}
         self._temp_path = utils.get_temp_path()
 
     @cached_static_property
@@ -542,12 +543,15 @@ class ServerInstance(object):
 
         while not self.interrupt:
             try:
-                response = self.collection.update({
+                doc = self.collection.find_and_modify({
                     '_id': bson.ObjectId(self.server.id),
                     'instances.instance_id': self.instance_id,
                 }, {'$set': {
                     'instances.$.ping_timestamp': utils.now(),
-                }})
+                }}, fields={
+                    '_id': False,
+                    'instances': True,
+                })
 
                 if not doc:
                     if self.stop_process():
@@ -555,6 +559,22 @@ class ServerInstance(object):
                     else:
                         time.sleep(0.1)
                         continue
+
+                active_hosts = set()
+                for instance in doc['instances']:
+                    host_id = instance['host_id']
+
+                    if host_id == settings.local.host_id:
+                        continue
+                    active_hosts.add(host_id)
+
+                    if host_id not in self.link_instances:
+                        self.link_instance(host_id)
+
+                for host_id in self.link_instances.keys():
+                    if host_id not in active_hosts:
+                        self.link_instances[host_id].stop()
+                        del self.link_instances[host_id]
             except:
                 logger.exception('Failed to update server ping. %r' % {
                     'server_id': self.server.id,
@@ -570,8 +590,7 @@ class ServerInstance(object):
         thread.daemon = True
         thread.start()
 
-        thread = threading.Thread(target=self._keep_alive_thread,
-            args=(process,))
+        thread = threading.Thread(target=self._keep_alive_thread)
         thread.daemon = True
         thread.start()
 
@@ -625,6 +644,9 @@ class ServerInstance(object):
                 'server_id': self.server.id,
             })
         finally:
+            for instance in self.link_instances.itervalues():
+                instance.stop()
+
             self.collection.update({
                 '_id': bson.ObjectId(self.server.id),
                 'instances.instance_id': self.instance_id,
@@ -638,6 +660,7 @@ class ServerInstance(object):
                     'instances_count': -1,
                 },
             })
+            utils.rmtree(self._temp_path)
 
     def run(self, send_events=False):
         response = self.collection.update({
