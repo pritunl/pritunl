@@ -491,7 +491,7 @@ def reserve_pooled_user(org, name=None, email=None,
         }[type],
     }, {
         '$set': doc,
-    })
+    }, new=True)
 
     if doc:
         return User(org=org, doc=doc)
