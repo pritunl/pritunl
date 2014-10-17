@@ -124,6 +124,10 @@ class Server(mongo.MongoObject):
     def user_collection(cls):
         return mongo.get_collection('users')
 
+    @cached_static_property
+    def host_collection(cls):
+        return mongo.get_collection('hosts')
+
     def dict(self):
         return {
             'id': self.id,
@@ -209,6 +213,24 @@ class Server(mongo.MongoObject):
         else:
             queue.start('unassign_ip_addr', server_id=self.id, org_id=org_id,
                 user_id=user_id)
+
+    def get_key_remotes(self):
+        remotes = []
+        spec = {
+            '_id': {'$in': self.hosts},
+        }
+        project = {
+            '_id': False,
+            'public_address': True,
+        }
+
+        for doc in self.host_collection.find(spec, project):
+            remotes.append('remote %s %s' % (
+                doc['public_address'], server.port))
+
+        random.shuffle(remotes)
+
+        return '\n'.join(remotes)
 
     def commit(self, *args, **kwargs):
         tran = None
