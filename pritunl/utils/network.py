@@ -6,7 +6,7 @@ import flask
 import subprocess
 import re
 
-_interfaces = set(['tun%s' % x for x in xrange(128)])
+_interfaces = set(['tun%s' % x for x in xrange(100)])
 
 def tun_interface_acquire():
     return _interfaces.pop()
