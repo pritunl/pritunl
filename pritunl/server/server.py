@@ -156,7 +156,7 @@ class Server(mongo.MongoObject):
     def users_online(self):
         clients = set()
         for instance in self.instances:
-            clients = clients |set(instance['clients'])
+            clients = clients | set(instance['clients'])
         return len(clients)
 
     @cached_property
@@ -251,8 +251,7 @@ class Server(mongo.MongoObject):
             # TODO update ip pool
             pass
 
-        mongo.MongoObject.commit(self, transaction=tran,
-            *args, **kwargs)
+        mongo.MongoObject.commit(self, transaction=tran, *args, **kwargs)
 
         if tran:
             messenger.publish('queue', 'queue_updated',
