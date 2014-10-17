@@ -540,7 +540,7 @@ def server_tls_verify_post(server_id):
     org = svr.get_org(org_id)
     if not org:
         logger.LogEntry(message='User failed authentication, ' +
-            'invalid organization on server "%s".' % svr.name)
+            'invalid organization "%s" on server "%s".' % (org_id, svr.name))
         return utils.jsonify({
             'error': ORG_INVALID,
             'error_msg': ORG_INVALID_MSG,
@@ -548,14 +548,14 @@ def server_tls_verify_post(server_id):
     user = org.get_user(user_id)
     if not user:
         logger.LogEntry(message='User failed authentication, ' +
-            'invalid user on server "%s".' % svr.name)
+            'invalid user "%s" on server "%s".' % (user_id, svr.name))
         return utils.jsonify({
             'error': USER_INVALID,
             'error_msg': USER_INVALID_MSG,
         }, 401)
     if user.disabled:
         logger.LogEntry(message='User failed authentication, ' +
-            'disabled user "%s".' % svr.name)
+            'disabled user "%s" on server "%s".' % (user.name, svr.name))
         return utils.jsonify({
             'error': USER_INVALID,
             'error_msg': USER_INVALID_MSG,
