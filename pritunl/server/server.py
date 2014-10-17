@@ -470,25 +470,32 @@ class Server(mongo.MongoObject):
         self.start_timestamp = start_timestamp
 
         started = False
-        stopped_count = 0
+        started_count = 0
+        error_count = 0
         try:
             prefered_host = random.choice(self.hosts)
             self.publish('start', extra={
                 'prefered_host': prefered_host,
             })
 
-            for msg in self.subscribe(cursor_id=cursor_id, timeout=timeout):
-                message = msg['message']
-                if message == 'started':
-                    started = True
-                    break
-                elif message == 'stopped':
-                    stopped_count += 1
-                    if stopped_count >= self.replica_count:
-                        break
+            for x_timeout in (2, timeout):
+                for msg in self.subscribe(cursor_id=cursor_id,
+                        timeout=x_timeout):
+                    message = msg['message']
+                    if message == 'started':
+                        started_count += 1
+                        if started_count + error_count >= self.replica_count:
+                            break
+                    elif message == 'error':
+                        error_count += 1
+                        if started_count + error_count >= self.replica_count:
+                            break
 
-            if not started:
-                if stopped_count:
+                if started_count:
+                    break
+
+            if not started_count:
+                if error_count:
                     raise ServerStartError('Server failed to start', {
                         'server_id': self.id,
                     })
@@ -496,7 +503,6 @@ class Server(mongo.MongoObject):
                     raise ServerStartError('Server start timed out', {
                             'server_id': self.id,
                         })
-            self.instances_count = started
         except:
             self.publish('force_stop')
             self.collection.update({
