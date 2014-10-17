@@ -433,8 +433,7 @@ class ServerInstance(object):
         if self.client_count != len(clients):
             for org_id in self.server.organizations:
                 event.Event(type=USERS_UPDATED, resource_id=org_id)
-            if not force:
-                event.Event(type=SERVERS_UPDATED)
+            event.Event(type=SERVERS_UPDATED)
             self.client_count = len(clients)
 
     def read_clients(self):
