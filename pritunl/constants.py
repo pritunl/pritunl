@@ -451,7 +451,18 @@ nobind
 persist-tun
 verb 2
 mute 3
+sndbuf 100000
+rcvbuf 100000
+"""
+
+OVPN_INLINE_LINK_CONF = """client
+dev %s
+proto %s
+%s
 nobind
+persist-tun
+verb %s
+mute %s
 sndbuf 100000
 rcvbuf 100000
 """
