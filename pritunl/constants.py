@@ -442,6 +442,7 @@ verb %s
 mute %s
 """
 
+# TODO reneg-sec 2592000 causes issues with status file
 OVPN_INLINE_CLIENT_CONF = """# %s
 client
 dev tun
@@ -452,7 +453,6 @@ persist-tun
 verb 2
 mute 3
 nobind
-reneg-sec 2592000
 sndbuf 100000
 rcvbuf 100000
 """
