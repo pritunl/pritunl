@@ -1,6 +1,7 @@
 from pritunl.server.output import ServerOutput
 from pritunl.server.bandwidth import ServerBandwidth
 from pritunl.server.ip_pool import ServerIpPool
+from pritunl.server.instance_link import ServerInstanceLink
 
 from pritunl.constants import *
 from pritunl.exceptions import *
@@ -549,6 +550,17 @@ class ServerInstance(object):
         while not self.interrupt:
             self.read_clients()
             time.sleep(settings.vpn.status_update_rate)
+
+    def link_instance(self, host_id):
+        if self.interrupt:
+            return
+        instance_link = ServerInstanceLink(
+            server=self.server,
+            linked_server=self.server,
+            linked_host=host.get_host(id=host_id),
+        )
+        self.link_instances[host_id] = instance_link
+        instance_link.start()
 
     def _keep_alive_thread(self, process):
         exit_attempts = 0
