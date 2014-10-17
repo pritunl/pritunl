@@ -57,7 +57,7 @@ class ServerIpPool:
                     'org_id': org_id,
                     'user_id': user_id,
                     'remote_addr': str(remote_ip_addr),
-                    'local_addr': str(remote_ip_addr),
+                    'local_addr': str(local_ip_addr),
                 })
                 break
             except pymongo.errors.DuplicateKeyError:
