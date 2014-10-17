@@ -53,6 +53,8 @@ def setup_mongo():
         'hosts_usage': getattr(database, prefix + 'hosts_usage'),
         'servers': getattr(database, prefix + 'servers'),
         'servers_output': getattr(database, prefix + 'servers_output'),
+        'servers_output_link': getattr(database,
+            prefix + 'servers_output_link'),
         'servers_bandwidth': getattr(database, prefix + 'servers_bandwidth'),
         'servers_ip_pool': getattr(database, prefix + 'servers_ip_pool'),
         'dh_params': getattr(database, prefix + 'dh_params'),
@@ -114,6 +116,10 @@ def setup_mongo():
     mongo.collections['servers'].ensure_index('name')
     mongo.collections['servers'].ensure_index('ping_timestamp')
     mongo.collections['servers_output'].ensure_index([
+        ('server_id', pymongo.ASCENDING),
+        ('timestamp', pymongo.ASCENDING),
+    ])
+    mongo.collections['servers_output_link'].ensure_index([
         ('server_id', pymongo.ASCENDING),
         ('timestamp', pymongo.ASCENDING),
     ])
