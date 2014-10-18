@@ -21,8 +21,8 @@ def new_server(**kwargs):
     server.initialize()
     return server
 
-def get_server(id):
-    return Server(id=id)
+def get_server(id, fields=None):
+    return Server(id=id, fields=fields)
 
 def get_used_resources(ignore_server_id):
     used_resources = Server.collection.aggregate([
