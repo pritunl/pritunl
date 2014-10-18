@@ -52,7 +52,7 @@ def interrupter_generator(call):
 
 def interrupter_sleep(length):
     while True:
-        sleep = min(1, length)
+        sleep = min(0.5, length)
         time.sleep(sleep)
         length -= sleep
         if _interrupt or length <= 0:
