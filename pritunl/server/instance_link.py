@@ -171,6 +171,7 @@ class ServerInstanceLink(object):
             8 if self.server.debug else 3,
         )
 
+        client_conf += PERF_MODES[self.server.performance_mode]
         client_conf += '<ca>\n%s\n</ca>\n' % utils.get_cert_block(
             self.server.ca_certificate)
         client_conf += ('<cert>\n%s\n' + \

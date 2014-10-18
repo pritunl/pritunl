@@ -195,6 +195,8 @@ class ServerInstance(object):
         if self.server.mode in (LOCAL_TRAFFIC, VPN_TRAFFIC):
             server_conf += 'client-to-client\n'
 
+        server_conf += PERF_MODES[self.server.performance_mode]
+
         if push:
             server_conf += push
 

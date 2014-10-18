@@ -331,6 +331,7 @@ class User(mongo.MongoObject):
                     if server.otp_auth:
                         client_conf += 'auth-user-pass\n'
 
+                    client_conf += PERF_MODES[server.performance_mode]
                     client_conf += '<ca>\n%s\n</ca>\n' % utils.get_cert_block(
                         server.ca_certificate)
                     client_conf += ('<cert>\n%s\n' + \
@@ -367,6 +368,7 @@ class User(mongo.MongoObject):
         if server.otp_auth:
             client_conf += 'auth-user-pass\n'
 
+        client_conf += PERF_MODES[server.performance_mode]
         client_conf += '<ca>\n%s\n</ca>\n' % utils.get_cert_block(
             server.ca_certificate)
         client_conf += '<cert>\n%s\n</cert>\n' % utils.get_cert_block(
