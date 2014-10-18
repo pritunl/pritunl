@@ -50,7 +50,8 @@ class ServerInstance(object):
         self.primary_user = None
         self.process = None
         self.iptables_rules = []
-        self.link_instances = {}
+        self.replica_links = {}
+        self.server_links = []
         self._temp_path = utils.get_temp_path()
 
     @cached_static_property
@@ -553,7 +554,7 @@ class ServerInstance(object):
             linked_server=self.server,
             linked_host=host.get_host(id=host_id),
         )
-        self.link_instances[host_id] = instance_link
+        self.replica_links[host_id] = instance_link
         instance_link.start()
 
     def _keep_alive_thread(self):
@@ -586,13 +587,13 @@ class ServerInstance(object):
                         continue
                     active_hosts.add(host_id)
 
-                    if host_id not in self.link_instances:
+                    if host_id not in self.replica_links:
                         self.link_instance(host_id)
 
-                for host_id in self.link_instances.keys():
+                for host_id in self.replica_links.keys():
                     if host_id not in active_hosts:
-                        self.link_instances[host_id].stop()
-                        del self.link_instances[host_id]
+                        self.replica_links[host_id].stop()
+                        del self.replica_links[host_id]
             except:
                 logger.exception('Failed to update server ping. %r' % {
                     'server_id': self.server.id,
@@ -643,6 +644,7 @@ class ServerInstance(object):
                         server=self.server,
                         linked_server=get_server(id=link_svr_id),
                     )
+                    self.server_links.append(instance_link)
                     instance_link.start()
 
             if send_events:
@@ -672,7 +674,7 @@ class ServerInstance(object):
                 'server_id': self.server.id,
             })
         finally:
-            for instance in self.link_instances.itervalues():
+            for instance in self.replica_links.values() + self.server_links:
                 instance.stop()
 
             self.collection.update({
