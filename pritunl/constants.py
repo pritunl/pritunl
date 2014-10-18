@@ -406,6 +406,11 @@ RANDOM_TWO = (
     'thunder',
 )
 
+PERF_MODES = {
+    PERF_NORMAL: '',
+    PERF_THROUGHPUT: 'tun-mtu 9000\nfragment 0\nmssfix 0\n',
+}
+
 OVPN_SERVER_CONF = """port %s
 proto %s
 dev %s
