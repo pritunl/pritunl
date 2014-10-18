@@ -89,7 +89,6 @@ class Server(mongo.MongoObject):
 
         self._orig_network = self.network
         self._orgs_changed = False
-        self.ip_pool = ServerIpPool(self)
 
         if name is not None:
             self.name = name
@@ -173,6 +172,10 @@ class Server(mongo.MongoObject):
     @cached_property
     def bandwidth(self):
         return ServerBandwidth(self.id)
+
+    @cached_property
+    def ip_pool(self):
+        return ServerIpPool(self)
 
     @cached_property
     def output(self):
