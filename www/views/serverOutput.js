@@ -8,6 +8,7 @@ define([
 ], function($, _, Backbone, ServerOutputModel, TextView, AlertView) {
   'use strict';
   var ServerOutputView = TextView.extend({
+    errorMsg: 'Failed to load server output, server error occurred.',
     initialize: function(options) {
       this.model = new ServerOutputModel({
         id: options.server
@@ -24,7 +25,7 @@ define([
         error: function() {
           var alertView = new AlertView({
             type: 'danger',
-            message: 'Failed to load server output, server error occurred.',
+            message: this.errorMsg,
             dismissable: true
           });
           $('.alerts-container').append(alertView.render().el);
