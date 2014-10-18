@@ -611,6 +611,8 @@ class ServerInstance(object):
         thread.start()
 
     def _run_thread(self, send_events):
+        from pritunl.server.utils import get_server
+
         logger.debug('Starting ovpn process. %r' % {
             'server_id': self.server.id,
         })
