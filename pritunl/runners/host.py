@@ -77,6 +77,7 @@ def _keep_alive_thread():
                 'auto_public_address': settings.local.public_ip,
             }})
         except GeneratorExit:
+            host.deinit_host()
             raise
         except:
             logger.exception('Error in host keep alive update. %s' % {
