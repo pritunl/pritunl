@@ -8,15 +8,14 @@ from pritunl import logger
 import threading
 import time
 
+@interrupter
 def _time_sync_thread():
     while True:
         try:
             utils.sync_time()
         except:
             logger.exception('Failed to sync time with mongo server.')
-        time.sleep(15)
+        yield interrupter_sleep(15)
 
 def start_time_sync():
-    thread = threading.Thread(target=_time_sync_thread)
-    thread.daemon = True
-    thread.start()
+    threading.Thread(target=_time_sync_thread).start()

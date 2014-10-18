@@ -26,6 +26,7 @@ def run_task(tsk):
     thread.daemon = True
     thread.start()
 
+@interrupter
 def run_thread():
     last_run = None
 
@@ -43,6 +44,9 @@ def run_thread():
 
         time.sleep(0.5)
 
+        yield
+
+@interrupter
 def check_thread():
     collection = mongo.get_collection('task')
 
@@ -64,12 +68,10 @@ def check_thread():
             if response['updatedExisting']:
                 run_task(task_item)
 
-        time.sleep(settings.mongo.task_ttl)
+        yield interrupter_sleep(settings.mongo.task_ttl)
 
 def start_task():
     from pritunl import tasks
 
     for target in (run_thread, check_thread):
-        thread = threading.Thread(target=target)
-        thread.daemon = True
-        thread.start()
+        threading.Thread(target=target).start()

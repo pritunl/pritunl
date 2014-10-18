@@ -74,6 +74,8 @@ def _server_check_thread():
                             },
                         })
 
+            yield
+
             response = collection.aggregate([
                 {'$match': {
                     'status': True,
@@ -95,6 +97,8 @@ def _server_check_thread():
                 }},
             ])['result']
 
+            yield
+
             for doc in response:
                 active_hosts = set([x['host_id'] for x in doc['instances']])
                 hosts = list(set(doc['hosts']) - active_hosts)
@@ -110,11 +114,8 @@ def _server_check_thread():
         except:
             logger.exception('Error checking server states.')
 
-        time.sleep(settings.vpn.server_ping)
+        yield interrupter_sleep(settings.vpn.server_ping)
 
 def start_server():
-    thread = threading.Thread(target=_server_check_thread)
-    thread.daemon = True
-    thread.start()
-
+    threading.Thread(target=_server_check_thread).start()
     listener.add_listener('servers', _on_msg)

@@ -10,6 +10,7 @@ from pritunl import utils
 import threading
 import time
 
+@interrupter
 def _keep_alive_thread():
     last_update = None
     proc_stat = None
@@ -34,7 +35,7 @@ def _keep_alive_thread():
                     settings.local.host.usage.add_period(timestamp,
                         cpu_usage, mem_usage)
 
-            time.sleep(settings.app.host_ttl - 10)
+            yield interrupter_sleep(settings.app.host_ttl - 10)
 
             settings.local.host.collection.update({
                 '_id': settings.local.host.id,
@@ -43,6 +44,8 @@ def _keep_alive_thread():
                 'ping_timestamp': utils.now(),
                 'auto_public_address': settings.local.public_ip,
             }})
+        except GeneratorExit:
+            raise
         except:
             logger.exception('Error in host keep alive update. %s' % {
                 'host_id': settings.local.host.id,
@@ -50,6 +53,4 @@ def _keep_alive_thread():
             })
 
 def start_host():
-    thread = threading.Thread(target=_keep_alive_thread)
-    thread.daemon = True
-    thread.start()
+    threading.Thread(target=_keep_alive_thread).start()

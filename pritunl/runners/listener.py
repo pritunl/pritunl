@@ -13,6 +13,7 @@ import logging
 import threading
 import time
 
+@interrupter
 def listener_thread():
     while True:
         try:
@@ -26,7 +27,7 @@ def listener_thread():
             logger.exception('Error in listener thread')
             time.sleep(0.3)
 
+        yield
+
 def start_listener():
-    thread = threading.Thread(target=listener_thread)
-    thread.daemon = True
-    thread.start()
+    threading.Thread(target=listener_thread).start()

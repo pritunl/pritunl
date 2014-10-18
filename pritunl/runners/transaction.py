@@ -14,6 +14,7 @@ import bson
 import threading
 import time
 
+@interrupter
 def _check_thread():
     collection = mongo.get_collection('transaction')
 
@@ -31,9 +32,7 @@ def _check_thread():
                     'transaction_id': str(doc['id']),
                 })
 
-        time.sleep(settings.mongo.tran_ttl)
+        yield interrupter_sleep(settings.mongo.tran_ttl)
 
 def start_transaction():
-    thread = threading.Thread(target=_check_thread)
-    thread.daemon = True
-    thread.start()
+    threading.Thread(target=_check_thread).start()

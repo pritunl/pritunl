@@ -7,11 +7,15 @@ from pritunl import logger
 
 import threading
 
+@interrupter
 def _check():
+    yield
+
     try:
         settings.load_mongo()
     except:
         logger.exception('Auto settings check failed')
+
     _start_check_timer()
 
 def _start_check_timer():

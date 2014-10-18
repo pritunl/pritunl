@@ -8,14 +8,13 @@ from pritunl import subscription
 import threading
 import time
 
+@interrupter
 def _subscription_thread():
     while True:
-        time.sleep(SUBSCRIPTION_UPDATE_RATE)
+        yield interrupter_sleep(SUBSCRIPTION_UPDATE_RATE)
         subscription.update()
 
 def start_subscription():
     settings.local.sub_active = None
     subscription.update()
-    thread = threading.Thread(target=_subscription_thread)
-    thread.daemon = True
-    thread.start()
+    threading.Thread(target=_subscription_thread).start()

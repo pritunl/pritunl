@@ -90,6 +90,7 @@ def run_timeout_queues():
                 queue_item,
             ))
 
+@interrupter
 def _check_thread():
     while True:
         try:
@@ -97,7 +98,7 @@ def _check_thread():
         except:
             logger.exception('Error in queue check thread.')
 
-        time.sleep(settings.mongo.queue_ttl)
+        yield interrupter_sleep(settings.mongo.queue_ttl)
 
 def run_queue_item(queue_item, thread_limit):
     release = True
@@ -136,8 +137,6 @@ def start_queue():
         thread.daemon = True
         thread.start()
 
-    thread = threading.Thread(target=_check_thread)
-    thread.daemon = True
-    thread.start()
+    threading.Thread(target=_check_thread).start()
 
     listener.add_listener('queue', _on_msg)
