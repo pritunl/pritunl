@@ -2,7 +2,7 @@ from pritunl.server.server import Server
 
 from pritunl.constants import *
 from pritunl.exceptions import *
-from pritunl.descriptors import *
+from pritunl.helpers import *
 
 import uuid
 import os

@@ -2,7 +2,7 @@ from pritunl.server.output import ServerOutput
 
 from pritunl.constants import *
 from pritunl.exceptions import *
-from pritunl.descriptors import *
+from pritunl.helpers import *
 from pritunl import mongo
 from pritunl import event
 

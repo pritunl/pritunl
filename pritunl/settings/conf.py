@@ -2,7 +2,7 @@ from pritunl.settings.group_file import SettingsGroupFile
 
 from pritunl.constants import *
 from pritunl.exceptions import *
-from pritunl.descriptors import *
+from pritunl.helpers import *
 from pritunl import conf_path
 
 class SettingsConf(SettingsGroupFile):

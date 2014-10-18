@@ -1,6 +1,6 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
-from pritunl.descriptors import *
+from pritunl.helpers import *
 from pritunl import pooler
 from pritunl import task
 from pritunl import logger

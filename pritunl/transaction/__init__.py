@@ -2,7 +2,7 @@ from pritunl.transaction.collection import TransactionCollection
 
 from pritunl.constants import *
 from pritunl.exceptions import *
-from pritunl.descriptors import *
+from pritunl.helpers import *
 from pritunl import settings
 from pritunl import mongo
 from pritunl import listener
