@@ -11,6 +11,8 @@ import logging.handlers
 import signal
 import time
 
+_exited = False
+
 try:
     import OpenSSL
     import cherrypy.wsgiserver.ssl_pyopenssl
@@ -51,6 +53,14 @@ def _end_host():
     from pritunl import host
     host.deinit_host()
 
+def handle_exit(signum, frame):
+    global _exited
+    if _exited:
+        return
+    _exited = True
+    set_global_interrupt()
+    signal.alarm(2)
+
 def _run_wsgi():
     logger.info('Starting server...')
 
@@ -70,7 +80,6 @@ def _run_wsgi():
         logger.exception('Server error occurred')
         raise
     finally:
-        signal.signal(signal.SIGINT, signal.SIG_IGN)
         logger.info('Stopping server...')
         _on_exit()
 
@@ -92,7 +101,6 @@ def _run_wsgi_debug():
         logger.exception('Server error occurred')
         raise
     finally:
-        signal.signal(signal.SIGINT, signal.SIG_IGN)
         logger.info('Stopping debug server...')
         _on_exit()
 
@@ -100,6 +108,9 @@ def _on_exit():
     _end_host()
 
 def run_server():
+    signal.signal(signal.SIGINT, handle_exit)
+    signal.signal(signal.SIGTERM, handle_exit)
+
     if settings.conf.debug:
         logger.LogEntry(message='Web debug server started.')
     else:
