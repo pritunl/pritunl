@@ -406,6 +406,15 @@ RANDOM_TWO = (
     'thunder',
 )
 
+CIPHERS = {
+    'none': 'cipher none\n',
+    'bf128': 'cipher BF-CBC\n',
+    'bf256': 'cipher BF-CBC\nkeysize 256\n',
+    'aes128': 'cipher AES-128-CBC\n',
+    'aes192': 'cipher AES-192-CBC\n',
+    'aes256': 'cipher AES-256-CBC\n',
+}
+
 PERF_MODES = {
     PERF_NORMAL: '',
     PERF_THROUGHPUT: 'tun-mtu 9000\nfragment 0\nmssfix 0\n',
