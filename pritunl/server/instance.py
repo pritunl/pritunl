@@ -633,6 +633,14 @@ class ServerInstance(object):
 
             self.publish('started')
 
+            for link_svr_id in self.server.links:
+                if self.server.id > link_svr_id:
+                    instance_link = ServerInstanceLink(
+                        server=self.server,
+                        linked_server=get_server(id=link_svr_id),
+                    )
+                    instance_link.start()
+
             if send_events:
                 event.Event(type=SERVERS_UPDATED)
                 event.Event(type=SERVER_HOSTS_UPDATED,
