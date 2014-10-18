@@ -52,8 +52,8 @@ class ServerInstanceLink(object):
     def collection(cls):
         return mongo.get_collection('servers')
 
-    @cached_static_property
-    def output_label(cls):
+    @cached_property
+    def output_label(self):
         if self.linked_host:
             return settings.local.host.name +  '->' + self.linked_host.name
         else:
@@ -201,7 +201,11 @@ class ServerInstanceLink(object):
             self.process = subprocess.Popen(['openvpn', ovpn_conf_path],
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         except OSError:
-            self.server.output_link.push_output(traceback.format_exc())
+            self.server.output_link.push_output(
+                traceback.format_exc(),
+                label=self.output_label,
+                link_server_id=self.linked_server.id,
+            )
             logger.exception('Failed to start link ovpn process. %r' % {
                 'server_id': self.server.id,
             })
@@ -219,13 +223,11 @@ class ServerInstanceLink(object):
                         continue
 
                 try:
-                    if self.linked_host:
-                        label = settings.local.host.name + \
-                            '->' + self.linked_host.name
-                    else:
-                        label = self.server.name + '<->' + \
-                            self.linked_server.name
-                    self.server.output_link.push_output(line, label=label)
+                    self.server.output_link.push_output(
+                        line,
+                        label=self.output_label,
+                        link_server_id=self.linked_server.id,
+                    )
                 except:
                     logger.exception('Failed to push link vpn output. %r', {
                         'server_id': self.server.id,
