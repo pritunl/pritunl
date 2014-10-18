@@ -74,7 +74,9 @@ class MongoObject(object):
                     fields[id_index] = 'id'
                 except ValueError:
                     pass
-            doc = self.collection.find_one(spec, fields=fields)
+                doc = self.collection.find_one(spec, fields=fields)
+            else:
+                doc = self.collection.find_one(spec)
             if not doc:
                 raise NotFound('Document not found', {
                     'spec': spec,
