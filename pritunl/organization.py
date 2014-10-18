@@ -133,8 +133,8 @@ class Organization(mongo.MongoObject):
             thread.daemon = True
             thread.start()
 
-    def get_user(self, id):
-        return user.get_user(org=self, id=id)
+    def get_user(self, id, fields=None):
+        return user.get_user(org=self, id=id, fields=fields)
 
     def find_user(self, name=None, type=None, resource_id=None):
         return user.find_user(org=self, name=name, type=type,
