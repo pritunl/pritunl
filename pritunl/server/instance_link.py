@@ -52,6 +52,10 @@ class ServerInstanceLink(object):
     def collection(cls):
         return mongo.get_collection('servers')
 
+    @cached_static_property
+    def output_label(cls):
+        self.server.name + '<->' + self.linked_server.name
+
     # TODO merge with instance.generate_iptables_rules
     def generate_iptables_rules(self):
         rules = []
