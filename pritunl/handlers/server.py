@@ -51,12 +51,12 @@ def _dns_server_invalid():
 @auth.session_auth
 def server_get(server_id=None):
     if server_id:
-        return utils.jsonify(server.get_server(server_id).dict())
+        return utils.jsonify(server.get_server_dict(server_id))
 
     servers = []
 
-    for svr in server.iter_servers():
-        servers.append(svr.dict())
+    for svr in server.iter_servers_dict():
+        servers.append(svr)
 
     return utils.jsonify(servers)
 
@@ -361,7 +361,7 @@ def server_put_post(server_id=None):
 @app.app.route('/server/<server_id>', methods=['DELETE'])
 @auth.session_auth
 def server_delete(server_id):
-    svr = server.get_server(id=server_id)
+    svr = server.get_server(id=server_id, fields=['_id', 'organizations'])
     svr.remove()
     logger.LogEntry(message='Deleted server "%s".' % svr.name)
     event.Event(type=SERVERS_UPDATED)
@@ -373,21 +373,21 @@ def server_delete(server_id):
 @auth.session_auth
 def server_org_get(server_id):
     orgs = []
-    svr = server.get_server(id=server_id)
-    for org in svr.iter_orgs():
-        orgs.append({
-            'id': org.id,
-            'server': svr.id,
-            'name': org.name,
-        })
+    svr = server.get_server(id=server_id, fields=['_id', 'organizations'])
+    for org_doc in svr.get_org_fields(fields=['_id', 'name']):
+        org_doc['id'] = str(org_doc.pop('_id'))
+        org_doc['server'] = svr.id
+        orgs.append(org_doc)
+
     return utils.jsonify(orgs)
 
 @app.app.route('/server/<server_id>/organization/<org_id>',
     methods=['PUT'])
 @auth.session_auth
 def server_org_put(server_id, org_id):
-    svr = server.get_server(id=server_id)
-    org = organization.get_org(id=org_id)
+    svr = server.get_server(id=server_id,
+        fields=['id', 'status', 'organizations'])
+    org = organization.get_org(id=org_id, fields=['_id'])
     if svr.status:
         return utils.jsonify({
             'error': SERVER_NOT_OFFLINE,
@@ -408,8 +408,9 @@ def server_org_put(server_id, org_id):
     methods=['DELETE'])
 @auth.session_auth
 def server_org_delete(server_id, org_id):
-    svr = server.get_server(id=server_id)
-    org = organization.get_org(id=org_id)
+    svr = server.get_server(id=server_id,
+        fields=['_id', 'status', 'organizations'])
+    org = organization.get_org(id=org_id, fields=['_id'])
     if svr.status:
         return utils.jsonify({
             'error': SERVER_NOT_OFFLINE,
@@ -426,10 +427,10 @@ def server_org_delete(server_id, org_id):
 @auth.session_auth
 def server_host_get(server_id):
     hosts = []
-    svr = server.get_server(id=server_id)
+    svr = server.get_server(id=server_id, fields=['_id', 'hosts', 'instances'])
     active_hosts = set([x['host_id'] for x in svr.instances])
 
-    for hst in svr.iter_hosts():
+    for hst in svr.iter_hosts(fields=['_id', 'name', 'public_addr']):
         hosts.append({
             'id': hst.id,
             'server': svr.id,
@@ -443,10 +444,10 @@ def server_host_get(server_id):
 @app.app.route('/server/<server_id>/host/<host_id>', methods=['PUT'])
 @auth.session_auth
 def server_host_put(server_id, host_id):
-    svr = server.get_server(id=server_id)
-    hst = host.get_host(id=host_id)
+    svr = server.get_server(id=server_id, fields=['_id', 'hosts'])
+    hst = host.get_host(id=host_id, fields=['_id', 'name', 'public_addr'])
     svr.add_host(hst)
-    svr.commit(svr.changed)
+    svr.commit('hosts')
     event.Event(type=SERVER_HOSTS_UPDATED, resource_id=svr.id)
 
     return utils.jsonify({
@@ -460,17 +461,18 @@ def server_host_put(server_id, host_id):
 @app.app.route('/server/<server_id>/host/<host_id>', methods=['DELETE'])
 @auth.session_auth
 def server_host_delete(server_id, host_id):
-    svr = server.get_server(id=server_id)
-    hst = host.get_host(id=host_id)
+    svr = server.get_server(id=server_id, fields=['_id', 'hosts'])
+    hst = host.get_host(id=host_id, fields=['_id', 'name'])
     svr.remove_host(hst)
-    svr.commit(svr.changed)
+    svr.commit('hosts')
     event.Event(type=SERVER_HOSTS_UPDATED, resource_id=svr.id)
     return utils.jsonify({})
 
 @app.app.route('/server/<server_id>/<operation>', methods=['PUT'])
 @auth.session_auth
 def server_operation_put(server_id, operation):
-    svr = server.get_server(id=server_id)
+    svr = server.get_server(id=server_id, fields=server.dict_fields + \
+        ['hosts', 'organizations'])
 
     if operation == START:
         svr.start()
@@ -489,41 +491,35 @@ def server_operation_put(server_id, operation):
 @app.app.route('/server/<server_id>/output', methods=['GET'])
 @auth.session_auth
 def server_output_get(server_id):
-    svr = server.get_server(id=server_id)
     return utils.jsonify({
-        'id': svr.id,
-        'output': svr.output.get_output(),
+        'id': server_id,
+        'output': server.output_get(server_id),
     })
 
 @app.app.route('/server/<server_id>/output', methods=['DELETE'])
 @auth.session_auth
 def server_output_delete(server_id):
-    svr = server.get_server(id=server_id)
-    svr.output.clear_output()
+    server.output_clear(server_id)
     return utils.jsonify({})
 
 @app.app.route('/server/<server_id>/link_output', methods=['GET'])
 @auth.session_auth
 def server_link_output_get(server_id):
-    svr = server.get_server(id=server_id)
     return utils.jsonify({
-        'id': svr.id,
-        'output': svr.output_link.get_output(),
+        'id': server_id,
+        'output': server.output_link_get(server_id),
     })
 
 @app.app.route('/server/<server_id>/link_output', methods=['DELETE'])
 @auth.session_auth
 def server_link_output_delete(server_id):
-    svr = server.get_server(id=server_id)
-    svr.output_link.clear_output(svr.links.keys())
+    server.output_link_clear(server_id)
     return utils.jsonify({})
 
-@app.app.route('/server/<server_id>/bandwidth/<period>',
-    methods=['GET'])
+@app.app.route('/server/<server_id>/bandwidth/<period>', methods=['GET'])
 @auth.session_auth
 def server_bandwidth_get(server_id, period):
-    svr = server.get_server(id=server_id)
-    return utils.jsonify(svr.bandwidth.get_period(period))
+    return utils.jsonify(server.bandwidth_get(server_id, period))
 
 @app.app.route('/server/<server_id>/tls_verify', methods=['POST'])
 @auth.server_auth
@@ -531,13 +527,14 @@ def server_tls_verify_post(server_id):
     org_id = flask.request.json['org_id']
     user_id = flask.request.json['user_id']
 
-    svr = server.get_server(server_id)
+    svr = server.get_server(server_id,
+        fields=['_id', 'name', 'organizations'])
     if not svr:
         return utils.jsonify({
             'error': SERVER_INVALID,
             'error_msg': SERVER_INVALID_MSG,
         }, 401)
-    org = svr.get_org(org_id)
+    org = svr.get_org(org_id, fields=['_id'])
     if not org:
         logger.LogEntry(message='User failed authentication, ' +
             'invalid organization "%s" on server "%s".' % (org_id, svr.name))
@@ -545,7 +542,7 @@ def server_tls_verify_post(server_id):
             'error': ORG_INVALID,
             'error_msg': ORG_INVALID_MSG,
         }, 401)
-    user = org.get_user(user_id)
+    user = org.get_user(user_id, fields=['_id', 'name', 'disabled'])
     if not user:
         logger.LogEntry(message='User failed authentication, ' +
             'invalid user "%s" on server "%s".' % (user_id, svr.name))
@@ -573,13 +570,14 @@ def server_otp_verify_post(server_id):
     otp_code = flask.request.json['otp_code']
     remote_ip = flask.request.json.get('remote_ip')
 
-    svr = server.get_server(server_id)
+    svr = server.get_server(server_id,
+        fields=['_id', 'name', 'organizations'])
     if not svr:
         return utils.jsonify({
             'error': SERVER_INVALID,
             'error_msg': SERVER_INVALID_MSG,
         }, 401)
-    org = svr.get_org(org_id)
+    org = svr.get_org(org_id, fields=['_id'])
     if not org:
         logger.LogEntry(message='User failed authentication, ' +
             'invalid organization on server "%s".' % svr.name)
@@ -587,7 +585,7 @@ def server_otp_verify_post(server_id):
             'error': ORG_INVALID,
             'error_msg': ORG_INVALID_MSG,
         }, 401)
-    user = org.get_user(user_id)
+    user = org.get_user(user_id, fields=['_id', 'name', 'type' ,'otp_secret'])
     if not user:
         logger.LogEntry(message='User failed authentication, ' +
             'invalid user on server "%s".' % svr.name)
@@ -614,19 +612,20 @@ def server_client_connect_post(server_id):
     org_id = flask.request.json['org_id']
     user_id = flask.request.json['user_id']
 
-    svr = server.get_server(id=server_id)
+    svr = server.get_server(id=server_id,
+        fields=['_id', 'name', 'links', 'organizations'])
     if not svr:
         return utils.jsonify({
             'error': SERVER_INVALID,
             'error_msg': SERVER_INVALID_MSG,
         }, 401)
-    org = svr.get_org(org_id)
+    org = svr.get_org(org_id, fields=['_id'])
     if not org:
         return utils.jsonify({
             'error': ORG_INVALID,
             'error_msg': ORG_INVALID_MSG,
         }, 401)
-    user = org.get_user(user_id)
+    user = org.get_user(user_id, fields=['_id', 'name', 'disabled'])
     if not user:
         return utils.jsonify({
             'error': USER_INVALID,
@@ -638,7 +637,8 @@ def server_client_connect_post(server_id):
     if user.id in svr.links.values():
         for link_svr_id, link_usr_id in svr.links.iteritems():
             if user.id == link_usr_id:
-                link_svr = server.get_server(id=link_svr_id)
+                link_svr = server.get_server(id=link_svr_id,
+                    fields=['_id', 'network', 'local_networks'])
                 client_conf += 'iroute %s %s\n' % utils.parse_network(
                     link_svr.network)
                 for local_network in link_svr.local_networks:
@@ -661,19 +661,19 @@ def server_client_disconnect_post(server_id):
     org_id = flask.request.json['org_id']
     user_id = flask.request.json['user_id']
 
-    svr = server.get_server(id=server_id)
+    svr = server.get_server(id=server_id, fields=['_id', 'organizations'])
     if not svr:
         return utils.jsonify({
             'error': SERVER_INVALID,
             'error_msg': SERVER_INVALID_MSG,
         }, 401)
-    org = svr.get_org(org_id)
+    org = svr.get_org(org_id, fields=['_id'])
     if not org:
         return utils.jsonify({
             'error': ORG_INVALID,
             'error_msg': ORG_INVALID_MSG,
         }, 401)
-    user = org.get_user(user_id)
+    user = org.get_user(user_id, fields=['_id'])
     if not user:
         return utils.jsonify({
             'error': USER_INVALID,
