@@ -1,3 +1,5 @@
+import time
+
 _interrupt = False
 
 class cached_property(object):
@@ -44,6 +46,14 @@ def interrupter_generator(call):
             if value is not None:
                 yield value
     return _wrapped
+
+def interrupter_sleep(length):
+    while True:
+        sleep = min(1, length)
+        time.sleep(sleep)
+        length -= sleep
+        if _interrupt or length <= 0:
+            return
 
 def set_global_interrupt():
     global _interrupt
