@@ -42,7 +42,6 @@ def _host_check_thread():
 
         yield interrupter_sleep(settings.app.host_ttl)
 
-
 @interrupter
 def _keep_alive_thread():
     last_update = None
