@@ -33,9 +33,12 @@ class static_property(object):
 
 def interrupter(call):
     def _wrapped(*args, **kwargs):
-        for _ in call(*args, **kwargs):
-            if _interrupt:
-                return
+        try:
+            for _ in call(*args, **kwargs):
+                if _interrupt:
+                    return
+        except GeneratorExit:
+            pass
     return _wrapped
 
 def interrupter_generator(call):
