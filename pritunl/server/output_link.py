@@ -5,12 +5,31 @@ from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import mongo
 from pritunl import event
+from pritunl import utils
 
 class ServerOutputLink(ServerOutput):
     @cached_static_property
     def collection(cls):
         return mongo.get_collection('servers_output_link')
 
-    def send_event(self):
+    def send_event(self, link_server_id):
         event.Event(type=SERVER_LINK_OUTPUT_UPDATED,
             resource_id=self.server_id)
+        if self.server_id != link_server_id:
+            event.Event(type=SERVER_LINK_OUTPUT_UPDATED,
+                resource_id=link_server_id)
+
+    def push_output(self, output, label, link_server_id):
+        if self.server_id != link_server_id:
+            server_ids = [self.server_id, link_server_id]
+        else:
+            server_ids = [self.server_id]
+
+        self.collection.insert({
+            'server_id': server_ids,
+            'timestamp': utils.now(),
+            'output': '[%s] %s' % (label, output.rstrip('\n')),
+        })
+
+        self.prune_output()
+        self.send_event(link_server_id)
