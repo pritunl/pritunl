@@ -66,6 +66,9 @@ GROUP_MONGO = 'mongo'
 GROUP_FILE = 'file'
 GROUP_LOCAL = 'local'
 
+PERF_NORMAL = 'normal'
+PERF_THROUGHPUT = 'throughput'
+
 SETTINGS_RESERVED = {
     'groups',
     'collection',
