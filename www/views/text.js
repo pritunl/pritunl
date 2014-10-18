@@ -19,7 +19,7 @@ define([
     render: function() {
       this.editor = Ace.edit(this.el);
       this.editor.setTheme('ace/theme/chrome');
-      this.editor.setFontSize(11);
+      this.editor.setFontSize(10);
       this.editor.setReadOnly(true);
       this.editor.setShowPrintMargin(false);
       this.editor.setHighlightActiveLine(false);
