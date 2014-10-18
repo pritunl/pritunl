@@ -515,7 +515,7 @@ def server_link_output_get(server_id):
 @auth.session_auth
 def server_link_output_delete(server_id):
     svr = server.get_server(id=server_id)
-    svr.output_link.clear_output()
+    svr.output_link.clear_output(svr.links.keys())
     return utils.jsonify({})
 
 @app.app.route('/server/<server_id>/bandwidth/<period>',
