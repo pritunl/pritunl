@@ -6,6 +6,7 @@ from pritunl.helpers import *
 from pritunl import settings
 from pritunl import event
 from pritunl import utils
+from pritunl import logger
 
 import datetime
 
@@ -46,3 +47,8 @@ def deinit_host():
         'ping_timestamp': None,
     }})
     event.Event(type=HOSTS_UPDATED)
+
+    if settings.conf.debug:
+        logger.LogEntry(message='Web debug server stopped.')
+    else:
+        logger.LogEntry(message='Web server stopped.')
