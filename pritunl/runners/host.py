@@ -6,9 +6,42 @@ from pritunl import app
 from pritunl import host
 from pritunl import logger
 from pritunl import utils
+from pritunl import mongo
 
 import threading
 import time
+
+@interrupter
+def _host_check_thread():
+    collection = mongo.get_collection('hosts')
+
+    while True:
+        try:
+            ttl_timestamp = {'$lt': utils.now() +
+                datetime.timedelta(seconds=settings.app.host_ttl)}
+
+            cursor = collection.find({
+                'ping_timestamp': ttl_timestamp,
+            }, {
+                '_id': True,
+                'ping_timestamp': True,
+            })
+
+            for doc in cursor:
+                collection.update({
+                    '_id': doc['_id'],
+                    'ping_timestamp': ttl_timestamp,
+                }, {'$set': {
+                    'status': OFFLINE,
+                    'ping_timestamp': None,
+                }})
+        except GeneratorExit:
+            raise
+        except:
+            logger.exception('Error checking host status.')
+
+        yield interrupter_sleep(settings.app.host_ttl)
+
 
 @interrupter
 def _keep_alive_thread():
@@ -53,4 +86,5 @@ def _keep_alive_thread():
             })
 
 def start_host():
+    threading.Thread(target=_host_check_thread).start()
     threading.Thread(target=_keep_alive_thread).start()
