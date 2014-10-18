@@ -352,10 +352,10 @@ def new_org(type=ORG_DEFAULT, block=True, **kwargs):
 
         return org
 
-def get_org(id):
-    return Organization(id=id)
+def get_org(id, fields=None):
+    return Organization(id=id, fields=fields)
 
-def iter_orgs(type=ORG_DEFAULT):
+def iter_orgs(spec=None, type=ORG_DEFAULT):
     spec = {}
     if type is not None:
         spec['type'] = type
