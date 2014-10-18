@@ -54,7 +54,10 @@ class ServerInstanceLink(object):
 
     @cached_static_property
     def output_label(cls):
-        self.server.name + '<->' + self.linked_server.name
+        if self.linked_host:
+            return settings.local.host.name +  '->' + self.linked_host.name
+        else:
+            return self.server.name + '<->' + self.linked_server.name
 
     # TODO merge with instance.generate_iptables_rules
     def generate_iptables_rules(self):
