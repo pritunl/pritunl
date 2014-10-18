@@ -32,6 +32,7 @@ import bson
 import pymongo
 import random
 import collections
+import bson
 
 _resource_lock = collections.defaultdict(threading.Lock)
 
@@ -122,6 +123,10 @@ class Server(mongo.MongoObject):
     @cached_static_property
     def user_collection(cls):
         return mongo.get_collection('users')
+
+    @cached_static_property
+    def org_collection(cls):
+        return mongo.get_collection('organizations')
 
     @cached_static_property
     def host_collection(cls):
@@ -333,9 +338,9 @@ class Server(mongo.MongoObject):
         self.generate_ca_cert()
         self._orgs_changed = True
 
-    def iter_orgs(self):
+    def iter_orgs(self, fields=None):
         for org_id in self.organizations:
-            org = organization.get_org(id=org_id)
+            org = organization.get_org(id=org_id, fields=fields)
             if org:
                 yield org
             else:
@@ -348,9 +353,37 @@ class Server(mongo.MongoObject):
                 self.commit('organizations')
                 event.Event(type=SERVER_ORGS_UPDATED, resource_id=self.id)
 
-    def get_org(self, org_id):
+    def get_org(self, org_id, fields=None):
         if org_id in self.organizations:
-            return organization.get_org(id=org_id)
+            return organization.get_org(id=org_id, fields=fields)
+
+    def get_org_fields(self, fields=None):
+        project = {}
+        push = {}
+
+        for field in fields:
+            if field == 'id':
+                project['_id'] = True
+                push[field] = '$_id'
+            else:
+                project[field] = True
+                push[field] = '$' + field
+
+        docs = self.org_collection.aggregate([
+            {'$match': {
+                '_id': {'$in': [bson.ObjectId(x) for x in self.organizations]},
+            }},
+            {'$project': project},
+            {'$group': {
+                '_id': None,
+                'orgs': {'$push': push},
+            }},
+        ])['result']
+
+        if docs:
+            docs = docs[0]['orgs']
+
+        return docs
 
     def add_host(self, host_id):
         if not isinstance(host_id, basestring):
