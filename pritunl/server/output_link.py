@@ -12,12 +12,19 @@ class ServerOutputLink(ServerOutput):
     def collection(cls):
         return mongo.get_collection('servers_output_link')
 
-    def send_event(self, link_server_id):
+    def send_event(self, link_server_ids):
         event.Event(type=SERVER_LINK_OUTPUT_UPDATED,
             resource_id=self.server_id)
-        if self.server_id != link_server_id:
-            event.Event(type=SERVER_LINK_OUTPUT_UPDATED,
-                resource_id=link_server_id)
+        for link_server_id in link_server_ids:
+            if self.server_id != link_server_id:
+                event.Event(type=SERVER_LINK_OUTPUT_UPDATED,
+                    resource_id=link_server_id)
+
+    def clear_output(self, link_server_ids):
+        self.collection.remove({
+            'server_id': self.server_id,
+        })
+        self.send_event(link_server_ids)
 
     def push_output(self, output, label, link_server_id):
         if self.server_id != link_server_id:
@@ -32,4 +39,4 @@ class ServerOutputLink(ServerOutput):
         })
 
         self.prune_output()
-        self.send_event(link_server_id)
+        self.send_event((link_server_id,))
