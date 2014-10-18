@@ -514,23 +514,29 @@ class ServerInstance(object):
                     'server_id': self.server.id,
                 })
 
+    @interrupter
     def _sub_thread(self, cursor_id):
-        for msg in self.subscribe(cursor_id=cursor_id):
-            if self.interrupt:
-                return
-            message = msg['message']
+        try:
+            for msg in self.subscribe(cursor_id=cursor_id):
+                yield
 
-            try:
-                if message == 'stop':
-                    if self.stop_process():
+                if self.interrupt:
+                    return
+                message = msg['message']
+
+                try:
+                    if message == 'stop':
+                        if self.stop_process():
+                            self.clean_exit = True
+                    elif message == 'force_stop':
                         self.clean_exit = True
-                elif message == 'force_stop':
-                    self.clean_exit = True
-                    for _ in xrange(10):
-                        self.process.send_signal(signal.SIGKILL)
-                        time.sleep(0.01)
-            except OSError:
-                pass
+                        for _ in xrange(10):
+                            self.process.send_signal(signal.SIGKILL)
+                            time.sleep(0.01)
+                except OSError:
+                    pass
+        finally:
+            self.stop_process()
 
     def _status_thread(self):
         while not self.interrupt:
