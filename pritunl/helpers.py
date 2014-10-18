@@ -58,6 +58,9 @@ def interrupter_sleep(length):
         if _interrupt or length <= 0:
             return
 
+def check_global_interrupt():
+    return _interrupt
+
 def set_global_interrupt():
     global _interrupt
     _interrupt = True
