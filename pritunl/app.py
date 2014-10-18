@@ -49,15 +49,12 @@ def after_request(response):
     response.headers.add('Write-Count', flask.g.write_count)
     return response
 
-def _end_host():
-    from pritunl import host
-    host.deinit_host()
-
 def handle_exit(signum, frame):
     global _exited
     if _exited:
         return
     _exited = True
+    logger.info('Stopping server...')
     set_global_interrupt()
     signal.alarm(2)
 
@@ -80,7 +77,6 @@ def _run_wsgi():
         logger.exception('Server error occurred')
         raise
     finally:
-        logger.info('Stopping server...')
         _on_exit()
 
 def _run_wsgi_debug():
@@ -100,12 +96,6 @@ def _run_wsgi_debug():
     except:
         logger.exception('Server error occurred')
         raise
-    finally:
-        logger.info('Stopping debug server...')
-        _on_exit()
-
-def _on_exit():
-    _end_host()
 
 def run_server():
     signal.signal(signal.SIGINT, handle_exit)
@@ -115,13 +105,8 @@ def run_server():
         logger.LogEntry(message='Web debug server started.')
     else:
         logger.LogEntry(message='Web server started.')
-    try:
-        if settings.conf.debug:
-            _run_wsgi_debug()
-        else:
-            _run_wsgi()
-    finally:
-        if settings.conf.debug:
-            logger.LogEntry(message='Web debug server stopped.')
-        else:
-            logger.LogEntry(message='Web server stopped.')
+
+    if settings.conf.debug:
+        _run_wsgi_debug()
+    else:
+        _run_wsgi()
