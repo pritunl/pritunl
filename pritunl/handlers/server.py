@@ -595,7 +595,8 @@ def server_otp_verify_post(server_id):
             'error': USER_INVALID,
             'error_msg': USER_INVALID_MSG,
         }, 401)
-    if not user.verify_otp_code(otp_code, remote_ip):
+    if user.type == CERT_CLIENT and \
+            not user.verify_otp_code(otp_code, remote_ip):
         logger.LogEntry(message='User failed two-step authentication "%s".' % (
             user.name))
         return utils.jsonify({
