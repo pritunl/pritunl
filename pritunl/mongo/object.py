@@ -12,7 +12,7 @@ class MongoObject(object):
     fields_default = {}
     fields_required = {}
 
-    def __new__(cls, id=None, doc=None, spec=None, **kwargs):
+    def __new__(cls, id=None, doc=None, spec=None, fields=fields, **kwargs):
         mongo_object = object.__new__(cls)
         mongo_object.changed = set()
         mongo_object.unseted = set()
@@ -21,7 +21,7 @@ class MongoObject(object):
         if id or doc or spec:
             mongo_object.exists = True
             try:
-                mongo_object.load(doc=doc, spec=spec)
+                mongo_object.load(doc=doc, spec=spec, fields=fields)
             except NotFound:
                 return None
         else:
@@ -60,7 +60,7 @@ class MongoObject(object):
     def collection(cls):
         raise TypeError('Database collection must be specified')
 
-    def load(self, doc=None, spec=None):
+    def load(self, doc=None, spec=None, fields=None):
         if doc and spec:
             raise TypeError('Doc and spec both defined')
         if not doc:
@@ -68,7 +68,13 @@ class MongoObject(object):
                 spec = {
                     '_id': self._id,
                 }
-            doc = self.collection.find_one(spec)
+            if fields:
+                try:
+                    id_index = fields.index('_id')
+                    fields[id_index] = 'id'
+                except ValueError:
+                    pass
+            doc = self.collection.find_one(spec, fields=fields)
             if not doc:
                 raise NotFound('Document not found', {
                     'spec': spec,
