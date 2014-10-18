@@ -201,27 +201,32 @@ class ServerInstanceLink(object):
             raise
 
     def openvpn_watch(self):
-        while True:
-            line = self.process.stdout.readline()
-            if not line:
-                if self.process.poll() is not None:
-                    break
-                else:
-                    time.sleep(0.05)
-                    continue
+        try:
+            while True:
+                line = self.process.stdout.readline()
+                if not line:
+                    if self.process.poll() is not None:
+                        break
+                    else:
+                        time.sleep(0.05)
+                        continue
 
-            try:
-                if self.linked_host:
-                    label = settings.local.host.name + \
-                        '->' + self.linked_host.name
-                else:
-                    label = self.server.name + '<->' + \
-                        self.linked_server.name
-                self.server.output_link.push_output(line, label=label)
-            except:
-                logger.exception('Failed to push link vpn output. %r', {
-                    'server_id': self.server.id,
-                })
+                try:
+                    if self.linked_host:
+                        label = settings.local.host.name + \
+                            '->' + self.linked_host.name
+                    else:
+                        label = self.server.name + '<->' + \
+                            self.linked_server.name
+                    self.server.output_link.push_output(line, label=label)
+                except:
+                    logger.exception('Failed to push link vpn output. %r', {
+                        'server_id': self.server.id,
+                    })
+        finally:
+            if self.interface:
+                utils.tun_interface_release(self.interface)
+                self.interface = None
 
     def stop_watch(self):
         try:
