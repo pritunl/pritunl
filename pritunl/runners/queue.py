@@ -6,6 +6,8 @@ from pritunl import logger
 from pritunl import mongo
 from pritunl import listener
 from pritunl import utils
+from pritunl import queue
+from pritunl import queues
 
 from Queue import PriorityQueue
 import pymongo
@@ -62,8 +64,6 @@ def add_queue_item(queue_item):
                 thread_limits[running_queue.cpu_type].release()
 
 def _on_msg(msg):
-    from pritunl import queue
-
     try:
         if msg['message'][0] == PENDING:
             add_queue_item(queue.get(doc=msg['queue_doc']))
@@ -71,8 +71,6 @@ def _on_msg(msg):
         pass
 
 def run_timeout_queues():
-    from pritunl import queue
-
     cur_timestamp = utils.now()
     spec = {
         'ttl_timestamp': {'$lt': cur_timestamp},
@@ -129,8 +127,6 @@ def _runner_thread(cpu_priority, thread_limit, runner_queue):
         thread.start()
 
 def start_queue():
-    from pritunl import queues
-
     for cpu_priority in (LOW_CPU, NORMAL_CPU, HIGH_CPU):
         thread = threading.Thread(target=_runner_thread, args=(
             cpu_priority,
