@@ -7,13 +7,15 @@ define([
   'views/serverOrgsList',
   'views/serverHostsList',
   'views/serverOutput',
+  'views/serverOutputLink',
   'views/serverBandwidth',
   'views/modalServerSettings',
   'views/modalDeleteServer',
   'text!templates/serversListItem.html'
 ], function($, _, Backbone, StatusModel, AlertView, ServerOrgsListView,
-    ServerHostsListView, ServerOutputView, ServerBandwidthView,
-    ModalServerSettingsView, ModalDeleteServerView, serversListItemTemplate) {
+    ServerHostsListView, ServerOutputView, ServerOutputLinkView,
+    ServerBandwidthView, ModalServerSettingsView, ModalDeleteServerView,
+    serversListItemTemplate) {
   'use strict';
   var ServersListItemView = Backbone.View.extend({
     className: 'server',
@@ -23,8 +25,10 @@ define([
       'click .server-del': 'onDelete',
       'click .server-restart, .server-start, .server-stop': 'onOperation',
       'click .server-output-btn': 'onServerOutput',
+      'click .server-output-link-btn': 'onServerOutputLink',
       'click .server-graph-btn': 'onServerGraph',
       'click .server-output-clear': 'onClearOutput',
+      'click .server-output-link-clear': 'onClearOutputLink',
       'click .server-graph-period': 'onServerGraphPeriod',
       'click .toggle-hidden': 'onToggleHidden'
     },
@@ -44,6 +48,10 @@ define([
         server: this.model.get('id')
       });
       this.addView(this.serverOutputView);
+      this.serverOutputLinkView = new ServerOutputLinkView({
+        server: this.model.get('id')
+      });
+      this.addView(this.serverOutputLinkView);
       this.serverBandwidthView = new ServerBandwidthView({
         server: this.model.get('id')
       });
@@ -68,8 +76,13 @@ define([
       this.$('.server-title a, .server-output-clear').tooltip({
         container: this.el
       });
+      this.$('.server-title a, .server-output-link-clear').tooltip({
+        container: this.el
+      });
       this.$('.server-output-viewer').append(
         this.serverOutputView.render().el);
+      this.$('.server-output-link-viewer').append(
+        this.serverOutputLinkView.render().el);
       this.$('.server-graph-viewer').append(
         this.serverBandwidthView.render().el);
       this.$el.append(this.serverOrgsListView.render().el);
@@ -275,6 +288,20 @@ define([
         }.bind(this)
       });
     },
+    onClearOutputLink: function() {
+      this.serverOutputLinkView.model.destroy({
+        error: function() {
+          var alertView = new AlertView({
+            type: 'danger',
+            message: 'Failed to clear server link output, server error ' +
+              'occurred.',
+            dismissable: true
+          });
+          $('.alerts-container').append(alertView.render().el);
+          this.addView(alertView);
+        }.bind(this)
+      });
+    },
     onServerGraphPeriod: function(evt) {
       this.$('.server-graph-period').removeClass('btn-primary');
       this.$('.server-graph-period').addClass('btn-default');
@@ -300,21 +327,43 @@ define([
     onServerOutput: function() {
       this.$('.server-output-btn').removeClass('btn-default');
       this.$('.server-output-btn').addClass('btn-primary');
+      this.$('.server-output-link-btn').removeClass('btn-primary');
+      this.$('.server-output-link-btn').addClass('btn-default');
       this.$('.server-graph-btn').removeClass('btn-primary');
       this.$('.server-graph-btn').addClass('btn-default');
       this.$('.server-graph-period').hide();
+      this.$('.server-output-link-clear').hide();
       this.$('.server-output-clear').show();
       this.serverBandwidthView.setState(false);
+      this.serverOutputLinkView.setState(false);
       this.serverOutputView.setState(true);
+    },
+    onServerOutputLink: function() {
+      this.$('.server-output-btn').removeClass('btn-primary');
+      this.$('.server-output-btn').addClass('btn-default');
+      this.$('.server-output-link-btn').removeClass('btn-default');
+      this.$('.server-output-link-btn').addClass('btn-primary');
+      this.$('.server-graph-btn').removeClass('btn-primary');
+      this.$('.server-graph-btn').addClass('btn-default');
+      this.$('.server-graph-period').hide();
+      this.$('.server-output-clear').hide();
+      this.$('.server-output-link-clear').show();
+      this.serverBandwidthView.setState(false);
+      this.serverOutputView.setState(false);
+      this.serverOutputLinkView.setState(true);
     },
     onServerGraph: function() {
       this.$('.server-output-btn').removeClass('btn-primary');
       this.$('.server-output-btn').addClass('btn-default');
+      this.$('.server-output-link-btn').removeClass('btn-primary');
+      this.$('.server-output-link-btn').addClass('btn-default');
       this.$('.server-graph-btn').removeClass('btn-default');
       this.$('.server-graph-btn').addClass('btn-primary');
       this.$('.server-output-clear').hide();
+      this.$('.server-output-link-clear').hide();
       this.$('.server-graph-period').show();
       this.serverOutputView.setState(false);
+      this.serverOutputLinkView.setState(false);
       this.serverBandwidthView.setState(true);
     },
     _updateTime: function() {
