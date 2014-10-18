@@ -228,9 +228,13 @@ class ServerInstanceLink(object):
                 utils.tun_interface_release(self.interface)
                 self.interface = None
 
+    @interrupter
     def stop_watch(self):
         try:
-            self.stop_event.wait()
+            while True:
+                if self.stop_event.wait(1):
+                    return
+                yield
         finally:
             try:
                 if not utils.stop_process(self.process):
