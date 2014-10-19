@@ -36,6 +36,26 @@ import bson
 
 _resource_lock = collections.defaultdict(threading.Lock)
 
+dict_fields = [
+    'id',
+    'name',
+    'status',
+    'uptime',
+    'users_online',
+    'user_count',
+    'network',
+    'port',
+    'protocol',
+    'dh_param_bits',
+    'mode',
+    'local_networks',
+    'dns_servers',
+    'search_domain',
+    'otp_auth',
+    'lzo_compression',
+    'debug',
+]
+
 class Server(mongo.MongoObject):
     fields = {
         'name',
