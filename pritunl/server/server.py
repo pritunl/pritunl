@@ -342,19 +342,11 @@ class Server(mongo.MongoObject):
         self._orgs_changed = True
 
     def iter_orgs(self, fields=None):
-        for org_id in self.organizations:
-            org = organization.get_org(id=org_id, fields=fields)
-            if org:
-                yield org
-            else:
-                logger.error('Removing non-existent organization ' +
-                    'from server. %r' % {
-                        'server_id': self.id,
-                        'org_id': org_id,
-                    })
-                self.remove_org(org_id)
-                self.commit('organizations')
-                event.Event(type=SERVER_ORGS_UPDATED, resource_id=self.id)
+        spec = {
+            '_id': {'$in': [bson.ObjectId(x) for x in self.organizations]}
+        }
+        for org in organization.iter_orgs(spec=spec):
+            yield org
 
     def get_org(self, org_id, fields=None):
         if org_id in self.organizations:
