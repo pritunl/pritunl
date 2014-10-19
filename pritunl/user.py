@@ -498,8 +498,8 @@ def reserve_pooled_user(org, name=None, email=None,
     if doc:
         return User(org=org, doc=doc)
 
-def get_user(org, id):
-    return User(org=org, id=id)
+def get_user(org, id, fields=None):
+    return User(org=org, id=id, fields=fields)
 
 def find_user(org, name=None, type=None, resource_id=None):
     spec = {
