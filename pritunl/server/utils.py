@@ -29,6 +29,9 @@ def new_server(**kwargs):
 def get_server(id, fields=None):
     return Server(id=id, fields=fields)
 
+def get_server_dict(id):
+    return Server(id=id, fields=dict_fields).dict()
+
 def get_used_resources(ignore_server_id):
     used_resources = Server.collection.aggregate([
         {'$match': {
