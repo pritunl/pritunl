@@ -411,20 +411,12 @@ class Server(mongo.MongoObject):
             pass
         self.changed.add('hosts')
 
-    def iter_hosts(self):
-        for host_id in self.hosts:
-            hst = host.get_host(id=host_id)
-            if hst:
-                yield hst
-            else:
-                logger.error('Removing non-existent host ' +
-                    'from server. %r' % {
-                        'server_id': self.id,
-                        'host_id': host_id,
-                    })
-                self.remove_host(host_id)
-                self.commit('hosts')
-                event.Event(type=SERVER_HOSTS_UPDATED, resource_id=self.id)
+    def iter_hosts(self, fields=None):
+        spec = {
+            '_id': {'$in': self.hosts}
+        }
+        for hst in host.iter_hosts(spec=spec):
+            yield hst
 
     def get_host(self, host_id):
         if host_id in self.hosts:
