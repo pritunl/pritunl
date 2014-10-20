@@ -558,12 +558,18 @@ header.blur {
 
 .users-list-container,
 .server-orgs-list,
-.server-hosts-list {
+.server-hosts-list,
+.server-links-list {
   margin: 0 13px 13px 13px;
 }
 
-.server-hosts-list {
+.server-hosts-list,
+.server-links-list {
   border-top: 1px solid @light3-fg;
+}
+
+.server-links-list.no-links {
+  border-top: none;
 }
 
 .orgs-list-container .no-orgs,
@@ -598,6 +604,7 @@ header.blur {
 .server-orgs-list .org,
 .server-orgs-list .no-orgs,
 .server-hosts-list .host,
+.server-links-list .link,
 .server-hosts-list .no-hosts {
   height: 40px;
   background: @white-fg;
@@ -641,7 +648,8 @@ header.blur {
 
 .users-list .user .name-container,
 .server-orgs-list .org .name-container,
-.server-hosts-list .host .name-container {
+.server-hosts-list .host .name-container,
+.server-links-list .link .name-container {
   float: left;
   height: auto;
   padding-top: 0;
@@ -651,18 +659,17 @@ header.blur {
 }
 
 .server-orgs-list .org .name-container,
-.server-hosts-list .host .name-container {
+.server-hosts-list .host .name-container,
+.server-links-list .link .name-container {
   border-left: none;
 }
 
 .server-hosts-list .host .host-online,
-.server-hosts-list .host .host-offline {
+.server-hosts-list .host .host-offline,
+.server-links-list .link .link-online,
+.server-links-list .link .link-offline {
   padding: 5px 12px;
   margin-right: 4px;
-}
-
-.server-hosts-list .host .host-offline {
-  display: none;
 }
 
 .users-list .user .name-container {
@@ -702,13 +709,15 @@ header.blur {
 }
 
 .server-orgs-list .org .name-container,
-.server-hosts-list .org .name-container {
+.server-hosts-list .host .name-container,
+.server-links-list .link .name-container {
   border-left: 0 none;
 }
 
 .users-list .user .name-container .name-icon,
 .server-orgs-list .org .name-container .name-icon,
-.server-hosts-list .host .name-container .name-icon {
+.server-hosts-list .host .name-container .name-icon,
+.server-links-list .link .name-container .name-icon {
   top: 3px;
   margin-top: 0;
   margin-right: 6px;
@@ -717,7 +726,8 @@ header.blur {
   vertical-align: text-top;
 }
 
-.server-hosts-list .host .name-container .name-icon {
+.server-hosts-list .host .name-container .name-icon,
+.server-links-list .link .name-container .name-icon {
   top: 4px;
 }
 
@@ -743,7 +753,8 @@ header.blur {
 .users-list .user .name-container .user-name,
 .server-orgs-list .org .org-name,
 .server-hosts-list .host .host-name,
-.server-hosts-list .host .host-public-address {
+.server-hosts-list .host .host-public-address,
+.server-links-list .link .link-name {
   font-size: 18px;
   cursor: pointer;
   vertical-align: text-top;
@@ -754,7 +765,8 @@ header.blur {
 .servers-list .server .server-title .server-id,
 .hosts-list .host .host-title .host-id,
 .servers-list .server .org .org-id,
-.servers-list .server .host .host-id {
+.servers-list .server .host .host-id,
+.servers-list .server .link .link-id {
   position: relative;
   color: @dark-fg;
   font-size: 10px;
@@ -762,7 +774,8 @@ header.blur {
 }
 
 .servers-list .server .org .org-id,
-.servers-list .server .host .host-id {
+.servers-list .server .host .host-id,
+.servers-list .server .link .link-id {
   top: 4px;
 }
 
@@ -787,7 +800,8 @@ header.blur {
 
 .server-orgs-list .org .org-name,
 .server-hosts-list .host .host-name,
-.server-hosts-list .host .host-public-address {
+.server-hosts-list .host .host-public-address,
+.server-links-list .link .link-name {
   color: @blue-fg;
   cursor: default;
 }
@@ -824,7 +838,8 @@ header.blur {
 
 .users-list .right-container,
 .server-orgs-list .org .button-container,
-.server-hosts-list .host .button-container {
+.server-hosts-list .host .button-container,
+.server-links-list .link .button-container {
   float: right;
   display: inline-block;
   margin-top: 5px;
@@ -843,7 +858,8 @@ header.blur {
 }
 
 .server-orgs-list .org .button-container,
-.server-hosts-list .host .button-container {
+.server-hosts-list .host .button-container,
+.server-links-list .link .button-container {
   border-left: 0 none;
 }
 
