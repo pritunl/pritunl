@@ -6,6 +6,7 @@ define([
   'views/alert',
   'views/serverOrgsList',
   'views/serverHostsList',
+  'views/serverLinksList',
   'views/serverOutput',
   'views/serverOutputLink',
   'views/serverBandwidth',
@@ -13,9 +14,9 @@ define([
   'views/modalDeleteServer',
   'text!templates/serversListItem.html'
 ], function($, _, Backbone, StatusModel, AlertView, ServerOrgsListView,
-    ServerHostsListView, ServerOutputView, ServerOutputLinkView,
-    ServerBandwidthView, ModalServerSettingsView, ModalDeleteServerView,
-    serversListItemTemplate) {
+    ServerHostsListView, ServerLinksListView, ServerOutputView,
+    ServerOutputLinkView, ServerBandwidthView, ModalServerSettingsView,
+    ModalDeleteServerView, serversListItemTemplate) {
   'use strict';
   var ServersListItemView = Backbone.View.extend({
     className: 'server',
@@ -34,28 +35,40 @@ define([
     },
     initialize: function() {
       this.statusModel = new StatusModel();
+
       this.serverOrgsListView = new ServerOrgsListView({
         server: this.model,
         serverView: this
       });
       this.addView(this.serverOrgsListView);
+
       this.serverHostsListView = new ServerHostsListView({
         server: this.model,
         serverView: this
       });
       this.addView(this.serverHostsListView);
+
+      this.serverLinksListView = new ServerLinksListView({
+        server: this.model,
+        serverView: this
+      });
+      this.addView(this.serverLinksListView);
+
       this.serverOutputView = new ServerOutputView({
         server: this.model.get('id')
       });
       this.addView(this.serverOutputView);
+
       this.serverOutputLinkView = new ServerOutputLinkView({
         server: this.model.get('id')
       });
       this.addView(this.serverOutputLinkView);
+
       this.serverBandwidthView = new ServerBandwidthView({
         server: this.model.get('id')
       });
       this.addView(this.serverBandwidthView);
+
       setTimeout(function() {
         this.uptimer = setInterval((this._updateTime).bind(this), 1000);
       }.bind(this), 1000);
@@ -87,6 +100,7 @@ define([
         this.serverBandwidthView.render().el);
       this.$el.append(this.serverOrgsListView.render().el);
       this.$el.append(this.serverHostsListView.render().el);
+      this.$el.append(this.serverLinksListView.render().el);
       return this;
     },
     update: function() {
