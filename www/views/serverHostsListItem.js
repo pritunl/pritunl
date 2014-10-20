@@ -23,15 +23,18 @@ define([
     },
     update: function() {
       this.$('.host-name').text(this.model.get('name'));
-      this.$('.host-public-address').text(
-        '(' + this.model.get('public_address') + ')');
+      this.$('.host-address').text('(' + this.model.get('address') + ')');
       if (this.model.get('status') === 'online') {
-        this.$('.host-offline').addClass('host-online');
-        this.$('.host-offline').removeClass('host-offline');
+        this.$('.host-offline').hide();
+        this.$('.host-online').show();
+      }
+      else if (this.model.get('status') === 'offline') {
+        this.$('.host-online').hide();
+        this.$('.host-offline').show();
       }
       else {
-        this.$('.host-online').addClass('host-offline');
-        this.$('.host-online').removeClass('host-online');
+        this.$('.host-online').hide();
+        this.$('.host-offline').hide();
       }
     },
     onDetach: function() {
