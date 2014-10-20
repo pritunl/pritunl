@@ -463,7 +463,7 @@ def server_host_put(server_id, host_id):
         'server': svr.id,
         'status': OFFLINE,
         'name': hst.name,
-        'public_address': hst.public_addr,
+        'address': hst.public_addr,
     })
 
 @app.app.route('/server/<server_id>/host/<host_id>', methods=['DELETE'])
