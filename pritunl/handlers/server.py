@@ -15,6 +15,7 @@ from pritunl import auth
 import flask
 import re
 import random
+import bson
 
 def _network_invalid():
     return utils.jsonify({
@@ -466,6 +467,64 @@ def server_host_delete(server_id, host_id):
     svr.remove_host(hst)
     svr.commit('hosts')
     event.Event(type=SERVER_HOSTS_UPDATED, resource_id=svr.id)
+    return utils.jsonify({})
+
+@app.app.route('/server/<server_id>/link', methods=['GET'])
+@auth.session_auth
+def server_link_get(server_id):
+    links = []
+    svr = server.get_server(id=server_id, fields=['_id', 'status', 'links',
+        'replica_count', 'instances'])
+    hosts_offline = svr.replica_count - len(svr.instances) > 0
+
+    spec = {
+        '_id': {'$in': [bson.ObjectId(x) for x in svr.links]},
+    }
+    for link_svr in server.iter_servers(spec=spec, fields=[
+            '_id', 'status', 'name', 'replica_count', 'instances']):
+        link_hosts_offline = link_svr.replica_count - len(
+            link_svr.instances) > 0
+        if svr.status:
+            if hosts_offline or link_hosts_offline:
+                status = OFFLINE
+            elif link_svr.status:
+                status = ONLINE
+            else:
+                status = OFFLINE
+        else:
+            status = None
+        links.append({
+            'id': link_svr.id,
+            'server': svr.id,
+            'status': status,
+            'name': link_svr.name,
+            'address': None,
+        })
+
+    return utils.jsonify(links)
+
+@app.app.route('/server/<server_id>/link/<link_server_id>', methods=['PUT'])
+@auth.session_auth
+def server_link_put(server_id, link_server_id):
+    try:
+        server.link_servers(server_id, link_server_id)
+    except ServerLinkOnlineError:
+        return utils.jsonify({
+            'error': SERVER_NOT_OFFLINE,
+            'error_msg': SERVER_NOT_OFFLINE_LINK_SERVER_MSG,
+        }, 400)
+    return utils.jsonify({})
+
+@app.app.route('/server/<server_id>/link/<link_server_id>', methods=['DELETE'])
+@auth.session_auth
+def server_link_delete(server_id, link_server_id):
+    try:
+        server.unlink_servers(server_id, link_server_id)
+    except ServerLinkOnlineError:
+        return utils.jsonify({
+            'error': SERVER_NOT_OFFLINE,
+            'error_msg': SERVER_NOT_OFFLINE_UNLINK_SERVER_MSG,
+        }, 400)
     return utils.jsonify({})
 
 @app.app.route('/server/<server_id>/<operation>', methods=['PUT'])
