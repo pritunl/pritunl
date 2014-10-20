@@ -8,6 +8,9 @@ from pritunl.server.server import Server, dict_fields
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
+from pritunl import utils
+from pritunl import transaction
+from pritunl import mongo
 
 import uuid
 import os
@@ -65,10 +68,11 @@ def get_used_resources(ignore_server_id):
 
     return {key: set(val) for key, val in used_resources.items()}
 
-def iter_servers(fields=None):
+def iter_servers(spec=None, fields=None):
     if fields:
         fields = {key: True for key in fields}
-    for doc in Server.collection.find({}, fields).sort('name'):
+
+    for doc in Server.collection.find(spec or {}, fields).sort('name'):
         yield Server(doc=doc)
 
 def iter_servers_dict():
