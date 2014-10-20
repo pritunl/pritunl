@@ -14,12 +14,10 @@ def get_host(id):
     return Host(id=id)
 
 def iter_hosts(spec=None, fields=None):
-    spec = spec or {}
-
     if fields:
         fields = {key: True for key in fields}
 
-    for doc in Host.collection.find(spec, fields).sort('name'):
+    for doc in Host.collection.find(spec or {}, fields).sort('name'):
         yield Host(doc=doc)
 
 def init_host():
