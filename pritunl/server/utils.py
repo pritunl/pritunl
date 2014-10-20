@@ -136,3 +136,38 @@ def link_servers(server_id, link_server_id):
     }})
 
     tran.commit()
+
+def unlink_servers(server_id, link_server_id):
+    server_obj_id = bson.ObjectId(server_id)
+    link_server_obj_id = bson.ObjectId(link_server_id)
+    collection = mongo.get_collection('servers')
+
+    count = 0
+    spec = {
+        '_id': {'$in': [server_obj_id, link_server_obj_id]},
+    }
+    project = {
+        '_id': True,
+        'status': True,
+    }
+
+    for doc in collection.find(spec, project):
+        if doc['status']:
+            raise ServerLinkOnlineError('Server must be offline to unlink')
+
+    tran = transaction.Transaction()
+    collection = tran.collection('servers')
+
+    collection.update({
+        '_id': server_obj_id,
+    }, {'$unset': {
+        'links.%s' % (utils.filter_id(link_server_id)): '',
+    }})
+
+    collection.update({
+        '_id': link_server_obj_id,
+    }, {'$unset': {
+        'links.%s' % (utils.filter_id(server_id)): '',
+    }})
+
+    tran.commit()
