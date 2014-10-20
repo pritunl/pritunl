@@ -9,7 +9,7 @@ define([
       'id': null,
       'server': null,
       'name': null,
-      'public_address': null
+      'address': null
     },
     url: function() {
       var url = '/server/' + this.get('server') + '/host';
