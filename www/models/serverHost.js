@@ -8,7 +8,8 @@ define([
     defaults: {
       'id': null,
       'server': null,
-      'name': null
+      'name': null,
+      'public_address': null
     },
     url: function() {
       var url = '/server/' + this.get('server') + '/host';
