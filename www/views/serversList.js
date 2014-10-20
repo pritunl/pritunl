@@ -12,11 +12,12 @@ define([
   'views/modalAddServer',
   'views/modalAttachOrg',
   'views/modalAttachHost',
+  'views/modalAttachLink',
   'text!templates/serversList.html'
 ], function($, _, Backbone, StatusModel, ServerCollection, OrgCollection,
     HostCollection, ListView, AlertView, ServersListItemView,
     ModalAddServerView, ModalAttachOrgView, ModalAttachHostView,
-    serversListTemplate) {
+    ModalAttachLinkView, serversListTemplate) {
   'use strict';
   var ServersListView = ListView.extend({
     className: 'servers-list',
@@ -26,12 +27,12 @@ define([
     events: {
       'click .servers-add-server': 'onAddServer',
       'click .servers-attach-org': 'onAttachOrg',
-      'click .servers-attach-host': 'onAttachHost'
+      'click .servers-attach-host': 'onAttachHost',
+      'click .servers-link-server': 'onLinkServer'
     },
     initialize: function() {
       this.collection = new ServerCollection();
       this.orgs = new OrgCollection();
-      this.hosts = new HostCollection();
       this.statusModel = new StatusModel();
       this.listenTo(window.events, 'servers_updated', this.update);
       this.listenTo(window.events, 'organizations_updated', this.updateOrgs);
@@ -52,13 +53,13 @@ define([
         }.bind(this)
       });
     },
-    updateHosts: function() {
-      this.hosts.fetch({
+    updateLinks: function() {
+      this.links.fetch({
         error: function() {
-          this.hosts.reset();
+          this.links.reset();
           var alertView = new AlertView({
             type: 'danger',
-            message: 'Failed to load hosts, server error occurred.',
+            message: 'Failed to load links, server error occurred.',
             dismissable: true
           });
           $('.alerts-container').append(alertView.render().el);
@@ -210,6 +211,34 @@ define([
         var alertView = new AlertView({
           type: 'warning',
           message: 'Successfully attached host.',
+          dismissable: true
+        });
+        $('.alerts-container').append(alertView.render().el);
+        this.addView(alertView);
+      }.bind(this));
+      this.addView(modal);
+    },
+    onLinkServer: function() {
+      console.log('test')
+      if (this.collection.length < 2) {
+        var alertView = new AlertView({
+          type: 'danger',
+          message: 'No servers exists, a server must be created before ' +
+            'attaching.',
+          dismissable: true
+        });
+        $('.alerts-container').append(alertView.render().el);
+        this.addView(alertView);
+        return;
+      }
+
+      var modal = new ModalAttachLinkView({
+        collection: this.collection
+      });
+      this.listenToOnce(modal, 'applied', function() {
+        var alertView = new AlertView({
+          type: 'warning',
+          message: 'Successfully linked server.',
           dismissable: true
         });
         $('.alerts-container').append(alertView.render().el);
