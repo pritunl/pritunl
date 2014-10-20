@@ -427,16 +427,24 @@ def server_org_delete(server_id, org_id):
 @auth.session_auth
 def server_host_get(server_id):
     hosts = []
-    svr = server.get_server(id=server_id, fields=['_id', 'hosts', 'instances'])
+    svr = server.get_server(id=server_id, fields=['_id', 'status',
+        'replica_count', 'hosts', 'instances'])
     active_hosts = set([x['host_id'] for x in svr.instances])
+    hosts_offline = svr.replica_count - len(active_hosts) > 0
 
     for hst in svr.iter_hosts(fields=['_id', 'name', 'public_addr']):
+        if svr.status and hst.id in active_hosts:
+            status = ONLINE
+        elif svr.status and hosts_offline:
+            status = OFFLINE
+        else:
+            status = None
         hosts.append({
             'id': hst.id,
             'server': svr.id,
-            'status': ONLINE if hst.id in active_hosts else OFFLINE,
+            'status': status,
             'name': hst.name,
-            'public_address': hst.public_addr,
+            'address': hst.public_addr,
         })
 
     return utils.jsonify(hosts)
