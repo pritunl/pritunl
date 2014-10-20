@@ -339,6 +339,10 @@ SERVER_NOT_OFFLINE_ATTACH_ORG_MSG = 'Server must be offline to attach ' + \
     'an organization.'
 SERVER_NOT_OFFLINE_DETACH_ORG_MSG = 'Server must be offline to detach ' + \
     'an organization.'
+SERVER_NOT_OFFLINE_LINK_SERVER_MSG = 'Server must be offline to link ' + \
+    'a server.'
+SERVER_NOT_OFFLINE_UNLINK_SERVER_MSG = 'Server must be offline to unlink ' + \
+    'a server.'
 
 SERVER_INVALID = 'server_invalid'
 SERVER_INVALID_MSG = 'Server is not valid.'
