@@ -382,8 +382,7 @@ def server_org_get(server_id):
 
     return utils.jsonify(orgs)
 
-@app.app.route('/server/<server_id>/organization/<org_id>',
-    methods=['PUT'])
+@app.app.route('/server/<server_id>/organization/<org_id>', methods=['PUT'])
 @auth.session_auth
 def server_org_put(server_id, org_id):
     svr = server.get_server(id=server_id,
