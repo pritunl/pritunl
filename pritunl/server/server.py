@@ -517,7 +517,7 @@ class Server(mongo.MongoObject):
         try:
             prefered_host = random.choice(self.hosts)
             self.publish('start', extra={
-                'prefered_host': prefered_host,
+                'prefered_hosts': [prefered_host],
             })
 
             for x_timeout in (2, timeout):
