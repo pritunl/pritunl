@@ -45,6 +45,12 @@ class ServerStartError(ServerError):
 class ServerStopError(ServerError):
     pass
 
+class ServerLinkError(ServerError):
+    pass
+
+class ServerLinkOnlineError(ServerError):
+    pass
+
 class IptablesError(ServerError):
     pass
 
