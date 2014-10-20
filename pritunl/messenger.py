@@ -78,6 +78,7 @@ def get_cursor_id(channels):
             else:
                 publish(channels, None)
 
+@interrupter_generator
 def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None):
     collection = mongo.get_collection('messages')
     start_time = time.time()
@@ -94,12 +95,19 @@ def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None):
             if cursor_id:
                 spec['_id'] = {'$gt': cursor_id}
 
+            yield
+
             cursor = collection.find(spec, tailable=True,
                 await_data=True).sort('$natural', pymongo.ASCENDING)
+
+            yield
 
             while cursor.alive:
                 for doc in cursor:
                     cursor_id = doc['_id']
+
+                    yield
+
                     if doc.get('message') is not None:
                         doc.pop('nonce', None)
                         yield doc
@@ -121,5 +129,8 @@ def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None):
 
                 if timeout and time.time() - start_time >= timeout:
                     return
+
+                yield
+
         except pymongo.errors.AutoReconnect:
             time.sleep(0.2)
