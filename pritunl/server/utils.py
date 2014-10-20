@@ -95,3 +95,44 @@ def output_link_clear(server_id):
 
 def bandwidth_get(server_id, period):
     return ServerBandwidth(server_id).get_period(period)
+
+def link_servers(server_id, link_server_id):
+    if server_id == link_server_id:
+        raise TypeError('Server id must be different then link server id')
+
+    server_obj_id = bson.ObjectId(server_id)
+    link_server_obj_id = bson.ObjectId(link_server_id)
+    collection = mongo.get_collection('servers')
+
+    count = 0
+    spec = {
+        '_id': {'$in': [server_obj_id, link_server_obj_id]},
+    }
+    project = {
+        '_id': True,
+        'status': True,
+    }
+
+    for doc in collection.find(spec, project):
+        if doc['status']:
+            raise ServerLinkOnlineError('Server must be offline to link')
+        count += 1
+    if count != 2:
+        raise ServerLinkError('Link server not found')
+
+    tran = transaction.Transaction()
+    collection = tran.collection('servers')
+
+    collection.update({
+        '_id': server_obj_id,
+    }, {'$set': {
+        'links.%s' % (utils.filter_id(link_server_id)): '',
+    }})
+
+    collection.update({
+        '_id': link_server_obj_id,
+    }, {'$set': {
+        'links.%s' % (utils.filter_id(server_id)): '',
+    }})
+
+    tran.commit()
