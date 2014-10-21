@@ -30,8 +30,8 @@ def fill_user():
 
     for org in organization.iter_orgs(type=None):
         orgs[org.id] = org
-        orgs_count[str(org.id), CERT_CLIENT_POOL] = 0
-        orgs_count[str(org.id), CERT_SERVER_POOL] = 0
+        orgs_count[org.id, CERT_CLIENT_POOL] = 0
+        orgs_count[org.id, CERT_SERVER_POOL] = 0
 
     pools = collection.aggregate([
         {'$match': {
