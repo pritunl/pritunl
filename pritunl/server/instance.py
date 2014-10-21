@@ -190,8 +190,14 @@ class ServerInstance(object):
             server_conf += 'auth-user-pass-verify %s via-file\n' % (
                 user_pass_verify_path)
 
-        if self.server.lzo_compression:
-            server_conf += 'comp-lzo\npush "comp-lzo"\n'
+        # Pritunl v0.10.x did not include comp-lzo in client conf
+        # if lzo_compression is adaptive dont include comp-lzo in server conf
+        if self.server.lzo_compression == ADAPTIVE:
+            pass
+        elif self.server.lzo_compression:
+            server_conf += 'comp-lzo yes\npush "comp-lzo yes"\n'
+        else:
+            server_conf += 'comp-lzo no\npush "comp-lzo no"\n'
 
         if self.server.mode in (LOCAL_TRAFFIC, VPN_TRAFFIC):
             server_conf += 'client-to-client\n'
