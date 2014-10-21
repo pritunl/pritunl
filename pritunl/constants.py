@@ -425,27 +425,6 @@ PERF_MODES = {
     PERF_THROUGHPUT: 'tun-mtu 9000\nfragment 0\nmssfix 0\n',
 }
 
-OVPN_SERVER_CONF = """port %s
-proto %s
-dev %s
-ca %s
-cert %s
-key %s
-tls-verify %s
-client-connect %s
-client-disconnect %s
-dh %s
-server %s
-max-clients 1024
-keepalive 10 60
-persist-tun
-status %s 1
-status-version 2
-script-security 2
-verb %s
-mute %s
-"""
-
 OVPN_INLINE_SERVER_CONF = """port %s
 proto %s
 dev %s
