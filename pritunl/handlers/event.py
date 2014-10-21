@@ -15,6 +15,9 @@ import bson
 @app.app.route('/event/<cursor>', methods=['GET'])
 @auth.session_auth
 def event_get(cursor=None):
+    if check_global_interrupt():
+        raise flask.abort(500)
+
     if cursor is not None:
         cursor = bson.ObjectId(cursor)
 
