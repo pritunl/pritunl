@@ -4,28 +4,32 @@ from pritunl.helpers import *
 from pritunl import mongo
 
 import datetime
-import bson
 import time
+import calendar
 import flask
 import json
+import bson
+import bson.tz_util
 
 def json_object_hook_handler(obj):
-    object_data = obj.get('__OBJ__')
-    if object_data:
-        object_type, object_data = object_data
-        if object_type == 'OID':
-            return bson.ObjectId(object_data)
-        elif object_type == 'DATE':
-            return datetime.datetime.fromtimestamp(object_data)
+    obj_data = obj.get('$obj')
+    if obj_data:
+        object_type, obj_data = obj_data
+        if object_type == 'oid':
+            return bson.ObjectId(obj_data)
+        elif object_type == 'date':
+            return datetime.datetime.fromtimestamp(obj_data / 1000.,
+                bson.tz_util.utc)
     return obj
 
 def json_default(obj):
     if isinstance(obj, (mongo.MongoDict, mongo.MongoList)):
         return obj.data
     elif isinstance(obj, bson.ObjectId):
-        return {'__OBJ__': ['OID', str(obj)]}
+        return {'$obj': ['oid', str(obj)]}
     elif isinstance(obj, datetime.datetime):
-        return {'__OBJ__': ['DATE', time.mktime(obj.timetuple()) + (obj.microsecond / 1000000.)]}
+        return {'$obj': ['date', int(calendar.timegm(obj.timetuple()) * 1000 +
+            obj.microsecond / 1000)]}
     raise TypeError(repr(obj) + ' is not JSON serializable')
 
 def jsonify(data=None, status_code=None):
