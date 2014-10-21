@@ -118,6 +118,7 @@ INFO = 'info'
 WARNING = 'warning'
 ERROR = 'error'
 
+ADAPTIVE = 'adaptive'
 VERSION_NAME = 'version'
 ORGS_DIR = 'organizations'
 SERVERS_DIR = 'servers'
