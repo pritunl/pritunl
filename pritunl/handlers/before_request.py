@@ -26,3 +26,9 @@ def before_request():
     elif settings.local.vpn_state == DISABLED and _is_vpn_path(
             flask.request.path):
         raise flask.abort(401, settings.local.notification)
+
+@app.app.url_value_preprocessor
+def parse_object_id(endpoint, values):
+    for key in values:
+        if key.endswith('_id'):
+            values[key] = bson.ObjectId(values[key])
