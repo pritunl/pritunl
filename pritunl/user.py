@@ -328,6 +328,9 @@ class User(mongo.MongoObject):
                         server.get_key_remotes(),
                     )
 
+                    if server.lzo_compression != ADAPTIVE:
+                        client_conf += 'comp-lzo no\n'
+
                     if server.otp_auth:
                         client_conf += 'auth-user-pass\n'
 
@@ -364,6 +367,9 @@ class User(mongo.MongoObject):
             server.protocol,
             server.get_key_remotes(),
         )
+
+        if server.lzo_compression != ADAPTIVE:
+            client_conf += 'comp-lzo no\n'
 
         if server.otp_auth:
             client_conf += 'auth-user-pass\n'
