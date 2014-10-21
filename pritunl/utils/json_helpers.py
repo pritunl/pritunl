@@ -34,7 +34,7 @@ def json_default(obj):
 
 def jsonify(data=None, status_code=None):
     if not isinstance(data, basestring):
-        data = json.dumps(data)
+        data = json.dumps(data, default=lambda x: str(x))
     response = flask.Response(response=data, mimetype='application/json')
     response.headers.add('Cache-Control',
         'no-cache, no-store, must-revalidate')
