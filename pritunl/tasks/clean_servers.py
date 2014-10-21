@@ -76,4 +76,16 @@ class TaskCleanServers(task.Task):
                             item_type: {'$in': missing_items},
                         }})
 
+            missing_links = []
+            for link_id in doc['links']:
+                if link_id not in server_ids:
+                    missing_links.append(link_id)
+            if missing_links:
+                update_doc = {'$unset': {}}
+                for link_id in missing_links:
+                    update_doc['$unset']['links.' + link_id] = ''
+                self.server_collection.update({
+                    '_id': doc['_id'],
+                }, update_doc)
+
 task.add_task(TaskCleanServers, hours=5, minutes=27)
