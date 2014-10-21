@@ -26,6 +26,16 @@ def run_task(tsk):
     thread.daemon = True
     thread.start()
 
+def print_tasks():
+    for hour in task.tasks:
+        print 'hour:', hour
+        for minute in task.tasks[hour]:
+            print '    minute:', minute
+            for second in task.tasks[hour][minute]:
+                print '        second:', second
+                for tsk in task.tasks[hour][minute][second]:
+                    print '            task:', tsk
+
 @interrupter
 def run_thread():
     last_run = None
