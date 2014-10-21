@@ -33,6 +33,7 @@ define([
     initialize: function() {
       this.collection = new ServerCollection();
       this.orgs = new OrgCollection();
+      this.hosts = new HostCollection();
       this.statusModel = new StatusModel();
       this.listenTo(window.events, 'servers_updated', this.update);
       this.listenTo(window.events, 'organizations_updated', this.updateOrgs);
