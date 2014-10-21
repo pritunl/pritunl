@@ -33,10 +33,10 @@ define([
     },
     resetItems: function(views) {
       if (!views.length) {
-        this.$('.no-hosts').slideDown(250);
+        this.$('.no-hosts').slideDown(window.slideTime);
       }
       else {
-        this.$('.no-hosts').slideUp(250);
+        this.$('.no-hosts').slideUp(window.slideTime);
       }
       this.serverView.updateButtons();
     }

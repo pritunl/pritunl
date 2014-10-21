@@ -80,13 +80,13 @@ define([
     },
     resetItems: function(views) {
       if (views.length) {
-        this.$('.no-users').slideUp(250);
-        this.$('.no-users-search').slideUp(250);
+        this.$('.no-users').slideUp(window.slideTime);
+        this.$('.no-users-search').slideUp(window.slideTime);
       }
       if (this.collection.getSearch()) {
         if (!views.length) {
-          this.$('.no-users').slideUp(250);
-          this.$('.no-users-search').slideDown(250);
+          this.$('.no-users').slideUp(window.slideTime);
+          this.$('.no-users-search').slideDown(window.slideTime);
         }
 
         this.$('.prev-page').hide();
@@ -109,8 +109,8 @@ define([
         var pageTotal = this.collection.getPageTotal();
 
         if (!views.length) {
-          this.$('.no-users').slideDown(250);
-          this.$('.no-users-search').slideUp(250);
+          this.$('.no-users').slideDown(window.slideTime);
+          this.$('.no-users-search').slideUp(window.slideTime);
         }
 
         this.$('.search-time').hide();

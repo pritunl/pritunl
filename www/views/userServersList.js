@@ -32,10 +32,10 @@ define([
     },
     resetItems: function(views) {
       if (!views.length) {
-        this.$('.no-servers').slideDown(250);
+        this.$('.no-servers').slideDown(window.slideTime);
       }
       else {
-        this.$('.no-servers').slideUp(250);
+        this.$('.no-servers').slideUp(window.slideTime);
       }
     }
   });

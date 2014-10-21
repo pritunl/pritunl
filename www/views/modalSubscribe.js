@@ -145,12 +145,12 @@ define([
     },
     onActivate: function() {
       this.activateActive = true;
-      this.$('.subscribe-info').slideUp(200);
-      this.$('.subscribe-activate-form').slideDown(200);
-      this.$('.subscribe-checkout').hide(200);
-      this.$('.subscribe-cancel').show(200);
-      this.$('.subscribe-activate').hide(200);
-      this.$('.subscribe-submit').show(200);
+      this.$('.subscribe-info').slideUp(window.slideTime);
+      this.$('.subscribe-activate-form').slideDown(window.slideTime);
+      this.$('.subscribe-checkout').hide(window.slideTime);
+      this.$('.subscribe-cancel').show(window.slideTime);
+      this.$('.subscribe-activate').hide(window.slideTime);
+      this.$('.subscribe-submit').show(window.slideTime);
     },
     onSubmit: function() {
       if (!this.$('.subscribe-activate-form textarea').val()) {
@@ -179,12 +179,12 @@ define([
       });
     },
     onCancel: function() {
-      this.$('.subscribe-activate-form').slideUp(200);
-      this.$('.subscribe-info').slideDown(200);
-      this.$('.subscribe-cancel').hide(200);
-      this.$('.subscribe-checkout').show(200);
-      this.$('.subscribe-submit').hide(200);
-      this.$('.subscribe-activate').show(200);
+      this.$('.subscribe-activate-form').slideUp(window.slideTime);
+      this.$('.subscribe-info').slideDown(window.slideTime);
+      this.$('.subscribe-cancel').hide(window.slideTime);
+      this.$('.subscribe-checkout').show(window.slideTime);
+      this.$('.subscribe-submit').hide(window.slideTime);
+      this.$('.subscribe-activate').show(window.slideTime);
       this.activateActive = false;
     }
   });

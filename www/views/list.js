@@ -30,7 +30,7 @@ define([
       }
       else {
         view.$el.slideDown({
-          duration: 250,
+          duration: window.slideTime,
           complete: function() {
             if (complete) {
               complete(view);
@@ -49,7 +49,7 @@ define([
       }
       else {
         view.$el.slideUp({
-          duration: 250,
+          duration: window.slideTime,
           complete: function() {
             if (complete) {
               complete(view);
@@ -287,7 +287,7 @@ define([
           return;
         }
         this.loading = false;
-        this.$('.loading').slideDown(250);
+        this.$('.loading').slideDown(window.slideTime);
       }.bind(this), 400);
 
       this.collection.fetch({
@@ -295,7 +295,7 @@ define([
         reset: true,
         error: function() {
           loading = false;
-          this.$('.loading').slideUp(250);
+          this.$('.loading').slideUp(window.slideTime);
           var alertView = new AlertView({
             type: 'danger',
             message: this.listErrorMsg,
@@ -307,7 +307,7 @@ define([
         }.bind(this),
         success: function() {
           loading = false;
-          this.$('.loading').slideUp(250);
+          this.$('.loading').slideUp(window.slideTime);
         }.bind(this)
       });
     },

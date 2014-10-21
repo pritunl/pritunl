@@ -261,13 +261,13 @@ define([
       if (this.$('.toggle-servers').hasClass('glyphicon-chevron-down')) {
         this.$('.toggle-servers').removeClass('glyphicon-chevron-down');
         this.$('.toggle-servers').addClass('glyphicon-chevron-up');
-        this.$('.user-servers').slideDown(200);
+        this.$('.user-servers').slideDown(window.slideTime);
         tooltipText = 'Hide additional user information';
       }
       else {
         this.$('.toggle-servers').removeClass('glyphicon-chevron-up');
         this.$('.toggle-servers').addClass('glyphicon-chevron-down');
-        this.$('.user-servers').slideUp(200);
+        this.$('.user-servers').slideUp(window.slideTime);
         tooltipText = 'Show additional user information';
       }
 

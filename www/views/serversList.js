@@ -257,12 +257,12 @@ define([
       if (!views.length) {
         this.$('.servers-attach-org').attr('disabled', 'disabled');
         this.$('.servers-attach-host').attr('disabled', 'disabled');
-        this.$('.no-servers').slideDown(250);
+        this.$('.no-servers').slideDown(window.slideTime);
       }
       else {
         this.$('.servers-attach-org').removeAttr('disabled');
         this.$('.servers-attach-host').removeAttr('disabled');
-        this.$('.no-servers').slideUp(250);
+        this.$('.no-servers').slideUp(window.slideTime);
       }
     }
   });
