@@ -36,7 +36,7 @@ def sync_time():
     collection.remove(doc['_id'])
 
 def rmtree(path):
-    for _ in xrange(5):
+    for _ in xrange(8):
         try:
             subprocess.check_call(['rm', '-rf', path],
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
