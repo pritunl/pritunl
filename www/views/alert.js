@@ -30,7 +30,7 @@ define([
       }));
       if (this.animate) {
         this.$el.hide();
-        this.$el.slideDown(250);
+        this.$el.slideDown(window.slideTime);
       }
       return this;
     },
@@ -45,15 +45,15 @@ define([
             if (complete) {
               complete();
             }
-          }.bind(this), 175);
-        }.bind(this), 175);
-      }.bind(this), 175);
+          }.bind(this), 150);
+        }.bind(this), 150);
+      }.bind(this), 150);
     },
     onClose: function() {
       this.close();
     },
     close: function(complete) {
-      this.$el.slideUp(250, function() {
+      this.$el.slideUp(window.slideTime, function() {
         this.destroy();
         if (complete) {
           complete();
