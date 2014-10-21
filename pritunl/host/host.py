@@ -89,7 +89,7 @@ class Host(mongo.MongoObject):
         usr = org.find_user(resource_id=self.id)
 
         if not usr:
-            usr = org.new_user(name=HOST_USER_PREFIX + self.id,
+            usr = org.new_user(name=HOST_USER_PREFIX + str(self.id),
                 type=CERT_SERVER, resource_id=self.id)
 
         return usr

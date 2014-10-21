@@ -38,7 +38,7 @@ _resource_locks = collections.defaultdict(threading.Lock)
 class ServerInstance(object):
     def __init__(self, server):
         self.server = server
-        self.instance_id = str(bson.ObjectId())
+        self.instance_id = bson.ObjectId()
         self.resource_lock = None
         self.interrupt = False
         self.clean_exit = False
@@ -412,22 +412,27 @@ class ServerInstance(object):
             self.server.bandwidth.add_data(
                 utils.now(), bytes_recv_t, bytes_sent_t)
 
-    def update_clients(self, clients):
+    def update_clients(self, clients_str):
         # Openvpn will create an undef client while a client connects
-        clients.pop('UNDEF', None)
+        clients_str.pop('UNDEF', None)
+        clients = {}
+
+        for client_id in clients_str:
+            clients[bson.ObjectId(client_id)] = clients_str[client_id]
 
         new_clients_set = set(clients)
 
         new_clients = new_clients_set - self.cur_clients
-        cursor = self.user_collection.find({
-            '_id': {'$in': [bson.ObjectId(x) for x in new_clients]},
-        }, {
-            'type': True,
-        })
+        if new_clients:
+            cursor = self.user_collection.find({
+                '_id': {'$in': new_clients},
+            }, {
+                'type': True,
+            })
 
-        for doc in cursor:
-            if doc['type'] != CERT_CLIENT:
-                self.ignore_clients.add(str(doc['_id']))
+            for doc in cursor:
+                if doc['type'] != CERT_CLIENT:
+                    self.ignore_clients.add(doc['_id'])
 
         rem_clients = self.cur_clients - new_clients_set
         for client_id in rem_clients:
@@ -439,7 +444,7 @@ class ServerInstance(object):
             clients.pop(client_id, None)
 
         response = self.collection.update({
-            '_id': bson.ObjectId(self.server.id),
+            '_id': self.server.id,
             'instances.instance_id': self.instance_id,
         }, {'$set': {
             'instances.$.clients': clients,
@@ -569,7 +574,7 @@ class ServerInstance(object):
         while not self.interrupt:
             try:
                 doc = self.collection.find_and_modify({
-                    '_id': bson.ObjectId(self.server.id),
+                    '_id': self.server.id,
                     'instances.instance_id': self.instance_id,
                 }, {'$set': {
                     'instances.$.ping_timestamp': utils.now(),
@@ -684,7 +689,7 @@ class ServerInstance(object):
                 instance.stop()
 
             self.collection.update({
-                '_id': bson.ObjectId(self.server.id),
+                '_id': self.server.id,
                 'instances.instance_id': self.instance_id,
             }, {
                 '$pull': {
@@ -700,7 +705,7 @@ class ServerInstance(object):
 
     def run(self, send_events=False):
         response = self.collection.update({
-            '_id': bson.ObjectId(self.server.id),
+            '_id': self.server.id,
             'status': True,
             'instances_count': {'$lt': self.server.replica_count},
         }, {

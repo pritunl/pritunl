@@ -176,7 +176,7 @@ class ServerIpPool:
         }, {
             'user_id': True,
         }).distinct('_id')
-        user_ids = set([str(x) for x in user_ids])
+        user_ids = set(user_ids)
 
         user_ip_ids = self.collection.find({
             'server_id': server_id,
@@ -205,7 +205,7 @@ class ServerIpPool:
             bulk.execute()
 
         for user_id in user_ids - user_ip_ids:
-            doc = self.users_collection.find_one(bson.ObjectId(user_id), {
+            doc = self.users_collection.find_one(user_id, {
                 'org_id': True,
             })
             if doc:

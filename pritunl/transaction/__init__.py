@@ -180,7 +180,7 @@ class Transaction(mongo.MongoObject):
         except:
             logger.exception('Error occured running ' +
                 'transaction actions. %r' % {
-                    'transaction_id': str(self.id),
+                    'transaction_id': self.id,
                 })
             raise
 
@@ -222,7 +222,7 @@ class Transaction(mongo.MongoObject):
         except:
             logger.exception('Error occured rolling back ' +
                 'transaction actions. %r' % {
-                    'transaction_id': str(self.id),
+                    'transaction_id': self.id,
                 })
             raise
 
@@ -254,7 +254,7 @@ class Transaction(mongo.MongoObject):
         except:
             logger.exception('Error occured running ' +
                 'transaction post actions. %r' % {
-                    'transaction_id': str(self.id),
+                    'transaction_id': self.id,
                 })
             raise
 

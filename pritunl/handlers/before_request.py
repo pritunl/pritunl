@@ -8,6 +8,7 @@ from pritunl import auth
 
 import flask
 import re
+import bson
 
 def _is_vpn_path(path):
     if re.match(r'^/server/[a-z0-9]+/tls_verify$', path) or \

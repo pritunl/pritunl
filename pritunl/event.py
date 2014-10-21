@@ -14,21 +14,18 @@ def get_events(cursor=None):
     events = []
     events_dict = {}
 
-    if cursor is not None:
-        cursor = bson.ObjectId(cursor)
-
     for event in messenger.subscribe('events', cursor_id=cursor,
             timeout=10, yield_delay=0.02):
         event_type, resource_id = event.pop('message')
         if (event_type, resource_id) in events_dict:
             old_event = events_dict[(event_type, resource_id)]
-            old_event['id'] = str(event['_id'])
+            old_event['id'] = event['_id']
             old_event['timestamp'] = time.mktime(
                 event['timestamp'].timetuple())
             continue
 
         events_dict[(event_type, resource_id)] = event
-        event['id'] = str(event.pop('_id'))
+        event['id'] = event.pop('_id')
         event['type'] = event_type
         event['resource_id'] = resource_id
         event['timestamp'] = time.mktime(event['timestamp'].timetuple())

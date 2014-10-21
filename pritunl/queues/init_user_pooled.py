@@ -16,10 +16,10 @@ class QueueInitUserPooled(QueueInitUser):
     def __init__(self, **kwargs):
         QueueInitUser.__init__(self, **kwargs)
 
-        org_id = str(self.org_doc['_id'])
+        org_id = self.org_doc['_id']
         user_type = str(self.user_doc['type'])
 
-        self.reserve_id = org_id + '-' + {
+        self.reserve_id = str(org_id) + '-' + {
             CERT_SERVER_POOL: CERT_SERVER,
             CERT_CLIENT_POOL: CERT_CLIENT,
         }[user_type]
@@ -51,7 +51,7 @@ class QueueInitUserPooled(QueueInitUser):
 @queue.add_reserve('queued_user')
 def reserve_queued_user(org, name=None, email=None, type=None,
         disabled=None, resource_id=None, block=False):
-    reserve_id = org.id + '-' + type
+    reserve_id = str(org.id) + '-' + type
     reserve_data = {}
 
     if name is not None:

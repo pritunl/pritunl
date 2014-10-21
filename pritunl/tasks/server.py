@@ -93,7 +93,7 @@ class TaskServer(task.Task):
                 prefered_host = random.choice(hosts)
 
                 messenger.publish('servers', 'start', extra={
-                    'server_id': str(doc['_id']),
+                    'server_id': doc['_id'],
                     'send_events': True,
                     'prefered_hosts': [prefered_host],
                 })

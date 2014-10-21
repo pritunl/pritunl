@@ -75,7 +75,7 @@ class Queue(mongo.MongoObject):
             if self.queue_com.state in (COMPLETE, STOPPED):
                 break
             response = self.collection.update({
-                '_id': bson.ObjectId(self.id),
+                '_id': self.id,
                 'runner_id': self.runner_id,
             }, {'$set': {
                 'ttl_timestamp': utils.now() + \
@@ -169,7 +169,7 @@ class Queue(mongo.MongoObject):
             datetime.timedelta(seconds=self.ttl)
 
         response = self.collection.update({
-            '_id': bson.ObjectId(self.id),
+            '_id': self.id,
             '$or': [
                 {'runner_id': self.runner_id},
                 {'runner_id': {'$exists': False}},
@@ -209,18 +209,19 @@ class Queue(mongo.MongoObject):
             for msg in messenger.subscribe('queue', cursor_id=cursor_id,
                     timeout=block_timeout):
                 try:
-                    if msg['message'] == [COMPLETE, str(doc['_id'])]:
+                    # TODO test ObjectId
+                    if msg['message'] == [COMPLETE, doc['_id']]:
                         return doc
-                    elif msg['message'] == [ERROR, str(doc['_id'])]:
+                    elif msg['message'] == [ERROR, doc['_id']]:
                         raise QueueTaskError('Error occured running ' +
                             'queue task', {
-                                'queue_id': str(doc['_id']),
+                                'queue_id': doc['_id'],
                                 'queue_type': doc['type'],
                             })
                 except TypeError:
                     pass
             raise QueueTimeout('Blocking queue reserve timed out', {
-                'queue_id': str(doc['_id']),
+                'queue_id': doc['_id'],
                 'queue_type': doc['type'],
             })
         else:

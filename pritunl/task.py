@@ -46,7 +46,7 @@ class Task(mongo.MongoObject):
 
         try:
             response = self.collection.update({
-                '_id': bson.ObjectId(self.id),
+                '_id': self.id,
                 '$or': [
                     {'runner_id': self.runner_id},
                     {'runner_id': {'$exists': False}},

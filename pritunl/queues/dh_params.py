@@ -74,7 +74,7 @@ class QueueDhParams(queue.Queue):
 
         if self.server_id:
             response = self.server_collection.update({
-                '_id': bson.ObjectId(self.server_id),
+                '_id': self.server_id,
                 'dh_param_bits': self.dh_param_bits,
             }, {'$set': {
                 'dh_params': self.dh_params,

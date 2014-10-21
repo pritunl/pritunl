@@ -20,7 +20,6 @@ class TaskCleanIpPool(task.Task):
         org_ids = self.server_collection.find({}, {
             '_id',
         }).distinct('_id')
-        org_ids = [str(x) for x in org_ids]
 
         self.collection.remove({
             'server_id': {'$nin': org_ids},

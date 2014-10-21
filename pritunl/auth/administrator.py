@@ -14,6 +14,7 @@ import time
 import datetime
 import hmac
 import pymongo
+import bson
 
 class Administrator(mongo.MongoObject):
     fields = {
@@ -161,6 +162,7 @@ def check_session():
         admin_id = flask.session.get('admin_id')
         if not admin_id:
             return False
+        admin_id = bson.ObjectId(admin_id)
 
         administrator = get_user(id=admin_id)
         if not administrator:

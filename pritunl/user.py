@@ -229,7 +229,7 @@ class User(mongo.MongoObject):
     def verify_otp_code(self, code, remote_ip=None):
         if remote_ip:
             doc = self.otp_cache_collection.find_one({
-                '_id': bson.ObjectId(self.id),
+                '_id': self.id,
             })
 
             if doc:
@@ -246,7 +246,7 @@ class User(mongo.MongoObject):
 
             if otp_hash == cur_otp_hash:
                 self.otp_cache_collection.update({
-                    '_id': bson.ObjectId(self.id),
+                    '_id': self.id,
                 }, {'$set': {
                     'timestamp': utils.now(),
                 }})
@@ -290,7 +290,7 @@ class User(mongo.MongoObject):
 
         if remote_ip:
             self.otp_cache_collection.update({
-                '_id': bson.ObjectId(self.id),
+                '_id': self.id,
             }, {'$set': {
                 'otp_hash': otp_hash,
                 'timestamp': utils.now(),

@@ -78,7 +78,7 @@ def run_timeout_queues():
 
     for queue_item in queue.iter_queues(spec):
         response = queue.Queue.collection.update({
-            '_id': bson.ObjectId(queue_item.id),
+            '_id': queue_item.id,
             'ttl_timestamp': {'$lt': cur_timestamp},
         }, {'$unset': {
             'runner_id': '',

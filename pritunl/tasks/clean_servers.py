@@ -5,8 +5,6 @@ from pritunl import mongo
 from pritunl import task
 from pritunl import logger
 
-import time
-
 class TaskCleanServers(task.Task):
     type = 'clean_server'
 
@@ -27,16 +25,9 @@ class TaskCleanServers(task.Task):
         return mongo.get_collection('servers')
 
     def task(self):
-        user_ids = set()
-        org_ids = set()
-        server_ids = set()
-        for collection, distinct_set in (
-                    (self.user_collection, user_ids),
-                    (self.org_collection, org_ids),
-                    (self.server_collection, server_ids),
-                ):
-            for doc_id in collection.find().distinct('_id'):
-                distinct_set.add(str(doc_id))
+        user_ids = set(self.user_collection.find().distinct('_id'))
+        org_ids = set(self.org_collection.find().distinct('_id'))
+        server_ids = set(self.server_collection.find().distinct('_id'))
         host_ids = set(self.host_collection.find().distinct('_id'))
 
         project = {

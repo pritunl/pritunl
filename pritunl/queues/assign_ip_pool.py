@@ -39,7 +39,7 @@ class QueueAssignIpPool(queue.Queue):
             return
 
         response = self.server.collection.update({
-            '_id': bson.ObjectId(self.server.id),
+            '_id': self.server.id,
             '$or': [
                 {'network_lock': self.id},
                 {'network_lock': {'$exists': False}},
@@ -67,7 +67,7 @@ class QueueAssignIpPool(queue.Queue):
         })
 
         self.server.collection.update({
-            '_id': bson.ObjectId(self.server_id),
+            '_id': self.server_id,
             'network_lock': self.id,
         }, {'$unset': {
             'network_lock': '',
@@ -83,14 +83,14 @@ class QueueAssignIpPool(queue.Queue):
         })
 
         self.server.collection.update({
-            '_id': bson.ObjectId(self.server_id),
+            '_id': self.server_id,
             'network': self.network,
         }, {'$set': {
             'network': self.old_network,
         }})
 
         self.server.collection.update({
-            '_id': bson.ObjectId(self.server_id),
+            '_id': self.server_id,
             'network_lock': self.id,
         }, {'$unset': {
             'network_lock': '',

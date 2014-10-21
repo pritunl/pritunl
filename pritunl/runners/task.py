@@ -70,7 +70,7 @@ def check_thread():
             random_sleep()
 
             response = task.Task.collection.update({
-                '_id': bson.ObjectId(task_item.id),
+                '_id': task_item.id,
                 'ttl_timestamp': {'$lt': cur_timestamp},
             }, {'$unset': {
                 'runner_id': '',

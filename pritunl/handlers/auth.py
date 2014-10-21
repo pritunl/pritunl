@@ -76,7 +76,7 @@ def auth_session_post():
             'error_msg': AUTH_INVALID_MSG,
         }, 401)
 
-    flask.session['admin_id'] = admin.id
+    flask.session['admin_id'] = str(admin.id)
     flask.session['timestamp'] = int(time.time())
     if not settings.conf.ssl:
         flask.session['source'] = remote_addr

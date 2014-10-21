@@ -23,7 +23,6 @@ class TaskCleanUsers(task.Task):
         org_ids = self.org_collection.find({}, {
             '_id',
         }).distinct('_id')
-        org_ids = [str(x) for x in org_ids]
 
         self.collection.remove({
             'org_id': {'$nin': org_ids},

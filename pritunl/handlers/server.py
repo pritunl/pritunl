@@ -376,7 +376,7 @@ def server_org_get(server_id):
     orgs = []
     svr = server.get_server(id=server_id, fields=['_id', 'organizations'])
     for org_doc in svr.get_org_fields(fields=['_id', 'name']):
-        org_doc['id'] = str(org_doc.pop('_id'))
+        org_doc['id'] = org_doc.pop('_id')
         org_doc['server'] = svr.id
         orgs.append(org_doc)
 
@@ -484,29 +484,30 @@ def server_link_get(server_id):
         'replica_count', 'instances'])
     hosts_offline = svr.replica_count - len(svr.instances) > 0
 
-    spec = {
-        '_id': {'$in': [bson.ObjectId(x) for x in svr.links]},
-    }
-    for link_svr in server.iter_servers(spec=spec, fields=[
-            '_id', 'status', 'name', 'replica_count', 'instances']):
-        link_hosts_offline = link_svr.replica_count - len(
-            link_svr.instances) > 0
-        if svr.status:
-            if hosts_offline or link_hosts_offline:
-                status = OFFLINE
-            elif link_svr.status:
-                status = ONLINE
+    if svr.links:
+        spec = {
+            '_id': {'$in': svr.links},
+        }
+        for link_svr in server.iter_servers(spec=spec, fields=[
+                '_id', 'status', 'name', 'replica_count', 'instances']):
+            link_hosts_offline = link_svr.replica_count - len(
+                link_svr.instances) > 0
+            if svr.status:
+                if hosts_offline or link_hosts_offline:
+                    status = OFFLINE
+                elif link_svr.status:
+                    status = ONLINE
+                else:
+                    status = OFFLINE
             else:
-                status = OFFLINE
-        else:
-            status = None
-        links.append({
-            'id': link_svr.id,
-            'server': svr.id,
-            'status': status,
-            'name': link_svr.name,
-            'address': None,
-        })
+                status = None
+            links.append({
+                'id': link_svr.id,
+                'server': svr.id,
+                'status': status,
+                'name': link_svr.name,
+                'address': None,
+            })
 
     return utils.jsonify(links)
 

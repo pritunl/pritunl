@@ -305,7 +305,7 @@ class Server(mongo.MongoObject):
                     'server_id': self.id,
                 })
 
-        user = org.new_user(name=SERVER_USER_PREFIX + self.id,
+        user = org.new_user(name=SERVER_USER_PREFIX + str(self.id),
             type=CERT_SERVER, resource_id=self.id)
 
         self.primary_organization = org.id
@@ -363,7 +363,7 @@ class Server(mongo.MongoObject):
 
     def iter_orgs(self, fields=None):
         spec = {
-            '_id': {'$in': [bson.ObjectId(x) for x in self.organizations]},
+            '_id': {'$in': self.organizations},
         }
         for org in organization.iter_orgs(spec=spec):
             yield org
@@ -386,7 +386,7 @@ class Server(mongo.MongoObject):
 
         docs = self.org_collection.aggregate([
             {'$match': {
-                '_id': {'$in': [bson.ObjectId(x) for x in self.organizations]},
+                '_id': {'$in': self.organizations},
             }},
             {'$project': project},
             {'$group': {
@@ -496,7 +496,7 @@ class Server(mongo.MongoObject):
 
         start_timestamp = utils.now()
         response = self.collection.update({
-            '_id': bson.ObjectId(self.id),
+            '_id': self.id,
             'status': False,
             'instances_count': 0,
         }, {'$set': {
@@ -548,7 +548,7 @@ class Server(mongo.MongoObject):
         except:
             self.publish('force_stop')
             self.collection.update({
-                '_id': bson.ObjectId(self.id),
+                '_id': self.id,
             }, {'$set': {
                 'status': False,
                 'instances': [],
@@ -570,7 +570,7 @@ class Server(mongo.MongoObject):
             return
 
         response = self.collection.update({
-            '_id': bson.ObjectId(self.id),
+            '_id': self.id,
             'status': True,
         }, {'$set': {
             'status': False,

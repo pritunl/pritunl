@@ -38,7 +38,7 @@ def get_server_dict(id):
 def get_used_resources(ignore_server_id):
     used_resources = Server.collection.aggregate([
         {'$match': {
-            '_id': {'$ne': bson.ObjectId(ignore_server_id)},
+            '_id': {'$ne': ignore_server_id},
         }},
         {'$project': {
             'network': True,
@@ -100,13 +100,11 @@ def link_servers(server_id, link_server_id):
     if server_id == link_server_id:
         raise TypeError('Server id must be different then link server id')
 
-    server_obj_id = bson.ObjectId(server_id)
-    link_server_obj_id = bson.ObjectId(link_server_id)
     collection = mongo.get_collection('servers')
 
     count = 0
     spec = {
-        '_id': {'$in': [server_obj_id, link_server_obj_id]},
+        '_id': {'$in': [server_id, link_server_id]},
     }
     project = {
         '_id': True,
@@ -124,13 +122,13 @@ def link_servers(server_id, link_server_id):
     collection = tran.collection('servers')
 
     collection.update({
-        '_id': server_obj_id,
+        '_id': server_id,
     }, {'$set': {
         'links.%s' % (utils.filter_id(link_server_id)): '',
     }})
 
     collection.update({
-        '_id': link_server_obj_id,
+        '_id': link_server_id,
     }, {'$set': {
         'links.%s' % (utils.filter_id(server_id)): '',
     }})
@@ -138,13 +136,11 @@ def link_servers(server_id, link_server_id):
     tran.commit()
 
 def unlink_servers(server_id, link_server_id):
-    server_obj_id = bson.ObjectId(server_id)
-    link_server_obj_id = bson.ObjectId(link_server_id)
     collection = mongo.get_collection('servers')
 
     count = 0
     spec = {
-        '_id': {'$in': [server_obj_id, link_server_obj_id]},
+        '_id': {'$in': [server_id, link_server_id]},
     }
     project = {
         '_id': True,
@@ -159,13 +155,13 @@ def unlink_servers(server_id, link_server_id):
     collection = tran.collection('servers')
 
     collection.update({
-        '_id': server_obj_id,
+        '_id': server_id,
     }, {'$unset': {
         'links.%s' % (utils.filter_id(link_server_id)): '',
     }})
 
     collection.update({
-        '_id': link_server_obj_id,
+        '_id': link_server_id,
     }, {'$unset': {
         'links.%s' % (utils.filter_id(server_id)): '',
     }})

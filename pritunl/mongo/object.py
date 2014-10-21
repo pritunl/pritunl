@@ -26,7 +26,7 @@ class MongoObject(object):
                 return None
         else:
             mongo_object.exists = False
-            mongo_object.id = str(bson.ObjectId())
+            mongo_object.id = bson.ObjectId()
         return mongo_object
 
     def __setattr__(self, name, value):
@@ -49,13 +49,6 @@ class MongoObject(object):
         raise AttributeError(
             'MongoObject instance has no attribute %r' % name)
 
-    @property
-    def _id(self):
-        id = self.id
-        if len(id) == 24:
-            return bson.ObjectId(id)
-        return id
-
     @cached_static_property
     def collection(cls):
         raise TypeError('Database collection must be specified')
@@ -66,7 +59,7 @@ class MongoObject(object):
         if not doc:
             if not spec:
                 spec = {
-                    '_id': self._id,
+                    '_id': self.id,
                 }
             if fields:
                 try:
@@ -81,15 +74,14 @@ class MongoObject(object):
                 raise NotFound('Document not found', {
                     'spec': spec,
                 })
-        doc['id'] = str(doc.pop('_id'))
-        for key, value in doc.iteritems():
-            setattr(self, key, value)
+        doc['id'] = doc.pop('_id')
+        self.__dict__.update(doc)
         self.exists = True
         self.changed = set()
 
     def export(self):
         doc = self.fields_default.copy()
-        doc['_id'] = self._id
+        doc['_id'] = self.id
         for field in self.fields:
             if hasattr(self, field):
                 doc[field] = getattr(self, field)
@@ -109,7 +101,7 @@ class MongoObject(object):
                 doc[field] = getattr(self, field)
         elif not self.exists:
             doc = self.fields_default.copy()
-            doc['_id'] = self._id
+            doc['_id'] = self.id
             for field in self.fields:
                 if hasattr(self, field):
                     doc[field] = getattr(self, field)
@@ -143,7 +135,7 @@ class MongoObject(object):
 
             if spec is None:
                 spec = {
-                    '_id': self._id,
+                    '_id': self.id,
                 }
 
             if doc:
@@ -169,7 +161,7 @@ class MongoObject(object):
         return response
 
     def remove(self):
-        self.collection.remove(self._id)
+        self.collection.remove(self.id)
 
     def read_file(self, field, path):
         with open(path, 'r') as field_file:
