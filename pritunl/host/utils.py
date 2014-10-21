@@ -10,8 +10,8 @@ from pritunl import logger
 
 import datetime
 
-def get_host(id):
-    return Host(id=id)
+def get_host(id, fields=None):
+    return Host(id=id, fields=fields)
 
 def iter_hosts(spec=None, fields=None):
     if fields:
