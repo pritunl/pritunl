@@ -1,5 +1,7 @@
 (function() {
   'use strict';
+  window.slideTime = 100;
+
   if (!Array.prototype.indexOf) {
     Array.prototype.indexOf = function (searchElement /*, fromIndex */ ) {
       /*jshint eqeqeq:false, bitwise:false */
