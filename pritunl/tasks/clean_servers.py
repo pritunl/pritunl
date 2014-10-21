@@ -61,4 +61,19 @@ class TaskCleanServers(task.Task):
                     'primary_organization': None,
                 }})
 
+            for item_type, item_distinct in (
+                        ('organizations', org_ids),
+                        ('hosts', host_ids),
+                    ):
+                missing_items = []
+                for item_id in doc[item_type]:
+                    if item_id not in item_distinct:
+                        missing_items.append(item_id)
+                    if missing_items:
+                        self.server_collection.update({
+                            '_id': doc['_id'],
+                        }, {'$pull': {
+                            item_type: {'$in': missing_items},
+                        }})
+
 task.add_task(TaskCleanServers, hours=5, minutes=27)
