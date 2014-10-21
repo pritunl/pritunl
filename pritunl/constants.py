@@ -452,7 +452,6 @@ nobind
 persist-tun
 verb 2
 mute 3
-comp-lzo no
 server-poll-timeout 3
 sndbuf 100000
 rcvbuf 100000
@@ -466,7 +465,6 @@ nobind
 persist-tun
 verb %s
 mute %s
-comp-lzo no
 server-poll-timeout 3
 sndbuf 100000
 rcvbuf 100000
