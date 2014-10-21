@@ -178,6 +178,9 @@ class ServerInstanceLink(object):
             8 if self.server.debug else 3,
         )
 
+        if self.server.lzo_compression != ADAPTIVE:
+            client_conf += 'comp-lzo no\n'
+
         client_conf += PERF_MODES[self.server.performance_mode]
         client_conf += '<ca>\n%s\n</ca>\n' % utils.get_cert_block(
             self.server.ca_certificate)
