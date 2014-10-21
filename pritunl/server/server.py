@@ -363,7 +363,7 @@ class Server(mongo.MongoObject):
 
     def iter_orgs(self, fields=None):
         spec = {
-            '_id': {'$in': [bson.ObjectId(x) for x in self.organizations]}
+            '_id': {'$in': [bson.ObjectId(x) for x in self.organizations]},
         }
         for org in organization.iter_orgs(spec=spec):
             yield org
