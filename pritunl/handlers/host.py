@@ -44,7 +44,7 @@ def host_put(host_id=None):
     hst.commit(hst.changed)
     event.Event(type=HOSTS_UPDATED)
 
-    return utils.jsonify(host.dict())
+    return utils.jsonify(hst.dict())
 
 @app.app.route('/host/<host_id>', methods=['DELETE'])
 @auth.session_auth
