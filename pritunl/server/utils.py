@@ -91,7 +91,8 @@ def output_link_get(server_id):
 
 def output_link_clear(server_id):
     svr = get_server(id=server_id, fields=['_id', 'links'])
-    ServerOutputLink(server_id).clear_output(svr.links.keys())
+    ServerOutputLink(server_id).clear_output(
+        [x['server_id'] for x in svr.links])
 
 def bandwidth_get(server_id, period):
     return ServerBandwidth(server_id).get_period(period)
