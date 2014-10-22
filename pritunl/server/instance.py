@@ -416,6 +416,8 @@ class ServerInstance(object):
         # Openvpn will create an undef client while a client connects
         clients_str.pop('UNDEF', None)
         clients = {}
+        clients_real = {}
+        clients_active = 0
 
         for client_id in clients_str:
             clients[bson.ObjectId(client_id)] = clients_str[client_id]
@@ -440,14 +442,17 @@ class ServerInstance(object):
             if client_id in self.ignore_clients:
                 self.ignore_clients.remove(client_id)
 
-        for client_id in self.ignore_clients:
-            clients.pop(client_id, None)
+        for client_id in clients:
+            if client_id not in self.ignore_clients:
+                clients_active += 1
+                clients_real[client_id] = clients[client_id]
 
         response = self.collection.update({
             '_id': self.server.id,
             'instances.instance_id': self.instance_id,
         }, {'$set': {
             'instances.$.clients': clients,
+            'instances.$.clients_active': clients_active,
         }})
 
         if not response['updatedExisting']:
@@ -715,6 +720,7 @@ class ServerInstance(object):
                     'host_id': settings.local.host_id,
                     'ping_timestamp': utils.now(),
                     'clients': {},
+                    'clients_active': 0,
                 },
             },
             '$inc': {
