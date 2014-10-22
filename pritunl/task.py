@@ -14,6 +14,7 @@ import collections
 _task_types = {}
 tasks = collections.defaultdict(
     lambda: collections.defaultdict(lambda: collections.defaultdict(list)))
+tasks_on_start = []
 
 class Task(mongo.MongoObject):
     fields = {
@@ -87,7 +88,11 @@ def iter_tasks(spec=None):
     for doc in Task.collection.find(spec or {}):
         yield _task_types[doc['type']](doc=doc)
 
-def add_task(task_cls, hours=None, minutes=None, seconds=None):
+def add_task(task_cls, hours=None, minutes=None, seconds=None,
+        run_on_start=False):
+    if run_on_start:
+        tasks_on_start.append(task_cls)
+
     if hours is not None or minutes is not None or seconds is not None:
         if hours is None:
             hours = ('all',)

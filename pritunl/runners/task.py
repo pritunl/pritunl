@@ -40,6 +40,9 @@ def print_tasks():
 def run_thread():
     last_run = None
 
+    for task_cls in task.tasks_on_start:
+        run_task(task_cls())
+
     while True:
         cur_time = utils.now()
 
