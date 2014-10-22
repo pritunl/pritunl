@@ -53,7 +53,7 @@ def filter_str(in_str):
 def filter_id(in_id):
     if not in_id:
         return in_id
-    return ''.join(x for x in in_id if x.isalnum())
+    return ''.join(x for x in str(in_id) if x.isalnum())
 
 def get_cert_block(cert_data):
     start_index = cert_data.index('-----BEGIN CERTIFICATE-----')
