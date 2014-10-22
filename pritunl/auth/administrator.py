@@ -185,6 +185,8 @@ def check_session():
     return True
 
 def check_auth(username, password, remote_addr=None):
+    username = utils.filter_str(username).lower()
+
     if remote_addr:
         doc = Administrator.limiter_collection.find_and_modify({
             '_id': remote_addr,

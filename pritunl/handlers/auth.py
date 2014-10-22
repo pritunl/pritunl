@@ -28,7 +28,7 @@ def auth_put():
 
     if 'username' in flask.request.json and flask.request.json['username']:
         admin.username = utils.filter_str(
-            flask.request.json['username'])
+            flask.request.json['username']).lower()
     if 'password' in flask.request.json and flask.request.json['password']:
         admin.password = flask.request.json['password']
     if 'token' in flask.request.json and flask.request.json['token']:
