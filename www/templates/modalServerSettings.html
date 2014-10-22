@@ -7,13 +7,13 @@
     <div class="network form-group">
       <label>Network</label>
       <span class="label label-default no-select" toggle="tooltip" title="Maximum number of users for this subnet"></span>
-      <input type="text" class="form-control" placeholder="Enter network address" data-toggle="tooltip" title="Network address for the private network that will be created for VPN clients" value="<%- network %>">
+      <input type="text" class="form-control" placeholder="Enter network address" data-toggle="tooltip" title="Network address for the private network that will be created for VPN clients" value="<%- network %>" autocapitalize="off">
     </div>
     <div class="port-protocol form-group">
       <label>Port</label>
       <label>Protocol</label>
       <br>
-      <input type="text" class="port form-control" placeholder="Enter port number" data-toggle="tooltip" title="Port number for VPN connections" value="<%- port %>">
+      <input type="text" class="port form-control" placeholder="Enter port number" data-toggle="tooltip" title="Port number for VPN connections" value="<%- port %>" autocapitalize="off">
       <select class="protocol form-control" data-toggle="tooltip" title="Protocol for VPN connections">
         <option value="udp" <%= protocol === 'udp' ? 'selected' : '' %>>udp</option>
         <option value="tcp" <%= protocol === 'tcp' ? 'selected' : '' %>>tcp</option>
@@ -33,11 +33,11 @@
   <div class="right">
     <div class="dns-servers form-group">
       <label>DNS Server</label>
-      <input type="text" class="form-control" placeholder="Enter DNS server" data-toggle="tooltip" title="Optional, DNS server for clients" value="<%- dns_servers.join(', ') %>">
+      <input type="text" class="form-control" placeholder="Enter DNS server" data-toggle="tooltip" title="Optional, DNS server for clients" value="<%- dns_servers.join(', ') %>" autocapitalize="off">
     </div>
     <div class="search-domain form-group">
       <label>DNS Search Domain</label>
-      <input type="text" class="form-control" placeholder="Enter DNS search domain" data-toggle="tooltip" title="Optional, DNS search domain for clients" value="<%- search_domain || '' %>">
+      <input type="text" class="form-control" placeholder="Enter DNS search domain" data-toggle="tooltip" title="Optional, DNS search domain for clients" value="<%- search_domain || '' %>" autocapitalize="off">
     </div>
     <div class="server-mode form-group">
       <label>Server Mode</label>
@@ -49,7 +49,7 @@
     </div>
     <div class="local-network form-group" <%= mode === 'local_traffic' ? '' : 'style="display: none;"' %>>
       <label>Local Networks</label>
-      <input type="text">
+      <input type="text" autocapitalize="off">
     </div>
     <div class="debug-toggle toggle-form form-group">
       <label>Enable Debugging Output</label>
