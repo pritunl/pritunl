@@ -25,7 +25,7 @@ def json_object_hook_handler(obj):
 def json_default(obj):
     if isinstance(obj, (mongo.MongoDict, mongo.MongoList)):
         return obj.data
-    elif isinstance(obj, bson.ObjectId):
+    elif isinstance(obj, bson.objectid.ObjectId):
         return {'$obj': ['oid', str(obj)]}
     elif isinstance(obj, datetime.datetime):
         return {'$obj': ['date', int(calendar.timegm(obj.timetuple()) * 1000 +
