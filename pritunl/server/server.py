@@ -91,6 +91,7 @@ class Server(mongo.MongoObject):
         'otp_auth': False,
         'lzo_compression': False,
         'debug': False,
+        'cipher': 'aes256',
         'performance_mode': PERF_NORMAL,
         'organizations': [],
         'hosts': [],
