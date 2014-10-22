@@ -591,8 +591,8 @@ def server_bandwidth_get(server_id, period):
 @app.app.route('/server/<server_id>/tls_verify', methods=['POST'])
 @auth.server_auth
 def server_tls_verify_post(server_id):
-    org_id = flask.request.json['org_id']
-    user_id = flask.request.json['user_id']
+    org_id = bson.ObjectId(flask.request.json['org_id'])
+    user_id = bson.ObjectId(flask.request.json['user_id'])
 
     svr = server.get_server(server_id,
         fields=['_id', 'name', 'organizations'])
@@ -632,8 +632,8 @@ def server_tls_verify_post(server_id):
 @app.app.route('/server/<server_id>/otp_verify', methods=['POST'])
 @auth.server_auth
 def server_otp_verify_post(server_id):
-    org_id = flask.request.json['org_id']
-    user_id = flask.request.json['user_id']
+    org_id = bson.ObjectId(flask.request.json['org_id'])
+    user_id = bson.ObjectId(flask.request.json['user_id'])
     otp_code = flask.request.json['otp_code']
     remote_ip = flask.request.json.get('remote_ip')
 
@@ -676,8 +676,8 @@ def server_otp_verify_post(server_id):
 @app.app.route('/server/<server_id>/client_connect', methods=['POST'])
 @auth.server_auth
 def server_client_connect_post(server_id):
-    org_id = flask.request.json['org_id']
-    user_id = flask.request.json['user_id']
+    org_id = bson.ObjectId(flask.request.json['org_id'])
+    user_id = bson.ObjectId(flask.request.json['user_id'])
 
     svr = server.get_server(id=server_id,
         fields=['_id', 'name', 'links', 'organizations'])
@@ -725,8 +725,8 @@ def server_client_connect_post(server_id):
     methods=['POST'])
 @auth.server_auth
 def server_client_disconnect_post(server_id):
-    org_id = flask.request.json['org_id']
-    user_id = flask.request.json['user_id']
+    org_id = bson.ObjectId(flask.request.json['org_id'])
+    user_id = bson.ObjectId(flask.request.json['user_id'])
 
     svr = server.get_server(id=server_id, fields=['_id', 'organizations'])
     if not svr:
