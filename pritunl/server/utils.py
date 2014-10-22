@@ -123,14 +123,22 @@ def link_servers(server_id, link_server_id):
 
     collection.update({
         '_id': server_id,
-    }, {'$set': {
-        'links.%s' % (utils.filter_id(link_server_id)): '',
+        'links.server_id': {'$ne': link_server_id},
+    }, {'$push': {
+        'links': {
+            'server_id': link_server_id,
+            'user_id': None,
+        },
     }})
 
     collection.update({
         '_id': link_server_id,
-    }, {'$set': {
-        'links.%s' % (utils.filter_id(server_id)): '',
+        'links.server_id': {'$ne': server_id},
+    }, {'$addToSet': {
+        'links': {
+            'server_id': server_id,
+            'user_id': None,
+        },
     }})
 
     tran.commit()
@@ -156,14 +164,14 @@ def unlink_servers(server_id, link_server_id):
 
     collection.update({
         '_id': server_id,
-    }, {'$unset': {
-        'links.%s' % (utils.filter_id(link_server_id)): '',
+    }, {'$pull': {
+        'links': {'server_id': link_server_id},
     }})
 
     collection.update({
         '_id': link_server_id,
-    }, {'$unset': {
-        'links.%s' % (utils.filter_id(server_id)): '',
+    }, {'$pull': {
+        'links': {'server_id': server_id},
     }})
 
     tran.commit()

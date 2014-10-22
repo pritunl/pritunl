@@ -165,8 +165,8 @@ class ServerInstance(object):
             push += 'push "dhcp-option DOMAIN %s"\n' % (
                 self.server.search_domain)
 
-        for link_svr_id in self.server.links.iterkeys():
-            link_svr = get_server(id=link_svr_id)
+        for link_doc in self.server.links:
+            link_svr = get_server(id=link_doc['server_id'])
             push += 'push "route %s %s"\n' % utils.parse_network(
                 link_svr.network)
             for local_network in link_svr.local_networks:
@@ -649,11 +649,11 @@ class ServerInstance(object):
 
             self.publish('started')
 
-            for link_svr_id in self.server.links:
-                if self.server.id > link_svr_id:
+            for link_doc in self.server.links:
+                if self.server.id > link_doc['server_id']:
                     instance_link = ServerInstanceLink(
                         server=self.server,
-                        linked_server=get_server(id=link_svr_id),
+                        linked_server=get_server(id=link_doc['server_id']),
                     )
                     self.server_links.append(instance_link)
                     instance_link.start()
