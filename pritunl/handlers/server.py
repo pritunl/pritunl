@@ -680,7 +680,7 @@ def server_client_connect_post(server_id):
     user_id = bson.ObjectId(flask.request.json['user_id'])
 
     svr = server.get_server(id=server_id,
-        fields=['_id', 'name', 'links', 'organizations'])
+        fields=['_id', 'name', 'network', 'links', 'organizations'])
     if not svr:
         return utils.jsonify({
             'error': SERVER_INVALID,
