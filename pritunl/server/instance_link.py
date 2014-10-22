@@ -155,7 +155,8 @@ class ServerInstanceLink(object):
             process.wait()
 
     def generate_client_conf(self):
-        os.makedirs(self._temp_path)
+        if not os.path.exists(self._temp_path):
+            os.makedirs(self._temp_path)
         ovpn_conf_path = os.path.join(self._temp_path, OVPN_CONF_NAME)
         self.interface = utils.tun_interface_acquire()
 
@@ -224,28 +225,44 @@ class ServerInstanceLink(object):
             })
             raise
 
+    @interrupter
     def openvpn_watch(self):
         try:
             while True:
-                line = self.process.stdout.readline()
-                if not line:
-                    if self.process.poll() is not None:
-                        break
-                    else:
-                        time.sleep(0.05)
-                        continue
+                while True:
+                    line = self.process.stdout.readline()
+                    if not line:
+                        if self.process.poll() is not None:
+                            break
+                        else:
+                            time.sleep(0.05)
+                            continue
 
-                try:
-                    self.server.output_link.push_output(
-                        line,
-                        label=self.output_label,
-                        link_server_id=self.linked_server.id,
-                    )
-                except:
-                    logger.exception('Failed to push link vpn output. %r', {
-                        'server_id': self.server.id,
-                    })
+                    try:
+                        self.server.output_link.push_output(
+                            line,
+                            label=self.output_label,
+                            link_server_id=self.linked_server.id,
+                        )
+                    except:
+                        logger.exception('Failed to push link vpn ' +
+                            'output. %r', {
+                                'server_id': self.server.id,
+                            })
+
+                if self.stop_event.is_set():
+                    break
+                else:
+                    logger.error('Server instance link stopped ' +
+                        'unexpectedly, restarting link. %r' % {
+                            'server_id': self.server.id,
+                            'link_server_id': self.linked_server.id,
+                        })
+                    self.openvpn_start()
+
         finally:
+            self.clear_iptables_rules()
+
             if self.interface:
                 utils.tun_interface_release(self.interface)
                 self.interface = None
