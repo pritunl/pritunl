@@ -196,7 +196,17 @@ class ServerInstanceLink(object):
         return ovpn_conf_path
 
     def openvpn_start(self):
-        ovpn_conf_path = os.path.join(self._temp_path, OVPN_CONF_NAME)
+        response = self.collection.update({
+            '_id': self.linked_server.id,
+            'links.server_id': self.server.id,
+        }, {'$set': {
+            'links.$.user_id': self.user.id,
+        }})
+
+        if not response['updatedExisting']:
+            raise ServerLinkError('Failed to update server links')
+
+        ovpn_conf_path = self.generate_client_conf()
 
         self.set_iptables_rules()
 
