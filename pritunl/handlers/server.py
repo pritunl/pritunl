@@ -701,17 +701,20 @@ def server_client_connect_post(server_id):
 
     client_conf = ''
 
-    if user.id in svr.links.values():
-        for link_svr_id, link_usr_id in svr.links.iteritems():
-            if user.id == link_usr_id:
-                link_svr = server.get_server(id=link_svr_id,
-                    fields=['_id', 'network', 'local_networks'])
-                client_conf += 'iroute %s %s\n' % utils.parse_network(
-                    link_svr.network)
-                for local_network in link_svr.local_networks:
-                    push += 'iroute %s %s\n' % utils.parse_network(
-                        local_network)
+    link_svr_id = None
+    for link_doc in svr.links:
+        if link_doc['user_id'] == user.id:
+            link_svr_id = link_doc['server_id']
+            break
 
+    if link_svr_id:
+        link_svr = server.get_server(id=link_svr_id,
+            fields=['_id', 'network', 'local_networks'])
+        client_conf += 'iroute %s %s\n' % utils.parse_network(
+            link_svr.network)
+        for local_network in link_svr.local_networks:
+            push += 'iroute %s %s\n' % utils.parse_network(
+                local_network)
     local_ip_addr, remote_ip_addr = svr.get_ip_set(org.id, user_id)
     if local_ip_addr and remote_ip_addr:
         client_conf += 'ifconfig-push %s %s\n' % (
