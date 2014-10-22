@@ -269,7 +269,6 @@ class ServerInstanceLink(object):
                     self.interface = None
 
     def start(self):
-        ovpn_conf_path = self.generate_client_conf()
         self.openvpn_start()
 
         thread = threading.Thread(target=self.openvpn_watch)
