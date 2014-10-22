@@ -93,7 +93,7 @@ class Server(mongo.MongoObject):
         'performance_mode': PERF_NORMAL,
         'organizations': [],
         'hosts': [],
-        'links': {},
+        'links': [],
         'status': False,
         'replica_count': 1,
         'instances': [],
