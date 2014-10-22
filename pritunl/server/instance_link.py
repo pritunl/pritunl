@@ -45,9 +45,6 @@ class ServerInstanceLink(object):
             self.linked_server.organizations[0])
         self._temp_path = utils.get_temp_path()
 
-        self.linked_server.links[self.server.id] = self.user.id
-        self.linked_server.commit('links')
-
     @cached_static_property
     def collection(cls):
         return mongo.get_collection('servers')
