@@ -486,7 +486,7 @@ def server_link_get(server_id):
 
     if svr.links:
         spec = {
-            '_id': {'$in': svr.links},
+            '_id': {'$in': [x['server_id'] for x in svr.links]},
         }
         for link_svr in server.iter_servers(spec=spec, fields=[
                 '_id', 'status', 'name', 'replica_count', 'instances']):
