@@ -181,6 +181,7 @@ class ServerInstance(object):
             client_connect_path,
             client_disconnect_path,
             '%s %s' % utils.parse_network(self.server.network),
+            CIPHERS[self.server.cipher],
             ovpn_status_path,
             4 if self.server.debug else 1,
             8 if self.server.debug else 3,

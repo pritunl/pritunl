@@ -436,6 +436,7 @@ server %s
 max-clients 1024
 keepalive 10 60
 persist-tun
+%s
 status %s 1
 status-version 2
 script-security 2
@@ -451,6 +452,7 @@ proto %s
 %s
 nobind
 persist-tun
+%s
 verb 2
 mute 3
 server-poll-timeout 3
@@ -464,6 +466,7 @@ proto %s
 %s
 nobind
 persist-tun
+%s
 verb %s
 mute %s
 server-poll-timeout 3

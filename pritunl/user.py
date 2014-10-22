@@ -326,6 +326,7 @@ class User(mongo.MongoObject):
                             self.name, self.org.name, server.name),
                         server.protocol,
                         server.get_key_remotes(),
+                        CIPHERS[server.cipher],
                     )
 
                     if server.lzo_compression != ADAPTIVE:
@@ -366,6 +367,7 @@ class User(mongo.MongoObject):
             self._get_key_info_str(self.name, self.org.name, server.name),
             server.protocol,
             server.get_key_remotes(),
+            CIPHERS[server.cipher],
         )
 
         if server.lzo_compression != ADAPTIVE:

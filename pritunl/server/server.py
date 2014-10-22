@@ -71,6 +71,7 @@ class Server(mongo.MongoObject):
         'otp_auth',
         'lzo_compression',
         'debug',
+        'cipher',
         'performance_mode',
         'organizations',
         'hosts',

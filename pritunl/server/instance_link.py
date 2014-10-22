@@ -172,6 +172,7 @@ class ServerInstanceLink(object):
             self.interface,
             self.linked_server.protocol,
             remotes,
+            CIPHERS[self.server.cipher],
             4 if self.server.debug else 1,
             8 if self.server.debug else 3,
         )
