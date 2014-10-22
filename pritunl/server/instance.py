@@ -517,6 +517,7 @@ class ServerInstance(object):
             })
             self.publish('error')
 
+    @interrupter
     def openvpn_watch(self):
         while True:
             line = self.process.stdout.readline()
@@ -527,12 +528,16 @@ class ServerInstance(object):
                     time.sleep(0.05)
                     continue
 
+            yield
+
             try:
                 self.server.output.push_output(line)
             except:
                 logger.exception('Failed to push vpn output. %r', {
                     'server_id': self.server.id,
                 })
+
+            yield
 
     @interrupter
     def _sub_thread(self, cursor_id):
