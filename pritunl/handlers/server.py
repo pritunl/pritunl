@@ -244,6 +244,18 @@ def server_put_post(server_id=None):
         lzo_compression = True if flask.request.json[
             'lzo_compression'] else False
 
+    chiper = False
+    chiper_def = False
+    if 'chiper' in flask.request.json:
+        chiper_def = True
+        chiper = flask.request.json['chiper']
+
+        if chiper not in CIPHERS:
+            return utils.jsonify({
+                'error': CHIPER_INVALID,
+                'error_msg': CHIPER_INVALID_MSG,
+            }, 400)
+
     if not server_id:
         if not name_def:
             return utils.jsonify({
@@ -315,6 +327,7 @@ def server_put_post(server_id=None):
             dns_servers=dns_servers,
             search_domain=search_domain,
             otp_auth=otp_auth,
+            chiper=chiper,
             lzo_compression=lzo_compression,
             debug=debug,
         )
@@ -347,6 +360,8 @@ def server_put_post(server_id=None):
             svr.search_domain = search_domain
         if otp_auth_def:
             svr.otp_auth = otp_auth
+        if chiper_def:
+            svr.chiper = chiper
         if lzo_compression_def:
             svr.lzo_compression = lzo_compression
         if debug_def:
