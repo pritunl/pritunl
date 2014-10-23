@@ -421,22 +421,18 @@ class ServerInstance(object):
             self.server.bandwidth.add_data(
                 utils.now(), bytes_recv_t, bytes_sent_t)
 
-    def update_clients(self, clients_str):
-        # Openvpn will create an undef client while a client connects
-        clients_str.pop('UNDEF', None)
-        clients = {}
-        clients_real = {}
+    def update_clients(self, clients):
+        new_clients = set()
+        clients_real = []
         clients_active = 0
 
-        for client_id in clients_str:
-            clients[bson.ObjectId(client_id)] = clients_str[client_id]
+        for client in clients:
+            new_clients.add(client['id'])
 
-        new_clients_set = set(clients)
-
-        new_clients = new_clients_set - self.cur_clients
-        if new_clients:
+        add_clients = new_clients - self.cur_clients
+        if add_clients:
             cursor = self.user_collection.find({
-                '_id': {'$in': new_clients},
+                '_id': {'$in': list(add_clients)},
             }, {
                 'type': True,
             })
