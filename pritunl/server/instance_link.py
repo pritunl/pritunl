@@ -164,7 +164,7 @@ class ServerInstanceLink(object):
                             'link_server_id': self.linked_server.id,
                         })
                     self.openvpn_start()
-                    time.sleep(1)
+                    yield interrupter_sleep(1)
 
             yield
 
