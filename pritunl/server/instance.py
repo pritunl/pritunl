@@ -394,18 +394,18 @@ class ServerInstance(object):
         for process in processes:
             process.wait()
 
-    def update_clients_bandwidth(self, clients):
+    def update_clients_bandwidth(self, clients, rem_clients):
         # Remove client no longer connected
-        for client_id in self.clients.keys():
-            if client_id not in clients:
-                del self.clients[client_id]
+        for client_id in rem_clients:
+            self.clients.pop(client_id, None)
 
         # Get total bytes send and recv for all clients
         bytes_recv_t = 0
         bytes_sent_t = 0
-        for client_id in clients:
-            bytes_recv = clients[client_id]['bytes_received']
-            bytes_sent = clients[client_id]['bytes_sent']
+        for client in clients:
+            client_id = client['id']
+            bytes_recv = client['bytes_received']
+            bytes_sent = client['bytes_sent']
             prev_bytes_recv, prev_bytes_sent = self.clients.get(
                 client_id, (0, 0))
             self.clients[client_id] = (bytes_recv, bytes_sent)
@@ -441,29 +441,32 @@ class ServerInstance(object):
                 if doc['type'] != CERT_CLIENT:
                     self.ignore_clients.add(doc['_id'])
 
-        rem_clients = self.cur_clients - new_clients_set
+        rem_clients = self.cur_clients - new_clients
         for client_id in rem_clients:
             self.cur_clients.remove(client_id)
             if client_id in self.ignore_clients:
                 self.ignore_clients.remove(client_id)
 
-        for client_id in clients:
-            if client_id not in self.ignore_clients:
+        clients_active = 0
+        for client in clients:
+            if client['id'] in self.ignore_clients:
+                client['ignore'] = True
+            else:
+                client['ignore'] = False
                 clients_active += 1
-                clients_real[client_id] = clients[client_id]
 
         response = self.collection.update({
             '_id': self.server.id,
             'instances.instance_id': self.instance_id,
         }, {'$set': {
             'instances.$.clients': clients,
-            'instances.$.clients_active': clients_active,
+            'instances.$.clients_active': len(clients_real),
         }})
 
         if not response['updatedExisting']:
             return
 
-        self.update_clients_bandwidth(clients)
+        self.update_clients_bandwidth(clients, rem_clients)
 
         if self.client_count != len(clients):
             for org_id in self.server.organizations:
