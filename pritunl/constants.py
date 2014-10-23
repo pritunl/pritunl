@@ -432,6 +432,7 @@ tls-verify %s
 client-connect %s
 client-disconnect %s
 server %s
+topology subnet
 max-clients 1024
 keepalive 10 60
 persist-tun
