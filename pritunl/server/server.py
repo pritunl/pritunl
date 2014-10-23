@@ -107,7 +107,7 @@ class Server(mongo.MongoObject):
     def __init__(self, name=None, network=None, port=None, protocol=None,
             dh_param_bits=None, mode=None, local_networks=None,
             dns_servers=None, search_domain=None, otp_auth=None,
-            lzo_compression=None, debug=None, **kwargs):
+            chiper=None, lzo_compression=None, debug=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         self._orig_network = self.network
@@ -133,6 +133,8 @@ class Server(mongo.MongoObject):
             self.search_domain = search_domain
         if otp_auth is not None:
             self.otp_auth = otp_auth
+        if chiper is not None:
+            self.chiper = chiper
         if lzo_compression is not None:
             self.lzo_compression = lzo_compression
         if debug is not None:
