@@ -38,6 +38,7 @@ class ServerIpPool:
 
         try:
             doc = self.collection.find({
+                'network': network,
                 'server_id': server_id,
             }).sort('_id', pymongo.DESCENDING)[0]
             if doc:
