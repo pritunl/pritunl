@@ -52,6 +52,7 @@ dict_fields = [
     'dns_servers',
     'search_domain',
     'otp_auth',
+    'chiper',
     'lzo_compression',
     'debug',
 ]
@@ -170,6 +171,7 @@ class Server(mongo.MongoObject):
             'dns_servers': self.dns_servers,
             'search_domain': self.search_domain,
             'otp_auth': True if self.otp_auth else False,
+            'cipher': self.cipher,
             'lzo_compression': self.lzo_compression,
             'debug': True if self.debug else False,
         }
