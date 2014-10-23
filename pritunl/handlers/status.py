@@ -76,7 +76,6 @@ def status_get():
         notification = settings.local.notification
 
     return utils.jsonify({
-        'org_count': 0,
         'org_count': orgs_count,
         'users_online': users_online,
         'user_count': user_count,
