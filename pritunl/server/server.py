@@ -232,7 +232,7 @@ class Server(mongo.MongoObject):
             key += '-%s' % suffix
         return key
 
-    def get_ip_set(self, org_id, user_id):
+    def get_ip_addr(self, org_id, user_id):
         return self.ip_pool.get_ip_addr(org_id, user_id)
 
     def assign_ip_addr(self, org_id, user_id):
