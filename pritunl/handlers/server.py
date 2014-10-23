@@ -730,10 +730,10 @@ def server_client_connect_post(server_id):
         for local_network in link_svr.local_networks:
             push += 'iroute %s %s\n' % utils.parse_network(
                 local_network)
-    local_ip_addr, remote_ip_addr = svr.get_ip_set(org.id, user_id)
-    if local_ip_addr and remote_ip_addr:
-        client_conf += 'ifconfig-push %s %s\n' % (
-            local_ip_addr, remote_ip_addr)
+    remote_ip_addr = svr.get_ip_addr(org.id, user_id)
+    if remote_ip_addr:
+        client_conf += 'ifconfig-push %s %s\n' % utils.parse_network(
+            remote_ip_addr)
 
     return utils.jsonify({
         'client_conf': client_conf,
