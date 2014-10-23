@@ -265,6 +265,9 @@ class Server(mongo.MongoObject):
 
         random.shuffle(remotes)
 
+        if len(remotes) > 1:
+            remotes.append('remote-random')
+
         return '\n'.join(remotes)
 
     def commit(self, *args, **kwargs):
