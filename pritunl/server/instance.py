@@ -504,6 +504,7 @@ class ServerInstance(object):
                         'bytes_sent': int(bytes_sent),
                         'connected_since': int(connected_since),
                     })
+
         self.update_clients(clients)
 
     def stop_process(self):
