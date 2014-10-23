@@ -35,6 +35,32 @@ def status_get():
     else:
         users_online = 0
 
+    response = server_collection.aggregate([
+        {'$project': {
+            '_id': True,
+            'status': True,
+        }},
+        {'$group': {
+            '_id': None,
+            'servers_count': {'$sum': 1},
+            'servers_online': {'$sum': {'$cond': {
+                'if': {'$eq': ['$status', True]},
+                'then': 1,
+                'else': 0,
+            }}},
+            'servers': {
+                '$push': '$status',
+            }
+        }},
+    ])['result']
+
+    if response:
+        servers_count = response[0]['servers_count']
+        servers_online_count = response[0]['servers_online']
+    else:
+        servers_count = 0
+        servers_online_count = 0
+
     user_count = organization.get_user_count_multi()
     local_networks = utils.get_local_networks()
 
