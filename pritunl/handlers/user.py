@@ -76,8 +76,6 @@ def user_get(org_id, user_id=None, page=None):
                 'id': server_id,
                 'name': svr.name,
                 'status': user_status,
-                'local_address': None,
-                'remote_address': None,
                 'real_address': None,
                 'virt_address': None,
                 'bytes_received': None,
@@ -92,13 +90,11 @@ def user_get(org_id, user_id=None, page=None):
         users.append(user_dict)
 
     ip_addrs_iter = server.multi_get_ip_addr(org_id, users_id)
-    for user_id, server_id, local_addr, remote_addr in ip_addrs_iter:
+    for user_id, server_id, ip_add in ip_addrs_iter:
         user_server_data = users_server_data[user_id].get(server_id)
         if user_server_data:
-            if not user_server_data['local_address']:
-                user_server_data['local_address'] = local_addr
-            if not user_server_data['remote_address']:
-                user_server_data['remote_address'] = remote_addr
+            if not user_server_data['virt_address']:
+                user_server_data['virt_address'] = ip_add
 
     if page is not None:
         return utils.jsonify({
