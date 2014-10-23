@@ -56,104 +56,6 @@ class ServerInstanceLink(object):
         else:
             return self.server.name + '<->' + self.linked_server.name
 
-    # TODO merge with instance.generate_iptables_rules
-    def generate_iptables_rules(self):
-        rules = []
-
-        rules.append(['INPUT', '-i', self.interface, '-j', 'ACCEPT'])
-        rules.append(['FORWARD', '-i', self.interface, '-j', 'ACCEPT'])
-
-        rules.append([
-            'POSTROUTING',
-            '-t', 'nat',
-            '-s', self.server.network,
-            '-d', self.linked_server.network,
-            '-o', self.interface,
-            '-j', 'MASQUERADE',
-        ])
-
-        extra_args = [
-            '--wait',
-            '-m', 'comment',
-            '--comment', 'pritunl_%s' % self.server.id,
-        ]
-        rules = [x + extra_args for x in rules]
-
-        return rules
-
-    def exists_iptables_rules(self, rule):
-        cmd = ['iptables', '-C'] + rule
-        return (cmd, subprocess.Popen(cmd,
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE))
-
-    def set_iptables_rules(self):
-        logger.debug('Setting iptables rules. %r' % {
-            'server_id': self.server.id,
-        })
-
-        processes = {}
-        poller = select.epoll()
-        self.iptables_rules = self.generate_iptables_rules()
-
-        for rule in self.iptables_rules:
-            cmd, process = self.exists_iptables_rules(rule)
-            fileno = process.stdout.fileno()
-
-            processes[fileno] = (cmd, process, ['iptables', '-A'] + rule)
-            poller.register(fileno, select.EPOLLHUP)
-
-        try:
-            while True:
-                for fd, event in poller.poll(timeout=8):
-                    cmd, process, next_cmd = processes.pop(fd)
-                    poller.unregister(fd)
-
-                    if next_cmd:
-                        if process.poll():
-                            process = subprocess.Popen(next_cmd,
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE,
-                            )
-                            fileno = process.stdout.fileno()
-
-                            processes[fileno] = (next_cmd, process, None)
-                            poller.register(fileno, select.EPOLLHUP)
-                    else:
-                        retcode = process.poll()
-                        if retcode:
-                            std_out, err_out = process.communicate()
-                            raise subprocess.CalledProcessError(
-                                retcode, cmd, output=err_out)
-
-                    if not processes:
-                        return
-
-        except subprocess.CalledProcessError as error:
-            logger.exception('Failed to apply iptables ' + \
-                'routing rule. %r' % {
-                    'server_id': self.server.id,
-                    'rule': rule,
-                    'output': error.output,
-                })
-            raise
-
-    def clear_iptables_rules(self):
-        logger.debug('Clearing iptables rules. %r' % {
-            'server_id': self.server.id,
-        })
-
-        processes = []
-
-        for rule in self.iptables_rules:
-            process = subprocess.Popen(['iptables', '-D'] + rule,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            )
-            processes.append(process)
-
-        for process in processes:
-            process.wait()
-
     def generate_client_conf(self):
         if not os.path.exists(self._temp_path):
             os.makedirs(self._temp_path)
@@ -210,8 +112,6 @@ class ServerInstanceLink(object):
 
         ovpn_conf_path = self.generate_client_conf()
 
-        self.set_iptables_rules()
-
         try:
             self.process = subprocess.Popen(['openvpn', ovpn_conf_path],
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -261,9 +161,9 @@ class ServerInstanceLink(object):
                         })
                     self.openvpn_start()
 
-        finally:
-            self.clear_iptables_rules()
+            yield
 
+        finally:
             if self.interface:
                 utils.tun_interface_release(self.interface)
                 self.interface = None
