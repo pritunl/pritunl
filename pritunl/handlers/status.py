@@ -7,25 +7,33 @@ from pritunl import server
 from pritunl import organization
 from pritunl import app
 from pritunl import auth
+from pritunl import mongo
 from pritunl import __version__
 
 @app.app.route('/status', methods=['GET'])
 @auth.session_auth
 def status_get():
-    orgs_count = 0
-    servers_count = 0
-    servers_online_count = 0
-    clients_count = 0
-    clients = set()
+    server_collection = mongo.get_collection('servers')
 
-    for svr in server.iter_servers(fields=('instances',)):
-        servers_count += 1
-        if svr.status:
-            servers_online_count += 1
-        # MongoDict doesnt support set(svr.clients)
-        for instance in svr.instances:
-            clients = clients |set(instance['clients'])
-    clients_count = len(clients)
+    response = server_collection.aggregate([
+        {'$project': {
+            'client': '$instances.clients',
+        }},
+        {'$unwind': '$client'},
+        {'$unwind': '$client'},
+        {'$match': {
+            'client.ignore': False,
+        }},
+        {'$group': {
+            '_id': None,
+            'clients': {'$addToSet': '$client.id'},
+        }},
+    ])['result']
+
+    if response:
+        users_online = len(response[0]['clients'])
+    else:
+        users_online = 0
 
     user_count = organization.get_user_count_multi()
     local_networks = utils.get_local_networks()
