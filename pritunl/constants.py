@@ -325,6 +325,9 @@ INTERFACE_INVALID_MSG = 'Interface is not valid, must be ' + \
 PROTOCOL_INVALID = 'protocol_invalid'
 PROTOCOL_INVALID_MSG = 'Protocol is not valid, must be "udp" or "tcp".'
 
+CHIPER_INVALID = 'chiper_invalid'
+CHIPER_INVALID_MSG = 'Encryption chiper is invalid.'
+
 NETWORK_IN_USE = 'network_in_use'
 NETWORK_IN_USE_MSG = 'Network address is already in use.'
 
