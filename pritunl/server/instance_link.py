@@ -139,6 +139,8 @@ class ServerInstanceLink(object):
                             time.sleep(0.05)
                             continue
 
+                    yield
+
                     try:
                         self.server.output_link.push_output(
                             line,
@@ -150,6 +152,8 @@ class ServerInstanceLink(object):
                             'output. %r', {
                                 'server_id': self.server.id,
                             })
+
+                    yield
 
                 if self.stop_event.is_set():
                     break
