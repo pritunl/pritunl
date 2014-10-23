@@ -40,6 +40,7 @@ dict_fields = [
     'id',
     'name',
     'status',
+    'start_timestamp',
     'uptime',
     'instances',
     'organizations',
