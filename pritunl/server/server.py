@@ -186,7 +186,9 @@ class Server(mongo.MongoObject):
     def users_online(self):
         clients = set()
         for instance in self.instances:
-            clients = clients | set(instance['clients'])
+            for client in instance['clients']:
+                if not client['ignore']:
+                    clients.add(client['id'])
         return len(clients)
 
     @cached_property
