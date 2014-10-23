@@ -476,7 +476,7 @@ class ServerInstance(object):
 
     def read_clients(self):
         path = os.path.join(self._temp_path, OVPN_STATUS_NAME)
-        clients = {}
+        clients = []
 
         if os.path.isfile(path):
             with open(path, 'r') as status_file:
@@ -484,19 +484,26 @@ class ServerInstance(object):
                     if line[:11] != 'CLIENT_LIST':
                         continue
                     line_split = line.strip('\n').split(',')
-                    client_id = line_split[1]
+                    user_id = line_split[1]
                     real_address = line_split[2]
                     virt_address = line_split[3]
                     bytes_recv = line_split[4]
                     bytes_sent = line_split[5]
                     connected_since = line_split[7]
-                    clients[client_id] = {
+
+                    # Openvpn will create an undef client while
+                    # a client connects
+                    if user_id == 'UNDEF':
+                        continue
+
+                    clients.append({
+                        'id': bson.ObjectId(user_id),
                         'real_address': real_address,
                         'virt_address': virt_address,
                         'bytes_received': int(bytes_recv),
                         'bytes_sent': int(bytes_sent),
                         'connected_since': int(connected_since),
-                    }
+                    })
         self.update_clients(clients)
 
     def stop_process(self):
