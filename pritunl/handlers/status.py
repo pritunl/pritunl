@@ -14,6 +14,7 @@ from pritunl import __version__
 @auth.session_auth
 def status_get():
     server_collection = mongo.get_collection('servers')
+    org_collection = mongo.get_collection('organizations')
 
     response = server_collection.aggregate([
         {'$project': {
@@ -63,6 +64,8 @@ def status_get():
 
     user_count = organization.get_user_count_multi()
     local_networks = utils.get_local_networks()
+
+    orgs_count = org_collection.find().count()
 
     if settings.local.openssl_heartbleed:
         notification = 'You are running an outdated version of openssl ' + \
