@@ -318,10 +318,6 @@ MODE_INVALID = 'mode_invalid'
 MODE_INVALID_MSG = 'Mode is not valid, must be "all_traffic" or ' + \
     '"local_traffic" or "vpn_traffic".'
 
-INTERFACE_INVALID = 'interface_invalid'
-INTERFACE_INVALID_MSG = 'Interface is not valid, must be ' + \
-    '"tun[0-64]" example "tun0".'
-
 PROTOCOL_INVALID = 'protocol_invalid'
 PROTOCOL_INVALID_MSG = 'Protocol is not valid, must be "udp" or "tcp".'
 
