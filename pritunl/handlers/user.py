@@ -31,7 +31,7 @@ def user_get(org_id, user_id=None, page=None):
     otp_auth = False
     search_more = True
     server_count = 0
-    clients = {}
+    clients = collections.defaultdict(dict)
     servers = []
 
     fields = (
