@@ -240,4 +240,4 @@ def multi_get_ip_addr(org_id, user_ids):
     }
 
     for doc in ServerIpPool.collection.find(spec, project):
-        yield doc['user_id'], doc['server_id'], doc['address']
+        yield doc['user_id'], doc['server_id'], doc['address'].split('/')[0]
