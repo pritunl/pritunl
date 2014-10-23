@@ -166,6 +166,14 @@ class ServerInstance(object):
                 self.server.search_domain)
 
         for link_doc in self.server.links:
+            if self.server.id < link_doc['server_id']:
+                push += 'route %s %s\n' % utils.parse_network(
+                    link_svr.network)
+                for local_network in link_svr.local_networks:
+                    push += 'route %s %s\n' % utils.parse_network(
+                        local_network)
+
+        for link_doc in self.server.links:
             link_svr = get_server(id=link_doc['server_id'])
             push += 'push "route %s %s"\n' % utils.parse_network(
                 link_svr.network)
