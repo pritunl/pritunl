@@ -34,7 +34,9 @@ class ServerIpPool:
         if response.get('updatedExisting'):
             return
 
-        ip_pool = ipaddress.VpnIPv4Network(network).iterhost_sets()
+        ip_network = ipaddress.IPv4Network(network)
+        ip_pool = ip_network.iterhosts()
+        ip_pool.next()
 
         try:
             doc = self.collection.find({
@@ -43,13 +45,13 @@ class ServerIpPool:
             }).sort('_id', pymongo.DESCENDING)[0]
             if doc:
                 last_addr = doc['_id']
-                for remote_ip_addr, local_ip_addr in ip_pool:
+                for remote_ip_addr in ip_pool:
                     if int(remote_ip_addr) == last_addr:
                         break
         except IndexError:
             pass
 
-        for remote_ip_addr, local_ip_addr in ip_pool:
+        for remote_ip_addr in ip_pool:
             try:
                 self.collection.insert({
                     '_id': int(remote_ip_addr),
@@ -57,8 +59,8 @@ class ServerIpPool:
                     'server_id': server_id,
                     'org_id': org_id,
                     'user_id': user_id,
-                    'remote_addr': str(remote_ip_addr),
-                    'local_addr': str(local_ip_addr),
+                    'address': '%s/%s' % (remote_ip_addr,
+                        ip_network.prefixlen),
                 })
                 break
             except pymongo.errors.DuplicateKeyError:
@@ -78,7 +80,9 @@ class ServerIpPool:
         server_id = self.server.id
         pool_end = False
 
-        ip_pool = ipaddress.VpnIPv4Network(network).iterhost_sets()
+        ip_network = ipaddress.IPv4Network(network)
+        ip_pool = ip_network.iterhosts()
+        ip_pool.next()
 
         if mongo.has_bulk:
             bulk = self.collection.initialize_unordered_bulk_op()
@@ -92,7 +96,7 @@ class ServerIpPool:
 
             for user in org.iter_users():
                 try:
-                    remote_ip_addr, local_ip_addr = ip_pool.next()
+                    remote_ip_addr = ip_pool.next()
                 except StopIteration:
                     pool_end = True
                     break
@@ -107,8 +111,8 @@ class ServerIpPool:
                     'server_id': server_id,
                     'org_id': org_id,
                     'user_id': user.id,
-                    'remote_addr': str(remote_ip_addr),
-                    'local_addr': str(local_ip_addr),
+                    'address': '%s/%s' % (remote_ip_addr,
+                        ip_network.prefixlen),
                 }}
 
                 if bulk:
@@ -218,13 +222,11 @@ class ServerIpPool:
             'network': self.server.network,
             'user_id': user_id,
         }, {
-            'local_addr': True,
-            'remote_addr': True,
+            'address': True,
         })
 
         if doc:
-            return doc['local_addr'], doc['remote_addr']
-        return None, None
+            return doc['address']
 
 def multi_get_ip_addr(org_id, user_ids):
     spec = {
@@ -234,10 +236,8 @@ def multi_get_ip_addr(org_id, user_ids):
         '_id': False,
         'user_id': True,
         'server_id': True,
-        'local_addr': True,
-        'remote_addr': True,
+        'address': True,
     }
 
     for doc in ServerIpPool.collection.find(spec, project):
-        yield doc['user_id'], doc['server_id'], \
-            doc['local_addr'], doc['remote_addr']
+        yield doc['user_id'], doc['server_id'], doc['address']
