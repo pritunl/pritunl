@@ -739,7 +739,7 @@ class ServerInstance(object):
                     'instance_id': self.instance_id,
                     'host_id': settings.local.host_id,
                     'ping_timestamp': utils.now(),
-                    'clients': {},
+                    'clients': [],
                     'clients_active': 0,
                 },
             },
