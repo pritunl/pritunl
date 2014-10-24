@@ -562,7 +562,7 @@ def server_link_delete(server_id, link_server_id):
 @auth.session_auth
 def server_operation_put(server_id, operation):
     svr = server.get_server(id=server_id, fields=server.dict_fields + \
-        ['hosts', 'organizations'])
+        ['hosts', 'links'])
 
     if operation == START:
         svr.start()
