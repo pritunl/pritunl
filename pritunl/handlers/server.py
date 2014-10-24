@@ -575,6 +575,7 @@ def server_operation_put(server_id, operation):
         logger.LogEntry(message='Restarted server "%s".' % svr.name)
     event.Event(type=SERVERS_UPDATED)
     event.Event(type=SERVER_HOSTS_UPDATED, resource_id=svr.id)
+    svr.send_link_events()
 
     return utils.jsonify(svr.dict())
 
