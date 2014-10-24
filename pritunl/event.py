@@ -20,7 +20,7 @@ class Event(object):
 
         messenger.publish('events', (type, resource_id))
 
-    def print_caller(self):
+    def print_caller(self, type, resource_id):
         file_name, line_no, func = logger.find_caller()
         file_name = os.path.basename(file_name)
         print 'event: [%s][%s] %s%s' % (
