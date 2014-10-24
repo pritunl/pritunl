@@ -489,6 +489,12 @@ class Server(mongo.MongoObject):
             if msg.get('server_id') == self.id:
                 yield msg
 
+    def send_link_events(self):
+        event.Event(type=SERVER_LINKS_UPDATED, resource_id=self.id)
+        for link in self.links:
+            event.Event(type=SERVER_LINKS_UPDATED,
+                resource_id=link['server_id'])
+
     def run(self, send_events=False):
         instance = ServerInstance(self)
         instance.run(send_events=send_events)
