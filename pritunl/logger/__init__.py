@@ -13,6 +13,9 @@ logger = logging.getLogger(APP_NAME)
 log_filter = None
 log_handler = None
 
+def find_caller():
+    return logger.findCaller()
+
 def _log(log_level, log_msg, log_type, **kwargs):
     if not log_filter or not log_handler:
         raise TypeError('Logger not setup')
