@@ -20,7 +20,8 @@ class ServerOutput(object):
         return mongo.get_collection('servers_output')
 
     def send_event(self):
-        event.Event(type=SERVER_OUTPUT_UPDATED, resource_id=self.server_id)
+        event.Event(type=SERVER_OUTPUT_UPDATED, resource_id=self.server_id,
+            delay=0.2)
 
     def clear_output(self):
         self.collection.remove({
