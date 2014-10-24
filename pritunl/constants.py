@@ -412,12 +412,12 @@ RANDOM_TWO = (
 )
 
 CIPHERS = {
-    'none': 'cipher none\n',
-    'bf128': 'cipher BF-CBC\n',
-    'bf256': 'cipher BF-CBC\nkeysize 256\n',
-    'aes128': 'cipher AES-128-CBC\n',
-    'aes192': 'cipher AES-192-CBC\n',
-    'aes256': 'cipher AES-256-CBC\n',
+    'none': 'cipher none',
+    'bf128': 'cipher BF-CBC',
+    'bf256': 'cipher BF-CBCkeysize 256',
+    'aes128': 'cipher AES-128-CBC',
+    'aes192': 'cipher AES-192-CBC',
+    'aes256': 'cipher AES-256-CBC',
 }
 
 PERF_MODES = {
