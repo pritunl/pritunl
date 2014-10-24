@@ -17,7 +17,7 @@ def _host_check_thread():
 
     while True:
         try:
-            ttl_timestamp = {'$lt': utils.now() +
+            ttl_timestamp = {'$lt': utils.now() -
                 datetime.timedelta(seconds=settings.app.host_ttl)}
 
             cursor = collection.find({
@@ -50,12 +50,13 @@ def _keep_alive_thread():
     while True:
         try:
             timestamp = utils.now()
-            timestamp_round = timestamp - datetime.timedelta(
+            timestamp -= datetime.timedelta(
                 microseconds=timestamp.microsecond,
                 seconds=timestamp.second,
             )
-            if timestamp_round != last_update:
-                last_update = timestamp_round
+
+            if timestamp != last_update:
+                last_update = timestamp
 
                 last_proc_stat = proc_stat
                 proc_stat = host.usage_utils.get_proc_stat()
