@@ -7,6 +7,7 @@ from pritunl import utils
 
 import time
 import bson
+import os
 
 event_queue = utils.NoneQueue()
 
