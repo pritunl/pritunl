@@ -552,6 +552,10 @@ def server_link_delete(server_id, link_server_id):
             'error': SERVER_NOT_OFFLINE,
             'error_msg': SERVER_NOT_OFFLINE_UNLINK_SERVER_MSG,
         }, 400)
+
+    event.Event(type=SERVER_LINKS_UPDATED, resource_id=server_id)
+    event.Event(type=SERVER_LINKS_UPDATED, resource_id=link_server_id)
+
     return utils.jsonify({})
 
 @app.app.route('/server/<server_id>/<operation>', methods=['PUT'])
