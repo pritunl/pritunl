@@ -15,7 +15,6 @@ define([
     listContainer: '.hosts-list-container',
     template: _.template(hostsListTemplate),
     listErrorMsg: 'Failed to load hosts, server error occurred.',
-    events: {},
     initialize: function() {
       this.collection = new HostCollection();
       this.listenTo(window.events, 'hosts_updated', this.update);
