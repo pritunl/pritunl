@@ -355,6 +355,29 @@ def new_org(type=ORG_DEFAULT, block=True, **kwargs):
 def get_org(id, fields=None):
     return Organization(id=id, fields=fields)
 
+def get_org_user_count(type=CERT_CLIENT):
+    user_collection = mongo.get_collection('users')
+
+    response = user_collection.aggregate([
+        {'$match': {
+            'type': type,
+        }},
+        {'$project': {
+            '_id': True,
+            'org_id': True,
+        }},
+        {'$group': {
+            '_id': '$org_id',
+            'count': {'$sum': 1},
+        }},
+    ])['result']
+
+    org_user_count = {}
+    for doc in response:
+        org_user_count[doc['_id']] = doc['count']
+
+    return org_user_count
+
 def iter_orgs(spec=None, type=ORG_DEFAULT):
     spec = {}
     if type is not None:
