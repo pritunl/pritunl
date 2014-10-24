@@ -24,16 +24,16 @@ define([
     update: function() {
       this.$('.link-name').text(this.model.get('name'));
       if (this.model.get('status') === 'online') {
-        this.$('.host-offline').hide();
-        this.$('.host-online').show();
+        this.$('.link-offline').hide();
+        this.$('.link-online').show();
       }
       else if (this.model.get('status') === 'offline') {
-        this.$('.host-online').hide();
-        this.$('.host-offline').show();
+        this.$('.link-online').hide();
+        this.$('.link-offline').show();
       }
       else {
-        this.$('.host-online').hide();
-        this.$('.host-offline').hide();
+        this.$('.link-online').hide();
+        this.$('.link-offline').hide();
       }
     },
     onDetach: function() {
