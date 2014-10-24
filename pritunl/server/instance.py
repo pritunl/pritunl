@@ -704,8 +704,7 @@ class ServerInstance(object):
                 'server_id': self.server.id,
             })
         finally:
-            for instance in self.replica_links.values() + self.server_links:
-                instance.stop()
+            self.server.send_link_events()
 
             self.collection.update({
                 '_id': self.server.id,
