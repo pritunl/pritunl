@@ -668,6 +668,13 @@ class ServerInstance(object):
 
             self.publish('started')
 
+            if send_events:
+                event.Event(type=SERVERS_UPDATED)
+                event.Event(type=SERVER_HOSTS_UPDATED,
+                    resource_id=self.server.id)
+                for org_id in self.server.organizations:
+                    event.Event(type=USERS_UPDATED, resource_id=org_id)
+
             for link_doc in self.server.links:
                 if self.server.id > link_doc['server_id']:
                     instance_link = ServerInstanceLink(
@@ -676,13 +683,6 @@ class ServerInstance(object):
                     )
                     self.server_links.append(instance_link)
                     instance_link.start()
-
-            if send_events:
-                event.Event(type=SERVERS_UPDATED)
-                event.Event(type=SERVER_HOSTS_UPDATED,
-                    resource_id=self.server.id)
-                for org_id in self.server.organizations:
-                    event.Event(type=USERS_UPDATED, resource_id=org_id)
 
             self.openvpn_watch()
 
