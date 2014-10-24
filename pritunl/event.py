@@ -3,9 +3,12 @@ from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import messenger
 from pritunl import logger
+from pritunl import utils
 
 import time
 import bson
+
+event_queue = utils.NoneQueue()
 
 class Event(object):
     def __init__(self, type, resource_id=None):
