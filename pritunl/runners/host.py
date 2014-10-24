@@ -7,6 +7,7 @@ from pritunl import host
 from pritunl import logger
 from pritunl import utils
 from pritunl import mongo
+from pritunl import event
 
 import threading
 import time
@@ -28,13 +29,16 @@ def _host_check_thread():
             })
 
             for doc in cursor:
-                collection.update({
+                response = collection.update({
                     '_id': doc['_id'],
                     'ping_timestamp': ttl_timestamp,
                 }, {'$set': {
                     'status': OFFLINE,
                     'ping_timestamp': None,
                 }})
+
+                if response['updatedExisting']:
+                    event.Event(type=HOSTS_UPDATED)
         except GeneratorExit:
             raise
         except:
