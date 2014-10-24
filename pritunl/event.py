@@ -10,6 +10,12 @@ class Event(object):
     def __init__(self, type, resource_id=None):
         messenger.publish('events', (type, resource_id))
 
+    def print_caller(self):
+        file_name, line_no, func = logger.find_caller()
+        file_name = os.path.basename(file_name)
+        print 'event: [%s][%s] %s%s' % (
+            file_name, line_no, type, resource_id if resource_id else '')
+
 def get_events(cursor=None):
     events = []
     events_dict = {}
