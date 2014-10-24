@@ -13,6 +13,7 @@ event_queue = utils.NoneQueue()
 class Event(object):
     def __init__(self, type, resource_id=None, delay=None):
         if delay:
+            # Delay event to reduce duplicate events in short period
             event_queue.put((time.time() + delay, type, resource_id))
             return
 
