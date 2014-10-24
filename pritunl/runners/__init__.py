@@ -3,6 +3,7 @@ from pritunl.runners.updates import start_updates
 from pritunl.runners.transaction import start_transaction
 from pritunl.runners.task import start_task
 from pritunl.runners.queue import start_queue
+from pritunl.runners.event import start_event
 from pritunl.runners.host import start_host
 from pritunl.runners.subscription import start_subscription
 from pritunl.runners.server import start_server
@@ -15,6 +16,7 @@ def start_all():
     start_transaction()
     start_task()
     start_queue()
+    start_event()
     start_host()
     start_subscription()
     start_server()
