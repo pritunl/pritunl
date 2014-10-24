@@ -386,6 +386,18 @@ def iter_orgs(spec=None, type=ORG_DEFAULT):
     for doc in Organization.collection.find(spec).sort('name'):
         yield Organization(doc=doc)
 
+def iter_orgs_dict():
+    spec = {
+        'type': ORG_DEFAULT,
+    }
+
+    org_user_count = get_org_user_count()
+
+    for doc in Organization.collection.find(spec).sort('name'):
+        org = Organization(doc=doc)
+        org.user_count = org_user_count.get(org.id, 0)
+        yield org.dict()
+
 def get_user_count_multi(org_ids=None, type=CERT_CLIENT):
     spec = {
         'type': type,
