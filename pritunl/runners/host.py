@@ -50,12 +50,12 @@ def _keep_alive_thread():
     while True:
         try:
             timestamp = utils.now()
-            timestamp -= datetime.timedelta(
+            timestamp_round = timestamp - datetime.timedelta(
                 microseconds=timestamp.microsecond,
                 seconds=timestamp.second,
             )
-            if timestamp != last_update:
-                last_update = timestamp
+            if timestamp_round != last_update:
+                last_update = timestamp_round
 
                 last_proc_stat = proc_stat
                 proc_stat = host.usage_utils.get_proc_stat()
