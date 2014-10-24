@@ -61,11 +61,11 @@ class Organization(mongo.MongoObject):
             '_id': True,
         }).limit(1).count())
 
-    @property
+    @cached_property
     def user_count(self):
         return self._get_user_count(type=CERT_CLIENT)
 
-    @property
+    @cached_property
     def server_user_count(self):
         return self._get_user_count(type=CERT_SERVER)
 
