@@ -18,8 +18,8 @@ def org_get(org_id=None):
         return utils.jsonify(organization.get_org(id=org_id).dict())
 
     orgs = []
-    for org in organization.iter_orgs():
-        orgs.append(org.dict())
+    for org in organization.iter_orgs_dict():
+        orgs.append(org)
     return utils.jsonify(orgs)
 
 @app.app.route('/organization', methods=['POST'])
