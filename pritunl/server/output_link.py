@@ -14,11 +14,11 @@ class ServerOutputLink(ServerOutput):
 
     def send_event(self, link_server_ids):
         event.Event(type=SERVER_LINK_OUTPUT_UPDATED,
-            resource_id=self.server_id)
+            resource_id=self.server_id, delay=OUTPUT_DELAY)
         for link_server_id in link_server_ids:
             if self.server_id != link_server_id:
                 event.Event(type=SERVER_LINK_OUTPUT_UPDATED,
-                    resource_id=link_server_id)
+                    resource_id=link_server_id, delay=OUTPUT_DELAY)
 
     def clear_output(self, link_server_ids):
         self.collection.remove({

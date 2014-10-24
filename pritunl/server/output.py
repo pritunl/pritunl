@@ -21,7 +21,7 @@ class ServerOutput(object):
 
     def send_event(self):
         event.Event(type=SERVER_OUTPUT_UPDATED, resource_id=self.server_id,
-            delay=0.2)
+            delay=OUTPUT_DELAY)
 
     def clear_output(self):
         self.collection.remove({
