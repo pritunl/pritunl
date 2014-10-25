@@ -116,6 +116,17 @@ class QueueDhParams(queue.Queue):
 
         return True
 
+    def stop_task(self):
+        logger.debug('Stopping queued dh params', 'server',
+            queue_id=self.id,
+            dh_param_bits=self.dh_param_bits,
+        )
+
+        self.queue_com.running.clear()
+        self.queue_com.popen_kill_all()
+
+        return True
+
     def resume_task(self):
         self.queue_com.running.set()
 
