@@ -395,3 +395,12 @@ def add_reserve(reserve_type):
 
 def reserve(reserve_type, *args, **kwargs):
     return reserve_types[reserve_type](*args, **kwargs)
+
+def is_locked(lock_id):
+    collection = mongo.get_collection('queue')
+
+    return bool(collection.find_one({
+        'lock_id': lock_id,
+    }, {
+        'lock_id': True
+    }))
