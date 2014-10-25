@@ -48,6 +48,7 @@ dict_fields = [
     'port',
     'protocol',
     'dh_param_bits',
+    'dh_params',
     'mode',
     'local_networks',
     'dns_servers',
