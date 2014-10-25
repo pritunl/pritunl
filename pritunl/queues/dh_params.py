@@ -81,7 +81,7 @@ class QueueDhParams(queue.Queue):
             }})
 
             if response['updatedExisting']:
-                logger.debug('Reserved queued server dh params', 'server',
+                logger.debug('Set queued server dh params', 'server',
                     queue_id=self.id,
                     dh_param_bits=self.dh_param_bits,
                 )
