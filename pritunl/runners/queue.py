@@ -67,6 +67,10 @@ def _on_msg(msg):
     try:
         if msg['message'][0] == PENDING:
             add_queue_item(queue.get(doc=msg['queue_doc']))
+        elif msg['message'][0] == STOP:
+            que = running_queues.get(msg['message'][1])
+            if que:
+                que.stop()
     except TypeError:
         pass
 
