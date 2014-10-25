@@ -456,6 +456,16 @@ class Server(mongo.MongoObject):
             return host.get_host(id=host_id)
 
     def generate_dh_param(self):
+        doc = queue.find({
+            'type': 'dh_params',
+            'server_id': self.id,
+        })
+        if doc:
+            if doc['dh_param_bits'] != self.dh_param_bits:
+                queue.stop(doc['_id'])
+            else:
+                return
+
         reserved = queue.reserve('pooled_dh_params', svr=self)
         if not reserved:
             reserved = queue.reserve('queued_dh_params', svr=self)
