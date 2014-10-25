@@ -12,6 +12,7 @@ define([
     events: {
       'click .close, .cancel': 'dismiss',
       'click .ok': 'onOk',
+      'click .modal-advanced-toggle': 'onAdvancedToggle',
       'hidden.bs.modal .modal': 'onRemove',
       'keyup input': 'onInputChange',
       'paste input': 'onInputChange',
@@ -25,6 +26,7 @@ define([
     cancelText: 'Cancel',
     enterOk: true,
     safeClose: false,
+    hasAdvanced: false,
     body: function() {
       return '';
     },
@@ -42,6 +44,9 @@ define([
         cancelText: this.cancelText,
         okText: this.okText
       }));
+      if (!this.hasAdvanced) {
+        this.$('.modal-advanced-toggle').hide();
+      }
       this.$('.modal-body').append(this.body());
       this.$('.modal').modal({
         backdrop: this.safeClose ? 'static' : true,
@@ -164,6 +169,16 @@ define([
     },
     onModalShown: function() {
       this.$('[autofocus]').focus();
+    },
+    onAdvancedToggle: function() {
+      if (this.$('.modal-advanced-toggle').text() === 'Advanced') {
+        this.$('.modal-advanced-toggle').text('Simple');
+        this.$('.advanced').slideDown(window.slideTime);
+      }
+      else {
+        this.$('.modal-advanced-toggle').text('Advanced');
+        this.$('.advanced').slideUp(window.slideTime);
+      }
     },
     onOk: function() {
       this.close();
