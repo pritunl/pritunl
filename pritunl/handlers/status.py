@@ -14,6 +14,7 @@ from pritunl import __version__
 @auth.session_auth
 def status_get():
     server_collection = mongo.get_collection('servers')
+    host_collection = mongo.get_collection('hosts')
     org_collection = mongo.get_collection('organizations')
 
     response = server_collection.aggregate([
@@ -56,11 +57,37 @@ def status_get():
     ])['result']
 
     if response:
-        servers_count = response[0]['servers_count']
-        servers_online_count = response[0]['servers_online']
+        server_count = response[0]['server_count']
+        servers_online = response[0]['servers_online']
     else:
-        servers_count = 0
-        servers_online_count = 0
+        server_count = 0
+        servers_online = 0
+
+    response = host_collection.aggregate([
+        {'$project': {
+            '_id': True,
+            'status': True,
+        }},
+        {'$group': {
+            '_id': None,
+            'host_count': {'$sum': 1},
+            'hosts_online': {'$sum': {'$cond': {
+                'if': {'$eq': ['$status', 'online']},
+                'then': 1,
+                'else': 0,
+            }}},
+            'servers': {
+                '$push': '$status',
+            }
+        }},
+    ])['result']
+
+    if response:
+        host_count = response[0]['host_count']
+        hosts_online = response[0]['hosts_online']
+    else:
+        host_count = 0
+        hosts_online = 0
 
     user_count = organization.get_user_count_multi()
     local_networks = utils.get_local_networks()
@@ -79,8 +106,10 @@ def status_get():
         'org_count': orgs_count,
         'users_online': users_online,
         'user_count': user_count,
-        'servers_online': servers_online_count,
-        'server_count': servers_count,
+        'servers_online': servers_online,
+        'server_count': server_count,
+        'hosts_online': hosts_online,
+        'host_count': host_count,
         'server_version': __version__,
         'current_host': settings.local.host_id,
         'public_ip': settings.local.public_ip,
