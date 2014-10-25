@@ -378,6 +378,21 @@ def start(queue_type, transaction=None, block=False, block_timeout=30,
         block_timeout=block_timeout)
     return que
 
+def stop(queue_id=None, spec=None, transaction=None):
+    if queue_id is not None:
+        pass
+    elif spec is not None:
+        doc = Queue.collection.find(spec, {
+            '_id': True,
+        })
+        if not doc:
+            return
+        queue_id = doc['_id']
+    else:
+        raise ValueError('Must provide queue_id or spec')
+
+    messenger.publish('queue', [STOP, queue_id], transaction=transaction)
+
 def iter_queues(spec=None):
     for doc in Queue.collection.find(spec or {}).sort('priority'):
         yield queue_types[doc['type']](doc=doc)
