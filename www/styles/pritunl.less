@@ -96,6 +96,32 @@
   overflow-y: auto;
 }
 
+.modal .modal-header .modal-title {
+  display: inline-block;
+}
+
+.modal .modal-header .modal-advanced-toggle {
+  display: inline-block;
+  float: right;
+  color: @gray8-fg;
+  margin-right: 29px;
+  margin-top: 2px;
+  padding: 9px 18px 9px 18px;
+  border-left: 1px solid @light-dark3-border;
+  border-right: 1px solid @light-dark3-border;
+  cursor: pointer;
+}
+
+.modal .modal-header .modal-advanced-toggle:hover {
+  color: @gray7-fg;
+  .box-shadow(inset 0px -7px 10px -10px @black-bg);
+}
+
+.modal .modal-header .modal-advanced-toggle:active {
+  color: @black-bg;
+  .box-shadow(inset 0px -8px 10px -10px @black-bg);
+}
+
 .modal .modal-body {
   padding: 20px 20px 0 20px;
 }
