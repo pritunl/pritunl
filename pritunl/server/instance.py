@@ -743,5 +743,4 @@ class ServerInstance(object):
         if not response['updatedExisting']:
             return
 
-        thread = threading.Thread(target=self._run_thread, args=(send_events,))
-        thread.start()
+        threading.Thread(target=self._run_thread, args=(send_events,)).start()
