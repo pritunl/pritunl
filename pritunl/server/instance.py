@@ -692,6 +692,7 @@ class ServerInstance(object):
 
             if not self.clean_exit:
                 event.Event(type=SERVERS_UPDATED)
+                self.server.send_link_events()
                 logger.LogEntry(message='Server stopped unexpectedly "%s".' % (
                     self.server.name))
         except:
@@ -704,8 +705,6 @@ class ServerInstance(object):
                 'server_id': self.server.id,
             })
         finally:
-            self.server.send_link_events()
-
             self.collection.update({
                 '_id': self.server.id,
                 'instances.instance_id': self.instance_id,
