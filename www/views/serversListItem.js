@@ -104,9 +104,10 @@ define([
       return this;
     },
     update: function() {
+      var status = this.model.get('status');
       this.$('.server-title a').text(this.model.get('name'));
       this.$('.server-status .status-text').text(
-        this.model.get('status') ? 'Online' : 'Offline');
+        status.charAt(0).toUpperCase() + status.slice(1));
       if (this.model.get('uptime')) {
         this.$('.server-uptime .status-text').text(
           window.formatUptime(this.model.get('uptime')));
@@ -134,6 +135,7 @@ define([
     },
     updateButtons: function() {
       var buttonLock = true;
+      var status = this.model.get('status');
       var orgsCount = this.serverOrgsListView.views.length;
       var hostsCount = this.serverHostsListView.views.length;
       if (!orgsCount && hostsCount) {
@@ -165,7 +167,7 @@ define([
         this.startDisabled = true;
         this.$('.server-start').attr('disabled', 'disabled');
       }
-      else if (this.model.get('status')) {
+      else if (status === 'online') {
         this.$('.server-start').hide();
         this.$('.server-restart').show();
         this.$('.server-stop').show();
@@ -187,7 +189,7 @@ define([
       }
     },
     onSettings: function() {
-      if (this.model.get('status')) {
+      if (this.model.get('status') === 'online') {
         var alertView = new AlertView({
           type: 'danger',
           message: 'Server must be offline to modify settings.',
