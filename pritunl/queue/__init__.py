@@ -28,6 +28,7 @@ class Queue(mongo.MongoObject):
         'retry',
         'attempts',
         'type',
+        'lock_id',
         'reserve_id',
         'reserve_data',
         'ttl',
