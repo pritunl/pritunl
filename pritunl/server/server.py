@@ -99,7 +99,7 @@ class Server(mongo.MongoObject):
         'organizations': [],
         'hosts': [],
         'links': [],
-        'status': False,
+        'status': OFFLINE,
         'replica_count': 1,
         'instances': [],
         'instances_count': 0,
@@ -162,7 +162,7 @@ class Server(mongo.MongoObject):
         return {
             'id': self.id,
             'name': self.name,
-            'status': self.status,
+            'status': PENDING if not self.dh_params else self.status,
             'uptime': self.uptime,
             'users_online': self.users_online,
             'user_count': self.user_count,
@@ -504,7 +504,11 @@ class Server(mongo.MongoObject):
         timeout = timeout or settings.vpn.op_timeout
         cursor_id = self.get_cursor_id()
 
-        if self.status:
+        if self.status != OFFLINE:
+            return
+
+        if not self.dh_params:
+            self.generate_dh_param()
             return
 
         if not self.organizations:
@@ -516,10 +520,10 @@ class Server(mongo.MongoObject):
         start_timestamp = utils.now()
         response = self.collection.update({
             '_id': self.id,
-            'status': False,
+            'status': OFFLINE,
             'instances_count': 0,
         }, {'$set': {
-            'status': True,
+            'status': ONLINE,
             'start_timestamp': start_timestamp,
         }})
 
@@ -527,7 +531,7 @@ class Server(mongo.MongoObject):
             raise ServerInstanceSet('Server instances already running. %r', {
                     'server_id': self.id,
                 })
-        self.status = True
+        self.status = ONLINE
         self.start_timestamp = start_timestamp
 
         started = False
@@ -569,11 +573,11 @@ class Server(mongo.MongoObject):
             self.collection.update({
                 '_id': self.id,
             }, {'$set': {
-                'status': False,
+                'status': OFFLINE,
                 'instances': [],
                 'instances_count': 0,
             }})
-            self.status = False
+            self.status = OFFLINE
             self.instances = []
             self.instances_count = 0
             raise
@@ -585,14 +589,14 @@ class Server(mongo.MongoObject):
             'server_id': self.id,
         })
 
-        if not self.status:
+        if self.status != ONLINE:
             return
 
         response = self.collection.update({
             '_id': self.id,
-            'status': True,
+            'status': ONLINE,
         }, {'$set': {
-            'status': False,
+            'status': OFFLINE,
             'start_timestamp': None,
             'instances': [],
             'instances_count': 0,
@@ -602,7 +606,7 @@ class Server(mongo.MongoObject):
             raise ServerStopError('Server not running', {
                     'server_id': self.id,
                 })
-        self.status = False
+        self.status = OFFLINE
 
         if force:
             self.publish('force_stop')
@@ -613,7 +617,7 @@ class Server(mongo.MongoObject):
         self.stop(force=True)
 
     def restart(self):
-        if not self.status:
+        if self.status != ONLINE:
             self.start()
             return
         logger.debug('Restarting server. %r' % {

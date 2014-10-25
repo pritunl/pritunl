@@ -276,7 +276,7 @@ class Organization(mongo.MongoObject):
         )
 
         for server in self.iter_servers():
-            if server.status:
+            if server.status == ONLINE:
                 server.stop()
             server.remove_org(self)
             server.commit()

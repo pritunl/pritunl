@@ -113,7 +113,7 @@ def link_servers(server_id, link_server_id):
     }
 
     for doc in collection.find(spec, project):
-        if doc['status']:
+        if doc['status'] == ONLINE:
             raise ServerLinkOnlineError('Server must be offline to link')
         count += 1
     if count != 2:

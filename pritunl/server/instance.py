@@ -723,7 +723,7 @@ class ServerInstance(object):
     def run(self, send_events=False):
         response = self.collection.update({
             '_id': self.server.id,
-            'status': True,
+            'status': ONLINE,
             'instances_count': {'$lt': self.server.replica_count},
         }, {
             '$push': {

@@ -64,7 +64,7 @@ class TaskServer(task.Task):
 
             response = self.server_collection.aggregate([
                 {'$match': {
-                    'status': True,
+                    'status': ONLINE,
                     'start_timestamp': {'$lt': timestamp_spec},
                 }},
                 {'$project': {
