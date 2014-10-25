@@ -332,6 +332,7 @@ class Queue(mongo.MongoObject):
         try:
             if self.queue_com.state == RUNNING and self.stop_task():
                 self.queue_com.state = STOPPED
+                self.remove()
                 return True
             return False
         finally:
