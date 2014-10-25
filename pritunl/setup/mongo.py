@@ -89,7 +89,6 @@ def setup_mongo():
     ])
     mongo.collections['queue'].ensure_index('runner_id')
     mongo.collections['queue'].ensure_index('ttl_timestamp')
-    mongo.collections['queue'].ensure_index('lock_id', unique=True)
     mongo.collections['task'].ensure_index('type', unique=True)
     mongo.collections['task'].ensure_index('ttl_timestamp')
     mongo.collections['log_entries'].ensure_index([
