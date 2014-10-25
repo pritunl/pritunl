@@ -44,7 +44,7 @@ def status_get():
         }},
         {'$group': {
             '_id': None,
-            'servers_count': {'$sum': 1},
+            'server_count': {'$sum': 1},
             'servers_online': {'$sum': {'$cond': {
                 'if': {'$eq': ['$status', True]},
                 'then': 1,
