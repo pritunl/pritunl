@@ -28,7 +28,6 @@ class Queue(mongo.MongoObject):
         'retry',
         'attempts',
         'type',
-        'lock_id',
         'reserve_id',
         'reserve_data',
         'ttl',
@@ -50,7 +49,6 @@ class Queue(mongo.MongoObject):
         self.type = self.type
         self.reserve_id = self.reserve_id
         self.runner_id = bson.ObjectId()
-        self.lock_id = bson.ObjectId()
         self.claimed = False
         self.queue_com = QueueCom()
         self.keep_alive_thread = None
