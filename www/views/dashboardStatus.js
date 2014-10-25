@@ -35,10 +35,12 @@ define([
           this.$('.orgs-status .status-num').text('-/-');
           this.$('.users-status .status-num').text('-/-');
           this.$('.servers-status .status-num').text('-/-');
+          this.$('.hosts-status .status-num').text('-/-');
 
           var selectors = '.orgs-status .status-num, ' +
             '.users-status .status-num, ' +
-            '.servers-status .status-num';
+            '.servers-status .status-num' +
+            '.hosts-status .status-num';
           this.$(selectors).removeClass(
             'default-text warning-text success-text');
           this.$(selectors).addClass('error-text');
@@ -52,6 +54,7 @@ define([
           this.addView(alertView);
         }.bind(this),
         success: function() {
+          var i;
           var num;
           var totalNum;
 
@@ -91,31 +94,41 @@ define([
           }
           this.$('.users-status .status-num').text(num + '/' + totalNum);
 
-          num = this.model.get('servers_online');
-          totalNum = this.model.get('server_count');
-          if (totalNum === 0) {
-            num = '-';
-            totalNum = '-';
-            this.$('.servers-status .status-num').removeClass(
-              'error-text warning-text success-text');
-            this.$('.servers-status .status-num').addClass('default-text');
+          var type;
+          var types = ['server', 'host'];
+          for (i = 0; i < types.length; i++) {
+            type = types[i];
+            num = this.model.get(type + 's_online');
+            totalNum = this.model.get(type + '_count');
+            if (totalNum === 0) {
+              num = '-';
+              totalNum = '-';
+              this.$('.' + type + 's-status .status-num').removeClass(
+                'error-text warning-text success-text');
+              this.$('.' + type + 's-status .status-num').addClass(
+                'default-text');
+            }
+            else if (num === 0) {
+              this.$('.' + type + 's-status .status-num').removeClass(
+                'default-text warning-text success-text');
+              this.$('.' + type + 's-status .status-num').addClass(
+                'error-text');
+            }
+            else if (num < totalNum) {
+              this.$('.' + type + 's-status .status-num').removeClass(
+                'default-text error-text success-text');
+              this.$('.' + type + 's-status .status-num').addClass(
+                'warning-text');
+            }
+            else {
+              this.$('.' + type + 's-status .status-num').removeClass(
+                'default-text error-text warning-text');
+              this.$('.' + type + 's-status .status-num').addClass(
+                'success-text');
+            }
+            this.$('.' + type + 's-status .status-num').text(
+              num + '/' + totalNum);
           }
-          else if (num === 0) {
-            this.$('.servers-status .status-num').removeClass(
-              'default-text warning-text success-text');
-            this.$('.servers-status .status-num').addClass('error-text');
-          }
-          else if (num < totalNum) {
-            this.$('.servers-status .status-num').removeClass(
-              'default-text error-text success-text');
-            this.$('.servers-status .status-num').addClass('warning-text');
-          }
-          else {
-            this.$('.servers-status .status-num').removeClass(
-              'default-text error-text warning-text');
-            this.$('.servers-status .status-num').addClass('success-text');
-          }
-          this.$('.servers-status .status-num').text(num + '/' + totalNum);
 
           var serverInfo = '';
           if (this.model.get('server_version')) {
