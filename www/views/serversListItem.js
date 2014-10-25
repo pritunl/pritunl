@@ -138,22 +138,33 @@ define([
       var status = this.model.get('status');
       var orgsCount = this.serverOrgsListView.views.length;
       var hostsCount = this.serverHostsListView.views.length;
-      if (!orgsCount && hostsCount) {
+
+      if (status === 'pending') {
+        this.$('.no-dh-warning').show();
+        this.$('.no-host-warning').hide();
+        this.$('.no-org-host-warning').hide();
+        this.$('.no-org-warning').hide();
+      }
+      else if (!orgsCount && hostsCount) {
+        this.$('.no-dh-warning').hide();
         this.$('.no-host-warning').hide();
         this.$('.no-org-host-warning').hide();
         this.$('.no-org-warning').show();
       }
       else if (orgsCount && !hostsCount) {
+        this.$('.no-dh-warning').hide();
         this.$('.no-org-warning').hide();
         this.$('.no-org-host-warning').hide();
         this.$('.no-host-warning').show();
       }
       else if (!orgsCount && !hostsCount) {
+        this.$('.no-dh-warning').hide();
         this.$('.no-org-warning').hide();
         this.$('.no-host-warning').hide();
         this.$('.no-org-host-warning').show();
       }
       else {
+        this.$('.no-dh-warning').hide();
         this.$('.no-org-warning').hide();
         this.$('.no-host-warning').hide();
         this.$('.no-org-host-warning').hide();
