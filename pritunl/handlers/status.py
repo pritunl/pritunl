@@ -46,7 +46,7 @@ def status_get():
             '_id': None,
             'server_count': {'$sum': 1},
             'servers_online': {'$sum': {'$cond': {
-                'if': {'$eq': ['$status', True]},
+                'if': {'$eq': ['$status', ONLINE]},
                 'then': 1,
                 'else': 0,
             }}},
@@ -72,7 +72,7 @@ def status_get():
             '_id': None,
             'host_count': {'$sum': 1},
             'hosts_online': {'$sum': {'$cond': {
-                'if': {'$eq': ['$status', 'online']},
+                'if': {'$eq': ['$status', ONLINE]},
                 'then': 1,
                 'else': 0,
             }}},

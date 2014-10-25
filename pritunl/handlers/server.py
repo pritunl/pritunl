@@ -334,7 +334,7 @@ def server_put_post(server_id=None):
         svr.commit()
     else:
         svr = server.get_server(id=server_id)
-        if svr.status:
+        if svr.status == ONLINE:
             return utils.jsonify({
                 'error': SERVER_NOT_OFFLINE,
                 'error_msg': SERVER_NOT_OFFLINE_SETTINGS_MSG,
@@ -403,7 +403,7 @@ def server_org_put(server_id, org_id):
     svr = server.get_server(id=server_id,
         fields=['id', 'status', 'organizations'])
     org = organization.get_org(id=org_id, fields=['_id'])
-    if svr.status:
+    if svr.status == ONLINE:
         return utils.jsonify({
             'error': SERVER_NOT_OFFLINE,
             'error_msg': SERVER_NOT_OFFLINE_ATTACH_ORG_MSG,
@@ -426,7 +426,7 @@ def server_org_delete(server_id, org_id):
     svr = server.get_server(id=server_id,
         fields=['_id', 'status', 'organizations'])
     org = organization.get_org(id=org_id, fields=['_id'])
-    if svr.status:
+    if svr.status == ONLINE:
         return utils.jsonify({
             'error': SERVER_NOT_OFFLINE,
             'error_msg': SERVER_NOT_OFFLINE_DETACH_ORG_MSG,
@@ -448,9 +448,9 @@ def server_host_get(server_id):
     hosts_offline = svr.replica_count - len(active_hosts) > 0
 
     for hst in svr.iter_hosts(fields=['_id', 'name', 'public_addr']):
-        if svr.status and hst.id in active_hosts:
+        if svr.status == ONLINE and hst.id in active_hosts:
             status = ONLINE
-        elif svr.status and hosts_offline:
+        elif svr.status == ONLINE and hosts_offline:
             status = OFFLINE
         else:
             status = None
@@ -507,10 +507,10 @@ def server_link_get(server_id):
                 '_id', 'status', 'name', 'replica_count', 'instances']):
             link_hosts_offline = link_svr.replica_count - len(
                 link_svr.instances) > 0
-            if svr.status:
+            if svr.status == ONLINE:
                 if hosts_offline or link_hosts_offline:
                     status = OFFLINE
-                elif link_svr.status:
+                elif link_svr.status == ONLINE:
                     status = ONLINE
                 else:
                     status = OFFLINE
