@@ -71,6 +71,7 @@ class TaskServer(task.Task):
                     '_id': True,
                     'hosts': True,
                     'instances': True,
+                    'replica_count': True,
                     'offline_instances_count': {
                         '$subtract': [
                             '$replica_count',
@@ -90,12 +91,13 @@ class TaskServer(task.Task):
                 hosts = list(set(doc['hosts']) - active_hosts)
                 if not hosts:
                     continue
-                prefered_host = random.choice(hosts)
 
+                prefered_host = random.sample(hosts,
+                    min(doc['replica_count'], len(hosts)))
                 messenger.publish('servers', 'start', extra={
                     'server_id': doc['_id'],
                     'send_events': True,
-                    'prefered_hosts': [prefered_host],
+                    'prefered_hosts': prefered_host,
                 })
         except GeneratorExit:
             raise
