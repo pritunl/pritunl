@@ -78,6 +78,18 @@ class Host(mongo.MongoObject):
             'public_address': self.public_addr,
         }
 
+    def iter_servers(self, fields=None):
+        from pritunl import server
+
+        spec = {
+            'hosts': self.id,
+        }
+        if fields:
+            fields = {key: True for key in fields}
+
+        for doc in server.Server.collection.find(spec, fields):
+            yield server.Server(doc=doc)
+
     def get_link_user(self, org_id):
         from pritunl import organization
 
