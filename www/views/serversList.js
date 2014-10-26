@@ -68,7 +68,7 @@ define([
         }.bind(this)
       });
     },
-    _addServer: function(type) {
+    onAddServer: function() {
       this.$('.servers-add-server').attr('disabled', 'disabled');
       this.statusModel.fetch({
         success: function() {
@@ -83,7 +83,6 @@ define([
           }
 
           var modal = new ModalAddServerView({
-            type: type,
             publicIp: this.statusModel.get('public_ip'),
             localNetworks: this.statusModel.get('local_networks'),
             usedNetworks: usedNetworks,
@@ -114,9 +113,6 @@ define([
           this.$('.servers-add-server').removeAttr('disabled');
         }.bind(this)
       });
-    },
-    onAddServer: function() {
-      this._addServer('server');
     },
     onAttachOrg: function() {
       if (this.orgs.models.length) {
