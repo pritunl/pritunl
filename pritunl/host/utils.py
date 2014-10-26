@@ -91,6 +91,7 @@ def init_host():
     settings.local.host.status = ONLINE
     settings.local.host.users_online = 0
     settings.local.host.start_timestamp = utils.now()
+    settings.local.host.ping_timestamp = utils.now()
     if settings.local.public_ip:
         settings.local.host.auto_public_address = settings.local.public_ip
 
