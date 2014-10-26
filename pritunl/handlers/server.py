@@ -256,6 +256,13 @@ def server_put_post(server_id=None):
                 'error_msg': CHIPER_INVALID_MSG,
             }, 400)
 
+    jumbo_frames = False
+    jumbo_frames_def = False
+    if 'jumbo_frames' in flask.request.json:
+        jumbo_frames_def = True
+        jumbo_frames = True if flask.request.json[
+            'jumbo_frames'] else False
+
     if not server_id:
         if not name_def:
             return utils.jsonify({
@@ -328,6 +335,7 @@ def server_put_post(server_id=None):
             search_domain=search_domain,
             otp_auth=otp_auth,
             chiper=chiper,
+            jumbo_frames=jumbo_frames,
             lzo_compression=lzo_compression,
             debug=debug,
         )
@@ -362,6 +370,8 @@ def server_put_post(server_id=None):
             svr.otp_auth = otp_auth
         if chiper_def:
             svr.chiper = chiper
+        if jumbo_frames_def:
+            svr.jumbo_frames = jumbo_frames
         if lzo_compression_def:
             svr.lzo_compression = lzo_compression
         if debug_def:
