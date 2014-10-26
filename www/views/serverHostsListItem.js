@@ -23,7 +23,12 @@ define([
     },
     update: function() {
       this.$('.host-name').text(this.model.get('name'));
-      this.$('.host-address').text('(' + this.model.get('address') + ')');
+      if (this.$('.host-address')) {
+        this.$('.host-address').text('(' + this.model.get('address') + ')');
+      }
+      else {
+        this.$('.host-address').text('');
+      }
       if (this.model.get('status') === 'online') {
         this.$('.host-offline').hide();
         this.$('.host-online').show();
