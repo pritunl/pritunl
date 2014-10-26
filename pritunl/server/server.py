@@ -434,11 +434,44 @@ class Server(mongo.MongoObject):
             'server_id': self.id,
             'host_id': host_id,
         })
-        try:
-            self.hosts.remove(host_id)
-        except ValueError:
-            pass
-        self.changed.add('hosts')
+
+        self.hosts.remove(host_id)
+
+        response = self.collection.update({
+            '_id': self.id,
+            'instances.host_id': host_id,
+        }, {
+            '$pull': {
+                'hosts': host_id,
+                'instances': {
+                    'host_id': host_id,
+                },
+            },
+            '$inc': {
+                'instances_count': -1,
+            },
+        })
+
+        if response['updatedExisting']:
+            prefered_host = random.sample(self.hosts,
+                min(self.replica_count, len(self.hosts)))
+            self.publish('start', extra={
+                'prefered_hosts': prefered_host,
+            })
+
+        doc = self.collection.find_and_modify({
+            '_id': self.id,
+        }, {
+            '$pull': {
+                'hosts': host_id,
+            },
+        }, {
+            'hosts': True,
+        })
+
+        if doc and not doc['hosts']:
+            self.status = OFFLINE
+            self.commit('status')
 
     def iter_hosts(self, fields=None):
         spec = {
