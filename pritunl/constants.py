@@ -66,9 +66,6 @@ GROUP_MONGO = 'mongo'
 GROUP_FILE = 'file'
 GROUP_LOCAL = 'local'
 
-PERF_NORMAL = 'normal'
-PERF_THROUGHPUT = 'throughput'
-
 SETTINGS_RESERVED = {
     'groups',
     'collection',
@@ -421,9 +418,9 @@ CIPHERS = {
     'aes256': 'cipher AES-256-CBC',
 }
 
-PERF_MODES = {
-    PERF_NORMAL: '',
-    PERF_THROUGHPUT: 'tun-mtu 9000\nfragment 0\nmssfix 0\n',
+JUMBO_FRAMES = {
+    False: '',
+    True: 'tun-mtu 9000\nfragment 0\nmssfix 0\n',
 }
 
 OVPN_INLINE_SERVER_CONF = """port %s

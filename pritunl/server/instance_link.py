@@ -85,7 +85,7 @@ class ServerInstanceLink(object):
         if self.server.otp_auth:
             client_conf += 'auth-user-pass\n'
 
-        client_conf += PERF_MODES[self.server.performance_mode]
+        client_conf += JUMBO_FRAMES[self.server.jumbo_frames]
         client_conf += '<ca>\n%s\n</ca>\n' % utils.get_cert_block(
             self.server.ca_certificate)
         client_conf += ('<cert>\n%s\n' + \

@@ -335,7 +335,7 @@ class User(mongo.MongoObject):
                     if server.otp_auth:
                         client_conf += 'auth-user-pass\n'
 
-                    client_conf += PERF_MODES[server.performance_mode]
+                    client_conf += JUMBO_FRAMES[server.jumbo_frames]
                     client_conf += '<ca>\n%s\n</ca>\n' % utils.get_cert_block(
                         server.ca_certificate)
                     client_conf += ('<cert>\n%s\n' + \
