@@ -124,6 +124,12 @@ def server_put_post(server_id=None):
             if address[3] != 0:
                 return _network_invalid()
 
+    bind_address = None
+    bind_address_def = False
+    if 'bind_address' in flask.request.json:
+        bind_address_def = True
+        bind_address = utils.filter_str(flask.request.json['bind_address'])
+
     protocol = 'udp'
     protocol_def = False
     if 'protocol' in flask.request.json:
@@ -326,6 +332,7 @@ def server_put_post(server_id=None):
         svr = server.new_server(
             name=name,
             network=network,
+            bind_address=bind_address,
             port=port,
             protocol=protocol,
             dh_param_bits=dh_param_bits,
@@ -351,6 +358,8 @@ def server_put_post(server_id=None):
             svr.name = name
         if network_def:
             svr.network = network
+        if bind_address_def:
+            svr.bind_address = bind_address
         if port_def:
             svr.port = port
         if protocol_def:
