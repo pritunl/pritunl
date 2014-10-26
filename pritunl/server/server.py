@@ -414,8 +414,6 @@ class Server(mongo.MongoObject):
         return docs
 
     def add_host(self, host_id):
-        if not isinstance(host_id, basestring):
-            host_id = host_id.id
         logger.debug('Adding host to server. %r' % {
             'server_id': self.id,
             'host_id': host_id,
@@ -430,8 +428,6 @@ class Server(mongo.MongoObject):
         self.changed.add('hosts')
 
     def remove_host(self, host_id):
-        if not isinstance(host_id, basestring):
-            host_id = host_id.id
         if host_id not in self.hosts:
             return
         logger.debug('Removing host from server. %r' % {

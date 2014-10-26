@@ -469,7 +469,7 @@ def server_host_get(server_id):
 def server_host_put(server_id, host_id):
     svr = server.get_server(id=server_id, fields=['_id', 'hosts'])
     hst = host.get_host(id=host_id, fields=['_id', 'name', 'public_addr'])
-    svr.add_host(hst)
+    svr.add_host(hst.id)
     svr.commit('hosts')
     event.Event(type=SERVER_HOSTS_UPDATED, resource_id=svr.id)
 
@@ -486,7 +486,7 @@ def server_host_put(server_id, host_id):
 def server_host_delete(server_id, host_id):
     svr = server.get_server(id=server_id, fields=['_id', 'hosts'])
     hst = host.get_host(id=host_id, fields=['_id', 'name'])
-    svr.remove_host(hst)
+    svr.remove_host(hst.id)
     svr.commit('hosts')
     event.Event(type=SERVER_HOSTS_UPDATED, resource_id=svr.id)
     return utils.jsonify({})
