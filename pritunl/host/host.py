@@ -116,8 +116,18 @@ class Host(mongo.MongoObject):
         })
 
     def remove(self):
+        send_event = False
+
         if self.status == ONLINE:
             raise HostError('Host must be offline to remove')
+
+        for svr in self.iter_servers(('_id', 'replica_count', 'hosts')):
+            send_event = True
+            svr.remove_host(self.id)
+            event.Event(type=SERVER_HOSTS_UPDATED, resource_id=svr.id)
+
+        if send_event:
+            event.Event(type=SERVERS_UPDATED)
 
         self.user_collection.remove({
             'resource_id': self.id,
