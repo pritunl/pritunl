@@ -182,6 +182,7 @@ define([
       var localNetworks = [];
       var debug = this.getDebugSelect();
       var otpAuth = this.getOtpAuthSelect();
+      var cipher = this.$('.cipher select').val();
 
       if (!name) {
         this.setAlert('danger', 'Name can not be empty.', '.name');
@@ -219,6 +220,7 @@ define([
         'dns_servers': dnsServers,
         'search_domain': searchDomain,
         'otp_auth': otpAuth,
+        'cipher': cipher,
         'debug': debug
       };
 
