@@ -187,6 +187,9 @@ class ServerInstance(object):
             8 if self.server.debug else 3,
         )
 
+        if self.server.bind_address:
+            server_conf += 'local %s\n' % self.server.bind_address
+
         if self.server.otp_auth:
             server_conf += 'auth-user-pass-verify %s via-file\n' % (
                 user_pass_verify_path)
