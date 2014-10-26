@@ -244,16 +244,16 @@ def server_put_post(server_id=None):
         lzo_compression = True if flask.request.json[
             'lzo_compression'] else False
 
-    chiper = None
-    chiper_def = False
-    if 'chiper' in flask.request.json:
-        chiper_def = True
-        chiper = flask.request.json['chiper']
+    cipher = None
+    cipher_def = False
+    if 'cipher' in flask.request.json:
+        cipher_def = True
+        cipher = flask.request.json['cipher']
 
-        if chiper not in CIPHERS:
+        if cipher not in CIPHERS:
             return utils.jsonify({
-                'error': CHIPER_INVALID,
-                'error_msg': CHIPER_INVALID_MSG,
+                'error': CIPHER_INVALID,
+                'error_msg': CIPHER_INVALID_MSG,
             }, 400)
 
     jumbo_frames = False
@@ -334,7 +334,7 @@ def server_put_post(server_id=None):
             dns_servers=dns_servers,
             search_domain=search_domain,
             otp_auth=otp_auth,
-            chiper=chiper,
+            cipher=cipher,
             jumbo_frames=jumbo_frames,
             lzo_compression=lzo_compression,
             debug=debug,
@@ -368,8 +368,8 @@ def server_put_post(server_id=None):
             svr.search_domain = search_domain
         if otp_auth_def:
             svr.otp_auth = otp_auth
-        if chiper_def:
-            svr.chiper = chiper
+        if cipher_def:
+            svr.cipher = cipher
         if jumbo_frames_def:
             svr.jumbo_frames = jumbo_frames
         if lzo_compression_def:

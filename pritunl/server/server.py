@@ -54,7 +54,7 @@ dict_fields = [
     'dns_servers',
     'search_domain',
     'otp_auth',
-    'chiper',
+    'cipher',
     'lzo_compression',
     'debug',
 ]
@@ -109,7 +109,7 @@ class Server(mongo.MongoObject):
     def __init__(self, name=None, network=None, port=None, protocol=None,
             dh_param_bits=None, mode=None, local_networks=None,
             dns_servers=None, search_domain=None, otp_auth=None,
-            chiper=None, jumbo_frames=None, lzo_compression=None,
+            cipher=None, jumbo_frames=None, lzo_compression=None,
             debug=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
@@ -136,8 +136,8 @@ class Server(mongo.MongoObject):
             self.search_domain = search_domain
         if otp_auth is not None:
             self.otp_auth = otp_auth
-        if chiper is not None:
-            self.chiper = chiper
+        if cipher is not None:
+            self.cipher = cipher
         if jumbo_frames is not None:
             self.jumbo_frames = jumbo_frames
         if lzo_compression is not None:
