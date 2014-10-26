@@ -46,7 +46,13 @@ def org_put(org_id):
 def org_delete(org_id):
     org = organization.get_org(id=org_id)
     name = org.name
-    org.remove()
+    server_ids = org.remove()
+
     logger.LogEntry(message='Deleted organization "%s".' % name)
+
+    for server_id in server_ids:
+        event.Event(type=SERVER_ORGS_UPDATED, resource_id=server_id)
+    event.Event(type=SERVERS_UPDATED)
     event.Event(type=ORGS_UPDATED)
+
     return utils.jsonify({})
