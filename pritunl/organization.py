@@ -271,19 +271,32 @@ class Organization(mongo.MongoObject):
         return usr
 
     def remove(self):
+        user_collection = mongo.get_collection('users')
+        server_collection = mongo.get_collection('servers')
+
         logger.debug('Remove org', 'organization',
             org_id=self.id,
         )
 
+        server_ids = []
+
         for server in self.iter_servers():
+            server_ids.append(server.id)
             if server.status == ONLINE:
                 server.stop()
-            server.remove_org(self)
-            server.commit()
+
+        server_collection.update({
+            'organizations': self.id,
+        }, {'$pull': {
+            'organizations': self.id,
+        }})
+
         mongo.MongoObject.remove(self)
-        user.User.collection.remove({
+        user_collection.remove({
             'org_id': self.id,
         })
+
+        return server_ids
 
 def new_pooled_org():
     thread = threading.Thread(target=new_org, kwargs={
