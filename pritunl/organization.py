@@ -226,11 +226,13 @@ class Organization(mongo.MongoObject):
 
     def iter_servers(self, fields=None):
         from pritunl import server
+
         spec = {
             'organizations': self.id,
         }
         if fields:
             fields = {key: True for key in fields}
+
         for doc in server.Server.collection.find(spec, fields):
             yield server.Server(doc=doc)
 
