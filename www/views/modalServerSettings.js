@@ -14,6 +14,7 @@ define([
     okText: 'Save',
     loadingMsg: 'Saving server...',
     errorMsg: 'Failed to saving server, server error occurred.',
+    hasAdvanced: true,
     events: function() {
       return _.extend({
         'change .server-mode select': 'onServerMode',
