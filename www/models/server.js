@@ -13,6 +13,7 @@ define([
       'users_online': null,
       'user_count': null,
       'network': null,
+      'bind_address': null,
       'port': null,
       'protocol': null,
       'dh_param_bits': null,

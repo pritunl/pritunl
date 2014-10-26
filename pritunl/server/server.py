@@ -45,6 +45,7 @@ dict_fields = [
     'instances',
     'organizations',
     'network',
+    'bind_address',
     'port',
     'protocol',
     'dh_param_bits',
@@ -64,6 +65,7 @@ class Server(mongo.MongoObject):
         'name',
         'network',
         'network_lock',
+        'bind_address',
         'port',
         'protocol',
         'dh_param_bits',
@@ -106,11 +108,12 @@ class Server(mongo.MongoObject):
     }
     cache_prefix = 'server'
 
-    def __init__(self, name=None, network=None, port=None, protocol=None,
-            dh_param_bits=None, mode=None, local_networks=None,
-            dns_servers=None, search_domain=None, otp_auth=None,
-            cipher=None, jumbo_frames=None, lzo_compression=None,
-            debug=None, **kwargs):
+    def __init__(self, name=None, network=None, bind_address=None,
+            port=None, protocol=None, dh_param_bits=None,
+            mode=None, local_networks=None, dns_servers=None,
+            search_domain=None, otp_auth=None, cipher=None,
+            jumbo_frames=None, lzo_compression=None, debug=None,
+            **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         self._orig_network = self.network
@@ -120,6 +123,8 @@ class Server(mongo.MongoObject):
             self.name = name
         if network is not None:
             self.network = network
+        if bind_address is not None:
+            self.bind_address = bind_address
         if port is not None:
             self.port = port
         if protocol is not None:
@@ -170,6 +175,7 @@ class Server(mongo.MongoObject):
             'users_online': self.users_online,
             'user_count': self.user_count,
             'network': self.network,
+            'bind_address': self.bind_address,
             'port': self.port,
             'protocol': self.protocol,
             'dh_param_bits': self.dh_param_bits,
