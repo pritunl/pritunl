@@ -488,6 +488,7 @@ def server_host_delete(server_id, host_id):
     hst = host.get_host(id=host_id, fields=['_id', 'name'])
     svr.remove_host(hst.id)
     svr.commit('hosts')
+    event.Event(type=SERVERS_UPDATED)
     event.Event(type=SERVER_HOSTS_UPDATED, resource_id=svr.id)
     return utils.jsonify({})
 
