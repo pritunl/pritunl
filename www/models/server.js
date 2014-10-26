@@ -8,7 +8,6 @@ define([
     defaults: {
       'id': null,
       'name': null,
-      'type': null,
       'status': null,
       'uptime': null,
       'users_online': null,
@@ -22,6 +21,8 @@ define([
       'dns_servers': null,
       'search_domain': null,
       'otp_auth': null,
+      'cipher': null,
+      'jumbo_frames': null,
       'lzo_compression': null,
       'debug': null
     },
