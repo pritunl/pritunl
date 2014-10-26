@@ -25,7 +25,6 @@ def _host_check_thread():
                 'ping_timestamp': ttl_timestamp,
             }, {
                 '_id': True,
-                'ping_timestamp': True,
             })
 
             for doc in cursor:
