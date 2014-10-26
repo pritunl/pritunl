@@ -244,7 +244,7 @@ def server_put_post(server_id=None):
         lzo_compression = True if flask.request.json[
             'lzo_compression'] else False
 
-    chiper = False
+    chiper = None
     chiper_def = False
     if 'chiper' in flask.request.json:
         chiper_def = True
