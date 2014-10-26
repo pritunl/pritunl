@@ -183,6 +183,10 @@ define([
       var debug = this.getDebugSelect();
       var otpAuth = this.getOtpAuthSelect();
       var cipher = this.$('.cipher select').val();
+      var bindAddress = this.$('.bind-address input').val();
+      if (!bindAddress) {
+        bindAddress = null;
+      }
 
       if (!name) {
         this.setAlert('danger', 'Name can not be empty.', '.name');
@@ -212,6 +216,7 @@ define([
         'name': name,
         'type': this.model.get('type'),
         'network': network,
+        'bind_address': bindAddress,
         'port': port,
         'protocol': protocol,
         'dh_param_bits': dhParamBits,
