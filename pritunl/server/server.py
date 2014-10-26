@@ -302,6 +302,10 @@ class Server(mongo.MongoObject):
             tran.commit()
 
     def remove(self):
+        queue.stop(spec={
+            'type': 'dh_params',
+            'server_id': self.id,
+        })
         self.remove_primary_user()
         mongo.MongoObject.remove(self)
 
