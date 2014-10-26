@@ -4,11 +4,6 @@
       <label>Name</label>
       <input type="text" class="form-control" placeholder="Enter name" data-toggle="tooltip" title="Name of VPN server" value="<%- name %>" autofocus>
     </div>
-    <div class="network form-group">
-      <label>Network</label>
-      <span class="label label-default no-select" toggle="tooltip" title="Maximum number of users for this subnet"></span>
-      <input type="text" class="form-control" placeholder="Enter network address" data-toggle="tooltip" title="Network address for the private network that will be created for VPN clients" value="<%- network %>" autocapitalize="off">
-    </div>
     <div class="port-protocol form-group">
       <label>Port</label>
       <label>Protocol</label>
@@ -19,25 +14,16 @@
         <option value="tcp" <%= protocol === 'tcp' ? 'selected' : '' %>>tcp</option>
       </select>
     </div>
-    <div class="dh-param-bits form-group">
-      <label>DH Param Bits</label>
-      <select class="form-control" data-toggle="tooltip" title="Size of DH parameters">
-        <option value="1024" <%= dh_param_bits === 1024 ? 'selected' : '' %>>1024</option>
-        <option value="1536" <%= dh_param_bits === 1536 ? 'selected' : '' %>>1536</option>
-        <option value="2048" <%= dh_param_bits === 2048 ? 'selected' : '' %>>2048</option>
-        <option value="3072" <%= dh_param_bits === 3072 ? 'selected' : '' %>>3072</option>
-        <option value="4096" <%= dh_param_bits === 4096 ? 'selected' : '' %>>4096</option>
-      </select>
+    <div class="network form-group">
+      <label>Network</label>
+      <span class="label label-default no-select" toggle="tooltip" title="Maximum number of users for this subnet"></span>
+      <input type="text" class="form-control" placeholder="Enter network address" data-toggle="tooltip" title="Network address for the private network that will be created for VPN clients" value="<%- network %>" autocapitalize="off">
     </div>
   </div>
   <div class="right">
     <div class="dns-servers form-group">
       <label>DNS Server</label>
       <input type="text" class="form-control" placeholder="Enter DNS server" data-toggle="tooltip" title="Optional, DNS server for clients" value="<%- dns_servers.join(', ') %>" autocapitalize="off">
-    </div>
-    <div class="search-domain form-group">
-      <label>DNS Search Domain</label>
-      <input type="text" class="form-control" placeholder="Enter DNS search domain" data-toggle="tooltip" title="Optional, DNS search domain for clients" value="<%- search_domain || '' %>" autocapitalize="off">
     </div>
     <div class="server-mode form-group">
       <label>Server Mode</label>
@@ -62,6 +48,39 @@
       <div class="selector <%= otp_auth ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Enable two-step authentication using Google Authenticator. Verification code is entered as the user password when connecting">
         <span class="selector-inner glyphicon glyphicon-ok"></span>
       </div>
+    </div>
+  </div>
+  <div class="left advanced">
+    <div class="dh-param-bits form-group">
+      <label>DH Param Bits</label>
+      <select class="form-control" data-toggle="tooltip" title="Size of DH parameters">
+        <option value="1024" <%= dh_param_bits === 1024 ? 'selected' : '' %>>1024</option>
+        <option value="1536" <%= dh_param_bits === 1536 ? 'selected' : '' %>>1536</option>
+        <option value="2048" <%= dh_param_bits === 2048 ? 'selected' : '' %>>2048</option>
+        <option value="3072" <%= dh_param_bits === 3072 ? 'selected' : '' %>>3072</option>
+        <option value="4096" <%= dh_param_bits === 4096 ? 'selected' : '' %>>4096</option>
+      </select>
+    </div>
+    <div class="cipher form-group">
+      <label>Encryption Chiper</label>
+      <select class="form-control" data-toggle="tooltip" title="Size of DH parameters">
+        <option value="none" <%= cipher === 'none' ? 'selected' : '' %>>None</option>
+        <option value="bf128" <%= cipher === 'bf128' ? 'selected' : '' %>>Blowfish 128bit</option>
+        <option value="bf256" <%= cipher === 'bf256' ? 'selected' : '' %>>Blowfish 256bit</option>
+        <option value="aes128" <%= cipher === 'aes128' ? 'selected' : '' %>>AES 128bit</option>
+        <option value="aes192" <%= cipher === 'aes192' ? 'selected' : '' %>>AES 192bit</option>
+        <option value="aes256" <%= cipher === 'aes256' ? 'selected' : '' %>>AES 256bit</option>
+      </select>
+    </div>
+  </div>
+  <div class="right advanced">
+    <div class="search-domain form-group">
+      <label>DNS Search Domain</label>
+      <input type="text" class="form-control" placeholder="Enter DNS search domain" data-toggle="tooltip" title="Optional, DNS search domain for clients" value="<%- search_domain || '' %>" autocapitalize="off">
+    </div>
+    <div class="bind-address form-group">
+      <label>Bind Address</label>
+      <input type="text" class="form-control" placeholder="Enter DNS server" data-toggle="tooltip" title="Optional, local address to bind vpn server to. Leave empty to bind to all addresses" value="<%- dns_servers.join(', ') %>" autocapitalize="off">
     </div>
   </div>
 </div>
