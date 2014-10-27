@@ -41,6 +41,10 @@ def host_put(host_id=None):
         hst.public_address = utils.filter_str(
             flask.request.json['public_address'])
 
+    if 'link_address' in flask.request.json:
+        hst.link_address = utils.filter_str(
+            flask.request.json['link_address'])
+
     hst.commit(hst.changed)
     event.Event(type=HOSTS_UPDATED)
 
