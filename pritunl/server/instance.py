@@ -593,6 +593,7 @@ class ServerInstance(object):
         self.replica_links[host_id] = instance_link
         instance_link.start()
 
+    @interrupter
     def _keep_alive_thread(self):
         exit_attempts = 0
 
@@ -607,6 +608,8 @@ class ServerInstance(object):
                     '_id': False,
                     'instances': True,
                 })
+
+                yield
 
                 if not doc:
                     if self.stop_process():
@@ -626,6 +629,8 @@ class ServerInstance(object):
                     if host_id not in self.replica_links:
                         self.link_instance(host_id)
 
+                yield
+
                 for host_id in self.replica_links.keys():
                     if host_id not in active_hosts:
                         self.replica_links[host_id].stop()
@@ -634,7 +639,7 @@ class ServerInstance(object):
                 logger.exception('Failed to update server ping. %r' % {
                     'server_id': self.server.id,
                 })
-            time.sleep(settings.vpn.server_ping)
+            yield interrupter_sleep(settings.vpn.server_ping)
 
     @interrupter
     def _tail_auth_log(self):
