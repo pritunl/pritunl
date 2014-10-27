@@ -49,10 +49,25 @@ class ServerInstance(object):
         self.interface = None
         self.primary_user = None
         self.process = None
+        self.auth_log_process = None
         self.iptables_rules = []
         self.replica_links = {}
         self.server_links = []
         self._temp_path = utils.get_temp_path()
+        self.tls_verify_path = os.path.join(self._temp_path,
+            TLS_VERIFY_NAME)
+        self.user_pass_verify_path = os.path.join(self._temp_path,
+            USER_PASS_VERIFY_NAME)
+        self.client_connect_path = os.path.join(self._temp_path,
+            CLIENT_CONNECT_NAME)
+        self.client_disconnect_path = os.path.join(self._temp_path,
+            CLIENT_DISCONNECT_NAME)
+        self.ovpn_status_path = os.path.join(self._temp_path,
+            OVPN_STATUS_NAME)
+        self.ovpn_conf_path = os.path.join(self._temp_path,
+            OVPN_CONF_NAME)
+        self.auth_log_path = os.path.join(self._temp_path,
+            AUTH_LOG_NAME)
 
     @cached_static_property
     def collection(cls):
@@ -117,27 +132,14 @@ class ServerInstance(object):
                 id=self.server.primary_organization)
             self.primary_user = primary_org.get_user(self.server.primary_user)
 
-        tls_verify_path = os.path.join(self._temp_path,
-            TLS_VERIFY_NAME)
-        user_pass_verify_path = os.path.join(self._temp_path,
-            USER_PASS_VERIFY_NAME)
-        client_connect_path = os.path.join(self._temp_path,
-            CLIENT_CONNECT_NAME)
-        client_disconnect_path = os.path.join(self._temp_path,
-            CLIENT_DISCONNECT_NAME)
-        ovpn_status_path = os.path.join(self._temp_path,
-            OVPN_STATUS_NAME)
-        ovpn_conf_path = os.path.join(self._temp_path,
-            OVPN_CONF_NAME)
-
         auth_host = settings.conf.bind_addr
         if auth_host == '0.0.0.0':
             auth_host = 'localhost'
         for script, script_path in (
-                    (TLS_VERIFY_SCRIPT, tls_verify_path),
-                    (USER_PASS_VERIFY_SCRIPT, user_pass_verify_path),
-                    (CLIENT_CONNECT_SCRIPT, client_connect_path),
-                    (CLIENT_DISCONNECT_SCRIPT, client_disconnect_path),
+                    (TLS_VERIFY_SCRIPT, self.tls_verify_path),
+                    (USER_PASS_VERIFY_SCRIPT, self.user_pass_verify_path),
+                    (CLIENT_CONNECT_SCRIPT, self.client_connect_path),
+                    (CLIENT_DISCONNECT_SCRIPT, self.client_disconnect_path),
                 ):
             with open(script_path, 'w') as script_file:
                 os.chmod(script_path, 0755) # TODO
@@ -177,12 +179,12 @@ class ServerInstance(object):
             self.server.port,
             self.server.protocol,
             self.interface,
-            tls_verify_path,
-            client_connect_path,
-            client_disconnect_path,
+            self.tls_verify_path,
+            self.client_connect_path,
+            self.client_disconnect_path,
             '%s %s' % utils.parse_network(self.server.network),
             CIPHERS[self.server.cipher],
-            ovpn_status_path,
+            self.ovpn_status_path,
             4 if self.server.debug else 1,
             8 if self.server.debug else 3,
         )
@@ -192,7 +194,7 @@ class ServerInstance(object):
 
         if self.server.otp_auth:
             server_conf += 'auth-user-pass-verify %s via-file\n' % (
-                user_pass_verify_path)
+                self.user_pass_verify_path)
 
         # Pritunl v0.10.x did not include comp-lzo in client conf
         # if lzo_compression is adaptive dont include comp-lzo in server conf
@@ -218,8 +220,8 @@ class ServerInstance(object):
         server_conf += '<key>\n%s\n</key>\n' % self.primary_user.private_key
         server_conf += '<dh>\n%s\n</dh>\n' % self.server.dh_params
 
-        with open(ovpn_conf_path, 'w') as ovpn_conf:
-            os.chmod(ovpn_conf_path, 0600)
+        with open(self.ovpn_conf_path, 'w') as ovpn_conf:
+            os.chmod(self.ovpn_conf_path, 0600)
             ovpn_conf.write(server_conf)
 
     def enable_ip_forwarding(self):
@@ -658,7 +660,7 @@ class ServerInstance(object):
             cursor_id = self.get_cursor_id()
 
             os.makedirs(self._temp_path)
-            ovpn_conf_path = self.generate_ovpn_conf()
+            self.generate_ovpn_conf()
 
             self.enable_ip_forwarding()
             self.set_iptables_rules()
