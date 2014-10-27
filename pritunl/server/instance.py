@@ -148,7 +148,7 @@ class ServerInstance(object):
                 os.chmod(script_path, 0755) # TODO
                 script_file.write(script % (
                     settings.app.server_api_key,
-                    '/dev/null', # TODO
+                    self.auth_log_path,
                     'https' if settings.conf.ssl else 'http',
                     auth_host,
                     settings.conf.port,
