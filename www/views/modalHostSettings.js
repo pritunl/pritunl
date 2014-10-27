@@ -11,17 +11,20 @@ define([
     template: _.template(modalHostSettingsTemplate),
     title: 'Host Settings',
     okText: 'Save',
+    hasAdvanced: true,
     body: function() {
       return this.template(this.model.toJSON());
     },
     onOk: function() {
       var name = this.$('.name input').val() || null;
       var publicAddress = this.$('.public-address input').val() || null;
+      var linkAddress = this.$('.link-address input').val() || null;
 
       this.setLoading('Saving host...');
       this.model.save({
         name: name,
-        public_address: publicAddress
+        public_address: publicAddress,
+        link_address: linkAddress
       }, {
         success: function() {
           this.close(true);
