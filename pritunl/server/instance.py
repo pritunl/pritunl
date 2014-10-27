@@ -683,6 +683,14 @@ class ServerInstance(object):
         thread.daemon = True
         thread.start()
 
+        thread = threading.Thread(target=self._tail_auth_log)
+        thread.daemon = True
+        thread.start()
+
+    def stop_threads(self):
+        if self.auth_log_process:
+            self.auth_log_process.send_signal(signal.SIGINT)
+
     def _run_thread(self, send_events):
         from pritunl.server.utils import get_server
 
