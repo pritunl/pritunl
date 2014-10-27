@@ -477,7 +477,7 @@ TLS_VERIFY_SCRIPT = """#!/usr/bin/env python
 import os
 import sys
 import json
-import time
+import datetime
 import traceback
 
 VALID_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789='
@@ -485,8 +485,11 @@ api_key = '%s'
 auth_log_path = '%s'
 def log_write(line):
     with open(auth_log_path, 'a') as auth_log_file:
-        auth_log_file.write('[TLS_VERIFY][TIME=%%s]%%s\\n' %% (
-            int(time.time()), line.rstrip('\\n')))
+        auth_log_file.write('%%s [auth_log:tls_verify] %%s\\n' %% (
+            datetime.datetime.utcnow().strftime(
+                '%%a %%b %%d %%H:%%M:%%S %%Y'),
+            line.rstrip('\\n'),
+        ))
 
 try:
     try:
@@ -559,7 +562,7 @@ USER_PASS_VERIFY_SCRIPT = """#!/usr/bin/env python
 import os
 import sys
 import json
-import time
+import datetime
 import traceback
 
 VALID_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789='
@@ -567,8 +570,11 @@ api_key = '%s'
 auth_log_path = '%s'
 def log_write(line):
     with open(auth_log_path, 'a') as auth_log_file:
-        auth_log_file.write('[OTP_VERIFY][TIME=%%s]%%s\\n' %% (
-            int(time.time()), line.rstrip('\\n')))
+        auth_log_file.write('%%s [auth_log:otp_verify] %%s\\n' %% (
+            datetime.datetime.utcnow().strftime(
+                '%%a %%b %%d %%H:%%M:%%S %%Y'),
+            line.rstrip('\\n'),
+        ))
 
 try:
     try:
@@ -656,7 +662,7 @@ CLIENT_CONNECT_SCRIPT = """#!/usr/bin/env python
 import os
 import sys
 import json
-import time
+import datetime
 import traceback
 
 VALID_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789='
@@ -664,8 +670,11 @@ api_key = '%s'
 auth_log_path = '%s'
 def log_write(line):
     with open(auth_log_path, 'a') as auth_log_file:
-        auth_log_file.write('[CLIENT_CONNECT][TIME=%%s]%%s\\n' %% (
-            int(time.time()), line.rstrip('\\n')))
+        auth_log_file.write('%%s [auth_log:client_connect] %%s\\n' %% (
+            datetime.datetime.utcnow().strftime(
+                '%%a %%b %%d %%H:%%M:%%S %%Y'),
+            line.rstrip('\\n'),
+        ))
 
 try:
     try:
@@ -741,7 +750,7 @@ CLIENT_DISCONNECT_SCRIPT = """#!/usr/bin/env python
 import os
 import sys
 import json
-import time
+import datetime
 import traceback
 
 VALID_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789='
@@ -749,8 +758,11 @@ api_key = '%s'
 auth_log_path = '%s'
 def log_write(line):
     with open(auth_log_path, 'a') as auth_log_file:
-        auth_log_file.write('[CLIENT_DISCONNECT][TIME=%%s]%%s\\n' %% (
-            int(time.time()), line.rstrip('\\n')))
+        auth_log_file.write('%%s [auth_log:client_disconnect] %%s\\n' %% (
+            datetime.datetime.utcnow().strftime(
+                '%%a %%b %%d %%H:%%M:%%S %%Y'),
+            line.rstrip('\\n'),
+        ))
 
 try:
     try:
