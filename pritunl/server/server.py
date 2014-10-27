@@ -261,7 +261,7 @@ class Server(mongo.MongoObject):
             queue.start('unassign_ip_addr', server_id=self.id, org_id=org_id,
                 user_id=user_id)
 
-    def get_key_remotes(self):
+    def get_key_remotes(self, include_link_addr=False):
         remotes = []
         spec = {
             '_id': {'$in': self.hosts},
@@ -269,11 +269,12 @@ class Server(mongo.MongoObject):
         project = {
             '_id': False,
             'public_address': True,
+            'link_address': include_link_addr,
         }
 
         for doc in self.host_collection.find(spec, project):
             remotes.append('remote %s %s' % (
-                doc['public_address'], self.port))
+                doc['link_address'] or doc['public_address'], self.port))
 
         random.shuffle(remotes)
 
