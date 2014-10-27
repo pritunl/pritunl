@@ -64,11 +64,11 @@ class ServerInstanceLink(object):
 
         if self.linked_host:
             remotes = 'remote %s %s' % (
-                self.host.public_address,
+                self.host.link_address or self.host.public_address,
                 self.linked_server.port,
             )
         else:
-            remotes = self.linked_server.get_key_remotes()
+            remotes = self.linked_server.get_key_remotes(True)
 
         client_conf = OVPN_INLINE_LINK_CONF % (
             self.interface,
