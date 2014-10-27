@@ -23,6 +23,8 @@ def listener_thread():
                         lstnr(msg)
                     except:
                         logger.exception('Error in listener callback')
+        except GeneratorExit:
+            raise
         except:
             logger.exception('Error in listener thread')
             time.sleep(0.3)

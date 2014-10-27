@@ -99,6 +99,8 @@ def _check_thread():
     while True:
         try:
             run_timeout_queues()
+        except GeneratorExit:
+            raise
         except:
             logger.exception('Error in queue check thread.')
 
