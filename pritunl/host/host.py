@@ -20,6 +20,7 @@ class Host(mongo.MongoObject):
         'start_timestamp',
         'public_address',
         'auto_public_address',
+        'link_address',
     }
     fields_default = {
         'status': OFFLINE,
@@ -76,6 +77,7 @@ class Host(mongo.MongoObject):
             'user_count': self.user_count,
             'users_online': self.users_online,
             'public_address': self.public_addr,
+            'link_address': self.link_address,
         }
 
     def iter_servers(self, fields=None):
