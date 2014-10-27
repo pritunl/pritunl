@@ -88,6 +88,7 @@ def _keep_alive_thread():
                 'host_id': settings.local.host.id,
                 'host_name': settings.local.host.name,
             })
+            time.sleep(0.5)
 
 def start_host():
     threading.Thread(target=_host_check_thread).start()
