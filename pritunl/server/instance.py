@@ -577,10 +577,11 @@ class ServerInstance(object):
         finally:
             self.stop_process()
 
+    @interrupter
     def _status_thread(self):
         while not self.interrupt:
             self.read_clients()
-            time.sleep(settings.vpn.status_update_rate)
+            yield interrupter_sleep(settings.vpn.status_update_rate)
 
     def link_instance(self, host_id):
         if self.interrupt:
