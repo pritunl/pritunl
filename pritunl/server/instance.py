@@ -521,10 +521,8 @@ class ServerInstance(object):
         return terminated
 
     def openvpn_start(self):
-        ovpn_conf_path = os.path.join(self._temp_path, OVPN_CONF_NAME)
-
         try:
-            return subprocess.Popen(['openvpn', ovpn_conf_path],
+            return subprocess.Popen(['openvpn', self.ovpn_conf_path],
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         except OSError:
             self.server.output.push_output(traceback.format_exc())
