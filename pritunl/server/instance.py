@@ -132,6 +132,9 @@ class ServerInstance(object):
                 id=self.server.primary_organization)
             self.primary_user = primary_org.get_user(self.server.primary_user)
 
+        with open(self.auth_log_path, 'w') as auth_log:
+            os.chmod(self.auth_log_path, 0600)
+
         auth_host = settings.conf.bind_addr
         if auth_host == '0.0.0.0':
             auth_host = 'localhost'
