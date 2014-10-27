@@ -636,6 +636,40 @@ class ServerInstance(object):
                 })
             time.sleep(settings.vpn.server_ping)
 
+    @interrupter
+    def _tail_auth_log(self):
+        try:
+            self.auth_log_process = subprocess.Popen(
+                ['tail', '-f', self.auth_log_path],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+        except OSError:
+            self.server.output.push_output(traceback.format_exc())
+            logger.exception('Failed to start tail auth log process. %r' % {
+                'server_id': self.server.id,
+            })
+
+        while True:
+            line = self.auth_log_process.stdout.readline()
+            if not line:
+                if self.auth_log_process.poll() is not None:
+                    break
+                else:
+                    time.sleep(0.05)
+                    continue
+
+            yield
+
+            try:
+                self.server.output.push_output(line)
+            except:
+                logger.exception('Failed to push auth log output. %r', {
+                    'server_id': self.server.id,
+                })
+
+            yield
+
     def start_threads(self, cursor_id):
         thread = threading.Thread(target=self._sub_thread, args=(cursor_id,))
         thread.daemon = True
