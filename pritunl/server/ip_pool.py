@@ -221,6 +221,11 @@ class ServerIpPool:
                     self.collection.update(spec, doc, upsert=True)
 
             if pool_end:
+                logger.warning('Failed to assign ip addresses ' +
+                    'to server, ip pool empty. %r' % {
+                        'org_id': org_id,
+                        'user_id': user_id,
+                    })
                 break
 
         if bulk and not bulk_empty:
