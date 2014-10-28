@@ -695,7 +695,11 @@ class ServerInstance(object):
 
     def stop_threads(self):
         if self.auth_log_process:
-            self.auth_log_process.send_signal(signal.SIGINT)
+            try:
+                self.auth_log_process.send_signal(signal.SIGINT)
+            except OSError as error:
+                if error.errno != 3:
+                    raise
 
     def _run_thread(self, send_events):
         from pritunl.server.utils import get_server
