@@ -3,6 +3,7 @@ from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import mongo
 from pritunl import ipaddress
+from pritunl import organization
 
 import bson
 import pymongo
@@ -82,7 +83,8 @@ class ServerIpPool:
             'user_id': '',
         }})
 
-    def assign_ip_pool_org(self, org):
+    def assign_ip_pool_org(self, org_id):
+        org = organization.get_org(id=org_id)
         network = self.server.network
         server_id = self.server.id
         org_id = org.id
