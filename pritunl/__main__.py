@@ -56,4 +56,4 @@ def pritunl_daemon(default_conf=None):
         print '#                                                            #'
         print '##############################################################'
 
-    pritunl.init_server(options.conf)
+    pritunl.init_server()
