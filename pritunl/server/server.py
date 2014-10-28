@@ -306,6 +306,9 @@ class Server(mongo.MongoObject):
         for org_id in self._orgs_added:
             self.ip_pool.assign_ip_pool_org(org_id)
 
+        for org_id in self._orgs_removed:
+            self.ip_pool.unassign_ip_pool_org(org_id)
+
         mongo.MongoObject.commit(self, transaction=tran, *args, **kwargs)
 
         if tran:
