@@ -304,8 +304,7 @@ class Server(mongo.MongoObject):
                 self.network_lock = queue_ip_pool.id
 
         for org_id in self._orgs_added:
-            org = organization.get_org(id=org_id)
-            self.ip_pool.assign_ip_pool_org(org)
+            self.ip_pool.assign_ip_pool_org(org_id)
 
         mongo.MongoObject.commit(self, transaction=tran, *args, **kwargs)
 
