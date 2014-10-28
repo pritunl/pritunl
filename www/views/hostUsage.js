@@ -102,6 +102,11 @@ define([
         return;
       }
 
+      if (this.getPeriod() === '1m') {
+        cpuUsage.pop();
+        graphMem.pop();
+      }
+
       var graphCpu = new Rickshaw.Graph({
         element: this.$('.host-graph-cpu')[0],
         width: this.$('.host-graph-cpu').width(),

@@ -102,6 +102,11 @@ define([
         return;
       }
 
+      if (this.getPeriod() === '1m') {
+        dataRecv.points.pop();
+        dataSent.points.pop();
+      }
+
       var graphRecv = new Rickshaw.Graph({
         element: this.$('.server-graph-recv')[0],
         width: this.$('.server-graph-recv').width(),
