@@ -25,7 +25,7 @@ define([
       this.$('.org-name').text(this.model.get('name'));
     },
     onDetachOrg: function() {
-      if (this.server.get('status')) {
+      if (this.server.get('status') === 'online') {
         var alertView = new AlertView({
           type: 'danger',
           message: 'Server must be offline to detach an organization.',
