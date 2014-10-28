@@ -98,6 +98,7 @@ define([
     updateGraph: function() {
       var dataRecv = this.model.getGraphData('received');
       var dataSent = this.model.getGraphData('sent');
+
       if (!dataRecv || !dataSent) {
         return;
       }
