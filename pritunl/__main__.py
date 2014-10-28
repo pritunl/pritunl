@@ -14,12 +14,22 @@ def pritunl_daemon(default_conf=None):
         help='Path to configuration file')
     parser.add_option('--version', action='store_true',
         help='Print version')
+    parser.add_option('--reset-password', action='store_true',
+        help='Reset administrator password')
     (options, _) = parser.parse_args()
 
     pritunl.set_conf_path(options.conf or default_conf)
 
     if options.version:
         print '%s v%s' % (pritunl.__title__, pritunl.__version__)
+        sys.exit(0)
+
+    if options.reset_password:
+        from pritunl import setup
+        from pritunl import mongo
+        setup.setup_db()
+        collection = mongo.get_collection('administrators')
+        collection.remove({})
         sys.exit(0)
 
     if options.daemon:
