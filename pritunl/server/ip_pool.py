@@ -62,9 +62,14 @@ class ServerIpPool:
                     'address': '%s/%s' % (remote_ip_addr,
                         ip_network.prefixlen),
                 })
-                break
+                return
             except pymongo.errors.DuplicateKeyError:
                 pass
+
+        logger.warning('Failed to assign ip address to user. %r' % {
+            'org_id': org_id,
+            'user_id': user_id,
+        })
 
     def unassign_ip_addr(self, org_id, user_id):
         self.collection.update({
