@@ -163,6 +163,16 @@ class ServerIpPool:
                     'user_id': user_id,
                 })
 
+    def unassign_ip_pool_org(self, org_id):
+        self.collection.update({
+            'server_id': self.server.id,
+            'network': self.server.network,
+            'org_id': org_id,
+        }, {'$unset': {
+            'org_id': '',
+            'user_id': '',
+        }})
+
     def assign_ip_pool(self, network):
         server_id = self.server.id
         pool_end = False
