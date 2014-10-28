@@ -759,6 +759,7 @@ class ServerInstance(object):
                 'server_id': self.server.id,
             })
         finally:
+            self.stop_threads()
             self.collection.update({
                 '_id': self.server.id,
                 'instances.instance_id': self.instance_id,
