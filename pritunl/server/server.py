@@ -117,7 +117,8 @@ class Server(mongo.MongoObject):
         mongo.MongoObject.__init__(self, **kwargs)
 
         self._orig_network = self.network
-        self._orgs_changed = False
+        self._orgs_added = []
+        self._orgs_removed = []
 
         if name is not None:
             self.name = name
@@ -368,7 +369,7 @@ class Server(mongo.MongoObject):
         self.organizations.append(org_id)
         self.changed.add('organizations')
         self.generate_ca_cert()
-        self._orgs_changed = True
+        self._orgs_added.append(org_id)
 
     def remove_org(self, org_id):
         if not isinstance(org_id, basestring):
@@ -387,7 +388,7 @@ class Server(mongo.MongoObject):
             pass
         self.changed.add('organizations')
         self.generate_ca_cert()
-        self._orgs_changed = True
+        self._orgs_removed.append(org_id)
 
     def iter_orgs(self, fields=None):
         spec = {
