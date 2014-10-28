@@ -27,3 +27,10 @@ def setup_all():
 
     if settings.conf.ssl:
         setup_server_cert()
+
+def setup_db():
+    setup_local()
+    setup_clear_temp()
+    setup_app()
+    setup_logger()
+    setup_mongo()
