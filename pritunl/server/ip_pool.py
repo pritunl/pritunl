@@ -193,7 +193,7 @@ class ServerIpPool:
         for org in self.server.iter_orgs():
             org_id = org.id
 
-            for user in org.iter_users():
+            for user in org.iter_users(include_pool=True):
                 try:
                     remote_ip_addr = ip_pool.next()
                 except StopIteration:
