@@ -81,6 +81,87 @@ class ServerIpPool:
             'user_id': '',
         }})
 
+    def assign_ip_pool_org(self, org):
+        network = self.server.network
+        server_id = self.server.id
+        org_id = org.id
+        ip_pool_avial = True
+        pool_end = False
+
+        ip_network = ipaddress.IPv4Network(network)
+        ip_pool = ip_network.iterhosts()
+        ip_pool.next()
+
+        try:
+            doc = self.collection.find({
+                'network': network,
+                'server_id': server_id,
+            }).sort('_id', pymongo.DESCENDING)[0]
+            if doc:
+                last_addr = doc['_id']
+                for remote_ip_addr in ip_pool:
+                    if int(remote_ip_addr) == last_addr:
+                        break
+        except IndexError:
+            pass
+
+        if mongo.has_bulk:
+            bulk = self.collection.initialize_unordered_bulk_op()
+            bulk_empty = True
+        else:
+            bulk = None
+            bulk_empty = None
+
+        for user in org.iter_users(include_pool=True):
+            if ip_pool_avial:
+                response = self.collection.update({
+                    'network': network,
+                    'server_id': server_id,
+                    'user_id': {'$exists': False},
+                }, {'$set': {
+                    'org_id': org_id,
+                    'user_id': user.id,
+                }})
+                if response['updatedExisting']:
+                    continue
+                ip_pool_avial = False
+
+            try:
+                remote_ip_addr = ip_pool.next()
+            except StopIteration:
+                pool_end = True
+                break
+            doc_id = int(remote_ip_addr)
+
+            spec = {
+                '_id': doc_id,
+            }
+            doc = {'$set': {
+                '_id': doc_id,
+                'network': network,
+                'server_id': server_id,
+                'org_id': org_id,
+                'user_id': user.id,
+                'address': '%s/%s' % (remote_ip_addr,
+                    ip_network.prefixlen),
+            }}
+
+            if bulk:
+                bulk.find(spec).upsert().update(doc)
+                bulk_empty = False
+            else:
+                self.collection.update(spec, doc, upsert=True)
+
+        if bulk and not bulk_empty:
+            bulk.execute()
+
+        if pool_end:
+            logger.warning('Failed to assign ip addresses ' +
+                'to org, ip pool empty. %r' % {
+                    'org_id': org_id,
+                    'user_id': user_id,
+                })
+
     def assign_ip_pool(self, network):
         server_id = self.server.id
         pool_end = False
