@@ -31,7 +31,7 @@ class ServerIpPool:
             'org_id': org_id,
             'user_id': user_id,
         }})
-        if response.get('updatedExisting'):
+        if response['updatedExisting']:
             return
 
         ip_network = ipaddress.IPv4Network(network)
