@@ -420,7 +420,7 @@ def server_org_get(server_id):
 @auth.session_auth
 def server_org_put(server_id, org_id):
     svr = server.get_server(id=server_id,
-        fields=['id', 'status', 'organizations'])
+        fields=['_id', 'status', 'network', 'organizations'])
     org = organization.get_org(id=org_id, fields=['_id'])
     if svr.status == ONLINE:
         return utils.jsonify({
@@ -443,7 +443,7 @@ def server_org_put(server_id, org_id):
 @auth.session_auth
 def server_org_delete(server_id, org_id):
     svr = server.get_server(id=server_id,
-        fields=['_id', 'status', 'organizations'])
+        fields=['_id', 'status', 'network', 'organizations'])
     org = organization.get_org(id=org_id, fields=['_id'])
     if svr.status == ONLINE:
         return utils.jsonify({
