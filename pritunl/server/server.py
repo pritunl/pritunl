@@ -302,9 +302,10 @@ class Server(mongo.MongoObject):
                     old_network=self._orig_network,
                 )
                 self.network_lock = queue_ip_pool.id
-        elif self._orgs_changed:
-            # TODO update ip pool
-            pass
+
+        for org_id in self._orgs_added:
+            org = organization.get_org(id=org_id)
+            self.ip_pool.assign_ip_pool_org(org)
 
         mongo.MongoObject.commit(self, transaction=tran, *args, **kwargs)
 
