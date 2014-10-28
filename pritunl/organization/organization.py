@@ -149,7 +149,7 @@ class Organization(mongo.MongoObject):
         }).count()
 
     def iter_users(self, page=None, search=None, search_limit=None,
-            fields=None):
+            fields=None, include_pool=False):
         spec = {
             'org_id': self.id,
             'type': {'$in': [CERT_CLIENT, CERT_SERVER]},
@@ -157,6 +157,10 @@ class Organization(mongo.MongoObject):
         limit = None
         skip = None
         page_count = settings.user.page_count
+
+        if include_pool:
+            spec['type']['$in'].append(CERT_CLIENT_POOL)
+            spec['type']['$in'].append(CERT_SERVER_POOL)
 
         if fields:
             fields = {key: True for key in fields}
