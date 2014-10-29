@@ -9,8 +9,8 @@ BASE_URL = os.getenv('BASE_URL', 'http://localhost:9700')
 HEADERS = {
     'Accept': 'application/json',
 }
-USERNAME = os.getenv('USERNAME', 'admin')
-PASSWORD = os.getenv('PASSWORD', 'admin')
+USERNAME = os.getenv('USERNAME', 'pritunl')
+PASSWORD = os.getenv('PASSWORD', 'pritunl')
 TEST_PASSWORD = 'unittest'
 TEST_USER_NAME = 'unittest_user'
 TEST_ORG_NAME = 'unittest_org'
