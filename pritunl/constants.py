@@ -77,8 +77,8 @@ SETTINGS_RESERVED = {
 
 DEFAULT_BIND_ADDR = '0.0.0.0'
 DEFAULT_PORT = 9700
-DEFAULT_USERNAME = 'admin'
-DEFAULT_PASSWORD = 'admin'
+DEFAULT_USERNAME = 'pritunl'
+DEFAULT_PASSWORD = 'pritunl'
 DEFAULT_CONF_PATH = '/etc/pritunl.conf'
 DEFAULT_WWW_PATH = '/usr/share/pritunl/www'
 SUBSCRIPTION_SERVER = 'https://app.pritunl.com/subscription'
