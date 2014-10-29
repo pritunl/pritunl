@@ -3,7 +3,6 @@ from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import event
 
-import Queue
 import time
 import collections
 import threading
