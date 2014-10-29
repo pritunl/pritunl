@@ -39,7 +39,6 @@ def setup_mongo():
             size=100000, max=1024)
 
     mongo.collections.update({
-        'log': getattr(database, prefix + 'log'),
         'time_sync': getattr(database, prefix + 'time_sync'),
         'transaction': getattr(database, prefix + 'transaction'),
         'queue': getattr(database, prefix + 'queue'),
@@ -72,16 +71,24 @@ def setup_mongo():
 
     settings.init()
 
+    if prefix + 'log' not in cur_collections:
+        log_limit = settings.app.log_limit
+        database.create_collection(prefix + 'log', capped=True,
+            size=log_limit * 1024, max=log_limit)
+
     if prefix + 'log_entries' not in cur_collections:
-        log_limit = settings.app.log_entry_limit
+        log_entry_limit = settings.app.log_entry_limit
         database.create_collection(prefix + 'log_entries', capped=True,
-            size=log_limit * 256 * 2, max=log_limit)
+            size=log_entry_limit * 512, max=log_entry_limit)
 
     mongo.collections.update({
+        'log': getattr(database, prefix + 'log'),
         'log_entries': getattr(database, prefix + 'log_entries'),
     })
+    mongo.collections['log'].name_str = 'log'
     mongo.collections['log_entries'].name_str = 'log_entries'
 
+    mongo.collections['log'].ensure_index('timestamp')
     mongo.collections['transaction'].ensure_index('lock_id', unique=True)
     mongo.collections['transaction'].ensure_index([
         ('ttl_timestamp', pymongo.ASCENDING),
