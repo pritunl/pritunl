@@ -30,6 +30,9 @@ def pritunl_daemon(default_conf=None):
         setup.setup_db()
         collection = mongo.get_collection('administrators')
         collection.remove({})
+        print 'Administrator password successfully reset:\n' + \
+            '  username: "%s"\n  password: "%s"' % (
+                DEFAULT_USERNAME, DEFAULT_PASSWORD)
         sys.exit(0)
 
     if options.daemon:
