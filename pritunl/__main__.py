@@ -4,27 +4,37 @@ import optparse
 import sys
 import os
 
+USAGE = """Usage: pritunl [command] [options]
+
+Commands:
+  start                 Start server
+  version               Print the version and exit
+  reset-password        Reset administrator password
+"""
+
 def pritunl_daemon(default_conf=None):
-    parser = optparse.OptionParser()
+    parser = optparse.OptionParser(usage=USAGE)
     parser.add_option('-d', '--daemon', action='store_true',
         help='Daemonize process')
     parser.add_option('-p', '--pidfile', type='string',
         help='Path to create pid file')
     parser.add_option('-c', '--conf', type='string',
         help='Path to configuration file')
-    parser.add_option('--version', action='store_true',
-        help='Print version')
-    parser.add_option('--reset-password', action='store_true',
-        help='Reset administrator password')
-    (options, _) = parser.parse_args()
+    (options, args) = parser.parse_args()
+
+    if args:
+        cmd = args[0]
+    else:
+        cmd = 'start'
 
     pritunl.set_conf_path(options.conf or default_conf)
 
-    if options.version:
+    if cmd == 'version':
         print '%s v%s' % (pritunl.__title__, pritunl.__version__)
         sys.exit(0)
 
-    if options.reset_password:
+    if cmd == 'reset-password':
+        from pritunl.constants import DEFAULT_USERNAME, DEFAULT_PASSWORD
         from pritunl import setup
         from pritunl import mongo
         setup.setup_db()
