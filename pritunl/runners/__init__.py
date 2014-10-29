@@ -1,4 +1,5 @@
 from pritunl.runners.settings import start_settings
+from pritunl.runners.logger import start_logger
 from pritunl.runners.updates import start_updates
 from pritunl.runners.transaction import start_transaction
 from pritunl.runners.task import start_task
@@ -12,6 +13,7 @@ from pritunl.runners.listener import start_listener
 
 def start_all():
     start_settings()
+    start_logger()
     start_updates()
     start_transaction()
     start_task()
