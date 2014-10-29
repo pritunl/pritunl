@@ -45,6 +45,9 @@ def pritunl_daemon(default_conf=None):
                 DEFAULT_USERNAME, DEFAULT_PASSWORD)
         sys.exit(0)
 
+    if cmd != 'start':
+        raise ValueError('Invalid command')
+
     if options.daemon:
         pid = os.fork()
         if pid > 0:
