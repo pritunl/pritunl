@@ -51,6 +51,8 @@ def interrupter_generator(call):
     return _wrapped
 
 def interrupter_sleep(length):
+    if _interrupt:
+        return
     while True:
         sleep = min(0.5, length)
         time.sleep(sleep)
