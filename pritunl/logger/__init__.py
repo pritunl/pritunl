@@ -19,13 +19,10 @@ def find_caller():
 def _log(log_level, log_msg, log_type, **kwargs):
     if not log_filter or not log_handler:
         raise TypeError('Logger not setup')
-    if log_level == 'exception':
-        getattr(logger, log_level)(log_msg)
-    else:
-        getattr(logger, log_level)(log_msg, extra={
-                'type': log_type,
-                'data': kwargs,
-            })
+    getattr(logger, log_level)(log_msg, extra={
+            'type': log_type,
+            'data': kwargs,
+        })
 
 def debug(log_msg, log_type=None, **kwargs):
     _log('debug', log_msg, log_type, **kwargs)
