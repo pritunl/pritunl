@@ -270,12 +270,17 @@ class Server(mongo.MongoObject):
         project = {
             '_id': False,
             'public_address': True,
-            'link_address': include_link_addr,
         }
 
+        if include_link_addr:
+            project['link_address'] = True
+
         for doc in self.host_collection.find(spec, project):
-            remotes.append('remote %s %s' % (
-                doc['link_address'] or doc['public_address'], self.port))
+            if include_link_addr and doc['link_address']:
+                address = doc['link_address']
+            else:
+                address = doc['public_address']
+            remotes.append('remote %s %s' % (address, self.port))
 
         random.shuffle(remotes)
 
