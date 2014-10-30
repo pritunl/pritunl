@@ -298,13 +298,58 @@ class User(mongo.MongoObject):
 
         return True
 
-    def _get_key_info_str(self, user_name, org_name, server_name):
+    def _get_key_info_str(self, user_name, org_name, server_name, conf_hash):
         return json.dumps({
             'version': CLIENT_CONF_VER,
             'user': user_name,
             'organization': org_name,
             'server': server_name,
+            'hash': conf_hash,
         })
+
+    def _generate_conf(self, server):
+        file_name = '%s_%s_%s.ovpn' % (
+            self.org.name, self.name, server.name)
+        server.generate_ca_cert()
+        key_remotes = server.get_key_remotes()
+        ca_certificate = utils.get_cert_block(server.ca_certificate)
+        certificate = utils.get_cert_block(self.certificate)
+        private_key = self.private_key.strip()
+
+        conf_hash = hashlib.md5()
+        conf_hash.update(self.name)
+        conf_hash.update(self.org.name)
+        conf_hash.update(server.name)
+        conf_hash.update(server.protocol)
+        for key_remote in sorted(key_remotes):
+            conf_hash.update(key_remote)
+        conf_hash.update(CIPHERS[server.cipher])
+        conf_hash.update(str(server.lzo_compression))
+        conf_hash.update(str(server.otp_auth))
+        conf_hash.update(JUMBO_FRAMES[server.jumbo_frames])
+        conf_hash.update(ca_certificate)
+        conf_hash = conf_hash.hexdigest()
+
+        client_conf = OVPN_INLINE_CLIENT_CONF % (
+            self._get_key_info_str(self.name, self.org.name,
+                server.name, conf_hash),
+            server.protocol,
+            server.get_key_remotes(),
+            CIPHERS[server.cipher],
+        )
+
+        if server.lzo_compression != ADAPTIVE:
+            client_conf += 'comp-lzo no\n'
+
+        if server.otp_auth:
+            client_conf += 'auth-user-pass\n'
+
+        client_conf += JUMBO_FRAMES[server.jumbo_frames]
+        client_conf += '<ca>\n%s\n</ca>\n' % ca_certificate
+        client_conf += '<cert>\n%s\n</cert>\n' % certificate
+        client_conf += '<key>\n%s\n</key>\n' % private_key
+
+        return file_name, client_conf, conf_hash
 
     def build_key_archive(self):
         temp_path = utils.get_temp_path()
