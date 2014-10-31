@@ -8,11 +8,8 @@ import logging
 def setup_logger():
     from pritunl.app import app
     from pritunl import logger
-    if settings.conf.log_path:
-        logger.log_handler = logging.handlers.RotatingFileHandler(
-            settings.conf.log_path, maxBytes=1000000, backupCount=1)
-    else:
-        logger.log_handler = logging.StreamHandler()
+
+    logger.log_handler = logger.LogHandler()
 
     logger.log_filter = logger.LogFilter()
     logger.logger.addFilter(logger.log_filter)
