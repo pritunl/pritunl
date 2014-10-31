@@ -2,6 +2,7 @@ from pritunl.logger.filter import LogFilter
 from pritunl.logger.formatter import LogFormatter
 from pritunl.logger.handler import LogHandler, log_queue
 from pritunl.logger.entry import *
+from pritunl.logger.view import *
 
 from pritunl.constants import *
 from pritunl.exceptions import *
