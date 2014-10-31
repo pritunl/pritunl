@@ -1,6 +1,7 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
+from pritunl import settings
 
 import logging
 import collections
@@ -14,4 +15,5 @@ class LogHandler(logging.Handler):
     def emit(self, record):
         msg = self.format(record)
         log_queue.append(msg)
-        print msg
+        if not settings.local.quiet:
+            print msg

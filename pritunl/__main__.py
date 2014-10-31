@@ -20,6 +20,8 @@ def pritunl_daemon(default_conf=None):
         help='Path to create pid file')
     parser.add_option('-c', '--conf', type='string',
         help='Path to configuration file')
+    parser.add_option('-q', '--quiet', action='store_true',
+        help='Suppress logging output')
     parser.add_option('--archive', action='store_true',
         help='Archive log file')
     parser.add_option('--tail', action='store_true',
@@ -75,6 +77,10 @@ def pritunl_daemon(default_conf=None):
 
     if cmd != 'start':
         raise ValueError('Invalid command')
+
+    if options.quiet:
+        from pritunl import settings
+        settings.local.quiet = True
 
     if options.daemon:
         pid = os.fork()
