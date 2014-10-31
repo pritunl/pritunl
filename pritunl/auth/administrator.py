@@ -213,3 +213,8 @@ def check_auth(username, password, remote_addr=None):
     if not administrator.test_password(password):
         return
     return administrator
+
+def reset_password():
+    collection = mongo.get_collection('administrators')
+    collection.remove({})
+    return (DEFAULT_USERNAME, DEFAULT_PASSWORD)
