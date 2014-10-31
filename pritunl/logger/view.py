@@ -72,7 +72,7 @@ class LogView(object):
         else:
             return '\n'.join(output)
 
-    def tail_log_lines(self):
+    def tail_log_lines(self, formatted=True):
         collection = mongo.get_collection('log')
 
         cursor_id = collection.find().sort(
@@ -87,7 +87,11 @@ class LogView(object):
         while cursor.alive:
             for doc in cursor:
                 cursor_id = doc['_id']
-                yield doc['message']
+
+                if formatted:
+                    yield self.format_line(doc['message'])
+                else:
+                    yield doc['message']
 
     def archive_log(self, archive_path):
         temp_path = utils.get_temp_path()
