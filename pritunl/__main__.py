@@ -57,17 +57,19 @@ def pritunl_daemon(default_conf=None):
         from pritunl import logger
         setup.setup_db()
 
+        log_view = logger.LogView()
+
         if options.archive:
             if len(args) > 1:
                 archive_path = args[1]
             else:
                 archive_path = './'
-            print 'Log archived to: ' + logger.archive_log(archive_path)
+            print 'Log archived to: ' + log_view.archive_log(archive_path)
         elif options.tail:
-            for msg in logger.tail_log_lines():
+            for msg in log_view.tail_log_lines():
                 print msg
         else:
-            print logger.get_log_lines()
+            print log_view.get_log_lines()
 
         sys.exit(0)
 
