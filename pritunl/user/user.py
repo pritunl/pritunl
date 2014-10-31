@@ -151,14 +151,17 @@ class User(mongo.MongoObject):
 
             try:
                 args = ['openssl', 'ca', '-batch']
+
                 if self.type == CERT_CA:
                     args += ['-selfsign']
+
                 args += [
                     '-config', ssl_conf_path,
                     '-in', reqs_path,
                     '-out', cert_path,
                     '-extensions', '%s_ext' % self.type.replace('_pool', ''),
                 ]
+
                 self.org.queue_com.popen(args)
             except (OSError, ValueError):
                 logger.exception('Failed to create user cert. %r' % {
@@ -207,9 +210,11 @@ class User(mongo.MongoObject):
     def get_cache_key(self, suffix=None):
         if not self.cache_prefix:
             raise AttributeError('Cached config object requires cache_prefix')
+
         key = self.cache_prefix + '-' + self.org.id + '_' + self.id
         if suffix:
             key += '-%s' % suffix
+
         return key
 
     def assign_ip_addr(self):
@@ -224,10 +229,12 @@ class User(mongo.MongoObject):
         sha_hash = hashlib.sha512()
         sha_hash.update(os.urandom(8192))
         byte_hash = sha_hash.digest()
+
         for _ in xrange(6):
             sha_hash = hashlib.sha512()
             sha_hash.update(byte_hash)
             byte_hash = sha_hash.digest()
+
         self.otp_secret = base64.b32encode(
             byte_hash)[:settings.user.otp_secret_len]
 
@@ -290,6 +297,7 @@ class User(mongo.MongoObject):
         }, {'$set': {
             'timestamp': utils.now(),
         }}, upsert=True)
+
         if response['updatedExisting']:
             return False
 
@@ -411,6 +419,7 @@ class User(mongo.MongoObject):
             })
 
         key_link = self.org.create_user_key_link(self.id)
+
         response = utils.request.post(POSTMARK_SERVER,
             headers={
                 'Accept': 'application/json',
@@ -431,24 +440,6 @@ class User(mongo.MongoObject):
                     key_link['uri_url'],
             },
         )
-
-        # TODO Use K to view previous in git commit -p
-
-        # TODO add uri link to view page
-
-        # TODO
-        # <script type="application/ld+json">
-        # {
-        #   "@context": "http://schema.org",
-        #   "@type": "EmailMessage",
-        #   "action": {
-        #     "@type": "ViewAction",
-        #     "url": "%s",
-        #     "name": "View Key"
-        #   },
-        #   "description": "View Pritunl key and configuration information"
-        # }
-        # </script>
 
         response = response.json()
         error_code = response.get('ErrorCode')
