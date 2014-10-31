@@ -48,57 +48,47 @@ class LogView(object):
                pass
         return line
 
-def get_log_lines():
-    collection = mongo.get_collection('log')
+    def get_log_lines(self, formatted=True):
+        collection = mongo.get_collection('log')
 
-    output = collection.aggregate([
-        {'$sort': {
-            'timestamp': pymongo.ASCENDING,
-        }},
-        {'$group': {
-            '_id': None,
-            'output': {'$push': '$message'},
-        }},
-    ])['result']
+        messages = collection.aggregate([
+            {'$sort': {
+                'timestamp': pymongo.ASCENDING,
+            }},
+            {'$group': {
+                '_id': None,
+                'messages': {'$push': '$message'},
+            }},
+        ])['result']
 
-    if output:
-        output = output[0]['output']
+        if messages:
+            messages = messages[0]['messages']
 
-    return '\n'.join(output)
+        if formatted:
+            output = ''
+            for msg in messages:
+                output += self.format_line(msg) + '\n'
+            return output
+        else:
+            return '\n'.join(output)
 
-def tail_log_lines():
-    collection = mongo.get_collection('log')
+    def archive_log(self, archive_path):
+        temp_path = utils.get_temp_path()
+        if os.path.isdir(archive_path):
+            archive_path = os.path.join(
+                archive_path, LOG_ARCHIVE_NAME + '.tar')
+        output_path = os.path.join(temp_path, LOG_ARCHIVE_NAME)
 
-    cursor_id = collection.find().sort(
-        '$natural', pymongo.DESCENDING)[100]['_id']
-
-    spec = {
-        '_id': {'$gt': cursor_id},
-    }
-    cursor = collection.find(spec, tailable=True,
-        await_data=True).sort('$natural', pymongo.ASCENDING)
-
-    while cursor.alive:
-        for doc in cursor:
-            cursor_id = doc['_id']
-            yield doc['message']
-
-def archive_log(archive_path):
-    temp_path = utils.get_temp_path()
-    if os.path.isdir(archive_path):
-        archive_path = os.path.join(archive_path, LOG_ARCHIVE_NAME + '.tar')
-    output_path = os.path.join(temp_path, LOG_ARCHIVE_NAME)
-
-    try:
-        os.makedirs(temp_path)
-        tar_file = tarfile.open(archive_path, 'w')
         try:
-            with open(output_path, 'w') as log_file:
-                log_file.write(get_log_lines())
-            tar_file.add(output_path, arcname=LOG_ARCHIVE_NAME)
+            os.makedirs(temp_path)
+            tar_file = tarfile.open(archive_path, 'w')
+            try:
+                with open(output_path, 'w') as log_file:
+                    log_file.write(self.get_log_lines(False))
+                tar_file.add(output_path, arcname=LOG_ARCHIVE_NAME)
+            finally:
+                tar_file.close()
         finally:
-            tar_file.close()
-    finally:
-        utils.rmtree(temp_path)
+            utils.rmtree(temp_path)
 
-    return archive_path
+        return archive_path
