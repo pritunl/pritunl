@@ -41,11 +41,14 @@ def pritunl_daemon(default_conf=None):
         from pritunl.constants import DEFAULT_USERNAME, DEFAULT_PASSWORD
         from pritunl import setup
         from pritunl import auth
+
         setup.setup_db()
         username, password = auth.reset_password()
+
         print 'Administrator password successfully reset:\n' + \
             '  username: "%s"\n  password: "%s"' % (
                 username, password)
+
         sys.exit(0)
 
     if cmd == 'logs':
