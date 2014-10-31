@@ -148,6 +148,7 @@ SERVER_CONF_NAME = 'server.conf'
 AUTH_LOG_NAME = 'auth.log'
 KEY_INDEX_NAME = 'key_index.html'
 CONF_TEMP_EXT = '.tmp'
+LOG_ARCHIVE_NAME = 'pritunl_log'
 
 SERVER = 'server'
 NODE_SERVER = 'node_server'
