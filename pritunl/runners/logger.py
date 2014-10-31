@@ -13,7 +13,7 @@ import threading
 @interrupter
 def _logger_runner_thread():
     log_queue = logger.log_queue
-    collection = mongo.get_collection('log')
+    collection = mongo.get_collection('logs')
 
     while True:
         try:

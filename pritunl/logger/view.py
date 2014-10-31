@@ -49,7 +49,7 @@ class LogView(object):
         return line
 
     def get_log_lines(self, formatted=True):
-        collection = mongo.get_collection('log')
+        collection = mongo.get_collection('logs')
 
         messages = collection.aggregate([
             {'$sort': {
@@ -73,7 +73,7 @@ class LogView(object):
             return '\n'.join(output)
 
     def tail_log_lines(self, formatted=True):
-        collection = mongo.get_collection('log')
+        collection = mongo.get_collection('logs')
 
         cursor_id = collection.find().sort(
             '$natural', pymongo.DESCENDING)[100]['_id']
