@@ -49,6 +49,7 @@ def _host_check_thread():
 def _keep_alive_thread():
     last_update = None
     proc_stat = None
+    settings.local.host_ping_timestamp = utils.now()
 
     while True:
         try:
@@ -73,6 +74,8 @@ def _keep_alive_thread():
 
             yield interrupter_sleep(settings.app.host_ttl - 10)
 
+            ping_timestamp = utils.now()
+
             settings.local.host.collection.update({
                 '_id': settings.local.host.id,
             }, {'$set': {
@@ -80,6 +83,8 @@ def _keep_alive_thread():
                 'ping_timestamp': utils.now(),
                 'auto_public_address': settings.local.public_ip,
             }})
+
+            settings.local.host_ping_timestamp = ping_timestamp
         except GeneratorExit:
             host.deinit_host()
             raise

@@ -8,4 +8,5 @@ class SettingsLocal(SettingsGroupLocal):
     group = 'local'
     fields = {
         'public_ip': None,
+        'host_ping_timestamp': None,
     }
