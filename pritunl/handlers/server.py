@@ -348,7 +348,7 @@ def server_put_post(server_id=None):
         )
         svr.commit()
     else:
-        svr = server.get_server(id=server_id)
+        svr = server.get_by_id(server_id)
         if svr.status == ONLINE:
             return utils.jsonify({
                 'error': SERVER_NOT_OFFLINE,
@@ -396,7 +396,7 @@ def server_put_post(server_id=None):
 @app.app.route('/server/<server_id>', methods=['DELETE'])
 @auth.session_auth
 def server_delete(server_id):
-    svr = server.get_server(id=server_id, fields=['_id', 'organizations'])
+    svr = server.get_by_id(server_id, fields=['_id', 'organizations'])
     svr.remove()
     logger.LogEntry(message='Deleted server "%s".' % svr.name)
     event.Event(type=SERVERS_UPDATED)
@@ -408,7 +408,7 @@ def server_delete(server_id):
 @auth.session_auth
 def server_org_get(server_id):
     orgs = []
-    svr = server.get_server(id=server_id, fields=['_id', 'organizations'])
+    svr = server.get_by_id(server_id, fields=['_id', 'organizations'])
     for org_doc in svr.get_org_fields(fields=['_id', 'name']):
         org_doc['id'] = org_doc.pop('_id')
         org_doc['server'] = svr.id
@@ -419,7 +419,7 @@ def server_org_get(server_id):
 @app.app.route('/server/<server_id>/organization/<org_id>', methods=['PUT'])
 @auth.session_auth
 def server_org_put(server_id, org_id):
-    svr = server.get_server(id=server_id,
+    svr = server.get_by_id(server_id,
         fields=['_id', 'status', 'network', 'organizations'])
     org = organization.get_org(id=org_id, fields=['_id'])
     if svr.status == ONLINE:
@@ -442,7 +442,7 @@ def server_org_put(server_id, org_id):
     methods=['DELETE'])
 @auth.session_auth
 def server_org_delete(server_id, org_id):
-    svr = server.get_server(id=server_id,
+    svr = server.get_by_id(server_id,
         fields=['_id', 'status', 'network', 'organizations'])
     org = organization.get_org(id=org_id, fields=['_id'])
     if svr.status == ONLINE:
@@ -461,7 +461,7 @@ def server_org_delete(server_id, org_id):
 @auth.session_auth
 def server_host_get(server_id):
     hosts = []
-    svr = server.get_server(id=server_id, fields=['_id', 'status',
+    svr = server.get_by_id(server_id, fields=['_id', 'status',
         'replica_count', 'hosts', 'instances'])
     active_hosts = set([x['host_id'] for x in svr.instances])
     hosts_offline = svr.replica_count - len(active_hosts) > 0
@@ -486,7 +486,7 @@ def server_host_get(server_id):
 @app.app.route('/server/<server_id>/host/<host_id>', methods=['PUT'])
 @auth.session_auth
 def server_host_put(server_id, host_id):
-    svr = server.get_server(id=server_id, fields=['_id', 'hosts'])
+    svr = server.get_by_id(server_id, fields=['_id', 'hosts'])
     hst = host.get_host(id=host_id, fields=['_id', 'name', 'public_addr'])
     svr.add_host(hst.id)
     svr.commit('hosts')
@@ -503,7 +503,7 @@ def server_host_put(server_id, host_id):
 @app.app.route('/server/<server_id>/host/<host_id>', methods=['DELETE'])
 @auth.session_auth
 def server_host_delete(server_id, host_id):
-    svr = server.get_server(id=server_id, fields=['_id', 'hosts'])
+    svr = server.get_by_id(server_id, fields=['_id', 'hosts'])
     hst = host.get_host(id=host_id, fields=['_id', 'name'])
     svr.remove_host(hst.id)
     svr.commit('hosts')
@@ -515,7 +515,7 @@ def server_host_delete(server_id, host_id):
 @auth.session_auth
 def server_link_get(server_id):
     links = []
-    svr = server.get_server(id=server_id, fields=['_id', 'status', 'links',
+    svr = server.get_by_id(server_id, fields=['_id', 'status', 'links',
         'replica_count', 'instances'])
     hosts_offline = svr.replica_count - len(svr.instances) > 0
 
@@ -581,7 +581,7 @@ def server_link_delete(server_id, link_server_id):
 @app.app.route('/server/<server_id>/<operation>', methods=['PUT'])
 @auth.session_auth
 def server_operation_put(server_id, operation):
-    svr = server.get_server(id=server_id, fields=server.dict_fields + \
+    svr = server.get_by_id(server_id, fields=server.dict_fields + \
         ['hosts', 'links'])
 
     if operation == START:
@@ -639,7 +639,7 @@ def server_tls_verify_post(server_id):
     org_id = bson.ObjectId(flask.request.json['org_id'])
     user_id = bson.ObjectId(flask.request.json['user_id'])
 
-    svr = server.get_server(server_id,
+    svr = server.get_by_id(server_id,
         fields=['_id', 'name', 'organizations'])
     if not svr:
         return utils.jsonify({
@@ -682,7 +682,7 @@ def server_otp_verify_post(server_id):
     otp_code = flask.request.json['otp_code']
     remote_ip = flask.request.json.get('remote_ip')
 
-    svr = server.get_server(server_id,
+    svr = server.get_by_id(server_id,
         fields=['_id', 'name', 'organizations'])
     if not svr:
         return utils.jsonify({
@@ -724,7 +724,7 @@ def server_client_connect_post(server_id):
     org_id = bson.ObjectId(flask.request.json['org_id'])
     user_id = bson.ObjectId(flask.request.json['user_id'])
 
-    svr = server.get_server(id=server_id,
+    svr = server.get_by_id(server_id,
         fields=['_id', 'name', 'network', 'links', 'organizations'])
     if not svr:
         return utils.jsonify({
@@ -753,7 +753,7 @@ def server_client_connect_post(server_id):
             break
 
     if link_svr_id:
-        link_svr = server.get_server(id=link_svr_id,
+        link_svr = server.get_by_id(link_svr_id,
             fields=['_id', 'network', 'local_networks'])
         client_conf += 'iroute %s %s\n' % utils.parse_network(
             link_svr.network)
@@ -776,7 +776,7 @@ def server_client_disconnect_post(server_id):
     org_id = bson.ObjectId(flask.request.json['org_id'])
     user_id = bson.ObjectId(flask.request.json['user_id'])
 
-    svr = server.get_server(id=server_id, fields=['_id', 'organizations'])
+    svr = server.get_by_id(server_id, fields=['_id', 'organizations'])
     if not svr:
         return utils.jsonify({
             'error': SERVER_INVALID,

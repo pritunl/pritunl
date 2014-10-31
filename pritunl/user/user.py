@@ -395,7 +395,7 @@ class User(mongo.MongoObject):
         return key_archive
 
     def build_key_conf(self, server_id, include_user_cert=True):
-        server = self.org.get_server(server_id)
+        server = self.org.get_by_id(server_id)
         conf_name, client_conf, conf_hash = self._generate_conf(server,
             include_user_cert)
 

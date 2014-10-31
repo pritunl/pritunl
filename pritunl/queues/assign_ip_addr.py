@@ -30,7 +30,7 @@ class QueueAssignIpAddr(queue.Queue):
             self.user_id = user_id
 
     def task(self):
-        svr = server.get_server(id=self.server_id)
+        svr = server.get_by_id(self.server_id)
         if not svr:
             return
 

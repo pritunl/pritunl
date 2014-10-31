@@ -29,7 +29,7 @@ def new_server(**kwargs):
     server.initialize()
     return server
 
-def get_server(id, fields=None):
+def get_by_id(id, fields=None):
     return Server(id=id, fields=fields)
 
 def get_server_dict(id):
@@ -90,7 +90,7 @@ def output_link_get(server_id):
     return ServerOutputLink(server_id).get_output()
 
 def output_link_clear(server_id):
-    svr = get_server(id=server_id, fields=['_id', 'links'])
+    svr = get_by_id(server_id, fields=['_id', 'links'])
     ServerOutputLink(server_id).clear_output(
         [x['server_id'] for x in svr.links])
 

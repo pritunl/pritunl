@@ -222,9 +222,9 @@ class Organization(mongo.MongoObject):
             'uri_url': '/ku/%s' % short_id,
         }
 
-    def get_server(self, server_id):
+    def get_by_id(self, server_id):
         from pritunl import server
-        svr = server.get_server(id=server_id)
+        svr = server.get_by_id(server_id)
         if svr and self.id in svr.organizations:
             return svr
 

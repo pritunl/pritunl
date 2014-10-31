@@ -108,8 +108,7 @@ class ServerInstance(object):
             self.interface = None
 
     def generate_ovpn_conf(self):
-        # TODO
-        from pritunl.server.utils import get_server
+        from pritunl.server.utils import get_by_id
 
         logger.debug('Generating server ovpn conf. %r' % {
             'server_id': self.server.id,
@@ -702,7 +701,7 @@ class ServerInstance(object):
                     raise
 
     def _run_thread(self, send_events):
-        from pritunl.server.utils import get_server
+        from pritunl.server.utils import get_by_id
 
         logger.debug('Starting ovpn process. %r' % {
             'server_id': self.server.id,
@@ -737,7 +736,7 @@ class ServerInstance(object):
                 if self.server.id > link_doc['server_id']:
                     instance_link = ServerInstanceLink(
                         server=self.server,
-                        linked_server=get_server(id=link_doc['server_id']),
+                        linked_server=get_by_id(link_doc['server_id']),
                     )
                     self.server_links.append(instance_link)
                     instance_link.start()

@@ -32,7 +32,7 @@ class QueueAssignIpPool(queue.Queue):
 
     @cached_property
     def server(self):
-        return server.get_server(id=self.server_id)
+        return server.get_by_id(self.server_id)
 
     def task(self):
         if not self.server:

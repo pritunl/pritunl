@@ -25,7 +25,7 @@ def _on_msg(msg):
         return
 
     try:
-        svr = server.get_server(msg['server_id'])
+        svr = server.get_by_id(msg['server_id'])
         if settings.local.host_id not in svr.hosts:
             return
 
