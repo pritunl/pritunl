@@ -42,7 +42,7 @@ class LogView(object):
                 log_level = line_split[2][1:]
                 log_msg = line_split[3]
 
-                return '\033[1;%sm[%s]\033[0m\033[1m[%s]\033' +
+                return '\033[1;%sm[%s]\033[0m\033[1m[%s]\033' + \
                         '[0m\033[0;%sm[%s]\033[0m%s' % (
                     self.host_colors[log_host], log_host,
                     log_time,
