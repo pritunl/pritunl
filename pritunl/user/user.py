@@ -20,6 +20,7 @@ import threading
 import json
 import bson
 import random
+import uuid
 
 class User(mongo.MongoObject):
     fields = {
@@ -29,6 +30,7 @@ class User(mongo.MongoObject):
         'otp_secret',
         'type',
         'disabled',
+        'sync_key',
         'private_key',
         'certificate',
         'resource_id',
@@ -56,6 +58,9 @@ class User(mongo.MongoObject):
             self.disabled = disabled
         if resource_id is not None:
             self.resource_id = resource_id
+
+        if not self.sync_key:
+            self.sync_key = uuid.uuid4().hex
 
     @cached_static_property
     def collection(cls):
@@ -298,16 +303,17 @@ class User(mongo.MongoObject):
 
         return True
 
-    def _get_key_info_str(self, user_name, org_name, server_name, conf_hash):
+    def _get_key_info_str(self, server_name, conf_hash):
         return json.dumps({
             'version': CLIENT_CONF_VER,
-            'user': user_name,
-            'organization': org_name,
+            'user': self.name,
+            'organization': self.org.name,
             'server': server_name,
+            'sync_key': self.sync_key,
             'hash': conf_hash,
         })
 
-    def _generate_conf(self, server):
+    def _generate_conf(self, server, include_user_cert=True):
         file_name = '%s_%s_%s.ovpn' % (
             self.org.name, self.name, server.name)
         server.generate_ca_cert()
@@ -331,8 +337,7 @@ class User(mongo.MongoObject):
         conf_hash = conf_hash.hexdigest()
 
         client_conf = OVPN_INLINE_CLIENT_CONF % (
-            self._get_key_info_str(self.name, self.org.name,
-                server.name, conf_hash),
+            self._get_key_info_str(server.name, conf_hash),
             server.protocol,
             server.get_key_remotes(),
             CIPHERS[server.cipher],
@@ -346,8 +351,9 @@ class User(mongo.MongoObject):
 
         client_conf += JUMBO_FRAMES[server.jumbo_frames]
         client_conf += '<ca>\n%s\n</ca>\n' % ca_certificate
-        client_conf += '<cert>\n%s\n</cert>\n' % certificate
-        client_conf += '<key>\n%s\n</key>\n' % private_key
+        if include_user_cert:
+            client_conf += '<cert>\n%s\n</cert>\n' % certificate
+            client_conf += '<key>\n%s\n</key>\n' % private_key
 
         return file_name, client_conf, conf_hash
 
@@ -362,36 +368,13 @@ class User(mongo.MongoObject):
                 for server in self.org.iter_servers():
                     server_conf_path = os.path.join(temp_path,
                         '%s_%s.ovpn' % (self.id, server.id))
-                    server_conf_arcname = '%s_%s_%s.ovpn' % (
-                        self.org.name, self.name, server.name)
-                    server.generate_ca_cert()
-
-                    client_conf = OVPN_INLINE_CLIENT_CONF % (
-                        self._get_key_info_str(
-                            self.name, self.org.name, server.name),
-                        server.protocol,
-                        server.get_key_remotes(),
-                        CIPHERS[server.cipher],
-                    )
-
-                    if server.lzo_compression != ADAPTIVE:
-                        client_conf += 'comp-lzo no\n'
-
-                    if server.otp_auth:
-                        client_conf += 'auth-user-pass\n'
-
-                    client_conf += JUMBO_FRAMES[server.jumbo_frames]
-                    client_conf += '<ca>\n%s\n</ca>\n' % utils.get_cert_block(
-                        server.ca_certificate)
-                    client_conf += ('<cert>\n%s\n' + \
-                        '</cert>\n') % utils.get_cert_block(self.certificate)
-                    client_conf += '<key>\n%s\n</key>\n' % (
-                        self.private_key.strip())
+                    conf_name, client_conf, conf_hash = self._generate_conf(
+                        server)
 
                     with open(server_conf_path, 'w') as ovpn_conf:
                         os.chmod(server_conf_path, 0600)
                         ovpn_conf.write(client_conf)
-                    tar_file.add(server_conf_path, arcname=server_conf_arcname)
+                    tar_file.add(server_conf_path, arcname=conf_name)
                     os.remove(server_conf_path)
             finally:
                 tar_file.close()
@@ -403,35 +386,22 @@ class User(mongo.MongoObject):
 
         return key_archive
 
-    def build_key_conf(self, server_id):
+    def build_key_conf(self, server_id, include_user_cert=True):
         server = self.org.get_server(server_id)
-        conf_name = '%s_%s_%s.ovpn' % (self.org.name, self.name, server.name)
-        server.generate_ca_cert()
-
-        client_conf = OVPN_INLINE_CLIENT_CONF % (
-            self._get_key_info_str(self.name, self.org.name, server.name),
-            server.protocol,
-            server.get_key_remotes(),
-            CIPHERS[server.cipher],
-        )
-
-        if server.lzo_compression != ADAPTIVE:
-            client_conf += 'comp-lzo no\n'
-
-        if server.otp_auth:
-            client_conf += 'auth-user-pass\n'
-
-        client_conf += PERF_MODES[server.performance_mode]
-        client_conf += '<ca>\n%s\n</ca>\n' % utils.get_cert_block(
-            server.ca_certificate)
-        client_conf += '<cert>\n%s\n</cert>\n' % utils.get_cert_block(
-            self.certificate)
-        client_conf += '<key>\n%s\n</key>\n' % self.private_key.strip()
+        conf_name, client_conf, conf_hash = self._generate_conf(server,
+            include_user_cert)
 
         return {
             'name': conf_name,
             'conf': client_conf,
+            'hash': conf_hash,
         }
+
+    def sync_conf(self, server_id, conf_hash):
+        key = self.build_key_conf(server_id, False)
+
+        if key['hash'] != conf_hash:
+            return key
 
     def send_key_email(self, key_link_domain):
         if not settings.app.email_from_addr or not settings.app.email_api_key:
