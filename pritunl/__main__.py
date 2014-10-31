@@ -40,13 +40,13 @@ def pritunl_daemon(default_conf=None):
     if cmd == 'reset-password':
         from pritunl.constants import DEFAULT_USERNAME, DEFAULT_PASSWORD
         from pritunl import setup
-        from pritunl import mongo
+        from pritunl import auth
         setup.setup_db()
-        collection = mongo.get_collection('administrators')
-        collection.remove({})
+        username, password = auth.reset_password()
         print 'Administrator password successfully reset:\n' + \
             '  username: "%s"\n  password: "%s"' % (
-                DEFAULT_USERNAME, DEFAULT_PASSWORD)
+                username, password)
+        sys.exit(0)
 
     if cmd == 'logs':
         from pritunl.constants import DEFAULT_USERNAME, DEFAULT_PASSWORD
