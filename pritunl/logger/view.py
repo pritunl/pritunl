@@ -22,6 +22,10 @@ class LogView(object):
             'CRITICAL': '95',
         }
 
+    @cached_static_property
+    def collection(cls):
+        return mongo.get_collection('logs')
+
     def get_color(self):
         try:
             return self.colors.next()
@@ -73,9 +77,7 @@ class LogView(object):
             return '\n'.join(output)
 
     def tail_log_lines(self, formatted=True):
-        collection = mongo.get_collection('logs')
-
-        cursor_id = collection.find().sort(
+        cursor_id = self.collection.find().sort(
             '$natural', pymongo.DESCENDING)[100]['_id']
 
         spec = {
