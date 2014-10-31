@@ -27,6 +27,23 @@ def get_log_lines():
 
     return '\n'.join(output)
 
+def tail_log_lines():
+    collection = mongo.get_collection('log')
+
+    cursor_id = collection.find().sort(
+        '$natural', pymongo.DESCENDING)[100]['_id']
+
+    spec = {
+        '_id': {'$gt': cursor_id},
+    }
+    cursor = collection.find(spec, tailable=True,
+        await_data=True).sort('$natural', pymongo.ASCENDING)
+
+    while cursor.alive:
+        for doc in cursor:
+            cursor_id = doc['_id']
+            yield doc['message']
+
 def archive_log(archive_path):
     temp_path = utils.get_temp_path()
     if os.path.isdir(archive_path):
