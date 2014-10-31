@@ -54,9 +54,7 @@ class LogView(object):
         return line
 
     def get_log_lines(self, formatted=True):
-        collection = mongo.get_collection('logs')
-
-        messages = collection.aggregate([
+        messages = self.collection.aggregate([
             {'$sort': {
                 'timestamp': pymongo.ASCENDING,
             }},
@@ -84,7 +82,7 @@ class LogView(object):
         spec = {
             '_id': {'$gt': cursor_id},
         }
-        cursor = collection.find(spec, tailable=True,
+        cursor = self.collection.find(spec, tailable=True,
             await_data=True).sort('$natural', pymongo.ASCENDING)
 
         while cursor.alive:
