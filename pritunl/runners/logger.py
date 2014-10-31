@@ -4,6 +4,7 @@ from pritunl.helpers import *
 from pritunl import utils
 from pritunl import logger
 from pritunl import mongo
+from pritunl import settings
 
 import time
 import collections
@@ -27,13 +28,12 @@ def _logger_runner_thread():
                 except IndexError:
                     break
 
-
             if msg_docs:
                 yield
 
                 collection.insert(msg_docs)
 
-            yield interrupter_sleep(3)
+            yield interrupter_sleep(settings.app.log_db_delay)
 
         except GeneratorExit:
             raise

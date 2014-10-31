@@ -16,6 +16,7 @@ class SettingsApp(SettingsGroupMongo):
         'session_timeout': 86400,
         'log_limit': 10240,
         'log_entry_limit': 50,
+        'log_db_delay': 1,
         'rate_limit_sleep': 0.5,
         'short_url_length': 5,
         'license': None,
