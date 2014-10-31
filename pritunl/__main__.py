@@ -89,7 +89,7 @@ def pritunl_daemon(default_conf=None):
                 with open(options.pidfile, 'w') as pid_file:
                     pid_file.write('%s' % pid)
             sys.exit(0)
-    else:
+    elif not options.quiet:
         print '##############################################################'
         print '#                                                            #'
         print '#                      /$$   /$$                         /$$ #'
