@@ -7,6 +7,7 @@ from pritunl.helpers import *
 class SettingsLocal(SettingsGroupLocal):
     group = 'local'
     fields = {
+        'quiet': False,
         'public_ip': None,
         'host_ping_timestamp': None,
     }
