@@ -142,3 +142,18 @@ def user_linked_key_conf_get(key_id, server_id):
         'attachment; filename="%s"' % key_conf['name'])
 
     return response
+
+@app.app.route('/key/<org_id>/<user_id>/<server_id>', methods=['GET'])
+def key_sync_get(org_id, user_id, server_id):
+    org = organization.get_org(id=org_id)
+    user = org.get_user(id=user_id)
+    sync_key = flask.request.json['sync_key']
+    key_hash = flask.request.json['key_hash']
+
+    if sync_key != user.sync_key:
+        raise flask.abort(401)
+
+    key_conf = user.sync_conf(server_id, key_hash)
+    if key_conf:
+        return key_conf['conf']
+    return ''
