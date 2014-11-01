@@ -16,4 +16,4 @@ def ping_get():
     if ping_timestamp and utils.now() > ping_timestamp + host_ttl:
         raise flask.abort(500)
     else:
-        return ''
+        return utils.response()
