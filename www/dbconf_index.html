@@ -138,6 +138,17 @@
         box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
       }
 
+      .btn[disabled] {
+        background-color: #428bca;
+        border-color: #357ebd;
+        pointer-events: none;
+        cursor: not-allowed;
+        filter: alpha(opacity=65);
+        -webkit-box-shadow: none;
+        box-shadow: none;
+        opacity: .65;
+      }
+
       .default-text {
         color: #616161 !important;
       }
