@@ -56,6 +56,12 @@ def static_get(file_name):
 
     return static_file.get_response()
 
+@app.route('/mongodb', methods=['PUT'])
+def mongodb_put():
+    return utils.jsonify({
+        'test': 'test',
+    })
+
 def _run_wsgi():
     server = cherrypy.wsgiserver.CherryPyWSGIServer(
         (settings.conf.bind_addr, settings.conf.port), app,
