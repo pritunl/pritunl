@@ -18,7 +18,7 @@ import random
 import json
 
 def _get_key_archive(org_id, user_id):
-    org = organization.get_org(id=org_id)
+    org = organization.get_by_id(org_id)
     user = org.get_user(user_id)
     key_archive = user.build_key_archive()
     response = flask.Response(response=key_archive,
@@ -35,7 +35,7 @@ def user_key_archive_get(org_id, user_id):
 @app.app.route('/key/<org_id>/<user_id>', methods=['GET'])
 @auth.session_auth
 def user_key_link_get(org_id, user_id):
-    org = organization.get_org(id=org_id)
+    org = organization.get_by_id(org_id)
     return utils.jsonify(org.create_user_key_link(user_id))
 
 @app.app.route('/key/<key_id>.tar', methods=['GET'])
@@ -62,7 +62,7 @@ def user_linked_key_page_get(short_id):
         time.sleep(settings.app.rate_limit_sleep)
         return flask.abort(404)
 
-    org = organization.get_org(id=doc['org_id'])
+    org = organization.get_by_id(doc['org_id'])
     user = org.get_user(id=doc['user_id'])
 
     key_page = static.StaticFile(settings.conf.www_path, KEY_INDEX_NAME,
@@ -111,7 +111,7 @@ def user_uri_key_page_get(short_id):
         time.sleep(settings.app.rate_limit_sleep)
         return flask.abort(404)
 
-    org = organization.get_org(id=doc['org_id'])
+    org = organization.get_by_id(doc['org_id'])
     user = org.get_user(id=doc['user_id'])
 
     keys = {}
@@ -132,7 +132,7 @@ def user_linked_key_conf_get(key_id, server_id):
         time.sleep(settings.app.rate_limit_sleep)
         return flask.abort(404)
 
-    org = organization.get_org(id=doc['org_id'])
+    org = organization.get_by_id(doc['org_id'])
     user = org.get_user(id=doc['user_id'])
     key_conf = user.build_key_conf(server_id)
 
@@ -145,7 +145,7 @@ def user_linked_key_conf_get(key_id, server_id):
 
 @app.app.route('/key/<org_id>/<user_id>/<server_id>', methods=['GET'])
 def key_sync_get(org_id, user_id, server_id):
-    org = organization.get_org(id=org_id)
+    org = organization.get_by_id(org_id)
     user = org.get_user(id=user_id)
     sync_key = flask.request.json['sync_key']
     key_hash = flask.request.json['key_hash']

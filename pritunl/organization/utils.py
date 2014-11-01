@@ -20,7 +20,7 @@ import math
 import pymongo
 import threading
 
-def new_pooled_org():
+def new_pooled():
     thread = threading.Thread(target=new_org, kwargs={
         'type': ORG_POOL,
         'block': False,
@@ -30,7 +30,7 @@ def new_pooled_org():
 
     logger.debug('Queued pooled org', 'organization')
 
-def reserve_pooled_org(name=None, type=ORG_DEFAULT):
+def reserve_pooled(name=None, type=ORG_DEFAULT):
     doc = {}
 
     if name is not None:
@@ -49,7 +49,7 @@ def reserve_pooled_org(name=None, type=ORG_DEFAULT):
 
 def new_org(type=ORG_DEFAULT, block=True, **kwargs):
     if type == ORG_DEFAULT:
-        org = reserve_pooled_org(type=type, **kwargs)
+        org = reserve_pooled(type=type, **kwargs)
 
         if not org:
             org = queue.reserve('queued_org', block=block, type=type,
@@ -65,7 +65,7 @@ def new_org(type=ORG_DEFAULT, block=True, **kwargs):
             )
 
         if org:
-            new_pooled_org()
+            new_pooled()
             return org
 
         org = Organization(type=type, **kwargs)
@@ -87,10 +87,10 @@ def new_org(type=ORG_DEFAULT, block=True, **kwargs):
 
         return org
 
-def get_org(id, fields=None):
+def get_by_id(id, fields=None):
     return Organization(id=id, fields=fields)
 
-def get_org_user_count(type=CERT_CLIENT):
+def get_user_count(type=CERT_CLIENT):
     user_collection = mongo.get_collection('users')
 
     response = user_collection.aggregate([
@@ -126,7 +126,7 @@ def iter_orgs_dict():
         'type': ORG_DEFAULT,
     }
 
-    org_user_count = get_org_user_count()
+    org_user_count = get_user_count()
 
     for doc in Organization.collection.find(spec).sort('name'):
         org = Organization(doc=doc)

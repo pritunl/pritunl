@@ -99,7 +99,7 @@ class Host(mongo.MongoObject):
             'host_id': self.id,
         })
 
-        org = organization.get_org(id=org_id)
+        org = organization.get_by_id(org_id)
         usr = org.find_user(resource_id=self.id)
 
         if not usr:

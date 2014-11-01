@@ -407,9 +407,9 @@ class Server(mongo.MongoObject):
         for org in organization.iter_orgs(spec=spec):
             yield org
 
-    def get_org(self, org_id, fields=None):
+    def get_by_id(self, org_id, fields=None):
         if org_id in self.organizations:
-            return organization.get_org(id=org_id, fields=fields)
+            return organization.get_by_id(org_id, fields=fields)
 
     def get_org_fields(self, fields=None):
         project = {}

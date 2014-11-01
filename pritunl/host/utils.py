@@ -47,7 +47,7 @@ def iter_servers_dict():
     for doc in response:
         hosts_clients[doc['_id']] = doc['clients']
 
-    org_user_count = organization.get_org_user_count()
+    org_user_count = organization.get_user_count()
 
     response = server_collection.aggregate([
         {'$project': {

@@ -15,7 +15,7 @@ import flask
 @auth.session_auth
 def org_get(org_id=None):
     if org_id:
-        return utils.jsonify(organization.get_org(id=org_id).dict())
+        return utils.jsonify(organization.get_by_id(org_id).dict())
 
     orgs = []
     for org in organization.iter_orgs_dict():
@@ -34,7 +34,7 @@ def org_post():
 @app.app.route('/organization/<org_id>', methods=['PUT'])
 @auth.session_auth
 def org_put(org_id):
-    org = organization.get_org(id=org_id)
+    org = organization.get_by_id(org_id)
     name = utils.filter_str(flask.request.json['name'])
     org.name = name
     org.commit(org.changed)
@@ -44,7 +44,7 @@ def org_put(org_id):
 @app.app.route('/organization/<org_id>', methods=['DELETE'])
 @auth.session_auth
 def org_delete(org_id):
-    org = organization.get_org(id=org_id)
+    org = organization.get_by_id(org_id)
     name = org.name
     server_ids = org.remove()
 

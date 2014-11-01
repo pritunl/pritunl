@@ -84,7 +84,7 @@ class ServerIpPool:
         }})
 
     def assign_ip_pool_org(self, org_id):
-        org = organization.get_org(id=org_id)
+        org = organization.get_by_id(org_id)
         network = self.server.network
         server_id = self.server.id
         org_id = org.id
