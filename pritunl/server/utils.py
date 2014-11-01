@@ -32,7 +32,7 @@ def new_server(**kwargs):
 def get_by_id(id, fields=None):
     return Server(id=id, fields=fields)
 
-def get_server_dict(id):
+def get_dict(id):
     return Server(id=id, fields=dict_fields).dict()
 
 def get_used_resources(ignore_server_id):

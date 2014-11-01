@@ -52,7 +52,7 @@ def _dns_server_invalid():
 @auth.session_auth
 def server_get(server_id=None):
     if server_id:
-        return utils.jsonify(server.get_server_dict(server_id))
+        return utils.jsonify(server.get_dict(server_id))
 
     servers = []
 
