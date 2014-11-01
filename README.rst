@@ -4,8 +4,14 @@ pritunl: enterprise vpn server
 .. image:: http://gitshields.com/v2/pypi/pritunl/version/43617e.png
     :target: https://pypi.python.org/pypi/pritunl
 
-.. image:: http://gitshields.com/v2/pypi/pritunl/month_down/754e8c.png
-    :target: https://pypi.python.org/pypi/pritunl
+.. image:: http://www.gitshields.com/v2/text/package/ubuntu/dd4814.png
+    :target: https://launchpad.net/~pritunl/+archive/ubuntu/ppa
+
+.. image:: http://www.gitshields.com/v2/text/package/arch%20linux/33aadd.png
+    :target: https://aur.archlinux.org/packages/pritunl/
+
+.. image:: http://www.gitshields.com/v2/text/package/centos/669900.png
+    :target: http://pritunl.com/#install
 
 .. image:: http://gitshields.com/v2/drone/github.com/pritunl/pritunl/589d59-b64d39.png
     :target: https://drone.io/github.com/pritunl/pritunl
