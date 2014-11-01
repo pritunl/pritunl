@@ -78,8 +78,9 @@ def pritunl_daemon(default_conf=None):
     if cmd != 'start':
         raise ValueError('Invalid command')
 
+    from pritunl import settings
+
     if options.quiet:
-        from pritunl import settings
         settings.local.quiet = True
 
     if options.daemon:
