@@ -13,6 +13,7 @@ import uuid
 import os
 import bson
 import signal
+import flask
 
 def now():
     return settings.local.mongo_time + (
@@ -126,3 +127,14 @@ def stop_process(process):
             time.sleep(0.01)
 
     return terminated
+
+def response(data=None, status_code=None):
+    response = flask.Response(response=data,
+        mimetype='text/html; charset=utf-8')
+    response.headers.add('Cache-Control',
+        'no-cache, no-store, must-revalidate')
+    response.headers.add('Pragma', 'no-cache')
+    response.headers.add('Expires', 0)
+    if status_code is not None:
+        response.status_code = status_code
+    return response
