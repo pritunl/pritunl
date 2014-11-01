@@ -22,7 +22,7 @@ def setup_mongo():
     last_error = time.time() - 24
     while True:
         try:
-            client = pymongo.MongoClient(settings.conf.mongodb_url,
+            client = pymongo.MongoClient(settings.conf.mongodb_uri,
                 connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
             break
         except pymongo.errors.ConnectionFailure:

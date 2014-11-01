@@ -21,6 +21,6 @@ class SettingsConf(SettingsGroupFile):
         'server_cert_path': '/var/lib/pritunl/pritunl.crt',
         'server_key_path': '/var/lib/pritunl/pritunl.key',
         'bind_addr': '0.0.0.0',
-        'mongodb_url': 'mongodb://localhost:27017/pritunl',
+        'mongodb_uri': 'mongodb://localhost:27017/pritunl',
         'mongodb_collection_prefix': None,
     }
