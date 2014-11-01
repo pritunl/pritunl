@@ -506,9 +506,9 @@ class Server(mongo.MongoObject):
         for hst in host.iter_hosts(spec=spec):
             yield hst
 
-    def get_host(self, host_id):
+    def get_by_id(self, host_id):
         if host_id in self.hosts:
-            return host.get_host(id=host_id)
+            return host.get_by_id(host_id)
 
     def generate_dh_param(self):
         doc = queue.find({

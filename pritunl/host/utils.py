@@ -13,7 +13,7 @@ from pritunl import mongo
 import datetime
 import collections
 
-def get_host(id, fields=None):
+def get_by_id(id, fields=None):
     return Host(id=id, fields=fields)
 
 def iter_hosts(spec=None, fields=None):
@@ -80,7 +80,7 @@ def iter_servers_dict():
 
         yield hst.dict()
 
-def init_host():
+def init():
     settings.local.host = Host()
 
     try:
@@ -98,7 +98,7 @@ def init_host():
     settings.local.host.commit()
     event.Event(type=HOSTS_UPDATED)
 
-def deinit_host():
+def deinit():
     Host.collection.update({
         '_id': settings.local.host.id,
     }, {'$set': {

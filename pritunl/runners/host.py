@@ -86,7 +86,7 @@ def _keep_alive_thread():
 
             settings.local.host_ping_timestamp = ping_timestamp
         except GeneratorExit:
-            host.deinit_host()
+            host.deinit()
             raise
         except:
             logger.exception('Error in host keep alive update. %s' % {

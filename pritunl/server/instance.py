@@ -588,7 +588,7 @@ class ServerInstance(object):
         instance_link = ServerInstanceLink(
             server=self.server,
             linked_server=self.server,
-            linked_host=host.get_host(id=host_id),
+            linked_host=host.get_by_id(host_id),
         )
         self.replica_links[host_id] = instance_link
         instance_link.start()

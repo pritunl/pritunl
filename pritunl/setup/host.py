@@ -4,4 +4,4 @@ from pritunl.helpers import *
 
 def setup_host():
     from pritunl import host
-    host.init_host()
+    host.init()

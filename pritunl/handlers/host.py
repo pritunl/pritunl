@@ -19,7 +19,7 @@ import collections
 @auth.session_auth
 def host_get(host_id=None):
     if host_id:
-        return utils.jsonify(host.get_host(id=host_id).dict())
+        return utils.jsonify(host.get_by_id(host_id).dict())
 
     hosts = []
 
@@ -31,7 +31,7 @@ def host_get(host_id=None):
 @app.app.route('/host/<host_id>', methods=['PUT'])
 @auth.session_auth
 def host_put(host_id=None):
-    hst = host.get_host(id=host_id)
+    hst = host.get_by_id(host_id)
 
     if 'name' in flask.request.json:
         hst.name = utils.filter_str(
@@ -53,7 +53,7 @@ def host_put(host_id=None):
 @app.app.route('/host/<host_id>', methods=['DELETE'])
 @auth.session_auth
 def host_delete(host_id):
-    hst = host.get_host(id=host_id)
+    hst = host.get_by_id(host_id)
     hst.remove()
 
     logger.LogEntry(message='Deleted host "%s".' % hst.name)
@@ -64,5 +64,5 @@ def host_delete(host_id):
 @app.app.route('/host/<host_id>/usage/<period>', methods=['GET'])
 @auth.session_auth
 def host_usage_get(host_id, period):
-    hst = host.get_host(id=host_id)
+    hst = host.get_by_id(host_id)
     return utils.jsonify(hst.usage.get_period(period))
