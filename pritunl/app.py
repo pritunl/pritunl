@@ -65,10 +65,12 @@ def _run_wsgi():
         (settings.conf.bind_addr, settings.conf.port), app,
         request_queue_size=settings.app.request_queue_size,
         server_name=cherrypy.wsgiserver.CherryPyWSGIServer.version)
+
     if settings.conf.ssl:
         server.ConnectionClass = HTTPConnectionPatch
         server.ssl_adapter = SSLAdapter(
             settings.conf.server_cert_path, settings.conf.server_key_path)
+
     try:
         server.start()
     except (KeyboardInterrupt, SystemExit):
