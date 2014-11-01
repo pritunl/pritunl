@@ -17,6 +17,15 @@ def setup_all():
     setup_clear_temp()
     setup_app()
     setup_logger()
+
+    if not settings.conf.mongodb_uri:
+        from pritunl import dbconf
+        import sys
+
+        dbconf.run_server()
+
+        sys.exit(0)
+
     setup_mongo()
     setup_temp_path()
     setup_public_ip()
