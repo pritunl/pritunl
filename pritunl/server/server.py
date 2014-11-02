@@ -120,7 +120,8 @@ class Server(mongo.MongoObject):
             **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
-        self._orig_network = self.network
+        if 'network' in self.loaded_fields:
+            self._orig_network = self.network
         self._orgs_added = []
         self._orgs_removed = []
 
@@ -300,7 +301,8 @@ class Server(mongo.MongoObject):
     def commit(self, *args, **kwargs):
         tran = None
 
-        if self.network != self._orig_network:
+        if 'network' in self.loaded_fields and \
+                self.network != self._orig_network:
             tran = transaction.Transaction()
             if self.network_lock:
                 raise ServerNetworkLocked('Server network is locked', {
