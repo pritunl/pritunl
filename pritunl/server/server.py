@@ -412,7 +412,7 @@ class Server(mongo.MongoObject):
         spec = {
             '_id': {'$in': self.organizations},
         }
-        for org in organization.iter_orgs(spec=spec):
+        for org in organization.iter_orgs(spec=spec, fields=fields):
             yield org
 
     def get_org(self, org_id, fields=None):
