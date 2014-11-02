@@ -247,6 +247,15 @@
               var data = JSON.parse(xmlhttp.responseText);
             }
             else {
+              var errorMsg;
+              try {
+                errorMsg = JSON.parse(xmlhttp.responseText)['error_msg'];
+              }
+              catch(error) {
+                errorMsg = 'Unknown server error occurred.';
+              }
+              setAlert(errorMsg, 'danger');
+              saveBtn.disabled = false;
             }
             saveBtn.disabled = false;
           }
