@@ -56,6 +56,7 @@ dict_fields = [
     'search_domain',
     'otp_auth',
     'cipher',
+    'jumbo_frames',
     'lzo_compression',
     'debug',
 ]
