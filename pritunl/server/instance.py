@@ -217,6 +217,11 @@ class ServerInstance(object):
 
         server_conf += '<ca>\n%s\n</ca>\n' % utils.get_cert_block(
             self.server.ca_certificate)
+
+        if self.server.tls_auth:
+            server_conf += '<tls-auth>\n%s\n</tls-auth>\n' % (
+                self.server.tls_auth_key)
+
         server_conf += '<cert>\n%s\n</cert>\n' % utils.get_cert_block(
             self.primary_user.certificate)
         server_conf += '<key>\n%s\n</key>\n' % self.primary_user.private_key

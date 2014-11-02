@@ -88,6 +88,11 @@ class ServerInstanceLink(object):
         client_conf += JUMBO_FRAMES[self.server.jumbo_frames]
         client_conf += '<ca>\n%s\n</ca>\n' % utils.get_cert_block(
             self.server.ca_certificate)
+
+        if self.server.tls_auth:
+            client_conf += '<tls-auth>\n%s\n</tls-auth>\n' % (
+                self.server.tls_auth_key)
+
         client_conf += ('<cert>\n%s\n' + \
             '</cert>\n') % utils.get_cert_block(self.user.certificate)
         client_conf += '<key>\n%s\n</key>\n' % (
