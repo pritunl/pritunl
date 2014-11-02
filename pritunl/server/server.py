@@ -74,7 +74,8 @@ class Server(mongo.MongoObject):
         'dns_servers',
         'search_domain',
         'otp_auth',
-        'tls-auth',
+        'tls_auth',
+        'tls_auth_key',
         'lzo_compression',
         'debug',
         'cipher',
@@ -95,7 +96,7 @@ class Server(mongo.MongoObject):
     fields_default = {
         'dns_servers': [],
         'otp_auth': False,
-        'tls-auth': True,
+        'tls_auth': True,
         'lzo_compression': False,
         'debug': False,
         'cipher': 'aes256',
