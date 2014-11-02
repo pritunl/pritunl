@@ -21,7 +21,7 @@ def iter_hosts(spec=None, fields=None):
         fields = {key: True for key in fields}
 
     for doc in Host.collection.find(spec or {}, fields).sort('name'):
-        yield Host(doc=doc)
+        yield Host(doc=doc, fields=fields)
 
 def iter_servers_dict():
     server_collection = mongo.get_collection('servers')

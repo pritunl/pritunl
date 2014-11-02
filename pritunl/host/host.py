@@ -90,7 +90,7 @@ class Host(mongo.MongoObject):
             fields = {key: True for key in fields}
 
         for doc in server.Server.collection.find(spec, fields):
-            yield server.Server(doc=doc)
+            yield server.Server(doc=doc, fields=fields)
 
     def get_link_user(self, org_id):
         from pritunl import organization

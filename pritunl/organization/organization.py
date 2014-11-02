@@ -188,7 +188,7 @@ class Organization(mongo.MongoObject):
             self.last_search_count = cursor.count()
 
         for doc in cursor:
-            yield user.User(self, doc=doc)
+            yield user.User(self, doc=doc, fields=fields)
 
     def create_user_key_link(self, user_id):
         success = False
@@ -238,7 +238,7 @@ class Organization(mongo.MongoObject):
             fields = {key: True for key in fields}
 
         for doc in server.Server.collection.find(spec, fields):
-            yield server.Server(doc=doc)
+            yield server.Server(doc=doc, fields=fields)
 
     def new_user(self, type=CERT_CLIENT, block=True, **kwargs):
         # First attempt to get user from pool then attempt to get

@@ -73,12 +73,12 @@ def iter_servers(spec=None, fields=None):
         fields = {key: True for key in fields}
 
     for doc in Server.collection.find(spec or {}, fields).sort('name'):
-        yield Server(doc=doc)
+        yield Server(doc=doc, fields=fields)
 
 def iter_servers_dict():
     fields = {key: True for key in dict_fields}
     for doc in Server.collection.find({}, fields).sort('name'):
-        yield Server(doc=doc).dict()
+        yield Server(doc=doc, fields=fields).dict()
 
 def output_get(server_id):
     return ServerOutput(server_id).get_output()

@@ -511,7 +511,7 @@ class Server(mongo.MongoObject):
         spec = {
             '_id': {'$in': self.hosts}
         }
-        for hst in host.iter_hosts(spec=spec):
+        for hst in host.iter_hosts(spec=spec, fields=fields):
             yield hst
 
     def get_by_id(self, host_id):
