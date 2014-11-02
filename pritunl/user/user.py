@@ -360,6 +360,10 @@ class User(mongo.MongoObject):
         client_conf += JUMBO_FRAMES[server.jumbo_frames]
         client_conf += '<ca>\n%s\n</ca>\n' % ca_certificate
         if include_user_cert:
+            if server.tls_auth:
+                client_conf += '<tls-auth>\n%s\n</tls-auth>\n' % (
+                    server.tls_auth_key)
+
             client_conf += '<cert>\n%s\n</cert>\n' % certificate
             client_conf += '<key>\n%s\n</key>\n' % private_key
 
