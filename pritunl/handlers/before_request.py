@@ -29,6 +29,7 @@ def before_request():
 
 @app.app.url_value_preprocessor
 def parse_object_id(endpoint, values):
-    for key in values:
-        if key.endswith('_id'):
-            values[key] = bson.ObjectId(values[key])
+    if values:
+        for key in values:
+            if key.endswith('_id'):
+                values[key] = bson.ObjectId(values[key])
