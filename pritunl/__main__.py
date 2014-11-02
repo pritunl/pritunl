@@ -10,6 +10,7 @@ Commands:
   start                 Start server
   version               Print the version and exit
   reset-password        Reset administrator password
+  reconfigure           Reconfigure database connection
   logs                  View server logs"""
 
 def pritunl_daemon(default_conf=None):
