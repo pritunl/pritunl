@@ -62,43 +62,40 @@ def static_get(file_name):
 
     return static_file.get_response()
 
-@app.route('/mongodb', methods=['PUT'])
+@app.route('/setup/mongodb', methods=['PUT'])
 def mongodb_put():
-    return utils.jsonify({
-        'test': 'test',
-    })
+    mongodb_uri = flask.request.json['mongodb_uri']
 
-def _run_wsgi():
+    if not mongodb_uri:
+        return utils.jsonify({
+            'error': MONGODB_URI_INVALID,
+            'error_msg': MONGODB_URI_INVALID_MSG,
+        }, 400)
+
+    try:
+        client = pymongo.MongoClient(mongodb_uri,
+            connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
+    except pymongo.errors.ConnectionFailure:
+        return utils.jsonify({
+            'error': MONGODB_CONNECT_ERROR,
+            'error_msg': MONGODB_CONNECT_ERROR_MSG,
+        }, 400)
+
+    settings.conf.mongodb_uri = mongodb_uri
+    server.interrupt = StopServer('Stop server')
+
+    return ''
+
+def run_server():
+    global server
     server = cherrypy.wsgiserver.CherryPyWSGIServer(
         (settings.conf.bind_addr, settings.conf.port), app,
-        request_queue_size=settings.app.request_queue_size,
-        server_name=cherrypy.wsgiserver.CherryPyWSGIServer.version)
-
-    if settings.conf.ssl:
-        server.ConnectionClass = HTTPConnectionPatch
-        server.ssl_adapter = SSLAdapter(
-            settings.conf.server_cert_path, settings.conf.server_key_path)
+        server_name=cherrypy.wsgiserver.CherryPyWSGIServer.version,
+        timeout=3,
+        shutdown_timeout=1,
+    )
 
     try:
         server.start()
-    except (KeyboardInterrupt, SystemExit):
+    except StopServer:
         pass
-    except:
-        logger.exception('Server error occurred')
-        raise
-
-def _run_wsgi_debug():
-    try:
-        app.run(host=settings.conf.bind_addr,
-            port=settings.conf.port, threaded=True)
-    except (KeyboardInterrupt, SystemExit):
-        pass
-    except:
-        logger.exception('Server error occurred')
-        raise
-
-def run_server():
-    if settings.conf.debug:
-        _run_wsgi_debug()
-    else:
-        _run_wsgi()
