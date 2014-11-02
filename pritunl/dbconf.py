@@ -82,6 +82,7 @@ def mongodb_put():
         }, 400)
 
     settings.conf.mongodb_uri = mongodb_uri
+    settings.conf.commit()
     server.interrupt = StopServer('Stop server')
 
     return ''
