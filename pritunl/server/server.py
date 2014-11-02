@@ -563,6 +563,10 @@ class Server(mongo.MongoObject):
         finally:
             utils.rmtree(self.tls_auth_temp_path)
 
+    def generate_tls_auth(self):
+        self.generate_tls_auth_start()
+        self.generate_tls_auth_wait()
+
     def generate_ca_cert(self):
         ca_certificate = ''
         for org in self.iter_orgs():
