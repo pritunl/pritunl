@@ -168,9 +168,12 @@ class MongoObject(object):
     def remove(self):
         self.collection.remove(self.id)
 
-    def read_file(self, field, path):
+    def read_file(self, field, path, rstrip=True):
         with open(path, 'r') as field_file:
-            setattr(self, field, field_file.read())
+            file_data = field_file.read()
+            if rstrip:
+                file_data = file_data.rstrip('\n')
+            setattr(self, field, file_data)
 
     def write_file(self, field, path, chmod=None):
         with open(path, 'w') as field_file:
