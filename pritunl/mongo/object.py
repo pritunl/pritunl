@@ -67,11 +67,6 @@ class MongoObject(object):
                     '_id': self.id,
                 }
             if fields:
-                try:
-                    id_index = fields.index('_id')
-                    fields[id_index] = 'id'
-                except ValueError:
-                    pass
                 doc = self.collection.find_one(spec, fields=fields)
             else:
                 doc = self.collection.find_one(spec)
