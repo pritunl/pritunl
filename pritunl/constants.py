@@ -389,6 +389,12 @@ SUBSCRIPTION_SERVER_ERROR = 'subscription_server_error'
 SUBSCRIPTION_SERVER_ERROR_MSG = 'Unable to connect to ' + \
     'subscription server, please try again later.'
 
+MONGODB_URI_INVALID = 'mongodb_uri_invalid'
+MONGODB_URI_INVALID_MSG = 'MongoDB URI is invalid.'
+
+MONGODB_CONNECT_ERROR = 'mongodb_connect_error'
+MONGODB_CONNECT_ERROR_MSG = 'Unable to connect to MongoDB server.'
+
 RANDOM_ONE = (
     'snowy',
     'restless',
