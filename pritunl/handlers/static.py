@@ -9,11 +9,12 @@ import os
 import flask
 
 @app.app.route('/', methods=['GET'])
+@app.app.route('/app', methods=['GET'])
 @app.app.route('/favicon.ico', methods=['GET'])
 @app.app.route('/robots.txt', methods=['GET'])
 def root_static_get():
     file_name = flask.request.path.lstrip('/')
-    if not file_name:
+    if not file_name or file_name == 'app':
         file_name = 'index.html'
         cache = False
     else:
