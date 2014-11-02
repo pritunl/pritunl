@@ -170,7 +170,8 @@ def user_put(org_id, user_id):
         if user.type == CERT_CLIENT:
             logger.LogEntry(message='Disabled user "%s".' % user.name)
 
-        for svr in org.iter_servers(fields=('instances',)):
+        for svr in org.iter_servers(fields=server.dict_fields + \
+                ['hosts', 'links', 'tls_auth_key']):
             for instance in svr.instances:
                 if user_id in instance['clients']:
                     svr.restart()
@@ -210,7 +211,8 @@ def user_delete(org_id, user_id):
     event.Event(type=ORGS_UPDATED)
     event.Event(type=USERS_UPDATED, resource_id=org.id)
 
-    for svr in org.iter_servers(fields=('instances',)):
+    for svr in org.iter_servers(fields=server.dict_fields + \
+            ['hosts', 'links', 'tls_auth_key']):
         for instance in svr.instances:
             if user_id in instance['clients']:
                 svr.restart()
