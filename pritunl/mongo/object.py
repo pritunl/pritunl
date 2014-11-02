@@ -12,11 +12,14 @@ class MongoObject(object):
     fields_default = {}
     fields_required = {}
 
-    def __new__(cls, id=None, doc=None, spec=None, fields=fields, **kwargs):
+    def __new__(cls, id=None, doc=None, spec=None, fields=None, **kwargs):
+        fields = fields or cls.fields
+
         mongo_object = object.__new__(cls)
         mongo_object.changed = set()
         mongo_object.unseted = set()
         mongo_object.id = id
+        mongo_object.loaded_fields = fields
 
         if id or doc or spec:
             mongo_object.exists = True
@@ -36,6 +39,8 @@ class MongoObject(object):
 
     def __getattr__(self, name):
         if name in self.fields:
+            if name not in self.loaded_fields:
+                raise ValueError('Cannot get unloaded field %r' % name)
             if name in self.fields_default:
                 value = self.fields_default[name]
                 if isinstance(value, list):
