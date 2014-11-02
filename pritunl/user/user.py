@@ -59,7 +59,7 @@ class User(mongo.MongoObject):
         if resource_id is not None:
             self.resource_id = resource_id
 
-        if not self.sync_key:
+        if 'sync_key' in self.loaded_fields and not self.sync_key:
             self.sync_key = uuid.uuid4().hex
 
     @cached_static_property
