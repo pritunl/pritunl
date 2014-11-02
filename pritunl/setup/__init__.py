@@ -24,8 +24,6 @@ def setup_all():
 
         dbconf.run_server()
 
-        sys.exit(0)
-
     setup_mongo()
     setup_temp_path()
     setup_public_ip()
