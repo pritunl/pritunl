@@ -611,6 +611,9 @@ class Server(mongo.MongoObject):
             self.generate_dh_param()
             return
 
+        if not self.tls_auth_key:
+            self.generate_tls_auth()
+
         if not self.organizations:
             raise ServerMissingOrg('Server cannot be started ' + \
                 'without any organizations', {
