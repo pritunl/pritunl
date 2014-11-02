@@ -617,6 +617,7 @@ class Server(mongo.MongoObject):
 
         if not self.tls_auth_key:
             self.generate_tls_auth()
+            self.commit('tls_auth_key')
 
         if not self.organizations:
             raise ServerMissingOrg('Server cannot be started ' + \
