@@ -229,7 +229,11 @@ class Server(mongo.MongoObject):
         return ServerOutputLink(self.id)
 
     def initialize(self):
-        self.generate_dh_param()
+        self.generate_tls_auth_start()
+        try:
+            self.generate_dh_param()
+        finally:
+            self.generate_tls_auth_wait()
 
     def queue_dh_params(self, block=False):
         queue.start('dh_params', block=block, server_id=self.id,
@@ -531,6 +535,33 @@ class Server(mongo.MongoObject):
             return
 
         self.queue_dh_params()
+
+    def generate_tls_auth_start(self):
+        self.tls_auth_temp_path = utils.get_temp_path()
+        self.tls_auth_path = os.path.join(
+            self.tls_auth_temp_path, TLS_AUTH_NAME)
+
+        os.makedirs(self.tls_auth_temp_path)
+        args = [
+            'openvpn', '--genkey',
+            '--secret', self.tls_auth_path,
+        ]
+        try:
+            self.tls_auth_process = subprocess.Popen(args,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        except:
+            utils.rmtree(self.tls_auth_temp_path)
+            raise
+
+    def generate_tls_auth_wait(self):
+        try:
+            return_code = self.tls_auth_process.wait()
+            if return_code:
+                raise ValueError('Popen returned ' +
+                    'error exit code %r' % return_code)
+            self.read_file('tls_auth_key', self.tls_auth_path)
+        finally:
+            utils.rmtree(self.tls_auth_temp_path)
 
     def generate_ca_cert(self):
         ca_certificate = ''
