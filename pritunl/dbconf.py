@@ -6,13 +6,18 @@ from pritunl import settings
 from pritunl import static
 from pritunl import utils
 
-import flask
 import cherrypy.wsgiserver
 import logging
 import logging.handlers
 import signal
 import time
 import os
+import pymongo
+import json
+import flask
+
+server = None
+app = flask.Flask(APP_NAME + '_dbconf')
 
 try:
     import OpenSSL
@@ -31,15 +36,16 @@ class HTTPConnectionPatch(cherrypy.wsgiserver.HTTPConnection):
         self.wfile = makefile(sock, 'wb', self.wbufsize)
         self.requests_seen = 0
 
-app = flask.Flask(APP_NAME + '_dbconf')
-
 @app.route('/', methods=['GET'])
-@app.route('/index.html', methods=['GET'])
 def index_get():
+    return flask.redirect('setup')
+
+@app.route('/setup', methods=['GET'])
+def setup_get():
     return utils.response(open(os.path.join(
         settings.conf.www_path, 'dbconf_index.html')))
 
-@app.route('/s/<file_name>', methods=['GET'])
+@app.route('/setup/s/<file_name>', methods=['GET'])
 def static_get(file_name):
     file_path = {
         'fredoka-one.eot': 'fonts/fredoka-one.woff',
