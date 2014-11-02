@@ -1,3 +1,7 @@
+class StopServer(Exception):
+    pass
+
+
 class BaseError(Exception):
     def __init__(self, message, data=None):
         if data:
