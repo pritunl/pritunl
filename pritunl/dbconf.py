@@ -109,8 +109,8 @@ def server_thread():
     server = cherrypy.wsgiserver.CherryPyWSGIServer(
         (settings.conf.bind_addr, settings.conf.port), app,
         server_name=cherrypy.wsgiserver.CherryPyWSGIServer.version,
-        timeout=3,
-        shutdown_timeout=1,
+        timeout=1,
+        shutdown_timeout=0.5,
     )
 
     try:
