@@ -11,8 +11,6 @@ import logging.handlers
 import signal
 import time
 
-_exited = False
-
 try:
     import OpenSSL
     import cherrypy.wsgiserver.ssl_pyopenssl
@@ -48,15 +46,6 @@ def after_request(response):
     response.headers.add('Query-Count', flask.g.query_count)
     response.headers.add('Write-Count', flask.g.write_count)
     return response
-
-def handle_exit(signum, frame):
-    global _exited
-    if _exited:
-        return
-    _exited = True
-    logger.info('Stopping server...')
-    set_global_interrupt()
-    signal.alarm(2)
 
 def _run_wsgi():
     logger.info('Starting server...')
@@ -100,9 +89,6 @@ def _run_wsgi_debug():
         raise
 
 def run_server():
-    signal.signal(signal.SIGINT, handle_exit)
-    signal.signal(signal.SIGTERM, handle_exit)
-
     if settings.conf.debug:
         logger.LogEntry(message='Web debug server started.')
     else:
