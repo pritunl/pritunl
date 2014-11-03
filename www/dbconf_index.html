@@ -248,6 +248,19 @@
     <script type="text/javascript">
       var uriInput = document.getElementById('mongodb-uri');
       var saveBtn = document.getElementById('save');
+      var alertDiv = document.getElementById('alert');
+
+      var setAlert = function(alert, style) {
+        if (alert) {
+          alertDiv.className = 'alert alert-' + (style || 'success');
+          alertDiv.innerHTML = alert;
+          alertDiv.style.display = 'block';
+        }
+        else {
+          alertDiv.style.display = 'none';
+        }
+      };
+
       var save = function() {
         saveBtn.disabled = true;
 
