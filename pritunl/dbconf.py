@@ -122,3 +122,5 @@ def run_server():
     thread = threading.Thread(target=server_thread)
     thread.daemon = True
     thread.start()
+
+    dbconf_ready.wait()
