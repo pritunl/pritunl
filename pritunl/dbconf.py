@@ -21,6 +21,9 @@ server = None
 app = flask.Flask(APP_NAME + '_dbconf')
 dbconf_ready = threading.Event()
 
+def stop_server():
+    server.interrupt = StopServer('Stop server')
+
 try:
     import OpenSSL
     import cherrypy.wsgiserver.ssl_pyopenssl
@@ -85,9 +88,10 @@ def mongodb_put():
 
     settings.conf.mongodb_uri = mongodb_uri
     settings.conf.commit()
-    server.interrupt = StopServer('Stop server')
 
     dbconf_ready.set()
+    settings.local.server_ready.wait()
+    threading.Thread(target=stop_server).start()
 
     return ''
 
