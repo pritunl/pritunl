@@ -148,6 +148,7 @@ SERVER_KEY_NAME = 'server.key'
 SERVER_CONF_NAME = 'server.conf'
 AUTH_LOG_NAME = 'auth.log'
 KEY_VIEW_NAME = 'key_view.html'
+DBCONF_NAME = 'dbconf.html'
 CONF_TEMP_EXT = '.tmp'
 LOG_ARCHIVE_NAME = 'pritunl_log'
 
