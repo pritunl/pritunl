@@ -147,7 +147,7 @@ SERVER_CERT_NAME = 'server.crt'
 SERVER_KEY_NAME = 'server.key'
 SERVER_CONF_NAME = 'server.conf'
 AUTH_LOG_NAME = 'auth.log'
-KEY_INDEX_NAME = 'key_index.html'
+KEY_VIEW_NAME = 'key_view.html'
 CONF_TEMP_EXT = '.tmp'
 LOG_ARCHIVE_NAME = 'pritunl_log'
 
