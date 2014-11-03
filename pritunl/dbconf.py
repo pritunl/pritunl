@@ -15,6 +15,7 @@ import os
 import pymongo
 import json
 import flask
+import threading
 
 server = None
 app = flask.Flask(APP_NAME + '_dbconf')
@@ -87,7 +88,7 @@ def mongodb_put():
 
     return ''
 
-def run_server():
+def server_thread():
     global server
     server = cherrypy.wsgiserver.CherryPyWSGIServer(
         (settings.conf.bind_addr, settings.conf.port), app,
@@ -100,3 +101,12 @@ def run_server():
         server.start()
     except StopServer:
         pass
+
+    settings.local.server_start.set()
+
+def run_server():
+    settings.local.server_start.clear()
+
+    thread = threading.Thread(target=server_thread)
+    thread.daemon = True
+    thread.start()
