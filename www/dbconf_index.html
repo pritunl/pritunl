@@ -273,7 +273,7 @@
             saveBtn.disabled = false;
           }
         };
-        xmlhttp.open('PUT', '/mongodb', true);
+        xmlhttp.open('PUT', '/setup/mongodb', true);
         xmlhttp.setRequestHeader('Content-Type', 'application/json');
         xmlhttp.send(JSON.stringify({
           'mongodb_uri': uriInput.value,
