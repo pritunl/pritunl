@@ -113,6 +113,11 @@ def server_thread():
         shutdown_timeout=0.5,
     )
 
+    if settings.conf.ssl:
+        server.ConnectionClass = HTTPConnectionPatch
+        server.ssl_adapter = SSLAdapter(
+            settings.conf.server_cert_path, settings.conf.server_key_path)
+
     try:
         server.start()
     except StopServer:
