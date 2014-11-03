@@ -37,7 +37,7 @@ data_files = [
         'data/var/pritunl.log.1',
     ]),
     ('/usr/share/pritunl/www', [
-        'www/key_index.html',
+        'www/key_view.html',
         'www/vendor/dist/favicon.ico',
         'www/vendor/dist/index.html',
         'www/vendor/dist/robots.txt',
