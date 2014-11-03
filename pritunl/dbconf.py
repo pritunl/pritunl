@@ -8,7 +8,6 @@ from pritunl import utils
 
 import cherrypy.wsgiserver
 import logging
-import logging.handlers
 import signal
 import time
 import os
