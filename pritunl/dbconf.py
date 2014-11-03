@@ -47,8 +47,13 @@ def index_get():
 
 @app.route('/setup', methods=['GET'])
 def setup_get():
-    return utils.response(open(os.path.join(
-        settings.conf.www_path, 'dbconf_index.html')))
+    try:
+        static_file = static.StaticFile(settings.conf.www_path,
+            DBCONF_NAME, cache=False)
+    except InvalidStaticFile:
+        return flask.abort(404)
+
+    return static_file.get_response()
 
 @app.route('/setup/s/<file_name>', methods=['GET'])
 def static_get(file_name):
