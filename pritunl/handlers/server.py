@@ -212,7 +212,7 @@ def server_put_post(server_id=None):
             except ValueError:
                 return _local_network_invalid()
 
-            if subnet < 8 or subnet > 30:
+            if subnet < 1 or subnet > 32:
                 return _local_network_invalid()
 
     dns_servers = None
