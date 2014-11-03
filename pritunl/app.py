@@ -60,6 +60,9 @@ def _run_wsgi():
         server.ssl_adapter = SSLAdapter(
             settings.conf.server_cert_path, settings.conf.server_key_path)
 
+    settings.local.server_ready.set()
+    settings.local.server_start.wait()
+
     try:
         server.start()
     except (KeyboardInterrupt, SystemExit):
@@ -78,6 +81,9 @@ def _run_wsgi_debug():
     werkzeug_logger.setLevel(logging.DEBUG)
     werkzeug_logger.addFilter(logger.log_filter)
     werkzeug_logger.addHandler(logger.log_handler)
+
+    settings.local.server_ready.set()
+    settings.local.server_start.wait()
 
     try:
         app.run(host=settings.conf.bind_addr,
