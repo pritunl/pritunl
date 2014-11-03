@@ -54,6 +54,18 @@ def pritunl_daemon(default_conf=None):
 
         sys.exit(0)
 
+    if cmd == 'reconfigure':
+        from pritunl import setup
+        from pritunl import settings
+        setup.setup_db()
+
+        settings.conf.mongodb_uri = None
+        settings.conf.commit()
+
+        print 'Database configuration successfully reset'
+
+        sys.exit(0)
+
     if cmd == 'logs':
         from pritunl.constants import DEFAULT_USERNAME, DEFAULT_PASSWORD
         from pritunl import setup
