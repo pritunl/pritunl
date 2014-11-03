@@ -19,6 +19,7 @@ import threading
 
 server = None
 app = flask.Flask(APP_NAME + '_dbconf')
+dbconf_ready = threading.Event()
 
 try:
     import OpenSSL
@@ -86,6 +87,8 @@ def mongodb_put():
     settings.conf.commit()
     server.interrupt = StopServer('Stop server')
 
+    dbconf_ready.set()
+
     return ''
 
 def server_thread():
@@ -106,6 +109,7 @@ def server_thread():
     except StopServer:
         pass
 
+    dbconf_ready.set()
     settings.local.server_start.set()
 
 def run_server():
