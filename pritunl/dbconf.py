@@ -89,6 +89,10 @@ def mongodb_put():
     return ''
 
 def server_thread():
+    app.logger.setLevel(logging.DEBUG)
+    app.logger.addFilter(logger.log_filter)
+    app.logger.addHandler(logger.log_handler)
+
     global server
     server = cherrypy.wsgiserver.CherryPyWSGIServer(
         (settings.conf.bind_addr, settings.conf.port), app,
