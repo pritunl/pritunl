@@ -4,6 +4,7 @@ from pritunl.setup.app import setup_app
 from pritunl.setup.mongo import setup_mongo
 from pritunl.setup.temp_path import setup_temp_path
 from pritunl.setup.logger import setup_logger
+from pritunl.setup.signal_handler import setup_signal_handler
 from pritunl.setup.public_ip import setup_public_ip
 from pritunl.setup.poolers import setup_poolers
 from pritunl.setup.host import setup_host
@@ -17,6 +18,7 @@ def setup_all():
     setup_clear_temp()
     setup_app()
     setup_logger()
+    setup_signal_handler()
 
     if not settings.conf.mongodb_uri:
         from pritunl import dbconf
