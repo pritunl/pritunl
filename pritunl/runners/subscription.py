@@ -4,6 +4,7 @@ from pritunl.helpers import *
 from pritunl import event
 from pritunl import settings
 from pritunl import subscription
+from pritunl import logger
 
 import threading
 import time
