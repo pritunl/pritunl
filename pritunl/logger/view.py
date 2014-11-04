@@ -42,6 +42,12 @@ class LogView(object):
                 log_level = line_split[2][1:]
                 log_msg = line_split[3]
 
+                if log_level in ('WARNING', 'ERROR', 'CRITICAL'):
+                    log_msg = log_msg.replace(
+                        'Traceback (most recent call last):',
+                        '\033[1;91mTraceback (most recent call last):\033[0m',
+                    )
+
                 return ('\033[1;%sm[%s]\033[0m\033[1m[%s]\033' + \
                         '[0m\033[1;%sm[%s]\033[0m%s') % (
                     self.host_colors[log_host], log_host,
