@@ -19,7 +19,7 @@ class LogFormatter(logging.Formatter):
             traceback = record.data.pop('traceback', None)
             width = len(max(record.data, key=len))
             for key, val in record.data.items():
-                formatted_record += '\n    %s = %r' % (key.ljust(width), val)
+                formatted_record += '\n  %s = %r' % (key.ljust(width), val)
             if traceback:
                 formatted_record += '\nTraceback (most recent call last):\n'
                 formatted_record += ''.join(traceback).rstrip('\n')
