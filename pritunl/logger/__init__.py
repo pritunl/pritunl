@@ -33,22 +33,40 @@ def _log(log_level, log_msg, log_type, **kwargs):
         })
 
 def debug(log_msg, log_type=None, **kwargs):
-    _log('debug', log_msg, log_type, **kwargs)
+    _log_queue.put((
+        ('debug', log_msg, log_type),
+        kwargs,
+    ))
 
 def info(log_msg, log_type=None, **kwargs):
-    _log('info', log_msg, log_type, **kwargs)
+    _log_queue.put((
+        ('info', log_msg, log_type),
+        kwargs,
+    ))
 
 def warning(log_msg, log_type=None, **kwargs):
-    _log('warning', log_msg, log_type, **kwargs)
+    _log_queue.put((
+        ('warning', log_msg, log_type),
+        kwargs,
+    ))
 
 def error(log_msg, log_type=None, **kwargs):
-    _log('error', log_msg, log_type, **kwargs)
+    _log_queue.put((
+        ('error', log_msg, log_type),
+        kwargs,
+    ))
 
 def critical(log_msg, log_type=None, **kwargs):
-    _log('critical', log_msg, log_type, **kwargs)
+    _log_queue.put((
+        ('critical', log_msg, log_type),
+        kwargs,
+    ))
 
 def exception(log_msg, log_type=None, **kwargs):
-    _log('exception', log_msg, log_type, **kwargs)
+    _log_queue.put((
+        ('exception', log_msg, log_type),
+        kwargs,
+    ))
 
 _thread = threading.Thread(target=_logger_thread)
 _thread.daemon = True
