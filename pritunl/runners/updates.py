@@ -16,8 +16,8 @@ def _check_updates():
             yield interrupter_sleep(30)
             continue
 
-        logger.debug('Checking notifications...')
         try:
+            logger.debug('Checking notifications...')
             request = urllib2.Request(
                 settings.app.notification_server +
                 '/%s' % settings.local.version_int)
