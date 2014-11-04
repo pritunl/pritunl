@@ -15,13 +15,13 @@ class SettingsGroupMongo(SettingsGroupBase):
             self.changed.add(name)
         object.__setattr__(self, name, value)
 
-    def get_commit_doc(self, all_fields):
+    def get_commit_doc(self, init):
         doc = {
             '_id': self.group,
         }
 
-        for field in self.fields if all_fields else self.changed:
+        for field in self.changed:
             doc[field] = getattr(self, field)
 
-        if len(doc) > 1:
+        if init or len(doc) > 1:
             return doc
