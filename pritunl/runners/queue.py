@@ -102,7 +102,7 @@ def _check_thread():
         except GeneratorExit:
             raise
         except:
-            logger.exception('Error in queue check thread.')
+            logger.exception('Error in queue check thread')
 
         yield interrupter_sleep(settings.mongo.queue_ttl)
 

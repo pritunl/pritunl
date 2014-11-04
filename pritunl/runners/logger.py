@@ -38,7 +38,7 @@ def _logger_runner_thread():
         except GeneratorExit:
             raise
         except:
-            logger.exception('Error in log runner thread.')
+            logger.exception('Error in log runner thread')
             time.sleep(0.5)
 
 def start_logger():

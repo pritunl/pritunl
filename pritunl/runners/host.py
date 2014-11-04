@@ -41,7 +41,7 @@ def _host_check_thread():
         except GeneratorExit:
             raise
         except:
-            logger.exception('Error checking host status.')
+            logger.exception('Error checking host status')
 
         yield interrupter_sleep(settings.app.host_ttl)
 
