@@ -3,6 +3,7 @@ from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import logger
 from pritunl import settings
+from pritunl import patches
 
 import flask
 import cherrypy.wsgiserver
@@ -18,15 +19,6 @@ try:
 except ImportError:
     import cherrypy.wsgiserver.ssl_builtin
     SSLAdapter = cherrypy.wsgiserver.ssl_builtin.BuiltinSSLAdapter
-
-class HTTPConnectionPatch(cherrypy.wsgiserver.HTTPConnection):
-    def __init__(self, server, sock,
-            makefile=cherrypy.wsgiserver.CP_fileobject):
-        self.server = server
-        self.socket = sock
-        self.rfile = makefile(sock, 'rb', self.rbufsize)
-        self.wfile = makefile(sock, 'wb', self.wbufsize)
-        self.requests_seen = 0
 
 app = flask.Flask(APP_NAME)
 
@@ -56,7 +48,7 @@ def _run_wsgi():
         server_name=cherrypy.wsgiserver.CherryPyWSGIServer.version)
 
     if settings.conf.ssl:
-        server.ConnectionClass = HTTPConnectionPatch
+        server.ConnectionClass = patches.HTTPConnectionPatch
         server.ssl_adapter = SSLAdapter(
             settings.conf.server_cert_path, settings.conf.server_key_path)
 
