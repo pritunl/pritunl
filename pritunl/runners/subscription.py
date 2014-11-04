@@ -15,6 +15,8 @@ def _subscription_thread():
         try:
             yield interrupter_sleep(SUBSCRIPTION_UPDATE_RATE)
             subscription.update()
+        except GeneratorExit:
+            raise
         except:
             logger.exception('Error in subscription thread.')
 
