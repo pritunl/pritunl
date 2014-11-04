@@ -14,6 +14,15 @@ import os
 import bson
 import signal
 import flask
+import sys
+
+if hasattr(sys, 'frozen'):
+    _srcfile = "logging%s__init__%s" % (os.sep, __file__[-4:])
+elif __file__[-4:].lower() in ('.pyc', '.pyo'):
+    _srcfile = __file__[:-4] + '.py'
+else:
+    _srcfile = __file__
+_srcfile = os.path.normcase(_srcfile)
 
 def now():
     return settings.local.mongo_time + (
@@ -35,6 +44,29 @@ def sync_time():
     settings.local.mongo_time = doc['_id'].generation_time.replace(tzinfo=None)
 
     collection.remove(doc['_id'])
+
+def find_caller():
+    try:
+        raise Exception
+    except:
+        f = sys.exc_info()[2].tb_frame.f_back
+
+    if f is not None:
+        f = f.f_back
+    rv = "(unknown file)", 0, "(unknown function)"
+
+    while hasattr(f, "f_code"):
+        co = f.f_code
+        filename = os.path.normcase(co.co_filename)
+
+        if filename == _srcfile:
+            f = f.f_back
+            continue
+
+        rv = (co.co_filename, f.f_lineno, co.co_name)
+        break
+
+    return rv
 
 def rmtree(path):
     for _ in xrange(8):
