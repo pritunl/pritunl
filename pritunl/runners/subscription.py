@@ -11,8 +11,11 @@ import time
 @interrupter
 def _subscription_thread():
     while True:
-        yield interrupter_sleep(SUBSCRIPTION_UPDATE_RATE)
-        subscription.update()
+        try:
+            yield interrupter_sleep(SUBSCRIPTION_UPDATE_RATE)
+            subscription.update()
+        except:
+            logger.exception('Error in subscription thread.')
 
 def start_subscription():
     settings.local.sub_active = None
