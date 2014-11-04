@@ -5,6 +5,7 @@ from pritunl import logger
 from pritunl import settings
 from pritunl import static
 from pritunl import utils
+from pritunl import patches
 
 import cherrypy.wsgiserver
 import logging
@@ -30,15 +31,6 @@ try:
 except ImportError:
     import cherrypy.wsgiserver.ssl_builtin
     SSLAdapter = cherrypy.wsgiserver.ssl_builtin.BuiltinSSLAdapter
-
-class HTTPConnectionPatch(cherrypy.wsgiserver.HTTPConnection):
-    def __init__(self, server, sock,
-            makefile=cherrypy.wsgiserver.CP_fileobject):
-        self.server = server
-        self.socket = sock
-        self.rfile = makefile(sock, 'rb', self.rbufsize)
-        self.wfile = makefile(sock, 'wb', self.wbufsize)
-        self.requests_seen = 0
 
 @app.route('/', methods=['GET'])
 def index_get():
@@ -113,7 +105,7 @@ def server_thread():
     )
 
     if settings.conf.ssl:
-        server.ConnectionClass = HTTPConnectionPatch
+        server.ConnectionClass = patches.HTTPConnectionPatch
         server.ssl_adapter = SSLAdapter(
             settings.conf.server_cert_path, settings.conf.server_key_path)
 
