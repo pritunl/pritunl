@@ -113,13 +113,16 @@ def get_user_count(type=CERT_CLIENT):
 
     return org_user_count
 
-def iter_orgs(spec=None, type=ORG_DEFAULT):
+def iter_orgs(spec=None, type=ORG_DEFAULT, fields=None):
     spec = {}
     if type is not None:
         spec['type'] = type
 
-    for doc in Organization.collection.find(spec).sort('name'):
-        yield Organization(doc=doc)
+    if fields:
+        fields = {key: True for key in fields}
+
+    for doc in Organization.collection.find(spec, fields).sort('name'):
+        yield Organization(doc=doc, fields=fields)
 
 def iter_orgs_dict():
     spec = {
