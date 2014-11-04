@@ -49,3 +49,7 @@ def critical(log_msg, log_type=None, **kwargs):
 
 def exception(log_msg, log_type=None, **kwargs):
     _log('exception', log_msg, log_type, **kwargs)
+
+_thread = threading.Thread(target=_logger_thread)
+_thread.daemon = True
+_thread.start()
