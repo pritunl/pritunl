@@ -53,7 +53,7 @@ class Settings(object):
                     continue
                 setattr(group, field, val)
 
-    def commit(self, all_fields=False):
+    def commit(self, init=False):
         from pritunl import messenger
         from pritunl import mongo
         from pritunl import transaction
@@ -69,7 +69,7 @@ class Settings(object):
             if group_cls.type != GROUP_MONGO:
                 continue
 
-            doc = group_cls.get_commit_doc(all_fields)
+            doc = group_cls.get_commit_doc(init)
 
             if doc:
                 has_docs = True
@@ -100,8 +100,8 @@ class Settings(object):
                 continue
 
             group = getattr(self, group_name)
-            for field, val in doc.items():
-                setattr(group, field, val)
+            group.__dict__.update(group.fields)
+            group.__dict__.update(doc)
         self._loaded = True
 
     def _init_modules(self):
@@ -115,4 +115,4 @@ class Settings(object):
 
     def init(self):
         self.load_mongo()
-        self.commit(all_fields=True)
+        self.commit(True)
