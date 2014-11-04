@@ -95,24 +95,20 @@ class Host(mongo.MongoObject):
     def get_link_user(self, org_id):
         from pritunl import organization
 
-        logger.debug('Creating host link user. %r' % {
-            'host_id': self.id,
-        })
-
         org = organization.get_by_id(org_id)
         usr = org.find_user(resource_id=self.id)
 
         if not usr:
+            logger.info('Creating host link user', 'host',
+                host_id=self.id,
+            )
+
             usr = org.new_user(name=HOST_USER_PREFIX + str(self.id),
                 type=CERT_SERVER, resource_id=self.id)
 
         return usr
 
     def remove_link_user(self):
-        logger.debug('Removing host link user. %r' % {
-            'host_id': self.id,
-        })
-
         self.user_collection.remove({
             'resource_id': self.id,
         })

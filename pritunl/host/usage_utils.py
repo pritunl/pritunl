@@ -51,7 +51,7 @@ def get_proc_stat():
         with open('/proc/stat') as stat_file:
             return stat_file.readline().split()[1:]
     except:
-        logger.exception('Failed to read proc stat')
+        logger.exception('Failed to read proc stat', 'host')
 
 def calc_cpu_usage(last_proc_stat, proc_stat):
     try:
@@ -60,7 +60,7 @@ def calc_cpu_usage(last_proc_stat, proc_stat):
         total = sum(deltas)
         return float(total - deltas[3]) / total
     except:
-        logger.exception('Failed to calculate cpu usage')
+        logger.exception('Failed to calculate cpu usage', 'host')
     return 0
 
 def get_mem_usage():
@@ -68,5 +68,5 @@ def get_mem_usage():
         free = subprocess.check_output(['free']).split()
         return float(free[15]) / float(free[7])
     except:
-        logger.exception('Failed to get memory usage')
+        logger.exception('Failed to get memory usage', 'host')
     return 0
