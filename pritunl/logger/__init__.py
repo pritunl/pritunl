@@ -45,18 +45,21 @@ def info(log_msg, log_type=None, **kwargs):
     ))
 
 def warning(log_msg, log_type=None, **kwargs):
+    kwargs['traceback'] = traceback.format_stack()
     _log_queue.put((
         ('warning', log_msg, log_type),
         kwargs,
     ))
 
 def error(log_msg, log_type=None, **kwargs):
+    kwargs['traceback'] = traceback.format_stack()
     _log_queue.put((
         ('error', log_msg, log_type),
         kwargs,
     ))
 
 def critical(log_msg, log_type=None, **kwargs):
+    kwargs['traceback'] = traceback.format_stack()
     _log_queue.put((
         ('critical', log_msg, log_type),
         kwargs,
