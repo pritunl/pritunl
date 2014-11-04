@@ -40,23 +40,28 @@ def print_tasks():
 def run_thread():
     last_run = None
 
-    for task_cls in task.tasks_on_start:
-        run_task(task_cls())
+    try:
+        for task_cls in task.tasks_on_start:
+            run_task(task_cls())
+    except:
+        logger.exception('Error running on start tasks')
 
     while True:
-        cur_time = utils.now()
+        try:
+            cur_time = utils.now()
 
-        if int(time.mktime(cur_time.timetuple())) != last_run:
-            last_run = int(time.mktime(cur_time.timetuple()))
+            if int(time.mktime(cur_time.timetuple())) != last_run:
+                last_run = int(time.mktime(cur_time.timetuple()))
 
-            for hour in ('all', cur_time.hour):
-                for minute in ('all', cur_time.minute):
-                    for second in ('all', cur_time.second):
-                        for task_cls in task.tasks[hour][minute][second]:
-                            run_task(task_cls())
+                for hour in ('all', cur_time.hour):
+                    for minute in ('all', cur_time.minute):
+                        for second in ('all', cur_time.second):
+                            for task_cls in task.tasks[hour][minute][second]:
+                                run_task(task_cls())
+        except:
+            logger.exception('Error in tasks run thread')
 
         time.sleep(0.5)
-
         yield
 
 @interrupter
@@ -64,22 +69,25 @@ def check_thread():
     collection = mongo.get_collection('task')
 
     while True:
-        cur_timestamp = utils.now()
-        spec = {
-            'ttl_timestamp': {'$lt': cur_timestamp},
-        }
-
-        for task_item in task.iter_tasks(spec):
-            random_sleep()
-
-            response = task.Task.collection.update({
-                '_id': task_item.id,
+        try:
+            cur_timestamp = utils.now()
+            spec = {
                 'ttl_timestamp': {'$lt': cur_timestamp},
-            }, {'$unset': {
-                'runner_id': '',
-            }})
-            if response['updatedExisting']:
-                run_task(task_item)
+            }
+
+            for task_item in task.iter_tasks(spec):
+                random_sleep()
+
+                response = task.Task.collection.update({
+                    '_id': task_item.id,
+                    'ttl_timestamp': {'$lt': cur_timestamp},
+                }, {'$unset': {
+                    'runner_id': '',
+                }})
+                if response['updatedExisting']:
+                    run_task(task_item)
+        except:
+            logger.exception('Error in task check thread')
 
         yield interrupter_sleep(settings.mongo.task_ttl)
 
