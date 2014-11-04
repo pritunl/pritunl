@@ -396,7 +396,7 @@ def server_put_post(server_id=None):
 @app.app.route('/server/<server_id>', methods=['DELETE'])
 @auth.session_auth
 def server_delete(server_id):
-    svr = server.get_by_id(server_id, fields=['_id', 'organizations'])
+    svr = server.get_by_id(server_id, fields=['_id', 'name', 'organizations'])
     svr.remove()
     logger.LogEntry(message='Deleted server "%s".' % svr.name)
     event.Event(type=SERVERS_UPDATED)
