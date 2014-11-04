@@ -10,10 +10,19 @@ from pritunl.helpers import *
 from pritunl import settings
 
 import logging
+import traceback
+import threading
+import Queue
 
 logger = logging.getLogger(APP_NAME)
 log_filter = None
 log_handler = None
+_log_queue = Queue.Queue()
+
+def _logger_thread():
+    while True:
+        args, kwargs = _log_queue.get()
+        _log(*args, **kwargs)
 
 def _log(log_level, log_msg, log_type, **kwargs):
     if not log_filter or not log_handler:
