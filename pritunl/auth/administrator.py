@@ -4,6 +4,7 @@ from pritunl.helpers import *
 from pritunl import settings
 from pritunl import utils
 from pritunl import mongo
+from pritunl import logger
 
 import base64
 import os
@@ -73,15 +74,23 @@ class Administrator(mongo.MongoObject):
         return pass_hash == test_hash
 
     def generate_token(self):
+        logger.info('Generating auth token', 'auth')
+
         self.token = re.sub(r'[\W_]+', '',
             base64.b64encode(os.urandom(64)))[:32]
 
     def generate_secret(self):
+        logger.info('Generating auth secret', 'auth')
+
         self.secret = re.sub(r'[\W_]+', '',
             base64.b64encode(os.urandom(64)))[:32]
 
     def commit(self, *args, **kwargs):
         if 'password' in self.changed:
+            logger.info('Changing administrator password', 'auth',
+                username=self.username,
+            )
+
             salt = base64.b64encode(os.urandom(8))
             pass_hash = base64.b64encode(
                 self._hash_password(salt, self.password))
@@ -215,6 +224,7 @@ def check_auth(username, password, remote_addr=None):
     return administrator
 
 def reset_password():
+    logger.info('Resetting administrator password', 'auth')
     collection = mongo.get_collection('administrators')
     collection.remove({})
     return (DEFAULT_USERNAME, DEFAULT_PASSWORD)
