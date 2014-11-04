@@ -125,13 +125,17 @@ def run_queue_item(queue_item, thread_limit):
 
 def _runner_thread(cpu_priority, thread_limit, runner_queue):
     while True:
-        thread_limit.acquire()
-        priority, queue_item = runner_queue.get()
+        try:
+            thread_limit.acquire()
+            priority, queue_item = runner_queue.get()
 
-        thread = threading.Thread(target=run_queue_item,
-            args=(queue_item, thread_limit))
-        thread.daemon = True
-        thread.start()
+            thread = threading.Thread(target=run_queue_item,
+                args=(queue_item, thread_limit))
+            thread.daemon = True
+            thread.start()
+        except:
+            logger.exception('Error in runner thread')
+            time.sleep(0.5)
 
 def start_queue():
     for cpu_priority in (LOW_CPU, NORMAL_CPU, HIGH_CPU):
