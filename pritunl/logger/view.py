@@ -53,11 +53,12 @@ class LogView(object):
                pass
         return line
 
-    def get_log_lines(self, formatted=True):
+    def get_log_lines(self, limit=1024, formatted=True):
         messages = self.collection.aggregate([
             {'$sort': {
-                'timestamp': pymongo.ASCENDING,
+                'timestamp': pymongo.DESCENDING,
             }},
+            {'$limit': limit},
             {'$group': {
                 '_id': None,
                 'messages': {'$push': '$message'},
@@ -69,15 +70,15 @@ class LogView(object):
 
         if formatted:
             output = ''
-            for msg in messages:
-                output += self.format_line(msg) + '\n'
+            for i in xrange(len(messages)-1, -1, -1):
+                output += self.format_line(messages[i]) + '\n'
             return output
         else:
             return '\n'.join(output)
 
     def tail_log_lines(self, formatted=True):
         cursor_id = self.collection.find().sort(
-            '$natural', pymongo.DESCENDING)[100]['_id']
+            '$natural', pymongo.DESCENDING)[128]['_id']
 
         spec = {
             '_id': {'$gt': cursor_id},
