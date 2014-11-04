@@ -22,8 +22,6 @@ def setup_all():
 
     if not settings.conf.mongodb_uri:
         from pritunl import dbconf
-        import sys
-
         dbconf.run_server()
 
     setup_mongo()
