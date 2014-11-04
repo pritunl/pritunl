@@ -62,4 +62,6 @@ Unittest
 License
 -------
 
-Please refer to the `LICENSE` file for a copy of the license
+Please refer to the `LICENSE` file for a copy of the license. This license
+is incomplete and only apply's to the code in this repository. It does not
+apply to the current release (v0.10.12) which is licensed under AGPLv3.

@@ -1,5 +1,13 @@
 Copyright (c) 2013-2014 Pritunl
 
+                               LICENSE SUMMARY
+
+* License does not expire
+* Can be used on unlimited sites, servers
+* Source-code or binary products cannot be resold or distributed
+* Non-commercial use only
+* Can modify source-code but cannot distribute modifications (derivative works)
+
                                   PREAMBLE
 
 This Agreement, signed on Sep 24, 2014 [hereinafter: Effective Date] governs
@@ -22,13 +30,15 @@ Limited: Licensee may use Software for the purpose of:
 * Running Software on Licensee's Website[s] and Server[s]
 * Allowing 3rd Parties to run Software on Licensee's Website[s] and Server[s]
 * Publishing Software's output to Licensee and 3rd Parties
-* Distribute verbatim copies of Software's output (including compiled binaries)
+* Modify Software to suit Licensee’s needs and specifications.
 
 Non Assignable & Non-Transferable: Licensee may not assign or transfer his
 rights and duties under this license.
 
-Commercial, Royalty Free: Licensee may use Software for any purpose, including
-paid-services, without any royalties
+Non-Commercial: Licensee may not use Software for commercial purposes. for the
+purpose of this license, commercial purposes means that a 3rd party has to pay
+in order to access Software or that the Website that runs Software is behind a
+paywall.
 
                              TERM & TERMINATION
 
