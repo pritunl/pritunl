@@ -12,13 +12,13 @@ def setup_server_cert():
             not os.path.isfile(settings.conf.server_key_path):
         logger.info('Generating server ssl cert', 'setup')
         try:
-            subprocess.check_call([
+            utils.check_output_logged([
                 'openssl', 'req', '-batch', '-x509', '-nodes', '-sha256',
                 '-newkey', 'rsa:4096',
                 '-days', '3652',
                 '-keyout', settings.conf.server_key_path,
                 '-out', settings.conf.server_cert_path,
-            ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            ])
         except subprocess.CalledProcessError:
             logger.exception('Failed to generate server ssl cert', 'setup')
             raise

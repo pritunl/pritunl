@@ -1,3 +1,5 @@
+from pritunl.utils.misc import check_output_logged
+
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
@@ -56,7 +58,8 @@ def parse_network(network):
 
 def get_local_networks():
     addresses = []
-    output = subprocess.check_output(['ifconfig'])
+    output = check_output_logged(['ifconfig'])
+
     for interface in output.split('\n\n'):
         interface_name = re.findall(r'[a-z0-9]+', interface, re.IGNORECASE)
         if not interface_name:

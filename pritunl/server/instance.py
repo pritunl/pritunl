@@ -237,8 +237,8 @@ class ServerInstance(object):
         )
 
         try:
-            subprocess.check_call(['sysctl', '-w', 'net.ipv4.ip_forward=1'],
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            utils.check_output_logged(
+                ['sysctl', '-w', 'net.ipv4.ip_forward=1'])
         except subprocess.CalledProcessError:
             logger.exception('Failed to enable IP forwarding', 'server',
                 server_id=self.server.id,
@@ -249,8 +249,7 @@ class ServerInstance(object):
         rules = []
 
         try:
-            routes_output = subprocess.check_output(['route', '-n'],
-                stderr=subprocess.PIPE)
+            routes_output = utils.check_output_logged(['route', '-n'])
         except subprocess.CalledProcessError:
             logger.exception('Failed to get IP routes', 'server',
                 server_id=self.server.id,

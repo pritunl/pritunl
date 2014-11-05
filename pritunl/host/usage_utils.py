@@ -2,6 +2,7 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import settings
+from pritunl import utils
 from pritunl import logger
 
 import subprocess
@@ -65,7 +66,7 @@ def calc_cpu_usage(last_proc_stat, proc_stat):
 
 def get_mem_usage():
     try:
-        free = subprocess.check_output(['free']).split()
+        free = utils.check_output_logged(['free']).split()
         return float(free[15]) / float(free[7])
     except:
         logger.exception('Failed to get memory usage', 'host')

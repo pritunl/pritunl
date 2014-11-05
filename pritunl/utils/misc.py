@@ -96,8 +96,7 @@ def find_caller():
 def rmtree(path):
     for _ in xrange(8):
         try:
-            subprocess.check_call(['rm', '-rf', path],
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            utils.check_output_logged(['rm', '-rf', path])
             return
         except subprocess.CalledProcessError:
             time.sleep(0.01)
@@ -119,7 +118,7 @@ def get_temp_path():
 def check_openssl():
     try:
         # Check for unpatched heartbleed
-        openssl_ver = subprocess.check_output(['openssl', 'version', '-a'])
+        openssl_ver = utils.check_output_logged(['openssl', 'version', '-a'])
         version, build_date = openssl_ver.split('\n')[0:2]
 
         build_date = build_date.replace('built on:', '').strip()
