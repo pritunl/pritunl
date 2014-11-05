@@ -582,8 +582,8 @@ class Server(mongo.MongoObject):
     def generate_ca_cert(self):
         ca_certificate = ''
         for org in self.iter_orgs():
-            ca_certificate += org.ca_certificate
-        self.ca_certificate = ca_certificate
+            ca_certificate += utils.get_cert_block(org.ca_certificate) + '\n'
+        self.ca_certificate = ca_certificate.rstrip('\n')
 
     def get_cursor_id(self):
         return messenger.get_cursor_id('servers')
