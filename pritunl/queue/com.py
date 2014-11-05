@@ -38,6 +38,8 @@ class QueueCom(object):
             self.processes.remove(process_data)
 
             if return_code:
+                # If process_data is set process is paused restart
+                # and wait for wait_status()
                 if not process_data[1]:
                     stdoutdata, stderrdata = process.communicate()
                     logger.error('Popen returned error exit code',
