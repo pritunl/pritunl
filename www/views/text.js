@@ -25,7 +25,7 @@ define([
       this.editor.setHighlightActiveLine(false);
       this.editor.setHighlightGutterLine(false);
       this.editor.setShowFoldWidgets(false);
-      this.editor.getSession().setMode('ace/mode/text');
+      this.editor.getSession().setMode('ace/mode/log');
       this.update();
       return this;
     },
