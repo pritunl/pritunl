@@ -110,9 +110,9 @@ class ServerInstance(object):
     def generate_ovpn_conf(self):
         from pritunl.server.utils import get_by_id
 
-        logger.debug('Generating server ovpn conf. %r' % {
-            'server_id': self.server.id,
-        })
+        logger.debug('Generating server ovpn conf', 'server',
+            server_id=self.server.id,
+        )
 
         if not self.server.primary_organization or \
                 not self.server.primary_user:
@@ -232,17 +232,17 @@ class ServerInstance(object):
             ovpn_conf.write(server_conf)
 
     def enable_ip_forwarding(self):
-        logger.debug('Enabling ip forwarding. %r' % {
-            'server_id': self.server.id,
-        })
+        logger.debug('Enabling ip forwarding', 'server',
+            server_id=self.server.id,
+        )
 
         try:
             subprocess.check_call(['sysctl', '-w', 'net.ipv4.ip_forward=1'],
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         except subprocess.CalledProcessError:
-            logger.exception('Failed to enable IP forwarding. %r' % {
-                'server_id': self.server.id,
-            })
+            logger.exception('Failed to enable IP forwarding', 'server',
+                server_id=self.server.id,
+            )
             raise
 
     def generate_iptables_rules(self):
@@ -252,9 +252,9 @@ class ServerInstance(object):
             routes_output = subprocess.check_output(['route', '-n'],
                 stderr=subprocess.PIPE)
         except subprocess.CalledProcessError:
-            logger.exception('Failed to get IP routes. %r' % {
-                'server_id': self.server.id,
-            })
+            logger.exception('Failed to get IP routes', 'server',
+                server_id=self.server.id,
+            )
             raise
 
         routes = {}
@@ -279,10 +279,10 @@ class ServerInstance(object):
             network = utils.parse_network(network_address)[0]
 
             if network not in routes:
-                logger.debug('Failed to find interface for local network ' + \
-                        'route, using default route. %r' % {
-                    'server_id': self.server.id,
-                })
+                logger.warning('Failed to find interface for local ' + \
+                    'network route, using default route', 'server',
+                    server_id=self.server.id,
+                )
                 interface = default_interface
             else:
                 interface = routes[network]
@@ -331,9 +331,9 @@ class ServerInstance(object):
             stdout=subprocess.PIPE, stderr=subprocess.PIPE))
 
     def set_iptables_rules(self):
-        logger.debug('Setting iptables rules. %r' % {
-            'server_id': self.server.id,
-        })
+        logger.debug('Setting iptables rules', 'server',
+            server_id=self.server.id,
+        )
 
         processes = {}
         poller = select.epoll()
@@ -374,17 +374,17 @@ class ServerInstance(object):
 
         except subprocess.CalledProcessError as error:
             logger.exception('Failed to apply iptables ' + \
-                'routing rule. %r' % {
-                    'server_id': self.server.id,
-                    'rule': rule,
-                    'output': error.output,
-                })
+                'routing rule', 'server',
+                server_id=self.server.id,
+                rule=rule,
+                output=error.output,
+            )
             raise
 
     def clear_iptables_rules(self):
-        logger.debug('Clearing iptables rules. %r' % {
-            'server_id': self.server.id,
-        })
+        logger.debug('Clearing iptables rules', 'server',
+            server_id=self.server.id,
+        )
 
         processes = []
 
@@ -516,10 +516,10 @@ class ServerInstance(object):
         terminated = utils.stop_process(self.process)
 
         if not terminated:
-            logger.error('Failed to stop server process. %r' % {
-                'server_id': self.server.id,
-                'instance_id': self.instance_id,
-            })
+            logger.error('Failed to stop server process', 'server',
+                server_id=self.server.id,
+                instance_id=self.instance_id,
+            )
             return False
 
         return terminated
@@ -530,9 +530,9 @@ class ServerInstance(object):
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         except OSError:
             self.server.output.push_output(traceback.format_exc())
-            logger.exception('Failed to start ovpn process. %r' % {
-                'server_id': self.server.id,
-            })
+            logger.exception('Failed to start ovpn process', 'server',
+                server_id=self.server.id,
+            )
             self.publish('error')
 
     @interrupter
@@ -551,9 +551,9 @@ class ServerInstance(object):
             try:
                 self.server.output.push_output(line)
             except:
-                logger.exception('Failed to push vpn output. %r', {
-                    'server_id': self.server.id,
-                })
+                logger.exception('Failed to push vpn output', 'server',
+                    server_id=self.server.id,
+                )
 
             yield
 
@@ -641,9 +641,9 @@ class ServerInstance(object):
                         self.replica_links[host_id].stop()
                         del self.replica_links[host_id]
             except:
-                logger.exception('Failed to update server ping. %r' % {
-                    'server_id': self.server.id,
-                })
+                logger.exception('Failed to update server ping', 'server',
+                    server_id=self.server.id,
+                )
             yield interrupter_sleep(settings.vpn.server_ping)
 
     @interrupter
@@ -656,9 +656,9 @@ class ServerInstance(object):
             )
         except OSError:
             self.server.output.push_output(traceback.format_exc())
-            logger.exception('Failed to start tail auth log process. %r' % {
-                'server_id': self.server.id,
-            })
+            logger.exception('Failed to start tail auth log process', 'server',
+                server_id=self.server.id,
+            )
 
         while True:
             line = self.auth_log_process.stdout.readline()
@@ -674,9 +674,9 @@ class ServerInstance(object):
             try:
                 self.server.output.push_output(line)
             except:
-                logger.exception('Failed to push auth log output. %r', {
-                    'server_id': self.server.id,
-                })
+                logger.exception('Failed to push auth log output', 'server',
+                    server_id=self.server.id,
+                )
 
             yield
 
@@ -708,9 +708,9 @@ class ServerInstance(object):
     def _run_thread(self, send_events):
         from pritunl.server.utils import get_by_id
 
-        logger.debug('Starting ovpn process. %r' % {
-            'server_id': self.server.id,
-        })
+        logger.debug('Starting ovpn process', 'server',
+            server_id=self.server.id,
+        )
 
         self.resources_acquire()
         try:
@@ -763,9 +763,9 @@ class ServerInstance(object):
                 self.clear_iptables_rules()
             self.resources_release()
 
-            logger.exception('Server error occurred while running. %r', {
-                'server_id': self.server.id,
-            })
+            logger.exception('Server error occurred while running', 'server',
+                server_id=self.server.id,
+            )
         finally:
             self.stop_threads()
             self.collection.update({
