@@ -420,7 +420,7 @@ def server_org_get(server_id):
 @auth.session_auth
 def server_org_put(server_id, org_id):
     svr = server.get_by_id(server_id,
-        fields=['_id', 'status', 'network', 'organizations'])
+        fields=['_id', 'name', 'status', 'network', 'organizations'])
     org = organization.get_by_id(org_id, fields=['_id'])
     if svr.status == ONLINE:
         return utils.jsonify({
