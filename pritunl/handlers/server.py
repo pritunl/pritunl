@@ -420,8 +420,8 @@ def server_org_get(server_id):
 @auth.session_auth
 def server_org_put(server_id, org_id):
     svr = server.get_by_id(server_id,
-        fields=['_id', 'name', 'status', 'network', 'organizations'])
-    org = organization.get_by_id(org_id, fields=['_id'])
+        fields=['_id', 'status', 'network', 'organizations'])
+    org = organization.get_by_id(org_id, fields=['_id', 'name'])
     if svr.status == ONLINE:
         return utils.jsonify({
             'error': SERVER_NOT_OFFLINE,
@@ -443,7 +443,8 @@ def server_org_put(server_id, org_id):
 @auth.session_auth
 def server_org_delete(server_id, org_id):
     svr = server.get_by_id(server_id,
-        fields=['_id', 'status', 'network', 'organizations'])
+        fields=['_id', 'status', 'network', 'primary_organization',
+            'primary_user', 'organizations'])
     org = organization.get_by_id(org_id, fields=['_id'])
     if svr.status == ONLINE:
         return utils.jsonify({
@@ -639,8 +640,7 @@ def server_tls_verify_post(server_id):
     org_id = bson.ObjectId(flask.request.json['org_id'])
     user_id = bson.ObjectId(flask.request.json['user_id'])
 
-    svr = server.get_by_id(server_id,
-        fields=['_id', 'name', 'organizations'])
+    svr = server.get_by_id(server_id, fields=['_id', 'name', 'organizations'])
     if not svr:
         return utils.jsonify({
             'error': SERVER_INVALID,
