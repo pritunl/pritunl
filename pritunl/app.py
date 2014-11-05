@@ -40,7 +40,7 @@ def after_request(response):
     return response
 
 def _run_wsgi():
-    logger.info('Starting server...')
+    logger.info('Starting server', 'app')
 
     server = cherrypy.wsgiserver.CherryPyWSGIServer(
         (settings.conf.bind_addr, settings.conf.port), app,
@@ -60,13 +60,13 @@ def _run_wsgi():
     except (KeyboardInterrupt, SystemExit):
         pass
     except:
-        logger.exception('Server error occurred')
+        logger.exception('Server error occurred', 'app')
         raise
     finally:
         _on_exit()
 
 def _run_wsgi_debug():
-    logger.info('Starting debug server...')
+    logger.info('Starting debug server', 'app')
 
     # App.run server uses werkzeug logger
     werkzeug_logger = logging.getLogger('werkzeug')
@@ -83,7 +83,7 @@ def _run_wsgi_debug():
     except (KeyboardInterrupt, SystemExit):
         pass
     except:
-        logger.exception('Server error occurred')
+        logger.exception('Server error occurred', 'app')
         raise
 
 def run_server():
