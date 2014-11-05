@@ -43,6 +43,14 @@ class LogView(object):
 
                 if log_level in ('WARNING', 'ERROR', 'CRITICAL'):
                     log_msg = log_msg.replace(
+                        'Process stdout:',
+                        '\033[1;93mProcess stdout:\033[0m',
+                    )
+                    log_msg = log_msg.replace(
+                        'Process stderr:',
+                        '\033[1;91mProcess stderr:\033[0m',
+                    )
+                    log_msg = log_msg.replace(
                         'Traceback (most recent call last):',
                         '\033[1;91mTraceback (most recent call last):\033[0m',
                     )
