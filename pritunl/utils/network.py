@@ -65,23 +65,31 @@ def get_local_networks():
         if not interface_name:
             continue
         interface_name = interface_name[0]
+
         if re.search(r'tun[0-9]+', interface_name) or interface_name == 'lo':
             continue
+
         addr = re.findall(r'inet.{0,10}' + IP_REGEX, interface, re.IGNORECASE)
         if not addr:
             continue
+
         addr = re.findall(IP_REGEX, addr[0], re.IGNORECASE)
         if not addr:
             continue
+
         mask = re.findall(r'mask.{0,10}' + IP_REGEX, interface, re.IGNORECASE)
         if not mask:
             continue
+
         mask = re.findall(IP_REGEX, mask[0], re.IGNORECASE)
         if not mask:
             continue
+
         addr = addr[0]
         mask = mask[0]
         if addr.split('.')[0] == '127':
             continue
+
         addresses.append(network_addr(addr, mask))
+
     return addresses
