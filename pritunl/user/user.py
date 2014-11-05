@@ -326,7 +326,7 @@ class User(mongo.MongoObject):
             self.org.name, self.name, server.name)
         server.generate_ca_cert()
         key_remotes = server.get_key_remotes()
-        ca_certificate = utils.get_cert_block(server.ca_certificate)
+        ca_certificate = server.ca_certificate
         certificate = utils.get_cert_block(self.certificate)
         private_key = self.private_key.strip()
 
