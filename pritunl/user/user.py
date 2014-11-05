@@ -466,12 +466,12 @@ class User(mongo.MongoObject):
                 'error_msg': error_msg,
             })
         else:
-            logger.error('Unknown send user email error. %r' % {
-                'org_id': self.org.id,
-                'user_id': self.id,
-                'error_code': error_code,
-                'error_msg': error_msg,
-            })
+            logger.error('Unknown send user email error', 'user',
+                org_id=self.org.id,
+                user_id=self.id,
+                error_code=error_code,
+                error_msg=error_msg,
+            )
             raise EmailError('Unknown send user email error.', {
                 'org_id': self.org.id,
                 'user_id': self.id,
