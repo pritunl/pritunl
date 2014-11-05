@@ -36,6 +36,10 @@ class QueueAssignIpPool(queue.Queue):
 
     def task(self):
         if not self.server:
+            logger.warning('Tried to run assign_ip_pool queue ' +
+                'but server is no longer available', 'queues',
+                server_id=self.server_id,
+            )
             return
 
         response = self.server.collection.update({
@@ -59,6 +63,10 @@ class QueueAssignIpPool(queue.Queue):
 
     def post_task(self):
         if not self.server:
+            logger.warning('Tried to run assign_ip_pool post queue ' +
+                'but server is no longer available', 'queues',
+                server_id=self.server_id,
+            )
             return
 
         self.server.ip_pool.collection.remove({
@@ -75,6 +83,10 @@ class QueueAssignIpPool(queue.Queue):
 
     def rollback_task(self):
         if not self.server:
+            logger.warning('Tried to run assign_ip_pool rollback queue ' +
+                'but server is no longer available', 'queues',
+                server_id=self.server_id,
+            )
             return
 
         self.server.ip_pool.collection.remove({
@@ -98,6 +110,10 @@ class QueueAssignIpPool(queue.Queue):
 
     def complete_task(self):
         if not self.server:
+            logger.warning('Tried to run assign_ip_pool complete queue ' +
+                'but server is no longer available', 'queues',
+                server_id=self.server_id,
+            )
             return
 
         for org_id in self.server.organizations:

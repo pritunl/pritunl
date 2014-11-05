@@ -30,6 +30,10 @@ class QueueUnassignIpAddr(queue.Queue):
     def task(self):
         svr = server.get_by_id(self.server_id)
         if not svr:
+            logger.warning('Tried to run unassign_ip_pool queue ' +
+                'but server is no longer available', 'queues',
+                server_id=self.server_id,
+            )
             return
 
         for _ in xrange(5):
