@@ -68,10 +68,10 @@ class ServerIpPool:
                 pass
 
         logger.warning('Failed to assign ip address ' +
-            'to user, ip pool empty. %r' % {
-                'org_id': org_id,
-                'user_id': user_id,
-            })
+            'to user, ip pool empty', 'server',
+            org_id=org_id,
+            user_id=user_id,
+        )
 
     def unassign_ip_addr(self, org_id, user_id):
         self.collection.update({
@@ -160,10 +160,10 @@ class ServerIpPool:
 
         if pool_end:
             logger.warning('Failed to assign ip addresses ' +
-                'to org, ip pool empty. %r' % {
-                    'org_id': org_id,
-                    'user_id': user_id,
-                })
+                'to org, ip pool empty', 'server',
+                org_id=org_id,
+                user_id=user_id,
+            )
 
     def unassign_ip_pool_org(self, org_id):
         self.collection.update({
@@ -222,10 +222,10 @@ class ServerIpPool:
 
             if pool_end:
                 logger.warning('Failed to assign ip addresses ' +
-                    'to server, ip pool empty. %r' % {
-                        'org_id': org_id,
-                        'user_id': user_id,
-                    })
+                    'to server, ip pool empty', 'server',
+                    org_id=org_id,
+                    user_id=user_id,
+                )
                 break
 
         if bulk and not bulk_empty:

@@ -126,9 +126,9 @@ class ServerInstanceLink(object):
                 label=self.output_label,
                 link_server_id=self.linked_server.id,
             )
-            logger.exception('Failed to start link ovpn process. %r' % {
-                'server_id': self.server.id,
-            })
+            logger.exception('Failed to start link ovpn process', 'server',
+                server_id=self.server.id,
+            )
             raise
 
     @interrupter
@@ -154,9 +154,9 @@ class ServerInstanceLink(object):
                         )
                     except:
                         logger.exception('Failed to push link vpn ' +
-                            'output. %r', {
-                                'server_id': self.server.id,
-                            })
+                            'output', 'server',
+                            server_id=self.server.id,
+                        )
 
                     yield
 
@@ -164,10 +164,10 @@ class ServerInstanceLink(object):
                     break
                 else:
                     logger.error('Server instance link stopped ' +
-                        'unexpectedly, restarting link. %r' % {
-                            'server_id': self.server.id,
-                            'link_server_id': self.linked_server.id,
-                        })
+                        'unexpectedly, restarting link', 'server',
+                        server_id=self.server.id,
+                        link_server_id=self.linked_server.id,
+                    )
                     self.openvpn_start()
                     yield interrupter_sleep(1)
 
@@ -188,9 +188,10 @@ class ServerInstanceLink(object):
         finally:
             try:
                 if not utils.stop_process(self.process):
-                    logger.error('Failed to stop openvpn link process. %r' % {
-                        'server_id': self.server.id,
-                    })
+                    logger.error('Failed to stop openvpn link process',
+                        'server',
+                        server_id=self.server.id,
+                    )
             finally:
                 if self.interface:
                     utils.tun_interface_release(self.interface)

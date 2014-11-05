@@ -340,9 +340,9 @@ class Server(mongo.MongoObject):
         mongo.MongoObject.remove(self)
 
     def create_primary_user(self):
-        logger.debug('Creating primary user. %r' % {
-            'server_id': self.id,
-        })
+        logger.debug('Creating primary user', 'server',
+            server_id=self.id,
+        )
 
         try:
             org = self.iter_orgs().next()
@@ -360,9 +360,9 @@ class Server(mongo.MongoObject):
         self.commit(('primary_organization', 'primary_user'))
 
     def remove_primary_user(self):
-        logger.debug('Removing primary user. %r' % {
-            'server_id': self.id,
-        })
+        logger.debug('Removing primary user', 'server',
+            server_id=self.id,
+        )
 
         self.user_collection.remove({
             'resource_id': self.id,
@@ -374,15 +374,15 @@ class Server(mongo.MongoObject):
     def add_org(self, org_id):
         if not isinstance(org_id, basestring):
             org_id = org_id.id
-        logger.debug('Adding organization to server. %r' % {
-            'server_id': self.id,
-            'org_id': org_id,
-        })
+        logger.debug('Adding organization to server', 'server',
+            server_id=self.id,
+            org_id=org_id,
+        )
         if org_id in self.organizations:
-            logger.debug('Organization already on server, skipping. %r' % {
-                'server_id': self.id,
-                'org_id': org_id,
-            })
+            logger.debug('Organization already on server, skipping', 'server',
+                server_id=self.id,
+                org_id=org_id,
+            )
             return
         self.organizations.append(org_id)
         self.changed.add('organizations')
@@ -394,10 +394,10 @@ class Server(mongo.MongoObject):
             org_id = org_id.id
         if org_id not in self.organizations:
             return
-        logger.debug('Removing organization from server. %r' % {
-            'server_id': self.id,
-            'org_id': org_id,
-        })
+        logger.debug('Removing organization from server', 'server',
+            server_id=self.id,
+            org_id=org_id,
+        )
         if self.primary_organization == org_id:
             self.remove_primary_user()
         try:
@@ -448,26 +448,34 @@ class Server(mongo.MongoObject):
         return docs
 
     def add_host(self, host_id):
-        logger.debug('Adding host to server. %r' % {
-            'server_id': self.id,
-            'host_id': host_id,
-        })
+        logger.debug('Adding host to server', 'server',
+            server_id=self.id,
+            host_id=host_id,
+        )
+
         if host_id in self.hosts:
-            logger.debug('Host already on server, skipping. %r' % {
-                'server_id': self.id,
-                'host_id': host_id,
-            })
+            logger.debug('Host already on server, skipping', 'server',
+                server_id=self.id,
+                host_id=host_id,
+            )
             return
+
         self.hosts.append(host_id)
         self.changed.add('hosts')
 
     def remove_host(self, host_id):
         if host_id not in self.hosts:
+            logger.warning('Attempted to remove host that does not exists',
+                'server',
+                server_id=self.id,
+                host_id=host_id,
+            )
             return
-        logger.debug('Removing host from server. %r' % {
-            'server_id': self.id,
-            'host_id': host_id,
-        })
+
+        logger.debug('Removing host from server', 'server',
+            server_id=self.id,
+            host_id=host_id,
+        )
 
         self.hosts.remove(host_id)
 
@@ -694,9 +702,9 @@ class Server(mongo.MongoObject):
     def stop(self, force=False):
         cursor_id = self.get_cursor_id()
 
-        logger.debug('Stopping server. %r' % {
-            'server_id': self.id,
-        })
+        logger.debug('Stopping server', 'server',
+            server_id=self.id,
+        )
 
         if self.status != ONLINE:
             return
@@ -729,8 +737,8 @@ class Server(mongo.MongoObject):
         if self.status != ONLINE:
             self.start()
             return
-        logger.debug('Restarting server. %r' % {
-            'server_id': self.id,
-        })
+        logger.debug('Restarting server', 'server',
+            server_id=self.id,
+        )
         self.stop()
         self.start()
