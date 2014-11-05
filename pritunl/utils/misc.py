@@ -17,7 +17,7 @@ import flask
 import sys
 
 if hasattr(sys, 'frozen'):
-    _srcfile = "logging%s__init__%s" % (os.sep, __file__[-4:])
+    _srcfile = 'logging%s__init__%s' % (os.sep, __file__[-4:])
 elif __file__[-4:].lower() in ('.pyc', '.pyo'):
     _srcfile = __file__[:-4] + '.py'
 else:
