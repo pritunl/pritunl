@@ -295,10 +295,10 @@ class Queue(mongo.MongoObject):
                 self.complete()
         except:
             if self.queue_com.state is not STOPPED:
-                logger.exception('Error running task in queue. %r' % {
-                    'queue_id': self.id,
-                    'queue_type': self.type,
-                })
+                logger.exception('Error running task in queue', 'queue',
+                    queue_id=self.id,
+                    queue_type=self.type,
+                )
                 messenger.publish('queue', [ERROR, self.id])
         finally:
             self.queue_com.state_lock.acquire()
