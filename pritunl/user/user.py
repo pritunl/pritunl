@@ -142,10 +142,10 @@ class User(mongo.MongoObject):
                 ]
                 self.org.queue_com.popen(args)
             except (OSError, ValueError):
-                logger.exception('Failed to create user cert requests. %r' % {
-                    'org_id': self.org.id,
-                    'user_id': self.id,
-                })
+                logger.exception('Failed to create user cert requests', 'user',
+                    org_id=self.org.id,
+                    user_id=self.id,
+                )
                 raise
             self.read_file('private_key', key_path)
 
@@ -164,10 +164,10 @@ class User(mongo.MongoObject):
 
                 self.org.queue_com.popen(args)
             except (OSError, ValueError):
-                logger.exception('Failed to create user cert. %r' % {
-                    'org_id': self.org.id,
-                    'user_id': self.id,
-                })
+                logger.exception('Failed to create user cert', 'user',
+                    org_id=self.org.id,
+                    user_id=self.id,
+                )
                 raise
             self.read_file('certificate', cert_path)
         finally:
@@ -182,10 +182,10 @@ class User(mongo.MongoObject):
         try:
             self.assign_ip_addr()
         except:
-            logger.exception('Failed to assign users ip address. %r' % {
-                'org_id': self.org.id,
-                'user_id': self.id,
-            })
+            logger.exception('Failed to assign users ip address', 'user',
+                org_id=self.org.id,
+                user_id=self.id,
+            )
 
     def queue_initialize(self, block, priority=LOW):
         if self.type in (CERT_SERVER_POOL, CERT_CLIENT_POOL):
