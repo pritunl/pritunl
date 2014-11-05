@@ -102,7 +102,7 @@ class Queue(mongo.MongoObject):
                 raise QueueStopped('Lost reserve, queue stopped', {
                     'queue_id': self.id,
                     'queue_type': self.type,
-                    })
+                })
 
         logger.debug('Queue keep alive thread ended', 'queue',
             queue_id=self.id,
