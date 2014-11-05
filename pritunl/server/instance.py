@@ -219,8 +219,7 @@ class ServerInstance(object):
         if push:
             server_conf += push
 
-        server_conf += '<ca>\n%s\n</ca>\n' % utils.get_cert_block(
-            self.server.ca_certificate)
+        server_conf += '<ca>\n%s\n</ca>\n' % self.server.ca_certificate
 
         if self.server.tls_auth:
             server_conf += '<tls-auth>\n%s\n</tls-auth>\n' % (
