@@ -280,10 +280,6 @@ class Organization(mongo.MongoObject):
         user_collection = mongo.get_collection('users')
         server_collection = mongo.get_collection('servers')
 
-        logger.debug('Remove org', 'organization',
-            org_id=self.id,
-        )
-
         server_ids = []
 
         for server in self.iter_servers():
