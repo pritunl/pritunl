@@ -118,6 +118,10 @@ class ServerInstance(object):
                 not self.server.primary_user:
             self.server.create_primary_user()
 
+        if self.server.primary_organization not in self.server.organizations:
+            self.server.remove_primary_user()
+            self.server.create_primary_user()
+
         primary_org = organization.get_by_id(self.server.primary_organization)
         if not primary_org:
             self.server.create_primary_user()
