@@ -28,6 +28,31 @@ def now():
     return settings.local.mongo_time + (
         datetime.datetime.utcnow() - settings.local.mongo_time_start)
 
+def check_output_logged(*args, **kwargs):
+    if 'stdout' in kwargs or 'stderr' in kwargs:
+        raise ValueError('Output arguments not allowed, it will be overridden')
+
+    process = subprocess.Popen(stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        *args, **kwargs)
+
+    stdoutdata, stderrdata = process.communicate()
+    return_code = process.poll()
+
+    if return_code:
+        cmd = kwargs.get('args', args[0])
+
+        logger.error('Popen returned error exit code', 'utils',
+            cmd=cmd,
+            return_code=return_code,
+            stdout=stdoutdata,
+            stderr=stderrdata,
+        )
+
+        raise subprocess.CalledProcessError(
+            return_code, cmd, output=stdoutdata)
+
+    return stdoutdata
+
 def sync_time():
     collection = mongo.get_collection('time_sync')
 
