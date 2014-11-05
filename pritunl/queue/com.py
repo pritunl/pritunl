@@ -1,6 +1,7 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
+from pritunl import logger
 
 import time
 import threading
@@ -38,6 +39,13 @@ class QueueCom(object):
 
             if return_code:
                 if not process_data[1]:
+                    stdoutdata, stderrdata = process.communicate()
+                    logger.error('Popen returned error exit code',
+                        'queue',
+                        stdout=stdoutdata,
+                        stderr=stderrdata,
+                        return_code=return_code,
+                    )
                     raise ValueError('Popen returned ' +
                         'error exit code %r' % return_code)
             else:
