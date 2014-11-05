@@ -79,19 +79,18 @@ class ServerInstanceLink(object):
             8 if self.server.debug else 3,
         )
 
-        if self.server.lzo_compression != ADAPTIVE:
+        if self.linked_server.lzo_compression != ADAPTIVE:
             client_conf += 'comp-lzo no\n'
 
-        if self.server.otp_auth:
+        if self.linked_server.otp_auth:
             client_conf += 'auth-user-pass\n'
 
-        client_conf += JUMBO_FRAMES[self.server.jumbo_frames]
-        client_conf += '<ca>\n%s\n</ca>\n' % utils.get_cert_block(
-            self.server.ca_certificate)
+        client_conf += JUMBO_FRAMES[self.linked_server.jumbo_frames]
+        client_conf += '<ca>\n%s\n</ca>\n' % self.linked_server.ca_certificate
 
-        if self.server.tls_auth:
+        if self.linked_server.tls_auth:
             client_conf += '<tls-auth>\n%s\n</tls-auth>\n' % (
-                self.server.tls_auth_key)
+                self.linked_server.tls_auth_key)
 
         client_conf += ('<cert>\n%s\n' + \
             '</cert>\n') % utils.get_cert_block(self.user.certificate)
