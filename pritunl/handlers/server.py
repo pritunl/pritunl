@@ -487,7 +487,7 @@ def server_host_get(server_id):
 @auth.session_auth
 def server_host_put(server_id, host_id):
     svr = server.get_by_id(server_id, fields=['_id', 'hosts'])
-    hst = host.get_by_id(host_id, fields=['_id', 'name', 'public_addr'])
+    hst = host.get_by_id(host_id, fields=['_id', 'name', 'public_address'])
     svr.add_host(hst.id)
     svr.commit('hosts')
     event.Event(type=SERVER_HOSTS_UPDATED, resource_id=svr.id)
