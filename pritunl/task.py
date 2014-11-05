@@ -73,10 +73,10 @@ class Task(mongo.MongoObject):
 
             self.complete()
         except:
-            logger.exception('Error running task. %r' % {
-                'task_id': self.id,
-                'task_type': self.type,
-            })
+            logger.exception('Error running task', 'task',
+                task_id=self.id,
+                task_type=self.type,
+            )
 
     def complete(self):
         self.remove()
