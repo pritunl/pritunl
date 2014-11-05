@@ -14,7 +14,7 @@ def handle_exit(signum, frame):
     if _exited:
         return
     _exited = True
-    logger.info('Stopping server...')
+    logger.info('Stopping server', 'setup')
     set_global_interrupt()
     signal.alarm(2)
 

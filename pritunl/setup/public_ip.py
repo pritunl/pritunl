@@ -15,8 +15,8 @@ def load_public_ip(attempts=1, timeout=5):
             return
         if i:
             time.sleep(3)
-            logger.debug('Retrying get public ip address...')
-        logger.debug('Getting public ip address...')
+            logger.info('Retrying get public ip address', 'setup')
+        logger.debug('Getting public ip address', 'setup')
         try:
             request = urllib2.Request(
                 settings.app.public_ip_server)
@@ -26,7 +26,7 @@ def load_public_ip(attempts=1, timeout=5):
         except:
             pass
     if not settings.local.public_ip:
-        logger.exception('Failed to get public ip address...')
+        logger.warning('Failed to get public ip address', 'setup')
 
 def setup_public_ip():
     #self.load_public_ip()
