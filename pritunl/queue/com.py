@@ -44,9 +44,10 @@ class QueueCom(object):
                     stdoutdata, stderrdata = process.communicate()
                     logger.error('Popen returned error exit code',
                         'queue',
+                        cmd=args,
+                        return_code=return_code,
                         stdout=stdoutdata,
                         stderr=stderrdata,
-                        return_code=return_code,
                     )
                     raise ValueError('Popen returned ' +
                         'error exit code %r' % return_code)
