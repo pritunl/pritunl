@@ -32,7 +32,8 @@ def update():
             settings.local.sub_cancel_at_period_end = data.get(
                 'cancel_at_period_end')
         except:
-            logger.exception('Failed to check subscription status...')
+            logger.exception('Failed to check subscription status',
+                'subscription')
             settings.local.sub_active = False
             settings.local.sub_status = None
             settings.local.sub_amount = None
