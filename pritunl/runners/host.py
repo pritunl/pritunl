@@ -89,10 +89,10 @@ def _keep_alive_thread():
             host.deinit()
             raise
         except:
-            logger.exception('Error in host keep alive update. %s' % {
-                'host_id': settings.local.host.id,
-                'host_name': settings.local.host.name,
-            })
+            logger.exception('Error in host keep alive update', 'runners',
+                host_id=settings.local.host.id,
+                host_name=settings.local.host.name,
+            )
             time.sleep(0.5)
 
 def start_host():
