@@ -392,18 +392,23 @@ class Server(mongo.MongoObject):
     def remove_org(self, org_id):
         if not isinstance(org_id, basestring):
             org_id = org_id.id
+
         if org_id not in self.organizations:
             return
+
         logger.debug('Removing organization from server', 'server',
             server_id=self.id,
             org_id=org_id,
         )
+
         if self.primary_organization == org_id:
             self.remove_primary_user()
+
         try:
             self.organizations.remove(org_id)
         except ValueError:
             pass
+
         self.changed.add('organizations')
         self.generate_ca_cert()
         self._orgs_removed.append(org_id)
