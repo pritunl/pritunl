@@ -60,7 +60,7 @@ class Host(mongo.MongoObject):
 
     @property
     def uptime(self):
-        if not self.start_timestamp:
+        if self.status != ONLINE or not self.start_timestamp:
             return
         return max((utils.now() - self.start_timestamp).seconds, 1)
 
