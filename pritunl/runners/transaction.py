@@ -29,15 +29,15 @@ def _check_thread():
                     tran = transaction.Transaction(doc=doc)
                     tran.run()
                 except:
-                    logger.exception('Failed to run transaction. %r' % {
-                        'transaction_id': doc['_id'],
-                    })
+                    logger.exception('Failed to run transaction', 'runners',
+                        transaction_id=doc['_id'],
+                    )
 
             yield interrupter_sleep(settings.mongo.tran_ttl)
         except GeneratorExit:
             raise
         except:
-            logger.exception('Error in transaction runner thread.')
+            logger.exception('Error in transaction runner thread', 'runners')
             time.sleep(0.5)
 
 def start_transaction():

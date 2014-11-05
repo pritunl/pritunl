@@ -22,11 +22,12 @@ def listener_thread():
                     try:
                         lstnr(msg)
                     except:
-                        logger.exception('Error in listener callback')
+                        logger.exception('Error in listener callback',
+                            'runners')
         except GeneratorExit:
             raise
         except:
-            logger.exception('Error in listener thread')
+            logger.exception('Error in listener thread', 'runners')
             time.sleep(0.3)
 
         yield

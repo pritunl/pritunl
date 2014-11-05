@@ -17,7 +17,7 @@ def _check_updates():
             continue
 
         try:
-            logger.debug('Checking notifications...')
+            logger.debug('Checking notifications...', 'runners')
             request = urllib2.Request(
                 settings.app.notification_server +
                 '/%s' % settings.local.version_int)
@@ -28,7 +28,7 @@ def _check_updates():
             settings.local.www_state = data.get('www', OK)
             settings.local.vpn_state = data.get('vpn', OK)
         except:
-            logger.exception('Failed to check notifications.')
+            logger.exception('Failed to check notifications', 'runners')
 
         yield interrupter_sleep(settings.app.update_check_rate)
 

@@ -14,7 +14,7 @@ def _check():
     try:
         settings.load_mongo()
     except:
-        logger.exception('Auto settings check failed')
+        logger.exception('Auto settings check failed', 'runners')
 
     _start_check_timer()
 

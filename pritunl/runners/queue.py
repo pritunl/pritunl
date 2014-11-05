@@ -102,7 +102,7 @@ def _check_thread():
         except GeneratorExit:
             raise
         except:
-            logger.exception('Error in queue check thread')
+            logger.exception('Error in queue check thread', 'runners')
 
         yield interrupter_sleep(settings.mongo.queue_ttl)
 
@@ -134,7 +134,7 @@ def _runner_thread(cpu_priority, thread_limit, runner_queue):
             thread.daemon = True
             thread.start()
         except:
-            logger.exception('Error in runner thread')
+            logger.exception('Error in runner thread', 'runners')
             time.sleep(0.5)
 
 def start_queue():

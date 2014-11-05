@@ -40,7 +40,7 @@ def _on_msg(msg):
 
         svr.run(send_events=msg.get('send_events'))
     except:
-        logger.exception('Failed to run server.')
+        logger.exception('Failed to run server', 'runners')
 
 def start_server():
     listener.add_listener('servers', _on_msg)

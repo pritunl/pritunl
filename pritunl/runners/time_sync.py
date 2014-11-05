@@ -14,7 +14,8 @@ def _time_sync_thread():
         try:
             utils.sync_time()
         except:
-            logger.exception('Failed to sync time with mongo server.')
+            logger.exception('Failed to sync time with mongo server',
+                'runners')
         yield interrupter_sleep(15)
 
 def start_time_sync():

@@ -44,7 +44,7 @@ def run_thread():
         for task_cls in task.tasks_on_start:
             run_task(task_cls())
     except:
-        logger.exception('Error running on start tasks')
+        logger.exception('Error running on start tasks', 'runners')
 
     while True:
         try:
@@ -59,7 +59,7 @@ def run_thread():
                             for task_cls in task.tasks[hour][minute][second]:
                                 run_task(task_cls())
         except:
-            logger.exception('Error in tasks run thread')
+            logger.exception('Error in tasks run thread', 'runners')
 
         time.sleep(0.5)
         yield
@@ -87,7 +87,7 @@ def check_thread():
                 if response['updatedExisting']:
                     run_task(task_item)
         except:
-            logger.exception('Error in task check thread')
+            logger.exception('Error in task check thread', 'runners')
 
         yield interrupter_sleep(settings.mongo.task_ttl)
 

@@ -18,7 +18,7 @@ def _subscription_thread():
         except GeneratorExit:
             raise
         except:
-            logger.exception('Error in subscription thread.')
+            logger.exception('Error in subscription thread', 'runners')
 
 def start_subscription():
     settings.local.sub_active = None

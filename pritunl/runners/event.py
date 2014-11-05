@@ -48,7 +48,7 @@ def _event_runner_thread():
         except GeneratorExit:
             raise
         except:
-            logger.exception('Error in event runner thread.')
+            logger.exception('Error in event runner thread.', 'runners')
             time.sleep(0.5)
 
 def start_event():
