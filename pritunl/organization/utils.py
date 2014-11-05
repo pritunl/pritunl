@@ -114,7 +114,8 @@ def get_user_count(type=CERT_CLIENT):
     return org_user_count
 
 def iter_orgs(spec=None, type=ORG_DEFAULT, fields=None):
-    spec = {}
+    if spec is None:
+        spec = {}
     if type is not None:
         spec['type'] = type
 
