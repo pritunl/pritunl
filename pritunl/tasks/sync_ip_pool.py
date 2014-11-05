@@ -15,9 +15,9 @@ class TaskSyncIpPool(task.Task):
             try:
                 svr.ip_pool.sync_ip_pool()
             except:
-                logger.exception('Failed to sync server IP pool. %r' % {
-                    'server_id': svr.id,
-                    'task_id': self.id,
-                })
+                logger.exception('Failed to sync server IP pool', 'tasks',
+                    server_id=svr.id,
+                    task_id=self.id,
+                )
 
 task.add_task(TaskSyncIpPool, minutes=7)

@@ -102,7 +102,7 @@ class TaskServer(task.Task):
         except GeneratorExit:
             raise
         except:
-            logger.exception('Error checking server states.')
+            logger.exception('Error checking server states', 'tasks')
 
         yield interrupter_sleep(settings.vpn.server_ping)
 
