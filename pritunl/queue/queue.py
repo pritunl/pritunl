@@ -209,7 +209,6 @@ class Queue(mongo.MongoObject):
             for msg in messenger.subscribe('queue', cursor_id=cursor_id,
                     timeout=block_timeout):
                 try:
-                    # TODO test ObjectId
                     if msg['message'] == [COMPLETE, doc['_id']]:
                         return doc
                     elif msg['message'] == [ERROR, doc['_id']]:
