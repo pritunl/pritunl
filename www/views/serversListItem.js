@@ -34,6 +34,8 @@ define([
       'click .toggle-hidden': 'onToggleHidden'
     },
     initialize: function() {
+      this.orgsCount = null;
+      this.hostsCount = null;
       this.statusModel = new StatusModel();
 
       this.serverOrgsListView = new ServerOrgsListView({
@@ -133,11 +135,15 @@ define([
 
       this.updateButtons();
     },
+    updateOrgsCount: function() {
+      this.orgsCount = this.serverOrgsListView.views.length;
+    },
+    updateHostsCount: function() {
+      this.hostsCount = this.serverHostsListView.views.length;
+    },
     updateButtons: function() {
       var buttonLock = true;
       var status = this.model.get('status');
-      var orgsCount = this.serverOrgsListView.views.length;
-      var hostsCount = this.serverHostsListView.views.length;
 
       if (status === 'pending') {
         this.$('.no-dh-warning').show();
@@ -145,19 +151,25 @@ define([
         this.$('.no-org-host-warning').hide();
         this.$('.no-org-warning').hide();
       }
-      else if (!orgsCount && hostsCount) {
+      else if (this.orgsCount === null || this.hostsCount === null) {
+        this.$('.no-dh-warning').hide();
+        this.$('.no-host-warning').hide();
+        this.$('.no-org-host-warning').hide();
+        this.$('.no-org-warning').hide();
+      }
+      else if (!this.orgsCount && this.hostsCount) {
         this.$('.no-dh-warning').hide();
         this.$('.no-host-warning').hide();
         this.$('.no-org-host-warning').hide();
         this.$('.no-org-warning').show();
       }
-      else if (orgsCount && !hostsCount) {
+      else if (this.orgsCount && !this.hostsCount) {
         this.$('.no-dh-warning').hide();
         this.$('.no-org-warning').hide();
         this.$('.no-org-host-warning').hide();
         this.$('.no-host-warning').show();
       }
-      else if (!orgsCount && !hostsCount) {
+      else if (!this.orgsCount && !this.hostsCount) {
         this.$('.no-dh-warning').hide();
         this.$('.no-org-warning').hide();
         this.$('.no-host-warning').hide();
