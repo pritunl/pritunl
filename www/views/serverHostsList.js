@@ -38,6 +38,7 @@ define([
       else {
         this.$('.no-hosts').slideUp(window.slideTime);
       }
+      this.serverView.updateHostsCount();
       this.serverView.updateButtons();
     }
   });
