@@ -18,7 +18,7 @@ define([
     className: 'text-viewer',
     render: function() {
       this.editor = Ace.edit(this.el);
-      this.editor.setTheme('ace/theme/chrome');
+      this.editor.setTheme('ace/theme/pritunl');
       this.editor.setFontSize(10);
       this.editor.setReadOnly(true);
       this.editor.setShowPrintMargin(false);
