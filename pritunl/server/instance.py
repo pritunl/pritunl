@@ -409,7 +409,7 @@ class ServerInstance(object):
         bytes_sent_t = 0
         for client in clients:
             client_id = client['id']
-            client_key = client_id + client['virt_address']
+            client_key = str(client_id) + client['virt_address']
             bytes_recv = client['bytes_received']
             bytes_sent = client['bytes_sent']
             _, prev_bytes_recv, prev_bytes_sent = self.clients.get(
