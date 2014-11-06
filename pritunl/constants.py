@@ -475,6 +475,7 @@ mute 3
 server-poll-timeout 3
 sndbuf 100000
 rcvbuf 100000
+remote-cert-tls server
 """
 
 OVPN_INLINE_LINK_CONF = """client
@@ -489,6 +490,7 @@ mute %s
 server-poll-timeout 3
 sndbuf 100000
 rcvbuf 100000
+remote-cert-tls server
 """
 
 # Script will run in python 2 and 3
