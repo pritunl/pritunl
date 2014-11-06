@@ -15,11 +15,17 @@ var LogHighlightRules = function() {
   this.$rules = {
     start: [
       {
-        token: 'comment',
+        token: 'comment.bold',
         regex: '^(\\[)(.*?)(\\])'
       }, {
-        token: 'keyword',
+        token: 'keyword.bold',
         regex: weekday+ws+month+ws+monthday+ws+timestamp+ws+year
+      }, {
+        token: 'variable.bold',
+        regex: '((?:WARNING)(.*?))$'
+      }, {
+        token: 'invalid.illegal.bold',
+        regex: '((?:ERROR|TLS Error|TLS_ERROR|VERIFY ERROR|OSError)(.*?))$'
       }
     ]
   };
