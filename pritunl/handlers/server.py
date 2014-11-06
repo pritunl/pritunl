@@ -446,16 +446,20 @@ def server_org_delete(server_id, org_id):
         fields=['_id', 'status', 'network', 'primary_organization',
             'primary_user', 'organizations'])
     org = organization.get_by_id(org_id, fields=['_id'])
+
     if svr.status == ONLINE:
         return utils.jsonify({
             'error': SERVER_NOT_OFFLINE,
             'error_msg': SERVER_NOT_OFFLINE_DETACH_ORG_MSG,
         }, 400)
+
     svr.remove_org(org)
     svr.commit(svr.changed)
+
     event.Event(type=SERVERS_UPDATED)
     event.Event(type=SERVER_ORGS_UPDATED, resource_id=svr.id)
     event.Event(type=USERS_UPDATED, resource_id=org.id)
+
     return utils.jsonify({})
 
 @app.app.route('/server/<server_id>/host', methods=['GET'])
@@ -474,6 +478,7 @@ def server_host_get(server_id):
             status = OFFLINE
         else:
             status = None
+
         hosts.append({
             'id': hst.id,
             'server': svr.id,
@@ -506,10 +511,13 @@ def server_host_put(server_id, host_id):
 def server_host_delete(server_id, host_id):
     svr = server.get_by_id(server_id, fields=['_id', 'hosts'])
     hst = host.get_by_id(host_id, fields=['_id', 'name'])
+
     svr.remove_host(hst.id)
     svr.commit('hosts')
+
     event.Event(type=SERVERS_UPDATED)
     event.Event(type=SERVER_HOSTS_UPDATED, resource_id=svr.id)
+
     return utils.jsonify({})
 
 @app.app.route('/server/<server_id>/link', methods=['GET'])
@@ -646,6 +654,7 @@ def server_tls_verify_post(server_id):
             'error': SERVER_INVALID,
             'error_msg': SERVER_INVALID_MSG,
         }, 401)
+
     org = svr.get_org(org_id, fields=['_id'])
     if not org:
         logger.LogEntry(message='User failed authentication, ' +
@@ -654,6 +663,7 @@ def server_tls_verify_post(server_id):
             'error': ORG_INVALID,
             'error_msg': ORG_INVALID_MSG,
         }, 401)
+
     user = org.get_user(user_id, fields=['_id', 'name', 'disabled'])
     if not user:
         logger.LogEntry(message='User failed authentication, ' +
@@ -662,6 +672,7 @@ def server_tls_verify_post(server_id):
             'error': USER_INVALID,
             'error_msg': USER_INVALID_MSG,
         }, 401)
+
     if user.disabled:
         logger.LogEntry(message='User failed authentication, ' +
             'disabled user "%s" on server "%s".' % (user.name, svr.name))
@@ -689,6 +700,7 @@ def server_otp_verify_post(server_id):
             'error': SERVER_INVALID,
             'error_msg': SERVER_INVALID_MSG,
         }, 401)
+
     org = svr.get_org(org_id, fields=['_id'])
     if not org:
         logger.LogEntry(message='User failed authentication, ' +
@@ -697,6 +709,7 @@ def server_otp_verify_post(server_id):
             'error': ORG_INVALID,
             'error_msg': ORG_INVALID_MSG,
         }, 401)
+
     user = org.get_user(user_id, fields=['_id', 'name', 'type' ,'otp_secret'])
     if not user:
         logger.LogEntry(message='User failed authentication, ' +
@@ -705,6 +718,7 @@ def server_otp_verify_post(server_id):
             'error': USER_INVALID,
             'error_msg': USER_INVALID_MSG,
         }, 401)
+
     if user.type == CERT_CLIENT and \
             not user.verify_otp_code(otp_code, remote_ip):
         logger.LogEntry(message='User failed two-step authentication "%s".' % (
@@ -731,12 +745,14 @@ def server_client_connect_post(server_id):
             'error': SERVER_INVALID,
             'error_msg': SERVER_INVALID_MSG,
         }, 401)
+
     org = svr.get_org(org_id, fields=['_id'])
     if not org:
         return utils.jsonify({
             'error': ORG_INVALID,
             'error_msg': ORG_INVALID_MSG,
         }, 401)
+
     user = org.get_user(user_id, fields=['_id', 'name', 'disabled'])
     if not user:
         return utils.jsonify({
