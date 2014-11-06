@@ -211,9 +211,6 @@ class ServerInstance(object):
         else:
             server_conf += 'comp-lzo no\npush "comp-lzo no"\n'
 
-        if self.server.mode in (LOCAL_TRAFFIC, VPN_TRAFFIC):
-            server_conf += 'client-to-client\n'
-
         server_conf += JUMBO_FRAMES[self.server.jumbo_frames]
 
         if push:
