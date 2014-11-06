@@ -399,19 +399,22 @@ class ServerInstance(object):
 
     def update_clients_bandwidth(self, clients, rem_clients):
         # Remove client no longer connected
-        for client_id in rem_clients:
-            self.clients.pop(client_id, None)
+        if rem_clients:
+            for client_key, (client_id, _, _) in self.clients.items():
+                if client_id in rem_clients:
+                    del self.clients[client_key]
 
         # Get total bytes send and recv for all clients
         bytes_recv_t = 0
         bytes_sent_t = 0
         for client in clients:
             client_id = client['id']
+            client_key = client_id + client['virt_address']
             bytes_recv = client['bytes_received']
             bytes_sent = client['bytes_sent']
-            prev_bytes_recv, prev_bytes_sent = self.clients.get(
-                client_id, (0, 0))
-            self.clients[client_id] = (bytes_recv, bytes_sent)
+            _, prev_bytes_recv, prev_bytes_sent = self.clients.get(
+                client_key, (None, 0, 0))
+            self.clients[client_key] = (client_id, bytes_recv, bytes_sent)
 
             if prev_bytes_recv > bytes_recv or prev_bytes_sent > bytes_sent:
                 prev_bytes_recv = 0
