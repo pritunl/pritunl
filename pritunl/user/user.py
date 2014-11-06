@@ -324,7 +324,8 @@ class User(mongo.MongoObject):
     def _generate_conf(self, server, include_user_cert=True):
         file_name = '%s_%s_%s.ovpn' % (
             self.org.name, self.name, server.name)
-        server.generate_ca_cert()
+        if not server.ca_certificate:
+            server.generate_ca_cert()
         key_remotes = server.get_key_remotes()
         ca_certificate = server.ca_certificate
         certificate = utils.get_cert_block(self.certificate)
