@@ -39,6 +39,7 @@ def check_output_logged(*args, **kwargs):
     return_code = process.poll()
 
     if return_code:
+        from pritunl import logger
         cmd = kwargs.get('args', args[0])
 
         logger.error('Popen returned error exit code', 'utils',
