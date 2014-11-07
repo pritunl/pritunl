@@ -37,7 +37,10 @@ class ServerInstanceCom(object):
         self.socket_path = instance.management_socket_path
         self.client = None
         self.clients = collections.defaultdict(list)
+        self.clients_ip = set()
         self.client_auth = False
+        self.ip_network = ipaddress.IPv4Network(self.server.network)
+        self.ip_pool = self.ip_network.iterhostsreversed()
 
     def client_connect(self, client):
         from pritunl.server.utils import get_by_id
@@ -50,6 +53,7 @@ class ServerInstanceCom(object):
         ssl_ver = client['ssl_ver']
         mac_addr = client['mac_addr']
         remote_ip = client['remote_ip']
+        devices = self.clients[user_id]
         device_key = '%s-%s-%s' % (remote_ip, vpn_ver, ssl_ver)
 
         org = self.server.get_org(org_id, fields=['_id'])
