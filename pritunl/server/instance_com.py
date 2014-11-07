@@ -36,6 +36,8 @@ class ServerInstanceCom(object):
         self.sock = None
         self.socket_path = instance.management_socket_path
         self.client = None
+        self.clients = {}
+        self.client_auth = False
 
     def client_connect(self, client):
         from pritunl.server.utils import get_by_id
@@ -44,6 +46,12 @@ class ServerInstanceCom(object):
         user_id = bson.ObjectId(client['user_id'])
         username = client['username'] # TODO
         password = client['password']
+        vpn_ver = client['vpn_ver']
+        ssl_ver = client['ssl_ver']
+        mac_addr = client['mac_addr']
+        remote_ip = client['remote_ip']
+        device_key = '%s-%s-%s' % (remote_ip, vpn_ver, ssl_ver)
+
         org = self.server.get_org(org_id, fields=['_id'])
         if not org:
             self.send_client_deny(client, 'Organization is not valid')
@@ -70,6 +78,21 @@ class ServerInstanceCom(object):
             for local_network in link_svr.local_networks:
                 push += 'iroute %s %s\n' % utils.parse_network(
                     local_network)
+
+        remote_ip_addr = None
+        devices = self.clients.get(user_id)
+        if devices:
+            for device in devices:
+                if device['mac_addr'] == mac_addr:
+                    remote_ip_addr = device['remote_ip_addr']
+                    break
+            if not remote_ip_addr:
+                for device in devices:
+                    dev_key = '%s-%s-%s' % (device['remote_ip'],
+                        device['vpn_ver'], device['ssl_ver'])
+                    if dev_key == device_key:
+                        remote_ip_addr = device['remote_ip_addr']
+                        break
 
         remote_ip_addr = self.server.get_ip_addr(org.id, user_id)
         if remote_ip_addr:
