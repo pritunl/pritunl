@@ -504,6 +504,8 @@ class ServerInstance(object):
                     # a client connects
                     if user_id == 'UNDEF':
                         continue
+                    elif not virt_address:
+                        continue
 
                     clients.append({
                         'id': bson.ObjectId(user_id),
