@@ -130,6 +130,8 @@ class ServerInstanceCom(object):
             client_conf += 'ifconfig-push %s %s\n' % utils.parse_network(
                 remote_ip_addr)
             self.send_client_auth(client, client_conf)
+        else:
+            self.send_client_deny(client, 'Unable to assign ip address')
 
     def send_client_auth(self, client, client_conf):
         self.sock.send('client-auth %s %s\n%s\nEND\n' % (
