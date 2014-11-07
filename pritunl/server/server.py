@@ -202,14 +202,26 @@ class Server(mongo.MongoObject):
             return
         return max((utils.now() - self.start_timestamp).seconds, 1)
 
-    @cached_property
-    def users_online(self):
+    def _set_user_counts(self):
+        count = 0
         clients = set()
         for instance in self.instances:
+            count += instance['clients_active']
             for client in instance['clients']:
                 if not client['ignore']:
                     clients.add(client['id'])
-        return len(clients)
+        self.devices_online = count
+        self.users_online = len(clients)
+
+    @cached_property
+    def users_online(self):
+        self._set_user_counts()
+        return self.users_online
+
+    @cached_property
+    def devices_online(self):
+        self._set_user_counts()
+        return self.devices_online
 
     @cached_property
     def user_count(self):
