@@ -592,6 +592,23 @@ class ServerInstance(object):
             self.read_clients()
             yield interrupter_sleep(settings.vpn.status_update_rate)
 
+    def parse_client_connect(self, client):
+        return True
+
+    @interrupter
+    def _management_thread(self):
+        try:
+            sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            sock.connect(self.management_socket_path)
+            data = ''
+            client = None
+            while True:
+                data += sock.recv(10240)
+                lines = data.split('\n')
+                data = lines.pop()
+        except:
+            logger.exception('Error in management thread')
+
     def link_instance(self, host_id):
         if self.interrupt:
             return
@@ -691,6 +708,10 @@ class ServerInstance(object):
         thread.start()
 
         thread = threading.Thread(target=self._status_thread)
+        thread.daemon = True
+        thread.start()
+
+        thread = threading.Thread(target=self._management_thread)
         thread.daemon = True
         thread.start()
 
