@@ -431,7 +431,6 @@ class ServerInstance(object):
 
     def update_clients(self, clients):
         new_clients = set()
-        clients_real = []
         clients_active = 0
 
         for client in clients:
@@ -468,7 +467,7 @@ class ServerInstance(object):
             'instances.instance_id': self.id,
         }, {'$set': {
             'instances.$.clients': clients,
-            'instances.$.clients_active': len(clients_real),
+            'instances.$.clients_active': clients_active,
         }})
 
         if not response['updatedExisting']:
