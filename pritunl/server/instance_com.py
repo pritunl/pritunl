@@ -212,7 +212,7 @@ class ServerInstanceCom(object):
             while True:
                 data += self.sock.recv(1024) # TODO Use constant or setting
                 if not data:
-                    if not self.instance.interrupt and \
+                    if not self.instance.sock_interrupt and \
                             not check_global_interrupt():
                         self.instance.stop_process()
                         self.push_output(
