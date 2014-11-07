@@ -551,6 +551,13 @@ class _BaseNet(_IPAddrBase):
             cur += 1
             yield IPAddress(cur - 1, version=self._version)
 
+    def iterhostsreversed(self):
+        cur = int(self.broadcast) - 1
+        end = int(self.network) + 1
+        while cur >= end:
+            cur -= 1
+            yield IPAddress(cur + 1, version=self._version)
+
     def __iter__(self):
         cur = int(self.network)
         bcast = int(self.broadcast)
