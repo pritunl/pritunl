@@ -607,7 +607,7 @@ class ServerInstance(object):
             data = ''
             client = None
             while True:
-                data += sock.recv(10240)
+                data += sock.recv(1024)
                 lines = data.split('\n')
                 data = lines.pop()
 
