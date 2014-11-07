@@ -32,6 +32,7 @@ import pymongo
 import random
 import collections
 import select
+import socket
 
 _resource_locks = collections.defaultdict(threading.Lock)
 
