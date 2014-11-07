@@ -130,7 +130,10 @@ class ServerInstanceCom(object):
                     o_index = tls_env.find('O=')
                     cn_index = tls_env.find('CN=')
                     if o_index < 0 or cn_index < 0:
-                        print 'error'
+                        self.send_client_deny(self.client,
+                            'Failed to parse org_id and user_id')
+                        self.client = None
+                        return
                     if o_index > cn_index:
                         org_id = tls_env[o_index + 2:]
                         user_id = tls_env[3:o_index]
