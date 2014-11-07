@@ -615,6 +615,9 @@ class ServerInstance(object):
                     line = line.strip()
                     if client:
                         if line == '>CLIENT:ENV,END':
+                            if self.parse_client_connect(client):
+                                sock.send('client-auth %s %s\nEND\n' % (
+                                    client['client_id'], client['key_id']))
                             client = None
                         elif line[:11] == '>CLIENT:ENV':
                             env_key, env_val = line[12:].split('=', 1)
