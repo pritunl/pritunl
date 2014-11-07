@@ -594,72 +594,6 @@ class ServerInstance(object):
     def parse_client_connect(self, client):
         return True
 
-    @interrupter
-    def _management_thread(self):
-        for _ in xrange(100):
-            if os.path.exists(self.management_socket_path):
-                break
-            time.sleep(0.005)
-        try:
-            sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-            sock.connect(self.management_socket_path)
-            data = ''
-            client = None
-            while True:
-                data += sock.recv(1024)
-                lines = data.split('\n')
-                data = lines.pop()
-
-                for line in lines:
-                    line = line.strip()
-                    if client:
-                        if line == '>CLIENT:ENV,END':
-                            if self.parse_client_connect(client):
-                                sock.send('client-auth %s %s\nEND\n' % (
-                                    client['client_id'], client['key_id']))
-                            client = None
-                        elif line[:11] == '>CLIENT:ENV':
-                            env_key, env_val = line[12:].split('=', 1)
-                            if env_key == 'tls_id_0':
-                                o_index = env_val.find('O=')
-                                cn_index = env_val.find('CN=')
-                                if o_index < 0 or cn_index < 0:
-                                    print 'error'
-                                    break
-                                if o_index > cn_index:
-                                    org_id = env_val[o_index + 2:]
-                                    user_id = env_val[3:o_index]
-                                else:
-                                    org_id = env_val[2:cn_index]
-                                    user_id = env_val[cn_index + 3:]
-
-                                client['org_id'] = org_id
-                                client['user_id'] = user_id
-                            elif env_key == 'IV_HWADDR':
-                                client['mac_addr'] = env_val
-                            elif env_key == 'IV_SSL':
-                                client['ssl_ver'] = env_val
-                            elif env_key == 'untrusted_ip':
-                                client['remote_ip'] = env_val
-                            elif env_key == 'username':
-                                client['username'] = env_val
-                            elif env_key == 'password':
-                                client['password'] = env_val
-                            elif env_key == 'password':
-                                client['password'] = env_val
-                        else:
-                            print 'error:', line
-                    elif line[:15] == '>CLIENT:CONNECT':
-                        client_id, key_id = line[16:].split(',')
-                        client = {
-                            'client_id': client_id,
-                            'key_id': key_id,
-                        }
-                    else:
-                        print 'line:', line
-        except:
-            logger.exception('Error in management thread')
-
     def link_instance(self, host_id):
         if self.interrupt:
             return
@@ -759,10 +693,6 @@ class ServerInstance(object):
         thread.start()
 
         thread = threading.Thread(target=self._status_thread)
-        thread.daemon = True
-        thread.start()
-
-        thread = threading.Thread(target=self._management_thread)
         thread.daemon = True
         thread.start()
 
