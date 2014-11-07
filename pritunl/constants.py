@@ -450,6 +450,7 @@ client-disconnect %s
 server %s
 management %s unix
 management-client-auth
+auth-user-pass-optional
 topology subnet
 client-to-client
 max-clients 1024
