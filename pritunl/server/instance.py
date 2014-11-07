@@ -189,8 +189,6 @@ class ServerInstance(object):
             self.server.port,
             self.server.protocol,
             self.interface,
-            self.client_connect_path,
-            self.client_disconnect_path,
             '%s %s' % utils.parse_network(self.server.network),
             self.management_socket_path,
             CIPHERS[self.server.cipher],
