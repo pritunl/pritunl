@@ -44,6 +44,8 @@ class ServerInstanceCom(object):
 
     def client_kill(self, client):
         self.sock.send('client-kill %s\n' % client['client_id'])
+        self.push_output('Disconnecting user %s %s' % (
+            client['user_id'], client['org_id']))
 
     def client_connect(self, client):
         from pritunl.server.utils import get_by_id
