@@ -38,7 +38,43 @@ class ServerInstanceCom(object):
         self.client = None
 
     def client_connect(self, client):
-        return True
+        from pritunl.server.utils import get_by_id
+
+        org_id = bson.ObjectId(client['org_id'])
+        user_id = bson.ObjectId(client['user_id'])
+        username = client['username'] # TODO
+        password = client['password']
+        org = self.server.get_org(org_id, fields=['_id'])
+        if not org:
+            self.send_client_deny(client, 'Organization is not valid')
+            return
+
+        user = org.get_user(user_id, fields=['_id', 'name', 'disabled'])
+        if not user:
+            self.send_client_deny(client, 'User is not valid')
+            return
+
+        client_conf = ''
+
+        link_svr_id = None
+        for link_doc in self.server.links:
+            if link_doc['user_id'] == user.id:
+                link_svr_id = link_doc['server_id']
+                break
+
+        if link_svr_id:
+            link_svr = get_by_id(link_svr_id,
+                fields=['_id', 'network', 'local_networks'])
+            client_conf += 'iroute %s %s\n' % utils.parse_network(
+                link_svr.network)
+            for local_network in link_svr.local_networks:
+                push += 'iroute %s %s\n' % utils.parse_network(
+                    local_network)
+
+        remote_ip_addr = self.server.get_ip_addr(org.id, user_id)
+        if remote_ip_addr:
+            client_conf += 'ifconfig-push %s %s\n' % utils.parse_network(
+                remote_ip_addr)
 
     def push_output(self, message):
         timestamp = datetime.datetime.utcnow().strftime(
