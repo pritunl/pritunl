@@ -179,6 +179,7 @@ class Server(mongo.MongoObject):
             'status': PENDING if not self.dh_params else self.status,
             'uptime': self.uptime,
             'users_online': self.users_online,
+            'devices_online': self.devices_online,
             'user_count': self.user_count,
             'network': self.network,
             'bind_address': self.bind_address,
