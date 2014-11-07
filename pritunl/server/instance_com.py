@@ -76,6 +76,12 @@ class ServerInstanceCom(object):
             client_conf += 'ifconfig-push %s %s\n' % utils.parse_network(
                 remote_ip_addr)
 
+        self.send_client_auth(client, client_conf)
+
+    def send_client_auth(self, client, client_conf):
+        self.sock.send('client-auth %s %s\n%s\nEND\n' % (
+            client['client_id'], client['key_id'], client_conf))
+
     def push_output(self, message):
         timestamp = datetime.datetime.utcnow().strftime(
             '%a %b  %d %H:%M:%S %Y').replace('  0', '   ', 1).replace(
