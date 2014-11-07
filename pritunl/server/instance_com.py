@@ -80,26 +80,56 @@ class ServerInstanceCom(object):
                     local_network)
 
         remote_ip_addr = None
-        devices = self.clients.get(user_id)
         if devices:
-            for device in devices:
+            rem_dev_index = None
+            for i, device in enumerate(devices):
                 if device['mac_addr'] == mac_addr:
                     remote_ip_addr = device['remote_ip_addr']
+                    self.client_kill(device)
+                    rem_dev_index = i
                     break
+
             if not remote_ip_addr:
-                for device in devices:
+                for i, device in enumerate(devices):
                     dev_key = '%s-%s-%s' % (device['remote_ip'],
                         device['vpn_ver'], device['ssl_ver'])
                     if dev_key == device_key:
                         remote_ip_addr = device['remote_ip_addr']
+                        self.client_kill(device)
+                        rem_dev_index = i
                         break
 
-        remote_ip_addr = self.server.get_ip_addr(org.id, user_id)
+            if rem_dev_index:
+                try:
+                    self.clients_ip.remove(devices[i]['remote_ip_addr'])
+                except KeyError:
+                    pass
+                del devices[rem_dev_index]
+
+        if not remote_ip_addr:
+            remote_ip_addr = self.server.get_ip_addr(org.id, user_id)
+            for device in devices:
+                if device['remote_ip_addr'] == remote_ip_addr:
+                    remote_ip_addr = None
+                    break
+
+        if remote_ip_addr and remote_ip_addr in self.clients_ip:
+            remote_ip_addr = None
+
+        if not remote_ip_addr:
+            for ip_addr in self.ip_pool:
+                ip_addr = '%s/%s' % (ip_addr, self.ip_network.prefixlen)
+                if ip_addr not in self.clients_ip:
+                    remote_ip_addr = ip_addr
+                    break
+
         if remote_ip_addr:
+            self.clients_ip.add(remote_ip_addr)
+            client['remote_ip_addr'] = remote_ip_addr
+            self.clients[user_id].append(client)
             client_conf += 'ifconfig-push %s %s\n' % utils.parse_network(
                 remote_ip_addr)
-
-        self.send_client_auth(client, client_conf)
+            self.send_client_auth(client, client_conf)
 
     def send_client_auth(self, client, client_conf):
         self.sock.send('client-auth %s %s\n%s\nEND\n' % (
