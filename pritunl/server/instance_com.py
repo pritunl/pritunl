@@ -42,6 +42,9 @@ class ServerInstanceCom(object):
         self.ip_network = ipaddress.IPv4Network(self.server.network)
         self.ip_pool = self.ip_network.iterhostsreversed()
 
+    def client_kill(self, client):
+        self.sock.send('client-kill %s\n' % client['client_id'])
+
     def client_connect(self, client):
         from pritunl.server.utils import get_by_id
 
