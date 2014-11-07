@@ -143,10 +143,12 @@ class ServerInstanceCom(object):
 
                     self.client['org_id'] = org_id
                     self.client['user_id'] = user_id
-                elif env_key == 'IV_HWADDR':
-                    self.client['mac_addr'] = env_val
+                elif env_key == 'IV_VER':
+                    self.client['vpn_ver'] = env_val
                 elif env_key == 'IV_SSL':
                     self.client['ssl_ver'] = env_val
+                elif env_key == 'IV_HWADDR':
+                    self.client['mac_addr'] = env_val
                 elif env_key == 'untrusted_ip':
                     self.client['remote_ip'] = env_val
                 elif env_key == 'username':
