@@ -36,7 +36,7 @@ class ServerInstanceCom(object):
         self.sock = None
         self.socket_path = instance.management_socket_path
         self.client = None
-        self.clients = {}
+        self.clients = collections.defaultdict(list)
         self.client_auth = False
 
     def client_connect(self, client):
