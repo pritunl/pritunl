@@ -445,7 +445,6 @@ JUMBO_FRAMES = {
 OVPN_INLINE_SERVER_CONF = """port %s
 proto %s
 dev %s
-tls-verify %s
 client-connect %s
 client-disconnect %s
 server %s
