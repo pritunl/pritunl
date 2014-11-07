@@ -159,8 +159,8 @@ class ServerInstanceCom(object):
                     self.client['password'] = env_val
             else:
                 print 'error:', line
-        elif line[:15] == '>CLIENT:CONNECT':
-            client_id, key_id = line[16:].split(',')
+        elif line[:14] in ('>CLIENT:CONNEC', '>CLIENT:REAUTH'):
+            _, client_id, key_id = line.split(',')
             self.client = {
                 'client_id': client_id,
                 'key_id': key_id,
