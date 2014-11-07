@@ -38,7 +38,7 @@ _resource_locks = collections.defaultdict(threading.Lock)
 class ServerInstance(object):
     def __init__(self, server):
         self.server = server
-        self.instance_id = bson.ObjectId()
+        self.id = bson.ObjectId()
         self.resource_lock = None
         self.interrupt = False
         self.clean_exit = False
@@ -463,7 +463,7 @@ class ServerInstance(object):
 
         response = self.collection.update({
             '_id': self.server.id,
-            'instances.instance_id': self.instance_id,
+            'instances.instance_id': self.id,
         }, {'$set': {
             'instances.$.clients': clients,
             'instances.$.clients_active': len(clients_real),
@@ -520,7 +520,7 @@ class ServerInstance(object):
         if not terminated:
             logger.error('Failed to stop server process', 'server',
                 server_id=self.server.id,
-                instance_id=self.instance_id,
+                instance_id=self.id,
             )
             return False
 
@@ -608,7 +608,7 @@ class ServerInstance(object):
             try:
                 doc = self.collection.find_and_modify({
                     '_id': self.server.id,
-                    'instances.instance_id': self.instance_id,
+                    'instances.instance_id': self.id,
                 }, {'$set': {
                     'instances.$.ping_timestamp': utils.now(),
                 }}, fields={
@@ -772,11 +772,11 @@ class ServerInstance(object):
             self.stop_threads()
             self.collection.update({
                 '_id': self.server.id,
-                'instances.instance_id': self.instance_id,
+                'instances.instance_id': self.id,
             }, {
                 '$pull': {
                     'instances': {
-                        'instance_id': self.instance_id,
+                        'instance_id': self.id,
                     },
                 },
                 '$inc': {
@@ -793,7 +793,7 @@ class ServerInstance(object):
         }, {
             '$push': {
                 'instances': {
-                    'instance_id': self.instance_id,
+                    'instance_id': self.id,
                     'host_id': settings.local.host_id,
                     'ping_timestamp': utils.now(),
                     'clients': [],
