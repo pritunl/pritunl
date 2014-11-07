@@ -466,6 +466,7 @@ client-to-client
 max-clients 1024
 keepalive 10 60
 persist-tun
+duplicate-cn
 %s
 status %s 1
 status-version 2
