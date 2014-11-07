@@ -68,6 +68,8 @@ class ServerInstance(object):
             OVPN_CONF_NAME)
         self.auth_log_path = os.path.join(self._temp_path,
             AUTH_LOG_NAME)
+        self.management_socket_path = os.path.join(settings.conf.var_run_path,
+            'pritunl_%s.sock' % self.id)
 
     @cached_static_property
     def collection(cls):
