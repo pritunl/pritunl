@@ -43,6 +43,7 @@ class ServerInstance(object):
         self.id = bson.ObjectId()
         self.resource_lock = None
         self.interrupt = False
+        self.sock_interrupt = False
         self.clean_exit = False
         self.clients = {}
         self.cur_clients = set()
@@ -516,6 +517,7 @@ class ServerInstance(object):
         self.update_clients(clients)
 
     def stop_process(self):
+        self.sock_interrupt = True
         terminated = utils.stop_process(self.process)
 
         if not terminated:
