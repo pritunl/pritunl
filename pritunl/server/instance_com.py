@@ -126,16 +126,17 @@ class ServerInstanceCom(object):
             elif line[:11] == '>CLIENT:ENV':
                 env_key, env_val = line[12:].split('=', 1)
                 if env_key == 'tls_id_0':
-                    o_index = env_val.find('O=')
-                    cn_index = env_val.find('CN=')
+                    tls_env = ''.join(x for x in env_val if x in VALID_CHARS)
+                    o_index = tls_env.find('O=')
+                    cn_index = tls_env.find('CN=')
                     if o_index < 0 or cn_index < 0:
                         print 'error'
                     if o_index > cn_index:
-                        org_id = env_val[o_index + 2:]
-                        user_id = env_val[3:o_index]
+                        org_id = tls_env[o_index + 2:]
+                        user_id = tls_env[3:o_index]
                     else:
-                        org_id = env_val[2:cn_index]
-                        user_id = env_val[cn_index + 3:]
+                        org_id = tls_env[2:cn_index]
+                        user_id = tls_env[cn_index + 3:]
 
                     self.client['org_id'] = org_id
                     self.client['user_id'] = user_id
