@@ -107,6 +107,11 @@ class ServerInstanceCom(object):
         self.push_output('User auth successful %s %s' % (
             client['user_id'], client['org_id']))
 
+    def send_client_deny(self, client, reason):
+        self.sock.send('client-deny %s %s "%s"\n' % (
+            client['client_id'], client['key_id'], reason))
+        self.push_output('ERROR User auth failed "%s"' % reason)
+
     def push_output(self, message):
         timestamp = datetime.datetime.utcnow().strftime(
             '%a %b  %d %H:%M:%S %Y').replace('  0', '   ', 1).replace(
