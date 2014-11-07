@@ -171,13 +171,40 @@ class ServerInstanceCom(object):
             time.sleep(0.001)
 
     def _socket_thread(self):
-        data = ''
-        while True:
-            data += self.sock.recv(1024)
-            lines = data.split('\n')
-            data = lines.pop()
-            for line in lines:
-                self.parse_line(line.strip())
+        try:
+            data = ''
+            while True:
+                data += self.sock.recv(1024) # TODO Use constant or setting
+                if not data:
+                    if not self.instance.interrupt and \
+                            not check_global_interrupt():
+                        self.instance.stop_process()
+                        self.push_output(
+                            'ERROR Management socket exited unexpectedly')
+                        logger.error('Management socket exited unexpectedly')
+                    return
+                lines = data.split('\n')
+                data = lines.pop()
+                for line in lines:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        self.parse_line(line)
+                    except:
+                        logger.exception('Failed to parse line from vpn com',
+                            'server',
+                            server_id=self.server.id,
+                            instance_id=self.instance.id,
+                            line=line,
+                        )
+        except:
+            self.push_output('ERROR Management socket exception')
+            logger.exception('Error in management socket thread', 'server',
+                server_id=self.server.id,
+                instance_id=self.instance.id,
+            )
+            self.instance.stop_process()
 
     def connect(self):
         self.wait_for_socket()
