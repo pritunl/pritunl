@@ -40,6 +40,12 @@ class ServerInstanceCom(object):
     def client_connect(self, client):
         return True
 
+    def push_output(self, message):
+        timestamp = datetime.datetime.utcnow().strftime(
+            '%a %b  %d %H:%M:%S %Y').replace('  0', '   ', 1).replace(
+            '  ', ' ', 1)
+        self.server.output.push_output('%s %s' % (timestamp, message))
+
     def parse_line(self, line):
         if self.client:
             if line == '>CLIENT:ENV,END':
