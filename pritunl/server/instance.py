@@ -188,7 +188,6 @@ class ServerInstance(object):
             self.server.port,
             self.server.protocol,
             self.interface,
-            self.tls_verify_path,
             self.client_connect_path,
             self.client_disconnect_path,
             '%s %s' % utils.parse_network(self.server.network),
