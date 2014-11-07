@@ -163,8 +163,6 @@ class ServerInstanceCom(object):
                 'client_id': client_id,
                 'key_id': key_id,
             }
-        else:
-            print 'line:', line
 
     def wait_for_socket(self):
         for _ in xrange(10000):
