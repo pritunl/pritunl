@@ -798,12 +798,14 @@ def server_client_disconnect_post(server_id):
             'error': SERVER_INVALID,
             'error_msg': SERVER_INVALID_MSG,
         }, 401)
+
     org = svr.get_org(org_id, fields=['_id'])
     if not org:
         return utils.jsonify({
             'error': ORG_INVALID,
             'error_msg': ORG_INVALID_MSG,
         }, 401)
+
     user = org.get_user(user_id, fields=['_id'])
     if not user:
         return utils.jsonify({
