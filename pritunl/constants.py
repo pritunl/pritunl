@@ -781,7 +781,7 @@ auth_log_path = '%s'
 def log_write(line):
     with open(auth_log_path, 'a') as auth_log_file:
         auth_log_file.write(
-            '%%s[ERROR][auth_log:client_disconnect] %%s\\n' %% (
+            '%%s [auth_log:client_disconnect] %%s\\n' %% (
             datetime.datetime.utcnow().strftime(
                 '%%a %%b %%d %%H:%%M:%%S %%Y'),
             line.rstrip('\\n'),
