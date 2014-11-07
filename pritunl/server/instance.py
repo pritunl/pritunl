@@ -598,6 +598,10 @@ class ServerInstance(object):
 
     @interrupter
     def _management_thread(self):
+        for _ in xrange(100):
+            if os.path.exists(self.management_socket_path):
+                break
+            time.sleep(0.005)
         try:
             sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
             sock.connect(self.management_socket_path)
