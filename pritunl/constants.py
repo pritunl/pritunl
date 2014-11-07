@@ -592,7 +592,7 @@ api_key = '%s'
 auth_log_path = '%s'
 def log_write(line):
     with open(auth_log_path, 'a') as auth_log_file:
-        auth_log_file.write('%%s[ERROR][auth_log:otp_verify] %%s\\n' %% (
+        auth_log_file.write('%%s [auth_log:otp_verify] %%s\\n' %% (
             datetime.datetime.utcnow().strftime(
                 '%%a %%b %%d %%H:%%M:%%S %%Y'),
             line.rstrip('\\n'),
@@ -692,7 +692,7 @@ api_key = '%s'
 auth_log_path = '%s'
 def log_write(line):
     with open(auth_log_path, 'a') as auth_log_file:
-        auth_log_file.write('%%s[ERROR][auth_log:client_connect] %%s\\n' %% (
+        auth_log_file.write('%%s [auth_log:client_connect] %%s\\n' %% (
             datetime.datetime.utcnow().strftime(
                 '%%a %%b %%d %%H:%%M:%%S %%Y'),
             line.rstrip('\\n'),
