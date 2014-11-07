@@ -449,6 +449,7 @@ tls-verify %s
 client-connect %s
 client-disconnect %s
 server %s
+management %s unix
 topology subnet
 client-to-client
 max-clients 1024
