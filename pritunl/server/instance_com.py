@@ -121,9 +121,7 @@ class ServerInstanceCom(object):
     def parse_line(self, line):
         if self.client:
             if line == '>CLIENT:ENV,END':
-                if self.client_connect(self.client):
-                    self.sock.send('client-auth %s %s\nEND\n' % (
-                        self.client['client_id'], self.client['key_id']))
+                self.client_connect(self.client)
                 self.client = None
             elif line[:11] == '>CLIENT:ENV':
                 env_key, env_val = line[12:].split('=', 1)
