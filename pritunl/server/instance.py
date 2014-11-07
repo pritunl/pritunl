@@ -704,6 +704,8 @@ class ServerInstance(object):
         thread.daemon = True
         thread.start()
 
+        self.instance_com.start()
+
     def stop_threads(self):
         if self.auth_log_process:
             try:
@@ -732,6 +734,9 @@ class ServerInstance(object):
             self.process = self.openvpn_start()
             if not self.process:
                 return
+
+            self.instance_com = ServerInstanceCom(self.server, self)
+            self.instance_com.connect()
 
             self.start_threads(cursor_id)
 
