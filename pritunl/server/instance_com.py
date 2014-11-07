@@ -104,6 +104,8 @@ class ServerInstanceCom(object):
     def send_client_auth(self, client, client_conf):
         self.sock.send('client-auth %s %s\n%s\nEND\n' % (
             client['client_id'], client['key_id'], client_conf))
+        self.push_output('User auth successful %s %s' % (
+            client['user_id'], client['org_id']))
 
     def push_output(self, message):
         timestamp = datetime.datetime.utcnow().strftime(
