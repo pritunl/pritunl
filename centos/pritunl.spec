@@ -14,7 +14,6 @@ Provides: pritunl
 Requires: python
 Requires: python-flask
 Requires: python-cherrypy
-Requires: python-crypto
 Requires: openvpn
 Requires: net-tools
 
