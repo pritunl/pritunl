@@ -50,94 +50,101 @@ class ServerInstanceCom(object):
     def client_connect(self, client):
         from pritunl.server.utils import get_by_id
 
-        org_id = bson.ObjectId(client['org_id'])
-        user_id = bson.ObjectId(client['user_id'])
-        username = client.get('username')
-        password = client.get('password')
-        mac_addr = client.get('mac_addr')
-        client_uuid = client.get('client_uuid')
-        remote_ip = client.get('remote_ip')
-        devices = self.clients[user_id]
+        try:
+            org_id = bson.ObjectId(client['org_id'])
+            user_id = bson.ObjectId(client['user_id'])
+            username = client.get('username')
+            password = client.get('password')
+            mac_addr = client.get('mac_addr')
+            client_uuid = client.get('client_uuid')
+            remote_ip = client.get('remote_ip')
+            devices = self.clients[user_id]
 
-        org = self.server.get_org(org_id, fields=['_id'])
-        if not org:
-            self.send_client_deny(client, 'Organization is not valid')
-            return
+            org = self.server.get_org(org_id, fields=['_id'])
+            if not org:
+                self.send_client_deny(client, 'Organization is not valid')
+                return
 
-        user = org.get_user(user_id, fields=['_id', 'name', 'disabled'])
-        if not user:
-            self.send_client_deny(client, 'User is not valid')
-            return
+            user = org.get_user(user_id, fields=['_id', 'name', 'disabled'])
+            if not user:
+                self.send_client_deny(client, 'User is not valid')
+                return
 
-        client_conf = ''
+            client_conf = ''
 
-        link_svr_id = None
-        for link_doc in self.server.links:
-            if link_doc['user_id'] == user.id:
-                link_svr_id = link_doc['server_id']
-                break
-
-        if link_svr_id:
-            link_svr = get_by_id(link_svr_id,
-                fields=['_id', 'network', 'local_networks'])
-            client_conf += 'iroute %s %s\n' % utils.parse_network(
-                link_svr.network)
-            for local_network in link_svr.local_networks:
-                push += 'iroute %s %s\n' % utils.parse_network(
-                    local_network)
-
-        remote_ip_addr = None
-        if devices:
-            rem_dev_index = None
-
-            if client_uuid:
-                for i, device in enumerate(devices):
-                    if device['client_uuid'] == client_uuid:
-                        remote_ip_addr = device['remote_ip_addr']
-                        rem_dev_index = i
-                        break
-
-            if not remote_ip_addr and mac_addr:
-                for i, device in enumerate(devices):
-                    if device['mac_addr'] == mac_addr:
-                        remote_ip_addr = device['remote_ip_addr']
-                        rem_dev_index = i
-                        break
-
-            if rem_dev_index is not None:
-                self.client_kill(devices[rem_dev_index])
-                try:
-                    self.clients_ip.remove(devices[i]['remote_ip_addr'])
-                except KeyError:
-                    pass
-                del devices[rem_dev_index]
-
-        if not remote_ip_addr:
-            remote_ip_addr = self.server.get_ip_addr(org.id, user_id)
-            for device in devices:
-                if device['remote_ip_addr'] == remote_ip_addr:
-                    remote_ip_addr = None
+            link_svr_id = None
+            for link_doc in self.server.links:
+                if link_doc['user_id'] == user.id:
+                    link_svr_id = link_doc['server_id']
                     break
 
-        if remote_ip_addr and remote_ip_addr in self.clients_ip:
+            if link_svr_id:
+                link_svr = get_by_id(link_svr_id,
+                    fields=['_id', 'network', 'local_networks'])
+                client_conf += 'iroute %s %s\n' % utils.parse_network(
+                    link_svr.network)
+                for local_network in link_svr.local_networks:
+                    push += 'iroute %s %s\n' % utils.parse_network(
+                        local_network)
+
             remote_ip_addr = None
+            if devices:
+                rem_dev_index = None
 
-        if not remote_ip_addr:
-            for ip_addr in self.ip_pool:
-                ip_addr = '%s/%s' % (ip_addr, self.ip_network.prefixlen)
-                if ip_addr not in self.clients_ip:
-                    remote_ip_addr = ip_addr
-                    break
+                if client_uuid:
+                    for i, device in enumerate(devices):
+                        if device['client_uuid'] == client_uuid:
+                            remote_ip_addr = device['remote_ip_addr']
+                            rem_dev_index = i
+                            break
 
-        if remote_ip_addr:
-            self.clients_ip.add(remote_ip_addr)
-            client['remote_ip_addr'] = remote_ip_addr
-            self.clients[user_id].append(client)
-            client_conf += 'ifconfig-push %s %s\n' % utils.parse_network(
-                remote_ip_addr)
-            self.send_client_auth(client, client_conf)
-        else:
-            self.send_client_deny(client, 'Unable to assign ip address')
+                if not remote_ip_addr and mac_addr:
+                    for i, device in enumerate(devices):
+                        if device['mac_addr'] == mac_addr:
+                            remote_ip_addr = device['remote_ip_addr']
+                            rem_dev_index = i
+                            break
+
+                if rem_dev_index is not None:
+                    self.client_kill(devices[rem_dev_index])
+                    try:
+                        self.clients_ip.remove(devices[i]['remote_ip_addr'])
+                    except KeyError:
+                        pass
+                    del devices[rem_dev_index]
+
+            if not remote_ip_addr:
+                remote_ip_addr = self.server.get_ip_addr(org.id, user_id)
+                for device in devices:
+                    if device['remote_ip_addr'] == remote_ip_addr:
+                        remote_ip_addr = None
+                        break
+
+            if remote_ip_addr and remote_ip_addr in self.clients_ip:
+                remote_ip_addr = None
+
+            if not remote_ip_addr:
+                for ip_addr in self.ip_pool:
+                    ip_addr = '%s/%s' % (ip_addr, self.ip_network.prefixlen)
+                    if ip_addr not in self.clients_ip:
+                        remote_ip_addr = ip_addr
+                        break
+
+            if remote_ip_addr:
+                self.clients_ip.add(remote_ip_addr)
+                client['remote_ip_addr'] = remote_ip_addr
+                self.clients[user_id].append(client)
+                client_conf += 'ifconfig-push %s %s\n' % utils.parse_network(
+                    remote_ip_addr)
+                self.send_client_auth(client, client_conf)
+            else:
+                self.send_client_deny(client, 'Unable to assign ip address')
+        except:
+            logger.exception('Error parsing client connect', 'server',
+                server_id=self.server.id,
+                instance_id=self.instance.id,
+            )
+            self.send_client_deny(client, 'Error parsing client connect')
 
     def client_connected(self, client):
         self.push_output('User connected %s %s' % (
