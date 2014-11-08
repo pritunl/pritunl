@@ -108,7 +108,7 @@ class ServerInstanceCom(object):
                         rem_dev_index = i
                         break
 
-            if rem_dev_index:
+            if rem_dev_index is not None:
                 try:
                     self.clients_ip.remove(devices[i]['remote_ip_addr'])
                 except KeyError:
