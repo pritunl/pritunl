@@ -148,8 +148,33 @@ class ServerInstanceCom(object):
             self.send_client_deny(client, 'Error parsing client connect')
 
     def client_connected(self, client):
-        self.push_output('User connected %s %s' % (
-            client['user_id'], client['org_id']))
+        client_id = client['client_id']
+        org_id = bson.ObjectId(client['org_id'])
+        user_id = bson.ObjectId(client['user_id'])
+        devices = self.client_devices[user_id]
+        data = None
+
+        for device in devices:
+            if device['client_id'] == client_id:
+                data = device
+                break
+
+        if not data:
+            self.push_output(
+                'ERROR Unknown client connected org_id=%s user_id=%s' % (
+                    org_id, user_id))
+            return
+
+        self.clients.append({
+            'id': user_id,
+            'client_id': client_id,
+            'real_address': data['real_address'],
+            'virt_address': data['virt_address'],
+            'connected_since': int(utils.now().strftime('%s')),
+        })
+
+        self.push_output('User connected org_id=%s user_id=%s' % (
+            org_id, user_id))
 
     def client_disconnect(self, client):
         self.push_output('User disconnected %s %s' % (
