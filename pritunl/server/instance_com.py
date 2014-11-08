@@ -44,7 +44,9 @@ class ServerInstanceCom(object):
         self.client_ips = set()
         self.client_dyn_ips = set()
         self.ip_network = ipaddress.IPv4Network(self.server.network)
-        self.ip_pool = self.ip_network.iterhostsreversed()
+        self.ip_pool = []
+        for ip_addr in self.ip_network.iterhosts():
+            self.ip_pool.append(ip_addr)
 
     def client_kill(self, client):
         self.sock.send('client-kill %s\n' % client['client_id'])
