@@ -54,12 +54,10 @@ class ServerInstanceCom(object):
         user_id = bson.ObjectId(client['user_id'])
         username = client.get('username')
         password = client.get('password')
-        vpn_ver = client.get('vpn_ver')
-        ssl_ver = client.get('ssl_ver')
         mac_addr = client.get('mac_addr')
+        client_uuid = client.get('client_uuid')
         remote_ip = client.get('remote_ip')
         devices = self.clients[user_id]
-        device_key = '%s-%s-%s' % (remote_ip, vpn_ver, ssl_ver)
 
         org = self.server.get_org(org_id, fields=['_id'])
         if not org:
@@ -91,24 +89,23 @@ class ServerInstanceCom(object):
         remote_ip_addr = None
         if devices:
             rem_dev_index = None
-            for i, device in enumerate(devices):
-                if device['mac_addr'] == mac_addr:
-                    remote_ip_addr = device['remote_ip_addr']
-                    self.client_kill(device)
-                    rem_dev_index = i
-                    break
 
-            if not remote_ip_addr:
+            if client_uuid:
                 for i, device in enumerate(devices):
-                    dev_key = '%s-%s-%s' % (device['remote_ip'],
-                        device['vpn_ver'], device['ssl_ver'])
-                    if dev_key == device_key:
+                    if device['client_uuid'] == client_uuid:
                         remote_ip_addr = device['remote_ip_addr']
-                        self.client_kill(device)
+                        rem_dev_index = i
+                        break
+
+            if not remote_ip_addr and mac_addr:
+                for i, device in enumerate(devices):
+                    if device['mac_addr'] == mac_addr:
+                        remote_ip_addr = device['remote_ip_addr']
                         rem_dev_index = i
                         break
 
             if rem_dev_index is not None:
+                self.client_kill(devices[rem_dev_index])
                 try:
                     self.clients_ip.remove(devices[i]['remote_ip_addr'])
                 except KeyError:
