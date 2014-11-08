@@ -31,6 +31,7 @@ import pymongo
 import random
 import collections
 import select
+import uuid
 
 class ServerInstanceLink(object):
     def __init__(self, server, linked_server, linked_host=None):
@@ -71,6 +72,7 @@ class ServerInstanceLink(object):
             remotes = self.linked_server.get_key_remotes(True)
 
         client_conf = OVPN_INLINE_LINK_CONF % (
+            uuid.uuid4().hex,
             self.interface,
             self.linked_server.protocol,
             remotes,

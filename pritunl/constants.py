@@ -477,6 +477,7 @@ mute %s
 
 # TODO reneg-sec 2592000 causes issues with status file
 OVPN_INLINE_CLIENT_CONF = """# %s
+setenv UV_UUID %s
 client
 dev tun
 proto %s
@@ -494,6 +495,7 @@ remote-cert-tls server
 """
 
 OVPN_INLINE_LINK_CONF = """client
+setenv UV_UUID %s
 dev %s
 proto %s
 %s
