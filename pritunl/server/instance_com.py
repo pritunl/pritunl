@@ -52,12 +52,12 @@ class ServerInstanceCom(object):
 
         org_id = bson.ObjectId(client['org_id'])
         user_id = bson.ObjectId(client['user_id'])
-        username = client['username'] # TODO
-        password = client['password']
-        vpn_ver = client['vpn_ver']
-        ssl_ver = client['ssl_ver']
-        mac_addr = client['mac_addr']
-        remote_ip = client['remote_ip']
+        username = client.get('username')
+        password = client.get('password')
+        vpn_ver = client.get('vpn_ver')
+        ssl_ver = client.get('ssl_ver')
+        mac_addr = client.get('mac_addr')
+        remote_ip = client.get('remote_ip')
         devices = self.clients[user_id]
         device_key = '%s-%s-%s' % (remote_ip, vpn_ver, ssl_ver)
 
