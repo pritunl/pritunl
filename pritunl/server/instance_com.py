@@ -218,6 +218,9 @@ class ServerInstanceCom(object):
             '  ', ' ', 1)
         self.server.output.push_output('%s %s' % (timestamp, message))
 
+    def parse_bytecount(self, client_id, bytes_recv, bytes_sent):
+        print client_id, bytes_recv, bytes_sent
+
     def parse_line(self, line):
         self.push_output(line)
 
@@ -261,6 +264,10 @@ class ServerInstanceCom(object):
                     self.client['client_uuid'] = env_val
                 elif env_key == 'password':
                     self.client['password'] = env_val
+        elif line[:14] == '>BYTECOUNT_CLI':
+            client_id, bytes_recv, bytes_sent = line.split(',')
+            client_id = client_id.split(':')[1]
+            self.parse_bytecount(client_id, int(bytes_recv), int(bytes_sent))
         elif line[:14] in ('>CLIENT:CONNEC', '>CLIENT:REAUTH'):
             _, client_id, key_id = line.split(',')
             self.client = {
