@@ -234,7 +234,7 @@ class ServerInstanceCom(object):
         for _ in xrange(10000):
             if os.path.exists(self.socket_path):
                 return
-            time.sleep(0.005)
+            time.sleep(0.001)
         logger.error('Server management socket path not found', 'server',
             server_id=self.server.id,
             instance_id=self.instance.id,
