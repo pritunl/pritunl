@@ -1,8 +1,8 @@
 ace.define('ace/mode/log_highlight_rules', ['require', 'exports', 'module', 'ace/lib/oop', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
 'use strict';
 
-var oop = require("../lib/oop");
-var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
+var oop = require('../lib/oop');
+var TextHighlightRules = require('./text_highlight_rules').TextHighlightRules;
 
 var LogHighlightRules = function() {
   var ws = '(\\s+)';
@@ -36,13 +36,13 @@ oop.inherits(LogHighlightRules, TextHighlightRules);
 exports.LogHighlightRules = LogHighlightRules;
 });
 
-ace.define("ace/mode/log", ["require","exports","module","ace/lib/oop","ace/mode/text","ace/mode/text_highlight_rules","ace/mode/log_highlight_rules"], function(require, exports, module) {
-"use strict";
+ace.define('ace/mode/log', ['require', 'exports', 'module', 'ace/lib/oop', 'ace/mode/text', 'ace/mode/text_highlight_rules', 'ace/mode/log_highlight_rules'], function(require, exports, module) {
+'use strict';
 
-var oop = require("../lib/oop");
-var TextMode = require("./text").Mode;
-var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-var LogHighlightRules = require("./log_highlight_rules").LogHighlightRules;
+var oop = require('../lib/oop');
+var TextMode = require('./text').Mode;
+var TextHighlightRules = require('./text_highlight_rules').TextHighlightRules;
+var LogHighlightRules = require('./log_highlight_rules').LogHighlightRules;
 
 var Mode = function(suppressHighlighting) {
   if (suppressHighlighting) {
@@ -55,7 +55,7 @@ var Mode = function(suppressHighlighting) {
 oop.inherits(Mode, TextMode);
 
 (function() {
-  this.$id = "ace/mode/log";
+  this.$id = 'ace/mode/log';
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
