@@ -16,6 +16,9 @@ define([
   'use strict';
   var TextView = Backbone.View.extend({
     className: 'text-viewer',
+    initialize: function() {
+      this.lastLine = null;
+    },
     render: function() {
       this.editor = Ace.edit(this.el);
       this.editor.setTheme('ace/theme/pritunl');
@@ -47,11 +50,46 @@ define([
       }.bind(this), 25);
     },
     setData: function(data) {
-      if (data && data.slice(-1) !== '\n') {
-        data += '\n';
+      var i;
+      var lines;
+      var foundLastLine;
+      var doc = this.editor.getSession().getDocument();
+
+      if (this.lastLine) {
+        lines = [];
+        for (i = data.length - 1; i >= 0; i--) {
+          if (data[i] === this.lastLine) {
+            foundLastLine = true;
+            break;
+          }
+          lines.push(data[i]);
+        }
+        if (!foundLastLine) {
+          this.lastLine = null;
+        }
+        else if (lines) {
+          doc.insertLines(doc.getLength() - 1, lines.reverse());
+        }
       }
-      this.editor.setValue(data, 1);
-      this.scrollBottom();
+
+      if (!this.lastLine) {
+        // lines = [];
+        // for (i = 0; i < data.length; i++) {
+        //   lines.push(data[i]);
+        // }
+        // doc.insertLines(0, lines);
+        // this.scrollBottom();
+        lines = '';
+        for (i = 0; i < data.length; i++) {
+          lines += data[i] + '\n';
+        }
+        this.editor.setValue(lines, 1);
+        this.scrollBottom();
+      }
+
+      if (lines) {
+        this.lastLine = data[data.length - 1];
+      }
     },
   });
 
