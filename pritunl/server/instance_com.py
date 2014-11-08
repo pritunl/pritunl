@@ -87,55 +87,55 @@ class ServerInstanceCom(object):
                     push += 'iroute %s %s\n' % utils.parse_network(
                         local_network)
 
-            remote_ip_addr = None
+            address = None
             if devices:
                 rem_dev_index = None
 
                 if client_uuid:
                     for i, device in enumerate(devices):
                         if device['client_uuid'] == client_uuid:
-                            remote_ip_addr = device['remote_ip_addr']
+                            address = device['address']
                             rem_dev_index = i
                             break
 
-                if not remote_ip_addr and mac_addr:
+                if not address and mac_addr:
                     for i, device in enumerate(devices):
                         if device['mac_addr'] == mac_addr:
-                            remote_ip_addr = device['remote_ip_addr']
+                            address = device['address']
                             rem_dev_index = i
                             break
 
                 if rem_dev_index is not None:
                     self.client_kill(devices[rem_dev_index])
                     try:
-                        self.clients_ip.remove(devices[i]['remote_ip_addr'])
+                        self.clients_ip.remove(devices[i]['address'])
                     except KeyError:
                         pass
                     del devices[rem_dev_index]
 
-            if not remote_ip_addr:
-                remote_ip_addr = self.server.get_ip_addr(org.id, user_id)
+            if not address:
+                address = self.server.get_ip_addr(org.id, user_id)
                 for device in devices:
-                    if device['remote_ip_addr'] == remote_ip_addr:
-                        remote_ip_addr = None
+                    if device['address'] == address:
+                        address = None
                         break
 
-            if remote_ip_addr and remote_ip_addr in self.clients_ip:
-                remote_ip_addr = None
+            if address and address in self.clients_ip:
+                address = None
 
-            if not remote_ip_addr:
+            if not address:
                 for ip_addr in self.ip_pool:
                     ip_addr = '%s/%s' % (ip_addr, self.ip_network.prefixlen)
                     if ip_addr not in self.clients_ip:
-                        remote_ip_addr = ip_addr
+                        address = ip_addr
                         break
 
-            if remote_ip_addr:
-                self.clients_ip.add(remote_ip_addr)
-                client['remote_ip_addr'] = remote_ip_addr
+            if address:
+                self.clients_ip.add(address)
+                client['address'] = address
                 self.clients[user_id].append(client)
                 client_conf += 'ifconfig-push %s %s\n' % utils.parse_network(
-                    remote_ip_addr)
+                    address)
                 self.send_client_auth(client, client_conf)
             else:
                 self.send_client_deny(client, 'Unable to assign ip address')
