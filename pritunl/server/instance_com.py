@@ -164,8 +164,11 @@ class ServerInstanceCom(object):
     def parse_line(self, line):
         if self.client:
             if line == '>CLIENT:ENV,END':
-                self.client_connect(self.client)
-                self.client = None
+                cmd = self.client['cmd']
+                if cmd == 'connect':
+                    self.client_connect(self.client)
+                elif cmd == 'connected':
+                    self.client_connected(self.client)
             elif line[:11] == '>CLIENT:ENV':
                 env_key, env_val = line[12:].split('=', 1)
                 if env_key == 'tls_id_0':
@@ -203,8 +206,15 @@ class ServerInstanceCom(object):
         elif line[:14] in ('>CLIENT:CONNEC', '>CLIENT:REAUTH'):
             _, client_id, key_id = line.split(',')
             self.client = {
+                'cmd': 'connect',
                 'client_id': client_id,
                 'key_id': key_id,
+            }
+        elif line[:19] == '>CLIENT:ESTABLISHED':
+            _, client_id = line.split(',')
+            self.client = {
+                'cmd': 'connected',
+                'client_id': client_id,
             }
 
     def wait_for_socket(self):
