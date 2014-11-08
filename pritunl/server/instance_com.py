@@ -321,3 +321,7 @@ class ServerInstanceCom(object):
         thread = threading.Thread(target=self._socket_thread)
         thread.daemon = True
         thread.start()
+
+        thread = threading.Thread(target=self._status_thread)
+        thread.daemon = True
+        thread.start()
