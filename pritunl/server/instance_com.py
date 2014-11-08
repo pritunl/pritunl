@@ -57,14 +57,14 @@ class ServerInstanceCom(object):
         from pritunl.server.utils import get_by_id
 
         try:
+            client_id = client['client_id']
             org_id = bson.ObjectId(client['org_id'])
             user_id = bson.ObjectId(client['user_id'])
-            username = client.get('username')
-            password = client.get('password')
-            mac_addr = client.get('mac_addr')
             client_uuid = client.get('client_uuid')
+            mac_addr = client.get('mac_addr')
+            password = client.get('password')
             remote_ip = client.get('remote_ip')
-            devices = self.clients[user_id]
+            devices = self.client_devices[user_id]
 
             org = self.server.get_org(org_id, fields=['_id'])
             if not org:
@@ -93,55 +93,50 @@ class ServerInstanceCom(object):
                     push += 'iroute %s %s\n' % utils.parse_network(
                         local_network)
 
-            address = None
-            if devices:
-                rem_dev_index = None
+            virt_address = None
+            if devices and client_uuid:
+                for i, device in enumerate(devices):
+                    if device['client_uuid'] == client_uuid:
+                        virt_address = device['virt_address']
 
-                if client_uuid:
-                    for i, device in enumerate(devices):
-                        if device['client_uuid'] == client_uuid:
-                            address = device['address']
-                            rem_dev_index = i
-                            break
+                        self.client_kill(device)
+                        if virt_address in self.client_ips:
+                            self.client_ips.remove(virt_address)
 
-                if not address and mac_addr:
-                    for i, device in enumerate(devices):
-                        if device['mac_addr'] == mac_addr:
-                            address = device['address']
-                            rem_dev_index = i
-                            break
+                        del devices[i]
 
-                if rem_dev_index is not None:
-                    self.client_kill(devices[rem_dev_index])
+            if not virt_address:
+                virt_address = self.server.get_ip_addr(org.id, user_id)
+
+            if virt_address and virt_address in self.client_ips:
+                virt_address = None
+
+            if not virt_address:
+                while True:
                     try:
-                        self.clients_ip.remove(devices[i]['address'])
-                    except KeyError:
-                        pass
-                    del devices[rem_dev_index]
-
-            if not address:
-                address = self.server.get_ip_addr(org.id, user_id)
-                for device in devices:
-                    if device['address'] == address:
-                        address = None
+                        ip_addr = self.ip_pool.pop()
+                    except IndexError:
                         break
-
-            if address and address in self.clients_ip:
-                address = None
-
-            if not address:
-                for ip_addr in self.ip_pool:
                     ip_addr = '%s/%s' % (ip_addr, self.ip_network.prefixlen)
-                    if ip_addr not in self.clients_ip:
-                        address = ip_addr
+                    if ip_addr not in self.client_ips:
+                        virt_address = ip_addr
+                        self.client_dyn_ips.add(virt_address)
                         break
 
-            if address:
-                self.clients_ip.add(address)
-                client['address'] = address
-                self.clients[user_id].append(client)
+            if virt_address:
+                self.client_ips.add(virt_address)
+                devices.append({
+                    'user_id': user_id,
+                    'org_id': org_id,
+                    'client_id': client_id,
+                    'client_uuid': client_uuid,
+                    'mac_addr': mac_addr,
+                    'password': password,
+                    'virt_address': virt_address,
+                    'real_address': remote_ip,
+                })
                 client_conf += 'ifconfig-push %s %s\n' % utils.parse_network(
-                    address)
+                    virt_address)
                 self.send_client_auth(client, client_conf)
             else:
                 self.send_client_deny(client, 'Unable to assign ip address')
