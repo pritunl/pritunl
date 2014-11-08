@@ -124,6 +124,13 @@ define([
         this.$('.server-users .status-num').text(this.model.get(
           'users_online') + '/' + this.model.get('user_count'));
       }
+      if (!this.model.get('devices_online')) {
+        this.$('.server-devices .status-num').text('0');
+      }
+      else {
+        this.$('.server-devices .status-num').text(
+          this.model.get('devices_online'));
+      }
       this.$('.server-network .status-text').text(
         this.model.get('network'));
       this.$('.server-interface .status-text').text(
