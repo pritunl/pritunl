@@ -234,10 +234,33 @@ class ServerInstanceCom(object):
         for _ in xrange(10000):
             if os.path.exists(self.socket_path):
                 return
-            time.sleep(0.001)
+            time.sleep(0.005)
+        logger.error('Server management socket path not found', 'server',
+            server_id=self.server.id,
+            instance_id=self.instance.id,
+            socket_path=self.socket_path,
+        )
 
+    @interrupter
     def _socket_thread(self):
+        time.sleep(3)
         try:
+            while True:
+                self.sock.send('status\n')
+                yield interrupter_sleep(1)
+        except GeneratorExit:
+            raise
+        except:
+            logger.exception('Error in management socket status thread',
+                'server',
+                server_id=self.server.id,
+                instance_id=self.instance.id,
+            )
+            self.instance.stop_process()
+
+    def _status_thread(self):
+        try:
+            self.connect()
             data = ''
             while True:
                 data += self.sock.recv(1024) # TODO Use constant or setting
