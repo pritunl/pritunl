@@ -117,7 +117,7 @@ define([
       else {
         this.$('.server-uptime .status-text').text('-');
       }
-      if (this.model.get('user_count') === 0) {
+      if (!this.model.get('user_count')) {
         this.$('.server-users .status-num').text('-/-');
       }
       else {
