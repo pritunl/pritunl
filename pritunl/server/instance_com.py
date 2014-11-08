@@ -142,11 +142,13 @@ class ServerInstanceCom(object):
         else:
             self.send_client_deny(client, 'Unable to assign ip address')
 
+    def client_connected(self, client):
+        self.push_output('User connected %s %s' % (
+            client['user_id'], client['org_id']))
+
     def send_client_auth(self, client, client_conf):
         self.sock.send('client-auth %s %s\n%s\nEND\n' % (
             client['client_id'], client['key_id'], client_conf))
-        self.push_output('User auth successful %s %s' % (
-            client['user_id'], client['org_id']))
 
     def send_client_deny(self, client, reason):
         self.sock.send('client-deny %s %s "%s"\n' % (
