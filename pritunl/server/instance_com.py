@@ -177,8 +177,34 @@ class ServerInstanceCom(object):
             org_id, user_id))
 
     def client_disconnect(self, client):
-        self.push_output('User disconnected %s %s' % (
-            client['user_id'], client['org_id']))
+        client_id = client['client_id']
+        org_id = bson.ObjectId(client['org_id'])
+        user_id = bson.ObjectId(client['user_id'])
+        virt_address = None
+        devices = self.client_devices[user_id]
+
+        for i, device in enumerate(devices):
+            if device['client_id'] == client_id:
+                virt_address = device['virt_address']
+                del devices[i]
+                break
+
+        for i, clt in enumerate(self.clients):
+            if clt['client_id'] == client_id:
+                virt_address = clt['virt_address']
+                del self.clients[i]
+                break
+
+        if virt_address:
+            if virt_address in self.client_ips:
+                self.client_ips.remove(virt_address)
+
+            if virt_address in self.client_dyn_ips:
+                self.client_dyn_ips.remove(virt_address)
+                self.ip_pool.append(virt_address.split('/')[0])
+
+        self.push_output('User disconnected org_id=%s user_id=%s' % (
+            org_id, user_id))
 
     def send_client_auth(self, client, client_conf):
         self.sock.send('client-auth %s %s\n%s\nEND\n' % (
