@@ -244,6 +244,7 @@ class ServerInstanceCom(object):
     @interrupter
     def _socket_thread(self):
         time.sleep(3)
+        self.sock.send('bytecount 1\n')
         try:
             while True:
                 self.sock.send('status\n')
