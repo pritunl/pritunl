@@ -89,4 +89,4 @@ class ServerOutput(object):
         if output:
             output = output[0]['output']
 
-        return '\n'.join(output)
+        return output
