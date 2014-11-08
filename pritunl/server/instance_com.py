@@ -34,8 +34,10 @@ class ServerInstanceCom(object):
         self.server = server
         self.instance = instance
         self.sock = None
+        self.sock_status_lock = threading.Lock()
         self.socket_path = instance.management_socket_path
         self.client = None
+        self.status = None
         self.clients = collections.defaultdict(list)
         self.clients_ip = set()
         self.client_auth = False
@@ -262,6 +264,7 @@ class ServerInstanceCom(object):
         self.sock.send('bytecount 1\n')
         try:
             while True:
+                self.sock_status_lock.acquire()
                 self.sock.send('status\n')
                 yield interrupter_sleep(1)
         except GeneratorExit:
