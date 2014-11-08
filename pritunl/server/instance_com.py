@@ -268,11 +268,7 @@ class ServerInstanceCom(object):
                 elif env_key == 'untrusted_ip':
                     self.client['remote_ip'] = env_val
                 elif env_key == 'UV_UUID':
-                    self.client['uuid'] = env_val
-                elif env_key == 'username':
-                    self.client['username'] = env_val
-                elif env_key == 'password':
-                    self.client['password'] = env_val
+                    self.client['client_uuid'] = env_val
                 elif env_key == 'password':
                     self.client['password'] = env_val
         elif line[:13] == 'TITLE,OpenVPN':
