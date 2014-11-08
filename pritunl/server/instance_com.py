@@ -34,11 +34,8 @@ class ServerInstanceCom(object):
         self.server = server
         self.instance = instance
         self.sock = None
-        self.sock_ready = threading.Event()
-        self.sock_status_lock = threading.Lock()
         self.socket_path = instance.management_socket_path
         self.client = None
-        self.status = None
         self.clients = []
         self.client_devices = collections.defaultdict(list)
         self.client_ips = set()
@@ -221,19 +218,10 @@ class ServerInstanceCom(object):
             '  ', ' ', 1)
         self.server.output.push_output('%s %s' % (timestamp, message))
 
-    def parse_status(self, lines):
-        pass
-
     def parse_line(self, line):
         self.push_output(line)
 
-        if self.status:
-            self.status.append(line)
-            if line == 'END':
-                self.parse_status(self.status)
-                self.status = None
-                self.sock_status_lock.release()
-        elif self.client:
+        if self.client:
             if line == '>CLIENT:ENV,END':
                 cmd = self.client['cmd']
                 if cmd == 'connect':
@@ -273,8 +261,6 @@ class ServerInstanceCom(object):
                     self.client['client_uuid'] = env_val
                 elif env_key == 'password':
                     self.client['password'] = env_val
-        elif line[:13] == 'TITLE,OpenVPN':
-            self.status = [line]
         elif line[:14] in ('>CLIENT:CONNEC', '>CLIENT:REAUTH'):
             _, client_id, key_id = line.split(',')
             self.client = {
@@ -306,45 +292,13 @@ class ServerInstanceCom(object):
             socket_path=self.socket_path,
         )
 
-    @interrupter
     def _socket_thread(self):
-        return
-        while True:
-            if self.sock_ready.wait(0.5):
-                break
-            yield
-            if self.instance.sock_interrupt:
-                return
-
-        yield interrupter_sleep(1)
-
-        self.sock.send('bytecount 1\n')
-
-        try:
-            while True:
-                self.sock_status_lock.acquire()
-                if self.instance.sock_interrupt:
-                    return
-
-                self.sock.send('status\n')
-
-                yield interrupter_sleep(1)
-                if self.instance.sock_interrupt:
-                    return
-        except GeneratorExit:
-            raise
-        except:
-            logger.exception('Error in management socket status thread',
-                'server',
-                server_id=self.server.id,
-                instance_id=self.instance.id,
-            )
-            self.instance.stop_process()
-
-    def _status_thread(self):
         try:
             self.connect()
-            self.sock_ready.set()
+
+            time.sleep(1)
+            self.sock.send('bytecount 1\n')
+
             data = ''
             while True:
                 data += self.sock.recv(SOCKET_BUFFER)
@@ -378,8 +332,6 @@ class ServerInstanceCom(object):
                 instance_id=self.instance.id,
             )
             self.instance.stop_process()
-        finally:
-            self.sock_status_lock.release()
 
     def connect(self):
         self.wait_for_socket()
@@ -388,9 +340,5 @@ class ServerInstanceCom(object):
 
     def start(self):
         thread = threading.Thread(target=self._socket_thread)
-        thread.daemon = True
-        thread.start()
-
-        thread = threading.Thread(target=self._status_thread)
         thread.daemon = True
         thread.start()
