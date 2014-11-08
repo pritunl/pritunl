@@ -224,6 +224,9 @@ class ServerInstanceCom(object):
     def parse_line(self, line):
         self.push_output(line)
 
+        line_14 = line[:14]
+        line_18 = line[:18]
+
         if self.client:
             if line == '>CLIENT:ENV,END':
                 cmd = self.client['cmd']
@@ -264,24 +267,24 @@ class ServerInstanceCom(object):
                     self.client['client_uuid'] = env_val
                 elif env_key == 'password':
                     self.client['password'] = env_val
-        elif line[:14] == '>BYTECOUNT_CLI':
+        elif line_14 == '>BYTECOUNT_CLI':
             client_id, bytes_recv, bytes_sent = line.split(',')
             client_id = client_id.split(':')[1]
             self.parse_bytecount(client_id, int(bytes_recv), int(bytes_sent))
-        elif line[:14] in ('>CLIENT:CONNEC', '>CLIENT:REAUTH'):
+        elif line_14 in ('>CLIENT:CONNEC', '>CLIENT:REAUTH'):
             _, client_id, key_id = line.split(',')
             self.client = {
                 'cmd': 'connect',
                 'client_id': client_id,
                 'key_id': key_id,
             }
-        elif line[:19] == '>CLIENT:ESTABLISHED':
+        elif line_18 == '>CLIENT:ESTABLISHE':
             _, client_id = line.split(',')
             self.client = {
                 'cmd': 'connected',
                 'client_id': client_id,
             }
-        elif line[:18] == '>CLIENT:DISCONNECT':
+        elif line_18 == '>CLIENT:DISCONNECT':
             _, client_id = line.split(',')
             self.client = {
                 'cmd': 'disconnected',
