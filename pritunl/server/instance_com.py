@@ -225,6 +225,8 @@ class ServerInstanceCom(object):
         pass
 
     def parse_line(self, line):
+        self.push_output(line)
+
         if self.status:
             self.status.append(line)
             if line == 'END':
@@ -317,11 +319,18 @@ class ServerInstanceCom(object):
         yield interrupter_sleep(1)
 
         self.sock.send('bytecount 1\n')
+
         try:
             while True:
                 self.sock_status_lock.acquire()
+                if self.instance.sock_interrupt:
+                    return
+
                 self.sock.send('status\n')
+
                 yield interrupter_sleep(1)
+                if self.instance.sock_interrupt:
+                    return
         except GeneratorExit:
             raise
         except:
@@ -369,6 +378,8 @@ class ServerInstanceCom(object):
                 instance_id=self.instance.id,
             )
             self.instance.stop_process()
+        finally:
+            self.sock_status_lock.release()
 
     def connect(self):
         self.wait_for_socket()
