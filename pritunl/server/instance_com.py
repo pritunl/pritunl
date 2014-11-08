@@ -169,8 +169,17 @@ class ServerInstanceCom(object):
             '  ', ' ', 1)
         self.server.output.push_output('%s %s' % (timestamp, message))
 
+    def parse_status(self, lines):
+        pass
+
     def parse_line(self, line):
-        if self.client:
+        if self.status:
+            self.status.append(line)
+            if line == 'END':
+                self.parse_status(self.status)
+                self.status = None
+                self.sock_status_lock.release()
+        elif self.client:
             if line == '>CLIENT:ENV,END':
                 cmd = self.client['cmd']
                 if cmd == 'connect':
@@ -214,6 +223,8 @@ class ServerInstanceCom(object):
                     self.client['password'] = env_val
                 elif env_key == 'password':
                     self.client['password'] = env_val
+        elif line[:13] == 'TITLE,OpenVPN':
+            self.status = [line]
         elif line[:14] in ('>CLIENT:CONNEC', '>CLIENT:REAUTH'):
             _, client_id, key_id = line.split(',')
             self.client = {
