@@ -34,6 +34,7 @@ class ServerInstanceCom(object):
         self.server = server
         self.instance = instance
         self.sock = None
+        self.sock_ready = threading.Event()
         self.sock_status_lock = threading.Lock()
         self.socket_path = instance.management_socket_path
         self.client = None
@@ -260,7 +261,16 @@ class ServerInstanceCom(object):
 
     @interrupter
     def _socket_thread(self):
-        time.sleep(3)
+        return
+        while True:
+            if self.sock_ready.wait(0.5):
+                break
+            yield
+            if self.instance.sock_interrupt:
+                return
+
+        yield interrupter_sleep(1)
+
         self.sock.send('bytecount 1\n')
         try:
             while True:
@@ -280,9 +290,10 @@ class ServerInstanceCom(object):
     def _status_thread(self):
         try:
             self.connect()
+            self.sock_ready.set()
             data = ''
             while True:
-                data += self.sock.recv(1024) # TODO Use constant or setting
+                data += self.sock.recv(SOCKET_BUFFER)
                 if not data:
                     if not self.instance.sock_interrupt and \
                             not check_global_interrupt():
