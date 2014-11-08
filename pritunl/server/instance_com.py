@@ -39,9 +39,10 @@ class ServerInstanceCom(object):
         self.socket_path = instance.management_socket_path
         self.client = None
         self.status = None
-        self.clients = collections.defaultdict(list)
-        self.clients_ip = set()
-        self.client_auth = False
+        self.clients = []
+        self.client_devices = collections.defaultdict(list)
+        self.client_ips = set()
+        self.client_dyn_ips = set()
         self.ip_network = ipaddress.IPv4Network(self.server.network)
         self.ip_pool = self.ip_network.iterhostsreversed()
 
