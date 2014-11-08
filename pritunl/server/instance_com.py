@@ -146,6 +146,10 @@ class ServerInstanceCom(object):
         self.push_output('User connected %s %s' % (
             client['user_id'], client['org_id']))
 
+    def client_disconnect(self, client):
+        self.push_output('User disconnected %s %s' % (
+            client['user_id'], client['org_id']))
+
     def send_client_auth(self, client, client_conf):
         self.sock.send('client-auth %s %s\n%s\nEND\n' % (
             client['client_id'], client['key_id'], client_conf))
@@ -169,6 +173,9 @@ class ServerInstanceCom(object):
                     self.client_connect(self.client)
                 elif cmd == 'connected':
                     self.client_connected(self.client)
+                elif cmd == 'disconnected':
+                    self.client_disconnect(self.client)
+                self.client = None
             elif line[:11] == '>CLIENT:ENV':
                 env_key, env_val = line[12:].split('=', 1)
                 if env_key == 'tls_id_0':
@@ -214,6 +221,12 @@ class ServerInstanceCom(object):
             _, client_id = line.split(',')
             self.client = {
                 'cmd': 'connected',
+                'client_id': client_id,
+            }
+        elif line[:18] == '>CLIENT:DISCONNECT':
+            _, client_id = line.split(',')
+            self.client = {
+                'cmd': 'disconnected',
                 'client_id': client_id,
             }
 
