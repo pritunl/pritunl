@@ -11,6 +11,7 @@ define([
       'status': null,
       'uptime': null,
       'users_online': null,
+      'devices_online': null,
       'user_count': null,
       'network': null,
       'bind_address': null,
