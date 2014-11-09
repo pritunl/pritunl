@@ -49,7 +49,7 @@ class ServerInstanceCom(object):
         self.cur_timestamp = utils.now()
         self.ip_network = ipaddress.IPv4Network(self.server.network)
         self.ip_pool = []
-        self.bandwidth_rate = settings.app.bandwidth_rate
+        self.bandwidth_rate = settings.vpn.bandwidth_update_rate
         for ip_addr in self.ip_network.iterhosts():
             self.ip_pool.append(ip_addr)
 
