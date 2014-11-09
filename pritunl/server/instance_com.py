@@ -35,11 +35,16 @@ class ServerInstanceCom(object):
         self.instance = instance
         self.sock = None
         self.socket_path = instance.management_socket_path
+        self.bytes_lock = threading.Lock()
+        self.bytes_recv = 0
+        self.bytes_sent = 0
         self.client = None
         self.clients = []
+        self.client_bytes = {}
         self.client_devices = collections.defaultdict(list)
         self.client_ips = set()
         self.client_dyn_ips = set()
+        self.cur_timestamp = utils.now()
         self.ip_network = ipaddress.IPv4Network(self.server.network)
         self.ip_pool = []
         for ip_addr in self.ip_network.iterhosts():
@@ -219,7 +224,16 @@ class ServerInstanceCom(object):
         self.server.output.push_output('%s %s' % (timestamp, message))
 
     def parse_bytecount(self, client_id, bytes_recv, bytes_sent):
-        print client_id, bytes_recv, bytes_sent
+        _, bytes_recv_prev, bytes_sent_prev = self.client_bytes.get(
+            client_id, (None, 0, 0))
+
+        self.client_bytes[client_id] = (
+            self.cur_timestamp, bytes_recv, bytes_sent)
+
+        self.bytes_lock.acquire()
+        self.bytes_recv += bytes_recv - bytes_recv_prev
+        self.bytes_sent += bytes_sent - bytes_sent_prev
+        self.bytes_lock.release()
 
     def parse_line(self, line):
         self.push_output(line)
@@ -302,12 +316,44 @@ class ServerInstanceCom(object):
             socket_path=self.socket_path,
         )
 
+    @interrupter
+    def _watch_thread(self):
+        try:
+            while True:
+                self.cur_timestamp = utils.now()
+                timestamp_ttl = self.cur_timestamp - datetime.timedelta(
+                    seconds=180)
+
+                for client_id, (timestamp, _, _) in self.client_bytes.items():
+                    if timestamp < timestamp_ttl:
+                        self.client_bytes.pop(client_id, None)
+
+                self.bytes_lock.acquire()
+                bytes_recv = self.bytes_recv
+                bytes_sent = self.bytes_sent
+                self.bytes_recv = 0
+                self.bytes_sent = 0
+                self.bytes_lock.release()
+
+                yield interrupter_sleep(15)
+                if self.instance.sock_interrupt:
+                    return
+        except GeneratorExit:
+            raise
+        except:
+            self.push_output('ERROR Management thread error')
+            logger.exception('Error in management watch thread', 'server',
+                server_id=self.server.id,
+                instance_id=self.instance.id,
+            )
+            self.instance.stop_process()
+
     def _socket_thread(self):
         try:
             self.connect()
 
             time.sleep(1)
-            self.sock.send('bytecount 1\n')
+            self.sock.send('bytecount 15\n')
 
             data = ''
             while True:
@@ -350,5 +396,9 @@ class ServerInstanceCom(object):
 
     def start(self):
         thread = threading.Thread(target=self._socket_thread)
+        thread.daemon = True
+        thread.start()
+
+        thread = threading.Thread(target=self._watch_thread)
         thread.daemon = True
         thread.start()
