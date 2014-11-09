@@ -43,7 +43,7 @@ def setup_mongo():
         'transaction': getattr(database, prefix + 'transaction'),
         'queue': getattr(database, prefix + 'queue'),
         'task': getattr(database, prefix + 'task'),
-        'system': getattr(database, prefix + 'system'),
+        'settings': getattr(database, prefix + 'settings'),
         'messages': getattr(database, prefix + 'messages'),
         'administrators': getattr(database, prefix + 'administrators'),
         'users': getattr(database, prefix + 'users'),

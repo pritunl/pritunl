@@ -32,7 +32,7 @@ class Settings(object):
     @cached_static_property
     def collection(cls):
         from pritunl import mongo
-        return mongo.get_collection('system')
+        return mongo.get_collection('settings')
 
     @cached_property
     def groups(self):
