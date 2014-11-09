@@ -15,7 +15,14 @@ define([
       return this;
     },
     update: function() {
-      this.$('.server-name .title').text(this.model.get('name'));
+      var name = this.model.get('name');
+      var device_name = this.model.get('device_name');
+
+      if (name && device_name) {
+        name = name + ' (' + device_name + ')'
+      }
+
+      this.$('.server-name .title').text(name);
 
       var addr = this.model.get('virt_address');
       if (addr) {
