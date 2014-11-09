@@ -465,7 +465,7 @@ auth-user-pass-optional
 topology subnet
 client-to-client
 max-clients 1024
-keepalive 10 60
+keepalive 15 30
 persist-tun
 duplicate-cn
 %s
