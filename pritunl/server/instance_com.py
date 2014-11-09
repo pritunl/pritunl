@@ -49,10 +49,12 @@ class ServerInstanceCom(object):
         self.cur_timestamp = utils.now()
         self.ip_network = ipaddress.IPv4Network(self.server.network)
         self.ip_pool = []
+        self.bandwidth_rate = settings.app.bandwidth_rate
         for ip_addr in self.ip_network.iterhosts():
             self.ip_pool.append(ip_addr)
 
     def client_kill(self, client):
+        # TODO
         self.sock.send('client-kill %s\n' % client['client_id'])
         self.push_output('Disconnecting user org_id=%s user_id=%s' % (
             client['user_id'], client['org_id']))
@@ -363,7 +365,11 @@ class ServerInstanceCom(object):
                 self.bytes_sent = 0
                 self.bytes_lock.release()
 
-                yield interrupter_sleep(15)
+                if bytes_recv != 0 or bytes_sent != 0:
+                    self.server.bandwidth.add_data(
+                        utils.now(), bytes_recv, bytes_sent)
+
+                yield interrupter_sleep(self.bandwidth_rate)
                 if self.instance.sock_interrupt:
                     return
         except GeneratorExit:
