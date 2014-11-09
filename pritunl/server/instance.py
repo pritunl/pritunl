@@ -193,7 +193,6 @@ class ServerInstance(object):
             '%s %s' % utils.parse_network(self.server.network),
             self.management_socket_path,
             CIPHERS[self.server.cipher],
-            self.ovpn_status_path,
             4 if self.server.debug else 1,
             8 if self.server.debug else 3,
         )

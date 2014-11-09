@@ -469,7 +469,6 @@ keepalive 10 60
 persist-tun
 duplicate-cn
 %s
-status %s 1
 status-version 2
 script-security 2
 verb %s
