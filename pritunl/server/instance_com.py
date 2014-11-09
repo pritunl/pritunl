@@ -65,7 +65,8 @@ class ServerInstanceCom(object):
             client_id = client['client_id']
             org_id = bson.ObjectId(client['org_id'])
             user_id = bson.ObjectId(client['user_id'])
-            client_uuid = client.get('client_uuid')
+            device_id = client.get('device_id')
+            device_name = client.get('device_name')
             mac_addr = client.get('mac_addr')
             password = client.get('password')
             remote_ip = client.get('remote_ip')
@@ -76,7 +77,8 @@ class ServerInstanceCom(object):
                 self.send_client_deny(client, 'Organization is not valid')
                 return
 
-            user = org.get_user(user_id, fields=['_id', 'name', 'disabled'])
+            user = org.get_user(user_id, fields=[
+                '_id', 'name', 'type', 'disabled'])
             if not user:
                 self.send_client_deny(client, 'User is not valid')
                 return
@@ -99,9 +101,9 @@ class ServerInstanceCom(object):
                         local_network)
 
             virt_address = None
-            if devices and client_uuid:
+            if devices and device_id:
                 for i, device in enumerate(devices):
-                    if device['client_uuid'] == client_uuid:
+                    if device['device_id'] == device_id:
                         virt_address = device['virt_address']
 
                         self.client_kill(device)
@@ -134,7 +136,9 @@ class ServerInstanceCom(object):
                     'user_id': user_id,
                     'org_id': org_id,
                     'client_id': client_id,
-                    'client_uuid': client_uuid,
+                    'device_id': device_id,
+                    'device_name': device_name,
+                    'type': user.type,
                     'mac_addr': mac_addr,
                     'password': password,
                     'virt_address': virt_address,
@@ -173,6 +177,9 @@ class ServerInstanceCom(object):
         self.clients.append({
             'id': user_id,
             'client_id': client_id,
+            'device_id': data['device_id'],
+            'device_name': data['device_name'],
+            'type': data['type'],
             'real_address': data['real_address'],
             'virt_address': data['virt_address'],
             'connected_since': int(utils.now().strftime('%s')),
@@ -190,6 +197,7 @@ class ServerInstanceCom(object):
         client_id = client['client_id']
         org_id = bson.ObjectId(client['org_id'])
         user_id = bson.ObjectId(client['user_id'])
+        user_type = None
         virt_address = None
         devices = self.client_devices[user_id]
 
@@ -201,6 +209,7 @@ class ServerInstanceCom(object):
 
         for i, clt in enumerate(self.clients):
             if clt['client_id'] == client_id:
+                user_type = clt['type']
                 virt_address = clt['virt_address']
                 del self.clients[i]
                 break
@@ -306,8 +315,10 @@ class ServerInstanceCom(object):
                     self.client['mac_addr'] = env_val
                 elif env_key == 'untrusted_ip':
                     self.client['remote_ip'] = env_val
-                elif env_key == 'UV_UUID':
-                    self.client['client_uuid'] = env_val
+                elif env_key == 'UV_ID':
+                    self.client['device_id'] = env_val
+                elif env_key == 'UV_NAME':
+                    self.client['device_name'] = env_val
                 elif env_key == 'password':
                     self.client['password'] = env_val
         elif line_14 == '>BYTECOUNT_CLI':
