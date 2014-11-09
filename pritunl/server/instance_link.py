@@ -73,6 +73,7 @@ class ServerInstanceLink(object):
 
         client_conf = OVPN_INLINE_LINK_CONF % (
             uuid.uuid4().hex,
+            utils.random_name(),
             self.interface,
             self.linked_server.protocol,
             remotes,
