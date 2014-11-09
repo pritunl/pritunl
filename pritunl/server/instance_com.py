@@ -274,8 +274,6 @@ class ServerInstanceCom(object):
         self.bytes_lock.release()
 
     def parse_line(self, line):
-        self.push_output(line)
-
         line_14 = line[:14]
         line_18 = line[:18]
 
