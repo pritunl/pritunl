@@ -397,7 +397,7 @@ class ServerInstanceCom(object):
             self.connect()
 
             time.sleep(1)
-            self.sock.send('bytecount 15\n')
+            self.sock.send('bytecount %s\n' % self.bandwidth_rate)
 
             data = ''
             while True:
