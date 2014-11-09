@@ -399,124 +399,6 @@ class ServerInstance(object):
         for process in processes:
             process.wait()
 
-    def update_clients_bandwidth(self, clients, rem_clients):
-        # Remove client no longer connected
-        if rem_clients:
-            for client_key, (client_id, _, _) in self.clients.items():
-                if client_id in rem_clients:
-                    del self.clients[client_key]
-
-        # Get total bytes send and recv for all clients
-        bytes_recv_t = 0
-        bytes_sent_t = 0
-        for client in clients:
-            client_id = client['id']
-            client_key = str(client_id) + client['virt_address']
-            bytes_recv = client['bytes_received']
-            bytes_sent = client['bytes_sent']
-            _, prev_bytes_recv, prev_bytes_sent = self.clients.get(
-                client_key, (None, 0, 0))
-            self.clients[client_key] = (client_id, bytes_recv, bytes_sent)
-
-            if prev_bytes_recv > bytes_recv or prev_bytes_sent > bytes_sent:
-                prev_bytes_recv = 0
-                prev_bytes_sent = 0
-
-            bytes_recv_t += bytes_recv - prev_bytes_recv
-            bytes_sent_t += bytes_sent - prev_bytes_sent
-
-        if bytes_recv_t != 0 or bytes_sent_t != 0:
-            self.server.bandwidth.add_data(
-                utils.now(), bytes_recv_t, bytes_sent_t)
-
-    def update_clients(self, clients):
-        new_clients = set()
-        clients_active = 0
-
-        for client in clients:
-            new_clients.add(client['id'])
-
-        add_clients = new_clients - self.cur_clients
-        if add_clients:
-            cursor = self.user_collection.find({
-                '_id': {'$in': list(add_clients)},
-            }, {
-                'type': True,
-            })
-
-            for doc in cursor:
-                if doc['type'] != CERT_CLIENT:
-                    self.ignore_clients.add(doc['_id'])
-
-        rem_clients = self.cur_clients - new_clients
-        for client_id in rem_clients:
-            self.cur_clients.remove(client_id)
-            if client_id in self.ignore_clients:
-                self.ignore_clients.remove(client_id)
-
-        clients_active = 0
-        for client in clients:
-            if client['id'] in self.ignore_clients:
-                client['ignore'] = True
-            else:
-                client['ignore'] = False
-                clients_active += 1
-
-        response = self.collection.update({
-            '_id': self.server.id,
-            'instances.instance_id': self.id,
-        }, {'$set': {
-            'instances.$.clients': clients,
-            'instances.$.clients_active': clients_active,
-        }})
-
-        if not response['updatedExisting']:
-            return
-
-        self.update_clients_bandwidth(clients, rem_clients)
-
-        if self.client_count != len(clients):
-            for org_id in self.server.organizations:
-                event.Event(type=USERS_UPDATED, resource_id=org_id)
-            event.Event(type=HOSTS_UPDATED, resource_id=settings.local.host_id)
-            event.Event(type=SERVERS_UPDATED)
-            self.client_count = len(clients)
-
-    def read_clients(self):
-        path = os.path.join(self._temp_path, OVPN_STATUS_NAME)
-        clients = []
-
-        if os.path.isfile(path):
-            with open(path, 'r') as status_file:
-                for line in status_file.readlines():
-                    if line[:11] != 'CLIENT_LIST':
-                        continue
-                    line_split = line.strip('\n').split(',')
-                    user_id = line_split[1]
-                    real_address = line_split[2]
-                    virt_address = line_split[3]
-                    bytes_recv = line_split[4]
-                    bytes_sent = line_split[5]
-                    connected_since = line_split[7]
-
-                    # Openvpn will create an undef client while
-                    # a client connects
-                    if user_id == 'UNDEF':
-                        continue
-                    elif not virt_address:
-                        continue
-
-                    clients.append({
-                        'id': bson.ObjectId(user_id),
-                        'real_address': real_address,
-                        'virt_address': virt_address,
-                        'bytes_received': int(bytes_recv),
-                        'bytes_sent': int(bytes_sent),
-                        'connected_since': int(connected_since),
-                    })
-
-        self.update_clients(clients)
-
     def stop_process(self):
         self.sock_interrupt = True
         terminated = utils.stop_process(self.process)
@@ -586,15 +468,6 @@ class ServerInstance(object):
                     pass
         finally:
             self.stop_process()
-
-    @interrupter
-    def _status_thread(self):
-        while not self.interrupt:
-            self.read_clients()
-            yield interrupter_sleep(settings.vpn.status_update_rate)
-
-    def parse_client_connect(self, client):
-        return True
 
     def link_instance(self, host_id):
         if self.interrupt:
@@ -691,10 +564,6 @@ class ServerInstance(object):
 
     def start_threads(self, cursor_id):
         thread = threading.Thread(target=self._sub_thread, args=(cursor_id,))
-        thread.daemon = True
-        thread.start()
-
-        thread = threading.Thread(target=self._status_thread)
         thread.daemon = True
         thread.start()
 
