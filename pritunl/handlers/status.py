@@ -24,7 +24,7 @@ def status_get():
         {'$unwind': '$client'},
         {'$unwind': '$client'},
         {'$match': {
-            'client.ignore': False,
+            'client.type': CERT_CLIENT,
         }},
         {'$group': {
             '_id': None,

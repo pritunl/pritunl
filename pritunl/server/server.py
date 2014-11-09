@@ -209,7 +209,7 @@ class Server(mongo.MongoObject):
         for instance in self.instances:
             count += instance['clients_active']
             for client in instance['clients']:
-                if not client['ignore']:
+                if client['type'] == CERT_CLIENT:
                     clients.add(client['id'])
         self.devices_online = count
         self.users_online = len(clients)

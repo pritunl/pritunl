@@ -35,7 +35,7 @@ def iter_servers_dict():
         {'$unwind': '$client'},
         {'$unwind': '$client'},
         {'$match': {
-            'client.ignore': False,
+            'client.type': CERT_CLIENT,
         }},
         {'$group': {
             '_id': '$host_id',
