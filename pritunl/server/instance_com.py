@@ -40,6 +40,8 @@ class ServerInstanceCom(object):
         self.bytes_sent = 0
         self.client = None
         self.clients = []
+        self.clients_active = 0
+        self.client_count = 0
         self.client_bytes = {}
         self.client_devices = collections.defaultdict(list)
         self.client_ips = set()
@@ -175,6 +177,11 @@ class ServerInstanceCom(object):
             'connected_since': int(utils.now().strftime('%s')),
         })
 
+        if data['type'] == CERT_CLIENT:
+            self.clients_active += 1
+
+        self.update_clients()
+
         self.push_output('User connected org_id=%s user_id=%s' % (
             org_id, user_id))
 
@@ -204,6 +211,11 @@ class ServerInstanceCom(object):
             if virt_address in self.client_dyn_ips:
                 self.client_dyn_ips.remove(virt_address)
                 self.ip_pool.append(virt_address.split('/')[0])
+
+        if user_type == CERT_CLIENT:
+            self.clients_active -= 1
+
+        self.update_clients()
 
         self.push_output('User disconnected org_id=%s user_id=%s' % (
             org_id, user_id))
