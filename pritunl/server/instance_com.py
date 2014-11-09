@@ -54,7 +54,6 @@ class ServerInstanceCom(object):
             self.ip_pool.append(ip_addr)
 
     def client_kill(self, client):
-        # TODO
         self.sock.send('client-kill %s\n' % client['client_id'])
         self.push_output('Disconnecting user org_id=%s user_id=%s' % (
             client['user_id'], client['org_id']))
