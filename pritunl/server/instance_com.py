@@ -208,6 +208,22 @@ class ServerInstanceCom(object):
         self.push_output('User disconnected org_id=%s user_id=%s' % (
             org_id, user_id))
 
+    def update_clients(self):
+        self.server.collection.update({
+            '_id': self.server.id,
+            'instances.instance_id': self.instance.id,
+        }, {'$set': {
+            'instances.$.clients': self.clients,
+            'instances.$.clients_active': self.clients_active,
+        }})
+
+        if self.client_count != len(self.clients):
+            for org_id in self.server.organizations:
+                event.Event(type=USERS_UPDATED, resource_id=org_id)
+            event.Event(type=HOSTS_UPDATED, resource_id=settings.local.host_id)
+            event.Event(type=SERVERS_UPDATED)
+            self.client_count = len(self.clients)
+
     def send_client_auth(self, client, client_conf):
         self.sock.send('client-auth %s %s\n%s\nEND\n' % (
             client['client_id'], client['key_id'], client_conf))
