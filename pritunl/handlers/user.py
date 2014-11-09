@@ -31,7 +31,7 @@ def user_get(org_id, user_id=None, page=None):
     otp_auth = False
     search_more = True
     server_count = 0
-    clients = collections.defaultdict(dict)
+    clients = collections.defaultdict(lambda: collections.defaultdict(list))
     servers = []
 
     fields = (
@@ -46,10 +46,9 @@ def user_get(org_id, user_id=None, page=None):
             otp_auth = True
         for instance in svr.instances:
             for client in instance['clients']:
-                clients[client['id']][svr.id] = client
+                clients[client['id']][svr.id].append(client)
 
     users = []
-    users_id = []
     users_server_data = collections.defaultdict(dict)
     fields = (
         'organization',
@@ -63,7 +62,6 @@ def user_get(org_id, user_id=None, page=None):
     for user in org.iter_users(page=page, search=search,
             search_limit=limit, fields=fields):
         user_id = user.id
-        users_id.append(user_id)
         is_client = user_id in clients
         user_dict = user.dict()
         user_dict['status'] = is_client
@@ -71,25 +69,35 @@ def user_get(org_id, user_id=None, page=None):
         server_data = []
         for svr in servers:
             server_id = svr.id
-            user_status = is_client and server_id in clients[user_id]
-            data = {
-                'id': server_id,
-                'name': svr.name,
-                'status': user_status,
-                'real_address': None,
-                'virt_address': None,
-                'bytes_received': None,
-                'bytes_sent': None,
-                'connected_since': None,
-            }
-            users_server_data[user_id][server_id] = data
-            if user_status:
-                data.update(clients[user_id][server_id])
-            server_data.append(data)
+
+            if clients[user_id][server_id]:
+                for device in clients[user_id][server_id]:
+                    device['id'] = device.pop('device_id', server_id)
+                    device['name'] = svr.name
+                    device['status'] = True
+                    device['virt_address'] = device['virt_address'].split(
+                        '/')[0]
+                    server_data.append(device)
+            else:
+                data = {
+                    'id': server_id,
+                    'name': svr.name,
+                    'status': False,
+                    'type': None,
+                    'client_id': None,
+                    'device_id': None,
+                    'device_name': None,
+                    'real_address': None,
+                    'virt_address': None,
+                    'connected_since': None
+                }
+                server_data.append(data)
+                users_server_data[user_id][server_id] = data
+
         user_dict['servers'] = server_data
         users.append(user_dict)
 
-    ip_addrs_iter = server.multi_get_ip_addr(org_id, users_id)
+    ip_addrs_iter = server.multi_get_ip_addr(org_id, users_server_data.keys())
     for user_id, server_id, ip_add in ip_addrs_iter:
         user_server_data = users_server_data[user_id].get(server_id)
         if user_server_data:
