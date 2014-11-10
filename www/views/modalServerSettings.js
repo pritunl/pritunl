@@ -187,6 +187,7 @@ define([
       var protocol = this.$('select.protocol').val();
       var dhParamBits = parseInt(this.$('.dh-param-bits select').val(), 10);
       var mode = this.$('.server-mode select').val();
+      var multiDevice = this.getMultiDeviceSelect();
       var dnsServers = [];
       var dnsServersTemp = this.$('.dns-servers input').val().split(',');
       for (i = 0; i < dnsServersTemp.length; i++) {
@@ -238,6 +239,7 @@ define([
         'protocol': protocol,
         'dh_param_bits': dhParamBits,
         'mode': mode,
+        'multi_device': multiDevice,
         'local_networks': localNetworks,
         'dns_servers': dnsServers,
         'search_domain': searchDomain,
