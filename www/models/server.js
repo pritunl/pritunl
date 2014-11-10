@@ -19,6 +19,7 @@ define([
       'protocol': null,
       'dh_param_bits': null,
       'mode': null,
+      'multi_device': null,
       'local_networks': null,
       'dns_servers': null,
       'search_domain': null,
