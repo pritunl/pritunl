@@ -138,7 +138,10 @@ class ServerInstanceCom(object):
                         ip_addr = self.ip_pool.pop()
                     except IndexError:
                         break
-                    ip_addr = '%s/%s' % (ip_addr, self.ip_network.prefixlen)
+
+                    ip_addr = '%s/%s' % (
+                        ip_addr, self.ip_network.prefixlen)
+
                     if ip_addr not in self.client_ips:
                         virt_address = ip_addr
                         self.client_dyn_ips.add(virt_address)
