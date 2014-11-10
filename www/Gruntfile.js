@@ -212,6 +212,15 @@ module.exports = function(grunt) {
     copy: {
       dist: {
         files: {
+          'vendor/dist/fonts/FontAwesome.eot': 'fonts/FontAwesome.eot',
+          'vendor/dist/fonts/fontawesome-webfont.eot':
+            'fonts/fontawesome-webfont.eot',
+          'vendor/dist/fonts/fontawesome-webfont.svg':
+            'fonts/fontawesome-webfont.svg',
+          'vendor/dist/fonts/fontawesome-webfont.ttf':
+            'fonts/fontawesome-webfont.ttf',
+          'vendor/dist/fonts/fontawesome-webfont.woff':
+            'fonts/fontawesome-webfont.woff',
           'vendor/dist/fonts/fredoka-one.eot': 'fonts/fredoka-one.eot',
           'vendor/dist/fonts/fredoka-one.woff': 'fonts/fredoka-one.woff',
           'vendor/dist/fonts/glyphicons-halflings-regular.eot':
