@@ -71,6 +71,7 @@ class Server(mongo.MongoObject):
         'protocol',
         'dh_param_bits',
         'mode',
+        'multi_device',
         'local_networks',
         'dns_servers',
         'search_domain',
@@ -95,6 +96,7 @@ class Server(mongo.MongoObject):
         'instances_count',
     }
     fields_default = {
+        'multi_device': False,
         'dns_servers': [],
         'otp_auth': False,
         'tls_auth': True,
@@ -114,8 +116,8 @@ class Server(mongo.MongoObject):
 
     def __init__(self, name=None, network=None, bind_address=None,
             port=None, protocol=None, dh_param_bits=None,
-            mode=None, local_networks=None, dns_servers=None,
-            search_domain=None, otp_auth=None, cipher=None,
+            mode=None, multi_device=None, local_networks=None,
+            dns_servers=None, search_domain=None, otp_auth=None, cipher=None,
             jumbo_frames=None, lzo_compression=None, debug=None,
             **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
@@ -139,6 +141,8 @@ class Server(mongo.MongoObject):
             self.dh_param_bits = dh_param_bits
         if mode is not None:
             self.mode = mode
+        if multi_device is not None:
+            self.multi_device = multi_device
         if local_networks is not None:
             self.local_networks = local_networks
         if dns_servers is not None:
@@ -187,6 +191,7 @@ class Server(mongo.MongoObject):
             'protocol': self.protocol,
             'dh_param_bits': self.dh_param_bits,
             'mode': self.mode,
+            'multi_device': self.multi_device,
             'local_networks': self.local_networks,
             'dns_servers': self.dns_servers,
             'search_domain': self.search_domain,
