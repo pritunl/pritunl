@@ -51,6 +51,7 @@ dict_fields = [
     'dh_param_bits',
     'dh_params',
     'mode',
+    'multi_device',
     'local_networks',
     'dns_servers',
     'search_domain',
