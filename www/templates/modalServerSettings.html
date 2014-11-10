@@ -37,9 +37,9 @@
       <label>Local Networks</label>
       <input type="text" autocapitalize="off">
     </div>
-    <div class="debug-toggle toggle-form form-group">
-      <label>Enable Debugging Output</label>
-      <div class="selector <%= debug ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Show server debugging information in output">
+    <div class="multi-device-toggle toggle-form form-group">
+      <label>Allow multiple devices</label>
+      <div class="selector <%= multi_device ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Allow users to connect with multiple devices concurrently">
         <span class="selector-inner glyphicon glyphicon-ok"></span>
       </div>
     </div>
@@ -51,6 +51,10 @@
     </div>
   </div>
   <div class="left advanced">
+    <div class="bind-address form-group">
+      <label>Bind Address</label>
+      <input type="text" class="form-control" placeholder="Enter bind address" data-toggle="tooltip" title="Optional, local address to bind vpn server to. Leave empty to bind to all interfaces" value="<%- bind_address || '' %>" autocapitalize="off">
+    </div>
     <div class="dh-param-bits form-group">
       <label>DH Param Bits</label>
       <select class="form-control" data-toggle="tooltip" title="Size of DH parameters">
