@@ -200,6 +200,9 @@ class ServerInstance(object):
         if self.server.bind_address:
             server_conf += 'local %s\n' % self.server.bind_address
 
+        if self.server.multi_device:
+            server_conf += 'duplicate-cn\n'
+
         if self.server.otp_auth:
             server_conf += 'auth-user-pass-verify %s via-file\n' % (
                 self.user_pass_verify_path)
