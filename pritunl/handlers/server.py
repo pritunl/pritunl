@@ -182,6 +182,12 @@ def server_put_post(server_id=None):
                 'error_msg': MODE_INVALID_MSG,
             }, 400)
 
+    multi_device = False
+    multi_device_def = False
+    if 'multi_device' in flask.request.json:
+        multi_device_def = True
+        multi_device = True if flask.request.json['multi_device'] else False
+
     local_networks = None
     local_networks_def = False
     if 'local_networks' in flask.request.json:
@@ -337,6 +343,7 @@ def server_put_post(server_id=None):
             protocol=protocol,
             dh_param_bits=dh_param_bits,
             mode=mode,
+            multi_device=multi_device,
             local_networks=local_networks,
             dns_servers=dns_servers,
             search_domain=search_domain,
@@ -369,6 +376,8 @@ def server_put_post(server_id=None):
             svr.generate_dh_param()
         if mode_def:
             svr.mode = mode
+        if multi_device_def:
+            svr.multi_device = multi_device
         if local_networks_def:
             svr.local_networks = local_networks
         if dns_servers_def:
