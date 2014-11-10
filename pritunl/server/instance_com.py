@@ -101,23 +101,36 @@ class ServerInstanceCom(object):
                     push += 'iroute %s %s\n' % utils.parse_network(
                         local_network)
 
-            virt_address = None
-            if devices and device_id:
-                for i, device in enumerate(devices):
-                    if device['device_id'] == device_id:
-                        virt_address = device['virt_address']
-
-                        self.client_kill(device)
-                        if virt_address in self.client_ips:
-                            self.client_ips.remove(virt_address)
-
-                        del devices[i]
-
-            if not virt_address:
+            if not self.server.multi_device:
                 virt_address = self.server.get_ip_addr(org.id, user_id)
 
-            if virt_address and virt_address in self.client_ips:
+                if virt_address and virt_address in self.client_ips:
+                    for i, device in enumerate(devices):
+                        if device['virt_address'] == virt_address:
+
+                            self.client_kill(device)
+                            if virt_address in self.client_ips:
+                                self.client_ips.remove(virt_address)
+
+                            del devices[i]
+            else:
                 virt_address = None
+                if devices and device_id:
+                    for i, device in enumerate(devices):
+                        if device['device_id'] == device_id:
+                            virt_address = device['virt_address']
+
+                            self.client_kill(device)
+                            if virt_address in self.client_ips:
+                                self.client_ips.remove(virt_address)
+
+                            del devices[i]
+
+                if not virt_address:
+                    virt_address = self.server.get_ip_addr(org.id, user_id)
+
+                if virt_address and virt_address in self.client_ips:
+                    virt_address = None
 
             if not virt_address:
                 while True:
