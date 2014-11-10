@@ -67,6 +67,7 @@ class ServerInstanceCom(object):
             user_id = bson.ObjectId(client['user_id'])
             device_id = client.get('device_id')
             device_name = client.get('device_name')
+            platform = client.get('platform')
             mac_addr = client.get('mac_addr')
             password = client.get('password')
             remote_ip = client.get('remote_ip')
@@ -139,6 +140,7 @@ class ServerInstanceCom(object):
                     'device_id': device_id,
                     'device_name': device_name,
                     'type': user.type,
+                    'platform': platform,
                     'mac_addr': mac_addr,
                     'password': password,
                     'virt_address': virt_address,
@@ -179,6 +181,7 @@ class ServerInstanceCom(object):
             'client_id': client_id,
             'device_id': data['device_id'],
             'device_name': data['device_name'],
+            'platform': data['platform'],
             'type': data['type'],
             'real_address': data['real_address'],
             'virt_address': data['virt_address'],
@@ -313,6 +316,8 @@ class ServerInstanceCom(object):
                     self.client['mac_addr'] = env_val
                 elif env_key == 'untrusted_ip':
                     self.client['remote_ip'] = env_val
+                elif env_key == 'IV_PLAT':
+                    self.client['platform'] = env_val
                 elif env_key == 'UV_ID':
                     self.client['device_id'] = env_val
                 elif env_key == 'UV_NAME':
