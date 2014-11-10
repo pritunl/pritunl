@@ -87,6 +87,7 @@ def user_get(org_id, user_id=None, page=None):
                     'client_id': None,
                     'device_id': None,
                     'device_name': None,
+                    'platform': None,
                     'real_address': None,
                     'virt_address': None,
                     'connected_since': None
