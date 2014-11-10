@@ -467,7 +467,6 @@ client-to-client
 max-clients 1024
 keepalive 15 30
 persist-tun
-duplicate-cn
 %s
 status-version 2
 script-security 2
