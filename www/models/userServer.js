@@ -13,6 +13,7 @@ define([
       'client_id': null,
       'device_id': null,
       'device_name': null,
+      'platform': null,
       'real_address': null,
       'virt_address': null,
       'connected_since': null
