@@ -20,7 +20,8 @@ define([
         'change .server-mode select': 'onServerMode',
         'change .dh-param-bits select': 'onDhParamBits',
         'click .otp-auth-toggle': 'onOtpAuthSelect',
-        'click .debug-toggle': 'onDebugSelect'
+        'click .debug-toggle': 'onDebugSelect',
+        'click .multi-device-toggle': 'onMultiDeviceSelect'
       }, ModalServerSettingsView.__super__.events);
     },
     initialize: function(options) {
@@ -119,6 +120,22 @@ define([
     },
     onDebugSelect: function() {
       this.setDebugSelect(!this.getDebugSelect());
+    },
+    getMultiDeviceSelect: function() {
+      return this.$('.multi-device-toggle .selector').hasClass('selected');
+    },
+    setMultiDeviceSelect: function(state) {
+      if (state) {
+        this.$('.multi-device-toggle .selector').addClass('selected');
+        this.$('.multi-device-toggle .selector-inner').show();
+      }
+      else {
+        this.$('.multi-device-toggle .selector').removeClass('selected');
+        this.$('.multi-device-toggle .selector-inner').hide();
+      }
+    },
+    onMultiDeviceSelect: function() {
+      this.setMultiDeviceSelect(!this.getMultiDeviceSelect());
     },
     onInputChange: function(evt) {
       if ($(evt.target).parent().hasClass('network')) {
