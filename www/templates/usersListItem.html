@@ -4,6 +4,7 @@
   </div>
   <div class="name-container type-<%- type %>">
     <span class="name-icon glyphicon glyphicon-user" <%= type === 'server' ? 'data-toggle="tooltip" title="Server user"' : '' %>></span>
+    <img class="name-gravatar" src="<%- email ? '//www.gravatar.com/avatar/' + window.md5(email) + '?r=x&s=52&d=404' : ''%>" onload="$(this).show(); $(this).siblings('.name-icon').hide()" onerror="$(this).hide(); $(this).siblings('.name-icon').show()"/>
     <a class="user-name title no-select" data-toggle="tooltip" title="Click to rename this user"><%- name %><%- email ? ' (' + email + ')' : '' %></a>
     <span class="user-id title">(<%- id %>)</span>
   </div>
