@@ -15,14 +15,31 @@ define([
       return this;
     },
     update: function() {
-      var name = this.model.get('name');
-      var device_name = this.model.get('device_name');
+      this.$('.server-name .title').text(this.model.get('name'));
 
-      if (name && device_name) {
-        name = name + ' (' + device_name + ')';
+      var deviceName = this.model.get('device_name');
+      var platform = this.model.get('platform');
+      if (deviceName) {
+        this.$('.server-device .title').text(deviceName);
+        if (platform === 'win') {
+          platform = 'windows';
+        }
+        else if (platform === 'mac') {
+          platform = 'apple';
+        }
+        else if (platform === 'linux') {
+        }
+        else {
+          platform = 'desktop';
+        }
+        this.$('.server-device .name-icon').removeClass(
+          'fa-windows fa-apple fa-linux fa-desktop');
+        this.$('.server-device .name-icon').addClass('fa-' + platform);
+        this.$('.server-device').show();
       }
-
-      this.$('.server-name .title').text(name);
+      else {
+        this.$('.server-device').hide();
+      }
 
       var addr = this.model.get('virt_address');
       if (addr) {
