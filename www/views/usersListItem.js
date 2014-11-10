@@ -117,6 +117,14 @@ define([
       var email = this.model.get('email');
       this.$('.user-name').text(
         this.model.get('name') + (email ? ' (' + email + ')' : ''));
+      if (email) {
+        this.$('.name-gravatar').attr('src', '//www.gravatar.com/avatar/' +
+          window.md5(email) + '?r=x&s=52&d=404');
+      }
+      else {
+        this.$('.name-gravatar').hide();
+        this.$('.name-gravatar').attr('src', '');
+      }
       if (this.model.get('disabled')) {
         this.$('.user .status-icon').removeClass('online');
         this.$('.user .status-icon').removeClass('offline');
