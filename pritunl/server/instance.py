@@ -57,20 +57,8 @@ class ServerInstance(object):
         self.replica_links = {}
         self.server_links = []
         self._temp_path = utils.get_temp_path()
-        self.tls_verify_path = os.path.join(self._temp_path,
-            TLS_VERIFY_NAME)
-        self.user_pass_verify_path = os.path.join(self._temp_path,
-            USER_PASS_VERIFY_NAME)
-        self.client_connect_path = os.path.join(self._temp_path,
-            CLIENT_CONNECT_NAME)
-        self.client_disconnect_path = os.path.join(self._temp_path,
-            CLIENT_DISCONNECT_NAME)
-        self.ovpn_status_path = os.path.join(self._temp_path,
-            OVPN_STATUS_NAME)
         self.ovpn_conf_path = os.path.join(self._temp_path,
             OVPN_CONF_NAME)
-        self.auth_log_path = os.path.join(self._temp_path,
-            AUTH_LOG_NAME)
         self.management_socket_path = os.path.join(settings.conf.var_run_path,
             'pritunl_%s.sock' % self.id)
 
@@ -139,29 +127,6 @@ class ServerInstance(object):
             primary_org = organization.get_by_id(
                 id=self.server.primary_organization)
             self.primary_user = primary_org.get_user(self.server.primary_user)
-
-        with open(self.auth_log_path, 'w') as auth_log:
-            os.chmod(self.auth_log_path, 0600)
-
-        auth_host = settings.conf.bind_addr
-        if auth_host == '0.0.0.0':
-            auth_host = 'localhost'
-        for script, script_path in (
-                    (TLS_VERIFY_SCRIPT, self.tls_verify_path),
-                    (USER_PASS_VERIFY_SCRIPT, self.user_pass_verify_path),
-                    (CLIENT_CONNECT_SCRIPT, self.client_connect_path),
-                    (CLIENT_DISCONNECT_SCRIPT, self.client_disconnect_path),
-                ):
-            with open(script_path, 'w') as script_file:
-                os.chmod(script_path, 0755) # TODO
-                script_file.write(script % (
-                    settings.app.server_api_key,
-                    self.auth_log_path,
-                    'https' if settings.conf.ssl else 'http',
-                    auth_host,
-                    settings.conf.port,
-                    self.server.id,
-                ))
 
         push = ''
         if self.server.mode == LOCAL_TRAFFIC:
