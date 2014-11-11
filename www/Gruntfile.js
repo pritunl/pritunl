@@ -290,6 +290,8 @@ module.exports = function(grunt) {
   grunt.registerTask('test', ['jshint', 'clean', 'requirejs:test',
     'less', 'copy:dist', 'versioning']);
 
+  grunt.registerTask('styles', ['less']);
+
   grunt.registerTask('demo', ['jshint', 'clean', 'requirejs:demo',
     'less', 'copy:demo', 'versioning']);
 
