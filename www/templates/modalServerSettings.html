@@ -51,10 +51,6 @@
     </div>
   </div>
   <div class="left advanced">
-    <div class="bind-address form-group">
-      <label>Bind Address</label>
-      <input type="text" class="form-control" placeholder="Enter bind address" data-toggle="tooltip" title="Optional, local address to bind vpn server to. Leave empty to bind to all interfaces" value="<%- bind_address || '' %>" autocapitalize="off">
-    </div>
     <div class="dh-param-bits form-group">
       <label>DH Param Bits</label>
       <select class="form-control" data-toggle="tooltip" title="Size of DH parameters">
@@ -76,15 +72,21 @@
         <option value="aes256" <%= cipher === 'aes256' ? 'selected' : '' %>>AES 256bit</option>
       </select>
     </div>
+    <div class="debug-toggle toggle-form form-group">
+      <label>Enable Debugging Output</label>
+      <div class="selector <%= debug ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Show server debugging information in output">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
   </div>
   <div class="right advanced">
-    <div class="search-domain form-group">
-      <label>DNS Search Domain</label>
-      <input type="text" class="form-control" placeholder="Enter DNS search domain" data-toggle="tooltip" title="Optional, DNS search domain for clients" value="<%- search_domain || '' %>" autocapitalize="off">
-    </div>
     <div class="bind-address form-group">
       <label>Bind Address</label>
       <input type="text" class="form-control" placeholder="Enter bind address" data-toggle="tooltip" title="Optional, local address to bind vpn server to. Leave empty to bind to all interfaces" value="<%- bind_address || '' %>" autocapitalize="off">
+    </div>
+    <div class="search-domain form-group">
+      <label>DNS Search Domain</label>
+      <input type="text" class="form-control" placeholder="Enter DNS search domain" data-toggle="tooltip" title="Optional, DNS search domain for clients" value="<%- search_domain || '' %>" autocapitalize="off">
     </div>
   </div>
 </div>
