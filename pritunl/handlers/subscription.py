@@ -9,6 +9,7 @@ from pritunl import auth
 
 import flask
 import re
+import httplib
 
 @app.app.route('/subscription', methods=['GET'])
 @auth.session_auth
