@@ -11,6 +11,7 @@ def update():
     if not license:
         settings.local.sub_active = False
         settings.local.sub_status = None
+        settings.local.sub_plan = None
         settings.local.sub_amount = None
         settings.local.sub_period_end = None
         settings.local.sub_cancel_at_period_end = None
@@ -27,17 +28,19 @@ def update():
                 return
             data = response.json()
 
-            settings.local.sub_active = data.get('active', False)
-            settings.local.sub_status = data.get('status', 'unknown')
-            settings.local.sub_amount = data.get('amount')
-            settings.local.sub_period_end = data.get('period_end')
-            settings.local.sub_cancel_at_period_end = data.get(
-                'cancel_at_period_end')
+            settings.local.sub_active = data['active']
+            settings.local.sub_status = data['status']
+            settings.local.sub_plan = data['plan']
+            settings.local.sub_amount = data['amount']
+            settings.local.sub_period_end = data['period_end']
+            settings.local.sub_cancel_at_period_end = data[
+                'cancel_at_period_end']
         except:
             logger.exception('Failed to check subscription status',
                 'subscription')
             settings.local.sub_active = False
             settings.local.sub_status = None
+            settings.local.sub_plan = None
             settings.local.sub_amount = None
             settings.local.sub_period_end = None
             settings.local.sub_cancel_at_period_end = None
@@ -50,9 +53,10 @@ def update():
 
 def dict():
     return {
-        'license': bool(settings.local.sub_active),
+        'license': settings.app.license,
         'active': settings.local.sub_active,
         'status': settings.local.sub_status,
+        'plan': settings.local.sub_plan,
         'amount': settings.local.sub_amount,
         'period_end': settings.local.sub_period_end,
         'cancel_at_period_end': settings.local.sub_cancel_at_period_end,
