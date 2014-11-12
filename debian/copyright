@@ -6,10 +6,6 @@ Files: *
 Copyright: 2013-2014 Pritunl
 License: Custom
 
-Files: debian/*
-Copyright: 2013-2014 Pritunl
-License: Custom
-
 # Please also look if there are files or directories which have a
 # different copyright/license attached and list them here.
 # Please avoid to pick license terms that are more restrictive than the
