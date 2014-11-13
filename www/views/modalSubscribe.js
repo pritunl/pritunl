@@ -21,6 +21,8 @@ define([
       return _.extend({
         'click .subscribe-premium': 'onPremium',
         'click .subscribe-enterprise': 'onEnterprise',
+        'click .subscribe-promo': 'onPromo',
+        'click .subscribe-promo-ok': 'onPromoOk',
         'click .subscribe-activate': 'onActivate',
         'click .subscribe-submit': 'onSubmit',
         'click .subscribe-cancel': 'onCancel'
@@ -149,6 +151,67 @@ define([
     },
     onEnterprise: function() {
       this._onCheckout('enterprise');
+    },
+    onPromo: function() {
+      this.$('.subscribe-promo').hide(window.slideTime);
+      this.$('.subscribe-promo-input').show(window.slideTime);
+      this.$('.subscribe-promo-ok').show(window.slideTime);
+    },
+    _closePromo: function() {
+      this.$('.subscribe-promo-ok').removeAttr('disabled');
+      this.$('.subscribe-promo').show(window.slideTime);
+      this.$('.subscribe-promo-input').hide(window.slideTime,
+        function() {
+          $(this).val('');
+        });
+      this.$('.subscribe-promo-input-email').hide(window.slideTime,
+        function() {
+          $(this).val('');
+        });
+      this.$('.subscribe-promo-ok').hide(window.slideTime);
+    },
+    onPromoOk: function() {
+      this.$('.subscribe-promo-ok').attr('disabled', 'disabled');
+      var promoCode = this.$('.subscribe-promo-input').val();
+      var email = this.$('.subscribe-promo-input-email').val();
+
+      if (!promoCode && !email) {
+        this._closePromo();
+        return;
+      }
+
+      if (!email && promoCode.substr(0, 2).toLowerCase() === 'ua') {
+        this.$('.subscribe-promo-input').hide(window.slideTime);
+        this.$('.subscribe-promo-input-email').show(window.slideTime,
+          function() {
+            this.$('.subscribe-promo-ok').removeAttr('disabled');
+          }.bind(this));
+        return;
+      }
+
+      $.ajax({
+          type: 'POST',
+          url: window.subscription_server + '/promo',
+          contentType: 'application/json',
+          dataType: 'json',
+          data: JSON.stringify({
+            'promo_code': promoCode,
+            'email': email,
+          }),
+          success: function(response) {
+            if (response.status) {
+              this.setAlert('success', response.msg);
+            }
+            else {
+              this.setAlert('danger', response.msg);
+            }
+            this._closePromo();
+          }.bind(this),
+          error: function() {
+            this.setAlert('danger', 'Failed to verify promo code, ' +
+              'please try again later.');
+          }.bind(this)
+      });
     },
     onActivate: function() {
       this.activateActive = true;
