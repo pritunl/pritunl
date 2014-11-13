@@ -37,13 +37,45 @@ define([
       this.listenTo(window.events, 'subscription_enterprise_inactive',
         this.onSubscriptionEnterpriseInactive);
     },
-    onSubscriptionActive: function() {
-      window.enterprise = true;
-      $('body').addClass('enterprise');
-    },
-    onSubscriptionInactive: function() {
-      window.enterprise = false;
+    onSubscriptionPremiumActive: function() {
+      window.subActive = true;
+      window.subPlan = 'premium';
+      $('body').addClass('premium');
       $('body').removeClass('enterprise');
+      $('body').removeClass('premium-license');
+      $('body').removeClass('enterprise-license');
+    },
+    onSubscriptionEnterpriseActive: function() {
+      window.subActive = true;
+      window.subPlan = 'enterprise';
+      $('body').removeClass('premium');
+      $('body').addClass('enterprise');
+      $('body').removeClass('premium-license');
+      $('body').removeClass('enterprise-license');
+    },
+    onSubscriptionPremiumInactive: function() {
+      window.subActive = false;
+      window.subPlan = 'premium';
+      $('body').removeClass('premium');
+      $('body').removeClass('enterprise');
+      $('body').addClass('premium-license');
+      $('body').removeClass('enterprise-license');
+    },
+    onSubscriptionEnterpriseInactive: function() {
+      window.subActive = false;
+      window.subPlan = 'enterprise';
+      $('body').removeClass('premium');
+      $('body').removeClass('enterprise');
+      $('body').removeClass('premium-license');
+      $('body').addClass('enterprise-license');
+    },
+    onSubscriptionNoneInactive: function() {
+      window.subActive = false;
+      window.subPlan = null;
+      $('body').removeClass('premium');
+      $('body').removeClass('enterprise');
+      $('body').removeClass('premium-license');
+      $('body').removeClass('enterprise-license');
     },
     checkAuth: function(callback) {
       if (window.authenticated) {
