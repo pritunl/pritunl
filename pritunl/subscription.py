@@ -68,4 +68,3 @@ def dict():
 def update_license(license):
     settings.app.license = license
     settings.commit()
-    subscription_update
