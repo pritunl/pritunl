@@ -21,6 +21,7 @@ def subscription_get():
 def subscription_state_get():
     return utils.jsonify({
         'active': settings.local.sub_active,
+        'plan': settings.local.sub_plan,
     })
 
 @app.app.route('/subscription', methods=['POST'])
