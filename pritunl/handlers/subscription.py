@@ -55,6 +55,7 @@ def subscription_post():
 def subscription_put():
     card = flask.request.json.get('card')
     email = flask.request.json.get('email')
+    plan = flask.request.json.get('plan')
     cancel = flask.request.json.get('cancel')
 
     try:
@@ -69,6 +70,7 @@ def subscription_put():
                 json_data={
                     'license': settings.app.license,
                     'card': card,
+                    'plan': plan,
                     'email': email,
                 },
             )
