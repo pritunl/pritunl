@@ -16,7 +16,8 @@ define([
     safeClose: true,
     events: function() {
       return _.extend({
-        'click .enterprise-update, .enterprise-reactivate': 'onCheckout',
+        'click .enterprise-update, .enterprise-reactivate': 'onUpdate',
+        'click .enterprise-change': 'onChange',
         'click .enterprise-remove': 'onRemoveLicense',
         'click .enterprise-cancel': 'onCancelLicense'
       }, ModalEnterpriseView.__super__.events);
@@ -174,10 +175,16 @@ define([
     setupCheckout: function() {
       $.getCachedScript('https://checkout.stripe.com/checkout.js');
     },
-    onCheckout: function() {
+    _onCheckout: function(optionsPath) {
       this.lock();
       this.clearAlert();
-      this.openCheckout(this.checkoutPath);
+      this.openCheckout(optionsPath);
+    },
+    onChange: function() {
+      this._onCheckout('checkout_change');
+    },
+    onUpdate: function() {
+      this._onCheckout(this.checkoutPath);
     },
     onRemoveLicense: function() {
       if (this.$('.enterprise-remove').text() === 'Remove License') {
