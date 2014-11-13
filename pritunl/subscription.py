@@ -16,6 +16,9 @@ def update():
         settings.local.sub_period_end = None
         settings.local.sub_cancel_at_period_end = None
     else:
+        cur_sub_active = settings.local.sub_active
+        cur_sub_plan = settings.local.sub_plan
+
         try:
             response = utils.request.get(SUBSCRIPTION_SERVER,
                 json_data={'license': license},
