@@ -506,10 +506,22 @@ require([
   model.fetch({
     url: '/subscription/state',
     success: function(model) {
-      window.enterprise = model.get('active');
-      if (window.enterprise) {
-        $('body').addClass('enterprise');
+      window.subActive = model.get('active');
+      window.subPlan = model.get('plan');
+
+      if (window.subActive) {
+        if (window.subPlan === 'premium') {
+          $('body').addClass('premium');
+        }
+        else if (window.subPlan === 'enterprise') {
+          $('body').addClass('enterprise');
+        }
       }
+
+      if (window.subPlan) {
+        $('body').addClass('license');
+      }
+
       init();
     },
     error: function() {
