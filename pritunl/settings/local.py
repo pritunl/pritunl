@@ -17,4 +17,10 @@ class SettingsLocal(SettingsGroupLocal):
         'server_ready': threading.Event(),
         'server_start': server_start,
         'host_ping_timestamp': None,
+        'sub_active': False,
+        'sub_status': None,
+        'sub_plan': None,
+        'sub_amount': None,
+        'sub_period_end': None,
+        'sub_cancel_at_period_end': None,
     }
