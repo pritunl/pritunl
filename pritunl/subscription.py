@@ -49,6 +49,7 @@ def update():
             settings.local.sub_amount = None
             settings.local.sub_period_end = None
             settings.local.sub_cancel_at_period_end = None
+
     if cur_sub_active != settings.local.sub_active or \
             cur_sub_plan != settings.local.sub_plan:
         if settings.local.sub_active:
