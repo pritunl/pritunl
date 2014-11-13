@@ -7,7 +7,6 @@ from pritunl import utils
 from pritunl import event
 
 def update():
-    cur_sub_active = settings.local.sub_active
     license = settings.app.license
 
     if not license:
