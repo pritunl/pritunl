@@ -138,7 +138,7 @@ define([
           }.bind(this)
       });
     },
-    configCheckout: function(options) {
+    configCheckout: function(options, plan) {
       $.getCachedScript('https://checkout.stripe.com/checkout.js', {
         success: function() {
           var ordered = false;
@@ -156,10 +156,19 @@ define([
               this.setLoading(this.checkoutLoading, true, 100);
               this.model.save({
                 card: token.id,
-                email: token.email
+                email: token.email,
+                plan: plan
               }, {
                 success: function() {
-                  this.setAlert('success', this.checkoutCompleted);
+                  if (plan) {
+                    this.setAlert('success', 'Subscription plan ' +
+                      'successfully changed. The payment or credit for the ' +
+                      'current month will be prorated into the payment ' +
+                      'for the next month.');
+                  }
+                  else {
+                    this.setAlert('success', this.checkoutCompleted);
+                  }
                   this.clearLoading();
                   this.unlock();
                   this.update();
