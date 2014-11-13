@@ -49,12 +49,22 @@ def update():
             settings.local.sub_amount = None
             settings.local.sub_period_end = None
             settings.local.sub_cancel_at_period_end = None
-    if cur_sub_active is not None and \
-            cur_sub_active != settings.local.sub_active:
+    if cur_sub_active != settings.local.sub_active or \
+            cur_sub_plan != settings.local.sub_plan:
         if settings.local.sub_active:
-            event.Event(type=SUBSCRIPTION_ACTIVE)
+            if settings.local.sub_plan == 'premium':
+                event.Event(type=SUBSCRIPTION_PREMIUM_ACTIVE)
+            elif settings.local.sub_plan == 'enterprise':
+                event.Event(type=SUBSCRIPTION_ENTERPRISE_ACTIVE)
+            else:
+                event.Event(type=SUBSCRIPTION_NONE_INACTIVE)
         else:
-            event.Event(type=SUBSCRIPTION_INACTIVE)
+            if settings.local.sub_plan == 'premium':
+                event.Event(type=SUBSCRIPTION_PREMIUM_INACTIVE)
+            elif settings.local.sub_plan == 'enterprise':
+                event.Event(type=SUBSCRIPTION_ENTERPRISE_INACTIVE)
+            else:
+                event.Event(type=SUBSCRIPTION_NONE_INACTIVE)
 
 def dict():
     return {
