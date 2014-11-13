@@ -186,8 +186,11 @@ SERVER_HOSTS_UPDATED = 'server_hosts_updated'
 SERVER_LINKS_UPDATED = 'server_links_updated'
 SERVER_OUTPUT_UPDATED = 'server_output_updated'
 SERVER_LINK_OUTPUT_UPDATED = 'server_link_output_updated'
-SUBSCRIPTION_ACTIVE = 'subscription_active'
-SUBSCRIPTION_INACTIVE = 'subscription_inactive'
+SUBSCRIPTION_PREMIUM_ACTIVE = 'subscription_premium_active'
+SUBSCRIPTION_ENTERPRISE_ACTIVE = 'subscription_enterprise_active'
+SUBSCRIPTION_NONE_INACTIVE = 'subscription_none_inactive'
+SUBSCRIPTION_PREMIUM_INACTIVE = 'subscription_premium_inactive'
+SUBSCRIPTION_ENTERPRISE_INACTIVE = 'subscription_enterprise_inactive'
 
 BASH_COLORS = [
     '92',
