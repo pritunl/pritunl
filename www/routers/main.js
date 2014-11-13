@@ -24,10 +24,18 @@ define([
     },
     initialize: function(data) {
       this.data = data;
-      this.listenTo(window.events, 'subscription_active',
-        this.onSubscriptionActive);
-      this.listenTo(window.events, 'subscription_inactive',
-        this.onSubscriptionInactive);
+      this.listenTo(window.events, 'subscription_none_active',
+        this.onSubscriptionNoneActive);
+      this.listenTo(window.events, 'subscription_premium_active',
+        this.onSubscriptionPremiumActive);
+      this.listenTo(window.events, 'subscription_enterprise_active',
+        this.onSubscriptionEnterpriseActive);
+      this.listenTo(window.events, 'subscription_none_inactive',
+        this.onSubscriptionNoneInactive);
+      this.listenTo(window.events, 'subscription_premium_inactive',
+        this.onSubscriptionPremiumInactive);
+      this.listenTo(window.events, 'subscription_enterprise_inactive',
+        this.onSubscriptionEnterpriseInactive);
     },
     onSubscriptionActive: function() {
       window.enterprise = true;
