@@ -19,7 +19,8 @@ define([
     safeClose: true,
     events: function() {
       return _.extend({
-        'click .subscribe-checkout': 'onCheckout',
+        'click .subscribe-premium': 'onPremium',
+        'click .subscribe-enterprise': 'onEnterprise',
         'click .subscribe-activate': 'onActivate',
         'click .subscribe-submit': 'onSubmit',
         'click .subscribe-cancel': 'onCancel'
@@ -124,7 +125,7 @@ define([
         }.bind(this)
       });
     },
-    openCheckout: function() {
+    openCheckout: function(plan) {
       if (this.checkout === undefined) {
         setTimeout((this.openCheckout).bind(this), 10);
       }
