@@ -8,6 +8,7 @@ from pritunl import utils
 def update():
     cur_sub_active = settings.local.sub_active
     license = settings.app.license
+
     if not license:
         settings.local.sub_active = False
         settings.local.sub_status = None
@@ -23,6 +24,7 @@ def update():
             response = utils.request.get(SUBSCRIPTION_SERVER,
                 json_data={'license': license},
                 timeout=max(settings.app.http_request_timeout, 10))
+
             # License key invalid
             if response.status_code == 470:
                 settings.app.license = None
