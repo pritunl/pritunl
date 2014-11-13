@@ -114,9 +114,23 @@ define([
     openCheckout: function(optionsPath) {
       $.ajax({
           type: 'GET',
-          url: 'https://app.pritunl.com/' + optionsPath,
+          url: window.subscription_server + '/' + optionsPath,
           success: function(options) {
-            this.configCheckout(options);
+            var plan;
+
+            if (options.plans) {
+              if (window.subPlan === 'enterprise') {
+                plan = 'premium';
+                _.extend(options, options.plans.premium);
+              }
+              else {
+                plan = 'enterprise';
+                _.extend(options, options.plans.enterprise);
+              }
+              delete options.plans;
+            }
+
+            this.configCheckout(options, plan);
           }.bind(this),
           error: function() {
             this.setAlert('danger', 'Failed to load checkout data, ' +
