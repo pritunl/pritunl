@@ -136,13 +136,19 @@ define([
         this.checkout.open();
       }
     },
-    onCheckout: function() {
+    _onCheckout: function(plan) {
       this.lock();
       this.clearAlert();
       if (this.checkout === null) {
         this.setupCheckout();
       }
-      this.openCheckout();
+      this.openCheckout(plan);
+    },
+    onPremium: function() {
+      this._onCheckout('premium');
+    },
+    onEnterprise: function() {
+      this._onCheckout('enterprise');
     },
     onActivate: function() {
       this.activateActive = true;
