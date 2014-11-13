@@ -517,9 +517,13 @@ require([
           $('body').addClass('enterprise');
         }
       }
-
-      if (window.subPlan) {
-        $('body').addClass('license');
+      else {
+        if (window.subPlan === 'premium') {
+          $('body').addClass('premium-license');
+        }
+        else if (window.subPlan === 'enterprise') {
+          $('body').addClass('enterprise-license');
+        }
       }
 
       init();
