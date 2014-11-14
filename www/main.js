@@ -511,6 +511,7 @@ require([
     success: function(model) {
       window.subActive = model.get('active');
       window.subPlan = model.get('plan');
+      window.subVer = model.get('version');
 
       if (window.subActive) {
         if (window.subPlan === 'premium') {
