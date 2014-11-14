@@ -10,6 +10,7 @@ from pritunl import auth
 import flask
 import re
 import httplib
+import time
 
 @app.app.route('/subscription', methods=['GET'])
 @auth.session_auth
@@ -24,6 +25,17 @@ def subscription_state_get():
         'plan': settings.local.sub_plan,
         'version': settings.local.version_int,
     })
+
+@app.app.route('/subscription/styles/<plan>/<ver>.css', methods=['GET'])
+@auth.session_auth
+def subscription_state_get(plan, ver):
+    styles = settings.local.sub_styles[plan]
+
+    return utils.styles_response(
+        styles['etag'],
+        styles['last_modified'],
+        styles['data'],
+    )
 
 @app.app.route('/subscription', methods=['POST'])
 @auth.session_auth
