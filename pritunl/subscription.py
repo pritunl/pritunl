@@ -24,7 +24,10 @@ def update():
 
         try:
             response = utils.request.get(SUBSCRIPTION_SERVER,
-                json_data={'license': license},
+                json_data={
+                    'license': license,
+                    'version': settings.local.version_int,
+                },
                 timeout=max(settings.app.http_request_timeout, 10))
 
             # License key invalid
