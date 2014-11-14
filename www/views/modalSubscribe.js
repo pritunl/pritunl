@@ -167,9 +167,9 @@ define([
       this._onCheckout('enterprise');
     },
     onPromo: function() {
-      this.$('.subscribe-promo').hide(window.slideTime);
-      this.$('.subscribe-promo-input').show(window.slideTime);
-      this.$('.subscribe-promo-ok').show(window.slideTime);
+      this.$('.subscribe-promo').hide();
+      this.$('.subscribe-promo-input').show();
+      this.$('.subscribe-promo-ok').show();
     },
     _closePromo: function() {
       this.$('.subscribe-promo-ok').removeAttr('disabled');
