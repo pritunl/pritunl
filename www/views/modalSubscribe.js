@@ -57,7 +57,6 @@ define([
       this.$('.subscribe-activate').removeAttr('disabled');
     },
     setupCheckout: function() {
-      this.checkout = undefined;
       $.ajax({
           type: 'GET',
           url: 'https://app.pritunl.com/checkout',
