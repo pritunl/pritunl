@@ -59,7 +59,7 @@ define([
     setupCheckout: function() {
       $.ajax({
           type: 'GET',
-          url: 'https://app.pritunl.com/checkout',
+          url: window.subscription_server + '/checkout',
           success: function(options) {
             var plan;
             this.plans = options.plans;
@@ -105,7 +105,7 @@ define([
               this.setLoading('Order processing, please wait...', true, 0);
               $.ajax({
                 type: 'POST',
-                url: 'https://app.pritunl.com/subscription',
+                url: window.subscription_server + '/subscription',
                 contentType: 'application/json',
                 dataType: 'json',
                 data: JSON.stringify({
