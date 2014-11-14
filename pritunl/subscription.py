@@ -6,6 +6,9 @@ from pritunl import logger
 from pritunl import utils
 from pritunl import event
 
+import hashlib
+import base64
+
 def update():
     license = settings.app.license
 
