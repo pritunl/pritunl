@@ -173,16 +173,12 @@ define([
     },
     _closePromo: function() {
       this.$('.subscribe-promo-ok').removeAttr('disabled');
-      this.$('.subscribe-promo').show(window.slideTime);
-      this.$('.subscribe-promo-input').hide(window.slideTime,
-        function() {
-          $(this).val('');
-        });
-      this.$('.subscribe-promo-input-email').hide(window.slideTime,
-        function() {
-          $(this).val('');
-        });
-      this.$('.subscribe-promo-ok').hide(window.slideTime);
+      this.$('.subscribe-promo').show();
+      this.$('.subscribe-promo-input').hide();
+      this.$('.subscribe-promo-input').val('');
+      this.$('.subscribe-promo-input-email').hide();
+      this.$('.subscribe-promo-input-email').val('');
+      this.$('.subscribe-promo-ok').hide();
     },
     onPromoOk: function() {
       this.$('.subscribe-promo-ok').attr('disabled', 'disabled');
