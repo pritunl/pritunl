@@ -149,7 +149,7 @@ define([
         this.unlock();
       }
       else {
-        this.checkout.open();
+        this.checkout.open(this.plans[plan]);
       }
     },
     _onCheckout: function(plan) {
