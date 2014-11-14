@@ -18,6 +18,7 @@ define([
       return _.extend({
         'click .enterprise-update, .enterprise-reactivate': 'onUpdate',
         'click .enterprise-change': 'onChange',
+        'click .enterprise-promo-ok': 'onPromoOk',
         'click .enterprise-remove': 'onRemoveLicense',
         'click .enterprise-cancel': 'onCancelLicense'
       }, ModalEnterpriseView.__super__.events);
@@ -208,6 +209,44 @@ define([
     },
     onUpdate: function() {
       this._onCheckout(this.checkoutPath);
+    },
+    _closePromo: function() {
+      this.$('.enterprise-promo-ok').removeAttr('disabled');
+      this.$('.enterprise-promo').show();
+      this.$('.enterprise-promo-input').hide();
+      this.$('.enterprise-promo-input').val('');
+      this.$('.enterprise-promo-ok').hide();
+    },
+    onPromoOk: function() {
+      this.$('.enterprise-promo-ok').attr('disabled', 'disabled');
+      var promoCode = this.$('.enterprise-promo-input').val();
+
+      if (!promoCode) {
+        this._closePromo();
+        return;
+      }
+
+      this.model.save({
+        'promo_code': promoCode
+      }, {
+        success: function() {
+          this._closePromo();
+          this.setAlert('success', 'Promo code successfully applied.');
+          this.update();
+        }.bind(this),
+        error: function(model, response) {
+          this._closePromo();
+          this.unlock();
+
+          if (response.responseJSON) {
+            this.setAlert('danger', response.responseJSON.error_msg);
+          }
+          else {
+            this.setAlert('danger', 'Server error occured, ' +
+              'please try again later.');
+          }
+        }.bind(this)
+      });
     },
     onRemoveLicense: function() {
       if (this.$('.enterprise-remove').text() === 'Remove License') {
