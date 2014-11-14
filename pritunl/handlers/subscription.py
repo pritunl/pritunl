@@ -87,6 +87,7 @@ def subscription_put():
         return utils.jsonify(response.json(), response.status_code)
 
     subscription.update()
+
     return utils.jsonify(subscription.dict())
 
 @app.app.route('/subscription', methods=['DELETE'])
