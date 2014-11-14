@@ -39,15 +39,21 @@ define([
     lock: function() {
       this.lockClose = true;
       this.$('.ok').attr('disabled', 'disabled');
-      this.$('.subscribe-checkout').attr('disabled', 'disabled');
+      this.$('.subscribe-premium').attr('disabled', 'disabled');
+      this.$('.subscribe-enterprise').attr('disabled', 'disabled');
+      this.$('.subscribe-promo').attr('disabled', 'disabled');
+      this.$('.subscribe-promo-ok').attr('disabled', 'disabled');
       this.$('.subscribe-activate').attr('disabled', 'disabled');
     },
     unlock: function(noCheckout) {
       this.lockClose = false;
       this.$('.ok').removeAttr('disabled');
       if (!noCheckout) {
-        this.$('.subscribe-checkout').removeAttr('disabled');
+        this.$('.subscribe-premium').removeAttr('disabled');
+        this.$('.subscribe-enterprise').removeAttr('disabled');
       }
+      this.$('.subscribe-promo').removeAttr('disabled');
+      this.$('.subscribe-promo-ok').removeAttr('disabled');
       this.$('.subscribe-activate').removeAttr('disabled');
     },
     setupCheckout: function() {
