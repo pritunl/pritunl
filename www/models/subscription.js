@@ -6,14 +6,16 @@ define([
   'use strict';
   var SubscriptionModel = Backbone.Model.extend({
     defaults: {
-      'license': null,
       'card': null,
       'email': null,
+      'url_key': null,
       'active': null,
       'status': null,
+      'plan': null,
       'amount': null,
       'period_end': null,
-      'cancel_at_period_end': null
+      'cancel_at_period_end': null,
+      'version': null
     },
     isNew: function() {
       var active = this.get('active');
