@@ -29,6 +29,7 @@ define([
     },
     postRender: function() {
       this.update();
+
       // Precache checkout and uservoice with delay to prevent animation lag
       setTimeout((this.setupUserVoice).bind(this), 200);
       setTimeout((this.setupCheckout).bind(this), 200);
