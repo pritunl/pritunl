@@ -110,7 +110,7 @@ define([
                 contentType: 'application/json',
                 dataType: 'json',
                 data: JSON.stringify({
-                  'plan': 'enterprise0',
+                  'plan': this.plan,
                   'card': token.id,
                   'email': token.email
                 }),
