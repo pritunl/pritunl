@@ -37,6 +37,7 @@ def subscription_post():
         response = utils.request.get(SUBSCRIPTION_SERVER,
             json_data={
                 'license': license,
+                'version': settings.local.version_int,
             },
         )
     except httplib.HTTPException:
