@@ -195,3 +195,16 @@ def response(data=None, status_code=None):
     if status_code is not None:
         response.status_code = status_code
     return response
+
+def styles_response(etag, last_modified, data):
+    response = flask.Response(response=data, mimetype='text/css')
+    if settings.conf.static_cache:
+        response.headers.add('Cache-Control', 'max-age=43200, public')
+        response.headers.add('ETag', '"%s"' % etag)
+    else:
+        response.headers.add('Cache-Control',
+            'no-cache, no-store, must-revalidate')
+        response.headers.add('Pragma', 'no-cache')
+        response.headers.add('Expires', 0)
+    response.headers.add('Last-Modified', last_modified)
+    return response
