@@ -148,6 +148,7 @@ define([
         this.unlock();
       }
       else {
+        this.plan = plan;
         this.checkout.open(this.plans[plan]);
       }
     },
