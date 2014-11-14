@@ -200,18 +200,6 @@ module.exports = function(grunt) {
       }
     },
 
-    less: {
-      compile: {
-        options: {
-          paths: ['styles'],
-          compress: true
-        },
-        files: {
-          'vendor/dist/css/main.css': 'styles/main.less'
-        }
-      }
-    },
-
     copy: {
       dist: {
         files: {
@@ -291,8 +279,6 @@ module.exports = function(grunt) {
 
   grunt.registerTask('test', ['jshint', 'clean', 'requirejs:test',
     'less', 'copy:dist', 'versioning']);
-
-  grunt.registerTask('styles', ['less']);
 
   grunt.registerTask('demo', ['jshint', 'clean', 'requirejs:demo',
     'less', 'copy:demo', 'versioning']);
