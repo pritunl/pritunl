@@ -18,6 +18,7 @@ define([
       return _.extend({
         'click .enterprise-update, .enterprise-reactivate': 'onUpdate',
         'click .enterprise-change': 'onChange',
+        'click .enterprise-promo': 'onPromo',
         'click .enterprise-promo-ok': 'onPromoOk',
         'click .enterprise-remove': 'onRemoveLicense',
         'click .enterprise-cancel': 'onCancelLicense'
@@ -209,6 +210,11 @@ define([
     },
     onUpdate: function() {
       this._onCheckout(this.checkoutPath);
+    },
+    onPromo: function() {
+      this.$('.enterprise-promo').hide();
+      this.$('.enterprise-promo-input').show();
+      this.$('.enterprise-promo-ok').show();
     },
     _closePromo: function() {
       this.$('.enterprise-promo-ok').removeAttr('disabled');
