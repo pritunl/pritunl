@@ -77,7 +77,6 @@ def update():
 
 def dict():
     return {
-        'license': hashlib.sha256(settings.app.license).hexdigest(),
         'active': settings.local.sub_active,
         'status': settings.local.sub_status,
         'plan': settings.local.sub_plan,
