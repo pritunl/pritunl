@@ -32,7 +32,7 @@ define([
       var model = new SubscriptionModel();
       model.fetch({
         success: function(model) {
-          if (model.get('license')) {
+          if (model.get('plan')) {
             this.enterpriseSettings(model);
           }
           else {
