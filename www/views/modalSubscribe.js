@@ -103,6 +103,7 @@ define([
               ordered = true;
               this.lock();
               this.setLoading('Order processing, please wait...', true, 0);
+
               $.ajax({
                 type: 'POST',
                 url: window.subscription_server + '/subscription',
