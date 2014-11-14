@@ -28,7 +28,7 @@ def subscription_state_get():
 
 @app.app.route('/subscription/styles/<plan>/<ver>.css', methods=['GET'])
 @auth.session_auth
-def subscription_state_get(plan, ver):
+def subscription_styles_get(plan, ver):
     styles = settings.local.sub_styles[plan]
 
     return utils.styles_response(
