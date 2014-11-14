@@ -198,6 +198,9 @@ require([
     }
     else if (type === 'date') {
       time = month + ' ' + day;
+      if (curDate.getFullYear() !== date.getFullYear()) {
+        time += ' ' + year;
+      }
     }
     else {
       time = hours + ':' + minutes + ' ' + meridiem + ' - ' +
