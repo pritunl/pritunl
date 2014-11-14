@@ -16,4 +16,6 @@ Thumbs.db
 /pritunl.egg-info
 /pritunl.db
 /www/node_modules
+/www/styles/*
+!/www/styles/vendor
 /tools/private_key.asc
