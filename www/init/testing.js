@@ -6,6 +6,8 @@ define([
 ], function($, _, Backbone) {
   'use strict';
   var initialize = function() {
+    window.subscriptionServer = 'http://localhost:9200';
+
     var _ajax = Backbone.ajax;
     Backbone.ajax = function(options) {
       var _complete = options.complete;
