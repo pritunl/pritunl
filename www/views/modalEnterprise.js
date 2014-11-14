@@ -171,6 +171,7 @@ define([
                   else {
                     this.setAlert('success', this.checkoutCompleted);
                   }
+
                   this.clearLoading();
                   this.unlock();
                   this.update();
