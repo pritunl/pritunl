@@ -190,11 +190,9 @@ define([
       }
 
       if (!email && promoCode.substr(0, 2).toLowerCase() === 'ua') {
-        this.$('.subscribe-promo-input').hide(window.slideTime);
-        this.$('.subscribe-promo-input-email').show(window.slideTime,
-          function() {
-            this.$('.subscribe-promo-ok').removeAttr('disabled');
-          }.bind(this));
+        this.$('.subscribe-promo-input').hide();
+        this.$('.subscribe-promo-input-email').show();
+        this.$('.subscribe-promo-ok').removeAttr('disabled');
         return;
       }
 
