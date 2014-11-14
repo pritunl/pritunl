@@ -51,6 +51,7 @@ def update():
             settings.local.sub_period_end = data['period_end']
             settings.local.sub_cancel_at_period_end = data[
                 'cancel_at_period_end']
+            settings.local.sub_styles[data['plan']] = data['styles']
         except:
             logger.exception('Failed to check subscription status',
                 'subscription')
