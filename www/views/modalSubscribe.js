@@ -206,17 +206,18 @@ define([
             'email': email,
           }),
           success: function(response) {
-            if (response.status) {
-              this.setAlert('success', response.msg);
-            }
-            else {
-              this.setAlert('danger', response.msg);
-            }
+            this.setAlert('success', response.msg);
             this._closePromo();
           }.bind(this),
-          error: function() {
-            this.setAlert('danger', 'Failed to verify promo code, ' +
-              'please try again later.');
+          error: function(response) {
+            if (response.responseJSON) {
+              this.setAlert('danger', response.responseJSON.error_msg);
+            }
+            else {
+              this.setAlert('danger', 'Failed to verify promo code, ' +
+                'please try again later.');
+            }
+            this._closePromo();
           }.bind(this)
       });
     },
