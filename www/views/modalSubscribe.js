@@ -224,8 +224,8 @@ define([
       this.activateActive = true;
       this.$('.subscribe-info').slideUp(window.slideTime);
       this.$('.subscribe-activate-form').slideDown(window.slideTime);
-      this.$('.subscribe-checkout').hide();
-      this.$('.subscribe-checkout2').hide();
+      this.$('.subscribe-premium').hide();
+      this.$('.subscribe-enterprise').hide();
       this.$('.subscribe-promo').hide();
       this.$('.subscribe-cancel').show();
       this.$('.subscribe-activate').hide();
@@ -261,8 +261,8 @@ define([
       this.$('.subscribe-activate-form').slideUp(window.slideTime);
       this.$('.subscribe-info').slideDown(window.slideTime);
       this.$('.subscribe-cancel').hide();
-      this.$('.subscribe-checkout').show();
-      this.$('.subscribe-checkout2').show();
+      this.$('.subscribe-premium').show();
+      this.$('.subscribe-enterprise').show();
       this.$('.subscribe-promo').show();
       this.$('.subscribe-submit').hide();
       this.$('.subscribe-activate').show();
