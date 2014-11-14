@@ -24,6 +24,7 @@ define([
     },
     initialize: function(data) {
       this.data = data;
+      this.loadedStyles = {};
       this.listenTo(window.events, 'subscription_none_active',
         this.onSubscriptionNoneActive);
       this.listenTo(window.events, 'subscription_premium_active',
@@ -44,6 +45,7 @@ define([
       $('body').removeClass('enterprise');
       $('body').removeClass('premium-license');
       $('body').removeClass('enterprise-license');
+      this.loadStyles()
     },
     onSubscriptionEnterpriseActive: function() {
       window.subActive = true;
@@ -52,6 +54,7 @@ define([
       $('body').addClass('enterprise');
       $('body').removeClass('premium-license');
       $('body').removeClass('enterprise-license');
+      this.loadStyles()
     },
     onSubscriptionPremiumInactive: function() {
       window.subActive = false;
@@ -128,7 +131,17 @@ define([
       }.bind(this));
       return false;
     },
+    loadStyles: function() {
+      if (window.subActive && !this.loadedStyles[window.subPlan]) {
+        this.loadedStyles[window.subPlan] = true;
+        $('<link>').appendTo('head')
+          .attr({type: 'text/css', rel: 'stylesheet'})
+          .attr('href', '/subscription/styles/' + window.subPlan + '/' +
+            window.subVer + '.css');
+      }
+    },
     loadPage: function(view) {
+      this.loadStyles();
       var curView = this.data.view;
       this.data.view = view;
       $(this.data.element).fadeOut(100, function() {
