@@ -124,6 +124,7 @@ define([
       else {
         this.$('.name-gravatar').hide();
         this.$('.name-gravatar').attr('src', '');
+        this.$('.name-icon').show();
       }
       if (this.model.get('disabled')) {
         this.$('.user .status-icon').removeClass('online');
