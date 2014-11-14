@@ -62,9 +62,17 @@ define([
           type: 'GET',
           url: 'https://app.pritunl.com/checkout',
           success: function(options) {
-            if (options.amount) {
-              this.$('.subscribe-checkout').text('Subscribe $' +
-                (options.amount / 100) + '/month');
+            var plan;
+            this.plans = options.plans;
+            delete options.plans;
+
+            if (this.plans.premium && this.plans.premium.amount) {
+              this.$('.subscribe-premium').text('Get Premium $' +
+                (this.plans.premium.amount / 100) + '/month');
+            }
+            if (this.plans.enterprise && this.plans.enterprise.amount) {
+              this.$('.subscribe-enterprise').text('Get Enterprise $' +
+                (this.plans.enterprise.amount / 100) + '/month');
             }
             this.configCheckout(options);
           }.bind(this),
