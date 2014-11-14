@@ -59,7 +59,7 @@ define([
     setupCheckout: function() {
       $.ajax({
           type: 'GET',
-          url: window.subscription_server + '/checkout',
+          url: window.subscriptionServer + '/checkout',
           success: function(options) {
             var plan;
             this.plans = options.plans;
@@ -200,7 +200,7 @@ define([
 
       $.ajax({
         type: 'POST',
-        url: window.subscription_server + '/promo',
+        url: window.subscriptionServer + '/promo',
         contentType: 'application/json',
         dataType: 'json',
         data: JSON.stringify({

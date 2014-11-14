@@ -117,7 +117,7 @@ define([
     openCheckout: function(optionsPath) {
       $.ajax({
           type: 'GET',
-          url: window.subscription_server + '/' + optionsPath,
+          url: window.subscriptionServer + '/' + optionsPath,
           success: function(options) {
             var plan;
 
