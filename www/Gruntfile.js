@@ -38,16 +38,18 @@ module.exports = function(grunt) {
       replaces[path.basename(filePath)] = path.basename(filePathNew);
     }
 
-    for (i = 0; i < replaceFiles.length; i++) {
-      replacePath = replaceFiles[i];
-      data = grunt.file.read(replacePath, options.encoding);
+    if (replaceFiles) {
+      for (i = 0; i < replaceFiles.length; i++) {
+        replacePath = replaceFiles[i];
+        data = grunt.file.read(replacePath, options.encoding);
 
-      for (searchStr in replaces) {
-        replaceStr = replaces[searchStr];
-        data = data.replace(new RegExp(searchStr, 'g'), replaceStr);
+        for (searchStr in replaces) {
+          replaceStr = replaces[searchStr];
+          data = data.replace(new RegExp(searchStr, 'g'), replaceStr);
+        }
+
+        grunt.file.write(replacePath, data, options.encoding);
       }
-
-      grunt.file.write(replacePath, data, options.encoding);
     }
   });
 
