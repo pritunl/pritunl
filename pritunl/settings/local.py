@@ -23,4 +23,5 @@ class SettingsLocal(SettingsGroupLocal):
         'sub_amount': None,
         'sub_period_end': None,
         'sub_cancel_at_period_end': None,
+        'sub_styles': {},
     }
