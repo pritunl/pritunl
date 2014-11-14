@@ -197,28 +197,28 @@ define([
       }
 
       $.ajax({
-          type: 'POST',
-          url: window.subscription_server + '/promo',
-          contentType: 'application/json',
-          dataType: 'json',
-          data: JSON.stringify({
-            'promo_code': promoCode,
-            'email': email,
-          }),
-          success: function(response) {
-            this.setAlert('success', response.msg);
-            this._closePromo();
-          }.bind(this),
-          error: function(response) {
-            if (response.responseJSON) {
-              this.setAlert('danger', response.responseJSON.error_msg);
-            }
-            else {
-              this.setAlert('danger', 'Failed to verify promo code, ' +
-                'please try again later.');
-            }
-            this._closePromo();
-          }.bind(this)
+        type: 'POST',
+        url: window.subscription_server + '/promo',
+        contentType: 'application/json',
+        dataType: 'json',
+        data: JSON.stringify({
+          'promo_code': promoCode,
+          'email': email,
+        }),
+        success: function(response) {
+          this.setAlert('success', response.msg);
+          this._closePromo();
+        }.bind(this),
+        error: function(response) {
+          if (response.responseJSON) {
+            this.setAlert('danger', response.responseJSON.error_msg);
+          }
+          else {
+            this.setAlert('danger', 'Failed to verify promo code, ' +
+              'please try again later.');
+          }
+          this._closePromo();
+        }.bind(this)
       });
     },
     onActivate: function() {
