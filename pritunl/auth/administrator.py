@@ -124,8 +124,21 @@ class Administrator(mongo.MongoObject):
 
         mongo.MongoObject.commit(self, *args, **kwargs)
 
-def get_user(id):
-    return Administrator(id=id)
+def clear_session(id, session_id):
+    Administrator.collection.update({
+        '_id': id,
+    }, {'$pull': {
+        'sessions': session_id,
+    }})
+
+def get_user(id, session_id):
+    if not session_id:
+        return
+    user =  Administrator(spec={
+        '_id': id,
+        'sessions': session_id,
+    })
+    return user
 
 def find_user(username=None, token=None):
     spec = {}
