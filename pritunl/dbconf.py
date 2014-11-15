@@ -6,8 +6,8 @@ from pritunl import settings
 from pritunl import static
 from pritunl import utils
 from pritunl import patches
+from pritunl import wsgiserver
 
-import cherrypy.wsgiserver
 import logging
 import signal
 import time
@@ -26,11 +26,11 @@ def stop_server():
 
 try:
     import OpenSSL
-    import cherrypy.wsgiserver.ssl_pyopenssl
-    SSLAdapter = cherrypy.wsgiserver.ssl_pyopenssl.pyOpenSSLAdapter
+    import wsgiserver.ssl_pyopenssl
+    SSLAdapter = wsgiserver.ssl_pyopenssl.pyOpenSSLAdapter
 except ImportError:
-    import cherrypy.wsgiserver.ssl_builtin
-    SSLAdapter = cherrypy.wsgiserver.ssl_builtin.BuiltinSSLAdapter
+    import wsgiserver.ssl_builtin
+    SSLAdapter = wsgiserver.ssl_builtin.BuiltinSSLAdapter
 
 @app.route('/', methods=['GET'])
 def index_get():
