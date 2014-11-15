@@ -58,12 +58,6 @@ def auth_put():
     })
     return utils.jsonify(response)
 
-@app.app.route('/auth/session', methods=['GET'])
-def auth_get():
-    return utils.jsonify({
-        'authenticated': auth.administrator.check_session(),
-    })
-
 @app.app.route('/auth/session', methods=['POST'])
 def auth_session_post():
     username = flask.request.json['username']
