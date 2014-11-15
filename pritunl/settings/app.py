@@ -14,6 +14,8 @@ class SettingsApp(SettingsGroupMongo):
         'notification_server': 'http://ip.pritunl.com/notification',
         'update_check_rate': 3600,
         'session_timeout': 86400,
+        'peer_limit': 500,
+        'peer_limit_timeout': 10,
         'log_limit': 10240,
         'log_entry_limit': 50,
         'log_db_delay': 1,
