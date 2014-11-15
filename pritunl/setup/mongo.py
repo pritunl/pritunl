@@ -58,6 +58,7 @@ def setup_mongo():
         'servers_bandwidth': getattr(database, prefix + 'servers_bandwidth'),
         'servers_ip_pool': getattr(database, prefix + 'servers_ip_pool'),
         'dh_params': getattr(database, prefix + 'dh_params'),
+        'auth_sessions': getattr(database, prefix + 'auth_sessions'),
         'auth_nonces': getattr(database, prefix + 'auth_nonces'),
         'auth_limiter': getattr(database, prefix + 'auth_limiter'),
         'otp': getattr(database, prefix + 'otp'),
@@ -150,6 +151,8 @@ def setup_mongo():
     # TODO check and remove current index when changed
     mongo.collections['users_key_link'].ensure_index('timestamp',
         expireAfterSeconds=settings.app.key_link_timeout)
+    mongo.collections['auth_sessions'].ensure_index('timestamp',
+        expireAfterSeconds=settings.app.session_timeout)
     mongo.collections['auth_nonces'].ensure_index('timestamp',
         expireAfterSeconds=settings.app.auth_time_window * 2.1)
     mongo.collections['auth_limiter'].ensure_index('timestamp',
