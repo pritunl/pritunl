@@ -1323,9 +1323,10 @@ class HTTPConnection(object):
     wbufsize = DEFAULT_BUFFER_SIZE
     RequestHandlerClass = HTTPRequest
 
-    def __init__(self, server, sock, makefile=CP_fileobject):
+    def __init__(self, server, sock, makefile=CP_fileobject, peer=None):
         self.server = server
         self.socket = sock
+        self.peer = sock.getpeername()
         self.rfile = makefile(sock, "rb", self.rbufsize)
         self.wfile = makefile(sock, "wb", self.wbufsize)
         self.requests_seen = 0
@@ -1340,6 +1341,9 @@ class HTTPConnection(object):
                 # get written to the previous request.
                 req = None
                 req = self.RequestHandlerClass(self.server, self)
+
+                if not self.server.validate_request(self.peer, req):
+                    return
 
                 # This order of operations should guarantee correct pipelining.
                 req.parse_request()
@@ -1800,6 +1804,12 @@ class HTTPServer(object):
         self.server_name = server_name
         self.clear_stats()
 
+    def validate_peer(self, peer):
+        return True
+
+    def validate_request(self, peer, request):
+        return True
+
     def clear_stats(self):
         self._start_time = None
         self._run_time = 0
@@ -2021,6 +2031,10 @@ class HTTPServer(object):
         try:
             s, addr = self.socket.accept()
 
+            peer = s.getpeername()
+            if not self.validate_peer(peer):
+                return
+
             if self.stats['Enabled']:
                 self.stats['Accepts'] += 1
             if not self.ready:
@@ -2059,7 +2073,7 @@ class HTTPServer(object):
                 if hasattr(s, 'settimeout'):
                     s.settimeout(self.timeout)
 
-            conn = self.ConnectionClass(self, s, makefile)
+            conn = self.ConnectionClass(self, s, makefile, peer)
 
             if not isinstance(self.bind_addr, basestring):
                 # optional values
