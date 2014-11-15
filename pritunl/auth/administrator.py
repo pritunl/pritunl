@@ -16,6 +16,7 @@ import datetime
 import hmac
 import pymongo
 import bson
+import uuid
 
 class Administrator(mongo.MongoObject):
     fields = {
@@ -88,6 +89,18 @@ class Administrator(mongo.MongoObject):
 
         self.secret = re.sub(r'[\W_]+', '',
             base64.b64encode(os.urandom(64)))[:32]
+
+    def new_session(self):
+        session_id = uuid.uuid4().hex
+        self.collection.update({
+            '_id': self.id,
+        }, {'$push': {
+            'sessions': {
+                '$each': [session_id],
+                '$slice': -settings.app.session_limit,
+            },
+        }})
+        return session_id
 
     def commit(self, *args, **kwargs):
         if 'password' in self.changed:
