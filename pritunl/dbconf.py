@@ -97,9 +97,9 @@ def server_thread():
     app.logger.addHandler(logger.log_handler)
 
     global server
-    server = cherrypy.wsgiserver.CherryPyWSGIServer(
+    server = wsgiserver.CherryPyWSGIServer(
         (settings.conf.bind_addr, settings.conf.port), app,
-        server_name=cherrypy.wsgiserver.CherryPyWSGIServer.version,
+        server_name=wsgiserver.CherryPyWSGIServer.version,
         timeout=1,
         shutdown_timeout=0.5,
     )
