@@ -6,6 +6,7 @@ from pritunl import auth
 from pritunl import settings
 from pritunl import static
 from pritunl import auth
+
 import os
 import flask
 
