@@ -7,7 +7,6 @@ import random
 import flask
 import time
 import bson
-import cherrypy.wsgiserver
 
 # For MongoDict MongoList
 # class JSONEncoderPatched(json.JSONEncoder):
@@ -133,12 +132,3 @@ class ObjectId(bson.ObjectId):
             return oid
         return object.__new__(cls)
 bson.ObjectId = ObjectId
-
-class HTTPConnectionPatch(cherrypy.wsgiserver.HTTPConnection):
-    def __init__(self, server, sock,
-            makefile=cherrypy.wsgiserver.CP_fileobject):
-        self.server = server
-        self.socket = sock
-        self.rfile = makefile(sock, 'rb', self.rbufsize)
-        self.wfile = makefile(sock, 'wb', self.wbufsize)
-        self.requests_seen = 0
