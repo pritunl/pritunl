@@ -1,3 +1,5 @@
+# Copyright (c) 2004-2011, CherryPy Team (team@cherrypy.org)
+# All rights reserved.
 """A library for integrating pyOpenSSL with CherryPy.
 
 The OpenSSL module must be importable for SSL functionality.

@@ -1,3 +1,5 @@
+# Copyright (c) 2004-2011, CherryPy Team (team@cherrypy.org)
+# All rights reserved.
 """A high-speed, production ready, thread pooled, generic HTTP server.
 
 Simplest example on how to use this module directly
