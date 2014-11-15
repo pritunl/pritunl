@@ -1,5 +1,3 @@
-# Fork of cherrpy wsgiserver to fix HTTPConnection socket error with ssl
-
 # Copyright (c) 2004-2011, CherryPy Team (team@cherrypy.org)
 # All rights reserved.
 
@@ -27,6 +25,8 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+
+# Fork of cherrpy wsgiserver to fix HTTPConnection socket error with ssl
 
 __all__ = ['HTTPRequest', 'HTTPConnection', 'HTTPServer',
            'SizeCheckWrapper', 'KnownLengthRFile', 'ChunkedRFile',
