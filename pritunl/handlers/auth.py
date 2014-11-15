@@ -71,6 +71,7 @@ def auth_session_post():
             'error_msg': AUTH_INVALID_MSG,
         }, 401)
 
+    flask.session['session_id'] = admin.new_session()
     flask.session['admin_id'] = str(admin.id)
     flask.session['timestamp'] = int(time.time())
     if not settings.conf.ssl:
