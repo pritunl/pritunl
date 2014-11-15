@@ -36,7 +36,7 @@ import socket
 import threading
 import time
 
-from cherrypy import wsgiserver
+from pritunl import wsgiserver
 
 try:
     from OpenSSL import SSL

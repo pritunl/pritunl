@@ -23,7 +23,7 @@ except ImportError:
 
 import sys
 
-from cherrypy import wsgiserver
+from pritunl import wsgiserver
 
 
 class BuiltinSSLAdapter(wsgiserver.SSLAdapter):
