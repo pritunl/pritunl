@@ -19,6 +19,7 @@ def subscription_get():
     return utils.jsonify(subscription.dict())
 
 @app.app.route('/subscription/state', methods=['GET'])
+@auth.session_auth
 def subscription_state_get():
     return utils.jsonify({
         'active': settings.local.sub_active,
