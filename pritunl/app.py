@@ -48,7 +48,6 @@ def _run_wsgi():
         server_name=wsgiserver.CherryPyWSGIServer.version)
 
     if settings.conf.ssl:
-        server.ConnectionClass = patches.HTTPConnectionPatch
         server.ssl_adapter = SSLAdapter(
             settings.conf.server_cert_path, settings.conf.server_key_path)
 
