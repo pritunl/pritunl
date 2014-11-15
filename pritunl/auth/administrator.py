@@ -24,6 +24,10 @@ class Administrator(mongo.MongoObject):
         'token',
         'secret',
         'default',
+        'sessions',
+    }
+    fields_default = {
+        'sessions': [],
     }
 
     def __init__(self, username=None, password=None, default=None, **kwargs):
