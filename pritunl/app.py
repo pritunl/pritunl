@@ -4,9 +4,9 @@ from pritunl.helpers import *
 from pritunl import logger
 from pritunl import settings
 from pritunl import patches
+from pritunl import wsgiserver
 
 import flask
-import cherrypy.wsgiserver
 import logging
 import logging.handlers
 import signal
@@ -14,11 +14,11 @@ import time
 
 try:
     import OpenSSL
-    import cherrypy.wsgiserver.ssl_pyopenssl
-    SSLAdapter = cherrypy.wsgiserver.ssl_pyopenssl.pyOpenSSLAdapter
+    from pritunl.wsgiserver import ssl_pyopenssl
+    SSLAdapter = ssl_pyopenssl.pyOpenSSLAdapter
 except ImportError:
-    import cherrypy.wsgiserver.ssl_builtin
-    SSLAdapter = cherrypy.wsgiserver.ssl_builtin.BuiltinSSLAdapter
+    from pritunl.wsgiserver import ssl_builtin
+    SSLAdapter = ssl_builtin.BuiltinSSLAdapter
 
 app = flask.Flask(APP_NAME)
 
@@ -45,7 +45,7 @@ def _run_wsgi():
     server = cherrypy.wsgiserver.CherryPyWSGIServer(
         (settings.conf.bind_addr, settings.conf.port), app,
         request_queue_size=settings.app.request_queue_size,
-        server_name=cherrypy.wsgiserver.CherryPyWSGIServer.version)
+        server_name=wsgiserver.CherryPyWSGIServer.version)
 
     if settings.conf.ssl:
         server.ConnectionClass = patches.HTTPConnectionPatch
