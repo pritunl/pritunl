@@ -2019,10 +2019,6 @@ class HTTPServer(object):
         try:
             s, addr = self.socket.accept()
 
-            print '***************************************************'
-            print s.getpeername()
-            print '***************************************************'
-
             if self.stats['Enabled']:
                 self.stats['Accepts'] += 1
             if not self.ready:
