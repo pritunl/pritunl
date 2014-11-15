@@ -39,6 +39,7 @@ def update():
                 settings.commit()
                 subscription_update()
                 return
+
             if response.status_code == 473:
                 raise ValueError(('Version %r not recognized by ' +
                     'subscription server') % settings.local.version_int)
