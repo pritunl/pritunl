@@ -25,7 +25,6 @@ define([
       if (!data) {
         return null;
       }
-      var max = 0;
       for (i = 0; i < data.length; i++) {
         points.push({x: data[i][0], y: data[i][1]});
       }
