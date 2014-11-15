@@ -146,7 +146,13 @@ def user_linked_key_conf_get(key_id, server_id):
 @app.app.route('/key/<org_id>/<user_id>/<server_id>', methods=['GET'])
 def key_sync_get(org_id, user_id, server_id):
     org = organization.get_by_id(org_id)
+    if not org:
+        raise flask.abort(401)
+
     user = org.get_user(id=user_id)
+    if not user:
+        raise flask.abort(401)
+
     sync_key = flask.request.json['sync_key']
     key_hash = flask.request.json['key_hash']
 
