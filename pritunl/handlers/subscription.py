@@ -22,6 +22,7 @@ def subscription_get():
 @auth.session_auth
 def subscription_state_get():
     return utils.jsonify({
+        'theme': settings.app.theme,
         'active': settings.local.sub_active,
         'plan': settings.local.sub_plan,
         'version': settings.local.version_int,
