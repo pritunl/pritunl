@@ -12,7 +12,8 @@ define([
       'secret': null,
       'default': null,
       'email_from': null,
-      'email_api_key': null
+      'email_api_key': null,
+      'theme': null
     },
     url: function() {
       return '/auth';
