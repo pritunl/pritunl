@@ -63,7 +63,7 @@
     </div>
     <div class="cipher form-group">
       <label>Encryption Chiper</label>
-      <select class="form-control" data-toggle="tooltip" title="Size of DH parameters">
+      <select class="form-control" data-toggle="tooltip" title="Encryption cipher used for VPN traffic. AES 256bit is recommended">
         <option value="none" <%= cipher === 'none' ? 'selected' : '' %>>None</option>
         <option value="bf128" <%= cipher === 'bf128' ? 'selected' : '' %>>Blowfish 128bit</option>
         <option value="bf256" <%= cipher === 'bf256' ? 'selected' : '' %>>Blowfish 256bit</option>
