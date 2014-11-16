@@ -15,8 +15,7 @@ define([
     className: 'login',
     template: _.template(loginTemplate),
     events: {
-      'click .login-button': 'login',
-      'keypress input': 'onKeypress'
+      'submit .login-form': 'login'
     },
     initialize: function(options) {
       if (window.loginViewLock) {
@@ -49,11 +48,6 @@ define([
         this.$('.username, .password').val('demo');
       }
       return this;
-    },
-    onKeypress: function(evt) {
-      if (evt.keyCode === 13) {
-        this.login();
-      }
     },
     setAlert: function(message) {
       if (this.alertView) {
@@ -150,6 +144,8 @@ define([
           }
         }.bind(this)
       });
+
+      return false;
     }
   });
 
