@@ -506,6 +506,14 @@ require([
       window.subActive = model.get('active');
       window.subPlan = model.get('plan');
       window.subVer = model.get('version');
+      window.theme = model.get('theme');
+
+      if (window.subActive && window.theme === 'dark') {
+        $('body').addClass('dark');
+      }
+      else {
+        $('body').removeClass('dark');
+      }
 
       if (window.subActive) {
         if (window.subPlan === 'premium') {
