@@ -124,6 +124,110 @@ color: #994409;\
 .ace-pritunl .ace_indent-guide {\
 background: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAE0lEQVQImWP4////f4bLly//BwAmVgd1/w11/gAAAABJRU5ErkJggg==\") right repeat-y;\
 }\
+.dark .ace-pritunl .ace_gutter {\
+background: #25282c;\
+color: #C5C8C6\
+}\
+.dark .ace-pritunl .ace_print-margin {\
+width: 1px;\
+background: #25282c\
+}\
+.dark .ace-pritunl {\
+background-color: #1D1F21;\
+color: #C5C8C6\
+}\
+.dark .ace-pritunl .ace_cursor {\
+color: #AEAFAD\
+}\
+.dark .ace-pritunl .ace_marker-layer .ace_selection {\
+background: #373B41\
+}\
+.dark .ace-pritunl.ace_multiselect .ace_selection.ace_start {\
+box-shadow: 0 0 3px 0px #1D1F21;\
+border-radius: 2px\
+}\
+.dark .ace-pritunl .ace_marker-layer .ace_step {\
+background: rgb(102, 82, 0)\
+}\
+.dark .ace-pritunl .ace_marker-layer .ace_bracket {\
+margin: -1px 0 0 -1px;\
+border: 1px solid #4B4E55\
+}\
+.dark .ace-pritunl .ace_marker-layer .ace_active-line {\
+background: #282A2E\
+}\
+.dark .ace-pritunl .ace_gutter-active-line {\
+background-color: #282A2E\
+}\
+.dark .ace-pritunl .ace_marker-layer .ace_selected-word {\
+border: 1px solid #373B41\
+}\
+.dark .ace-pritunl .ace_invisible {\
+color: #4B4E55\
+}\
+.dark .ace-pritunl .ace_keyword,\
+.dark .ace-pritunl .ace_meta,\
+.dark .ace-pritunl .ace_storage,\
+.dark .ace-pritunl .ace_storage.ace_type,\
+.dark .ace-pritunl .ace_support.ace_type {\
+/* MODIFIED */\
+color: rgb(34, 107, 46);\
+}\
+.dark .ace-pritunl .ace_keyword.ace_operator {\
+color: #8ABEB7\
+}\
+.dark .ace-pritunl .ace_constant.ace_character,\
+.dark .ace-pritunl .ace_constant.ace_language,\
+.dark .ace-pritunl .ace_constant.ace_numeric,\
+.dark .ace-pritunl .ace_keyword.ace_other.ace_unit,\
+.dark .ace-pritunl .ace_support.ace_constant,\
+.dark .ace-pritunl .ace_variable.ace_parameter {\
+color: #DE935F\
+}\
+.dark .ace-pritunl .ace_constant.ace_other {\
+color: #CED1CF\
+}\
+.dark .ace-pritunl .ace_invalid {\
+/* MODIFIED */\
+color: rgb(197, 0, 0);\
+}\
+.dark .ace-pritunl .ace_invalid.ace_deprecated {\
+color: #CED2CF;\
+background-color: #B798BF\
+}\
+.dark .ace-pritunl .ace_fold {\
+background-color: #81A2BE;\
+border-color: #C5C8C6\
+}\
+.dark .ace-pritunl .ace_entity.ace_name.ace_function,\
+.dark .ace-pritunl .ace_support.ace_function,\
+.dark .ace-pritunl .ace_variable {\
+color: #81A2BE\
+}\
+.dark .ace-pritunl .ace_support.ace_class,\
+.dark .ace-pritunl .ace_support.ace_type {\
+color: #F0C674\
+}\
+.dark .ace-pritunl .ace_heading,\
+.dark .ace-pritunl .ace_markup.ace_heading,\
+.dark .ace-pritunl .ace_string {\
+color: #B5BD68\
+}\
+.dark .ace-pritunl .ace_entity.ace_name.ace_tag,\
+.dark .ace-pritunl .ace_entity.ace_other.ace_attribute-name,\
+.dark .ace-pritunl .ace_meta.ace_tag,\
+.dark .ace-pritunl .ace_string.ace_regexp,\
+.dark .ace-pritunl .ace_variable {\
+/* MODIFIED */\
+color: rgb(202, 152, 4);\
+}\
+.dark .ace-pritunl .ace_comment {\
+/* MODIFIED */\
+color: #0059a6;\
+}\
+.dark .ace-pritunl .ace_indent-guide {\
+background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAEklEQVQImWNgYGBgYHB3d/8PAAOIAdULw8qMAAAAAElFTkSuQmCC) right repeat-y\
+}\
 ";
 
 var dom = require("../lib/dom");
