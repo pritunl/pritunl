@@ -103,56 +103,32 @@ define([
       window.theme = 'dark';
       this.updateTheme();
     },
-    checkAuth: function(callback) {
+    auth: function(callback) {
       if (window.authenticated) {
-        callback(true);
+        callback();
         return;
       }
-      var authSessionModel = new AuthSessionModel();
-      authSessionModel.fetch({
-        success: function(model) {
-          if (model.get('authenticated')) {
-            window.authenticated = true;
-            callback(true);
-          }
-          else {
-            callback(false);
-          }
-        },
-        error: function() {
-          callback(false);
-        }
-      });
-    },
-    auth: function(callback) {
-      this.checkAuth(function(authStatus) {
-        if (authStatus) {
-          callback();
-          return;
-        }
-        this.loginCallback = callback;
-        if (this.loginView) {
-          return;
-        }
-        $('.modal').modal('hide');
-        this.loginView = new LoginView({
-          alert: this.logoutAlert,
-          callback: function() {
-            this.loginView = null;
-            window.authenticated = true;
-            this.loginCallback();
-            this.loginCallback = null;
-          }.bind(this)
-        });
-        this.logoutAlert = null;
-        if (this.loginView.active) {
-          $('body').append(this.loginView.render().el);
-        }
-        else {
+      this.loginCallback = callback;
+      if (this.loginView) {
+        return;
+      }
+      $('.modal').modal('hide');
+      this.loginView = new LoginView({
+        alert: this.logoutAlert,
+        callback: function() {
           this.loginView = null;
-        }
-      }.bind(this));
-      return false;
+          window.authenticated = true;
+          this.loginCallback();
+          this.loginCallback = null;
+        }.bind(this)
+      });
+      this.logoutAlert = null;
+      if (this.loginView.active) {
+        $('body').append(this.loginView.render().el);
+      }
+      else {
+        this.loginView = null;
+      }
     },
     loadStyles: function() {
       if (window.subActive && !this.loadedStyles[window.subPlan]) {
