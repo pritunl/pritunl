@@ -12,7 +12,7 @@ define([
   var ModalSubscribeView = ModalView.extend({
     className: 'subscribe-modal',
     template: _.template(modalSubscribeTemplate),
-    title: 'Enterprise Upgrade',
+    title: 'Upgrade Subscription',
     cancelText: null,
     okText: 'Close',
     enterOk: false,
