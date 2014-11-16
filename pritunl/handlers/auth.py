@@ -7,6 +7,7 @@ from pritunl import utils
 from pritunl import mongo
 from pritunl import app
 from pritunl import auth
+from pritunl import event
 
 import time
 import flask
@@ -17,6 +18,7 @@ import bson
 def auth_get():
     response = flask.g.administrator.dict()
     response.update({
+        'theme': settings.app.theme,
         'email_from': settings.app.email_from_addr,
         'email_api_key': settings.app.email_api_key,
     })
@@ -46,6 +48,18 @@ def auth_put():
         settings_commit = True
         email_api_key = flask.request.json['email_api_key']
         settings.app.email_api_key = email_api_key or None
+    if 'theme' in flask.request.json:
+        settings_commit = True
+        theme = 'dark' if flask.request.json['theme'] == 'dark' else 'light'
+
+        if theme != settings.app.theme:
+            if theme == 'dark':
+                event.Event(type=THEME_DARK)
+            else:
+                event.Event(type=THEME_LIGHT)
+
+        settings.app.theme = theme
+
     if settings_commit:
         settings.commit()
 
