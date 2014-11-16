@@ -4,15 +4,12 @@ define([
   'underscore',
   'backbone',
   'ace',
+  'aceModeLog',
   'aceModeSh',
   'aceModeText',
-  'aceThemeAmbiance',
-  'aceThemeChrome',
-  'aceThemeGithub',
-  'aceThemeMonokai',
-  'aceThemeTwilight'
-], function($, _, Backbone, Ace, AceModeSh, AceModeText, AceThemeAmbiance,
-    AceThemeChrome, AceThemeGithub, AceThemeMonokai, AceThemeTwilight) {
+  'aceThemePritunl'
+], function($, _, Backbone, Ace, AceModeLog, AceModeSh, AceModeText,
+    aceThemePritunl) {
   'use strict';
   var TextView = Backbone.View.extend({
     className: 'text-viewer',
