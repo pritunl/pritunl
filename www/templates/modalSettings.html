@@ -12,6 +12,13 @@
       <label>Verify new password</label>
       <input type="password" class="form-control" placeholder="Verify password">
     </div>
+    <div class="theme form-group">
+      <label>Theme</label>
+      <select class="form-control" data-toggle="tooltip" title="Pritunl color theme">
+        <option value="light" <%= theme === 'light' ? 'selected' : '' %>>Light</option>
+        <option value="dark" <%= theme === 'dark' ? 'selected' : '' %>>Dark</option>
+      </select>
+    </div>
   </div>
   <div class="settings-right right">
     <div class="api-token form-group">
