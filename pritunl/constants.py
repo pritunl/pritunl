@@ -191,6 +191,8 @@ SUBSCRIPTION_ENTERPRISE_ACTIVE = 'subscription_enterprise_active'
 SUBSCRIPTION_NONE_INACTIVE = 'subscription_none_inactive'
 SUBSCRIPTION_PREMIUM_INACTIVE = 'subscription_premium_inactive'
 SUBSCRIPTION_ENTERPRISE_INACTIVE = 'subscription_enterprise_inactive'
+THEME_LIGHT = 'theme_light'
+THEME_DARK = 'theme_dark'
 
 BASH_COLORS = [
     '92',
