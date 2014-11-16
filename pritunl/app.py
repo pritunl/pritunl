@@ -5,6 +5,7 @@ from pritunl import logger
 from pritunl import settings
 from pritunl import patches
 from pritunl import wsgiserver
+from pritunl import limiter
 
 import flask
 import logging
@@ -42,27 +43,7 @@ def after_request(response):
 def _run_wsgi():
     logger.info('Starting server', 'app')
 
-    get_time = time.time
-    peers_expire_count = {}
-
-    class CherryPyWSGIServerPatched(wsgiserver.CherryPyWSGIServer):
-        def validate_peer(self, peer):
-            cur_time = get_time()
-            peer = peer[0]
-            expire, count = peers_expire_count.get(peer, (None, None))
-            if expire and cur_time <= expire:
-                if count > settings.app.peer_limit:
-                    return False
-                peers_expire_count[peer] = (expire, count + 1)
-            else:
-                peers_expire_count[peer] = (
-                    cur_time + settings.app.peer_limit_timeout, 1)
-            return True
-
-        def validate_request(self, peer, request):
-            return self.validate_peer(peer)
-
-    server = CherryPyWSGIServerPatched(
+    server = limiter.CherryPyWSGIServerLimited(
         (settings.conf.bind_addr, settings.conf.port), app,
         request_queue_size=settings.app.request_queue_size,
         server_name=wsgiserver.CherryPyWSGIServer.version)
