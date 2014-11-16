@@ -42,6 +42,8 @@ def index_static_get():
 
 @app.app.route('/login', methods=['GET'])
 def login_static_get():
+    if auth.check_session():
+        return flask.redirect('')
     static_file = static.StaticFile(settings.conf.www_path,
         'login.html', cache=False)
     return static_file.get_response()
