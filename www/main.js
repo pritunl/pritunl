@@ -489,6 +489,8 @@ require([
 
   $(document).on('dblclick mousedown', '.no-select', false);
 
+  window.authenticated = true;
+
   var init = function() {
     window.events = new EventCollection();
     window.events.start();
