@@ -31,6 +31,7 @@ color: rgb(88, 92, 246);\
 color: rgb(6, 150, 14);\
 }\
 .ace-pritunl .ace_invalid {\
+/* MODIFIED */\
 color: rgb(197, 0, 0);\
 }\
 .ace-pritunl .ace_fold {\
@@ -54,6 +55,7 @@ color:#FD971F;\
 color: rgb(104, 118, 135);\
 }\
 .ace-pritunl .ace_comment {\
+/* MODIFIED */\
 color: #0059a6;\
 }\
 .ace-pritunl .ace_comment.ace_doc {\
@@ -66,6 +68,7 @@ color: #236e24;\
 color: rgb(0, 0, 205);\
 }\
 .ace-pritunl .ace_variable {\
+/* MODIFIED */\
 color: rgb(202, 152, 4);\
 }\
 .ace-pritunl .ace_xml-pe {\
@@ -106,6 +109,7 @@ border: 1px solid rgb(200, 200, 250);\
 .ace-pritunl .ace_storage,\
 .ace-pritunl .ace_keyword,\
 .ace-pritunl .ace_meta.ace_tag {\
+/* MODIFIED */\
 color: rgb(34, 107, 46);\
 }\
 .ace-pritunl .ace_string.ace_regex {\
