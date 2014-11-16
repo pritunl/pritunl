@@ -69,6 +69,7 @@ define([
     onOk: function() {
       var username = this.$('.username input').val();
       var password = this.$('.pass input').val();
+      var theme = this.$('.theme select').val();
       var verifyPassword = this.$('.verify-pass input').val();
       var emailFromAddr = this.$('.email-from-addr input').val();
       var emailApiKey = this.$('.email-api-key input').val();
@@ -76,7 +77,8 @@ define([
       var modelAttr = {
         username: username,
         email_from: emailFromAddr,
-        email_api_key: emailApiKey
+        email_api_key: emailApiKey,
+        theme: theme
       };
 
       if (!username) {
