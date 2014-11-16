@@ -37,6 +37,16 @@ define([
         this.onSubscriptionPremiumInactive);
       this.listenTo(window.events, 'subscription_enterprise_inactive',
         this.onSubscriptionEnterpriseInactive);
+      this.listenTo(window.events, 'theme_light', this.onThemeLight);
+      this.listenTo(window.events, 'theme_dark', this.onThemeDark);
+    },
+    updateTheme: function() {
+      if (window.subActive && window.theme === 'dark') {
+        $('body').addClass('dark');
+      }
+      else {
+        $('body').removeClass('dark');
+      }
     },
     onSubscriptionPremiumActive: function() {
       window.subActive = true;
@@ -45,7 +55,8 @@ define([
       $('body').removeClass('enterprise');
       $('body').removeClass('premium-license');
       $('body').removeClass('enterprise-license');
-      this.loadStyles()
+      this.loadStyles();
+      this.updateTheme();
     },
     onSubscriptionEnterpriseActive: function() {
       window.subActive = true;
@@ -54,7 +65,8 @@ define([
       $('body').addClass('enterprise');
       $('body').removeClass('premium-license');
       $('body').removeClass('enterprise-license');
-      this.loadStyles()
+      this.loadStyles();
+      this.updateTheme();
     },
     onSubscriptionPremiumInactive: function() {
       window.subActive = false;
@@ -63,6 +75,7 @@ define([
       $('body').removeClass('enterprise');
       $('body').addClass('premium-license');
       $('body').removeClass('enterprise-license');
+      this.updateTheme();
     },
     onSubscriptionEnterpriseInactive: function() {
       window.subActive = false;
@@ -71,6 +84,7 @@ define([
       $('body').removeClass('enterprise');
       $('body').removeClass('premium-license');
       $('body').addClass('enterprise-license');
+      this.updateTheme();
     },
     onSubscriptionNoneInactive: function() {
       window.subActive = false;
@@ -79,6 +93,15 @@ define([
       $('body').removeClass('enterprise');
       $('body').removeClass('premium-license');
       $('body').removeClass('enterprise-license');
+      this.updateTheme();
+    },
+    onThemeLight: function() {
+      window.theme = 'light';
+      this.updateTheme();
+    },
+    onThemeDark: function() {
+      window.theme = 'dark';
+      this.updateTheme();
     },
     checkAuth: function(callback) {
       if (window.authenticated) {
