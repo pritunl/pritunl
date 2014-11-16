@@ -15,7 +15,8 @@ define([
       'amount': null,
       'period_end': null,
       'cancel_at_period_end': null,
-      'version': null
+      'version': null,
+      'theme': null
     },
     isNew: function() {
       var active = this.get('active');
