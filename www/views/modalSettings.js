@@ -13,6 +13,7 @@ define([
     okText: 'Save',
     events: function() {
       return _.extend({
+        'change .theme select': 'onThemeChange',
         'click .generate-new-api-key': 'onGenerateNewKey',
         'click .right input': 'onClickInput'
       }, ModalSettingsView.__super__.events);
@@ -31,6 +32,14 @@ define([
     update: function() {
       this.$('.api-token input').val(this.model.get('token'));
       this.$('.api-secret input').val(this.model.get('secret'));
+    },
+    onThemeChange: function() {
+      if (this.$('.theme select').val() === 'dark') {
+        $('body').addClass('dark');
+      }
+      else {
+        $('body').removeClass('dark');
+      }
     },
     onInputChange: function() {
       var pass = this.$('.pass input').val();
@@ -112,6 +121,17 @@ define([
     },
     onClickInput: function(evt) {
       this.$(evt.target).select();
+    },
+    onRemove: function() {
+      ModalSettingsView.__super__.onRemove.call(this);
+      if (!this.triggerApplied) {
+        if (window.theme === 'dark') {
+          $('body').addClass('dark');
+        }
+        else {
+          $('body').removeClass('dark');
+        }
+      }
     }
   });
 
