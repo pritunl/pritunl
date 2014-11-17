@@ -152,6 +152,7 @@ define([
       this.$('.modal').modal('hide');
     },
     close: function(triggerApplied) {
+      this.triggerApplied = triggerApplied;
       if (this.safeClose && this.lockClose) {
         return;
       }
