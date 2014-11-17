@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Pritunl</title>
+    <meta name="viewport" content="width=1000">
+    <style type="text/css">
+      *, :before, *:after {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: #efefef;
+        overflow-y: scroll;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        line-height: 1.428571429;
+        color: #333;
+      }
+
+      .btn {
+        display: inline-block;
+        padding: 6px 12px;
+        margin-top: 13px;
+        margin-bottom: 0;
+        font-size: 14px;
+        font-weight: normal;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        cursor: pointer;
+        background-image: none;
+        border: 1px solid #357ebd;
+        display: block;
+        width: 100%;
+        color: #fff;
+        background-color: #428bca;
+        padding: 10px 16px;
+        font-size: 18px;
+        line-height: 1.33;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        -webkit-border-radius: 2px;
+        -moz-border-radius: 2px;
+        border-radius: 2px;
+      }
+
+      .btn:hover {
+        color: #fff;
+        background-color: #3071a9;
+        border-color: #285e8e;
+      }
+
+      .btn:hover,
+      .btn:focus {
+        color: #333;
+        text-decoration: none;
+      }
+
+      .btn.disabled,
+      .btn[disabled] {
+        pointer-events: none;
+        cursor: not-allowed;
+        box-shadow: none;
+        opacity: 0.65;
+      }
+
+      .form-control {
+        position: relative;
+        display: block;
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        color: #555;
+        line-height: 1.42857143;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
+        -webkit-border-radius: 2px;
+        -moz-border-radius: 2px;
+        border-radius: 2px;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+        -o-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+        -webkit-transition: border-color ease-in-out 0.15s, -webkit-box-shadow ease-in-out 0.15s;
+        -o-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+        transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+      }
+
+      .form-control:focus {
+        border-color: #66afe9;
+        outline: 0;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+      }
+
+      .form-control::-webkit-input-placeholder {
+        color: #777;
+      }
+      .form-control::-moz-placeholder {
+        color: #777;
+        opacity: 1;
+      }
+      .form-control:-ms-input-placeholder {
+        color: #777;
+      }
+
+      .alert {
+        display: none;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        -webkit-border-radius: 2px;
+        -moz-border-radius: 2px;
+        border-radius: 2px;
+      }
+
+      .alert.flash {
+        background-color: #fff;
+      }
+
+      .alert-success {
+        color: #3c763d;
+        background-color: #daeed1;
+        border-color: #b2df8d;
+      }
+
+      .alert-warning {
+        color: #8a6d3b;
+        background-color: #fff8db;
+        border-color: #f1d997;
+      }
+
+      .alert-danger {
+        color: #a94442;
+        background-color: #eed6d6;
+        border-color: #e0a2ac;
+      }
+
+      .login .login-header {
+        padding: 10px 15px 1px 15px;
+        font-size: 28px;
+        cursor: default;
+        color: #ececec;
+        background-color: #222;
+        border-color: #080808;
+        margin: 0;
+        -webkit-border-top-left-radius: 2px;
+        -moz-border-top-left-radius: 2px;
+        border-top-left-radius: 2px;
+        -webkit-border-top-right-radius: 2px;
+        -moz-border-top-right-radius: 2px;
+        border-top-right-radius: 2px;
+      }
+
+      .login .login-header img {
+        width: 92px;
+      }
+
+      .login,
+      .login-backdrop {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 2050;
+      }
+
+      .login-backdrop {
+        background-color: #000;
+        opacity: 0.75;
+        z-index: 2000;
+        cursor: default;
+      }
+
+      .login .login-button {
+        margin-top: 13px;
+      }
+
+      .login .login-box {
+        position: fixed;
+        width: 374px;
+        margin: 0 auto;
+        opacity: 1;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        -webkit-border-radius: 2px;
+        -moz-border-radius: 2px;
+        border-radius: 2px;
+        -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        -moz-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        -o-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        top: -webkit-calc(50% - 164px);
+        top: -moz-calc(50% - 164px);
+        top: -o-calc(50% - 164px);
+        top: calc(50% - 164px);
+        left: -webkit-calc(50% - 187px);
+        left: -moz-calc(50% - 187px);
+        left: -o-calc(50% - 187px);
+        left: calc(50% - 187px);
+      }
+
+      .login .login-form {
+        background-color: #f9f9f9;
+        padding: 40px 35px;
+        -webkit-border-bottom-left-radius: 2px;
+        -moz-border-bottom-left-radius: 2px;
+        border-bottom-left-radius: 2px;
+        -webkit-border-bottom-right-radius: 2px;
+        -moz-border-bottom-right-radius: 2px;
+        border-bottom-right-radius: 2px;
+      }
+
+      .login .form-control {
+        position: relative;
+        font-size: 16px;
+        height: auto;
+        padding: 10px;
+      }
+
+      .login .form-control:focus {
+        z-index: 2;
+      }
+
+      .login .username {
+        margin-bottom: -1px;
+        -webkit-border-bottom-left-radius: 0;
+        -moz-border-bottom-left-radius: 0;
+        border-bottom-left-radius: 0;
+        -webkit-border-bottom-right-radius: 0;
+        -moz-border-bottom-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+
+      .login .password {
+        -webkit-border-top-left-radius: 0;
+        -moz-border-top-left-radius: 0;
+        border-top-left-radius: 0;
+        -webkit-border-top-right-radius: 0;
+        -moz-border-top-right-radius: 0;
+        border-top-right-radius: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login">
+      <div class="login-box">
+        <h2 class="login-header navbar-inverse">
+          <img alt="pritunl" src="data:image/png;base64,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">
+        </h2>
+        <form class="login-form" onsubmit="return onSubmit();">
+          <div id="alert" class="alert"></div>
+          <input id="username" type="text" name="username" class="username form-control" placeholder="Username" autocapitalize="off" autofocus>
+          <input id="password" type="password" name="password" class="password form-control" placeholder="Password">
+          <input id="submit" class="login-button btn" type="submit" value="Sign in">
+        </form>
+      </div>
+    </div>
+    <div class="login-backdrop"></div>
+    <script type="text/javascript">
+      var userInput = document.getElementById('username');
+      var passInput = document.getElementById('password');
+      var submitBtn = document.getElementById('submit');
+      var alertDiv = document.getElementById('alert');
+
+      var flashAlert = function() {
+        var alertClass = alertDiv.className;
+        var alertClassFlash = alertClass + ' flash';
+
+        alertDiv.className = alertClassFlash;
+        setTimeout(function() {
+          alertDiv.className = alertClass;
+          setTimeout(function() {
+            alertDiv.className = alertClassFlash;
+            setTimeout(function() {
+              alertDiv.className = alertClass;
+            }.bind(this), 150);
+          }.bind(this), 150);
+        }.bind(this), 150);
+      }
+
+      var setAlert = function(alert, style) {
+        if (alert) {
+          alertDiv.className = 'alert alert-' + (style || 'success');
+          alertDiv.innerHTML = alert;
+          if (alertDiv.style.display === 'block') {
+            flashAlert();
+          }
+          else {
+            alertDiv.style.display = 'block';
+          }
+        }
+        else {
+          alertDiv.style.display = 'none';
+        }
+      };
+
+      var onSubmit = function() {
+        submitBtn.disabled = true;
+
+        var xmlhttp = new XMLHttpRequest();
+
+        xmlhttp.onreadystatechange = function() {
+          if (xmlhttp.readyState === 4) {
+            if (xmlhttp.status === 200) {
+              window.location = '/';
+            }
+            else {
+              var errorMsg;
+              try {
+                errorMsg = JSON.parse(xmlhttp.responseText)['error_msg'];
+              }
+              catch(error) {
+                errorMsg = 'Server error occurred.';
+              }
+              setAlert(errorMsg, 'danger');
+              submitBtn.disabled = false;
+            }
+          }
+        };
+
+        xmlhttp.open('POST', '/auth/session', true);
+        xmlhttp.setRequestHeader('Content-Type', 'application/json');
+        xmlhttp.send(JSON.stringify({
+          'username': userInput.value,
+          'password': passInput.value,
+        }));
+
+        return false;
+      };
+    </script>
+  </body>
+</html>
