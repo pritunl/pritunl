@@ -28,6 +28,9 @@ def now():
     return settings.local.mongo_time + (
         datetime.datetime.utcnow() - settings.local.mongo_time_start)
 
+def get_int_ver(version):
+    return int(''.join([x.zfill(2) for x in version.split('.')]))
+
 def check_output_logged(*args, **kwargs):
     if 'stdout' in kwargs or 'stderr' in kwargs:
         raise ValueError('Output arguments not allowed, it will be overridden')
