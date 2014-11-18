@@ -108,7 +108,7 @@ class LogView(object):
                 else:
                     yield doc['message']
 
-    def archive_log(self, archive_path):
+    def archive_log(self, archive_path, limit):
         temp_path = utils.get_temp_path()
         if os.path.isdir(archive_path):
             archive_path = os.path.join(
@@ -120,7 +120,7 @@ class LogView(object):
             tar_file = tarfile.open(archive_path, 'w')
             try:
                 with open(output_path, 'w') as log_file:
-                    log_file.write(self.get_log_lines(False))
+                    log_file.write(self.get_log_lines(limit, False))
                 tar_file.add(output_path, arcname=LOG_ARCHIVE_NAME)
             finally:
                 tar_file.close()
