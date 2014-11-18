@@ -6,6 +6,21 @@ define([
 ], function($, _, Backbone) {
   'use strict';
   var initialize = function() {
+    var stylesLoaded = false;
+    for (var i = 0; i < document.styleSheets.length; i++) {
+      if (document.styleSheets[i].ownerNode.id.indexOf('main_dev') !== -1) {
+        stylesLoaded = true;
+        break;
+      }
+    }
+
+    if (!stylesLoaded) {
+      $('<link>').appendTo('head')
+        .attr({type: 'text/css', rel: 'stylesheet'})
+        .attr('href', 's/styles/main.css');
+      $('.less-error-message').remove();
+    }
+
     window.subscriptionServer = 'http://localhost:9200';
 
     var _ajax = Backbone.ajax;
