@@ -55,6 +55,7 @@ define([
       $('body').removeClass('enterprise');
       $('body').removeClass('premium-license');
       $('body').removeClass('enterprise-license');
+
       this.loadStyles();
       this.updateTheme();
 
@@ -79,6 +80,7 @@ define([
       $('body').removeClass('enterprise');
       $('body').addClass('premium-license');
       $('body').removeClass('enterprise-license');
+
       this.updateTheme();
 
       if ($('header .hosts').hasClass('active')) {
@@ -92,6 +94,7 @@ define([
       $('body').removeClass('enterprise');
       $('body').removeClass('premium-license');
       $('body').addClass('enterprise-license');
+
       this.updateTheme();
 
       if ($('header .hosts').hasClass('active')) {
@@ -105,6 +108,7 @@ define([
       $('body').removeClass('enterprise');
       $('body').removeClass('premium-license');
       $('body').removeClass('enterprise-license');
+
       this.updateTheme();
 
       if ($('header .hosts').hasClass('active')) {
