@@ -101,7 +101,6 @@ def rmtree(path):
             return
         except subprocess.CalledProcessError:
             time.sleep(0.01)
-    raise
 
 def filter_str(in_str):
     if not in_str:
