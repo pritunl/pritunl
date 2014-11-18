@@ -12,6 +12,7 @@ from pritunl.setup.runners import setup_runners
 from pritunl.setup.handlers import setup_handlers
 from pritunl.setup.server_cert import setup_server_cert
 from pritunl import settings
+from pritunl import dbconf
 
 def setup_all():
     setup_local()
@@ -20,9 +21,7 @@ def setup_all():
     setup_logger()
     setup_signal_handler()
 
-    if not settings.conf.mongodb_uri:
-        from pritunl import dbconf
-        dbconf.run_server()
+    dbconf.setup_server()
 
     setup_mongo()
     setup_temp_path()
