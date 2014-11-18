@@ -27,6 +27,8 @@ def pritunl_daemon(default_conf=None):
         help='Archive log file')
     parser.add_option('--tail', action='store_true',
         help='Tail log file')
+    parser.add_option('--limit', type='int',
+        help='Limit log lines')
     (options, args) = parser.parse_args()
 
     if args:
@@ -84,7 +86,7 @@ def pritunl_daemon(default_conf=None):
             for msg in log_view.tail_log_lines():
                 print msg
         else:
-            print log_view.get_log_lines()
+            print log_view.get_log_lines(options.limit)
 
         sys.exit(0)
 
