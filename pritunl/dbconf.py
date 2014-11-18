@@ -19,10 +19,15 @@ import threading
 
 server = None
 app = flask.Flask(APP_NAME + '_dbconf')
-dbconf_ready = threading.Event()
+upgrade_done = threading.Event()
+setup_ready = threading.Event()
 
 def stop_server():
-    server.interrupt = StopServer('Stop server')
+    def stop():
+        server.interrupt = StopServer('Stop server')
+    setup_ready.set()
+    settings.local.server_ready.wait()
+    threading.Thread(target=stop).start()
 
 try:
     import OpenSSL
@@ -38,9 +43,25 @@ def index_get():
 
 @app.route('/setup', methods=['GET'])
 def setup_get():
+    if settings.conf.mongodb_uri:
+        return flask.redirect('upgrade')
+
     try:
         static_file = static.StaticFile(settings.conf.www_path,
             DBCONF_NAME, cache=False)
+    except InvalidStaticFile:
+        return flask.abort(404)
+
+    return static_file.get_response()
+
+@app.route('/upgrade', methods=['GET'])
+def upgrade_get():
+    if not settings.conf.mongodb_uri:
+        return flask.redirect('setup')
+
+    try:
+        static_file = static.StaticFile(settings.conf.www_path,
+            UPGRADE_NAME, cache=False)
     except InvalidStaticFile:
         return flask.abort(404)
 
@@ -64,7 +85,7 @@ def static_get(file_name):
     return static_file.get_response()
 
 @app.route('/setup/mongodb', methods=['PUT'])
-def mongodb_put():
+def setup_mongodb_put():
     mongodb_uri = flask.request.json['mongodb_uri']
 
     if not mongodb_uri:
@@ -85,10 +106,18 @@ def mongodb_put():
     settings.conf.mongodb_uri = mongodb_uri
     settings.conf.commit()
 
-    dbconf_ready.set()
-    settings.local.server_ready.wait()
-    threading.Thread(target=stop_server).start()
+    if settings.local.version >= 1000:
+        pass
+    else:
+        stop_server()
 
+    return ''
+
+@app.route('/setup/upgrade', methods=['GET'])
+def setup_upgrade_get():
+    if upgrade_done.wait(15):
+        stop_server()
+        return 'true';
     return ''
 
 def server_thread():
@@ -113,14 +142,16 @@ def server_thread():
     except StopServer:
         pass
 
-    dbconf_ready.set()
+    setup_ready.set()
     settings.local.server_start.set()
 
-def run_server():
+def setup_server():
+    if settings.conf.mongodb_uri and settings.local.version < 1000:
+        return
     settings.local.server_start.clear()
 
     thread = threading.Thread(target=server_thread)
     thread.daemon = True
     thread.start()
 
-    dbconf_ready.wait()
+    setup_ready.wait()
