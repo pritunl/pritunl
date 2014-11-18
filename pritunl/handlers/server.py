@@ -353,6 +353,7 @@ def server_put_post(server_id=None):
             lzo_compression=lzo_compression,
             debug=debug,
         )
+        svr.add_host(settings.local.host_id)
         svr.commit()
     else:
         svr = server.get_by_id(server_id)
