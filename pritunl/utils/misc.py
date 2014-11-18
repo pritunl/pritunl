@@ -95,11 +95,16 @@ def find_caller():
     return rv
 
 def rmtree(path):
-    for _ in xrange(8):
+    for i in xrange(8):
         try:
             check_output_logged(['rm', '-rf', path])
             return
         except subprocess.CalledProcessError:
+            if i == 7:
+                from pritunl import logger
+                logger.exception('Failed to rm files', 'utils',
+                    path=path,
+                )
             time.sleep(0.01)
 
 def filter_str(in_str):
