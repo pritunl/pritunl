@@ -157,6 +157,7 @@ SERVER_CONF_NAME = 'server.conf'
 MANAGEMENT_SOCKET_NAME = 'pritunl_%s.sock'
 KEY_VIEW_NAME = 'key_view.html'
 DBCONF_NAME = 'dbconf.html'
+UPGRADE_NAME = 'upgrade.html'
 CONF_TEMP_EXT = '.tmp'
 LOG_ARCHIVE_NAME = 'pritunl_log'
 
