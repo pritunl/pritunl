@@ -81,7 +81,8 @@ def pritunl_daemon(default_conf=None):
                 archive_path = args[1]
             else:
                 archive_path = './'
-            print 'Log archived to: ' + log_view.archive_log(archive_path)
+            print 'Log archived to: ' + log_view.archive_log(archive_path,
+                options.limit)
         elif options.tail:
             for msg in log_view.tail_log_lines():
                 print msg
