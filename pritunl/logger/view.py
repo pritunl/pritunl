@@ -85,9 +85,9 @@ class LogView(object):
             output = ''
             for i in xrange(len(messages)-1, -1, -1):
                 output += self.format_line(messages[i]) + '\n'
-            return output
+            return output.rstrip('\n')
         else:
-            return '\n'.join(output)
+            return '\n'.join(output).rstrip('\n')
 
     def tail_log_lines(self, formatted=True):
         cursor_id = self.collection.find().sort(
