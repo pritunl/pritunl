@@ -481,7 +481,8 @@ def server_host_get(server_id):
     active_hosts = set([x['host_id'] for x in svr.instances])
     hosts_offline = svr.replica_count - len(active_hosts) > 0
 
-    for hst in svr.iter_hosts(fields=['_id', 'name', 'public_address']):
+    for hst in svr.iter_hosts(fields=['_id', 'name',
+            'public_address', 'auto_public_address']):
         if svr.status == ONLINE and hst.id in active_hosts:
             status = ONLINE
         elif svr.status == ONLINE and hosts_offline:
