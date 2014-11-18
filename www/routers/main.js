@@ -57,6 +57,10 @@ define([
       $('body').removeClass('enterprise-license');
       this.loadStyles();
       this.updateTheme();
+
+      if ($('header .hosts').hasClass('active')) {
+        this.dashboard();
+      }
     },
     onSubscriptionEnterpriseActive: function() {
       window.subActive = true;
@@ -76,6 +80,10 @@ define([
       $('body').addClass('premium-license');
       $('body').removeClass('enterprise-license');
       this.updateTheme();
+
+      if ($('header .hosts').hasClass('active')) {
+        this.dashboard();
+      }
     },
     onSubscriptionEnterpriseInactive: function() {
       window.subActive = false;
@@ -85,6 +93,10 @@ define([
       $('body').removeClass('premium-license');
       $('body').addClass('enterprise-license');
       this.updateTheme();
+
+      if ($('header .hosts').hasClass('active')) {
+        this.dashboard();
+      }
     },
     onSubscriptionNoneInactive: function() {
       window.subActive = false;
@@ -94,6 +106,10 @@ define([
       $('body').removeClass('premium-license');
       $('body').removeClass('enterprise-license');
       this.updateTheme();
+
+      if ($('header .hosts').hasClass('active')) {
+        this.dashboard();
+      }
     },
     onThemeLight: function() {
       window.theme = 'light';
