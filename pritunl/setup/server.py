@@ -17,9 +17,6 @@ import json
 import flask
 import threading
 
-# TODO Move to setup
-# TODO Add msg that pritunl data must be updated for version 0.10.x users
-
 server = None
 app = flask.Flask(APP_NAME + '_dbconf')
 upgrade_done = threading.Event()
