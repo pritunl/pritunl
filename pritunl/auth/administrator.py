@@ -61,7 +61,25 @@ class Administrator(mongo.MongoObject):
     def limiter_collection(cls):
         return mongo.get_collection('auth_limiter')
 
-    def _hash_password(self, salt, password):
+    def _hash_password_v0(self, salt, password):
+        pass_hash = hashlib.sha512()
+        pass_hash.update(password[:settings.app.password_len_limit])
+        pass_hash.update(base64.b64decode(salt))
+        return pass_hash.digest()
+
+    def _hash_password_v1(self, salt, password):
+        pass_hash = hashlib.sha512()
+        pass_hash.update(password[:settings.app.password_len_limit])
+        pass_hash.update(base64.b64decode(salt))
+        hash_digest = pass_hash.digest()
+
+        for i in xrange(5):
+            pass_hash = hashlib.sha512()
+            pass_hash.update(hash_digest)
+            hash_digest = pass_hash.digest()
+        return hash_digest
+
+    def _hash_password_v2(self, salt, password):
         pass_hash = hashlib.sha512()
         pass_hash.update(password[:settings.app.password_len_limit])
         pass_hash.update(base64.b64decode(salt))
