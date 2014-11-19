@@ -27,5 +27,4 @@ def setup_local():
             uuid_file.write(settings.local.host_id)
 
     settings.local.version = __version__
-    settings.local.version_int = int(
-        ''.join([x.zfill(2) for x in settings.local.version.split('.')]))
+    settings.local.version_int = utils.get_int_ver(__version__)
