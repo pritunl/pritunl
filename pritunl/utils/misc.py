@@ -15,6 +15,10 @@ import bson
 import signal
 import flask
 import sys
+import json
+import pymongo
+import hashlib
+import base64
 
 if hasattr(sys, 'frozen'):
     _srcfile = 'logging%s__init__%s' % (os.sep, __file__[-4:])
@@ -114,6 +118,18 @@ def filter_str(in_str):
     if not in_str:
         return in_str
     return ''.join(x for x in in_str if x.isalnum() or x in NAME_SAFE_CHARS)
+
+def generate_otp_secret(self):
+    sha_hash = hashlib.sha512()
+    sha_hash.update(os.urandom(8192))
+    byte_hash = sha_hash.digest()
+
+    for _ in xrange(6):
+        sha_hash = hashlib.sha512()
+        sha_hash.update(byte_hash)
+        byte_hash = sha_hash.digest()
+
+    return base64.b32encode(byte_hash)[:settings.user.otp_secret_len]
 
 def get_cert_block(cert_data):
     start_index = cert_data.index('-----BEGIN CERTIFICATE-----')
