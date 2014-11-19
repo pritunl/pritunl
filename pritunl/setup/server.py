@@ -31,11 +31,11 @@ def stop_server():
 
 try:
     import OpenSSL
-    import wsgiserver.ssl_pyopenssl
-    SSLAdapter = wsgiserver.ssl_pyopenssl.pyOpenSSLAdapter
+    from pritunl.wsgiserver import ssl_pyopenssl
+    SSLAdapter = ssl_pyopenssl.pyOpenSSLAdapter
 except ImportError:
-    import wsgiserver.ssl_builtin
-    SSLAdapter = wsgiserver.ssl_builtin.BuiltinSSLAdapter
+    from pritunl.wsgiserver import ssl_builtin
+    SSLAdapter = ssl_builtin.BuiltinSSLAdapter
 
 @app.route('/', methods=['GET'])
 def index_get():
