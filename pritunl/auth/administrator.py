@@ -92,8 +92,16 @@ class Administrator(mongo.MongoObject):
         return hash_digest
 
     def test_password(self, test_pass):
-        _, pass_salt, pass_hash = self.password.split('$')
-        test_hash = base64.b64encode(self._hash_password(pass_salt, test_pass))
+        hash_ver, pass_salt, pass_hash = self.password.split('$')
+
+        if hash_ver == '0':
+            hash_func = self._hash_password_v0
+        elif hash_ver == '1':
+            hash_func = self._hash_password_v1
+        elif hash_ver == '2':
+            hash_func = self._hash_password_v2
+
+        test_hash = base64.b64encode(hash_func(pass_salt, test_pass))
         return pass_hash == test_hash
 
     def generate_token(self):
