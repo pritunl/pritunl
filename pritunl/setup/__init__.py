@@ -25,9 +25,9 @@ def setup_all():
 
     setup_mongo()
     setup_temp_path()
+    setup_host()
     setup_public_ip()
     setup_poolers()
-    setup_host()
     setup_runners()
     setup_handlers()
 
