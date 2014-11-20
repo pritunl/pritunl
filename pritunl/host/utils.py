@@ -12,6 +12,7 @@ from pritunl import mongo
 
 import datetime
 import collections
+import random
 
 def get_by_id(id, fields=None):
     return Host(id=id, fields=fields)
@@ -111,3 +112,6 @@ def deinit():
         logger.LogEntry(message='Web debug server stopped.')
     else:
         logger.LogEntry(message='Web server stopped.')
+
+def get_prefered_hosts(hosts, replica_count):
+    return random.sample(hosts, min(replica_count, len(hosts)))
