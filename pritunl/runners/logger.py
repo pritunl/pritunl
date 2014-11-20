@@ -15,6 +15,8 @@ def _logger_runner_thread():
     log_queue = logger.log_queue
     collection = mongo.get_collection('logs')
 
+    settings.local.logger_runner = True
+
     while True:
         try:
             msg_docs = []
