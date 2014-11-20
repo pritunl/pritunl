@@ -119,7 +119,7 @@ def filter_str(in_str):
         return in_str
     return ''.join(x for x in in_str if x.isalnum() or x in NAME_SAFE_CHARS)
 
-def generate_otp_secret(self):
+def generate_otp_secret():
     sha_hash = hashlib.sha512()
     sha_hash.update(os.urandom(8192))
     byte_hash = sha_hash.digest()
