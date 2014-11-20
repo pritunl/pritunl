@@ -121,7 +121,7 @@ def setup_mongodb_put():
 def setup_upgrade_get():
     if upgrade_done.wait(15):
         stop_server()
-        return 'true';
+        return 'true'
     return ''
 
 def server_thread():
