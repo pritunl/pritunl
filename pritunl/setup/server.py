@@ -7,6 +7,7 @@ from pritunl import static
 from pritunl import utils
 from pritunl import patches
 from pritunl import wsgiserver
+from pritunl import upgrade
 
 import logging
 import signal
@@ -149,9 +150,26 @@ def server_thread():
     setup_ready.set()
     settings.local.server_start.set()
 
+def upgrade_database():
+    def _upgrade_thread():
+        upgrade.upgrade_server()
+        upgrade_done.set()
+        stop_server()
+    threading.Thread(target=_upgrade_thread).start()
+
 def setup_server():
-    if settings.conf.mongodb_uri and settings.local.version < 1000:
+    global db_setup
+    db_setup = not settings.conf.mongodb_uri
+
+    global server_upgrade
+    server_upgrade = utils.get_db_ver_int() < settings.local.version_int
+
+    if not db_setup and not server_upgrade:
         return
+
+    if not db_setup:
+        upgrade_database()
+
     settings.local.server_start.clear()
 
     thread = threading.Thread(target=server_thread)
