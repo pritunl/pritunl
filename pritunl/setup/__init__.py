@@ -13,7 +13,6 @@ from pritunl.setup.runners import setup_runners
 from pritunl.setup.handlers import setup_handlers
 from pritunl.setup.server_cert import setup_server_cert
 from pritunl import settings
-from pritunl import dbconf
 
 def setup_all():
     setup_local()
