@@ -21,6 +21,10 @@ server = None
 app = flask.Flask(APP_NAME + '_dbconf')
 upgrade_done = threading.Event()
 setup_ready = threading.Event()
+db_ready = threading.Event()
+server_ready = threading.Event()
+db_setup = None
+server_upgrade = None
 
 def stop_server():
     def stop():
@@ -43,7 +47,7 @@ def index_get():
 
 @app.route('/setup', methods=['GET'])
 def setup_get():
-    if settings.conf.mongodb_uri:
+    if db_ready:
         return flask.redirect('upgrade')
 
     try:
@@ -56,7 +60,7 @@ def setup_get():
 
 @app.route('/upgrade', methods=['GET'])
 def upgrade_get():
-    if not settings.conf.mongodb_uri:
+    if not db_ready:
         return flask.redirect('setup')
 
     try:
@@ -106,10 +110,10 @@ def setup_mongodb_put():
     settings.conf.mongodb_uri = mongodb_uri
     settings.conf.commit()
 
-    if settings.local.version >= 1000:
-        pass
-    else:
+    if server_ready:
         stop_server()
+    else:
+        upgrade_database()
 
     return ''
 
