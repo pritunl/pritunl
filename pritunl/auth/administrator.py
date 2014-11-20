@@ -106,15 +106,11 @@ class Administrator(mongo.MongoObject):
 
     def generate_token(self):
         logger.info('Generating auth token', 'auth')
-
-        self.token = re.sub(r'[\W_]+', '',
-            base64.b64encode(os.urandom(64)))[:32]
+        self.token = utils.generate_secret()
 
     def generate_secret(self):
         logger.info('Generating auth secret', 'auth')
-
-        self.secret = re.sub(r'[\W_]+', '',
-            base64.b64encode(os.urandom(64)))[:32]
+        self.secret = utils.generate_secret()
 
     def new_session(self):
         session_id = uuid.uuid4().hex
