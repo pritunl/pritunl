@@ -445,7 +445,7 @@ RANDOM_TWO = (
 CIPHERS = {
     'none': 'cipher none',
     'bf128': 'cipher BF-CBC',
-    'bf256': 'cipher BF-CBCkeysize 256',
+    'bf256': 'cipher BF-CBC\nkeysize 256',
     'aes128': 'cipher AES-128-CBC',
     'aes192': 'cipher AES-192-CBC',
     'aes256': 'cipher AES-256-CBC',
