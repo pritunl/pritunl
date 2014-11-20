@@ -1,3 +1,5 @@
+from pritunl import __version__
+
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
@@ -35,6 +37,46 @@ def now():
 
 def get_int_ver(version):
     return int(''.join([x.zfill(2) for x in version.split('.')]))
+
+def get_db_ver():
+    prefix = settings.conf.mongodb_collection_prefix or ''
+    client = pymongo.MongoClient(settings.conf.mongodb_uri,
+        connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
+    database = client.get_default_database()
+    settings_db = getattr(database, prefix + 'settings')
+    doc = settings_db.find_one({
+        '_id': 'version',
+    }) or {}
+
+    version = doc.get('version')
+    if version:
+        return version
+
+    if not version and settings.conf.data_path:
+        path = os.path.join(settings.conf.data_path, 'version')
+        if os.path.exists(path):
+            with open(path, 'r') as ver_file:
+                return ver_file.read().strip()
+
+    return __version__
+
+def get_db_ver_int():
+    version = get_db_ver()
+    if version:
+        return get_int_ver(version)
+
+def set_db_ver(version):
+    prefix = settings.conf.mongodb_collection_prefix or ''
+    client = pymongo.MongoClient(settings.conf.mongodb_uri,
+        connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
+    database = client.get_default_database()
+    settings_db = getattr(database, prefix + 'settings')
+    doc = settings_db.update({
+        '_id': 'version',
+    }, {
+        'version': version,
+    }, upsert=True)
+    return doc.get('version')
 
 def check_output_logged(*args, **kwargs):
     if 'stdout' in kwargs or 'stderr' in kwargs:
