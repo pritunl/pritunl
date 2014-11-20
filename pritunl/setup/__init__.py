@@ -1,6 +1,7 @@
 from pritunl.setup.local import setup_local
 from pritunl.setup.clear_temp import setup_clear_temp
 from pritunl.setup.app import setup_app
+from pritunl.setup.server import setup_server
 from pritunl.setup.mongo import setup_mongo
 from pritunl.setup.temp_path import setup_temp_path
 from pritunl.setup.logger import setup_logger
@@ -20,9 +21,7 @@ def setup_all():
     setup_app()
     setup_logger()
     setup_signal_handler()
-
-    dbconf.setup_server()
-
+    setup_server()
     setup_mongo()
     setup_temp_path()
     setup_host()
