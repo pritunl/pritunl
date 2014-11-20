@@ -95,15 +95,15 @@ def _upgrade_org_users(org_id, org_path):
                     update_doc[name] = value
                 elif name == 'type':
                     if value == 'client':
-                        user_type = CERT_CLIENT
+                        update_doc['type'] = CERT_CLIENT
                     elif value == 'server':
-                        user_type = CERT_SERVER
+                        update_doc['type'] = CERT_SERVER
                     elif value == 'client_pool':
-                        user_type = CERT_CLIENT_POOL
+                        update_doc['type'] = CERT_CLIENT_POOL
                     elif value == 'server_pool':
-                        user_type = CERT_SERVER_POOL
+                        update_doc['type'] = CERT_SERVER_POOL
                     elif value == 'ca':
-                        user_type = CERT_CA
+                        update_doc['type'] = CERT_CA
                 elif name == 'disabled' and value == 'true':
                     user_disabled = True
 
