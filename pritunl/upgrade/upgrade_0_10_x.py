@@ -56,25 +56,43 @@ def _upgrade_org_users(org_id, org_path):
 
     for user_conf_name in os.listdir(users_path):
         user_id = os.path.splitext(user_conf_name)[0]
-
         user_conf_path = os.path.join(users_path, user_conf_name)
         user_cert_path = os.path.join(org_path, 'certs', user_id + '.crt')
         user_key_path = os.path.join(org_path, 'keys', user_id + '.key')
-        user_name = None
-        user_email = None
-        user_type = CERT_CLIENT
-        user_otp_secret = None
-        user_disabled = False
+
+        if user_id == 'ca':
+            spec = {
+                'org_id': bson.ObjectId(org_id),
+                'type': 'ca',
+            }
+        else:
+            spec = {
+                '_id': bson.ObjectId(user_id),
+            }
+
+        update_doc = {
+            'private_key': user_key,
+            'otp_secret': None,
+            'name': None,
+            'certificate': user_cert,
+            'resource_id': None,
+            'org_id': bson.ObjectId(org_id),
+            'disabled': False,
+            'type': CERT_CLIENT,
+            'email': None,
+        }
 
         with open(user_conf_path, 'r') as conf_file:
             for line in conf_file.readlines():
                 line = line.strip()
                 name, value = line.split('=', 1)
 
-                if name == 'name':
-                    user_name = value
-                if name == 'email':
-                    user_email = value
+                if name in (
+                            'name',
+                            'email',
+                            'otp_secret',
+                        ):
+                    update_doc[name] = value
                 elif name == 'type':
                     if value == 'client':
                         user_type = CERT_CLIENT
@@ -86,41 +104,17 @@ def _upgrade_org_users(org_id, org_path):
                         user_type = CERT_SERVER_POOL
                     elif value == 'ca':
                         user_type = CERT_CA
-                elif name == 'otp_secret':
-                    user_otp_secret = value
                 elif name == 'disabled' and value == 'true':
                     user_disabled = True
 
-        if not user_otp_secret:
-            user_otp_secret = utils.generate_otp_secret()
+        if not update_doc['otp_secret']:
+            update_doc['otp_secret'] = utils.generate_otp_secret()
 
         with open(user_cert_path, 'r') as vert_file:
-            user_cert = vert_file.read().rstrip('\n')
+            update_doc['certificate'] = vert_file.read().rstrip('\n')
 
         with open(user_key_path, 'r') as key_file:
-            user_key = key_file.read().rstrip('\n')
-
-        update_doc = {
-            'private_key': user_key,
-            'otp_secret': user_otp_secret,
-            'name': user_name,
-            'certificate': user_cert,
-            'resource_id': None,
-            'org_id': bson.ObjectId(org_id),
-            'disabled': user_disabled,
-            'type': user_type,
-            'email': user_email,
-        }
-
-        if user_id == 'ca':
-            spec = {
-                'org_id': bson.ObjectId(org_id),
-                'type': 'ca',
-            }
-        else:
-            spec = {
-                '_id': bson.ObjectId(user_id),
-            }
+            update_doc['private_key'] = key_file.read().rstrip('\n')
 
         users_db.update(spec, update_doc, upsert=True)
 
