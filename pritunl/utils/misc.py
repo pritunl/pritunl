@@ -19,6 +19,7 @@ import json
 import pymongo
 import hashlib
 import base64
+import re
 
 if hasattr(sys, 'frozen'):
     _srcfile = 'logging%s__init__%s' % (os.sep, __file__[-4:])
@@ -118,6 +119,9 @@ def filter_str(in_str):
     if not in_str:
         return in_str
     return ''.join(x for x in in_str if x.isalnum() or x in NAME_SAFE_CHARS)
+
+def generate_secret():
+    return re.sub(r'[\W_]+', '', base64.b64encode(os.urandom(64)))[:32]
 
 def generate_otp_secret():
     sha_hash = hashlib.sha512()
