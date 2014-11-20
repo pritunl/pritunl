@@ -632,7 +632,17 @@ class Server(mongo.MongoObject):
             event.Event(type=SERVER_LINKS_UPDATED,
                 resource_id=link['server_id'])
 
+    def pre_start_check(self):
+        if not self.tls_auth_key:
+            self.generate_tls_auth()
+            self.commit('tls_auth_key')
+
+        if not self.ca_certificate:
+            self.generate_ca_cert()
+            self.commit('ca_certificate')
+
     def run(self, send_events=False):
+        self.pre_start_check()
         instance = ServerInstance(self)
         instance.run(send_events=send_events)
 
@@ -647,15 +657,13 @@ class Server(mongo.MongoObject):
             self.generate_dh_param()
             return
 
-        if not self.tls_auth_key:
-            self.generate_tls_auth()
-            self.commit('tls_auth_key')
-
         if not self.organizations:
             raise ServerMissingOrg('Server cannot be started ' + \
                 'without any organizations', {
                     'server_id': self.id,
                 })
+
+        self.pre_start_check()
 
         start_timestamp = utils.now()
         response = self.collection.update({
