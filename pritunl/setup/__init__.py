@@ -17,8 +17,8 @@ from pritunl import settings
 def setup_all():
     setup_local()
     setup_clear_temp()
-    setup_app()
     setup_logger()
+    setup_app()
     setup_signal_handler()
     setup_server()
     setup_mongo()
