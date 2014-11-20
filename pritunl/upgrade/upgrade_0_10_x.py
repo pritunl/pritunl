@@ -71,10 +71,10 @@ def _upgrade_org_users(org_id, org_path):
             }
 
         update_doc = {
-            'private_key': user_key,
+            'private_key': None,
             'otp_secret': None,
             'name': None,
-            'certificate': user_cert,
+            'certificate': None,
             'resource_id': None,
             'org_id': bson.ObjectId(org_id),
             'disabled': False,
