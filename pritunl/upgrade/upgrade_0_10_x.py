@@ -12,6 +12,7 @@ import sys
 import json
 import pymongo
 import bson
+import datetime
 
 def _upgrade_auth():
     username = None
@@ -180,7 +181,7 @@ def _upgrade_server(server_id, server_path):
         'cipher': 'bf128',
         'bind_address': None,
         'organizations': [],
-        'start_timestamp': None,
+        'start_timestamp': datetime.datetime.fromtimestamp(0),
         'instances_count': 0,
         'name': None,
         'search_domain': None,
