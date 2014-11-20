@@ -226,17 +226,7 @@ class User(mongo.MongoObject):
             server.unassign_ip_addr(self.org.id, self.id)
 
     def generate_otp_secret(self):
-        sha_hash = hashlib.sha512()
-        sha_hash.update(os.urandom(8192))
-        byte_hash = sha_hash.digest()
-
-        for _ in xrange(6):
-            sha_hash = hashlib.sha512()
-            sha_hash.update(byte_hash)
-            byte_hash = sha_hash.digest()
-
-        self.otp_secret = base64.b32encode(
-            byte_hash)[:settings.user.otp_secret_len]
+        self.otp_secret = utils.generate_otp_secret()
 
     def verify_otp_code(self, code, remote_ip=None):
         if remote_ip:
