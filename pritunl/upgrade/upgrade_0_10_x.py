@@ -175,7 +175,7 @@ def _upgrade_server(server_id, server_path):
         'dh_params': None,
         'local_networks': [],
         'primary_user': None,
-        'status': OFFLINE,
+        'status': ONLINE,
         'debug': False,
         'cipher': 'bf128',
         'bind_address': None,
