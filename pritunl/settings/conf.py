@@ -24,4 +24,6 @@ class SettingsConf(SettingsGroupFile):
         'bind_addr': '0.0.0.0',
         'mongodb_uri': 'mongodb://localhost:27017/pritunl',
         'mongodb_collection_prefix': None,
+        'data_path': None, # For 0.10.x upgrade
+        'db_path': None, # For 0.10.x upgrade
     }
