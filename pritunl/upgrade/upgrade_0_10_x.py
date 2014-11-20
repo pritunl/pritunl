@@ -121,36 +121,36 @@ def _upgrade_org_users(org_id, org_path):
 def _upgrade_org(org_id, org_path):
     organizations_db = get_collection('organizations')
     org_conf_path = os.path.join(org_path, 'ca.conf')
-    org_name = None
-    org_type = ORG_DEFAULT
-    org_ca_cert = None
-    org_ca_key = None
+
+    spec = {
+        '_id': bson.ObjectId(org_id),
+    }
+
+    update_doc = {
+        'name': None,
+        'type': ORG_DEFAULT,
+        'ca_certificate': None,
+        'ca_private_key': None,
+    }
 
     with open(org_conf_path, 'r') as conf_file:
         for line in conf_file.readlines():
             line = line.strip()
             name, value = line.split('=', 1)
             if name == 'name':
-                org_name = value
+                update_doc['name'] = value
             elif name == 'pool' and value == 'true':
-                org_type = ORG_POOL
+                update_doc['type'] = ORG_POOL
 
     org_ca_cert_path = os.path.join(org_path, 'certs', 'ca.crt')
     with open(org_ca_cert_path, 'r') as org_cert_file:
-        org_ca_cert = org_cert_file.read().rstrip('\n')
+        update_doc['ca_certificate'] = org_cert_file.read().rstrip('\n')
 
     org_ca_key_path = os.path.join(org_path, 'keys', 'ca.key')
     with open(org_ca_key_path, 'r') as org_key_file:
-        org_ca_key = org_key_file.read().rstrip('\n')
+        update_doc['ca_private_key'] = org_key_file.read().rstrip('\n')
 
-    organizations_db.update({
-        '_id': bson.ObjectId(org_id),
-    }, {
-        'type': org_type,
-        'name': org_name,
-        'ca_certificate': org_ca_cert,
-        'ca_private_key': org_ca_key,
-    }, upsert=True)
+    organizations_db.update(spec, update_doc, upsert=True)
 
 def _upgrade_server(server_id, server_path):
     servers_db = get_collection('servers')
