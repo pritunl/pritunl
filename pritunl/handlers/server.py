@@ -602,8 +602,10 @@ def server_link_delete(server_id, link_server_id):
 @app.app.route('/server/<server_id>/<operation>', methods=['PUT'])
 @auth.session_auth
 def server_operation_put(server_id, operation):
-    svr = server.get_by_id(server_id, fields=server.dict_fields + \
-        ['hosts', 'links', 'replica_count', 'tls_auth_key'])
+    fields = server.dict_fields + ['hosts', 'links', 'replica_count',
+        'tls_auth_key'] + (['ca_certificate'] if operation == START else [])
+
+    svr = server.get_by_id(server_id, fields=fields)
 
     if operation == START:
         svr.start()
