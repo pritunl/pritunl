@@ -39,7 +39,7 @@ class LogFormatter(logging.Formatter):
                         if stderr_lines and not stderr_lines[-1]:
                             stderr_lines.pop()
                         for line in stderr_lines:
-                            formatted_record += '\n  ' + line
+                            formatted_record += '\n  ' + line.decode('utf-8')
                     if traceback:
                         formatted_record += \
                             '\nTraceback (most recent call last):\n'
