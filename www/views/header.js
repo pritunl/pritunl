@@ -2,14 +2,14 @@ define([
   'jquery',
   'underscore',
   'backbone',
-  'models/auth',
+  'models/settings',
   'models/subscription',
   'views/alert',
   'views/modalSettings',
   'views/modalSubscribe',
   'views/modalEnterprise',
   'text!templates/header.html'
-], function($, _, Backbone, AuthModel, SubscriptionModel, AlertView,
+], function($, _, Backbone, SettingsModel, SubscriptionModel, AlertView,
     ModalSettingsView, ModalSubscribeView, ModalEnterpriseView,
     headerTemplate) {
   'use strict';
@@ -82,7 +82,7 @@ define([
       this.addView(modal);
     },
     openSettings: function() {
-      var model = new AuthModel();
+      var model = new SettingsModel();
       model.fetch({
         success: function() {
           var modal = new ModalSettingsView({
