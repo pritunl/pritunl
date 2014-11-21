@@ -65,7 +65,7 @@ class ServerInstanceLink(object):
 
         if self.linked_host:
             remotes = 'remote %s %s' % (
-                self.host.link_address or self.host.public_address,
+                self.host.link_addr,
                 self.linked_server.port,
             )
         else:
