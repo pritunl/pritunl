@@ -45,8 +45,7 @@ def pritunl_daemon(default_conf=None):
     if cmd == 'version':
         print '%s v%s' % (pritunl.__title__, pritunl.__version__)
         sys.exit(0)
-
-    if cmd == 'reset-password':
+    elif cmd == 'reset-password':
         from pritunl.constants import DEFAULT_USERNAME, DEFAULT_PASSWORD
         from pritunl import setup
         from pritunl import auth
@@ -59,8 +58,7 @@ def pritunl_daemon(default_conf=None):
                 username, password)
 
         sys.exit(0)
-
-    if cmd == 'reconfigure':
+    elif cmd == 'reconfigure':
         from pritunl import setup
         from pritunl import settings
         setup.setup_db()
@@ -71,8 +69,7 @@ def pritunl_daemon(default_conf=None):
         print 'Database configuration successfully reset'
 
         sys.exit(0)
-
-    if cmd == 'logs':
+    elif cmd == 'logs':
         from pritunl.constants import DEFAULT_USERNAME, DEFAULT_PASSWORD
         from pritunl import setup
         from pritunl import logger
@@ -94,8 +91,7 @@ def pritunl_daemon(default_conf=None):
             print log_view.get_log_lines(options.limit)
 
         sys.exit(0)
-
-    if cmd != 'start':
+    elif cmd != 'start':
         raise ValueError('Invalid command')
 
     from pritunl import settings
