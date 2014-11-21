@@ -160,11 +160,21 @@ def upgrade_database():
     threading.Thread(target=_upgrade_thread).start()
 
 def setup_server():
+    db_ver_int = utils.get_db_ver_int()
+
+    if db_ver_int > settings.local.version_int:
+        logger.error('Database version is newer than server version',
+            'setup',
+            db_version=db_ver_int,
+            server_version=settings.local.version_int,
+        )
+        exit(75)
+
     global db_setup
     db_setup = not settings.conf.mongodb_uri
 
     global server_upgrade
-    server_upgrade = utils.get_db_ver_int() < settings.local.version_int
+    server_upgrade = db_ver_int < settings.local.version_int
 
     if db_setup or server_upgrade:
         if not db_setup:
@@ -178,4 +188,4 @@ def setup_server():
 
         setup_ready.wait()
 
-    setup_ready.wait()
+    utils.set_db_ver(__version__)
