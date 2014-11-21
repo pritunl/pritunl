@@ -80,7 +80,6 @@ define([
       var password = this.$('.pass input').val();
       var publicAddress = this.$('.public-address input').val();
       var theme = this.$('.theme select').val();
-      var verifyPassword = this.$('.verify-pass input').val();
       var emailFromAddr = this.$('.email-from-addr input').val();
       var emailApiKey = this.$('.email-api-key input').val();
       var emailReg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
@@ -97,10 +96,6 @@ define([
         return;
       }
       if (password) {
-        if (password !== verifyPassword) {
-          this.setAlert('danger', 'Passwords do not match.', '.verify-pass');
-          return;
-        }
         modelAttr.password = password;
       }
       if (emailFromAddr && !emailReg.test(emailFromAddr)) {
