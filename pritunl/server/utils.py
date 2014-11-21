@@ -157,7 +157,7 @@ def unlink_servers(server_id, link_server_id):
     }
 
     for doc in collection.find(spec, project):
-        if doc['status']:
+        if doc['status'] == ONLINE:
             raise ServerLinkOnlineError('Server must be offline to unlink')
 
     tran = transaction.Transaction()
