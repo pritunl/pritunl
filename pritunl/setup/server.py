@@ -1,3 +1,5 @@
+from pritunl import __version__
+
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
@@ -164,16 +166,16 @@ def setup_server():
     global server_upgrade
     server_upgrade = utils.get_db_ver_int() < settings.local.version_int
 
-    if not db_setup and not server_upgrade:
-        return
+    if db_setup or server_upgrade:
+        if not db_setup:
+            upgrade_database()
 
-    if not db_setup:
-        upgrade_database()
+        settings.local.server_start.clear()
 
-    settings.local.server_start.clear()
+        thread = threading.Thread(target=server_thread)
+        thread.daemon = True
+        thread.start()
 
-    thread = threading.Thread(target=server_thread)
-    thread.daemon = True
-    thread.start()
+        setup_ready.wait()
 
     setup_ready.wait()
