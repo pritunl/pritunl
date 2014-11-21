@@ -95,7 +95,7 @@ def user_get(org_id, user_id=None, page=None):
                 server_data.append(data)
                 users_server_data[user_id][server_id] = data
 
-        user_dict['servers'] = server_data
+        user_dict['servers'] = sorted(server_data, key=lambda x: x['name'])
         users.append(user_dict)
 
     ip_addrs_iter = server.multi_get_ip_addr(org_id, users_server_data.keys())
