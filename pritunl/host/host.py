@@ -28,6 +28,8 @@ class Host(mongo.MongoObject):
 
     def __init__(self, name=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
+        self.user_count = None
+        self.users_online = None
 
         if 'id' not in kwargs and 'doc' not in kwargs and 'spec' not in kwargs:
             self.id = settings.local.host_id
@@ -39,16 +41,6 @@ class Host(mongo.MongoObject):
 
         if self.name is None:
             self.name = utils.random_name()
-
-    @cached_property
-    def user_count(self):
-        # TODO
-        return 0
-
-    @cached_property
-    def users_online(self):
-        # TODO
-        return 0
 
     @cached_static_property
     def collection(cls):
