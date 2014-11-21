@@ -11,6 +11,7 @@ from pritunl import listener
 from pritunl import messenger
 from pritunl import utils
 from pritunl import task
+from pritunl import host
 
 import pymongo
 import collections
@@ -18,7 +19,6 @@ import datetime
 import bson
 import threading
 import time
-import random
 import hashlib
 
 class TaskServer(task.Task):
@@ -92,12 +92,11 @@ class TaskServer(task.Task):
                 if not hosts:
                     continue
 
-                prefered_host = random.sample(hosts,
-                    min(doc['replica_count'], len(hosts)))
                 messenger.publish('servers', 'start', extra={
                     'server_id': doc['_id'],
                     'send_events': True,
-                    'prefered_hosts': prefered_host,
+                    'prefered_hosts': host.get_prefered_hosts(
+                        hosts, doc['replica_count'])
                 })
         except GeneratorExit:
             raise
