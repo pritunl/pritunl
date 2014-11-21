@@ -8,6 +8,7 @@ import pritunl.handlers.log
 import pritunl.handlers.org
 import pritunl.handlers.ping
 import pritunl.handlers.server
+import pritunl.handlers.settings
 import pritunl.handlers.static
 import pritunl.handlers.status
 import pritunl.handlers.subscription
