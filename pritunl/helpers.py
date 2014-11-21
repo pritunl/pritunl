@@ -1,4 +1,5 @@
 import time
+import signal
 
 _interrupt = False
 
@@ -65,4 +66,10 @@ def check_global_interrupt():
 
 def set_global_interrupt():
     global _interrupt
+    if _interrupt:
+        return
     _interrupt = True
+
+    from pritunl import logger
+    logger.info('Stopping server', 'setup')
+    signal.alarm(2)
