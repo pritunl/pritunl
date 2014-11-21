@@ -336,9 +336,9 @@ class User(mongo.MongoObject):
         conf_hash = conf_hash.hexdigest()
 
         client_conf = OVPN_INLINE_CLIENT_CONF % (
+            self._get_key_info_str(server.name, conf_hash),
             uuid.uuid4().hex,
             utils.random_name(),
-            self._get_key_info_str(server.name, conf_hash),
             server.protocol,
             server.get_key_remotes(),
             CIPHERS[server.cipher],
