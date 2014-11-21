@@ -27,6 +27,9 @@ define([
       this.listenTo(this.model, 'change', this.update);
     },
     update: function(model) {
+      var colorDark;
+      var colorLight;
+
       // Only event from model will have model argument
       if (model) {
         this.$('.generate-new-key').removeAttr('disabled');
@@ -38,12 +41,22 @@ define([
         '@' + this.model.get('organization_name') + '?secret=' +
         this.model.get('otp_secret');
       this.$('.qrcode').empty();
+
+      if ($('body').hasClass('dark')) {
+        colorDark = '#14171a';
+        colorLight = '#385468';
+      }
+      else {
+        colorDark = '#3276b1';
+        colorLight = '#fff';
+      }
+
       new QRCode(this.$('.qrcode').get(0), {
-          text: otpUrl,
-          width: 192,
-          height: 192,
-          colorDark : '#3276b1',
-          colorLight : '#fff'
+        text: otpUrl,
+        width: 192,
+        height: 192,
+        colorDark : colorDark,
+        colorLight : colorLight
       });
     },
     onGenerateNewKey: function() {
