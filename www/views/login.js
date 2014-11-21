@@ -2,13 +2,13 @@ define([
   'jquery',
   'underscore',
   'backbone',
-  'models/auth',
+  'models/settings',
   'models/authSession',
   'views/alert',
   'views/loginBackdrop',
   'views/modalSettings',
   'text!templates/login.html'
-], function($, _, Backbone, AuthModel, AuthSessionModel, AlertView,
+], function($, _, Backbone, SettingsModel, AuthSessionModel, AlertView,
     LoginBackdropView, ModalSettingsView, loginTemplate) {
   'use strict';
   var LoginView = Backbone.View.extend({
@@ -73,7 +73,7 @@ define([
       this.$('input').addClass('has-warning');
     },
     openSettings: function() {
-      var model = new AuthModel();
+      var model = new SettingsModel();
       model.fetch({
         success: function() {
           var modal = new ModalSettingsView({
