@@ -519,10 +519,9 @@ class Server(mongo.MongoObject):
         })
 
         if response['updatedExisting']:
-            prefered_host = random.sample(self.hosts,
-                min(self.replica_count, len(self.hosts)))
             self.publish('start', extra={
-                'prefered_hosts': prefered_host,
+                'prefered_hosts': host.get_prefered_hosts(
+                    self.hosts, self.replica_count),
             })
 
         doc = self.collection.find_and_modify({
@@ -686,10 +685,9 @@ class Server(mongo.MongoObject):
         started_count = 0
         error_count = 0
         try:
-            prefered_host = random.sample(self.hosts,
-                min(self.replica_count, len(self.hosts)))
             self.publish('start', extra={
-                'prefered_hosts': prefered_host,
+                'prefered_hosts': host.get_prefered_hosts(
+                    self.hosts, self.replica_count),
             })
 
             for x_timeout in (2, timeout):
