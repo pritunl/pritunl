@@ -298,6 +298,7 @@ class Server(mongo.MongoObject):
         project = {
             '_id': False,
             'public_address': True,
+            'auto_public_address': True,
         }
 
         if include_link_addr:
@@ -307,7 +308,7 @@ class Server(mongo.MongoObject):
             if include_link_addr and doc['link_address']:
                 address = doc['link_address']
             else:
-                address = doc['public_address']
+                address = doc['public_address'] or doc['auto_public_address']
             remotes.append('remote %s %s' % (address, self.port))
 
         random.shuffle(remotes)
