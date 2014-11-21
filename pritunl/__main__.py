@@ -14,27 +14,31 @@ Commands:
   logs                  View server logs"""
 
 def pritunl_daemon(default_conf=None):
-    parser = optparse.OptionParser(usage=USAGE)
-    parser.add_option('-d', '--daemon', action='store_true',
-        help='Daemonize process')
-    parser.add_option('-p', '--pidfile', type='string',
-        help='Path to create pid file')
-    parser.add_option('-c', '--conf', type='string',
-        help='Path to configuration file')
-    parser.add_option('-q', '--quiet', action='store_true',
-        help='Suppress logging output')
-    parser.add_option('--archive', action='store_true',
-        help='Archive log file')
-    parser.add_option('--tail', action='store_true',
-        help='Tail log file')
-    parser.add_option('--limit', type='int',
-        help='Limit log lines')
-    (options, args) = parser.parse_args()
-
-    if args:
-        cmd = args[0]
+    if len(sys.argv) > 1:
+        cmd = sys.argv[1]
     else:
         cmd = 'start'
+
+    parser = optparse.OptionParser(usage=USAGE)
+
+    if cmd == 'start':
+        parser.add_option('-d', '--daemon', action='store_true',
+            help='Daemonize process')
+        parser.add_option('-p', '--pidfile', type='string',
+            help='Path to create pid file')
+        parser.add_option('-c', '--conf', type='string',
+            help='Path to configuration file')
+        parser.add_option('-q', '--quiet', action='store_true',
+            help='Suppress logging output')
+    elif cmd == 'logs':
+        parser.add_option('--archive', action='store_true',
+            help='Archive log file')
+        parser.add_option('--tail', action='store_true',
+            help='Tail log file')
+        parser.add_option('--limit', type='int',
+            help='Limit log lines')
+
+    (options, args) = parser.parse_args()
 
     pritunl.set_conf_path(options.conf or default_conf)
 
