@@ -13,9 +13,9 @@ import time
 import flask
 import bson
 
-@app.app.route('/auth', methods=['GET'])
+@app.app.route('/settings', methods=['GET'])
 @auth.session_auth
-def auth_get():
+def settings_get():
     response = flask.g.administrator.dict()
     response.update({
         'theme': settings.app.theme,
@@ -24,9 +24,9 @@ def auth_get():
     })
     return utils.jsonify(response)
 
-@app.app.route('/auth', methods=['PUT'])
+@app.app.route('/settings', methods=['PUT'])
 @auth.session_auth
-def auth_put():
+def settings_put():
     admin = flask.g.administrator
 
     if 'username' in flask.request.json and flask.request.json['username']:
