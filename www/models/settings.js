@@ -13,6 +13,7 @@ define([
       'default': null,
       'email_from': null,
       'email_api_key': null,
+      'public_address': null,
       'theme': null
     },
     url: function() {
