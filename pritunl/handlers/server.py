@@ -607,15 +607,19 @@ def server_operation_put(server_id, operation):
 
     svr = server.get_by_id(server_id, fields=fields)
 
-    if operation == START:
-        svr.start()
-        logger.LogEntry(message='Started server "%s".' % svr.name)
-    if operation == STOP:
-        svr.stop()
-        logger.LogEntry(message='Stopped server "%s".' % svr.name)
-    elif operation == RESTART:
-        svr.restart()
-        logger.LogEntry(message='Restarted server "%s".' % svr.name)
+    try:
+        if operation == START:
+            svr.start()
+            logger.LogEntry(message='Started server "%s".' % svr.name)
+        if operation == STOP:
+            svr.stop()
+            logger.LogEntry(message='Stopped server "%s".' % svr.name)
+        elif operation == RESTART:
+            svr.restart()
+            logger.LogEntry(message='Restarted server "%s".' % svr.name)
+    except:
+        event.Event(type=SERVERS_UPDATED)
+        raise
 
     event.Event(type=SERVERS_UPDATED)
     event.Event(type=SERVER_HOSTS_UPDATED, resource_id=svr.id)
