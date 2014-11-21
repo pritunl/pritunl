@@ -32,7 +32,8 @@ class LogHandler(logging.Handler):
         msg = self.format(record)
 
         if not settings.local.logger_runner:
-            self.file_handler.emit(record)
+            if settings.conf.log_path:
+                self.file_handler.emit(record)
         else:
             log_queue.append(msg)
 
