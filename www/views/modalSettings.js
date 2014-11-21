@@ -127,7 +127,7 @@ define([
     onRemove: function() {
       ModalSettingsView.__super__.onRemove.call(this);
       if (!this.triggerApplied) {
-        if (window.theme === 'dark') {
+        if (window.subActive && window.theme === 'dark') {
           $('body').addClass('dark');
         }
         else {
