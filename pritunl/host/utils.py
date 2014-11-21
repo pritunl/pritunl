@@ -70,7 +70,7 @@ def iter_servers_dict():
     for doc in Host.collection.find().sort('name'):
         hst = Host(doc=doc)
 
-        users_online = len(hosts_clients.get(hst.id, ''))
+        users_online = len(hosts_clients.get(hst.id, []))
 
         user_count = 0
         for org_id in host_orgs[hst.id]:
