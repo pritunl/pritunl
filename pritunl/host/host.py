@@ -68,6 +68,11 @@ class Host(mongo.MongoObject):
     def public_addr(self):
         return self.public_address or self.auto_public_address
 
+    @property
+    def link_addr(self):
+        return self.link_address or  self.public_address or \
+            self.auto_public_address
+
     def dict(self):
         return {
             'id': self.id,
