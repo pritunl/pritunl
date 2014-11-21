@@ -445,8 +445,8 @@ class ServerInstance(object):
             linked_server=self.server,
             linked_host=host.get_by_id(host_id),
         )
-        self.replica_links[host_id] = instance_link
         instance_link.start()
+        self.replica_links[host_id] = instance_link
 
     @interrupter
     def _keep_alive_thread(self):
