@@ -78,6 +78,7 @@ define([
     onOk: function() {
       var username = this.$('.username input').val();
       var password = this.$('.pass input').val();
+      var publicAddress = this.$('.public-address input').val();
       var theme = this.$('.theme select').val();
       var verifyPassword = this.$('.verify-pass input').val();
       var emailFromAddr = this.$('.email-from-addr input').val();
@@ -87,6 +88,7 @@ define([
         username: username,
         email_from: emailFromAddr,
         email_api_key: emailApiKey,
+        public_address: publicAddress,
         theme: theme
       };
 
