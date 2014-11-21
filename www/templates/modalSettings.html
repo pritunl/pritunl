@@ -19,6 +19,10 @@
         <option value="dark" <%= theme === 'dark' ? 'selected' : '' %>>Dark</option>
       </select>
     </div>
+    <div class="public-address form-group">
+      <label>Public Address</label>
+      <input type="text" class="form-control" placeholder="Enter public address" data-toggle="tooltip" title="Public IP address or domain name of the host" value="<%- public_address %>">
+    </div>
   </div>
   <div class="settings-right right">
     <div class="api-token form-group">
