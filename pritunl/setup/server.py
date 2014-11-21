@@ -10,6 +10,7 @@ from pritunl import utils
 from pritunl import patches
 from pritunl import wsgiserver
 from pritunl import upgrade
+from pritunl import listener
 
 import logging
 import signal
@@ -159,8 +160,15 @@ def upgrade_database():
         stop_server()
     threading.Thread(target=_upgrade_thread).start()
 
+def on_system_msg(msg):
+    if msg['message'] == SHUT_DOWN:
+        logger.warning('Received shut down event', 'setup')
+        set_global_interrupt()
+
 def setup_server():
     db_ver_int = utils.get_db_ver_int()
+
+    listener.add_listener('system', on_system_msg)
 
     if db_ver_int > settings.local.version_int:
         logger.error('Database version is newer than server version',
