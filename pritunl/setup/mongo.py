@@ -89,77 +89,83 @@ def setup_mongo():
     mongo.collections['logs'].name_str = 'logs'
     mongo.collections['log_entries'].name_str = 'log_entries'
 
-    mongo.collections['logs'].ensure_index('timestamp')
-    mongo.collections['transaction'].ensure_index('lock_id', unique=True)
+    mongo.collections['logs'].ensure_index('timestamp', background=True)
+    mongo.collections['transaction'].ensure_index('lock_id',
+        background=True, unique=True)
     mongo.collections['transaction'].ensure_index([
         ('ttl_timestamp', pymongo.ASCENDING),
         ('state', pymongo.ASCENDING),
         ('priority', pymongo.DESCENDING),
-    ])
-    mongo.collections['queue'].ensure_index('runner_id')
-    mongo.collections['queue'].ensure_index('ttl_timestamp')
-    mongo.collections['task'].ensure_index('type', unique=True)
-    mongo.collections['task'].ensure_index('ttl_timestamp')
+    ], background=True)
+    mongo.collections['queue'].ensure_index('runner_id', background=True)
+    mongo.collections['queue'].ensure_index('ttl_timestamp', background=True)
+    mongo.collections['task'].ensure_index('type', background=True,
+        unique=True)
+    mongo.collections['task'].ensure_index('ttl_timestamp', background=True)
     mongo.collections['log_entries'].ensure_index([
         ('timestamp', pymongo.DESCENDING),
-    ])
-    mongo.collections['messages'].ensure_index('channel')
-    mongo.collections['administrators'].ensure_index('username', unique=True)
-    mongo.collections['users'].ensure_index('resource_id')
+    ], background=True)
+    mongo.collections['messages'].ensure_index('channel', background=True)
+    mongo.collections['administrators'].ensure_index('username',
+        background=True, unique=True)
+    mongo.collections['users'].ensure_index('resource_id', background=True)
     mongo.collections['users'].ensure_index([
         ('type', pymongo.ASCENDING),
         ('org_id', pymongo.ASCENDING),
-    ])
+    ], background=True)
     mongo.collections['users'].ensure_index([
         ('org_id', pymongo.ASCENDING),
         ('name', pymongo.ASCENDING),
-    ])
-    mongo.collections['users_key_link'].ensure_index('key_id')
-    mongo.collections['users_key_link'].ensure_index('short_id', unique=True)
-    mongo.collections['organizations'].ensure_index('type')
-    mongo.collections['hosts'].ensure_index('name')
+    ], background=True)
+    mongo.collections['users_key_link'].ensure_index('key_id', background=True)
+    mongo.collections['users_key_link'].ensure_index('short_id',
+        background=True, unique=True)
+    mongo.collections['organizations'].ensure_index('type', background=True)
+    mongo.collections['hosts'].ensure_index('name', background=True)
     mongo.collections['hosts_usage'].ensure_index([
         ('host_id', pymongo.ASCENDING),
         ('timestamp', pymongo.ASCENDING),
-    ])
-    mongo.collections['servers'].ensure_index('name')
-    mongo.collections['servers'].ensure_index('ping_timestamp')
+    ], background=True)
+    mongo.collections['servers'].ensure_index('name', background=True)
+    mongo.collections['servers'].ensure_index('ping_timestamp',
+        background=True)
     mongo.collections['servers_output'].ensure_index([
         ('server_id', pymongo.ASCENDING),
         ('timestamp', pymongo.ASCENDING),
-    ])
+    ], background=True)
     mongo.collections['servers_output_link'].ensure_index([
         ('server_id', pymongo.ASCENDING),
         ('timestamp', pymongo.ASCENDING),
-    ])
+    ], background=True)
     mongo.collections['servers_bandwidth'].ensure_index([
         ('server_id', pymongo.ASCENDING),
         ('period', pymongo.ASCENDING),
         ('timestamp', pymongo.ASCENDING),
-    ])
+    ], background=True)
     mongo.collections['servers_ip_pool'].ensure_index([
         ('server_id', pymongo.ASCENDING),
         ('user_id', pymongo.ASCENDING),
-    ])
-    mongo.collections['servers_ip_pool'].ensure_index('user_id')
-    mongo.collections['dh_params'].ensure_index('dh_param_bits')
+    ], background=True)
+    mongo.collections['servers_ip_pool'].ensure_index('user_id',
+        background=True)
+    mongo.collections['dh_params'].ensure_index('dh_param_bits',
+        background=True)
     mongo.collections['auth_nonces'].ensure_index([
         ('token', pymongo.ASCENDING),
         ('nonce', pymongo.ASCENDING),
-    ], unique=True)
+    ], background=True, unique=True)
 
-    # TODO check and remove current index when changed
     mongo.collections['users_key_link'].ensure_index('timestamp',
-        expireAfterSeconds=settings.app.key_link_timeout)
+        background=True, expireAfterSeconds=settings.app.key_link_timeout)
     mongo.collections['auth_sessions'].ensure_index('timestamp',
-        expireAfterSeconds=settings.app.session_timeout)
-    mongo.collections['auth_nonces'].ensure_index('timestamp',
+        background=True, expireAfterSeconds=settings.app.session_timeout)
+    mongo.collections['auth_nonces'].ensure_index('timestamp', background=True,
         expireAfterSeconds=settings.app.auth_time_window * 2.1)
     mongo.collections['auth_limiter'].ensure_index('timestamp',
-        expireAfterSeconds=settings.app.auth_limiter_ttl)
-    mongo.collections['otp'].ensure_index('timestamp',
+        background=True, expireAfterSeconds=settings.app.auth_limiter_ttl)
+    mongo.collections['otp'].ensure_index('timestamp', background=True,
         expireAfterSeconds=120)
-    mongo.collections['otp_cache'].ensure_index('timestamp',
+    mongo.collections['otp_cache'].ensure_index('timestamp', background=True,
         expireAfterSeconds=settings.user.otp_cache_ttl)
 
     if not auth.Administrator.collection.find_one():
