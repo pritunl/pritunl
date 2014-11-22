@@ -49,6 +49,9 @@ def parse_network(network):
     address = ipaddress.IPNetwork(network)
     return (str(address.ip), str(address.netmask))
 
+def get_network_gateway(network):
+    return str(ipaddress.IPNetwork(network).iterhosts().next())
+
 def get_local_networks():
     addresses = []
     output = check_output_logged(['ifconfig'])
