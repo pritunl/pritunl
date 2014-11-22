@@ -17,9 +17,9 @@ define([
       'keyup input': 'onInputChange',
       'paste input': 'onInputChange',
       'input input': 'onInputChange',
+      'propertychange input': 'onInputChange',
       'keypress .modal': 'onKeypress',
-      'shown.bs.modal .modal': 'onModalShown',
-      'propertychange input': 'onInputChange'
+      'shown.bs.modal .modal': 'onModalShown'
     },
     title: '',
     okText: 'Ok',
