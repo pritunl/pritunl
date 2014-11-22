@@ -13,6 +13,11 @@ define([
     okText: 'Save',
     events: function() {
       return _.extend({
+        'change .pass input': 'onPassChange',
+        'keyup .pass input': 'onPassEvent',
+        'paste .pass input': 'onPassEvent',
+        'input .pass input': 'onPassEvent',
+        'propertychange .pass input': 'onPassEvent',
         'change .theme select': 'onThemeChange',
         'click .generate-new-api-key': 'onGenerateNewKey',
         'click .right input': 'onClickInput'
@@ -41,7 +46,7 @@ define([
         $('body').removeClass('dark');
       }
     },
-    onInputChange: function() {
+    onPassChange: function() {
       var pass = this.$('.pass input').val();
       if (pass && (
             pass.length < 8 || !pass.match(/[0-9]/) ||
