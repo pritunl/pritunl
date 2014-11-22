@@ -72,7 +72,7 @@ class ServerInstanceCom(object):
             device_name = client.get('device_name')
             platform = client.get('platform')
             mac_addr = client.get('mac_addr')
-            password = client.get('password')
+            otp_code = client.get('otp_code')
             remote_ip = client.get('remote_ip')
             devices = self.client_devices[user_id]
 
@@ -165,7 +165,7 @@ class ServerInstanceCom(object):
                     'type': user.type,
                     'platform': platform,
                     'mac_addr': mac_addr,
-                    'password': password,
+                    'otp_code': otp_code,
                     'virt_address': virt_address,
                     'real_address': remote_ip,
                 })
@@ -346,7 +346,7 @@ class ServerInstanceCom(object):
                 elif env_key == 'UV_NAME':
                     self.client['device_name'] = env_val
                 elif env_key == 'password':
-                    self.client['password'] = env_val
+                    self.client['otp_code'] = env_val
         elif line_14 == '>BYTECOUNT_CLI':
             client_id, bytes_recv, bytes_sent = line.split(',')
             client_id = client_id.split(':')[1]
