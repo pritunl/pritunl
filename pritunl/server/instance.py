@@ -176,10 +176,6 @@ class ServerInstance(object):
         if self.server.multi_device:
             server_conf += 'duplicate-cn\n'
 
-        if self.server.otp_auth:
-            server_conf += 'auth-user-pass-verify %s via-file\n' % (
-                self.user_pass_verify_path)
-
         # Pritunl v0.10.x did not include comp-lzo in client conf
         # if lzo_compression is adaptive dont include comp-lzo in server conf
         if self.server.lzo_compression == ADAPTIVE:
