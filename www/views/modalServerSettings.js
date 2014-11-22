@@ -57,7 +57,7 @@ define([
         if (!this.$('.otp-auth-toggle').parent().hasClass('left')) {
           this.$('.local-network').slideDown(window.slideTime);
           this.$('.otp-auth-toggle').slideUp(window.slideTime, function() {
-            this.$('.otp-auth-toggle').appendTo('.left');
+            this.$('.otp-auth-toggle').appendTo('.left:not(.advanced)');
             this.$('.otp-auth-toggle').show();
           }.bind(this));
         }
@@ -66,7 +66,7 @@ define([
         if (!this.$('.otp-auth-toggle').parent().hasClass('right')) {
           this.$('.local-network').slideUp(window.slideTime);
           this.$('.otp-auth-toggle').slideUp(window.slideTime, function() {
-            this.$('.otp-auth-toggle').appendTo('.right');
+            this.$('.otp-auth-toggle').appendTo('.right:not(.advanced)');
             this.$('.otp-auth-toggle').show();
           }.bind(this));
         }
