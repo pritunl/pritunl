@@ -12,10 +12,11 @@ import threading
 def _limiter_runner_thread():
     while True:
         try:
-            cur_time = time.time()
-            for peer, (expire, count) in limiter.peers_expire_count.items():
-                if cur_time > expire:
-                    limiter.peers_expire_count.pop(peer, None)
+            for limtr in limiter.limiters:
+                cur_time = time.time()
+                for peer, (expire, count) in limtr.peers_expire_count.items():
+                    if cur_time > expire:
+                        limtr.peers_expire_count.pop(peer, None)
 
             yield interrupter_sleep(settings.app.peer_limit_timeout * 2)
 
