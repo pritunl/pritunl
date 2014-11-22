@@ -156,10 +156,12 @@ define([
     resetItems: function(views) {
       if (!views.length) {
         this.$('.orgs-add-user').attr('disabled', 'disabled');
+        this.$('.orgs-add-user-bulk').attr('disabled', 'disabled');
         this.$('.no-orgs').slideDown(window.slideTime);
       }
       else {
         this.$('.orgs-add-user').removeAttr('disabled');
+        this.$('.orgs-add-user-bulk').removeAttr('disabled');
         this.$('.no-orgs').slideUp(window.slideTime);
       }
     }
