@@ -55,8 +55,7 @@ def pritunl_daemon(default_conf=None):
         username, password = auth.reset_password()
 
         print 'Administrator password successfully reset:\n' + \
-            '  username: "%s"\n  password: "%s"' % (
-                username, password)
+            '  username: "%s"\n  password: "%s"' % (username, password)
 
         sys.exit(0)
     elif cmd == 'reconfigure':
