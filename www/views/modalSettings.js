@@ -56,6 +56,16 @@ define([
         this.clearAlert();
       }
     },
+    onPassEvent: function() {
+      var changeId = (new Date()).getTime();
+      this.changeId = changeId;
+
+      setTimeout(function() {
+        if (this.changeId === changeId) {
+          this.onPassChange();
+        }
+      }.bind(this), 500);
+    },
     onGenerateNewKey: function() {
       this.setLoading('Generating new api key...');
       this.model.clear();
