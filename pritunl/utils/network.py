@@ -3,6 +3,7 @@ from pritunl.utils.misc import check_output_logged
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
+from pritunl import ipaddress
 
 import flask
 import subprocess
@@ -45,16 +46,8 @@ def network_addr(ip, subnet):
         subnet_to_cidr(subnet))
 
 def parse_network(network):
-    network_split = network.split('/')
-    address = network_split[0]
-    cidr = int(network_split[1])
-    if cidr == 32:
-        subnet = '255.255.255.255'
-    else:
-        subnet = ('255.' * (cidr / 8)) + str(
-            int(('1' * (cidr % 8)).ljust(8, '0'), 2))
-        subnet += '.0' * (3 - subnet.count('.'))
-    return (address, subnet)
+    address = ipaddress.IPNetwork(network)
+    return (str(address.ip), str(address.netmask))
 
 def get_local_networks():
     addresses = []
