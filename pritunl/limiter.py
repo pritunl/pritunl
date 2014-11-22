@@ -8,9 +8,11 @@ from pritunl import wsgiserver
 import time
 
 _get_time = time.time
+limiters = []
 
 class Limiter(object):
     def __init__(self, group_name, limit_name, limit_timeout_name):
+        limiters.append(self)
         self.peers_expire_count = {}
         self.group_name = group_name
         self.limit_name = limit_name
