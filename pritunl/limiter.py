@@ -23,13 +23,13 @@ class Limiter(object):
 
         cur_time = _get_time()
         peer = peer[0]
-        expire, count = peers_expire_count.get(peer, (None, None))
+        expire, count = self.peers_expire_count.get(peer, (None, None))
         if expire and cur_time <= expire:
             if count > limit:
                 return False
-            peers_expire_count[peer] = (expire, count + 1)
+            self.peers_expire_count[peer] = (expire, count + 1)
         else:
-            peers_expire_count[peer] = (cur_time + limit_timeout, 1)
+            self.peers_expire_count[peer] = (cur_time + limit_timeout, 1)
         return True
 
 _wsgi_limiter = Limiter('app', 'peer_limit', 'peer_limit_timeout')
