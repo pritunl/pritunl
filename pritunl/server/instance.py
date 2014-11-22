@@ -145,6 +145,14 @@ class ServerInstance(object):
         for link_doc in self.server.links:
             link_svr = get_by_id(link_doc['server_id'])
 
+            if self.server.id < link_doc['server_id']:
+                gateway = utils.get_network_gateway(self.server.network)
+                push += 'route %s %s %s\n' % (utils.parse_network(
+                    link_svr.network) + (gateway,))
+                for local_network in link_svr.local_networks:
+                    push += 'route %s %s %s\n' % (utils.parse_network(
+                        local_network) + (gateway,))
+
             push += 'push "route %s %s"\n' % utils.parse_network(
                 link_svr.network)
             for local_network in link_svr.local_networks:
