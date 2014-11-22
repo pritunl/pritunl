@@ -29,6 +29,8 @@ import collections
 import select
 import socket
 
+_limiter = limiter.Limiter('vpn', 'peer_limit', 'peer_limit_timeout')
+
 class ServerInstanceCom(object):
     def __init__(self, server, instance):
         self.server = server
@@ -72,6 +74,10 @@ class ServerInstanceCom(object):
             password = client.get('password')
             remote_ip = client.get('remote_ip')
             devices = self.client_devices[user_id]
+
+            if not _limiter.validate(remote_ip):
+                self.send_client_deny(client, 'Too many connect requests')
+                return
 
             org = self.server.get_org(org_id, fields=['_id'])
             if not org:
