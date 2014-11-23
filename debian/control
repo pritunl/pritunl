@@ -1,7 +1,7 @@
 Source: pritunl
 Section: utils
 Priority: optional
-Maintainer: Zachary Huff <zach.huff.386@gmail.com>
+Maintainer: Pritunl <contact@pritunl.com>
 Build-Depends: debhelper (>= 8.0.0),
                python-all (>= 2.7),
                python-setuptools (>= 0.6b3),
