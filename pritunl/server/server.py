@@ -100,7 +100,7 @@ class Server(mongo.MongoObject):
         'multi_device': False,
         'dns_servers': [],
         'otp_auth': False,
-        'tls_auth': True,
+        'tls_auth': False,
         'lzo_compression': False,
         'debug': False,
         'cipher': 'aes256',
