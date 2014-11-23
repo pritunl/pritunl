@@ -56,6 +56,9 @@ class ServerOutput(object):
             })
 
     def push_output(self, output, label=None):
+        if '--keepalive' in output:
+            return
+
         label = label or settings.local.host.name
 
         self.collection.insert({
