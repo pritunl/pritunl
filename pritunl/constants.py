@@ -492,6 +492,8 @@ persist-tun
 verb 2
 mute 3
 push-peer-info
+ping 10
+ping-restart 60
 server-poll-timeout 3
 sndbuf 100000
 rcvbuf 100000
@@ -509,6 +511,8 @@ persist-tun
 %s
 verb %s
 mute %s
+ping 10
+ping-restart 60
 push-peer-info
 server-poll-timeout 3
 sndbuf 100000
