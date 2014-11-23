@@ -36,7 +36,20 @@ def now():
         datetime.datetime.utcnow() - settings.local.mongo_time_start)
 
 def get_int_ver(version):
-    return int(''.join([x.zfill(2) for x in version.split('.')]))
+    ver = re.findall(r'\d+', version)
+
+    if 'alpha' in version:
+        ver[3] = str(int(ver[3]) + 1000)
+    elif 'beta' in version:
+        ver[3] = str(int(ver[3]) + 2000)
+    elif 'rc' in version:
+        ver[3] = str(int(ver[3]) + 3000)
+    elif len(ver) > 3:
+        ver[3] = ver[3].zfill(4)
+    else:
+        ver.append('0000')
+
+    return int(''.join([x.zfill(2) for x in ver]))
 
 def get_db_ver():
     prefix = settings.conf.mongodb_collection_prefix or ''
