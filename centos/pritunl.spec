@@ -13,9 +13,11 @@ Packager: Pritunl <contact@pritunl.com>
 Provides: pritunl
 Requires: python
 Requires: python-flask
-Requires: python-cherrypy
+Requires: python-pymongo
+Requires: pyopenssl
 Requires: openvpn
 Requires: net-tools
+Requires: mongodb-server
 
 %description
 Open source vpn server. Documentation and more information can be found at
