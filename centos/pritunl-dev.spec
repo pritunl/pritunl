@@ -2,7 +2,7 @@
 %define pkgver 0.10.12
 
 Name: pritunl-dev
-Summary: Pritunl VPN Server
+Summary: Enterprise VPN Server
 Version: %{pkgver}
 Release: 1%{?dist}
 Group: Applications/Internet
@@ -21,7 +21,7 @@ Requires: mongodb-server
 
 %description
 Enterprise vpn server. Documentation and more information can be found at
-the home page pritunl.com
+pritunl.com
 
 %prep
 rm -rf $RPM_BUILD_DIR/%{pkgname}-%{pkgver}

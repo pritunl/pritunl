@@ -23,6 +23,6 @@ Depends: python-flask,
          iptables,
          ${misc:Depends},
          ${python:Depends}
-Description: Pritunl vpn server
- Open source vpn server. Documentation and more information can be found at
- the home page pritunl.com
+Description: Enterprise VPN Server
+ Enterprise vpn server. Documentation and more information can be found at
+ pritunl.com

@@ -3,7 +3,7 @@
 pkgname=pritunl
 pkgver=0.10.12
 pkgrel=1
-pkgdesc="Pritunl vpn server"
+pkgdesc="Enterprise VPN Server"
 arch=("any")
 license=("custom")
 url="https://github.com/${pkgname}/${pkgname}"
