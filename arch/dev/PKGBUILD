@@ -12,17 +12,18 @@ depends=(
     "python"
     "python2"
     "python2-flask"
-    "python2-cherrypy"
     "python2-pyopenssl"
+    "python2-pymongo"
     "net-tools"
     "iproute2"
     "openvpn"
+    "mongodb"
 )
 makedepends=(
     "python2-distribute"
     "python2-flask"
-    "python2-cherrypy"
     "python2-pyopenssl"
+    "python2-pymongo"
 )
 provides=("${_pkgname}")
 conflicts=("${_pkgname}")
