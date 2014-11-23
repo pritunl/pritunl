@@ -18,4 +18,5 @@ Thumbs.db
 /www/node_modules
 /www/styles/*
 !/www/styles/vendor
+/tools/github_key
 /tools/private_key.asc
