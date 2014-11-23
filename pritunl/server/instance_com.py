@@ -121,7 +121,6 @@ class ServerInstanceCom(object):
                 if virt_address and virt_address in self.client_ips:
                     for i, device in enumerate(devices):
                         if device['virt_address'] == virt_address:
-
                             self.client_kill(device)
                             if virt_address in self.client_ips:
                                 self.client_ips.remove(virt_address)
