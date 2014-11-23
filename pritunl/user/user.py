@@ -276,6 +276,7 @@ class User(mongo.MongoObject):
             truncated_hash &= 0x7FFFFFFF
             truncated_hash %= 1000000
             valid_codes.append('%06d' % truncated_hash)
+
         if code not in valid_codes:
             return False
 
