@@ -466,7 +466,7 @@ management-client-auth
 auth-user-pass-optional
 topology subnet
 client-to-client
-max-clients 1024
+max-clients 2048
 ping 10
 ping-restart 80
 push "ping 10"
