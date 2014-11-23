@@ -91,6 +91,13 @@ class ServerInstanceCom(object):
                 self.send_client_deny(client, 'User is not valid')
                 return
 
+            if self.server.otp_auth and  user.type == CERT_CLIENT and \
+                    not user.verify_otp_code(otp_code, remote_ip):
+                logger.LogEntry(message='User failed two-step ' +
+                    'authentication "%s".' % user.name)
+                self.send_client_deny(client, 'Invalid OTP code')
+                return
+
             client_conf = ''
 
             link_svr_id = None
