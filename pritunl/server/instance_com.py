@@ -260,7 +260,7 @@ class ServerInstanceCom(object):
         self.update_clients()
 
         self.push_output('User disconnected org_id=%s user_id=%s' % (
-            org_id, user_id))
+            client.get('org_id'), user_id))
 
     def update_clients(self):
         self.server.collection.update({
