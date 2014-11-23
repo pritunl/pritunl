@@ -479,7 +479,6 @@ verb %s
 mute %s
 """
 
-# TODO reneg-sec 2592000 causes issues with status file
 OVPN_INLINE_CLIENT_CONF = """# %s
 setenv UV_ID %s
 setenv UV_NAME %s
