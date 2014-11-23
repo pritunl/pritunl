@@ -495,6 +495,7 @@ push-peer-info
 ping 10
 ping-restart 60
 server-poll-timeout 3
+reneg-sec 2592000
 sndbuf 100000
 rcvbuf 100000
 remote-cert-tls server
@@ -515,6 +516,7 @@ ping 10
 ping-restart 60
 push-peer-info
 server-poll-timeout 3
+reneg-sec 2592000
 sndbuf 100000
 rcvbuf 100000
 remote-cert-tls server
