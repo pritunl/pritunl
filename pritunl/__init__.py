@@ -1,7 +1,7 @@
 from pritunl import patches
 from pritunl.constants import *
 
-__title__ = APP_NAME
+__title__ = 'pritunl_client'
 __version__ = '0.10.12'
 __author__ = 'Pritunl'
 __license__ = 'Custom'
