@@ -227,9 +227,8 @@ class ServerInstanceCom(object):
             org_id, user_id))
 
     def client_disconnect(self, client):
-        client_id = client['client_id']
-        org_id = bson.ObjectId(client['org_id'])
-        user_id = bson.ObjectId(client['user_id'])
+        client_id = client.get('client_id')
+        user_id = bson.ObjectId(client_id) if client_id else None
         user_type = None
         virt_address = None
         devices = self.client_devices[user_id]
