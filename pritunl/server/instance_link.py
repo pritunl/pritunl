@@ -85,9 +85,6 @@ class ServerInstanceLink(object):
         if self.linked_server.lzo_compression != ADAPTIVE:
             client_conf += 'comp-lzo no\n'
 
-        if self.linked_server.otp_auth:
-            client_conf += 'auth-user-pass\n'
-
         client_conf += JUMBO_FRAMES[self.linked_server.jumbo_frames]
         client_conf += '<ca>\n%s\n</ca>\n' % self.linked_server.ca_certificate
 
