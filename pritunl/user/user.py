@@ -229,7 +229,7 @@ class User(mongo.MongoObject):
         self.otp_secret = utils.generate_otp_secret()
 
     def verify_otp_code(self, code, remote_ip=None):
-        if remote_ip:
+        if remote_ip and settings.vpn.cache_otp_codes:
             doc = self.otp_cache_collection.find_one({
                 '_id': self.id,
             })
@@ -291,7 +291,7 @@ class User(mongo.MongoObject):
         if response['updatedExisting']:
             return False
 
-        if remote_ip:
+        if remote_ip and settings.vpn.cache_otp_codes:
             self.otp_cache_collection.update({
                 '_id': self.id,
             }, {'$set': {
