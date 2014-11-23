@@ -9,7 +9,7 @@ Group: Applications/Internet
 URL: http://%{pkgname}.com/
 License: Custom
 Source0: https://github.com/%{pkgname}/%{pkgname}/archive/%{pkgver}.tar.gz
-Packager: Zachary Huff <zach.huff.386@gmail.com>
+Packager: Pritunl <contact@pritunl.com>
 Provides: pritunl
 Requires: python
 Requires: python-flask
