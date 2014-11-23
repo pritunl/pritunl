@@ -467,7 +467,10 @@ auth-user-pass-optional
 topology subnet
 client-to-client
 max-clients 1024
-keepalive 15 60
+ping 10
+ping-restart 80
+push "ping 10"
+push "ping-restart 60"
 persist-tun
 %s
 status-version 2
