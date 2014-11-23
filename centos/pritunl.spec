@@ -2,7 +2,7 @@
 %define pkgver 0.10.12
 
 Name: %{pkgname}
-Summary: Pritunl vpn server
+Summary: Pritunl VPN Server
 Version: %{pkgver}
 Release: 1%{?dist}
 Group: Applications/Internet
@@ -20,7 +20,7 @@ Requires: net-tools
 Requires: mongodb-server
 
 %description
-Open source vpn server. Documentation and more information can be found at
+Enterprise vpn server. Documentation and more information can be found at
 the home page pritunl.com
 
 %prep
