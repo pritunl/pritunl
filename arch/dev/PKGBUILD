@@ -1,0 +1,49 @@
+# Maintainer: Pritunl <contact@pritunl.com>
+
+pkgname=pritunl-dev
+_pkgname=pritunl
+pkgver=0.10.12
+pkgrel=1
+pkgdesc="Pritunl vpn server"
+arch=("any")
+license=("custom")
+url="https://github.com/${_pkgname}/${_pkgname}"
+depends=(
+    "python"
+    "python2"
+    "python2-flask"
+    "python2-cherrypy"
+    "python2-pyopenssl"
+    "net-tools"
+    "iproute2"
+    "openvpn"
+)
+makedepends=(
+    "python2-distribute"
+    "python2-flask"
+    "python2-cherrypy"
+    "python2-pyopenssl"
+)
+provides=("${_pkgname}")
+conflicts=("${_pkgname}")
+install=${_pkgname}.install
+source=("${url}/archive/${pkgver}.tar.gz")
+sha256sums=("CHANGE_ME")
+options=("emptydirs")
+backup=(
+    "etc/${_pkgname}.conf"
+    "var/lib/${_pkgname}/${_pkgname}.db"
+    "var/log/${_pkgname}.log"
+    "var/log/${_pkgname}.log.1"
+)
+
+build() {
+    cd "${srcdir}/${_pkgname}-${pkgver}"
+    python2 setup.py build
+}
+
+package() {
+    cd "${srcdir}/${_pkgname}-${pkgver}"
+    mkdir -p "${pkgdir}/var/lib/${_pkgname}"
+    python2 setup.py install --root="${pkgdir}" --prefix=/usr --no-upstart
+}
