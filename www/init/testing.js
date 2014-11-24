@@ -20,6 +20,9 @@ define([
         .attr('href', 's/styles/main.css');
       $('.less-error-message').remove();
     }
+    else {
+      window.devStyles = true;
+    }
 
     var _ajax = Backbone.ajax;
     Backbone.ajax = function(options) {
