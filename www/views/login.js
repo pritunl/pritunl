@@ -123,7 +123,6 @@ define([
           }, {
             duration: 400,
             complete: function() {
-              var initial;
               this.destroy();
               if (model.get('default')) {
                 this.openSettings();
