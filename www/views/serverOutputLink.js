@@ -3,10 +3,8 @@ define([
   'underscore',
   'backbone',
   'models/serverOutputLink',
-  'views/serverOutput',
-  'views/alert'
-], function($, _, Backbone, ServerOutputLinkModel, ServerOutputView,
-    AlertView) {
+  'views/serverOutput'
+], function($, _, Backbone, ServerOutputLinkModel, ServerOutputView) {
   'use strict';
   var ServerOutputLinkView = ServerOutputView.extend({
     errorMsg: 'Failed to load server link output, server error occurred.',
