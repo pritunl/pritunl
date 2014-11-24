@@ -48,7 +48,8 @@ def subscription_post():
     license = re.sub(r'[\W_]+', '', license)
 
     try:
-        response = utils.request.get(SUBSCRIPTION_SERVER,
+        response = utils.request.get(
+            'https://app.pritunl.com/subscription',
             json_data={
                 'license': license,
                 'version': settings.local.version_int,
@@ -78,13 +79,15 @@ def subscription_put():
 
     try:
         if cancel:
-            response = utils.request.delete(SUBSCRIPTION_SERVER,
+            response = utils.request.delete(
+                'https://app.pritunl.com/subscription',
                 json_data={
                     'license': settings.app.license,
                 },
             )
         else:
-            response = utils.request.put(SUBSCRIPTION_SERVER,
+            response = utils.request.put(
+                'https://app.pritunl.com/subscription',
                 json_data={
                     'license': settings.app.license,
                     'card': card,

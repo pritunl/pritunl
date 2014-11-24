@@ -26,7 +26,8 @@ def update():
         cur_sub_plan = settings.local.sub_plan
 
         try:
-            response = utils.request.get(SUBSCRIPTION_SERVER,
+            response = utils.request.get(
+                'https://app.pritunl.com/subscription',
                 json_data={
                     'license': license,
                     'version': settings.local.version_int,
