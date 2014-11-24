@@ -474,6 +474,7 @@ persist-tun
 %s
 status-version 2
 script-security 2
+reneg-sec 2592000
 verb %s
 mute %s
 """
