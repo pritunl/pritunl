@@ -96,15 +96,15 @@ define([
     },
     updateGraph: function() {
       var cpuUsage = this.model.getGraphData('cpu');
-      var graphMem = this.model.getGraphData('mem');
+      var memUsage = this.model.getGraphData('mem');
 
-      if (!cpuUsage || !graphMem) {
+      if (!cpuUsage || !memUsage) {
         return;
       }
 
       if (this.getPeriod() === '1m') {
         cpuUsage.pop();
-        graphMem.pop();
+        memUsage.pop();
       }
 
       var graphCpu = new Rickshaw.Graph({
@@ -149,7 +149,7 @@ define([
           name: 'Memory Usage',
           color: 'rgba(44, 127, 184, 0.05)',
           stroke: '#2c7fb8',
-          data: graphMem
+          data: memUsage
         }],
       });
       graphMem.render();
