@@ -93,7 +93,6 @@ DEFAULT_USERNAME = 'pritunl'
 DEFAULT_PASSWORD = 'pritunl'
 DEFAULT_CONF_PATH = '/etc/pritunl.conf'
 DEFAULT_WWW_PATH = '/usr/share/pritunl/www'
-SUBSCRIPTION_SERVER = 'https://app.pritunl.com/subscription'
 SUBSCRIPTION_UPDATE_RATE = 900
 POSTMARK_SERVER = 'https://api.postmarkapp.com/email'
 ENV_PREFIX = APP_NAME
