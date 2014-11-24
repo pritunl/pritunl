@@ -61,7 +61,6 @@ define([
           type: 'GET',
           url: window.subscriptionServer + '/checkout',
           success: function(options) {
-            var plan;
             this.plans = options.plans;
             delete options.plans;
 
