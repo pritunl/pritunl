@@ -29,9 +29,6 @@ define([
       var server = this.$('.server select').val();
       var link = this.$('.link select').val();
 
-      console.log(server, link)
-      console.log(this.$('.server select option[value="' + link + '"]'), this.$('.link select option[value="' + server + '"]'))
-
       this.$('.server select option, .link select option').show();
       this.$('.server select option[value="' + link + '"]').hide();
       this.$('.link select option[value="' + server + '"]').hide();
