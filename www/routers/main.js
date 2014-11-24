@@ -151,7 +151,8 @@ define([
       }
     },
     loadStyles: function() {
-      if (window.subActive && !this.loadedStyles[window.subPlan]) {
+      if (!window.devStyles && window.subActive &&
+          !this.loadedStyles[window.subPlan]) {
         this.loadedStyles[window.subPlan] = true;
         $('<link>').appendTo('head')
           .attr({type: 'text/css', rel: 'stylesheet'})
