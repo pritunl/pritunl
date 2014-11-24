@@ -193,7 +193,7 @@ define([
       }.bind(this));
     },
     hosts: function() {
-      if (!window.subActive || !window.subPlan === 'enterprise') {
+      if (!window.subActive || window.subPlan !== 'enterprise') {
         this.dashboard();
         return;
       }
