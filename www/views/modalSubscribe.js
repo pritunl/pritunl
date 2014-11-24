@@ -59,7 +59,7 @@ define([
     setupCheckout: function() {
       $.ajax({
           type: 'GET',
-          url: window.subscriptionServer + '/checkout',
+          url: 'https://app.pritunl.com' + '/checkout',
           success: function(options) {
             this.plans = options.plans;
             delete options.plans;
@@ -199,7 +199,7 @@ define([
 
       $.ajax({
         type: 'POST',
-        url: window.subscriptionServer + '/promo',
+        url: 'https://app.pritunl.com' + '/promo',
         contentType: 'application/json',
         dataType: 'json',
         data: JSON.stringify({
