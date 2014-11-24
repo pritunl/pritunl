@@ -264,22 +264,22 @@ require([
     function FF(a,b,c,d,x,s,ac) {
       a = AddUnsigned(a, AddUnsigned(AddUnsigned(F(b, c, d), x), ac));
       return AddUnsigned(RotateLeft(a, s), b);
-    };
+    }
 
     function GG(a,b,c,d,x,s,ac) {
       a = AddUnsigned(a, AddUnsigned(AddUnsigned(G(b, c, d), x), ac));
       return AddUnsigned(RotateLeft(a, s), b);
-    };
+    }
 
     function HH(a,b,c,d,x,s,ac) {
       a = AddUnsigned(a, AddUnsigned(AddUnsigned(H(b, c, d), x), ac));
       return AddUnsigned(RotateLeft(a, s), b);
-    };
+    }
 
     function II(a,b,c,d,x,s,ac) {
       a = AddUnsigned(a, AddUnsigned(AddUnsigned(I(b, c, d), x), ac));
       return AddUnsigned(RotateLeft(a, s), b);
-    };
+    }
 
     function ConvertToWordArray(string) {
       var lWordCount;
@@ -304,22 +304,22 @@ require([
       lWordArray[lNumberOfWords-2] = lMessageLength<<3;
       lWordArray[lNumberOfWords-1] = lMessageLength>>>29;
       return lWordArray;
-    };
+    }
 
     function WordToHex(lValue) {
-      var WordToHexValue="",WordToHexValue_temp="",lByte,lCount;
+      var WordToHexValue='',WordToHexValue_temp='',lByte,lCount;
       for (lCount = 0;lCount<=3;lCount++) {
         lByte = (lValue>>>(lCount*8)) & 255;
-        WordToHexValue_temp = "0" + lByte.toString(16);
+        WordToHexValue_temp = '0' + lByte.toString(16);
         WordToHexValue = WordToHexValue + WordToHexValue_temp.substr(
           WordToHexValue_temp.length-2,2);
       }
       return WordToHexValue;
-    };
+    }
 
     function Utf8Encode(string) {
-      string = string.replace(/\r\n/g,"\n");
-      var utftext = "";
+      string = string.replace(/\r\n/g,'\n');
+      var utftext = '';
 
       for (var n = 0; n < string.length; n++) {
         var c = string.charCodeAt(n);
@@ -339,7 +339,7 @@ require([
       }
 
       return utftext;
-    };
+    }
 
     var x=Array();
     var k,AA,BB,CC,DD,a,b,c,d;
