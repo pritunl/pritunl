@@ -231,6 +231,7 @@ require([
   };
 
   window.md5 = function(string) {
+    /* jshint -W016:true, -W027:true, -W052:true, -W064:true */
     function RotateLeft(lValue, iShiftBits) {
       return (lValue<<iShiftBits) | (lValue>>>(32-iShiftBits));
     }
