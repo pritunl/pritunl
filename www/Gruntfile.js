@@ -267,13 +267,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-requirejs');
 
   grunt.registerTask('default', ['jshint', 'clean',
-    'requirejs:production', 'less', 'copy:dist', 'versioning']);
+    'requirejs:production', 'copy:dist', 'versioning']);
 
   grunt.registerTask('test', ['jshint', 'clean', 'requirejs:test',
-    'less', 'copy:dist', 'versioning']);
+    'copy:dist', 'versioning']);
 
   grunt.registerTask('demo', ['jshint', 'clean', 'requirejs:demo',
-    'less', 'copy:demo', 'versioning']);
+    'copy:demo', 'versioning']);
 
   grunt.registerTask('lint', ['jshint']);
 };
