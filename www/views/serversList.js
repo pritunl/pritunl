@@ -216,7 +216,6 @@ define([
       this.addView(modal);
     },
     onLinkServer: function() {
-      console.log('test')
       if (this.collection.length < 2) {
         var alertView = new AlertView({
           type: 'danger',
