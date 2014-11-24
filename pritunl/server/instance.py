@@ -373,6 +373,10 @@ class ServerInstance(object):
 
     def stop_process(self):
         self.sock_interrupt = True
+
+        for instance_link in self.server_links:
+            instance_link.stop()
+
         terminated = utils.stop_process(self.process)
 
         if not terminated:
