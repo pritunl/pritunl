@@ -28,6 +28,7 @@ define([
           platform = 'apple';
         }
         else if (platform === 'linux') {
+          platform = 'linux';
         }
         else {
           platform = 'desktop';
