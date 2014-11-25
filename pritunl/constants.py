@@ -396,11 +396,10 @@ EMAIL_NOT_CONFIGURED_MSG = 'Required email settings have not been ' + \
     'configured, please open settings and configure email.'
 
 EMAIL_FROM_INVALID = 'email_from_invalid'
-EMAIL_FROM_INVALID_MSG = 'Postmark sender signature not defined ' + \
-    'for from address.'
+EMAIL_FROM_INVALID_MSG = 'SMTP server did not accept the from address.'
 
-EMAIL_API_KEY_INVALID = 'email_api_key_invalid'
-EMAIL_API_KEY_INVALID_MSG = 'Postmark email api key invalid.'
+EMAIL_AUTH_INVALID = 'email_auth_invalid'
+EMAIL_AUTH_INVALID_MSG = 'SMTP authentication is invalid.'
 
 SUBSCRIPTION_SERVER_ERROR = 'subscription_server_error'
 SUBSCRIPTION_SERVER_ERROR_MSG = 'Unable to connect to ' + \
