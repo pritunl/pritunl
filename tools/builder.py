@@ -35,6 +35,32 @@ STYLES_DIR = 'www/styles'
 
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
+
+def vagrant_popen(cmd, cwd=None, name='node0'):
+    if cwd:
+        cmd = 'cd /vagrant/%s; %s' % (cwd, cmd)
+    return subprocess.Popen("vagrant ssh --command='%s' %s" % (cmd, name),
+        shell=True, stdin=subprocess.PIPE)
+
+def vagrant_check_call(cmd, cwd=None, name='node0'):
+    if cwd:
+        cmd = 'cd /vagrant/%s; %s' % (cwd, cmd)
+    return subprocess.check_call("vagrant ssh --command='%s' %s" % (cmd, name),
+        shell=True, stdin=subprocess.PIPE)
+
+def wget(url, cwd=None):
+    subprocess.check_call(['wget', url], cwd=cwd)
+
+def rm_tree(path):
+    subprocess.check_call(['rm', '-rf', path])
+
+def tar_extract(archive_path, cwd=None):
+    subprocess.check_call(['tar', 'xfz', archive_path], cwd=cwd)
+
+def tar_compress(archive_path, in_path, cwd=None):
+    subprocess.check_call(['tar', 'cfz', archive_path, in_path], cwd=cwd)
+
+
 # Get package info
 with open(INIT_PATH, 'r') as init_file:
     for line in init_file.readlines():
