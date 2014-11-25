@@ -35,6 +35,9 @@ def now():
     mongo_time_start, mongo_time = settings.local.mongo_time
     return mongo_time + (datetime.datetime.utcnow() - mongo_time_start)
 
+def time_now():
+    return now().strftime('%s')
+
 def get_int_ver(version):
     ver = re.findall(r'\d+', version)
 
