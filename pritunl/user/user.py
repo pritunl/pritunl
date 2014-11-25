@@ -413,8 +413,8 @@ class User(mongo.MongoObject):
         user_key_link = self.org.create_user_key_link(self.id)
 
         key_link = key_link_domain + user_key_link['view_url']
-        uri_link = key_link_domain.replace('http', 'pt', 1) + \
-            user_key_link['uri_url']
+        uri_link = key_link_domain.replace('https', 'pritunl', 1).replace(
+            'http', 'pritunl', 1) + user_key_link['uri_url']
 
         text_email = KEY_LINK_EMAIL_TEXT.format(
             key_link=key_link,
