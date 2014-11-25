@@ -100,7 +100,7 @@ setup(
     ],
     data_files=data_files,
     entry_points={
-        'console_scripts': ['pritunl = pritunl.__main__:pritunl_daemon'],
+        'console_scripts': ['pritunl = pritunl.__main__:main'],
     },
     platforms=[
         'Linux',
