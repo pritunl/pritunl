@@ -521,3 +521,24 @@ sndbuf 100000
 rcvbuf 100000
 remote-cert-tls server
 """
+
+KEY_LINK_EMAIL_TEXT = """\
+Your vpn key can be downloaded from the temporary link below. You may also directly import your keys in the Pritunl client using the temporary URI link.
+
+Key Link: {key_link}
+URI Key Link: {uri_link}"""
+
+KEY_LINK_EMAIL_HTML = """\
+<p>Your vpn key can be downloaded from the temporary link below.
+You may also directly import your keys in the Pritunl client using the
+temporary URI link.<br><br>
+Key Link: <a href="{key_link}">{key_link}</a><br>
+URI Key Link: <a href="{uri_link}">{uri_link}</a></p>
+
+<div itemscope itemtype="http://schema.org/EmailMessage">
+  <div itemprop="action" itemscope itemtype="http://schema.org/ViewAction">
+    <link itemprop="url" href="{key_link}"></link>
+    <meta itemprop="name" content="View Key"></meta>
+  </div>
+  <meta itemprop="description" content="View Pritunl key and configuration information"></meta>
+</div>"""
