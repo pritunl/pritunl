@@ -359,6 +359,9 @@ INTERFACE_IN_USE_MSG = 'Tunnel interface is already in use.'
 PORT_PROTOCOL_IN_USE = 'port_protocol_in_use'
 PORT_PROTOCOL_IN_USE_MSG = 'Port and protocol is already in use.'
 
+SERVER_LINKS_NOT_OFFLINE = 'server_links_not_offline'
+SERVER_LINKS_NOT_OFFLINE_SETTINGS_MSG = 'All linked servers must be offline to modify settings.'
+
 SERVER_NOT_OFFLINE = 'server_not_offline'
 SERVER_NOT_OFFLINE_SETTINGS_MSG = 'Server must be offline to modify settings.'
 SERVER_NOT_OFFLINE_ATTACH_ORG_MSG = 'Server must be offline to attach ' + \
