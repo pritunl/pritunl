@@ -155,6 +155,15 @@ elif cmd == 'set-version':
         cwd=STYLES_DIR)
     subprocess.check_call(['grunt'], cwd=WWW_DIR)
 
+    subprocess.check_call(['git', 'reset', 'HEAD', '.'],
+        cwd=STYLES_DIR)
+    subprocess.check_call(['git', 'add', 'debian/changelog'],
+        cwd=STYLES_DIR)
+    subprocess.check_call(['git', 'commit', '-m', 'Create new release'],
+        cwd=STYLES_DIR)
+    subprocess.check_call(['git', 'push'],
+        cwd=STYLES_DIR)
+
 
     # Generate changelog
     debian_changelog = ''
