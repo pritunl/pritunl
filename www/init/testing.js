@@ -24,6 +24,11 @@ define([
       window.devStyles = true;
     }
 
+    // Fix for firefox dev tools
+    if (navigator.userAgent.indexOf('Firefox') !== -1) {
+      window.disableInterval = true;
+    }
+
     var _ajax = Backbone.ajax;
     Backbone.ajax = function(options) {
       var _complete = options.complete;
