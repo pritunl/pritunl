@@ -382,6 +382,14 @@ def server_put_post(server_id=None):
                 'error': SERVER_NOT_OFFLINE,
                 'error_msg': SERVER_NOT_OFFLINE_SETTINGS_MSG,
             }, 400)
+
+        for link_svr in svr.iter_links(fields=('status',)):
+            if link_svr.status == ONLINE:
+                return utils.jsonify({
+                    'error': SERVER_LINKS_NOT_OFFLINE,
+                    'error_msg': SERVER_LINKS_NOT_OFFLINE_SETTINGS_MSG,
+                }, 400)
+
         if name_def:
             svr.name = name
         if network_def:
