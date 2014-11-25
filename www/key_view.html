@@ -53,17 +53,6 @@
         color: #333;
       }
 
-      input,
-      button,
-      .key-box,
-      .key-box .key-body a {
-        -webkit-border-radius: 2px;
-        -moz-border-radius: 2px;
-        -ms-border-radius: 2px;
-        -o-border-radius: 2px;
-        border-radius: 2px;
-      }
-
       .key-box .key-header {
         -webkit-border-top-left-radius: 2px;
         -moz-border-top-left-radius: 2px;
@@ -104,7 +93,7 @@
         font-family: 'Ubuntu', sans-serif;
         margin: 0 0 12px 0;
         line-height: 1.428571429;
-        font-size: 20px;
+        font-size: 22px;
         display: block;
       }
 
@@ -163,51 +152,97 @@
         text-align: center;
       }
 
-      .key-box .key-body button,
-      .key-box .key-body a {
+      .btn {
+        padding: 6px 12px;
         margin-top: 15px;
         margin-bottom: 4px;
-        min-width: 260px;
-        color: #fff;
-        background-color: #d9534f;
-        border-color: #d43f3a;
-        display: inline-block;
-        padding: 8px 12px;
-        font-size: 18px;
+        font-size: 14px;
         font-weight: normal;
-        line-height: 1.428571429;
         text-align: center;
+        white-space: nowrap;
         vertical-align: middle;
         cursor: pointer;
         background-image: none;
-        border: 1px solid rgba(0, 0, 0, 0);
+        border: 1px solid #357ebd;
+        display: inline-block;
+        min-width: 260px;
+        color: #fff;
+        background-color: #428bca;
+        padding: 8px 12px;
+        font-size: 18px;
+        line-height: 1.33;
+        text-align: center;
+        vertical-align: middle;
         white-space: nowrap;
         -webkit-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
-        -o-user-select: none;
         user-select: none;
+        -webkit-border-radius: 2px;
+        -moz-border-radius: 2px;
+        border-radius: 2px;
         outline: 0;
         text-decoration: none;
       }
 
-      .key-box .key-body button {
-        margin-top: 11px;
+      .btn:hover {
+        color: #fff;
+        background-color: #3071a9;
+        border-color: #285e8e;
       }
 
-      .key-box .key-body a.sm {
+      .btn:hover,
+      .btn:focus {
+        text-decoration: none;
+      }
+
+      .btn.disabled,
+      .btn[disabled] {
+        pointer-events: none;
+        cursor: not-allowed;
+        box-shadow: none;
+        opacity: 0.65;
+      }
+
+      .btn-success {
+        color: #fff;
+        background-color: #5cb85c;
+        border-color: #4cae4c;
+      }
+
+      .btn-success:hover,
+      .btn-success:focus,
+      .btn-success:active,
+      .btn-success.active {
+        color: #fff;
+        background-color: #47a447;
+        border-color: #398439;
+      }
+
+      .btn-sm {
         padding: 3px 5px;
         font-size: 12px;
         margin-top: 7px;
         margin-bottom: 0;
       }
 
-      .key-box .key-body button:hover,
-      .key-box .key-body button:active,
-      .key-box .key-body a:hover,
-      .key-box .key-body a:active {
+      .btn-danger {
+        color: #fff;
+        background-color: #d9534f;
+        border-color: #d43f3a;
+      }
+
+      .btn-danger:hover,
+      .btn-danger:focus,
+      .btn-danger:active,
+      .btn-danger.active {
+        color: #fff;
         background-color: #d2322d;
         border-color: #ac2925;
+      }
+
+      .key-box .key-body button {
+        margin-top: 11px;
       }
 
       .key-box .key-body a:active {
@@ -230,9 +265,9 @@
         <label id="otp-label">Two-step authentication key</label>
         <input id="key" type="text" readonly value="<%= user_otp_key %>">
         <div id="qrcode"></div>
-        <a title="Download Key" href="<%= user_key_url %>">Download Keys</a><br>
+        <a class="btn btn-success" title="Download Keys" href="<%= user_key_url %>">Download Keys</a><br>
         <%= conf_links %>
-        <button onclick="deleteKey()">Delete Temporary Key Link</button><br>
+        <button class="btn btn-danger" onclick="deleteKey()">Delete Temporary Key Link</button><br>
       </div>
     </div>
 
