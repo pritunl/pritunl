@@ -11,6 +11,7 @@ from pritunl.helpers import *
 from pritunl import utils
 from pritunl import transaction
 from pritunl import mongo
+from pritunl import ipaddress
 
 import uuid
 import os
@@ -66,7 +67,12 @@ def get_used_resources(ignore_server_id):
         used_resources = used_resources[0]
         used_resources.pop('_id')
 
-    return {key: set(val) for key, val in used_resources.items()}
+    return {
+        'networks': {ipaddress.IPNetwork(
+            x) for x in used_resources['networks']},
+        'interfaces': set(used_resources['interfaces']),
+        'ports': set(used_resources['ports']),
+    }
 
 def iter_servers(spec=None, fields=None):
     if fields:
