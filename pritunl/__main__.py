@@ -14,7 +14,7 @@ Commands:
   reconfigure           Reconfigure database connection
   logs                  View server logs"""
 
-def pritunl_daemon(default_conf=None):
+def main(default_conf=None):
     if len(sys.argv) > 1:
         cmd = sys.argv[1]
     else:
