@@ -409,8 +409,6 @@ class User(mongo.MongoObject):
         if key['hash'] != conf_hash:
             return key
 
-    # TODO Move to seperate class use template and img
-    # TODO add uri link to view page
     def send_key_email(self, key_link_domain):
         user_key_link = self.org.create_user_key_link(self.id)
 
