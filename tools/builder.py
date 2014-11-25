@@ -61,6 +61,22 @@ def tar_extract(archive_path, cwd=None):
 def tar_compress(archive_path, in_path, cwd=None):
     subprocess.check_call(['tar', 'cfz', archive_path, in_path], cwd=cwd)
 
+def get_int_ver(version):
+    ver = re.findall(r'\d+', version)
+
+    if 'alpha' in version:
+        ver[3] = str(int(ver[3]) + 1000)
+    elif 'beta' in version:
+        ver[3] = str(int(ver[3]) + 2000)
+    elif 'rc' in version:
+        ver[3] = str(int(ver[3]) + 3000)
+    elif len(ver) > 3:
+        ver[3] = ver[3].zfill(4)
+    else:
+        ver.append('0000')
+
+    return int(''.join([x.zfill(2) for x in ver]))
+
 
 # Get package info
 with open(INIT_PATH, 'r') as init_file:
