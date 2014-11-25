@@ -124,3 +124,6 @@ def main(default_conf=None):
         print '##############################################################'
 
     pritunl.init_server()
+
+if __name__ == '__main__':
+    main()
