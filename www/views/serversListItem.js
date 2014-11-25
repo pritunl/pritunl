@@ -72,6 +72,9 @@ define([
       this.addView(this.serverBandwidthView);
 
       setTimeout(function() {
+        if (window.disableInterval) {
+          return;
+        }
         this.uptimer = setInterval((this._updateTime).bind(this), 1000);
       }.bind(this), 1000);
     },
