@@ -159,7 +159,7 @@ elif cmd == 'set-version':
         cwd=STYLES_DIR)
     subprocess.check_call(['git', 'add', 'debian/changelog'],
         cwd=STYLES_DIR)
-    subprocess.check_call(['git', 'commit', '-m', 'Create new release'],
+    subprocess.check_call(['git', 'commit', '-m', 'Add new build'],
         cwd=STYLES_DIR)
     subprocess.check_call(['git', 'push'],
         cwd=STYLES_DIR)
