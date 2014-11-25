@@ -11,6 +11,7 @@ from pritunl import event
 from pritunl import server
 from pritunl import organization
 from pritunl import auth
+from pritunl import ipaddress
 
 import flask
 import re
@@ -46,6 +47,25 @@ def _dns_server_invalid():
         'error': DNS_SERVER_INVALID,
         'error_msg': DNS_SERVER_INVALID_MSG,
     }, 400)
+
+def _check_network_overlap(test_network, networks):
+    test_start = ipaddress.IPNetwork(test_network).network
+    test_end = ipaddress.IPNetwork(test_network).broadcast
+
+    for network in networks:
+        net_start = network.network
+        net_end = network.broadcast
+
+        if test_start >= net_start and test_start <= net_end:
+            return True
+        elif test_end >= net_start and test_end <= net_end:
+            return True
+        elif net_start >= test_start and net_start <= test_end:
+            return True
+        elif net_end >= test_start and net_end <= test_end:
+            return True
+
+    return False
 
 @app.app.route('/server', methods=['GET'])
 @app.app.route('/server/<server_id>', methods=['GET'])
@@ -287,7 +307,7 @@ def server_put_post(server_id=None):
             for i in xrange(5000):
                 rand_network = '10.%s.%s.0/24' % (
                     random.randint(15, 250), random.randint(15, 250))
-                if rand_network not in network_used:
+                if not _check_network_overlap(rand_network, network_used):
                     network = rand_network
                     break
             if not network:
@@ -322,7 +342,7 @@ def server_put_post(server_id=None):
                 mode = ALL_TRAFFIC
 
     if network_def:
-        if network in network_used:
+        if _check_network_overlap(network, network_used):
             return utils.jsonify({
                 'error': NETWORK_IN_USE,
                 'error_msg': NETWORK_IN_USE_MSG,
