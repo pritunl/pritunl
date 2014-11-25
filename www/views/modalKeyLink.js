@@ -29,15 +29,8 @@ define([
             window.location.host + this.model.get('key_url');
           var otpLink = window.location.protocol + '//' +
             window.location.host + this.model.get('view_url');
-          var uriProtocol;
-          if (window.location.protocol.replace(':', '') === 'http') {
-            uriProtocol = 'pt';
-          }
-          else {
-            uriProtocol = 'pts';
-          }
-          var uriLink = uriProtocol + '://' +
-            window.location.host + this.model.get('uri_url');
+          var uriLink = 'pritunl://' + window.location.host +
+            this.model.get('uri_url');
 
           this.$('.key-link input').val(keyLink);
           this.$('.key-link a').attr('href', keyLink);
