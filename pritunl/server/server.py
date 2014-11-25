@@ -359,6 +359,15 @@ class Server(mongo.MongoObject):
         self.remove_primary_user()
         mongo.MongoObject.remove(self)
 
+    def iter_links(self, fields=None):
+        from pritunl.server.utils import iter_servers
+
+        spec = {
+            '_id': {'$in': [x['server_id'] for x in self.links]},
+        }
+        for svr in iter_servers(spec=spec, fields=fields):
+            yield svr
+
     def create_primary_user(self):
         logger.debug('Creating primary user', 'server',
             server_id=self.id,
