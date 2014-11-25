@@ -26,6 +26,7 @@ define([
         host: this.model.get('id')
       });
       this.addView(this.hostUsageView);
+
       setTimeout(function() {
         if (window.disableInterval) {
           return;
