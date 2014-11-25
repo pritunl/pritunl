@@ -151,7 +151,8 @@ elif cmd == 'set-version':
 
 
     # Build webapp
-    subprocess.check_call(['grunt', '--ver=%s' % new_version], cwd=STYLES_DIR)
+    subprocess.check_call(['grunt', '--ver=%s' % get_int_ver(new_version)],
+        cwd=STYLES_DIR)
     subprocess.check_call(['grunt'], cwd=WWW_DIR)
 
 
