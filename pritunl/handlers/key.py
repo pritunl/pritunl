@@ -85,7 +85,7 @@ def user_linked_key_page_get(short_id):
 
     conf_links = ''
     for server in org.iter_servers():
-        conf_links += '<a class="sm" title="Download Key" ' + \
+        conf_links += '<a class="btn btn-sm" title="Download Key" ' + \
             'href="/key/%s/%s.key">Download Key (%s)</a><br>\n' % (
                 doc['key_id'], server.id, server.name)
     key_page = key_page.replace('<%= conf_links %>', conf_links)
