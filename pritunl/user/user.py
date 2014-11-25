@@ -409,66 +409,28 @@ class User(mongo.MongoObject):
         if key['hash'] != conf_hash:
             return key
 
+    # TODO Move to seperate class use template and img
+    # TODO add uri link to view page
     def send_key_email(self, key_link_domain):
-        if not settings.app.email_from_addr or not settings.app.email_api_key:
-            raise EmailNotConfiguredError('Email not configured', {
-                'org_id': self.org.id,
-                'user_id': self.id,
-            })
+        user_key_link = self.org.create_user_key_link(self.id)
 
-        key_link = self.org.create_user_key_link(self.id)
+        key_link = key_link_domain + user_key_link['view_url']
+        uri_link = key_link_domain.replace('http', 'pt', 1) + \
+            user_key_link['uri_url']
 
-        response = utils.request.post(POSTMARK_SERVER,
-            headers={
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'X-Postmark-Server-Token': settings.app.email_api_key,
-            },
-            json_data={
-                'From': settings.app.email_from_addr,
-                'To': self.email,
-                'Subject': 'Pritunl VPN Key',
-                'TextBody':  'Your vpn key can be downloaded from the ' +
-                    'temporary link below. You may also directly import ' +
-                    'your keys in the Pritunl client using the temporary ' +
-                    'URI link.\n\n' +
-                    'Key Link: ' + key_link_domain + key_link['view_url'] +
-                    '\nURI Key Link: ' +
-                    key_link_domain.replace('http', 'pt', 1) +
-                    key_link['uri_url'],
-            },
+        text_email = KEY_LINK_EMAIL_TEXT.format(
+            key_link=key_link,
+            uri_link=uri_link,
         )
 
-        response = response.json()
-        error_code = response.get('ErrorCode')
-        error_msg = response.get('Message')
+        html_email = KEY_LINK_EMAIL_HTML.format(
+            key_link=key_link,
+            uri_link=uri_link,
+        )
 
-        if error_code == 0:
-            pass
-        elif error_code == 10:
-            raise EmailApiKeyInvalid('Email api key invalid', {
-                'org_id': self.org.id,
-                'user_id': self.id,
-                'error_code': error_code,
-                'error_msg': error_msg,
-            })
-        elif error_code == 400:
-            raise EmailFromInvalid('Email from invalid', {
-                'org_id': self.org.id,
-                'user_id': self.id,
-                'error_code': error_code,
-                'error_msg': error_msg,
-            })
-        else:
-            logger.error('Unknown send user email error', 'user',
-                org_id=self.org.id,
-                user_id=self.id,
-                error_code=error_code,
-                error_msg=error_msg,
-            )
-            raise EmailError('Unknown send user email error.', {
-                'org_id': self.org.id,
-                'user_id': self.id,
-                'error_code': error_code,
-                'error_msg': error_msg,
-            })
+        utils.send_email(
+            self.email,
+            'Pritunl VPN Key',
+            text_email,
+            html_email,
+        )
