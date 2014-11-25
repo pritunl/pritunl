@@ -201,10 +201,10 @@ def user_put(org_id, user_id):
                 'error': EMAIL_FROM_INVALID,
                 'error_msg': EMAIL_FROM_INVALID_MSG,
             }, 400)
-        except EmailApiKeyInvalid:
+        except EmailAuthInvalid:
             return utils.jsonify({
-                'error': EMAIL_API_KEY_INVALID,
-                'error_msg': EMAIL_API_KEY_INVALID_MSG,
+                'error': EMAIL_AUTH_INVALID,
+                'error_msg': EMAIL_AUTH_INVALID_MSG,
             }, 400)
 
     return utils.jsonify(user.dict())
