@@ -6,6 +6,7 @@ import json
 import os
 import subprocess
 import time
+import getpass
 import requests
 
 UBUNTU_RELEASES = [
@@ -261,6 +262,66 @@ elif cmd == 'set-version':
 elif cmd == 'build':
     build_dir = 'build/%s' % cur_version
 
+    passphrase = getpass.getpass('Enter GPG passphrase: ')
+
+    if not os.path.isdir(build_dir):
+        os.makedirs(build_dir)
+
+    # Import gpg key
+    vagrant_check_call('sudo gpg --import private_key.asc || true',
+        cwd='tools')
+
+    # Download archive
+    archive_name = '%s.tar.gz' % cur_version
+    archive_path = os.path.join(build_dir, archive_name)
+    if not os.path.isfile(archive_path):
+        wget('https://github.com/pritunl/pritunl/archive/' + archive_name,
+            cwd=build_dir)
+
+    # Create orig archive
+    orig_name = '%s_%s.orig.tar.gz' % (pkg_name, cur_version)
+    orig_path = os.path.join(build_dir, orig_name)
+    if not os.path.isfile(orig_path):
+        tar_extract(archive_name, cwd=build_dir)
+        rm_tree(os.path.join(
+            build_dir,
+            '%s-%s/debian' % (pkg_name, cur_version),
+        ))
+        tar_compress(
+            orig_name,
+            '%s-%s' % (pkg_name, cur_version),
+            cwd=build_dir,
+        )
+        rm_tree(os.path.join(
+            build_dir,
+            '%s-%s' % (pkg_name, cur_version),
+        ))
+
+    # Create build path
+    build_name = '%s-%s' % (pkg_name, cur_version)
+    build_path = os.path.join(build_dir, build_name)
+    if not os.path.isdir(build_path):
+        tar_extract(archive_name, cwd=build_dir)
+
+    # Read changelog
+    changelog_path = os.path.join(build_path, DEBIAN_CHANGELOG_PATH)
+    with open(changelog_path, 'r') as changelog_file:
+        changelog_data = changelog_file.read()
+
+    # Build debian packages
+    for ubuntu_release in UBUNTU_RELEASES:
+        with open(changelog_path, 'w') as changelog_file:
+            changelog_file.write(re.sub(
+                'ubuntu1(.*);',
+                'ubuntu1~%s) %s;' % (ubuntu_release, ubuntu_release),
+                changelog_data,
+            ))
+
+        vagrant_check_call(
+            'sudo debuild -S -p"gpg --no-tty --passphrase %s"' % (
+                passphrase),
+            cwd=build_path,
+        )
 
 else:
     sys.exit(0)
