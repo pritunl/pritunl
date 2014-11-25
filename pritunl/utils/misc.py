@@ -32,8 +32,8 @@ else:
 _srcfile = os.path.normcase(_srcfile)
 
 def now():
-    return settings.local.mongo_time + (
-        datetime.datetime.utcnow() - settings.local.mongo_time_start)
+    mongo_time_start, mongo_time = settings.local.mongo_time
+    return mongo_time + (datetime.datetime.utcnow() - mongo_time_start)
 
 def get_int_ver(version):
     ver = re.findall(r'\d+', version)
@@ -125,12 +125,14 @@ def sync_time():
         'nounce': nounce,
     }, manipulate=False)
 
-    settings.local.mongo_time_start = datetime.datetime.utcnow()
+    mongo_time_start = datetime.datetime.utcnow()
 
     doc = collection.find_one({
         'nounce': nounce,
     })
-    settings.local.mongo_time = doc['_id'].generation_time.replace(tzinfo=None)
+    mongo_time = doc['_id'].generation_time.replace(tzinfo=None)
+
+    settings.local.mongo_time = (mongo_time_start, mongo_time)
 
     collection.remove(doc['_id'])
 
