@@ -26,7 +26,7 @@ class EmailNotConfiguredError(BaseError):
 class EmailFromInvalid(EmailError):
     pass
 
-class EmailApiKeyInvalid(EmailError):
+class EmailAuthInvalid(EmailError):
     pass
 
 
