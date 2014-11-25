@@ -182,10 +182,3 @@ def setup_mongo():
         settings.app.cookie_secret = secret_key
         settings.commit()
     app.app.secret_key = secret_key.encode()
-
-    server_api_key = settings.app.server_api_key
-    if not server_api_key:
-        server_api_key = re.sub(r'[\W_]+', '',
-            base64.b64encode(os.urandom(128)))[:64]
-        settings.app.server_api_key = server_api_key
-        settings.commit()
