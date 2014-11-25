@@ -38,7 +38,7 @@ class SettingsApp(SettingsGroupMongo):
         'email_server': None,
         'email_username': None,
         'email_password': None,
-        'email_from_addr': None,
+        'email_from': None,
         'queue_low_thread_limit': 4,
         'queue_med_thread_limit': 2,
         'queue_high_thread_limit': 1,

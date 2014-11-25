@@ -19,7 +19,7 @@ def settings_get():
     response = flask.g.administrator.dict()
     response.update({
         'theme': settings.app.theme,
-        'email_from': settings.app.email_from_addr,
+        'email_from': settings.app.email_from,
         'email_api_key': settings.app.email_api_key,
         'public_address': settings.local.host.public_address,
     })
@@ -44,7 +44,7 @@ def settings_put():
     if 'email_from' in flask.request.json:
         settings_commit = True
         email_from = flask.request.json['email_from']
-        settings.app.email_from_addr = email_from or None
+        settings.app.email_from = email_from or None
     if 'email_api_key' in flask.request.json:
         settings_commit = True
         email_api_key = flask.request.json['email_api_key']
@@ -74,7 +74,7 @@ def settings_put():
     response = flask.g.administrator.dict()
     response.update({
         'theme': settings.app.theme,
-        'email_from': settings.app.email_from_addr,
+        'email_from': settings.app.email_from,
         'email_api_key': settings.app.email_api_key,
         'public_address': settings.local.host.public_address,
     })
