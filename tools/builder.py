@@ -95,6 +95,7 @@ else:
 parser = optparse.OptionParser(usage=USAGE)
 (options, args) = parser.parse_args()
 
+build_num = 0
 
 if cmd == 'version':
     print '%s v%s' % (app_name, cur_version)
@@ -168,8 +169,9 @@ elif cmd == 'set-version':
                 if not changelog_version:
                     changelog_version = version
 
-                debian_changelog += '%s (%s-0ubuntu1) %s; urgency=low\n\n' % (
-                    pkg_name, version, UBUNTU_RELEASES[0])
+                debian_changelog += \
+                    '%s (%s-%subuntu1) unstable; urgency=low\n\n' % (
+                    build_num, pkg_name, version)
 
             elif debian_changelog:
                 debian_changelog += '  * %s\n' % line
