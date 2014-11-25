@@ -4,7 +4,8 @@ import optparse
 import sys
 import os
 
-USAGE = """Usage: pritunl [command] [options]
+USAGE = """\
+Usage: pritunl [command] [options]
 Command Help: pritunl [command] --help
 
 Commands:
