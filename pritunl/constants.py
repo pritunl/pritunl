@@ -240,7 +240,8 @@ OPENSSL_HEARTBLEED = {
 }
 OPENSSL_HEARTBLEED_BUILD_DATE = datetime.date(2014, 4, 7)
 
-CERT_CONF = """[ default ]
+CERT_CONF = """\
+[ default ]
 [ req ]
 default_bits = %s
 default_md = sha1
@@ -456,7 +457,8 @@ JUMBO_FRAMES = {
     True: 'tun-mtu 9000\nfragment 0\nmssfix 0\n',
 }
 
-OVPN_INLINE_SERVER_CONF = """port %s
+OVPN_INLINE_SERVER_CONF = """\
+port %s
 proto %s
 dev %s
 server %s
@@ -479,7 +481,8 @@ verb %s
 mute %s
 """
 
-OVPN_INLINE_CLIENT_CONF = """# %s
+OVPN_INLINE_CLIENT_CONF = """\
+# %s
 setenv UV_ID %s
 setenv UV_NAME %s
 client
@@ -501,7 +504,8 @@ rcvbuf 100000
 remote-cert-tls server
 """
 
-OVPN_INLINE_LINK_CONF = """client
+OVPN_INLINE_LINK_CONF = """\
+client
 setenv UV_ID %s
 setenv UV_NAME %s
 dev %s
