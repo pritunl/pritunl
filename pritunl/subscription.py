@@ -5,12 +5,14 @@ from pritunl import settings
 from pritunl import logger
 from pritunl import utils
 from pritunl import event
+from pritunl import mongo
 
 import hashlib
 import base64
 
 def update():
     license = settings.app.license
+    collection = mongo.get_collection('settings')
 
     if not license:
         settings.local.sub_active = False
