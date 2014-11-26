@@ -46,4 +46,14 @@ def login_static_get():
         return flask.redirect('')
     static_file = static.StaticFile(settings.conf.www_path,
         'login.html', cache=False)
+
+    dark_theme = all((
+        settings.local.sub_active,
+        settings.app.theme == 'dark',
+    ))
+
+    if dark_theme:
+        static_file.data = static_file.data.replace(
+            '<body>', '<body class="dark">')
+
     return static_file.get_response()
