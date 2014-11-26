@@ -95,13 +95,16 @@ define([
       var password = this.$('.pass input').val();
       var publicAddress = this.$('.public-address input').val();
       var theme = this.$('.theme select').val();
-      var emailFromAddr = this.$('.email-from-addr input').val();
-      var emailApiKey = this.$('.email-api-key input').val();
-      var emailReg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+      var emailFrom = this.$('.email-from input').val();
+      var emailServer = this.$('.email-server input').val();
+      var emailUsername = this.$('.email-username input').val();
+      var emailPassword = this.$('.email-password input').val();
+
       var modelAttr = {
         username: username,
-        email_from: emailFromAddr,
-        email_api_key: emailApiKey,
+        email_from: emailFrom,
+        email_server: emailServer,
+        email_username: emailUsername,
         public_address: publicAddress,
         theme: theme
       };
@@ -113,11 +116,10 @@ define([
       if (password) {
         modelAttr.password = password;
       }
-      if (emailFromAddr && !emailReg.test(emailFromAddr)) {
-        this.setAlert('danger', 'From email is not valid.',
-          '.email-from-addr');
-        return;
+      if (emailPassword !== '********************') {
+        modelAttr.email_password = emailPassword;
       }
+
       this.setLoading('Saving settings...');
       this.model.clear();
       this.model.save(modelAttr, {
