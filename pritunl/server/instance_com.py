@@ -112,7 +112,7 @@ class ServerInstanceCom(object):
                 client_conf += 'iroute %s %s\n' % utils.parse_network(
                     link_svr.network)
                 for local_network in link_svr.local_networks:
-                    push += 'iroute %s %s\n' % utils.parse_network(
+                    client_conf += 'iroute %s %s\n' % utils.parse_network(
                         local_network)
 
             if not self.server.multi_device:
