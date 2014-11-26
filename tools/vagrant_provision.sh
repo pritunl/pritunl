@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 ntpdate ntp.ubuntu.com
 
-apt-get install -qq -y python-software-properties
-
 add-apt-repository -y ppa:pritunl/pritunl-testing
 
 apt-get update -qq
