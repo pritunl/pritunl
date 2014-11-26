@@ -13,6 +13,7 @@ from pritunl import mongo
 import datetime
 import collections
 import random
+import socket
 
 def get_by_id(id, fields=None):
     return Host(id=id, fields=fields)
@@ -95,6 +96,9 @@ def init():
     settings.local.host.ping_timestamp = utils.now()
     if settings.local.public_ip:
         settings.local.host.auto_public_address = settings.local.public_ip
+
+    settings.local.host.local_address = socket.gethostbyname(
+        socket.gethostname())
 
     settings.local.host.commit()
     event.Event(type=HOSTS_UPDATED)
