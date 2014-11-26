@@ -22,50 +22,60 @@ def update():
         settings.local.sub_period_end = None
         settings.local.sub_cancel_at_period_end = None
     else:
-        cur_sub_active = settings.local.sub_active
-        cur_sub_plan = settings.local.sub_plan
+        for i in xrange(3):
+            try:
+                response = utils.request.get(
+                    'https://app.pritunl.com/subscription',
+                    json_data={
+                        'license': license,
+                        'version': settings.local.version_int,
+                    },
+                    timeout=max(settings.app.http_request_timeout, 15))
 
-        try:
-            response = utils.request.get(
-                'https://app.pritunl.com/subscription',
-                json_data={
-                    'license': license,
-                    'version': settings.local.version_int,
-                },
-                timeout=max(settings.app.http_request_timeout, 10))
+                # License key invalid
+                if response.status_code == 470:
+                    settings.app.license = None
+                    settings.commit()
+                    subscription_update()
+                    return
 
-            # License key invalid
-            if response.status_code == 470:
-                settings.app.license = None
-                settings.commit()
-                subscription_update()
-                return
+                if response.status_code == 473:
+                    raise ValueError(('Version %r not recognized by ' +
+                        'subscription server') % settings.local.version_int)
+                data = response.json()
 
-            if response.status_code == 473:
-                raise ValueError(('Version %r not recognized by ' +
-                    'subscription server') % settings.local.version_int)
-            data = response.json()
+                settings.local.sub_active = data['active']
+                settings.local.sub_status = data['status']
+                settings.local.sub_plan = data['plan']
+                settings.local.sub_amount = data['amount']
+                settings.local.sub_period_end = data['period_end']
+                settings.local.sub_cancel_at_period_end = data[
+                    'cancel_at_period_end']
+                settings.local.sub_styles[data['plan']] = data['styles']
+            except:
+                if i < 2:
+                    time.sleep(1)
+                    continue
+                logger.exception('Failed to check subscription status',
+                    'subscription')
+                settings.local.sub_active = False
+                settings.local.sub_status = None
+                settings.local.sub_plan = None
+                settings.local.sub_amount = None
+                settings.local.sub_period_end = None
+                settings.local.sub_cancel_at_period_end = None
 
-            settings.local.sub_active = data['active']
-            settings.local.sub_status = data['status']
-            settings.local.sub_plan = data['plan']
-            settings.local.sub_amount = data['amount']
-            settings.local.sub_period_end = data['period_end']
-            settings.local.sub_cancel_at_period_end = data[
-                'cancel_at_period_end']
-            settings.local.sub_styles[data['plan']] = data['styles']
-        except:
-            logger.exception('Failed to check subscription status',
-                'subscription')
-            settings.local.sub_active = False
-            settings.local.sub_status = None
-            settings.local.sub_plan = None
-            settings.local.sub_amount = None
-            settings.local.sub_period_end = None
-            settings.local.sub_cancel_at_period_end = None
-
-    if cur_sub_active != settings.local.sub_active or \
-            cur_sub_plan != settings.local.sub_plan:
+    response = collection.update({
+        '_id': 'subscription',
+        '$or': [
+            {'active': {'$ne': settings.local.sub_active}},
+            {'plan': {'$ne': settings.local.sub_plan}},
+        ],
+    }, {'$set': {
+        'active': settings.local.sub_active,
+        'plan': settings.local.sub_plan,
+    }})
+    if response['updatedExisting']:
         if settings.local.sub_active:
             if settings.local.sub_plan == 'premium':
                 event.Event(type=SUBSCRIPTION_PREMIUM_ACTIVE)
