@@ -11,8 +11,10 @@ define([
       'token': null,
       'secret': null,
       'default': null,
+      'email_server': null,
+      'email_username': null,
+      'email_password': null,
       'email_from': null,
-      'email_api_key': null,
       'public_address': null,
       'theme': null
     },
