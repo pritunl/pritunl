@@ -20,7 +20,9 @@ def settings_get():
     response.update({
         'theme': settings.app.theme,
         'email_from': settings.app.email_from,
-        'email_api_key': settings.app.email_api_key,
+        'email_server': settings.app.email_server,
+        'email_username': settings.app.email_username,
+        'email_password': bool(settings.app.email_password),
         'public_address': settings.local.host.public_address,
     })
     return utils.jsonify(response)
@@ -45,10 +47,18 @@ def settings_put():
         settings_commit = True
         email_from = flask.request.json['email_from']
         settings.app.email_from = email_from or None
-    if 'email_api_key' in flask.request.json:
+    if 'email_server' in flask.request.json:
         settings_commit = True
-        email_api_key = flask.request.json['email_api_key']
-        settings.app.email_api_key = email_api_key or None
+        email_server = flask.request.json['email_server']
+        settings.app.email_server = email_server or None
+    if 'email_username' in flask.request.json:
+        settings_commit = True
+        email_username = flask.request.json['email_username']
+        settings.app.email_username = email_username or None
+    if 'email_password' in flask.request.json:
+        settings_commit = True
+        email_password = flask.request.json['email_password']
+        settings.app.email_password = email_password or None
     if 'theme' in flask.request.json:
         settings_commit = True
         theme = 'dark' if flask.request.json['theme'] == 'dark' else 'light'
@@ -75,7 +85,9 @@ def settings_put():
     response.update({
         'theme': settings.app.theme,
         'email_from': settings.app.email_from,
-        'email_api_key': settings.app.email_api_key,
+        'email_server': settings.app.email_server,
+        'email_username': settings.app.email_username,
+        'email_password': bool(settings.app.email_password),
         'public_address': settings.local.host.public_address,
     })
     return utils.jsonify(response)
