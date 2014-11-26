@@ -19,6 +19,14 @@
       <label>Public Address</label>
       <input type="text" class="form-control" placeholder="Enter public address" data-toggle="tooltip" title="Public IP address or domain name of the host" value="<%- public_address %>">
     </div>
+    <div class="email-from-addr form-group">
+      <label>SMTP From Address</label>
+      <input type="email" class="form-control" placeholder="Enter SMTP from address" value="<%- email_from || '' %>" data-toggle="tooltip" title="SMTP name and from email address (example: Pritunl <contact@pritunl.com>)">
+    </div>
+    <div class="email-username form-group">
+      <label>SMTP Username</label>
+      <input type="text" class="form-control" placeholder="Enter SMTP username" value="<%- email_username || '' %>">
+    </div>
   </div>
   <div class="settings-right right">
     <div class="api-token form-group">
@@ -30,20 +38,13 @@
       <input type="text" class="form-control" placeholder="" value="<%- secret || '' %>" readonly>
     </div>
     <button type="button" class="generate-new-api-key btn btn-danger">Generate New API Key</button>
-  </div>
-</div>
-<div class="split postmark-settings">
-  <img class="postmark-logo" alt="Postmark" src="data:image/png;base64,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"/>
-  <div class="postmark-left left">
-    <div class="email-from-addr form-group">
-      <label>Postmark From Address</label>
-      <input type="email" class="form-control" placeholder="Enter from email address" value="<%- email_from || '' %>">
+    <div class="email-server form-group">
+      <label>SMTP Server</label>
+      <input type="text" class="form-control" placeholder="Enter SMTP server" value="<%- email_server || '' %>">
     </div>
-  </div>
-  <div class="postmark-right right">
-    <div class="email-api-key form-group">
-      <label>Postmark API Key</label>
-      <input type="text" class="form-control" placeholder="Enter Postmark API key" value="<%- email_api_key || '' %>">
+    <div class="email-password form-group">
+      <label>SMTP Password</label>
+      <input type="password" class="form-control" placeholder="Enter SMTP password" value="<%- email_password ? '********************' : '' %>">
     </div>
   </div>
 </div>
