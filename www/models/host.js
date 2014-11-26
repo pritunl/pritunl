@@ -11,7 +11,8 @@ define([
       'uptime': null,
       'user_count': null,
       'users_online': null,
-      'public_address': null
+      'public_address': null,
+      'local_address': null
     },
     url: function() {
       var url = '/host';
