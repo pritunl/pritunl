@@ -9,7 +9,6 @@ from pritunl import utils
 from pritunl import queue
 from pritunl import queues
 
-from Queue import PriorityQueue
 import pymongo
 import random
 import bson
@@ -20,7 +19,7 @@ import bson
 import collections
 
 running_queues = {}
-runner_queues = [PriorityQueue() for _ in xrange(3)]
+runner_queues = [utils.PyPriorityQueue() for _ in xrange(3)]
 thread_limits = [threading.Semaphore(x) for x in (
     settings.app.queue_low_thread_limit,
     settings.app.queue_med_thread_limit,

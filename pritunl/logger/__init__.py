@@ -8,16 +8,16 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import settings
+from pritunl import utils
 
 import logging
 import traceback
 import threading
-import Queue
 
 logger = logging.getLogger(APP_NAME)
 log_filter = None
 log_handler = None
-_log_queue = Queue.Queue()
+_log_queue = utils.PyQueue()
 
 def _logger_thread():
     while True:

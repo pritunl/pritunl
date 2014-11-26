@@ -22,6 +22,7 @@ import pymongo
 import hashlib
 import base64
 import re
+import Queue
 
 if hasattr(sys, 'frozen'):
     _srcfile = 'logging%s__init__%s' % (os.sep, __file__[-4:])
@@ -30,6 +31,9 @@ elif __file__[-4:].lower() in ('.pyc', '.pyo'):
 else:
     _srcfile = __file__
 _srcfile = os.path.normcase(_srcfile)
+
+PyQueue = Queue.Queue
+PyPriorityQueue = Queue.PriorityQueue
 
 def now():
     mongo_time_start, mongo_time = settings.local.mongo_time
