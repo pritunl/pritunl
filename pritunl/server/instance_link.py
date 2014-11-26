@@ -176,6 +176,7 @@ class ServerInstanceLink(object):
             if self.interface:
                 utils.tun_interface_release(self.interface)
                 self.interface = None
+            utils.rmtree(self._temp_path)
 
     @interrupter
     def stop_watch(self):
