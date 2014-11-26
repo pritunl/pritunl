@@ -6,7 +6,7 @@ add-apt-repository -y ppa:pritunl/pritunl-testing
 apt-get update -qq
 
 # Dev requirements
-apt-get install -qq -y python-flask python-cherrypy3 python-objgraph python-pymongo openvpn htop ntp
+apt-get install -qq -y python-flask python-cherrypy3 python-objgraph python-pymongo openvpn htop
 
 # Build requirements
 apt-get install -qq -y devscripts debhelper python-all python-setuptools 1> /dev/null
