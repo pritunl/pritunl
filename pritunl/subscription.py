@@ -13,8 +13,6 @@ def update():
     license = settings.app.license
 
     if not license:
-        cur_sub_active = None
-        cur_sub_plan = None
         settings.local.sub_active = False
         settings.local.sub_status = None
         settings.local.sub_plan = None
