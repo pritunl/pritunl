@@ -569,8 +569,16 @@ def server_link_get(server_id):
     hosts_offline = svr.replica_count - len(svr.instances) > 0
 
     if svr.links:
+        link_use_local = {}
+        link_server_ids = []
+
+        for link in svr.links:
+            link_server_id = link['server_id']
+            link_use_local[link_server_id] = link['use_local_address']
+            link_server_ids.append(link_server_id)
+
         spec = {
-            '_id': {'$in': [x['server_id'] for x in svr.links]},
+            '_id': {'$in': link_server_ids},
         }
         for link_svr in server.iter_servers(spec=spec, fields=[
                 '_id', 'status', 'name', 'replica_count', 'instances']):
@@ -591,6 +599,7 @@ def server_link_get(server_id):
                 'status': status,
                 'name': link_svr.name,
                 'address': None,
+                'use_local_address': link_use_local[link_svr.id],
             })
 
     return utils.jsonify(links)
