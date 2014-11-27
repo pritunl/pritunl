@@ -254,8 +254,12 @@ elif cmd == 'set-version':
     subprocess.check_call(['git', 'add', 'centos/pritunl-dev.spec'])
     subprocess.check_call(['git', 'commit', '-m', 'Create new release'])
     subprocess.check_call(['git', 'push'])
-    commit_hash = subprocess.check_output(['git', 'rev-parse', 'HEAD']).strip()
-    time.sleep(6)
+
+
+    # Create branch
+    subprocess.check_call(['git', 'branch', new_version])
+    subprocess.check_call(['git', 'push', '-u', 'origin', new_version])
+    time.sleep(8)
 
 
     # Create release
@@ -271,7 +275,7 @@ elif cmd == 'set-version':
             'name': '%s v%s' % (pkg_name, new_version),
             'body': release_body,
             'prerelease': is_snapshot,
-            'target_commitish': commit_hash,
+            'target_commitish': new_version,
         }),
     )
 
