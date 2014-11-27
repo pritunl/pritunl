@@ -54,9 +54,11 @@ define([
       var useLocal = this.getUseLocalSelect();
 
       this.setLoading('Attaching link...');
+
       var model = new ServerLinkModel();
       var server = this.$('.server select').val();
       lastServer = server;
+
       model.save({
         id: this.$('.link select').val(),
         server: server,
