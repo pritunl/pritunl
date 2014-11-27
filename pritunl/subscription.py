@@ -30,7 +30,7 @@ def update():
                         'license': license,
                         'version': settings.local.version_int,
                     },
-                    timeout=max(settings.app.http_request_timeout, 15))
+                    timeout=max(settings.app.http_request_timeout, 10))
 
                 # License key invalid
                 if response.status_code == 470:
