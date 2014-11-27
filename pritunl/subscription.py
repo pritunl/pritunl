@@ -22,7 +22,7 @@ def update():
         settings.local.sub_period_end = None
         settings.local.sub_cancel_at_period_end = None
     else:
-        for i in xrange(3):
+        for i in xrange(2):
             try:
                 response = utils.request.get(
                     'https://app.pritunl.com/subscription',
