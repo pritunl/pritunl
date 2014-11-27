@@ -62,4 +62,85 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       node3.vm.network :forwarded_port, guest: 9900, host: 9903,
         auto_correct: true, protocol: "udp"
   end
+
+  config.vm.define "node4" do |node4|
+      node4.vm.provision :shell, :path => "tools/vagrant_provision.sh"
+
+      node4.vm.network "private_network", ip: "192.168.178.104"
+      node4.vm.network :forwarded_port, guest: 9700, host: 9704,
+        auto_correct: true
+      node4.vm.network :forwarded_port, guest: 9900, host: 9904,
+        auto_correct: true, protocol: "udp"
+  end
+
+  config.vm.define "node5" do |node5|
+      node5.vm.provision :shell, :path => "tools/vagrant_provision.sh"
+
+      node5.vm.network "private_network", ip: "192.168.178.105"
+      node5.vm.network :forwarded_port, guest: 9700, host: 9705,
+        auto_correct: true
+      node5.vm.network :forwarded_port, guest: 9900, host: 9905,
+        auto_correct: true, protocol: "udp"
+  end
+
+
+  config.vm.define "node10" do |node10|
+      node10.vm.provision :shell, :path => "tools/vagrant_provision.sh"
+
+      node10.vm.network "private_network", ip: "192.168.188.100"
+      node10.vm.network :forwarded_port, guest: 9700, host: 9710,
+        auto_correct: true
+      node10.vm.network :forwarded_port, guest: 9900, host: 9910,
+        auto_correct: true, protocol: "udp"
+  end
+
+  config.vm.define "node11" do |node11|
+      node11.vm.provision :shell, :path => "tools/vagrant_provision.sh"
+
+      node11.vm.network "private_network", ip: "192.168.188.101"
+      node11.vm.network :forwarded_port, guest: 9700, host: 9711,
+        auto_correct: true
+      node11.vm.network :forwarded_port, guest: 9900, host: 9911,
+        auto_correct: true, protocol: "udp"
+  end
+
+  config.vm.define "node12" do |node12|
+      node12.vm.provision :shell, :path => "tools/vagrant_provision.sh"
+
+      node12.vm.network "private_network", ip: "192.168.188.102"
+      node12.vm.network :forwarded_port, guest: 9700, host: 9712,
+        auto_correct: true
+      node12.vm.network :forwarded_port, guest: 9900, host: 9912,
+        auto_correct: true, protocol: "udp"
+  end
+
+  config.vm.define "node13" do |node13|
+      node13.vm.provision :shell, :path => "tools/vagrant_provision.sh"
+
+      node13.vm.network "private_network", ip: "192.168.188.103"
+      node13.vm.network :forwarded_port, guest: 9700, host: 9713,
+        auto_correct: true
+      node13.vm.network :forwarded_port, guest: 9900, host: 9913,
+        auto_correct: true, protocol: "udp"
+  end
+
+  config.vm.define "node14" do |node14|
+      node14.vm.provision :shell, :path => "tools/vagrant_provision.sh"
+
+      node14.vm.network "private_network", ip: "192.168.188.104"
+      node14.vm.network :forwarded_port, guest: 9700, host: 9714,
+        auto_correct: true
+      node14.vm.network :forwarded_port, guest: 9900, host: 9914,
+        auto_correct: true, protocol: "udp"
+  end
+
+  config.vm.define "node15" do |node15|
+      node15.vm.provision :shell, :path => "tools/vagrant_provision.sh"
+
+      node15.vm.network "private_network", ip: "192.168.188.105"
+      node15.vm.network :forwarded_port, guest: 9700, host: 9715,
+        auto_correct: true
+      node15.vm.network :forwarded_port, guest: 9900, host: 9915,
+        auto_correct: true, protocol: "udp"
+  end
 end
