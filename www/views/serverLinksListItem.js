@@ -35,6 +35,13 @@ define([
         this.$('.link-online').hide();
         this.$('.link-offline').hide();
       }
+
+      if (this.model.get('use_local_address')) {
+        this.$('.link-use-local').hide();
+      }
+      else {
+        this.$('.link-use-local').show();
+      }
     },
     onDetach: function() {
       var modal = new ModalDetachLink({
