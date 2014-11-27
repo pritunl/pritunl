@@ -17,6 +17,7 @@ define([
     events: function() {
       return _.extend({
         'change .server select, .link select': 'onSelectChange',
+        'click .use-local-toggle': 'onUseLocalSelect',
       }, ModalAttachLinkView.__super__.events);
     },
     body: function() {
@@ -33,14 +34,33 @@ define([
       this.$('.server select option[value="' + link + '"]').hide();
       this.$('.link select option[value="' + server + '"]').hide();
     },
+    getUseLocalSelect: function() {
+      return this.$('.use-local-toggle .selector').hasClass('selected');
+    },
+    setUseLocalSelect: function(state) {
+      if (state) {
+        this.$('.use-local-toggle .selector').addClass('selected');
+        this.$('.use-local-toggle .selector-inner').show();
+      }
+      else {
+        this.$('.use-local-toggle .selector').removeClass('selected');
+        this.$('.use-local-toggle .selector-inner').hide();
+      }
+    },
+    onUseLocalSelect: function() {
+      this.setUseLocalSelect(!this.getUseLocalSelect());
+    },
     onOk: function() {
+      var useLocal = this.getUseLocalSelect();
+
       this.setLoading('Attaching link...');
       var model = new ServerLinkModel();
       var server = this.$('.server select').val();
       lastServer = server;
       model.save({
         id: this.$('.link select').val(),
-        server: server
+        server: server,
+        use_local_address: useLocal,
       }, {
         success: function() {
           this.close(true);
