@@ -53,7 +53,9 @@ def update():
                     'cancel_at_period_end']
                 settings.local.sub_styles[data['plan']] = data['styles']
             except:
-                if i < 2:
+                if i < 1:
+                    logger.exception('Failed to check subscription status',
+                        'subscription, retrying...')
                     time.sleep(1)
                     continue
                 logger.exception('Failed to check subscription status',
