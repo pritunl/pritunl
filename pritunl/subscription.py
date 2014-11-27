@@ -43,6 +43,7 @@ def update():
                 if response.status_code == 473:
                     raise ValueError(('Version %r not recognized by ' +
                         'subscription server') % settings.local.version_int)
+
                 data = response.json()
 
                 settings.local.sub_active = data['active']
