@@ -607,8 +607,10 @@ def server_link_get(server_id):
 @app.app.route('/server/<server_id>/link/<link_server_id>', methods=['PUT'])
 @auth.session_auth
 def server_link_put(server_id, link_server_id):
+    use_local_address = flask.request.json.get('use_local_address', False)
+
     try:
-        server.link_servers(server_id, link_server_id)
+        server.link_servers(server_id, link_server_id, use_local_address)
     except ServerLinkOnlineError:
         return utils.jsonify({
             'error': SERVER_NOT_OFFLINE,
