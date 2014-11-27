@@ -224,6 +224,7 @@ define([
     },
     onActivate: function() {
       this.activateActive = true;
+      this._closePromo();
       this.$('.subscribe-info').slideUp(window.slideTime);
       this.$('.subscribe-activate-form').slideDown(window.slideTime);
       this.$('.subscribe-premium').hide();
