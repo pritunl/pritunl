@@ -8,7 +8,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "mongodb" do |mongodb|
       mongodb.vm.provider "virtualbox" do |v|
-        v.memory = 1024
+        v.memory = 2048
       end
 
       mongodb.vm.provision :shell,
