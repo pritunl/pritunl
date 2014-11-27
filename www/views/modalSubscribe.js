@@ -105,7 +105,7 @@ define([
 
               $.ajax({
                 type: 'POST',
-                url: window.subscription_server + '/subscription',
+                url: 'https://app.pritunl.com/subscription',
                 contentType: 'application/json',
                 dataType: 'json',
                 data: JSON.stringify({
