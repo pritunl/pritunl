@@ -194,7 +194,7 @@ module.exports = function(grunt) {
     copy: {
       dist: {
         files: {
-          'vendor/dist/css/main.css': 'styles/main.css',
+          'vendor/dist/css/main.css': 'styles/vendor/main.css',
           'vendor/dist/fonts/FontAwesome.eot': 'fonts/FontAwesome.eot',
           'vendor/dist/fonts/fontawesome-webfont.eot':
             'fonts/fontawesome-webfont.eot',
@@ -226,7 +226,7 @@ module.exports = function(grunt) {
       },
       demo: {
         files: {
-          'vendor/dist/css/main.css': 'styles/main.css',
+          'vendor/dist/css/main.css': 'styles/vendor/main.css',
           'vendor/dist/fonts/fredoka-one.eot': 'fonts/fredoka-one.eot',
           'vendor/dist/fonts/fredoka-one.woff': 'fonts/fredoka-one.woff',
           'vendor/dist/fonts/glyphicons-halflings-regular.eot':
