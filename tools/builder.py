@@ -40,6 +40,7 @@ PRIVATE_KEY_NAME = 'private_key.asc'
 WWW_DIR = 'www'
 STYLES_DIR = 'www/styles'
 RELEASES_DIR = 'www/styles/releases'
+AUR_CATEGORY = 13
 
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
@@ -497,6 +498,40 @@ elif cmd == 'build':
     subprocess.check_call(['mkaurball'], cwd=build_dir)
 
 
+elif cmd == 'upload':
+    is_snapshot = 'snapshot' in cur_version
+
+    # Upload arch package
+    aurball_pkg_name = pkg_name + '-dev' if is_snapshot else pkg_name
+    aurball_path = os.path.join('build/%s/arch' % cur_version,
+        '%s-%s-%s.src.tar.gz' % (aurball_pkg_name, cur_version, build_num + 1))
+
+    session = requests.Session()
+
+    response = session.post('https://aur.archlinux.org/login',
+        data={
+            'user': aur_username,
+            'passwd': aur_password,
+            'remember_me': 'on',
+        },
+    )
+
+    response = session.get('https://aur.archlinux.org/submit/')
+    token = re.findall(
+        '(name="token" value=)("?.*")',
+        response.text,
+    )[0][1].replace('"', '')
+
+    response = session.post('https://aur.archlinux.org/submit/',
+        files={
+            'pfile': open(aurball_path, 'rb'),
+        },
+        data={
+            'pkgsubmit': 1,
+            'token': token,
+            'category': AUR_CATEGORY,
+        }
+    )
 
 else:
     sys.exit(0)
