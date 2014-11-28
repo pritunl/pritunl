@@ -43,7 +43,6 @@ RELEASES_DIR = 'www/styles/releases'
 
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
-
 def vagrant_popen(cmd, cwd=None, name='node0'):
     if cwd:
         cmd = 'cd /vagrant/%s; %s' % (cwd, cmd)
@@ -366,6 +365,7 @@ elif cmd == 'build':
         wget('https://github.com/pritunl/pritunl/archive/' + archive_name,
             cwd=build_dir)
 
+
     # Create orig archive
     orig_name = '%s_%s.orig.tar.gz' % (pkg_name, cur_version)
     orig_path = os.path.join(build_dir, orig_name)
@@ -385,16 +385,19 @@ elif cmd == 'build':
             '%s-%s' % (pkg_name, cur_version),
         ))
 
+
     # Create build path
     build_name = '%s-%s' % (pkg_name, cur_version)
     build_path = os.path.join(build_dir, build_name)
     if not os.path.isdir(build_path):
         tar_extract(archive_name, cwd=build_dir)
 
+
     # Read changelog
     changelog_path = os.path.join(build_path, DEBIAN_CHANGELOG_PATH)
     with open(changelog_path, 'r') as changelog_file:
         changelog_data = changelog_file.read()
+
 
     # Build debian packages
     for ubuntu_release in UBUNTU_RELEASES:
