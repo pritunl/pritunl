@@ -8,6 +8,7 @@ import subprocess
 import time
 import getpass
 import requests
+import werkzeug.http
 
 UBUNTU_RELEASES = [
     'trusty', # 14.04
@@ -77,6 +78,19 @@ def get_int_ver(version):
         ver.append('0000')
 
     return int(''.join([x.zfill(2) for x in ver]))
+
+def generate_last_modifited_etag(file_path):
+    file_name = os.path.basename(file_path).encode(sys.getfilesystemencoding())
+    file_mtime = datetime.datetime.utcfromtimestamp(
+        os.path.getmtime(file_path))
+    file_size = int(os.path.getsize(file_path))
+    last_modified = werkzeug.http.http_date(file_mtime)
+
+    return (last_modified, 'wzsdm-%d-%s-%s' % (
+        time.mktime(file_mtime.timetuple()),
+        file_size,
+        zlib.adler32(file_name) & 0xffffffff,
+    ))
 
 
 # Load build keys
