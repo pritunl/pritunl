@@ -339,16 +339,25 @@ elif cmd == 'set-version':
 
 
 elif cmd == 'build':
-    build_dir = 'build/%s' % cur_version
+    # Create debian packaage
+    build_dir = 'build/%s/debian' % cur_version
 
     passphrase = getpass.getpass('Enter GPG passphrase: ')
 
     if not os.path.isdir(build_dir):
         os.makedirs(build_dir)
 
+
     # Import gpg key
+    private_key_path = os.path.join(build_dir, PRIVATE_KEY_NAME)
+    with open(private_key_path, 'w') as private_key_file:
+        private_key_file.write(private_key)
+
     vagrant_check_call('sudo gpg --import private_key.asc || true',
-        cwd='tools')
+        cwd=build_dir)
+
+    os.remove(private_key_path)
+
 
     # Download archive
     archive_name = '%s.tar.gz' % cur_version
