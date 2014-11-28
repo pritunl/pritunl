@@ -13,6 +13,7 @@ define([
     title: 'Anonymous Feedback/Bug Report',
     okText: 'Submit',
     enterOk: false,
+    safeClose: true,
     body: function() {
       return this.template();
     },
