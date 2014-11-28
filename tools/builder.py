@@ -8,6 +8,7 @@ import subprocess
 import time
 import shutil
 import getpass
+import zlib
 import pymongo
 import requests
 import werkzeug.http
