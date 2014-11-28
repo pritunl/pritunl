@@ -447,6 +447,11 @@ elif cmd == 'build':
             ))
 
         vagrant_check_call(
+            'sudo debuild -p"gpg --no-tty --passphrase %s"' % (
+                passphrase),
+            cwd=build_path,
+        )
+        vagrant_check_call(
             'sudo debuild -S -p"gpg --no-tty --passphrase %s"' % (
                 passphrase),
             cwd=build_path,
