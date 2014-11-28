@@ -35,6 +35,7 @@ CENTOS_DEV_PKGSPEC = 'centos/pritunl-dev.spec'
 PRIVATE_KEY_NAME = 'private_key.asc'
 WWW_DIR = 'www'
 STYLES_DIR = 'www/styles'
+RELEASES_DIR = 'www/styles/releases'
 
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
@@ -175,6 +176,33 @@ elif cmd == 'set-version':
     subprocess.check_call(['grunt', '--ver=%s' % get_int_ver(new_version)],
         cwd=STYLES_DIR)
     subprocess.check_call(['grunt'], cwd=WWW_DIR)
+
+
+    # Sync db
+    for file_name in os.listdir(RELEASES_DIR):
+        file_path = os.path.join(RELEASES_DIR, file_name)
+        ver, file_type, _ = file_name.split('.')
+        ver = int(ver)
+        if file_type == 'release':
+            with open(file_path, 'r') as release_file:
+                doc = json.loads(release_file.read().strip())
+                releases_db.update({
+                    '_id': ver,
+                }, {
+                    '$set': doc,
+                }, upsert=True)
+        else:
+            last_modified, etag = generate_last_modifited_etag(file_path)
+            with open(file_path, 'r') as css_file:
+                releases_db.update({
+                    '_id': ver,
+                }, {'$set': {
+                    file_type: {
+                        'etag': etag,
+                        'last_modified': last_modified,
+                        'data': css_file.read(),
+                    },
+                }}, upsert=True)
 
 
     # Generate changelog
