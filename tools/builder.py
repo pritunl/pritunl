@@ -495,7 +495,8 @@ elif cmd == 'build':
 
 
     # Build arch package
-    subprocess.check_call(['mkaurball'], cwd=build_dir)
+    subprocess.check_call(['makepkg', '-f'], cwd=build_dir)
+    subprocess.check_call(['mkaurball', '-f'], cwd=build_dir)
 
 
 elif cmd == 'upload':
