@@ -296,6 +296,11 @@ elif cmd == 'set-version':
             'pkgver=%s' % new_version,
             pkgbuild_file.read(),
         )
+        pkgbuild_data = re.sub(
+            'pkgrel=(.*)',
+            'pkgrel=%s' % build_num + 1,
+            pkgbuild_data,
+        )
 
     with open(pkgbuild_path, 'w') as pkgbuild_file:
         pkgbuild_file.write(pkgbuild_data)
