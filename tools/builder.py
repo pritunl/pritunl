@@ -182,6 +182,13 @@ elif cmd == 'set-version':
     subprocess.check_call(['grunt'], cwd=WWW_DIR)
 
 
+    # Commit webapp
+    subprocess.check_call(['git', 'reset', 'HEAD', '.'])
+    subprocess.check_call(['git', 'add', '--all', 'www/vendor/dist'])
+    subprocess.check_call(['git', 'commit', '-m', 'Rebuild dist'])
+    subprocess.check_call(['git', 'push'])
+
+
     # Sync db
     for file_name in os.listdir(RELEASES_DIR):
         file_path = os.path.join(RELEASES_DIR, file_name)
