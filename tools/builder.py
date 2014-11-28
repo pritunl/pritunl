@@ -299,12 +299,11 @@ elif cmd == 'set-version':
 
     # Git commit
     subprocess.check_call(['git', 'reset', 'HEAD', '.'])
-    subprocess.check_call(['git', 'add', 'debian/changelog'])
-    subprocess.check_call(['git', 'add', 'arch/dev/PKGBUILD'])
-    subprocess.check_call(['git', 'add', 'arch/git/PKGBUILD'])
-    subprocess.check_call(['git', 'add', 'arch/production/PKGBUILD'])
-    subprocess.check_call(['git', 'add', 'centos/pritunl.spec'])
-    subprocess.check_call(['git', 'add', 'centos/pritunl-dev.spec'])
+    subprocess.check_call(['git', 'add', DEBIAN_CHANGELOG_PATH])
+    subprocess.check_call(['git', 'add', ARCH_PKGBUILD_PATH])
+    subprocess.check_call(['git', 'add', ARCH_DEV_PKGBUILD_PATH])
+    subprocess.check_call(['git', 'add', CENTOS_PKGSPEC_PATH])
+    subprocess.check_call(['git', 'add', CENTOS_DEV_PKGSPEC_PATH])
     subprocess.check_call(['git', 'commit', '-m', 'Create new release'])
     subprocess.check_call(['git', 'push'])
 
