@@ -24,7 +24,7 @@ define([
           url: 'https://app.pritunl.com/feedback',
           contentType: 'application/json',
           data: JSON.stringify({
-            'message': message,
+            'message': message
           }),
           success: function() {
             this.close(true);
