@@ -313,8 +313,21 @@ elif cmd == 'set-version':
         pkgspec_file.write(pkgspec_data)
 
 
+    # Update init
+    with open(INIT_PATH, 'r') as init_file:
+        init_data = init_file.read()
+
+    with open(INIT_PATH, 'w') as init_file:
+        init_file.write(re.sub(
+            "(__version__ = )('.*?')",
+            "__version__ = '%s'" % new_version,
+            init_data,
+        ))
+
+
     # Git commit
     subprocess.check_call(['git', 'reset', 'HEAD', '.'])
+    subprocess.check_call(['git', 'add', INIT_PATH])
     subprocess.check_call(['git', 'add', DEBIAN_CHANGELOG_PATH])
     subprocess.check_call(['git', 'add', ARCH_PKGBUILD_PATH])
     subprocess.check_call(['git', 'add', ARCH_DEV_PKGBUILD_PATH])
