@@ -20,7 +20,7 @@ define([
     onOk: function() {
       var message = this.$('textarea').val();
 
-      this.setLoading('Submitting...');
+      this.setLoading('Submitting feedback/bug report...');
       $.ajax({
           type: 'POST',
           url: 'https://app.pritunl.com/feedback',
