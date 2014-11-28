@@ -6,7 +6,6 @@ import json
 import os
 import subprocess
 import time
-import shutil
 import getpass
 import zlib
 import pymongo
@@ -462,7 +461,7 @@ elif cmd == 'build':
          pkgbuild_file.write(pkgbuild_data)
 
     pkginstall_path = ARCH_DEV_PKGINSTALL if is_snapshot else ARCH_PKGINSTALL
-    shutil.copyfile(pkginstall_path, build_dir)
+    subprocess.check_call(['cp', pkginstall_path, build_dir])
 
 
     # Build arch package
