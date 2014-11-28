@@ -252,7 +252,7 @@ elif cmd == 'set-version':
 
                 debian_changelog += \
                     '%s (%s-%subuntu1) unstable; urgency=low\n\n' % (
-                    build_num, pkg_name, version)
+                    pkg_name, version, build_num)
 
             elif debian_changelog:
                 debian_changelog += '  * %s\n' % line
