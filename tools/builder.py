@@ -349,7 +349,6 @@ elif cmd == 'set-version':
 elif cmd == 'build':
     # Create debian packaage
     build_dir = 'build/%s/debian' % cur_version
-
     passphrase = getpass.getpass('Enter GPG passphrase: ')
 
     if not os.path.isdir(build_dir):
