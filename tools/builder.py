@@ -188,8 +188,12 @@ elif cmd == 'set-version':
     # Commit webapp
     subprocess.check_call(['git', 'reset', 'HEAD', '.'])
     subprocess.check_call(['git', 'add', '--all', 'www/vendor/dist'])
-    subprocess.check_call(['git', 'commit', '-m', 'Rebuild dist'])
-    subprocess.check_call(['git', 'push'])
+    changes = subprocess.check_output(
+        ['git', 'status', '-s']).rstrip().split('\n')
+    changed = any([True if x[0] == 'M' else False for x in changes])
+    if changed:
+        subprocess.check_call(['git', 'commit', '-m', 'Rebuild dist'])
+        subprocess.check_call(['git', 'push'])
 
 
     # Sync db
