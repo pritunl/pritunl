@@ -110,12 +110,6 @@ with open(INIT_PATH, 'r') as init_file:
             key, val = line.split('=')
             cur_version = line.split('=')[1].replace("'", '').strip()
 
-
-# Get github owner and token
-with open(GITHUB_KEY_PATH, 'r') as github_key_file:
-    github_owner, github_token = github_key_file.read().strip().split(':')
-
-
 # Parse args
 if len(sys.argv) > 1:
     cmd = sys.argv[1]
