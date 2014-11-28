@@ -26,11 +26,12 @@ Commands:
 INIT_PATH = 'pritunl/__init__.py'
 CHANGES_PATH = 'CHANGES'
 DEBIAN_CHANGELOG_PATH = 'debian/changelog'
-GITHUB_KEY_PATH = 'tools/github_key'
+BUILD_KEYS_PATH = 'tools/build_keys.json'
 ARCH_PKGBUILD = 'arch/production/PKGBUILD'
 ARCH_DEV_PKGBUILD = 'arch/dev/PKGBUILD'
 CENTOS_PKGSPEC = 'centos/pritunl.spec'
 CENTOS_DEV_PKGSPEC = 'centos/pritunl-dev.spec'
+PRIVATE_KEY_NAME = 'private_key.asc'
 WWW_DIR = 'www'
 STYLES_DIR = 'www/styles'
 
@@ -77,6 +78,18 @@ def get_int_ver(version):
 
     return int(''.join([x.zfill(2) for x in ver]))
 
+
+# Load build keys
+with open(BUILD_KEYS_PATH, 'r') as build_keys_file:
+    build_keys = json.loads(build_keys_file.read().strip())
+    github_owner = build_keys['github_owner']
+    github_token = build_keys['github_token']
+    mongodb_uri = build_keys['mongodb_uri']
+    private_key = build_keys['private_key']
+
+mongo_client = pymongo.MongoClient(mongodb_uri)
+mongo_db = mongo_client.get_default_database()
+releases_db = mongo_db.releases
 
 # Get package info
 with open(INIT_PATH, 'r') as init_file:
