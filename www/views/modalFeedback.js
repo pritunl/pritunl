@@ -6,7 +6,6 @@ define([
   'text!templates/modalFeedback.html'
 ], function($, _, Backbone, ModalView, modalFeedbackTemplate) {
   'use strict';
-  var lastOrg;
   var ModalFeedbackView = ModalView.extend({
     className: 'feedback-modal',
     template: _.template(modalFeedbackTemplate),
