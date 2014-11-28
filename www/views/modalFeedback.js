@@ -12,6 +12,7 @@ define([
     template: _.template(modalFeedbackTemplate),
     title: 'Anonymous Feedback/Bug Report',
     okText: 'Submit',
+    enterOk: false,
     body: function() {
       return this.template();
     },
