@@ -31,12 +31,12 @@ INIT_PATH = 'pritunl/__init__.py'
 CHANGES_PATH = 'CHANGES'
 DEBIAN_CHANGELOG_PATH = 'debian/changelog'
 BUILD_KEYS_PATH = 'tools/build_keys.json'
-ARCH_PKGBUILD = 'arch/production/PKGBUILD'
-ARCH_DEV_PKGBUILD = 'arch/dev/PKGBUILD'
+ARCH_PKGBUILD_PATH = 'arch/production/PKGBUILD'
+ARCH_DEV_PKGBUILD_PATH = 'arch/dev/PKGBUILD'
 ARCH_PKGINSTALL = 'arch/production/pritunl.install'
 ARCH_DEV_PKGINSTALL = 'arch/dev/pritunl.install'
-CENTOS_PKGSPEC = 'centos/pritunl.spec'
-CENTOS_DEV_PKGSPEC = 'centos/pritunl-dev.spec'
+CENTOS_PKGSPEC_PATH = 'centos/pritunl.spec'
+CENTOS_DEV_PKGSPEC_PATH = 'centos/pritunl-dev.spec'
 PRIVATE_KEY_NAME = 'private_key.asc'
 WWW_DIR = 'www'
 STYLES_DIR = 'www/styles'
@@ -272,7 +272,8 @@ elif cmd == 'set-version':
 
 
     # Update arch package
-    pkgbuild_path = ARCH_DEV_PKGBUILD if is_snapshot else ARCH_PKGBUILD
+    pkgbuild_path = ARCH_DEV_PKGBUILD_PATH if is_snapshot else \
+        ARCH_PKGBUILD_PATH
     with open(pkgbuild_path, 'r') as pkgbuild_file:
         pkgbuild_data = re.sub(
             'pkgver=(.*)',
@@ -285,7 +286,8 @@ elif cmd == 'set-version':
 
 
     # Update centos package
-    pkgspec_path = CENTOS_DEV_PKGSPEC if is_snapshot else CENTOS_PKGSPEC
+    pkgspec_path = CENTOS_DEV_PKGSPEC_PATH if is_snapshot else \
+        CENTOS_PKGSPEC_PATH
     with open(pkgspec_path, 'r') as pkgspec_file:
         pkgspec_data = re.sub(
             '%define pkgver (.*)',
@@ -433,7 +435,8 @@ elif cmd == 'build':
 
 
     # Generate pkgbuild
-    pkgbuild_path = ARCH_DEV_PKGBUILD if is_snapshot else ARCH_PKGBUILD
+    pkgbuild_path = ARCH_DEV_PKGBUILD_PATH if is_snapshot else \
+        ARCH_PKGBUILD_PATH
     with open(pkgbuild_path, 'r') as pkgbuild_file:
         pkgbuild_data = pkgbuild_file.read()
     pkgbuild_data = pkgbuild_data.replace('CHANGE_ME', archive_sha256_sum)
