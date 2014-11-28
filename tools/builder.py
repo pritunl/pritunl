@@ -32,6 +32,8 @@ DEBIAN_CHANGELOG_PATH = 'debian/changelog'
 BUILD_KEYS_PATH = 'tools/build_keys.json'
 ARCH_PKGBUILD = 'arch/production/PKGBUILD'
 ARCH_DEV_PKGBUILD = 'arch/dev/PKGBUILD'
+ARCH_PKGINSTALL = 'arch/production/pritunl.install'
+ARCH_DEV_PKGINSTALL = 'arch/dev/pritunl.install'
 CENTOS_PKGSPEC = 'centos/pritunl.spec'
 CENTOS_DEV_PKGSPEC = 'centos/pritunl-dev.spec'
 PRIVATE_KEY_NAME = 'private_key.asc'
@@ -399,6 +401,43 @@ elif cmd == 'build':
                 passphrase),
             cwd=build_path,
         )
+
+
+    # Create arch package
+    build_dir = 'build/%s/arch' % cur_version
+
+
+    # Download archive
+    archive_name = '%s.tar.gz' % cur_version
+    archive_path = os.path.join(build_dir, archive_name)
+    if not os.path.isfile(archive_path):
+        wget('https://github.com/pritunl/pritunl/archive/' + archive_name,
+            cwd=build_dir)
+
+
+    # Get sha256 sum
+    archive_sha256_sum = subprocess.check_output(
+        ['sha256sum', archive_path]).split()[0]
+
+
+    # Generate pkgbuild
+    pkgbuild_path = ARCH_DEV_PKGBUILD if is_snapshot else ARCH_PKGBUILD
+    with open(pkgbuild_path, 'r') as pkgbuild_file:
+        pkgbuild_data = pkgbuild_file.read()
+    pkgbuild_data = pkgbuild_data.replace('CHANGE_ME', archive_sha256_sum)
+
+    pkgbuild_path = os.path.join(build_dir, 'PKGBUILD')
+    with open(pkgbuild_path, 'w') as pkgbuild_file:
+         pkgbuild_file.write(pkgbuild_data)
+
+    pkginstall_path = ARCH_DEV_PKGINSTALL if is_snapshot else ARCH_PKGINSTALL
+    shutil.copyfile(pkginstall_path, build_dir)
+
+
+    # Build arch package
+    subprocess.check_call(['mkaurball'])
+
+
 
 else:
     sys.exit(0)
