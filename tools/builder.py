@@ -56,8 +56,12 @@ def vagrant_check_call(cmd, cwd=None, name='node0'):
     return subprocess.check_call("vagrant ssh --command='%s' %s" % (cmd, name),
         shell=True, stdin=subprocess.PIPE)
 
-def wget(url, cwd=None):
-    subprocess.check_call(['wget', url], cwd=cwd)
+def wget(url, cwd=None, output=None):
+    if output:
+        args = ['wget', '-O', output, url]
+    else:
+        args = ['wget', url]
+    subprocess.check_call(args, cwd=cwd)
 
 def rm_tree(path):
     subprocess.check_call(['rm', '-rf', path])
@@ -370,8 +374,11 @@ elif cmd == 'build':
     archive_name = '%s.tar.gz' % cur_version
     archive_path = os.path.join(build_dir, archive_name)
     if not os.path.isfile(archive_path):
-        wget('https://github.com/pritunl/pritunl/archive/' + archive_name,
-            cwd=build_dir)
+        wget('https://github.com/%s/%s/archive/%s' % (
+                github_owner, pkg_name, archive_name),
+            output=archive_name,
+            cwd=build_dir,
+        )
 
 
     # Create orig archive
@@ -431,8 +438,11 @@ elif cmd == 'build':
     archive_name = '%s.tar.gz' % cur_version
     archive_path = os.path.join(build_dir, archive_name)
     if not os.path.isfile(archive_path):
-        wget('https://github.com/pritunl/pritunl/archive/' + archive_name,
-            cwd=build_dir)
+        wget('https://github.com/%s/%s/archive/%s' % (
+                github_owner, pkg_name, archive_name),
+            output=archive_name,
+            cwd=build_dir,
+        )
 
 
     # Get sha256 sum
