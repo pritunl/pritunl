@@ -465,7 +465,7 @@ elif cmd == 'build':
 
 
     # Build arch package
-    subprocess.check_call(['mkaurball'])
+    subprocess.check_call(['mkaurball'], cwd=build_dir)
 
 
 
