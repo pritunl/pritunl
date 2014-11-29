@@ -352,8 +352,9 @@ elif cmd == 'set-version':
 
 
     # Create branch
-    subprocess.check_call(['git', 'branch', new_version])
-    subprocess.check_call(['git', 'push', '-u', 'origin', new_version])
+    if not is_snapshot:
+        subprocess.check_call(['git', 'branch', new_version])
+        subprocess.check_call(['git', 'push', '-u', 'origin', new_version])
     time.sleep(8)
 
 
