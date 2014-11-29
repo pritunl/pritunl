@@ -1,5 +1,4 @@
 from pritunl.setup.local import setup_local
-from pritunl.setup.clear_temp import setup_clear_temp
 from pritunl.setup.app import setup_app
 from pritunl.setup.server import setup_server
 from pritunl.setup.mongo import setup_mongo
