@@ -541,9 +541,10 @@ elif cmd == 'upload':
 
 
     # Upload arch package
-    aurball_pkg_name = pkg_name + '-dev' if is_snapshot else pkg_name
-    aurball_path = os.path.join('build/%s/arch' % cur_version,
-        '%s-%s-%s.src.tar.gz' % (aurball_pkg_name, cur_version, build_num + 1))
+    build_dir = 'build/%s/arch' % cur_version
+    aurball_pkg_name = pkg_name + '-dev' if is_dev_release else pkg_name
+    aurball_path = os.path.join(build_dir, '%s-%s-%s.src.tar.gz' % (
+        aurball_pkg_name, cur_version, build_num + 1))
 
     session = requests.Session()
 
