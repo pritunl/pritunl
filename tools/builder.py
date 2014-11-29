@@ -305,7 +305,7 @@ elif cmd == 'set-version':
         )
         pkgbuild_data = re.sub(
             'pkgrel=(.*)',
-            'pkgrel=%s' % build_num + 1,
+            'pkgrel=%s' % (build_num + 1),
             pkgbuild_data,
         )
 
