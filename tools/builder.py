@@ -375,6 +375,8 @@ elif cmd == 'set-version':
 
 
 elif cmd == 'build':
+    is_snapshot = 'snapshot' in cur_version
+
     # Create debian packaage
     build_dir = 'build/%s/debian' % cur_version
     passphrase = getpass.getpass('Enter GPG passphrase: ')
