@@ -475,6 +475,8 @@ elif cmd == 'build':
     # Create arch package
     build_dir = 'build/%s/arch' % cur_version
 
+    if not os.path.isdir(build_dir):
+        os.makedirs(build_dir)
 
     # Download archive
     archive_name = '%s.tar.gz' % cur_version
