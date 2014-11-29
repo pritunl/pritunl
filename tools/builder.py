@@ -154,6 +154,12 @@ if cmd == 'version':
 elif cmd == 'set-version':
     new_version = args[1]
     is_snapshot = 'snapshot' in new_version
+    is_dev_release = any((
+        'snapshot' in new_version,
+        'alpha' in new_version,
+        'beta' in new_version,
+        'rc' in new_version,
+    ))
 
     # Check for duplicate version
     response = requests.get(
@@ -289,7 +295,7 @@ elif cmd == 'set-version':
 
 
     # Update arch package
-    pkgbuild_path = ARCH_DEV_PKGBUILD_PATH if is_snapshot else \
+    pkgbuild_path = ARCH_DEV_PKGBUILD_PATH if is_dev_release else \
         ARCH_PKGBUILD_PATH
     with open(pkgbuild_path, 'r') as pkgbuild_file:
         pkgbuild_data = re.sub(
@@ -308,7 +314,7 @@ elif cmd == 'set-version':
 
 
     # Update centos package
-    pkgspec_path = CENTOS_DEV_PKGSPEC_PATH if is_snapshot else \
+    pkgspec_path = CENTOS_DEV_PKGSPEC_PATH if is_dev_release else \
         CENTOS_PKGSPEC_PATH
     with open(pkgspec_path, 'r') as pkgspec_file:
         pkgspec_data = re.sub(
@@ -375,7 +381,12 @@ elif cmd == 'set-version':
 
 
 elif cmd == 'build':
-    is_snapshot = 'snapshot' in cur_version
+    is_dev_release = any((
+        'snapshot' in cur_version,
+        'alpha' in cur_version,
+        'beta' in cur_version,
+        'rc' in cur_version,
+    ))
 
     # Create debian packaage
     build_dir = 'build/%s/debian' % cur_version
@@ -482,7 +493,7 @@ elif cmd == 'build':
 
 
     # Generate pkgbuild
-    pkgbuild_path = ARCH_DEV_PKGBUILD_PATH if is_snapshot else \
+    pkgbuild_path = ARCH_DEV_PKGBUILD_PATH if is_dev_release else \
         ARCH_PKGBUILD_PATH
     with open(pkgbuild_path, 'r') as pkgbuild_file:
         pkgbuild_data = pkgbuild_file.read()
@@ -492,7 +503,8 @@ elif cmd == 'build':
     with open(pkgbuild_path, 'w') as pkgbuild_file:
          pkgbuild_file.write(pkgbuild_data)
 
-    pkginstall_path = ARCH_DEV_PKGINSTALL if is_snapshot else ARCH_PKGINSTALL
+    pkginstall_path = ARCH_DEV_PKGINSTALL if is_dev_release else \
+        ARCH_PKGINSTALL
     subprocess.check_call(['cp', pkginstall_path, build_dir])
 
 
