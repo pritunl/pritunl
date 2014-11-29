@@ -103,7 +103,7 @@ define([
             post_idea_enabled: false
           }]);
           window.UserVoice.push(['identify', {
-            type: 'Enterprise'
+            type: window.subPlan
           }]);
           window.UserVoice.push(['addTrigger', '#trigger-uservoice',
             {mode: 'contact'}]);
