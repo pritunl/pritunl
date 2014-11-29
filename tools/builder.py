@@ -516,7 +516,29 @@ elif cmd == 'build':
 
 
 elif cmd == 'upload':
-    is_snapshot = 'snapshot' in cur_version
+    is_dev_release = any((
+        'snapshot' in cur_version,
+        'alpha' in cur_version,
+        'beta' in cur_version,
+        'rc' in cur_version,
+    ))
+
+    # Upload debian package
+    build_dir = 'build/%s/debian' % cur_version
+    launchpad_ppa = '%s/%s-dev' % (pkg_name, pkg_name) if is_dev_release else \
+        '%s/ppa' % pkg_name
+    for ubuntu_release in UBUNTU_RELEASES:
+        vagrant_check_call(
+            'sudo dput ppa:%s %s_%s-%subuntu1~%s_source.changes' % (
+                launchpad_ppa,
+                pkg_name,
+                cur_version,
+                build_num,
+                ubuntu_release,
+            ),
+            cwd=build_dir,
+        )
+
 
     # Upload arch package
     aurball_pkg_name = pkg_name + '-dev' if is_snapshot else pkg_name
