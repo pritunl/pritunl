@@ -97,8 +97,21 @@ def init():
     if settings.local.public_ip:
         settings.local.host.auto_public_address = settings.local.public_ip
 
-    settings.local.host.local_address = socket.gethostbyname(
-        socket.gethostname())
+    if settings.conf.local_address_interface == 'auto':
+        try:
+            settings.local.host.local_address = socket.gethostbyname(
+                socket.gethostname())
+        except:
+            logger.exception('Failed to get local_address auto', 'host')
+            settings.local.host.local_address = None
+    else:
+        try:
+            settings.local.host.local_address = utils.get_interface_address(
+                settings.conf.local_address_interface)
+        except:
+            logger.exception('Failed to get local_address', 'host',
+                interface=settings.conf.local_address_interface)
+            settings.local.host.local_address = None
 
     settings.local.host.commit()
     event.Event(type=HOSTS_UPDATED)
