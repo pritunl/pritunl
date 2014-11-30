@@ -204,6 +204,11 @@ def _upgrade_server(server_id, server_path):
             line = line.strip()
             name, value = line.split('=', 1)
             if name in (
+                        'primary_user',
+                        'primary_organization',
+                    ):
+                update_doc[name] = bson.ObjectId(value)
+            if name in (
                         'name',
                         'protocol',
                         'network',
