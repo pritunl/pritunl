@@ -107,7 +107,7 @@ def init():
     else:
         try:
             settings.local.host.local_address = utils.get_interface_address(
-                settings.conf.local_address_interface)
+                str(settings.conf.local_address_interface))
         except:
             logger.exception('Failed to get local_address', 'host',
                 interface=settings.conf.local_address_interface)
