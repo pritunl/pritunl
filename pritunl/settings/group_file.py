@@ -49,9 +49,11 @@ class SettingsGroupFile(SettingsGroupBase):
     def commit(self):
         doc = {}
 
-        for field in self.fields:
+        for field, default in self.fields.iteritems():
             if hasattr(self, field):
-                doc[field] = getattr(self, field)
+                value = getattr(self, field)
+                if value != default:
+                    doc[field] = getattr(self, field)
 
         with open(self.path, 'w') as settings_file:
             settings_file.write(json.dumps(doc, indent=4))
