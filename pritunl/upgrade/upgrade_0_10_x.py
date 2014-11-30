@@ -272,6 +272,11 @@ def _upgrade_server(server_id, server_path):
     servers_db.update(spec, update_doc, upsert=True)
 
 def upgrade_0_10_x():
+    if not settings.conf.data_path:
+        settings.conf.data_path = '/var/lib/pritunl'
+    if not settings.conf.db_path:
+        settings.conf.db_path = '/var/lib/pritunl/pritunl.db'
+
     _upgrade_auth()
 
     dir_path = os.path.join(settings.conf.data_path, 'dh_param_pool')
