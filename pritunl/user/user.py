@@ -218,11 +218,13 @@ class User(mongo.MongoObject):
         return key
 
     def assign_ip_addr(self):
-        for server in self.org.iter_servers():
+        for server in self.org.iter_servers(fields=(
+                'id', 'network', 'network_lock')):
             server.assign_ip_addr(self.org.id, self.id)
 
     def unassign_ip_addr(self):
-        for server in self.org.iter_servers():
+        for server in self.org.iter_servers(fields=(
+                'id', 'network', 'network_lock')):
             server.unassign_ip_addr(self.org.id, self.id)
 
     def generate_otp_secret(self):
