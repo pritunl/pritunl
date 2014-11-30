@@ -9,7 +9,7 @@ define([
   var ModalAddServerView = ModalServerSettingsView.extend({
     title: 'Add Server',
     okText: 'Add',
-    loadingMsg: 'Adding server, this will take several minutes...',
+    loadingMsg: 'Adding server...',
     errorMsg: 'Failed to add server, server error occurred.',
     safeClose: true,
     initialize: function(options) {
