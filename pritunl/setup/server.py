@@ -51,7 +51,7 @@ def index_get():
 
 @app.route('/setup', methods=['GET'])
 def setup_get():
-    if db_ready:
+    if not db_setup:
         return flask.redirect('upgrade')
 
     try:
@@ -64,7 +64,7 @@ def setup_get():
 
 @app.route('/upgrade', methods=['GET'])
 def upgrade_get():
-    if not db_ready:
+    if db_setup:
         return flask.redirect('setup')
 
     try:
@@ -154,6 +154,9 @@ def server_thread():
     settings.local.server_start.set()
 
 def upgrade_database():
+    global db_setup
+    db_setup = False
+
     def _upgrade_thread():
         upgrade.upgrade_server()
         upgrade_done.set()
