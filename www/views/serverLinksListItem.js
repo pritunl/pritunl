@@ -37,10 +37,10 @@ define([
       }
 
       if (this.model.get('use_local_address')) {
-        this.$('.link-use-local').hide();
+        this.$('.link-use-local').show();
       }
       else {
-        this.$('.link-use-local').show();
+        this.$('.link-use-local').hide();
       }
     },
     onDetach: function() {
