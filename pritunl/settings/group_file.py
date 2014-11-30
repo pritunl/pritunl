@@ -42,6 +42,7 @@ class SettingsGroupFile(SettingsGroupBase):
                         setattr(self, name, os.path.normpath(value))
                     elif name in ('bind_addr'):
                         setattr(self, name, value)
+
                 self.commit()
 
         for field, value in doc.items():
