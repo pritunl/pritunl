@@ -29,7 +29,7 @@ def load_public_ip(attempts=1, timeout=5):
         logger.warning('Failed to get public ip address', 'setup')
 
 def setup_public_ip():
-    self.load_public_ip()
+    load_public_ip()
     if not settings.local.public_ip:
         thread = threading.Thread(target=load_public_ip,
             kwargs={'attempts': 5})
