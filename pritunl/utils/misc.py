@@ -54,7 +54,7 @@ def get_int_ver(version):
     elif len(ver) > 3:
         ver[3] = ver[3].zfill(4)
     else:
-        ver.append('0000')
+        ver.append('4000')
 
     return int(''.join([x.zfill(2) for x in ver]))
 
