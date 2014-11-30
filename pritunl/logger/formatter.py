@@ -13,8 +13,17 @@ class LogFormatter(logging.Formatter):
             except AttributeError:
                 host_name = 'undefined'
 
-            formatted_record = '[' + host_name + ']' + \
-                logging.Formatter.format(self, record)
+            formatted_record = '[' + host_name + ']'
+
+            try:
+                formatted_record += logging.Formatter.format(self, record)
+            except:
+                try:
+                    record.msg = record.msg.encode('string_escape')
+                    formatted_record += logging.Formatter.format(self, record)
+                except:
+                    record.msg = 'Unreadable'
+                    formatted_record += logging.Formatter.format(self, record)
 
             if hasattr(record, 'data') and record.data:
                 traceback = record.data.pop('traceback', None)
