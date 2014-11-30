@@ -84,6 +84,12 @@ def _keep_alive_thread():
                 'auto_public_address': settings.local.public_ip,
             }})
 
+            if settings.local.host.auto_public_address != \
+                    settings.local.public_ip:
+                settings.local.host.auto_public_address = \
+                    settings.local.public_ip
+                event.Event(type=HOSTS_UPDATED)
+
             settings.local.host_ping_timestamp = ping_timestamp
         except GeneratorExit:
             host.deinit()
