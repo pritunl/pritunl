@@ -59,18 +59,21 @@ def get_int_ver(version):
     return int(''.join([x.zfill(2) for x in ver]))
 
 def get_db_ver():
-    prefix = settings.conf.mongodb_collection_prefix or ''
-    client = pymongo.MongoClient(settings.conf.mongodb_uri,
-        connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
-    database = client.get_default_database()
-    settings_db = getattr(database, prefix + 'settings')
-    doc = settings_db.find_one({
-        '_id': 'version',
-    }) or {}
+    if settings.conf.mongodb_uri:
+        prefix = settings.conf.mongodb_collection_prefix or ''
+        client = pymongo.MongoClient(settings.conf.mongodb_uri,
+            connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
+        database = client.get_default_database()
+        settings_db = getattr(database, prefix + 'settings')
+        doc = settings_db.find_one({
+            '_id': 'version',
+        }) or {}
 
-    version = doc.get('version')
-    if version:
-        return version
+        version = doc.get('version')
+        if version:
+            return version
+    else:
+        version = None
 
     if not version and settings.conf.data_path:
         path = os.path.join(settings.conf.data_path, 'version')
