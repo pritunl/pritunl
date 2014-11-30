@@ -10,6 +10,7 @@ import os
 class SettingsGroupFile(SettingsGroupBase):
     type = GROUP_FILE
     path = None
+    commit_fields = set()
 
     def load(self):
         if not os.path.isfile(self.path):
@@ -52,7 +53,7 @@ class SettingsGroupFile(SettingsGroupBase):
         for field, default in self.fields.iteritems():
             if hasattr(self, field):
                 value = getattr(self, field)
-                if value != default:
+                if field in self.commit_fields or value != default:
                     doc[field] = getattr(self, field)
 
         with open(self.path, 'w') as settings_file:
