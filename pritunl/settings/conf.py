@@ -27,3 +27,16 @@ class SettingsConf(SettingsGroupFile):
         'data_path': None, # For 0.10.x upgrade
         'db_path': None, # For 0.10.x upgrade
     }
+    commit_fields = {
+        'debug',
+        'static_cache',
+        'bind_addr',
+        'port',
+        'log_path',
+        'www_path',
+        'temp_path',
+        'server_cert_path',
+        'server_key_path',
+        'local_address_interface',
+        'mongodb_uri',
+    }
