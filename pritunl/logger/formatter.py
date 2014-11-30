@@ -56,5 +56,6 @@ class LogFormatter(logging.Formatter):
         except:
             from pritunl import logger
             logger.exception('Log format error')
+            raise
 
         return formatted_record
