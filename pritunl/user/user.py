@@ -268,7 +268,7 @@ class User(mongo.MongoObject):
             otp_secret = otp_secret.ljust(len(otp_secret) + padding, '=')
         otp_secret = base64.b32decode(otp_secret.upper())
         valid_codes = []
-        epoch = int(time.time() / 30)
+        epoch = int(utils.time_now() / 30)
         for epoch_offset in range(-1, 2):
             value = struct.pack('>q', epoch + epoch_offset)
             hmac_hash = hmac.new(otp_secret, value, hashlib.sha1).digest()

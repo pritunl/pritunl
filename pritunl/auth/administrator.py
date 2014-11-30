@@ -184,7 +184,7 @@ def check_session():
         auth_nonce = auth_nonce[:32]
 
         try:
-            if abs(int(auth_timestamp) - int(time.time())) > \
+            if abs(int(auth_timestamp) - int(utils.time_now())) > \
                     settings.app.auth_time_window:
                 return False
         except ValueError:
@@ -236,12 +236,12 @@ def check_session():
             return False
 
         session_timeout = settings.app.session_timeout
-        if session_timeout and int(time.time()) - \
+        if session_timeout and int(utils.time_now()) - \
                 flask.session['timestamp'] > session_timeout:
             flask.session.clear()
             return False
 
-        flask.session['timestamp'] = int(time.time())
+        flask.session['timestamp'] = int(utils.time_now())
 
     flask.g.administrator = administrator
     return True
