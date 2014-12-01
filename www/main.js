@@ -61,7 +61,7 @@
   }
 }());
 
-require['config']({
+require.config({
   waitSeconds: 10,
   paths: {
     ace: 'vendor/ace/ace',
