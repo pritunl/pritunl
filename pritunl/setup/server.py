@@ -22,7 +22,7 @@ import flask
 import threading
 
 server = None
-app = flask.Flask(APP_NAME + '_dbconf')
+app = flask.Flask(__name__)
 upgrade_done = threading.Event()
 setup_ready = threading.Event()
 db_ready = threading.Event()

@@ -21,7 +21,7 @@ except ImportError:
     from pritunl.wsgiserver import ssl_builtin
     SSLAdapter = ssl_builtin.BuiltinSSLAdapter
 
-app = flask.Flask(APP_NAME)
+app = flask.Flask(__name__)
 
 @app.before_request
 def before_request():
