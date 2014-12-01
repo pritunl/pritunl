@@ -42,7 +42,11 @@ def main(default_conf=None):
 
     (options, args) = parser.parse_args()
 
-    pritunl.set_conf_path(options.conf or default_conf)
+    if hasattr(options, 'conf') and options.conf:
+        conf_path = options.conf
+    else:
+        conf_path = default_conf
+    pritunl.set_conf_path(conf_path)
 
     if cmd == 'version':
         print '%s v%s' % (pritunl.__title__, pritunl.__version__)
