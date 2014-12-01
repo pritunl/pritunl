@@ -229,6 +229,14 @@ def check_openssl():
         pass
     return True
 
+def check_iptables_wait():
+    try:
+        subprocess.check_call(['iptables', '--wait', '-L', '-n'])
+        return True
+    except:
+        pass
+    return False
+
 def roundrobin(*iterables):
     # Recipe credited to George Sakkis
     pending = len(iterables)
