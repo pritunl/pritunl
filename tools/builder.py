@@ -389,7 +389,10 @@ elif cmd == 'build':
         'rc' in cur_version,
     ))
 
-    # Create debian packaage
+    # Start vagrant boxes
+    subprocess.check_call(['vagrant', 'up', 'debian', 'centos'])
+
+    # Create debian package
     build_dir = 'build/%s/debian' % cur_version
     passphrase = getpass.getpass('Enter GPG passphrase: ')
     passphrase_retype = getpass.getpass('Retype GPG passphrase: ')
