@@ -142,6 +142,10 @@ else:
     cmd = 'version'
 
 parser = optparse.OptionParser(usage=USAGE)
+
+parser.add_option('--test', action='store_true',
+    help='Upload to test repo')
+
 (options, args) = parser.parse_args()
 
 build_num = 0
@@ -522,8 +526,14 @@ elif cmd == 'upload':
 
     # Upload debian package
     build_dir = 'build/%s/debian' % cur_version
-    launchpad_ppa = '%s/%s-dev' % (pkg_name, pkg_name) if is_dev_release else \
-        '%s/ppa' % pkg_name
+
+    if options.test:
+        launchpad_ppa = '%s/%s-test' % (pkg_name, pkg_name)
+    elif is_dev_release:
+        launchpad_ppa = '%s/%s-dev' % (pkg_name, pkg_name)
+    else:
+        launchpad_ppa = '%s/ppa' % pkg_name
+
     for ubuntu_release in UBUNTU_RELEASES:
         vagrant_check_call(
             'sudo dput ppa:%s %s_%s-%subuntu1~%s_source.changes' % (
