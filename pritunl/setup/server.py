@@ -188,6 +188,8 @@ def setup_server():
     server_upgrade = db_ver_int < settings.local.version_int
 
     if db_setup or server_upgrade:
+        logger.info('Starting setup server', 'setup')
+
         if not db_setup:
             upgrade_database()
 
