@@ -1,3 +1,4 @@
+/* jshint -W069:true */
 (function() {
   'use strict';
   window.slideTime = 100;
@@ -60,7 +61,7 @@
   }
 }());
 
-require.config({
+require['config']({
   waitSeconds: 10,
   paths: {
     ace: 'vendor/ace/ace',
