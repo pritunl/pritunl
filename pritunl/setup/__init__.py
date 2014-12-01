@@ -17,24 +17,39 @@ from pritunl import settings
 def setup_all():
     setup_local()
     setup_logger()
-    setup_app()
 
-    if settings.conf.ssl:
-        setup_server_cert()
+    try:
+        setup_app()
 
-    setup_signal_handler()
-    setup_server()
-    setup_mongo()
-    setup_temp_path()
-    setup_host()
-    setup_public_ip()
-    setup_poolers()
-    setup_runners()
-    setup_handlers()
-    setup_check()
+        if settings.conf.ssl:
+            setup_server_cert()
+
+        setup_signal_handler()
+        setup_server()
+        setup_mongo()
+        setup_temp_path()
+        setup_host()
+        setup_public_ip()
+        setup_poolers()
+        setup_runners()
+        setup_handlers()
+        setup_check()
+    except:
+        from pritunl import logger
+        logger.exception('Pritunl setup failed', 'setup')
+        raise
 
 def setup_db():
     setup_local()
     setup_app()
-    setup_logger()
-    setup_mongo()
+
+    try:
+        if settings.conf.ssl:
+            setup_server_cert()
+
+        setup_logger()
+        setup_mongo()
+    except:
+        from pritunl import logger
+        logger.exception('Pritunl setup failed', 'setup')
+        raise
