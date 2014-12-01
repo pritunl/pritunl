@@ -267,6 +267,7 @@
 
       var save = function() {
         saveBtn.disabled = true;
+        uriInput.disabled = true;
 
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function() {
@@ -286,6 +287,7 @@
               }
               setAlert(errorMsg, 'danger');
               saveBtn.disabled = false;
+              uriInput.disabled = false;
             }
           }
         };
