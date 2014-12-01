@@ -1,11 +1,17 @@
-pritunl (0.10.12-0ubuntu1) trusty; urgency=low
+pritunl (1.0.0snapshot1-0ubuntu1) unstable; urgency=low
+
+  * Snapshot release
+
+ -- Pritunl <contact@pritunl.com>  Mon, 01 Dec 2014 00:00:00 -0400
+
+pritunl (0.10.12-0ubuntu1) unstable; urgency=low
 
   * Pre-pool dh params for instant server creation
   * Improve client configurations
 
  -- Pritunl <contact@pritunl.com>  Mon, 04 Aug 2014 00:00:00 -0400
 
-pritunl (0.10.11-0ubuntu1) trusty; urgency=low
+pritunl (0.10.11-0ubuntu1) unstable; urgency=low
 
   * Improve email key links
   * Add additional non-enterprise features
@@ -19,7 +25,7 @@ pritunl (0.10.11-0ubuntu1) trusty; urgency=low
 
  -- Pritunl <contact@pritunl.com>  Tue, 29 Jul 2014 00:00:00 -0400
 
-pritunl (0.10.10-0ubuntu1) trusty; urgency=low
+pritunl (0.10.10-0ubuntu1) unstable; urgency=low
 
   * Add user setting to temporarily disable a user
   * Add email to user
@@ -32,7 +38,7 @@ pritunl (0.10.10-0ubuntu1) trusty; urgency=low
 
  -- Pritunl <contact@pritunl.com>  Tue, 01 Jul 2014 00:00:00 -0400
 
-pritunl (0.10.9-0ubuntu1) trusty; urgency=low
+pritunl (0.10.9-0ubuntu1) unstable; urgency=low
 
   * Add static IP addresses for vpn clients
   * Add update notifications
@@ -42,14 +48,14 @@ pritunl (0.10.9-0ubuntu1) trusty; urgency=low
 
  -- Pritunl <contact@pritunl.com>  Wed, 23 Apr 2014 00:00:00 -0400
 
-pritunl (0.10.8-0ubuntu1) trusty; urgency=low
+pritunl (0.10.8-0ubuntu1) unstable; urgency=low
 
   * Fix openvpn authentication issue
   * Disable download key when no servers are attached to a user
 
  -- Pritunl <contact@pritunl.com>  Sun, 23 Mar 2014 00:00:00 -0400
 
-pritunl (0.10.7-0ubuntu1) trusty; urgency=low
+pritunl (0.10.7-0ubuntu1) unstable; urgency=low
 
   * Changes to api
   * Improve server caching
@@ -60,7 +66,7 @@ pritunl (0.10.7-0ubuntu1) trusty; urgency=low
 
  -- Pritunl <contact@pritunl.com>  Fri, 28 Feb 2014 00:00:00 -0400
 
-pritunl (0.10.6-0ubuntu1) trusty; urgency=low
+pritunl (0.10.6-0ubuntu1) unstable; urgency=low
 
   * Changes to api
   * Add rate limiting to auth attempts per ip
@@ -76,7 +82,7 @@ pritunl (0.10.6-0ubuntu1) trusty; urgency=low
 
  -- Pritunl <contact@pritunl.com>  Wed, 12 Feb 2014 00:00:00 -0400
 
-pritunl (0.10.5-0ubuntu1) trusty; urgency=low
+pritunl (0.10.5-0ubuntu1) unstable; urgency=low
 
   * Changes to api
   * Add support for multiple local networks on vpn server
@@ -93,7 +99,7 @@ pritunl (0.10.5-0ubuntu1) trusty; urgency=low
 
  -- Pritunl <contact@pritunl.com>  Wed, 29 Jan 2014 00:00:00 -0400
 
-pritunl (0.10.4-0ubuntu1) trusty; urgency=low
+pritunl (0.10.4-0ubuntu1) unstable; urgency=low
 
   * Improve support for mobile devices
   * Add temporary page to view two-step authentication key and conf links
@@ -103,7 +109,7 @@ pritunl (0.10.4-0ubuntu1) trusty; urgency=low
 
  -- Pritunl <contact@pritunl.com>  Fri, 10 Jan 2014 00:00:00 -0400
 
-pritunl (0.10.3-0ubuntu1) trusty; urgency=low
+pritunl (0.10.3-0ubuntu1) unstable; urgency=low
 
   * Add functionality to generate new two-step authentication keys
   * Add support for inline certs
@@ -112,7 +118,7 @@ pritunl (0.10.3-0ubuntu1) trusty; urgency=low
 
  -- Pritunl <contact@pritunl.com>  Thu, 14 Nov 2013 00:00:00 -0400
 
-pritunl (0.10.2-0ubuntu1) trusty; urgency=low
+pritunl (0.10.2-0ubuntu1) unstable; urgency=low
 
   * Add time based two-step otp password verification using google authenticator
   * Add client sent and received data transfer to status tooltip
@@ -123,7 +129,7 @@ pritunl (0.10.2-0ubuntu1) trusty; urgency=low
 
  -- Pritunl <contact@pritunl.com>  Mon, 04 Nov 2013 00:00:00 -0400
 
-pritunl (0.10.1-0ubuntu1) trusty; urgency=low
+pritunl (0.10.1-0ubuntu1) unstable; urgency=low
 
   * Initial beta release
 
