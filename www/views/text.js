@@ -9,7 +9,7 @@ define([
   'aceModeText',
   'aceThemePritunl'
 ], function($, _, Backbone, Ace, AceModeLog, AceModeSh, AceModeText,
-    aceThemePritunl) {
+    AceThemePritunl) {
   'use strict';
   var TextView = Backbone.View.extend({
     className: 'text-viewer',
