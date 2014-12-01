@@ -423,20 +423,7 @@ elif cmd == 'build':
     orig_name = '%s_%s.orig.tar.gz' % (pkg_name, cur_version)
     orig_path = os.path.join(build_dir, orig_name)
     if not os.path.isfile(orig_path):
-        tar_extract(archive_name, cwd=build_dir)
-        rm_tree(os.path.join(
-            build_dir,
-            '%s-%s/debian' % (pkg_name, cur_version),
-        ))
-        tar_compress(
-            orig_name,
-            '%s-%s' % (pkg_name, cur_version),
-            cwd=build_dir,
-        )
-        rm_tree(os.path.join(
-            build_dir,
-            '%s-%s' % (pkg_name, cur_version),
-        ))
+        subprocess.check_call(['cp', archive_name, orig_name], cwd=build_dir)
 
 
     # Create build path
