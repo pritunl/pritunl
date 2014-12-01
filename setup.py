@@ -80,6 +80,12 @@ for file_name in patch_files:
         line = line.replace('%PREFIX%', prefix)
         print line.rstrip('\n')
 
+packages = ['pritunl']
+
+for dir_name in os.listdir('pritunl'):
+    if os.path.isdir(os.path.join('pritunl', dir_name)):
+        packages.append('pritunl.%s' % dir_name)
+
 setup(
     name='pritunl',
     version=VERSION,
@@ -91,7 +97,7 @@ setup(
     download_url='https://github.com/pritunl/pritunl/archive/%s.tar.gz' % (
         VERSION),
     keywords='openvpn, vpn, management, server, web interface',
-    packages=['pritunl', 'pritunl.handlers'],
+    packages=packages,
     license=open('LICENSE').read(),
     zip_safe=False,
     install_requires=[
