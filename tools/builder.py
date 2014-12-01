@@ -536,7 +536,7 @@ elif cmd == 'upload':
 
     for ubuntu_release in UBUNTU_RELEASES:
         vagrant_check_call(
-            'sudo dput ppa:%s %s_%s-%subuntu1~%s_source.changes' % (
+            'sudo dput -f ppa:%s %s_%s-%subuntu1~%s_source.changes' % (
                 launchpad_ppa,
                 pkg_name,
                 cur_version,
