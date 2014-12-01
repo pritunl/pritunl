@@ -392,6 +392,11 @@ elif cmd == 'build':
     # Create debian packaage
     build_dir = 'build/%s/debian' % cur_version
     passphrase = getpass.getpass('Enter GPG passphrase: ')
+    passphrase_retype = getpass.getpass('Retype GPG passphrase: ')
+
+    if passphrase != passphrase_retype:
+        print 'Passwords do not match'
+        sys.exit(1)
 
     if not os.path.isdir(build_dir):
         os.makedirs(build_dir)
