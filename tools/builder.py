@@ -546,6 +546,9 @@ elif cmd == 'upload':
             cwd=build_dir,
         )
 
+    if options.test:
+        sys.exit(0)
+
 
     # Upload arch package
     build_dir = 'build/%s/arch' % cur_version
