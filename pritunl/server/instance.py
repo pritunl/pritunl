@@ -290,10 +290,13 @@ class ServerInstance(object):
             ])
 
         extra_args = [
-            '--wait',
             '-m', 'comment',
             '--comment', 'pritunl_%s' % self.server.id,
         ]
+
+        if settings.local.iptables_wait:
+            extra_args.append('--wait')
+
         rules = [x + extra_args for x in rules]
 
         return rules
