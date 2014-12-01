@@ -18,6 +18,10 @@ def setup_all():
     setup_local()
     setup_logger()
     setup_app()
+
+    if settings.conf.ssl:
+        setup_server_cert()
+
     setup_signal_handler()
     setup_server()
     setup_mongo()
@@ -28,9 +32,6 @@ def setup_all():
     setup_runners()
     setup_handlers()
     setup_check()
-
-    if settings.conf.ssl:
-        setup_server_cert()
 
 def setup_db():
     setup_local()
