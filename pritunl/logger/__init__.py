@@ -24,10 +24,10 @@ def _logger_thread():
         args, kwargs = _log_queue.get()
         _log(*args, **kwargs)
 
-def _log(log_level, log_msg, log_type, **kwargs):
+def _log(log_level, log_msg, log_type, exc_info=None, **kwargs):
     if not log_filter or not log_handler:
         raise TypeError('Logger not setup')
-    getattr(logger, log_level)(log_msg, extra={
+    getattr(logger, log_level)(log_msg, exc_info=exc_info, extra={
             'type': log_type,
             'data': kwargs,
         })
@@ -66,7 +66,8 @@ def critical(log_msg, log_type=None, **kwargs):
     ))
 
 def exception(log_msg, log_type=None, **kwargs):
-    _log('exception', log_msg, log_type, **kwargs)
+    # Fix for python #15541
+    _log('error', log_msg, log_type, exc_info=1, **kwargs)
 
 _thread = threading.Thread(target=_logger_thread)
 _thread.daemon = True
