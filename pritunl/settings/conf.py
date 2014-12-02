@@ -25,8 +25,8 @@ class SettingsConf(SettingsGroupFile):
         'mongodb_uri': 'mongodb://localhost:27017/pritunl',
         'mongodb_collection_prefix': None,
         'local_address_interface': 'auto',
-        'data_path': None, # For 0.10.x upgrade
-        'db_path': None, # For 0.10.x upgrade
+        'data_path': '/var/lib/pritunl', # For 0.10.x upgrade
+        'db_path': '/var/lib/pritunl/pritunl.db', # For 0.10.x upgrade
     }
     commit_fields = {
         'debug',
