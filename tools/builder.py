@@ -200,6 +200,7 @@ elif cmd == 'set-version':
 
     # Commit webapp
     subprocess.check_call(['git', 'reset', 'HEAD', '.'])
+    subprocess.check_call(['git', 'add', 'www/styles/vendor/main.css'])
     subprocess.check_call(['git', 'add', '--all', 'www/vendor/dist'])
     changes = subprocess.check_output(
         ['git', 'status', '-s']).rstrip().split('\n')
