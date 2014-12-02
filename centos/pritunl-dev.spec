@@ -17,7 +17,6 @@ Requires: python-pymongo
 Requires: pyOpenSSL
 Requires: openvpn
 Requires: net-tools
-Requires: mongodb-server
 
 %description
 Enterprise vpn server. Documentation and more information can be found at
