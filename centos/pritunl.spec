@@ -14,7 +14,7 @@ Provides: pritunl
 Requires: python
 Requires: python-flask
 Requires: python-pymongo
-Requires: pyopenssl
+Requires: pyOpenSSL
 Requires: openvpn
 Requires: net-tools
 Requires: mongodb-server
