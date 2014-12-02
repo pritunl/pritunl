@@ -584,4 +584,5 @@ elif cmd == 'upload':
     )
 
 else:
-    sys.exit(0)
+    print 'Unknown command'
+    sys.exit(1)
