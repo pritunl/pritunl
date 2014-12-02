@@ -165,7 +165,7 @@ def _upgrade_server(server_id, server_path):
     }
 
     update_doc = {
-        'lzo_compression': False,
+        'lzo_compression': ADAPTIVE,
         'dns_servers': [],
         'protocol': None,
         'links': [],
@@ -221,7 +221,6 @@ def _upgrade_server(server_id, server_path):
                     ):
                 update_doc[name] = int(value) if value else None
             elif name in (
-                        'lzo_compression',
                         'otp_auth',
                         'debug',
                     ):
@@ -232,6 +231,8 @@ def _upgrade_server(server_id, server_path):
                         'debug',
                     ):
                 update_doc[name] = value.split(',') if value else []
+            elif name == 'lzo_compression':
+                update_doc[name] = True if value == 'true' else ADAPTIVE
             elif name == 'mode':
                 if value == 'all_traffic':
                     update_doc[name] = ALL_TRAFFIC
