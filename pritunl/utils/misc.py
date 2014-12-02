@@ -228,7 +228,8 @@ def check_openssl():
 
 def check_iptables_wait():
     try:
-        subprocess.check_call(['iptables', '--wait', '-L', '-n'])
+        subprocess.check_call(['iptables', '--wait', '-L', '-n'],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         return True
     except:
         pass
