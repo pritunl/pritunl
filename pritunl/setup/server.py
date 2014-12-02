@@ -181,6 +181,11 @@ def setup_server():
         )
         exit(75)
 
+    # Fix for replaced conf file in 0.10.x upgrade
+    if db_ver_int < 100000000 and not settings.conf.mongodb_uri:
+        settings.conf.mongodb_uri = 'mongodb://localhost:27017/pritunl'
+        settings.conf.commit()
+
     global db_setup
     db_setup = not settings.conf.mongodb_uri
 
