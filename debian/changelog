@@ -1,8 +1,8 @@
-pritunl (1.0.0snapshot1-0ubuntu1) unstable; urgency=low
+pritunl (1.0.0snapshot2-0ubuntu1) unstable; urgency=low
 
   * Snapshot release
 
- -- Pritunl <contact@pritunl.com>  Mon, 01 Dec 2014 00:00:00 -0400
+ -- Pritunl <contact@pritunl.com>  Tue, 02 Dec 2014 00:00:00 -0400
 
 pritunl (0.10.12-0ubuntu1) unstable; urgency=low
 

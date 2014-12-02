@@ -1,5 +1,5 @@
 %define pkgname pritunl
-%define pkgver 1.0.0snapshot1
+%define pkgver 1.0.0snapshot2
 
 Name: pritunl-dev
 Summary: Enterprise VPN Server
