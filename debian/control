@@ -21,9 +21,9 @@ Depends: python-flask,
          python-pymongo,
          openvpn,
          iptables,
-         mongodb-server,
          ${misc:Depends},
          ${python:Depends}
+Recommends: mongodb-server
 Description: Enterprise VPN Server
  Enterprise vpn server. Documentation and more information can be found at
  pritunl.com
