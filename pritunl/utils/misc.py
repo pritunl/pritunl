@@ -72,14 +72,11 @@ def get_db_ver():
         version = doc.get('version')
         if version:
             return version
-    else:
-        version = None
 
-    if not version and settings.conf.data_path:
-        path = os.path.join(settings.conf.data_path, 'version')
-        if os.path.exists(path):
-            with open(path, 'r') as ver_file:
-                return ver_file.read().strip()
+    path = os.path.join(settings.conf.data_path, 'version')
+    if os.path.exists(path):
+        with open(path, 'r') as ver_file:
+            return ver_file.read().strip()
 
     return __version__
 
