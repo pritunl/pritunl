@@ -27,7 +27,7 @@ pritunl.com
 rm -rf $RPM_BUILD_DIR/%{pkgname}-%{pkgver}
 rm -rf $RPM_SOURCE_DIR/%{pkgver}.tar.gz
 wget https://github.com/%{pkgname}/%{pkgname}/archive/%{pkgver}.tar.gz -P $RPM_SOURCE_DIR/
-tar -xf $RPM_SOURCE_DIR/%{pkgver}.tar.gz
+tar xfz $RPM_SOURCE_DIR/%{pkgver}.tar.gz
 
 %build
 cd $RPM_BUILD_DIR/%{pkgname}-%{pkgver}
