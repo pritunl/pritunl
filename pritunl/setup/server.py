@@ -105,6 +105,7 @@ def setup_mongodb_put():
     try:
         client = pymongo.MongoClient(mongodb_uri,
             connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
+        database = client.get_default_database()
     except pymongo.errors.ConnectionFailure:
         return utils.jsonify({
             'error': MONGODB_CONNECT_ERROR,
