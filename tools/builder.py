@@ -714,6 +714,19 @@ elif cmd == 'upload':
         }
     )
 
+
+    # Upload centos package
+    rpms_dir = 'build/%s/centos/RPMS/x86_64' % cur_version
+    rpm_name = '%s-%s-%s.el7.centos.x86_64.rpm' % (
+        pkg_name + '-dev' if is_dev_release else pkg_name,
+        cur_version,
+        build_num + 1,
+    )
+    rpm_path = os.path.join(rpms_dir, rpm_name)
+
+    post_git_asset(release_id, rpm_name, rpm_path)
+
+
 else:
     print 'Unknown command'
     sys.exit(1)
