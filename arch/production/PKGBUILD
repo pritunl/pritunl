@@ -16,6 +16,8 @@ depends=(
     "net-tools"
     "iproute2"
     "openvpn"
+)
+optdepends=(
     "mongodb"
 )
 makedepends=(
