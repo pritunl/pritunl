@@ -579,7 +579,8 @@ elif cmd == 'build':
 
 
     # Build rpm spec
-    vagrant_check_call('rpmbuild -ba %s' % rpm_spec_name, cwd=rpm_specs_path)
+    vagrant_check_call('rpmbuild -ba %s' % rpm_spec_name, name='centos',
+        cwd=rpm_specs_path)
 
 
 elif cmd == 'upload':
