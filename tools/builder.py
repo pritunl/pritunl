@@ -531,6 +531,57 @@ elif cmd == 'build':
     subprocess.check_call(['mkaurball', '-f'], cwd=build_dir)
 
 
+    # Create centos package
+    build_dir = 'build/%s/centos' % cur_version
+
+    if not os.path.isdir(build_dir):
+        os.makedirs(build_dir)
+
+
+    # Create rpm dirs
+    rpm_build_path = os.path.join(build_dir, 'BUILD')
+    rpm_rpms_path = os.path.join(build_dir, 'RPMS')
+    rpm_sources_path = os.path.join(build_dir, 'SOURCES')
+    rpm_specs_path = os.path.join(build_dir, 'SPECS')
+    rpm_srpms_path = os.path.join(build_dir, 'SRPMS')
+
+    for rpm_dir_path in (
+                rpm_build_path,
+                rpm_rpms_path,
+                rpm_sources_path,
+                rpm_specs_path,
+                rpm_srpms_path,
+            ):
+        if not os.path.isdir(rpm_dir_path):
+            os.makedirs(rpm_dir_path)
+
+
+    # Download archive
+    archive_name = '%s.tar.gz' % cur_version
+    archive_path = os.path.join(build_dir, archive_name)
+    if not os.path.isfile(archive_path):
+        wget('https://github.com/%s/%s/archive/%s' % (
+                github_owner, pkg_name, archive_name),
+            output=archive_name,
+            cwd=build_dir,
+        )
+
+        tar_extract(archive_name, build_dir)
+
+
+    # Create rpm spec
+    rpm_spec_name = 'pritunl%s.spec' % ('-dev' if is_dev_release else '')
+    rpm_spec_path = os.path.join(rpm_specs_path, rpm_spec_name)
+    rpm_source_spec_path = os.path.join(build_dir, '%s-%s' % (
+        pkg_name, cur_version), 'centos', rpm_spec_name)
+
+    subprocess.check_call(['cp', rpm_source_spec_path, rpm_spec_path])
+
+
+    # Build rpm spec
+    vagrant_check_call('rpmbuild -ba %s' % rpm_spec_name, cwd=rpm_specs_path)
+
+
 elif cmd == 'upload':
     is_dev_release = any((
         'snapshot' in cur_version,
