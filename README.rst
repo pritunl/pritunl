@@ -23,6 +23,19 @@ Documentation and more information can be found at the home page
 .. image:: www/img/logo_full.png
     :target: http://pritunl.com
 
+Development Setup (Single Node)
+-------------------------------
+
+.. code-block:: bash
+
+    $ git clone https://github.com/pritunl/pritunl.git
+    $ cd pritunl
+    $ vagrant up mongodb node0
+    $ vagrant ssh node0
+    $ cd /vagrant
+    $ sudo python2 server.py
+    # Open http://localhost:9700/
+
 Development Setup (Multi Node)
 ------------------------------
 
@@ -38,19 +51,6 @@ Development Setup (Multi Node)
     # Open node3 http://localhost:9703/
     # Open node4 http://localhost:9704/
     # Open node5 http://localhost:9705/
-
-Development Setup (Single Node)
--------------------------------
-
-.. code-block:: bash
-
-    $ git clone https://github.com/pritunl/pritunl.git
-    $ cd pritunl
-    $ vagrant up node0 mongodb
-    $ vagrant ssh node0
-    $ cd /vagrant
-    $ sudo python2 server.py
-    # Open http://localhost:9700/
 
 Unittest
 --------
