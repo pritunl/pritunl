@@ -196,12 +196,6 @@ elif cmd == 'set-version':
             'Authorization': 'token %s' % github_token,
             'Content-type': 'application/json',
         },
-        data=json.dumps({
-            'tag_name': new_version,
-            'name': '%s v%s' % (pkg_name, new_version),
-            'body': 'Snapshot release',
-            'prerelease': True,
-        }),
     )
 
     if response.status_code != 200:
