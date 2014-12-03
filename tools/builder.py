@@ -64,6 +64,28 @@ def wget(url, cwd=None, output=None):
         args = ['wget', url]
     subprocess.check_call(args, cwd=cwd)
 
+def post_git_asset(release_id, file_name, file_path):
+    file_size = os.path.getsize(file_path)
+    response = requests.post(
+        'https://uploads.github.com/repos/%s/%s/releases/%s/assets' % (
+            github_owner, pkg_name, release_id),
+        verify=False,
+        headers={
+            'Authorization': 'token %s' % github_token,
+            'Content-Type': 'application/octet-stream',
+            'Content-Size': file_size,
+        },
+        params={
+            'name': file_name,
+        },
+        data=open(file_path, 'rb').read(),
+    )
+
+    if response.status_code != 201:
+        print 'Failed to create release on github'
+        print response.json()
+        sys.exit(1)
+
 def rm_tree(path):
     subprocess.check_call(['rm', '-rf', path])
 
@@ -591,6 +613,27 @@ elif cmd == 'upload':
         'rc' in cur_version,
     ))
 
+
+    # Get release id
+    release_id = None
+    response = requests.get(
+        'https://api.github.com/repos/%s/%s/releases' % (
+            github_owner, pkg_name),
+        headers={
+            'Authorization': 'token %s' % github_token,
+            'Content-type': 'application/json',
+        },
+    )
+
+    for release in response.json():
+        if release['tag_name'] == cur_version:
+            release_id = release['id']
+
+    if not release_id:
+        print 'Version does not exists in github'
+        sys.exit(1)
+
+
     # Upload debian package
     build_dir = 'build/%s/debian' % cur_version
 
@@ -602,6 +645,15 @@ elif cmd == 'upload':
         launchpad_ppa = '%s/ppa' % pkg_name
 
     for ubuntu_release in UBUNTU_RELEASES:
+        deb_file_name = '%s_%s-%subuntu1~%s_all.deb' % (
+            pkg_name,
+            cur_version,
+            build_num,
+            ubuntu_release,
+        )
+        deb_file_path = os.path.join(build_dir, deb_file_name)
+        post_git_asset(release_id, deb_file_name, deb_file_path)
+
         vagrant_check_call(
             'sudo dput -f ppa:%s %s_%s-%subuntu1~%s_source.changes' % (
                 launchpad_ppa,
@@ -619,9 +671,20 @@ elif cmd == 'upload':
 
     # Upload arch package
     build_dir = 'build/%s/arch' % cur_version
-    aurball_pkg_name = pkg_name + '-dev' if is_dev_release else pkg_name
-    aurball_path = os.path.join(build_dir, '%s-%s-%s.src.tar.gz' % (
-        aurball_pkg_name, cur_version, build_num + 1))
+    aur_pkg_name = '%s-%s-%s-any.pkg.tar.xz' % (
+        pkg_name + '-dev' if is_dev_release else pkg_name,
+        cur_version,
+        build_num + 1,
+    )
+    aur_path = os.path.join(build_dir, aur_pkg_name)
+    aurball_pkg_name = '%s-%s-%s.src.tar.gz' % (
+        pkg_name + '-dev' if is_dev_release else pkg_name,
+        cur_version,
+        build_num + 1,
+    )
+    aurball_path = os.path.join(build_dir, aurball_pkg_name)
+
+    post_git_asset(release_id, aur_pkg_name, aur_path)
 
     session = requests.Session()
 
