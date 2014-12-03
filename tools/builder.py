@@ -27,6 +27,7 @@ Commands:
   build                 Build and release"""
 
 INIT_PATH = 'pritunl/__init__.py'
+SETUP_PATH = 'setup.py'
 CHANGES_PATH = 'CHANGES'
 DEBIAN_CHANGELOG_PATH = 'debian/changelog'
 BUILD_KEYS_PATH = 'tools/build_keys.json'
@@ -344,9 +345,22 @@ elif cmd == 'set-version':
         ))
 
 
+    # Update setup
+    with open(SETUP_PATH, 'r') as setup_file:
+        setup_data = setup_file.read()
+
+    with open(SETUP_PATH, 'w') as setup_file:
+        setup_file.write(re.sub(
+            "(VERSION = )('.*?')",
+            "VERSION = '%s'" % new_version,
+            setup_data,
+        ))
+
+
     # Git commit
     subprocess.check_call(['git', 'reset', 'HEAD', '.'])
     subprocess.check_call(['git', 'add', INIT_PATH])
+    subprocess.check_call(['git', 'add', SETUP_PATH])
     subprocess.check_call(['git', 'add', DEBIAN_CHANGELOG_PATH])
     subprocess.check_call(['git', 'add', ARCH_PKGBUILD_PATH])
     subprocess.check_call(['git', 'add', ARCH_DEV_PKGBUILD_PATH])
