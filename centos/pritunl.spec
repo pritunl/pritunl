@@ -1,10 +1,11 @@
 %define pkgname pritunl
 %define pkgver 0.10.12
+%define pkgrelease 1
 
 Name: %{pkgname}
 Summary: Enterprise VPN Server
 Version: %{pkgver}
-Release: 1%{?dist}
+Release: %{pkgrelease}%{?dist}
 Group: Applications/Internet
 URL: http://%{pkgname}.com/
 License: Custom

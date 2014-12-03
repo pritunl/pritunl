@@ -1,11 +1,12 @@
 %define pkgname pritunl
 %define pkgver 1.0.0snapshot3
 %define pymongo_pkgver 2.7.2
+%define pkgrelease 1
 
 Name: pritunl-dev
 Summary: Enterprise VPN Server
 Version: %{pkgver}
-Release: 1%{?dist}
+Release: %{pkgrelease}%{?dist}
 Group: Applications/Internet
 URL: http://%{pkgname}.com/
 License: Custom
