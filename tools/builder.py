@@ -600,7 +600,9 @@ elif cmd == 'build':
 
 
     # Build rpm spec
-    vagrant_check_call('rpmbuild -ba %s' % rpm_spec_name, name='centos',
+    topdir_path = os.path.join('/vagrant', build_dir)
+    vagrant_check_call('rpmbuild --define "_topdir %s" -ba %s' % (
+        topdir_path, rpm_spec_name), name='centos',
         cwd=rpm_specs_path)
 
 
