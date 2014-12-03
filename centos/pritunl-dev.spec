@@ -1,5 +1,5 @@
 %define pkgname pritunl
-%define pkgver 1.0.0snapshot2
+%define pkgver 1.0.0snapshot3
 %define pymongo_pkgver 2.7.2
 
 Name: pritunl-dev
