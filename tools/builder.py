@@ -344,6 +344,11 @@ elif cmd == 'set-version':
             '%%define pkgver %s' % new_version,
             pkgspec_file.read(),
         )
+        pkgspec_data = re.sub(
+            '%define pkgrelease (.*)',
+            '%%define pkgrelease %s' % (build_num + 1),
+            pkgspec_data,
+        )
 
     with open(pkgspec_path, 'w') as pkgspec_file:
         pkgspec_file.write(pkgspec_data)
