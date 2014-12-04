@@ -23,6 +23,7 @@ Command Help: builder [command] --help
 
 Commands:
   version               Print the version and exit
+  sync-db               Sync database
   set-version           Set current version
   build                 Build and release"""
 
@@ -124,6 +125,32 @@ def generate_last_modifited_etag(file_path):
         zlib.adler32(file_name) & 0xffffffff,
     ))
 
+def sync_db():
+    for file_name in os.listdir(RELEASES_DIR):
+        file_path = os.path.join(RELEASES_DIR, file_name)
+        ver, file_type, _ = file_name.split('.')
+        ver = int(ver)
+        if file_type == 'release':
+            with open(file_path, 'r') as release_file:
+                doc = json.loads(release_file.read().strip())
+                releases_db.update({
+                    '_id': ver,
+                }, {
+                    '$set': doc,
+                }, upsert=True)
+        else:
+            last_modified, etag = generate_last_modifited_etag(file_path)
+            with open(file_path, 'r') as css_file:
+                releases_db.update({
+                    '_id': ver,
+                }, {'$set': {
+                    file_type: {
+                        'etag': etag,
+                        'last_modified': last_modified,
+                        'data': css_file.read(),
+                    },
+                }}, upsert=True)
+
 
 # Load build keys
 with open(BUILD_KEYS_PATH, 'r') as build_keys_file:
@@ -178,6 +205,10 @@ if cmd == 'version':
     sys.exit(0)
 
 
+elif cmd == 'sync-db':
+    sync_db()
+
+
 elif cmd == 'set-version':
     new_version = args[1]
     is_snapshot = 'snapshot' in new_version
@@ -228,30 +259,7 @@ elif cmd == 'set-version':
 
 
     # Sync db
-    for file_name in os.listdir(RELEASES_DIR):
-        file_path = os.path.join(RELEASES_DIR, file_name)
-        ver, file_type, _ = file_name.split('.')
-        ver = int(ver)
-        if file_type == 'release':
-            with open(file_path, 'r') as release_file:
-                doc = json.loads(release_file.read().strip())
-                releases_db.update({
-                    '_id': ver,
-                }, {
-                    '$set': doc,
-                }, upsert=True)
-        else:
-            last_modified, etag = generate_last_modifited_etag(file_path)
-            with open(file_path, 'r') as css_file:
-                releases_db.update({
-                    '_id': ver,
-                }, {'$set': {
-                    file_type: {
-                        'etag': etag,
-                        'last_modified': last_modified,
-                        'data': css_file.read(),
-                    },
-                }}, upsert=True)
+    sync_db()
 
 
     # Generate changelog
