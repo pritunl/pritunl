@@ -23,7 +23,7 @@ def settings_get():
         'email_server': settings.app.email_server,
         'email_username': settings.app.email_username,
         'email_password': bool(settings.app.email_password),
-        'public_address': settings.local.host.public_address,
+        'public_address': settings.local.host.public_addr,
     })
     return utils.jsonify(response)
 
@@ -88,6 +88,6 @@ def settings_put():
         'email_server': settings.app.email_server,
         'email_username': settings.app.email_username,
         'email_password': bool(settings.app.email_password),
-        'public_address': settings.local.host.public_address,
+        'public_address': settings.local.host.public_addr,
     })
     return utils.jsonify(response)
