@@ -3,6 +3,7 @@ import pritunl
 import optparse
 import sys
 import os
+import time
 
 USAGE = """\
 Usage: pritunl [command] [options]
@@ -59,6 +60,7 @@ def main(default_conf=None):
         setup.setup_db()
         username, password = auth.reset_password()
 
+        time.sleep(1)
         print 'Administrator password successfully reset:\n' + \
             '  username: "%s"\n  password: "%s"' % (username, password)
 
@@ -71,6 +73,7 @@ def main(default_conf=None):
         settings.conf.mongodb_uri = None
         settings.conf.commit()
 
+        time.sleep(1)
         print 'Database configuration successfully reset'
 
         sys.exit(0)
