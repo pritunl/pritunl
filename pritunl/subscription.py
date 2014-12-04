@@ -68,6 +68,7 @@ def update():
                 settings.local.sub_amount = None
                 settings.local.sub_period_end = None
                 settings.local.sub_cancel_at_period_end = None
+            break
 
     response = collection.update({
         '_id': 'subscription',
