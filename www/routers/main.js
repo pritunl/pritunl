@@ -142,9 +142,7 @@ define([
               dismissable: true
             });
             $('.alerts-container').append(alertView.render().el);
-            this.addView(alertView);
           }.bind(this));
-          this.addView(modal);
         }.bind(this),
         error: function() {
           var alertView = new AlertView({
