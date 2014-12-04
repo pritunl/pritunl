@@ -92,7 +92,6 @@ DEFAULT_PORT = 9700
 DEFAULT_USERNAME = 'pritunl'
 DEFAULT_PASSWORD = 'pritunl'
 DEFAULT_CONF_PATH = '/etc/pritunl.conf'
-DEFAULT_WWW_PATH = '/usr/share/pritunl/www'
 SUBSCRIPTION_UPDATE_RATE = 900
 ENV_PREFIX = APP_NAME
 SHORT_URL_CHARS = (string.ascii_lowercase + string.ascii_uppercase +
