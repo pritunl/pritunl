@@ -18,14 +18,20 @@ class TaskCleanUsers(task.Task):
     def org_collection(cls):
         return mongo.get_collection('organizations')
 
-    def task(self):
-        # Remove users from orgs that dont exists
-        org_ids = self.org_collection.find({}, {
+    def _get_org_ids(self):
+        return set(self.org_collection.find({}, {
             '_id',
-        }).distinct('_id')
+        }).distinct('_id'))
+
+    def task(self):
+        # Remove users from orgs that dont exists check twice to reduce
+        # possibility of deleting a ca user durning org creation
+        org_ids = self._get_org_ids()
+        time.sleep(30)
+        org_ids2 = self._get_org_ids()
 
         self.collection.remove({
-            'org_id': {'$nin': org_ids},
+            'org_id': {'$nin': list(org_ids & org_ids2)},
         })
 
-task.add_task(TaskCleanUsers, hours=5, minutes=17)
+task.add_task(TaskCleanUsers, hours=5, minutes=17, run_on_start=True)
