@@ -152,7 +152,6 @@ define([
             dismissable: true
           });
           $('.alerts-container').append(alertView.render().el);
-          this.addView(alertView);
         }.bind(this)
       });
     },
