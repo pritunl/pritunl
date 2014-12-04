@@ -34,4 +34,4 @@ class TaskCleanUsers(task.Task):
             'org_id': {'$nin': list(org_ids & org_ids2)},
         })
 
-task.add_task(TaskCleanUsers, hours=5, minutes=17, run_on_start=True)
+task.add_task(TaskCleanUsers, hours=5, minutes=17)
