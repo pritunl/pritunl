@@ -3,18 +3,22 @@ define([
   'underscore',
   'backbone',
   'models/authSession',
+  'models/settings',
   'views/alert',
   'views/login',
   'views/dashboard',
   'views/users',
   'views/servers',
-  'views/hosts'
-], function($, _, Backbone, AuthSessionModel, AlertView, LoginView,
-    DashboardView, UsersView, ServersView, HostsView) {
+  'views/hosts',
+  'views/modalSettings'
+], function($, _, Backbone, AuthSessionModel, SettingsModel, AlertView,
+    LoginView, DashboardView, UsersView, ServersView, HostsView,
+    ModalSettingsView) {
   'use strict';
   var Router = Backbone.Router.extend({
     routes: {
       '': 'dashboard',
+      'init': 'init',
       'dashboard': 'dashboard',
       'users': 'users',
       'servers': 'servers',
@@ -123,6 +127,37 @@ define([
       window.theme = 'dark';
       this.updateTheme();
     },
+    openSettings: function() {
+      var model = new SettingsModel();
+      model.fetch({
+        success: function() {
+          var modal = new ModalSettingsView({
+            initial: true,
+            model: model
+          });
+          this.listenToOnce(modal, 'applied', function() {
+            var alertView = new AlertView({
+              type: 'warning',
+              message: 'Successfully saved settings.',
+              dismissable: true
+            });
+            $('.alerts-container').append(alertView.render().el);
+            this.addView(alertView);
+          }.bind(this));
+          this.addView(modal);
+        }.bind(this),
+        error: function() {
+          var alertView = new AlertView({
+            type: 'danger',
+            message: 'Failed to load authentication data, ' +
+              'server error occurred.',
+            dismissable: true
+          });
+          $('.alerts-container').append(alertView.render().el);
+          this.addView(alertView);
+        }.bind(this)
+      });
+    },
     auth: function(callback) {
       if (window.authenticated) {
         callback();
@@ -172,11 +207,18 @@ define([
         $(this.data.element).fadeIn(300);
       }.bind(this));
     },
-    dashboard: function() {
+    init: function() {
+      this.dashboard(true);
+    },
+    dashboard: function(init) {
       this.auth(function() {
         $('header .navbar .nav li').removeClass('active');
         $('header .dashboard').addClass('active');
         this.loadPage(new DashboardView());
+        if (init) {
+          this.openSettings();
+          Backbone.history.navigate('dashboard');
+        }
       }.bind(this));
     },
     users: function() {
