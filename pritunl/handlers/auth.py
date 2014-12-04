@@ -34,7 +34,7 @@ def auth_session_post():
 
     return utils.jsonify({
         'authenticated': True,
-        'default': admin.default,
+        'default': admin.default or False,
     })
 
 @app.app.route('/auth/session', methods=['DELETE'])
