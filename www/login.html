@@ -356,7 +356,12 @@
         xmlhttp.onreadystatechange = function() {
           if (xmlhttp.readyState === 4) {
             if (xmlhttp.status === 200) {
-              window.location = '/';
+              if (JSON.parse(xmlhttp.response)['default']) {
+                window.location = '/#/init';
+              }
+              else {
+                window.location = '/';
+              }
             }
             else {
               var errorMsg;
