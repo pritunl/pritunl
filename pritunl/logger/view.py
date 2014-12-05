@@ -66,7 +66,8 @@ class LogView(object):
                pass
         return line
 
-    def get_log_lines(self, limit=1024, formatted=True):
+    def get_log_lines(self, limit=None, formatted=True):
+        limit = limit or 1024
         messages = self.collection.aggregate([
             {'$sort': {
                 'timestamp': pymongo.DESCENDING,
