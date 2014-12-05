@@ -494,6 +494,23 @@ class Server(mongo.MongoObject):
             )
             return
 
+        if self.links:
+            hosts_set = set(self.hosts)
+            hosts_set.add(host_id)
+
+            spec = {
+            '_id': {'$in': [x['server_id'] for x in self.links]},
+            }
+            project = {
+                '_id': True,
+                'hosts': True,
+            }
+
+            for doc in self.collection.find(spec, project):
+                if hosts_set & set(doc['hosts']):
+                    raise ServerLinkCommonHostError(
+                        'Servers have a common host')
+
         self.hosts.append(host_id)
         self.changed.add('hosts')
 
