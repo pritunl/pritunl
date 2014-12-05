@@ -371,6 +371,9 @@ SERVER_NOT_OFFLINE_LINK_SERVER_MSG = 'Server must be offline to link ' + \
 SERVER_NOT_OFFLINE_UNLINK_SERVER_MSG = 'Server must be offline to unlink ' + \
     'a server.'
 
+SERVER_LINK_COMMON_HOST = 'server_link_common_host'
+SERVER_LINK_COMMON_HOST_MSG = 'Linked servers cannot have a common host.'
+
 SERVER_INVALID = 'server_invalid'
 SERVER_INVALID_MSG = 'Server is not valid.'
 
