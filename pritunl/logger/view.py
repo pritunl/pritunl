@@ -91,8 +91,14 @@ class LogView(object):
             return '\n'.join(output).rstrip('\n')
 
     def tail_log_lines(self, formatted=True):
-        cursor_id = self.collection.find().sort(
-            '$natural', pymongo.DESCENDING)[128]['_id']
+        cursor = self.collection.find().sort(
+            '$natural', pymongo.DESCENDING)
+        cursor_count = cursor.count()
+
+        if cursor_count > 127:
+            cursor_id = cursor[127]['_id']
+        else:
+            cursor_id = cursor[cursor_count - 1]['_id']
 
         spec = {
             '_id': {'$gt': cursor_id},
