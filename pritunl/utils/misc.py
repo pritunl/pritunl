@@ -46,17 +46,15 @@ def get_int_ver(version):
     ver = re.findall(r'\d+', version)
 
     if 'alpha' in version:
-        ver[3] = str(int(ver[3]) + 1000)
+        ver[-1] = str(int(ver[-1]) + 1000)
     elif 'beta' in version:
-        ver[3] = str(int(ver[3]) + 2000)
+        ver[-1] = str(int(ver[-1]) + 2000)
     elif 'rc' in version:
-        ver[3] = str(int(ver[3]) + 3000)
-    elif len(ver) > 3:
-        ver[3] = ver[3].zfill(4)
+        ver[-1] = str(int(ver[-1]) + 3000)
     else:
         ver.append('4000')
 
-    return int(''.join([x.zfill(2) for x in ver]))
+    return int(''.join([x.zfill(4) for x in ver]))
 
 def get_db_ver():
     if settings.conf.mongodb_uri:
