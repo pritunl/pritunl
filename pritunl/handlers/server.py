@@ -434,7 +434,7 @@ def server_put_post(server_id=None):
 @app.app.route('/server/<server_id>', methods=['DELETE'])
 @auth.session_auth
 def server_delete(server_id):
-    svr = server.get_by_id(server_id, fields=['_id', 'name', 'organizations'])
+    svr = server.get_by_id(server_id, fields=('_id', 'name', 'organizations'))
     svr.remove()
     logger.LogEntry(message='Deleted server "%s".' % svr.name)
     event.Event(type=SERVERS_UPDATED)
@@ -446,8 +446,8 @@ def server_delete(server_id):
 @auth.session_auth
 def server_org_get(server_id):
     orgs = []
-    svr = server.get_by_id(server_id, fields=['_id', 'organizations'])
-    for org_doc in svr.get_org_fields(fields=['_id', 'name']):
+    svr = server.get_by_id(server_id, fields=('_id', 'organizations'))
+    for org_doc in svr.get_org_fields(fields=('_id', 'name')):
         org_doc['id'] = org_doc.pop('_id')
         org_doc['server'] = svr.id
         orgs.append(org_doc)
@@ -458,8 +458,8 @@ def server_org_get(server_id):
 @auth.session_auth
 def server_org_put(server_id, org_id):
     svr = server.get_by_id(server_id,
-        fields=['_id', 'status', 'network', 'organizations'])
-    org = organization.get_by_id(org_id, fields=['_id', 'name'])
+        fields=('_id', 'status', 'network', 'organizations'))
+    org = organization.get_by_id(org_id, fields=('_id', 'name'))
     if svr.status == ONLINE:
         return utils.jsonify({
             'error': SERVER_NOT_OFFLINE,
@@ -481,9 +481,9 @@ def server_org_put(server_id, org_id):
 @auth.session_auth
 def server_org_delete(server_id, org_id):
     svr = server.get_by_id(server_id,
-        fields=['_id', 'status', 'network', 'primary_organization',
-            'primary_user', 'organizations'])
-    org = organization.get_by_id(org_id, fields=['_id'])
+        fields=('_id', 'status', 'network', 'primary_organization',
+            'primary_user', 'organizations'))
+    org = organization.get_by_id(org_id, fields=('_id'))
 
     if svr.status == ONLINE:
         return utils.jsonify({
@@ -504,13 +504,13 @@ def server_org_delete(server_id, org_id):
 @auth.session_auth
 def server_host_get(server_id):
     hosts = []
-    svr = server.get_by_id(server_id, fields=['_id', 'status',
-        'replica_count', 'hosts', 'instances'])
+    svr = server.get_by_id(server_id, fields=('_id', 'status',
+        'replica_count', 'hosts', 'instances'))
     active_hosts = set([x['host_id'] for x in svr.instances])
     hosts_offline = svr.replica_count - len(active_hosts) > 0
 
-    for hst in svr.iter_hosts(fields=['_id', 'name',
-            'public_address', 'auto_public_address']):
+    for hst in svr.iter_hosts(fields=('_id', 'name',
+            'public_address', 'auto_public_address')):
         if svr.status == ONLINE and hst.id in active_hosts:
             status = ONLINE
         elif svr.status == ONLINE and hosts_offline:
@@ -549,8 +549,8 @@ def server_host_put(server_id, host_id):
 @app.app.route('/server/<server_id>/host/<host_id>', methods=['DELETE'])
 @auth.session_auth
 def server_host_delete(server_id, host_id):
-    svr = server.get_by_id(server_id, fields=['_id', 'hosts'])
-    hst = host.get_by_id(host_id, fields=['_id', 'name'])
+    svr = server.get_by_id(server_id, fields=('_id', 'hosts'))
+    hst = host.get_by_id(host_id, fields=('_id', 'name'))
 
     svr.remove_host(hst.id)
     svr.commit('hosts')
@@ -564,8 +564,8 @@ def server_host_delete(server_id, host_id):
 @auth.session_auth
 def server_link_get(server_id):
     links = []
-    svr = server.get_by_id(server_id, fields=['_id', 'status', 'links',
-        'replica_count', 'instances'])
+    svr = server.get_by_id(server_id, fields=('_id', 'status', 'links',
+        'replica_count', 'instances'))
     hosts_offline = svr.replica_count - len(svr.instances) > 0
 
     if svr.links:
@@ -580,8 +580,8 @@ def server_link_get(server_id):
         spec = {
             '_id': {'$in': link_server_ids},
         }
-        for link_svr in server.iter_servers(spec=spec, fields=[
-                '_id', 'status', 'name', 'replica_count', 'instances']):
+        for link_svr in server.iter_servers(spec=spec, fields=(
+                '_id', 'status', 'name', 'replica_count', 'instances')):
             link_hosts_offline = link_svr.replica_count - len(
                 link_svr.instances) > 0
             if svr.status == ONLINE:
