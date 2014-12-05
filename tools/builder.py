@@ -607,6 +607,13 @@ elif cmd == 'build':
     subprocess.check_call(['cp', rpm_source_spec_path, rpm_spec_path])
 
 
+    # Fix rpm script hardlinking when hardlinks not supported
+    vagrant_check_call(
+        'sudo sed -i -e "s/ln /cp /g" /usr/lib/rpm/redhat/brp-python-hardlink',
+        name='centos',
+    )
+
+
     # Build rpm spec
     topdir_path = os.path.join('/vagrant', build_dir)
     vagrant_check_call('rpmbuild --define "_topdir %s" -ba %s' % (
