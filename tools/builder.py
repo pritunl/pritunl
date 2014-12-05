@@ -233,6 +233,20 @@ elif cmd == 'set-version':
         'rc' in new_version,
     ))
 
+
+    # Update changes
+    with open(CHANGES_PATH, 'r') as changes_file:
+        changes_data = changes_file.read()
+
+    with open(CHANGES_PATH, 'w') as changes_file:
+        ver_date_str = 'Version ' + new_version.replace(
+            'v', '') + cur_date.strftime(' %Y-%m-%d')
+        changes_file.write(changes_data.replace(
+            '<%= version %>',
+            '%s\n%s' % (ver_date_str, '-' * len(ver_date_str)),
+        ))
+
+
     # Check for duplicate version
     response = requests.get(
         'https://api.github.com/repos/%s/%s/releases' % (
@@ -402,6 +416,7 @@ elif cmd == 'set-version':
 
     # Git commit
     subprocess.check_call(['git', 'reset', 'HEAD', '.'])
+    subprocess.check_call(['git', 'add', CHANGES_PATH])
     subprocess.check_call(['git', 'add', INIT_PATH])
     subprocess.check_call(['git', 'add', SETUP_PATH])
     subprocess.check_call(['git', 'add', DEBIAN_CHANGELOG_PATH])
