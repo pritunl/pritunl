@@ -46,6 +46,7 @@ RELEASES_DIR = 'www/styles/releases'
 AUR_CATEGORY = 13
 
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
+cur_date = datetime.datetime.utcnow()
 
 def vagrant_popen(cmd, cwd=None, name='debian'):
     if cwd:
@@ -98,7 +99,6 @@ def tar_compress(archive_path, in_path, cwd=None):
     subprocess.check_call(['tar', 'cfz', archive_path, in_path], cwd=cwd)
 
 def get_ver(version):
-    cur_date = datetime.datetime.utcnow()
     day_num = (cur_date - datetime.datetime(2013, 9, 12)).days
     min_num = int(math.floor(((cur_date.hour * 60) + cur_date.minute) / 14.4))
     ver = re.findall(r'\d+', version)
