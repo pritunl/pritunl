@@ -116,11 +116,19 @@ def link_servers(server_id, link_server_id, use_local_address=False):
     project = {
         '_id': True,
         'status': True,
+        'hosts': True,
     }
 
+    hosts = set()
     for doc in collection.find(spec, project):
         if doc['status'] == ONLINE:
             raise ServerLinkOnlineError('Server must be offline to link')
+
+        hosts_set = set(doc['hosts'])
+        if hosts & hosts_set:
+            raise ServerLinkCommonHostError('Servers have a common host')
+        hosts.update(hosts_set)
+
         count += 1
     if count != 2:
         raise ServerLinkError('Link server not found')
