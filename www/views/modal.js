@@ -24,6 +24,7 @@ define([
     title: '',
     okText: 'Ok',
     cancelText: 'Cancel',
+    errorMsg: 'Unknown server error occurred.',
     enterOk: true,
     safeClose: false,
     hasAdvanced: false,
