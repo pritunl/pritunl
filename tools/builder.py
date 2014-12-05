@@ -96,21 +96,32 @@ def tar_extract(archive_path, cwd=None):
 def tar_compress(archive_path, in_path, cwd=None):
     subprocess.check_call(['tar', 'cfz', archive_path, in_path], cwd=cwd)
 
+def get_ver(version):
+    cur_date = datetime.datetime.utcnow()
+    day_num = (cur_date - datetime.datetime(2013, 9, 12)).days
+    min_num = int(math.floor(((cur_date.hour * 60) + cur_date.minute) / 14.4))
+    ver = re.findall(r'\d+', version)
+    ver_str = 'v' + '.'.join((ver[0], ver[1], str(day_num), str(min_num)))
+
+    name = ''.join(re.findall('[a-z]+', version)).replace('v', '', 1)
+    if name:
+        ver_str += name + ver[2]
+
+    return ver_str
+
 def get_int_ver(version):
     ver = re.findall(r'\d+', version)
 
     if 'alpha' in version:
-        ver[3] = str(int(ver[3]) + 1000)
+        ver[-1] = str(int(ver[-1]) + 1000)
     elif 'beta' in version:
-        ver[3] = str(int(ver[3]) + 2000)
+        ver[-1] = str(int(ver[-1]) + 2000)
     elif 'rc' in version:
-        ver[3] = str(int(ver[3]) + 3000)
-    elif len(ver) > 3:
-        ver[3] = ver[3].zfill(4)
+        ver[-1] = str(int(ver[-1]) + 3000)
     else:
         ver.append('4000')
 
-    return int(''.join([x.zfill(2) for x in ver]))
+    return int(''.join([x.zfill(4) for x in ver]))
 
 def generate_last_modifited_etag(file_path):
     file_name = os.path.basename(file_path).encode(sys.getfilesystemencoding())
