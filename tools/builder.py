@@ -222,7 +222,9 @@ elif cmd == 'sync-db':
 
 
 elif cmd == 'set-version':
-    new_version = args[1]
+    new_version_orig = args[1]
+    new_version = get_ver(new_version_orig)
+
     is_snapshot = 'snapshot' in new_version
     is_dev_release = any((
         'snapshot' in new_version,
