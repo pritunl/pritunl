@@ -55,6 +55,9 @@ class ServerLinkError(ServerError):
 class ServerLinkOnlineError(ServerError):
     pass
 
+class ServerLinkCommonHostError(ServerError):
+    pass
+
 class IptablesError(ServerError):
     pass
 
