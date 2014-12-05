@@ -447,7 +447,7 @@ elif cmd == 'set-version':
             'tag_name': new_version,
             'name': '%s v%s' % (pkg_name, new_version),
             'body': release_body,
-            'prerelease': is_snapshot,
+            'prerelease': is_dev_release,
             'target_commitish': 'master' if is_snapshot else new_version,
         }),
     )
