@@ -36,10 +36,6 @@ class QueueAssignIpPool(queue.Queue):
 
     def task(self):
         if not self.server:
-            logger.warning('Tried to run assign_ip_pool queue ' +
-                'but server is no longer available', 'queues',
-                server_id=self.server_id,
-            )
             return
 
         response = self.server.collection.update({
