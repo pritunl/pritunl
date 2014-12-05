@@ -531,10 +531,18 @@ def server_host_get(server_id):
 @app.app.route('/server/<server_id>/host/<host_id>', methods=['PUT'])
 @auth.session_auth
 def server_host_put(server_id, host_id):
-    svr = server.get_by_id(server_id, fields=['_id', 'hosts'])
-    hst = host.get_by_id(host_id, fields=['_id', 'name',
-        'public_address', 'auto_public_address'])
-    svr.add_host(hst.id)
+    svr = server.get_by_id(server_id, fields=('_id', 'hosts', 'links'))
+    hst = host.get_by_id(host_id, fields=('_id', 'name',
+        'public_address', 'auto_public_address'))
+
+    try:
+        svr.add_host(hst.id)
+    except ServerLinkCommonHostError:
+        return utils.jsonify({
+            'error': SERVER_LINK_COMMON_HOST,
+            'error_msg': SERVER_LINK_COMMON_HOST_MSG,
+        }, 400)
+
     svr.commit('hosts')
     event.Event(type=SERVER_HOSTS_UPDATED, resource_id=svr.id)
 
