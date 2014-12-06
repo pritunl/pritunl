@@ -20,6 +20,7 @@ def update():
         settings.local.sub_plan = None
         settings.local.sub_amount = None
         settings.local.sub_period_end = None
+        settings.local.sub_trial_end = None
         settings.local.sub_cancel_at_period_end = None
     else:
         for i in xrange(2):
@@ -52,6 +53,7 @@ def update():
                 settings.local.sub_plan = data['plan']
                 settings.local.sub_amount = data['amount']
                 settings.local.sub_period_end = data['period_end']
+                settings.local.sub_trial_end = data['trial_end']
                 settings.local.sub_cancel_at_period_end = data[
                     'cancel_at_period_end']
                 settings.local.sub_styles[data['plan']] = data['styles']
@@ -68,6 +70,7 @@ def update():
                 settings.local.sub_plan = None
                 settings.local.sub_amount = None
                 settings.local.sub_period_end = None
+                settings.local.sub_trial_end = None
                 settings.local.sub_cancel_at_period_end = None
             break
 
@@ -104,6 +107,7 @@ def dict():
         'plan': settings.local.sub_plan,
         'amount': settings.local.sub_amount,
         'period_end': settings.local.sub_period_end,
+        'sub_trial_end': settings.local.sub_trial_end,
         'cancel_at_period_end': settings.local.sub_cancel_at_period_end,
     }
 
