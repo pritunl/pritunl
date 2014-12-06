@@ -68,7 +68,7 @@ def main(default_conf=None):
     elif cmd == 'reconfigure':
         from pritunl import setup
         from pritunl import settings
-        setup.setup_db()
+        setup.setup_loc()
 
         settings.conf.mongodb_uri = None
         settings.conf.commit()
