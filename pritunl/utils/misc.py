@@ -42,6 +42,9 @@ def now():
 def time_now():
     return now().strftime('%s')
 
+def rand_sleep():
+    time.sleep(random.randint(0, 25) / 1000.)
+
 def get_int_ver(version):
     ver = re.findall(r'\d+', version)
 
