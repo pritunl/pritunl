@@ -195,7 +195,7 @@ module.exports = function(grunt) {
       dist: {
         files: {
           'vendor/dist/css/main.css': 'styles/vendor/main.css',
-          'vendor/dist/fonts/FontAwesome.eot': 'fonts/FontAwesome.eot',
+          'vendor/dist/fonts/FontAwesome.otf': 'fonts/FontAwesome.otf',
           'vendor/dist/fonts/fontawesome-webfont.eot':
             'fonts/fontawesome-webfont.eot',
           'vendor/dist/fonts/fontawesome-webfont.svg':
