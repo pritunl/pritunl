@@ -12,8 +12,8 @@ define([
   var ModalAttachLinkView = ModalView.extend({
     className: 'attach-link-modal',
     template: _.template(modalAttachLinkTemplate),
-    title: 'Attach Link',
-    okText: 'Attach',
+    title: 'Link Servers',
+    okText: 'Link',
     events: function() {
       return _.extend({
         'change .server select, .link select': 'onSelectChange',
