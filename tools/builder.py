@@ -113,14 +113,16 @@ def get_ver(version):
 def get_int_ver(version):
     ver = re.findall(r'\d+', version)
 
-    if 'alpha' in version:
+    if 'snapshot' in version:
+        pass
+    elif 'alpha' in version:
         ver[-1] = str(int(ver[-1]) + 1000)
     elif 'beta' in version:
         ver[-1] = str(int(ver[-1]) + 2000)
     elif 'rc' in version:
         ver[-1] = str(int(ver[-1]) + 3000)
     else:
-        ver.append('4000')
+        ver[-1] = str(int(ver[-1]) + 4000)
 
     return int(''.join([x.zfill(4) for x in ver]))
 
