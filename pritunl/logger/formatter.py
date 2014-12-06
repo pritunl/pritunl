@@ -35,24 +35,27 @@ class LogFormatter(logging.Formatter):
                     for key, val in record.data.items():
                         formatted_record += '\n  %s = %r' % (
                             key.ljust(width), val)
-                    if stdout:
-                        formatted_record += '\nProcess stdout:'
-                        stdout_lines = stdout.split('\n')
-                        if stdout_lines and not stdout_lines[-1]:
-                            stdout_lines.pop()
-                        for line in stdout_lines:
-                            formatted_record += '\n  ' + line
-                    if stderr:
-                        formatted_record += '\nProcess stderr:'
-                        stderr_lines = stderr.split('\n')
-                        if stderr_lines and not stderr_lines[-1]:
-                            stderr_lines.pop()
-                        for line in stderr_lines:
-                            formatted_record += '\n  ' + line.decode('utf-8')
-                    if traceback:
-                        formatted_record += \
-                            '\nTraceback (most recent call last):\n'
-                        formatted_record += ''.join(traceback).rstrip('\n')
+
+                if stdout:
+                    formatted_record += '\nProcess stdout:'
+                    stdout_lines = stdout.split('\n')
+                    if stdout_lines and not stdout_lines[-1]:
+                        stdout_lines.pop()
+                    for line in stdout_lines:
+                        formatted_record += '\n  ' + line
+
+                if stderr:
+                    formatted_record += '\nProcess stderr:'
+                    stderr_lines = stderr.split('\n')
+                    if stderr_lines and not stderr_lines[-1]:
+                        stderr_lines.pop()
+                    for line in stderr_lines:
+                        formatted_record += '\n  ' + line.decode('utf-8')
+
+                if traceback:
+                    formatted_record += \
+                        '\nTraceback (most recent call last):\n'
+                    formatted_record += ''.join(traceback).rstrip('\n')
         except:
             from pritunl import logger
             logger.exception('Log format error')
