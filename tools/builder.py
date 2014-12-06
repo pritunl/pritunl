@@ -141,7 +141,6 @@ def sync_db():
     for file_name in os.listdir(RELEASES_DIR):
         file_path = os.path.join(RELEASES_DIR, file_name)
         ver, file_type, _ = file_name.split('.')
-        ver = int(ver)
         if file_type == 'release':
             with open(file_path, 'r') as release_file:
                 doc = json.loads(release_file.read().strip())
