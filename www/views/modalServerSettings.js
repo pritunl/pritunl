@@ -34,6 +34,7 @@ define([
     postRender: function() {
       if (this.model.get('mode') === 'local_traffic') {
         this.$('.otp-auth-toggle').appendTo('.left');
+        this.$('.otp-auth-toggle').slice(1).remove();
       }
       this.$('.local-network input').select2({
         tags: this.localNetworks,
@@ -58,6 +59,7 @@ define([
           this.$('.local-network').slideDown(window.slideTime);
           this.$('.otp-auth-toggle').slideUp(window.slideTime, function() {
             this.$('.otp-auth-toggle').appendTo('.left:not(.advanced)');
+            this.$('.otp-auth-toggle').slice(1).remove();
             this.$('.otp-auth-toggle').show();
           }.bind(this));
         }
@@ -67,6 +69,7 @@ define([
           this.$('.local-network').slideUp(window.slideTime);
           this.$('.otp-auth-toggle').slideUp(window.slideTime, function() {
             this.$('.otp-auth-toggle').appendTo('.right:not(.advanced)');
+            this.$('.otp-auth-toggle').slice(1).remove();
             this.$('.otp-auth-toggle').show();
           }.bind(this));
         }
