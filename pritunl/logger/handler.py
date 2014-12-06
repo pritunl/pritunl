@@ -12,9 +12,6 @@ import collections
 log_queue = collections.deque()
 
 class LogHandler(logging.Handler):
-    def __init__(self):
-        logging.Handler.__init__(self)
-
     @cached_property
     def log_view(self):
         return LogView()
