@@ -61,9 +61,45 @@ class ServerInstanceCom(object):
         self.push_output('Disconnecting user org_id=%s user_id=%s' % (
             client['org_id'], client['user_id']))
 
-    def client_connect(self, client):
+    def generate_client_conf(self, user):
         from pritunl.server.utils import get_by_id
 
+        client_conf = ''
+
+        link_usr_svr = None
+        for link_doc in self.server.links:
+            if link_doc['user_id'] == user.id:
+                link_usr_svr = get_by_id(link_doc['server_id'],
+                    fields=['_id', 'network', 'local_networks'])
+                break
+
+        if link_usr_svr:
+            client_conf += 'iroute %s %s\n' % utils.parse_network(
+                link_usr_svr.network)
+            for local_network in link_usr_svr.local_networks:
+                client_conf += 'iroute %s %s\n' % utils.parse_network(
+                    local_network)
+        else:
+            if self.server.mode == ALL_TRAFFIC:
+                client_conf += 'push "redirect-gateway"\n'
+
+            for dns_server in self.server.dns_servers:
+                client_conf += 'push "dhcp-option DNS %s"\n' % dns_server
+            if self.server.search_domain:
+                client_conf += 'push "dhcp-option DOMAIN %s"\n' % (
+                    self.server.search_domain)
+
+            for link_svr in self.server.iter_links(fields=(
+                    '_id', 'network', 'local_networks')):
+                client_conf += 'push "route %s %s"\n' % utils.parse_network(
+                    link_svr.network)
+                for local_network in link_svr.local_networks:
+                    client_conf += 'push "route %s %s"\n' % (
+                        utils.parse_network(local_network))
+
+        return client_conf
+
+    def client_connect(self, client):
         try:
             client_id = client['client_id']
             org_id = bson.ObjectId(client['org_id'])
@@ -98,22 +134,7 @@ class ServerInstanceCom(object):
                 self.send_client_deny(client, 'Invalid OTP code')
                 return
 
-            client_conf = ''
-
-            link_svr_id = None
-            for link_doc in self.server.links:
-                if link_doc['user_id'] == user.id:
-                    link_svr_id = link_doc['server_id']
-                    break
-
-            if link_svr_id:
-                link_svr = get_by_id(link_svr_id,
-                    fields=['_id', 'network', 'local_networks'])
-                client_conf += 'iroute %s %s\n' % utils.parse_network(
-                    link_svr.network)
-                for local_network in link_svr.local_networks:
-                    client_conf += 'iroute %s %s\n' % utils.parse_network(
-                        local_network)
+            client_conf = self.generate_client_conf(user)
 
             if not self.server.multi_device:
                 virt_address = self.server.get_ip_addr(org.id, user_id)
