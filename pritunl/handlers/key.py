@@ -40,6 +40,8 @@ def user_key_link_get(org_id, user_id):
 
 @app.app.route('/key/<key_id>.tar', methods=['GET'])
 def user_linked_key_archive_get(key_id):
+    utils.rand_sleep()
+
     collection = mongo.get_collection('users_key_link')
     doc = collection.find_one({
         'key_id': key_id,
@@ -53,6 +55,8 @@ def user_linked_key_archive_get(key_id):
 
 @app.app.route('/k/<short_id>', methods=['GET'])
 def user_linked_key_page_get(short_id):
+    utils.rand_sleep()
+
     collection = mongo.get_collection('users_key_link')
     doc = collection.find_one({
         'short_id': short_id,
@@ -94,6 +98,8 @@ def user_linked_key_page_get(short_id):
 
 @app.app.route('/k/<short_id>', methods=['DELETE'])
 def user_linked_key_page_delete_get(short_id):
+    utils.rand_sleep()
+
     collection = mongo.get_collection('users_key_link')
     collection.remove({
         'short_id': short_id,
@@ -102,6 +108,8 @@ def user_linked_key_page_delete_get(short_id):
 
 @app.app.route('/ku/<short_id>', methods=['GET'])
 def user_uri_key_page_get(short_id):
+    utils.rand_sleep()
+
     collection = mongo.get_collection('users_key_link')
     doc = collection.find_one({
         'short_id': short_id,
@@ -123,6 +131,8 @@ def user_uri_key_page_get(short_id):
 
 @app.app.route('/key/<key_id>/<server_id>.key', methods=['GET'])
 def user_linked_key_conf_get(key_id, server_id):
+    utils.rand_sleep()
+
     collection = mongo.get_collection('users_key_link')
     doc = collection.find_one({
         'key_id': key_id,
@@ -145,6 +155,8 @@ def user_linked_key_conf_get(key_id, server_id):
 
 @app.app.route('/key/<org_id>/<user_id>/<server_id>', methods=['GET'])
 def key_sync_get(org_id, user_id, server_id):
+    utils.rand_sleep()
+
     org = organization.get_by_id(org_id)
     if not org:
         raise flask.abort(401)
