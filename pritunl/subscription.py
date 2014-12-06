@@ -107,7 +107,7 @@ def dict():
         'plan': settings.local.sub_plan,
         'amount': settings.local.sub_amount,
         'period_end': settings.local.sub_period_end,
-        'sub_trial_end': settings.local.sub_trial_end,
+        'trial_end': settings.local.sub_trial_end,
         'cancel_at_period_end': settings.local.sub_cancel_at_period_end,
     }
 
