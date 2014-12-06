@@ -101,8 +101,6 @@ class ServerInstance(object):
             self.interface = None
 
     def generate_ovpn_conf(self):
-        from pritunl.server.utils import get_by_id
-
         logger.debug('Generating server ovpn conf', 'server',
             server_id=self.server.id,
         )
@@ -134,30 +132,16 @@ class ServerInstance(object):
                 push += 'push "route %s %s"\n' % utils.parse_network(network)
         elif self.server.mode == VPN_TRAFFIC:
             pass
-        else:
-            push += 'push "redirect-gateway"\n'
-        for dns_server in self.server.dns_servers:
-            push += 'push "dhcp-option DNS %s"\n' % dns_server
-        if self.server.search_domain:
-            push += 'push "dhcp-option DOMAIN %s"\n' % (
-                self.server.search_domain)
 
-        for link_doc in self.server.links:
-            link_svr = get_by_id(link_doc['server_id'])
-
-            if self.server.id < link_doc['server_id']:
+        for link_svr in self.server.iter_links(fields=(
+                '_id', 'network', 'local_networks')):
+            if self.server.id < link_svr.id:
                 gateway = utils.get_network_gateway(self.server.network)
                 push += 'route %s %s %s\n' % (utils.parse_network(
                     link_svr.network) + (gateway,))
                 for local_network in link_svr.local_networks:
                     push += 'route %s %s %s\n' % (utils.parse_network(
                         local_network) + (gateway,))
-
-            push += 'push "route %s %s"\n' % utils.parse_network(
-                link_svr.network)
-            for local_network in link_svr.local_networks:
-                push += 'push "route %s %s"\n' % utils.parse_network(
-                    local_network)
 
         server_conf = OVPN_INLINE_SERVER_CONF % (
             self.server.port,
