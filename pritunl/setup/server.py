@@ -159,9 +159,13 @@ def upgrade_database():
     db_setup = False
 
     def _upgrade_thread():
-        upgrade.upgrade_server()
-        upgrade_done.set()
-        stop_server()
+        try:
+            upgrade.upgrade_server()
+            upgrade_done.set()
+            stop_server()
+        except:
+            logger.exception('Server upgrade failed')
+            set_global_interrupt()
     threading.Thread(target=_upgrade_thread).start()
 
 def on_system_msg(msg):
