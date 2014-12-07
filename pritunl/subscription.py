@@ -39,7 +39,7 @@ def update():
                     logger.warning('License key is invalid', 'subscription')
                     settings.app.license = None
                     settings.commit()
-                    subscription_update()
+                    update()
                     return
 
                 if response.status_code == 473:
