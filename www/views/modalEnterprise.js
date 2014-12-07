@@ -76,6 +76,14 @@ define([
       else {
         this.$('.renew').hide();
       }
+
+      if (this.model.get('trial_end')) {
+        this.$('.trial-end .enterprise-item').text(
+          window.formatTime(this.model.get('trial_end'), 'date'));
+      }
+      else {
+        this.$('.trial-end').hide();
+      }
     },
     lock: function() {
       this.lockClose = true;
