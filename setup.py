@@ -40,6 +40,7 @@ data_files = [
         'www/dbconf.html',
         'www/key_view.html',
         'www/login.html',
+        'www/upgrade.html',
         'www/vendor/dist/favicon.ico',
         'www/vendor/dist/index.html',
         'www/vendor/dist/robots.txt',
