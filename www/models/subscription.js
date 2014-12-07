@@ -14,6 +14,7 @@ define([
       'plan': null,
       'amount': null,
       'period_end': null,
+      'trial_end': null,
       'cancel_at_period_end': null,
       'version': null,
       'theme': null
@@ -53,10 +54,17 @@ define([
           loadMsg, completeMsg];
       }
       else {
+        if (status === 'trialing') {
+          status = 'Trial Period';
+        }
+        else {
+          status = 'Active';
+        }
+
         loadMsg = 'Updating payment information, please wait...';
         completeMsg = 'Payment information successfully updated, you will '+
           'not be charged until the end of the current subscription period.';
-        return ['Active', 'success-text', 'checkout_update',
+        return [status, 'success-text', 'checkout_update',
           loadMsg, completeMsg];
       }
     }
