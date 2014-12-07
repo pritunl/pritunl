@@ -6,6 +6,7 @@ from pritunl.helpers import *
 from pritunl import settings
 from pritunl import utils
 from pritunl import ipaddress
+from pritunl import logger
 
 import os
 import sys
@@ -28,6 +29,10 @@ def _upgrade_auth():
             if key == 'auth':
                 username = value.get('username')
                 password = value.get('password')
+    else:
+        logger.warning('No db file found in upgraded', 'upgrade',
+            path=db_path,
+        )
 
     if username and password:
         update_doc = {
@@ -50,6 +55,10 @@ def _upgrade_auth():
             }
 
         administrators_db.update(spec, update_doc, upsert=True)
+    else:
+        logger.warning('Username and password not upgraded', 'upgrade',
+            path=db_path,
+        )
 
 def _upgrade_org_users(org_id, org_path):
     users_db = get_collection('users')
@@ -278,6 +287,8 @@ def upgrade_0_10_x():
     dir_path = os.path.join(settings.conf.data_path, 'dh_param_pool')
     if os.path.exists(dir_path):
         dh_params_db = get_collection('dh_params')
+        has_data = False
+
         for file_name in os.listdir(dir_path):
             dh_param_bits, id = file_name.split('_')
             file_path = os.path.join(dir_path, file_name)
@@ -288,19 +299,52 @@ def upgrade_0_10_x():
                     'dh_param_bits': int(dh_param_bits),
                     'dh_params': file_data.read().rstrip('\n'),
                 }, upsert=True)
+            has_data = True
+
+        if not has_data:
+            logger.warning('DH param pool not upgraded', 'upgrade',
+                path=dir_path,
+            )
+    else:
+        logger.warning('No dh_param_pool dir found in upgrade', 'upgrade',
+            path=dir_path,
+        )
 
     dir_path = os.path.join(settings.conf.data_path, 'organizations')
     if os.path.exists(dir_path):
+        has_data = False
+
         for org_id in os.listdir(dir_path):
             org_path = os.path.join(dir_path, org_id)
             if os.path.exists(os.path.join(org_path, 'ca.conf')):
                 _upgrade_org(org_id, org_path)
                 _upgrade_org_users(org_id, org_path)
+                has_data = True
+
+        if not has_data:
+            logger.warning('Organizations not upgraded', 'upgrade',
+                path=dir_path,
+            )
+    else:
+        logger.warning('No organizations dir found in upgrade', 'upgrade',
+            path=dir_path,
+        )
 
     dir_path = os.path.join(settings.conf.data_path, 'servers')
-
     if os.path.exists(dir_path):
+        has_data = False
+
         for server_id in os.listdir(dir_path):
             server_path = os.path.join(dir_path, server_id)
             if os.path.exists(os.path.join(server_path, 'server.conf')):
                 _upgrade_server(server_id, server_path)
+                has_data = True
+
+        if not has_data:
+            logger.warning('Servers not upgraded', 'upgrade',
+                path=dir_path,
+            )
+    else:
+        logger.warning('No servers dir found in upgrade', 'upgrade',
+            path=dir_path,
+        )
