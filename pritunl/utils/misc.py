@@ -98,7 +98,14 @@ def get_db_ver_int():
         return get_int_ver(version)
 
 def set_db_ver(version):
+    from pritunl import logger
+
     upgraded_path = os.path.join(settings.conf.data_path, 'upgraded')
+
+    logger.info('Setting db version', 'utils',
+        cur_ver=get_db_ver(),
+        new_ver=version,
+    )
 
     prefix = settings.conf.mongodb_collection_prefix or ''
     client = pymongo.MongoClient(settings.conf.mongodb_uri,
