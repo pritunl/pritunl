@@ -191,7 +191,7 @@ def setup_server():
     db_setup = not settings.conf.mongodb_uri
 
     global server_upgrade
-    server_upgrade = db_ver_int < settings.local.version_int
+    server_upgrade = db_ver_int and db_ver_int < settings.local.version_int
 
     if db_setup or server_upgrade:
         logger.info('Starting setup server', 'setup')
