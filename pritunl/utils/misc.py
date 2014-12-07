@@ -62,6 +62,17 @@ def get_int_ver(version):
     return int(''.join([x.zfill(4) for x in ver]))
 
 def get_db_ver():
+    prev_ver = None
+    ver_path = os.path.join(settings.conf.data_path, 'version')
+    upgraded_path = os.path.join(settings.conf.data_path, 'upgraded')
+
+    if os.path.exists(ver_path):
+        with open(ver_path, 'r') as ver_file:
+            prev_ver = ver_file.read().strip()
+
+    if prev_ver and not os.path.exists(upgraded_path):
+        return prev_ver
+
     if settings.conf.mongodb_uri:
         prefix = settings.conf.mongodb_collection_prefix or ''
         client = pymongo.MongoClient(settings.conf.mongodb_uri,
@@ -76,10 +87,8 @@ def get_db_ver():
         if version:
             return version
 
-    path = os.path.join(settings.conf.data_path, 'version')
-    if os.path.exists(path):
-        with open(path, 'r') as ver_file:
-            return ver_file.read().strip()
+    if prev_ver:
+        return prev_ver
 
     return __version__
 
@@ -89,6 +98,8 @@ def get_db_ver_int():
         return get_int_ver(version)
 
 def set_db_ver(version):
+    upgraded_path = os.path.join(settings.conf.data_path, 'upgraded')
+
     prefix = settings.conf.mongodb_collection_prefix or ''
     client = pymongo.MongoClient(settings.conf.mongodb_uri,
         connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
@@ -99,6 +110,10 @@ def set_db_ver(version):
     }, {
         'version': version,
     }, upsert=True)
+
+    with open(upgraded_path, 'w') as upgraded_file:
+        pass
+
     return doc.get('version')
 
 def check_output_logged(*args, **kwargs):
