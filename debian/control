@@ -5,9 +5,9 @@ Maintainer: Pritunl <contact@pritunl.com>
 Build-Depends: debhelper (>= 8.0.0),
                python-all (>= 2.7),
                python-setuptools (>= 0.6b3),
-               python-flask,
-               python-openssl,
-               python-pymongo
+               python-flask (>= 0.8),
+               python-openssl (>= 0.12),
+               python-pymongo (>= 2.7.2)
 Standards-Version: 3.9.4
 Homepage: http://pritunl.com/
 X-Python-Version: >= 2.7
@@ -16,11 +16,11 @@ X-Python-Version: >= 2.7
 
 Package: pritunl
 Architecture: all
-Depends: python-flask,
-         python-openssl,
-         python-pymongo,
-         openvpn,
-         iptables,
+Depends: python-flask (>= 0.8),
+         python-openssl (>= 0.12),
+         python-pymongo (>= 2.7.2),
+         openvpn (>= 2.2.1),
+         iptables (>= 1.4.12),
          ${misc:Depends},
          ${python:Depends}
 Recommends: mongodb-server
