@@ -57,6 +57,7 @@ define([
       this.$('.subscribe-activate').removeAttr('disabled');
     },
     setupCheckout: function() {
+      this.checkout = undefined;
       $.ajax({
           type: 'GET',
           url: 'https://app.pritunl.com/checkout',
@@ -77,7 +78,7 @@ define([
           error: function() {
             this.setAlert('danger', 'Failed to load checkout data, ' +
               'please try again later.');
-            this.checkout = null;
+            this.checkout = false;
           }.bind(this)
       });
     },
@@ -136,7 +137,7 @@ define([
         error: function() {
           this.setAlert('danger', 'Failed to load upgrade checkout, ' +
             'please try again later.');
-          this.checkout = null;
+          this.checkout = false;
         }.bind(this)
       });
     },
@@ -144,18 +145,18 @@ define([
       if (this.checkout === undefined) {
         setTimeout((this.openCheckout).bind(this), 10);
       }
-      else if (this.checkout === null) {
+      else if (this.checkout === false) {
         this.unlock();
       }
       else {
-        this.plan = plan;
         this.checkout.open(this.plans[plan]);
       }
     },
     _onCheckout: function(plan) {
       this.lock();
       this.clearAlert();
-      if (this.checkout === null) {
+      this.plan = plan;
+      if (this.checkout === false) {
         this.setupCheckout();
       }
       this.openCheckout(plan);
