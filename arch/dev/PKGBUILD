@@ -2,7 +2,7 @@
 
 pkgname=pritunl-dev
 _pkgname=pritunl
-pkgver=1.0.453.81snapshot4
+pkgver=1.0.454.86snapshot5
 pkgrel=1
 pkgdesc="Enterprise VPN Server (Development Release)"
 arch=("any")
