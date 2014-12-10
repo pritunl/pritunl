@@ -280,4 +280,9 @@ def reset_password():
     logger.info('Resetting administrator password', 'auth')
     collection = mongo.get_collection('administrators')
     collection.remove({})
+    Administrator(
+        username=DEFAULT_USERNAME,
+        password=DEFAULT_PASSWORD,
+        default=True,
+    ).commit()
     return (DEFAULT_USERNAME, DEFAULT_PASSWORD)
