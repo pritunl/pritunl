@@ -40,7 +40,7 @@ def now():
     return mongo_time + (datetime.datetime.utcnow() - mongo_time_start)
 
 def time_now():
-    return now().strftime('%s')
+    return int(now().strftime('%s'))
 
 def rand_sleep():
     time.sleep(random.randint(0, 25) / 1000.)
