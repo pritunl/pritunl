@@ -230,15 +230,6 @@ define([
       }
     },
     onSettings: function() {
-      if (this.model.get('status') === 'online') {
-        var alertView = new AlertView({
-          type: 'danger',
-          message: 'Server must be offline to modify settings.',
-          dismissable: true
-        });
-        $('.alerts-container').append(alertView.render().el);
-        return;
-      }
       this.$('.server-title a').addClass('disabled');
       this.statusModel.fetch({
         success: function() {
