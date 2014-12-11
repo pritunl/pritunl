@@ -30,7 +30,8 @@ class User(mongo.MongoObject):
         'otp_secret',
         'type',
         'disabled',
-        'sync_key',
+        'sync_token',
+        'sync_secret',
         'private_key',
         'certificate',
         'resource_id',
@@ -304,17 +305,27 @@ class User(mongo.MongoObject):
 
         return True
 
-    def _get_key_info_str(self, server_name, conf_hash):
+    def _get_key_info_str(self, server, conf_hash):
         return json.dumps({
             'version': CLIENT_CONF_VER,
             'user': self.name,
             'organization': self.org.name,
-            'server': server_name,
-            'sync_key': self.sync_key,
-            'hash': conf_hash,
+            'server': server.name,
+            'user_id': str(self.id),
+            'organization_id': str(self.org.id),
+            'server_id': str(server.id),
+            'sync_token': self.sync_token,
+            'sync_secret': self.sync_secret,
+            'sync_hash': conf_hash,
+            'sync_hosts': server.get_sync_remotes(),
         })
 
     def _generate_conf(self, server, include_user_cert=True):
+        if not self.sync_token or not self.sync_secret:
+            self.sync_token = utils.generate_secret()
+            self.sync_secret = utils.generate_secret()
+            self.commit(('sync_token', 'sync_secret'))
+
         file_name = '%s_%s_%s.ovpn' % (
             self.org.name, self.name, server.name)
         if not server.ca_certificate:
@@ -339,7 +350,7 @@ class User(mongo.MongoObject):
         conf_hash = conf_hash.hexdigest()
 
         client_conf = OVPN_INLINE_CLIENT_CONF % (
-            self._get_key_info_str(server.name, conf_hash),
+            self._get_key_info_str(server, conf_hash),
             uuid.uuid4().hex,
             utils.random_name(),
             server.protocol,
