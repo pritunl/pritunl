@@ -290,6 +290,27 @@ class Server(mongo.MongoObject):
             queue.start('unassign_ip_addr', server_id=self.id, org_id=org_id,
                 user_id=user_id)
 
+    def get_sync_remotes(self):
+        remotes = []
+        spec = {
+            '_id': {'$in': self.hosts},
+        }
+        project = {
+            '_id': False,
+            'public_address': True,
+            'auto_public_address': True,
+        }
+
+        for doc in self.host_collection.find(spec, project):
+            address = doc['public_address'] or doc['auto_public_address']
+            remotes.append('%s://%s:%s' % (
+                'https' if settings.conf.ssl else 'http',
+                address,
+                settings.conf.port,
+            ))
+
+        return remotes
+
     def get_key_remotes(self, include_link_addr=False):
         remotes = []
         spec = {
