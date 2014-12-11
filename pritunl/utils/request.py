@@ -18,8 +18,11 @@ class Response:
     def json(self):
         return json.loads(self.content)
 
-def _request(method, url, json_data=None, headers={},
-        timeout=socket._GLOBAL_DEFAULT_TIMEOUT):
+def _request(method, url, json_data=None, headers=None, timeout=None):
+    if headers is None:
+        headers = {}
+    if timeout is None:
+        timeout = socket._GLOBAL_DEFAULT_TIMEOUT
     data = None
     request = urllib2.Request(url, headers=headers)
     request.get_method = lambda: method
