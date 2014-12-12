@@ -165,31 +165,34 @@ def user_linked_key_conf_get(key_id, server_id):
 def key_sync_get(org_id, user_id, server_id, key_hash):
     utils.rand_sleep()
 
+    if not settings.local.sub_active:
+        return utils.response('', status_code=480)
+
     auth_token = flask.request.headers.get('Auth-Token', None)
     auth_timestamp = flask.request.headers.get('Auth-Timestamp', None)
     auth_nonce = flask.request.headers.get('Auth-Nonce', None)
     auth_signature = flask.request.headers.get('Auth-Signature', None)
     if not auth_token or not auth_timestamp or not auth_nonce or \
             not auth_signature:
-        raise flask.abort(401)
+        return flask.abort(401)
     auth_nonce = auth_nonce[:32]
 
     try:
         if abs(int(auth_timestamp) - int(utils.time_now())) > \
                 settings.app.auth_time_window:
-            raise flask.abort(401)
+            return flask.abort(401)
     except ValueError:
-        raise flask.abort(401)
+        return flask.abort(401)
 
     org = organization.get_by_id(org_id)
     if not org:
-        raise flask.abort(401)
+        return flask.abort(404)
 
     user = org.get_user(id=user_id)
     if not user:
-        raise flask.abort(401)
+        return flask.abort(404)
     elif not user.sync_secret:
-        raise flask.abort(401)
+        return flask.abort(404)
 
     auth_string = '&'.join([
         auth_token, auth_timestamp, auth_nonce, flask.request.method,
@@ -197,13 +200,13 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
         ([flask.request.data] if flask.request.data else []))
 
     if len(auth_string) > AUTH_SIG_STRING_MAX_LEN:
-        raise flask.abort(401)
+        return flask.abort(401)
 
     auth_test_signature = base64.b64encode(hmac.new(
         user.sync_secret.encode(), auth_string,
         hashlib.sha256).digest())
     if auth_signature != auth_test_signature:
-        raise flask.abort(401)
+        return flask.abort(401)
 
     nonces_collection = mongo.get_collection('auth_nonces')
     try:
@@ -213,9 +216,9 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
             'timestamp': utils.now(),
         }, w=0)
     except pymongo.errors.DuplicateKeyError:
-        raise flask.abort(401)
+        return flask.abort(401)
 
     key_conf = user.sync_conf(server_id, key_hash)
     if key_conf:
-        return key_conf['conf']
-    return ''
+        return utils.response(key_conf['conf'])
+    return utils.response('')
