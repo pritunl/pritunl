@@ -8,8 +8,8 @@ import fileinput
 
 VERSION = '1.0.457.10snapshot6'
 PATCH_DIR = 'build'
-INSTALL_UPSTART = True
-INSTALL_SYSTEMD = True
+install_upstart = True
+install_systemd = True
 
 prefix = sys.prefix
 for arg in copy.copy(sys.argv):
@@ -17,10 +17,10 @@ for arg in copy.copy(sys.argv):
         prefix = os.path.normpath(shlex.split(arg)[0].split('=')[-1])
     elif arg == '--no-upstart':
         sys.argv.remove('--no-upstart')
-        INSTALL_UPSTART = False
+        install_upstart = False
     elif arg == '--no-systemd':
         sys.argv.remove('--no-systemd')
-        INSTALL_SYSTEMD = False
+        install_systemd = False
 
 if not os.path.exists('build'):
     os.mkdir('build')
@@ -65,12 +65,12 @@ data_files = [
 ]
 
 patch_files = []
-if INSTALL_UPSTART:
+if install_upstart:
     patch_files.append('%s/pritunl.conf' % PATCH_DIR)
     data_files.append(('/etc/init', ['%s/pritunl.conf' % PATCH_DIR]))
     data_files.append(('/etc/init.d', ['data/init.d/pritunl.sh']))
     shutil.copy('data/init/pritunl.conf', '%s/pritunl.conf' % PATCH_DIR)
-if INSTALL_SYSTEMD:
+if install_systemd:
     patch_files.append('%s/pritunl.service' % PATCH_DIR)
     data_files.append(('/etc/systemd/system',
         ['%s/pritunl.service' % PATCH_DIR]))
@@ -117,7 +117,7 @@ setup(
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'Intended Audience :: End Users/Desktop',
-        'License :: OSI Approved :: GNU Affero General Public License v3',
+        'License :: Other/Proprietary License',
         'Natural Language :: English',
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python :: 2.7',
