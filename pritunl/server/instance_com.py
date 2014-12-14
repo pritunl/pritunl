@@ -198,6 +198,13 @@ class ServerInstanceCom(object):
                 })
                 client_conf += 'ifconfig-push %s %s\n' % utils.parse_network(
                     virt_address)
+
+                if self.server.debug:
+                    self.push_output('Client conf %s:' % user_id)
+                    for conf_line in client_conf.split('\n'):
+                        if conf_line:
+                            self.push_output('  ' + conf_line)
+
                 self.send_client_auth(client, client_conf)
             else:
                 self.send_client_deny(client, 'Unable to assign ip address')
