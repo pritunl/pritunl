@@ -34,12 +34,24 @@ class QueueAssignIpPool(queue.Queue):
     def server(self):
         return server.get_by_id(self.server_id)
 
+    @cached_static_property
+    def server_collection(cls):
+        return mongo.get_collection('servers')
+
+    @cached_static_property
+    def server_ip_pool_collection(cls):
+        return mongo.get_collection('servers_ip_pool')
+
     def task(self):
         if not self.server:
+            logger.warning('Tried to run assign_ip_pool task queue ' +
+                'but server is no longer available', 'queues',
+                server_id=self.server_id,
+            )
             return
 
-        response = self.server.collection.update({
-            '_id': self.server.id,
+        response = self.server_collection.update({
+            '_id': self.server_id,
             '$or': [
                 {'network_lock': self.id},
                 {'network_lock': {'$exists': False}},
@@ -50,7 +62,7 @@ class QueueAssignIpPool(queue.Queue):
         }})
         if not response['updatedExisting']:
             raise ServerNetworkLocked('Server network is locked', {
-                'server_id': self.server.id,
+                'server_id': self.server_id,
                 'queue_id': self.id,
                 'queue_type': self.type,
             })
@@ -58,51 +70,39 @@ class QueueAssignIpPool(queue.Queue):
         self.server.ip_pool.assign_ip_pool(self.network)
 
     def post_task(self):
-        if not self.server:
-            logger.warning('Tried to run assign_ip_pool post queue ' +
-                'but server is no longer available', 'queues',
-                server_id=self.server_id,
-            )
-            return
-
-        self.server.ip_pool.collection.remove({
-            'network': self.old_network,
-            'server_id': self.server_id,
-        })
-
-        self.server.collection.update({
-            '_id': self.server_id,
-            'network_lock': self.id,
-        }, {'$unset': {
-            'network_lock': '',
-        }})
+        try:
+            self.server_ip_pool_collection.remove({
+                'network': self.old_network,
+                'server_id': self.server_id,
+            })
+        finally:
+            self.server_collection.update({
+                '_id': self.server_id,
+                'network_lock': self.id,
+            }, {'$unset': {
+                'network_lock': '',
+            }})
 
     def rollback_task(self):
-        if not self.server:
-            logger.warning('Tried to run assign_ip_pool rollback queue ' +
-                'but server is no longer available', 'queues',
-                server_id=self.server_id,
-            )
-            return
+        try:
+            self.server_ip_pool_collection.remove({
+                'network': self.network,
+                'server_id': self.server_id,
+            })
 
-        self.server.ip_pool.collection.remove({
-            'network': self.network,
-            'server_id': self.server_id,
-        })
-
-        self.server.collection.update({
-            '_id': self.server_id,
-            'network': self.network,
-        }, {'$set': {
-            'network': self.old_network,
-        }})
-
-        self.server.collection.update({
-            '_id': self.server_id,
-            'network_lock': self.id,
-        }, {'$unset': {
-            'network_lock': '',
-        }})
+            self.server_collection.update({
+                '_id': self.server_id,
+                'network': self.network,
+            }, {'$set': {
+                'network': self.old_network,
+            }})
+        finally:
+            self.server_collection.update({
+                '_id': self.server_id,
+                'network_lock': self.id,
+            }, {'$unset': {
+                'network_lock': '',
+            }})
 
     def complete_task(self):
         if not self.server:
