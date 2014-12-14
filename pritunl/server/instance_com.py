@@ -66,14 +66,10 @@ class ServerInstanceCom(object):
 
         client_conf = ''
 
-        link_usr_svr = None
-        for link_doc in self.server.links:
-            if link_doc['user_id'] == user.id:
-                link_usr_svr = get_by_id(link_doc['server_id'],
-                    fields=['_id', 'network', 'local_networks'])
-                break
+        if user.link_server_id:
+            link_usr_svr = get_by_id(user.link_server_id,
+                fields=('_id', 'network', 'local_networks'))
 
-        if link_usr_svr:
             client_conf += 'iroute %s %s\n' % utils.parse_network(
                 link_usr_svr.network)
             for local_network in link_usr_svr.local_networks:
