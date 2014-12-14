@@ -415,6 +415,9 @@ MONGODB_URI_INVALID_MSG = 'MongoDB URI is invalid.'
 MONGODB_CONNECT_ERROR = 'mongodb_connect_error'
 MONGODB_CONNECT_ERROR_MSG = 'Unable to connect to MongoDB server.'
 
+MONGODB_AUTH_ERROR = 'mongodb_auth_error'
+MONGODB_AUTH_ERROR_MSG = 'Unable to authenticate to the MongoDB server.'
+
 RANDOM_ONE = (
     'snowy',
     'restless',
