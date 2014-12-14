@@ -315,10 +315,7 @@ class ServerInstanceCom(object):
         self.push_output('ERROR User auth failed "%s"' % reason)
 
     def push_output(self, message):
-        timestamp = datetime.datetime.utcnow().strftime(
-            '%a %b  %d %H:%M:%S %Y').replace('  0', '   ', 1).replace(
-            '  ', ' ', 1)
-        self.server.output.push_output('%s %s' % (timestamp, message))
+        self.server.output.push_message(message)
 
     def parse_bytecount(self, client_id, bytes_recv, bytes_sent):
         _, bytes_recv_prev, bytes_sent_prev = self.client_bytes.get(
