@@ -35,6 +35,7 @@ class User(mongo.MongoObject):
         'private_key',
         'certificate',
         'resource_id',
+        'link_server_id',
     }
     fields_default = {
         'name': 'undefined',
