@@ -38,10 +38,6 @@ class QueueDhParams(queue.Queue):
     def server_collection(cls):
         return mongo.get_collection('servers')
 
-    @cached_property
-    def server(self):
-        return server.Server(doc=self.server_doc)
-
     def task(self):
         logger.debug('Generating server dh params', 'server',
             queue_id=self.id,
