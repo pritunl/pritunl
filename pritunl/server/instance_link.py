@@ -118,6 +118,7 @@ class ServerInstanceLink(object):
         return ovpn_conf_path
 
     def openvpn_start(self):
+        # TODO Remove might no longer be needed
         response = self.collection.update({
             '_id': self.linked_server.id,
             'links.server_id': self.server.id,
@@ -127,6 +128,9 @@ class ServerInstanceLink(object):
 
         if not response['updatedExisting']:
             raise ServerLinkError('Failed to update server links')
+
+        self.user.link_server_id = self.server.id
+        self.user.commit('link_server_id')
 
         ovpn_conf_path = self.generate_client_conf()
 
