@@ -117,8 +117,8 @@ class ServerInstanceCom(object):
                 self.send_client_deny(client, 'Organization is not valid')
                 return
 
-            user = org.get_user(user_id, fields=[
-                '_id', 'name', 'type', 'disabled', 'otp_secret'])
+            user = org.get_user(user_id, fields=('_id', 'name', 'type',
+                'disabled', 'otp_secret', 'link_server_id'))
             if not user:
                 self.send_client_deny(client, 'User is not valid')
                 return
