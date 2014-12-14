@@ -174,6 +174,12 @@ class ServerInstance(object):
         if push:
             server_conf += push
 
+        if self.server.debug:
+            self.server.output.push_message('Server conf:')
+            for conf_line in server_conf.split('\n'):
+                if conf_line:
+                    self.server.output.push_message('  ' + conf_line)
+
         server_conf += '<ca>\n%s\n</ca>\n' % self.server.ca_certificate
 
         if self.server.tls_auth:
