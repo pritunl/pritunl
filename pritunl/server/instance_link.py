@@ -85,6 +85,20 @@ class ServerInstanceLink(object):
         if self.linked_server.lzo_compression != ADAPTIVE:
             client_conf += 'comp-lzo no\n'
 
+        if self.server.debug:
+            self.server.output_link.push_message(
+                'Server conf:',
+                label=self.output_label,
+                link_server_id=self.linked_server.id,
+            )
+            for conf_line in client_conf.split('\n'):
+                if conf_line:
+                    self.server.output_link.push_message(
+                        '  ' + conf_line,
+                        label=self.output_label,
+                        link_server_id=self.linked_server.id,
+                    )
+
         client_conf += JUMBO_FRAMES[self.linked_server.jumbo_frames]
         client_conf += '<ca>\n%s\n</ca>\n' % self.linked_server.ca_certificate
 
