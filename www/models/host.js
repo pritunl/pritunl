@@ -7,6 +7,7 @@ define([
   var HostModel = Backbone.Model.extend({
     defaults: {
       'name': null,
+      'hostname': null,
       'status': null,
       'uptime': null,
       'user_count': null,
