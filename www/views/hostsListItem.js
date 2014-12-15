@@ -45,7 +45,14 @@ define([
       return this;
     },
     update: function() {
-      this.$('.host-title a').text(this.model.get('name'));
+      var name = this.model.get('name');
+      var hostname = this.model.get('hostname');
+
+      if (hostname) {
+        name += ' (' + hostname + ')';
+      }
+
+      this.$('.host-title a').text(name);
       this.$('.host-status .status-text').text(
         this.model.get('status').charAt(0).toUpperCase() +
         this.model.get('status').slice(1));
