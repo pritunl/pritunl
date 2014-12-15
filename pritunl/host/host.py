@@ -15,6 +15,7 @@ import datetime
 class Host(mongo.MongoObject):
     fields = {
         'name',
+        'hostname',
         'ping_timestamp',
         'status',
         'start_timestamp',
@@ -70,6 +71,7 @@ class Host(mongo.MongoObject):
         return {
             'id': self.id,
             'name': self.name,
+            'hostname': self.hostname,
             'status': self.status,
             'uptime': self.uptime,
             'user_count': self.user_count,

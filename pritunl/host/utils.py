@@ -97,6 +97,12 @@ def init():
     if settings.local.public_ip:
         settings.local.host.auto_public_address = settings.local.public_ip
 
+    try:
+        settings.local.host.hostname = socket.gethostname()
+    except:
+        logger.exception('Failed to get hostname', 'host')
+        settings.local.host.hostname = None
+
     if settings.conf.local_address_interface == 'auto':
         try:
             settings.local.host.local_address = socket.gethostbyname(
