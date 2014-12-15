@@ -238,7 +238,7 @@ class ServerInstance(object):
 
         interfaces = set()
         for network_address in self.server.local_networks or ['0.0.0.0/0']:
-            args = ['POSTROUTING', '-t', 'nat']
+            args_base = ['POSTROUTING', '-t', 'nat']
             network = utils.parse_network(network_address)[0]
 
             if network not in routes:
@@ -252,14 +252,17 @@ class ServerInstance(object):
             interfaces.add(interface)
 
             if network != '0.0.0.0':
-                args += ['-d', network_address]
+                args_base += ['-d', network_address]
 
-            args += [
-                '-s', self.server.network,
+            args_base += [
                 '-o', interface,
                 '-j', 'MASQUERADE',
             ]
-            rules.append(args)
+
+            rules.append(args_base + ['-s', self.server.network])
+
+            for link_svr in self.server.iter_links(fields=('_id', 'network')):
+                rules.append(args_base + ['-s', link_svr.network])
 
         for interface in interfaces:
             rules.append([
