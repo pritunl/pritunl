@@ -106,6 +106,13 @@ def setup_mongodb_put():
         client = pymongo.MongoClient(mongodb_uri,
             connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
         database = client.get_default_database()
+    except pymongo.errors.ConfigurationError as error:
+        if 'auth failed' in str(error):
+            return utils.jsonify({
+                'error': MONGODB_AUTH_ERROR,
+                'error_msg': MONGODB_AUTH_ERROR_MSG,
+            }, 400)
+        raise
     except pymongo.errors.ConnectionFailure:
         return utils.jsonify({
             'error': MONGODB_CONNECT_ERROR,
