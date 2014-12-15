@@ -103,8 +103,8 @@ setup(
     license=open('LICENSE').read(),
     zip_safe=False,
     install_requires=[
-        'flask>=0.6',
-        'pymongo>=2.5.2',
+        'flask>=0.8',
+        'pymongo>=2.7.1',
     ],
     data_files=data_files,
     entry_points={
