@@ -1,5 +1,5 @@
 %define pkgname pritunl
-%define pkgver 1.0.459.12snapshot7
+%define pkgver 1.0.459.72beta2
 %define pymongo_pkgver 2.7.2
 %define pkgrelease 1
 
