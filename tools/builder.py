@@ -122,7 +122,7 @@ def get_int_ver(version):
     elif 'rc' in version:
         ver[-1] = str(int(ver[-1]) + 3000)
     else:
-        ver[-1] = str(int(ver[-1]) + 4000)
+        ver.append('4000')
 
     return int(''.join([x.zfill(4) for x in ver]))
 
