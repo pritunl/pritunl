@@ -222,6 +222,7 @@ def _upgrade_server(server_id, server_path):
                         'protocol',
                         'network',
                         'public_address',
+                        'search_domain',
                     ):
                 update_doc[name] = value
             elif name in (
@@ -236,8 +237,8 @@ def _upgrade_server(server_id, server_path):
                 update_doc[name] = True if value == 'true' else False
             elif name in (
                         'organizations',
+                        'local_networks',
                         'dns_servers',
-                        'debug',
                     ):
                 update_doc[name] = value.split(',') if value else []
             elif name == 'lzo_compression':
