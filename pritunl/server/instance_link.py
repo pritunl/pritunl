@@ -103,7 +103,7 @@ class ServerInstanceLink(object):
         client_conf += '<ca>\n%s\n</ca>\n' % self.linked_server.ca_certificate
 
         if self.linked_server.tls_auth:
-            client_conf += '<tls-auth>\n%s\n</tls-auth>\n' % (
+            client_conf += 'key-direction 1\n<tls-auth>\n%s\n</tls-auth>\n' % (
                 self.linked_server.tls_auth_key)
 
         client_conf += ('<cert>\n%s\n' + \
