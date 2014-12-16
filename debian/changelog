@@ -1,3 +1,17 @@
+pritunl (1.0.460.41-0ubuntu1) unstable; urgency=low
+
+  * Server codebase rewritten
+  * Added distributed servers
+  * Automatic failover for servers
+  * Support for multiple devices
+  * Redesigned web interface
+  * Improved vpn connection performance
+  * Data store moved to MongoDB
+  * Automatic data migration will occur on first run
+  * Fix issue with update
+
+ -- Pritunl <contact@pritunl.com>  Tue, 16 Dec 2014 00:00:00 -0400
+
 pritunl (1.0.460.38-0ubuntu1) unstable; urgency=low
 
   * Server codebase rewritten
