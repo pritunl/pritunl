@@ -7,7 +7,7 @@ from pritunl import utils
 from pritunl import logger
 
 def upgrade_server():
-    if utils.get_db_ver_int() < 100000000:
+    if utils.get_db_ver_int() < 10000000000004000:
         logger.info('Running 0.10.x database upgrade', 'upgrade')
         upgrade_0_10_x()
         utils.set_db_ver('1.0.0')
