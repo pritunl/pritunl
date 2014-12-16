@@ -143,7 +143,9 @@ define([
     },
     openCheckout: function(plan) {
       if (this.checkout === undefined) {
-        setTimeout((this.openCheckout).bind(this), 10);
+        setTimeout(function() {
+          this.openCheckout(plan);
+        }.bind(this), 10);
       }
       else if (this.checkout === false) {
         this.unlock();
