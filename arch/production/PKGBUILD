@@ -1,7 +1,7 @@
 # Maintainer: Pritunl <contact@pritunl.com>
 
 pkgname=pritunl
-pkgver=0.10.12
+pkgver=1.0.460.38
 pkgrel=1
 pkgdesc="Enterprise VPN Server"
 arch=("any")

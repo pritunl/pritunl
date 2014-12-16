@@ -1,6 +1,18 @@
 Pritunl Changelog
 =================
 
+Version 1.0.460.38 2014-12-16
+-----------------------------
+
+Server codebase rewritten
+Added distributed servers
+Automatic failover for servers
+Support for multiple devices
+Redesigned web interface
+Improved vpn connection performance
+Data store moved to MongoDB
+Automatic data migration will occur on first run
+
 Version 1.0.459.72beta2 2014-12-15
 ----------------------------------
 
