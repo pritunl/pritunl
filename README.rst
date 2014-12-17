@@ -1,9 +1,6 @@
 pritunl: enterprise vpn server
 ==============================
 
-.. image:: http://gitshields.com/v2/pypi/pritunl/version/43617e.png
-    :target: http://pritunl.com/
-
 .. image:: http://www.gitshields.com/v2/text/package/ubuntu/dd4814.png
     :target: https://launchpad.net/~pritunl/+archive/ubuntu/ppa
 
