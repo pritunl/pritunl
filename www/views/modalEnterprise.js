@@ -125,7 +125,7 @@ define([
     openCheckout: function(optionsPath) {
       $.ajax({
           type: 'GET',
-          url: 'https://app.pritunl.com' + '/' + optionsPath,
+          url: 'https://app.pritunl.com/' + optionsPath,
           success: function(options) {
             var plan;
 
