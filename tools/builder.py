@@ -140,29 +140,30 @@ def generate_last_modifited_etag(file_path):
     ))
 
 def sync_db():
-    for file_name in os.listdir(RELEASES_DIR):
-        file_path = os.path.join(RELEASES_DIR, file_name)
-        ver, file_type, _ = file_name.split('.')
-        if file_type == 'release':
-            with open(file_path, 'r') as release_file:
-                doc = json.loads(release_file.read().strip())
-                releases_db.update({
-                    '_id': ver,
-                }, {
-                    '$set': doc,
-                }, upsert=True)
-        else:
-            last_modified, etag = generate_last_modifited_etag(file_path)
-            with open(file_path, 'r') as css_file:
-                releases_db.update({
-                    '_id': ver,
-                }, {'$set': {
-                    file_type: {
-                        'etag': etag,
-                        'last_modified': last_modified,
-                        'data': css_file.read(),
-                    },
-                }}, upsert=True)
+    for releases_db in releases_dbs:
+        for file_name in os.listdir(RELEASES_DIR):
+            file_path = os.path.join(RELEASES_DIR, file_name)
+            ver, file_type, _ = file_name.split('.')
+            if file_type == 'release':
+                with open(file_path, 'r') as release_file:
+                    doc = json.loads(release_file.read().strip())
+                    releases_db.update({
+                        '_id': ver,
+                    }, {
+                        '$set': doc,
+                    }, upsert=True)
+            else:
+                last_modified, etag = generate_last_modifited_etag(file_path)
+                with open(file_path, 'r') as css_file:
+                    releases_db.update({
+                        '_id': ver,
+                    }, {'$set': {
+                        file_type: {
+                            'etag': etag,
+                            'last_modified': last_modified,
+                            'data': css_file.read(),
+                        },
+                    }}, upsert=True)
 
 
 # Load build keys
@@ -172,12 +173,14 @@ with open(BUILD_KEYS_PATH, 'r') as build_keys_file:
     github_token = build_keys['github_token']
     aur_username = build_keys['aur_username']
     aur_password = build_keys['aur_password']
-    mongodb_uri = build_keys['mongodb_uri']
+    mongodb_uris = build_keys['mongodb_uris']
     private_key = build_keys['private_key']
 
-mongo_client = pymongo.MongoClient(mongodb_uri)
-mongo_db = mongo_client.get_default_database()
-releases_db = mongo_db.releases
+releases_dbs = []
+for mongodb_uri in mongodb_uris:
+    mongo_client = pymongo.MongoClient(mongodb_uri)
+    mongo_db = mongo_client.get_default_database()
+    releases_dbs.append(mongo_db.releases)
 
 # Get package info
 with open(INIT_PATH, 'r') as init_file:
