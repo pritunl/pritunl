@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issues with updating subscription
+
 Version 1.0.460.81 2014-12-16
 -----------------------------
 
