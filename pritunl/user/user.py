@@ -304,7 +304,7 @@ class User(mongo.MongoObject):
         return True
 
     def _get_key_info_str(self, server, conf_hash):
-        return json.dumps({
+        return '#' + json.dumps({
             'version': CLIENT_CONF_VER,
             'user': self.name,
             'organization': self.org.name,
@@ -316,7 +316,7 @@ class User(mongo.MongoObject):
             'sync_secret': self.sync_secret,
             'sync_hash': conf_hash,
             'sync_hosts': server.get_sync_remotes(),
-        })
+        }, indent=1).replace('\n', '\n#')
 
     def _generate_conf(self, server, include_user_cert=True):
         if not self.sync_token or not self.sync_secret:
