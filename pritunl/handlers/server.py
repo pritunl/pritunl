@@ -531,7 +531,8 @@ def server_host_get(server_id):
 @app.app.route('/server/<server_id>/host/<host_id>', methods=['PUT'])
 @auth.session_auth
 def server_host_put(server_id, host_id):
-    svr = server.get_by_id(server_id, fields=('_id', 'hosts', 'links'))
+    svr = server.get_by_id(server_id, fields=('_id', 'hosts', 'links',
+        'replica_count'))
     hst = host.get_by_id(host_id, fields=('_id', 'name',
         'public_address', 'auto_public_address'))
 
