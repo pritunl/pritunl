@@ -1,6 +1,11 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue detaching hosts
+Interface improvements
+
 Version 1.0.462.12 2014-12-18
 -----------------------------
 
