@@ -17,7 +17,7 @@ pritunl: enterprise vpn server
 vpn server built using the OpenVPN protocol. Documentation and more
 information can be found at the home page `pritunl.com <http://pritunl.com>`_
 
-.. image:: www/img/logo_full.png
+.. image:: www/img/logo_code.png
     :target: http://pritunl.com
 
 Development Setup (Single Node)
