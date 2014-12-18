@@ -13,9 +13,9 @@ pritunl: enterprise vpn server
 .. image:: http://gitshields.com/v2/drone/github.com/pritunl/pritunl/589d59-b64d39.png
     :target: https://drone.io/github.com/pritunl/pritunl
 
-`Pritunl <https://github.com/pritunl/pritunl>`_ is an enterprise vpn server.
-Documentation and more information can be found at the home page
-`pritunl.com <http://pritunl.com>`_
+`Pritunl <https://github.com/pritunl/pritunl>`_ is a distributed enterprise
+vpn server built using the OpenVPN protocol. Documentation and more
+information can be found at the home page `pritunl.com <http://pritunl.com>`_
 
 .. image:: www/img/logo_full.png
     :target: http://pritunl.com
