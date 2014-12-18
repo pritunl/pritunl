@@ -80,7 +80,7 @@ define([
       }, {
         success: function() {
           this.clearLoading();
-          this.setAlert('warning', 'Successfully generated a new api key.');
+          this.setAlert('success', 'Successfully generated a new api key.');
           this.update();
         }.bind(this),
         error: function() {

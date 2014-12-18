@@ -91,7 +91,7 @@ define([
           });
           this.listenToOnce(modal, 'applied', function() {
             var alertView = new AlertView({
-              type: 'warning',
+              type: 'success',
               message: 'Successfully added server.',
               dismissable: true
             });
@@ -156,7 +156,7 @@ define([
       });
       this.listenToOnce(modal, 'applied', function() {
         var alertView = new AlertView({
-          type: 'warning',
+          type: 'success',
           message: 'Successfully attached organization.',
           dismissable: true
         });
@@ -206,7 +206,7 @@ define([
       });
       this.listenToOnce(modal, 'applied', function() {
         var alertView = new AlertView({
-          type: 'warning',
+          type: 'success',
           message: 'Successfully attached host.',
           dismissable: true
         });
@@ -233,7 +233,7 @@ define([
       });
       this.listenToOnce(modal, 'applied', function() {
         var alertView = new AlertView({
-          type: 'warning',
+          type: 'success',
           message: 'Successfully linked server.',
           dismissable: true
         });

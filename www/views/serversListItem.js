@@ -239,7 +239,7 @@ define([
           });
           this.listenToOnce(modal, 'applied', function() {
             var alertView = new AlertView({
-              type: 'warning',
+              type: 'success',
               message: 'Successfully saved server settings.',
               dismissable: true
             });
@@ -268,7 +268,7 @@ define([
       });
       this.listenToOnce(modal, 'applied', function() {
         var alertView = new AlertView({
-          type: 'warning',
+          type: 'success',
           message: 'Successfully deleted server.',
           dismissable: true
         });

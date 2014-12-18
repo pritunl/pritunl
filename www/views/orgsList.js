@@ -49,7 +49,7 @@ define([
       var modal = new ModalAddOrgView();
       this.listenToOnce(modal, 'applied', function() {
         var alertView = new AlertView({
-          type: 'warning',
+          type: 'success',
           message: 'Successfully added organization.',
           dismissable: true
         });
@@ -64,7 +64,7 @@ define([
       });
       this.listenToOnce(modal, 'applied', function() {
         var alertView = new AlertView({
-          type: 'warning',
+          type: 'success',
           message: 'Successfully added user.',
           dismissable: true
         });
@@ -79,7 +79,7 @@ define([
       });
       this.listenToOnce(modal, 'applied', function() {
         var alertView = new AlertView({
-          type: 'warning',
+          type: 'success',
           message: 'Successfully added users.',
           dismissable: true
         });
@@ -101,7 +101,7 @@ define([
       });
       this.listenToOnce(modal, 'applied', function() {
         var alertView = new AlertView({
-          type: 'warning',
+          type: 'success',
           message: 'Successfully deleted selected users.',
           dismissable: true
         });

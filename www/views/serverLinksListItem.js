@@ -49,7 +49,7 @@ define([
       });
       this.listenToOnce(modal, 'applied', function() {
         var alertView = new AlertView({
-          type: 'warning',
+          type: 'success',
           message: 'Successfully detached link.',
           dismissable: true
         });

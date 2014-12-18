@@ -34,7 +34,7 @@ define([
       if (model) {
         this.$('.generate-new-key').removeAttr('disabled');
         this.clearLoading();
-        this.setAlert('warning', 'Successfully generated new key.');
+        this.setAlert('success', 'Successfully generated new key.');
       }
       this.$('input').val(this.model.get('otp_secret'));
       var otpUrl = 'otpauth://totp/' + this.model.get('name') +
