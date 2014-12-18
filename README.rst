@@ -10,9 +10,6 @@ pritunl: enterprise vpn server
 .. image:: http://www.gitshields.com/v2/text/package/centos/669900.png
     :target: http://pritunl.com/#install
 
-.. image:: http://gitshields.com/v2/drone/github.com/pritunl/pritunl/589d59-b64d39.png
-    :target: https://drone.io/github.com/pritunl/pritunl
-
 `Pritunl <https://github.com/pritunl/pritunl>`_ is a distributed enterprise
 vpn server built using the OpenVPN protocol. Documentation and more
 information can be found at the home page `pritunl.com <http://pritunl.com>`_
