@@ -35,14 +35,13 @@ define([
     },
     _get_free_network: function() {
       var i;
-      var network = '50.203.224.0/24';
+      var network;
 
-      for (i = 0; i < 4096; i++) {
+      for (i = 0; i < 512; i++) {
+        network = '192.168.' + this._rand(15, 250) + '.0/24';
         if (this.usedNetworks.indexOf(network) === -1) {
           break;
         }
-        network = '10.' + this._rand(15, 250) + '.' +
-          this._rand(15, 250) + '.0/24';
       }
 
       return network;
