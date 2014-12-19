@@ -85,7 +85,12 @@ def fill_user():
         if count >= pool_size:
             break
 
-        org = orgs[org_id]
+        org = orgs.get(org_id)
+        if not org:
+            logger.warning('Pooler cannot find org from user_count', 'pooler',
+                org_id=org_id,
+            )
+            continue
         new_users.append([(org, user_type)] * (pool_size - count))
 
     for org, user_type in utils.roundrobin(*new_users):
