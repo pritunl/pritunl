@@ -304,8 +304,11 @@ def server_put_post(server_id=None):
 
         if not network_def:
             network_def = True
-            rand_range = range(15, 250)
+            rand_range = range(215, 250)
+            rand_range_low = range(15, 215)
             random.shuffle(rand_range)
+            random.shuffle(rand_range_low)
+            rand_range += rand_range_low
             for i in rand_range:
                 rand_network = '192.168.%s.0/24' % i
                 if not _check_network_overlap(rand_network, network_used):
