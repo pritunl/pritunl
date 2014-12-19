@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Change server defaults
+
 Version 1.0.462.77 2014-12-18
 -----------------------------
 
