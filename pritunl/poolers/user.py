@@ -6,6 +6,7 @@ from pritunl import pooler
 from pritunl import mongo
 from pritunl import utils
 from pritunl import organization
+from pritunl import logger
 
 import time
 import threading
