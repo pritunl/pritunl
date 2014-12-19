@@ -304,9 +304,10 @@ def server_put_post(server_id=None):
 
         if not network_def:
             network_def = True
-            for i in xrange(5000):
-                rand_network = '10.%s.%s.0/24' % (
-                    random.randint(15, 250), random.randint(15, 250))
+            rand_range = range(15, 250)
+            random.shuffle(rand_range)
+            for i in rand_range:
+                rand_network = '192.168.%s.0/24' % i
                 if not _check_network_overlap(rand_network, network_used):
                     network = rand_network
                     break
