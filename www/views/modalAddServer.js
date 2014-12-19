@@ -37,10 +37,18 @@ define([
       var i;
       var network;
 
-      for (i = 0; i < 512; i++) {
-        network = '192.168.' + this._rand(15, 250) + '.0/24';
+      for (i = 0; i < 64; i++) {
+        network = '192.168.' + this._rand(215, 250) + '.0/24';
         if (this.usedNetworks.indexOf(network) === -1) {
           break;
+        }
+      }
+      if (this.usedNetworks.indexOf(network) !== -1) {
+        for (i = 0; i < 512; i++) {
+          network = '192.168.' + this._rand(15, 215) + '.0/24';
+          if (this.usedNetworks.indexOf(network) === -1) {
+            break;
+          }
         }
       }
 
