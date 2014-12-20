@@ -1,13 +1,13 @@
 pritunl: enterprise vpn server
 ==============================
 
-.. image:: http://www.gitshields.com/v2/text/package/ubuntu/dd4814.png
+.. image:: https://img.shields.io/badge/package-ubuntu-dd4814.svg?style=flat
     :target: https://launchpad.net/~pritunl/+archive/ubuntu/ppa
 
-.. image:: http://www.gitshields.com/v2/text/package/arch%20linux/33aadd.png
+.. image:: https://img.shields.io/badge/package-arch%20linux-33aadd.svg?style=flat
     :target: https://aur.archlinux.org/packages/pritunl/
 
-.. image:: http://www.gitshields.com/v2/text/package/centos/669900.png
+.. image:: https://img.shields.io/badge/package-centos-669900.svg?style=flat
     :target: http://pritunl.com/#install
 
 `Pritunl <https://github.com/pritunl/pritunl>`_ is a distributed enterprise
