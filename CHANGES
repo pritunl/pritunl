@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Change server defaults
+Fix exit on upgrade check when db server is offline
 
 Version 1.0.462.77 2014-12-18
 -----------------------------
