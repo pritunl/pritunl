@@ -98,7 +98,10 @@ setup(
     url='https://github.com/pritunl/pritunl',
     download_url='https://github.com/pritunl/pritunl/archive/%s.tar.gz' % (
         VERSION),
-    keywords='openvpn, vpn, management, server, web interface',
+    keywords='pritunl, vpn server, distributed vpn server, ' +
+        'enterprise vpn server, open source vpn server, ' +
+        'virtual private network, virtual networks, openvpn client, ' +
+        'openvpn server, vpn tutorial',
     packages=packages,
     license=open('LICENSE').read(),
     zip_safe=False,
