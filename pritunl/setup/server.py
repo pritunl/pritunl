@@ -181,7 +181,16 @@ def on_system_msg(msg):
         set_global_interrupt()
 
 def setup_server():
-    db_ver_int = utils.get_db_ver_int()
+    last_error = time.time() - 24
+    while True:
+        try:
+            db_ver_int = utils.get_db_ver_int()
+            break
+        except pymongo.errors.ConnectionFailure:
+            time.sleep(0.5)
+            if time.time() - last_error > 30:
+                last_error = time.time()
+                logger.exception('Error connecting to mongodb server')
 
     listener.add_listener('system', on_system_msg)
 
