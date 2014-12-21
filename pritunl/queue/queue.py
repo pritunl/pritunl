@@ -201,7 +201,7 @@ class Queue(mongo.MongoObject):
             'reserve_data': None,
         }, {'$set': {
             'reserve_data': reserve_data,
-        }})
+        }}, new=True)
         if not doc:
             return
 
