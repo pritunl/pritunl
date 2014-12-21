@@ -71,4 +71,7 @@ def reserve_queued_org(name=None, type=None, block=False):
     if not doc:
         return
 
-    return organization.Organization(doc=doc['org_doc'])
+    doc = doc['org_doc']
+    doc.update(reserve_data)
+
+    return organization.Organization(doc=doc)
