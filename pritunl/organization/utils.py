@@ -42,7 +42,7 @@ def reserve_pooled(name=None, type=ORG_DEFAULT):
         'type': ORG_POOL,
     }, {
         '$set': doc,
-    })
+    }, new=True)
 
     if doc:
         return Organization(doc=doc)
