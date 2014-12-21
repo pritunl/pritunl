@@ -397,6 +397,7 @@ class Server(mongo.MongoObject):
         try:
             org = self.iter_orgs().next()
         except StopIteration:
+            self.stop()
             raise ServerMissingOrg('Primary user cannot be created ' + \
                 'without any organizations', {
                     'server_id': self.id,
