@@ -69,5 +69,8 @@ def reserve_queued_user(org, name=None, email=None, type=None,
     if not doc:
         return
 
+    user_doc = doc['user_doc']
+    user_doc.update(reserve_data)
+
     org = organization.Organization(doc=doc['org_doc'])
-    return user.User(org=org, doc=doc['user_doc'])
+    return user.User(org=org, doc=user_doc)
