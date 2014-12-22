@@ -132,7 +132,7 @@ def reserve_pooled_dh_params(svr):
         'dh_param_bits': svr.dh_param_bits,
     }, {'$set': {
         'dh_param_bits': None,
-    }})
+    }}, new=True)
 
     if not doc:
         return False
