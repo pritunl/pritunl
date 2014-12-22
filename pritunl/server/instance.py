@@ -466,7 +466,7 @@ class ServerInstance(object):
                 }}, fields={
                     '_id': False,
                     'instances': True,
-                })
+                }, new=True)
 
                 yield
 
