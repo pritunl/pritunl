@@ -158,7 +158,7 @@ class Transaction(mongo.MongoObject):
                 '$inc': {
                     'attempts': 1,
                 },
-            })
+            }, new=True)
 
             if not doc:
                 return
