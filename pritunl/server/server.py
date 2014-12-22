@@ -581,7 +581,7 @@ class Server(mongo.MongoObject):
             },
         }, {
             'hosts': True,
-        })
+        }, new=True)
 
         if doc and not doc['hosts']:
             self.status = OFFLINE
