@@ -60,7 +60,6 @@ def reserve_pooled_user(org, name=None, email=None,
     }, {
         '$set': doc,
     }, new=True)
-    # TODO Check other find_and_modify calls
 
     if doc:
         return User(org=org, doc=doc)
