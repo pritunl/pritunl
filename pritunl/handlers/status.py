@@ -78,7 +78,7 @@ def status_get():
             }}},
             'servers': {
                 '$push': '$status',
-            }
+            },
         }},
     ])['result']
 
