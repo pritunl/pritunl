@@ -8,14 +8,17 @@ pritunl: enterprise vpn server
     :target: https://aur.archlinux.org/packages/pritunl/
 
 .. image:: https://img.shields.io/badge/package-centos-669900.svg?style=flat
-    :target: http://pritunl.com/#install
+    :target: https://pritunl.com/#install
+
+.. image:: https://img.shields.io/badge/twitter-pritunl-55acee.svg?style=flat
+    :target: https://twitter.com/pritunl
 
 `Pritunl <https://github.com/pritunl/pritunl>`_ is a distributed enterprise
 vpn server built using the OpenVPN protocol. Documentation and more
-information can be found at the home page `pritunl.com <http://pritunl.com>`_
+information can be found at the home page `pritunl.com <https://pritunl.com>`_
 
 .. image:: www/img/logo_code.png
-    :target: http://pritunl.com
+    :target: https://pritunl.com
 
 Development Setup (Single Node)
 -------------------------------
