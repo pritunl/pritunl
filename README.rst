@@ -49,15 +49,6 @@ Development Setup (Multi Node)
     # Open node4 http://localhost:9704/
     # Open node5 http://localhost:9705/
 
-Unittest
---------
-
-.. code-block:: bash
-
-    $ git clone https://github.com/pritunl/pritunl.git
-    $ cd pritunl
-    $ python2 test_pritunl.py
-
 License
 -------
 
