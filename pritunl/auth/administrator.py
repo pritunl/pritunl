@@ -100,6 +100,8 @@ class Administrator(mongo.MongoObject):
             hash_func = self._hash_password_v1
         elif hash_ver == '2':
             hash_func = self._hash_password_v2
+        else:
+            raise AttributeError('Unknown hash version')
 
         test_hash = base64.b64encode(hash_func(pass_salt, test_pass))
         return pass_hash == test_hash
