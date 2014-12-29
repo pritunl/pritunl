@@ -9,7 +9,6 @@ from pritunl import app
 from pritunl import auth
 from pritunl import event
 
-import time
 import flask
 import bson
 
