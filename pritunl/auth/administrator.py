@@ -287,4 +287,4 @@ def reset_password():
         password=DEFAULT_PASSWORD,
         default=True,
     ).commit()
-    return (DEFAULT_USERNAME, DEFAULT_PASSWORD)
+    return DEFAULT_USERNAME, DEFAULT_PASSWORD
