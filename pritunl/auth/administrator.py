@@ -33,7 +33,6 @@ class Administrator(mongo.MongoObject):
 
     def __init__(self, username=None, password=None, default=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
-
         if username is not None:
             self.username = username
         if password is not None:
