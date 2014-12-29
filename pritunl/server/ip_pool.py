@@ -162,7 +162,6 @@ class ServerIpPool:
             logger.warning('Failed to assign ip addresses ' +
                 'to org, ip pool empty', 'server',
                 org_id=org_id,
-                user_id=user_id,
             )
 
     def unassign_ip_pool_org(self, org_id):
@@ -224,7 +223,6 @@ class ServerIpPool:
                 logger.warning('Failed to assign ip addresses ' +
                     'to server, ip pool empty', 'server',
                     org_id=org_id,
-                    user_id=user_id,
                 )
                 break
 
