@@ -28,7 +28,7 @@ def before_request():
         raise flask.abort(401, settings.local.notification)
 
 @app.app.url_value_preprocessor
-def parse_object_id(endpoint, values):
+def parse_object_id(_, values):
     if values:
         for key in values:
             if key.endswith('_id'):
