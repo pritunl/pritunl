@@ -1,7 +1,6 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
-from pritunl import settings
 from pritunl import app
 from pritunl import host
 from pritunl import utils
@@ -10,9 +9,6 @@ from pritunl import event
 from pritunl import auth
 
 import flask
-import math
-import time
-import collections
 
 @app.app.route('/host', methods=['GET'])
 @app.app.route('/host/<host_id>', methods=['GET'])
