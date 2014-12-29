@@ -8,10 +8,8 @@ from pritunl import logger
 
 import base64
 import os
-import re
 import hashlib
 import flask
-import time
 import datetime
 import hmac
 import pymongo
