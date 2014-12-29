@@ -533,7 +533,7 @@ class TunlDB(object):
                         if not ttl:
                             continue
                         ttl -= int(time.time() * 1000)
-                        ttl = ttl / 1000.0
+                        ttl /= 1000.0
                         if ttl >= 0:
                             timer = threading.Timer(ttl, self.remove, (key,))
                             timer.daemon = True
