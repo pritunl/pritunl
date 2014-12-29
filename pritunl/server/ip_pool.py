@@ -4,6 +4,7 @@ from pritunl.helpers import *
 from pritunl import mongo
 from pritunl import ipaddress
 from pritunl import organization
+from pritunl import logger
 
 import bson
 import pymongo
