@@ -157,6 +157,7 @@ def check_output_logged(*args, **kwargs):
 def sync_time():
     nounce = None
     doc = {}
+
     try:
         collection = mongo.get_collection('time_sync')
 
@@ -177,6 +178,7 @@ def sync_time():
         collection.remove(doc['_id'])
     except:
         from pritunl import logger
+
         logger.exception('Failed to sync time',
             nounce=nounce,
             doc_id=doc.get('id'),
