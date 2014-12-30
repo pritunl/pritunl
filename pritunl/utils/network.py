@@ -74,7 +74,7 @@ def network_addr(ip, subnet):
 
 def parse_network(network):
     address = ipaddress.IPNetwork(network)
-    return (str(address.ip), str(address.netmask))
+    return str(address.ip), str(address.netmask)
 
 def get_network_gateway(network):
     return str(ipaddress.IPNetwork(network).iterhosts().next())
