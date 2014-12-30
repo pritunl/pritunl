@@ -10,6 +10,7 @@ import flask
 import json
 import bson
 import bson.tz_util
+import bson.objectid
 
 def json_object_hook_handler(obj):
     obj_data = obj.get('$obj')
