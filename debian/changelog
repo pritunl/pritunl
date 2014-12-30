@@ -1,3 +1,9 @@
+pritunl (1.0.474.91-0ubuntu1) unstable; urgency=low
+
+  * Bug fixes
+
+ -- Pritunl <contact@pritunl.com>  Tue, 30 Dec 2014 00:00:00 -0400
+
 pritunl (1.0.464.77-0ubuntu1) unstable; urgency=low
 
   * Change server defaults
