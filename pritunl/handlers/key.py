@@ -1,7 +1,6 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
-from pritunl import settings
 from pritunl import utils
 from pritunl import static
 from pritunl import organization
@@ -10,19 +9,12 @@ from pritunl import app
 from pritunl import auth
 from pritunl import mongo
 
-import os
 import flask
-import uuid
 import time
-import random
-import json
 import base64
-import re
 import hashlib
-import datetime
 import hmac
 import pymongo
-import bson
 
 def _get_key_archive(org_id, user_id):
     org = organization.get_by_id(org_id)
