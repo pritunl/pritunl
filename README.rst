@@ -10,6 +10,9 @@ pritunl: enterprise vpn server
 .. image:: https://img.shields.io/badge/package-centos-669900.svg?style=flat
     :target: https://pritunl.com/#install
 
+.. image:: https://img.shields.io/badge/github-pritunl-11bdc2.svg?style=flat
+    :target: https://github.com/pritunl
+
 .. image:: https://img.shields.io/badge/twitter-pritunl-55acee.svg?style=flat
     :target: https://twitter.com/pritunl
 
