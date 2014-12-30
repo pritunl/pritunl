@@ -155,23 +155,33 @@ def check_output_logged(*args, **kwargs):
     return stdoutdata
 
 def sync_time():
-    collection = mongo.get_collection('time_sync')
+    nounce = None
+    doc = {}
+    try:
+        collection = mongo.get_collection('time_sync')
 
-    nounce = bson.ObjectId()
-    collection.insert({
-        'nounce': nounce,
-    }, manipulate=False)
+        nounce = ObjectId()
+        collection.insert({
+            'nounce': nounce,
+        }, manipulate=False)
 
-    mongo_time_start = datetime.datetime.utcnow()
+        mongo_time_start = datetime.datetime.utcnow()
 
-    doc = collection.find_one({
-        'nounce': nounce,
-    })
-    mongo_time = doc['_id'].generation_time.replace(tzinfo=None)
+        doc = collection.find_one({
+            'nounce': nounce,
+        })
+        mongo_time = doc['_id'].generation_time.replace(tzinfo=None)
 
-    settings.local.mongo_time = (mongo_time_start, mongo_time)
+        settings.local.mongo_time = (mongo_time_start, mongo_time)
 
-    collection.remove(doc['_id'])
+        collection.remove(doc['_id'])
+    except:
+        from pritunl import logger
+        logger.exception('Failed to sync time',
+            nounce=nounce,
+            doc_id=doc.get('id'),
+        )
+        raise
 
 def find_caller():
     try:
