@@ -1,3 +1,5 @@
+from pritunl.utils.misc import ObjectId
+
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
@@ -17,7 +19,7 @@ def json_object_hook_handler(obj):
     if obj_data:
         object_type, obj_data = obj_data
         if object_type == 'oid':
-            return bson.ObjectId(obj_data)
+            return ObjectId(obj_data)
         elif object_type == 'date':
             return datetime.datetime.fromtimestamp(obj_data / 1000.,
                 bson.tz_util.utc)
@@ -31,6 +33,7 @@ def json_default(obj):
     elif isinstance(obj, datetime.datetime):
         return {'$obj': ['date', int(calendar.timegm(obj.timetuple()) * 1000 +
             obj.microsecond / 1000)]}
+
     raise TypeError(repr(obj) + ' is not JSON serializable')
 
 def jsonify(data=None, status_code=None):

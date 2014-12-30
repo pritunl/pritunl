@@ -32,7 +32,7 @@ def publish(channels, message, extra=None, transaction=None):
         if isinstance(channels, str):
             doc['channel'] = channels
             tran_collection.update({
-                'nonce': bson.ObjectId(),
+                'nonce': utils.ObjectId(),
             }, {
                 '$set': doc,
             }, upsert=True)
@@ -42,7 +42,7 @@ def publish(channels, message, extra=None, transaction=None):
                 doc_copy['channel'] = channel
 
                 tran_collection.bulk().find({
-                    'nonce': bson.ObjectId(),
+                    'nonce': utils.ObjectId(),
                 }).upsert().update({
                     '$set': doc_copy,
                 })

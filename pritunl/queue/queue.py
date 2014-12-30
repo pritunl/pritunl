@@ -48,7 +48,7 @@ class Queue(mongo.MongoObject):
         mongo.MongoObject.__init__(self, **kwargs)
         self.type = self.type
         self.reserve_id = self.reserve_id
-        self.runner_id = bson.ObjectId()
+        self.runner_id = utils.ObjectId()
         self.claimed = False
         self.queue_com = QueueCom()
         self.keep_alive_thread = None

@@ -35,6 +35,11 @@ _srcfile = os.path.normcase(_srcfile)
 PyQueue = Queue.Queue
 PyPriorityQueue = Queue.PriorityQueue
 
+def ObjectId(oid=None):
+    if oid is not None and len(oid) == 32:
+        return oid
+    return bson.ObjectId(oid)
+
 def now():
     mongo_time_start, mongo_time = settings.local.mongo_time
     return mongo_time + (datetime.datetime.utcnow() - mongo_time_start)

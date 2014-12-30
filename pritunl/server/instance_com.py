@@ -98,8 +98,8 @@ class ServerInstanceCom(object):
     def client_connect(self, client):
         try:
             client_id = client['client_id']
-            org_id = bson.ObjectId(client['org_id'])
-            user_id = bson.ObjectId(client['user_id'])
+            org_id = utils.ObjectId(client['org_id'])
+            user_id = utils.ObjectId(client['user_id'])
             device_id = client.get('device_id')
             device_name = client.get('device_name')
             platform = client.get('platform')
@@ -213,8 +213,8 @@ class ServerInstanceCom(object):
 
     def client_connected(self, client):
         client_id = client['client_id']
-        org_id = bson.ObjectId(client['org_id'])
-        user_id = bson.ObjectId(client['user_id'])
+        org_id = utils.ObjectId(client['org_id'])
+        user_id = utils.ObjectId(client['user_id'])
         devices = self.client_devices[user_id]
         data = None
 
@@ -251,7 +251,7 @@ class ServerInstanceCom(object):
 
     def client_disconnect(self, client):
         client_id = client.get('client_id')
-        user_id = bson.ObjectId(client_id) if client_id else None
+        user_id = utils.ObjectId(client_id) if client_id else None
         user_type = None
         virt_address = None
         devices = self.client_devices[user_id]

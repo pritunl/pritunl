@@ -41,7 +41,7 @@ def auth_delete():
     admin_id = flask.session.get('admin_id')
     session_id = flask.session.get('session_id')
     if admin_id and session_id:
-        admin_id = bson.ObjectId(admin_id)
+        admin_id = utils.ObjectId(admin_id)
         auth.clear_session(admin_id, session_id)
     flask.session.clear()
 

@@ -72,12 +72,12 @@ def _upgrade_org_users(org_id, org_path):
 
         if user_id == 'ca':
             spec = {
-                'org_id': bson.ObjectId(org_id),
+                'org_id': utils.ObjectId(org_id),
                 'type': 'ca',
             }
         else:
             spec = {
-                '_id': bson.ObjectId(user_id),
+                '_id': utils.ObjectId(user_id),
             }
 
         update_doc = {
@@ -86,7 +86,7 @@ def _upgrade_org_users(org_id, org_path):
             'name': None,
             'certificate': None,
             'resource_id': None,
-            'org_id': bson.ObjectId(org_id),
+            'org_id': utils.ObjectId(org_id),
             'disabled': False,
             'type': CERT_CLIENT,
             'email': None,
@@ -133,7 +133,7 @@ def _upgrade_org(org_id, org_path):
     org_conf_path = os.path.join(org_path, 'ca.conf')
 
     spec = {
-        '_id': bson.ObjectId(org_id),
+        '_id': utils.ObjectId(org_id),
     }
 
     update_doc = {
@@ -170,7 +170,7 @@ def _upgrade_server(server_id, server_path):
     ip_pool_path = os.path.join(server_path, 'ip_pool')
 
     spec = {
-        '_id': bson.ObjectId(server_id),
+        '_id': utils.ObjectId(server_id),
     }
 
     update_doc = {
@@ -216,7 +216,7 @@ def _upgrade_server(server_id, server_path):
                         'primary_user',
                         'primary_organization',
                     ):
-                update_doc[name] = bson.ObjectId(value)
+                update_doc[name] = utils.ObjectId(value)
             if name in (
                         'name',
                         'protocol',
@@ -295,7 +295,7 @@ def upgrade_0_10_x():
             file_path = os.path.join(dir_path, file_name)
             with open(file_path, 'r') as file_data:
                 dh_params_db.update({
-                    '_id': bson.ObjectId(id),
+                    '_id': utils.ObjectId(id),
                 }, {
                     'dh_param_bits': int(dh_param_bits),
                     'dh_params': file_data.read().rstrip('\n'),

@@ -28,8 +28,9 @@ class MongoObject(object):
             except NotFound:
                 return None
         else:
+            from pritunl import utils
             mongo_object.exists = False
-            mongo_object.id = bson.ObjectId()
+            mongo_object.id = utils.ObjectId()
         return mongo_object
 
     def __setattr__(self, name, value):

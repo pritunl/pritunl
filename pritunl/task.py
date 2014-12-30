@@ -32,7 +32,7 @@ class Task(mongo.MongoObject):
     def __init__(self, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
         self.type = self.type
-        self.runner_id = bson.ObjectId()
+        self.runner_id = utils.ObjectId()
 
     @cached_static_property
     def collection(cls):

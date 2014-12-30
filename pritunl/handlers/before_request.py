@@ -3,6 +3,7 @@ from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import app
+from pritunl import utils
 
 import flask
 import re
@@ -29,4 +30,4 @@ def parse_object_id(_, values):
     if values:
         for key in values:
             if key.endswith('_id'):
-                values[key] = bson.ObjectId(values[key])
+                values[key] = utils.ObjectId(values[key])

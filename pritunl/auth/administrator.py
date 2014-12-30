@@ -222,7 +222,7 @@ def check_session():
         admin_id = flask.session.get('admin_id')
         if not admin_id:
             return False
-        admin_id = bson.ObjectId(admin_id)
+        admin_id = utils.ObjectId(admin_id)
         session_id = flask.session.get('session_id')
 
         administrator = get_user(admin_id, session_id)

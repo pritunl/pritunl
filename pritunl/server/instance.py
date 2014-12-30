@@ -32,7 +32,7 @@ _resource_locks = collections.defaultdict(threading.Lock)
 class ServerInstance(object):
     def __init__(self, server):
         self.server = server
-        self.id = bson.ObjectId()
+        self.id = utils.ObjectId()
         self.resource_lock = None
         self.interrupt = False
         self.sock_interrupt = False

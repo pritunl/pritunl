@@ -124,11 +124,3 @@ def aggregate(self, *args, **kwargs):
         flask.g.query_time += (time.time() - start)
     return val
 pymongo.collection.Collection.aggregate = aggregate
-
-class ObjectId(bson.ObjectId):
-    def __new__(cls, oid=None):
-        # Patch for pritunl 0.10.x
-        if oid and len(oid) != 24:
-            return oid
-        return object.__new__(cls)
-bson.ObjectId = ObjectId

@@ -17,6 +17,6 @@ def event_get(cursor=None):
         raise flask.abort(500)
 
     if cursor is not None:
-        cursor = bson.ObjectId(cursor)
+        cursor = utils.ObjectId(cursor)
 
     return utils.jsonify(event.get_events(cursor=cursor))

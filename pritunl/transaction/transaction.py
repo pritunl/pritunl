@@ -42,7 +42,7 @@ class Transaction(mongo.MongoObject):
         if lock_id is not None:
             self.lock_id = lock_id
         if self.lock_id is None:
-            self.lock_id = bson.ObjectId()
+            self.lock_id = utils.ObjectId()
 
         if priority is not None:
             self.priority = priority
