@@ -2,16 +2,12 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import settings
-from pritunl import auth
 from pritunl import utils
-from pritunl import mongo
 from pritunl import app
 from pritunl import auth
 from pritunl import event
 
-import time
 import flask
-import bson
 
 @app.app.route('/settings', methods=['GET'])
 @auth.session_auth
