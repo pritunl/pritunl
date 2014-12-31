@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix missing import
+
 Version 1.0.474.91 2014-12-30
 -----------------------------
 
