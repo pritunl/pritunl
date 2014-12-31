@@ -13,7 +13,7 @@ var DEFAULT_MAX = 5;
     templateUrl: 'packages/pritunl/components/rating/rating.html',
     cssUrl: 'rating.css'
 )
-class RatingComponent {
+class RatingComp {
   var stars = [];
 
   @NgTwoWay('rating')

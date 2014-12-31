@@ -9,8 +9,8 @@ import 'package:angular/application_factory.dart' as appfactory;
 
 class Pritunl extends ng.Module {
   Pritunl() {
-    this.bind(rating.RatingComponent);
-    this.bind(status.StatusComponent);
+    this.bind(rating.RatingComp);
+    this.bind(status.StatusComp);
     this.bind(
       ng.RouteInitializerFn,
       toValue: routers.Main

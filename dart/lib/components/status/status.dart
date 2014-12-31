@@ -6,17 +6,15 @@ import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
     selector: 'status',
     templateUrl: 'packages/pritunl/components/status/status.html'
 )
-class StatusComponent {
+class StatusComp {
   var recipes;
   var selected;
 
-  StatusComponent() {
-    print('init');
+  StatusComp() {
     this.recipes = this._load();
   }
 
   select(recipe) {
-    print('select');
     this.selected = recipe;
   }
 
