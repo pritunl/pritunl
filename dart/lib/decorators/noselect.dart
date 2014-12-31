@@ -7,9 +7,7 @@ import 'package:angular/angular.dart' show Decorator;
   selector: '[no-select]'
 )
 class NoSelectDec {
-  var element;
-
-  NoSelectDec(dom.Element this.element) {
+  NoSelectDec(dom.Element element) {
     element.onMouseDown.listen((evt) {
       evt.preventDefault();
     });
