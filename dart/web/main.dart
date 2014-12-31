@@ -1,16 +1,13 @@
 library pritunl;
 
 import 'package:pritunl/routers/routers.dart' as routers;
-import 'package:pritunl/components/status/status.dart' as status;
-import 'package:pritunl/components/rating/rating.dart' as rating;
+import 'package:pritunl/components/components.dart' as components;
 
 import 'package:angular/angular.dart' as ng;
 import 'package:angular/application_factory.dart' as appfactory;
 
 class Pritunl extends ng.Module {
   Pritunl() {
-    this.bind(rating.RatingComp);
-    this.bind(status.StatusComp);
     this.bind(
       ng.RouteInitializerFn,
       toValue: routers.Main
@@ -24,6 +21,7 @@ class Pritunl extends ng.Module {
 
 void main() {
   appfactory.applicationFactory()
+      .addModule(new components.ComponentsMod())
       .addModule(new Pritunl())
       .run();
 }
