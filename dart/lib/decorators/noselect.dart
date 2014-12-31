@@ -4,7 +4,7 @@ import 'dart:html' as dom;
 import 'package:angular/angular.dart' show Decorator;
 
 @Decorator(
-  selector: '[tooltip]'
+  selector: '[no-select]'
 )
 class NoSelectDec {
   var element;
