@@ -4,13 +4,9 @@ import 'package:barback/barback.dart' as barback;
 import 'dart:io' as io;
 import 'dart:convert' as conv;
 
-class SassError implements Exception {
-  var output;
-
-  SassError(this.output);
-
-  toString() => output;
-}
+var sassFiles = new Set();
+var sassTouched = {};
+var sassImports = {};
 
 convert(content) {
   return io.Process.start('scss', ['-I', 'lib']).then((process) {
@@ -59,9 +55,13 @@ addAllPaths(touch, path) {
   });
 }
 
-var sassFiles = new Set();
-var sassTouched = {};
-var sassImports = {};
+class SassError implements Exception {
+  var output;
+
+  SassError(this.output);
+
+  toString() => output;
+}
 
 class SassTran extends barback.Transformer {
   SassTran.asPlugin();
