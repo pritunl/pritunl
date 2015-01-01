@@ -48,6 +48,9 @@ convert(content) {
   }, test: (e) => e is io.ProcessException);
 }
 
+var sassFiles = new Set();
+var sassTouched = {};
+
 class SassTran extends barback.Transformer {
   SassTran.asPlugin();
 
@@ -55,7 +58,31 @@ class SassTran extends barback.Transformer {
 
   apply(transform) {
     return transform.primaryInput.readAsString().then((content) {
+      var curPath = transform.primaryInput.id.path;
       var newId = transform.primaryInput.id.changeExtension('.css');
+      sassFiles.add(curPath);
+
+      if (sassTouched[curPath] == null) {
+        sassTouched[curPath] = 0;
+      }
+      else if (sassTouched[curPath] > 0) {
+        sassTouched[curPath] -= 1;
+      }
+      else {
+        sassFiles.forEach((path) {
+          if (path != curPath) {
+            sassTouched[path] = 2;
+          }
+          else {
+            sassTouched[path] = 1;
+          }
+        });
+        sassFiles.forEach((path) {
+          if (path != curPath) {
+            io.Process.start('touch', ['-c', path]);
+          }
+        });
+      }
 
       return convert(content).then((newContent) {
         transform.addOutput(new barback.Asset.fromString(newId, newContent));
