@@ -1,7 +1,6 @@
 library sass;
 
 import 'package:barback/barback.dart' as barback;
-import 'dart:async' as async;
 import 'dart:io' as io;
 import 'dart:convert' as conv;
 
