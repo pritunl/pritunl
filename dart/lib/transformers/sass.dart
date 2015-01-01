@@ -3,6 +3,14 @@ library sass;
 import 'package:barback/barback.dart' as barback;
 import 'dart:async' as async;
 
+class SassError implements Exception {
+  var output;
+
+  SassError(this.output);
+
+  toString() => output;
+}
+
 class SassTran extends barback.Transformer {
   SassTran.asPlugin();
 
