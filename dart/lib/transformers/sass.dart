@@ -21,7 +21,7 @@ class SassTran extends barback.Transformer {
   }
 
   convert(content) {
-    return io.Process.start('scss', []).then((pro*cess) {
+    return io.Process.start('scss', []).then((process) {
       var stdout = new StringBuffer();
       var stderr = new StringBuffer();
 
