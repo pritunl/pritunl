@@ -59,8 +59,10 @@ class SassTran extends barback.Transformer {
   apply(transform) {
     return transform.primaryInput.readAsString().then((content) {
       var newId = transform.primaryInput.id.changeExtension('.css');
-      var newContent = 'test\n$content';
-      transform.addOutput(new barback.Asset.fromString(newId, newContent));
+
+      return this.convert(content).then((newContent) {
+        transform.addOutput(new barback.Asset.fromString(newId, newContent));
+      });
     });
   }
 }
