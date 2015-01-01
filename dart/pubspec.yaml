@@ -2,8 +2,8 @@ name: pritunl
 version: 1.0.0
 dependencies:
   angular: ">=1.0.0 <2.0.0"
-  web_components: ">=0.10.0 <0.11.0"
-  browser: ">=0.10.0+2 <0.11.0"
+  web_components: ">=0.10.0"
+  browser: ">=0.10.0+2"
   barback: ">=0.14.1"
 transformers:
 - pritunl
