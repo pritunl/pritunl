@@ -6,4 +6,5 @@ dependencies:
   browser: ">=0.10.0+2 <0.11.0"
   barback: ">=0.14.1 <0.16.0"
 transformers:
+- pritunl
 - angular
