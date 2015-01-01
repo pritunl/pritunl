@@ -71,10 +71,7 @@ class SassTran extends barback.Transformer {
       else {
         sassFiles.forEach((path) {
           if (path != curPath) {
-            sassTouched[path] = 2;
-          }
-          else {
-            sassTouched[path] = 1;
+            sassTouched[path] += 1;
           }
         });
         sassFiles.forEach((path) {
