@@ -48,8 +48,20 @@ convert(content) {
   }, test: (e) => e is io.ProcessException);
 }
 
+addAllPaths(touch, path) {
+  if (sassImports[path] == null) {
+    sassImports[path] = new Set();
+  }
+
+  sassImports[path].toList().forEach((p) {
+    touch.add(p);
+    addAllPaths(touch, p);
+  });
+}
+
 var sassFiles = new Set();
 var sassTouched = {};
+var sassImports = {};
 
 class SassTran extends barback.Transformer {
   SassTran.asPlugin();
@@ -62,6 +74,18 @@ class SassTran extends barback.Transformer {
       var newId = transform.primaryInput.id.changeExtension('.css');
       sassFiles.add(curPath);
 
+      var touch = new Set();
+
+      var re = new RegExp(r"@import '(.*?)';");
+      for (var match in re.allMatches(content)) {
+        var path = 'lib/${match.group(1)}';
+
+        if (sassImports[path] == null) {
+          sassImports[path] = new Set();
+        }
+        sassImports[path].add(curPath);
+      }
+
       if (sassTouched[curPath] == null) {
         sassTouched[curPath] = 0;
       }
@@ -69,12 +93,23 @@ class SassTran extends barback.Transformer {
         sassTouched[curPath] -= 1;
       }
       else {
-        sassFiles.forEach((path) {
+        if (sassImports[curPath] == null) {
+          sassImports[curPath] = new Set();
+        }
+
+        sassImports[curPath].toList().forEach((path) {
+          touch.addAll(sassImports[curPath]);
+        });
+
+        addAllPaths(touch, curPath);
+
+        var touchList = touch.toList();
+        touchList.forEach((path) {
           if (path != curPath) {
             sassTouched[path] += 1;
           }
         });
-        sassFiles.forEach((path) {
+        touchList.forEach((path) {
           if (path != curPath) {
             io.Process.start('touch', ['-c', path]);
           }
