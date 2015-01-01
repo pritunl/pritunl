@@ -1,6 +1,6 @@
 library navbar;
 
-import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
+import 'package:angular/angular.dart' show Component;
 
 @Component(
     selector: 'navbar',
