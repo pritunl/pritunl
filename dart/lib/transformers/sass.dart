@@ -52,9 +52,7 @@ convert(content) {
 class SassTran extends barback.Transformer {
   SassTran.asPlugin();
 
-  isPrimary(id) {
-    return new async.Future.value(id.extension == '.scss');
-  }
+  get allowedExtensions => '.scss';
 
   apply(transform) {
     return transform.primaryInput.readAsString().then((content) {
