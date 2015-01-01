@@ -9,6 +9,7 @@ Thumbs.db
 *.pyc
 *.egg
 *.egg-info
+.sass-cache
 /.vagrant
 /build
 /dist
