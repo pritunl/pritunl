@@ -4,7 +4,8 @@ import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
 
 @Component(
     selector: 'status',
-    templateUrl: 'packages/pritunl/components/status/status.html'
+    templateUrl: 'packages/pritunl/components/status/status.html',
+    cssUrl: 'packages/pritunl/components/status/status.css'
 )
 class StatusComp {
   var recipes;
