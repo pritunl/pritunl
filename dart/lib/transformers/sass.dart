@@ -4,9 +4,9 @@ import 'package:barback/barback.dart' as barback;
 import 'dart:io' as io;
 import 'dart:convert' as conv;
 
-var sassFiles = new Set();
-var sassTouched = {};
-var sassImports = {};
+var files = new Set();
+var touched = {};
+var imports = {};
 
 convert(content) {
   return io.Process.start('scss', ['-I', 'lib']).then((process) {
@@ -45,11 +45,11 @@ convert(content) {
 }
 
 addAllPaths(touch, path) {
-  if (sassImports[path] == null) {
-    sassImports[path] = new Set();
+  if (imports[path] == null) {
+    imports[path] = new Set();
   }
 
-  sassImports[path].toList().forEach((p) {
+  imports[path].toList().forEach((p) {
     touch.add(p);
     addAllPaths(touch, p);
   });
@@ -72,7 +72,7 @@ class SassTran extends barback.Transformer {
     return transform.primaryInput.readAsString().then((content) {
       var curPath = transform.primaryInput.id.path;
       var newId = transform.primaryInput.id.changeExtension('.css');
-      sassFiles.add(curPath);
+      files.add(curPath);
 
       var touch = new Set();
 
@@ -80,25 +80,25 @@ class SassTran extends barback.Transformer {
       for (var match in re.allMatches(content)) {
         var path = 'lib/${match.group(1)}';
 
-        if (sassImports[path] == null) {
-          sassImports[path] = new Set();
+        if (imports[path] == null) {
+          imports[path] = new Set();
         }
-        sassImports[path].add(curPath);
+        imports[path].add(curPath);
       }
 
-      if (sassTouched[curPath] == null) {
-        sassTouched[curPath] = 0;
+      if (touched[curPath] == null) {
+        touched[curPath] = 0;
       }
-      else if (sassTouched[curPath] > 0) {
-        sassTouched[curPath] -= 1;
+      else if (touched[curPath] > 0) {
+        touched[curPath] -= 1;
       }
       else {
-        if (sassImports[curPath] == null) {
-          sassImports[curPath] = new Set();
+        if (imports[curPath] == null) {
+          imports[curPath] = new Set();
         }
 
-        sassImports[curPath].toList().forEach((path) {
-          touch.addAll(sassImports[curPath]);
+        imports[curPath].toList().forEach((path) {
+          touch.addAll(imports[curPath]);
         });
 
         addAllPaths(touch, curPath);
