@@ -1,0 +1,36 @@
+@import 'styles/variables.scss';
+
+.navbar {
+  x-label: header;
+  background-color: map-get($header, bg);
+}
+
+.navbar-brand {
+  x-label: header-brand;
+  color: map-get($header-brand, fg);
+}
+
+.nav > li > a {
+  x-label: header-link;
+  color: map-get($header-link, fg);
+}
+
+.navbar-nav > li > a:hover,
+.navbar-nav > li > a:focus {
+  x-label: header-link;
+  color: map-get($header-link, fg-hover);
+  background-color: map-get($header-link, bg-hover);
+}
+
+.navbar-nav > .active > a,
+.navbar-nav > .active > a:hover,
+.navbar-nav > .active > a:focus {
+  x-label: header-link;
+  color: map-get($header-link, fg-active);
+  background-color: map-get($header-link, bg-active);
+}
+
+.nav .upgrade span {
+  x-label: header-label;
+  background-color: map-get($header-label, bg);
+}
