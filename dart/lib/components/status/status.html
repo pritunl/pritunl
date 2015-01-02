@@ -1,21 +1,47 @@
-<h3>Recipe List</h3>
-<ul>
-  <li class="pointer"
-      ng-repeat="recipe in recipes"
-      ng-click="select(recipe)">
-    {{recipe.name}}
-  </li>
-</ul>
-
-<h3>Recipe Details</h3>
-<div no-select><strong>Name: </strong>{{selected.name}}</div>
-<div><strong>Category: </strong>{{selected.category}}</div>
-<div><strong>Rating: </strong><rating max-rating="5" rating="selected.rating"></rating></div>
-<div>
-  <ul>
-    <li ng-repeat="ingredient in selected.ingredients">
-      {{ingredient}}
-    </li>
-  </ul>
-</div>
-<div><strong>Directions: </strong>{{selected.directions}}</div>
+<table>
+  <tbody>
+  <tr>
+    <td class="status-item orgs-status">
+      <h3 class="status-title title">
+        <span class="status-icon glyphicon glyphicon-tower"></span>
+        <span>Organizations</span>
+      </h3>
+      <div class="status-text title">
+        <span class="status-num">-/-</span>
+        <span>available</span>
+      </div>
+    </td>
+    <td class="status-item users-status">
+      <h3 class="status-title title">
+        <span class="status-icon glyphicon glyphicon-user"></span>
+        <span>Users</span>
+      </h3>
+      <div class="status-text title">
+        <span class="status-num">-/-</span>
+        <span>online</span>
+      </div>
+    </td>
+    <td class="status-item last servers-status">
+      <h3 class="status-title title">
+        <span class="status-icon glyphicon glyphicon-cloud"></span>
+        <span>Servers</span>
+      </h3>
+      <div class="status-text title">
+        <span class="status-num">-/-</span>
+        <span>online</span>
+      </div>
+    </td>
+    <td class="status-item last hosts-status">
+      <h3 class="status-title title">
+        <span class="status-icon glyphicon glyphicon-globe"></span>
+        <span>Hosts</span>
+      </h3>
+      <div class="status-text title">
+        <span class="status-num">-/-</span>
+        <span>online</span>
+      </div>
+      <div class="server-info"></div>
+    </td>
+  </tr>
+  </tbody>
+</table>
