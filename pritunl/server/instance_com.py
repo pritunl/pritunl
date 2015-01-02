@@ -251,7 +251,7 @@ class ServerInstanceCom(object):
 
     def client_disconnect(self, client):
         client_id = client.get('client_id')
-        user_id = client.get('org_id')
+        user_id = client.get('user_id')
         user_id = utils.ObjectId(user_id) if user_id else None
         user_type = None
         virt_address = None
