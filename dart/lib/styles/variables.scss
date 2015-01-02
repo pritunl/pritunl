@@ -1,1 +1,16 @@
-$gray-bg2: #525252;
+$header: (
+  bg: #202020,
+);
+$header-brand: (
+  fg: #f2f2f2,
+);
+$header-link: (
+  fg: #777,
+  fg-hover: #fff,
+  bg-hover: transparent,
+  fg-active: #fff,
+  bg-active: #080808,
+);
+$header-label: (
+  bg: #525252,
+)
