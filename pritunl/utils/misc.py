@@ -36,9 +36,15 @@ PyQueue = Queue.Queue
 PyPriorityQueue = Queue.PriorityQueue
 
 def ObjectId(oid=None):
-    if oid is not None and len(oid) == 32:
-        return oid
-    return bson.ObjectId(oid)
+    if oid is None or len(oid) != 32:
+        try:
+            return bson.ObjectId(oid)
+        except:
+            from pritunl import logger
+            logger.exception('Failed to convert object id', 'utils',
+                object_id=oid,
+            )
+    return oid
 
 def now():
     mongo_time_start, mongo_time = settings.local.mongo_time
