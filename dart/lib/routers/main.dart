@@ -1,4 +1,6 @@
-part of routers;
+library main;
+
+import 'package:angular/angular.dart' as ng;
 
 route({path, view}) {
   return ng.ngRoute(
@@ -7,7 +9,7 @@ route({path, view}) {
   );
 }
 
-Main(router, views) {
+MainRout(router, views) {
   views.configure({
     'dashboard': route(
       path: '',
