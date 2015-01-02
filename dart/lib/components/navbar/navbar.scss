@@ -1,68 +1,36 @@
 @import 'styles/base.scss';
 
-.navbar .navbar-brand,
-.navbar .navbar-brand:hover,
-.navbar .navbar-brand:active,
-.login .login-header {
+.navbar-inverse {
+    @include border-radius(0);
+}
+
+.navbar-inverse .navbar-brand {
     font-family: 'Fredoka One', cursive;
     padding: 13px 15px 0 15px;
     font-size: 28px;
     cursor: default;
-    color: #ececec;
+    color: #f2f2f2;
 }
 
-.nav .hosts {
+.premium-brand,
+.enterprise-brand {
     display: none;
 }
 
-.navbar .navbar-brand.premium-brand,
-.navbar .navbar-brand.enterprise-brand {
+.hosts {
     display: none;
 }
 
-.premium .navbar .navbar-brand.brand,
-.enterprise .navbar .navbar-brand.brand {
-    display: none;
-}
-
-.premium .navbar .navbar-brand.premium-brand {
-    display: block;
-}
-
-.enterprise .navbar .navbar-brand.enterprise-brand {
-    display: block;
-}
-
-.premium .navbar .enterprise-upgrade,
-.premium-license .navbar .enterprise-upgrade {
-    display: none;
-}
-
-.premium .navbar .enterprise-settings,
-.premium-license .navbar .enterprise-settings {
-    display: block;
-}
-
-.enterprise .navbar .enterprise-upgrade,
-.enterprise-license .navbar .enterprise-upgrade {
-    display: none;
-}
-
-.enterprise .navbar .enterprise-settings,
-.enterprise-license .navbar .enterprise-settings {
-    display: block;
-}
-
-.navbar .enterprise-upgrade a {
+.upgrade a {
     padding-top: 13px;
 }
 
-.navbar .enterprise-upgrade span {
+.upgrade span {
     background-color: $gray-bg2;
     padding: 4px;
 }
 
-.navbar .enterprise-settings {
+.subscription {
     display: none;
 }
 
@@ -75,14 +43,10 @@
     padding: 3px;
     opacity: 0.9;
     z-index: 100000;
-//.border-bottom-right-radius(0);
-//.border-bottom-left-radius(0);
+    @include border-bottom-right-radius(0);
+    @include border-bottom-left-radius(0);
 }
 
 .navbar .feedback:hover {
     opacity: 1;
-}
-
-.navbar .nav a {
-    cursor: pointer;
 }
