@@ -1,3 +1,9 @@
+pritunl (1.0.477.0-0ubuntu1) unstable; urgency=low
+
+  * Fix issue with client vpn connections
+
+ -- Pritunl <contact@pritunl.com>  Fri, 02 Jan 2015 00:00:00 -0400
+
 pritunl (1.0.475.0-0ubuntu1) unstable; urgency=low
 
   * Fix missing import
