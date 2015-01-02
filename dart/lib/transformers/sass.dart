@@ -106,7 +106,7 @@ class SassTran extends barback.Transformer {
         var touchList = touch.toList();
         touchList.forEach((path) {
           if (path != curPath) {
-            sassTouched[path] += 1;
+            touched[path] += 1;
           }
         });
         touchList.forEach((path) {
