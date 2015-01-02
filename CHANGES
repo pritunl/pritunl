@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with client vpn connections
+
 Version 1.0.475.0 2014-12-31
 ----------------------------
 
