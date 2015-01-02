@@ -1,15 +1,14 @@
 @import 'styles/base.scss';
 
-.navbar-inverse {
+.navbar {
     @include border-radius(0);
 }
 
-.navbar-inverse .navbar-brand {
+.navbar-brand {
     font-family: 'Fredoka One', cursive;
     padding: 13px 15px 0 15px;
     font-size: 28px;
     cursor: default;
-    color: #f2f2f2;
 }
 
 .premium-brand,
@@ -26,7 +25,6 @@
 }
 
 .upgrade span {
-    background-color: $gray-bg2;
     padding: 4px;
 }
 
