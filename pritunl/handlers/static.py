@@ -5,12 +5,18 @@ from pritunl import app
 from pritunl import settings
 from pritunl import static
 from pritunl import auth
+from pritunl import utils
 
 import flask
 
+@app.app.route('/s/', methods=['GET'])
 @app.app.route('/s/<path:file_path>', methods=['GET'])
 @auth.session_auth
-def static_get(file_path):
+def static_get(file_path='index.html'):
+    if settings.local.dart_url:
+        response = utils.request.get(settings.local.dart_url + file_path)
+        return flask.Response(response.content, headers=response.headers)
+
     try:
         static_file = static.StaticFile(settings.conf.www_path,
             file_path, cache=True)
@@ -37,6 +43,10 @@ def robots_static_get():
 def index_static_get():
     if not auth.check_session():
         return flask.redirect('login')
+
+    if settings.local.dart_url:
+        return flask.redirect('/s/')
+
     static_file = static.StaticFile(settings.conf.www_path,
         'index.html', cache=False)
 
