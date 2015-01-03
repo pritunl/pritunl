@@ -3,6 +3,11 @@
 // ####################################
 // base
 // ####################################
+body {
+  x-label: body;
+  background-color: #efefef;
+}
+
 table,
 table td {
   x-label: table;
@@ -24,40 +29,41 @@ table td {
 // ####################################
 // navbar
 // ####################################
-.navbar {
+body /deep/ nav {
   x-label: header;
+  border-color: map-get($header, border);
   background-color: map-get($header, bg);
 }
 
-.navbar-brand,
-.navbar-brand:focus,
-.navbar-brand:active,
-.navbar-brand:hover {
+body /deep/ nav .brand,
+body /deep/ nav .brand:focus,
+body /deep/ nav .brand:active,
+body /deep/ nav .brand:hover {
   x-label: header-brand;
   color: map-get($header-brand, fg);
 }
 
-.nav > li > a {
+body /deep/ nav .links > li > a {
   x-label: header-link;
   color: map-get($header-link, fg);
 }
 
-.navbar-nav > li > a:hover,
-.navbar-nav > li > a:focus {
+body /deep/ nav .links > li > a:hover,
+body /deep/ nav .links > li > a:focus {
   x-label: header-link;
   color: map-get($header-link, fg-hover);
   background-color: map-get($header-link, bg-hover);
 }
 
-.navbar-nav > .active > a,
-.navbar-nav > .active > a:hover,
-.navbar-nav > .active > a:focus {
+body /deep/ nav .links > .active > a,
+body /deep/ nav .links > .active > a:hover,
+body /deep/ nav .links > .active > a:focus {
   x-label: header-link;
   color: map-get($header-link, fg-active);
   background-color: map-get($header-link, bg-active);
 }
 
-.nav .upgrade span {
+body /deep/ nav .label {
   x-label: header-label;
   background-color: map-get($header-label, bg);
 }
