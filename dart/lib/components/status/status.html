@@ -1,45 +1,45 @@
-<table>
+<table class="status">
   <tbody>
   <tr>
-    <td class="status-item orgs-status">
-      <h3 class="status-title title">
-        <span class="status-icon glyphicon glyphicon-tower"></span>
+    <td class="item">
+      <h3 class="name title">
+        <span class="icon glyphicon glyphicon-tower"></span>
         <span>Organizations</span>
       </h3>
-      <div class="status-text title">
-        <span class="status-num">-/-</span>
-        <span>available</span>
-      </div>
+      <p class="info title">
+        <span class="num">{{model.org_count}}/{{model.org_count}}</span>
+        <span class="text">available</span>
+      </p>
     </td>
-    <td class="status-item users-status">
-      <h3 class="status-title title">
-        <span class="status-icon glyphicon glyphicon-user"></span>
+    <td class="item">
+      <h3 class="name title">
+        <span class="icon glyphicon glyphicon-user"></span>
         <span>Users</span>
       </h3>
-      <div class="status-text title">
-        <span class="status-num">-/-</span>
-        <span>online</span>
-      </div>
+      <p class="info title">
+        <span class="num">-/-</span>
+        <span class="text">online</span>
+      </p>
     </td>
-    <td class="status-item last servers-status">
-      <h3 class="status-title title">
-        <span class="status-icon glyphicon glyphicon-cloud"></span>
+    <td class="item">
+      <h3 class="name title">
+        <span class="icon glyphicon glyphicon-cloud"></span>
         <span>Servers</span>
       </h3>
-      <div class="status-text title">
-        <span class="status-num">-/-</span>
-        <span>online</span>
-      </div>
+      <p class="info title">
+        <span class="num">-/-</span>
+        <span class="text">online</span>
+      </p>
     </td>
-    <td class="status-item last hosts-status">
-      <h3 class="status-title title">
-        <span class="status-icon glyphicon glyphicon-globe"></span>
-        <span>Hosts</span>
+    <td class="item hosts-status">
+      <h3 class="name title">
+        <span class="icon glyphicon glyphicon-globe"></span>
+        <span class="text">Hosts</span>
       </h3>
-      <div class="status-text title">
-        <span class="status-num">-/-</span>
-        <span>online</span>
-      </div>
+      <p class="info title">
+        <span class="num">-/-</span>
+        <span class="text">online</span>
+      </p>
       <div class="server-info"></div>
     </td>
   </tr>
