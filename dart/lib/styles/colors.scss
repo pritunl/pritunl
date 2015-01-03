@@ -1,11 +1,38 @@
 @import 'styles/variables.scss';
 
+// ####################################
+// base
+// ####################################
+table,
+table td {
+  x-label: table;
+  border-color: map-get($table, border);
+}
+
+.title {
+  x-label: title;
+  color: map-get($title, fg);
+}
+
+// ####################################
+// container
+// ####################################
+.container {
+  width: 940px;
+}
+
+// ####################################
+// navbar
+// ####################################
 .navbar {
   x-label: header;
   background-color: map-get($header, bg);
 }
 
-.navbar-brand {
+.navbar-brand,
+.navbar-brand:focus,
+.navbar-brand:active,
+.navbar-brand:hover {
   x-label: header-brand;
   color: map-get($header-brand, fg);
 }
@@ -34,3 +61,11 @@
   x-label: header-label;
   background-color: map-get($header-label, bg);
 }
+
+// ####################################
+// status
+// ####################################
+status::shadow .icon {
+  color: map-get($status-icon, fg);
+}
+
