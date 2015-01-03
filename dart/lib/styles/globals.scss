@@ -10,8 +10,15 @@
   box-sizing: border-box;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
 body {
-  background-color: #efefef;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  margin: 0;
   overflow-y: scroll;
 }
 
@@ -19,8 +26,10 @@ a,
 a:focus,
 a:hover,
 a:active {
+  text-decoration: none;
   cursor: pointer;
   outline: 0;
+  background-color: transparent;
 }
 
 select:-moz-focusring {
