@@ -1,15 +1,32 @@
 @import 'styles/base.scss';
 
-.navbar {
+*,
+*:before,
+*:after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+nav {
+  min-height: 51px;
+  position: relative;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
   @include border-radius(0);
 }
 
-.navbar-brand,
-.navbar-brand:focus,
-.navbar-brand:active,
-.navbar-brand:hover {
+nav header {
+  float: left;
+}
+
+.brand,
+.brand:focus,
+.brand:active,
+.brand:hover {
+  float: left;
   font-family: 'Fredoka One', cursive;
-  padding: 13px 15px 0 15px;
+  padding: 6px 15px 0 0;
   font-size: 28px;
   cursor: default;
 }
@@ -17,6 +34,29 @@
 .premium-brand,
 .enterprise-brand {
   display: none;
+}
+
+.links {
+  float: left;
+  padding: 0;
+  margin: 0;
+}
+
+.links-right {
+  float: right;
+}
+
+.links > li {
+  float: left;
+  position: relative;
+  display: block;
+}
+
+.links > li > a {
+  line-height: 20px;
+  position: relative;
+  display: block;
+  padding: 15px;
 }
 
 .hosts {
@@ -35,7 +75,7 @@
   display: none;
 }
 
-.navbar .feedback {
+.feedback {
   cursor: pointer;
   position: fixed;
   font-size: 13px;
@@ -48,6 +88,6 @@
   @include border-bottom-left-radius(0);
 }
 
-.navbar .feedback:hover {
+.feedback:hover {
   opacity: 1;
 }
