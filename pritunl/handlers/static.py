@@ -12,10 +12,14 @@ import flask
 @app.app.route('/s/', methods=['GET'])
 @app.app.route('/s/<path:file_path>', methods=['GET'])
 @auth.session_auth
-def static_get(file_path='index.html'):
+def static_get(file_path=None):
     if settings.local.dart_url:
+        file_path = file_path or 'index.html'
         response = utils.request.get(settings.local.dart_url + file_path)
         return flask.Response(response.content, headers=response.headers)
+
+    if not file_path:
+        return flask.abort(404)
 
     try:
         static_file = static.StaticFile(settings.conf.www_path,
