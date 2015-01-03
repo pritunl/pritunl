@@ -4,7 +4,10 @@
     @include border-radius(0);
 }
 
-.navbar-brand {
+.navbar-brand,
+.navbar-brand:focus,
+.navbar-brand:active,
+.navbar-brand:hover {
     font-family: 'Fredoka One', cursive;
     padding: 13px 15px 0 15px;
     font-size: 28px;
