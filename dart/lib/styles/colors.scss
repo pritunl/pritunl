@@ -59,6 +59,29 @@ body /deep/ box-label::shadow .danger {
 }
 
 // ####################################
+// fraction
+// ####################################
+body /deep/ fraction::shadow .default {
+  x-label: text;
+  color: map-get($text, default-fg);
+}
+
+body /deep/ fraction::shadow .danger {
+  x-label: text;
+  color: map-get($text, danger-fg);
+}
+
+body /deep/ fraction::shadow .warning {
+  x-label: text;
+  color: map-get($text, warning-fg);
+}
+
+body /deep/ fraction::shadow .success {
+  x-label: text;
+  color: map-get($text, success-fg);
+}
+
+// ####################################
 // navbar
 // ####################################
 body /deep/ navbar::shadow nav {
