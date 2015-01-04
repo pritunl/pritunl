@@ -27,26 +27,31 @@ body /deep/ box-label::shadow .default {
   color: map-get($label, default-fg);
   background-color: map-get($label, default-bg);
 }
+
 body /deep/ box-label::shadow .primary {
   x-label: label;
   color: map-get($label, primary-fg);
   background-color: map-get($label, primary-bg);
 }
+
 body /deep/ box-label::shadow .success {
   x-label: label;
   color: map-get($label, success-fg);
   background-color: map-get($label, success-bg);
 }
+
 body /deep/ box-label::shadow .info {
   x-label: label;
   color: map-get($label, info-fg);
   background-color: map-get($label, info-bg);
 }
+
 body /deep/ box-label::shadow .warning {
   x-label: label;
   color: map-get($label, warning-fg);
   background-color: map-get($label, warning-bg);
 }
+
 body /deep/ box-label::shadow .danger {
   x-label: label;
   color: map-get($label, danger-fg);
