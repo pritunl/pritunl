@@ -1,7 +1,6 @@
 library boilerplate;
 
 import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
-import 'package:angular/angular.dart' as ng;
 
 @Component(
   selector: 'boilerplate',
