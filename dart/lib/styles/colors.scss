@@ -8,48 +8,47 @@ body {
   background-color: #efefef;
 }
 
-table,
-table td {
+body /deep/ table,
+body /deep/ table td {
   x-label: table;
   border-color: map-get($table, border);
 }
 
-.title {
+body /deep/ .title {
   x-label: title;
   color: map-get($title, fg);
-}
-
-// ####################################
-// container TODO
-// ####################################
-.container {
-  width: 940px;
 }
 
 // ####################################
 // label
 // ####################################
 body /deep/ box-label::shadow .default {
+  x-label: label;
   color: map-get($label, default-fg);
   background-color: map-get($label, default-bg);
 }
 body /deep/ box-label::shadow .primary {
+  x-label: label;
   color: map-get($label, primary-fg);
   background-color: map-get($label, primary-bg);
 }
 body /deep/ box-label::shadow .success {
+  x-label: label;
   color: map-get($label, success-fg);
   background-color: map-get($label, success-bg);
 }
 body /deep/ box-label::shadow .info {
+  x-label: label;
   color: map-get($label, info-fg);
   background-color: map-get($label, info-bg);
 }
 body /deep/ box-label::shadow .warning {
+  x-label: label;
   color: map-get($label, warning-fg);
   background-color: map-get($label, warning-bg);
 }
 body /deep/ box-label::shadow .danger {
+  x-label: label;
   color: map-get($label, danger-fg);
   background-color: map-get($label, danger-bg);
 }
@@ -57,41 +56,41 @@ body /deep/ box-label::shadow .danger {
 // ####################################
 // navbar
 // ####################################
-body /deep/ nav {
+body /deep/ navbar::shadow nav {
   x-label: header;
   border-color: map-get($header, border);
   background-color: map-get($header, bg);
 }
 
-body /deep/ nav .brand,
-body /deep/ nav .brand:focus,
-body /deep/ nav .brand:active,
-body /deep/ nav .brand:hover {
+body /deep/ navbar::shadow .brand,
+body /deep/ navbar::shadow .brand:focus,
+body /deep/ navbar::shadow .brand:active,
+body /deep/ navbar::shadow .brand:hover {
   x-label: header-brand;
   color: map-get($header-brand, fg);
 }
 
-body /deep/ nav .links > li > a {
+body /deep/ navbar::shadow .links > li > a {
   x-label: header-link;
   color: map-get($header-link, fg);
 }
 
-body /deep/ nav .links > li > a:hover,
-body /deep/ nav .links > li > a:focus {
+body /deep/ navbar::shadow .links > li > a:hover,
+body /deep/ navbar::shadow .links > li > a:focus {
   x-label: header-link;
   color: map-get($header-link, fg-hover);
   background-color: map-get($header-link, bg-hover);
 }
 
-body /deep/ nav .links > .active > a,
-body /deep/ nav .links > .active > a:hover,
-body /deep/ nav .links > .active > a:focus {
+body /deep/ navbar::shadow .links > .active > a,
+body /deep/ navbar::shadow .links > .active > a:hover,
+body /deep/ navbar::shadow .links > .active > a:focus {
   x-label: header-link;
   color: map-get($header-link, fg-active);
   background-color: map-get($header-link, bg-active);
 }
 
-body /deep/ nav .label {
+body /deep/ navbar::shadow box-label::shadow .default {
   x-label: header-label;
   background-color: map-get($header-label, bg);
 }
@@ -99,7 +98,6 @@ body /deep/ nav .label {
 // ####################################
 // status
 // ####################################
-status::shadow .icon {
+body /deep/ status::shadow .icon {
   color: map-get($status-icon, fg);
 }
-
