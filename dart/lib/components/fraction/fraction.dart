@@ -31,6 +31,28 @@ class FractionComp {
   @NgAttr('full-style')
   var fullStyle;
 
+  get numerStr {
+    if (this.numer != null) {
+      try {
+        int.parse(this.numer);
+        return this.numer;
+      } on FormatException catch(_) {
+      }
+    }
+    return '-';
+  }
+
+  get denomStr {
+    if (this.denom != null) {
+      try {
+        int.parse(this.denom);
+        return this.denom;
+      } on FormatException catch(_) {
+      }
+    }
+    return '-';
+  }
+
   get numerInt {
     if (this.numer == null) {
       return null;
