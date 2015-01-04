@@ -10,4 +10,8 @@ import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
 class GlyphiconComp {
   @NgAttr('icon-type')
   var iconType;
+
+  get iconClass {
+    return 'glyphicon glyphicon-${this.iconType}';
+  }
 }
