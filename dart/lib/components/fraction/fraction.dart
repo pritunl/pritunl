@@ -9,7 +9,7 @@ var DEFAULT_FULL_STYLE = 'success';
 
 @Component(
   selector: 'fraction',
-  template: '<span ng-class="colorType">{{numer}}/{{denom}}</span>',
+  template: '<span ng-class="colorType">{{numerStr}}/{{denomStr}}</span>',
   cssUrl: 'packages/pritunl/components/fraction/fraction.css'
 )
 class FractionComp {
