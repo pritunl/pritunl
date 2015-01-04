@@ -1,5 +1,13 @@
 @import 'styles/base.scss';
 
+.version {
+  position: absolute;
+  top: -1px;
+  right: 2px;
+  font-size: 12px;
+  opacity: 0.1;
+}
+
 .status {
   width: 100%;
   table-layout: fixed;
