@@ -52,6 +52,7 @@
   font-weight: normal;
 }
 
-.glyphicon-cloud {
-  top: 4px;
+glyphicon[icon-type="cloud"] {
+  top: 3px;
+  position: relative;
 }
