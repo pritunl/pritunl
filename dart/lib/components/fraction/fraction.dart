@@ -59,7 +59,7 @@ class FractionComp {
     }
     try {
       return int.parse(this.numer);
-    } on FormatException catch(err) {
+    } on FormatException catch(_) {
       return null;
     }
   }
@@ -70,7 +70,7 @@ class FractionComp {
     }
     try {
       return int.parse(this.denom);
-    } on FormatException catch(err) {
+    } on FormatException catch(_) {
       return null;
     }
   }
