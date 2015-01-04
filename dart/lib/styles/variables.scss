@@ -1,13 +1,40 @@
+// ####################################
+// base
+// ####################################
+$body: (
+  bg: #efefef,
+);
 $table: (
   border: #cfcfcf,
 );
-
 $title: (
   fg: #4d535c,
 );
 
+// ####################################
+// label
+// ####################################
+$label: (
+  default-fg: #fff,
+  default-bg: #777,
+  primary-fg: #fff,
+  primary-bg: #337ab7,
+  success-fg: #fff,
+  success-bg: #5cb85c,
+  info-fg: #fff,
+  info-bg: #5bc0de,
+  warning-fg: #fff,
+  warning-bg: #f0ad4e,
+  danger-fg: #fff,
+  danger-bg: #d9534f,
+);
+
+// ####################################
+// header
+// ####################################
 $header: (
   bg: #202020,
+  border: #080808,
 );
 $header-brand: (
   fg: #f2f2f2,
@@ -23,6 +50,9 @@ $header-label: (
   bg: #525252,
 );
 
+// ####################################
+// status
+// ####################################
 $status-icon: (
   fg: #5585a0,
 );
