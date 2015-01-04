@@ -1,4 +1,5 @@
 @import 'styles/variables.scss';
+@import 'styles/colors.scss';
 
 *,
 *:before,
@@ -20,113 +21,97 @@ body {
   overflow-y: scroll;
 }
 
-a,
-a:focus,
-a:hover,
-a:active {
+body /deep/ a,
+body /deep/ a:focus,
+body /deep/ a:hover,
+body /deep/ a:active {
   text-decoration: none;
   cursor: pointer;
   outline: 0;
   background-color: transparent;
 }
 
-select:-moz-focusring {
+body /deep/ select:-moz-focusring {
   color: transparent;
   text-shadow: 0 0 0 #555;
 }
 
-button,
-input,
-optgroup,
-select,
-textarea {
+body /deep/ button,
+body /deep/ input,
+body /deep/ optgroup,
+body /deep/ select,
+body /deep/ textarea {
   margin: 0;
   font: inherit;
   color: inherit;
 }
-button {
+body /deep/ button {
   overflow: visible;
 }
-button,
-select {
+body /deep/ button,
+body /deep/ select {
   text-transform: none;
 }
-button,
-html input[type="button"],
-input[type="reset"],
-input[type="submit"] {
+body /deep/ button,
+body /deep/ html input[type="button"],
+body /deep/ input[type="reset"],
+body /deep/ input[type="submit"] {
   -webkit-appearance: button;
   cursor: pointer;
 }
-button[disabled],
-html input[disabled] {
+body /deep/ button[disabled],
+body /deep/ html input[disabled] {
   cursor: default;
 }
-button::-moz-focus-inner,
-input::-moz-focus-inner {
+body /deep/ button::-moz-focus-inner,
+body /deep/ input::-moz-focus-inner {
   padding: 0;
   border: 0;
 }
-input {
+body /deep/ input {
   line-height: normal;
 }
-input[type="checkbox"],
-input[type="radio"] {
+body /deep/ input[type="checkbox"],
+body /deep/ input[type="radio"] {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   padding: 0;
 }
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
+body /deep/ input[type="number"]::-webkit-inner-spin-button,
+body /deep/ input[type="number"]::-webkit-outer-spin-button {
   height: auto;
 }
-input[type="search"] {
+body /deep/ input[type="search"] {
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
   -webkit-appearance: textfield;
 }
-input[type="search"]::-webkit-search-cancel-button,
-input[type="search"]::-webkit-search-decoration {
+body /deep/ input[type="search"]::-webkit-search-cancel-button,
+body /deep/ input[type="search"]::-webkit-search-decoration {
   -webkit-appearance: none;
 }
 
-ul {
+body /deep/ ul {
   padding-left: 30px;
 }
 
-.form-control[disabled],
-.form-control[readonly],
-fieldset[disabled] .form-control {
+body /deep/ .form-control[disabled],
+body /deep/ .form-control[readonly],
+body /deep/ fieldset[disabled] .form-control {
   cursor: default;
 }
 
-.title {
+body /deep/ .container {
+  width: 940px;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+body /deep/ .title {
   font-weight: bold;
   font-family: 'Ubuntu', sans-serif;
-}
-
-@font-face {
-  font-family: 'Fredoka One';
-  font-style: normal;
-  font-weight: 400;
-  src: url('../fonts/fredoka-one.eot') format('embedded-opentype'),
-  url('../fonts/fredoka-one.woff') format('woff');
-}
-
-@font-face {
-  font-family: 'Ubuntu';
-  font-style: normal;
-  font-weight: 400;
-  src: url('../fonts/ubuntu.eot') format('embedded-opentype'),
-  url('../fonts/ubuntu.woff') format('woff');
-}
-
-@font-face {
-  font-family: 'Ubuntu';
-  font-style: normal;
-  font-weight: 700;
-  src: url('../fonts/ubuntu-bold.eot') format('embedded-opentype'),
-  url('../fonts/ubuntu-bold.woff') format('woff');
 }
