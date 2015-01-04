@@ -36,6 +36,11 @@ body /deep/ select:-moz-focusring {
   text-shadow: 0 0 0 #555;
 }
 
+body /deep/ table {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
 body /deep/ button,
 body /deep/ input,
 body /deep/ optgroup,
