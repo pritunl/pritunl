@@ -1,0 +1,53 @@
+@import 'styles/base.scss';
+
+.log-container {
+  margin-bottom: 25px;
+  border: 1px solid #CFCFCF;
+  background-color: #F9F9F9;
+  padding: 20px 20px 5px 20px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  -webkit-box-shadow: 0 2px 1px rgba(0, 0, 0, 0.05), 0 -1px 2px rgba(0, 0, 0, 0.05) inset;
+  -moz-box-shadow: 0 2px 1px rgba(0, 0, 0, 0.05), 0 -1px 2px rgba(0, 0, 0, 0.05) inset;
+  -o-box-shadow: 0 2px 1px rgba(0, 0, 0, 0.05), 0 -1px 2px rgba(0, 0, 0, 0.05) inset;
+  box-shadow: 0 2px 1px rgba(0, 0, 0, 0.05), 0 -1px 2px rgba(0, 0, 0, 0.05) inset;
+  -webkit-background-clip: padding;
+  -moz-background-clip: padding;
+  background-clip: padding-box;
+}
+
+.title {
+  color: #4D535C;
+  margin: 0;
+  font-size: 20px;
+  padding-bottom: 17px;
+  border-bottom: 1px solid #CFCFCF;
+}
+
+.entry {
+  color: #4D535C;
+  padding: 5px 15px 5px 10px;
+  border-bottom: 1px solid #CFCFCF;
+}
+
+.entry span {
+  vertical-align: top;
+}
+
+.entry glyphicon {
+  color: #1F83BB;
+  font-size: 15px;
+  margin-right: 7px;
+  float: left;
+  top: 3px;
+}
+
+.entry .message {
+  float: left;
+}
+
+.entry .time {
+  color: #777;
+  float: right;
+}
