@@ -126,6 +126,11 @@ body /deep/ navbar::shadow box-label::shadow .default {
 // ####################################
 // status
 // ####################################
-body /deep/ status::shadow .icon {
+body /deep/ status::shadow .version {
+  x-label: header-link;
+  color: map-get($header-link, fg);
+}
+
+body /deep/ status::shadow glyphicon::shadow .glyphicon {
   color: map-get($status-icon, fg);
 }
