@@ -4,7 +4,7 @@ import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
 
 @Component(
   selector: 'box-label',
-  templateUrl: 'packages/pritunl/components/box_label/box_label.html',
+  template: '<span class="{{labelType}}"><content></content></span>',
   cssUrl: 'packages/pritunl/components/box_label/box_label.css'
 )
 class BoxLabelComp {
