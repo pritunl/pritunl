@@ -25,7 +25,7 @@ class LogEntry(mongo.MongoObject):
     def dict(self):
         return {
             'id': self.id,
-            'timestamp': self.timestamp.strftime('%s'),
+            'timestamp': int(self.timestamp.strftime('%s')),
             'message': self.message,
         }
 
