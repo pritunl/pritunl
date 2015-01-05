@@ -106,26 +106,99 @@ body /deep/ input[type="search"]::-webkit-search-cancel-button,
 body /deep/ input[type="search"]::-webkit-search-decoration {
   -webkit-appearance: none;
 }
-
+body /deep/ input,
+body /deep/ button,
+body /deep/ select,
+body /deep/ textarea {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+body /deep/ h1,
+body /deep/ h2,
+body /deep/ h3,
+body /deep/ h4,
+body /deep/ h5,
+body /deep/ h6 {
+  font-family: inherit;
+  font-weight: 500;
+  line-height: 1.1;
+  color: inherit;
+}
+body /deep/ h1 small,
+body /deep/ h2 small,
+body /deep/ h3 small,
+body /deep/ h4 small,
+body /deep/ h5 small,
+body /deep/ h6 small {
+  font-weight: normal;
+  line-height: 1;
+}
 body /deep/ ul {
-  padding-left: 30px;
+  padding-left: 0;
+  margin: 0;
 }
-
-body /deep/ .form-control[disabled],
-body /deep/ .form-control[readonly],
-body /deep/ fieldset[disabled] .form-control {
-  cursor: default;
-}
-
-body /deep/ .container {
-  width: 940px;
-  padding-right: 15px;
-  padding-left: 15px;
-  margin-right: auto;
-  margin-left: auto;
+body /deep/ li {
+  list-style-type: none;
 }
 
 body /deep/ .title {
   font-weight: bold;
   font-family: 'Ubuntu', sans-serif;
+}
+
+body /deep/ .clearfix:before,
+body /deep/ .clearfix:after {
+  display: table;
+  content: " ";
+}
+
+body /deep/ .clearfix:after {
+  clear: both;
+}
+
+// TODO
+body /deep/ .dl-horizontal dd:before,
+body /deep/ .dl-horizontal dd:after,
+body /deep/ .row:before,
+body /deep/ .row:after,
+body /deep/ .form-horizontal .form-group:before,
+body /deep/ .form-horizontal .form-group:after,
+body /deep/ .btn-toolbar:before,
+body /deep/ .btn-toolbar:after,
+body /deep/ .btn-group-vertical > .btn-group:before,
+body /deep/ .btn-group-vertical > .btn-group:after,
+body /deep/ .nav:before,
+body /deep/ .nav:after,
+body /deep/ .navbar:before,
+body /deep/ .navbar:after,
+body /deep/ .navbar-header:before,
+body /deep/ .navbar-header:after,
+body /deep/ .navbar-collapse:before,
+body /deep/ .navbar-collapse:after,
+body /deep/ .pager:before,
+body /deep/ .pager:after,
+body /deep/ .panel-body:before,
+body /deep/ .panel-body:after,
+body /deep/ .modal-footer:before,
+body /deep/ .modal-footer:after {
+  display: table;
+  content: " ";
+}
+
+// TODO
+body /deep/ .clearfix:after,
+body /deep/ .dl-horizontal dd:after,
+body /deep/ .row:after,
+body /deep/ .form-horizontal .form-group:after,
+body /deep/ .btn-toolbar:after,
+body /deep/ .btn-group-vertical > .btn-group:after,
+body /deep/ .nav:after,
+body /deep/ .navbar:after,
+body /deep/ .navbar-header:after,
+body /deep/ .navbar-collapse:after,
+body /deep/ .pager:after,
+body /deep/ .panel-body:after,
+body /deep/ .modal-footer:after {
+  clear: both;
 }
