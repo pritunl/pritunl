@@ -11,8 +11,12 @@ route({path, view}) {
 
 MainRout(router, views) {
   views.configure({
-    'dashboard': route(
+    'root': route(
       path: '',
+      view: 'dashboard.html'
+    ),
+    'dashboard': route(
+      path: '/dashboard',
       view: 'dashboard.html'
     )
   });
