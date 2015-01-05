@@ -2,9 +2,7 @@ library datetime;
 
 import 'package:angular/angular.dart' show Formatter;
 
-@Formatter(
-  name: 'datetime'
-)
+@Formatter(name: 'datetime')
 class DatetimeForm {
   call(time) {
     var date = new DateTime.fromMillisecondsSinceEpoch(time * 1000);
