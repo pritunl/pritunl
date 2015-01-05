@@ -657,7 +657,7 @@ def server_link_delete(server_id, link_server_id):
 @auth.session_auth
 def server_operation_put(server_id, operation):
     fields = server.dict_fields + ['hosts', 'links', 'replica_count',
-        'tls_auth_key', 'ca_certificate'])
+        'tls_auth_key', 'ca_certificate']
 
     svr = server.get_by_id(server_id, fields=fields)
 
