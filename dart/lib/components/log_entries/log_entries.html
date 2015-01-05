@@ -4,7 +4,7 @@
     <li class="entry clearfix" ng-repeat="entry in entries">
       <glyphicon icon-type="record"></glyphicon>
       <span class="message">{{entry.message}}</span>
-      <span class="time">{{entry.timestamp}}</span>
+      <span class="time">{{entry.timestamp | datetime}}</span>
     </li>
   </ul>
 </div>
