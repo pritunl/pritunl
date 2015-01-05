@@ -12,6 +12,8 @@ import 'package:pritunl/components/log_entries/log_entries.dart'
   as log_entries;
 import 'package:pritunl/components/navbar/navbar.dart'
   as navbar;
+import 'package:pritunl/components/organizations/organizations.dart'
+  as organizations;
 import 'package:pritunl/components/rating/rating.dart'
   as rating;
 import 'package:pritunl/components/status/status.dart'
@@ -27,6 +29,7 @@ class ComponentsMod extends ng.Module {
     this.bind(glyphicon.GlyphiconComp);
     this.bind(log_entries.LogEntriesComp);
     this.bind(navbar.NavbarComp);
+    this.bind(organizations.OrganizationsComp);
     this.bind(rating.RatingComp);
     this.bind(status.StatusComp);
   }
