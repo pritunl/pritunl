@@ -9,8 +9,8 @@ import 'package:angular/angular.dart' as ng;
     cssUrl: 'packages/pritunl/components/status/status.css'
 )
 class StatusComp {
-  var model;
   var http;
+  var model;
 
   StatusComp(ng.Http this.http) {
     this.update();
