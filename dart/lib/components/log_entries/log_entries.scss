@@ -2,7 +2,8 @@
 
 .log-container {
   margin-bottom: 25px;
-  border: 1px solid;
+  border-width: 1px;
+  border-style: solid;
   padding: 20px 20px 5px 20px;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
@@ -20,7 +21,8 @@
   margin: 0;
   font-size: 20px;
   padding-bottom: 17px;
-  border-bottom: 1px solid;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
 }
 
 .entry {
@@ -28,7 +30,8 @@
 }
 
 .entry + .entry {
-  border-top: 1px solid;
+  border-top-width: 1px;
+  border-top-style: solid;
 }
 
 .entry span {
