@@ -22,6 +22,7 @@ class ComponentsMod extends ng.Module {
     this.bind(box_label.BoxLabelComp);
     this.bind(fraction.FractionComp);
     this.bind(glyphicon.GlyphiconComp);
+    this.bind(log_entries.LogEntriesComp);
     this.bind(navbar.NavbarComp);
     this.bind(rating.RatingComp);
     this.bind(status.StatusComp);
