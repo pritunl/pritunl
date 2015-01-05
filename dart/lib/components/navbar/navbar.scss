@@ -78,10 +78,9 @@ nav header {
 .feedback {
   cursor: pointer;
   position: fixed;
-  font-size: 13px;
+  font-size: 15px;
   bottom: 0;
   right: 13px;
-  padding: 3px;
   opacity: 0.9;
   z-index: 100000;
   @include border-bottom-right-radius(0);
