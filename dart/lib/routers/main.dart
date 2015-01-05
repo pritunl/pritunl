@@ -1,23 +1,31 @@
 library main;
 
-import 'package:angular/angular.dart' as ng;
+import 'package:pritunl/settings/settings.dart' as settings;
 
-route({path, view}) {
-  return ng.ngRoute(
-    path: path,
-    view: 'packages/pritunl/views/$view'
-  );
-}
+import 'package:angular/angular.dart' as ng;
 
 MainRout(router, views) {
   views.configure({
-    'root': route(
+    'root': ng.ngRoute(
       path: '',
-      view: 'dashboard.html'
+      view: 'packages/pritunl/views/dashboard.html',
+      enter: (_) {
+        settings.set('active_page', 'dashboard');
+      }
     ),
-    'dashboard': route(
+    'dashboard': ng.ngRoute(
       path: '/dashboard',
-      view: 'dashboard.html'
+      view: 'packages/pritunl/views/dashboard.html',
+      enter: (_) {
+        settings.set('active_page', 'dashboard');
+      }
+    ),
+    'users': ng.ngRoute(
+      path: '/users',
+      view: 'packages/pritunl/views/users.html',
+      enter: (_) {
+        settings.set('active_page', 'users');
+      }
     )
   });
 }

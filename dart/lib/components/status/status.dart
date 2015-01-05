@@ -1,5 +1,7 @@
 library status;
 
+import 'package:pritunl/settings/settings.dart' as settings;
+
 import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
 import 'package:angular/angular.dart' as ng;
 

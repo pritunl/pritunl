@@ -5,11 +5,11 @@
       <a class="brand premium-brand" href="../../../../#">pritunl premium</a>
       <a class="brand enterprise-brand" href="../../../../#">pritunl enterprise</a>
     </header>
-    <ul class="links">
-      <li class="active"><a href="../../../../#/dashboard">Dashboard</a></li>
-      <li><a href="#/users">Users</a></li>
-      <li><a href="#/servers">Servers</a></li>
-      <li><a href="#/hosts">Hosts</a></li>
+    <ul class="links" ng-class="active">
+      <li ng-class="active['dashboard']"><a href="../../../../#/dashboard">Dashboard</a></li>
+      <li ng-class="active['users']"><a href="../../../../#/users">Users</a></li>
+      <li><a href="../../../../#/servers">Servers</a></li>
+      <li><a href="../../../../#/hosts">Hosts</a></li>
     </ul>
     <ul class="links links-right">
       <li><a><box-label label-type="default">Upgrade to Premium!</box-label></a></li>
