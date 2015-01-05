@@ -134,3 +134,28 @@ body /deep/ status::shadow .version {
 body /deep/ status::shadow glyphicon::shadow .glyphicon {
   color: map-get($status-icon, fg);
 }
+
+// ####################################
+// log-entries
+// ####################################
+body /deep/ log-entries::shadow .log-container {
+  border-color: #cfcfcf;
+  background-color: #f9f9f9;
+}
+
+body /deep/ log-entries::shadow .title,
+body /deep/ log-entries::shadow .entry {
+  border-color: #cfcfcf;
+}
+
+body /deep/ log-entries::shadow .entry {
+  color: #4d535c;
+}
+
+body /deep/ log-entries::shadow .entry glyphicon {
+  color: #1f83bb;
+}
+
+body /deep/ log-entries::shadow .entry .time {
+  color: #777;
+}
