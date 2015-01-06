@@ -101,3 +101,22 @@ $header-label: (
 $status-icon: (
   fg: #5585a0,
 );
+
+// ####################################
+// organizations
+// ####################################
+$organizations: (
+  bg: #f9f9f9,
+  border: #cfcfcf,
+);
+
+$organizations-none: (
+  fg: #777,
+  bg: #f5f5f5,
+  border: #cfcfcf,
+);
+
+$organizations-header: (
+  bg: #fff,
+  border: #ccc,
+);

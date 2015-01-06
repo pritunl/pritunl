@@ -240,6 +240,7 @@ body /deep/ status::shadow .version {
 }
 
 body /deep/ status::shadow glyphicon::shadow .glyphicon {
+  x-label: status-icon;
   color: map-get($status-icon, fg);
 }
 
@@ -266,4 +267,26 @@ body /deep/ log-entries::shadow .entry glyphicon {
 
 body /deep/ log-entries::shadow .entry .time {
   color: #777;
+}
+
+// ####################################
+// organizations
+// ####################################
+body /deep/ organizations::shadow .org {
+  x-label: organizations;
+  background-color: map-get($organizations, bg);
+  border-color: map-get($organizations, border);
+}
+
+body /deep/ organizations::shadow .no-orgs {
+  x-label: organizations-none;
+  color: map-get($organizations-none, fg);
+  background-color: map-get($organizations-none, bg);
+  border-color: map-get($organizations-none, border);
+}
+
+body /deep/ organizations::shadow .org-header {
+  x-label: organizations-header;
+  background-color: map-get($organizations-header, bg);
+  border-color: map-get($organizations-header, border);
 }

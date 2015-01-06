@@ -2,8 +2,8 @@
 
 .org {
   margin-bottom: 25px;
-  border: 1px solid #CFCFCF; // TODO
-  background-color: #F9F9F9; // TODO
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
   @include border-radius-default();
   @include box-shadow((
     0 2px 1px rgba(0, 0, 0, 0.05),
@@ -12,11 +12,10 @@
 }
 
 .header .title {
-  color: #4D535C; // TODO
-  display: inline-block;
   margin-top: 6px;
   margin-bottom: 19px;
   font-size: 22px;
+  display: inline-block;
 }
 
 .header .buttons {
@@ -36,9 +35,9 @@
 }
 
 .org-header {
-  background-color: #FFF; // TODO
   padding: 14px 11px 17px 14px;
-  border-bottom: 1px solid #CCC; // TODO
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
   -webkit-border-top-left-radius: 2px;
   -moz-border-top-left-radius: 2px;
   border-top-left-radius: 2px;
@@ -88,13 +87,11 @@
 
 .no-orgs {
   margin-bottom: 25px;
-  border: 1px solid #CFCFCF; // TODO
-  background-color: #F9F9F9; // TODO
+  border-width: 1px;
+  border-style: solid;
   text-align: center;
   font-size: 14px;
   padding: 10px;
-  color: #777; // TODO
-  background-color: #F5F5F5; // TODO
   @include border-radius-default();
   @include box-shadow((
     0 2px 1px rgba(0, 0, 0, 0.05),
