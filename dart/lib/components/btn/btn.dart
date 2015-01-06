@@ -4,16 +4,16 @@ import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
 
 @Component(
   selector: 'btn',
-  template: '<button type="button" ng-class="[btnType, btnSize]" ng-disabled="disabled">'
-    '<content></content></button>',
+  template: '<button type="button" ng-class="[type, size]" '
+    'ng-disabled="disabled"><content></content></button>',
   cssUrl: 'packages/pritunl/components/btn/btn.css'
 )
 class BtnComp {
-  @NgAttr('btn-type')
-  var btnType;
+  @NgAttr('type')
+  var type;
 
-  @NgAttr('btn-size')
-  var btnSize;
+  @NgAttr('size')
+  var size;
 
   var _disabled;
   @NgAttr('disabled')

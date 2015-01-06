@@ -1,14 +1,14 @@
 <div class="header">
   <h1 class="title">Users and Organizations</h1>
   <div class="buttons">
-    <btn btn-type="primary">Add Organization</btn>
-    <btn btn-type="primary">Add User</btn>
-    <btn btn-type="primary">Bulk Add Users</btn>
-    <btn btn-type="warning" disabled>Email Selected</btn>
-    <btn btn-type="danger" disabled>Delete Selected</btn>
+    <btn type="primary">Add Organization</btn>
+    <btn type="primary">Add User</btn>
+    <btn type="primary">Bulk Add Users</btn>
+    <btn type="warning" disabled>Email Selected</btn>
+    <btn type="danger" disabled>Delete Selected</btn>
   </div>
 </div>
-<ul class="orgs-list">
+<ul>
   <li class="org" ng-repeat="org in orgs">
     <organization model="org"></organization>
   </li>
