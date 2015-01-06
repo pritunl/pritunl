@@ -17,7 +17,7 @@ class OrganizationsComp {
   }
 
   update() {
-    this.http.get('/orgs').then((response) {
+    this.http.get('/organization').then((response) {
       this.orgs = response.data;
     });
   }
