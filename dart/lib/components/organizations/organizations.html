@@ -10,18 +10,7 @@
 </div>
 <ul class="orgs-list">
   <li class="org" ng-repeat="org in orgs">
-    <div class="org-header">
-      <box-label class="org-label"
-        label-type="success">Organization</box-label><h2 class="title"><a
-        no-select>{{org.name}}</a><span
-        class="org-id title">({{org.id}})</span></h2>
-      <div class="box-right">
-        <box-label class="user-count" label-type="default"
-          no-select>{{org.user_count}} users</box-label>
-        <form-control type="text" placeholder="Search for user"></form-control>
-        <btn btn-type="danger" btn-size="sm">Delete Organization</btn>
-      </div>
-    </div>
+    <organization model="org"></organization>
   </li>
   <li class="no-orgs">
     There are no organizations on this host.
