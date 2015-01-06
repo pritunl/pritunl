@@ -1,10 +1,11 @@
 library form_control;
 
-import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
+import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr, NgModel;
 
 @Component(
   selector: 'form-control',
-  template: '<input type="{{type}}" placeholder="{{placeholder}}"/>',
+  template: '<input class="form-control" ng-type="type" '
+    'placeholder="{{placeholder}}" ng-model="model"/>',
   cssUrl: 'packages/pritunl/components/form_control/form_control.css'
 )
 class FormControlComp {
@@ -13,4 +14,7 @@ class FormControlComp {
 
   @NgAttr('placeholder')
   var placeholder;
+
+  @NgTwoWay('model')
+  var model;
 }
