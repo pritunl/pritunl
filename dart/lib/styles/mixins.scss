@@ -66,3 +66,9 @@
   filter: alpha(opacity=$value);
   opacity: $value / 100;
 }
+
+@mixin transition($value) {
+  -webkit-transition: $value;
+  -o-transition: $value;
+  transition: $value;
+}
