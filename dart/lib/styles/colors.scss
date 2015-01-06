@@ -20,6 +20,114 @@ body /deep/ .title {
 }
 
 // ####################################
+// btn
+// ####################################
+body /deep/ btn::shadow button {
+  x-label: btn;
+  color: map-get($btn, fg);
+}
+
+body /deep/ btn::shadow .primary {
+  x-label: btn;
+  background-color: map-get($btn, primary-bg);
+  border-color: map-get($btn, primary-border);
+}
+
+body /deep/ btn::shadow .primary:hover,
+body /deep/ btn::shadow .primary:focus,
+body /deep/ btn::shadow .primary:active {
+  x-label: btn;
+  background-color: map-get($btn, primary-bg-hover);
+  border-color: map-get($btn, primary-border-hover);
+}
+
+body /deep/ btn::shadow .primary[disabled] {
+  x-label: btn;
+  background-color: map-get($btn, primary-bg-disabled);
+  border-color: map-get($btn, primary-border-disabled);
+}
+
+body /deep/ btn::shadow .success {
+  x-label: btn;
+  background-color: map-get($btn, success-bg);
+  border-color: map-get($btn, success-border);
+}
+
+body /deep/ btn::shadow .success:hover,
+body /deep/ btn::shadow .success:focus,
+body /deep/ btn::shadow .success:active {
+  x-label: btn;
+  background-color: map-get($btn, success-bg-hover);
+  border-color: map-get($btn, success-border-hover);
+}
+
+body /deep/ btn::shadow .success[disabled] {
+  x-label: btn;
+  background-color: map-get($btn, success-bg-disabled);
+  border-color: map-get($btn, success-border-disabled);
+}
+
+body /deep/ btn::shadow .info {
+  x-label: btn;
+  background-color: map-get($btn, info-bg);
+  border-color: map-get($btn, info-border);
+}
+
+body /deep/ btn::shadow .info:hover,
+body /deep/ btn::shadow .info:focus,
+body /deep/ btn::shadow .info:active {
+  x-label: btn;
+  background-color: map-get($btn, info-bg-hover);
+  border-color: map-get($btn, info-border-hover);
+}
+
+body /deep/ btn::shadow .info[disabled] {
+  x-label: btn;
+  background-color: map-get($btn, info-bg-disabled);
+  border-color: map-get($btn, info-border-disabled);
+}
+
+body /deep/ btn::shadow .warning {
+  x-label: btn;
+  background-color: map-get($btn, warning-bg);
+  border-color: map-get($btn, warning-border);
+}
+
+body /deep/ btn::shadow .warning:hover,
+body /deep/ btn::shadow .warning:focus,
+body /deep/ btn::shadow .warning:active {
+  x-label: btn;
+  background-color: map-get($btn, warning-bg-hover);
+  border-color: map-get($btn, warning-border-hover);
+}
+
+body /deep/ btn::shadow .warning[disabled] {
+  x-label: btn;
+  background-color: map-get($btn, warning-bg-disabled);
+  border-color: map-get($btn, warning-border-disabled);
+}
+
+body /deep/ btn::shadow .danger {
+  x-label: btn;
+  background-color: map-get($btn, danger-bg);
+  border-color: map-get($btn, danger-border);
+}
+
+body /deep/ btn::shadow .danger:hover,
+body /deep/ btn::shadow .danger:focus,
+body /deep/ btn::shadow .danger:active {
+  x-label: btn;
+  background-color: map-get($btn, danger-bg-hover);
+  border-color: map-get($btn, danger-border-hover);
+}
+
+body /deep/ btn::shadow .danger[disabled] {
+  x-label: btn;
+  background-color: map-get($btn, danger-bg);
+  border-color: map-get($btn, danger-border);
+}
+
+// ####################################
 // label
 // ####################################
 body /deep/ box-label::shadow .default {
