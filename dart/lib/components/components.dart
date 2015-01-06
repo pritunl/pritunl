@@ -20,6 +20,8 @@ import 'package:pritunl/components/rating/rating.dart'
   as rating;
 import 'package:pritunl/components/status/status.dart'
   as status;
+import 'package:pritunl/components/form_control/form_control.dart'
+  as form_control;
 
 import 'package:angular/angular.dart' as ng;
 
@@ -35,5 +37,6 @@ class ComponentsMod extends ng.Module {
     this.bind(organizations.OrganizationsComp);
     this.bind(rating.RatingComp);
     this.bind(status.StatusComp);
+    this.bind(form_control.FormControlComp);
   }
 }
