@@ -270,23 +270,26 @@ body /deep/ log-entries::shadow .entry .time {
 }
 
 // ####################################
-// organizations
+// organization
 // ####################################
-body /deep/ organizations::shadow .org {
-  x-label: organizations;
-  background-color: map-get($organizations, bg);
-  border-color: map-get($organizations, border);
+body /deep/ organization::shadow .org {
+  x-label: organization;
+  background-color: map-get($organization, bg);
+  border-color: map-get($organization, border);
 }
 
+body /deep/ organization::shadow .header {
+  x-label: organization-header;
+  background-color: map-get($organization-header, bg);
+  border-color: map-get($organization-header, border);
+}
+
+// ####################################
+// organizations
+// ####################################
 body /deep/ organizations::shadow .no-orgs {
   x-label: organizations-none;
   color: map-get($organizations-none, fg);
   background-color: map-get($organizations-none, bg);
   border-color: map-get($organizations-none, border);
-}
-
-body /deep/ organizations::shadow .org-header {
-  x-label: organizations-header;
-  background-color: map-get($organizations-header, bg);
-  border-color: map-get($organizations-header, border);
 }
