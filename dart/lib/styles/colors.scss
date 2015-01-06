@@ -248,25 +248,30 @@ body /deep/ status::shadow glyphicon::shadow .glyphicon {
 // log-entries
 // ####################################
 body /deep/ log-entries::shadow .log-container {
-  border-color: #cfcfcf;
-  background-color: #f9f9f9;
+  x-label: log-entries;
+  border-color: map-get($log-entries, border);
+  background-color: map-get($log-entries, bg);
 }
 
 body /deep/ log-entries::shadow .title,
 body /deep/ log-entries::shadow .entry {
-  border-color: #cfcfcf;
+  x-label: log-entries;
+  border-color: map-get($log-entries, border);
 }
 
 body /deep/ log-entries::shadow .entry {
-  color: #4d535c;
+  x-label: log-entries;
+  color: map-get($log-entries, fg);
 }
 
 body /deep/ log-entries::shadow .entry glyphicon {
-  color: #1f83bb;
+  x-label: log-entries;
+  color: map-get($log-entries, icon);
 }
 
 body /deep/ log-entries::shadow .entry .time {
-  color: #777;
+  x-label: log-entries-time;
+  color: map-get($log-entries-time, fg);
 }
 
 // ####################################
