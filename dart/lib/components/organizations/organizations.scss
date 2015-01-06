@@ -1,18 +1,103 @@
 @import 'styles/base.scss';
 
-.title {
-  color: #4D535C;
+.org {
+  margin-bottom: 25px;
+  border: 1px solid #CFCFCF; // TODO
+  background-color: #F9F9F9; // TODO
+  @include border-radius-default();
+  @include box-shadow((
+    0 2px 1px rgba(0, 0, 0, 0.05),
+    0 -1px 2px rgba(0, 0, 0, 0.05) inset
+  ));
+}
+
+.header .title {
+  color: #4D535C; // TODO
   display: inline-block;
   margin-top: 6px;
   margin-bottom: 19px;
   font-size: 22px;
 }
 
-.buttons {
+.header .buttons {
   float: right;
   display: block;
 }
 
-.buttons button {
+.header .buttons button {
   margin-top: 2px;
+}
+
+.org box-label.org-label::shadow span {
+  cursor: default;
+  margin-top: 1px;
+  margin-right: 15px;
+  padding: 6px 12px;
+}
+
+.org-header {
+  background-color: #FFF; // TODO
+  padding: 14px 11px 17px 14px;
+  border-bottom: 1px solid #CCC; // TODO
+  -webkit-border-top-left-radius: 2px;
+  -moz-border-top-left-radius: 2px;
+  border-top-left-radius: 2px;
+  -webkit-border-top-right-radius: 2px;
+  -moz-border-top-right-radius: 2px;
+  border-top-right-radius: 2px;
+}
+
+.org-header .title {
+  margin: 0;
+  display: inline-block;
+  line-height: 16px;
+  position: relative;
+  top: 2px;
+  font-size: 19px;
+}
+
+.org-header form-control {
+  position: relative;
+  top: 1px;
+  margin-right: 2px;
+}
+
+.org-header form-control::shadow input {
+  width: 150px;
+  height: 30px;
+}
+
+.org-header .box-right {
+  float: right;
+  position: relative;
+  top: -5px;
+}
+
+.org-header .org-id {
+  display: none;
+}
+
+.org-header box-label.user-count::shadow span {
+  padding: 4px 8px;
+  margin-right: 7px;
+}
+
+.org-header btn {
+  margin-left: 6px;
+}
+
+.no-orgs {
+  margin-bottom: 25px;
+  border: 1px solid #CFCFCF; // TODO
+  background-color: #F9F9F9; // TODO
+  text-align: center;
+  font-size: 14px;
+  padding: 10px;
+  color: #777; // TODO
+  background-color: #F5F5F5; // TODO
+  @include border-radius-default();
+  @include box-shadow((
+    0 2px 1px rgba(0, 0, 0, 0.05),
+    0 -1px 2px rgba(0, 0, 0, 0.05) inset
+  ))
 }
