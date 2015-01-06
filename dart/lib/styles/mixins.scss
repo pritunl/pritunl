@@ -1,3 +1,5 @@
+@import 'styles/variables.scss';
+
 @mixin box-shadow($args) {
   -webkit-box-shadow: $args;
   -moz-box-shadow: $args;
@@ -10,6 +12,13 @@
   -moz-border-radius: $radius;
   -ms-border-radius: $radius;
   border-radius: $radius;
+}
+
+@mixin border-radius-default() {
+  -webkit-border-radius: $border-radius;
+  -moz-border-radius: $border-radius;
+  -ms-border-radius: $border-radius;
+  border-radius: $border-radius;
 }
 
 @mixin border-top-left-radius($radius) {
