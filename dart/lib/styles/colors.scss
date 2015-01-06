@@ -1,4 +1,5 @@
 @import 'styles/variables.scss';
+@import 'styles/mixins.scss';
 
 // ####################################
 // base
@@ -164,6 +165,88 @@ body /deep/ box-label::shadow .danger {
   x-label: label;
   color: map-get($label, danger-fg);
   background-color: map-get($label, danger-bg);
+}
+
+// ####################################
+// form-control
+// ####################################
+body /deep/ form-control::shadow input {
+  x-label: form-control;
+  color: map-get($form-control, fg);
+  background-color: map-get($form-control, bg);
+  border-color: map-get($form-control, border);
+}
+
+body /deep/ form-control::shadow input:focus {
+  x-label: form-control;
+  border-color: map-get($form-control, border-focus);
+  @include box-shadow((
+    inset 0 1px 1px rgba(0, 0, 0, .075),
+    0 0 8px map-get($form-control, shadow-focus)
+  ));
+}
+
+body /deep/ form-control::shadow input::-moz-placeholder {
+  x-label: form-control;
+  color: map-get($form-control, placeholder);
+}
+
+body /deep/ form-control::shadow input::-ms-input-placeholder {
+  x-label: form-control;
+  color: map-get($form-control, placeholder);
+}
+
+body /deep/ form-control::shadow input::-webkit-input-placeholder {
+  x-label: form-control;
+  color: map-get($form-control, placeholder);
+}
+
+body /deep/ form-control::shadow input[disabled],
+body /deep/ form-control::shadow input[readonly] {
+  x-label: form-control;
+  background-color: map-get($form-control, bg-disabled);
+}
+
+body /deep/ form-control::shadow input.success {
+  x-label: form-control;
+  border-color: map-get($form-control, success-border);
+}
+
+body /deep/ form-control::shadow input.success:focus {
+  x-label: form-control;
+  border-color: map-get($form-control, success-border-focus);
+  @include box-shadow((
+    inset 0 1px 1px rgba(0, 0, 0, .075),
+    0 0 6px map-get($form-control, success-shadow-focus)
+  ));
+}
+
+body /deep/ form-control::shadow input.warning {
+  x-label: form-control;
+  border-color: map-get($form-control, warning-border);
+}
+
+body /deep/ form-control::shadow input.warning:focus {
+  x-label: form-control;
+  border-color: map-get($form-control, warning-border-focus);
+  @include box-shadow((
+    inset 0 1px 1px rgba(0, 0, 0, .075),
+    0 0 6px map-get($form-control, warning-shadow-focus)
+  ));
+}
+
+body /deep/ form-control::shadow input.danger {
+  x-label: form-control;
+  border-color: map-get($form-control, danger-border);
+}
+
+body /deep/ form-control::shadow input.danger:focus {
+  x-label: form-control;
+  border-color: map-get($form-control, danger-border-focus);
+  @include box-shadow((
+    inset 0 1px 1px rgba(0, 0, 0, .075),
+    0 0 6px map-get($form-control, danger-shadow-focus)
+  ));
 }
 
 // ####################################

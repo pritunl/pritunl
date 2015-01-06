@@ -75,6 +75,28 @@ $label: (
 );
 
 // ####################################
+// form-control
+// ####################################
+$form-control: (
+  fg: #555,
+  bg: #fff,
+  bg-disabled: #eee,
+  border: #ccc,
+  border-focus: #66afe9,
+  shadow-focus: rgba(102, 175, 233, .6),
+  placeholder: #999,
+  success-border: #3c763d,
+  success-border-focus: #2b542c,
+  success-shadow-focus: #67b168,
+  warning-border: #8a6d3b,
+  warning-border-focus: #66512c,
+  warning-shadow-focus: #c0a16b,
+  danger-border: #a94442,
+  danger-border-focus: #843534,
+  danger-shadow-focus: #ce8483,
+);
+
+// ####################################
 // header
 // ####################################
 $header: (
