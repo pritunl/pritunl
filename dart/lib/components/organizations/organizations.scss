@@ -1,1 +1,18 @@
 @import 'styles/base.scss';
+
+.title {
+  color: #4D535C;
+  display: inline-block;
+  margin-top: 6px;
+  margin-bottom: 19px;
+  font-size: 22px;
+}
+
+.buttons {
+  float: right;
+  display: block;
+}
+
+.buttons button {
+  margin-top: 2px;
+}
