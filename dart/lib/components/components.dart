@@ -1,7 +1,9 @@
 library components;
 
 import 'package:pritunl/components/box_label/box_label.dart'
-  as box_label;
+as box_label;
+import 'package:pritunl/components/btn/btn.dart'
+as btn;
 import 'package:pritunl/components/container/container.dart'
   as container;
 import 'package:pritunl/components/fraction/fraction.dart'
@@ -24,6 +26,7 @@ import 'package:angular/angular.dart' as ng;
 class ComponentsMod extends ng.Module {
   ComponentsMod() {
     this.bind(box_label.BoxLabelComp);
+    this.bind(btn.BtnComp);
     this.bind(container.ContainerComp);
     this.bind(fraction.FractionComp);
     this.bind(glyphicon.GlyphiconComp);
