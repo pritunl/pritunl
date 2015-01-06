@@ -10,4 +10,7 @@ import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
 class OrganizationComp {
   @NgTwoWay('model')
   var model;
+
+  @NgTwoWay('search')
+  var search;
 }
