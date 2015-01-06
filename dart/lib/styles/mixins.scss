@@ -54,3 +54,10 @@
   -moz-background-clip: padding;
   background-clip: padding-box;
 }
+
+@mixin no-user-select() {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
