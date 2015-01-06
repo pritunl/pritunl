@@ -1,4 +1,4 @@
-library boilerplate;
+library organizations;
 
 import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
 import 'package:angular/angular.dart' as ng;
