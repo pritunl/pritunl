@@ -35,3 +35,21 @@ button[disabled] {
   @include box-shadow(none);
   @include opacity(65);
 }
+
+.xs {
+  padding: 1px 5px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.sm {
+  padding: 5px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.lg {
+  padding: 10px 16px;
+  font-size: 18px;
+  line-height: 1.33;
+}
