@@ -19,11 +19,9 @@ class BtnComp {
   }
   set disabled(value) {
     if (value == '') {
-      print('set: true');
       this._disabled = true;
     }
     else {
-      print('set: false');
       this._disabled = false;
     }
   }
