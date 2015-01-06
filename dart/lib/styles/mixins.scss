@@ -61,3 +61,8 @@
   -ms-user-select: none;
   user-select: none;
 }
+
+@mixin opacity($value) {
+  filter: alpha(opacity=$value);
+  opacity: $value / 100;
+}
