@@ -1,6 +1,7 @@
 library form_control;
 
-import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr, NgModel;
+import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
+import 'package:angular/angular.dart' as ng;
 
 @Component(
   selector: 'form-control',
@@ -8,7 +9,16 @@ import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr, NgModel;
     'ng-model="model"/>',
   cssUrl: 'packages/pritunl/components/form_control/form_control.css'
 )
-class FormControlComp {
+class FormControlComp implements ng.ShadowRootAware {
+  @NgAttr('padding')
+  var padding;
+
+  @NgAttr('width')
+  var width;
+
+  @NgAttr('height')
+  var height;
+
   @NgAttr('type')
   var type;
 
@@ -17,4 +27,18 @@ class FormControlComp {
 
   @NgTwoWay('model')
   var model;
+
+  onShadowRoot(root) {
+    var elem = root.querySelector('input');
+
+    if (this.padding != null) {
+      elem.style.padding = this.padding;
+    }
+    if (this.width != null) {
+      elem.style.width = this.width;
+    }
+    if (this.height != null) {
+      elem.style.height = this.height;
+    }
+  }
 }
