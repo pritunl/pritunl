@@ -1,3 +1,9 @@
+pritunl (1.0.482.93-0ubuntu1) unstable; urgency=low
+
+  * Updates to web interface
+
+ -- Pritunl <contact@pritunl.com>  Wed, 07 Jan 2015 00:00:00 -0400
+
 pritunl (1.0.481.92-0ubuntu1) unstable; urgency=low
 
   * Fix issue with restarting servers
