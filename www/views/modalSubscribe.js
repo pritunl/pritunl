@@ -5,8 +5,9 @@ define([
   'qrcode',
   'models/subscription',
   'views/modal',
+  'views/alert',
   'text!templates/modalSubscribe.html'
-], function($, _, Backbone, QRCode, SubscriptionModel, ModalView,
+], function($, _, Backbone, QRCode, SubscriptionModel, ModalView, AlertView,
     modalSubscribeTemplate) {
   'use strict';
   var ModalSubscribeView = ModalView.extend({
@@ -17,6 +18,21 @@ define([
     okText: 'Close',
     enterOk: false,
     safeClose: true,
+    initialize: function() {
+      ModalSubscribeView.__super__.initialize.call(this);
+      var alertView = new AlertView({
+        type: 'success',
+        message: '<b>Follow and tweet ' +
+          '<a href="https://twitter.com/intent/tweet?' +
+          'screen_name=pritunl&text=Enterprise%20open%20' +
+          'source%20VPN%20server%20https%3A%2F%2Fpritunl.com" ' +
+          'target="_blank">@pritunl</a> for a ' +
+          'free six month premium subscription.</b>',
+        animate: false
+      });
+      this.addView(alertView);
+      this.$('.modal-body').prepend(alertView.render().el);
+    },
     events: function() {
       return _.extend({
         'click .subscribe-premium': 'onPremium',
