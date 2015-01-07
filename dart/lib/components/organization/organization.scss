@@ -11,7 +11,7 @@
   ));
 }
 
-.org box-label.org-label::shadow span {
+.org box-label.org-label {
   cursor: default;
   margin-top: 1px;
   margin-right: 15px;
@@ -44,11 +44,6 @@
   margin-right: 2px;
 }
 
-.header form-control::shadow input {
-  width: 150px;
-  height: 30px;
-}
-
 .header .box-right {
   float: right;
   position: relative;
@@ -59,8 +54,7 @@
   display: none;
 }
 
-.header box-label.user-count::shadow span {
-  padding: 4px 8px;
+.header box-label.user-count {
   margin-right: 7px;
 }
 
