@@ -16,7 +16,8 @@ X-Python-Version: >= 2.7
 
 Package: pritunl
 Architecture: all
-Depends: python-flask (>= 0.8),
+Depends: python-pkg-resources (>= 0.6.16),
+         python-flask (>= 0.8),
          python-openssl (>= 0.12),
          python-pymongo (>= 2.7.1),
          openvpn (>= 2.2.1),
