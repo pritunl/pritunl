@@ -2,13 +2,13 @@
   <li ng-repeat="user in users">
     {{user.id}}
   </li>
-  <li class="no-users">
+  <li ng-if="users.length == 0" class="message">
     There are no users in this organization
   </li>
-  <li class="no-users-search">
+  <li ng-if="false" class="message">
     No users found
   </li>
-  <li class="loading">
+  <li ng-if="users == null" class="message">
     Loading...
   </li>
 </ul>
