@@ -16,7 +16,10 @@ class BoxLabelComp implements ng.ShadowRootAware {
   var padding;
 
   onShadowRoot(root) {
-    root.querySelector('span')
-      ..style.padding = this.padding;
+    var spanElem = root.querySelector('span');
+
+    if (this.padding != null) {
+      spanElem.style.padding = this.padding;
+    }
   }
 }
