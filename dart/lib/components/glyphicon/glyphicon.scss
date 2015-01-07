@@ -1,5 +1,9 @@
 @import 'styles/base.scss';
 
+:host {
+  line-height: 1;
+}
+
 .glyphicon {
   position: relative;
   top: 1px;
