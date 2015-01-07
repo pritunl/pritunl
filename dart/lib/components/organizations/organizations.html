@@ -12,7 +12,10 @@
   <li class="org" ng-repeat="org in orgs">
     <organization model="org"></organization>
   </li>
-  <li class="no-orgs">
+  <li ng-if="orgs.length == 0" class="message">
     There are no organizations on this host.
+  </li>
+  <li ng-if="orgs == null" class="message">
+    Loading...
   </li>
 </ul>
