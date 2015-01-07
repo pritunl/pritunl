@@ -9,17 +9,15 @@ import 'package:angular/angular.dart' as ng;
   cssUrl: 'packages/pritunl/components/box_label/box_label.css'
 )
 class BoxLabelComp implements ng.ShadowRootAware {
-  @NgAttr('type')
-  var type;
-
   @NgAttr('padding')
   var padding;
 
-  onShadowRoot(root) {
-    var spanElem = root.querySelector('span');
+  @NgAttr('type')
+  var type;
 
+  onShadowRoot(root) {
     if (this.padding != null) {
-      spanElem.style.padding = this.padding;
+      root.querySelector('span').style.padding = this.padding;
     }
   }
 }
