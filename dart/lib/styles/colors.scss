@@ -182,7 +182,7 @@ body /deep/ form-control::shadow input:focus {
   border-color: map-get($form-control, border-focus);
   @include box-shadow((
     inset 0 1px 1px rgba(0, 0, 0, .075),
-    0 0 8px map-get($form-control, shadow-focus)
+    0 0 8px map-get($form-control, shadow-focus),
   ));
 }
 
@@ -217,7 +217,7 @@ body /deep/ form-control::shadow input.success:focus {
   border-color: map-get($form-control, success-border-focus);
   @include box-shadow((
     inset 0 1px 1px rgba(0, 0, 0, .075),
-    0 0 6px map-get($form-control, success-shadow-focus)
+    0 0 6px map-get($form-control, success-shadow-focus),
   ));
 }
 
@@ -231,7 +231,7 @@ body /deep/ form-control::shadow input.warning:focus {
   border-color: map-get($form-control, warning-border-focus);
   @include box-shadow((
     inset 0 1px 1px rgba(0, 0, 0, .075),
-    0 0 6px map-get($form-control, warning-shadow-focus)
+    0 0 6px map-get($form-control, warning-shadow-focus),
   ));
 }
 
@@ -245,7 +245,7 @@ body /deep/ form-control::shadow input.danger:focus {
   border-color: map-get($form-control, danger-border-focus);
   @include box-shadow((
     inset 0 1px 1px rgba(0, 0, 0, .075),
-    0 0 6px map-get($form-control, danger-shadow-focus)
+    0 0 6px map-get($form-control, danger-shadow-focus),
   ));
 }
 
