@@ -24,6 +24,8 @@ import 'package:pritunl/components/rating/rating.dart'
   as rating;
 import 'package:pritunl/components/status/status.dart'
   as status;
+import 'package:pritunl/components/user/user.dart'
+  as user;
 import 'package:pritunl/components/users/users.dart'
   as users;
 
@@ -43,6 +45,7 @@ class ComponentsMod extends ng.Module {
     this.bind(organizations.OrganizationsComp);
     this.bind(rating.RatingComp);
     this.bind(status.StatusComp);
+    this.bind(user.UserComp);
     this.bind(users.UsersComp);
   }
 }
