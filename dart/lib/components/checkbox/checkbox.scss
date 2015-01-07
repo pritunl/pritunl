@@ -3,12 +3,11 @@
 div {
   width: 19px;
   height: 19px;
-  margin-right: 10px;
   padding-left: 1px;
   border-width: 1px;
   border-style: solid;
   cursor: pointer;
-  float: left;
+  display: inline-block;
   @include border-radius-default();
 }
 
