@@ -11,7 +11,6 @@ from pritunl import app
 from pritunl import auth
 
 import flask
-import math
 import time
 import collections
 
@@ -29,7 +28,6 @@ def user_get(org_id, user_id=None, page=None):
     search = flask.request.args.get('search', None)
     limit = int(flask.request.args.get('limit', settings.user.page_count))
     otp_auth = False
-    search_more = True
     server_count = 0
     clients = collections.defaultdict(lambda: collections.defaultdict(list))
     servers = []
