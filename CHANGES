@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Updates to web interface
+
 Version 1.0.481.92 2015-01-06
 -----------------------------
 
