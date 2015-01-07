@@ -1,0 +1,39 @@
+@import 'styles/base.scss';
+
+.user-list {
+  margin: 0 13px 13px 13px;
+}
+
+.no-users,
+.no-users-search,
+.loading {
+  color: #777;
+  background-color: #fff;
+  border-color: #cfcfcf;
+
+  text-align: center;
+  font-size: 14px;
+  padding-top: 10px;
+  height: 40px;
+  border-width: 1px;
+  border-style: solid;
+  margin-top: 12px;
+  @include border-radius-default();
+  @include box-shadow((
+    0, 1px, 0, rgba(255, 255, 255, 0.02),
+    0, 1px, 3px, rgba(0, 0, 0, 0.08), inset,
+  ));
+}
+
+.next,
+.prev {
+  margin: 0 13px 12px 13px;
+}
+
+.prev {
+  float: left;
+}
+
+.next {
+  float: right;
+}
