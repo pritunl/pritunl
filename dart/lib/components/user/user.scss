@@ -2,8 +2,8 @@
 
 .user {
   height: 40px;
-  background: #FFF;
-  border: 1px solid #CFCFCF;
+  border-width: 1px;
+  border-style: solid;
   margin-top: 12px;
   @include border-radius-default();
   @include box-shadow((
@@ -23,12 +23,12 @@ checkbox {
   padding-top: 0;
   margin-top: 5px;
   padding-left: 13px;
-  border-left: 1px solid #CFCFCF;
+  border-left-width: 1px;
+  border-left-style: solid;
 }
 
 .name-container glyphicon {
   font-size: 19px;
-  color: #64b3f6;
   line-height: 28px;
   position: relative;
   top: 2px;
@@ -39,8 +39,8 @@ checkbox {
   font-size: 18px;
   cursor: pointer;
   vertical-align: text-top;
-  color: #428bca;
   line-height: 13px;
+  margin-left: 2px;
 }
 
 .name-container .id {
@@ -56,7 +56,8 @@ checkbox {
   height: 28px;
   padding: 3px 8px 0 12px;
   white-space: nowrap;
-  border-left: 1px solid #CFCFCF;
+  border-left-width: 1px;
+  border-left-style: solid;
 }
 
 .status {
@@ -79,17 +80,8 @@ checkbox {
   border-radius: 50%;
 }
 
-.status .title {
-  color: #6f7277;
-}
-
-.status .icon.offline {
-  background-color: #d2322d;
-}
-
 .buttons glyphicon {
   font-size: 20px;
-  color: #4E8BBF;
   cursor: pointer;
   margin-left: 3px;
 }

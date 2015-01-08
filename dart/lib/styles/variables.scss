@@ -167,3 +167,23 @@ $organizations-none: (
   bg: #f5f5f5,
   border: #cfcfcf,
 );
+
+// ####################################
+// user
+// ####################################
+$user: (
+  fg: #428bca,
+  bg: #fff,
+  border: #cfcfcf,
+  icon: #64b3f6,
+);
+
+$user-buttons: (
+  icon: #4e8bbf,
+);
+
+$user-status: (
+  fg: #6f7277,
+  icon-online: #47a447,
+  icon-offline: #d2322d,
+);

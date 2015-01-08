@@ -394,3 +394,54 @@ body /deep/ organizations::shadow .no-orgs {
   background-color: map-get($organizations-none, bg);
   border-color: map-get($organizations-none, border);
 }
+
+// ####################################
+// user
+// ####################################
+body /deep/ user::shadow .user {
+  x-label: user;
+  background-color: map-get($user, bg);
+  border-color: map-get($user, border);
+}
+
+body /deep/ user::shadow .name-container {
+  x-label: user;
+  border-color: map-get($user, border);
+}
+
+body /deep/ user::shadow .name-container glyphicon {
+  x-label: user;
+  color: map-get($user, icon);
+}
+
+body /deep/ user::shadow .name-container .name {
+  x-label: user;
+  color: map-get($user, fg);
+}
+
+body /deep/ user::shadow .buttons {
+  x-label: user;
+  border-color: map-get($user, border);
+}
+
+body /deep/ user::shadow .status .title {
+  x-label: user-status;
+  color: map-get($user-status, fg);
+}
+
+body /deep/ user::shadow .status .icon.online {
+  x-label: user-status;
+  background-color: map-get($user-status, icon-online);
+}
+
+body /deep/ user::shadow .status .icon.offline {
+  x-label: user-status;
+  background-color: map-get($user-status, icon-offline);
+}
+
+body /deep/ user::shadow .buttons glyphicon {
+  x-label: user-buttons;
+  color: map-get($user-buttons, icon);
+}
+
+
