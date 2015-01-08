@@ -4,6 +4,8 @@ import 'package:pritunl/components/box_label/box_label.dart'
   as box_label;
 import 'package:pritunl/components/btn/btn.dart'
   as btn;
+import 'package:pritunl/components/checkbox/checkbox.dart'
+as checkbox;
 import 'package:pritunl/components/container/container.dart'
   as container;
 import 'package:pritunl/components/form_control/form_control.dart'
@@ -35,6 +37,7 @@ class ComponentsMod extends ng.Module {
   ComponentsMod() {
     this.bind(box_label.BoxLabelComp);
     this.bind(btn.BtnComp);
+    this.bind(checkbox.CheckboxComp);
     this.bind(container.ContainerComp);
     this.bind(form_control.FormControlComp);
     this.bind(fraction.FractionComp);
