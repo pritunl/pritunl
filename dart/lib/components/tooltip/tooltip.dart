@@ -1,7 +1,6 @@
 library tooltip;
 
-import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
-import 'package:angular/angular.dart' as ng;
+import 'package:angular/angular.dart' show Component, NgTwoWay;
 import 'dart:html' as dom;
 
 @Component(
@@ -9,9 +8,8 @@ import 'dart:html' as dom;
   templateUrl: 'packages/pritunl/components/tooltip/tooltip.html',
   cssUrl: 'packages/pritunl/components/tooltip/tooltip.css'
 )
-class TooltipComp implements ng.ShadowRootAware {
+class TooltipComp {
   var element;
-  var root;
 
   @NgTwoWay('state')
   var state;
@@ -28,9 +26,5 @@ class TooltipComp implements ng.ShadowRootAware {
 
   hide() {
     this.state = false;
-  }
-
-  onShadowRoot(root) {
-    this.root = root;
   }
 }
