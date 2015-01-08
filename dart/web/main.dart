@@ -6,6 +6,7 @@ import 'package:pritunl/decorators/decorators.dart' as decorators;
 import 'package:pritunl/formatters/formatters.dart' as formatters;
 
 import 'package:angular/application_factory.dart' as appfactory;
+import 'package:angular/animate/module.dart' as animate;
 
 void main() {
   appfactory.applicationFactory()
@@ -13,5 +14,6 @@ void main() {
     .addModule(new components.ComponentsMod())
     .addModule(new decorators.DecoratorsMod())
     .addModule(new formatters.FormattersMod())
+    .addModule(new animate.AnimationModule())
     .run();
 }
