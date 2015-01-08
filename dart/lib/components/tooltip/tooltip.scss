@@ -1,19 +1,19 @@
 @import 'styles/base.scss';
 
 .container {
-  position: absolute;
+  position: relative;
+  left: -50%;
   z-index: 1070;
   display: block;
   font-size: 12px;
   line-height: 1.4;
   visibility: visible;
-  //@include opacity(1);
+  @include opacity(0);
   @include transition((opacity .15s linear));
 }
 
-.container.top {
-  padding: 5px 0;
-  margin-top: -3px;
+.container.show {
+  @include opacity(0.8);
 }
 
 .arrow {
@@ -22,10 +22,7 @@
   height: 0;
   border-color: rgba(0, 0, 0, 0);
   border-style: solid;
-}
-
-.top .arrow {
-  bottom: 0;
+  bottom: -5px;
   left: 50%;
   margin-left: -5px;
   border-width: 5px 5px 0;
