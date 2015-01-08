@@ -1,6 +1,6 @@
 library user;
 
-import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
+import 'package:angular/angular.dart' show Component, NgAttr, NgTwoWay;
 
 @Component(
   selector: 'user',
