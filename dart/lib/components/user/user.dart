@@ -10,4 +10,7 @@ import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
 class UserComp {
   @NgTwoWay('model')
   var model;
+
+  @NgAttr('selected')
+  var selected;
 }
