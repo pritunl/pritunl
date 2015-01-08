@@ -129,6 +129,19 @@ body /deep/ btn::shadow .danger[disabled] {
 }
 
 // ####################################
+// checkbox
+// ####################################
+body /deep/ checkbox::shadow div {
+  x-label: checkbox;
+  border-color: map-get($checkbox, border);
+}
+
+body /deep/ checkbox::shadow glyphicon {
+  x-label: checkbox;
+  color: map-get($checkbox, fg);
+}
+
+// ####################################
 // label
 // ####################################
 body /deep/ box-label::shadow .default {
