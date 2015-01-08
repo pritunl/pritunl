@@ -9,9 +9,10 @@ import 'package:angular/application_factory.dart' as appfactory;
 
 void main() {
   appfactory.applicationFactory()
-      .addModule(new routers.RoutersMod())
-      .addModule(new components.ComponentsMod())
-      .addModule(new decorators.DecoratorsMod())
-      .addModule(new formatters.FormattersMod())
-      .run();
+    .addModule(new routers.RoutersMod())
+    .addModule(new components.ComponentsMod())
+    .addModule(new decorators.DecoratorsMod())
+    .addModule(new formatters.FormattersMod())
+    .addModule(new services.ServicesMod())
+    .run();
 }
