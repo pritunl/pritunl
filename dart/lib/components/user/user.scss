@@ -1,1 +1,95 @@
 @import 'styles/base.scss';
+
+.user {
+  height: 40px;
+  background: #FFF;
+  border: 1px solid #CFCFCF;
+  margin-top: 12px;
+  @include border-radius-default();
+  @include box-shadow((
+    0, 1px, 0, rgba(255, 255, 255, 0.02),
+    0, 1px, 3px, rgba(0, 0, 0, 0.08), inset,
+  ));
+}
+
+checkbox {
+  margin: 10px;
+  float: left;
+}
+
+.name-container {
+  float: left;
+  height: auto;
+  padding-top: 0;
+  margin-top: 5px;
+  padding-left: 13px;
+  border-left: 1px solid #CFCFCF;
+}
+
+.name-container glyphicon {
+  font-size: 19px;
+  color: #64b3f6;
+  line-height: 28px;
+  position: relative;
+  top: 2px;
+  margin-right: 6px;
+}
+
+.name-container .name {
+  font-size: 18px;
+  cursor: pointer;
+  vertical-align: text-top;
+  color: #428bca;
+  line-height: 13px;
+}
+
+.name-container .id {
+  font-size: 10px;
+  position: relative;
+  top: -2px;
+}
+
+.buttons {
+  float: right;
+  display: inline-block;
+  margin-top: 5px;
+  height: 28px;
+  padding: 3px 8px 0 12px;
+  white-space: nowrap;
+  border-left: 1px solid #CFCFCF;
+}
+
+.status {
+  display: inline-block;
+  cursor: default;
+  width: 84px;
+  position: relative;
+  top: -4px;
+}
+
+.status .icon {
+  display: inline-block;
+  position: relative;
+  top: 3px;
+  margin-right: 4px;
+  width: 16px;
+  height: 16px;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+}
+
+.status .title {
+  color: #6f7277;
+}
+
+.status .icon.offline {
+  background-color: #d2322d;
+}
+
+.buttons glyphicon {
+  font-size: 20px;
+  color: #4E8BBF;
+  cursor: pointer;
+  margin-left: 3px;
+}

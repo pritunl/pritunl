@@ -1,7 +1,20 @@
 <div class="user">
   <div class="name-container">
-    <glyphicon type="user"></glyphicon>
-    <a class="name title" no-select>{{model.name}}</a>
-    <span class="id title">({{model.id}})</span>
+    <glyphicon type="user"></glyphicon><a class="name title" no-select>{{model.name}}</a>
+    <span class="id title" ng-if="false">({{model.id}})</span>
   </div>
+
+  <div class="buttons">
+    <div class="status">
+      <div class="icon" ng-class="'offline'"></div>
+      <span class="title">Offline</span>
+    </div>
+    <glyphicon type="qrcode"></glyphicon>
+    <glyphicon type="link"></glyphicon>
+    <glyphicon type="download"></glyphicon>
+    <glyphicon type="ban-circle"></glyphicon>
+    <glyphicon type="ok-circle" ng-if="false"></glyphicon>
+    <glyphicon type="chevron-down"></glyphicon>
+  </div>
+
 </div>
