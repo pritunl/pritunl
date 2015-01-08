@@ -1,6 +1,6 @@
 <ul class="user-list">
   <li ng-repeat="user in users">
-    {{user.id}}
+    <user model="user"></user>
   </li>
   <li ng-if="users.length == 0" class="message">
     There are no users in this organization
