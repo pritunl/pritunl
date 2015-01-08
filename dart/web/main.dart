@@ -13,6 +13,5 @@ void main() {
     .addModule(new components.ComponentsMod())
     .addModule(new decorators.DecoratorsMod())
     .addModule(new formatters.FormattersMod())
-    .addModule(new services.ServicesMod())
     .run();
 }
