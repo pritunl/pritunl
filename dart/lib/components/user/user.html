@@ -10,12 +10,14 @@
       <div class="icon" ng-class="'offline'"></div>
       <span class="title">Offline</span>
     </div>
-    <glyphicon type="qrcode"></glyphicon>
+
+    <tooltip>{{model.name}}</tooltip>
+    <glyphicon type="qrcode" tooltip-attach></glyphicon>
+
     <glyphicon type="link"></glyphicon>
     <glyphicon type="download"></glyphicon>
     <glyphicon type="ban-circle"></glyphicon>
     <glyphicon type="ok-circle" ng-if="false"></glyphicon>
     <glyphicon type="chevron-down"></glyphicon>
   </div>
-
 </div>
