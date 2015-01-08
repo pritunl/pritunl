@@ -16,7 +16,13 @@ class TooltipComp implements ng.ShadowRootAware {
   @NgTwoWay('state')
   var state;
 
-  show() {
+  TooltipComp(dom.Element this.element);
+
+  show(x, y) {
+    this.element.style
+      ..position = 'absolute'
+      ..left = '${x}px'
+      ..top = '${y}px';
     this.state = true;
   }
 
