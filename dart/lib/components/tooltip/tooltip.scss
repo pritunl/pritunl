@@ -8,12 +8,23 @@
   font-size: 12px;
   line-height: 1.4;
   visibility: visible;
-  @include opacity(0);
-  @include transition((opacity .15s linear));
+  @include transition((opacity 0.15s linear));
 }
 
-.container.show {
+.container.ng-enter {
   @include opacity(0.8);
+}
+
+.container.ng-enter-active {
+  @include opacity(0.8);
+}
+
+.container.ng-leave {
+  @include opacity(0.8);
+}
+
+.container.ng-leave-active {
+  @include opacity(0);
 }
 
 .arrow {
