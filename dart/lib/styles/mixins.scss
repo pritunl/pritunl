@@ -72,3 +72,9 @@
   -o-transition: $value;
   transition: $value;
 }
+
+@mixin calc($property, $expression) {
+  #{$property}: -webkit-calc(#{$expression});
+  #{$property}: -moz-calc(#{$expression});
+  #{$property}: calc(#{$expression});
+}
