@@ -1,0 +1,43 @@
+@import 'styles/base.scss';
+
+.container {
+  position: absolute;
+  z-index: 1070;
+  display: block;
+  font-size: 12px;
+  line-height: 1.4;
+  visibility: visible;
+  //@include opacity(1);
+  @include transition((opacity .15s linear));
+}
+
+.container.top {
+  padding: 5px 0;
+  margin-top: -3px;
+}
+
+.arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-color: rgba(0, 0, 0, 0);
+  border-style: solid;
+}
+
+.top .arrow {
+  bottom: 0;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px 5px 0;
+  border-top-color: #000;
+}
+
+.inner {
+  max-width: 200px;
+  padding: 3px 8px;
+  color: #FFF;
+  text-align: center;
+  text-decoration: none;
+  background-color: #000;
+  border-radius: 4px;
+}
