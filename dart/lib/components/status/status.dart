@@ -12,13 +12,11 @@ class StatusComp {
   var http;
   var model;
 
-  StatusComp(ng.Http this.http) {
+  StatusComp(ng.Http this.http, status.Status this.model) {
     this.update();
   }
 
   update() {
-    this.http.get('/status').then((response) {
-      this.model = response.data;
-    });
+    this.model.fetch();
   }
 }
