@@ -1,7 +1,7 @@
 library noselect;
 
-import 'dart:html' as dom;
 import 'package:angular/angular.dart' show Decorator;
+import 'dart:html' as dom;
 
 @Decorator(
   selector: '[no-select]'
