@@ -10,10 +10,9 @@ import 'package:angular/angular.dart' as ng;
 )
 class UsersComp implements ng.AttachAware {
   var http;
-  var users;
 
-  @NgTwoWay('org-id')
-  var orgId;
+  @NgTwoWay('users')
+  var users;
 
   UsersComp(ng.Http this.http);
 
@@ -22,8 +21,6 @@ class UsersComp implements ng.AttachAware {
   }
 
   update() {
-    this.http.get('/user/${this.orgId}').then((response) {
-      this.users = response.data;
-    });
+    this.users.fetch();
   }
 }

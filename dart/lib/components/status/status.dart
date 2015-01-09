@@ -3,7 +3,6 @@ library status;
 import 'package:pritunl/models/status.dart' as status;
 
 import 'package:angular/angular.dart' show Component;
-import 'package:angular/angular.dart' as ng;
 
 @Component(
     selector: 'status',

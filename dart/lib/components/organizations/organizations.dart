@@ -1,7 +1,8 @@
 library organizations;
 
+import 'package:pritunl/collections/organizations.dart' as organizations;
+
 import 'package:angular/angular.dart' show Component;
-import 'package:angular/angular.dart' as ng;
 
 @Component(
   selector: 'organizations',
