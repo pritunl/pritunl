@@ -12,15 +12,10 @@ class Collection extends collection.IterableBase {
   var errorStatus;
   var errorData;
 
-  Collection(ng.Http this.http);
+  Collection(ng.Http this.http) : _collection = [];
 
   get iterator {
-    if (this._collection == null) {
-      return [].iterator;
-    }
-    else {
-      return this._collection.iterator;
-    }
+    return this._collection.iterator;
   }
 
   fetch() {
