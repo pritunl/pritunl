@@ -1,6 +1,6 @@
 library log_entries;
 
-import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
+import 'package:angular/angular.dart' show Component;
 import 'package:angular/angular.dart' as ng;
 
 @Component(
