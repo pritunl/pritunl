@@ -92,7 +92,11 @@ def status_get():
     user_count = organization.get_user_count_multi()
     local_networks = utils.get_local_networks()
 
-    orgs_count = org_collection.find().count()
+    orgs_count = org_collection.find({
+       'type': ORG_DEFAULT,
+    }, {
+        '_id': True,
+    }).count()
 
     if settings.local.openssl_heartbleed:
         notification = 'You are running an outdated version of openssl ' + \
