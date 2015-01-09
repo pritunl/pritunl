@@ -1,4 +1,4 @@
-library model;
+library log_entries;
 
 import 'package:pritunl/collection.dart' as collection;
 import 'package:pritunl/models/log_entry.dart' as log_entry;
