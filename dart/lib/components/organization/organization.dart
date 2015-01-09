@@ -13,4 +13,8 @@ class OrganizationComp {
 
   @NgTwoWay('search')
   var search;
+
+  toggleHidden() {
+    model.users.hidden = model.users.hidden != true;
+  }
 }
