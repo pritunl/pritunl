@@ -11,6 +11,9 @@ class UserComp {
   @NgTwoWay('model')
   var model;
 
+  @NgTwoWay('collection')
+  var collection;
+
   @NgAttr('selected')
   var selected;
 }
