@@ -28,7 +28,7 @@ class TooltipAttachDec {
   }
 
   TooltipAttachDec(dom.Element this.element) {
-    this.element..onMouseEnter.listen((_) {
+    this.element.onMouseEnter.listen((_) {
       var x = this.element.offsetLeft;
       var y = this.element.offsetTop;
       var width = this.element.offsetWidth;
@@ -36,7 +36,7 @@ class TooltipAttachDec {
 
       this.tooltip.show(x + (width / 2), y - height  - 10);
     });
-    this.element..onMouseLeave.listen((_) {
+    this.element.onMouseLeave.listen((_) {
       this.tooltip.hide();
     });
   }
