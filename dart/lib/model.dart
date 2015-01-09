@@ -5,6 +5,8 @@ import 'dart:mirrors' as mirrors;
 
 class Model {
   var _http;
+  var errorStatus;
+  var errorData;
 
   Model(ng.Http this._http);
 
@@ -13,8 +15,13 @@ class Model {
   }
 
   fetch() {
-    this._http.get(this.url).then((response) {
+    return this._http.get(this.url).then((response) {
       this.import(response.data);
+      return response.data;
+    }).catchError((err) {
+      this.errorStatus = err.status;
+      this.errorData = err.data;
+      throw err;
     });
   }
 
