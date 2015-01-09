@@ -1,6 +1,6 @@
 library container;
 
-import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
+import 'package:angular/angular.dart' show Component;
 
 @Component(
   selector: 'container',
@@ -8,6 +8,4 @@ import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
   cssUrl: 'packages/pritunl/components/container/container.css'
 )
 class ContainerComp {
-  ContainerComp() {
-  }
 }
