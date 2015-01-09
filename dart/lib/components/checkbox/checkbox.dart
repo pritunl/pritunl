@@ -1,6 +1,6 @@
 library checkbox;
 
-import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
+import 'package:angular/angular.dart' show Component, NgTwoWay;
 
 @Component(
   selector: 'checkbox',
