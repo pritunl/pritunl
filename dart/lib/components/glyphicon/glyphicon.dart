@@ -1,6 +1,6 @@
 library glyphicon;
 
-import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
+import 'package:angular/angular.dart' show Component, NgAttr;
 
 @Component(
   selector: 'glyphicon',
