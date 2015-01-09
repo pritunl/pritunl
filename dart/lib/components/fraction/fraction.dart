@@ -1,6 +1,6 @@
 library fraction;
 
-import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
+import 'package:angular/angular.dart' show Component, NgAttr;
 
 var DEFAULT_NULL_STYLE = 'default';
 var DEFAULT_EMPTY_STYLE = 'danger';
