@@ -25,7 +25,7 @@ class Organization extends model.Model {
     this._id = val;
   }
 
-  Organization(ng.Http http) : super(http) {
-    this.users = new usrs.Users(this.http);
-  }
+  Organization(ng.Http http) :
+      users = new usrs.Users(http),
+      super(http);
 }
