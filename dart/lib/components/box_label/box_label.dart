@@ -1,6 +1,6 @@
 library box_label;
 
-import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
+import 'package:angular/angular.dart' show Component, NgAttr;
 import 'package:angular/angular.dart' as ng;
 
 @Component(
