@@ -11,6 +11,12 @@
   ));
 }
 
+.org .id {
+  font-size: 10px;
+  position: relative;
+  top: -2px;
+}
+
 .org box-label.org-label {
   cursor: default;
   margin-top: 1px;
@@ -48,10 +54,6 @@
   float: right;
   position: relative;
   top: -5px;
-}
-
-.header .org-id {
-  display: none;
 }
 
 .header box-label.user-count {
