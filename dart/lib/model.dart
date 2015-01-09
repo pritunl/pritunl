@@ -4,18 +4,17 @@ import 'package:angular/angular.dart' as ng;
 import 'dart:mirrors' as mirrors;
 
 class Model {
-  var data;
-  var http;
+  var _http;
 
-  Model(ng.Http this.http);
+  Model(ng.Http this._http);
 
   get url {
     return '';
   }
 
   fetch() {
-    this.http.get(this.url).then((response) {
-      this.data = response.data;
+    this._http.get(this.url).then((response) {
+      this.import(response.data);
     });
   }
 
