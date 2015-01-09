@@ -9,16 +9,13 @@ import 'package:angular/angular.dart' as ng;
   cssUrl: 'packages/pritunl/components/organizations/organizations.css'
 )
 class OrganizationsComp {
-  var http;
   var orgs;
 
-  OrganizationsComp(ng.Http this.http) {
+  OrganizationsComp(organizations.Organizations this.orgs) {
     this.update();
   }
 
   update() {
-    this.http.get('/organization').then((response) {
-      this.orgs = response.data;
-    });
+    this.orgs.fetch();
   }
 }

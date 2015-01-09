@@ -24,7 +24,7 @@ class Collection extends collection.IterableBase {
   }
 
   fetch() {
-    return this._http.get(this.url).then((response) {
+    return this.http.get(this.url).then((response) {
       this.import(response.data);
       return response.data;
     }).catchError((err) {
@@ -45,7 +45,7 @@ class Collection extends collection.IterableBase {
     this._collection = [];
 
     data.forEach((value) {
-      var mdl = modelCls.newInstance(initSym, [this._http]).reflectee;
+      var mdl = modelCls.newInstance(initSym, [this.http]).reflectee;
       mdl.import(value);
       this._collection.add(mdl);
     });
