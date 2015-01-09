@@ -14,10 +14,18 @@
     <tooltip>Get two-step authentication key</tooltip>
     <glyphicon type="qrcode" tooltip-attach></glyphicon>
 
-    <tooltip></tooltip>
+    <tooltip>
+      <span ng-if="true">Get key links</span>
+      <span ng-if="false">Organization must be attached to
+        server to get key links</span>
+    </tooltip>
     <glyphicon type="link" tooltip-attach></glyphicon>
 
-    <tooltip></tooltip>
+    <tooltip>
+      <span ng-if="true">Click to download key</span>
+      <span ng-if="false">Organization must be attached to
+        server to download key</span>
+    </tooltip>
     <glyphicon type="download" tooltip-attach></glyphicon>
 
     <tooltip>Disable and disconnect user</tooltip>
