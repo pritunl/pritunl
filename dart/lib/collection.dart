@@ -5,14 +5,14 @@ import 'dart:mirrors' as mirrors;
 import 'dart:collection' as collection;
 
 class Collection extends collection.IterableBase {
-  var _http;
   var _collection;
+  var http;
   var url;
   var model;
   var errorStatus;
   var errorData;
 
-  Collection(ng.Http this._http);
+  Collection(ng.Http this.http);
 
   get iterator {
     if (this._collection == null) {
