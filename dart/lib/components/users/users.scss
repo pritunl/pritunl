@@ -31,3 +31,18 @@
 .next {
   float: right;
 }
+
+.pages {
+  margin-top: 16px;
+  text-align: center;
+  padding: 0 150px;
+}
+
+.pages li {
+  display: inline;
+  padding: 0 2px;
+}
+
+.pages li b {
+  pointer-events: none;
+}
