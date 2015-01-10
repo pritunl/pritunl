@@ -13,7 +13,7 @@
 }
 
 checkbox {
-  margin: 10px;
+  margin: 10px 10px 0 10px;
   float: left;
 }
 
@@ -84,4 +84,96 @@ checkbox {
   font-size: 20px;
   cursor: pointer;
   margin-left: 3px;
+}
+
+
+
+
+.user-servers {
+  @include transition((opacity 0.05s ease-in-out));
+}
+
+.user-servers.ng-enter {
+  @include opacity(0);
+}
+
+.user-servers.ng-enter-active {
+  @include opacity(1);
+}
+
+.user-servers.ng-leave {
+  @include opacity(1);
+}
+
+.user-servers.ng-leave-active {
+  @include opacity(0);
+}
+
+
+
+.user-servers {
+  border-color: #cfcfcf;
+  background: #fff;
+
+  border-width: 1px;
+  border-style: solid;
+  border-top: none;
+  margin-left: 3px;
+  margin-right: 3px;
+  padding: 1px 10px;
+  @include border-bottom-left-radius-default();
+  @include border-bottom-right-radius-default();
+  @include box-shadow((inset 0px 12px 8px -14px rgba(0, 0, 0, 0.53)));
+}
+
+.user-servers .server {
+  color: #4d535c;
+
+  font-size: 15px;
+  height: 27px;
+  padding-top: 2px;
+}
+
+.user-servers .server + .server {
+  border-top-color: #cfcfcf;
+
+  border-top-width: 1px;
+  border-top-style: solid;
+}
+
+.user-servers .item,
+.user-servers .item span {
+  font-size: 12px;
+  display: inline-block;
+}
+
+.user-servers .right {
+  float: right;
+  width: 385px;
+  white-space: nowrap;
+}
+
+.user-servers .status {
+  float: right;
+}
+
+.virt-addr span,
+.real-addr span {
+  width: 95px;
+}
+
+.conn-time span {
+  width: 70px;
+}
+
+.user-servers .status .icon {
+  width: 13px;
+  height: 13px;
+  top: 2px;
+}
+
+.user-servers .status {
+  width: 65px;
+  position: relative;
+  top: 3px;
 }
