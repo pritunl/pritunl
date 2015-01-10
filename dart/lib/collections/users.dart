@@ -1,5 +1,7 @@
 library users;
 
+import 'package:pritunl/exceptions.dart';
+
 import 'package:pritunl/collection.dart' as collection;
 import 'package:pritunl/models/user.dart' as user;
 
@@ -9,6 +11,7 @@ import 'dart:math' as math;
 
 @Injectable()
 class Users extends collection.Collection {
+  var _search;
   var model = user.User;
   var org_id;
   var hidden;
@@ -17,7 +20,28 @@ class Users extends collection.Collection {
   var pages;
 
   get url {
-    return '/user/${this.org_id}?page=${this.page}';
+    var url = '/user/${this.org_id}';
+
+    if (this.search != null) {
+      url += '?search=${this.search}';
+    }
+    else {
+      url += '?page=${this.page}';
+    }
+
+    return url;
+  }
+
+  set search (val) {
+    if (val == '') {
+      val = null;
+    }
+
+    this._search = val;
+    this.fetch();
+  }
+  get search {
+    return this._search;
   }
 
   Users(ng.Http http) :
@@ -25,8 +49,16 @@ class Users extends collection.Collection {
     super(http);
 
   parse(data) {
-    this.page = data['page'].toInt();
-    this.page_total = data['page_total'].toInt();
+    if (data.containsKey('search')) {
+      if (this._search != data['search']) {
+        throw new IgnoreResponse();
+      }
+    }
+    else {
+      this.page = data['page'].toInt();
+      this.page_total = data['page_total'].toInt();
+    }
+
     this._updatePages();
 
     return data['users'];
