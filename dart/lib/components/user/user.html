@@ -16,8 +16,10 @@
       <span class="title">Offline</span>
     </div>
 
-    <tooltip>Get two-step authentication key</tooltip>
-    <glyphicon type="qrcode" tooltip-attach></glyphicon>
+    <span ng-if="model.otp_auth">
+      <tooltip>Get two-step authentication key</tooltip>
+      <glyphicon type="qrcode" tooltip-attach></glyphicon>
+    </span>
 
     <tooltip>
       <span ng-if="true">Get key links</span>
