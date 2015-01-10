@@ -12,10 +12,19 @@
     Loading...
   </li>
 </ul>
-<btn class="prev" type="primary"
-  size="sm" min-width="105px">Previous Page</btn>
-<btn class="next clearfix" type="primary"
-  size="sm" min-width="105px">Next Page</btn>
+<btn class="prev" type="primary" size="sm" min-width="105px"
+  ng-if="users.page != 0"
+  ng-click="users.prev()">Previous Page</btn>
+<btn class="next clearfix" type="primary" size="sm" min-width="105px"
+  ng-if="users.page != users.page_total"
+  ng-click="users.next()">Next Page</btn>
+<ul class="pages" no-select>
+  <li ng-repeat="page in users.pages">
+    <a ng-click="users.onPage(page[1])"><span><b
+      ng-if="page[0]">{{page[1]}}</b></span><span
+      ng-if="page[0] != true">{{page[1]}}</span></a>
+  </li>
+</ul>
 <!--<div class="pages no-select">-->
   <!--<div class="links">-->
     <!--<a class="link first">First</a>-->
