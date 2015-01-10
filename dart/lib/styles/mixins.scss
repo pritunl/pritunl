@@ -21,6 +21,34 @@
   border-radius: $border-radius;
 }
 
+@mixin border-top-left-radius-default() {
+  -webkit-top-left-border-radius: $border-radius;
+  -moz-top-left-border-radius: $border-radius;
+  -ms-top-left-border-radius: $border-radius;
+  border-top-left-radius: $border-radius;
+}
+
+@mixin border-top-right-radius-default() {
+  -webkit-top-right-border-radius: $border-radius;
+  -moz-top-right-border-radius: $border-radius;
+  -ms-top-right-border-radius: $border-radius;
+  border-top-right-radius: $border-radius;
+}
+
+@mixin border-bottom-left-radius-default() {
+  -webkit-bottom-left-border-radius: $border-radius;
+  -moz-bottom-left-border-radius: $border-radius;
+  -ms-bottom-left-border-radius: $border-radius;
+  border-bottom-left-radius: $border-radius;
+}
+
+@mixin border-bottom-right-radius-default() {
+  -webkit-bottom-right-border-radius: $border-radius;
+  -moz-bottom-right-border-radius: $border-radius;
+  -ms-bottom-right-border-radius: $border-radius;
+  border-bottom-right-radius: $border-radius;
+}
+
 @mixin border-top-left-radius($radius) {
   -webkit-border-radius: $radius;
   -moz-border-radius: $radius;
