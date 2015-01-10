@@ -87,7 +87,7 @@ checkbox {
 }
 
 .user-servers {
-  @include transition((opacity 0.05s ease-in-out));
+  @include transition((opacity 0.04s ease-in-out));
 }
 
 .user-servers.ng-enter {
