@@ -43,3 +43,37 @@
     <glyphicon type="chevron-down" tooltip-attach></glyphicon>
   </div>
 </div>
+<ul ng-if="showServers" class="user-servers" ng-animate>
+  <li class="server" ng-repeat="server in model.servers">
+    <div class="item title name">
+      <glyphicon type="dashboard"></glyphicon>
+      <span>{{server.name}}</span>
+    </div>
+    <div class="item title device">
+      <glyphicon type="device"></glyphicon>
+      <span>{{server.device_name}}</span>
+    </div>
+    <div ng-if="model.status" class="item title status">
+      <div class="icon online"></div>
+      <span class="title">Online</span>
+    </div>
+    <div ng-if="model.status != true" class="item title status">
+      <div class="icon offline"></div>
+      <span class="title">Offline</span>
+    </div>
+    <div class="right">
+      <div ng-if="server.virt_address != null" class="item title virt-addr">
+        <glyphicon type="send"></glyphicon>
+        <span>{{server.virt_address}}</span>
+      </div>
+      <div ng-if="server.real_address != null" class="item title real-addr">
+        <glyphicon type="globe"></glyphicon>
+        <span>{{server.real_address}}</span>
+      </div>
+      <div ng-if="server.connected_since != null" class="item title conn-time">
+        <glyphicon type="time"></glyphicon>
+        <span>{{server.connected_since}}</span>
+      </div>
+    </div>
+  </li>
+</ul>

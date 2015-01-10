@@ -16,4 +16,6 @@ class UserComp {
 
   @NgAttr('selected')
   var selected;
+
+  var showServers;
 }
