@@ -40,6 +40,10 @@ body /deep/ a:active {
   background-color: transparent;
 }
 
+body /deep/ a:hover {
+  text-decoration: underline;
+}
+
 body /deep/ select:-moz-focusring {
   color: transparent;
   text-shadow: 0 0 0 #555;
