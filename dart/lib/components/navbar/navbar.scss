@@ -30,6 +30,7 @@ nav header {
   font-size: 28px;
   line-height: 32px;
   cursor: default;
+  text-decoration: none;
 }
 
 .premium-brand,
@@ -58,6 +59,10 @@ nav header {
   position: relative;
   display: block;
   padding: 15px;
+}
+
+.links > li > a:hover {
+  text-decoration: none;
 }
 
 .hosts {
