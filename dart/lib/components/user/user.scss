@@ -107,9 +107,6 @@ checkbox {
 }
 
 .user-servers {
-  border-color: #cfcfcf;
-  background: #fff;
-
   border-width: 1px;
   border-style: solid;
   border-top: none;
@@ -122,16 +119,12 @@ checkbox {
 }
 
 .user-servers .server {
-  color: #4d535c;
-
   font-size: 15px;
   height: 27px;
   padding-top: 2px;
 }
 
 .user-servers .server + .server {
-  border-top-color: #cfcfcf;
-
   border-top-width: 1px;
   border-top-style: solid;
 }
