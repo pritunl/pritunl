@@ -13,7 +13,7 @@ class User extends model.Model {
   var name;
   var email;
   var type;
-  var oth_auth;
+  var otp_auth;
   var otp_secret;
   var disabled;
   var servers;
