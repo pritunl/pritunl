@@ -444,6 +444,17 @@ body /deep/ user::shadow .buttons glyphicon {
   color: map-get($user-buttons, icon);
 }
 
+body /deep/ user::shadow .user-servers {
+  x-label: users;
+  background-color: map-get($user, bg);
+  border-color: map-get($user, border);
+}
+
+body /deep/ user::shadow .user-servers .server + .server {
+  x-label: user;
+  border-color: map-get($user, border);
+}
+
 // ####################################
 // users
 // ####################################
