@@ -86,9 +86,6 @@ checkbox {
   margin-left: 3px;
 }
 
-
-
-
 .user-servers {
   @include transition((opacity 0.05s ease-in-out));
 }
@@ -108,8 +105,6 @@ checkbox {
 .user-servers.ng-leave-active {
   @include opacity(0);
 }
-
-
 
 .user-servers {
   border-color: #cfcfcf;
