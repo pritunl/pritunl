@@ -39,8 +39,16 @@
     <tooltip>Enable user</tooltip>
     <glyphicon type="ok-circle" ng-if="false" tooltip-attach></glyphicon>
 
-    <tooltip>Show additional user information</tooltip>
-    <glyphicon type="chevron-down" tooltip-attach></glyphicon>
+    <span ng-if="showServers != true">
+      <tooltip>Show additional user information</tooltip>
+      <glyphicon type="chevron-down" ng-click="showServers = true"
+        tooltip-attach></glyphicon>
+    </span>
+    <span ng-if="showServers">
+      <tooltip>Hide additional user information</tooltip>
+      <glyphicon type="chevron-up" ng-click="showServers = false"
+        tooltip-attach></glyphicon>
+    </span>
   </div>
 </div>
 <ul ng-if="showServers" class="user-servers" ng-animate>
