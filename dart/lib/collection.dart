@@ -1,5 +1,7 @@
 library model;
 
+import 'package:pritunl/exceptions.dart';
+
 import 'package:angular/angular.dart' as ng;
 import 'dart:mirrors' as mirrors;
 import 'dart:collection' as collection;
@@ -34,7 +36,14 @@ class Collection extends collection.IterableBase {
   }
 
   import(responseData) {
-    var data = this.parse(responseData);
+    var data;
+
+    try {
+      data = this.parse(responseData);
+    } on IgnoreResponse {
+      return;
+    }
+
     var modelCls = mirrors.reflectClass(this.model);
     var initSym = new Symbol('');
     this._collection = [];
