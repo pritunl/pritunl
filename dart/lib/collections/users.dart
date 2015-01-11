@@ -12,6 +12,7 @@ import 'dart:math' as math;
 @Injectable()
 class Users extends collection.Collection {
   var _search;
+  var _has_clients;
   var model = user.User;
   var org_id;
   var hidden;
@@ -51,6 +52,14 @@ class Users extends collection.Collection {
     return this._search;
   }
 
+  get no_users {
+    if (this._has_clients == true || (
+        this.hidden == true && this.length != 0)) {
+      return false;
+    }
+    return true;
+  }
+
   Users(ng.Http http) :
     page = 0,
     super(http);
@@ -82,6 +91,18 @@ class Users extends collection.Collection {
     }
 
     return data['users'];
+  }
+
+  imported() {
+    var user;
+
+    for (user in this) {
+      if (user.type == 'client') {
+        this._has_clients = true;
+        return;
+      }
+    }
+    this._has_clients = false;
   }
 
   _updatePages() {
