@@ -29,7 +29,7 @@
 </div>
 <div class="footer" ng-if="users.search != null">
   <div class="search-time" no-select>search found {{users.search_count}}
-    results in {{users.search_time.toFixed(4)}} seconds</div>
+    results in {{users.search_time.toStringAsFixed(4)}} seconds</div>
   <div class="search-more" ng-if="users.search_more" no-select>
     <a ng-click="users.search_more">show more results</a>
   </div>
