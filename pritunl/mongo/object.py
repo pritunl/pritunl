@@ -91,7 +91,7 @@ class MongoObject(object):
     def get_commit_doc(self, fields=None):
         doc = {}
 
-        if fields:
+        if fields is not None:
             if isinstance(fields, basestring):
                 fields = (fields,)
         elif self.exists:
