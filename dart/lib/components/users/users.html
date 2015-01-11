@@ -1,6 +1,7 @@
 <ul class="user-list">
   <li ng-repeat="user in users">
-    <user model="user" collection="users"></user>
+    <user model="user" collection="users"
+      ng-if="user.type == 'client' || users.hidden"></user>
   </li>
   <li ng-if="users.length == 0" class="message">
     There are no users in this organization
