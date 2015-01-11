@@ -136,4 +136,9 @@ class Users extends collection.Collection {
     this.page = page;
     this.fetch();
   }
+
+  searchMore() {
+    this.search_limit *= 2;
+    this.fetch();
+  }
 }
