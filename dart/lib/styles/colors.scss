@@ -20,6 +20,18 @@ body /deep/ .title {
   color: map-get($title, fg);
 }
 
+body /deep/ a {
+  x-label: link;
+  color: map-get($link, fg);
+}
+
+body /deep/ a:focus,
+body /deep/ a:hover,
+body /deep/ a:active {
+  x-label: link;
+  color: map-get($link, fg-hover);
+}
+
 // ####################################
 // btn
 // ####################################
