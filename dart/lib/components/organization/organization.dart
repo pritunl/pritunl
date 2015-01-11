@@ -12,6 +12,6 @@ class OrganizationComp {
   var model;
 
   toggleHidden() {
-    model.users.hidden = model.users.hidden != true;
+    this.model.users.hidden = this.model.users.hidden != true;
   }
 }
