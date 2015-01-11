@@ -21,12 +21,16 @@ class Users extends collection.Collection {
   var search_count;
   var search_more;
   var search_time;
+  var search_limit;
 
   get url {
     var url = '/user/${this.org_id}';
 
     if (this.search != null) {
       url += '?search=${this.search}';
+      if (this.search_limit != null) {
+        url += '&limit=${this.search_limit}';
+      }
     }
     else {
       url += '?page=${this.page}';
@@ -59,15 +63,23 @@ class Users extends collection.Collection {
       this.search_count = data['search_count'];
       this.search_more = data['search_more'];
       this.search_time = data['search_time'];
+      this.search_limit = data['search_limit'];
+
+      this.page_total = null;
     }
     else {
       if (this.page != data['page'].toInt()) {
         throw new IgnoreResponse();
       }
       this.page_total = data['page_total'].toInt();
-    }
 
-    this._updatePages();
+      this.search_count = null;
+      this.search_more = null;
+      this.search_time = null;
+      this.search_limit = null;
+
+      this._updatePages();
+    }
 
     return data['users'];
   }
