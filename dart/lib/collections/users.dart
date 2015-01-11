@@ -76,7 +76,6 @@ class Users extends collection.Collection {
     this.pages = [];
 
     if (this.page_total < 2) {
-      print(this.pages);
       return;
     }
 
