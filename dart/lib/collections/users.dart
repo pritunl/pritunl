@@ -18,6 +18,9 @@ class Users extends collection.Collection {
   var page;
   var page_total;
   var pages;
+  var search_count;
+  var search_more;
+  var search_time;
 
   get url {
     var url = '/user/${this.org_id}';
@@ -32,7 +35,7 @@ class Users extends collection.Collection {
     return url;
   }
 
-  set search (val) {
+  set search(val) {
     if (val == '') {
       val = null;
     }
@@ -53,9 +56,14 @@ class Users extends collection.Collection {
       if (this._search != data['search']) {
         throw new IgnoreResponse();
       }
+      this.search_count = data['search_count'];
+      this.search_more = data['search_more'];
+      this.search_time = data['search_time'];
     }
     else {
-      this.page = data['page'].toInt();
+      if (this.page != data['page'].toInt()) {
+        throw new IgnoreResponse();
+      }
       this.page_total = data['page_total'].toInt();
     }
 
