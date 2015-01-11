@@ -86,24 +86,26 @@ checkbox {
   margin-left: 3px;
 }
 
-.user-servers {
-  @include transition((opacity 0.04s ease-in-out));
+.user-servers,
+.user-servers .server {
+  overflow: hidden;
+  @include transition((height .1s ease-in-out));
 }
 
-.user-servers.ng-enter {
-  @include opacity(0);
+.user-servers.ng-enter .server {
+  height: 0;
 }
 
-.user-servers.ng-enter-active {
-  @include opacity(1);
+.user-servers.ng-enter-active .server {
+  height: 27px;
 }
 
-.user-servers.ng-leave {
-  @include opacity(1);
+.user-servers.ng-leave .server {
+  height: 27px;
 }
 
-.user-servers.ng-leave-active {
-  @include opacity(0);
+.user-servers.ng-leave-active .server {
+  height: 0;
 }
 
 .user-servers {
