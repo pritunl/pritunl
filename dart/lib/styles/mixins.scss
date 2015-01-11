@@ -101,6 +101,12 @@
   transition: $value;
 }
 
+@mixin transform($value) {
+  -webkit-transform: $value;
+  -o-transform: $value;
+  transform: $value;
+}
+
 @mixin calc($property, $expression) {
   #{$property}: -webkit-calc(#{$expression});
   #{$property}: -moz-calc(#{$expression});
