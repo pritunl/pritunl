@@ -46,3 +46,16 @@
 .pages li b {
   pointer-events: none;
 }
+
+.search-time {
+  margin-right: 12px;
+  margin-bottom: 15px;
+  float: right;
+}
+
+.search-more {
+  cursor: pointer;
+  text-align: center;
+  padding: 0 350px;
+  margin: 10px 10px 0 10px;
+}
