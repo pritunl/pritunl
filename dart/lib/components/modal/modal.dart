@@ -22,7 +22,6 @@ class ModalComp {
   }
 
   softClose(target) {
-    print('taret $target');
     if (target.classes.contains('modal')) {
       this.close();
     }
