@@ -6,6 +6,7 @@
 // ####################################
 body {
   x-label: body;
+  color: map-get($body, fg);
   background-color: #efefef;
 }
 
