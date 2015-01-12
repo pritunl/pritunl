@@ -28,12 +28,10 @@ class ModalComp {
   }
 
   hardClose() {
-    print('hardClose');
     this.close();
   }
 
   submit() {
-    print('submit');
     this.close();
   }
 }
