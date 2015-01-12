@@ -91,8 +91,8 @@
 }
 
 @mixin opacity($value) {
-  filter: alpha(opacity=$value);
-  opacity: $value / 100;
+  filter: alpha(opacity=$value * 100);
+  opacity: $value;
 }
 
 @mixin transition($value) {
