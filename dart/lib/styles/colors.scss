@@ -45,8 +45,30 @@ body /deep/ btn::shadow .close {
   color: map-get($btn, close-fg);
 }
 
+body /deep/ btn::shadow .default {
+  x-label: btn;
+  color: map-get($btn, default-fg);
+  background-color: map-get($btn, default-bg);
+  border-color: map-get($btn, default-border);
+}
+
+body /deep/ btn::shadow .default:hover,
+body /deep/ btn::shadow .default:focus,
+body /deep/ btn::shadow .default:active {
+  x-label: btn;
+  background-color: map-get($btn, default-bg-hover);
+  border-color: map-get($btn, default-border-hover);
+}
+
+body /deep/ btn::shadow .default[disabled] {
+  x-label: btn;
+  background-color: map-get($btn, default-bg-disabled);
+  border-color: map-get($btn, default-border-disabled);
+}
+
 body /deep/ btn::shadow .primary {
   x-label: btn;
+  color: map-get($btn, primary-fg);
   background-color: map-get($btn, primary-bg);
   border-color: map-get($btn, primary-border);
 }
@@ -67,6 +89,7 @@ body /deep/ btn::shadow .primary[disabled] {
 
 body /deep/ btn::shadow .success {
   x-label: btn;
+  color: map-get($btn, success-fg);
   background-color: map-get($btn, success-bg);
   border-color: map-get($btn, success-border);
 }
@@ -87,6 +110,7 @@ body /deep/ btn::shadow .success[disabled] {
 
 body /deep/ btn::shadow .info {
   x-label: btn;
+  color: map-get($btn, info-fg);
   background-color: map-get($btn, info-bg);
   border-color: map-get($btn, info-border);
 }
@@ -107,6 +131,7 @@ body /deep/ btn::shadow .info[disabled] {
 
 body /deep/ btn::shadow .warning {
   x-label: btn;
+  color: map-get($btn, warning-fg);
   background-color: map-get($btn, warning-bg);
   border-color: map-get($btn, warning-border);
 }
@@ -127,6 +152,7 @@ body /deep/ btn::shadow .warning[disabled] {
 
 body /deep/ btn::shadow .danger {
   x-label: btn;
+  color: map-get($btn, danger-fg);
   background-color: map-get($btn, danger-bg);
   border-color: map-get($btn, danger-border);
 }
