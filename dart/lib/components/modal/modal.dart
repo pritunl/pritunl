@@ -12,4 +12,29 @@ class ModalComp {
 
   ModalComp() {
   }
+
+  open() {
+    this.state = true;
+  }
+
+  close() {
+    this.state = false;
+  }
+
+  softClose(target) {
+    print('taret $target');
+    if (target.classes.contains('modal')) {
+      this.close();
+    }
+  }
+
+  hardClose() {
+    print('hardClose');
+    this.close();
+  }
+
+  submit() {
+    print('submit');
+    this.close();
+  }
 }

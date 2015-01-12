@@ -1,9 +1,9 @@
 <div ng-if="state" ng-animate>
   <div class="backdrop"></div>
-  <div class="modal">
+  <div class="modal" ng-click="softClose($event.target)">
     <form class="content">
       <div class="header">
-        <btn type="close"></btn>
+        <btn type="close" ng-click="hardClose()"></btn>
         <h4 class="title">Add Organization</h4>
         <!--<div class="advanced">Advanced</div>-->
       </div>
@@ -16,8 +16,8 @@
         </div>
       </div>
       <div class="footer">
-        <btn type="default">Cancel</btn>
-        <btn type="primary" form-submit>Ok</btn>
+        <btn type="default" ng-click="hardClose()">Cancel</btn>
+        <btn type="primary" form-submit ng-click="submit()">Ok</btn>
       </div>
     </form>
   </div>
