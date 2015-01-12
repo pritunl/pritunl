@@ -16,7 +16,31 @@ class Collection extends collection.IterableBase {
   var model;
   var errorStatus;
   var errorData;
-  var loading;
+  var loadingLong;
+
+  var _loading;
+  set loading(val) {
+    if (val) {
+      var loadCheckId = new math.Random().nextInt(32000);
+      this._loadCheckId = loadCheckId;
+      this._loading = true;
+
+      new async.Future.delayed(
+        new Duration(milliseconds: 200), () {
+          if (this._loadCheckId == loadCheckId) {
+            this.loadingLong = true;
+          }
+        });
+    }
+    else {
+      this._loadCheckId = null;
+      this.loadingLong = false;
+      this._loading = false;
+    }
+  }
+  get loading {
+    return this._loading;
+  }
 
   Collection(ng.Http this.http) : _collection = [];
 
