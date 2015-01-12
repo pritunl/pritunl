@@ -1,6 +1,6 @@
 library modal;
 
-import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
+import 'package:angular/angular.dart' show Component, NgCallback;
 
 @Component(
   selector: 'modal',
@@ -10,28 +10,46 @@ import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
 class ModalComp {
   var state;
 
+  @NgCallback('on-ok')
+  var onOk;
+
+  @NgCallback('on-cancel')
+  var onCancel;
+
   ModalComp() {
   }
 
-  open() {
+  open(submit) {
     this.state = true;
+    if (submit) {
+      this.onOk();
+    }
+    else {
+      this.onCancel();
+    }
   }
 
-  close() {
+  close(submit) {
     this.state = false;
+    if (submit) {
+      this.onOk();
+    }
+    else {
+      this.onCancel();
+    }
   }
 
   softClose(target) {
     if (target.classes.contains('modal')) {
-      this.close();
+      this.close(false);
     }
   }
 
   hardClose() {
-    this.close();
+    this.close(false);
   }
 
   submit() {
-    this.close();
+    this.close(true);
   }
 }
