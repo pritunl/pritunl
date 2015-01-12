@@ -19,14 +19,8 @@ class ModalComp {
   ModalComp() {
   }
 
-  open(submit) {
+  open() {
     this.state = true;
-    if (submit) {
-      this.onOk();
-    }
-    else {
-      this.onCancel();
-    }
   }
 
   close(submit) {
