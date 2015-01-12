@@ -37,6 +37,14 @@ button[disabled] {
   @include opacity(0.65);
 }
 
+.close:focus {
+  outline: none;
+}
+
+.close:hover {
+  @include opacity(0.5);
+}
+
 .close:before {
   content: '\e014';
 }
