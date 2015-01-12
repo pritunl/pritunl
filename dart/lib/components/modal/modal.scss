@@ -1,0 +1,105 @@
+@import 'styles/base.scss';
+
+.backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1040;
+  background-color: #000;
+  @include opacity(0.5);
+}
+
+.backdrop .ng-enter {
+  @include transition(opacity .15s linear);
+  @include opacity(0);
+}
+
+.backdrop .ng-enter-active {
+  @include opacity(0.5);
+}
+
+.backdrop .ng-leave {
+  @include transition(opacity .15s linear);
+  @include opacity(0.5);
+}
+
+.backdrop .ng-leave-active {
+  @include opacity(0);
+}
+
+.modal .ng-enter {
+  @include transition((opacity .15s linear, transform 0.3s ease-out));
+  @include transform(translate3d(0, 0, -50%));
+  @include opacity(0);
+}
+
+.modal .ng-enter-active {
+  @include transform(translate3d(0, 0, 0));
+  @include opacity(0.5);
+}
+
+.modal .ng-leave {
+  @include transition((opacity .15s linear, transform 0.3s ease-out));
+  @include transform(translate3d(0, 0, 0));
+  @include opacity(0.5);
+}
+
+.modal .ng-leave-active {
+  @include transform(translate3d(0, 0, -50%));
+  @include opacity(0);
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1050;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  outline: 0;
+  @include border-radius-default();
+}
+
+.content {
+  width: 600px;
+  margin: 75px auto;
+  background-color: #fff;
+}
+
+.header {
+  padding: 17px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.header h4 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.header btn {
+  float: right;
+}
+
+.body {
+  padding: 20px 20px 0 20px;
+}
+
+.footer {
+  background-color: #f5f5f5;
+  border-color: #e5e5e5;
+  border-top-width: 1px;
+  border-top-style: solid;
+  padding: 15px;
+  text-align: right;
+  @include border-bottom-left-radius-default();
+  @include border-bottom-right-radius-default();
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
