@@ -29,11 +29,11 @@ class ModalAttachDec {
   }
 
   show() {
-    this.modal.state = true;
+    this.modal.open();
   }
 
   hide() {
-    this.modal.state = false;
+    this.modal.close();
   }
 
   ModalAttachDec(dom.Element this.element) {
