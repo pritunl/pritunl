@@ -20,6 +20,9 @@ class ModalAttachDec {
 
     if (selector != '' && selector != null) {
       modal = this.element.parent.querySelector(selector);
+      if (modal.nodeName != 'MODAL') {
+        modal = modal.shadowRoot.querySelector('modal');
+      }
     }
     else {
       modal = this.element.previousElementSibling;
