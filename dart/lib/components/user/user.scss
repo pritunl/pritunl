@@ -88,7 +88,7 @@ checkbox {
 
 .user-servers.ng-enter,
 .user-servers.ng-enter .server {
-  @include transition((height .1s ease-in-out));
+  @include transition(height .1s ease-in-out);
   overflow: hidden;
 }
 
@@ -102,7 +102,7 @@ checkbox {
 
 .user-servers.ng-leave,
 .user-servers.ng-leave .server {
-  @include transition((height .1s ease-in-out));
+  @include transition(height .1s ease-in-out);
   overflow: hidden;
 }
 
