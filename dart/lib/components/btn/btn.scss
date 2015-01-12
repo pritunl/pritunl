@@ -14,6 +14,7 @@ button {
   background-image: none;
   border: 1px solid rgba(0, 0, 0, 0);
   border-radius: 4px;
+  background-color: transparent;
   @include no-user-select();
   @include border-radius-default();
 }
