@@ -3,13 +3,15 @@
     <user model="user" collection="users"
       ng-if="user.type == 'client' || users.hidden"></user>
   </li>
-  <li ng-if="users.no_users && users.search == null" class="message">
+  <li ng-if="users.loading != true && users.no_users && users.search == null"
+      class="message">
     There are no users in this organization
   </li>
-  <li ng-if="users.no_users && users.search != null" class="message">
+  <li ng-if="users.loading != true && users.no_users && users.search != null"
+      class="message">
     No users found
   </li>
-  <li ng-if="users.loading" class="message">
+  <li ng-if="users.loadingLong" class="message">
     Loading...
   </li>
 </ul>
