@@ -100,6 +100,19 @@
   @include border-bottom-right-radius-default();
 }
 
+.footer btn {
+  margin-left: 5px;
+}
+
 .form-group {
   margin-bottom: 20px;
+}
+
+.form-group label {
+  display: inline-block;
+  margin-bottom: 5px;
+}
+
+.form-group form-control {
+  display: block;
 }
