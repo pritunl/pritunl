@@ -5,7 +5,7 @@ import 'package:angular/angular.dart' as ng;
 
 @Component(
   selector: 'btn',
-  template: '<button type="button" ng-class="[type, size]" '
+  template: '<button type="{{btnType}}" ng-class="[type, size]" '
     'ng-disabled="disabled"><content></content></button>',
   cssUrl: 'packages/pritunl/components/btn/btn.css'
 )
@@ -27,6 +27,20 @@ class BtnComp implements ng.ShadowRootAware {
 
   @NgAttr('min-height')
   var minHeight;
+
+  var btnType;
+  @NgAttr('form-submit')
+  get formSubmit {
+    return this.btnType == 'submit';
+  }
+  set formSubmit(value) {
+    if (value == '') {
+      this.btnType = 'submit';
+    }
+    else {
+      this.btnType = 'button';
+    }
+  }
 
   var _disabled;
   @NgAttr('disabled')
