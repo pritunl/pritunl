@@ -129,7 +129,7 @@ checkbox {
 .user-servers .server {
   font-size: 15px;
   height: 27px;
-  padding-top: 2px;
+  padding-left: 1px;
 }
 
 .user-servers .server + .server {
@@ -139,6 +139,7 @@ checkbox {
 
 .user-servers .item,
 .user-servers .item span {
+  margin-top: 2px;
   font-size: 12px;
   display: inline-block;
 }
@@ -150,6 +151,7 @@ checkbox {
 }
 
 .user-servers .status {
+  margin-top: 0;
   float: right;
 }
 
