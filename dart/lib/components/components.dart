@@ -16,6 +16,8 @@ import 'package:pritunl/components/glyphicon/glyphicon.dart'
   as glyphicon;
 import 'package:pritunl/components/log_entries/log_entries.dart'
   as log_entries;
+import 'package:pritunl/components/modal/modal.dart'
+  as modal;
 import 'package:pritunl/components/navbar/navbar.dart'
   as navbar;
 import 'package:pritunl/components/organization/organization.dart'
@@ -43,6 +45,7 @@ class ComponentsMod extends ng.Module {
     this.bind(fraction.FractionComp);
     this.bind(glyphicon.GlyphiconComp);
     this.bind(log_entries.LogEntriesComp);
+    this.bind(modal.ModalComp);
     this.bind(navbar.NavbarComp);
     this.bind(organization.OrganizationComp);
     this.bind(organizations.OrganizationsComp);
