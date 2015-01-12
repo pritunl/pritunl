@@ -8,6 +8,8 @@ import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
   cssUrl: 'packages/pritunl/components/modal/modal.css'
 )
 class ModalComp {
+  var state;
+
   ModalComp() {
   }
 }
