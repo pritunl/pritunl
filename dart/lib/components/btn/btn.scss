@@ -34,7 +34,22 @@ button[disabled] {
   pointer-events: none;
   cursor: not-allowed;
   @include box-shadow(none);
-  @include opacity(65);
+  @include opacity(0.65);
+}
+
+.close:before {
+  content: '\e014';
+}
+
+.close {
+  background-color: transparent;
+  border: none;
+  line-height: 1;
+  font-size: 12px;
+  font-family: 'Glyphicons Halflings';
+  text-shadow: 0 1px 0 #fff;
+  padding: 0;
+  @include opacity(0.2);
 }
 
 .xs {
