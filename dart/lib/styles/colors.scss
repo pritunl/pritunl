@@ -40,6 +40,11 @@ body /deep/ btn::shadow button {
   color: map-get($btn, fg);
 }
 
+body /deep/ btn::shadow .close {
+  x-label: btn;
+  color: map-get($btn, close-fg);
+}
+
 body /deep/ btn::shadow .primary {
   x-label: btn;
   background-color: map-get($btn, primary-bg);
@@ -151,6 +156,14 @@ body /deep/ checkbox::shadow div {
 body /deep/ checkbox::shadow glyphicon {
   x-label: checkbox;
   color: map-get($checkbox, fg);
+}
+
+// ####################################
+// modal
+// ####################################
+body /deep/ btn::shadow button {
+  x-label: btn;
+  color: map-get($btn, fg);
 }
 
 // ####################################
