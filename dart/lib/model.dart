@@ -11,28 +11,42 @@ class Model {
   var url;
   var errorStatus;
   var errorData;
-  var loading;
+  var loadingLong;
+
+  var _loading;
+  set loading(val) {
+    if (val) {
+      var loadCheckId = new math.Random().nextInt(32000);
+      this._loadCheckId = loadCheckId;
+      this._loading = true;
+
+      new async.Future.delayed(
+        new Duration(milliseconds: 200), () {
+          if (this._loadCheckId == loadCheckId) {
+            this.loadingLong = true;
+          }
+        });
+    }
+    else {
+      this._loadCheckId = null;
+      this.loadingLong = false;
+      this._loading = false;
+    }
+  }
+  get loading {
+    return this._loading;
+  }
 
   Model(ng.Http this.http);
 
   fetch() {
-    var loadCheckId = new math.Random().nextInt(32000);
-    this._loadCheckId = loadCheckId;
-    new async.Future.delayed(
-      new Duration(milliseconds: 200), () {
-        if (this._loadCheckId == loadCheckId) {
-          this.loading = true;
-        }
-      });
+    this.loading = true;
 
     return this.http.get(this.url).then((response) {
-      this._loadCheckId = null;
       this.loading = false;
-
       this.import(response.data);
       return response.data;
     }).catchError((err) {
-      this._loadCheckId = null;
       this.loading = false;
       this.errorStatus = err.status;
       this.errorData = err.data;
