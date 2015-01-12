@@ -49,22 +49,13 @@ class Collection extends collection.IterableBase {
   }
 
   fetch() {
-    var loadCheckId = new math.Random().nextInt(32000);
-    this._loadCheckId = loadCheckId;
-    new async.Future.delayed(
-      new Duration(milliseconds: 200), () {
-        if (this._loadCheckId == loadCheckId) {
-          this.loading = true;
-        }
-      });
+    this.loading = true;
 
     return this.http.get(this.url).then((response) {
-      this._loadCheckId = null;
       this.loading = false;
       this.import(response.data);
       return response.data;
     }).catchError((err) {
-      this._loadCheckId = null;
       this.loading = false;
       this.errorStatus = err.status;
       this.errorData = err.data;
