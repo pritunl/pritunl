@@ -12,25 +12,25 @@ import 'dart:math' as math;
 @Injectable()
 class Users extends collection.Collection {
   var _search;
-  var _has_clients;
+  var _hasClients;
   var model = user.User;
-  var org_id;
+  var orgId;
   var hidden;
   var page;
-  var page_total;
+  var pageTotal;
   var pages;
-  var search_count;
-  var search_more;
-  var search_time;
-  var search_limit;
+  var searchCount;
+  var searchMore;
+  var searchTime;
+  var searchLimit;
 
   get url {
-    var url = '/user/${this.org_id}';
+    var url = '/user/${this.orgId}';
 
     if (this.search != null) {
       url += '?search=${this.search}';
-      if (this.search_limit != null) {
-        url += '&limit=${this.search_limit}';
+      if (this.searchLimit != null) {
+        url += '&limit=${this.searchLimit}';
       }
     }
     else {
@@ -52,8 +52,8 @@ class Users extends collection.Collection {
     return this._search;
   }
 
-  get no_users {
-    if (this._has_clients == true || (
+  get noUsers {
+    if (this._hasClients == true || (
         this.hidden == true && this.length != 0)) {
       return false;
     }
@@ -69,23 +69,23 @@ class Users extends collection.Collection {
       if (this._search != data['search']) {
         throw new IgnoreResponse();
       }
-      this.search_count = data['search_count'];
-      this.search_more = data['search_more'];
-      this.search_time = data['search_time'];
-      this.search_limit = data['search_limit'];
+      this.searchCount = data['search_count'];
+      this.searchMore = data['search_more'];
+      this.searchTime = data['search_time'];
+      this.searchLimit = data['search_limit'];
 
-      this.page_total = null;
+      this.pageTotal = null;
     }
     else {
       if (this.page != data['page'].toInt()) {
         throw new IgnoreResponse();
       }
-      this.page_total = data['page_total'].toInt();
+      this.pageTotal = data['page_total'].toInt();
 
-      this.search_count = null;
-      this.search_more = null;
-      this.search_time = null;
-      this.search_limit = null;
+      this.searchCount = null;
+      this.searchMore = null;
+      this.searchTime = null;
+      this.searchLimit = null;
 
       this._updatePages();
     }
@@ -98,17 +98,17 @@ class Users extends collection.Collection {
 
     for (user in this) {
       if (user.type == 'client') {
-        this._has_clients = true;
+        this._hasClients = true;
         return;
       }
     }
-    this._has_clients = false;
+    this._hasClients = false;
   }
 
   _updatePages() {
     this.pages = [];
 
-    if (this.page_total < 2) {
+    if (this.pageTotal < 2) {
       return;
     }
 
@@ -120,7 +120,7 @@ class Users extends collection.Collection {
 
     for (i = 0; i < 15; i++) {
       isCurPage = cur == this.page;
-      if (cur > this.page_total - 1) {
+      if (cur > this.pageTotal - 1) {
         break;
       }
       if (cur > 0) {
@@ -149,7 +149,7 @@ class Users extends collection.Collection {
       page = 0;
     }
     else if (page == 'Last') {
-      page = this.page_total;
+      page = this.pageTotal;
     }
     else {
       page -= 1;
@@ -158,8 +158,8 @@ class Users extends collection.Collection {
     this.fetch();
   }
 
-  searchMore() {
-    this.search_limit *= 2;
+  searchIncrease() {
+    this.searchLimit *= 2;
     this.fetch();
   }
 }
