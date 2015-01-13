@@ -11,12 +11,12 @@ class Organization extends model.Model {
   var name;
   var user_count;
   var users;
-  var _id;
 
   get url {
     return '/organization/${this.id}';
   }
 
+  var _id;
   get id {
     return this._id;
   }
