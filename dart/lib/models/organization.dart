@@ -8,11 +8,13 @@ import 'package:angular/angular.dart' as ng;
 
 @Injectable()
 class Organization extends model.Model {
-  var user_count;
   var users;
 
   @model.Attr('name')
   var name;
+
+  @model.Attr('user_count')
+  var userCount;
 
   var _id;
   @model.Attr('id')
@@ -20,7 +22,7 @@ class Organization extends model.Model {
     return this._id;
   }
   set id(val) {
-    this.users.org_id = val;
+    this.users.orgId = val;
     this._id = val;
   }
 
