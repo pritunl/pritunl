@@ -8,21 +8,24 @@ import 'package:angular/angular.dart' as ng;
 
 @Injectable()
 class Organization extends model.Model {
-  var name;
   var user_count;
   var users;
 
-  get url {
-    return '/organization/${this.id}';
-  }
+  @model.Attr('name')
+  var name;
 
   var _id;
+  @model.Attr('id')
   get id {
     return this._id;
   }
   set id(val) {
     this.users.org_id = val;
     this._id = val;
+  }
+
+  get url {
+    return '/organization/${this.id}';
   }
 
   Organization(ng.Http http) :
