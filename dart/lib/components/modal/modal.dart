@@ -24,13 +24,19 @@ class ModalComp {
   }
 
   close(submit) {
-    this.state = false;
+    var returnVal;
     if (submit) {
-      this.onOk();
+      returnVal = this.onOk();
     }
     else {
-      this.onCancel();
+      returnVal = this.onCancel();
     }
+
+    if (returnVal == false) {
+      return;
+    }
+
+    this.state = false;
   }
 
   softClose(target) {
