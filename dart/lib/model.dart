@@ -97,22 +97,53 @@ class Model {
     });
   }
 
-  save([fields]) {
-    var doc = {};
+  _send(method, fields) {
+    var data = {};
     var attrs = this._attrs;
     var mirror = mirrors.reflect(this);
+
+    this.loading = true;
 
     if (fields != null) {
       fields.forEach((name) {
         var symbol = attrs[name];
-        doc[name] = mirror.getField(symbol);
+        data[name] = mirror.getField(symbol).reflectee;
       });
     }
     else {
       attrs.forEach((name, symbol) {
-        doc[name] = mirror.getField(symbol).reflectee;
+        data[name] = mirror.getField(symbol).reflectee;
       });
     }
+
+    if (method == 'post') {
+      method = this.http.post;
+    }
+    else if (method == 'put') {
+      method = this.http.put;
+    }
+    else {
+      throw new ArgumentError('Unkown method');
+    }
+
+    return method(this.url, data).then((response) {
+      this.loading = false;
+      this.import(response.data);
+      return response.data;
+    }).catchError((err) {
+      this.loading = false;
+      this.errorStatus = err.status;
+      this.errorData = err.data;
+      throw err;
+    });
+  }
+
+  save([fields]) {
+    this._send('put', fields);
+  }
+
+  create([fields]) {
+    this._send('post', fields);
   }
 
   clear() {
