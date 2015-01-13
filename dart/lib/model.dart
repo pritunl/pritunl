@@ -97,6 +97,30 @@ class Model {
     });
   }
 
-  save() {
+  save([fields]) {
+    var doc = {};
+    var attrs = this._attrs;
+    var mirror = mirrors.reflect(this);
+
+    if (fields != null) {
+      fields.forEach((name) {
+        var symbol = attrs[name];
+        doc[name] = mirror.getField(symbol);
+      });
+    }
+    else {
+      attrs.forEach((name, symbol) {
+        doc[name] = mirror.getField(symbol).reflectee;
+      });
+    }
+  }
+
+  clear() {
+    var attrs = this._attrs;
+    var mirror = mirrors.reflect(this);
+
+    attrs.values.forEach((symbol) {
+      mirror.setField(symbol, null);
+    });
   }
 }
