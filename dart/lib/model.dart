@@ -5,6 +5,8 @@ import 'dart:mirrors' as mirrors;
 import 'dart:async' as async;
 import 'dart:math' as math;
 
+var _attrData = {};
+
 class Attr {
   final name;
   const Attr(this.name);
@@ -17,6 +19,23 @@ class Model {
   var errorStatus;
   var errorData;
   var loadingLong;
+
+  get _attrs {
+    if (_attrData.containsKey(this.runtimeType)) {
+      return _attrData[this.runtimeType];
+    }
+    var attrs = {};
+    var mirror = mirrors.reflect(this).type;
+
+    mirror.declarations.forEach((varSymbol, varMirror) {
+      varMirror.metadata.forEach((metadata) {
+        attrs[metadata.reflectee.name] = varSymbol;
+      });
+    });
+
+    _attrData[this.runtimeType] = attrs;
+    return attrs;
+  }
 
   var _loading;
   set loading(val) {
@@ -64,14 +83,17 @@ class Model {
   }
 
   import(responseData) {
+    var attrs = this._attrs;
     var data = this.parse(responseData);
     var mirror = mirrors.reflect(this);
 
     data.forEach((key, value) {
-      try {
-        mirror.setField(new Symbol(key), value);
-      } on NoSuchMethodError {
+      var symbol = attrs[key];
+      if (symbol == null) {
+        return;
       }
+
+      mirror.setField(symbol, value);
     });
   }
 
