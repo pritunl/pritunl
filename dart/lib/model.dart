@@ -5,6 +5,11 @@ import 'dart:mirrors' as mirrors;
 import 'dart:async' as async;
 import 'dart:math' as math;
 
+class Attr {
+  final name;
+  const Attr(this.name);
+}
+
 class Model {
   var _loadCheckId;
   var http;
