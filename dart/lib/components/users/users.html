@@ -3,11 +3,11 @@
     <user model="user" collection="users"
       ng-if="user.type == 'client' || users.hidden"></user>
   </li>
-  <li ng-if="users.loading != true && users.no_users && users.search == null"
+  <li ng-if="users.loading != true && users.noUsers && users.search == null"
       class="message">
     There are no users in this organization
   </li>
-  <li ng-if="users.loading != true && users.no_users && users.search != null"
+  <li ng-if="users.loading != true && users.noUsers && users.search != null"
       class="message">
     No users found
   </li>
@@ -20,7 +20,7 @@
     ng-if="users.page != 0"
     ng-click="users.prev()">Previous Page</btn>
   <btn class="next clearfix" type="primary" size="sm" min-width="105px"
-    ng-if="users.page != users.page_total"
+    ng-if="users.page != users.pageTotal"
     ng-click="users.next()">Next Page</btn>
   <ul class="pages" no-select>
     <li ng-repeat="page in users.pages">
@@ -31,9 +31,9 @@
   </ul>
 </div>
 <div class="footer" ng-if="users.search != null">
-  <div class="search-time" no-select>search found {{users.search_count}}
-    results in {{users.search_time.toStringAsFixed(4)}} seconds</div>
-  <div class="search-more" ng-if="users.search_more" no-select>
-    <a ng-click="users.searchMore()">show more results</a>
+  <div class="search-time" no-select>search found {{users.searchCount}}
+    results in {{users.searchTime.toStringAsFixed(4)}} seconds</div>
+  <div class="search-more" ng-if="users.searchMore" no-select>
+    <a ng-click="users.searchIncrease()">show more results</a>
   </div>
 </div>
