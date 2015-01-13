@@ -1,5 +1,7 @@
 library components;
 
+import 'package:pritunl/components/add_org/add_org.dart'
+  as add_org;
 import 'package:pritunl/components/box_label/box_label.dart'
   as box_label;
 import 'package:pritunl/components/btn/btn.dart'
@@ -10,6 +12,8 @@ import 'package:pritunl/components/container/container.dart'
   as container;
 import 'package:pritunl/components/form_control/form_control.dart'
   as form_control;
+import 'package:pritunl/components/form_group/form_group.dart'
+  as form_group;
 import 'package:pritunl/components/fraction/fraction.dart'
   as fraction;
 import 'package:pritunl/components/glyphicon/glyphicon.dart'
@@ -37,11 +41,13 @@ import 'package:angular/angular.dart' as ng;
 
 class ComponentsMod extends ng.Module {
   ComponentsMod() {
+    this.bind(add_org.AddOrgComp);
     this.bind(box_label.BoxLabelComp);
     this.bind(btn.BtnComp);
     this.bind(checkbox.CheckboxComp);
     this.bind(container.ContainerComp);
     this.bind(form_control.FormControlComp);
+    this.bind(form_group.FormGroupComp);
     this.bind(fraction.FractionComp);
     this.bind(glyphicon.GlyphiconComp);
     this.bind(log_entries.LogEntriesComp);
