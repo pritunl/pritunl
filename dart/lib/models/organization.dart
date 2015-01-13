@@ -25,7 +25,13 @@ class Organization extends model.Model {
   }
 
   get url {
-    return '/organization/${this.id}';
+    var url = '/organization';
+
+    if (this.id != null) {
+      url += '/${this.id}';
+    }
+
+    return url;
   }
 
   Organization(ng.Http http) :
