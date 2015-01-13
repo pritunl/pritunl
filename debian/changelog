@@ -1,3 +1,9 @@
+pritunl (1.0.488.77-0ubuntu1) unstable; urgency=low
+
+  * Improve organization management
+
+ -- Pritunl <contact@pritunl.com>  Tue, 13 Jan 2015 00:00:00 -0400
+
 pritunl (1.0.482.93-0ubuntu1) unstable; urgency=low
 
   * Updates to web interface
