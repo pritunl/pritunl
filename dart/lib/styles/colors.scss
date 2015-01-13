@@ -272,12 +272,12 @@ body /deep/ form-control::shadow input[readonly] {
   background-color: map-get($form-control, bg-disabled);
 }
 
-body /deep/ form-control::shadow input.success {
+body /deep/ form-control.success::shadow input {
   x-label: form-control;
   border-color: map-get($form-control, success-border);
 }
 
-body /deep/ form-control::shadow input.success:focus {
+body /deep/ form-control.success::shadow input:focus {
   x-label: form-control;
   border-color: map-get($form-control, success-border-focus);
   @include box-shadow((
@@ -286,12 +286,12 @@ body /deep/ form-control::shadow input.success:focus {
   ));
 }
 
-body /deep/ form-control::shadow input.warning {
+body /deep/ form-control.warning::shadow input {
   x-label: form-control;
   border-color: map-get($form-control, warning-border);
 }
 
-body /deep/ form-control::shadow input.warning:focus {
+body /deep/ form-control.warning::shadow input:focus {
   x-label: form-control;
   border-color: map-get($form-control, warning-border-focus);
   @include box-shadow((
@@ -300,12 +300,12 @@ body /deep/ form-control::shadow input.warning:focus {
   ));
 }
 
-body /deep/ form-control::shadow input.danger {
+body /deep/ form-control.danger::shadow input {
   x-label: form-control;
   border-color: map-get($form-control, danger-border);
 }
 
-body /deep/ form-control::shadow input.danger:focus {
+body /deep/ form-control.danger::shadow input:focus {
   x-label: form-control;
   border-color: map-get($form-control, danger-border-focus);
   @include box-shadow((
