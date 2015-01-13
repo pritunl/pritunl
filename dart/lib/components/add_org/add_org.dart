@@ -15,10 +15,10 @@ class AddOrgComp {
   AddOrgComp(organization.Organization this.org);
 
   add() {
-    print('${this.org.name}');
+    this.org.save();
   }
 
   cancel() {
-    this.org.name = null;
+    this.org.clear();
   }
 }
