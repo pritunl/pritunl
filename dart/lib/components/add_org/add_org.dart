@@ -11,7 +11,6 @@ import 'package:angular/angular.dart' show Component;
 )
 class AddOrgComp {
   var org;
-  var orgName;
 
   AddOrgComp(organization.Organization this.org);
 
