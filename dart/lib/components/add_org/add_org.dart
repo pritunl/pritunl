@@ -15,7 +15,7 @@ class AddOrgComp {
   AddOrgComp(organization.Organization this.org);
 
   add() {
-    this.org.save();
+    this.org.save(['name']);
   }
 
   cancel() {
