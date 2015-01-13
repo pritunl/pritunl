@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve organization management
+
 Version 1.0.482.93 2015-01-07
 -----------------------------
 
