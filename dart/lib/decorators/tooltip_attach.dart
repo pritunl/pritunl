@@ -1,5 +1,7 @@
 library tooltip_attach;
 
+import 'package:pritunl/components/tooltip/tooltip.dart' as tooltip_com;
+
 import 'package:angular/angular.dart' show NgAttr, Decorator;
 import 'package:angular/angular.dart' as ng;
 import 'dart:html' as dom;
@@ -20,12 +22,19 @@ class TooltipAttachDec {
 
     if (selector != '' && selector != null) {
       tooltip = this.element.parent.querySelector(selector);
+      if (tooltip.nodeName != 'TOOLTIP') {
+        tooltip = tooltip.shadowRoot.querySelector('modal');
+      }
     }
     else {
       tooltip = this.element.previousElementSibling;
     }
 
-    return ng.ngDirectives(tooltip)[0];
+    var directive = ng.ngDirectives(tooltip)[0];
+    if (directive is! tooltip_com.TooltipComp) {
+      return null;
+    }
+    return directive;
   }
 
   show() {
@@ -39,7 +48,10 @@ class TooltipAttachDec {
     var width = this.element.offsetWidth;
     var height = this.element.offsetHeight;
 
-    this.tooltip.show(x + (width / 2), y - height  - 10);
+    var tooltip = this.tooltip;
+    if (tooltip != null) {
+      tooltip.show(x + (width / 2), y - height  - 10);
+    }
   }
 
   hide() {
@@ -47,7 +59,11 @@ class TooltipAttachDec {
       return;
     }
     this.state = false;
-    this.tooltip.hide();
+
+    var tooltip = this.tooltip;
+    if (tooltip != null) {
+      tooltip.hide();
+    }
   }
 
   TooltipAttachDec(dom.Element this.element) {
