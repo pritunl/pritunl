@@ -1,5 +1,5 @@
-<span class="version">v{{model.server_version}}
-  {{model.current_host.substring(0, 6)}}</span>
+<span class="version">v{{model.serverVersion}}
+  {{model.currentHost.substring(0, 6)}}</span>
 <table class="status">
   <tbody>
   <tr>
@@ -10,8 +10,8 @@
       </h3>
       <p class="info title">
         <fraction
-          numer="{{model.org_count}}"
-          denom="{{model.org_count}}"></fraction>
+          numer="{{model.orgCount}}"
+          denom="{{model.orgCount}}"></fraction>
         <span class="text">available</span>
       </p>
     </td>
@@ -22,8 +22,8 @@
       </h3>
       <p class="info title">
         <fraction
-          numer="{{model.users_online}}"
-          denom="{{model.user_count}}"
+          numer="{{model.usersOnline}}"
+          denom="{{model.userCount}}"
           empty-style="default"
           half-style="default"
           full-style="default"></fraction>
@@ -37,8 +37,8 @@
       </h3>
       <p class="info title">
         <fraction
-          numer="{{model.servers_online}}"
-          denom="{{model.server_count}}"></fraction>
+          numer="{{model.serversOnline}}"
+          denom="{{model.serverCount}}"></fraction>
         <span class="text">online</span>
       </p>
     </td>
@@ -49,8 +49,8 @@
       </h3>
       <p class="info title">
         <fraction
-          numer="{{model.hosts_online}}"
-          denom="{{model.host_count}}"></fraction>
+          numer="{{model.hostsOnline}}"
+          denom="{{model.hostCount}}"></fraction>
         <span class="text">online</span>
       </p>
       <div class="server-info"></div>
