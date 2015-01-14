@@ -220,6 +220,37 @@ body /deep/ box-label::shadow .danger {
 }
 
 // ####################################
+// alert
+// ####################################
+body /deep/ alert::shadow .alert.success {
+  x-label: alert;
+  color: map-get($alert, success-fg);
+  background-color: map-get($alert, success-bg);
+  border-color: map-get($alert, success-border);
+}
+
+body /deep/ alert::shadow .alert.info {
+  x-label: alert;
+  color: map-get($alert, info-fg);
+  background-color: map-get($alert, info-bg);
+  border-color: map-get($alert, info-border);
+}
+
+body /deep/ alert::shadow .alert.warning {
+  x-label: alert;
+  color: map-get($alert, warning-fg);
+  background-color: map-get($alert, warning-bg);
+  border-color: map-get($alert, warning-border);
+}
+
+body /deep/ alert::shadow .alert.danger {
+  x-label: alert;
+  color: map-get($alert, danger-fg);
+  background-color: map-get($alert, danger-bg);
+  border-color: map-get($alert, danger-border);
+}
+
+// ####################################
 // form-control
 // ####################################
 body /deep/ form-control::shadow input {

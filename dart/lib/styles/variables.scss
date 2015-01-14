@@ -101,6 +101,24 @@ $label: (
 );
 
 // ####################################
+// alert
+// ####################################
+$alert: (
+  success-fg: #3c763d,
+  success-bg: #daeed1,
+  success-border: #b2df8d,
+  info-fg: #31708f,
+  info-bg: #d9edf7,
+  info-border: #bce8f1,
+  warning-fg: #8a6d3b,
+  warning-bg: #fcf8e3,
+  warning-border: #faebcc,
+  danger-fg: #a94442,
+  danger-bg: #f2dede,
+  danger-border: #ebccd1,
+);
+
+// ####################################
 // form-control
 // ####################################
 $form-control: (
