@@ -1,0 +1,17 @@
+@import 'styles/base.scss';
+
+.alert {
+  padding: 10px;
+  margin-bottom: 10px;
+  border-width: 1px;
+  border-style: solid;
+  @include border-radius-default();
+  //@include transition(background-color .175s);
+}
+
+.alert btn {
+  float: right;
+  top: -1px;
+  position: relative;
+  margin-right: 2px;
+}
