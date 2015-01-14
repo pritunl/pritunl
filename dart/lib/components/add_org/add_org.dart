@@ -20,10 +20,15 @@ class AddOrgComp implements ng.ShadowRootAware {
     this.root = root;
   }
 
+  var alertType;
+  var alertText;
+
   add() {
     if (this.org.name == null) {
       var form = this.root.querySelector('form-control');
       form.classes.add('danger');
+      this.alertType = 'danger';
+      this.alertText = 'Organization name cannot be empty';
       return false;
     }
 
