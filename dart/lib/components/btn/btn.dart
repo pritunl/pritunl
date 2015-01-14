@@ -47,8 +47,8 @@ class BtnComp implements ng.ShadowRootAware {
   get disabled {
     return this._disabled;
   }
-  set disabled(value) {
-    if (value == '') {
+  set disabled(val) {
+    if (val == '') {
       this._disabled = true;
     }
     else {
