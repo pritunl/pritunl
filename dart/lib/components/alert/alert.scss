@@ -15,3 +15,23 @@
   position: relative;
   margin-right: 2px;
 }
+
+.alert.ng-enter {
+  @include transition(opacity .15s linear);
+  @include opacity(0);
+}
+
+.alert.ng-enter-active {
+  @include transition(opacity .15s linear);
+  @include opacity(1);
+}
+
+.alert.ng-leave {
+  @include transition(opacity .15s linear);
+  @include opacity(1);
+}
+
+.alert.ng-leave-active {
+  @include transition(opacity .15s linear);
+  @include opacity(0);
+}
