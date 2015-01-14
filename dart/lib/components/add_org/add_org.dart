@@ -13,6 +13,7 @@ import 'package:angular/angular.dart' as ng;
 class AddOrgComp implements ng.ShadowRootAware {
   var org;
   var root;
+  var alertText;
 
   AddOrgComp(organization.Organization this.org);
 
@@ -20,24 +21,27 @@ class AddOrgComp implements ng.ShadowRootAware {
     this.root = root;
   }
 
-  var alertType;
-  var alertText;
+  reset() {
+    var form = this.root.querySelector('form-control');
+    form.classes.remove('danger');
+    this.alertText = null;
+    this.org.clear();
+  }
 
   add() {
     if (this.org.name == null) {
       var form = this.root.querySelector('form-control');
       form.classes.add('danger');
-      this.alertType = 'danger';
       this.alertText = 'Organization name cannot be empty';
       return false;
     }
 
     this.org.create(['name']).then(() {
-      this.org.clear();
+      this.reset();
     });
   }
 
   cancel() {
-    this.org.clear();
+    this.reset();
   }
 }
