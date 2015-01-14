@@ -42,6 +42,11 @@ button[disabled] {
   outline: none;
 }
 
+.close:active,
+.close-color:active {
+  @include box-shadow(none);
+}
+
 .close:hover {
   @include opacity(0.5);
 }
