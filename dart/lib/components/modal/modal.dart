@@ -25,6 +25,7 @@ class ModalComp {
 
   close(submit) {
     var returnVal;
+
     if (submit) {
       returnVal = this.onOk();
     }
