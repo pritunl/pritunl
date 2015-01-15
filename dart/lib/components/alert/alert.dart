@@ -63,6 +63,10 @@ class AlertComp implements ng.ShadowRootAware {
         this.alertElem.classes.add('flash-off');
         this.alertElem.classes.remove('flash-on');
       });
+    }).then((_) {
+      return new async.Future.delayed(new Duration(milliseconds: 180), () {
+        this.alertElem.classes.remove('flash-off');
+      });
     });
   }
 
