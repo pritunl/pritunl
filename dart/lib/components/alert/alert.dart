@@ -3,6 +3,7 @@ library alert;
 import 'package:angular/angular.dart' show Component, NgAttr, NgTwoWay,
   NgCallback;
 import 'package:angular/angular.dart' as ng;
+import 'dart:async' as async;
 
 @Component(
   selector: 'alert',
@@ -36,6 +37,27 @@ class AlertComp implements ng.ShadowRootAware {
 
   onShadowRoot(root) {
     this.root = root;
+  }
+
+  flash() {
+    var alertElem = this.root.querySelector('.alert');
+
+    alertElem.classes.add('flash-on');
+    alertElem.classes.remove('flash-off');
+    new async.Future.delayed(new Duration(milliseconds: 180), () {
+      alertElem.classes.add('flash-off');
+      alertElem.classes.remove('flash-on');
+    }).then((_) {
+      return new async.Future.delayed(new Duration(milliseconds: 180), () {
+        alertElem.classes.add('flash-on');
+        alertElem.classes.remove('flash-off');
+      });
+    }).then((_) {
+      return new async.Future.delayed(new Duration(milliseconds: 180), () {
+        alertElem.classes.add('flash-off');
+        alertElem.classes.remove('flash-on');
+      });
+    });
   }
 
   close() {
