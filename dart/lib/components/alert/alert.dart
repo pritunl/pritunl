@@ -10,7 +10,9 @@ import 'package:angular/angular.dart' show Component, NgAttr, NgTwoWay,
     'ng-if="dismissible"></btn></div>',
   cssUrl: 'packages/pritunl/components/alert/alert.css'
 )
-class AlertComp {
+class AlertComp implements ng.ShadowRootAware {
+  var root;
+
   @NgAttr('type')
   var type;
 
@@ -29,6 +31,10 @@ class AlertComp {
   }
   get dismissible {
     return this._dismissible;
+  }
+
+  onShadowRoot(root) {
+    this.root = root;
   }
 
   close() {
