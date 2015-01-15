@@ -36,7 +36,7 @@ class AddOrgComp implements ng.ShadowRootAware {
       return false;
     }
 
-    this.org.create(['name']).then(() {
+    this.org.create(['name']).then((_) {
       this.reset();
     });
   }
