@@ -2,6 +2,7 @@ library alert;
 
 import 'package:angular/angular.dart' show Component, NgAttr, NgTwoWay,
   NgCallback;
+import 'package:angular/angular.dart' as ng;
 
 @Component(
   selector: 'alert',
