@@ -32,8 +32,6 @@ import 'package:pritunl/components/organizations/organizations.dart'
   as organizations;
 import 'package:pritunl/components/status/status.dart'
   as status;
-import 'package:pritunl/components/tooltip/tooltip.dart'
-  as tooltip;
 import 'package:pritunl/components/user/user.dart'
   as user;
 import 'package:pritunl/components/users/users.dart'
@@ -59,7 +57,6 @@ class ComponentsMod extends ng.Module {
     this.bind(organization.OrganizationComp);
     this.bind(organizations.OrganizationsComp);
     this.bind(status.StatusComp);
-    this.bind(tooltip.TooltipComp);
     this.bind(user.UserComp);
     this.bind(users.UsersComp);
   }
