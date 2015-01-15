@@ -1,6 +1,7 @@
 library add_org;
 
 import 'package:pritunl/models/organization.dart' as organization;
+import 'package:pritunl/utils/utils.dart' as utils;
 
 import 'package:angular/angular.dart' show Component;
 import 'package:angular/angular.dart' as ng;
@@ -16,6 +17,22 @@ class AddOrgComp implements ng.ShadowRootAware {
   var alertText;
 
   AddOrgComp(organization.Organization this.org);
+
+  var _alertElem;
+  get alertElem {
+    if (this._alertElem != null) {
+      return this._alertElem;
+    }
+    return this.root.querySelector('alert');
+  }
+
+  var _alert;
+  get alert {
+    if (this._alert != null) {
+      return this._alert;
+    }
+    return utils.getDirective(this.alertElem);
+  }
 
   onShadowRoot(root) {
     this.root = root;
