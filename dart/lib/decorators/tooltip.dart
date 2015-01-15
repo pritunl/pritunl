@@ -2,6 +2,7 @@ library tooltip_attach;
 
 import 'package:angular/angular.dart' show NgAttr, Decorator;
 import 'dart:html' as dom;
+import 'dart:async' as async;
 
 @Decorator(
   selector: '[tooltip]'
@@ -39,7 +40,9 @@ class TooltipDec {
       ..padding = '3px 8px'
       ..color = '#fff'
       ..backgroundColor = '#000'
-      ..borderRadius = '2px';
+      ..borderRadius = '2px'
+      ..opacity = '0'
+      ..transition = 'opacity .15s linear';
 
     arrow.style
       ..position = 'absolute'
@@ -62,12 +65,19 @@ class TooltipDec {
 
     this.tooltipElement.style
       ..left = '${x}px'
-      ..top = '${y}px';
+      ..top = '${y}px'
+      ..opacity = '1';
   }
 
   hide() {
-    this.tooltipElement.remove();
-    this.tooltipElement = null;
+    if (this.tooltipElement == null) {
+      return;
+    }
+    this.tooltipElement.style.opacity = '0';
+    new async.Timer(new Duration(milliseconds: 150), () {
+      this.tooltipElement.remove();
+      this.tooltipElement = null;
+    });
   }
 
   TooltipDec(dom.Element this.element) {
