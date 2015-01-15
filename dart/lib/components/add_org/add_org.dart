@@ -14,7 +14,6 @@ import 'package:angular/angular.dart' as ng;
 class AddOrgComp implements ng.ShadowRootAware {
   var org;
   var root;
-  var alertText;
 
   AddOrgComp(organization.Organization this.org);
 
@@ -41,7 +40,6 @@ class AddOrgComp implements ng.ShadowRootAware {
   reset() {
     var form = this.root.querySelector('form-control');
     form.classes.remove('danger');
-    this.alertText = null;
     this.org.clear();
   }
 
