@@ -6,7 +6,7 @@ import 'package:angular/angular.dart' as ng;
 
 @Component(
   selector: 'alert',
-  template: '<div class="alert {{type}}" ng-class="" ng-if="text != null" '
+  template: '<div class="alert" ng-class="type" ng-if="text != null" '
     'ng-animate>{{text}}<btn type="close-color" ng-click="close()" '
     'ng-if="dismissible"></btn></div>',
   cssUrl: 'packages/pritunl/components/alert/alert.css'
