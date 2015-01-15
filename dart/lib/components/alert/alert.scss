@@ -16,6 +16,15 @@
   margin-right: 2px;
 }
 
+.alert.flash-on {
+  background-color: #fff !important;
+  @include transition(background-color .175s);
+}
+
+.alert.flash-off {
+  @include transition(background-color .175s);
+}
+
 .alert.ng-enter {
   @include transition(opacity .15s linear);
   @include opacity(0);
