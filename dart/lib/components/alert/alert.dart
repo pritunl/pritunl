@@ -11,6 +11,12 @@ import 'package:angular/angular.dart' show Component, NgAttr, NgTwoWay,
   cssUrl: 'packages/pritunl/components/alert/alert.css'
 )
 class AlertComp {
+  @NgAttr('type')
+  var type;
+
+  @NgTwoWay('text')
+  var text;
+
   var _dismissible;
   @NgAttr('dismissible')
   set dismissible(val) {
@@ -24,12 +30,6 @@ class AlertComp {
   get dismissible {
     return this._dismissible;
   }
-
-  @NgAttr('type')
-  var type;
-
-  @NgTwoWay('text')
-  var text;
 
   close() {
     this.text = null;
