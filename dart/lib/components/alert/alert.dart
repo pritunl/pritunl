@@ -13,9 +13,6 @@ import 'package:angular/angular.dart' show Component, NgAttr, NgTwoWay,
 class AlertComp {
   var _dismissible;
   @NgAttr('dismissible')
-  get dismissible {
-    return this._dismissible;
-  }
   set dismissible(val) {
     if (val == '') {
       this._dismissible = true;
@@ -23,6 +20,9 @@ class AlertComp {
     else {
       this._dismissible = false;
     }
+  }
+  get dismissible {
+    return this._dismissible;
   }
 
   @NgAttr('type')
