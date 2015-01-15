@@ -37,10 +37,10 @@ class AlertComp implements ng.ShadowRootAware {
 
   var _alertElem;
   get alertElem {
-    if (this._alertElem != null) {
-      return this._alertElem;
+    if (this._alertElem == null) {
+      this._alertElem = this.root.querySelector('.alert');
     }
-    return this.root.querySelector('alert');
+    return this._alertElem;
   }
 
   onShadowRoot(root) {
