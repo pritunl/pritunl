@@ -258,6 +258,11 @@ body /deep/ alert::shadow .alert.danger-remove {
   border-color: map-get($alert, danger-border);
 }
 
+body /deep/ alert::shadow .alert.flash-on {
+  x-label: alert;
+  background-color: map-get($alert, flash-bg);
+}
+
 // ####################################
 // form-control
 // ####################################
