@@ -17,7 +17,6 @@
 }
 
 .alert.flash-on {
-  background-color: #fff !important;
   @include transition(background-color .175s);
 }
 
