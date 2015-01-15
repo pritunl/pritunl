@@ -35,27 +35,33 @@ class AlertComp implements ng.ShadowRootAware {
     return this._dismissible;
   }
 
+  var _alertElem;
+  get alertElem {
+    if (this._alertElem != null) {
+      return this._alertElem;
+    }
+    return this.root.querySelector('alert');
+  }
+
   onShadowRoot(root) {
     this.root = root;
   }
 
   flash() {
-    var alertElem = this.root.querySelector('.alert');
-
-    alertElem.classes.add('flash-on');
-    alertElem.classes.remove('flash-off');
+    this.alertElem.classes.add('flash-on');
+    this.alertElem.classes.remove('flash-off');
     new async.Future.delayed(new Duration(milliseconds: 180), () {
-      alertElem.classes.add('flash-off');
-      alertElem.classes.remove('flash-on');
+      this.alertElem.classes.add('flash-off');
+      this.alertElem.classes.remove('flash-on');
     }).then((_) {
       return new async.Future.delayed(new Duration(milliseconds: 180), () {
-        alertElem.classes.add('flash-on');
-        alertElem.classes.remove('flash-off');
+        this.alertElem.classes.add('flash-on');
+        this.alertElem.classes.remove('flash-off');
       });
     }).then((_) {
       return new async.Future.delayed(new Duration(milliseconds: 180), () {
-        alertElem.classes.add('flash-off');
-        alertElem.classes.remove('flash-on');
+        this.alertElem.classes.add('flash-off');
+        this.alertElem.classes.remove('flash-on');
       });
     });
   }
