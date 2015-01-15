@@ -17,39 +17,29 @@
     </div>
 
     <span ng-if="model.otpAuth">
-      <tooltip>Get two-step authentication key</tooltip>
-      <glyphicon type="qrcode" tooltip-attach></glyphicon>
+      <glyphicon tooltip="Get two-step authentication key"
+        type="qrcode"></glyphicon>
     </span>
 
-    <tooltip>
-      <span ng-if="true">Get key links</span>
-      <span ng-if="false">Organization must be attached to
-        server to get key links</span>
-    </tooltip>
-    <glyphicon type="link" tooltip-attach></glyphicon>
+    <glyphicon tooltip="{{true ? 'Get key links' : 'Organization must be attached to server to get key links'}}"
+      type="link"></glyphicon>
 
-    <tooltip>
-      <span ng-if="true">Click to download key</span>
-      <span ng-if="false">Organization must be attached to
-        server to download key</span>
-    </tooltip>
-    <glyphicon type="download" tooltip-attach></glyphicon>
+    <glyphicon tooltip="{{true ? 'Click to download key' : 'Organization must be attached to server to download key'}}"
+      type="download"></glyphicon>
 
-    <tooltip>Disable and disconnect user</tooltip>
-    <glyphicon type="ban-circle" tooltip-attach></glyphicon>
+    <glyphicon tooltip="Disable and disconnect user"
+      type="ban-circle"></glyphicon>
 
-    <tooltip>Enable user</tooltip>
-    <glyphicon type="ok-circle" ng-if="false" tooltip-attach></glyphicon>
+    <glyphicon tooltip="Enable user" type="ok-circle"
+      ng-if="false"></glyphicon>
 
     <span ng-if="showServers != true">
-      <tooltip>Show additional user information</tooltip>
-      <glyphicon type="chevron-down" ng-click="showServers = true"
-        tooltip-attach></glyphicon>
+      <glyphicon tooltip="Show additional user information"
+        type="chevron-down" ng-click="showServers = true"></glyphicon>
     </span>
     <span ng-if="showServers">
-      <tooltip>Hide additional user information</tooltip>
-      <glyphicon type="chevron-up" ng-click="showServers = false"
-        tooltip-attach></glyphicon>
+      <glyphicon tooltip="Hide additional user information"
+        type="chevron-up" ng-click="showServers = false"></glyphicon>
     </span>
   </div>
 </div>
