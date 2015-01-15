@@ -73,11 +73,13 @@ class TooltipDec {
     if (this.tooltipElem == null) {
       return;
     }
+
     this.tooltipElem.style.opacity = '0';
     new async.Timer(new Duration(milliseconds: 150), () {
       if (this.tooltipElem == null) {
         return;
       }
+
       this.tooltipElem.remove();
       this.tooltipElem = null;
     });
