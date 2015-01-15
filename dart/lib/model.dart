@@ -139,11 +139,11 @@ class Model {
   }
 
   save([fields]) {
-    this._send('put', fields);
+    return this._send('put', fields);
   }
 
   create([fields]) {
-    this._send('post', fields);
+    return this._send('post', fields);
   }
 
   clear() {
