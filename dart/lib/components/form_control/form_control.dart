@@ -5,11 +5,13 @@ import 'package:angular/angular.dart' as ng;
 
 @Component(
   selector: 'form-control',
-  template: '<input ng-type="type" placeholder="{{placeholder}}" '
-    'ng-model="model"/>',
+  template: '<input ng-type="type" placeholder="{{placeholder}}" ng-model="model" tooltip="{{formTooltip}}"/>',
   cssUrl: 'packages/pritunl/components/form_control/form_control.css'
 )
 class FormControlComp implements ng.ShadowRootAware {
+  @NgAttr('form-tooltip')
+  var formTooltip;
+
   @NgAttr('padding')
   var padding;
 
