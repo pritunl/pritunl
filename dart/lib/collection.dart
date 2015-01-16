@@ -26,7 +26,7 @@ class Collection extends collection.IterableBase {
       this._loading = true;
 
       new async.Future.delayed(
-        new Duration(milliseconds: 200), () {
+        const Duration(milliseconds: 200), () {
           if (this._loadCheckId == loadCheckId) {
             this.loadingLong = true;
           }
@@ -77,7 +77,7 @@ class Collection extends collection.IterableBase {
     }
 
     var modelCls = mirrors.reflectClass(this.model);
-    var initSym = new Symbol('');
+    var initSym = const Symbol('');
     this._collection = [];
 
     data.forEach((value) {
