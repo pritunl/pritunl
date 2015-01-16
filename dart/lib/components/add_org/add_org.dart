@@ -41,6 +41,7 @@ class AddOrgComp implements ng.ShadowRootAware {
     var form = this.root.querySelector('form-control');
     form.classes.remove('danger');
     this.org.clear();
+    this.alert.text = null;
   }
 
   add() {
