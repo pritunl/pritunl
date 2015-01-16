@@ -6,6 +6,7 @@ import 'package:angular/angular.dart' as ng;
 
 class ModalBase implements ng.ShadowRootAware {
   var root;
+  var _errorForm;
 
   var _alertElem;
   get alertElem {
@@ -31,9 +32,29 @@ class ModalBase implements ng.ShadowRootAware {
     if (text != null && this.alert.text == text) {
       this.alert.flash();
     }
-    else {
-      this.alert.text = text;
+    this.alert.text = text;
+  }
+
+  clearAlert() {
+    this.setAlert(null);
+  }
+
+  setFormError(selector, error) {
+    var form = this.root.querySelector(selector);
+
+    if (this._errorForm != null && this._errorForm != form) {
+      this._errorForm.classes.remove('danger');
     }
+    this._errorForm = form;
+
+    form.classes.add('danger');
+    this.setAlert(error);
+  }
+
+  clearFormError() {
+    this._errorForm.classes.remove('danger');
+    this._errorForm = null;
+    this.clearAlert();
   }
 
   reset() {
