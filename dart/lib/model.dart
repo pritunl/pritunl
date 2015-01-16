@@ -5,11 +5,25 @@ import 'dart:mirrors' as mirrors;
 import 'dart:async' as async;
 import 'dart:math' as math;
 
-var _attrData = {};
+var _attrSymbols = {};
+var _attrValidators = {};
 
-class Attr {
+class Attribute {
   final name;
-  const Attr(this.name);
+  const Attribute(this.name);
+}
+
+class Validator {
+  final name;
+  const Validator(this.name);
+}
+
+class Invalid extends Error {
+  var message;
+
+  Invalid(this.message);
+
+  toString() => this.message;
 }
 
 class Model {
@@ -20,20 +34,31 @@ class Model {
   var errorData;
   var loadingLong;
 
-  get _attrs {
-    if (!_attrData.containsKey(this.runtimeType)) {
-      var attrs = {};
+  get _symbols {
+    if (!_attrSymbols.containsKey(this.runtimeType)) {
+      var symbols = {};
+      var validators = {};
       var mirror = mirrors.reflect(this).type;
 
-      mirror.declarations.forEach((varSymbol, varMirror) {
+      mirror.declarations.forEach((value, varMirror) {
         varMirror.metadata.forEach((metadata) {
-          attrs[metadata.reflectee.name] = varSymbol;
+          if (metadata.reflectee is Attribute) {
+            symbols[metadata.reflectee.name] = value;
+          }
+          else if (metadata.reflectee is Validator) {
+            validators[metadata.reflectee.name] = value;
+          }
         });
       });
 
-      _attrData[this.runtimeType] = attrs;
+      _attrSymbols[this.runtimeType] = symbols;
+      _attrValidators[this.runtimeType] = validators;
     }
-    return _attrData[this.runtimeType];
+    return _attrSymbols[this.runtimeType];
+  }
+
+  get _validators {
+    return _attrValidators[this.runtimeType];
   }
 
   var _loading;
