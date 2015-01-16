@@ -92,9 +92,8 @@ class Model {
     var symbols = this._symbols;
     var validators = this._validators;
     var mirror = mirrors.reflect(this);
-    var validator = mirror.getField(validators[name]).reflectee;
-
-    return validator(mirror.getField(symbols[name]).reflectee);
+    var validator = mirror.getField(validators[name]);
+    validator.apply([mirror.getField(symbols[name]).reflectee]);
   }
 
   clone() {
