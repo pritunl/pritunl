@@ -72,7 +72,7 @@ class ModalBase implements ng.ShadowRootAware {
     }
 
     if (this.model != null) {
-      this.model.reset();
+      this.model.clear();
     }
   }
 
