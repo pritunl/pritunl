@@ -19,9 +19,10 @@ class Validator {
 }
 
 class Invalid extends Error {
+  var type;
   var message;
 
-  Invalid(this.message);
+  Invalid(this.type, this.message);
 
   toString() => this.message;
 }
