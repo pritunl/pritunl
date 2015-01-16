@@ -40,6 +40,10 @@ class ModalBase implements ng.ShadowRootAware {
   }
 
   setFormError(selector, error) {
+    if (error is Error) {
+      error = error.toString();
+    }
+
     var form = this.root.querySelector(selector);
 
     if (this._errorForm != null && this._errorForm != form) {
