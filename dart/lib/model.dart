@@ -87,6 +87,15 @@ class Model {
 
   Model(ng.Http this.http);
 
+  validate(name) {
+    var symbols = this._symbols;
+    var validators = this._validators;
+    var mirror = mirrors.reflect(this);
+    var validator = mirror.getField(validators[name]).reflectee;
+
+    return validator(mirror.getField(symbols[name]).reflectee);
+  }
+
   fetch() {
     this.loading = true;
 
