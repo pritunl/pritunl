@@ -21,12 +21,10 @@ class AddOrgComp extends modal_base.ModalBase {
   }
 
   add() {
-    if (this.org.name == null) {
-      var form = this.root.querySelector('form-control');
-      form.classes.add('danger');
-
-      this.setAlert('Organization name cannot be empty');
-
+    try {
+      this.org.validate('name');
+    } catch(err) {
+      this.setFormError('.name', err);
       return false;
     }
 
