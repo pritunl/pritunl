@@ -13,6 +13,13 @@ class Organization extends model.Model {
   @model.Attribute('name')
   var name;
 
+  @model.Validator('name')
+  nameValidator(val) {
+    if (val == null) {
+      throw new model.Invalid('Organization name cannot be empty');
+    }
+  }
+
   @model.Attribute('user_count')
   var userCount;
 
