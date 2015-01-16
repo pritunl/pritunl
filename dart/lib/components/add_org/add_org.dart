@@ -20,7 +20,7 @@ class AddOrgComp extends modal_base.ModalBase {
     this.org.clear();
   }
 
-  add() {
+  submit() {
     try {
       this.org.validate('name');
     } catch(err) {
