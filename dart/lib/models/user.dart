@@ -7,37 +7,37 @@ import 'package:angular/angular.dart' as ng;
 
 @Injectable()
 class User extends model.Model {
-  @model.Attr('id')
+  @model.Attribute('id')
   var id;
 
-  @model.Attr('organization')
+  @model.Attribute('organization')
   var organization;
 
-  @model.Attr('organization_name')
+  @model.Attribute('organization_name')
   var organizationName;
 
-  @model.Attr('name')
+  @model.Attribute('name')
   var name;
 
-  @model.Attr('email')
+  @model.Attribute('email')
   var email;
 
-  @model.Attr('type')
+  @model.Attribute('type')
   var type;
 
-  @model.Attr('otp_auth')
+  @model.Attribute('otp_auth')
   var otpAuth;
 
-  @model.Attr('otp_secret')
+  @model.Attribute('otp_secret')
   var otpSecret;
 
-  @model.Attr('disabled')
+  @model.Attribute('disabled')
   var disabled;
 
-  @model.Attr('servers')
+  @model.Attribute('servers')
   var servers;
 
-  @model.Attr('status')
+  @model.Attribute('status')
   var status;
 
   get url {
