@@ -7,40 +7,40 @@ import 'package:angular/angular.dart' as ng;
 
 @Injectable()
 class Status extends model.Model {
-  @model.Attr('org_count')
+  @model.Attribute('org_count')
   var orgCount;
 
-  @model.Attr('users_online')
+  @model.Attribute('users_online')
   var usersOnline;
 
-  @model.Attr('user_count')
+  @model.Attribute('user_count')
   var userCount;
 
-  @model.Attr('servers_online')
+  @model.Attribute('servers_online')
   var serversOnline;
 
-  @model.Attr('server_count')
+  @model.Attribute('server_count')
   var serverCount;
 
-  @model.Attr('hosts_online')
+  @model.Attribute('hosts_online')
   var hostsOnline;
 
-  @model.Attr('host_count')
+  @model.Attribute('host_count')
   var hostCount;
 
-  @model.Attr('server_version')
+  @model.Attribute('server_version')
   var serverVersion;
 
-  @model.Attr('current_host')
+  @model.Attribute('current_host')
   var currentHost;
 
-  @model.Attr('public_ip')
+  @model.Attribute('public_ip')
   var publicIp;
 
-  @model.Attr('local_networks')
+  @model.Attribute('local_networks')
   var localNetworks;
 
-  @model.Attr('notification')
+  @model.Attribute('notification')
   var notification;
 
   get url {

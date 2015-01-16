@@ -7,13 +7,13 @@ import 'package:angular/angular.dart' as ng;
 
 @Injectable()
 class LogEntry extends model.Model {
-  @model.Attr('id')
+  @model.Attribute('id')
   var id;
 
-  @model.Attr('timestamp')
+  @model.Attribute('timestamp')
   var timestamp;
 
-  @model.Attr('message')
+  @model.Attribute('message')
   var message;
 
   LogEntry(ng.Http http) : super(http);

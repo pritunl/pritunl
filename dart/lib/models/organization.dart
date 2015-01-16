@@ -10,14 +10,14 @@ import 'package:angular/angular.dart' as ng;
 class Organization extends model.Model {
   var users;
 
-  @model.Attr('name')
+  @model.Attribute('name')
   var name;
 
-  @model.Attr('user_count')
+  @model.Attribute('user_count')
   var userCount;
 
   var _id;
-  @model.Attr('id')
+  @model.Attribute('id')
   get id {
     return this._id;
   }
