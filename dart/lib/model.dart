@@ -107,12 +107,12 @@ class Model {
   }
 
   import(responseData) {
-    var attrs = this._attrs;
+    var symbols = this._symbols;
     var data = this.parse(responseData);
     var mirror = mirrors.reflect(this);
 
     data.forEach((key, value) {
-      var symbol = attrs[key];
+      var symbol = symbols[key];
       if (symbol == null) {
         return;
       }
@@ -123,19 +123,19 @@ class Model {
 
   _send(method, fields) {
     var data = {};
-    var attrs = this._attrs;
+    var symbols = this._symbols;
     var mirror = mirrors.reflect(this);
 
     this.loading = true;
 
     if (fields != null) {
       fields.forEach((name) {
-        var symbol = attrs[name];
+        var symbol = symbols[name];
         data[name] = mirror.getField(symbol).reflectee;
       });
     }
     else {
-      attrs.forEach((name, symbol) {
+      symbols.forEach((name, symbol) {
         data[name] = mirror.getField(symbol).reflectee;
       });
     }
@@ -171,10 +171,10 @@ class Model {
   }
 
   clear() {
-    var attrs = this._attrs;
+    var symbols = this._symbols;
     var mirror = mirrors.reflect(this);
 
-    attrs.values.forEach((symbol) {
+    symbols.values.forEach((symbol) {
       mirror.setField(symbol, null);
     });
   }
