@@ -11,24 +11,24 @@ import 'package:angular/angular.dart' show Component;
   cssUrl: 'packages/pritunl/components/add_org/add_org.css'
 )
 class AddOrgComp extends modal_base.ModalBase {
-  var org;
+  var model;
 
-  AddOrgComp(organization.Organization this.org);
+  AddOrgComp(organization.Organization this.model);
 
   reset() {
     super.reset();
-    this.org.clear();
+    this.model.clear();
   }
 
   submit() {
     try {
-      this.org.validate('name');
+      this.model.validate('name');
     } catch(err) {
       this.setFormError('.name', err);
       return false;
     }
 
-    this.org.create(['name']).then((_) {
+    this.model.create(['name']).then((_) {
       this.reset();
     });
   }
