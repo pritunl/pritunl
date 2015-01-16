@@ -27,6 +27,15 @@ class ModalBase implements ng.ShadowRootAware {
     this.root = root;
   }
 
+  setAlert(text) {
+    if (text != null && this.alert.text == text) {
+      this.alert.flash();
+    }
+    else {
+      this.alert.text = text;
+    }
+  }
+
   reset() {
     var form = this.root.querySelector('form-control');
     form.classes.remove('danger');

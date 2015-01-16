@@ -25,12 +25,7 @@ class AddOrgComp extends modal_base.ModalBase {
       var form = this.root.querySelector('form-control');
       form.classes.add('danger');
 
-      if (this.alert.text != null) {
-        this.alert.flash();
-      }
-      else {
-        this.alert.text = 'Organization name cannot be empty';
-      }
+      this.setAlert('Organization name cannot be empty');
 
       return false;
     }
