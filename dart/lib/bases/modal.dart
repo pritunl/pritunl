@@ -80,6 +80,18 @@ class ModalBase implements ng.ShadowRootAware {
     this.clearAlert();
   }
 
+  validateForms(forms) {
+    for (final name in forms.keys) {
+      try {
+        this.model.validate(name);
+      } catch(err) {
+        this.setFormError(forms[name], err);
+        return false;
+      }
+    }
+    return true;
+  }
+
   submit() {
     var clone = this.model.clone();
     this.reset();

@@ -15,10 +15,11 @@ class AddOrgComp extends modal_base.ModalBase {
   AddOrgComp(organization.Organization this.model);
 
   submit() {
-    try {
-      this.model.validate('name');
-    } catch(err) {
-      this.setFormError('.name', err);
+    var valid = this.validateForms({
+      'name': '.name',
+    });
+
+    if (valid != true) {
       return false;
     }
 

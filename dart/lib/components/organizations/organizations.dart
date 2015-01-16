@@ -16,6 +16,10 @@ class OrganizationsComp {
     this.update();
   }
 
+  onAddOrg(model) {
+    print('add: $model');
+  }
+
   update() {
     this.orgs.fetch();
   }
