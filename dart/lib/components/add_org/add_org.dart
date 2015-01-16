@@ -7,8 +7,7 @@ import 'package:angular/angular.dart' show Component;
 
 @Component(
   selector: 'add-org',
-  templateUrl: 'packages/pritunl/components/add_org/add_org.html',
-  cssUrl: 'packages/pritunl/components/add_org/add_org.css'
+  templateUrl: 'packages/pritunl/components/add_org/add_org.html'
 )
 class AddOrgComp extends modal_base.ModalBase {
   var model;
@@ -24,7 +23,7 @@ class AddOrgComp extends modal_base.ModalBase {
     }
 
     this.model.create(['name']).then((_) {
-      this.reset();
+      super.submit();
     });
   }
 }
