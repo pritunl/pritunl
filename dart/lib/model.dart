@@ -21,20 +21,19 @@ class Model {
   var loadingLong;
 
   get _attrs {
-    if (_attrData.containsKey(this.runtimeType)) {
-      return _attrData[this.runtimeType];
-    }
-    var attrs = {};
-    var mirror = mirrors.reflect(this).type;
+    if (!_attrData.containsKey(this.runtimeType)) {
+      var attrs = {};
+      var mirror = mirrors.reflect(this).type;
 
-    mirror.declarations.forEach((varSymbol, varMirror) {
-      varMirror.metadata.forEach((metadata) {
-        attrs[metadata.reflectee.name] = varSymbol;
+      mirror.declarations.forEach((varSymbol, varMirror) {
+        varMirror.metadata.forEach((metadata) {
+          attrs[metadata.reflectee.name] = varSymbol;
+        });
       });
-    });
 
-    _attrData[this.runtimeType] = attrs;
-    return attrs;
+      _attrData[this.runtimeType] = attrs;
+    }
+    return _attrData[this.runtimeType];
   }
 
   var _loading;
