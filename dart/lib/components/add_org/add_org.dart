@@ -15,11 +15,6 @@ class AddOrgComp extends modal_base.ModalBase {
 
   AddOrgComp(organization.Organization this.model);
 
-  reset() {
-    super.reset();
-    this.model.clear();
-  }
-
   submit() {
     try {
       this.model.validate('name');
