@@ -70,7 +70,7 @@ class Model {
       this._loading = true;
 
       new async.Future.delayed(
-        new Duration(milliseconds: 200), () {
+        const Duration(milliseconds: 200), () {
           if (this._loadCheckId == loadCheckId) {
             this.loadingLong = true;
           }
@@ -95,6 +95,18 @@ class Model {
     var validator = mirror.getField(validators[name]).reflectee;
 
     return validator(mirror.getField(symbols[name]).reflectee);
+  }
+
+  clone() {
+    var symbols = this._symbols;
+    var mirror = mirrors.reflect(this);
+    var clone = mirror.type.newInstance(const Symbol(''), [this.http]);
+
+    symbols.forEach((name, symbol) {
+      clone.setField(symbol, mirror.getField(symbol).reflectee);
+    });
+
+    return clone.reflectee;
   }
 
   fetch() {
