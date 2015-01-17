@@ -1,7 +1,5 @@
 library form_input;
 
-import 'package:pritunl/model.dart' as mdl;
-
 import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
 import 'package:angular/angular.dart' as ng;
 import 'dart:html' as dom;
