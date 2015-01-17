@@ -1,4 +1,4 @@
-library model;
+library collection;
 
 import 'package:pritunl/exceptions.dart';
 import 'package:pritunl/model.dart' as mdl;
