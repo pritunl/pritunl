@@ -4,56 +4,56 @@ modal[ng-animate] {
   @include transition(opacity .3s linear);
 }
 
-modal[ng-animate].ng-enter modal::shadow .backdrop {
+modal[ng-animate].ng-enter::shadow .backdrop {
   @include transition(opacity .15s linear);
   @include opacity(0);
 }
 
-modal[ng-animate].ng-enter-active modal::shadow .backdrop {
+modal[ng-animate].ng-enter-active::shadow .backdrop {
   @include opacity(0.5);
 }
 
-modal[ng-animate].ng-leave modal::shadow .backdrop {
+modal[ng-animate].ng-leave::shadow .backdrop {
   @include transition(opacity .15s linear);
   @include opacity(0.5);
 }
 
-modal[ng-animate].ng-leave-active modal::shadow .backdrop {
+modal[ng-animate].ng-leave-active::shadow .backdrop {
   @include opacity(0);
 }
 
-modal[ng-animate].ng-enter modal::shadow .modal {
+modal[ng-animate].ng-enter::shadow .modal {
   @include transition(transform .3s ease-out);
   @include transform(translate3d(0, -25%, 0));
 }
 
-modal[ng-animate].ng-enter-active modal::shadow .modal {
+modal[ng-animate].ng-enter-active::shadow .modal {
   @include transform(translate3d(0, 0, 0));
 }
 
-modal[ng-animate].ng-leave modal::shadow .modal {
+modal[ng-animate].ng-leave::shadow .modal {
   @include transition(transform .3s ease-out);
   @include transform(translate3d(0, 0, 0));
 }
 
-modal[ng-animate].ng-leave-active modal::shadow .modal {
+modal[ng-animate].ng-leave-active::shadow .modal {
   @include transform(translate3d(0, -25%, 0));
 }
 
-modal[ng-animate].ng-enter modal::shadow .content {
+modal[ng-animate].ng-enter::shadow .content {
   @include transition(opacity .15s linear);
   @include opacity(0);
 }
 
-modal[ng-animate].ng-enter-active modal::shadow .content {
+modal[ng-animate].ng-enter-active::shadow .content {
   @include opacity(1);
 }
 
-modal[ng-animate].ng-leave modal::shadow .content {
+modal[ng-animate].ng-leave::shadow .content {
   @include transition(opacity .15s linear);
   @include opacity(1);
 }
 
-modal[ng-animate].ng-leave-active modal::shadow .content {
+modal[ng-animate].ng-leave-active::shadow .content {
   @include opacity(0);
 }
