@@ -45,7 +45,7 @@ class ModalComp {
     this.state = true;
   }
 
-  void close(bool submit) {
+  void close([bool submit]) {
     var returnVal;
 
     if (submit) {
