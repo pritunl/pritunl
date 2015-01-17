@@ -8,13 +8,13 @@ import 'package:angular/angular.dart' as ng;
 
 @Injectable()
 class Organization extends model.Model {
-  var users;
+  usrs.Users users;
 
   @model.Attribute('name')
-  var name;
+  String name;
 
   @model.Validator('name')
-  nameValidator(val) {
+  void nameValidator(val) {
     if (val == null || val == '') {
       throw new model.Invalid('empty',
         'Organization name cannot be empty');
@@ -22,19 +22,19 @@ class Organization extends model.Model {
   }
 
   @model.Attribute('user_count')
-  var userCount;
+  int userCount;
 
   var _id;
   @model.Attribute('id')
-  get id {
+  String get id {
     return this._id;
   }
-  set id(val) {
+  set id(String val) {
     this.users.orgId = val;
     this._id = val;
   }
 
-  get url {
+  String get url {
     var url = '/organization';
 
     if (this.id != null) {

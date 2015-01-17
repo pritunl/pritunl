@@ -3,7 +3,7 @@ library utils;
 import 'package:angular/introspection.dart' as introspection;
 import 'dart:html' as dom;
 
-getDirective(node) {
+ dynamic getDirective(dom.Node node) {
   while (node != null) {
     var probe = introspection.elementExpando[node];
 

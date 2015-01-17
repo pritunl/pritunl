@@ -5,22 +5,22 @@ import 'dart:mirrors' as mirrors;
 import 'dart:async' as async;
 import 'dart:math' as math;
 
-var _attrSymbols = {};
-var _attrValidators = {};
+Map<Type, Map<String, Symbol>> _attrSymbols = {};
+Map<Type, Map<String, Function>> _attrValidators = {};
 
 class Attribute {
-  final name;
+  final String name;
   const Attribute(this.name);
 }
 
 class Validator {
-  final name;
+  final String name;
   const Validator(this.name);
 }
 
 class Invalid extends Error {
-  var type;
-  var message;
+  String type;
+  String message;
 
   Invalid(this.type, this.message);
 
@@ -28,14 +28,14 @@ class Invalid extends Error {
 }
 
 class Model {
-  var _loadCheckId;
-  var http;
-  var url;
-  var errorStatus;
-  var errorData;
-  var loadingLong;
+  int _loadCheckId;
+  ng.Http http;
+  String url;
+  int errorStatus;
+  dynamic errorData;
+  bool loadingLong;
 
-  get _symbols {
+  Map<String, Symbol> get _symbols {
     if (!_attrSymbols.containsKey(this.runtimeType)) {
       var symbols = {};
       var validators = {};
@@ -58,12 +58,12 @@ class Model {
     return _attrSymbols[this.runtimeType];
   }
 
-  get _validators {
+  Map<String, Function> get _validators {
     return _attrValidators[this.runtimeType];
   }
 
   var _loading;
-  set loading(val) {
+  set loading(bool val) {
     if (val) {
       var loadCheckId = new math.Random().nextInt(32000);
       this._loadCheckId = loadCheckId;
@@ -82,13 +82,13 @@ class Model {
       this._loading = false;
     }
   }
-  get loading {
+  bool get loading {
     return this._loading;
   }
 
-  Model(ng.Http this.http);
+  Model(this.http);
 
-  validate(name) {
+  void validate(String name) {
     var symbols = this._symbols;
     var validators = this._validators;
     var mirror = mirrors.reflect(this);
@@ -96,7 +96,7 @@ class Model {
     validator.apply([mirror.getField(symbols[name]).reflectee]);
   }
 
-  clone() {
+  dynamic clone() {
     var symbols = this._symbols;
     var mirror = mirrors.reflect(this);
     var clone = mirror.type.newInstance(const Symbol(''), [this.http]);
@@ -108,7 +108,7 @@ class Model {
     return clone.reflectee;
   }
 
-  fetch() {
+  async.Future fetch() {
     this.loading = true;
 
     return this.http.get(this.url).then((response) {
@@ -123,11 +123,11 @@ class Model {
     });
   }
 
-  parse(data) {
+  dynamic parse(dynamic data) {
     return data;
   }
 
-  import(responseData) {
+  void import(dynamic responseData) {
     var symbols = this._symbols;
     var data = this.parse(responseData);
     var mirror = mirrors.reflect(this);
@@ -142,10 +142,11 @@ class Model {
     });
   }
 
-  _send(method, fields) {
+  dynamic _send(String method, List<String> fields) {
     var data = {};
     var symbols = this._symbols;
     var mirror = mirrors.reflect(this);
+    var methodFunc;
 
     this.loading = true;
 
@@ -162,16 +163,16 @@ class Model {
     }
 
     if (method == 'post') {
-      method = this.http.post;
+      methodFunc = this.http.post;
     }
     else if (method == 'put') {
-      method = this.http.put;
+      methodFunc = this.http.put;
     }
     else {
       throw new ArgumentError('Unkown method');
     }
 
-    return method(this.url, data).then((response) {
+    return methodFunc(this.url, data).then((response) {
       this.loading = false;
       this.import(response.data);
       return response.data;
@@ -183,15 +184,15 @@ class Model {
     });
   }
 
-  save([fields]) {
+  dynamic save([List<String> fields]) {
     return this._send('put', fields);
   }
 
-  create([fields]) {
+  dynamic create([List<String> fields]) {
     return this._send('post', fields);
   }
 
-  clear() {
+  void clear() {
     var symbols = this._symbols;
     var mirror = mirrors.reflect(this);
 

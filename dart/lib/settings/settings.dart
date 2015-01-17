@@ -3,17 +3,17 @@ library settings;
 var _data = {};
 var _observers = {};
 
-get(name) {
+dynamic get(String name) {
   return _data[name];
 }
 
-set(name, value) {
+set(String name, dynamic value) {
   _data[name] = value;
   if (_observers[name] != null) {
     _observers[name](name, value);
   }
 }
 
-observe(name, callback) {
+void observe(String name, Function callback) {
   _observers[name] = callback;
 }
