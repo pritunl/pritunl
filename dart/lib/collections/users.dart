@@ -77,7 +77,7 @@ class Users extends collection.Collection {
       this.pageTotal = null;
     }
     else {
-      if (this.page != data['page'].toInt()) {
+      if (this.page != data['page']) {
         throw new IgnoreResponse();
       }
       this.pageTotal = data['page_total'].toInt();
