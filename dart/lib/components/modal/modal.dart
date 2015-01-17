@@ -1,6 +1,7 @@
 library modal;
 
-import 'package:angular/angular.dart' show Component, NgAttr, NgCallback;
+import 'package:angular/angular.dart' show Component, NgAttr, NgCallback,
+  NgTwoWay;
 import 'dart:html' as dom;
 
 @Component(
@@ -9,6 +10,7 @@ import 'dart:html' as dom;
   cssUrl: 'packages/pritunl/components/modal/modal.css'
 )
 class ModalComp {
+  @NgTwoWay('state')
   bool state;
 
   @NgCallback('on-ok')
