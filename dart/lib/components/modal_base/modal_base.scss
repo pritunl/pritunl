@@ -1,0 +1,59 @@
+@import 'styles/base.scss';
+
+modal[ng-animate] {
+  @include transition(opacity .3s linear);
+}
+
+modal[ng-animate].ng-enter modal::shadow .backdrop {
+  @include transition(opacity .15s linear);
+  @include opacity(0);
+}
+
+modal[ng-animate].ng-enter-active modal::shadow .backdrop {
+  @include opacity(0.5);
+}
+
+modal[ng-animate].ng-leave modal::shadow .backdrop {
+  @include transition(opacity .15s linear);
+  @include opacity(0.5);
+}
+
+modal[ng-animate].ng-leave-active modal::shadow .backdrop {
+  @include opacity(0);
+}
+
+modal[ng-animate].ng-enter modal::shadow .modal {
+  @include transition(transform .3s ease-out);
+  @include transform(translate3d(0, -25%, 0));
+}
+
+modal[ng-animate].ng-enter-active modal::shadow .modal {
+  @include transform(translate3d(0, 0, 0));
+}
+
+modal[ng-animate].ng-leave modal::shadow .modal {
+  @include transition(transform .3s ease-out);
+  @include transform(translate3d(0, 0, 0));
+}
+
+modal[ng-animate].ng-leave-active modal::shadow .modal {
+  @include transform(translate3d(0, -25%, 0));
+}
+
+modal[ng-animate].ng-enter modal::shadow .content {
+  @include transition(opacity .15s linear);
+  @include opacity(0);
+}
+
+modal[ng-animate].ng-enter-active modal::shadow .content {
+  @include opacity(1);
+}
+
+modal[ng-animate].ng-leave modal::shadow .content {
+  @include transition(opacity .15s linear);
+  @include opacity(1);
+}
+
+modal[ng-animate].ng-leave-active modal::shadow .content {
+  @include opacity(0);
+}
