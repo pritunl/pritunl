@@ -12,6 +12,7 @@ class ModalBase implements ng.ShadowRootAware {
   dom.ShadowRoot root;
   mdl.Model model;
   dom.Element _errorForm;
+  bool state;
 
   @NgCallback('on-submit')
   Function onSubmit;
@@ -34,6 +35,14 @@ class ModalBase implements ng.ShadowRootAware {
 
   void onShadowRoot(dom.ShadowRoot root) {
     this.root = root;
+  }
+
+  void show() {
+    this.state = true;
+  }
+
+  void hide() {
+    this.state = false;
   }
 
   void setAlert(String text, [String type]) {
