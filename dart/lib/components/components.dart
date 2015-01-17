@@ -9,7 +9,7 @@ import 'package:pritunl/components/box_label/box_label.dart'
 import 'package:pritunl/components/btn/btn.dart'
   as btn;
 import 'package:pritunl/components/checkbox/checkbox.dart'
-as checkbox;
+  as checkbox;
 import 'package:pritunl/components/container/container.dart'
   as container;
 import 'package:pritunl/components/form_control/form_control.dart'
