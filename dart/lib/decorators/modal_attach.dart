@@ -1,9 +1,9 @@
 library modal_attach;
 
-import 'package:pritunl/components/modal/modal.dart' as mdl;
+import 'package:pritunl/bases/modal.dart' as modal_base;
+import 'package:pritunl/utils/utils.dart' as utils;
 
 import 'package:angular/angular.dart' show Decorator, NgAttr;
-import 'package:angular/angular.dart' as ng;
 import 'dart:html' as dom;
 
 @Decorator(
@@ -11,39 +11,27 @@ import 'dart:html' as dom;
 )
 class ModalAttachDec {
   dom.Element element;
-  bool state;
 
   @NgAttr('modal-attach')
   String modalAttach;
 
-  mdl.ModalComp get modal {
-    var modal;
+  modal_base.ModalBase get modalBase {
+    var modalElem;
     var selector = this.modalAttach;
 
     if (selector != '' && selector != null) {
-      modal = this.element.parent.querySelector(selector);
-      if (modal.nodeName != 'MODAL') {
-        modal = modal.shadowRoot.querySelector('modal');
-      }
+      modalElem = this.element.parent.querySelector(selector);
     }
     else {
-      modal = this.element.previousElementSibling;
+      modalElem = this.element.previousElementSibling;
     }
 
-    return ng.ngDirectives(modal)[0];
-  }
-
-  void show() {
-    this.modal.open();
-  }
-
-  void hide() {
-    this.modal.close();
+    return utils.getDirective(modalElem);
   }
 
   ModalAttachDec(this.element) {
     this.element.onClick.listen((_) {
-      this.show();
+      this.modalBase.show();
     });
   }
 }
