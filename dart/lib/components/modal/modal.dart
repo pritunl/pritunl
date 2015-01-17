@@ -1,6 +1,7 @@
 library modal;
 
 import 'package:angular/angular.dart' show Component, NgAttr, NgCallback;
+import 'dart:html' as dom;
 
 @Component(
   selector: 'modal',
@@ -8,43 +9,43 @@ import 'package:angular/angular.dart' show Component, NgAttr, NgCallback;
   cssUrl: 'packages/pritunl/components/modal/modal.css'
 )
 class ModalComp {
-  var state;
+  bool state;
 
   @NgCallback('on-ok')
-  var onOk;
+  Function onOk;
 
   @NgCallback('on-cancel')
-  var onCancel;
+  Function onCancel;
 
   var _okText;
   @NgAttr('ok-text')
-  get okText {
+  String get okText {
     if (this._okText != null && this._okText != '') {
       return this._okText;
     }
     return 'Ok';
   }
-  set okText(val) {
+  set okText(String val) {
     this._okText = val;
   }
 
   var _cancelText;
   @NgAttr('cancel-text')
-  get cancelText {
+  String get cancelText {
     if (this._cancelText != null && this._cancelText != '') {
       return this._cancelText;
     }
     return 'Cancel';
   }
-  set cancelText(val) {
+  set cancelText(String val) {
     this._cancelText = val;
   }
 
-  open() {
+  void open() {
     this.state = true;
   }
 
-  close(submit) {
+  void close(bool submit) {
     var returnVal;
 
     if (submit) {
@@ -61,17 +62,17 @@ class ModalComp {
     this.state = false;
   }
 
-  softClose(target) {
+  void softClose(dom.Element target) {
     if (target.classes.contains('modal')) {
       this.close(false);
     }
   }
 
-  hardClose() {
+  void hardClose() {
     this.close(false);
   }
 
-  submit() {
+  void submit() {
     this.close(true);
   }
 }

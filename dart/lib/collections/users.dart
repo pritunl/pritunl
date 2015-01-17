@@ -11,20 +11,20 @@ import 'dart:math' as math;
 
 @Injectable()
 class Users extends collection.Collection {
-  var _search;
-  var _hasClients;
-  var model = user.User;
-  var orgId;
-  var hidden;
-  var page;
-  var pageTotal;
-  var pages;
-  var searchCount;
-  var searchMore;
-  var searchTime;
-  var searchLimit;
+  String _search;
+  bool _hasClients;
+  Type model = user.User;
+  String orgId;
+  bool hidden;
+  int page;
+  int pageTotal;
+  List<dynamic> pages;
+  int searchCount;
+  bool searchMore;
+  double searchTime;
+  int searchLimit;
 
-  get url {
+  String get url {
     var url = '/user/${this.orgId}';
 
     if (this.search != null) {
@@ -40,7 +40,7 @@ class Users extends collection.Collection {
     return url;
   }
 
-  set search(val) {
+  set search(String val) {
     if (val == '') {
       val = null;
     }
@@ -48,11 +48,11 @@ class Users extends collection.Collection {
     this._search = val;
     this.fetch();
   }
-  get search {
+  String get search {
     return this._search;
   }
 
-  get noUsers {
+  bool get noUsers {
     if (this._hasClients == true || (
         this.hidden == true && this.length != 0)) {
       return false;
@@ -64,7 +64,7 @@ class Users extends collection.Collection {
     page = 0,
     super(http);
 
-  parse(data) {
+  List<Map> parse(Map<String, dynamic> data) {
     if (data.containsKey('search')) {
       if (this._search != data['search']) {
         throw new IgnoreResponse();
@@ -93,7 +93,7 @@ class Users extends collection.Collection {
     return data['users'];
   }
 
-  imported() {
+  void imported() {
     var user;
 
     for (user in this) {
@@ -105,7 +105,7 @@ class Users extends collection.Collection {
     this._hasClients = false;
   }
 
-  _updatePages() {
+  void _updatePages() {
     this.pages = [];
 
     if (this.pageTotal < 2) {
@@ -134,17 +134,17 @@ class Users extends collection.Collection {
     this.pages = pages;
   }
 
-  next() {
+  void next() {
     this.page += 1;
     this.fetch();
   }
 
-  prev() {
+  void prev() {
     this.page -= 1;
     this.fetch();
   }
 
-  onPage(page) {
+  void onPage(dynamic page) {
     if (page == 'First') {
       page = 0;
     }
@@ -158,7 +158,7 @@ class Users extends collection.Collection {
     this.fetch();
   }
 
-  searchIncrease() {
+  void searchIncrease() {
     this.searchLimit *= 2;
     this.fetch();
   }

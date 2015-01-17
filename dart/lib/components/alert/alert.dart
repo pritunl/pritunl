@@ -4,6 +4,7 @@ import 'package:angular/angular.dart' show Component, NgAttr, NgTwoWay,
   NgCallback;
 import 'package:angular/angular.dart' as ng;
 import 'dart:async' as async;
+import 'dart:html' as dom;
 
 @Component(
   selector: 'alert',
@@ -13,17 +14,17 @@ import 'dart:async' as async;
   cssUrl: 'packages/pritunl/components/alert/alert.css'
 )
 class AlertComp implements ng.ShadowRootAware {
-  var root;
+  dom.ShadowRoot root;
 
   @NgAttr('type')
-  var type;
+  String type;
 
   @NgTwoWay('text')
-  var text;
+  String text;
 
   var _dismissible;
   @NgAttr('dismissible')
-  set dismissible(val) {
+  set dismissible(dynamic val) {
     if (val == '') {
       this._dismissible = true;
     }
@@ -31,23 +32,23 @@ class AlertComp implements ng.ShadowRootAware {
       this._dismissible = false;
     }
   }
-  get dismissible {
+  bool get dismissible {
     return this._dismissible;
   }
 
   var _alertElem;
-  get alertElem {
+  dom.Element get alertElem {
     if (this._alertElem == null) {
       this._alertElem = this.root.querySelector('.alert');
     }
     return this._alertElem;
   }
 
-  onShadowRoot(root) {
+  void onShadowRoot(dom.ShadowRoot root) {
     this.root = root;
   }
 
-  flash() {
+  void flash() {
     var delay = const Duration(milliseconds: 180);
 
     this.alertElem.classes.add('flash-on');
@@ -72,7 +73,7 @@ class AlertComp implements ng.ShadowRootAware {
     });
   }
 
-  close() {
+  void close() {
     this.text = null;
   }
 }

@@ -10,11 +10,11 @@ import 'package:angular/angular.dart' show Component;
   templateUrl: 'packages/pritunl/components/add_org/add_org.html'
 )
 class AddOrgComp extends modal_base.ModalBase {
-  var model;
+  organization.Organization model;
 
-  AddOrgComp(organization.Organization this.model);
+  AddOrgComp(this.model);
 
-  submit() {
+  bool submit() {
     var valid = this.validateForms({
       'name': '.name',
     });

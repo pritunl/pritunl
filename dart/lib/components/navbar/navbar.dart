@@ -10,7 +10,7 @@ import 'package:angular/angular.dart' show Component;
     cssUrl: 'packages/pritunl/components/navbar/navbar.css'
 )
 class NavbarComp {
-  var active;
+  Map<String, String> active;
 
   NavbarComp() {
     settings.set('active_page', this);

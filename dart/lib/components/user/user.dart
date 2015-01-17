@@ -1,5 +1,8 @@
 library user;
 
+import 'package:pritunl/collections/users.dart' as users;
+import 'package:pritunl/models/user.dart' as user;
+
 import 'package:angular/angular.dart' show Component, NgAttr, NgTwoWay;
 
 @Component(
@@ -8,14 +11,14 @@ import 'package:angular/angular.dart' show Component, NgAttr, NgTwoWay;
   cssUrl: 'packages/pritunl/components/user/user.css'
 )
 class UserComp {
+  bool showServers;
+
   @NgTwoWay('model')
-  var model;
+  user.User model;
 
   @NgTwoWay('collection')
-  var collection;
+  users.Users collection;
 
   @NgAttr('selected')
-  var selected;
-
-  var showServers;
+  bool selected;
 }

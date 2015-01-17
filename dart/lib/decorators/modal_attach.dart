@@ -1,5 +1,7 @@
 library modal_attach;
 
+import 'package:pritunl/components/modal/modal.dart' as mdl;
+
 import 'package:angular/angular.dart' show Decorator, NgAttr;
 import 'package:angular/angular.dart' as ng;
 import 'dart:html' as dom;
@@ -8,13 +10,13 @@ import 'dart:html' as dom;
   selector: '[modal-attach]'
 )
 class ModalAttachDec {
-  var element;
-  var state;
+  dom.Element element;
+  bool state;
 
   @NgAttr('modal-attach')
-  var modalAttach;
+  String modalAttach;
 
-  get modal {
+  mdl.ModalComp get modal {
     var modal;
     var selector = this.modalAttach;
 
@@ -31,15 +33,15 @@ class ModalAttachDec {
     return ng.ngDirectives(modal)[0];
   }
 
-  show() {
+  void show() {
     this.modal.open();
   }
 
-  hide() {
+  void hide() {
     this.modal.close();
   }
 
-  ModalAttachDec(dom.Element this.element) {
+  ModalAttachDec(this.element) {
     this.element.onClick.listen((_) {
       this.show();
     });

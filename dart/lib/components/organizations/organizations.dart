@@ -1,6 +1,7 @@
 library organizations;
 
 import 'package:pritunl/collections/organizations.dart' as organizations;
+import 'package:pritunl/models/organization.dart' as organization;
 
 import 'package:angular/angular.dart' show Component;
 
@@ -10,17 +11,17 @@ import 'package:angular/angular.dart' show Component;
   cssUrl: 'packages/pritunl/components/organizations/organizations.css'
 )
 class OrganizationsComp {
-  var orgs;
+  organizations.Organizations orgs;
 
-  OrganizationsComp(organizations.Organizations this.orgs) {
+  OrganizationsComp(this.orgs) {
     this.update();
   }
 
-  onAddOrg(model) {
+  void onAddOrg(organization.Organization model) {
     print('add: $model');
   }
 
-  update() {
+  void update() {
     this.orgs.fetch();
   }
 }

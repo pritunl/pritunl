@@ -1,20 +1,24 @@
 library modal;
 
+import 'package:pritunl/components/alert/alert.dart' as alrt;
+import 'package:pritunl/model.dart' as mdl;
 import 'package:pritunl/utils/utils.dart' as utils;
+
 
 import 'package:angular/angular.dart' show NgCallback;
 import 'package:angular/angular.dart' as ng;
+import 'dart:html' as dom;
 
 class ModalBase implements ng.ShadowRootAware {
-  var root;
-  var model;
-  var _errorForm;
+  dom.ShadowRoot root;
+  mdl.Model model;
+  dom.Element _errorForm;
 
   @NgCallback('on-submit')
-  var onSubmit;
+  Function onSubmit;
 
   var _alertElem;
-  get alertElem {
+  dom.Element get alertElem {
     if (this._alertElem == null) {
       this._alertElem = this.root.querySelector('alert');
     }
@@ -22,18 +26,18 @@ class ModalBase implements ng.ShadowRootAware {
   }
 
   var _alert;
-  get alert {
+  alrt.AlertComp get alert {
     if (this._alert == null) {
       this._alert = utils.getDirective(this.alertElem);
     }
     return this._alert;
   }
 
-  onShadowRoot(root) {
+  void onShadowRoot(dom.ShadowRoot root) {
     this.root = root;
   }
 
-  setAlert(text, [type]) {
+  void setAlert(String text, [String type]) {
     if (type != null) {
       this.alert.type = type;
     }
@@ -45,15 +49,11 @@ class ModalBase implements ng.ShadowRootAware {
     this.alert.text = text;
   }
 
-  clearAlert() {
+  void clearAlert() {
     this.setAlert(null);
   }
 
-  setFormError(selector, error, [type]) {
-    if (error is Error) {
-      error = error.toString();
-    }
-
+  void setFormError(String selector, Error error, [String type]) {
     if (type == null) {
       type = 'danger';
     }
@@ -69,10 +69,10 @@ class ModalBase implements ng.ShadowRootAware {
     this._errorForm = form;
 
     form.classes.add(type);
-    this.setAlert(error, type);
+    this.setAlert(error.toString(), type);
   }
 
-  clearFormError() {
+  void clearFormError() {
     if (this._errorForm != null) {
       this._errorForm.classes.remove(this.alert.type);
       this._errorForm = null;
@@ -80,8 +80,8 @@ class ModalBase implements ng.ShadowRootAware {
     this.clearAlert();
   }
 
-  validateForms(forms) {
-    for (final name in forms.keys) {
+  bool validateForms(Map<String, String> forms) {
+    for (var name in forms.keys) {
       try {
         this.model.validate(name);
       } catch(err) {
@@ -92,13 +92,13 @@ class ModalBase implements ng.ShadowRootAware {
     return true;
   }
 
-  submit() {
+  void submit() {
     var clone = this.model.clone();
     this.reset();
     this.onSubmit({r'$model': clone});
   }
 
-  reset() {
+  void reset() {
     this.clearFormError();
 
     if (this.alert != null) {
@@ -110,7 +110,7 @@ class ModalBase implements ng.ShadowRootAware {
     }
   }
 
-  cancel() {
+  void cancel() {
     this.reset();
   }
 }

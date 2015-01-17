@@ -10,13 +10,13 @@ import 'package:angular/angular.dart' show Component;
     cssUrl: 'packages/pritunl/components/status/status.css'
 )
 class StatusComp {
-  var model;
+  status.Status model;
 
-  StatusComp(status.Status this.model) {
+  StatusComp(this.model) {
     this.update();
   }
 
-  update() {
+  void update() {
     this.model.fetch();
   }
 }

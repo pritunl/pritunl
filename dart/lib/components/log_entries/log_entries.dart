@@ -10,13 +10,13 @@ import 'package:angular/angular.dart' show Component;
   cssUrl: 'packages/pritunl/components/log_entries/log_entries.css'
 )
 class LogEntriesComp {
-  var entries;
+  log_entries.LogEntries entries;
 
-  LogEntriesComp(log_entries.LogEntries this.entries) {
+  LogEntriesComp(this.entries) {
     this.update();
   }
 
-  update() {
+  void update() {
     this.entries.fetch();
   }
 }

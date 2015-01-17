@@ -8,7 +8,7 @@ import 'dart:html' as dom;
 )
 class ShiftClickDec {
   @NgCallback('shift-click')
-  var callback;
+  Function callback;
 
   ShiftClickDec(dom.Element element) {
     element.onClick.listen((evt) {

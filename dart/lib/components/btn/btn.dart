@@ -2,6 +2,7 @@ library btn;
 
 import 'package:angular/angular.dart' show Component, NgAttr;
 import 'package:angular/angular.dart' as ng;
+import 'dart:html' as dom;
 
 @Component(
   selector: 'btn',
@@ -10,31 +11,32 @@ import 'package:angular/angular.dart' as ng;
   cssUrl: 'packages/pritunl/components/btn/btn.css'
 )
 class BtnComp implements ng.ShadowRootAware {
+  String btnType;
+
   @NgAttr('type')
-  var type;
+  String type;
 
   @NgAttr('size')
-  var size;
+  String size;
 
   @NgAttr('width')
-  var width;
+  String width;
 
   @NgAttr('min-width')
-  var minWidth;
+  String minWidth;
 
   @NgAttr('height')
-  var height;
+  String height;
 
   @NgAttr('min-height')
-  var minHeight;
+  String minHeight;
 
-  var btnType;
   @NgAttr('form-submit')
-  get formSubmit {
+  bool get formSubmit {
     return this.btnType == 'submit';
   }
-  set formSubmit(value) {
-    if (value == '') {
+  set formSubmit(dynamic val) {
+    if (val == '') {
       this.btnType = 'submit';
     }
     else {
@@ -44,10 +46,10 @@ class BtnComp implements ng.ShadowRootAware {
 
   var _disabled;
   @NgAttr('disabled')
-  get disabled {
+  bool get disabled {
     return this._disabled;
   }
-  set disabled(val) {
+  set disabled(dynamic val) {
     if (val == '') {
       this._disabled = true;
     }
@@ -56,7 +58,7 @@ class BtnComp implements ng.ShadowRootAware {
     }
   }
 
-  onShadowRoot(root) {
+  void onShadowRoot(dom.ShadowRoot root) {
     var elem = root.querySelector('button');
 
     if (this.width != null) {

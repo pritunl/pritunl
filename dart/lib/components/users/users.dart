@@ -1,5 +1,7 @@
 library users;
 
+import 'package:pritunl/collections/users.dart' as usrs;
+
 import 'package:angular/angular.dart' show Component, NgTwoWay;
 import 'package:angular/angular.dart' as ng;
 
@@ -9,18 +11,18 @@ import 'package:angular/angular.dart' as ng;
   cssUrl: 'packages/pritunl/components/users/users.css'
 )
 class UsersComp implements ng.AttachAware {
-  var http;
+  ng.Http http;
 
   @NgTwoWay('users')
-  var users;
+  usrs.Users users;
 
-  UsersComp(ng.Http this.http);
+  UsersComp(this.http);
 
-  attach() {
+  void attach() {
     this.update();
   }
 
-  update() {
+  void update() {
     this.users.fetch();
   }
 }

@@ -10,9 +10,9 @@ import 'package:angular/angular.dart' show Component, NgTwoWay;
 )
 class CheckboxComp {
   @NgTwoWay('state')
-  var state;
+  bool state;
 
-  onClick() {
+  void onClick() {
     this.state = this.state != true;
   }
 }

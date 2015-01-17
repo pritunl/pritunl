@@ -8,9 +8,9 @@ import 'package:angular/angular.dart' as ng;
 
 @Injectable()
 class Organizations extends collection.Collection {
-  var model = organization.Organization;
+  Type model = organization.Organization;
 
-  get url {
+  String get url {
     return '/organization';
   }
 

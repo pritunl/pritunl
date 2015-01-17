@@ -8,11 +8,11 @@ import 'dart:html' as dom;
   selector: '[autofocus]'
 )
 class AutoFocusDec implements ng.AttachAware {
-  var element;
+  dom.Element element;
 
-  AutoFocusDec(dom.Element element);
+  AutoFocusDec(element);
 
-  attach() {
+  void attach() {
     element.focus();
   }
 }

@@ -8,9 +8,9 @@ import 'package:angular/angular.dart' as ng;
 
 @Injectable()
 class LogEntries extends collection.Collection {
-  var model = log_entry.LogEntry;
+  Type model = log_entry.LogEntry;
 
-  get url {
+  String get url {
     return '/log';
   }
 

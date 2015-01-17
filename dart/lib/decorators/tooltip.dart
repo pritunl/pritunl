@@ -8,13 +8,13 @@ import 'dart:async' as async;
   selector: '[tooltip]'
 )
 class TooltipDec {
-  var element;
-  var tooltipElem;
+  dom.Element element;
+  dom.Element tooltipElem;
 
   @NgAttr('tooltip')
-  var tooltip;
+  String tooltip;
 
-  show() {
+  void show() {
     if (this.tooltipElem != null) {
       return;
     }
@@ -69,7 +69,7 @@ class TooltipDec {
       ..opacity = '1';
   }
 
-  hide() {
+  void hide() {
     if (this.tooltipElem == null) {
       return;
     }
@@ -85,7 +85,7 @@ class TooltipDec {
     });
   }
 
-  TooltipDec(dom.Element this.element) {
+  TooltipDec(this.element) {
     this.element
       ..onMouseEnter.listen((_) {
         this.show();

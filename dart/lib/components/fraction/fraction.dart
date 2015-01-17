@@ -2,10 +2,10 @@ library fraction;
 
 import 'package:angular/angular.dart' show Component, NgAttr;
 
-var DEFAULT_NULL_STYLE = 'default';
-var DEFAULT_EMPTY_STYLE = 'danger';
-var DEFAULT_HALF_STYLE = 'warning';
-var DEFAULT_FULL_STYLE = 'success';
+const String DEFAULT_NULL_STYLE = 'default';
+const String DEFAULT_EMPTY_STYLE = 'danger';
+const String DEFAULT_HALF_STYLE = 'warning';
+const String DEFAULT_FULL_STYLE = 'success';
 
 @Component(
   selector: 'fraction',
@@ -14,24 +14,24 @@ var DEFAULT_FULL_STYLE = 'success';
 )
 class FractionComp {
   @NgAttr('numer')
-  var numer;
+  String numer;
 
   @NgAttr('denom')
-  var denom;
+  String denom;
 
   @NgAttr('null-style')
-  var nullStyle;
+  String nullStyle;
 
   @NgAttr('empty-style')
-  var emptyStyle;
+  String emptyStyle;
 
   @NgAttr('half-style')
-  var halfStyle;
+  String halfStyle;
 
   @NgAttr('full-style')
-  var fullStyle;
+  String fullStyle;
 
-  get numerStr {
+  String get numerStr {
     if (this.numer != null) {
       try {
         int.parse(this.numer);
@@ -42,7 +42,7 @@ class FractionComp {
     return '-';
   }
 
-  get denomStr {
+  String get denomStr {
     if (this.denom != null) {
       try {
         int.parse(this.denom);
@@ -53,7 +53,7 @@ class FractionComp {
     return '-';
   }
 
-  get numerInt {
+  int get numerInt {
     if (this.numer == null) {
       return null;
     }
@@ -64,7 +64,7 @@ class FractionComp {
     }
   }
 
-  get denomInt {
+  int get denomInt {
     if (this.denom == null) {
       return null;
     }
@@ -75,7 +75,7 @@ class FractionComp {
     }
   }
 
-  get colorType {
+  String get colorType {
     var numerInt = this.numerInt;
     var denomInt = this.denomInt;
 

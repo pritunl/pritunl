@@ -2,6 +2,7 @@ library box_label;
 
 import 'package:angular/angular.dart' show Component, NgAttr;
 import 'package:angular/angular.dart' as ng;
+import 'dart:html' as dom;
 
 @Component(
   selector: 'box-label',
@@ -10,12 +11,12 @@ import 'package:angular/angular.dart' as ng;
 )
 class BoxLabelComp implements ng.ShadowRootAware {
   @NgAttr('padding')
-  var padding;
+  String padding;
 
   @NgAttr('type')
-  var type;
+  String type;
 
-  onShadowRoot(root) {
+  onShadowRoot(dom.ShadowRoot root) {
     if (this.padding != null) {
       root.querySelector('span').style.padding = this.padding;
     }

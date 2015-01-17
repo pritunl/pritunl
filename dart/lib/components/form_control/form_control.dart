@@ -1,7 +1,10 @@
 library form_control;
 
+import 'package:pritunl/model.dart' as mdl;
+
 import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
 import 'package:angular/angular.dart' as ng;
+import 'dart:html' as dom;
 
 @Component(
   selector: 'form-control',
@@ -11,27 +14,27 @@ import 'package:angular/angular.dart' as ng;
 )
 class FormControlComp implements ng.ShadowRootAware {
   @NgAttr('form-tooltip')
-  var formTooltip;
+  String formTooltip;
 
   @NgAttr('padding')
-  var padding;
+  String padding;
 
   @NgAttr('width')
-  var width;
+  String width;
 
   @NgAttr('height')
-  var height;
+  String height;
 
   @NgAttr('type')
-  var type;
+  String type;
 
   @NgAttr('placeholder')
-  var placeholder;
+  String placeholder;
 
   @NgTwoWay('model')
-  var model;
+  String model;
 
-  onShadowRoot(root) {
+  void onShadowRoot(dom.ShadowRoot root) {
     var elem = root.querySelector('input');
 
     if (this.padding != null) {

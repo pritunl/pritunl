@@ -9,9 +9,9 @@ import 'package:angular/angular.dart' show Component, NgAttr;
 )
 class GlyphiconComp {
   @NgAttr('type')
-  var type;
+  String type;
 
-  get iconClass {
+  String get iconClass {
     return 'glyphicon glyphicon-${this.type}';
   }
 }
