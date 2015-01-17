@@ -1,6 +1,6 @@
 library modal_attach;
 
-import 'package:pritunl/bases/modal.dart' as modal_base;
+import 'package:pritunl/components/modal_base/modal_base.dart' as modal_base;
 import 'package:pritunl/utils/utils.dart' as utils;
 
 import 'package:angular/angular.dart' show Decorator, NgAttr;
@@ -15,7 +15,7 @@ class ModalAttachDec {
   @NgAttr('modal-attach')
   String modalAttach;
 
-  modal_base.ModalBase get modalBase {
+  modal_base.ModalBase get modal {
     var modalElem;
     var selector = this.modalAttach;
 
@@ -31,7 +31,7 @@ class ModalAttachDec {
 
   ModalAttachDec(this.element) {
     this.element.onClick.listen((_) {
-      this.modalBase.show();
+      this.modal.show();
     });
   }
 }
