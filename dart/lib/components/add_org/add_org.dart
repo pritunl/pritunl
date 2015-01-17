@@ -1,6 +1,6 @@
 library add_org;
 
-import 'package:pritunl/bases/modal.dart' as modal_base;
+import 'package:pritunl/components/modal_base/modal_base.dart' as modal_base;
 import 'package:pritunl/models/organization.dart' as organization;
 
 import 'package:angular/angular.dart' show Component;
