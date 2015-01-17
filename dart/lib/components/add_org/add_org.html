@@ -1,4 +1,5 @@
-<modal on-ok="submit()" on-cancel="cancel()" ok-text="Add">
+<modal ng-if="state" state="state" on-ok="submit()"
+    on-cancel="cancel()" ok-text="Add" ng-animate>
   <alert></alert>
   <form-group>
     <label form-group>Name</label>
