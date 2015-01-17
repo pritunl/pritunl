@@ -16,6 +16,8 @@ import 'package:pritunl/components/form_group/form_group.dart'
   as form_group;
 import 'package:pritunl/components/form_input/form_input.dart'
   as form_input;
+import 'package:pritunl/components/form_select/form_select.dart'
+  as form_select;
 import 'package:pritunl/components/fraction/fraction.dart'
   as fraction;
 import 'package:pritunl/components/glyphicon/glyphicon.dart'
@@ -49,6 +51,7 @@ class ComponentsMod extends ng.Module {
     this.bind(container.ContainerComp);
     this.bind(form_input.FormInputComp);
     this.bind(form_group.FormGroupComp);
+    this.bind(form_select.FormSelectComp);
     this.bind(fraction.FractionComp);
     this.bind(glyphicon.GlyphiconComp);
     this.bind(log_entries.LogEntriesComp);
