@@ -12,10 +12,10 @@ import 'package:pritunl/components/checkbox/checkbox.dart'
   as checkbox;
 import 'package:pritunl/components/container/container.dart'
   as container;
-import 'package:pritunl/components/form_control/form_control.dart'
-  as form_control;
 import 'package:pritunl/components/form_group/form_group.dart'
   as form_group;
+import 'package:pritunl/components/form_input/form_input.dart'
+  as form_input;
 import 'package:pritunl/components/fraction/fraction.dart'
   as fraction;
 import 'package:pritunl/components/glyphicon/glyphicon.dart'
@@ -47,7 +47,7 @@ class ComponentsMod extends ng.Module {
     this.bind(btn.BtnComp);
     this.bind(checkbox.CheckboxComp);
     this.bind(container.ContainerComp);
-    this.bind(form_control.FormControlComp);
+    this.bind(form_input.FormInputComp);
     this.bind(form_group.FormGroupComp);
     this.bind(fraction.FractionComp);
     this.bind(glyphicon.GlyphiconComp);
