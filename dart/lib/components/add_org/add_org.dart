@@ -7,7 +7,8 @@ import 'package:angular/angular.dart' show Component;
 
 @Component(
   selector: 'add-org',
-  templateUrl: 'packages/pritunl/components/add_org/add_org.html'
+  templateUrl: 'packages/pritunl/components/add_org/add_org.html',
+  cssUrl: modal_base.BASE_CSS_URL
 )
 class AddOrgComp extends modal_base.ModalBase {
   organization.Organization model;
