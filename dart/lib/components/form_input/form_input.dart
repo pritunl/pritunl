@@ -1,4 +1,4 @@
-library form_control;
+library form_input;
 
 import 'package:pritunl/model.dart' as mdl;
 
@@ -7,12 +7,12 @@ import 'package:angular/angular.dart' as ng;
 import 'dart:html' as dom;
 
 @Component(
-  selector: 'form-control',
+  selector: 'form-input',
   template: '<input ng-type="type" placeholder="{{placeholder}}" '
     'ng-model="model" tooltip="{{formTooltip}}"/>',
-  cssUrl: 'packages/pritunl/components/form_control/form_control.css'
+  cssUrl: 'packages/pritunl/components/form_input/form_input.css'
 )
-class FormControlComp implements ng.ShadowRootAware {
+class FormInputComp implements ng.ShadowRootAware {
   @NgAttr('form-tooltip')
   String formTooltip;
 
