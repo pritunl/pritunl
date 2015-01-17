@@ -26,5 +26,7 @@ class AddOrgComp extends modal_base.ModalBase {
     this.model.create(['name']).then((_) {
       super.submit();
     });
+
+    return true;
   }
 }
