@@ -38,38 +38,13 @@ class ModalComp {
     this._cancelText = val;
   }
 
-  void open() {
-    this.state = true;
-  }
-
-  void close([bool submit]) {
-    var returnVal;
-
-    if (submit) {
-      returnVal = this.onOk();
-    }
-    else {
-      returnVal = this.onCancel();
-    }
-
-    if (returnVal == false) {
-      return;
-    }
-
-    this.state = false;
-  }
-
   void softClose(dom.Element target) {
     if (target.classes.contains('modal')) {
-      this.close(false);
+      this.cancel();
     }
   }
 
   void hardClose() {
-    this.close(false);
-  }
-
-  void submit() {
-    this.close(true);
+    this.cancel();
   }
 }
