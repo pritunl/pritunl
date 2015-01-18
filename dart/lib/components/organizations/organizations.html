@@ -3,7 +3,8 @@
   <div class="buttons">
     <add-org on-submit="onAddOrg($model)"></add-org>
     <btn type="primary" modal-attach="add-org">Add Organization</btn>
-    <btn type="primary">Add User</btn>
+    <add-user on-submit="onAddOrg($model)" orgs="orgs"></add-user>
+    <btn type="primary" modal-attach="add-user">Add User</btn>
     <btn type="primary">Bulk Add Users</btn>
     <btn type="warning" disabled>Email Selected</btn>
     <btn type="danger" disabled>Delete Selected</btn>
