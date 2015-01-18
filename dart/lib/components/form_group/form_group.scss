@@ -5,7 +5,8 @@
   margin-bottom: 5px;
 }
 
-::content form-input {
+::content form-input,
+::content form-select {
   display: block;
   margin-bottom: 20px;
 }
