@@ -266,14 +266,16 @@ body /deep/ alert::shadow .alert.flash-on {
 // ####################################
 // form-input
 // ####################################
-body /deep/ form-input::shadow input {
+body /deep/ form-input::shadow input,
+body /deep/ form-select::shadow select {
   x-label: form-input;
   color: map-get($form-input, fg);
   background-color: map-get($form-input, bg);
   border-color: map-get($form-input, border);
 }
 
-body /deep/ form-input::shadow input:focus {
+body /deep/ form-input::shadow input:focus,
+body /deep/ form-select::shadow select:focus {
   x-label: form-input;
   border-color: map-get($form-input, border-focus);
   @include box-shadow((
@@ -298,17 +300,21 @@ body /deep/ form-input::shadow input::-webkit-input-placeholder {
 }
 
 body /deep/ form-input::shadow input[disabled],
-body /deep/ form-input::shadow input[readonly] {
+body /deep/ form-input::shadow input[readonly],
+body /deep/ form-select::shadow select[disabled],
+body /deep/ form-select::shadow select[readonly] {
   x-label: form-input;
   background-color: map-get($form-input, bg-disabled);
 }
 
-body /deep/ form-input.success::shadow input {
+body /deep/ form-input.success::shadow input,
+body /deep/ form-select.success::shadow select {
   x-label: form-input;
   border-color: map-get($form-input, success-border);
 }
 
-body /deep/ form-input.success::shadow input:focus {
+body /deep/ form-input.success::shadow input:focus,
+body /deep/ form-select.success::shadow select:focus {
   x-label: form-input;
   border-color: map-get($form-input, success-border-focus);
   @include box-shadow((
@@ -317,11 +323,13 @@ body /deep/ form-input.success::shadow input:focus {
   ));
 }
 
-body /deep/ form-input.warning::shadow input {
+body /deep/ form-input.warning::shadow input,
+body /deep/ form-select.warning::shadow select {
   x-label: form-input;
   border-color: map-get($form-input, warning-border);
 }
 
+body /deep/ form-input.warning::shadow input:focus,
 body /deep/ form-input.warning::shadow input:focus {
   x-label: form-input;
   border-color: map-get($form-input, warning-border-focus);
@@ -331,12 +339,14 @@ body /deep/ form-input.warning::shadow input:focus {
   ));
 }
 
-body /deep/ form-input.danger::shadow input {
+body /deep/ form-input.danger::shadow input,
+body /deep/ form-select.danger::shadow select {
   x-label: form-input;
   border-color: map-get($form-input, danger-border);
 }
 
-body /deep/ form-input.danger::shadow input:focus {
+body /deep/ form-input.danger::shadow input:focus,
+body /deep/ form-select.danger::shadow select:focus {
   x-label: form-input;
   border-color: map-get($form-input, danger-border-focus);
   @include box-shadow((
