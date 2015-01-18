@@ -1,4 +1,4 @@
-library container;
+library container_comp;
 
 import 'package:angular/angular.dart' show Component;
 

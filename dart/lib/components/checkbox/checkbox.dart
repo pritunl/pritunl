@@ -1,4 +1,4 @@
-library checkbox;
+library checkbox_comp;
 
 import 'package:angular/angular.dart' show Component, NgTwoWay;
 

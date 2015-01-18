@@ -1,4 +1,4 @@
-library autofocus;
+library autofocus_dec;
 
 import 'package:angular/angular.dart' show Decorator;
 import 'package:angular/angular.dart' as ng;

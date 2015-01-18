@@ -1,4 +1,4 @@
-library log_entries;
+library log_entries_comp;
 
 import 'package:pritunl/collections/log_entries.dart' as log_entries;
 

@@ -1,4 +1,4 @@
-library form_input;
+library form_input_comp;
 
 import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
 import 'package:angular/angular.dart' as ng;

@@ -1,4 +1,4 @@
-library alert;
+library alert_comp;
 
 import 'package:angular/angular.dart' show Component, NgAttr, NgTwoWay,
   NgCallback;

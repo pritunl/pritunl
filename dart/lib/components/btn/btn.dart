@@ -1,4 +1,4 @@
-library btn;
+library btn_comp;
 
 import 'package:angular/angular.dart' show Component, NgAttr;
 import 'package:angular/angular.dart' as ng;

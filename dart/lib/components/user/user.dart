@@ -1,4 +1,4 @@
-library user;
+library user_comp;
 
 import 'package:pritunl/collections/users.dart' as users;
 import 'package:pritunl/models/user.dart' as user;

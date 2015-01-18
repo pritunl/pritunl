@@ -1,4 +1,4 @@
-library fraction;
+library fraction_comp;
 
 import 'package:angular/angular.dart' show Component, NgAttr;
 

@@ -1,4 +1,4 @@
-library users;
+library users_comp;
 
 import 'package:pritunl/collections/users.dart' as usrs;
 

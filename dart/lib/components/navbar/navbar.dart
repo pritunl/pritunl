@@ -1,4 +1,4 @@
-library navbar;
+library navbar_comp;
 
 import 'package:pritunl/settings/settings.dart' as settings;
 

@@ -1,4 +1,4 @@
-library modal;
+library modal_dec;
 
 import 'package:pritunl/decorators/conditional.dart' as conditional;
 import 'package:pritunl/utils/utils.dart' as utils;

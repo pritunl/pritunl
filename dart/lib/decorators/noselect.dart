@@ -1,4 +1,4 @@
-library noselect;
+library noselect_dec;
 
 import 'package:angular/angular.dart' show Decorator;
 import 'dart:html' as dom;

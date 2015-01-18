@@ -1,4 +1,4 @@
-library form_select;
+library form_select_comp;
 
 import 'package:angular/angular.dart' show Component, NgCallback, NgTwoWay,
   NgOneWay, NgAttr;

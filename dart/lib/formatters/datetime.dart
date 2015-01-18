@@ -1,4 +1,4 @@
-library datetime;
+library datetime_form;
 
 import 'package:angular/angular.dart' show Formatter;
 

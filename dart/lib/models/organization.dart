@@ -1,4 +1,4 @@
-library organization;
+library organization_mod;
 
 import 'package:pritunl/model.dart' as model;
 import 'package:pritunl/collections/users.dart' as usrs;

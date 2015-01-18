@@ -1,4 +1,4 @@
-library user;
+library user_mod;
 
 import 'package:pritunl/model.dart' as model;
 

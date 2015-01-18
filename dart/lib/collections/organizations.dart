@@ -1,4 +1,4 @@
-library organization;
+library organization_col;
 
 import 'package:pritunl/collection.dart' as collection;
 import 'package:pritunl/models/organization.dart' as organization;

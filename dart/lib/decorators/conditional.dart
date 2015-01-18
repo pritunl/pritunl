@@ -1,4 +1,4 @@
-library conditional;
+library conditional_dec;
 
 import 'package:angular/angular.dart' as ng;
 import 'dart:html' as dom;

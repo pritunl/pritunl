@@ -1,4 +1,4 @@
-library users;
+library users_col;
 
 import 'package:pritunl/exceptions.dart';
 

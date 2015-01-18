@@ -1,4 +1,4 @@
-library box_label;
+library box_label_comp;
 
 import 'package:angular/angular.dart' show Component, NgAttr;
 import 'package:angular/angular.dart' as ng;

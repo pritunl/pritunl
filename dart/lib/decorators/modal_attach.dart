@@ -1,4 +1,4 @@
-library modal_attach;
+library modal_attach_dec;
 
 import 'package:pritunl/components/modal_content/modal_content.dart' as
   modal_content;

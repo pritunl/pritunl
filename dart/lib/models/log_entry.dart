@@ -1,4 +1,4 @@
-library log_entry;
+library log_entry_mod;
 
 import 'package:pritunl/model.dart' as model;
 

@@ -1,4 +1,4 @@
-library tooltip_attach;
+library tooltip_attach_dec;
 
 import 'package:angular/angular.dart' show NgAttr, Decorator;
 import 'dart:html' as dom;

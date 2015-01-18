@@ -1,4 +1,4 @@
-library status;
+library status_mod;
 
 import 'package:pritunl/model.dart' as model;
 

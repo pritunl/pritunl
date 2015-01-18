@@ -1,4 +1,4 @@
-library form_group;
+library form_group_comp;
 
 import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
 

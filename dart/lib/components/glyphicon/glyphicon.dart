@@ -1,4 +1,4 @@
-library glyphicon;
+library glyphicon_comp;
 
 import 'package:angular/angular.dart' show Component, NgAttr;
 

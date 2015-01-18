@@ -1,4 +1,4 @@
-library add_org;
+library add_org_comp;
 
 import 'package:pritunl/components/modal_content/modal_content.dart' as
   modal_content;

@@ -1,4 +1,4 @@
-library main;
+library main_rout;
 
 import 'package:pritunl/settings/settings.dart' as settings;
 

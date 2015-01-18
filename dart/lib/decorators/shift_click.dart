@@ -1,4 +1,4 @@
-library shift_click;
+library shift_click_dec;
 
 import 'package:angular/angular.dart' show Decorator, NgCallback;
 import 'dart:html' as dom;
