@@ -11,17 +11,46 @@ import 'dart:html' as dom;
   cssUrl: 'packages/pritunl/components/form_input/form_input.css'
 )
 class FormInputComp implements ng.ShadowRootAware {
+  dom.Element element;
+
   @NgAttr('form-tooltip')
   String formTooltip;
 
-  @NgAttr('padding')
-  String padding;
-
+  var _width;
   @NgAttr('width')
-  String width;
+  String get width {
+    return this._width;
+  }
+  set width(String width) {
+    if (this.element != null) {
+      this.element.style.width = width;
+    }
+    this._width = width;
+  }
 
+  var _height;
   @NgAttr('height')
-  String height;
+  String get height {
+    return this._height;
+  }
+  set height(String height) {
+    if (this.element != null) {
+      this.element.style.height = height;
+    }
+    this._height = height;
+  }
+
+  var _padding;
+  @NgAttr('padding')
+  String get padding {
+    return this._padding;
+  }
+  set padding(String padding) {
+    if (this.element != null) {
+      this.element.style.padding = padding;
+    }
+    this._padding = padding;
+  }
 
   @NgAttr('type')
   String type;
