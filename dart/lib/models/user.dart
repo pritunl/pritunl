@@ -19,6 +19,13 @@ class User extends model.Model {
   @model.Attribute('name')
   String name;
 
+  @model.Validator('name')
+  void nameValidator(val) {
+    if (val == null || val == '') {
+      throw new model.Invalid('empty', 'User name cannot be empty');
+    }
+  }
+
   @model.Attribute('email')
   String email;
 
