@@ -31,6 +31,7 @@ abstract class Conditional {
     if (this._view != null) {
       this._viewPort.remove(this._view);
       this._view = null;
+      this.element = null;
     }
   }
 }
