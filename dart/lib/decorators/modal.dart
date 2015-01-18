@@ -41,5 +41,8 @@ class ModalDec extends conditional.Conditional {
   void hide() {
     var comp = utils.getDirective(this.element, modal.ModalComp);
     comp.state = false;
+    new async.Timer(const Duration(milliseconds: 300), () {
+      this.condition = false;
+    });
   }
 }
