@@ -16,8 +16,7 @@ class Organization extends model.Model {
   @model.Validator('name')
   void nameValidator(val) {
     if (val == null || val == '') {
-      throw new model.Invalid('empty',
-        'Organization name cannot be empty');
+      throw new model.Invalid('empty', 'Organization name cannot be empty');
     }
   }
 
