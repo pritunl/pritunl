@@ -62,16 +62,16 @@ class FormInputComp implements ng.ShadowRootAware {
   String model;
 
   void onShadowRoot(dom.ShadowRoot root) {
-    var elem = root.querySelector('input');
+    this.element = root.querySelector('input');
 
-    if (this.padding != null) {
-      elem.style.padding = this.padding;
+    if (this.width == null) {
+      this.width = '200px';
     }
-    if (this.width != null) {
-      elem.style.width = this.width;
+    else {
+      this.width = this.width;
     }
-    if (this.height != null) {
-      elem.style.height = this.height;
-    }
+
+    this.height = this.height;
+    this.padding = this.padding;
   }
 }
