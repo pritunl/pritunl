@@ -1,16 +1,26 @@
 library utils;
+import 'package:pritunl/components/modal/modal.dart' as modal;
 
 import 'package:angular/introspection.dart' as introspection;
 import 'dart:html' as dom;
 
- dynamic getDirective(dom.Node node) {
+ dynamic getDirective(dom.Node node, [var type]) {
   while (node != null) {
     var probe = introspection.elementExpando[node];
 
     if (probe != null) {
       var directives = probe.directives;
       if (directives.length > 0) {
-        return directives[0];
+        if (type != null) {
+          for (var directive in directives) {
+            if (directive.runtimeType == type) {
+              return directive;
+            }
+          }
+        }
+        else {
+          return directives[0];
+        }
       }
       return null;
     }
