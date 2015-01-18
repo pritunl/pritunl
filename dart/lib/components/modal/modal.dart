@@ -10,14 +10,9 @@ import 'dart:html' as dom;
   cssUrl: 'packages/pritunl/components/modal/modal.css'
 )
 class ModalComp {
-  @NgTwoWay('state')
   bool state;
-
-  @NgCallback('on-ok')
-  Function onOk;
-
-  @NgCallback('on-cancel')
-  Function onCancel;
+  Function submit;
+  Function cancel;
 
   var _okText;
   @NgAttr('ok-text')
