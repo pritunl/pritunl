@@ -8,9 +8,6 @@ import 'package:angular/angular.dart' show NgCallback;
 import 'package:angular/angular.dart' as ng;
 import 'dart:html' as dom;
 
-const String BASE_CSS_URL = 'packages/pritunl/components/'
-  'modal_base/modal_base.css';
-
 class ModalBase implements ng.ShadowRootAware {
   dom.ShadowRoot root;
   mdl.Model model;
