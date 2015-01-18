@@ -1,6 +1,7 @@
 library modal_attach;
 
-import 'package:pritunl/components/modal_base/modal_base.dart' as modal_base;
+import 'package:pritunl/components/modal_content/modal_content.dart' as
+  modal_content;
 import 'package:pritunl/decorators/modal.dart' as modal_dec;
 import 'package:pritunl/utils/utils.dart' as utils;
 
@@ -30,7 +31,7 @@ class ModalAttachDec {
     return modalElem;
   }
 
-  modal_base.ModalBase get modalBase {
+  modal_content.ModalContent get modalBase {
     return utils.getDirective(this.modalBaseElem);
   }
 

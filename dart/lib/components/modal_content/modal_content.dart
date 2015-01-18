@@ -1,4 +1,4 @@
-library modal;
+library modal_content_comp;
 
 import 'package:pritunl/components/alert/alert.dart' as alrt;
 import 'package:pritunl/model.dart' as mdl;
@@ -8,7 +8,7 @@ import 'package:angular/angular.dart' show NgCallback;
 import 'package:angular/angular.dart' as ng;
 import 'dart:html' as dom;
 
-abstract class ModalBase implements ng.ShadowRootAware {
+abstract class ModalContent implements ng.ShadowRootAware {
   dom.ShadowRoot root;
   mdl.Model model;
   dom.Element _errorForm;

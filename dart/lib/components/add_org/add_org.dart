@@ -1,6 +1,7 @@
 library add_org;
 
-import 'package:pritunl/components/modal_base/modal_base.dart' as modal_base;
+import 'package:pritunl/components/modal_content/modal_content.dart' as
+  modal_content;
 import 'package:pritunl/models/organization.dart' as organization;
 
 import 'package:angular/angular.dart' show Component;
@@ -9,7 +10,7 @@ import 'package:angular/angular.dart' show Component;
   selector: 'add-org',
   templateUrl: 'packages/pritunl/components/add_org/add_org.html'
 )
-class AddOrgComp extends modal_base.ModalBase {
+class AddOrgComp extends modal_content.ModalContent {
   organization.Organization model;
 
   AddOrgComp(this.model);
