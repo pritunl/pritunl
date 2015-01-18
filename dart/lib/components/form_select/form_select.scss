@@ -1,6 +1,6 @@
 @import 'styles/base.scss';
 
-input {
+select {
   display: inline-block;
   width: 100%;
   height: 34px;
@@ -18,16 +18,12 @@ input {
   ))
 }
 
-input:focus {
+select:focus {
   outline: 0;
 }
 
-input::-moz-placeholder {
-  opacity: 1;
-}
-
-input[disabled],
-input[readonly] {
+select[disabled],
+select[readonly] {
   cursor: not-allowed;
   opacity: 1;
 }
