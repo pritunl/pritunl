@@ -8,11 +8,10 @@ import 'package:angular/angular.dart' show NgCallback;
 import 'package:angular/angular.dart' as ng;
 import 'dart:html' as dom;
 
-class ModalBase implements ng.ShadowRootAware {
+abstract class ModalBase implements ng.ShadowRootAware {
   dom.ShadowRoot root;
   mdl.Model model;
   dom.Element _errorForm;
-  bool state;
 
   @NgCallback('on-submit')
   Function onSubmit;
@@ -35,14 +34,6 @@ class ModalBase implements ng.ShadowRootAware {
 
   void onShadowRoot(dom.ShadowRoot root) {
     this.root = root;
-  }
-
-  void show() {
-    this.state = true;
-  }
-
-  void hide() {
-    this.state = false;
   }
 
   void setAlert(String text, [String type]) {
@@ -100,12 +91,6 @@ class ModalBase implements ng.ShadowRootAware {
     return true;
   }
 
-  void submit() {
-    var clone = this.model.clone();
-    this.reset();
-    this.onSubmit({r'$model': clone});
-  }
-
   void reset() {
     this.clearFormError();
 
@@ -118,7 +103,15 @@ class ModalBase implements ng.ShadowRootAware {
     }
   }
 
-  void cancel() {
+  bool submit() {
+    var clone = this.model.clone();
     this.reset();
+    this.onSubmit({r'$model': clone});
+    return true;
+  }
+
+  bool cancel() {
+    this.reset();
+    return true;
   }
 }
