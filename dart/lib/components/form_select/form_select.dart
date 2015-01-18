@@ -35,17 +35,8 @@ class FormSelectComp implements ng.ShadowRootAware {
   @NgTwoWay('model')
   String model;
 
-  var _coll;
   @NgOneWay('collection')
-  get collection {
-    print('get');
-    return this._coll;
-  }
-  set collection(val) {
-    this._coll = val;
-  }
-
-  //Iterable collection;
+  Iterable collection;
 
   @NgCallback('opt-value')
   Function optValue;
