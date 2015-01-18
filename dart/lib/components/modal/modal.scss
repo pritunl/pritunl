@@ -11,61 +11,62 @@
   @include opacity(0.5);
 }
 
-div[ng-animate] {
+.container {
+  position: absolute;
   @include transition(opacity .3s linear);
 }
 
-div[ng-animate].ng-enter .backdrop {
+.container.ng-enter .backdrop {
   @include transition(opacity .15s linear);
   @include opacity(0);
 }
 
-div[ng-animate].ng-enter-active .backdrop {
+.container.ng-enter-active .backdrop {
   @include opacity(0.5);
 }
 
-div[ng-animate].ng-leave .backdrop {
+.container.ng-leave .backdrop {
   @include transition(opacity .15s linear);
   @include opacity(0.5);
 }
 
-div[ng-animate].ng-leave-active .backdrop {
+.container.ng-leave-active .backdrop {
   @include opacity(0);
 }
 
-div[ng-animate].ng-enter .modal {
+.container.ng-enter .modal {
   @include transition(transform .3s ease-out);
   @include transform(translate3d(0, -25%, 0));
 }
 
-div[ng-animate].ng-enter-active .modal {
+.container.ng-enter-active .modal {
   @include transform(translate3d(0, 0, 0));
 }
 
-div[ng-animate].ng-leave .modal {
+.container.ng-leave .modal {
   @include transition(transform .3s ease-out);
   @include transform(translate3d(0, 0, 0));
 }
 
-div[ng-animate].ng-leave-active .modal {
+.container.ng-leave-active .modal {
   @include transform(translate3d(0, -25%, 0));
 }
 
-div[ng-animate].ng-enter .content {
+.container.ng-enter .content {
   @include transition(opacity .15s linear);
   @include opacity(0);
 }
 
-div[ng-animate].ng-enter-active .content {
+.container.ng-enter-active .content {
   @include opacity(1);
 }
 
-div[ng-animate].ng-leave .content {
+.container.ng-leave .content {
   @include transition(opacity .15s linear);
   @include opacity(1);
 }
 
-div[ng-animate].ng-leave-active .content {
+.container.ng-leave-active .content {
   @include opacity(0);
 }
 
