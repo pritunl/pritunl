@@ -6,6 +6,7 @@ import 'package:pritunl/components/modal/modal.dart' as modal;
 
 import 'package:angular/angular.dart' show Decorator;
 import 'package:angular/angular.dart' as ng;
+import 'dart:async' as async;
 
 @Decorator(
   children: 'transclude',
@@ -32,7 +33,9 @@ class ModalDec extends conditional.Conditional {
       this.hide();
     };
 
-    comp.state = true;
+    async.Timer.run(() {
+      comp.state = true;
+    });
   }
 
   void hide() {
