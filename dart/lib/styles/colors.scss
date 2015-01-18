@@ -264,94 +264,94 @@ body /deep/ alert::shadow .alert.flash-on {
 }
 
 // ####################################
-// form-input
+// form-control
 // ####################################
 body /deep/ form-input::shadow input,
 body /deep/ form-select::shadow select {
-  x-label: form-input;
-  color: map-get($form-input, fg);
-  background-color: map-get($form-input, bg);
-  border-color: map-get($form-input, border);
+  x-label: form-control;
+  color: map-get($form-control, fg);
+  background-color: map-get($form-control, bg);
+  border-color: map-get($form-control, border);
 }
 
 body /deep/ form-input::shadow input:focus,
 body /deep/ form-select::shadow select:focus {
-  x-label: form-input;
-  border-color: map-get($form-input, border-focus);
+  x-label: form-control;
+  border-color: map-get($form-control, border-focus);
   @include box-shadow((
     inset 0 1px 1px rgba(0, 0, 0, .075),
-    0 0 8px map-get($form-input, shadow-focus),
+    0 0 8px map-get($form-control, shadow-focus),
   ));
 }
 
 body /deep/ form-input::shadow input::-moz-placeholder {
-  x-label: form-input;
-  color: map-get($form-input, placeholder);
+  x-label: form-control;
+  color: map-get($form-control, placeholder);
 }
 
 body /deep/ form-input::shadow input::-ms-input-placeholder {
-  x-label: form-input;
-  color: map-get($form-input, placeholder);
+  x-label: form-control;
+  color: map-get($form-control, placeholder);
 }
 
 body /deep/ form-input::shadow input::-webkit-input-placeholder {
-  x-label: form-input;
-  color: map-get($form-input, placeholder);
+  x-label: form-control;
+  color: map-get($form-control, placeholder);
 }
 
 body /deep/ form-input::shadow input[disabled],
 body /deep/ form-input::shadow input[readonly],
 body /deep/ form-select::shadow select[disabled],
 body /deep/ form-select::shadow select[readonly] {
-  x-label: form-input;
-  background-color: map-get($form-input, bg-disabled);
+  x-label: form-control;
+  background-color: map-get($form-control, bg-disabled);
 }
 
 body /deep/ form-input.success::shadow input,
 body /deep/ form-select.success::shadow select {
-  x-label: form-input;
-  border-color: map-get($form-input, success-border);
+  x-label: form-control;
+  border-color: map-get($form-control, success-border);
 }
 
 body /deep/ form-input.success::shadow input:focus,
 body /deep/ form-select.success::shadow select:focus {
-  x-label: form-input;
-  border-color: map-get($form-input, success-border-focus);
+  x-label: form-control;
+  border-color: map-get($form-control, success-border-focus);
   @include box-shadow((
     inset 0 1px 1px rgba(0, 0, 0, .075),
-    0 0 6px map-get($form-input, success-shadow-focus),
+    0 0 6px map-get($form-control, success-shadow-focus),
   ));
 }
 
 body /deep/ form-input.warning::shadow input,
 body /deep/ form-select.warning::shadow select {
-  x-label: form-input;
-  border-color: map-get($form-input, warning-border);
+  x-label: form-control;
+  border-color: map-get($form-control, warning-border);
 }
 
 body /deep/ form-input.warning::shadow input:focus,
 body /deep/ form-input.warning::shadow input:focus {
-  x-label: form-input;
-  border-color: map-get($form-input, warning-border-focus);
+  x-label: form-control;
+  border-color: map-get($form-control, warning-border-focus);
   @include box-shadow((
     inset 0 1px 1px rgba(0, 0, 0, .075),
-    0 0 6px map-get($form-input, warning-shadow-focus),
+    0 0 6px map-get($form-control, warning-shadow-focus),
   ));
 }
 
 body /deep/ form-input.danger::shadow input,
 body /deep/ form-select.danger::shadow select {
-  x-label: form-input;
-  border-color: map-get($form-input, danger-border);
+  x-label: form-control;
+  border-color: map-get($form-control, danger-border);
 }
 
 body /deep/ form-input.danger::shadow input:focus,
 body /deep/ form-select.danger::shadow select:focus {
-  x-label: form-input;
-  border-color: map-get($form-input, danger-border-focus);
+  x-label: form-control;
+  border-color: map-get($form-control, danger-border-focus);
   @include box-shadow((
     inset 0 1px 1px rgba(0, 0, 0, .075),
-    0 0 6px map-get($form-input, danger-shadow-focus),
+    0 0 6px map-get($form-control, danger-shadow-focus),
   ));
 }
 
