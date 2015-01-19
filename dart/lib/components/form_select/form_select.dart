@@ -5,7 +5,6 @@ import 'package:pritunl/bases/form_control/form_control.dart' as
 
 import 'package:angular/angular.dart' show Component, NgCallback, NgTwoWay,
   NgOneWay, NgAttr;
-import 'dart:html' as dom;
 
 @Component(
   selector: 'form-select',
@@ -27,8 +26,22 @@ class FormSelectComp extends form_control_base.FormControlBase {
   @NgAttr('placeholder')
   String placeholder;
 
+  var _model;
   @NgTwoWay('model')
-  String model;
+  String get model {
+    if (this._model == null) {
+      if (this.collection != null) {
+        for (var model in this.collection) {
+          this._model = this.optValue({r'$model': model});
+          break;
+        }
+      }
+    }
+    return this._model;
+  }
+  set model(String val) {
+    this._model = val;
+  }
 
   @NgOneWay('collection')
   Iterable collection;
@@ -38,15 +51,4 @@ class FormSelectComp extends form_control_base.FormControlBase {
 
   @NgCallback('opt-text')
   Function optText;
-
-  onShadowRoot(dom.ShadowRoot root) {
-    if (this.model == null && this.collection != null) {
-      for (var model in this.collection) {
-        this.model = this.optValue({r'$model': model});
-        break;
-      }
-    }
-
-    super.onShadowRoot(root);
-  }
 }
