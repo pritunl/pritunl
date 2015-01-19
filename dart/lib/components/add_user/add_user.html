@@ -2,14 +2,21 @@
   <alert type="danger"></alert>
   <form-group>
     <label form-group>Name</label>
-    <form-input class="name" type="text" placeholder="User name"
+    <form-input class="name" type="text" placeholder="Enter name"
       model="model.name" form-group
       form-tooltip="Enter name"></form-input>
   </form-group>
   <form-group>
     <label form-group>Select an organization</label>
     <form-select class="org" model="model.organization" collection="orgs"
+      form-tooltip="Organization to add user to"
       opt-value="$model.id" opt-text="$model.name"
       opt-select="$model.name == 'test'"></form-select>
+  </form-group>
+  <form-group>
+    <label form-group>Email (optional)</label>
+    <form-input class="email" type="text" placeholder="Enter email address"
+      model="model.email" form-group
+      form-tooltip="Email address of user"></form-input>
   </form-group>
 </modal>
