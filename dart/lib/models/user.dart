@@ -36,6 +36,13 @@ class User extends model.Model {
   @model.Attribute('email')
   String email;
 
+  @model.Validator('email')
+  void emailValidator(val) {
+    if (val != null && val != '' && !val.contains('@')) {
+      throw new model.Invalid('empty', 'User email is invalid');
+    }
+  }
+
   @model.Attribute('type')
   String type;
 
