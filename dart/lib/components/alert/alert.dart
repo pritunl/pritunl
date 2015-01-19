@@ -1,7 +1,7 @@
 library alert_comp;
 
-import 'package:angular/angular.dart' show Component, NgAttr, NgTwoWay,
-  NgCallback;
+import 'package:angular/angular.dart' show Component, NgAttr, NgOneWay,
+  NgTwoWay, NgCallback;
 import 'package:angular/angular.dart' as ng;
 import 'dart:async' as async;
 import 'dart:html' as dom;
@@ -16,7 +16,7 @@ import 'dart:html' as dom;
 class AlertComp implements ng.ShadowRootAware {
   dom.ShadowRoot root;
 
-  @NgAttr('type')
+  @NgOneWay('type')
   String type;
 
   @NgTwoWay('text')
