@@ -62,7 +62,13 @@ class User extends model.Model {
   bool status;
 
   String get url {
-    return '/user/${this.organization}/${this.id}';
+    var url = '/user/${this.organization}';
+
+    if (this.id != null) {
+      url += '/${this.id}';
+    }
+
+    return url;
   }
 
   User(ng.Http http) : super(http);
