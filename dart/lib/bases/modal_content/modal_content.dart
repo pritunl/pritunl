@@ -1,4 +1,4 @@
-library modal_content_comp;
+library modal_content_base;
 
 import 'package:pritunl/components/alert/alert.dart' as alrt;
 import 'package:pritunl/model.dart' as mdl;
