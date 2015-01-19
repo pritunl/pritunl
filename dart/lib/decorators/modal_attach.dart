@@ -1,6 +1,6 @@
 library modal_attach_dec;
 
-import 'package:pritunl/components/modal_content/modal_content.dart' as
+import 'package:pritunl/bases/modal_content/modal_content.dart' as
   modal_content;
 import 'package:pritunl/decorators/modal.dart' as modal_dec;
 import 'package:pritunl/utils/utils.dart' as utils;

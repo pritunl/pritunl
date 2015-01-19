@@ -2,7 +2,7 @@ library add_user;
 
 import 'package:pritunl/collections/organizations.dart' as organizations;
 
-import 'package:pritunl/components/modal_content/modal_content.dart' as
+import 'package:pritunl/bases/modal_content/modal_content.dart' as
   modal_content;
 import 'package:pritunl/models/user.dart' as user;
 

@@ -1,6 +1,6 @@
 library add_org_comp;
 
-import 'package:pritunl/components/modal_content/modal_content.dart' as
+import 'package:pritunl/bases/modal_content/modal_content.dart' as
   modal_content;
 import 'package:pritunl/models/organization.dart' as organization;
 
