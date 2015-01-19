@@ -88,6 +88,7 @@ abstract class ModalContent implements ng.ShadowRootAware {
         return false;
       }
     }
+    this.clearFormError();
     return true;
   }
 
