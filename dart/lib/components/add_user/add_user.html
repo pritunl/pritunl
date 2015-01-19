@@ -2,14 +2,14 @@
   <alert type="danger"></alert>
   <form-group>
     <label form-group>Name</label>
-    <form-input type="text" placeholder="User name"
-      width="200px" model="model.name" form-group
+    <form-input class="name" type="text" placeholder="User name"
+      model="model.name" form-group
       form-tooltip="Enter name"></form-input>
   </form-group>
   <form-group>
-    <span>{{org}}</span>
     <label form-group>Select an organization</label>
-    <form-select model="org" collection="orgs" opt-value="$model.id"
-      opt-text="$model.name"></form-select>
+    <form-select class="org" model="model.organization" collection="orgs"
+      opt-value="$model.id" opt-text="$model.name"
+      opt-select="$model.name == 'test'"></form-select>
   </form-group>
 </modal>
