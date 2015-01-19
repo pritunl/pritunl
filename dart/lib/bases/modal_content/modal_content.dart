@@ -1,5 +1,6 @@
 library modal_content_base;
 
+import 'package:pritunl/decorators/modal.dart' as modal_dec;
 import 'package:pritunl/components/alert/alert.dart' as alrt;
 import 'package:pritunl/model.dart' as mdl;
 import 'package:pritunl/utils/utils.dart' as utils;
@@ -7,29 +8,21 @@ import 'package:pritunl/utils/utils.dart' as utils;
 import 'package:angular/angular.dart' show NgCallback;
 import 'package:angular/angular.dart' as ng;
 import 'dart:html' as dom;
+import 'dart:async' as async;
 
 abstract class ModalContent implements ng.ShadowRootAware {
   dom.ShadowRoot root;
   mdl.Model model;
   dom.Element _errorForm;
+  String alertType;
+  String alertText;
 
   @NgCallback('on-submit')
   Function onSubmit;
 
-  var _alertElem;
-  dom.Element get alertElem {
-    if (this._alertElem == null) {
-      this._alertElem = this.root.querySelector('alert');
-    }
-    return this._alertElem;
-  }
-
-  var _alert;
   alrt.AlertComp get alert {
-    if (this._alert == null) {
-      this._alert = utils.getDirective(this.alertElem);
-    }
-    return this._alert;
+    var alertElem = this.root.querySelector('alert');
+    return utils.getDirective(alertElem, alrt.AlertComp);
   }
 
   void onShadowRoot(dom.ShadowRoot root) {
@@ -38,14 +31,14 @@ abstract class ModalContent implements ng.ShadowRootAware {
 
   void setAlert(String text, [String type]) {
     if (type != null) {
-      this.alert.type = type;
+      this.alertType = type;
     }
 
-    if (text != null && this.alert.text != null) {
+    if (text != null && this.alertText != null) {
       this.alert.flash();
     }
 
-    this.alert.text = text;
+    this.alertText = text;
   }
 
   void clearAlert() {
@@ -60,10 +53,10 @@ abstract class ModalContent implements ng.ShadowRootAware {
     var form = this.root.querySelector(selector);
 
     if (this._errorForm != null && (
-          this._errorForm != form ||
-          this.alert.type != type
-        )) {
-      this._errorForm.classes.remove(this.alert.type);
+      this._errorForm != form ||
+      this.alertType != type
+    )) {
+      this._errorForm.classes.remove(this.alertType);
     }
     this._errorForm = form;
 
@@ -73,7 +66,7 @@ abstract class ModalContent implements ng.ShadowRootAware {
 
   void clearFormError() {
     if (this._errorForm != null) {
-      this._errorForm.classes.remove(this.alert.type);
+      this._errorForm.classes.remove(this.alertType);
       this._errorForm = null;
     }
     this.clearAlert();
@@ -96,7 +89,7 @@ abstract class ModalContent implements ng.ShadowRootAware {
     this.clearFormError();
 
     if (this.alert != null) {
-      this.alert.text = null;
+      this.alertText = null;
     }
 
     if (this.model != null) {
@@ -104,15 +97,17 @@ abstract class ModalContent implements ng.ShadowRootAware {
     }
   }
 
-  bool submit() {
-    var clone = this.model.clone();
-    this.reset();
-    this.onSubmit({r'$model': clone});
-    return true;
+  void submit(async.Future closeHandler()) {
+    closeHandler().then((_) {
+      var clone = this.model.clone();
+      this.reset();
+      this.onSubmit({r'$model': clone});
+    });
   }
 
-  bool cancel() {
-    this.reset();
-    return true;
+  void cancel(async.Future closeHandler()) {
+    closeHandler().then((_) {
+      this.reset();
+    });
   }
 }
