@@ -1,12 +1,12 @@
 library add_user;
 
 import 'package:pritunl/collections/organizations.dart' as organizations;
-
 import 'package:pritunl/bases/modal_content/modal_content.dart' as
   modal_content;
 import 'package:pritunl/models/user.dart' as user;
 
 import 'package:angular/angular.dart' show Component, NgOneWay, NgTwoWay;
+import 'dart:async' as async;
 
 @Component(
   selector: 'add-user',
@@ -20,7 +20,19 @@ class AddUserComp extends modal_content.ModalContent {
 
   AddUserComp(this.model);
 
-  bool submit() {
-    return false;
+  void submit(async.Future closeHandler()) {
+    var valid = this.validateForms({
+      'name': '.name',
+      'organization': '.org',
+      'email': '.email',
+    });
+
+    if (valid != true) {
+      return;
+    }
+
+    this.model.create(['name', 'organization', 'email']).then((_) {
+      super.submit(closeHandler);
+    });
   }
 }
