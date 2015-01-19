@@ -40,17 +40,14 @@ class FormSelectComp extends form_control_base.FormControlBase {
   @NgCallback('opt-text')
   Function optText;
 
-  void onShadowRoot(dom.ShadowRoot root) {
-    this.element = root.querySelector('select');
-
-    if (this.width == null) {
-      this.width = '200px';
-    }
-    else {
-      this.width = this.width;
+  onShadowRoot(dom.ShadowRoot root) {
+    if (this.model == null && this.collection != null) {
+      for (var model in this.collection) {
+        this.model = this.optValue({r'$model': model});
+        break;
+      }
     }
 
-    this.height = this.height;
-    this.padding = this.padding;
+    super.onShadowRoot(root);
   }
 }
