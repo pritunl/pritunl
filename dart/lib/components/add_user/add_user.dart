@@ -14,7 +14,6 @@ import 'package:angular/angular.dart' show Component, NgOneWay, NgTwoWay;
 )
 class AddUserComp extends modal_content.ModalContent {
   user.User model;
-  String org;
 
   @NgTwoWay('orgs')
   organizations.Organizations orgs;
