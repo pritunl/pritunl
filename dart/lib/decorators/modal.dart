@@ -21,16 +21,10 @@ class ModalDec extends conditional.Conditional {
 
     var comp = utils.getDirective(this.element, modal.ModalComp);
     comp.submit = () {
-      if (onSubmit() == false) {
-        return;
-      }
-      this.hide();
+      onSubmit(this.hide);
     };
     comp.cancel = () {
-      if (onCancel() == false) {
-        return;
-      }
-      this.hide();
+      onCancel(this.hide);
     };
 
     async.Timer.run(() {
@@ -38,10 +32,10 @@ class ModalDec extends conditional.Conditional {
     });
   }
 
-  void hide() {
+  async.Future hide() {
     var comp = utils.getDirective(this.element, modal.ModalComp);
     comp.state = false;
-    new async.Timer(const Duration(milliseconds: 300), () {
+    return new async.Future.delayed(const Duration(milliseconds: 300), () {
       this.condition = false;
     });
   }
