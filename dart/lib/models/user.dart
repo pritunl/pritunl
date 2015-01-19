@@ -13,6 +13,13 @@ class User extends model.Model {
   @model.Attribute('organization')
   String organization;
 
+  @model.Validator('organization')
+  void organizationValidator(val) {
+    if (val == null || val == '') {
+      throw new model.Invalid('empty', 'Organization cannot be empty');
+    }
+  }
+
   @model.Attribute('organization_name')
   String organizationName;
 
