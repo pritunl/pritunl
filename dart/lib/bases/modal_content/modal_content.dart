@@ -1,6 +1,5 @@
 library modal_content_base;
 
-import 'package:pritunl/decorators/modal.dart' as modal_dec;
 import 'package:pritunl/components/alert/alert.dart' as alrt;
 import 'package:pritunl/model.dart' as mdl;
 import 'package:pritunl/utils/utils.dart' as utils;
