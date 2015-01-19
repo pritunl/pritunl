@@ -1,5 +1,4 @@
 library utils;
-import 'package:pritunl/components/modal/modal.dart' as modal;
 
 import 'package:angular/introspection.dart' as introspection;
 import 'dart:html' as dom;
