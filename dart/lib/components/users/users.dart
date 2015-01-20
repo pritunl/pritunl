@@ -19,6 +19,9 @@ class UsersComp implements ng.AttachAware {
   UsersComp(this.http);
 
   void attach() {
+    if (this.users.page == null) {
+      this.users.page = 0;
+    }
     this.update();
   }
 
