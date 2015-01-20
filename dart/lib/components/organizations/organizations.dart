@@ -1,8 +1,8 @@
 library organizations_comp;
 
 import 'package:pritunl/collections/organizations.dart' as organizations;
+import 'package:pritunl/collections/users.dart' as users;
 import 'package:pritunl/models/organization.dart' as organization;
-import 'package:pritunl/models/user_bulk.dart' as user_bulk;
 import 'package:pritunl/models/user.dart' as user;
 
 import 'package:angular/angular.dart' show Component;
@@ -27,8 +27,8 @@ class OrganizationsComp {
     print('addUser: $model');
   }
 
-  void onAddUserBulk(user_bulk.UserBulk model) {
-    print('addUserBulk: $model');
+  void onAddUserBulk(users.Users collection) {
+    print('addUserBulk: $collection');
   }
 
   void update() {
