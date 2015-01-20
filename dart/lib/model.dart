@@ -142,13 +142,10 @@ class Model {
     });
   }
 
-  dynamic _send(String method, List<String> fields) {
+  Map<String, dynamic> export([List<String> fields]) {
     var data = {};
     var symbols = this._symbols;
     var mirror = mirrors.reflect(this);
-    var methodFunc;
-
-    this.loading = true;
 
     if (fields != null) {
       fields.forEach((name) {
@@ -161,6 +158,18 @@ class Model {
         data[name] = mirror.getField(symbol).reflectee;
       });
     }
+
+    return data;
+  }
+
+  dynamic _send(String method, List<String> fields) {
+    var symbols = this._symbols;
+    var mirror = mirrors.reflect(this);
+    var methodFunc;
+
+    this.loading = true;
+
+    var data = this.export(fields);
 
     if (method == 'post') {
       methodFunc = this.http.post;
