@@ -62,7 +62,11 @@ class Users extends collection.Collection {
 
   Users(ng.Http http) : super(http);
 
-  List<Map> parse(Map<String, dynamic> data) {
+  List<Map> parse(dynamic data) {
+    if (data is! Map) {
+      return data;
+    }
+
     if (data.containsKey('search')) {
       if (this._search != data['search']) {
         throw new IgnoreResponse();
