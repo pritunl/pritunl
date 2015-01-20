@@ -86,11 +86,6 @@ class Collection extends collection.IterableBase {
       mdl.import(value);
       this._collection.add(mdl);
     });
-
-    this.imported();
-  }
-
-  void imported() {
   }
 
   void save() {
