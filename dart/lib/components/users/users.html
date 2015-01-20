@@ -31,7 +31,9 @@
   </ul>
 </div>
 <div class="footer" ng-if="users.search != null">
-  <div class="search-time" no-select>search found {{users.searchCount}}
+  <div class="search-time" no-select
+    ng-if="users.searchCount != null"
+    >search found {{users.searchCount}}
     results in {{users.searchTime.toStringAsFixed(4)}} seconds</div>
   <div class="search-more" ng-if="users.searchMore" no-select>
     <a ng-click="users.searchIncrease()">show more results</a>
