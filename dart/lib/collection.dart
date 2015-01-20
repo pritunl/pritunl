@@ -96,8 +96,55 @@ class Collection extends collection.IterableBase {
       mdl.import(value);
       this._collection.add(mdl);
     });
+
+    this.imported();
   }
 
-  void save() {
+  void imported() {
+  }
+
+  dynamic _send(String method, List<String> fields) {
+    var data = [];
+    var mirror = mirrors.reflect(this);
+    var methodFunc;
+
+    this.loading = true;
+
+    for (var model in this._collection) {
+      data.add(model.export(fields));
+    }
+
+    if (method == 'post') {
+      methodFunc = this.http.post;
+    }
+    else if (method == 'put') {
+      methodFunc = this.http.put;
+    }
+    else {
+      throw new ArgumentError('Unkown method');
+    }
+
+    return methodFunc(this.url, data).then((response) {
+      this.loading = false;
+      this.import(response.data);
+      return response.data;
+    }).catchError((err) {
+      this.loading = false;
+      this.errorStatus = err.status;
+      this.errorData = err.data;
+      throw err;
+    });
+  }
+
+  dynamic save([List<String> fields]) {
+    return this._send('put', fields);
+  }
+
+  dynamic create([List<String> fields]) {
+    return this._send('post', fields);
+  }
+
+  void clear() {
+    this._collection = [];
   }
 }
