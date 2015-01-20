@@ -92,9 +92,7 @@ class Users extends collection.Collection {
   }
 
   void imported() {
-    var user;
-
-    for (user in this) {
+    for (var user in this) {
       if (user.type == 'client') {
         this._hasClients = true;
         return;
