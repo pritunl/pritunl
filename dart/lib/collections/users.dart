@@ -60,9 +60,7 @@ class Users extends collection.Collection {
     return true;
   }
 
-  Users(ng.Http http) :
-    page = 0,
-    super(http);
+  Users(ng.Http http) : super(http);
 
   List<Map> parse(Map<String, dynamic> data) {
     if (data.containsKey('search')) {
