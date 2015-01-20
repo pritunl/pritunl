@@ -55,6 +55,7 @@ abstract class Model {
       _attrSymbols[this.runtimeType] = symbols;
       _attrValidators[this.runtimeType] = validators;
     }
+
     return _attrSymbols[this.runtimeType];
   }
 
