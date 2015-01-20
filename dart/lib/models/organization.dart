@@ -29,7 +29,7 @@ class Organization extends model.Model {
     return this._id;
   }
   set id(String val) {
-    this.users.orgId = val;
+    this.users.org = val;
     this._id = val;
   }
 
