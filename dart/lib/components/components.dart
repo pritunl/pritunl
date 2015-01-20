@@ -4,6 +4,8 @@ import 'package:pritunl/components/add_org/add_org.dart'
   as add_org;
 import 'package:pritunl/components/add_user/add_user.dart'
   as add_user;
+import 'package:pritunl/components/add_user_bulk/add_user_bulk.dart'
+  as add_user_bulk;
 import 'package:pritunl/components/alert/alert.dart'
   as alert;
 import 'package:pritunl/components/box_label/box_label.dart'
@@ -49,6 +51,7 @@ class ComponentsMod extends ng.Module {
   ComponentsMod() {
     this.bind(add_org.AddOrgComp);
     this.bind(add_user.AddUserComp);
+    this.bind(add_user_bulk.AddUserBulkComp);
     this.bind(alert.AlertComp);
     this.bind(box_label.BoxLabelComp);
     this.bind(btn.BtnComp);
