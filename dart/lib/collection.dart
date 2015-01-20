@@ -65,6 +65,18 @@ abstract class Collection extends collection.IterableBase {
     }
   }
 
+  Collection clone() {
+    var mirror = mirrors.reflect(this);
+    var clone = mirror.type.newInstance(
+      const Symbol(''), [this.http]).reflectee;
+
+    for (var model in this) {
+      clone._collection.add(model.clone());
+    }
+
+    return clone;
+  }
+
   async.Future fetch() {
     this.loading = true;
 
