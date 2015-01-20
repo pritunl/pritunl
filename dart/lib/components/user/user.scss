@@ -87,30 +87,36 @@ checkbox {
 }
 
 .user-servers.ng-enter,
-.user-servers.ng-enter .server {
+.user-servers.ng-enter .server,
+.user-servers.ng-enter .no-servers {
   @include transition(height .1s ease-in-out);
   overflow: hidden;
 }
 
-.user-servers.ng-enter .server {
+.user-servers.ng-enter .server,
+.user-servers.ng-enter .no-servers {
   height: 0;
 }
 
-.user-servers.ng-enter-active .server {
+.user-servers.ng-enter-active .server,
+.user-servers.ng-enter-active .no-servers {
   height: 27px;
 }
 
 .user-servers.ng-leave,
-.user-servers.ng-leave .server {
+.user-servers.ng-leave .server,
+.user-servers.ng-leave .no-servers {
   @include transition(height .1s ease-in-out);
   overflow: hidden;
 }
 
-.user-servers.ng-leave .server {
+.user-servers.ng-leave .server,
+.user-servers.ng-leave .no-servers {
   height: 27px;
 }
 
-.user-servers.ng-leave-active .server {
+.user-servers.ng-leave-active .server,
+.user-servers.ng-leave-active .no-servers {
   height: 0;
 }
 
