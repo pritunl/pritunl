@@ -33,7 +33,7 @@ class Users extends collection.Collection {
         url += '&limit=${this.searchLimit}';
       }
     }
-    else {
+    else if (this.page != null) {
       url += '?page=${this.page}';
     }
 
