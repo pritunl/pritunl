@@ -14,6 +14,19 @@ class TooltipDec {
   @NgAttr('tooltip')
   String tooltip;
 
+  TooltipDec(this.element) {
+    this.element
+      ..onMouseEnter.listen((_) {
+      this.show();
+    })
+      ..onMouseOver.listen((_) {
+      this.show();
+    })
+      ..onMouseLeave.listen((_) {
+      this.hide();
+    });
+  }
+
   void show() {
     if (this.tooltipElem != null) {
       return;
@@ -83,18 +96,5 @@ class TooltipDec {
       this.tooltipElem.remove();
       this.tooltipElem = null;
     });
-  }
-
-  TooltipDec(this.element) {
-    this.element
-      ..onMouseEnter.listen((_) {
-        this.show();
-      })
-      ..onMouseOver.listen((_) {
-        this.show();
-      })
-      ..onMouseLeave.listen((_) {
-        this.hide();
-      });
   }
 }
