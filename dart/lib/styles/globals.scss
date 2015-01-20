@@ -60,8 +60,14 @@ body /deep/ optgroup,
 body /deep/ select,
 body /deep/ textarea {
   margin: 0;
-  font: inherit;
   color: inherit;
+}
+
+body /deep/ button,
+body /deep/ input,
+body /deep/ optgroup,
+body /deep/ select {
+  font: inherit;
 }
 
 body /deep/ button {
@@ -119,15 +125,6 @@ body /deep/ input[type="search"] {
 body /deep/ input[type="search"]::-webkit-search-cancel-button,
 body /deep/ input[type="search"]::-webkit-search-decoration {
   -webkit-appearance: none;
-}
-
-body /deep/ input,
-body /deep/ button,
-body /deep/ select,
-body /deep/ textarea {
-  font-family: inherit;
-  font-size: inherit;
-  line-height: inherit;
 }
 
 body /deep/ h1,
