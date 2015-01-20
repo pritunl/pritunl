@@ -59,6 +59,12 @@ class Collection extends collection.IterableBase {
     this._collection.add(mdl);
   }
 
+  void validate(String name) {
+    for (var model in this) {
+      model.validate(name);
+    }
+  }
+
   async.Future fetch() {
     this.loading = true;
 
