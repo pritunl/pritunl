@@ -49,6 +49,16 @@ class Collection extends collection.IterableBase {
     return this._collection.iterator;
   }
 
+  void add(Map<String, dynamic> attrs) {
+    var modelCls = mirrors.reflectClass(this.model);
+    var initSym = const Symbol('');
+    var mdl = modelCls.newInstance(initSym, [this.http]).reflectee;
+
+    mdl.import(attrs);
+
+    this._collection.add(mdl);
+  }
+
   async.Future fetch() {
     this.loading = true;
 
