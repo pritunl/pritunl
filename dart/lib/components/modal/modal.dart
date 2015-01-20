@@ -14,6 +14,9 @@ class ModalComp {
   Function submit;
   Function cancel;
 
+  @NgAttr('title')
+  String title;
+
   var _okText;
   @NgAttr('ok-text')
   String get okText {
