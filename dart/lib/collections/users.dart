@@ -14,7 +14,7 @@ class Users extends collection.Collection {
   String _search;
   bool _hasClients;
   Type model = user.User;
-  String orgId;
+  String org;
   bool hidden;
   int page;
   int pageTotal;
@@ -25,7 +25,7 @@ class Users extends collection.Collection {
   int searchLimit;
 
   String get url {
-    var url = '/user/${this.orgId}';
+    var url = '/user/${this.org}';
 
     if (this.search != null) {
       url += '?search=${this.search}';
