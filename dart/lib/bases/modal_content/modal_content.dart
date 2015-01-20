@@ -11,7 +11,7 @@ import 'dart:async' as async;
 
 abstract class ModalContent implements ng.ShadowRootAware {
   dom.ShadowRoot root;
-  mdl.Model model;
+  dynamic model;
   dom.Element _errorForm;
   String alertType;
   String alertText;
