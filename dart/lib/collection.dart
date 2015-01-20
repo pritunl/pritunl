@@ -9,7 +9,7 @@ import 'dart:collection' as collection;
 import 'dart:async' as async;
 import 'dart:math' as math;
 
-class Collection extends collection.IterableBase {
+abstract class Collection extends collection.IterableBase {
   List<mdl.Model> _collection;
   int _loadCheckId;
   ng.Http http;
