@@ -5,7 +5,9 @@
     <btn type="primary" modal-attach="add-org">Add Organization</btn>
     <add-user on-submit="onAddUser($model)" orgs="orgs"></add-user>
     <btn type="primary" modal-attach="add-user">Add User</btn>
-    <btn type="primary">Bulk Add Users</btn>
+    <add-user-bulk on-submit="onAddUserBulk($model)"
+      orgs="orgs"></add-user-bulk>
+    <btn type="primary" modal-attach="add-user-bulk">Bulk Add Users</btn>
     <btn type="warning" disabled>Email Selected</btn>
     <btn type="danger" disabled>Delete Selected</btn>
   </div>
