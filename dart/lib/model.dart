@@ -96,7 +96,7 @@ abstract class Model {
     validator.apply([mirror.getField(symbols[name]).reflectee]);
   }
 
-  dynamic clone() {
+  Model clone() {
     var symbols = this._symbols;
     var mirror = mirrors.reflect(this);
     var clone = mirror.type.newInstance(const Symbol(''), [this.http]);
