@@ -27,7 +27,7 @@ class Invalid extends Error {
   toString() => this.message;
 }
 
-class Model {
+abstract class Model {
   int _loadCheckId;
   ng.Http http;
   String url;
