@@ -15,6 +15,8 @@ class UsersComp implements ng.AttachAware, ng.ShadowRootAware {
   ng.Http http;
   dom.ShadowRoot root;
 
+  UsersComp(this.http);
+
   var _usersLen = 0;
   var _users;
   @NgTwoWay('users')
@@ -52,8 +54,6 @@ class UsersComp implements ng.AttachAware, ng.ShadowRootAware {
   get users {
     return this._users;
   }
-
-  UsersComp(this.http);
 
   void attach() {
     if (this.users.page == null) {
