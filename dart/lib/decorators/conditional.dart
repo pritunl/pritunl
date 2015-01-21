@@ -7,8 +7,8 @@ abstract class Conditional {
   final ng.ViewFactory _viewFactory;
   final ng.ViewPort _viewPort;
   final ng.Scope _scope;
-  dom.Element element;
   ng.View _view;
+  dom.Element element;
 
   Conditional(this._viewFactory, this._viewPort, this._scope);
 
