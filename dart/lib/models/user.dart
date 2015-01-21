@@ -7,6 +7,8 @@ import 'package:angular/angular.dart' as ng;
 
 @Injectable()
 class User extends model.Model {
+  String animated;
+
   @model.Attribute('id')
   String id;
 
