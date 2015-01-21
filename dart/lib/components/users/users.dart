@@ -26,19 +26,15 @@ class UsersComp implements ng.AttachAware, ng.ShadowRootAware {
       var diff = (val.length - this._usersLen).abs();
       var insAnim = (val.length - diff).abs();
       var remAnim = (this._usersLen - diff).abs();
-      var i = 0;
+      var aniamted = {};
 
-      for (var user in val) {
+      for (var i = 0; i < val.length; i++) {
         if (i >= insAnim) {
-          user.animated = 'animated-ins';
+          aniamted[val[i]] = true;
         }
-        else {
-          user.animated = null;
-        }
-        i += 1;
       }
 
-      for (i = 0; i < userItems.length; i++) {
+      for (var i = 0; i < userItems.length; i++) {
         if (i >= remAnim) {
           userItems[i].classes.add('animated-rem');
         }
@@ -53,6 +49,13 @@ class UsersComp implements ng.AttachAware, ng.ShadowRootAware {
   }
   get users {
     return this._users;
+  }
+
+  String aniamted(usr.User user) {
+    if (this._animated[user] == true) {
+      return 'animated-ins';
+    }
+    return null;
   }
 
   void attach() {
