@@ -1,5 +1,25 @@
 @import 'styles/base.scss';
 
+.user-list .animated-ins-add {
+  overflow: hidden;
+  height: 0;
+  @include transition(height 0.3s ease-in-out);
+}
+
+.user-list .animated-ins-add-active {
+  height: 40px;
+}
+
+.user-list .animated-rem.ng-leave {
+  overflow: hidden;
+  height: 40px;
+  @include transition(height 0.3s ease-in-out);
+}
+
+.user-list .animated-rem.ng-leave-active {
+  height: 0;
+}
+
 .user-list {
   margin: 0 13px 13px 13px;
 }
