@@ -62,6 +62,10 @@ class UsersComp implements ng.AttachAware, ng.ShadowRootAware {
     this.update();
   }
 
+  void onShadowRoot(dom.ShadowRoot root) {
+    this.root = root;
+  }
+
   void update() {
     this.users.fetch();
   }
