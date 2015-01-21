@@ -105,6 +105,28 @@
   float: right;
 }
 
+.header .advanced {
+  display: inline-block;
+  float: right;
+  color: #7B7B7B;
+  margin-right: 29px;
+  margin-top: 2px;
+  padding: 9px 18px 9px 18px;
+  border-left: 1px solid #E5E5E5;
+  border-right: 1px solid #E5E5E5;
+  cursor: pointer;
+}
+
+.header .advanced:hover {
+  color: #737373;
+  @include box-shadow(inset 0px -7px 10px -10px #000);
+}
+
+.header .advanced:active {
+   color: #000;
+   @include box-shadow(inset 0px -8px 10px -10px #000);
+ }
+
 .body {
   padding: 20px 20px 0 20px;
 }
