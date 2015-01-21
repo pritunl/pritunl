@@ -64,4 +64,9 @@ class AddUserBulkComp extends modal_content.ModalContent {
       super.submit(closeHandler);
     });
   }
+
+  void reset() {
+    this.users = '';
+    super.reset();
+  }
 }
