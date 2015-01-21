@@ -1,7 +1,7 @@
 library modal_comp;
 
-import 'package:angular/angular.dart' show Component, NgAttr, NgCallback,
-  NgTwoWay;
+import 'package:angular/angular.dart' show Component, NgAttr, NgOneWay,
+  NgTwoWay, NgCallback;
 import 'dart:html' as dom;
 
 @Component(
@@ -16,6 +16,20 @@ class ModalComp {
 
   @NgAttr('title')
   String title;
+
+  var _advanced;
+  @NgAttr('advanced')
+  get advanced {
+    return this._advanced;
+  }
+  set advanced(val) {
+    if (val == '') {
+      this._advanced = true;
+    }
+    else {
+      this._advanced = false;
+    }
+  }
 
   var _okText;
   @NgAttr('ok-text')
