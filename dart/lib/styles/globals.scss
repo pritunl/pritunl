@@ -218,3 +218,9 @@ body /deep/ .panel-body:after,
 body /deep/ .modal-footer:after {
   clear: both;
 }
+
+// TODO
+body /deep/ form-select {
+  display: block;
+  margin-bottom: 20px;
+}
