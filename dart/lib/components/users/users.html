@@ -1,5 +1,6 @@
 <ul class="user-list">
-  <li ng-repeat="user in users">
+  <li ng-repeat="user in users" class="user-item"
+      ng-class="user.animated" ng-animate>
     <user model="user" collection="users"
       ng-if="user.type == 'client' || users.hidden"></user>
   </li>
