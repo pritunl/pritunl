@@ -196,6 +196,17 @@ $organization-header: (
   border: #ccc,
 );
 
+$organization-message: (
+  fg: #777,
+  bg: #f5f5f5,
+  border: #cfcfcf
+);
+
+$organization-footer: (
+  fg: #9c9c9c,
+  fg-active: #4b4b4b,
+);
+
 // ####################################
 // organizations
 // ####################################
@@ -223,24 +234,4 @@ $user-status: (
   fg: #6f7277,
   icon-online: #47a447,
   icon-offline: #d2322d,
-);
-
-// ####################################
-// users
-// ####################################
-$users: (
-  fg: #777,
-  bg: #fff,
-  border: #cfcfcf,
-);
-
-$users-message: (
-  fg: #777,
-  bg: #f5f5f5,
-  border: #cfcfcf
-);
-
-$users-footer: (
-  fg: #9c9c9c,
-  fg-active: #4b4b4b,
 );
