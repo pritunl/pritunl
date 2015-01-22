@@ -1,6 +1,7 @@
 library users_comp;
 
 import 'package:pritunl/collections/users.dart' as usrs;
+import 'package:pritunl/models/user.dart' as usr;
 
 import 'package:angular/angular.dart' show Component, NgTwoWay;
 import 'package:angular/angular.dart' as ng;
