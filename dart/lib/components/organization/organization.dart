@@ -1,21 +1,90 @@
 library organization_comp;
 
 import 'package:pritunl/models/organization.dart' as organization;
+import 'package:pritunl/collections/users.dart' as usrs;
+import 'package:pritunl/models/user.dart' as usr;
 
 import 'package:angular/angular.dart' show Component, NgOneWay;
+import 'package:angular/angular.dart' as ng;
+import 'dart:html' as dom;
 
 @Component(
   selector: 'organization',
   templateUrl: 'packages/pritunl/components/organization/organization.html',
   cssUrl: 'packages/pritunl/components/organization/organization.css'
 )
-class OrganizationComp {
-  bool showHidden;
+class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
+  ng.Http http;
+  dom.ShadowRoot root;
+  Map<String, String> animated = {};
+  Map<String, bool> showServers = {};
+  Map<String, bool> selected = {};
+  //bool showHidden;
+
+  var _showHidden;
+  get showHidden {
+    print('get: showHidden');
+    return this._showHidden;
+  }
+  set showHidden(val) {
+    this._showHidden = val;
+  }
+
+  OrganizationComp(this.http);
 
   @NgOneWay('model')
-  organization.Organization model;
+  organization.Organization org;
+
+  var _usersLen = 0;
+  get users {
+    usrs.Users users = this.org.users;
+
+    if (users != null && users.length != this._usersLen) {
+      var userItems = this.root.querySelectorAll('.user-item');
+      var diff = (users.length - this._usersLen).abs();
+      var insAnim = (users.length - diff).abs();
+      var remAnim = (this._usersLen - diff).abs();
+      var aniamted = {};
+
+      for (var i = 0; i < users.length; i++) {
+        if (i >= insAnim) {
+          aniamted[users[i].id] = 'animated-ins';
+        }
+      }
+
+      this.animated = aniamted;
+
+      for (var i = 0; i < userItems.length; i++) {
+        if (i >= remAnim) {
+          userItems[i].classes.add('animated-rem');
+        }
+        else {
+          userItems[i].classes.remove('animated-rem');
+        }
+      }
+
+      this._usersLen = users.length;
+    }
+
+    return users;
+  }
 
   toggleHidden() {
     this.showHidden = this.showHidden != true;
+  }
+
+  void attach() {
+    if (this.users.page == null) {
+      this.users.page = 0;
+    }
+    this.update();
+  }
+
+  void onShadowRoot(dom.ShadowRoot root) {
+    this.root = root;
+  }
+
+  void update() {
+    this.users.fetch();
   }
 }
