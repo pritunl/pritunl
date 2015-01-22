@@ -44,7 +44,7 @@ class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
 
       for (var i = 0; i < users.length; i++) {
         if (i >= insAnim) {
-          aniamted[users[i].id] = 'animated-ins';
+          aniamted[users[i]] = 'animated-ins';
         }
       }
 
