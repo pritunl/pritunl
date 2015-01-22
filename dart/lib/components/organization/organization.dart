@@ -19,16 +19,7 @@ class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
   Map<String, String> animated = {};
   Map<String, bool> showServers = {};
   Map<String, bool> selected = {};
-  //bool showHidden;
-
-  var _showHidden;
-  get showHidden {
-    print('get: showHidden');
-    return this._showHidden;
-  }
-  set showHidden(val) {
-    this._showHidden = val;
-  }
+  bool showHidden;
 
   OrganizationComp(this.http);
 
