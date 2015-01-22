@@ -491,6 +491,33 @@ body /deep/ organization::shadow .header {
   border-color: map-get($organization-header, border);
 }
 
+body /deep/ organization::shadow .message {
+  x-label: organization-message;
+  color: map-get($organization-message, fg);
+  background-color: map-get($organization-message, bg);
+  border-color: map-get($organization-message, border);
+}
+
+body /deep/ organization::shadow .pages {
+  x-label: organization-footer;
+  color: map-get($organization-footer, fg);
+}
+
+body /deep/ organization::shadow .pages li a {
+  x-label: organization-footer;
+  color: map-get($organization-footer, fg);
+}
+
+body /deep/ organization::shadow .pages li b {
+  x-label: organization-footer;
+  color: map-get($organization-footer, fg-active);
+}
+
+body /deep/ organization::shadow .search-time {
+  x-label: organization-footer;
+  color: map-get($organization-footer, fg);
+}
+
 // ####################################
 // organizations
 // ####################################
@@ -564,29 +591,3 @@ body /deep/ user::shadow .user-servers .server + .server {
 // ####################################
 // users
 // ####################################
-body /deep/ users::shadow .message {
-  x-label: users-message;
-  color: map-get($users-message, fg);
-  background-color: map-get($users-message, bg);
-  border-color: map-get($users-message, border);
-}
-
-body /deep/ users::shadow .pages {
-  x-label: users-footer;
-  color: map-get($users-footer, fg);
-}
-
-body /deep/ users::shadow .pages li a {
-  x-label: users-footer;
-  color: map-get($users-footer, fg);
-}
-
-body /deep/ users::shadow .pages li b {
-  x-label: users-footer;
-  color: map-get($users-footer, fg-active);
-}
-
-body /deep/ users::shadow .search-time {
-  x-label: users-footer;
-  color: map-get($users-footer, fg);
-}
