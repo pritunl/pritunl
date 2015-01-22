@@ -36,15 +36,20 @@ class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
   organization.Organization org;
 
   var _usersLen = 0;
-  get users {
-    usrs.Users users = this.org.users;
-
+  void onUsersImport(List<usr.User> users) {
     if (users != null && users.length != this._usersLen) {
-      var userItems = this.root.querySelectorAll('.user-item');
+      var userItems;
       var diff = (users.length - this._usersLen).abs();
       var insAnim = (users.length - diff).abs();
       var remAnim = (this._usersLen - diff).abs();
       var aniamted = {};
+
+      if (this.root != null) {
+        userItems = this.root.querySelectorAll('.user-item');
+      }
+      else {
+        userItems = [];
+      }
 
       for (var i = 0; i < users.length; i++) {
         if (i >= insAnim) {
@@ -74,8 +79,9 @@ class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
   }
 
   void attach() {
-    if (this.users.page == null) {
-      this.users.page = 0;
+    this.org.users.onImport = this.onUsersImport;
+    if (this.org.users.page == null) {
+      this.org.users.page = 0;
     }
     this.update();
   }
