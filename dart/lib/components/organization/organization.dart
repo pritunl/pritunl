@@ -89,6 +89,19 @@ class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
   }
 
   void update() {
-    this.users.fetch();
+    this.org.users.fetch();
+  }
+
+  String get message {
+    if (this.org.users.loadingLong == true) {
+      return 'Loading...';
+    }
+    else if (this.org.users.noUsers == true) {
+      if (this.org.users.search == null) {
+        return 'There are no users in this organization';
+      }
+      return 'No users found';
+    }
+    return null;
   }
 }
