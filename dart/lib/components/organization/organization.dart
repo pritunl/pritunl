@@ -70,11 +70,9 @@ class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
 
       this._usersLen = users.length;
     }
-
-    return users;
   }
 
-  toggleHidden() {
+  void toggleHidden() {
     this.showHidden = this.showHidden != true;
   }
 
