@@ -5,9 +5,8 @@
       class="name title" no-select>{{model.name}}<span
         ng-if="model.email != null && model.email != ''"
         > ({{model.email}})</span></a>
-    <span class="id title" ng-if="collection.hidden">({{model.id}})</span>
+    <span class="id title" ng-if="showHidden">({{model.id}})</span>
   </div>
-
   <div class="buttons">
     <div ng-if="model.status" class="status">
       <div class="icon online"></div>
