@@ -53,7 +53,7 @@ abstract class Collection extends collection.IterableBase {
     return this._collection.length;
   }
 
-  mdl.Model operator [](int index) {
+  dynamic operator [](int index) {
     return this._collection[index];
   }
 
