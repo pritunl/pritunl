@@ -1,8 +1,10 @@
-<ul class="user-list">
+<ul class="user-list" ng-class="showHidden ? 'hidden' : ''">
   <li ng-repeat="user in users" class="user-item"
       ng-class="aniamted(user)" ng-animate>
-    <user model="user" collection="users"
-      ng-if="user.type == 'client' || users.hidden"></user>
+    <user model="user" ng-if="user.type == 'client' || showHidden"
+      selected="selected[user.id]"
+      show-hidden="showHidden"
+      show-servers="showServers[user.id]"></user>
   </li>
   <li ng-if="users.loadingLong != true && users.noUsers && users.search == null"
       class="message" ng-animate>
@@ -32,10 +34,10 @@
   </ul>
 </div>
 <div class="footer" ng-if="users.search != null">
-  <div class="search-time" no-select
-    >search found {{users.searchCount != null ? users.searchCount : '...'}}
+  <div class="search-time" no-select>search found
+    {{users.searchCount != null ? users.searchCount : '...'}}
     results in {{users.searchCount != null ?
-      users.searchTime.toStringAsFixed(4) : '...'}} seconds</div>
+    users.searchTime.toStringAsFixed(4) : '...'}} seconds</div>
   <div class="search-more" ng-if="users.searchMore" no-select>
     <a ng-click="users.searchIncrease()">show more results</a>
   </div>
