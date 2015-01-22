@@ -2,7 +2,7 @@ library organization_comp;
 
 import 'package:pritunl/models/organization.dart' as organization;
 
-import 'package:angular/angular.dart' show Component, NgTwoWay;
+import 'package:angular/angular.dart' show Component, NgOneWay;
 
 @Component(
   selector: 'organization',
@@ -10,10 +10,12 @@ import 'package:angular/angular.dart' show Component, NgTwoWay;
   cssUrl: 'packages/pritunl/components/organization/organization.css'
 )
 class OrganizationComp {
-  @NgTwoWay('model')
+  bool showHidden;
+
+  @NgOneWay('model')
   organization.Organization model;
 
   toggleHidden() {
-    this.model.users.hidden = this.model.users.hidden != true;
+    this.showHidden = this.showHidden != true;
   }
 }
