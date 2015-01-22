@@ -2,18 +2,18 @@
 
 .user-list .animated-ins-add {
   overflow: hidden;
-  height: 0;
-  @include transition(height 0.3s ease-in-out);
+  max-height: 0;
+  @include transition(max-height .3s ease-in-out);
 }
 
 .user-list .animated-ins-add-active {
-  height: 40px;
+  max-height: 200px;
 }
 
 .user-list .animated-rem.ng-leave {
   overflow: hidden;
-  height: 40px;
-  @include transition(height 0.3s ease-in-out);
+  max-height: 200px;
+  @include transition(max-height .3s ease-in-out);
 }
 
 .user-list .animated-rem.ng-leave-active {
@@ -47,7 +47,6 @@
 .message {
   text-align: center;
   font-size: 14px;
-  padding-top: 10px;
   height: 40px;
   border-width: 1px;
   border-style: solid;
@@ -57,6 +56,10 @@
     0, 1px, 0, rgba(255, 255, 255, 0.02),
     0, 1px, 3px, rgba(0, 0, 0, 0.08), inset,
   ));
+}
+
+.message span {
+  line-height: 37px;
 }
 
 .next,
