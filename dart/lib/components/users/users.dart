@@ -3,7 +3,7 @@ library users_comp;
 import 'package:pritunl/collections/users.dart' as usrs;
 import 'package:pritunl/models/user.dart' as usr;
 
-import 'package:angular/angular.dart' show Component, NgTwoWay;
+import 'package:angular/angular.dart' show Component, NgOneWay, NgTwoWay;
 import 'package:angular/angular.dart' as ng;
 import 'dart:html' as dom;
 
@@ -15,24 +15,32 @@ import 'dart:html' as dom;
 class UsersComp implements ng.AttachAware, ng.ShadowRootAware {
   ng.Http http;
   dom.ShadowRoot root;
-  Map<usrs.Users, String> _animated;
+  Map<usrs.Users, String> _animated = {};
+  Map<String, bool> showServers = {};
+  Map<String, bool> selected = {};
 
   UsersComp(this.http);
 
+  @NgOneWay('show-hidden')
+  bool showHidden;
+
   var _usersLen = 0;
   var _users;
-  @NgTwoWay('users')
+  @NgOneWay('users')
   set users(usrs.Users val) {
-    if (val.length != this._usersLen) {
+    this._users = val;
+  }
+  get users {
+    if (this._users != null && this._users.length != this._usersLen) {
       var userItems = this.root.querySelectorAll('.user-item');
-      var diff = (val.length - this._usersLen).abs();
-      var insAnim = (val.length - diff).abs();
+      var diff = (this._users.length - this._usersLen).abs();
+      var insAnim = (this._users.length - diff).abs();
       var remAnim = (this._usersLen - diff).abs();
       var aniamted = {};
 
-      for (var i = 0; i < val.length; i++) {
+      for (var i = 0; i < this._users.length; i++) {
         if (i >= insAnim) {
-          aniamted[val[i]] = true;
+          aniamted[this._users[i]] = true;
         }
       }
 
@@ -46,12 +54,10 @@ class UsersComp implements ng.AttachAware, ng.ShadowRootAware {
           userItems[i].classes.remove('animated-rem');
         }
       }
+
+      this._usersLen = this._users.length;
     }
 
-    this._usersLen = val.length;
-    this._users = val;
-  }
-  get users {
     return this._users;
   }
 
