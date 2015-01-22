@@ -15,13 +15,13 @@
   </div>
   <ul class="user-list">
     <li ng-repeat="user in org.users" class="user-item"
-      ng-class="animated[user.id]" ng-animate>
+      ng-class="animated[user]" ng-animate>
       <user model="user" ng-if="user.type == 'client' || showHidden"
-        selected="selected[user.id]"
+        selected="selected[user]"
         show-hidden="showHidden"
-        show-servers="showServers[user.id]"></user>
+        show-servers="showServers[user]"></user>
     </li>
-    <li ng-if="message" class="message" ng-animate>
+    <li ng-if="message != null" class="message">
       <span>{{message}}</span>
     </li>
   </ul>
@@ -43,9 +43,9 @@
   <div class="footer" ng-if="org.users.search != null">
     <div class="search-time" no-select>search found
       {{org.users.searchCount != null ? org.users.searchCount : '...'}}
-      results in {{users.searchCount != null ?
+      results in {{org.users.searchCount != null ?
       org.users.searchTime.toStringAsFixed(4) : '...'}} seconds</div>
-    <div class="search-more" ng-if="users.searchMore" no-select>
+    <div class="search-more" ng-if="org.users.searchMore" no-select>
       <a ng-click="users.searchIncrease()">show more results</a>
     </div>
   </div>
