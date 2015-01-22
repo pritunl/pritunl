@@ -17,6 +17,26 @@
 }
 
 .user-list .animated-rem.ng-leave-active {
+  max-height: 0;
+}
+
+.message.ng-enter {
+  overflow: hidden;
+  height: 0;
+  @include transition(height 0.1s ease-in-out);
+}
+
+.message.ng-enter-active {
+  height: 40px;
+}
+
+.message.ng-leave {
+  overflow: hidden;
+  height: 40px;
+  @include transition(height 0.1s ease-in-out);
+}
+
+.message.ng-leave-active {
   height: 0;
 }
 
