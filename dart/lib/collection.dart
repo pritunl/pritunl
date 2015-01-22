@@ -18,6 +18,7 @@ abstract class Collection extends collection.IterableBase {
   int errorStatus;
   dynamic errorData;
   bool loadingLong;
+  Function onImport;
 
   var _loading;
   set loading(bool val) {
@@ -123,6 +124,10 @@ abstract class Collection extends collection.IterableBase {
       mdl.import(value);
       collection.add(mdl);
     });
+
+    if (this.onImport != null) {
+      this.onImport(collection);
+    }
 
     this._collection = collection;
 
