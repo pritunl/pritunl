@@ -4,7 +4,7 @@
       shift-click="toggleHidden()" no-select
       type="success">Organization</box-label><h2 class="title"><a
       no-select>{{model.name}}</a>
-    <span ng-if="model.users.hidden"
+    <span ng-if="showHidden"
       class="id">({{model.id}})</span></h2>
     <div class="box-right">
       <box-label class="user-count" type="default" padding="4px 8px"
@@ -14,5 +14,5 @@
       <btn type="danger" size="sm">Delete Organization</btn>
     </div>
   </div>
-  <users users="model.users"></users>
+  <users users="model.users" show-hidden="showHidden"></users>
 </div>
