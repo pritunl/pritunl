@@ -56,7 +56,7 @@ class User extends model.Model {
   bool disabled;
 
   @model.Attribute('servers')
-  List<Map> servers;
+  List<Map<String, dynamic>> servers;
 
   @model.Attribute('status')
   bool status;
