@@ -3,16 +3,58 @@
     <box-label class="org-label" padding="6px 12px"
       shift-click="toggleHidden()" no-select
       type="success">Organization</box-label><h2 class="title"><a
-      no-select>{{model.name}}</a>
-    <span ng-if="showHidden"
-      class="id">({{model.id}})</span></h2>
+      no-select>{{org.name}}</a>
+    <span ng-if="showHidden" class="id">({{org.id}})</span></h2>
     <div class="box-right">
       <box-label class="user-count" type="default" padding="4px 8px"
-        no-select>{{model.userCount}} users</box-label>
+        no-select>{{org.userCount}} users</box-label>
       <form-input type="text" placeholder="Search for user"
-        width="150px" height="30px" model="model.users.search"></form-input>
+        width="150px" height="30px" model="org.users.search"></form-input>
       <btn type="danger" size="sm">Delete Organization</btn>
     </div>
   </div>
-  <users users="model.users" show-hidden="showHidden"></users>
+  <ul class="user-list" ng-class="showHidden ? 'hidden' : ''">
+    <li ng-repeat="user in users" class="user-item"
+      ng-class="animated[user.id]" ng-animate>
+      <user model="user" ng-if="user.type == 'client' || showHidden"
+        selected="selected[user.id]"
+        show-hidden="showHidden"
+        show-servers="showServers[user.id]"></user>
+    </li>
+    <li ng-if="users.loadingLong != true && users.noUsers && users.search == null"
+      class="message" ng-animate>
+      <span>There are no users in this organization</span>
+    </li>
+    <li ng-if="users.loadingLong != true && users.noUsers && users.search != null"
+      class="message" ng-animate>
+      <span>No users found</span>
+    </li>
+    <li ng-if="users.loadingLong" class="message" ng-animate>
+      <span>Loading...</span>
+    </li>
+  </ul>
+  <div class="footer" ng-if="users.search == null">
+    <btn class="prev" type="primary" size="sm" min-width="105px"
+      ng-if="users.page != 0"
+      ng-click="users.prev()">Previous Page</btn>
+    <btn class="next clearfix" type="primary" size="sm" min-width="105px"
+      ng-if="users.page != users.pageTotal"
+      ng-click="users.next()">Next Page</btn>
+    <ul class="pages" no-select>
+      <li ng-repeat="page in users.pages">
+        <a ng-click="users.onPage(page[1])"><span><b
+          ng-if="page[0]">{{page[1]}}</b></span><span
+          ng-if="page[0] != true">{{page[1]}}</span></a>
+      </li>
+    </ul>
+  </div>
+  <div class="footer" ng-if="users.search != null">
+    <div class="search-time" no-select>search found
+      {{users.searchCount != null ? users.searchCount : '...'}}
+      results in {{users.searchCount != null ?
+      users.searchTime.toStringAsFixed(4) : '...'}} seconds</div>
+    <div class="search-more" ng-if="users.searchMore" no-select>
+      <a ng-click="users.searchIncrease()">show more results</a>
+    </div>
+  </div>
 </div>
