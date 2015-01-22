@@ -12,10 +12,9 @@ import 'dart:math' as math;
 @Injectable()
 class Users extends collection.Collection {
   String _search;
-  bool _hasClients;
+  bool noUsers;
   Type model = user.User;
   String org;
-  bool hidden;
   int page;
   int pageTotal;
   List<dynamic> pages;
@@ -23,6 +22,8 @@ class Users extends collection.Collection {
   bool searchMore;
   double searchTime;
   int searchLimit;
+
+  Users(ng.Http http) : super(http);
 
   String get url {
     var url = '/user/${this.org}';
@@ -51,16 +52,6 @@ class Users extends collection.Collection {
   String get search {
     return this._search;
   }
-
-  bool get noUsers {
-    if (this._hasClients == true || (
-        this.hidden == true && this.length != 0)) {
-      return false;
-    }
-    return true;
-  }
-
-  Users(ng.Http http) : super(http);
 
   List<Map> parse(dynamic data) {
     if (data is! Map) {
@@ -98,11 +89,11 @@ class Users extends collection.Collection {
   void imported() {
     for (var user in this) {
       if (user.type == 'client') {
-        this._hasClients = true;
+        this.noUsers = false;
         return;
       }
     }
-    this._hasClients = false;
+    this.noUsers = true;
   }
 
   void _updatePages() {
