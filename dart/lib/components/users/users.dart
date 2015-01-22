@@ -35,6 +35,8 @@ class UsersComp implements ng.AttachAware, ng.ShadowRootAware {
         }
       }
 
+      this._animated = aniamted;
+
       for (var i = 0; i < userItems.length; i++) {
         if (i >= remAnim) {
           userItems[i].classes.add('animated-rem');
