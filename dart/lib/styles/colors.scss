@@ -587,7 +587,3 @@ body /deep/ user::shadow .user-servers .server + .server {
   x-label: user;
   border-color: map-get($user, border);
 }
-
-// ####################################
-// users
-// ####################################
