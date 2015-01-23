@@ -20,7 +20,7 @@ class AlertComp implements ng.ShadowRootAware {
   String type;
 
   @NgTwoWay('text')
-  String text;
+  String text = '';
 
   var _dismissible;
   @NgAttr('dismissible')
