@@ -15,7 +15,7 @@ import 'dart:html' as dom;
 class UsersComp implements ng.AttachAware, ng.ShadowRootAware {
   ng.Http http;
   dom.ShadowRoot root;
-  Map<usrs.Users, String> _animated = {};
+  Map<String, String> animated = {};
   Map<String, bool> showServers = {};
   Map<String, bool> selected = {};
 
