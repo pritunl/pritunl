@@ -17,8 +17,8 @@
     <li ng-repeat="user in org.users" class="user-item"
       ng-class="animated[user]" ng-animate>
       <user model="user" ng-if="user.type == 'client' || showHidden"
-        selected="selected[user]"
         show-hidden="showHidden"
+        selected="selected[user]"
         show-servers="showServers[user]"></user>
     </li>
     <li ng-if="message != null" class="message">
