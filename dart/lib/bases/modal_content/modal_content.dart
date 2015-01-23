@@ -1,7 +1,6 @@
 library modal_content_base;
 
 import 'package:pritunl/components/alert/alert.dart' as alrt;
-import 'package:pritunl/model.dart' as mdl;
 import 'package:pritunl/utils/utils.dart' as utils;
 
 import 'package:angular/angular.dart' show NgCallback;
