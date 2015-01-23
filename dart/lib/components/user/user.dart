@@ -14,12 +14,12 @@ class UserComp {
   @NgOneWay('model')
   user.User model;
 
+  @NgOneWay('show-hidden')
+  bool showHidden;
+
   @NgTwoWay('selected')
   bool selected;
 
   @NgTwoWay('show-servers')
   bool showServers;
-
-  @NgOneWay('show-hidden')
-  bool showHidden;
 }
