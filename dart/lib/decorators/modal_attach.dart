@@ -17,6 +17,12 @@ class ModalAttachDec {
   @NgAttr('modal-attach')
   String modalAttach;
 
+  ModalAttachDec(this.element) {
+    this.element.onClick.listen((_) {
+      this.show();
+    });
+  }
+
   dom.Element get modalBaseElem {
     var modalElem;
     var selector = this.modalAttach;
@@ -48,11 +54,5 @@ class ModalAttachDec {
   void show() {
     var modalBase = this.modalBase;
     this.modalDec.show(modalBase.submit, modalBase.cancel);
-  }
-
-  ModalAttachDec(this.element) {
-    this.element.onClick.listen((_) {
-      this.show();
-    });
   }
 }
