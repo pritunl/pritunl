@@ -25,7 +25,7 @@
       <span>{{message}}</span>
     </li>
   </ul>
-  <div class="footer" ng-if="org.users.search == null">
+  <div class="footer" ng-if="org.users.search == null" no-select>
     <btn class="prev" type="primary" size="sm" min-width="105px"
       ng-if="org.users.page != 0"
       ng-click="org.users.prev()">Previous Page</btn>
