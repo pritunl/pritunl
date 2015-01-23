@@ -55,8 +55,8 @@ class ComponentsMod extends ng.Module {
     this.bind(btn.BtnComp);
     this.bind(checkbox.CheckboxComp);
     this.bind(container.ContainerComp);
-    this.bind(form_input.FormInputComp);
     this.bind(form_group.FormGroupComp);
+    this.bind(form_input.FormInputComp);
     this.bind(form_select.FormSelectComp);
     this.bind(form_textarea.FormTextareaComp);
     this.bind(fraction.FractionComp);
