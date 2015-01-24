@@ -12,7 +12,7 @@ import 'dart:async' as async;
   templateUrl: 'packages/pritunl/components/del_org/del_org.html'
 )
 class DelOrgComp extends modal_content.ModalContent {
-  String nameConfirm;
+  bool okDisabled = true;
 
   @NgOneWayOneTime('model')
   organization.Organization model;
