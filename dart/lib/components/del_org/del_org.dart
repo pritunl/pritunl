@@ -36,14 +36,6 @@ class DelOrgComp extends modal_content.ModalContent {
   }
 
   void submit(async.Future closeHandler()) {
-    var valid = this.validateForms({
-      'name': '.name',
-    });
-
-    if (valid != true) {
-      return;
-    }
-
     this.model.create(['name']).then((_) {
       super.submit(closeHandler);
     });
