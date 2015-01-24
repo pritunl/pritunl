@@ -36,8 +36,7 @@ class DelOrgComp extends modal_content.ModalContent {
   }
 
   void submit(async.Future closeHandler()) {
-    this.model.create(['name']).then((_) {
-      super.submit(closeHandler);
+    this.model.create().then((_) {
     });
   }
 }
