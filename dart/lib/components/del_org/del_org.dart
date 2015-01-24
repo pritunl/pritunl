@@ -34,6 +34,8 @@ class DelOrgComp extends modal_content.ModalContent {
   void reset() {
     this.clearFormError();
     this.clearAlert();
+
+    this.nameConfirm = null;
   }
 
   void submit(async.Future closeHandler()) {
