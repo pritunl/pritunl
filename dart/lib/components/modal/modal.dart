@@ -17,6 +17,12 @@ class ModalComp {
   @NgAttr('title')
   String title;
 
+  @NgOneWay('ok-disabled')
+  bool okDisabled;
+
+  @NgOneWay('cancel-disabled')
+  bool cancelDisabled;
+
   var _advanced;
   @NgAttr('advanced')
   get advanced {
