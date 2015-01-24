@@ -10,7 +10,9 @@
         no-select>{{org.userCount}} users</box-label>
       <form-input type="text" placeholder="Search for user"
         width="150px" height="30px" model="org.users.search"></form-input>
-      <btn type="danger" size="sm">Delete Organization</btn>
+      <del-org on-submit="onDelOrg($model)" model="org"></del-org>
+      <btn type="danger" size="sm" modal-attach="del-org"
+        >Delete Organization</btn>
     </div>
   </div>
   <ul class="user-list">
