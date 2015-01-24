@@ -124,6 +124,21 @@ abstract class Model {
     });
   }
 
+  async.Future destroy() {
+    this.loading = true;
+
+    return this.http.delete(this.url).then((response) {
+      this.loading = false;
+      this.import(response.data);
+      return response.data;
+    }).catchError((err) {
+      this.loading = false;
+      this.errorStatus = err.status;
+      this.errorData = err.data;
+      throw err;
+    });
+  }
+
   dynamic parse(dynamic data) {
     return data;
   }
