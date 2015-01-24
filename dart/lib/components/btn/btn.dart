@@ -1,6 +1,6 @@
 library btn_comp;
 
-import 'package:angular/angular.dart' show Component, NgAttr;
+import 'package:angular/angular.dart' show Component, NgAttr, NgOneWay;
 import 'package:angular/angular.dart' as ng;
 import 'dart:html' as dom;
 
@@ -31,6 +31,9 @@ class BtnComp implements ng.ShadowRootAware {
   @NgAttr('min-height')
   String minHeight;
 
+  @NgOneWay('disabled')
+  bool disabled;
+
   @NgAttr('form-submit')
   bool get formSubmit {
     return this.btnType == 'submit';
@@ -41,20 +44,6 @@ class BtnComp implements ng.ShadowRootAware {
     }
     else {
       this.btnType = 'button';
-    }
-  }
-
-  var _disabled;
-  @NgAttr('disabled')
-  bool get disabled {
-    return this._disabled;
-  }
-  set disabled(dynamic val) {
-    if (val == '') {
-      this._disabled = true;
-    }
-    else {
-      this._disabled = false;
     }
   }
 
