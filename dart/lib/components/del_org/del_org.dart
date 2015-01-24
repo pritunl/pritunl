@@ -31,6 +31,11 @@ class DelOrgComp extends modal_content.ModalContent {
     return this._nameConfirm;
   }
 
+  void reset() {
+    this.clearFormError();
+    this.clearAlert();
+  }
+
   void onDelOrg(organization.Organization model) {
     print('delOrg: $model');
   }
