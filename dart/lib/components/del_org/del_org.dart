@@ -17,6 +17,20 @@ class DelOrgComp extends modal_content.ModalContent {
   @NgOneWayOneTime('model')
   organization.Organization model;
 
+  var _nameConfirm;
+  set nameConfirm(String val) {
+    if (val == this.model.name) {
+      this.okDisabled = false;
+    }
+    else {
+      this.okDisabled = true;
+    }
+    this._nameConfirm = val;
+  }
+  String get nameConfirm {
+    return this._nameConfirm;
+  }
+
   void onDelOrg(organization.Organization model) {
     print('delOrg: $model');
   }
