@@ -36,10 +36,6 @@ class DelOrgComp extends modal_content.ModalContent {
     this.clearAlert();
   }
 
-  void onDelOrg(organization.Organization model) {
-    print('delOrg: $model');
-  }
-
   void submit(async.Future closeHandler()) {
     this.model.create().then((_) {
     });
