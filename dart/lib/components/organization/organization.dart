@@ -21,10 +21,23 @@ class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
   Map<String, bool> selected = {};
   bool showHidden;
 
-  OrganizationComp(this.http);
-
   @NgOneWay('model')
   organization.Organization org;
+
+  OrganizationComp(this.http);
+
+  String get message {
+    if (this.org.users.loadingLong == true) {
+      return 'Loading...';
+    }
+    else if (this.org.users.noUsers == true) {
+      if (this.org.users.search == null) {
+        return 'There are no users in this organization';
+      }
+      return 'No users found';
+    }
+    return null;
+  }
 
   var _usersLen = 0;
   void onUsersImport(List<usr.User> users) {
@@ -83,17 +96,8 @@ class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
     this.org.users.fetch();
   }
 
-  String get message {
-    if (this.org.users.loadingLong == true) {
-      return 'Loading...';
-    }
-    else if (this.org.users.noUsers == true) {
-      if (this.org.users.search == null) {
-        return 'There are no users in this organization';
-      }
-      return 'No users found';
-    }
-    return null;
+  void update() {
+    this.org.users.fetch();
   }
 
   void onDelOrg(organization.Organization model) {
