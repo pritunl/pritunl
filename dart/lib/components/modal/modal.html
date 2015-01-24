@@ -11,8 +11,9 @@
         <content></content>
       </div>
       <div class="footer">
-        <btn type="default" ng-click="hardClose()">{{cancelText}}</btn>
-        <btn type="primary" ng-click="submit()"
+        <btn type="default" ng-click="hardClose()" ng-disabled="cancelDisabled"
+          >{{cancelText}}</btn>
+        <btn type="primary" ng-click="submit()" disabled="okDisabled"
           form-submit>{{okText}}</btn>
       </div>
     </form>
