@@ -95,4 +95,8 @@ class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
     }
     return null;
   }
+
+  void onDelOrg(organization.Organization model) {
+    print('delOrg: $model');
+  }
 }
