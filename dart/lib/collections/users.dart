@@ -41,13 +41,18 @@ class Users extends collection.Collection {
     return url;
   }
 
-  set search(String val) {
+  void set search(String val) {
     if (val == '') {
       val = null;
     }
 
-    this._search = val;
-    this.fetch();
+    if (val != this._search) {
+      this._search = val;
+      this.fetch();
+    }
+    else {
+      this._search = val;
+    }
   }
   String get search {
     return this._search;
