@@ -16,7 +16,8 @@ body /deep/ table td {
   border-color: map-get($table, border);
 }
 
-body /deep/ .title {
+body /deep/ .title,
+body /deep/ .title:hover {
   x-label: title;
   color: map-get($title, fg);
 }
