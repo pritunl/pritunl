@@ -28,7 +28,17 @@ class ModalAttachDec {
     var selector = this.modalAttach;
 
     if (selector != '' && selector != null) {
-      modalElem = this.element.parent.querySelector(selector);
+      var element = this.element.parent;
+
+      while (true) {
+        modalElem = element.querySelector(selector);
+
+        if (modalElem != null) {
+          break;
+        }
+
+        element = element.parent;
+      }
     }
     else {
       modalElem = this.element.previousElementSibling;
