@@ -1,8 +1,9 @@
 <div class="user">
   <checkbox state="selected"></checkbox>
   <div class="name-container">
-    <glyphicon type="user"></glyphicon><a
-      class="name title" no-select>{{model.name}}<span
+    <modify-user model="model"></modify-user>
+    <glyphicon type="user"></glyphicon><a class="name title" no-select
+        modal-attach="modify-user">{{model.name}}<span
         ng-if="model.email != null && model.email != ''"
         > ({{model.email}})</span></a>
     <span class="id title" ng-if="showHidden">({{model.id}})</span>
