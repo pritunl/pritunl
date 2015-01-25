@@ -1,10 +1,10 @@
 <div class="user">
   <checkbox state="selected"></checkbox>
   <div class="name-container">
-    <modify-user model="model"></modify-user>
+    <user-modify model="model"></user-modify>
     <glyphicon type="user"></glyphicon><a class="name title" no-select
         tooltip="Click to modify this user"
-        modal-attach="modify-user">{{model.name}}<span
+        modal-attach="user-modify">{{model.name}}<span
         ng-if="model.email != null && model.email != ''"
         > ({{model.email}})</span></a>
     <span class="id title" ng-if="showHidden">({{model.id}})</span>
