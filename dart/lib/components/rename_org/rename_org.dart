@@ -12,16 +12,16 @@ import 'dart:async' as async;
   templateUrl: 'packages/pritunl/components/rename_org/rename_org.html'
 )
 class RenameOrgComp extends modal_content.ModalContent {
-  String newName;
   organization.Organization model;
 
   @NgOneWayOneTime('model')
   organization.Organization origModel;
 
-  void submit(async.Future closeHandler()) {
+  void show() {
     this.model = this.origModel.clone();
-    this.model.name = this.newName;
+  }
 
+  void submit(async.Future closeHandler()) {
     var valid = this.validateForms({
       'name': '.name',
     });
