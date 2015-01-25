@@ -3,6 +3,7 @@
   <div class="name-container">
     <modify-user model="model"></modify-user>
     <glyphicon type="user"></glyphicon><a class="name title" no-select
+        tooltip="Click to modify this user"
         modal-attach="modify-user">{{model.name}}<span
         ng-if="model.email != null && model.email != ''"
         > ({{model.email}})</span></a>
