@@ -67,15 +67,15 @@ class ComponentsMod extends ng.Module {
     this.bind(log_entries.LogEntriesComp);
     this.bind(modal.ModalComp);
     this.bind(navbar.NavbarComp);
-    this.bind(org_add.AddOrgComp);
-    this.bind(org_del.DelOrgComp);
+    this.bind(org_add.OrgAddComp);
+    this.bind(org_del.OrgDelComp);
     this.bind(org_modify.ModifyOrgComp);
     this.bind(organization.OrganizationComp);
     this.bind(organizations.OrganizationsComp);
     this.bind(status.StatusComp);
     this.bind(user.UserComp);
     this.bind(user_add.AddUserComp);
-    this.bind(user_add_bulk.AddUserBulkComp);
-    this.bind(user_modify.ModifyUserComp);
+    this.bind(user_add_bulk.UserAddBulkComp);
+    this.bind(user_modify.UserModifyComp);
   }
 }
