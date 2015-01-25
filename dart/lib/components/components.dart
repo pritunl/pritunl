@@ -40,6 +40,8 @@ import 'package:pritunl/components/organization/organization.dart'
   as organization;
 import 'package:pritunl/components/organizations/organizations.dart'
   as organizations;
+import 'package:pritunl/components/rename_org/rename_org.dart'
+  as rename_org;
 import 'package:pritunl/components/status/status.dart'
   as status;
 import 'package:pritunl/components/user/user.dart'
@@ -69,6 +71,7 @@ class ComponentsMod extends ng.Module {
     this.bind(navbar.NavbarComp);
     this.bind(organization.OrganizationComp);
     this.bind(organizations.OrganizationsComp);
+    this.bind(rename_org.RenameOrgComp);
     this.bind(status.StatusComp);
     this.bind(user.UserComp);
   }
