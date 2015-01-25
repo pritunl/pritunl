@@ -34,6 +34,8 @@ import 'package:pritunl/components/log_entries/log_entries.dart'
   as log_entries;
 import 'package:pritunl/components/modal/modal.dart'
   as modal;
+import 'package:pritunl/components/modify_org/modify_org.dart'
+  as modify_org;
 import 'package:pritunl/components/modify_user/modify_user.dart'
   as modify_user;
 import 'package:pritunl/components/navbar/navbar.dart'
@@ -42,8 +44,6 @@ import 'package:pritunl/components/organization/organization.dart'
   as organization;
 import 'package:pritunl/components/organizations/organizations.dart'
   as organizations;
-import 'package:pritunl/components/rename_org/rename_org.dart'
-  as rename_org;
 import 'package:pritunl/components/status/status.dart'
   as status;
 import 'package:pritunl/components/user/user.dart'
@@ -70,11 +70,11 @@ class ComponentsMod extends ng.Module {
     this.bind(glyphicon.GlyphiconComp);
     this.bind(log_entries.LogEntriesComp);
     this.bind(modal.ModalComp);
+    this.bind(modify_org.ModifyOrgComp);
     this.bind(modify_user.ModifyUserComp);
     this.bind(navbar.NavbarComp);
     this.bind(organization.OrganizationComp);
     this.bind(organizations.OrganizationsComp);
-    this.bind(rename_org.RenameOrgComp);
     this.bind(status.StatusComp);
     this.bind(user.UserComp);
   }
