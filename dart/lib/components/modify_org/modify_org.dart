@@ -1,4 +1,4 @@
-library rename_org_comp;
+library modify_org_comp;
 
 import 'package:pritunl/bases/modal_content/modal_content.dart' as
   modal_content;
@@ -8,10 +8,10 @@ import 'package:angular/angular.dart' show Component, NgOneWayOneTime;
 import 'dart:async' as async;
 
 @Component(
-  selector: 'rename-org',
-  templateUrl: 'packages/pritunl/components/rename_org/rename_org.html'
+  selector: 'modify-org',
+  templateUrl: 'packages/pritunl/components/modify_org/modify_org.html'
 )
-class RenameOrgComp extends modal_content.ModalContent {
+class ModifyOrgComp extends modal_content.ModalContent {
   organization.Organization model;
 
   @NgOneWayOneTime('model')
