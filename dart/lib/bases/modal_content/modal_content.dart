@@ -27,6 +27,9 @@ abstract class ModalContent implements ng.ShadowRootAware {
     this.root = root;
   }
 
+  void show() {
+  }
+
   void setAlert(String text, [String type]) {
     if (type != null) {
       this.alertType = type;
