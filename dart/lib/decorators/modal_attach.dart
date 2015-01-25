@@ -63,6 +63,7 @@ class ModalAttachDec {
 
   void show() {
     var modalBase = this.modalBase;
+    this.modalBase.show();
     this.modalDec.show(modalBase.submit, modalBase.cancel);
   }
 }
