@@ -1,4 +1,4 @@
-library add_org_comp;
+library org_add_comp;
 
 import 'package:pritunl/bases/modal_content/modal_content.dart' as
   modal_content;
@@ -8,13 +8,13 @@ import 'package:angular/angular.dart' show Component;
 import 'dart:async' as async;
 
 @Component(
-  selector: 'add-org',
-  templateUrl: 'packages/pritunl/components/add_org/add_org.html'
+  selector: 'org-add',
+  templateUrl: 'packages/pritunl/components/org_add/org_add.html'
 )
-class AddOrgComp extends modal_content.ModalContent {
+class OrgAddComp extends modal_content.ModalContent {
   organization.Organization model;
 
-  AddOrgComp(this.model);
+  OrgAddComp(this.model);
 
   void submit(async.Future closeHandler()) {
     var valid = this.validateForms({

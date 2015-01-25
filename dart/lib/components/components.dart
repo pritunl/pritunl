@@ -1,11 +1,5 @@
 library components;
 
-import 'package:pritunl/components/add_org/add_org.dart'
-  as add_org;
-import 'package:pritunl/components/add_user/add_user.dart'
-  as add_user;
-import 'package:pritunl/components/add_user_bulk/add_user_bulk.dart'
-  as add_user_bulk;
 import 'package:pritunl/components/alert/alert.dart'
   as alert;
 import 'package:pritunl/components/box_label/box_label.dart'
@@ -16,8 +10,6 @@ import 'package:pritunl/components/checkbox/checkbox.dart'
   as checkbox;
 import 'package:pritunl/components/container/container.dart'
   as container;
-import 'package:pritunl/components/del_org/del_org.dart'
-  as del_org;
 import 'package:pritunl/components/form_group/form_group.dart'
   as form_group;
 import 'package:pritunl/components/form_input/form_input.dart'
@@ -34,12 +26,14 @@ import 'package:pritunl/components/log_entries/log_entries.dart'
   as log_entries;
 import 'package:pritunl/components/modal/modal.dart'
   as modal;
-import 'package:pritunl/components/modify_org/modify_org.dart'
-  as modify_org;
-import 'package:pritunl/components/modify_user/modify_user.dart'
-  as modify_user;
 import 'package:pritunl/components/navbar/navbar.dart'
   as navbar;
+import 'package:pritunl/components/org_add/org_add.dart'
+  as org_add;
+import 'package:pritunl/components/org_del/org_del.dart'
+  as org_del;
+import 'package:pritunl/components/org_modify/org_modify.dart'
+  as org_modify;
 import 'package:pritunl/components/organization/organization.dart'
   as organization;
 import 'package:pritunl/components/organizations/organizations.dart'
@@ -48,20 +42,22 @@ import 'package:pritunl/components/status/status.dart'
   as status;
 import 'package:pritunl/components/user/user.dart'
   as user;
+import 'package:pritunl/components/user_add/user_add.dart'
+  as user_add;
+import 'package:pritunl/components/user_add_bulk/user_add_bulk.dart'
+  as user_add_bulk;
+import 'package:pritunl/components/user_modify/user_modify.dart'
+  as user_modify;
 
 import 'package:angular/angular.dart' as ng;
 
 class ComponentsMod extends ng.Module {
   ComponentsMod() {
-    this.bind(add_org.AddOrgComp);
-    this.bind(add_user.AddUserComp);
-    this.bind(add_user_bulk.AddUserBulkComp);
     this.bind(alert.AlertComp);
     this.bind(box_label.BoxLabelComp);
     this.bind(btn.BtnComp);
     this.bind(checkbox.CheckboxComp);
     this.bind(container.ContainerComp);
-    this.bind(del_org.DelOrgComp);
     this.bind(form_group.FormGroupComp);
     this.bind(form_input.FormInputComp);
     this.bind(form_select.FormSelectComp);
@@ -70,12 +66,16 @@ class ComponentsMod extends ng.Module {
     this.bind(glyphicon.GlyphiconComp);
     this.bind(log_entries.LogEntriesComp);
     this.bind(modal.ModalComp);
-    this.bind(modify_org.ModifyOrgComp);
-    this.bind(modify_user.ModifyUserComp);
     this.bind(navbar.NavbarComp);
+    this.bind(org_add.AddOrgComp);
+    this.bind(org_del.DelOrgComp);
+    this.bind(org_modify.ModifyOrgComp);
     this.bind(organization.OrganizationComp);
     this.bind(organizations.OrganizationsComp);
     this.bind(status.StatusComp);
     this.bind(user.UserComp);
+    this.bind(user_add.AddUserComp);
+    this.bind(user_add_bulk.AddUserBulkComp);
+    this.bind(user_modify.ModifyUserComp);
   }
 }

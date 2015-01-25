@@ -1,4 +1,4 @@
-library add_user_bulk_comp;
+library user_add_bulk_comp;
 
 import 'package:pritunl/collections/organizations.dart' as organizations;
 import 'package:pritunl/bases/modal_content/modal_content.dart' as
@@ -9,17 +9,17 @@ import 'package:angular/angular.dart' show Component, NgOneWay;
 import 'dart:async' as async;
 
 @Component(
-  selector: 'add-user-bulk',
-  templateUrl: 'packages/pritunl/components/add_user_bulk/add_user_bulk.html'
+  selector: 'user-add-bulk',
+  templateUrl: 'packages/pritunl/components/user_add_bulk/user_add_bulk.html'
 )
-class AddUserBulkComp extends modal_content.ModalContent {
+class UserAddBulkComp extends modal_content.ModalContent {
   String users;
   usrs.Users model;
 
   @NgOneWay('orgs')
   organizations.Organizations orgs;
 
-  AddUserBulkComp(this.model);
+  UserAddBulkComp(this.model);
 
   void submit(async.Future closeHandler()) {
     var usersLines;

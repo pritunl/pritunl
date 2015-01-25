@@ -1,4 +1,4 @@
-library modify_user_comp;
+library user_modify_comp;
 
 import 'package:pritunl/bases/modal_content/modal_content.dart' as
   modal_content;
@@ -8,10 +8,10 @@ import 'package:angular/angular.dart' show Component, NgOneWayOneTime;
 import 'dart:async' as async;
 
 @Component(
-  selector: 'modify-user',
-  templateUrl: 'packages/pritunl/components/modify_user/modify_user.html'
+  selector: 'user-modify',
+  templateUrl: 'packages/pritunl/components/user_modify/user_modify.html'
 )
-class ModifyUserComp extends modal_content.ModalContent {
+class UserModifyComp extends modal_content.ModalContent {
   user.User model;
 
   @NgOneWayOneTime('model')

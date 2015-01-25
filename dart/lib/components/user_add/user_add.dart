@@ -1,4 +1,4 @@
-library add_user;
+library user_add;
 
 import 'package:pritunl/collections/organizations.dart' as organizations;
 import 'package:pritunl/bases/modal_content/modal_content.dart' as
@@ -9,8 +9,8 @@ import 'package:angular/angular.dart' show Component, NgOneWay;
 import 'dart:async' as async;
 
 @Component(
-  selector: 'add-user',
-  templateUrl: 'packages/pritunl/components/add_user/add_user.html'
+  selector: 'user-add',
+  templateUrl: 'packages/pritunl/components/user_add/user_add.html'
 )
 class AddUserComp extends modal_content.ModalContent {
   user.User model;

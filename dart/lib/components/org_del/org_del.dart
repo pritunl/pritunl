@@ -1,4 +1,4 @@
-library del_org_comp;
+library org_del_comp;
 
 import 'package:pritunl/bases/modal_content/modal_content.dart' as
   modal_content;
@@ -8,10 +8,10 @@ import 'package:angular/angular.dart' show Component, NgOneWayOneTime;
 import 'dart:async' as async;
 
 @Component(
-  selector: 'del-org',
-  templateUrl: 'packages/pritunl/components/del_org/del_org.html'
+  selector: 'org-del',
+  templateUrl: 'packages/pritunl/components/org_del/org_del.html'
 )
-class DelOrgComp extends modal_content.ModalContent {
+class OrgDelComp extends modal_content.ModalContent {
   bool okDisabled = true;
 
   @NgOneWayOneTime('model')
