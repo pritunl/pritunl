@@ -25,6 +25,11 @@ class Key extends model.Model {
     return '${loc.protocol}//${loc.host}';
   }
 
+  String get _basePritunlUrl {
+    var loc = dom.window.location;
+    return 'pritunl://${loc.host}';
+  }
+
   String get fullKeyUrl {
     if (this.keyUrl == null) {
       return null;
@@ -43,7 +48,7 @@ class Key extends model.Model {
     if (this.uriUrl == null) {
       return null;
     }
-    return this._baseUrl + this.uriUrl;
+    return this._basePritunlUrl + this.uriUrl;
   }
 
   String get url {
