@@ -1,21 +1,19 @@
 <modal title="Add User" ok-text="Add">
   <alert type="alertType" text="alertText"></alert>
   <form-group>
-    <label form-group>Name</label>
+    <label>Name</label>
     <form-input class="name" type="text" placeholder="Enter name"
-      model="model.name" form-group
-      form-tooltip="Enter name"></form-input>
+      model="model.name" form-tooltip="Enter name"></form-input>
   </form-group>
   <form-group>
-    <label form-group>Select an organization</label>
+    <label>Select an organization</label>
     <form-select class="org" model="model.organization" collection="orgs"
       form-tooltip="Organization to add user to"
       opt-value="$model.id" opt-text="$model.name"></form-select>
   </form-group>
   <form-group>
-    <label form-group>Email (optional)</label>
+    <label>Email (optional)</label>
     <form-input class="email" type="text" placeholder="Enter email address"
-      model="model.email" form-group
-      form-tooltip="Email address of user"></form-input>
+      model="model.email" form-tooltip="Email address of user"></form-input>
   </form-group>
 </modal>
