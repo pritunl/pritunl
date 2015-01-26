@@ -46,6 +46,8 @@ import 'package:pritunl/components/user_add/user_add.dart'
   as user_add;
 import 'package:pritunl/components/user_add_bulk/user_add_bulk.dart'
   as user_add_bulk;
+import 'package:pritunl/components/user_key_links/user_key_links.dart'
+  as user_key_links;
 import 'package:pritunl/components/user_modify/user_modify.dart'
   as user_modify;
 
@@ -76,6 +78,7 @@ class ComponentsMod extends ng.Module {
     this.bind(user.UserComp);
     this.bind(user_add.AddUserComp);
     this.bind(user_add_bulk.UserAddBulkComp);
+    this.bind(user_key_links.UserKeyLinksComp);
     this.bind(user_modify.UserModifyComp);
   }
 }
