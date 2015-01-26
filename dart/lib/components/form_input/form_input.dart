@@ -9,7 +9,8 @@ import 'package:angular/angular.dart' show Component, NgOneWay, NgTwoWay,
 @Component(
   selector: 'form-input',
   template: '<input ng-type="type" placeholder="{{placeholder}}" '
-    'ng-readonly="readonly" ng-model="model" value="{{value}}" tooltip="{{formTooltip}}"/>',
+    'ng-readonly="readonly" ng-model="model" value="{{value}}" '
+    'tooltip="{{formTooltip}}"/>',
   cssUrl: 'packages/pritunl/components/form_input/form_input.css'
 )
 class FormInputComp extends form_control_base.FormControlBase {
