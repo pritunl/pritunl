@@ -3,12 +3,13 @@ library form_input_comp;
 import 'package:pritunl/bases/form_control/form_control.dart' as
   form_control_base;
 
-import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
+import 'package:angular/angular.dart' show Component, NgOneWay, NgTwoWay,
+  NgAttr;
 
 @Component(
   selector: 'form-input',
   template: '<input ng-type="type" placeholder="{{placeholder}}" '
-    'ng-readonly="readonly" ng-model="model" tooltip="{{formTooltip}}"/>',
+    'ng-readonly="readonly" ng-model="model" value="{{value}}" tooltip="{{formTooltip}}"/>',
   cssUrl: 'packages/pritunl/components/form_input/form_input.css'
 )
 class FormInputComp extends form_control_base.FormControlBase {
@@ -25,6 +26,9 @@ class FormInputComp extends form_control_base.FormControlBase {
 
   @NgTwoWay('model')
   String model;
+
+  @NgOneWay('value')
+  String value;
 
   var _readonly;
   @NgAttr('readonly')
