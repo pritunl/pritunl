@@ -8,7 +8,7 @@ import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
 @Component(
   selector: 'form-input',
   template: '<input ng-type="type" placeholder="{{placeholder}}" '
-    'ng-model="model" tooltip="{{formTooltip}}"/>',
+    'ng-readonly="readonly" ng-model="model" tooltip="{{formTooltip}}"/>',
   cssUrl: 'packages/pritunl/components/form_input/form_input.css'
 )
 class FormInputComp extends form_control_base.FormControlBase {
@@ -25,4 +25,18 @@ class FormInputComp extends form_control_base.FormControlBase {
 
   @NgTwoWay('model')
   String model;
+
+  var _readonly;
+  @NgAttr('readonly')
+  set readonly(dynamic val) {
+    if (val == '') {
+      this._readonly = true;
+    }
+    else {
+      this._readonly = false;
+    }
+  }
+  bool get readonly {
+    return this._readonly;
+  }
 }
