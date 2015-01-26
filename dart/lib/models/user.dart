@@ -61,6 +61,8 @@ class User extends model.Model {
   @model.Attribute('status')
   bool status;
 
+  User(ng.Http http) : super(http);
+
   String get url {
     var url = '/user/${this.organization}';
 
@@ -70,6 +72,4 @@ class User extends model.Model {
 
     return url;
   }
-
-  User(ng.Http http) : super(http);
 }
