@@ -28,8 +28,8 @@
     <glyphicon tooltip="{{true ? 'Get key links' : 'Organization must be attached to server to get key links'}}"
       type="link" modal-attach="user-key-links"></glyphicon>
 
-    <glyphicon tooltip="{{true ? 'Click to download key' : 'Organization must be attached to server to download key'}}"
-      type="download"></glyphicon>
+    <a href="{{model.keyUrl}}"><glyphicon tooltip="{{true ? 'Click to download key' : 'Organization must be attached to server to download key'}}"
+      type="download"></glyphicon></a>
 
     <glyphicon tooltip="Disable and disconnect user"
       type="ban-circle"></glyphicon>
