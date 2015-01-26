@@ -5,11 +5,11 @@
       each line with a comma separating the username from the email
       address</label>
     <form-textarea class="users" type="text" model="users"
-      rows="12" form-group spellcheck="false"
+      rows="12" spellcheck="false"
       placeholder="user1,user1@pritunl.com"></form-textarea>
   </form-group>
   <form-group>
-    <label form-group>Select an organization</label>
+    <label>Select an organization</label>
     <form-select class="org" model="model.org" collection="orgs"
       form-tooltip="Organization to add user to"
       opt-value="$model.id" opt-text="$model.name"></form-select>
