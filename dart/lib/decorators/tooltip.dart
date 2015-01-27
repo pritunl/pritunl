@@ -11,8 +11,19 @@ class TooltipDec {
   dom.Element element;
   dom.Element tooltipElem;
 
+  var _tooltip;
   @NgAttr('tooltip')
-  String tooltip;
+  get tooltip {
+    return this._tooltip;
+  }
+  set tooltip(val) {
+    this._tooltip = val;
+    if (this.tooltipElem != null) {
+      this.hide().then((_) {
+        this.show();
+      });
+    }
+  }
 
   TooltipDec(this.element) {
     this.element
@@ -82,13 +93,13 @@ class TooltipDec {
       ..opacity = '1';
   }
 
-  void hide() {
+  async.Future hide() {
     if (this.tooltipElem == null) {
-      return;
+      return null;
     }
 
     this.tooltipElem.style.opacity = '0';
-    new async.Timer(const Duration(milliseconds: 150), () {
+    return new async.Future.delayed(const Duration(milliseconds: 150), () {
       if (this.tooltipElem == null) {
         return;
       }
