@@ -24,7 +24,8 @@ class UserComp {
   bool showServers;
 
   void toggleDisabled() {
-    this.model.disabled = this.model.disabled != true;
-    this.model.save(['disabled']);
+    var model = this.model.clone();
+    model.disabled = this.model.disabled != true;
+    model.save(['disabled']);
   }
 }
