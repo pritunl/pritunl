@@ -31,11 +31,11 @@
     <a href="{{model.keyUrl}}"><glyphicon tooltip="{{true ? 'Click to download key' : 'Organization must be attached to server to download key'}}"
       type="download"></glyphicon></a>
 
-    <glyphicon tooltip="Disable and disconnect user"
-      type="ban-circle"></glyphicon>
+    <glyphicon tooltip="Disable and disconnect user" type="ban-circle"
+      ng-if="model.disabled == false"></glyphicon>
 
-    <glyphicon tooltip="Enable user" type="ok-circle"
-      ng-if="false"></glyphicon>
+    <glyphicon tooltip="Enable user"
+      type="ok-circle" ng-if="model.disabled"></glyphicon>
 
     <span ng-if="showServers != true">
       <glyphicon tooltip="Show additional user information"
