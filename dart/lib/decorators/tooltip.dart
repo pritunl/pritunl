@@ -17,14 +17,14 @@ class TooltipDec {
   TooltipDec(this.element) {
     this.element
       ..onMouseEnter.listen((_) {
-      this.show();
-    })
+        this.show();
+      })
       ..onMouseOver.listen((_) {
-      this.show();
-    })
+        this.show();
+      })
       ..onMouseLeave.listen((_) {
-      this.hide();
-    });
+        this.hide();
+      });
   }
 
   void show() {
