@@ -44,6 +44,20 @@ abstract class FormControlBase implements ng.ShadowRootAware {
     this._padding = padding;
   }
 
+  var _clickSelect;
+  @NgAttr('click-select')
+  set clickSelect(dynamic val) {
+    if (val == '') {
+      this._clickSelect = true;
+    }
+    else {
+      this._clickSelect = false;
+    }
+  }
+  bool get clickSelect {
+    return this._clickSelect;
+  }
+
   void onShadowRoot(dom.ShadowRoot root) {
     this.element = root.querySelector(this.controlSelector);
 
@@ -56,5 +70,13 @@ abstract class FormControlBase implements ng.ShadowRootAware {
 
     this.height = this.height;
     this.padding = this.padding;
+
+    if (this.clickSelect == true) {
+      dom.InputElement inputElement = this.element;
+
+      inputElement.onClick.listen((_) {
+        inputElement.select();
+      });
+    }
   }
 }
