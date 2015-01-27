@@ -6,7 +6,6 @@ import 'package:pritunl/models/user.dart' as user;
 import 'package:pritunl/models/key.dart' as ky;
 
 import 'package:angular/angular.dart' show Component, NgOneWayOneTime;
-import 'dart:async' as async;
 
 @Component(
   selector: 'user-key-links',
