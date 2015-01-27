@@ -22,4 +22,9 @@ class UserComp {
 
   @NgTwoWay('show-servers')
   bool showServers;
+
+  void toggleDisabled() {
+    this.model.disabled = this.model.disabled != true;
+    this.model.save(['disabled']);
+  }
 }
