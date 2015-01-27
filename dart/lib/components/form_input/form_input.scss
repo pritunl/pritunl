@@ -28,6 +28,6 @@ input::-moz-placeholder {
 
 input[disabled],
 input[readonly] {
-  cursor: not-allowed;
+  cursor: default;
   opacity: 1;
 }
