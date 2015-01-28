@@ -1,7 +1,19 @@
 label,
 form-input,
 btn {
-  margin: 7px;
   display: block;
   text-align: center;
+}
+
+label {
+  margin-bottom: 5px;
+}
+
+form-input {
+  margin-bottom: 15px;
+}
+
+btn {
+  margin-top: 15px;
+  margin-bottom: 20px;
 }
