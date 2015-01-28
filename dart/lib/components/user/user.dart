@@ -35,6 +35,7 @@ class UserComp {
     var model = this.model.clone();
     model.disabled = this.model.disabled != true;
     model.save(['disabled']).then((_) {
+      this.model.disabled = model.disabled;
       target.classes.remove('disabled');
     });
   }
