@@ -4,6 +4,7 @@ import 'package:pritunl/models/user.dart' as user;
 
 import 'package:angular/angular.dart' show Component, NgOneWay, NgTwoWay,
   NgCallback;
+import 'dart:html' as dom;
 
 @Component(
   selector: 'user',
@@ -23,9 +24,18 @@ class UserComp {
   @NgTwoWay('show-servers')
   bool showServers;
 
-  void toggleDisabled() {
+  void toggleDisabled(dom.Event evt) {
+    dom.Element target = evt.target;
+
+    if (target.classes.contains('disabled')) {
+      return;
+    }
+    target.classes.add('disabled');
+
     var model = this.model.clone();
     model.disabled = this.model.disabled != true;
-    model.save(['disabled']);
+    model.save(['disabled']).then((_) {
+      target.classes.remove('disabled');
+    });
   }
 }
