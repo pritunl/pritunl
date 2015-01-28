@@ -12,13 +12,13 @@ import 'dart:async' as async;
   selector: 'user-add',
   templateUrl: 'packages/pritunl/components/user_add/user_add.html'
 )
-class AddUserComp extends modal_content.ModalContent {
+class UserAddComp extends modal_content.ModalContent {
   user.User model;
 
   @NgOneWay('orgs')
   organizations.Organizations orgs;
 
-  AddUserComp(this.model);
+  UserAddComp(this.model);
 
   void submit(async.Future closeHandler()) {
     var valid = this.validateForms({

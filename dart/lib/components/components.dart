@@ -76,7 +76,7 @@ class ComponentsMod extends ng.Module {
     this.bind(organizations.OrganizationsComp);
     this.bind(status.StatusComp);
     this.bind(user.UserComp);
-    this.bind(user_add.AddUserComp);
+    this.bind(user_add.UserAddComp);
     this.bind(user_add_bulk.UserAddBulkComp);
     this.bind(user_key_links.UserKeyLinksComp);
     this.bind(user_modify.UserModifyComp);
