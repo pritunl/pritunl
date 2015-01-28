@@ -26,5 +26,6 @@ class UserOtpComp extends modal_content.ModalContent {
   }
 
   void newKey() {
+    this.model.genNewOtp();
   }
 }
