@@ -117,19 +117,28 @@ abstract class Collection extends collection.IterableBase {
     var modelCls = mirrors.reflectClass(this.model);
     var initSym = const Symbol('');
 
-    var collection = [];
-
-    data.forEach((value) {
-      var mdl = modelCls.newInstance(initSym, [this.http]).reflectee;
-      mdl.import(value);
-      collection.add(mdl);
-    });
-
-    if (this.onImport != null) {
-      this.onImport(collection);
+    for (var i = 0; i < data.length; i++) {
+      if (i < this._collection.length) {
+        this._collection[i].import(data[i]);
+      }
+      else {
+        var mdl = modelCls.newInstance(initSym, [this.http]).reflectee;
+        mdl.import(data[i]);
+        this._collection.add(mdl);
+      }
     }
 
-    this._collection = collection;
+    var diff = this._collection.length - data.length;
+
+    if (diff > 0) {
+      for (var i = 0; i < diff; i++) {
+        this._collection.removeLast();
+      }
+    }
+
+    if (this.onImport != null) {
+      this.onImport(this._collection);
+    }
 
     this.imported();
   }
