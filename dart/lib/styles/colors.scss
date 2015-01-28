@@ -573,6 +573,11 @@ body /deep/ user::shadow .status .icon.offline {
   background-color: map-get($user-status, icon-offline);
 }
 
+body /deep/ user::shadow .status .icon.disabled {
+  x-label: user-status;
+  background-color: map-get($user-status, icon-disabled);
+}
+
 body /deep/ user::shadow .buttons glyphicon {
   x-label: user-buttons;
   color: map-get($user-buttons, icon);
