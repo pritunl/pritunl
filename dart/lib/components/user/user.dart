@@ -24,6 +24,26 @@ class UserComp {
   @NgTwoWay('show-servers')
   bool showServers;
 
+  String get statusIcon {
+    if (this.model.disabled) {
+      return 'disabled';
+    }
+    else if (this.model.status) {
+      return 'online';
+    }
+    return 'offline';
+  }
+
+  String get statusText {
+    if (this.model.disabled) {
+      return 'Disabled';
+    }
+    else if (this.model.status) {
+      return 'Online';
+    }
+    return 'Offline';
+  }
+
   void toggleDisabled(dom.Event evt) {
     dom.Element target = evt.target;
 
