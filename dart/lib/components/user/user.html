@@ -14,9 +14,10 @@
       <div class="icon" ng-class="statusIcon"></div>
       <span class="title">{{statusText}}</span>
     </div>
+    <user-otp model="model"></user-otp>
     <span ng-if="model.otpAuth">
       <glyphicon tooltip="Get two-step authentication key"
-        type="qrcode"></glyphicon>
+        type="qrcode" modal-attach="user-otp"></glyphicon>
     </span>
     <user-key-links model="model"></user-key-links>
     <glyphicon tooltip="{{true ? 'Get key links' : 'Organization must be attached to server to get key links'}}"
