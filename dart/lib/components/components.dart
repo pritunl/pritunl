@@ -38,6 +38,8 @@ import 'package:pritunl/components/organization/organization.dart'
   as organization;
 import 'package:pritunl/components/organizations/organizations.dart'
   as organizations;
+import 'package:pritunl/components/qrcode/qrcode.dart'
+  as qrcode;
 import 'package:pritunl/components/status/status.dart'
   as status;
 import 'package:pritunl/components/user/user.dart'
@@ -50,6 +52,8 @@ import 'package:pritunl/components/user_key_links/user_key_links.dart'
   as user_key_links;
 import 'package:pritunl/components/user_modify/user_modify.dart'
   as user_modify;
+import 'package:pritunl/components/user_otp/user_otp.dart'
+  as user_otp;
 
 import 'package:angular/angular.dart' as ng;
 
@@ -74,11 +78,13 @@ class ComponentsMod extends ng.Module {
     this.bind(org_modify.ModifyOrgComp);
     this.bind(organization.OrganizationComp);
     this.bind(organizations.OrganizationsComp);
+    this.bind(qrcode.QrcodeComp);
     this.bind(status.StatusComp);
     this.bind(user.UserComp);
     this.bind(user_add.UserAddComp);
     this.bind(user_add_bulk.UserAddBulkComp);
     this.bind(user_key_links.UserKeyLinksComp);
     this.bind(user_modify.UserModifyComp);
+    this.bind(user_otp.UserOtpComp);
   }
 }
