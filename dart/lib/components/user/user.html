@@ -25,7 +25,7 @@
     <a href="{{model.keyUrl}}"><glyphicon tooltip="{{true ? 'Click to download key' : 'Organization must be attached to server to download key'}}"
       type="download"></glyphicon></a>
     <glyphicon ng-click="toggleDisabled($event)"
-      tooltip="{{model.disabled ? 'Disable and disconnect user' : 'Enable user'}}"
+      tooltip="{{model.disabled ? 'Enable user' : 'Disable and disconnect user'}}"
       type="{{model.disabled ? 'ok-circle' : 'ban-circle'}}"></glyphicon>
     <span ng-if="showServers != true">
       <glyphicon tooltip="Show additional user information"
