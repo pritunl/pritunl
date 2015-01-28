@@ -5,6 +5,7 @@ import 'package:pritunl/model.dart' as model;
 import 'package:angular/angular.dart' show Injectable;
 import 'package:angular/angular.dart' as ng;
 import 'dart:html' as dom;
+import 'dart:async' as async;
 
 @Injectable()
 class User extends model.Model {
@@ -78,5 +79,9 @@ class User extends model.Model {
     var loc = dom.window.location;
     return '${loc.protocol}//${loc.host}/key/${this.organization}'
       '/${this.id}.tar';
+  }
+
+  async.Future genNewOtp() {
+    return this.send('put', this.url + '/otp_secret', null);
   }
 }
