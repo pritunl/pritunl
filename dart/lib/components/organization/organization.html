@@ -4,8 +4,8 @@
     <box-label class="org-label" padding="6px 12px"
       shift-click="toggleHidden()" no-select
       type="success">Organization</box-label><h2 class="title"
-      tooltip="Click to modify this organization"><a
-      class="title" modal-attach="org-modify" no-select>{{org.name}}</a>
+      tooltip="Click to modify this organization"><a class="title"
+      modal-attach="org-modify" no-select ng-bind="org.name"></a>
     <span ng-if="showHidden" class="id">({{org.id}})</span></h2>
     <div class="box-right">
       <box-label class="user-count" type="default" padding="4px 8px"
@@ -26,7 +26,7 @@
         show-servers="showServers[user]"></user>
     </li>
     <li ng-if="message != null" class="message">
-      <span>{{message}}</span>
+      <span ng-bind="message"></span>
     </li>
   </ul>
   <div class="footer" ng-if="org.users.search == null" no-select>
@@ -39,8 +39,8 @@
     <ul class="pages" no-select>
       <li ng-repeat="page in org.users.pages">
         <a ng-click="org.users.onPage(page[1])"><span><b
-          ng-if="page[0]">{{page[1]}}</b></span><span
-          ng-if="page[0] != true">{{page[1]}}</span></a>
+          ng-if="page[0]" ng-bind="page[1]"></b></span><span
+          ng-if="page[0] != true" ng-bind="page[1]"></span></a>
       </li>
     </ul>
   </div>
