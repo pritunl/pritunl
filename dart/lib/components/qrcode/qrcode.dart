@@ -9,8 +9,7 @@ import 'dart:js' as js;
 
 @Component(
   selector: 'qrcode',
-  template: '<div></div>',
-  cssUrl: 'packages/pritunl/components/qrcode/qrcode.css'
+  template: '<div></div>'
 )
 class QrcodeComp implements ng.ShadowRootAware, ng.AttachAware {
   dom.Element qrcodeElem;
@@ -51,6 +50,9 @@ class QrcodeComp implements ng.ShadowRootAware, ng.AttachAware {
     });
 
     new js.JsObject(js.context['QRCode'], [qrcodeElem, qrSettings]);
+
+    qrcodeElem.querySelector('canvas').style.margin = '0 auto';
+    qrcodeElem.querySelector('img').style.margin = '0 auto';
 
     new async.Timer(const Duration(milliseconds: 50), () {
       this.qrcodeElem.replaceWith(qrcodeElem);
