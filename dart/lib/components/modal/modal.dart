@@ -61,6 +61,34 @@ class ModalComp {
     this._cancelText = val;
   }
 
+  var _noCancel;
+  @NgAttr('noCancel')
+  set noCancel(dynamic val) {
+    if (val == '') {
+      this._noCancel = true;
+    }
+    else {
+      this._noCancel = false;
+    }
+  }
+  bool get noCancel {
+    return this._noCancel;
+  }
+
+  var _noOk;
+  @NgAttr('noOk')
+  set noOk(dynamic val) {
+    if (val == '') {
+      this._noOk = true;
+    }
+    else {
+      this._noOk = false;
+    }
+  }
+  bool get noOk {
+    return this._noOk;
+  }
+
   void softClose(dom.Element target) {
     if (target.classes.contains('modal')) {
       this.cancel();
