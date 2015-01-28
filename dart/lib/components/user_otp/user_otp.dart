@@ -20,6 +20,11 @@ class UserOtpComp extends modal_content.ModalContent {
       '${this.model.organizationName}?secret=${this.model.otpSecret}';
   }
 
+  void reset() {
+    this.clearFormError();
+    this.clearAlert();
+  }
+
   void newKey() {
   }
 }
