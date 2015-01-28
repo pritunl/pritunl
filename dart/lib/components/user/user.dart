@@ -25,20 +25,20 @@ class UserComp {
   bool showServers;
 
   String get statusIcon {
-    if (this.model.disabled) {
+    if (this.model.disabled == true) {
       return 'disabled';
     }
-    else if (this.model.status) {
+    else if (this.model.status == true) {
       return 'online';
     }
     return 'offline';
   }
 
   String get statusText {
-    if (this.model.disabled) {
+    if (this.model.disabled == true) {
       return 'Disabled';
     }
-    else if (this.model.status) {
+    else if (this.model.status == true) {
       return 'Online';
     }
     return 'Offline';
