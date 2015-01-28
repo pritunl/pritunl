@@ -178,7 +178,7 @@ abstract class Model {
     return data;
   }
 
-  dynamic _send(String method, List<String> fields) {
+  dynamic send(String method, String url, List<String> fields) {
     var symbols = this._symbols;
     var mirror = mirrors.reflect(this);
     var methodFunc;
@@ -197,7 +197,7 @@ abstract class Model {
       throw new ArgumentError('Unkown method');
     }
 
-    return methodFunc(this.url, data).then((response) {
+    return methodFunc(url, data).then((response) {
       this.loading = false;
       this.import(response.data);
       return response.data;
@@ -210,11 +210,11 @@ abstract class Model {
   }
 
   dynamic save([List<String> fields]) {
-    return this._send('put', fields);
+    return this.send('put', this.url, fields);
   }
 
   dynamic create([List<String> fields]) {
-    return this._send('post', fields);
+    return this.send('post', this.url, fields);
   }
 
   void clear() {
