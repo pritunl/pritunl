@@ -2,6 +2,6 @@
   <label>Two-step authentication key</label>
   <form-input class="name" width="190px" value="model.otpSecret"
     type="text" readonly click-select></form-input>
-  <div class="qrcode"></div>
-  <btn type="danger" width="190px">Generate New Key</btn>
+  <qrcode width="192" height="192" text="qrcodeText"></qrcode>
+  <btn type="danger" width="190px" ng-click="newKey()">Generate New Key</btn>
 </modal>
