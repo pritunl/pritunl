@@ -22,7 +22,7 @@
       ng-class="animated[user]" ng-animate>
       <user model="user" ng-if="user.type == 'client' || showHidden"
         show-hidden="showHidden"
-        on-select="select(user)"
+        on-select="select(user, $shift)"
         selected="selected.contains(user)"
         show-servers="showServers[user]"></user>
     </li>

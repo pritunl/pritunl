@@ -82,7 +82,7 @@ class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
     this.showHidden = this.showHidden != true;
   }
 
-  void select(usr.User user) {
+  void select(usr.User user, bool shift) {
     if (this.selected.contains(user)) {
       this.selected.remove(user);
     } else {
