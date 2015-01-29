@@ -1,6 +1,6 @@
 library checkbox_comp;
 
-import 'package:angular/angular.dart' show Component, NgTwoWay;
+import 'package:angular/angular.dart' show Component, NgTwoWay, NgCallback;
 
 @Component(
   selector: 'checkbox',
@@ -12,7 +12,15 @@ class CheckboxComp {
   @NgTwoWay('state')
   bool state;
 
+  @NgCallback('on-select')
+  Function onSelect;
+
   void onClick() {
-    this.state = this.state != true;
+    if (this.onSelect != null) {
+      this.onSelect();
+    }
+    else {
+      this.state = this.state != true;
+    }
   }
 }
