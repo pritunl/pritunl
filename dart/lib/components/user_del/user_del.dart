@@ -9,7 +9,8 @@ import 'dart:async' as async;
 
 @Component(
   selector: 'user-del',
-  templateUrl: 'packages/pritunl/components/user_del/user_del.html'
+  templateUrl: 'packages/pritunl/components/user_del/user_del.html',
+  cssUrl: 'packages/pritunl/components/user_del/user_del.css'
 )
 class UserDelComp extends modal_content.ModalContent {
   @NgOneWay('users')
