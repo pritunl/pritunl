@@ -18,6 +18,8 @@ class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
   dom.ShadowRoot root;
   Map<String, String> animated = {};
   Map<String, bool> showServers = {};
+  Set<String> _userIdsSet;
+  Map<String, usr.User> _userIdsMap;
   bool showHidden;
 
   @NgOneWayOneTime('model')
@@ -43,6 +45,23 @@ class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
 
   var _usersLen = 0;
   void onUsersImport(List<usr.User> users) {
+    var userIdsSet = new Set();
+    var userIdsMap = {};
+
+    users.forEach((user) {
+      userIdsSet.add(user.id);
+      userIdsMap[user.id] = user;
+    });
+
+    if (this._userIdsSet != null) {
+      this._userIdsSet.difference(userIdsSet).forEach((id) {
+        this.selected.remove(this._userIdsMap[id]);
+      });
+    }
+    this._userIdsSet = userIdsSet;
+    this._userIdsMap = userIdsMap;
+
+
     if (users != null && users.length != this._usersLen) {
       var userItems;
       var diff = (users.length - this._usersLen).abs();
