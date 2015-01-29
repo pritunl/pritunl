@@ -9,12 +9,13 @@
       orgs="orgs"></user-add-bulk>
     <btn type="primary" modal-attach="user-add-bulk">Bulk Add Users</btn>
     <btn type="warning" disabled="true">Email Selected</btn>
-    <btn type="danger" disabled="true">Delete Selected</btn>
+    <user-del users="selected"></user-del>
+    <btn type="danger" modal-attach="user-del">Delete Selected</btn>
   </div>
 </div>
 <ul>
   <li class="org" ng-repeat="org in orgs">
-    <organization model="org"></organization>
+    <organization model="org" selected="selected"></organization>
   </li>
   <li ng-if="orgs.length == 0" class="message">
     There are no organizations on this host.

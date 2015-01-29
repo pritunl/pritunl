@@ -13,6 +13,7 @@ import 'package:angular/angular.dart' show Component;
   cssUrl: 'packages/pritunl/components/organizations/organizations.css'
 )
 class OrganizationsComp {
+  Set<user.User> selected = new Set();
   organizations.Organizations orgs;
 
   OrganizationsComp(this.orgs) {

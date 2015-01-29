@@ -1,5 +1,6 @@
 <div class="user">
-  <checkbox state="selected"></checkbox>
+  <checkbox state="selected"
+    on-select="onSelect({'$shift': $shift})"></checkbox>
   <div class="name-container">
     <user-modify model="model"></user-modify>
     <glyphicon type="user"></glyphicon><a class="name title" no-select

@@ -18,8 +18,11 @@ class UserComp {
   @NgOneWay('show-hidden')
   bool showHidden;
 
-  @NgTwoWay('selected')
+  @NgOneWay('selected')
   bool selected;
+
+  @NgCallback('on-select')
+  Function onSelect;
 
   @NgTwoWay('show-servers')
   bool showServers;
