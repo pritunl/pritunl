@@ -3,7 +3,8 @@ library organization_comp;
 import 'package:pritunl/models/organization.dart' as organization;
 import 'package:pritunl/models/user.dart' as usr;
 
-import 'package:angular/angular.dart' show Component, NgOneWay;
+import 'package:angular/angular.dart' show Component, NgOneWay,
+  NgOneWayOneTime;
 import 'package:angular/angular.dart' as ng;
 import 'dart:html' as dom;
 
@@ -17,11 +18,13 @@ class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
   dom.ShadowRoot root;
   Map<String, String> animated = {};
   Map<String, bool> showServers = {};
-  Map<String, bool> selected = {};
   bool showHidden;
 
-  @NgOneWay('model')
+  @NgOneWayOneTime('model')
   organization.Organization org;
+
+  @NgOneWay('selected')
+  Set<usr.User> selected;
 
   OrganizationComp(this.http);
 
@@ -77,6 +80,14 @@ class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
 
   void toggleHidden() {
     this.showHidden = this.showHidden != true;
+  }
+
+  void select(usr.User user) {
+    if (this.selected.contains(user)) {
+      this.selected.remove(user);
+    } else {
+      this.selected.add(user);
+    }
   }
 
   void attach() {
