@@ -61,7 +61,6 @@ class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
     this._userIdsSet = userIdsSet;
     this._userIdsMap = userIdsMap;
 
-
     if (users != null && users.length != this._usersLen) {
       var userItems;
       var diff = (users.length - this._usersLen).abs();
