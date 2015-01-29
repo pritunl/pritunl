@@ -10,7 +10,8 @@
     <btn type="primary" modal-attach="user-add-bulk">Bulk Add Users</btn>
     <btn type="warning" disabled="true">Email Selected</btn>
     <user-del users="selected"></user-del>
-    <btn type="danger" modal-attach="user-del">Delete Selected</btn>
+    <btn type="danger" modal-attach="user-del"
+      disabled="selected.length == 0">Delete Selected</btn>
   </div>
 </div>
 <ul>
