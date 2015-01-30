@@ -10,5 +10,9 @@ class Alert {
 
   Alert(this.text, this.type) {
     alerts.add(this);
+
+    while (alerts.length > 3) {
+      alerts.removeFirst();
+    }
   }
 }
