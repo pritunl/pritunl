@@ -18,7 +18,7 @@ class OrgDelComp extends modal_content.ModalContent {
   organization.Organization model;
 
   var _nameConfirm;
-  set nameConfirm(String val) {
+  void set nameConfirm(String val) {
     if (val == this.model.name) {
       this.okDisabled = false;
     }
