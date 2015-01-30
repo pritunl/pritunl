@@ -59,6 +59,7 @@ class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
         this.showServers.remove(id);
       });
     }
+
     this._userIdsSet = userIdsSet;
     this._userIdsMap = userIdsMap;
 
