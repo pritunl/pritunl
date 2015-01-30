@@ -8,8 +8,7 @@ import 'dart:collection' as collection;
 @Component(
   selector: 'alert-global',
   template: '<alert ng-repeat="alert in alerts" type="alert.type" '
-    'text="alert.text" on-dismiss="onDismiss(alert)" dismissible></alert>',
-  cssUrl: 'packages/pritunl/components/alert_global/alert_global.css'
+    'text="alert.text" on-dismiss="onDismiss(alert)" dismissible></alert>'
 )
 class AlertGlobalComp {
   collection.Queue<alrt.Alert> alerts = alrt.alerts;
