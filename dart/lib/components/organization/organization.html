@@ -24,7 +24,7 @@
         show-hidden="showHidden"
         on-select="select(user, $shift)"
         selected="selected.contains(user)"
-        show-servers="showServers[user]"></user>
+        show-servers="showServers[user.id]"></user>
     </li>
     <li ng-if="message != null" class="message">
       <span ng-bind="message"></span>
