@@ -20,18 +20,6 @@ class OrganizationsComp {
     this.update();
   }
 
-  void onAddOrg(organization.Organization model) {
-    print('addOrg: $model');
-  }
-
-  void onAddUser(user.User model) {
-    print('addUser: $model');
-  }
-
-  void onAddUserBulk(users.Users collection) {
-    print('addUserBulk: $collection');
-  }
-
   void update() {
     this.orgs.fetch();
   }

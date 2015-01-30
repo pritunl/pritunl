@@ -1,12 +1,11 @@
 <div class="header">
   <h1 class="title">Users and Organizations</h1>
   <div class="buttons">
-    <org-add on-submit="onAddOrg($model)"></org-add>
+    <org-add></org-add>
     <btn type="primary" modal-attach="org-add">Add Organization</btn>
-    <user-add on-submit="onAddUser($model)" orgs="orgs"></user-add>
+    <user-add orgs="orgs"></user-add>
     <btn type="primary" modal-attach="user-add">Add User</btn>
-    <user-add-bulk on-submit="onAddUserBulk($model)"
-      orgs="orgs"></user-add-bulk>
+    <user-add-bulk orgs="orgs"></user-add-bulk>
     <btn type="primary" modal-attach="user-add-bulk">Bulk Add Users</btn>
     <btn type="warning" disabled="true">Email Selected</btn>
     <user-del users="selected"></user-del>
