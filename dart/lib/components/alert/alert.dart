@@ -79,7 +79,7 @@ class AlertComp implements ng.ShadowRootAware {
   void close() {
     this.text = null;
     if (this.onDismiss != null) {
-      new async.Timer(const Duration(milliseconds: 175), () {
+      new async.Timer(const Duration(milliseconds: 150), () {
         this.onDismiss();
       });
     }
