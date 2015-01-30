@@ -7,7 +7,8 @@ import 'dart:collection' as collection;
 
 @Component(
   selector: 'alert-global',
-  templateUrl: 'packages/pritunl/components/alert_global/alert_global.html',
+  template: '<alert ng-repeat="alert in alerts" type="alert.type" '
+    'text="alert.text"></alert>',
   cssUrl: 'packages/pritunl/components/alert_global/alert_global.css'
 )
 class AlertGlobalComp {
