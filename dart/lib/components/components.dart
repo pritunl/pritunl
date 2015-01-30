@@ -2,6 +2,8 @@ library components;
 
 import 'package:pritunl/components/alert/alert.dart'
   as alert;
+import 'package:pritunl/components/alert_global/alert_global.dart'
+  as alert_global;
 import 'package:pritunl/components/box_label/box_label.dart'
   as box_label;
 import 'package:pritunl/components/btn/btn.dart'
@@ -62,6 +64,7 @@ import 'package:angular/angular.dart' as ng;
 class ComponentsMod extends ng.Module {
   ComponentsMod() {
     this.bind(alert.AlertComp);
+    this.bind(alert_global.AlertGlobalComp);
     this.bind(box_label.BoxLabelComp);
     this.bind(btn.BtnComp);
     this.bind(checkbox.CheckboxComp);
