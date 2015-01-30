@@ -38,7 +38,7 @@ class BtnComp implements ng.ShadowRootAware {
   bool get formSubmit {
     return this.btnType == 'submit';
   }
-  set formSubmit(dynamic val) {
+  void set formSubmit(dynamic val) {
     if (val == '') {
       this.btnType = 'submit';
     }
