@@ -16,8 +16,8 @@ import 'dart:html' as dom;
 class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
   ng.Http http;
   dom.ShadowRoot root;
-  Map<String, String> animated = {};
-  Map<String, bool> showServers = {};
+  Map<usr.User, String> animated = {};
+  Map<usr.User, bool> showServers = {};
   Set<String> _userIdsSet;
   Map<String, usr.User> _userIdsMap;
   bool showHidden;
