@@ -26,6 +26,8 @@ class UserOtpComp extends modal_content.ModalContent {
   }
 
   void newKey() {
-    this.model.genNewOtp();
+    this.model.genNewOtp().then((_) {
+      this.setAlert('Successfully generated new key.', 'success');
+    });
   }
 }
