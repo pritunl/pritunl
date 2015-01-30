@@ -28,7 +28,7 @@ class Organization extends model.Model {
   String get id {
     return this._id;
   }
-  set id(String val) {
+  void set id(String val) {
     this.users.org = val;
     this._id = val;
   }
