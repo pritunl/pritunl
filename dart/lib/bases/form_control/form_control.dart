@@ -13,7 +13,7 @@ abstract class FormControlBase implements ng.ShadowRootAware {
   String get width {
     return this._width;
   }
-  set width(String width) {
+  void set width(String width) {
     if (this.element != null) {
       this.element.style.width = width;
     }
@@ -25,7 +25,7 @@ abstract class FormControlBase implements ng.ShadowRootAware {
   String get height {
     return this._height;
   }
-  set height(String height) {
+  void set height(String height) {
     if (this.element != null) {
       this.element.style.height = height;
     }
@@ -37,7 +37,7 @@ abstract class FormControlBase implements ng.ShadowRootAware {
   String get padding {
     return this._padding;
   }
-  set padding(String padding) {
+  void set padding(String padding) {
     if (this.element != null) {
       this.element.style.padding = padding;
     }
@@ -46,7 +46,7 @@ abstract class FormControlBase implements ng.ShadowRootAware {
 
   var _clickSelect;
   @NgAttr('click-select')
-  set clickSelect(dynamic val) {
+  void set clickSelect(dynamic val) {
     if (val == '') {
       this._clickSelect = true;
     }
