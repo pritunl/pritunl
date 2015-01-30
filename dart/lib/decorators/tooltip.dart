@@ -16,7 +16,7 @@ class TooltipDec {
   get tooltip {
     return this._tooltip;
   }
-  set tooltip(val) {
+  void set tooltip(val) {
     this._tooltip = val;
     if (this.tooltipElem != null) {
       this.hide().then((_) {
