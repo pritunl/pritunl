@@ -1,8 +1,6 @@
 library organizations_comp;
 
 import 'package:pritunl/collections/organizations.dart' as organizations;
-import 'package:pritunl/collections/users.dart' as users;
-import 'package:pritunl/models/organization.dart' as organization;
 import 'package:pritunl/models/user.dart' as user;
 
 import 'package:angular/angular.dart' show Component;
