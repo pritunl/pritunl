@@ -28,6 +28,9 @@ class UserOtpComp extends modal_content.ModalContent {
   void newKey() {
     this.model.genNewOtp().then((_) {
       this.setAlert('Successfully generated new key.', 'success');
+    }).catchError((err) {
+      this.setAlert('Failed to generate new key, server error occurred.',
+        'danger');
     });
   }
 }
