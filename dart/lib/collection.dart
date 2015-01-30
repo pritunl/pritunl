@@ -21,7 +21,7 @@ abstract class Collection extends collection.IterableBase {
   Function onImport;
 
   var _loading;
-  set loading(bool val) {
+  void set loading(bool val) {
     if (val) {
       var loadCheckId = new math.Random().nextInt(32000);
       this._loadCheckId = loadCheckId;
