@@ -22,6 +22,9 @@ class AlertComp implements ng.ShadowRootAware {
   @NgTwoWay('text')
   String text = '';
 
+  @NgCallback('on-dismiss')
+  Function onDismiss;
+
   var _dismissible;
   @NgAttr('dismissible')
   void set dismissible(dynamic val) {
@@ -75,5 +78,10 @@ class AlertComp implements ng.ShadowRootAware {
 
   void close() {
     this.text = null;
+    if (this.onDismiss != null) {
+      new async.Timer(const Duration(milliseconds: 175), () {
+        this.onDismiss();
+      });
+    }
   }
 }
