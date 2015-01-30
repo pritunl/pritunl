@@ -101,7 +101,11 @@ abstract class ModalContent implements ng.ShadowRootAware {
 
   void submit(async.Future closeHandler()) {
     closeHandler().then((_) {
-      var clone = this.model.clone();
+      var clone;
+      if (this.model != null) {
+        clone = this.model.clone();
+      }
+
       this.reset();
       this.onSubmit({r'$model': clone});
     });
