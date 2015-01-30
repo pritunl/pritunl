@@ -17,7 +17,7 @@ class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
   ng.Http http;
   dom.ShadowRoot root;
   Map<usr.User, String> animated = {};
-  Map<usr.User, bool> showServers = {};
+  Map<String, bool> showServers = {};
   Set<String> _userIdsSet;
   Map<String, usr.User> _userIdsMap;
   bool showHidden;
