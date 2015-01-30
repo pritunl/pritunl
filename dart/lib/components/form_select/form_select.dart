@@ -39,7 +39,7 @@ class FormSelectComp extends form_control_base.FormControlBase {
     }
     return this._model;
   }
-  set model(String val) {
+  void set model(String val) {
     this._model = val;
   }
 
