@@ -28,7 +28,7 @@ class ModalComp {
   get advanced {
     return this._advanced;
   }
-  set advanced(val) {
+  void set advanced(val) {
     if (val == '') {
       this._advanced = true;
     }
@@ -45,7 +45,7 @@ class ModalComp {
     }
     return 'Ok';
   }
-  set okText(String val) {
+  void set okText(String val) {
     this._okText = val;
   }
 
@@ -57,13 +57,13 @@ class ModalComp {
     }
     return 'Cancel';
   }
-  set cancelText(String val) {
+  void set cancelText(String val) {
     this._cancelText = val;
   }
 
   var _noCancel;
   @NgAttr('noCancel')
-  set noCancel(dynamic val) {
+  void set noCancel(dynamic val) {
     if (val == '') {
       this._noCancel = true;
     }
@@ -77,7 +77,7 @@ class ModalComp {
 
   var _noOk;
   @NgAttr('noOk')
-  set noOk(dynamic val) {
+  void set noOk(dynamic val) {
     if (val == '') {
       this._noOk = true;
     }
