@@ -25,7 +25,7 @@ class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
   @NgOneWayOneTime('model')
   organization.Organization org;
 
-  @NgOneWay('selected')
+  @NgOneWayOneTime('selected')
   Set<usr.User> selected;
 
   OrganizationComp(this.http);
