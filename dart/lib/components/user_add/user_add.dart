@@ -4,6 +4,7 @@ import 'package:pritunl/collections/organizations.dart' as organizations;
 import 'package:pritunl/bases/modal_content/modal_content.dart' as
   modal_content;
 import 'package:pritunl/models/user.dart' as user;
+import 'package:pritunl/alert.dart' as alrt;
 
 import 'package:angular/angular.dart' show Component, NgOneWay;
 import 'dart:async' as async;
@@ -20,7 +21,7 @@ class UserAddComp extends modal_content.ModalContent {
 
   UserAddComp(this.model);
 
-  void submit(async.Future closeHandler()) {
+  async.Future submit(async.Future closeHandler()) {
     var valid = this.validateForms({
       'name': '.name',
       'organization': '.org',
@@ -28,11 +29,15 @@ class UserAddComp extends modal_content.ModalContent {
     });
 
     if (valid != true) {
-      return;
+      return null;
     }
 
-    this.model.create(['name', 'organization', 'email']).then((_) {
-      super.submit(closeHandler);
+    return this.model.create(['name', 'organization', 'email']).then((_) {
+      return super.submit(closeHandler);
+    }).then((_) {
+      new alrt.Alert('Successfully added user.', 'success');
+    }).catchError((err) {
+      this.setAlert('Failed to add user, server error occurred.', 'danger');
     });
   }
 }
