@@ -33,7 +33,7 @@ class FormInputComp extends form_control_base.FormControlBase {
 
   var _readonly;
   @NgAttr('readonly')
-  set readonly(dynamic val) {
+  void set readonly(dynamic val) {
     if (val == '') {
       this._readonly = true;
     }
