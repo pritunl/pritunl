@@ -5,6 +5,7 @@ dependencies:
   web_components: ">=0.10.0"
   browser: ">=0.10.0+2"
   barback: ">=0.14.1"
+  logging: ">=0.9.3"
 transformers:
 - pritunl
 - angular
