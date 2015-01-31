@@ -6,11 +6,13 @@ import 'package:pritunl/components/components.dart' as components;
 import 'package:pritunl/decorators/decorators.dart' as decorators;
 import 'package:pritunl/formatters/formatters.dart' as formatters;
 import 'package:pritunl/models/models.dart' as models;
+import 'package:pritunl/logger.dart' as logger;
 
 import 'package:angular/application_factory.dart' as appfactory;
 import 'package:angular/animate/module.dart' as animate;
 
 void main() {
+  logger.setup();
   appfactory.applicationFactory()
     .addModule(new routers.RoutersMod())
     .addModule(new collections.CollectionsMod())
