@@ -3,6 +3,8 @@ library org_del_comp;
 import 'package:pritunl/bases/modal_content/modal_content.dart' as
   modal_content;
 import 'package:pritunl/models/organization.dart' as organization;
+import 'package:pritunl/alert.dart' as alrt;
+import 'package:pritunl/logger.dart' as logger;
 
 import 'package:angular/angular.dart' show Component, NgOneWayOneTime;
 import 'dart:async' as async;
@@ -38,9 +40,15 @@ class OrgDelComp extends modal_content.ModalContent {
     this.nameConfirm = null;
   }
 
-  void submit(async.Future closeHandler()) {
-    this.model.destroy().then((_) {
-      super.submit(closeHandler);
+  async.Future submit(async.Future closeHandler()) {
+    return this.model.destroy().then((_) {
+      return super.submit(closeHandler);
+    }).then((_) {
+      new alrt.Alert('Successfully deleted organization.', 'success');
+    }).catchError((err) {
+      logger.severe('Failed to delete organization', err);
+      this.setAlert('Failed to delete organization, server error occurred.',
+      'danger');
     });
   }
 }
