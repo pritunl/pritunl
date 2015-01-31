@@ -205,7 +205,7 @@ abstract class Model {
       this.loading = false;
       this.errorStatus = err.status;
       this.errorData = err.data;
-      
+
       return new async.Future.error(err);
     });
   }
