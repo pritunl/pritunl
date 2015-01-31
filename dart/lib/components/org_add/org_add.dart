@@ -3,6 +3,8 @@ library org_add_comp;
 import 'package:pritunl/bases/modal_content/modal_content.dart' as
   modal_content;
 import 'package:pritunl/models/organization.dart' as organization;
+import 'package:pritunl/alert.dart' as alrt;
+import 'package:pritunl/logger.dart' as logger;
 
 import 'package:angular/angular.dart' show Component;
 import 'dart:async' as async;
@@ -16,17 +18,23 @@ class OrgAddComp extends modal_content.ModalContent {
 
   OrgAddComp(this.model);
 
-  void submit(async.Future closeHandler()) {
+  async.Future submit(async.Future closeHandler()) {
     var valid = this.validateForms({
       'name': '.name',
     });
 
     if (valid != true) {
-      return;
+      return null;
     }
 
-    this.model.create(['name']).then((_) {
-      super.submit(closeHandler);
+    return this.model.create(['name']).then((_) {
+      return super.submit(closeHandler);
+    }).then((_) {
+      new alrt.Alert('Successfully added organization.', 'success');
+    }).catchError((err) {
+      logger.severe('Failed to add organization', err);
+      this.setAlert('Failed to add organization, server error occurred.',
+        'danger');
     });
   }
 }
