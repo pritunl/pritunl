@@ -209,11 +209,11 @@ abstract class Model {
     });
   }
 
-  async.Future  save([List<String> fields]) {
+  async.Future save([List<String> fields]) {
     return this.send('put', this.url, fields);
   }
 
-  async.Future  create([List<String> fields]) {
+  async.Future create([List<String> fields]) {
     return this.send('post', this.url, fields);
   }
 
