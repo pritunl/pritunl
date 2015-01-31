@@ -4,6 +4,8 @@ import 'package:pritunl/collections/organizations.dart' as organizations;
 import 'package:pritunl/bases/modal_content/modal_content.dart' as
   modal_content;
 import 'package:pritunl/collections/users.dart' as usrs;
+import 'package:pritunl/alert.dart' as alrt;
+import 'package:pritunl/logger.dart' as logger;
 
 import 'package:angular/angular.dart' show Component, NgOneWay;
 import 'dart:async' as async;
@@ -21,7 +23,7 @@ class UserAddBulkComp extends modal_content.ModalContent {
 
   UserAddBulkComp(this.model);
 
-  void submit(async.Future closeHandler()) {
+  async.Future submit(async.Future closeHandler()) {
     var usersLines;
 
     if (this.users != null) {
@@ -30,7 +32,7 @@ class UserAddBulkComp extends modal_content.ModalContent {
 
     if (usersLines == null || usersLines.length == 0) {
       this.setFormError('.users', 'User list cannot be empty');
-      return;
+      return null;
     }
 
     for(var line in usersLines) {
@@ -57,11 +59,16 @@ class UserAddBulkComp extends modal_content.ModalContent {
 
     if (valid != true) {
       this.model.clear();
-      return;
+      return null;
     }
 
-    this.model.create(['name', 'email']).then((_) {
-      super.submit(closeHandler);
+    return this.model.create(['name', 'email']).then((_) {
+      return super.submit(closeHandler);
+    }).then((_) {
+      new alrt.Alert('Successfully added users.', 'success');
+    }).catchError((err) {
+      logger.severe('Failed to add users', err);
+      this.setAlert('Failed to add users, server error occurred.', 'danger');
     });
   }
 
