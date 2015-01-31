@@ -3,6 +3,8 @@ library org_modify_comp;
 import 'package:pritunl/bases/modal_content/modal_content.dart' as
   modal_content;
 import 'package:pritunl/models/organization.dart' as organization;
+import 'package:pritunl/alert.dart' as alrt;
+import 'package:pritunl/logger.dart' as logger;
 
 import 'package:angular/angular.dart' show Component, NgOneWayOneTime;
 import 'dart:async' as async;
@@ -21,17 +23,23 @@ class ModifyOrgComp extends modal_content.ModalContent {
     this.model = this.origModel.clone();
   }
 
-  void submit(async.Future closeHandler()) {
+  async.Future submit(async.Future closeHandler()) {
     var valid = this.validateForms({
       'name': '.name',
     });
 
     if (valid != true) {
-      return;
+      return null;
     }
 
-    this.model.save(['name']).then((_) {
-      super.submit(closeHandler);
+    return this.model.save(['name']).then((_) {
+      return super.submit(closeHandler);
+    }).then((_) {
+      new alrt.Alert('Successfully modified organization.', 'success');
+    }).catchError((err) {
+      logger.severe('Failed to modify organization', err);
+      this.setAlert('Failed to modify organization, server error occurred.',
+        'danger');
     });
   }
 }
