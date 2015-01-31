@@ -178,7 +178,7 @@ abstract class Model {
     return data;
   }
 
-  dynamic send(String method, String url, List<String> fields) {
+  async.Future send(String method, String url, List<String> fields) {
     var symbols = this._symbols;
     var mirror = mirrors.reflect(this);
     var methodFunc;
@@ -209,11 +209,11 @@ abstract class Model {
     });
   }
 
-  dynamic save([List<String> fields]) {
+  async.Future  save([List<String> fields]) {
     return this.send('put', this.url, fields);
   }
 
-  dynamic create([List<String> fields]) {
+  async.Future  create([List<String> fields]) {
     return this.send('post', this.url, fields);
   }
 
