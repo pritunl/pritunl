@@ -1,4 +1,4 @@
-library user_del;
+library user_del_comp;
 
 import 'package:pritunl/bases/modal_content/modal_content.dart' as
   modal_content;
