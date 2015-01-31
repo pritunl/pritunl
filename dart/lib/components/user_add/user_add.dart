@@ -1,4 +1,4 @@
-library user_add;
+library user_add_comp;
 
 import 'package:pritunl/collections/organizations.dart' as organizations;
 import 'package:pritunl/bases/modal_content/modal_content.dart' as
