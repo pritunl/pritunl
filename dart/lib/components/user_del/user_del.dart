@@ -18,19 +18,10 @@ class UserDelComp extends modal_content.ModalContent {
   @NgOneWay('users')
   Set<usr.User> users;
 
-  async.Future _destroyUsers(Iterator<usr.User> users) {
-    users.moveNext();
-    if (users.current == null) {
-      return null;
-    }
-
-    return users.current.destroy().then((_) {
-      return this._destroyUsers(users);
-    });
-  }
-
   async.Future submit(async.Future closeHandler()) {
-    return this._destroyUsers(this.users.iterator).then((_) {
+    return async.Future.wait(this.users.map((user) {
+      return user.destroy();
+    })).then((_) {
       return super.submit(closeHandler);
     }).then((_) {
       new alrt.Alert('Successfully added user.', 'success');
