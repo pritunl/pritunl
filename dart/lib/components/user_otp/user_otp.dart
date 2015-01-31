@@ -1,4 +1,4 @@
-library user_otp;
+library user_otp_comp;
 
 import 'package:pritunl/bases/modal_content/modal_content.dart' as
   modal_content;
