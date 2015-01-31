@@ -37,6 +37,7 @@ class UserAddComp extends modal_content.ModalContent {
     }).then((_) {
       new alrt.Alert('Successfully added user.', 'success');
     }).catchError((err) {
+      logger.severe('Failed to add user', err);
       this.setAlert('Failed to add user, server error occurred.', 'danger');
     });
   }
