@@ -5,7 +5,7 @@ import 'package:logging/logging.dart' as logging;
 logging.Logger log = new logging.Logger('pritunl');
 
 void setup() {
-  logging.Logger.root.level = logging.Level.ALL;
+  logging.Logger.root.level = logging.Level.FINE;
   logging.Logger.root.onRecord.listen((logging.LogRecord rec) {
     print('${rec.level.name}: ${rec.time}: ${rec.message}');
   });
