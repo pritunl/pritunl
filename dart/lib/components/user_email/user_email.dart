@@ -54,6 +54,7 @@ class UserEmailComp extends modal_content.ModalContent {
         'danger');
     }).whenComplete(() {
       this.okDisabled = false;
+      this.userClass.clear();
     });
   }
 }
