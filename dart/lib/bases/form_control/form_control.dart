@@ -47,7 +47,7 @@ abstract class FormControlBase implements ng.ShadowRootAware {
   var _clickSelect;
   @NgAttr('click-select')
   void set clickSelect(dynamic val) {
-    if (val == '') {
+    if (val == '' || val == 'click-select') {
       this._clickSelect = true;
     }
     else {

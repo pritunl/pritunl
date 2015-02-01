@@ -28,7 +28,7 @@ class AlertComp implements ng.ShadowRootAware {
   var _dismissible;
   @NgAttr('dismissible')
   void set dismissible(dynamic val) {
-    if (val == '') {
+    if (val == '' || val == 'dismissible') {
       this._dismissible = true;
     }
     else {
