@@ -14,6 +14,7 @@ import 'package:angular/angular.dart' show Component, NgOneWayOneTime;
 class UserOtpComp extends modal_content.ModalContent {
   @NgOneWayOneTime('model')
   user.User model;
+  bool genKeyDisabled;
 
   String get qrcodeText {
     return 'otpauth://totp/${this.model.name}@'
@@ -26,11 +27,15 @@ class UserOtpComp extends modal_content.ModalContent {
   }
 
   void newKey() {
+    this.genKeyDisabled = true;
+
     this.model.genNewOtp().then((_) {
       this.setAlert('Successfully generated new key.', 'success');
     }).catchError((err) {
       this.setAlert('Failed to generate new key, server error occurred.',
         'danger');
+    }).whenComplete(() {
+      this.genKeyDisabled = false;
     });
   }
 }

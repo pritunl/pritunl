@@ -4,5 +4,6 @@
   <form-input class="name" width="190px" value="model.otpSecret"
     type="text" readonly click-select></form-input>
   <qrcode width="192" height="192" text="qrcodeText"></qrcode>
-  <btn type="danger" width="190px" ng-click="newKey()">Generate New Key</btn>
+  <btn type="danger" width="190px" ng-click="newKey()"
+    disabled="genKeyDisabled">Generate New Key</btn>
 </modal>
