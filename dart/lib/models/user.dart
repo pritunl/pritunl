@@ -63,6 +63,9 @@ class User extends model.Model {
   @model.Attribute('status')
   bool status;
 
+  @model.Attribute('send_key_email')
+  bool _sendKeyEmail;
+
   User(ng.Http http) : super(http);
 
   String get url {
@@ -83,5 +86,11 @@ class User extends model.Model {
 
   async.Future genNewOtp() {
     return this.send('put', this.url + '/otp_secret', null);
+  }
+
+  async.Future mailKey() {
+    var clone = this.clone();
+    clone._sendKeyEmail = true;
+    return clone.save(['send_key_email']);
   }
 }
