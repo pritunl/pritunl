@@ -29,6 +29,8 @@ class UserDelComp extends modal_content.ModalContent {
       logger.severe('Failed to delete users', err);
       this.setAlert('Failed to delete users, server error occurred.',
         'danger');
+    }).whenComplete(() {
+      this.okDisabled = false;
     });
   }
 }
