@@ -61,6 +61,7 @@ class UserAddBulkComp extends modal_content.ModalContent {
       this.model.clear();
       return null;
     }
+    this.okDisabled = true;
 
     return this.model.create(['name', 'email']).then((_) {
       return super.submit(closeHandler);
@@ -69,6 +70,8 @@ class UserAddBulkComp extends modal_content.ModalContent {
     }).catchError((err) {
       logger.severe('Failed to add users', err);
       this.setAlert('Failed to add users, server error occurred.', 'danger');
+    }).whenComplete(() {
+      this.okDisabled = false;
     });
   }
 
