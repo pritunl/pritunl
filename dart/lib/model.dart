@@ -120,7 +120,7 @@ abstract class Model {
       this.loading = false;
       this.errorStatus = err.status;
       this.errorData = err.data;
-      throw err;
+      return new async.Future.error(err);
     });
   }
 
@@ -135,7 +135,7 @@ abstract class Model {
       this.loading = false;
       this.errorStatus = err.status;
       this.errorData = err.data;
-      throw err;
+      return new async.Future.error(err);
     });
   }
 
