@@ -23,6 +23,14 @@ class UserEmailComp extends modal_content.ModalContent {
   Set<usr.User> users;
 
   async.Future submit(async.Future closeHandler()) {
+    if (this.okText == 'Close') {
+      return super.submit(closeHandler).then((_) {
+        this.noCancel = null;
+        this.okText = 'Send';
+      });
+    }
+    this.okDisabled = true;
+
     return async.Future.wait(this.users.map((user) {
       if (user.email == null) {
         return new async.Future.sync(() {
@@ -44,6 +52,8 @@ class UserEmailComp extends modal_content.ModalContent {
       logger.severe('Failed to email users', err);
       this.setAlert('Failed to email users, server error occurred.',
         'danger');
+    }).whenComplete(() {
+      this.okDisabled = false;
     });
   }
 }
