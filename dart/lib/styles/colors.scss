@@ -593,3 +593,9 @@ body /deep/ user::shadow .user-servers .server + .server {
   x-label: user;
   border-color: map-get($user, border);
 }
+
+body /deep/ user-del::shadow .users li,
+body /deep/ user-del::shadow .users li {
+  x-label: user;
+  color: map-get($user-list, fg);
+}
