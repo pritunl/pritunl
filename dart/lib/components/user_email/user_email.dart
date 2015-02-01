@@ -43,6 +43,7 @@ class UserEmailComp extends modal_content.ModalContent {
         this.noCancel = null;
         this.okText = 'Send';
         this.userClass.clear();
+        this.userMsg.clear();
       });
     }
     this.okDisabled = true;
@@ -51,13 +52,16 @@ class UserEmailComp extends modal_content.ModalContent {
       if (user.email == null) {
         return new async.Future.sync(() {
           this.userClass[user] = 'warning-text';
+          this.userMsg[user] = 'Skipped';
         });
       }
 
       return user.mailKey().then((_) {
         this.userClass[user] = 'success-text';
+        this.userMsg[user] = 'Sent';
       }).catchError((err) {
         this.userClass[user] = 'danger-text';
+        this.userMsg[user] = 'Error';
         return new async.Future.error(err);
       });
     })).then((_) {
