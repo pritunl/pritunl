@@ -32,6 +32,7 @@ class UserModifyComp extends modal_content.ModalContent {
     if (valid != true) {
       return null;
     }
+    this.okDisabled = true;
 
     return this.model.save(['name', 'email']).then((_) {
       return super.submit(closeHandler);
@@ -41,6 +42,8 @@ class UserModifyComp extends modal_content.ModalContent {
       logger.severe('Failed to modified user', err);
       this.setAlert('Failed to modified user, server error occurred.',
         'danger');
+    }).whenComplete(() {
+      this.okDisabled = false;
     });
   }
 }
