@@ -15,13 +15,14 @@ import 'dart:async' as async;
 )
 class OrgDelComp extends modal_content.ModalContent {
   bool okDisabled = true;
+  bool locked;
 
   @NgOneWayOneTime('model')
   organization.Organization model;
 
   var _nameConfirm;
   void set nameConfirm(String val) {
-    if (val == this.model.name) {
+    if (val == this.model.name && this.locked != true) {
       this.okDisabled = false;
     }
     else {
@@ -41,6 +42,9 @@ class OrgDelComp extends modal_content.ModalContent {
   }
 
   async.Future submit(async.Future closeHandler()) {
+    this.locked = true;
+    this.okDisabled = true;
+
     return this.model.destroy().then((_) {
       return super.submit(closeHandler);
     }).then((_) {
@@ -49,6 +53,9 @@ class OrgDelComp extends modal_content.ModalContent {
       logger.severe('Failed to delete organization', err);
       this.setAlert('Failed to delete organization, server error occurred.',
       'danger');
+    }).catchError((err) {
+      this.locked = false;
+      this.okDisabled = false;
     });
   }
 }
