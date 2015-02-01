@@ -1,2 +1,2 @@
 flask>=0.8
-pymongo
+pymongo>=2.7.1

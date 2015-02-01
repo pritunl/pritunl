@@ -107,7 +107,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'flask>=0.8',
-        'pymongo', # TODO utopic package missing ver files - pymongo>=2.7.1
+        'pymongo>=2.7.1', # TODO utopic package missing req files
     ],
     data_files=data_files,
     entry_points={
