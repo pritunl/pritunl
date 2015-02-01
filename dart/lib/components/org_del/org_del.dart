@@ -53,7 +53,7 @@ class OrgDelComp extends modal_content.ModalContent {
       logger.severe('Failed to delete organization', err);
       this.setAlert('Failed to delete organization, server error occurred.',
       'danger');
-    }).catchError((err) {
+    }).whenComplete(() {
       this.locked = false;
       this.okDisabled = false;
     });
