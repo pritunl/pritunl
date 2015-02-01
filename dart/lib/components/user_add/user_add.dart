@@ -32,6 +32,7 @@ class UserAddComp extends modal_content.ModalContent {
     if (valid != true) {
       return null;
     }
+    this.okDisabled = true;
 
     return this.model.create(['name', 'organization', 'email']).then((_) {
       return super.submit(closeHandler);
@@ -40,6 +41,8 @@ class UserAddComp extends modal_content.ModalContent {
     }).catchError((err) {
       logger.severe('Failed to add user', err);
       this.setAlert('Failed to add user, server error occurred.', 'danger');
+    }).whenComplete(() {
+      this.okDisabled = false;
     });
   }
 }
