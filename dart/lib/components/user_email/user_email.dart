@@ -42,6 +42,7 @@ class UserEmailComp extends modal_content.ModalContent {
       return super.submit(closeHandler).then((_) {
         this.noCancel = null;
         this.okText = 'Send';
+        this.userClass.clear();
       });
     }
     this.okDisabled = true;
@@ -69,7 +70,6 @@ class UserEmailComp extends modal_content.ModalContent {
         'danger');
     }).whenComplete(() {
       this.okDisabled = false;
-      this.userClass.clear();
     });
   }
 }
