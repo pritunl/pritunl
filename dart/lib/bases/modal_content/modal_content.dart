@@ -14,6 +14,8 @@ abstract class ModalContent implements ng.ShadowRootAware {
   dom.Element _errorForm;
   String alertType;
   String alertText;
+  bool okDisabled;
+  bool cancelDisabled;
 
   @NgCallback('on-submit')
   Function onSubmit;
