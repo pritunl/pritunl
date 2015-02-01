@@ -26,6 +26,7 @@ class OrgAddComp extends modal_content.ModalContent {
     if (valid != true) {
       return null;
     }
+    this.okDisabled = true;
 
     return this.model.create(['name']).then((_) {
       return super.submit(closeHandler);
@@ -35,6 +36,8 @@ class OrgAddComp extends modal_content.ModalContent {
       logger.severe('Failed to add organization', err);
       this.setAlert('Failed to add organization, server error occurred.',
         'danger');
+    }).whenComplete(() {
+      this.okDisabled = false;
     });
   }
 }
