@@ -62,9 +62,9 @@ class ModalComp {
   }
 
   var _noCancel;
-  @NgAttr('noCancel')
+  @NgAttr('no-cancel')
   void set noCancel(dynamic val) {
-    if (val == '') {
+    if (val == '' || val == 'no-cancel') {
       this._noCancel = true;
     }
     else {
@@ -76,9 +76,9 @@ class ModalComp {
   }
 
   var _noOk;
-  @NgAttr('noOk')
+  @NgAttr('no-ok')
   void set noOk(dynamic val) {
-    if (val == '') {
+    if (val == '' || val == 'no-ok') {
       this._noOk = true;
     }
     else {
