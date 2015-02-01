@@ -595,7 +595,7 @@ body /deep/ user::shadow .user-servers .server + .server {
 }
 
 body /deep/ user-del::shadow .users li,
-body /deep/ user-del::shadow .users li {
+body /deep/ user-email::shadow .users li {
   x-label: user;
   color: map-get($user-list, fg);
 }
