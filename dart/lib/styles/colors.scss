@@ -372,24 +372,28 @@ body /deep/ form-select.danger::shadow select:focus {
 // ####################################
 // fraction
 // ####################################
+body /deep/ .default-text,
 body /deep/ fraction::shadow .default {
   x-label: text;
-  color: map-get($text, default-fg);
+  color: map-get($text, default-fg) !important;
 }
 
+body /deep/ .danger-text,
 body /deep/ fraction::shadow .danger {
   x-label: text;
-  color: map-get($text, danger-fg);
+  color: map-get($text, danger-fg) !important;
 }
 
+body /deep/ .warning-text,
 body /deep/ fraction::shadow .warning {
   x-label: text;
-  color: map-get($text, warning-fg);
+  color: map-get($text, warning-fg) !important;
 }
 
+body /deep/ .success-text,
 body /deep/ fraction::shadow .success {
   x-label: text;
-  color: map-get($text, success-fg);
+  color: map-get($text, success-fg) !important;
 }
 
 // ####################################
