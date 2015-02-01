@@ -18,9 +18,24 @@ class UserEmailComp extends modal_content.ModalContent {
   String okText = 'Send';
   String noCancel;
   Map<usr.User, String> userClass = {};
+  Map<usr.User, String> userMsg = {};
 
   @NgOneWay('users')
   Set<usr.User> users;
+
+  String getUserData(usr.User user) {
+    var data = user.name;
+
+    if (user.email != null) {
+      data += ' (${user.email})';
+    }
+
+    if (this.userMsg[user] != null) {
+      data += ' - ${this.userMsg[user]}';
+    }
+
+    return data;
+  }
 
   async.Future submit(async.Future closeHandler()) {
     if (this.okText == 'Close') {
