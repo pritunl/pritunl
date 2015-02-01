@@ -31,6 +31,7 @@ class ModifyOrgComp extends modal_content.ModalContent {
     if (valid != true) {
       return null;
     }
+    this.okDisabled = true;
 
     return this.model.save(['name']).then((_) {
       return super.submit(closeHandler);
@@ -40,6 +41,8 @@ class ModifyOrgComp extends modal_content.ModalContent {
       logger.severe('Failed to modify organization', err);
       this.setAlert('Failed to modify organization, server error occurred.',
         'danger');
+    }).whenComplete(() {
+      this.okDisabled = false;
     });
   }
 }
