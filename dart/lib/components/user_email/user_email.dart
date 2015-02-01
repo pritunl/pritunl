@@ -15,15 +15,30 @@ import 'dart:async' as async;
   cssUrl: 'packages/pritunl/components/user_email/user_email.css'
 )
 class UserEmailComp extends modal_content.ModalContent {
+  String okText = 'Send';
+  String noCancel;
+  Map<usr.User, String> userClass = {};
+
   @NgOneWay('users')
   Set<usr.User> users;
 
   async.Future submit(async.Future closeHandler()) {
     return async.Future.wait(this.users.map((user) {
-      return user.mailKey();
+      if (user.email == null) {
+        return new async.Future.sync(() {
+          this.userClass[user] = 'warning-text';
+        });
+      }
+
+      return user.mailKey().then((_) {
+        this.userClass[user] = 'success-text';
+      }).catchError((err) {
+        this.userClass[user] = 'danger-text';
+        return new async.Future.error(err);
+      });
     })).then((_) {
-      return super.submit(closeHandler);
-    }).then((_) {
+      this.noCancel = 'no-cancel';
+      this.okText = 'Close';
       this.setAlert('Successfully emailed users.', 'success');
     }).catchError((err) {
       logger.severe('Failed to email users', err);
