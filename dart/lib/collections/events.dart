@@ -12,7 +12,7 @@ class Events extends collection.Collection {
   String cursor;
 
   String get url {
-    var url = 'event';
+    var url = '/event';
 
     if (this.cursor != null) {
       url += '/${this.cursor}';
