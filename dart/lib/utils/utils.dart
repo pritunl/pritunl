@@ -33,3 +33,7 @@ import 'dart:html' as dom;
   }
   return null;
 }
+
+String getDomain() {
+  return '${dom.window.location.protocol}//${dom.window.location.host}';
+}
