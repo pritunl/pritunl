@@ -15,8 +15,9 @@ abstract class Collection extends collection.IterableBase {
   ng.Http http;
   String url;
   Type model;
+  String error;
+  String errorMsg;
   int errorStatus;
-  dynamic errorData;
   bool loadingLong;
   Function onImport;
 
@@ -95,14 +96,28 @@ abstract class Collection extends collection.IterableBase {
       return response.data;
     }).catchError((err) {
       this.loading = false;
-      this.errorStatus = err.status;
-      this.errorData = err.data;
-      throw err;
-    });
+      return new async.Future.error(this.parseError(err));
+    }, test: (e) => e is ng.HttpResponse);
   }
 
   dynamic parse(dynamic data) {
     return data;
+  }
+
+  dynamic parseError(dynamic err) {
+    var httpErr = new HttpError(err);
+
+    this.error = httpErr.error;
+    this.errorMsg = httpErr.errorMsg;
+    this.errorStatus = httpErr.resp.status;
+
+    return httpErr;
+  }
+
+  void clearError() {
+    this.error = null;
+    this.errorMsg = null;
+    this.errorStatus = null;
   }
 
   void import(dynamic responseData) {
@@ -173,10 +188,8 @@ abstract class Collection extends collection.IterableBase {
       return response.data;
     }).catchError((err) {
       this.loading = false;
-      this.errorStatus = err.status;
-      this.errorData = err.data;
-      throw err;
-    });
+      return new async.Future.error(this.parseError(err));
+    }, test: (e) => e is ng.HttpResponse);
   }
 
   dynamic save([List<String> fields]) {
