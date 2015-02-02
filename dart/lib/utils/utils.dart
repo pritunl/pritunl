@@ -2,6 +2,7 @@ library utils;
 
 import 'package:angular/introspection.dart' as introspection;
 import 'dart:html' as dom;
+import 'dart:math' as math;
 
 dynamic getDirective(dom.Node node, [var type]) {
   while (node != null) {
@@ -32,6 +33,18 @@ dynamic getDirective(dom.Node node, [var type]) {
     }
   }
   return null;
+}
+
+String uuid() {
+  var rand = new math.Random();
+  var id = '';
+
+  for (var i = 0; i < 8; i++) {
+    id += ((1 + rand.nextDouble()) * 0x10000).floor().toRadixString(
+      16).substring(1);
+  }
+
+  return id;
 }
 
 String getDomain() {
