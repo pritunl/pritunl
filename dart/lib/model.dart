@@ -1,5 +1,7 @@
 library model;
 
+import 'package:pritunl/utils/utils.dart' as utils;
+
 import 'package:angular/angular.dart' as ng;
 import 'dart:mirrors' as mirrors;
 import 'dart:async' as async;
@@ -31,8 +33,9 @@ abstract class Model {
   int _loadCheckId;
   ng.Http http;
   String url;
+  String error;
+  String errorMsg;
   int errorStatus;
-  dynamic errorData;
   bool loadingLong;
 
   Map<String, Symbol> get _symbols {
@@ -118,9 +121,7 @@ abstract class Model {
       return response.data;
     }).catchError((err) {
       this.loading = false;
-      this.errorStatus = err.status;
-      this.errorData = err.data;
-      return new async.Future.error(err);
+      return new async.Future.error(this.parseError(err));
     });
   }
 
@@ -133,14 +134,22 @@ abstract class Model {
       return response.data;
     }).catchError((err) {
       this.loading = false;
-      this.errorStatus = err.status;
-      this.errorData = err.data;
-      return new async.Future.error(err);
+      return new async.Future.error(this.parseError(err));
     });
   }
 
   dynamic parse(dynamic data) {
     return data;
+  }
+
+  dynamic parseError(dynamic err) {
+    var httpErr = new utils.HttpError(err);
+
+    this.error = httpErr.error;
+    this.errorMsg = httpErr.errorMsg;
+    this.errorStatus = httpErr.resp.status;
+
+    return httpErr;
   }
 
   void import(dynamic responseData) {
@@ -203,10 +212,7 @@ abstract class Model {
       return response.data;
     }).catchError((err) {
       this.loading = false;
-      this.errorStatus = err.status;
-      this.errorData = err.data;
-
-      return new async.Future.error(err);
+      return new async.Future.error(this.parseError(err));
     });
   }
 
