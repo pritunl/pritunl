@@ -1,6 +1,6 @@
 library model;
 
-import 'package:pritunl/utils/utils.dart' as utils;
+import 'package:pritunl/exceptions.dart';
 
 import 'package:angular/angular.dart' as ng;
 import 'dart:mirrors' as mirrors;
@@ -145,7 +145,7 @@ abstract class Model {
   }
 
   dynamic parseError(dynamic err) {
-    var httpErr = new utils.HttpError(err);
+    var httpErr = new HttpError(err);
 
     this.error = httpErr.error;
     this.errorMsg = httpErr.errorMsg;
