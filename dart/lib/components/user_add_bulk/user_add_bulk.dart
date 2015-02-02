@@ -69,7 +69,7 @@ class UserAddBulkComp extends modal_content.ModalContent {
       new alrt.Alert('Successfully added users.', 'success');
     }).catchError((err) {
       logger.severe('Failed to add users', err);
-      this.setAlert('Failed to add users, server error occurred.', 'danger');
+      this.setHttpError('Failed to add users, server error occurred.', err);
     }).whenComplete(() {
       this.okDisabled = false;
     });

@@ -40,8 +40,8 @@ class UserModifyComp extends modal_content.ModalContent {
       new alrt.Alert('Successfully modified user.', 'success');
     }).catchError((err) {
       logger.severe('Failed to modified user', err);
-      this.setAlert('Failed to modified user, server error occurred.',
-        'danger');
+      this.setHttpError(
+        'Failed to modified user, server error occurred.', err);
     }).whenComplete(() {
       this.okDisabled = false;
     });

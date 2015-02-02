@@ -34,8 +34,8 @@ class OrgAddComp extends modal_content.ModalContent {
       new alrt.Alert('Successfully added organization.', 'success');
     }).catchError((err) {
       logger.severe('Failed to add organization', err);
-      this.setAlert('Failed to add organization, server error occurred.',
-        'danger');
+      this.setHttpError('Failed to add organization, server error occurred.',
+        err);
     }).whenComplete(() {
       this.okDisabled = false;
     });

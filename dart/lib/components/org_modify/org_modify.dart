@@ -39,8 +39,8 @@ class ModifyOrgComp extends modal_content.ModalContent {
       new alrt.Alert('Successfully modified organization.', 'success');
     }).catchError((err) {
       logger.severe('Failed to modify organization', err);
-      this.setAlert('Failed to modify organization, server error occurred.',
-        'danger');
+      this.setHttpError(
+        'Failed to modify organization, server error occurred.', err);
     }).whenComplete(() {
       this.okDisabled = false;
     });
