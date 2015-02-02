@@ -1,6 +1,7 @@
 library user_mod;
 
 import 'package:pritunl/model.dart' as model;
+import 'package:pritunl/utils/utils.dart' as utils;
 
 import 'package:angular/angular.dart' show Injectable;
 import 'package:angular/angular.dart' as ng;
@@ -64,7 +65,7 @@ class User extends model.Model {
   bool status;
 
   @model.Attribute('send_key_email')
-  bool _sendKeyEmail;
+  String _sendKeyEmail;
 
   User(ng.Http http) : super(http);
 
@@ -90,7 +91,7 @@ class User extends model.Model {
 
   async.Future mailKey() {
     var clone = this.clone();
-    clone._sendKeyEmail = true;
+    clone._sendKeyEmail = utils.getDomain();
     return clone.save(['send_key_email']);
   }
 }
