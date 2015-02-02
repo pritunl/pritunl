@@ -152,6 +152,12 @@ abstract class Model {
     return httpErr;
   }
 
+  void clearError() {
+    this.error = null;
+    this.errorMsg = null;
+    this.errorStatus = null;
+  }
+
   void import(dynamic responseData) {
     var symbols = this._symbols;
     var data = this.parse(responseData);
