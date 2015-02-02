@@ -70,8 +70,7 @@ class UserEmailComp extends modal_content.ModalContent {
       this.setAlert('Successfully emailed users.', 'success');
     }).catchError((err) {
       logger.severe('Failed to email users', err);
-      this.setAlert('Failed to email users, server error occurred.',
-        'danger');
+      this.setHttpError('Failed to email users, server error occurred.', err);
     }).whenComplete(() {
       this.okDisabled = false;
     });
