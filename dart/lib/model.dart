@@ -117,6 +117,7 @@ abstract class Model {
 
     return this.http.get(this.url).then((response) {
       this.loading = false;
+      this.clearError();
       this.import(response.data);
       return response.data;
     }).catchError((err) {
@@ -130,6 +131,7 @@ abstract class Model {
 
     return this.http.delete(this.url).then((response) {
       this.loading = false;
+      this.clearError();
       this.import(response.data);
       return response.data;
     }).catchError((err) {
@@ -214,6 +216,7 @@ abstract class Model {
 
     return methodFunc(url, data).then((response) {
       this.loading = false;
+      this.clearError();
       this.import(response.data);
       return response.data;
     }).catchError((err) {
