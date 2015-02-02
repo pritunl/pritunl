@@ -17,7 +17,7 @@ class Event extends model.Model {
   String resourceId;
 
   @model.Attribute('timestamp')
-  String timestamp;
+  double timestamp;
 
   Event(ng.Http http) : super(http);
 }
