@@ -48,6 +48,15 @@ abstract class ModalContent implements ng.ShadowRootAware {
     this.setAlert(null);
   }
 
+  void setHttpError(String defaultMsg, utils.HttpError err) {
+    if (err.errorMsg != null) {
+      this.setAlert(err.errorMsg, 'danger');
+    }
+    else {
+      this.setAlert(defaultMsg, 'danger');
+    }
+  }
+
   void setFormError(String selector, dynamic error, [String type]) {
     if (error is Error) {
       error = error.toString();
