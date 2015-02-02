@@ -1,5 +1,6 @@
 library modal_content_base;
 
+import 'package:pritunl/exceptions.dart';
 import 'package:pritunl/components/alert/alert.dart' as alrt;
 import 'package:pritunl/utils/utils.dart' as utils;
 
@@ -48,7 +49,7 @@ abstract class ModalContent implements ng.ShadowRootAware {
     this.setAlert(null);
   }
 
-  void setHttpError(String defaultMsg, utils.HttpError err) {
+  void setHttpError(String defaultMsg, HttpError err) {
     if (err.errorMsg != null) {
       this.setAlert(err.errorMsg, 'danger');
     }
