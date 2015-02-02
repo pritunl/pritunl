@@ -123,7 +123,7 @@ abstract class Model {
     }).catchError((err) {
       this.loading = false;
       return new async.Future.error(this.parseError(err));
-    });
+    }, test: (e) => e is ng.HttpResponse);
   }
 
   async.Future destroy() {
@@ -137,7 +137,7 @@ abstract class Model {
     }).catchError((err) {
       this.loading = false;
       return new async.Future.error(this.parseError(err));
-    });
+    }, test: (e) => e is ng.HttpResponse);
   }
 
   dynamic parse(dynamic data) {
@@ -222,7 +222,7 @@ abstract class Model {
     }).catchError((err) {
       this.loading = false;
       return new async.Future.error(this.parseError(err));
-    });
+    }, test: (e) => e is ng.HttpResponse);
   }
 
   async.Future save([List<String> fields]) {
