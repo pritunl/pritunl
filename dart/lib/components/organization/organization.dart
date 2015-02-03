@@ -2,6 +2,7 @@ library organization_comp;
 
 import 'package:pritunl/models/organization.dart' as organization;
 import 'package:pritunl/models/user.dart' as usr;
+import 'package:pritunl/event.dart' as evnt;
 
 import 'package:angular/angular.dart' show Component, NgOneWay,
   NgOneWayOneTime;
@@ -28,7 +29,13 @@ class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
   @NgOneWayOneTime('selected')
   Set<usr.User> selected;
 
-  OrganizationComp(this.http);
+  OrganizationComp(this.http) {
+    evnt.register(this.onEvent, 'users_updated');
+  }
+
+  void onEvent(event) {
+    print('event: $event');
+  }
 
   String get message {
     if (this.org.users.loadingLong == true) {
