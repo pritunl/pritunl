@@ -11,13 +11,18 @@ class Listener {
   void deregister() {
     listeners[this._key].remove(this._listener);
   }
+
+  void update(String type, [String resource]) {
+    this.deregister();
+    register(this._listener, type, resource);
+  }
 }
 
-Listener register(Function listener, String type, [String resourceId]) {
+Listener register(Function listener, String type, [String resource]) {
   var key;
 
-  if (resourceId != null) {
-    key = '$type:$resourceId';
+  if (resource != null) {
+    key = '$type:$resource';
   }
   else {
     key = type;
