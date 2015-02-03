@@ -29,13 +29,7 @@ class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
   @NgOneWayOneTime('selected')
   Set<usr.User> selected;
 
-  OrganizationComp(this.http) {
-    evnt.register(this.onEvent, 'users_updated');
-  }
-
-  void onEvent(event) {
-    print('event: $event');
-  }
+  OrganizationComp(this.http);
 
   String get message {
     if (this.org.users.loadingLong == true) {
@@ -117,12 +111,18 @@ class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
     }
   }
 
+  void onEvent(event) {
+    print('event: ${event.type} resource: ${event.resourceId}');
+  }
+
   void attach() {
     this.org.users.onImport = this.onUsersImport;
     if (this.org.users.page == null) {
       this.org.users.page = 0;
     }
     this.update();
+
+    evnt.register(this.onEvent, 'users_updated', this.org.id);
   }
 
   void onShadowRoot(dom.ShadowRoot root) {
