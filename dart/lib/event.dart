@@ -1,6 +1,6 @@
 library event;
 
-Map<String, Set<Function>> listeners;
+Map<String, Set<Function>> listeners = {};
 
 void register(Function listener, String type, [String resourceId]) {
   var key;
