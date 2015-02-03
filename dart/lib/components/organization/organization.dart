@@ -2,7 +2,6 @@ library organization_comp;
 
 import 'package:pritunl/models/organization.dart' as organization;
 import 'package:pritunl/models/user.dart' as usr;
-import 'package:pritunl/event.dart' as evnt;
 
 import 'package:angular/angular.dart' show Component, NgOneWay,
   NgOneWayOneTime;
