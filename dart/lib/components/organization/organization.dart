@@ -103,13 +103,12 @@ class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
     this.org.users.onChange = this.clearUser;
     this.org.users.onRemove = this.clearUser;
     this.org.users.onImport = this.onUsersImport;
+    this.org.users.eventRegister(this.onEvent);
 
     if (this.org.users.page == null) {
       this.org.users.page = 0;
     }
     this.update();
-
-    evnt.register(this.onEvent, 'users_updated', this.org.id);
   }
 
   void onShadowRoot(dom.ShadowRoot root) {
