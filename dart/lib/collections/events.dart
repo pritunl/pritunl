@@ -32,10 +32,11 @@ class Events extends collection.Collection {
     }
 
     for (var event in this) {
-      var listenerSets = [event.type];
+      var listenerSets = [evnt.listeners[event.type]];
 
       if (event.resourceId != null) {
-        listenerSets.add('${event.type}:${event.resourceId}');
+        listenerSets.add(
+          evnt.listeners['${event.type}:${event.resourceId}']);
       }
 
       listenerSets.forEach((listeners) {
