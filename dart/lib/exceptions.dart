@@ -31,4 +31,11 @@ class HttpError extends Error {
       this.resp = err;
     }
   }
+
+  String toString() {
+    if (this.errorMsg != null) {
+      return this.errorMsg;
+    }
+    return this.resp.toString();
+  }
 }
