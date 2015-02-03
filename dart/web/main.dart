@@ -8,12 +8,14 @@ import 'package:pritunl/formatters/formatters.dart' as formatters;
 import 'package:pritunl/models/models.dart' as models;
 import 'package:pritunl/logger.dart' as logger;
 
+import 'package:pritunl/collections/events.dart' as evnts;
+
 import 'package:angular/application_factory.dart' as appfactory;
 import 'package:angular/animate/module.dart' as animate;
 
 void main() {
   logger.setup();
-  appfactory.applicationFactory()
+  var app = appfactory.applicationFactory()
     .addModule(new routers.RoutersMod())
     .addModule(new collections.CollectionsMod())
     .addModule(new components.ComponentsMod())
@@ -22,4 +24,6 @@ void main() {
     .addModule(new models.ModelsMod())
     .addModule(new animate.AnimationModule())
     .run();
+
+  app.get(evnts.Events).start();
 }
