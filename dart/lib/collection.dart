@@ -9,8 +9,7 @@ import 'package:angular/angular.dart' as ng;
 import 'dart:mirrors' as mirrors;
 import 'dart:collection' as collection;
 
-abstract class Collection extends remote.Remote implements
-    collection.IterableBase {
+abstract class Collection extends remote.Remote with collection.IterableMixin {
   List<mdl.Model> _collection;
   Function onAdd;
   Function onChange;
