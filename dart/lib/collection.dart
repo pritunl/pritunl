@@ -2,6 +2,7 @@ library collection;
 
 import 'package:pritunl/exceptions.dart';
 import 'package:pritunl/model.dart' as mdl;
+import 'package:pritunl/event.dart' as evnt;
 
 import 'package:angular/angular.dart' as ng;
 import 'dart:mirrors' as mirrors;
@@ -23,6 +24,7 @@ abstract class Collection extends collection.IterableBase {
   Function onAdd;
   Function onChange;
   Function onRemove;
+  evnt.Listener listener;
 
   var _loading;
   void set loading(bool val) {
@@ -46,6 +48,14 @@ abstract class Collection extends collection.IterableBase {
   }
   bool get loading {
     return this._loading;
+  }
+
+  String get eventType {
+    throw new UnimplementedError();
+  }
+
+  String get eventResource {
+    return null;
   }
 
   Collection(this.http) : _collection = [];
@@ -115,6 +125,21 @@ abstract class Collection extends collection.IterableBase {
     this.errorStatus = httpErr.resp.status;
 
     return httpErr;
+  }
+
+  void eventRegister(Function listener) {
+    this.listener = evnt.register(listener,
+    this.eventType, this.eventResource);
+  }
+
+  void eventDeregister() {
+    this.listener.deregister();
+  }
+
+  void eventUpdate() {
+    if (this.listener != null) {
+      this.listener.update(this.eventType, this.eventResource);
+    }
   }
 
   void clearError() {
