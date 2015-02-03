@@ -19,8 +19,6 @@ class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
   dom.ShadowRoot root;
   Map<usr.User, String> animated = {};
   Map<String, bool> showServers = {};
-  Set<String> _userIdsSet;
-  Map<String, usr.User> _userIdsMap;
   bool showHidden;
 
   @NgOneWayOneTime('model')
@@ -46,24 +44,6 @@ class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
 
   var _usersLen = 0;
   void onUsersImport(List<usr.User> users) {
-    var userIdsSet = new Set();
-    var userIdsMap = {};
-
-    users.forEach((user) {
-      userIdsSet.add(user.id);
-      userIdsMap[user.id] = user;
-    });
-
-    if (this._userIdsSet != null) {
-      this._userIdsSet.difference(userIdsSet).forEach((id) {
-        this.selected.remove(this._userIdsMap[id]);
-        this.showServers.remove(id);
-      });
-    }
-
-    this._userIdsSet = userIdsSet;
-    this._userIdsMap = userIdsMap;
-
     if (users != null && users.length != this._usersLen) {
       var userItems;
       var diff = (users.length - this._usersLen).abs();
@@ -115,8 +95,16 @@ class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
     print('event: ${event.type} resource: ${event.resourceId}');
   }
 
+  void clearUser(usr.User user) {
+    this.selected.remove(user);
+    this.showServers.remove(user.hashCode.toString());
+  }
+
   void attach() {
+    this.org.users.onChange = this.clearUser;
+    this.org.users.onRemove = this.clearUser;
     this.org.users.onImport = this.onUsersImport;
+
     if (this.org.users.page == null) {
       this.org.users.page = 0;
     }
