@@ -4,13 +4,14 @@ import 'package:pritunl/collections/organizations.dart' as organizations;
 import 'package:pritunl/models/user.dart' as user;
 
 import 'package:angular/angular.dart' show Component;
+import 'package:angular/angular.dart' as ng;
 
 @Component(
   selector: 'organizations',
   templateUrl: 'packages/pritunl/components/organizations/organizations.html',
   cssUrl: 'packages/pritunl/components/organizations/organizations.css'
 )
-class OrganizationsComp {
+class OrganizationsComp implements ng.AttachAware, ng.DetachAware {
   Set<user.User> selected = new Set();
   organizations.Organizations orgs;
 
@@ -19,6 +20,16 @@ class OrganizationsComp {
   }
 
   void update() {
-    this.orgs.fetch();
+    this.orgs.fetch().then((_) {
+      print(this.orgs);
+    });
+  }
+
+  void attach() {
+    this.orgs.eventRegister((_) => this.update());
+  }
+
+  void detach() {
+    this.orgs.eventDeregister();
   }
 }
