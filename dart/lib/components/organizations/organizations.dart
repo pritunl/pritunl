@@ -20,9 +20,7 @@ class OrganizationsComp implements ng.AttachAware, ng.DetachAware {
   }
 
   void update() {
-    this.orgs.fetch().then((_) {
-      print(this.orgs);
-    });
+    this.orgs.fetch();
   }
 
   void attach() {
