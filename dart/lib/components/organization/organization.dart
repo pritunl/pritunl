@@ -91,10 +91,6 @@ class OrganizationComp implements ng.AttachAware, ng.DetachAware,
     }
   }
 
-  void onEvent(event) {
-    print('event: ${event.type} resource: ${event.resourceId}');
-  }
-
   void clearUser(usr.User user) {
     this.selected.remove(user);
     this.showServers.remove(user.hashCode.toString());
@@ -104,7 +100,7 @@ class OrganizationComp implements ng.AttachAware, ng.DetachAware,
     this.org.users.onChange = this.clearUser;
     this.org.users.onRemove = this.clearUser;
     this.org.users.onImport = this.onUsersImport;
-    this.org.users.eventRegister(this.onEvent);
+    this.org.users.eventRegister(this.update);
 
     if (this.org.users.page == null) {
       this.org.users.page = 0;
