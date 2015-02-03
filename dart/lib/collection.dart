@@ -20,6 +20,9 @@ abstract class Collection extends collection.IterableBase {
   int errorStatus;
   bool loadingLong;
   Function onImport;
+  Function onAdd;
+  Function onChange;
+  Function onRemove;
 
   var _loading;
   void set loading(bool val) {
@@ -135,11 +138,19 @@ abstract class Collection extends collection.IterableBase {
     for (var i = 0; i < data.length; i++) {
       if (i < this._collection.length) {
         this._collection[i].import(data[i]);
+        this.changed(this._collection[i]);
+        if (this.onChange != null) {
+          this.onChange(this._collection[i]);
+        }
       }
       else {
         var mdl = modelCls.newInstance(initSym, [this.http]).reflectee;
         mdl.import(data[i]);
         this._collection.add(mdl);
+        this.added(mdl);
+        if (this.onAdd != null) {
+          this.onAdd(mdl);
+        }
       }
     }
 
@@ -147,7 +158,11 @@ abstract class Collection extends collection.IterableBase {
 
     if (diff > 0) {
       for (var i = 0; i < diff; i++) {
-        this._collection.removeLast();
+        var mdl = this._collection.removeLast();
+        this.removed(mdl);
+        if (this.onRemove != null) {
+          this.onRemove(mdl);
+        }
       }
     }
 
@@ -159,6 +174,15 @@ abstract class Collection extends collection.IterableBase {
   }
 
   void imported() {
+  }
+
+  void added(mdl.Model model) {
+  }
+
+  void changed(mdl.Model model) {
+  }
+
+  void removed(mdl.Model model) {
   }
 
   dynamic _send(String method, List<String> fields) {
