@@ -8,6 +8,7 @@ import 'dart:async' as async;
 import 'dart:math' as math;
 
 abstract class Remote {
+  int _loadCheckId;
   ng.Http http;
   String url;
   String error;
@@ -16,7 +17,6 @@ abstract class Remote {
   bool loadingLong;
   evnt.Listener listener;
   Function onImport;
-  int _loadCheckId;
 
   Remote(this.http);
 
