@@ -12,8 +12,8 @@ import 'dart:math' as math;
 @Injectable()
 class Users extends collection.Collection {
   String _search;
-  bool noUsers;
   Type model = user.User;
+  String eventType = 'users_updated';
   String org;
   int page;
   int pageTotal;
@@ -22,12 +22,9 @@ class Users extends collection.Collection {
   bool searchMore;
   double searchTime;
   int searchLimit;
+  bool noUsers;
 
   Users(ng.Http http) : super(http);
-
-  String get eventType {
-    return 'users_updated';
-  }
 
   String get eventResource {
     return this.org;
