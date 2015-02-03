@@ -13,7 +13,8 @@ import 'dart:html' as dom;
   templateUrl: 'packages/pritunl/components/organization/organization.html',
   cssUrl: 'packages/pritunl/components/organization/organization.css'
 )
-class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
+class OrganizationComp implements ng.AttachAware, ng.DetachAware,
+    ng.ShadowRootAware {
   ng.Http http;
   dom.ShadowRoot root;
   Map<usr.User, String> animated = {};
@@ -109,6 +110,10 @@ class OrganizationComp implements ng.AttachAware, ng.ShadowRootAware {
       this.org.users.page = 0;
     }
     this.update();
+  }
+
+  void detach() {
+    this.org.users.eventDeregister();
   }
 
   void onShadowRoot(dom.ShadowRoot root) {
