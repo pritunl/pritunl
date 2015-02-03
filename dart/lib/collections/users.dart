@@ -25,6 +25,14 @@ class Users extends collection.Collection {
 
   Users(ng.Http http) : super(http);
 
+  String get eventType {
+    return 'users_updated';
+  }
+
+  String get eventResource {
+    return this.org;
+  }
+
   String get url {
     var url = '/user/${this.org}';
 
