@@ -22,14 +22,6 @@ abstract class Collection extends remote.Remote with collection.IterableMixin {
     return this._collection.iterator;
   }
 
-  int get length {
-    return this._collection.length;
-  }
-
-  dynamic operator [](int index) {
-    return this._collection[index];
-  }
-
   void add(Map<String, dynamic> attrs) {
     var modelCls = mirrors.reflectClass(this.model);
     var initSym = const Symbol('');
