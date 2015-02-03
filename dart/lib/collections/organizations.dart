@@ -9,6 +9,7 @@ import 'package:angular/angular.dart' as ng;
 @Injectable()
 class Organizations extends collection.Collection {
   Type model = org.Organization;
+  String eventType = 'orgs_updated';
 
   String get url {
     return '/organization';
