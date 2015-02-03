@@ -100,7 +100,7 @@ class OrganizationComp implements ng.AttachAware, ng.DetachAware,
     this.org.users.onChange = this.clearUser;
     this.org.users.onRemove = this.clearUser;
     this.org.users.onImport = this.onUsersImport;
-    this.org.users.eventRegister((_) => this.update);
+    this.org.users.eventRegister((_) => this.update());
 
     if (this.org.users.page == null) {
       this.org.users.page = 0;
