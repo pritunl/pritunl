@@ -56,7 +56,7 @@ abstract class Collection extends remote.Remote with collection.IterableMixin {
 
   void eventRegister(Function listener) {
     this.listener = evnt.register(listener,
-    this.eventType, this.eventResource);
+      this.eventType, this.eventResource);
   }
 
   void eventDeregister() {
