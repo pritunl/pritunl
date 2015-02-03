@@ -1,11 +1,11 @@
 library model;
 
-import 'package:pritunl/exceptions.dart';
+import 'package:pritunl/remote.dart' as remote;
+import 'package:pritunl/event.dart' as evnt;
 
 import 'package:angular/angular.dart' as ng;
 import 'dart:mirrors' as mirrors;
 import 'dart:async' as async;
-import 'dart:math' as math;
 
 Map<Type, Map<String, Symbol>> _attrSymbols = {};
 Map<Type, Map<String, Function>> _attrValidators = {};
@@ -29,14 +29,8 @@ class Invalid extends Error {
   toString() => this.message;
 }
 
-abstract class Model {
-  int _loadCheckId;
-  ng.Http http;
-  String url;
-  String error;
-  String errorMsg;
-  int errorStatus;
-  bool loadingLong;
+abstract class Model extends remote.Remote {
+  Model(ng.Http http) : super(http);
 
   Map<String, Symbol> get _symbols {
     if (!_attrSymbols.containsKey(this.runtimeType)) {
@@ -66,32 +60,6 @@ abstract class Model {
     return _attrValidators[this.runtimeType];
   }
 
-  var _loading;
-  void set loading(bool val) {
-    if (val) {
-      var loadCheckId = new math.Random().nextInt(32000);
-      this._loadCheckId = loadCheckId;
-      this._loading = true;
-
-      new async.Future.delayed(
-        const Duration(milliseconds: 200), () {
-          if (this._loadCheckId == loadCheckId) {
-            this.loadingLong = true;
-          }
-        });
-    }
-    else {
-      this._loadCheckId = null;
-      this.loadingLong = false;
-      this._loading = false;
-    }
-  }
-  bool get loading {
-    return this._loading;
-  }
-
-  Model(this.http);
-
   void validate(String name) {
     var symbols = this._symbols;
     var validators = this._validators;
@@ -112,52 +80,19 @@ abstract class Model {
     return clone.reflectee;
   }
 
-  async.Future fetch() {
-    this.loading = true;
-
-    return this.http.get(this.url).then((response) {
-      this.loading = false;
-      this.clearError();
-      this.import(response.data);
-      return response.data;
-    }).catchError((err) {
-      this.loading = false;
-      return new async.Future.error(this.parseError(err));
-    }, test: (e) => e is ng.HttpResponse);
+  void eventRegister(Function listener) {
+    this.listener = evnt.register(listener,
+      this.eventType, this.eventResource);
   }
 
-  async.Future destroy() {
-    this.loading = true;
-
-    return this.http.delete(this.url).then((response) {
-      this.loading = false;
-      this.clearError();
-      this.import(response.data);
-      return response.data;
-    }).catchError((err) {
-      this.loading = false;
-      return new async.Future.error(this.parseError(err));
-    }, test: (e) => e is ng.HttpResponse);
+  void eventDeregister() {
+    this.listener.deregister();
   }
 
-  dynamic parse(dynamic data) {
-    return data;
-  }
-
-  dynamic parseError(dynamic err) {
-    var httpErr = new HttpError(err);
-
-    this.error = httpErr.error;
-    this.errorMsg = httpErr.errorMsg;
-    this.errorStatus = httpErr.resp.status;
-
-    return httpErr;
-  }
-
-  void clearError() {
-    this.error = null;
-    this.errorMsg = null;
-    this.errorStatus = null;
+  void eventUpdate() {
+    if (this.listener != null) {
+      this.listener.update(this.eventType, this.eventResource);
+    }
   }
 
   void import(dynamic responseData) {
@@ -173,6 +108,12 @@ abstract class Model {
 
       mirror.setField(symbol, value);
     });
+
+    if (this.onImport != null) {
+      this.onImport();
+    }
+
+    this.imported();
   }
 
   Map<String, dynamic> export([List<String> fields]) {
@@ -193,6 +134,20 @@ abstract class Model {
     }
 
     return data;
+  }
+
+  async.Future destroy() {
+    this.loading = true;
+
+    return this.http.delete(this.url).then((response) {
+      this.loading = false;
+      this.clearError();
+      this.import(response.data);
+      return response.data;
+    }).catchError((err) {
+      this.loading = false;
+      return new async.Future.error(this.parseError(err));
+    }, test: (e) => e is ng.HttpResponse);
   }
 
   async.Future send(String method, String url, List<String> fields) {
