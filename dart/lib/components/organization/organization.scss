@@ -64,23 +64,23 @@
   margin-left: 6px;
 }
 
-.user-list .animated-ins-add {
+.user-item.ng-enter {
   overflow: hidden;
   max-height: 0;
   @include transition(max-height .3s ease-in-out);
 }
 
-.user-list .animated-ins-add-active {
+.user-item.ng-enter-active {
   max-height: 200px;
 }
 
-.user-list .animated-rem.ng-leave {
+.user-item.ng-leave {
   overflow: hidden;
   max-height: 200px;
   @include transition(max-height .3s ease-in-out);
 }
 
-.user-list .animated-rem.ng-leave-active {
+.user-item.ng-leave-active {
   max-height: 0;
 }
 
