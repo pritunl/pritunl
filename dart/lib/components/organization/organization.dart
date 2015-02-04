@@ -98,7 +98,6 @@ class OrganizationComp implements ng.ScopeAware, ng.ShadowRootAware {
   void set scope(ng.Scope scope) {
     scope.on('users_updated').listen((evt) {
       if (evt.data.resourceId == this.org.id) {
-        print('users_updated');
         this.org.users.fetch();
       }
     });
