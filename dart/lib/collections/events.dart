@@ -12,6 +12,7 @@ import 'dart:async' as async;
 class Events extends collection.Collection {
   Type model = event.Event;
   String cursor;
+  ng.RootScope rootScope;
 
   String get url {
     var url = '/event';
@@ -23,7 +24,7 @@ class Events extends collection.Collection {
     return url;
   }
 
-  Events(ng.Http http) : super(http);
+  Events(ng.Http http, this.rootScope) : super(http);
 
   void imported() {
     if (this.length > 0) {
@@ -31,20 +32,7 @@ class Events extends collection.Collection {
     }
 
     for (var event in this) {
-      var listenerSets = [evnt.listeners[event.type]];
-
-      if (event.resourceId != null) {
-        listenerSets.add(
-          evnt.listeners['${event.type}:${event.resourceId}']);
-      }
-
-      listenerSets.forEach((listeners) {
-        if (listeners != null) {
-          listeners.forEach((listener) {
-            listener(event);
-          });
-        }
-      });
+      this.rootScope.broadcast(event.type, event);
     }
   }
 
