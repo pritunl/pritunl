@@ -69,7 +69,9 @@ abstract class Model extends remote.Remote {
   String id;
   Function onLinkClear;
 
-  Model(ng.Http http) : super(http);
+  Model(ng.Http http) : super(http) {
+    this.init();
+  }
 
   Map<String, Symbol> get _symbols {
     _buildAttrs(this);
@@ -209,5 +211,8 @@ abstract class Model extends remote.Remote {
     symbols.values.forEach((symbol) {
       mirror.setField(symbol, null);
     });
+  }
+
+  void init() {
   }
 }
