@@ -10,7 +10,6 @@ import 'dart:async' as async;
 
 @Injectable()
 class User extends model.Model {
-  @model.Linked()
   bool showServers;
 
   @model.Attribute('id')
@@ -86,6 +85,10 @@ class User extends model.Model {
     var loc = dom.window.location;
     return '${loc.protocol}//${loc.host}/key/${this.organization}'
       '/${this.id}.tar';
+  }
+
+  void init() {
+    this.showServers = false;
   }
 
   async.Future genNewOtp() {
