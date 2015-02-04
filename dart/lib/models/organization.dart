@@ -8,6 +8,7 @@ import 'package:angular/angular.dart' as ng;
 
 @Injectable()
 class Organization extends model.Model {
+  @model.Linked()
   usrs.Users users;
 
   @model.Attribute('name')
@@ -23,15 +24,8 @@ class Organization extends model.Model {
   @model.Attribute('user_count')
   int userCount;
 
-  var _id;
   @model.Attribute('id')
-  String get id {
-    return this._id;
-  }
-  void set id(String val) {
-    this.users.org = val;
-    this._id = val;
-  }
+  String id;
 
   String get url {
     var url = '/organization';
