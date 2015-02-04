@@ -93,33 +93,69 @@ abstract class Collection extends remote.Remote with collection.IterableMixin {
     var modelCls = mirrors.reflectClass(this.model);
     var initSym = const Symbol('');
 
-    for (var i = 0; i < data.length; i++) {
-      if (i < this._collection.length) {
-        this._collection[i].import(data[i]);
-        this.changed(this._collection[i]);
-        if (this.onChange != null) {
-          this.onChange(this._collection[i]);
-        }
-      }
-      else {
-        var mdl = modelCls.newInstance(initSym, [this.http]).reflectee;
-        mdl.import(data[i]);
-        this._collection.add(mdl);
-        this.added(mdl);
-        if (this.onAdd != null) {
-          this.onAdd(mdl);
-        }
-      }
+    var curIds = [];
+    var newIds = new Set();
+    var models = {};
+    var recModels = new collection.Queue();
+    var coll = [];
+    var links;
+
+    if (this._collection.length != 0) {
+      links = this._collection[0].links;
     }
 
-    var diff = this._collection.length - data.length;
+    for (var model in this._collection) {
+      curIds.add(model.id);
+      models[model.id] = model;
+    }
 
-    if (diff > 0) {
-      for (var i = 0; i < diff; i++) {
-        var mdl = this._collection.removeLast();
-        this.removed(mdl);
+    for (var i = 0; i < data.length; i++) {
+      newIds.add(data[i]['id']);
+    }
+
+    curIds.forEach((id) {
+      if (!newIds.contains(id)) {
+        var model = models.remove(id);
+
+        this.removed(model);
         if (this.onRemove != null) {
-          this.onRemove(mdl);
+          this.onRemove(model);
+        }
+
+        recModels.add(model);
+      }
+    });
+
+    for (var i = 0; i < data.length; i++) {
+      var added;
+      var model = models[data[i]['id']];
+
+      if (model == null) {
+        added = true;
+        if (recModels.length > 0) {
+          model = recModels.removeFirst();
+
+          if (links != null) {
+            var mirror = mirrors.reflect(model);
+
+            for (var linkSym in links) {
+              mirror.setField(linkSym, null);
+            }
+          }
+        }
+        else {
+          model = modelCls.newInstance(initSym, [this.http]).reflectee;
+
+        }
+      }
+
+      model.import(data[i]);
+      coll.add(model);
+
+      if (added == true) {
+        this.added(model);
+        if (this.onAdd != null) {
+          this.onAdd(model);
         }
       }
     }
