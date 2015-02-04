@@ -10,6 +10,9 @@ import 'dart:async' as async;
 
 @Injectable()
 class User extends model.Model {
+  @model.Linked()
+  bool showServers;
+
   @model.Attribute('id')
   String id;
 
