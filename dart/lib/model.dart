@@ -8,6 +8,7 @@ import 'dart:async' as async;
 
 Map<Type, Map<String, Symbol>> _attrSymbols = {};
 Map<Type, Map<String, Function>> _attrValidators = {};
+Map<Type, List<Symbol>> _attrLinks = {};
 
 class Attribute {
   final String name;
@@ -19,6 +20,10 @@ class Validator {
   const Validator(this.name);
 }
 
+class Linked {
+  const Linked();
+}
+
 class Invalid extends Error {
   String type;
   String message;
@@ -28,35 +33,60 @@ class Invalid extends Error {
   toString() => this.message;
 }
 
+List<Symbol> getLinks(Type model) {
+  _buildAttrs(model);
+  return _attrLinks[model.runtimeType];
+}
+
+_buildAttrs(model) {
+  if (!_attrSymbols.containsKey(model.runtimeType)) {
+    var symbols = {};
+    var validators = {};
+    var links = [];
+    var mirror = mirrors.reflect(model).type;
+
+    mirror.declarations.forEach((value, varMirror) {
+      varMirror.metadata.forEach((metadata) {
+        if (metadata.reflectee is Attribute) {
+          symbols[metadata.reflectee.name] = value;
+        }
+        else if (metadata.reflectee is Validator) {
+          validators[metadata.reflectee.name] = value;
+        }
+        else if (metadata.reflectee is Linked) {
+            links.add(value);
+          }
+      });
+    });
+
+    _attrSymbols[model.runtimeType] = symbols;
+    _attrValidators[model.runtimeType] = validators;
+    _attrLinks[model.runtimeType] = links;
+  }
+}
+
 abstract class Model extends remote.Remote {
+  String id;
+  Function onLinkClear;
+
   Model(ng.Http http) : super(http);
 
   Map<String, Symbol> get _symbols {
-    if (!_attrSymbols.containsKey(this.runtimeType)) {
-      var symbols = {};
-      var validators = {};
-      var mirror = mirrors.reflect(this).type;
-
-      mirror.declarations.forEach((value, varMirror) {
-        varMirror.metadata.forEach((metadata) {
-          if (metadata.reflectee is Attribute) {
-            symbols[metadata.reflectee.name] = value;
-          }
-          else if (metadata.reflectee is Validator) {
-            validators[metadata.reflectee.name] = value;
-          }
-        });
-      });
-
-      _attrSymbols[this.runtimeType] = symbols;
-      _attrValidators[this.runtimeType] = validators;
-    }
-
+    _buildAttrs(this);
     return _attrSymbols[this.runtimeType];
   }
 
   Map<String, Function> get _validators {
+    _buildAttrs(this);
     return _attrValidators[this.runtimeType];
+  }
+
+  List<Symbol> get links {
+    _buildAttrs(this);
+    return _attrLinks[this.runtimeType];
+  }
+
+  void linkCleared() {
   }
 
   void validate(String name) {
