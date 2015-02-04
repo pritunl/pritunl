@@ -16,7 +16,6 @@ import 'dart:html' as dom;
 class OrganizationComp implements ng.ScopeAware, ng.ShadowRootAware {
   ng.Http http;
   dom.ShadowRoot root;
-  Map<usr.User, String> animated = {};
   bool showHidden;
 
   @NgOneWayOneTime('model')
@@ -40,43 +39,6 @@ class OrganizationComp implements ng.ScopeAware, ng.ShadowRootAware {
     return null;
   }
 
-  var _usersLen = 0;
-  void onUsersImport() {
-    if (this.org.users != null && this.org.users.length != this._usersLen) {
-      var userItems;
-      var diff = (this.org.users.length - this._usersLen).abs();
-      var insAnim = (this.org.users.length - diff).abs();
-      var remAnim = (this._usersLen - diff).abs();
-      var aniamted = {};
-
-      if (this.root != null) {
-        userItems = this.root.querySelectorAll('.user-item');
-      }
-      else {
-        userItems = [];
-      }
-
-      for (var i = 0; i < this.org.users.length; i++) {
-        if (i >= insAnim) {
-          aniamted[this.org.users[i]] = 'animated-ins';
-        }
-      }
-
-      this.animated = aniamted;
-
-      for (var i = 0; i < userItems.length; i++) {
-        if (i >= remAnim) {
-          userItems[i].classes.add('animated-rem');
-        }
-        else {
-          userItems[i].classes.remove('animated-rem');
-        }
-      }
-
-      this._usersLen = this.org.users.length;
-    }
-  }
-
   void toggleHidden() {
     this.showHidden = this.showHidden != true;
   }
@@ -87,10 +49,6 @@ class OrganizationComp implements ng.ScopeAware, ng.ShadowRootAware {
     } else {
       this.selected.add(user);
     }
-  }
-
-  void attach() {
-    //this.org.users.onImport = this.onUsersImport;
   }
 
   void set scope(ng.Scope scope) {
