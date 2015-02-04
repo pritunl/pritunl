@@ -1,5 +1,6 @@
 library organization_comp;
 
+import 'package:pritunl/collections/users.dart' as usrs;
 import 'package:pritunl/models/organization.dart' as organization;
 import 'package:pritunl/models/user.dart' as usr;
 
@@ -7,18 +8,17 @@ import 'package:angular/angular.dart' show Component, NgOneWay,
   NgOneWayOneTime;
 import 'package:angular/angular.dart' as ng;
 import 'dart:html' as dom;
+import 'dart:async' as async;
 
 @Component(
   selector: 'organization',
   templateUrl: 'packages/pritunl/components/organization/organization.html',
   cssUrl: 'packages/pritunl/components/organization/organization.css'
 )
-class OrganizationComp implements ng.AttachAware, ng.DetachAware,
-    ng.ShadowRootAware {
+class OrganizationComp implements ng.ScopeAware, ng.ShadowRootAware {
   ng.Http http;
   dom.ShadowRoot root;
   Map<usr.User, String> animated = {};
-  Map<String, bool> showServers = {};
   bool showHidden;
 
   @NgOneWayOneTime('model')
@@ -43,11 +43,11 @@ class OrganizationComp implements ng.AttachAware, ng.DetachAware,
   }
 
   var _usersLen = 0;
-  void onUsersImport(List<usr.User> users) {
-    if (users != null && users.length != this._usersLen) {
+  void onUsersImport() {
+    if (this.org.users != null && this.org.users.length != this._usersLen) {
       var userItems;
-      var diff = (users.length - this._usersLen).abs();
-      var insAnim = (users.length - diff).abs();
+      var diff = (this.org.users.length - this._usersLen).abs();
+      var insAnim = (this.org.users.length - diff).abs();
       var remAnim = (this._usersLen - diff).abs();
       var aniamted = {};
 
@@ -58,9 +58,9 @@ class OrganizationComp implements ng.AttachAware, ng.DetachAware,
         userItems = [];
       }
 
-      for (var i = 0; i < users.length; i++) {
+      for (var i = 0; i < this.org.users.length; i++) {
         if (i >= insAnim) {
-          aniamted[users[i]] = 'animated-ins';
+          aniamted[this.org.users[i]] = 'animated-ins';
         }
       }
 
@@ -75,7 +75,7 @@ class OrganizationComp implements ng.AttachAware, ng.DetachAware,
         }
       }
 
-      this._usersLen = users.length;
+      this._usersLen = this.org.users.length;
     }
   }
 
@@ -91,11 +91,6 @@ class OrganizationComp implements ng.AttachAware, ng.DetachAware,
     }
   }
 
-  void clearUser(usr.User user) {
-    this.selected.remove(user);
-    this.showServers.remove(user.hashCode.toString());
-  }
-
   void attach() {
     this.org.users.onChange = this.clearUser;
     this.org.users.onRemove = this.clearUser;
@@ -108,8 +103,13 @@ class OrganizationComp implements ng.AttachAware, ng.DetachAware,
     this.update();
   }
 
-  void detach() {
-    this.org.users.eventDeregister();
+  void set scope(ng.Scope scope) {
+    scope.on('users_updated').listen((evt) {
+      if (evt.data.resourceId == this.org.id) {
+        print('users_updated');
+        this.org.users.fetch();
+      }
+    });
   }
 
   void onShadowRoot(dom.ShadowRoot root) {
