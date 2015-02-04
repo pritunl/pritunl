@@ -24,7 +24,7 @@ class UserDelComp extends modal_content.ModalContent {
     })).then((_) {
       return super.submit(closeHandler);
     }).then((_) {
-      new alrt.Alert('Successfully added user.', 'success');
+      new alrt.Alert('Successfully deleted users.', 'success');
     }).catchError((err) {
       logger.severe('Failed to delete users', err);
       this.setHttpError('Failed to delete users, server error occurred.', err);
