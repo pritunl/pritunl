@@ -92,7 +92,7 @@ class OrganizationComp implements ng.ScopeAware, ng.ShadowRootAware {
   }
 
   void attach() {
-    // TODO this.org.users.onImport = this.onUsersImport;
+    //this.org.users.onImport = this.onUsersImport;
   }
 
   void set scope(ng.Scope scope) {
