@@ -3,7 +3,6 @@ library events_col;
 import 'package:pritunl/collection.dart' as collection;
 import 'package:pritunl/models/event.dart' as event;
 import 'package:pritunl/logger.dart' as logger;
-import 'package:pritunl/event.dart' as evnt;
 
 import 'package:angular/angular.dart' show Injectable;
 import 'package:angular/angular.dart' as ng;

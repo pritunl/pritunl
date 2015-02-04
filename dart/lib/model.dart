@@ -1,7 +1,6 @@
 library model;
 
 import 'package:pritunl/remote.dart' as remote;
-import 'package:pritunl/event.dart' as evnt;
 
 import 'package:angular/angular.dart' as ng;
 import 'dart:mirrors' as mirrors;
@@ -78,21 +77,6 @@ abstract class Model extends remote.Remote {
     });
 
     return clone.reflectee;
-  }
-
-  void eventRegister(Function listener) {
-    this.listener = evnt.register(listener,
-      this.eventType, this.eventResource);
-  }
-
-  void eventDeregister() {
-    this.listener.deregister();
-  }
-
-  void eventUpdate() {
-    if (this.listener != null) {
-      this.listener.update(this.eventType, this.eventResource);
-    }
   }
 
   void import(dynamic responseData) {

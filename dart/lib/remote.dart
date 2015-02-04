@@ -1,6 +1,5 @@
 library remote;
 
-import 'package:pritunl/event.dart' as evnt;
 import 'package:pritunl/exceptions.dart';
 
 import 'package:angular/angular.dart' as ng;
@@ -15,7 +14,6 @@ abstract class Remote {
   String errorMsg;
   int errorStatus;
   bool loadingLong;
-  evnt.Listener listener;
   Function onImport;
 
   Remote(this.http);
@@ -42,14 +40,6 @@ abstract class Remote {
   }
   bool get loading {
     return this._loading;
-  }
-
-  String get eventType {
-    throw new UnimplementedError();
-  }
-
-  String get eventResource {
-    return null;
   }
 
   dynamic parse(dynamic data) {
