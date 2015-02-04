@@ -18,8 +18,7 @@
     </div>
   </div>
   <ul class="user-list">
-    <li ng-repeat="user in org.users" class="user-item"
-      ng-class="animated[user]" ng-animate>
+    <li ng-repeat="user in org.users" class="user-item" ng-animate>
       <user model="user" ng-if="user.type == 'client' || showHidden"
         show-hidden="showHidden"
         on-select="select(user, $shift)"
