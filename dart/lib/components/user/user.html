@@ -28,17 +28,17 @@
     <glyphicon ng-click="toggleDisabled($event)"
       tooltip="{{model.disabled ? 'Enable user' : 'Disable and disconnect user'}}"
       type="{{model.disabled ? 'ok-circle' : 'ban-circle'}}"></glyphicon>
-    <span ng-if="showServers != true">
+    <span ng-if="model.showServers != true">
       <glyphicon tooltip="Show additional user information"
-        type="chevron-down" ng-click="showServers = true"></glyphicon>
+        type="chevron-down" ng-click="model.showServers = true"></glyphicon>
     </span>
-    <span ng-if="showServers">
+    <span ng-if="model.showServers">
       <glyphicon tooltip="Hide additional user information"
-        type="chevron-up" ng-click="showServers = false"></glyphicon>
+        type="chevron-up" ng-click="model.showServers = false"></glyphicon>
     </span>
   </div>
 </div>
-<ul ng-if="showServers" class="user-servers" ng-animate>
+<ul ng-if="model.showServers" class="user-servers" ng-animate>
   <li class="server" ng-repeat="server in model.servers">
     <div class="item title name">
       <glyphicon type="dashboard"></glyphicon>
