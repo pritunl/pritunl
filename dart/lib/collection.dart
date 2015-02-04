@@ -144,6 +144,8 @@ abstract class Collection extends remote.Remote with collection.IterableMixin {
       }
     }
 
+    this._collection = coll;
+
     if (this.onImport != null) {
       this.onImport(this._collection);
     }
