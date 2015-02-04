@@ -1,6 +1,5 @@
 library organization_comp;
 
-import 'package:pritunl/collections/users.dart' as usrs;
 import 'package:pritunl/models/organization.dart' as organization;
 import 'package:pritunl/models/user.dart' as usr;
 
@@ -8,7 +7,6 @@ import 'package:angular/angular.dart' show Component, NgOneWay,
   NgOneWayOneTime;
 import 'package:angular/angular.dart' as ng;
 import 'dart:html' as dom;
-import 'dart:async' as async;
 
 @Component(
   selector: 'organization',
