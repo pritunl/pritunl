@@ -37,4 +37,8 @@ class Organization extends mdl.Model {
 
     return url;
   }
+
+  void init() {
+    this.users = new usrs.Users(this.http);
+  }
 }
