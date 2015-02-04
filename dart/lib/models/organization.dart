@@ -27,6 +27,10 @@ class Organization extends model.Model {
   @model.Attribute('id')
   String id;
 
+  Organization(ng.Http http) :
+    users = new usrs.Users(http),
+    super(http);
+
   String get url {
     var url = '/organization';
 
@@ -36,8 +40,4 @@ class Organization extends model.Model {
 
     return url;
   }
-
-  Organization(ng.Http http) :
-    users = new usrs.Users(http),
-    super(http);
 }
