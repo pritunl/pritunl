@@ -38,6 +38,6 @@ class Organization extends model.Model {
   }
 
   Organization(ng.Http http) :
-      users = new usrs.Users(http),
-      super(http);
+    users = new usrs.Users(http),
+    super(http);
 }
