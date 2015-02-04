@@ -129,7 +129,6 @@ abstract class Collection extends remote.Remote with collection.IterableMixin {
         }
         else {
           model = modelCls.newInstance(initSym, [this.http]).reflectee;
-
         }
       }
 
