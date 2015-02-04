@@ -82,11 +82,6 @@ abstract class Collection extends remote.Remote with collection.IterableMixin {
     var models = {};
     var recModels = new collection.Queue();
     var coll = [];
-    var links;
-
-    if (this._collection.length != 0) {
-      links = this._collection[0].links;
-    }
 
     for (var model in this._collection) {
       curIds.add(model.id);
@@ -118,14 +113,6 @@ abstract class Collection extends remote.Remote with collection.IterableMixin {
         added = true;
         if (recModels.length > 0) {
           model = recModels.removeFirst();
-
-          if (links != null) {
-            var mirror = mirrors.reflect(model);
-
-            for (var linkSym in links) {
-              mirror.setField(linkSym, null);
-            }
-          }
         }
         else {
           model = modelCls.newInstance(initSym, [this.http]).reflectee;
