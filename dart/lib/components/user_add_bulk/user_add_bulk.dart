@@ -1,8 +1,8 @@
 library user_add_bulk_comp;
 
-import 'package:pritunl/collections/organizations.dart' as organizations;
 import 'package:pritunl/bases/modal_content/modal_content.dart' as
-  modal_content;
+  modal_content_base;
+import 'package:pritunl/collections/organizations.dart' as organizations;
 import 'package:pritunl/collections/users.dart' as usrs;
 import 'package:pritunl/alert.dart' as alrt;
 import 'package:pritunl/logger.dart' as logger;
@@ -14,7 +14,7 @@ import 'dart:async' as async;
   selector: 'user-add-bulk',
   templateUrl: 'packages/pritunl/components/user_add_bulk/user_add_bulk.html'
 )
-class UserAddBulkComp extends modal_content.ModalContent {
+class UserAddBulkComp extends modal_content_base.ModalContent {
   String users;
   usrs.Users model;
 

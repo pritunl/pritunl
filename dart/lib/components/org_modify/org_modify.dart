@@ -1,7 +1,7 @@
 library org_modify_comp;
 
 import 'package:pritunl/bases/modal_content/modal_content.dart' as
-  modal_content;
+  modal_content_base;
 import 'package:pritunl/models/organization.dart' as organization;
 import 'package:pritunl/alert.dart' as alrt;
 import 'package:pritunl/logger.dart' as logger;
@@ -13,7 +13,7 @@ import 'dart:async' as async;
   selector: 'org-modify',
   templateUrl: 'packages/pritunl/components/org_modify/org_modify.html'
 )
-class ModifyOrgComp extends modal_content.ModalContent {
+class ModifyOrgComp extends modal_content_base.ModalContent {
   organization.Organization model;
 
   @NgOneWayOneTime('model')

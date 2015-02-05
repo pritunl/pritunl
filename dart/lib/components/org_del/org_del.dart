@@ -1,7 +1,7 @@
 library org_del_comp;
 
 import 'package:pritunl/bases/modal_content/modal_content.dart' as
-  modal_content;
+  modal_content_base;
 import 'package:pritunl/models/organization.dart' as organization;
 import 'package:pritunl/alert.dart' as alrt;
 import 'package:pritunl/logger.dart' as logger;
@@ -13,7 +13,7 @@ import 'dart:async' as async;
   selector: 'org-del',
   templateUrl: 'packages/pritunl/components/org_del/org_del.html'
 )
-class OrgDelComp extends modal_content.ModalContent {
+class OrgDelComp extends modal_content_base.ModalContent {
   bool okDisabled = true;
   bool locked;
 

@@ -1,7 +1,7 @@
 library user_del_comp;
 
 import 'package:pritunl/bases/modal_content/modal_content.dart' as
-  modal_content;
+  modal_content_base;
 import 'package:pritunl/models/user.dart' as usr;
 import 'package:pritunl/alert.dart' as alrt;
 import 'package:pritunl/logger.dart' as logger;
@@ -14,7 +14,7 @@ import 'dart:async' as async;
   templateUrl: 'packages/pritunl/components/user_del/user_del.html',
   cssUrl: 'packages/pritunl/components/user_del/user_del.css'
 )
-class UserDelComp extends modal_content.ModalContent {
+class UserDelComp extends modal_content_base.ModalContent {
   @NgOneWay('users')
   Set<usr.User> users;
 

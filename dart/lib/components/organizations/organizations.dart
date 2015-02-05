@@ -2,7 +2,7 @@ library organizations_comp;
 
 import 'package:pritunl/collections/organizations.dart' as organizations;
 import 'package:pritunl/collections/users.dart' as usrs;
-import 'package:pritunl/models/user.dart' as user;
+import 'package:pritunl/models/user.dart' as usr;
 
 import 'package:angular/angular.dart' show Component;
 import 'package:angular/angular.dart' as ng;
@@ -13,7 +13,7 @@ import 'package:angular/angular.dart' as ng;
   cssUrl: 'packages/pritunl/components/organizations/organizations.css'
 )
 class OrganizationsComp implements ng.AttachAware, ng.ScopeAware {
-  Set<user.User> selected = new Set();
+  Set<usr.User> selected = new Set();
   organizations.Organizations orgs;
   ng.Http http;
 

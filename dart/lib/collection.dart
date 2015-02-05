@@ -28,11 +28,11 @@ abstract class Collection extends remote.Remote with collection.IterableMixin {
   void add(Map<String, dynamic> attrs) {
     var modelCls = mirrors.reflectClass(this.model);
     var initSym = const Symbol('');
-    var mdl = modelCls.newInstance(initSym, [this.http]).reflectee;
+    var model = modelCls.newInstance(initSym, [this.http]).reflectee;
 
-    mdl.import(attrs);
+    model.import(attrs);
 
-    this._collection.add(mdl);
+    this._collection.add(model);
   }
 
   void validate(String name) {

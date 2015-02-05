@@ -1,7 +1,7 @@
 library user_email_comp;
 
 import 'package:pritunl/bases/modal_content/modal_content.dart' as
-  modal_content;
+  modal_content_base;
 import 'package:pritunl/models/user.dart' as usr;
 import 'package:pritunl/logger.dart' as logger;
 
@@ -13,7 +13,7 @@ import 'dart:async' as async;
   templateUrl: 'packages/pritunl/components/user_email/user_email.html',
   cssUrl: 'packages/pritunl/components/user_email/user_email.css'
 )
-class UserEmailComp extends modal_content.ModalContent {
+class UserEmailComp extends modal_content_base.ModalContent {
   String okText = 'Send';
   String noCancel;
   Map<usr.User, String> userClass = {};

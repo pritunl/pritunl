@@ -2,17 +2,17 @@ library users_col;
 
 import 'package:pritunl/exceptions.dart';
 
-import 'package:pritunl/collection.dart' as collection;
-import 'package:pritunl/models/user.dart' as user;
+import 'package:pritunl/collection.dart' as collec;
+import 'package:pritunl/models/user.dart' as usr;
 
 import 'package:angular/angular.dart' show Injectable;
 import 'package:angular/angular.dart' as ng;
 import 'dart:math' as math;
 
 @Injectable()
-class Users extends collection.Collection {
+class Users extends collec.Collection {
   String _search;
-  Type model = user.User;
+  Type model = usr.User;
   String eventType = 'users_updated';
   String org;
   int page;

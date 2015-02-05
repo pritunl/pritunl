@@ -1,6 +1,6 @@
 library user_comp;
 
-import 'package:pritunl/models/user.dart' as user;
+import 'package:pritunl/models/user.dart' as usr;
 
 import 'package:angular/angular.dart' show Component, NgOneWay, NgTwoWay,
   NgCallback;
@@ -13,7 +13,7 @@ import 'dart:html' as dom;
 )
 class UserComp {
   @NgOneWay('model')
-  user.User model;
+  usr.User model;
 
   @NgOneWay('show-hidden')
   bool showHidden;

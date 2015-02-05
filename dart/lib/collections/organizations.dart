@@ -1,14 +1,14 @@
 library organization_col;
 
-import 'package:pritunl/collection.dart' as collection;
-import 'package:pritunl/models/organization.dart' as org;
+import 'package:pritunl/collection.dart' as collec;
+import 'package:pritunl/models/organization.dart' as organization;
 
 import 'package:angular/angular.dart' show Injectable;
 import 'package:angular/angular.dart' as ng;
 
 @Injectable()
-class Organizations extends collection.Collection {
-  Type model = org.Organization;
+class Organizations extends collec.Collection {
+  Type model = organization.Organization;
   String eventType = 'organizations_updated';
 
   String get url {

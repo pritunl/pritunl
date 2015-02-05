@@ -1,8 +1,8 @@
 library user_otp_comp;
 
 import 'package:pritunl/bases/modal_content/modal_content.dart' as
-  modal_content;
-import 'package:pritunl/models/user.dart' as user;
+  modal_content_base;
+import 'package:pritunl/models/user.dart' as usr;
 
 import 'package:angular/angular.dart' show Component, NgOneWayOneTime;
 
@@ -11,9 +11,9 @@ import 'package:angular/angular.dart' show Component, NgOneWayOneTime;
   templateUrl: 'packages/pritunl/components/user_otp/user_otp.html',
   cssUrl: 'packages/pritunl/components/user_otp/user_otp.css'
 )
-class UserOtpComp extends modal_content.ModalContent {
+class UserOtpComp extends modal_content_base.ModalContent {
   @NgOneWayOneTime('model')
-  user.User model;
+  usr.User model;
   bool genKeyDisabled;
 
   String get qrcodeText {

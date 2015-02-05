@@ -1,23 +1,23 @@
 library key_mod;
 
-import 'package:pritunl/model.dart' as model;
+import 'package:pritunl/model.dart' as mdl;
 
 import 'package:angular/angular.dart' show Injectable;
 import 'package:angular/angular.dart' as ng;
 import 'dart:html' as dom;
 
 @Injectable()
-class Key extends model.Model {
+class Key extends mdl.Model {
   String org;
   String user;
 
-  @model.Attribute('key_url')
+  @mdl.Attribute('key_url')
   String keyUrl;
 
-  @model.Attribute('view_url')
+  @mdl.Attribute('view_url')
   String viewUrl;
 
-  @model.Attribute('uri_url')
+  @mdl.Attribute('uri_url')
   String uriUrl;
 
   String get _baseUrl {

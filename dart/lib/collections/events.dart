@@ -1,7 +1,7 @@
 library events_col;
 
-import 'package:pritunl/collection.dart' as collection;
-import 'package:pritunl/models/event.dart' as event;
+import 'package:pritunl/collection.dart' as collec;
+import 'package:pritunl/models/event.dart' as evnt;
 import 'package:pritunl/logger.dart' as logger;
 
 import 'package:angular/angular.dart' show Injectable;
@@ -9,8 +9,8 @@ import 'package:angular/angular.dart' as ng;
 import 'dart:async' as async;
 
 @Injectable()
-class Events extends collection.Collection {
-  Type model = event.Event;
+class Events extends collec.Collection {
+  Type model = evnt.Event;
   String cursor;
   ng.RootScope rootScope;
 

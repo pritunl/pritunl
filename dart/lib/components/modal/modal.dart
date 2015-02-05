@@ -1,7 +1,6 @@
 library modal_comp;
 
-import 'package:angular/angular.dart' show Component, NgAttr, NgOneWay,
-  NgTwoWay, NgCallback;
+import 'package:angular/angular.dart' show Component, NgAttr, NgOneWay;
 import 'dart:html' as dom;
 
 @Component(

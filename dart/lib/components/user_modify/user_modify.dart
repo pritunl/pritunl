@@ -1,8 +1,8 @@
 library user_modify_comp;
 
 import 'package:pritunl/bases/modal_content/modal_content.dart' as
-  modal_content;
-import 'package:pritunl/models/user.dart' as user;
+  modal_content_base;
+import 'package:pritunl/models/user.dart' as usr;
 import 'package:pritunl/alert.dart' as alrt;
 import 'package:pritunl/logger.dart' as logger;
 
@@ -13,11 +13,11 @@ import 'dart:async' as async;
   selector: 'user-modify',
   templateUrl: 'packages/pritunl/components/user_modify/user_modify.html'
 )
-class UserModifyComp extends modal_content.ModalContent {
-  user.User model;
+class UserModifyComp extends modal_content_base.ModalContent {
+  usr.User model;
 
   @NgOneWayOneTime('model')
-  user.User origModel;
+  usr.User origModel;
 
   void show() {
     this.model = this.origModel.clone();

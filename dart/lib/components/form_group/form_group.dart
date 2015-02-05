@@ -1,6 +1,6 @@
 library form_group_comp;
 
-import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
+import 'package:angular/angular.dart' show Component;
 
 @Component(
   selector: 'form-group',

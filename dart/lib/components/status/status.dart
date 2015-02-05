@@ -1,6 +1,6 @@
 library status_comp;
 
-import 'package:pritunl/models/status.dart' as status;
+import 'package:pritunl/models/status.dart' as stus;
 
 import 'package:angular/angular.dart' show Component;
 
@@ -10,7 +10,7 @@ import 'package:angular/angular.dart' show Component;
     cssUrl: 'packages/pritunl/components/status/status.css'
 )
 class StatusComp {
-  status.Status model;
+  stus.Status model;
 
   StatusComp(this.model) {
     this.update();

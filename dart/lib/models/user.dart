@@ -1,6 +1,6 @@
 library user_mod;
 
-import 'package:pritunl/model.dart' as model;
+import 'package:pritunl/model.dart' as mdl;
 import 'package:pritunl/utils/utils.dart' as utils;
 
 import 'package:angular/angular.dart' show Injectable;
@@ -9,64 +9,64 @@ import 'dart:html' as dom;
 import 'dart:async' as async;
 
 @Injectable()
-class User extends model.Model {
+class User extends mdl.Model {
   bool showServers;
 
-  @model.Attribute('id')
+  @mdl.Attribute('id')
   String id;
 
-  @model.Attribute('organization')
+  @mdl.Attribute('organization')
   String organization;
 
-  @model.Validator('organization')
+  @mdl.Validator('organization')
   void organizationValidator(val) {
     if (val == null || val == '') {
-      throw new model.Invalid('empty', 'Organization cannot be empty');
+      throw new mdl.Invalid('empty', 'Organization cannot be empty');
     }
   }
 
-  @model.Attribute('organization_name')
+  @mdl.Attribute('organization_name')
   String organizationName;
 
-  @model.Attribute('name')
+  @mdl.Attribute('name')
   String name;
 
-  @model.Validator('name')
+  @mdl.Validator('name')
   void nameValidator(val) {
     if (val == null || val == '') {
-      throw new model.Invalid('empty', 'User name cannot be empty');
+      throw new mdl.Invalid('empty', 'User name cannot be empty');
     }
   }
 
-  @model.Attribute('email')
+  @mdl.Attribute('email')
   String email;
 
-  @model.Validator('email')
+  @mdl.Validator('email')
   void emailValidator(val) {
     if (val != null && val != '' && !val.contains('@')) {
-      throw new model.Invalid('empty', 'User email is invalid');
+      throw new mdl.Invalid('empty', 'User email is invalid');
     }
   }
 
-  @model.Attribute('type')
+  @mdl.Attribute('type')
   String type;
 
-  @model.Attribute('otp_auth')
+  @mdl.Attribute('otp_auth')
   bool otpAuth;
 
-  @model.Attribute('otp_secret')
+  @mdl.Attribute('otp_secret')
   String otpSecret;
 
-  @model.Attribute('disabled')
+  @mdl.Attribute('disabled')
   bool disabled;
 
-  @model.Attribute('servers')
+  @mdl.Attribute('servers')
   List<Map<String, dynamic>> servers;
 
-  @model.Attribute('status')
+  @mdl.Attribute('status')
   bool status;
 
-  @model.Attribute('send_key_email')
+  @mdl.Attribute('send_key_email')
   String _sendKeyEmail;
 
   User(ng.Http http) : super(http);
