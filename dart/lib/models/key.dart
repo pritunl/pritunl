@@ -20,6 +20,8 @@ class Key extends mdl.Model {
   @mdl.Attribute('uri_url')
   String uriUrl;
 
+  Key(ng.Http http) : super(http);
+
   String get _baseUrl {
     var loc = dom.window.location;
     return '${loc.protocol}//${loc.host}';
@@ -54,6 +56,4 @@ class Key extends mdl.Model {
   String get url {
     return '/key/${this.org}/${this.user}';
   }
-
-  Key(ng.Http http) : super(http);
 }
