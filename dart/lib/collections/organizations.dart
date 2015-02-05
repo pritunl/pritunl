@@ -11,9 +11,9 @@ class Organizations extends collec.Collection {
   Type model = organization.Organization;
   String eventType = 'organizations_updated';
 
+  Organizations(ng.Http http) : super(http);
+
   String get url {
     return '/organization';
   }
-
-  Organizations(ng.Http http) : super(http);
 }

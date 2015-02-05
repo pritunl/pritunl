@@ -10,9 +10,9 @@ import 'package:angular/angular.dart' as ng;
 class LogEntries extends collec.Collection {
   Type model = log_ent.LogEntry;
 
+  LogEntries(ng.Http http) : super(http);
+
   String get url {
     return '/log';
   }
-
-  LogEntries(ng.Http http) : super(http);
 }

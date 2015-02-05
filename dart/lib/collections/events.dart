@@ -14,6 +14,8 @@ class Events extends collec.Collection {
   String cursor;
   ng.RootScope rootScope;
 
+  Events(ng.Http http, this.rootScope) : super(http);
+
   String get url {
     var url = '/event';
 
@@ -23,8 +25,6 @@ class Events extends collec.Collection {
 
     return url;
   }
-
-  Events(ng.Http http, this.rootScope) : super(http);
 
   void imported() {
     if (this.length > 0) {
