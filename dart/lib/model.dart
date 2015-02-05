@@ -102,11 +102,10 @@ abstract class Model extends remote.Remote {
       mirror.setField(symbol, value);
     });
 
+    this.imported();
     if (this.onImport != null) {
       this.onImport();
     }
-
-    this.imported();
   }
 
   Map<String, dynamic> export([List<String> fields]) {
