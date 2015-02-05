@@ -43,9 +43,9 @@ class Status extends mdl.Model {
   @mdl.Attribute('notification')
   String notification;
 
+  Status(ng.Http http) : super(http);
+
   String get url {
     return '/status';
   }
-
-  Status(ng.Http http) : super(http);
 }
