@@ -184,6 +184,15 @@ $log-entries-time: (
 );
 
 // ####################################
+// message
+// ####################################
+$message: (
+  fg: #777,
+  bg: #f5f5f5,
+  border: #cfcfcf
+);
+
+// ####################################
 // organization
 // ####################################
 $organization: (
@@ -194,12 +203,6 @@ $organization: (
 $organization-header: (
   bg: #fff,
   border: #ccc,
-);
-
-$organization-message: (
-  fg: #777,
-  bg: #f5f5f5,
-  border: #cfcfcf
 );
 
 $organization-footer: (

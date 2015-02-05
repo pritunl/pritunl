@@ -482,6 +482,16 @@ body /deep/ log-entries::shadow .entry .time {
 }
 
 // ####################################
+// message
+// ####################################
+body /deep/ .message {
+  x-label: message;
+  color: map-get($message, fg);
+  background-color: map-get($message, bg);
+  border-color: map-get($message, border);
+}
+
+// ####################################
 // organization
 // ####################################
 body /deep/ organization::shadow .org {
@@ -494,13 +504,6 @@ body /deep/ organization::shadow .header {
   x-label: organization-header;
   background-color: map-get($organization-header, bg);
   border-color: map-get($organization-header, border);
-}
-
-body /deep/ organization::shadow .message {
-  x-label: organization-message;
-  color: map-get($organization-message, fg);
-  background-color: map-get($organization-message, bg);
-  border-color: map-get($organization-message, border);
 }
 
 body /deep/ organization::shadow .pages {
