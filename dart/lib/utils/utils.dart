@@ -3,6 +3,7 @@ library utils;
 import 'package:angular/introspection.dart' as introspection;
 import 'dart:html' as dom;
 import 'dart:math' as math;
+import 'dart:js' as js;
 
 dynamic getDirective(dom.Node node, [var type]) {
   while (node != null) {
@@ -49,4 +50,9 @@ String uuid() {
 
 String getDomain() {
   return '${dom.window.location.protocol}//${dom.window.location.host}';
+}
+
+void printColor(dynamic obj, String color) {
+  js.context['console'].callMethod('log', [
+    '%c$obj', 'color: $color']);
 }
