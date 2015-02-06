@@ -2,13 +2,31 @@ library logger;
 
 import 'package:logging/logging.dart' as logging;
 
+import 'dart:js' as js;
+
 void setup() {
   logging.Logger.root.level = logging.Level.FINE;
   logging.Logger.root.onRecord.listen((logging.LogRecord rec) {
-    print('${rec.level.name}: ${rec.time}: ${rec.message}');
+    var color;
+
+    if (rec.level.value <= 500) { // Debug
+      color = 'gray';
+    } else if (rec.level.value <= 800) { // Info
+      color = 'blue';
+    } else if (rec.level.value <= 900) { // Warning
+      color = 'yellow';
+    } else if (rec.level.value <= 1000) { // Error
+      color = 'red';
+    } else if (rec.level.value <= 1200) { // Critical
+      color = 'red';
+    }
+
+    js.context['console'].callMethod('log', [
+      '%c${rec.level.name}: ${rec.time}: ${rec.message}', 'color: $color']);
 
     if (rec.error != null) {
-      print('  TYPE: ${rec.error}');
+      js.context['console'].callMethod('log', [
+        '%c  TYPE: ${rec.error}', 'color: $color']);
     }
 
     if (rec.stackTrace != null) {
