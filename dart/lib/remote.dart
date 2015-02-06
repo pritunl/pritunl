@@ -1,7 +1,6 @@
 library remote;
 
 import 'package:pritunl/exceptions.dart';
-import 'package:pritunl/utils/utils.dart' as utils;
 
 import 'package:angular/angular.dart' as ng;
 import 'dart:async' as async;
