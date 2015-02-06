@@ -34,7 +34,8 @@ void setup() {
       rec.stackTrace.toString().split('\n').forEach((line) {
         stackTrace += '  $line\n';
       });
-      print(stackTrace);
+      js.context['console'].callMethod('log', [
+        '%c$stackTrace', 'color: red']);
     }
   });
 }
