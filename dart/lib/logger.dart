@@ -7,7 +7,12 @@ void setup() {
   logging.Logger.root.onRecord.listen((logging.LogRecord rec) {
     print('${rec.level.name}: ${rec.time}: ${rec.message}');
     print('  TYPE: ${rec.error}');
-    print(rec.stackTrace);
+
+    var stackTrace = '';
+    rec.stackTrace.toString().split('\n').forEach((line) {
+      stackTrace += '  $line\n';
+    });
+    print(stackTrace);
   });
 }
 
