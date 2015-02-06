@@ -21,7 +21,7 @@ void setup() {
       color = '#d9534f'; // Critical
     }
 
-    utils.printColor('${rec.level.name}: ${rec.time}: ${rec.message}', color);
+    utils.printColor('${rec.level.name}:${rec.time}: ${rec.message}', color);
 
     if (rec.error != null) {
       utils.printColor('  TYPE: ${rec.error}', color);
