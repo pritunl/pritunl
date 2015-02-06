@@ -32,7 +32,7 @@ void setup() {
       rec.stackTrace.toString().split('\n').forEach((line) {
         stackTrace += '  $line\n';
       });
-      utils.printColor(stackTrace, 'red');
+      utils.printColor(stackTrace, '#d9534f');
     }
   });
 }
