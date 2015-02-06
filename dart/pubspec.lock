@@ -41,6 +41,10 @@ packages:
     description: html5lib
     source: hosted
     version: "0.12.0"
+  initialize:
+    description: initialize
+    source: hosted
+    version: "0.2.0"
   intl:
     description: intl
     source: hosted
@@ -100,4 +104,4 @@ packages:
   web_components:
     description: web_components
     source: hosted
-    version: "0.10.0"
+    version: "0.10.1"
