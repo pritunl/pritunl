@@ -5,8 +5,8 @@ import 'package:logging/logging.dart' as logging;
 void setup() {
   logging.Logger.root.level = logging.Level.FINE;
   logging.Logger.root.onRecord.listen((logging.LogRecord rec) {
-    print('${rec.level.name}: ${rec.time}: ${rec.message} '
-      '${rec.error}');
+    print('${rec.level.name}: ${rec.time}: ${rec.message}');
+    print('  TYPE: ${rec.error}');
     print(rec.stackTrace);
   });
 }
