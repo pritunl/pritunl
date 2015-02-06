@@ -38,8 +38,8 @@
     <ul class="pages" no-select>
       <li ng-repeat="page in org.users.pages">
         <a ng-click="org.users.onPage(page[1])"><span><b
-          ng-if="page[0]" ng-bind="page[1]"></b></span><span
-          ng-if="page[0] != true" ng-bind="page[1]"></span></a>
+          ng-if="page[0] == org.users.page" ng-bind="page[1]"></b></span><span
+          ng-if="page[0] != org.users.page" ng-bind="page[1]"></span></a>
       </li>
     </ul>
   </div>

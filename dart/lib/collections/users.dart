@@ -115,22 +115,20 @@ class Users extends collec.Collection {
 
     var i;
     var isCurPage;
-    var cur = math.max(0, this.page - 7);
+    var cur = math.max(1, this.page - 7);
 
-    this.pages.add([this.page == 0, 'First']);
+    this.pages.add([0, 'First']);
 
     for (i = 0; i < 15; i++) {
       isCurPage = cur == this.page;
       if (cur > this.pageTotal - 1) {
         break;
       }
-      if (cur > 0) {
-        this.pages.add([isCurPage, cur + 1]);
-      }
+      this.pages.add([cur, cur + 1]);
       cur += 1;
     }
 
-    pages.add([isCurPage, 'Last']);
+    pages.add([this.pageTotal, 'Last']);
 
     this.pages = pages;
   }
