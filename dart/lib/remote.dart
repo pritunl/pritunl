@@ -69,14 +69,16 @@ abstract class Remote {
   }
 
   async.Future fetch() {
-    this.loading = true;
+    var fetchCheckId = utils.uuid();
+    this._fetchCheckId = fetchCheckId;
+    var loadId = this.setLoading();
 
     return this.http.get(this.url).then((response) {
-      this.loading = false;
+      this.clearLoading(loadId);
       this.import(response.data);
       return response.data;
     }).catchError((err) {
-      this.loading = false;
+      this.clearLoading(loadId);
       return new async.Future.error(this.parseError(err));
     }, test: (e) => e is ng.HttpResponse);
   }
