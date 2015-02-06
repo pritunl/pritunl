@@ -9,16 +9,16 @@ void setup() {
   logging.Logger.root.onRecord.listen((logging.LogRecord rec) {
     var color;
 
-    if (rec.level.value <= 500) { // Debug
-      color = 'gray';
-    } else if (rec.level.value <= 800) { // Info
-      color = 'blue';
-    } else if (rec.level.value <= 900) { // Warning
-      color = 'yellow';
-    } else if (rec.level.value <= 1000) { // Error
-      color = 'red';
-    } else if (rec.level.value <= 1200) { // Critical
-      color = 'red';
+    if (rec.level.value <= 500) {
+      color = 'gray'; // Debug
+    } else if (rec.level.value <= 800) {
+      color = 'blue'; // Info
+    } else if (rec.level.value <= 900) {
+      color = 'yellow'; // Warning
+    } else if (rec.level.value <= 1000) {
+      color = 'red'; // Error
+    } else if (rec.level.value <= 1200) {
+      color = 'red'; // Critical
     }
 
     js.context['console'].callMethod('log', [
