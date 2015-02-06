@@ -151,7 +151,8 @@
   padding: 0 2px;
 }
 
-.pages li b {
+.pages li .current {
+  font-weight: bold;
   pointer-events: none;
 }
 

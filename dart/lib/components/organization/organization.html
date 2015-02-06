@@ -37,9 +37,8 @@
       ng-click="org.users.next()">Next Page</btn>
     <ul class="pages" no-select>
       <li ng-repeat="page in org.users.pages">
-        <a ng-click="org.users.onPage(page[1])"><span><b
-          ng-if="page[0] == org.users.page" ng-bind="page[1]"></b></span><span
-          ng-if="page[0] != org.users.page" ng-bind="page[1]"></span></a>
+        <a ng-click="org.users.onPage(page[1])"><span ng-bind="page[1]"
+          ng-class="page[0] == org.users.page ? 'current' : null"></span></a>
       </li>
     </ul>
   </div>
