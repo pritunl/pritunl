@@ -7,6 +7,7 @@ void setup() {
   logging.Logger.root.onRecord.listen((logging.LogRecord rec) {
     print('${rec.level.name}: ${rec.time}: ${rec.message} '
       '${rec.error}');
+    print(rec.stackTrace);
   });
 }
 
