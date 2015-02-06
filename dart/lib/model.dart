@@ -129,15 +129,15 @@ abstract class Model extends remote.Remote {
   }
 
   async.Future destroy() {
-    this.loading = true;
+    var loadId = this.setLoading();
 
     return this.http.delete(this.url).then((response) {
-      this.loading = false;
+      this.clearLoading(loadId);
       this.clearError();
       this.import(response.data);
       return response.data;
     }).catchError((err) {
-      this.loading = false;
+      this.clearLoading(loadId);
       return new async.Future.error(this.parseError(err));
     }, test: (e) => e is ng.HttpResponse);
   }
@@ -145,9 +145,8 @@ abstract class Model extends remote.Remote {
   async.Future send(String method, String url, List<String> fields) {
     var symbols = this._symbols;
     var mirror = mirrors.reflect(this);
+    var loadId = this.setLoading();
     var methodFunc;
-
-    this.loading = true;
 
     var data = this.export(fields);
 
@@ -162,12 +161,12 @@ abstract class Model extends remote.Remote {
     }
 
     return methodFunc(url, data).then((response) {
-      this.loading = false;
+      this.clearLoading(loadId);
       this.clearError();
       this.import(response.data);
       return response.data;
     }).catchError((err) {
-      this.loading = false;
+      this.clearLoading(loadId);
       return new async.Future.error(this.parseError(err));
     }, test: (e) => e is ng.HttpResponse);
   }
