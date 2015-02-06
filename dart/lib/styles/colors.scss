@@ -516,7 +516,7 @@ body /deep/ organization::shadow .pages li a {
   color: map-get($organization-footer, fg);
 }
 
-body /deep/ organization::shadow .pages li b {
+body /deep/ organization::shadow .pages li .current {
   x-label: organization-footer;
   color: map-get($organization-footer, fg-active);
 }
