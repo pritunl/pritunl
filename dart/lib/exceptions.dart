@@ -24,8 +24,11 @@ class HttpError extends Error {
       }
 
       this.resp = new ng.HttpResponse.copy(err, data: data);
-      this.error = data['error'];
-      this.errorMsg = data['error_msg'];
+
+      if (data is Map) {
+        this.error = data['error'];
+        this.errorMsg = data['error_msg'];
+      }
     }
     else {
       this.resp = err;
