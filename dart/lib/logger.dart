@@ -1,8 +1,8 @@
 library logger;
 
-import 'package:logging/logging.dart' as logging;
+import 'package:pritunl/utils/utils.dart' as utils;
 
-import 'dart:js' as js;
+import 'package:logging/logging.dart' as logging;
 
 void setup() {
   logging.Logger.root.level = logging.Level.FINE;
@@ -21,12 +21,10 @@ void setup() {
       color = 'red'; // Critical
     }
 
-    js.context['console'].callMethod('log', [
-      '%c${rec.level.name}: ${rec.time}: ${rec.message}', 'color: $color']);
+    utils.printColor('${rec.level.name}: ${rec.time}: ${rec.message}', color);
 
     if (rec.error != null) {
-      js.context['console'].callMethod('log', [
-        '%c  TYPE: ${rec.error}', 'color: $color']);
+      utils.printColor('  TYPE: ${rec.error}', color);
     }
 
     if (rec.stackTrace != null) {
@@ -34,8 +32,7 @@ void setup() {
       rec.stackTrace.toString().split('\n').forEach((line) {
         stackTrace += '  $line\n';
       });
-      js.context['console'].callMethod('log', [
-        '%c$stackTrace', 'color: red']);
+      utils.printColor(stackTrace, 'red');
     }
   });
 }
