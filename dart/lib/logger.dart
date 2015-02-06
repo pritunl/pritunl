@@ -6,13 +6,18 @@ void setup() {
   logging.Logger.root.level = logging.Level.FINE;
   logging.Logger.root.onRecord.listen((logging.LogRecord rec) {
     print('${rec.level.name}: ${rec.time}: ${rec.message}');
-    print('  TYPE: ${rec.error}');
 
-    var stackTrace = '';
-    rec.stackTrace.toString().split('\n').forEach((line) {
-      stackTrace += '  $line\n';
-    });
-    print(stackTrace);
+    if (rec.error != null) {
+      print('  TYPE: ${rec.error}');
+    }
+
+    if (rec.stackTrace != null) {
+      var stackTrace = '';
+      rec.stackTrace.toString().split('\n').forEach((line) {
+        stackTrace += '  $line\n';
+      });
+      print(stackTrace);
+    }
   });
 }
 
