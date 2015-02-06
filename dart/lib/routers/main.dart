@@ -18,7 +18,8 @@ MainRout(ng.Router router, ng.RouteViewFactory views) {
       view: 'packages/pritunl/views/dashboard.html',
       enter: (_) {
         settings.set('active_page', 'dashboard');
-      }
+      },
+      defaultRoute: true
     ),
     'users': ng.ngRoute(
       path: '/users',
