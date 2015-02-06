@@ -26,17 +26,26 @@ class OrganizationComp implements ng.ScopeAware, ng.ShadowRootAware {
 
   OrganizationComp(this.http);
 
+  String _curMessage;
   String get message {
     if (this.org.users.loadingLong == true) {
-      return 'Loading...';
+      this._curMessage = 'Loading...';
     }
     else if (this.org.users.noUsers == true) {
-      if (this.org.users.search == null) {
-        return 'There are no users in this organization';
+      if (this.org.users.loading == true) {
+        return _curMessage;
       }
-      return 'No users found';
+      else if (this.org.users.search == null) {
+        this._curMessage = 'There are no users in this organization';
+      }
+      else {
+        this._curMessage = 'No users found';
+      }
     }
-    return null;
+    else {
+      this._curMessage = null;
+    }
+    return this._curMessage;
   }
 
   void toggleHidden() {
