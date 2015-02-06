@@ -1,45 +1,46 @@
 library remote;
 
 import 'package:pritunl/exceptions.dart';
+import 'package:pritunl/utils/utils.dart' as utils;
 
 import 'package:angular/angular.dart' as ng;
 import 'dart:async' as async;
-import 'dart:math' as math;
 
 abstract class Remote {
-  int _loadCheckId;
+  String _loadCheckId;
+  String _fetchCheckId;
   ng.Http http;
   String url;
   String error;
   String errorMsg;
   int errorStatus;
+  bool loading;
   bool loadingLong;
   Function onImport;
 
   Remote(this.http);
 
-  var _loading;
-  void set loading(bool val) {
-    if (val) {
-      var loadCheckId = new math.Random().nextInt(32000);
-      this._loadCheckId = loadCheckId;
-      this._loading = true;
+  String setLoading() {
+    var loadCheckId = utils.uuid();
+    this._loadCheckId = loadCheckId;
+    this.loading = true;
 
-      new async.Future.delayed(
-        const Duration(milliseconds: 200), () {
-          if (this._loadCheckId == loadCheckId) {
-            this.loadingLong = true;
-          }
-        });
-    }
-    else {
+    new async.Future.delayed(
+      const Duration(milliseconds: 250), () {
+        if (this._loadCheckId == loadCheckId) {
+          this.loadingLong = true;
+        }
+      });
+
+    return loadCheckId;
+  }
+
+  void clearLoading(String loadingId) {
+    if (this._loadCheckId == loadingId) {
       this._loadCheckId = null;
       this.loadingLong = false;
-      this._loading = false;
+      this.loading = false;
     }
-  }
-  bool get loading {
-    return this._loading;
   }
 
   dynamic parse(dynamic data) {
