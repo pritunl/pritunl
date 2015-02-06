@@ -11,13 +11,17 @@ void setup() {
 
     if (rec.level.value <= 500) {
       color = '#bdbdbd'; // Debug
-    } else if (rec.level.value <= 800) {
+    }
+    else if (rec.level.value <= 800) {
       color = '#31b0d5'; // Info
-    } else if (rec.level.value <= 900) {
+    }
+    else if (rec.level.value <= 900) {
       color = '#f0ad4e'; // Warning
-    } else if (rec.level.value <= 1000) {
+    }
+    else if (rec.level.value <= 1000) {
       color = '#d9534f'; // Error
-    } else if (rec.level.value <= 1200) {
+    }
+    else if (rec.level.value <= 1200) {
       color = '#d9534f'; // Critical
     }
 
