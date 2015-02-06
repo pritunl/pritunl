@@ -10,15 +10,15 @@ void setup() {
     var color;
 
     if (rec.level.value <= 500) {
-      color = 'gray'; // Debug
+      color = '#bdbdbd'; // Debug
     } else if (rec.level.value <= 800) {
-      color = 'blue'; // Info
+      color = '#31b0d5'; // Info
     } else if (rec.level.value <= 900) {
-      color = 'yellow'; // Warning
+      color = '#f0ad4e'; // Warning
     } else if (rec.level.value <= 1000) {
-      color = 'red'; // Error
+      color = '#d9534f'; // Error
     } else if (rec.level.value <= 1200) {
-      color = 'red'; // Critical
+      color = '#d9534f'; // Critical
     }
 
     utils.printColor('${rec.level.name}: ${rec.time}: ${rec.message}', color);
