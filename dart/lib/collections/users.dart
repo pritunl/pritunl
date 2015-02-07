@@ -13,7 +13,6 @@ import 'dart:math' as math;
 class Users extends collec.Collection {
   String _search;
   Type model = usr.User;
-  String eventType = 'users_updated';
   String org;
   int page;
   int pageTotal;
