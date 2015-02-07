@@ -1,3 +1,9 @@
+pritunl (1.0.513.37-0ubuntu1) unstable; urgency=low
+
+  * Fix timezone issue with two step authentication
+
+ -- Pritunl <contact@pritunl.com>  Sat, 07 Feb 2015 00:00:00 -0400
+
 pritunl (1.0.488.77-0ubuntu1) unstable; urgency=low
 
   * Improve organization management
