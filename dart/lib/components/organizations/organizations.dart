@@ -3,6 +3,8 @@ library organizations_comp;
 import 'package:pritunl/collections/organizations.dart' as organizations;
 import 'package:pritunl/collections/users.dart' as usrs;
 import 'package:pritunl/models/user.dart' as usr;
+import 'package:pritunl/alert.dart' as alrt;
+import 'package:pritunl/logger.dart' as logger;
 
 import 'package:angular/angular.dart' show Component;
 import 'package:angular/angular.dart' as ng;
@@ -23,7 +25,11 @@ class OrganizationsComp implements ng.AttachAware, ng.ScopeAware {
   }
 
   void update() {
-    this.orgs.fetch();
+    this.orgs.fetch().catchError((err) {
+      logger.severe('Failed to load organizations', err);
+      new alrt.Alert('Failed to load organizations, server error occurred.',
+        'danger');
+    });
   }
 
   void set scope(ng.Scope scope) {
