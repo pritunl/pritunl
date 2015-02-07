@@ -28,7 +28,7 @@ class OrganizationsComp implements ng.AttachAware, ng.ScopeAware {
 
   void set scope(ng.Scope scope) {
     scope.on('organizations_updated').listen((evt) {
-      this.orgs.fetch();
+      this.update();
     });
   }
 
