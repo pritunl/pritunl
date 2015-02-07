@@ -77,20 +77,20 @@ class Users extends collec.Collection {
       this.searchTime = data['search_time'];
       this.searchLimit = data['search_limit'];
 
-      this.pageTotal = null;
+      this.pageTotal = 0;
+      this.pages = [];
     }
     else {
       if (this.page != data['page']) {
         throw new IgnoreResponse();
       }
       this.pageTotal = data['page_total'].toInt();
+      this._updatePages();
 
       this.searchCount = null;
       this.searchMore = null;
       this.searchTime = null;
       this.searchLimit = null;
-
-      this._updatePages();
     }
 
     return data['users'];
