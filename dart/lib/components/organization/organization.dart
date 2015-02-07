@@ -70,7 +70,7 @@ class OrganizationComp implements ng.ScopeAware, ng.ShadowRootAware {
             this.selected.add(us);
           }
           else {
-            if (us == this._lastSelected || us == user) {
+            if (us == user || us == this._lastSelected) {
               found = true;
               this.selected.add(us);
             }
