@@ -3,7 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
-Fix timezone issue
+Fix timezone issue with two step authentication
 
 Version 1.0.488.77 2015-01-13
 -----------------------------
