@@ -34,7 +34,6 @@ class OrganizationComp implements ng.ScopeAware, ng.ShadowRootAware {
     }
     else if (this.org.users.noUsers == true) {
       if (this.org.users.loading == true) {
-        return _curMessage;
       }
       else if (this.org.users.search == null) {
         this._curMessage = 'There are no users in this organization';
