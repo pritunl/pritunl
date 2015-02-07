@@ -113,13 +113,12 @@ class Users extends collec.Collection {
       return;
     }
 
-    var i;
     var isCurPage;
     var cur = math.max(1, this.page - 7);
 
     this.pages.add([0, 'First']);
 
-    for (i = 0; i < 15; i++) {
+    for (var i = 0; i < 15; i++) {
       isCurPage = cur == this.page;
       if (cur > this.pageTotal - 1) {
         break;
