@@ -17,6 +17,7 @@ class OrganizationComp implements ng.ScopeAware, ng.ShadowRootAware {
   ng.Http http;
   dom.ShadowRoot root;
   bool showHidden;
+  usr.User _lastSelected;
 
   @NgOneWayOneTime('model')
   organization.Organization org;
@@ -53,10 +54,41 @@ class OrganizationComp implements ng.ScopeAware, ng.ShadowRootAware {
   }
 
   void select(usr.User user, bool shift) {
-    if (this.selected.contains(user)) {
-      this.selected.remove(user);
-    } else {
+    if (shift == true) {
+      if (this._lastSelected != null) {
+        var found = false;
+
+        if (user == this._lastSelected) {
+          return;
+        }
+
+        for (var us in this.org.users) {
+          if (found == true) {
+            if (us == user || us == this._lastSelected) {
+              break;
+            }
+            this.selected.add(us);
+          }
+          else {
+            if (us == this._lastSelected || us == user) {
+              found = true;
+              this.selected.add(us);
+            }
+          }
+        }
+      }
+
       this.selected.add(user);
+      this._lastSelected = user;
+    }
+    else {
+      if (this.selected.contains(user)) {
+        this.selected.remove(user);
+        this._lastSelected = null;
+      } else {
+        this.selected.add(user);
+        this._lastSelected = user;
+      }
     }
   }
 
