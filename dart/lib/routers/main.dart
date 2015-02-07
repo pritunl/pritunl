@@ -23,6 +23,14 @@ MainRout(ng.Router router, ng.RouteViewFactory views) {
         alrt.clear();
         settings.set('active_page', 'users');
       }
+    ),
+    'servers': ng.ngRoute(
+      path: '/servers',
+      view: 'packages/pritunl/views/servers.html',
+      enter: (_) {
+        alrt.clear();
+        settings.set('active_page', 'servers');
+      }
     )
   });
 }
