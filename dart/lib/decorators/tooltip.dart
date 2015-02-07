@@ -82,10 +82,9 @@ class TooltipDec {
 
     this.element.insertAdjacentElement('beforeBegin', this.tooltipElem);
 
-    var bounds = this.element.getBoundingClientRect();
-    var tooltipBounds = this.tooltipElem.getBoundingClientRect();
-    var x = bounds.left + bounds.width / 2 - tooltipBounds.width / 2;
-    var y = bounds.top - tooltipBounds.height - 5;
+    var x = this.element.offsetLeft + this.element.offsetWidth / 2 -
+      this.tooltipElem.offsetWidth / 2;
+    var y = this.element.offsetTop - this.tooltipElem.offsetHeight - 5;
 
     this.tooltipElem.style
       ..left = '${x}px'
