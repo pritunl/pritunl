@@ -20,10 +20,7 @@
   <li class="org" ng-repeat="org in orgs">
     <organization model="org" selected="selected"></organization>
   </li>
-  <li ng-if="orgs.length == 0" class="message">
-    There are no organizations on this host.
-  </li>
-  <li ng-if="orgs == null" class="message">
-    Loading...
+  <li ng-if="message != null" class="message">
+    <span ng-bind="message"></span>
   </li>
 </ul>
