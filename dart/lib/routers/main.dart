@@ -1,6 +1,7 @@
 library main_rout;
 
 import 'package:pritunl/settings/settings.dart' as settings;
+import 'package:pritunl/alert.dart' as alrt;
 
 import 'package:angular/angular.dart' as ng;
 
@@ -10,6 +11,7 @@ MainRout(ng.Router router, ng.RouteViewFactory views) {
       path: '/dashboard',
       view: 'packages/pritunl/views/dashboard.html',
       enter: (_) {
+        alrt.clear();
         settings.set('active_page', 'dashboard');
       },
       defaultRoute: true
@@ -18,6 +20,7 @@ MainRout(ng.Router router, ng.RouteViewFactory views) {
       path: '/users',
       view: 'packages/pritunl/views/users.html',
       enter: (_) {
+        alrt.clear();
         settings.set('active_page', 'users');
       }
     )
