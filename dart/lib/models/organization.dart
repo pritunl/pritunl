@@ -10,6 +10,9 @@ import 'package:angular/angular.dart' as ng;
 class Organization extends mdl.Model {
   usrs.Users users;
 
+  @mdl.Attribute('id')
+  String id;
+
   @mdl.Attribute('name')
   String name;
 
@@ -22,9 +25,6 @@ class Organization extends mdl.Model {
 
   @mdl.Attribute('user_count')
   int userCount;
-
-  @mdl.Attribute('id')
-  String id;
 
   Organization(ng.Http http) : super(http);
 
