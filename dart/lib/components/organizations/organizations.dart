@@ -45,4 +45,20 @@ class OrganizationsComp implements ng.AttachAware, ng.ScopeAware {
       model.users.fetch();
     };
   }
+
+  String _curMessage;
+  String get message {
+    if (this.orgs.loadingLong == true) {
+      this._curMessage = 'Loading...';
+    }
+    else if (this.orgs.length == 0) {
+      if (this.orgs.loading != true) {
+        this._curMessage = 'There are no organizations on this host';
+      }
+    }
+    else {
+      this._curMessage = null;
+    }
+    return _curMessage;
+  }
 }
