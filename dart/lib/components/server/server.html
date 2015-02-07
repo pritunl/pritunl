@@ -1,0 +1,14 @@
+<div class="server clearfix">
+  <div class="header">
+    <box-label padding="6px 12px" shift-click="toggleHidden()" no-select
+      type="primary">Server</box-label><h2 class="title"
+      tooltip="Click to modify this server"><a class="title"
+      no-select ng-bind="model.name"></a>
+    <span ng-if="showHidden" class="id">({{model.id}})</span></h2>
+    <div class="box-right">
+      <btn type="danger">Stop Server</btn>
+      <btn type="success">Start Server</btn>
+      <btn type="danger">Delete Server</btn>
+    </div>
+  </div>
+</div>
