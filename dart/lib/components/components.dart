@@ -42,6 +42,8 @@ import 'package:pritunl/components/organizations/organizations.dart'
   as organizations;
 import 'package:pritunl/components/qrcode/qrcode.dart'
   as qrcode;
+import 'package:pritunl/components/servers/servers.dart'
+  as servers;
 import 'package:pritunl/components/status/status.dart'
   as status;
 import 'package:pritunl/components/user/user.dart'
@@ -86,6 +88,7 @@ class ComponentsMod extends ng.Module {
     this.bind(organization.OrganizationComp);
     this.bind(organizations.OrganizationsComp);
     this.bind(qrcode.QrcodeComp);
+    this.bind(servers.ServersComp);
     this.bind(status.StatusComp);
     this.bind(user.UserComp);
     this.bind(user_add.UserAddComp);
