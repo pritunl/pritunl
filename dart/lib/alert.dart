@@ -16,3 +16,7 @@ class Alert {
     }
   }
 }
+
+void clear() {
+  alerts.clear();
+}
