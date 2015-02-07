@@ -261,24 +261,24 @@ class User(mongo.MongoObject):
                 otp_hash,
             ))
 
-        # MongoDB server may not have utc
+        otp_secret = self.otp_secret
+        padding = 8 - len(otp_secret) % 8
+        if padding != 8:
+            otp_secret = otp_secret.ljust(len(otp_secret) + padding, '=')
+        otp_secret = base64.b32decode(otp_secret.upper())
         valid_codes = []
-        for cur_time in (utils.time_now(), time.time()):
-            otp_secret = self.otp_secret
-            padding = 8 - len(otp_secret) % 8
-            if padding != 8:
-                otp_secret = otp_secret.ljust(len(otp_secret) + padding, '=')
-            otp_secret = base64.b32decode(otp_secret.upper())
-            epoch = int(cur_time / 30)
-            for epoch_offset in range(-1, 2):
-                value = struct.pack('>q', epoch + epoch_offset)
-                hmac_hash = hmac.new(otp_secret, value, hashlib.sha1).digest()
-                offset = ord(hmac_hash[-1]) & 0x0F
-                truncated_hash = hmac_hash[offset:offset + 4]
-                truncated_hash = struct.unpack('>L', truncated_hash)[0]
-                truncated_hash &= 0x7FFFFFFF
-                truncated_hash %= 1000000
-                valid_codes.append('%06d' % truncated_hash)
+        # MongoDB server may not have utc
+        #epoch = int(utils.time_now() / 30)
+        epoch = int(time.time() / 30)
+        for epoch_offset in range(-1, 2):
+            value = struct.pack('>q', epoch + epoch_offset)
+            hmac_hash = hmac.new(otp_secret, value, hashlib.sha1).digest()
+            offset = ord(hmac_hash[-1]) & 0x0F
+            truncated_hash = hmac_hash[offset:offset + 4]
+            truncated_hash = struct.unpack('>L', truncated_hash)[0]
+            truncated_hash &= 0x7FFFFFFF
+            truncated_hash %= 1000000
+            valid_codes.append('%06d' % truncated_hash)
 
         if code not in valid_codes:
             return False
