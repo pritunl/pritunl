@@ -6,8 +6,10 @@
       no-select ng-bind="model.name"></a>
     <span ng-if="showHidden" class="id">({{model.id}})</span></h2>
     <div class="box-right">
-      <btn type="danger" size="sm">Stop Server</btn>
-      <btn type="success" size="sm">Start Server</btn>
+      <span ng-switch="model.status">
+        <btn type="danger" size="sm" ng-switch-when="online">Stop Server</btn>
+        <btn type="success" size="sm" ng-switch-default>Start Server</btn>
+      </span>
       <btn type="danger" size="sm">Delete Server</btn>
     </div>
   </div>
