@@ -23,6 +23,9 @@ class Server extends mdl.Model {
     }
   }
 
+  @mdl.Attribute('status')
+  String status;
+
   Server(ng.Http http) : super(http);
 
   String get url {
