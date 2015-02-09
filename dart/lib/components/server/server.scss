@@ -59,3 +59,34 @@
 .header btn {
   margin-left: 6px;
 }
+
+.info {
+  background-color: #fff;
+}
+
+.info .status {
+  width: 255px;
+  margin-right: 11px;
+  float: left;
+}
+
+.info .item {
+  padding: 11px 12px;
+  height: 43px;
+  text-align: left;
+}
+
+.info .item + .item {
+  border-top: 1px solid #cfcfcf;
+}
+
+.info .item .title {
+  margin: 0;
+  color: #4d535c;
+}
+
+.info .item .right.title {
+  float: right;
+  position: relative;
+  top: -21px;
+}
