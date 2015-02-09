@@ -24,8 +24,10 @@ define([
         type: 'success',
         message: '<b>Follow and tweet ' +
           '<a href="https://twitter.com/intent/tweet?' +
-          'screen_name=pritunl&text=Enterprise%20open%20' +
-          'source%20VPN%20server%20https%3A%2F%2Fpritunl.com" ' +
+          'original_referer=https%3A%2F%2Fabout.twitter' +
+          '.com%2Fresources%2Fbuttons&text=Enterprise%20' +
+          'open%20source%20VPN%20server&tw_p=tweetbutton' +
+          '&url=http%3A%2F%2Fpritunl.com%2F&via=pritunl" ' +
           'target="_blank">@pritunl</a> for a ' +
           'free six month premium subscription.</b>',
         animate: false
