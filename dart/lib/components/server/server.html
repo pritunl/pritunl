@@ -23,14 +23,14 @@
           <glyphicon type="dashboard"></glyphicon>
           <span>Status</span>
         </h3>
-        <span class="right title"></span>
+        <span class="right title" ng-bind="model.status"></span>
       </div>
       <div class="item">
         <h3 class="left title">
           <glyphicon type="time"></glyphicon>
           <span>Uptime</span>
         </h3>
-        <span class="right title">-</span>
+        <span class="right title" ng-bind="model.uptime">-</span>
       </div>
       <div class="item">
         <h3 class="left title">
@@ -38,7 +38,7 @@
           <span>Users</span>
         </h3>
         <span class="right title">
-          <span></span> users online
+          {{model.usersOnline}}/{{model.userCount}} users online
         </span>
       </div>
       <div class="item">
@@ -47,7 +47,7 @@
           <span>Devices</span>
         </h3>
         <span class="right title">
-          <span></span> devices online
+          <span ng-bind="model.devicesOnline"></span> devices online
         </span>
       </div>
       <div class="item">
@@ -55,21 +55,21 @@
           <glyphicon type="signal"></glyphicon>
           <span>Network</span>
         </h3>
-        <span class="right title"></span>
+        <span class="right title" ng-bind="model.network"></span>
       </div>
       <div class="item">
         <h3 class="left title">
           <glyphicon type="upload"></glyphicon>
           <span>Port</span>
         </h3>
-        <span class="right title"></span>
+        <span class="right title" ng-bind="model.port"></span>
       </div>
       <div class="item">
         <h3 class="left title">
           <glyphicon type="cog"></glyphicon>
           <span>Mode</span>
         </h3>
-        <span class="right title"></span>
+        <span class="right title" ng-bind="model.mode"></span>
       </div>
     </div>
     <div class="data"></div>
