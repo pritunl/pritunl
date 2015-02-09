@@ -5,6 +5,10 @@ import 'package:angular/angular.dart' show Formatter;
 @Formatter(name: 'datetime')
 class DatetimeForm {
   String call(int time) {
+    if (time == null) {
+      return null;
+    }
+
     var date = new DateTime.fromMillisecondsSinceEpoch(time * 1000);
 
     var abbrev = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
