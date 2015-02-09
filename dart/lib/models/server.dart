@@ -30,19 +30,19 @@ class Server extends mdl.Model {
   int uptime;
 
   @mdl.Attribute('user_count')
-  int user_count;
+  int userCount;
 
   @mdl.Attribute('users_online')
-  int users_online;
+  int usersOnline;
 
   @mdl.Attribute('devices_online')
-  int devices_online;
+  int devicesOnline;
 
   @mdl.Attribute('network')
   String network;
 
   @mdl.Attribute('bind_address')
-  String bind_address;
+  String bindAddress;
 
   @mdl.Attribute('port')
   int port;
@@ -51,34 +51,34 @@ class Server extends mdl.Model {
   String protocol;
 
   @mdl.Attribute('dh_param_bits')
-  int dh_param_bits;
+  int dhParamBits;
 
   @mdl.Attribute('mode')
   String mode;
 
   @mdl.Attribute('multi_device')
-  bool multi_device;
+  bool multiDevice;
 
   @mdl.Attribute('local_networks')
-  List<String> local_networks;
+  List<String> localNetworks;
 
   @mdl.Attribute('dns_servers')
-  List<String> dns_servers;
+  List<String> dnsServers;
 
   @mdl.Attribute('search_domain')
-  String search_domain;
+  String searchDomain;
 
   @mdl.Attribute('otp_auth')
-  bool otp_auth;
+  bool otpAuth;
 
   @mdl.Attribute('cipher')
   String cipher;
 
   @mdl.Attribute('jumbo_frames')
-  bool jumbo_frames;
+  bool jumboFrames;
 
   @mdl.Attribute('lzo_compression')
-  bool lzo_compression;
+  bool lzoCompression;
 
   @mdl.Attribute('debug')
   bool debug;
