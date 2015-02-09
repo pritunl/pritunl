@@ -94,7 +94,4 @@ class Server extends mdl.Model {
 
     return url;
   }
-
-  void init() {
-  }
 }
