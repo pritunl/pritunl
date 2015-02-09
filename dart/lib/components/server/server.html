@@ -23,14 +23,14 @@
           <glyphicon type="dashboard"></glyphicon>
           <span>Status</span>
         </h3>
-        <span class="right title" ng-bind="model.status"></span>
+        <span class="right title" ng-bind="model.status | capitalize"></span>
       </div>
       <div class="item">
         <h3 class="left title">
           <glyphicon type="time"></glyphicon>
           <span>Uptime</span>
         </h3>
-        <span class="right title" ng-bind="model.uptime"></span>
+        <span class="right title" ng-bind="model.uptime | datetime"></span>
       </div>
       <div class="item">
         <h3 class="left title">
