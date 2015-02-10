@@ -83,8 +83,24 @@
   color: #4d535c;
 }
 
+.info .item glyphicon {
+  position: relative;
+  top: 3px;
+  vertical-align: text-top;
+  font-size: 17px;
+  color: #1f83bb;
+}
+
+.info .item .left.title {
+  position: relative;
+  top: -1px;
+  vertical-align: text-top;
+  font-size: 18px;
+}
+
 .info .item .right.title {
   float: right;
   position: relative;
   top: -21px;
+  font-size: 13px;
 }
