@@ -38,9 +38,8 @@
           <glyphicon type="user"></glyphicon>
           <span>Users</span>
         </h3>
-        <span class="right title">
-          {{model.usersOnline}}/{{model.userCount}} users online
-        </span>
+        <span class="right title"
+          ng-bind="[model.usersOnline, model.userCount] | fraction"></span>
       </div>
       <div class="item">
         <h3 class="left title">
