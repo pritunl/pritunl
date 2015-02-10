@@ -94,4 +94,17 @@ class Server extends mdl.Model {
 
     return url;
   }
+
+  String get modeLong {
+    if (this.mode == 'all_traffic') {
+      return 'All Traffic';
+    }
+    else if (this.mode == 'local_traffic') {
+      return 'Local Traffic Only';
+    }
+    else if (this.mode == 'vpn_traffic') {
+      return 'VPN Traffic Only';
+    }
+    return 'Unknown';
+  }
 }
