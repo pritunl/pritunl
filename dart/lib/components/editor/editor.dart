@@ -7,7 +7,7 @@ import 'dart:js' as js;
 
 @Component(
   selector: 'editor',
-  templateUrl: 'packages/pritunl/components/editor/editor.html',
+  template: '<div class="editor"></div>',
   cssUrl: 'packages/pritunl/components/editor/editor.css'
 )
 class EditorComp implements ng.ShadowRootAware {
