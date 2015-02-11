@@ -12,6 +12,8 @@ import 'package:pritunl/components/checkbox/checkbox.dart'
   as checkbox;
 import 'package:pritunl/components/container/container.dart'
   as container;
+import 'package:pritunl/components/editor/editor.dart'
+  as editor;
 import 'package:pritunl/components/form_group/form_group.dart'
   as form_group;
 import 'package:pritunl/components/form_input/form_input.dart'
@@ -75,6 +77,7 @@ class ComponentsMod extends ng.Module {
     this.bind(btn.BtnComp);
     this.bind(checkbox.CheckboxComp);
     this.bind(container.ContainerComp);
+    this.bind(editor.EditorComp);
     this.bind(form_group.FormGroupComp);
     this.bind(form_input.FormInputComp);
     this.bind(form_select.FormSelectComp);
