@@ -11,14 +11,27 @@ import 'dart:js' as js;
   cssUrl: 'packages/pritunl/components/editor/editor.css'
 )
 class EditorComp implements ng.ShadowRootAware {
+  js.JsObject _editor;
+
   @NgAttr('width')
   String width;
 
   @NgAttr('height')
   String height;
 
+  String _content;
   @NgOneWay('content')
-  String content;
+  set content(String value) {
+    this._content = value;
+
+    if (this._editor != null) {
+      this._editor.callMethod('getSession').callMethod(
+        'getDocument').callMethod('setValue', [value]);
+    }
+  }
+  String get content {
+    return this._content;
+  }
 
   onShadowRoot(dom.ShadowRoot root) {
     var editorDiv = root.querySelector('.editor');
@@ -44,5 +57,7 @@ class EditorComp implements ng.ShadowRootAware {
     for (var style in styles) {
       root.children.add(style.clone(true));
     }
+
+    this._editor = editor;
   }
 }
