@@ -1,6 +1,6 @@
 library editor_comp;
 
-import 'package:angular/angular.dart' show Component, NgAttr;
+import 'package:angular/angular.dart' show Component, NgAttr, NgOneWay;
 import 'package:angular/angular.dart' as ng;
 import 'dart:html' as dom;
 import 'dart:js' as js;
@@ -17,6 +17,9 @@ class EditorComp implements ng.ShadowRootAware {
   @NgAttr('height')
   String height;
 
+  @NgOneWay('content')
+  String content;
+
   onShadowRoot(dom.ShadowRoot root) {
     var editorDiv = root.querySelector('.editor');
 
@@ -32,6 +35,9 @@ class EditorComp implements ng.ShadowRootAware {
     editor.callMethod('setHighlightGutterLine', [false]);
     editor.callMethod('setShowFoldWidgets', [false]);
     editor.callMethod('getSession').callMethod('setMode', ['ace/mode/log']);
+
+    editor.callMethod('getSession').callMethod(
+      'getDocument').callMethod('setValue', [this.content]);
 
     var styles = dom.document.head.querySelectorAll('#ace_editor, #ace-tm');
 
