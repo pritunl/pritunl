@@ -3,3 +3,15 @@
 .editor {
   border: 1px solid #cfcfcf;
 }
+
+.editor ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.editor ::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+.editor ::-webkit-scrollbar-thumb {
+  background: #bcbcbc;
+  border: 1px solid #a8a8a8;
+}
