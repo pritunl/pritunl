@@ -21,7 +21,7 @@ class EditorComp implements ng.ShadowRootAware {
 
   String _content;
   @NgOneWay('content')
-  set content(String value) {
+  void set content(String value) {
     this._content = value;
 
     if (this._editor != null) {
