@@ -4,7 +4,6 @@ import 'package:angular/angular.dart' show Component, NgAttr;
 import 'package:angular/angular.dart' as ng;
 import 'dart:html' as dom;
 import 'dart:js' as js;
-import 'dart:async' as async;
 
 @Component(
   selector: 'editor',
