@@ -24,8 +24,7 @@ class EditorComp implements ng.ShadowRootAware {
     editorDiv.style.width = this.width;
     editorDiv.style.height = this.height;
 
-    var editor = js.context['ace'].callMethod('edit',
-      [root.querySelector('.editor')]);
+    var editor = js.context['ace'].callMethod('edit', [editorDiv]);
     editor.callMethod('setTheme', ['ace/theme/pritunl']);
     editor.callMethod('setFontSize', [10]);
     editor.callMethod('setReadOnly', [true]);
