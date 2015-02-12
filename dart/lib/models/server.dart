@@ -1,15 +1,12 @@
 library server_mod;
 
 import 'package:pritunl/model.dart' as mdl;
-import 'package:pritunl/collections/users.dart' as usrs;
 
 import 'package:angular/angular.dart' show Injectable;
 import 'package:angular/angular.dart' as ng;
 
 @Injectable()
 class Server extends mdl.Model {
-  usrs.Users users;
-
   @mdl.Attribute('id')
   String id;
 
