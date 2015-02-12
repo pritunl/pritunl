@@ -33,6 +33,40 @@ class EditorComp implements ng.ShadowRootAware {
     return this._content;
   }
 
+  void _setContent(String content) {
+    var foundLastLine;
+    var contentSplit = content.split('\n');
+    var doc = this._editor.callMethod('getSession').callMethod(
+      'getDocument');
+
+    if (this._lastLine != null) {
+      var lines = [];
+      for (var line in contentSplit.reversed) {
+        if (line == this._lastLine) {
+          foundLastLine = true;
+          break;
+        }
+        lines.add(line);
+      }
+
+      if (foundLastLine != true) {
+        this._lastLine = null;
+      }
+      else if (lines.length > 0) {
+        var docLen = doc.callMethod('getLength');
+        doc.callMethod('insertLines', [docLen - 1, lines.reversed.toList()]);
+      }
+    }
+
+    if (this._lastLine == null) {
+      doc.callMethod('setValue', [content]);
+    }
+
+    if (contentSplit.length > 0) {
+      this._lastLine = contentSplit[contentSplit.length - 1];
+    }
+  }
+
   onShadowRoot(dom.ShadowRoot root) {
     var editorDiv = root.querySelector('.editor');
 
