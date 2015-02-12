@@ -85,6 +85,7 @@ class EditorComp implements ng.ShadowRootAware {
       }
 
       doc.callMethod('setValue', [lines]);
+      this.scrollBottom();
     }
 
     if (content.length > 0) {
