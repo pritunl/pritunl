@@ -57,6 +57,11 @@ class EditorComp implements ng.ShadowRootAware {
     var doc = this._editor.callMethod('getSession').callMethod(
       'getDocument');
 
+    if (content == null) {
+      doc.callMethod('setValue', ['']);
+      return;
+    }
+
     if (this._lastLine != null) {
       var lines = [];
       for (var line in content.reversed) {
