@@ -54,7 +54,8 @@ class EditorComp implements ng.ShadowRootAware {
       }
       else if (lines.length > 0) {
         var docLen = doc.callMethod('getLength');
-        doc.callMethod('insertLines', [docLen - 1, lines.reversed.toList()]);
+        doc.callMethod('insertLines', [docLen - 1,
+          new js.JsArray.from(lines.reversed)]);
       }
     }
 
