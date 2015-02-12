@@ -84,9 +84,6 @@ class EditorComp implements ng.ShadowRootAware {
     editor.callMethod('setShowFoldWidgets', [false]);
     editor.callMethod('getSession').callMethod('setMode', ['ace/mode/log']);
 
-    editor.callMethod('getSession').callMethod(
-      'getDocument').callMethod('setValue', [this.content]);
-
     var styles = dom.document.head.querySelectorAll('#ace_editor, #ace-tm');
 
     for (var style in styles) {
@@ -94,5 +91,7 @@ class EditorComp implements ng.ShadowRootAware {
     }
 
     this._editor = editor;
+
+    this._setContent(this.content);
   }
 }
