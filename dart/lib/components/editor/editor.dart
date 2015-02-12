@@ -12,6 +12,7 @@ import 'dart:js' as js;
 )
 class EditorComp implements ng.ShadowRootAware {
   js.JsObject _editor;
+  String _lastLine;
 
   @NgAttr('width')
   String width;
