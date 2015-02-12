@@ -25,8 +25,7 @@ class EditorComp implements ng.ShadowRootAware {
     this._content = value;
 
     if (this._editor != null) {
-      this._editor.callMethod('getSession').callMethod(
-        'getDocument').callMethod('setValue', [value]);
+      this._setContent(value);
     }
   }
   String get content {
