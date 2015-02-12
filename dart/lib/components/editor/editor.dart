@@ -33,15 +33,14 @@ class EditorComp implements ng.ShadowRootAware {
     return this._content;
   }
 
-  void _setContent(String content) {
+  void _setContent(List<String> content) {
     var foundLastLine;
-    var contentSplit = content.split('\n');
     var doc = this._editor.callMethod('getSession').callMethod(
       'getDocument');
 
     if (this._lastLine != null) {
       var lines = [];
-      for (var line in contentSplit.reversed) {
+      for (var line in content.reversed) {
         if (line == this._lastLine) {
           foundLastLine = true;
           break;
@@ -60,11 +59,17 @@ class EditorComp implements ng.ShadowRootAware {
     }
 
     if (this._lastLine == null) {
-      doc.callMethod('setValue', [content]);
+      var lines = '';
+
+      for (var line in content) {
+        lines += '$line\n';
+      }
+
+      doc.callMethod('setValue', [lines]);
     }
 
-    if (contentSplit.length > 0) {
-      this._lastLine = contentSplit[contentSplit.length - 1];
+    if (content.length > 0) {
+      this._lastLine = content[content.length - 1];
     }
   }
 
