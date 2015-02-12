@@ -89,7 +89,7 @@ class EditorComp implements ng.ShadowRootAware {
     }
 
     if (content.length > 0) {
-      this._lastLine = content[content.length - 1];
+      this._lastLine = content.last;
     }
   }
 
