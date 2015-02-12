@@ -20,7 +20,7 @@ class EditorComp implements ng.ShadowRootAware {
   @NgAttr('height')
   String height;
 
-  String _content;
+  var _content;
   @NgOneWay('content')
   void set content(String value) {
     this._content = value;
