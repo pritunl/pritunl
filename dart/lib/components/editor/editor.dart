@@ -22,14 +22,14 @@ class EditorComp implements ng.ShadowRootAware {
 
   var _content;
   @NgOneWay('content')
-  void set content(String value) {
+  void set content(List<String> value) {
     this._content = value;
 
     if (this._editor != null) {
       this._setContent(value);
     }
   }
-  String get content {
+  List<String> get content {
     return this._content;
   }
 
