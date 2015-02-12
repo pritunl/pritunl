@@ -4,6 +4,7 @@ import 'package:angular/angular.dart' show Component, NgAttr, NgOneWay;
 import 'package:angular/angular.dart' as ng;
 import 'dart:html' as dom;
 import 'dart:js' as js;
+import 'dart:async' as async;
 
 @Component(
   selector: 'editor',
@@ -13,6 +14,7 @@ import 'dart:js' as js;
 class EditorComp implements ng.ShadowRootAware {
   js.JsObject _editor;
   String _lastLine;
+  dom.ShadowRoot _root;
 
   @NgAttr('width')
   String width;
@@ -31,6 +33,23 @@ class EditorComp implements ng.ShadowRootAware {
   }
   List<String> get content {
     return this._content;
+  }
+
+  void scrollBottom([int count]) {
+    if (count == null) {
+      count = 0;
+    }
+    else if (count >= 10) {
+      return;
+    }
+    count += 1;
+
+    var scroll = this._root.querySelector('.ace_scrollbar').scrollHeight;
+    this._root.querySelector('.ace_scrollbar').scrollTop = scroll;
+
+    new async.Timer(const Duration(milliseconds: 25), () {
+      this.scrollBottom(count);
+    });
   }
 
   void _setContent(List<String> content) {
@@ -74,6 +93,8 @@ class EditorComp implements ng.ShadowRootAware {
   }
 
   onShadowRoot(dom.ShadowRoot root) {
+    this._root = root;
+
     var editorDiv = root.querySelector('.editor');
 
     editorDiv.style.width = this.width;
