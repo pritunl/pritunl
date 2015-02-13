@@ -5,9 +5,12 @@ import 'package:pritunl/models/server_output.dart' as svr_output;
 
 import 'package:angular/angular.dart' show Injectable;
 import 'package:angular/angular.dart' as ng;
+import 'dart:async' as async;
 
 @Injectable()
 class Server extends mdl.Model {
+  var _count;
+  var _curUptime;
   svr_output.ServerOutput output;
 
   @mdl.Attribute('id')
@@ -93,6 +96,36 @@ class Server extends mdl.Model {
     }
 
     return url;
+  }
+  void _counter() {
+    if (this.uptime == null) {
+      this._count = null;
+      return;
+    }
+
+    if (this.uptime < this._curUptime) {
+      this._count = 0;
+    }
+
+    this._curUptime = this.uptime;
+    this._count += 1;
+    new async.Timer(const Duration(seconds: 1), () {
+      this._counter();
+    });
+  }
+
+  int get curUptime {
+    if (this.uptime == null) {
+      return null;
+    }
+
+    if (this._count == null) {
+      this._count = 0;
+      this._curUptime = this.uptime;
+      this._counter();
+    }
+
+    return this.uptime + this._count;
   }
 
   void init() {
