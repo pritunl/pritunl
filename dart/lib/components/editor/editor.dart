@@ -102,7 +102,6 @@ class EditorComp implements ng.ShadowRootAware {
     this.root = root;
 
     var editorDiv = root.querySelector('.editor');
-
     editorDiv.style.width = this.width;
     editorDiv.style.height = this.height;
 
