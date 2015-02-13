@@ -12,21 +12,33 @@ import 'package:angular/angular.dart' as ng;
   templateUrl: 'packages/pritunl/components/server/server.html',
   cssUrl: 'packages/pritunl/components/server/server.css'
 )
-class ServerComp implements ng.AttachAware {
+class ServerComp implements ng.AttachAware, ng.ScopeAware {
   bool showHidden;
 
   @NgOneWayOneTime('model')
   svr.Server model;
 
-  void toggleHidden() {
-    this.showHidden = this.showHidden != true;
-  }
-
-  void attach() {
+  void update() {
     this.model.output.fetch().catchError((err) {
       logger.severe('Failed to load server output', err);
       new alrt.Alert('Failed to load server output, server error occurred.',
       'danger');
     });
+  }
+
+  void set scope(ng.Scope scope) {
+    scope.on('servers_updated').listen((evt) {
+      if (evt.data.resourceId == this.model.id) {
+        this.update();
+      }
+    });
+  }
+
+  void attach() {
+    this.update();
+  }
+
+  void toggleHidden() {
+    this.showHidden = this.showHidden != true;
   }
 }
