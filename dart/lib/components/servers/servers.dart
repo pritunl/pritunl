@@ -12,13 +12,19 @@ import 'package:angular/angular.dart' as ng;
   templateUrl: 'packages/pritunl/components/servers/servers.html',
   cssUrl: 'packages/pritunl/components/servers/servers.css'
 )
-class ServersComp {
+class ServersComp implements ng.ScopeAware {
   svrs.Servers servers;
   ng.Http http;
 
   ServersComp(this.http) {
     this.servers = new svrs.Servers(this.http);
     this.update();
+  }
+
+  void set scope(ng.Scope scope) {
+    scope.on('servers_updated').listen((evt) {
+      this.update();
+    });
   }
 
   void update() {
