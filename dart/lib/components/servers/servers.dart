@@ -22,7 +22,7 @@ class ServersComp implements ng.ScopeAware {
   }
 
   void set scope(ng.Scope scope) {
-    scope.on('servers_updated').listen((evt) {
+    scope.on('servers_updated').listen((_) {
       this.update();
     });
   }
