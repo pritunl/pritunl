@@ -23,9 +23,7 @@ class ServerComp implements ng.AttachAware {
   }
 
   void attach() {
-    this.model.output.fetch().then((_) {
-      print(this.model.output.output);
-    }).catchError((err) {
+    this.model.output.fetch().catchError((err) {
       logger.severe('Failed to load server output', err);
       new alrt.Alert('Failed to load server output, server error occurred.',
       'danger');
