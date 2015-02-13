@@ -60,13 +60,10 @@
   margin-left: 6px;
 }
 
-.info {
-  background-color: #fff;
-}
-
 .info .data {
   height: 302px;
-  border-bottom: 1px solid #cfcfcf;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
 }
 
 .info .status {
@@ -79,16 +76,17 @@
   padding: 11px 12px;
   height: 43px;
   text-align: left;
-  border-right: 1px solid #cfcfcf;
+  border-right-style: solid;
+  border-right-width: 1px;
 }
 
 .info .item + .item {
-  border-top: 1px solid #cfcfcf;
+  border-top-style: solid;
+  border-top-width: 1px;
 }
 
 .info .item .title {
   margin: 0;
-  color: #4d535c;
 }
 
 .info .item glyphicon {
@@ -96,7 +94,6 @@
   top: 3px;
   vertical-align: text-top;
   font-size: 17px;
-  color: #1f83bb;
 }
 
 .info .item .left.title {
