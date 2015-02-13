@@ -20,7 +20,6 @@ PENDING = 'pending'
 COMMITTED = 'committed'
 ROLLBACK = 'rollback'
 COMPLETE = 'complete'
-ERROR = 'error'
 UPDATE = 'update'
 
 ONLINE = 'online'
