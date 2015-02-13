@@ -1,12 +1,15 @@
 library server_mod;
 
 import 'package:pritunl/model.dart' as mdl;
+import 'package:pritunl/models/server_output.dart' as svr_output;
 
 import 'package:angular/angular.dart' show Injectable;
 import 'package:angular/angular.dart' as ng;
 
 @Injectable()
 class Server extends mdl.Model {
+  svr_output.ServerOutput output;
+
   @mdl.Attribute('id')
   String id;
 
@@ -90,6 +93,10 @@ class Server extends mdl.Model {
     }
 
     return url;
+  }
+
+  void init() {
+    this.output = new svr_output.ServerOutput(this.http, this);
   }
 
   String get modeLong {
