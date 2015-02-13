@@ -14,7 +14,7 @@ import 'dart:async' as async;
 class EditorComp implements ng.ShadowRootAware {
   js.JsObject _editor;
   String _lastLine;
-  dom.ShadowRoot _root;
+  dom.ShadowRoot root;
 
   @NgAttr('width')
   String width;
@@ -44,8 +44,8 @@ class EditorComp implements ng.ShadowRootAware {
     }
     count += 1;
 
-    var scroll = this._root.querySelector('.ace_scrollbar').scrollHeight;
-    this._root.querySelector('.ace_scrollbar').scrollTop = scroll;
+    var scroll = this.root.querySelector('.ace_scrollbar').scrollHeight;
+    this.root.querySelector('.ace_scrollbar').scrollTop = scroll;
 
     new async.Timer(const Duration(milliseconds: 25), () {
       this.scrollBottom(count);
@@ -99,7 +99,7 @@ class EditorComp implements ng.ShadowRootAware {
   }
 
   onShadowRoot(dom.ShadowRoot root) {
-    this._root = root;
+    this.root = root;
 
     var editorDiv = root.querySelector('.editor');
 
