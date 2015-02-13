@@ -97,6 +97,7 @@ class Server extends mdl.Model {
 
     return url;
   }
+
   void _counter() {
     if (this.uptime == null) {
       this._count = null;
