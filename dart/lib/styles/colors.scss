@@ -619,5 +619,27 @@ body /deep/ server::shadow .server {
 body /deep/ server::shadow .header {
   x-label: server-header;
   background-color: map-get($server-header, bg);
-  border-color: map-get($server-header, border);
+}
+
+body /deep/ server::shadow .header,
+body /deep/ server::shadow .server .info .data,
+body /deep/ server::shadow .server .info .item,
+body /deep/ server::shadow .server .info .item + .item {
+  x-label: server;
+  border-color: map-get($server, border);
+}
+
+body /deep/ server::shadow .server .info {
+  x-label: server-info;
+  background-color: map-get($server-info, bg);
+}
+
+body /deep/ server::shadow .server .info .item {
+  x-label: server-info;
+  color: map-get($server-info, fg);
+}
+
+body /deep/ server::shadow .server .info .item glyphicon {
+  x-label: server-info;
+  color: map-get($server-info, icon);
 }
