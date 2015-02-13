@@ -27,7 +27,7 @@ class ServerComp implements ng.AttachAware, ng.ScopeAware {
   }
 
   void set scope(ng.Scope scope) {
-    scope.on('servers_updated').listen((evt) {
+    scope.on('server_output_updated').listen((evt) {
       if (evt.data.resourceId == this.model.id) {
         this.update();
       }
