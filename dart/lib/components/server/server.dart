@@ -42,6 +42,16 @@ class ServerComp implements ng.AttachAware, ng.ScopeAware {
     });
   }
 
+  void updateHosts() {
+    this.model.hosts.fetch().then((_) {
+      print(this.model.hosts);
+    }).catchError((err) {
+      logger.severe('Failed to load server hosts', err);
+      new alrt.Alert('Failed to load server hosts, '
+        'server error occurred.', 'danger');
+    });
+  }
+
   void set scope(ng.Scope scope) {
     scope.on('server_output_updated').listen((evt) {
       if (evt.data.resourceId == this.model.id) {
@@ -53,11 +63,17 @@ class ServerComp implements ng.AttachAware, ng.ScopeAware {
         this.updateOrgs();
       }
     });
+    scope.on('server_hosts_updated').listen((evt) {
+      if (evt.data.resourceId == this.model.id) {
+        this.updateHosts();
+      }
+    });
   }
 
   void attach() {
     this.updateOutput();
     this.updateOrgs();
+    this.updateHosts();
   }
 
   void toggleHidden() {
