@@ -18,7 +18,7 @@ class ServerComp implements ng.AttachAware, ng.ScopeAware {
   @NgOneWayOneTime('model')
   svr.Server model;
 
-  void update() {
+  void updateOutput() {
     this.model.output.fetch().catchError((err) {
       logger.severe('Failed to load server output', err);
       new alrt.Alert('Failed to load server output, server error occurred.',
@@ -26,16 +26,32 @@ class ServerComp implements ng.AttachAware, ng.ScopeAware {
     });
   }
 
+  void updateOrgs() {
+    this.model.orgs.fetch().then((_) {
+      print(this.model.orgs);
+    }).catchError((err) {
+      logger.severe('Failed to load server organizations', err);
+      new alrt.Alert('Failed to load server organizations, '
+        'server error occurred.', 'danger');
+    });
+  }
+
   void set scope(ng.Scope scope) {
     scope.on('server_output_updated').listen((evt) {
       if (evt.data.resourceId == this.model.id) {
-        this.update();
+        this.updateOutput();
+      }
+    });
+    scope.on('server_organizations_updated').listen((evt) {
+      if (evt.data.resourceId == this.model.id) {
+        this.updateOrgs();
       }
     });
   }
 
   void attach() {
-    this.update();
+    this.updateOutput();
+    this.updateOrgs();
   }
 
   void toggleHidden() {
