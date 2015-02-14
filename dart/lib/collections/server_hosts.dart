@@ -1,4 +1,4 @@
-library server_orgs_col;
+library server_hosts_col;
 
 import 'package:pritunl/collection.dart' as collec;
 import 'package:pritunl/models/server.dart' as svr;
