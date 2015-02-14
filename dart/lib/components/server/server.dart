@@ -19,8 +19,17 @@ class ServerComp implements ng.AttachAware, ng.ScopeAware {
   svr.Server model;
 
   String get message {
-    if (this.model.orgs.length == 0) {
-      return 'Server must have an organization attached';
+    var noOrgs = this.model.orgs.length == 0;
+    var noHosts = this.model.hosts.length == 0;
+
+    if (noOrgs || noHosts) {
+      if (!noOrgs) {
+        return 'Server must have a host attached';
+      }
+      else if (!noHosts) {
+        return 'Server must have an organization attached';
+      }
+      return 'Server must have a host and an organization attached';
     }
 
     return null;
