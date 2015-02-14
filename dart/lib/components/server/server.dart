@@ -18,6 +18,14 @@ class ServerComp implements ng.AttachAware, ng.ScopeAware {
   @NgOneWayOneTime('model')
   svr.Server model;
 
+  String get message {
+    if (this.model.orgs.length == 0) {
+      return 'Server must have an organization attached';
+    }
+
+    return null;
+  }
+
   void updateOutput() {
     this.model.output.fetch().catchError((err) {
       logger.severe('Failed to load server output', err);
