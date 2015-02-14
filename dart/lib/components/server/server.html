@@ -1,15 +1,14 @@
 <div class="server clearfix">
   <div class="header">
-    <box-label padding="6px 12px" shift-click="toggleHidden()" no-select
-      type="primary">Server</box-label><h2 class="title"
+    <box-label class="name" padding="6px 12px" shift-click="toggleHidden()"
+      no-select type="primary">Server</box-label><h2 class="title"
       tooltip="Click to modify this server"><a class="title"
       no-select ng-bind="model.name"></a>
     <span ng-if="showHidden" class="id">({{model.id}})</span></h2>
     <div class="box-right">
       <span ng-switch="model.status">
-        <box-label ng-if="model.orgs.length == 0" type="default" size="large">
-          Server must have an organization attached
-        </box-label>
+        <box-label class="message" ng-if="message != null" type="default"
+          size="large" ng-bind="message"></box-label>
         <span ng-switch-when="online">
           <btn type="primary" size="sm">Restart Server</btn>
           <btn type="warning" size="sm">Stop Server</btn>
