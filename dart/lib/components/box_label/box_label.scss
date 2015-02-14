@@ -11,3 +11,7 @@ span {
   vertical-align: baseline;
   @include border-radius-default();
 }
+
+.large {
+  padding: 9px 12px;
+}
