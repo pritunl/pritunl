@@ -7,6 +7,9 @@
     <span ng-if="showHidden" class="id">({{model.id}})</span></h2>
     <div class="box-right">
       <span ng-switch="model.status">
+        <box-label ng-if="model.orgs.length == 0" type="default" size="large">
+          Server must have an organization attached
+        </box-label>
         <span ng-switch-when="online">
           <btn type="primary" size="sm">Restart Server</btn>
           <btn type="warning" size="sm">Stop Server</btn>
