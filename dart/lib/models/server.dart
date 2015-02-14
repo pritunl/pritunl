@@ -1,6 +1,7 @@
 library server_mod;
 
 import 'package:pritunl/model.dart' as mdl;
+import 'package:pritunl/collections/server_orgs.dart' as svr_orgs;
 import 'package:pritunl/models/server_output.dart' as svr_output;
 
 import 'package:angular/angular.dart' show Injectable;
@@ -12,6 +13,7 @@ class Server extends mdl.Model {
   var _count;
   var _curUptime;
   svr_output.ServerOutput output;
+  svr_orgs.ServerOrgs orgs;
 
   @mdl.Attribute('id')
   String id;
@@ -131,6 +133,7 @@ class Server extends mdl.Model {
 
   void init() {
     this.output = new svr_output.ServerOutput(this.http, this);
+    this.orgs = new svr_orgs.ServerOrgs(this.http, this);
   }
 
   String get modeLong {
