@@ -6,7 +6,7 @@ import 'dart:html' as dom;
 
 @Component(
   selector: 'box-label',
-  template: '<span ng-class="type"><content></content></span>',
+  template: '<span ng-class="[type, size]"><content></content></span>',
   cssUrl: 'packages/pritunl/components/box_label/box_label.css'
 )
 class BoxLabelComp implements ng.ShadowRootAware {
@@ -15,6 +15,9 @@ class BoxLabelComp implements ng.ShadowRootAware {
 
   @NgAttr('type')
   String type;
+
+  @NgAttr('size')
+  String size;
 
   onShadowRoot(dom.ShadowRoot root) {
     if (this.padding != null) {
