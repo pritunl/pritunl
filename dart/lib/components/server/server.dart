@@ -30,7 +30,7 @@ class ServerComp implements ng.AttachAware, ng.ScopeAware {
     this.model.output.fetch().catchError((err) {
       logger.severe('Failed to load server output', err);
       new alrt.Alert('Failed to load server output, server error occurred.',
-      'danger');
+        'danger');
     });
   }
 
