@@ -35,9 +35,7 @@ class ServerComp implements ng.AttachAware, ng.ScopeAware {
   }
 
   void updateOrgs() {
-    this.model.orgs.fetch().then((_) {
-      print(this.model.orgs);
-    }).catchError((err) {
+    this.model.orgs.fetch().catchError((err) {
       logger.severe('Failed to load server organizations', err);
       new alrt.Alert('Failed to load server organizations, '
         'server error occurred.', 'danger');
