@@ -3,6 +3,7 @@ library collections;
 import 'package:pritunl/collections/events.dart' as evnts;
 import 'package:pritunl/collections/log_entries.dart' as log_ents;
 import 'package:pritunl/collections/organizations.dart' as organizations;
+import 'package:pritunl/collections/server_orgs.dart' as svg_orgs;
 import 'package:pritunl/collections/servers.dart' as servers;
 import 'package:pritunl/collections/users.dart' as usrs;
 
@@ -13,6 +14,7 @@ class CollectionsMod extends ng.Module {
     this.bind(evnts.Events);
     this.bind(log_ents.LogEntries);
     this.bind(organizations.Organizations);
+    this.bind(svg_orgs.ServerOrgs);
     this.bind(servers.Servers);
     this.bind(usrs.Users);
   }
