@@ -154,4 +154,16 @@ class Server extends mdl.Model {
     }
     return 'Unknown';
   }
+
+  async.Future start() {
+    return this.send('put', this.url + '/start', null);
+  }
+
+  async.Future stop() {
+    return this.send('put', this.url + '/stop', null);
+  }
+
+  async.Future restart() {
+    return this.send('put', this.url + '/restart', null);
+  }
 }
