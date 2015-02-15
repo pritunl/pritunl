@@ -3,7 +3,8 @@ library server_mod;
 import 'package:pritunl/model.dart' as mdl;
 import 'package:pritunl/collections/server_orgs.dart' as svr_orgs;
 import 'package:pritunl/collections/server_hosts.dart' as svr_hsts;
-import 'package:pritunl/models/server_output.dart' as svr_output;
+import 'package:pritunl/models/server_output.dart' as svr_otpt;
+import 'package:pritunl/models/server_link_output.dart' as svr_lnk_otpt;
 
 import 'package:angular/angular.dart' show Injectable;
 import 'package:angular/angular.dart' as ng;
@@ -13,7 +14,8 @@ import 'dart:async' as async;
 class Server extends mdl.Model {
   var _count;
   var _curUptime;
-  svr_output.ServerOutput output;
+  svr_otpt.ServerOutput output;
+  svr_lnk_otpt.ServerLinkOutput linkOutput;
   svr_orgs.ServerOrgs orgs;
   svr_hsts.ServerHosts hosts;
 
@@ -134,7 +136,8 @@ class Server extends mdl.Model {
   }
 
   void init() {
-    this.output = new svr_output.ServerOutput(this.http, this);
+    this.output = new svr_otpt.ServerOutput(this.http, this);
+    this.linkOutput = new svr_lnk_otpt.ServerLinkOutput(this.http, this);
     this.orgs = new svr_orgs.ServerOrgs(this.http, this);
     this.hosts = new svr_hsts.ServerHosts(this.http, this);
   }
