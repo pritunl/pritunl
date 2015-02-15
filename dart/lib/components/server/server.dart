@@ -14,9 +14,16 @@ import 'package:angular/angular.dart' as ng;
 )
 class ServerComp implements ng.AttachAware, ng.ScopeAware {
   bool showHidden;
+  Map<String, String> dataModeTypes;
 
   @NgOneWayOneTime('model')
   svr.Server model;
+
+  ServerComp() : dataModeTypes = {
+    'svrOutput': 'default',
+    'linkOutput': 'primary',
+    'bandwidth': 'primary',
+  };
 
   String get message {
     var noOrgs = this.model.orgs.length == 0;
