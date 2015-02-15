@@ -643,3 +643,8 @@ body /deep/ server::shadow .server .info .item glyphicon {
   x-label: server-info;
   color: map-get($server-info, icon);
 }
+
+body /deep/ server::shadow .server .data-header glyphicon {
+  x-label: server-data-header;
+  color: map-get($server-data-header, icon);
+}
