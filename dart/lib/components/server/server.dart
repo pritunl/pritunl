@@ -110,6 +110,30 @@ class ServerComp implements ng.AttachAware, ng.ScopeAware {
     };
   }
 
+  onStart() {
+    this.model.start().catchError((err) {
+      logger.severe('Failed to start server', err);
+      new alrt.Alert('Failed to start server, '
+      'server error occurred.', 'danger');
+    });
+  }
+
+  onStop() {
+    this.model.stop().catchError((err) {
+      logger.severe('Failed to stop server', err);
+      new alrt.Alert('Failed to stop server, '
+        'server error occurred.', 'danger');
+    });
+  }
+
+  onRestart() {
+    this.model.restart().catchError((err) {
+      logger.severe('Failed to restart server', err);
+      new alrt.Alert('Failed to restart server, '
+        'server error occurred.', 'danger');
+    });
+  }
+
   void set scope(ng.Scope scope) {
     scope.on('server_output_updated').listen((evt) {
       if (evt.data.resourceId == this.model.id) {
