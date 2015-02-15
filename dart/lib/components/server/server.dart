@@ -110,7 +110,7 @@ class ServerComp implements ng.AttachAware, ng.ScopeAware {
     };
   }
 
-  onStart() {
+  void onStart() {
     this.model.start().catchError((err) {
       logger.severe('Failed to start server', err);
       new alrt.Alert('Failed to start server, '
@@ -118,7 +118,7 @@ class ServerComp implements ng.AttachAware, ng.ScopeAware {
     });
   }
 
-  onStop() {
+  void onStop() {
     this.model.stop().catchError((err) {
       logger.severe('Failed to stop server', err);
       new alrt.Alert('Failed to stop server, '
@@ -126,7 +126,7 @@ class ServerComp implements ng.AttachAware, ng.ScopeAware {
     });
   }
 
-  onRestart() {
+  void onRestart() {
     this.model.restart().catchError((err) {
       logger.severe('Failed to restart server', err);
       new alrt.Alert('Failed to restart server, '
