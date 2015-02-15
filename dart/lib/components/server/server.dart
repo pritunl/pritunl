@@ -20,14 +20,14 @@ class ServerComp implements ng.AttachAware, ng.ScopeAware {
   @NgOneWayOneTime('model')
   svr.Server model;
 
-  ServerComp() : dataModesType = {
-    'svrOutput': 'default',
-    'linkOutput': 'primary',
-    'bandwidth': 'primary',
-  }, dataModes = {
+  ServerComp() : dataModes = {
     'svrOutput': true,
     'linkOutput': false,
     'bandwidth': false,
+  }, dataModesType = {
+    'svrOutput': 'default',
+    'linkOutput': 'primary',
+    'bandwidth': 'primary',
   };
 
   String get message {
