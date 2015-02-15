@@ -125,6 +125,16 @@
   height: 24px;
 }
 
+.data-header glyphicon {
+  cursor: pointer;
+  float: right;
+  color: #4d535c;
+  top: 4px;
+  position: relative;
+  font-size: 13px;
+  margin-right: 4px;
+}
+
 editor {
   position: relative;
   top: 20px;
