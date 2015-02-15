@@ -79,11 +79,11 @@
     <div class="data">
       <div class="data-header">
         <btn type="{{dataModeTypes['svrOutput']}}"
-          size="xs">Server Output</btn>
+          size="xs" ng-click="onSvrOutput()">Server Output</btn>
         <btn type="{{dataModeTypes['linkOutput']}}"
-          size="xs">Link Output</btn>
+          size="xs" ng-click="onLinkOutput()">Link Output</btn>
         <btn type="{{dataModeTypes['bandwidth']}}"
-          size="xs">Bandwidth Graphs</btn>
+          size="xs" ng-click="onBandwidth()">Bandwidth Graphs</btn>
         <glyphicon type="trash"></glyphicon>
       </div>
 

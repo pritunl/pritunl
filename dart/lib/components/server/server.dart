@@ -66,6 +66,24 @@ class ServerComp implements ng.AttachAware, ng.ScopeAware {
     });
   }
 
+  void onSvrOutput() {
+    this.dataModeTypes['linkOutput'] = 'primary';
+    this.dataModeTypes['bandwidth'] = 'primary';
+    this.dataModeTypes['svrOutput'] = 'default';
+  }
+
+  void onLinkOutput() {
+    this.dataModeTypes['svrOutput'] = 'primary';
+    this.dataModeTypes['bandwidth'] = 'primary';
+    this.dataModeTypes['linkOutput'] = 'default';
+  }
+
+  void onBandwidth() {
+    this.dataModeTypes['svrOutput'] = 'primary';
+    this.dataModeTypes['linkOutput'] = 'primary';
+    this.dataModeTypes['bandwidth'] = 'default';
+  }
+
   void set scope(ng.Scope scope) {
     scope.on('server_output_updated').listen((evt) {
       if (evt.data.resourceId == this.model.id) {
