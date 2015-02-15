@@ -14,6 +14,7 @@ import 'package:angular/angular.dart' as ng;
 )
 class ServerComp implements ng.AttachAware, ng.ScopeAware {
   bool showHidden;
+  Map<String, bool> dataModes;
   Map<String, String> dataModesType;
 
   @NgOneWayOneTime('model')
@@ -23,6 +24,10 @@ class ServerComp implements ng.AttachAware, ng.ScopeAware {
     'svrOutput': 'default',
     'linkOutput': 'primary',
     'bandwidth': 'primary',
+  }, dataModes = {
+    'svrOutput': true,
+    'linkOutput': false,
+    'bandwidth': false,
   };
 
   String get message {
@@ -67,21 +72,42 @@ class ServerComp implements ng.AttachAware, ng.ScopeAware {
   }
 
   void onSvrOutput() {
-    this.dataModesType['linkOutput'] = 'primary';
-    this.dataModesType['bandwidth'] = 'primary';
-    this.dataModesType['svrOutput'] = 'default';
+    this.dataModes = {
+      'linkOutput': false,
+      'bandwidth': false,
+      'svrOutput': true,
+    };
+    this.dataModesType = {
+      'linkOutput': 'primary',
+      'bandwidth': 'primary',
+      'svrOutput': 'default',
+    };
   }
 
   void onLinkOutput() {
-    this.dataModesType['svrOutput'] = 'primary';
-    this.dataModesType['bandwidth'] = 'primary';
-    this.dataModesType['linkOutput'] = 'default';
+    this.dataModes = {
+      'svrOutput': false,
+      'bandwidth': false,
+      'linkOutput': true,
+    };
+    this.dataModesType = {
+      'svrOutput': 'primary',
+      'bandwidth': 'primary',
+      'linkOutput': 'default',
+    };
   }
 
   void onBandwidth() {
-    this.dataModesType['svrOutput'] = 'primary';
-    this.dataModesType['linkOutput'] = 'primary';
-    this.dataModesType['bandwidth'] = 'default';
+    this.dataModes = {
+      'svrOutput': false,
+      'linkOutput': false,
+      'bandwidth': true,
+    };
+    this.dataModesType = {
+      'svrOutput': 'primary',
+      'linkOutput': 'primary',
+      'bandwidth': 'default',
+    };
   }
 
   void set scope(ng.Scope scope) {

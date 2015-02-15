@@ -86,7 +86,7 @@
           size="xs" ng-click="onBandwidth()">Bandwidth Graphs</btn>
         <glyphicon type="trash"></glyphicon>
       </div>
-      <editor width="632px" height="262px"
+      <editor ng-if="dataModes['svrOutput']" width="632px" height="262px"
         content="model.output.output"></editor>
     </div>
   </div>
