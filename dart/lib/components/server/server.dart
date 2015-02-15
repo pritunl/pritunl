@@ -52,9 +52,7 @@ class ServerComp implements ng.AttachAware, ng.ScopeAware {
   }
 
   void updateHosts() {
-    this.model.hosts.fetch().then((_) {
-      print(this.model.hosts);
-    }).catchError((err) {
+    this.model.hosts.fetch().catchError((err) {
       logger.severe('Failed to load server hosts', err);
       new alrt.Alert('Failed to load server hosts, '
         'server error occurred.', 'danger');
