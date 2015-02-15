@@ -115,6 +115,7 @@ class User(mongo.MongoObject):
             with open(ssl_conf_path, 'w') as conf_file:
                 conf_file.write(CERT_CONF % (
                     settings.user.cert_key_bits,
+                    settings.user.cert_message_digest,
                     self.org.id,
                     self.id,
                     index_path,
@@ -122,6 +123,7 @@ class User(mongo.MongoObject):
                     temp_path,
                     ca_cert_path,
                     ca_key_path,
+                    settings.user.cert_message_digest,
                 ))
 
             self.org.queue_com.wait_status()

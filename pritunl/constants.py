@@ -241,7 +241,7 @@ CERT_CONF = """\
 [ default ]
 [ req ]
 default_bits = %s
-default_md = sha1
+default_md = %s
 encrypt_key = no
 utf8 = yes
 string_mask = utf8only
@@ -278,7 +278,7 @@ certificate = %s
 private_key = %s
 default_days = 3652
 default_crl_days = 365
-default_md = sha1
+default_md = %s
 policy = ca_policy
 crl_extensions = crl_ext
 
