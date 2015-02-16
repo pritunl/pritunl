@@ -87,7 +87,7 @@
           size="xs" ng-click="onLinkOutput()">Link Output</btn>
         <btn type="{{dataModesType['bandwidth']}}"
           size="xs" ng-click="onBandwidth()">Bandwidth Graphs</btn>
-        <glyphicon type="trash"></glyphicon>
+        <glyphicon type="trash" ng-click="onClearOutput()"></glyphicon>
       </div>
       <editor ng-if="dataModes['svrOutput']" width="632px" height="262px"
         content="model.output.output"></editor>
