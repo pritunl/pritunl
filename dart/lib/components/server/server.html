@@ -93,6 +93,13 @@
         <span ng-switch="dataModes['svrOutput'] || dataModes['linkOutput']">
           <glyphicon ng-switch-when="true" type="trash"
             ng-click="onClearOutput()"></glyphicon>
+          <span ng-switch-default>
+            <btn type="primary" size="xs">6 Hours</btn>
+            <btn type="default" size="xs">24 Hours</btn>
+            <btn type="default" size="xs">7 Days</btn>
+            <btn type="default" size="xs">30 Days</btn>
+            <btn type="default" size="xs">365 Days</btn>
+          </span>
         </span>
       </div>
       <editor ng-if="dataModes['svrOutput']" width="632px" height="262px"
