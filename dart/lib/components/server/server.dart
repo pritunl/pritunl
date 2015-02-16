@@ -78,9 +78,9 @@ class ServerComp implements ng.AttachAware, ng.ScopeAware {
       'svrOutput': true,
     };
     this.dataModesType = {
-      'linkOutput': 'primary',
-      'bandwidth': 'primary',
-      'svrOutput': 'default',
+      'linkOutput': 'default',
+      'bandwidth': 'default',
+      'svrOutput': 'primary',
     };
   }
 
@@ -91,9 +91,9 @@ class ServerComp implements ng.AttachAware, ng.ScopeAware {
       'linkOutput': true,
     };
     this.dataModesType = {
-      'svrOutput': 'primary',
-      'bandwidth': 'primary',
-      'linkOutput': 'default',
+      'svrOutput': 'default',
+      'bandwidth': 'default',
+      'linkOutput': 'primary',
     };
   }
 
@@ -104,9 +104,9 @@ class ServerComp implements ng.AttachAware, ng.ScopeAware {
       'bandwidth': true,
     };
     this.dataModesType = {
-      'svrOutput': 'primary',
-      'linkOutput': 'primary',
-      'bandwidth': 'default',
+      'svrOutput': 'default',
+      'linkOutput': 'default',
+      'bandwidth': 'primary',
     };
   }
 
