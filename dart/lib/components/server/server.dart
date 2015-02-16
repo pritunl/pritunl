@@ -138,7 +138,7 @@ class ServerComp implements ng.AttachAware, ng.ScopeAware {
       this.model.linkOutput.destroy().catchError((err) {
         logger.severe('Failed to clear server link output', err);
         new alrt.Alert('Failed to clear server link output, '
-        'server error occurred.', 'danger');
+          'server error occurred.', 'danger');
       });
     }
   }
