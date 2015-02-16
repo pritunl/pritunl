@@ -5,7 +5,7 @@ import 'package:angular/angular.dart' show Formatter;
 @Formatter(name: 'timer')
 class TimerForm {
   String call(int count) {
-    if (count == null) {
+    if (count == null || count == 0) {
       return '-';
     }
 
