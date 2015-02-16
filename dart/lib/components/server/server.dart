@@ -25,9 +25,9 @@ class ServerComp implements ng.AttachAware, ng.ScopeAware {
     'linkOutput': false,
     'bandwidth': false,
   }, dataModesType = {
-    'svrOutput': 'default',
-    'linkOutput': 'primary',
-    'bandwidth': 'primary',
+    'svrOutput': 'primary',
+    'linkOutput': 'default',
+    'bandwidth': 'default',
   };
 
   String get message {
