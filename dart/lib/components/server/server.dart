@@ -151,14 +151,6 @@ class ServerComp implements ng.AttachAware, ng.ScopeAware {
     });
   }
 
-  void onDelete() {
-    this.model.destroy().catchError((err) {
-      logger.severe('Failed to delete server', err);
-      new alrt.Alert('Failed to delete server, '
-        'server error occurred.', 'danger');
-    });
-  }
-
   void set scope(ng.Scope scope) {
     scope.on('server_output_updated').listen((evt) {
       if (evt.data.resourceId == this.model.id) {

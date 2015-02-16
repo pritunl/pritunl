@@ -6,6 +6,7 @@
       no-select ng-bind="model.name"></a>
     <span ng-if="showHidden" class="id">({{model.id}})</span></h2>
     <div class="box-right">
+      <server-del model="model"></server-del>
       <span ng-switch="model.status">
         <box-label class="message" ng-if="message != null" type="default"
           size="large" ng-bind="message"></box-label>
