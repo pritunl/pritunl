@@ -114,7 +114,7 @@ class ServerComp implements ng.AttachAware, ng.ScopeAware {
     this.model.start().catchError((err) {
       logger.severe('Failed to start server', err);
       new alrt.Alert('Failed to start server, '
-      'server error occurred.', 'danger');
+        'server error occurred.', 'danger');
     });
   }
 
