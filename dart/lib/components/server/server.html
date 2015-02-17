@@ -107,4 +107,11 @@
         content="model.linkOutput.output"></editor>
     </div>
   </div>
+  <ul class="orgs">
+    <li ng-repeat="org in model.orgs">
+      <glyphicon type="tower"></glyphicon>
+      <span class="title" ng-bind="org.name"></span>
+      <span class="title">({{org.id}})</span>
+    </li>
+  </ul>
 </div>
