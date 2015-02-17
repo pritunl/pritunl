@@ -30,8 +30,8 @@
   padding: 14px 11px 16px 14px;
   border-bottom-width: 1px;
   border-bottom-style: solid;
-  @include border-top-left-radius(2px);
-  @include border-top-right-radius(2px);
+  @include border-top-left-radius-default;
+  @include border-top-right-radius-default;
 }
 
 .header .title {
