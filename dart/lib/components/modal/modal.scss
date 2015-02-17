@@ -135,8 +135,8 @@
   border-top-style: solid;
   padding: 15px;
   text-align: right;
-  @include border-bottom-left-radius-default();
-  @include border-bottom-right-radius-default();
+  @include border-bottom-left-radius-default;
+  @include border-bottom-right-radius-default;
 }
 
 .footer btn {
