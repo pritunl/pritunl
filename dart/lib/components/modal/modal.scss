@@ -87,12 +87,12 @@
 .content {
   width: 600px;
   margin: 75px auto;
-  background-color: #fff;
 }
 
 .header {
   padding: 17px;
-  border-bottom: 1px solid #e5e5e5;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
 }
 
 .header h4 {
@@ -108,22 +108,21 @@
 .header .advanced {
   display: inline-block;
   float: right;
-  color: #7B7B7B;
   margin-right: 29px;
   margin-top: 2px;
   padding: 9px 18px 9px 18px;
-  border-left: 1px solid #E5E5E5;
-  border-right: 1px solid #E5E5E5;
+  border-left-width: 1px;
+  border-left-style: solid;
+  border-right-width: 1px;
+  border-right-style: solid;
   cursor: pointer;
 }
 
 .header .advanced:hover {
-  color: #737373;
   @include box-shadow(inset 0px -7px 10px -10px #000);
 }
 
 .header .advanced:active {
-   color: #000;
    @include box-shadow(inset 0px -8px 10px -10px #000);
  }
 
@@ -132,8 +131,6 @@
 }
 
 .footer {
-  background-color: #f5f5f5;
-  border-color: #e5e5e5;
   border-top-width: 1px;
   border-top-style: solid;
   padding: 15px;

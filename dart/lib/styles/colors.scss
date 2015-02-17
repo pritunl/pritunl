@@ -370,6 +370,41 @@ body /deep/ form-select.danger::shadow select:focus {
 }
 
 // ####################################
+// modal
+// ####################################
+body /deep/ modal::shadow .content {
+  x-label: modal;
+  background-color: map-get($modal, bg);
+}
+
+body /deep/ modal::shadow .header {
+  x-label: modal;
+  border-color: map-get($modal, border);
+}
+
+body /deep/ modal::shadow .header .advanced {
+  x-label: modal;
+  color: map-get($modal, fg);
+  border-color: map-get($modal, border);
+}
+
+body /deep/ modal::shadow .header .advanced:hover {
+  x-label: modal;
+  color: map-get($modal, fg-hover);
+}
+
+body /deep/ modal::shadow .header .advanced:active {
+  x-label: modal;
+  color: map-get($modal, fg-active);
+}
+
+body /deep/ modal::shadow .footer {
+  x-label: modal;
+  border-color: map-get($modal-footer, border);
+  background-color: map-get($modal-footer, bg);
+}
+
+// ####################################
 // fraction
 // ####################################
 body /deep/ .default-text,
