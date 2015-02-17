@@ -81,7 +81,7 @@
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   outline: 0;
-  @include border-radius-default();
+  @include border-radius-default;
 }
 
 .content {

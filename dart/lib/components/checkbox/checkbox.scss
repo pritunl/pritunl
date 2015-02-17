@@ -8,7 +8,7 @@ div {
   border-style: solid;
   cursor: pointer;
   display: inline-block;
-  @include border-radius-default();
+  @include border-radius-default;
 }
 
 glyphicon {

@@ -9,7 +9,7 @@ span {
   text-align: center;
   white-space: nowrap;
   vertical-align: baseline;
-  @include border-radius-default();
+  @include border-radius-default;
 }
 
 .large {

@@ -16,7 +16,7 @@ button {
   border-radius: 4px;
   background-color: transparent;
   @include no-user-select();
-  @include border-radius-default();
+  @include border-radius-default;
 }
 
 button:hover,

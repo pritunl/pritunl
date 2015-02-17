@@ -5,7 +5,7 @@
   margin-bottom: 10px;
   border-width: 1px;
   border-style: solid;
-  @include border-radius-default();
+  @include border-radius-default;
 }
 
 .alert btn {
