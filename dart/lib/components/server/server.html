@@ -111,7 +111,7 @@
     <li ng-repeat="org in model.orgs">
       <glyphicon type="tower"></glyphicon>
       <span class="title" ng-bind="org.name"></span>
-      <span class="title">({{org.id}})</span>
+      <span ng-if="showHidden" class="title">({{org.id}})</span>
     </li>
   </ul>
 </div>
