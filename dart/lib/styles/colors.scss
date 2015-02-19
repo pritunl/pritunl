@@ -7,7 +7,7 @@
 body {
   x-label: body;
   color: map-get($body, fg);
-  background-color: #efefef;
+  background-color: map-get($body, bg);
 }
 
 body /deep/ table,
