@@ -108,8 +108,6 @@ class LogView(object):
 
         while cursor.alive:
             for doc in cursor:
-                cursor_id = doc['_id']
-
                 if formatted:
                     yield self.format_line(doc['message'])
                 else:
