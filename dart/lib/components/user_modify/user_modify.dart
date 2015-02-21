@@ -10,7 +10,7 @@ import 'package:angular/angular.dart' show Component, NgOneWayOneTime;
 import 'dart:async' as async;
 
 @Component(
-  selector: 'user-modify',
+  selector: 'x-user-modify',
   templateUrl: 'packages/pritunl/components/user_modify/user_modify.html'
 )
 class UserModifyComp extends modal_content_base.ModalContent {

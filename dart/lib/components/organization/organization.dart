@@ -9,7 +9,7 @@ import 'package:angular/angular.dart' as ng;
 import 'dart:html' as dom;
 
 @Component(
-  selector: 'organization',
+  selector: 'x-organization',
   templateUrl: 'packages/pritunl/components/organization/organization.html',
   cssUrl: 'packages/pritunl/components/organization/organization.css'
 )

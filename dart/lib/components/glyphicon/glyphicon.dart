@@ -3,7 +3,7 @@ library glyphicon_comp;
 import 'package:angular/angular.dart' show Component, NgAttr;
 
 @Component(
-  selector: 'glyphicon',
+  selector: 'x-glyphicon',
   template: '<span ng-class="iconClass"></span>',
   cssUrl: 'packages/pritunl/components/glyphicon/glyphicon.css'
 )

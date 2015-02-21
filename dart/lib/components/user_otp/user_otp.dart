@@ -7,7 +7,7 @@ import 'package:pritunl/models/user.dart' as usr;
 import 'package:angular/angular.dart' show Component, NgOneWayOneTime;
 
 @Component(
-  selector: 'user-otp',
+  selector: 'x-user-otp',
   templateUrl: 'packages/pritunl/components/user_otp/user_otp.html',
   cssUrl: 'packages/pritunl/components/user_otp/user_otp.css'
 )

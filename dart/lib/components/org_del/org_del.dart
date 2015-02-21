@@ -10,7 +10,7 @@ import 'package:angular/angular.dart' show Component, NgOneWayOneTime;
 import 'dart:async' as async;
 
 @Component(
-  selector: 'org-del',
+  selector: 'x-org-del',
   templateUrl: 'packages/pritunl/components/org_del/org_del.html'
 )
 class OrgDelComp extends modal_content_base.ModalContent {
@@ -46,7 +46,8 @@ class OrgDelComp extends modal_content_base.ModalContent {
     this.okDisabled = true;
 
     return this.model.destroy().then((_) {
-      return super.submit(closeHandler);
+      // TODO The org component will already be removed from dom
+      //return super.submit(closeHandler);
     }).then((_) {
       new alrt.Alert('Successfully deleted organization.', 'success');
     }).catchError((err) {

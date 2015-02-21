@@ -5,7 +5,7 @@ import 'package:pritunl/models/status.dart' as stus;
 import 'package:angular/angular.dart' show Component;
 
 @Component(
-    selector: 'status',
+    selector: 'x-status',
     templateUrl: 'packages/pritunl/components/status/status.html',
     cssUrl: 'packages/pritunl/components/status/status.css'
 )

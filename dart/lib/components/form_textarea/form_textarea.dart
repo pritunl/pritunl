@@ -6,7 +6,7 @@ import 'package:pritunl/bases/form_control/form_control.dart' as
 import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
 
 @Component(
-  selector: 'form-textarea',
+  selector: 'x-form-textarea',
   template: '<textarea placeholder="{{placeholder}}" '
     'ng-model="model" tooltip="{{formTooltip}}" rows="{{rows}}" '
     'spellcheck="{{spellcheck}}"></textarea>',

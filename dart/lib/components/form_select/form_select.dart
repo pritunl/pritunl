@@ -7,7 +7,7 @@ import 'package:angular/angular.dart' show Component, NgCallback, NgTwoWay,
   NgOneWay, NgAttr;
 
 @Component(
-  selector: 'form-select',
+  selector: 'x-form-select',
   template: '<select ng-model="model" tooltip="{{formTooltip}}">'
     '<option ng-repeat="colModel in collection" '
     'ng-value="optValue({\'\$model\': colModel})">'

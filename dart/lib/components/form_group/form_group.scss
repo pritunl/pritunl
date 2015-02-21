@@ -5,9 +5,9 @@
   margin-bottom: 5px;
 }
 
-::content form-input,
-::content form-textarea,
-::content form-select {
+::content x-form-input,
+::content x-form-textarea,
+::content x-form-select {
   display: block;
   margin-bottom: 20px;
 }

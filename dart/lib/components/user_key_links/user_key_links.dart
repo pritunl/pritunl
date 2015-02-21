@@ -8,7 +8,7 @@ import 'package:pritunl/models/key.dart' as ky;
 import 'package:angular/angular.dart' show Component, NgOneWayOneTime;
 
 @Component(
-  selector: 'user-key-links',
+  selector: 'x-user-key-links',
   templateUrl: 'packages/pritunl/components/user_key_links/user_key_links.html',
   cssUrl: 'packages/pritunl/components/user_key_links/user_key_links.css'
 )

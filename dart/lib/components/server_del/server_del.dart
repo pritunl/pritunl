@@ -10,7 +10,7 @@ import 'package:angular/angular.dart' show Component, NgOneWayOneTime;
 import 'dart:async' as async;
 
 @Component(
-  selector: 'server-del',
+  selector: 'x-server-del',
   templateUrl: 'packages/pritunl/components/server_del/server_del.html'
 )
 class ServerDelComp extends modal_content_base.ModalContent {

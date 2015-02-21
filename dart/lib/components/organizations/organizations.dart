@@ -10,7 +10,7 @@ import 'package:angular/angular.dart' show Component;
 import 'package:angular/angular.dart' as ng;
 
 @Component(
-  selector: 'organizations',
+  selector: 'x-organizations',
   templateUrl: 'packages/pritunl/components/organizations/organizations.html',
   cssUrl: 'packages/pritunl/components/organizations/organizations.css'
 )

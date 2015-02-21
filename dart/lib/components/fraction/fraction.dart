@@ -8,7 +8,7 @@ const String DEFAULT_HALF_STYLE = 'warning';
 const String DEFAULT_FULL_STYLE = 'success';
 
 @Component(
-  selector: 'fraction',
+  selector: 'x-fraction',
   template: '<span ng-class="colorType">{{numerStr}}/{{denomStr}}</span>',
   cssUrl: 'packages/pritunl/components/fraction/fraction.css'
 )

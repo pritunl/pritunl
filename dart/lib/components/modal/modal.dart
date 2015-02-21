@@ -4,7 +4,7 @@ import 'package:angular/angular.dart' show Component, NgAttr, NgOneWay;
 import 'dart:html' as dom;
 
 @Component(
-  selector: 'modal',
+  selector: 'x-modal',
   templateUrl: 'packages/pritunl/components/modal/modal.html',
   cssUrl: 'packages/pritunl/components/modal/modal.css'
 )

@@ -1,10 +1,10 @@
-<modal title="Email Users" ok-text="{{okText}}" no-cancel="{{noCancel}}"
+<x-modal title="Email Users" ok-text="{{okText}}" no-cancel="{{noCancel}}"
     ok-disabled="okDisabled">
-  <alert type="alertType" text="alertText"></alert>
+  <x-alert type="alertType" text="alertText"></x-alert>
   <label>Are you sure you want to email a key link to the following
     users?</label>
   <ul class="users">
     <li ng-repeat="user in users" ng-bind="getUserData(user)"
       ng-class="userClass[user]"></li>
   </ul>
-</modal>
+</x-modal>

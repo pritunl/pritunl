@@ -11,10 +11,10 @@
         <content></content>
       </div>
       <div class="footer">
-        <btn ng-if="noCancel != true" type="default" ng-click="hardClose()"
-          disabled="cancelDisabled">{{cancelText}}</btn>
-        <btn ng-if="noOk != true" type="primary" ng-click="submit()"
-          disabled="okDisabled" form-submit>{{okText}}</btn>
+        <x-btn ng-if="noCancel != true" type="default" ng-click="hardClose()"
+          disabled="cancelDisabled">{{cancelText}}</x-btn>
+        <x-btn ng-if="noOk != true" type="primary" ng-click="submit()"
+          disabled="okDisabled" form-submit>{{okText}}</x-btn>
       </div>
     </form>
   </div>

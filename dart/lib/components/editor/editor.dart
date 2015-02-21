@@ -7,7 +7,7 @@ import 'dart:js' as js;
 import 'dart:async' as async;
 
 @Component(
-  selector: 'editor',
+  selector: 'x-editor',
   template: '<div class="editor"></div>',
   cssUrl: 'packages/pritunl/components/editor/editor.css'
 )

@@ -4,9 +4,9 @@ import 'package:angular/angular.dart' show Component, NgTwoWay, NgCallback;
 import 'dart:html' as dom;
 
 @Component(
-  selector: 'checkbox',
+  selector: 'x-checkbox',
   template: r'<div ng-click="onClick($event)">'
-    '<glyphicon type="ok" ng-if="state"></glyphicon></div>',
+    '<x-glyphicon type="ok" ng-if="state"></x-glyphicon></div>',
   cssUrl: 'packages/pritunl/components/checkbox/checkbox.css'
 )
 class CheckboxComp {

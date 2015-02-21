@@ -11,7 +11,7 @@ import 'package:angular/angular.dart' show Component, NgOneWay;
 import 'dart:async' as async;
 
 @Component(
-  selector: 'user-add-bulk',
+  selector: 'x-user-add-bulk',
   templateUrl: 'packages/pritunl/components/user_add_bulk/user_add_bulk.html'
 )
 class UserAddBulkComp extends modal_content_base.ModalContent {

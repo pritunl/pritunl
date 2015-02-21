@@ -8,7 +8,7 @@
   @include border-radius-default;
 }
 
-checkbox {
+x-checkbox {
   margin: 10px 10px 0 10px;
   float: left;
 }
@@ -23,7 +23,7 @@ checkbox {
   border-left-style: solid;
 }
 
-.name-container glyphicon {
+.name-container x-glyphicon {
   font-size: 19px;
   line-height: 28px;
   position: relative;
@@ -76,13 +76,13 @@ checkbox {
   border-radius: 50%;
 }
 
-.buttons glyphicon {
+.buttons x-glyphicon {
   font-size: 20px;
   cursor: pointer;
   margin-left: 3px;
 }
 
-.buttons glyphicon.disabled {
+.buttons x-glyphicon.disabled {
   @include opacity(0.65);
 }
 

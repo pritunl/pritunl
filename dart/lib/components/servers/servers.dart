@@ -8,7 +8,7 @@ import 'package:angular/angular.dart' show Component;
 import 'package:angular/angular.dart' as ng;
 
 @Component(
-  selector: 'servers',
+  selector: 'x-servers',
   templateUrl: 'packages/pritunl/components/servers/servers.html',
   cssUrl: 'packages/pritunl/components/servers/servers.css'
 )

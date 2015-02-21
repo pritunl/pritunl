@@ -7,10 +7,10 @@ import 'dart:async' as async;
 import 'dart:html' as dom;
 
 @Component(
-  selector: 'alert',
+  selector: 'x-alert',
   template: '<div class="alert" ng-class="type" ng-if="text != null" '
-    'ng-animate>{{text}}<content></content><btn type="close-color" '
-    'ng-click="close()" ng-if="dismissible"></btn></div>',
+    'ng-animate>{{text}}<content></content><x-btn type="close-color" '
+    'ng-click="close()" ng-if="dismissible"></x-btn></div>',
   cssUrl: 'packages/pritunl/components/alert/alert.css'
 )
 class AlertComp implements ng.ShadowRootAware {

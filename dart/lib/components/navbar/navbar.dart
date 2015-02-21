@@ -5,7 +5,7 @@ import 'package:pritunl/settings/settings.dart' as settings;
 import 'package:angular/angular.dart' show Component;
 
 @Component(
-    selector: 'navbar',
+    selector: 'x-navbar',
     templateUrl: 'packages/pritunl/components/navbar/navbar.html',
     cssUrl: 'packages/pritunl/components/navbar/navbar.css'
 )

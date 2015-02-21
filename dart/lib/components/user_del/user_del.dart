@@ -10,7 +10,7 @@ import 'package:angular/angular.dart' show Component, NgOneWay;
 import 'dart:async' as async;
 
 @Component(
-  selector: 'user-del',
+  selector: 'x-user-del',
   templateUrl: 'packages/pritunl/components/user_del/user_del.html',
   cssUrl: 'packages/pritunl/components/user_del/user_del.css'
 )

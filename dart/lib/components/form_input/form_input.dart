@@ -7,7 +7,7 @@ import 'package:angular/angular.dart' show Component, NgOneWay, NgTwoWay,
   NgAttr;
 
 @Component(
-  selector: 'form-input',
+  selector: 'x-form-input',
   template: '<input ng-type="type" placeholder="{{placeholder}}" '
     'ng-readonly="readonly" ng-model="model" value="{{value}}" '
     'tooltip="{{formTooltip}}"/>',

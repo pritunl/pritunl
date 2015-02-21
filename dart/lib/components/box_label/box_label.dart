@@ -5,7 +5,7 @@ import 'package:angular/angular.dart' as ng;
 import 'dart:html' as dom;
 
 @Component(
-  selector: 'box-label',
+  selector: 'x-box-label',
   template: '<span ng-class="[type, size]"><content></content></span>',
   cssUrl: 'packages/pritunl/components/box_label/box_label.css'
 )

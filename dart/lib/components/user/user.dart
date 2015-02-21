@@ -7,7 +7,7 @@ import 'package:angular/angular.dart' show Component, NgOneWay, NgTwoWay,
 import 'dart:html' as dom;
 
 @Component(
-  selector: 'user',
+  selector: 'x-user',
   templateUrl: 'packages/pritunl/components/user/user.html',
   cssUrl: 'packages/pritunl/components/user/user.css'
 )

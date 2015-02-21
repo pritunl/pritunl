@@ -9,7 +9,7 @@ import 'package:angular/angular.dart' show Component, NgOneWay;
 import 'dart:async' as async;
 
 @Component(
-  selector: 'user-email',
+  selector: 'x-user-email',
   templateUrl: 'packages/pritunl/components/user_email/user_email.html',
   cssUrl: 'packages/pritunl/components/user_email/user_email.css'
 )

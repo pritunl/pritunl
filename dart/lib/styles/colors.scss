@@ -37,132 +37,132 @@ body /deep/ a:active {
 // ####################################
 // btn
 // ####################################
-body /deep/ btn::shadow .close {
+body /deep/ x-btn::shadow .close {
   x-label: btn;
   color: map-get($btn, close-fg);
 }
 
-body /deep/ btn::shadow .default {
+body /deep/ x-btn::shadow .default {
   x-label: btn;
   color: map-get($btn, default-fg);
   background-color: map-get($btn, default-bg);
   border-color: map-get($btn, default-border);
 }
 
-body /deep/ btn::shadow .default:hover,
-body /deep/ btn::shadow .default:focus,
-body /deep/ btn::shadow .default:active {
+body /deep/ x-btn::shadow .default:hover,
+body /deep/ x-btn::shadow .default:focus,
+body /deep/ x-btn::shadow .default:active {
   x-label: btn;
   background-color: map-get($btn, default-bg-hover);
   border-color: map-get($btn, default-border-hover);
 }
 
-body /deep/ btn::shadow .default[disabled] {
+body /deep/ x-btn::shadow .default[disabled] {
   x-label: btn;
   background-color: map-get($btn, default-bg-disabled);
   border-color: map-get($btn, default-border-disabled);
 }
 
-body /deep/ btn::shadow .primary {
+body /deep/ x-btn::shadow .primary {
   x-label: btn;
   color: map-get($btn, primary-fg);
   background-color: map-get($btn, primary-bg);
   border-color: map-get($btn, primary-border);
 }
 
-body /deep/ btn::shadow .primary:hover,
-body /deep/ btn::shadow .primary:focus,
-body /deep/ btn::shadow .primary:active {
+body /deep/ x-btn::shadow .primary:hover,
+body /deep/ x-btn::shadow .primary:focus,
+body /deep/ x-btn::shadow .primary:active {
   x-label: btn;
   background-color: map-get($btn, primary-bg-hover);
   border-color: map-get($btn, primary-border-hover);
 }
 
-body /deep/ btn::shadow .primary[disabled] {
+body /deep/ x-btn::shadow .primary[disabled] {
   x-label: btn;
   background-color: map-get($btn, primary-bg-disabled);
   border-color: map-get($btn, primary-border-disabled);
 }
 
-body /deep/ btn::shadow .success {
+body /deep/ x-btn::shadow .success {
   x-label: btn;
   color: map-get($btn, success-fg);
   background-color: map-get($btn, success-bg);
   border-color: map-get($btn, success-border);
 }
 
-body /deep/ btn::shadow .success:hover,
-body /deep/ btn::shadow .success:focus,
-body /deep/ btn::shadow .success:active {
+body /deep/ x-btn::shadow .success:hover,
+body /deep/ x-btn::shadow .success:focus,
+body /deep/ x-btn::shadow .success:active {
   x-label: btn;
   background-color: map-get($btn, success-bg-hover);
   border-color: map-get($btn, success-border-hover);
 }
 
-body /deep/ btn::shadow .success[disabled] {
+body /deep/ x-btn::shadow .success[disabled] {
   x-label: btn;
   background-color: map-get($btn, success-bg-disabled);
   border-color: map-get($btn, success-border-disabled);
 }
 
-body /deep/ btn::shadow .info {
+body /deep/ x-btn::shadow .info {
   x-label: btn;
   color: map-get($btn, info-fg);
   background-color: map-get($btn, info-bg);
   border-color: map-get($btn, info-border);
 }
 
-body /deep/ btn::shadow .info:hover,
-body /deep/ btn::shadow .info:focus,
-body /deep/ btn::shadow .info:active {
+body /deep/ x-btn::shadow .info:hover,
+body /deep/ x-btn::shadow .info:focus,
+body /deep/ x-btn::shadow .info:active {
   x-label: btn;
   background-color: map-get($btn, info-bg-hover);
   border-color: map-get($btn, info-border-hover);
 }
 
-body /deep/ btn::shadow .info[disabled] {
+body /deep/ x-btn::shadow .info[disabled] {
   x-label: btn;
   background-color: map-get($btn, info-bg-disabled);
   border-color: map-get($btn, info-border-disabled);
 }
 
-body /deep/ btn::shadow .warning {
+body /deep/ x-btn::shadow .warning {
   x-label: btn;
   color: map-get($btn, warning-fg);
   background-color: map-get($btn, warning-bg);
   border-color: map-get($btn, warning-border);
 }
 
-body /deep/ btn::shadow .warning:hover,
-body /deep/ btn::shadow .warning:focus,
-body /deep/ btn::shadow .warning:active {
+body /deep/ x-btn::shadow .warning:hover,
+body /deep/ x-btn::shadow .warning:focus,
+body /deep/ x-btn::shadow .warning:active {
   x-label: btn;
   background-color: map-get($btn, warning-bg-hover);
   border-color: map-get($btn, warning-border-hover);
 }
 
-body /deep/ btn::shadow .warning[disabled] {
+body /deep/ x-btn::shadow .warning[disabled] {
   x-label: btn;
   background-color: map-get($btn, warning-bg-disabled);
   border-color: map-get($btn, warning-border-disabled);
 }
 
-body /deep/ btn::shadow .danger {
+body /deep/ x-btn::shadow .danger {
   x-label: btn;
   color: map-get($btn, danger-fg);
   background-color: map-get($btn, danger-bg);
   border-color: map-get($btn, danger-border);
 }
 
-body /deep/ btn::shadow .danger:hover,
-body /deep/ btn::shadow .danger:focus,
-body /deep/ btn::shadow .danger:active {
+body /deep/ x-btn::shadow .danger:hover,
+body /deep/ x-btn::shadow .danger:focus,
+body /deep/ x-btn::shadow .danger:active {
   x-label: btn;
   background-color: map-get($btn, danger-bg-hover);
   border-color: map-get($btn, danger-border-hover);
 }
 
-body /deep/ btn::shadow .danger[disabled] {
+body /deep/ x-btn::shadow .danger[disabled] {
   x-label: btn;
   background-color: map-get($btn, danger-bg);
   border-color: map-get($btn, danger-border);
@@ -171,12 +171,12 @@ body /deep/ btn::shadow .danger[disabled] {
 // ####################################
 // checkbox
 // ####################################
-body /deep/ checkbox::shadow div {
+body /deep/ x-checkbox::shadow div {
   x-label: checkbox;
   border-color: map-get($checkbox, border);
 }
 
-body /deep/ checkbox::shadow glyphicon {
+body /deep/ x-checkbox::shadow x-glyphicon {
   x-label: checkbox;
   color: map-get($checkbox, fg);
 }
@@ -184,37 +184,37 @@ body /deep/ checkbox::shadow glyphicon {
 // ####################################
 // label
 // ####################################
-body /deep/ box-label::shadow .default {
+body /deep/ x-box-label::shadow .default {
   x-label: label;
   color: map-get($label, default-fg);
   background-color: map-get($label, default-bg);
 }
 
-body /deep/ box-label::shadow .primary {
+body /deep/ x-box-label::shadow .primary {
   x-label: label;
   color: map-get($label, primary-fg);
   background-color: map-get($label, primary-bg);
 }
 
-body /deep/ box-label::shadow .success {
+body /deep/ x-box-label::shadow .success {
   x-label: label;
   color: map-get($label, success-fg);
   background-color: map-get($label, success-bg);
 }
 
-body /deep/ box-label::shadow .info {
+body /deep/ x-box-label::shadow .info {
   x-label: label;
   color: map-get($label, info-fg);
   background-color: map-get($label, info-bg);
 }
 
-body /deep/ box-label::shadow .warning {
+body /deep/ x-box-label::shadow .warning {
   x-label: label;
   color: map-get($label, warning-fg);
   background-color: map-get($label, warning-bg);
 }
 
-body /deep/ box-label::shadow .danger {
+body /deep/ x-box-label::shadow .danger {
   x-label: label;
   color: map-get($label, danger-fg);
   background-color: map-get($label, danger-bg);
@@ -223,43 +223,43 @@ body /deep/ box-label::shadow .danger {
 // ####################################
 // alert
 // ####################################
-body /deep/ alert::shadow .alert.success,
-body /deep/ alert::shadow .alert.success-add,
-body /deep/ alert::shadow .alert.success-remove {
+body /deep/ x-alert::shadow .alert.success,
+body /deep/ x-alert::shadow .alert.success-add,
+body /deep/ x-alert::shadow .alert.success-remove {
   x-label: alert;
   color: map-get($alert, success-fg);
   background-color: map-get($alert, success-bg);
   border-color: map-get($alert, success-border);
 }
 
-body /deep/ alert::shadow .alert.info,
-body /deep/ alert::shadow .alert.info-add,
-body /deep/ alert::shadow .alert.info-remove {
+body /deep/ x-alert::shadow .alert.info,
+body /deep/ x-alert::shadow .alert.info-add,
+body /deep/ x-alert::shadow .alert.info-remove {
   x-label: alert;
   color: map-get($alert, info-fg);
   background-color: map-get($alert, info-bg);
   border-color: map-get($alert, info-border);
 }
 
-body /deep/ alert::shadow .alert.warning,
-body /deep/ alert::shadow .alert.warning-add,
-body /deep/ alert::shadow .alert.warning-remove {
+body /deep/ x-alert::shadow .alert.warning,
+body /deep/ x-alert::shadow .alert.warning-add,
+body /deep/ x-alert::shadow .alert.warning-remove {
   x-label: alert;
   color: map-get($alert, warning-fg);
   background-color: map-get($alert, warning-bg);
   border-color: map-get($alert, warning-border);
 }
 
-body /deep/ alert::shadow .alert.danger,
-body /deep/ alert::shadow .alert.danger-add,
-body /deep/ alert::shadow .alert.danger-remove {
+body /deep/ x-alert::shadow .alert.danger,
+body /deep/ x-alert::shadow .alert.danger-add,
+body /deep/ x-alert::shadow .alert.danger-remove {
   x-label: alert;
   color: map-get($alert, danger-fg);
   background-color: map-get($alert, danger-bg);
   border-color: map-get($alert, danger-border);
 }
 
-body /deep/ alert::shadow .alert.flash-on {
+body /deep/ x-alert::shadow .alert.flash-on {
   x-label: alert;
   background-color: map-get($alert, flash-bg);
 }
@@ -267,18 +267,18 @@ body /deep/ alert::shadow .alert.flash-on {
 // ####################################
 // form-control
 // ####################################
-body /deep/ form-input::shadow input,
-body /deep/ form-textarea::shadow textarea,
-body /deep/ form-select::shadow select {
+body /deep/ x-form-input::shadow input,
+body /deep/ x-form-textarea::shadow textarea,
+body /deep/ x-form-select::shadow select {
   x-label: form-control;
   color: map-get($form-control, fg);
   background-color: map-get($form-control, bg);
   border-color: map-get($form-control, border);
 }
 
-body /deep/ form-input::shadow input:focus,
-body /deep/ form-textarea::shadow textarea:focus,
-body /deep/ form-select::shadow select:focus {
+body /deep/ x-form-input::shadow input:focus,
+body /deep/ x-form-textarea::shadow textarea:focus,
+body /deep/ x-form-select::shadow select:focus {
   x-label: form-control;
   border-color: map-get($form-control, border-focus);
   @include box-shadow((
@@ -287,44 +287,44 @@ body /deep/ form-select::shadow select:focus {
   ));
 }
 
-body /deep/ form-input::shadow input::-moz-placeholder,
-body /deep/ form-textarea::shadow textarea::-moz-placeholder {
+body /deep/ x-form-input::shadow input::-moz-placeholder,
+body /deep/ x-form-textarea::shadow textarea::-moz-placeholder {
   x-label: form-control;
   color: map-get($form-control, placeholder);
 }
 
-body /deep/ form-input::shadow input::-ms-input-placeholder,
-body /deep/ form-textarea::shadow textarea::-ms-input-placeholder {
+body /deep/ x-form-input::shadow input::-ms-input-placeholder,
+body /deep/ x-form-textarea::shadow textarea::-ms-input-placeholder {
   x-label: form-control;
   color: map-get($form-control, placeholder);
 }
 
-body /deep/ form-input::shadow input::-webkit-input-placeholder,
-body /deep/ form-textarea::shadow textarea::-webkit-input-placeholder {
+body /deep/ x-form-input::shadow input::-webkit-input-placeholder,
+body /deep/ x-form-textarea::shadow textarea::-webkit-input-placeholder {
   x-label: form-control;
   color: map-get($form-control, placeholder);
 }
 
-body /deep/ form-input::shadow input[disabled],
-body /deep/ form-input::shadow input[readonly],
-body /deep/ form-textarea::shadow textarea[disabled],
-body /deep/ form-textarea::shadow textarea[readonly],
-body /deep/ form-select::shadow select[disabled],
-body /deep/ form-select::shadow select[readonly] {
+body /deep/ x-form-input::shadow input[disabled],
+body /deep/ x-form-input::shadow input[readonly],
+body /deep/ x-form-textarea::shadow textarea[disabled],
+body /deep/ x-form-textarea::shadow textarea[readonly],
+body /deep/ x-form-select::shadow select[disabled],
+body /deep/ x-form-select::shadow select[readonly] {
   x-label: form-control;
   background-color: map-get($form-control, bg-disabled);
 }
 
-body /deep/ form-input.success::shadow input,
-body /deep/ form-textarea.success::shadow textarea,
-body /deep/ form-select.success::shadow select {
+body /deep/ x-form-input.success::shadow input,
+body /deep/ x-form-textarea.success::shadow textarea,
+body /deep/ x-form-select.success::shadow select {
   x-label: form-control;
   border-color: map-get($form-control, success-border);
 }
 
-body /deep/ form-input.success::shadow input:focus,
-body /deep/ form-textarea.success::shadow textarea:focus,
-body /deep/ form-select.success::shadow select:focus {
+body /deep/ x-form-input.success::shadow input:focus,
+body /deep/ x-form-textarea.success::shadow textarea:focus,
+body /deep/ x-form-select.success::shadow select:focus {
   x-label: form-control;
   border-color: map-get($form-control, success-border-focus);
   @include box-shadow((
@@ -333,16 +333,16 @@ body /deep/ form-select.success::shadow select:focus {
   ));
 }
 
-body /deep/ form-input.warning::shadow input,
-body /deep/ form-textarea.warning::shadow textarea,
-body /deep/ form-select.warning::shadow select {
+body /deep/ x-form-input.warning::shadow input,
+body /deep/ x-form-textarea.warning::shadow textarea,
+body /deep/ x-form-select.warning::shadow select {
   x-label: form-control;
   border-color: map-get($form-control, warning-border);
 }
 
-body /deep/ form-input.warning::shadow input:focus,
-body /deep/ form-textarea.warning::shadow textarea:focus,
-body /deep/ form-select.warning::shadow select:focus {
+body /deep/ x-form-input.warning::shadow input:focus,
+body /deep/ x-form-textarea.warning::shadow textarea:focus,
+body /deep/ x-form-select.warning::shadow select:focus {
   x-label: form-control;
   border-color: map-get($form-control, warning-border-focus);
   @include box-shadow((
@@ -351,16 +351,16 @@ body /deep/ form-select.warning::shadow select:focus {
   ));
 }
 
-body /deep/ form-input.danger::shadow input,
-body /deep/ form-textarea.danger::shadow textarea,
-body /deep/ form-select.danger::shadow select {
+body /deep/ x-form-input.danger::shadow input,
+body /deep/ x-form-textarea.danger::shadow textarea,
+body /deep/ x-form-select.danger::shadow select {
   x-label: form-control;
   border-color: map-get($form-control, danger-border);
 }
 
-body /deep/ form-input.danger::shadow input:focus,
-body /deep/ form-textarea.danger::shadow textarea:focus,
-body /deep/ form-select.danger::shadow select:focus {
+body /deep/ x-form-input.danger::shadow input:focus,
+body /deep/ x-form-textarea.danger::shadow textarea:focus,
+body /deep/ x-form-select.danger::shadow select:focus {
   x-label: form-control;
   border-color: map-get($form-control, danger-border-focus);
   @include box-shadow((
@@ -372,33 +372,33 @@ body /deep/ form-select.danger::shadow select:focus {
 // ####################################
 // modal
 // ####################################
-body /deep/ modal::shadow .content {
+body /deep/ x-modal::shadow .content {
   x-label: modal;
   background-color: map-get($modal, bg);
 }
 
-body /deep/ modal::shadow .header {
+body /deep/ x-modal::shadow .header {
   x-label: modal;
   border-color: map-get($modal, border);
 }
 
-body /deep/ modal::shadow .header .advanced {
+body /deep/ x-modal::shadow .header .advanced {
   x-label: modal;
   color: map-get($modal, fg);
   border-color: map-get($modal, border);
 }
 
-body /deep/ modal::shadow .header .advanced:hover {
+body /deep/ x-modal::shadow .header .advanced:hover {
   x-label: modal;
   color: map-get($modal, fg-hover);
 }
 
-body /deep/ modal::shadow .header .advanced:active {
+body /deep/ x-modal::shadow .header .advanced:active {
   x-label: modal;
   color: map-get($modal, fg-active);
 }
 
-body /deep/ modal::shadow .footer {
+body /deep/ x-modal::shadow .footer {
   x-label: modal;
   border-color: map-get($modal-footer, border);
   background-color: map-get($modal-footer, bg);
@@ -408,25 +408,25 @@ body /deep/ modal::shadow .footer {
 // fraction
 // ####################################
 body /deep/ .default-text,
-body /deep/ fraction::shadow .default {
+body /deep/ x-fraction::shadow .default {
   x-label: text;
   color: map-get($text, default-fg) !important;
 }
 
 body /deep/ .danger-text,
-body /deep/ fraction::shadow .danger {
+body /deep/ x-fraction::shadow .danger {
   x-label: text;
   color: map-get($text, danger-fg) !important;
 }
 
 body /deep/ .warning-text,
-body /deep/ fraction::shadow .warning {
+body /deep/ x-fraction::shadow .warning {
   x-label: text;
   color: map-get($text, warning-fg) !important;
 }
 
 body /deep/ .success-text,
-body /deep/ fraction::shadow .success {
+body /deep/ x-fraction::shadow .success {
   x-label: text;
   color: map-get($text, success-fg) !important;
 }
@@ -434,41 +434,41 @@ body /deep/ fraction::shadow .success {
 // ####################################
 // navbar
 // ####################################
-body /deep/ navbar::shadow nav {
+body /deep/ x-navbar::shadow nav {
   x-label: header;
   border-color: map-get($header, border);
   background-color: map-get($header, bg);
 }
 
-body /deep/ navbar::shadow .brand,
-body /deep/ navbar::shadow .brand:focus,
-body /deep/ navbar::shadow .brand:active,
-body /deep/ navbar::shadow .brand:hover {
+body /deep/ x-navbar::shadow .brand,
+body /deep/ x-navbar::shadow .brand:focus,
+body /deep/ x-navbar::shadow .brand:active,
+body /deep/ x-navbar::shadow .brand:hover {
   x-label: header-brand;
   color: map-get($header-brand, fg);
 }
 
-body /deep/ navbar::shadow .links > li > a {
+body /deep/ x-navbar::shadow .links > li > a {
   x-label: header-link;
   color: map-get($header-link, fg);
 }
 
-body /deep/ navbar::shadow .links > li > a:hover,
-body /deep/ navbar::shadow .links > li > a:focus {
+body /deep/ x-navbar::shadow .links > li > a:hover,
+body /deep/ x-navbar::shadow .links > li > a:focus {
   x-label: header-link;
   color: map-get($header-link, fg-hover);
   background-color: map-get($header-link, bg-hover);
 }
 
-body /deep/ navbar::shadow .links > .active > a,
-body /deep/ navbar::shadow .links > .active > a:hover,
-body /deep/ navbar::shadow .links > .active > a:focus {
+body /deep/ x-navbar::shadow .links > .active > a,
+body /deep/ x-navbar::shadow .links > .active > a:hover,
+body /deep/ x-navbar::shadow .links > .active > a:focus {
   x-label: header-link;
   color: map-get($header-link, fg-active);
   background-color: map-get($header-link, bg-active);
 }
 
-body /deep/ navbar::shadow box-label::shadow .default {
+body /deep/ x-navbar::shadow x-box-label::shadow .default {
   x-label: header-label;
   background-color: map-get($header-label, bg);
 }
@@ -476,12 +476,12 @@ body /deep/ navbar::shadow box-label::shadow .default {
 // ####################################
 // status
 // ####################################
-body /deep/ status::shadow .version {
+body /deep/ x-status::shadow .version {
   x-label: header-link;
   color: map-get($header-link, fg);
 }
 
-body /deep/ status::shadow glyphicon::shadow .glyphicon {
+body /deep/ x-status::shadow x-glyphicon::shadow .glyphicon {
   x-label: status-icon;
   color: map-get($status-icon, fg);
 }
@@ -489,29 +489,29 @@ body /deep/ status::shadow glyphicon::shadow .glyphicon {
 // ####################################
 // log-entries
 // ####################################
-body /deep/ log-entries::shadow .log-container {
+body /deep/ x-log-entries::shadow .log-container {
   x-label: log-entries;
   border-color: map-get($log-entries, border);
   background-color: map-get($log-entries, bg);
 }
 
-body /deep/ log-entries::shadow .title,
-body /deep/ log-entries::shadow .entry {
+body /deep/ x-log-entries::shadow .title,
+body /deep/ x-log-entries::shadow .entry {
   x-label: log-entries;
   border-color: map-get($log-entries, border);
 }
 
-body /deep/ log-entries::shadow .entry {
+body /deep/ x-log-entries::shadow .entry {
   x-label: log-entries;
   color: map-get($log-entries, fg);
 }
 
-body /deep/ log-entries::shadow .entry glyphicon {
+body /deep/ x-log-entries::shadow .entry x-glyphicon {
   x-label: log-entries;
   color: map-get($log-entries, icon);
 }
 
-body /deep/ log-entries::shadow .entry .time {
+body /deep/ x-log-entries::shadow .entry .time {
   x-label: log-entries-time;
   color: map-get($log-entries-time, fg);
 }
@@ -529,34 +529,34 @@ body /deep/ .message {
 // ####################################
 // organization
 // ####################################
-body /deep/ organization::shadow .org {
+body /deep/ x-organization::shadow .org {
   x-label: organization;
   background-color: map-get($organization, bg);
   border-color: map-get($organization, border);
 }
 
-body /deep/ organization::shadow .header {
+body /deep/ x-organization::shadow .header {
   x-label: organization-header;
   background-color: map-get($organization-header, bg);
   border-color: map-get($organization-header, border);
 }
 
-body /deep/ organization::shadow .pages {
+body /deep/ x-organization::shadow .pages {
   x-label: organization-footer;
   color: map-get($organization-footer, fg);
 }
 
-body /deep/ organization::shadow .pages li a {
+body /deep/ x-organization::shadow .pages li a {
   x-label: organization-footer;
   color: map-get($organization-footer, fg);
 }
 
-body /deep/ organization::shadow .pages li .current {
+body /deep/ x-organization::shadow .pages li .current {
   x-label: organization-footer;
   color: map-get($organization-footer, fg-active);
 }
 
-body /deep/ organization::shadow .search-time {
+body /deep/ x-organization::shadow .search-time {
   x-label: organization-footer;
   color: map-get($organization-footer, fg);
 }
@@ -564,7 +564,7 @@ body /deep/ organization::shadow .search-time {
 // ####################################
 // organizations
 // ####################################
-body /deep/ organizations::shadow .no-orgs {
+body /deep/ x-organizations::shadow .no-orgs {
   x-label: organizations-none;
   color: map-get($organizations-none, fg);
   background-color: map-get($organizations-none, bg);
@@ -574,70 +574,70 @@ body /deep/ organizations::shadow .no-orgs {
 // ####################################
 // user
 // ####################################
-body /deep/ user::shadow .user {
+body /deep/ x-user::shadow .user {
   x-label: user;
   background-color: map-get($user, bg);
   border-color: map-get($user, border);
 }
 
-body /deep/ user::shadow .name-container {
+body /deep/ x-user::shadow .name-container {
   x-label: user;
   border-color: map-get($user, border);
 }
 
-body /deep/ user::shadow .name-container glyphicon {
+body /deep/ x-user::shadow .name-container x-glyphicon {
   x-label: user;
   color: map-get($user, icon);
 }
 
-body /deep/ user::shadow .name-container .name {
+body /deep/ x-user::shadow .name-container .name {
   x-label: user;
   color: map-get($user, fg);
 }
 
-body /deep/ user::shadow .buttons {
+body /deep/ x-user::shadow .buttons {
   x-label: user;
   border-color: map-get($user, border);
 }
 
-body /deep/ user::shadow .status .title {
+body /deep/ x-user::shadow .status .title {
   x-label: user-status;
   color: map-get($user-status, fg);
 }
 
-body /deep/ user::shadow .status .icon.online {
+body /deep/ x-user::shadow .status .icon.online {
   x-label: user-status;
   background-color: map-get($user-status, icon-online);
 }
 
-body /deep/ user::shadow .status .icon.offline {
+body /deep/ x-user::shadow .status .icon.offline {
   x-label: user-status;
   background-color: map-get($user-status, icon-offline);
 }
 
-body /deep/ user::shadow .status .icon.disabled {
+body /deep/ x-user::shadow .status .icon.disabled {
   x-label: user-status;
   background-color: map-get($user-status, icon-disabled);
 }
 
-body /deep/ user::shadow .buttons glyphicon {
+body /deep/ x-user::shadow .buttons x-glyphicon {
   x-label: user-buttons;
   color: map-get($user-buttons, icon);
 }
 
-body /deep/ user::shadow .user-servers {
+body /deep/ x-user::shadow .user-servers {
   x-label: users;
   background-color: map-get($user, bg);
   border-color: map-get($user, border);
 }
 
-body /deep/ user::shadow .user-servers .server + .server {
+body /deep/ x-user::shadow .user-servers .server + .server {
   x-label: user;
   border-color: map-get($user, border);
 }
 
-body /deep/ user-del::shadow .users li,
-body /deep/ user-email::shadow .users li {
+body /deep/ x-user-del::shadow .users li,
+body /deep/ x-user-email::shadow .users li {
   x-label: user;
   color: map-get($user-list, fg);
 }
@@ -645,41 +645,41 @@ body /deep/ user-email::shadow .users li {
 // ####################################
 // server
 // ####################################
-body /deep/ server::shadow .server {
+body /deep/ x-server::shadow .server {
   x-label: server;
   background-color: map-get($server, bg);
   border-color: map-get($server, border);
 }
 
-body /deep/ server::shadow .header {
+body /deep/ x-server::shadow .header {
   x-label: server-header;
   background-color: map-get($server-header, bg);
 }
 
-body /deep/ server::shadow .header,
-body /deep/ server::shadow .server .info .data,
-body /deep/ server::shadow .server .info .item,
-body /deep/ server::shadow .server .info .item + .item {
+body /deep/ x-server::shadow .header,
+body /deep/ x-server::shadow .server .info .data,
+body /deep/ x-server::shadow .server .info .item,
+body /deep/ x-server::shadow .server .info .item + .item {
   x-label: server;
   border-color: map-get($server, border);
 }
 
-body /deep/ server::shadow .server .info {
+body /deep/ x-server::shadow .server .info {
   x-label: server-info;
   background-color: map-get($server-info, bg);
 }
 
-body /deep/ server::shadow .server .info .item {
+body /deep/ x-server::shadow .server .info .item {
   x-label: server-info;
   color: map-get($server-info, fg);
 }
 
-body /deep/ server::shadow .server .info .item glyphicon {
+body /deep/ x-server::shadow .server .info .item x-glyphicon {
   x-label: server-info;
   color: map-get($server-info, icon);
 }
 
-body /deep/ server::shadow .server .data-header glyphicon {
+body /deep/ x-server::shadow .server .data-header x-glyphicon {
   x-label: server-data-header;
   color: map-get($server-data-header, icon);
 }

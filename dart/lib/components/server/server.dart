@@ -8,7 +8,7 @@ import 'package:angular/angular.dart' show Component, NgOneWayOneTime;
 import 'package:angular/angular.dart' as ng;
 
 @Component(
-  selector: 'server',
+  selector: 'x-server',
   templateUrl: 'packages/pritunl/components/server/server.html',
   cssUrl: 'packages/pritunl/components/server/server.css'
 )

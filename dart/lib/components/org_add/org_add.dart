@@ -10,7 +10,7 @@ import 'package:angular/angular.dart' show Component;
 import 'dart:async' as async;
 
 @Component(
-  selector: 'org-add',
+  selector: 'x-org-add',
   templateUrl: 'packages/pritunl/components/org_add/org_add.html'
 )
 class OrgAddComp extends modal_content_base.ModalContent {

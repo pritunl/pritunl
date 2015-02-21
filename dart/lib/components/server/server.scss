@@ -17,7 +17,7 @@
   top: -2px;
 }
 
-.header box-label {
+.header x-box-label {
   cursor: default;
   margin-top: 1px;
 }
@@ -43,7 +43,7 @@
   font-size: 19px;
 }
 
-.header form-input {
+.header x-form-input {
   position: relative;
   top: 1px;
   margin-right: 2px;
@@ -55,7 +55,7 @@
   top: -4px;
 }
 
-.header btn {
+.header x-btn {
   margin-left: 6px;
 }
 
@@ -88,7 +88,7 @@
   margin: 0;
 }
 
-.info .item glyphicon {
+.info .item x-glyphicon {
   position: relative;
   top: 3px;
   vertical-align: text-top;
@@ -117,7 +117,7 @@
   height: 24px;
 }
 
-.data-header glyphicon {
+.data-header x-glyphicon {
   cursor: pointer;
   float: right;
   top: 4px;
@@ -126,7 +126,7 @@
   margin-right: 4px;
 }
 
-editor {
+x-editor {
   position: relative;
   top: 9px;
 }
@@ -154,7 +154,7 @@ editor {
   background-clip: padding-box;
 }
 
-.orgs li glyphicon {
+.orgs li x-glyphicon {
   top: 5px;
   position: relative;
   margin-top: 0;

@@ -101,7 +101,7 @@
   margin: 0;
 }
 
-.header btn {
+.header x-btn {
   float: right;
 }
 
@@ -139,6 +139,6 @@
   @include border-bottom-right-radius-default;
 }
 
-.footer btn {
+.footer x-btn {
   margin-left: 5px;
 }

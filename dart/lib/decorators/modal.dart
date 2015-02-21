@@ -10,7 +10,7 @@ import 'dart:async' as async;
 
 @Decorator(
   children: 'transclude',
-  selector: 'modal'
+  selector: 'x-modal'
 )
 class ModalDec extends conditional.Conditional {
   ModalDec(ng.ViewFactory viewFactory, ng.ViewPort viewPort,

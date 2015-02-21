@@ -11,7 +11,7 @@ import 'package:angular/angular.dart' show Component, NgOneWay;
 import 'dart:async' as async;
 
 @Component(
-  selector: 'user-add',
+  selector: 'x-user-add',
   templateUrl: 'packages/pritunl/components/user_add/user_add.html'
 )
 class UserAddComp extends modal_content_base.ModalContent {

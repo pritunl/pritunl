@@ -5,7 +5,7 @@ import 'package:angular/angular.dart' as ng;
 import 'dart:html' as dom;
 
 @Component(
-  selector: 'btn',
+  selector: 'x-btn',
   template: '<button type="{{btnType}}" ng-class="[type, size]" '
     'ng-disabled="disabled"><content></content></button>',
   cssUrl: 'packages/pritunl/components/btn/btn.css'

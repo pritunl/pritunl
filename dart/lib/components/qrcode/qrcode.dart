@@ -8,7 +8,7 @@ import 'dart:async' as async;
 import 'dart:js' as js;
 
 @Component(
-  selector: 'qrcode',
+  selector: 'x-qrcode',
   template: '<div></div>'
 )
 class QrcodeComp implements ng.ShadowRootAware, ng.AttachAware {
