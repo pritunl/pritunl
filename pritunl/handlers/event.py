@@ -7,7 +7,6 @@ from pritunl import app
 from pritunl import auth
 
 import flask
-import bson
 
 @app.app.route('/event', methods=['GET'])
 @app.app.route('/event/<cursor>', methods=['GET'])
