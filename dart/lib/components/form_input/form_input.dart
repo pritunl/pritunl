@@ -3,8 +3,8 @@ library form_input_comp;
 import 'package:pritunl/bases/form_control/form_control.dart' as
   form_control_base;
 
-import 'package:angular/angular.dart' show Component, NgOneWay, NgTwoWay,
-  NgAttr;
+import 'package:angular/angular.dart' show Component, NgAttr, NgOneWay,
+  NgTwoWay;
 
 @Component(
   selector: 'x-form-input',
