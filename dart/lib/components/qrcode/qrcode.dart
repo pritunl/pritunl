@@ -1,5 +1,7 @@
 library qrcode_comp;
 
+import 'package:pritunl/all_aware.dart' as all_aware;
+
 import 'package:angular/angular.dart' show Component, NgAttr, NgOneWay,
   NgOneWayOneTime;
 import 'package:angular/angular.dart' as ng;
@@ -11,7 +13,7 @@ import 'dart:js' as js;
   selector: 'x-qrcode',
   template: '<div></div>'
 )
-class QrcodeComp implements ng.ShadowRootAware, ng.AttachAware {
+class QrcodeComp implements all_aware.AllAware {
   dom.Element qrcodeElem;
   var _curText;
   var _attached;
@@ -60,11 +62,8 @@ class QrcodeComp implements ng.ShadowRootAware, ng.AttachAware {
     });
   }
 
-  void onShadowRoot(dom.ShadowRoot root) {
+  void onAll(dom.ShadowRoot root) {
     this.qrcodeElem = root.querySelector('div');
-  }
-
-  void attach() {
     this.buildQrcode();
     this._attached = true;
   }
