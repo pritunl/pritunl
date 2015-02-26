@@ -4,7 +4,6 @@ import 'package:pritunl/all_aware.dart' as all_aware;
 
 import 'package:angular/angular.dart' show Component, NgAttr, NgOneWay,
   NgOneWayOneTime;
-import 'package:angular/angular.dart' as ng;
 import 'dart:html' as dom;
 import 'dart:async' as async;
 import 'dart:js' as js;
@@ -13,7 +12,7 @@ import 'dart:js' as js;
   selector: 'x-qrcode',
   template: '<div></div>'
 )
-class QrcodeComp implements all_aware.AllAware {
+class QrcodeComp extends all_aware.AllAware {
   dom.Element qrcodeElem;
   var _curText;
   var _attached;
