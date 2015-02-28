@@ -93,14 +93,16 @@ abstract class Model extends remote.Remote {
     var data = this.parse(responseData);
     var mirror = mirrors.reflect(this);
 
-    data.forEach((key, value) {
-      var symbol = symbols[key];
-      if (symbol == null) {
-        return;
-      }
+    if (data != null && data != '') {
+      data.forEach((key, value) {
+        var symbol = symbols[key];
+        if (symbol == null) {
+          return;
+        }
 
-      mirror.setField(symbol, value);
-    });
+        mirror.setField(symbol, value);
+      });
+    }
 
     this.imported();
     if (this.onImport != null) {
