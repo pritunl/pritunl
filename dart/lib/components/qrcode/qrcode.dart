@@ -41,7 +41,6 @@ class QrcodeComp extends all_aware.AllAware {
     }
     this._curText = this.text;
     var qrcodeElem = new dom.Element.div();
-
     var qrSettings = new js.JsObject.jsify({
       'text': this._curText,
       'width': this.width,
