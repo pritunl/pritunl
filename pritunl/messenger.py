@@ -6,8 +6,6 @@ from pritunl import utils
 
 import pymongo
 import time
-import datetime
-import bson
 
 def publish(channels, message, extra=None, transaction=None):
     collection = mongo.get_collection('messages')
