@@ -2,12 +2,9 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import messenger
-from pritunl import logger
 from pritunl import utils
 
 import time
-import bson
-import os
 
 event_queue = utils.NoneQueue()
 
