@@ -2,7 +2,7 @@ library alert_global_comp;
 
 import 'package:pritunl/alert.dart' as alrt;
 
-import 'package:angular/angular.dart' show Component, NgTwoWay, NgAttr;
+import 'package:angular/angular.dart' show Component;
 import 'dart:collection' as collection;
 
 @Component(
