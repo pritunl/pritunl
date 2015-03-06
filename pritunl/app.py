@@ -3,14 +3,12 @@ from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import logger
 from pritunl import settings
-from pritunl import patches
 from pritunl import wsgiserver
 from pritunl import limiter
 
 import flask
 import logging
 import logging.handlers
-import signal
 import time
 
 try:
