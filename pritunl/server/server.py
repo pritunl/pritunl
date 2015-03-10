@@ -59,6 +59,7 @@ dict_fields = [
     'cipher',
     'jumbo_frames',
     'lzo_compression',
+    'inter_client',
     'debug',
 ]
 
@@ -80,6 +81,7 @@ class Server(mongo.MongoObject):
         'tls_auth',
         'tls_auth_key',
         'lzo_compression',
+        'inter_client',
         'debug',
         'cipher',
         'jumbo_frames',
@@ -102,6 +104,7 @@ class Server(mongo.MongoObject):
         'otp_auth': False,
         'tls_auth': True,
         'lzo_compression': False,
+        'inter_client': True,
         'debug': False,
         'cipher': 'aes256',
         'jumbo_frames': False,
@@ -119,8 +122,8 @@ class Server(mongo.MongoObject):
             port=None, protocol=None, dh_param_bits=None,
             mode=None, multi_device=None, local_networks=None,
             dns_servers=None, search_domain=None, otp_auth=None, cipher=None,
-            jumbo_frames=None, lzo_compression=None, debug=None,
-            **kwargs):
+            jumbo_frames=None, lzo_compression=None, inter_client=None,
+            debug=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         if 'network' in self.loaded_fields:
@@ -158,6 +161,8 @@ class Server(mongo.MongoObject):
             self.jumbo_frames = jumbo_frames
         if lzo_compression is not None:
             self.lzo_compression = lzo_compression
+        if inter_client is not None:
+            self.inter_client = inter_client
         if debug is not None:
             self.debug = debug
 
@@ -200,6 +205,7 @@ class Server(mongo.MongoObject):
             'cipher': self.cipher,
             'jumbo_frames': self.jumbo_frames,
             'lzo_compression': self.lzo_compression,
+            'inter_client': True if self.inter_client else False,
             'debug': True if self.debug else False,
         }
 
