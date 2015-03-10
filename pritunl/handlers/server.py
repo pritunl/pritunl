@@ -255,6 +255,12 @@ def server_put_post(server_id=None):
         search_domain_def = True
         search_domain = utils.filter_str(flask.request.json['search_domain'])
 
+    inter_client = True
+    inter_client_def = False
+    if 'inter_client' in flask.request.json:
+        inter_client_def = True
+        inter_client = True if flask.request.json['inter_client'] else False
+
     debug = False
     debug_def = False
     if 'debug' in flask.request.json:
@@ -373,6 +379,7 @@ def server_put_post(server_id=None):
             cipher=cipher,
             jumbo_frames=jumbo_frames,
             lzo_compression=lzo_compression,
+            inter_client=inter_client,
             debug=debug,
         )
         svr.add_host(settings.local.host_id)
@@ -423,6 +430,8 @@ def server_put_post(server_id=None):
             svr.jumbo_frames = jumbo_frames
         if lzo_compression_def:
             svr.lzo_compression = lzo_compression
+        if inter_client_def:
+            svr.inter_client = inter_client
         if debug_def:
             svr.debug = debug
         svr.commit(svr.changed)
