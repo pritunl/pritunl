@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.0.544.74 2015-03-10
+-----------------------------
 
 Add inter-client communication option to advanced server settings
 Fix issue with disabled users

@@ -1,3 +1,11 @@
+pritunl (1.0.544.74-0ubuntu1) unstable; urgency=low
+
+  * Add inter-client communication option to advanced server settings
+  * Fix issue with disabled users
+  * Bug fixes
+
+ -- Pritunl <contact@pritunl.com>  Tue, 10 Mar 2015 00:00:00 -0400
+
 pritunl (1.0.513.37-0ubuntu1) unstable; urgency=low
 
   * Fix timezone issue with two step authentication
