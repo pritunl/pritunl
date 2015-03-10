@@ -123,6 +123,12 @@ class ServerInstanceCom(object):
                 self.send_client_deny(client, 'User is not valid')
                 return
 
+            if user.disabled:
+                logger.LogEntry(message='User failed authentication, ' +
+                    'disabled user "%s".' % (user.name))
+                self.send_client_deny(client, 'User is disabled')
+                return
+
             if self.server.otp_auth and  user.type == CERT_CLIENT and \
                     not user.verify_otp_code(otp_code, remote_ip):
                 logger.LogEntry(message='User failed two-step ' +
