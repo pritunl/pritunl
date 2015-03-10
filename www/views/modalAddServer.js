@@ -27,6 +27,7 @@ define([
         'local_networks': [],
         'dns_servers': ['8.8.8.8'],
         'cipher': 'aes256',
+        'inter_client': true
       });
       ModalAddServerView.__super__.initialize.call(this, options);
     },

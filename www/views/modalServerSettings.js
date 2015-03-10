@@ -20,6 +20,7 @@ define([
         'change .server-mode select': 'onServerMode',
         'change .dh-param-bits select': 'onDhParamBits',
         'click .otp-auth-toggle': 'onOtpAuthSelect',
+        'click .inter-client-toggle': 'onInterClientSelect',
         'click .debug-toggle': 'onDebugSelect',
         'click .multi-device-toggle': 'onMultiDeviceSelect'
       }, ModalServerSettingsView.__super__.events);
@@ -107,6 +108,22 @@ define([
     },
     onOtpAuthSelect: function() {
       this.setOtpAuthSelect(!this.getOtpAuthSelect());
+    },
+    getInterClientSelect: function() {
+      return this.$('.inter-client-toggle .selector').hasClass('selected');
+    },
+    setInterClientSelect: function(state) {
+      if (state) {
+        this.$('.inter-client-toggle .selector').addClass('selected');
+        this.$('.inter-client-toggle .selector-inner').show();
+      }
+      else {
+        this.$('.inter-client-toggle .selector').removeClass('selected');
+        this.$('.inter-client-toggle .selector-inner').hide();
+      }
+    },
+    onInterClientSelect: function() {
+      this.setInterClientSelect(!this.getInterClientSelect());
     },
     getDebugSelect: function() {
       return this.$('.debug-toggle .selector').hasClass('selected');
@@ -201,6 +218,7 @@ define([
       }
       var searchDomain = this.$('.search-domain input').val();
       var localNetworks = [];
+      var interClient = this.getInterClientSelect();
       var debug = this.getDebugSelect();
       var otpAuth = this.getOtpAuthSelect();
       var cipher = this.$('.cipher select').val();
@@ -248,6 +266,7 @@ define([
         'search_domain': searchDomain,
         'otp_auth': otpAuth,
         'cipher': cipher,
+        'inter_client': interClient,
         'debug': debug
       };
 

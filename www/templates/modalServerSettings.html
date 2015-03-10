@@ -88,5 +88,11 @@
       <label>DNS Search Domain</label>
       <input type="text" class="form-control" placeholder="Enter DNS search domain" data-toggle="tooltip" title="Optional, DNS search domain for clients" value="<%- search_domain || '' %>" autocapitalize="off">
     </div>
+    <div class="inter-client-toggle toggle-form form-group">
+      <label>Inter-Client Communication</label>
+      <div class="selector <%= inter_client ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Allow clients to communicate with each other on the vpn network">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
   </div>
 </div>

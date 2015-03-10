@@ -27,6 +27,7 @@ define([
       'cipher': null,
       'jumbo_frames': null,
       'lzo_compression': null,
+      'inter_client': null,
       'debug': null
     },
     url: function() {
