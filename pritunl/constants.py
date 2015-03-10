@@ -472,7 +472,6 @@ management %s unix
 management-client-auth
 auth-user-pass-optional
 topology subnet
-client-to-client
 max-clients 2048
 ping 10
 ping-restart 80

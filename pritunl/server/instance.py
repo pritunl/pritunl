@@ -149,6 +149,9 @@ class ServerInstance(object):
         if self.server.bind_address:
             server_conf += 'local %s\n' % self.server.bind_address
 
+        if self.server.inter_client:
+            server_conf += 'client-to-client\n'
+
         if self.server.multi_device:
             server_conf += 'duplicate-cn\n'
 
