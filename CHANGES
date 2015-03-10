@@ -1,6 +1,11 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with disabled users
+Bug fixes
+
 Version 1.0.513.37 2015-02-07
 -----------------------------
 
