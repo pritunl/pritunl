@@ -74,7 +74,7 @@ def get_cursor_id(channels):
             if i:
                 raise
             else:
-                publish(channels[0], None)
+                publish(channels, None)
 
 @interrupter_generator
 def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None):
