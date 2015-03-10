@@ -177,8 +177,13 @@ def user_put(org_id, user_id):
             logger.LogEntry(message='Disabled user "%s".' % user.name)
 
         for svr in org.iter_servers(fields=server.dict_fields + \
-                ['hosts', 'links', 'tls_auth_key']):
+                ['hosts', 'links',  'replica_count', 'tls_auth_key',
+                    'ca_certificate']):
             for instance in svr.instances:
+                for client in instance['clients']:
+                    if client['id'] == user_id:
+                        svr.restart()
+                        break
                 if user_id in instance['clients']:
                     svr.restart()
     elif disabled == False and user.type == CERT_CLIENT:
