@@ -318,7 +318,8 @@ AUTH_INVALID_MSG = 'Username or password is not valid.'
 
 NETWORK_INVALID = 'network_invalid'
 NETWORK_INVALID_MSG = 'Network address is not valid, format must be ' + \
-    '"10.[0-255].[0-255].0/[8-24]" such as "10.12.32.0/24".'
+    '"[10,172,192].[0-255,16-31,168].[0-255].0/[8-24]" ' +
+    'such as "10.12.32.0/24".'
 
 LOCAL_NETWORK_INVALID = 'local_network_invalid'
 LOCAL_NETWORK_INVALID_MSG = 'Local network address is not valid, ' + \
