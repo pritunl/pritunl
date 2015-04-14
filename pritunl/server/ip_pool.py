@@ -264,7 +264,8 @@ class ServerIpPool:
                 'count': {'$gt': 1},
             }},
         ])
-        for dup_user_ip in dup_user_ips['result']:
+
+        for dup_user_ip in dup_user_ips:
             for doc_id in dup_user_ip['ids'][1:]:
                 spec = {
                     '_id': doc_id,

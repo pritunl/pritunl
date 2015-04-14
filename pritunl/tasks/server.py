@@ -82,7 +82,7 @@ class TaskServer(task.Task):
                 {'$match': {
                     'offline_instances_count': {'$gt': 0},
                 }},
-            ])['result']
+            ])
 
             yield
 

@@ -30,7 +30,7 @@ class ServerOutput(object):
         self.send_event()
 
     def prune_output(self):
-        doc_ids = self.collection.aggregate([
+        response = self.collection.aggregate([
             {'$match': {
                 'server_id': self.server_id,
             }},
@@ -46,10 +46,14 @@ class ServerOutput(object):
                 '_id': None,
                 'doc_ids': {'$push': '$_id'},
             }},
-        ])['result']
+        ])
 
-        if doc_ids:
-            doc_ids = doc_ids[0]['doc_ids']
+        val = None
+        for val in response:
+            break
+
+        if val:
+            doc_ids = val['doc_ids']
 
             self.collection.remove({
                 '_id': {'$in': doc_ids},
@@ -77,7 +81,7 @@ class ServerOutput(object):
         self.push_output('%s %s' % (timestamp, message), *args, **kwargs)
 
     def get_output(self):
-        output = self.collection.aggregate([
+        response = self.collection.aggregate([
             {'$match': {
                 'server_id': self.server_id,
             }},
@@ -93,9 +97,15 @@ class ServerOutput(object):
                 '_id': None,
                 'output': {'$push': '$output'},
             }},
-        ])['result']
+        ])
 
-        if output:
-            output = output[0]['output']
+        val = None
+        for val in response:
+            break
+
+        if val:
+            output = val['output']
+        else:
+            output = []
 
         return output

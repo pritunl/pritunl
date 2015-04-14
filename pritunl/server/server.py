@@ -493,7 +493,7 @@ class Server(mongo.MongoObject):
                 project[field] = True
                 push[field] = '$' + field
 
-        docs = self.org_collection.aggregate([
+        response = self.org_collection.aggregate([
             {'$match': {
                 '_id': {'$in': self.organizations},
             }},
@@ -502,10 +502,16 @@ class Server(mongo.MongoObject):
                 '_id': None,
                 'orgs': {'$push': push},
             }},
-        ])['result']
+        ])
 
-        if docs:
-            docs = docs[0]['orgs']
+        val = None
+        for val in response:
+            break
+
+        if val:
+            docs = val['orgs']
+        else:
+            docs = []
 
         return docs
 

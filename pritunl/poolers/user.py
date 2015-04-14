@@ -49,7 +49,7 @@ def fill_user():
             },
             'count': {'$sum': 1},
         }},
-    ])['result']
+    ])
 
     for pool in pools:
         orgs_count[pool['_id']['org_id'], pool['_id']['type']] += pool[
@@ -71,7 +71,7 @@ def fill_user():
             },
             'count': {'$sum': 1},
         }},
-    ])['result']
+    ])
 
     for pool in pools:
         orgs_count[pool['_id']['org_id'], pool['_id']['type']] += pool[

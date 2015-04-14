@@ -110,7 +110,7 @@ def get_user_count(type=CERT_CLIENT, org_ids=None):
             '_id': '$org_id',
             'count': {'$sum': 1},
         }},
-    ])['result']
+    ])
 
     org_user_count = {}
     for doc in response:

@@ -37,7 +37,7 @@ def get_dict(id):
     return Server(id=id, fields=dict_fields).dict()
 
 def get_used_resources(ignore_server_id):
-    used_resources = Server.collection.aggregate([
+    response = Server.collection.aggregate([
         {'$match': {
             '_id': {'$ne': ignore_server_id},
         }},
@@ -55,17 +55,20 @@ def get_used_resources(ignore_server_id):
             'interfaces': {'$addToSet': '$interface'},
             'ports': {'$addToSet': '$port_protocol'},
         }},
-    ])['result']
+    ])
 
-    if not used_resources:
+    used_resources = None
+    for used_resources in response:
+        break
+
+    if used_resources:
+        used_resources.pop('_id')
+    else:
         used_resources = {
             'networks': set(),
             'interfaces': set(),
             'ports': set(),
         }
-    else:
-        used_resources = used_resources[0]
-        used_resources.pop('_id')
 
     return {
         'networks': {ipaddress.IPNetwork(

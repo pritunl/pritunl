@@ -43,7 +43,7 @@ def iter_servers_dict():
             '_id': '$host_id',
             'clients': {'$addToSet': '$client.id'},
         }},
-    ])['result']
+    ])
 
     hosts_clients = {}
     for doc in response:
@@ -62,7 +62,7 @@ def iter_servers_dict():
             '_id': '$hosts',
             'organizations': {'$addToSet': '$organizations'},
         }},
-    ])['result']
+    ])
 
     host_orgs = collections.defaultdict(list)
     for doc in response:

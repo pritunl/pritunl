@@ -99,7 +99,7 @@ class HostUsage(object):
             {'$sort': {
                 'timestamp': pymongo.ASCENDING,
             }}
-        ])['result']
+        ])
 
         for doc in results:
             if date_cur > doc['timestamp']:

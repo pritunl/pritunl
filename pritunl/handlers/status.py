@@ -30,10 +30,14 @@ def status_get():
             '_id': None,
             'clients': {'$addToSet': '$client.id'},
         }},
-    ])['result']
+    ])
 
-    if response:
-        users_online = len(response[0]['clients'])
+    val = None
+    for val in response:
+        break
+
+    if val:
+        users_online = len(val['clients'])
     else:
         users_online = 0
 
@@ -54,11 +58,15 @@ def status_get():
                 '$push': '$status',
             },
         }},
-    ])['result']
+    ])
 
-    if response:
-        server_count = response[0]['server_count']
-        servers_online = response[0]['servers_online']
+    val = None
+    for val in response:
+        break
+
+    if val:
+        server_count = val['server_count']
+        servers_online = val['servers_online']
     else:
         server_count = 0
         servers_online = 0
@@ -80,11 +88,15 @@ def status_get():
                 '$push': '$status',
             },
         }},
-    ])['result']
+    ])
 
-    if response:
-        host_count = response[0]['host_count']
-        hosts_online = response[0]['hosts_online']
+    val = None
+    for val in response:
+        break
+
+    if val:
+        host_count = val['host_count']
+        hosts_online = val['hosts_online']
     else:
         host_count = 0
         hosts_online = 0

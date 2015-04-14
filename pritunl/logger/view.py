@@ -68,7 +68,7 @@ class LogView(object):
 
     def get_log_lines(self, limit=None, formatted=True):
         limit = limit or 1024
-        messages = self.collection.aggregate([
+        response = self.collection.aggregate([
             {'$sort': {
                 'timestamp': pymongo.DESCENDING,
             }},
@@ -77,10 +77,16 @@ class LogView(object):
                 '_id': None,
                 'messages': {'$push': '$message'},
             }},
-        ])['result']
+        ])
 
-        if messages:
-            messages = messages[0]['messages']
+        val = None
+        for val in response:
+            break
+
+        if val:
+            messages = val['messages']
+        else:
+            messages = []
 
         if formatted:
             output = ''

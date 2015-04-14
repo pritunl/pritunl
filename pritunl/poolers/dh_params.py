@@ -29,7 +29,7 @@ def fill_dh_params():
                 '_id': '$dh_param_bits',
                 'count': {'$sum': 1},
             }},
-        ])['result']
+        ])
 
         for pool in pools:
             dh_param_counts[pool['_id']] = pool['count']
@@ -46,7 +46,7 @@ def fill_dh_params():
                 '_id': '$dh_param_bits',
                 'count': {'$sum': 1},
             }},
-        ])['result']
+        ])
 
         for pool in pools:
             dh_param_counts[pool['_id']] += pool['count']
