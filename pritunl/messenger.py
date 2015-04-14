@@ -95,8 +95,13 @@ def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None):
 
             yield
 
-            cursor = collection.find(spec, tailable=True,
-                await_data=True).sort('$natural', pymongo.ASCENDING)
+            if PYMONGO3:
+                cursor = collection.find(spec,
+                    cursor_type=pymongo.cursor.CursorType.TAILABLE_AWAIT).sort(
+                    '$natural', pymongo.ASCENDING)
+            else:
+                cursor = collection.find(spec, tailable=True,
+                    await_data=True).sort('$natural', pymongo.ASCENDING)
 
             yield
 
