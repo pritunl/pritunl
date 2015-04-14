@@ -89,6 +89,13 @@ def find(self, *args, **kwargs):
         start = None
     if RANDOM_ERROR_RATE and random.random() <= RANDOM_ERROR_RATE:
         raise random.choice(_mongo_errors)('Test error')
+
+    if PYMONGO3:
+        if 'fields' in kwargs:
+            fields = kwargs.pop('fields', None)
+            if fields:
+                kwargs['projection'] = list(fields)
+
     val = find_orig(self, *args, **kwargs)
     if start:
         flask.g.query_time += (time.time() - start)
