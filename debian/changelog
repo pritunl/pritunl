@@ -1,3 +1,9 @@
+pritunl (1.0.586.29-0ubuntu1) unstable; urgency=low
+
+  * Support for mongodb 3.0
+
+ -- Pritunl <contact@pritunl.com>  Tue, 21 Apr 2015 00:00:00 -0400
+
 pritunl (1.0.544.74-0ubuntu1) unstable; urgency=low
 
   * Add inter-client communication option to advanced server settings
