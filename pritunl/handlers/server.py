@@ -124,10 +124,10 @@ def server_put_post(server_id=None):
 
                 if subnet not in (8, 16, 24):
                     return _network_invalid()
-            elif address[0] == 172:
-                if address[1] < 16 or address[1] > 31:
+            elif address[0] == 100 and address[1] >= 64 and address[1] <= 127:
+                if subnet not in (16, 24):
                     return _network_invalid()
-
+            elif address[0] == 172 and address[1] >= 16 and address[1] <= 31:
                 if subnet not in (16, 24):
                     return _network_invalid()
             elif address[0] == 192 and address[1] == 168:
