@@ -356,6 +356,8 @@ class User(mongo.MongoObject):
             server.protocol,
             server.get_key_remotes(),
             CIPHERS[server.cipher],
+            server.ping_interval,
+            server.ping_timeout,
         )
 
         if server.lzo_compression != ADAPTIVE:
