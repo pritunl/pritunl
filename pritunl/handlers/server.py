@@ -267,6 +267,18 @@ def server_put_post(server_id=None):
         inter_client_def = True
         inter_client = True if flask.request.json['inter_client'] else False
 
+    ping_interval = False
+    ping_interval_def = False
+    if 'ping_interval' in flask.request.json:
+        ping_interval_def = True
+        ping_interval = int(flask.request.json['ping_interval'])
+
+    ping_timeout = False
+    ping_timeout_def = False
+    if 'ping_timeout' in flask.request.json:
+        ping_timeout_def = True
+        ping_timeout = int(flask.request.json['ping_timeout'])
+
     debug = False
     debug_def = False
     if 'debug' in flask.request.json:
@@ -386,6 +398,8 @@ def server_put_post(server_id=None):
             jumbo_frames=jumbo_frames,
             lzo_compression=lzo_compression,
             inter_client=inter_client,
+            ping_interval=ping_interval,
+            ping_timeout=ping_timeout,
             debug=debug,
         )
         svr.add_host(settings.local.host_id)
@@ -438,6 +452,10 @@ def server_put_post(server_id=None):
             svr.lzo_compression = lzo_compression
         if inter_client_def:
             svr.inter_client = inter_client
+        if ping_interval_def:
+            svr.ping_interval = ping_interval
+        if ping_timeout_def:
+            svr.ping_timeout = ping_timeout
         if debug_def:
             svr.debug = debug
         svr.commit(svr.changed)
