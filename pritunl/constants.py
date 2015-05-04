@@ -510,7 +510,7 @@ mute 3
 push-peer-info
 ping %s
 ping-restart %s
-server-poll-timeout 3
+server-poll-timeout 4
 reneg-sec 2592000
 sndbuf 100000
 rcvbuf 100000
@@ -532,7 +532,7 @@ mute %s
 push-peer-info
 ping %s
 ping-restart %s
-server-poll-timeout 3
+server-poll-timeout 4
 reneg-sec 2592000
 sndbuf 100000
 rcvbuf 100000
