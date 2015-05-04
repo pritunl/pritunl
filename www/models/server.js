@@ -28,6 +28,8 @@ define([
       'jumbo_frames': null,
       'lzo_compression': null,
       'inter_client': null,
+      'ping_interval': null,
+      'ping_timeout': null,
       'debug': null
     },
     url: function() {
