@@ -481,10 +481,10 @@ management-client-auth
 auth-user-pass-optional
 topology subnet
 max-clients 2048
-ping 10
-ping-restart 80
-push "ping 10"
-push "ping-restart 60"
+ping %s
+ping-restart %s
+push "ping %s"
+push "ping-restart %s"
 persist-tun
 %s
 status-version 2
@@ -508,8 +508,8 @@ persist-tun
 verb 2
 mute 3
 push-peer-info
-ping 10
-ping-restart 60
+ping %s
+ping-restart %s
 server-poll-timeout 3
 reneg-sec 2592000
 sndbuf 100000
@@ -529,9 +529,9 @@ persist-tun
 %s
 verb %s
 mute %s
-ping 10
-ping-restart 60
 push-peer-info
+ping %s
+ping-restart %s
 server-poll-timeout 3
 reneg-sec 2592000
 sndbuf 100000
