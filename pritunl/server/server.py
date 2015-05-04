@@ -50,6 +50,8 @@ dict_fields = [
     'jumbo_frames',
     'lzo_compression',
     'inter_client',
+    'ping_interval',
+    'ping_timeout',
     'debug',
 ]
 
@@ -72,6 +74,8 @@ class Server(mongo.MongoObject):
         'tls_auth_key',
         'lzo_compression',
         'inter_client',
+        'ping_interval',
+        'ping_timeout',
         'debug',
         'cipher',
         'jumbo_frames',
@@ -95,6 +99,8 @@ class Server(mongo.MongoObject):
         'tls_auth': True,
         'lzo_compression': False,
         'inter_client': True,
+        'ping_interval': 10,
+        'ping_timeout': 60,
         'debug': False,
         'cipher': 'aes256',
         'jumbo_frames': False,
@@ -113,7 +119,7 @@ class Server(mongo.MongoObject):
             mode=None, multi_device=None, local_networks=None,
             dns_servers=None, search_domain=None, otp_auth=None, cipher=None,
             jumbo_frames=None, lzo_compression=None, inter_client=None,
-            debug=None, **kwargs):
+            ping_interval=None, ping_timeout=None, debug=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         if 'network' in self.loaded_fields:
@@ -153,6 +159,10 @@ class Server(mongo.MongoObject):
             self.lzo_compression = lzo_compression
         if inter_client is not None:
             self.inter_client = inter_client
+        if ping_interval is not None:
+            self.ping_interval = ping_interval
+        if ping_timeout is not None:
+            self.ping_timeout = ping_timeout
         if debug is not None:
             self.debug = debug
 
@@ -196,6 +206,8 @@ class Server(mongo.MongoObject):
             'jumbo_frames': self.jumbo_frames,
             'lzo_compression': self.lzo_compression,
             'inter_client': True if self.inter_client else False,
+            'ping_interval': self.ping_interval,
+            'ping_timeout': self.ping_timeout,
             'debug': True if self.debug else False,
         }
 
@@ -732,7 +744,6 @@ class Server(mongo.MongoObject):
         self.status = ONLINE
         self.start_timestamp = start_timestamp
 
-        started = False
         started_count = 0
         error_count = 0
         try:
@@ -781,8 +792,6 @@ class Server(mongo.MongoObject):
             raise
 
     def stop(self, force=False):
-        cursor_id = self.get_cursor_id()
-
         logger.debug('Stopping server', 'server',
             server_id=self.id,
         )
