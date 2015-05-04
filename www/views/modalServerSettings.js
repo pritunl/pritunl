@@ -219,6 +219,8 @@ define([
       var searchDomain = this.$('.search-domain input').val();
       var localNetworks = [];
       var interClient = this.getInterClientSelect();
+      var pingInterval = parseInt(this.$('.ping-interval input').val(), 10);
+      var pingTimeout = parseInt(this.$('.ping-timeout input').val(), 10);
       var debug = this.getDebugSelect();
       var otpAuth = this.getOtpAuthSelect();
       var cipher = this.$('.cipher select').val();
@@ -267,6 +269,8 @@ define([
         'otp_auth': otpAuth,
         'cipher': cipher,
         'inter_client': interClient,
+        'ping_interval': pingInterval,
+        'ping_timeout': pingTimeout,
         'debug': debug
       };
 

@@ -72,6 +72,10 @@
         <option value="aes256" <%= cipher === 'aes256' ? 'selected' : '' %>>AES 256bit</option>
       </select>
     </div>
+    <div class="ping-interval form-group">
+      <label>Ping Interval</label>
+      <input type="number" class="form-control" placeholder="Enter ping interval" data-toggle="tooltip" title="Optional, interval to ping client" value="<%- ping_interval || '' %>" autocapitalize="off">
+    </div>
     <div class="debug-toggle toggle-form form-group">
       <label>Enable Debugging Output</label>
       <div class="selector <%= debug ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Show server debugging information in output">
@@ -87,6 +91,10 @@
     <div class="search-domain form-group">
       <label>DNS Search Domain</label>
       <input type="text" class="form-control" placeholder="Enter DNS search domain" data-toggle="tooltip" title="Optional, DNS search domain for clients" value="<%- search_domain || '' %>" autocapitalize="off">
+    </div>
+    <div class="ping-timeout form-group">
+      <label>Ping Timeout</label>
+      <input type="number" class="form-control" placeholder="Enter ping timeout" data-toggle="tooltip" title="Optional, timeout for client ping. Must be greater then ping interval" value="<%- ping_timeout || '' %>" autocapitalize="off">
     </div>
     <div class="inter-client-toggle toggle-form form-group">
       <label>Inter-Client Communication</label>
