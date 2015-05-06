@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.0.601.66 2015-05-06
+-----------------------------
 
 Fix issues with adding servers
 

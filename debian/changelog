@@ -1,3 +1,9 @@
+pritunl (1.0.601.66-0ubuntu1) unstable; urgency=low
+
+  * Fix issues with adding servers
+
+ -- Pritunl <contact@pritunl.com>  Wed, 06 May 2015 00:00:00 -0400
+
 pritunl (1.0.601.2-0ubuntu1) unstable; urgency=low
 
   * Add additional private subnets
