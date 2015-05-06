@@ -16,7 +16,7 @@ import werkzeug.http
 UBUNTU_RELEASES = [
     'trusty', # 14.04
     'precise', # 12.04
-    'utopic', # 14.10
+    'vivid', # 15.04
 ]
 
 USAGE = """Usage: builder [command] [options]
