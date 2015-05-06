@@ -1,9 +1,9 @@
 Pritunl Changelog
 =================
 
-Version 1.0.601.66 2015-05-06
------------------------------
+<%= version %>
 
+Change server defaults for ping interval
 Fix issues with adding servers
 
 Version 1.0.601.2 2015-05-06
