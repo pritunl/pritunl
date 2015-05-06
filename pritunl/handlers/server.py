@@ -267,13 +267,13 @@ def server_put_post(server_id=None):
         inter_client_def = True
         inter_client = True if flask.request.json['inter_client'] else False
 
-    ping_interval = False
+    ping_interval = None
     ping_interval_def = False
     if flask.request.json.get('ping_interval'):
         ping_interval_def = True
         ping_interval = int(flask.request.json['ping_interval'])
 
-    ping_timeout = False
+    ping_timeout = None
     ping_timeout_def = False
     if flask.request.json.get('ping_timeout'):
         ping_timeout_def = True
