@@ -5,7 +5,7 @@ Pritunl Changelog
 
 Add additional private subnets
 Add ping interval options to server settings
-Add support ubuntu vivid
+Add support for ubuntu vivid
 
 Version 1.0.586.29 2015-04-21
 -----------------------------
