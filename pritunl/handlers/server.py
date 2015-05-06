@@ -182,7 +182,7 @@ def server_put_post(server_id=None):
 
     dh_param_bits = None
     dh_param_bits_def = False
-    if 'dh_param_bits' in flask.request.json:
+    if flask.request.json.get('dh_param_bits'):
         dh_param_bits_def = True
         dh_param_bits = flask.request.json['dh_param_bits']
 
@@ -269,13 +269,13 @@ def server_put_post(server_id=None):
 
     ping_interval = False
     ping_interval_def = False
-    if 'ping_interval' in flask.request.json:
+    if flask.request.json.get('ping_interval'):
         ping_interval_def = True
         ping_interval = int(flask.request.json['ping_interval'])
 
     ping_timeout = False
     ping_timeout_def = False
-    if 'ping_timeout' in flask.request.json:
+    if flask.request.json.get('ping_timeout'):
         ping_timeout_def = True
         ping_timeout = int(flask.request.json['ping_timeout'])
 
