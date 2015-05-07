@@ -27,6 +27,11 @@
       <label>SMTP Username</label>
       <input type="text" class="form-control" placeholder="Enter SMTP username" value="<%- email_username || '' %>">
     </div>
+    <div class="sso-match form-group">
+      <label>Google Apps Domain</label>
+      <input type="email" class="form-control" placeholder="Enter Google Apps domain" value="<%- sso_match || '' %>" data-toggle="tooltip"
+        title="Google apps domain to match against users email address. Multiple domains can be entrered sperated by a comma. (example: pritunl.com)">
+    </div>
   </div>
   <div class="settings-right right">
     <div class="api-token form-group">
@@ -45,6 +50,14 @@
     <div class="email-password form-group">
       <label>SMTP Password</label>
       <input type="password" class="form-control" placeholder="Enter SMTP password" value="<%- email_password ? '********************' : '' %>">
+    </div>
+    <div class="sso-org form-group">
+      <label>Single Sign-On Organization</label>
+      <select class="form-control">
+        <% _.each(orgs, function(org) { %>
+        <option value="<%- org.id %>" <%= (sso_org === org.id) ? 'selected' : '' %>><%- org.name %></option>
+        <% }); %>
+      </select>
     </div>
   </div>
 </div>

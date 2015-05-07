@@ -2,9 +2,10 @@ define([
   'jquery',
   'underscore',
   'backbone',
+  'collections/org',
   'views/modal',
   'text!templates/modalSettings.html'
-], function($, _, Backbone, ModalView, modalSettingsTemplate) {
+], function($, _, Backbone, OrgCollection, ModalView, modalSettingsTemplate) {
   'use strict';
   var ModalSettingsView = ModalView.extend({
     className: 'settings-modal',
@@ -24,6 +25,7 @@ define([
       }, ModalSettingsView.__super__.events);
     },
     initialize: function(options) {
+      this.orgs = new OrgCollection();
       this.initial = options.initial;
       if (this.initial) {
         this.title = 'Initial Setup';
