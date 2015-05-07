@@ -144,11 +144,29 @@ define([
       var emailUsername = this.$('.email-username input').val();
       var emailPassword = this.$('.email-password input').val();
 
+      var sso = this.getSsoSelect();
+      var ssoMatch;
+      var ssoOrg;
+
+      if (sso) {
+        ssoMatch = this.$('.sso-match input').val().split(',');
+
+        for (var i = 0; i < ssoMatch.length; i++) {
+          ssoMatch[i] = ssoMatch[i].replace(/^\s\s*/,
+            '').replace(/\s\s*$/, '');
+        }
+
+        ssoOrg = this.$('.sso-org select').val();
+      }
+
       var modelAttr = {
         username: username,
         email_from: emailFrom,
         email_server: emailServer,
         email_username: emailUsername,
+        sso: sso,
+        sso_match: ssoMatch,
+        sso_org: ssoOrg,
         public_address: publicAddress,
         theme: theme
       };
