@@ -28,9 +28,11 @@
       <input type="text" class="form-control" placeholder="Enter SMTP username" value="<%- email_username || '' %>">
     </div>
     <div class="sso-match form-group">
-      <label>Google Apps Domain</label>
-      <input type="email" class="form-control" placeholder="Enter Google Apps domain" value="<%- sso_match || '' %>" data-toggle="tooltip"
-        title="Google apps domain to match against users email address. Multiple domains can be entrered sperated by a comma. (example: pritunl.com)">
+      <label>Single Sign-On Domain</label>
+      <div class="selector <%= sso ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Allow clients to login using their Google Apps bussiness account">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+      <input type="email" class="form-control" placeholder="Enter Google Apps domain" value="<%- sso_match || '' %>" <%= sso ? '' : 'disabled' %> data-toggle="tooltip" title="Google apps domain to match against users email address. Multiple domains can be entrered sperated by a comma. (example: pritunl.com)">
     </div>
   </div>
   <div class="settings-right right">
