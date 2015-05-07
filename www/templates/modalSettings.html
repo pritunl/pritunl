@@ -55,7 +55,7 @@
     </div>
     <div class="sso-org form-group">
       <label>Single Sign-On Organization</label>
-      <select class="form-control">
+      <select class="form-control" <%= sso ? '' : 'disabled' %>>
         <% _.each(orgs, function(org) { %>
         <option value="<%- org.id %>" <%= (sso_org === org.id) ? 'selected' : '' %>><%- org.name %></option>
         <% }); %>

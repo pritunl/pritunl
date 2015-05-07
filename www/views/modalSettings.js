@@ -14,6 +14,7 @@ define([
     okText: 'Save',
     events: function() {
       return _.extend({
+        'click .sso-match .selector': 'onSsoSelect',
         'change .pass input': 'onPassChange',
         'keyup .pass input': 'onPassEvent',
         'paste .pass input': 'onPassEvent',
@@ -39,6 +40,26 @@ define([
     update: function() {
       this.$('.api-token input').val(this.model.get('token'));
       this.$('.api-secret input').val(this.model.get('secret'));
+    },
+    getSsoSelect: function() {
+      return this.$('.sso-match .selector').hasClass('selected');
+    },
+    setSsoSelect: function(state) {
+      if (state) {
+        this.$('.sso-match .selector').addClass('selected');
+        this.$('.sso-match .selector-inner').show();
+        this.$('.sso-match input').removeAttr('disabled');
+        this.$('.sso-org select').removeAttr('disabled');
+      }
+      else {
+        this.$('.sso-match .selector').removeClass('selected');
+        this.$('.sso-match .selector-inner').hide();
+        this.$('.sso-match input').attr('disabled', 'disabled');
+        this.$('.sso-org select').attr('disabled', 'disabled');
+      }
+    },
+    onSsoSelect: function() {
+      this.setSsoSelect(!this.getSsoSelect());
     },
     onThemeChange: function() {
       if (this.$('.theme select').val() === 'dark') {
