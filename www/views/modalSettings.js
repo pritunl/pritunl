@@ -35,7 +35,28 @@ define([
       ModalSettingsView.__super__.initialize.call(this);
     },
     body: function() {
-      return this.template(this.model.toJSON());
+      return this.template(_.extend({orgs: this.orgs.toJSON()},
+        this.model.toJSON()));
+    },
+    postRender: function() {
+      this.setLoading('Loading organizations...');
+      this.orgs.fetch({
+        success: function() {
+          this.clearLoading();
+          for (var i = 0; i < this.orgs.length; i++) {
+            var org = this.orgs.models[i];
+            var selected = this.model.get('sso_org') === org.get('id');
+            this.$('.sso-org select').append('<option ' +
+              (selected ? 'selected ' : '') + 'value="' + org.get('id')
+              + '">' + org.get('name') + '</option>')
+          }
+        }.bind(this),
+        error: function() {
+          this.clearLoading();
+          this.setAlert('danger',
+            'Failed to load organizations, server error occurred.');
+        }.bind(this)
+      });
     },
     update: function() {
       this.$('.api-token input').val(this.model.get('token'));
