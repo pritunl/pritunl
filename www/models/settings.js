@@ -15,6 +15,9 @@ define([
       'email_username': null,
       'email_password': null,
       'email_from': null,
+      'sso': null,
+      'sso_match': null,
+      'sso_org': null,
       'public_address': null,
       'theme': null
     },
