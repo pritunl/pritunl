@@ -26,6 +26,7 @@ def subscription_state_get():
         'active': settings.local.sub_active,
         'plan': settings.local.sub_plan,
         'version': settings.local.version_int,
+        'sso': bool(settings.app.sso),
     })
 
 @app.app.route('/subscription/styles/<plan>/<ver>.css', methods=['GET'])
