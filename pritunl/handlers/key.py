@@ -15,6 +15,7 @@ import base64
 import hashlib
 import hmac
 import pymongo
+import uuid
 
 def _get_key_archive(org_id, user_id):
     org = organization.get_by_id(org_id)
@@ -214,3 +215,64 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
     if key_conf:
         return utils.response(key_conf['conf'])
     return utils.response('')
+
+@app.app.route('/sso/request', methods=['GET'])
+def sso_request_get():
+    state = uuid.uuid4().hex
+    callback = flask.request.url_root + 'sso/callback'
+
+    if not settings.local.sub_active:
+        return flask.abort(405)
+
+    resp = utils.request.post('https://auth.pritunl.com/request/google',
+        json_data={
+            'license': 'test',
+            'callback': callback,
+            'state': state,
+        }, headers={
+            'Content-Type': 'application/json',
+        })
+
+    if resp.status_code != 200:
+        if resp.status_code == 401:
+            return flask.abort(405)
+        return flask.abort(500)
+
+    tokens_collection = mongo.get_collection('sso_tokens')
+    tokens_collection.insert({
+        '_id': state,
+        'timestamp': utils.now(),
+        })
+
+    data = resp.json()
+
+    return flask.redirect(data['url'])
+
+@app.app.route('/sso/callback', methods=['GET'])
+def sso_callback_get():
+    state = flask.request.args.get('state')
+    user = flask.request.args.get('user')
+
+    tokens_collection = mongo.get_collection('sso_tokens')
+    doc = tokens_collection.find_and_modify(query={
+        '_id': state,
+    }, remove=True)
+
+    if not doc:
+        return flask.abort(404)
+
+    org_id = settings.app.sso_org
+    if not org_id:
+        return flask.abort(405)
+
+    org = organization.get_by_id(org_id)
+    if not org:
+        return flask.abort(405)
+
+    usr = org.find_user(name=user)
+    if not usr:
+        usr = org.new_user(name=user, email=user, type=CERT_CLIENT)
+
+    key_link = org.create_user_key_link(usr.id)
+
+    return flask.redirect(flask.request.url_root[:-1] + key_link['view_url'])
