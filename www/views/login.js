@@ -44,6 +44,9 @@ define([
       if (this.alert) {
         this.setAlert(this.alert);
       }
+      if (window.sso) {
+        this.$('form').addClass('sso');
+      }
       if (window.demo) {
         this.$('.username, .password').val('demo');
       }
