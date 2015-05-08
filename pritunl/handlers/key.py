@@ -55,13 +55,13 @@ def user_linked_key_archive_get(key_id):
 
     return _get_key_archive(doc['org_id'], doc['user_id'])
 
-@app.app.route('/k/<short_id>', methods=['GET'])
-def user_linked_key_page_get(short_id):
+@app.app.route('/k/<short_code>', methods=['GET'])
+def user_linked_key_page_get(short_code):
     utils.rand_sleep()
 
     collection = mongo.get_collection('users_key_link')
     doc = collection.find_one({
-        'short_id': short_id,
+        'short_id': short_code,
     })
 
     if not doc:
@@ -98,23 +98,23 @@ def user_linked_key_page_get(short_id):
 
     return key_page
 
-@app.app.route('/k/<short_id>', methods=['DELETE'])
-def user_linked_key_page_delete_get(short_id):
+@app.app.route('/k/<short_code>', methods=['DELETE'])
+def user_linked_key_page_delete_get(short_code):
     utils.rand_sleep()
 
     collection = mongo.get_collection('users_key_link')
     collection.remove({
-        'short_id': short_id,
+        'short_id': short_code,
     })
     return utils.jsonify({})
 
-@app.app.route('/ku/<short_id>', methods=['GET'])
-def user_uri_key_page_get(short_id):
+@app.app.route('/ku/<short_code>', methods=['GET'])
+def user_uri_key_page_get(short_code):
     utils.rand_sleep()
 
     collection = mongo.get_collection('users_key_link')
     doc = collection.find_one({
-        'short_id': short_id,
+        'short_id': short_code,
     })
 
     if not doc:
