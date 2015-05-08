@@ -15,7 +15,6 @@ import base64
 import hashlib
 import hmac
 import pymongo
-import uuid
 
 def _get_key_archive(org_id, user_id):
     org = organization.get_by_id(org_id)
@@ -218,7 +217,7 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
 
 @app.app.route('/sso/request', methods=['GET'])
 def sso_request_get():
-    state = uuid.uuid4().hex
+    state = utils.rand_str(64)
     callback = flask.request.url_root + 'sso/callback'
 
     if not settings.local.sub_active:
