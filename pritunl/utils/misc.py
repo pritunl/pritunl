@@ -355,3 +355,7 @@ def styles_response(etag, last_modified, data):
         response.headers.add('Expires', 0)
     response.headers.add('Last-Modified', last_modified)
     return response
+
+def rand_str(length):
+    return re.sub(r'[\W_]+', '', base64.b64encode(
+        os.urandom(length * 2)))[:length]

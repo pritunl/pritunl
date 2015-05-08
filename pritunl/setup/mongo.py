@@ -174,8 +174,7 @@ def setup_mongo():
 
     secret_key = settings.app.cookie_secret
     if not secret_key:
-        secret_key = re.sub(r'[\W_]+', '',
-            base64.b64encode(os.urandom(128)))[:64]
+        secret_key = utils.rand_str(64)
         settings.app.cookie_secret = secret_key
         settings.commit()
     app.app.secret_key = secret_key.encode()
