@@ -19,6 +19,9 @@ def settings_get():
         'email_server': settings.app.email_server,
         'email_username': settings.app.email_username,
         'email_password': bool(settings.app.email_password),
+        'sso': bool(settings.app.sso),
+        'sso_match': settings.app.sso_match,
+        'sso_org': settings.app.sso_org,
         'public_address': settings.local.host.public_addr,
     })
     return utils.jsonify(response)
