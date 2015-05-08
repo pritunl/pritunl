@@ -73,8 +73,6 @@ define([
       var users = this.collection.models.slice(0);
       var error = false;
       var count = users.length;
-      var linkDomain = window.location.protocol + '//' +
-            window.location.host;
       var close = function() {
         if (!error) {
           this.setAlert('success', 'Successfully emailed selected users.');
@@ -120,7 +118,7 @@ define([
           continue;
         }
         model.save({
-          send_key_email: linkDomain
+          send_key_email: true
         }, saveData);
         this.setUserText(model, 'primary-text-light', 'Sending...');
       }
