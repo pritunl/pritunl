@@ -77,7 +77,10 @@ def settings_put():
     if 'sso_org' in flask.request.json:
         settings_commit = True
         sso_org = flask.request.json['sso_org']
-        settings.app.sso_org = sso_org or None
+        if sso_org:
+            settings.app.sso_org = utils.ObjectId(sso_org)
+        else:
+            settings.app.sso_org = None
 
     if 'theme' in flask.request.json:
         settings_commit = True
