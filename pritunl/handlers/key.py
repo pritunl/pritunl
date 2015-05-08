@@ -261,6 +261,10 @@ def sso_callback_get():
     if not doc:
         return flask.abort(404)
 
+    user_domain = user.split('@')[-1]
+    if user_domain not in settings.app.sso_match:
+        return flask.abort(401)
+
     org_id = settings.app.sso_org
     if not org_id:
         return flask.abort(405)
