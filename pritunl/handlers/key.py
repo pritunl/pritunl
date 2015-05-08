@@ -8,6 +8,7 @@ from pritunl import settings
 from pritunl import app
 from pritunl import auth
 from pritunl import mongo
+from pritunl import sso
 
 import flask
 import time
@@ -273,11 +274,10 @@ def sso_callback_get():
     if sig != test_sig:
         return flask.abort(401)
 
-    user_domain = user.split('@')[-1]
-    if user_domain not in settings.app.sso_match:
+    valid, org_id = sso.verify_google(user, settings.app.sso_org)
+    if not valid:
         return flask.abort(401)
 
-    org_id = settings.app.sso_org
     if not org_id:
         return flask.abort(405)
 
