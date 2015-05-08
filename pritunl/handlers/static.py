@@ -63,13 +63,16 @@ def login_static_get():
     static_file = static.StaticFile(settings.conf.www_path,
         'login.html', cache=False)
 
-    dark_theme = all((
-        settings.local.sub_active,
-        settings.app.theme == 'dark',
-    ))
+    bodyClass = ''
 
-    if dark_theme:
-        static_file.data = static_file.data.replace(
-            '<body>', '<body class="dark">')
+    if settings.local.sub_active:
+        if settings.app.theme == 'dark':
+            bodyClass += 'dark '
+
+        if settings.app.sso and settings.local.sub_active:
+            bodyClass += 'sso '
+
+    static_file.data = static_file.data.replace(
+        '<body>', '<body class="' + bodyClass + '">')
 
     return static_file.get_response()
