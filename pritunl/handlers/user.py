@@ -192,7 +192,7 @@ def user_put(org_id, user_id):
     send_key_email = flask.request.json.get('send_key_email')
     if send_key_email and user.email:
         try:
-            user.send_key_email(send_key_email)
+            user.send_key_email(flask.request.url_root[:-1])
         except EmailNotConfiguredError:
             return utils.jsonify({
                 'error': EMAIL_NOT_CONFIGURED,
