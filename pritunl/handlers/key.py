@@ -247,7 +247,7 @@ def sso_request_get():
         '_id': state,
         'secret': secret,
         'timestamp': utils.now(),
-        })
+    })
 
     data = resp.json()
 
@@ -257,6 +257,7 @@ def sso_request_get():
 def sso_callback_get():
     state = flask.request.args.get('state')
     user = flask.request.args.get('user')
+    sig = flask.request.args.get('sig')
 
     tokens_collection = mongo.get_collection('sso_tokens')
     doc = tokens_collection.find_and_modify(query={
@@ -266,8 +267,8 @@ def sso_callback_get():
     if not doc:
         return flask.abort(404)
 
-    test_sig = base64.b64encode(hmac.new(doc['secret'], state + user,
-        hashlib.sha256).digest())
+    test_sig = base64.urlsafe_b64encode(hmac.new(str(doc['secret']),
+        str(state + user), hashlib.sha256).digest())
 
     if sig != test_sig:
         return flask.abort(401)
