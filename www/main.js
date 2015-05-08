@@ -511,6 +511,7 @@ require([
       window.subPlan = model.get('plan');
       window.subVer = model.get('version');
       window.theme = model.get('theme');
+      window.sso = model.get('sso');
 
       if (window.subActive && window.theme === 'dark') {
         $('body').addClass('dark');
