@@ -15,6 +15,9 @@ import base64
 import hashlib
 import hmac
 import pymongo
+import hmac
+import hashlib
+import base64
 
 def _get_key_archive(org_id, user_id):
     org = organization.get_by_id(org_id)
@@ -218,6 +221,7 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
 @app.app.route('/sso/request', methods=['GET'])
 def sso_request_get():
     state = utils.rand_str(64)
+    secret = utils.rand_str(64)
     callback = flask.request.url_root + 'sso/callback'
 
     if not settings.local.sub_active:
@@ -225,9 +229,10 @@ def sso_request_get():
 
     resp = utils.request.post('https://auth.pritunl.com/request/google',
         json_data={
-            'license': 'test',
+            'license': settings.app.license,
             'callback': callback,
             'state': state,
+            'secret': secret,
         }, headers={
             'Content-Type': 'application/json',
         })
@@ -240,6 +245,7 @@ def sso_request_get():
     tokens_collection = mongo.get_collection('sso_tokens')
     tokens_collection.insert({
         '_id': state,
+        'secret': secret,
         'timestamp': utils.now(),
         })
 
@@ -259,6 +265,12 @@ def sso_callback_get():
 
     if not doc:
         return flask.abort(404)
+
+    test_sig = base64.b64encode(hmac.new(doc['secret'], state + user,
+        hashlib.sha256).digest())
+
+    if sig != test_sig:
+        return flask.abort(401)
 
     user_domain = user.split('@')[-1]
     if user_domain not in settings.app.sso_match:
