@@ -46,18 +46,39 @@ def settings_put():
         settings_commit = True
         email_from = flask.request.json['email_from']
         settings.app.email_from = email_from or None
+
     if 'email_server' in flask.request.json:
         settings_commit = True
         email_server = flask.request.json['email_server']
         settings.app.email_server = email_server or None
+
     if 'email_username' in flask.request.json:
         settings_commit = True
         email_username = flask.request.json['email_username']
         settings.app.email_username = email_username or None
+
     if 'email_password' in flask.request.json:
         settings_commit = True
         email_password = flask.request.json['email_password']
         settings.app.email_password = email_password or None
+
+    if 'sso' in flask.request.json:
+        settings_commit = True
+        sso = flask.request.json['sso']
+        settings.app.sso = sso or None
+
+    if 'sso_match' in flask.request.json:
+        sso_match = flask.request.json['sso_match']
+
+        if isinstance(sso_match, list):
+            settings_commit = True
+            settings.app.sso_match = sso_match or None
+
+    if 'sso_org' in flask.request.json:
+        settings_commit = True
+        sso_org = flask.request.json['sso_org']
+        settings.app.sso_org = sso_org or None
+
     if 'theme' in flask.request.json:
         settings_commit = True
         theme = 'dark' if flask.request.json['theme'] == 'dark' else 'light'
@@ -87,6 +108,9 @@ def settings_put():
         'email_server': settings.app.email_server,
         'email_username': settings.app.email_username,
         'email_password': bool(settings.app.email_password),
+        'sso': bool(settings.app.sso),
+        'sso_match': settings.app.sso_match,
+        'sso_org': settings.app.sso_org,
         'public_address': settings.local.host.public_addr,
     })
     return utils.jsonify(response)
