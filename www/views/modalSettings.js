@@ -186,6 +186,7 @@ define([
       this.model.clear();
       this.model.save(modelAttr, {
         success: function() {
+          window.sso = sso;
           this.close(true);
         }.bind(this),
         error: function() {
