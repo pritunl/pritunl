@@ -60,6 +60,7 @@ def setup_mongo():
         'auth_limiter': getattr(database, prefix + 'auth_limiter'),
         'otp': getattr(database, prefix + 'otp'),
         'otp_cache': getattr(database, prefix + 'otp_cache'),
+        'sso_tokens': getattr(database, prefix + 'sso_tokens'),
     })
 
     for collection_name, collection in mongo.collections.items():
@@ -164,6 +165,8 @@ def setup_mongo():
         expireAfterSeconds=120)
     mongo.collections['otp_cache'].ensure_index('timestamp', background=True,
         expireAfterSeconds=settings.user.otp_cache_ttl)
+    mongo.collections['sso_tokens'].ensure_index('timestamp', background=True,
+        expireAfterSeconds=600)
 
     if not auth.Administrator.collection.find_one():
         auth.Administrator(
