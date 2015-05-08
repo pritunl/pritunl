@@ -69,7 +69,7 @@ def login_static_get():
         if settings.app.theme == 'dark':
             bodyClass += 'dark '
 
-        if settings.app.sso and settings.local.sub_active:
+        if settings.app.sso and settings.local.sub_plan == 'enterprise':
             bodyClass += 'sso '
 
     static_file.data = static_file.data.replace(
