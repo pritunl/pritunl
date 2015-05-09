@@ -47,8 +47,8 @@ define([
             var org = this.orgs.models[i];
             var selected = this.model.get('sso_org') === org.get('id');
             this.$('.sso-org select').append('<option ' +
-              (selected ? 'selected ' : '') + 'value="' + org.get('id')
-              + '">' + org.get('name') + '</option>');
+              (selected ? 'selected ' : '') + 'value="' + org.get('id') +
+              '">' + org.get('name') + '</option>');
           }
         }.bind(this),
         error: function() {
