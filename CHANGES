@@ -1,6 +1,11 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Interface improvements
+Add support for single sign on with Google apps
+
 Version 1.0.601.67 2015-05-06
 -----------------------------
 
