@@ -1,3 +1,10 @@
+pritunl (1.2.604.38-0ubuntu1) unstable; urgency=low
+
+  * Interface improvements
+  * Add support for single sign on with Google apps
+
+ -- Pritunl <contact@pritunl.com>  Sat, 09 May 2015 00:00:00 -0400
+
 pritunl (1.0.601.67-0ubuntu1) unstable; urgency=low
 
   * Change server defaults for ping interval
