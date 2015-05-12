@@ -539,6 +539,45 @@ rcvbuf 100000
 remote-cert-tls server
 """
 
+OVPN_ONC_CLIENT_CONF = """\
+{
+  "Type": "UnencryptedConfiguration",
+  "NetworkConfigurations": [{
+    "GUID": "<%= ID %>",
+    "Name": "<%= CONF_NAME %>",
+    "Type": "VPN",
+    "VPN": {
+      "Host": "<%= IP_ADDR %>",
+      "Type": "OpenVPN",
+      "OpenVPN": {
+        "AuthRetry": "interact",
+        "Cipher": "<%= CIPHER %>",
+        "ClientCertType": "Pattern",
+        "ClientCertPattern": {
+          "IssuerCARef": ["<%= CERT_HASH %>"]
+        },
+        "CompLZO": "<%= COMP_LZO %>",
+        "Port": "<%= PORT %>",
+        "Proto": "<%= PROTO %>",
+        "PushPeerInfo": true,
+        "RenegSec": 2592000,
+        "ServerCARefs": ["<%= CERT_HASH %>"],
+        "ServerPollTimeout": 4,
+        "TLSAuthContents": "<%= CERT_HASH %>",
+        "TLSRemote": "server",
+        "UserAuthenticationType": "<%= OTP or None %>",
+        "Verb": "2"
+      }
+    },
+    "Certificates": [{
+      "GUID": "<%= CERT_HASH %>",
+      "Type": "Authority",
+      "X509": "<%= CA_CERT %>"
+    }],
+  }]
+}
+"""
+
 KEY_LINK_EMAIL_TEXT = """\
 Your vpn key can be downloaded from the temporary link below. You may also directly import your keys in the Pritunl client using the temporary URI link.
 
