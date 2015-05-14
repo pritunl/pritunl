@@ -76,19 +76,15 @@
       <label>Ping Interval</label>
       <input type="number" class="form-control" placeholder="Enter ping interval" data-toggle="tooltip" title="Optional, interval to ping client" value="<%- ping_interval || '' %>" autocapitalize="off">
     </div>
-    <div class="debug-toggle toggle-form form-group">
-      <label>Enable Debugging Output</label>
-      <div class="selector <%= debug ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Show server debugging information in output">
-        <span class="selector-inner glyphicon glyphicon-ok"></span>
-      </div>
-    </div>
     <div class="replica-count form-group">
       <label>Replication Count</label>
-      <select class="form-control" data-toggle="tooltip"
-        title="Replicate server accross multiple hosts.">
-        <option value="1">1</option>
-        <option value="max">Max</option>
-      </select>
+      <input type="number" class="form-control" placeholder="Enter replication count" data-toggle="tooltip" title="Replicate server accross multiple hosts." value="<%- replica_count || 0 %>" autocapitalize="off">
+    </div>
+    <div class="replica-max form-group">
+      <label>Replicate to All Hosts</label>
+      <div class="selector <%= replica_count ? 'max' : '' %> no-select" data-toggle="tooltip" title="Replicate to all hosts">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
     </div>
   </div>
   <div class="right advanced">
@@ -107,6 +103,12 @@
     <div class="inter-client-toggle toggle-form form-group">
       <label>Inter-Client Communication</label>
       <div class="selector <%= inter_client ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Allow clients to communicate with each other on the vpn network">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
+    <div class="debug-toggle toggle-form form-group">
+      <label>Enable Debugging Output</label>
+      <div class="selector <%= debug ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Show server debugging information in output">
         <span class="selector-inner glyphicon glyphicon-ok"></span>
       </div>
     </div>
