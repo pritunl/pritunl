@@ -601,7 +601,7 @@ class ServerInstance(object):
         response = self.collection.update({
             '_id': self.server.id,
             'status': ONLINE,
-            'instances_count': {'$lt': self.server.replica_count},
+            'instances_count': {'$lt': replica_count},
         }, {
             '$push': {
                 'instances': {
