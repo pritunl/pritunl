@@ -274,11 +274,12 @@ def sso_callback_get():
     if sig != test_sig:
         return flask.abort(401)
 
-    valid, org_id = sso.verify_google(user, settings.app.sso_org)
+    valid, org_id = sso.verify_google(user)
     if not valid:
         return flask.abort(401)
 
     if not org_id:
+        org_id = settings.app.sso_org
         return flask.abort(405)
 
     org = organization.get_by_id(org_id)
