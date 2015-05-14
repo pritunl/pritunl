@@ -242,12 +242,18 @@ define([
       var interClient = this.getInterClientSelect();
       var pingInterval = parseInt(this.$('.ping-interval input').val(), 10);
       var pingTimeout = parseInt(this.$('.ping-timeout input').val(), 10);
+      var replicaCount = parseInt(this.$('.replica-count input').val(), 10);
+      var replicaMax = this.getReplicaSelect();
       var debug = this.getDebugSelect();
       var otpAuth = this.getOtpAuthSelect();
       var cipher = this.$('.cipher select').val();
       var bindAddress = this.$('.bind-address input').val();
       if (!bindAddress) {
         bindAddress = null;
+      }
+
+      if (replicaMax) {
+        replicaCount = -1;
       }
 
       if (!name) {
@@ -273,6 +279,10 @@ define([
       if (!searchDomain) {
         searchDomain = null;
       }
+      if (replicaCount === NaN || replicaCount === 0) {
+        replicaCount = 1;
+        return;
+      }
 
       var data = {
         'name': name,
@@ -292,6 +302,7 @@ define([
         'inter_client': interClient,
         'ping_interval': pingInterval,
         'ping_timeout': pingTimeout,
+        'replica_count': replicaCount,
         'debug': debug
       };
 
