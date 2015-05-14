@@ -281,7 +281,6 @@ define([
       }
       if (replicaCount === NaN || replicaCount === 0) {
         replicaCount = 1;
-        return;
       }
 
       var data = {
