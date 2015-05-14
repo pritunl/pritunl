@@ -9,7 +9,7 @@ class TaskCleanIpPool(task.Task):
     type = 'clean_ip_pool'
 
     @cached_static_property
-    def collection(cls):
+    def pool_collection(cls):
         return mongo.get_collection('servers_ip_pool')
 
     @cached_static_property
@@ -21,7 +21,7 @@ class TaskCleanIpPool(task.Task):
             '_id',
         }).distinct('_id')
 
-        self.collection.remove({
+        self.pool_collection.remove({
             'server_id': {'$nin': org_ids},
         })
 
