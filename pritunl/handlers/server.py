@@ -279,6 +279,16 @@ def server_put_post(server_id=None):
         ping_timeout_def = True
         ping_timeout = int(flask.request.json['ping_timeout'])
 
+    replica_count = None
+    replica_count_def = False
+    if flask.request.json.get('replica_count'):
+        replica_count_def = True
+        replica_count = int(flask.request.json['replica_count'])
+        if replica_count == 0:
+            replica_count = 1
+        elif replica_count < 0:
+            replica_count = -1
+
     debug = False
     debug_def = False
     if 'debug' in flask.request.json:
@@ -400,6 +410,7 @@ def server_put_post(server_id=None):
             inter_client=inter_client,
             ping_interval=ping_interval,
             ping_timeout=ping_timeout,
+            replica_count=replica_count,
             debug=debug,
         )
         svr.add_host(settings.local.host_id)
@@ -456,6 +467,8 @@ def server_put_post(server_id=None):
             svr.ping_interval = ping_interval
         if ping_timeout_def:
             svr.ping_timeout = ping_timeout
+        if replica_count_def:
+            svr.replica_count = replica_count
         if debug_def:
             svr.debug = debug
         svr.commit(svr.changed)
