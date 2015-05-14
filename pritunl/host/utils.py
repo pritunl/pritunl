@@ -137,4 +137,7 @@ def deinit():
         logger.LogEntry(message='Web server stopped.')
 
 def get_prefered_hosts(hosts, replica_count):
+    if replica_count < 1:
+        replica_count = 10000
+
     return random.sample(hosts, min(replica_count, len(hosts)))

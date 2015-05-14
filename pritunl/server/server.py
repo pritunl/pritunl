@@ -749,12 +749,17 @@ class Server(mongo.MongoObject):
         self.status = ONLINE
         self.start_timestamp = start_timestamp
 
+        replica_count = self.replica_count
+        if replica_count < 1:
+            replica_count = 10000
+        replica_count = min(replica_count, len(self.hosts))
+
         started_count = 0
         error_count = 0
         try:
             self.publish('start', extra={
                 'prefered_hosts': host.get_prefered_hosts(
-                    self.hosts, self.replica_count),
+                    self.hosts, replica_count),
             })
 
             for x_timeout in (2, timeout):
@@ -763,11 +768,11 @@ class Server(mongo.MongoObject):
                     message = msg['message']
                     if message == 'started':
                         started_count += 1
-                        if started_count + error_count >= self.replica_count:
+                        if started_count + error_count >= replica_count:
                             break
                     elif message == 'error':
                         error_count += 1
-                        if started_count + error_count >= self.replica_count:
+                        if started_count + error_count >= replica_count:
                             break
 
                 if started_count:

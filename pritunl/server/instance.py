@@ -594,6 +594,10 @@ class ServerInstance(object):
             utils.rmtree(self._temp_path)
 
     def run(self, send_events=False):
+        replica_count = self.server.replica_count
+        if replica_count < 1:
+            replica_count = 10000
+
         response = self.collection.update({
             '_id': self.server.id,
             'status': ONLINE,
