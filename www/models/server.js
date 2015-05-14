@@ -30,6 +30,7 @@ define([
       'inter_client': null,
       'ping_interval': null,
       'ping_timeout': null,
+      'replica_count': null,
       'debug': null
     },
     url: function() {
