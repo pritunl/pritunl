@@ -90,34 +90,6 @@ def new_org(type=ORG_DEFAULT, block=True, **kwargs):
 def get_by_id(id, fields=None):
     return Organization(id=id, fields=fields)
 
-def get_user_count(type=CERT_CLIENT, org_ids=None):
-    user_collection = mongo.get_collection('users')
-
-    match_spec = {
-        'type': type,
-    }
-
-    if org_ids:
-        match_spec['org_id'] = {'$in': org_ids}
-
-    response = user_collection.aggregate([
-        {'$match': match_spec},
-        {'$project': {
-            '_id': True,
-            'org_id': True,
-        }},
-        {'$group': {
-            '_id': '$org_id',
-            'count': {'$sum': 1},
-        }},
-    ])
-
-    org_user_count = {}
-    for doc in response:
-        org_user_count[doc['_id']] = doc['count']
-
-    return org_user_count
-
 def iter_orgs(spec=None, type=ORG_DEFAULT, fields=None):
     if spec is None:
         spec = {}
@@ -135,11 +107,8 @@ def iter_orgs_dict():
         'type': ORG_DEFAULT,
     }
 
-    org_user_count = get_user_count()
-
     for doc in Organization.collection.find(spec).sort('name'):
         org = Organization(doc=doc)
-        org.user_count = org_user_count.get(org.id, 0)
         yield org.dict()
 
 def get_user_count_multi(org_ids=None, type=CERT_CLIENT):
