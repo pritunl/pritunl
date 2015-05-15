@@ -1,3 +1,5 @@
+from pritunl.server.listener import *
+
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
@@ -401,29 +403,20 @@ class ServerInstanceCom(object):
             socket_path=self.socket_path,
         )
 
-    def _sub(self):
-        cursor_id = messenger.get_cursor_id('instance')
+    def on_msg(self, event):
+        event_type, user_id = event['message']
 
-        while True:
-            for event in messenger.subscribe('instance',
-                    cursor_id=cursor_id, timeout=10):
-                cursor_id = event['_id']
-                event_type, user_id = event['message']
+        if event_type != 'user_disconnect':
+            return
 
-                if event_type != 'user_disconnect':
-                    continue
+        devices = self.client_devices.get(user_id)
+        if not devices:
+            return
 
-                devices = self.client_devices.get(user_id)
-                if not devices:
-                    continue
-
-                for device in devices:
-                    if self.instance.sock_interrupt:
-                        return
-                    self.client_kill(device)
-
+        for device in devices:
             if self.instance.sock_interrupt:
                 return
+            self.client_kill(device)
 
     @interrupter
     def _watch_thread(self):
@@ -468,6 +461,8 @@ class ServerInstanceCom(object):
             time.sleep(1)
             self.sock.send('bytecount %s\n' % self.bandwidth_rate)
 
+            add_listener(self.instance.id, self.on_msg)
+
             data = ''
             while True:
                 data += self.sock.recv(SOCKET_BUFFER)
@@ -502,20 +497,8 @@ class ServerInstanceCom(object):
                     instance_id=self.instance.id,
                 )
             self.instance.stop_process()
-
-    def _sub_thread(self):
-        try:
-            time.sleep(10)
-            self._sub()
-        except:
-            if not self.instance.sock_interrupt:
-                self.push_output('ERROR Management messenger exception')
-                logger.exception('Error in management messenger thread',
-                    'server',
-                    server_id=self.server.id,
-                    instance_id=self.instance.id,
-                )
-            self.instance.stop_process()
+        finally:
+            remove_listener(self.instance.id)
 
     def connect(self):
         self.wait_for_socket()
@@ -528,9 +511,5 @@ class ServerInstanceCom(object):
         thread.start()
 
         thread = threading.Thread(target=self._watch_thread)
-        thread.daemon = True
-        thread.start()
-
-        thread = threading.Thread(target=self._sub_thread)
         thread.daemon = True
         thread.start()
