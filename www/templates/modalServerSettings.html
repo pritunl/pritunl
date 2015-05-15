@@ -78,13 +78,7 @@
     </div>
     <div class="replica-count form-group">
       <label>Replication Count</label>
-      <input type="number" class="form-control" placeholder="Enter replication count" data-toggle="tooltip" title="Replicate server accross multiple hosts." value="<%- replica_count === -1 ? '' : replica_count %>" autocapitalize="off" <%= replica_count === -1 ? 'disabled' : '' %>>
-    </div>
-    <div class="replica-toggle form-group">
-      <label>Replicate to All Hosts</label>
-      <div class="selector <%= replica_count === -1 ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Replicate to all hosts">
-        <span class="selector-inner glyphicon glyphicon-ok"></span>
-      </div>
+      <input type="number" class="form-control" placeholder="Enter replication count" data-toggle="tooltip" title="Replicate server accross multiple hosts." value="<%- replica_count === -1 ? '' : replica_count %>" autocapitalize="off">
     </div>
   </div>
   <div class="right advanced">

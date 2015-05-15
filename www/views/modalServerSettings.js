@@ -22,7 +22,6 @@ define([
         'click .otp-auth-toggle': 'onOtpAuthSelect',
         'click .inter-client-toggle': 'onInterClientSelect',
         'click .debug-toggle': 'onDebugSelect',
-        'click .replica-toggle': 'onReplicaSelect',
         'click .multi-device-toggle': 'onMultiDeviceSelect'
       }, ModalServerSettingsView.__super__.events);
     },
@@ -142,26 +141,6 @@ define([
     onDebugSelect: function() {
       this.setDebugSelect(!this.getDebugSelect());
     },
-    getReplicaSelect: function() {
-      return this.$('.replica-toggle .selector').hasClass('selected');
-    },
-    setReplicaSelect: function(state) {
-      if (state) {
-        this.$('.replica-toggle .selector').addClass('selected');
-        this.$('.replica-toggle .selector-inner').show();
-        this.$('.replica-count input').val('');
-        this.$('.replica-count input').attr('disabled', 'disabled');
-      }
-      else {
-        this.$('.replica-toggle .selector').removeClass('selected');
-        this.$('.replica-toggle .selector-inner').hide();
-        this.$('.replica-count input').val('1');
-        this.$('.replica-count input').removeAttr('disabled');
-      }
-    },
-    onReplicaSelect: function() {
-      this.setReplicaSelect(!this.getReplicaSelect());
-    },
     getMultiDeviceSelect: function() {
       return this.$('.multi-device-toggle .selector').hasClass('selected');
     },
@@ -243,17 +222,12 @@ define([
       var pingInterval = parseInt(this.$('.ping-interval input').val(), 10);
       var pingTimeout = parseInt(this.$('.ping-timeout input').val(), 10);
       var replicaCount = parseInt(this.$('.replica-count input').val(), 10);
-      var replicaMax = this.getReplicaSelect();
       var debug = this.getDebugSelect();
       var otpAuth = this.getOtpAuthSelect();
       var cipher = this.$('.cipher select').val();
       var bindAddress = this.$('.bind-address input').val();
       if (!bindAddress) {
         bindAddress = null;
-      }
-
-      if (replicaMax) {
-        replicaCount = -1;
       }
 
       if (!name) {
