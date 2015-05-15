@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add support for replicated servers
+Disconnect users without restarting servers
 
 Version 1.2.604.38 2015-05-09
 -----------------------------
