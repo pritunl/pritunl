@@ -405,8 +405,6 @@ class ServerInstanceCom(object):
         cursor_id = messenger.get_cursor_id('instance')
 
         while True:
-            print cursor_id
-
             for event in messenger.subscribe('instance',
                     cursor_id=cursor_id, timeout=10):
                 cursor_id = event['_id']
