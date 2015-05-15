@@ -2,23 +2,11 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import settings
-from pritunl import mongo
 from pritunl import logger
-from pritunl import transaction
-from pritunl import event
 from pritunl import server
 from pritunl import listener
-from pritunl import messenger
-from pritunl import utils
 
-import pymongo
-import collections
-import datetime
-import bson
-import threading
 import time
-import random
-import hashlib
 
 def _on_msg(msg):
     if msg['message'] != 'start':
