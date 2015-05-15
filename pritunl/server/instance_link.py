@@ -43,7 +43,7 @@ class ServerInstanceLink(object):
         self.interface = None
         self.stop_event = threading.Event()
         self.user = settings.local.host.get_link_user(
-            self.linked_server.organizations[0])
+            self.linked_server.organizations)
         self._temp_path = utils.get_temp_path()
 
     @cached_static_property
