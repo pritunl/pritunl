@@ -16,7 +16,7 @@ class SettingsVpn(SettingsGroupMongo):
         'server_ping_ttl': 6,
         'status_update_rate': 3,
         'http_request_timeout': 10,
-        'op_timeout': 4,
+        'op_timeout': 10,
         'bandwidth_update_rate': 15,
         'safe_pub_subnets': ['50.203.224.0/24'],
     }
