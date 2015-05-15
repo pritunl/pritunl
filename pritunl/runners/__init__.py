@@ -8,6 +8,7 @@ from pritunl.runners.event import start_event
 from pritunl.runners.host import start_host
 from pritunl.runners.subscription import start_subscription
 from pritunl.runners.server import start_server
+from pritunl.runners.instance import start_instance
 from pritunl.runners.time_sync import start_time_sync
 from pritunl.runners.limiter import start_limiter
 from pritunl.runners.listener import start_listener
@@ -23,6 +24,7 @@ def start_all():
     start_host()
     start_subscription()
     start_server()
+    start_instance()
     start_time_sync()
     start_limiter()
 
