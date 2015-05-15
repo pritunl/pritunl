@@ -120,12 +120,16 @@ def link_servers(server_id, link_server_id, use_local_address=False):
         '_id': True,
         'status': True,
         'hosts': True,
+        'replica_count': True
     }
 
     hosts = set()
     for doc in collection.find(spec, project):
         if doc['status'] == ONLINE:
             raise ServerLinkOnlineError('Server must be offline to link')
+
+        if doc['replica_count'] > 1:
+            raise ServerLinkReplicaError('Server has replicas')
 
         hosts_set = set(doc['hosts'])
         if hosts & hosts_set:
