@@ -6,6 +6,7 @@ from pritunl import mongo
 from pritunl import utils
 from pritunl import queue
 from pritunl import logger
+from pritunl import messenger
 
 import tarfile
 import os
@@ -202,6 +203,9 @@ class User(mongo.MongoObject):
     def remove(self):
         self.unassign_ip_addr()
         mongo.MongoObject.remove(self)
+
+    def disconnect(self):
+        messenger.publish('instance', ['user_disconnect', self.id])
 
     def get_cache_key(self, suffix=None):
         if not self.cache_prefix:
