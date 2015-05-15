@@ -239,6 +239,7 @@ define([
           });
           $('.alerts-container').append(alertView.render().el);
           this.addView(alertView);
+          this.$('.enable-user').removeClass('disabled');
         }.bind(this)
       });
     },
@@ -262,6 +263,7 @@ define([
           });
           $('.alerts-container').append(alertView.render().el);
           this.addView(alertView);
+          this.$('.enable-user').removeClass('disabled');
         }.bind(this)
       });
     },
