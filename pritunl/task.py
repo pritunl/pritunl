@@ -7,7 +7,6 @@ from pritunl import logger
 from pritunl import utils
 
 import pymongo
-import bson
 import datetime
 import collections
 
