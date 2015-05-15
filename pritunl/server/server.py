@@ -762,7 +762,7 @@ class Server(mongo.MongoObject):
                     self.hosts, replica_count),
             })
 
-            for x_timeout in (2, timeout):
+            for x_timeout in (4, timeout):
                 for msg in self.subscribe(cursor_id=cursor_id,
                         timeout=x_timeout):
                     message = msg['message']
