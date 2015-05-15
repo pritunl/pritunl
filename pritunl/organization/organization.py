@@ -172,12 +172,8 @@ class Organization(mongo.MongoObject):
             limit = page_count
             skip = page * page_count if page else 0
 
-        sort = [
-            ('type', pymongo.ASCENDING),
-            ('name', pymongo.ASCENDING),
-        ]
-
-        cursor = user.User.collection.find(spec, fields).sort(sort)
+        cursor = user.User.collection.find(spec, fields).sort(
+            'name', pymongo.ASCENDING)
 
         if skip is not None:
             cursor = cursor.skip(page * page_count if page else 0)
