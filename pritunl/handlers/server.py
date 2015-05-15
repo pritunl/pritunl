@@ -471,6 +471,13 @@ def server_put_post(server_id=None):
             svr.replica_count = replica_count
         if debug_def:
             svr.debug = debug
+
+        if svr.links and svr.replica_count > 1:
+            return utils.jsonify({
+                'error': SERVER_LINKS_AND_REPLICA,
+                'error_msg': SERVER_LINKS_AND_REPLICA_MSG,
+            }, 400)
+
         svr.commit(svr.changed)
 
     logger.LogEntry(message='Created server "%s".' % svr.name)
@@ -676,6 +683,11 @@ def server_link_put(server_id, link_server_id):
         return utils.jsonify({
             'error': SERVER_LINK_COMMON_HOST,
             'error_msg': SERVER_LINK_COMMON_HOST_MSG,
+        }, 400)
+    except ServerLinkReplicaError:
+        return utils.jsonify({
+            'error': SERVER_LINKS_AND_REPLICA,
+            'error_msg': SERVER_LINKS_AND_REPLICA_MSG,
         }, 400)
 
     event.Event(type=SERVER_LINKS_UPDATED, resource_id=server_id)
