@@ -284,10 +284,8 @@ def server_put_post(server_id=None):
     if flask.request.json.get('replica_count'):
         replica_count_def = True
         replica_count = int(flask.request.json['replica_count'])
-        if replica_count == 0:
+        if replica_count < 1:
             replica_count = 1
-        elif replica_count < 0:
-            replica_count = -1
 
     debug = False
     debug_def = False

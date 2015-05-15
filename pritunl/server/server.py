@@ -749,10 +749,7 @@ class Server(mongo.MongoObject):
         self.status = ONLINE
         self.start_timestamp = start_timestamp
 
-        replica_count = self.replica_count
-        if replica_count < 1:
-            replica_count = 10000
-        replica_count = min(replica_count, len(self.hosts))
+        replica_count = min(self.replica_count, len(self.hosts))
 
         started_count = 0
         error_count = 0
