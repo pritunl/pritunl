@@ -42,7 +42,6 @@ class ServerInstance(object):
         self.process = None
         self.auth_log_process = None
         self.iptables_rules = []
-        self.replica_links = {}
         self.server_links = []
         self._temp_path = utils.get_temp_path()
         self.ovpn_conf_path = os.path.join(self._temp_path,
@@ -436,21 +435,8 @@ class ServerInstance(object):
         finally:
             self.stop_process()
 
-    def link_instance(self, host_id):
-        if self.interrupt:
-            return
-        instance_link = ServerInstanceLink(
-            server=self.server,
-            linked_server=self.server,
-            linked_host=host.get_by_id(host_id),
-        )
-        instance_link.start()
-        self.replica_links[host_id] = instance_link
-
     @interrupter
     def _keep_alive_thread(self):
-        exit_attempts = 0
-
         while not self.interrupt:
             try:
                 doc = self.collection.find_and_modify({
@@ -472,23 +458,6 @@ class ServerInstance(object):
                         time.sleep(0.1)
                         continue
 
-                active_hosts = set()
-                for instance in doc['instances']:
-                    host_id = instance['host_id']
-
-                    if host_id == settings.local.host_id:
-                        continue
-                    active_hosts.add(host_id)
-
-                    if host_id not in self.replica_links:
-                        self.link_instance(host_id)
-
-                yield
-
-                for host_id in self.replica_links.keys():
-                    if host_id not in active_hosts:
-                        self.replica_links[host_id].stop()
-                        del self.replica_links[host_id]
             except:
                 logger.exception('Failed to update server ping', 'server',
                     server_id=self.server.id,
