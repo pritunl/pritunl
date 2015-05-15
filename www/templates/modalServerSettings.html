@@ -80,6 +80,12 @@
       <label>Replication Count</label>
       <input type="number" class="form-control" placeholder="Enter replication count" data-toggle="tooltip" title="Replicate server accross multiple hosts." value="<%- replica_count === -1 ? '' : replica_count %>" autocapitalize="off">
     </div>
+    <div class="debug-toggle toggle-form form-group">
+      <label>Enable Debugging Output</label>
+      <div class="selector <%= debug ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Show server debugging information in output">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
   </div>
   <div class="right advanced">
     <div class="bind-address form-group">
