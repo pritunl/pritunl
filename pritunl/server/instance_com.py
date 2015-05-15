@@ -415,6 +415,32 @@ class ServerInstanceCom(object):
             socket_path=self.socket_path,
         )
 
+    def _sub(self):
+        cursor_id = messenger.get_cursor_id('instance')
+
+        while True:
+            print cursor_id
+
+            for event in messenger.subscribe('instance',
+                    cursor_id=cursor_id, timeout=10):
+                cursor_id = event['_id']
+                event_type, user_id = event['message']
+
+                if event_type != 'user_disconnect':
+                    continue
+
+                devices = self.client_devices.get(user_id)
+                if not devices:
+                    continue
+
+                for device in devices:
+                    if self.instance.sock_interrupt:
+                        return
+                    self.client_kill(device)
+
+            if self.instance.sock_interrupt:
+                return
+
     @interrupter
     def _watch_thread(self):
         try:
@@ -493,6 +519,20 @@ class ServerInstanceCom(object):
                 )
             self.instance.stop_process()
 
+    def _sub_thread(self):
+        try:
+            time.sleep(10)
+            self._sub()
+        except:
+            if not self.instance.sock_interrupt:
+                self.push_output('ERROR Management messenger exception')
+                logger.exception('Error in management messenger thread',
+                    'server',
+                    server_id=self.server.id,
+                    instance_id=self.instance.id,
+                )
+            self.instance.stop_process()
+
     def connect(self):
         self.wait_for_socket()
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -504,5 +544,9 @@ class ServerInstanceCom(object):
         thread.start()
 
         thread = threading.Thread(target=self._watch_thread)
+        thread.daemon = True
+        thread.start()
+
+        thread = threading.Thread(target=self._sub_thread)
         thread.daemon = True
         thread.start()
