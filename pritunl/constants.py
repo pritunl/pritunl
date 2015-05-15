@@ -303,7 +303,6 @@ authorityKeyIdentifier = keyid:always
 authorityKeyIdentifier = keyid:always
 
 [ server_ext ]
-nsCertType = server
 keyUsage = critical,digitalSignature,keyEncipherment
 basicConstraints = CA:false
 extendedKeyUsage = serverAuth,clientAuth
@@ -311,7 +310,6 @@ subjectKeyIdentifier = hash
 authorityKeyIdentifier = keyid:always
 
 [ client_ext ]
-nsCertType = client
 keyUsage = critical,digitalSignature,keyEncipherment
 basicConstraints = CA:false
 extendedKeyUsage = clientAuth
