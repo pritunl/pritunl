@@ -93,21 +93,26 @@ class Host(mongo.MongoObject):
         for doc in server.Server.collection.find(spec, fields):
             yield server.Server(doc=doc, fields=fields)
 
-    def get_link_user(self, org_id):
+    def get_link_user(self, org_ids):
         from pritunl import organization
 
-        org = organization.get_by_id(org_id)
-        usr = org.find_user(resource_id=self.id)
+        for org_id in org_ids:
+            org = organization.get_by_id(org_id)
+            if not org:
+                continue
 
-        if not usr:
-            logger.info('Creating host link user', 'host',
-                host_id=self.id,
-            )
+            usr = org.find_user(resource_id=self.id)
+            if not usr:
+                logger.info('Creating host link user', 'host',
+                    host_id=self.id,
+                )
 
-            usr = org.new_user(name=HOST_USER_PREFIX + str(self.id),
-                type=CERT_SERVER, resource_id=self.id)
+                usr = org.new_user(name=HOST_USER_PREFIX + str(self.id),
+                    type=CERT_SERVER, resource_id=self.id)
 
-        return usr
+            return usr
+
+        raise ValueError('No orgs exists in link server')
 
     def remove_link_user(self):
         self.user_collection.remove({
