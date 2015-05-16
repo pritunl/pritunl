@@ -3,21 +3,10 @@ from pritunl.organization.organization import Organization
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
-from pritunl import settings
-from pritunl import app
 from pritunl import logger
-from pritunl import mongo
 from pritunl import queue
-from pritunl import pooler
 from pritunl import user
-from pritunl import utils
 
-import uuid
-import logging
-import random
-import json
-import math
-import pymongo
 import threading
 
 def new_pooled():

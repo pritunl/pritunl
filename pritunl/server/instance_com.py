@@ -8,7 +8,6 @@ from pritunl import ipaddress
 from pritunl import logger
 from pritunl import utils
 from pritunl import event
-from pritunl import messenger
 from pritunl import limiter
 
 import os

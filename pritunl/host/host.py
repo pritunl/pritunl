@@ -9,9 +9,6 @@ from pritunl import mongo
 from pritunl import logger
 from pritunl import event
 
-import signal
-import datetime
-
 class Host(mongo.MongoObject):
     fields = {
         'name',
