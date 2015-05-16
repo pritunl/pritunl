@@ -211,6 +211,24 @@ class User(mongo.MongoObject):
     def disconnect(self):
         messenger.publish('instance', ['user_disconnect', self.id])
 
+    def auth_check(self):
+        if self.auth_type == GOOGLE_AUTH:
+            try:
+                resp = utils.request.get(AUTH_SERVER +
+                    '/update/google?user=%s&license=%s' % (
+                        self.email, settings.app.license))
+
+                if resp.status_code == 200:
+                    return True
+            except:
+                logger.exception('Google auth check error', 'user',
+                    user_id=self.id,
+                    email=self.email,
+                )
+            return False
+
+        return True
+
     def get_cache_key(self, suffix=None):
         if not self.cache_prefix:
             raise AttributeError('Cached config object requires cache_prefix')
