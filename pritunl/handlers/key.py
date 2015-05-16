@@ -228,7 +228,7 @@ def sso_request_get():
     if not settings.local.sub_active:
         return flask.abort(405)
 
-    resp = utils.request.post('https://auth.pritunl.com/request/google',
+    resp = utils.request.post(AUTH_SERVER + '/request/google',
         json_data={
             'license': settings.app.license,
             'callback': callback,
