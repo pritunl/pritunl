@@ -280,7 +280,6 @@ def sso_callback_get():
 
     if not org_id:
         org_id = settings.app.sso_org
-        return flask.abort(405)
 
     org = organization.get_by_id(org_id)
     if not org:
