@@ -182,6 +182,9 @@ CERT_CLIENT_POOL = 'client_pool'
 ORG_DEFAULT = 'default'
 ORG_POOL = 'pool'
 
+LOCAL_AUTH = 'local'
+GOOGLE_AUTH = 'google'
+
 ORGS_UPDATED = 'organizations_updated'
 USERS_UPDATED = 'users_updated'
 LOG_UPDATED = 'log_updated'
