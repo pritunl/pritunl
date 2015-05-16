@@ -3,25 +3,8 @@ from pritunl.user.user import User
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
-from pritunl import settings
-from pritunl import app
-from pritunl import mongo
-from pritunl import utils
-from pritunl import queue
-from pritunl import logger
 
-import tarfile
-import os
-import subprocess
-import hashlib
-import base64
-import struct
-import hmac
-import time
 import threading
-import json
-import bson
-import random
 
 def new_pooled_user(org, type):
     type = {
@@ -36,8 +19,8 @@ def new_pooled_user(org, type):
     thread.daemon = True
     thread.start()
 
-def reserve_pooled_user(org, name=None, email=None,
-        type=CERT_CLIENT, disabled=None, resource_id=None):
+def reserve_pooled_user(org, name=None, email=None, type=CERT_CLIENT,
+        auth_type=None, disabled=None, resource_id=None):
     doc = {}
 
     if name is not None:
@@ -46,6 +29,8 @@ def reserve_pooled_user(org, name=None, email=None,
         doc['email'] = email
     if type is not None:
         doc['type'] = type
+    if auth_type is not None:
+        doc['auth_type'] = auth_type
     if disabled is not None:
         doc['disabled'] = disabled
     if resource_id is not None:
