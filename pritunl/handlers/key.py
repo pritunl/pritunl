@@ -287,7 +287,11 @@ def sso_callback_get():
 
     usr = org.find_user(name=user)
     if not usr:
-        usr = org.new_user(name=user, email=user, type=CERT_CLIENT)
+        usr = org.new_user(name=user, email=user, type=CERT_CLIENT,
+            auth_type=GOOGLE_AUTH)
+    elif usr.auth_type != GOOGLE_AUTH:
+        usr.auth_type = GOOGLE_AUTH
+        usr.commit('auth_type')
 
     key_link = org.create_user_key_link(usr.id)
 
