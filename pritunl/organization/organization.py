@@ -152,15 +152,11 @@ class Organization(mongo.MongoObject):
             fields=None, include_pool=False):
         spec = {
             'org_id': self.id,
-            'type': {'$in': [CERT_CLIENT, CERT_SERVER]},
+            'type': CERT_CLIENT,
         }
         limit = None
         skip = None
         page_count = settings.user.page_count
-
-        if include_pool:
-            spec['type']['$in'].append(CERT_CLIENT_POOL)
-            spec['type']['$in'].append(CERT_SERVER_POOL)
 
         if fields:
             fields = {key: True for key in fields}
@@ -178,10 +174,30 @@ class Organization(mongo.MongoObject):
         if skip is not None:
             cursor = cursor.skip(page * page_count if page else 0)
         if limit is not None:
-            cursor = cursor.limit(limit)
+            cursor = cursor.limit(limit + 1)
 
         if search:
             self.last_search_count = cursor.count()
+
+        if limit is None:
+            for doc in cursor:
+                yield user.User(self, doc=doc, fields=fields)
+        else:
+            count = 0
+            for doc in cursor:
+                count += 1
+                if count > limit:
+                    return
+                yield user.User(self, doc=doc, fields=fields)
+
+        if include_pool:
+            spec['type'] = {'$in': [CERT_SERVER, CERT_CLIENT_POOL,
+                CERT_SERVER_POOL]}
+        else:
+            spec['type'] = CERT_SERVER
+
+        cursor = user.User.collection.find(spec, fields).sort(
+            'name', pymongo.ASCENDING)
 
         for doc in cursor:
             yield user.User(self, doc=doc, fields=fields)
