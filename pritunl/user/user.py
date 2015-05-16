@@ -25,6 +25,7 @@ class User(mongo.MongoObject):
         'email',
         'otp_secret',
         'type',
+        'auth_type',
         'disabled',
         'sync_token',
         'sync_secret',
@@ -37,10 +38,11 @@ class User(mongo.MongoObject):
         'name': 'undefined',
         'disabled': False,
         'type': CERT_CLIENT,
+        'auth_type': LOCAL_AUTH,
     }
 
-    def __init__(self, org, name=None, email=None, type=None, disabled=None,
-            resource_id=None, **kwargs):
+    def __init__(self, org, name=None, email=None, type=None, auth_type=None,
+            disabled=None, resource_id=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         self.org = org
@@ -52,6 +54,8 @@ class User(mongo.MongoObject):
             self.email = email
         if type is not None:
             self.type = type
+        if auth_type is not None:
+            self.auth_type = auth_type
         if disabled is not None:
             self.disabled = disabled
         if resource_id is not None:
