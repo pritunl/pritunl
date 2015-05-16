@@ -223,8 +223,8 @@ class User(mongo.MongoObject):
             except:
                 logger.exception('Google auth check error', 'user',
                     user_id=self.id,
-                    email=self.email,
                 )
+
             return False
 
         return True
