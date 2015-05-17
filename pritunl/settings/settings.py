@@ -50,7 +50,6 @@ class Settings(object):
 
     def commit(self, init=False):
         from pritunl import messenger
-        from pritunl import mongo
         from pritunl import transaction
 
         docs = []
