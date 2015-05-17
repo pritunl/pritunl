@@ -509,6 +509,7 @@ setenv UV_NAME %s
 client
 dev tun
 proto %s
+remote-random
 %s
 nobind
 persist-tun
