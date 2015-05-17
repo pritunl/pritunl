@@ -10,7 +10,6 @@ from pritunl import utils
 from pritunl import logger
 from pritunl import mongo
 
-import datetime
 import collections
 import random
 import socket
@@ -49,8 +48,6 @@ def iter_servers_dict():
     for doc in response:
         hosts_clients[doc['_id']] = doc['clients']
 
-    org_user_count = organization.get_user_count()
-
     response = server_collection.aggregate([
         {'$project': {
             'hosts': True,
@@ -64,9 +61,13 @@ def iter_servers_dict():
         }},
     ])
 
+    orgs = set()
     host_orgs = collections.defaultdict(list)
     for doc in response:
+        orgs.union(doc['organizations'])
         host_orgs[doc['_id']] = doc['organizations']
+
+    org_user_count = organization.get_user_count(orgs)
 
     for doc in Host.collection.find().sort('name'):
         hst = Host(doc=doc)
