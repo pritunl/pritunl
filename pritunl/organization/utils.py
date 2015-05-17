@@ -6,6 +6,7 @@ from pritunl.helpers import *
 from pritunl import logger
 from pritunl import queue
 from pritunl import user
+from pritunl import mongo
 
 import threading
 
@@ -99,6 +100,34 @@ def iter_orgs_dict():
     for doc in Organization.collection.find(spec).sort('name'):
         org = Organization(doc=doc)
         yield org.dict()
+
+def get_user_count(type=CERT_CLIENT, org_ids=None):
+    user_collection = mongo.get_collection('users')
+
+    match_spec = {
+        'type': type,
+    }
+
+    if org_ids:
+        match_spec['org_id'] = {'$in': org_ids}
+
+    response = user_collection.aggregate([
+        {'$match': match_spec},
+        {'$project': {
+            '_id': True,
+            'org_id': True,
+        }},
+        {'$group': {
+            '_id': '$org_id',
+            'count': {'$sum': 1},
+        }},
+    ])
+
+    org_user_count = {}
+    for doc in response:
+        org_user_count[doc['_id']] = doc['count']
+
+    return org_user_count
 
 def get_user_count_multi(org_ids=None, type=CERT_CLIENT):
     spec = {
