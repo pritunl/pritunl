@@ -142,8 +142,8 @@ class Organization(mongo.MongoObject):
 
     def _get_user_count(self, type=CERT_CLIENT):
         return user.User.collection.find({
-            'org_id': self.id,
             'type': type,
+            'org_id': self.id,
         }, {
             '_id': True,
         }).count()
