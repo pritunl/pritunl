@@ -30,7 +30,7 @@ class LogView(object):
             return self.colors.next()
         except StopIteration:
             self.colors = (x for x in BASH_COLORS)
-            return get_color()
+            return self.get_color()
 
     def format_line(self, line):
         if line[0] == '[':
