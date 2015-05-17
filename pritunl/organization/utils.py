@@ -109,6 +109,8 @@ def get_user_count(org_ids, type=CERT_CLIENT):
         org_user_count[org_id] = user_collection.find({
             'type': type,
             'org_id': org_id,
+        }, {
+            '_id': True,
         }).count()
 
     return org_user_count
@@ -119,4 +121,6 @@ def get_user_count_multi(org_ids=None, type=CERT_CLIENT):
     }
     if org_ids is not None:
         spec['org_id'] = {'$in': org_ids}
-    return user.User.collection.find(spec).count()
+    return user.User.collection.find(spec, {
+        '_id': True,
+    }).count()
