@@ -64,7 +64,7 @@ def iter_servers_dict():
     orgs = set()
     host_orgs = collections.defaultdict(list)
     for doc in response:
-        orgs.union(doc['organizations'])
+        orgs = orgs.union(doc['organizations'])
         host_orgs[doc['_id']] = doc['organizations']
 
     org_user_count = organization.get_user_count(orgs)
