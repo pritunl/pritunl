@@ -90,7 +90,7 @@ class LogView(object):
 
         if formatted:
             output = ''
-            for i in xrange(len(messages)-1, -1, -1):
+            for i in xrange(len(messages) - 1, -1, -1):
                 output += self.format_line(messages[i]) + '\n'
             return output.rstrip('\n')
         else:
