@@ -101,31 +101,15 @@ def iter_orgs_dict():
         org = Organization(doc=doc)
         yield org.dict()
 
-def get_user_count(type=CERT_CLIENT, org_ids=None):
+def get_user_count(org_ids, type=CERT_CLIENT):
     user_collection = mongo.get_collection('users')
-
-    match_spec = {
-        'type': type,
-    }
-
-    if org_ids:
-        match_spec['org_id'] = {'$in': org_ids}
-
-    response = user_collection.aggregate([
-        {'$match': match_spec},
-        {'$project': {
-            '_id': True,
-            'org_id': True,
-        }},
-        {'$group': {
-            '_id': '$org_id',
-            'count': {'$sum': 1},
-        }},
-    ])
-
     org_user_count = {}
-    for doc in response:
-        org_user_count[doc['_id']] = doc['count']
+
+    for org_id in org_ids:
+        org_user_count[org_id] = user_collection.find({
+            'type': type,
+            'org_id': org_id,
+        }).count()
 
     return org_user_count
 
