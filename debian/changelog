@@ -1,3 +1,12 @@
+pritunl (1.3.613.97beta1-0ubuntu1) unstable; urgency=low
+
+  * Add support for replicated servers
+  * Disconnect users without restarting servers
+  * Check Google authentication on user connect
+  * Add paging to organizations, servers and hosts
+
+ -- Pritunl <contact@pritunl.com>  Mon, 18 May 2015 00:00:00 -0400
+
 pritunl (1.2.604.38-0ubuntu1) unstable; urgency=low
 
   * Interface improvements

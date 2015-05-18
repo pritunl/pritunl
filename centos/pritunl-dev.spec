@@ -1,5 +1,5 @@
 %define pkgname pritunl
-%define pkgver 1.0.459.72beta2
+%define pkgver 1.3.613.97beta1
 %define pymongo_pkgver 3.0.2
 %define flask_pkgver 0.10.1
 %define pyopenssl_pkgver 0.14
