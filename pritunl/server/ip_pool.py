@@ -64,7 +64,7 @@ class ServerIpPool:
                     'address': '%s/%s' % (remote_ip_addr,
                         ip_network.prefixlen),
                 })
-                return
+                return True
             except pymongo.errors.DuplicateKeyError:
                 pass
 
@@ -73,6 +73,7 @@ class ServerIpPool:
             org_id=org_id,
             user_id=user_id,
         )
+        return False
 
     def unassign_ip_addr(self, org_id, user_id):
         self.collection.update({
@@ -318,7 +319,8 @@ class ServerIpPool:
                 'org_id': True,
             })
             if doc:
-                self.assign_ip_addr(doc['org_id'], user_id)
+                if not self.assign_ip_addr(doc['org_id'], user_id):
+                    break
 
     def get_ip_addr(self, org_id, user_id):
         doc = self.collection.find_one({
