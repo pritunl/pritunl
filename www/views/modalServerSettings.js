@@ -253,7 +253,7 @@ define([
       if (!searchDomain) {
         searchDomain = null;
       }
-      if (replicaCount === NaN || replicaCount === 0) {
+      if (replicaCount.isNan() || replicaCount === 0) {
         replicaCount = 1;
       }
 
