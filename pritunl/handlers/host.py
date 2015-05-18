@@ -19,7 +19,7 @@ def host_get(host_id=None):
 
     hosts = []
 
-    for hst in host.iter_servers_dict():
+    for hst in host.iter_hosts_dict():
         hosts.append(hst)
 
     return utils.jsonify(hosts)
