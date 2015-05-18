@@ -13,18 +13,47 @@ from pritunl import mongo
 import collections
 import random
 import socket
+import math
 
 def get_by_id(id, fields=None):
     return Host(id=id, fields=fields)
 
-def iter_hosts(spec=None, fields=None):
+def iter_hosts(spec=None, fields=None, page=None):
+    limit = None
+    skip = None
+    page_count = settings.app.host_page_count
+
+    if spec is None:
+        spec = {}
+
     if fields:
         fields = {key: True for key in fields}
 
-    for doc in Host.collection.find(spec or {}, fields).sort('name'):
+    if page is not None:
+        limit = page_count
+        skip = page * page_count if page else 0
+
+    cursor = Host.collection.find(spec, fields).sort('name')
+
+    if skip is not None:
+        cursor = cursor.skip(page * page_count if page else 0)
+    if limit is not None:
+        cursor = cursor.limit(limit)
+
+    for doc in cursor:
         yield Host(doc=doc, fields=fields)
 
-def iter_hosts_dict():
+def get_host_page_total():
+    org_collection = mongo.get_collection('hosts')
+
+    count = org_collection.find({}, {
+        '_id': True,
+    }).count()
+
+    return int(math.floor(max(0, float(count - 1)) /
+        settings.app.host_page_count))
+
+def iter_hosts_dict(page=None):
     server_collection = mongo.get_collection('servers')
 
     response = server_collection.aggregate([
@@ -69,9 +98,7 @@ def iter_hosts_dict():
 
     org_user_count = organization.get_user_count(orgs)
 
-    for doc in Host.collection.find().sort('name'):
-        hst = Host(doc=doc)
-
+    for hst in iter_hosts(page=page):
         users_online = len(hosts_clients.get(hst.id, []))
 
         user_count = 0

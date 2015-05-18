@@ -18,11 +18,20 @@ def host_get(host_id=None):
         return utils.jsonify(host.get_by_id(host_id).dict())
 
     hosts = []
+    page = flask.request.args.get('page', None)
+    page = int(page) if page else page
 
-    for hst in host.iter_hosts_dict():
+    for hst in host.iter_hosts_dict(page=page):
         hosts.append(hst)
 
-    return utils.jsonify(hosts)
+    if page is not None:
+        return utils.jsonify({
+            'page': page,
+            'page_total': host.get_host_page_total(),
+            'hosts': hosts,
+        })
+    else:
+        return utils.jsonify(hosts)
 
 @app.app.route('/host/<host_id>', methods=['PUT'])
 @auth.session_auth
