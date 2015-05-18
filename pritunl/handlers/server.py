@@ -73,11 +73,20 @@ def server_get(server_id=None):
         return utils.jsonify(server.get_dict(server_id))
 
     servers = []
+    page = flask.request.args.get('page', None)
+    page = int(page) if page else page
 
-    for svr in server.iter_servers_dict():
+    for svr in server.iter_servers_dict(page=page):
         servers.append(svr)
 
-    return utils.jsonify(servers)
+    if page is not None:
+        return utils.jsonify({
+            'page': page,
+            'page_total': server.get_server_page_total(),
+            'servers': servers,
+        })
+    else:
+        return utils.jsonify(servers)
 
 @app.app.route('/server', methods=['POST'])
 @app.app.route('/server/<server_id>', methods=['PUT'])

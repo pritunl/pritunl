@@ -9,6 +9,9 @@ from pritunl.helpers import *
 from pritunl import transaction
 from pritunl import mongo
 from pritunl import ipaddress
+from pritunl import settings
+
+import math
 
 def new_server(**kwargs):
     server = Server(**kwargs)
@@ -62,17 +65,46 @@ def get_used_resources(ignore_server_id):
         'ports': set(used_resources['ports']),
     }
 
-def iter_servers(spec=None, fields=None):
+def iter_servers(spec=None, fields=None, page=None):
+    limit = None
+    skip = None
+    page_count = settings.app.server_page_count
+
+    if spec is None:
+        spec = {}
+
     if fields:
         fields = {key: True for key in fields}
 
-    for doc in Server.collection.find(spec or {}, fields).sort('name'):
+    if page is not None:
+        limit = page_count
+        skip = page * page_count if page else 0
+
+    cursor = Server.collection.find(spec, fields).sort('name')
+
+    if skip is not None:
+        cursor = cursor.skip(page * page_count if page else 0)
+    if limit is not None:
+        cursor = cursor.limit(limit)
+
+    for doc in cursor:
         yield Server(doc=doc, fields=fields)
 
-def iter_servers_dict():
+def iter_servers_dict(page=None):
     fields = {key: True for key in dict_fields}
-    for doc in Server.collection.find({}, fields).sort('name'):
-        yield Server(doc=doc, fields=fields).dict()
+
+    for svr in iter_servers(fields=fields, page=page):
+        yield svr.dict()
+
+def get_server_page_total():
+    org_collection = mongo.get_collection('servers')
+
+    count = org_collection.find({}, {
+        '_id': True,
+    }).count()
+
+    return int(math.floor(max(0, float(count - 1)) /
+        settings.app.server_page_count))
 
 def output_get(server_id):
     return ServerOutput(server_id).get_output()
