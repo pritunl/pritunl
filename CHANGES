@@ -6,6 +6,7 @@ Pritunl Changelog
 Add support for replicated servers
 Disconnect users without restarting servers
 Check Google authentication on user connect
+Add paging to organizations, servers and hosts
 
 Version 1.2.604.38 2015-05-09
 -----------------------------
