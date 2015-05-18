@@ -7,8 +7,10 @@ from pritunl import logger
 from pritunl import queue
 from pritunl import user
 from pritunl import mongo
+from pritunl import settings
 
 import threading
+import math
 
 def new_pooled():
     thread = threading.Thread(target=new_org, kwargs={
@@ -80,26 +82,45 @@ def new_org(type=ORG_DEFAULT, block=True, **kwargs):
 def get_by_id(id, fields=None):
     return Organization(id=id, fields=fields)
 
-def iter_orgs(spec=None, type=ORG_DEFAULT, fields=None):
+def iter_orgs(spec=None, type=ORG_DEFAULT, fields=None, page=None):
+    limit = None
+    skip = None
+    page_count = settings.app.org_page_count
+
     if spec is None:
         spec = {}
+
     if type is not None:
         spec['type'] = type
+
+    if page is not None:
+        limit = page_count
+        skip = page * page_count if page else 0
 
     if fields:
         fields = {key: True for key in fields}
 
-    for doc in Organization.collection.find(spec, fields).sort('name'):
+    cursor = Organization.collection.find(spec, fields).sort('name')
+
+    if skip is not None:
+        cursor = cursor.skip(page * page_count if page else 0)
+    if limit is not None:
+        cursor = cursor.limit(limit)
+
+    for doc in cursor:
         yield Organization(doc=doc, fields=fields)
 
-def iter_orgs_dict():
-    spec = {
-        'type': ORG_DEFAULT,
-    }
+def get_org_page_total():
+    org_collection = mongo.get_collection('organizations')
 
-    for doc in Organization.collection.find(spec).sort('name'):
-        org = Organization(doc=doc)
-        yield org.dict()
+    count = org_collection.find({
+        'type': ORG_DEFAULT,
+    }, {
+        '_id': True,
+    }).count()
+
+    return int(math.floor(max(0, float(count - 1)) /
+        settings.app.org_page_count))
 
 def get_user_count(org_ids, type=CERT_CLIENT):
     user_collection = mongo.get_collection('users')
