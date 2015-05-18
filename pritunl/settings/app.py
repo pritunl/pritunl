@@ -47,4 +47,7 @@ class SettingsApp(SettingsGroupMongo):
         'queue_high_thread_limit': 1,
         'host_ttl': 30,
         'theme': 'dark',
+        'org_page_count': 5,
+        'server_page_count': 3,
+        'host_page_count': 10,
     }
