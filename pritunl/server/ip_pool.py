@@ -68,11 +68,6 @@ class ServerIpPool:
             except pymongo.errors.DuplicateKeyError:
                 pass
 
-        logger.warning('Failed to assign ip address ' +
-            'to user, ip pool empty', 'server',
-            org_id=org_id,
-            user_id=user_id,
-        )
         return False
 
     def unassign_ip_addr(self, org_id, user_id):
