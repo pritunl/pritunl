@@ -18,6 +18,7 @@ define([
       this.listenTo(window.events, 'users_updated', this.update);
       this.listenTo(window.events, 'organizations_updated', this.update);
       this.listenTo(window.events, 'servers_updated', this.update);
+      this.listenTo(window.events, 'hosts_updated', this.update);
     },
     onNotification: function() {
       if (this.notified) {
