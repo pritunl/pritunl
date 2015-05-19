@@ -24,7 +24,7 @@ define([
     update: function() {
       this.$('.org-name').text(this.model.get('name'));
     },
-    onDetachOrg: function() {
+    onDetachOrg: function(evt) {
       if (this.server.get('status') === 'online') {
         var alertView = new AlertView({
           type: 'danger',
@@ -34,8 +34,16 @@ define([
         $('.alerts-container').append(alertView.render().el);
         return;
       }
+
+      var model = this.model.clone();
+
+      if (evt.shiftKey && evt.ctrlKey) {
+        model.destroy();
+        return;
+      }
+
       var modal = new ModalDetachOrg({
-        model: this.model.clone()
+        model: model
       });
       this.listenToOnce(modal, 'applied', function() {
         var alertView = new AlertView({

@@ -43,9 +43,16 @@ define([
         this.$('.link-use-local').hide();
       }
     },
-    onDetach: function() {
+    onDetach: function(evt) {
+      var model = this.model.clone();
+
+      if (evt.shiftKey && evt.ctrlKey) {
+        model.destroy();
+        return;
+      }
+
       var modal = new ModalDetachLink({
-        model: this.model.clone()
+        model: model
       });
       this.listenToOnce(modal, 'applied', function() {
         var alertView = new AlertView({

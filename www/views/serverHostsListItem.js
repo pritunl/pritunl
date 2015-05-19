@@ -42,9 +42,16 @@ define([
         this.$('.host-offline').hide();
       }
     },
-    onDetach: function() {
+    onDetach: function(evt) {
+      var model = this.model.clone();
+
+      if (evt.shiftKey && evt.ctrlKey) {
+        model.destroy();
+        return;
+      }
+
       var modal = new ModalDetachHost({
-        model: this.model.clone()
+        model: model
       });
       this.listenToOnce(modal, 'applied', function() {
         var alertView = new AlertView({
