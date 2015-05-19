@@ -164,7 +164,7 @@
                 "content": {"Fn::Join": ["", [
                   "[pritunl]\n",
                   "name=Pritunl Repository\n",
-                  "baseurl=http://mirror.pritunl.com/yum/x86_64\n",
+                  "baseurl=http://mirror.pritunl.com/yum/pritunl/x86_64\n",
                   "gpgcheck=0\n",
                   "enabled=1\n"
                 ]]},
