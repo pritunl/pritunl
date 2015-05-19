@@ -488,7 +488,7 @@ management %s unix
 management-client-auth
 auth-user-pass-optional
 topology subnet
-max-clients 2048
+max-clients %s
 ping %s
 ping-restart %s
 push "ping %s"
