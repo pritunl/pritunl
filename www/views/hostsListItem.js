@@ -133,9 +133,16 @@ define([
         this.hostUsageView.setPeriod('1d');
       }
     },
-    onDelete: function() {
+    onDelete: function(evt) {
+      var model = this.model.clone();
+
+      if (evt.shiftKey && evt.ctrlKey) {
+        model.destroy();
+        return;
+      }
+
       var modal = new ModalDeleteHostView({
-        model: this.model.clone()
+        model: model
       });
       this.listenToOnce(modal, 'applied', function() {
         var alertView = new AlertView({

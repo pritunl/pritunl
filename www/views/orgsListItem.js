@@ -48,9 +48,16 @@ define([
       });
       this.addView(modal);
     },
-    onDelete: function() {
+    onDelete: function(evt) {
+      var model = this.model.clone();
+
+      if (evt.shiftKey && evt.ctrlKey) {
+        model.destroy();
+        return;
+      }
+
       var modal = new ModalDeleteOrgView({
-        model: this.model
+        model: model
       });
       this.listenToOnce(modal, 'applied', function() {
         // TODO View is already destroyed
