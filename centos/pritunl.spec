@@ -12,6 +12,10 @@ License: Custom
 Source0: https://github.com/%{pkgname}/%{pkgname}/archive/%{pkgver}.tar.gz
 Packager: Pritunl <contact@pritunl.com>
 
+Provides: pritunl = %{version}-%{release}
+Conflicts: pritunl
+Conflicts: pritunl-dev
+
 Requires: python2
 Requires: openvpn
 Requires: net-tools
