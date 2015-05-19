@@ -136,6 +136,7 @@ class ServerInstance(object):
             self.interface,
             '%s %s' % utils.parse_network(self.server.network),
             self.management_socket_path,
+            self.server.max_clients,
             self.server.ping_interval,
             self.server.ping_timeout + 20,
             self.server.ping_interval,

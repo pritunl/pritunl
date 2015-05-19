@@ -52,6 +52,7 @@ dict_fields = [
     'inter_client',
     'ping_interval',
     'ping_timeout',
+    'max_clients',
     'replica_count',
     'debug',
 ]
@@ -89,6 +90,7 @@ class Server(mongo.MongoObject):
         'dh_params',
         'status',
         'start_timestamp',
+        'max_clients',
         'replica_count',
         'instances',
         'instances_count',
@@ -109,6 +111,7 @@ class Server(mongo.MongoObject):
         'hosts': [],
         'links': [],
         'status': OFFLINE,
+        'max_clients': 2048,
         'replica_count': 1,
         'instances': [],
         'instances_count': 0,
@@ -120,8 +123,8 @@ class Server(mongo.MongoObject):
             mode=None, multi_device=None, local_networks=None,
             dns_servers=None, search_domain=None, otp_auth=None, cipher=None,
             jumbo_frames=None, lzo_compression=None, inter_client=None,
-            ping_interval=None, ping_timeout=None, replica_count=None,
-            debug=None, **kwargs):
+            ping_interval=None, ping_timeout=None, max_clients=None,
+            replica_count=None, debug=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         if 'network' in self.loaded_fields:
@@ -165,6 +168,8 @@ class Server(mongo.MongoObject):
             self.ping_interval = ping_interval
         if ping_timeout is not None:
             self.ping_timeout = ping_timeout
+        if max_clients is not None:
+            self.max_clients = max_clients
         if replica_count is not None:
             self.replica_count = replica_count
         if debug is not None:
@@ -212,6 +217,7 @@ class Server(mongo.MongoObject):
             'inter_client': True if self.inter_client else False,
             'ping_interval': self.ping_interval,
             'ping_timeout': self.ping_timeout,
+            'max_clients': self.max_clients,
             'replica_count': self.replica_count,
             'debug': True if self.debug else False,
         }
