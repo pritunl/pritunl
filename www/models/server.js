@@ -30,6 +30,7 @@ define([
       'inter_client': null,
       'ping_interval': null,
       'ping_timeout': null,
+      'max_clients': null,
       'replica_count': null,
       'debug': null
     },
