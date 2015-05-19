@@ -76,9 +76,9 @@
       <label>Ping Interval</label>
       <input type="number" class="form-control" placeholder="Enter ping interval" data-toggle="tooltip" title="Optional, interval to ping client" value="<%- ping_interval || '' %>" autocapitalize="off">
     </div>
-    <div class="replica-count form-group">
-      <label>Replication Count</label>
-      <input type="number" class="form-control" placeholder="Enter replication count" data-toggle="tooltip" title="Replicate server accross multiple hosts." value="<%- replica_count === -1 ? '' : replica_count %>" autocapitalize="off">
+    <div class="max-clients form-group">
+      <label>Max Clients</label>
+      <input type="number" class="form-control" placeholder="Enter max clients" data-toggle="tooltip" title="Maximum number of clients connected to a server or to each server replica." value="<%- max_clients === -1 ? '' : max_clients %>" autocapitalize="off">
     </div>
     <div class="debug-toggle toggle-form form-group">
       <label>Enable Debugging Output</label>
@@ -99,6 +99,10 @@
     <div class="ping-timeout form-group">
       <label>Ping Timeout</label>
       <input type="number" class="form-control" placeholder="Enter ping timeout" data-toggle="tooltip" title="Optional, timeout for client ping. Must be greater then ping interval" value="<%- ping_timeout || '' %>" autocapitalize="off">
+    </div>
+    <div class="replica-count form-group">
+      <label>Replication Count</label>
+      <input type="number" class="form-control" placeholder="Enter replication count" data-toggle="tooltip" title="Replicate server accross multiple hosts." value="<%- replica_count === -1 ? '' : replica_count %>" autocapitalize="off">
     </div>
     <div class="inter-client-toggle toggle-form form-group">
       <label>Inter-Client Communication</label>

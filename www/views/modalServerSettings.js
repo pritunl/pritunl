@@ -221,6 +221,7 @@ define([
       var interClient = this.getInterClientSelect();
       var pingInterval = parseInt(this.$('.ping-interval input').val(), 10);
       var pingTimeout = parseInt(this.$('.ping-timeout input').val(), 10);
+      var maxClients = parseInt(this.$('.max-clients input').val(), 10);
       var replicaCount = parseInt(this.$('.replica-count input').val(), 10);
       var debug = this.getDebugSelect();
       var otpAuth = this.getOtpAuthSelect();
@@ -275,6 +276,7 @@ define([
         'inter_client': interClient,
         'ping_interval': pingInterval,
         'ping_timeout': pingTimeout,
+        'max_clients': maxClients,
         'replica_count': replicaCount,
         'debug': debug
       };
