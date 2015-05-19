@@ -8,7 +8,7 @@ define([
   var HostCollection = Backbone.Collection.extend({
     model: HostModel,
     initialize: function() {
-      this.page = window.org_page || 0;
+      this.page = window.host_page || 0;
     },
     url: function() {
       return '/host';
@@ -23,7 +23,7 @@ define([
     },
     setPage: function(page) {
       this.page = page;
-      window.org_page = page;
+      window.host_page = page;
     },
     getPage: function() {
       return this.page;
