@@ -288,6 +288,14 @@ def server_put_post(server_id=None):
         ping_timeout_def = True
         ping_timeout = int(flask.request.json['ping_timeout'])
 
+    max_clients = None
+    max_clients_def = False
+    if flask.request.json.get('max_clients'):
+        max_clients_def = True
+        max_clients = int(flask.request.json['max_clients'])
+        if max_clients < 1:
+            max_clients = 1
+
     replica_count = None
     replica_count_def = False
     if flask.request.json.get('replica_count'):
@@ -417,6 +425,7 @@ def server_put_post(server_id=None):
             inter_client=inter_client,
             ping_interval=ping_interval,
             ping_timeout=ping_timeout,
+            max_clients=max_clients,
             replica_count=replica_count,
             debug=debug,
         )
@@ -474,6 +483,8 @@ def server_put_post(server_id=None):
             svr.ping_interval = ping_interval
         if ping_timeout_def:
             svr.ping_timeout = ping_timeout
+        if max_clients_def:
+            svr.max_clients = max_clients
         if replica_count_def:
             svr.replica_count = replica_count
         if debug_def:
