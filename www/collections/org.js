@@ -17,9 +17,10 @@ define([
       if (response.page !== undefined) {
         this.setPage(response.page);
         this.setPageTotal(response.page_total);
+        return response.organizations;
       }
 
-      return response.organizations;
+      return response;
     },
     setPage: function(page) {
       this.page = page;
