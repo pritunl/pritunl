@@ -438,16 +438,19 @@ class Server(mongo.MongoObject):
     def add_org(self, org_id):
         if not isinstance(org_id, basestring):
             org_id = org_id.id
+
         logger.debug('Adding organization to server', 'server',
             server_id=self.id,
             org_id=org_id,
         )
+
         if org_id in self.organizations:
             logger.debug('Organization already on server, skipping', 'server',
                 server_id=self.id,
                 org_id=org_id,
             )
             return
+
         self.organizations.append(org_id)
         self.changed.add('organizations')
         self.generate_ca_cert()
