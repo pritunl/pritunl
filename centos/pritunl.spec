@@ -1,5 +1,5 @@
 %define pkgname pritunl
-%define pkgver 1.2.604.38
+%define pkgver 1.3.614.40
 %define pkgrelease 1
 
 Name: %{pkgname}
