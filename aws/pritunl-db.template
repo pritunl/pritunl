@@ -189,7 +189,7 @@
           },
           "Setup": {
             "files": {
-              "/etc/yum.repos.d/pritunl.repo": {
+              "/etc/yum.repos.d/mongodb-org-3.0.repo": {
                 "content": {"Fn::Join": ["", [
                   "[mongodb-org-3.0]\n",
                   "name=MongoDB Repository\n",
