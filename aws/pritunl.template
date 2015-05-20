@@ -149,7 +149,7 @@
       "Metadata": {
         "AWS::CloudFormation::Init": {
           "configSets": {
-            "InstallAndRun": ["Setup", "Install", "Configure"]
+            "InstallAndRun": ["Update", "Setup", "Install", "Configure"]
           },
           "Update": {
             "commands": {
