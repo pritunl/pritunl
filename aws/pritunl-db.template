@@ -233,9 +233,17 @@
             ]}
         ]},
         "InstanceType": {"Ref": "InstanceType"},
-        "SecurityGroups": [{"Ref": "DatabaseSecurityGroup"}],
-        "SubnetId": {"Ref": "DatabaseVpcSubnet"},
         "KeyName": {"Ref": "KeyName"},
+        "NetworkInterfaces": [ {
+          "AssociatePublicIpAddress": "true",
+          "DeviceIndex": "0",
+          "GroupSet": [{"Ref": "DatabaseSecurityGroup"}],
+          "SubnetId": {"Ref": "DatabaseVpcSubnet"}
+        }],
+        "BlockDeviceMappings": [{
+          "DeviceName": "/dev/xvda",
+          "Ebs": {"VolumeSize": "32"}
+        }],
         "UserData": {"Fn::Base64": {"Fn::Join": ["", [
           "#!/bin/bash -xe\n",
           "yum update -y aws-cfn-bootstrap\n",
