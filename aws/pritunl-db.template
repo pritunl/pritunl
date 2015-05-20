@@ -224,13 +224,13 @@
       },
       "Properties": {
         "ImageId": {"Fn::FindInMap": [
-            "AWSRegionArch2AMI",
-            {"Ref": "AWS::Region"},
-            {"Fn::FindInMap": [
-              "AWSInstanceType2Arch",
-              {"Ref": "InstanceType"},
-              "Arch"
-            ]}
+          "AWSRegionArch2AMI",
+          {"Ref": "AWS::Region"},
+          {"Fn::FindInMap": [
+            "AWSInstanceType2Arch",
+            {"Ref": "InstanceType"},
+            "Arch"
+          ]}
         ]},
         "InstanceType": {"Ref": "InstanceType"},
         "KeyName": {"Ref": "KeyName"},
