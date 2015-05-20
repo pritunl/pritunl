@@ -3,26 +3,26 @@
   "Description": "Pritunl - Enterprise Distributed VPN Server",
   "Parameters": {
     "KeyName": {
-      "Description": "Name of an existing EC2 KeyPair to enable SSH access",
       "Type": "AWS::EC2::KeyPair::KeyName",
+      "Description": "Name of an existing EC2 KeyPair to enable SSH access",
       "ConstraintDescription": "Must be the name of an existing EC2 KeyPair"
     },
     "MongoDBUrl": {
+      "Type": "String",
       "Default": "mongodb://db.mydomain.com:27017/pritunl",
       "Description": "MongoDB connection URI for database",
-      "Type": "String",
       "ConstraintDescription": "Must be a valid MongoDB URI"
     },
     "StackSize": {
+      "Type": "String",
       "Default": "1",
       "Description": "Number of Pritunl instances to create",
-      "Type": "String",
       "ConstraintDescription": "Must be an integer"
     },
     "InstanceType": {
-      "Description": "Pritunl EC2 instance type",
       "Type": "String",
       "Default": "t2.micro",
+      "Description": "Pritunl EC2 instance type",
       "AllowedValues": [
         "t2.micro",
         "t2.small",
@@ -48,6 +48,16 @@
         "r3.8xlarge"
       ],
       "ConstraintDescription": "Must be a valid EC2 instance type"
+    },
+    "VpcId": {
+      "Type": "AWS::EC2::VPC::Id",
+      "Description": "VPC Id of existsing VPC",
+      "ConstraintDescription": "Must be the Id of an existing VPC"
+    },
+    "VpcSubnets": {
+      "Type": "List<AWS::EC2::Subnet::Id>",
+      "Description": "The list of SubnetIds in your VPC",
+      "ConstraintDescription" : "Must be a list of existing subnets in VPC"
     }
   },
   "Mappings": {
@@ -138,6 +148,7 @@
       "Type": "AWS::AutoScaling::AutoScalingGroup",
       "Properties": {
         "AvailabilityZones": {"Fn::GetAZs": ""},
+        "VPCZoneIdentifier": {"Ref": "VpcSubnets"},
         "LaunchConfigurationName": {"Ref": "PritunlLaunchConfig"},
         "MinSize": {"Ref": "StackSize"},
         "MaxSize": {"Ref": "StackSize"},
@@ -250,6 +261,7 @@
       "Type": "AWS::EC2::SecurityGroup",
       "Properties": {
         "GroupDescription": "Pritunl Security Group",
+        "VpcId": {"Ref": "VpcId"},
         "SecurityGroupIngress": [
           {
             "IpProtocol": "tcp",
