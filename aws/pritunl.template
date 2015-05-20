@@ -56,7 +56,7 @@
     },
     "VpcSubnets": {
       "Type": "List<AWS::EC2::Subnet::Id>",
-      "Description": "The list of SubnetIds in your VPC",
+      "Description": "The list of SubnetIds in your VPC to launch Pritunl instances",
       "ConstraintDescription" : "Must be a list of existing subnets in VPC"
     }
   },
