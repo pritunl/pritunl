@@ -319,8 +319,8 @@
                   "    \"server_key_path\": \"/var/lib/pritunl/pritunl.key\",\n",
                   "    \"local_address_interface\": \"auto\",\n",
                   "    \"mongodb_uri\": \"mongodb://", {"Fn::GetAtt": [
-                  		"DatabaseInstance", "PrivateIp" ]},
-                  		":27017/pritunl\"\n",
+                        "DatabaseInstance", "PrivateIp" ]},
+                        ":27017/pritunl\"\n",
                   "}\n"
                 ]]},
                 "mode": "000644",
