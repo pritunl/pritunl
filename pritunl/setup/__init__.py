@@ -8,6 +8,7 @@ from pritunl.setup.signal_handler import setup_signal_handler
 from pritunl.setup.public_ip import setup_public_ip
 from pritunl.setup.poolers import setup_poolers
 from pritunl.setup.host import setup_host
+from pritunl.setup.host_fix import setup_host_fix
 from pritunl.setup.runners import setup_runners
 from pritunl.setup.handlers import setup_handlers
 from pritunl.setup.check import setup_check
@@ -31,6 +32,7 @@ def setup_all():
         setup_public_ip()
         setup_host()
         setup_poolers()
+        setup_host_fix()
         setup_runners()
         setup_handlers()
         setup_check()
