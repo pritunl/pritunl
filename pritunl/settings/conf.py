@@ -9,6 +9,7 @@ class SettingsConf(SettingsGroupFile):
     group = 'conf'
     path = conf_path
     fields = {
+        'host_id': None,
         'debug': False,
         'ssl': True,
         'static_cache': True,
