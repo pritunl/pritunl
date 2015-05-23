@@ -7,9 +7,6 @@ from pritunl import utils
 from pritunl import event
 from pritunl import mongo
 
-import hashlib
-import base64
-
 def update():
     license = settings.app.license
     collection = mongo.get_collection('settings')
