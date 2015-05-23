@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with servers after restoring backup with non-enterprise
+
 Version 1.3.614.40 2015-05-19
 -----------------------------
 
