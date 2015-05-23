@@ -6,7 +6,6 @@ from pritunl import ipaddress
 from pritunl import organization
 from pritunl import logger
 
-import bson
 import pymongo
 
 class ServerIpPool:
