@@ -6,7 +6,6 @@ from pritunl.helpers import *
 from pritunl import settings
 from pritunl import utils
 
-import hashlib
 import uuid
 import os
 
