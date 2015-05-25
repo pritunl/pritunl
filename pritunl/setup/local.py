@@ -13,7 +13,9 @@ def setup_local():
     settings.local.openssl_heartbleed = not utils.check_openssl()
     settings.local.iptables_wait = utils.check_iptables_wait()
 
-    if os.path.isfile(settings.conf.uuid_path):
+    if settings.conf.host_id:
+        settings.local.host_id = settings.conf.host_id
+    elif os.path.isfile(settings.conf.uuid_path):
         with open(settings.conf.uuid_path, 'r') as uuid_file:
             settings.local.host_id = uuid_file.read().strip()
     else:
