@@ -4,6 +4,7 @@ from pritunl.helpers import *
 from pritunl import mongo
 
 def setup_host():
+    from pritunl import host
     collection = mongo.get_collection('settings')
 
     collection.update({
@@ -13,5 +14,4 @@ def setup_host():
         'plan': None,
     }}, upsert=True)
 
-    from pritunl import host
     host.init()
