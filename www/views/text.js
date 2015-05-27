@@ -70,12 +70,6 @@ define([
       }
 
       if (!this.lastLine) {
-        // lines = [];
-        // for (i = 0; i < data.length; i++) {
-        //   lines.push(data[i]);
-        // }
-        // doc.insertLines(0, lines);
-        // this.scrollBottom();
         lines = '';
         for (i = 0; i < data.length; i++) {
           lines += data[i] + '\n';
