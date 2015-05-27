@@ -87,7 +87,7 @@ define([
       if (lines) {
         this.lastLine = data[data.length - 1];
       }
-    },
+    }
   });
 
   return TextView;
