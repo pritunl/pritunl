@@ -3,7 +3,6 @@ from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import mongo
 from pritunl import task
-from pritunl import logger
 
 class TaskCleanServers(task.Task):
     type = 'clean_server'
