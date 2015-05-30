@@ -18,7 +18,7 @@ class TaskCleanIpPool(task.Task):
 
     def task(self):
         org_ids = self.server_collection.find({}, {
-            '_id',
+            '_id': True,
         }).distinct('_id')
 
         self.pool_collection.remove({
