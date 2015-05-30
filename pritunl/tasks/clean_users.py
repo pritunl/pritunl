@@ -19,7 +19,7 @@ class TaskCleanUsers(task.Task):
 
     def _get_org_ids(self):
         return set(self.org_collection.find({}, {
-            '_id',
+            '_id': True,
         }).distinct('_id'))
 
     def task(self):
