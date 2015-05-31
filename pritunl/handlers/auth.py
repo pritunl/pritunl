@@ -7,7 +7,6 @@ from pritunl import utils
 from pritunl import app
 
 import flask
-import bson
 
 @app.app.route('/auth/session', methods=['POST'])
 def auth_session_post():
