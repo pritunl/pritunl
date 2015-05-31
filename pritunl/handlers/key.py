@@ -72,7 +72,12 @@ def user_linked_key_page_get(short_code):
     org = organization.get_by_id(doc['org_id'])
     user = org.get_user(id=doc['user_id'])
 
-    key_page = static.StaticFile(settings.conf.www_path, KEY_VIEW_NAME,
+    if settings.app.theme == 'dark':
+        view_name = KEY_VIEW_DARK_NAME
+    else:
+        view_name = KEY_VIEW_NAME
+
+    key_page = static.StaticFile(settings.conf.www_path, view_name,
         cache=False).data
     key_page = key_page.replace('<%= user_name %>', '%s - %s' % (
         org.name, user.name))
