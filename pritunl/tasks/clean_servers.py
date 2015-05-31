@@ -40,7 +40,7 @@ class TaskCleanServers(task.Task):
 
         for doc in self.server_collection.find({}, project):
             if (doc['primary_user'] or doc['primary_organization']) and (
-                    doc['primary_user'] not in user_ids or \
+                    doc['primary_user'] not in user_ids or
                     doc['primary_organization'] not in org_ids):
                 self.server_collection.update({
                     '_id': doc['_id'],
