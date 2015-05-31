@@ -39,6 +39,7 @@ data_files = [
     ('/usr/share/pritunl/www', [
         'www/dbconf.html',
         'www/key_view.html',
+        'www/key_view_dark.html',
         'www/login.html',
         'www/upgrade.html',
         'www/vendor/dist/favicon.ico',
