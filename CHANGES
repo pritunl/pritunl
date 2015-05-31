@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Fix issue with servers after restoring backup with non-enterprise
+Add dark theme to key view page
 
 Version 1.3.614.40 2015-05-19
 -----------------------------
