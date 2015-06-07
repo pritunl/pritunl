@@ -137,7 +137,7 @@ def link_servers(server_id, link_server_id, use_local_address=False):
         '_id': True,
         'status': True,
         'hosts': True,
-        'replica_count': True
+        'replica_count': True,
     }
 
     hosts = set()
