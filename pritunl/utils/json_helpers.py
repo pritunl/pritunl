@@ -6,7 +6,6 @@ from pritunl.helpers import *
 from pritunl import mongo
 
 import datetime
-import time
 import calendar
 import flask
 import json
