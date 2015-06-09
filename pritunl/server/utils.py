@@ -187,7 +187,6 @@ def link_servers(server_id, link_server_id, use_local_address=False):
 def unlink_servers(server_id, link_server_id):
     collection = mongo.get_collection('servers')
 
-    count = 0
     spec = {
         '_id': {'$in': [server_id, link_server_id]},
     }
