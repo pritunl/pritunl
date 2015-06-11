@@ -509,6 +509,7 @@ setenv UV_ID %s
 setenv UV_NAME %s
 client
 dev tun
+dev-type tun
 proto %s
 %s
 nobind
@@ -531,6 +532,7 @@ client
 setenv UV_ID %s
 setenv UV_NAME %s
 dev %s
+dev-type tun
 proto %s
 %s
 nobind
