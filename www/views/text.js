@@ -41,8 +41,8 @@ define([
       count += 1;
 
       var $scollbar = this.$('.ace_scrollbar');
-
       $scollbar.scrollTop($scollbar[0].scrollHeight);
+
       setTimeout(function() {
         this.scrollBottom(count);
       }.bind(this), 25);
