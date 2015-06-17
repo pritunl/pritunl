@@ -100,8 +100,7 @@ require([
 ], function(Backbone) {
   'use strict';
   Backbone.View = Backbone.View.extend({
-    deinitialize: function() {
-    },
+    deinitialize: function() {},
     addView: function(view) {
       this.children = this.children || {};
       var id = view.cid;
