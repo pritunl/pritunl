@@ -49,7 +49,8 @@
           fToBind = this,
           NOP = function () {},
           Bound = function () {
-            return fToBind.apply(this instanceof NOP && oThis ? this : oThis,
+            return fToBind.apply(this instanceof NOP &&
+              oThis ? this : oThis,
               aArgs.concat(Array.prototype.slice.call(arguments)));
           };
 
