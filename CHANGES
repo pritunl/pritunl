@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix display issues with web interface
+
 Version 1.3.627.6 2015-06-01
 ----------------------------
 
