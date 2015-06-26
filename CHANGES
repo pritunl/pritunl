@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with key sync
+
 Version 1.3.651.28 2015-06-25
 -----------------------------
 
