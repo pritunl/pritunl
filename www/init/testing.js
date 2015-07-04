@@ -17,7 +17,7 @@ define([
     if (!stylesLoaded) {
       $('<link>').appendTo('head')
         .attr({type: 'text/css', rel: 'stylesheet'})
-        .attr('href', 's/styles/main.css');
+        .attr('href', 's/styles/vendor/main.css');
       $('.less-error-message').remove();
     }
     else {
