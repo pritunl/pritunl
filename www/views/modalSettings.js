@@ -143,6 +143,8 @@ define([
       var emailServer = this.$('.email-server input').val();
       var emailUsername = this.$('.email-username input').val();
       var emailPassword = this.$('.email-password input').val();
+      var serverCert = this.$('.server-cert textarea').val();
+      var serverKey = this.$('.server-key textarea').val();
 
       var sso = this.getSsoSelect();
       var ssoMatch;
@@ -168,7 +170,9 @@ define([
         sso_match: ssoMatch,
         sso_org: ssoOrg,
         public_address: publicAddress,
-        theme: theme
+        theme: theme,
+        server_cert: serverCert,
+        server_key: serverKey
       };
 
       if (!username) {
