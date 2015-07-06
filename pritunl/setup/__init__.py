@@ -21,14 +21,14 @@ def setup_all():
 
     try:
         setup_app()
-
-        if settings.conf.ssl:
-            setup_server_cert()
-
         setup_signal_handler()
         setup_server()
         setup_mongo()
         setup_temp_path()
+
+        if settings.conf.ssl:
+            setup_server_cert()
+
         setup_public_ip()
         setup_host()
         setup_poolers()
@@ -46,11 +46,11 @@ def setup_db():
     setup_app()
 
     try:
-        if settings.conf.ssl:
-            setup_server_cert()
-
         setup_logger()
         setup_mongo()
+
+        if settings.conf.ssl:
+            setup_server_cert()
     except:
         from pritunl import logger
         logger.exception('Pritunl setup failed', 'setup')
