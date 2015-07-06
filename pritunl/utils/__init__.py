@@ -1,3 +1,4 @@
+from pritunl.utils.cert import *
 from pritunl.utils.json_helpers import *
 from pritunl.utils.least_common_counter import *
 from pritunl.utils.mail import *
