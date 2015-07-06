@@ -9,8 +9,8 @@ import subprocess
 import os
 
 def setup_server_cert():
-    server_cert_path = os.path.join(settings.conf.temp_path, 'server.crt')
-    server_key_path = os.path.join(settings.conf.temp_path, 'server.key')
+    server_cert_path = os.path.join(settings.conf.temp_path, SERVER_CERT_NAME)
+    server_key_path = os.path.join(settings.conf.temp_path, SERVER_KEY_NAME)
 
     if not settings.app.server_cert or not settings.app.server_key:
         logger.info('Generating server ssl cert', 'setup')
