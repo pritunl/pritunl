@@ -19,7 +19,9 @@ define([
       'sso_match': null,
       'sso_org': null,
       'public_address': null,
-      'theme': null
+      'theme': null,
+      'server_cert': null,
+      'server_key': null
     },
     url: function() {
       return '/settings';
