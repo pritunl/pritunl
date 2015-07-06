@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Fix issue with key sync
+Fix issue with client type icon
 
 Version 1.3.651.28 2015-06-25
 -----------------------------
