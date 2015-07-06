@@ -48,6 +48,11 @@ data_files = [
     ]),
     ('/usr/share/pritunl/www/css', [main_css_path]),
     ('/usr/share/pritunl/www/fonts', [
+        'www/vendor/dist/fonts/FontAwesome.otf',
+        'www/vendor/dist/fonts/fontawesome-webfont.eot',
+        'www/vendor/dist/fonts/fontawesome-webfont.svg',
+        'www/vendor/dist/fonts/fontawesome-webfont.ttf',
+        'www/vendor/dist/fonts/fontawesome-webfont.woff',
         'www/vendor/dist/fonts/fredoka-one.eot',
         'www/vendor/dist/fonts/fredoka-one.woff',
         'www/vendor/dist/fonts/glyphicons-halflings-regular.eot',
