@@ -26,7 +26,7 @@ def setup_server_cert():
             logger.exception('Failed to generate server ssl cert', 'setup')
             raise
 
-        os.chmod(settings.conf.server_key_path, 0600)
+        os.chmod(server_key_path, 0600)
 
         with open(server_cert_path, 'r') as server_cert_file:
             settings.app.server_cert = server_cert_file.read().strip()
