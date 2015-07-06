@@ -20,8 +20,6 @@ class SettingsConf(SettingsGroupFile):
         'www_path': '/usr/share/pritunl/www',
         'var_run_path': '/var/run',
         'uuid_path': '/var/lib/pritunl/pritunl.uuid',
-        'server_cert_path': '/var/lib/pritunl/pritunl.crt',
-        'server_key_path': '/var/lib/pritunl/pritunl.key',
         'bind_addr': '0.0.0.0',
         'mongodb_uri': 'mongodb://localhost:27017/pritunl',
         'mongodb_collection_prefix': None,
@@ -37,8 +35,6 @@ class SettingsConf(SettingsGroupFile):
         'log_path',
         'www_path',
         'temp_path',
-        'server_cert_path',
-        'server_key_path',
         'local_address_interface',
         'mongodb_uri',
     }
