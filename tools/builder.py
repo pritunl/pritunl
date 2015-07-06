@@ -734,33 +734,6 @@ elif cmd == 'upload':
 
     post_git_asset(release_id, aur_pkg_name, aur_path)
 
-    session = requests.Session()
-
-    response = session.post('https://aur.archlinux.org/login',
-        data={
-            'user': aur_username,
-            'passwd': aur_password,
-            'remember_me': 'on',
-        },
-    )
-
-    response = session.get('https://aur.archlinux.org/submit/')
-    token = re.findall(
-        '(name="token" value=)("?.*")',
-        response.text,
-    )[0][1].replace('"', '')
-
-    response = session.post('https://aur.archlinux.org/submit/',
-        files={
-            'pfile': open(aurball_path, 'rb'),
-        },
-        data={
-            'pkgsubmit': 1,
-            'token': token,
-            'category': AUR_CATEGORY,
-        }
-    )
-
 
     # Upload centos package
     rpms_dir = 'build/%s/centos/RPMS/x86_64' % cur_version
