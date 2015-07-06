@@ -50,4 +50,6 @@ class SettingsApp(SettingsGroupMongo):
         'org_page_count': 5,
         'server_page_count': 3,
         'host_page_count': 10,
+        'server_cert': None,
+        'server_key': None,
     }
