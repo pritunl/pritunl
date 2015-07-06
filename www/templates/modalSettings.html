@@ -34,6 +34,10 @@
       </div>
       <input type="email" class="form-control" placeholder="Enter Google Apps domain" value="<%- sso_match || '' %>" <%= sso ? '' : 'disabled' %> data-toggle="tooltip" title="Google apps domain to match against users email address. Multiple domains can be entrered sperated by a comma. (example: pritunl.com)">
     </div>
+    <div class="server-cert form-group">
+      <label>Enter Server SSL Certificate</label><br>
+      <textarea class="form-control" rows="7" spellcheck="false"><%- server_cert %></textarea>
+    </div>
   </div>
   <div class="settings-right right">
     <div class="api-token form-group">
@@ -60,6 +64,10 @@
         <option value="<%- org.id %>" <%= (sso_org === org.id) ? 'selected' : '' %>><%- org.name %></option>
         <% }); %>
       </select>
+    </div>
+    <div class="server-key form-group">
+      <label>Enter Server SSL Key</label><br>
+      <textarea class="form-control" rows="7" spellcheck="false"><%- server_key %></textarea>
     </div>
   </div>
 </div>
