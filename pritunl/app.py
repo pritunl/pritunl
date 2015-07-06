@@ -10,6 +10,7 @@ import flask
 import logging
 import logging.handlers
 import time
+import os
 
 try:
     import OpenSSL
@@ -46,9 +47,11 @@ def _run_wsgi():
         request_queue_size=settings.app.request_queue_size,
         server_name=wsgiserver.CherryPyWSGIServer.version)
 
+
     if settings.conf.ssl:
-        server.ssl_adapter = SSLAdapter(
-            settings.conf.server_cert_path, settings.conf.server_key_path)
+        server_cert_path = os.path.join(settings.conf.temp_path, 'server.crt')
+        server_key_path = os.path.join(settings.conf.temp_path, 'server.key')
+        server.ssl_adapter = SSLAdapter(server_cert_path, server_key_path)
 
     settings.local.server_ready.set()
     settings.local.server_start.wait()
