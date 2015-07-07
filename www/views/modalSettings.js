@@ -12,6 +12,7 @@ define([
     template: _.template(modalSettingsTemplate),
     title: 'Settings',
     okText: 'Save',
+    enterOk: false,
     events: function() {
       return _.extend({
         'click .sso-match .selector': 'onSsoSelect',
