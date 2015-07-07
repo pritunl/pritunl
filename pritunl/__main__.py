@@ -13,6 +13,7 @@ Commands:
   start                 Start server
   version               Print the version and exit
   reset-password        Reset administrator password
+  reset-ssl-cert        Reset the server ssl certificate
   reconfigure           Reconfigure database connection
   logs                  View server logs"""
 
@@ -77,6 +78,19 @@ def main(default_conf=None):
 
         time.sleep(1)
         print 'Database configuration successfully reset'
+
+        sys.exit(0)
+    elif cmd == 'reset-ssl-cert':
+        from pritunl import setup
+        from pritunl import settings
+        setup.setup_db()
+
+        settings.app.server_cert = None
+        settings.app.server_key = None
+        settings.commit()
+
+        time.sleep(1)
+        print 'Server ssl certificate successfully reset'
 
         sys.exit(0)
     elif cmd == 'logs':
