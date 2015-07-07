@@ -48,9 +48,6 @@ def setup_db():
     try:
         setup_logger()
         setup_mongo()
-
-        if settings.conf.ssl:
-            setup_server_cert()
     except:
         from pritunl import logger
         logger.exception('Pritunl setup failed', 'setup')
