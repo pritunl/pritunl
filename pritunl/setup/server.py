@@ -149,9 +149,13 @@ def server_thread():
         shutdown_timeout=0.5,
     )
 
+    server_cert_path = os.path.join(settings.conf.temp_path, SERVER_CERT_NAME)
+    server_key_path = os.path.join(settings.conf.temp_path, SERVER_KEY_NAME)
+
     if settings.conf.ssl:
-        server.ssl_adapter = SSLAdapter(
-            settings.conf.server_cert_path, settings.conf.server_key_path)
+        logger.info('Generating setup server ssl cert', 'setup')
+        utils.generate_server_cert(server_cert_path, server_key_path)
+        server.ssl_adapter = SSLAdapter(server_cert_path, server_key_path)
 
     try:
         server.start()
