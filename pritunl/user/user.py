@@ -357,9 +357,9 @@ class User(mongo.MongoObject):
         private_key = self.private_key.strip()
 
         conf_hash = hashlib.md5()
-        conf_hash.update(self.name)
-        conf_hash.update(self.org.name)
-        conf_hash.update(server.name)
+        conf_hash.update(self.name.encode('utf-8'))
+        conf_hash.update(self.org.name.encode('utf-8'))
+        conf_hash.update(server.name.encode('utf-8'))
         conf_hash.update(server.protocol)
         for key_remote in sorted(key_remotes):
             conf_hash.update(key_remote)
