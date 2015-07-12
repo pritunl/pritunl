@@ -359,3 +359,12 @@ def styles_response(etag, last_modified, data):
 def rand_str(length):
     return re.sub(r'[\W_]+', '', base64.b64encode(
         os.urandom(length * 2)))[:length]
+
+def fnv32a(s):
+    hval = 0x811c9dc5
+    fnv_32_prime = 0x01000193
+    uint32_max = 2 ** 32
+    for x in s:
+        hval ^= ord(x)
+        hval = (hval * fnv_32_prime) % uint32_max
+    return hval
