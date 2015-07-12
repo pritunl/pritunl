@@ -791,8 +791,8 @@ class Server(mongo.MongoObject):
                     })
                 else:
                     raise ServerStartError('Server start timed out', {
-                            'server_id': self.id,
-                        })
+                        'server_id': self.id,
+                    })
         except:
             self.publish('force_stop')
             self.collection.update({
