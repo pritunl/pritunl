@@ -409,8 +409,8 @@ class ServerInstanceCom(object):
             socket_path=self.socket_path,
         )
 
-    def on_msg(self, event):
-        event_type, user_id = event['message']
+    def on_msg(self, evt):
+        event_type, user_id = evt['message']
 
         if event_type != 'user_disconnect':
             return
