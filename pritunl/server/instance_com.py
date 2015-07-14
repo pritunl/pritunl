@@ -9,6 +9,7 @@ from pritunl import logger
 from pritunl import utils
 from pritunl import event
 from pritunl import limiter
+from pritunl import mongo
 
 import os
 import time
@@ -16,6 +17,8 @@ import datetime
 import threading
 import collections
 import socket
+import bson
+import hashlib
 
 _limiter = limiter.Limiter('vpn', 'peer_limit', 'peer_limit_timeout')
 
@@ -31,6 +34,7 @@ class ServerInstanceCom(object):
         self.client = None
         self.clients = []
         self.clients_active = 0
+        self.clients_ip = collections.deque()
         self.client_count = 0
         self.client_bytes = {}
         self.client_devices = collections.defaultdict(list)
@@ -424,6 +428,34 @@ class ServerInstanceCom(object):
             if self.instance.sock_interrupt:
                 return
             self.client_kill(device)
+
+    def client_ip_insert(self, user, client_id, address):
+        domain = user.name + '.' + user.org.name
+        network = self.server.network.replace('.', '-')
+        timestamp = utils.now()
+
+        domain_hash = hashlib.md5()
+        domain_hash.update(domain)
+        domain_hash = bson.binary.Binary(domain_hash.digest(),
+            subtype=bson.binary.MD5_SUBTYPE)
+
+        self.users_ip_collection.update({
+            '_id': domain_hash,
+        }, {
+            '$set': {
+                'timestamp': timestamp,
+                'last': address,
+                network: address,
+            },
+        }, upsert=True)
+
+        self.clients_ip.append({
+            'id': domain_hash,
+            'client_id': client_id,
+            'timestamp': timestamp,
+            'network': network,
+            'address': address,
+        })
 
     @interrupter
     def _watch_thread(self):
