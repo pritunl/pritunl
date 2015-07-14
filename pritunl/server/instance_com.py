@@ -99,7 +99,7 @@ class ServerInstanceCom(object):
                 self.send_client_deny(client, 'Too many connect requests')
                 return
 
-            org = self.server.get_org(org_id, fields=['_id'])
+            org = self.server.get_org(org_id, fields=['_id', 'name'])
             if not org:
                 self.send_client_deny(client, 'Organization is not valid')
                 return
