@@ -360,11 +360,21 @@ def rand_str(length):
     return re.sub(r'[\W_]+', '', base64.b64encode(
         os.urandom(length * 2)))[:length]
 
+prime32 = 16777619
+uint32_max = 2 ** 32
+prime64 = 1099511628211
+uint64_max = 2 ** 64
+
 def fnv32a(s):
-    hval = 0x811c9dc5
-    fnv_32_prime = 0x01000193
-    uint32_max = 2 ** 32
+    hval = 2166136261
     for x in s:
         hval ^= ord(x)
-        hval = (hval * fnv_32_prime) % uint32_max
+        hval = (hval * prime32) % uint32_max
+    return hval
+
+def fnv64a(s):
+    hval = 14695981039346656037
+    for x in s:
+        hval ^= ord(x)
+        hval = (hval * prime64) % uint64_max
     return hval
