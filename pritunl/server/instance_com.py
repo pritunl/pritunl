@@ -279,9 +279,9 @@ class ServerInstanceCom(object):
                 del self.clients[i]
                 break
 
-        if virt_address:
-            if virt_address in self.client_ips:
-                self.client_ips.remove(virt_address)
+        if virt_address and client_id:
+            if self.client_ips.get(virt_address) == client_id:
+                self.client_ips.pop(virt_address, None)
 
             if virt_address in self.client_dyn_ips:
                 self.client_dyn_ips.remove(virt_address)
