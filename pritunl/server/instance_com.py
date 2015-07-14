@@ -539,6 +539,61 @@ class ServerInstanceCom(object):
         finally:
             remove_listener(self.instance.id)
 
+    @interrupter
+    def _user_ip_thread(self):
+        while True:
+            try:
+                try:
+                    client_ip = self.clients_ip.popleft()
+                except IndexError:
+                    yield interrupter_sleep(settings.vpn.user_ip_ttl - 60)
+                    continue
+
+                diff = datetime.timedelta(
+                    seconds=settings.vpn.user_ip_ttl - 60) - \
+                       (utils.now() - client_ip['timestamp'])
+
+                if diff.seconds > 1:
+                    yield interrupter_sleep(diff.seconds)
+
+                client_id = self.client_ips.get(client_ip['address'])
+                if not client_id or client_id != client_ip['client_id']:
+                    continue
+
+                try:
+                    timestamp = utils.now()
+
+                    self.users_ip_collection.update({
+                        '_id': client_ip['id'],
+                    }, {
+                        '$set': {
+                            'timestamp': timestamp,
+                            'last': client_ip['address'],
+                            client_ip['network']: client_ip['address'],
+                        },
+                    }, upsert=True)
+
+                    client_ip['timestamp'] = timestamp
+                except:
+                    logger.exception('Failed to update client ip', 'server',
+                        server_id=self.server.id,
+                        instance_id=self.instance.id,
+                    )
+                    continue
+                finally:
+                    self.clients_ip.append(client_ip)
+
+                yield
+            except GeneratorExit:
+                raise
+            except:
+                logger.exception('Error in client ip thread', 'server',
+                    server_id=self.server.id,
+                    instance_id=self.instance.id,
+                )
+                yield interrupter_sleep(3)
+
+
     def connect(self):
         self.wait_for_socket()
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -550,5 +605,9 @@ class ServerInstanceCom(object):
         thread.start()
 
         thread = threading.Thread(target=self._watch_thread)
+        thread.daemon = True
+        thread.start()
+
+        thread = threading.Thread(target=self._user_ip_thread)
         thread.daemon = True
         thread.start()
