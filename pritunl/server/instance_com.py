@@ -34,7 +34,7 @@ class ServerInstanceCom(object):
         self.client_count = 0
         self.client_bytes = {}
         self.client_devices = collections.defaultdict(list)
-        self.client_ips = set()
+        self.client_ips = {}
         self.client_dyn_ips = set()
         self.cur_timestamp = utils.now()
         self.ip_network = ipaddress.IPv4Network(self.server.network)
@@ -140,7 +140,7 @@ class ServerInstanceCom(object):
                         if device['virt_address'] == virt_address:
                             self.client_kill(device)
                             if virt_address in self.client_ips:
-                                self.client_ips.remove(virt_address)
+                                self.client_ips.pop(virt_address, None)
 
                             del devices[i]
             else:
@@ -152,7 +152,7 @@ class ServerInstanceCom(object):
 
                             self.client_kill(device)
                             if virt_address in self.client_ips:
-                                self.client_ips.remove(virt_address)
+                                self.client_ips.pop(virt_address, None)
 
                             del devices[i]
 
@@ -178,7 +178,8 @@ class ServerInstanceCom(object):
                         break
 
             if virt_address:
-                self.client_ips.add(virt_address)
+                self.client_ips[virt_address] = client_id
+                self.client_ip_insert(user, client_id, virt_address)
                 devices.append({
                     'user_id': user_id,
                     'org_id': org_id,
