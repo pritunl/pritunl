@@ -361,8 +361,8 @@ def rand_str(length):
         os.urandom(length * 2)))[:length]
 
 prime32 = 16777619
-uint32_max = 2 ** 32
 prime64 = 1099511628211
+uint32_max = 2 ** 32
 uint64_max = 2 ** 64
 
 def fnv32a(s):
