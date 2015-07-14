@@ -47,6 +47,10 @@ class ServerInstanceCom(object):
         for ip_addr in self.ip_network.iterhosts():
             self.ip_pool.append(ip_addr)
 
+    @cached_static_property
+    def users_ip_collection(cls):
+        return mongo.get_collection('users_ip')
+
     def client_kill(self, client):
         self.sock.send('client-kill %s\n' % client['client_id'])
         self.push_output('Disconnecting user org_id=%s user_id=%s' % (
