@@ -9,7 +9,6 @@ arch=("any")
 license=("custom")
 url="https://github.com/${_pkgname}/${_pkgname}"
 depends=(
-    "python"
     "python2"
     "python2-flask"
     "python2-pyopenssl"
