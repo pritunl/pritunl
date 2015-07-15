@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add ssl cert to settings
+Fix issue with multiple clients
 Fix issue with utf-8 names
 
 Version 1.3.662.15 2015-07-06
