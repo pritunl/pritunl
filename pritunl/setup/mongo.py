@@ -117,8 +117,11 @@ def setup_mongo():
     mongo.collections['users_key_link'].ensure_index('short_id',
         background=True, unique=True)
     mongo.collections['clients'].ensure_index('user_id', background=True)
-    mongo.collections['clients'].ensure_index('server_id', background=True)
     mongo.collections['clients'].ensure_index('domain', background=True)
+    mongo.collections['clients'].ensure_index([
+        ('server_id', pymongo.ASCENDING),
+        ('type', pymongo.ASCENDING),
+    ], background=True)
     mongo.collections['organizations'].ensure_index('type', background=True)
     mongo.collections['hosts'].ensure_index('name', background=True)
     mongo.collections['hosts_usage'].ensure_index([
