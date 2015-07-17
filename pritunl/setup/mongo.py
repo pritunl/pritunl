@@ -9,9 +9,6 @@ from pritunl import auth
 from pritunl import utils
 
 import pymongo
-import re
-import os
-import base64
 import time
 
 def setup_mongo():
