@@ -41,7 +41,6 @@ def setup_mongo():
         'messages': getattr(database, prefix + 'messages'),
         'administrators': getattr(database, prefix + 'administrators'),
         'users': getattr(database, prefix + 'users'),
-        'users_ip': getattr(database, prefix + 'users_ip'),
         'users_key_link': getattr(database, prefix + 'users_key_link'),
         'clients': getattr(database, prefix + 'clients'),
         'organizations': getattr(database, prefix + 'organizations'),
@@ -155,8 +154,6 @@ def setup_mongo():
         ('nonce', pymongo.ASCENDING),
     ], background=True, unique=True)
 
-    mongo.collections['users_ip'].ensure_index('timestamp',
-        background=True, expireAfterSeconds=settings.vpn.user_ip_ttl)
     mongo.collections['users_key_link'].ensure_index('timestamp',
         background=True, expireAfterSeconds=settings.app.key_link_timeout)
     mongo.collections['auth_sessions'].ensure_index('timestamp',
