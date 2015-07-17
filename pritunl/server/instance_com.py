@@ -80,6 +80,8 @@ class ServerInstanceCom(object):
                 client_conf += 'push "dhcp-option DOMAIN %s"\n' % (
                     self.server.search_domain)
 
+            client_conf += 'push "ip-win32 dynamic 0 3600"\n'
+
             for link_svr in self.server.iter_links(fields=(
                     '_id', 'network', 'local_networks')):
                 client_conf += 'push "route %s %s"\n' % utils.parse_network(
