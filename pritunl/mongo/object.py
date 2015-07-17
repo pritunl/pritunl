@@ -2,8 +2,6 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
 
-import bson
-import json
 import os
 import copy
 
