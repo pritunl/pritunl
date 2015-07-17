@@ -154,6 +154,8 @@ def setup_mongo():
         ('nonce', pymongo.ASCENDING),
     ], background=True, unique=True)
 
+    mongo.collections['clients'].ensure_index('timestamp',
+        background=True, expireAfterSeconds=settings.vpn.client_ttl)
     mongo.collections['users_key_link'].ensure_index('timestamp',
         background=True, expireAfterSeconds=settings.app.key_link_timeout)
     mongo.collections['auth_sessions'].ensure_index('timestamp',
