@@ -101,7 +101,6 @@ def setup_mongo():
     mongo.collections['log_entries'].ensure_index([
         ('timestamp', pymongo.DESCENDING),
     ], background=True)
-    # TODO project size of array in $addToSet for aggragate
     mongo.collections['messages'].ensure_index('channel', background=True)
     mongo.collections['administrators'].ensure_index('username',
         background=True, unique=True)
@@ -174,8 +173,6 @@ def setup_mongo():
         expireAfterSeconds=settings.user.otp_cache_ttl)
     mongo.collections['sso_tokens'].ensure_index('timestamp', background=True,
         expireAfterSeconds=600)
-
-    # TODO check and remove current index when changed
 
     if not auth.Administrator.collection.find_one():
         auth.Administrator(

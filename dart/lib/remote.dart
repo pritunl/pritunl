@@ -1,14 +1,12 @@
 library remote;
 
 import 'package:pritunl/exceptions.dart';
-import 'package:pritunl/utils/utils.dart' as utils;
 
 import 'package:angular/angular.dart' as ng;
 import 'dart:async' as async;
 
 abstract class Remote {
   String _loadCheckId;
-  String _fetchCheckId;
   ng.Http http;
   String url;
   String error;
@@ -69,8 +67,6 @@ abstract class Remote {
   }
 
   async.Future fetch() {
-    var fetchCheckId = utils.uuid();
-    this._fetchCheckId = fetchCheckId;
     var loadId = this.setLoading();
 
     return this.http.get(this.url).then((response) {

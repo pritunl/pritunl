@@ -40,12 +40,13 @@ tar xfz $RPM_SOURCE_DIR/%{pkgver}.tar.gz
 cd $RPM_BUILD_DIR/%{pkgname}-%{pkgver}
 python2 setup.py build
 virtualenv /usr/lib/%{pkgname}
-/usr/lib/%{pkgname}/bin/pip install -r requirements.txt
+/usr/lib/%{pkgname}/bin/pip install -r requirements_virtualenv.txt
 
 %install
 cd $RPM_BUILD_DIR/%{pkgname}-%{pkgver}
 mkdir -p $RPM_BUILD_ROOT/var/lib/%{pkgname}
 /usr/lib/%{pkgname}/bin/python2 setup.py install --root="$RPM_BUILD_ROOT" --prefix=/usr
+rm -r $RPM_BUILD_ROOT/etc/init.d/%{pkgname}.sh
 cp -r $RPM_BUILD_ROOT/usr/lib/python2.7/site-packages /usr/lib/%{pkgname}/lib/python2.7
 rm -r $RPM_BUILD_ROOT/usr/lib/python2.7
 mkdir -p $RPM_BUILD_ROOT/usr/lib/%{pkgname}
@@ -54,7 +55,6 @@ cp -r /usr/lib/%{pkgname}/* $RPM_BUILD_ROOT/usr/lib/%{pkgname}/
 %files
 %config /etc/%{pkgname}.conf
 /etc/init/%{pkgname}.conf
-/etc/init.d/%{pkgname}.sh
 /etc/systemd/system/%{pkgname}.service
 /usr/bin/%{pkgname}
 /usr/lib/%{pkgname}

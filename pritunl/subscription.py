@@ -109,7 +109,6 @@ def dict():
     }
 
 def update_license(license):
-    # TODO Send event to other servers
     settings.app.license = license
     settings.commit()
     update()

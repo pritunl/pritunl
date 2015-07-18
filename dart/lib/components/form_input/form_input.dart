@@ -8,7 +8,7 @@ import 'package:angular/angular.dart' show Component, NgAttr, NgOneWay,
 
 @Component(
   selector: 'x-form-input',
-  template: '<input type="{{type}}" placeholder="{{placeholder}}" '
+  template: '<input ng-type="type" placeholder="{{placeholder}}" '
     'ng-readonly="readonly" ng-model="model" value="{{value}}" '
     'tooltip="{{formTooltip}}"/>',
   cssUrl: 'packages/pritunl/components/form_input/form_input.css'

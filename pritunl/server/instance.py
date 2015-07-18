@@ -22,19 +22,20 @@ import re
 import collections
 import select
 
-# TODO Linked servers with local address not working
-
 _resource_locks = collections.defaultdict(threading.Lock)
 
 class ServerInstance(object):
     def __init__(self, server):
-        # TODO Check for unused vars
         self.server = server
         self.id = utils.ObjectId()
         self.resource_lock = None
         self.interrupt = False
         self.sock_interrupt = False
         self.clean_exit = False
+        self.clients = {}
+        self.cur_clients = set()
+        self.ignore_clients = set()
+        self.client_count = 0
         self.interface = None
         self.primary_user = None
         self.process = None
@@ -571,7 +572,9 @@ class ServerInstance(object):
                 'instances': {
                     'instance_id': self.id,
                     'host_id': settings.local.host_id,
-                    'ping_timestamp': utils.now(), # TODO Rename timestamp
+                    'ping_timestamp': utils.now(),
+                    'clients': [],
+                    'clients_active': 0,
                 },
             },
             '$inc': {

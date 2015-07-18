@@ -12,8 +12,6 @@ class SettingsGroupFile(SettingsGroupBase):
     path = None
     commit_fields = set()
 
-    # TODO Load from sys.env
-
     def load(self):
         if not os.path.isfile(self.path):
             return

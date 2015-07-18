@@ -6,6 +6,7 @@ import json
 import os
 import subprocess
 import time
+import getpass
 import zlib
 import math
 import pymongo
@@ -89,28 +90,28 @@ def tar_extract(archive_path, cwd=None):
 def tar_compress(archive_path, in_path, cwd=None):
     subprocess.check_call(['tar', 'cfz', archive_path, in_path], cwd=cwd)
 
-def get_ver(versn):
+def get_ver(version):
     day_num = (cur_date - datetime.datetime(2013, 9, 12)).days
     min_num = int(math.floor(((cur_date.hour * 60) + cur_date.minute) / 14.4))
-    ver = re.findall(r'\d+', versn)
+    ver = re.findall(r'\d+', version)
     ver_str = '.'.join((ver[0], ver[1], str(day_num), str(min_num)))
 
-    name = ''.join(re.findall('[a-z]+', versn))
+    name = ''.join(re.findall('[a-z]+', version))
     if name:
         ver_str += name + ver[2]
 
     return ver_str
 
-def get_int_ver(versn):
-    ver = re.findall(r'\d+', versn)
+def get_int_ver(version):
+    ver = re.findall(r'\d+', version)
 
-    if 'snapshot' in versn:
+    if 'snapshot' in version:
         pass
-    elif 'alpha' in versn:
+    elif 'alpha' in version:
         ver[-1] = str(int(ver[-1]) + 1000)
-    elif 'beta' in versn:
+    elif 'beta' in version:
         ver[-1] = str(int(ver[-1]) + 2000)
-    elif 'rc' in versn:
+    elif 'rc' in version:
         ver[-1] = str(int(ver[-1]) + 3000)
     else:
         ver.append('4000')
@@ -563,43 +564,6 @@ elif cmd == 'upload':
     if not release_id:
         print 'Version does not exists in github'
         sys.exit(1)
-
-
-    # Upload arch package
-    build_dir = 'build/%s/arch' % cur_version
-    aur_dir = os.path.join(build_dir, pkg_name)
-
-    subprocess.check_call(['git', 'clone',
-        'ssh://aur@aur4.archlinux.org/%s.git' % (
-            pkg_name + '-dev' if is_dev_release else pkg_name)],
-        cwd=build_dir)
-
-    subprocess.check_call(['mksrcinfo'], cwd=build_dir)
-    subprocess.check_call(['cp', os.path.join(build_dir, 'PKGBUILD'),
-        aur_dir])
-    subprocess.check_call(['cp', os.path.join(build_dir, 'pritunl.install'),
-        aur_dir])
-    subprocess.check_call(['cp', os.path.join(build_dir, '.SRCINFO'),
-        aur_dir])
-
-    subprocess.check_call(['git', 'add', '.'], cwd=aur_dir)
-    subprocess.check_call(['git', 'commit', '-m',
-        'Update to %s' % cur_version], cwd=aur_dir)
-    subprocess.check_call(['git', 'push'], cwd=aur_dir)
-
-    aur_pkg_name = '%s-%s-%s-any.pkg.tar.xz' % (
-        pkg_name + '-dev' if is_dev_release else pkg_name,
-        cur_version,
-        build_num + 1,
-    )
-    aur_path = os.path.join(build_dir, aur_pkg_name)
-    aurball_pkg_name = '%s-%s-%s.src.tar.gz' % (
-        pkg_name + '-dev' if is_dev_release else pkg_name,
-        cur_version,
-        build_num + 1,
-    )
-    aurball_path = os.path.join(build_dir, aurball_pkg_name)
-    post_git_asset(release_id, aur_pkg_name, aur_path)
 
 
     # Upload centos package
