@@ -23,12 +23,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         auto_correct: true
   end
 
-  config.vm.define "debian" do |debian|
-      debian.vm.box = "ubuntu/trusty64"
-
-      debian.vm.provision :shell, :path => "tools/vagrant_provision_debian.sh"
-  end
-
   config.vm.define "centos" do |centos|
       centos.vm.box = "chef/centos-7.0"
 
