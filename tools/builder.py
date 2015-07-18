@@ -440,6 +440,7 @@ elif cmd == 'build':
     if not os.path.isdir(build_dir):
         os.makedirs(build_dir)
 
+
     # Download archive
     archive_name = '%s.tar.gz' % cur_version
     archive_path = os.path.join(build_dir, archive_name)
