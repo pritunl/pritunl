@@ -46,7 +46,7 @@ def vagrant_popen(cmd, cwd=None, name='centos'):
     return subprocess.Popen("vagrant ssh --command='%s' %s" % (cmd, name),
         shell=True, stdin=subprocess.PIPE)
 
-def vagrant_check_call(cmd, cwd=None, name='debian'):
+def vagrant_check_call(cmd, cwd=None, name='centos'):
     if cwd:
         cmd = 'cd /vagrant/%s; %s' % (cwd, cmd)
     return subprocess.check_call("vagrant ssh --command='%s' %s" % (cmd, name),
