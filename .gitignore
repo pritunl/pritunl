@@ -23,4 +23,6 @@ Thumbs.db
 /dart/.pub
 /dart/packages
 /dart/web/packages
+/dart/web/vendor/packages
+/dart/web/vendor/ace/packages
 /dart/build
