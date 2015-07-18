@@ -569,8 +569,6 @@ class ServerInstance(object):
                     'instance_id': self.id,
                     'host_id': settings.local.host_id,
                     'ping_timestamp': utils.now(),
-                    'clients': [],
-                    'clients_active': 0,
                 },
             },
             '$inc': {
