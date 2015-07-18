@@ -32,10 +32,6 @@ class ServerInstance(object):
         self.interrupt = False
         self.sock_interrupt = False
         self.clean_exit = False
-        self.clients = {}
-        self.cur_clients = set()
-        self.ignore_clients = set()
-        self.client_count = 0
         self.interface = None
         self.primary_user = None
         self.process = None
