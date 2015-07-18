@@ -429,84 +429,9 @@ elif cmd == 'build':
         'rc' in cur_version,
     ))
 
-    # Create debian package
-    build_dir = 'build/%s/debian' % cur_version
-    passphrase = getpass.getpass('Enter GPG passphrase: ')
-    passphrase_retype = getpass.getpass('Retype GPG passphrase: ')
-
-    if passphrase != passphrase_retype:
-        print 'Passwords do not match'
-        sys.exit(1)
-
-    if not os.path.isdir(build_dir):
-        os.makedirs(build_dir)
-
 
     # Start vagrant boxes
-    subprocess.check_call(['vagrant', 'up', 'debian', 'centos'])
-
-
-    # Import gpg key
-    private_key_path = os.path.join(build_dir, PRIVATE_KEY_NAME)
-    with open(private_key_path, 'w') as private_key_file:
-        private_key_file.write(private_key)
-
-    vagrant_check_call('sudo gpg --import private_key.asc || true',
-        cwd=build_dir)
-
-    os.remove(private_key_path)
-
-
-    # Download archive
-    archive_name = '%s.tar.gz' % cur_version
-    archive_path = os.path.join(build_dir, archive_name)
-    if not os.path.isfile(archive_path):
-        wget('https://github.com/%s/%s/archive/%s' % (
-                github_owner, pkg_name, archive_name),
-            output=archive_name,
-            cwd=build_dir,
-        )
-
-
-    # Create orig archive
-    orig_name = '%s_%s.orig.tar.gz' % (pkg_name, cur_version)
-    orig_path = os.path.join(build_dir, orig_name)
-    if not os.path.isfile(orig_path):
-        subprocess.check_call(['cp', archive_name, orig_name], cwd=build_dir)
-
-
-    # Create build path
-    build_name = '%s-%s' % (pkg_name, cur_version)
-    build_path = os.path.join(build_dir, build_name)
-    if not os.path.isdir(build_path):
-        tar_extract(archive_name, cwd=build_dir)
-
-
-    # Read changelog
-    changelog_path = os.path.join(build_path, DEBIAN_CHANGELOG_PATH)
-    with open(changelog_path, 'r') as changelog_file:
-        changelog_data = changelog_file.read()
-
-
-    # Build debian packages
-    for ubuntu_release in UBUNTU_RELEASES:
-        with open(changelog_path, 'w') as changelog_file:
-            changelog_file.write(re.sub(
-                'ubuntu1(.*);',
-                'ubuntu1~%s) %s;' % (ubuntu_release, ubuntu_release),
-                changelog_data,
-            ))
-
-        vagrant_check_call(
-            'sudo debuild -p"gpg --no-tty --passphrase %s"' % (
-                passphrase),
-            cwd=build_path,
-        )
-        vagrant_check_call(
-            'sudo debuild -S -p"gpg --no-tty --passphrase %s"' % (
-                passphrase),
-            cwd=build_path,
-        )
+    subprocess.check_call(['vagrant', 'up', 'centos'])
 
 
     # Create arch package
