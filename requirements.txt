@@ -1,2 +1,2 @@
-flask>=0.8
-pymongo>=2.7.1
+Flask>=0.10.1
+pymongo>=3.0.3
