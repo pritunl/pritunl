@@ -25,20 +25,10 @@ class ServerInstanceCom(object):
         self.bytes_recv = 0
         self.bytes_sent = 0
         self.client = None
-        self.clients = []
-        self.clients_active = 0
-        self.clients_ip = collections.deque()
-        self.client_count = 0
+        self.clients = Clients(server, instance, self)
         self.client_bytes = {}
-        self.client_devices = collections.defaultdict(list)
-        self.client_ips = {}
-        self.client_dyn_ips = set()
         self.cur_timestamp = utils.now()
-        self.ip_network = ipaddress.IPv4Network(self.server.network)
-        self.ip_pool = []
         self.bandwidth_rate = settings.vpn.bandwidth_update_rate
-        for ip_addr in self.ip_network.iterhosts():
-            self.ip_pool.append(ip_addr)
 
     @cached_static_property
     def users_ip_collection(cls):
