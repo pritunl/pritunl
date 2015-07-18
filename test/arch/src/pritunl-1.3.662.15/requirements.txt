@@ -1,2 +1,0 @@
-flask>=0.8
-pymongo>=2.7.1
