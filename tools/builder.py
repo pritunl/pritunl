@@ -89,28 +89,28 @@ def tar_extract(archive_path, cwd=None):
 def tar_compress(archive_path, in_path, cwd=None):
     subprocess.check_call(['tar', 'cfz', archive_path, in_path], cwd=cwd)
 
-def get_ver(version):
+def get_ver(versn):
     day_num = (cur_date - datetime.datetime(2013, 9, 12)).days
     min_num = int(math.floor(((cur_date.hour * 60) + cur_date.minute) / 14.4))
-    ver = re.findall(r'\d+', version)
+    ver = re.findall(r'\d+', versn)
     ver_str = '.'.join((ver[0], ver[1], str(day_num), str(min_num)))
 
-    name = ''.join(re.findall('[a-z]+', version))
+    name = ''.join(re.findall('[a-z]+', versn))
     if name:
         ver_str += name + ver[2]
 
     return ver_str
 
-def get_int_ver(version):
-    ver = re.findall(r'\d+', version)
+def get_int_ver(versn):
+    ver = re.findall(r'\d+', versn)
 
-    if 'snapshot' in version:
+    if 'snapshot' in versn:
         pass
-    elif 'alpha' in version:
+    elif 'alpha' in versn:
         ver[-1] = str(int(ver[-1]) + 1000)
-    elif 'beta' in version:
+    elif 'beta' in versn:
         ver[-1] = str(int(ver[-1]) + 2000)
-    elif 'rc' in version:
+    elif 'rc' in versn:
         ver[-1] = str(int(ver[-1]) + 3000)
     else:
         ver.append('4000')
