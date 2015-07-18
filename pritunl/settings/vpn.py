@@ -7,8 +7,7 @@ from pritunl.helpers import *
 class SettingsVpn(SettingsGroupMongo):
     group = 'vpn'
     fields = {
-        'client_ttl': 180,
-        'user_ip_ttl': 600,
+        'client_ttl': 300,
         'peer_limit': 300,
         'peer_limit_timeout': 10,
         'default_dh_param_bits': 1536,
