@@ -40,7 +40,7 @@ tar xfz $RPM_SOURCE_DIR/%{pkgver}.tar.gz
 cd $RPM_BUILD_DIR/%{pkgname}-%{pkgver}
 python2 setup.py build
 virtualenv /usr/lib/%{pkgname}
-/usr/lib/%{pkgname}/bin/pip install -r requirements_virtualenv.txt
+/usr/lib/%{pkgname}/bin/pip install -r requirements.txt
 
 %install
 cd $RPM_BUILD_DIR/%{pkgname}-%{pkgver}
