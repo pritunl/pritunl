@@ -163,8 +163,6 @@ with open(BUILD_KEYS_PATH, 'r') as build_keys_file:
     build_keys = json.loads(build_keys_file.read().strip())
     github_owner = build_keys['github_owner']
     github_token = build_keys['github_token']
-    aur_username = build_keys['aur_username']
-    aur_password = build_keys['aur_password']
     mongodb_uris = build_keys['mongodb_uris']
 
 releases_dbs = []
