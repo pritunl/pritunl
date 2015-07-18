@@ -568,41 +568,6 @@ elif cmd == 'upload':
         sys.exit(1)
 
 
-    # Upload debian package
-    build_dir = 'build/%s/debian' % cur_version
-
-    if options.test:
-        launchpad_ppa = '%s/%s-test' % (pkg_name, pkg_name)
-    elif is_dev_release:
-        launchpad_ppa = '%s/%s-dev' % (pkg_name, pkg_name)
-    else:
-        launchpad_ppa = '%s/ppa' % pkg_name
-
-    for ubuntu_release in UBUNTU_RELEASES:
-        deb_file_name = '%s_%s-%subuntu1~%s_all.deb' % (
-            pkg_name,
-            cur_version,
-            build_num,
-            ubuntu_release,
-        )
-        deb_file_path = os.path.join(build_dir, deb_file_name)
-        post_git_asset(release_id, deb_file_name, deb_file_path)
-
-        vagrant_check_call(
-            'sudo dput -f ppa:%s %s_%s-%subuntu1~%s_source.changes' % (
-                launchpad_ppa,
-                pkg_name,
-                cur_version,
-                build_num,
-                ubuntu_release,
-            ),
-            cwd=build_dir,
-        )
-
-    if options.test:
-        sys.exit(0)
-
-
     # Upload arch package
     build_dir = 'build/%s/arch' % cur_version
     aur_pkg_name = '%s-%s-%s-any.pkg.tar.xz' % (
