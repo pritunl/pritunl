@@ -6,7 +6,6 @@ import json
 import os
 import subprocess
 import time
-import getpass
 import zlib
 import math
 import pymongo
