@@ -23,35 +23,6 @@ information can be found at the home page `pritunl.com <https://pritunl.com>`_
 .. image:: www/img/logo_code.png
     :target: https://pritunl.com
 
-Development Setup (Single Node)
--------------------------------
-
-.. code-block:: bash
-
-    $ git clone https://github.com/pritunl/pritunl.git
-    $ cd pritunl
-    $ vagrant up mongodb node0
-    $ vagrant ssh node0
-    $ cd /vagrant
-    $ sudo python2 server.py
-    # Open http://localhost:9700/
-
-Development Setup (Multi Node)
-------------------------------
-
-.. code-block:: bash
-
-    $ git clone https://github.com/pritunl/pritunl.git
-    $ cd pritunl
-    $ vagrant up
-    $ foreman start mongodb node0 node1 node2 node3 node4 node5
-    # Open node0 http://localhost:9700/
-    # Open node1 http://localhost:9701/
-    # Open node2 http://localhost:9702/
-    # Open node3 http://localhost:9703/
-    # Open node4 http://localhost:9704/
-    # Open node5 http://localhost:9705/
-
 License
 -------
 
