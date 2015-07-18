@@ -383,7 +383,6 @@ elif cmd == 'set-version':
     subprocess.check_call(['git', 'add', CHANGES_PATH])
     subprocess.check_call(['git', 'add', INIT_PATH])
     subprocess.check_call(['git', 'add', SETUP_PATH])
-    subprocess.check_call(['git', 'add', DEBIAN_CHANGELOG_PATH])
     subprocess.check_call(['git', 'add', ARCH_PKGBUILD_PATH])
     subprocess.check_call(['git', 'add', ARCH_DEV_PKGBUILD_PATH])
     subprocess.check_call(['git', 'add', CENTOS_PKGSPEC_PATH])
