@@ -1,9 +1,6 @@
 pritunl: enterprise vpn server
 ==============================
 
-.. image:: https://img.shields.io/badge/package-ubuntu-dd4814.svg?style=flat
-    :target: https://launchpad.net/~pritunl/+archive/ubuntu/ppa
-
 .. image:: https://img.shields.io/badge/package-arch%20linux-33aadd.svg?style=flat
     :target: https://aur.archlinux.org/packages/pritunl/
 
