@@ -1,0 +1,10 @@
+#!/usr/bin/python2
+# EASY-INSTALL-ENTRY-SCRIPT: 'pritunl==1.3.662.15','console_scripts','pritunl'
+__requires__ = 'pritunl==1.3.662.15'
+import sys
+from pkg_resources import load_entry_point
+
+if __name__ == '__main__':
+    sys.exit(
+        load_entry_point('pritunl==1.3.662.15', 'console_scripts', 'pritunl')()
+    )

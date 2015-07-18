@@ -1,0 +1,22 @@
+<div class="server form-group">
+  <label>Select first server</label>
+  <select class="form-control">
+    <% _.each(servers, function(server) { %>
+      <option value="<%- server.id %>" <%= server.id === servers[1].id ? 'style="display: none;"' : '' %> <%= (lastServer === server.id) ? 'selected' : '' %>><%- server.name %></option>
+    <% }); %>
+  </select>
+</div>
+<div class="link form-group">
+  <label>Select second server</label>
+  <select class="form-control">
+    <% _.each(servers, function(server) { %>
+      <option value="<%- server.id %>" <%= server.id === servers[0].id ? 'style="display: none;"' : '' %> <%= (server.id === servers[1].id) ? 'selected' : '' %>><%- server.name %></option>
+    <% }); %>
+  </select>
+</div>
+<div class="use-local-toggle toggle-form form-group">
+  <label>Use local address</label>
+  <div class="selector no-select" data-toggle="tooltip" title="Use the hosts local address when linking servers">
+    <span class="selector-inner glyphicon glyphicon-ok"></span>
+  </div>
+</div>

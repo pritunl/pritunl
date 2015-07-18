@@ -1,0 +1,18 @@
+@import 'styles/base.scss';
+
+div {
+  width: 19px;
+  height: 19px;
+  padding-left: 1px;
+  border-width: 1px;
+  border-style: solid;
+  cursor: pointer;
+  display: inline-block;
+  @include border-radius-default;
+}
+
+x-glyphicon {
+  position: relative;
+  top: -1px;
+  font-size: 14px;
+}

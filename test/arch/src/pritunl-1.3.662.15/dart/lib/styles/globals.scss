@@ -1,0 +1,226 @@
+@import 'styles/variables.scss';
+@import 'styles/colors.scss';
+
+*,
+*:before,
+*:after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+body /deep/ *,
+body /deep/ *:before,
+body /deep/ *:after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  margin: 0;
+  overflow-y: scroll;
+  line-height: 1.42857143;
+}
+
+body /deep/ a,
+body /deep/ a:focus,
+body /deep/ a:hover,
+body /deep/ a:active {
+  text-decoration: none;
+  cursor: pointer;
+  outline: 0;
+  background-color: transparent;
+}
+
+body /deep/ a:hover {
+  text-decoration: underline;
+}
+
+body /deep/ select:-moz-focusring {
+  color: transparent;
+  text-shadow: 0 0 0 #555;
+}
+
+body /deep/ table {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+body /deep/ button,
+body /deep/ input,
+body /deep/ optgroup,
+body /deep/ select,
+body /deep/ textarea {
+  margin: 0;
+  color: inherit;
+}
+
+body /deep/ button,
+body /deep/ input,
+body /deep/ optgroup,
+body /deep/ select {
+  font: inherit;
+}
+
+body /deep/ button {
+  overflow: visible;
+}
+
+body /deep/ button,
+body /deep/ select {
+  text-transform: none;
+}
+
+body /deep/ button,
+body /deep/ html input[type="button"],
+body /deep/ input[type="reset"],
+body /deep/ input[type="submit"] {
+  -webkit-appearance: button;
+  cursor: pointer;
+}
+
+body /deep/ button[disabled],
+body /deep/ html input[disabled] {
+  cursor: default;
+}
+
+body /deep/ button::-moz-focus-inner,
+body /deep/ input::-moz-focus-inner {
+  padding: 0;
+  border: 0;
+}
+
+body /deep/ input {
+  line-height: normal;
+}
+
+body /deep/ input[type="checkbox"],
+body /deep/ input[type="radio"] {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+body /deep/ input[type="number"]::-webkit-inner-spin-button,
+body /deep/ input[type="number"]::-webkit-outer-spin-button {
+  height: auto;
+}
+
+body /deep/ input[type="search"] {
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  -webkit-appearance: textfield;
+}
+
+body /deep/ input[type="search"]::-webkit-search-cancel-button,
+body /deep/ input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+body /deep/ h1,
+body /deep/ h2,
+body /deep/ h3,
+body /deep/ h4,
+body /deep/ h5,
+body /deep/ h6 {
+  font-family: inherit;
+  font-weight: 500;
+  line-height: 1.1;
+  color: inherit;
+}
+
+body /deep/ h1 small,
+body /deep/ h2 small,
+body /deep/ h3 small,
+body /deep/ h4 small,
+body /deep/ h5 small,
+body /deep/ h6 small {
+  font-weight: normal;
+  line-height: 1;
+}
+
+body /deep/ ul {
+  padding-left: 0;
+  margin: 0;
+}
+
+body /deep/ li {
+  list-style-type: none;
+}
+
+body /deep/ .title {
+  font-weight: bold;
+  font-family: 'Ubuntu', sans-serif;
+}
+
+body /deep/ .clearfix:before,
+body /deep/ .clearfix:after {
+  display: table;
+  content: " ";
+}
+
+body /deep/ .clearfix:after {
+  clear: both;
+}
+
+// TODO
+body /deep/ .dl-horizontal dd:before,
+body /deep/ .dl-horizontal dd:after,
+body /deep/ .row:before,
+body /deep/ .row:after,
+body /deep/ .form-horizontal .form-group:before,
+body /deep/ .form-horizontal .form-group:after,
+body /deep/ .btn-toolbar:before,
+body /deep/ .btn-toolbar:after,
+body /deep/ .btn-group-vertical > .btn-group:before,
+body /deep/ .btn-group-vertical > .btn-group:after,
+body /deep/ .nav:before,
+body /deep/ .nav:after,
+body /deep/ .navbar:before,
+body /deep/ .navbar:after,
+body /deep/ .navbar-header:before,
+body /deep/ .navbar-header:after,
+body /deep/ .navbar-collapse:before,
+body /deep/ .navbar-collapse:after,
+body /deep/ .pager:before,
+body /deep/ .pager:after,
+body /deep/ .panel-body:before,
+body /deep/ .panel-body:after,
+body /deep/ .modal-footer:before,
+body /deep/ .modal-footer:after {
+  display: table;
+  content: " ";
+}
+
+// TODO
+body /deep/ .clearfix:after,
+body /deep/ .dl-horizontal dd:after,
+body /deep/ .row:after,
+body /deep/ .form-horizontal .form-group:after,
+body /deep/ .btn-toolbar:after,
+body /deep/ .btn-group-vertical > .btn-group:after,
+body /deep/ .nav:after,
+body /deep/ .navbar:after,
+body /deep/ .navbar-header:after,
+body /deep/ .navbar-collapse:after,
+body /deep/ .pager:after,
+body /deep/ .panel-body:after,
+body /deep/ .modal-footer:after {
+  clear: both;
+}
+
+// TODO
+body /deep/ x-form-select {
+  display: block;
+  margin-bottom: 20px;
+}

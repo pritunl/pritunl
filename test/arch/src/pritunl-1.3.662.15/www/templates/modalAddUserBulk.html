@@ -1,0 +1,12 @@
+<div class="form-group users">
+  <label>Enter list of usernames and optionally an email addresses on each line with a comma separating the username from the email address</label><br>
+  <textarea class="form-control" rows="12" placeholder="user1,user1@pritunl.com" spellcheck="false" autofocus></textarea>
+</div>
+<div class="form-group org">
+  <label>Select an organization</label>
+  <select class="form-control">
+    <% _.each(orgs, function(org) { %>
+      <option value="<%- org.id %>" <%= (lastOrg === org.id) ? 'selected' : '' %>><%- org.name %></option>
+    <% }); %>
+  </select>
+</div>

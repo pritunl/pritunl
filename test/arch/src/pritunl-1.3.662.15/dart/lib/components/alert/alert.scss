@@ -1,0 +1,44 @@
+@import 'styles/base.scss';
+
+.alert {
+  padding: 10px;
+  margin-bottom: 10px;
+  border-width: 1px;
+  border-style: solid;
+  @include border-radius-default;
+}
+
+.alert btn {
+  float: right;
+  top: -1px;
+  position: relative;
+  margin-right: 2px;
+}
+
+.alert.flash-on {
+  @include transition(background-color .175s);
+}
+
+.alert.flash-off {
+  @include transition(background-color .175s);
+}
+
+.alert.ng-enter {
+  @include transition(opacity .15s linear);
+  @include opacity(0);
+}
+
+.alert.ng-enter-active {
+  @include transition(opacity .15s linear);
+  @include opacity(1);
+}
+
+.alert.ng-leave {
+  @include transition(opacity .15s linear);
+  @include opacity(1);
+}
+
+.alert.ng-leave-active {
+  @include transition(opacity .15s linear);
+  @include opacity(0);
+}

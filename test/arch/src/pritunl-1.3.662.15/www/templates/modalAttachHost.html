@@ -1,0 +1,16 @@
+<div class="host form-group">
+  <label>Select a host</label>
+  <select class="form-control">
+    <% _.each(hosts, function(host) { %>
+      <option value="<%- host.id %>"><%- host.name %></option>
+    <% }); %>
+  </select>
+</div>
+<div class="server form-group">
+  <label>Select a server</label>
+  <select class="form-control">
+    <% _.each(servers, function(server) { %>
+      <option value="<%- server.id %>" <%= (lastServer === server.id) ? 'selected' : '' %>><%- server.name %></option>
+    <% }); %>
+  </select>
+</div>

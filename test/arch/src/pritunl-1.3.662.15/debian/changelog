@@ -1,0 +1,311 @@
+pritunl (1.3.662.15-0ubuntu1) unstable; urgency=low
+
+  * Fix issue with key sync
+  * Fix issue with client type icon
+
+ -- Pritunl <contact@pritunl.com>  Mon, 06 Jul 2015 00:00:00 -0400
+
+pritunl (1.3.651.28-0ubuntu1) unstable; urgency=low
+
+  * Fix display issues with web interface
+
+ -- Pritunl <contact@pritunl.com>  Thu, 25 Jun 2015 00:00:00 -0400
+
+pritunl (1.3.627.6-0ubuntu1) unstable; urgency=low
+
+  * Fix issue with servers after restoring backup with non-enterprise
+  * Add dark theme to key view page
+
+ -- Pritunl <contact@pritunl.com>  Mon, 01 Jun 2015 00:00:00 -0400
+
+pritunl (1.3.614.40-0ubuntu1) unstable; urgency=low
+
+  * Add support for replicated servers
+  * Disconnect users without restarting servers
+  * Check Google authentication on user connect
+  * Add paging to organizations, servers and hosts
+  * Holding shift and ctrl when clicking will skip confirm
+
+ -- Pritunl <contact@pritunl.com>  Tue, 19 May 2015 00:00:00 -0400
+
+pritunl (1.3.613.97beta1-0ubuntu1) unstable; urgency=low
+
+  * Add support for replicated servers
+  * Disconnect users without restarting servers
+  * Check Google authentication on user connect
+  * Add paging to organizations, servers and hosts
+
+ -- Pritunl <contact@pritunl.com>  Mon, 18 May 2015 00:00:00 -0400
+
+pritunl (1.2.604.38-0ubuntu1) unstable; urgency=low
+
+  * Interface improvements
+  * Add support for single sign on with Google apps
+
+ -- Pritunl <contact@pritunl.com>  Sat, 09 May 2015 00:00:00 -0400
+
+pritunl (1.0.601.67-0ubuntu1) unstable; urgency=low
+
+  * Change server defaults for ping interval
+  * Fix issues with adding servers
+
+ -- Pritunl <contact@pritunl.com>  Wed, 06 May 2015 00:00:00 -0400
+
+pritunl (1.0.601.2-0ubuntu1) unstable; urgency=low
+
+  * Add additional private subnets
+  * Add ping interval options to server settings
+  * Add support for ubuntu vivid
+
+ -- Pritunl <contact@pritunl.com>  Wed, 06 May 2015 00:00:00 -0400
+
+pritunl (1.0.586.29-0ubuntu1) unstable; urgency=low
+
+  * Support for mongodb 3.0
+
+ -- Pritunl <contact@pritunl.com>  Tue, 21 Apr 2015 00:00:00 -0400
+
+pritunl (1.0.544.74-0ubuntu1) unstable; urgency=low
+
+  * Add inter-client communication option to advanced server settings
+  * Fix issue with disabled users
+  * Bug fixes
+
+ -- Pritunl <contact@pritunl.com>  Tue, 10 Mar 2015 00:00:00 -0400
+
+pritunl (1.0.513.37-0ubuntu1) unstable; urgency=low
+
+  * Fix timezone issue with two step authentication
+
+ -- Pritunl <contact@pritunl.com>  Sat, 07 Feb 2015 00:00:00 -0400
+
+pritunl (1.0.488.77-0ubuntu1) unstable; urgency=low
+
+  * Improve organization management
+
+ -- Pritunl <contact@pritunl.com>  Tue, 13 Jan 2015 00:00:00 -0400
+
+pritunl (1.0.482.93-0ubuntu1) unstable; urgency=low
+
+  * Updates to web interface
+
+ -- Pritunl <contact@pritunl.com>  Wed, 07 Jan 2015 00:00:00 -0400
+
+pritunl (1.0.481.92-0ubuntu1) unstable; urgency=low
+
+  * Fix issue with restarting servers
+
+ -- Pritunl <contact@pritunl.com>  Tue, 06 Jan 2015 00:00:00 -0400
+
+pritunl (1.0.477.0-0ubuntu1) unstable; urgency=low
+
+  * Fix issue with client vpn connections
+
+ -- Pritunl <contact@pritunl.com>  Fri, 02 Jan 2015 00:00:00 -0400
+
+pritunl (1.0.475.0-0ubuntu1) unstable; urgency=low
+
+  * Fix missing import
+
+ -- Pritunl <contact@pritunl.com>  Wed, 31 Dec 2014 00:00:00 -0400
+
+pritunl (1.0.474.91-0ubuntu1) unstable; urgency=low
+
+  * Bug fixes
+
+ -- Pritunl <contact@pritunl.com>  Tue, 30 Dec 2014 00:00:00 -0400
+
+pritunl (1.0.464.77-0ubuntu1) unstable; urgency=low
+
+  * Change server defaults
+  * Fix exit on upgrade check when db server is offline
+
+ -- Pritunl <contact@pritunl.com>  Sat, 20 Dec 2014 00:00:00 -0400
+
+pritunl (1.0.462.77-0ubuntu1) unstable; urgency=low
+
+  * Fix issue detaching hosts
+  * Fix issue with client conf
+  * Interface improvements
+
+ -- Pritunl <contact@pritunl.com>  Thu, 18 Dec 2014 00:00:00 -0400
+
+pritunl (1.0.462.12-0ubuntu1) unstable; urgency=low
+
+  * Fix issues with updating subscription
+
+ -- Pritunl <contact@pritunl.com>  Thu, 18 Dec 2014 00:00:00 -0400
+
+pritunl (1.0.460.81-0ubuntu1) unstable; urgency=low
+
+  * Fix issue with client configuration files
+
+ -- Pritunl <contact@pritunl.com>  Tue, 16 Dec 2014 00:00:00 -0400
+
+pritunl (1.0.460.43-0ubuntu1) unstable; urgency=low
+
+  * Fix issue with setup
+
+ -- Pritunl <contact@pritunl.com>  Tue, 16 Dec 2014 00:00:00 -0400
+
+pritunl (1.0.460.41-0ubuntu1) unstable; urgency=low
+
+  * Fix issue with update
+
+ -- Pritunl <contact@pritunl.com>  Tue, 16 Dec 2014 00:00:00 -0400
+
+pritunl (1.0.460.38-0ubuntu1) unstable; urgency=low
+
+  * Server codebase rewritten
+  * Added distributed servers
+  * Automatic failover for servers
+  * Support for multiple devices
+  * Redesigned web interface
+  * Improved vpn connection performance
+  * Data store moved to MongoDB
+  * Automatic data migration will occur on first run
+
+ -- Pritunl <contact@pritunl.com>  Tue, 16 Dec 2014 00:00:00 -0400
+
+pritunl (1.0.459.72beta2-0ubuntu1) unstable; urgency=low
+
+  * Bug fixes
+
+ -- Pritunl <contact@pritunl.com>  Mon, 15 Dec 2014 00:00:00 -0400
+
+pritunl (1.0.449.92beta1-0ubuntu1) unstable; urgency=low
+
+  * Initial 1.0 beta release
+
+ -- Pritunl <contact@pritunl.com>  Fri, 05 Dec 2014 00:00:00 -0400
+
+pritunl (0.10.12-0ubuntu1) unstable; urgency=low
+
+  * Pre-pool dh params for instant server creation
+  * Improve client configurations
+
+ -- Pritunl <contact@pritunl.com>  Mon, 04 Aug 2014 00:00:00 -0400
+
+pritunl (0.10.11-0ubuntu1) unstable; urgency=low
+
+  * Improve email key links
+  * Add additional non-enterprise features
+  * Fix issues with authentication script errors
+  * Add rotating log files
+  * Pre-pool certs for instant org and user creation
+  * Queue cache updates for faster org and server changes
+  * Improve interface usability
+  * Add bulk add users
+  * Improve search performance
+
+ -- Pritunl <contact@pritunl.com>  Tue, 29 Jul 2014 00:00:00 -0400
+
+pritunl (0.10.10-0ubuntu1) unstable; urgency=low
+
+  * Add user setting to temporarily disable a user
+  * Add email to user
+  * Improve caching
+  * Changes to interface design
+  * Fix issue with bind address
+  * Cache OTP codes for client IP addresses to allow reconnecting
+  * Add search domain to server settings
+  * Email user key links with Postmark integration
+
+ -- Pritunl <contact@pritunl.com>  Tue, 01 Jul 2014 00:00:00 -0400
+
+pritunl (0.10.9-0ubuntu1) unstable; urgency=low
+
+  * Add static IP addresses for vpn clients
+  * Add update notifications
+  * Add additional user information
+  * Change API authentication system with token and secret
+  * Previous API authentication method has been removed
+
+ -- Pritunl <contact@pritunl.com>  Wed, 23 Apr 2014 00:00:00 -0400
+
+pritunl (0.10.8-0ubuntu1) unstable; urgency=low
+
+  * Fix openvpn authentication issue
+  * Disable download key when no servers are attached to a user
+
+ -- Pritunl <contact@pritunl.com>  Sun, 23 Mar 2014 00:00:00 -0400
+
+pritunl (0.10.7-0ubuntu1) unstable; urgency=low
+
+  * Changes to api
+  * Improve server caching
+  * Add server bandwidth graphs
+  * Cache static file data to reduce disk io usage
+  * Add handler to delete temporary key links
+  * Read conf options from environment variables
+
+ -- Pritunl <contact@pritunl.com>  Fri, 28 Feb 2014 00:00:00 -0400
+
+pritunl (0.10.6-0ubuntu1) unstable; urgency=low
+
+  * Changes to api
+  * Add rate limiting to auth attempts per ip
+  * Move password to db
+  * Add username to change password interface
+  * Change password hash function
+  * Improve ovpn iptables rules
+  * Add openvpn user connect and disconnect scripts
+  * Improve node server support
+  * Add dns servers to server options
+  * Add dh param bits to server options
+  * Pritunl conf will be automatically upgraded after first launch
+
+ -- Pritunl <contact@pritunl.com>  Wed, 12 Feb 2014 00:00:00 -0400
+
+pritunl (0.10.5-0ubuntu1) unstable; urgency=low
+
+  * Changes to api
+  * Add support for multiple local networks on vpn server
+  * Cache organizations and users to reduce response times
+  * Changes to event system
+  * Add support for node servers
+  * Organization openssl crl is no longer generated
+  * Add pages to user list
+  * Add search to user list
+  * Add support for node servers
+  * Server conf data will be automatically upgraded after first launch
+  * Organization data will be automatically upgraded after first launch
+  * Log entries will be cleared after first launch for database upgrade
+
+ -- Pritunl <contact@pritunl.com>  Wed, 29 Jan 2014 00:00:00 -0400
+
+pritunl (0.10.4-0ubuntu1) unstable; urgency=low
+
+  * Improve support for mobile devices
+  * Add temporary page to view two-step authentication key and conf links
+  * Add organization name to two-step authentication label
+  * Changes to rest api
+  * User conf data will be automatically upgraded after first launch
+
+ -- Pritunl <contact@pritunl.com>  Fri, 10 Jan 2014 00:00:00 -0400
+
+pritunl (0.10.3-0ubuntu1) unstable; urgency=low
+
+  * Add functionality to generate new two-step authentication keys
+  * Add support for inline certs
+  * Servers will only restart when deleting users that are connected
+  * Add export data handler
+
+ -- Pritunl <contact@pritunl.com>  Thu, 14 Nov 2013 00:00:00 -0400
+
+pritunl (0.10.2-0ubuntu1) unstable; urgency=low
+
+  * Add time based two-step otp password verification using google authenticator
+  * Add client sent and received data transfer to status tooltip
+  * Use openvpn client-to-client when using local network
+  * Reduce default dh_param bits length
+  * Add conf option get_public_ip
+  * User conf data will be automatically upgraded after first launch
+
+ -- Pritunl <contact@pritunl.com>  Mon, 04 Nov 2013 00:00:00 -0400
+
+pritunl (0.10.1-0ubuntu1) unstable; urgency=low
+
+  * Initial beta release
+
+ -- Pritunl <contact@pritunl.com>  Thu, 10 Oct 2013 00:00:00 -0400

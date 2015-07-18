@@ -1,0 +1,178 @@
+@import 'styles/base.scss';
+
+.server {
+  margin-bottom: 25px;
+  border-width: 1px;
+  border-style: solid;
+  @include border-radius-default;
+  @include box-shadow((
+    0 2px 1px rgba(0, 0, 0, 0.05),
+    0 -1px 2px rgba(0, 0, 0, 0.05) inset,
+  ));
+}
+
+.server .id {
+  font-size: 10px;
+  position: relative;
+  top: -2px;
+}
+
+.header x-box-label {
+  cursor: default;
+  margin-top: 1px;
+}
+
+.header .name {
+  margin-right: 15px;
+}
+
+.header {
+  padding: 14px 11px 16px 14px;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  @include border-top-left-radius-default;
+  @include border-top-right-radius-default;
+}
+
+.header .title {
+  margin: 0;
+  display: inline-block;
+  line-height: 16px;
+  position: relative;
+  top: 1px;
+  font-size: 19px;
+}
+
+.header x-form-input {
+  position: relative;
+  top: 1px;
+  margin-right: 2px;
+}
+
+.header .box-right {
+  float: right;
+  position: relative;
+  top: -4px;
+}
+
+.header x-btn {
+  margin-left: 6px;
+}
+
+.info .data {
+  height: 302px;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+}
+
+.info .status {
+  width: 255px;
+  margin-right: 11px;
+  float: left;
+}
+
+.info .item {
+  padding: 11px 12px;
+  height: 43px;
+  text-align: left;
+  border-right-style: solid;
+  border-right-width: 1px;
+}
+
+.info .item + .item {
+  border-top-style: solid;
+  border-top-width: 1px;
+}
+
+.info .item .title {
+  margin: 0;
+}
+
+.info .item x-glyphicon {
+  position: relative;
+  top: 3px;
+  vertical-align: text-top;
+  font-size: 17px;
+}
+
+.info .item .left.title {
+  position: relative;
+  top: -1px;
+  vertical-align: text-top;
+  font-size: 18px;
+}
+
+.info .item .right.title {
+  float: right;
+  position: relative;
+  top: -21px;
+  font-size: 13px;
+}
+
+.data-header {
+  font-size: 16px;
+  margin: 0;
+  padding-top: 5px;
+  padding-right: 10px;
+  height: 24px;
+}
+
+.data-header x-glyphicon {
+  cursor: pointer;
+  float: right;
+  top: 4px;
+  position: relative;
+  font-size: 13px;
+  margin-right: 4px;
+}
+
+x-editor {
+  position: relative;
+  top: 9px;
+}
+
+.data-header .bandwidth-buttons {
+  float: right;
+}
+
+.orgs {
+  margin: 0 13px 13px 13px;
+}
+
+.orgs li {
+  height: 40px;
+  background: #fff;
+  border: 1px solid #cfcfcf;
+  margin-top: 12px;
+  padding-top: 2px;
+  padding-left: 13px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  -webkit-background-clip: padding;
+  -moz-background-clip: padding;
+  background-clip: padding-box;
+}
+
+.orgs li x-glyphicon {
+  top: 5px;
+  position: relative;
+  margin-top: 0;
+  margin-right: 6px;
+  font-size: 19px;
+  color: #64b3f6;
+  vertical-align: text-top;
+}
+
+.orgs li .title {
+  color: #428bca;
+  font-size: 18px;
+  vertical-align: text-top;
+}
+
+.orgs li .id {
+  position: relative;
+  top: 7px;
+  color: #4d535c;
+  font-size: 10px;
+}

@@ -1,0 +1,117 @@
+<div class="server clearfix">
+  <div class="header">
+    <x-box-label class="name" padding="6px 12px" shift-click="toggleHidden()"
+      no-select type="primary">Server</x-box-label><h2 class="title"
+      tooltip="Click to modify this server"><a class="title"
+      no-select ng-bind="model.name"></a>
+    <span ng-if="showHidden" class="id">({{model.id}})</span></h2>
+    <div class="box-right">
+      <x-server-del model="model"></x-server-del>
+      <span ng-switch="model.status">
+        <x-box-label class="message" ng-if="message != null" type="default"
+          size="large" ng-bind="message"></x-box-label>
+        <span ng-switch-when="online">
+          <x-btn type="primary" size="sm"
+            ng-click="onRestart()">Restart Server</x-btn>
+          <x-btn type="warning" size="sm"
+            ng-click="onStop()">Stop Server</x-btn>
+        </span>
+        <x-btn type="success" size="sm" ng-switch-default
+          disabled="model.orgs.length == 0"
+          ng-click="onStart()">Start Server</x-btn>
+      </span>
+      <x-btn type="danger" size="sm" modal-attach="x-server-del"
+        >Delete Server</x-btn>
+    </div>
+  </div>
+  <div class="info">
+    <div class="status">
+      <div class="item">
+        <h3 class="left title">
+          <x-glyphicon type="dashboard"></x-glyphicon>
+          <span>Status</span>
+        </h3>
+        <span class="right title" ng-bind="model.status | capitalize"></span>
+      </div>
+      <div class="item">
+        <h3 class="left title">
+          <x-glyphicon type="time"></x-glyphicon>
+          <span>Uptime</span>
+        </h3>
+        <span class="right title"
+          ng-bind="model.curUptime | timer"></span>
+      </div>
+      <div class="item">
+        <h3 class="left title">
+          <x-glyphicon type="user"></x-glyphicon>
+          <span>Users</span>
+        </h3>
+        <span class="right title"><span
+          ng-bind="[model.usersOnline, model.userCount] | fraction"></span>
+          users online</span>
+      </div>
+      <div class="item">
+        <h3 class="left title">
+          <x-glyphicon type="transfer"></x-glyphicon>
+          <span>Devices</span>
+        </h3>
+        <span class="right title">
+          <span ng-bind="model.devicesOnline"></span> devices online
+        </span>
+      </div>
+      <div class="item">
+        <h3 class="left title">
+          <x-glyphicon type="signal"></x-glyphicon>
+          <span>Network</span>
+        </h3>
+        <span class="right title" ng-bind="model.network"></span>
+      </div>
+      <div class="item">
+        <h3 class="left title">
+          <x-glyphicon type="upload"></x-glyphicon>
+          <span>Port</span>
+        </h3>
+        <span class="right title">{{model.port}}/{{model.protocol}}</span>
+      </div>
+      <div class="item">
+        <h3 class="left title">
+          <x-glyphicon type="cog"></x-glyphicon>
+          <span>Mode</span>
+        </h3>
+        <span class="right title" ng-bind="model.modeLong"></span>
+      </div>
+    </div>
+    <div class="data">
+      <div class="data-header">
+        <x-btn type="{{dataModesType['svrOutput']}}"
+          size="xs" ng-click="onSvrOutput()">Server Output</x-btn>
+        <x-btn type="{{dataModesType['linkOutput']}}"
+          size="xs" ng-click="onLinkOutput()">Link Output</x-btn>
+        <x-btn type="{{dataModesType['bandwidth']}}"
+          size="xs" ng-click="onBandwidth()">Bandwidth Graphs</x-btn>
+        <span ng-switch="dataModes['svrOutput'] || dataModes['linkOutput']">
+          <x-glyphicon ng-switch-when="true" type="trash"
+            ng-click="onClearOutput()"></x-glyphicon>
+          <span class="bandwidth-buttons" ng-switch-default>
+            <x-btn type="primary" size="xs">6 Hours</x-btn>
+            <x-btn type="default" size="xs">24 Hours</x-btn>
+            <x-btn type="default" size="xs">7 Days</x-btn>
+            <x-btn type="default" size="xs">30 Days</x-btn>
+            <x-btn type="default" size="xs">365 Days</x-btn>
+          </span>
+        </span>
+      </div>
+      <x-editor ng-if="dataModes['svrOutput']" width="632px" height="262px"
+        content="model.output.output"></x-editor>
+      <x-editor ng-if="dataModes['linkOutput']" width="632px" height="262px"
+        content="model.linkOutput.output"></x-editor>
+    </div>
+  </div>
+  <ul class="orgs">
+    <li ng-repeat="org in model.orgs">
+      <x-glyphicon type="tower"></x-glyphicon>
+      <span class="title" ng-bind="org.name"></span>
+      <span ng-if="showHidden" class="id title">({{org.id}})</span>
+    </li>
+  </ul>
+</div>

@@ -1,0 +1,18 @@
+<div class="header">
+  <h1 class="title">Servers</h1>
+  <div class="buttons">
+    <x-btn type="primary">Add Server</x-btn>
+    <x-btn type="primary">Attach Organization</x-btn>
+    <x-btn type="primary">Attach Host</x-btn>
+    <x-btn type="primary">Link Server</x-btn>
+  </div>
+</div>
+<x-alert-global></x-alert-global>
+<ul>
+  <li class="server" ng-repeat="server in servers">
+    <x-server model="server"></x-server>
+  </li>
+  <li ng-if="message != null" class="message">
+    <span ng-bind="message"></span>
+  </li>
+</ul>

@@ -1,0 +1,144 @@
+@import 'styles/base.scss';
+
+.backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1040;
+  background-color: #000;
+  @include opacity(0.5);
+}
+
+.container {
+  position: absolute;
+  @include transition(opacity .3s linear);
+}
+
+.container.ng-enter .backdrop {
+  @include transition(opacity .15s linear);
+  @include opacity(0);
+}
+
+.container.ng-enter-active .backdrop {
+  @include opacity(0.5);
+}
+
+.container.ng-leave .backdrop {
+  @include transition(opacity .15s linear);
+  @include opacity(0.5);
+}
+
+.container.ng-leave-active .backdrop {
+  @include opacity(0);
+}
+
+.container.ng-enter .modal {
+  @include transition(transform .3s ease-out);
+  @include transform(translate3d(0, -25%, 0));
+}
+
+.container.ng-enter-active .modal {
+  @include transform(translate3d(0, 0, 0));
+}
+
+.container.ng-leave .modal {
+  @include transition(transform .3s ease-out);
+  @include transform(translate3d(0, 0, 0));
+}
+
+.container.ng-leave-active .modal {
+  @include transform(translate3d(0, -25%, 0));
+}
+
+.container.ng-enter .content {
+  @include transition(opacity .15s linear);
+  @include opacity(0);
+}
+
+.container.ng-enter-active .content {
+  @include opacity(1);
+}
+
+.container.ng-leave .content {
+  @include transition(opacity .15s linear);
+  @include opacity(1);
+}
+
+.container.ng-leave-active .content {
+  @include opacity(0);
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1050;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  outline: 0;
+  @include border-radius-default;
+}
+
+.content {
+  width: 600px;
+  margin: 75px auto;
+}
+
+.header {
+  padding: 17px;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+
+.header h4 {
+  display: inline-block;
+  font-size: 18px;
+  margin: 0;
+}
+
+.header x-btn {
+  float: right;
+}
+
+.header .advanced {
+  display: inline-block;
+  float: right;
+  margin-right: 29px;
+  margin-top: 2px;
+  padding: 9px 18px 9px 18px;
+  border-left-width: 1px;
+  border-left-style: solid;
+  border-right-width: 1px;
+  border-right-style: solid;
+  cursor: pointer;
+}
+
+.header .advanced:hover {
+  @include box-shadow(inset 0px -7px 10px -10px #000);
+}
+
+.header .advanced:active {
+   @include box-shadow(inset 0px -8px 10px -10px #000);
+ }
+
+.body {
+  padding: 20px 20px 0 20px;
+}
+
+.footer {
+  border-top-width: 1px;
+  border-top-style: solid;
+  padding: 15px;
+  text-align: right;
+  @include border-bottom-left-radius-default;
+  @include border-bottom-right-radius-default;
+}
+
+.footer x-btn {
+  margin-left: 5px;
+}

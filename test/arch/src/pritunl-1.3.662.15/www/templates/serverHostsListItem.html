@@ -1,0 +1,11 @@
+<div class="name-container">
+  <span class="name-icon glyphicon glyphicon-dashboard"></span>
+  <span class="host-name title"><%- name %></span>
+  <span class="host-public-address title"><%- address ? '(' + address + ')' : ''%></span>
+  <span class="host-id title">(<%- id %>)</span>
+</div>
+<div class="button-container">
+  <div class="host-online label label-success no-select" <%= status === 'online' ? '' : 'style="display: none;"' %>>Online</div>
+  <div class="host-offline label label-danger no-select" <%= status === 'offline' ? '' : 'style="display: none;"' %>>Offline</div>
+  <button type="button" class="server-detach-host btn btn-danger btn-xs">Detach Host</button>
+</div>

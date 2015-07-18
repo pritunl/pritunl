@@ -1,0 +1,11 @@
+@import 'styles/base.scss';
+
+modal .users {
+  padding-left: 30px;
+  margin-top: 5px;
+  margin-bottom: 20px;
+}
+
+modal .users li {
+  list-style-type: disc;
+}

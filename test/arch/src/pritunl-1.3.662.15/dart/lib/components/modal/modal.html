@@ -1,0 +1,21 @@
+<div class="container" ng-if="state" ng-animate>
+  <div class="backdrop"></div>
+  <div class="modal" ng-click="softClose($event.target)">
+    <form class="content">
+      <div class="header">
+        <btn type="close" ng-click="hardClose()"></btn>
+        <h4 class="title">{{title}}</h4>
+        <div ng-if="advanced" class="advanced" no-select>Advanced</div>
+      </div>
+      <div class="body">
+        <content></content>
+      </div>
+      <div class="footer">
+        <x-btn ng-if="noCancel != true" type="default" ng-click="hardClose()"
+          disabled="cancelDisabled">{{cancelText}}</x-btn>
+        <x-btn ng-if="noOk != true" type="primary" ng-click="submit()"
+          disabled="okDisabled" form-submit>{{okText}}</x-btn>
+      </div>
+    </form>
+  </div>
+</div>

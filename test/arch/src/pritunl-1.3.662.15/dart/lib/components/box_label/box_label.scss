@@ -1,0 +1,17 @@
+@import 'styles/base.scss';
+
+span {
+  display: inline;
+  padding: .2em .6em .3em;
+  font-size: 75%;
+  font-weight: bold;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  @include border-radius-default;
+}
+
+.large {
+  padding: 9px 12px;
+}

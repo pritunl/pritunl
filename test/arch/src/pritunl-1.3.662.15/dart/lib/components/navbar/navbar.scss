@@ -1,0 +1,98 @@
+@import 'styles/base.scss';
+
+*,
+*:before,
+*:after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+nav {
+  min-height: 51px;
+  position: relative;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  @include border-radius(0);
+}
+
+nav header {
+  float: left;
+}
+
+.brand,
+.brand:focus,
+.brand:active,
+.brand:hover {
+  float: left;
+  font-family: 'Fredoka One', cursive;
+  padding: 7px 15px 0 0;
+  font-size: 28px;
+  line-height: 32px;
+  cursor: default;
+  text-decoration: none;
+}
+
+.premium-brand,
+.enterprise-brand {
+  display: none;
+}
+
+.links {
+  float: left;
+  padding: 0;
+  margin: 0;
+}
+
+.links-right {
+  float: right;
+}
+
+.links > li {
+  float: left;
+  position: relative;
+  display: block;
+}
+
+.links > li > a {
+  line-height: 20px;
+  position: relative;
+  display: block;
+  padding: 15px;
+}
+
+.links > li > a:hover {
+  text-decoration: none;
+}
+
+.hosts {
+  display: none;
+}
+
+.upgrade a {
+  padding-top: 13px;
+}
+
+.upgrade span {
+  padding: 4px;
+}
+
+.subscription {
+  display: none;
+}
+
+.feedback {
+  cursor: pointer;
+  position: fixed;
+  font-size: 15px;
+  bottom: 0;
+  right: 13px;
+  opacity: 0.9;
+  z-index: 100000;
+  @include border-bottom-right-radius(0);
+  @include border-bottom-left-radius(0);
+}
+
+.feedback:hover {
+  opacity: 1;
+}

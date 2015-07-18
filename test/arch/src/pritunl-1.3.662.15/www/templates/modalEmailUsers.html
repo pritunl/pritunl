@@ -1,0 +1,10 @@
+<div class="form-group">
+  <label>Are you sure you want to email a key link to the following users?</label>
+  <ul class="modal-user-list">
+    <% _.each(users, function(user) { %>
+      <li class="user-<%- user.id %>">
+        <%- user.name %><%- user.email ? ' (' + user.email + ')' : '' %>
+      </li>
+    <% }); %>
+  </ul>
+</div>

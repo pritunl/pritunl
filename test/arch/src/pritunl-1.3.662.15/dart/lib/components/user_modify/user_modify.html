@@ -1,0 +1,13 @@
+<x-modal title="Modify User" ok-text="Save" ok-disabled="okDisabled">
+  <x-alert type="alertType" text="alertText"></x-alert>
+  <fx-orm-group>
+    <label>Name</label>
+    <x-form-input class="name" type="text" placeholder="Enter name"
+      model="model.name" form-tooltip="Enter name"></x-form-input>
+  </fx-orm-group>
+  <fx-orm-group>
+    <label>Email (optional)</label>
+    <x-form-input class="email" type="text" placeholder="Enter email address"
+      model="model.email" form-tooltip="Email address of user"></x-form-input>
+  </fx-orm-group>
+</x-modal>

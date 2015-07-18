@@ -1,0 +1,60 @@
+<span class="version">v{{model.serverVersion}}
+  {{model.currentHost.substring(0, 6)}}</span>
+<table class="status">
+  <tbody>
+  <tr>
+    <td class="item">
+      <h3 class="name title">
+        <x-glyphicon type="tower"></x-glyphicon>
+        <span>Organizations</span>
+      </h3>
+      <p class="info title">
+        <x-fraction
+          numer="{{model.orgCount}}"
+          denom="{{model.orgCount}}"></x-fraction>
+        <span class="text">available</span>
+      </p>
+    </td>
+    <td class="item">
+      <h3 class="name title">
+        <x-glyphicon type="user"></x-glyphicon>
+        <span>Users</span>
+      </h3>
+      <p class="info title">
+        <x-fraction
+          numer="{{model.usersOnline}}"
+          denom="{{model.userCount}}"
+          empty-style="default"
+          half-style="default"
+          full-style="default"></x-fraction>
+        <span class="text">online</span>
+      </p>
+    </td>
+    <td class="item">
+      <h3 class="name title">
+        <x-glyphicon type="cloud"></x-glyphicon>
+        <span>Servers</span>
+      </h3>
+      <p class="info title">
+        <x-fraction
+          numer="{{model.serversOnline}}"
+          denom="{{model.serverCount}}"></x-fraction>
+        <span class="text">online</span>
+      </p>
+    </td>
+    <td class="item hosts-status">
+      <h3 class="name title">
+        <x-glyphicon type="globe"></x-glyphicon>
+        <span class="text">Hosts</span>
+      </h3>
+      <p class="info title">
+        <x-fraction
+          numer="{{model.hostsOnline}}"
+          denom="{{model.hostCount}}"></x-fraction>
+        <span class="text">online</span>
+      </p>
+      <div class="server-info"></div>
+    </td>
+  </tr>
+  </tbody>
+</table>

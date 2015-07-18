@@ -1,0 +1,26 @@
+<div class="header">
+  <h1 class="title">Users and Organizations</h1>
+  <div class="buttons">
+    <x-org-add></x-org-add>
+    <x-btn type="primary" modal-attach="x-org-add">Add Organization</x-btn>
+    <x-user-add orgs="orgs"></x-user-add>
+    <x-btn type="primary" modal-attach="x-user-add">Add User</x-btn>
+    <x-user-add-bulk orgs="orgs"></x-user-add-bulk>
+    <x-btn type="primary" modal-attach="x-user-add-bulk">Bulk Add Users</x-btn>
+    <x-user-email users="selected"></x-user-email>
+    <x-btn type="warning" modal-attach="x-user-email"
+      disabled="selected.length == 0">Email Selected</x-btn>
+    <x-user-del users="selected"></x-user-del>
+    <x-btn type="danger" modal-attach="x-user-del"
+      disabled="selected.length == 0">Delete Selected</x-btn>
+  </div>
+</div>
+<x-alert-global></x-alert-global>
+<ul>
+  <li class="org" ng-repeat="org in orgs">
+    <x-organization model="org" selected="selected"></x-organization>
+  </li>
+  <li ng-if="message != null" class="message">
+    <span ng-bind="message"></span>
+  </li>
+</ul>

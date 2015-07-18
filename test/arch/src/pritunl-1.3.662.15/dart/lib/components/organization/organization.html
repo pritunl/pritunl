@@ -1,0 +1,54 @@
+<div class="org clearfix">
+  <div class="header">
+    <x-org-modify model="org"></x-org-modify>
+    <x-box-label padding="6px 12px"
+      shift-click="toggleHidden()" no-select
+      type="success">Organization</x-box-label><h2 class="title"
+      tooltip="Click to modify this organization"><a class="title"
+      modal-attach="x-org-modify" no-select ng-bind="org.name"></a>
+    <span ng-if="showHidden" class="id">({{org.id}})</span></h2>
+    <div class="box-right">
+      <x-box-label class="user-count" type="default" padding="4px 8px"
+        no-select>{{org.userCount}} users</x-box-label>
+      <x-form-input type="text" placeholder="Search for user"
+        width="150px" height="30px" model="org.users.search"></x-form-input>
+      <x-org-del model="org"></x-org-del>
+      <x-btn type="danger" size="sm" modal-attach="x-org-del"
+        >Delete Organization</x-btn>
+    </div>
+  </div>
+  <ul class="user-list">
+    <li ng-repeat="user in org.users" class="user-item" ng-animate>
+      <x-user model="user" ng-if="user.type == 'client' || showHidden"
+        show-hidden="showHidden"
+        on-select="select(user, $shift)"
+        selected="selected.contains(user)"></x-user>
+    </li>
+    <li ng-if="message != null" class="message">
+      <span ng-bind="message"></span>
+    </li>
+  </ul>
+  <div class="footer" ng-if="org.users.search == null" no-select>
+    <x-btn class="prev" type="primary" size="sm" min-width="105px"
+      ng-if="org.users.page != 0"
+      ng-click="org.users.prev()">Previous Page</x-btn>
+    <x-btn class="next clearfix" type="primary" size="sm" min-width="105px"
+      ng-if="org.users.page != org.users.pageTotal"
+      ng-click="org.users.next()">Next Page</x-btn>
+    <ul class="pages" no-select>
+      <li ng-repeat="page in org.users.pages">
+        <a ng-click="org.users.onPage(page[1])"><span ng-bind="page[1]"
+          ng-class="page[0] == org.users.page ? 'current' : null"></span></a>
+      </li>
+    </ul>
+  </div>
+  <div class="footer" ng-if="org.users.search != null">
+    <div class="search-time" no-select>search found
+      {{org.users.searchCount != null ? org.users.searchCount : '...'}}
+      results in {{org.users.searchCount != null ?
+        org.users.searchTime.toStringAsFixed(4) : '...'}} seconds</div>
+    <div class="search-more" ng-if="org.users.searchMore" no-select>
+      <a ng-click="org.users.searchIncrease()">show more results</a>
+    </div>
+  </div>
+</div>

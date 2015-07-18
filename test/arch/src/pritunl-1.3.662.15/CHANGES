@@ -1,0 +1,276 @@
+Pritunl Changelog
+=================
+
+Version 1.3.662.15 2015-07-06
+-----------------------------
+
+Fix issue with key sync
+Fix issue with client type icon
+
+Version 1.3.651.28 2015-06-25
+-----------------------------
+
+Fix display issues with web interface
+
+Version 1.3.627.6 2015-06-01
+----------------------------
+
+Fix issue with servers after restoring backup with non-enterprise
+Add dark theme to key view page
+
+Version 1.3.614.40 2015-05-19
+-----------------------------
+
+Add support for replicated servers
+Disconnect users without restarting servers
+Check Google authentication on user connect
+Add paging to organizations, servers and hosts
+Holding shift and ctrl when clicking will skip confirm
+
+Version 1.3.613.97beta1 2015-05-18
+----------------------------------
+
+Add support for replicated servers
+Disconnect users without restarting servers
+Check Google authentication on user connect
+Add paging to organizations, servers and hosts
+
+Version 1.2.604.38 2015-05-09
+-----------------------------
+
+Interface improvements
+Add support for single sign on with Google apps
+
+Version 1.0.601.67 2015-05-06
+-----------------------------
+
+Change server defaults for ping interval
+Fix issues with adding servers
+
+Version 1.0.601.2 2015-05-06
+----------------------------
+
+Add additional private subnets
+Add ping interval options to server settings
+Add support for ubuntu vivid
+
+Version 1.0.586.29 2015-04-21
+-----------------------------
+
+Support for mongodb 3.0
+
+Version 1.0.544.74 2015-03-10
+-----------------------------
+
+Add inter-client communication option to advanced server settings
+Fix issue with disabled users
+Bug fixes
+
+Version 1.0.513.37 2015-02-07
+-----------------------------
+
+Fix timezone issue with two step authentication
+
+Version 1.0.488.77 2015-01-13
+-----------------------------
+
+Improve organization management
+
+Version 1.0.482.93 2015-01-07
+-----------------------------
+
+Updates to web interface
+
+Version 1.0.481.92 2015-01-06
+-----------------------------
+
+Fix issue with restarting servers
+
+Version 1.0.477.0 2015-01-02
+----------------------------
+
+Fix issue with client vpn connections
+
+Version 1.0.475.0 2014-12-31
+----------------------------
+
+Fix missing import
+
+Version 1.0.474.91 2014-12-30
+-----------------------------
+
+Bug fixes
+
+Version 1.0.464.77 2014-12-20
+-----------------------------
+
+Change server defaults
+Fix exit on upgrade check when db server is offline
+
+Version 1.0.462.77 2014-12-18
+-----------------------------
+
+Fix issue detaching hosts
+Fix issue with client conf
+Interface improvements
+
+Version 1.0.462.12 2014-12-18
+-----------------------------
+
+Fix issues with updating subscription
+
+Version 1.0.460.81 2014-12-16
+-----------------------------
+
+Fix issue with client configuration files
+
+Version 1.0.460.43 2014-12-16
+-----------------------------
+
+Fix issue with setup
+
+Version 1.0.460.41 2014-12-16
+-----------------------------
+
+Fix issue with update
+
+Version 1.0.460.38 2014-12-16
+-----------------------------
+
+Server codebase rewritten
+Added distributed servers
+Automatic failover for servers
+Support for multiple devices
+Redesigned web interface
+Improved vpn connection performance
+Data store moved to MongoDB
+Automatic data migration will occur on first run
+
+Version 1.0.459.72beta2 2014-12-15
+----------------------------------
+
+Bug fixes
+
+Version 1.0.449.92beta1 2014-12-05
+----------------------------------
+
+Initial 1.0 beta release
+
+Version 0.10.12 2014-08-04
+--------------------------
+
+Pre-pool dh params for instant server creation
+Improve client configurations
+
+Version 0.10.11 2014-07-29
+--------------------------
+
+Improve email key links
+Add additional non-enterprise features
+Fix issues with authentication script errors
+Add rotating log files
+Pre-pool certs for instant org and user creation
+Queue cache updates for faster org and server changes
+Improve interface usability
+Add bulk add users
+Improve search performance
+
+Version 0.10.10 2014-07-01
+--------------------------
+
+Add user setting to temporarily disable a user
+Add email to user
+Improve caching
+Changes to interface design
+Fix issue with bind address
+Cache OTP codes for client IP addresses to allow reconnecting
+Add search domain to server settings
+Email user key links with Postmark integration
+
+Version 0.10.9 2014-04-23
+-------------------------
+
+Add static IP addresses for vpn clients
+Add update notifications
+Add additional user information
+Change API authentication system with token and secret
+Previous API authentication method has been removed
+
+Version 0.10.8 2014-03-23
+-------------------------
+
+Fix openvpn authentication issue
+Disable download key when no servers are attached to a user
+
+Version 0.10.7 2014-02-28
+-------------------------
+
+Changes to api
+Improve server caching
+Add server bandwidth graphs
+Cache static file data to reduce disk io usage
+Add handler to delete temporary key links
+Read conf options from environment variables
+
+Version 0.10.6 2014-02-12
+-------------------------
+
+Changes to api
+Add rate limiting to auth attempts per ip
+Move password to db
+Add username to change password interface
+Change password hash function
+Improve ovpn iptables rules
+Add openvpn user connect and disconnect scripts
+Improve node server support
+Add dns servers to server options
+Add dh param bits to server options
+Pritunl conf will be automatically upgraded after first launch
+
+Version 0.10.5 2014-01-29
+-------------------------
+
+Changes to api
+Add support for multiple local networks on vpn server
+Cache organizations and users to reduce response times
+Changes to event system
+Add support for node servers
+Organization openssl crl is no longer generated
+Add pages to user list
+Add search to user list
+Add support for node servers
+Server conf data will be automatically upgraded after first launch
+Organization data will be automatically upgraded after first launch
+Log entries will be cleared after first launch for database upgrade
+
+Version 0.10.4 2014-01-10
+-------------------------
+
+Improve support for mobile devices
+Add temporary page to view two-step authentication key and conf links
+Add organization name to two-step authentication label
+Changes to rest api
+User conf data will be automatically upgraded after first launch
+
+Version 0.10.3 2013-11-14
+-------------------------
+
+Add functionality to generate new two-step authentication keys
+Add support for inline certs
+Servers will only restart when deleting users that are connected
+Add export data handler
+
+Version 0.10.2 2013-11-04
+-------------------------
+
+Add time based two-step otp password verification using google authenticator
+Add client sent and received data transfer to status tooltip
+Use openvpn client-to-client when using local network
+Reduce default dh_param bits length
+Add conf option get_public_ip
+User conf data will be automatically upgraded after first launch
+
+Version 0.10.1 2013-10-10
+-------------------------
+
+Initial beta release

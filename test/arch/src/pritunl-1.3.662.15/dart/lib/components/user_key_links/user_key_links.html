@@ -1,0 +1,25 @@
+<x-modal title="Temporary Key Links" ok-text="Close" no-cancel>
+  <x-alert type="alertType" text="alertText"></x-alert>
+  <x-form-group>
+    <label>Temporary url to download key, expires after 24 hours</label>
+    <x-form-input class="name" width="525px" value="model.fullKeyUrl"
+      type="text" readonly click-select></x-form-input><a
+      href="{{model.fullKeyUrl}}" tooltip="Download key"><x-glyphicon
+      type="download"></x-glyphicon></a>
+  </x-form-group>
+  <x-form-group>
+    <label>Temporary url to view key links, expires after 24 hours</label>
+    <x-form-input class="name" width="525px" value="model.fullViewUrl"
+      type="text" readonly click-select></x-form-input><a
+      href="{{model.fullViewUrl}}" target="_blank"><x-glyphicon
+      tooltip="Open key link" type="download"></x-glyphicon></a>
+  </x-form-group>
+  <x-form-group>
+    <label>Temporary uri link for Pritunl Client,
+      expires after 24 hours</label>
+    <x-form-input class="name" width="525px" value="model.fullUriUrl"
+      type="text" readonly click-select></x-form-input><a
+      href="{{model.fullUriUrl}}" target="_blank"><x-glyphicon
+      tooltip="Open key uri link" type="download"></x-glyphicon></a>
+  </x-form-group>
+</x-modal>

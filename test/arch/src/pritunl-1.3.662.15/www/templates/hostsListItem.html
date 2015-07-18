@@ -1,0 +1,57 @@
+<div class="host-header">
+  <div class="host-label label label-danger toggle-hidden no-select">Host</div><h2 class="host-title title"><a class="no-select" data-toggle="tooltip" title="Click to open host settings"></a><span class="host-id title">(<%- id %>)</span></h2>
+  <button type="button" class="host-del btn btn-danger btn-sm" data-toggle="tooltip" title="Host must be offline to delete">Delete Host</button>
+</div>
+<div class="host-info">
+  <div class="status-items">
+    <div class="status-item host-status">
+      <h3 class="status-title title">
+        <span class="status-icon glyphicon glyphicon-dashboard"></span>
+        <span>Status</span>
+      </h3>
+      <div class="status-text title"></div>
+    </div>
+    <div class="status-item host-uptime">
+      <h3 class="status-title title">
+        <span class="status-icon glyphicon glyphicon-time"></span>
+        <span>Uptime</span>
+      </h3>
+      <div class="status-text title"></div>
+    </div>
+    <div class="status-item host-users">
+      <h3 class="status-title title">
+        <span class="status-icon glyphicon glyphicon-user"></span>
+        <span>Users</span>
+      </h3>
+      <div class="status-text title">
+        <span class="status-num"></span> users online
+      </div>
+    </div>
+    <div class="status-item host-public-address">
+      <h3 class="status-title title">
+        <span class="status-icon glyphicon glyphicon-globe"></span>
+        <span>Public IP</span>
+      </h3>
+      <div class="status-text title"></div>
+    </div>
+    <div class="status-item host-local-address last">
+      <h3 class="status-title title">
+        <span class="status-icon glyphicon glyphicon-transfer"></span>
+        <span>Local IP</span>
+      </h3>
+      <div class="status-text title"></div>
+    </div>
+  </div>
+  <div class="host-graph">
+    <h3 class="host-usage-title title">
+      <button type="button" class="host-cpu-usage-btn btn btn-primary btn-xs">CPU Usage</button>
+      <button type="button" class="host-mem-usage-btn btn btn-default btn-xs">Memory Usage</button>
+      <button type="button" class="graph-period graph-1d btn btn-default btn-xs">365 Days</button>
+      <button type="button" class="graph-period graph-2h btn btn-default btn-xs">30 Days</button>
+      <button type="button" class="graph-period graph-30m btn btn-default btn-xs">7 Days</button>
+      <button type="button" class="graph-period graph-5m btn btn-default btn-xs">24 Hours</button>
+      <button type="button" class="graph-period graph-1m btn btn-primary btn-xs">6 Hours</button>
+    </h3>
+    <div class="host-graph-viewer"></div>
+  </div>
+</div>

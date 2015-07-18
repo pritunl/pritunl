@@ -1,0 +1,189 @@
+@import 'styles/base.scss';
+
+.user {
+  height: 40px;
+  border-width: 1px;
+  border-style: solid;
+  margin-top: 12px;
+  @include border-radius-default;
+}
+
+x-checkbox {
+  margin: 10px 10px 0 10px;
+  float: left;
+}
+
+.name-container {
+  float: left;
+  height: auto;
+  padding-top: 0;
+  margin-top: 5px;
+  padding-left: 13px;
+  border-left-width: 1px;
+  border-left-style: solid;
+}
+
+.name-container x-glyphicon {
+  font-size: 19px;
+  line-height: 28px;
+  position: relative;
+  top: 2px;
+  margin-right: 6px;
+}
+
+.name-container .name {
+  font-size: 18px;
+  cursor: pointer;
+  vertical-align: text-top;
+  line-height: 13px;
+  margin-left: 2px;
+}
+
+.name-container .id {
+  font-size: 10px;
+  position: relative;
+  top: -2px;
+}
+
+.buttons {
+  float: right;
+  display: inline-block;
+  margin-top: 5px;
+  height: 28px;
+  padding: 3px 8px 0 12px;
+  white-space: nowrap;
+  border-left-width: 1px;
+  border-left-style: solid;
+}
+
+.status {
+  display: inline-block;
+  cursor: default;
+  width: 84px;
+  position: relative;
+  top: -4px;
+}
+
+.status .icon {
+  display: inline-block;
+  position: relative;
+  top: 3px;
+  margin-right: 4px;
+  width: 16px;
+  height: 16px;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+}
+
+.buttons x-glyphicon {
+  font-size: 20px;
+  cursor: pointer;
+  margin-left: 3px;
+}
+
+.buttons x-glyphicon.disabled {
+  @include opacity(0.65);
+}
+
+.user-servers.ng-enter,
+.user-servers.ng-enter .server,
+.user-servers.ng-enter .no-servers {
+  @include transition(height .1s ease-in-out);
+  overflow: hidden;
+}
+
+.user-servers.ng-enter .server,
+.user-servers.ng-enter .no-servers {
+  height: 0;
+}
+
+.user-servers.ng-enter-active .server,
+.user-servers.ng-enter-active .no-servers {
+  height: 27px;
+}
+
+.user-servers.ng-leave,
+.user-servers.ng-leave .server,
+.user-servers.ng-leave .no-servers {
+  @include transition(height .1s ease-in-out);
+  overflow: hidden;
+}
+
+.user-servers.ng-leave .server,
+.user-servers.ng-leave .no-servers {
+  height: 27px;
+}
+
+.user-servers.ng-leave-active .server,
+.user-servers.ng-leave-active .no-servers {
+  height: 0;
+}
+
+.user-servers {
+  border-width: 1px;
+  border-style: solid;
+  border-top: none;
+  margin-left: 3px;
+  margin-right: 3px;
+  padding: 1px 10px;
+  @include border-bottom-left-radius-default();
+  @include border-bottom-right-radius-default();
+  @include box-shadow((inset 0px 12px 8px -14px rgba(0, 0, 0, 0.53)));
+}
+
+.user-servers .server {
+  font-size: 15px;
+  height: 27px;
+  padding-left: 1px;
+}
+
+.user-servers .server + .server {
+  border-top-width: 1px;
+  border-top-style: solid;
+}
+
+.user-servers .item,
+.user-servers .item span {
+  margin-top: 2px;
+  font-size: 12px;
+  display: inline-block;
+}
+
+.user-servers .right {
+  float: right;
+  width: 385px;
+  white-space: nowrap;
+}
+
+.user-servers .status {
+  margin-top: 0;
+  float: right;
+}
+
+.virt-addr span,
+.real-addr span {
+  width: 95px;
+}
+
+.conn-time span {
+  width: 70px;
+}
+
+.user-servers .status .icon {
+  width: 13px;
+  height: 13px;
+  top: 2px;
+}
+
+.user-servers .status {
+  width: 65px;
+  position: relative;
+  top: 3px;
+}
+
+.no-servers {
+  font-size: 15px;
+  padding: 4px 0;
+  height: 29px;
+}

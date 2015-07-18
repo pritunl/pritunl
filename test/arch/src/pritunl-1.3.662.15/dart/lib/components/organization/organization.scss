@@ -1,0 +1,170 @@
+@import 'styles/base.scss';
+
+.org {
+  margin-bottom: 25px;
+  border-width: 1px;
+  border-style: solid;
+  @include border-radius-default;
+  @include box-shadow((
+    0 2px 1px rgba(0, 0, 0, 0.05),
+    0 -1px 2px rgba(0, 0, 0, 0.05) inset,
+  ));
+}
+
+.org .id {
+  font-size: 10px;
+  position: relative;
+  top: -2px;
+}
+
+.header x-box-label {
+  cursor: default;
+  margin-top: 1px;
+  margin-right: 15px;
+}
+
+.header {
+  padding: 14px 11px 17px 14px;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  -webkit-border-top-left-radius: 2px;
+  -moz-border-top-left-radius: 2px;
+  border-top-left-radius: 2px;
+  -webkit-border-top-right-radius: 2px;
+  -moz-border-top-right-radius: 2px;
+  border-top-right-radius: 2px;
+}
+
+.header .title {
+  margin: 0;
+  display: inline-block;
+  line-height: 16px;
+  position: relative;
+  top: 1px;
+  font-size: 19px;
+}
+
+.header x-form-input {
+  position: relative;
+  top: 1px;
+  margin-right: 2px;
+}
+
+.header .box-right {
+  float: right;
+  position: relative;
+  top: -5px;
+}
+
+.header box-label.user-count {
+  margin-right: 7px;
+}
+
+.header x-btn {
+  margin-left: 6px;
+}
+
+.user-item.ng-enter {
+  overflow: hidden;
+  max-height: 0;
+  @include transition(max-height .3s ease-in-out);
+}
+
+.user-item.ng-enter-active {
+  max-height: 200px;
+}
+
+.user-item.ng-leave {
+  overflow: hidden;
+  max-height: 200px;
+  @include transition(max-height .3s ease-in-out);
+}
+
+.user-item.ng-leave-active {
+  max-height: 0;
+}
+
+// TODO
+//.message.ng-enter {
+//  overflow: hidden;
+//  height: 0;
+//  @include transition(height 0.1s ease-in-out);
+//}
+//
+//.message.ng-enter-active {
+//  height: 40px;
+//}
+//
+//.message.ng-leave {
+//  overflow: hidden;
+//  height: 40px;
+//  @include transition(height 0.1s ease-in-out);
+//}
+//
+//.message.ng-leave-active {
+//  height: 0;
+//}
+
+.user-list {
+  margin: 0 13px 13px 13px;
+}
+
+.message {
+  text-align: center;
+  font-size: 14px;
+  height: 40px;
+  border-width: 1px;
+  border-style: solid;
+  margin-top: 12px;
+  @include border-radius-default;
+  @include box-shadow((
+    0, 1px, 0, rgba(255, 255, 255, 0.02),
+    0, 1px, 3px, rgba(0, 0, 0, 0.08), inset,
+  ));
+}
+
+.message span {
+  line-height: 37px;
+}
+
+.next,
+.prev {
+  margin: 0 13px 12px 13px;
+}
+
+.prev {
+  float: left;
+}
+
+.next {
+  float: right;
+}
+
+.pages {
+  margin-top: 13px;
+  text-align: center;
+  padding: 5px 150px 0 150px;
+}
+
+.pages li {
+  display: inline;
+  padding: 0 2px;
+}
+
+.pages li .current {
+  font-weight: bold;
+  pointer-events: none;
+}
+
+.search-time {
+  margin-right: 12px;
+  margin-bottom: 15px;
+  float: right;
+}
+
+.search-more {
+  cursor: pointer;
+  text-align: center;
+  padding: 0 350px;
+  margin: 10px 10px 0 10px;
+}

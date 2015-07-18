@@ -1,0 +1,12 @@
+<x-modal title="Delete Organization" ok-text="Delete" ok-disabled="okDisabled">
+  <x-alert type="'danger'">Deleting the organization will delete all the users
+    in it. Any servers that are attached to the organization will be
+    stopped.</x-alert>
+  <x-alert type="alertType" text="alertText"></x-alert>
+  <x-form-group>
+    <label>Enter the name of the organization to confirm</label>
+    <x-form-input class="name" type="text" model="nameConfirm"
+      placeholder="Name of organization"
+      form-tooltip="Enter name"></x-form-input>
+  </x-form-group>
+</x-modal>

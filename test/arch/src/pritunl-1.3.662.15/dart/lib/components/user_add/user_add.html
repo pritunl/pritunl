@@ -1,0 +1,19 @@
+<x-modal title="Add User" ok-text="Add" ok-disabled="okDisabled">
+  <x-alert type="alertType" text="alertText"></x-alert>
+  <x-form-group>
+    <label>Name</label>
+    <x-form-input class="name" type="text" placeholder="Enter name"
+      model="model.name" form-tooltip="Enter name"></x-form-input>
+  </x-form-group>
+  <x-form-group>
+    <label>Select an organization</label>
+    <x-form-select class="org" model="model.organization" collection="orgs"
+      form-tooltip="Organization to add user to"
+      opt-value="$model.id" opt-text="$model.name"></x-form-select>
+  </x-form-group>
+  <x-form-group>
+    <label>Email (optional)</label>
+    <x-form-input class="email" type="text" placeholder="Enter email address"
+      model="model.email" form-tooltip="Email address of user"></x-form-input>
+  </x-form-group>
+</x-modal>

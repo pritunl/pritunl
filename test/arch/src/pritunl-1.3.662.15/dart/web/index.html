@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html ng-app>
+<head>
+  <title>Pritunl - Testing</title>
+  <link rel="stylesheet" type="text/css"
+        href="packages/pritunl/styles/globals.css" shim-shadowdom>
+  <script src="vendor/ace/ace.js"></script>
+  <script src="vendor/qrcode.min.js"></script>
+  <script src="packages/web_components/webcomponents.js"></script>
+  <script src="packages/web_components/dart_support.js"></script>
+  <style>
+    @font-face {
+      font-family: 'Fredoka One';
+      font-style: normal;
+      font-weight: 400;
+      src: url('packages/pritunl/fonts/fredoka-one.eot') format('embedded-opentype'),
+      url('packages/pritunl/fonts/fredoka-one.woff') format('woff');
+    }
+    @font-face {
+      font-family: 'Ubuntu';
+      font-style: normal;
+      font-weight: 400;
+      src: url('packages/pritunl/fonts/ubuntu.eot') format('embedded-opentype'),
+      url('packages/pritunl/fonts/ubuntu.woff') format('woff');
+    }
+    @font-face {
+      font-family: 'Ubuntu';
+      font-style: normal;
+      font-weight: 700;
+      src: url('packages/pritunl/fonts/ubuntu-bold.eot') format('embedded-opentype'),
+      url('packages/pritunl/fonts/ubuntu-bold.woff') format('woff');
+    }
+    @font-face {
+      font-family: 'Glyphicons Halflings';
+      src: url('packages/pritunl/fonts/glyphicons-halflings-regular.eot');
+      src: url('packages/pritunl/fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('packages/pritunl/fonts/glyphicons-halflings-regular.woff') format('woff'), url('packages/pritunl/fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('packages/pritunl/fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+    }
+  </style>
+</head>
+<body>
+  <x-navbar></x-navbar>
+  <ng-view></ng-view>
+  <script type="application/dart" src="main.dart"></script>
+  <script type="text/javascript" src="packages/browser/dart.js"></script>
+</body>
+</html>

@@ -18,6 +18,7 @@ def fill_dh_params():
         dh_param_counts = utils.LeastCommonCounter(
             {x: 0 for x in dh_param_bits_pool})
 
+        # TODO User loop with .count()
         pools = collection.aggregate([
             {'$match': {
                 'dh_param_bits': {'$in': dh_param_bits_pool},
@@ -34,6 +35,7 @@ def fill_dh_params():
         for pool in pools:
             dh_param_counts[pool['_id']] = pool['count']
 
+        # TODO User loop with .count()
         pools = queue_collection.aggregate([
             {'$match': {
                 'type': 'dh_params',

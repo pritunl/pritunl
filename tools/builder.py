@@ -566,16 +566,52 @@ elif cmd == 'upload':
         sys.exit(1)
 
 
-    # Upload centos package
-    rpms_dir = 'build/%s/centos/RPMS/x86_64' % cur_version
-    rpm_name = '%s-%s-%s.el7.centos.x86_64.rpm' % (
+    # Upload arch package
+    build_dir = 'build/%s/arch' % cur_version
+    aur_dir = os.path.join(build_dir, pkg_name)
+
+    subprocess.check_call(['git', 'clone',
+        'ssh://aur@aur4.archlinux.org/%s.git' % (
+            pkg_name + '-dev' if is_dev_release else pkg_name)],
+        cwd=build_dir)
+
+    subprocess.check_call(['mksrcinfo'], cwd=build_dir)
+    subprocess.check_call(['cp', os.path.join(build_dir, 'PKGBUILD'),
+        aur_dir])
+    subprocess.check_call(['cp', os.path.join(build_dir, 'pritunl.install'),
+        aur_dir])
+    subprocess.check_call(['cp', os.path.join(build_dir, '.SRCINFO'),
+        aur_dir])
+
+    subprocess.check_call(['git', 'add', '.'])
+    subprocess.check_call(['git', 'commit', '-m',
+        'Update to %s' % cur_version])
+
+    aur_pkg_name = '%s-%s-%s-any.pkg.tar.xz' % (
         pkg_name + '-dev' if is_dev_release else pkg_name,
         cur_version,
         build_num + 1,
     )
-    rpm_path = os.path.join(rpms_dir, rpm_name)
-
-    post_git_asset(release_id, rpm_name, rpm_path)
+    aur_path = os.path.join(build_dir, aur_pkg_name)
+    aurball_pkg_name = '%s-%s-%s.src.tar.gz' % (
+        pkg_name + '-dev' if is_dev_release else pkg_name,
+        cur_version,
+        build_num + 1,
+    )
+    aurball_path = os.path.join(build_dir, aurball_pkg_name)
+    # post_git_asset(release_id, aur_pkg_name, aur_path)
+    #
+    #
+    # # Upload centos package
+    # rpms_dir = 'build/%s/centos/RPMS/x86_64' % cur_version
+    # rpm_name = '%s-%s-%s.el7.centos.x86_64.rpm' % (
+    #     pkg_name + '-dev' if is_dev_release else pkg_name,
+    #     cur_version,
+    #     build_num + 1,
+    # )
+    # rpm_path = os.path.join(rpms_dir, rpm_name)
+    #
+    # post_git_asset(release_id, rpm_name, rpm_path)
 
 
 else:

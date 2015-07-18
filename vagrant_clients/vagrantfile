@@ -1,0 +1,24 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "ubuntu/trusty64"
+
+  config.vm.define "client0" do |client0|
+      client0.vm.provision :shell, :path => "vagrant_provision.sh"
+  end
+
+  config.vm.define "client1" do |client1|
+      client1.vm.provision :shell, :path => "vagrant_provision.sh"
+  end
+
+  config.vm.define "client2" do |client2|
+      client2.vm.provision :shell, :path => "vagrant_provision.sh"
+  end
+
+  config.vm.define "client3" do |client3|
+      client3.vm.provision :shell, :path => "vagrant_provision.sh"
+  end
+end

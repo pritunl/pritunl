@@ -1,0 +1,13 @@
+@import 'styles/base.scss';
+
+::content label {
+  display: inline-block;
+  margin-bottom: 5px;
+}
+
+::content x-form-input,
+::content x-form-textarea,
+::content x-form-select {
+  display: block;
+  margin-bottom: 20px;
+}

@@ -1,0 +1,23 @@
+<nav no-select>
+  <x-container>
+    <header>
+      <a class="brand standard-brand" href="/s">pritunl</a>
+      <a class="brand premium-brand" href="/s">pritunl premium</a>
+      <a class="brand enterprise-brand" href="/s">pritunl enterprise</a>
+    </header>
+    <ul class="links" ng-class="active">
+      <li ng-class="active['dashboard']"><a
+        href="/s/#/dashboard">Dashboard</a></li>
+      <li ng-class="active['users']"><a href="/s/#/users">Users</a></li>
+      <li ng-class="active['servers']"><a href="/s/#/servers">Servers</a></li>
+      <li><a href="/s/#/hosts">Hosts</a></li>
+    </ul>
+    <ul class="links links-right">
+      <li><a><box-label type="default">Upgrade to Premium!</box-label></a></li>
+      <li><a>Subscription</a></li>
+      <li><a>Settings</a></li>
+      <li><a href="/s/#/logout">Logout</a></li>
+    </ul>
+    <x-box-label class="feedback" type="success">Provide Feedback</x-box-label>
+  </x-container>
+</nav>

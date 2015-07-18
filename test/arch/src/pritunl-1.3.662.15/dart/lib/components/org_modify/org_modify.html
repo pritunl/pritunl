@@ -1,0 +1,10 @@
+<x-modal title="Modify Organization" ok-text="Rename"
+    ok-disabled="okDisabled">
+  <x-alert type="alertType" text="alertText"></x-alert>
+  <x-form-group>
+    <label>Rename {{origModel.name}}</label>
+    <x-form-input class="name" type="text" model="model.name"
+      placeholder="Name of organization"
+      form-tooltip="Enter new name"></x-form-input>
+  </x-form-group>
+</x-modal>

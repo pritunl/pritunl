@@ -1,0 +1,10 @@
+<div class="log-container">
+  <h2 class="title">Recent log entries</h2>
+  <ul class="entries">
+    <li class="entry clearfix" ng-repeat="entry in entries">
+      <x-glyphicon type="record"></x-glyphicon>
+      <span class="message" ng-bind="entry.message"></span>
+      <span class="time" ng-bind="entry.timestamp | datetime"></span>
+    </li>
+  </ul>
+</div>

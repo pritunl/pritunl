@@ -1,0 +1,9 @@
+<x-modal title="Two-Step Authentication Key" no-cancel>
+  <x-alert type="alertType" text="alertText"></x-alert>
+  <label>Two-step authentication key</label>
+  <x-form-input class="name" width="190px" value="model.otpSecret"
+    type="text" readonly click-select></x-form-input>
+  <x-qrcode width="192" height="192" text="qrcodeText"></x-qrcode>
+  <x-btn type="danger" width="190px" ng-click="newKey()"
+    disabled="genKeyDisabled">Generate New Key</x-btn>
+</x-modal>

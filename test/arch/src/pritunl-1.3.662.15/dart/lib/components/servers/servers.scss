@@ -1,0 +1,31 @@
+@import 'styles/base.scss';
+
+.header .title {
+  margin-top: 6px;
+  margin-bottom: 19px;
+  font-size: 22px;
+  display: inline-block;
+}
+
+.header .buttons {
+  float: right;
+  display: block;
+}
+
+.header .buttons button {
+  margin-top: 2px;
+}
+
+.message {
+  margin-bottom: 25px;
+  border-width: 1px;
+  border-style: solid;
+  text-align: center;
+  font-size: 14px;
+  padding: 10px;
+  @include border-radius-default;
+  @include box-shadow((
+    0 2px 1px rgba(0, 0, 0, 0.05),
+    0 -1px 2px rgba(0, 0, 0, 0.05) inset
+  ))
+}

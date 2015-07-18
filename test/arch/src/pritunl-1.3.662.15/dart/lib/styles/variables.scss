@@ -1,0 +1,283 @@
+$border-radius: 2px;
+
+// ####################################
+// base
+// ####################################
+$body: (
+  fg: #333,
+  bg: #efefef,
+);
+$table: (
+  border: #cfcfcf,
+);
+$title: (
+  fg: #4d535c,
+);
+$text: (
+  default-fg: #616161,
+  danger-fg: #f00,
+  warning-fg: #f90,
+  success-fg: #3ba51a,
+);
+$link: (
+  fg: #428bca,
+  fg-hover: #2a6496,
+);
+
+// ####################################
+// btn
+// ####################################
+$btn: (
+  fg: #fff,
+  close-fg: #000,
+  default-fg: #333,
+  default-bg: #fff,
+  default-border: #ccc,
+  default-bg-hover: #e6e6e6,
+  default-border-hover: #adadad,
+  default-bg-disabled: #fff,
+  default-border-disabled: #ccc,
+  primary-fg: #fff,
+  primary-bg: #337ab7,
+  primary-border: #2e6da4,
+  primary-bg-hover: #286090,
+  primary-border-hover: #204d74,
+  primary-bg-disabled: #337ab7,
+  primary-border-disabled: #2e6da4,
+  success-fg: #fff,
+  success-bg: #5cb85c,
+  success-border: #4cae4c,
+  success-bg-hover: #449d44,
+  success-border-hover: #398439,
+  success-bg-disabled: #5cb85c,
+  success-border-disabled: #4cae4c,
+  info-fg: #fff,
+  info-bg: #5bc0de,
+  info-border: #46b8da,
+  info-bg-hover: #31b0d5,
+  info-border-hover: #269abc,
+  info-bg-disabled: #5bc0de,
+  info-border-disabled: #46b8da,
+  warning-fg: #fff,
+  warning-bg: #f0ad4e,
+  warning-border: #eea236,
+  warning-bg-hover: #ec971f,
+  warning-border-hover: #d58512,
+  warning-bg-disabled: #f0ad4e,
+  warning-border-disabled: #eea236,
+  danger-fg: #fff,
+  danger-bg: #d9534f,
+  danger-border: #d43f3a,
+  danger-bg-hover: #c9302c,
+  danger-border-hover: #ac2925,
+  danger-bg-disabled: #d9534f,
+  danger-border-disabled: #d43f3a,
+);
+
+// ####################################
+// checkbox
+// ####################################
+$checkbox: (
+  fg: #858585,
+  border: #cfcfcf,
+);
+
+// ####################################
+// label
+// ####################################
+$label: (
+  default-fg: #fff,
+  default-bg: #777,
+  primary-fg: #fff,
+  primary-bg: #337ab7,
+  success-fg: #fff,
+  success-bg: #5cb85c,
+  info-fg: #fff,
+  info-bg: #5bc0de,
+  warning-fg: #fff,
+  warning-bg: #f0ad4e,
+  danger-fg: #fff,
+  danger-bg: #d9534f,
+);
+
+// ####################################
+// alert
+// ####################################
+$alert: (
+  flash-bg: #fff,
+  success-fg: #3c763d,
+  success-bg: #daeed1,
+  success-border: #b2df8d,
+  info-fg: #31708f,
+  info-bg: #d9edf7,
+  info-border: #bce8f1,
+  warning-fg: #8a6d3b,
+  warning-bg: #fcf8e3,
+  warning-border: #faebcc,
+  danger-fg: #a94442,
+  danger-bg: #f2dede,
+  danger-border: #ebccd1,
+);
+
+// ####################################
+// form-control
+// ####################################
+$form-control: (
+  fg: #555,
+  bg: #fff,
+  bg-disabled: #eee,
+  border: #ccc,
+  border-focus: #66afe9,
+  shadow-focus: rgba(102, 175, 233, .6),
+  placeholder: #999,
+  success-border: #3c763d,
+  success-border-focus: #2b542c,
+  success-shadow-focus: #67b168,
+  warning-border: #8a6d3b,
+  warning-border-focus: #66512c,
+  warning-shadow-focus: #c0a16b,
+  danger-border: #a94442,
+  danger-border-focus: #843534,
+  danger-shadow-focus: #ce8483,
+);
+
+// ####################################
+// modal
+// ####################################
+$modal: (
+  fg: #7b7b7b,
+  fg-hover: #737373,
+  fg-active: #000,
+  bg: #fff,
+  border: #e5e5e5,
+);
+$modal-footer: (
+  bg: #f5f5f5,
+  border: #e5e5e5,
+);
+
+// ####################################
+// header
+// ####################################
+$header: (
+  bg: #202020,
+  border: #080808,
+);
+$header-brand: (
+  fg: #f2f2f2,
+);
+$header-link: (
+  fg: #777,
+  fg-hover: #fff,
+  bg-hover: transparent,
+  fg-active: #fff,
+  bg-active: #080808,
+);
+$header-label: (
+  bg: #525252,
+);
+
+// ####################################
+// status
+// ####################################
+$status-icon: (
+  fg: #5585a0,
+);
+
+// ####################################
+// log-entries
+// ####################################
+$log-entries: (
+  fg: #4d535c,
+  bg: #f9f9f9,
+  icon: #1f83bb,
+  border: #cfcfcf,
+);
+
+$log-entries-time: (
+  fg: #777,
+);
+
+// ####################################
+// message
+// ####################################
+$message: (
+  fg: #777,
+  bg: #f5f5f5,
+  border: #cfcfcf
+);
+
+// ####################################
+// organization
+// ####################################
+$organization: (
+  bg: #f9f9f9,
+  border: #cfcfcf,
+);
+
+$organization-header: (
+  bg: #fff,
+  border: #ccc,
+);
+
+$organization-footer: (
+  fg: #9c9c9c,
+  fg-active: #4b4b4b,
+);
+
+// ####################################
+// organizations
+// ####################################
+$organizations-none: (
+  fg: #777,
+  bg: #f5f5f5,
+  border: #cfcfcf,
+);
+
+// ####################################
+// user
+// ####################################
+$user: (
+  fg: #428bca,
+  bg: #fff,
+  border: #cfcfcf,
+  icon: #64b3f6,
+);
+
+$user-buttons: (
+  icon: #4e8bbf,
+);
+
+$user-status: (
+  fg: #6f7277,
+  icon-online: #47a447,
+  icon-offline: #d2322d,
+  icon-disabled: #999,
+);
+
+$user-list: (
+  fg: #777,
+);
+
+// ####################################
+// server
+// ####################################
+$server: (
+  bg: #f9f9f9,
+  border: #cfcfcf,
+);
+
+$server-header: (
+  bg: #fff,
+  border: #ccc,
+);
+
+$server-info: (
+  fg: #4d535c,
+  bg: #fff,
+  icon: #1f83bb,
+);
+
+$server-data-header: (
+  icon: #4d535c,
+);

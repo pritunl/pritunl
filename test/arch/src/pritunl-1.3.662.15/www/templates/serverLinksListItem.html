@@ -1,0 +1,11 @@
+<div class="name-container">
+  <span class="name-icon glyphicon glyphicon-transfer"></span>
+  <span class="link-name title"><%- name %></span>
+  <span class="link-id title">(<%- id %>)</span>
+</div>
+<div class="button-container">
+  <div class="link-use-local label label-default no-select" <%= use_local_address ? '' : 'style="display: none;"' %>>LAN</div>
+  <div class="link-online label label-success no-select" <%= status === 'online' ? '' : 'style="display: none;"' %>>Online</div>
+  <div class="link-offline label label-danger no-select" <%= status === 'offline' ? '' : 'style="display: none;"' %>>Offline</div>
+  <button type="button" class="server-detach-link btn btn-danger btn-xs">Unlink Server</button>
+</div>

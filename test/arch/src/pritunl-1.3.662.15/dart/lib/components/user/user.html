@@ -1,0 +1,79 @@
+<div class="user">
+  <x-checkbox state="selected"
+    on-select="onSelect({'$shift': $shift})"></x-checkbox>
+  <div class="name-container">
+    <x-user-modify model="model"></x-user-modify>
+    <x-glyphicon type="user"></x-glyphicon><a class="name title" no-select
+        tooltip="Click to modify this user"
+        modal-attach="x-user-modify">{{model.name}}<span
+        ng-if="model.email != null && model.email != ''"
+        > ({{model.email}})</span></a>
+    <span class="id title" ng-if="showHidden">({{model.id}})</span>
+  </div>
+  <div class="buttons">
+    <div class="status">
+      <div class="icon" ng-class="statusIcon"></div>
+      <span class="title" ng-bind="statusText"></span>
+    </div>
+    <x-user-otp model="model"></x-user-otp>
+    <span ng-if="model.otpAuth">
+      <x-glyphicon tooltip="Get two-step authentication key"
+        type="qrcode" modal-attach="x-user-otp"></x-glyphicon>
+    </span>
+    <x-user-key-links model="model"></x-user-key-links>
+    <x-glyphicon tooltip="{{true ? 'Get key links' : 'Organization must be attached to server to get key links'}}"
+      type="link" modal-attach="x-user-key-links"></x-glyphicon>
+    <a href="{{model.keyUrl}}"><x-glyphicon tooltip="{{true ? 'Click to download key' : 'Organization must be attached to server to download key'}}"
+      type="download"></x-glyphicon></a>
+    <x-glyphicon ng-click="toggleDisabled($event)"
+      tooltip="{{model.disabled ? 'Enable user' : 'Disable and disconnect user'}}"
+      type="{{model.disabled ? 'ok-circle' : 'ban-circle'}}"></x-glyphicon>
+    <span ng-switch="model.showServers">
+      <span ng-switch-when="true">
+        <x-glyphicon tooltip="Hide additional user information"
+          type="chevron-up" ng-click="model.showServers = false"></x-glyphicon>
+      </span>
+      <span ng-switch-default>
+        <x-glyphicon tooltip="Show additional user information"
+          type="chevron-down" ng-click="model.showServers = true"></x-glyphicon>
+      </span>
+    </span>
+  </div>
+</div>
+<ul ng-if="model.showServers" class="user-servers" ng-animate>
+  <li class="server" ng-repeat="server in model.servers">
+    <div class="item title name">
+      <x-glyphicon type="dashboard"></x-glyphicon>
+      <span ng-bind="server.name"></span>
+    </div>
+    <div class="item title device">
+      <x-glyphicon type="device"></x-glyphicon>
+      <span ng-bind="server.device_name"></span>
+    </div>
+    <div ng-if="model.status" class="item title status">
+      <div class="icon online"></div>
+      <span class="title">Online</span>
+    </div>
+    <div ng-if="model.status != true" class="item title status">
+      <div class="icon offline"></div>
+      <span class="title">Offline</span>
+    </div>
+    <div class="right">
+      <div ng-if="server.virt_address != null" class="item title virt-addr">
+        <x-glyphicon type="send"></x-glyphicon>
+        <span ng-bind="server.virt_address"></span>
+      </div>
+      <div ng-if="server.real_address != null" class="item title real-addr">
+        <x-glyphicon type="globe"></x-glyphicon>
+        <span ng-bind="server.real_address"></span>
+      </div>
+      <div ng-if="server.connected_since != null" class="item title conn-time">
+        <x-glyphicon type="time"></x-glyphicon>
+        <span ng-bind="server.connected_since"></span>
+      </div>
+    </div>
+  </li>
+  <li ng-if="model.servers.length == 0" class="no-servers title">
+    No servers available
+  </li>
+</ul>

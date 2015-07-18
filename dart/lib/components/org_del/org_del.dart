@@ -46,7 +46,8 @@ class OrgDelComp extends modal_content_base.ModalContent {
     this.okDisabled = true;
 
     return this.model.destroy().then((_) {
-      return super.submit(closeHandler);
+      // TODO The org component will already be removed from dom
+      //return super.submit(closeHandler);
     }).then((_) {
       new alrt.Alert('Successfully deleted organization.', 'success');
     }).catchError((err) {

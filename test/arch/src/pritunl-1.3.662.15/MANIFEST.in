@@ -1,0 +1,5 @@
+include CHANGES COPYING LICENSE README.rst requirements.txt server.py test_drivnal.py vagrantfile
+graft data
+graft tools
+graft www
+prune www/node_modules

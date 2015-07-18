@@ -1,0 +1,8 @@
+<div class="alert alert-<%- type %> <%- (dismissable) ? 'alert-dismissable' : '' %>">
+  <% if (dismissable) { %>
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+  <% } %>
+  <span>
+    <%= message %>
+  </span>
+</div>

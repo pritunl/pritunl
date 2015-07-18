@@ -10,6 +10,8 @@ import pymongo
 import datetime
 import collections
 
+# TODO use Queue() to run tasks
+
 _task_types = {}
 tasks = collections.defaultdict(
     lambda: collections.defaultdict(lambda: collections.defaultdict(list)))

@@ -1,0 +1,17 @@
+<x-modal title="Bulk Add Users" ok-text="Add" ok-disabled="okDisabled">
+  <x-alert type="alertType" text="alertText"></x-alert>
+  <x-form-group>
+    <label>Enter list of usernames and optionally an email addresses on
+      each line with a comma separating the username from the email
+      address</label>
+    <x-form-textarea class="users" type="text" model="users"
+      rows="12" spellcheck="false"
+      placeholder="user1,user1@pritunl.com"></x-form-textarea>
+  </x-form-group>
+  <x-form-group>
+    <label>Select an organization</label>
+    <x-form-select class="org" model="model.org" collection="orgs"
+      form-tooltip="Organization to add user to"
+      opt-value="$model.id" opt-text="$model.name"></x-form-select>
+  </x-form-group>
+</x-modal>

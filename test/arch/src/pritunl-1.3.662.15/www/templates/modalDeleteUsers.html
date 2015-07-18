@@ -1,0 +1,10 @@
+<div class="form-group">
+  <label>Are you sure you want to disconnect and delete the following users?</label>
+  <ul class="modal-user-list">
+    <% _.each(users, function(user) { %>
+      <li>
+        <%- user.name %>
+      </li>
+    <% }); %>
+  </ul>
+</div>

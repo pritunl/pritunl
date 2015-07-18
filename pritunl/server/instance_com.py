@@ -1,26 +1,19 @@
 from pritunl.server.listener import *
+from pritunl.server.clients import *
 
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import settings
-from pritunl import ipaddress
 from pritunl import logger
 from pritunl import utils
-from pritunl import event
-from pritunl import limiter
 from pritunl import mongo
 
 import os
 import time
 import datetime
 import threading
-import collections
 import socket
-import bson
-import hashlib
-
-_limiter = limiter.Limiter('vpn', 'peer_limit', 'peer_limit_timeout')
 
 class ServerInstanceCom(object):
     def __init__(self, server, instance):
@@ -32,20 +25,10 @@ class ServerInstanceCom(object):
         self.bytes_recv = 0
         self.bytes_sent = 0
         self.client = None
-        self.clients = []
-        self.clients_active = 0
-        self.clients_ip = collections.deque()
-        self.client_count = 0
+        self.clients = Clients(server, instance, self)
         self.client_bytes = {}
-        self.client_devices = collections.defaultdict(list)
-        self.client_ips = {}
-        self.client_dyn_ips = set()
         self.cur_timestamp = utils.now()
-        self.ip_network = ipaddress.IPv4Network(self.server.network)
-        self.ip_pool = []
         self.bandwidth_rate = settings.vpn.bandwidth_update_rate
-        for ip_addr in self.ip_network.iterhosts():
-            self.ip_pool.append(ip_addr)
 
     @cached_static_property
     def users_ip_collection(cls):
@@ -55,263 +38,6 @@ class ServerInstanceCom(object):
         self.sock.send('client-kill %s\n' % client['client_id'])
         self.push_output('Disconnecting user org_id=%s user_id=%s' % (
             client['org_id'], client['user_id']))
-
-    def generate_client_conf(self, user):
-        from pritunl.server.utils import get_by_id
-
-        client_conf = ''
-
-        if user.link_server_id:
-            link_usr_svr = get_by_id(user.link_server_id,
-                fields=('_id', 'network', 'local_networks'))
-
-            client_conf += 'iroute %s %s\n' % utils.parse_network(
-                link_usr_svr.network)
-            for local_network in link_usr_svr.local_networks:
-                client_conf += 'iroute %s %s\n' % utils.parse_network(
-                    local_network)
-        else:
-            if self.server.mode == ALL_TRAFFIC:
-                client_conf += 'push "redirect-gateway"\n'
-
-            for dns_server in self.server.dns_servers:
-                client_conf += 'push "dhcp-option DNS %s"\n' % dns_server
-            if self.server.search_domain:
-                client_conf += 'push "dhcp-option DOMAIN %s"\n' % (
-                    self.server.search_domain)
-
-            client_conf += 'push "ip-win32 dynamic 0 3600"\n'
-
-            for link_svr in self.server.iter_links(fields=(
-                    '_id', 'network', 'local_networks')):
-                client_conf += 'push "route %s %s"\n' % utils.parse_network(
-                    link_svr.network)
-                for local_network in link_svr.local_networks:
-                    client_conf += 'push "route %s %s"\n' % (
-                        utils.parse_network(local_network))
-
-        return client_conf
-
-    def client_connect(self, client):
-        try:
-            client_id = client['client_id']
-            org_id = utils.ObjectId(client['org_id'])
-            user_id = utils.ObjectId(client['user_id'])
-            device_id = client.get('device_id')
-            device_name = client.get('device_name')
-            platform = client.get('platform')
-            mac_addr = client.get('mac_addr')
-            otp_code = client.get('otp_code')
-            remote_ip = client.get('remote_ip')
-            devices = self.client_devices[user_id]
-
-            if not _limiter.validate(remote_ip):
-                self.send_client_deny(client, 'Too many connect requests')
-                return
-
-            org = self.server.get_org(org_id, fields=['_id', 'name'])
-            if not org:
-                self.send_client_deny(client, 'Organization is not valid')
-                return
-
-            user = org.get_user(user_id, fields=('_id', 'name', 'email',
-                'type', 'auth_type', 'disabled', 'otp_secret',
-                'link_server_id'))
-            if not user:
-                self.send_client_deny(client, 'User is not valid')
-                return
-
-            if user.disabled:
-                logger.LogEntry(message='User failed authentication, ' +
-                    'disabled user "%s".' % (user.name))
-                self.send_client_deny(client, 'User is disabled')
-                return
-
-            if not user.auth_check():
-                logger.LogEntry(message='User failed authentication, ' +
-                    'Google authentication failed "%s".' % (user.name))
-                self.send_client_deny(client, 'User failed authentication')
-                return
-
-            if self.server.otp_auth and  user.type == CERT_CLIENT and \
-                    not user.verify_otp_code(otp_code, remote_ip):
-                logger.LogEntry(message='User failed two-step ' +
-                    'authentication "%s".' % user.name)
-                self.send_client_deny(client, 'Invalid OTP code')
-                return
-
-            client_conf = self.generate_client_conf(user)
-
-            if not self.server.multi_device:
-                virt_address = self.server.get_ip_addr(org.id, user_id)
-
-                if virt_address and virt_address in self.client_ips:
-                    for i, device in enumerate(devices):
-                        if device['virt_address'] == virt_address:
-                            self.client_kill(device)
-                            if virt_address in self.client_ips:
-                                self.client_ips.pop(virt_address, None)
-
-                            del devices[i]
-            else:
-                virt_address = None
-                if devices and device_id:
-                    for i, device in enumerate(devices):
-                        if device['device_id'] == device_id:
-                            virt_address = device['virt_address']
-
-                            self.client_kill(device)
-                            if virt_address in self.client_ips:
-                                self.client_ips.pop(virt_address, None)
-
-                            del devices[i]
-
-                if not virt_address:
-                    virt_address = self.server.get_ip_addr(org.id, user_id)
-
-                if virt_address and virt_address in self.client_ips:
-                    virt_address = None
-
-            if not virt_address:
-                while True:
-                    try:
-                        ip_addr = self.ip_pool.pop()
-                    except IndexError:
-                        break
-
-                    ip_addr = '%s/%s' % (
-                        ip_addr, self.ip_network.prefixlen)
-
-                    if ip_addr not in self.client_ips:
-                        virt_address = ip_addr
-                        self.client_dyn_ips.add(virt_address)
-                        break
-
-            if virt_address:
-                self.client_ips[virt_address] = client_id
-                self.client_ip_insert(user, client_id, virt_address)
-                devices.append({
-                    'user_id': user_id,
-                    'org_id': org_id,
-                    'client_id': client_id,
-                    'device_id': device_id,
-                    'device_name': device_name,
-                    'type': user.type,
-                    'platform': platform,
-                    'mac_addr': mac_addr,
-                    'otp_code': otp_code,
-                    'virt_address': virt_address,
-                    'real_address': remote_ip,
-                })
-                client_conf += 'ifconfig-push %s %s\n' % utils.parse_network(
-                    virt_address)
-
-                if self.server.debug:
-                    self.push_output('Client conf %s:' % user_id)
-                    for conf_line in client_conf.split('\n'):
-                        if conf_line:
-                            self.push_output('  ' + conf_line)
-
-                self.send_client_auth(client, client_conf)
-            else:
-                self.send_client_deny(client, 'Unable to assign ip address')
-        except:
-            logger.exception('Error parsing client connect', 'server',
-                server_id=self.server.id,
-                instance_id=self.instance.id,
-            )
-            self.send_client_deny(client, 'Error parsing client connect')
-
-    def client_connected(self, client):
-        client_id = client['client_id']
-        org_id = utils.ObjectId(client['org_id'])
-        user_id = utils.ObjectId(client['user_id'])
-        devices = self.client_devices[user_id]
-        data = None
-
-        for device in devices:
-            if device['client_id'] == client_id:
-                data = device
-                break
-
-        if not data:
-            self.push_output(
-                'ERROR Unknown client connected org_id=%s user_id=%s' % (
-                    org_id, user_id))
-            return
-
-        self.clients.append({
-            'id': user_id,
-            'client_id': client_id,
-            'device_id': data['device_id'],
-            'device_name': data['device_name'],
-            'platform': data['platform'],
-            'type': data['type'],
-            'real_address': data['real_address'],
-            'virt_address': data['virt_address'],
-            'connected_since': int(utils.now().strftime('%s')),
-        })
-
-        if data['type'] == CERT_CLIENT:
-            self.clients_active += 1
-
-        self.update_clients()
-
-        self.push_output('User connected org_id=%s user_id=%s' % (
-            org_id, user_id))
-
-    def client_disconnect(self, client):
-        client_id = client.get('client_id')
-        user_id = client.get('user_id')
-        user_id = utils.ObjectId(user_id) if user_id else None
-        user_type = None
-        virt_address = None
-        devices = self.client_devices[user_id]
-
-        for i, device in enumerate(devices):
-            if device['client_id'] == client_id:
-                virt_address = device['virt_address']
-                del devices[i]
-                break
-
-        for i, clt in enumerate(self.clients):
-            if clt['client_id'] == client_id:
-                user_type = clt['type']
-                virt_address = clt['virt_address']
-                del self.clients[i]
-                break
-
-        if virt_address and client_id:
-            if self.client_ips.get(virt_address) == client_id:
-                self.client_ips.pop(virt_address, None)
-
-            if virt_address in self.client_dyn_ips:
-                self.client_dyn_ips.remove(virt_address)
-                self.ip_pool.append(virt_address.split('/')[0])
-
-        if user_type == CERT_CLIENT:
-            self.clients_active -= 1
-
-        self.update_clients()
-
-        self.push_output('User disconnected org_id=%s user_id=%s' % (
-            client.get('org_id'), user_id))
-
-    def update_clients(self):
-        self.server.collection.update({
-            '_id': self.server.id,
-            'instances.instance_id': self.instance.id,
-        }, {'$set': {
-            'instances.$.clients': self.clients,
-            'instances.$.clients_active': self.clients_active,
-        }})
-
-        if self.client_count != len(self.clients):
-            for org_id in self.server.organizations:
-                event.Event(type=USERS_UPDATED, resource_id=org_id)
-            event.Event(type=HOSTS_UPDATED, resource_id=settings.local.host_id)
-            event.Event(type=SERVERS_UPDATED)
-            self.client_count = len(self.clients)
 
     def send_client_auth(self, client, client_conf):
         self.sock.send('client-auth %s %s\n%s\nEND\n' % (
@@ -345,11 +71,11 @@ class ServerInstanceCom(object):
             if line == '>CLIENT:ENV,END':
                 cmd = self.client['cmd']
                 if cmd == 'connect':
-                    self.client_connect(self.client)
+                    self.clients.connect(self.client)
                 elif cmd == 'connected':
-                    self.client_connected(self.client)
+                    self.clients.connected(self.client)
                 elif cmd == 'disconnected':
-                    self.client_disconnect(self.client)
+                    self.clients.disconnected(self.client)
                 self.client = None
             elif line[:11] == '>CLIENT:ENV':
                 env_key, env_val = line[12:].split('=', 1)
@@ -426,42 +152,7 @@ class ServerInstanceCom(object):
         if event_type != 'user_disconnect':
             return
 
-        devices = self.client_devices.get(user_id)
-        if not devices:
-            return
-
-        for device in devices:
-            if self.instance.sock_interrupt:
-                return
-            self.client_kill(device)
-
-    def client_ip_insert(self, user, client_id, address):
-        domain = user.name + '.' + user.org.name
-        network = self.server.network.replace('.', '-')
-        timestamp = utils.now()
-
-        domain_hash = hashlib.md5()
-        domain_hash.update(domain)
-        domain_hash = bson.binary.Binary(domain_hash.digest(),
-            subtype=bson.binary.MD5_SUBTYPE)
-
-        self.users_ip_collection.update({
-            '_id': domain_hash,
-        }, {
-            '$set': {
-                'timestamp': timestamp,
-                'last': address,
-                network: address,
-            },
-        }, upsert=True)
-
-        self.clients_ip.append({
-            'id': domain_hash,
-            'client_id': client_id,
-            'timestamp': timestamp,
-            'network': network,
-            'address': address,
-        })
+        self.clients.disconnect_user(user_id)
 
     @interrupter
     def _watch_thread(self):
@@ -545,61 +236,6 @@ class ServerInstanceCom(object):
         finally:
             remove_listener(self.instance.id)
 
-    @interrupter
-    def _user_ip_thread(self):
-        while True:
-            try:
-                try:
-                    client_ip = self.clients_ip.popleft()
-                except IndexError:
-                    yield interrupter_sleep(settings.vpn.user_ip_ttl - 60)
-                    continue
-
-                diff = datetime.timedelta(
-                    seconds=settings.vpn.user_ip_ttl - 60) - \
-                       (utils.now() - client_ip['timestamp'])
-
-                if diff.seconds > 1:
-                    yield interrupter_sleep(diff.seconds)
-
-                client_id = self.client_ips.get(client_ip['address'])
-                if not client_id or client_id != client_ip['client_id']:
-                    continue
-
-                try:
-                    timestamp = utils.now()
-
-                    self.users_ip_collection.update({
-                        '_id': client_ip['id'],
-                    }, {
-                        '$set': {
-                            'timestamp': timestamp,
-                            'last': client_ip['address'],
-                            client_ip['network']: client_ip['address'],
-                        },
-                    }, upsert=True)
-
-                    client_ip['timestamp'] = timestamp
-                except:
-                    logger.exception('Failed to update client ip', 'server',
-                        server_id=self.server.id,
-                        instance_id=self.instance.id,
-                    )
-                    continue
-                finally:
-                    self.clients_ip.append(client_ip)
-
-                yield
-            except GeneratorExit:
-                raise
-            except:
-                logger.exception('Error in client ip thread', 'server',
-                    server_id=self.server.id,
-                    instance_id=self.instance.id,
-                )
-                yield interrupter_sleep(3)
-
-
     def connect(self):
         self.wait_for_socket()
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -614,6 +250,6 @@ class ServerInstanceCom(object):
         thread.daemon = True
         thread.start()
 
-        thread = threading.Thread(target=self._user_ip_thread)
+        thread = threading.Thread(target=self.clients.ping_thread)
         thread.daemon = True
         thread.start()
