@@ -13,11 +13,6 @@ import pymongo
 import requests
 import werkzeug.http
 
-UBUNTU_RELEASES = [
-    'trusty', # 14.04
-    'precise', # 12.04
-]
-
 USAGE = """Usage: builder [command] [options]
 Command Help: builder [command] --help
 
@@ -30,7 +25,6 @@ Commands:
 INIT_PATH = 'pritunl/__init__.py'
 SETUP_PATH = 'setup.py'
 CHANGES_PATH = 'CHANGES'
-DEBIAN_CHANGELOG_PATH = 'debian/changelog'
 BUILD_KEYS_PATH = 'tools/build_keys.json'
 ARCH_PKGBUILD_PATH = 'arch/production/PKGBUILD'
 ARCH_DEV_PKGBUILD_PATH = 'arch/dev/PKGBUILD'
@@ -38,7 +32,6 @@ ARCH_PKGINSTALL = 'arch/production/pritunl.install'
 ARCH_DEV_PKGINSTALL = 'arch/dev/pritunl.install'
 CENTOS_PKGSPEC_PATH = 'centos/pritunl.spec'
 CENTOS_DEV_PKGSPEC_PATH = 'centos/pritunl-dev.spec'
-PRIVATE_KEY_NAME = 'private_key.asc'
 WWW_DIR = 'www'
 STYLES_DIR = 'www/styles'
 RELEASES_DIR = 'www/styles/releases'
@@ -47,7 +40,7 @@ AUR_CATEGORY = 13
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 cur_date = datetime.datetime.utcnow()
 
-def vagrant_popen(cmd, cwd=None, name='debian'):
+def vagrant_popen(cmd, cwd=None, name='centos'):
     if cwd:
         cmd = 'cd /vagrant/%s; %s' % (cwd, cmd)
     return subprocess.Popen("vagrant ssh --command='%s' %s" % (cmd, name),
@@ -173,7 +166,6 @@ with open(BUILD_KEYS_PATH, 'r') as build_keys_file:
     aur_username = build_keys['aur_username']
     aur_password = build_keys['aur_password']
     mongodb_uris = build_keys['mongodb_uris']
-    private_key = build_keys['private_key']
 
 releases_dbs = []
 for mongodb_uri in mongodb_uris:
@@ -294,58 +286,27 @@ elif cmd == 'set-version':
 
 
     # Generate changelog
-    debian_changelog = ''
-    changelog_version = None
+    version = None
     release_body = ''
     snapshot_lines = []
-    if is_snapshot:
-        snapshot_lines.append('Version %s %s' % (
-            new_version, datetime.datetime.utcnow().strftime('%Y-%m-%d')))
-        snapshot_lines.append('Snapshot release')
+    if not is_snapshot:
+        with open(CHANGES_PATH, 'r') as changelog_file:
+            for line in changelog_file.readlines()[2:]:
+                line = line.strip()
 
-    with open(CHANGES_PATH, 'r') as changelog_file:
-        for line in snapshot_lines + changelog_file.readlines()[2:]:
-            line = line.strip()
+                if not line or line[0] == '-':
+                    continue
 
-            if not line or line[0] == '-':
-                continue
-
-            if line[:7] == 'Version':
-                if debian_changelog:
-                    debian_changelog += '\n -- %s <%s>  %s -0400\n\n' % (
-                        maintainer,
-                        maintainer_email,
-                        date.strftime('%a, %d %b %Y %H:%M:%S'),
-                    )
-
-                _, version, date = line.split(' ')
-                date = datetime.datetime.strptime(date, '%Y-%m-%d')
-
-                if not changelog_version:
-                    changelog_version = version
-
-                debian_changelog += \
-                    '%s (%s-%subuntu1) unstable; urgency=low\n\n' % (
-                    pkg_name, version, build_num)
-
-            elif debian_changelog:
-                debian_changelog += '  * %s\n' % line
-
-                if not is_snapshot and version == new_version:
+                if line[:7] == 'Version':
+                    if version:
+                        break
+                    version = line.split(' ')[1]
+                elif version:
                     release_body += '* %s\n' % line
 
-        debian_changelog += '\n -- %s <%s>  %s -0400\n' % (
-            maintainer,
-            maintainer_email,
-            date.strftime('%a, %d %b %Y %H:%M:%S'),
-        )
-
-    if not is_snapshot and changelog_version != new_version:
+    if not is_snapshot and version != new_version:
         print 'New version does not exist in changes'
         sys.exit(1)
-
-    with open(DEBIAN_CHANGELOG_PATH, 'w') as changelog_file:
-        changelog_file.write(debian_changelog)
 
     if not is_snapshot and not release_body:
         print 'Failed to generate github release body'
