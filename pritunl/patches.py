@@ -121,9 +121,5 @@ def aggregate(self, *args, **kwargs):
     val = aggregate_orig(self, *args, **kwargs)
     if start:
         flask.g.query_time += (time.time() - start)
-
-    if not PYMONGO3:
-        val = val['result']
-
     return val
 pymongo.collection.Collection.aggregate = aggregate
