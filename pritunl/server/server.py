@@ -184,6 +184,10 @@ class Server(mongo.MongoObject):
         return mongo.get_collection('users')
 
     @cached_static_property
+    def clients_collection(cls):
+        return mongo.get_collection('clients')
+
+    @cached_static_property
     def org_collection(cls):
         return mongo.get_collection('organizations')
 
@@ -228,26 +232,19 @@ class Server(mongo.MongoObject):
             return
         return max((utils.now() - self.start_timestamp).seconds, 1)
 
-    def _set_user_counts(self):
-        count = 0
-        clients = set()
-        for instance in self.instances:
-            count += instance['clients_active']
-            for client in instance['clients']:
-                if client['type'] == CERT_CLIENT:
-                    clients.add(client['id'])
-        self.devices_online = count
-        self.users_online = len(clients)
-
     @cached_property
     def users_online(self):
-        self._set_user_counts()
-        return self.users_online
+        return len(self.clients_collection.distinct("user_id", {
+            'server_id': self.id,
+            'type': CERT_CLIENT,
+        }))
 
     @cached_property
     def devices_online(self):
-        self._set_user_counts()
-        return self.devices_online
+        return self.clients_collection.find({
+            'server_id': self.id,
+            'type': CERT_CLIENT,
+        }).count()
 
     @cached_property
     def user_count(self):
