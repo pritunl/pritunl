@@ -227,6 +227,7 @@ class Clients(object):
                 'platform': device['platform'],
                 'type': device['type'],
                 'device_name': device['device_name'],
+                'mac_addr': device['mac_addr'],
                 'network': network,
                 'real_address': device['real_address'],
                 'virt_address': device['virt_address'],
