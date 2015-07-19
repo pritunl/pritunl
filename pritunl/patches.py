@@ -44,7 +44,6 @@ def insert(self, *args, **kwargs):
     if start:
         flask.g.query_time += (time.time() - start)
     return val
-
 pymongo.collection.Collection.insert = insert
 
 update_orig = pymongo.collection.Collection.update
