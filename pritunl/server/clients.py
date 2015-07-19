@@ -174,7 +174,6 @@ class Clients(object):
                     'type': user.type,
                     'platform': platform,
                     'mac_addr': mac_addr,
-                    'otp_code': otp_code,
                     'virt_address': virt_address,
                     'real_address': remote_ip,
                 }
