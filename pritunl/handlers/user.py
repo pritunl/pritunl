@@ -32,12 +32,7 @@ def user_get(org_id, user_id=None, page=None):
     clients = collections.defaultdict(lambda: collections.defaultdict(list))
     servers = []
 
-    fields = (
-        'name',
-        'instances',
-        'otp_auth',
-    )
-    for svr in org.iter_servers(fields=fields):
+    for svr in org.iter_servers(fields=('name', 'otp_auth')):
         servers.append(svr)
         server_count += 1
         if svr.otp_auth:
