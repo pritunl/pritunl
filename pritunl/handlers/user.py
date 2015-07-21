@@ -37,9 +37,6 @@ def user_get(org_id, user_id=None, page=None):
         server_count += 1
         if svr.otp_auth:
             otp_auth = True
-        for instance in svr.instances:
-            for client in instance['clients']:
-                clients[client['id']][svr.id].append(client)
 
     users = []
     users_server_data = collections.defaultdict(dict)
