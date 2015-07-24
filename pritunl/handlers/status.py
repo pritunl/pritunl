@@ -3,7 +3,6 @@ from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import utils
 from pritunl import settings
-from pritunl import server
 from pritunl import organization
 from pritunl import app
 from pritunl import auth
