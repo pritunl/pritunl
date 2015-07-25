@@ -4,7 +4,6 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import settings
-from pritunl import app
 from pritunl import mongo
 from pritunl import utils
 
