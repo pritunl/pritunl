@@ -1,3 +1,4 @@
+from pritunl.static.utils import *
 from pritunl.cache import cache_db
 
 from pritunl.constants import *
@@ -5,9 +6,6 @@ from pritunl.exceptions import *
 from pritunl import settings
 
 import os
-import sys
-import zlib
-import time
 import datetime
 import mimetypes
 import flask
@@ -34,14 +32,6 @@ class StaticFile(object):
     def get_cache_key(self):
         return 'file_%s' % self.path
 
-    def generate_etag(self, file_name, file_size, mtime):
-        file_name = file_name.encode(sys.getfilesystemencoding())
-        return 'wzsdm-%d-%s-%s' % (
-            time.mktime(mtime.timetuple()),
-            file_size,
-            zlib.adler32(file_name) & 0xffffffff,
-        )
-
     def set_cache(self):
         cache_db.dict_set(self.get_cache_key(), 'data', self.data or '')
         cache_db.dict_set(self.get_cache_key(), 'mime_type',
@@ -59,7 +49,7 @@ class StaticFile(object):
 
     def load_file(self):
         if settings.conf.static_cache and cache_db.exists(
-                self.get_cache_key()):
+            self.get_cache_key()):
             self.get_cache()
             return
 
@@ -78,7 +68,7 @@ class StaticFile(object):
 
         self.mime_type = mimetypes.guess_type(file_basename)[0] or 'text/plain'
         self.last_modified = werkzeug.http.http_date(file_mtime)
-        self.etag = self.generate_etag(file_basename, file_size, file_mtime)
+        self.etag = generate_etag(file_basename, file_size, file_mtime)
         if settings.conf.static_cache:
             self.set_cache()
 
@@ -87,7 +77,7 @@ class StaticFile(object):
             flask.abort(404)
         response = flask.Response(response=self.data, mimetype=self.mime_type)
         if settings.conf.static_cache and \
-                not settings.conf.debug and self.cache:
+            not settings.conf.debug and self.cache:
             response.headers.add('Cache-Control',
                 'max-age=%s, public' % settings.app.static_cache_time)
             response.headers.add('ETag', '"%s"' % self.etag)
