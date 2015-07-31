@@ -13,64 +13,27 @@ def fill_dh_params():
     collection = mongo.get_collection('dh_params')
     queue_collection = mongo.get_collection('queue')
 
+    new_dh_params = []
     dh_param_bits_pool = settings.app.dh_param_bits_pool
-    if len(dh_param_bits_pool) > 1:
-        dh_param_counts = utils.LeastCommonCounter(
-            {x: 0 for x in dh_param_bits_pool})
+    dh_param_counts = utils.LeastCommonCounter()
 
-        pools = collection.aggregate([
-            {'$match': {
-                'dh_param_bits': {'$in': dh_param_bits_pool},
-            }},
-            {'$project': {
-                'dh_param_bits': True,
-            }},
-            {'$group': {
-                '_id': '$dh_param_bits',
-                'count': {'$sum': 1},
-            }},
-        ])
-
-        for pool in pools:
-            dh_param_counts[pool['_id']] = pool['count']
-
-        pools = queue_collection.aggregate([
-            {'$match': {
-                'type': 'dh_params',
-                'dh_param_bits': {'$in': dh_param_bits_pool},
-            }},
-            {'$project': {
-                'dh_param_bits': True,
-            }},
-            {'$group': {
-                '_id': '$dh_param_bits',
-                'count': {'$sum': 1},
-            }},
-        ])
-
-        for pool in pools:
-            dh_param_counts[pool['_id']] += pool['count']
-    else:
-        dh_param_counts = utils.LeastCommonCounter()
-
+    for dh_param_bits in dh_param_bits_pool:
         pool_count = collection.find({
-            'dh_param_bits': dh_param_bits_pool[0],
+            'dh_param_bits': dh_param_bits,
         }, {
             '_id': True
         }).count()
 
-        dh_param_counts[dh_param_bits_pool[0]] = pool_count
+        dh_param_counts[dh_param_bits] = pool_count
 
         pool_count = queue_collection.find({
             'type': 'dh_params',
-            'dh_param_bits': dh_param_bits_pool[0],
+            'dh_param_bits': dh_param_bits,
         }, {
             '_id': True
         }).count()
 
-        dh_param_counts[dh_param_bits_pool[0]] += pool_count
-
-    new_dh_params = []
+        dh_param_counts[dh_param_bits] += pool_count
 
     for dh_param_bits, count in dh_param_counts.least_common():
         new_dh_params.append([dh_param_bits] * (
