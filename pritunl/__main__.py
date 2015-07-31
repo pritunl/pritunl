@@ -56,7 +56,6 @@ def main(default_conf=None):
         print '%s v%s' % (pritunl.__title__, pritunl.__version__)
         sys.exit(0)
     elif cmd == 'reset-password':
-        from pritunl.constants import DEFAULT_USERNAME, DEFAULT_PASSWORD
         from pritunl import setup
         from pritunl import auth
 
