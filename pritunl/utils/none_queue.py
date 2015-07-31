@@ -1,13 +1,6 @@
-from pritunl.constants import *
-from pritunl.exceptions import *
-from pritunl.helpers import *
-from pritunl import settings
-from pritunl import mongo
-
 from time import time as _time
 import threading as _threading
 from collections import deque
-import heapq
 import Queue
 
 # Copy of Queue.Queue returning None instead of raising Queue.Empty

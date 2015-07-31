@@ -7,9 +7,6 @@ from pritunl import event
 from pritunl import server
 from pritunl import queue
 
-import pymongo
-import bson
-
 @queue.add_queue
 class QueueAssignIpPool(queue.Queue):
     fields = {

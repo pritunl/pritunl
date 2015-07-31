@@ -1,22 +1,17 @@
 from pritunl.transaction.collection import TransactionCollection
 
 from pritunl.constants import *
-from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import mongo
-from pritunl import listener
 from pritunl import logger
 from pritunl import utils
 
-import pymongo
 import collections
 import datetime
 import bson
-import threading
 import zlib
 import json
-import time
 
 class Transaction(mongo.MongoObject):
     fields = {

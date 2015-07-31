@@ -5,7 +5,6 @@ from pritunl.server.server import Server, dict_fields
 
 from pritunl.constants import *
 from pritunl.exceptions import *
-from pritunl.helpers import *
 from pritunl import transaction
 from pritunl import mongo
 from pritunl import ipaddress

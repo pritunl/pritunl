@@ -1,5 +1,3 @@
-from pritunl.constants import *
-from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import mongo
@@ -7,15 +5,9 @@ from pritunl import logger
 from pritunl import task
 from pritunl import utils
 
-import pymongo
-import collections
-import datetime
-import bson
 import threading
 import time
 import random
-import os
-import importlib
 
 def random_sleep():
     time.sleep(random.randint(0, 50) / 1000.)

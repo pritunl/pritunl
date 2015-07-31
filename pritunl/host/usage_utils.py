@@ -1,11 +1,6 @@
 from pritunl.constants import *
-from pritunl.exceptions import *
-from pritunl.helpers import *
-from pritunl import settings
 from pritunl import utils
 from pritunl import logger
-
-import subprocess
 
 def get_period_timestamp(period, timestamp):
     timestamp -= datetime.timedelta(microseconds=timestamp.microsecond,

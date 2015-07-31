@@ -6,7 +6,6 @@ from pritunl.settings.user import SettingsUser
 from pritunl.settings.vpn import SettingsVpn
 
 from pritunl.constants import *
-from pritunl.exceptions import *
 from pritunl.helpers import *
 
 module_classes = (

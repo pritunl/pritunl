@@ -1,6 +1,4 @@
 from pritunl.constants import *
-from pritunl.exceptions import *
-from pritunl.helpers import *
 from pritunl import settings
 from pritunl import pooler
 from pritunl import mongo
@@ -8,18 +6,9 @@ from pritunl import utils
 from pritunl import organization
 from pritunl import logger
 
-import time
-import threading
-import uuid
-import subprocess
-import os
-import itertools
-import collections
-
 @pooler.add_pooler('user')
 def fill_user():
     collection = mongo.get_collection('users')
-    org_collection = mongo.get_collection('organizations')
     queue_collection = mongo.get_collection('queue')
 
     orgs = {}

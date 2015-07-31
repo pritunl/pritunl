@@ -1,13 +1,8 @@
 from pritunl.constants import *
-from pritunl.exceptions import *
 from pritunl.helpers import *
-from pritunl import app
-from pritunl import logger
 from pritunl import event
 from pritunl import organization
 from pritunl import queue
-
-import copy
 
 @queue.add_queue
 class QueueInitOrgPooled(queue.Queue):

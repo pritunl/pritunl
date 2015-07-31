@@ -1,5 +1,3 @@
-from pritunl.constants import *
-from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import mongo
@@ -7,10 +5,6 @@ from pritunl import logger
 from pritunl import transaction
 from pritunl import utils
 
-import pymongo
-import collections
-import datetime
-import bson
 import threading
 import time
 

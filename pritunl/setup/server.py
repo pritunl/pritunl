@@ -7,17 +7,14 @@ from pritunl import logger
 from pritunl import settings
 from pritunl import static
 from pritunl import utils
-from pritunl import patches
 from pritunl import wsgiserver
 from pritunl import upgrade
 from pritunl import listener
 
 import logging
-import signal
 import time
 import os
 import pymongo
-import json
 import flask
 import threading
 

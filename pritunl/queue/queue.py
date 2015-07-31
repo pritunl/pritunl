@@ -4,19 +4,14 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import settings
-from pritunl.queue import com
 from pritunl import logger
 from pritunl import mongo
 from pritunl import messenger
 from pritunl import utils
 
-import bson
 import datetime
-import logging
 import threading
 import time
-import importlib
-import os
 
 queue_types = {}
 reserve_types = {}

@@ -1,5 +1,4 @@
 from pritunl.constants import *
-from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import utils
@@ -13,7 +12,6 @@ import flask
 import datetime
 import hmac
 import pymongo
-import bson
 import uuid
 
 class Administrator(mongo.MongoObject):

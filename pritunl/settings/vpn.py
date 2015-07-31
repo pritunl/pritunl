@@ -1,9 +1,5 @@
 from pritunl.settings.group_mongo import SettingsGroupMongo
 
-from pritunl.constants import *
-from pritunl.exceptions import *
-from pritunl.helpers import *
-
 class SettingsVpn(SettingsGroupMongo):
     group = 'vpn'
     fields = {

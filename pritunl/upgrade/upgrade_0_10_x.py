@@ -1,18 +1,13 @@
 from pritunl.upgrade.utils import get_collection
 
 from pritunl.constants import *
-from pritunl.exceptions import *
-from pritunl.helpers import *
 from pritunl import settings
 from pritunl import utils
 from pritunl import ipaddress
 from pritunl import logger
 
 import os
-import sys
 import json
-import pymongo
-import bson
 import datetime
 
 def _upgrade_auth():

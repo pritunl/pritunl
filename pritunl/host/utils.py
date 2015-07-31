@@ -2,7 +2,6 @@ from pritunl.host.host import Host
 
 from pritunl.constants import *
 from pritunl.exceptions import *
-from pritunl.helpers import *
 from pritunl import settings
 from pritunl import organization
 from pritunl import event

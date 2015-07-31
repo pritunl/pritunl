@@ -1,12 +1,8 @@
-from pritunl.constants import *
-from pritunl.exceptions import *
 from pritunl.helpers import *
-from pritunl import settings
 from pritunl import utils
 from pritunl import logger
 
 import threading
-import time
 
 @interrupter
 def _time_sync_thread():

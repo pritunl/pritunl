@@ -1,5 +1,3 @@
-from pritunl.constants import *
-from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import utils
 from pritunl import event
