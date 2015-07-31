@@ -93,7 +93,6 @@ def main(default_conf=None):
 
         sys.exit(0)
     elif cmd == 'logs':
-        from pritunl.constants import DEFAULT_USERNAME, DEFAULT_PASSWORD
         from pritunl import setup
         from pritunl import logger
         setup.setup_db()
