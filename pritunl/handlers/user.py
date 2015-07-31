@@ -8,10 +8,10 @@ from pritunl import server
 from pritunl import organization
 from pritunl import app
 from pritunl import auth
+from pritunl import mongo
 
 import flask
 import time
-import collections
 
 @app.app.route('/user/<org_id>', methods=['GET'])
 @app.app.route('/user/<org_id>/<user_id>', methods=['GET'])
@@ -28,7 +28,6 @@ def user_get(org_id, user_id=None, page=None):
     limit = int(flask.request.args.get('limit', settings.user.page_count))
     otp_auth = False
     server_count = 0
-    clients = collections.defaultdict(lambda: collections.defaultdict(list))
     servers = []
 
     for svr in org.iter_servers(fields=('name', 'otp_auth')):
@@ -38,7 +37,9 @@ def user_get(org_id, user_id=None, page=None):
             otp_auth = True
 
     users = []
-    users_server_data = collections.defaultdict(dict)
+    users_id = []
+    users_data = {}
+    users_servers = {}
     fields = (
         'organization',
         'organization_name',
@@ -48,50 +49,60 @@ def user_get(org_id, user_id=None, page=None):
         'otp_secret',
         'disabled',
     )
-    for user in org.iter_users(page=page, search=search,
+    for usr in org.iter_users(page=page, search=search,
             search_limit=limit, fields=fields):
-        user_id = user.id
-        is_client = user_id in clients
-        user_dict = user.dict()
-        user_dict['status'] = is_client
+        users_id.append(usr.id)
+
+        user_dict = usr.dict()
+        user_dict['status'] = False
         user_dict['otp_auth'] = otp_auth
+
+        users_data[usr.id] = user_dict
+        users_servers[usr.id] = {}
+
         server_data = []
         for svr in servers:
-            server_id = svr.id
-
-            if clients[user_id][server_id]:
-                for device in clients[user_id][server_id]:
-                    device['id'] = device.pop('device_id', server_id)
-                    device['name'] = svr.name
-                    device['status'] = True
-                    device['virt_address'] = device['virt_address'].split(
-                        '/')[0]
-                    server_data.append(device)
-            else:
-                data = {
-                    'id': server_id,
-                    'name': svr.name,
-                    'status': False,
-                    'type': None,
-                    'client_id': None,
-                    'device_name': None,
-                    'platform': None,
-                    'real_address': None,
-                    'virt_address': None,
-                    'connected_since': None
-                }
-                server_data.append(data)
-                users_server_data[user_id][server_id] = data
+            data = {
+                'id': svr.id,
+                'name': svr.name,
+                'status': False,
+                'client_id': None,
+                'device_name': None,
+                'platform': None,
+                'real_address': None,
+                'virt_address': None,
+                'connected_since': None
+            }
+            server_data.append(data)
+            users_servers[usr.id][svr.id] = data
 
         user_dict['servers'] = sorted(server_data, key=lambda x: x['name'])
+
         users.append(user_dict)
 
-    ip_addrs_iter = server.multi_get_ip_addr(org_id, users_server_data.keys())
+    clients_collection = mongo.get_collection('clients')
+    for doc in clients_collection.find({
+                'user_id': {'$in': users_id},
+            }):
+        server_data = users_servers[doc['user_id']].get(doc['server_id'])
+        if not server_data:
+            continue
+
+        users_data[doc['user_id']]['status'] = True
+
+        server_data['status'] = True
+        server_data['client_id'] = doc['_id']
+        server_data['device_name'] = doc['device_name']
+        server_data['platform'] = doc['platform']
+        server_data['real_address'] = doc['real_address']
+        server_data['virt_address'] = doc['virt_address'].split('/')[0]
+        server_data['connected_since'] = doc['connected_since']
+
+    ip_addrs_iter = server.multi_get_ip_addr(org_id, users_id)
     for user_id, server_id, ip_add in ip_addrs_iter:
-        user_server_data = users_server_data[user_id].get(server_id)
-        if user_server_data:
-            if not user_server_data['virt_address']:
-                user_server_data['virt_address'] = ip_add
+        server_data = users_servers[user_id].get(server_id)
+        if server_data and not server_data['virt_address']:
+            server_data['virt_address'] = ip_add
 
     if page is not None:
         return utils.jsonify({
