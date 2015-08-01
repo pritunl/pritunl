@@ -9,11 +9,11 @@ from pritunl import auth
 import flask
 
 @app.app.route('/host', methods=['GET'])
-@app.app.route('/host/<host_id>', methods=['GET'])
+@app.app.route('/host/<hst>', methods=['GET'])
 @auth.session_auth
-def host_get(host_id=None):
-    if host_id:
-        return utils.jsonify(host.get_by_id(host_id).dict())
+def host_get(hst=None):
+    if hst:
+        return utils.jsonify(host.get_by_id(hst).dict())
 
     hosts = []
     page = flask.request.args.get('page', None)
@@ -31,10 +31,10 @@ def host_get(host_id=None):
     else:
         return utils.jsonify(hosts)
 
-@app.app.route('/host/<host_id>', methods=['PUT'])
+@app.app.route('/host/<hst>', methods=['PUT'])
 @auth.session_auth
-def host_put(host_id=None):
-    hst = host.get_by_id(host_id)
+def host_put(hst=None):
+    hst = host.get_by_id(hst)
 
     if 'name' in flask.request.json:
         hst.name = utils.filter_str(
@@ -53,10 +53,10 @@ def host_put(host_id=None):
 
     return utils.jsonify(hst.dict())
 
-@app.app.route('/host/<host_id>', methods=['DELETE'])
+@app.app.route('/host/<hst>', methods=['DELETE'])
 @auth.session_auth
-def host_delete(host_id):
-    hst = host.get_by_id(host_id)
+def host_delete(hst):
+    hst = host.get_by_id(hst)
     hst.remove()
 
     logger.LogEntry(message='Deleted host "%s".' % hst.name)
@@ -64,8 +64,8 @@ def host_delete(host_id):
 
     return utils.jsonify({})
 
-@app.app.route('/host/<host_id>/usage/<period>', methods=['GET'])
+@app.app.route('/host/<hst>/usage/<period>', methods=['GET'])
 @auth.session_auth
-def host_usage_get(host_id, period):
-    hst = host.get_by_id(host_id)
+def host_usage_get(hst, period):
+    hst = host.get_by_id(hst)
     return utils.jsonify(hst.usage.get_period(period))
