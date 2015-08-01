@@ -9,7 +9,6 @@ define([
       'id': null,
       'name': null,
       'status': null,
-      'type': null,
       'client_id': null,
       'device_id': null,
       'device_name': null,
