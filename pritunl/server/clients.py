@@ -209,7 +209,6 @@ class Clients(object):
             return
 
         domain = device['user'] + '.' + device['org']
-        network = self.server.network.replace('.', '-')
         timestamp = utils.now()
 
         domain_hash = hashlib.md5()
@@ -227,7 +226,7 @@ class Clients(object):
                 'type': device['type'],
                 'device_name': device['device_name'],
                 'mac_addr': device['mac_addr'],
-                'network': network,
+                'network': self.server.network,
                 'real_address': device['real_address'],
                 'virt_address': device['virt_address'],
                 'connected_since': int(timestamp.strftime('%s')),
