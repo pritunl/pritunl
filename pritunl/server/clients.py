@@ -22,7 +22,6 @@ class Clients(object):
         self.instance_com = instance_com
 
         self.clients = collections.deque()
-        self.client_count = 0
         self.ips = {}
         self.dyn_ips = set()
         self.devices = collections.defaultdict(dict)
@@ -306,7 +305,6 @@ class Clients(object):
             event.Event(type=USERS_UPDATED, resource_id=org_id)
         event.Event(type=HOSTS_UPDATED, resource_id=settings.local.host_id)
         event.Event(type=SERVERS_UPDATED)
-        self.client_count = len(self.clients)
 
     @interrupter
     def ping_thread(self):
