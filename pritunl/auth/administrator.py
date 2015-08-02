@@ -1,3 +1,5 @@
+from pritunl.auth.utils import *
+
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import settings
@@ -56,45 +58,15 @@ class Administrator(mongo.MongoObject):
     def limiter_collection(cls):
         return mongo.get_collection('auth_limiter')
 
-    def _hash_password_v0(self, salt, password):
-        pass_hash = hashlib.sha512()
-        pass_hash.update(password[:settings.app.password_len_limit])
-        pass_hash.update(base64.b64decode(salt))
-        return pass_hash.digest()
-
-    def _hash_password_v1(self, salt, password):
-        pass_hash = hashlib.sha512()
-        pass_hash.update(password[:settings.app.password_len_limit])
-        pass_hash.update(base64.b64decode(salt))
-        hash_digest = pass_hash.digest()
-
-        for i in xrange(5):
-            pass_hash = hashlib.sha512()
-            pass_hash.update(hash_digest)
-            hash_digest = pass_hash.digest()
-        return hash_digest
-
-    def _hash_password_v2(self, salt, password):
-        pass_hash = hashlib.sha512()
-        pass_hash.update(password[:settings.app.password_len_limit])
-        pass_hash.update(base64.b64decode(salt))
-        hash_digest = pass_hash.digest()
-
-        for _ in xrange(10):
-            pass_hash = hashlib.sha512()
-            pass_hash.update(hash_digest)
-            hash_digest = pass_hash.digest()
-        return hash_digest
-
     def test_password(self, test_pass):
         hash_ver, pass_salt, pass_hash = self.password.split('$')
 
         if hash_ver == '0':
-            hash_func = self._hash_password_v0
+            hash_func = hash_password_v0
         elif hash_ver == '1':
-            hash_func = self._hash_password_v1
+            hash_func = hash_password_v1
         elif hash_ver == '2':
-            hash_func = self._hash_password_v2
+            hash_func = hash_password_v2
         else:
             raise AttributeError('Unknown hash version')
 
@@ -129,7 +101,7 @@ class Administrator(mongo.MongoObject):
 
             salt = base64.b64encode(os.urandom(8))
             pass_hash = base64.b64encode(
-                self._hash_password_v2(salt, self.password))
+                hash_password_v2(salt, self.password))
             pass_hash = '2$%s$%s' % (salt, pass_hash)
             self.password = pass_hash
 
