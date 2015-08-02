@@ -65,7 +65,7 @@ class MongoObject(object):
                     '_id': self.id,
                 }
             if fields:
-                doc = self.collection.find_one(spec, fields)
+                doc = self.collection.find_one(spec, list(fields))
             else:
                 doc = self.collection.find_one(spec)
             if not doc:
