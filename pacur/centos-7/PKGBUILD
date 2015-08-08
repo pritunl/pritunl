@@ -51,7 +51,7 @@ package() {
     mkdir -p "${pkgdir}/var/lib/${pkgname}"
     mkdir -p "${pkgdir}/usr/lib/${pkgname}"
     /usr/lib/${pkgname}/bin/python2 setup.py install --root="${pkgdir}" --prefix=/usr
-    rm -r ${pkgdir}/etc/init.d/${pkgname}.sh
+    rm -r ${pkgdir}/etc/init.d
     cp -r ${pkgdir}/usr/lib/python2.7/site-packages /usr/lib/${pkgname}/lib/python2.7
     rm -r ${pkgdir}/usr/lib/python2.7
     cp -r /usr/lib/${pkgname}/* ${pkgdir}/usr/lib/${pkgname}/
