@@ -6,11 +6,10 @@ import json
 import os
 import subprocess
 import time
-import getpass
-import zlib
 import math
-import pymongo
 import requests
+import pymongo
+import zlib
 import werkzeug.http
 
 USAGE = """Usage: builder [command] [options]
@@ -26,31 +25,14 @@ INIT_PATH = 'pritunl/__init__.py'
 SETUP_PATH = 'setup.py'
 CHANGES_PATH = 'CHANGES'
 BUILD_KEYS_PATH = 'tools/build_keys.json'
-ARCH_PKGBUILD_PATH = 'arch/production/PKGBUILD'
-ARCH_DEV_PKGBUILD_PATH = 'arch/dev/PKGBUILD'
-ARCH_PKGINSTALL = 'arch/production/pritunl.install'
-ARCH_DEV_PKGINSTALL = 'arch/dev/pritunl.install'
-CENTOS_PKGSPEC_PATH = 'centos/pritunl.spec'
-CENTOS_DEV_PKGSPEC_PATH = 'centos/pritunl-dev.spec'
+PACUR_PATH = '../pritunl-pacur'
+BUILD_TARGETS = ('pritunl',)
 WWW_DIR = 'www'
 STYLES_DIR = 'www/styles'
 RELEASES_DIR = 'www/styles/releases'
-AUR_CATEGORY = 13
 
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 cur_date = datetime.datetime.utcnow()
-
-def vagrant_popen(cmd, cwd=None, name='centos'):
-    if cwd:
-        cmd = 'cd /vagrant/%s; %s' % (cwd, cmd)
-    return subprocess.Popen("vagrant ssh --command='%s' %s" % (cmd, name),
-        shell=True, stdin=subprocess.PIPE)
-
-def vagrant_check_call(cmd, cwd=None, name='centos'):
-    if cwd:
-        cmd = 'cd /vagrant/%s; %s' % (cwd, cmd)
-    return subprocess.check_call("vagrant ssh --command='%s' %s" % (cmd, name),
-        shell=True, stdin=subprocess.PIPE)
 
 def wget(url, cwd=None, output=None):
     if output:
@@ -77,18 +59,9 @@ def post_git_asset(release_id, file_name, file_path):
     )
 
     if response.status_code != 201:
-        print 'Failed to create release on github'
+        print 'Failed to create asset on github'
         print response.json()
         sys.exit(1)
-
-def rm_tree(path):
-    subprocess.check_call(['rm', '-rf', path])
-
-def tar_extract(archive_path, cwd=None):
-    subprocess.check_call(['tar', 'xfz', archive_path], cwd=cwd)
-
-def tar_compress(archive_path, in_path, cwd=None):
-    subprocess.check_call(['tar', 'cfz', archive_path, in_path], cwd=cwd)
 
 def get_ver(version):
     day_num = (cur_date - datetime.datetime(2013, 9, 12)).days
@@ -114,9 +87,29 @@ def get_int_ver(version):
     elif 'rc' in version:
         ver[-1] = str(int(ver[-1]) + 3000)
     else:
-        ver.append('4000')
+        ver[-1] = str(int(ver[-1]) + 4000)
 
     return int(''.join([x.zfill(4) for x in ver]))
+
+
+def iter_packages():
+    for target in BUILD_TARGETS:
+        target_path = os.path.join(PACUR_PATH, target)
+        for release in os.listdir(target_path):
+            release_path = os.path.join(target_path, release)
+            for name in os.listdir(release_path):
+                if name.endswith(".pkg.tar.xz"):
+                    pass
+                elif name.endswith(".rpm"):
+                    pass
+                elif name.endswith(".deb"):
+                    pass
+                else:
+                    continue
+
+                path = os.path.join(release_path, name)
+
+                yield name, path
 
 def generate_last_modifited_etag(file_path):
     file_name = os.path.basename(file_path).encode(sys.getfilesystemencoding())
@@ -163,6 +156,7 @@ with open(BUILD_KEYS_PATH, 'r') as build_keys_file:
     build_keys = json.loads(build_keys_file.read().strip())
     github_owner = build_keys['github_owner']
     github_token = build_keys['github_token']
+    mirror_url = build_keys['mirror_url']
     mongodb_uris = build_keys['mongodb_uris']
 
 releases_dbs = []
@@ -170,6 +164,7 @@ for mongodb_uri in mongodb_uris:
     mongo_client = pymongo.MongoClient(mongodb_uri)
     mongo_db = mongo_client.get_default_database()
     releases_dbs.append(mongo_db.releases)
+
 
 # Get package info
 with open(INIT_PATH, 'r') as init_file:
@@ -190,6 +185,7 @@ with open(INIT_PATH, 'r') as init_file:
             key, val = line.split('=')
             cur_version = line.split('=')[1].replace("'", '').strip()
 
+
 # Parse args
 if len(sys.argv) > 1:
     cmd = sys.argv[1]
@@ -205,6 +201,8 @@ parser.add_option('--test', action='store_true',
 
 build_num = 0
 
+
+# Run cmd
 if cmd == 'version':
     print '%s v%s' % (app_name, cur_version)
     sys.exit(0)
@@ -217,14 +215,7 @@ elif cmd == 'sync-db':
 elif cmd == 'set-version':
     new_version_orig = args[1]
     new_version = get_ver(new_version_orig)
-
     is_snapshot = 'snapshot' in new_version
-    is_dev_release = any((
-        'snapshot' in new_version,
-        'alpha' in new_version,
-        'beta' in new_version,
-        'rc' in new_version,
-    ))
 
 
     # Update changes
@@ -286,7 +277,6 @@ elif cmd == 'set-version':
     # Generate changelog
     version = None
     release_body = ''
-    snapshot_lines = []
     if not is_snapshot:
         with open(CHANGES_PATH, 'r') as changelog_file:
             for line in changelog_file.readlines()[2:]:
@@ -306,50 +296,12 @@ elif cmd == 'set-version':
         print 'New version does not exist in changes'
         sys.exit(1)
 
-    if not is_snapshot and not release_body:
+    if is_snapshot:
+        release_body = '* Snapshot release'
+    elif not release_body:
         print 'Failed to generate github release body'
         sys.exit(1)
-    elif is_snapshot:
-        release_body = '* Snapshot release'
     release_body = release_body.rstrip('\n')
-
-
-    # Update arch package
-    pkgbuild_path = ARCH_DEV_PKGBUILD_PATH if is_dev_release else \
-        ARCH_PKGBUILD_PATH
-    with open(pkgbuild_path, 'r') as pkgbuild_file:
-        pkgbuild_data = re.sub(
-            'pkgver=(.*)',
-            'pkgver=%s' % new_version,
-            pkgbuild_file.read(),
-        )
-        pkgbuild_data = re.sub(
-            'pkgrel=(.*)',
-            'pkgrel=%s' % (build_num + 1),
-            pkgbuild_data,
-        )
-
-    with open(pkgbuild_path, 'w') as pkgbuild_file:
-        pkgbuild_file.write(pkgbuild_data)
-
-
-    # Update centos package
-    pkgspec_path = CENTOS_DEV_PKGSPEC_PATH if is_dev_release else \
-        CENTOS_PKGSPEC_PATH
-    with open(pkgspec_path, 'r') as pkgspec_file:
-        pkgspec_data = re.sub(
-            '%define pkgver (.*)',
-            '%%define pkgver %s' % new_version,
-            pkgspec_file.read(),
-        )
-        pkgspec_data = re.sub(
-            '%define pkgrelease (.*)',
-            '%%define pkgrelease %s' % (build_num + 1),
-            pkgspec_data,
-        )
-
-    with open(pkgspec_path, 'w') as pkgspec_file:
-        pkgspec_file.write(pkgspec_data)
 
 
     # Update init
@@ -381,16 +333,12 @@ elif cmd == 'set-version':
     subprocess.check_call(['git', 'add', CHANGES_PATH])
     subprocess.check_call(['git', 'add', INIT_PATH])
     subprocess.check_call(['git', 'add', SETUP_PATH])
-    subprocess.check_call(['git', 'add', ARCH_PKGBUILD_PATH])
-    subprocess.check_call(['git', 'add', ARCH_DEV_PKGBUILD_PATH])
-    subprocess.check_call(['git', 'add', CENTOS_PKGSPEC_PATH])
-    subprocess.check_call(['git', 'add', CENTOS_DEV_PKGSPEC_PATH])
     subprocess.check_call(['git', 'commit', '-m', 'Create new release'])
     subprocess.check_call(['git', 'push'])
 
 
     # Create branch
-    if not is_dev_release:
+    if not is_snapshot:
         subprocess.check_call(['git', 'branch', new_version])
         subprocess.check_call(['git', 'push', '-u', 'origin', new_version])
     time.sleep(8)
@@ -408,8 +356,8 @@ elif cmd == 'set-version':
             'tag_name': new_version,
             'name': '%s v%s' % (pkg_name, new_version),
             'body': release_body,
-            'prerelease': is_dev_release,
-            'target_commitish': 'master' if is_dev_release else new_version,
+            'prerelease': is_snapshot,
+            'target_commitish': 'master' if is_snapshot else new_version,
         }),
     )
 
@@ -418,133 +366,59 @@ elif cmd == 'set-version':
         print response.json()
         sys.exit(1)
 
-
 elif cmd == 'build':
-    is_dev_release = any((
-        'snapshot' in cur_version,
-        'alpha' in cur_version,
-        'beta' in cur_version,
-        'rc' in cur_version,
-    ))
-
-
-    # Start vagrant boxes
-    subprocess.check_call(['vagrant', 'up', 'centos'])
-
-
-    # Create arch package
-    build_dir = 'build/%s/arch' % cur_version
-
-    if not os.path.isdir(build_dir):
-        os.makedirs(build_dir)
-
-
-    # Download archive
-    archive_name = '%s.tar.gz' % cur_version
-    archive_path = os.path.join(build_dir, archive_name)
-    if not os.path.isfile(archive_path):
-        wget('https://github.com/%s/%s/archive/%s' % (
-                github_owner, pkg_name, archive_name),
-            output=archive_name,
-            cwd=build_dir,
-        )
+    # Remove previous build
+    for name, path in iter_packages():
+        try:
+            os.remove(path)
+        except:
+            pass
 
 
     # Get sha256 sum
+    archive_name = '%s.tar.gz' % cur_version
+    archive_path = os.path.join(os.path.sep, 'tmp', archive_name)
+    if os.path.isfile(archive_path):
+        os.remove(archive_path)
+    wget('https://github.com/%s/%s/archive/%s' % (
+        github_owner, pkg_name, archive_name),
+        output=archive_name,
+        cwd=os.path.join(os.path.sep, 'tmp'),
+    )
     archive_sha256_sum = subprocess.check_output(
         ['sha256sum', archive_path]).split()[0]
+    os.remove(archive_path)
 
 
-    # Generate pkgbuild
-    pkgbuild_path = ARCH_DEV_PKGBUILD_PATH if is_dev_release else \
-        ARCH_PKGBUILD_PATH
-    with open(pkgbuild_path, 'r') as pkgbuild_file:
-        pkgbuild_data = pkgbuild_file.read()
-    pkgbuild_data = pkgbuild_data.replace('CHANGE_ME', archive_sha256_sum)
+    # Update sha256 sum and pkgver in PKGBUILD
+    for dir in BUILD_TARGETS:
+        for name in os.listdir(os.path.join(PACUR_PATH, dir)):
+            pkgbuild_path = os.path.join(PACUR_PATH, dir, name, 'PKGBUILD')
 
-    pkgbuild_path = os.path.join(build_dir, 'PKGBUILD')
-    with open(pkgbuild_path, 'w') as pkgbuild_file:
-         pkgbuild_file.write(pkgbuild_data)
+            with open(pkgbuild_path, 'r') as pkgbuild_file:
+                pkgbuild_data = re.sub(
+                    'pkgver="(.*)"',
+                    'pkgver="%s"' % cur_version,
+                    pkgbuild_file.read(),
+                )
+                pkgbuild_data = re.sub(
+                    '"[a-f0-9]{64}"',
+                    '"%s"' % archive_sha256_sum,
+                    pkgbuild_data,
+                )
 
-    pkginstall_path = ARCH_DEV_PKGINSTALL if is_dev_release else \
-        ARCH_PKGINSTALL
-    subprocess.check_call(['cp', pkginstall_path, build_dir])
-
-
-    # Build arch package
-    subprocess.check_call(['makepkg', '-f'], cwd=build_dir)
-    subprocess.check_call(['mkaurball', '-f'], cwd=build_dir)
-
-
-    # Create centos package
-    build_dir = 'build/%s/centos' % cur_version
-
-    if not os.path.isdir(build_dir):
-        os.makedirs(build_dir)
+            with open(pkgbuild_path, 'w') as pkgbuild_file:
+                pkgbuild_file.write(pkgbuild_data)
 
 
-    # Create rpm dirs
-    rpm_build_path = os.path.join(build_dir, 'BUILD')
-    rpm_rpms_path = os.path.join(build_dir, 'RPMS')
-    rpm_sources_path = os.path.join(build_dir, 'SOURCES')
-    rpm_specs_path = os.path.join(build_dir, 'SPECS')
-    rpm_srpms_path = os.path.join(build_dir, 'SRPMS')
-
-    for rpm_dir_path in (
-                rpm_build_path,
-                rpm_rpms_path,
-                rpm_sources_path,
-                rpm_specs_path,
-                rpm_srpms_path,
-            ):
-        if not os.path.isdir(rpm_dir_path):
-            os.makedirs(rpm_dir_path)
-
-
-    # Download archive
-    archive_name = '%s.tar.gz' % cur_version
-    archive_path = os.path.join(build_dir, archive_name)
-    if not os.path.isfile(archive_path):
-        wget('https://github.com/%s/%s/archive/%s' % (
-                github_owner, pkg_name, archive_name),
-            output=archive_name,
-            cwd=build_dir,
-        )
-
-        tar_extract(archive_name, build_dir)
-
-
-    # Create rpm spec
-    rpm_spec_name = 'pritunl%s.spec' % ('-dev' if is_dev_release else '')
-    rpm_spec_path = os.path.join(rpm_specs_path, rpm_spec_name)
-    rpm_source_spec_path = os.path.join(build_dir, '%s-%s' % (
-        pkg_name, cur_version), 'centos', rpm_spec_name)
-
-    subprocess.check_call(['cp', rpm_source_spec_path, rpm_spec_path])
-
-
-    # Fix rpm script hardlinking when hardlinks not supported
-    vagrant_check_call(
-        'sudo sed -i -e "s/ln /cp /g" /usr/lib/rpm/redhat/brp-python-hardlink',
-        name='centos',
-    )
-
-
-    # Build rpm spec
-    topdir_path = os.path.join('/vagrant', build_dir)
-    vagrant_check_call('rpmbuild --define "_topdir %s" -ba %s' % (
-        topdir_path, rpm_spec_name), name='centos',
-        cwd=rpm_specs_path)
+    # Run pacur project build
+    for build_target in BUILD_TARGETS:
+        subprocess.check_call(['pacur', 'project', 'build', build_target],
+            cwd=PACUR_PATH)
 
 
 elif cmd == 'upload':
-    is_dev_release = any((
-        'snapshot' in cur_version,
-        'alpha' in cur_version,
-        'beta' in cur_version,
-        'rc' in cur_version,
-    ))
-
+    is_snapshot = 'snapshot' in cur_version
 
     # Get release id
     release_id = None
@@ -566,54 +440,25 @@ elif cmd == 'upload':
         sys.exit(1)
 
 
-    # Upload arch package
-    build_dir = 'build/%s/arch' % cur_version
-    aur_dir = os.path.join(build_dir, pkg_name)
-
-    subprocess.check_call(['git', 'clone',
-        'ssh://aur@aur4.archlinux.org/%s.git' % (
-            pkg_name + '-dev' if is_dev_release else pkg_name)],
-        cwd=build_dir)
-
-    subprocess.check_call(['mksrcinfo'], cwd=build_dir)
-    subprocess.check_call(['cp', os.path.join(build_dir, 'PKGBUILD'),
-        aur_dir])
-    subprocess.check_call(['cp', os.path.join(build_dir, 'pritunl.install'),
-        aur_dir])
-    subprocess.check_call(['cp', os.path.join(build_dir, '.SRCINFO'),
-        aur_dir])
-
-    subprocess.check_call(['git', 'add', '.'], cwd=aur_dir)
-    subprocess.check_call(['git', 'commit', '-m',
-        'Update to %s' % cur_version], cwd=aur_dir)
-    subprocess.check_call(['git', 'push'], cwd=aur_dir)
-
-    aur_pkg_name = '%s-%s-%s-any.pkg.tar.xz' % (
-        pkg_name + '-dev' if is_dev_release else pkg_name,
-        cur_version,
-        build_num + 1,
-    )
-    aur_path = os.path.join(build_dir, aur_pkg_name)
-    aurball_pkg_name = '%s-%s-%s.src.tar.gz' % (
-        pkg_name + '-dev' if is_dev_release else pkg_name,
-        cur_version,
-        build_num + 1,
-    )
-    aurball_path = os.path.join(build_dir, aurball_pkg_name)
-    post_git_asset(release_id, aur_pkg_name, aur_path)
+    # Run pacur project build
+    subprocess.check_call(['pacur', 'project', 'repo'], cwd=PACUR_PATH)
 
 
-    # Upload centos package
-    rpms_dir = 'build/%s/centos/RPMS/x86_64' % cur_version
-    rpm_name = '%s-%s-%s.el7.centos.x86_64.rpm' % (
-        pkg_name + '-dev' if is_dev_release else pkg_name,
-        cur_version,
-        build_num + 1,
-    )
-    rpm_path = os.path.join(rpms_dir, rpm_name)
+    # Sync mirror
+    subprocess.check_call(['rsync',
+        '--human-readable',
+        '--archive',
+        '--progress',
+        '--delete',
+        '--acls',
+        'mirror/',
+        mirror_url,
+    ],cwd=PACUR_PATH)
 
-    post_git_asset(release_id, rpm_name, rpm_path)
 
+    # Add to github
+    for name, path in iter_packages():
+        post_git_asset(release_id, name, path)
 
 else:
     print 'Unknown command'
