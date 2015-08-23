@@ -157,6 +157,7 @@ with open(BUILD_KEYS_PATH, 'r') as build_keys_file:
     github_owner = build_keys['github_owner']
     github_token = build_keys['github_token']
     mirror_url = build_keys['mirror_url']
+    test_mirror_url = build_keys['test_mirror_url']
     mongodb_uris = build_keys['mongodb_uris']
 
 releases_dbs = []
@@ -449,7 +450,7 @@ elif cmd == 'upload':
         '--delete',
         '--acls',
         'mirror/',
-        mirror_url,
+        test_mirror_url if is_snapshot else mirror_url,
     ],cwd=PACUR_PATH)
 
 
