@@ -193,10 +193,6 @@ else:
     cmd = 'version'
 
 parser = optparse.OptionParser(usage=USAGE)
-
-parser.add_option('--test', action='store_true',
-    help='Upload to test repo')
-
 (options, args) = parser.parse_args()
 
 build_num = 0
