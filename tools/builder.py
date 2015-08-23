@@ -362,6 +362,7 @@ elif cmd == 'set-version':
         print response.json()
         sys.exit(1)
 
+
 elif cmd == 'build':
     # Remove previous build
     for name, path in iter_packages():
