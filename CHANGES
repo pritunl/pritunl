@@ -1,8 +1,7 @@
 Pritunl Changelog
 =================
 
-Version 1.4.711.1snapshot 2015-08-24
-------------------------------------
+<%= version %>
 
 Add ssl cert to settings
 Fix issue with multiple clients
