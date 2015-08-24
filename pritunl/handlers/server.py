@@ -46,8 +46,9 @@ def _dns_server_invalid():
     }, 400)
 
 def _check_network_overlap(test_network, networks):
-    test_start = ipaddress.IPNetwork(test_network).network
-    test_end = ipaddress.IPNetwork(test_network).broadcast
+    test_net = ipaddress.IPNetwork(test_network)
+    test_start = test_net.network
+    test_end = test_net.broadcast
 
     for network in networks:
         net_start = network.network
