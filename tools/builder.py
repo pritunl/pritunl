@@ -25,7 +25,8 @@ INIT_PATH = 'pritunl/__init__.py'
 SETUP_PATH = 'setup.py'
 CHANGES_PATH = 'CHANGES'
 BUILD_KEYS_PATH = 'tools/build_keys.json'
-PACUR_PATH = '../pritunl-pacur'
+STABLE_PACUR_PATH = '../pritunl-pacur'
+TEST_PACUR_PATH = '../pritunl-pacur-test'
 BUILD_TARGETS = ('pritunl',)
 WWW_DIR = 'www'
 STYLES_DIR = 'www/styles'
@@ -33,6 +34,7 @@ RELEASES_DIR = 'www/styles/releases'
 
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 cur_date = datetime.datetime.utcnow()
+pacur_path = None
 
 def wget(url, cwd=None, output=None):
     if output:
@@ -68,10 +70,7 @@ def get_ver(version):
     min_num = int(math.floor(((cur_date.hour * 60) + cur_date.minute) / 14.4))
     ver = re.findall(r'\d+', version)
     ver_str = '.'.join((ver[0], ver[1], str(day_num), str(min_num)))
-
-    name = ''.join(re.findall('[a-z]+', version))
-    if name:
-        ver_str += name + ver[2]
+    ver_str += ''.join(re.findall('[a-z]+', version))
 
     return ver_str
 
@@ -94,7 +93,7 @@ def get_int_ver(version):
 
 def iter_packages():
     for target in BUILD_TARGETS:
-        target_path = os.path.join(PACUR_PATH, target)
+        target_path = os.path.join(pacur_path, target)
         for release in os.listdir(target_path):
             release_path = os.path.join(target_path, release)
             for name in os.listdir(release_path):
@@ -213,6 +212,7 @@ elif cmd == 'set-version':
     new_version_orig = args[1]
     new_version = get_ver(new_version_orig)
     is_snapshot = 'snapshot' in new_version
+    pacur_path = STABLE_PACUR_PATH if is_snapshot else TEST_PACUR_PATH
 
 
     # Update changes
@@ -365,6 +365,10 @@ elif cmd == 'set-version':
 
 
 elif cmd == 'build':
+    is_snapshot = 'snapshot' in cur_version
+    pacur_path = STABLE_PACUR_PATH if is_snapshot else TEST_PACUR_PATH
+
+
     # Remove previous build
     for name, path in iter_packages():
         try:
@@ -390,8 +394,8 @@ elif cmd == 'build':
 
     # Update sha256 sum and pkgver in PKGBUILD
     for dir in BUILD_TARGETS:
-        for name in os.listdir(os.path.join(PACUR_PATH, dir)):
-            pkgbuild_path = os.path.join(PACUR_PATH, dir, name, 'PKGBUILD')
+        for name in os.listdir(os.path.join(pacur_path, dir)):
+            pkgbuild_path = os.path.join(pacur_path, dir, name, 'PKGBUILD')
 
             with open(pkgbuild_path, 'r') as pkgbuild_file:
                 pkgbuild_data = re.sub(
@@ -412,11 +416,13 @@ elif cmd == 'build':
     # Run pacur project build
     for build_target in BUILD_TARGETS:
         subprocess.check_call(['pacur', 'project', 'build', build_target],
-            cwd=PACUR_PATH)
+            cwd=pacur_path)
 
 
 elif cmd == 'upload':
     is_snapshot = 'snapshot' in cur_version
+    pacur_path = STABLE_PACUR_PATH if is_snapshot else TEST_PACUR_PATH
+
 
     # Get release id
     release_id = None
@@ -439,7 +445,7 @@ elif cmd == 'upload':
 
 
     # Run pacur project build
-    subprocess.check_call(['pacur', 'project', 'repo'], cwd=PACUR_PATH)
+    subprocess.check_call(['pacur', 'project', 'repo'], cwd=pacur_path)
 
 
     # Sync mirror
@@ -451,7 +457,7 @@ elif cmd == 'upload':
         '--acls',
         'mirror/',
         test_mirror_url if is_snapshot else mirror_url,
-    ],cwd=PACUR_PATH)
+    ],cwd=pacur_path)
 
 
     # Add to github
