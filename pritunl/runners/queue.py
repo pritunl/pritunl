@@ -5,6 +5,7 @@ from pritunl import logger
 from pritunl import listener
 from pritunl import utils
 from pritunl import queue
+from pritunl import queues
 
 import threading
 import time
