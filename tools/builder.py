@@ -216,16 +216,17 @@ elif cmd == 'set-version':
 
 
     # Update changes
-    with open(CHANGES_PATH, 'r') as changes_file:
-        changes_data = changes_file.read()
+    if not is_snapshot:
+        with open(CHANGES_PATH, 'r') as changes_file:
+            changes_data = changes_file.read()
 
-    with open(CHANGES_PATH, 'w') as changes_file:
-        ver_date_str = 'Version ' + new_version.replace(
-            'v', '') + cur_date.strftime(' %Y-%m-%d')
-        changes_file.write(changes_data.replace(
-            '<%= version %>',
-            '%s\n%s' % (ver_date_str, '-' * len(ver_date_str)),
-        ))
+        with open(CHANGES_PATH, 'w') as changes_file:
+            ver_date_str = 'Version ' + new_version.replace(
+                'v', '') + cur_date.strftime(' %Y-%m-%d')
+            changes_file.write(changes_data.replace(
+                '<%= version %>',
+                '%s\n%s' % (ver_date_str, '-' * len(ver_date_str)),
+            ))
 
 
     # Check for duplicate version
