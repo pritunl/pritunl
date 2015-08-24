@@ -90,7 +90,6 @@ def get_int_ver(version):
 
     return int(''.join([x.zfill(4) for x in ver]))
 
-
 def iter_packages():
     for target in BUILD_TARGETS:
         target_path = os.path.join(pacur_path, target)
