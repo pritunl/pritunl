@@ -70,17 +70,6 @@ def get_int_ver(version):
     return int(''.join([x.zfill(4) for x in ver]))
 
 def get_db_ver():
-    prev_ver = None
-    ver_path = os.path.join(settings.conf.data_path, 'version')
-    upgraded_path = os.path.join(settings.conf.data_path, 'upgraded')
-
-    if os.path.exists(ver_path):
-        with open(ver_path, 'r') as ver_file:
-            prev_ver = ver_file.read().strip()
-
-    if prev_ver and not os.path.exists(upgraded_path):
-        return prev_ver
-
     if settings.conf.mongodb_uri:
         prefix = settings.conf.mongodb_collection_prefix or ''
         client = pymongo.MongoClient(settings.conf.mongodb_uri,
@@ -94,9 +83,6 @@ def get_db_ver():
         version = doc.get('version')
         if version:
             return version
-
-    if prev_ver:
-        return prev_ver
 
     return __version__
 

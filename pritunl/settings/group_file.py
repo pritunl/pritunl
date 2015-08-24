@@ -35,8 +35,7 @@ class SettingsGroupFile(SettingsGroupBase):
                         setattr(self, name, value)
                     elif name == 'port':
                         setattr(self, name, int(value))
-                    elif name in ('log_path', 'www_path', 'data_path',
-                            'db_path'):
+                    elif name in ('log_path', 'www_path'):
                         setattr(self, name, os.path.normpath(value))
                     elif name in ('bind_addr'):
                         setattr(self, name, value)
