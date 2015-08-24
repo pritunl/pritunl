@@ -102,7 +102,7 @@
     </div>
     <div class="replica-count form-group">
       <label>Replication Count</label>
-      <input type="number" class="form-control" placeholder="Enter replication count" data-toggle="tooltip" title="Replicate server accross multiple hosts." value="<%- replica_count === -1 ? '' : replica_count %>" autocapitalize="off">
+      <input type="number" class="form-control" placeholder="Enter replication count" data-toggle="tooltip" title="Replicate server accross multiple hosts." value="<%- replica_count === -1 ? '' : replica_count %>" min="1" autocapitalize="off">
     </div>
     <div class="inter-client-toggle toggle-form form-group">
       <label>Inter-Client Communication</label>
