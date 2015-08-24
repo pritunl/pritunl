@@ -211,7 +211,7 @@ elif cmd == 'set-version':
     new_version_orig = args[1]
     new_version = get_ver(new_version_orig)
     is_snapshot = 'snapshot' in new_version
-    pacur_path = STABLE_PACUR_PATH if is_snapshot else TEST_PACUR_PATH
+    pacur_path = TEST_PACUR_PATH if is_snapshot else STABLE_PACUR_PATH
 
 
     # Update changes
@@ -366,7 +366,7 @@ elif cmd == 'set-version':
 
 elif cmd == 'build':
     is_snapshot = 'snapshot' in cur_version
-    pacur_path = STABLE_PACUR_PATH if is_snapshot else TEST_PACUR_PATH
+    pacur_path = TEST_PACUR_PATH if is_snapshot else STABLE_PACUR_PATH
 
 
     # Remove previous build
@@ -421,7 +421,7 @@ elif cmd == 'build':
 
 elif cmd == 'upload':
     is_snapshot = 'snapshot' in cur_version
-    pacur_path = STABLE_PACUR_PATH if is_snapshot else TEST_PACUR_PATH
+    pacur_path = TEST_PACUR_PATH if is_snapshot else STABLE_PACUR_PATH
 
 
     # Get release id
