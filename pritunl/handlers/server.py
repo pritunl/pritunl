@@ -65,6 +65,21 @@ def _check_network_overlap(test_network, networks):
 
     return False
 
+def _check_network_private(test_network):
+    test_net = ipaddress.IPNetwork(test_network)
+    test_start = test_net.network
+    test_end = test_net.broadcast
+
+    for network in settings.vpn.safe_priv_subnets:
+        network = ipaddress.IPNetwork(network)
+        net_start = network.network
+        net_end = network.broadcast
+
+        if test_start >= net_start and test_end <= net_end:
+            return True
+
+    return False
+
 @app.app.route('/server', methods=['GET'])
 @app.app.route('/server/<server_id>', methods=['GET'])
 @auth.session_auth
@@ -108,54 +123,8 @@ def server_put_post(server_id=None):
         network_def = True
         network = flask.request.json['network']
 
-        if network not in settings.vpn.safe_pub_subnets:
-            network_split = network.split('/')
-            if len(network_split) != 2:
-                return _network_invalid()
-
-            address = network_split[0].split('.')
-            if len(address) != 4:
-                return _network_invalid()
-            for i, value in enumerate(address):
-                try:
-                    address[i] = int(value)
-                except ValueError:
-                    return _network_invalid()
-
-            try:
-                subnet = int(network_split[1])
-            except ValueError:
-                return _network_invalid()
-
-            if address[0] == 10:
-                if address[1] < 0 or address[1] > 255:
-                    return _network_invalid()
-
-                if subnet not in (8, 16, 24):
-                    return _network_invalid()
-            elif address[0] == 100 and address[1] >= 64 and address[1] <= 127:
-                if subnet not in (16, 24):
-                    return _network_invalid()
-            elif address[0] == 172 and address[1] >= 16 and address[1] <= 31:
-                if subnet not in (16, 24):
-                    return _network_invalid()
-            elif address[0] == 192 and address[1] == 168:
-                if subnet not in (16, 24):
-                    return _network_invalid()
-            elif address[0] == 198 and (address[1] == 18 or address[1] == 19):
-                if subnet not in (16, 24):
-                    return _network_invalid()
-            elif address[0] == 50 and address[1] == 203:
-                if subnet not in (16, 24):
-                    return _network_invalid()
-            else:
-                return _network_invalid()
-
-            if address[2] < 0 or address[2] > 255:
-                return _network_invalid()
-
-            if address[3] != 0:
-                return _network_invalid()
+        if not _check_network_private(network):
+            return _network_invalid()
 
     bind_address = None
     bind_address_def = False
