@@ -457,7 +457,7 @@ elif cmd == 'upload':
         '--acls',
         'mirror/',
         test_mirror_url if is_snapshot else mirror_url,
-    ],cwd=pacur_path)
+    ], cwd=pacur_path)
 
 
     # Add to github
