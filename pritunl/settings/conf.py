@@ -12,7 +12,7 @@ class SettingsConf(SettingsGroupFile):
         'static_cache': True,
         'port': 9700,
         'pooler': True,
-        'temp_path': 'tmp/pritunl',
+        'temp_path': '/tmp/pritunl',
         'log_path': '/var/log/pritunl.log',
         'www_path': '/usr/share/pritunl/www',
         'var_run_path': '/var/run',
