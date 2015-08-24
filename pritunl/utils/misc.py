@@ -126,7 +126,7 @@ def set_db_ver(version):
         'version': version,
     }, upsert=True)
 
-    with open(upgraded_path, 'w') as upgraded_file:
+    with open(upgraded_path, 'w') as _:
         pass
 
     return doc.get('version')
