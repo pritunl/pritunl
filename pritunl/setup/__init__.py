@@ -20,11 +20,11 @@ def setup_all():
     setup_logger()
 
     try:
+        setup_temp_path()
         setup_app()
         setup_signal_handler()
         setup_server()
         setup_mongo()
-        setup_temp_path()
 
         if settings.conf.ssl:
             setup_server_cert()
