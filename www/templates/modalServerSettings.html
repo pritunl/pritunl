@@ -80,6 +80,12 @@
       <label>Max Clients</label>
       <input type="number" class="form-control" placeholder="Enter max clients" data-toggle="tooltip" title="Maximum number of clients connected to a server or to each server replica." value="<%- max_clients === -1 ? '' : max_clients %>" autocapitalize="off">
     </div>
+    <div class="debug-toggle toggle-form form-group">
+      <label>Enable Debugging Output</label>
+      <div class="selector <%= debug ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Show server debugging information in output">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
   </div>
   <div class="right advanced">
     <div class="bind-address form-group">
