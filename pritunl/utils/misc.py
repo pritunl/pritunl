@@ -94,7 +94,6 @@ def get_db_ver_int():
 def set_db_ver(version):
     from pritunl import logger
 
-    upgraded_path = os.path.join(settings.conf.data_path, 'upgraded')
     db_version = get_db_ver()
 
     if version != db_version:
@@ -113,9 +112,6 @@ def set_db_ver(version):
     }, {
         'version': version,
     }, upsert=True)
-
-    with open(upgraded_path, 'w') as _:
-        pass
 
     return doc.get('version')
 
