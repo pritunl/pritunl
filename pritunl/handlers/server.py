@@ -126,6 +126,30 @@ def server_put_post(server_id=None):
         if not _check_network_private(network):
             return _network_invalid()
 
+    network_mode = None
+    network_mode_def = False
+    if 'network_mode' in flask.request.json:
+        network_mode_def = True
+        network_mode = flask.request.json['network_mode']
+
+    network_start = None
+    network_start_def = False
+    if 'network_start' in flask.request.json:
+        network_start_def = True
+        network_start = flask.request.json['network_start']
+
+        # if not _check_network_private(network_start):
+        #     return _network_invalid()
+
+    network_end = None
+    network_end_def = False
+    if 'network_end' in flask.request.json:
+        network_end_def = True
+        network_end = flask.request.json['network_end']
+
+        # if not _check_network_private(network_end):
+        #     return _network_invalid()
+
     bind_address = None
     bind_address_def = False
     if 'bind_address' in flask.request.json:
@@ -318,6 +342,13 @@ def server_put_post(server_id=None):
                 'error_msg': MISSING_PARAMS_MSG,
             }, 400)
 
+        if network_def and network_mode == BRIDGE and \
+                (not network_start or not network_end):
+            return utils.jsonify({
+                'error': MISSING_PARAMS,
+                'error_msg': MISSING_PARAMS_MSG,
+            }, 400)
+
         if not network_def:
             network_def = True
             rand_range = range(215, 250)
@@ -378,6 +409,9 @@ def server_put_post(server_id=None):
         svr = server.new_server(
             name=name,
             network=network,
+            network_mode=network_mode,
+            network_start=network_start,
+            network_end=network_end,
             bind_address=bind_address,
             port=port,
             protocol=protocol,
@@ -419,6 +453,18 @@ def server_put_post(server_id=None):
             svr.name = name
         if network_def:
             svr.network = network
+        if network_start_def:
+            svr.network_start = network_start
+        if network_end_def:
+            svr.network_end = network_end
+        if network_mode_def:
+            if network_mode == BRIDGE and (
+                    not network_start or not network_end):
+                return utils.jsonify({
+                    'error': MISSING_PARAMS,
+                    'error_msg': MISSING_PARAMS_MSG,
+                }, 400)
+            svr.network_mode = network_mode
         if bind_address_def:
             svr.bind_address = bind_address
         if port_def:
