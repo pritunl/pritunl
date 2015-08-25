@@ -80,6 +80,19 @@
       <label>Max Clients</label>
       <input type="number" class="form-control" placeholder="Enter max clients" data-toggle="tooltip" title="Maximum number of clients connected to a server or to each server replica." min="0" value="<%- max_clients === -1 ? '' : max_clients %>" autocapitalize="off">
     </div>
+    <div class="network-mode form-group">
+      <label>Network Mode</label>
+      <select class="form-control" data-toggle="tooltip" title="Network mode">
+        <option value="tunnel" <%= network_mode === 'tunnel' ? 'selected' : ''
+        %>>Tunnel</option>
+        <option value="bridge" <%= network_mode === 'bridge' ? 'selected' : ''
+        %>>Bridge</option>
+      </select>
+    </div>
+    <div class="network-start form-group" <%= network_mode === 'bridge' ? '' : 'style="display: none;"' %>>
+      <label>Network Start</label>
+      <input type="text" class="form-control" placeholder="Enter start address" data-toggle="tooltip" title="Starting network address for the bridged VPN client IP addresses" value="<%- network_start %>" autocapitalize="off">
+    </div>
   </div>
   <div class="right advanced">
     <div class="bind-address form-group">
@@ -109,6 +122,10 @@
       <div class="selector <%= debug ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Show server debugging information in output">
         <span class="selector-inner glyphicon glyphicon-ok"></span>
       </div>
+    </div>
+    <div class="network-end form-group" <%= network_mode === 'bridge' ? '' : 'style="display: none;"' %>>
+      <label>Network End</label>
+      <input type="text" class="form-control" placeholder="Enter end address" data-toggle="tooltip" title="Ending network address for the bridged VPN client IP addresses" value="<%- network_end %>" autocapitalize="off">
     </div>
   </div>
 </div>
