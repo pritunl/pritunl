@@ -32,6 +32,9 @@ UPDATE = 'update'
 ONLINE = 'online'
 OFFLINE = 'offline'
 
+TUNNEL = 'tunnel'
+BRIDGE = 'bridge'
+
 VERY_LOW = 0
 LOW = 1
 NORMAL = 2
