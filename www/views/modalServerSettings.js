@@ -19,6 +19,7 @@ define([
       return _.extend({
         'change .server-mode select': 'onServerMode',
         'change .dh-param-bits select': 'onDhParamBits',
+        'change .network-mode select': 'onNetworkMode',
         'click .otp-auth-toggle': 'onOtpAuthSelect',
         'click .inter-client-toggle': 'onInterClientSelect',
         'click .debug-toggle': 'onDebugSelect',
@@ -92,6 +93,22 @@ define([
       else {
         this.clearAlert();
       }
+    },
+    getNetworkMode: function() {
+      return this.$('.network-mode select').val();
+    },
+    setNetworkMode: function(mode) {
+      if (mode === 'bridge') {
+        this.$('.network-start').slideDown(window.slideTime);
+        this.$('.network-end').slideDown(window.slideTime);
+      }
+      else {
+        this.$('.network-start').slideUp(window.slideTime);
+        this.$('.network-end').slideUp(window.slideTime);
+      }
+    },
+    onNetworkMode: function() {
+      this.setNetworkMode(this.getNetworkMode());
     },
     getOtpAuthSelect: function() {
       return this.$('.otp-auth-toggle .selector').hasClass('selected');
@@ -230,6 +247,9 @@ define([
       if (!bindAddress) {
         bindAddress = null;
       }
+      var networkMode = this.$('.network-mode select').val();
+      var networkStart = this.$('.network-start input').val();
+      var networkEnd = this.$('.network-end input').val();
 
       if (!name) {
         this.setAlert('danger', 'Name can not be empty.', '.name');
@@ -258,6 +278,11 @@ define([
         replicaCount = 1;
       }
 
+      if (networkMode !== 'bridge') {
+        networkStart = '';
+        networkEnd = '';
+      }
+
       var data = {
         'name': name,
         'type': this.model.get('type'),
@@ -267,6 +292,9 @@ define([
         'protocol': protocol,
         'dh_param_bits': dhParamBits,
         'mode': mode,
+        'network_mode': networkMode,
+        'network_start': networkStart,
+        'network_end': networkEnd,
         'multi_device': multiDevice,
         'local_networks': localNetworks,
         'dns_servers': dnsServers,
