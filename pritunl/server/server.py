@@ -35,6 +35,9 @@ dict_fields = [
     'instances',
     'organizations',
     'network',
+    'network_mode',
+    'network_start',
+    'network_end',
     'bind_address',
     'port',
     'protocol',
@@ -67,6 +70,9 @@ class Server(mongo.MongoObject):
         'protocol',
         'dh_param_bits',
         'mode',
+        'network_mode',
+        'network_start',
+        'network_end',
         'multi_device',
         'local_networks',
         'dns_servers',
@@ -96,6 +102,7 @@ class Server(mongo.MongoObject):
         'instances_count',
     }
     fields_default = {
+        'network_mode': TUNNEL,
         'multi_device': False,
         'dns_servers': [],
         'otp_auth': False,
@@ -118,7 +125,8 @@ class Server(mongo.MongoObject):
     }
     cache_prefix = 'server'
 
-    def __init__(self, name=None, network=None, bind_address=None,
+    def __init__(self, name=None, network=None, network_mode=None,
+            network_start=None, network_end=None, bind_address=None,
             port=None, protocol=None, dh_param_bits=None,
             mode=None, multi_device=None, local_networks=None,
             dns_servers=None, search_domain=None, otp_auth=None, cipher=None,
@@ -136,6 +144,12 @@ class Server(mongo.MongoObject):
             self.name = name
         if network is not None:
             self.network = network
+        if network_mode is not None:
+            self.network_mode = network_mode
+        if network_start is not None:
+            self.network_start = network_start
+        if network_end is not None:
+            self.network_end = network_end
         if bind_address is not None:
             self.bind_address = bind_address
         if port is not None:
@@ -210,6 +224,9 @@ class Server(mongo.MongoObject):
             'protocol': self.protocol,
             'dh_param_bits': self.dh_param_bits,
             'mode': self.mode,
+            'network_mode': self.network_mode,
+            'network_start': self.network_start,
+            'network_end': self.network_end,
             'multi_device': self.multi_device,
             'local_networks': self.local_networks,
             'dns_servers': self.dns_servers,
