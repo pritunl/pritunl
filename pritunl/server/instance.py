@@ -302,7 +302,7 @@ class ServerInstance(object):
             cmd, process = self.exists_iptables_rules(rule)
             fileno = process.stdout.fileno()
 
-            processes[fileno] = (cmd, process, ['iptables', '-A'] + rule)
+            processes[fileno] = (cmd, process, ['iptables', '-I'] + rule)
             poller.register(fileno, select.EPOLLHUP)
 
         try:
