@@ -216,6 +216,7 @@ class ServerIpPool:
             if pool_end:
                 logger.warning('Failed to assign ip addresses ' +
                     'to server, ip pool empty', 'server',
+                    server_id=server_id,
                     org_id=org_id,
                 )
                 break
