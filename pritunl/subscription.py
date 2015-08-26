@@ -18,6 +18,7 @@ def update():
         settings.local.sub_period_end = None
         settings.local.sub_trial_end = None
         settings.local.sub_cancel_at_period_end = None
+        settings.local.sub_url_key = None
     else:
         for i in xrange(2):
             try:
@@ -52,6 +53,7 @@ def update():
                 settings.local.sub_trial_end = data['trial_end']
                 settings.local.sub_cancel_at_period_end = data[
                     'cancel_at_period_end']
+                settings.local.sub_url_key = data.get('url_key')
                 settings.local.sub_styles[data['plan']] = data['styles']
             except:
                 if i < 1:
@@ -68,6 +70,7 @@ def update():
                 settings.local.sub_period_end = None
                 settings.local.sub_trial_end = None
                 settings.local.sub_cancel_at_period_end = None
+                settings.local.sub_url_key = None
             break
 
     response = collection.update({
@@ -105,6 +108,7 @@ def dict():
         'period_end': settings.local.sub_period_end,
         'trial_end': settings.local.sub_trial_end,
         'cancel_at_period_end': settings.local.sub_cancel_at_period_end,
+        'url_key': settings.local.sub_url_key,
     }
 
 def update_license(license):
