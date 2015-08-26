@@ -137,6 +137,9 @@ class Server(mongo.MongoObject):
 
         if 'network' in self.loaded_fields:
             self._orig_network = self.network
+            self._orig_network_start = self.network_start
+            self._orig_network_end = self.network_end
+            self._orig_network_hash = self.network_hash
         self._orgs_added = []
         self._orgs_removed = []
 
@@ -384,7 +387,7 @@ class Server(mongo.MongoObject):
         tran = None
 
         if 'network' in self.loaded_fields and \
-                self.network != self._orig_network:
+                self.network_hash != self._orig_network_hash:
             tran = transaction.Transaction()
             if self.network_lock:
                 raise ServerNetworkLocked('Server network is locked', {
@@ -396,7 +399,13 @@ class Server(mongo.MongoObject):
                     transaction=tran,
                     server_id=self.id,
                     network=self.network,
+                    network_start=self.network_start,
+                    network_end=self.network_end,
+                    network_hash=self.network_hash,
                     old_network=self._orig_network,
+                    old_network_start=self._orig_network_start,
+                    old_network_end=self._orig_network_end,
+                    old_network_hash=self._orig_network_hash,
                 )
                 self.network_lock = queue_ip_pool.id
 
