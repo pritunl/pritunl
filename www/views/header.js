@@ -60,7 +60,7 @@ define([
       this.listenToOnce(modal, 'applied', function() {
         var alertView = new AlertView({
           type: 'success',
-          message: 'Welcome to Pritunl Enterprise.',
+          message: 'License activated.',
           dismissable: true
         });
         $('.alerts-container').append(alertView.render().el);
@@ -75,7 +75,7 @@ define([
       this.listenToOnce(modal, 'applied', function() {
         var alertView = new AlertView({
           type: 'danger',
-          message: 'Enterprise license removed.',
+          message: 'License removed.',
           dismissable: true
         });
         $('.alerts-container').append(alertView.render().el);
