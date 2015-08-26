@@ -84,6 +84,11 @@ define([
       else {
         this.$('.trial-end').hide();
       }
+
+      if (this.model.get('url_key')) {
+        this.$('.enterprise-support-link').attr('href',
+          'https://app.pritunl.com/support/' + this.model.get('url_key'));
+      }
     },
     lock: function() {
       this.lockClose = true;
