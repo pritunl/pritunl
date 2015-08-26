@@ -249,6 +249,14 @@ class Server(mongo.MongoObject):
             return
         return max((utils.now() - self.start_timestamp).seconds, 1)
 
+    @property
+    def network_hash(self):
+        return utils.fnv32a(
+            self.network + '-' +
+            self.network_start or '' + '-' +
+            self.network_end or ''
+        )
+
     @cached_property
     def users_online(self):
         return len(self.clients_collection.distinct("user_id", {
