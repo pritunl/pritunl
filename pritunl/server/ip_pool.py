@@ -1,3 +1,4 @@
+from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import mongo
 from pritunl import ipaddress
@@ -18,12 +19,34 @@ class ServerIpPool:
     def users_collection(cls):
         return mongo.get_collection('users')
 
+    def get_ip_pool(self, network, network_start):
+        ip_pool = network.iterhosts()
+        ip_pool.next()
+
+        if network_start:
+            network_start = ipaddress.IPv4Address(network_start)
+            network_break = network_start - 1
+
+            while True:
+                try:
+                    ip_addr = ip_pool.next()
+                except StopIteration:
+                    logger.error('Failed to find network start', 'server',
+                        server_id=self.server.id,
+                    )
+                    return
+
+                if ip_addr == network_break:
+                    break
+
+        return ip_pool
+
     def assign_ip_addr(self, org_id, user_id):
-        network = self.server.network
+        network_hash = self.server.network_hash
         server_id = self.server.id
 
         response = self.collection.update({
-            'network': network,
+            'network': network_hash,
             'server_id': server_id,
             'user_id': {'$exists': False},
         }, {'$set': {
@@ -33,13 +56,23 @@ class ServerIpPool:
         if response['updatedExisting']:
             return
 
-        ip_network = ipaddress.IPv4Network(network)
-        ip_pool = ip_network.iterhosts()
-        ip_pool.next()
+        network = ipaddress.IPv4Network(self.server.network)
+        if self.server.network_start:
+            network_start = ipaddress.IPv4Address(self.server.network_start)
+        else:
+            network_start = None
+        if self.server.network_end:
+            network_end = ipaddress.IPv4Address(self.server.network_end)
+        else:
+            network_end = None
+
+        ip_pool = self.get_ip_pool(network, network_start)
+        if not ip_pool:
+            return
 
         try:
             doc = self.collection.find({
-                'network': network,
+                'network': network_hash,
                 'server_id': server_id,
             }).sort('_id', pymongo.DESCENDING)[0]
             if doc:
@@ -51,15 +84,18 @@ class ServerIpPool:
             pass
 
         for remote_ip_addr in ip_pool:
+            if network_end and remote_ip_addr > network_end:
+                break
+
             try:
                 self.collection.insert({
                     '_id': int(remote_ip_addr),
-                    'network': network,
+                    'network': network_hash,
                     'server_id': server_id,
                     'org_id': org_id,
                     'user_id': user_id,
                     'address': '%s/%s' % (remote_ip_addr,
-                        ip_network.prefixlen),
+                        network.prefixlen),
                 })
                 return True
             except pymongo.errors.DuplicateKeyError:
@@ -70,7 +106,7 @@ class ServerIpPool:
     def unassign_ip_addr(self, org_id, user_id):
         self.collection.update({
             'server_id': self.server.id,
-            'network': self.server.network,
+            'network': self.server.network_hash,
             'user_id': user_id,
         }, {'$unset': {
             'org_id': '',
@@ -79,19 +115,19 @@ class ServerIpPool:
 
     def assign_ip_pool_org(self, org_id):
         org = organization.get_by_id(org_id)
-        network = self.server.network
+        network_hash = self.server.network_hash
         server_id = self.server.id
         org_id = org.id
         ip_pool_avial = True
         pool_end = False
 
-        ip_network = ipaddress.IPv4Network(network)
+        ip_network = ipaddress.IPv4Network(self.server.network)
         ip_pool = ip_network.iterhosts()
         ip_pool.next()
 
         try:
             doc = self.collection.find({
-                'network': network,
+                'network': network_hash,
                 'server_id': server_id,
             }).sort('_id', pymongo.DESCENDING)[0]
             if doc:
@@ -112,7 +148,7 @@ class ServerIpPool:
         for user in org.iter_users(include_pool=True):
             if ip_pool_avial:
                 response = self.collection.update({
-                    'network': network,
+                    'network': network_hash,
                     'server_id': server_id,
                     'user_id': {'$exists': False},
                 }, {'$set': {
@@ -135,7 +171,7 @@ class ServerIpPool:
             }
             doc = {'$set': {
                 '_id': doc_id,
-                'network': network,
+                'network': network_hash,
                 'server_id': server_id,
                 'org_id': org_id,
                 'user_id': user.id,
@@ -161,20 +197,27 @@ class ServerIpPool:
     def unassign_ip_pool_org(self, org_id):
         self.collection.update({
             'server_id': self.server.id,
-            'network': self.server.network,
+            'network': self.server.network_hash,
             'org_id': org_id,
         }, {'$unset': {
             'org_id': '',
             'user_id': '',
         }})
 
-    def assign_ip_pool(self, network):
+    def assign_ip_pool(self, network, network_start,
+            network_end, network_hash):
         server_id = self.server.id
         pool_end = False
 
-        ip_network = ipaddress.IPv4Network(network)
-        ip_pool = ip_network.iterhosts()
-        ip_pool.next()
+        network = ipaddress.IPv4Network(network)
+        if network_start:
+            network_start = ipaddress.IPv4Address(network_start)
+        if network_end:
+            network_end = ipaddress.IPv4Address(network_end)
+
+        ip_pool = self.get_ip_pool(network, network_start)
+        if not ip_pool:
+            return
 
         if mongo.has_bulk:
             bulk = self.collection.initialize_unordered_bulk_op()
@@ -189,6 +232,8 @@ class ServerIpPool:
             for user in org.iter_users(include_pool=True):
                 try:
                     remote_ip_addr = ip_pool.next()
+                    if network_end and remote_ip_addr > network_end:
+                        raise StopIteration()
                 except StopIteration:
                     pool_end = True
                     break
@@ -199,12 +244,12 @@ class ServerIpPool:
                 }
                 doc = {'$set': {
                     '_id': doc_id,
-                    'network': network,
+                    'network': network_hash,
                     'server_id': server_id,
                     'org_id': org_id,
                     'user_id': user.id,
                     'address': '%s/%s' % (remote_ip_addr,
-                        ip_network.prefixlen),
+                        network.prefixlen),
                 }}
 
                 if bulk:
@@ -234,7 +279,7 @@ class ServerIpPool:
 
         spec = {
             'server_id': server_id,
-            'network': {'$ne': self.server.network},
+            'network': {'$ne': self.server.network_hash},
         }
         if bulk:
             bulk.find(spec).remove()
@@ -291,7 +336,7 @@ class ServerIpPool:
         for user_id in user_ip_ids - user_ids:
             spec = {
                 'server_id': server_id,
-                'network': self.server.network,
+                'network': self.server.network_hash,
                 'user_id': user_id,
             }
             doc = {'$unset': {
@@ -318,7 +363,7 @@ class ServerIpPool:
     def get_ip_addr(self, org_id, user_id):
         doc = self.collection.find_one({
             'server_id': self.server.id,
-            'network': self.server.network,
+            'network': self.server.network_hash,
             'user_id': user_id,
         }, {
             'address': True,
