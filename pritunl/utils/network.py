@@ -10,20 +10,30 @@ import struct
 import fcntl
 
 _tun_interfaces = set(['tun%s' % x for x in xrange(100)])
-_tap_interfaces = set(['tun%s' % x for x in xrange(100)])
+_tap_interfaces = set(['tap%s' % x for x in xrange(100)])
+_br_interfaces = set(['br%s' % x for x in xrange(100)])
 _sock = None
 _sockfd = None
 
 def interface_acquire(interface_type):
-    if interface_type == BRIDGE:
+    if interface_type == 'tun':
+        return _tun_interfaces.pop()
+    elif interface_type == 'tap':
         return _tap_interfaces.pop()
-    return _tun_interfaces.pop()
+    elif interface_type == 'br':
+        return _br_interfaces.pop()
+    else:
+        raise ValueError('Unknown interface type %s' % interface_type)
 
 def interface_release(interface_type, interface):
-    if interface_type == BRIDGE:
-        _tap_interfaces.add(interface)
-    else:
+    if interface_type == 'tun':
         _tun_interfaces.add(interface)
+    elif interface_type == 'tap':
+        _tap_interfaces.add(interface)
+    elif interface_type == 'br':
+        _br_interfaces.add(interface)
+    else:
+        raise ValueError('Unknown interface type %s' % interface_type)
 
 def get_remote_addr():
     return flask.request.remote_addr
