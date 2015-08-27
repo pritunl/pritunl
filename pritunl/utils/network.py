@@ -174,7 +174,7 @@ def get_interfaces():
 def find_interface(network):
     network = ipaddress.IPNetwork(network)
 
-    for interface, data in get_interfaces():
+    for interface, data in get_interfaces().items():
         try:
             address = ipaddress.IPAddress(data['address'])
         except ValueError:
