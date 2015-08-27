@@ -138,6 +138,9 @@ def get_interfaces():
             continue
         addr = addr[0]
 
-        interfaces[interface_name] = addr
+        try:
+            interfaces[interface_name] = ipaddress.IPAddress(addr)
+        except ValueError:
+            pass
 
     return interfaces
