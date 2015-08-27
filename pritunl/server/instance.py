@@ -207,6 +207,41 @@ class ServerInstance(object):
             )
             raise
 
+    def bridge_start(self):
+        if self.server.network_mode != BRIDGE:
+            return
+
+        host_int_data = utils.find_interface(self.server.network)
+        if not host_int_data:
+            self.server.output.push_output('ERROR Failed to find bridged network interface')
+            logger.error('Failed to find bridged network interface', 'server',
+                server_id=self.server.id,
+                network=self.server.network,
+            )
+            raise ValueError('Failed to find bridged network interface')
+
+        host_interface = host_int_data['interface']
+        host_address = host_int_data['address']
+        host_netmask = host_int_data['netmask']
+        host_broadcast = host_int_data['broadcast']
+
+        utils.check_output_logged(['openvpn', '--mktun', '--dev', self.interface])
+        utils.check_output_logged(['brctl', 'addbr', self.bridge_interface])
+        utils.check_output_logged(['brctl', 'addif', self.bridge_interface, host_interface])
+        utils.check_output_logged(['brctl', 'addif', self.bridge_interface, self.interface])
+        utils.check_output_logged(['ifconfig', self.interface, '0.0.0.0', 'promisc', 'up'])
+        utils.check_output_logged(['ifconfig', host_interface, '0.0.0.0', 'promisc', 'up'])
+        utils.check_output_logged(['ifconfig', self.bridge_interface, host_address,
+            'netmask', host_netmask, 'broadcast', host_broadcast])
+
+    def bridge_stop(self):
+        if self.server.network_mode != BRIDGE:
+            return
+
+        utils.check_output_logged(['ifconfig', self.bridge_interface, 'down'])
+        utils.check_output_logged(['brctl', 'delbr', self.bridge_interface])
+        utils.check_output_logged(['openvpn', '--rmtun', '--dev', self.interface])
+
     def generate_iptables_rules(self):
         rules = []
 
@@ -500,6 +535,7 @@ class ServerInstance(object):
             self.generate_ovpn_conf()
 
             self.enable_ip_forwarding()
+            self.bridge_start()
             self.set_iptables_rules()
 
             self.process = self.openvpn_start()
@@ -533,6 +569,7 @@ class ServerInstance(object):
 
             self.interrupt = True
             self.clear_iptables_rules()
+            self.bridge_stop()
             self.resources_release()
 
             if not self.clean_exit:
@@ -544,6 +581,7 @@ class ServerInstance(object):
             self.interrupt = True
             if self.resource_lock:
                 self.clear_iptables_rules()
+                self.bridge_stop()
             self.resources_release()
 
             logger.exception('Server error occurred while running', 'server',
