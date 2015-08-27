@@ -74,12 +74,15 @@ class ServerInstance(object):
             raise TypeError('Server resource lock already set')
         self.resource_lock = _resource_locks[self.server.id]
         self.resource_lock.acquire()
-        self.interface = utils.interface_acquire(self.server.network_mode)
+        self.interface = utils.interface_acquire(
+            'tap' if self.server.network_mode == BRIDGE else 'tun')
 
     def resources_release(self):
         if self.resource_lock:
             self.resource_lock.release()
-            utils.interface_release(self.server.network_mode, self.interface)
+            utils.interface_release(
+                'tap' if self.server.network_mode == BRIDGE else 'tun',
+                self.interface)
             self.interface = None
 
     def generate_ovpn_conf(self):
