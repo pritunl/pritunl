@@ -116,7 +116,6 @@ def get_local_networks():
 
 def get_interfaces():
     output = check_output_logged(['ifconfig'])
-
     interfaces = {}
 
     for interface in output.split('\n\n'):
