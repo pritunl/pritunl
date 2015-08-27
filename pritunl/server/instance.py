@@ -33,6 +33,7 @@ class ServerInstance(object):
         self.sock_interrupt = False
         self.clean_exit = False
         self.interface = None
+        self.bridge_interface = None
         self.primary_user = None
         self.process = None
         self.auth_log_process = None
@@ -76,6 +77,8 @@ class ServerInstance(object):
         self.resource_lock.acquire()
         self.interface = utils.interface_acquire(
             'tap' if self.server.network_mode == BRIDGE else 'tun')
+        if self.server.network_mode == BRIDGE:
+            self.bridge_interface = utils.interface_acquire('br')
 
     def resources_release(self):
         if self.resource_lock:
@@ -83,6 +86,8 @@ class ServerInstance(object):
             utils.interface_release(
                 'tap' if self.server.network_mode == BRIDGE else 'tun',
                 self.interface)
+            if self.bridge_interface:
+                utils.interface_release('br', self.bridge_interface)
             self.interface = None
 
     def generate_ovpn_conf(self):
