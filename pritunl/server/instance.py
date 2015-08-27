@@ -147,11 +147,26 @@ class ServerInstance(object):
                     push += 'route %s %s %s\n' % (utils.parse_network(
                         local_network) + (gateway,))
 
+        if self.server.network_mode == BRIDGE:
+            host_int_data = self.host_interface_data
+            host_address = host_int_data['address']
+            host_netmask = host_int_data['netmask']
+
+            server_line = 'server-bridge %s %s %s %s' % (
+                host_address,
+                host_netmask,
+                self.server.network_start,
+                self.server.network_end,
+            )
+        else:
+            server_line = 'server %s %s' % utils.parse_network(
+                self.server.network)
+
         server_conf = OVPN_INLINE_SERVER_CONF % (
             self.server.port,
             self.server.protocol,
             self.interface,
-            '%s %s' % utils.parse_network(self.server.network),
+            server_line,
             self.management_socket_path,
             self.server.max_clients,
             self.server.ping_interval,
