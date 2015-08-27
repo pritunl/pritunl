@@ -113,3 +113,26 @@ def get_local_networks():
         addresses.append(network_addr(addr, mask))
 
     return addresses
+
+def get_interfaces():
+    output = check_output_logged(['ifconfig'])
+
+    interfaces = {}
+
+    for interface in output.split('\n\n'):
+        interface_name = re.findall(r'[a-z0-9]+', interface, re.IGNORECASE)
+        if not interface_name:
+            continue
+        interface_name = interface_name[0]
+
+        addr = re.findall(r'inet.{0,10}' + IP_REGEX, interface, re.IGNORECASE)
+        if not addr:
+            continue
+        addr = re.findall(IP_REGEX, addr[0], re.IGNORECASE)
+        if not addr:
+            continue
+        addr = addr[0]
+
+        interfaces[interface_name] = addr
+
+    return interfaces
