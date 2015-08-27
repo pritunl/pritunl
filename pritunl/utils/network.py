@@ -9,15 +9,21 @@ import socket
 import struct
 import fcntl
 
-_interfaces = set(['tun%s' % x for x in xrange(100)])
+_tun_interfaces = set(['tun%s' % x for x in xrange(100)])
+_tap_interfaces = set(['tun%s' % x for x in xrange(100)])
 _sock = None
 _sockfd = None
 
-def tun_interface_acquire():
-    return _interfaces.pop()
+def tun_interface_acquire(interface_type):
+    if interface_type == BRIDGE:
+        return _tap_interfaces.pop()
+    return _tun_interfaces.pop()
 
-def tun_interface_release(interface):
-    _interfaces.add(interface)
+def tun_interface_release(interface_type, interface):
+    if interface_type == BRIDGE:
+        _tap_interfaces.add(interface)
+    else:
+        _tun_interfaces.add(interface)
 
 def get_remote_addr():
     return flask.request.remote_addr
