@@ -135,10 +135,13 @@ def get_interfaces():
     interfaces = {}
 
     for interface in output.split('\n\n'):
+        data = {}
+
         interface_name = re.findall(r'[a-z0-9]+', interface, re.IGNORECASE)
         if not interface_name:
             continue
         interface_name = interface_name[0]
+        data['interface'] = interface_name
 
         addr = re.findall(r'inet.{0,10}' + IP_REGEX, interface, re.IGNORECASE)
         if not addr:
@@ -146,18 +149,36 @@ def get_interfaces():
         addr = re.findall(IP_REGEX, addr[0], re.IGNORECASE)
         if not addr:
             continue
-        addr = addr[0]
+        data['address'] = addr[0]
 
-        try:
-            interfaces[interface_name] = ipaddress.IPAddress(addr)
-        except ValueError:
-            pass
+        netmask = re.findall(r'netmask.{0,10}' + IP_REGEX, interface, re.IGNORECASE)
+        if not netmask:
+            continue
+        netmask = re.findall(IP_REGEX, netmask[0], re.IGNORECASE)
+        if not netmask:
+            continue
+        data['netmask'] = netmask[0]
+
+        broadcast = re.findall(r'broadcast.{0,10}' + IP_REGEX, interface, re.IGNORECASE)
+        if not broadcast:
+            continue
+        broadcast = re.findall(IP_REGEX, broadcast[0], re.IGNORECASE)
+        if not broadcast:
+            continue
+        data['broadcast'] = broadcast[0]
+
+        interfaces[interface_name] = data
 
     return interfaces
 
 def find_interface(network):
     network = ipaddress.IPNetwork(network)
 
-    for interface, address in get_interfaces():
+    for interface, data in get_interfaces():
+        try:
+            address = ipaddress.IPAddress(data['address'])
+        except ValueError:
+            continue
+
         if address in network:
-            return interface
+            return data
