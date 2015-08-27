@@ -226,7 +226,6 @@ class ServerInstance(object):
             return
 
         host_int_data = self.host_interface_data
-
         host_interface = host_int_data['interface']
         host_address = host_int_data['address']
         host_netmask = host_int_data['netmask']
