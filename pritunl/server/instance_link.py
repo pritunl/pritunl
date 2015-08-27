@@ -41,7 +41,7 @@ class ServerInstanceLink(object):
         if not os.path.exists(self._temp_path):
             os.makedirs(self._temp_path)
         ovpn_conf_path = os.path.join(self._temp_path, OVPN_CONF_NAME)
-        self.interface = utils.tun_interface_acquire(self.linked_server.network_mode)
+        self.interface = utils.interface_acquire(self.linked_server.network_mode)
 
         if self.linked_host:
             remotes = 'remote %s %s' % (
@@ -175,7 +175,7 @@ class ServerInstanceLink(object):
 
         finally:
             if self.interface:
-                utils.tun_interface_release(self.linked_server.network_mode, self.interface)
+                utils.interface_release(self.linked_server.network_mode, self.interface)
                 self.interface = None
             utils.rmtree(self._temp_path)
 
@@ -195,7 +195,7 @@ class ServerInstanceLink(object):
                     )
             finally:
                 if self.interface:
-                    utils.tun_interface_release(self.linked_server.network_mode, self.interface)
+                    utils.interface_release(self.linked_server.network_mode, self.interface)
                     self.interface = None
 
     def start(self):

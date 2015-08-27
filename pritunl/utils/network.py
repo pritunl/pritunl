@@ -14,12 +14,12 @@ _tap_interfaces = set(['tun%s' % x for x in xrange(100)])
 _sock = None
 _sockfd = None
 
-def tun_interface_acquire(interface_type):
+def interface_acquire(interface_type):
     if interface_type == BRIDGE:
         return _tap_interfaces.pop()
     return _tun_interfaces.pop()
 
-def tun_interface_release(interface_type, interface):
+def interface_release(interface_type, interface):
     if interface_type == BRIDGE:
         _tap_interfaces.add(interface)
     else:
