@@ -144,3 +144,10 @@ def get_interfaces():
             pass
 
     return interfaces
+
+def find_interface(network):
+    network = ipaddress.IPNetwork(network)
+
+    for interface, address in get_interfaces():
+        if address in network:
+            return interface
