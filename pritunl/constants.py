@@ -487,7 +487,7 @@ OVPN_INLINE_SERVER_CONF = """\
 port %s
 proto %s
 dev %s
-server %s
+%s
 management %s unix
 management-client-auth
 auth-user-pass-optional
