@@ -41,7 +41,7 @@ class ServerInstanceLink(object):
         if not os.path.exists(self._temp_path):
             os.makedirs(self._temp_path)
         ovpn_conf_path = os.path.join(self._temp_path, OVPN_CONF_NAME)
-        self.interface = utils.tun_interface_acquire()
+        self.interface = utils.tun_interface_acquire(self.linked_server.network_mode)
 
         if self.linked_host:
             remotes = 'remote %s %s' % (
@@ -55,6 +55,7 @@ class ServerInstanceLink(object):
             uuid.uuid4().hex,
             utils.random_name(),
             self.interface,
+            'tap' if self.linked_server.network_mode == BRIDGE else 'tun',
             self.linked_server.protocol,
             remotes,
             CIPHERS[self.server.cipher],
@@ -174,7 +175,7 @@ class ServerInstanceLink(object):
 
         finally:
             if self.interface:
-                utils.tun_interface_release(self.interface)
+                utils.tun_interface_release(self.linked_server.network_mode, self.interface)
                 self.interface = None
             utils.rmtree(self._temp_path)
 
@@ -194,7 +195,7 @@ class ServerInstanceLink(object):
                     )
             finally:
                 if self.interface:
-                    utils.tun_interface_release(self.interface)
+                    utils.tun_interface_release(self.linked_server.network_mode, self.interface)
                     self.interface = None
 
     def start(self):
