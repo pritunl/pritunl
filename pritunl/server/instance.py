@@ -213,7 +213,8 @@ class ServerInstance(object):
 
         host_int_data = utils.find_interface(self.server.network)
         if not host_int_data:
-            self.server.output.push_output('ERROR Failed to find bridged network interface')
+            self.server.output.push_output(
+                'ERROR Failed to find bridged network interface')
             logger.error('Failed to find bridged network interface', 'server',
                 server_id=self.server.id,
                 network=self.server.network,
@@ -225,14 +226,52 @@ class ServerInstance(object):
         host_netmask = host_int_data['netmask']
         host_broadcast = host_int_data['broadcast']
 
-        utils.check_output_logged(['openvpn', '--mktun', '--dev', self.interface])
-        utils.check_output_logged(['brctl', 'addbr', self.bridge_interface])
-        utils.check_output_logged(['brctl', 'addif', self.bridge_interface, host_interface])
-        utils.check_output_logged(['brctl', 'addif', self.bridge_interface, self.interface])
-        utils.check_output_logged(['ifconfig', self.interface, '0.0.0.0', 'promisc', 'up'])
-        utils.check_output_logged(['ifconfig', host_interface, '0.0.0.0', 'promisc', 'up'])
-        utils.check_output_logged(['ifconfig', self.bridge_interface, host_address,
-            'netmask', host_netmask, 'broadcast', host_broadcast])
+        utils.check_output_logged([
+            'openvpn',
+            '--mktun',
+            '--dev',
+            self.interface,
+        ])
+        utils.check_output_logged([
+            'brctl',
+            'addbr',
+            self.bridge_interface,
+        ])
+        utils.check_output_logged([
+            'brctl',
+            'addif',
+            self.bridge_interface,
+            host_interface,
+        ])
+        utils.check_output_logged([
+            'brctl',
+            'addif',
+            self.bridge_interface,
+            self.interface,
+        ])
+        utils.check_output_logged([
+            'ifconfig',
+            self.interface,
+            '0.0.0.0',
+            'promisc',
+            'up',
+        ])
+        utils.check_output_logged([
+            'ifconfig',
+            host_interface,
+            '0.0.0.0',
+            'promisc',
+            'up',
+        ])
+        utils.check_output_logged([
+            'ifconfig',
+            self.bridge_interface,
+            host_address,
+            'netmask',
+            host_netmask,
+            'broadcast',
+            host_broadcast,
+        ])
 
     def bridge_stop(self):
         if self.server.network_mode != BRIDGE:
