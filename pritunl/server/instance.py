@@ -339,7 +339,13 @@ class ServerInstance(object):
         default_interface = routes['0.0.0.0']
 
         rules.append(['INPUT', '-i', self.interface, '-j', 'ACCEPT'])
-        rules.append(['FORWARD', '-i', self.interface, '-j', 'ACCEPT'])
+        if self.server.network_mode == BRIDGE:
+            rules.append(
+                ['INPUT', '-i', self.bridge_interface, '-j', 'ACCEPT'])
+            rules.append(
+                ['FORWARD', '-i', self.bridge_interface, '-j', 'ACCEPT'])
+        else:
+            rules.append(['FORWARD', '-i', self.interface, '-j', 'ACCEPT'])
 
         interfaces = set()
         for network_address in self.server.local_networks or ['0.0.0.0/0']:
