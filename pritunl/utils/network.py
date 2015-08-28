@@ -151,7 +151,8 @@ def get_interfaces():
             continue
         data['address'] = addr[0]
 
-        netmask = re.findall(r'netmask.{0,10}' + IP_REGEX, interface, re.IGNORECASE)
+        netmask = re.findall(r'netmask.{0,10}' + IP_REGEX,
+            interface, re.IGNORECASE)
         if not netmask:
             continue
         netmask = re.findall(IP_REGEX, netmask[0], re.IGNORECASE)
@@ -159,7 +160,8 @@ def get_interfaces():
             continue
         data['netmask'] = netmask[0]
 
-        broadcast = re.findall(r'broadcast.{0,10}' + IP_REGEX, interface, re.IGNORECASE)
+        broadcast = re.findall(r'broadcast.{0,10}' + IP_REGEX,
+            interface, re.IGNORECASE)
         if not broadcast:
             continue
         broadcast = re.findall(IP_REGEX, broadcast[0], re.IGNORECASE)
