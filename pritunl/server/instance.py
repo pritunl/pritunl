@@ -331,6 +331,22 @@ class ServerInstance(object):
         except subprocess.CalledProcessError:
             pass
 
+        host_int_data = self.host_interface_data
+        host_interface = host_int_data['interface']
+        host_address = host_int_data['address']
+        host_netmask = host_int_data['netmask']
+        host_broadcast = host_int_data['broadcast']
+
+        utils.check_output_logged([
+            'ifconfig',
+            host_interface,
+            host_address,
+            'netmask',
+            host_netmask,
+            'broadcast',
+            host_broadcast,
+        ])
+
     def generate_iptables_rules(self):
         rules = []
 
