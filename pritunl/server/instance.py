@@ -248,6 +248,13 @@ class ServerInstance(object):
         host_broadcast = host_int_data['broadcast']
 
         utils.check_output_logged([
+            'ip',
+            'link',
+            'set',
+            'down',
+            host_interface,
+        ])
+        utils.check_output_logged([
             'openvpn',
             '--mktun',
             '--dev',
