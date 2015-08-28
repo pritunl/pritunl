@@ -138,7 +138,8 @@ class ServerInstance(object):
             pass
 
         for link_svr in self.server.iter_links(fields=(
-                '_id', 'network', 'local_networks')):
+                '_id', 'network', 'local_networks', 'network_start',
+                'network_end')):
             if self.server.id < link_svr.id:
                 gateway = utils.get_network_gateway(self.server.network)
                 push += 'route %s %s %s\n' % (utils.parse_network(
@@ -372,7 +373,8 @@ class ServerInstance(object):
 
             rules.append(args_base + ['-s', self.server.network])
 
-            for link_svr in self.server.iter_links(fields=('_id', 'network')):
+            for link_svr in self.server.iter_links(fields=('_id', 'network',
+                    'network_start', 'network_end')):
                 rules.append(args_base + ['-s', link_svr.network])
 
         for interface in interfaces:
