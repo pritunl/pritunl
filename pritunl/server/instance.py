@@ -305,22 +305,31 @@ class ServerInstance(object):
         if self.server.network_mode != BRIDGE:
             return
 
-        utils.check_output_logged([
-            'ifconfig',
-            self.bridge_interface,
-            'down',
-        ])
-        utils.check_output_logged([
-            'brctl',
-            'delbr',
-            self.bridge_interface,
-        ])
-        utils.check_output_logged([
-            'openvpn',
-            '--rmtun',
-            '--dev',
-            self.interface,
-        ])
+        try:
+            utils.check_output_logged([
+                'ifconfig',
+                self.bridge_interface,
+                'down',
+            ])
+        except subprocess.CalledProcessError:
+            pass
+        try:
+            utils.check_output_logged([
+                'brctl',
+                'delbr',
+                self.bridge_interface,
+            ])
+        except subprocess.CalledProcessError:
+            pass
+        try:
+            utils.check_output_logged([
+                'openvpn',
+                '--rmtun',
+                '--dev',
+                self.interface,
+            ])
+        except subprocess.CalledProcessError:
+            pass
 
     def generate_iptables_rules(self):
         rules = []
