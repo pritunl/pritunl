@@ -622,8 +622,8 @@ class ServerInstance(object):
             self.generate_ovpn_conf()
 
             self.enable_ip_forwarding()
-            self.bridge_start()
             self.set_iptables_rules()
+            self.bridge_start()
 
             self.process = self.openvpn_start()
             if not self.process:
@@ -655,8 +655,8 @@ class ServerInstance(object):
             self.openvpn_watch()
 
             self.interrupt = True
-            self.clear_iptables_rules()
             self.bridge_stop()
+            self.clear_iptables_rules()
             self.resources_release()
 
             if not self.clean_exit:
