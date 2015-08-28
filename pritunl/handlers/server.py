@@ -546,7 +546,8 @@ def server_org_get(server_id):
 @auth.session_auth
 def server_org_put(server_id, org_id):
     svr = server.get_by_id(server_id,
-        fields=('_id', 'status', 'network', 'organizations'))
+        fields=('_id', 'status', 'network', 'network_start', 'network_end',
+        'organizations'))
     org = organization.get_by_id(org_id, fields=('_id', 'name'))
     if svr.status == ONLINE:
         return utils.jsonify({
@@ -569,7 +570,8 @@ def server_org_put(server_id, org_id):
 @auth.session_auth
 def server_org_delete(server_id, org_id):
     svr = server.get_by_id(server_id,
-        fields=('_id', 'status', 'network', 'primary_organization',
+        fields=('_id', 'status', 'network', 'network_start',
+            'network_end', 'primary_organization',
             'primary_user', 'organizations'))
     org = organization.get_by_id(org_id, fields=('_id'))
 
