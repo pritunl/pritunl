@@ -42,7 +42,8 @@ class Clients(object):
 
         if user.link_server_id:
             link_usr_svr = get_by_id(user.link_server_id,
-                fields=('_id', 'network', 'local_networks'))
+                fields=('_id', 'network', 'network_start',
+                'network_end', 'local_networks'))
 
             client_conf += 'iroute %s %s\n' % utils.parse_network(
                 link_usr_svr.network)
@@ -62,7 +63,8 @@ class Clients(object):
             client_conf += 'push "ip-win32 dynamic 0 3600"\n'
 
             for link_svr in self.server.iter_links(fields=(
-                '_id', 'network', 'local_networks')):
+                    '_id', 'network', 'local_networks', 'network_start',
+                    'network_end')):
                 client_conf += 'push "route %s %s"\n' % utils.parse_network(
                     link_svr.network)
                 for local_network in link_svr.local_networks:
