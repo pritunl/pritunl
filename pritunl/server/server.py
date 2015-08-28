@@ -255,7 +255,7 @@ class Server(mongo.MongoObject):
     @property
     def network_hash(self):
         return utils.fnv32a(
-            self.network + '-' +
+            (self.network or '') + '-' +
             (self.network_start or '') + '-' +
             (self.network_end or '')
         )
