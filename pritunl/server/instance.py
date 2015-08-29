@@ -490,7 +490,6 @@ class ServerInstance(object):
             logger.exception('Failed to apply iptables ' + \
                 'routing rule', 'server',
                 server_id=self.server.id,
-                rule=rule,
                 output=error.output,
             )
             raise
