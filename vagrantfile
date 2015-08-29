@@ -28,10 +28,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     node1.vm.network "private_network", ip: "192.168.178.101"
     node1.vm.network :forwarded_port, guest: 9700, host: 9701,
       auto_correct: true
-    node1.vm.network :forwarded_port, guest: 9900, host: 9901,
+    node1.vm.network :forwarded_port, guest: 9901, host: 9901,
       auto_correct: true, protocol: "udp"
-    node1.vm.network :forwarded_port, guest: 943, host: 943,
-      auto_correct: true, protocol: "tcp"
 
     node1.vm.provider :virtualbox do |virt|
       virt.customize ["modifyvm", :id, "--nicpromisc2", "allow-all"]
