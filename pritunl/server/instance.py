@@ -273,7 +273,7 @@ class ServerInstance(object):
             network = utils.parse_network(network_address)[0]
 
             if network not in routes:
-                logger.warning('Failed to find interface for local ' + \
+                logger.info('Failed to find interface for local ' + \
                     'network route, using default route', 'server',
                     server_id=self.server.id,
                 )
