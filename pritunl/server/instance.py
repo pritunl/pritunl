@@ -53,20 +53,6 @@ class ServerInstance(object):
     def user_collection(cls):
         return mongo.get_collection('users')
 
-    @cached_property
-    def host_interface_data(self):
-        data = utils.find_interface(self.server.network)
-        if not data:
-            self.server.output.push_output(
-                'ERROR Failed to find bridged network interface')
-            logger.error('Failed to find bridged network interface', 'server',
-                 server_id=self.server.id,
-                 network=self.server.network,
-            )
-            raise ValueError('Failed to find bridged network interface')
-
-        return data
-
     def get_cursor_id(self):
         return messenger.get_cursor_id('servers')
 
