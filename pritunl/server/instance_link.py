@@ -90,7 +90,7 @@ class ServerInstanceLink(object):
             client_conf += 'key-direction 1\n<tls-auth>\n%s\n</tls-auth>\n' % (
                 self.linked_server.tls_auth_key)
 
-        client_conf += ('<cert>\n%s\n' + \
+        client_conf += ('<cert>\n%s\n' +
             '</cert>\n') % utils.get_cert_block(self.user.certificate)
         client_conf += '<key>\n%s\n</key>\n' % (
             self.user.private_key.strip())
