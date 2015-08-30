@@ -1,5 +1,6 @@
 from pritunl.server.instance_com import ServerInstanceCom
 from pritunl.server.instance_link import ServerInstanceLink
+from pritunl.server.bridge import add_interface, rem_interface
 
 from pritunl.constants import *
 from pritunl.exceptions import *
@@ -77,8 +78,6 @@ class ServerInstance(object):
         self.resource_lock.acquire()
         self.interface = utils.interface_acquire(
             'tap' if self.server.network_mode == BRIDGE else 'tun')
-        if self.server.network_mode == BRIDGE:
-            self.bridge_interface = utils.interface_acquire('br')
 
     def resources_release(self):
         if self.resource_lock:
@@ -86,8 +85,6 @@ class ServerInstance(object):
             utils.interface_release(
                 'tap' if self.server.network_mode == BRIDGE else 'tun',
                 self.interface)
-            if self.bridge_interface:
-                utils.interface_release('br', self.bridge_interface)
             self.interface = None
 
     def generate_ovpn_conf(self):
@@ -227,111 +224,16 @@ class ServerInstance(object):
         if self.server.network_mode != BRIDGE:
             return
 
-        host_int_data = self.host_interface_data
-        host_interface = host_int_data['interface']
-        host_address = host_int_data['address']
-        host_netmask = host_int_data['netmask']
-        host_broadcast = host_int_data['broadcast']
-
-        utils.check_output_logged([
-            'ip',
-            'link',
-            'set',
-            'down',
-            host_interface,
-        ])
-        utils.check_output_logged([
-            'openvpn',
-            '--mktun',
-            '--dev',
+        self.bridge_interface, self.host_interface_data = add_interface(
+            self.server.network,
             self.interface,
-        ])
-        utils.check_output_logged([
-            'brctl',
-            'addbr',
-            self.bridge_interface,
-        ])
-        utils.check_output_logged([
-            'brctl',
-            'addif',
-            self.bridge_interface,
-            host_interface,
-        ])
-        utils.check_output_logged([
-            'brctl',
-            'addif',
-            self.bridge_interface,
-            self.interface,
-        ])
-        utils.check_output_logged([
-            'ifconfig',
-            self.interface,
-            '0.0.0.0',
-            'promisc',
-            'up',
-        ])
-        utils.check_output_logged([
-            'ifconfig',
-            host_interface,
-            '0.0.0.0',
-            'promisc',
-            'up',
-        ])
-        utils.check_output_logged([
-            'ifconfig',
-            self.bridge_interface,
-            host_address,
-            'netmask',
-            host_netmask,
-            'broadcast',
-            host_broadcast,
-        ])
+        )
 
     def bridge_stop(self):
         if self.server.network_mode != BRIDGE:
             return
 
-        try:
-            utils.check_output_logged([
-                'ifconfig',
-                self.bridge_interface,
-                'down',
-            ])
-        except subprocess.CalledProcessError:
-            pass
-        try:
-            utils.check_output_logged([
-                'brctl',
-                'delbr',
-                self.bridge_interface,
-            ])
-        except subprocess.CalledProcessError:
-            pass
-        try:
-            utils.check_output_logged([
-                'openvpn',
-                '--rmtun',
-                '--dev',
-                self.interface,
-            ])
-        except subprocess.CalledProcessError:
-            pass
-
-        host_int_data = self.host_interface_data
-        host_interface = host_int_data['interface']
-        host_address = host_int_data['address']
-        host_netmask = host_int_data['netmask']
-        host_broadcast = host_int_data['broadcast']
-
-        utils.check_output_logged([
-            'ifconfig',
-            host_interface,
-            host_address,
-            'netmask',
-            host_netmask,
-            'broadcast',
-            host_broadcast,
-        ])
+        rem_interface(self.server.network, self.interface)
 
     def generate_iptables_rules(self):
         rules = []
