@@ -90,6 +90,16 @@ def user_get(org_id, user_id=None, page=None):
 
         users_data[doc['user_id']]['status'] = True
 
+        if server_data['status']:
+            server_data = {
+                'id': server_data['id'],
+                'name': server_data['name'],
+            }
+            append = True
+        else:
+            append = False
+
+        server_data['id'] = str(server_data['id']) + '-' + str(doc['_id'])
         server_data['status'] = True
         server_data['client_id'] = doc['_id']
         server_data['device_name'] = doc['device_name']
@@ -97,6 +107,12 @@ def user_get(org_id, user_id=None, page=None):
         server_data['real_address'] = doc['real_address']
         server_data['virt_address'] = doc['virt_address'].split('/')[0]
         server_data['connected_since'] = doc['connected_since']
+
+        if append:
+            svrs = users_data[doc['user_id']]['servers']
+            svrs.append(server_data)
+            users_data[doc['user_id']]['servers'] = sorted(
+                svrs, key=lambda x: x['name'])
 
     ip_addrs_iter = server.multi_get_ip_addr(org_id, users_id)
     for user_id, server_id, ip_add in ip_addrs_iter:
