@@ -530,11 +530,11 @@ class ServerInstance(object):
             cursor_id = self.get_cursor_id()
 
             os.makedirs(self._temp_path)
-            self.generate_ovpn_conf()
 
             self.enable_ip_forwarding()
-            self.set_iptables_rules()
             self.bridge_start()
+            self.generate_ovpn_conf()
+            self.set_iptables_rules()
 
             self.process = self.openvpn_start()
             if not self.process:
