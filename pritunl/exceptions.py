@@ -70,6 +70,9 @@ class InvalidStaticFile(ServerError):
 class ServerNetworkLocked(ServerError):
     pass
 
+class BridgeLookupError(ServerError):
+    pass
+
 
 class NotFound(BaseError):
     pass
