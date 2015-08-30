@@ -260,16 +260,15 @@ class ServerInstance(object):
         default_interface = routes['0.0.0.0']
 
         rules.append(['INPUT', '-i', self.interface, '-j', 'ACCEPT'])
-        if self.server.network_mode == BRIDGE:
-            rules.append(
-                ['INPUT', '-i', self.bridge_interface, '-j', 'ACCEPT'])
-            rules.append(
-                ['FORWARD', '-i', self.bridge_interface, '-j', 'ACCEPT'])
-        else:
-            rules.append(['FORWARD', '-i', self.interface, '-j', 'ACCEPT'])
+        rules.append(['FORWARD', '-i', self.interface, '-j', 'ACCEPT'])
 
         interfaces = set()
-        for network_address in self.server.local_networks or ['0.0.0.0/0']:
+        other_networks = []
+        if self.server.mode == ALL_TRAFFIC and \
+                self.server.network_mode != BRIDGE:
+            other_networks = ['0.0.0.0/0']
+
+        for network_address in self.server.local_networks or other_networks:
             args_base = ['POSTROUTING', '-t', 'nat']
             network = utils.parse_network(network_address)[0]
 
