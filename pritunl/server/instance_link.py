@@ -177,7 +177,8 @@ class ServerInstanceLink(object):
         finally:
             if self.interface:
                 utils.interface_release(
-                    'tap' if self.linked_server.network_mode == BRIDGE else 'tun',
+                    'tap' if self.linked_server.network_mode == BRIDGE \
+                        else 'tun',
                     self.interface)
                 self.interface = None
             utils.rmtree(self._temp_path)
@@ -199,7 +200,8 @@ class ServerInstanceLink(object):
             finally:
                 if self.interface:
                     utils.interface_release(
-                        'tap' if self.linked_server.network_mode == BRIDGE else 'tun',
+                        'tap' if self.linked_server.network_mode == BRIDGE \
+                            else 'tun',
                         self.interface)
                     self.interface = None
 
