@@ -185,5 +185,5 @@ def find_interface(network):
         except ValueError:
             continue
 
-        if address in network:
+        if address in network and data['netmask'] == str(network.netmask):
             return data
