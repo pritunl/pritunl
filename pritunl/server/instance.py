@@ -221,10 +221,15 @@ class ServerInstance(object):
         if self.server.network_mode != BRIDGE:
             return
 
-        self.bridge_interface, self.host_interface_data = add_interface(
-            self.server.network,
-            self.interface,
-        )
+        try:
+            self.bridge_interface, self.host_interface_data = add_interface(
+                self.server.network,
+                self.interface,
+            )
+        except BridgeLookupError:
+            self.server.output.push_output(
+                'ERROR Failed to find bridged network interface')
+            raise
 
     def bridge_stop(self):
         if self.server.network_mode != BRIDGE:
