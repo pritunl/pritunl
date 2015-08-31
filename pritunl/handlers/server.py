@@ -151,17 +151,11 @@ def server_put_post(server_id=None):
         network_start_def = True
         network_start = flask.request.json['network_start']
 
-        # if not _check_network_private(network_start):
-        #     return _network_invalid()
-
     network_end = None
     network_end_def = False
     if 'network_end' in flask.request.json:
         network_end_def = True
         network_end = flask.request.json['network_end']
-
-        # if not _check_network_private(network_end):
-        #     return _network_invalid()
 
     bind_address = None
     bind_address_def = False
