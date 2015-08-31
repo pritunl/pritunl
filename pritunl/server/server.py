@@ -437,6 +437,9 @@ class Server(mongo.MongoObject):
     def iter_links(self, fields=None):
         from pritunl.server.utils import iter_servers
 
+        if not len(self.links):
+            return
+
         spec = {
             '_id': {'$in': [x['server_id'] for x in self.links]},
         }
