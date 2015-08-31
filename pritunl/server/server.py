@@ -294,6 +294,10 @@ class Server(mongo.MongoObject):
     def output_link(self):
         return ServerOutputLink(self.id)
 
+    @property
+    def adapter_type(self):
+        return 'tap' if self.network_mode == BRIDGE else 'tun'
+
     def initialize(self):
         self.generate_tls_auth_start()
         try:
