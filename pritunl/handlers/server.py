@@ -82,8 +82,14 @@ def _check_network_private(test_network):
 
 def _check_network_range(test_network, start_addr, end_addr):
     test_net = ipaddress.IPNetwork(test_network)
-    return ipaddress.IPAddress(start_addr) in test_net and \
-        ipaddress.IPAddress(end_addr) in test_net
+    start_addr = ipaddress.IPAddress(start_addr)
+    end_addr = ipaddress.IPAddress(end_addr)
+
+    if start_addr == test_net.network or \
+            start_addr == test_net.iterhosts().next():
+        return False
+
+    return start_addr in test_net and end_addr in test_net
 
 @app.app.route('/server', methods=['GET'])
 @app.app.route('/server/<server_id>', methods=['GET'])
