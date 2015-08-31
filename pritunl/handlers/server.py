@@ -414,8 +414,8 @@ def server_put_post(server_id=None):
         if network_mode == BRIDGE:
             if not _check_network_range(network, network_start, network_end):
                 return utils.jsonify({
-                    'error': NETWORK_INVALID,
-                    'error_msg': NETWORK_INVALID_MSG,
+                    'error': BRIDGE_NETWORK_INVALID,
+                    'error_msg': BRIDGE_NETWORK_INVALID_MSG,
                 }, 400)
 
         svr = server.new_server(
@@ -521,8 +521,8 @@ def server_put_post(server_id=None):
             if not _check_network_range(svr.network, svr.network_start,
                     svr.network_end):
                 return utils.jsonify({
-                    'error': NETWORK_INVALID,
-                    'error_msg': NETWORK_INVALID_MSG,
+                    'error': BRIDGE_NETWORK_INVALID,
+                    'error_msg': BRIDGE_NETWORK_INVALID_MSG,
                 }, 400)
 
         if svr.links and svr.replica_count > 1:
