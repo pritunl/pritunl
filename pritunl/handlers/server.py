@@ -80,6 +80,11 @@ def _check_network_private(test_network):
 
     return False
 
+def _check_network_range(test_network, start_addr, end_addr):
+    test_net = ipaddress.IPNetwork(test_network)
+    return ipaddress.IPAddress(start_addr) in test_net and \
+        ipaddress.IPAddress(end_addr) in test_net
+
 @app.app.route('/server', methods=['GET'])
 @app.app.route('/server/<server_id>', methods=['GET'])
 @auth.session_auth
@@ -406,6 +411,13 @@ def server_put_post(server_id=None):
             }, 400)
 
     if not server_id:
+        if network_mode == BRIDGE:
+            if not _check_network_range(network, network_start, network_end):
+                return utils.jsonify({
+                    'error': NETWORK_INVALID,
+                    'error_msg': NETWORK_INVALID_MSG,
+                }, 400)
+
         svr = server.new_server(
             name=name,
             network=network,
@@ -504,6 +516,14 @@ def server_put_post(server_id=None):
             svr.replica_count = replica_count
         if debug_def:
             svr.debug = debug
+
+        if svr.network_mode == BRIDGE:
+            if not _check_network_range(svr.network, svr.network_start,
+                    svr.network_end):
+                return utils.jsonify({
+                    'error': NETWORK_INVALID,
+                    'error_msg': NETWORK_INVALID_MSG,
+                }, 400)
 
         if svr.links and svr.replica_count > 1:
             return utils.jsonify({
