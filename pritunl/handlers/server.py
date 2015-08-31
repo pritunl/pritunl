@@ -85,11 +85,13 @@ def _check_network_range(test_network, start_addr, end_addr):
     start_addr = ipaddress.IPAddress(start_addr)
     end_addr = ipaddress.IPAddress(end_addr)
 
-    if start_addr == test_net.network or \
-            start_addr == test_net.iterhosts().next():
-        return False
-
-    return start_addr in test_net and end_addr in test_net
+    return all((
+        start_addr != test_net.network,
+        end_addr != test_net.broadcast,
+        start_addr < end_addr,
+        start_addr in test_net,
+        end_addr in test_net,
+    ))
 
 @app.app.route('/server', methods=['GET'])
 @app.app.route('/server/<server_id>', methods=['GET'])
