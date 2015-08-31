@@ -294,8 +294,7 @@ class ServerInstance(object):
 
             rules.append(args_base + ['-s', self.server.network])
 
-            for link_svr in self.server.iter_links(fields=('_id', 'network',
-                    'network_start', 'network_end')):
+            for link_svr in self.server.iter_links(fields=('_id', 'network')):
                 rules.append(args_base + ['-s', link_svr.network])
 
         for interface in interfaces:
