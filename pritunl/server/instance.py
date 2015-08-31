@@ -270,6 +270,10 @@ class ServerInstance(object):
                 self.server.network_mode != BRIDGE:
             other_networks = ['0.0.0.0/0']
 
+        link_svr_networks = []
+        for link_svr in self.server.iter_links(fields=('_id', 'network')):
+            link_svr_networks.append(link_svr.network)
+
         for network_address in self.server.local_networks or other_networks:
             args_base = ['POSTROUTING', '-t', 'nat']
             network = utils.parse_network(network_address)[0]
@@ -294,8 +298,8 @@ class ServerInstance(object):
 
             rules.append(args_base + ['-s', self.server.network])
 
-            for link_svr in self.server.iter_links(fields=('_id', 'network')):
-                rules.append(args_base + ['-s', link_svr.network])
+            for link_svr_net in link_svr_networks:
+                rules.append(args_base + ['-s', link_svr_net])
 
         for interface in interfaces:
             rules.append([
