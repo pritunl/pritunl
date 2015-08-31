@@ -21,7 +21,6 @@ class ServerIpPool:
 
     def get_ip_pool(self, network, network_start):
         ip_pool = network.iterhosts()
-        ip_pool.next()
 
         if network_start:
             network_start = ipaddress.IPv4Address(network_start)
@@ -38,6 +37,8 @@ class ServerIpPool:
 
                 if ip_addr == network_break:
                     break
+        else:
+            ip_pool.next()
 
         return ip_pool
 
