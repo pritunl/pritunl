@@ -375,6 +375,8 @@ class User(mongo.MongoObject):
             self._get_key_info_str(server, conf_hash),
             uuid.uuid4().hex,
             utils.random_name(),
+            'tap' if self.server.network_mode == BRIDGE else 'tun',
+            'tap' if self.server.network_mode == BRIDGE else 'tun',
             server.protocol,
             server.get_key_remotes(),
             CIPHERS[server.cipher],

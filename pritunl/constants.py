@@ -511,8 +511,8 @@ OVPN_INLINE_CLIENT_CONF = """\
 setenv UV_ID %s
 setenv UV_NAME %s
 client
-dev tun
-dev-type tun
+dev $s
+dev-type $s
 proto %s
 %s
 nobind
