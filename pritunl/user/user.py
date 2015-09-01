@@ -109,7 +109,8 @@ class User(mongo.MongoObject):
                 os.utime(index_attr_path, None)
 
             with open(serial_path, 'w') as serial_file:
-                serial_file.write('01\n')
+                serial_hex = ('%x' % utils.fnv64a(str(self.id))).upper()
+                serial_file.write('%s\n' % serial_hex)
 
             with open(ssl_conf_path, 'w') as conf_file:
                 conf_file.write(CERT_CONF % (
