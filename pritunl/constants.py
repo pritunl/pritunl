@@ -482,6 +482,15 @@ CIPHERS = {
     'aes256': 'cipher AES-256-CBC',
 }
 
+ONC_CIPHERS = {
+    'none': 'none',
+    'bf128': 'BF-CBC',
+    'bf256': 'BF-CBC',
+    'aes128': 'AES-128-CBC',
+    'aes192': 'AES-192-CBC',
+    'aes256': 'AES-256-CBC',
+}
+
 JUMBO_FRAMES = {
     False: '',
     True: 'tun-mtu 9000\nfragment 0\nmssfix 0\n',
@@ -532,6 +541,52 @@ reneg-sec 2592000
 sndbuf 100000
 rcvbuf 100000
 remote-cert-tls server
+"""
+
+OVPN_ONC_CLIENT_CONF = """\
+{
+  "Type": "UnencryptedConfiguration",
+  "NetworkConfigurations": [{
+    "GUID": "%s",
+    "Name": "%s",
+    "Type": "VPN",
+    "VPN": {
+      "Host": "%s",
+      "Type": "OpenVPN",
+      "OpenVPN": {
+        "AuthRetry": "interact",
+        "Cipher": "%s",
+        "ClientCertType": "Pattern",
+        "ClientCertPattern": {
+          "IssuerCARef": [
+%s
+          ]
+        },
+        "CompLZO": "%s",
+        "Port": %s,
+        "Proto": "%s",
+        "PushPeerInfo": true,
+        "RenegSec": 2592000,
+        "ServerCARefs": [
+%s
+        ],
+        "ServerPollTimeout": 4,%s
+        "TLSRemote": "server",
+        "Username": "%s",
+        "UserAuthenticationType": "%s",
+        "Verb": "2"
+      }
+    }
+  }],
+%s}
+"""
+
+OVPN_ONC_CA_CERT = """\
+  "Certificates": [{
+    "GUID": "%s",
+    "Type": "Authority",
+    "X509": "%s"
+  }]
 """
 
 OVPN_INLINE_LINK_CONF = """\
