@@ -1,6 +1,5 @@
 import string
 import datetime
-import pymongo
 
 APP_NAME = 'pritunl'
 APP_NAME_FORMATED = 'Pritunl'
