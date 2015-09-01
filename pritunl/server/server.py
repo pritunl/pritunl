@@ -400,6 +400,25 @@ class Server(mongo.MongoObject):
 
         return '\n'.join(remotes)
 
+    def get_hosts(self):
+        hosts = []
+        spec = {
+            '_id': {'$in': self.hosts},
+        }
+        project = {
+            '_id': False,
+            'public_address': True,
+            'auto_public_address': True,
+        }
+
+        for doc in self.host_collection.find(spec, project):
+            address = doc['public_address'] or doc['auto_public_address']
+            hosts.append((address, self.port))
+
+        random.shuffle(hosts)
+
+        return hosts
+
     def commit(self, *args, **kwargs):
         tran = None
 
