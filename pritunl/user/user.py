@@ -110,6 +110,10 @@ class User(mongo.MongoObject):
 
             with open(serial_path, 'w') as serial_file:
                 serial_hex = ('%x' % utils.fnv64a(str(self.id))).upper()
+
+                if len(serial_hex) % 2:
+                    serial_hex = '0' + serial_hex
+
                 serial_file.write('%s\n' % serial_hex)
 
             with open(ssl_conf_path, 'w') as conf_file:
