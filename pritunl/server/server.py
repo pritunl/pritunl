@@ -298,6 +298,19 @@ class Server(mongo.MongoObject):
     def adapter_type(self):
         return 'tap' if self.network_mode == BRIDGE else 'tun'
 
+    @property
+    def ca_certificate_list(self):
+        ca_split = self.ca_certificate.split('-----BEGIN CERTIFICATE-----')
+        certs = []
+
+        for cert in ca_split:
+            if not cert:
+                continue
+            certs.append(cert.replace('-----END CERTIFICATE-----', '').replace(
+                '\n', ''))
+
+        return certs
+
     def initialize(self):
         self.generate_tls_auth_start()
         try:
