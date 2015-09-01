@@ -109,13 +109,9 @@ class LogView(object):
             '_id': {'$gt': cursor_id},
         }
 
-        if PYMONGO3:
-            cursor = self.collection.find(spec,
-                cursor_type=pymongo.cursor.CursorType.TAILABLE_AWAIT).sort(
-                '$natural', pymongo.ASCENDING)
-        else:
-            cursor = self.collection.find(spec, tailable=True,
-                await_data=True).sort('$natural', pymongo.ASCENDING)
+        cursor = self.collection.find(spec,
+            cursor_type=pymongo.cursor.CursorType.TAILABLE_AWAIT).sort(
+            '$natural', pymongo.ASCENDING)
 
         while cursor.alive:
             for doc in cursor:

@@ -2,12 +2,6 @@ import string
 import datetime
 import pymongo
 
-PYMONGO3 = False
-try:
-    PYMONGO3 = int(pymongo.version.split('.')[0]) >= 3
-except:
-    pass
-
 APP_NAME = 'pritunl'
 APP_NAME_FORMATED = 'Pritunl'
 CONF_FILENAME = '%s.conf' % APP_NAME
