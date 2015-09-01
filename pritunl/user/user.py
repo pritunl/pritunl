@@ -8,6 +8,7 @@ from pritunl import logger
 from pritunl import messenger
 
 import tarfile
+import zipfile
 import os
 import subprocess
 import hashlib
@@ -410,6 +411,70 @@ class User(mongo.MongoObject):
 
         return file_name, client_conf, conf_hash
 
+    def _generate_onc(self, server):
+        if not server.primary_organization or \
+                not server.primary_user:
+            server.create_primary_user()
+
+        file_name = '%s_%s_%s.onc' % (
+            self.org.name, self.name, server.name)
+
+        conf_hash = hashlib.md5()
+        conf_hash.update(str(self.org_id))
+        conf_hash.update(str(self.id))
+        conf_hash = '{%s}' % conf_hash.hexdigest()
+
+        hosts = server.get_hosts()
+        ca_certs = server.ca_certificate_list
+
+        tls_auth = ''
+        if server.tls_auth:
+            for line in server.tls_auth_key.split('\n'):
+                if line.startswith('#'):
+                    continue
+                tls_auth += line + '\\n'
+            tls_auth = '\n        "TLSAuthContents": "%s",' % tls_auth
+            tls_auth = '\n        "KeyDirection": "1",' + tls_auth
+
+        certs = ""
+        cert_ids = []
+
+        for cert in ca_certs:
+            cert_id = '{%s}' % hashlib.md5(cert).hexdigest()
+            cert_ids.append(cert_id)
+            certs += OVPN_ONC_CA_CERT % (
+                cert_id,
+                cert,
+            )
+
+        client_ref = ''
+        for cert_id in cert_ids:
+            client_ref += '            "%s",\n' % cert_id
+        client_ref = client_ref[:-2]
+
+        server_ref = ''
+        for cert_id in cert_ids:
+            server_ref += '          "%s",\n' % cert_id
+        server_ref = server_ref[:-2]
+
+        onc_conf = OVPN_ONC_CLIENT_CONF % (
+            conf_hash,
+            '%s - %s (%s)' % (self.name, self.org.name, server.name),
+            hosts[0][0], # TODO
+            ONC_CIPHERS[server.cipher],
+            client_ref,
+            'adaptive' if server.lzo_compression == ADAPTIVE else 'false',
+            hosts[0][1], # TODO
+            server.protocol,
+            server_ref,
+            tls_auth,
+            self.id,
+            'OTP' if server.otp_auth else 'None',
+            certs,
+        )
+
+        return file_name, onc_conf
+
     def build_key_archive(self):
         temp_path = utils.get_temp_path()
         key_archive_path = os.path.join(temp_path, '%s.tar' % self.id)
@@ -431,6 +496,61 @@ class User(mongo.MongoObject):
                     os.remove(server_conf_path)
             finally:
                 tar_file.close()
+
+            with open(key_archive_path, 'r') as archive_file:
+                key_archive = archive_file.read()
+        finally:
+            utils.rmtree(temp_path)
+
+        return key_archive
+
+    def build_onc_archive(self):
+        temp_path = utils.get_temp_path()
+        key_archive_path = os.path.join(temp_path, '%s.zip' % self.id)
+
+        try:
+            os.makedirs(temp_path)
+            zip_file = zipfile.ZipFile(key_archive_path, 'w')
+            try:
+                user_cert_path = os.path.join(temp_path, '%s.crt' % self.id)
+                user_key_path = os.path.join(temp_path, '%s.key' % self.id)
+                user_p12_path = os.path.join(temp_path, '%s.p12' % self.id)
+
+                with open(user_cert_path, 'w') as user_cert:
+                    user_cert.write(self.certificate)
+
+                with open(user_key_path, 'w') as user_key:
+                    os.chmod(user_key_path, 0600)
+                    user_key.write(self.private_key)
+
+                utils.check_output_logged([
+                    'openssl',
+                    'pkcs12',
+                    '-export',
+                    '-nodes',
+                    '-password', 'pass:',
+                    '-inkey', user_key_path,
+                    '-in', user_cert_path,
+                    '-out', user_p12_path
+                ])
+
+                zip_file.write(user_p12_path, arcname='%s.p12' % self.name)
+
+                os.remove(user_cert_path)
+                os.remove(user_key_path)
+                os.remove(user_p12_path)
+
+                for server in self.org.iter_servers():
+                    server_conf_path = os.path.join(temp_path,
+                        '%s_%s.onc' % (self.id, server.id))
+                    conf_name, client_conf = self._generate_onc(server)
+
+                    with open(server_conf_path, 'w') as ovpn_conf:
+                        ovpn_conf.write(client_conf)
+                    zip_file.write(server_conf_path, arcname=conf_name)
+                    os.remove(server_conf_path)
+            finally:
+                zip_file.close()
 
             with open(key_archive_path, 'r') as archive_file:
                 key_archive = archive_file.read()
