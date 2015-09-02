@@ -564,15 +564,24 @@ OVPN_ONC_CLIENT_CONF = """\
 %s
         ],
         "ServerPollTimeout": 4,%s
-        "RemoteCertTLS": "server",
-        "Username": "%s",
-        "UserAuthenticationType": "%s",
+        "RemoteCertTLS": "server",%s
         "Verb": "2"
       }
     }
   }],
 %s}
 """
+
+OVPN_ONC_AUTH_NONE = """
+        "SaveCredentials": true,
+        "UserAuthenticationType": "Password",
+        "Username": "%s",
+        "Password": "chrome","""
+
+OVPN_ONC_AUTH_OTP = """
+        "SaveCredentials": false,
+        "UserAuthenticationType": "OTP",
+        "Username": "%s","""
 
 OVPN_ONC_CA_CERT = """\
   "Certificates": [{

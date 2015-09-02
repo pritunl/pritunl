@@ -457,6 +457,11 @@ class User(mongo.MongoObject):
             server_ref += '          "%s",\n' % cert_id
         server_ref = server_ref[:-2]
 
+        if server.otp_auth:
+            auth = OVPN_ONC_AUTH_OTP % self.id
+        else:
+            auth = OVPN_ONC_AUTH_NONE % self.id
+
         onc_conf = OVPN_ONC_CLIENT_CONF % (
             conf_hash,
             '%s - %s (%s)' % (self.name, self.org.name, server.name),
@@ -468,8 +473,7 @@ class User(mongo.MongoObject):
             server.protocol,
             server_ref,
             tls_auth,
-            self.id,
-            'OTP' if server.otp_auth else 'None',
+            auth,
             certs,
         )
 
