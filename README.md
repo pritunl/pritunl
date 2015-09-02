@@ -1,32 +1,24 @@
-pritunl: enterprise vpn server
-==============================
+# pritunl: enterprise vpn server
 
-.. image:: https://img.shields.io/badge/package-arch%20linux-33aadd.svg?style=flat
-    :target: https://aur.archlinux.org/packages/pritunl/
+[![archlinux](https://img.shields.io/badge/package-arch%20linux-33aadd.svg?style=flat)](https://pritunl.com/#install)
 
-.. image:: https://img.shields.io/badge/package-centos-669900.svg?style=flat
-    :target: https://pritunl.com/#install
+[![centos](https://img.shields.io/badge/package-centos-669900.svg?style=flat)](https://pritunl.com/#install)
 
-.. image:: https://img.shields.io/badge/github-pritunl-11bdc2.svg?style=flat
-    :target: https://github.com/pritunl
+[![github](https://img.shields.io/badge/github-pritunl-11bdc2.svg?style=flat)](https://github.com/pritunl)
 
-.. image:: https://img.shields.io/badge/twitter-pritunl-55acee.svg?style=flat
-    :target: https://twitter.com/pritunl
+[![twitter](https://img.shields.io/badge/twitter-pritunl-55acee.svg?style=flat)](https://twitter.com/pritunl)
 
-`Pritunl <https://github.com/pritunl/pritunl>`_ is a distributed enterprise
+[Pritunl](https://github.com/pritunl/pritunl) is a distributed enterprise
 vpn server built using the OpenVPN protocol. Documentation and more
-information can be found at the home page `pritunl.com <https://pritunl.com>`_
+information can be found at the home page [pritunl.com](https://pritunl.com)
 
-.. image:: www/img/logo_code.png
-    :target: https://pritunl.com
+[![pritunl](www/img/logo_code.png)](https://pritunl.com)
 
-Development Builds
-------------------
+## Development Builds
+
+### archlinux
 
 ```
-#############################################
-# archlinux
-#############################################
 $ nano /etc/pacman.conf
 [pritunl]
 Server = http://repo.pritunl.com/dev/pacman
@@ -37,10 +29,11 @@ $ pacman -Sy
 $ pacman -S pritunl
 $ systemctl start mongodb pritunl
 $ systemctl enable mongodb pritunl
+```
 
-#############################################
-# centos-7
-#############################################
+### centos-7
+
+```
 $ wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 $ rpm -i epel-release-latest-7.noarch.rpm
 
@@ -56,10 +49,11 @@ $ gpg --armor --export CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
 $ yum install pritunl mongodb-server
 $ systemctl start mongod pritunl
 $ systemctl enable mongod pritunl
+```
 
-#############################################
-# amazon linux
-#############################################
+### amazon linux
+
+```
 $ wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 $ rpm -i epel-release-latest-7.noarch.rpm
 
@@ -75,10 +69,11 @@ $ gpg --armor --export CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
 $ yum install pritunl mongodb-server
 $ start mongod
 $ start pritunl
+```
 
-#############################################
-# debian wheezy
-#############################################
+### debian wheezy
+
+```
 $ nano /etc/apt/sources.list.d/mongodb-org-3.0.list
 deb http://repo.mongodb.org/apt/debian wheezy/mongodb-org/3.0 main
 
@@ -91,10 +86,11 @@ $ apt-get update
 $ apt-get install pritunl
 $ systemctl start mongod pritunl
 $ systemctl enable mongod pritunl
+```
 
-#############################################
-# debian jessie
-#############################################
+### debian jessie
+
+```
 $ nano /etc/apt/sources.list.d/mongodb-org-3.0.list
 deb http://repo.mongodb.org/apt/debian wheezy/mongodb-org/3.0 main
 
@@ -107,10 +103,11 @@ $ apt-get update
 $ apt-get install pritunl
 $ systemctl start mongod pritunl
 $ systemctl enable mongod pritunl
+```
 
-#############################################
-# ubuntu precise
-#############################################
+### ubuntu precise
+
+```
 $ nano /etc/apt/sources.list.d/mongodb-org-3.0.list
 deb http://repo.mongodb.org/apt/ubuntu precise/mongodb-org/3.0 multiverse
 
@@ -122,10 +119,11 @@ $ apt-key adv --keyserver hkp://pgp.mit.edu --recv CF8E292A
 $ apt-get update
 $ apt-get install pritunl
 $ service pritunl start
+```
 
-#############################################
-# ubuntu trusty
-#############################################
+### ubuntu trusty
+
+```
 $ nano /etc/apt/sources.list.d/mongodb-org-3.0.list
 deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.0 multiverse
 
@@ -137,10 +135,11 @@ $ apt-key adv --keyserver hkp://pgp.mit.edu --recv CF8E292A
 $ apt-get update
 $ apt-get install pritunl
 $ service pritunl start
+```
 
-#############################################
-# ubuntu vivid
-#############################################
+### ubuntu vivid
+
+```
 $ nano /etc/apt/sources.list.d/mongodb-org-3.0.list
 deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.0 multiverse
 
@@ -152,10 +151,11 @@ $ apt-key adv --keyserver hkp://pgp.mit.edu --recv CF8E292A
 $ apt-get update
 $ apt-get install pritunl
 $ service pritunl start
+```
 
-#############################################
-# ubuntu wily
-#############################################
+### ubuntu wily
+
+```
 $ nano /etc/apt/sources.list.d/mongodb-org-3.0.list
 deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.0 multiverse
 
@@ -169,13 +169,11 @@ $ apt-get install pritunl
 $ service pritunl start
 ```
 
-License
--------
+## License
 
 Please refer to the `LICENSE` file for a copy of the license.
 
-Export Requirements
--------------------
+### Export Requirements
 
 You may not export or re-export this software or any copy or adaptation in
 violation of any applicable laws or regulations.
