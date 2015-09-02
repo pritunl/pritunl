@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add support for bridge mode
+Add support for Chromebook
 Add ssl cert to settings
 Fix issue with multiple clients
 Fix issue with utf-8 names
