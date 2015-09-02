@@ -1,11 +1,8 @@
 # pritunl: enterprise vpn server
 
 [![archlinux](https://img.shields.io/badge/package-arch%20linux-33aadd.svg?style=flat)](https://pritunl.com/#install)
-
 [![centos](https://img.shields.io/badge/package-centos-669900.svg?style=flat)](https://pritunl.com/#install)
-
 [![github](https://img.shields.io/badge/github-pritunl-11bdc2.svg?style=flat)](https://github.com/pritunl)
-
 [![twitter](https://img.shields.io/badge/twitter-pritunl-55acee.svg?style=flat)](https://twitter.com/pritunl)
 
 [Pritunl](https://github.com/pritunl/pritunl) is a distributed enterprise
