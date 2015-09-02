@@ -98,7 +98,7 @@ setup(
     name='pritunl',
     version=VERSION,
     description='Pritunl vpn server',
-    long_description=open('README.rst').read(),
+    long_description=open('README.md').read(),
     author='Pritunl',
     author_email='contact@pritunl.com',
     url='https://github.com/pritunl/pritunl',
