@@ -564,7 +564,7 @@ OVPN_ONC_CLIENT_CONF = """\
 %s
         ],
         "ServerPollTimeout": 4,%s
-        "TLSRemote": "server",
+        "RemoteCertTLS": "server",
         "Username": "%s",
         "UserAuthenticationType": "%s",
         "Verb": "2"
