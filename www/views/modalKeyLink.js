@@ -26,7 +26,9 @@ define([
         success: function() {
           this.clearLoading();
           var keyLink = window.location.protocol + '//' +
-            window.location.host + this.model.get('key_url');
+              window.location.host + this.model.get('key_url');
+          var keyOncLink = window.location.protocol + '//' +
+              window.location.host + this.model.get('key_onc_url');
           var otpLink = window.location.protocol + '//' +
             window.location.host + this.model.get('view_url');
           var uriLink = 'pritunl://' + window.location.host +
@@ -34,6 +36,8 @@ define([
 
           this.$('.key-link input').val(keyLink);
           this.$('.key-link a').attr('href', keyLink);
+          this.$('.key-onc-link input').val(keyOncLink);
+          this.$('.key-onc-link a').attr('href', keyOncLink);
           this.$('.otp-link input').val(otpLink);
           this.$('.otp-link a').attr('href', otpLink);
           this.$('.uri-link input').val(uriLink);
