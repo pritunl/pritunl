@@ -170,7 +170,7 @@ $ service pritunl start
 
 ## License
 
-Please refer to the `LICENSE` file for a copy of the license.
+Please refer to the [`LICENSE`](LICENSE) file for a copy of the license.
 
 ### Export Requirements
 
