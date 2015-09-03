@@ -123,6 +123,7 @@ STATIC_FILE_EXTENSIONS = {
     '.ttf',
     '.txt',
     '.woff',
+    '.woff2',
 }
 
 INFO = 'info'
