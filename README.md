@@ -13,6 +13,8 @@ information can be found at the home page [pritunl.com](https://pritunl.com)
 
 ## Development Builds
 
+For testing only
+
 ### archlinux
 
 ```
