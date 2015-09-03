@@ -172,7 +172,7 @@ $ service pritunl start
 
 Please refer to the [`LICENSE`](LICENSE) file for a copy of the license.
 
-### Export Requirements
+## Export Requirements
 
 You may not export or re-export this software or any copy or adaptation in
 violation of any applicable laws or regulations.
