@@ -13,6 +13,7 @@ import time
 import datetime
 import threading
 import socket
+import uuid
 
 class ServerInstanceCom(object):
     def __init__(self, server, instance):
@@ -103,6 +104,10 @@ class ServerInstanceCom(object):
                 elif env_key == 'untrusted_ip':
                     self.client['remote_ip'] = env_val
                 elif env_key == 'IV_PLAT':
+                    if 'chrome' in env_val.lower():
+                        env_val = 'chrome'
+                        self.client['device_id'] = uuid.uuid4().hex
+                        self.client['device_name'] = 'chrome-os'
                     self.client['platform'] = env_val
                 elif env_key == 'UV_ID':
                     self.client['device_id'] = env_val
