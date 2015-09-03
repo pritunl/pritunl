@@ -53,6 +53,7 @@ data_files = [
         'www/vendor/dist/fonts/fontawesome-webfont.svg',
         'www/vendor/dist/fonts/fontawesome-webfont.ttf',
         'www/vendor/dist/fonts/fontawesome-webfont.woff',
+        'www/vendor/dist/fonts/fontawesome-webfont.woff2',
         'www/vendor/dist/fonts/fredoka-one.eot',
         'www/vendor/dist/fonts/fredoka-one.woff',
         'www/vendor/dist/fonts/glyphicons-halflings-regular.eot',

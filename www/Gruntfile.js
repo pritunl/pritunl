@@ -204,6 +204,8 @@ module.exports = function(grunt) {
             'fonts/fontawesome-webfont.ttf',
           'vendor/dist/fonts/fontawesome-webfont.woff':
             'fonts/fontawesome-webfont.woff',
+          'vendor/dist/fonts/fontawesome-webfont.woff2':
+            'fonts/fontawesome-webfont.woff2',
           'vendor/dist/fonts/fredoka-one.eot': 'fonts/fredoka-one.eot',
           'vendor/dist/fonts/fredoka-one.woff': 'fonts/fredoka-one.woff',
           'vendor/dist/fonts/glyphicons-halflings-regular.eot':
