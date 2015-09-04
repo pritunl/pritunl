@@ -7,6 +7,7 @@ from pritunl import app
 from pritunl import auth
 from pritunl import mongo
 from pritunl import sso
+from pritunl import event
 
 import flask
 import time
@@ -327,6 +328,9 @@ def sso_callback_get():
     if not usr:
         usr = org.new_user(name=user, email=user, type=CERT_CLIENT,
             auth_type=GOOGLE_AUTH)
+        event.Event(type=ORGS_UPDATED)
+        event.Event(type=USERS_UPDATED, resource_id=org.id)
+        event.Event(type=SERVERS_UPDATED)
     elif usr.auth_type != GOOGLE_AUTH:
         usr.auth_type = GOOGLE_AUTH
         usr.commit('auth_type')
