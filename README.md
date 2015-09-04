@@ -30,26 +30,6 @@ $ systemctl start mongodb pritunl
 $ systemctl enable mongodb pritunl
 ```
 
-### centos 7
-
-```
-$ wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-$ rpm -i epel-release-latest-7.noarch.rpm
-
-$ nano /etc/yum.repos.d/pritunl.repo
-[pritunl]
-name=Pritunl Dev Repository
-baseurl=http://repo.pritunl.com/dev/yum/centos/7/
-gpgcheck=1
-enabled=1
-
-$ gpg --keyserver hkp://pgp.mit.edu --recv-keys CF8E292A
-$ gpg --armor --export CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
-$ yum install pritunl mongodb-server
-$ systemctl start mongod pritunl
-$ systemctl enable mongod pritunl
-```
-
 ### amazon linux
 
 ```
@@ -68,6 +48,26 @@ $ gpg --armor --export CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
 $ yum install pritunl mongodb-server
 $ start mongod
 $ start pritunl
+```
+
+### centos 7
+
+```
+$ wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+$ rpm -i epel-release-latest-7.noarch.rpm
+
+$ nano /etc/yum.repos.d/pritunl.repo
+[pritunl]
+name=Pritunl Dev Repository
+baseurl=http://repo.pritunl.com/dev/yum/centos/7/
+gpgcheck=1
+enabled=1
+
+$ gpg --keyserver hkp://pgp.mit.edu --recv-keys CF8E292A
+$ gpg --armor --export CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
+$ yum install pritunl mongodb-server
+$ systemctl start mongod pritunl
+$ systemctl enable mongod pritunl
 ```
 
 ### debian wheezy
