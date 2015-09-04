@@ -30,6 +30,7 @@ class Bridge(object):
         host_address = host_int_data['address']
         host_netmask = host_int_data['netmask']
         host_broadcast = host_int_data['broadcast']
+        host_gateway = host_int_data['gateway']
 
         utils.check_output_logged([
             'iptables',
@@ -88,12 +89,23 @@ class Bridge(object):
             host_broadcast,
         ])
 
+        if host_gateway:
+            utils.check_output_logged([
+                'route',
+                'add',
+                'default',
+                'gw',
+                host_gateway,
+            ])
+
     def stop(self):
         try:
             utils.check_output_logged([
-                'ifconfig',
-                self.bridge_interface,
+                'ip',
+                'link',
+                'set',
                 'down',
+                self.bridge_interface,
             ])
         except subprocess.CalledProcessError:
             pass
@@ -139,6 +151,7 @@ class Bridge(object):
         host_address = host_int_data['address']
         host_netmask = host_int_data['netmask']
         host_broadcast = host_int_data['broadcast']
+        host_gateway = host_int_data['gateway']
 
         utils.check_output_logged([
             'ip',
@@ -165,6 +178,17 @@ class Bridge(object):
             'broadcast',
             host_broadcast,
         ])
+        if host_gateway:
+            try:
+                utils.check_output_logged([
+                    'route',
+                    'add',
+                    'default',
+                    'gw',
+                    host_gateway,
+                ])
+            except subprocess.CalledProcessError:
+                pass
 
     def add_interface(self, interface):
         self.interfaces.add(interface)
