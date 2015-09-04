@@ -9,7 +9,7 @@ information can be found at the home page [pritunl.com](https://pritunl.com)
 
 [![pritunl](www/img/logo_code.png)](https://pritunl.com)
 
-## Development Builds
+## Development Repository
 
 For testing only
 
