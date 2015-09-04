@@ -27,18 +27,40 @@ def static_get(file_path=None):
 
     return static_file.get_response()
 
+@app.app.route('/fredoka-one.eot', methods=['GET'])
+def fredoka_eot_static_get():
+    static_file = static.StaticFile(settings.conf.www_path,
+        'fonts/fredoka-one.eot', cache=True)
+    return static_file.get_response()
+
+@app.app.route('/ubuntu-bold.eot', methods=['GET'])
+def ubuntu_eot_static_get():
+    static_file = static.StaticFile(settings.conf.www_path,
+        'fonts/ubuntu-bold.eot', cache=True)
+    return static_file.get_response()
+
+@app.app.route('/fredoka-one.woff', methods=['GET'])
+def fredoka_woff_static_get():
+    static_file = static.StaticFile(settings.conf.www_path,
+        'fonts/fredoka-one.woff', cache=True)
+    return static_file.get_response()
+
+@app.app.route('/ubuntu-bold.woff', methods=['GET'])
+def ubuntu_woff_static_get():
+    static_file = static.StaticFile(settings.conf.www_path,
+        'fonts/ubuntu-bold.woff', cache=True)
+    return static_file.get_response()
+
 @app.app.route('/favicon.ico', methods=['GET'])
 def favicon_static_get():
     static_file = static.StaticFile(settings.conf.www_path,
         'favicon.ico', cache=True)
-
     return static_file.get_response()
 
 @app.app.route('/robots.txt', methods=['GET'])
 def robots_static_get():
     static_file = static.StaticFile(settings.conf.www_path,
         'robots.txt', cache=True)
-
     return static_file.get_response()
 
 @app.app.route('/', methods=['GET'])
