@@ -68,6 +68,23 @@ $ systemctl start mongod pritunl
 $ systemctl enable mongod pritunl
 ```
 
+### fedora 22
+
+```
+$ nano /etc/yum.repos.d/pritunl.repo
+[pritunl]
+name=Pritunl Dev Repository
+baseurl=http://repo.pritunl.com/dev/yum/fedora/22/
+gpgcheck=1
+enabled=1
+
+$ gpg --keyserver hkp://pgp.mit.edu --recv-keys CF8E292A
+$ gpg --armor --export CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
+$ yum install pritunl mongodb-server
+$ systemctl start mongod pritunl
+$ systemctl enable mongod pritunl
+```
+
 ### debian wheezy
 
 ```
