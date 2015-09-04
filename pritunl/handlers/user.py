@@ -66,7 +66,7 @@ def user_get(org_id, user_id=None, page=None):
                 'id': svr.id,
                 'name': svr.name,
                 'status': False,
-                'client_id': None,
+                'server_id': svr.id,
                 'device_name': None,
                 'platform': None,
                 'real_address': None,
@@ -92,16 +92,15 @@ def user_get(org_id, user_id=None, page=None):
 
         if server_data['status']:
             server_data = {
-                'id': server_data['id'],
                 'name': server_data['name'],
             }
             append = True
         else:
             append = False
 
-        server_data['id'] = str(server_data['id']) + '-' + str(doc['_id'])
+        server_data['id'] = doc['_id']
         server_data['status'] = True
-        server_data['client_id'] = doc['_id']
+        server_data['server_id'] = server_data['id']
         server_data['device_name'] = doc['device_name']
         server_data['platform'] = doc['platform']
         server_data['real_address'] = doc['real_address']
