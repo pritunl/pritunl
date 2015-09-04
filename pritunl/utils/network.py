@@ -125,6 +125,18 @@ def get_local_networks():
 
     return addresses
 
+def get_routes():
+    routes_output = check_output_logged(['route', '-n'])
+
+    routes = {}
+    for line in routes_output.splitlines():
+        line_split = line.split()
+        if len(line_split) < 8 or not re.match(IP_REGEX, line_split[0]):
+            continue
+        routes[line_split[0]] = line_split[7]
+
+    return routes
+
 def get_gateway():
     routes_output = check_output_logged(['route', '-n'])
 
