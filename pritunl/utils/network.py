@@ -125,7 +125,25 @@ def get_local_networks():
 
     return addresses
 
+def get_gateway():
+    routes_output = check_output_logged(['route', '-n'])
+
+    for line in routes_output.splitlines():
+        line_split = line.split()
+        if len(line_split) < 8 or not re.match(IP_REGEX, line_split[0]) or \
+                not re.match(IP_REGEX, line_split[1]):
+            continue
+
+        if line_split[0] == '0.0.0.0':
+            return (line_split[7], line_split[1])
+
 def get_interfaces():
+    gateway = get_gateway()
+    if not gateway:
+        from pritunl import logger
+        logger.error('Failed to find gateway address', 'utils')
+    gateway_inf, gateway_addr = gateway
+
     output = check_output_logged(['ifconfig'])
     interfaces = {}
 
@@ -166,6 +184,11 @@ def get_interfaces():
         if not broadcast:
             continue
         data['broadcast'] = broadcast[0]
+
+        if data['interface'] == gateway_inf:
+            data['gateway'] = gateway_addr
+        else:
+            data['gateway'] = None
 
         interfaces[interface_name] = data
 
