@@ -8,6 +8,7 @@ Add support for Chromebook
 Add ssl cert to settings
 Fix issue with multiple clients
 Fix issue with utf-8 names
+Improve performance for large servers
 Add support for all private subnets for server network
 Change database format requires db upgrade
 Remove upgrade support for 0.10.x
