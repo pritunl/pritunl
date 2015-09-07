@@ -18,7 +18,7 @@ $ nano /etc/pacman.conf
 [pritunl]
 Server = http://repo.pritunl.com/stable/pacman
 
-$ pacman-key --keyserver hkp://pgp.mit.edu -r CF8E292A
+$ pacman-key --keyserver hkp://keyserver.ubuntu.com -r CF8E292A
 $ pacman-key --lsign-key CF8E292A
 $ pacman -Sy
 $ pacman -S pritunl
@@ -39,7 +39,7 @@ baseurl=http://repo.pritunl.com/stable/yum/centos/7/
 gpgcheck=1
 enabled=1
 
-$ gpg --keyserver hkp://pgp.mit.edu --recv-keys CF8E292A
+$ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys CF8E292A
 $ gpg --armor --export CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
 $ yum install pritunl mongodb-server
 $ start mongod
@@ -59,7 +59,7 @@ baseurl=http://repo.pritunl.com/stable/yum/centos/7/
 gpgcheck=1
 enabled=1
 
-$ gpg --keyserver hkp://pgp.mit.edu --recv-keys CF8E292A
+$ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys CF8E292A
 $ gpg --armor --export CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
 $ yum install pritunl mongodb-server
 $ systemctl start mongod pritunl
@@ -76,7 +76,7 @@ baseurl=http://repo.pritunl.com/stable/yum/fedora/22/
 gpgcheck=1
 enabled=1
 
-$ gpg --keyserver hkp://pgp.mit.edu --recv-keys CF8E292A
+$ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys CF8E292A
 $ gpg --armor --export CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
 $ yum install pritunl mongodb-server
 $ systemctl start mongod pritunl
@@ -93,7 +93,7 @@ $ nano /etc/apt/sources.list.d/pritunl.list
 deb http://repo.pritunl.com/stable/apt wheezy main
 
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
-$ apt-key adv --keyserver hkp://pgp.mit.edu --recv CF8E292A
+$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
 $ apt-get install pritunl
 $ systemctl start mongod pritunl
@@ -110,7 +110,7 @@ $ nano /etc/apt/sources.list.d/pritunl.list
 deb http://repo.pritunl.com/stable/apt jessie main
 
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
-$ apt-key adv --keyserver hkp://pgp.mit.edu --recv CF8E292A
+$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
 $ apt-get install pritunl
 $ systemctl start mongod pritunl
@@ -127,7 +127,7 @@ $ nano /etc/apt/sources.list.d/pritunl.list
 deb http://repo.pritunl.com/stable/apt precise main
 
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
-$ apt-key adv --keyserver hkp://pgp.mit.edu --recv CF8E292A
+$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
 $ apt-get install pritunl
 $ service pritunl start
@@ -143,7 +143,7 @@ $ nano /etc/apt/sources.list.d/pritunl.list
 deb http://repo.pritunl.com/stable/apt trusty main
 
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
-$ apt-key adv --keyserver hkp://pgp.mit.edu --recv CF8E292A
+$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
 $ apt-get install pritunl
 $ service pritunl start
@@ -159,7 +159,7 @@ $ nano /etc/apt/sources.list.d/pritunl.list
 deb http://repo.pritunl.com/stable/apt vivid main
 
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
-$ apt-key adv --keyserver hkp://pgp.mit.edu --recv CF8E292A
+$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
 $ apt-get install pritunl
 $ service pritunl start
@@ -175,7 +175,7 @@ $ nano /etc/apt/sources.list.d/pritunl.list
 deb http://repo.pritunl.com/stable/apt wily main
 
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
-$ apt-key adv --keyserver hkp://pgp.mit.edu --recv CF8E292A
+$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
 $ apt-get install pritunl
 $ service pritunl start
@@ -190,7 +190,7 @@ $ nano /etc/pacman.conf
 [pritunl]
 Server = http://repo.pritunl.com/dev/pacman
 
-$ pacman-key --keyserver hkp://pgp.mit.edu -r CF8E292A
+$ pacman-key --keyserver hkp://keyserver.ubuntu.com -r CF8E292A
 $ pacman-key --lsign-key CF8E292A
 $ pacman -Sy
 $ pacman -S pritunl
@@ -211,7 +211,7 @@ baseurl=http://repo.pritunl.com/dev/yum/centos/7/
 gpgcheck=1
 enabled=1
 
-$ gpg --keyserver hkp://pgp.mit.edu --recv-keys CF8E292A
+$ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys CF8E292A
 $ gpg --armor --export CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
 $ yum install pritunl mongodb-server
 $ start mongod
@@ -231,7 +231,7 @@ baseurl=http://repo.pritunl.com/dev/yum/centos/7/
 gpgcheck=1
 enabled=1
 
-$ gpg --keyserver hkp://pgp.mit.edu --recv-keys CF8E292A
+$ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys CF8E292A
 $ gpg --armor --export CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
 $ yum install pritunl mongodb-server
 $ systemctl start mongod pritunl
@@ -248,7 +248,7 @@ baseurl=http://repo.pritunl.com/dev/yum/fedora/22/
 gpgcheck=1
 enabled=1
 
-$ gpg --keyserver hkp://pgp.mit.edu --recv-keys CF8E292A
+$ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys CF8E292A
 $ gpg --armor --export CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
 $ yum install pritunl mongodb-server
 $ systemctl start mongod pritunl
@@ -265,7 +265,7 @@ $ nano /etc/apt/sources.list.d/pritunl.list
 deb http://repo.pritunl.com/dev/apt wheezy main
 
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
-$ apt-key adv --keyserver hkp://pgp.mit.edu --recv CF8E292A
+$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
 $ apt-get install pritunl
 $ systemctl start mongod pritunl
@@ -282,7 +282,7 @@ $ nano /etc/apt/sources.list.d/pritunl.list
 deb http://repo.pritunl.com/dev/apt jessie main
 
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
-$ apt-key adv --keyserver hkp://pgp.mit.edu --recv CF8E292A
+$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
 $ apt-get install pritunl
 $ systemctl start mongod pritunl
@@ -299,7 +299,7 @@ $ nano /etc/apt/sources.list.d/pritunl.list
 deb http://repo.pritunl.com/dev/apt precise main
 
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
-$ apt-key adv --keyserver hkp://pgp.mit.edu --recv CF8E292A
+$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
 $ apt-get install pritunl
 $ service pritunl start
@@ -315,7 +315,7 @@ $ nano /etc/apt/sources.list.d/pritunl.list
 deb http://repo.pritunl.com/dev/apt trusty main
 
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
-$ apt-key adv --keyserver hkp://pgp.mit.edu --recv CF8E292A
+$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
 $ apt-get install pritunl
 $ service pritunl start
@@ -331,7 +331,7 @@ $ nano /etc/apt/sources.list.d/pritunl.list
 deb http://repo.pritunl.com/dev/apt vivid main
 
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
-$ apt-key adv --keyserver hkp://pgp.mit.edu --recv CF8E292A
+$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
 $ apt-get install pritunl
 $ service pritunl start
@@ -347,7 +347,7 @@ $ nano /etc/apt/sources.list.d/pritunl.list
 deb http://repo.pritunl.com/dev/apt wily main
 
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
-$ apt-key adv --keyserver hkp://pgp.mit.edu --recv CF8E292A
+$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
 $ apt-get install pritunl
 $ service pritunl start
