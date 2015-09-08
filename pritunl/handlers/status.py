@@ -11,32 +11,13 @@ from pritunl import __version__
 @auth.session_auth
 def status_get():
     server_collection = mongo.get_collection('servers')
+    clients_collection = mongo.get_collection('clients')
     host_collection = mongo.get_collection('hosts')
     org_collection = mongo.get_collection('organizations')
 
-    response = server_collection.aggregate([
-        {'$project': {
-            'client': '$instances.clients',
-        }},
-        {'$unwind': '$client'},
-        {'$unwind': '$client'},
-        {'$match': {
-            'client.type': CERT_CLIENT,
-        }},
-        {'$group': {
-            '_id': None,
-            'clients': {'$addToSet': '$client.id'},
-        }},
-    ])
-
-    val = None
-    for val in response:
-        break
-
-    if val:
-        users_online = len(val['clients'])
-    else:
-        users_online = 0
+    users_online = len(clients_collection.distinct("user_id", {
+        'type': CERT_CLIENT,
+    }))
 
     response = server_collection.aggregate([
         {'$project': {
