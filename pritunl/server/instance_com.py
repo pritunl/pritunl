@@ -20,6 +20,7 @@ class ServerInstanceCom(object):
         self.server = server
         self.instance = instance
         self.sock = None
+        self.sock_lock = threading.Lock()
         self.socket_path = instance.management_socket_path
         self.bytes_lock = threading.Lock()
         self.bytes_recv = 0
@@ -34,17 +35,24 @@ class ServerInstanceCom(object):
     def users_ip_collection(cls):
         return mongo.get_collection('users_ip')
 
+    def sock_send(self, data):
+        self.sock_lock.acquire()
+        try:
+            self.sock.send(data)
+        finally:
+            self.sock_lock.release()
+
     def client_kill(self, client):
-        self.sock.send('client-kill %s\n' % client['client_id'])
+        self.sock_send('client-kill %s\n' % client['client_id'])
         self.push_output('Disconnecting user org_id=%s user_id=%s' % (
             client['org_id'], client['user_id']))
 
     def send_client_auth(self, client, client_conf):
-        self.sock.send('client-auth %s %s\n%s\nEND\n' % (
+        self.sock_send('client-auth %s %s\n%s\nEND\n' % (
             client['client_id'], client['key_id'], client_conf))
 
     def send_client_deny(self, client, reason):
-        self.sock.send('client-deny %s %s "%s"\n' % (
+        self.sock_send('client-deny %s %s "%s"\n' % (
             client['client_id'], client['key_id'], reason))
         self.push_output('ERROR User auth failed "%s"' % reason)
 
@@ -199,7 +207,7 @@ class ServerInstanceCom(object):
             self.connect()
 
             time.sleep(1)
-            self.sock.send('bytecount %s\n' % self.bandwidth_rate)
+            self.sock_send('bytecount %s\n' % self.bandwidth_rate)
 
             add_listener(self.instance.id, self.on_msg)
 
