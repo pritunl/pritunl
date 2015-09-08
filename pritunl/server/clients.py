@@ -135,10 +135,11 @@ class Clients(object):
                             self.instance_com.client_kill(device)
             else:
                 virt_address = None
-                if devices and device_id:
-                    for cid, device in devices.items():
-                        if device['device_id'] == device_id:
-                            self.instance_com.client_kill(device)
+                # if devices and device_id:
+                #     for cid, device in devices.items():
+                #         if device['device_id'] == device_id:
+                #             self.instance_com.client_kill(device)
+                #             virt_address = device['virt_address']
 
                 if not virt_address:
                     virt_address = self.server.get_ip_addr(org.id, user_id)
