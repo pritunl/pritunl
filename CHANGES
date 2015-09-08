@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with server crashing
+
 Version 1.4.722.95 2015-09-04
 -----------------------------
 
