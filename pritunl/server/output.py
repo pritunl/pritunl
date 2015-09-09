@@ -71,7 +71,7 @@ class ServerOutput(object):
         self.send_event()
 
     def push_message(self, message, *args, **kwargs):
-        timestamp = datetime.datetime.utcnow().strftime(
+        timestamp = datetime.datetime.now().strftime(
             '%a %b  %d %H:%M:%S %Y').replace('  0', '   ', 1).replace(
             '  ', ' ', 1)
         self.push_output('%s %s' % (timestamp, message), *args, **kwargs)
