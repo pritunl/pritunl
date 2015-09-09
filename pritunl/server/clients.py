@@ -208,6 +208,7 @@ class Clients(object):
             self.instance_com.push_output(
                 'ERROR Unknown client connected org_id=%s user_id=%s' % (
                     org_id, user_id))
+            self.instance_com.client_kill(client)
             return
 
         domain = device['user'] + '.' + device['org']
