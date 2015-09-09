@@ -122,6 +122,8 @@ class ServerInstanceCom(object):
                     self.client['device_name'] = env_val
                 elif env_key == 'password':
                     self.client['otp_code'] = env_val
+            else:
+                self.push_output('CCOM> %s' % line)
         elif line_14 == '>BYTECOUNT_CLI':
             client_id, bytes_recv, bytes_sent = line.split(',')
             client_id = client_id.split(':')[1]
@@ -145,6 +147,8 @@ class ServerInstanceCom(object):
                 'cmd': 'disconnected',
                 'client_id': client_id,
             }
+        elif line[:8] != 'SUCCESS:':
+            self.push_output('COM> %s' % line)
 
     def wait_for_socket(self):
         for _ in xrange(10000):
