@@ -173,31 +173,9 @@ class DocDb(object):
 
         return True
 
-    def remove(self, query, slow=False):
-        self._lock.acquire()
-        try:
-            doc_ids = self._find(query, slow, True)
-            for doc_id in doc_ids:
-                doc = self._docs.pop(doc_id)
-
-                for index_key, index in self._index.items():
-                    val = doc.get(index_key)
-                    if val is not None:
-                        val_index = index[val]
-                        val_index.remove(doc_id)
-                        if len(val_index) == 0:
-                            index.pop(val)
-        finally:
-            self._lock.release()
-
-        return len(doc_ids)
-
-    def remove_id(self, doc_id):
-        self._lock.acquire()
-        try:
-            doc = self._docs.get(doc_id)
-            if not doc:
-                return
+    def _remove(self, doc_ids):
+        for doc_id in doc_ids:
+            doc = self._docs.pop(doc_id)
 
             for index_key, index in self._index.items():
                 val = doc.get(index_key)
@@ -207,6 +185,21 @@ class DocDb(object):
                     if len(val_index) == 0:
                         index.pop(val)
 
-            self._docs.pop(doc_id)
+    def remove(self, query, slow=False):
+        self._lock.acquire()
+        try:
+            doc_ids = self._find(query, slow, True)
+            self._remove(doc_ids)
+        finally:
+            self._lock.release()
+
+        return len(doc_ids)
+
+    def remove_id(self, doc_id):
+        self._lock.acquire()
+        try:
+            if doc_id not in self._docs:
+                return False
+            self._remove([doc_id])
         finally:
             self._lock.release()
