@@ -94,6 +94,16 @@ class DocDb(object):
 
         return found
 
+    def find_all(self):
+        found = []
+
+        for doc_id, doc in self._docs.items():
+            doc = copy.deepcopy(doc)
+            doc['id'] = doc_id
+            found.append(doc)
+
+        return found
+
     def find(self, query, slow=False):
         return self._find(query, slow)
 
