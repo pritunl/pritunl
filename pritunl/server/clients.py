@@ -348,6 +348,10 @@ class Clients(object):
                             },
                         })
                         if not response['updatedExisting']:
+                            logger.error('Client lost unexpectedly', 'server',
+                                server_id=self.server.id,
+                                instance_id=self.instance.id,
+                            )
                             self.instance_com.client_kill(client)
                             continue
 
