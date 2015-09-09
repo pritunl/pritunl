@@ -256,11 +256,13 @@ class Clients(object):
         self.send_event()
 
     def disconnected(self, client):
-        client_id = client.get('client_id')
         user_id = client.get('user_id')
-        user_id = utils.ObjectId(user_id) if user_id else None
-        org_id = client.get('org_id')
-        org_id = utils.ObjectId(org_id) if org_id else None
+        if not user_id:
+            return
+        client_id = client.get('client_id')
+
+        if user_id and isinstance(user_id, str):
+            user_id = utils.ObjectId(user_id)
 
         devices = self.devices[user_id]
         device = devices.get(client_id)
@@ -289,8 +291,7 @@ class Clients(object):
                         server_id=self.server.id,
                     )
 
-        self.instance_com.push_output(
-            'User disconnected org_id=%s user_id=%s' % (org_id, user_id))
+        self.instance_com.push_output('User disconnected user_id=%s' % user_id)
         self.send_event()
 
     def disconnect_user(self, user_id):
