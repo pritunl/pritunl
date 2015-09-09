@@ -14,12 +14,22 @@ class DocDb(object):
             self._indexes.add(ind)
             self._index[ind] = collections.defaultdict(set)
 
-    def find(self, query, slow=False):
+    def _find(self, query, slow=False, only_id=False):
         if 'id' in query:
-            doc = self.find_id(query['id'])
-            if doc:
-                return [doc]
-            return []
+            doc_id = query['id']
+            if only_id:
+                self._lock.acquire()
+                try:
+                    if doc_id in self._docs:
+                        return [doc_id]
+                    return []
+                finally:
+                    self._lock.release()
+            else:
+                doc = self.find_id(doc_id)
+                if doc:
+                    return [doc]
+                return []
 
         need = len(query)
         possible = collections.defaultdict(set)
@@ -38,9 +48,12 @@ class DocDb(object):
                             matched = possible[doc_id]
                             matched.add(index_key)
                             if len(matched) == need:
-                                doc = copy.deepcopy(self._docs[doc_id])
-                                doc['id'] = doc_id
-                                found.append(doc)
+                                if only_id:
+                                    found.append(doc_id)
+                                else:
+                                    doc = copy.deepcopy(self._docs[doc_id])
+                                    doc['id'] = doc_id
+                                    found.append(doc)
 
             if not index_count:
                 if not slow:
@@ -53,9 +66,12 @@ class DocDb(object):
                             match = False
                             break
                     if match:
-                        doc = copy.deepcopy(doc)
-                        doc['id'] = doc_id
-                        found.append(doc)
+                        if only_id:
+                            found.append(doc_id)
+                        else:
+                            doc = copy.deepcopy(doc)
+                            doc['id'] = doc_id
+                            found.append(doc)
             elif index_count != need:
                 for doc_id, matched in possible.items():
                     if len(matched) != index_count:
@@ -67,13 +83,19 @@ class DocDb(object):
                             match = False
                             break
                     if match:
-                        doc = copy.deepcopy(doc)
-                        doc['id'] = doc_id
-                        found.append(doc)
+                        if only_id:
+                            found.append(doc_id)
+                        else:
+                            doc = copy.deepcopy(doc)
+                            doc['id'] = doc_id
+                            found.append(doc)
         finally:
             self._lock.release()
 
         return found
+
+    def find(self, query, slow=False):
+        return self._find(query, slow)
 
     def find_id(self, doc_id):
         self._lock.acquire()
@@ -109,6 +131,47 @@ class DocDb(object):
             self._lock.release()
 
         return orig_doc
+
+    def _update(self, doc_ids, update):
+        for doc_id in doc_ids:
+            doc = self._docs[doc_id]
+
+            for key, val in update.items():
+                if key in self._indexes:
+                    index = self._index[key]
+
+                    cur_val = doc.get(key)
+                    if cur_val is not None:
+                        val_index = index[cur_val]
+                        val_index.remove(doc_id)
+                        if len(val_index) == 0:
+                            index.pop(cur_val)
+
+                    if val is not None:
+                        index[val].add(doc_id)
+
+                doc[key] = val
+
+    def update(self, query, update, slow=False):
+        self._lock.acquire()
+        try:
+            doc_ids = self._find(query, slow, True)
+            self._update(doc_ids, update)
+        finally:
+            self._lock.release()
+
+        return len(doc_ids)
+
+    def update_id(self, doc_id, update):
+        self._lock.acquire()
+        try:
+            if doc_id not in self._docs:
+                return False
+            self._update([doc_id], update)
+        finally:
+            self._lock.release()
+
+        return True
 
     def remove(self, doc):
         pass
