@@ -277,9 +277,9 @@ class Clients(object):
             if virt_address in self.dyn_ips:
                 try:
                     self.dyn_ips.remove(virt_address)
+                    self.ip_pool.append(virt_address.split('/')[0])
                 except KeyError:
                     pass
-                self.ip_pool.append(virt_address.split('/')[0])
 
             id = device.get('id')
             if id:
