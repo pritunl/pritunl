@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix connectivity display issues
+
 Version 1.4.726.73 2015-09-08
 -----------------------------
 
