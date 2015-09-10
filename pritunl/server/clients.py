@@ -290,6 +290,18 @@ class Clients(object):
         event.Event(type=HOSTS_UPDATED, resource_id=settings.local.host_id)
         event.Event(type=SERVERS_UPDATED)
 
+    def interrupter_sleep(self, length):
+        if check_global_interrupt() or self.instance.sock_interrupt:
+            return True
+        while True:
+            sleep = min(0.5, length)
+            time.sleep(sleep)
+            length -= sleep
+            if check_global_interrupt() or self.instance.sock_interrupt:
+                return True
+            elif length <= 0:
+                return False
+
     @interrupter
     def ping_thread(self):
         try:
@@ -298,8 +310,8 @@ class Clients(object):
                     try:
                         client_id = self.clients_queue.popleft()
                     except IndexError:
-                        yield interrupter_sleep(settings.vpn.client_ttl - 60)
-                        if self.instance.sock_interrupt:
+                        if self.interrupter_sleep(
+                                settings.vpn.client_ttl - 60):
                             return
                         continue
 
@@ -312,9 +324,8 @@ class Clients(object):
                            (datetime.datetime.now() - client['timestamp'])
 
                     if diff.seconds > 1:
-                        yield interrupter_sleep(diff.seconds)
-                        if self.instance.sock_interrupt:
-                            return
+                        if self.interrupter_sleep(diff.seconds):
+                                return
 
                     if self.instance.sock_interrupt:
                         return
