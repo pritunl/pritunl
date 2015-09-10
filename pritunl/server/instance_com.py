@@ -42,17 +42,17 @@ class ServerInstanceCom(object):
         finally:
             self.sock_lock.release()
 
-    def client_kill(self, client):
-        self.clients.disconnected(client)
-        self.sock_send('client-kill %s\n' % client['client_id'])
+    def client_kill(self, client_id):
+        self.clients.disconnected(client_id)
+        self.sock_send('client-kill %s\n' % client_id)
 
-    def send_client_auth(self, client, client_conf):
+    def send_client_auth(self, client_id, key_id, client_conf):
         self.sock_send('client-auth %s %s\n%s\nEND\n' % (
-            client['client_id'], client['key_id'], client_conf))
+            client_id, key_id, client_conf))
 
-    def send_client_deny(self, client, reason):
+    def send_client_deny(self, client_id, key_id, reason):
         self.sock_send('client-deny %s %s "%s"\n' % (
-            client['client_id'], client['key_id'], reason))
+            client_id, key_id, reason))
         self.push_output('ERROR User auth failed "%s"' % reason)
 
     def push_output(self, message):
@@ -80,9 +80,9 @@ class ServerInstanceCom(object):
                 if cmd == 'connect':
                     self.clients.connect(self.client)
                 elif cmd == 'connected':
-                    self.clients.connected(self.client)
+                    self.clients.connected(self.client.get('client_id'))
                 elif cmd == 'disconnected':
-                    self.clients.disconnected(self.client)
+                    self.clients.disconnected(self.client.get('client_id'))
                 self.client = None
             elif line[:11] == '>CLIENT:ENV':
                 env_key, env_val = line[12:].split('=', 1)
@@ -104,8 +104,8 @@ class ServerInstanceCom(object):
                         org_id = tls_env[2:cn_index]
                         user_id = tls_env[cn_index + 3:]
 
-                    self.client['org_id'] = org_id
-                    self.client['user_id'] = user_id
+                    self.client['org_id'] = utils.ObjectId(org_id)
+                    self.client['user_id'] = utils.ObjectId(user_id)
                 elif env_key == 'IV_HWADDR':
                     self.client['mac_addr'] = env_val
                 elif env_key == 'untrusted_ip':

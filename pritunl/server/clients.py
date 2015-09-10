@@ -7,6 +7,7 @@ from pritunl import logger
 from pritunl import ipaddress
 from pritunl import settings
 from pritunl import event
+from pritunl import docdb
 
 import datetime
 import collections
@@ -21,10 +22,12 @@ class Clients(object):
         self.instance = instance
         self.instance_com = instance_com
 
-        self.clients = collections.deque()
-        self.ips = {}
-        self.dyn_ips = set()
-        self.devices = collections.defaultdict(dict)
+        self.clients = docdb.DocDb(
+            'user_id',
+            'device_id',
+            'virt_address',
+        )
+        self.clients_queue = collections.deque()
 
         self.ip_pool = []
         self.ip_network = ipaddress.IPv4Network(self.server.network)
@@ -74,77 +77,70 @@ class Clients(object):
         return client_conf
 
     def connect(self, client):
+        client_id = None
+        key_id = None
         try:
             client_id = client['client_id']
-            org_id = utils.ObjectId(client['org_id'])
-            user_id = utils.ObjectId(client['user_id'])
+            key_id = client['key_id']
+            org_id = client['org_id']
+            user_id = client['user_id']
             device_id = client.get('device_id')
             device_name = client.get('device_name')
             platform = client.get('platform')
             mac_addr = client.get('mac_addr')
             otp_code = client.get('otp_code')
             remote_ip = client.get('remote_ip')
-            devices = self.devices[user_id]
+            address_dynamic = False
 
             if not _limiter.validate(remote_ip):
-                self.instance_com.send_client_deny(
-                    client, 'Too many connect requests')
+                self.instance_com.send_client_deny(client_id, key_id,
+                    'Too many connect requests')
                 return
 
             org = self.server.get_org(org_id, fields=['_id', 'name'])
             if not org:
-                self.instance_com.send_client_deny(
-                    client, 'Organization is not valid')
+                self.instance_com.send_client_deny(client_id, key_id,
+                    'Organization is not valid')
                 return
 
             user = org.get_user(user_id, fields=('_id', 'name', 'email',
                 'type', 'auth_type', 'disabled', 'otp_secret',
                 'link_server_id'))
             if not user:
-                self.instance_com.send_client_deny(client, 'User is not valid')
+                self.instance_com.send_client_deny(client_id, key_id,
+                    'User is not valid')
                 return
 
             if user.disabled:
                 logger.LogEntry(message='User failed authentication, ' +
                     'disabled user "%s".' % (user.name))
-                self.instance_com.send_client_deny(client, 'User is disabled')
+                self.instance_com.send_client_deny(client_id, key_id,
+                    'User is disabled')
                 return
 
             if not user.auth_check():
                 logger.LogEntry(message='User failed authentication, ' +
                     'Google authentication failed "%s".' % (user.name))
-                self.instance_com.send_client_deny(
-                    client, 'User failed authentication')
+                self.instance_com.send_client_deny(client_id, key_id,
+                    'User failed authentication')
                 return
 
             if self.server.otp_auth and  user.type == CERT_CLIENT and \
-                not user.verify_otp_code(otp_code, remote_ip):
+                    not user.verify_otp_code(otp_code, remote_ip):
                 logger.LogEntry(message='User failed two-step ' +
                     'authentication "%s".' % user.name)
-                self.instance_com.send_client_deny(client, 'Invalid OTP code')
+                self.instance_com.send_client_deny(client_id, key_id,
+                    'Invalid OTP code')
                 return
 
             client_conf = self.generate_client_conf(user)
 
+            virt_address = self.server.get_ip_addr(org.id, user_id)
             if not self.server.multi_device:
-                virt_address = self.server.get_ip_addr(org.id, user_id)
-
-                if virt_address and virt_address in self.ips:
-                    for cid, device in devices.items():
-                        if device['virt_address'] == virt_address:
-                            self.instance_com.client_kill(device)
+                for client in self.clients.find({'user_id': user_id}):
+                    self.instance_com.client_kill(client['id'])
             else:
-                virt_address = None
-                if devices and device_id:
-                    for cid, device in devices.items():
-                        if device['device_id'] == device_id:
-                            self.instance_com.client_kill(device)
-                            virt_address = device['virt_address']
-
-                if not virt_address:
-                    virt_address = self.server.get_ip_addr(org.id, user_id)
-
-                if virt_address and virt_address in self.ips:
+                if self.clients.find({'virt_address': virt_address}):
                     virt_address = None
 
             if not virt_address:
@@ -153,146 +149,133 @@ class Clients(object):
                         ip_addr = self.ip_pool.pop()
                     except IndexError:
                         break
+                    ip_addr = '%s/%s' % (ip_addr, self.ip_network.prefixlen)
 
-                    ip_addr = '%s/%s' % (
-                        ip_addr, self.ip_network.prefixlen)
-
-                    if ip_addr not in self.ips:
+                    if not self.clients.find({'virt_address': ip_addr}):
                         virt_address = ip_addr
-                        self.dyn_ips.add(virt_address)
+                        address_dynamic = True
                         break
 
-            if virt_address:
-                self.ips[virt_address] = client_id
-                devices[client_id] = {
-                    'user': user.name,
-                    'user_id': user_id,
-                    'org': org.name,
-                    'org_id': org_id,
-                    'client_id': client_id,
-                    'device_id': device_id,
-                    'device_name': device_name,
-                    'type': user.type,
-                    'platform': platform,
-                    'mac_addr': mac_addr,
-                    'virt_address': virt_address,
-                    'real_address': remote_ip,
-                }
-                client_conf += 'ifconfig-push %s %s\n' % utils.parse_network(
-                    virt_address)
+            if not virt_address:
+                self.instance_com.send_client_deny(client_id, key_id,
+                    'Unable to assign ip address')
+                return
 
-                if self.server.debug:
-                    self.instance_com.push_output('Client conf %s:' % user_id)
-                    for conf_line in client_conf.split('\n'):
-                        if conf_line:
-                            self.instance_com.push_output('  ' + conf_line)
+            self.clients.insert({
+                'id': client_id,
+                'org_id': org_id,
+                'org_name': org.name,
+                'user_id': user_id,
+                'user_name': user.name,
+                'user_type': user.type,
+                'device_id': device_id,
+                'device_name': device_name,
+                'platform': platform,
+                'mac_addr': mac_addr,
+                'otp_code': None,
+                'virt_address': virt_address,
+                'real_address': remote_ip,
+                'address_dynamic': address_dynamic,
+            })
 
-                self.instance_com.send_client_auth(client, client_conf)
-            else:
-                self.instance_com.send_client_deny(
-                    client, 'Unable to assign ip address')
+            client_conf += 'ifconfig-push %s %s\n' % utils.parse_network(
+                virt_address)
+
+            if self.server.debug:
+                self.instance_com.push_output('Client conf %s:' % user_id)
+                for conf_line in client_conf.split('\n'):
+                    if conf_line:
+                        self.instance_com.push_output('  ' + conf_line)
+
+            self.instance_com.send_client_auth(client_id, key_id, client_conf)
         except:
             logger.exception('Error parsing client connect', 'server',
                 server_id=self.server.id,
             )
-            self.instance_com.send_client_deny(
-                client, 'Error parsing client connect')
+            if client_id and key_id:
+                self.instance_com.send_client_deny(client_id, key_id,
+                    'Error parsing client connect')
 
-    def connected(self, client):
-        client_id = client['client_id']
-        user_id = utils.ObjectId(client['user_id'])
-        org_id = utils.ObjectId(client['org_id'])
-        device = self.devices[user_id].get(client_id)
-
-        if not device:
+    def connected(self, client_id):
+        client = self.clients.find_id(client_id)
+        if not client:
             self.instance_com.push_output(
-                'ERROR Unknown client connected org_id=%s user_id=%s' % (
-                    org_id, user_id))
-            self.instance_com.client_kill(client)
+                'ERROR Unknown client connected client_id=%s' % client_id)
+            self.instance_com.client_kill(client_id)
             return
 
-        domain = device['user'] + '.' + device['org']
         timestamp = utils.now()
-
         domain_hash = hashlib.md5()
-        domain_hash.update(domain)
+        domain_hash.update(client['user_name'] + '.' + client['org_name'])
         domain_hash = bson.binary.Binary(domain_hash.digest(),
             subtype=bson.binary.MD5_SUBTYPE)
 
         try:
-            id = self.collection.insert({
-                'user_id': user_id,
+            doc_id = self.collection.insert({
+                'user_id': client['user_id'],
                 'server_id': self.server.id,
                 'domain': domain_hash,
                 'timestamp': timestamp,
-                'platform': device['platform'],
-                'type': device['type'],
-                'device_name': device['device_name'],
-                'mac_addr': device['mac_addr'],
+                'platform': client['platform'],
+                'type': client['user_type'],
+                'device_name': client['device_name'],
+                'mac_addr': client['mac_addr'],
                 'network': self.server.network,
-                'real_address': device['real_address'],
-                'virt_address': device['virt_address'],
+                'real_address': client['real_address'],
+                'virt_address': client['virt_address'],
                 'connected_since': int(timestamp.strftime('%s')),
             })
         except:
             logger.exception('Error adding client', 'server',
                 server_id=self.server.id,
             )
-            self.instance_com.client_kill(device)
+            self.instance_com.client_kill(client_id)
             return
 
-        device['id'] = id
+        self.clients.update_id(client_id, {
+            'doc_id': doc_id,
+        })
 
-        self.clients.append({
-            'id': id,
+        self.clients_queue.append({
             'client_id': client_id,
-            'user_id': user_id,
-            'org_id': org_id,
-            'virt_address': device['virt_address'],
+            'doc_id': doc_id,
             'timestamp': timestamp,
         })
 
-        self.instance_com.push_output('User connected org_id=%s user_id=%s' % (
-            org_id, user_id))
+        self.instance_com.push_output(
+            'User connected user_id=%s' % client['user_id'])
         self.send_event()
 
-    def disconnected(self, client):
-        user_id = client.get('user_id')
-        if not user_id:
+    def disconnected(self, client_id):
+        client = self.clients.find_id(client_id)
+        if not client:
             return
-        client_id = client.get('client_id')
+        self.clients.remove_id(client_id)
 
-        if user_id and isinstance(user_id, str):
-            user_id = utils.ObjectId(user_id)
+        virt_address = client['virt_address']
+        if client['address_dynamic']:
+            updated = self.clients.update({
+                'id': client_id,
+                'virt_address': virt_address,
+            }, {
+                'virt_address': None,
+            })
+            if updated:
+                self.ip_pool.append(virt_address.split('/')[0])
 
-        devices = self.devices[user_id]
-        device = devices.get(client_id)
-        devices.pop(client_id, None)
+        doc_id = client.get('doc_id')
+        if doc_id:
+            try:
+                self.collection.remove({
+                    '_id': doc_id,
+                })
+            except:
+                logger.exception('Error removing client', 'server',
+                    server_id=self.server.id,
+                )
 
-        if device:
-            virt_address = device['virt_address']
-            if self.ips.get(virt_address) == client_id:
-                self.ips.pop(virt_address, None)
-
-            if virt_address in self.dyn_ips:
-                try:
-                    self.dyn_ips.remove(virt_address)
-                    self.ip_pool.append(virt_address.split('/')[0])
-                except KeyError:
-                    pass
-
-            id = device.get('id')
-            if id:
-                try:
-                    self.collection.remove({
-                        '_id': id,
-                    })
-                except:
-                    logger.exception('Error removing client', 'server',
-                        server_id=self.server.id,
-                    )
-
-        self.instance_com.push_output('User disconnected user_id=%s' % user_id)
+        self.instance_com.push_output(
+            'User disconnected user_id=%s' % client['user_id'])
         self.send_event()
 
     def disconnect_user(self, user_id):
@@ -300,10 +283,8 @@ class Clients(object):
         if not devices:
             return
 
-        for device in devices:
-            if self.instance.sock_interrupt:
-                return
-            self.instance_com.client_kill(device)
+        for client in self.clients.find({'user_id': user_id}):
+            self.instance_com.client_kill(client['id'])
 
     def send_event(self):
         for org_id in self.server.organizations:
@@ -317,7 +298,7 @@ class Clients(object):
             while True:
                 try:
                     try:
-                        client = self.clients.popleft()
+                        client = self.clients_queue.popleft()
                     except IndexError:
                         yield interrupter_sleep(settings.vpn.client_ttl - 60)
                         if self.instance.sock_interrupt:
@@ -333,15 +314,14 @@ class Clients(object):
                         if self.instance.sock_interrupt:
                             return
 
-                    ip_client_id = self.ips.get(client['virt_address'])
-                    if not ip_client_id or ip_client_id != client['client_id']:
+                    if not self.clients.find_id(client['client_id']):
                         continue
 
                     try:
                         timestamp = utils.now()
 
                         response = self.collection.update({
-                            '_id': client['id'],
+                            '_id': client['doc_id'],
                         }, {
                             '$set': {
                                 'timestamp': timestamp,
@@ -352,19 +332,19 @@ class Clients(object):
                                 server_id=self.server.id,
                                 instance_id=self.instance.id,
                             )
-                            self.instance_com.client_kill(client)
+                            self.instance_com.client_kill(client['client_id'])
                             continue
 
                         client['timestamp'] = timestamp
                     except:
-                        self.clients.append(client)
+                        self.clients_queue.append(client)
                         logger.exception('Failed to update client', 'server',
                             server_id=self.server.id,
                             instance_id=self.instance.id,
                         )
                         continue
 
-                    self.clients.append(client)
+                    self.clients_queue.append(client)
 
                     yield
                     if self.instance.sock_interrupt:
@@ -380,13 +360,13 @@ class Clients(object):
                     if self.instance.sock_interrupt:
                         return
         finally:
-            client_ids = []
-            for _, client in enumerate(self.clients):
-                client_ids.append(client['id'])
+            doc_ids = []
+            for client in self.clients.find_all():
+                doc_ids.append(client['doc_id'])
 
             try:
                 self.collection.remove({
-                    '_id': {'$in': client_ids},
+                    '_id': {'$in': doc_ids},
                 })
             except:
                 logger.exception('Error removing client', 'server',
