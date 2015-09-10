@@ -277,10 +277,6 @@ class Clients(object):
         self.send_event()
 
     def disconnect_user(self, user_id):
-        devices = self.devices.get(user_id)
-        if not devices:
-            return
-
         for client in self.clients.find({'user_id': user_id}):
             self.instance_com.client_kill(client['id'])
 
