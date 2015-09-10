@@ -296,33 +296,41 @@ class Clients(object):
             while True:
                 try:
                     try:
-                        client = self.clients_queue.popleft()
+                        client_id = self.clients_queue.popleft()
                     except IndexError:
                         yield interrupter_sleep(settings.vpn.client_ttl - 60)
                         if self.instance.sock_interrupt:
                             return
                         continue
 
+                    client = self.clients.find_id(client_id)
+                    if not client:
+                        continue
+
                     diff = datetime.timedelta(
                         seconds=settings.vpn.client_ttl - 60) - \
-                           (utils.now() - client['timestamp'])
+                           (datetime.datetime.now() - client['timestamp'])
 
                     if diff.seconds > 1:
                         yield interrupter_sleep(diff.seconds)
                         if self.instance.sock_interrupt:
                             return
 
-                    if not self.clients.find_id(client['client_id']):
-                        continue
+                    if self.instance.sock_interrupt:
+                        return
 
                     try:
-                        timestamp = utils.now()
+                        updated = self.clients.update_id(client_id, {
+                            'timestamp': datetime.datetime.now(),
+                        })
+                        if not updated:
+                            continue
 
                         response = self.collection.update({
                             '_id': client['doc_id'],
                         }, {
                             '$set': {
-                                'timestamp': timestamp,
+                                'timestamp': utils.now(),
                             },
                         })
                         if not response['updatedExisting']:
@@ -330,19 +338,18 @@ class Clients(object):
                                 server_id=self.server.id,
                                 instance_id=self.instance.id,
                             )
-                            self.instance_com.client_kill(client['client_id'])
+                            self.instance_com.client_kill(client_id)
                             continue
-
-                        client['timestamp'] = timestamp
                     except:
-                        self.clients_queue.append(client)
+                        self.clients_queue.append(client_id)
                         logger.exception('Failed to update client', 'server',
                             server_id=self.server.id,
                             instance_id=self.instance.id,
                         )
+                        yield interrupter_sleep(1)
                         continue
 
-                    self.clients_queue.append(client)
+                    self.clients_queue.append(client_id)
 
                     yield
                     if self.instance.sock_interrupt:
