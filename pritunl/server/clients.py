@@ -204,13 +204,14 @@ class Clients(object):
             self.instance_com.client_kill(client_id)
             return
 
-        timestamp = utils.now()
         domain_hash = hashlib.md5()
         domain_hash.update(client['user_name'] + '.' + client['org_name'])
         domain_hash = bson.binary.Binary(domain_hash.digest(),
             subtype=bson.binary.MD5_SUBTYPE)
 
         try:
+            timestamp = utils.now()
+
             doc_id = self.collection.insert({
                 'user_id': client['user_id'],
                 'server_id': self.server.id,
@@ -234,13 +235,10 @@ class Clients(object):
 
         self.clients.update_id(client_id, {
             'doc_id': doc_id,
+            'timestamp': datetime.datetime.now(),
         })
 
-        self.clients_queue.append({
-            'client_id': client_id,
-            'doc_id': doc_id,
-            'timestamp': timestamp,
-        })
+        self.clients_queue.append(client_id)
 
         self.instance_com.push_output(
             'User connected user_id=%s' % client['user_id'])
