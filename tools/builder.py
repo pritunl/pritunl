@@ -103,7 +103,7 @@ def iter_packages():
             else:
                 continue
 
-            path = os.path.join(release_path, name)
+            path = os.path.join(target_path, name)
 
             yield name, path
 
