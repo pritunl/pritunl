@@ -1,6 +1,11 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve server load handling
+Bug fixes
+
 Version 1.4.728.46 2015-09-10
 -----------------------------
 
