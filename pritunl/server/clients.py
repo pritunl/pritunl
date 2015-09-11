@@ -383,7 +383,9 @@ class Clients(object):
         finally:
             doc_ids = []
             for client in self.clients.find_all():
-                doc_ids.append(client['doc_id'])
+                doc_id = client.get('doc_id')
+                if doc_id:
+                    doc_ids.append(doc_id)
 
             try:
                 self.collection.remove({
