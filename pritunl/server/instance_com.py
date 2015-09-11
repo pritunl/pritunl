@@ -148,7 +148,7 @@ class ServerInstanceCom(object):
                 'client_id': client_id,
             }
         elif line[:8] != 'SUCCESS:':
-            self.push_output('COM> %s' % line)
+            self.push_output('COM> %s' % line[1:])
 
     def wait_for_socket(self):
         for _ in xrange(10000):
