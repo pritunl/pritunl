@@ -123,7 +123,7 @@ class ServerInstanceCom(object):
                 elif env_key == 'password':
                     self.client['otp_code'] = env_val
             else:
-                self.push_output('CCOM> %s' % line)
+                self.push_output('CCOM> %s' % line[1:])
         elif line_14 == '>BYTECOUNT_CLI':
             client_id, bytes_recv, bytes_sent = line.split(',')
             client_id = client_id.split(':')[1]
