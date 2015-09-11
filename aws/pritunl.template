@@ -176,7 +176,7 @@
                   "[pritunl]\n",
                   "name=Pritunl Repository\n",
                   "baseurl=http://repo.pritunl.com/stable/yum/centos/7/\n",
-                  "gpgcheck=0\n",
+                  "gpgcheck=1\n",
                   "enabled=1\n"
                 ]]},
                 "mode": "000644",
