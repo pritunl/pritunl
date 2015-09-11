@@ -32,12 +32,12 @@ class DocDb(object):
                 return []
 
         need = len(query)
-        possible = collections.defaultdict(set)
+        possible = {}
         found = []
 
         self._lock.acquire()
         try:
-            index_count = False
+            index_count = 0
             for index_key in self._index.keys():
                 val = query.pop(index_key, None)
                 if val is not None:
@@ -45,9 +45,9 @@ class DocDb(object):
                     index = self._index[index_key]
                     if val in index:
                         for doc_id in index[val]:
-                            matched = possible[doc_id]
-                            matched.add(index_key)
-                            if len(matched) == need:
+                            matched = possible.get(doc_id, 0) + 1
+                            possible[doc_id] = matched
+                            if matched == need:
                                 if only_id:
                                     found.append(doc_id)
                                 else:
@@ -74,7 +74,7 @@ class DocDb(object):
                             found.append(doc)
             elif index_count != need:
                 for doc_id, matched in possible.items():
-                    if len(matched) != index_count:
+                    if matched != index_count:
                         continue
                     doc = self._docs[doc_id]
                     match = True
