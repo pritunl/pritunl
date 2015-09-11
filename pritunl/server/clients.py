@@ -319,7 +319,16 @@ class Clients(object):
                         seconds=settings.vpn.client_ttl - 60) - \
                            (datetime.datetime.now() - client['timestamp'])
 
-                    if diff.seconds > 1:
+                    if diff.seconds > settings.vpn.client_ttl:
+                        logger.error('Client ping time diff out of range',
+                            'server',
+                            time_diff=diff.seconds,
+                            server_id=self.server.id,
+                            instance_id=self.instance.id,
+                        )
+                        if self.interrupter_sleep(10):
+                            return
+                    elif diff.seconds > 1:
                         if self.interrupter_sleep(diff.seconds):
                             return
 
