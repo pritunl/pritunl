@@ -321,7 +321,7 @@ class Clients(object):
 
                     if diff.seconds > 1:
                         if self.interrupter_sleep(diff.seconds):
-                                return
+                            return
 
                     if self.instance.sock_interrupt:
                         return
