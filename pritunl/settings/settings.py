@@ -53,9 +53,8 @@ class Settings(object):
 
         docs = []
         has_docs = False
-        transaction = transaction.Transaction()
-        collection = transaction.collection(
-            self.collection.name_str)
+        tran = transaction.Transaction()
+        collection = tran.collection(self.collection.name_str)
 
         for group in self.groups:
             group_cls = getattr(self, group)
@@ -73,13 +72,13 @@ class Settings(object):
                 })
                 docs.append(doc)
 
-        messenger.publish('setting', docs, transaction=transaction)
+        messenger.publish('setting', docs, transaction=tran)
 
         if not has_docs:
             return
 
         collection.bulk_execute()
-        transaction.commit()
+        tran.commit()
 
     def load_mongo(self):
         for cls in module_classes:
