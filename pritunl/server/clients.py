@@ -139,9 +139,9 @@ class Clients(object):
             if not self.server.multi_device:
                 for client in self.clients.find({'user_id': user_id}):
                     self.instance_com.client_kill(client['id'])
-            else:
-                if self.clients.find({'virt_address': virt_address}):
-                    virt_address = None
+            elif virt_address and self.clients.find(
+                    {'virt_address': virt_address}):
+                virt_address = None
 
             if not virt_address:
                 while True:
