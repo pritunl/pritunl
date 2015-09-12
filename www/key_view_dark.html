@@ -244,7 +244,15 @@
         border-color: #962e2b;
       }
 
-      .key-box .key-body button {
+      .key-box .key-body .btn:first-child {
+        margin-top: 15px;
+      }
+
+      .key-box .key-body .btn {
+        margin-top: 7px;
+      }
+
+      .key-box .key-body button.btn {
         margin-top: 11px;
       }
 
@@ -268,7 +276,8 @@
         <label id="otp-label">Two-step authentication key</label>
         <input id="key" type="text" readonly value="<%= user_otp_key %>">
         <div id="qrcode"></div>
-        <a class="btn btn-success" title="Download Keys" href="<%= user_key_url %>">Download Keys</a><br>
+        <a class="btn btn-success" title="Download Keys" href="<%= user_key_tar_url %>">Download Keys</a><br>
+        <a class="btn btn-success" title="Download Keys (zip)" href="<%= user_key_zip_url %>">Download Keys (zip)</a><br>
         <%= conf_links %>
         <button class="btn btn-danger" onclick="deleteKey()">Delete Temporary Key Link</button><br>
       </div>
