@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add zip key archives
+
 Version 1.4.729.19 2015-09-11
 -----------------------------
 
