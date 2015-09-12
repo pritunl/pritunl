@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.4.730.81 2015-09-12
+-----------------------------
 
 Fix issue with multiple device configurations
 
