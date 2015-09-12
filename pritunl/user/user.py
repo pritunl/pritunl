@@ -479,7 +479,7 @@ class User(mongo.MongoObject):
 
         return file_name, onc_conf
 
-    def build_key_archive(self):
+    def build_key_tar_archive(self):
         temp_path = utils.get_temp_path()
         key_archive_path = os.path.join(temp_path, '%s.tar' % self.id)
 
@@ -500,6 +500,35 @@ class User(mongo.MongoObject):
                     os.remove(server_conf_path)
             finally:
                 tar_file.close()
+
+            with open(key_archive_path, 'r') as archive_file:
+                key_archive = archive_file.read()
+        finally:
+            utils.rmtree(temp_path)
+
+        return key_archive
+
+    def build_key_zip_archive(self):
+        temp_path = utils.get_temp_path()
+        key_archive_path = os.path.join(temp_path, '%s.zip' % self.id)
+
+        try:
+            os.makedirs(temp_path)
+            zip_file = zipfile.ZipFile(key_archive_path, 'w')
+            try:
+                for server in self.org.iter_servers():
+                    server_conf_path = os.path.join(temp_path,
+                        '%s_%s.ovpn' % (self.id, server.id))
+                    conf_name, client_conf, conf_hash = self._generate_conf(
+                        server)
+
+                    with open(server_conf_path, 'w') as ovpn_conf:
+                        os.chmod(server_conf_path, 0600)
+                        ovpn_conf.write(client_conf)
+                    zip_file.write(server_conf_path, arcname=conf_name)
+                    os.remove(server_conf_path)
+            finally:
+                zip_file.close()
 
             with open(key_archive_path, 'r') as archive_file:
                 key_archive = archive_file.read()
