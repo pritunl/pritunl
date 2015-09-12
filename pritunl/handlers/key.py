@@ -137,7 +137,9 @@ def user_linked_key_page_get(short_code):
         cache=False).data
     key_page = key_page.replace('<%= user_name %>', '%s - %s' % (
         org.name, user.name))
-    key_page = key_page.replace('<%= user_key_url %>', '/key/%s.tar' % (
+    key_page = key_page.replace('<%= user_key_tar_url %>', '/key/%s.tar' % (
+        doc['key_id']))
+    key_page = key_page.replace('<%= user_key_zip_url %>', '/key/%s.zip' % (
         doc['key_id']))
 
     if org.otp_auth:
