@@ -16,14 +16,24 @@ import hmac
 import hashlib
 import base64
 
-def _get_key_archive(org_id, user_id):
+def _get_key_tar_archive(org_id, user_id):
     org = organization.get_by_id(org_id)
-    user = org.get_user(user_id)
-    key_archive = user.build_key_archive()
+    usr = org.get_user(user_id)
+    key_archive = usr.build_key_tar_archive()
     response = flask.Response(response=key_archive,
         mimetype='application/octet-stream')
     response.headers.add('Content-Disposition',
-        'attachment; filename="%s.tar"' % user.name)
+        'attachment; filename="%s.tar"' % usr.name)
+    return response
+
+def _get_key_zip_archive(org_id, user_id):
+    org = organization.get_by_id(org_id)
+    usr = org.get_user(user_id)
+    key_archive = usr.build_key_zip_archive()
+    response = flask.Response(response=key_archive,
+        mimetype='application/octet-stream')
+    response.headers.add('Content-Disposition',
+        'attachment; filename="%s.zip"' % usr.name)
     return response
 
 def _get_onc_archive(org_id, user_id):
@@ -38,8 +48,13 @@ def _get_onc_archive(org_id, user_id):
 
 @app.app.route('/key/<org_id>/<user_id>.tar', methods=['GET'])
 @auth.session_auth
-def user_key_archive_get(org_id, user_id):
-    return _get_key_archive(org_id, user_id)
+def user_key_tar_archive_get(org_id, user_id):
+    return _get_key_tar_archive(org_id, user_id)
+
+@app.app.route('/key/<org_id>/<user_id>.zip', methods=['GET'])
+@auth.session_auth
+def user_key_zip_archive_get(org_id, user_id):
+    return _get_key_zip_archive(org_id, user_id)
 
 @app.app.route('/key_onc/<org_id>/<user_id>.zip', methods=['GET'])
 @auth.session_auth
@@ -53,7 +68,7 @@ def user_key_link_get(org_id, user_id):
     return utils.jsonify(org.create_user_key_link(user_id))
 
 @app.app.route('/key/<key_id>.tar', methods=['GET'])
-def user_linked_key_archive_get(key_id):
+def user_linked_key_tar_archive_get(key_id):
     utils.rand_sleep()
 
     collection = mongo.get_collection('users_key_link')
@@ -65,7 +80,22 @@ def user_linked_key_archive_get(key_id):
         time.sleep(settings.app.rate_limit_sleep)
         return flask.abort(404)
 
-    return _get_key_archive(doc['org_id'], doc['user_id'])
+    return _get_key_tar_archive(doc['org_id'], doc['user_id'])
+
+@app.app.route('/key/<key_id>.zip', methods=['GET'])
+def user_linked_key_zip_archive_get(key_id):
+    utils.rand_sleep()
+
+    collection = mongo.get_collection('users_key_link')
+    doc = collection.find_one({
+        'key_id': key_id,
+    })
+
+    if not doc:
+        time.sleep(settings.app.rate_limit_sleep)
+        return flask.abort(404)
+
+    return _get_key_zip_archive(doc['org_id'], doc['user_id'])
 
 @app.app.route('/key_onc/<key_id>.zip', methods=['GET'])
 def user_linked_key_onc_archive_get(key_id):
