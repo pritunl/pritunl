@@ -39,9 +39,13 @@ class DocDb(object):
         try:
             index_count = 0
             for index_key in self._index.keys():
-                val = query.pop(index_key, None)
-                if val is not None:
+                if index_key in query:
                     index_count += 1
+                    val = query[index_key]
+                else:
+                    val = None
+
+                if val is not None:
                     index = self._index[index_key]
                     if val in index:
                         for doc_id in index[val]:
