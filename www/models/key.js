@@ -9,6 +9,7 @@ define([
       'id': null,
       'key_url': null,
       'key_zip_url': null,
+      'key_onc_url': null,
       'view_url': null,
       'uri_url': null
     },
