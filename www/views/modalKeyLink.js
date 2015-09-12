@@ -26,11 +26,11 @@ define([
         success: function() {
           this.clearLoading();
           var keyLink = window.location.protocol + '//' +
-              window.location.host + this.model.get('key_url');
+            window.location.host + this.model.get('key_url');
           var keyZipLink = window.location.protocol + '//' +
-              window.location.host + this.model.get('key_zip_url');
+            window.location.host + this.model.get('key_zip_url');
           var keyOncLink = window.location.protocol + '//' +
-              window.location.host + this.model.get('key_onc_url');
+            window.location.host + this.model.get('key_onc_url');
           var otpLink = window.location.protocol + '//' +
             window.location.host + this.model.get('view_url');
           var uriLink = 'pritunl://' + window.location.host +
