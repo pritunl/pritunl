@@ -231,6 +231,15 @@ require([
     return bytes;
   };
 
+  window.uuid = function() {
+    var uuid = '';
+    for (var i = 0; i < 8; i++) {
+      uuid += Math.floor((1 + Math.random()) * 0x10000).toString(
+        16).substring(1);
+    }
+    return uuid;
+  };
+
   window.md5 = function(string) {
     /* jshint -W016:true, -W027:true, -W052:true, -W064:true */
     function RotateLeft(lValue, iShiftBits) {
