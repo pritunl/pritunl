@@ -264,7 +264,3 @@ class ServerInstanceCom(object):
         thread = threading.Thread(target=self._watch_thread)
         thread.daemon = True
         thread.start()
-
-        thread = threading.Thread(target=self.clients.ping_thread)
-        thread.daemon = True
-        thread.start()
