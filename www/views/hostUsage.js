@@ -28,7 +28,7 @@ define([
         }
       });
       Rickshaw.Graph.HoverDetail.prototype.initialize.call(this, args);
-    },
+    }
   });
 
   var HostUsageView = Backbone.View.extend({
@@ -163,7 +163,7 @@ define([
           color: 'rgba(44, 127, 184, 0.05)',
           stroke: '#2c7fb8',
           data: memUsage
-        }],
+        }]
       });
       graphMem.render();
       if (this.getType() === 'mem') {
