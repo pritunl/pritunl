@@ -249,6 +249,7 @@ class ServerInstanceCom(object):
                 )
             self.instance.stop_process()
         finally:
+            self.clients.disconnect_all()
             remove_listener(self.instance.id)
 
     def connect(self):
