@@ -41,9 +41,22 @@ define([
       this.state = false;
       this.interval = setInterval((this.update).bind(this), 15000);
       this.update();
+
+      this.bindId = window.uuid();
+      this.width = this.$el.width();
+      $(window).bind('resize.' + this.bindId, (this.onResize).bind(this));
     },
     deinitialize: function() {
       clearInterval(this.interval);
+      $(window).unbind('resize.' + this.bindId);
+    },
+    onResize: function() {
+      var width = this.$el.width();
+      if (width != this.width) {
+        this.width = width;
+        this.$el.empty();
+        this.render();
+      }
     },
     render: function() {
       this.$el.html(this.template());
