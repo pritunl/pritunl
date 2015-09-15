@@ -52,7 +52,7 @@ define([
     },
     onResize: function() {
       var width = this.$el.width();
-      if (width != this.width) {
+      if (width !== this.width) {
         this.width = width;
         this.$el.empty();
         this.render();
