@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Improvements to web console
+Fix issue with upgrade
 
 Version 1.4.730.81 2015-09-12
 -----------------------------
