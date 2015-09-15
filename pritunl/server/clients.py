@@ -9,9 +9,10 @@ from pritunl import settings
 from pritunl import event
 from pritunl import docdb
 
+import datetime
+import collections
 import bson
 import hashlib
-import threading
 
 _limiter = limiter.Limiter('vpn', 'peer_limit', 'peer_limit_timeout')
 
@@ -26,7 +27,7 @@ class Clients(object):
             'device_id',
             'virt_address',
         )
-        self.timers = {}
+        self.clients_queue = collections.deque()
 
         self.ip_pool = []
         self.ip_network = ipaddress.IPv4Network(self.server.network)
@@ -195,60 +196,6 @@ class Clients(object):
                 self.instance_com.send_client_deny(client_id, key_id,
                     'Error parsing client connect')
 
-    def start_timer(self, client_id, interval=None):
-        if self.instance.sock_interrupt:
-            return
-
-        if interval is None:
-            interval = settings.vpn.client_ttl - 60
-
-        timer = threading.Timer(interval, self._timer_callback, [client_id])
-        timer.daemon = True
-        timer.start()
-
-        self.timers[client_id] = timer
-
-    def stop_timer(self, client_id):
-        timer = self.timers.pop(client_id, None)
-        try:
-            timer.cancel()
-        except:
-            pass
-
-    def _timer_callback(self, client_id):
-        self.timers.pop(client_id, None)
-
-        try:
-            client = self.clients.find_id(client_id)
-            if not client:
-                return
-
-            if self.instance.sock_interrupt:
-                return
-
-            response = self.collection.update({
-                '_id': client['doc_id'],
-            }, {
-                '$set': {
-                    'timestamp': utils.now(),
-                },
-            })
-            if not response['updatedExisting']:
-                logger.error('Client lost unexpectedly', 'server',
-                    server_id=self.server.id,
-                    instance_id=self.instance.id,
-                )
-                self.instance_com.client_kill(client_id)
-                return
-
-            self.start_timer(client_id)
-        except:
-            logger.exception('Failed to update client', 'server',
-                server_id=self.server.id,
-                instance_id=self.instance.id,
-            )
-            self.start_timer(client_id, 5)
-
     def connected(self, client_id):
         client = self.clients.find_id(client_id)
         if not client:
@@ -288,23 +235,23 @@ class Clients(object):
 
         self.clients.update_id(client_id, {
             'doc_id': doc_id,
+            'timestamp': datetime.datetime.now(),
         })
 
-        self.start_timer(client_id)
+        self.clients_queue.append(client_id)
 
         self.instance_com.push_output(
             'User connected user_id=%s' % client['user_id'])
         self.send_event()
 
     def disconnected(self, client_id):
-        self.stop_timer(client_id)
-
         client = self.clients.find_id(client_id)
         if not client:
             return
+        self.clients.remove_id(client_id)
 
+        virt_address = client['virt_address']
         if client['address_dynamic']:
-            virt_address = client['virt_address']
             updated = self.clients.update({
                 'id': client_id,
                 'virt_address': virt_address,
@@ -313,8 +260,6 @@ class Clients(object):
             })
             if updated:
                 self.ip_pool.append(virt_address.split('/')[0])
-
-        self.clients.remove_id(client_id)
 
         doc_id = client.get('doc_id')
         if doc_id:
@@ -341,21 +286,112 @@ class Clients(object):
         event.Event(type=HOSTS_UPDATED, resource_id=settings.local.host_id)
         event.Event(type=SERVERS_UPDATED)
 
-    def disconnect_all(self):
-        for client_id in self.timers.keys():
-            self.stop_timer(client_id)
+    def interrupter_sleep(self, length):
+        if check_global_interrupt() or self.instance.sock_interrupt:
+            return True
+        while True:
+            sleep = min(0.5, length)
+            time.sleep(sleep)
+            length -= sleep
+            if check_global_interrupt() or self.instance.sock_interrupt:
+                return True
+            elif length <= 0:
+                return False
 
-        doc_ids = []
-        for client in self.clients.find_all():
-            doc_id = client.get('doc_id')
-            if doc_id:
-                doc_ids.append(doc_id)
-
+    @interrupter
+    def ping_thread(self):
         try:
-            self.collection.remove({
-                '_id': {'$in': doc_ids},
-            })
-        except:
-            logger.exception('Error removing client', 'server',
-                server_id=self.server.id,
-            )
+            while True:
+                try:
+                    try:
+                        client_id = self.clients_queue.popleft()
+                    except IndexError:
+                        if self.interrupter_sleep(
+                                settings.vpn.client_ttl - 60):
+                            return
+                        continue
+
+                    client = self.clients.find_id(client_id)
+                    if not client:
+                        continue
+
+                    diff = datetime.timedelta(
+                        seconds=settings.vpn.client_ttl - 60) - \
+                           (datetime.datetime.now() - client['timestamp'])
+
+                    if diff.seconds > settings.vpn.client_ttl:
+                        logger.error('Client ping time diff out of range',
+                            'server',
+                            time_diff=diff.seconds,
+                            server_id=self.server.id,
+                            instance_id=self.instance.id,
+                        )
+                        if self.interrupter_sleep(10):
+                            return
+                    elif diff.seconds > 1:
+                        if self.interrupter_sleep(diff.seconds):
+                            return
+
+                    if self.instance.sock_interrupt:
+                        return
+
+                    try:
+                        updated = self.clients.update_id(client_id, {
+                            'timestamp': datetime.datetime.now(),
+                        })
+                        if not updated:
+                            continue
+
+                        response = self.collection.update({
+                            '_id': client['doc_id'],
+                        }, {
+                            '$set': {
+                                'timestamp': utils.now(),
+                            },
+                        })
+                        if not response['updatedExisting']:
+                            logger.error('Client lost unexpectedly', 'server',
+                                server_id=self.server.id,
+                                instance_id=self.instance.id,
+                            )
+                            self.instance_com.client_kill(client_id)
+                            continue
+                    except:
+                        self.clients_queue.append(client_id)
+                        logger.exception('Failed to update client', 'server',
+                            server_id=self.server.id,
+                            instance_id=self.instance.id,
+                        )
+                        yield interrupter_sleep(1)
+                        continue
+
+                    self.clients_queue.append(client_id)
+
+                    yield
+                    if self.instance.sock_interrupt:
+                        return
+                except GeneratorExit:
+                    raise
+                except:
+                    logger.exception('Error in client thread', 'server',
+                        server_id=self.server.id,
+                        instance_id=self.instance.id,
+                    )
+                    yield interrupter_sleep(3)
+                    if self.instance.sock_interrupt:
+                        return
+        finally:
+            doc_ids = []
+            for client in self.clients.find_all():
+                doc_id = client.get('doc_id')
+                if doc_id:
+                    doc_ids.append(doc_id)
+
+            try:
+                self.collection.remove({
+                    '_id': {'$in': doc_ids},
+                })
+            except:
+                logger.exception('Error removing client', 'server',
+                    server_id=self.server.id,
+                )

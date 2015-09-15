@@ -249,7 +249,6 @@ class ServerInstanceCom(object):
                 )
             self.instance.stop_process()
         finally:
-            self.clients.disconnect_all()
             remove_listener(self.instance.id)
 
     def connect(self):
@@ -263,5 +262,9 @@ class ServerInstanceCom(object):
         thread.start()
 
         thread = threading.Thread(target=self._watch_thread)
+        thread.daemon = True
+        thread.start()
+
+        thread = threading.Thread(target=self.clients.ping_thread)
         thread.daemon = True
         thread.start()
