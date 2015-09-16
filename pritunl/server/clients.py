@@ -2,6 +2,7 @@ from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import utils
 from pritunl import mongo
+from pritunl import sso
 from pritunl import limiter
 from pritunl import logger
 from pritunl import ipaddress
@@ -13,6 +14,7 @@ import datetime
 import collections
 import bson
 import hashlib
+import threading
 
 _limiter = limiter.Limiter('vpn', 'peer_limit', 'peer_limit_timeout')
 
@@ -76,6 +78,74 @@ class Clients(object):
 
         return client_conf
 
+    def allow_client(self, client, org, user):
+        client_id = client['client_id']
+        key_id = client['key_id']
+        org_id = client['org_id']
+        user_id = client['user_id']
+        device_id = client.get('device_id')
+        device_name = client.get('device_name')
+        platform = client.get('platform')
+        mac_addr = client.get('mac_addr')
+        remote_ip = client.get('remote_ip')
+        address_dynamic = False
+
+        client_conf = self.generate_client_conf(user)
+
+        virt_address = self.server.get_ip_addr(org_id, user_id)
+        if not self.server.multi_device:
+            for client in self.clients.find({'user_id': user_id}):
+                self.instance_com.client_kill(client['id'])
+        elif virt_address and self.clients.find(
+            {'virt_address': virt_address}):
+            virt_address = None
+
+        if not virt_address:
+            while True:
+                try:
+                    ip_addr = self.ip_pool.pop()
+                except IndexError:
+                    break
+                ip_addr = '%s/%s' % (ip_addr, self.ip_network.prefixlen)
+
+                if not self.clients.find({'virt_address': ip_addr}):
+                    virt_address = ip_addr
+                    address_dynamic = True
+                    break
+
+        if not virt_address:
+            self.instance_com.send_client_deny(client_id, key_id,
+                'Unable to assign ip address')
+            return
+
+        self.clients.insert({
+            'id': client_id,
+            'org_id': org_id,
+            'org_name': org.name,
+            'user_id': user_id,
+            'user_name': user.name,
+            'user_type': user.type,
+            'device_id': device_id,
+            'device_name': device_name,
+            'platform': platform,
+            'mac_addr': mac_addr,
+            'otp_code': None,
+            'virt_address': virt_address,
+            'real_address': remote_ip,
+            'address_dynamic': address_dynamic,
+        })
+
+        client_conf += 'ifconfig-push %s %s\n' % utils.parse_network(
+            virt_address)
+
+        if self.server.debug:
+            self.instance_com.push_output('Client conf %s:' % user_id)
+            for conf_line in client_conf.split('\n'):
+                if conf_line:
+                    self.instance_com.push_output('  ' + conf_line)
+
+        self.instance_com.send_client_auth(client_id, key_id, client_conf)
+
     def connect(self, client):
         client_id = None
         key_id = None
@@ -128,7 +198,45 @@ class Clients(object):
                     'Invalid OTP code')
                 return
 
-            self.allow_client(client, org, user)
+            if user.auth_type == DUO_AUTH:
+                def duo_auth():
+                    allow = False
+                    try:
+                        allow, _ = sso.auth_duo(user.name)
+                    except:
+                        logger.exception('Duo server error', 'server',
+                            client_id=client_id,
+                            user_id=user.id,
+                            username=user.name,
+                            server_id=self.server.id,
+                        )
+                        self.instance_com.push_output(
+                            'ERROR Duo server error client_id=%s' % client_id)
+                    try:
+                        if allow:
+                            self.allow_client(client, org, user)
+                        else:
+                            logger.LogEntry(message='User failed duo ' +
+                                'authentication "%s".' % user.name)
+                            self.instance_com.send_client_deny(
+                                client_id,
+                                key_id,
+                                'User failed duo authentication',
+                            )
+                    except:
+                        logger.exception('Duo auth error', 'server',
+                            client_id=client_id,
+                            user_id=user.id,
+                            server_id=self.server.id,
+                        )
+                        self.instance_com.push_output(
+                            'ERROR Duo auth error client_id=%s' % client_id)
+
+                thread = threading.Thread(target=duo_auth)
+                thread.daemon = True
+                thread.start()
+            else:
+                self.allow_client(client, org, user)
         except:
             logger.exception('Error parsing client connect', 'server',
                 server_id=self.server.id,
