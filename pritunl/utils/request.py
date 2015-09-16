@@ -1,4 +1,5 @@
 import json
+import urllib
 import urllib2
 import httplib
 import socket
@@ -14,7 +15,8 @@ class Response:
     def json(self):
         return json.loads(self.content)
 
-def _request(method, url, json_data=None, headers=None, timeout=None):
+def _request(method, url, json_data=None, params=None, headers=None,
+        timeout=None):
     if headers is None:
         headers = {}
     if timeout is None:
@@ -26,6 +28,8 @@ def _request(method, url, json_data=None, headers=None, timeout=None):
     if json_data is not None:
         request.add_header('Content-Type', 'application/json')
         data = json.dumps(json_data)
+    elif params is not None:
+        data = urllib.urlencode(params)
 
     try:
         url_response = urllib2.urlopen(request, data=data, timeout=timeout)
