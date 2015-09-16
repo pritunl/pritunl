@@ -15,7 +15,7 @@ define([
     enterOk: false,
     events: function() {
       return _.extend({
-        'click .sso-match .selector': 'onSsoSelect',
+        'click .sso-mode select': 'onSsoMode',
         'change .pass input': 'onPassChange',
         'keyup .pass input': 'onPassEvent',
         'paste .pass input': 'onPassEvent',
@@ -63,25 +63,26 @@ define([
       this.$('.api-token input').val(this.model.get('token'));
       this.$('.api-secret input').val(this.model.get('secret'));
     },
-    getSsoSelect: function() {
-      return this.$('.sso-match .selector').hasClass('selected');
+    getSsoMode: function() {
+      return this.$('.sso-mode select').val();
     },
-    setSsoSelect: function(state) {
-      if (state) {
-        this.$('.sso-match .selector').addClass('selected');
-        this.$('.sso-match .selector-inner').show();
-        this.$('.sso-match input').removeAttr('disabled');
-        this.$('.sso-org select').removeAttr('disabled');
+    setSsoMode: function(mode) {
+      if (!mode) {
+        this.$('.sso-match').slideUp(window.slideTime);
+        this.$('.sso-org').slideUp(window.slideTime);
+        return;
+      } else {
+        this.$('.sso-org').slideDown(window.slideTime);
       }
-      else {
-        this.$('.sso-match .selector').removeClass('selected');
-        this.$('.sso-match .selector-inner').hide();
-        this.$('.sso-match input').attr('disabled', 'disabled');
-        this.$('.sso-org select').attr('disabled', 'disabled');
+
+      if (mode === 'google') {
+        this.$('.sso-match').slideDown(window.slideTime);
+      } else if (mode === 'duo') {
+
       }
     },
-    onSsoSelect: function() {
-      this.setSsoSelect(!this.getSsoSelect());
+    onSsoMode: function() {
+      this.setSsoMode(this.getSsoMode());
     },
     onThemeChange: function() {
       if (this.$('.theme select').val() === 'dark') {
@@ -147,7 +148,7 @@ define([
       var serverCert = this.$('.server-cert textarea').val();
       var serverKey = this.$('.server-key textarea').val();
 
-      var sso = this.getSsoSelect();
+      var sso = this.getSsoMode();
       var ssoMatch;
       var ssoOrg;
 
