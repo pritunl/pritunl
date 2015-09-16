@@ -83,10 +83,8 @@
     <div class="network-mode form-group">
       <label>Network Mode</label>
       <select class="form-control" data-toggle="tooltip" title="Network mode">
-        <option value="tunnel" <%= network_mode === 'tunnel' ? 'selected' : ''
-        %>>Tunnel</option>
-        <option value="bridge" <%= network_mode === 'bridge' ? 'selected' : ''
-        %>>Bridge</option>
+        <option value="tunnel" <%= network_mode === 'tunnel' ? 'selected' : '' %>>Tunnel</option>
+        <option value="bridge" <%= network_mode === 'bridge' ? 'selected' : '' %>>Bridge</option>
       </select>
     </div>
     <div class="network-start form-group" <%= network_mode === 'bridge' ? '' : 'style="display: none;"' %>>
