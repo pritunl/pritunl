@@ -27,12 +27,17 @@
       <label>SMTP Username</label>
       <input type="text" class="form-control" placeholder="Enter SMTP username" value="<%- email_username || '' %>">
     </div>
-    <div class="sso-match form-group">
+    <div class="sso-mode form-group">
+      <label>Single Sign-On</label>
+      <select class="form-control" data-toggle="tooltip" title="Single Sign-On Mode">
+        <option value="" <%= sso ? '' : 'selected' %>>Disabled</option>
+        <option value="google" <%= sso === 'google' ? 'selected' : '' %>>Google Apps</option>
+        <option value="duo" <%= sso === 'duo' ? 'selected' : '' %>>Duo Security</option>
+      </select>
+    </div>
+    <div class="sso-match form-group" <%= sso === 'google' ? '' : 'style="display: none;"' %>>
       <label>Single Sign-On Domain</label>
-      <div class="selector <%= sso ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Allow clients to login using their Google Apps bussiness account">
-        <span class="selector-inner glyphicon glyphicon-ok"></span>
-      </div>
-      <input type="email" class="form-control" placeholder="Enter Google Apps domain" value="<%- sso_match || '' %>" <%= sso ? '' : 'disabled' %> data-toggle="tooltip" title="Google apps domain to match against users email address. Multiple domains can be entrered sperated by a comma. (example: pritunl.com)">
+      <input type="email" class="form-control" placeholder="Enter Google Apps domain" value="<%- sso_match || '' %>" data-toggle="tooltip" title="Google apps domain to match against users email address. Multiple domains can be entrered sperated by a comma. (example: pritunl.com)">
     </div>
     <div class="server-cert form-group">
       <label>Enter Server SSL Certificate</label><br>
@@ -57,9 +62,9 @@
       <label>SMTP Password</label>
       <input type="password" class="form-control" placeholder="Enter SMTP password" value="<%- email_password ? '********************' : '' %>">
     </div>
-    <div class="sso-org form-group">
+    <div class="sso-org form-group" <%= sso ? '' : 'style="display: none;"' %>>
       <label>Single Sign-On Organization</label>
-      <select class="form-control" <%= sso ? '' : 'disabled' %>>
+      <select class="form-control">
         <% _.each(orgs, function(org) { %>
         <option value="<%- org.id %>" <%= (sso_org === org.id) ? 'selected' : '' %>><%- org.name %></option>
         <% }); %>
