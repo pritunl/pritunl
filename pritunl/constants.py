@@ -181,6 +181,7 @@ ORG_DEFAULT = 'default'
 ORG_POOL = 'pool'
 
 LOCAL_AUTH = 'local'
+DUO_AUTH = 'duo'
 GOOGLE_AUTH = 'google'
 
 ORGS_UPDATED = 'organizations_updated'
