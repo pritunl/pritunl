@@ -295,7 +295,7 @@ def sso_authenticate_post():
     username = flask.request.json['username']
     username = username.split('@')[0]
 
-    valid, org_id = sso.auth_duo(username)
+    valid, org_id = sso.auth_duo(username, strong=True)
     if not valid:
         return flask.abort(401)
 

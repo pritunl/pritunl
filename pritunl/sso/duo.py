@@ -29,7 +29,7 @@ def sign(method, path, params):
         'Authorization': 'Basic %s' % base64.b64encode(auth),
     }
 
-def auth_duo(username):
+def auth_duo(username, strong=False):
     params = {
         'username': username,
         'factor': 'push',
@@ -50,7 +50,10 @@ def auth_duo(username):
     data = response.json()
     resp_data = data.get('response')
     if resp_data and resp_data.get('result') == 'allow':
-        allow = True
+        if strong and resp_data.get('status') == 'bypass':
+            allow = False
+        else:
+            allow = True
     else:
         allow = False
 
