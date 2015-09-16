@@ -393,7 +393,7 @@
             }.bind(this), 150);
           }.bind(this), 150);
         }.bind(this), 150);
-      }
+      };
 
       var setAlert = function(alert, style) {
         if (alert) {
@@ -462,7 +462,7 @@
         xmlhttp.setRequestHeader('Content-Type', 'application/json');
         xmlhttp.send(JSON.stringify({
           'username': userInput.value,
-          'password': passInput.value,
+          'password': passInput.value
         }));
 
         return false;
