@@ -5,6 +5,7 @@ from pritunl import organization
 from pritunl import settings
 from pritunl import app
 from pritunl import auth
+from pritunl import sso
 from pritunl import mongo
 from pritunl import sso
 from pritunl import event
@@ -288,6 +289,37 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
     if key_conf:
         return utils.response(key_conf['conf'])
     return utils.response('')
+
+@app.app.route('/sso/authenticate', methods=['POST'])
+def sso_authenticate_post():
+    username = flask.request.json['username']
+    username = username.split('@')[0]
+
+    valid, org_id = sso.auth_duo(username)
+    if not valid:
+        return flask.abort(401)
+
+    if not org_id:
+        org_id = settings.app.sso_org
+
+    org = organization.get_by_id(org_id)
+    if not org:
+        return flask.abort(405)
+
+    usr = org.find_user(name=username)
+    if not usr:
+        usr = org.new_user(name=username, type=CERT_CLIENT,
+            auth_type=DUO_AUTH)
+        event.Event(type=ORGS_UPDATED)
+        event.Event(type=USERS_UPDATED, resource_id=org.id)
+        event.Event(type=SERVERS_UPDATED)
+    elif usr.auth_type != DUO_AUTH:
+        usr.auth_type = DUO_AUTH
+        usr.commit('auth_type')
+
+    key_link = org.create_user_key_link(usr.id)
+
+    return flask.request.url_root[:-1] + key_link['view_url']
 
 @app.app.route('/sso/request', methods=['GET'])
 def sso_request_get():
