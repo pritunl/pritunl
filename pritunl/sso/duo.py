@@ -6,6 +6,7 @@ import email
 import hmac
 import hashlib
 import urllib
+import httplib
 
 def sign(method, path, params):
     now = email.Utils.formatdate()
@@ -37,10 +38,14 @@ def auth_duo(username):
     headers = sign('POST', '/auth/v2/auth', params)
     url = 'https://%s/auth/v2/auth' % settings.app.sso_host
 
-    response = utils.request.post(url,
-        headers=headers,
-        params=params,
-    )
+    try:
+        response = utils.request.post(url,
+            headers=headers,
+            params=params,
+            timeout=settings.app.sso_timeout,
+        )
+    except httplib.HTTPException:
+        return False, None
 
     data = response.json()
     resp_data = data.get('response')
