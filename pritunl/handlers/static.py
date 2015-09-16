@@ -89,8 +89,11 @@ def login_static_get():
         if settings.app.theme == 'dark':
             bodyClass += 'dark '
 
-        if settings.app.sso and settings.local.sub_plan == 'enterprise':
-            bodyClass += 'sso '
+        if settings.local.sub_plan == 'enterprise':
+            if settings.app.sso == 'google':
+                bodyClass += 'sso-google '
+            elif settings.app.sso == 'duo':
+                bodyClass += 'sso-duo '
 
     static_file.data = static_file.data.replace(
         '<body>', '<body class="' + bodyClass + '">')
