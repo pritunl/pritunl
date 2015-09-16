@@ -40,6 +40,7 @@ class SettingsApp(SettingsGroupMongo):
         'sso_host': None,
         'sso_token': None,
         'sso_secret': None,
+        'sso_timeout': 30,
         'sso_org': None,
         'queue_low_thread_limit': 4,
         'queue_med_thread_limit': 2,
