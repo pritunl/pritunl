@@ -84,13 +84,8 @@ class Clients(object):
             key_id = client['key_id']
             org_id = client['org_id']
             user_id = client['user_id']
-            device_id = client.get('device_id')
-            device_name = client.get('device_name')
-            platform = client.get('platform')
-            mac_addr = client.get('mac_addr')
             otp_code = client.get('otp_code')
             remote_ip = client.get('remote_ip')
-            address_dynamic = False
 
             if not _limiter.validate(remote_ip):
                 self.instance_com.send_client_deny(client_id, key_id,
@@ -133,61 +128,7 @@ class Clients(object):
                     'Invalid OTP code')
                 return
 
-            client_conf = self.generate_client_conf(user)
-
-            virt_address = self.server.get_ip_addr(org.id, user_id)
-            if not self.server.multi_device:
-                for client in self.clients.find({'user_id': user_id}):
-                    self.instance_com.client_kill(client['id'])
-            elif virt_address and self.clients.find(
-                    {'virt_address': virt_address}):
-                virt_address = None
-
-            if not virt_address:
-                while True:
-                    try:
-                        ip_addr = self.ip_pool.pop()
-                    except IndexError:
-                        break
-                    ip_addr = '%s/%s' % (ip_addr, self.ip_network.prefixlen)
-
-                    if not self.clients.find({'virt_address': ip_addr}):
-                        virt_address = ip_addr
-                        address_dynamic = True
-                        break
-
-            if not virt_address:
-                self.instance_com.send_client_deny(client_id, key_id,
-                    'Unable to assign ip address')
-                return
-
-            self.clients.insert({
-                'id': client_id,
-                'org_id': org_id,
-                'org_name': org.name,
-                'user_id': user_id,
-                'user_name': user.name,
-                'user_type': user.type,
-                'device_id': device_id,
-                'device_name': device_name,
-                'platform': platform,
-                'mac_addr': mac_addr,
-                'otp_code': None,
-                'virt_address': virt_address,
-                'real_address': remote_ip,
-                'address_dynamic': address_dynamic,
-            })
-
-            client_conf += 'ifconfig-push %s %s\n' % utils.parse_network(
-                virt_address)
-
-            if self.server.debug:
-                self.instance_com.push_output('Client conf %s:' % user_id)
-                for conf_line in client_conf.split('\n'):
-                    if conf_line:
-                        self.instance_com.push_output('  ' + conf_line)
-
-            self.instance_com.send_client_auth(client_id, key_id, client_conf)
+            self.allow_client(client, org, user)
         except:
             logger.exception('Error parsing client connect', 'server',
                 server_id=self.server.id,
