@@ -21,8 +21,8 @@ def sign(method, path, params):
     canon.append('&'.join(args))
     canon = '\n'.join(canon)
 
-    sig = hmac.new(settings.app.sso_secret, canon, hashlib.sha1)
-    auth = '%s:%s' % (settings.app.sso_token, sig.hexdigest())
+    sig = hmac.new(settings.app.sso_secret.encode(), canon, hashlib.sha1)
+    auth = '%s:%s' % (settings.app.sso_token.encode(), sig.hexdigest())
 
     return {
         'Date': now,
