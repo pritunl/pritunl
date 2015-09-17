@@ -198,7 +198,7 @@ class Clients(object):
                     'Invalid OTP code')
                 return
 
-            if user.auth_type == DUO_AUTH:
+            if user.auth_type == DUO_AUTH and settings.app.sso == DUO_AUTH:
                 def duo_auth():
                     allow = False
                     try:
