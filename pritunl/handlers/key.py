@@ -292,6 +292,9 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
 
 @app.app.route('/sso/authenticate', methods=['POST'])
 def sso_authenticate_post():
+    if settings.app.sso != DUO_AUTH:
+        return flask.abort(405)
+
     username = flask.request.json['username']
     username = username.split('@')[0]
 
@@ -323,6 +326,9 @@ def sso_authenticate_post():
 
 @app.app.route('/sso/request', methods=['GET'])
 def sso_request_get():
+    if settings.app.sso != GOOGLE_AUTH:
+        return flask.abort(405)
+
     state = utils.rand_str(64)
     secret = utils.rand_str(64)
     callback = flask.request.url_root + 'sso/callback'
@@ -358,6 +364,9 @@ def sso_request_get():
 
 @app.app.route('/sso/callback', methods=['GET'])
 def sso_callback_get():
+    if settings.app.sso != GOOGLE_AUTH:
+        return flask.abort(405)
+
     state = flask.request.args.get('state')
     user = flask.request.args.get('user')
     sig = flask.request.args.get('sig')
