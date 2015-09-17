@@ -1,10 +1,18 @@
-from pritunl import settings
+from pritunl.upgrade.utils import get_collection
 
 def upgrade_1_5():
-    if settings.app.sso:
-        settings.app.sso = 'google'
-    elif settings.app.sso is not None:
-        settings.app.sso = None
-    else:
-        return
-    settings.commit()
+    settings_collection = get_collection('settings')
+
+    response = settings_collection.update({
+        '_id': 'app',
+        'sso': True,
+    }, {'$set': {
+        'sso': 'google',
+    }})
+
+    if not response['updatedExisting']:
+        settings_collection.update({
+            '_id': 'app',
+        }, {'$set': {
+            'sso': None,
+        }})
