@@ -19,6 +19,9 @@ def settings_get():
         'email_password': bool(settings.app.email_password),
         'sso': settings.app.sso,
         'sso_match': settings.app.sso_match,
+        'sso_token': settings.app.sso_token,
+        'sso_secret': settings.app.sso_secret,
+        'sso_host': settings.app.sso_host,
         'sso_org': settings.app.sso_org,
         'public_address': settings.local.host.public_addr,
         'server_cert': settings.app.server_cert,
@@ -74,6 +77,21 @@ def settings_put():
             settings_commit = True
             settings.app.sso_match = sso_match or None
 
+    if 'sso_token' in flask.request.json:
+        sso_token = flask.request.json['sso_token']
+        settings_commit = True
+        settings.app.sso_token = sso_token or None
+
+    if 'sso_secret' in flask.request.json:
+        sso_secret = flask.request.json['sso_secret']
+        settings_commit = True
+        settings.app.sso_secret = sso_secret or None
+
+    if 'sso_host' in flask.request.json:
+        sso_host = flask.request.json['sso_host']
+        settings_commit = True
+        settings.app.sso_host = sso_host or None
+
     if 'sso_org' in flask.request.json:
         settings_commit = True
         sso_org = flask.request.json['sso_org']
@@ -115,6 +133,13 @@ def settings_put():
         else:
             settings.app.server_key = None
 
+    if not settings.app.sso:
+        settings.app.sso_match = None
+        settings.app.sso_token = None
+        settings.app.sso_secret = None
+        settings.app.sso_host = None
+        settings.app.sso_org = None
+
     if settings_commit:
         settings.commit()
 
@@ -129,6 +154,9 @@ def settings_put():
         'email_password': bool(settings.app.email_password),
         'sso': settings.app.sso,
         'sso_match': settings.app.sso_match,
+        'sso_token': settings.app.sso_token,
+        'sso_secret': settings.app.sso_secret,
+        'sso_host': settings.app.sso_host,
         'sso_org': settings.app.sso_org,
         'public_address': settings.local.host.public_addr,
     })
