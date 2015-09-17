@@ -21,7 +21,7 @@ Server = http://repo.pritunl.com/stable/pacman
 $ pacman-key --keyserver hkp://keyserver.ubuntu.com -r CF8E292A
 $ pacman-key --lsign-key CF8E292A
 $ pacman -Sy
-$ pacman -S pritunl
+$ pacman -S pritunl mongodb
 $ systemctl start mongodb pritunl
 $ systemctl enable mongodb pritunl
 ```
@@ -95,7 +95,7 @@ deb http://repo.pritunl.com/stable/apt wheezy main
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
-$ apt-get install pritunl
+$ apt-get install pritunl mongodb-org
 $ systemctl start mongod pritunl
 $ systemctl enable mongod pritunl
 ```
@@ -112,7 +112,7 @@ deb http://repo.pritunl.com/stable/apt jessie main
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
-$ apt-get install pritunl
+$ apt-get install pritunl mongodb-org
 $ systemctl start mongod pritunl
 $ systemctl enable mongod pritunl
 ```
@@ -129,7 +129,7 @@ deb http://repo.pritunl.com/stable/apt precise main
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
-$ apt-get install pritunl
+$ apt-get install pritunl mongodb-org
 $ service pritunl start
 ```
 
@@ -145,7 +145,7 @@ deb http://repo.pritunl.com/stable/apt trusty main
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
-$ apt-get install pritunl
+$ apt-get install pritunl mongodb-org
 $ service pritunl start
 ```
 
@@ -161,7 +161,7 @@ deb http://repo.pritunl.com/stable/apt vivid main
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
-$ apt-get install pritunl
+$ apt-get install pritunl mongodb-org
 $ service pritunl start
 ```
 
@@ -177,7 +177,7 @@ deb http://repo.pritunl.com/stable/apt wily main
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
-$ apt-get install pritunl
+$ apt-get install pritunl mongodb-org
 $ service pritunl start
 ```
 
@@ -195,7 +195,7 @@ Server = http://repo.pritunl.com/dev/pacman
 $ pacman-key --keyserver hkp://keyserver.ubuntu.com -r CF8E292A
 $ pacman-key --lsign-key CF8E292A
 $ pacman -Sy
-$ pacman -S pritunl
+$ pacman -S pritunl mongodb
 $ systemctl start mongodb pritunl
 $ systemctl enable mongodb pritunl
 ```
@@ -269,7 +269,7 @@ deb http://repo.pritunl.com/dev/apt wheezy main
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
-$ apt-get install pritunl
+$ apt-get install pritunl mongodb-org
 $ systemctl start mongod pritunl
 $ systemctl enable mongod pritunl
 ```
@@ -286,7 +286,7 @@ deb http://repo.pritunl.com/dev/apt jessie main
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
-$ apt-get install pritunl
+$ apt-get install pritunl mongodb-org
 $ systemctl start mongod pritunl
 $ systemctl enable mongod pritunl
 ```
@@ -303,7 +303,7 @@ deb http://repo.pritunl.com/dev/apt precise main
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
-$ apt-get install pritunl
+$ apt-get install pritunl mongodb-org
 $ service pritunl start
 ```
 
@@ -319,7 +319,7 @@ deb http://repo.pritunl.com/dev/apt trusty main
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
-$ apt-get install pritunl
+$ apt-get install pritunl mongodb-org
 $ service pritunl start
 ```
 
@@ -335,7 +335,7 @@ deb http://repo.pritunl.com/dev/apt vivid main
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
-$ apt-get install pritunl
+$ apt-get install pritunl mongodb-org
 $ service pritunl start
 ```
 
@@ -351,7 +351,7 @@ deb http://repo.pritunl.com/dev/apt wily main
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
-$ apt-get install pritunl
+$ apt-get install pritunl mongodb-org
 $ service pritunl start
 ```
 
