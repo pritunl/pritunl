@@ -336,7 +336,7 @@ def sso_authenticate_post():
         usr.auth_type = DUO_AUTH
         usr.commit('auth_type')
 
-    key_link = org.create_user_key_link(usr.id)
+    key_link = org.create_user_key_link(usr.id, one_time=True)
 
     return flask.request.url_root[:-1] + key_link['view_url']
 
@@ -423,6 +423,6 @@ def sso_callback_get():
         usr.auth_type = GOOGLE_AUTH
         usr.commit('auth_type')
 
-    key_link = org.create_user_key_link(usr.id)
+    key_link = org.create_user_key_link(usr.id, one_time=True)
 
     return flask.redirect(flask.request.url_root[:-1] + key_link['view_url'])
