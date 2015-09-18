@@ -162,6 +162,11 @@ def user_linked_key_page_get(short_code):
 
     key_page = key_page.replace('<%= short_id %>', doc['short_id'])
 
+    if doc.get('one_time'):
+        key_page = key_page.replace(
+            '<button class="btn btn-danger" onclick="deleteKey()"' +
+            '>Delete Temporary Key Link</button><br>', '')
+
     conf_links = ''
 
     if settings.local.sub_active and settings.local.sub_plan == 'enterprise':
