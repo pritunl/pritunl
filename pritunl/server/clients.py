@@ -97,7 +97,7 @@ class Clients(object):
             for client in self.clients.find({'user_id': user_id}):
                 self.instance_com.client_kill(client['id'])
         elif virt_address and self.clients.find(
-            {'virt_address': virt_address}):
+                {'virt_address': virt_address}):
             virt_address = None
 
         if not virt_address:
