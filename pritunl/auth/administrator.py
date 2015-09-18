@@ -260,11 +260,20 @@ def check_auth(username, password, remote_addr=None):
 
 def reset_password():
     logger.info('Resetting administrator password', 'auth')
-    collection = mongo.get_collection('administrators')
-    collection.remove({})
+
+    admin_collection = mongo.get_collection('administrators')
+    admin_collection.remove({})
     Administrator(
         username=DEFAULT_USERNAME,
         password=DEFAULT_PASSWORD,
         default=True,
     ).commit()
+
+    settings_collection = mongo.get_collection('settings')
+    settings_collection.update({
+        '_id': 'app',
+    }, {'$set': {
+        'sso_admin': None,
+    }})
+
     return DEFAULT_USERNAME, DEFAULT_PASSWORD
