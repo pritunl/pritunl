@@ -39,6 +39,7 @@ class SettingsApp(SettingsGroupMongo):
         'sso': False,
         'sso_match': None,
         'sso_host': None,
+        'sso_admin': None,
         'sso_token': None,
         'sso_secret': None,
         'sso_timeout': 60,
