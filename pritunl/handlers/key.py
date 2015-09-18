@@ -186,6 +186,7 @@ def user_linked_key_page_delete_get(short_code):
     collection.remove({
         'short_id': short_code,
     })
+
     return utils.jsonify({})
 
 @app.app.route('/ku/<short_code>', methods=['GET'])
