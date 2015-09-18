@@ -6,7 +6,6 @@ from pritunl import organization
 from pritunl import settings
 from pritunl import app
 from pritunl import auth
-from pritunl import sso
 from pritunl import mongo
 from pritunl import sso
 from pritunl import event
