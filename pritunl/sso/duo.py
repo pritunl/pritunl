@@ -42,7 +42,7 @@ def auth_duo(username, strong=False, type=None, info=None):
         params['type'] = type
 
     if info:
-        params['info'] = urllib.urlencode(info)
+        params['pushinfo'] = urllib.urlencode(info)
 
     headers = sign('POST', '/auth/v2/auth', params)
     url = 'https://%s/auth/v2/auth' % settings.app.sso_host
