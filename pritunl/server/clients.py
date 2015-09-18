@@ -156,6 +156,8 @@ class Clients(object):
             user_id = client['user_id']
             otp_code = client.get('otp_code')
             remote_ip = client.get('remote_ip')
+            platform = client.get('platform')
+            device_name = client.get('device_name')
 
             if not _limiter.validate(remote_ip):
                 self.instance_com.send_client_deny(client_id, key_id,
@@ -200,9 +202,32 @@ class Clients(object):
 
             if user.auth_type == DUO_AUTH and settings.app.sso == DUO_AUTH:
                 def duo_auth():
+                    info={
+                        'Server': self.server.name,
+                    }
+
+                    platform_name = None
+                    if platform == 'linux':
+                        platform_name = 'Linux'
+                    elif platform == 'mac':
+                        platform_name = 'Apple'
+                    elif platform == 'win':
+                        platform_name = 'Windows'
+                    elif platform == 'chrome':
+                        platform_name = 'Chrome OS'
+
+                    if device_name:
+                        info['Device'] = '%s (%s)' % (
+                            device_name, platform_name)
+
                     allow = False
                     try:
-                        allow, _ = sso.auth_duo(user.name)
+                        allow, _ = sso.auth_duo(
+                            user.name,
+                            ipaddr=remote_ip,
+                            type='Connection',
+                            info=info,
+                        )
                     except:
                         logger.exception('Duo server error', 'server',
                             client_id=client_id,
