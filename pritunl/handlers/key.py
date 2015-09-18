@@ -298,8 +298,6 @@ def sso_authenticate_post():
     username = flask.request.json['username']
     try:
         valid, org_id = sso.auth_duo(username, strong=True)
-        if not valid:
-            return flask.abort(401)
     except InvalidUser:
         new_username = username.split('@')[0]
         if new_username != username:
@@ -308,10 +306,10 @@ def sso_authenticate_post():
                 valid, org_id = sso.auth_duo(username, strong=True)
             except InvalidUser:
                 valid = False
-            if not valid:
-                return flask.abort(401)
         else:
             return flask.abort(401)
+    if not valid:
+        return flask.abort(401)
 
     if not org_id:
         org_id = settings.app.sso_org
