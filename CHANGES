@@ -4,6 +4,7 @@ Pritunl Changelog
 <% version %>
 
 Add support for Duo authentication
+Fix server failed to start issue after upgrade on debian systems
 
 Version 1.4.733.12 2015-09-15
 -----------------------------
