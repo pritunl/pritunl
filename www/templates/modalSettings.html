@@ -84,7 +84,7 @@
     </div>
     <div class="sso-admin form-group" <%= sso === 'duo' ? '' : 'style="display: none;"' %>>
     <label>Duo Admin Username</label>
-    <input type="text" class="form-control" placeholder="Enter admin username" value="<%- sso_admin || '' %>" data-toggle="tooltip" title="Require a Duo push authentication from this username when logging into the web console as the admin">
+    <input type="text" class="form-control" placeholder="Enter admin username" value="<%- sso_admin || '' %>" data-toggle="tooltip" title="Require a Duo push request from this username when logging into the web console as the admin">
     </div>
     <div class="server-key form-group">
       <label>Enter Server SSL Key</label><br>
