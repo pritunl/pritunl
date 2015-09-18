@@ -72,6 +72,7 @@ define([
         this.$('.sso-token').slideUp(window.slideTime);
         this.$('.sso-secret').slideUp(window.slideTime);
         this.$('.sso-host').slideUp(window.slideTime);
+        this.$('.sso-admin').slideUp(window.slideTime);
         this.$('.sso-org').slideUp(window.slideTime);
         return;
       } else {
@@ -82,12 +83,14 @@ define([
         this.$('.sso-token').slideUp(window.slideTime);
         this.$('.sso-secret').slideUp(window.slideTime);
         this.$('.sso-host').slideUp(window.slideTime);
+        this.$('.sso-admin').slideUp(window.slideTime);
         this.$('.sso-match').slideDown(window.slideTime);
       } else if (mode === 'duo') {
         this.$('.sso-match').slideUp(window.slideTime);
         this.$('.sso-token').slideDown(window.slideTime);
         this.$('.sso-secret').slideDown(window.slideTime);
         this.$('.sso-host').slideDown(window.slideTime);
+        this.$('.sso-admin').slideDown(window.slideTime);
       }
     },
     onSsoMode: function() {
@@ -162,6 +165,7 @@ define([
       var ssoToken = null;
       var ssoSecret = null;
       var ssoHost = null;
+      var ssoAdmin = null;
       var ssoOrg = null;
 
       if (sso) {
@@ -169,6 +173,7 @@ define([
           ssoToken = this.$('.sso-token input').val();
           ssoSecret = this.$('.sso-secret input').val();
           ssoHost = this.$('.sso-host input').val();
+          ssoAdmin = this.$('.sso-admin input').val();
         } else if (sso === 'google') {
           ssoMatch = this.$('.sso-match input').val().split(',');
 
@@ -191,6 +196,7 @@ define([
         sso_token: ssoToken,
         sso_secret: ssoSecret,
         sso_host: ssoHost,
+        sso_admin: ssoAdmin,
         sso_org: ssoOrg,
         public_address: publicAddress,
         theme: theme,
