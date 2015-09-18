@@ -1,4 +1,5 @@
 from pritunl import settings
+from pritunl import logger
 from pritunl import utils
 
 import base64
@@ -56,5 +57,8 @@ def auth_duo(username, strong=False):
             allow = True
     else:
         allow = False
+        logger.error('Duo authentication failure', 'sso',
+            data=data,
+        )
 
     return allow, None
