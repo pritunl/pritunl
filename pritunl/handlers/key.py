@@ -47,6 +47,18 @@ def _get_onc_archive(org_id, user_id):
         'attachment; filename="%s.zip"' % user.name)
     return response
 
+def _find_doc(query):
+    collection = mongo.get_collection('users_key_link')
+    doc = collection.find_one(query)
+
+    if doc and doc.get('one_time'):
+        collection = mongo.get_collection('users_key_link')
+        collection.remove({
+            '_id': doc['_id'],
+        })
+
+    return doc
+
 @app.app.route('/key/<org_id>/<user_id>.tar', methods=['GET'])
 @auth.session_auth
 def user_key_tar_archive_get(org_id, user_id):
@@ -72,8 +84,7 @@ def user_key_link_get(org_id, user_id):
 def user_linked_key_tar_archive_get(key_id):
     utils.rand_sleep()
 
-    collection = mongo.get_collection('users_key_link')
-    doc = collection.find_one({
+    doc = _find_doc({
         'key_id': key_id,
     })
 
@@ -87,8 +98,7 @@ def user_linked_key_tar_archive_get(key_id):
 def user_linked_key_zip_archive_get(key_id):
     utils.rand_sleep()
 
-    collection = mongo.get_collection('users_key_link')
-    doc = collection.find_one({
+    doc = _find_doc({
         'key_id': key_id,
     })
 
@@ -102,8 +112,7 @@ def user_linked_key_zip_archive_get(key_id):
 def user_linked_key_onc_archive_get(key_id):
     utils.rand_sleep()
 
-    collection = mongo.get_collection('users_key_link')
-    doc = collection.find_one({
+    doc = _find_doc({
         'key_id': key_id,
     })
 
@@ -117,8 +126,7 @@ def user_linked_key_onc_archive_get(key_id):
 def user_linked_key_page_get(short_code):
     utils.rand_sleep()
 
-    collection = mongo.get_collection('users_key_link')
-    doc = collection.find_one({
+    doc = _find_doc({
         'short_id': short_code,
     })
 
@@ -184,8 +192,7 @@ def user_linked_key_page_delete_get(short_code):
 def user_uri_key_page_get(short_code):
     utils.rand_sleep()
 
-    collection = mongo.get_collection('users_key_link')
-    doc = collection.find_one({
+    doc = _find_doc({
         'short_id': short_code,
     })
 
@@ -207,8 +214,7 @@ def user_uri_key_page_get(short_code):
 def user_linked_key_conf_get(key_id, server_id):
     utils.rand_sleep()
 
-    collection = mongo.get_collection('users_key_link')
-    doc = collection.find_one({
+    doc = _find_doc({
         'key_id': key_id,
     })
 
