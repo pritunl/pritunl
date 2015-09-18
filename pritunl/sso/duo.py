@@ -31,12 +31,19 @@ def sign(method, path, params):
         'Authorization': 'Basic %s' % base64.b64encode(auth),
     }
 
-def auth_duo(username, strong=False):
+def auth_duo(username, strong=False, type=None, info=None):
     params = {
         'username': username,
         'factor': 'push',
         'device': 'auto',
     }
+
+    if type:
+        params['type'] = type
+
+    if info:
+        params['info'] = urllib.urlencode(info)
+
     headers = sign('POST', '/auth/v2/auth', params)
     url = 'https://%s/auth/v2/auth' % settings.app.sso_host
 
