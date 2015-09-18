@@ -1,3 +1,4 @@
+from pritunl.exceptions import *
 from pritunl import settings
 from pritunl import logger
 from pritunl import utils
@@ -55,6 +56,8 @@ def auth_duo(username, strong=False):
             allow = False
         else:
             allow = True
+    elif data.get('code') == 40002:
+        raise InvalidUser('Invalid username')
     else:
         allow = False
         logger.error('Duo authentication failure', 'sso',
