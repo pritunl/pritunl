@@ -31,12 +31,15 @@ def sign(method, path, params):
         'Authorization': 'Basic %s' % base64.b64encode(auth),
     }
 
-def auth_duo(username, strong=False, type=None, info=None):
+def auth_duo(username, strong=False, ipaddr=None, type=None, info=None):
     params = {
         'username': username,
         'factor': 'push',
         'device': 'auto',
     }
+
+    if ipaddr:
+        params['ipaddr'] = ipaddr
 
     if type:
         params['type'] = type
