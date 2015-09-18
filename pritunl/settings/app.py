@@ -19,6 +19,7 @@ class SettingsApp(SettingsGroupMongo):
         'rate_limit_sleep': 0.5,
         'short_url_length': 5,
         'license': None,
+        'license_plan': None,
         'http_request_timeout': 15,
         'request_queue_size': 512,
         'static_cache_time': 43200,
