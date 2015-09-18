@@ -317,7 +317,12 @@ def sso_authenticate_post():
     valid = False
     for username in usernames:
         try:
-            valid, org_id = sso.auth_duo(username, strong=True)
+            valid, org_id = sso.auth_duo(
+                username,
+                strong=True,
+                ipaddr=flask.request.remote_addr,
+                type='Key',
+            )
         except InvalidUser:
             pass
 
