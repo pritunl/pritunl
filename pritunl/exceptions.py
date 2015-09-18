@@ -89,3 +89,7 @@ class QueueTaskError(QueueError):
 
 class QueueStopped(QueueError):
     pass
+
+
+class InvalidUser(QueueError):
+    pass
