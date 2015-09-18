@@ -6,6 +6,7 @@ from pritunl import settings
 from pritunl import utils
 from pritunl import mongo
 from pritunl import logger
+from pritunl import sso
 
 import base64
 import os
@@ -243,6 +244,18 @@ def check_auth(username, password, remote_addr=None):
         return
     if not administrator.test_password(password):
         return
+
+    sso_admin = settings.app.sso_admin
+    if settings.app.sso == DUO_AUTH and sso_admin:
+        allow, _ = sso.auth_duo(
+            sso_admin,
+            strong=True,
+            ipaddr=remote_addr,
+            type='Administrator'
+        )
+        if not allow:
+            return
+
     return administrator
 
 def reset_password():
