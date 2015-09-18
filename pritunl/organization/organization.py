@@ -199,7 +199,7 @@ class Organization(mongo.MongoObject):
         for doc in cursor:
             yield user.User(self, doc=doc, fields=fields)
 
-    def create_user_key_link(self, user_id):
+    def create_user_key_link(self, user_id, one_time=False):
         success = False
         for _ in xrange(256):
             key_id = uuid.uuid4().hex
@@ -213,6 +213,7 @@ class Organization(mongo.MongoObject):
                 }, {'$set': {
                     'key_id': key_id,
                     'short_id': short_id,
+                    'one_time': one_time,
                     'timestamp': utils.now(),
                 }}, upsert=True)
             except pymongo.errors.DuplicateKeyError:
