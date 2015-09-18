@@ -1,4 +1,5 @@
 from pritunl.constants import *
+from pritunl.exceptions import *
 from pritunl import utils
 from pritunl import static
 from pritunl import organization
@@ -296,11 +297,22 @@ def sso_authenticate_post():
         return flask.abort(405)
 
     username = flask.request.json['username']
-    username = username.split('@')[0]
-
-    valid, org_id = sso.auth_duo(username, strong=True)
-    if not valid:
-        return flask.abort(401)
+    try:
+        valid, org_id = sso.auth_duo(username, strong=True)
+        if not valid:
+            return flask.abort(401)
+    except InvalidUser:
+        new_username = username.split('@')[0]
+        if new_username != username:
+            username = new_username
+            try:
+                valid, org_id = sso.auth_duo(username, strong=True)
+            except InvalidUser:
+                valid = False
+            if not valid:
+                return flask.abort(401)
+        else:
+            return flask.abort(401)
 
     if not org_id:
         org_id = settings.app.sso_org
