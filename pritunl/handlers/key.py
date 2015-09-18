@@ -53,9 +53,11 @@ def _find_doc(query):
 
     if doc and doc.get('one_time'):
         collection = mongo.get_collection('users_key_link')
-        collection.remove({
+        resp = collection.remove({
             '_id': doc['_id'],
         })
+        if resp['n'] != 1:
+            raise KeyError('Key link does not exists')
 
     return doc
 
