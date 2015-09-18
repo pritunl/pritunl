@@ -34,8 +34,7 @@ def update():
                 # License key invalid
                 if response.status_code == 470:
                     logger.warning('License key is invalid', 'subscription')
-                    settings.app.license = None
-                    settings.commit()
+                    update_license(None)
                     update()
                     return
 
@@ -118,5 +117,6 @@ def dict():
 
 def update_license(license):
     settings.app.license = license
+    settings.app.license_plan = None
     settings.commit()
     update()
