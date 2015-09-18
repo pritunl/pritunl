@@ -4,8 +4,8 @@ Pritunl Changelog
 <% version %>
 
 Add support for Duo authentication
-Fix server failed to start after upgrade on debian (premium only)
-Fix host id change after upgrade on debian (enterprise only)
+Fix server failed to start after upgrade (premium only)
+Fix host id change after upgrade (enterprise only)
 
 Version 1.4.733.12 2015-09-15
 -----------------------------
