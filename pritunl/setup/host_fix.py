@@ -1,6 +1,9 @@
 from pritunl import settings
+from pritunl import subscription
 
 def setup_host_fix():
+    subscription.update()
+
     if settings.app.license and settings.app.license_plan != 'premium':
         return
 
