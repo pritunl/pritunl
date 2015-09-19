@@ -390,7 +390,9 @@ def sso_request_get():
 
 @app.app.route('/sso/callback', methods=['GET'])
 def sso_callback_get():
-    if settings.app.sso != GOOGLE_AUTH:
+    sso_mode = settings.app.sso
+
+    if sso_mode not in (GOOGLE_AUTH, GOOGLE_DUO_AUTH):
         return flask.abort(405)
 
     state = flask.request.args.get('state')
@@ -415,6 +417,15 @@ def sso_callback_get():
     if not valid:
         return flask.abort(401)
 
+    if sso_mode == GOOGLE_DUO_AUTH:
+        valid, _ = sso.auth_duo(
+            user,
+            ipaddr=flask.request.remote_addr,
+            type='Key',
+        )
+        if not valid:
+            return flask.abort(401)
+
     if not org_id:
         org_id = settings.app.sso_org
 
@@ -422,15 +433,20 @@ def sso_callback_get():
     if not org:
         return flask.abort(405)
 
+    if sso_mode == GOOGLE_DUO_AUTH:
+        auth_type = DUO_AUTH
+    else:
+        auth_type = GOOGLE_AUTH
+
     usr = org.find_user(name=user)
     if not usr:
         usr = org.new_user(name=user, email=user, type=CERT_CLIENT,
-            auth_type=GOOGLE_AUTH)
+            auth_type=auth_type)
         event.Event(type=ORGS_UPDATED)
         event.Event(type=USERS_UPDATED, resource_id=org.id)
         event.Event(type=SERVERS_UPDATED)
-    elif usr.auth_type != GOOGLE_AUTH:
-        usr.auth_type = GOOGLE_AUTH
+    elif usr.auth_type != auth_type:
+        usr.auth_type = auth_type
         usr.commit('auth_type')
 
     key_link = org.create_user_key_link(usr.id, one_time=True)
