@@ -47,16 +47,20 @@ def _get_onc_archive(org_id, user_id):
         'attachment; filename="%s.zip"' % user.name)
     return response
 
-def _find_doc(query):
+def _find_doc(query, one_time=None):
     collection = mongo.get_collection('users_key_link')
     doc = collection.find_one(query)
 
-    if doc and doc.get('one_time'):
+    if one_time and doc and doc.get('one_time'):
         collection = mongo.get_collection('users_key_link')
-        resp = collection.remove({
+        response = collection.update({
             '_id': doc['_id'],
-        })
-        if resp['n'] != 1:
+            'short_id': doc['short_id'],
+            'one_time': True,
+        }, {'$set': {
+            'one_time': 'used',
+        }})
+        if not response['updatedExisting']:
             raise KeyError('Key link does not exists')
 
     return doc
@@ -130,7 +134,7 @@ def user_linked_key_page_get(short_code):
 
     doc = _find_doc({
         'short_id': short_code,
-    })
+    }, one_time=True)
 
     if not doc:
         time.sleep(settings.app.rate_limit_sleep)
@@ -202,7 +206,7 @@ def user_uri_key_page_get(short_code):
 
     doc = _find_doc({
         'short_id': short_code,
-    })
+    }, one_time=True)
 
     if not doc:
         time.sleep(settings.app.rate_limit_sleep)
