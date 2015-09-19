@@ -1,4 +1,5 @@
 from pritunl.exceptions import *
+from pritunl.constants import *
 from pritunl import app
 from pritunl import settings
 from pritunl import static
@@ -90,9 +91,9 @@ def login_static_get():
             bodyClass += 'dark '
 
         if settings.local.sub_plan == 'enterprise':
-            if settings.app.sso == 'google':
+            if settings.app.sso == GOOGLE_AUTH:
                 bodyClass += 'sso-google '
-            elif settings.app.sso == 'duo':
+            elif settings.app.sso == DUO_AUTH:
                 bodyClass += 'sso-duo '
 
     static_file.data = static_file.data.replace(
