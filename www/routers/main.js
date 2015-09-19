@@ -254,12 +254,7 @@ define([
       authSessionModel.destroy({
         success: function() {
           window.authenticated = false;
-          if (this.data.view) {
-            Backbone.history.history.back();
-          }
-          else {
-            this.navigate('', {trigger: true});
-          }
+          window.location = '';
         }.bind(this),
         error: function() {
           var alertView = new AlertView({
