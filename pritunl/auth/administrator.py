@@ -246,7 +246,7 @@ def check_auth(username, password, remote_addr=None):
         return
 
     sso_admin = settings.app.sso_admin
-    if DUO_AUTH in settings.app.sso and sso_admin:
+    if settings.app.sso and DUO_AUTH in settings.app.sso and sso_admin:
         allow, _ = sso.auth_duo(
             sso_admin,
             strong=True,
