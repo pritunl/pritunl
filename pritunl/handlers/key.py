@@ -248,13 +248,13 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
 
     org = organization.get_by_id(org_id)
     if not org:
-        return flask.abort(404)
+        return flask.abort(401)
 
     user = org.get_user(id=user_id)
     if not user:
-        return flask.abort(404)
+        return flask.abort(401)
     elif not user.sync_secret:
-        return flask.abort(404)
+        return flask.abort(401)
 
     auth_string = '&'.join([
         auth_token, auth_timestamp, auth_nonce, flask.request.method,
