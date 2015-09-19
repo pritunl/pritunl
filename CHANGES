@@ -1,7 +1,7 @@
 Pritunl Changelog
 =================
 
-<% version %>
+<%= version %>
 
 Add support for Duo authentication
 Add support for Google + Duo authentication
