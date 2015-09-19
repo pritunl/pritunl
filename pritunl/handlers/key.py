@@ -48,6 +48,8 @@ def _get_onc_archive(org_id, user_id):
     return response
 
 def _find_doc(query, one_time=None):
+    utils.rand_sleep()
+
     collection = mongo.get_collection('users_key_link')
     doc = collection.find_one(query)
 
@@ -62,6 +64,9 @@ def _find_doc(query, one_time=None):
         }})
         if not response['updatedExisting']:
             raise KeyError('Key link does not exists')
+
+    if not doc:
+        time.sleep(settings.app.rate_limit_sleep)
 
     return doc
 
@@ -88,56 +93,40 @@ def user_key_link_get(org_id, user_id):
 
 @app.app.route('/key/<key_id>.tar', methods=['GET'])
 def user_linked_key_tar_archive_get(key_id):
-    utils.rand_sleep()
-
     doc = _find_doc({
         'key_id': key_id,
     })
-
     if not doc:
-        time.sleep(settings.app.rate_limit_sleep)
         return flask.abort(404)
 
     return _get_key_tar_archive(doc['org_id'], doc['user_id'])
 
 @app.app.route('/key/<key_id>.zip', methods=['GET'])
 def user_linked_key_zip_archive_get(key_id):
-    utils.rand_sleep()
-
     doc = _find_doc({
         'key_id': key_id,
     })
-
     if not doc:
-        time.sleep(settings.app.rate_limit_sleep)
         return flask.abort(404)
 
     return _get_key_zip_archive(doc['org_id'], doc['user_id'])
 
 @app.app.route('/key_onc/<key_id>.zip', methods=['GET'])
 def user_linked_key_onc_archive_get(key_id):
-    utils.rand_sleep()
-
     doc = _find_doc({
         'key_id': key_id,
     })
-
     if not doc:
-        time.sleep(settings.app.rate_limit_sleep)
         return flask.abort(404)
 
     return _get_onc_archive(doc['org_id'], doc['user_id'])
 
 @app.app.route('/k/<short_code>', methods=['GET'])
 def user_linked_key_page_get(short_code):
-    utils.rand_sleep()
-
     doc = _find_doc({
         'short_id': short_code,
     }, one_time=True)
-
     if not doc:
-        time.sleep(settings.app.rate_limit_sleep)
         return flask.abort(404)
 
     org = organization.get_by_id(doc['org_id'])
@@ -197,14 +186,11 @@ def user_linked_key_page_delete_get(short_code):
 
 @app.app.route('/ku/<short_code>', methods=['GET'])
 def user_uri_key_page_get(short_code):
-    utils.rand_sleep()
-
     doc = _find_doc({
         'short_id': short_code,
     }, one_time=True)
 
     if not doc:
-        time.sleep(settings.app.rate_limit_sleep)
         return flask.abort(404)
 
     org = organization.get_by_id(doc['org_id'])
@@ -219,14 +205,10 @@ def user_uri_key_page_get(short_code):
 
 @app.app.route('/key/<key_id>/<server_id>.key', methods=['GET'])
 def user_linked_key_conf_get(key_id, server_id):
-    utils.rand_sleep()
-
     doc = _find_doc({
         'key_id': key_id,
     })
-
     if not doc:
-        time.sleep(settings.app.rate_limit_sleep)
         return flask.abort(404)
 
     org = organization.get_by_id(doc['org_id'])
