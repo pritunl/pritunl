@@ -352,7 +352,7 @@ def sso_authenticate_post():
 
 @app.app.route('/sso/request', methods=['GET'])
 def sso_request_get():
-    if settings.app.sso != GOOGLE_AUTH:
+    if settings.app.sso not in (GOOGLE_AUTH, GOOGLE_DUO_AUTH):
         return flask.abort(405)
 
     state = utils.rand_str(64)

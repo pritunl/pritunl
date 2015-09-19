@@ -91,7 +91,7 @@ def login_static_get():
             bodyClass += 'dark '
 
         if settings.local.sub_plan == 'enterprise':
-            if settings.app.sso == GOOGLE_AUTH:
+            if settings.app.sso in (GOOGLE_AUTH, GOOGLE_DUO_AUTH):
                 bodyClass += 'sso-google '
             elif settings.app.sso == DUO_AUTH:
                 bodyClass += 'sso-duo '
