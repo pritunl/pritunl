@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix login issue
+
 Version 1.5.737.82 2015-09-19
 -----------------------------
 
