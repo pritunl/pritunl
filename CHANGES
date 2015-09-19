@@ -4,6 +4,8 @@ Pritunl Changelog
 <% version %>
 
 Add support for Duo authentication
+Add support for Google + Duo authentication
+Improve Google single sign-on
 Fix server failed to start after upgrade (premium only)
 Fix host id change after upgrade (enterprise only)
 
