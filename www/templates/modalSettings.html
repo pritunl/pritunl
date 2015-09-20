@@ -36,10 +36,6 @@
         <option value="google_duo" <%= sso === 'google_duo' ? 'selected' : '' %>>Google Apps + Duo Security</option>
       </select>
     </div>
-    <div class="sso-match form-group" <%= sso === 'google' || sso === 'google_duo' ? '' : 'style="display: none;"' %>>
-      <label>Google Apps Domain</label>
-      <input type="email" class="form-control" placeholder="Enter Google Apps domain" value="<%- sso_match || '' %>" data-toggle="tooltip" title="Google apps domain to match against users email address. Multiple domains can be entrered sperated by a comma. (example: pritunl.com)">
-    </div>
     <div class="sso-token form-group" <%= sso === 'duo' || sso === 'google_duo' ? '' : 'style="display: none;"' %>>
       <label>Duo Integration Key</label>
       <input type="text" class="form-control" placeholder="Enter integration key" value="<%- sso_token || '' %>">
@@ -47,6 +43,10 @@
     <div class="sso-host form-group" <%= sso === 'duo' || sso === 'google_duo' ? '' : 'style="display: none;"' %>>
       <label>Duo API Hostname</label>
       <input type="text" class="form-control" placeholder="Enter api hostname" value="<%- sso_host || '' %>">
+    </div>
+    <div class="sso-match form-group" <%= sso === 'google' || sso === 'google_duo' ? '' : 'style="display: none;"' %>>
+      <label>Google Apps Domain</label>
+      <input type="email" class="form-control" placeholder="Enter Google Apps domain" value="<%- sso_match || '' %>" data-toggle="tooltip" title="Google apps domain to match against users email address. Multiple domains can be entrered sperated by a comma. (example: pritunl.com)">
     </div>
     <div class="server-cert form-group">
       <label>Enter Server SSL Certificate</label><br>
