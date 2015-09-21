@@ -13,11 +13,11 @@ def setup_host():
         'plan': None,
     }}, upsert=True)
 
+    host.init()
+
     def _on_msg(msg):
         if msg['message'] != 'updated':
             return
         settings.local.host.load()
 
     listener.add_listener('hosts', _on_msg)
-
-    host.init()
