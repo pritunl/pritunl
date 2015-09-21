@@ -5,6 +5,7 @@ from pritunl import utils
 from pritunl import logger
 from pritunl import event
 from pritunl import auth
+from pritunl import messenger
 
 import flask
 
@@ -50,6 +51,7 @@ def host_put(hst=None):
 
     hst.commit(hst.changed)
     event.Event(type=HOSTS_UPDATED)
+    messenger.publish('hosts', 'updated')
 
     return utils.jsonify(hst.dict())
 
