@@ -154,7 +154,7 @@ def sync_time():
         nounce = ObjectId()
         collection.insert({
             'nounce': nounce,
-        }, manipulate=False)
+        }, manipulate=False, w=1)
 
         mongo_time_start = datetime.datetime.utcnow()
         cur_mongo_time = settings.local.mongo_time
