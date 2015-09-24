@@ -474,7 +474,10 @@ class ServerInstance(object):
                             time.sleep(0.01)
                 except OSError:
                     pass
-        finally:
+        except:
+            logger.exception('Exception in messaging thread', 'server',
+                server_id=self.server.id,
+            )
             self.stop_process()
 
     @interrupter
