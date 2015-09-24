@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix server stopped unexpectedly issue
+
 Version 1.5.737.89 2015-09-19
 -----------------------------
 
