@@ -43,9 +43,12 @@ def ObjectId(oid=None):
             )
     return oid
 
+def _now(mongo_time):
+    mongo_time_start, mongo_time_cur = mongo_time
+    return mongo_time_cur + (datetime.datetime.utcnow() - mongo_time_start)
+
 def now():
-    mongo_time_start, mongo_time = settings.local.mongo_time
-    return mongo_time + (datetime.datetime.utcnow() - mongo_time_start)
+    return _now(settings.local.mongo_time)
 
 def time_now():
     return int((now() - datetime.datetime(1970, 1, 1)).total_seconds())
@@ -154,6 +157,7 @@ def sync_time():
         }, manipulate=False)
 
         mongo_time_start = datetime.datetime.utcnow()
+        cur_mongo_time = settings.local.mongo_time
 
         doc = collection.find_one({
             'nounce': nounce,
@@ -161,6 +165,15 @@ def sync_time():
         mongo_time = doc['_id'].generation_time.replace(tzinfo=None)
 
         settings.local.mongo_time = (mongo_time_start, mongo_time)
+
+        if cur_mongo_time:
+            time_diff = abs(_now(cur_mongo_time) - now())
+            if time_diff > datetime.timedelta(milliseconds=1000):
+                from pritunl import logger
+                logger.error(
+                    'Unexpected time deviation from mongodb', 'utils',
+                    deviation=str(time_diff),
+                )
 
         collection.remove(doc['_id'])
     except:

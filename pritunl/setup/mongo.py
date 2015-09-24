@@ -62,6 +62,7 @@ def setup_mongo():
     for collection_name, collection in mongo.collections.items():
         collection.name_str = collection_name
 
+    settings.local.mongo_time = None
     utils.sync_time()
 
     settings.init()
