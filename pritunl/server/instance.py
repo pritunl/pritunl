@@ -497,6 +497,11 @@ class ServerInstance(object):
                 yield
 
                 if not doc:
+                    logger.error(
+                        'Instance doc lost, stopping server', 'server',
+                        server_id=self.server.id,
+                    )
+
                     if self.stop_process():
                         break
                     else:
