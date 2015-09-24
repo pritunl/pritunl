@@ -585,6 +585,7 @@ class ServerInstance(object):
                     self.server.name))
         except:
             self.interrupt = True
+            self.stop_process()
             if self.resource_lock:
                 self.clear_iptables_rules()
                 self.bridge_stop()
