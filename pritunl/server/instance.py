@@ -12,6 +12,7 @@ from pritunl import mongo
 from pritunl import event
 from pritunl import messenger
 from pritunl import organization
+from pritunl import ipaddress
 
 import os
 import signal
@@ -39,6 +40,7 @@ class ServerInstance(object):
         self.process = None
         self.auth_log_process = None
         self.iptables_rules = []
+        self.ip6tables_rules = []
         self.server_links = []
         self._temp_path = utils.get_temp_path()
         self.ovpn_conf_path = os.path.join(self._temp_path,
@@ -252,6 +254,7 @@ class ServerInstance(object):
 
     def generate_iptables_rules(self):
         rules = []
+        rules6 = []
 
         try:
             routes_output = utils.check_output_logged(['route', '-n'])
@@ -274,14 +277,51 @@ class ServerInstance(object):
             })
         default_interface = routes['0.0.0.0']
 
+        routes6 = {}
+        default_interface6 = None
+        if self.server.ipv6:
+            try:
+                routes_output = utils.check_output_logged(
+                    ['route', '-n', '-A', 'inet6'])
+            except subprocess.CalledProcessError:
+                logger.exception('Failed to get IPv6 routes', 'server',
+                    server_id=self.server.id,
+                )
+                raise
+
+            for line in routes_output.splitlines():
+                line_split = line.split()
+
+                if len(line_split) < 7:
+                    continue
+
+                try:
+                    ipaddress.IPv6Network(line_split[0])
+                except ipaddress.AddressValueError:
+                    continue
+
+                if line_split[0] not in routes6:
+                    routes6[line_split[0]] = line_split[6]
+
+            if '::/0' not in routes6:
+                raise IptablesError(
+                    'Failed to find default IPv6 network interface')
+            default_interface6 = routes6['::/0']
+
         rules.append(['INPUT', '-i', self.interface, '-j', 'ACCEPT'])
         rules.append(['FORWARD', '-i', self.interface, '-j', 'ACCEPT'])
+        if self.server.ipv6:
+            rules6.append(['INPUT', '-i', self.interface, '-j', 'ACCEPT'])
+            rules6.append(['FORWARD', '-i', self.interface, '-j', 'ACCEPT'])
 
         interfaces = set()
+        interfaces6 = set()
         other_networks = []
         if self.server.mode == ALL_TRAFFIC and \
                 self.server.network_mode != BRIDGE:
             other_networks = ['0.0.0.0/0']
+            if self.server.ipv6:
+                other_networks.append('::/0')
 
         link_svr_networks = []
         for link_svr in self.server.iter_links(fields=('_id', 'network')):
@@ -289,19 +329,36 @@ class ServerInstance(object):
 
         for network_address in self.server.local_networks or other_networks:
             args_base = ['POSTROUTING', '-t', 'nat']
-            network = utils.parse_network(network_address)[0]
-
-            if network not in routes:
-                logger.info('Failed to find interface for local ' + \
-                    'network route, using default route', 'server',
-                    server_id=self.server.id,
-                )
-                interface = default_interface
+            is6 = ':' in network_address
+            if is6:
+                network = network_address
             else:
-                interface = routes[network]
-            interfaces.add(interface)
+                network = utils.parse_network(network_address)[0]
 
-            if network != '0.0.0.0':
+            if is6:
+                if network not in routes6:
+                    logger.info('Failed to find interface for local ' + \
+                        'IPv6 network route, using default route', 'server',
+                        server_id=self.server.id,
+                        network=network,
+                    )
+                    interface = default_interface6
+                else:
+                    interface = routes6[network]
+                interfaces6.add(interface)
+            else:
+                if network not in routes:
+                    logger.info('Failed to find interface for local ' + \
+                        'network route, using default route', 'server',
+                        server_id=self.server.id,
+                        network=network,
+                    )
+                    interface = default_interface
+                else:
+                    interface = routes[network]
+                interfaces.add(interface)
+
+            if network != '0.0.0.0' and network != '::/0':
                 args_base += ['-d', network_address]
 
             args_base += [
@@ -309,7 +366,12 @@ class ServerInstance(object):
                 '-j', 'MASQUERADE',
             ]
 
-            rules.append(args_base + ['-s', self.server.network])
+            if is6:
+                net6 = utils.net4to6(settings.vpn.ipv6_prefix,
+                    self.server.network)
+                rules6.append(args_base + ['-s', net6])
+            else:
+                rules.append(args_base + ['-s', self.server.network])
 
             for link_svr_net in link_svr_networks:
                 rules.append(args_base + ['-s', link_svr_net])
@@ -332,6 +394,24 @@ class ServerInstance(object):
                 '-j', 'ACCEPT',
             ])
 
+        for interface in interfaces6:
+            rules6.append([
+                'FORWARD',
+                '-i', interface,
+                '-o', self.interface,
+                '-m', 'state',
+                '--state', 'ESTABLISHED,RELATED',
+                '-j', 'ACCEPT',
+            ])
+            rules6.append([
+                'FORWARD',
+                '-i', self.interface,
+                '-o', interface,
+                '-m', 'state',
+                '--state', 'ESTABLISHED,RELATED',
+                '-j', 'ACCEPT',
+            ])
+
         extra_args = [
             '-m', 'comment',
             '--comment', 'pritunl_%s' % self.server.id,
@@ -341,8 +421,9 @@ class ServerInstance(object):
             extra_args.append('--wait')
 
         rules = [x + extra_args for x in rules]
+        rules6 = [x + extra_args for x in rules6]
 
-        return rules
+        return rules, rules6
 
     def exists_iptables_rules(self, rule):
         cmd = ['iptables', '-C'] + rule
