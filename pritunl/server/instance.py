@@ -429,6 +429,11 @@ class ServerInstance(object):
         return (cmd, subprocess.Popen(cmd,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE))
 
+    def exists_ip6tables_rules(self, rule):
+        cmd = ['ip6tables', '-C'] + rule
+        return (cmd, subprocess.Popen(cmd,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE))
+
     def set_iptables_rules(self):
         logger.debug('Setting iptables rules', 'server',
             server_id=self.server.id,
