@@ -273,9 +273,7 @@ class ServerInstance(object):
                 routes[line_split[0]] = line_split[7]
 
         if '0.0.0.0' not in routes:
-            raise IptablesError('Failed to find default network interface', {
-                'server_id': self.server.id,
-            })
+            raise IptablesError('Failed to find default network interface')
         default_interface = routes['0.0.0.0']
 
         routes6 = {}
