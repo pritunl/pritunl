@@ -218,6 +218,26 @@ def find_interface(network):
         if address in network and data['netmask'] == str(network.netmask):
             return data
 
+def net4to6(prefix, net):
+    net, cidr = net.split('/')
+    nets = net.split('.')
+    cidr = int(cidr)
+
+    net_num = int(nets[0]) * 256**3 + int(nets[1]) * 256**2 + \
+        int(nets[2]) * 256**1 + int(nets[3]) * 256**0
+    net_hex = hex(net_num + cidr * 256**4)
+
+    net6 = prefix + ':' + net_hex[2:6].lstrip('0')
+    x = net_hex[6:10].lstrip('0')
+    if x:
+        net6 += ':' + x
+    x = net_hex[10:14].lstrip('0')
+    if x:
+        net6 += ':' + x
+    net6 += '::/64'
+
+    return net6
+
 def ip4to6(prefix, net, addr):
     addrs = addr.split('.')
     net, cidr = net.split('/')
