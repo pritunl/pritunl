@@ -57,7 +57,10 @@ class Clients(object):
                     local_network)
         else:
             if self.server.mode == ALL_TRAFFIC:
-                client_conf += 'push "redirect-gateway"\n'
+                client_conf += 'push "redirect-gateway def1"\n'
+                if self.server.ipv6:
+                    client_conf += 'push "redirect-gateway-ipv6 def1"\n'
+                    client_conf += 'push "route-ipv6 2000::/3"\n'
 
             for dns_server in self.server.dns_servers:
                 client_conf += 'push "dhcp-option DNS %s"\n' % dns_server
