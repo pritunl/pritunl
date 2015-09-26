@@ -141,6 +141,11 @@ class Clients(object):
         client_conf += 'ifconfig-push %s %s\n' % utils.parse_network(
             virt_address)
 
+        if self.server.ipv6:
+            client_conf += 'ifconfig-ipv6-push %s\n' % (
+                utils.ip4to6(settings.vpn.ipv6_prefix, self.server.network,
+                    virt_address))
+
         if self.server.debug:
             self.instance_com.push_output('Client conf %s:' % user_id)
             for conf_line in client_conf.split('\n'):
