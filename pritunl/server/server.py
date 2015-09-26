@@ -232,6 +232,7 @@ class Server(mongo.MongoObject):
             'protocol': self.protocol,
             'dh_param_bits': self.dh_param_bits,
             'mode': self.mode,
+            'ipv6': True if self.ipv6 else False,
             'network_mode': self.network_mode,
             'network_start': self.network_start,
             'network_end': self.network_end,
