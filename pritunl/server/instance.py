@@ -217,6 +217,15 @@ class ServerInstance(object):
             )
             raise
 
+        if self.server.ipv6:
+            try:
+                utils.check_output_logged(
+                    ['sysctl', '-w', 'net.ipv6.conf.all.forwarding=1'])
+            except subprocess.CalledProcessError:
+                logger.exception('Failed to enable IPv6 forwarding', 'server',
+                    server_id=self.server.id,
+                )
+
     def bridge_start(self):
         if self.server.network_mode != BRIDGE:
             return
