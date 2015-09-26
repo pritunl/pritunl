@@ -9,8 +9,8 @@ import socket
 import struct
 import fcntl
 
-_tun_interfaces = set(['tun%s' % x for x in xrange(100)])
-_tap_interfaces = set(['tap%s' % x for x in xrange(100)])
+_tun_interfaces = set(['tun%s' % _x for _x in xrange(100)])
+_tap_interfaces = set(['tap%s' % _x for _x in xrange(100)])
 _sock = None
 _sockfd = None
 
