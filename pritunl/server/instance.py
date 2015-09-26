@@ -442,13 +442,21 @@ class ServerInstance(object):
 
         processes = {}
         poller = select.epoll()
-        self.iptables_rules = self.generate_iptables_rules()
+        self.iptables_rules, self.ip6tables_rules = \
+            self.generate_iptables_rules()
 
         for rule in self.iptables_rules:
             cmd, process = self.exists_iptables_rules(rule)
             fileno = process.stdout.fileno()
 
             processes[fileno] = (cmd, process, ['iptables', '-I'] + rule)
+            poller.register(fileno, select.EPOLLHUP)
+
+        for rule in self.ip6tables_rules:
+            cmd, process = self.exists_ip6tables_rules(rule)
+            fileno = process.stdout.fileno()
+
+            processes[fileno] = (cmd, process, ['ip6tables', '-I'] + rule)
             poller.register(fileno, select.EPOLLHUP)
 
         try:
@@ -496,7 +504,14 @@ class ServerInstance(object):
             process = subprocess.Popen(['iptables', '-D'] + rule,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-            )
+                                       )
+            processes.append(process)
+
+        for rule in self.ip6tables_rules:
+            process = subprocess.Popen(['ip6tables', '-D'] + rule,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                                       )
             processes.append(process)
 
         for process in processes:
