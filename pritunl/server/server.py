@@ -129,12 +129,12 @@ class Server(mongo.MongoObject):
 
     def __init__(self, name=None, network=None, network_mode=None,
             network_start=None, network_end=None, ipv6=None, bind_address=None,
-            port=None, protocol=None, dh_param_bits=None,
-            mode=None, multi_device=None, local_networks=None,
-            dns_servers=None, search_domain=None, otp_auth=None, cipher=None,
-            jumbo_frames=None, lzo_compression=None, inter_client=None,
-            ping_interval=None, ping_timeout=None, max_clients=None,
-            replica_count=None, debug=None, **kwargs):
+            port=None, protocol=None, dh_param_bits=None, mode=None,
+            multi_device=None, local_networks=None, dns_servers=None,
+            search_domain=None, otp_auth=None, cipher=None, jumbo_frames=None,
+            lzo_compression=None, inter_client=None, ping_interval=None,
+            ping_timeout=None, max_clients=None, replica_count=None,
+            debug=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         if 'network' in self.loaded_fields:
