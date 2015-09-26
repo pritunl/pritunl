@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add support for IPv6
+
 Version 1.5.743.11 2015-09-25
 -----------------------------
 
