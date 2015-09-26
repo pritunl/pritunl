@@ -17,6 +17,9 @@ def static_get(file_path=None):
         response = utils.request.get(settings.local.dart_url + file_path)
         return flask.Response(response.content, headers=response.headers)
 
+    if settings.conf.debug and 'styles/fonts/' in file_path:
+        file_path = file_path.replace('styles/fonts/', 'fonts/', 1)
+
     if not file_path:
         return flask.abort(404)
 
