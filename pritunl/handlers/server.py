@@ -267,7 +267,9 @@ def server_put_post(server_id=None):
         dns_servers = flask.request.json['dns_servers'] or []
 
         for dns_server in dns_servers:
-            if not re.match(IP_REGEX, dns_server):
+            try:
+                ipaddress.IPAddress(dns_server)
+            except ipaddress.AddressValueError:
                 return _dns_server_invalid()
 
     search_domain = None
