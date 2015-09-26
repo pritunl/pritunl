@@ -324,6 +324,7 @@ class ServerInstance(object):
 
         link_svr_networks = []
         for link_svr in self.server.iter_links(fields=('_id', 'network')):
+            # TODO Add IPv6 networks
             link_svr_networks.append(link_svr.network)
 
         for network_address in self.server.local_networks or other_networks:
