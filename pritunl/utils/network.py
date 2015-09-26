@@ -239,7 +239,7 @@ def net4to6(prefix, net):
     return net6
 
 def ip4to6(prefix, net, addr):
-    addrs = addr.split('.')
+    addrs = addr.split('/')[0].split('.')
     net, cidr = net.split('/')
     nets = net.split('.')
     cidr = int(cidr)
