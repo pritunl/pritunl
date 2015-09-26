@@ -54,5 +54,4 @@ class SettingsApp(SettingsGroupMongo):
         'host_page_count': 10,
         'server_cert': None,
         'server_key': None,
-        'ipv6_prefix': 'fd00',
     }

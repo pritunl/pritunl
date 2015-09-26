@@ -15,6 +15,7 @@ class SettingsVpn(SettingsGroupMongo):
         'http_request_timeout': 10,
         'op_timeout': 10,
         'bandwidth_update_rate': 15,
+        'ipv6_prefix': 'fd00',
         'safe_priv_subnets': [
             '10.0.0.0/8',
             '100.64.0.0/10',
