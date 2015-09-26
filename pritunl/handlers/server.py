@@ -234,30 +234,9 @@ def server_put_post(server_id=None):
         local_networks = flask.request.json['local_networks'] or []
 
         for local_network in local_networks:
-            local_network_split = local_network.split('/')
-            if len(local_network_split) != 2:
-                return _local_network_invalid()
-
-            address = local_network_split[0].split('.')
-            if len(address) != 4:
-                return _local_network_invalid()
-            for i, value in enumerate(address):
-                try:
-                    address[i] = int(value)
-                except ValueError:
-                    return _local_network_invalid()
-            if address[0] > 255 or address[0] < 0 or \
-                    address[1] > 255 or address[1] < 0 or \
-                    address[2] > 255 or address[2] < 0 or \
-                    address[3] > 254 or address[3] < 0:
-                return _local_network_invalid()
-
             try:
-                subnet = int(local_network_split[1])
-            except ValueError:
-                return _local_network_invalid()
-
-            if subnet < 1 or subnet > 32:
+                ipaddress.IPNetwork(local_network)
+            except ipaddress.AddressValueError:
                 return _local_network_invalid()
 
     dns_servers = None
