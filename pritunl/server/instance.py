@@ -504,14 +504,14 @@ class ServerInstance(object):
             process = subprocess.Popen(['iptables', '-D'] + rule,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                                       )
+            )
             processes.append(process)
 
         for rule in self.ip6tables_rules:
             process = subprocess.Popen(['ip6tables', '-D'] + rule,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                                       )
+            )
             processes.append(process)
 
         for process in processes:
