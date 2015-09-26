@@ -143,6 +143,10 @@ class ServerInstance(object):
             server_line = 'server %s %s' % utils.parse_network(
                 self.server.network)
 
+            if self.server.ipv6:
+                server_line += '/nserver-ipv6 ' + utils.net4to6(
+                    settings.vpn.ipv6_prefix, self.server.network)
+
         server_conf = OVPN_INLINE_SERVER_CONF % (
             self.server.port,
             self.server.protocol,
