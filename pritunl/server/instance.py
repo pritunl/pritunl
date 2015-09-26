@@ -269,7 +269,8 @@ class ServerInstance(object):
             line_split = line.split()
             if len(line_split) < 8 or not re.match(IP_REGEX, line_split[0]):
                 continue
-            routes[line_split[0]] = line_split[7]
+            if line_split[0] not in routes:
+                routes[line_split[0]] = line_split[7]
 
         if '0.0.0.0' not in routes:
             raise IptablesError('Failed to find default network interface', {
