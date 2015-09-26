@@ -164,14 +164,36 @@ define([
       return this.$('.ipv6-toggle .selector').hasClass('selected');
     },
     setIpv6Select: function(state) {
+      var dnsServers = this.getDnsServers();
+
       if (state) {
         this.$('.ipv6-toggle .selector').addClass('selected');
         this.$('.ipv6-toggle .selector-inner').show();
+
+        if (dnsServers.indexOf('8.8.4.4') !== -1 &&
+          dnsServers.indexOf('2001:4860:4860::8844') == -1) {
+          dnsServers.unshift('2001:4860:4860::8844')
+        }
+        if (dnsServers.indexOf('8.8.8.8') !== -1 &&
+          dnsServers.indexOf('2001:4860:4860::8888') == -1) {
+          dnsServers.unshift('2001:4860:4860::8888')
+        }
       }
       else {
         this.$('.ipv6-toggle .selector').removeClass('selected');
         this.$('.ipv6-toggle .selector-inner').hide();
+
+        var i = dnsServers.indexOf('2001:4860:4860::8888');
+        if (i !== -1) {
+          dnsServers.splice(i, 1);
+        }
+        i = dnsServers.indexOf('2001:4860:4860::8844');
+        if (i !== -1) {
+          dnsServers.splice(i, 1);
+        }
       }
+
+      this.$('.dns-servers input').val(dnsServers.join(', '));
     },
     onIpv6Select: function() {
       this.setIpv6Select(!this.getIpv6Select());
@@ -196,6 +218,17 @@ define([
       if ($(evt.target).parent().hasClass('network')) {
         this.updateMaxHosts();
       }
+    },
+    getDnsServers: function() {
+      var dnsServers = [];
+      var dnsServersTemp = this.$('.dns-servers input').val().split(',');
+      for (var i = 0; i < dnsServersTemp.length; i++) {
+        dnsServersTemp[i] = $.trim(dnsServersTemp[i]);
+        if (dnsServersTemp[i]) {
+          dnsServers.push(dnsServersTemp[i]);
+        }
+      }
+      return dnsServers;
     },
     updateMaxHosts: function() {
       var value = this.$('.network input').val().split('/');
@@ -235,7 +268,6 @@ define([
       this.$('.network .label').hide();
     },
     onOk: function() {
-      var i;
       var name = this.$('.name input').val();
       var network = this.$('.network input').val();
       var port = this.$('input.port').val();
@@ -244,14 +276,7 @@ define([
       var mode = this.$('.server-mode select').val();
       var ipv6 = this.getIpv6Select();
       var multiDevice = this.getMultiDeviceSelect();
-      var dnsServers = [];
-      var dnsServersTemp = this.$('.dns-servers input').val().split(',');
-      for (i = 0; i < dnsServersTemp.length; i++) {
-        dnsServersTemp[i] = $.trim(dnsServersTemp[i]);
-        if (dnsServersTemp[i]) {
-          dnsServers.push(dnsServersTemp[i]);
-        }
-      }
+      var dnsServers = this.getDnsServers();
       var searchDomain = this.$('.search-domain input').val();
       var localNetworks = [];
       var interClient = this.getInterClientSelect();
