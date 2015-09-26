@@ -70,6 +70,7 @@ class Server(mongo.MongoObject):
         'protocol',
         'dh_param_bits',
         'mode',
+        'ipv6',
         'network_mode',
         'network_start',
         'network_end',
@@ -102,6 +103,7 @@ class Server(mongo.MongoObject):
         'instances_count',
     }
     fields_default = {
+        'ipv6': False,
         'network_mode': TUNNEL,
         'multi_device': False,
         'dns_servers': [],
@@ -126,7 +128,7 @@ class Server(mongo.MongoObject):
     cache_prefix = 'server'
 
     def __init__(self, name=None, network=None, network_mode=None,
-            network_start=None, network_end=None, bind_address=None,
+            network_start=None, network_end=None, ipv6=None, bind_address=None,
             port=None, protocol=None, dh_param_bits=None,
             mode=None, multi_device=None, local_networks=None,
             dns_servers=None, search_domain=None, otp_auth=None, cipher=None,
@@ -153,6 +155,8 @@ class Server(mongo.MongoObject):
             self.network_start = network_start
         if network_end is not None:
             self.network_end = network_end
+        if ipv6 is not None:
+            self.ipv6 = ipv6
         if bind_address is not None:
             self.bind_address = bind_address
         if port is not None:
