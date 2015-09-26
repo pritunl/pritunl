@@ -523,7 +523,10 @@ class ServerInstance(object):
         for instance_link in self.server_links:
             instance_link.stop()
 
-        terminated = utils.stop_process(self.process)
+        if self.process:
+            terminated = utils.stop_process(self.process)
+        else:
+            terminated = True
 
         if not terminated:
             logger.error('Failed to stop server process', 'server',
