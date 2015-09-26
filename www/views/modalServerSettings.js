@@ -171,12 +171,12 @@ define([
         this.$('.ipv6-toggle .selector-inner').show();
 
         if (dnsServers.indexOf('8.8.4.4') !== -1 &&
-          dnsServers.indexOf('2001:4860:4860::8844') == -1) {
-          dnsServers.unshift('2001:4860:4860::8844')
+            dnsServers.indexOf('2001:4860:4860::8844') === -1) {
+          dnsServers.unshift('2001:4860:4860::8844');
         }
         if (dnsServers.indexOf('8.8.8.8') !== -1 &&
-          dnsServers.indexOf('2001:4860:4860::8888') == -1) {
-          dnsServers.unshift('2001:4860:4860::8888')
+            dnsServers.indexOf('2001:4860:4860::8888') === -1) {
+          dnsServers.unshift('2001:4860:4860::8888');
         }
       }
       else {
