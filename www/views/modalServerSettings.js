@@ -23,6 +23,7 @@ define([
         'click .otp-auth-toggle': 'onOtpAuthSelect',
         'click .inter-client-toggle': 'onInterClientSelect',
         'click .debug-toggle': 'onDebugSelect',
+        'click .ipv6-toggle': 'onIpv6Select',
         'click .multi-device-toggle': 'onMultiDeviceSelect'
       }, ModalServerSettingsView.__super__.events);
     },
@@ -159,6 +160,22 @@ define([
     onDebugSelect: function() {
       this.setDebugSelect(!this.getDebugSelect());
     },
+    getIpv6Select: function() {
+      return this.$('.ipv6-toggle .selector').hasClass('selected');
+    },
+    setIpv6Select: function(state) {
+      if (state) {
+        this.$('.ipv6-toggle .selector').addClass('selected');
+        this.$('.ipv6-toggle .selector-inner').show();
+      }
+      else {
+        this.$('.ipv6-toggle .selector').removeClass('selected');
+        this.$('.ipv6-toggle .selector-inner').hide();
+      }
+    },
+    onIpv6Select: function() {
+      this.setIpv6Select(!this.getIpv6Select());
+    },
     getMultiDeviceSelect: function() {
       return this.$('.multi-device-toggle .selector').hasClass('selected');
     },
@@ -225,6 +242,7 @@ define([
       var protocol = this.$('select.protocol').val();
       var dhParamBits = parseInt(this.$('.dh-param-bits select').val(), 10);
       var mode = this.$('.server-mode select').val();
+      var ipv6 = this.getIpv6Select();
       var multiDevice = this.getMultiDeviceSelect();
       var dnsServers = [];
       var dnsServersTemp = this.$('.dns-servers input').val().split(',');
@@ -296,6 +314,7 @@ define([
         'network_mode': networkMode,
         'network_start': networkStart,
         'network_end': networkEnd,
+        'ipv6': ipv6,
         'multi_device': multiDevice,
         'local_networks': localNetworks,
         'dns_servers': dnsServers,
