@@ -372,6 +372,9 @@ INTERFACE_IN_USE_MSG = 'Tunnel interface is already in use.'
 PORT_PROTOCOL_IN_USE = 'port_protocol_in_use'
 PORT_PROTOCOL_IN_USE_MSG = 'Port and protocol is already in use.'
 
+IPV6_BRIDGED_INVALID = 'ipv6_bridged_invalid'
+IPV6_BRIDGED_INVALID_MSG = 'IPv6 cannot be used with bridged servers.'
+
 SERVER_LINKS_NOT_OFFLINE = 'server_links_not_offline'
 SERVER_LINKS_NOT_OFFLINE_SETTINGS_MSG = 'All linked servers must be ' + \
     'offline to modify settings.'

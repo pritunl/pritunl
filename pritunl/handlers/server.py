@@ -407,6 +407,12 @@ def server_put_post(server_id=None):
                     'error_msg': BRIDGE_NETWORK_INVALID_MSG,
                 }, 400)
 
+            if ipv6:
+                return utils.jsonify({
+                    'error': IPV6_BRIDGED_INVALID,
+                    'error_msg': IPV6_BRIDGED_INVALID_MSG,
+                }, 400)
+
         svr = server.new_server(
             name=name,
             network=network,
@@ -515,6 +521,12 @@ def server_put_post(server_id=None):
                 return utils.jsonify({
                     'error': BRIDGE_NETWORK_INVALID,
                     'error_msg': BRIDGE_NETWORK_INVALID_MSG,
+                }, 400)
+
+            if svr.ipv6:
+                return utils.jsonify({
+                    'error': IPV6_BRIDGED_INVALID,
+                    'error_msg': IPV6_BRIDGED_INVALID_MSG,
                 }, 400)
 
         if svr.links and svr.replica_count > 1:
