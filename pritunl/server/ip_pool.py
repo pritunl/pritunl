@@ -1,9 +1,10 @@
-from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import mongo
 from pritunl import ipaddress
 from pritunl import organization
 from pritunl import logger
+from pritunl import settings
+from pritunl import utils
 
 import pymongo
 
@@ -385,4 +386,10 @@ def multi_get_ip_addr(org_id, user_ids):
     }
 
     for doc in ServerIpPool.collection.find(spec, project):
-        yield doc['user_id'], doc['server_id'], doc['address'].split('/')[0]
+        network = ipaddress.IPNetwork(doc['address'])
+        network = str(network.network) + '/' + str(network.prefixlen)
+        addr6 = utils.ip4to6(settings.vpn.ipv6_prefix,
+            network, doc['address'])
+
+        yield doc['user_id'], doc['server_id'], \
+            doc['address'].split('/')[0], addr6.split('/')[0]
