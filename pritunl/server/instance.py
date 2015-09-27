@@ -151,7 +151,7 @@ class ServerInstance(object):
 
         server_conf = OVPN_INLINE_SERVER_CONF % (
             self.server.port,
-            self.server.protocol,
+            self.server.protocol + '6' if self.server.ipv6 else '',
             self.interface,
             server_line,
             self.management_socket_path,
