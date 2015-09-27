@@ -121,6 +121,9 @@ class Clients(object):
                 'Unable to assign ip address')
             return
 
+        virt_address6 = utils.ip4to6(
+            settings.vpn.ipv6_prefix, self.server.network, virt_address)
+
         self.clients.insert({
             'id': client_id,
             'org_id': org_id,
@@ -134,6 +137,7 @@ class Clients(object):
             'mac_addr': mac_addr,
             'otp_code': None,
             'virt_address': virt_address,
+            'virt_address6': virt_address6,
             'real_address': remote_ip,
             'address_dynamic': address_dynamic,
         })
@@ -142,9 +146,7 @@ class Clients(object):
             virt_address)
 
         if self.server.ipv6:
-            client_conf += 'ifconfig-ipv6-push %s\n' % (
-                utils.ip4to6(settings.vpn.ipv6_prefix, self.server.network,
-                    virt_address))
+            client_conf += 'ifconfig-ipv6-push %s\n' % virt_address6
 
         if self.server.debug:
             self.instance_com.push_output('Client conf %s:' % user_id)
