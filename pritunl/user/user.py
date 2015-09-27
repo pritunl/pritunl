@@ -383,7 +383,6 @@ class User(mongo.MongoObject):
             utils.random_name(),
             server.adapter_type,
             server.adapter_type,
-            server.protocol,
             server.get_key_remotes(),
             CIPHERS[server.cipher],
             server.ping_interval,

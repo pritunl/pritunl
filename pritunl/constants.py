@@ -522,7 +522,6 @@ setenv UV_NAME %s
 client
 dev %s
 dev-type %s
-proto %s
 %s
 nobind
 persist-tun
