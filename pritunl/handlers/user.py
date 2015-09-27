@@ -71,6 +71,7 @@ def user_get(org_id, user_id=None, page=None):
                 'platform': None,
                 'real_address': None,
                 'virt_address': None,
+                'virt_address6': None,
                 'connected_since': None
             }
             server_data.append(data)
@@ -98,6 +99,10 @@ def user_get(org_id, user_id=None, page=None):
         else:
             append = False
 
+        virt_address6 = doc.get('virt_address6')
+        if virt_address6:
+            server_data['virt_address6'] = virt_address6.split('/')[0]
+
         server_data['id'] = doc['_id']
         server_data['status'] = True
         server_data['server_id'] = server_data['id']
@@ -114,10 +119,13 @@ def user_get(org_id, user_id=None, page=None):
                 svrs, key=lambda x: x['name'])
 
     ip_addrs_iter = server.multi_get_ip_addr(org_id, users_id)
-    for user_id, server_id, ip_add in ip_addrs_iter:
+    for user_id, server_id, addr, addr6 in ip_addrs_iter:
         server_data = users_servers[user_id].get(server_id)
-        if server_data and not server_data['virt_address']:
-            server_data['virt_address'] = ip_add
+        if server_data:
+            if not server_data['virt_address']:
+                server_data['virt_address'] = addr
+            if not server_data['virt_address6']:
+                server_data['virt_address6'] = addr6
 
     if page is not None:
         return utils.jsonify({
