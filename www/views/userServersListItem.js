@@ -8,11 +8,17 @@ define([
   var UserServersListItemView = Backbone.View.extend({
     className: 'user-server',
     template: _.template(userServersListItemTemplate),
+    events: {
+      'click .server-addr .name-icon': 'toggleServerAddr'
+    },
     render: function() {
       this.$el.html(this.template());
       this.update();
       this.$('.server-item').tooltip();
       return this;
+    },
+    toggleServerAddr: function() {
+      this.$el.toggleClass('ipv6');
     },
     update: function() {
       this.$('.server-name .title').text(this.model.get('name'));
@@ -49,6 +55,11 @@ define([
       }
       else {
         this.$('.server-addr').hide();
+      }
+
+      var addr6 = this.model.get('virt_address6');
+      if (addr6) {
+        this.$('.server-addr .title.ipv6').text(addr6);
       }
 
       var addrReal = this.model.get('real_address');
