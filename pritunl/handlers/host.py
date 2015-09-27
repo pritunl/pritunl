@@ -45,6 +45,10 @@ def host_put(hst=None):
         hst.public_address = utils.filter_str(
             flask.request.json['public_address'])
 
+    if 'public_address6' in flask.request.json:
+        hst.public_address6 = utils.filter_str(
+            flask.request.json['public_address6'])
+
     if 'link_address' in flask.request.json:
         hst.link_address = utils.filter_str(
             flask.request.json['link_address'])
