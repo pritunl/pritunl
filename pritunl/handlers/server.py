@@ -612,7 +612,8 @@ def server_host_get(server_id):
     hosts_offline = svr.replica_count - len(active_hosts) > 0
 
     for hst in svr.iter_hosts(fields=('_id', 'name',
-            'public_address', 'auto_public_address')):
+            'public_address', 'auto_public_address',
+            'public_address6', 'auto_public_address6')):
         if svr.status == ONLINE and hst.id in active_hosts:
             status = ONLINE
         elif svr.status == ONLINE and hosts_offline:
@@ -626,6 +627,7 @@ def server_host_get(server_id):
             'status': status,
             'name': hst.name,
             'address': hst.public_addr,
+            'address6': hst.public_addr6,
         })
 
     return utils.jsonify(hosts)
