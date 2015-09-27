@@ -218,41 +218,64 @@ def find_interface(network):
         if address in network and data['netmask'] == str(network.netmask):
             return data
 
-def net4to6(prefix, net):
-    net, cidr = net.split('/')
+def net4to6x64(prefix, net):
+    net = net.split('/')[0]
     nets = net.split('.')
-    cidr = int(cidr)
 
     net_num = int(nets[0]) * 256**3 + int(nets[1]) * 256**2 + \
-        int(nets[2]) * 256**1 + int(nets[3]) * 256**0
-    net_hex = hex(net_num + cidr * 256**4)
+              int(nets[2]) * 256**1 + int(nets[3]) * 256**0
+    net_hex = hex(net_num)
 
     net6 = prefix + ':' + net_hex[2:6].lstrip('0')
     x = net_hex[6:10].lstrip('0')
-    if x:
-        net6 += ':' + x
-    x = net_hex[10:14].lstrip('0')
     if x:
         net6 += ':' + x
     net6 += '::/64'
 
     return net6
 
-def ip4to6(prefix, net, addr):
-    addrs = addr.split('/')[0].split('.')
-    net, cidr = net.split('/')
+def net4to6x96(prefix, net):
+    prefix = str(ipaddress.IPv6Network(prefix)).split('/')[0]
+    net = net.split('/')[0]
     nets = net.split('.')
-    cidr = int(cidr)
 
     net_num = int(nets[0]) * 256**3 + int(nets[1]) * 256**2 + \
-        int(nets[2]) * 256**1 + int(nets[3]) * 256**0
-    net_hex = hex(net_num + cidr * 256**4)
+              int(nets[2]) * 256**1 + int(nets[3]) * 256**0
+    net_hex = hex(net_num)
 
-    addr6 = prefix + ':' + net_hex[2:6].lstrip('0')
-    x = net_hex[6:10].lstrip('0')
-    if x:
-        addr6 += ':' + x
-    addr6 += ':' + net_hex[10:14].lstrip('0') +  ':' + addrs[0] + ':' + \
-        addrs[1] + ':' + addrs[2] + ':' + addrs[3] + '/64'
+    net6 = prefix + net_hex[2:6] + ':' + net_hex[6:10] + ':0:0/96'
 
-    return addr6
+    return str(ipaddress.IPv6Network(net6))
+
+def ip4to6x64(prefix, net, addr):
+    addrs = addr.split('/')[0].split('.')
+    net = net.split('/')[0]
+    nets = net.split('.')
+
+    net_num = int(nets[0]) * 256**3 + int(nets[1]) * 256**2 + \
+              int(nets[2]) * 256**1 + int(nets[3]) * 256**0
+    net_hex = hex(net_num)
+
+    addr6 = prefix + ':' + net_hex[2:6] + ':' + net_hex[6:10] + '::' + \
+            addrs[0] + ':' + addrs[1] + ':' + addrs[2] + ':' + addrs[3]
+
+    return str(ipaddress.IPv6Address(addr6))
+
+def ip4to6x96(prefix, net, addr):
+    prefix = str(ipaddress.IPv6Network(prefix)).split('/')[0]
+    addrs = addr.split('/')[0].split('.')
+    net = net.split('/')[0]
+    nets = net.split('.')
+
+    net_num = int(nets[0]) * 256**3 + int(nets[1]) * 256**2 + \
+              int(nets[2]) * 256**1 + int(nets[3]) * 256**0
+    net_hex = hex(net_num)
+
+    addr_num = int(addrs[0]) * 256**3 + int(addrs[1]) * 256**2 + \
+               int(addrs[2]) * 256**1 + int(addrs[3]) * 256**0
+    addr_hex = hex(addr_num)
+
+    addr6 = prefix + net_hex[2:6] + ':' + net_hex[6:10] + ':' + \
+            addr_hex[2:6] + ':' + addr_hex[6:10]
+
+    return str(ipaddress.IPv6Address(addr6))
