@@ -108,11 +108,13 @@ class ServerInstanceCom(object):
                     self.client['user_id'] = utils.ObjectId(user_id)
                 elif env_key == 'IV_HWADDR':
                     self.client['mac_addr'] = env_val
-                elif env_key == 'trusted_ip' or env_key == 'trusted_ip6':
+                elif env_key == 'untrusted_ip':
                     self.client['remote_ip'] = env_val
-                elif env_key == 'untrusted_ip' or env_key == 'untrusted_ip6':
-                    if not self.client.get('remote_ip'):
-                        self.client['remote_ip'] = env_val
+                elif env_key == 'untrusted_ip6':
+                    remote_ip = env_val
+                    if '.' in remote_ip:
+                        remote_ip = remote_ip.split(':')[-1]
+                    self.client['remote_ip'] = remote_ip
                 elif env_key == 'IV_PLAT':
                     if 'chrome' in env_val.lower():
                         env_val = 'chrome'
