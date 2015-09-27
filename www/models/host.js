@@ -13,7 +13,9 @@ define([
       'user_count': null,
       'users_online': null,
       'public_address': null,
-      'local_address': null
+      'public_address6': null,
+      'local_address': null,
+      'link_address': null
     },
     url: function() {
       var url = '/host';
