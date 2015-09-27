@@ -25,6 +25,7 @@ def settings_get():
         'sso_admin': settings.app.sso_admin,
         'sso_org': settings.app.sso_org,
         'public_address': settings.local.host.public_addr,
+        'public_address6': settings.local.host.public_addr6,
         'server_cert': settings.app.server_cert,
         'server_key': settings.app.server_key,
     })
@@ -122,6 +123,11 @@ def settings_put():
         public_address = flask.request.json['public_address']
         settings.local.host.public_address = public_address
         settings.local.host.commit('public_address')
+
+    if 'public_address6' in flask.request.json:
+        public_address6 = flask.request.json['public_address6']
+        settings.local.host.public_address6 = public_address6
+        settings.local.host.commit('public_address6')
 
     if 'server_cert' in flask.request.json:
         settings_commit = True
