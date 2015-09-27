@@ -103,7 +103,7 @@ define([
       this.setSsoMode(this.getSsoMode());
     },
     onThemeChange: function() {
-      if (this.$('.theme select').val() === 'dark') {
+      if (this.$('.theme:visible select').val() === 'dark') {
         $('body').addClass('dark');
       }
       else {
@@ -157,8 +157,10 @@ define([
     onOk: function() {
       var username = this.$('.username input').val();
       var password = this.$('.pass input').val();
+      var verifyPassword = this.$('.verify-pass input').val();
       var publicAddress = this.$('.public-address input').val();
-      var theme = this.$('.theme select').val();
+      var publicAddress6 = this.$('.public-address6 input').val();
+      var theme = this.$('.theme:visible select').val();
       var emailFrom = this.$('.email-from input').val();
       var emailServer = this.$('.email-server input').val();
       var emailUsername = this.$('.email-username input').val();
@@ -173,6 +175,11 @@ define([
       var ssoHost = null;
       var ssoAdmin = null;
       var ssoOrg = null;
+
+      if (password && password !== verifyPassword) {
+        this.setAlert('danger', 'Passwords do not match.', '.verify-pass');
+        return;
+      }
 
       if (sso) {
         if (sso === 'duo' || sso === 'google_duo') {
@@ -207,6 +214,7 @@ define([
         sso_admin: ssoAdmin,
         sso_org: ssoOrg,
         public_address: publicAddress,
+        public_address6: publicAddress6,
         theme: theme,
         server_cert: serverCert,
         server_key: serverKey
