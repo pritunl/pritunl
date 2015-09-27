@@ -19,6 +19,7 @@ define([
       'protocol': null,
       'dh_param_bits': null,
       'mode': null,
+      'ipv6': null,
       'network_mode': null,
       'network_start': null,
       'network_end': null,
