@@ -10,6 +10,7 @@ class SettingsLocal(SettingsGroupLocal):
     fields = {
         'quiet': False,
         'public_ip': None,
+        'public_ip6': None,
         'server_ready': threading.Event(),
         'server_start': server_start,
         'host_ping_timestamp': None,
@@ -19,6 +20,7 @@ class SettingsLocal(SettingsGroupLocal):
         'sub_plan': None,
         'sub_amount': None,
         'sub_period_end': None,
+        'sub_trial_end': None,
         'sub_cancel_at_period_end': None,
         'sub_url_key': False,
         'sub_styles': {},
