@@ -80,12 +80,17 @@ def _keep_alive_thread():
                 'status': ONLINE,
                 'ping_timestamp': utils.now(),
                 'auto_public_address': settings.local.public_ip,
+                'auto_public_address6': settings.local.public_ip6,
             }})
 
             if settings.local.host.auto_public_address != \
-                    settings.local.public_ip:
+                    settings.local.public_ip or \
+                    settings.local.host.auto_public_address6 != \
+                    settings.local.public_ip6:
                 settings.local.host.auto_public_address = \
                     settings.local.public_ip
+                settings.local.host.auto_public_address6 = \
+                    settings.local.public_ip6
                 event.Event(type=HOSTS_UPDATED)
 
             settings.local.host_ping_timestamp = ping_timestamp
