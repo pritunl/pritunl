@@ -17,7 +17,9 @@ class Host(mongo.MongoObject):
         'status',
         'start_timestamp',
         'public_address',
+        'public_address6',
         'auto_public_address',
+        'auto_public_address6',
         'link_address',
         'local_address',
     }
@@ -60,6 +62,10 @@ class Host(mongo.MongoObject):
         return self.public_address or self.auto_public_address
 
     @property
+    def public_addr6(self):
+        return self.public_address6 or self.auto_public_address6
+
+    @property
     def link_addr(self):
         return self.link_address or  self.public_address or \
             self.auto_public_address
@@ -74,6 +80,7 @@ class Host(mongo.MongoObject):
             'user_count': self.user_count,
             'users_online': self.users_online,
             'public_address': self.public_addr,
+            'public_address6': self.public_addr6,
             'link_address': self.link_address,
             'local_address': self.local_address,
         }
