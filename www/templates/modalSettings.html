@@ -8,12 +8,9 @@
       <label>New Password</label>
       <input type="password" class="form-control" placeholder="Enter password">
     </div>
-    <div class="theme form-group">
-      <label>Theme</label>
-      <select class="form-control" data-toggle="tooltip" title="Pritunl color theme">
-        <option value="light" <%= theme === 'light' ? 'selected' : '' %>>Light</option>
-        <option value="dark" <%= theme === 'dark' ? 'selected' : '' %>>Dark</option>
-      </select>
+    <div class="verify-pass form-group">
+      <label>Verify Password</label>
+      <input type="password" class="form-control" placeholder="Verify password">
     </div>
     <div class="public-address form-group">
       <label>Public Address</label>
@@ -27,6 +24,13 @@
       <label>SMTP Username</label>
       <input type="text" class="form-control" placeholder="Enter SMTP username" value="<%- email_username || '' %>">
     </div>
+    <div class="theme form-group">
+      <label>Theme</label>
+      <select class="form-control" data-toggle="tooltip" title="Pritunl color theme">
+        <option value="light" <%= theme === 'light' ? 'selected' : '' %>>Light</option>
+        <option value="dark" <%= theme === 'dark' ? 'selected' : '' %>>Dark</option>
+      </select>
+    </div>
     <div class="sso-mode form-group">
       <label>Single Sign-On</label>
       <select class="form-control" data-toggle="tooltip" title="Single Sign-On Mode">
@@ -36,17 +40,21 @@
         <option value="google_duo" <%= sso === 'google_duo' ? 'selected' : '' %>>Google Apps + Duo Security</option>
       </select>
     </div>
+    <div class="sso-org form-group" <%= sso ? '' : 'style="display: none;"' %>>
+      <label>Single Sign-On Organization</label>
+      <select class="form-control">
+        <% _.each(orgs, function(org) { %>
+        <option value="<%- org.id %>" <%= (sso_org === org.id) ? 'selected' : '' %>><%- org.name %></option>
+        <% }); %>
+      </select>
+    </div>
     <div class="sso-token form-group" <%= sso === 'duo' || sso === 'google_duo' ? '' : 'style="display: none;"' %>>
       <label>Duo Integration Key</label>
       <input type="text" class="form-control" placeholder="Enter integration key" value="<%- sso_token || '' %>">
     </div>
-    <div class="sso-host form-group" <%= sso === 'duo' || sso === 'google_duo' ? '' : 'style="display: none;"' %>>
-      <label>Duo API Hostname</label>
-      <input type="text" class="form-control" placeholder="Enter api hostname" value="<%- sso_host || '' %>">
-    </div>
-    <div class="sso-match form-group" <%= sso === 'google' || sso === 'google_duo' ? '' : 'style="display: none;"' %>>
-      <label>Google Apps Domain</label>
-      <input type="email" class="form-control" placeholder="Enter Google Apps domain" value="<%- sso_match || '' %>" data-toggle="tooltip" title="Google apps domain to match against users email address. Multiple domains can be entrered sperated by a comma. (example: pritunl.com)">
+    <div class="sso-admin form-group" <%= sso === 'duo' || sso === 'google_duo' ? '' : 'style="display: none;"' %>>
+      <label>Duo Admin Username</label>
+      <input type="text" class="form-control" placeholder="Enter admin username" value="<%- sso_admin || '' %>" data-toggle="tooltip" title="Require a Duo push request from this username when logging into the web console as the admin">
     </div>
     <div class="server-cert form-group">
       <label>Enter Server SSL Certificate</label><br>
@@ -63,6 +71,10 @@
       <input type="text" class="form-control" placeholder="" value="<%- secret || '' %>" readonly>
     </div>
     <button type="button" class="generate-new-api-key btn btn-danger">Generate New API Key</button>
+    <div class="public-address6 form-group">
+      <label>Public IPv6 Address</label>
+      <input type="text" class="form-control" placeholder="Enter public address" data-toggle="tooltip" title="Public IPv6 address or domain name of the host" value="<%- public_address6 %>">
+    </div>
     <div class="email-server form-group">
       <label>SMTP Server</label>
       <input type="text" class="form-control" placeholder="Enter SMTP server" value="<%- email_server || '' %>">
@@ -71,21 +83,24 @@
       <label>SMTP Password</label>
       <input type="password" class="form-control" placeholder="Enter SMTP password" value="<%- email_password ? '********************' : '' %>">
     </div>
-    <div class="sso-org form-group" <%= sso ? '' : 'style="display: none;"' %>>
-      <label>Single Sign-On Organization</label>
-      <select class="form-control">
-        <% _.each(orgs, function(org) { %>
-        <option value="<%- org.id %>" <%= (sso_org === org.id) ? 'selected' : '' %>><%- org.name %></option>
-        <% }); %>
+    <div class="theme form-group">
+      <label>Theme</label>
+      <select class="form-control" data-toggle="tooltip" title="Pritunl color theme">
+        <option value="light" <%= theme === 'light' ? 'selected' : '' %>>Light</option>
+        <option value="dark" <%= theme === 'dark' ? 'selected' : '' %>>Dark</option>
       </select>
+    </div>
+    <div class="sso-host form-group" <%= sso === 'duo' || sso === 'google_duo' ? '' : 'style="display: none;"' %>>
+      <label>Duo API Hostname</label>
+      <input type="text" class="form-control" placeholder="Enter api hostname" value="<%- sso_host || '' %>">
     </div>
     <div class="sso-secret form-group" <%= sso === 'duo' || sso === 'google_duo' ? '' : 'style="display: none;"' %>>
       <label>Duo Secret Key</label>
       <input type="text" class="form-control" placeholder="Enter secret key" value="<%- sso_secret || '' %>">
     </div>
-    <div class="sso-admin form-group" <%= sso === 'duo' || sso === 'google_duo' ? '' : 'style="display: none;"' %>>
-    <label>Duo Admin Username</label>
-    <input type="text" class="form-control" placeholder="Enter admin username" value="<%- sso_admin || '' %>" data-toggle="tooltip" title="Require a Duo push request from this username when logging into the web console as the admin">
+    <div class="sso-match form-group" <%= sso === 'google' || sso === 'google_duo' ? '' : 'style="display: none;"' %>>
+      <label>Google Apps Domain</label>
+      <input type="email" class="form-control" placeholder="Enter Google Apps domain" value="<%- sso_match || '' %>" data-toggle="tooltip" title="Google apps domain to match against users email address. Multiple domains can be entrered sperated by a comma. (example: pritunl.com)">
     </div>
     <div class="server-key form-group">
       <label>Enter Server SSL Key</label><br>
