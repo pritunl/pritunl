@@ -380,6 +380,7 @@ class Server(mongo.MongoObject):
 
     def get_key_remotes(self, include_link_addr=False):
         remotes = []
+        remotes6 = []
         spec = {
             '_id': {'$in': self.hosts},
         }
@@ -387,6 +388,8 @@ class Server(mongo.MongoObject):
             '_id': False,
             'public_address': True,
             'auto_public_address': True,
+            'public_address6': True,
+            'auto_public_address6': True,
         }
 
         if include_link_addr:
@@ -395,11 +398,28 @@ class Server(mongo.MongoObject):
         for doc in self.host_collection.find(spec, project):
             if include_link_addr and doc['link_address']:
                 address = doc['link_address']
+                if ':' in address:
+                    remotes6.append('remote %s %s %s' % (
+                        address, self.port, self.protocol + '6'))
+                else:
+                    remotes.append('remote %s %s %s' % (
+                        doc['link_address'], self.port, self.protocol))
             else:
                 address = doc['public_address'] or doc['auto_public_address']
-            remotes.append('remote %s %s' % (address, self.port))
+                remotes.append('remote %s %s %s' % (
+                    address, self.port, self.protocol))
+
+                address6 = doc.get('public_address6') or \
+                    doc.get('auto_public_address6')
+                if address6:
+                    remotes6.append('remote %s %s %s' % (
+                        address6, self.port, self.protocol + '6'))
 
         random.shuffle(remotes)
+        random.shuffle(remotes6)
+
+        if self.ipv6:
+            remotes = remotes6 + remotes
 
         if len(remotes) > 1:
             remotes.append('remote-random')
@@ -415,6 +435,8 @@ class Server(mongo.MongoObject):
             '_id': False,
             'public_address': True,
             'auto_public_address': True,
+            'public_address6': True,
+            'auto_public_address6': True,
         }
 
         for doc in self.host_collection.find(spec, project):
