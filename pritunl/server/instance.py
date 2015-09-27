@@ -146,7 +146,7 @@ class ServerInstance(object):
                 self.server.network)
 
             if self.server.ipv6:
-                server_line += '\nserver-ipv6 ' + utils.net4to6(
+                server_line += '\nserver-ipv6 ' + utils.net4to6x64(
                     settings.vpn.ipv6_prefix, self.server.network)
 
         server_conf = OVPN_INLINE_SERVER_CONF % (
@@ -367,7 +367,7 @@ class ServerInstance(object):
             ]
 
             if is6:
-                net6 = utils.net4to6(settings.vpn.ipv6_prefix,
+                net6 = utils.net4to6x64(settings.vpn.ipv6_prefix,
                     self.server.network)
                 rules6.append(args_base + ['-s', net6])
             else:

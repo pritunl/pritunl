@@ -388,7 +388,7 @@ def multi_get_ip_addr(org_id, user_ids):
     for doc in ServerIpPool.collection.find(spec, project):
         network = ipaddress.IPNetwork(doc['address'])
         network = str(network.network) + '/' + str(network.prefixlen)
-        addr6 = utils.ip4to6(settings.vpn.ipv6_prefix,
+        addr6 = utils.ip4to6x64(settings.vpn.ipv6_prefix,
             network, doc['address'])
 
         yield doc['user_id'], doc['server_id'], \
