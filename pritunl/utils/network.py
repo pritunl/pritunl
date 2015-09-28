@@ -223,7 +223,7 @@ def net4to6x64(prefix, net):
     nets = net.split('.')
 
     net_num = int(nets[0]) * 256**3 + int(nets[1]) * 256**2 + \
-              int(nets[2]) * 256**1 + int(nets[3]) * 256**0
+        int(nets[2]) * 256**1 + int(nets[3]) * 256**0
     net_hex = hex(net_num)
 
     net6 = prefix + ':' + net_hex[2:6].lstrip('0')
@@ -243,7 +243,7 @@ def net4to6x96(prefix, net):
         prefix = prefix[:-1]
 
     net_num = int(nets[0]) * 256**3 + int(nets[1]) * 256**2 + \
-              int(nets[2]) * 256**1 + int(nets[3]) * 256**0
+        int(nets[2]) * 256**1 + int(nets[3]) * 256**0
     net_hex = hex(net_num)
 
     net6 = prefix + net_hex[2:6] + ':' + net_hex[6:10] + ':0:0/96'
@@ -256,7 +256,7 @@ def ip4to6x64(prefix, net, addr):
     nets = net.split('.')
 
     net_num = int(nets[0]) * 256**3 + int(nets[1]) * 256**2 + \
-              int(nets[2]) * 256**1 + int(nets[3]) * 256**0
+        int(nets[2]) * 256**1 + int(nets[3]) * 256**0
     net_hex = hex(net_num)
 
     addr6 = prefix + ':' + net_hex[2:6] + ':' + net_hex[6:10] + '::' + \
@@ -274,14 +274,14 @@ def ip4to6x96(prefix, net, addr):
         prefix = prefix[:-1]
 
     net_num = int(nets[0]) * 256**3 + int(nets[1]) * 256**2 + \
-              int(nets[2]) * 256**1 + int(nets[3]) * 256**0
+        int(nets[2]) * 256**1 + int(nets[3]) * 256**0
     net_hex = hex(net_num)
 
     addr_num = int(addrs[0]) * 256**3 + int(addrs[1]) * 256**2 + \
-               int(addrs[2]) * 256**1 + int(addrs[3]) * 256**0
+        int(addrs[2]) * 256**1 + int(addrs[3]) * 256**0
     addr_hex = hex(addr_num)
 
     addr6 = prefix + net_hex[2:6] + ':' + net_hex[6:10] + ':' + \
-            addr_hex[2:6] + ':' + addr_hex[6:10]
+        addr_hex[2:6] + ':' + addr_hex[6:10]
 
     return str(ipaddress.IPv6Address(addr6))
