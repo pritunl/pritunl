@@ -112,7 +112,7 @@ class ServerInstanceCom(object):
                     self.client['remote_ip'] = env_val
                 elif env_key == 'untrusted_ip6':
                     remote_ip = env_val
-                    if '.' in remote_ip:
+                    if remote_ip.startswith('::ffff:'):
                         remote_ip = remote_ip.split(':')[-1]
                     self.client['remote_ip'] = remote_ip
                 elif env_key == 'IV_PLAT':
