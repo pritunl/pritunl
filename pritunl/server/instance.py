@@ -318,7 +318,7 @@ class ServerInstance(object):
         if self.server.mode == ALL_TRAFFIC and \
                 self.server.network_mode != BRIDGE:
             other_networks = ['0.0.0.0/0']
-            if self.server.ipv6:
+            if self.server.ipv6 and not settings.local.host.routed_subnet6:
                 other_networks.append('::/0')
 
         link_svr_networks = []
