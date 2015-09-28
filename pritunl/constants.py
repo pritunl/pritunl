@@ -428,6 +428,10 @@ EMAIL_FROM_INVALID_MSG = 'SMTP server did not accept the from address.'
 EMAIL_AUTH_INVALID = 'email_auth_invalid'
 EMAIL_AUTH_INVALID_MSG = 'SMTP authentication is invalid.'
 
+IPV6_SUBNET_ONLINE = 'ipv6_subnet_online'
+IPV6_SUBNET_ONLINE_MSG = 'IPv6 routed subnet cannot be changed with ' + \
+    'IPv6 servers online.'
+
 IPV6_SUBNET_INVALID = 'ipv6_subnet_invalid'
 IPV6_SUBNET_INVALID_MSG = 'IPv6 routed subnet is invalid.'
 
