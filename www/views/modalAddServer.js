@@ -24,6 +24,7 @@ define([
         'protocol': 'udp',
         'dh_param_bits': 1536,
         'mode': 'all_traffic',
+        'ipv6_firewall': true,
         'local_networks': [],
         'dns_servers': ['8.8.8.8'],
         'cipher': 'aes256',
