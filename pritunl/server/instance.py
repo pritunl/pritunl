@@ -306,6 +306,11 @@ class ServerInstance(object):
                     'Failed to find default IPv6 network interface')
             default_interface6 = routes6['::/0']
 
+            if default_interface6 == 'lo':
+                logger.error('Failed to find default IPv6 interface', 'server',
+                    server_id=self.server.id,
+                )
+
         rules.append(['INPUT', '-i', self.interface, '-j', 'ACCEPT'])
         rules.append(['FORWARD', '-i', self.interface, '-j', 'ACCEPT'])
         if self.server.ipv6:
