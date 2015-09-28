@@ -23,6 +23,12 @@ def get_by_id(id, fields=None):
 def get_dict(id):
     return Server(id=id, fields=dict_fields).dict()
 
+def get_online_ipv6_count():
+    return Server.collection.find({
+        'status': ONLINE,
+        'ipv6': True,
+    }).count()
+
 def get_used_resources(ignore_server_id):
     response = Server.collection.aggregate([
         {'$match': {
