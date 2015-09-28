@@ -428,6 +428,13 @@ EMAIL_FROM_INVALID_MSG = 'SMTP server did not accept the from address.'
 EMAIL_AUTH_INVALID = 'email_auth_invalid'
 EMAIL_AUTH_INVALID_MSG = 'SMTP authentication is invalid.'
 
+IPV6_SUBNET_INVALID = 'ipv6_subnet_invalid'
+IPV6_SUBNET_INVALID_MSG = 'IPv6 routed subnet is invalid.'
+
+IPV6_SUBNET_SIZE_INVALID = 'ipv6_subnet_size_invalid'
+IPV6_SUBNET_SIZE_INVALID_MSG = 'IPv6 routed subnet size is invalid, must ' + \
+    'be atleast /64.'
+
 SUBSCRIPTION_SERVER_ERROR = 'subscription_server_error'
 SUBSCRIPTION_SERVER_ERROR_MSG = 'Unable to connect to ' + \
     'subscription server, please try again later.'
