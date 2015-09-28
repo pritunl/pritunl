@@ -121,8 +121,7 @@ class Clients(object):
                 'Unable to assign ip address')
             return
 
-        virt_address6 = utils.ip4to6x64(
-            settings.vpn.ipv6_prefix, self.server.network, virt_address)
+        virt_address6 = self.server.ip4to6(virt_address)
 
         self.clients.insert({
             'id': client_id,
