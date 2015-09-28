@@ -35,6 +35,7 @@ dict_fields = [
     'instances',
     'organizations',
     'ipv6',
+    'ipv6_firewall',
     'network',
     'network_mode',
     'network_start',
@@ -72,6 +73,7 @@ class Server(mongo.MongoObject):
         'dh_param_bits',
         'mode',
         'ipv6',
+        'ipv6_firewall',
         'network_mode',
         'network_start',
         'network_end',
@@ -105,6 +107,7 @@ class Server(mongo.MongoObject):
     }
     fields_default = {
         'ipv6': False,
+        'ipv6_firewall': True,
         'network_mode': TUNNEL,
         'multi_device': False,
         'dns_servers': [],
@@ -129,10 +132,11 @@ class Server(mongo.MongoObject):
     cache_prefix = 'server'
 
     def __init__(self, name=None, network=None, network_mode=None,
-            network_start=None, network_end=None, ipv6=None, bind_address=None,
-            port=None, protocol=None, dh_param_bits=None, mode=None,
-            multi_device=None, local_networks=None, dns_servers=None,
-            search_domain=None, otp_auth=None, cipher=None, jumbo_frames=None,
+            network_start=None, network_end=None, ipv6=None,
+            ipv6_firewall=None,bind_address=None, port=None, protocol=None,
+            dh_param_bits=None, mode=None, multi_device=None,
+            local_networks=None, dns_servers=None, search_domain=None,
+            otp_auth=None, cipher=None, jumbo_frames=None,
             lzo_compression=None, inter_client=None, ping_interval=None,
             ping_timeout=None, max_clients=None, replica_count=None,
             debug=None, **kwargs):
@@ -158,6 +162,8 @@ class Server(mongo.MongoObject):
             self.network_end = network_end
         if ipv6 is not None:
             self.ipv6 = ipv6
+        if ipv6_firewall is not None:
+            self.ipv6_firewall = ipv6_firewall
         if bind_address is not None:
             self.bind_address = bind_address
         if port is not None:
@@ -233,6 +239,7 @@ class Server(mongo.MongoObject):
             'dh_param_bits': self.dh_param_bits,
             'mode': self.mode,
             'ipv6': True if self.ipv6 else False,
+            'ipv6_firewall': True if self.ipv6_firewall else False,
             'network_mode': self.network_mode,
             'network_start': self.network_start,
             'network_end': self.network_end,
