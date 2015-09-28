@@ -239,6 +239,9 @@ def net4to6x96(prefix, net):
     net = net.split('/')[0]
     nets = net.split('.')
 
+    if prefix.count(':') == 5:
+        prefix = prefix[:-1]
+
     net_num = int(nets[0]) * 256**3 + int(nets[1]) * 256**2 + \
               int(nets[2]) * 256**1 + int(nets[3]) * 256**0
     net_hex = hex(net_num)
@@ -266,6 +269,9 @@ def ip4to6x96(prefix, net, addr):
     addrs = addr.split('/')[0].split('.')
     net = net.split('/')[0]
     nets = net.split('.')
+
+    if prefix.count(':') == 5:
+        prefix = prefix[:-1]
 
     net_num = int(nets[0]) * 256**3 + int(nets[1]) * 256**2 + \
               int(nets[2]) * 256**1 + int(nets[3]) * 256**0
