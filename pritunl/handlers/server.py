@@ -162,6 +162,12 @@ def server_put_post(server_id=None):
         ipv6_def = True
         ipv6 = True if flask.request.json['ipv6'] else False
 
+    ipv6_firewall = None
+    ipv6_firewall_def = False
+    if 'ipv6_firewall' in flask.request.json:
+        ipv6_firewall_def = True
+        ipv6_firewall = True if flask.request.json['ipv6_firewall'] else False
+
     bind_address = None
     bind_address_def = False
     if 'bind_address' in flask.request.json:
@@ -419,6 +425,7 @@ def server_put_post(server_id=None):
             network_start=network_start,
             network_end=network_end,
             ipv6=ipv6,
+            ipv6_firewall=ipv6_firewall,
             bind_address=bind_address,
             port=port,
             protocol=protocol,
@@ -466,6 +473,8 @@ def server_put_post(server_id=None):
             svr.network_end = network_end
         if ipv6_def:
             svr.ipv6 = ipv6
+        if ipv6_firewall_def:
+            svr.ipv6_firewall = ipv6_firewall
         if network_mode_def:
             if network_mode == BRIDGE and (
                     not network_start or not network_end):
