@@ -76,8 +76,11 @@ class Clients(object):
                 client_conf += 'push "route %s %s"\n' % utils.parse_network(
                     link_svr.network)
                 for local_network in link_svr.local_networks:
-                    client_conf += 'push "route %s %s"\n' % (
-                        utils.parse_network(local_network))
+                    if ':' in local_network:
+                        client_conf += 'push "route-ipv6 %s"\n' % local_network
+                    else:
+                        client_conf += 'push "route %s %s"\n' % (
+                            utils.parse_network(local_network))
 
         return client_conf
 
