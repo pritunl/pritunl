@@ -14,6 +14,7 @@ define([
       'users_online': null,
       'public_address': null,
       'public_address6': null,
+      'routed_subnet6': null,
       'local_address': null,
       'link_address': null
     },
