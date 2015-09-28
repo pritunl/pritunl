@@ -4,6 +4,7 @@ from pritunl import utils
 from pritunl import app
 from pritunl import auth
 from pritunl import event
+from pritunl import ipaddress
 
 import flask
 
@@ -26,6 +27,7 @@ def settings_get():
         'sso_org': settings.app.sso_org,
         'public_address': settings.local.host.public_addr,
         'public_address6': settings.local.host.public_addr6,
+        'routed_subnet6': settings.local.host.routed_subnet6,
         'server_cert': settings.app.server_cert,
         'server_key': settings.app.server_key,
     })
@@ -128,6 +130,30 @@ def settings_put():
         public_address6 = flask.request.json['public_address6']
         settings.local.host.public_address6 = public_address6
         settings.local.host.commit('public_address6')
+
+    if 'routed_subnet6' in flask.request.json:
+        routed_subnet6 = flask.request.json['routed_subnet6']
+        if routed_subnet6:
+            try:
+                routed_subnet6 = ipaddress.IPv6Network(
+                    flask.request.json['routed_subnet6'])
+            except ipaddress.AddressValueError:
+                return utils.jsonify({
+                    'error': IPV6_SUBNET_INVALID,
+                    'error_msg': IPV6_SUBNET_INVALID_MSG,
+                }, 400)
+
+            if routed_subnet6.prefixlen > 64:
+                return utils.jsonify({
+                    'error': IPV6_SUBNET_SIZE_INVALID,
+                    'error_msg': IPV6_SUBNET_SIZE_INVALID_MSG,
+                }, 400)
+
+            settings.local.host.routed_subnet6 = str(routed_subnet6)
+        else:
+            settings.local.host.routed_subnet6 = None
+
+        settings.local.host.commit('routed_subnet6')
 
     if 'server_cert' in flask.request.json:
         settings_commit = True
