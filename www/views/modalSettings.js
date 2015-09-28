@@ -157,6 +157,7 @@ define([
     onOk: function() {
       var username = this.$('.username input').val();
       var password = this.$('.pass input').val();
+      var verifyPassword = this.$('.verify-pass input').val();
       var publicAddress = this.$('.public-address input').val();
       var publicAddress6 = this.$('.public-address6 input').val();
       var routedSubnet6 = this.$('.routed-subnet6 input').val();
@@ -175,6 +176,12 @@ define([
       var ssoHost = null;
       var ssoAdmin = null;
       var ssoOrg = null;
+
+      if (this.$('.verify-pass input').is(':visible') &&
+          password && password !== verifyPassword) {
+        this.setAlert('danger', 'Passwords do not match.', '.verify-pass');
+        return;
+      }
 
       if (sso) {
         if (sso === 'duo' || sso === 'google_duo') {
