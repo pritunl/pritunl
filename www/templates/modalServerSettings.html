@@ -127,6 +127,12 @@
         <span class="selector-inner glyphicon glyphicon-ok"></span>
       </div>
     </div>
+    <div class="ipv6-firewall-toggle toggle-form form-group" <%= ipv6 ? '' : 'style="display: none;"' %>>
+      <label>Routed IPv6 Firewall</label>
+      <div class="selector <%= ipv6_firewall ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Enabled firewall when routed IPv6 is used">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
     <div class="network-end form-group" <%= network_mode === 'bridge' ? '' : 'style="display: none;"' %>>
       <label>Network End</label>
       <input type="text" class="form-control" placeholder="Enter end address" data-toggle="tooltip" title="Ending network address for the bridged VPN client IP addresses" value="<%- network_end %>" autocapitalize="off">

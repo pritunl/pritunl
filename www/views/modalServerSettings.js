@@ -24,7 +24,8 @@ define([
         'click .inter-client-toggle': 'onInterClientSelect',
         'click .debug-toggle': 'onDebugSelect',
         'click .ipv6-toggle': 'onIpv6Select',
-        'click .multi-device-toggle': 'onMultiDeviceSelect'
+        'click .multi-device-toggle': 'onMultiDeviceSelect',
+        'click .ipv6-firewall-toggle': 'onIpv6FirewallSelect'
       }, ModalServerSettingsView.__super__.events);
     },
     initialize: function(options) {
@@ -178,6 +179,8 @@ define([
             dnsServers.indexOf('2001:4860:4860::8888') === -1) {
           dnsServers.unshift('2001:4860:4860::8888');
         }
+
+        this.$('.ipv6-firewall-toggle').show();
       }
       else {
         this.$('.ipv6-toggle .selector').removeClass('selected');
@@ -191,6 +194,8 @@ define([
         if (i !== -1) {
           dnsServers.splice(i, 1);
         }
+
+        this.$('.ipv6-firewall-toggle').hide();
       }
 
       this.$('.dns-servers input').val(dnsServers.join(', '));
@@ -213,6 +218,22 @@ define([
     },
     onMultiDeviceSelect: function() {
       this.setMultiDeviceSelect(!this.getMultiDeviceSelect());
+    },
+    getIpv6FirewallSelect: function() {
+      return this.$('.ipv6-firewall-toggle .selector').hasClass('selected');
+    },
+    setIpv6FirewallSelect: function(state) {
+      if (state) {
+        this.$('.ipv6-firewall-toggle .selector').addClass('selected');
+        this.$('.ipv6-firewall-toggle .selector-inner').show();
+      }
+      else {
+        this.$('.ipv6-firewall-toggle .selector').removeClass('selected');
+        this.$('.ipv6-firewall-toggle .selector-inner').hide();
+      }
+    },
+    onIpv6FirewallSelect: function() {
+      this.setIpv6FirewallSelect(!this.getIpv6FirewallSelect());
     },
     onInputChange: function(evt) {
       if ($(evt.target).parent().hasClass('network')) {
@@ -275,6 +296,7 @@ define([
       var dhParamBits = parseInt(this.$('.dh-param-bits select').val(), 10);
       var mode = this.$('.server-mode select').val();
       var ipv6 = this.getIpv6Select();
+      var ipv6Firewall = this.getIpv6FirewallSelect();
       var multiDevice = this.getMultiDeviceSelect();
       var dnsServers = this.getDnsServers();
       var searchDomain = this.$('.search-domain input').val();
@@ -340,6 +362,7 @@ define([
         'network_start': networkStart,
         'network_end': networkEnd,
         'ipv6': ipv6,
+        'ipv6_firewall': ipv6Firewall,
         'multi_device': multiDevice,
         'local_networks': localNetworks,
         'dns_servers': dnsServers,
