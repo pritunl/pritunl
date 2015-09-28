@@ -6,6 +6,7 @@ from pritunl import settings
 
 import logging
 import collections
+import os
 
 log_queue = collections.deque()
 
@@ -16,6 +17,10 @@ class LogHandler(logging.Handler):
 
     @cached_property
     def file_handler(self):
+        path = os.path.dirname(settings.conf.log_path)
+        if not os.path.exists(path):
+            os.makedirs(path)
+
         log_handler = logging.handlers.RotatingFileHandler(
             settings.conf.log_path, backupCount=1, maxBytes=1000000)
         log_handler.setLevel(logging.DEBUG)
