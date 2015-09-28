@@ -317,28 +317,28 @@ class ServerInstance(object):
             if self.server.ipv6_firewall and \
                     settings.local.host.routed_subnet6:
                 rules6.append(
-                    ['INPUT', '-i', self.interface, '-j', 'DROP'])
+                    ['INPUT', '-d', self.server.network6, '-j', 'DROP'])
                 rules6.append(
-                    ['INPUT', '-i', self.interface, '-m', 'conntrack',
+                    ['INPUT', '-d', self.server.network6, '-m', 'conntrack',
                      '--ctstate','RELATED,ESTABLISHED', '-j', 'ACCEPT'])
                 rules6.append(
-                    ['INPUT', '-i', self.interface, '-p', 'icmpv6',
+                    ['INPUT', '-d', self.server.network6, '-p', 'icmpv6',
                      '--icmpv6-type', '128', '-m', 'conntrack',
                      '--ctstate', 'NEW', '-j', 'ACCEPT'])
                 rules6.append(
-                    ['FORWARD', '-i', self.interface, '-j', 'DROP'])
+                    ['FORWARD', '-d', self.server.network6, '-j', 'DROP'])
                 rules6.append(
-                    ['FORWARD', '-i', self.interface, '-m', 'conntrack',
+                    ['FORWARD', '-d', self.server.network6, '-m', 'conntrack',
                      '--ctstate', 'RELATED,ESTABLISHED', '-j', 'ACCEPT'])
                 rules6.append(
-                    ['FORWARD', '-i', self.interface, '-p', 'icmpv6',
+                    ['FORWARD', '-d', self.server.network6, '-p', 'icmpv6',
                      '--icmpv6-type', '128', '-m', 'conntrack',
                      '--ctstate', 'NEW', '-j', 'ACCEPT'])
             else:
                 rules6.append(
-                    ['INPUT', '-i', self.interface, '-j', 'ACCEPT'])
+                    ['INPUT', '-d', self.server.network6, '-j', 'ACCEPT'])
                 rules6.append(
-                    ['FORWARD', '-i', self.interface, '-j', 'ACCEPT'])
+                    ['FORWARD', '-d', self.server.network6, '-j', 'ACCEPT'])
 
         interfaces = set()
         interfaces6 = set()
