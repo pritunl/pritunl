@@ -6,6 +6,7 @@ from pritunl import logger
 from pritunl import event
 from pritunl import auth
 from pritunl import messenger
+from pritunl import ipaddress
 
 import flask
 
@@ -48,6 +49,28 @@ def host_put(hst=None):
     if 'public_address6' in flask.request.json:
         hst.public_address6 = utils.filter_str(
             flask.request.json['public_address6'])
+
+    if 'routed_subnet6' in flask.request.json:
+        routed_subnet6 = flask.request.json['routed_subnet6']
+        if routed_subnet6:
+            try:
+                routed_subnet6 = ipaddress.IPv6Network(
+                    flask.request.json['routed_subnet6'])
+            except ipaddress.AddressValueError:
+                return utils.jsonify({
+                    'error': IPV6_SUBNET_INVALID,
+                    'error_msg': IPV6_SUBNET_INVALID_MSG,
+                }, 400)
+
+            if routed_subnet6.prefixlen > 64:
+                return utils.jsonify({
+                    'error': IPV6_SUBNET_SIZE_INVALID,
+                    'error_msg': IPV6_SUBNET_SIZE_INVALID_MSG,
+                }, 400)
+
+            hst.routed_subnet6 = str(routed_subnet6)
+        else:
+            hst.routed_subnet6 = None
 
     if 'link_address' in flask.request.json:
         hst.link_address = utils.filter_str(
