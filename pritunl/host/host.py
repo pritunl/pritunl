@@ -20,6 +20,7 @@ class Host(mongo.MongoObject):
         'public_address6',
         'auto_public_address',
         'auto_public_address6',
+        'routed_subnet6',
         'link_address',
         'local_address',
     }
@@ -81,6 +82,7 @@ class Host(mongo.MongoObject):
             'users_online': self.users_online,
             'public_address': self.public_addr,
             'public_address6': self.public_addr6,
+            'routed_subnet6': self.routed_subnet6,
             'link_address': self.link_address,
             'local_address': self.local_address,
         }
