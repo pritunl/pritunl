@@ -266,6 +266,19 @@ class Server(mongo.MongoObject):
             (self.network_end or '')
         )
 
+    @property
+    def network6(self):
+        routed_subnet6 = settings.local.host.routed_subnet6
+        if routed_subnet6:
+            return utils.net4to6x96(routed_subnet6, self.network)
+        return utils.net4to6x64(settings.vpn.ipv6_prefix, self.network)
+
+    def ip4to6(self, addr):
+        routed_subnet6 = settings.local.host.routed_subnet6
+        if routed_subnet6:
+            return utils.ip4to6x96(routed_subnet6, self.network, addr)
+        return utils.ip4to6x64(settings.vpn.ipv6_prefix, self.network, addr)
+
     @cached_property
     def users_online(self):
         return len(self.clients_collection.distinct("user_id", {
