@@ -314,8 +314,31 @@ class ServerInstance(object):
         rules.append(['INPUT', '-i', self.interface, '-j', 'ACCEPT'])
         rules.append(['FORWARD', '-i', self.interface, '-j', 'ACCEPT'])
         if self.server.ipv6:
-            rules6.append(['INPUT', '-i', self.interface, '-j', 'ACCEPT'])
-            rules6.append(['FORWARD', '-i', self.interface, '-j', 'ACCEPT'])
+            if self.server.ipv6_firewall and \
+                    settings.local.host.routed_subnet6:
+                rules6.append(
+                    ['INPUT', '-i', self.interface, '-j', 'DROP'])
+                rules6.append(
+                    ['INPUT', '-i', self.interface, '-m', 'conntrack',
+                     '--ctstate','RELATED,ESTABLISHED', '-j', 'ACCEPT'])
+                rules6.append(
+                    ['INPUT', '-i', self.interface, '-p', 'icmpv6',
+                     '--icmpv6-type', '128', '-m', 'conntrack',
+                     '--ctstate', 'NEW', '-j', 'ACCEPT'])
+                rules6.append(
+                    ['FORWARD', '-i', self.interface, '-j', 'DROP'])
+                rules6.append(
+                    ['FORWARD', '-i', self.interface, '-m', 'conntrack',
+                     '--ctstate', 'RELATED,ESTABLISHED', '-j', 'ACCEPT'])
+                rules6.append(
+                    ['FORWARD', '-i', self.interface, '-p', 'icmpv6',
+                     '--icmpv6-type', '128', '-m', 'conntrack',
+                     '--ctstate', 'NEW', '-j', 'ACCEPT'])
+            else:
+                rules6.append(
+                    ['INPUT', '-i', self.interface, '-j', 'ACCEPT'])
+                rules6.append(
+                    ['FORWARD', '-i', self.interface, '-j', 'ACCEPT'])
 
         interfaces = set()
         interfaces6 = set()
@@ -397,6 +420,11 @@ class ServerInstance(object):
             ])
 
         for interface in interfaces6:
+            if self.server.ipv6 and self.server.ipv6_firewall and \
+                    settings.local.host.routed_subnet6 and \
+                    interface == default_interface6:
+                continue
+
             rules6.append([
                 'FORWARD',
                 '-i', interface,
