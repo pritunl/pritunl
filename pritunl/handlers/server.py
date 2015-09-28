@@ -12,7 +12,6 @@ from pritunl import auth
 from pritunl import ipaddress
 
 import flask
-import re
 import random
 
 def _network_invalid():
