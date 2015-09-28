@@ -7,6 +7,7 @@ from pritunl import event
 from pritunl import auth
 from pritunl import messenger
 from pritunl import ipaddress
+from pritunl import server
 
 import flask
 
@@ -68,9 +69,17 @@ def host_put(hst=None):
                     'error_msg': IPV6_SUBNET_SIZE_INVALID_MSG,
                 }, 400)
 
-            hst.routed_subnet6 = str(routed_subnet6)
+            routed_subnet6 = str(routed_subnet6)
         else:
-            hst.routed_subnet6 = None
+            routed_subnet6 = None
+
+        if hst.routed_subnet6 != routed_subnet6:
+            if server.get_online_ipv6_count():
+                return utils.jsonify({
+                    'error': IPV6_SUBNET_ONLINE,
+                    'error_msg': IPV6_SUBNET_ONLINE_MSG,
+                }, 400)
+            hst.routed_subnet6 = routed_subnet6
 
     if 'link_address' in flask.request.json:
         hst.link_address = utils.filter_str(
