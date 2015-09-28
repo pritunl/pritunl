@@ -5,6 +5,7 @@ from pritunl import app
 from pritunl import auth
 from pritunl import event
 from pritunl import ipaddress
+from pritunl import server
 
 import flask
 
@@ -149,11 +150,18 @@ def settings_put():
                     'error_msg': IPV6_SUBNET_SIZE_INVALID_MSG,
                 }, 400)
 
-            settings.local.host.routed_subnet6 = str(routed_subnet6)
+            routed_subnet6 = str(routed_subnet6)
         else:
-            settings.local.host.routed_subnet6 = None
+            routed_subnet6 = None
 
-        settings.local.host.commit('routed_subnet6')
+        if settings.local.host.routed_subnet6 != routed_subnet6:
+            if server.get_online_ipv6_count():
+                return utils.jsonify({
+                    'error': IPV6_SUBNET_ONLINE,
+                    'error_msg': IPV6_SUBNET_ONLINE_MSG,
+                }, 400)
+            settings.local.host.routed_subnet6 = routed_subnet6
+            settings.local.host.commit('routed_subnet6')
 
     if 'server_cert' in flask.request.json:
         settings_commit = True
