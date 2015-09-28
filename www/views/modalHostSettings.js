@@ -19,6 +19,7 @@ define([
       var name = this.$('.name input').val() || null;
       var publicAddress = this.$('.public-address input').val() || null;
       var publicAddress6 = this.$('.public-address6 input').val() || null;
+      var routedSubnet6 = this.$('.routed-subnet6 input').val() || null;
       var linkAddress = this.$('.link-address input').val() || null;
 
       this.setLoading('Saving host...');
@@ -26,15 +27,21 @@ define([
         name: name,
         public_address: publicAddress,
         public_address6: publicAddress6,
+        routed_subnet6: routedSubnet6,
         link_address: linkAddress
       }, {
         success: function() {
           this.close(true);
         }.bind(this),
-        error: function() {
+        error: function(model, response) {
           this.clearLoading();
-          this.setAlert('danger',
-            'Failed to modify host, server error occurred.');
+          if (response.responseJSON) {
+            this.setAlert('danger', response.responseJSON.error_msg);
+          }
+          else {
+            this.setAlert('danger',
+              'Failed to modify host, server error occurred.');
+          }
         }.bind(this)
       });
     }
