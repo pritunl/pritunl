@@ -318,10 +318,6 @@ class ServerInstance(object):
                     settings.local.host.routed_subnet6:
                 rules6.append(
                     ['INPUT', '-d', self.server.network6, '-j', 'DROP'])
-                if self.server.inter_client:
-                    rules6.append(
-                        ['INPUT', '-d', self.server.network6,
-                        '-s', self.server.network6, '-j', 'ACCEPT'])
                 rules6.append(
                     ['INPUT', '-d', self.server.network6, '-m', 'conntrack',
                      '--ctstate','RELATED,ESTABLISHED', '-j', 'ACCEPT'])
@@ -331,10 +327,6 @@ class ServerInstance(object):
                      '--ctstate', 'NEW', '-j', 'ACCEPT'])
                 rules6.append(
                     ['FORWARD', '-d', self.server.network6, '-j', 'DROP'])
-                if self.server.inter_client:
-                    rules6.append(
-                        ['FORWARD', '-d', self.server.network6,
-                        '-s', self.server.network6, '-j', 'ACCEPT'])
                 rules6.append(
                     ['FORWARD', '-d', self.server.network6, '-m', 'conntrack',
                      '--ctstate', 'RELATED,ESTABLISHED', '-j', 'ACCEPT'])
