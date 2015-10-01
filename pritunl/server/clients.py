@@ -311,6 +311,7 @@ class Clients(object):
                 'network': self.server.network,
                 'real_address': client['real_address'],
                 'virt_address': client['virt_address'],
+                'virt_address6': client['virt_address6'],
                 'connected_since': int(timestamp.strftime('%s')),
             })
         except:
