@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix display issue with IPv6 address
+
 Version 1.6.747.62 2015-09-29
 -----------------------------
 
