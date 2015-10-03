@@ -8,4 +8,5 @@ class SettingsUser(SettingsGroupMongo):
         'cert_message_digest': 'sha256',
         'otp_cache_ttl': 43200,
         'page_count': 10,
+        'ipv6_remotes': False,
     }
