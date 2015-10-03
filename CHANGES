@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Disable IPv6 remotes in user conf
+
 Version 1.6.749.17 2015-10-01
 -----------------------------
 
