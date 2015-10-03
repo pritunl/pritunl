@@ -20,6 +20,7 @@ define([
       'dh_param_bits': null,
       'mode': null,
       'ipv6': null,
+      'ipv6_firewall': null,
       'network_mode': null,
       'network_start': null,
       'network_end': null,
