@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add set-mongodb cli command
+
 Version 1.6.751.72 2015-10-03
 -----------------------------
 
