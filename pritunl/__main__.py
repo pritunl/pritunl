@@ -15,6 +15,7 @@ Commands:
   reset-password        Reset administrator password
   reset-ssl-cert        Reset the server ssl certificate
   reconfigure           Reconfigure database connection
+  set-mongodb           Change the mongodb uri
   logs                  View server logs"""
 
 def main(default_conf=None):
