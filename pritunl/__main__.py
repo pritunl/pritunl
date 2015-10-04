@@ -79,6 +79,23 @@ def main(default_conf=None):
         print 'Database configuration successfully reset'
 
         sys.exit(0)
+    elif cmd == 'set-mongodb':
+        from pritunl import setup
+        from pritunl import settings
+        setup.setup_loc()
+
+        if len(args) > 1:
+            mongodb_uri = args[1]
+        else:
+            mongodb_uri = None
+
+        settings.conf.mongodb_uri = mongodb_uri
+        settings.conf.commit()
+
+        time.sleep(.5)
+        print 'Database configuration successfully set'
+
+        sys.exit(0)
     elif cmd == 'reset-ssl-cert':
         from pritunl import setup
         from pritunl import settings
