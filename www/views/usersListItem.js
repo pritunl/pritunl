@@ -70,10 +70,10 @@ define([
     },
     _getDownloadTooltip: function() {
       if (this.model.get('has_key')) {
-        return 'Click to download key';
+        return 'Click to download profile';
       }
       else {
-        return 'Organization must be attached to server to download key';
+        return 'Organization must be attached to server to download profile';
       }
     },
     _getKeyLink: function() {
@@ -90,10 +90,10 @@ define([
     },
     _getKeyLinkTooltip: function() {
       if (this.model.get('has_key')) {
-        return 'Get key links';
+        return 'Get temporary profile links';
       }
       else {
-        return 'Organization must be attached to server to get key links';
+        return 'Organization must be attached to server to get temporary profile links';
       }
     },
     render: function() {

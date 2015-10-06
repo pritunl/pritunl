@@ -9,7 +9,7 @@ define([
   var ModalKeyLinkView = ModalView.extend({
     className: 'key-link-modal',
     template: _.template(modalKeyLinkTemplate),
-    title: 'Temporary Key Link',
+    title: 'Temporary Profile Link',
     cancelText: null,
     okText: 'Close',
     events: function() {
@@ -21,7 +21,7 @@ define([
       return this.template();
     },
     postRender: function() {
-      this.setLoading('Generating url...', true);
+      this.setLoading('Generating temporary url...', true);
       this.model.fetch({
         success: function() {
           this.clearLoading();
@@ -49,7 +49,7 @@ define([
         }.bind(this),
         error: function() {
           this.clearLoading();
-          this.setAlert('danger', 'Failed to generate key url.');
+          this.setAlert('danger', 'Failed to generate temporary profile url.');
         }.bind(this)
       });
     },
