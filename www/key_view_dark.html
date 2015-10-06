@@ -274,8 +274,8 @@
         <label id="otp-label">Two-step authentication key</label>
         <input id="key" type="text" readonly value="<%= user_otp_key %>">
         <div id="qrcode"></div>
-        <a class="btn btn-success" title="Download Keys" href="<%= user_key_tar_url %>">Download Profiles</a><br>
-        <a class="btn btn-success" title="Download Keys (zip)" href="<%= user_key_zip_url %>">Download Profiles (zip)</a><br>
+        <a class="btn btn-success" title="Download Profiles" href="<%= user_key_tar_url %>">Download Profiles</a><br>
+        <a class="btn btn-success" title="Download Profiles (zip)" href="<%= user_key_zip_url %>">Download Profiles (zip)</a><br>
         <%= conf_links %>
         <button class="btn btn-danger" onclick="deleteKey()">Delete Temporary Profile Link</button><br>
       </div>
