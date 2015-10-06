@@ -161,13 +161,13 @@ def user_linked_key_page_get(short_code):
 
     if settings.local.sub_active and settings.local.sub_plan == 'enterprise':
         conf_links += '<a class="btn btn-success" ' + \
-            'title="Download Chromebook Keys" ' + \
-            'href="/key_onc/%s.zip">Download Chromebook Keys</a><br>\n' % (
+            'title="Download Chromebook Profiles" ' + \
+            'href="/key_onc/%s.zip">Download Chromebook Profiles</a><br>\n' % (
                 doc['key_id'])
 
     for server in org.iter_servers():
-        conf_links += '<a class="btn btn-sm" title="Download Key" ' + \
-            'href="/key/%s/%s.key">Download Key (%s)</a><br>\n' % (
+        conf_links += '<a class="btn btn-sm" title="Download Profile" ' + \
+            'href="/key/%s/%s.key">Download Profile (%s)</a><br>\n' % (
                 doc['key_id'], server.id, server.name)
     key_page = key_page.replace('<%= conf_links %>', conf_links)
 
