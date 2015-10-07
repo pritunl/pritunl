@@ -93,7 +93,8 @@ define([
         return 'Get temporary profile links';
       }
       else {
-        return 'Organization must be attached to server to get temporary profile links';
+        return 'Organization must be attached to server to get ' +
+          'temporary profile links';
       }
     },
     render: function() {
