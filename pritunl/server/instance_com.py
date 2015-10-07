@@ -251,6 +251,7 @@ class ServerInstanceCom(object):
                 logger.exception('Error in management socket thread', 'server',
                     server_id=self.server.id,
                     instance_id=self.instance.id,
+                    socket_path=self.socket_path,
                 )
             self.instance.stop_process()
         finally:
