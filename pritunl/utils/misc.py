@@ -20,6 +20,8 @@ import hashlib
 import base64
 import re
 import Queue
+import urllib2
+import json
 
 if hasattr(sys, 'frozen'):
     _srcfile = 'logging%s__init__%s' % (os.sep, __file__[-4:])
@@ -373,3 +375,40 @@ def fnv64a(s):
         hval ^= ord(x)
         hval = (hval * prime64) % uint64_max
     return hval
+
+def sync_public_ip(attempts=1, timeout=5, update=False):
+    from pritunl import logger
+
+    for i in xrange(attempts):
+        if i:
+            time.sleep(3)
+            logger.info('Retrying get public ip address', 'utils')
+        logger.debug('Getting public ip address', 'utils')
+        try:
+            request = urllib2.Request(
+                settings.app.public_ip_server)
+            response = urllib2.urlopen(request, timeout=timeout)
+            settings.local.public_ip = json.load(response)['ip']
+            break
+        except:
+            pass
+
+    logger.debug('Getting public ipv6 address', 'utils')
+    try:
+        request = urllib2.Request(
+            settings.app.public_ip6_server)
+        response = urllib2.urlopen(request, timeout=timeout)
+        settings.local.public_ip6 = json.load(response)['ip']
+    except:
+        pass
+
+    if not settings.local.public_ip:
+        logger.warning('Failed to get public ip address', 'utils')
+
+    if update:
+        settings.local.host.collection.update({
+            '_id': settings.local.host.id,
+        }, {'$set': {
+            'auto_public_address': settings.local.public_ip,
+            'auto_public_address6': settings.local.public_ip6,
+        }})
