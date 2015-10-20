@@ -273,31 +273,6 @@ class Clients(object):
                 thread = threading.Thread(target=duo_auth)
                 thread.daemon = True
                 thread.start()
-            elif settings.app.sso and user.auth_type == GOOGLE_AUTH and \
-                    GOOGLE_AUTH in settings.app.sso:
-                allow = False
-                try:
-                    allow, _ = sso.verify_google(user.name)
-                except:
-                    logger.exception('Google server error', 'server',
-                        client_id=client_id,
-                        user_id=user.id,
-                        username=user.name,
-                        server_id=self.server.id,
-                    )
-                    self.instance_com.push_output(
-                        'ERROR Google server error client_id=%s' % client_id)
-
-                if allow:
-                    self.allow_client(client, org, user)
-                else:
-                    logger.LogEntry(message='User failed google ' +
-                        'authentication "%s".' % user.name)
-                    self.instance_com.send_client_deny(
-                        client_id,
-                        key_id,
-                        'User failed google authentication',
-                    )
             else:
                 self.allow_client(client, org, user)
         except:
