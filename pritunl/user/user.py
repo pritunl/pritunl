@@ -424,6 +424,9 @@ class User(mongo.MongoObject):
         conf_hash = '{%s}' % conf_hash.hexdigest()
 
         hosts = server.get_hosts()
+        if not hosts:
+            return None, None
+
         ca_certs = server.ca_certificate_list
 
         tls_auth = ''
@@ -576,6 +579,8 @@ class User(mongo.MongoObject):
                     server_conf_path = os.path.join(temp_path,
                         '%s_%s.onc' % (self.id, server.id))
                     conf_name, client_conf = self._generate_onc(server)
+                    if not client_conf:
+                        continue
 
                     with open(server_conf_path, 'w') as ovpn_conf:
                         ovpn_conf.write(client_conf)
