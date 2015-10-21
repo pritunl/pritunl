@@ -363,6 +363,9 @@ PROTOCOL_INVALID_MSG = 'Protocol is not valid, must be "udp" or "tcp".'
 CIPHER_INVALID = 'cipher_invalid'
 CIPHER_INVALID_MSG = 'Encryption cipher is invalid.'
 
+NETWORK_LINK_INVALID = 'network_link_invalid'
+NETWORK_LINK_INVALID_MSG = 'Network link is not a valid network address.'
+
 NETWORK_IN_USE = 'network_in_use'
 NETWORK_IN_USE_MSG = 'Network address is already in use.'
 
