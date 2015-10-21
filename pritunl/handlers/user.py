@@ -9,9 +9,16 @@ from pritunl import organization
 from pritunl import app
 from pritunl import auth
 from pritunl import mongo
+from pritunl import ipaddress
 
 import flask
 import time
+
+def _network_link_invalid():
+    return utils.jsonify({
+        'error': NETWORK_LINK_INVALID,
+        'error_msg': NETWORK_LINK_INVALID_MSG,
+    }, 400)
 
 @app.app.route('/user/<org_id>', methods=['GET'])
 @app.app.route('/user/<org_id>/<user_id>', methods=['GET'])
@@ -189,6 +196,13 @@ def user_put(org_id, user_id):
 
     if 'email' in flask.request.json:
         user.email = utils.filter_str(flask.request.json['email']) or None
+
+    if 'network_links' in flask.request.json:
+        for network_link in flask.request.json['network_links']:
+            try:
+                user.add_network_link(network_link)
+            except ipaddress.AddressValueError:
+                return _network_link_invalid()
 
     disabled = flask.request.json.get('disabled')
     if disabled is not None:
