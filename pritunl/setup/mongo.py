@@ -40,6 +40,7 @@ def setup_mongo():
         'administrators': getattr(database, prefix + 'administrators'),
         'users': getattr(database, prefix + 'users'),
         'users_key_link': getattr(database, prefix + 'users_key_link'),
+        'users_net_link': getattr(database, prefix + 'users_net_link'),
         'clients': getattr(database, prefix + 'clients'),
         'organizations': getattr(database, prefix + 'organizations'),
         'hosts': getattr(database, prefix + 'hosts'),
