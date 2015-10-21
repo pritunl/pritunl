@@ -29,6 +29,16 @@ define([
       var email = this.$('.email input').val();
       var emailReg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
 
+      var networkLink;
+      var networkLinks = [];
+      var networkLinksTemp = this.$('.network-links input').val().split(',');
+      for (var i = 0; i < networkLinksTemp.length; i++) {
+        networkLink = $.trim(networkLinksTemp[i]);
+        if (networkLink) {
+          networkLinks.push(networkLink);
+        }
+      }
+
       if (!name) {
         this.setAlert('danger', 'Name can not be empty.', '.form-group.name');
         return;
@@ -47,7 +57,8 @@ define([
       userModel.save({
         organization: org,
         name: name,
-        email: email
+        email: email,
+        network_links: networkLinks
       }, {
         success: function() {
           this.close(true);
