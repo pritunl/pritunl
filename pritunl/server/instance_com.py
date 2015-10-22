@@ -115,7 +115,7 @@ class ServerInstanceCom(object):
                     if remote_ip.startswith('::ffff:'):
                         remote_ip = remote_ip.split(':')[-1]
                     self.client['remote_ip'] = remote_ip
-                elif env_key == 'IV_PLAT':
+                elif env_key == 'IV_PLAT' and not self.client.get('platform'):
                     if 'chrome' in env_val.lower():
                         env_val = 'chrome'
                         self.client['device_id'] = uuid.uuid4().hex
@@ -125,6 +125,8 @@ class ServerInstanceCom(object):
                     self.client['device_id'] = env_val
                 elif env_key == 'UV_NAME':
                     self.client['device_name'] = env_val
+                elif env_key == 'UV_PLATFORM':
+                    self.client['platform'] = env_val
                 elif env_key == 'password':
                     self.client['otp_code'] = env_val
             else:
