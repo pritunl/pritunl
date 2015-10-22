@@ -212,6 +212,10 @@ class Server(mongo.MongoObject):
         return mongo.get_collection('users')
 
     @cached_static_property
+    def user_net_link_collection(cls):
+        return mongo.get_collection('users_net_link')
+
+    @cached_static_property
     def clients_collection(cls):
         return mongo.get_collection('clients')
 
@@ -319,6 +323,17 @@ class Server(mongo.MongoObject):
     @cached_property
     def output_link(self):
         return ServerOutputLink(self.id)
+
+    @cached_property
+    def network_links(self):
+        links = []
+
+        for doc in self.user_net_link_collection.find({
+                    'org_id': {'$in': self.organizations},
+                }):
+            links.append(doc['network'])
+
+        return links
 
     @property
     def adapter_type(self):
