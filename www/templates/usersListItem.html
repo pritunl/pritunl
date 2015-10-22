@@ -8,7 +8,8 @@
     <a class="user-name title no-select" data-toggle="tooltip" title="Click to rename this user"><%- name %><%- email ? ' (' + email + ')' : '' %></a>
     <span class="user-id title">(<%- id %>)</span>
   </div>
-  <div class="user-network-link">
+  <div class="user-network-link" data-toggle="tooltip"
+      title="User network links">
     <% for (var i in network_links) { %>
       <span class="fa fa-circle-o"></span><span
         class="title link"><%- network_links[i] %></span>
