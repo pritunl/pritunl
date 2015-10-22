@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add user network links
+
 Version 1.6.757.9 2015-10-09
 ----------------------------
 
