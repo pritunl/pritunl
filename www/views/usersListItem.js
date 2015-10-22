@@ -172,6 +172,15 @@ define([
         this.$('.get-otp-auth').addClass('no-otp-auth');
       }
 
+      var networkLinks = this.model.get('network_links');
+      if (networkLinks) {
+        for (var i = 0; i < networkLinks.length; i++) {
+          this.$('.user-network-link').append(
+            '<span class="fa fa-circle-o">').append(
+            $('<span class="title link"></span>').text(networkLinks[i]));
+        }
+      }
+
       this.serverList.update(this.model.get('servers'));
     },
     getSelect: function() {
