@@ -116,6 +116,12 @@ def setup_mongo():
     mongo.collections['users_key_link'].ensure_index('key_id', background=True)
     mongo.collections['users_key_link'].ensure_index('short_id',
         background=True, unique=True)
+    mongo.collections['users_net_link'].ensure_index('user_id',
+        background=True)
+    mongo.collections['users_net_link'].ensure_index('org_id',
+        background=True)
+    mongo.collections['users_net_link'].ensure_index('network',
+        background=True)
     mongo.collections['clients'].ensure_index('user_id', background=True)
     mongo.collections['clients'].ensure_index('domain', background=True)
     mongo.collections['clients'].ensure_index([
