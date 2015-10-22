@@ -138,7 +138,7 @@ def settings_put():
             try:
                 routed_subnet6 = ipaddress.IPv6Network(
                     flask.request.json['routed_subnet6'])
-            except ipaddress.AddressValueError:
+            except (ipaddress.AddressValueError, ValueError):
                 return utils.jsonify({
                     'error': IPV6_SUBNET_INVALID,
                     'error_msg': IPV6_SUBNET_INVALID_MSG,

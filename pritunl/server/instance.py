@@ -298,7 +298,7 @@ class ServerInstance(object):
 
                 try:
                     ipaddress.IPv6Network(line_split[0])
-                except ipaddress.AddressValueError:
+                except (ipaddress.AddressValueError, ValueError):
                     continue
 
                 if line_split[0] not in routes6:

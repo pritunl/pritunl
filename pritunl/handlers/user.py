@@ -185,7 +185,7 @@ def user_post(org_id):
             for network_link in network_links:
                 try:
                     user.add_network_link(network_link)
-                except ipaddress.AddressValueError:
+                except (ipaddress.AddressValueError, ValueError):
                     return _network_link_invalid()
 
         users.append(user.dict())
@@ -218,7 +218,7 @@ def user_put(org_id, user_id):
         for network_link in flask.request.json['network_links']:
             try:
                 user.add_network_link(network_link)
-            except ipaddress.AddressValueError:
+            except (ipaddress.AddressValueError, ValueError):
                 return _network_link_invalid()
 
     disabled = flask.request.json.get('disabled')

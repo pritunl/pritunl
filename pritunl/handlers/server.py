@@ -241,7 +241,7 @@ def server_put_post(server_id=None):
         for local_network in local_networks:
             try:
                 ipaddress.IPNetwork(local_network)
-            except ipaddress.AddressValueError:
+            except (ipaddress.AddressValueError, ValueError):
                 return _local_network_invalid()
 
     dns_servers = None
@@ -253,7 +253,7 @@ def server_put_post(server_id=None):
         for dns_server in dns_servers:
             try:
                 ipaddress.IPAddress(dns_server)
-            except ipaddress.AddressValueError:
+            except (ipaddress.AddressValueError, ValueError):
                 return _dns_server_invalid()
 
     search_domain = None
