@@ -70,11 +70,26 @@ class Clients(object):
 
             client_conf += 'push "ip-win32 dynamic 0 3600"\n'
 
+            for network_link in user.get_network_links():
+                if ':' in network_link:
+                    client_conf += 'iroute-ipv6 %s\n' % network_link
+                else:
+                    client_conf += 'iroute %s %s\n' % utils.parse_network(
+                        network_link)
+
+            for network_link in self.server.network_links:
+                if ':' in network_link:
+                    client_conf += 'push "route-ipv6 %s"\n' % network_link
+                else:
+                    client_conf += 'push "route %s %s"\n' % (
+                        utils.parse_network(network_link))
+
             for link_svr in self.server.iter_links(fields=(
                     '_id', 'network', 'local_networks', 'network_start',
                     'network_end')):
                 client_conf += 'push "route %s %s"\n' % utils.parse_network(
                     link_svr.network)
+
                 for local_network in link_svr.local_networks:
                     if ':' in local_network:
                         client_conf += 'push "route-ipv6 %s"\n' % local_network
