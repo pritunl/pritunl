@@ -215,11 +215,24 @@ def user_put(org_id, user_id):
         user.email = utils.filter_str(flask.request.json['email']) or None
 
     if 'network_links' in flask.request.json:
+        network_links_cur = set(user.get_network_links())
+        network_links_new = set()
+
         for network_link in flask.request.json['network_links']:
             try:
-                user.add_network_link(network_link)
+                network_link = str(ipaddress.IPNetwork(network_link))
             except (ipaddress.AddressValueError, ValueError):
                 return _network_link_invalid()
+            network_links_new.add(network_link)
+
+        network_links_add = network_links_new - network_links_cur
+        network_links_rem = network_links_cur - network_links_new
+
+        for network_link in network_links_add:
+            user.add_network_link(network_link)
+
+        for network_link in network_links_rem:
+            user.remove_network_link(network_link)
 
     disabled = flask.request.json.get('disabled')
     if disabled is not None:
