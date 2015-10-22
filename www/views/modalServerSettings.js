@@ -241,12 +241,13 @@ define([
       }
     },
     getDnsServers: function() {
+      var dnsServer;
       var dnsServers = [];
       var dnsServersTemp = this.$('.dns-servers input').val().split(',');
       for (var i = 0; i < dnsServersTemp.length; i++) {
-        dnsServersTemp[i] = $.trim(dnsServersTemp[i]);
-        if (dnsServersTemp[i]) {
-          dnsServers.push(dnsServersTemp[i]);
+        dnsServer = $.trim(dnsServersTemp[i]);
+        if (dnsServer) {
+          dnsServers.push(dnsServer);
         }
       }
       return dnsServers;
