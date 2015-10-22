@@ -91,6 +91,9 @@ class ServerInstance(object):
             server_id=self.server.id,
         )
 
+        # Preload network links
+        _ = self.server.network_links
+
         if not self.server.primary_organization or \
                 not self.server.primary_user:
             self.server.create_primary_user()
