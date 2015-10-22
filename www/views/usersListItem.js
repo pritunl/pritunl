@@ -173,6 +173,7 @@ define([
       }
 
       var networkLinks = this.model.get('network_links');
+      this.$('.user-network-link').empty();
       if (networkLinks) {
         for (var i = 0; i < networkLinks.length; i++) {
           this.$('.user-network-link').append(
