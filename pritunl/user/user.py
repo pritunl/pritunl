@@ -6,6 +6,7 @@ from pritunl import utils
 from pritunl import queue
 from pritunl import logger
 from pritunl import messenger
+from pritunl import ipaddress
 
 import tarfile
 import zipfile
@@ -64,6 +65,10 @@ class User(mongo.MongoObject):
     @cached_static_property
     def collection(cls):
         return mongo.get_collection('users')
+
+    @cached_static_property
+    def net_link_collection(cls):
+        return mongo.get_collection('users_net_link')
 
     @cached_static_property
     def otp_collection(cls):
@@ -210,6 +215,9 @@ class User(mongo.MongoObject):
             self.load()
 
     def remove(self):
+        self.net_link_collection.remove({
+            'user_id': self.id,
+        })
         self.unassign_ip_addr()
         mongo.MongoObject.remove(self)
 
