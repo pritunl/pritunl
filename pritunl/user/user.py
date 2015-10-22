@@ -644,3 +644,33 @@ class User(mongo.MongoObject):
             text_email,
             html_email,
         )
+
+    def add_network_link(self, network):
+        network = str(ipaddress.IPNetwork(network))
+
+        self.net_link_collection.update({
+            'user_id': self.id,
+            'org_id': self.org_id,
+            'network': network,
+        }, {
+            'user_id': self.id,
+            'org_id': self.org_id,
+            'network': network,
+        }, upsert=True)
+
+    def remove_network_link(self, network):
+        self.net_link_collection.remove({
+            'user_id': self.id,
+            'org_id': self.org_id,
+            'network': network,
+        })
+
+    def get_network_links(self):
+        links = []
+
+        for doc in self.net_link_collection.find({
+                    'user_id': self.id,
+                }):
+            links.append(doc['network'])
+
+        return links
