@@ -6,3 +6,10 @@
   <label>Email (optional)</label>
   <input type="email" class="form-control" placeholder="Enter email address" data-toggle="tooltip" title="User email address" value="<%- email ? email : '' %>">
 </div>
+<div class="form-group network-links">
+  <label>Network Link</label>
+  <input type="text" class="form-control"
+    placeholder="Enter network address" data-toggle="tooltip"
+    title="Enter network address with cidr subnet. This will provision access to a clients local network to the attached vpn servers and other clients. Multiple networks may be separated by a comma."
+    value="<%- network_links ? network_links.join(', ') : '' %>">
+</div>
