@@ -63,6 +63,7 @@ def user_get(org_id, user_id=None, page=None):
         user_dict = usr.dict()
         user_dict['status'] = False
         user_dict['otp_auth'] = otp_auth
+        user_dict['network_links'] = []
 
         users_data[usr.id] = user_dict
         users_servers[usr.id] = {}
@@ -125,6 +126,12 @@ def user_get(org_id, user_id=None, page=None):
             users_data[doc['user_id']]['servers'] = sorted(
                 svrs, key=lambda x: x['name'])
 
+    net_link_collection = mongo.get_collection('users_net_link')
+    for doc in net_link_collection.find({
+                'user_id': {'$in': users_id},
+            }):
+        users_data[doc['user_id']]['network_links'].append(doc['network'])
+
     ip_addrs_iter = server.multi_get_ip_addr(org_id, users_id)
     for user_id, server_id, addr, addr6 in ip_addrs_iter:
         server_data = users_servers[user_id].get(server_id)
@@ -169,8 +176,18 @@ def user_post(org_id):
         name = utils.filter_str(user_data['name'])
         email = utils.filter_str(user_data.get('email'))
         disabled = user_data.get('disabled')
+        network_links = user_data.get('network_links')
+
         user = org.new_user(type=CERT_CLIENT, name=name, email=email,
             disabled=disabled)
+
+        if network_links:
+            for network_link in network_links:
+                try:
+                    user.add_network_link(network_link)
+                except ipaddress.AddressValueError:
+                    return _network_link_invalid()
+
         users.append(user.dict())
 
     event.Event(type=ORGS_UPDATED)
