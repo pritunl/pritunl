@@ -30,6 +30,7 @@ define([
       'search_domain': null,
       'otp_auth': null,
       'cipher': null,
+      'hash': null,
       'jumbo_frames': null,
       'lzo_compression': null,
       'inter_client': null,
