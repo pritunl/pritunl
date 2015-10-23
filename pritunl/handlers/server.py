@@ -327,6 +327,18 @@ def server_put_post(server_id=None):
                 'error_msg': CIPHER_INVALID_MSG,
             }, 400)
 
+    hash = None
+    hash_def = False
+    if 'hash' in flask.request.json:
+        hash_def = True
+        hash = flask.request.json['hash']
+
+        if hash not in HASHES:
+            return utils.jsonify({
+                'error': HASH_INVALID,
+                'error_msg': HASH_INVALID_MSG,
+            }, 400)
+
     jumbo_frames = False
     jumbo_frames_def = False
     if 'jumbo_frames' in flask.request.json:
@@ -437,6 +449,7 @@ def server_put_post(server_id=None):
             search_domain=search_domain,
             otp_auth=otp_auth,
             cipher=cipher,
+            hash=hash,
             jumbo_frames=jumbo_frames,
             lzo_compression=lzo_compression,
             inter_client=inter_client,
@@ -506,6 +519,8 @@ def server_put_post(server_id=None):
             svr.otp_auth = otp_auth
         if cipher_def:
             svr.cipher = cipher
+        if hash_def:
+            svr.hash = hash
         if jumbo_frames_def:
             svr.jumbo_frames = jumbo_frames
         if lzo_compression_def:
