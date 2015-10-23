@@ -363,6 +363,9 @@ PROTOCOL_INVALID_MSG = 'Protocol is not valid, must be "udp" or "tcp".'
 CIPHER_INVALID = 'cipher_invalid'
 CIPHER_INVALID_MSG = 'Encryption cipher is invalid.'
 
+HASH_INVALID = 'hash_invalid'
+HASH_INVALID_MSG = 'Hash algorithm is invalid.'
+
 NETWORK_LINK_INVALID = 'network_link_invalid'
 NETWORK_LINK_INVALID_MSG = 'Network link is not a valid network address.'
 
@@ -493,6 +496,14 @@ CIPHERS = {
     'aes128': 'cipher AES-128-CBC',
     'aes192': 'cipher AES-192-CBC',
     'aes256': 'cipher AES-256-CBC',
+}
+
+HASHES = {
+    'none': 'none',
+    'md5': 'MD5',
+    'sha1': 'SHA1',
+    'sha256': 'SHA256',
+    'sha512': 'SHA512',
 }
 
 ONC_CIPHERS = {
