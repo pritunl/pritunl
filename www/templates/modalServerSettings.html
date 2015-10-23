@@ -93,6 +93,12 @@
       <label>Network Start</label>
       <input type="text" class="form-control" placeholder="Enter start address" data-toggle="tooltip" title="Starting network address for the bridged VPN client IP addresses" value="<%- network_start %>" autocapitalize="off">
     </div>
+    <div class="multi-device-toggle toggle-form form-group">
+      <label>Allow Multiple Devices</label>
+      <div class="selector <%= multi_device ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Allow users to connect with multiple devices concurrently">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
     <div class="debug-toggle toggle-form form-group">
       <label>Enable Debugging Output</label>
       <div class="selector <%= debug ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Show server debugging information in output">
@@ -104,6 +110,16 @@
     <div class="bind-address form-group">
       <label>Bind Address</label>
       <input type="text" class="form-control" placeholder="Enter bind address" data-toggle="tooltip" title="Optional, local address to bind vpn server to. Leave empty to bind to all interfaces" value="<%- bind_address || '' %>" autocapitalize="off">
+    </div>
+    <div class="hash form-group">
+      <label>Hash Algorithm</label>
+      <select class="form-control" data-toggle="tooltip" title="Authentication hashing algorithm">
+        <option value="none" <%= hash === 'none' ? 'selected' : '' %>>None</option>
+        <option value="md5" <%= hash === 'md5' ? 'selected' : '' %>>MD5</option>
+        <option value="sha1" <%= hash === 'sha1' ? 'selected' : '' %>>SHA-1</option>
+        <option value="sha256" <%= hash === 'sha256' ? 'selected' : '' %>>SHA-256</option>
+        <option value="sha512" <%= hash === 'sha512' ? 'selected' : '' %>>SHA-512</option>
+      </select>
     </div>
     <div class="search-domain form-group">
       <label>DNS Search Domain</label>
@@ -117,15 +133,13 @@
       <label>Replication Count</label>
       <input type="number" class="form-control" placeholder="Enter replication count" data-toggle="tooltip" title="Replicate server accross multiple hosts." value="<%- replica_count === -1 ? '' : replica_count %>" min="1" autocapitalize="off">
     </div>
+    <div class="network-end form-group" <%= network_mode === 'bridge' ? '' : 'style="display: none;"' %>>
+      <label>Network End</label>
+      <input type="text" class="form-control" placeholder="Enter end address" data-toggle="tooltip" title="Ending network address for the bridged VPN client IP addresses" value="<%- network_end %>" autocapitalize="off">
+    </div>
     <div class="inter-client-toggle toggle-form form-group">
       <label>Inter-Client Communication</label>
       <div class="selector <%= inter_client ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Allow clients to communicate with each other on the vpn network">
-        <span class="selector-inner glyphicon glyphicon-ok"></span>
-      </div>
-    </div>
-    <div class="multi-device-toggle toggle-form form-group">
-      <label>Allow Multiple Devices</label>
-      <div class="selector <%= multi_device ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Allow users to connect with multiple devices concurrently">
         <span class="selector-inner glyphicon glyphicon-ok"></span>
       </div>
     </div>
@@ -134,10 +148,6 @@
       <div class="selector <%= ipv6_firewall ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Enabled firewall when routed IPv6 is used">
         <span class="selector-inner glyphicon glyphicon-ok"></span>
       </div>
-    </div>
-    <div class="network-end form-group" <%= network_mode === 'bridge' ? '' : 'style="display: none;"' %>>
-      <label>Network End</label>
-      <input type="text" class="form-control" placeholder="Enter end address" data-toggle="tooltip" title="Ending network address for the bridged VPN client IP addresses" value="<%- network_end %>" autocapitalize="off">
     </div>
   </div>
 </div>

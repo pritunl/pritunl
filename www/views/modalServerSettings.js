@@ -310,6 +310,7 @@ define([
       var debug = this.getDebugSelect();
       var otpAuth = this.getOtpAuthSelect();
       var cipher = this.$('.cipher select').val();
+      var hash = this.$('.hash select').val();
       var bindAddress = this.$('.bind-address input').val();
       if (!bindAddress) {
         bindAddress = null;
@@ -370,6 +371,7 @@ define([
         'search_domain': searchDomain,
         'otp_auth': otpAuth,
         'cipher': cipher,
+        'hash': hash,
         'inter_client': interClient,
         'ping_interval': pingInterval,
         'ping_timeout': pingTimeout,
