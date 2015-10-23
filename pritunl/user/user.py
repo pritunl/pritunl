@@ -393,6 +393,7 @@ class User(mongo.MongoObject):
             server.adapter_type,
             server.get_key_remotes(),
             CIPHERS[server.cipher],
+            HASHES[server.hash],
             server.ping_interval,
             server.ping_timeout,
         )
@@ -476,6 +477,7 @@ class User(mongo.MongoObject):
             conf_hash,
             '%s - %s (%s)' % (self.name, self.org.name, server.name),
             hosts[0][0], # TODO
+            HASHES[server.hash],
             ONC_CIPHERS[server.cipher],
             client_ref,
             'adaptive' if server.lzo_compression == ADAPTIVE else 'false',
