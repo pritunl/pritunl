@@ -536,6 +536,7 @@ push "ping %s"
 push "ping-restart %s"
 persist-tun
 %s
+auth %s
 status-version 2
 script-security 2
 reneg-sec 2592000
@@ -554,6 +555,7 @@ dev-type %s
 nobind
 persist-tun
 %s
+auth %s
 verb 2
 mute 3
 push-peer-info
@@ -578,6 +580,7 @@ OVPN_ONC_CLIENT_CONF = """\
       "Type": "OpenVPN",
       "OpenVPN": {
         "AuthRetry": "interact",
+        "Auth": "%s",
         "Cipher": "%s",
         "ClientCertType": "Pattern",
         "ClientCertPattern": {
@@ -632,6 +635,7 @@ proto %s
 nobind
 persist-tun
 %s
+auth %s
 verb %s
 mute %s
 push-peer-info
