@@ -60,6 +60,7 @@ class ServerInstanceLink(object):
             self.linked_server.protocol,
             remotes,
             CIPHERS[self.server.cipher],
+            HASHES[self.server.hash],
             4 if self.server.debug else 1,
             8 if self.server.debug else 3,
             self.linked_server.ping_interval,

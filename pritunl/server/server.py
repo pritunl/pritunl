@@ -52,6 +52,7 @@ dict_fields = [
     'search_domain',
     'otp_auth',
     'cipher',
+    'hash',
     'jumbo_frames',
     'lzo_compression',
     'inter_client',
@@ -90,6 +91,7 @@ class Server(mongo.MongoObject):
         'ping_timeout',
         'debug',
         'cipher',
+        'hash',
         'jumbo_frames',
         'organizations',
         'hosts',
@@ -119,6 +121,7 @@ class Server(mongo.MongoObject):
         'ping_timeout': 60,
         'debug': False,
         'cipher': 'aes256',
+        'hash': 'sha1',
         'jumbo_frames': False,
         'organizations': [],
         'hosts': [],
@@ -136,7 +139,7 @@ class Server(mongo.MongoObject):
             ipv6_firewall=None,bind_address=None, port=None, protocol=None,
             dh_param_bits=None, mode=None, multi_device=None,
             local_networks=None, dns_servers=None, search_domain=None,
-            otp_auth=None, cipher=None, jumbo_frames=None,
+            otp_auth=None, cipher=None, hash=None, jumbo_frames=None,
             lzo_compression=None, inter_client=None, ping_interval=None,
             ping_timeout=None, max_clients=None, replica_count=None,
             debug=None, **kwargs):
@@ -186,6 +189,8 @@ class Server(mongo.MongoObject):
             self.otp_auth = otp_auth
         if cipher is not None:
             self.cipher = cipher
+        if hash is not None:
+            self.hash = hash
         if jumbo_frames is not None:
             self.jumbo_frames = jumbo_frames
         if lzo_compression is not None:
@@ -253,6 +258,7 @@ class Server(mongo.MongoObject):
             'search_domain': self.search_domain,
             'otp_auth': True if self.otp_auth else False,
             'cipher': self.cipher,
+            'hash': self.hash,
             'jumbo_frames': self.jumbo_frames,
             'lzo_compression': self.lzo_compression,
             'inter_client': True if self.inter_client else False,
