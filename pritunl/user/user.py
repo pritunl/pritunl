@@ -1,4 +1,5 @@
 from pritunl.constants import *
+from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import mongo
@@ -648,6 +649,10 @@ class User(mongo.MongoObject):
         )
 
     def add_network_link(self, network):
+        for server in self.org.iter_servers(('status',)):
+            if server.status == ONLINE:
+                raise ServerOnlineError('Server online')
+
         network = str(ipaddress.IPNetwork(network))
 
         self.net_link_collection.update({
