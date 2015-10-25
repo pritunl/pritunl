@@ -53,8 +53,11 @@ class Clients(object):
             client_conf += 'iroute %s %s\n' % utils.parse_network(
                 link_usr_svr.network)
             for local_network in link_usr_svr.local_networks:
-                client_conf += 'iroute %s %s\n' % utils.parse_network(
-                    local_network)
+                if ':' in local_network:
+                    client_conf += 'iroute-ipv6 %s\n' % local_network
+                else:
+                    client_conf += 'iroute %s %s\n' % utils.parse_network(
+                        local_network)
         else:
             if self.server.mode == ALL_TRAFFIC:
                 client_conf += 'push "redirect-gateway def1"\n'
