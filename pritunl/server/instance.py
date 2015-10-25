@@ -122,15 +122,25 @@ class ServerInstance(object):
         elif self.server.mode == VPN_TRAFFIC:
             pass
 
+        gateway = utils.get_network_gateway(self.server.network)
+        gateway6 = utils.get_network_gateway(self.server.network6)
+
         for link_svr in self.server.iter_links(fields=(
                 '_id', 'network', 'local_networks', 'network_start',
                 'network_end')):
             if self.server.id < link_svr.id:
-                push += 'route %s %s\n' % utils.parse_network(
-                    link_svr.network)
+                push += 'route %s %s %s\n' % (utils.parse_network(
+                    link_svr.network) + (gateway,))
                 for local_network in link_svr.local_networks:
-                    push += 'route %s %s\n' % utils.parse_network(
-                        local_network)
+                    push += 'route %s %s %s\n' % (utils.parse_network(
+                        local_network) + (gateway,))
+
+        for network_link in self.server.network_links:
+            if ':' in network_link:
+                push += 'route-ipv6 %s %s\n' % (network_link, gateway6)
+            else:
+                push += 'route %s %s %s\n' % (utils.parse_network(
+                    network_link) + (gateway,))
 
         if self.server.network_mode == BRIDGE:
             host_int_data = self.host_interface_data
