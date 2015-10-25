@@ -369,6 +369,10 @@ HASH_INVALID_MSG = 'Hash algorithm is invalid.'
 NETWORK_LINK_INVALID = 'network_link_invalid'
 NETWORK_LINK_INVALID_MSG = 'Network link is not a valid network address.'
 
+NETWORK_LINK_NOT_OFFLINE = 'network_link_not_offline'
+NETWORK_LINK_NOT_OFFLINE_MSG = 'All attached servers must be offline to ' + \
+    'add a network link.'
+
 NETWORK_IN_USE = 'network_in_use'
 NETWORK_IN_USE_MSG = 'Network address is already in use.'
 

@@ -228,8 +228,14 @@ def user_put(org_id, user_id):
         network_links_add = network_links_new - network_links_cur
         network_links_rem = network_links_cur - network_links_new
 
-        for network_link in network_links_add:
-            user.add_network_link(network_link)
+        try:
+            for network_link in network_links_add:
+                user.add_network_link(network_link)
+        except ServerOnlineError:
+            return utils.jsonify({
+                'error': NETWORK_LINK_NOT_OFFLINE,
+                'error_msg': NETWORK_LINK_NOT_OFFLINE_MSG,
+            }, 400)
 
         for network_link in network_links_rem:
             user.remove_network_link(network_link)
