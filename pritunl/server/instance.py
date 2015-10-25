@@ -129,8 +129,12 @@ class ServerInstance(object):
                 push += 'route %s %s %s\n' % (utils.parse_network(
                     link_svr.network) + (gateway,))
                 for local_network in link_svr.local_networks:
-                    push += 'route %s %s %s\n' % (utils.parse_network(
-                        local_network) + (gateway,))
+                    if ':' in local_network:
+                        push += 'route-ipv6 %s %s\n' % (
+                            local_network, gateway6)
+                    else:
+                        push += 'route %s %s %s\n' % (utils.parse_network(
+                            local_network) + (gateway,))
 
         for network_link in self.server.network_links:
             if ':' in network_link:
