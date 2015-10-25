@@ -126,12 +126,11 @@ class ServerInstance(object):
                 '_id', 'network', 'local_networks', 'network_start',
                 'network_end')):
             if self.server.id < link_svr.id:
-                gateway = utils.get_network_gateway(self.server.network)
-                push += 'route %s %s %s\n' % (utils.parse_network(
-                    link_svr.network) + (gateway,))
+                push += 'route %s %s\n' % utils.parse_network(
+                    link_svr.network)
                 for local_network in link_svr.local_networks:
-                    push += 'route %s %s %s\n' % (utils.parse_network(
-                        local_network) + (gateway,))
+                    push += 'route %s %s\n' % utils.parse_network(
+                        local_network)
 
         if self.server.network_mode == BRIDGE:
             host_int_data = self.host_interface_data
