@@ -49,6 +49,9 @@ class ServerStartError(ServerError):
 class ServerStopError(ServerError):
     pass
 
+class ServerOnlineError(ServerError):
+    pass
+
 class ServerLinkError(ServerError):
     pass
 
