@@ -332,12 +332,12 @@ class Server(mongo.MongoObject):
 
     @cached_property
     def network_links(self):
-        links = []
+        links = set()
 
         for doc in self.user_net_link_collection.find({
                     'org_id': {'$in': self.organizations},
                 }):
-            links.append(doc['network'])
+            links.add(doc['network'])
 
         return links
 
