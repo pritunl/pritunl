@@ -1,6 +1,5 @@
 from pritunl.helpers import *
 from pritunl import settings
-from pritunl import mongo
 from pritunl import logger
 from pritunl import task
 from pritunl import utils
@@ -58,8 +57,6 @@ def run_thread():
 
 @interrupter
 def check_thread():
-    collection = mongo.get_collection('task')
-
     while True:
         try:
             cur_timestamp = utils.now()
