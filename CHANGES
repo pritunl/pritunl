@@ -3,7 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
-Add user network links
+Add gateway network links
 Add hash algorithm to server settings
 Add integration with EdgeRouter
 
