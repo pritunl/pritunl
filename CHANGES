@@ -1,8 +1,7 @@
 Pritunl Changelog
 =================
 
-Version 1.7.773.19 2015-10-25
------------------------------
+<%= version %>
 
 Add user network links
 Add hash algorithm to server settings
