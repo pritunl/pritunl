@@ -5,6 +5,7 @@ Pritunl Changelog
 
 Add user network links
 Add hash algorithm to server settings
+Add integration with EdgeRouter
 
 Version 1.6.757.9 2015-10-09
 ----------------------------
