@@ -71,9 +71,6 @@ class ServerInstanceCom(object):
         self.bytes_lock.release()
 
     def parse_line(self, line):
-        line_14 = line[:14]
-        line_18 = line[:18]
-
         if self.client:
             if line == '>CLIENT:ENV,END':
                 cmd = self.client['cmd']
@@ -84,7 +81,7 @@ class ServerInstanceCom(object):
                 elif cmd == 'disconnected':
                     self.clients.disconnected(self.client.get('client_id'))
                 self.client = None
-            elif line[:11] == '>CLIENT:ENV':
+            elif line.startswith('>CLIENT:ENV'):
                 env_key, env_val = line[12:].split('=', 1)
                 if env_key == 'tls_id_0':
                     tls_env = ''.join(x for x in env_val if x in VALID_CHARS)
@@ -131,30 +128,31 @@ class ServerInstanceCom(object):
                     self.client['otp_code'] = env_val
             else:
                 self.push_output('CCOM> %s' % line[1:])
-        elif line_14 == '>BYTECOUNT_CLI':
+        elif line.startswith('>BYTECOUNT_CLI'):
             client_id, bytes_recv, bytes_sent = line.split(',')
             client_id = client_id.split(':')[1]
             self.parse_bytecount(client_id, int(bytes_recv), int(bytes_sent))
-        elif line_14 in ('>CLIENT:CONNEC', '>CLIENT:REAUTH'):
+        elif line.startswith('>CLIENT:CONNECT') or \
+                line.startswith('>CLIENT:REAUTH'):
             _, client_id, key_id = line.split(',')
             self.client = {
                 'cmd': 'connect',
                 'client_id': client_id,
                 'key_id': key_id,
             }
-        elif line_18 == '>CLIENT:ESTABLISHE':
+        elif line.startswith('>CLIENT:ESTABLISHED'):
             _, client_id = line.split(',')
             self.client = {
                 'cmd': 'connected',
                 'client_id': client_id,
             }
-        elif line_18 == '>CLIENT:DISCONNECT':
+        elif line.startswith('>CLIENT:DISCONNECT'):
             _, client_id = line.split(',')
             self.client = {
                 'cmd': 'disconnected',
                 'client_id': client_id,
             }
-        elif line[:8] != 'SUCCESS:':
+        elif line.startswith('SUCCESS:'):
             self.push_output('COM> %s' % line[1:])
 
     def wait_for_socket(self):
