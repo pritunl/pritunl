@@ -76,6 +76,8 @@ class ServerInstanceCom(object):
                 cmd = self.client['cmd']
                 if cmd == 'connect':
                     self.clients.connect(self.client)
+                elif cmd == 'reauth':
+                    self.clients.connect(self.client, reauth=True)
                 elif cmd == 'connected':
                     self.clients.connected(self.client.get('client_id'))
                 elif cmd == 'disconnected':
@@ -132,11 +134,17 @@ class ServerInstanceCom(object):
             client_id, bytes_recv, bytes_sent = line.split(',')
             client_id = client_id.split(':')[1]
             self.parse_bytecount(client_id, int(bytes_recv), int(bytes_sent))
-        elif line.startswith('>CLIENT:CONNECT') or \
-                line.startswith('>CLIENT:REAUTH'):
+        elif line.startswith('>CLIENT:CONNECT'):
             _, client_id, key_id = line.split(',')
             self.client = {
                 'cmd': 'connect',
+                'client_id': client_id,
+                'key_id': key_id,
+            }
+        elif line.startswith('>CLIENT:REAUTH'):
+            _, client_id, key_id = line.split(',')
+            self.client = {
+                'cmd': 'reauth',
                 'client_id': client_id,
                 'key_id': key_id,
             }

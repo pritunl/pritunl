@@ -102,7 +102,7 @@ class Clients(object):
 
         return client_conf
 
-    def allow_client(self, client, org, user):
+    def allow_client(self, client, org, user, reauth=False):
         client_id = client['client_id']
         key_id = client['key_id']
         org_id = client['org_id']
@@ -116,51 +116,60 @@ class Clients(object):
 
         client_conf = self.generate_client_conf(user)
 
-        virt_address = self.server.get_ip_addr(org_id, user_id)
-        if not self.server.multi_device:
-            for client in self.clients.find({'user_id': user_id}):
-                self.instance_com.client_kill(client['id'])
-        elif virt_address and self.clients.find(
-                {'virt_address': virt_address}):
-            virt_address = None
+        if reauth:
+            doc = self.clients.find_id(client_id)
+            if not doc:
+                self.instance_com.send_client_deny(client_id, key_id,
+                    'Client connection info timed out')
+                return
+            virt_address = doc['virt_address']
+            virt_address6 = doc['virt_address6']
+        else:
+            virt_address = self.server.get_ip_addr(org_id, user_id)
+            if not self.server.multi_device:
+                for client in self.clients.find({'user_id': user_id}):
+                    self.instance_com.client_kill(client['id'])
+            elif virt_address and self.clients.find(
+                    {'virt_address': virt_address}):
+                virt_address = None
 
-        if not virt_address:
-            while True:
-                try:
-                    ip_addr = self.ip_pool.pop()
-                except IndexError:
-                    break
-                ip_addr = '%s/%s' % (ip_addr, self.ip_network.prefixlen)
+            if not virt_address:
+                while True:
+                    try:
+                        ip_addr = self.ip_pool.pop()
+                    except IndexError:
+                        break
+                    ip_addr = '%s/%s' % (ip_addr, self.ip_network.prefixlen)
 
-                if not self.clients.find({'virt_address': ip_addr}):
-                    virt_address = ip_addr
-                    address_dynamic = True
-                    break
+                    if not self.clients.find({'virt_address': ip_addr}):
+                        virt_address = ip_addr
+                        address_dynamic = True
+                        break
 
-        if not virt_address:
-            self.instance_com.send_client_deny(client_id, key_id,
-                'Unable to assign ip address')
-            return
+            if not virt_address:
+                self.instance_com.send_client_deny(client_id, key_id,
+                    'Unable to assign ip address')
+                return
 
-        virt_address6 = self.server.ip4to6(virt_address)
+            virt_address6 = self.server.ip4to6(virt_address)
 
-        self.clients.insert({
-            'id': client_id,
-            'org_id': org_id,
-            'org_name': org.name,
-            'user_id': user_id,
-            'user_name': user.name,
-            'user_type': user.type,
-            'device_id': device_id,
-            'device_name': device_name,
-            'platform': platform,
-            'mac_addr': mac_addr,
-            'otp_code': None,
-            'virt_address': virt_address,
-            'virt_address6': virt_address6,
-            'real_address': remote_ip,
-            'address_dynamic': address_dynamic,
-        })
+            self.clients.insert({
+                'id': client_id,
+                'org_id': org_id,
+                'org_name': org.name,
+                'user_id': user_id,
+                'user_name': user.name,
+                'user_type': user.type,
+                'device_id': device_id,
+                'device_name': device_name,
+                'platform': platform,
+                'mac_addr': mac_addr,
+                'otp_code': None,
+                'virt_address': virt_address,
+                'virt_address6': virt_address6,
+                'real_address': remote_ip,
+                'address_dynamic': address_dynamic,
+            })
 
         client_conf += 'ifconfig-push %s %s\n' % utils.parse_network(
             virt_address)
@@ -176,7 +185,7 @@ class Clients(object):
 
         self.instance_com.send_client_auth(client_id, key_id, client_conf)
 
-    def connect(self, client):
+    def connect(self, client, reauth=False):
         client_id = None
         key_id = None
         try:
@@ -270,7 +279,7 @@ class Clients(object):
                             'ERROR Duo server error client_id=%s' % client_id)
                     try:
                         if allow:
-                            self.allow_client(client, org, user)
+                            self.allow_client(client, org, user, reauth)
                         else:
                             logger.LogEntry(message='User failed duo ' +
                                 'authentication "%s".' % user.name)
@@ -292,7 +301,7 @@ class Clients(object):
                 thread.daemon = True
                 thread.start()
             else:
-                self.allow_client(client, org, user)
+                self.allow_client(client, org, user, reauth)
         except:
             logger.exception('Error parsing client connect', 'server',
                 server_id=self.server.id,
