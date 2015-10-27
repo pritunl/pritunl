@@ -60,6 +60,7 @@ dict_fields = [
     'ping_timeout',
     'max_clients',
     'replica_count',
+    'dns_mapping',
     'debug',
 ]
 
@@ -89,6 +90,7 @@ class Server(mongo.MongoObject):
         'inter_client',
         'ping_interval',
         'ping_timeout',
+        'dns_mapping',
         'debug',
         'cipher',
         'hash',
@@ -142,7 +144,7 @@ class Server(mongo.MongoObject):
             otp_auth=None, cipher=None, hash=None, jumbo_frames=None,
             lzo_compression=None, inter_client=None, ping_interval=None,
             ping_timeout=None, max_clients=None, replica_count=None,
-            debug=None, **kwargs):
+            dns_mapping=None, debug=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         if 'network' in self.loaded_fields:
@@ -205,6 +207,8 @@ class Server(mongo.MongoObject):
             self.max_clients = max_clients
         if replica_count is not None:
             self.replica_count = replica_count
+        if dns_mapping is not None:
+            self.dns_mapping = dns_mapping
         if debug is not None:
             self.debug = debug
 
@@ -266,6 +270,7 @@ class Server(mongo.MongoObject):
             'ping_timeout': self.ping_timeout,
             'max_clients': self.max_clients,
             'replica_count': self.replica_count,
+            'dns_mapping': True if self.dns_mapping else False,
             'debug': True if self.debug else False,
         }
 

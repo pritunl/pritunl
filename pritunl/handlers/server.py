@@ -296,6 +296,12 @@ def server_put_post(server_id=None):
         if replica_count < 1:
             replica_count = 1
 
+    dns_mapping = False
+    dns_mapping_def = False
+    if 'dns_mapping' in flask.request.json:
+        dns_mapping_def = True
+        dns_mapping = True if flask.request.json['dns_mapping'] else False
+
     debug = False
     debug_def = False
     if 'debug' in flask.request.json:
@@ -457,6 +463,7 @@ def server_put_post(server_id=None):
             ping_timeout=ping_timeout,
             max_clients=max_clients,
             replica_count=replica_count,
+            dns_mapping=dns_mapping,
             debug=debug,
         )
         svr.add_host(settings.local.host_id)
@@ -535,6 +542,8 @@ def server_put_post(server_id=None):
             svr.max_clients = max_clients
         if replica_count_def:
             svr.replica_count = replica_count
+        if dns_mapping_def:
+            svr.dns_mapping = dns_mapping
         if debug_def:
             svr.debug = debug
 
