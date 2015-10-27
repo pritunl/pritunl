@@ -65,6 +65,10 @@ class Clients(object):
                     client_conf += 'push "redirect-gateway-ipv6 def1"\n'
                     client_conf += 'push "route-ipv6 2000::/3"\n'
 
+            if self.server.dns_mapping:
+                client_conf += 'push "dhcp-option DNS %s"\n' % (
+                    utils.get_network_gateway(self.server.network))
+
             for dns_server in self.server.dns_servers:
                 client_conf += 'push "dhcp-option DNS %s"\n' % dns_server
             if self.server.search_domain:
