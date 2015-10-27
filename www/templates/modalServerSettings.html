@@ -137,6 +137,12 @@
       <label>Network End</label>
       <input type="text" class="form-control" placeholder="Enter end address" data-toggle="tooltip" title="Ending network address for the bridged VPN client IP addresses" value="<%- network_end %>" autocapitalize="off">
     </div>
+    <div class="dns-mapping-toggle toggle-form form-group">
+      <label>Enable VPN Client DNS Mapping</label>
+      <div class="selector <%= dns_mapping ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Map the vpn clients ip address to the .vpn domain such as example_user.example_org.vpn">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
     <div class="inter-client-toggle toggle-form form-group">
       <label>Inter-Client Communication</label>
       <div class="selector <%= inter_client ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Allow clients to communicate with each other on the vpn network">
