@@ -8,6 +8,10 @@ import threading
 
 @interrupter
 def _dns_thread():
+    while not settings.local.sub_active and \
+            settings.local.sub_plan != 'enterprise':
+        time.sleep(1)
+
     while True:
         try:
             utils.check_output_logged(
