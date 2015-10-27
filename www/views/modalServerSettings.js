@@ -22,6 +22,7 @@ define([
         'change .network-mode select': 'onNetworkMode',
         'click .otp-auth-toggle': 'onOtpAuthSelect',
         'click .inter-client-toggle': 'onInterClientSelect',
+        'click .dns-mapping-toggle': 'onDnsMappingSelect',
         'click .debug-toggle': 'onDebugSelect',
         'click .ipv6-toggle': 'onIpv6Select',
         'click .multi-device-toggle': 'onMultiDeviceSelect',
@@ -144,6 +145,22 @@ define([
     },
     onInterClientSelect: function() {
       this.setInterClientSelect(!this.getInterClientSelect());
+    },
+    getDnsMappingSelect: function() {
+      return this.$('.dns-mapping-toggle .selector').hasClass('selected');
+    },
+    setDnsMappingSelect: function(state) {
+      if (state) {
+        this.$('.dns-mapping-toggle .selector').addClass('selected');
+        this.$('.dns-mapping-toggle .selector-inner').show();
+      }
+      else {
+        this.$('.dns-mapping-toggle .selector').removeClass('selected');
+        this.$('.dns-mapping-toggle .selector-inner').hide();
+      }
+    },
+    onDnsMappingSelect: function() {
+      this.setDnsMappingSelect(!this.getDnsMappingSelect());
     },
     getDebugSelect: function() {
       return this.$('.debug-toggle .selector').hasClass('selected');
@@ -307,6 +324,7 @@ define([
       var pingTimeout = parseInt(this.$('.ping-timeout input').val(), 10);
       var maxClients = parseInt(this.$('.max-clients input').val(), 10);
       var replicaCount = parseInt(this.$('.replica-count input').val(), 10);
+      var dnsMapping = this.getDnsMappingSelect();
       var debug = this.getDebugSelect();
       var otpAuth = this.getOtpAuthSelect();
       var cipher = this.$('.cipher select').val();
@@ -377,6 +395,7 @@ define([
         'ping_timeout': pingTimeout,
         'max_clients': maxClients,
         'replica_count': replicaCount,
+        'dns_mapping': dnsMapping,
         'debug': debug
       };
 
