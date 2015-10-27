@@ -318,29 +318,32 @@ class Clients(object):
             self.instance_com.client_kill(client_id)
             return
 
-        domain_hash = hashlib.md5()
-        domain_hash.update(client['user_name'] + '.' + client['org_name'])
-        domain_hash = bson.binary.Binary(domain_hash.digest(),
-            subtype=bson.binary.MD5_SUBTYPE)
+        timestamp = utils.now()
+        doc = {
+            'user_id': client['user_id'],
+            'server_id': self.server.id,
+            'timestamp': timestamp,
+            'platform': client['platform'],
+            'type': client['user_type'],
+            'device_name': client['device_name'],
+            'mac_addr': client['mac_addr'],
+            'network': self.server.network,
+            'real_address': client['real_address'],
+            'virt_address': client['virt_address'],
+            'virt_address6': client['virt_address6'],
+            'connected_since': int(timestamp.strftime('%s')),
+        }
+
+        if settings.local.sub_active and \
+                settings.local.sub_plan == 'enterprise':
+            domain_hash = hashlib.md5()
+            domain_hash.update(client['user_name'] + '.' + client['org_name'])
+            domain_hash = bson.binary.Binary(domain_hash.digest(),
+                subtype=bson.binary.MD5_SUBTYPE)
+            doc['domain'] = domain_hash
 
         try:
-            timestamp = utils.now()
-
-            doc_id = self.collection.insert({
-                'user_id': client['user_id'],
-                'server_id': self.server.id,
-                'domain': domain_hash,
-                'timestamp': timestamp,
-                'platform': client['platform'],
-                'type': client['user_type'],
-                'device_name': client['device_name'],
-                'mac_addr': client['mac_addr'],
-                'network': self.server.network,
-                'real_address': client['real_address'],
-                'virt_address': client['virt_address'],
-                'virt_address6': client['virt_address6'],
-                'connected_since': int(timestamp.strftime('%s')),
-            })
+            doc_id = self.collection.insert(doc)
         except:
             logger.exception('Error adding client', 'server',
                 server_id=self.server.id,
