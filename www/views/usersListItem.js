@@ -172,6 +172,15 @@ define([
         this.$('.get-otp-auth').addClass('no-otp-auth');
       }
 
+      var dnsMapping = this.model.get('dns_mapping');
+      if (dnsMapping) {
+        this.$('.user-dns-name .name').text(dnsMapping);
+        this.$('.user-dns-name').show();
+      } else {
+        this.$('.user-dns-name').hide();
+        this.$('.user-dns-name .name').text('');
+      }
+
       var networkLinks = this.model.get('network_links');
       this.$('.user-network-link').empty();
       if (networkLinks) {
