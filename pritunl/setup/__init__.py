@@ -10,6 +10,7 @@ from pritunl.setup.poolers import setup_poolers
 from pritunl.setup.host import setup_host
 from pritunl.setup.dns import setup_dns
 from pritunl.setup.host_fix import setup_host_fix
+from pritunl.setup.subscription import setup_subscription
 from pritunl.setup.runners import setup_runners
 from pritunl.setup.handlers import setup_handlers
 from pritunl.setup.check import setup_check
@@ -35,6 +36,7 @@ def setup_all():
         setup_dns()
         setup_poolers()
         setup_host_fix()
+        setup_subscription()
         setup_runners()
         setup_handlers()
         setup_check()
