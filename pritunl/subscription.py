@@ -5,6 +5,7 @@ from pritunl import logger
 from pritunl import utils
 from pritunl import event
 from pritunl import mongo
+from pritunl import messenger
 
 def update():
     license = settings.app.license
@@ -120,3 +121,4 @@ def update_license(license):
     settings.app.license_plan = None
     settings.commit()
     update()
+    messenger.publish('subscription', 'updated')
