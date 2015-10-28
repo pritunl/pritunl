@@ -172,32 +172,33 @@ def user_post(org_id):
     else:
         users_data = [flask.request.json]
 
-    for user_data in users_data:
-        name = utils.filter_str(user_data['name'])
-        email = utils.filter_str(user_data.get('email'))
-        disabled = user_data.get('disabled')
-        network_links = user_data.get('network_links')
+    try:
+        for user_data in users_data:
+            name = utils.filter_str(user_data['name'])
+            email = utils.filter_str(user_data.get('email'))
+            disabled = user_data.get('disabled')
+            network_links = user_data.get('network_links')
 
-        user = org.new_user(type=CERT_CLIENT, name=name, email=email,
-            disabled=disabled)
+            user = org.new_user(type=CERT_CLIENT, name=name, email=email,
+                disabled=disabled)
 
-        if network_links:
-            for network_link in network_links:
-                try:
-                    user.add_network_link(network_link)
-                except (ipaddress.AddressValueError, ValueError):
-                    return _network_link_invalid()
-                except ServerOnlineError:
-                    return utils.jsonify({
-                        'error': NETWORK_LINK_NOT_OFFLINE,
-                        'error_msg': NETWORK_LINK_NOT_OFFLINE_MSG,
-                    }, 400)
+            if network_links:
+                for network_link in network_links:
+                    try:
+                        user.add_network_link(network_link)
+                    except (ipaddress.AddressValueError, ValueError):
+                        return _network_link_invalid()
+                    except ServerOnlineError:
+                        return utils.jsonify({
+                            'error': NETWORK_LINK_NOT_OFFLINE,
+                            'error_msg': NETWORK_LINK_NOT_OFFLINE_MSG,
+                        }, 400)
 
-        users.append(user.dict())
-
-    event.Event(type=ORGS_UPDATED)
-    event.Event(type=USERS_UPDATED, resource_id=org.id)
-    event.Event(type=SERVERS_UPDATED)
+            users.append(user.dict())
+    finally:
+        event.Event(type=ORGS_UPDATED)
+        event.Event(type=USERS_UPDATED, resource_id=org.id)
+        event.Event(type=SERVERS_UPDATED)
 
     if isinstance(flask.request.json, list):
         logger.LogEntry(message='Created %s new users.' % len(
