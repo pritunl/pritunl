@@ -34,14 +34,17 @@ def user_get(org_id, user_id=None, page=None):
     search = flask.request.args.get('search', None)
     limit = int(flask.request.args.get('limit', settings.user.page_count))
     otp_auth = False
+    dns_mapping = False
     server_count = 0
     servers = []
 
-    for svr in org.iter_servers(fields=('name', 'otp_auth')):
+    for svr in org.iter_servers(fields=('name', 'otp_auth', 'dns_mapping')):
         servers.append(svr)
         server_count += 1
         if svr.otp_auth:
             otp_auth = True
+        if svr.dns_mapping:
+            dns_mapping = True
 
     users = []
     users_id = []
@@ -63,6 +66,10 @@ def user_get(org_id, user_id=None, page=None):
         user_dict = usr.dict()
         user_dict['status'] = False
         user_dict['otp_auth'] = otp_auth
+        if dns_mapping:
+            user_dict['dns_mapping'] = '%s.%s.vpn' % (usr.name, org.name)
+        else:
+            user_dict['dns_mapping'] = None
         user_dict['network_links'] = []
 
         users_data[usr.id] = user_dict
