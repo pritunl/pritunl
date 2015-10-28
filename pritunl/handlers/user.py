@@ -187,6 +187,11 @@ def user_post(org_id):
                     user.add_network_link(network_link)
                 except (ipaddress.AddressValueError, ValueError):
                     return _network_link_invalid()
+                except ServerOnlineError:
+                    return utils.jsonify({
+                        'error': NETWORK_LINK_NOT_OFFLINE,
+                        'error_msg': NETWORK_LINK_NOT_OFFLINE_MSG,
+                    }, 400)
 
         users.append(user.dict())
 
