@@ -8,6 +8,11 @@
     <a class="user-name title no-select" data-toggle="tooltip" title="Click to rename this user"><%- name %><%- email ? ' (' + email + ')' : '' %></a>
     <span class="user-id title">(<%- id %>)</span>
   </div>
+  <div class="user-dns-name" data-toggle="tooltip"
+      title="User dns name">
+    <span class="fa fa-globe"></span><span
+      class="title name"><%- dns_mapping %></span>
+  </div>
   <div class="user-network-link" data-toggle="tooltip"
       title="User network links">
     <% for (var i in network_links) { %>
