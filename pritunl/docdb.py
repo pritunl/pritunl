@@ -164,6 +164,25 @@ class DocDb(object):
 
                 doc[key] = val
 
+    def count(self, query, slow=False):
+        self._lock.acquire()
+        try:
+            doc_ids = self._find(query, slow, True)
+        finally:
+            self._lock.release()
+
+        return len(doc_ids)
+
+    def count_id(self, doc_id):
+        self._lock.acquire()
+        try:
+            if doc_id in self._docs:
+                return 1
+        finally:
+            self._lock.release()
+
+        return 0
+
     def update(self, query, update, slow=False):
         self._lock.acquire()
         try:
