@@ -23,6 +23,9 @@ class Clients(object):
         self.server = server
         self.instance = instance
         self.instance_com = instance_com
+        self.iroutes = {}
+        self.iroutes_lock = threading.RLock()
+        self.iroutes_index = collections.defaultdict(set)
 
         self.clients = docdb.DocDb(
             'user_id',
@@ -40,7 +43,7 @@ class Clients(object):
     def collection(cls):
         return mongo.get_collection('clients')
 
-    def generate_client_conf(self, user):
+    def generate_client_conf(self, client_id, user):
         from pritunl.server.utils import get_by_id
 
         client_conf = ''
@@ -78,6 +81,9 @@ class Clients(object):
             client_conf += 'push "ip-win32 dynamic 0 3600"\n'
 
             for network_link in user.get_network_links():
+                if not self.reserve_iroute(client_id, network_link):
+                    continue
+
                 if ':' in network_link:
                     client_conf += 'iroute-ipv6 %s\n' % network_link
                 else:
@@ -99,12 +105,54 @@ class Clients(object):
 
                 for local_network in link_svr.local_networks:
                     if ':' in local_network:
-                        client_conf += 'push "route-ipv6 %s"\n' % local_network
+                        client_conf += 'push "route-ipv6 %s"\n' % (
+                            local_network)
                     else:
                         client_conf += 'push "route %s %s"\n' % (
                             utils.parse_network(local_network))
 
         return client_conf
+
+    def reserve_iroute(self, client_id, network):
+        self.iroutes_lock.acquire()
+        try:
+            self.iroutes_index[client_id].add(network)
+            iroute = self.iroutes.get(network)
+            if iroute and self.clients.count_id(iroute['master']):
+                iroute['slaves'].add(client_id)
+                return False
+            else:
+                self.iroutes[network] = {
+                    'master': client_id,
+                    'slaves': set(),
+                }
+                return True
+        finally:
+            self.iroutes_lock.release()
+
+    def remove_iroutes(self, client_id):
+        reconnect = set()
+
+        self.iroutes_lock.acquire()
+        try:
+            if client_id not in self.iroutes_index:
+                return
+
+            networks = self.iroutes_index.pop(client_id)
+            for network in networks:
+                iroute = self.iroutes.get(network)
+                if not iroute:
+                    continue
+                if iroute['master'] == client_id:
+                    reconnect |= iroute['slaves']
+                    self.iroutes.pop(network)
+                else:
+                    iroute['slaves'].remove(client_id)
+        finally:
+            self.iroutes_lock.release()
+
+        for client_id in reconnect:
+            self.instance_com.client_kill(client_id)
 
     def allow_client(self, client, org, user, reauth=False):
         client_id = client['client_id']
@@ -118,7 +166,7 @@ class Clients(object):
         remote_ip = client.get('remote_ip')
         address_dynamic = False
 
-        client_conf = self.generate_client_conf(user)
+        client_conf = self.generate_client_conf(client_id, user)
 
         if reauth:
             doc = self.clients.find_id(client_id)
@@ -371,6 +419,7 @@ class Clients(object):
         if not client:
             return
         self.clients.remove_id(client_id)
+        self.remove_iroutes(client_id)
 
         virt_address = client['virt_address']
         if client['address_dynamic']:
