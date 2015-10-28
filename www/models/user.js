@@ -17,7 +17,8 @@ define([
       'otp_secret': null,
       'servers': null,
       'disabled': null,
-      'network_links': null
+      'network_links': null,
+      'dns_mapping': null
     },
     url: function() {
       var url = '/user/' + this.get('organization');
