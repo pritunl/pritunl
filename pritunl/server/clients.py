@@ -81,7 +81,7 @@ class Clients(object):
             client_conf += 'push "ip-win32 dynamic 0 3600"\n'
 
             for network_link in user.get_network_links():
-                if not self.reserve_iroute(client_id, network_link):
+                if not self.reserve_iroute(client_id, network_link, True):
                     continue
 
                 if ':' in network_link:
@@ -113,25 +113,45 @@ class Clients(object):
 
         return client_conf
 
-    def reserve_iroute(self, client_id, network):
+    def reserve_iroute(self, client_id, network, primary):
+        reserved = False
+
         self.iroutes_lock.acquire()
         try:
             self.iroutes_index[client_id].add(network)
             iroute = self.iroutes.get(network)
+            reconnect = None
+
             if iroute and self.clients.count_id(iroute['master']):
-                iroute['slaves'].add(client_id)
-                return False
+                if not primary or iroute['primary']:
+                    if primary:
+                        iroute['primary_slaves'].add(client_id)
+                    else:
+                        iroute['secondary_slaves'].add(client_id)
+                else:
+                    reconnect = iroute['master']
+                    iroute['master'] = client_id
+                    iroute['primary'] = primary
+                    reserved = True
             else:
                 self.iroutes[network] = {
                     'master': client_id,
-                    'slaves': set(),
+                    'primary': primary,
+                    'primary_slaves': set(),
+                    'secondary_slaves': set(),
                 }
-                return True
+                reserved = True
         finally:
             self.iroutes_lock.release()
 
+        if reconnect:
+            self.instance_com.client_kill(reconnect)
+
+        return reserved
+
     def remove_iroutes(self, client_id):
-        reconnect = set()
+        primary_reconnect = set()
+        secondary_reconnect = set()
 
         self.iroutes_lock.acquire()
         try:
@@ -144,14 +164,22 @@ class Clients(object):
                 if not iroute:
                     continue
                 if iroute['master'] == client_id:
-                    reconnect |= iroute['slaves']
+                    primary_reconnect |= iroute['primary_slaves']
+                    secondary_reconnect |= iroute['secondary_slaves']
                     self.iroutes.pop(network)
                 else:
-                    iroute['slaves'].remove(client_id)
+                    iroute['primary_slaves'].remove(client_id)
+                    iroute['secondary_slaves'].remove(client_id)
         finally:
             self.iroutes_lock.release()
 
-        for client_id in reconnect:
+        for client_id in primary_reconnect:
+            self.instance_com.client_kill(client_id)
+
+        if len(primary_reconnect):
+            time.sleep(3)
+
+        for client_id in secondary_reconnect:
             self.instance_com.client_kill(client_id)
 
     def allow_client(self, client, org, user, reauth=False):
