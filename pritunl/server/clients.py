@@ -545,7 +545,6 @@ class Clients(object):
                 continue
 
             latency = utils.ping(virt_address)
-            print 'ping', client_id, latency
             if latency is None and self.has_failover_iroute(client_id):
                 self.instance_com.client_kill(client_id)
                 break
