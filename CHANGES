@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add vpn client dns mapping
+Add failover gateway network links
 
 Version 1.7.774.46 2015-10-26
 -----------------------------
