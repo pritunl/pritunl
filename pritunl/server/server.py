@@ -126,7 +126,7 @@ class Server(mongo.MongoObject):
         'ping_interval': 10,
         'ping_timeout': 60,
         'link_ping_interval': 1,
-        'link_ping_timeout': 3,
+        'link_ping_timeout': 5,
         'debug': False,
         'cipher': 'aes256',
         'hash': 'sha1',
