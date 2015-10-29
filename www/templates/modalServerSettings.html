@@ -78,6 +78,13 @@
       <label>Ping Interval</label>
       <input type="number" class="form-control" placeholder="Enter ping interval" data-toggle="tooltip" title="Optional, interval to ping client" value="<%- ping_interval || '' %>" min="0" autocapitalize="off">
     </div>
+    <div class="link-ping-interval form-group">
+      <label>User Link Ping Interval</label>
+      <input type="number" class="form-control" placeholder="Enter ping interval" data-toggle="tooltip"
+        title="Optional, time in between pings used when multiple users have the same network link to failover to another user when one network link fails."
+        value="<%- link_ping_interval || '' %>" min="0" step="0.1"
+        autocapitalize="off">
+    </div>
     <div class="max-clients form-group">
       <label>Max Clients</label>
       <input type="number" class="form-control" placeholder="Enter max clients" data-toggle="tooltip" title="Maximum number of clients connected to a server or to each server replica." min="0" value="<%- max_clients === -1 ? '' : max_clients %>" autocapitalize="off">
@@ -123,7 +130,11 @@
     </div>
     <div class="ping-timeout form-group">
       <label>Ping Timeout</label>
-      <input type="number" class="form-control" placeholder="Enter ping timeout" data-toggle="tooltip" title="Optional, timeout for client ping. Must be greater then ping interval" min="0" *value="<%- ping_timeout || '' %>" autocapitalize="off">
+      <input type="number" class="form-control" placeholder="Enter ping timeout" data-toggle="tooltip" title="Optional, timeout for client ping. Must be greater then ping interval" min="0" value="<%- ping_timeout || '' %>" autocapitalize="off">
+    </div>
+    <div class="link-ping-timeout form-group">
+      <label>User Link Ping Timeout</label>
+      <input type="number" class="form-control" placeholder="Enter ping timeout" data-toggle="tooltip" title="Optional, ping timeout used when multiple users have the same network link to failover to another user when one network link fails." min="0" step="0.1" value="<%- link_ping_timeout || '' %>" autocapitalize="off">
     </div>
     <div class="search-domain form-group">
       <label>DNS Search Domain</label>

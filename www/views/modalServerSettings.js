@@ -322,6 +322,10 @@ define([
       var interClient = this.getInterClientSelect();
       var pingInterval = parseInt(this.$('.ping-interval input').val(), 10);
       var pingTimeout = parseInt(this.$('.ping-timeout input').val(), 10);
+      var linkPingInterval = parseFloat(
+        this.$('.link-ping-interval input').val(), 10);
+      var linkPingTimeout = parseFloat(
+        this.$('.link-ping-timeout input').val(), 10);
       var maxClients = parseInt(this.$('.max-clients input').val(), 10);
       var replicaCount = parseInt(this.$('.replica-count input').val(), 10);
       var dnsMapping = this.getDnsMappingSelect();
@@ -393,6 +397,8 @@ define([
         'inter_client': interClient,
         'ping_interval': pingInterval,
         'ping_timeout': pingTimeout,
+        'link_ping_interval': linkPingInterval,
+        'link_ping_timeout': linkPingTimeout,
         'max_clients': maxClients,
         'replica_count': replicaCount,
         'dns_mapping': dnsMapping,
