@@ -36,6 +36,8 @@ define([
       'inter_client': null,
       'ping_interval': null,
       'ping_timeout': null,
+      'link_ping_interval': null,
+      'link_ping_timeout': null,
       'max_clients': null,
       'replica_count': null,
       'dns_mapping': null,
