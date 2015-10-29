@@ -270,27 +270,43 @@ def server_put_post(server_id=None):
 
     ping_interval = None
     ping_interval_def = False
-    if flask.request.json.get('ping_interval'):
+    if 'ping_interval' in flask.request.json:
         ping_interval_def = True
-        ping_interval = int(flask.request.json['ping_interval'])
+        ping_interval = flask.request.json['ping_interval']
+        if ping_interval:
+            ping_interval = int(ping_interval)
+        else:
+            ping_interval = 10
 
     ping_timeout = None
     ping_timeout_def = False
-    if flask.request.json.get('ping_timeout'):
+    if 'ping_timeout' in flask.request.json:
         ping_timeout_def = True
-        ping_timeout = int(flask.request.json['ping_timeout'])
+        ping_timeout = flask.request.json['ping_timeout']
+        if ping_timeout:
+            ping_timeout = int(ping_timeout)
+        else:
+            ping_timeout = 60
 
     link_ping_interval = None
     link_ping_interval_def = False
-    if flask.request.json.get('link_ping_interval'):
+    if 'link_ping_interval' in flask.request.json:
         link_ping_interval_def = True
-        link_ping_interval = float(flask.request.json['link_ping_interval'])
+        link_ping_interval = flask.request.json['link_ping_interval']
+        if link_ping_interval:
+            link_ping_interval = int(link_ping_interval)
+        else:
+            link_ping_interval = 1
 
     link_ping_timeout = None
     link_ping_timeout_def = False
-    if flask.request.json.get('link_ping_timeout'):
+    if 'link_ping_timeout' in flask.request.json:
         link_ping_timeout_def = True
-        link_ping_timeout = float(flask.request.json['link_ping_timeout'])
+        link_ping_timeout = flask.request.json['link_ping_timeout']
+        if link_ping_timeout:
+            link_ping_timeout = int(link_ping_timeout)
+        else:
+            link_ping_timeout = 5
 
     max_clients = None
     max_clients_def = False
@@ -302,10 +318,14 @@ def server_put_post(server_id=None):
 
     replica_count = None
     replica_count_def = False
-    if flask.request.json.get('replica_count'):
+    if 'replica_count' in flask.request.json:
         replica_count_def = True
-        replica_count = int(flask.request.json['replica_count'])
-        if replica_count < 1:
+        replica_count = flask.request.json['replica_count']
+        if replica_count:
+            replica_count = int(replica_count)
+            if replica_count < 1:
+                replica_count = 1
+        else:
             replica_count = 1
 
     dns_mapping = False
