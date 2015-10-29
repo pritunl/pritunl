@@ -275,7 +275,7 @@ def server_put_post(server_id=None):
         ping_interval = flask.request.json['ping_interval']
         if ping_interval:
             ping_interval = int(ping_interval)
-        else:
+        if not ping_interval:
             ping_interval = 10
 
     ping_timeout = None
@@ -285,7 +285,7 @@ def server_put_post(server_id=None):
         ping_timeout = flask.request.json['ping_timeout']
         if ping_timeout:
             ping_timeout = int(ping_timeout)
-        else:
+        if not ping_timeout:
             ping_timeout = 60
 
     link_ping_interval = None
@@ -295,7 +295,7 @@ def server_put_post(server_id=None):
         link_ping_interval = flask.request.json['link_ping_interval']
         if link_ping_interval:
             link_ping_interval = int(link_ping_interval)
-        else:
+        if not link_ping_interval:
             link_ping_interval = 1
 
     link_ping_timeout = None
@@ -305,16 +305,18 @@ def server_put_post(server_id=None):
         link_ping_timeout = flask.request.json['link_ping_timeout']
         if link_ping_timeout:
             link_ping_timeout = int(link_ping_timeout)
-        else:
+        if not link_ping_timeout:
             link_ping_timeout = 5
 
     max_clients = None
     max_clients_def = False
-    if flask.request.json.get('max_clients'):
+    if 'max_clients' in flask.request.json:
         max_clients_def = True
-        max_clients = int(flask.request.json['max_clients'])
-        if max_clients < 1:
-            max_clients = 1
+        max_clients = flask.request.json['max_clients']
+        if max_clients:
+            max_clients = int(max_clients)
+        if not max_clients:
+            max_clients = 2048
 
     replica_count = None
     replica_count_def = False
@@ -323,9 +325,7 @@ def server_put_post(server_id=None):
         replica_count = flask.request.json['replica_count']
         if replica_count:
             replica_count = int(replica_count)
-            if replica_count < 1:
-                replica_count = 1
-        else:
+        if not replica_count:
             replica_count = 1
 
     dns_mapping = False
