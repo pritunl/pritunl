@@ -195,6 +195,10 @@ class Clients(object):
         for client_id in secondary_reconnect:
             self.instance_com.client_kill(client_id)
 
+        if primary_reconnect or secondary_reconnect:
+            self.instance_com.push_output('Gateway link ' +
+                'changed, relinking gateways')
+
     def has_failover_iroute(self, client_id):
         self.iroutes_lock.acquire()
         try:
@@ -546,6 +550,8 @@ class Clients(object):
 
             latency = utils.ping(virt_address)
             if latency is None and self.has_failover_iroute(client_id):
+                self.instance_com.push_output(
+                    'Gateway link timeout on %s' % virt_address)
                 self.instance_com.client_kill(client_id)
                 break
 
