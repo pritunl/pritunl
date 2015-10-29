@@ -25,6 +25,7 @@ class Clients(object):
         self.instance = instance
         self.instance_com = instance_com
         self.iroutes = {}
+        self.iroutes_thread = {}
         self.iroutes_lock = threading.RLock()
         self.iroutes_index = collections.defaultdict(set)
 
@@ -44,7 +45,7 @@ class Clients(object):
     def collection(cls):
         return mongo.get_collection('clients')
 
-    def generate_client_conf(self, client_id, user):
+    def generate_client_conf(self, client_id, virt_address, user, reauth):
         from pritunl.server.utils import get_by_id
 
         client_conf = ''
@@ -81,15 +82,20 @@ class Clients(object):
 
             client_conf += 'push "ip-win32 dynamic 0 3600"\n'
 
-            for network_link in user.get_network_links():
-                if not self.reserve_iroute(client_id, network_link, True):
-                    continue
+            network_links = user.get_network_links()
+            for network_link in network_links:
+                if self.reserve_iroute(client_id, network_link, True):
+                    if ':' in network_link:
+                        client_conf += 'iroute-ipv6 %s\n' % network_link
+                    else:
+                        client_conf += 'iroute %s %s\n' % utils.parse_network(
+                            network_link)
 
-                if ':' in network_link:
-                    client_conf += 'iroute-ipv6 %s\n' % network_link
-                else:
-                    client_conf += 'iroute %s %s\n' % utils.parse_network(
-                        network_link)
+            if network_links and not reauth:
+                thread = threading.Thread(target=self.iroute_ping_thread,
+                    args=(client_id, virt_address.split('/')[0]))
+                thread.daemon = True
+                thread.start()
 
             for network_link in self.server.network_links:
                 if ':' in network_link:
@@ -124,7 +130,9 @@ class Clients(object):
             reconnect = None
 
             if iroute and self.clients.count_id(iroute['master']):
-                if not primary or iroute['primary']:
+                if iroute['master'] == client_id:
+                    reserved = True
+                elif not primary or iroute['primary']:
                     if primary:
                         iroute['primary_slaves'].add(client_id)
                     else:
@@ -180,7 +188,7 @@ class Clients(object):
             self.instance_com.client_kill(client_id)
 
         if len(primary_reconnect):
-            time.sleep(3)
+            time.sleep(5)
 
         for client_id in secondary_reconnect:
             self.instance_com.client_kill(client_id)
