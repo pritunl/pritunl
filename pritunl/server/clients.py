@@ -168,8 +168,10 @@ class Clients(object):
                     secondary_reconnect |= iroute['secondary_slaves']
                     self.iroutes.pop(network)
                 else:
-                    iroute['primary_slaves'].remove(client_id)
-                    iroute['secondary_slaves'].remove(client_id)
+                    if client_id in iroute['primary_slaves']:
+                        iroute['primary_slaves'].remove(client_id)
+                    if client_id in iroute['secondary_slaves']:
+                        iroute['secondary_slaves'].remove(client_id)
         finally:
             self.iroutes_lock.release()
 
