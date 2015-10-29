@@ -23,6 +23,8 @@ import Queue
 import urllib2
 import json
 
+_null = open(os.devnull, 'w')
+
 if hasattr(sys, 'frozen'):
     _srcfile = 'logging%s__init__%s' % (os.sep, __file__[-4:])
 elif __file__[-4:].lower() in ('.pyc', '.pyo'):
@@ -412,3 +414,12 @@ def sync_public_ip(attempts=1, timeout=5, update=False):
             'auto_public_address': settings.local.public_ip,
             'auto_public_address6': settings.local.public_ip6,
         }})
+
+def ping(address, timeout=1):
+    start = time.time()
+    code = subprocess.call(['ping', '-c', '1', '-W', str(timeout), address],
+        stdout=_null, stderr=_null)
+    runtime = (time.time() - start)
+    if code != 0:
+        return None
+    return runtime
