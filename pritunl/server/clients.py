@@ -444,7 +444,8 @@ class Clients(object):
         if settings.local.sub_active and \
                 settings.local.sub_plan == 'enterprise':
             domain_hash = hashlib.md5()
-            domain_hash.update(client['user_name'] + '.' + client['org_name'])
+            domain_hash.update(
+                client['user_name'].split('@')[0] + '.' + client['org_name'])
             domain_hash = bson.binary.Binary(domain_hash.digest(),
                 subtype=bson.binary.MD5_SUBTYPE)
             doc['domain'] = domain_hash
