@@ -193,6 +193,21 @@ class Clients(object):
         for client_id in secondary_reconnect:
             self.instance_com.client_kill(client_id)
 
+    def has_failover_iroute(self, client_id):
+        self.iroutes_lock.acquire()
+        try:
+            if client_id in self.iroutes_index:
+                for network in self.iroutes_index[client_id]:
+                    iroute = self.iroutes.get(network)
+
+                    if iroute['primary_slaves'] or iroute['primary_slaves']:
+                        return True
+            else:
+                return True
+        finally:
+            self.iroutes_lock.release()
+        return False
+
     def allow_client(self, client, org, user, reauth=False):
         client_id = client['client_id']
         key_id = client['key_id']
