@@ -58,6 +58,8 @@ dict_fields = [
     'inter_client',
     'ping_interval',
     'ping_timeout',
+    'link_ping_interval',
+    'link_ping_timeout',
     'max_clients',
     'replica_count',
     'dns_mapping',
@@ -90,6 +92,8 @@ class Server(mongo.MongoObject):
         'inter_client',
         'ping_interval',
         'ping_timeout',
+        'link_ping_interval',
+        'link_ping_timeout',
         'dns_mapping',
         'debug',
         'cipher',
@@ -121,6 +125,8 @@ class Server(mongo.MongoObject):
         'inter_client': True,
         'ping_interval': 10,
         'ping_timeout': 60,
+        'link_ping_interval': 1,
+        'link_ping_timeout': 3,
         'debug': False,
         'cipher': 'aes256',
         'hash': 'sha1',
@@ -143,8 +149,9 @@ class Server(mongo.MongoObject):
             local_networks=None, dns_servers=None, search_domain=None,
             otp_auth=None, cipher=None, hash=None, jumbo_frames=None,
             lzo_compression=None, inter_client=None, ping_interval=None,
-            ping_timeout=None, max_clients=None, replica_count=None,
-            dns_mapping=None, debug=None, **kwargs):
+            ping_timeout=None, link_ping_interval=None, link_ping_timeout=None,
+            max_clients=None, replica_count=None, dns_mapping=None,
+        debug=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         if 'network' in self.loaded_fields:
@@ -203,6 +210,10 @@ class Server(mongo.MongoObject):
             self.ping_interval = ping_interval
         if ping_timeout is not None:
             self.ping_timeout = ping_timeout
+        if link_ping_interval is not None:
+            self.link_ping_interval = link_ping_interval
+        if link_ping_timeout is not None:
+            self.link_ping_timeout = link_ping_timeout
         if max_clients is not None:
             self.max_clients = max_clients
         if replica_count is not None:
@@ -268,6 +279,8 @@ class Server(mongo.MongoObject):
             'inter_client': True if self.inter_client else False,
             'ping_interval': self.ping_interval,
             'ping_timeout': self.ping_timeout,
+            'link_ping_interval': self.link_ping_interval,
+            'link_ping_timeout': self.link_ping_timeout,
             'max_clients': self.max_clients,
             'replica_count': self.replica_count,
             'dns_mapping': True if self.dns_mapping else False,
