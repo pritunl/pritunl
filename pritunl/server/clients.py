@@ -189,7 +189,7 @@ class Clients(object):
         for client_id in primary_reconnect:
             self.instance_com.client_kill(client_id)
 
-        if len(primary_reconnect):
+        if primary_reconnect:
             time.sleep(5)
 
         for client_id in secondary_reconnect:
