@@ -154,6 +154,8 @@ class Clients(object):
             self.iroutes_lock.release()
 
         if reconnect:
+            self.instance_com.push_output('Primary link available ' +
+                'over secondary, relinking %s' % network)
             self.instance_com.client_kill(reconnect)
 
         return reserved
