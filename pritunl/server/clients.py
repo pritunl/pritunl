@@ -220,8 +220,6 @@ class Clients(object):
         remote_ip = client.get('remote_ip')
         address_dynamic = False
 
-        client_conf = self.generate_client_conf(client_id, user)
-
         if reauth:
             doc = self.clients.find_id(client_id)
             if not doc:
@@ -276,6 +274,9 @@ class Clients(object):
                 'real_address': remote_ip,
                 'address_dynamic': address_dynamic,
             })
+
+        client_conf = self.generate_client_conf(client_id,
+            virt_address, user, reauth)
 
         client_conf += 'ifconfig-push %s %s\n' % utils.parse_network(
             virt_address)
