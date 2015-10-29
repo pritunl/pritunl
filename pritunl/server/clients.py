@@ -539,7 +539,7 @@ class Clients(object):
         yield interrupter_sleep(6)
 
         while True:
-            yield interrupter_sleep(1)
+            yield interrupter_sleep(self.server.link_ping_interval)
 
             if client_id not in self.iroutes_index or \
                     self.iroutes_thread.get(client_id) != thread_id:
@@ -548,7 +548,8 @@ class Clients(object):
             if not self.has_failover_iroute(client_id):
                 continue
 
-            latency = utils.ping(virt_address)
+            latency = utils.ping(virt_address,
+                timeout=self.server.link_ping_timeout)
             if latency is None and self.has_failover_iroute(client_id):
                 self.instance_com.push_output(
                     'Gateway link timeout on %s' % virt_address)
