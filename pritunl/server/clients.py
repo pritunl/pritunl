@@ -15,6 +15,7 @@ import collections
 import bson
 import hashlib
 import threading
+import uuid
 
 _limiter = limiter.Limiter('vpn', 'peer_limit', 'peer_limit_timeout')
 
@@ -498,6 +499,29 @@ class Clients(object):
                 return True
             elif length <= 0:
                 return False
+
+    @interrupter
+    def iroute_ping_thread(self, client_id, virt_address):
+        thread_id = uuid.uuid4().hex
+        self.iroutes_thread[client_id] = thread_id
+
+        yield interrupter_sleep(6)
+
+        while True:
+            yield interrupter_sleep(1)
+
+            if client_id not in self.iroutes_index or \
+                    self.iroutes_thread.get(client_id) != thread_id:
+                break
+
+            if not self.has_failover_iroute(client_id):
+                continue
+
+            latency = utils.ping(virt_address)
+            print 'ping', client_id, latency
+            if latency is None and self.has_failover_iroute(client_id):
+                self.instance_com.client_kill(client_id)
+                break
 
     @interrupter
     def ping_thread(self):
