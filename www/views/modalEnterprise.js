@@ -106,25 +106,28 @@ define([
       this.$('.enterprise-buttons button' + notSel).removeAttr('disabled');
     },
     setupUserVoice: function() {
-      $.getCachedScript('//widget.uservoice.com/Vp7EFBMcYhZHI91VAtHeyg.js', {
-        success: function() {
-          window.UserVoice.push(['set', {
-            contact_title: 'Contact Support',
-            accent_color: '#448dd6',
-            screenshot_enabled: false,
-            smartvote_enabled: false,
-            post_idea_enabled: false
-          }]);
-          window.UserVoice.push(['identify', {
-            type: window.subPlan
-          }]);
-          window.UserVoice.push(['addTrigger', '#trigger-uservoice',
-            {mode: 'contact'}]);
-          window.UserVoice.push(['autoprompt', {}]);
-        }.bind(this),
-        error: function() {
-          this.$('.enterprise-support').attr('disabled', 'disabled');
-        }.bind(this)
+      window.$zopim || (function(d, s) {
+        var z = window.$zopim = function(c) {
+          z._.push(c)
+        },
+          $ = z.s = d.createElement(s),
+          e = d.getElementsByTagName(s)[0];
+        z.set=function(o) {
+          z.set._.push(o)
+        };
+        z._ = [];
+        z.set._ = [];
+        $.async = !0;
+        $.setAttribute("charset","utf-8");
+
+        $.src = "//v2.zopim.com/?3QAb3PtnE4kUWsqbpjY6MzH9vkMdM7zX";
+        z.t = +new Date;
+        $.type = "text/javascript";
+        e.parentNode.insertBefore($, e);
+      })(document,"script");
+
+      this.$('.enterprise-support').click(function() {
+        window.$zopim.livechat.window.show();
       });
     },
     openCheckout: function(optionsPath) {
