@@ -20,6 +20,7 @@ define([
         'click .enterprise-change': 'onChange',
         'click .enterprise-promo': 'onPromo',
         'click .enterprise-promo-ok': 'onPromoOk',
+        'click .enterprise-support': 'onSupport',
         'click .enterprise-remove': 'onRemoveLicense',
         'click .enterprise-cancel': 'onCancelLicense'
       }, ModalEnterpriseView.__super__.events);
@@ -31,7 +32,6 @@ define([
       this.update();
 
       // Precache checkout and uservoice with delay to prevent animation lag
-      setTimeout((this.setupSupport).bind(this), 200);
       setTimeout((this.setupCheckout).bind(this), 200);
     },
     update: function() {
@@ -105,7 +105,7 @@ define([
       }
       this.$('.enterprise-buttons button' + notSel).removeAttr('disabled');
     },
-    setupSupport: function() {
+    onSupport: function() {
       window.$zopim || (function(d, s) {
         var z = window.$zopim = function(c) {
           z._.push(c)
@@ -125,8 +125,7 @@ define([
         $.type = "text/javascript";
         e.parentNode.insertBefore($, e);
       })(document,"script");
-
-      this.$('.enterprise-support').click(function() {
+      window.$zopim(function() {
         window.$zopim.livechat.window.show();
       });
     },
