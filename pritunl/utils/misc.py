@@ -22,6 +22,7 @@ import re
 import Queue
 import urllib2
 import json
+import math
 
 _null = open(os.devnull, 'w')
 
@@ -418,7 +419,7 @@ def sync_public_ip(attempts=1, timeout=5, update=False):
 def ping(address, timeout=1):
     start = time.time()
     code = subprocess.call(['ping', '-c', '1', '-W',
-            str(int(timeout)), address],
+            str(math.ceil(timeout)), address],
         stdout=_null, stderr=_null)
     runtime = (time.time() - start)
     if code != 0:
