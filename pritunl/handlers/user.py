@@ -67,7 +67,8 @@ def user_get(org_id, user_id=None, page=None):
         user_dict['status'] = False
         user_dict['otp_auth'] = otp_auth
         if dns_mapping:
-            user_dict['dns_mapping'] = '%s.%s.vpn' % (usr.name, org.name)
+            user_dict['dns_mapping'] = '%s.%s.vpn' % (
+                usr.name.split('@')[0], org.name)
         else:
             user_dict['dns_mapping'] = None
         user_dict['network_links'] = []
