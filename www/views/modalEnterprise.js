@@ -31,7 +31,7 @@ define([
       this.update();
 
       // Precache checkout and uservoice with delay to prevent animation lag
-      setTimeout((this.setupUserVoice).bind(this), 200);
+      setTimeout((this.setupSupport).bind(this), 200);
       setTimeout((this.setupCheckout).bind(this), 200);
     },
     update: function() {
@@ -105,7 +105,7 @@ define([
       }
       this.$('.enterprise-buttons button' + notSel).removeAttr('disabled');
     },
-    setupUserVoice: function() {
+    setupSupport: function() {
       window.$zopim || (function(d, s) {
         var z = window.$zopim = function(c) {
           z._.push(c)
