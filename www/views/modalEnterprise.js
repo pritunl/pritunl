@@ -131,27 +131,27 @@ define([
     },
     openCheckout: function(optionsPath) {
       $.ajax({
-          type: 'GET',
-          url: 'https://app.pritunl.com/' + optionsPath,
-          success: function(options) {
-            var plan;
-            var changed = (optionsPath === 'checkout_change');
+        type: 'GET',
+        url: 'https://app.pritunl.com/' + optionsPath,
+        success: function(options) {
+          var plan;
+          var changed = (optionsPath === 'checkout_change');
 
-            if (options.plans) {
-              if (options.plans[window.subPlan].plan) {
-                plan = options.plans[window.subPlan].plan;
-                delete options.plans[window.subPlan].plan;
-              }
-              _.extend(options, options.plans[window.subPlan]);
-              delete options.plans;
+          if (options.plans) {
+            if (options.plans[window.subPlan].plan) {
+              plan = options.plans[window.subPlan].plan;
+              delete options.plans[window.subPlan].plan;
             }
+            _.extend(options, options.plans[window.subPlan]);
+            delete options.plans;
+          }
 
-            this.configCheckout(options, plan, changed);
-          }.bind(this),
-          error: function() {
-            this.setAlert('danger', 'Failed to load checkout data, ' +
-              'please try again later.');
-          }.bind(this)
+          this.configCheckout(options, plan, changed);
+        }.bind(this),
+        error: function() {
+          this.setAlert('danger', 'Failed to load checkout data, ' +
+            'please try again later.');
+        }.bind(this)
       });
     },
     configCheckout: function(options, plan, changed) {
