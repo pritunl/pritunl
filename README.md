@@ -34,10 +34,14 @@ $ systemctl enable mongodb pritunl
 ### amazon linux
 
 ```
-$ wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-$ rpm -i epel-release-latest-7.noarch.rpm
+$ sudo nano /etc/yum.repos.d/mongodb-org-3.0.repo
+[mongodb-org-3.0]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/amazon/2013.03/mongodb-org/3.0/x86_64/
+gpgcheck=0
+enabled=1
 
-$ nano /etc/yum.repos.d/pritunl.repo
+$ sudo nano /etc/yum.repos.d/pritunl.repo
 [pritunl]
 name=Pritunl Repository
 baseurl=http://repo.pritunl.com/stable/yum/centos/7/
@@ -45,10 +49,10 @@ gpgcheck=1
 enabled=1
 
 $ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys CF8E292A
-$ gpg --armor --export CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
-$ yum install pritunl mongodb-server
-$ start mongod
-$ start pritunl
+$ gpg --armor --export CF8E292A > key.tmp; sudo rpm --import key.tmp; rm -f key.tmp
+$ sudo yum install pritunl mongodb-org
+$ sudo service mongod start
+$ sudo start pritunl
 ```
 
 ### centos 7
@@ -207,21 +211,25 @@ $ systemctl enable mongodb pritunl
 ### amazon linux
 
 ```
-$ wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-$ rpm -i epel-release-latest-7.noarch.rpm
+$ sudo nano /etc/yum.repos.d/mongodb-org-3.0.repo
+[mongodb-org-3.0]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/amazon/2013.03/mongodb-org/3.0/x86_64/
+gpgcheck=0
+enabled=1
 
-$ nano /etc/yum.repos.d/pritunl.repo
+$ sudo nano /etc/yum.repos.d/pritunl.repo
 [pritunl]
-name=Pritunl Dev Repository
+name=Pritunl Repository
 baseurl=http://repo.pritunl.com/dev/yum/centos/7/
 gpgcheck=1
 enabled=1
 
 $ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys CF8E292A
-$ gpg --armor --export CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
-$ yum install pritunl mongodb-server
-$ start mongod
-$ start pritunl
+$ gpg --armor --export CF8E292A > key.tmp; sudo rpm --import key.tmp; rm -f key.tmp
+$ sudo yum install pritunl mongodb-org
+$ sudo service mongod start
+$ sudo start pritunl
 ```
 
 ### centos 7
