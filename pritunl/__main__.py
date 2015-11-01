@@ -133,6 +133,28 @@ def main(default_conf=None):
             json.dumps(getattr(group, key_str)))
 
         sys.exit(0)
+    elif cmd == 'unset':
+        from pritunl import setup
+        from pritunl import settings
+        setup.setup_db()
+
+        if len(args) != 2:
+            raise ValueError('Invalid arguments')
+
+        group_str, key_str = args[1].split('.')
+
+        group = getattr(settings, group_str)
+
+        group.unset(key_str)
+
+        settings.commit()
+
+        time.sleep(.5)
+
+        print '%s.%s = %s' % (group_str, key_str,
+            json.dumps(getattr(group, key_str)))
+
+        sys.exit(0)
     elif cmd == 'set-mongodb':
         from pritunl import setup
         from pritunl import settings
