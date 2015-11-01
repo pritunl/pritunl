@@ -4,6 +4,7 @@ import optparse
 import sys
 import os
 import time
+import json
 
 USAGE = """\
 Usage: pritunl [command] [options]
@@ -76,8 +77,60 @@ def main(default_conf=None):
         settings.conf.mongodb_uri = None
         settings.conf.commit()
 
+        # TODO Fix db index updates when settings such as vpn.client_ttl change
+
         time.sleep(.5)
         print 'Database configuration successfully reset'
+
+        sys.exit(0)
+    elif cmd == 'get':
+        from pritunl import setup
+        from pritunl import settings
+        setup.setup_db()
+
+        if len(args) != 2:
+            raise ValueError('Invalid arguments')
+
+        split = args[1].split('.')
+        key_str = None
+        group_str = split[0]
+        if len(split) > 1:
+            key_str = split[1]
+
+        group = getattr(settings, group_str)
+        if key_str:
+            val = getattr(group, key_str)
+
+            print '%s.%s = %s' % (group_str, key_str,
+                json.dumps(val))
+
+        else:
+            for field in group.fields:
+                val = getattr(group, field)
+                print '%s.%s = %s' % (group_str, field, json.dumps(val))
+
+        sys.exit(0)
+    elif cmd == 'set':
+        from pritunl import setup
+        from pritunl import settings
+        setup.setup_db()
+
+        if len(args) != 3:
+            raise ValueError('Invalid arguments')
+
+        group_str, key_str = args[1].split('.')
+
+        group = getattr(settings, group_str)
+        val_str = args[2]
+        val = json.loads(val_str)
+        setattr(group, key_str, val)
+
+        settings.commit()
+
+        time.sleep(.5)
+
+        print '%s.%s = %s' % (group_str, key_str,
+            json.dumps(getattr(group, key_str)))
 
         sys.exit(0)
     elif cmd == 'set-mongodb':
