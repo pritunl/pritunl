@@ -453,6 +453,35 @@ elif cmd == 'upload':
     for name, path in iter_packages():
         post_git_asset(release_id, name, path)
 
+
+elif cmd == 'upload-github':
+    is_snapshot = 'snapshot' in cur_version
+
+
+    # Get release id
+    release_id = None
+    response = requests.get(
+        'https://api.github.com/repos/%s/%s/releases' % (
+            github_owner, pkg_name),
+        headers={
+            'Authorization': 'token %s' % github_token,
+            'Content-type': 'application/json',
+        },
+        )
+
+    for release in response.json():
+        if release['tag_name'] == cur_version:
+            release_id = release['id']
+
+    if not release_id:
+        print 'Version does not exists in github'
+        sys.exit(1)
+
+
+    # Add to github
+    for name, path in iter_packages():
+        post_git_asset(release_id, name, path)
+
 else:
     print 'Unknown command'
     sys.exit(1)
