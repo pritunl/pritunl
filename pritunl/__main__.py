@@ -77,8 +77,6 @@ def main(default_conf=None):
         settings.conf.mongodb_uri = None
         settings.conf.commit()
 
-        # TODO Fix db index updates when settings such as vpn.client_ttl change
-
         time.sleep(.5)
         print 'Database configuration successfully reset'
 
