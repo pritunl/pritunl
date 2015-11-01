@@ -70,6 +70,22 @@ class Settings(object):
                 }).upsert().update({
                     '$set': doc,
                 })
+
+            unset_doc = group_cls.get_commit_unset_doc()
+            if unset_doc:
+                has_docs = True
+                doc_id = unset_doc.pop('_id')
+                collection.bulk().find({
+                    '_id': doc_id,
+                }).upsert().update({
+                    '$unset': unset_doc,
+                })
+
+                doc = doc or {'_id': doc_id}
+                for key in unset_doc:
+                    doc[key] = getattr(group_cls, key)
+
+            if doc:
                 docs.append(doc)
 
         messenger.publish('setting', docs, transaction=tran)
