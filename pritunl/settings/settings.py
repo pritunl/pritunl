@@ -62,7 +62,6 @@ class Settings(object):
                 continue
 
             doc = group_cls.get_commit_doc(init)
-
             if doc:
                 has_docs = True
                 collection.bulk().find({
