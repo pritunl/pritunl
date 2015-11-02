@@ -31,7 +31,7 @@ class Clients(object):
 
         self.clients = docdb.DocDb(
             'user_id',
-            'device_id',
+            'mac_addr',
             'virt_address',
         )
         self.clients_queue = collections.deque()
@@ -239,9 +239,12 @@ class Clients(object):
             if not self.server.multi_device:
                 for client in self.clients.find({'user_id': user_id}):
                     self.instance_com.client_kill(client['id'])
-            elif virt_address and self.clients.find(
-                    {'virt_address': virt_address}):
-                virt_address = None
+            elif virt_address:
+                for client in self.clients.find({'mac_addr': mac_addr}):
+                    self.instance_com.client_kill(client['id'])
+
+                if self.clients.find({'virt_address': virt_address}):
+                    virt_address = None
 
             if not virt_address:
                 while True:
