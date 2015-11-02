@@ -98,7 +98,6 @@ def main(default_conf=None):
         group = getattr(settings, group_str)
         if key_str:
             val = getattr(group, key_str)
-
             print '%s.%s = %s' % (group_str, key_str,
                 json.dumps(val))
 
