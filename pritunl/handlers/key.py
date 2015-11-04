@@ -159,7 +159,7 @@ def user_linked_key_page_get(short_code):
 
     conf_links = ''
 
-    if settings.local.sub_active and settings.local.sub_plan == 'enterprise':
+    if settings.local.sub_active:
         conf_links += '<a class="btn btn-success" ' + \
             'title="Download Chromebook Profiles" ' + \
             'href="/key_onc/%s.zip">Download Chromebook Profiles</a><br>\n' % (
