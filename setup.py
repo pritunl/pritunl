@@ -77,13 +77,13 @@ data_files = [
 
 patch_files = []
 if install_sysvinit:
-    data_files.append(('/etc/init.d', ['data/init.d.sysvinit/pritunl.sh']))
+    data_files.append(('/etc/init.d', ['data/init.d.sysvinit/pritunl']))
 
 if install_upstart:
     patch_files.append('%s/pritunl.conf' % PATCH_DIR)
     data_files.append(('/etc/init', ['%s/pritunl.conf' % PATCH_DIR]))
     if not install_sysvinit:
-        data_files.append(('/etc/init.d', ['data/init.d.upstart/pritunl.sh']))
+        data_files.append(('/etc/init.d', ['data/init.d.upstart/pritunl']))
     shutil.copy('data/init/pritunl.conf', '%s/pritunl.conf' % PATCH_DIR)
 
 if install_systemd:
