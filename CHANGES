@@ -5,6 +5,7 @@ Pritunl Changelog
 
 Add command line options
 Improve multi device support
+Add sysvinit support
 
 Version 1.8.778.54 2015-10-30
 -----------------------------
