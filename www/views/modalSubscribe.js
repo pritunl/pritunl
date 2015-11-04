@@ -20,20 +20,6 @@ define([
     safeClose: true,
     initialize: function() {
       ModalSubscribeView.__super__.initialize.call(this);
-      var alertView = new AlertView({
-        type: 'success',
-        message: '<b>Follow and tweet ' +
-          '<a href="https://twitter.com/intent/tweet?' +
-          'original_referer=https%3A%2F%2Fabout.twitter' +
-          '.com%2Fresources%2Fbuttons&text=Enterprise%20' +
-          'open%20source%20VPN%20server&tw_p=tweetbutton' +
-          '&url=http%3A%2F%2Fpritunl.com%2F&via=pritunl" ' +
-          'target="_blank">@pritunl</a> for a ' +
-          'free six month premium subscription.</b>',
-        animate: false
-      });
-      this.addView(alertView);
-      this.$('.modal-body').prepend(alertView.render().el);
     },
     events: function() {
       return _.extend({
