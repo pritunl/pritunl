@@ -10,6 +10,7 @@ VERSION = '1.8.778.54'
 PATCH_DIR = 'build'
 install_upstart = True
 install_systemd = True
+install_sysvinit = False
 
 prefix = sys.prefix
 for arg in copy.copy(sys.argv):
@@ -21,6 +22,9 @@ for arg in copy.copy(sys.argv):
     elif arg == '--no-systemd':
         sys.argv.remove('--no-systemd')
         install_systemd = False
+    elif arg == '--sysvinit':
+        sys.argv.remove('--sysvinit')
+        install_sysvinit = True
 
 if not os.path.exists('build'):
     os.mkdir('build')
@@ -72,11 +76,14 @@ data_files = [
 ]
 
 patch_files = []
-if install_upstart:
+if install_sysvinit:
+    data_files.append(('/etc/init.d', ['data/init.d.sysvinit/pritunl.sh']))
+elif install_upstart:
     patch_files.append('%s/pritunl.conf' % PATCH_DIR)
     data_files.append(('/etc/init', ['%s/pritunl.conf' % PATCH_DIR]))
-    data_files.append(('/etc/init.d', ['data/init.d/pritunl.sh']))
+    data_files.append(('/etc/init.d', ['data/init.d.upstart/pritunl.sh']))
     shutil.copy('data/init/pritunl.conf', '%s/pritunl.conf' % PATCH_DIR)
+
 if install_systemd:
     patch_files.append('%s/pritunl.service' % PATCH_DIR)
     data_files.append(('/etc/systemd/system',
