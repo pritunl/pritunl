@@ -240,8 +240,9 @@ class Clients(object):
                 for client in self.clients.find({'user_id': user_id}):
                     self.instance_com.client_kill(client['id'])
             elif virt_address:
-                for client in self.clients.find({'mac_addr': mac_addr}):
-                    self.instance_com.client_kill(client['id'])
+                if mac_addr:
+                    for client in self.clients.find({'mac_addr': mac_addr}):
+                        self.instance_com.client_kill(client['id'])
 
                 if self.clients.find({'virt_address': virt_address}):
                     virt_address = None
