@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with mobile connections with multi device enabled
+
 Version 1.8.783.26 2015-11-04
 -----------------------------
 
