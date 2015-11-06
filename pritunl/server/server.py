@@ -129,7 +129,7 @@ class Server(mongo.MongoObject):
         'link_ping_timeout': 5,
         'debug': False,
         'cipher': 'aes256',
-        'hash': 'sha1',
+        'hash': 'sha256',
         'jumbo_frames': False,
         'organizations': [],
         'hosts': [],
