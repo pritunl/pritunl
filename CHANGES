@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix display issue with network link ping settings
+
 Version 1.8.785.65 2015-11-06
 -----------------------------
 
