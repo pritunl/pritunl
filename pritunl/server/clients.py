@@ -348,7 +348,7 @@ class Clients(object):
                     'User failed authentication')
                 return
 
-            if self.server.otp_auth and  user.type == CERT_CLIENT and \
+            if self.server.otp_auth and user.type == CERT_CLIENT and \
                     not user.verify_otp_code(otp_code, remote_ip):
                 logger.LogEntry(message='User failed two-step ' +
                     'authentication "%s".' % user.name)
