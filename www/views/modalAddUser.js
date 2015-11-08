@@ -14,6 +14,11 @@ define([
     title: 'Add User',
     okText: 'Add',
     hasAdvanced: true,
+    events: function() {
+      return _.extend({
+        'click .bypass-secondary-toggle': 'onBypassSecondarySelect'
+      }, ModalAddUserView.__super__.events);
+    },
     initialize: function(options) {
       this.orgs = options.orgs;
       ModalAddUserView.__super__.initialize.call(this);
@@ -24,11 +29,28 @@ define([
         lastOrg: lastOrg
       });
     },
+    getBypassSecondarySelect: function() {
+      return this.$('.bypass-secondary-toggle .selector').hasClass('selected');
+    },
+    setBypassSecondarySelect: function(state) {
+      if (state) {
+        this.$('.bypass-secondary-toggle .selector').addClass('selected');
+        this.$('.bypass-secondary-toggle .selector-inner').show();
+      }
+      else {
+        this.$('.bypass-secondary-toggle .selector').removeClass('selected');
+        this.$('.bypass-secondary-toggle .selector-inner').hide();
+      }
+    },
+    onBypassSecondarySelect: function() {
+      this.setBypassSecondarySelect(!this.getBypassSecondarySelect());
+    },
     onOk: function() {
       var name = this.$('.name input').val();
       var org = this.$('.org select').val();
       var email = this.$('.email input').val();
       var emailReg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+      var bypassSecondary = this.getBypassSecondarySelect();
 
       var networkLink;
       var networkLinks = [];
@@ -59,7 +81,8 @@ define([
         organization: org,
         name: name,
         email: email,
-        network_links: networkLinks
+        network_links: networkLinks,
+        bypass_secondary: bypassSecondary
       }, {
         success: function() {
           this.close(true);
