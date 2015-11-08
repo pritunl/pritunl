@@ -93,6 +93,7 @@ class User(mongo.MongoObject):
             'type': self.type,
             'otp_secret': self.otp_secret,
             'disabled': self.disabled,
+            'bypass_secondary': self.bypass_secondary,
         }
 
     def initialize(self):
