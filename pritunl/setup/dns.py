@@ -26,7 +26,7 @@ def _dns_thread():
         except:
             logger.exception('Error in dns server', 'setup')
 
-        time.sleep(1)
+        time.sleep(60)
         yield
 
 def setup_dns():
