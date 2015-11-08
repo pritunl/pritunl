@@ -9,6 +9,7 @@ from pritunl import auth
 from pritunl import mongo
 from pritunl import sso
 from pritunl import event
+from pritunl import logger
 
 import flask
 import time
@@ -357,6 +358,12 @@ def sso_request_get():
     if resp.status_code != 200:
         if resp.status_code == 401:
             return flask.abort(405)
+
+        logger.error('Auth server error', 'server',
+            status_code=resp.status_code,
+            content=resp.content,
+        )
+
         return flask.abort(500)
 
     tokens_collection = mongo.get_collection('sso_tokens')
