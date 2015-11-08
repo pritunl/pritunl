@@ -58,6 +58,7 @@ def user_get(org_id, user_id=None, page=None):
         'type',
         'otp_secret',
         'disabled',
+        'bypass_secondary',
     )
     for usr in org.iter_users(page=page, search=search,
             search_limit=limit, fields=fields):
