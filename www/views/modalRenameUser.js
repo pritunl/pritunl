@@ -11,13 +11,36 @@ define([
     template: _.template(modalRenameUserTemplate),
     title: 'Modify User',
     okText: 'Save',
+    hasAdvanced: true,
+    events: function() {
+      return _.extend({
+        'click .bypass-secondary-toggle': 'onBypassSecondarySelect'
+      }, ModalRenameUserView.__super__.events);
+    },
     body: function() {
       return this.template(this.model.toJSON());
+    },
+    getBypassSecondarySelect: function() {
+      return this.$('.bypass-secondary-toggle .selector').hasClass('selected');
+    },
+    setBypassSecondarySelect: function(state) {
+      if (state) {
+        this.$('.bypass-secondary-toggle .selector').addClass('selected');
+        this.$('.bypass-secondary-toggle .selector-inner').show();
+      }
+      else {
+        this.$('.bypass-secondary-toggle .selector').removeClass('selected');
+        this.$('.bypass-secondary-toggle .selector-inner').hide();
+      }
+    },
+    onBypassSecondarySelect: function() {
+      this.setBypassSecondarySelect(!this.getBypassSecondarySelect());
     },
     onOk: function() {
       var name = this.$('.name input').val();
       var email = this.$('.email input').val();
       var emailReg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+      var bypassSecondary = this.getBypassSecondarySelect();
 
       var networkLink;
       var networkLinks = [];
@@ -46,7 +69,8 @@ define([
         name: name,
         email: email,
         disabled: null,
-        network_links: networkLinks
+        network_links: networkLinks,
+        bypass_secondary: bypassSecondary
       }, {
         success: function() {
           this.close(true);
