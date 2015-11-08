@@ -379,8 +379,6 @@ class Clients(object):
             user_id = client['user_id']
             otp_code = client.get('otp_code')
             remote_ip = client.get('remote_ip')
-            platform = client.get('platform')
-            device_name = client.get('device_name')
 
             if not _limiter.validate(remote_ip):
                 self.instance_com.send_client_deny(client_id, key_id,
