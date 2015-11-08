@@ -302,6 +302,73 @@ class Clients(object):
 
         self.instance_com.send_client_auth(client_id, key_id, client_conf)
 
+    def auth_duo(self, client, org, user, reauth):
+        client_id = client['client_id']
+        key_id = client['key_id']
+        remote_ip = client.get('remote_ip')
+        platform = client.get('platform')
+        device_name = client.get('device_name')
+
+        def auth_thread():
+            info={
+                'Server': self.server.name,
+            }
+
+            platform_name = None
+            if platform == 'linux':
+                platform_name = 'Linux'
+            elif platform == 'mac':
+                platform_name = 'Apple'
+            elif platform == 'win':
+                platform_name = 'Windows'
+            elif platform == 'chrome':
+                platform_name = 'Chrome OS'
+
+            if device_name:
+                info['Device'] = '%s (%s)' % (
+                    device_name, platform_name)
+
+            allow = False
+            try:
+                allow, _ = sso.auth_duo(
+                    user.name,
+                    ipaddr=remote_ip,
+                    type='Connection',
+                    info=info,
+                )
+            except:
+                logger.exception('Duo server error', 'server',
+                    client_id=client_id,
+                    user_id=user.id,
+                    username=user.name,
+                    server_id=self.server.id,
+                )
+                self.instance_com.push_output(
+                    'ERROR Duo server error client_id=%s' % client_id)
+            try:
+                if allow:
+                    self.allow_client(client, org, user, reauth)
+                else:
+                    logger.LogEntry(message='User failed duo ' +
+                        'authentication "%s".' % user.name)
+                    self.instance_com.send_client_deny(
+                        client_id,
+                        key_id,
+                        'User failed duo authentication',
+                    )
+            except:
+                logger.exception('Duo auth error', 'server',
+                    client_id=client_id,
+                    user_id=user.id,
+                    server_id=self.server.id,
+                )
+                self.instance_com.push_output(
+                    'ERROR Duo auth error client_id=%s' % client_id)
+
+        thread = threading.Thread(target=auth_thread)
+        thread.daemon = True
+        thread.start()
+
     def connect(self, client, reauth=False):
         client_id = None
         key_id = None
@@ -358,65 +425,7 @@ class Clients(object):
 
             if settings.app.sso and user.auth_type == DUO_AUTH and \
                     DUO_AUTH in settings.app.sso:
-                def duo_auth():
-                    info={
-                        'Server': self.server.name,
-                    }
-
-                    platform_name = None
-                    if platform == 'linux':
-                        platform_name = 'Linux'
-                    elif platform == 'mac':
-                        platform_name = 'Apple'
-                    elif platform == 'win':
-                        platform_name = 'Windows'
-                    elif platform == 'chrome':
-                        platform_name = 'Chrome OS'
-
-                    if device_name:
-                        info['Device'] = '%s (%s)' % (
-                            device_name, platform_name)
-
-                    allow = False
-                    try:
-                        allow, _ = sso.auth_duo(
-                            user.name,
-                            ipaddr=remote_ip,
-                            type='Connection',
-                            info=info,
-                        )
-                    except:
-                        logger.exception('Duo server error', 'server',
-                            client_id=client_id,
-                            user_id=user.id,
-                            username=user.name,
-                            server_id=self.server.id,
-                        )
-                        self.instance_com.push_output(
-                            'ERROR Duo server error client_id=%s' % client_id)
-                    try:
-                        if allow:
-                            self.allow_client(client, org, user, reauth)
-                        else:
-                            logger.LogEntry(message='User failed duo ' +
-                                'authentication "%s".' % user.name)
-                            self.instance_com.send_client_deny(
-                                client_id,
-                                key_id,
-                                'User failed duo authentication',
-                            )
-                    except:
-                        logger.exception('Duo auth error', 'server',
-                            client_id=client_id,
-                            user_id=user.id,
-                            server_id=self.server.id,
-                        )
-                        self.instance_com.push_output(
-                            'ERROR Duo auth error client_id=%s' % client_id)
-
-                thread = threading.Thread(target=duo_auth)
-                thread.daemon = True
-                thread.start()
+                self.auth_duo(client, org, user, reauth)
             else:
                 self.allow_client(client, org, user, reauth)
         except:
