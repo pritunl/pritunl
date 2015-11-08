@@ -20,3 +20,11 @@
     placeholder="Enter network address" data-toggle="tooltip"
     title="Enter network address with cidr subnet. This will provision access to a clients local network to the attached vpn servers and other clients. Multiple networks may be separated by a comma.">
 </div>
+<div class="advanced form-group">
+  <div class="bypass-secondary-toggle toggle-form form-group">
+    <label>Bypass Secondary Authentication</label>
+    <div class="selector <%= bypass_secondary ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Bypass secondary authentication such as two-factor authentication. Use for server users that can't provide a two-factor code.">
+      <span class="selector-inner glyphicon glyphicon-ok"></span>
+    </div>
+  </div>
+</div>

@@ -13,6 +13,7 @@ define([
     template: _.template(modalAddUserTemplate),
     title: 'Add User',
     okText: 'Add',
+    hasAdvanced: true,
     initialize: function(options) {
       this.orgs = options.orgs;
       ModalAddUserView.__super__.initialize.call(this);
