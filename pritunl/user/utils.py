@@ -18,7 +18,8 @@ def new_pooled_user(org, type):
     thread.start()
 
 def reserve_pooled_user(org, name=None, email=None, type=CERT_CLIENT,
-        auth_type=None, disabled=None, resource_id=None):
+        auth_type=None, disabled=None, resource_id=None,
+        bypass_secondary=None):
     doc = {}
 
     if name is not None:
@@ -33,6 +34,8 @@ def reserve_pooled_user(org, name=None, email=None, type=CERT_CLIENT,
         doc['disabled'] = disabled
     if resource_id is not None:
         doc['resource_id'] = resource_id
+    if bypass_secondary is not None:
+        doc['bypass_secondary'] = bypass_secondary
 
     doc = User.collection.find_and_modify({
         'org_id': org.id,
