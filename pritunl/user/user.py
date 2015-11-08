@@ -35,16 +35,18 @@ class User(mongo.MongoObject):
         'certificate',
         'resource_id',
         'link_server_id',
+        'bypass_secondary',
     }
     fields_default = {
         'name': 'undefined',
         'disabled': False,
         'type': CERT_CLIENT,
         'auth_type': LOCAL_AUTH,
+        'bypass_secondary': False,
     }
 
     def __init__(self, org, name=None, email=None, type=None, auth_type=None,
-            disabled=None, resource_id=None, **kwargs):
+            disabled=None, resource_id=None, bypass_secondary=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         self.org = org
@@ -62,6 +64,8 @@ class User(mongo.MongoObject):
             self.disabled = disabled
         if resource_id is not None:
             self.resource_id = resource_id
+        if bypass_secondary is not None:
+            self.bypass_secondary = bypass_secondary
 
     @cached_static_property
     def collection(cls):
