@@ -407,7 +407,7 @@ class User(mongo.MongoObject):
         if server.lzo_compression != ADAPTIVE:
             client_conf += 'comp-lzo no\n'
 
-        if server.otp_auth:
+        if not self.bypass_secondary and server.otp_auth:
             client_conf += 'auth-user-pass\n'
 
         if server.tls_auth:
@@ -474,7 +474,7 @@ class User(mongo.MongoObject):
             server_ref += '          "%s",\n' % cert_id
         server_ref = server_ref[:-2]
 
-        if server.otp_auth:
+        if not self.bypass_secondary and server.otp_auth:
             auth = OVPN_ONC_AUTH_OTP % self.id
         else:
             auth = OVPN_ONC_AUTH_NONE % self.id
