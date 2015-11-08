@@ -186,9 +186,10 @@ def user_post(org_id):
             email = utils.filter_str(user_data.get('email'))
             disabled = user_data.get('disabled')
             network_links = user_data.get('network_links')
+            bypass_secondary = user_data.get('bypass_secondary')
 
             user = org.new_user(type=CERT_CLIENT, name=name, email=email,
-                disabled=disabled)
+                disabled=disabled, bypass_secondary=bypass_secondary)
 
             if network_links:
                 for network_link in network_links:
@@ -257,6 +258,10 @@ def user_put(org_id, user_id):
     disabled = flask.request.json.get('disabled')
     if disabled is not None:
         user.disabled = disabled
+
+    bypass_secondary = flask.request.json.get('bypass_secondary')
+    if bypass_secondary is not None:
+        user.bypass_secondary = bypass_secondary
 
     user.commit()
     event.Event(type=USERS_UPDATED, resource_id=user.org.id)
