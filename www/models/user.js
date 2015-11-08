@@ -18,7 +18,8 @@ define([
       'servers': null,
       'disabled': null,
       'network_links': null,
-      'dns_mapping': null
+      'dns_mapping': null,
+      'bypass_secondary': null
     },
     url: function() {
       var url = '/user/' + this.get('organization');
