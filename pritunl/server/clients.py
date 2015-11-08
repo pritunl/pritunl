@@ -393,7 +393,7 @@ class Clients(object):
 
             user = org.get_user(user_id, fields=('_id', 'name', 'email',
                 'type', 'auth_type', 'disabled', 'otp_secret',
-                'link_server_id'))
+                'link_server_id', 'bypass_secondary'))
             if not user:
                 self.instance_com.send_client_deny(client_id, key_id,
                     'User is not valid')
@@ -406,26 +406,28 @@ class Clients(object):
                     'User is disabled')
                 return
 
-            if not user.auth_check():
-                logger.LogEntry(message='User failed authentication, ' +
-                    'Google authentication failed "%s".' % (user.name))
-                self.instance_com.send_client_deny(client_id, key_id,
-                    'User failed authentication')
-                return
+            if not user.bypass_secondary:
+                if not user.auth_check():
+                    logger.LogEntry(message='User failed authentication, ' +
+                        'Google authentication failed "%s".' % (user.name))
+                    self.instance_com.send_client_deny(client_id, key_id,
+                        'User failed authentication')
+                    return
 
-            if self.server.otp_auth and user.type == CERT_CLIENT and \
-                    not user.verify_otp_code(otp_code, remote_ip):
-                logger.LogEntry(message='User failed two-step ' +
-                    'authentication "%s".' % user.name)
-                self.instance_com.send_client_deny(client_id, key_id,
-                    'Invalid OTP code')
-                return
+                if self.server.otp_auth and user.type == CERT_CLIENT and \
+                        not user.verify_otp_code(otp_code, remote_ip):
+                    logger.LogEntry(message='User failed two-step ' +
+                        'authentication "%s".' % user.name)
+                    self.instance_com.send_client_deny(client_id, key_id,
+                        'Invalid OTP code')
+                    return
 
-            if settings.app.sso and user.auth_type == DUO_AUTH and \
-                    DUO_AUTH in settings.app.sso:
-                self.auth_duo(client, org, user, reauth)
-            else:
-                self.allow_client(client, org, user, reauth)
+                if settings.app.sso and user.auth_type == DUO_AUTH and \
+                        DUO_AUTH in settings.app.sso:
+                    self.auth_duo(client, org, user, reauth)
+                    return
+
+            self.allow_client(client, org, user, reauth)
         except:
             logger.exception('Error parsing client connect', 'server',
                 server_id=self.server.id,
