@@ -8,7 +8,7 @@ import threading
 
 @interrupter
 def _dns_thread():
-    while not settings.local.sub_active and \
+    while not settings.local.sub_active or \
             settings.local.sub_plan != 'enterprise':
         time.sleep(1)
 
