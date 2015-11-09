@@ -201,6 +201,7 @@ class Clients(object):
 
     def has_failover_iroute(self, client_id):
         self.iroutes_lock.acquire()
+
         try:
             if client_id in self.iroutes_index:
                 for network in self.iroutes_index[client_id]:
@@ -212,6 +213,7 @@ class Clients(object):
                 return True
         finally:
             self.iroutes_lock.release()
+
         return False
 
     def allow_client(self, client, org, user, reauth=False):
