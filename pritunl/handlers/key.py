@@ -306,6 +306,7 @@ def sso_authenticate_post():
                 ipaddr=flask.request.remote_addr,
                 type='Key',
             )
+            break
         except InvalidUser:
             pass
 
