@@ -424,7 +424,7 @@ class Clients(object):
                         'Invalid OTP code')
                     return
 
-                if settings.app.sso and user.auth_type == DUO_AUTH and \
+                if settings.app.sso and DUO_AUTH in user.auth_type and \
                         DUO_AUTH in settings.app.sso:
                     self.auth_duo(client, org, user, reauth)
                     return
