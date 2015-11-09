@@ -184,6 +184,8 @@ LOCAL_AUTH = 'local'
 DUO_AUTH = 'duo'
 GOOGLE_AUTH = 'google'
 GOOGLE_DUO_AUTH = 'google_duo'
+SAML_AUTH = 'saml'
+SAML_DUO_AUTH = 'saml_duo'
 
 ORGS_UPDATED = 'organizations_updated'
 USERS_UPDATED = 'users_updated'
