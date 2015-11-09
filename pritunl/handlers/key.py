@@ -449,12 +449,15 @@ def sso_callback_get():
     params = urlparse.parse_qs(query)
 
     if doc.get('type') == SAML_AUTH:
-        username = params.get('username', [None])[0]
+        username = params.get('username')[0]
         email = params.get('email', [None])[0]
         org_name = params.get('org', [None])[0]
         secondary = params.get('secondary', [None])[0]
 
         org_id = org_name # TODO
+
+        if not username:
+            return flask.abort(406)
 
         valid, org_id = sso.verify_saml(username, email, org_id)
         if not valid:
@@ -481,7 +484,7 @@ def sso_callback_get():
 
         auth_type = sso_mode
 
-    if DUO_AUTH in auth_type:
+    if DUO_AUTH in sso_mode and DUO_AUTH in auth_type:
         valid, _ = sso.auth_duo(
             username,
             ipaddr=flask.request.remote_addr,
