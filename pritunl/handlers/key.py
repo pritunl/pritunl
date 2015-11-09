@@ -17,6 +17,7 @@ import pymongo
 import hmac
 import hashlib
 import base64
+import urlparse
 
 def _get_key_tar_archive(org_id, user_id):
     org = organization.get_by_id(org_id)
@@ -267,7 +268,7 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
 
     auth_test_signature = base64.b64encode(hmac.new(
         user.sync_secret.encode(), auth_string,
-        hashlib.sha256).digest())
+        hashlib.sha512).digest())
     if auth_signature != auth_test_signature:
         return flask.abort(401)
 
@@ -335,7 +336,8 @@ def sso_authenticate_post():
 
 @app.app.route('/sso/request', methods=['GET'])
 def sso_request_get():
-    if settings.app.sso not in (GOOGLE_AUTH, GOOGLE_DUO_AUTH):
+    if settings.app.sso not in (GOOGLE_AUTH, GOOGLE_DUO_AUTH,
+            SAML_AUTH, SAML_DUO_AUTH):
         return flask.abort(405)
 
     state = utils.rand_str(64)
@@ -345,47 +347,88 @@ def sso_request_get():
     if not settings.local.sub_active:
         return flask.abort(405)
 
-    resp = utils.request.post(AUTH_SERVER + '/request/google',
-        json_data={
-            'license': settings.app.license,
-            'callback': callback,
-            'state': state,
+    if settings.app.sso in (GOOGLE_AUTH, GOOGLE_DUO_AUTH):
+        resp = utils.request.post(AUTH_SERVER + '/v1/request/google',
+            json_data={
+                'license': settings.app.license,
+                'callback': callback,
+                'state': state,
+                'secret': secret,
+            }, headers={
+                'Content-Type': 'application/json',
+            })
+
+        if resp.status_code != 200:
+            if resp.status_code == 401:
+                return flask.abort(405)
+
+            logger.error('Auth server error', 'server',
+                status_code=resp.status_code,
+                content=resp.content,
+            )
+
+            return flask.abort(500)
+
+        tokens_collection = mongo.get_collection('sso_tokens')
+        tokens_collection.insert({
+            '_id': state,
+            'type': GOOGLE_AUTH,
             'secret': secret,
-        }, headers={
-            'Content-Type': 'application/json',
+            'timestamp': utils.now(),
         })
 
-    if resp.status_code != 200:
-        if resp.status_code == 401:
-            return flask.abort(405)
+        data = resp.json()
 
-        logger.error('Auth server error', 'server',
-            status_code=resp.status_code,
-            content=resp.content,
+        return flask.redirect(data['url'])
+
+    elif settings.app.sso in (SAML_AUTH, SAML_DUO_AUTH):
+        resp = utils.request.post(AUTH_SERVER + '/v1/request/saml',
+            json_data={
+                'license': settings.app.license,
+                'callback': callback,
+                'state': state,
+                'secret': secret,
+                'sso_url': settings.app.sso_saml_url,
+                'issuer_url': settings.app.sso_saml_issuer_url,
+                'cert': settings.app.sso_saml_cert,
+            }, headers={
+                'Content-Type': 'application/json',
+            })
+
+        if resp.status_code != 200:
+            if resp.status_code == 401:
+                return flask.abort(405)
+
+            logger.error('Auth server error', 'server',
+                status_code=resp.status_code,
+                content=resp.content,
+            )
+
+            return flask.abort(500)
+
+        tokens_collection = mongo.get_collection('sso_tokens')
+        tokens_collection.insert({
+            '_id': state,
+            'type': SAML_AUTH,
+            'secret': secret,
+            'timestamp': utils.now(),
+        })
+
+        return flask.Response(
+            status=200,
+            response=resp.content,
+            content_type="text/html;charset=utf-8",
         )
-
-        return flask.abort(500)
-
-    tokens_collection = mongo.get_collection('sso_tokens')
-    tokens_collection.insert({
-        '_id': state,
-        'secret': secret,
-        'timestamp': utils.now(),
-    })
-
-    data = resp.json()
-
-    return flask.redirect(data['url'])
 
 @app.app.route('/sso/callback', methods=['GET'])
 def sso_callback_get():
     sso_mode = settings.app.sso
 
-    if sso_mode not in (GOOGLE_AUTH, GOOGLE_DUO_AUTH):
+    if sso_mode not in (GOOGLE_AUTH, GOOGLE_DUO_AUTH,
+            SAML_AUTH, SAML_DUO_AUTH):
         return flask.abort(405)
 
     state = flask.request.args.get('state')
-    user = flask.request.args.get('user')
     sig = flask.request.args.get('sig')
 
     tokens_collection = mongo.get_collection('sso_tokens')
@@ -396,40 +439,64 @@ def sso_callback_get():
     if not doc:
         return flask.abort(404)
 
+    query = flask.request.query_string.split('&sig=')[0]
     test_sig = base64.urlsafe_b64encode(hmac.new(str(doc['secret']),
-        str(state + user), hashlib.sha256).digest())
+        query, hashlib.sha512).digest())
 
     if sig != test_sig:
         return flask.abort(401)
 
-    valid, org_id = sso.verify_google(user)
-    if not valid:
-        return flask.abort(401)
+    params = urlparse.parse_qs(query)
 
-    if sso_mode == GOOGLE_DUO_AUTH:
+    if doc.get('type') == SAML_AUTH:
+        username = params.get('username', [None])[0]
+        email = params.get('email', [None])[0]
+        org_name = params.get('org', [None])[0]
+        secondary = params.get('secondary', [None])[0]
+
+        org_id = org_name # TODO
+
+        valid, org_id = sso.verify_saml(username, email, org_id)
+        if not valid:
+            return flask.abort(401)
+
+        if not org_id:
+            org_id = settings.app.sso_org
+
+        if secondary == DUO_AUTH:
+            auth_type = SAML_DUO_AUTH
+        else:
+            auth_type = SAML_AUTH
+
+    else:
+        username = params.get('username', [None])[0]
+        email = username
+
+        valid, org_id = sso.verify_google(username)
+        if not valid:
+            return flask.abort(401)
+
+        if not org_id:
+            org_id = settings.app.sso_org
+
+        auth_type = sso_mode
+
+    if DUO_AUTH in auth_type:
         valid, _ = sso.auth_duo(
-            user,
+            username,
             ipaddr=flask.request.remote_addr,
             type='Key',
         )
         if not valid:
             return flask.abort(401)
 
-    if not org_id:
-        org_id = settings.app.sso_org
-
     org = organization.get_by_id(org_id)
     if not org:
         return flask.abort(405)
 
-    if sso_mode == GOOGLE_DUO_AUTH:
-        auth_type = DUO_AUTH
-    else:
-        auth_type = GOOGLE_AUTH
-
-    usr = org.find_user(name=user)
+    usr = org.find_user(name=username)
     if not usr:
-        usr = org.new_user(name=user, email=user, type=CERT_CLIENT,
+        usr = org.new_user(name=username, email=email, type=CERT_CLIENT,
             auth_type=auth_type)
         event.Event(type=ORGS_UPDATED)
         event.Event(type=USERS_UPDATED, resource_id=org.id)
