@@ -294,7 +294,9 @@ def sso_authenticate_post():
 
     username = flask.request.json['username']
     usernames = [username]
+    email = None
     if '@' in username:
+        email = username
         usernames.append(username.split('@')[0])
 
     valid = False
@@ -322,7 +324,7 @@ def sso_authenticate_post():
 
     usr = org.find_user(name=username)
     if not usr:
-        usr = org.new_user(name=username, type=CERT_CLIENT,
+        usr = org.new_user(name=username, email=email, type=CERT_CLIENT,
             auth_type=DUO_AUTH)
         event.Event(type=ORGS_UPDATED)
         event.Event(type=USERS_UPDATED, resource_id=org.id)
