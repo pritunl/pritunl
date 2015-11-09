@@ -231,7 +231,7 @@ class User(mongo.MongoObject):
         messenger.publish('instance', ['user_disconnect', self.id])
 
     def auth_check(self):
-        if self.auth_type == GOOGLE_AUTH:
+        if GOOGLE_AUTH in self.auth_type:
             try:
                 resp = utils.request.get(AUTH_SERVER +
                     '/update/google?user=%s&license=%s' % (
