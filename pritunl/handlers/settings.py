@@ -26,6 +26,9 @@ def settings_get():
         'sso_host': settings.app.sso_host,
         'sso_admin': settings.app.sso_admin,
         'sso_org': settings.app.sso_org,
+        'sso_saml_url': settings.app.sso_saml_url,
+        'sso_saml_issuer_url': settings.app.sso_saml_issuer_url,
+        'sso_saml_cert': settings.app.sso_saml_cert,
         'public_address': settings.local.host.public_addr,
         'public_address6': settings.local.host.public_addr6,
         'routed_subnet6': settings.local.host.routed_subnet6,
@@ -109,6 +112,21 @@ def settings_put():
             settings.app.sso_org = utils.ObjectId(sso_org)
         else:
             settings.app.sso_org = None
+
+    if 'sso_saml_url' in flask.request.json:
+        sso_saml_url = flask.request.json['sso_saml_url']
+        settings_commit = True
+        settings.app.sso_saml_url = sso_saml_url or None
+
+    if 'sso_saml_issuer_url' in flask.request.json:
+        sso_saml_issuer_url = flask.request.json['sso_saml_issuer_url']
+        settings_commit = True
+        settings.app.sso_saml_issuer_url = sso_saml_issuer_url or None
+
+    if 'sso_saml_cert' in flask.request.json:
+        sso_saml_cert = flask.request.json['sso_saml_cert']
+        settings_commit = True
+        settings.app.sso_saml_cert = sso_saml_cert or None
 
     if 'theme' in flask.request.json:
         settings_commit = True
@@ -206,6 +224,9 @@ def settings_put():
         'sso_host': settings.app.sso_host,
         'sso_admin': settings.app.sso_admin,
         'sso_org': settings.app.sso_org,
+        'sso_saml_url': settings.app.sso_saml_url,
+        'sso_saml_issuer_url': settings.app.sso_saml_issuer_url,
+        'sso_saml_cert': settings.app.sso_saml_cert,
         'public_address': settings.local.host.public_addr,
     })
     return utils.jsonify(response)
