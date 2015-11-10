@@ -74,24 +74,55 @@ define([
         this.$('.sso-host').slideUp(window.slideTime);
         this.$('.sso-admin').slideUp(window.slideTime);
         this.$('.sso-org').slideUp(window.slideTime);
+
+        this.$('.sso-saml-url').slideUp(window.slideTime);
+        this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
+        this.$('.sso-saml-cert').slideUp(window.slideTime);
         return;
       } else {
         this.$('.sso-org').slideDown(window.slideTime);
       }
 
-      if (mode === 'google') {
+      if (mode === 'saml') {
+        this.$('.sso-token').slideUp(window.slideTime);
+        this.$('.sso-secret').slideUp(window.slideTime);
+        this.$('.sso-host').slideUp(window.slideTime);
+        this.$('.sso-admin').slideUp(window.slideTime);
+        this.$('.sso-match').slideUp(window.slideTime);
+        this.$('.sso-saml-url').slideDown(window.slideTime);
+        this.$('.sso-saml-issuer-url').slideDown(window.slideTime);
+        this.$('.sso-saml-cert').slideDown(window.slideTime);
+      } else if (mode === 'saml_duo') {
+        this.$('.sso-match').slideUp(window.slideTime);
+        this.$('.sso-token').slideDown(window.slideTime);
+        this.$('.sso-secret').slideDown(window.slideTime);
+        this.$('.sso-host').slideDown(window.slideTime);
+        this.$('.sso-admin').slideDown(window.slideTime);
+        this.$('.sso-saml-url').slideDown(window.slideTime);
+        this.$('.sso-saml-issuer-url').slideDown(window.slideTime);
+        this.$('.sso-saml-cert').slideDown(window.slideTime);
+      } else if (mode === 'google') {
+        this.$('.sso-saml-url').slideUp(window.slideTime);
+        this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
+        this.$('.sso-saml-cert').slideUp(window.slideTime);
         this.$('.sso-token').slideUp(window.slideTime);
         this.$('.sso-secret').slideUp(window.slideTime);
         this.$('.sso-host').slideUp(window.slideTime);
         this.$('.sso-admin').slideUp(window.slideTime);
         this.$('.sso-match').slideDown(window.slideTime);
       } else if (mode === 'google_duo') {
+        this.$('.sso-saml-url').slideUp(window.slideTime);
+        this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
+        this.$('.sso-saml-cert').slideUp(window.slideTime);
         this.$('.sso-match').slideDown(window.slideTime);
         this.$('.sso-token').slideDown(window.slideTime);
         this.$('.sso-secret').slideDown(window.slideTime);
         this.$('.sso-host').slideDown(window.slideTime);
         this.$('.sso-admin').slideDown(window.slideTime);
       } else if (mode === 'duo') {
+        this.$('.sso-saml-url').slideUp(window.slideTime);
+        this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
+        this.$('.sso-saml-cert').slideUp(window.slideTime);
         this.$('.sso-match').slideUp(window.slideTime);
         this.$('.sso-token').slideDown(window.slideTime);
         this.$('.sso-secret').slideDown(window.slideTime);
@@ -176,6 +207,9 @@ define([
       var ssoHost = null;
       var ssoAdmin = null;
       var ssoOrg = null;
+      var ssoSamlUrl = null;
+      var ssoSamlIssuerUrl = null;
+      var ssoSamlCert = null;
 
       if (this.$('.verify-pass input').is(':visible') &&
           password && password !== verifyPassword) {
@@ -184,11 +218,17 @@ define([
       }
 
       if (sso) {
-        if (sso === 'duo' || sso === 'google_duo') {
+        if (sso === 'duo' || sso === 'saml_duo' || sso === 'google_duo') {
           ssoToken = this.$('.sso-token input').val();
           ssoSecret = this.$('.sso-secret input').val();
           ssoHost = this.$('.sso-host input').val();
           ssoAdmin = this.$('.sso-admin input').val();
+        }
+
+        if (sso === 'saml' || sso === 'saml_duo') {
+          ssoSamlUrl = this.$('.sso-saml-url input').val();
+          ssoSamlIssuerUrl = this.$('.sso-saml-issuer-url input').val();
+          ssoSamlCert = this.$('.sso-saml-cert textarea').val();
         }
 
         if (sso === 'google' || sso === 'google_duo') {
@@ -215,6 +255,9 @@ define([
         sso_host: ssoHost,
         sso_admin: ssoAdmin,
         sso_org: ssoOrg,
+        sso_saml_url: ssoSamlUrl,
+        sso_saml_issuer_url: ssoSamlIssuerUrl,
+        sso_saml_cert: ssoSamlCert,
         public_address: publicAddress,
         public_address6: publicAddress6,
         routed_subnet6: routedSubnet6,
