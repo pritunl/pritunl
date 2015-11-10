@@ -80,6 +80,14 @@ def new_org(type=ORG_DEFAULT, block=True, **kwargs):
 def get_by_id(id, fields=None):
     return Organization(id=id, fields=fields)
 
+def get_by_name(name, fields=None):
+    doc = Organization.collection.find_one({
+        'name': name,
+    }, fields)
+
+    if doc:
+        return Organization(doc=doc, fields=fields)
+
 def iter_orgs(spec=None, type=ORG_DEFAULT, fields=None, page=None):
     limit = None
     skip = None
