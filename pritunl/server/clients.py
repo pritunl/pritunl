@@ -327,8 +327,7 @@ class Clients(object):
                 platform_name = 'Chrome OS'
 
             if device_name:
-                info['Device'] = '%s (%s)' % (
-                    device_name, platform_name)
+                info['Device'] = '%s (%s)' % (device_name, platform_name)
 
             allow = False
             try:
