@@ -1,2 +1,2 @@
-def verify_saml(username, email, org_id):
-    return True, org_id
+def verify_saml(username, email, org_name):
+    return True, org_name
