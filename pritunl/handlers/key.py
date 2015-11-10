@@ -455,24 +455,19 @@ def sso_callback_get():
         username = params.get('username')[0]
         email = params.get('email', [None])[0]
         org_name = params.get('org', [None])[0]
-        secondary = params.get('secondary', [None])[0]
-
-        org_id = org_name # TODO
 
         if not username:
             return flask.abort(406)
 
-        valid, org_id = sso.verify_saml(username, email, org_id)
+        valid, org_name = sso.verify_saml(username, email, org_name)
         if not valid:
             return flask.abort(401)
 
-        if not org_id:
-            org_id = settings.app.sso_org
-
-        if secondary == DUO_AUTH:
-            auth_type = SAML_DUO_AUTH
+        org = organization.get_by_name(org_name, fields=('_id'))
+        if org:
+            org_id = org.id
         else:
-            auth_type = SAML_AUTH
+            org_id = settings.app.sso_org
 
     else:
         username = params.get('username', [None])[0]
@@ -485,7 +480,7 @@ def sso_callback_get():
         if not org_id:
             org_id = settings.app.sso_org
 
-        auth_type = sso_mode
+    auth_type = sso_mode
 
     if DUO_AUTH in sso_mode and DUO_AUTH in auth_type:
         valid, _ = sso.auth_duo(
