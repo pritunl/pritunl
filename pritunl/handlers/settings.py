@@ -6,6 +6,7 @@ from pritunl import auth
 from pritunl import event
 from pritunl import ipaddress
 from pritunl import server
+from pritunl import organization
 
 import flask
 
@@ -40,6 +41,7 @@ def settings_get():
 @app.app.route('/settings', methods=['PUT'])
 @auth.session_auth
 def settings_put():
+    org_event = False
     admin = flask.g.administrator
 
     if 'username' in flask.request.json and flask.request.json['username']:
@@ -74,6 +76,7 @@ def settings_put():
         settings.app.email_password = email_password or None
 
     if 'sso' in flask.request.json:
+        org_event = True
         settings_commit = True
         sso = flask.request.json['sso']
         settings.app.sso = sso or None
@@ -209,6 +212,10 @@ def settings_put():
         settings.commit()
 
     admin.commit(admin.changed)
+
+    if org_event:
+        for org in organization.iter_orgs(fields=('_id')):
+            event.Event(type=USERS_UPDATED, resource_id=org.id)
 
     response = flask.g.administrator.dict()
     response.update({
