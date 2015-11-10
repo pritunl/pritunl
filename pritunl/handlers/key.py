@@ -464,11 +464,11 @@ def sso_callback_get():
         if not valid:
             return flask.abort(401)
 
-        org = organization.get_by_name(org_name, fields=('_id'))
-        if org:
-            org_id = org.id
-        else:
-            org_id = settings.app.sso_org
+        org_id = settings.app.sso_org
+        if org_name:
+            org = organization.get_by_name(org_name, fields=('_id'))
+            if org:
+                org_id = org.id
 
     else:
         username = params.get('username', [None])[0]
