@@ -91,6 +91,7 @@ class User(mongo.MongoObject):
             'name': self.name,
             'email': self.email,
             'type': self.type,
+            'auth_type': self.auth_type,
             'otp_secret': self.otp_secret,
             'disabled': self.disabled,
             'bypass_secondary': self.bypass_secondary,
