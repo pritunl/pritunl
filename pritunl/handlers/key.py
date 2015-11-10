@@ -332,6 +332,7 @@ def sso_authenticate_post():
     elif usr.auth_type != DUO_AUTH:
         usr.auth_type = DUO_AUTH
         usr.commit('auth_type')
+        event.Event(type=USERS_UPDATED, resource_id=org.id)
 
     key_link = org.create_user_key_link(usr.id, one_time=True)
 
