@@ -191,6 +191,35 @@ define([
         }
       }
 
+      if (this.model.get('bypass_secondary')) {
+        this.$('.saml-logo').hide();
+        this.$('.google-logo').hide();
+        this.$('.duo-logo').hide();
+      } else {
+        var sso = this.model.get('sso') || '';
+        var auth_type = this.model.get('auth_type');
+        if (sso.indexOf('saml') !== -1 &&
+            auth_type.indexOf('saml') !== -1) {
+          this.$('.saml-logo').show();
+        } else {
+          this.$('.saml-logo').hide();
+        }
+
+        if (sso.indexOf('google') !== -1 &&
+            auth_type.indexOf('google') !== -1) {
+          this.$('.google-logo').show();
+        } else {
+          this.$('.google-logo').hide();
+        }
+
+        if (sso.indexOf('duo') !== -1 &&
+            auth_type.indexOf('duo') !== -1) {
+          this.$('.duo-logo').show();
+        } else {
+          this.$('.duo-logo').hide();
+        }
+      }
+
       this.serverList.update(this.model.get('servers'));
     },
     getSelect: function() {
