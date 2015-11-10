@@ -1,6 +1,12 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add support for SAML
+Fix issue with Duo clients timing out durning connection
+Add icons for user authentication type
+
 Version 1.8.787.62 2015-11-08
 -----------------------------
 
