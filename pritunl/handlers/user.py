@@ -56,6 +56,7 @@ def user_get(org_id, user_id=None, page=None):
         'name',
         'email',
         'type',
+        'auth_type',
         'otp_secret',
         'disabled',
         'bypass_secondary',
@@ -66,6 +67,7 @@ def user_get(org_id, user_id=None, page=None):
 
         user_dict = usr.dict()
         user_dict['status'] = False
+        user_dict['sso'] = settings.app.sso
         user_dict['otp_auth'] = otp_auth
         if dns_mapping:
             user_dict['dns_mapping'] = '%s.%s.vpn' % (
