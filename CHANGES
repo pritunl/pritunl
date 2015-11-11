@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix users online count in hosts section
+
 Version 1.9.789.46 2015-11-10
 -----------------------------
 
