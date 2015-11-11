@@ -53,28 +53,8 @@ def get_host_page_total():
         settings.app.host_page_count))
 
 def iter_hosts_dict(page=None):
+    clients_collection = mongo.get_collection('clients')
     server_collection = mongo.get_collection('servers')
-
-    response = server_collection.aggregate([
-        {'$project': {
-            'host_id': '$instances.host_id',
-            'client': '$instances.clients',
-        }},
-        {'$unwind': '$host_id'},
-        {'$unwind': '$client'},
-        {'$unwind': '$client'},
-        {'$match': {
-            'client.type': CERT_CLIENT,
-        }},
-        {'$group': {
-            '_id': '$host_id',
-            'clients': {'$addToSet': '$client.id'},
-        }},
-    ])
-
-    hosts_clients = {}
-    for doc in response:
-        hosts_clients[doc['_id']] = doc['clients']
 
     response = server_collection.aggregate([
         {'$project': {
@@ -98,7 +78,10 @@ def iter_hosts_dict(page=None):
     org_user_count = organization.get_user_count(orgs)
 
     for hst in iter_hosts(page=page):
-        users_online = len(hosts_clients.get(hst.id, []))
+        users_online = len(clients_collection.distinct("user_id", {
+            'host_id': hst.id,
+            'type': CERT_CLIENT,
+        }))
 
         user_count = 0
         for org_id in host_orgs[hst.id]:
