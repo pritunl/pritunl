@@ -449,6 +449,7 @@ class Clients(object):
         doc = {
             'user_id': client['user_id'],
             'server_id': self.server.id,
+            'host_id': settings.local.host_id,
             'timestamp': timestamp,
             'platform': client['platform'],
             'type': client['user_type'],
