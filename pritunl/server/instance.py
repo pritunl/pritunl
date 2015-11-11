@@ -337,8 +337,7 @@ class ServerInstance(object):
                      '--ctstate','RELATED,ESTABLISHED', '-j', 'ACCEPT'])
                 rules6.append(
                     ['INPUT', '-d', self.server.network6, '-p', 'icmpv6',
-                     '--icmpv6-type', '128', '-m', 'conntrack',
-                     '--ctstate', 'NEW', '-j', 'ACCEPT'])
+                     '-m', 'conntrack', '--ctstate', 'NEW', '-j', 'ACCEPT'])
                 rules6.append(
                     ['FORWARD', '-d', self.server.network6, '-j', 'DROP'])
                 rules6.append(
@@ -346,8 +345,7 @@ class ServerInstance(object):
                      '--ctstate', 'RELATED,ESTABLISHED', '-j', 'ACCEPT'])
                 rules6.append(
                     ['FORWARD', '-d', self.server.network6, '-p', 'icmpv6',
-                     '--icmpv6-type', '128', '-m', 'conntrack',
-                     '--ctstate', 'NEW', '-j', 'ACCEPT'])
+                     '-m', 'conntrack', '--ctstate', 'NEW', '-j', 'ACCEPT'])
             else:
                 rules6.append(
                     ['INPUT', '-d', self.server.network6, '-j', 'ACCEPT'])
