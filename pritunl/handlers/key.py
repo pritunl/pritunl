@@ -311,12 +311,14 @@ def sso_authenticate_post():
             break
         except InvalidUser:
             if i == len(usernames) - 1:
-                return utils.jsonify({
-                    'error': DUO_USER_INVALID,
-                    'error_msg': DUO_USER_INVALID_MSG,
-                }, 401)
+                logger.error('Invalid duo username', 'sso',
+                    username=username,
+                )
 
     if not valid:
+        logger.error('Invalid duo username', 'sso',
+            username=username,
+        )
         return flask.abort(401)
 
     if not org_id:
@@ -324,6 +326,9 @@ def sso_authenticate_post():
 
     org = organization.get_by_id(org_id)
     if not org:
+        logger.error('Organization for Duo sso does not exist', 'sso',
+            org_id=org_id,
+        )
         return flask.abort(405)
 
     usr = org.find_user(name=username)
@@ -353,6 +358,7 @@ def sso_request_get():
     callback = flask.request.url_root + 'sso/callback'
 
     if not settings.local.sub_active:
+        logger.error('Subscription must be active for sso', 'sso')
         return flask.abort(405)
 
     if settings.app.sso in (GOOGLE_AUTH, GOOGLE_DUO_AUTH):
@@ -367,13 +373,13 @@ def sso_request_get():
             })
 
         if resp.status_code != 200:
-            if resp.status_code == 401:
-                return flask.abort(405)
-
-            logger.error('Auth server error', 'server',
+            logger.error('Google auth server error', 'sso',
                 status_code=resp.status_code,
                 content=resp.content,
             )
+
+            if resp.status_code == 401:
+                return flask.abort(405)
 
             return flask.abort(500)
 
@@ -404,13 +410,13 @@ def sso_request_get():
             })
 
         if resp.status_code != 200:
-            if resp.status_code == 401:
-                return flask.abort(405)
-
-            logger.error('Auth server error', 'server',
+            logger.error('Saml auth server error', 'sso',
                 status_code=resp.status_code,
                 content=resp.content,
             )
+
+            if resp.status_code == 401:
+                return flask.abort(405)
 
             return flask.abort(500)
 
