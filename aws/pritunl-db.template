@@ -297,7 +297,7 @@
                 "content": {"Fn::Join": ["", [
                   "[pritunl]\n",
                   "name=Pritunl Repository\n",
-                  "baseurl=http://mirror.pritunl.com/yum/pritunl/x86_64\n",
+                  "baseurl=http://repo.pritunl.com/stable/yum/centos/7/\n",
                   "gpgcheck=0\n",
                   "enabled=1\n"
                 ]]},
@@ -323,8 +323,6 @@
                   "    \"port\": 9700,\n",
                   "    \"log_path\": \"/var/log/pritunl.log\",\n",
                   "    \"temp_path\": \"/tmp/pritunl_%r\",\n",
-                  "    \"server_cert_path\": \"/var/lib/pritunl/pritunl.crt\",\n",
-                  "    \"server_key_path\": \"/var/lib/pritunl/pritunl.key\",\n",
                   "    \"local_address_interface\": \"auto\",\n",
                   "    \"mongodb_uri\": \"mongodb://", {"Fn::GetAtt": [
                         "DatabaseInstance", "PrivateIp" ]},
