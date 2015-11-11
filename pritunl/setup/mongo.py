@@ -128,6 +128,10 @@ def setup_mongo():
         ('server_id', pymongo.ASCENDING),
         ('type', pymongo.ASCENDING),
     ], background=True)
+    mongo.collections['clients'].ensure_index([
+        ('host_id', pymongo.ASCENDING),
+        ('type', pymongo.ASCENDING),
+    ], background=True)
     mongo.collections['organizations'].ensure_index('type', background=True)
     mongo.collections['hosts'].ensure_index('name', background=True)
     mongo.collections['hosts_usage'].ensure_index([
