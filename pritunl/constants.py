@@ -464,6 +464,9 @@ MONGODB_CONNECT_ERROR_MSG = 'Unable to connect to MongoDB server.'
 MONGODB_AUTH_ERROR = 'mongodb_auth_error'
 MONGODB_AUTH_ERROR_MSG = 'Unable to authenticate to the MongoDB server.'
 
+DUO_USER_INVALID = 'duo_user_invalid'
+DUO_USER_INVALID_MSG = 'Username is invalid.'
+
 RANDOM_ONE = (
     'snowy',
     'restless',
