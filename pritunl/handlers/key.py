@@ -300,7 +300,7 @@ def sso_authenticate_post():
         usernames.append(username.split('@')[0])
 
     valid = False
-    for username in usernames:
+    for i, username in enumerate(usernames):
         try:
             valid, org_id = sso.auth_duo(
                 username,
@@ -310,7 +310,11 @@ def sso_authenticate_post():
             )
             break
         except InvalidUser:
-            pass
+            if i == len(usernames) - 1:
+                return utils.jsonify({
+                    'error': DUO_USER_INVALID,
+                    'error_msg': DUO_USER_INVALID_MSG,
+                }, 401)
 
     if not valid:
         return flask.abort(401)
