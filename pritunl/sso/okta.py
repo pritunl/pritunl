@@ -109,7 +109,6 @@ def auth_okta(username, strong=False, ipaddr=None, type=None, info=None):
     while True:
         data = response.json()
         result = data.get('factorResult').lower()
-        print result
 
         # TODO Log here
         if result == 'success':
