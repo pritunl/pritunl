@@ -25,6 +25,7 @@ define([
       'sso_saml_url': null,
       'sso_saml_issuer_url': null,
       'sso_saml_cert': null,
+      'sso_okta_token': null,
       'public_address': null,
       'theme': null,
       'server_cert': null,
