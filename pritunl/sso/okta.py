@@ -21,18 +21,29 @@ def get_user_id(username):
             },
         )
     except httplib.HTTPException:
-        # TODO Log here
+        logger.exception('Okta api error', 'sso',
+            username=username,
+        )
         return None
 
     if response.status_code != 200:
-        # TODO Log here
+        logger.error('Okta api error', 'sso',
+            username=username,
+            status_code=response.status_code,
+            response=response.content,
+        )
         return None
 
     data = response.json()
     if 'id' in data:
         return data['id']
 
-    # TODO Log here
+    logger.error('Okta username not found', 'sso',
+        username=username,
+        status_code=response.status_code,
+        response=response.content,
+    )
+
     return None
 
 def get_factor_id(user_id):
@@ -45,11 +56,17 @@ def get_factor_id(user_id):
             },
         )
     except httplib.HTTPException:
-        # TODO Log here
+        logger.exception('Okta api error', 'sso',
+            user_id=user_id,
+        )
         return None
 
     if response.status_code != 200:
-        # TODO Log here
+        logger.error('Okta api error', 'sso',
+            user_id=user_id,
+            status_code=response.status_code,
+            response=response.content,
+        )
         return None
 
     not_active = False
@@ -70,13 +87,15 @@ def get_factor_id(user_id):
         return factor['id']
 
     if not_active:
-        # TODO Log not active error
-        pass
+        logger.error('Okta push not active', 'sso',
+            user_id=user_id,
+        )
+        return None
     else:
-        # TODO Log not found error
-        pass
-
-    return None
+        logger.warning('Okta push not available, skipping', 'sso',
+            user_id=user_id,
+        )
+        return True
 
 def auth_okta(username, strong=False, ipaddr=None, type=None, info=None):
     user_id = get_user_id(username)
@@ -97,11 +116,21 @@ def auth_okta(username, strong=False, ipaddr=None, type=None, info=None):
             },
         )
     except httplib.HTTPException:
-        # TODO Log here
+        logger.exception('Okta api error', 'sso',
+            username=username,
+            user_id=user_id,
+            factor_id=factor_id,
+        )
         return False
 
     if response.status_code != 201:
-        # TODO Log here
+        logger.error('Okta api error', 'sso',
+            username=username,
+            user_id=user_id,
+            factor_id=factor_id,
+            status_code=response.status_code,
+            response=response.content,
+        )
         return False
 
     poll_url = None
@@ -110,39 +139,48 @@ def auth_okta(username, strong=False, ipaddr=None, type=None, info=None):
         data = response.json()
         result = data.get('factorResult').lower()
 
-        # TODO Log here
         if result == 'success':
             return True
-        elif result == 'challenge':
-            return False
         elif result == 'waiting':
             pass
-        elif result == 'failed':
-            return False
-        elif result == 'cancelled':
-            return False
-        elif result == 'timeout':
-            return False
-        elif result == 'time_window_exceeded':
-            return False
-        elif result == 'passcode_replayed':
-            return False
-        elif result == 'error':
-            return False
         else:
+            logger.error('Okta got bad result', 'sso',
+                username=username,
+                user_id=user_id,
+                factor_id=factor_id,
+                result=result,
+            )
             return False
 
         if not poll_url:
             links = data.get('_links')
             if not links:
+                logger.error('Okta cant find links', 'sso',
+                    username=username,
+                    user_id=user_id,
+                    factor_id=factor_id,
+                    data=data,
+                )
                 return False
 
             poll = links.get('poll')
             if not poll:
+                logger.error('Okta cant find poll', 'sso',
+                    username=username,
+                    user_id=user_id,
+                    factor_id=factor_id,
+                    data=data,
+                )
                 return False
 
             poll_url = poll.get('href')
             if not poll_url:
+                logger.error('Okta cant find href', 'sso',
+                    username=username,
+                    user_id=user_id,
+                    factor_id=factor_id,
+                    data=data,
+                )
                 return False
 
         time.sleep(0.2)
@@ -156,9 +194,19 @@ def auth_okta(username, strong=False, ipaddr=None, type=None, info=None):
                 },
             )
         except httplib.HTTPException:
-            # TODO Log here
+            logger.exception('Okta poll api error', 'sso',
+                username=username,
+                user_id=user_id,
+                factor_id=factor_id,
+            )
             return False
 
         if response.status_code != 200:
-            # TODO Log here
+            logger.error('Okta poll api error', 'sso',
+                username=username,
+                user_id=user_id,
+                factor_id=factor_id,
+                status_code=response.status_code,
+                response=response.content,
+            )
             return False
