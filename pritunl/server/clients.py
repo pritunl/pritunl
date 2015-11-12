@@ -304,7 +304,7 @@ class Clients(object):
 
         self.instance_com.send_client_auth(client_id, key_id, client_conf)
 
-    def auth_duo(self, client, org, user, reauth):
+    def auth_push(self, type, client, org, user, reauth):
         client_id = client['client_id']
         key_id = client['key_id']
         remote_ip = client.get('remote_ip')
@@ -331,40 +331,47 @@ class Clients(object):
 
             allow = False
             try:
-                allow, _ = sso.auth_duo(
+                if type == DUO_AUTH:
+                    provider = sso.auth_duo
+                elif type == SAML_OKTA_AUTH:
+                    provider = sso.auth_okta
+                else:
+                    raise ValueError('Unkown push auth type')
+
+                allow, _ = provider(
                     user.name,
                     ipaddr=remote_ip,
                     type='Connection',
                     info=info,
                 )
             except:
-                logger.exception('Duo server error', 'server',
+                logger.exception('Push auth server error', 'server',
                     client_id=client_id,
                     user_id=user.id,
                     username=user.name,
                     server_id=self.server.id,
                 )
                 self.instance_com.push_output(
-                    'ERROR Duo server error client_id=%s' % client_id)
+                    'ERROR Push auth server error client_id=%s' % client_id)
             try:
                 if allow:
                     self.allow_client(client, org, user, reauth)
                 else:
-                    logger.LogEntry(message='User failed duo ' +
+                    logger.LogEntry(message='User failed push ' +
                         'authentication "%s".' % user.name)
                     self.instance_com.send_client_deny(
                         client_id,
                         key_id,
-                        'User failed duo authentication',
+                        'User failed push authentication',
                     )
             except:
-                logger.exception('Duo auth error', 'server',
+                logger.exception('Push auth error', 'server',
                     client_id=client_id,
                     user_id=user.id,
                     server_id=self.server.id,
                 )
                 self.instance_com.push_output(
-                    'ERROR Duo auth error client_id=%s' % client_id)
+                    'ERROR Push auth error client_id=%s' % client_id)
 
         thread = threading.Thread(target=auth_thread)
         thread.daemon = True
@@ -425,7 +432,12 @@ class Clients(object):
 
                 if settings.app.sso and DUO_AUTH in user.auth_type and \
                         DUO_AUTH in settings.app.sso:
-                    self.auth_duo(client, org, user, reauth)
+                    self.auth_push(DUO_AUTH, client, org, user, reauth)
+                    return
+                elif settings.app.sso and \
+                        user.auth_type == SAML_OKTA_AUTH and \
+                        settings.app.sso == SAML_OKTA_AUTH:
+                    self.auth_push(SAML_OKTA_AUTH, client, org, user, reauth)
                     return
 
             self.allow_client(client, org, user, reauth)
