@@ -105,6 +105,8 @@ def auth_okta(username, strong=False, ipaddr=None, type=None, info=None):
     factor_id = get_factor_id(user_id)
     if not factor_id:
         return False
+    elif factor_id is True:
+        return True
 
     try:
         response = utils.request.post(
