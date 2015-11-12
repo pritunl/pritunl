@@ -363,14 +363,16 @@ def sso_request_get():
 
     if settings.app.sso in (GOOGLE_AUTH, GOOGLE_DUO_AUTH):
         resp = utils.request.post(AUTH_SERVER + '/v1/request/google',
+            headers={
+                'Content-Type': 'application/json',
+            },
             json_data={
                 'license': settings.app.license,
                 'callback': callback,
                 'state': state,
                 'secret': secret,
-            }, headers={
-                'Content-Type': 'application/json',
-            })
+            }
+        )
 
         if resp.status_code != 200:
             logger.error('Google auth server error', 'sso',
@@ -397,6 +399,9 @@ def sso_request_get():
 
     elif settings.app.sso in (SAML_AUTH, SAML_DUO_AUTH, SAML_OKTA_AUTH):
         resp = utils.request.post(AUTH_SERVER + '/v1/request/saml',
+            headers={
+                'Content-Type': 'application/json',
+            },
             json_data={
                 'license': settings.app.license,
                 'callback': callback,
@@ -405,9 +410,8 @@ def sso_request_get():
                 'sso_url': settings.app.sso_saml_url,
                 'issuer_url': settings.app.sso_saml_issuer_url,
                 'cert': settings.app.sso_saml_cert,
-            }, headers={
-                'Content-Type': 'application/json',
-            })
+            },
+        )
 
         if resp.status_code != 200:
             logger.error('Saml auth server error', 'sso',
