@@ -1,4 +1,3 @@
-from pritunl.exceptions import *
 from pritunl import settings
 from pritunl import logger
 from pritunl import utils
@@ -6,14 +5,19 @@ from pritunl import utils
 import urllib
 import httplib
 import time
+import urlparse
+
+def _getokta_url():
+    parsed = urlparse.urlparse(settings.app.sso_saml_url)
+    return '%s://%s' % (parsed.scheme, parsed.netloc)
 
 def get_user_id(username):
     try:
         response = utils.request.get(
-            OKTA_URL + '/api/v1/users/%s' % urllib.quote(username),
+            _getokta_url() + '/api/v1/users/%s' % urllib.quote(username),
             headers={
                 'Accept': 'application/json',
-                'Authorization': 'SSWS %s' % OKTA_API_KEY,
+                'Authorization': 'SSWS %s' % settings.app.sso_okta_token,
             },
         )
     except httplib.HTTPException:
@@ -34,10 +38,10 @@ def get_user_id(username):
 def get_factor_id(user_id):
     try:
         response = utils.request.get(
-            OKTA_URL + '/api/v1/users/%s/factors' % user_id,
+            _getokta_url() + '/api/v1/users/%s/factors' % user_id,
             headers={
                 'Accept': 'application/json',
-                'Authorization': 'SSWS %s' % OKTA_API_KEY,
+                'Authorization': 'SSWS %s' % settings.app.sso_okta_token,
             },
         )
     except httplib.HTTPException:
@@ -49,7 +53,8 @@ def get_factor_id(user_id):
         return None
 
     not_active = False
-    for factor in response.json():
+    data = response.json()
+    for factor in data:
         if 'id' not in factor or 'provider' not in factor or \
                 'factorType' not in factor or 'status' not in factor:
             continue
@@ -84,11 +89,11 @@ def auth_okta(username, strong=False, ipaddr=None, type=None, info=None):
 
     try:
         response = utils.request.post(
-            OKTA_URL + '/api/v1/users/%s/factors/%s/verify' % (
+            _getokta_url() + '/api/v1/users/%s/factors/%s/verify' % (
                 user_id, factor_id),
             headers={
                 'Accept': 'application/json',
-                'Authorization': 'SSWS %s' % OKTA_API_KEY,
+                'Authorization': 'SSWS %s' % settings.app.sso_okta_token,
             },
         )
     except httplib.HTTPException:
@@ -148,7 +153,7 @@ def auth_okta(username, strong=False, ipaddr=None, type=None, info=None):
                 poll_url,
                 headers={
                     'Accept': 'application/json',
-                    'Authorization': 'SSWS %s' % OKTA_API_KEY,
+                    'Authorization': 'SSWS %s' % settings.app.sso_okta_token,
                 },
             )
         except httplib.HTTPException:
