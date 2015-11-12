@@ -51,6 +51,7 @@ class SettingsApp(SettingsGroupMongo):
         'sso_okta_token': None,
         'sso_okta_poll_rate': 0.25,
         'sso_okta_skip_unavailable': False,
+        'sso_okta_timeout': 60,
         'queue_low_thread_limit': 4,
         'queue_med_thread_limit': 2,
         'queue_high_thread_limit': 1,
