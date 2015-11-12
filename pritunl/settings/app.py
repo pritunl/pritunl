@@ -48,6 +48,7 @@ class SettingsApp(SettingsGroupMongo):
         'sso_saml_url': None,
         'sso_saml_issuer_url': None,
         'sso_saml_cert': None,
+        'sso_okta_token': None,
         'queue_low_thread_limit': 4,
         'queue_med_thread_limit': 2,
         'queue_high_thread_limit': 1,
