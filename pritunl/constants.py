@@ -186,6 +186,7 @@ GOOGLE_AUTH = 'google'
 GOOGLE_DUO_AUTH = 'google_duo'
 SAML_AUTH = 'saml'
 SAML_DUO_AUTH = 'saml_duo'
+SAML_OKTA_AUTH = 'saml_okta'
 
 ORGS_UPDATED = 'organizations_updated'
 USERS_UPDATED = 'users_updated'
