@@ -332,18 +332,21 @@ class Clients(object):
             allow = False
             try:
                 if type == DUO_AUTH:
-                    provider = sso.auth_duo
+                    allow, _ = sso.auth_duo(
+                        user.name,
+                        ipaddr=remote_ip,
+                        type='Connection',
+                        info=info,
+                    )
                 elif type == SAML_OKTA_AUTH:
-                    provider = sso.auth_okta
+                    allow = sso.auth_okta(
+                        user.name,
+                        ipaddr=remote_ip,
+                        type='Connection',
+                        info=info,
+                    )
                 else:
                     raise ValueError('Unkown push auth type')
-
-                allow, _ = provider(
-                    user.name,
-                    ipaddr=remote_ip,
-                    type='Connection',
-                    info=info,
-                )
             except:
                 logger.exception('Push auth server error', 'server',
                     client_id=client_id,
