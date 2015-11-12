@@ -350,7 +350,7 @@ def sso_authenticate_post():
 @app.app.route('/sso/request', methods=['GET'])
 def sso_request_get():
     if settings.app.sso not in (GOOGLE_AUTH, GOOGLE_DUO_AUTH,
-            SAML_AUTH, SAML_DUO_AUTH):
+            SAML_AUTH, SAML_DUO_AUTH, SAML_OKTA_AUTH):
         return flask.abort(405)
 
     state = utils.rand_str(64)
@@ -395,7 +395,7 @@ def sso_request_get():
 
         return flask.redirect(data['url'])
 
-    elif settings.app.sso in (SAML_AUTH, SAML_DUO_AUTH):
+    elif settings.app.sso in (SAML_AUTH, SAML_DUO_AUTH, SAML_OKTA_AUTH):
         resp = utils.request.post(AUTH_SERVER + '/v1/request/saml',
             json_data={
                 'license': settings.app.license,
@@ -439,7 +439,7 @@ def sso_callback_get():
     sso_mode = settings.app.sso
 
     if sso_mode not in (GOOGLE_AUTH, GOOGLE_DUO_AUTH,
-            SAML_AUTH, SAML_DUO_AUTH):
+            SAML_AUTH, SAML_DUO_AUTH, SAML_OKTA_AUTH):
         return flask.abort(405)
 
     state = flask.request.args.get('state')
@@ -495,6 +495,15 @@ def sso_callback_get():
 
     if DUO_AUTH in sso_mode and DUO_AUTH in auth_type:
         valid, _ = sso.auth_duo(
+            username,
+            ipaddr=flask.request.remote_addr,
+            type='Key',
+        )
+        if not valid:
+            return flask.abort(401)
+
+    if sso_mode == SAML_OKTA_AUTH and auth_type == SAML_OKTA_AUTH:
+        valid, _ = sso.auth_okta(
             username,
             ipaddr=flask.request.remote_addr,
             type='Key',
