@@ -91,7 +91,7 @@ def get_factor_id(user_id):
             user_id=user_id,
         )
         return None
-    elif settings.user.skip_unavailable_okta:
+    elif settings.app.sso_okta_skip_unavailable:
         logger.warning('Okta push not available, skipping', 'sso',
             user_id=user_id,
         )
@@ -190,7 +190,7 @@ def auth_okta(username, strong=False, ipaddr=None, type=None, info=None):
                 )
                 return False
 
-        time.sleep(0.2)
+        time.sleep(settings.app.sso_okta_poll_rate)
 
         try:
             response = utils.request.get(
