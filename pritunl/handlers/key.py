@@ -502,15 +502,6 @@ def sso_callback_get():
         if not valid:
             return flask.abort(401)
 
-    if sso_mode == SAML_OKTA_AUTH and auth_type == SAML_OKTA_AUTH:
-        valid, _ = sso.auth_okta(
-            username,
-            ipaddr=flask.request.remote_addr,
-            type='Key',
-        )
-        if not valid:
-            return flask.abort(401)
-
     org = organization.get_by_id(org_id)
     if not org:
         return flask.abort(405)
