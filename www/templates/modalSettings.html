@@ -42,6 +42,7 @@
         <option value="saml" <%= sso === 'saml' ? 'selected' : '' %>>SAML</option>
         <option value="google" <%= sso === 'google' ? 'selected' : '' %>>Google Apps</option>
         <option value="duo" <%= sso === 'duo' ? 'selected' : '' %>>Duo Security</option>
+        <option value="saml_okta" <%= sso === 'saml_okta' ? 'selected' : '' %>>SAML + Okta Push</option>
         <option value="saml_duo" <%= sso === 'saml_duo' ? 'selected' : '' %>>SAML + Duo Security</option>
         <option value="google_duo" <%= sso === 'google_duo' ? 'selected' : '' %>>Google Apps + Duo Security</option>
       </select>
@@ -54,7 +55,7 @@
         <% }); %>
       </select>
     </div>
-    <div class="sso-saml-cert form-group" <%= sso === 'saml' || sso === 'saml_duo' ? '' : 'style="display: none;"' %>>
+    <div class="sso-saml-cert form-group" <%= sso === 'saml' || sso === 'saml_duo' || sso === 'saml_okta' ? '' : 'style="display: none;"' %>>
       <label>SAML Certificate</label><br>
       <textarea class="form-control" rows="4" spellcheck="false" data-toggle="tooltip" title="The SAML X.509 Certificate" placeholder="Enter saml certificate"><%- sso_saml_cert %></textarea>
     </div>
@@ -100,13 +101,17 @@
         <option value="dark" <%= theme === 'dark' ? 'selected' : '' %>>Dark</option>
       </select>
     </div>
-    <div class="sso-saml-url form-group" <%= sso === 'saml' || sso === 'saml_duo' ? '' : 'style="display: none;"' %>>
+    <div class="sso-saml-url form-group" <%= sso === 'saml' || sso === 'saml_duo' || sso === 'saml_okta' ? '' : 'style="display: none;"' %>>
       <label>SAML Sign-On URL</label>
       <input type="text" class="form-control" placeholder="Enter SAML sign-on url" value="<%- sso_saml_url || '' %>" data-toggle="tooltip" title="The SAML identity provider single sign-on url">
     </div>
-    <div class="sso-saml-issuer-url form-group" <%= sso === 'saml' || sso === 'saml_duo' ? '' : 'style="display: none;"' %>>
+    <div class="sso-saml-issuer-url form-group" <%= sso === 'saml' || sso === 'saml_duo' || sso === 'saml_okta' ? '' : 'style="display: none;"' %>>
       <label>SAML Issuer URL</label>
       <input type="text" class="form-control" placeholder="Enter SAML issuer url" value="<%- sso_saml_issuer_url || '' %>" data-toggle="tooltip" title="The SAML identity provider issuer url">
+    </div>
+    <div class="sso-okta-token form-group" <%= sso === 'saml_okta' ? '' : 'style="display: none;"' %>>
+      <label>Okta API Token</label>
+      <input type="text" class="form-control" placeholder="Enter Okta token" value="<%- sso_saml_issuer_url || '' %>" data-toggle="tooltip" title="Okta API token for Okta Push">
     </div>
     <div class="sso-match form-group" <%= sso === 'google' || sso === 'google_duo' ? '' : 'style="display: none;"' %>>
       <label>Google Apps Domain</label>
