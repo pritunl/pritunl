@@ -74,7 +74,6 @@ define([
         this.$('.sso-host').slideUp(window.slideTime);
         this.$('.sso-admin').slideUp(window.slideTime);
         this.$('.sso-org').slideUp(window.slideTime);
-
         this.$('.sso-saml-url').slideUp(window.slideTime);
         this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
         this.$('.sso-saml-cert').slideUp(window.slideTime);
