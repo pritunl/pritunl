@@ -187,7 +187,7 @@ def setup_server():
         try:
             db_ver_int = utils.get_db_ver_int()
             break
-        except pymongo.errors.ConnectionFailure:
+        except:
             time.sleep(0.5)
             if time.time() - last_error > 30:
                 last_error = time.time()
@@ -223,4 +223,13 @@ def setup_server():
 
         setup_ready.wait()
 
-    utils.set_db_ver(__version__)
+    last_error = time.time() - 24
+    while True:
+        try:
+            utils.set_db_ver(__version__)
+            break
+        except:
+            time.sleep(0.5)
+            if time.time() - last_error > 30:
+                last_error = time.time()
+                logger.exception('Error connecting to mongodb server')
