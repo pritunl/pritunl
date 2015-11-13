@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.9.792.33 2015-11-13
+-----------------------------
 
 Fix issue with upstart script
 
