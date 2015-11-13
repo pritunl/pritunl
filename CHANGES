@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve initial setup
+
 Version 1.9.792.33 2015-11-13
 -----------------------------
 
