@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with adding user with add in queue
+
 Version 1.9.792.39 2015-11-13
 -----------------------------
 
