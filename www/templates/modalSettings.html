@@ -103,7 +103,7 @@
     </div>
     <div class="sso-saml-url form-group" <%= sso === 'saml' || sso === 'saml_duo' || sso === 'saml_okta' ? '' : 'style="display: none;"' %>>
       <label>SAML Sign-On URL</label>
-      <input type="text" class="form-control" placeholder="Enter SAML sign-on url" value="<%- sso_saml_url || '' %>" data-toggle="tooltip" title="The SAML identity provider single sign-on url">
+      <input type="text" class="form-control" placeholder="Enter SAML sign-on url" value="<%- sso_saml_url || '' %>" data-toggle="tooltip" title="The SAML identity provider single sign-on url. Also known as SAML 2.0 Endpoint">
     </div>
     <div class="sso-saml-issuer-url form-group" <%= sso === 'saml' || sso === 'saml_duo' || sso === 'saml_okta' ? '' : 'style="display: none;"' %>>
       <label>SAML Issuer URL</label>
