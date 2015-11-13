@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add support for Okta Push
+Improvements to single sign-on
 
 Version 1.9.790.54 2015-11-11
 -----------------------------
