@@ -143,7 +143,7 @@ def auth_okta(username, strong=False, ipaddr=None, type=None, info=None):
     poll_url = None
 
     start = time.time()
-    while time.time() - start < settings.app.sso_okta_timeout:
+    while time.time() - start < settings.app.sso_timeout:
         data = response.json()
         result = data.get('factorResult').lower()
 
