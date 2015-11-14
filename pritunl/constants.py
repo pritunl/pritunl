@@ -571,7 +571,7 @@ mute 3
 push-peer-info
 ping %s
 ping-restart %s
-hand-window 70
+hand-window 75
 server-poll-timeout 4
 reneg-sec 2592000
 sndbuf 100000
@@ -652,7 +652,7 @@ mute %s
 push-peer-info
 ping %s
 ping-restart %s
-hand-window 8
+hand-window 75
 server-poll-timeout 4
 reneg-sec 2592000
 sndbuf 100000
