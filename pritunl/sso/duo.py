@@ -32,21 +32,23 @@ def sign(method, path, params):
         'Authorization': 'Basic %s' % base64.b64encode(auth),
     }
 
-def auth_duo(username, strong=False, ipaddr=None, type=None, info=None):
+def auth_duo(username, strong=False, ipaddr=None, type=None, info=None,
+        factor='push'):
     params = {
         'username': username,
-        'factor': 'push',
+        'factor': factor,
         'device': 'auto',
     }
 
     if ipaddr:
         params['ipaddr'] = ipaddr
 
-    if type:
-        params['type'] = type
+    if factor == 'push':
+        if type:
+            params['type'] = type
 
-    if info:
-        params['pushinfo'] = urllib.urlencode(info)
+        if info:
+            params['pushinfo'] = urllib.urlencode(info)
 
     headers = sign('POST', '/auth/v2/auth', params)
     url = 'https://%s/auth/v2/auth' % settings.app.sso_host
@@ -80,6 +82,9 @@ def auth_duo(username, strong=False, ipaddr=None, type=None, info=None):
         else:
             allow = True
     elif data.get('code') == 40002:
+        if factor == 'push':
+            return auth_duo(username, strong, ipaddr, type, info, 'phone')
+
         if settings.app.sso == SAML_DUO_AUTH and \
                 settings.app.sso_saml_duo_skip_unavailable:
             logger.warning('Skipping duo auth for unavailable user', 'sso',
