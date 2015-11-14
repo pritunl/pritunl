@@ -64,10 +64,19 @@ def auth_duo(username, strong=False, ipaddr=None, type=None, info=None):
     resp_data = data.get('response')
     if resp_data and resp_data.get('result') == 'allow':
         if strong and resp_data.get('status') == 'bypass':
-            logger.error('Cannot use Duo bypass with profile login', 'sso',
-                data=resp_data,
-            )
-            allow = False
+            if settings.app.sso == SAML_DUO_AUTH and \
+                    settings.app.sso_saml_duo_skip_unavailable:
+                logger.warning('Skipping duo auth with bypass',
+                    'sso',
+                    username=username,
+                )
+                allow = True
+            else:
+                logger.error('Cannot use Duo bypass with profile login',
+                    'sso',
+                    data=resp_data,
+                )
+                allow = False
         else:
             allow = True
     elif data.get('code') == 40002:
