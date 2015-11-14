@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add support for Duo phone callback
+
 Version 1.9.793.2 2015-11-14
 ----------------------------
 
