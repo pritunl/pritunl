@@ -1,4 +1,5 @@
 from pritunl.exceptions import *
+from pritunl.constants import *
 from pritunl import settings
 from pritunl import logger
 from pritunl import utils
@@ -70,7 +71,14 @@ def auth_duo(username, strong=False, ipaddr=None, type=None, info=None):
         else:
             allow = True
     elif data.get('code') == 40002:
-        raise InvalidUser('Invalid username')
+        if settings.app.sso == SAML_DUO_AUTH and \
+                settings.app.sso_saml_duo_skip_unavailable:
+            logger.warning('Skipping duo auth for unavailable user', 'sso',
+                username=username,
+            )
+            allow = True
+        else:
+            raise InvalidUser('Invalid username')
     else:
         allow = False
         logger.error('Duo authentication failure', 'sso',
