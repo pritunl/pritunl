@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with debian package output
+
 Version 1.9.793.22 2015-11-14
 -----------------------------
 
