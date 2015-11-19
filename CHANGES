@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix display issue in dialog input
+
 Version 1.9.798.13 2015-11-19
 -----------------------------
 
