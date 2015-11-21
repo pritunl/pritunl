@@ -420,7 +420,7 @@ class Clients(object):
             if not user.bypass_secondary:
                 if not user.auth_check():
                     logger.LogEntry(message='User failed authentication, ' +
-                        'Google authentication failed "%s".' % (user.name))
+                        'sso provider denied "%s".' % (user.name))
                     self.instance_com.send_client_deny(client_id, key_id,
                         'User failed authentication')
                     return
