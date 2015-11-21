@@ -349,8 +349,11 @@ def sso_authenticate_post():
 
 @app.app.route('/sso/request', methods=['GET'])
 def sso_request_get():
-    if settings.app.sso not in (GOOGLE_AUTH, GOOGLE_DUO_AUTH,
-            SAML_AUTH, SAML_DUO_AUTH, SAML_OKTA_AUTH):
+    sso_mode = settings.app.sso
+
+    if sso_mode not in (GOOGLE_AUTH, GOOGLE_DUO_AUTH,
+            SAML_AUTH, SAML_DUO_AUTH, SAML_OKTA_AUTH, SAML_ONELOGIN_AUTH,
+            SAML_ONELOGIN_DUO_AUTH):
         return flask.abort(405)
 
     state = utils.rand_str(64)
@@ -361,7 +364,7 @@ def sso_request_get():
         logger.error('Subscription must be active for sso', 'sso')
         return flask.abort(405)
 
-    if settings.app.sso in (GOOGLE_AUTH, GOOGLE_DUO_AUTH):
+    if GOOGLE_AUTH in sso_mode:
         resp = utils.request.post(AUTH_SERVER + '/v1/request/google',
             headers={
                 'Content-Type': 'application/json',
@@ -397,7 +400,7 @@ def sso_request_get():
 
         return flask.redirect(data['url'])
 
-    elif settings.app.sso in (SAML_AUTH, SAML_DUO_AUTH, SAML_OKTA_AUTH):
+    elif SAML_AUTH in sso_mode:
         resp = utils.request.post(AUTH_SERVER + '/v1/request/saml',
             headers={
                 'Content-Type': 'application/json',
@@ -443,7 +446,8 @@ def sso_callback_get():
     sso_mode = settings.app.sso
 
     if sso_mode not in (GOOGLE_AUTH, GOOGLE_DUO_AUTH,
-            SAML_AUTH, SAML_DUO_AUTH, SAML_OKTA_AUTH):
+            SAML_AUTH, SAML_DUO_AUTH, SAML_OKTA_AUTH, SAML_ONELOGIN_AUTH,
+            SAML_ONELOGIN_DUO_AUTH):
         return flask.abort(405)
 
     state = flask.request.args.get('state')
@@ -495,9 +499,7 @@ def sso_callback_get():
         if not org_id:
             org_id = settings.app.sso_org
 
-    auth_type = sso_mode
-
-    if DUO_AUTH in sso_mode and DUO_AUTH in auth_type:
+    if DUO_AUTH in sso_mode:
         valid, _ = sso.auth_duo(
             username,
             ipaddr=flask.request.remote_addr,
@@ -513,12 +515,12 @@ def sso_callback_get():
     usr = org.find_user(name=username)
     if not usr:
         usr = org.new_user(name=username, email=email, type=CERT_CLIENT,
-            auth_type=auth_type)
+            auth_type=sso_mode)
         event.Event(type=ORGS_UPDATED)
         event.Event(type=USERS_UPDATED, resource_id=org.id)
         event.Event(type=SERVERS_UPDATED)
-    elif usr.auth_type != auth_type:
-        usr.auth_type = auth_type
+    elif usr.auth_type != sso_mode:
+        usr.auth_type = sso_mode
         usr.commit('auth_type')
 
     key_link = org.create_user_key_link(usr.id, one_time=True)
