@@ -111,6 +111,7 @@ RANDOM_ERROR_RATE = 0
 IP_REGEX = r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
 VALID_DH_PARAM_BITS = (1024, 1536, 2048, 3072, 4096)
 AUTH_SERVER = 'https://auth.pritunl.com'
+ONELOGIN_URL = 'https://api.onelogin.com'
 STATIC_FILE_EXTENSIONS = {
     '.css',
     '.eot',
