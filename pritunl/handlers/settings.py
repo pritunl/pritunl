@@ -31,6 +31,7 @@ def settings_get():
         'sso_saml_issuer_url': settings.app.sso_saml_issuer_url,
         'sso_saml_cert': settings.app.sso_saml_cert,
         'sso_okta_token': settings.app.sso_okta_token,
+        'sso_onelogin_key': settings.app.sso_onelogin_key,
         'public_address': settings.local.host.public_addr,
         'public_address6': settings.local.host.public_addr6,
         'routed_subnet6': settings.local.host.routed_subnet6,
@@ -137,6 +138,11 @@ def settings_put():
         settings_commit = True
         settings.app.sso_okta_token = sso_okta_token or None
 
+    if 'sso_onelogin_key' in flask.request.json:
+        sso_onelogin_key = flask.request.json['sso_onelogin_key']
+        settings_commit = True
+        settings.app.sso_onelogin_key = sso_onelogin_key or None
+
     if 'theme' in flask.request.json:
         settings_commit = True
         theme = 'dark' if flask.request.json['theme'] == 'dark' else 'light'
@@ -217,6 +223,7 @@ def settings_put():
         settings.app.sso_saml_issuer_url = None
         settings.app.sso_saml_cert = None
         settings.app.sso_okta_token = None
+        settings.app.sso_onelogin_key = None
 
     if settings_commit:
         settings.commit()
@@ -245,6 +252,7 @@ def settings_put():
         'sso_saml_issuer_url': settings.app.sso_saml_issuer_url,
         'sso_saml_cert': settings.app.sso_saml_cert,
         'sso_okta_token': settings.app.sso_okta_token,
+        'sso_onelogin_key': settings.app.sso_onelogin_key,
         'public_address': settings.local.host.public_addr,
     })
     return utils.jsonify(response)
