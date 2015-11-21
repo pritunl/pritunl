@@ -6,7 +6,7 @@ from pritunl import utils
 import urllib
 import httplib
 
-def auth_onelogin(username, strong=False, ipaddr=None, type=None, info=None):
+def auth_onelogin(username):
     try:
         response = utils.request.post(
             ONELOGIN_URL + '/api/v3/users/username/%s' % (
