@@ -321,7 +321,8 @@ class ServerInstance(object):
             default_interface6 = routes6['::/0']
 
             if default_interface6 == 'lo':
-                logger.error('Failed to find default IPv6 interface', 'server',
+                logger.error('Failed to find default IPv6 interface',
+                    'server',
                     server_id=self.server.id,
                 )
 
