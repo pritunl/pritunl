@@ -117,6 +117,17 @@ define([
         this.$('.sso-saml-issuer-url').slideDown(window.slideTime);
         this.$('.sso-saml-cert').slideDown(window.slideTime);
         this.$('.sso-okta-token').slideDown(window.slideTime);
+      } else if (mode === 'saml_okta_duo') {
+        this.$('.sso-match').slideUp(window.slideTime);
+        this.$('.sso-onelogin-key').slideUp(window.slideTime);
+        this.$('.sso-token').slideDown(window.slideTime);
+        this.$('.sso-secret').slideDown(window.slideTime);
+        this.$('.sso-host').slideDown(window.slideTime);
+        this.$('.sso-admin').slideDown(window.slideTime);
+        this.$('.sso-saml-url').slideDown(window.slideTime);
+        this.$('.sso-saml-issuer-url').slideDown(window.slideTime);
+        this.$('.sso-saml-cert').slideDown(window.slideTime);
+        this.$('.sso-okta-token').slideDown(window.slideTime);
       } else if (mode === 'saml_onelogin') {
         this.$('.sso-token').slideUp(window.slideTime);
         this.$('.sso-secret').slideUp(window.slideTime);
