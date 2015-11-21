@@ -91,21 +91,17 @@ def get_factor_id(user_id):
 
         return factor['id']
 
-    if not_active:
+    if settings.app.sso_okta_skip_unavailable:
+        return True
+    elif not_active:
         logger.error('Okta push not active', 'sso',
             user_id=user_id,
         )
-        return None
-    elif settings.app.sso_okta_skip_unavailable:
-        logger.warning('Okta push not available, skipping', 'sso',
-            user_id=user_id,
-        )
-        return True
     else:
         logger.error('Okta push not available', 'sso',
             user_id=user_id,
         )
-        return None
+    return None
 
 def auth_okta(username, strong=False, ipaddr=None, type=None, info=None):
     user_id = get_user_id(username)
