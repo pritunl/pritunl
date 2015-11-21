@@ -3,6 +3,7 @@ import urllib
 import urllib2
 import httplib
 import socket
+import base64
 
 class Response:
     def __init__(self, url, headers, status_code, reason, content):
