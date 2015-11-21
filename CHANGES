@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improvements to Okta SSO
+
 Version 1.9.800.2 2015-11-21
 ----------------------------
 
