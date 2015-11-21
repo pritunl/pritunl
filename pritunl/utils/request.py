@@ -16,7 +16,7 @@ class Response:
         return json.loads(self.content)
 
 def _request(method, url, json_data=None, params=None, headers=None,
-        timeout=None):
+        timeout=None, auth=None):
     if headers is None:
         headers = {}
     if timeout is None:
@@ -24,6 +24,11 @@ def _request(method, url, json_data=None, params=None, headers=None,
     data = None
     request = urllib2.Request(url, headers=headers)
     request.get_method = lambda: method
+
+    if auth is not None:
+        auth_str = base64.encodestring(
+            '%s:%s' % (auth[0], auth[1])).replace('\n', '')
+        request.add_header('Authorization', 'Basic %s' % auth_str)
 
     if json_data is not None:
         request.add_header('Content-Type', 'application/json')
