@@ -36,6 +36,11 @@ def get_user_id(username):
 
     data = response.json()
     if 'id' in data:
+        if data['status'].lower() != 'active':
+            logger.error('Okta user is not active', 'sso',
+                username=username,
+            )
+            return None
         return data['id']
 
     logger.error('Okta username not found', 'sso',
