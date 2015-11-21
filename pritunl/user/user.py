@@ -8,6 +8,7 @@ from pritunl import queue
 from pritunl import logger
 from pritunl import messenger
 from pritunl import ipaddress
+from pritunl import sso
 
 import tarfile
 import zipfile
@@ -244,7 +245,14 @@ class User(mongo.MongoObject):
                 logger.exception('Google auth check error', 'user',
                     user_id=self.id,
                 )
-
+            return False
+        elif SAML_ONELOGIN_AUTH in self.auth_type:
+            try:
+                return sso.auth_onelogin(self.name)
+            except:
+                logger.exception('OneLogin auth check error', 'user',
+                    user_id=self.id,
+                )
             return False
 
         return True
