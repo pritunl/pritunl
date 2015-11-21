@@ -8,7 +8,7 @@ import httplib
 
 def auth_onelogin(username):
     try:
-        response = utils.request.post(
+        response = utils.request.get(
             ONELOGIN_URL + '/api/v3/users/username/%s' % (
                 urllib.quote(username)),
             auth=(settings.app.sso_onelogin_key, 'x'),
