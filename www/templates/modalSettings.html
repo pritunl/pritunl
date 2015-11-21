@@ -43,6 +43,8 @@
         <option value="google" <%= sso === 'google' ? 'selected' : '' %>>Google Apps</option>
         <option value="duo" <%= sso === 'duo' ? 'selected' : '' %>>Duo Security</option>
         <option value="saml_okta" <%= sso === 'saml_okta' ? 'selected' : '' %>>Okta</option>
+        <option value="saml_onelogin" <%= sso === 'saml_onelogin' ? 'selected' : '' %>>OneLogin</option>
+        <option value="saml_onelogin_duo" <%= sso === 'saml_onelogin_duo' ? 'selected' : '' %>>OneLogin + Duo Security</option>
         <option value="saml_duo" <%= sso === 'saml_duo' ? 'selected' : '' %>>SAML + Duo Security</option>
         <option value="google_duo" <%= sso === 'google_duo' ? 'selected' : '' %>>Google Apps + Duo Security</option>
       </select>
@@ -55,15 +57,15 @@
         <% }); %>
       </select>
     </div>
-    <div class="sso-saml-cert form-group" <%= sso === 'saml' || sso === 'saml_duo' || sso === 'saml_okta' ? '' : 'style="display: none;"' %>>
+    <div class="sso-saml-cert form-group" <%= sso === 'saml' || sso === 'saml_duo' || sso === 'saml_okta' || sso === 'saml_onelogin' || sso === 'saml_onelogin_duo' ? '' : 'style="display: none;"' %>>
       <label>SAML Certificate</label><br>
       <textarea class="form-control" rows="4" spellcheck="false" data-toggle="tooltip" title="The SAML X.509 Certificate" placeholder="Enter saml certificate"><%- sso_saml_cert %></textarea>
     </div>
-    <div class="sso-token form-group" <%= sso === 'duo' || sso === 'saml_duo' || sso === 'google_duo' ? '' : 'style="display: none;"' %>>
+    <div class="sso-token form-group" <%= sso === 'duo' || sso === 'saml_duo' || sso === 'google_duo' || sso === 'saml_onelogin_duo' ? '' : 'style="display: none;"' %>>
       <label>Duo Integration Key</label>
       <input type="text" class="form-control" placeholder="Enter integration key" value="<%- sso_token || '' %>">
     </div>
-    <div class="sso-admin form-group" <%= sso === 'duo' || sso === 'saml_duo' || sso === 'google_duo' ? '' : 'style="display: none;"' %>>
+    <div class="sso-admin form-group" <%= sso === 'duo' || sso === 'saml_duo' || sso === 'google_duo' || sso === 'saml_onelogin_duo' ? '' : 'style="display: none;"' %>>
       <label>Duo Admin Username</label>
       <input type="text" class="form-control" placeholder="Enter admin username" value="<%- sso_admin || '' %>" data-toggle="tooltip" title="Require a Duo push request from this username when logging into the web console as the admin">
     </div>
@@ -101,17 +103,21 @@
         <option value="dark" <%= theme === 'dark' ? 'selected' : '' %>>Dark</option>
       </select>
     </div>
-    <div class="sso-saml-url form-group" <%= sso === 'saml' || sso === 'saml_duo' || sso === 'saml_okta' ? '' : 'style="display: none;"' %>>
+    <div class="sso-saml-url form-group" <%= sso === 'saml' || sso === 'saml_duo' || sso === 'saml_okta' || sso === 'saml_onelogin' || sso === 'saml_onelogin_duo' ? '' : 'style="display: none;"' %>>
       <label>SAML Sign-On URL</label>
       <input type="text" class="form-control" placeholder="Enter SAML sign-on url" value="<%- sso_saml_url || '' %>" data-toggle="tooltip" title="The SAML identity provider single sign-on url. Also known as SAML 2.0 Endpoint">
     </div>
-    <div class="sso-saml-issuer-url form-group" <%= sso === 'saml' || sso === 'saml_duo' || sso === 'saml_okta' ? '' : 'style="display: none;"' %>>
+    <div class="sso-saml-issuer-url form-group" <%= sso === 'saml' || sso === 'saml_duo' || sso === 'saml_okta' || sso === 'saml_onelogin' || sso === 'saml_onelogin_duo' ? '' : 'style="display: none;"' %>>
       <label>SAML Issuer URL</label>
       <input type="text" class="form-control" placeholder="Enter SAML issuer url" value="<%- sso_saml_issuer_url || '' %>" data-toggle="tooltip" title="The SAML identity provider issuer url">
     </div>
     <div class="sso-okta-token form-group" <%= sso === 'saml_okta' ? '' : 'style="display: none;"' %>>
       <label>Okta API Token</label>
-      <input type="text" class="form-control" placeholder="Enter Okta API token" value="<%- sso_okta_token || '' %>" data-toggle="tooltip" title="Okta API token for Okta Push">
+      <input type="text" class="form-control" placeholder="Enter Okta API token" value="<%- sso_okta_token || '' %>" data-toggle="tooltip" title="Okta API token">
+    </div>
+    <div class="sso-onelogin-key form-group" <%= sso === 'saml_onelogin' || sso === 'saml_onelogin_duo' ? '' : 'style="display: none;"' %>>
+      <label>OneLogin API Key</label>
+      <input type="text" class="form-control" placeholder="Enter OneLogin API key" value="<%- sso_onelogin_key || '' %>" data-toggle="tooltip" title="OneLogin API key">
     </div>
     <div class="sso-match form-group" <%= sso === 'google' || sso === 'google_duo' ? '' : 'style="display: none;"' %>>
       <label>Google Apps Domain</label>
