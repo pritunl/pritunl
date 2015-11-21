@@ -66,7 +66,7 @@ def auth_duo(username, strong=False, ipaddr=None, type=None, info=None,
     resp_data = data.get('response')
     if resp_data and resp_data.get('result') == 'allow':
         if strong and resp_data.get('status') == 'bypass':
-            if settings.app.sso == SAML_DUO_AUTH and \
+            if SAML_DUO_AUTH in settings.app.sso and \
                     settings.app.sso_saml_duo_skip_unavailable:
                 logger.warning('Skipping duo auth with bypass',
                     'sso',
@@ -85,7 +85,7 @@ def auth_duo(username, strong=False, ipaddr=None, type=None, info=None,
         if factor == 'push':
             return auth_duo(username, strong, ipaddr, type, info, 'phone')
 
-        if settings.app.sso == SAML_DUO_AUTH and \
+        if SAML_DUO_AUTH in settings.app.sso and \
                 settings.app.sso_saml_duo_skip_unavailable:
             logger.warning('Skipping duo auth for unavailable user', 'sso',
                 username=username,
