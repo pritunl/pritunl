@@ -438,8 +438,8 @@ class Clients(object):
                     self.auth_push(DUO_AUTH, client, org, user, reauth)
                     return
                 elif settings.app.sso and \
-                        user.auth_type == SAML_OKTA_AUTH and \
-                        settings.app.sso == SAML_OKTA_AUTH:
+                        SAML_OKTA_AUTH in user.auth_type and \
+                        SAML_OKTA_AUTH in settings.app.sso:
                     self.auth_push(SAML_OKTA_AUTH, client, org, user, reauth)
                     return
 
