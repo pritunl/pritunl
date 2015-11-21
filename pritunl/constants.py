@@ -188,6 +188,7 @@ GOOGLE_DUO_AUTH = 'google_duo'
 SAML_AUTH = 'saml'
 SAML_DUO_AUTH = 'saml_duo'
 SAML_OKTA_AUTH = 'saml_okta'
+SAML_OKTA_DUO_AUTH = 'saml_okta_duo'
 SAML_ONELOGIN_AUTH = 'saml_onelogin'
 SAML_ONELOGIN_DUO_AUTH = 'saml_onelogin_duo'
 
