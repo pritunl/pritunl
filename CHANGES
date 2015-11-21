@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add additional configuration options
+
 Version 1.9.798.90 2015-11-19
 -----------------------------
 
