@@ -96,6 +96,8 @@ def login_static_get():
         if settings.local.sub_plan == 'enterprise':
             if settings.app.sso in (SAML_AUTH, SAML_DUO_AUTH):
                 bodyClass += 'sso-saml '
+            elif SAML_OKTA_AUTH in settings.app.sso:
+                bodyClass += 'sso-okta '
             elif SAML_ONELOGIN_AUTH in settings.app.sso:
                 bodyClass += 'sso-onelogin '
             elif GOOGLE_AUTH in settings.app.sso:
