@@ -112,6 +112,7 @@ define([
         this.$('.sso-host').slideUp(window.slideTime);
         this.$('.sso-admin').slideUp(window.slideTime);
         this.$('.sso-match').slideUp(window.slideTime);
+        this.$('.sso-onelogin-key').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideDown(window.slideTime);
         this.$('.sso-saml-issuer-url').slideDown(window.slideTime);
         this.$('.sso-saml-cert').slideDown(window.slideTime);
