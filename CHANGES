@@ -1,8 +1,7 @@
 Pritunl Changelog
 =================
 
-Version 1.9.802.84 2015-11-23
------------------------------
+<%= version %>
 
 Add reauth check for Okta on vpn connections
 Add OneLogin support with reauth check on vpn connections
