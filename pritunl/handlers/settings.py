@@ -89,6 +89,8 @@ def settings_put():
         if isinstance(sso_match, list):
             settings_commit = True
             settings.app.sso_match = sso_match or None
+        else:
+            settings.app.sso_match = None
 
     if 'sso_token' in flask.request.json:
         sso_token = flask.request.json['sso_token']
