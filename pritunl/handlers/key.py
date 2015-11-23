@@ -65,7 +65,7 @@ def _find_doc(query, one_time=None):
             'one_time': 'used',
         }})
         if not response['updatedExisting']:
-            raise KeyError('Key link does not exists')
+            return None
 
     if not doc:
         time.sleep(settings.app.rate_limit_sleep)
