@@ -46,7 +46,6 @@ def info(log_msg, log_type=None, **kwargs):
     ))
 
 def warning(log_msg, log_type=None, **kwargs):
-    kwargs['traceback'] = traceback.format_stack()
     _log_queue.put((
         ('warning', log_msg, log_type),
         kwargs,
