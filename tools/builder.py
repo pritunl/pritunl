@@ -61,9 +61,12 @@ def post_git_asset(release_id, file_name, file_path):
     )
 
     if response.status_code != 201:
-        print 'Failed to create asset on github'
-        print response.json()
-        sys.exit(1)
+        data = response.json()
+        errors = data.get('errors')
+        if not errors or errors[0].get('code') != 'already_exists':
+            print 'Failed to create asset on github'
+            print data
+            sys.exit(1)
 
 def get_ver(version):
     day_num = (cur_date - datetime.datetime(2013, 9, 12)).days
