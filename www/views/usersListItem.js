@@ -213,10 +213,24 @@ define([
         }
 
         if (sso.indexOf('duo') !== -1 &&
-            auth_type.indexOf('duo') !== -1) {
+          auth_type.indexOf('duo') !== -1) {
           this.$('.duo-logo').show();
         } else {
           this.$('.duo-logo').hide();
+        }
+
+        if (sso.indexOf('okta') !== -1 &&
+          auth_type.indexOf('okta') !== -1) {
+          this.$('.okta-logo').show();
+        } else {
+          this.$('.okta-logo').hide();
+        }
+
+        if (sso.indexOf('onelogin') !== -1 &&
+          auth_type.indexOf('onelogin') !== -1) {
+          this.$('.onelogin-logo').show();
+        } else {
+          this.$('.onelogin-logo').hide();
         }
       }
 
