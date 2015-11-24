@@ -459,6 +459,7 @@ elif cmd == 'upload':
 
 elif cmd == 'upload-github':
     is_snapshot = 'snapshot' in cur_version
+    pacur_path = TEST_PACUR_PATH if is_snapshot else STABLE_PACUR_PATH
 
 
     # Get release id
