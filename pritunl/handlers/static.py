@@ -94,7 +94,9 @@ def login_static_get():
             bodyClass += 'dark '
 
         if settings.local.sub_plan == 'enterprise':
-            if settings.app.sso in (SAML_AUTH, SAML_DUO_AUTH):
+            if not settings.app.sso:
+                pass
+            elif settings.app.sso in (SAML_AUTH, SAML_DUO_AUTH):
                 bodyClass += 'sso-saml '
             elif SAML_OKTA_AUTH in settings.app.sso:
                 bodyClass += 'sso-okta '
