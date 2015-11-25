@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with Enterprise login
+
 Version 1.9.803.37 2015-11-24
 -----------------------------
 
