@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Disable Enterprise dns server
+
 Version 1.9.804.68 2015-11-25
 -----------------------------
 
