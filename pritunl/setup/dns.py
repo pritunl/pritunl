@@ -12,6 +12,8 @@ def _dns_thread():
             settings.local.sub_plan != 'enterprise':
         time.sleep(1)
 
+    return
+
     while True:
         try:
             utils.check_output_logged(
