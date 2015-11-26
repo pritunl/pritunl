@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add support for dns forwarding
+
 Version 1.9.805.7 2015-11-26
 ----------------------------
 
