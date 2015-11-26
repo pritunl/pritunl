@@ -21,7 +21,9 @@ define([
       'disabled': null,
       'network_links': null,
       'dns_mapping': null,
-      'bypass_secondary': null
+      'bypass_secondary': null,
+      'dns_servers': null,
+      'dns_suffix': null
     },
     url: function() {
       var url = '/user/' + this.get('organization');
