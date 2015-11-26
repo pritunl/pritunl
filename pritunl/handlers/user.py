@@ -271,6 +271,14 @@ def user_put(org_id, user_id):
     if bypass_secondary is not None:
         user.bypass_secondary = bypass_secondary
 
+    dns_servers = flask.request.json.get('dns_servers')
+    if dns_servers is not None:
+        user.dns_servers = dns_servers
+
+    dns_suffix = flask.request.json.get('dns_suffix')
+    if dns_suffix is not None:
+        user.dns_suffix = dns_suffix
+
     user.commit()
     event.Event(type=USERS_UPDATED, resource_id=user.org.id)
 
