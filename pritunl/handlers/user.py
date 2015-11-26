@@ -60,6 +60,8 @@ def user_get(org_id, user_id=None, page=None):
         'otp_secret',
         'disabled',
         'bypass_secondary',
+        'dns_servers',
+        'dns_suffix',
     )
     for usr in org.iter_users(page=page, search=search,
             search_limit=limit, fields=fields):
@@ -189,6 +191,8 @@ def user_post(org_id):
             email = utils.filter_str(user_data.get('email'))
             disabled = user_data.get('disabled')
             network_links = user_data.get('network_links')
+            dns_servers = user_data.get('dns_servers')
+            dns_suffix = user_data.get('dns_suffix')
             bypass_secondary = user_data.get('bypass_secondary')
 
             user = org.new_user(type=CERT_CLIENT, name=name, email=email,
@@ -197,7 +201,11 @@ def user_post(org_id):
             if network_links:
                 for network_link in network_links:
                     try:
-                        user.add_network_link(network_link)
+                        user.add_network_link(
+                            network_link,
+                            dns_servers,
+                            dns_suffix,
+                        )
                     except (ipaddress.AddressValueError, ValueError):
                         return _network_link_invalid()
                     except ServerOnlineError:
