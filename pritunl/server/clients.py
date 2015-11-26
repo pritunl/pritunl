@@ -269,6 +269,13 @@ class Clients(object):
 
             virt_address6 = self.server.ip4to6(virt_address)
 
+            dns_servers = []
+            if user.dns_servers:
+                for dns_server in user.dns_servers:
+                    if dns_server == '127.0.0.1':
+                        dns_server = virt_address
+                    dns_servers.append(dns_server)
+
             self.clients.insert({
                 'id': client_id,
                 'org_id': org_id,
@@ -276,6 +283,8 @@ class Clients(object):
                 'user_id': user_id,
                 'user_name': user.name,
                 'user_type': user.type,
+                'dns_servers': dns_servers,
+                'dns_suffix': user.dns_suffix,
                 'device_id': device_id,
                 'device_name': device_name,
                 'platform': platform,
@@ -404,7 +413,8 @@ class Clients(object):
 
             user = org.get_user(user_id, fields=('_id', 'name', 'email',
                 'type', 'auth_type', 'disabled', 'otp_secret',
-                'link_server_id', 'bypass_secondary'))
+                'link_server_id', 'bypass_secondary', 'dns_servers',
+                'dns_suffix'))
             if not user:
                 self.instance_com.send_client_deny(client_id, key_id,
                     'User is not valid')
