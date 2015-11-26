@@ -201,11 +201,7 @@ def user_post(org_id):
             if network_links:
                 for network_link in network_links:
                     try:
-                        user.add_network_link(
-                            network_link,
-                            dns_servers,
-                            dns_suffix,
-                        )
+                        user.add_network_link(network_link)
                     except (ipaddress.AddressValueError, ValueError):
                         return _network_link_invalid()
                     except ServerOnlineError:
