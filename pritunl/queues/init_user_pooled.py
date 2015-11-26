@@ -46,7 +46,8 @@ class QueueInitUserPooled(QueueInitUser):
 
 @queue.add_reserve('queued_user')
 def reserve_queued_user(org, name=None, email=None, type=None,
-        disabled=None, bypass_secondary=None, resource_id=None, block=False):
+        disabled=None, bypass_secondary=None, dns_servers=None,
+        dns_suffix=None, resource_id=None, block=False):
     reserve_id = str(org.id) + '-' + type
     reserve_data = {}
 
@@ -60,6 +61,10 @@ def reserve_queued_user(org, name=None, email=None, type=None,
         reserve_data['disabled'] = disabled
     if bypass_secondary is not None:
         reserve_data['bypass_secondary'] = bypass_secondary
+    if dns_servers is not None:
+        reserve_data['dns_servers'] = dns_servers
+    if dns_suffix is not None:
+        reserve_data['dns_suffix'] = dns_suffix
     if resource_id is not None:
         reserve_data['resource_id'] = resource_id
 
