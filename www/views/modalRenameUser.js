@@ -40,6 +40,7 @@ define([
       var name = this.$('.name input').val();
       var email = this.$('.email input').val();
       var emailReg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+      var dnsSuffix = this.$('.dns-suffix input').val();
       var bypassSecondary = this.getBypassSecondarySelect();
 
       var networkLink;
@@ -49,6 +50,16 @@ define([
         networkLink = $.trim(networkLinksTemp[i]);
         if (networkLink) {
           networkLinks.push(networkLink);
+        }
+      }
+
+      var dnsServer;
+      var dnsServers = [];
+      var dnsServersTemp = this.$('.dns-servers input').val().split(',');
+      for (i = 0; i < dnsServersTemp.length; i++) {
+        dnsServer = $.trim(dnsServersTemp[i]);
+        if (dnsServer) {
+          dnsServers.push(dnsServer);
         }
       }
 
@@ -70,7 +81,9 @@ define([
         email: email,
         disabled: null,
         network_links: networkLinks,
-        bypass_secondary: bypassSecondary
+        bypass_secondary: bypassSecondary,
+        dns_servers: dnsServers,
+        dns_suffix: dnsSuffix
       }, {
         success: function() {
           this.close(true);
