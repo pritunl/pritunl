@@ -37,6 +37,7 @@ define([
       this.setBypassSecondarySelect(!this.getBypassSecondarySelect());
     },
     onOk: function() {
+      var i;
       var name = this.$('.name input').val();
       var email = this.$('.email input').val();
       var emailReg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
@@ -46,7 +47,7 @@ define([
       var networkLink;
       var networkLinks = [];
       var networkLinksTemp = this.$('.network-links input').val().split(',');
-      for (var i = 0; i < networkLinksTemp.length; i++) {
+      for (i = 0; i < networkLinksTemp.length; i++) {
         networkLink = $.trim(networkLinksTemp[i]);
         if (networkLink) {
           networkLinks.push(networkLink);
