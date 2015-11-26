@@ -37,6 +37,8 @@ class User(mongo.MongoObject):
         'resource_id',
         'link_server_id',
         'bypass_secondary',
+        'dns_servers',
+        'dns_suffix',
     }
     fields_default = {
         'name': 'undefined',
@@ -47,7 +49,8 @@ class User(mongo.MongoObject):
     }
 
     def __init__(self, org, name=None, email=None, type=None, auth_type=None,
-            disabled=None, resource_id=None, bypass_secondary=None, **kwargs):
+            disabled=None, resource_id=None, bypass_secondary=None,
+            dns_servers=None, dns_suffix=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         self.org = org
@@ -67,6 +70,10 @@ class User(mongo.MongoObject):
             self.resource_id = resource_id
         if bypass_secondary is not None:
             self.bypass_secondary = bypass_secondary
+        if dns_servers is not None:
+            self.dns_servers = dns_servers
+        if dns_suffix is not None:
+            self.dns_suffix = dns_suffix
 
     @cached_static_property
     def collection(cls):
@@ -96,6 +103,8 @@ class User(mongo.MongoObject):
             'otp_secret': self.otp_secret,
             'disabled': self.disabled,
             'bypass_secondary': self.bypass_secondary,
+            'dns_servers': self.dns_servers,
+            'dns_suffix': self.dns_suffix,
         }
 
     def initialize(self):
