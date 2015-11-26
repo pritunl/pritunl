@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with Enterprise dns server
+
 Version 1.9.804.88 2015-11-25
 -----------------------------
 
