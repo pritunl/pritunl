@@ -484,6 +484,8 @@ class Clients(object):
             'real_address': client['real_address'],
             'virt_address': client['virt_address'],
             'virt_address6': client['virt_address6'],
+            'dns_servers': client['dns_servers'],
+            'dns_suffix': client['dns_suffix'],
             'connected_since': int(timestamp.strftime('%s')),
         }
 
