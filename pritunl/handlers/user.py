@@ -230,6 +230,7 @@ def user_post(org_id):
 def user_put(org_id, user_id):
     org = organization.get_by_id(org_id)
     user = org.get_user(user_id)
+    reset_user = False
 
     if 'name' in flask.request.json:
         user.name = utils.filter_str(flask.request.json['name']) or None
@@ -253,6 +254,7 @@ def user_put(org_id, user_id):
 
         try:
             for network_link in network_links_add:
+                reset_user = True
                 user.add_network_link(network_link)
         except ServerOnlineError:
             return utils.jsonify({
@@ -261,6 +263,7 @@ def user_put(org_id, user_id):
             }, 400)
 
         for network_link in network_links_rem:
+            reset_user = True
             user.remove_network_link(network_link)
 
     disabled = flask.request.json.get('disabled')
@@ -272,16 +275,24 @@ def user_put(org_id, user_id):
         user.bypass_secondary = bypass_secondary
 
     if 'dns_servers' in flask.request.json:
-        user.dns_servers = flask.request.json['dns_servers']
+        dns_servers = flask.request.json['dns_servers']
+        if user.dns_servers != dns_servers:
+            reset_user = True
+        user.dns_servers = dns_servers
 
     if 'dns_suffix' in flask.request.json:
-        user.dns_suffix = utils.filter_str(flask.request.json['dns_suffix'])
+        dns_suffix = utils.filter_str(flask.request.json['dns_suffix'])
+        if user.dns_suffix != dns_suffix:
+            reset_user = True
+        user.dns_suffix = dns_suffix
 
     user.commit()
     event.Event(type=USERS_UPDATED, resource_id=user.org.id)
 
-    if disabled:
+    if reset_user or disabled:
         user.disconnect()
+
+    if disabled:
         if user.type == CERT_CLIENT:
             logger.LogEntry(message='Disabled user "%s".' % user.name)
     elif disabled == False and user.type == CERT_CLIENT:
