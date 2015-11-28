@@ -40,6 +40,13 @@ class Administrator(mongo.MongoObject):
             self.default = default
 
     def dict(self):
+        if settings.app.demo_mode:
+            return {
+                'username': self.username,
+                'token': 'demo',
+                'secret': 'demo',
+                'default': self.default,
+            }
         return {
             'username': self.username,
             'token': self.token,
