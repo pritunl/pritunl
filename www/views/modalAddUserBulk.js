@@ -58,7 +58,7 @@ define([
         success: function() {
           this.close(true);
         }.bind(this),
-        error: function(model, resposne) {
+        error: function(model, response) {
           this.$('.users textarea').removeAttr('disabled');
           this.$('.org select').removeAttr('disabled');
           this.clearLoading();
