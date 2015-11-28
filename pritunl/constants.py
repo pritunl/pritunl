@@ -331,6 +331,9 @@ authorityKeyIdentifier = keyid:always
 MISSING_PARAMS = 'missing_params'
 MISSING_PARAMS_MSG = 'Missing required parameters.'
 
+DEMO_BLOCKED = 'demo_blocked'
+DEMO_BLOCKED_MSG = 'Not aviaible in demo.'
+
 AUTH_INVALID = 'auth_invalid'
 AUTH_INVALID_MSG = 'Username or password is not valid.'
 
