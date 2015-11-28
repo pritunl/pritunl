@@ -62,7 +62,7 @@ def calc_cpu_usage(last_proc_stat, proc_stat):
 def get_mem_usage():
     try:
         free = utils.check_output_logged(['free']).split()
-        return float(free[15]) / float(free[7])
+        return float(output.split()[8]) / float(output.split()[7])
     except:
         logger.exception('Failed to get memory usage', 'host')
     return 0
