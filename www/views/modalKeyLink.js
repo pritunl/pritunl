@@ -47,9 +47,14 @@ define([
           this.$('.uri-link input').val(uriLink);
           this.$('.uri-link a').attr('href', uriLink);
         }.bind(this),
-        error: function() {
+        error: function(model, response) {
           this.clearLoading();
-          this.setAlert('danger', 'Failed to generate temporary profile url.');
+          if (response.responseJSON) {
+            this.setAlert('danger', response.responseJSON.error_msg);
+          }
+          else {
+            this.setAlert('danger', this.errorMsg);
+          }
         }.bind(this)
       });
     },

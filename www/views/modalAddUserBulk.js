@@ -58,12 +58,16 @@ define([
         success: function() {
           this.close(true);
         }.bind(this),
-        error: function() {
+        error: function(model, resposne) {
           this.$('.users textarea').removeAttr('disabled');
           this.$('.org select').removeAttr('disabled');
           this.clearLoading();
-          this.setAlert('danger',
-            'Failed to add users, server error occurred.');
+          if (response.responseJSON) {
+            this.setAlert('danger', response.responseJSON.error_msg);
+          }
+          else {
+            this.setAlert('danger', this.errorMsg);
+          }
         }.bind(this)
       });
     }

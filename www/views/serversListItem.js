@@ -332,10 +332,19 @@ define([
     },
     onClearOutput: function() {
       this.serverOutputView.model.destroy({
-        error: function() {
+        error: function(model, response) {
+          var message;
+          if (response.responseJSON) {
+            message = response.responseJSON.error_msg;
+          }
+          else {
+            message = 'Failed to clear server link output, server error ' +
+              'occurred.';
+          }
+
           var alertView = new AlertView({
             type: 'danger',
-            message: 'Failed to clear server output, server error occurred.',
+            message: message,
             dismissable: true
           });
           $('.alerts-container').append(alertView.render().el);
@@ -345,11 +354,19 @@ define([
     },
     onClearOutputLink: function() {
       this.serverOutputLinkView.model.destroy({
-        error: function() {
+        error: function(model, response) {
+          var message;
+          if (response.responseJSON) {
+            message = response.responseJSON.error_msg;
+          }
+          else {
+            message = 'Failed to clear server link output, server error ' +
+              'occurred.';
+          }
+
           var alertView = new AlertView({
             type: 'danger',
-            message: 'Failed to clear server link output, server error ' +
-              'occurred.',
+            message: message,
             dismissable: true
           });
           $('.alerts-container').append(alertView.render().el);

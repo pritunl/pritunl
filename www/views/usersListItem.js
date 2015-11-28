@@ -294,15 +294,23 @@ define([
         success: function() {
           this.$('.disable-user').removeClass('disabled');
         }.bind(this),
-        error: function() {
+        error: function(model, response) {
+          var message;
+          if (response.responseJSON) {
+            message = response.responseJSON.error_msg;
+          }
+          else {
+            message = 'Failed to disable user, server error occurred.';
+          }
+
           var alertView = new AlertView({
             type: 'danger',
-            message: 'Failed to disable user, server error occurred.',
+            message: message,
             dismissable: true
           });
           $('.alerts-container').append(alertView.render().el);
           this.addView(alertView);
-          this.$('.enable-user').removeClass('disabled');
+          this.$('.disable-user').removeClass('disabled');
         }.bind(this)
       });
     },
@@ -318,10 +326,18 @@ define([
         success: function() {
           this.$('.enable-user').removeClass('disabled');
         }.bind(this),
-        error: function() {
+        error: function(model, response) {
+          var message;
+          if (response.responseJSON) {
+            message = response.responseJSON.error_msg;
+          }
+          else {
+            message = 'Failed to enable user, server error occurred.';
+          }
+
           var alertView = new AlertView({
             type: 'danger',
-            message: 'Failed to disable user, server error occurred.',
+            message: message,
             dismissable: true
           });
           $('.alerts-container').append(alertView.render().el);

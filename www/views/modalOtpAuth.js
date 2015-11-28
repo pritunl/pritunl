@@ -63,11 +63,15 @@ define([
       this.$('.generate-new-key').attr('disabled', 'disabled');
       this.setLoading('Generating new key...');
       this.model.destroyOtpSecret({
-        error: function() {
+        error: function(model, response) {
           this.$('.generate-new-key').removeAttr('disabled');
           this.clearLoading();
-          this.setAlert('danger',
-            'Failed to generate new key, server error occurred.');
+          if (response.responseJSON) {
+            this.setAlert('danger', response.responseJSON.error_msg);
+          }
+          else {
+            this.setAlert('danger', this.errorMsg);
+          }
         }.bind(this)
       });
     },

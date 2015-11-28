@@ -39,8 +39,7 @@ define([
             this.setAlert('danger', response.responseJSON.error_msg);
           }
           else {
-            this.setAlert('danger',
-              'Failed to modify host, server error occurred.');
+            this.setAlert('danger', this.errorMsg);
           }
         }.bind(this)
       });

@@ -196,8 +196,7 @@ define([
                     this.setAlert('danger', response.responseJSON.error_msg);
                   }
                   else {
-                    this.setAlert('danger', 'Server error occured, ' +
-                      'please try again later.');
+                    this.setAlert('danger', this.errorMsg);
                   }
                   this.clearLoading();
                   this.unlock();
@@ -285,10 +284,14 @@ define([
           this.unlock();
           this.close(true);
         }.bind(this),
-        error: function() {
+        error: function(model, response) {
           this.unlock();
-          this.setAlert('danger', 'Server error occured, ' +
-            'please try again later.');
+          if (response.responseJSON) {
+            this.setAlert('danger', response.responseJSON.error_msg);
+          }
+          else {
+            this.setAlert('danger', this.errorMsg);
+          }
         }.bind(this)
       });
     },
@@ -311,10 +314,14 @@ define([
             'current period.');
           this.update();
         }.bind(this),
-        error: function() {
+        error: function(model, response) {
           this.unlock();
-          this.setAlert('danger', 'Server error occured, ' +
-            'please try again later.');
+          if (response.responseJSON) {
+            this.setAlert('danger', response.responseJSON.error_msg);
+          }
+          else {
+            this.setAlert('danger', this.errorMsg);
+          }
         }.bind(this)
       });
     }
