@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add additional advanced settings
+Fix display issue with sso logos
 
 Version 1.10.807.63 2015-11-28
 ------------------------------
