@@ -1,5 +1,6 @@
 from pritunl.utils.misc import ObjectId
 
+from pritunl.constants import *
 from pritunl import mongo
 
 import datetime
@@ -43,3 +44,9 @@ def jsonify(data=None, status_code=None):
     if status_code is not None:
         response.status_code = status_code
     return response
+
+def demo_blocked():
+    return jsonify({
+        'error': DEMO_BLOCKED,
+        'error_msg': DEMO_BLOCKED_MSG,
+    }, 400)
