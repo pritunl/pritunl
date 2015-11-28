@@ -3,6 +3,7 @@ from pritunl.settings.group_mongo import SettingsGroupMongo
 class SettingsApp(SettingsGroupMongo):
     group = 'app'
     fields = {
+        'demo_mode': False,
         'settings_check_interval': 600,
         'key_link_timeout': 86400,
         'password_len_limit': 128,
