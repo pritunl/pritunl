@@ -417,6 +417,11 @@
       var alertDiv = document.getElementById('alert');
       var duoAlertDiv = document.getElementById('duo-alert');
 
+      if (document.body.className.indexOf('demo') !== -1) {
+        userInput.value = 'demo';
+        passInput.value = 'demo';
+      }
+
       var flashAlert = function() {
         var alertClass = alertDiv.className;
         var alertClassFlash = alertClass + ' flash';
