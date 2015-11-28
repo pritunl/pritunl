@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add demo mode
+
 Version 1.10.806.90 2015-11-27
 ------------------------------
 
