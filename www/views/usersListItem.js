@@ -163,7 +163,7 @@ define([
         this._getKeyLinkTooltip());
       this.$('.get-key-link').tooltip();
 
-      if (this.model.get('otp_auth')) {
+      if (!this.model.get('bypass_secondary') && this.model.get('otp_auth')) {
         this.$('.right-container').removeClass('no-otp-auth');
         this.$('.get-otp-auth').removeClass('no-otp-auth');
       }
