@@ -196,7 +196,7 @@ def user_post(org_id):
             network_links = user_data.get('network_links')
             bypass_secondary = user_data.get('bypass_secondary')
             dns_servers = user_data.get('dns_servers')
-            dns_suffix = utils.filter_str(user_data['dns_suffix'])
+            dns_suffix = utils.filter_str(user_data.get('dns_suffix'))
 
             user = org.new_user(type=CERT_CLIENT, name=name, email=email,
                 disabled=disabled, bypass_secondary=bypass_secondary,
