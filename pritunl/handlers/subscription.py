@@ -44,6 +44,9 @@ def subscription_styles_get(plan, ver):
 @app.app.route('/subscription', methods=['POST'])
 @auth.session_auth
 def subscription_post():
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     license = flask.request.json['license']
     license = license.lower().replace('begin license', '').replace(
         'end license', '')
@@ -73,6 +76,9 @@ def subscription_post():
 @app.app.route('/subscription', methods=['PUT'])
 @auth.session_auth
 def subscription_put():
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     card = flask.request.json.get('card')
     email = flask.request.json.get('email')
     plan = flask.request.json.get('plan')
@@ -114,5 +120,8 @@ def subscription_put():
 @app.app.route('/subscription', methods=['DELETE'])
 @auth.session_auth
 def subscription_delete():
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     subscription.update_license(None)
     return utils.jsonify({})

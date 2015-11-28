@@ -119,6 +119,9 @@ def server_get(server_id=None):
 @app.app.route('/server/<server_id>', methods=['PUT'])
 @auth.session_auth
 def server_put_post(server_id=None):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     used_resources = server.get_used_resources(server_id)
     network_used = used_resources['networks']
     port_used = used_resources['ports']
@@ -616,6 +619,9 @@ def server_put_post(server_id=None):
 @app.app.route('/server/<server_id>', methods=['DELETE'])
 @auth.session_auth
 def server_delete(server_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     svr = server.get_by_id(server_id, fields=('_id', 'name', 'organizations'))
     svr.remove()
     logger.LogEntry(message='Deleted server "%s".' % svr.name)
@@ -639,6 +645,9 @@ def server_org_get(server_id):
 @app.app.route('/server/<server_id>/organization/<org_id>', methods=['PUT'])
 @auth.session_auth
 def server_org_put(server_id, org_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     svr = server.get_by_id(server_id,
         fields=('_id', 'status', 'network', 'network_start', 'network_end',
         'organizations'))
@@ -663,6 +672,9 @@ def server_org_put(server_id, org_id):
     methods=['DELETE'])
 @auth.session_auth
 def server_org_delete(server_id, org_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     svr = server.get_by_id(server_id,
         fields=('_id', 'status', 'network', 'network_start',
             'network_end', 'primary_organization',
@@ -717,6 +729,9 @@ def server_host_get(server_id):
 @app.app.route('/server/<server_id>/host/<host_id>', methods=['PUT'])
 @auth.session_auth
 def server_host_put(server_id, host_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     svr = server.get_by_id(server_id, fields=('_id', 'hosts', 'links'))
     hst = host.get_by_id(host_id, fields=('_id', 'name',
         'public_address', 'auto_public_address'))
@@ -743,6 +758,9 @@ def server_host_put(server_id, host_id):
 @app.app.route('/server/<server_id>/host/<host_id>', methods=['DELETE'])
 @auth.session_auth
 def server_host_delete(server_id, host_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     svr = server.get_by_id(server_id, fields=('_id', 'hosts', 'replica_count'))
     hst = host.get_by_id(host_id, fields=('_id', 'name'))
 
@@ -801,6 +819,9 @@ def server_link_get(server_id):
 @app.app.route('/server/<server_id>/link/<link_server_id>', methods=['PUT'])
 @auth.session_auth
 def server_link_put(server_id, link_server_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     use_local_address = flask.request.json.get('use_local_address', False)
 
     try:
@@ -829,6 +850,9 @@ def server_link_put(server_id, link_server_id):
 @app.app.route('/server/<server_id>/link/<link_server_id>', methods=['DELETE'])
 @auth.session_auth
 def server_link_delete(server_id, link_server_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     try:
         server.unlink_servers(server_id, link_server_id)
     except ServerLinkOnlineError:
@@ -845,6 +869,9 @@ def server_link_delete(server_id, link_server_id):
 @app.app.route('/server/<server_id>/<operation>', methods=['PUT'])
 @auth.session_auth
 def server_operation_put(server_id, operation):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     fields = server.dict_fields + ['hosts', 'links', 'replica_count',
         'tls_auth_key', 'ca_certificate']
 
@@ -881,6 +908,9 @@ def server_output_get(server_id):
 @app.app.route('/server/<server_id>/output', methods=['DELETE'])
 @auth.session_auth
 def server_output_delete(server_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     server.output_clear(server_id)
     return utils.jsonify({})
 
@@ -895,6 +925,9 @@ def server_link_output_get(server_id):
 @app.app.route('/server/<server_id>/link_output', methods=['DELETE'])
 @auth.session_auth
 def server_link_output_delete(server_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     server.output_link_clear(server_id)
     return utils.jsonify({})
 

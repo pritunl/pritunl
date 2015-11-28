@@ -107,6 +107,9 @@ def login_static_get():
             elif settings.app.sso == DUO_AUTH:
                 bodyClass += 'sso-duo '
 
+    if settings.app.demo_mode:
+        bodyClass += 'demo '
+
     static_file.data = static_file.data.replace(
         '<body>', '<body class="' + bodyClass + '">')
 

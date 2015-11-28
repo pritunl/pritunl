@@ -177,6 +177,9 @@ def user_get(org_id, user_id=None, page=None):
 @app.app.route('/user/<org_id>', methods=['POST'])
 @auth.session_auth
 def user_post(org_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     org = organization.get_by_id(org_id)
     users = []
 
@@ -228,6 +231,9 @@ def user_post(org_id):
 @app.app.route('/user/<org_id>/<user_id>', methods=['PUT'])
 @auth.session_auth
 def user_put(org_id, user_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     org = organization.get_by_id(org_id)
     user = org.get_user(user_id)
     reset_user = False
@@ -323,6 +329,9 @@ def user_put(org_id, user_id):
 @app.app.route('/user/<org_id>/<user_id>', methods=['DELETE'])
 @auth.session_auth
 def user_delete(org_id, user_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     org = organization.get_by_id(org_id)
     user = org.get_user(user_id)
     name = user.name
@@ -340,6 +349,9 @@ def user_delete(org_id, user_id):
 @app.app.route('/user/<org_id>/<user_id>/otp_secret', methods=['PUT'])
 @auth.session_auth
 def user_otp_secret_put(org_id, user_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     org = organization.get_by_id(org_id)
     user = org.get_user(user_id)
     user.generate_otp_secret()

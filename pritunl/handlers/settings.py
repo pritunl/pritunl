@@ -43,6 +43,9 @@ def settings_get():
 @app.app.route('/settings', methods=['PUT'])
 @auth.session_auth
 def settings_put():
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     org_event = False
     admin = flask.g.administrator
 

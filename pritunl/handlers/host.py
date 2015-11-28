@@ -8,6 +8,7 @@ from pritunl import auth
 from pritunl import messenger
 from pritunl import ipaddress
 from pritunl import server
+from pritunl import settings
 
 import flask
 
@@ -37,6 +38,9 @@ def host_get(hst=None):
 @app.app.route('/host/<hst>', methods=['PUT'])
 @auth.session_auth
 def host_put(hst=None):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     hst = host.get_by_id(hst)
 
     if 'name' in flask.request.json:
@@ -94,6 +98,9 @@ def host_put(hst=None):
 @app.app.route('/host/<hst>', methods=['DELETE'])
 @auth.session_auth
 def host_delete(hst):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     hst = host.get_by_id(hst)
     hst.remove()
 

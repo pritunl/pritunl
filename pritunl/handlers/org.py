@@ -5,6 +5,7 @@ from pritunl import event
 from pritunl import organization
 from pritunl import app
 from pritunl import auth
+from pritunl import settings
 
 import flask
 
@@ -34,6 +35,9 @@ def org_get(org_id=None):
 @app.app.route('/organization', methods=['POST'])
 @auth.session_auth
 def org_post():
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     name = utils.filter_str(flask.request.json['name'])
     org = organization.new_org(name=name, type=ORG_DEFAULT)
     logger.LogEntry(message='Created new organization "%s".' % org.name)
@@ -43,6 +47,9 @@ def org_post():
 @app.app.route('/organization/<org_id>', methods=['PUT'])
 @auth.session_auth
 def org_put(org_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     org = organization.get_by_id(org_id)
     name = utils.filter_str(flask.request.json['name'])
     org.name = name
@@ -53,6 +60,9 @@ def org_put(org_id):
 @app.app.route('/organization/<org_id>', methods=['DELETE'])
 @auth.session_auth
 def org_delete(org_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     org = organization.get_by_id(org_id)
     name = org.name
     server_ids = org.remove()
