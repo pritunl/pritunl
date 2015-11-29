@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.10.808.29 2015-11-29
+------------------------------
 
 Fix memory usage
 
