@@ -233,10 +233,14 @@ define([
           this.setAlert('success', 'Successfully generated a new api key.');
           this.update();
         }.bind(this),
-        error: function() {
+        error: function(model, response) {
           this.clearLoading();
-          this.setAlert('danger',
-            'Failed to generated a new api key, server error occurred.');
+          if (response.responseJSON) {
+            this.setAlert('danger', response.responseJSON.error_msg);
+          }
+          else {
+            this.setAlert('danger', this.errorMsg);
+          }
         }.bind(this)
       });
     },
