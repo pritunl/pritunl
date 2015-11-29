@@ -138,7 +138,10 @@ def server_put_post(server_id=None):
         network_def = True
         network = flask.request.json['network']
 
-        if not _check_network_private(network):
+        try:
+            if not _check_network_private(network):
+                return _network_invalid()
+        except (ipaddress.AddressValueError, ValueError):
             return _network_invalid()
 
     network_mode = None
