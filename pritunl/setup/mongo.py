@@ -26,6 +26,7 @@ def _get_read_pref(name):
 def setup_mongo():
     prefix = settings.conf.mongodb_collection_prefix or ''
     last_error = time.time() - 24
+
     while True:
         try:
             client = pymongo.MongoClient(
