@@ -20,6 +20,7 @@ class SettingsConf(SettingsGroupFile):
         'bind_addr': '0.0.0.0',
         'mongodb_uri': 'mongodb://localhost:27017/pritunl',
         'mongodb_collection_prefix': None,
+        'mongodb_read_preference': None,
         'local_address_interface': 'auto',
     }
     commit_fields = {
