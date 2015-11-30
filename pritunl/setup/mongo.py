@@ -9,13 +9,31 @@ from pritunl import utils
 import pymongo
 import time
 
+def _get_read_pref(name):
+    return {
+        'primary': \
+            pymongo.read_preferences.ReadPreference.PRIMARY,
+        'primaryPreferred': \
+            pymongo.read_preferences.ReadPreference.PRIMARY_PREFERRED,
+        'secondary': \
+            pymongo.read_preferences.ReadPreference.SECONDARY,
+        'secondaryPreferred': \
+            pymongo.read_preferences.ReadPreference.SECONDARY_PREFERRED,
+        'nearest': \
+            pymongo.read_preferences.ReadPreference.NEAREST,
+    }.get(name)
+
 def setup_mongo():
     prefix = settings.conf.mongodb_collection_prefix or ''
     last_error = time.time() - 24
     while True:
         try:
-            client = pymongo.MongoClient(settings.conf.mongodb_uri,
-                connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
+            client = pymongo.MongoClient(
+                settings.conf.mongodb_uri,
+                connectTimeoutMS=MONGO_CONNECT_TIMEOUT,
+                read_preference=_get_read_pref(
+                    settings.conf.mongodb_read_preference),
+            )
             break
         except pymongo.errors.ConnectionFailure:
             time.sleep(0.5)
