@@ -11,6 +11,7 @@ define([
       'organization_name': null,
       'name': null,
       'email': null,
+      'gravatar': null,
       'type': null,
       'auth_type': null,
       'status': null,
