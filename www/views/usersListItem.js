@@ -118,7 +118,7 @@ define([
       var email = this.model.get('email');
       this.$('.user-name').text(
         this.model.get('name') + (email ? ' (' + email + ')' : ''));
-      if (email) {
+      if (email && this.model.get('gravatar')) {
         this.$('.name-gravatar').attr('src', '//www.gravatar.com/avatar/' +
           window.md5(email) + '?r=x&s=52&d=404');
       }
