@@ -5,6 +5,7 @@ class SettingsApp(SettingsGroupMongo):
     fields = {
         'demo_mode': False,
         'allow_insecure_session': False,
+        'auditing': False,
         'settings_check_interval': 600,
         'key_link_timeout': 86400,
         'password_len_limit': 128,
