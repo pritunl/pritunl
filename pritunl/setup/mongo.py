@@ -29,12 +29,20 @@ def setup_mongo():
 
     while True:
         try:
-            client = pymongo.MongoClient(
-                settings.conf.mongodb_uri,
-                connectTimeoutMS=MONGO_CONNECT_TIMEOUT,
-                read_preference=_get_read_pref(
-                    settings.conf.mongodb_read_preference),
-            )
+            read_pref = _get_read_pref(settings.conf.mongodb_read_preference)
+
+            if read_pref:
+                client = pymongo.MongoClient(
+                    settings.conf.mongodb_uri,
+                    connectTimeoutMS=MONGO_CONNECT_TIMEOUT,
+                    read_preference=read_pref
+                )
+            else:
+                client = pymongo.MongoClient(
+                    settings.conf.mongodb_uri,
+                    connectTimeoutMS=MONGO_CONNECT_TIMEOUT,
+                )
+
             break
         except pymongo.errors.ConnectionFailure:
             time.sleep(0.5)
