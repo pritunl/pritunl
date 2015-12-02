@@ -414,9 +414,6 @@ def user_otp_secret_put(org_id, user_id):
 @app.app.route('/user/<org_id>/<user_id>/audit', methods=['GET'])
 @auth.session_auth
 def user_audit_get(org_id, user_id):
-    if settings.app.demo_mode:
-        return utils.demo_blocked()
-
     org = organization.get_by_id(org_id)
     user = org.get_user(user_id)
 

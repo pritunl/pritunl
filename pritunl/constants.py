@@ -76,6 +76,27 @@ VALID_CHARS = {
     '4', '5', '6', '7', '8', '9', '=',
 }
 
+DEMO_AUDIT_EVENTS = [
+    {
+        'message': 'User connected to "east"',
+        'remote_addr': '12.34.56.78',
+        'timestamp': 1449053618,
+        'type': 'user_connection',
+    },
+    {
+        'message': 'User temporary profile links created from web console',
+        'remote_addr': '12.34.56.78',
+        'timestamp': 1449052968,
+        'type': 'user_profile',
+    },
+    {
+        'message': 'User created with single sign-on',
+        'remote_addr': '12.34.56.78',
+        'timestamp': 1449051783,
+        'type': 'user_profile',
+    },
+]
+
 GROUP_MONGO = 'mongo'
 GROUP_FILE = 'file'
 GROUP_LOCAL = 'local'

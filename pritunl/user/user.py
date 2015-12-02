@@ -729,6 +729,9 @@ class User(mongo.MongoObject):
         })
 
     def get_audit_events(self):
+        if settings.app.demo_mode:
+            return DEMO_AUDIT_EVENTS
+
         events = []
         spec = {
             'user_id': self.id,
@@ -738,7 +741,7 @@ class User(mongo.MongoObject):
         for doc in self.audit_collection.find(spec).sort(
                 'timestamp', pymongo.DESCENDING).limit(
                 settings.user.audit_limit):
-            doc['timestamp'] = int(doc['timestamp'].strftime('%s')),
+            doc['timestamp'] = int(doc['timestamp'].strftime('%s'))
             events.append(doc)
 
         return events
