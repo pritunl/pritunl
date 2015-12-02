@@ -141,6 +141,13 @@ def setup_mongo():
         ('org_id', pymongo.ASCENDING),
         ('name', pymongo.ASCENDING),
     ], background=True)
+    mongo.collections['users_audit'].ensure_index([
+        ('org_id', pymongo.ASCENDING),
+        ('user_id', pymongo.ASCENDING),
+    ], background=True)
+    mongo.collections['users_audit'].ensure_index([
+        ('timestamp', pymongo.DESCENDING),
+    ], background=True)
     mongo.collections['users_key_link'].ensure_index('key_id', background=True)
     mongo.collections['users_key_link'].ensure_index('short_id',
         background=True, unique=True)
