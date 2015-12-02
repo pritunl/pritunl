@@ -709,10 +709,12 @@ class User(mongo.MongoObject):
 
         return links
 
-    def audit_event(self, event_type, event_data):
+    def audit_event(self, event_type, event_msg, remote_addr=None):
         self.audit_collection.insert_one({
             'user_id': self.id,
+            'org_id': self.org_id,
             'timestamp': utils.now(),
             'type': event_type,
-            'data': event_data,
+            'remote_addr': remote_addr,
+            'message': event_msg,
         })
