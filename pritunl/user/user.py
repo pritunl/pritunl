@@ -716,6 +716,9 @@ class User(mongo.MongoObject):
         return links
 
     def audit_event(self, event_type, event_msg, remote_addr=None):
+        if settings.app.auditing != ALL:
+            return
+
         self.audit_collection.insert_one({
             'user_id': self.id,
             'org_id': self.org_id,
