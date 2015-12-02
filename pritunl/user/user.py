@@ -728,7 +728,8 @@ class User(mongo.MongoObject):
         }
 
         for doc in self.audit_collection.find(spec).sort(
-                'timestamp', pymongo.DESCENDING).limit(1000):
+                'timestamp', pymongo.DESCENDING).limit(
+                settings.user.audit_limit):
             doc['timestamp'] = int(doc['timestamp'].strftime('%s')),
             events.append(doc)
 
