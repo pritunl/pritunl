@@ -27,7 +27,7 @@ def _get_key_tar_archive(org_id, user_id):
         mimetype='application/octet-stream')
     response.headers.add('Content-Disposition',
         'attachment; filename="%s.tar"' % usr.name)
-    return response
+    return (usr, response)
 
 def _get_key_zip_archive(org_id, user_id):
     org = organization.get_by_id(org_id)
@@ -37,17 +37,17 @@ def _get_key_zip_archive(org_id, user_id):
         mimetype='application/octet-stream')
     response.headers.add('Content-Disposition',
         'attachment; filename="%s.zip"' % usr.name)
-    return response
+    return (usr, response)
 
 def _get_onc_archive(org_id, user_id):
     org = organization.get_by_id(org_id)
-    user = org.get_user(user_id)
-    key_archive = user.build_onc_archive()
+    usr = org.get_user(user_id)
+    key_archive = usr.build_onc_archive()
     response = flask.Response(response=key_archive,
         mimetype='application/octet-stream')
     response.headers.add('Content-Disposition',
-        'attachment; filename="%s.zip"' % user.name)
-    return response
+        'attachment; filename="%s.zip"' % usr.name)
+    return (usr, response)
 
 def _find_doc(query, one_time=None):
     utils.rand_sleep()
@@ -75,22 +75,50 @@ def _find_doc(query, one_time=None):
 @app.app.route('/key/<org_id>/<user_id>.tar', methods=['GET'])
 @auth.session_auth
 def user_key_tar_archive_get(org_id, user_id):
-    return _get_key_tar_archive(org_id, user_id)
+    usr, resp = _get_key_tar_archive(org_id, user_id)
+
+    usr.audit_event('user_profile',
+        'User tar profile downloaded from web console',
+        remote_addr=utils.get_remote_addr(),
+    )
+
+    return resp
 
 @app.app.route('/key/<org_id>/<user_id>.zip', methods=['GET'])
 @auth.session_auth
 def user_key_zip_archive_get(org_id, user_id):
-    return _get_key_zip_archive(org_id, user_id)
+    usr, resp = _get_key_zip_archive(org_id, user_id)
+
+    usr.audit_event('user_profile',
+        'User zip profile downloaded from web console',
+        remote_addr=utils.get_remote_addr(),
+    )
+
+    return resp
 
 @app.app.route('/key_onc/<org_id>/<user_id>.zip', methods=['GET'])
 @auth.session_auth
 def user_key_onc_archive_get(org_id, user_id):
-    return _get_onc_archive(org_id, user_id)
+    usr, resp = _get_onc_archive(org_id, user_id)
+
+    usr.audit_event('user_profile',
+        'User onc profile downloaded from web console',
+        remote_addr=utils.get_remote_addr(),
+    )
+
+    return resp
 
 @app.app.route('/key/<org_id>/<user_id>', methods=['GET'])
 @auth.session_auth
 def user_key_link_get(org_id, user_id):
     org = organization.get_by_id(org_id)
+    usr = org.get_user(user_id)
+
+    usr.audit_event('user_profile',
+        'User temporary profile links created from web console',
+        remote_addr=utils.get_remote_addr(),
+    )
+
     return utils.jsonify(org.create_user_key_link(user_id))
 
 @app.app.route('/key/<key_id>.tar', methods=['GET'])
@@ -101,7 +129,14 @@ def user_linked_key_tar_archive_get(key_id):
     if not doc:
         return flask.abort(404)
 
-    return _get_key_tar_archive(doc['org_id'], doc['user_id'])
+    usr, reps = _get_key_tar_archive(doc['org_id'], doc['user_id'])
+
+    usr.audit_event('user_profile',
+        'User tar profile downloaded with temporary profile link',
+        remote_addr=utils.get_remote_addr(),
+    )
+
+    return resp
 
 @app.app.route('/key/<key_id>.zip', methods=['GET'])
 def user_linked_key_zip_archive_get(key_id):
@@ -111,7 +146,14 @@ def user_linked_key_zip_archive_get(key_id):
     if not doc:
         return flask.abort(404)
 
-    return _get_key_zip_archive(doc['org_id'], doc['user_id'])
+    usr, resp = _get_key_zip_archive(doc['org_id'], doc['user_id'])
+
+    usr.audit_event('user_profile',
+        'User zip profile downloaded with temporary profile link',
+        remote_addr=utils.get_remote_addr(),
+    )
+
+    return resp
 
 @app.app.route('/key_onc/<key_id>.zip', methods=['GET'])
 def user_linked_key_onc_archive_get(key_id):
@@ -121,7 +163,14 @@ def user_linked_key_onc_archive_get(key_id):
     if not doc:
         return flask.abort(404)
 
-    return _get_onc_archive(doc['org_id'], doc['user_id'])
+    usr, resp = _get_onc_archive(doc['org_id'], doc['user_id'])
+
+    usr.audit_event('user_profile',
+        'User onc profile downloaded with temporary profile link',
+        remote_addr=utils.get_remote_addr(),
+    )
+
+    return resp
 
 @app.app.route('/k/<short_code>', methods=['GET'])
 def user_linked_key_page_get(short_code):
@@ -133,6 +182,11 @@ def user_linked_key_page_get(short_code):
 
     org = organization.get_by_id(doc['org_id'])
     user = org.get_user(id=doc['user_id'])
+
+    user.audit_event('user_profile',
+        'User temporary profile link viewed',
+        remote_addr=utils.get_remote_addr(),
+    )
 
     if settings.local.sub_active and settings.app.theme == 'dark':
         view_name = KEY_VIEW_DARK_NAME
@@ -198,6 +252,11 @@ def user_uri_key_page_get(short_code):
     org = organization.get_by_id(doc['org_id'])
     user = org.get_user(id=doc['user_id'])
 
+    user.audit_event('user_profile',
+        'User temporary profile downloaded from pritunl client',
+        remote_addr=utils.get_remote_addr(),
+    )
+
     keys = {}
     for server in org.iter_servers():
         key = user.build_key_conf(server.id)
@@ -216,6 +275,11 @@ def user_linked_key_conf_get(key_id, server_id):
     org = organization.get_by_id(doc['org_id'])
     user = org.get_user(id=doc['user_id'])
     key_conf = user.build_key_conf(server_id)
+
+    user.audit_event('user_profile',
+        'User profile downloaded with temporary profile link',
+        remote_addr=utils.get_remote_addr(),
+    )
 
     response = flask.Response(response=key_conf['conf'],
         mimetype='application/octet-stream')
@@ -284,6 +348,11 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
 
     key_conf = user.sync_conf(server_id, key_hash)
     if key_conf:
+        user.audit_event('user_profile',
+            'User profile synced from pritunl client',
+            remote_addr=utils.get_remote_addr(),
+        )
+
         return utils.response(key_conf['conf'])
     return utils.response('')
 
@@ -335,6 +404,9 @@ def sso_authenticate_post():
     if not usr:
         usr = org.new_user(name=username, email=email, type=CERT_CLIENT,
             auth_type=DUO_AUTH)
+        usr.audit_event('user_created', 'User created with single sign-on',
+            remote_addr=utils.get_remote_addr())
+
         event.Event(type=ORGS_UPDATED)
         event.Event(type=USERS_UPDATED, resource_id=org.id)
         event.Event(type=SERVERS_UPDATED)
@@ -344,6 +416,11 @@ def sso_authenticate_post():
         event.Event(type=USERS_UPDATED, resource_id=org.id)
 
     key_link = org.create_user_key_link(usr.id, one_time=True)
+
+    usr.audit_event('user_profile',
+        'User profile viewed from single sign-on',
+        remote_addr=utils.get_remote_addr(),
+    )
 
     return flask.request.url_root[:-1] + key_link['view_url']
 
@@ -516,6 +593,9 @@ def sso_callback_get():
     if not usr:
         usr = org.new_user(name=username, email=email, type=CERT_CLIENT,
             auth_type=sso_mode)
+        usr.audit_event('user_created', 'User created with single sign-on',
+            remote_addr=utils.get_remote_addr())
+
         event.Event(type=ORGS_UPDATED)
         event.Event(type=USERS_UPDATED, resource_id=org.id)
         event.Event(type=SERVERS_UPDATED)
@@ -524,5 +604,10 @@ def sso_callback_get():
         usr.commit('auth_type')
 
     key_link = org.create_user_key_link(usr.id, one_time=True)
+
+    usr.audit_event('user_profile',
+        'User profile viewed from single sign-on',
+        remote_addr=utils.get_remote_addr(),
+    )
 
     return flask.redirect(flask.request.url_root[:-1] + key_link['view_url'])
