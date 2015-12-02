@@ -69,6 +69,7 @@ def user_get(org_id, user_id=None, page=None):
 
         user_dict = usr.dict()
         user_dict['gravatar'] = settings.user.gravatar
+        user_dict['audit'] = settings.app.auditing == ALL
         user_dict['status'] = False
         user_dict['sso'] = settings.app.sso
         user_dict['otp_auth'] = otp_auth
@@ -301,11 +302,10 @@ def user_put(org_id, user_id):
     disabled = flask.request.json.get('disabled')
     if disabled is not None:
         if disabled != user.disabled:
-            for _ in xrange(100):
-                user.audit_event('user_updated',
-                    'User %s' % ('disabled' if disabled else 'enabled'),
-                    remote_addr=utils.get_remote_addr(),
-                )
+            user.audit_event('user_updated',
+                'User %s' % ('disabled' if disabled else 'enabled'),
+                remote_addr=utils.get_remote_addr(),
+            )
 
         user.disabled = disabled
 
