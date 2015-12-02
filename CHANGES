@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Add auditing
 Add MongoDB read preference to conf
 
 Version 1.10.808.53 2015-11-29
