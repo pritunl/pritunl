@@ -196,12 +196,16 @@ def user_post(org_id):
             disabled = user_data.get('disabled')
             network_links = user_data.get('network_links')
             bypass_secondary = user_data.get('bypass_secondary')
-            dns_servers = user_data.get('dns_servers')
-            dns_suffix = utils.filter_str(user_data.get('dns_suffix'))
+            dns_servers = user_data.get('dns_servers') or None
+            dns_suffix = utils.filter_str(user_data.get('dns_suffix')) or None
 
             user = org.new_user(type=CERT_CLIENT, name=name, email=email,
                 disabled=disabled, bypass_secondary=bypass_secondary,
                 dns_servers=dns_servers, dns_suffix=dns_suffix)
+            user.audit_event('user_created',
+                'User created from web console',
+                remote_addr=utils.get_remote_addr(),
+            )
 
             if network_links:
                 for network_link in network_links:
@@ -240,9 +244,25 @@ def user_put(org_id, user_id):
     reset_user = False
 
     if 'name' in flask.request.json:
+        name = utils.filter_str(flask.request.json['name']) or None
+
+        if name != user.name:
+            user.audit_event('user_updated',
+                'User name changed',
+                remote_addr=utils.get_remote_addr(),
+            )
+
         user.name = utils.filter_str(flask.request.json['name']) or None
 
     if 'email' in flask.request.json:
+        email = utils.filter_str(flask.request.json['email']) or None
+
+        if email != user.email:
+            user.audit_event('user_updated',
+                'User email changed',
+                remote_addr=utils.get_remote_addr(),
+            )
+
         user.email = utils.filter_str(flask.request.json['email']) or None
 
     if 'network_links' in flask.request.json:
@@ -259,9 +279,15 @@ def user_put(org_id, user_id):
         network_links_add = network_links_new - network_links_cur
         network_links_rem = network_links_cur - network_links_new
 
+        if len(network_links_add) or len(network_links_rem):
+            reset_user = True
+            user.audit_event('user_updated',
+                'User network links updated',
+                remote_addr=utils.get_remote_addr(),
+            )
+
         try:
             for network_link in network_links_add:
-                reset_user = True
                 user.add_network_link(network_link)
         except ServerOnlineError:
             return utils.jsonify({
@@ -270,11 +296,17 @@ def user_put(org_id, user_id):
             }, 400)
 
         for network_link in network_links_rem:
-            reset_user = True
             user.remove_network_link(network_link)
 
     disabled = flask.request.json.get('disabled')
     if disabled is not None:
+        if disabled != user.disabled:
+            for _ in xrange(100):
+                user.audit_event('user_updated',
+                    'User %s' % ('disabled' if disabled else 'enabled'),
+                    remote_addr=utils.get_remote_addr(),
+                )
+
         user.disabled = disabled
 
     bypass_secondary = flask.request.json.get('bypass_secondary')
@@ -282,14 +314,22 @@ def user_put(org_id, user_id):
         user.bypass_secondary = bypass_secondary
 
     if 'dns_servers' in flask.request.json:
-        dns_servers = flask.request.json['dns_servers']
+        dns_servers = flask.request.json['dns_servers'] or None
         if user.dns_servers != dns_servers:
+            user.audit_event('user_updated',
+                'User dns servers changed',
+                remote_addr=utils.get_remote_addr(),
+            )
             reset_user = True
         user.dns_servers = dns_servers
 
     if 'dns_suffix' in flask.request.json:
-        dns_suffix = utils.filter_str(flask.request.json['dns_suffix'])
+        dns_suffix = utils.filter_str(flask.request.json['dns_suffix']) or None
         if user.dns_suffix != dns_suffix:
+            user.audit_event('user_updated',
+                'User dns suffix changed',
+                remote_addr=utils.get_remote_addr(),
+            )
             reset_user = True
         user.dns_suffix = dns_suffix
 
@@ -307,6 +347,11 @@ def user_put(org_id, user_id):
 
     send_key_email = flask.request.json.get('send_key_email')
     if send_key_email and user.email:
+        user.audit_event('user_emailed',
+            'User key email sent to "%s"' % user.email,
+            remote_addr=utils.get_remote_addr(),
+        )
+
         try:
             user.send_key_email(flask.request.url_root[:-1])
         except EmailNotConfiguredError:
@@ -355,6 +400,12 @@ def user_otp_secret_put(org_id, user_id):
 
     org = organization.get_by_id(org_id)
     user = org.get_user(user_id)
+
+    user.audit_event('user_updated',
+        'User two step secret reset',
+        remote_addr=utils.get_remote_addr(),
+    )
+
     user.generate_otp_secret()
     user.commit()
     event.Event(type=USERS_UPDATED, resource_id=org.id)
