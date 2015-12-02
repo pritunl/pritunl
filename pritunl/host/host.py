@@ -115,6 +115,8 @@ class Host(mongo.MongoObject):
 
                 usr = org.new_user(name=HOST_USER_PREFIX + str(self.id),
                     type=CERT_SERVER, resource_id=self.id)
+                usr.audit_event('user_created',
+                    'User created for host linking')
 
             return usr
 

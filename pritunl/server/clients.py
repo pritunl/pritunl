@@ -237,6 +237,11 @@ class Clients(object):
             virt_address = doc['virt_address']
             virt_address6 = doc['virt_address6']
         else:
+            user.audit_event('user_connection',
+                'User connected to "%s"' % self.server.name,
+                remote_addr=remote_ip,
+            )
+
             virt_address = self.server.get_ip_addr(org_id, user_id)
             if not self.server.multi_device:
                 for client in self.clients.find({'user_id': user_id}):
@@ -371,6 +376,12 @@ class Clients(object):
                 else:
                     logger.LogEntry(message='User failed push ' +
                         'authentication "%s".' % user.name)
+                    user.audit_event('user_connection',
+                        ('User connection to "%s" denied. ' +
+                         'Push authentication failed') % (
+                            self.server.name),
+                        remote_addr=remote_ip,
+                    )
                     self.instance_com.send_client_deny(
                         client_id,
                         key_id,
@@ -423,6 +434,11 @@ class Clients(object):
             if user.disabled:
                 logger.LogEntry(message='User failed authentication, ' +
                     'disabled user "%s".' % (user.name))
+                user.audit_event('user_connection',
+                    'User connection to "%s" denied. User is disabled' % (
+                        self.server.name),
+                    remote_addr=remote_ip,
+                )
                 self.instance_com.send_client_deny(client_id, key_id,
                     'User is disabled')
                 return
@@ -431,6 +447,12 @@ class Clients(object):
                 if not user.auth_check():
                     logger.LogEntry(message='User failed authentication, ' +
                         'sso provider denied "%s".' % (user.name))
+                    user.audit_event('user_connection',
+                        ('User connection to "%s" denied. ' +
+                            'Secondary authentication failed') % (
+                            self.server.name),
+                        remote_addr=remote_ip,
+                    )
                     self.instance_com.send_client_deny(client_id, key_id,
                         'User failed authentication')
                     return
@@ -439,6 +461,12 @@ class Clients(object):
                         not user.verify_otp_code(otp_code, remote_ip):
                     logger.LogEntry(message='User failed two-step ' +
                         'authentication "%s".' % user.name)
+                    user.audit_event('user_connection',
+                        ('User connection to "%s" denied. ' +
+                         'User failed two-step authentication') % (
+                            self.server.name),
+                        remote_addr=remote_ip,
+                    )
                     self.instance_com.send_client_deny(client_id, key_id,
                         'Invalid OTP code')
                     return
