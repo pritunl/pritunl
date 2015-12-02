@@ -8,9 +8,12 @@
       <label>New Password</label>
       <input type="password" class="form-control" placeholder="Enter password">
     </div>
-    <div class="verify-pass form-group">
-      <label>Verify Password</label>
-      <input type="password" class="form-control" placeholder="Verify password">
+    <div class="auditing form-group">
+      <label>Auditing Mode</label>
+      <select class="form-control" data-toggle="tooltip" title="Auditing mode">
+        <option value="none" <%= !auditing ? 'selected' : '' %>>Disabled</option>
+        <option value="all" <%= auditing === 'all' ? 'selected' : '' %>>All</option>
+      </select>
     </div>
     <div class="public-address form-group">
       <label>Public Address</label>
