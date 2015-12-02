@@ -290,8 +290,13 @@ class Organization(mongo.MongoObject):
 
     def remove(self):
         user_collection = mongo.get_collection('users')
+        user_audit_collection = mongo.get_collection('users_audit')
         user_net_link_collection = mongo.get_collection('users_net_link')
         server_collection = mongo.get_collection('servers')
+
+        user_audit_collection.remove({
+            'org_id': self.id,
+        })
 
         user_net_link_collection.remove({
             'org_id': self.id,
