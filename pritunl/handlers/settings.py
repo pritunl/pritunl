@@ -17,6 +17,7 @@ def settings_get():
     if settings.app.demo_mode:
         response.update({
             'theme': settings.app.theme,
+            'auditing': settings.app.auditing,
             'email_from': settings.app.email_from,
             'email_server': 'demo',
             'email_username': 'demo',
@@ -42,6 +43,7 @@ def settings_get():
     else:
         response.update({
             'theme': settings.app.theme,
+            'auditing': settings.app.auditing,
             'email_from': settings.app.email_from,
             'email_server': settings.app.email_server,
             'email_username': settings.app.email_username,
@@ -86,6 +88,11 @@ def settings_put():
         admin.generate_secret()
 
     settings_commit = False
+    if 'auditing' in flask.request.json:
+        settings_commit = True
+        auditing = flask.request.json['auditing']
+        settings.app.auditing = auditing or None
+
     if 'email_from' in flask.request.json:
         settings_commit = True
         email_from = flask.request.json['email_from']
@@ -268,6 +275,7 @@ def settings_put():
     response = flask.g.administrator.dict()
     response.update({
         'theme': settings.app.theme,
+        'auditing': settings.app.auditing,
         'email_from': settings.app.email_from,
         'email_server': settings.app.email_server,
         'email_username': settings.app.email_username,
