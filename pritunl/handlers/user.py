@@ -68,6 +68,7 @@ def user_get(org_id, user_id=None, page=None):
         users_id.append(usr.id)
 
         user_dict = usr.dict()
+        user_dict['gravatar'] = settings.user.gravatar
         user_dict['status'] = False
         user_dict['sso'] = settings.app.sso
         user_dict['otp_auth'] = otp_auth
