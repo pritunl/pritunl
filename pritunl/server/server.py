@@ -595,11 +595,12 @@ class Server(mongo.MongoObject):
                     'server_id': self.id,
                 })
 
-        user = org.new_user(name=SERVER_USER_PREFIX + str(self.id),
+        usr = org.new_user(name=SERVER_USER_PREFIX + str(self.id),
             type=CERT_SERVER, resource_id=self.id)
+        usr.audit_event('user_created', 'User created for server')
 
         self.primary_organization = org.id
-        self.primary_user = user.id
+        self.primary_user = usr.id
         self.commit(('primary_organization', 'primary_user'))
 
     def remove_primary_user(self):
