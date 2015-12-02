@@ -3,6 +3,7 @@ from pritunl.settings.group_mongo import SettingsGroupMongo
 class SettingsUser(SettingsGroupMongo):
     group = 'user'
     fields = {
+        'audit_limit': 1000,
         'gravatar': True,
         'otp_secret_len': 16,
         'cert_key_bits': 4096,
