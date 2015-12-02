@@ -90,8 +90,12 @@ def settings_put():
     settings_commit = False
     if 'auditing' in flask.request.json:
         settings_commit = True
-        auditing = flask.request.json['auditing']
-        settings.app.auditing = auditing or None
+        auditing = flask.request.json['auditing'] or None
+
+        if settings.app.auditing != auditing:
+            org_event = True
+
+        settings.app.auditing = auditing
 
     if 'email_from' in flask.request.json:
         settings_commit = True
