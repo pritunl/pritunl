@@ -8,6 +8,7 @@ define([
     defaults: {
       'username': null,
       'password': null,
+      'auditing': null,
       'token': null,
       'secret': null,
       'default': null,
