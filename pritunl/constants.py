@@ -181,6 +181,8 @@ CERT_CLIENT_POOL = 'client_pool'
 ORG_DEFAULT = 'default'
 ORG_POOL = 'pool'
 
+ALL = 'all'
+
 LOCAL_AUTH = 'local'
 DUO_AUTH = 'duo'
 GOOGLE_AUTH = 'google'
