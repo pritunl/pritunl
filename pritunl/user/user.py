@@ -237,8 +237,13 @@ class User(mongo.MongoObject):
             self.load()
 
     def remove(self):
+        self.audit_collection.remove({
+            'user_id': self.id,
+            'org_id': self.org_id,
+        })
         self.net_link_collection.remove({
             'user_id': self.id,
+            'org_id': self.org_id,
         })
         self.unassign_ip_addr()
         mongo.MongoObject.remove(self)
