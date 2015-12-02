@@ -20,6 +20,7 @@ import struct
 import hmac
 import json
 import uuid
+import pymongo
 
 class User(mongo.MongoObject):
     fields = {
@@ -718,3 +719,17 @@ class User(mongo.MongoObject):
             'remote_addr': remote_addr,
             'message': event_msg,
         })
+
+    def get_audit_events(self):
+        events = []
+        spec = {
+            'user_id': self.id,
+            'org_id': self.org_id,
+        }
+
+        for doc in self.audit_collection.find(spec).sort(
+                'timestamp', pymongo.DESCENDING).limit(1000):
+            doc['timestamp'] = int(doc['timestamp'].strftime('%s')),
+            events.append(doc)
+
+        return events
