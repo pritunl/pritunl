@@ -105,6 +105,11 @@ def update():
                 event.Event(type=SUBSCRIPTION_NONE_INACTIVE)
 
 def dict():
+    if settings.app.demo_mode:
+        url_key = 'demo'
+    else:
+        url_key = settings.local.sub_url_key
+
     return {
         'active': settings.local.sub_active,
         'status': settings.local.sub_status,
@@ -113,7 +118,7 @@ def dict():
         'period_end': settings.local.sub_period_end,
         'trial_end': settings.local.sub_trial_end,
         'cancel_at_period_end': settings.local.sub_cancel_at_period_end,
-        'url_key': settings.local.sub_url_key,
+        'url_key': url_key,
     }
 
 def update_license(license):
