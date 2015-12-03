@@ -279,7 +279,7 @@ define([
         return;
       }
 
-      if (auditing !== "all") {
+      if (auditing !== 'all') {
         auditing = null;
       }
 
