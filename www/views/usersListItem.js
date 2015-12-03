@@ -3,15 +3,17 @@ define([
   'underscore',
   'backbone',
   'models/key',
+  'collections/userAudit',
   'views/alert',
   'views/modalRenameUser',
   'views/modalKeyLink',
+  'views/modalAuditUser',
   'views/modalOtpAuth',
   'views/userServersList',
   'text!templates/usersListItem.html'
-], function($, _, Backbone, KeyModel, AlertView, ModalRenameUserView,
-    ModalKeyLinkView, ModalOtpAuthView, UserServersListView,
-    usersListItemTemplate) {
+], function($, _, Backbone, KeyModel, UserAuditCollection, AlertView,
+    ModalRenameUserView, ModalKeyLinkView, ModalAuditUserView,
+    ModalOtpAuthView, UserServersListView, usersListItemTemplate) {
   'use strict';
   var UsersListItemView = Backbone.View.extend({
     template: _.template(usersListItemTemplate),
@@ -19,6 +21,7 @@ define([
       'click .selector': 'onSelect',
       'click .user-name': 'onRename',
       'click .get-key-link': 'onGetKeyLink',
+      'click .audit-user': 'onAuditUser',
       'click .get-otp-auth': 'onGetOtpAuth',
       'click .disable-user': 'onDisableUser',
       'click .enable-user': 'onEnableUser',
@@ -172,6 +175,13 @@ define([
         this.$('.get-otp-auth').addClass('no-otp-auth');
       }
 
+      if (this.model.get('audit')) {
+        this.$('.audit-user').removeClass('no-audit-user');
+      }
+      else {
+        this.$('.audit-user').addClass('no-audit-user');
+      }
+
       var dnsMapping = this.model.get('dns_mapping');
       if (dnsMapping) {
         this.$('.user-dns-name .name').text(dnsMapping);
@@ -272,6 +282,14 @@ define([
           'organization': this.model.get('organization'),
           'user': this.model.get('id'),
           'otp_auth': this.model.get('otp_auth')
+        })
+      });
+      this.addView(modal);
+    },
+    onAuditUser: function() {
+      var modal = new ModalAuditUserView({
+        collection: new UserAuditCollection({
+          'user': this.model
         })
       });
       this.addView(modal);
