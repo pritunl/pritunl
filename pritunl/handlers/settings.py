@@ -323,7 +323,7 @@ def settings_put():
 
     for change in changes:
         auth.audit_event(
-            'admin_auth',
+            'admin_settings',
             _changes_audit_text[change],
             remote_addr=utils.get_remote_addr(),
         )
