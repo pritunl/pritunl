@@ -10,6 +10,14 @@ from pritunl import organization
 
 import flask
 
+_changes_audit_text = {
+    'username': 'Administrator username changed',
+    'password': 'Administrator password changed',
+    'token': 'Administrator api token changed',
+    'smtp': 'SMTP settings changed',
+    'sso': 'Single sign-on settings changed',
+}
+
 @app.app.route('/settings', methods=['GET'])
 @auth.session_auth
 def settings_get():
@@ -76,16 +84,25 @@ def settings_put():
 
     org_event = False
     admin = flask.g.administrator
+    changes = set()
 
     if 'username' in flask.request.json and flask.request.json['username']:
-        admin.username = utils.filter_str(
+        username = utils.filter_str(
             flask.request.json['username']).lower()
+        if username != admin.username:
+            changes.add('username')
+        admin.username = username
     if 'password' in flask.request.json and flask.request.json['password']:
+        password = flask.request.json['password']
+        if password != admin.password:
+            changes.add('password')
         admin.password = flask.request.json['password']
     if 'token' in flask.request.json and flask.request.json['token']:
         admin.generate_token()
+        changes.add('token')
     if 'secret' in flask.request.json and flask.request.json['secret']:
         admin.generate_secret()
+        changes.add('token')
 
     settings_commit = False
     if 'auditing' in flask.request.json:
@@ -99,91 +116,128 @@ def settings_put():
 
     if 'email_from' in flask.request.json:
         settings_commit = True
-        email_from = flask.request.json['email_from']
-        settings.app.email_from = email_from or None
+        email_from = flask.request.json['email_from'] or None
+        if email_from != settings.app.email_from:
+            changes.add('smtp')
+        settings.app.email_from = email_from
 
     if 'email_server' in flask.request.json:
         settings_commit = True
-        email_server = flask.request.json['email_server']
-        settings.app.email_server = email_server or None
+        email_server = flask.request.json['email_server'] or None
+        if email_server != settings.app.email_server:
+            changes.add('smtp')
+        settings.app.email_server = email_server
 
     if 'email_username' in flask.request.json:
         settings_commit = True
-        email_username = flask.request.json['email_username']
-        settings.app.email_username = email_username or None
+        email_username = flask.request.json['email_username'] or None
+        if email_username != settings.app.email_username:
+            changes.add('smtp')
+        settings.app.email_username = email_username
 
     if 'email_password' in flask.request.json:
         settings_commit = True
-        email_password = flask.request.json['email_password']
-        settings.app.email_password = email_password or None
+        email_password = flask.request.json['email_password'] or None
+        if email_password != settings.app.email_password:
+            changes.add('smtp')
+        settings.app.email_password = email_password
 
     if 'sso' in flask.request.json:
         org_event = True
         settings_commit = True
-        sso = flask.request.json['sso']
-        settings.app.sso = sso or None
+        sso = flask.request.json['sso'] or None
+        if sso != settings.app.sso:
+            changes.add('sso')
+        settings.app.sso = sso
 
     if 'sso_match' in flask.request.json:
-        sso_match = flask.request.json['sso_match']
+        settings_commit = True
+        sso_match = flask.request.json['sso_match'] or None
+
+        if sso_match != settings.app.sso_match:
+            changes.add('sso')
 
         if isinstance(sso_match, list):
-            settings_commit = True
-            settings.app.sso_match = sso_match or None
+            settings.app.sso_match = sso_match
         else:
             settings.app.sso_match = None
 
     if 'sso_token' in flask.request.json:
-        sso_token = flask.request.json['sso_token']
         settings_commit = True
-        settings.app.sso_token = sso_token or None
+        sso_token = flask.request.json['sso_token'] or None
+        if sso_token != settings.app.sso_token:
+            changes.add('sso')
+        settings.app.sso_token = sso_token
 
     if 'sso_secret' in flask.request.json:
-        sso_secret = flask.request.json['sso_secret']
         settings_commit = True
-        settings.app.sso_secret = sso_secret or None
+        sso_secret = flask.request.json['sso_secret'] or None
+        if sso_secret != settings.app.sso_secret:
+            changes.add('sso')
+        settings.app.sso_secret = sso_secret
 
     if 'sso_host' in flask.request.json:
-        sso_host = flask.request.json['sso_host']
         settings_commit = True
-        settings.app.sso_host = sso_host or None
+        sso_host = flask.request.json['sso_host'] or None
+        if sso_host != settings.app.sso_host:
+            changes.add('sso')
+        settings.app.sso_host = sso_host
 
     if 'sso_admin' in flask.request.json:
-        sso_admin = flask.request.json['sso_admin']
         settings_commit = True
-        settings.app.sso_admin = sso_admin or None
+        sso_admin = flask.request.json['sso_admin'] or None
+        if sso_admin != settings.app.sso_admin:
+            changes.add('sso')
+        settings.app.sso_admin = sso_admin
 
     if 'sso_org' in flask.request.json:
         settings_commit = True
         sso_org = flask.request.json['sso_org']
+
         if sso_org:
-            settings.app.sso_org = utils.ObjectId(sso_org)
+            sso_org = utils.ObjectId(sso_org)
         else:
-            settings.app.sso_org = None
+            sso_org = None
+
+        if sso_org != settings.app.sso_org:
+            changes.add('sso')
+
+        settings.app.sso_org = sso_org
 
     if 'sso_saml_url' in flask.request.json:
-        sso_saml_url = flask.request.json['sso_saml_url']
         settings_commit = True
-        settings.app.sso_saml_url = sso_saml_url or None
+        sso_saml_url = flask.request.json['sso_saml_url'] or None
+        if sso_saml_url != settings.app.sso_saml_url:
+            changes.add('sso')
+        settings.app.sso_saml_url = sso_saml_url
 
     if 'sso_saml_issuer_url' in flask.request.json:
-        sso_saml_issuer_url = flask.request.json['sso_saml_issuer_url']
         settings_commit = True
-        settings.app.sso_saml_issuer_url = sso_saml_issuer_url or None
+        sso_saml_issuer_url = flask.request.json['sso_saml_issuer_url'] or None
+        if sso_saml_issuer_url != settings.app.sso_saml_issuer_url:
+            changes.add('sso')
+        settings.app.sso_saml_issuer_url = sso_saml_issuer_url
 
     if 'sso_saml_cert' in flask.request.json:
-        sso_saml_cert = flask.request.json['sso_saml_cert']
         settings_commit = True
-        settings.app.sso_saml_cert = sso_saml_cert or None
+        sso_saml_cert = flask.request.json['sso_saml_cert'] or None
+        if sso_saml_cert != settings.app.sso_saml_cert:
+            changes.add('sso')
+        settings.app.sso_saml_cert = sso_saml_cert
 
     if 'sso_okta_token' in flask.request.json:
-        sso_okta_token = flask.request.json['sso_okta_token']
         settings_commit = True
-        settings.app.sso_okta_token = sso_okta_token or None
+        sso_okta_token = flask.request.json['sso_okta_token'] or None
+        if sso_okta_token != settings.app.sso_okta_token:
+            changes.add('sso')
+        settings.app.sso_okta_token = sso_okta_token
 
     if 'sso_onelogin_key' in flask.request.json:
-        sso_onelogin_key = flask.request.json['sso_onelogin_key']
         settings_commit = True
-        settings.app.sso_onelogin_key = sso_onelogin_key or None
+        sso_onelogin_key = flask.request.json['sso_onelogin_key'] or None
+        if sso_onelogin_key != settings.app.sso_onelogin_key:
+            changes.add('sso')
+        settings.app.sso_onelogin_key = sso_onelogin_key
 
     if 'theme' in flask.request.json:
         settings_commit = True
@@ -266,6 +320,13 @@ def settings_put():
         settings.app.sso_saml_cert = None
         settings.app.sso_okta_token = None
         settings.app.sso_onelogin_key = None
+
+    for change in changes:
+        auth.audit_event(
+            'admin_auth',
+            _changes_audit_text[change],
+            remote_addr=utils.get_remote_addr(),
+        )
 
     if settings_commit:
         settings.commit()
