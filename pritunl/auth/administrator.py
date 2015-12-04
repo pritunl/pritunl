@@ -285,3 +285,30 @@ def reset_password():
     }})
 
     return DEFAULT_USERNAME, DEFAULT_PASSWORD
+
+def audit_event(event_type, event_msg, remote_addr=None):
+    audit_collection = mongo.get_collection('users_audit')
+    audit_collection.insert_one({
+        'user_id': 'admin',
+        'org_id': 'admin',
+        'timestamp': utils.now(),
+        'type': event_type,
+        'remote_addr': remote_addr,
+        'message': event_msg,
+    })
+
+def get_audit_events():
+    audit_collection = mongo.get_collection('users_audit')
+    events = []
+    spec = {
+        'user_id': 'admin',
+        'org_id': 'admin',
+    }
+
+    for doc in audit_collection.find(spec).sort(
+        'timestamp', pymongo.DESCENDING).limit(
+        settings.user.audit_limit):
+        doc['timestamp'] = int(doc['timestamp'].strftime('%s'))
+        events.append(doc)
+
+    return events
