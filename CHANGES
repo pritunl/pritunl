@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with key archive
+
 Version 1.11.811.59 2015-12-02
 ------------------------------
 
