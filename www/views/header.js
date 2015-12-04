@@ -4,27 +4,74 @@ define([
   'backbone',
   'models/settings',
   'models/subscription',
+  'models/user',
+  'collections/userAudit',
   'views/alert',
   'views/modalSettings',
   'views/modalSubscribe',
   'views/modalEnterprise',
   'views/modalFeedback',
+  'views/modalAuditUser',
   'text!templates/header.html'
-], function($, _, Backbone, SettingsModel, SubscriptionModel, AlertView,
-    ModalSettingsView, ModalSubscribeView, ModalEnterpriseView,
-    ModalFeedbackView, headerTemplate) {
+], function($, _, Backbone, SettingsModel, SubscriptionModel, UserModel,
+    UserAuditCollection, AlertView, ModalSettingsView, ModalSubscribeView,
+    ModalEnterpriseView, ModalFeedbackView, ModalAuditUserView,
+    headerTemplate) {
   'use strict';
   var HeaderView = Backbone.View.extend({
     tagName: 'header',
     template: _.template(headerTemplate),
     events: {
       'click .enterprise-upgrade a, .enterprise-settings a': 'onEnterprise',
+      'click .audit-admin a': 'onAuditAdmin',
       'click .change-password a': 'openSettings',
       'click .feedback': 'onFeedback'
+    },
+    initialize: function(options) {
+      this.model = new SettingsModel();
+      this.listenTo(window.events, 'settings_updated', this.update);
+      this.update();
+      HeaderView.__super__.initialize.call(this);
     },
     render: function() {
       this.$el.html(this.template());
       return this;
+    },
+    update: function() {
+      this.model.fetch({
+        success: function(model) {
+          if (model.get('auditing') === 'all') {
+            this.$('.audit-admin a').css('display', 'block');
+          }
+          else {
+            this.$('.audit-admin a').hide();
+          }
+        }.bind(this),
+        error: function() {
+          var alertView = new AlertView({
+            type: 'danger',
+            message: 'Failed to load settings data, ' +
+              'server error occurred.',
+            dismissable: true
+          });
+          $('.alerts-container').append(alertView.render().el);
+          this.addView(alertView);
+        }.bind(this)
+      });
+    },
+    onAuditAdmin: function() {
+      var model = new UserModel();
+      model.set({
+        id: 'admin',
+        organization: 'admin',
+        name: 'Administrator'
+      });
+      var modal = new ModalAuditUserView({
+        collection: new UserAuditCollection({
+          'user': model
+        })
+      });
+      this.addView(modal);
     },
     onEnterprise: function() {
       if (this.onEnterpriseLock) {
