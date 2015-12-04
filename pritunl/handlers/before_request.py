@@ -28,4 +28,6 @@ def parse_object_id(_, values):
     if values:
         for key in values:
             if key.endswith('_id'):
-                values[key] = utils.ObjectId(values[key])
+                val = values[key]
+                if len(val) > 10:
+                    values[key] = utils.ObjectId(val)
