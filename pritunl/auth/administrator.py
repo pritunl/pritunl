@@ -335,8 +335,8 @@ def get_audit_events():
     }
 
     for doc in audit_collection.find(spec).sort(
-        'timestamp', pymongo.DESCENDING).limit(
-        settings.user.audit_limit):
+            'timestamp', pymongo.DESCENDING).limit(
+            settings.user.audit_limit):
         doc['timestamp'] = int(doc['timestamp'].strftime('%s'))
         events.append(doc)
 
