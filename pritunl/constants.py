@@ -278,6 +278,7 @@ SAML_OKTA_DUO_AUTH = 'saml_okta_duo'
 SAML_ONELOGIN_AUTH = 'saml_onelogin'
 SAML_ONELOGIN_DUO_AUTH = 'saml_onelogin_duo'
 
+SETTINGS_UPDATED = 'settings_updated'
 ORGS_UPDATED = 'organizations_updated'
 USERS_UPDATED = 'users_updated'
 LOG_UPDATED = 'log_updated'
