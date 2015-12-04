@@ -104,7 +104,7 @@ define([
         error: function() {
           var alertView = new AlertView({
             type: 'danger',
-            message: 'Failed to load authentication data, ' +
+            message: 'Failed to load settings data, ' +
               'server error occurred.',
             dismissable: true
           });
