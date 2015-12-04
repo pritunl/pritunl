@@ -287,6 +287,9 @@ def reset_password():
     return DEFAULT_USERNAME, DEFAULT_PASSWORD
 
 def audit_event(event_type, event_msg, remote_addr=None):
+    if settings.app.auditing != ALL:
+        return
+
     audit_collection = mongo.get_collection('users_audit')
     audit_collection.insert_one({
         'user_id': 'admin',
