@@ -249,8 +249,18 @@ def check_auth(username, password, remote_addr=None):
 
     administrator = find_user(username=username)
     if not administrator:
+        audit_event(
+            'admin_auth',
+            'Administrator login failed, invalid username',
+            remote_addr=remote_addr,
+        )
         return
     if not administrator.test_password(password):
+        audit_event(
+            'admin_auth',
+            'Administrator login failed, invalid password',
+            remote_addr=remote_addr,
+        )
         return
 
     sso_admin = settings.app.sso_admin
@@ -262,12 +272,26 @@ def check_auth(username, password, remote_addr=None):
             type='Administrator'
         )
         if not allow:
+            audit_event(
+                'admin_auth',
+                'Administrator login failed, failed secondary authentication',
+                remote_addr=remote_addr,
+            )
             return
+
+    audit_event(
+        'admin_auth',
+        'Administrator login successful',
+        remote_addr=remote_addr,
+    )
 
     return administrator
 
 def reset_password():
     logger.info('Resetting administrator password', 'auth')
+
+    audit_event('admin_auth',
+        'Administrator password reset from command line')
 
     admin_collection = mongo.get_collection('administrators')
     admin_collection.remove({})
