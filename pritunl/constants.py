@@ -160,6 +160,33 @@ DEMO_AUDIT_EVENTS = [
     },
 ]
 
+DEMO_ADMIN_AUDIT_EVENTS = [
+    {
+        'message': 'Single sign-on settings changed',
+        'remote_addr': '12.34.56.78',
+        'timestamp': 1449054365,
+        'type': 'admin_settings',
+    },
+    {
+        'message': 'Administrator username changed',
+        'remote_addr': '12.34.56.78',
+        'timestamp': 1449053618,
+        'type': 'admin_settings',
+    },
+    {
+        'message': 'Administrator password changed',
+        'remote_addr': '12.34.56.78',
+        'timestamp': 1449052968,
+        'type': 'admin_settings',
+    },
+    {
+        'message': 'Administrator login successful',
+        'remote_addr': '12.34.56.78',
+        'timestamp': 1449051783,
+        'type': 'admin_auth',
+    },
+]
+
 GROUP_MONGO = 'mongo'
 GROUP_FILE = 'file'
 GROUP_LOCAL = 'local'
