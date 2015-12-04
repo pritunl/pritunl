@@ -27,7 +27,7 @@ define([
       'click .change-password a': 'openSettings',
       'click .feedback': 'onFeedback'
     },
-    initialize: function(options) {
+    initialize: function() {
       this.model = new SettingsModel();
       this.listenTo(window.events, 'settings_updated', this.update);
       this.update();
