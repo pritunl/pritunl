@@ -6,7 +6,7 @@
       <span class="glyphicon glyphicon-record"></span>
       <%- event.message %>
     </span>
-    <span class="event-addr">
+    <span class="event-addr" style="<%= event.remote_addr ? '' : 'display: none' %>">
       <span class="glyphicon glyphicon-globe"></span>
       <%- event.remote_addr %>
     </span>
