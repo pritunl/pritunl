@@ -76,6 +76,69 @@ VALID_CHARS = {
     '4', '5', '6', '7', '8', '9', '=',
 }
 
+DEMO_LOG_ENTRIES = [
+    {
+        'id': '56610a2ab0e7307d6a553175',
+        'message': 'Started server "West".',
+        'timestamp': 1449055271,
+    },
+    {
+        'id': '56610a2ab0e7307d6a55316d',
+        'message': 'Started server "East".',
+        'timestamp': 1449054471,
+    },
+    {
+        'id': '566106c3b0e7307d6a552ee0',
+        'message': 'Created server "West".',
+        'timestamp': 1449053618,
+    },
+    {
+        'id': '566106bab0e730539212b4a1',
+        'message': 'Created server "East".',
+        'timestamp': 1449052968,
+    },
+    {
+        'id': '566106bab0e730539212b4a0',
+        'message': 'Created 2 new users.',
+        'timestamp': 1449050591,
+    },
+    {
+        'id': '565e8be6b0e730539211c695',
+        'message': 'Created 30 new users.',
+        'timestamp': 1449049318,
+    },
+    {
+        'id': '565e8bddb0e730519bdf51e1',
+        'message': 'Created 30 new users.',
+        'timestamp': 1449048575,
+    },
+    {
+        'id': '565e8bddb0e730519bdf51e0',
+        'message': 'Created new organization "Links".',
+        'timestamp': 1449047691,
+    },
+    {
+        'id': '565e8babb0e730519bdf50fc',
+        'message': 'Created new organization "Operations".',
+        'timestamp': 1449046292,
+    },
+    {
+        'id': '565e8ba7b0e73045a8aa5bac',
+        'message': 'Created new organization "Developers".',
+        'timestamp': 1449045128,
+    },
+    {
+        'id': '565e8ba7b0e73045a8aa5bab',
+        'message': 'Web server started.',
+        'timestamp': 1449044723,
+    },
+    {
+        'id': '565e87eeb0e73045a8aa5885',
+        'message': 'Web server started.',
+        'timestamp': 1449043571,
+    },
+]
+
 DEMO_AUDIT_EVENTS = [
     {
         'message': 'User connected to "east"',
