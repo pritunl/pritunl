@@ -337,6 +337,8 @@ def settings_put():
         for org in organization.iter_orgs(fields=('_id')):
             event.Event(type=USERS_UPDATED, resource_id=org.id)
 
+    event.Event(type=SETTINGS_UPDATED)
+
     response = flask.g.administrator.dict()
     response.update({
         'theme': settings.app.theme,
