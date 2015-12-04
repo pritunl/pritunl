@@ -327,6 +327,9 @@ def audit_event(event_type, event_msg, remote_addr=None):
     })
 
 def get_audit_events():
+    if settings.app.demo_mode:
+        return DEMO_ADMIN_AUDIT_EVENTS
+
     audit_collection = mongo.get_collection('users_audit')
     events = []
     spec = {
