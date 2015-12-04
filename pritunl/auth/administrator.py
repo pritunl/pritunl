@@ -290,8 +290,10 @@ def check_auth(username, password, remote_addr=None):
 def reset_password():
     logger.info('Resetting administrator password', 'auth')
 
-    audit_event('admin_auth',
-        'Administrator password reset from command line')
+    audit_event(
+        'admin_auth',
+        'Administrator password reset from command line',
+    )
 
     admin_collection = mongo.get_collection('administrators')
     admin_collection.remove({})
