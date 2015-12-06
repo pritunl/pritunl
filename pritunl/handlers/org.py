@@ -39,7 +39,16 @@ def org_post():
         return utils.demo_blocked()
 
     name = utils.filter_str(flask.request.json['name'])
-    org = organization.new_org(name=name, type=ORG_DEFAULT)
+    auth_api = flask.request.json.get('auth_api', False)
+
+    org = organization.new_org(name=name, auth_api=None, type=ORG_DEFAULT)
+
+    if auth_api:
+        org.auth_api = True
+        org.generate_auth_token()
+        org.generate_auth_secret()
+        org.commit()
+
     logger.LogEntry(message='Created new organization "%s".' % org.name)
     event.Event(type=ORGS_UPDATED)
     return utils.jsonify(org.dict())
