@@ -168,6 +168,8 @@ def setup_mongo():
         ('type', pymongo.ASCENDING),
     ], background=True)
     mongo.collections['organizations'].ensure_index('type', background=True)
+    mongo.collections['organizations'].ensure_index(
+        'auth_token', background=True)
     mongo.collections['hosts'].ensure_index('name', background=True)
     mongo.collections['hosts_usage'].ensure_index([
         ('host_id', pymongo.ASCENDING),
