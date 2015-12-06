@@ -35,7 +35,7 @@ class Organization(mongo.MongoObject):
         'ca_certificate',
     }
 
-    def __init__(self, name=None, type=None, **kwargs):
+    def __init__(self, name=None, auth_api=None, type=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
         self.last_search_count = None
         self.processes = []
@@ -43,6 +43,8 @@ class Organization(mongo.MongoObject):
 
         if name is not None:
             self.name = name
+        if auth_api is not None:
+            self.auth_api = auth_api
         if type is not None:
             self.type = type
 
@@ -50,6 +52,9 @@ class Organization(mongo.MongoObject):
         return {
             'id': self.id,
             'name': self.name,
+            'auth_api': self.auth_api,
+            'auth_token': self.auth_token,
+            'auth_secret': self.auth_secret,
             'user_count': self.user_count,
         }
 
