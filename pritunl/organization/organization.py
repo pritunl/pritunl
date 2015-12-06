@@ -19,11 +19,15 @@ class Organization(mongo.MongoObject):
     fields = {
         'name',
         'type',
+        'auth_api',
+        'auth_token',
+        'auth_secret',
         'ca_private_key',
         'ca_certificate',
     }
     fields_default = {
         'type': ORG_DEFAULT,
+        'auth_api': False,
     }
     fields_required = {
         'type',
