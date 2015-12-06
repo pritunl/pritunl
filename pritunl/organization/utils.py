@@ -20,11 +20,13 @@ def new_pooled():
 
     logger.debug('Queued pooled org', 'organization')
 
-def reserve_pooled(name=None, type=ORG_DEFAULT):
+def reserve_pooled(name=None, auth_api=None, type=ORG_DEFAULT):
     doc = {}
 
     if name is not None:
         doc['name'] = name
+    if auth_api is not None:
+        doc['auth_api'] = auth_api
     if type is not None:
         doc['type'] = type
 
