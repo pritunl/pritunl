@@ -110,6 +110,12 @@ class Organization(mongo.MongoObject):
         self.ca_private_key = ca_user.private_key
         self.ca_certificate = ca_user.certificate
 
+    def generate_auth_token(self):
+        self.auth_token = utils.generate_secret()
+
+    def generate_auth_secret(self):
+        self.auth_secret = utils.generate_secret()
+
     def queue_initialize(self, block, priority=LOW):
         if self.type != ORG_POOL:
             raise TypeError('Only pool orgs can be queued')
