@@ -60,9 +60,28 @@ def org_put(org_id):
         return utils.demo_blocked()
 
     org = organization.get_by_id(org_id)
-    name = utils.filter_str(flask.request.json['name'])
-    org.name = name
-    org.commit(org.changed)
+
+    org.name = utils.filter_str(flask.request.json['name'])
+
+    auth_api = flask.request.json.get('auth_api', False)
+    if auth_api:
+        org.auth_api = True
+        if not org.auth_token:
+            org.generate_auth_token()
+        if not org.auth_secret:
+            org.generate_auth_secret()
+    else:
+        org.auth_api = False
+        org.auth_token = None
+        org.auth_secret = None
+
+    if flask.request.json.get('auth_token') == True:
+        org.generate_auth_token()
+
+    if flask.request.json.get('auth_secret') == True:
+        org.generate_auth_secret()
+
+    org.commit()
     event.Event(type=ORGS_UPDATED)
     return utils.jsonify(org.dict())
 
