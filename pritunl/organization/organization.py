@@ -89,6 +89,10 @@ class Organization(mongo.MongoObject):
         return mongo.get_collection('servers')
 
     @cached_static_property
+    def nonces_collection(cls):
+        return mongo.get_collection('auth_nonces')
+
+    @cached_static_property
     def key_link_collection(cls):
         return mongo.get_collection('users_key_link')
 
