@@ -287,16 +287,16 @@ class User(mongo.MongoObject):
         return key
 
     def assign_ip_addr(self):
-        for server in self.org.iter_servers(fields=(
+        for svr in self.org.iter_servers(fields=(
                 'id', 'network', 'network_start',
                 'network_end', 'network_lock')):
-            server.assign_ip_addr(self.org.id, self.id)
+            svr.assign_ip_addr(self.org.id, self.id)
 
     def unassign_ip_addr(self):
-        for server in self.org.iter_servers(fields=(
+        for svr in self.org.iter_servers(fields=(
                 'id', 'network', 'network_start',
                 'network_end', 'network_lock')):
-            server.unassign_ip_addr(self.org.id, self.id)
+            svr.unassign_ip_addr(self.org.id, self.id)
 
     def generate_otp_secret(self):
         self.otp_secret = utils.generate_otp_secret()
@@ -375,106 +375,106 @@ class User(mongo.MongoObject):
 
         return True
 
-    def _get_key_info_str(self, server, conf_hash):
+    def _get_key_info_str(self, svr, conf_hash):
         return '#' + json.dumps({
             'version': CLIENT_CONF_VER,
             'user': self.name,
             'organization': self.org.name,
-            'server': server.name,
+            'server': svr.name,
             'user_id': str(self.id),
             'organization_id': str(self.org.id),
-            'server_id': str(server.id),
+            'server_id': str(svr.id),
             'sync_token': self.sync_token,
             'sync_secret': self.sync_secret,
             'sync_hash': conf_hash,
-            'sync_hosts': server.get_sync_remotes(),
+            'sync_hosts': svr.get_sync_remotes(),
         }, indent=1).replace('\n', '\n#')
 
-    def _generate_conf(self, server, include_user_cert=True):
+    def _generate_conf(self, svr, include_user_cert=True):
         if not self.sync_token or not self.sync_secret:
             self.sync_token = utils.generate_secret()
             self.sync_secret = utils.generate_secret()
             self.commit(('sync_token', 'sync_secret'))
 
         file_name = '%s_%s_%s.ovpn' % (
-            self.org.name, self.name, server.name)
-        if not server.ca_certificate:
-            server.generate_ca_cert()
-        key_remotes = server.get_key_remotes()
-        ca_certificate = server.ca_certificate
+            self.org.name, self.name, svr.name)
+        if not svr.ca_certificate:
+            svr.generate_ca_cert()
+        key_remotes = svr.get_key_remotes()
+        ca_certificate = svr.ca_certificate
         certificate = utils.get_cert_block(self.certificate)
         private_key = self.private_key.strip()
 
         conf_hash = hashlib.md5()
         conf_hash.update(self.name.encode('utf-8'))
         conf_hash.update(self.org.name.encode('utf-8'))
-        conf_hash.update(server.name.encode('utf-8'))
-        conf_hash.update(server.protocol)
+        conf_hash.update(svr.name.encode('utf-8'))
+        conf_hash.update(svr.protocol)
         for key_remote in sorted(key_remotes):
             conf_hash.update(key_remote)
-        conf_hash.update(CIPHERS[server.cipher])
-        conf_hash.update(str(server.lzo_compression))
-        conf_hash.update(str(server.otp_auth))
-        conf_hash.update(JUMBO_FRAMES[server.jumbo_frames])
+        conf_hash.update(CIPHERS[svr.cipher])
+        conf_hash.update(str(svr.lzo_compression))
+        conf_hash.update(str(svr.otp_auth))
+        conf_hash.update(JUMBO_FRAMES[svr.jumbo_frames])
         conf_hash.update(ca_certificate)
         conf_hash = conf_hash.hexdigest()
 
         client_conf = OVPN_INLINE_CLIENT_CONF % (
-            self._get_key_info_str(server, conf_hash),
+            self._get_key_info_str(svr, conf_hash),
             uuid.uuid4().hex,
             utils.random_name(),
-            server.adapter_type,
-            server.adapter_type,
-            server.get_key_remotes(),
-            CIPHERS[server.cipher],
-            HASHES[server.hash],
-            server.ping_interval,
-            server.ping_timeout,
+            svr.adapter_type,
+            svr.adapter_type,
+            svr.get_key_remotes(),
+            CIPHERS[svr.cipher],
+            HASHES[svr.hash],
+            svr.ping_interval,
+            svr.ping_timeout,
         )
 
-        if server.lzo_compression != ADAPTIVE:
+        if svr.lzo_compression != ADAPTIVE:
             client_conf += 'comp-lzo no\n'
 
-        if not self.bypass_secondary and server.otp_auth:
+        if not self.bypass_secondary and svr.otp_auth:
             client_conf += 'auth-user-pass\n'
 
-        if server.tls_auth:
+        if svr.tls_auth:
             client_conf += 'key-direction 1\n'
 
-        client_conf += JUMBO_FRAMES[server.jumbo_frames]
+        client_conf += JUMBO_FRAMES[svr.jumbo_frames]
         client_conf += '<ca>\n%s\n</ca>\n' % ca_certificate
         if include_user_cert:
-            if server.tls_auth:
+            if svr.tls_auth:
                 client_conf += '<tls-auth>\n%s\n</tls-auth>\n' % (
-                    server.tls_auth_key)
+                    svr.tls_auth_key)
 
             client_conf += '<cert>\n%s\n</cert>\n' % certificate
             client_conf += '<key>\n%s\n</key>\n' % private_key
 
         return file_name, client_conf, conf_hash
 
-    def _generate_onc(self, server):
-        if not server.primary_organization or \
-                not server.primary_user:
-            server.create_primary_user()
+    def _generate_onc(self, svr):
+        if not svr.primary_organization or \
+                not svr.primary_user:
+            svr.create_primary_user()
 
         file_name = '%s_%s_%s.onc' % (
-            self.org.name, self.name, server.name)
+            self.org.name, self.name, svr.name)
 
         conf_hash = hashlib.md5()
         conf_hash.update(str(self.org_id))
         conf_hash.update(str(self.id))
         conf_hash = '{%s}' % conf_hash.hexdigest()
 
-        hosts = server.get_hosts()
+        hosts = svr.get_hosts()
         if not hosts:
             return None, None
 
-        ca_certs = server.ca_certificate_list
+        ca_certs = svr.ca_certificate_list
 
         tls_auth = ''
-        if server.tls_auth:
-            for line in server.tls_auth_key.split('\n'):
+        if svr.tls_auth:
+            for line in svr.tls_auth_key.split('\n'):
                 if line.startswith('#'):
                     continue
                 tls_auth += line + '\\n'
@@ -502,21 +502,21 @@ class User(mongo.MongoObject):
             server_ref += '          "%s",\n' % cert_id
         server_ref = server_ref[:-2]
 
-        if not self.bypass_secondary and server.otp_auth:
+        if not self.bypass_secondary and svr.otp_auth:
             auth = OVPN_ONC_AUTH_OTP % self.id
         else:
             auth = OVPN_ONC_AUTH_NONE % self.id
 
         onc_conf = OVPN_ONC_CLIENT_CONF % (
             conf_hash,
-            '%s - %s (%s)' % (self.name, self.org.name, server.name),
+            '%s - %s (%s)' % (self.name, self.org.name, svr.name),
             hosts[0][0], # TODO
-            HASHES[server.hash],
-            ONC_CIPHERS[server.cipher],
+            HASHES[svr.hash],
+            ONC_CIPHERS[svr.cipher],
             client_ref,
-            'adaptive' if server.lzo_compression == ADAPTIVE else 'false',
+            'adaptive' if svr.lzo_compression == ADAPTIVE else 'false',
             hosts[0][1], # TODO
-            server.protocol,
+            svr.protocol,
             server_ref,
             tls_auth,
             auth,
@@ -533,11 +533,11 @@ class User(mongo.MongoObject):
             os.makedirs(temp_path)
             tar_file = tarfile.open(key_archive_path, 'w')
             try:
-                for server in self.org.iter_servers():
+                for svr in self.org.iter_servers():
                     server_conf_path = os.path.join(temp_path,
-                        '%s_%s.ovpn' % (self.id, server.id))
+                        '%s_%s.ovpn' % (self.id, svr.id))
                     conf_name, client_conf, conf_hash = self._generate_conf(
-                        server)
+                        svr)
 
                     with open(server_conf_path, 'w') as ovpn_conf:
                         os.chmod(server_conf_path, 0600)
@@ -562,11 +562,11 @@ class User(mongo.MongoObject):
             os.makedirs(temp_path)
             zip_file = zipfile.ZipFile(key_archive_path, 'w')
             try:
-                for server in self.org.iter_servers():
+                for svr in self.org.iter_servers():
                     server_conf_path = os.path.join(temp_path,
-                        '%s_%s.ovpn' % (self.id, server.id))
+                        '%s_%s.ovpn' % (self.id, svr.id))
                     conf_name, client_conf, conf_hash = self._generate_conf(
-                        server)
+                        svr)
 
                     with open(server_conf_path, 'w') as ovpn_conf:
                         os.chmod(server_conf_path, 0600)
@@ -619,10 +619,10 @@ class User(mongo.MongoObject):
                 os.remove(user_key_path)
                 os.remove(user_p12_path)
 
-                for server in self.org.iter_servers():
+                for svr in self.org.iter_servers():
                     server_conf_path = os.path.join(temp_path,
-                        '%s_%s.onc' % (self.id, server.id))
-                    conf_name, client_conf = self._generate_onc(server)
+                        '%s_%s.onc' % (self.id, svr.id))
+                    conf_name, client_conf = self._generate_onc(svr)
                     if not client_conf:
                         continue
 
@@ -641,8 +641,8 @@ class User(mongo.MongoObject):
         return key_archive
 
     def build_key_conf(self, server_id, include_user_cert=True):
-        server = self.org.get_by_id(server_id)
-        conf_name, client_conf, conf_hash = self._generate_conf(server,
+        svr = self.org.get_by_id(server_id)
+        conf_name, client_conf, conf_hash = self._generate_conf(svr,
             include_user_cert)
 
         return {
@@ -697,6 +697,15 @@ class User(mongo.MongoObject):
             'org_id': self.org_id,
             'network': network,
         }, upsert=True)
+
+        if force:
+            for svr in self.org.iter_servers(server.operation_fields):
+                if svr.status == ONLINE:
+                    logger.info(
+                        'Restarting running server to add network link',
+                        'user',
+                    )
+                    svr.restart()
 
     def remove_network_link(self, network):
         self.net_link_collection.remove({
