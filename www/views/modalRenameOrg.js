@@ -14,6 +14,7 @@ define([
     events: function() {
       return _.extend({
         'click .auth-toggle': 'onAuthSelect',
+        'click .auth-token input, .auth-secret input': 'onClickInput',
         'click .generate-new-auth-key': 'onGenerateNewKey'
       }, ModalRenameOrgView.__super__.events);
     },
@@ -40,6 +41,9 @@ define([
     },
     onAuthSelect: function() {
       this.setAuthSelect(!this.getAuthSelect());
+    },
+    onClickInput: function(evt) {
+      this.$(evt.target).select();
     },
     onGenerateNewKey: function() {
       this.setLoading('Generating new authorization key...');
