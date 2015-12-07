@@ -90,6 +90,14 @@ def get_by_name(name, fields=None):
     if doc:
         return Organization(doc=doc, fields=fields)
 
+def get_by_token(token, fields=None):
+    doc = Organization.collection.find_one({
+        'token': token,
+    }, fields)
+
+    if doc:
+        return Organization(doc=doc, fields=fields)
+
 def iter_orgs(spec=None, type=ORG_DEFAULT, fields=None, page=None):
     limit = None
     skip = None
