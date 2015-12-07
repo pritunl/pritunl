@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add auth token to organizations
+Fix display issue with host graphs
 
 Version 1.11.813.26 2015-12-04
 ------------------------------
