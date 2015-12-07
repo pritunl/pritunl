@@ -13,6 +13,10 @@ from pritunl import ipaddress
 
 import flask
 import time
+import base64
+import hmac
+import hashlib
+import pymongo
 
 def _network_link_invalid():
     return utils.jsonify({
@@ -421,3 +425,101 @@ def user_audit_get(org_id, user_id):
     user = org.get_user(user_id)
 
     return utils.jsonify(user.get_audit_events())
+
+@app.app.route('/auth/user', methods=['POST'])
+def auth_user_post():
+    auth_token = flask.request.headers.get('Auth-Token', None)
+    auth_timestamp = flask.request.headers.get('Auth-Timestamp', None)
+    auth_nonce = flask.request.headers.get('Auth-Nonce', None)
+    auth_signature = flask.request.headers.get('Auth-Signature', None)
+
+    if not auth_token or not auth_timestamp or not auth_nonce or \
+        not auth_signature:
+        return utils.jsonify({
+            'error': AUTH_INVALID,
+            'error_msg': AUTH_INVALID_MSG,
+        }, 401)
+    auth_nonce = auth_nonce[:32]
+
+    try:
+        if abs(int(auth_timestamp) - int(utils.time_now())) > \
+            settings.app.auth_time_window:
+            return utils.jsonify({
+                'error': AUTH_INVALID,
+                'error_msg': AUTH_INVALID_MSG,
+            }, 401)
+    except ValueError:
+        return utils.jsonify({
+            'error': AUTH_INVALID,
+            'error_msg': AUTH_INVALID_MSG,
+        }, 401)
+
+    org = organization.get_by_token(auth_token)
+    if not org:
+        return utils.jsonify({
+            'error': AUTH_INVALID,
+            'error_msg': AUTH_INVALID_MSG,
+        }, 401)
+
+    auth_string = '&'.join([
+        auth_token,
+        auth_timestamp,
+        auth_nonce,
+        flask.request.method,
+        flask.request.path,
+    ] + ([flask.request.data] if flask.request.data else []))
+
+    if len(auth_string) > AUTH_SIG_STRING_MAX_LEN:
+        return utils.jsonify({
+            'error': AUTH_INVALID,
+            'error_msg': AUTH_INVALID_MSG,
+        }, 401)
+
+    auth_test_signature = base64.b64encode(hmac.new(
+        org.auth_secret.encode(), auth_string,
+        hashlib.sha256).digest())
+    if auth_signature != auth_test_signature:
+        return utils.jsonify({
+            'error': AUTH_INVALID,
+            'error_msg': AUTH_INVALID_MSG,
+        }, 401)
+
+    try:
+        org.nonces_collection.insert({
+            'token': auth_token,
+            'nonce': auth_nonce,
+            'timestamp': utils.now(),
+        })
+    except pymongo.errors.DuplicateKeyError:
+        return utils.jsonify({
+            'error': AUTH_INVALID,
+            'error_msg': AUTH_INVALID_MSG,
+        }, 401)
+
+    username = flask.request.json['username']
+    network_links = flask.request.json.get('network_links')
+
+    usr = org.find_user(name=username)
+    if not usr:
+        usr = org.new_user(name=username, type=CERT_CLIENT)
+        usr.audit_event('user_created',
+            'User created with authentication token',
+            remote_addr=utils.get_remote_addr())
+
+        if network_links:
+            for network_link in network_links:
+                try:
+                    usr.add_network_link(network_link, force=True)
+                except (ipaddress.AddressValueError, ValueError):
+                    return _network_link_invalid()
+
+        event.Event(type=ORGS_UPDATED)
+        event.Event(type=USERS_UPDATED, resource_id=org.id)
+        event.Event(type=SERVERS_UPDATED)
+
+    keys = {}
+    for server in org.iter_servers():
+        key = usr.build_key_conf(server.id)
+        keys[key['name']] = key['conf']
+
+    return utils.jsonify(keys)
