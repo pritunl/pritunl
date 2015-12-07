@@ -9,8 +9,8 @@ define([
   var ModalRenameOrgView = ModalView.extend({
     className: 'rename-org-modal',
     template: _.template(modalRenameOrgTemplate),
-    title: 'Rename Organization',
-    okText: 'Rename',
+    title: 'Modify Organization',
+    okText: 'Modify',
     events: function() {
       return _.extend({
         'click .auth-toggle': 'onAuthSelect',
