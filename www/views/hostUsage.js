@@ -120,10 +120,13 @@ define([
         memUsage.pop();
       }
 
+      var width = this.$el.width();
+      var height = this.$el.height() - 2;
+
       var graphCpu = new Rickshaw.Graph({
         element: this.$('.host-graph-cpu')[0],
-        width: this.$('.host-graph-cpu').width(),
-        height: this.$('.host-graph-cpu').height(),
+        width: width,
+        height: height,
         renderer: 'area',
         stroke: true,
         max: 1,
@@ -152,8 +155,8 @@ define([
 
       var graphMem = new Rickshaw.Graph({
         element: this.$('.host-graph-mem')[0],
-        width: this.$('.host-graph-mem').width(),
-        height: this.$('.host-graph-mem').height(),
+        width: width,
+        height: height,
         renderer: 'area',
         stroke: true,
         max: 1,
