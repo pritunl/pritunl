@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add auth token to orgs
+
 Version 1.11.813.26 2015-12-04
 ------------------------------
 
