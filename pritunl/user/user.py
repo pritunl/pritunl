@@ -681,10 +681,13 @@ class User(mongo.MongoObject):
             html_email,
         )
 
-    def add_network_link(self, network):
-        for server in self.org.iter_servers(('status',)):
-            if server.status == ONLINE:
-                raise ServerOnlineError('Server online')
+    def add_network_link(self, network, force=False):
+        from pritunl import server
+
+        if not force:
+            for svr in self.org.iter_servers(('status',)):
+                if svr.status == ONLINE:
+                    raise ServerOnlineError('Server online')
 
         network = str(ipaddress.IPNetwork(network))
 
