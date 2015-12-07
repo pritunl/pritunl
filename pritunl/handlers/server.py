@@ -875,10 +875,7 @@ def server_operation_put(server_id, operation):
     if settings.app.demo_mode:
         return utils.demo_blocked()
 
-    fields = server.dict_fields + ['hosts', 'links', 'replica_count',
-        'tls_auth_key', 'ca_certificate']
-
-    svr = server.get_by_id(server_id, fields=fields)
+    svr = server.get_by_id(server_id, fields=server.operation_fields)
 
     try:
         if operation == START:
