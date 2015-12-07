@@ -26,6 +26,8 @@ def _request(method, url, json_data=None, params=None, headers=None,
     request = urllib2.Request(url, headers=headers)
     request.get_method = lambda: method
 
+    request.add_header('User-Agent', 'pritunl')
+
     if auth is not None:
         auth_str = base64.encodestring(
             '%s:%s' % (auth[0], auth[1])).replace('\n', '')
