@@ -65,6 +65,13 @@ dict_fields = [
     'dns_mapping',
     'debug',
 ]
+operation_fields = dict_fields + [
+    'hosts',
+    'links',
+    'replica_count',
+    'tls_auth_key',
+    'ca_certificate',
+]
 
 class Server(mongo.MongoObject):
     fields = {
