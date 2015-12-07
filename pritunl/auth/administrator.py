@@ -190,7 +190,7 @@ def check_session():
                 'token': auth_token,
                 'nonce': auth_nonce,
                 'timestamp': utils.now(),
-            }, w=0)
+            })
         except pymongo.errors.DuplicateKeyError:
             return False
     else:
