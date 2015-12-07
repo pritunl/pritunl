@@ -11,6 +11,10 @@ def update():
     license = settings.app.license
     collection = mongo.get_collection('settings')
 
+    if not settings.app.id:
+        settings.app.id = utils.random_name()
+        settings.commit()
+
     if not license:
         settings.local.sub_active = False
         settings.local.sub_status = None
@@ -26,6 +30,7 @@ def update():
                 response = utils.request.get(
                     'https://app.pritunl.com/subscription',
                     json_data={
+                        'id': settings.app.id,
                         'license': license,
                         'version': settings.local.version_int,
                     },
