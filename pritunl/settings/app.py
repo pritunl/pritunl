@@ -40,6 +40,7 @@ class SettingsApp(SettingsGroupMongo):
         'email_username': None,
         'email_password': None,
         'email_from': None,
+        'id': None,
         'sso': False,
         'sso_match': None,
         'sso_host': None,
