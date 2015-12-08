@@ -92,7 +92,7 @@ def get_by_name(name, fields=None):
 
 def get_by_token(token, fields=None):
     doc = Organization.collection.find_one({
-        'token': token,
+        'auth_token': token,
     }, fields)
 
     if doc:
