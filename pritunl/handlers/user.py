@@ -434,7 +434,7 @@ def auth_user_post():
     auth_signature = flask.request.headers.get('Auth-Signature', None)
 
     if not auth_token or not auth_timestamp or not auth_nonce or \
-        not auth_signature:
+            not auth_signature:
         return utils.jsonify({
             'error': AUTH_INVALID,
             'error_msg': AUTH_INVALID_MSG,
@@ -443,7 +443,7 @@ def auth_user_post():
 
     try:
         if abs(int(auth_timestamp) - int(utils.time_now())) > \
-            settings.app.auth_time_window:
+                settings.app.auth_time_window:
             return utils.jsonify({
                 'error': AUTH_INVALID,
                 'error_msg': AUTH_INVALID_MSG,
