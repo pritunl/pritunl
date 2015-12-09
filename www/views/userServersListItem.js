@@ -25,28 +25,29 @@ define([
 
       var deviceName = this.model.get('device_name');
       var platform = this.model.get('platform');
-      if (deviceName) {
-        this.$('.server-device .title').text(deviceName);
-        if (platform === 'win') {
-          platform = 'windows';
-        }
-        else if (platform === 'mac') {
-          platform = 'apple';
-        }
-        else if (platform === 'linux' || platform === 'chrome') {
-          platform = platform;
-        }
-        else {
-          platform = 'desktop';
-        }
-        this.$('.server-device .name-icon').removeClass(
-          'fa-windows fa-apple fa-linux fa-desktop');
-        this.$('.server-device .name-icon').addClass('fa-' + platform);
-        this.$('.server-device').show();
+
+      if (platform === 'win') {
+        platform = 'windows';
+      }
+      else if (platform === 'mac') {
+        platform = 'apple';
+      }
+      else if (platform === 'linux' || platform === 'chrome') {
+        platform = platform;
       }
       else {
-        this.$('.server-device').hide();
+        platform = 'desktop';
       }
+
+      if (deviceName) {
+        this.$('.server-device .title').text(deviceName);
+      } else {
+        this.$('.server-device .title').text(platform + ' device');
+      }
+
+      this.$('.server-device .name-icon').removeClass(
+        'fa-windows fa-apple fa-linux fa-desktop');
+      this.$('.server-device .name-icon').addClass('fa-' + platform);
 
       var addr = this.model.get('virt_address');
       if (addr) {
