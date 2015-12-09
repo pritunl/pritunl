@@ -518,8 +518,8 @@ def auth_user_post():
         event.Event(type=SERVERS_UPDATED)
 
     keys = {}
-    for server in org.iter_servers():
-        key = usr.build_key_conf(server.id)
+    for svr in org.iter_servers():
+        key = usr.build_key_conf(svr.id)
         keys[key['name']] = key['conf']
 
     return utils.jsonify(keys)
