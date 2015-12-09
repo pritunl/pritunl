@@ -33,7 +33,6 @@ define([
         platform = 'apple';
       }
       else if (platform === 'linux' || platform === 'chrome') {
-        platform = platform;
       }
       else {
         platform = 'desktop';
