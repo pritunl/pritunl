@@ -100,6 +100,7 @@ define([
       }
 
       if (this.model.get('status')) {
+        this.$('.server-device').show();
         if (!this.$('.status-icon').hasClass('online')) {
           this.$('.status-icon').removeClass('offline');
           this.$('.status-icon').addClass('online');
@@ -107,6 +108,7 @@ define([
         }
       }
       else {
+        this.$('.server-device').hide();
         if (!this.$('.status-icon').hasClass('offline')) {
           this.$('.status-icon').removeClass('online');
           this.$('.status-icon').addClass('offline');
