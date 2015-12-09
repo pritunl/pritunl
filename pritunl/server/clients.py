@@ -45,7 +45,8 @@ class Clients(object):
     def collection(cls):
         return mongo.get_collection('clients')
 
-    def generate_client_conf(self, client_id, virt_address, user, reauth):
+    def generate_client_conf(self, platform, client_id, virt_address,
+            user, reauth):
         from pritunl.server.utils import get_by_id
 
         client_conf = ''
@@ -65,9 +66,15 @@ class Clients(object):
                         local_network)
         else:
             if self.server.mode == ALL_TRAFFIC:
-                client_conf += 'push "redirect-gateway def1"\n'
+                if platform == 'ios':
+                    client_conf += 'push "route 0.0.0.0 128.0.0.0"\n'
+                    client_conf += 'push "route 128.0.0.0 128.0.0.0"\n'
+                else:
+                    client_conf += 'push "redirect-gateway def1"\n'
+
                 if self.server.ipv6:
-                    client_conf += 'push "redirect-gateway-ipv6 def1"\n'
+                    if platform != 'ios':
+                        client_conf += 'push "redirect-gateway-ipv6 def1"\n'
                     client_conf += 'push "route-ipv6 2000::/3"\n'
 
             if self.server.dns_mapping:
@@ -301,7 +308,7 @@ class Clients(object):
                 'address_dynamic': address_dynamic,
             })
 
-        client_conf = self.generate_client_conf(client_id,
+        client_conf = self.generate_client_conf(platform, client_id,
             virt_address, user, reauth)
 
         client_conf += 'ifconfig-push %s %s\n' % utils.parse_network(
