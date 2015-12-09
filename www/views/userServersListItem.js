@@ -29,7 +29,7 @@ define([
       if (platform === 'win') {
         platform = 'windows';
       }
-      else if (platform === 'mac') {
+      else if (platform === 'mac' || platform === 'ios') {
         platform = 'apple';
       }
       else if (platform === 'linux' || platform === 'chrome') {
