@@ -323,7 +323,7 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
         return flask.abort(401)
 
     auth_string = '&'.join([
-        auth_token, auth_timestamp, auth_nonce, flask.request.method,
+        user.sync_token, auth_timestamp, auth_nonce, flask.request.method,
         flask.request.path] +
         ([flask.request.data] if flask.request.data else []))
 
