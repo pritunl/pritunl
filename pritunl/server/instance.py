@@ -418,7 +418,10 @@ class ServerInstance(object):
                     rules.append(args_base + ['-s', self.server.network])
 
                 for link_svr_net in link_svr_networks:
-                    rules.append(args_base + ['-s', link_svr_net])
+                    if ':' in link_svr_net:
+                        rules6.append(args_base + ['-s', link_svr_net])
+                    else:
+                        rules.append(args_base + ['-s', link_svr_net])
 
         for interface in interfaces:
             rules.append([
