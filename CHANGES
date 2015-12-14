@@ -6,6 +6,7 @@ Pritunl Changelog
 Add auth token to organizations
 Fix issue with gateway redirect on iOS
 Fix display issue with host graphs
+Fix display error with server and host uptime
 
 Version 1.11.813.26 2015-12-04
 ------------------------------
