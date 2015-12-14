@@ -298,7 +298,8 @@ class Server(mongo.MongoObject):
     def uptime(self):
         if self.status != ONLINE or not self.start_timestamp:
             return
-        return max((utils.now() - self.start_timestamp).seconds, 1)
+        return max(int((
+            utils.now() - self.start_timestamp).total_seconds()), 1)
 
     @property
     def network_hash(self):
