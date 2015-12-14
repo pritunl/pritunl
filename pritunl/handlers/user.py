@@ -328,7 +328,8 @@ def user_put(org_id, user_id):
         user.dns_servers = dns_servers
 
     if 'dns_suffix' in flask.request.json:
-        dns_suffix = utils.filter_str(flask.request.json['dns_suffix']) or None
+        dns_suffix = utils.filter_str(
+            flask.request.json['dns_suffix']) or None
         if user.dns_suffix != dns_suffix:
             user.audit_event('user_updated',
                 'User dns suffix changed',
