@@ -95,8 +95,8 @@ class Clients(object):
                     if ':' in network_link:
                         client_conf += 'iroute-ipv6 %s\n' % network_link
                     else:
-                        client_conf += 'iroute %s %s\n' % utils.parse_network(
-                            network_link)
+                        client_conf += 'iroute %s %s\n' % \
+                            utils.parse_network(network_link)
 
             if network_links and not reauth:
                 thread = threading.Thread(target=self.iroute_ping_thread,
