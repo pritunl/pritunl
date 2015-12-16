@@ -681,6 +681,7 @@ class ServerInstance(object):
                 logger.exception('Failed to update server ping', 'server',
                     server_id=self.server.id,
                 )
+
             yield interrupter_sleep(settings.vpn.server_ping)
 
     def start_threads(self, cursor_id):
