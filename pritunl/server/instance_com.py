@@ -273,6 +273,9 @@ class ServerInstanceCom(object):
 
             for org in self.server.iter_orgs():
                 for user in org.iter_users():
+                    if user.type != CERT_CLIENT:
+                        continue
+
                     i += 1
 
                     client = {
