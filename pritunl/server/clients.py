@@ -10,7 +10,6 @@ from pritunl import settings
 from pritunl import event
 from pritunl import docdb
 
-import datetime
 import collections
 import bson
 import hashlib
@@ -544,7 +543,7 @@ class Clients(object):
 
         self.clients.update_id(client_id, {
             'doc_id': doc_id,
-            'timestamp': datetime.datetime.now(),
+            'timestamp': time.time(),
         })
 
         self.clients_queue.append(client_id)
@@ -650,11 +649,10 @@ class Clients(object):
                     if not client:
                         continue
 
-                    diff = datetime.timedelta(
-                        seconds=settings.vpn.client_ttl - 60) - \
-                           (datetime.datetime.now() - client['timestamp'])
+                    diff = settings.vpn.client_ttl - 60 - \
+                        (time.time() - client['timestamp'])
 
-                    if diff.seconds > settings.vpn.client_ttl:
+                    if diff > settings.vpn.client_ttl:
                         logger.error('Client ping time diff out of range',
                             'server',
                             time_diff=diff.seconds,
@@ -663,8 +661,8 @@ class Clients(object):
                         )
                         if self.interrupter_sleep(10):
                             return
-                    elif diff.seconds > 1:
-                        if self.interrupter_sleep(diff.seconds):
+                    elif diff > 1:
+                        if self.interrupter_sleep(diff):
                             return
 
                     if self.instance.sock_interrupt:
@@ -672,7 +670,7 @@ class Clients(object):
 
                     try:
                         updated = self.clients.update_id(client_id, {
-                            'timestamp': datetime.datetime.now(),
+                            'timestamp': time.time(),
                         })
                         if not updated:
                             continue
