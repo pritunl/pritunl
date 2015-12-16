@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Changes to default settings
+
 Version 1.12.825.77 2015-12-16
 ------------------------------
 
