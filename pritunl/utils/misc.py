@@ -61,7 +61,7 @@ def time_now():
 def sync_time():
     try:
         client = ntplib.NTPClient()
-        response = client.request('ntp.ubuntu.com', version=3)
+        response = client.request(settings.app.ntp_server, version=3)
         start_time = time.time()
 
         settings.local.ntp_time = (start_time, response.tx_time)
