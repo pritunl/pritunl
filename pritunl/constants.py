@@ -223,6 +223,7 @@ IP_REGEX = r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
 VALID_DH_PARAM_BITS = (1024, 1536, 2048, 3072, 4096)
 AUTH_SERVER = 'https://auth.pritunl.com'
 ONELOGIN_URL = 'https://api.onelogin.com'
+NTP_SERVER = 'ntp.ubuntu.com'
 STATIC_FILE_EXTENSIONS = {
     '.css',
     '.eot',
