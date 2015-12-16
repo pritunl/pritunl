@@ -14,6 +14,7 @@ import datetime
 import threading
 import socket
 import uuid
+import random
 
 class ServerInstanceCom(object):
     def __init__(self, server, instance):
@@ -266,6 +267,37 @@ class ServerInstanceCom(object):
         finally:
             remove_listener(self.instance.id)
 
+    def _stress_thread(self):
+        try:
+            i = 0
+
+            for org in self.server.iter_orgs():
+                for user in org.iter_users():
+                    i += 1
+
+                    client = {
+                        'client_id': i,
+                        'key_id': 1,
+                        'org_id': org.id,
+                        'user_id': user.id,
+                        'mac_addr': utils.rand_str(16),
+                        'remote_ip': str(
+                            ipaddress.IPAddress(100000000 + random.randint(
+                                0, 1000000000))),
+                        'platform': 'linux',
+                        'device_id': str(bson.ObjectId()),
+                        'device_name': utils.random_name(),
+                    }
+
+                    self.clients.connect(client)
+                    self.clients.connected(client['client_id'])
+        except:
+            logger.exception('Error in stress thread', 'server',
+                server_id=self.server.id,
+                instance_id=self.instance.id,
+                socket_path=self.socket_path,
+            )
+
     def connect(self):
         self.wait_for_socket()
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -283,3 +315,8 @@ class ServerInstanceCom(object):
         thread = threading.Thread(target=self.clients.ping_thread)
         thread.daemon = True
         thread.start()
+
+        if settings.vpn.stress_test:
+            thread = threading.Thread(target=self._stress_thread)
+            thread.daemon = True
+            thread.start()
