@@ -92,7 +92,14 @@ def setup_mongo():
         collection.name_str = collection_name
 
     settings.local.mongo_time = None
-    utils.sync_time()
+
+    while True:
+        try:
+            utils.sync_time()
+            break
+        except:
+            logger.exception('Failed to sync time', 'setup')
+            time.sleep(30)
 
     settings.init()
 
