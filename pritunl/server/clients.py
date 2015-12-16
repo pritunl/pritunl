@@ -681,7 +681,7 @@ class Clients(object):
                     if not client:
                         continue
 
-                    diff = settings.vpn.client_ttl - 60 - \
+                    diff = settings.vpn.client_ttl - 90 - \
                         (time.time() - client['timestamp'])
 
                     if diff > settings.vpn.client_ttl:
