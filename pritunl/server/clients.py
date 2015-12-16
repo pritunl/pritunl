@@ -9,6 +9,7 @@ from pritunl import ipaddress
 from pritunl import settings
 from pritunl import event
 from pritunl import docdb
+from pritunl import callqueue
 
 import collections
 import bson
@@ -27,6 +28,7 @@ class Clients(object):
         self.iroutes_thread = {}
         self.iroutes_lock = threading.RLock()
         self.iroutes_index = collections.defaultdict(set)
+        self.call_queue = callqueue.CallQueue(maxsize=1024)
 
         self.clients = docdb.DocDb(
             'user_id',
@@ -243,7 +245,9 @@ class Clients(object):
             virt_address = doc['virt_address']
             virt_address6 = doc['virt_address6']
         else:
-            user.audit_event('user_connection',
+            self.call_queue.put(
+                user.audit_event,
+                'user_connection',
                 'User connected to "%s"' % self.server.name,
                 remote_addr=remote_ip,
             )
@@ -548,9 +552,9 @@ class Clients(object):
 
         self.clients_queue.append(client_id)
 
-        self.instance_com.push_output(
+        self.call_queue.put(self.instance_com.push_output,
             'User connected user_id=%s' % client['user_id'])
-        self.send_event()
+        self.call_queue.put(self.send_event)
 
     def disconnected(self, client_id):
         client = self.clients.find_id(client_id)
@@ -728,3 +732,14 @@ class Clients(object):
                 logger.exception('Error removing client', 'server',
                     server_id=self.server.id,
                 )
+
+    def call_queue_thread(self):
+        while True:
+            try:
+                self.call_queue.call(timeout=0.5)
+            except:
+                logger.exception('Error in queued called', 'server',
+                    server_id=self.server.id,
+                )
+            if self.instance.sock_interrupt:
+                return
