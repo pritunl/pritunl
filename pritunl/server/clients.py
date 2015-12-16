@@ -415,6 +415,11 @@ class Clients(object):
 
         def auth_thread():
             try:
+                if settings.vpn.stress_test:
+                    self.connected(client_id)
+                    self.allow_client(client, org, user, reauth)
+                    return
+
                 if not user.auth_check():
                     logger.LogEntry(message='User failed authentication, ' +
                         'sso provider denied "%s".' % (user.name))
@@ -453,9 +458,6 @@ class Clients(object):
                     return
 
                 self.allow_client(client, org, user, reauth)
-
-                if settings.vpn.stress_test:
-                    self.connected(client_id)
             except:
                 logger.exception('Auth check error', 'server',
                     client_id=client_id,
