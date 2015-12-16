@@ -53,8 +53,8 @@ def _now(ntp_time):
     return sync_time + (time.time() - start_time)
 
 def now():
-    return datetime.datetime.fromtimestamp(time.time())
-    #return datetime.datetime.fromtimestamp(_now(settings.local.ntp_time))
+    return datetime.datetime.utcfromtimestamp(time.time())
+    #return datetime.datetime.utcfromtimestamp(_now(settings.local.ntp_time))
 
 def time_now():
     return time.time()
