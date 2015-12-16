@@ -15,6 +15,7 @@ class SettingsLocal(SettingsGroupLocal):
         'server_start': server_start,
         'host_ping_timestamp': None,
         'logger_runner': False,
+        'local_time': None,
         'sub_active': False,
         'sub_status': None,
         'sub_plan': None,
