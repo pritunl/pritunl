@@ -477,7 +477,8 @@ class Clients(object):
             user_id = client['user_id']
             remote_ip = client.get('remote_ip')
 
-            if not _limiter.validate(remote_ip):
+            if not settings.vpn.stress_test and \
+                    not _limiter.validate(remote_ip):
                 self.instance_com.send_client_deny(client_id, key_id,
                     'Too many connect requests')
                 return
