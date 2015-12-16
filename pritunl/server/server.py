@@ -156,9 +156,9 @@ class Server(mongo.MongoObject):
             local_networks=None, dns_servers=None, search_domain=None,
             otp_auth=None, cipher=None, hash=None, jumbo_frames=None,
             lzo_compression=None, inter_client=None, ping_interval=None,
-            ping_timeout=None, link_ping_interval=None, link_ping_timeout=None,
-            max_clients=None, replica_count=None, dns_mapping=None,
-        debug=None, **kwargs):
+            ping_timeout=None, link_ping_interval=None,
+            link_ping_timeout=None, max_clients=None, replica_count=None,
+            dns_mapping=None, debug=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         if 'network' in self.loaded_fields:
