@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix timezone issue
+
 Version 1.12.825.62 2015-12-16
 ------------------------------
 
