@@ -2,7 +2,7 @@ from pritunl import __version__
 
 from pritunl.constants import *
 from pritunl import settings
-from pritunl import mongo
+from pritunl import ntplib
 
 import subprocess
 import time
@@ -48,15 +48,28 @@ def ObjectId(oid=None):
             )
     return oid
 
-def _now(mongo_time):
-    mongo_time_start, mongo_time_cur = mongo_time
-    return mongo_time_cur + (datetime.datetime.utcnow() - mongo_time_start)
+def _now(ntp_time):
+    start_time, sync_time = ntp_time
+    return sync_time + (time.time() - start_time)
 
 def now():
-    return _now(settings.local.mongo_time)
+    return datetime.datetime.utcfromtimestamp(_now(settings.local.ntp_time))
 
 def time_now():
-    return int((now() - datetime.datetime(1970, 1, 1)).total_seconds())
+    return _now(settings.local.ntp_time)
+
+def sync_time():
+    try:
+        client = ntplib.NTPClient()
+        response = client.request('ntp.ubuntu.com', version=3)
+        start_time = time.time()
+
+        settings.local.ntp_time = (start_time, response.tx_time)
+    except:
+        from pritunl import logger
+
+        logger.exception('Failed to sync time')
+        raise
 
 def rand_sleep():
     time.sleep(random.randint(0, 25) / 1000.)
@@ -148,47 +161,6 @@ def check_output_logged(*args, **kwargs):
             return_code, cmd, output=stdoutdata)
 
     return stdoutdata
-
-def sync_time():
-    nounce = None
-    doc = {}
-
-    try:
-        collection = mongo.get_collection('time_sync')
-
-        nounce = ObjectId()
-        collection.insert({
-            'nounce': nounce,
-        }, manipulate=False, w=1)
-
-        mongo_time_start = datetime.datetime.utcnow()
-        cur_mongo_time = settings.local.mongo_time
-
-        doc = collection.find_one({
-            'nounce': nounce,
-        })
-        mongo_time = doc['_id'].generation_time.replace(tzinfo=None)
-
-        settings.local.mongo_time = (mongo_time_start, mongo_time)
-
-        if cur_mongo_time:
-            time_diff = abs(_now(cur_mongo_time) - now())
-            if time_diff > datetime.timedelta(milliseconds=1000):
-                from pritunl import logger
-                logger.error(
-                    'Unexpected time deviation from mongodb', 'utils',
-                    deviation=str(time_diff),
-                )
-
-        collection.remove(doc['_id'])
-    except:
-        from pritunl import logger
-
-        logger.exception('Failed to sync time',
-            nounce=nounce,
-            doc_id=doc.get('id'),
-        )
-        raise
 
 def find_caller():
     try:
