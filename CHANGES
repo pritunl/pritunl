@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add auth token to organizations
+Fix issue with inaccurate timestamps leading to client and server timeouts
 Fix issue with gateway redirect on iOS
 Fix display issue with host graphs
 Fix display error with server and host uptime
