@@ -256,7 +256,8 @@ class ServerInstanceCom(object):
         except:
             if not self.instance.sock_interrupt:
                 self.push_output('ERROR Management socket exception')
-                logger.exception('Error in management socket thread', 'server',
+                logger.exception('Error in management socket thread',
+                    'server',
                     server_id=self.server.id,
                     instance_id=self.instance.id,
                     socket_path=self.socket_path,
