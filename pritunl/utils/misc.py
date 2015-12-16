@@ -53,36 +53,39 @@ def _now(ntp_time):
     return sync_time + (time.time() - start_time)
 
 def now():
-    return datetime.datetime.utcfromtimestamp(_now(settings.local.ntp_time))
+    return datetime.datetime.fromtimestamp(time.time())
+    #return datetime.datetime.fromtimestamp(_now(settings.local.ntp_time))
 
 def time_now():
-    return _now(settings.local.ntp_time)
+    return time.time()
+    #return _now(settings.local.ntp_time)
 
 def sync_time():
-    try:
-        client = ntplib.NTPClient()
-        resp = client.request(NTP_SERVER, version=3)
-        start_time = time.time()
-
-        cur_ntp_time = settings.local.ntp_time
-        settings.local.ntp_time = (start_time, resp.tx_time)
-
-        if cur_ntp_time:
-            time_diff = abs(_now(cur_ntp_time) - time_now())
-
-            if time_diff > 0.5:
-                from pritunl import logger
-                logger.error(
-                   'Unexpected time deviation from time sync', 'utils',
-                    ntp_server=NTP_SERVER,
-                    deviation=time_diff,
-                )
-    except:
-        from pritunl import logger
-        logger.exception('Failed to sync time', 'utils',
-            ntp_server=NTP_SERVER,
-        )
-        raise
+    pass
+    # try:
+    #     client = ntplib.NTPClient()
+    #     resp = client.request(NTP_SERVER, version=3)
+    #     start_time = time.time()
+    #
+    #     cur_ntp_time = settings.local.ntp_time
+    #     settings.local.ntp_time = (start_time, resp.tx_time)
+    #
+    #     if cur_ntp_time:
+    #         time_diff = abs(_now(cur_ntp_time) - time_now())
+    #
+    #         if time_diff > 0.5:
+    #             from pritunl import logger
+    #             logger.error(
+    #                'Unexpected time deviation from time sync', 'utils',
+    #                 ntp_server=NTP_SERVER,
+    #                 deviation=time_diff,
+    #             )
+    # except:
+    #     from pritunl import logger
+    #     logger.exception('Failed to sync time', 'utils',
+    #         ntp_server=NTP_SERVER,
+    #     )
+    #     raise
 
 def rand_sleep():
     time.sleep(random.randint(0, 25) / 1000.)
