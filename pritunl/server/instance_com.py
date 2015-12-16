@@ -316,6 +316,10 @@ class ServerInstanceCom(object):
         thread.daemon = True
         thread.start()
 
+        thread = threading.Thread(target=self.clients.call_queue_thread)
+        thread.daemon = True
+        thread.start()
+
         if settings.vpn.stress_test:
             thread = threading.Thread(target=self._stress_thread)
             thread.daemon = True
