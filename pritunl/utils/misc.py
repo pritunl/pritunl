@@ -74,6 +74,7 @@ def sync_time():
                 from pritunl import logger
                 logger.error(
                    'Unexpected time deviation from time sync', 'utils',
+                    ntp_server=NTP_SERVER,
                     deviation=time_diff,
                 )
     except:
