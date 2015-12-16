@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve server stability
+
 Version 1.12.825.71 2015-12-16
 ------------------------------
 
