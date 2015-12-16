@@ -68,7 +68,9 @@ def sync_time():
     except:
         from pritunl import logger
 
-        logger.exception('Failed to sync time')
+        logger.exception('Failed to sync time', 'utils',
+            ntp_server=settings.app.ntp_server,
+        )
         raise
 
 def rand_sleep():
