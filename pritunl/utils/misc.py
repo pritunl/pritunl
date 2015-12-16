@@ -70,7 +70,7 @@ def sync_time():
         if cur_ntp_time:
             time_diff = abs(_now(cur_ntp_time) - time_now())
 
-            if time_diff > 1:
+            if time_diff > 0.5:
                 from pritunl import logger
                 logger.error(
                    'Unexpected time deviation from time sync', 'utils',
