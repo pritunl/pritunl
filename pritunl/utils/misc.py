@@ -67,7 +67,6 @@ def sync_time():
         settings.local.ntp_time = (start_time, response.tx_time)
     except:
         from pritunl import logger
-
         logger.exception('Failed to sync time', 'utils',
             ntp_server=settings.app.ntp_server,
         )
