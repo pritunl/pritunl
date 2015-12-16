@@ -290,7 +290,6 @@ class ServerInstanceCom(object):
                     }
 
                     self.clients.connect(client)
-                    self.clients.connected(client['client_id'])
         except:
             logger.exception('Error in stress thread', 'server',
                 server_id=self.server.id,
