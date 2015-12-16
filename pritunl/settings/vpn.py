@@ -17,6 +17,7 @@ class SettingsVpn(SettingsGroupMongo):
         'bandwidth_update_rate': 15,
         'nat_routes': True,
         'ipv6_prefix': 'fd00',
+        'stress_test': False,
         'safe_priv_subnets': [
             '10.0.0.0/8',
             '100.64.0.0/10',
