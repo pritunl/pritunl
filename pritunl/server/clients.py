@@ -673,8 +673,7 @@ class Clients(object):
                     try:
                         client_id = self.clients_queue.popleft()
                     except IndexError:
-                        if self.interrupter_sleep(
-                                settings.vpn.client_ttl - 60):
+                        if self.interrupter_sleep(10):
                             return
                         continue
 
@@ -688,7 +687,7 @@ class Clients(object):
                     if diff > settings.vpn.client_ttl:
                         logger.error('Client ping time diff out of range',
                             'server',
-                            time_diff=diff.seconds,
+                            time_diff=diff,
                             server_id=self.server.id,
                             instance_id=self.instance.id,
                         )
