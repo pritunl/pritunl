@@ -9,7 +9,6 @@ class SettingsApp(SettingsGroupMongo):
         'settings_check_interval': 600,
         'key_link_timeout': 86400,
         'password_len_limit': 128,
-        'ntp_server': 'ntp.ubuntu.com',
         'public_ip_server': 'https://app.pritunl.com/ip',
         'public_ip6_server': 'https://app6.pritunl.com/ip',
         'notification_server': 'https://app.pritunl.com/notification',
