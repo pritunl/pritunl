@@ -416,8 +416,8 @@ class Clients(object):
         def auth_thread():
             try:
                 if settings.vpn.stress_test:
-                    self.connected(client_id)
                     self.allow_client(client, org, user, reauth)
+                    self.connected(client_id)
                     return
 
                 if not user.auth_check():
