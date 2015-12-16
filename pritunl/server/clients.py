@@ -10,6 +10,7 @@ from pritunl import settings
 from pritunl import event
 from pritunl import docdb
 from pritunl import callqueue
+from pritunl import objcache
 
 import collections
 import bson
@@ -29,6 +30,7 @@ class Clients(object):
         self.iroutes_lock = threading.RLock()
         self.iroutes_index = collections.defaultdict(set)
         self.call_queue = callqueue.CallQueue(maxsize=1024)
+        self.obj_cache = objcache.ObjCache()
 
         self.clients = docdb.DocDb(
             'user_id',
@@ -426,7 +428,12 @@ class Clients(object):
                     'Too many connect requests')
                 return
 
-            org = self.server.get_org(org_id, fields=['_id', 'name'])
+            org = self.obj_cache.get(org_id)
+            if not org:
+                org = self.server.get_org(org_id, fields=['_id', 'name'])
+                if org:
+                    self.obj_cache.set(org_id, org)
+
             if not org:
                 self.instance_com.send_client_deny(client_id, key_id,
                     'Organization is not valid')
