@@ -20,7 +20,6 @@ class Limiter(object):
         limit_timeout = getattr(settings_group, self.limit_timeout_name)
 
         cur_time = _get_time()
-        peer = peer[0]
         expire, count = self.peers_expire_count.get(peer, (None, None))
         if expire and cur_time <= expire:
             if count > limit:
