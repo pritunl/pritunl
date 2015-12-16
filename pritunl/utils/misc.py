@@ -64,7 +64,18 @@ def sync_time():
         resp = client.request(NTP_SERVER, version=3)
         start_time = time.time()
 
+        cur_ntp_time = settings.local.ntp_time
         settings.local.ntp_time = (start_time, resp.tx_time)
+
+        if cur_ntp_time:
+            time_diff = abs(_now(cur_ntp_time) - time_now())
+
+            if time_diff > 1:
+                from pritunl import logger
+                logger.error(
+                   'Unexpected time deviation from time sync', 'utils',
+                    deviation=time_diff,
+                )
     except:
         from pritunl import logger
         logger.exception('Failed to sync time', 'utils',
