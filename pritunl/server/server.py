@@ -324,6 +324,9 @@ class Server(mongo.MongoObject):
 
     @cached_property
     def users_online(self):
+        if self.status != ONLINE:
+            return 0
+
         return len(self.clients_collection.distinct("user_id", {
             'server_id': self.id,
             'type': CERT_CLIENT,
@@ -331,6 +334,9 @@ class Server(mongo.MongoObject):
 
     @cached_property
     def devices_online(self):
+        if self.status != ONLINE:
+            return 0
+
         return self.clients_collection.find({
             'server_id': self.id,
             'type': CERT_CLIENT,
