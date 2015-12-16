@@ -61,14 +61,14 @@ def time_now():
 def sync_time():
     try:
         client = ntplib.NTPClient()
-        resp = client.request(settings.app.ntp_server, version=3)
+        resp = client.request(NTP_SERVER, version=3)
         start_time = time.time()
 
         settings.local.ntp_time = (start_time, resp.tx_time)
     except:
         from pritunl import logger
         logger.exception('Failed to sync time', 'utils',
-            ntp_server=settings.app.ntp_server,
+            ntp_server=NTP_SERVER,
         )
         raise
 
