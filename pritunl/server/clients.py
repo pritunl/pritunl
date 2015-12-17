@@ -761,13 +761,5 @@ class Clients(object):
                     server_id=self.server.id,
                 )
 
-    def call_queue_thread(self):
-        while True:
-            try:
-                self.call_queue.call(timeout=0.5)
-            except:
-                logger.exception('Error in queued called', 'server',
-                    server_id=self.server.id,
-                )
-            if self.instance.sock_interrupt:
-                return
+    def start(self):
+        self.call_queue.start(10)
