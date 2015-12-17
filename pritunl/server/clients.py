@@ -29,7 +29,8 @@ class Clients(object):
         self.iroutes_thread = {}
         self.iroutes_lock = threading.RLock()
         self.iroutes_index = collections.defaultdict(set)
-        self.call_queue = callqueue.CallQueue(maxsize=1024)
+        self.call_queue = callqueue.CallQueue(
+            self.instance.is_sock_interrupt, 1024)
         self.obj_cache = objcache.ObjCache()
 
         self.clients = docdb.DocDb(
