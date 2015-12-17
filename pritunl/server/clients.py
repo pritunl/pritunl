@@ -420,7 +420,7 @@ class Clients(object):
 
         if settings.vpn.stress_test:
             self.allow_client(client, org, user, reauth)
-            self.connected(client_id)
+            self._connected(client_id)
             return
 
         if not user.auth_check():
@@ -525,7 +525,7 @@ class Clients(object):
     def connect(self, client, reauth=False):
         self.call_queue.put(self._connect, client, reauth)
 
-    def connected(self, client_id):
+    def _connected(self, client_id):
         client = self.clients.find_id(client_id)
         if not client:
             self.instance_com.push_output(
@@ -581,7 +581,10 @@ class Clients(object):
             'User connected user_id=%s' % client['user_id'])
         self.send_event()
 
-    def disconnected(self, client_id):
+    def connected(self, client_id):
+        self.call_queue.put(self._connected, client_id)
+
+    def _disconnected(self, client_id):
         client = self.clients.find_id(client_id)
         if not client:
             return
@@ -613,6 +616,9 @@ class Clients(object):
         self.instance_com.push_output(
             'User disconnected user_id=%s' % client['user_id'])
         self.send_event()
+
+    def disconnected(self, client_id):
+        self.call_queue.put(self._disconnected, client_id)
 
     def disconnect_user(self, user_id):
         for client in self.clients.find({'user_id': user_id}):
