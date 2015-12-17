@@ -1,3 +1,5 @@
+from pritunl import logger
+
 import Queue
 
 class CallQueue(object):
@@ -13,3 +15,5 @@ class CallQueue(object):
             func(*args, **kwargs)
         except Queue.Empty:
             pass
+        except:
+            logger.exception('Error in queued called', 'callqueue')
