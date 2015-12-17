@@ -354,58 +354,63 @@ class Clients(object):
         if device_name:
             info['Device'] = '%s (%s)' % (device_name, platform_name)
 
-        allow = False
-        try:
-            if type == DUO_AUTH:
-                allow, _ = sso.auth_duo(
-                    user.name,
-                    ipaddr=remote_ip,
-                    type='Connection',
-                    info=info,
+        def auth_thread():
+            allow = False
+            try:
+                if type == DUO_AUTH:
+                    allow, _ = sso.auth_duo(
+                        user.name,
+                        ipaddr=remote_ip,
+                        type='Connection',
+                        info=info,
+                    )
+                elif type == SAML_OKTA_AUTH:
+                    allow = sso.auth_okta(
+                        user.name,
+                        ipaddr=remote_ip,
+                        type='Connection',
+                        info=info,
+                    )
+                else:
+                    raise ValueError('Unkown push auth type')
+            except:
+                logger.exception('Push auth server error', 'server',
+                    client_id=client_id,
+                    user_id=user.id,
+                    username=user.name,
+                    server_id=self.server.id,
                 )
-            elif type == SAML_OKTA_AUTH:
-                allow = sso.auth_okta(
-                    user.name,
-                    ipaddr=remote_ip,
-                    type='Connection',
-                    info=info,
+                self.instance_com.push_output(
+                    'ERROR Push auth server error client_id=%s' % client_id)
+            try:
+                if allow:
+                    self.allow_client(client, org, user, reauth)
+                else:
+                    logger.LogEntry(message='User failed push ' +
+                        'authentication "%s".' % user.name)
+                    user.audit_event('user_connection',
+                        ('User connection to "%s" denied. ' +
+                         'Push authentication failed') % (
+                            self.server.name),
+                        remote_addr=remote_ip,
+                    )
+                    self.instance_com.send_client_deny(
+                        client_id,
+                        key_id,
+                        'User failed push authentication',
+                    )
+            except:
+                logger.exception('Push auth error', 'server',
+                    client_id=client_id,
+                    user_id=user.id,
+                    server_id=self.server.id,
                 )
-            else:
-                raise ValueError('Unkown push auth type')
-        except:
-            logger.exception('Push auth server error', 'server',
-                client_id=client_id,
-                user_id=user.id,
-                username=user.name,
-                server_id=self.server.id,
-            )
-            self.instance_com.push_output(
-                'ERROR Push auth server error client_id=%s' % client_id)
-        try:
-            if allow:
-                self.allow_client(client, org, user, reauth)
-            else:
-                logger.LogEntry(message='User failed push ' +
-                    'authentication "%s".' % user.name)
-                user.audit_event('user_connection',
-                    ('User connection to "%s" denied. ' +
-                     'Push authentication failed') % (
-                        self.server.name),
-                    remote_addr=remote_ip,
-                )
-                self.instance_com.send_client_deny(
-                    client_id,
-                    key_id,
-                    'User failed push authentication',
-                )
-        except:
-            logger.exception('Push auth error', 'server',
-                client_id=client_id,
-                user_id=user.id,
-                server_id=self.server.id,
-            )
-            self.instance_com.push_output(
-                'ERROR Push auth error client_id=%s' % client_id)
+                self.instance_com.push_output(
+                    'ERROR Push auth error client_id=%s' % client_id)
+
+        thread = threading.Thread(target=auth_thread)
+        thread.daemon = True
+        thread.start()
 
     def auth_check(self, client, org, user, reauth):
         client_id = client['client_id']
@@ -413,63 +418,58 @@ class Clients(object):
         remote_ip = client.get('remote_ip')
         otp_code = client.get('otp_code')
 
-        def auth_thread():
-            try:
-                if settings.vpn.stress_test:
-                    self.allow_client(client, org, user, reauth)
-                    self.connected(client_id)
-                    return
-
-                if not user.auth_check():
-                    logger.LogEntry(message='User failed authentication, ' +
-                        'sso provider denied "%s".' % (user.name))
-                    user.audit_event('user_connection',
-                        ('User connection to "%s" denied. ' +
-                         'Secondary authentication failed') % (
-                            self.server.name),
-                        remote_addr=remote_ip,
-                        )
-                    self.instance_com.send_client_deny(client_id, key_id,
-                        'User failed authentication')
-                    return
-
-                if self.server.otp_auth and user.type == CERT_CLIENT and \
-                        not user.verify_otp_code(otp_code, remote_ip):
-                    logger.LogEntry(message='User failed two-step ' +
-                        'authentication "%s".' % user.name)
-                    user.audit_event('user_connection',
-                        ('User connection to "%s" denied. ' +
-                         'User failed two-step authentication') % (
-                            self.server.name),
-                        remote_addr=remote_ip,
-                        )
-                    self.instance_com.send_client_deny(client_id, key_id,
-                        'Invalid OTP code')
-                    return
-
-                if settings.app.sso and DUO_AUTH in user.auth_type and \
-                        DUO_AUTH in settings.app.sso:
-                    self.auth_push(DUO_AUTH, client, org, user, reauth)
-                    return
-                elif settings.app.sso and \
-                        SAML_OKTA_AUTH in user.auth_type and \
-                        SAML_OKTA_AUTH in settings.app.sso:
-                    self.auth_push(SAML_OKTA_AUTH, client, org, user, reauth)
-                    return
-
+        try:
+            if settings.vpn.stress_test:
                 self.allow_client(client, org, user, reauth)
-            except:
-                logger.exception('Auth check error', 'server',
-                    client_id=client_id,
-                    user_id=user.id,
-                    server_id=self.server.id,
-                )
+                self.connected(client_id)
+                return
 
-        thread = threading.Thread(target=auth_thread)
-        thread.daemon = True
-        thread.start()
+            if not user.auth_check():
+                logger.LogEntry(message='User failed authentication, ' +
+                    'sso provider denied "%s".' % (user.name))
+                user.audit_event('user_connection',
+                    ('User connection to "%s" denied. ' +
+                     'Secondary authentication failed') % (
+                        self.server.name),
+                    remote_addr=remote_ip,
+                    )
+                self.instance_com.send_client_deny(client_id, key_id,
+                    'User failed authentication')
+                return
 
-    def connect(self, client, reauth=False):
+            if self.server.otp_auth and user.type == CERT_CLIENT and \
+                    not user.verify_otp_code(otp_code, remote_ip):
+                logger.LogEntry(message='User failed two-step ' +
+                    'authentication "%s".' % user.name)
+                user.audit_event('user_connection',
+                    ('User connection to "%s" denied. ' +
+                     'User failed two-step authentication') % (
+                        self.server.name),
+                    remote_addr=remote_ip,
+                    )
+                self.instance_com.send_client_deny(client_id, key_id,
+                    'Invalid OTP code')
+                return
+
+            if settings.app.sso and DUO_AUTH in user.auth_type and \
+                    DUO_AUTH in settings.app.sso:
+                self.auth_push(DUO_AUTH, client, org, user, reauth)
+                return
+            elif settings.app.sso and \
+                    SAML_OKTA_AUTH in user.auth_type and \
+                    SAML_OKTA_AUTH in settings.app.sso:
+                self.auth_push(SAML_OKTA_AUTH, client, org, user, reauth)
+                return
+
+            self.allow_client(client, org, user, reauth)
+        except:
+            logger.exception('Auth check error', 'server',
+                client_id=client_id,
+                user_id=user.id,
+                server_id=self.server.id,
+            )
+
+    def _connect(self, client, reauth):
         client_id = None
         key_id = None
         try:
@@ -528,6 +528,9 @@ class Clients(object):
             if client_id and key_id:
                 self.instance_com.send_client_deny(client_id, key_id,
                     'Error parsing client connect')
+
+    def connect(self, client, reauth=False):
+        self.call_queue.put(self._connect, client, reauth)
 
     def connected(self, client_id):
         client = self.clients.find_id(client_id)
