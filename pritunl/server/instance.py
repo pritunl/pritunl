@@ -59,6 +59,9 @@ class ServerInstance(object):
     def get_cursor_id(self):
         return messenger.get_cursor_id('servers')
 
+    def is_sock_interrupt(self):
+        return self.sock_interrupt
+
     def publish(self, message, transaction=None, extra=None):
         extra = extra or {}
         extra.update({
