@@ -247,8 +247,7 @@ class Clients(object):
             virt_address = doc['virt_address']
             virt_address6 = doc['virt_address6']
         else:
-            self.call_queue.put(
-                user.audit_event,
+            user.audit_event(
                 'user_connection',
                 'User connected to "%s"' % self.server.name,
                 remote_addr=remote_ip,
@@ -581,9 +580,9 @@ class Clients(object):
 
         self.clients_queue.append(client_id)
 
-        self.call_queue.put(self.instance_com.push_output,
+        self.instance_com.push_output(
             'User connected user_id=%s' % client['user_id'])
-        self.call_queue.put(self.send_event)
+        self.send_event()
 
     def disconnected(self, client_id):
         client = self.clients.find_id(client_id)
@@ -614,9 +613,9 @@ class Clients(object):
                     server_id=self.server.id,
                 )
 
-        self.call_queue.put(self.instance_com.push_output,
+        self.instance_com.push_output(
             'User disconnected user_id=%s' % client['user_id'])
-        self.call_queue.put(self.send_event)
+        self.send_event()
 
     def disconnect_user(self, user_id):
         for client in self.clients.find({'user_id': user_id}):
