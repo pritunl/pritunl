@@ -672,6 +672,9 @@ auth %s
 status-version 2
 script-security 2
 reneg-sec 2592000
+hash-size 1024 1024
+replay-window 128
+max-routes-per-client 512
 verb %s
 mute %s
 """
