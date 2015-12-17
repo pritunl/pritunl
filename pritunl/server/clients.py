@@ -418,56 +418,49 @@ class Clients(object):
         remote_ip = client.get('remote_ip')
         otp_code = client.get('otp_code')
 
-        try:
-            if settings.vpn.stress_test:
-                self.allow_client(client, org, user, reauth)
-                self.connected(client_id)
-                return
-
-            if not user.auth_check():
-                logger.LogEntry(message='User failed authentication, ' +
-                    'sso provider denied "%s".' % (user.name))
-                user.audit_event('user_connection',
-                    ('User connection to "%s" denied. ' +
-                     'Secondary authentication failed') % (
-                        self.server.name),
-                    remote_addr=remote_ip,
-                    )
-                self.instance_com.send_client_deny(client_id, key_id,
-                    'User failed authentication')
-                return
-
-            if self.server.otp_auth and user.type == CERT_CLIENT and \
-                    not user.verify_otp_code(otp_code, remote_ip):
-                logger.LogEntry(message='User failed two-step ' +
-                    'authentication "%s".' % user.name)
-                user.audit_event('user_connection',
-                    ('User connection to "%s" denied. ' +
-                     'User failed two-step authentication') % (
-                        self.server.name),
-                    remote_addr=remote_ip,
-                    )
-                self.instance_com.send_client_deny(client_id, key_id,
-                    'Invalid OTP code')
-                return
-
-            if settings.app.sso and DUO_AUTH in user.auth_type and \
-                    DUO_AUTH in settings.app.sso:
-                self.auth_push(DUO_AUTH, client, org, user, reauth)
-                return
-            elif settings.app.sso and \
-                    SAML_OKTA_AUTH in user.auth_type and \
-                    SAML_OKTA_AUTH in settings.app.sso:
-                self.auth_push(SAML_OKTA_AUTH, client, org, user, reauth)
-                return
-
+        if settings.vpn.stress_test:
             self.allow_client(client, org, user, reauth)
-        except:
-            logger.exception('Auth check error', 'server',
-                client_id=client_id,
-                user_id=user.id,
-                server_id=self.server.id,
-            )
+            self.connected(client_id)
+            return
+
+        if not user.auth_check():
+            logger.LogEntry(message='User failed authentication, ' +
+                'sso provider denied "%s".' % (user.name))
+            user.audit_event('user_connection',
+                ('User connection to "%s" denied. ' +
+                 'Secondary authentication failed') % (
+                    self.server.name),
+                remote_addr=remote_ip,
+                )
+            self.instance_com.send_client_deny(client_id, key_id,
+                'User failed authentication')
+            return
+
+        if self.server.otp_auth and user.type == CERT_CLIENT and \
+                not user.verify_otp_code(otp_code, remote_ip):
+            logger.LogEntry(message='User failed two-step ' +
+                'authentication "%s".' % user.name)
+            user.audit_event('user_connection',
+                ('User connection to "%s" denied. ' +
+                 'User failed two-step authentication') % (
+                    self.server.name),
+                remote_addr=remote_ip,
+                )
+            self.instance_com.send_client_deny(client_id, key_id,
+                'Invalid OTP code')
+            return
+
+        if settings.app.sso and DUO_AUTH in user.auth_type and \
+                DUO_AUTH in settings.app.sso:
+            self.auth_push(DUO_AUTH, client, org, user, reauth)
+            return
+        elif settings.app.sso and \
+                SAML_OKTA_AUTH in user.auth_type and \
+                SAML_OKTA_AUTH in settings.app.sso:
+            self.auth_push(SAML_OKTA_AUTH, client, org, user, reauth)
+            return
+
+        self.allow_client(client, org, user, reauth)
 
     def _connect(self, client, reauth):
         client_id = None
