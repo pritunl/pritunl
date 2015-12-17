@@ -142,7 +142,7 @@ class Server(mongo.MongoObject):
         'hosts': [],
         'links': [],
         'status': OFFLINE,
-        'max_clients': 2048,
+        'max_clients': 1024,
         'replica_count': 1,
         'instances': [],
         'instances_count': 0,
