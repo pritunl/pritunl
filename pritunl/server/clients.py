@@ -587,7 +587,12 @@ class Clients(object):
     def connected(self, client_id):
         self.call_queue.put(self._connected, client_id)
 
-    def _disconnected(self, client_id):
+    def _disconnected(self, client):
+        self.instance_com.push_output(
+            'User disconnected user_id=%s' % client['user_id'])
+        self.send_event()
+
+    def disconnected(self, client_id):
         client = self.clients.find_id(client_id)
         if not client:
             return
@@ -616,12 +621,7 @@ class Clients(object):
                     server_id=self.server.id,
                 )
 
-        self.instance_com.push_output(
-            'User disconnected user_id=%s' % client['user_id'])
-        self.send_event()
-
-    def disconnected(self, client_id):
-        self.call_queue.put(self._disconnected, client_id)
+        self.call_queue.put(self._disconnected, client)
 
     def disconnect_user(self, user_id):
         for client in self.clients.find({'user_id': user_id}):
