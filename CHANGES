@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix key import on iOS
+
 Version 1.12.827.72 2015-12-18
 ------------------------------
 
