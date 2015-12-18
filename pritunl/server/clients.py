@@ -257,6 +257,7 @@ class Clients(object):
             virt_address = self.server.get_ip_addr(org_id, user_id)
             if not self.server.multi_device:
                 for clnt in self.clients.find({'user_id': user_id}):
+                    time.sleep(3)
                     self.instance_com.client_kill(clnt['id'])
             elif virt_address:
                 if mac_addr:
