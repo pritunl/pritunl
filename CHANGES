@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with tcp servers not starting
+
 Version 1.12.827.16 2015-12-18
 ------------------------------
 
