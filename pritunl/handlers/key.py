@@ -245,7 +245,6 @@ def user_uri_key_page_get(short_code):
     doc = _find_doc({
         'short_id': short_code,
     }, one_time=True)
-
     if not doc:
         return flask.abort(404)
 
