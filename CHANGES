@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve client connections
+
 Version 1.12.826.5 2015-12-17
 -----------------------------
 
