@@ -259,6 +259,7 @@ class Clients(object):
                 for clnt in self.clients.find({'user_id': user_id}):
                     time.sleep(3)
                     self.instance_com.client_kill(clnt['id'])
+
             elif virt_address:
                 if mac_addr:
                     for clnt in self.clients.find({
