@@ -281,7 +281,7 @@ def user_linked_key_conf_get(key_id, server_id):
     )
 
     response = flask.Response(response=key_conf['conf'],
-        mimetype='application/octet-stream')
+        mimetype='application/ovpn')
     response.headers.add('Content-Disposition',
         'attachment; filename="%s"' % key_conf['name'])
 
