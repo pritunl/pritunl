@@ -671,7 +671,7 @@ persist-tun
 auth %s
 status-version 2
 script-security 2
-reneg-sec 2592000
+reneg-sec 3600
 hash-size 1024 1024
 replay-window 128
 max-routes-per-client 512
