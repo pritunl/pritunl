@@ -91,8 +91,6 @@ class Clients(object):
                 client_conf += 'push "dhcp-option DOMAIN %s"\n' % (
                     self.server.search_domain)
 
-            client_conf += 'push "ip-win32 dynamic 0 3600"\n'
-
             network_links = user.get_network_links()
             for network_link in network_links:
                 if self.reserve_iroute(client_id, network_link, True):
