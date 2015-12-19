@@ -25,7 +25,7 @@ This test will create real user connections using a docker container for each cl
 
 First edit the `get_test_names.py` and set the `COUNT` to the number of users you want to test. Then run the script and copy the list of user names into the Bulk Add Users for a new organization in the web console.
 
-Create a test server with a network address of `10.167.0.0/16` and set the server mode to `VPN Traffic Only`. Once created attach the organization to the server and start the server. It is import that the public address for the host is set to an address that docker containers will be able to access.
+Create a test server with a network address of `10.167.0.0/16` and set the server mode to `VPN Traffic Only`. Once created attach the organization to the server and start the server. It is import that the public address for the server host is set to an address that docker containers will be able to access.
 
 Then in the users page hold shift and click the green "Organization" label this will show the organization ID to the right. Open the `download_all_users.py` file and copy the organization ID to the `ORG_ID` constant. The set the `BASE_URL`, `API_TOKEN` and `API_SECRET` constants. The api key can be found in the settings. Then run the script. This will download all the user profiles to the `test_client/confs` directory for use by the docker container.
 
