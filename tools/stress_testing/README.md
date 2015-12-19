@@ -1,7 +1,7 @@
 # stress testing pritunl
 
 This documentation describes stress testing Pritunl. Python 2.7,
-python-requests, go and docker.
+python-requests, go and docker are required.
 
 ### Emulate user connections
 
