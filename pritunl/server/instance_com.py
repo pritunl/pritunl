@@ -231,7 +231,7 @@ class ServerInstanceCom(object):
             data = ''
             while True:
                 data += self.sock.recv(SOCKET_BUFFER)
-                if not data:
+                if not data or self.instance.sock_interrupt:
                     if not self.instance.sock_interrupt and \
                             not check_global_interrupt():
                         self.instance.stop_process()
