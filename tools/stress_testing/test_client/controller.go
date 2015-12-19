@@ -10,6 +10,7 @@ import (
 	"strings"
 	"flag"
 	"net/http"
+	"time"
 )
 
 const count = 128
@@ -46,6 +47,8 @@ func Setup() {
 		cid = strings.TrimSpace(cid)
 		fmt.Println(cid)
 		cids = append(cids, cid)
+
+		time.Sleep(250 * time.Millisecond)
 	}
 
 	fmt.Println("\n")
