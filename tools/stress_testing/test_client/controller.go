@@ -30,6 +30,22 @@ func ExecOutput(name string, args ...string) (output string, err error) {
 func Setup() {
 	cids := []string{}
 
+	defer func() {
+		waiter := sync.WaitGroup{}
+		waiter.Add(len(cids))
+		for _, cid := range cids {
+			go func(cid string) {
+				ExecOutput("docker", "kill", cid)
+				ExecOutput("docker", "rm", cid)
+				println(cid)
+				waiter.Done()
+			}(cid)
+
+			time.Sleep(250 * time.Millisecond)
+		}
+		waiter.Wait()
+	}()
+
 	for i := 1; i <= count; i++ {
 		cid, err := ExecOutput(
 			"docker",
@@ -57,18 +73,6 @@ func Setup() {
 	signal.Notify(signals, os.Interrupt)
 	signal.Notify(signals, syscall.SIGTERM)
 	<-signals
-
-	waiter := sync.WaitGroup{}
-	waiter.Add(len(cids))
-	for _, cid := range cids {
-		go func(cid string) {
-			ExecOutput("docker", "stop", cid)
-			ExecOutput("docker", "rm", cid)
-			println(cid)
-			waiter.Done()
-		}(cid)
-	}
-	waiter.Wait()
 }
 
 func Start() {
