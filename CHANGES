@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Stability improvements
+
 Version 1.12.827.85 2015-12-18
 ------------------------------
 
