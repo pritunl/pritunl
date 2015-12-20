@@ -74,9 +74,22 @@ def _keep_alive_thread():
 
             ping_timestamp = utils.now()
 
+            cpu_usage = None
+            mem_usage = None
+            try:
+                cpu_usage, mem_usage = utils.get_process_cpu_mem()
+            except:
+                logger.exception('Failed to get process cpu and mem usage',
+                    'runners',
+                    host_id=settings.local.host.id,
+                    host_name=settings.local.host.name,
+                )
+
             settings.local.host.collection.update({
                 '_id': settings.local.host.id,
             }, {'$set': {
+                'cpu_usage': cpu_usage,
+                'mem_usage': mem_usage,
                 'status': ONLINE,
                 'ping_timestamp': utils.now(),
                 'auto_public_address': settings.local.public_ip,
