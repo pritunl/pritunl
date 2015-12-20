@@ -17,7 +17,7 @@ def _host_check_thread():
     while True:
         try:
             ttl_timestamp = {'$lt': utils.now() -
-                datetime.timedelta(seconds=settings.app.host_ttl)}
+                datetime.timedelta(seconds=settings.app.host_ping_ttl)}
 
             cursor = collection.find({
                 'ping_timestamp': ttl_timestamp,
@@ -41,7 +41,7 @@ def _host_check_thread():
         except:
             logger.exception('Error checking host status', 'runners')
 
-        yield interrupter_sleep(settings.app.host_ttl)
+        yield interrupter_sleep(settings.app.host_ping_ttl)
 
 @interrupter
 def _keep_alive_thread():
@@ -70,7 +70,7 @@ def _keep_alive_thread():
                     settings.local.host.usage.add_period(timestamp,
                         cpu_usage, mem_usage)
 
-            yield interrupter_sleep(settings.app.host_ttl - 10)
+            yield interrupter_sleep(settings.app.host_ping)
 
             ping_timestamp = utils.now()
 
