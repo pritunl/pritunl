@@ -413,3 +413,17 @@ def ping(address, timeout=1):
     if code != 0:
         return None
     return runtime
+
+def get_process_cpu_mem():
+    output = subprocess.check_output([
+        'ps', '-p', str(os.getpid()), '-o', '%cpu,%mem'])
+
+    output = output.split('\n')
+    if len(output) < 2:
+        raise ValueError('Invalid output')
+
+    output = output[1].strip().split()
+    if len(output) != 2:
+        raise ValueError('Invalid output')
+
+    return float(output[0]), float(output[1])
