@@ -167,6 +167,8 @@ class DocDb(object):
     def count(self, query, slow=False):
         self._lock.acquire()
         try:
+            if not query:
+                return len(self._docs)
             doc_ids = self._find(query, slow, True)
         finally:
             self._lock.release()
