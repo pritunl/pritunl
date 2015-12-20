@@ -91,6 +91,7 @@ def _keep_alive_thread():
                 'client_count': host.global_clients.count({}),
                 'cpu_usage': cpu_usage,
                 'mem_usage': mem_usage,
+                'thread_count': threading.active_count(),
                 'status': ONLINE,
                 'ping_timestamp': utils.now(),
                 'auto_public_address': settings.local.public_ip,
