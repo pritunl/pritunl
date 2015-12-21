@@ -762,8 +762,9 @@ class ServerInstance(object):
             if not self.clean_exit:
                 event.Event(type=SERVERS_UPDATED)
                 self.server.send_link_events()
-                logger.LogEntry(message='Server stopped unexpectedly "%s".' % (
-                    self.server.name))
+                logger.LogEntry(
+                    message='Server stopped unexpectedly "%s".' % (
+                        self.server.name))
         except:
             self.interrupt = True
             self.stop_process()
