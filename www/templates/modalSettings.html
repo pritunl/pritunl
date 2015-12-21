@@ -10,9 +10,16 @@
     </div>
     <div class="auditing form-group">
       <label>Auditing Mode</label>
-      <select class="form-control" data-toggle="tooltip" title="Auditing mode">
+      <select class="form-control" data-toggle="tooltip" title="Auditing mode" data-toggle="tooltip" title="Log administrator and user actions">
         <option value="none" <%= !auditing ? 'selected' : '' %>>Disabled</option>
         <option value="all" <%= auditing === 'all' ? 'selected' : '' %>>All</option>
+      </select>
+    </div>
+    <div class="monitoring form-group">
+      <label>Monitoring Mode</label>
+      <select class="form-control" data-toggle="tooltip" title="Auditing mode">
+        <option value="none" <%= !monitoring ? 'selected' : '' %>>Disabled</option>
+        <option value="prometheus" <%= monitoring === 'prometheus' ? 'selected' : '' %>>Prometheus</option>
       </select>
     </div>
     <div class="public-address form-group">
