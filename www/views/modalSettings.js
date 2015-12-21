@@ -249,6 +249,7 @@ define([
       var password = this.$('.pass input').val();
       var verifyPassword = this.$('.verify-pass input').val();
       var auditing = this.$('.auditing select').val();
+      var monitoring = this.$('.monitoring select').val();
       var publicAddress = this.$('.public-address input').val();
       var publicAddress6 = this.$('.public-address6 input').val();
       var routedSubnet6 = this.$('.routed-subnet6 input').val();
@@ -281,6 +282,10 @@ define([
 
       if (auditing !== 'all') {
         auditing = null;
+      }
+
+      if (monitoring === 'none') {
+        monitoring = null;
       }
 
       if (sso) {
@@ -322,6 +327,7 @@ define([
       var modelAttr = {
         username: username,
         auditing: auditing,
+        monitoring: monitoring,
         email_from: emailFrom,
         email_server: emailServer,
         email_username: emailUsername,
