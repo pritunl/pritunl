@@ -11,6 +11,7 @@ from pritunl import event
 from pritunl import docdb
 from pritunl import callqueue
 from pritunl import objcache
+from pritunl import host
 
 import collections
 import bson
@@ -316,6 +317,12 @@ class Clients(object):
                 'address_dynamic': address_dynamic,
             })
 
+            if user.type == CERT_CLIENT:
+                host.global_clients.insert({
+                    'instance_id': self.instance.id,
+                    'client_id': client_id,
+                })
+
         client_conf = self.generate_client_conf(platform, client_id,
             virt_address, user, reauth)
 
@@ -597,6 +604,10 @@ class Clients(object):
         if not client:
             return
         self.clients.remove_id(client_id)
+        host.global_clients.remove({
+            'instance_id': self.instance.id,
+            'client_id': client_id,
+        })
         self.remove_iroutes(client_id)
 
         virt_address = client['virt_address']
@@ -768,3 +779,8 @@ class Clients(object):
 
     def start(self):
         self.call_queue.start(10)
+
+    def stop(self):
+        host.global_clients.remove({
+            'instance_id': self.instance.id,
+        })
