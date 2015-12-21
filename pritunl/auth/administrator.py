@@ -264,6 +264,7 @@ def check_auth(username, password, remote_addr=None):
             remote_addr=remote_addr,
         )
         return
+
     if not administrator.test_password(password):
         audit_event(
             'admin_auth',
