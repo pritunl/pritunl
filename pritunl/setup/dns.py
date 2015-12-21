@@ -1,32 +1,45 @@
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import logger
-from pritunl import utils
 
 import os
 import threading
+import subprocess
 
 @interrupter
 def _dns_thread():
-    while not settings.local.sub_active or \
-            settings.local.sub_plan != 'enterprise':
-        time.sleep(1)
+    from pritunl import host
 
     while True:
         try:
-            utils.check_output_logged(
+            if not host.dns_mapping_servers:
+                time.sleep(3)
+                continue
+
+            process = subprocess.Popen(
                 ['pritunl-dns'],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
                 env=dict(os.environ, **{
                     'DB': settings.conf.mongodb_uri,
                     'DB_PREFIX': settings.conf.mongodb_collection_prefix or '',
                 }),
             )
+
+            while True:
+                if not host.dns_mapping_servers:
+                    process.terminate()
+                    time.sleep(3)
+                    process.kill()
+                    process = None
+                    break
+                time.sleep(3)
         except GeneratorExit:
             raise
         except:
-            logger.exception('Error in dns server', 'setup')
+            logger.exception('Error in monitoring service', 'setup')
 
-        time.sleep(60)
+        time.sleep(1)
         yield
 
 def setup_dns():
