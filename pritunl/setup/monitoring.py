@@ -11,7 +11,6 @@ def _monitoring_thread():
     while True:
         try:
             mode = settings.app.monitoring
-
             if not mode:
                 time.sleep(3)
                 continue
