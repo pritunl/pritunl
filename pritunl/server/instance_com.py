@@ -218,6 +218,8 @@ class ServerInstanceCom(object):
                 instance_id=self.instance.id,
             )
             self.instance.stop_process()
+        finally:
+            self.clients.stop()
 
     def _socket_thread(self):
         try:
