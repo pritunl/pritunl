@@ -88,6 +88,7 @@ def _keep_alive_thread():
             settings.local.host.collection.update({
                 '_id': settings.local.host.id,
             }, {'$set': {
+                'server_count': len(host.global_servers),
                 'device_count': host.global_clients.count({}),
                 'cpu_usage': cpu_usage,
                 'mem_usage': mem_usage,
