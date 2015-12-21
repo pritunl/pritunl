@@ -476,6 +476,12 @@ def auth_user_post():
             'error_msg': AUTH_INVALID_MSG,
         }, 401)
 
+    if not org.auth_secret or len(org.auth_secret) < 8:
+        return utils.jsonify({
+            'error': AUTH_INVALID,
+            'error_msg': AUTH_INVALID_MSG,
+        }, 401)
+
     auth_test_signature = base64.b64encode(hmac.new(
         org.auth_secret.encode(), auth_string,
         hashlib.sha256).digest())

@@ -69,6 +69,9 @@ class Administrator(mongo.MongoObject):
     def test_password(self, test_pass):
         hash_ver, pass_salt, pass_hash = self.password.split('$')
 
+        if not test_pass:
+            return False
+
         if hash_ver == '0':
             hash_func = hash_password_v0
         elif hash_ver == '1':
@@ -106,6 +109,9 @@ class Administrator(mongo.MongoObject):
             logger.info('Changing administrator password', 'auth',
                 username=self.username,
             )
+
+            if not self.password:
+                raise ValueError('Password is empty')
 
             salt = base64.b64encode(os.urandom(8))
             pass_hash = base64.b64encode(
@@ -177,6 +183,9 @@ def check_session():
             ([flask.request.data] if flask.request.data else []))
 
         if len(auth_string) > AUTH_SIG_STRING_MAX_LEN:
+            return False
+
+        if not administrator.secret or len(administrator.secret) < 8:
             return False
 
         auth_test_signature = base64.b64encode(hmac.new(
