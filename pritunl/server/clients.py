@@ -778,9 +778,11 @@ class Clients(object):
                 )
 
     def start(self):
+        host.global_servers.add(self.instance.id)
         self.call_queue.start(10)
 
     def stop(self):
+        host.global_servers.remove(self.instance.id)
         host.global_clients.remove({
             'instance_id': self.instance.id,
         })
