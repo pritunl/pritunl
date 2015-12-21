@@ -782,7 +782,10 @@ class Clients(object):
         self.call_queue.start(10)
 
     def stop(self):
-        host.global_servers.remove(self.instance.id)
+        try:
+            host.global_servers.remove(self.instance.id)
+        except KeyError:
+            pass
         host.global_clients.remove({
             'instance_id': self.instance.id,
         })
