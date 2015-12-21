@@ -13,7 +13,7 @@ def _dns_thread():
     while True:
         try:
             if not host.dns_mapping_servers:
-                time.sleep(3)
+                yield interrupter_sleep(3)
                 continue
 
             process = subprocess.Popen(
@@ -29,18 +29,17 @@ def _dns_thread():
             while True:
                 if not host.dns_mapping_servers:
                     process.terminate()
-                    time.sleep(3)
+                    yield interrupter_sleep(3)
                     process.kill()
                     process = None
                     break
-                time.sleep(3)
+                yield interrupter_sleep(3)
         except GeneratorExit:
             raise
         except:
             logger.exception('Error in monitoring service', 'setup')
 
-        time.sleep(1)
-        yield
+        yield interrupter_sleep(1)
 
 def setup_dns():
     threading.Thread(target=_dns_thread).start()

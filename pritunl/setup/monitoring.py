@@ -12,7 +12,7 @@ def _monitoring_thread():
         try:
             mode = settings.app.monitoring
             if not mode:
-                time.sleep(3)
+                yield interrupter_sleep(3)
                 continue
 
             process = subprocess.Popen(
@@ -32,18 +32,17 @@ def _monitoring_thread():
             while True:
                 if settings.app.monitoring != mode:
                     process.terminate()
-                    time.sleep(3)
+                    yield interrupter_sleep(3)
                     process.kill()
                     process = None
                     break
-                time.sleep(3)
+                yield interrupter_sleep(3)
         except GeneratorExit:
             raise
         except:
             logger.exception('Error in monitoring service', 'setup')
 
-        time.sleep(1)
-        yield
+        yield interrupter_sleep(1)
 
 def setup_monitoring():
     threading.Thread(target=_monitoring_thread).start()
