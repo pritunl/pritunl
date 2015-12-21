@@ -6,6 +6,8 @@ class SettingsApp(SettingsGroupMongo):
         'demo_mode': False,
         'allow_insecure_session': False,
         'auditing': None,
+        'monitoring': None,
+        'prometheus_port': 9780,
         'settings_check_interval': 600,
         'key_link_timeout': 86400,
         'password_len_limit': 128,
