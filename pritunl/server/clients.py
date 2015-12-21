@@ -779,11 +779,17 @@ class Clients(object):
 
     def start(self):
         host.global_servers.add(self.instance.id)
+        if self.server.dns_mapping:
+            host.dns_mapping_servers.add(self.instance.id)
         self.call_queue.start(10)
 
     def stop(self):
         try:
             host.global_servers.remove(self.instance.id)
+        except KeyError:
+            pass
+        try:
+            host.dns_mapping_servers.remove(self.instance.id)
         except KeyError:
             pass
         host.global_clients.remove({

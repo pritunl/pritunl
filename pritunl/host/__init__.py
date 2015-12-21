@@ -10,3 +10,4 @@ global_clients = docdb.DocDb(
 )
 
 global_servers = set()
+dns_mapping_servers = set()
