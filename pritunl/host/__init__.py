@@ -8,3 +8,5 @@ global_clients = docdb.DocDb(
     'instance_id',
     'client_id',
 )
+
+global_servers = set()
