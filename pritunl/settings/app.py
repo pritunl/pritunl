@@ -8,6 +8,7 @@ class SettingsApp(SettingsGroupMongo):
         'auditing': None,
         'monitoring': None,
         'prometheus_port': 9780,
+        'datadog_api_key': None,
         'settings_check_interval': 600,
         'key_link_timeout': 86400,
         'password_len_limit': 128,
