@@ -26,6 +26,7 @@ def settings_get():
         response.update({
             'theme': settings.app.theme,
             'auditing': settings.app.auditing,
+            'monitoring': settings.app.monitoring,
             'email_from': settings.app.email_from,
             'email_server': 'demo',
             'email_username': 'demo',
@@ -52,6 +53,7 @@ def settings_get():
         response.update({
             'theme': settings.app.theme,
             'auditing': settings.app.auditing,
+            'monitoring': settings.app.monitoring,
             'email_from': settings.app.email_from,
             'email_server': settings.app.email_server,
             'email_username': settings.app.email_username,
@@ -113,6 +115,11 @@ def settings_put():
             org_event = True
 
         settings.app.auditing = auditing
+
+    if 'monitoring' in flask.request.json:
+        settings_commit = True
+        monitoring = flask.request.json['monitoring'] or None
+        settings.app.monitoring = monitoring
 
     if 'email_from' in flask.request.json:
         settings_commit = True
@@ -343,6 +350,7 @@ def settings_put():
     response.update({
         'theme': settings.app.theme,
         'auditing': settings.app.auditing,
+        'monitoring': settings.app.monitoring,
         'email_from': settings.app.email_from,
         'email_server': settings.app.email_server,
         'email_username': settings.app.email_username,
