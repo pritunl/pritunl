@@ -483,66 +483,93 @@ class ServerInstance(object):
 
         return rules, rules6
 
-    def exists_iptables_rules(self, rule):
-        cmd = ['iptables', '-C'] + rule
-        return (cmd, subprocess.Popen(cmd,
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE))
+    def exists_iptables_rule(self, rule):
+        process = subprocess.Popen(
+            ['iptables', '-C'] + rule,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
 
-    def exists_ip6tables_rules(self, rule):
-        cmd = ['ip6tables', '-C'] + rule
-        return (cmd, subprocess.Popen(cmd,
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE))
+        if process.wait():
+            return False
+        return True
+
+    def exists_ip6tables_rule(self, rule):
+        process = subprocess.Popen(
+            ['ip6tables', '-C'] + rule,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+
+        if process.wait():
+            return False
+        return True
+
+    def remove_iptables_rule(self, rule):
+        process = subprocess.Popen(
+            ['iptables', '-D'] + rule,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            )
+
+        if process.wait():
+            return False
+        return True
+
+    def remove_ip6tables_rule(self, rule):
+        process = subprocess.Popen(
+            ['ip6tables', '-D'] + rule,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            )
+
+        if process.wait():
+            return False
+        return True
+
+    def set_iptables_rule(self, rule):
+        for i in xrange(2):
+            try:
+                utils.check_output_logged(['iptables', '-I'] + rule)
+                break
+            except:
+                if i:
+                    raise
+                logger.error(
+                    'Failed to insert iptables rule, retrying...',
+                    'instance',
+                    rule=rule,
+                )
+            time.sleep(1)
+
+    def set_ip6tables_rule(self, rule):
+        for i in xrange(2):
+            try:
+                utils.check_output_logged(['ip6tables', '-I'] + rule)
+                break
+            except:
+                if i:
+                    raise
+                logger.error(
+                    'Failed to insert ip6tables rule, retrying...',
+                    'instance',
+                    rule=rule,
+                )
+            time.sleep(1)
 
     def set_iptables_rules(self):
         logger.debug('Setting iptables rules', 'server',
             server_id=self.server.id,
         )
 
-        processes = {}
-        poller = select.epoll()
-        self.iptables_rules, self.ip6tables_rules = \
-            self.generate_iptables_rules()
-
-        for rule in self.iptables_rules:
-            cmd, process = self.exists_iptables_rules(rule)
-            fileno = process.stdout.fileno()
-
-            processes[fileno] = (cmd, process, ['iptables', '-I'] + rule)
-            poller.register(fileno, select.EPOLLHUP)
-
-        for rule in self.ip6tables_rules:
-            cmd, process = self.exists_ip6tables_rules(rule)
-            fileno = process.stdout.fileno()
-
-            processes[fileno] = (cmd, process, ['ip6tables', '-I'] + rule)
-            poller.register(fileno, select.EPOLLHUP)
-
         try:
-            while True:
-                for fd, event in poller.poll(timeout=8):
-                    cmd, process, next_cmd = processes.pop(fd)
-                    poller.unregister(fd)
+            for rule in self.iptables_rules:
+                if not self.exists_iptables_rule(rule):
+                    self.set_iptables_rule(rule)
 
-                    if next_cmd:
-                        if process.poll():
-                            process = subprocess.Popen(next_cmd,
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE,
-                            )
-                            fileno = process.stdout.fileno()
-
-                            processes[fileno] = (next_cmd, process, None)
-                            poller.register(fileno, select.EPOLLHUP)
-                    else:
-                        retcode = process.poll()
-                        if retcode:
-                            std_out, err_out = process.communicate()
-                            raise subprocess.CalledProcessError(
-                                retcode, cmd, output=err_out)
-
-                    if not processes:
-                        return
-
+            for rule in self.ip6tables_rules:
+                if not self.exists_ip6tables_rule(rule):
+                    self.set_ip6tables_rule(rule)
         except subprocess.CalledProcessError as error:
             logger.exception('Failed to apply iptables ' + \
                 'routing rule', 'server',
@@ -556,24 +583,11 @@ class ServerInstance(object):
             server_id=self.server.id,
         )
 
-        processes = []
-
         for rule in self.iptables_rules:
-            process = subprocess.Popen(['iptables', '-D'] + rule,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            )
-            processes.append(process)
+            self.remove_iptables_rule(rule)
 
         for rule in self.ip6tables_rules:
-            process = subprocess.Popen(['ip6tables', '-D'] + rule,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            )
-            processes.append(process)
-
-        for process in processes:
-            process.wait()
+            self.remove_ip6tables_rule(rule)
 
     def stop_process(self):
         self.sock_interrupt = True
@@ -605,6 +619,18 @@ class ServerInstance(object):
                 server_id=self.server.id,
             )
             self.publish('error')
+
+    def interrupter_sleep(self, length):
+        if check_global_interrupt() or self.interrupt:
+            return True
+        while True:
+            sleep = min(0.5, length)
+            time.sleep(sleep)
+            length -= sleep
+            if check_global_interrupt() or self.interrupt:
+                return True
+            elif length <= 0:
+                return False
 
     @interrupter
     def openvpn_watch(self):
@@ -690,12 +716,34 @@ class ServerInstance(object):
 
             yield interrupter_sleep(settings.vpn.server_ping)
 
+    def _iptables_thread(self):
+        if self.interrupter_sleep(5):
+            return
+
+        try:
+            while not self.interrupt:
+                try:
+                    self.set_iptables_rules()
+                    if self.interrupter_sleep(5):
+                        return
+                except:
+                    logger.exception('Error in iptables thread', 'server',
+                        server_id=self.server.id,
+                    )
+                    time.sleep(1)
+        finally:
+            self.clear_iptables_rules()
+
     def start_threads(self, cursor_id):
         thread = threading.Thread(target=self._sub_thread, args=(cursor_id,))
         thread.daemon = True
         thread.start()
 
         thread = threading.Thread(target=self._keep_alive_thread)
+        thread.daemon = True
+        thread.start()
+
+        thread = threading.Thread(target=self._iptables_thread)
         thread.daemon = True
         thread.start()
 
@@ -723,6 +771,9 @@ class ServerInstance(object):
             self.enable_ip_forwarding()
             self.bridge_start()
             self.generate_ovpn_conf()
+
+            self.iptables_rules, self.ip6tables_rules = \
+                self.generate_iptables_rules()
             self.set_iptables_rules()
 
             self.process = self.openvpn_start()
