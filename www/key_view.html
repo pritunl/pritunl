@@ -271,6 +271,38 @@
         -o-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
         box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
       }
+
+      #pin {
+        width: 150px;
+        margin-top: 11px;
+      }
+
+      .alert {
+        display: none;
+        width: 282px;
+        margin: 11px auto 0 auto;
+        padding: 10px;
+        -webkit-transition: background-color 175ms;
+        -moz-transition: background-color 175ms;
+        -o-transition: background-color 175ms;
+        transition: background-color 175ms;
+        -webkit-border-radius: 2px;
+        -moz-border-radius: 2px;
+        border-radius: 2px;
+        border: 1px solid transparent;
+      }
+
+      .alert.success {
+        color: #3c763d;
+        background-color: #daeed1;
+        border-color: #b2df8d;
+      }
+
+      .alert.danger {
+        color: #a94442;
+        background-color: #eed6d6;
+        border-color: #e0a2ac;
+      }
     </style>
   </head>
   <body>
@@ -284,6 +316,10 @@
         <a class="btn btn-success" title="Download Profiles" href="<%= user_key_tar_url %>">Download Profiles</a><br>
         <a class="btn btn-success" title="Download Profiles (zip)" href="<%= user_key_zip_url %>">Download Profiles (zip)</a><br>
         <%= conf_links %>
+        <div id="pin-alert" class="alert danger"></div>
+        <input id="pin" type="password" class="form-control"
+          placeholder="Enter new user pin" data-toggle="tooltip">
+        <button id="change-pin" class="btn" onclick="changePin()">Change Pin</button><br>
         <button class="btn btn-danger" onclick="deleteKey()">Delete Temporary Profile Link</button><br>
         <a class="btn" title="Download Client" href="https://client.pritunl.com/" target="_blank">Download Client</a><br>
       </div>
@@ -320,14 +356,57 @@
         document.getElementById('qrcode').style.display = 'none';
       }
 
+      var changePin = function() {
+        document.getElementById('change-pin').disabled = true;
+
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open('PUT', '/key_pin/<%= key_id %>', true);
+        var data = JSON.stringify({
+          pin: document.getElementById('pin').value
+        });
+        xmlhttp.setRequestHeader('Content-Type', 'application/json');
+        xmlhttp.onreadystatechange = function() {
+          if(xmlhttp.readyState === 4) {
+            var alert = document.getElementById('pin-alert');
+            document.getElementById('change-pin').disabled = false;
+            document.getElementById('pin').value = '';
+
+            if (xmlhttp.status === 200) {
+              alert.className = 'alert success';
+              alert.innerHTML = 'Pin successfully changed.';
+            } else {
+              alert.className = 'alert danger';
+
+              var data;
+              try {
+                data = JSON.parse(xmlhttp.responseText);
+              } catch(_) {
+                data = {}
+              }
+
+              if (data['error_msg']) {
+                alert.innerHTML = data['error_msg'];
+              } else {
+                alert.innerHTML = 'Failed to change pin, unknown server error';
+              }
+            }
+
+            alert.style.display = 'block';
+          }
+        };
+        xmlhttp.send(data);
+      };
+
       var deleteKey = function() {
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open('DELETE', '/k/<%= short_id %>', false);
+        xmlhttp.open('DELETE', '/k/<%= short_id %>', true);
+        xmlhttp.onreadystatechange = function() {
+          if(xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+            document.getElementById('key-box').style.display = 'none';
+            document.getElementById('key-deleted-box').style.display = 'block';
+          }
+        };
         xmlhttp.send();
-        if (xmlhttp.status === 200) {
-          document.getElementById('key-box').style.display = 'none';
-          document.getElementById('key-deleted-box').style.display = 'block';
-        }
       };
     </script>
   </body>
