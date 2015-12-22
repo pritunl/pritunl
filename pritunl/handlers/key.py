@@ -172,6 +172,44 @@ def user_linked_key_onc_archive_get(key_id):
 
     return resp
 
+@app.app.route('/key_pin/<key_id>', methods=['PUT'])
+def user_key_pin_put(key_id):
+    doc = _find_doc({
+        'key_id': key_id,
+    })
+    if not doc:
+        return flask.abort(404)
+
+    org = organization.get_by_id(doc['org_id'])
+    usr = org.get_user(doc['user_id'])
+
+    pin = utils.filter_str(flask.request.json.get('pin')) or None
+    if pin:
+        if not pin.isdigit():
+            return utils.jsonify({
+                'error': PIN_NOT_DIGITS,
+                'error_msg': PIN_NOT_DIGITS_MSG,
+            }, 400)
+
+        if len(pin) < settings.user.pin_min_length:
+            return utils.jsonify({
+                'error': PIN_TOO_SHORT,
+                'error_msg': PIN_TOO_SHORT_MSG,
+            }, 400)
+
+    usr.pin = pin
+
+    usr.audit_event('user_updated',
+        'User pin changed with temporary profile link',
+        remote_addr=utils.get_remote_addr(),
+    )
+
+    usr.commit()
+
+    event.Event(type=USERS_UPDATED, resource_id=org.id)
+
+    return utils.jsonify({})
+
 @app.app.route('/k/<short_code>', methods=['GET'])
 def user_linked_key_page_get(short_code):
     doc = _find_doc({
