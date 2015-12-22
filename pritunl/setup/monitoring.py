@@ -11,6 +11,8 @@ def _monitoring_thread():
     while True:
         try:
             mode = settings.app.monitoring
+            prometheus_port = settings.app.prometheus_port
+            datadog_api_key = settings.app.datadog_api_key
             if not mode:
                 yield interrupter_sleep(3)
                 continue
@@ -24,13 +26,15 @@ def _monitoring_thread():
                     'MODE': mode,
                     'DB': settings.conf.mongodb_uri,
                     'DB_PREFIX': settings.conf.mongodb_collection_prefix or '',
-                    'PROMETHEUS_PORT': str(settings.app.prometheus_port),
-                    'DATADOG_API_KEY': str(settings.app.datadog_api_key),
+                    'PROMETHEUS_PORT': str(prometheus_port),
+                    'DATADOG_API_KEY': str(datadog_api_key),
                 }),
             )
 
             while True:
-                if settings.app.monitoring != mode:
+                if settings.app.monitoring != mode or \
+                        settings.app.prometheus_port != prometheus_port or \
+                        settings.app.datadog_api_key != datadog_api_key:
                     process.terminate()
                     yield interrupter_sleep(3)
                     process.kill()
