@@ -180,6 +180,9 @@ def user_key_pin_put(key_id):
     if not doc:
         return flask.abort(404)
 
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     org = organization.get_by_id(doc['org_id'])
     usr = org.get_user(doc['user_id'])
 
