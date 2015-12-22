@@ -128,7 +128,7 @@ class ServerInstanceCom(object):
                 elif env_key == 'UV_PLATFORM':
                     self.client['platform'] = env_val
                 elif env_key == 'password':
-                    self.client['otp_code'] = env_val
+                    self.client['password'] = env_val
             else:
                 self.push_output('CCOM> %s' % line[1:])
         elif line.startswith('>BYTECOUNT_CLI'):
