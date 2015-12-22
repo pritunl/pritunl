@@ -27,6 +27,7 @@ class User(mongo.MongoObject):
         'org_id',
         'name',
         'email',
+        'pin',
         'otp_secret',
         'type',
         'auth_type',
@@ -103,6 +104,7 @@ class User(mongo.MongoObject):
             'organization_name': self.org.name,
             'name': self.name,
             'email': self.email,
+            'pin': bool(self.pin),
             'type': self.type,
             'auth_type': self.auth_type,
             'otp_secret': self.otp_secret,
@@ -375,6 +377,23 @@ class User(mongo.MongoObject):
 
         return True
 
+    def _get_password_mode(self, svr):
+        password_mode = None
+
+        if self.bypass_secondary:
+            return
+
+        if svr.otp_auth:
+            password_mode = 'otp'
+
+        if self.pin or settings.user.pin_mode == PIN_REQUIRED:
+            if password_mode:
+                password_mode += '_pin'
+            else:
+                password_mode = 'pin'
+
+        return password_mode
+
     def _get_key_info_str(self, svr, conf_hash):
         return '#' + json.dumps({
             'version': CLIENT_CONF_VER,
@@ -388,6 +407,7 @@ class User(mongo.MongoObject):
             'sync_secret': self.sync_secret,
             'sync_hash': conf_hash,
             'sync_hosts': svr.get_sync_remotes(),
+            'password_mode': self._get_password_mode(svr),
         }, indent=1).replace('\n', '\n#')
 
     def _generate_conf(self, svr, include_user_cert=True):
@@ -435,7 +455,7 @@ class User(mongo.MongoObject):
         if svr.lzo_compression != ADAPTIVE:
             client_conf += 'comp-lzo no\n'
 
-        if not self.bypass_secondary and svr.otp_auth:
+        if self._get_password_mode(svr):
             client_conf += 'auth-user-pass\n'
 
         if svr.tls_auth:
@@ -502,8 +522,11 @@ class User(mongo.MongoObject):
             server_ref += '          "%s",\n' % cert_id
         server_ref = server_ref[:-2]
 
-        if not self.bypass_secondary and svr.otp_auth:
+        password_mode = self._get_password_mode(svr)
+        if password_mode == 'otp':
             auth = OVPN_ONC_AUTH_OTP % self.id
+        elif password_mode:
+            auth = OVPN_ONC_AUTH_PASS % self.id
         else:
             auth = OVPN_ONC_AUTH_NONE % self.id
 
