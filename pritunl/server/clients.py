@@ -310,7 +310,6 @@ class Clients(object):
                 'device_name': device_name,
                 'platform': platform,
                 'mac_addr': mac_addr,
-                'otp_code': None,
                 'virt_address': virt_address,
                 'virt_address6': virt_address6,
                 'real_address': remote_ip,
@@ -426,11 +425,49 @@ class Clients(object):
         client_id = client['client_id']
         key_id = client['key_id']
         remote_ip = client.get('remote_ip')
-        otp_code = client.get('otp_code')
+        password = client.get('password')
 
         if settings.vpn.stress_test:
             self.allow_client(client, org, user, reauth)
             self._connected(client_id)
+            return
+
+        if self.server.otp_auth and user.type == CERT_CLIENT:
+            otp_code = password[-6:]
+            password = password[:-6]
+
+            if not user.verify_otp_code(otp_code, remote_ip):
+                logger.LogEntry(message='User failed two-step ' +
+                    'authentication "%s".' % user.name)
+                user.audit_event('user_connection',
+                    ('User connection to "%s" denied. ' +
+                     'User failed two-step authentication') % (
+                        self.server.name),
+                    remote_addr=remote_ip,
+                    )
+                self.instance_com.send_client_deny(client_id, key_id,
+                    'Invalid OTP code')
+                return
+
+        if user.pin:
+            if password != user.pin:
+                self.instance_com.send_client_deny(client_id, key_id,
+                    'Invalid pin')
+                user.audit_event('user_connection',
+                    ('User connection to "%s" denied. ' +
+                     'invalid pin') % (self.server.name),
+                    remote_addr=remote_ip,
+                )
+                return
+        elif settings.user.pin_mode == PIN_REQUIRED:
+            self.instance_com.send_client_deny(client_id, key_id,
+                'User does not have a pin set')
+            user.audit_event('user_connection',
+                ('User connection to "%s" denied. ' +
+                 'User does not have a pin set') % (
+                    self.server.name),
+                remote_addr=remote_ip,
+            )
             return
 
         if not user.auth_check():
@@ -441,23 +478,9 @@ class Clients(object):
                  'Secondary authentication failed') % (
                     self.server.name),
                 remote_addr=remote_ip,
-                )
+            )
             self.instance_com.send_client_deny(client_id, key_id,
                 'User failed authentication')
-            return
-
-        if self.server.otp_auth and user.type == CERT_CLIENT and \
-                not user.verify_otp_code(otp_code, remote_ip):
-            logger.LogEntry(message='User failed two-step ' +
-                'authentication "%s".' % user.name)
-            user.audit_event('user_connection',
-                ('User connection to "%s" denied. ' +
-                 'User failed two-step authentication') % (
-                    self.server.name),
-                remote_addr=remote_ip,
-                )
-            self.instance_com.send_client_deny(client_id, key_id,
-                'Invalid OTP code')
             return
 
         if settings.app.sso and DUO_AUTH in user.auth_type and \
@@ -500,7 +523,7 @@ class Clients(object):
                 return
 
             user = org.get_user(user_id, fields=('_id', 'name', 'email',
-                'type', 'auth_type', 'disabled', 'otp_secret',
+                'pin', 'type', 'auth_type', 'disabled', 'otp_secret',
                 'link_server_id', 'bypass_secondary', 'dns_servers',
                 'dns_suffix'))
             if not user:
