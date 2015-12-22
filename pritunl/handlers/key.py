@@ -249,6 +249,7 @@ def user_linked_key_page_get(short_code):
         key_page = key_page.replace('<%= user_otp_key %>', '')
         key_page = key_page.replace('<%= user_otp_url %>', '')
 
+    key_page = key_page.replace('<%= key_id %>', doc['key_id'])
     key_page = key_page.replace('<%= short_id %>', doc['short_id'])
 
     conf_links = ''
