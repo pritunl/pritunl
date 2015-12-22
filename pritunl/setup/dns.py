@@ -37,7 +37,7 @@ def _dns_thread():
         except GeneratorExit:
             raise
         except:
-            logger.exception('Error in monitoring service', 'setup')
+            logger.exception('Error in dns service', 'setup')
 
         yield interrupter_sleep(1)
 
