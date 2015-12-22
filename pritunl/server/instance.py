@@ -718,14 +718,15 @@ class ServerInstance(object):
             yield interrupter_sleep(settings.vpn.server_ping)
 
     def _iptables_thread(self):
-        if self.interrupter_sleep(5):
+        if self.interrupter_sleep(settings.vpn.iptables_update_rate):
             return
 
         try:
             while not self.interrupt:
                 try:
                     self.set_iptables_rules()
-                    if self.interrupter_sleep(5):
+                    if self.interrupter_sleep(
+                            settings.vpn.iptables_update_rate):
                         return
                 except:
                     logger.exception('Error in iptables thread', 'server',
