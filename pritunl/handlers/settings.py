@@ -15,6 +15,7 @@ _changes_audit_text = {
     'password': 'Administrator password changed',
     'token': 'Administrator api token changed',
     'smtp': 'SMTP settings changed',
+    'pin_mode': 'User pin mode settings changed',
     'sso': 'Single sign-on settings changed',
 }
 
@@ -32,6 +33,7 @@ def settings_get():
             'email_server': 'demo',
             'email_username': 'demo',
             'email_password': True,
+            'pin_mode': settings.user.pin_mode,
             'sso': settings.app.sso,
             'sso_match': settings.app.sso_match,
             'sso_token': 'demo',
@@ -60,6 +62,7 @@ def settings_get():
             'email_server': settings.app.email_server,
             'email_username': settings.app.email_username,
             'email_password': bool(settings.app.email_password),
+            'pin_mode': settings.user.pin_mode,
             'sso': settings.app.sso,
             'sso_match': settings.app.sso_match,
             'sso_token': settings.app.sso_token,
@@ -155,6 +158,13 @@ def settings_put():
         if email_password != settings.app.email_password:
             changes.add('smtp')
         settings.app.email_password = email_password
+
+    if 'pin_mode' in flask.request.json:
+        settings_commit = True
+        pin_mode = flask.request.json['pin_mode'] or None
+        if pin_mode != settings.user.pin_mode:
+            changes.add('pin_mode')
+        settings.user.pin_mode = pin_mode
 
     if 'sso' in flask.request.json:
         org_event = True
@@ -363,6 +373,7 @@ def settings_put():
         'email_server': settings.app.email_server,
         'email_username': settings.app.email_username,
         'email_password': bool(settings.app.email_password),
+        'pin_mode': settings.user.pin_mode,
         'sso': settings.app.sso,
         'sso_match': settings.app.sso_match,
         'sso_token': settings.app.sso_token,
