@@ -28,6 +28,10 @@ OFFLINE = 'offline'
 TUNNEL = 'tunnel'
 BRIDGE = 'bridge'
 
+PIN_REQUIRED = 'required'
+PIN_OPTIONAL = 'optional'
+PIN_DISABLED = 'disabled'
+
 VERY_LOW = 0
 LOW = 1
 NORMAL = 2
@@ -497,6 +501,15 @@ NETWORK_LINK_INVALID_MSG = 'Network link is not a valid network address.'
 NETWORK_LINK_NOT_OFFLINE = 'network_link_not_offline'
 NETWORK_LINK_NOT_OFFLINE_MSG = 'All attached servers must be offline to ' + \
     'add a network link.'
+
+PIN_NOT_DIGITS = 'pin_not_digits'
+PIN_NOT_DIGITS_MSG = 'Pin must contain only digits.'
+
+PIN_TOO_SHORT = 'pin_too_short'
+PIN_TOO_SHORT_MSG = 'Pin is not long enough.'
+
+PIN_IS_REQUIRED = 'pin_is_required'
+PIN_IS_REQUIRED_MSG = 'Pin is required.'
 
 NETWORK_IN_USE = 'network_in_use'
 NETWORK_IN_USE_MSG = 'Network address is already in use.'
