@@ -528,12 +528,12 @@ class ServerInstance(object):
         return True
 
     def set_iptables_rule(self, rule):
-        for i in xrange(2):
+        for i in xrange(3):
             try:
                 utils.check_output_logged(['iptables', '-I'] + rule)
                 break
             except:
-                if i:
+                if i == 2:
                     raise
                 logger.error(
                     'Failed to insert iptables rule, retrying...',
@@ -543,12 +543,12 @@ class ServerInstance(object):
             time.sleep(1)
 
     def set_ip6tables_rule(self, rule):
-        for i in xrange(2):
+        for i in xrange(3):
             try:
                 utils.check_output_logged(['ip6tables', '-I'] + rule)
                 break
             except:
-                if i:
+                if i == 2:
                     raise
                 logger.error(
                     'Failed to insert ip6tables rule, retrying...',
