@@ -764,6 +764,11 @@ OVPN_ONC_AUTH_OTP = """
         "UserAuthenticationType": "OTP",
         "Username": "%s","""
 
+OVPN_ONC_AUTH_PASS = """
+        "SaveCredentials": false,
+        "UserAuthenticationType": "Password",
+        "Username": "%s","""
+
 OVPN_ONC_CA_CERT = """\
   "Certificates": [{
     "GUID": "%s",
