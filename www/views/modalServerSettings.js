@@ -26,7 +26,10 @@ define([
         'click .debug-toggle': 'onDebugSelect',
         'click .ipv6-toggle': 'onIpv6Select',
         'click .multi-device-toggle': 'onMultiDeviceSelect',
-        'click .ipv6-firewall-toggle': 'onIpv6FirewallSelect'
+        'click .ipv6-firewall-toggle': 'onIpv6FirewallSelect',
+        'change select.protocol, .cipher select, .network-mode select':
+          'onInputChange',
+        'click div.otp-auth-toggle': 'onInputChange'
       }, ModalServerSettingsView.__super__.events);
     },
     initialize: function(options) {
@@ -255,6 +258,36 @@ define([
     onInputChange: function(evt) {
       if ($(evt.target).parent().hasClass('network')) {
         this.updateMaxHosts();
+      }
+
+      var port = parseInt(this.$('input.port').val(), 10);
+      var protocol = this.$('select.protocol').val();
+      var cipher = this.$('.cipher select').val();
+      var hash = this.$('.hash select').val();
+      var networkMode = this.$('.network-mode select').val();
+      var otpAuth = this.getOtpAuthSelect();
+
+      console.log(port, this.model.get('port'));
+      console.log(protocol, this.model.get('protocol'));
+      console.log(cipher, this.model.get('cipher'));
+      console.log(hash, this.model.get('hash'));
+      console.log(networkMode, this.model.get('network_mode'));
+      console.log(otpAuth, this.model.get('otp_auth'));
+
+      if (
+        port !== this.model.get('port') ||
+        protocol !== this.model.get('protocol') ||
+        cipher !== this.model.get('cipher') ||
+        hash !== this.model.get('hash') ||
+        networkMode !== this.model.get('network_mode') ||
+        otpAuth !== this.model.get('otp_auth')
+      ) {
+        this.setAlert('warning', 'These changes will require users ' +
+          'that are not using an offical Pritunl client to download their ' +
+          'updated profile again before being able to connect. Users ' +
+          'using an offical Pritunl client will be able sync the changes.');
+      } else {
+        this.clearAlert();
       }
     },
     getDnsServers: function() {
