@@ -9,8 +9,6 @@ import subprocess
 @interrupter
 def _monitoring_thread():
     while True:
-        process = None
-
         try:
             mode = settings.app.monitoring
             prometheus_port = settings.app.prometheus_port
