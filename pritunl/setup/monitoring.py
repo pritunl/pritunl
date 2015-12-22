@@ -9,6 +9,8 @@ import subprocess
 @interrupter
 def _monitoring_thread():
     while True:
+        process = None
+
         try:
             mode = settings.app.monitoring
             prometheus_port = settings.app.prometheus_port
@@ -40,6 +42,21 @@ def _monitoring_thread():
                     process.kill()
                     process = None
                     break
+                elif process.poll() is not None:
+                    output = None
+                    try:
+                        output = process.stdout.readall()
+                        output += process.stderr.readall()
+                    except:
+                        pass
+
+                    logger.error(
+                        'Monitoring service stopped unexpectedly', 'setup',
+                        output=output,
+                    )
+                    process = None
+                    break
+
                 yield interrupter_sleep(3)
         except GeneratorExit:
             raise
