@@ -713,6 +713,7 @@ class ServerInstance(object):
                 logger.exception('Failed to update server ping', 'server',
                     server_id=self.server.id,
                 )
+                time.sleep(1)
 
             yield interrupter_sleep(settings.vpn.server_ping)
 
