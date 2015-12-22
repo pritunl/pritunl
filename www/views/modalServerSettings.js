@@ -267,13 +267,6 @@ define([
       var networkMode = this.$('.network-mode select').val();
       var otpAuth = this.getOtpAuthSelect();
 
-      console.log(port, this.model.get('port'));
-      console.log(protocol, this.model.get('protocol'));
-      console.log(cipher, this.model.get('cipher'));
-      console.log(hash, this.model.get('hash'));
-      console.log(networkMode, this.model.get('network_mode'));
-      console.log(otpAuth, this.model.get('otp_auth'));
-
       if (
         port !== this.model.get('port') ||
         protocol !== this.model.get('protocol') ||
