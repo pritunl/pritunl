@@ -59,6 +59,7 @@ def user_get(org_id, user_id=None, page=None):
         'organization_name',
         'name',
         'email',
+        'pin',
         'type',
         'auth_type',
         'otp_secret',
@@ -198,14 +199,28 @@ def user_post(org_id):
         for user_data in users_data:
             name = utils.filter_str(user_data['name'])
             email = utils.filter_str(user_data.get('email'))
+            pin = utils.filter_str(user_data.get('pin')) or None
             disabled = user_data.get('disabled')
             network_links = user_data.get('network_links')
             bypass_secondary = user_data.get('bypass_secondary')
             dns_servers = user_data.get('dns_servers') or None
             dns_suffix = utils.filter_str(user_data.get('dns_suffix')) or None
 
+            if pin:
+                if not pin.isdigit():
+                    return utils.jsonify({
+                        'error': PIN_NOT_DIGITS,
+                        'error_msg': PIN_NOT_DIGITS_MSG,
+                    }, 400)
+
+                if len(pin) < settings.user.pin_min_length:
+                    return utils.jsonify({
+                        'error': PIN_TOO_SHORT,
+                        'error_msg': PIN_TOO_SHORT_MSG,
+                    }, 400)
+
             user = org.new_user(type=CERT_CLIENT, name=name, email=email,
-                disabled=disabled, bypass_secondary=bypass_secondary,
+                pin=pin, disabled=disabled, bypass_secondary=bypass_secondary,
                 dns_servers=dns_servers, dns_suffix=dns_suffix)
             user.audit_event('user_created',
                 'User created from web console',
@@ -269,6 +284,30 @@ def user_put(org_id, user_id):
             )
 
         user.email = utils.filter_str(flask.request.json['email']) or None
+
+    if 'pin' in flask.request.json:
+        pin = flask.request.json['pin']
+
+        if pin != True:
+            if pin:
+                if not pin.isdigit():
+                    return utils.jsonify({
+                        'error': PIN_NOT_DIGITS,
+                        'error_msg': PIN_NOT_DIGITS_MSG,
+                    }, 400)
+
+                if len(pin) < settings.user.pin_min_length:
+                    return utils.jsonify({
+                        'error': PIN_TOO_SHORT,
+                        'error_msg': PIN_TOO_SHORT_MSG,
+                    }, 400)
+
+            user.audit_event('user_updated',
+                'User pin changed',
+                remote_addr=utils.get_remote_addr(),
+            )
+
+            user.pin = pin
 
     if 'network_links' in flask.request.json:
         network_links_cur = set(user.get_network_links())
