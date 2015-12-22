@@ -71,4 +71,5 @@ class SettingsApp(SettingsGroupMongo):
         'host_page_count': 10,
         'server_cert': None,
         'server_key': None,
+        'iptables_check_rate': 5,
     }
