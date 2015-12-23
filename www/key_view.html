@@ -369,16 +369,18 @@
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.open('PUT', '/key_pin/<%= key_id %>', true);
         var data = JSON.stringify({
-          pin: document.getElementById('pin').value
+          pin: document.getElementById('pin').value,
+          current_pin: document.getElementById('cur-pin').value
         });
         xmlhttp.setRequestHeader('Content-Type', 'application/json');
         xmlhttp.onreadystatechange = function() {
           if(xmlhttp.readyState === 4) {
             var alert = document.getElementById('pin-alert');
             document.getElementById('change-pin').disabled = false;
-            document.getElementById('pin').value = '';
 
             if (xmlhttp.status === 200) {
+              document.getElementById('cur-pin').value = '';
+              document.getElementById('pin').value = '';
               alert.className = 'alert success';
               alert.innerHTML = 'Pin successfully changed.';
             } else {
