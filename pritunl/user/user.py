@@ -9,6 +9,7 @@ from pritunl import logger
 from pritunl import messenger
 from pritunl import ipaddress
 from pritunl import sso
+from pritunl import auth
 
 import tarfile
 import zipfile
@@ -253,7 +254,7 @@ class User(mongo.MongoObject):
     def disconnect(self):
         messenger.publish('instance', ['user_disconnect', self.id])
 
-    def auth_check(self):
+    def sso_auth_check(self):
         if GOOGLE_AUTH in self.auth_type:
             try:
                 resp = utils.request.get(AUTH_SERVER +
