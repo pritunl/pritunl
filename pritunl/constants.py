@@ -502,6 +502,9 @@ NETWORK_LINK_NOT_OFFLINE = 'network_link_not_offline'
 NETWORK_LINK_NOT_OFFLINE_MSG = 'All attached servers must be offline to ' + \
     'add a network link.'
 
+PIN_INVALID = 'pin_invalid'
+PIN_INVALID_MSG = 'Current pin is invalid.'
+
 PIN_NOT_DIGITS = 'pin_not_digits'
 PIN_NOT_DIGITS_MSG = 'Pin must contain only digits.'
 
