@@ -368,8 +368,9 @@
 
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.open('PUT', '/key_pin/<%= key_id %>', true);
+        var pin = document.getElementById('pin').value;
         var data = JSON.stringify({
-          pin: document.getElementById('pin').value,
+          pin: pin,
           current_pin: document.getElementById('cur-pin').value
         });
         xmlhttp.setRequestHeader('Content-Type', 'application/json');
@@ -383,6 +384,12 @@
               document.getElementById('pin').value = '';
               alert.className = 'alert success';
               alert.innerHTML = 'Pin successfully changed.';
+
+              if (pin) {
+                document.getElementById('cur-pin').style.display = 'block';
+              } else {
+                document.getElementById('cur-pin').style.display = 'none';
+              }
             } else {
               alert.className = 'alert danger';
 
