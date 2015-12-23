@@ -421,6 +421,9 @@ class Server(mongo.MongoObject):
         if block:
             self.load()
 
+    def get_link_server(self, link_server_id, fields=None):
+        return Server(id=link_server_id, fields=fields)
+
     def get_cache_key(self, suffix=None):
         if not self.cache_prefix:
             raise AttributeError('Cached config object requires cache_prefix')
