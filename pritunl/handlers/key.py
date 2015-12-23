@@ -186,7 +186,10 @@ def user_key_pin_put(key_id):
     org = organization.get_by_id(doc['org_id'])
     usr = org.get_user(doc['user_id'])
 
+    current_pin = utils.filter_str(
+        flask.request.json.get('current_pin')) or None
     pin = utils.filter_str(flask.request.json.get('pin')) or None
+
     if pin:
         if not pin.isdigit():
             return utils.jsonify({
@@ -200,7 +203,13 @@ def user_key_pin_put(key_id):
                 'error_msg': PIN_TOO_SHORT_MSG,
             }, 400)
 
-    usr.pin = pin
+    if usr.pin and not usr.check_pin(current_pin):
+        return utils.jsonify({
+            'error': PIN_INVALID,
+            'error_msg': PIN_INVALID_MSG,
+        }, 400)
+
+    usr.set_pin(pin)
 
     usr.audit_event('user_updated',
         'User pin changed with temporary profile link',
@@ -251,6 +260,11 @@ def user_linked_key_page_get(short_code):
     else:
         key_page = key_page.replace('<%= user_otp_key %>', '')
         key_page = key_page.replace('<%= user_otp_url %>', '')
+
+    if user.pin:
+        key_page = key_page.replace('<%= cur_pin_display %>', 'block')
+    else:
+        key_page = key_page.replace('<%= cur_pin_display %>', 'none')
 
     key_page = key_page.replace('<%= key_id %>', doc['key_id'])
     key_page = key_page.replace('<%= short_id %>', doc['short_id'])
