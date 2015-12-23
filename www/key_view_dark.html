@@ -272,9 +272,14 @@
         box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
       }
 
-      #pin {
+      #pin,
+      #cur-pin {
         width: 150px;
         margin-top: 11px;
+      }
+
+      #cur-pin {
+        display: <%= cur_pin_display %>;
       }
 
       .alert {
@@ -317,8 +322,10 @@
         <a class="btn btn-success" title="Download Profiles (zip)" href="<%= user_key_zip_url %>">Download Profiles (zip)</a><br>
         <%= conf_links %>
         <div id="pin-alert" class="alert danger"></div>
+        <input id="cur-pin" type="password" class="form-control"
+          placeholder="Enter current pin" data-toggle="tooltip">
         <input id="pin" type="password" class="form-control"
-          placeholder="Enter new user pin" data-toggle="tooltip">
+          placeholder="Enter new pin" data-toggle="tooltip">
         <button id="change-pin" class="btn" onclick="changePin()">Change Pin</button><br>
         <button class="btn btn-danger" onclick="deleteKey()">Delete Temporary Profile Link</button><br>
         <a class="btn" title="Download Client" href="https://client.pritunl.com/" target="_blank">Download Client</a><br>
