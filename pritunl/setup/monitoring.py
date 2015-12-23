@@ -18,7 +18,7 @@ def _monitoring_thread():
                 continue
 
             process = subprocess.Popen(
-                ['pritunl-monitoring'],
+                ['pritunl-monitor'],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 env=dict(os.environ, **{
