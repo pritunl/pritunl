@@ -680,6 +680,22 @@ class User(mongo.MongoObject):
         if key['hash'] != conf_hash:
             return key
 
+    def check_pin(self, test_pin):
+        if not self.pin or not test_pin:
+            return False
+
+        _, pin_salt, pin_hash = self.pin.split('$')
+
+        test_hash = base64.b64encode(auth.hash_pin_v1(pin_salt, test_pin))
+        return test_hash == pin_hash
+
+    def set_pin(self, pin):
+        if not pin:
+            self.pin = pin
+            return
+
+        self.pin = auth.generate_hash_pin_v1(pin)
+
     def send_key_email(self, key_link_domain):
         user_key_link = self.org.create_user_key_link(self.id)
 
