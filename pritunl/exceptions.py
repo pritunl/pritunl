@@ -96,3 +96,9 @@ class QueueStopped(QueueError):
 
 class InvalidUser(QueueError):
     pass
+
+class AuthError(Exception):
+    pass
+
+class AuthForked(Exception):
+    pass
