@@ -1,5 +1,4 @@
 from pritunl.server.listener import *
-from pritunl.server.clients import *
 
 from pritunl.constants import *
 from pritunl.helpers import *
@@ -7,6 +6,7 @@ from pritunl import settings
 from pritunl import logger
 from pritunl import utils
 from pritunl import mongo
+from pritunl import clients
 
 import os
 import time
@@ -17,8 +17,8 @@ import uuid
 import random
 
 class ServerInstanceCom(object):
-    def __init__(self, server, instance):
-        self.server = server
+    def __init__(self, svr, instance):
+        self.server = svr
         self.instance = instance
         self.sock = None
         self.sock_lock = threading.Lock()
@@ -27,7 +27,7 @@ class ServerInstanceCom(object):
         self.bytes_recv = 0
         self.bytes_sent = 0
         self.client = None
-        self.clients = Clients(server, instance, self)
+        self.clients = clients.Clients(svr, instance, self)
         self.client_bytes = {}
         self.cur_timestamp = utils.now()
         self.bandwidth_rate = settings.vpn.bandwidth_update_rate
