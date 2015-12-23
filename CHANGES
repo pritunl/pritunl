@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Add user pins
 Add support for monitoring with Prometheus and Datadog
 
 Version 1.12.828.76 2015-12-19
