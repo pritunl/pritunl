@@ -219,6 +219,8 @@ def user_post(org_id):
                         'error_msg': PIN_TOO_SHORT_MSG,
                     }, 400)
 
+                pin = auth.generate_hash_pin_v1(pin)
+
             user = org.new_user(type=CERT_CLIENT, name=name, email=email,
                 pin=pin, disabled=disabled, bypass_secondary=bypass_secondary,
                 dns_servers=dns_servers, dns_suffix=dns_suffix)
@@ -307,7 +309,7 @@ def user_put(org_id, user_id):
                 remote_addr=utils.get_remote_addr(),
             )
 
-            user.pin = pin
+            user.set_pin(pin)
 
     if 'network_links' in flask.request.json:
         network_links_cur = set(user.get_network_links())
