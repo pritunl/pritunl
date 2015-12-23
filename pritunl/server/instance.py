@@ -22,7 +22,6 @@ import threading
 import traceback
 import re
 import collections
-import select
 
 _resource_locks = collections.defaultdict(threading.Lock)
 
