@@ -383,11 +383,12 @@
               document.getElementById('cur-pin').value = '';
               document.getElementById('pin').value = '';
               alert.className = 'alert success';
-              alert.innerHTML = 'Pin successfully changed.';
 
               if (pin) {
+                alert.innerHTML = 'Pin successfully changed.';
                 document.getElementById('cur-pin').style.display = 'block';
               } else {
+                alert.innerHTML = 'Pin successfully cleared.';
                 document.getElementById('cur-pin').style.display = 'none';
               }
             } else {
