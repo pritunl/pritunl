@@ -364,32 +364,36 @@
       }
 
       var changePin = function() {
-        document.getElementById('change-pin').disabled = true;
+        var pinElem = document.getElementById('pin');
+        var curPinElem = document.getElementById('cur-pin');
+        var changePinElem = document.getElementById('change-pin');
+
+        changePinElem.disabled = true;
 
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.open('PUT', '/key_pin/<%= key_id %>', true);
-        var pin = document.getElementById('pin').value;
+        var pin = pinElem.value;
         var data = JSON.stringify({
           pin: pin,
-          current_pin: document.getElementById('cur-pin').value
+          current_pin: curPinElem.value
         });
         xmlhttp.setRequestHeader('Content-Type', 'application/json');
         xmlhttp.onreadystatechange = function() {
           if(xmlhttp.readyState === 4) {
             var alert = document.getElementById('pin-alert');
-            document.getElementById('change-pin').disabled = false;
+            changePinElem.disabled = false;
 
             if (xmlhttp.status === 200) {
-              document.getElementById('cur-pin').value = '';
-              document.getElementById('pin').value = '';
+              curPinElem.value = '';
+              pinElem.value = '';
               alert.className = 'alert success';
 
               if (pin) {
                 alert.innerHTML = 'Pin successfully changed.';
-                document.getElementById('cur-pin').style.display = 'block';
+                curPinElem.style.display = 'block';
               } else {
                 alert.innerHTML = 'Pin successfully cleared.';
-                document.getElementById('cur-pin').style.display = 'none';
+                curPinElem.style.display = 'none';
               }
             } else {
               alert.className = 'alert danger';
