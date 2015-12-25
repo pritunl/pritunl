@@ -461,9 +461,28 @@ class Clients(object):
     def connected(self, client_id):
         self.call_queue.put(self._connected, client_id)
 
-    def _disconnected(self, client_data):
+    def _disconnected(self, client):
+        org_id = client['org_id']
+        user_id = client['user_id']
+        remote_ip = client['real_address']
+
+        org = self.obj_cache.get(org_id)
+        if not org:
+            org = self.server.get_org(org_id, fields=['_id', 'name'])
+            if org:
+                self.obj_cache.set(org_id, org)
+
+        if org:
+            user = org.get_user(user_id, fields=('_id',))
+            if user:
+                user.audit_event(
+                    'user_connection',
+                    'User disconnected from "%s"' % self.server.name,
+                    remote_addr=remote_ip,
+                )
+
         self.instance_com.push_output(
-            'User disconnected user_id=%s' % client_data['user_id'])
+            'User disconnected user_id=%s' % client['user_id'])
         self.send_event()
 
     def disconnected(self, client_id):
