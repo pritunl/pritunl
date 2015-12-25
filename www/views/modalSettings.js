@@ -21,6 +21,7 @@ define([
         'paste .pass input': 'onPassEvent',
         'input .pass input': 'onPassEvent',
         'propertychange .pass input': 'onPassEvent',
+        'change .monitoring select': 'onMonitoringChange',
         'change .theme select': 'onThemeChange',
         'click .generate-new-api-key': 'onGenerateNewKey',
         'click .api-token input, .api-secret input': 'onClickInput'
@@ -188,6 +189,14 @@ define([
     onSsoMode: function() {
       this.setSsoMode(this.getSsoMode());
     },
+    onMonitoringChange: function() {
+      if (this.$('.monitoring select').val() === 'datadog') {
+        this.$('.datadog-api-key').slideDown(window.slideTime);
+      }
+      else {
+        this.$('.datadog-api-key').slideUp(window.slideTime);
+      }
+    },
     onThemeChange: function() {
       if (this.$('.theme:visible select').val() === 'dark') {
         $('body').addClass('dark');
@@ -250,6 +259,7 @@ define([
       var verifyPassword = this.$('.verify-pass input').val();
       var auditing = this.$('.auditing select').val();
       var monitoring = this.$('.monitoring select').val();
+      var datadogAPiKey = this.$('.datadog-api-key input').val();
       var publicAddress = this.$('.public-address input').val();
       var publicAddress6 = this.$('.public-address6 input').val();
       var routedSubnet6 = this.$('.routed-subnet6 input').val();
@@ -258,6 +268,7 @@ define([
       var emailServer = this.$('.email-server input').val();
       var emailUsername = this.$('.email-username input').val();
       var emailPassword = this.$('.email-password input').val();
+      var pinMode = this.$('.pin-mode select').val();
       var serverCert = this.$('.server-cert textarea').val();
       var serverKey = this.$('.server-key textarea').val();
 
@@ -286,6 +297,10 @@ define([
 
       if (monitoring === 'none') {
         monitoring = null;
+      }
+
+      if (monitoring !== 'datadog') {
+        datadogAPiKey = null;
       }
 
       if (sso) {
@@ -328,9 +343,11 @@ define([
         username: username,
         auditing: auditing,
         monitoring: monitoring,
+        datadog_api_key: datadogAPiKey,
         email_from: emailFrom,
         email_server: emailServer,
         email_username: emailUsername,
+        pin_mode: pinMode,
         sso: sso,
         sso_match: ssoMatch,
         sso_token: ssoToken,
