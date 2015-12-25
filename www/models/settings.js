@@ -16,6 +16,7 @@ define([
       'email_username': null,
       'email_password': null,
       'email_from': null,
+      'pin_mode': null,
       'monitoring': null,
       'datadog_api_key': null,
       'sso': null,
