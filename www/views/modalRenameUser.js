@@ -42,7 +42,12 @@ define([
       var email = this.$('.email input').val();
       var emailReg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
       var dnsSuffix = this.$('.dns-suffix input').val();
+      var pin = this.$('.pin input').val() || null;
       var bypassSecondary = this.getBypassSecondarySelect();
+
+      if (pin === '******') {
+        pin = true;
+      }
 
       var networkLink;
       var networkLinks = [];
@@ -81,6 +86,7 @@ define([
         name: name,
         email: email,
         disabled: null,
+        pin: pin,
         network_links: networkLinks,
         bypass_secondary: bypassSecondary,
         dns_servers: dnsServers,
