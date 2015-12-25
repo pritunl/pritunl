@@ -260,6 +260,10 @@ define([
         this.updateMaxHosts();
       }
 
+      if (this.newServer) {
+        return;
+      }
+
       var port = parseInt(this.$('input.port').val(), 10);
       var protocol = this.$('select.protocol').val();
       var cipher = this.$('.cipher select').val();
