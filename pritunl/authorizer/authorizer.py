@@ -144,7 +144,7 @@ class Authorizer(object):
         platform_name = None
         if self.platform == 'linux':
             platform_name = 'Linux'
-        elif self.platform == 'mac':
+        elif self.platform == 'mac' or self.platform == 'ios':
             platform_name = 'Apple'
         elif self.platform == 'win':
             platform_name = 'Windows'
