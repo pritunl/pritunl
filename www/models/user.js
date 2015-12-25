@@ -25,7 +25,8 @@ define([
       'dns_mapping': null,
       'bypass_secondary': null,
       'dns_servers': null,
-      'dns_suffix': null
+      'dns_suffix': null,
+      'pin': null
     },
     url: function() {
       var url = '/user/' + this.get('organization');
