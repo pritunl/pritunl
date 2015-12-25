@@ -16,6 +16,7 @@ define([
       this.usedNetworks = options.usedNetworks;
       this.usedPorts = options.usedPorts;
       this.usedInterfaces = options.usedInterfaces;
+      this.newServer = true;
 
       this.model = new ServerModel({
         'name': '',
