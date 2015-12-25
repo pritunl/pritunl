@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add user disconnect audit event
+
 Version 1.13.832.99 2015-12-23
 ------------------------------
 
