@@ -44,9 +44,9 @@ class Authorizer(object):
             self._check_call(self._check_password)
             self._check_call(self._check_sso)
             self._check_call(self._check_push)
+            self.callback(True)
         except:
-            return
-        self.callback(True)
+            pass
 
     def _check_call(self, func):
         try:
