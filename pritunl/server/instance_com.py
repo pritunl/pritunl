@@ -7,6 +7,7 @@ from pritunl import logger
 from pritunl import utils
 from pritunl import mongo
 from pritunl import clients
+from pritunl import ipaddress
 
 import os
 import time
@@ -15,6 +16,7 @@ import threading
 import socket
 import uuid
 import random
+import bson
 
 class ServerInstanceCom(object):
     def __init__(self, svr, instance):
