@@ -42,12 +42,14 @@ class Administrator(mongo.MongoObject):
     def dict(self):
         if settings.app.demo_mode:
             return {
+                'id': self.id,
                 'username': self.username,
                 'token': 'demo',
                 'secret': 'demo',
                 'default': self.default,
             }
         return {
+            'id': self.id,
             'username': self.username,
             'token': self.token,
             'secret': self.secret,
