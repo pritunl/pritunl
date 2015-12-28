@@ -86,6 +86,9 @@ class Administrator(mongo.MongoObject):
         test_hash = base64.b64encode(hash_func(pass_salt, test_pass))
         return pass_hash == test_hash
 
+    def generate_otp_secret(self):
+        self.otp_secret = utils.generate_otp_secret()
+
     def generate_token(self):
         logger.info('Generating auth token', 'auth')
         self.token = utils.generate_secret()
