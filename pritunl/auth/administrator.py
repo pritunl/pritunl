@@ -368,3 +368,15 @@ def get_audit_events():
         events.append(doc)
 
     return events
+
+def iter_admins(fields=None):
+    if fields:
+        fields = {key: True for key in fields}
+
+    cursor = Administrator.collection.find({}, fields).sort('name')
+
+    for doc in cursor:
+        yield Administrator(doc=doc, fields=fields)
+
+def get_by_id(id, fields=None):
+    return Administrator(id=id, fields=fields)
