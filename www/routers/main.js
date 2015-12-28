@@ -7,12 +7,13 @@ define([
   'views/alert',
   'views/login',
   'views/dashboard',
+  'views/admins',
   'views/users',
   'views/servers',
   'views/hosts',
   'views/modalSettings'
 ], function($, _, Backbone, AuthSessionModel, SettingsModel, AlertView,
-    LoginView, DashboardView, UsersView, ServersView, HostsView,
+    LoginView, DashboardView, AdminsView, UsersView, ServersView, HostsView,
     ModalSettingsView) {
   'use strict';
   var Router = Backbone.Router.extend({
@@ -20,6 +21,7 @@ define([
       '': 'dashboard',
       'init': 'init',
       'dashboard': 'dashboard',
+      'admins': 'admins',
       'users': 'users',
       'servers': 'servers',
       'hosts': 'hosts',
@@ -216,6 +218,13 @@ define([
           this.openSettings();
           Backbone.history.navigate('dashboard');
         }
+      }.bind(this));
+    },
+    admins: function() {
+      this.auth(function() {
+        $('header .navbar .nav li').removeClass('active');
+        $('header .admins').addClass('active');
+        this.loadPage(new AdminsView());
       }.bind(this));
     },
     users: function() {
