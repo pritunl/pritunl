@@ -131,6 +131,18 @@ class Administrator(mongo.MongoObject):
 
         mongo.MongoObject.commit(self, *args, **kwargs)
 
+    def audit_event(self, event_type, event_msg, remote_addr=None):
+        if settings.app.auditing != ALL:
+            return
+
+        self.audit_collection.insert_one({
+            'user_id': self.id,
+            'timestamp': utils.now(),
+            'type': event_type,
+            'remote_addr': remote_addr,
+            'message': event_msg,
+        })
+
 def clear_session(id, session_id):
     Administrator.collection.update({
         '_id': id,
