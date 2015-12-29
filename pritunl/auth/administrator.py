@@ -21,6 +21,7 @@ class Administrator(mongo.MongoObject):
     fields = {
         'username',
         'password',
+        'otp_secret',
         'token',
         'secret',
         'default',
