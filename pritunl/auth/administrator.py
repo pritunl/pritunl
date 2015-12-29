@@ -67,6 +67,10 @@ class Administrator(mongo.MongoObject):
         return mongo.get_collection('administrators')
 
     @cached_static_property
+    def audit_collection(cls):
+        return mongo.get_collection('users_audit')
+
+    @cached_static_property
     def nonces_collection(cls):
         return mongo.get_collection('auth_nonces')
 
