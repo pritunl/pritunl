@@ -83,3 +83,9 @@ def admin_put(admin_id):
     event.Event(type=ADMINS_UPDATED)
 
     return utils.jsonify(admin.dict())
+
+@app.app.route('/admin/<admin_id>/audit', methods=['GET'])
+@auth.session_auth
+def admin_audit_get(admin_id):
+    admin = auth.get_by_id(admin_id)
+    return utils.jsonify(admin.get_audit_events())
