@@ -34,7 +34,7 @@ def admin_put(admin_id):
                 remote_addr=utils.get_remote_addr(),
             )
 
-        admin.username = utils.filter_str(flask.request.json['name']) or None
+        admin.username = username
 
     if 'password' in flask.request.json:
         password = flask.request.json['password']
