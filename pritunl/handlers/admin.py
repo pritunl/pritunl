@@ -61,4 +61,25 @@ def admin_put(admin_id):
             remote_addr=utils.get_remote_addr(),
         )
 
+    disabled = flask.request.json.get('disabled')
+    if disabled is not None:
+        if disabled != admin.disabled:
+            admin.audit_event('admin_updated',
+                'Administrator %s' % ('disabled' if disabled else 'enabled'),
+                remote_addr=utils.get_remote_addr(),
+            )
+
+        admin.disabled = disabled
+
+    otp_secret = flask.request.json.get('otp_secret')
+    if otp_secret == True:
+        admin.audit_event('admin_updated',
+            'Administrator two-factor authentication secret reset',
+            remote_addr=utils.get_remote_addr(),
+        )
+        admin.generate_otp_secret()
+
+    admin.commit()
+    event.Event(type=ADMINS_UPDATED)
+
     return utils.jsonify(admin.dict())
