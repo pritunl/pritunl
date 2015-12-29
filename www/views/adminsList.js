@@ -15,7 +15,7 @@ define([
     listErrorMsg: 'Failed to load administrators, server error occurred.',
     initialize: function() {
       this.collection = new AdminCollection();
-      this.listenTo(window.events, 'admins_updated', this.update);
+      this.listenTo(window.events, 'administrators_updated', this.update);
       AdminsListView.__super__.initialize.call(this);
     },
     removeItem: function(view) {
