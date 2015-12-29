@@ -22,6 +22,13 @@ define([
       }
 
       return url;
+    },
+    destroyOtpSecret: function(options) {
+      var otpSecret = this.get('otp_secret');
+      this.save({
+        otp_secret: true
+      }, options);
+      this.set({'otp_secret': otpSecret});
     }
   });
 
