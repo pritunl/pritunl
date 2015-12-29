@@ -119,6 +119,9 @@ class Authorizer(object):
             raise AuthError('Failed secondary authentication')
 
     def _check_push(self):
+        if self.user.bypass_secondary or settings.vpn.stress_test:
+            return
+
         self._set_push_type()
         if not self.push_type:
             return
