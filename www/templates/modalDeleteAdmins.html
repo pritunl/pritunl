@@ -1,0 +1,10 @@
+<div class="form-group">
+  <label>Are you sure you want to logout and delete the following administrators?</label>
+  <ul class="modal-user-list">
+    <% _.each(admins, function(admin) { %>
+      <li>
+        <%- admin.username %>
+      </li>
+    <% }); %>
+  </ul>
+</div>
