@@ -274,7 +274,7 @@ def user_put(org_id, user_id):
                 remote_addr=utils.get_remote_addr(),
             )
 
-        user.name = utils.filter_str(flask.request.json['name']) or None
+        user.name = name
 
     if 'email' in flask.request.json:
         email = utils.filter_str(flask.request.json['email']) or None
@@ -285,7 +285,7 @@ def user_put(org_id, user_id):
                 remote_addr=utils.get_remote_addr(),
             )
 
-        user.email = utils.filter_str(flask.request.json['email']) or None
+        user.email = email
 
     if 'pin' in flask.request.json:
         pin = flask.request.json['pin']
