@@ -1,10 +1,8 @@
 from pritunl.constants import *
-from pritunl import logger
 from pritunl import utils
 from pritunl import event
 from pritunl import app
 from pritunl import auth
-from pritunl import settings
 
 import flask
 
