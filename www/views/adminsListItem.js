@@ -25,8 +25,6 @@ define([
       'click .disable-admin': 'onDisableAdmin',
       'click .enable-admin': 'onEnableAdmin'
     },
-    initialize: function() {
-    },
     render: function() {
       this.$el.html(this.template(this.model.toJSON()));
       this.$('[data-toggle="tooltip"]').tooltip();
