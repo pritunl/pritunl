@@ -147,6 +147,23 @@ class Administrator(mongo.MongoObject):
             'message': event_msg,
         })
 
+    def get_audit_events(self):
+        if settings.app.demo_mode:
+            return DEMO_ADMIN_AUDIT_EVENTS
+
+        events = []
+        spec = {
+            'user_id': self.id,
+        }
+
+        for doc in self.audit_collection.find(spec).sort(
+                'timestamp', pymongo.DESCENDING).limit(
+                settings.user.audit_limit):
+            doc['timestamp'] = int(doc['timestamp'].strftime('%s'))
+            events.append(doc)
+
+        return events
+
 def clear_session(id, session_id):
     Administrator.collection.update({
         '_id': id,
