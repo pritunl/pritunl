@@ -25,6 +25,7 @@ class Administrator(mongo.MongoObject):
         'token',
         'secret',
         'default',
+        'disabled',
         'sessions',
     }
     fields_default = {
