@@ -112,7 +112,8 @@ define([
             message = response.responseJSON.error_msg;
           }
           else {
-            message = 'Failed to disable administrator, server error occurred.';
+            message = 'Failed to disable administrator, ' +
+              'server error occurred.';
           }
 
           var alertView = new AlertView({
