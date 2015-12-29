@@ -103,6 +103,7 @@ define([
       }, {
         success: function() {
           this.$('.disable-admin').removeClass('disabled');
+          this.update();
         }.bind(this),
         error: function(model, response) {
           var message;
@@ -135,6 +136,7 @@ define([
       }, {
         success: function() {
           this.$('.enable-admin').removeClass('disabled');
+          this.update();
         }.bind(this),
         error: function(model, response) {
           var message;
