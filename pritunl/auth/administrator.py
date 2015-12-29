@@ -46,16 +46,20 @@ class Administrator(mongo.MongoObject):
             return {
                 'id': self.id,
                 'username': self.username,
+                'otp_secret': self.otp_secret,
                 'token': 'demo',
                 'secret': 'demo',
                 'default': self.default,
+                'disabled': self.disabled,
             }
         return {
             'id': self.id,
             'username': self.username,
+            'otp_secret': self.otp_secret,
             'token': self.token,
             'secret': self.secret,
             'default': self.default,
+            'disabled': self.disabled,
         }
 
     @cached_static_property
