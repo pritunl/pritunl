@@ -3,7 +3,7 @@ define([
   'underscore',
   'backbone',
   'models/key',
-  'collections/userAudit',
+  'collections/adminAudit',
   'views/alert',
   'views/modalRenameUser',
   'views/modalKeyLink',
@@ -11,7 +11,7 @@ define([
   'views/modalOtpAuth',
   'views/userServersList',
   'text!templates/adminsListItem.html'
-], function($, _, Backbone, KeyModel, UserAuditCollection, AlertView,
+], function($, _, Backbone, KeyModel, AdminAuditCollection, AlertView,
     ModalRenameUserView, ModalKeyLinkView, ModalAuditUserView,
     ModalOtpAuthView, UserServersListView, adminsListItemTemplate) {
   'use strict';
@@ -83,8 +83,8 @@ define([
     },
     onAuditAdmin: function() {
       var modal = new ModalAuditUserView({
-        collection: new UserAuditCollection({
-          'user': this.model
+        collection: new AdminAuditCollection({
+          user: this.model
         })
       });
       this.addView(modal);
