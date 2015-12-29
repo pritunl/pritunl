@@ -23,7 +23,7 @@ def admin_get(admin_id=None):
 @app.app.route('/admin/<admin_id>', methods=['PUT'])
 @auth.session_auth
 def admin_put(admin_id):
-    admin = auth.get_by_id(admin_id).dict()
+    admin = auth.get_by_id(admin_id)
 
     if 'username' in flask.request.json:
         username = utils.filter_str(flask.request.json['username']) or None
