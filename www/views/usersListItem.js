@@ -32,45 +32,6 @@ define([
         models: this.model.get('servers')
       });
     },
-    getVirtAddresses: function() {
-      var i;
-      var servers = this.model.get('servers');
-      var virtAddresses = [];
-
-      for (i = 0; i < servers.length; i++) {
-        if (servers[i].virt_address) {
-          virtAddresses.push(servers[i].virt_address);
-        }
-      }
-
-      return virtAddresses;
-    },
-    getBytesReceived: function() {
-      var i;
-      var servers = this.model.get('servers');
-      var bytesReceived = 0;
-
-      for (i = 0; i < servers.length; i++) {
-        if (servers[i].bytes_received) {
-          bytesReceived += servers[i].bytes_received;
-        }
-      }
-
-      return window.formatSize(bytesReceived);
-    },
-    getBytesSent: function() {
-      var i;
-      var servers = this.model.get('servers');
-      var bytesSent = 0;
-
-      for (i = 0; i < servers.length; i++) {
-        if (servers[i].bytes_sent) {
-          bytesSent += servers[i].bytes_sent;
-        }
-      }
-
-      return window.formatSize(bytesSent);
-    },
     _getDownloadTooltip: function() {
       if (this.model.get('has_key')) {
         return 'Click to download profile';
