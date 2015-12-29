@@ -2,9 +2,13 @@ define([
   'jquery',
   'underscore',
   'backbone',
+  'collections/admin',
+  'views/alert',
   'views/adminsList',
+  'views/modalDeleteAdmins',
   'text!templates/admins.html'
-], function($, _, Backbone, AdminsListView, adminsTemplate) {
+], function($, _, Backbone, AdminCollection, AlertView, AdminsListView,
+    ModalDeleteAdminsView, adminsTemplate) {
   'use strict';
   var AdminsView = Backbone.View.extend({
     template: _.template(adminsTemplate),
@@ -39,6 +43,28 @@ define([
       else {
         this.$('.admins-del-selected').attr('disabled', 'disabled');
       }
+    },
+    onDelSelected: function() {
+      var i;
+      var models = [];
+
+      for (i = 0; i < this.selected.length; i++) {
+        models.push(this.selected[i].model);
+      }
+
+      var modal = new ModalDeleteAdminsView({
+        collection: new AdminCollection(models)
+      });
+      this.listenToOnce(modal, 'applied', function() {
+        var alertView = new AlertView({
+          type: 'success',
+          message: 'Successfully deleted selected administrators.',
+          dismissable: true
+        });
+        $('.alerts-container').append(alertView.render().el);
+        this.addView(alertView);
+      }.bind(this));
+      this.addView(modal);
     },
     render: function() {
       this.$el.html(this.template());
