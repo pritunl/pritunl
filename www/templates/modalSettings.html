@@ -4,10 +4,6 @@
       <label>Username</label>
       <input type="text" class="form-control" placeholder="Enter username" value="<%- username %>" autofocus>
     </div>
-    <div class="pass form-group">
-      <label>New Password</label>
-      <input type="password" class="form-control" placeholder="Enter password">
-    </div>
     <div class="auditing form-group">
       <label>Auditing Mode</label>
       <select class="form-control" data-toggle="tooltip" title="Auditing mode" data-toggle="tooltip" title="Log administrator and user actions">
@@ -86,15 +82,10 @@
     </div>
   </div>
   <div class="settings-right right">
-    <div class="api-token form-group">
-      <label>API Token</label>
-      <input type="text" class="form-control" placeholder="" value="<%- token || '' %>" readonly>
+    <div class="pass form-group">
+      <label>New Password</label>
+      <input type="password" class="form-control" placeholder="Enter password">
     </div>
-    <div class="api-secret form-group">
-      <label>API Secret</label>
-      <input type="text" class="form-control" placeholder="" value="<%- secret || '' %>" readonly>
-    </div>
-    <button type="button" class="generate-new-api-key btn btn-danger">Generate New API Key</button>
     <div class="routed-subnet6 form-group">
       <label>Routed IPv6 Subnet</label>
       <input type="text" class="form-control" placeholder="Enter routed subnet" data-toggle="tooltip" title="IPv6 subnet that is routed to the host, must be atleast /64" value="<%- routed_subnet6 %>">
