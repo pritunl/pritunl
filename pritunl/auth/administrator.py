@@ -294,6 +294,9 @@ def check_session():
 
         flask.session['timestamp'] = int(utils.time_now())
 
+    if administrator.disabled:
+        return False
+
     flask.g.administrator = administrator
     return True
 
@@ -333,6 +336,14 @@ def check_auth(username, password, remote_addr=None):
         audit_event(
             'admin_auth',
             'Administrator login failed, invalid password',
+            remote_addr=remote_addr,
+        )
+        return
+
+    if administrator.disabled:
+        audit_event(
+            'admin_auth',
+            'Administrator login failed, administrator is disabled',
             remote_addr=remote_addr,
         )
         return
