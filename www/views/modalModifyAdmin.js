@@ -97,9 +97,10 @@ define([
 
       var data = {
         username: username,
+        otp_auth: otpAuth,
         auth_api: authApi,
-        auth_token: null,
-        auth_secret: null
+        token: null,
+        secret: null
       };
 
       if (password) {
