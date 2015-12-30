@@ -607,11 +607,17 @@ MONGODB_AUTH_ERROR_MSG = 'Unable to authenticate to the MongoDB server.'
 DUO_USER_INVALID = 'duo_user_invalid'
 DUO_USER_INVALID_MSG = 'Username is invalid.'
 
-NO_ADMINS = 'no_admins'
-NO_ADMINS_MSG = 'Atleast one super administrator must be enabled.'
+NO_ADMINS_ENABLED = 'no_admins_enabled'
+NO_ADMINS_ENABLED_MSG = 'Atleast one super administrator must be enabled.'
 
 NO_SUPER_USERS = 'no_super_users'
 NO_SUPER_USERS_MSG = 'There must be atleast one super user.'
+
+NO_ADMINS = 'no_admins'
+NO_ADMINS_MSG = 'Atleast one super administrator must exist.'
+
+ADMIN_USERNAME_EXISTS = 'admin_username_exists'
+ADMIN_USERNAME_EXISTS_MSG = 'Administrator username already exists.'
 
 RANDOM_ONE = (
     'snowy',
