@@ -11,19 +11,16 @@ define([
   'views/modalSubscribe',
   'views/modalEnterprise',
   'views/modalFeedback',
-  'views/modalAuditUser',
   'text!templates/header.html'
 ], function($, _, Backbone, SettingsModel, SubscriptionModel, UserModel,
     UserAuditCollection, AlertView, ModalSettingsView, ModalSubscribeView,
-    ModalEnterpriseView, ModalFeedbackView, ModalAuditUserView,
-    headerTemplate) {
+    ModalEnterpriseView, ModalFeedbackView, headerTemplate) {
   'use strict';
   var HeaderView = Backbone.View.extend({
     tagName: 'header',
     template: _.template(headerTemplate),
     events: {
       'click .enterprise-upgrade a, .enterprise-settings a': 'onEnterprise',
-      'click .audit-admin a': 'onAuditAdmin',
       'click .change-password a': 'openSettings',
       'click .feedback': 'onFeedback'
     },
@@ -58,20 +55,6 @@ define([
           this.addView(alertView);
         }.bind(this)
       });
-    },
-    onAuditAdmin: function() {
-      var model = new UserModel();
-      model.set({
-        id: 'admin',
-        organization: 'admin',
-        name: 'Administrator'
-      });
-      var modal = new ModalAuditUserView({
-        collection: new UserAuditCollection({
-          'user': model
-        })
-      });
-      this.addView(modal);
     },
     onEnterprise: function() {
       if (this.onEnterpriseLock) {
