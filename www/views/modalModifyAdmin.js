@@ -95,13 +95,19 @@ define([
         return;
       }
 
-      this.setLoading('Modifying administrator...');
-      this.model.save({
-        name: this.$('input').val(),
+      var data = {
+        username: username,
         auth_api: authApi,
         auth_token: null,
         auth_secret: null
-      }, {
+      };
+
+      if (password) {
+        data.password = password;
+      }
+
+      this.setLoading('Modifying administrator...');
+      this.model.save(data, {
         success: function() {
           this.close(true);
         }.bind(this),
