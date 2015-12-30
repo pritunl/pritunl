@@ -29,15 +29,15 @@ class Administrator(mongo.MongoObject):
         'default',
         'disabled',
         'sessions',
-        'super',
+        'super_user',
     }
     fields_default = {
-        'super': True,
+        'super_user': True,
         'sessions': [],
     }
 
     def __init__(self, username=None, password=None, default=None,
-            otp_auth=None, auth_api=None, disabled=None, super=None,
+            otp_auth=None, auth_api=None, disabled=None, super_user=None,
             **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
         if username is not None:
@@ -52,8 +52,8 @@ class Administrator(mongo.MongoObject):
             self.auth_api = auth_api
         if disabled is not None:
             self.disabled = disabled
-        if super is not None:
-            self.super = super
+        if super_user is not None:
+            self.super_user = super_user
 
     def dict(self):
         if settings.app.demo_mode:
@@ -67,7 +67,7 @@ class Administrator(mongo.MongoObject):
                 'secret': 'demo',
                 'default': self.default,
                 'disabled': self.disabled,
-                'super': self.super,
+                'super_user': self.super_user,
             }
         return {
             'id': self.id,
@@ -79,7 +79,7 @@ class Administrator(mongo.MongoObject):
             'secret': self.secret,
             'default': self.default,
             'disabled': self.disabled,
-            'super': self.super,
+            'super_user': self.super_user,
         }
 
     @cached_static_property
