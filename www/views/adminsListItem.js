@@ -51,6 +51,12 @@ define([
         this.$('.enable-admin').hide();
         this.$('.disable-admin').show();
       }
+
+      if (this.model.get('otp_auth')) {
+        this.$('.get-otp-auth').removeClass('no-otp-auth');
+      } else {
+        this.$('.get-otp-auth').addClass('no-otp-auth');
+      }
     },
     getSelect: function() {
       return this.$('.selector').hasClass('selected');
