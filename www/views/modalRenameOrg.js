@@ -79,7 +79,7 @@ define([
 
       this.setLoading('Modifying organization...');
       this.model.save({
-        name: this.$('input').val(),
+        name: name,
         auth_api: authApi,
         auth_token: null,
         auth_secret: null
