@@ -172,6 +172,23 @@ def admin_post():
 
     return utils.jsonify(admin.dict())
 
+@app.app.route('/admin/<admin_id>', methods=['DELETE'])
+@auth.session_auth
+def admin_delete(admin_id):
+    admin = auth.get_by_id(admin_id)
+
+    if admin.super_user and auth.super_user_count() < 2:
+        return utils.jsonify({
+            'error': NO_ADMINS,
+            'error_msg': NO_ADMINS_MSG,
+        }, 400)
+
+    admin.remove()
+
+    event.Event(type=ADMINS_UPDATED)
+
+    return utils.jsonify({})
+
 @app.app.route('/admin/<admin_id>/audit', methods=['GET'])
 @auth.session_auth
 def admin_audit_get(admin_id):
