@@ -442,6 +442,20 @@ def iter_admins(fields=None):
 def get_by_id(id, fields=None):
     return Administrator(id=id, fields=fields)
 
+def new_admin(**kwargs):
+    admin = Administrator(**kwargs)
+
+    if admin.otp_auth:
+        admin.generate_otp_secret()
+
+    if admin.auth_api:
+        admin.generate_token()
+        admin.generate_secret()
+
+    admin.commit()
+
+    return admin
+
 def enabled_count():
     return Administrator.collection.find({
         'super': {'$ne': False},
