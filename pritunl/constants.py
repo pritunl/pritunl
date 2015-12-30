@@ -619,6 +619,10 @@ NO_ADMINS_MSG = 'Atleast one super administrator must exist.'
 ADMIN_USERNAME_EXISTS = 'admin_username_exists'
 ADMIN_USERNAME_EXISTS_MSG = 'Administrator username already exists.'
 
+REQUIRES_SUPER_USER = 'requires_super_user'
+REQUIRES_SUPER_USER_MSG = 'This administrator action can only be ' + \
+    'performed by a super user.'
+
 RANDOM_ONE = (
     'snowy',
     'restless',
