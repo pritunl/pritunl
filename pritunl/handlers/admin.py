@@ -5,6 +5,7 @@ from pritunl import app
 from pritunl import auth
 
 import flask
+import pymongo
 
 @app.app.route('/admin', methods=['GET'])
 @app.app.route('/admin/<admin_id>', methods=['GET'])
@@ -93,8 +94,8 @@ def admin_put(admin_id):
     if disabled is not None:
         if disabled and auth.super_user_count() < 2:
             return utils.jsonify({
-                'error': NO_ADMINS,
-                'error_msg': NO_ADMINS_MSG,
+                'error': NO_ADMINS_ENABLED,
+                'error_msg': NO_ADMINS_ENABLED_MSG,
             }, 400)
 
         if disabled != admin.disabled:
@@ -124,7 +125,14 @@ def admin_put(admin_id):
         )
         admin.generate_otp_secret()
 
-    admin.commit()
+    try:
+        admin.commit()
+    except pymongo.errors.DuplicateKeyError:
+        return utils.jsonify({
+            'error': ADMIN_USERNAME_EXISTS,
+            'error_msg': ADMIN_USERNAME_EXISTS_MSG,
+        }, 400)
+
     event.Event(type=ADMINS_UPDATED)
 
     return utils.jsonify(admin.dict())
@@ -139,14 +147,25 @@ def admin_post():
     disabled = flask.request.json.get('disabled', False)
     super_user = flask.request.json.get('super_user', False)
 
-    admin = auth.new_admin(
-        username=username,
-        password=password,
-        default=True,
-        otp_auth=otp_auth,
-        auth_api=auth_api,
-        disabled=disabled,
-        super_user=super_user,
+    try:
+        admin = auth.new_admin(
+            username=username,
+            password=password,
+            default=True,
+            otp_auth=otp_auth,
+            auth_api=auth_api,
+            disabled=disabled,
+            super_user=super_user,
+        )
+    except pymongo.errors.DuplicateKeyError:
+        return utils.jsonify({
+            'error': ADMIN_USERNAME_EXISTS,
+            'error_msg': ADMIN_USERNAME_EXISTS_MSG,
+        }, 400)
+
+    admin.audit_event('admin_created',
+        'Administrator created',
+        remote_addr=utils.get_remote_addr(),
     )
 
     event.Event(type=ADMINS_UPDATED)
