@@ -67,6 +67,7 @@ class Administrator(mongo.MongoObject):
                 'secret': 'demo',
                 'default': self.default,
                 'disabled': self.disabled,
+                'super': self.super,
             }
         return {
             'id': self.id,
@@ -78,6 +79,7 @@ class Administrator(mongo.MongoObject):
             'secret': self.secret,
             'default': self.default,
             'disabled': self.disabled,
+            'super': self.super,
         }
 
     @cached_static_property
