@@ -129,6 +129,30 @@ def admin_put(admin_id):
 
     return utils.jsonify(admin.dict())
 
+@app.app.route('/admin', methods=['POST'])
+@auth.session_auth
+def admin_post():
+    username = utils.filter_str(flask.request.json['username'])
+    password = flask.request.json['password']
+    otp_auth = flask.request.json.get('otp_auth', False)
+    auth_api = flask.request.json.get('auth_api', False)
+    disabled = flask.request.json.get('disabled', False)
+    super_user = flask.request.json.get('super_user', False)
+
+    admin = auth.new_admin(
+        username=username,
+        password=password,
+        default=True,
+        otp_auth=otp_auth,
+        auth_api=auth_api,
+        disabled=disabled,
+        super_user=super_user,
+    )
+
+    event.Event(type=ADMINS_UPDATED)
+
+    return utils.jsonify(admin.dict())
+
 @app.app.route('/admin/<admin_id>/audit', methods=['GET'])
 @auth.session_auth
 def admin_audit_get(admin_id):
