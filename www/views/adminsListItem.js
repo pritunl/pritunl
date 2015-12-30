@@ -5,14 +5,14 @@ define([
   'models/key',
   'collections/adminAudit',
   'views/alert',
-  'views/modalRenameUser',
+  'views/modalModifyAdmin',
   'views/modalKeyLink',
   'views/modalAuditUser',
   'views/modalOtpAuth',
   'views/userServersList',
   'text!templates/adminsListItem.html'
 ], function($, _, Backbone, KeyModel, AdminAuditCollection, AlertView,
-    ModalRenameUserView, ModalKeyLinkView, ModalAuditUserView,
+    ModalModifyAdminView, ModalKeyLinkView, ModalAuditUserView,
     ModalOtpAuthView, UserServersListView, adminsListItemTemplate) {
   'use strict';
   var AdminsListItemView = Backbone.View.extend({
@@ -74,7 +74,7 @@ define([
       this.setSelect(!this.getSelect(), evt.shiftKey);
     },
     onModify: function() {
-      var modal = new ModalRenameUserView({
+      var modal = new ModalModifyAdminView({
         model: this.model.clone()
       });
       this.addView(modal);
