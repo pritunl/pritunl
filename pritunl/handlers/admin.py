@@ -47,6 +47,17 @@ def admin_put(admin_id):
 
         admin.password = password
 
+    auth_api = flask.request.json.get('auth_api')
+    if auth_api is not None:
+        if auth_api != admin.auth_api:
+            admin.audit_event('admin_updated',
+                'Administrator token authentication %s' % (
+                    'disabled' if auth_api else 'enabled'),
+                remote_addr=utils.get_remote_addr(),
+            )
+
+        admin.auth_api = auth_api
+
     if 'token' in flask.request.json and flask.request.json['token']:
         admin.generate_token()
         admin.audit_event('admin_updated',
@@ -70,6 +81,17 @@ def admin_put(admin_id):
             )
 
         admin.disabled = disabled
+
+    otp_auth = flask.request.json.get('otp_auth')
+    if otp_auth is not None:
+        if otp_auth != admin.otp_auth:
+            admin.audit_event('admin_updated',
+                'Administrator two-step authentication %s' % (
+                    'disabled' if otp_auth else 'enabled'),
+                remote_addr=utils.get_remote_addr(),
+            )
+
+        admin.otp_auth = otp_auth
 
     otp_secret = flask.request.json.get('otp_secret')
     if otp_secret == True:
