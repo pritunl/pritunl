@@ -456,7 +456,7 @@ def new_admin(**kwargs):
 
     return admin
 
-def enabled_count():
+def super_user_count():
     return Administrator.collection.find({
         'super': {'$ne': False},
         'disabled': {'$ne': True},

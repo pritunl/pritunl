@@ -607,8 +607,8 @@ MONGODB_AUTH_ERROR_MSG = 'Unable to authenticate to the MongoDB server.'
 DUO_USER_INVALID = 'duo_user_invalid'
 DUO_USER_INVALID_MSG = 'Username is invalid.'
 
-CANNOT_DISABLE_ALL_ADMINS = 'cannot_disable_all_admins'
-CANNOT_DISABLE_ALL_ADMINS_MSG = 'Atleast one super admin must be enabled.'
+NO_ADMINS = 'no_admins'
+NO_ADMINS_MSG = 'Atleast one super administrator must be enabled.'
 
 RANDOM_ONE = (
     'snowy',
