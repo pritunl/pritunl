@@ -430,3 +430,11 @@ def iter_admins(fields=None):
 
 def get_by_id(id, fields=None):
     return Administrator(id=id, fields=fields)
+
+def enabled_count():
+    return Administrator.collection.find({
+        'super': {'$ne': False},
+        'disabled': {'$ne': True},
+    }, {
+        '_id': True,
+    }).count()
