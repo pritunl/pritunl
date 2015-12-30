@@ -21,7 +21,9 @@ class Administrator(mongo.MongoObject):
     fields = {
         'username',
         'password',
+        'otp_auth',
         'otp_secret',
+        'auth_api',
         'token',
         'secret',
         'default',
@@ -46,7 +48,9 @@ class Administrator(mongo.MongoObject):
             return {
                 'id': self.id,
                 'username': self.username,
+                'otp_auth': self.otp_auth,
                 'otp_secret': self.otp_secret,
+                'auth_api': self.auth_api,
                 'token': 'demo',
                 'secret': 'demo',
                 'default': self.default,
@@ -55,7 +59,9 @@ class Administrator(mongo.MongoObject):
         return {
             'id': self.id,
             'username': self.username,
+            'otp_auth': self.otp_auth,
             'otp_secret': self.otp_secret,
+            'auth_api': self.auth_api,
             'token': self.token,
             'secret': self.secret,
             'default': self.default,
