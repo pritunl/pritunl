@@ -610,6 +610,9 @@ DUO_USER_INVALID_MSG = 'Username is invalid.'
 NO_ADMINS = 'no_admins'
 NO_ADMINS_MSG = 'Atleast one super administrator must be enabled.'
 
+NO_SUPER_USERS = 'no_super_users'
+NO_SUPER_USERS_MSG = 'There must be atleast one super user.'
+
 RANDOM_ONE = (
     'snowy',
     'restless',

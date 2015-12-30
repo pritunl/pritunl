@@ -49,6 +49,12 @@ def admin_put(admin_id):
 
     super_user = flask.request.json.get('super_user')
     if super_user is not None:
+        if not super_user and auth.super_user_count() < 2:
+            return utils.jsonify({
+                'error': NO_SUPER_USERS,
+                'error_msg': NO_SUPER_USERS_MSG,
+            }, 400)
+
         if super_user != admin.super_user:
             admin.audit_event('admin_updated',
                 'Administrator super user %s' % (
