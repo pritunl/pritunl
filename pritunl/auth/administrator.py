@@ -29,8 +29,10 @@ class Administrator(mongo.MongoObject):
         'default',
         'disabled',
         'sessions',
+        'super',
     }
     fields_default = {
+        'super': True,
         'sessions': [],
     }
 
