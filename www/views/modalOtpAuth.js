@@ -37,8 +37,14 @@ define([
         this.setAlert('success', 'Successfully generated new key.');
       }
       this.$('input').val(this.model.get('otp_secret'));
-      var otpUrl = 'otpauth://totp/' + this.model.get('name') +
-        '@' + this.model.get('organization_name') + '?secret=' +
+
+      var name = this.model.get('name') || this.model.get('username');
+      var org = this.model.get('organization_name');
+      if (org) {
+        name += '@' + org;
+      }
+
+      var otpUrl = 'otpauth://totp/' + name + '?secret=' +
         this.model.get('otp_secret');
       this.$('.qrcode').empty();
 
