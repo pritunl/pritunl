@@ -85,6 +85,12 @@ def admin_put(admin_id):
 
     disabled = flask.request.json.get('disabled')
     if disabled is not None:
+        if disabled and auth.enabled_count() < 2:
+            return utils.jsonify({
+                'error': CANNOT_DISABLE_ALL_ADMINS,
+                'error_msg': CANNOT_DISABLE_ALL_ADMINS_MSG,
+            }, 400)
+
         if disabled != admin.disabled:
             admin.audit_event('admin_updated',
                 'Administrator %s' % ('disabled' if disabled else 'enabled'),
