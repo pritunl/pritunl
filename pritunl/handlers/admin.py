@@ -36,7 +36,7 @@ def admin_put(admin_id):
 
         admin.username = username
 
-    if 'password' in flask.request.json:
+    if 'password' in flask.request.json and flask.request.json['password']:
         password = flask.request.json['password']
 
         if password != admin.password:
