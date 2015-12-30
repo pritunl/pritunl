@@ -36,7 +36,9 @@ class Administrator(mongo.MongoObject):
         'sessions': [],
     }
 
-    def __init__(self, username=None, password=None, default=None, **kwargs):
+    def __init__(self, username=None, password=None, default=None,
+            otp_auth=None, auth_api=None, disabled=None, super=None,
+            **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
         if username is not None:
             self.username = username
@@ -44,6 +46,14 @@ class Administrator(mongo.MongoObject):
             self.password = password
         if default is not None:
             self.default = default
+        if otp_auth is not None:
+            self.otp_auth = otp_auth
+        if auth_api is not None:
+            self.auth_api = auth_api
+        if disabled is not None:
+            self.disabled = disabled
+        if super is not None:
+            self.super = super
 
     def dict(self):
         if settings.app.demo_mode:
