@@ -23,7 +23,6 @@ define([
         'propertychange .pass input': 'onPassEvent',
         'change .monitoring select': 'onMonitoringChange',
         'change .theme select': 'onThemeChange',
-        'click .generate-new-api-key': 'onGenerateNewKey',
         'click .api-token input, .api-secret input': 'onClickInput'
       }, ModalSettingsView.__super__.events);
     },
@@ -229,29 +228,6 @@ define([
           this.onPassChange();
         }
       }.bind(this), 500);
-    },
-    onGenerateNewKey: function() {
-      this.setLoading('Generating new api key...');
-      this.model.clear();
-      this.model.save({
-        token: true,
-        secret: true
-      }, {
-        success: function() {
-          this.clearLoading();
-          this.setAlert('success', 'Successfully generated a new api key.');
-          this.update();
-        }.bind(this),
-        error: function(model, response) {
-          this.clearLoading();
-          if (response.responseJSON) {
-            this.setAlert('danger', response.responseJSON.error_msg);
-          }
-          else {
-            this.setAlert('danger', this.errorMsg);
-          }
-        }.bind(this)
-      });
     },
     onOk: function() {
       var username = this.$('.username input').val();
