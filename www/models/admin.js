@@ -8,6 +8,7 @@ define([
     defaults: {
       'id': null,
       'username': null,
+      'auth_api': null,
       'token': null,
       'secret': null,
       'otp_auth': null,
