@@ -98,13 +98,16 @@ def settings_put():
         if username != admin.username:
             changes.add('username')
         admin.username = username
+
     if 'password' in flask.request.json and flask.request.json['password']:
         password = flask.request.json['password']
         changes.add('password')
         admin.password = password
+
     if 'token' in flask.request.json and flask.request.json['token']:
         admin.generate_token()
         changes.add('token')
+
     if 'secret' in flask.request.json and flask.request.json['secret']:
         admin.generate_secret()
         changes.add('token')
