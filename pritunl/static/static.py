@@ -5,6 +5,9 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import settings
 
+import gzip
+import StringIO
+import shutil
 import os
 import datetime
 import mimetypes
@@ -63,8 +66,11 @@ class StaticFile(object):
             os.path.getmtime(self.path))
         file_size = int(os.path.getsize(self.path))
 
-        with open(self.path, 'r') as static_file:
-            self.data = static_file.read()
+        gzip_data = StringIO.StringIO()
+        with open(self.path, 'rb') as static_file, \
+                gzip.GzipFile(fileobj=gzip_data, mode='wb') as gzip_file:
+            shutil.copyfileobj(static_file, gzip_file)
+        self.data = gzip_data.getvalue()
 
         self.mime_type = mimetypes.guess_type(file_basename)[0] or 'text/plain'
         self.last_modified = werkzeug.http.http_date(file_mtime)
@@ -76,8 +82,10 @@ class StaticFile(object):
         if not self.last_modified:
             flask.abort(404)
         response = flask.Response(response=self.data, mimetype=self.mime_type)
+        response.headers.add('Content-Encoding', 'gzip')
+
         if settings.conf.static_cache and \
-            not settings.conf.debug and self.cache:
+                not settings.conf.debug and self.cache:
             response.headers.add('Cache-Control',
                 'max-age=%s, public' % settings.app.static_cache_time)
             response.headers.add('ETag', '"%s"' % self.etag)
