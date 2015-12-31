@@ -80,6 +80,13 @@ def admin_put(admin_id):
     auth_api = flask.request.json.get('auth_api')
     if auth_api is not None:
         if auth_api != admin.auth_api:
+            if not auth_api:
+                admin.token = None
+                admin.secret = None
+            elif not admin.token or not admin.secret:
+                admin.generate_token()
+                admin.generate_secret()
+
             admin.audit_event('admin_updated',
                 'Administrator token authentication %s' % (
                     'disabled' if auth_api else 'enabled'),
@@ -121,7 +128,9 @@ def admin_put(admin_id):
     otp_auth = flask.request.json.get('otp_auth')
     if otp_auth is not None:
         if otp_auth != admin.otp_auth:
-            if not admin.otp_secret:
+            if not otp_auth:
+                admin.otp_secret = None
+            elif not admin.otp_secret:
                 admin.generate_otp_secret()
 
             admin.audit_event('admin_updated',
