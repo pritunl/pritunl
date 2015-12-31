@@ -511,7 +511,7 @@ def new_admin(**kwargs):
 
 def super_user_count():
     return Administrator.collection.find({
-        'super': {'$ne': False},
+        'super_user': {'$ne': False},
         'disabled': {'$ne': True},
     }, {
         '_id': True,
