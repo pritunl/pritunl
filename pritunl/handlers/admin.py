@@ -11,6 +11,12 @@ import pymongo
 @app.app.route('/admin/<admin_id>', methods=['GET'])
 @auth.session_auth
 def admin_get(admin_id=None):
+    if not flask.g.administrator.super_user:
+            return utils.jsonify({
+                'error': REQUIRES_SUPER_USER,
+                'error_msg': REQUIRES_SUPER_USER_MSG,
+            }, 400)
+
     if admin_id:
         return utils.jsonify(auth.get_by_id(admin_id).dict())
 
@@ -24,6 +30,12 @@ def admin_get(admin_id=None):
 @app.app.route('/admin/<admin_id>', methods=['PUT'])
 @auth.session_auth
 def admin_put(admin_id):
+    if not flask.g.administrator.super_user:
+        return utils.jsonify({
+            'error': REQUIRES_SUPER_USER,
+            'error_msg': REQUIRES_SUPER_USER_MSG,
+        }, 400)
+
     admin = auth.get_by_id(admin_id)
 
     if 'username' in flask.request.json:
@@ -140,6 +152,12 @@ def admin_put(admin_id):
 @app.app.route('/admin', methods=['POST'])
 @auth.session_auth
 def admin_post():
+    if not flask.g.administrator.super_user:
+        return utils.jsonify({
+            'error': REQUIRES_SUPER_USER,
+            'error_msg': REQUIRES_SUPER_USER_MSG,
+        }, 400)
+
     username = utils.filter_str(flask.request.json['username'])
     password = flask.request.json['password']
     otp_auth = flask.request.json.get('otp_auth', False)
@@ -175,6 +193,12 @@ def admin_post():
 @app.app.route('/admin/<admin_id>', methods=['DELETE'])
 @auth.session_auth
 def admin_delete(admin_id):
+    if not flask.g.administrator.super_user:
+        return utils.jsonify({
+            'error': REQUIRES_SUPER_USER,
+            'error_msg': REQUIRES_SUPER_USER_MSG,
+        }, 400)
+
     admin = auth.get_by_id(admin_id)
 
     if admin.super_user and auth.super_user_count() < 2:
@@ -192,5 +216,11 @@ def admin_delete(admin_id):
 @app.app.route('/admin/<admin_id>/audit', methods=['GET'])
 @auth.session_auth
 def admin_audit_get(admin_id):
+    if not flask.g.administrator.super_user:
+        return utils.jsonify({
+            'error': REQUIRES_SUPER_USER,
+            'error_msg': REQUIRES_SUPER_USER_MSG,
+        }, 400)
+
     admin = auth.get_by_id(admin_id)
     return utils.jsonify(admin.get_audit_events())
