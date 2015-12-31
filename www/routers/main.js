@@ -221,6 +221,11 @@ define([
       }.bind(this));
     },
     admins: function() {
+      if (!window.superUser || window.subPlan !== 'enterprise') {
+        this.dashboard();
+        return;
+      }
+
       this.auth(function() {
         $('header .navbar .nav li').removeClass('active');
         $('header .admins').addClass('active');
