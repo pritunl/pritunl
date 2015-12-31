@@ -121,6 +121,8 @@ def admin_put(admin_id):
     otp_auth = flask.request.json.get('otp_auth')
     if otp_auth is not None:
         if otp_auth != admin.otp_auth:
+            admin.generate_otp_secret()
+
             admin.audit_event('admin_updated',
                 'Administrator two-step authentication %s' % (
                     'disabled' if otp_auth else 'enabled'),
