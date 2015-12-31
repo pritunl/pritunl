@@ -115,6 +115,11 @@ def settings_put():
         auditing = flask.request.json['auditing'] or None
 
         if settings.app.auditing != auditing:
+            if not flask.g.administrator.super_user:
+                return utils.jsonify({
+                    'error': REQUIRES_SUPER_USER,
+                    'error_msg': REQUIRES_SUPER_USER_MSG,
+                }, 400)
             org_event = True
 
         settings.app.auditing = auditing
