@@ -19,6 +19,7 @@ def subscription_get():
 @auth.session_auth
 def subscription_state_get():
     return utils.jsonify({
+        'super_user': flask.g.administrator.super_user,
         'theme': settings.app.theme,
         'active': settings.local.sub_active,
         'plan': settings.local.sub_plan,
