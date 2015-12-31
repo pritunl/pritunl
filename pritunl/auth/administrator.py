@@ -332,6 +332,9 @@ def check_session():
         if not administrator:
             return False
 
+        if not administrator.auth_api:
+            return False
+
         auth_string = '&'.join([
             auth_token, auth_timestamp, auth_nonce, flask.request.method,
             flask.request.path] +
