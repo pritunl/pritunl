@@ -419,22 +419,12 @@ def get_by_username(username, remote_addr=None):
 
     admin = find_user(username=username)
     if not admin:
-        audit_event(
-            'admin_auth',
-            'Administrator login failed, invalid username',
-            remote_addr=remote_addr,
-        )
         return
 
     return admin
 
 def reset_password():
     logger.info('Resetting administrator password', 'auth')
-
-    audit_event(
-        'admin_auth',
-        'Administrator password reset from command line',
-    )
 
     admin_collection = mongo.get_collection('administrators')
     admin_collection.remove({})
@@ -452,39 +442,6 @@ def reset_password():
     }})
 
     return DEFAULT_USERNAME, DEFAULT_PASSWORD
-
-def audit_event(event_type, event_msg, remote_addr=None):
-    if settings.app.auditing != ALL:
-        return
-
-    audit_collection = mongo.get_collection('users_audit')
-    audit_collection.insert_one({
-        'user_id': 'admin',
-        'org_id': 'admin',
-        'timestamp': utils.now(),
-        'type': event_type,
-        'remote_addr': remote_addr,
-        'message': event_msg,
-    })
-
-def get_audit_events():
-    if settings.app.demo_mode:
-        return DEMO_ADMIN_AUDIT_EVENTS
-
-    audit_collection = mongo.get_collection('users_audit')
-    events = []
-    spec = {
-        'user_id': 'admin',
-        'org_id': 'admin',
-    }
-
-    for doc in audit_collection.find(spec).sort(
-            'timestamp', pymongo.DESCENDING).limit(
-            settings.user.audit_limit):
-        doc['timestamp'] = int(doc['timestamp'].strftime('%s'))
-        events.append(doc)
-
-    return events
 
 def iter_admins(fields=None):
     if fields:
