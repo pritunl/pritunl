@@ -62,13 +62,13 @@ def admin_put(admin_id):
 
     super_user = flask.request.json.get('super_user')
     if super_user is not None:
-        if not super_user and auth.super_user_count() < 2:
-            return utils.jsonify({
-                'error': NO_SUPER_USERS,
-                'error_msg': NO_SUPER_USERS_MSG,
-            }, 400)
-
         if super_user != admin.super_user:
+            if not super_user and auth.super_user_count() < 2:
+                return utils.jsonify({
+                    'error': NO_SUPER_USERS,
+                    'error_msg': NO_SUPER_USERS_MSG,
+                }, 400)
+
             admin.audit_event('admin_updated',
                 'Administrator super user %s' % (
                     'disabled' if super_user else 'enabled'),
@@ -104,13 +104,13 @@ def admin_put(admin_id):
 
     disabled = flask.request.json.get('disabled')
     if disabled is not None:
-        if disabled and auth.super_user_count() < 2:
-            return utils.jsonify({
-                'error': NO_ADMINS_ENABLED,
-                'error_msg': NO_ADMINS_ENABLED_MSG,
-            }, 400)
-
         if disabled != admin.disabled:
+            if disabled and admin.super_user and auth.super_user_count() < 2:
+                return utils.jsonify({
+                    'error': NO_ADMINS_ENABLED,
+                    'error_msg': NO_ADMINS_ENABLED_MSG,
+                }, 400)
+
             admin.audit_event('admin_updated',
                 'Administrator %s' % ('disabled' if disabled else 'enabled'),
                 remote_addr=utils.get_remote_addr(),
