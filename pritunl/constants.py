@@ -455,7 +455,10 @@ DEMO_BLOCKED = 'demo_blocked'
 DEMO_BLOCKED_MSG = 'Not aviaible in demo.'
 
 AUTH_INVALID = 'auth_invalid'
-AUTH_INVALID_MSG = 'Username or password is not valid.'
+AUTH_INVALID_MSG = 'Authentication credentials are not valid.'
+
+AUTH_OTP_REQUIRED = 'auth_otp_required'
+AUTH_OTP_REQUIRED_MSG = 'Two-factor authentication required.'
 
 NETWORK_INVALID = 'network_invalid'
 NETWORK_INVALID_MSG = 'Network address is not valid, format must be ' + \
