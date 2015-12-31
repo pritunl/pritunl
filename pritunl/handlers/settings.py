@@ -352,7 +352,7 @@ def settings_put():
         settings.app.sso_onelogin_key = None
 
     for change in changes:
-        auth.audit_event(
+        flask.g.administrator.audit_event(
             'admin_settings',
             _changes_audit_text[change],
             remote_addr=utils.get_remote_addr(),
