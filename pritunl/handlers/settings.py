@@ -13,7 +13,6 @@ import flask
 _changes_audit_text = {
     'username': 'Administrator username changed',
     'password': 'Administrator password changed',
-    'token': 'Administrator api token changed',
     'smtp': 'SMTP settings changed',
     'pin_mode': 'User pin mode settings changed',
     'sso': 'Single sign-on settings changed',
