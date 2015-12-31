@@ -5,15 +5,32 @@ from pritunl import utils
 from pritunl import app
 
 import flask
+import time
+import random
 
 @app.app.route('/auth/session', methods=['POST'])
 def auth_session_post():
     username = flask.request.json['username']
     password = flask.request.json['password']
+    otp_code = flask.request.json.get('otp_code')
     remote_addr = utils.get_remote_addr()
-    admin = auth.check_auth(username, password, remote_addr)
 
+    admin = auth.get_by_username(username, remote_addr)
     if not admin:
+        time.sleep(random.randint(0, 100) / 1000.)
+        return utils.jsonify({
+            'error': AUTH_INVALID,
+            'error_msg': AUTH_INVALID_MSG,
+        }, 401)
+
+    if not otp_code and admin.otp_auth:
+        return utils.jsonify({
+            'error': AUTH_OTP_REQUIRED,
+            'error_msg': AUTH_OTP_REQUIRED_MSG,
+        }, 402)
+
+    if not admin.auth_check(password, otp_code, remote_addr):
+        time.sleep(random.randint(0, 100) / 1000.)
         return utils.jsonify({
             'error': AUTH_INVALID,
             'error_msg': AUTH_INVALID_MSG,
