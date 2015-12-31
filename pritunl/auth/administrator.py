@@ -121,6 +121,57 @@ class Administrator(mongo.MongoObject):
         test_hash = base64.b64encode(hash_func(pass_salt, test_pass))
         return pass_hash == test_hash
 
+    def auth_check(self, password, otp_code=None, remote_addr=None):
+        if not self.test_password(password):
+            self.audit_event(
+                'admin_auth',
+                'Administrator login failed, invalid password',
+                remote_addr=remote_addr,
+            )
+            return False
+
+        if self.otp_auth and not self.verify_otp_code(otp_code):
+            self.audit_event(
+                'admin_auth',
+                'Administrator login failed, ' +
+                    'invalid two-factor authentication code',
+                remote_addr=remote_addr,
+            )
+            return False
+
+        if self.disabled:
+            self.audit_event(
+                'admin_auth',
+                'Administrator login failed, administrator is disabled',
+                remote_addr=remote_addr,
+            )
+            return False
+
+        sso_admin = settings.app.sso_admin
+        if settings.app.sso and DUO_AUTH in settings.app.sso and sso_admin:
+            allow, _ = sso.auth_duo(
+                sso_admin,
+                strong=True,
+                ipaddr=remote_addr,
+                type='Administrator'
+            )
+            if not allow:
+                self.audit_event(
+                    'admin_auth',
+                    'Administrator login failed, ' +
+                        'failed secondary authentication',
+                    remote_addr=remote_addr,
+                )
+                return False
+
+        self.audit_event(
+            'admin_auth',
+            'Administrator login successful',
+            remote_addr=remote_addr,
+        )
+
+        return True
+
     def generate_otp_secret(self):
         self.otp_secret = utils.generate_otp_secret()
 
@@ -340,7 +391,7 @@ def check_session():
     flask.g.administrator = administrator
     return True
 
-def check_auth(username, password, remote_addr=None):
+def get_by_username(username, remote_addr=None):
     username = utils.filter_str(username).lower()
 
     if remote_addr:
@@ -363,8 +414,8 @@ def check_auth(username, password, remote_addr=None):
         if doc['count'] > settings.app.auth_limiter_count_max:
             raise flask.abort(403)
 
-    administrator = find_user(username=username)
-    if not administrator:
+    admin = find_user(username=username)
+    if not admin:
         audit_event(
             'admin_auth',
             'Administrator login failed, invalid username',
@@ -372,45 +423,7 @@ def check_auth(username, password, remote_addr=None):
         )
         return
 
-    if not administrator.test_password(password):
-        audit_event(
-            'admin_auth',
-            'Administrator login failed, invalid password',
-            remote_addr=remote_addr,
-        )
-        return
-
-    if administrator.disabled:
-        audit_event(
-            'admin_auth',
-            'Administrator login failed, administrator is disabled',
-            remote_addr=remote_addr,
-        )
-        return
-
-    sso_admin = settings.app.sso_admin
-    if settings.app.sso and DUO_AUTH in settings.app.sso and sso_admin:
-        allow, _ = sso.auth_duo(
-            sso_admin,
-            strong=True,
-            ipaddr=remote_addr,
-            type='Administrator'
-        )
-        if not allow:
-            audit_event(
-                'admin_auth',
-                'Administrator login failed, failed secondary authentication',
-                remote_addr=remote_addr,
-            )
-            return
-
-    audit_event(
-        'admin_auth',
-        'Administrator login successful',
-        remote_addr=remote_addr,
-    )
-
-    return administrator
+    return admin
 
 def reset_password():
     logger.info('Resetting administrator password', 'auth')
