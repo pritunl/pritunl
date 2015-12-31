@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add multiple administrators
+Compress static web files with gzip
 
 Version 1.13.836.1 2015-12-27
 -----------------------------
