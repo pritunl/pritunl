@@ -16,6 +16,7 @@ import datetime
 import hmac
 import pymongo
 import uuid
+import struct
 
 class Administrator(mongo.MongoObject):
     fields = {
@@ -98,6 +99,10 @@ class Administrator(mongo.MongoObject):
     def limiter_collection(cls):
         return mongo.get_collection('auth_limiter')
 
+    @cached_static_property
+    def otp_collection(cls):
+        return mongo.get_collection('otp')
+
     def test_password(self, test_pass):
         hash_ver, pass_salt, pass_hash = self.password.split('$')
 
@@ -118,6 +123,41 @@ class Administrator(mongo.MongoObject):
 
     def generate_otp_secret(self):
         self.otp_secret = utils.generate_otp_secret()
+
+    def verify_otp_code(self, code):
+        otp_secret = self.otp_secret
+        padding = 8 - len(otp_secret) % 8
+        if padding != 8:
+            otp_secret = otp_secret.ljust(len(otp_secret) + padding, '=')
+        otp_secret = base64.b32decode(otp_secret.upper())
+        valid_codes = []
+        epoch = int(utils.time_now() / 30)
+        for epoch_offset in range(-1, 2):
+            value = struct.pack('>q', epoch + epoch_offset)
+            hmac_hash = hmac.new(otp_secret, value, hashlib.sha1).digest()
+            offset = ord(hmac_hash[-1]) & 0x0F
+            truncated_hash = hmac_hash[offset:offset + 4]
+            truncated_hash = struct.unpack('>L', truncated_hash)[0]
+            truncated_hash &= 0x7FFFFFFF
+            truncated_hash %= 1000000
+            valid_codes.append('%06d' % truncated_hash)
+
+        if code not in valid_codes:
+            return False
+
+        response = self.otp_collection.update({
+            '_id': {
+                'user_id': self.id,
+                'code': code,
+            },
+        }, {'$set': {
+            'timestamp': utils.now(),
+        }}, upsert=True)
+
+        if response['updatedExisting']:
+            return False
+
+        return True
 
     def generate_token(self):
         logger.info('Generating auth token', 'auth')
