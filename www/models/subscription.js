@@ -18,6 +18,7 @@ define([
       'cancel_at_period_end': null,
       'version': null,
       'theme': null,
+      'super_user': null,
       'sso': null
     },
     isNew: function() {
