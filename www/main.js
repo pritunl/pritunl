@@ -519,6 +519,7 @@ require([
       window.subPlan = model.get('plan');
       window.subVer = model.get('version');
       window.theme = model.get('theme');
+      window.superUser = model.get('super_user');
       window.sso = model.get('sso');
 
       if (window.subActive && window.theme === 'dark') {
@@ -543,6 +544,12 @@ require([
         else if (window.subPlan === 'enterprise') {
           $('body').addClass('enterprise-license');
         }
+      }
+
+      if (window.superUser) {
+        $('body').addClass('super-user');
+      } else {
+        $('body').removeClass('super-user');
       }
 
       init();
