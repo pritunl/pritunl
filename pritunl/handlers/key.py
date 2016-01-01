@@ -130,6 +130,8 @@ def user_linked_key_tar_archive_get(key_id):
         return flask.abort(404)
 
     usr, resp = _get_key_tar_archive(doc['org_id'], doc['user_id'])
+    if usr.disabled:
+        return flask.abort(404)
 
     usr.audit_event('user_profile',
         'User tar profile downloaded with temporary profile link',
