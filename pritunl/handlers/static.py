@@ -85,7 +85,7 @@ def login_static_get():
     if auth.check_session():
         return flask.redirect('')
     static_file = static.StaticFile(settings.conf.www_path,
-        'login.html', cache=False)
+        'login.html', cache=False, gzip=False)
 
     bodyClass = ''
 
