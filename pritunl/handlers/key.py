@@ -147,6 +147,8 @@ def user_linked_key_zip_archive_get(key_id):
         return flask.abort(404)
 
     usr, resp = _get_key_zip_archive(doc['org_id'], doc['user_id'])
+    if usr.disabled:
+        return flask.abort(404)
 
     usr.audit_event('user_profile',
         'User zip profile downloaded with temporary profile link',
@@ -164,6 +166,8 @@ def user_linked_key_onc_archive_get(key_id):
         return flask.abort(404)
 
     usr, resp = _get_onc_archive(doc['org_id'], doc['user_id'])
+    if usr.disabled:
+        return flask.abort(404)
 
     usr.audit_event('user_profile',
         'User onc profile downloaded with temporary profile link',
@@ -185,6 +189,8 @@ def user_key_pin_put(key_id):
 
     org = organization.get_by_id(doc['org_id'])
     usr = org.get_user(doc['user_id'])
+    if usr.disabled:
+        return flask.abort(404)
 
     current_pin = utils.filter_str(
         flask.request.json.get('current_pin')) or None
@@ -232,6 +238,8 @@ def user_linked_key_page_get(short_code):
 
     org = organization.get_by_id(doc['org_id'])
     user = org.get_user(id=doc['user_id'])
+    if user.disabled:
+        return flask.abort(404)
 
     user.audit_event('user_profile',
         'User temporary profile link viewed',
@@ -306,6 +314,8 @@ def user_uri_key_page_get(short_code):
 
     org = organization.get_by_id(doc['org_id'])
     user = org.get_user(id=doc['user_id'])
+    if user.disabled:
+        return flask.abort(404)
 
     user.audit_event('user_profile',
         'User temporary profile downloaded from pritunl client',
@@ -329,6 +339,9 @@ def user_linked_key_conf_get(key_id, server_id):
 
     org = organization.get_by_id(doc['org_id'])
     user = org.get_user(id=doc['user_id'])
+    if user.disabled:
+        return flask.abort(404)
+
     key_conf = user.build_key_conf(server_id)
 
     user.audit_event('user_profile',
@@ -376,6 +389,9 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
         return flask.abort(401)
     elif not user.sync_secret:
         return flask.abort(401)
+
+    if user.disabled:
+        return flask.abort(404)
 
     auth_string = '&'.join([
         user.sync_token, auth_timestamp, auth_nonce, flask.request.method,
@@ -465,10 +481,14 @@ def sso_authenticate_post():
         event.Event(type=ORGS_UPDATED)
         event.Event(type=USERS_UPDATED, resource_id=org.id)
         event.Event(type=SERVERS_UPDATED)
-    elif usr.auth_type != DUO_AUTH:
-        usr.auth_type = DUO_AUTH
-        usr.commit('auth_type')
-        event.Event(type=USERS_UPDATED, resource_id=org.id)
+    else:
+        if usr.disabled:
+            return flask.abort(404)
+
+        if usr.auth_type != DUO_AUTH:
+            usr.auth_type = DUO_AUTH
+            usr.commit('auth_type')
+            event.Event(type=USERS_UPDATED, resource_id=org.id)
 
     key_link = org.create_user_key_link(usr.id, one_time=True)
 
@@ -654,9 +674,13 @@ def sso_callback_get():
         event.Event(type=ORGS_UPDATED)
         event.Event(type=USERS_UPDATED, resource_id=org.id)
         event.Event(type=SERVERS_UPDATED)
-    elif usr.auth_type != sso_mode:
-        usr.auth_type = sso_mode
-        usr.commit('auth_type')
+    else:
+        if usr.disabled:
+            return flask.abort(404)
+
+        if usr.auth_type != sso_mode:
+            usr.auth_type = sso_mode
+            usr.commit('auth_type')
 
     key_link = org.create_user_key_link(usr.id, one_time=True)
 
