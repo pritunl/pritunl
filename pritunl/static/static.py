@@ -15,7 +15,7 @@ import flask
 import werkzeug.http
 
 class StaticFile(object):
-    def __init__(self, root, path, cache=True):
+    def __init__(self, root, path, cache=True, gzip=True):
         path = '/'.join([x for x in path.split('/') if x and x != '..'])
         path = os.path.normpath(os.path.join(root, path))
         if os.path.commonprefix([root, path]) != root:
@@ -28,6 +28,7 @@ class StaticFile(object):
                 {'path': path})
         self.path = path
         self.cache = cache
+        self.gzip = gzip
         self.data = None
         self.mime_type = None
         self.last_modified = None
@@ -54,7 +55,7 @@ class StaticFile(object):
 
     def load_file(self):
         if settings.conf.static_cache and cache_db.exists(
-            self.get_cache_key()):
+                self.get_cache_key()):
             self.get_cache()
             return
 
@@ -68,11 +69,15 @@ class StaticFile(object):
             os.path.getmtime(self.path))
         file_size = int(os.path.getsize(self.path))
 
-        gzip_data = StringIO.StringIO()
-        with open(self.path, 'rb') as static_file, \
-                gzip.GzipFile(fileobj=gzip_data, mode='wb') as gzip_file:
-            shutil.copyfileobj(static_file, gzip_file)
-        self.data = gzip_data.getvalue()
+        if self.gzip:
+            gzip_data = StringIO.StringIO()
+            with open(self.path, 'rb') as static_file, \
+                    gzip.GzipFile(fileobj=gzip_data, mode='wb') as gzip_file:
+                shutil.copyfileobj(static_file, gzip_file)
+            self.data = gzip_data.getvalue()
+        else:
+            with open(self.path, 'r') as static_file:
+                self.data = static_file.read()
 
         self.mime_type = mimetypes.guess_type(file_basename)[0] or 'text/plain'
         self.last_modified = werkzeug.http.http_date(file_mtime)
@@ -84,7 +89,9 @@ class StaticFile(object):
         if not self.last_modified:
             flask.abort(404)
         response = flask.Response(response=self.data, mimetype=self.mime_type)
-        response.headers.add('Content-Encoding', 'gzip')
+
+        if self.gzip:
+            response.headers.add('Content-Encoding', 'gzip')
 
         if settings.conf.static_cache and \
                 not settings.conf.debug and self.cache:
