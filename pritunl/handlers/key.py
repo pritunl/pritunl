@@ -131,7 +131,7 @@ def user_linked_key_tar_archive_get(key_id):
 
     usr, resp = _get_key_tar_archive(doc['org_id'], doc['user_id'])
     if usr.disabled:
-        return flask.abort(404)
+        return flask.abort(403)
 
     usr.audit_event('user_profile',
         'User tar profile downloaded with temporary profile link',
@@ -150,7 +150,7 @@ def user_linked_key_zip_archive_get(key_id):
 
     usr, resp = _get_key_zip_archive(doc['org_id'], doc['user_id'])
     if usr.disabled:
-        return flask.abort(404)
+        return flask.abort(403)
 
     usr.audit_event('user_profile',
         'User zip profile downloaded with temporary profile link',
@@ -169,7 +169,7 @@ def user_linked_key_onc_archive_get(key_id):
 
     usr, resp = _get_onc_archive(doc['org_id'], doc['user_id'])
     if usr.disabled:
-        return flask.abort(404)
+        return flask.abort(403)
 
     usr.audit_event('user_profile',
         'User onc profile downloaded with temporary profile link',
@@ -192,7 +192,7 @@ def user_key_pin_put(key_id):
     org = organization.get_by_id(doc['org_id'])
     usr = org.get_user(doc['user_id'])
     if usr.disabled:
-        return flask.abort(404)
+        return flask.abort(403)
 
     current_pin = utils.filter_str(
         flask.request.json.get('current_pin')) or None
@@ -241,7 +241,7 @@ def user_linked_key_page_get(short_code):
     org = organization.get_by_id(doc['org_id'])
     user = org.get_user(id=doc['user_id'])
     if user.disabled:
-        return flask.abort(404)
+        return flask.abort(403)
 
     user.audit_event('user_profile',
         'User temporary profile link viewed',
@@ -317,7 +317,7 @@ def user_uri_key_page_get(short_code):
     org = organization.get_by_id(doc['org_id'])
     user = org.get_user(id=doc['user_id'])
     if user.disabled:
-        return flask.abort(404)
+        return flask.abort(403)
 
     user.audit_event('user_profile',
         'User temporary profile downloaded from pritunl client',
@@ -342,7 +342,7 @@ def user_linked_key_conf_get(key_id, server_id):
     org = organization.get_by_id(doc['org_id'])
     user = org.get_user(id=doc['user_id'])
     if user.disabled:
-        return flask.abort(404)
+        return flask.abort(403)
 
     key_conf = user.build_key_conf(server_id)
 
@@ -393,7 +393,7 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
         return flask.abort(401)
 
     if user.disabled:
-        return flask.abort(404)
+        return flask.abort(403)
 
     auth_string = '&'.join([
         user.sync_token, auth_timestamp, auth_nonce, flask.request.method,
@@ -485,7 +485,7 @@ def sso_authenticate_post():
         event.Event(type=SERVERS_UPDATED)
     else:
         if usr.disabled:
-            return flask.abort(404)
+            return flask.abort(403)
 
         if usr.auth_type != DUO_AUTH:
             usr.auth_type = DUO_AUTH
@@ -678,7 +678,7 @@ def sso_callback_get():
         event.Event(type=SERVERS_UPDATED)
     else:
         if usr.disabled:
-            return flask.abort(404)
+            return flask.abort(403)
 
         if usr.auth_type != sso_mode:
             usr.auth_type = sso_mode
