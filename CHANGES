@@ -5,6 +5,7 @@ Pritunl Changelog
 
 Add multiple administrators
 Compress static web files with gzip
+Disabled profile download for disabled users
 
 Version 1.13.836.1 2015-12-27
 -----------------------------
