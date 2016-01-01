@@ -149,8 +149,11 @@ class Organization(mongo.MongoObject):
             thread.daemon = True
             thread.start()
 
-    def get_user(self, id, fields=None):
-        return user.get_user(org=self, id=id, fields=fields)
+    def get_user(self, id, fields=None, no_disabled=False):
+        usr = user.get_user(org=self, id=id, fields=fields)
+        if no_disabled and usr and usr.disabled:
+            return
+        return usr
 
     def find_user(self, name=None, type=None, resource_id=None):
         return user.find_user(org=self, name=name, type=type,
