@@ -19,8 +19,10 @@ class StaticFile(object):
         path = '/'.join([x for x in path.split('/') if x and x != '..'])
         path = os.path.normpath(os.path.join(root, path))
         if os.path.commonprefix([root, path]) != root:
-            raise InvalidStaticFile('Static path is not a prefix of root path',
-                {'path': path})
+            raise InvalidStaticFile(
+                'Static path is not a prefix of root path',
+                {'path': path},
+            )
         if os.path.splitext(path)[1] not in STATIC_FILE_EXTENSIONS:
             raise InvalidStaticFile('Static path file extension is invalid',
                 {'path': path})
