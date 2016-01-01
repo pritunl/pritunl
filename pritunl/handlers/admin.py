@@ -3,6 +3,7 @@ from pritunl import utils
 from pritunl import event
 from pritunl import app
 from pritunl import auth
+from pritunl import settings
 
 import flask
 import pymongo
@@ -30,6 +31,9 @@ def admin_get(admin_id=None):
 @app.app.route('/admin/<admin_id>', methods=['PUT'])
 @auth.session_auth
 def admin_put(admin_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     if not flask.g.administrator.super_user:
         return utils.jsonify({
             'error': REQUIRES_SUPER_USER,
@@ -164,6 +168,9 @@ def admin_put(admin_id):
 @app.app.route('/admin', methods=['POST'])
 @auth.session_auth
 def admin_post():
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     if not flask.g.administrator.super_user:
         return utils.jsonify({
             'error': REQUIRES_SUPER_USER,
@@ -205,6 +212,9 @@ def admin_post():
 @app.app.route('/admin/<admin_id>', methods=['DELETE'])
 @auth.session_auth
 def admin_delete(admin_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     if not flask.g.administrator.super_user:
         return utils.jsonify({
             'error': REQUIRES_SUPER_USER,
