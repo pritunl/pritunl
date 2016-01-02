@@ -427,7 +427,9 @@ def reset_password():
     logger.info('Resetting administrator password', 'auth')
 
     admin_collection = mongo.get_collection('administrators')
-    admin_collection.remove({})
+    admin_collection.delete_one({
+        'super_user': {'$ne': False},
+    })
     Administrator(
         username=DEFAULT_USERNAME,
         password=DEFAULT_PASSWORD,
