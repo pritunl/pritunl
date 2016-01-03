@@ -85,6 +85,10 @@ class Organization(mongo.MongoObject):
         return mongo.get_collection('organizations')
 
     @cached_static_property
+    def clients_collection(cls):
+        return mongo.get_collection('clients')
+
+    @cached_static_property
     def server_collection(cls):
         return mongo.get_collection('servers')
 
@@ -170,6 +174,8 @@ class Organization(mongo.MongoObject):
             'org_id': self.id,
             'type': CERT_CLIENT,
         }
+        searched = False
+        type_search = False
         limit = None
         skip = None
         page_count = settings.user.page_count
@@ -178,7 +184,46 @@ class Organization(mongo.MongoObject):
             fields = {key: True for key in fields}
 
         if search is not None:
-            spec['name'] = {'$regex': '.*%s.*' % search}
+            searched = True
+
+            n = search.find('type:')
+            if n != -1:
+                user_type = search[n + 5:].split(None, 1)
+                user_type = user_type[0] if user_type else ''
+                if user_type:
+                    type_search = True
+                    spec['type'] = user_type
+                search = search[:n] + search[n + 5 + len(user_type):].strip()
+
+            n = search.find('email:')
+            if n != -1:
+                email = search[n + 6:].split(None, 1)
+                email = email[0] if email else ''
+                if email:
+                    spec['email'] = {'$regex': '.*%s.*' % email}
+                search = search[:n] + search[n + 6 + len(email):].strip()
+
+            n = search.find('status:')
+            if n != -1:
+                status = search[n + 7:].split(None, 1)
+                status = status[0] if status else ''
+                search = search[:n] + search[n + 7 + len(status):].strip()
+
+                if status not in (ONLINE, OFFLINE):
+                    return
+
+                user_ids = self.clients_collection.find(None, {
+                    '_id': True,
+                    'user_id': True,
+                }).distinct('user_id')
+
+                if status == ONLINE:
+                    spec['_id'] = {'$in': user_ids}
+                else:
+                    spec['_id'] = {'$nin': user_ids}
+
+            spec['name'] = {'$regex': '.*%s.*' % search.strip()}
+
             limit = search_limit or page_count
         elif page is not None:
             limit = page_count
@@ -192,7 +237,7 @@ class Organization(mongo.MongoObject):
         if limit is not None:
             cursor = cursor.limit(limit + 1)
 
-        if search:
+        if searched:
             self.last_search_count = cursor.count()
 
         if limit is None:
@@ -205,6 +250,9 @@ class Organization(mongo.MongoObject):
                 if count > limit:
                     return
                 yield user.User(self, doc=doc, fields=fields)
+
+        if type_search:
+            return
 
         if include_pool:
             spec['type'] = {'$in': [CERT_SERVER, CERT_CLIENT_POOL,
