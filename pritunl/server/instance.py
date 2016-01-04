@@ -556,7 +556,7 @@ class ServerInstance(object):
                 )
             time.sleep(1)
 
-    def set_iptables_rules(self):
+    def set_iptables_rules(self, log=False):
         logger.debug('Setting iptables rules', 'server',
             server_id=self.server.id,
         )
@@ -564,10 +564,24 @@ class ServerInstance(object):
         try:
             for rule in self.iptables_rules:
                 if not self.exists_iptables_rule(rule):
+                    if log:
+                        logger.error(
+                            'Unexpected loss of iptables rule, ' +
+                                'adding again...',
+                            'instance',
+                            rule=rule,
+                        )
                     self.set_iptables_rule(rule)
 
             for rule in self.ip6tables_rules:
                 if not self.exists_ip6tables_rule(rule):
+                    if log:
+                        logger.error(
+                            'Unexpected loss of ip6tables rule, ' +
+                                'adding again...',
+                            'instance',
+                            rule=rule,
+                        )
                     self.set_ip6tables_rule(rule)
         except subprocess.CalledProcessError as error:
             logger.exception('Failed to apply iptables ' + \
@@ -723,7 +737,7 @@ class ServerInstance(object):
         try:
             while not self.interrupt:
                 try:
-                    self.set_iptables_rules()
+                    self.set_iptables_rules(log=True)
                     if self.interrupter_sleep(
                             settings.vpn.iptables_update_rate):
                         return
