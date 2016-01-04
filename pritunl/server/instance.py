@@ -564,7 +564,7 @@ class ServerInstance(object):
         try:
             for rule in self.iptables_rules:
                 if not self.exists_iptables_rule(rule):
-                    if log:
+                    if log and not self.interrupt:
                         logger.error(
                             'Unexpected loss of iptables rule, ' +
                                 'adding again...',
@@ -575,7 +575,7 @@ class ServerInstance(object):
 
             for rule in self.ip6tables_rules:
                 if not self.exists_ip6tables_rule(rule):
-                    if log:
+                    if log and not self.interrupt:
                         logger.error(
                             'Unexpected loss of ip6tables rule, ' +
                                 'adding again...',
