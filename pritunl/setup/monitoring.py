@@ -38,7 +38,6 @@ def _monitoring_thread():
                     process.terminate()
                     yield interrupter_sleep(3)
                     process.kill()
-                    process = None
                     break
                 elif process.poll() is not None:
                     output = None
@@ -52,10 +51,11 @@ def _monitoring_thread():
                         'Monitoring service stopped unexpectedly', 'setup',
                         output=output,
                     )
-                    process = None
                     break
 
                 yield interrupter_sleep(3)
+
+            process = None
         except GeneratorExit:
             raise
         except:
