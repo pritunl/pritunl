@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add user search operators
+
 Version 1.14.842.79 2016-01-02
 ------------------------------
 
