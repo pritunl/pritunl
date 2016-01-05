@@ -91,13 +91,7 @@ define([
       if (val > 2048) {
         this.setAlert('danger', 'Using dh parameters larger then 2048 can ' +
           'take several hours to generate.', '.dh-param-bits');
-      }
-      else if (val > 1536) {
-        this.setAlert(
-          'warning', 'Using dh parameters larger then 1536 can ' +
-          'take several minutes to generate.', '.dh-param-bits');
-      }
-      else {
+      } else {
         this.clearAlert();
       }
     },
