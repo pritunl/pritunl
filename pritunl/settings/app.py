@@ -20,7 +20,7 @@ class SettingsApp(SettingsGroupMongo):
         'session_timeout': 86400,
         'peer_limit': 500,
         'peer_limit_timeout': 10,
-        'log_limit': 10240,
+        'log_limit': 10000,
         'log_entry_limit': 50,
         'log_db_delay': 1,
         'rate_limit_sleep': 0.5,
