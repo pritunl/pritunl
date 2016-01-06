@@ -211,7 +211,7 @@ define([
         dataType: 'json',
         data: JSON.stringify({
           'promo_code': promoCode,
-          'email': email,
+          'email': email
         }),
         success: function(response) {
           this.setAlert('success', response.msg);
