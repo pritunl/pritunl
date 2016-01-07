@@ -368,7 +368,8 @@ class Clients(object):
             user = org.get_user(user_id, fields=(
                 '_id', 'name', 'email', 'pin', 'type', 'auth_type',
                 'disabled', 'otp_secret', 'link_server_id',
-                'bypass_secondary', 'dns_servers', 'dns_suffix'))
+                'bypass_secondary', 'dns_servers', 'dns_suffix',
+                'port_forwarding'))
             if not user:
                 self.instance_com.send_client_deny(client_id, key_id,
                     'User is not valid')
