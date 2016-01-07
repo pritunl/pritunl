@@ -22,9 +22,12 @@
       <label>Public Address</label>
       <input type="text" class="form-control" placeholder="Enter public address" data-toggle="tooltip" title="Public IP address or domain name of the host" value="<%- public_address %>">
     </div>
-    <div class="public-address6 form-group">
-      <label>Public IPv6 Address</label>
-      <input type="text" class="form-control" placeholder="Enter public address" data-toggle="tooltip" title="Public IPv6 address or domain name of the host" value="<%- public_address6 %>">
+    <div class="theme form-group">
+      <label>Theme</label>
+      <select class="form-control" data-toggle="tooltip" title="Pritunl color theme">
+        <option value="light" <%= theme === 'light' ? 'selected' : '' %>>Light</option>
+        <option value="dark" <%= theme === 'dark' ? 'selected' : '' %>>Dark</option>
+      </select>
     </div>
     <div class="email-from form-group">
       <label>SMTP From Address</label>
@@ -33,13 +36,6 @@
     <div class="email-username form-group">
       <label>SMTP Username</label>
       <input type="text" class="form-control" placeholder="Enter SMTP username" value="<%- email_username || '' %>">
-    </div>
-    <div class="theme form-group">
-      <label>Theme</label>
-      <select class="form-control" data-toggle="tooltip" title="Pritunl color theme">
-        <option value="light" <%= theme === 'light' ? 'selected' : '' %>>Light</option>
-        <option value="dark" <%= theme === 'dark' ? 'selected' : '' %>>Dark</option>
-      </select>
     </div>
     <div class="sso-mode form-group">
       <label>Single Sign-On</label>
@@ -85,6 +81,10 @@
     <div class="pass form-group">
       <label>New Password</label>
       <input type="password" class="form-control" placeholder="Enter password">
+    </div>
+    <div class="public-address6 form-group">
+      <label>Public IPv6 Address</label>
+      <input type="text" class="form-control" placeholder="Enter public address" data-toggle="tooltip" title="Public IPv6 address or domain name of the host" value="<%- public_address6 %>">
     </div>
     <div class="routed-subnet6 form-group">
       <label>Routed IPv6 Subnet</label>
