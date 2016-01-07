@@ -408,6 +408,108 @@ class Clients(object):
     def connect(self, client_data, reauth=False):
         self.call_queue.put(self._connect, client_data, reauth)
 
+    def forward_ports(self, client):
+        client['port_forwarding'] = [{
+            'protocol': 'tcp',
+            'port': '8000-9000',
+        }]
+
+        if not client['port_forwarding']:
+            return
+
+        client_addr = client['virt_address'].split('/')[0]
+        client_addr6 = client['virt_address6'].split('/')[0]
+
+        rules = []
+        rules6 = []
+
+        base_args = [
+            'FORWARD',
+            '-d', client_addr,
+            '!', '-i', self.instance.interface,
+            '-o', self.instance.interface,
+            '-j', 'ACCEPT',
+        ]
+
+        prerouting_base_args = [
+            'PREROUTING',
+            '-t', 'nat',
+            '!', '-i', self.instance.interface,
+            '-j', 'DNAT',
+        ]
+        output_base_args = [
+            'OUTPUT',
+            '-t', 'nat',
+            '-o', 'lo',
+            '-j', 'DNAT',
+        ]
+
+        extra_args = [
+            '-m', 'comment',
+            '--comment', 'pritunl_%s' % self.server.id,
+        ]
+
+        for data in client['port_forwarding']:
+            proto = data['protocol']
+            port = data['port']
+            dport = data.get('dport')
+
+            if not dport:
+                dport = port
+                port = ''
+            else:
+                port = ':' + port
+            dport = dport.replace('-', ':')
+
+            rule = prerouting_base_args + [
+                '-p', proto,
+                '-m', proto,
+                '--dport', dport,
+                '--to-destination', client_addr + port,
+            ] + extra_args
+            rules.append(rule)
+
+            if self.server.ipv6:
+                rule = prerouting_base_args + [
+                    '-p', proto,
+                    '-m', proto,
+                    '--dport', dport,
+                    '--to-destination', client_addr6 + port,
+                ] + extra_args
+                rules6.append(rule)
+
+
+            rule = output_base_args + [
+                '-p', proto,
+                '-m', proto,
+                '--dport', dport,
+                '--to-destination', client_addr + port,
+            ] + extra_args
+            rules.append(rule)
+
+            if self.server.ipv6:
+                rule = output_base_args + [
+                    '-p', proto,
+                    '-m', proto,
+                    '--dport', dport,
+                    '--to-destination', client_addr6 + port,
+                ] + extra_args
+                rules6.append(rule)
+
+
+            rule = base_args + [
+                '-p', proto,
+                '-m', proto,
+                '--dport', dport,
+            ] + extra_args
+            rules.append(rule)
+            if self.server.ipv6:
+                rules6.append(rule)
+
+        self.instance.enable_iptables_output_nat()
+        self.instance.append_iptables_rules(rules)
+        self.instance.append_ip6tables_rules(rules6)
+
     def _connected(self, client_id):
         client = self.clients.find_id(client_id)
         if not client:
