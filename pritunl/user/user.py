@@ -42,6 +42,7 @@ class User(mongo.MongoObject):
         'bypass_secondary',
         'dns_servers',
         'dns_suffix',
+        'port_forwarding',
     }
     fields_default = {
         'name': 'undefined',
