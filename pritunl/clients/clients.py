@@ -375,13 +375,19 @@ class Clients(object):
                 return
 
             def callback(allow, reason=None):
-                if allow:
-                    self.allow_client(client_data, org, user, reauth)
-                    if settings.vpn.stress_test:
-                        self._connected(client_id)
-                else:
-                    self.instance_com.send_client_deny(
-                        client_id, key_id, reason)
+                try:
+                    if allow:
+                        self.allow_client(client_data, org, user, reauth)
+                        if settings.vpn.stress_test:
+                            self._connected(client_id)
+                    else:
+                        self.instance_com.send_client_deny(
+                            client_id, key_id, reason)
+                except:
+                    logger.exception('Error in authorizer callback', 'server',
+                        server_id=self.server.id,
+                        instance_id=self.instance.id,
+                    )
 
             authorizer.Authorizer(
                 self.server,
