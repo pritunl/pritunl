@@ -40,6 +40,7 @@ class ServerInstance(object):
         self.auth_log_process = None
         self.iptables_rules = []
         self.ip6tables_rules = []
+        self.iptables_lock = threading.Lock()
         self.server_links = []
         self._temp_path = utils.get_temp_path()
         self.ovpn_conf_path = os.path.join(self._temp_path,
@@ -556,33 +557,89 @@ class ServerInstance(object):
                 )
             time.sleep(1)
 
+    def append_iptables_rules(self, rules):
+        self.iptables_lock.acquire()
+        try:
+            if self.iptables_rules is None:
+                return
+            for rule in rules:
+                self.iptables_rules.append(rule)
+                if not self.exists_iptables_rule(rule):
+                    self.set_iptables_rule(rule)
+        finally:
+            self.iptables_lock.release()
+
+    def delete_iptables_rules(self, rules):
+        self.iptables_lock.acquire()
+        try:
+            if self.iptables_rules is None:
+                return
+            for rule in rules:
+                try:
+                    self.iptables_rules.remove(rule)
+                except ValueError:
+                    pass
+                self.remove_iptables_rule(rule)
+
+        finally:
+            self.iptables_lock.release()
+
+    def append_ip6tables_rules(self, rules):
+        self.iptables_lock.acquire()
+        try:
+            if self.ip6tables_rules is None:
+                return
+            for rule in rules:
+                self.ip6tables_rules.append(rule)
+                if not self.exists_ip6tables_rule(rule):
+                    self.set_ip6tables_rule(rule)
+        finally:
+            self.iptables_lock.release()
+
+    def delete_ip6tables_rules(self, rules):
+        self.iptables_lock.acquire()
+        try:
+            if self.ip6tables_rules is None:
+                return
+            for rule in rules:
+                try:
+                    self.ip6tables_rules.remove(rule)
+                except ValueError:
+                    pass
+                self.remove_ip6tables_rule(rule)
+        finally:
+            self.iptables_lock.release()
+
     def set_iptables_rules(self, log=False):
         logger.debug('Setting iptables rules', 'server',
             server_id=self.server.id,
         )
 
+        self.iptables_lock.acquire()
         try:
-            for rule in self.iptables_rules:
-                if not self.exists_iptables_rule(rule):
-                    if log and not self.interrupt:
-                        logger.error(
-                            'Unexpected loss of iptables rule, ' +
-                                'adding again...',
-                            'instance',
-                            rule=rule,
-                        )
-                    self.set_iptables_rule(rule)
+            if self.iptables_rules is not None:
+                for rule in self.iptables_rules:
+                    if not self.exists_iptables_rule(rule):
+                        if log and not self.interrupt:
+                            logger.error(
+                                'Unexpected loss of iptables rule, ' +
+                                    'adding again...',
+                                'instance',
+                                rule=rule,
+                            )
+                        self.set_iptables_rule(rule)
 
-            for rule in self.ip6tables_rules:
-                if not self.exists_ip6tables_rule(rule):
-                    if log and not self.interrupt:
-                        logger.error(
-                            'Unexpected loss of ip6tables rule, ' +
-                                'adding again...',
-                            'instance',
-                            rule=rule,
-                        )
-                    self.set_ip6tables_rule(rule)
+            if self.ip6tables_rules is not None:
+                for rule in self.ip6tables_rules:
+                    if not self.exists_ip6tables_rule(rule):
+                        if log and not self.interrupt:
+                            logger.error(
+                                'Unexpected loss of ip6tables rule, ' +
+                                    'adding again...',
+                                'instance',
+                                rule=rule,
+                            )
+                        self.set_ip6tables_rule(rule)
         except subprocess.CalledProcessError as error:
             logger.exception('Failed to apply iptables ' + \
                 'routing rule', 'server',
@@ -590,6 +647,8 @@ class ServerInstance(object):
                 output=error.output,
             )
             raise
+        finally:
+            self.iptables_lock.release()
 
     def clear_iptables_rules(self):
         logger.debug('Clearing iptables rules', 'server',
