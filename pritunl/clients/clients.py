@@ -438,6 +438,7 @@ class Clients(object):
             '!', '-i', self.instance.interface,
             '-j', 'DNAT',
         ]
+
         output_base_args = [
             'OUTPUT',
             '-t', 'nat',
