@@ -295,6 +295,9 @@ class Clients(object):
                         dns_server = virt_address
                     dns_servers.append(dns_server)
 
+            rules, rules6 = self.generate_iptables_rules(
+                user, virt_address, virt_address6)
+
             self.clients.insert({
                 'id': client_id,
                 'org_id': org_id,
@@ -312,7 +315,8 @@ class Clients(object):
                 'virt_address6': virt_address6,
                 'real_address': remote_ip,
                 'address_dynamic': address_dynamic,
-                'port_forwarding': user.port_forwarding,
+                'iptables_rules': rules,
+                'ip6tables_rules': rules6,
             })
 
             if user.type == CERT_CLIENT:
