@@ -503,9 +503,24 @@ class Clients(object):
             if self.server.ipv6:
                 rules6.append(rule)
 
-        self.instance.enable_iptables_tun_nat()
-        self.instance.append_iptables_rules(rules)
-        self.instance.append_ip6tables_rules(rules6)
+        return rules, rules6
+
+    def set_iptables_rules(self, client):
+        rules = client['iptables_rules']
+        rules6 = client['ip6tables_rules']
+
+        if rules or rules6:
+            self.instance.enable_iptables_tun_nat()
+            self.instance.append_iptables_rules(rules)
+            self.instance.append_ip6tables_rules(rules6)
+
+    def clear_iptables_rules(self, client):
+        rules = client['iptables_rules']
+        rules6 = client['ip6tables_rules']
+
+        if rules or rules6:
+            self.instance.delete_iptables_rules(rules)
+            self.instance.delete_iptables_rules(rules6)
 
     def _connected(self, client_id):
         client = self.clients.find_id(client_id)
