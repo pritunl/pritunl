@@ -23,7 +23,7 @@ define([
         'network': this._get_free_network(),
         'port': this._get_free_port(),
         'protocol': 'udp',
-        'dh_param_bits': 2048,
+        'dh_param_bits': 1536,
         'mode': 'all_traffic',
         'ipv6_firewall': true,
         'local_networks': [],
