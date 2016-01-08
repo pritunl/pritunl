@@ -828,20 +828,17 @@ class ServerInstance(object):
         if self.interrupter_sleep(settings.vpn.iptables_update_rate):
             return
 
-        try:
-            while not self.interrupt:
-                try:
-                    self.set_iptables_rules(log=True)
-                    if self.interrupter_sleep(
-                            settings.vpn.iptables_update_rate):
-                        return
-                except:
-                    logger.exception('Error in iptables thread', 'server',
-                        server_id=self.server.id,
-                    )
-                    time.sleep(1)
-        finally:
-            self.clear_iptables_rules()
+        while not self.interrupt:
+            try:
+                self.set_iptables_rules(log=True)
+                if self.interrupter_sleep(
+                        settings.vpn.iptables_update_rate):
+                    return
+            except:
+                logger.exception('Error in iptables thread', 'server',
+                    server_id=self.server.id,
+                )
+                time.sleep(1)
 
     def start_threads(self, cursor_id):
         thread = threading.Thread(target=self._sub_thread, args=(cursor_id,))
