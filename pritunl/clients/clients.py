@@ -312,6 +312,7 @@ class Clients(object):
                 'virt_address6': virt_address6,
                 'real_address': remote_ip,
                 'address_dynamic': address_dynamic,
+                'port_forwarding': user.port_forwarding,
             })
 
             if user.type == CERT_CLIENT:
