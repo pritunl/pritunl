@@ -590,9 +590,9 @@ class ServerInstance(object):
             if self.iptables_rules is None:
                 return
             for rule in rules:
-                self.iptables_rules.append(rule)
                 if not self.exists_iptables_rule(rule):
                     self.set_iptables_rule(rule)
+                self.iptables_rules.append(rule)
         finally:
             self.iptables_lock.release()
 
@@ -607,7 +607,6 @@ class ServerInstance(object):
                 except ValueError:
                     pass
                 self.remove_iptables_rule(rule)
-
         finally:
             self.iptables_lock.release()
 
@@ -617,9 +616,9 @@ class ServerInstance(object):
             if self.ip6tables_rules is None:
                 return
             for rule in rules:
-                self.ip6tables_rules.append(rule)
                 if not self.exists_ip6tables_rule(rule):
                     self.set_ip6tables_rule(rule)
+                self.ip6tables_rules.append(rule)
         finally:
             self.iptables_lock.release()
 
