@@ -508,7 +508,7 @@ class Clients(object):
             if self.server.ipv6:
                 rules6.append(rule)
 
-        self.instance.enable_iptables_output_nat()
+        self.instance.enable_iptables_tun_nat()
         self.instance.append_iptables_rules(rules)
         self.instance.append_ip6tables_rules(rules6)
 
