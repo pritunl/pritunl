@@ -534,6 +534,8 @@ class Clients(object):
             self.instance_com.client_kill(client_id)
             return
 
+        self.set_iptables_rules(client)
+
         timestamp = utils.now()
         doc = {
             'user_id': client['user_id'],
@@ -619,6 +621,8 @@ class Clients(object):
             'client_id': client_id,
         })
         self.remove_iroutes(client_id)
+
+        self.clear_iptables_rules(client)
 
         virt_address = client['virt_address']
         if client['address_dynamic']:
