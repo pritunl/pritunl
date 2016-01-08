@@ -41,6 +41,7 @@ class ServerInstance(object):
         self.iptables_rules = []
         self.ip6tables_rules = []
         self.iptables_lock = threading.Lock()
+        self.tun_nat = False
         self.server_links = []
         self._temp_path = utils.get_temp_path()
         self.ovpn_conf_path = os.path.join(self._temp_path,
@@ -556,6 +557,32 @@ class ServerInstance(object):
                     rule=rule,
                 )
             time.sleep(1)
+
+    def enable_iptables_tun_nat(self):
+        self.iptables_lock.acquire()
+        try:
+            if self.iptables_rules is None:
+                return
+
+            if self.tun_nat:
+                return
+            self.tun_nat = True
+
+            rule = [
+                'POSTROUTING',
+                '-t', 'nat',
+                '-o', self.interface,
+                '-j', 'MASQUERADE',
+                '-m', 'comment',
+                '--comment', 'pritunl_%s' % self.server.id,
+            ]
+            self.iptables_rules.append(rule)
+            self.set_iptables_rule(rule)
+            if self.server.ipv6:
+                self.ip6tables_rules.append(rule)
+                self.set_ip6tables_rule(rule)
+        finally:
+            self.iptables_lock.release()
 
     def append_iptables_rules(self, rules):
         self.iptables_lock.acquire()
