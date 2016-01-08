@@ -410,12 +410,12 @@ class Clients(object):
     def connect(self, client_data, reauth=False):
         self.call_queue.put(self._connect, client_data, reauth)
 
-    def forward_ports(self, client):
-        if not client['port_forwarding']:
-            return
+    def generate_iptables_rules(self, usr, virt_address, virt_address6):
+        if not usr.port_forwarding:
+            return [], []
 
-        client_addr = client['virt_address'].split('/')[0]
-        client_addr6 = client['virt_address6'].split('/')[0]
+        client_addr = virt_address.split('/')[0]
+        client_addr6 = virt_address6.split('/')[0]
 
         rules = []
         rules6 = []
@@ -446,7 +446,7 @@ class Clients(object):
             '--comment', 'pritunl_%s' % self.server.id,
         ]
 
-        for data in client['port_forwarding']:
+        for data in usr.port_forwarding:
             proto = data['protocol']
             port = data['port']
             dport = data.get('dport')
