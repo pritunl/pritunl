@@ -682,11 +682,19 @@ class ServerInstance(object):
             server_id=self.server.id,
         )
 
-        for rule in self.iptables_rules:
-            self.remove_iptables_rule(rule)
+        self.iptables_lock.acquire()
+        try:
+            if self.iptables_rules is not None:
+                for rule in self.iptables_rules:
+                    self.remove_iptables_rule(rule)
 
-        for rule in self.ip6tables_rules:
-            self.remove_ip6tables_rule(rule)
+            if self.ip6tables_rules is not None:
+                for rule in self.ip6tables_rules:
+                    self.remove_ip6tables_rule(rule)
+        finally:
+            self.iptables_rules = None
+            self.ip6tables_rules = None
+            self.iptables_lock.release()
 
     def stop_process(self):
         self.sock_interrupt = True
