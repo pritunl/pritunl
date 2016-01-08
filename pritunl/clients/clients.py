@@ -411,11 +411,6 @@ class Clients(object):
         self.call_queue.put(self._connect, client_data, reauth)
 
     def forward_ports(self, client):
-        client['port_forwarding'] = [{
-            'protocol': 'tcp',
-            'port': '8000-9000',
-        }]
-
         if not client['port_forwarding']:
             return
 
