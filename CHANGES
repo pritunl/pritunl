@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add port forwarding
+
 Version 1.14.845.99 2016-01-05
 ------------------------------
 
