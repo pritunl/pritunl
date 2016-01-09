@@ -205,6 +205,8 @@ def user_post(org_id):
             bypass_secondary = user_data.get('bypass_secondary')
             dns_servers = user_data.get('dns_servers') or None
             dns_suffix = utils.filter_str(user_data.get('dns_suffix')) or None
+            port_forwarding_in = user_data.get('port_forwarding')
+            port_forwarding = []
 
             if pin:
                 if not pin.isdigit():
@@ -221,9 +223,22 @@ def user_post(org_id):
 
                 pin = auth.generate_hash_pin_v1(pin)
 
+            if port_forwarding_in:
+                for data in port_forwarding_in:
+                    if data.get('protocol') not in ('tcp', 'udp') or \
+                            not data.get('port'):
+                        pass
+
+                    port_forwarding.append({
+                        'protocol': utils.filter_str(data.get('protocol')),
+                        'port': utils.filter_str(data.get('port')),
+                        'dport': utils.filter_str(data.get('dport')),
+                    })
+
             user = org.new_user(type=CERT_CLIENT, name=name, email=email,
                 pin=pin, disabled=disabled, bypass_secondary=bypass_secondary,
-                dns_servers=dns_servers, dns_suffix=dns_suffix)
+                dns_servers=dns_servers, dns_suffix=dns_suffix,
+                port_forwarding=port_forwarding)
             user.audit_event('user_created',
                 'User created from web console',
                 remote_addr=utils.get_remote_addr(),
