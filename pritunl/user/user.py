@@ -54,7 +54,7 @@ class User(mongo.MongoObject):
 
     def __init__(self, org, name=None, email=None, type=None, auth_type=None,
             disabled=None, resource_id=None, bypass_secondary=None,
-            dns_servers=None, dns_suffix=None, **kwargs):
+            dns_servers=None, dns_suffix=None, port_forwarding=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         self.org = org
@@ -78,6 +78,8 @@ class User(mongo.MongoObject):
             self.dns_servers = dns_servers
         if dns_suffix is not None:
             self.dns_suffix = dns_suffix
+        if port_forwarding is not None:
+            self.port_forwarding = port_forwarding
 
     @cached_static_property
     def collection(cls):
@@ -114,6 +116,7 @@ class User(mongo.MongoObject):
             'bypass_secondary': self.bypass_secondary,
             'dns_servers': self.dns_servers,
             'dns_suffix': self.dns_suffix,
+            'port_forwarding': self.port_forwarding,
         }
 
     def initialize(self):
