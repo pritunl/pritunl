@@ -65,7 +65,7 @@ class LogView(object):
                pass
         return line
 
-    def get_log_lines(self, limit=None, formatted=True):
+    def get_log_lines(self, limit=None, formatted=True, reverse=False):
         limit = limit or 1024
         response = self.collection.aggregate([
             {'$sort': {
@@ -93,7 +93,8 @@ class LogView(object):
                 output += self.format_line(messages[i]) + '\n'
             return output.rstrip('\n')
         else:
-            return '\n'.join(messages).rstrip('\n')
+            return '\n'.join(
+                messages[::-1] if reverse else messages).rstrip('\n')
 
     def tail_log_lines(self, formatted=True):
         cursor = self.collection.find().sort(
