@@ -66,7 +66,7 @@ def _run_wsgi_debug():
 
     # App.run server uses werkzeug logger
     werkzeug_logger = logging.getLogger('werkzeug')
-    werkzeug_logger.setLevel(logging.DEBUG)
+    werkzeug_logger.setLevel(logging.WARNING)
     werkzeug_logger.addFilter(logger.log_filter)
     werkzeug_logger.addHandler(logger.log_handler)
 
