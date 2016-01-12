@@ -9,6 +9,35 @@ information can be found at the home page [pritunl.com](https://pritunl.com)
 
 [![pritunl](www/img/logo_code.png)](https://pritunl.com)
 
+## Install From Source
+
+```bash
+export VERSION=X.XX.XX.XX # Set current pritunl version here
+
+wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+rpm -i epel-release-latest-7.noarch.rpm
+yum -y install golang git bzr python2 python-pip net-tools openvpn bridge-utils mongodb-server
+
+echo "export GOPATH=/go" >> ~/.bash_profile
+source ~/.bash_profile
+go get github.com/pritunl/pritunl-dns
+go get github.com/pritunl/pritunl-monitor
+ln -s /go/bin/pritunl-dns /usr/local/bin/pritunl-dns
+ln -s /go/bin/pritunl-monitor /usr/local/bin/pritunl-monitor
+
+wget https://github.com/pritunl/pritunl/archive/$VERSION.tar.gz
+tar xf $VERSION.tar.gz
+cd pritunl-$VERSION
+python2 setup.py build
+pip install -r requirements.txt
+mkdir -p /var/lib/pritunl
+python2 setup.py install
+
+systemctl daemon-reload
+systemctl start mongod pritunl
+systemctl enable mongod pritunl
+```
+
 ## Stable Repository
 
 ### archlinux
