@@ -26,6 +26,7 @@ define([
       'bypass_secondary': null,
       'dns_servers': null,
       'dns_suffix': null,
+      'port_forwarding': null,
       'pin': null
     },
     url: function() {
