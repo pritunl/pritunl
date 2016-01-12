@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add port forwarding
+Add system log view
 
 Version 1.14.845.99 2016-01-05
 ------------------------------
