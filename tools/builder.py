@@ -250,22 +250,22 @@ elif cmd == 'set-version':
             sys.exit(1)
 
 
-    # Build webapp
-    subprocess.check_call(['grunt', '--ver=%s' % get_int_ver(new_version)],
-        cwd=STYLES_DIR)
-    subprocess.check_call(['grunt'], cwd=WWW_DIR)
+    # # Build webapp
+    # subprocess.check_call(['grunt', '--ver=%s' % get_int_ver(new_version)],
+    #     cwd=STYLES_DIR)
+    # subprocess.check_call(['grunt'], cwd=WWW_DIR)
 
 
-    # Commit webapp
-    subprocess.check_call(['git', 'reset', 'HEAD', '.'])
-    subprocess.check_call(['git', 'add', 'www/styles/vendor/main.css'])
-    subprocess.check_call(['git', 'add', '--all', 'www/vendor/dist'])
-    changes = subprocess.check_output(
-        ['git', 'status', '-s']).rstrip().split('\n')
-    changed = any([True if x[0] == 'M' else False for x in changes])
-    if changed:
-        subprocess.check_call(['git', 'commit', '-m', 'Rebuild dist'])
-        subprocess.check_call(['git', 'push'])
+    # # Commit webapp
+    # subprocess.check_call(['git', 'reset', 'HEAD', '.'])
+    # subprocess.check_call(['git', 'add', 'www/styles/vendor/main.css'])
+    # subprocess.check_call(['git', 'add', '--all', 'www/vendor/dist'])
+    # changes = subprocess.check_output(
+    #     ['git', 'status', '-s']).rstrip().split('\n')
+    # changed = any([True if x[0] == 'M' else False for x in changes])
+    # if changed:
+    #     subprocess.check_call(['git', 'commit', '-m', 'Rebuild dist'])
+    #     subprocess.check_call(['git', 'push'])
 
 
     # Sync db
