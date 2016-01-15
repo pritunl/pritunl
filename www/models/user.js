@@ -43,6 +43,34 @@ define([
         url: this.url() + '/otp_secret'
       }, options));
     },
+    portForwardingFormatted: function() {
+      var portForwarding = this.get('port_forwarding');
+      if (!portForwarding) {
+        return '';
+      }
+
+      var item;
+      var port;
+      var ports = [];
+
+      for (var i = 0; i < portForwarding.length; i++) {
+        item = portForwarding[i];
+
+        port = item.port;
+
+        if (item.dport) {
+          port += ':' + item.dport;
+        }
+
+        if (item.protocol) {
+          port += '/' + item.protocol;
+        }
+
+        ports.push(port);
+      }
+
+      return ports.join(', ');
+    },
     parse: function(response) {
       this.set({'hidden': response.type !== 'client'});
       return response;
