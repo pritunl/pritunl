@@ -452,7 +452,7 @@ class Clients(object):
         ]
 
         for data in usr.port_forwarding:
-            proto = data['protocol']
+            proto = data.get('protocol')
             port = data['port']
             dport = data.get('dport')
 
@@ -463,45 +463,43 @@ class Clients(object):
                 port = ':' + port
             dport = dport.replace('-', ':')
 
-            rule = prerouting_base_args + [
-                '-p', proto,
-                '-m', proto,
+            if proto:
+                proto_args = [
+                    '-p', proto,
+                    '-m', proto,
+                ]
+            else:
+                proto_args = []
+
+            rule = prerouting_base_args + proto_args + [
                 '--dport', dport,
                 '--to-destination', client_addr + port,
             ] + extra_args
             rules.append(rule)
 
             if self.server.ipv6:
-                rule = prerouting_base_args + [
-                    '-p', proto,
-                    '-m', proto,
+                rule = prerouting_base_args + proto_args + [
                     '--dport', dport,
                     '--to-destination', client_addr6 + port,
                 ] + extra_args
                 rules6.append(rule)
 
 
-            rule = output_base_args + [
-                '-p', proto,
-                '-m', proto,
+            rule = output_base_args + proto_args + [
                 '--dport', dport,
                 '--to-destination', client_addr + port,
             ] + extra_args
             rules.append(rule)
 
             if self.server.ipv6:
-                rule = output_base_args + [
-                    '-p', proto,
-                    '-m', proto,
+                rule = output_base_args + proto_args + [
                     '--dport', dport,
                     '--to-destination', client_addr6 + port,
                 ] + extra_args
                 rules6.append(rule)
 
 
-            rule = base_args + [
-                '-p', proto,
-                '-m', proto,
+            rule = base_args + proto_args + [
                 '--dport', dport,
             ] + extra_args
             rules.append(rule)
