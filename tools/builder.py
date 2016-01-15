@@ -251,10 +251,25 @@ elif cmd == 'set-version':
 
 
     # Build webapp
-    subprocess.check_call(['npmdocker', '--ver=%s' % get_int_ver(new_version)],
-        cwd=STYLES_DIR)
-    subprocess.check_call(['npmdocker'], cwd=WWW_DIR)
-
+    subprocess.check_call([
+        'docker',
+        'run',
+        '--rm',
+        '-ti',
+        '-v', '%s:/mount' % os.path.join(os.getcwd(), STYLES_DIR),
+        'npm',
+        'grunt',
+        '--ver=%s' % get_int_ver(new_version)
+    ])
+    subprocess.check_call([
+        'docker',
+        'run',
+        '--rm',
+        '-ti',
+        '-v', '%s:/mount' % os.path.join(os.getcwd(), WWW_DIR),
+        'npm',
+        'grunt',
+    ])
 
     # Commit webapp
     subprocess.check_call(['git', 'reset', 'HEAD', '.'])
