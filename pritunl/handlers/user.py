@@ -226,10 +226,6 @@ def user_post(org_id):
 
             if port_forwarding_in:
                 for data in port_forwarding_in:
-                    if data.get('protocol') not in ('tcp', 'udp') or \
-                            not data.get('port'):
-                        pass
-
                     port_forwarding.append({
                         'protocol': utils.filter_str(data.get('protocol')),
                         'port': utils.filter_str(data.get('port')),
