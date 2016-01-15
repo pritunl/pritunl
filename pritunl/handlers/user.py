@@ -360,6 +360,15 @@ def user_put(org_id, user_id):
         for network_link in network_links_rem:
             user.remove_network_link(network_link)
 
+    if 'port_forwarding' in flask.request.json:
+        user.port_forwarding = []
+        for data in flask.request.json['port_forwarding']:
+            user.port_forwarding.append({
+                'protocol': utils.filter_str(data.get('protocol')),
+                'port': utils.filter_str(data.get('port')),
+                'dport': utils.filter_str(data.get('dport')),
+            })
+
     disabled = flask.request.json.get('disabled')
     if disabled is not None:
         if disabled != user.disabled:
