@@ -18,7 +18,46 @@ define([
       }, ModalRenameUserView.__super__.events);
     },
     body: function() {
-      return this.template(this.model.toJSON());
+      return this.template(_.extend({
+        portForwardingFormatted: this.model.portForwardingFormatted()
+      }, this.model.toJSON()));
+    },
+    getPortForwarding: function() {
+      var item;
+      var protocol;
+      var port;
+      var dport;
+      var ports = [];
+
+      var data = this.$('.port-forwarding input').val();
+      data = data.split(',');
+
+      for (var i = 0; i < data.length; i++) {
+        protocol = null;
+        port = null;
+        dport = null;
+
+        item = data[i];
+        item = item.split('/');
+
+        if (item.length === 2) {
+          protocol = item[1];
+        }
+        item = item[0].split(':');
+
+        if (item.length === 2) {
+          dport = item[1];
+        }
+        port = item[0];
+
+        ports.push({
+          protocol: protocol,
+          port: port,
+          dport: dport
+        });
+      }
+
+      return ports;
     },
     getBypassSecondarySelect: function() {
       return this.$('.bypass-secondary-toggle .selector').hasClass('selected');
@@ -44,6 +83,7 @@ define([
       var dnsSuffix = this.$('.dns-suffix input').val();
       var pin = this.$('.pin input').val() || null;
       var bypassSecondary = this.getBypassSecondarySelect();
+      var portForwarding = this.getPortForwarding();
 
       if (pin === '******') {
         pin = true;
@@ -90,7 +130,8 @@ define([
         network_links: networkLinks,
         bypass_secondary: bypassSecondary,
         dns_servers: dnsServers,
-        dns_suffix: dnsSuffix
+        dns_suffix: dnsSuffix,
+        port_forwarding: portForwarding
       }, {
         success: function() {
           this.close(true);
