@@ -9,6 +9,7 @@ from pritunl import organization
 from pritunl import app
 from pritunl import auth
 from pritunl import mongo
+from pritunl import messenger
 from pritunl import ipaddress
 
 import flask
@@ -276,6 +277,7 @@ def user_put(org_id, user_id):
     org = organization.get_by_id(org_id)
     user = org.get_user(user_id)
     reset_user = False
+    port_forwarding_event = False
 
     if 'name' in flask.request.json:
         name = utils.filter_str(flask.request.json['name']) or None
@@ -357,13 +359,16 @@ def user_put(org_id, user_id):
             user.remove_network_link(network_link)
 
     if 'port_forwarding' in flask.request.json:
-        user.port_forwarding = []
+        port_forwarding = []
         for data in flask.request.json['port_forwarding']:
-            user.port_forwarding.append({
+            port_forwarding.append({
                 'protocol': utils.filter_str(data.get('protocol')),
                 'port': utils.filter_str(data.get('port')),
                 'dport': utils.filter_str(data.get('dport')),
             })
+
+        port_forwarding_event = port_forwarding != user.port_forwarding
+        user.port_forwarding = port_forwarding
 
     disabled = flask.request.json.get('disabled')
     if disabled is not None:
@@ -402,6 +407,11 @@ def user_put(org_id, user_id):
 
     user.commit()
     event.Event(type=USERS_UPDATED, resource_id=user.org.id)
+    if port_forwarding_event:
+        messenger.publish('port_forwarding', {
+            'org_id': org.id,
+            'user_id': user.id,
+        })
 
     if reset_user or disabled:
         user.disconnect()
