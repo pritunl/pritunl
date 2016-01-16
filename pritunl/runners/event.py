@@ -1,5 +1,6 @@
 from pritunl.helpers import *
 from pritunl import event
+from pritunl import logger
 
 import time
 import collections
