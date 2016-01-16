@@ -20,6 +20,7 @@ import threading
 import uuid
 
 _limiter = limiter.Limiter('vpn', 'peer_limit', 'peer_limit_timeout')
+_listeners = {}
 
 class Clients(object):
     def __init__(self, svr, instance, instance_com):
@@ -49,6 +50,14 @@ class Clients(object):
     @cached_static_property
     def collection(cls):
         return mongo.get_collection('clients')
+
+    def get_org(self, org_id):
+        org = self.obj_cache.get(org_id)
+        if not org:
+            org = self.server.get_org(org_id, fields=['_id', 'name'])
+            if org:
+                self.obj_cache.set(org_id, org)
+        return org
 
     def generate_client_conf(self, platform, client_id, virt_address,
             user, reauth):
@@ -359,12 +368,7 @@ class Clients(object):
                     'Too many connect requests')
                 return
 
-            org = self.obj_cache.get(org_id)
-            if not org:
-                org = self.server.get_org(org_id, fields=['_id', 'name'])
-                if org:
-                    self.obj_cache.set(org_id, org)
-
+            org = self.get_org(org_id)
             if not org:
                 self.instance_com.send_client_deny(client_id, key_id,
                     'Organization is not valid')
@@ -413,6 +417,39 @@ class Clients(object):
 
     def connect(self, client_data, reauth=False):
         self.call_queue.put(self._connect, client_data, reauth)
+
+    def on_port_forwarding(self, org_id, user_id):
+        client = self.clients.find({'user_id': user_id})
+        if not client:
+            return
+        client = client[0]
+
+        org = self.get_org(org_id)
+        if not org:
+            return
+
+        usr = org.get_user(user_id)
+        if not usr:
+            return
+
+        rules, rules6 = self.generate_iptables_rules(
+            usr,
+            client['virt_address'],
+            client['virt_address6'],
+        )
+
+        self.clear_iptables_rules(
+            client['iptables_rules'],
+            client['ip6tables_rules'],
+        )
+
+        if not self.clients.update_id(client['id'], {
+                    'iptables_rules': rules,
+                    'ip6tables_rules': rules6,
+                }):
+            return
+
+        self.set_iptables_rules(rules, rules6)
 
     def generate_iptables_rules(self, usr, virt_address, virt_address6):
         if not usr.port_forwarding:
@@ -516,19 +553,13 @@ class Clients(object):
 
         return rules, rules6
 
-    def set_iptables_rules(self, client):
-        rules = client['iptables_rules']
-        rules6 = client['ip6tables_rules']
-
+    def set_iptables_rules(self, rules, rules6):
         if rules or rules6:
             self.instance.enable_iptables_tun_nat()
             self.instance.append_iptables_rules(rules)
             self.instance.append_ip6tables_rules(rules6)
 
-    def clear_iptables_rules(self, client):
-        rules = client['iptables_rules']
-        rules6 = client['ip6tables_rules']
-
+    def clear_iptables_rules(self, rules, rules6):
         if rules or rules6:
             self.instance.delete_iptables_rules(rules)
             self.instance.delete_iptables_rules(rules6)
@@ -541,7 +572,10 @@ class Clients(object):
             self.instance_com.client_kill(client_id)
             return
 
-        self.set_iptables_rules(client)
+        self.set_iptables_rules(
+            client['iptables_rules'],
+            client['ip6tables_rules'],
+        )
 
         timestamp = utils.now()
         doc = {
@@ -599,12 +633,7 @@ class Clients(object):
         user_id = client['user_id']
         remote_ip = client['real_address']
 
-        org = self.obj_cache.get(org_id)
-        if not org:
-            org = self.server.get_org(org_id, fields=['_id', 'name'])
-            if org:
-                self.obj_cache.set(org_id, org)
-
+        org = self.get_org(org_id)
         if org:
             user = org.get_user(user_id, fields=('_id',))
             if user:
@@ -629,7 +658,10 @@ class Clients(object):
         })
         self.remove_iroutes(client_id)
 
-        self.clear_iptables_rules(client)
+        self.clear_iptables_rules(
+            client['iptables_rules'],
+            client['ip6tables_rules'],
+        )
 
         virt_address = client['virt_address']
         if client['address_dynamic']:
@@ -799,12 +831,14 @@ class Clients(object):
                 )
 
     def start(self):
+        _listeners[self.instance.id] = self.on_port_forwarding
         host.global_servers.add(self.instance.id)
         if self.server.dns_mapping:
             host.dns_mapping_servers.add(self.instance.id)
         self.call_queue.start(10)
 
     def stop(self):
+        _listeners.pop(self.instance.id, None)
         try:
             host.global_servers.remove(self.instance.id)
         except KeyError:
@@ -816,3 +850,10 @@ class Clients(object):
         host.global_clients.remove({
             'instance_id': self.instance.id,
         })
+
+def on_port_forwarding(msg):
+    for listener in _listeners.values():
+        listener(
+            msg['message']['org_id'],
+            msg['message']['user_id'],
+        )
