@@ -232,10 +232,6 @@ class Administrator(mongo.MongoObject):
 
     def commit(self, *args, **kwargs):
         if 'password' in self.changed:
-            logger.info('Changing administrator password', 'auth',
-                username=self.username,
-            )
-
             if not self.password:
                 raise ValueError('Password is empty')
 
