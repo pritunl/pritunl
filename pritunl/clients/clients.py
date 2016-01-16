@@ -464,47 +464,55 @@ class Clients(object):
             dport = dport.replace('-', ':')
 
             if proto:
-                proto_args = [
+                protos = [proto]
+            else:
+                protos = ['tcp', 'udp']
+
+            for proto in protos:
+                rule = prerouting_base_args + [
                     '-p', proto,
                     '-m', proto,
-                ]
-            else:
-                proto_args = []
-
-            rule = prerouting_base_args + proto_args + [
-                '--dport', dport,
-                '--to-destination', client_addr + port,
-            ] + extra_args
-            rules.append(rule)
-
-            if self.server.ipv6:
-                rule = prerouting_base_args + proto_args + [
                     '--dport', dport,
-                    '--to-destination', client_addr6 + port,
+                    '--to-destination', client_addr + port,
                 ] + extra_args
-                rules6.append(rule)
+                rules.append(rule)
+
+                if self.server.ipv6:
+                    rule = prerouting_base_args + [
+                        '-p', proto,
+                        '-m', proto,
+                        '--dport', dport,
+                        '--to-destination', client_addr6 + port,
+                    ] + extra_args
+                    rules6.append(rule)
 
 
-            rule = output_base_args + proto_args + [
-                '--dport', dport,
-                '--to-destination', client_addr + port,
-            ] + extra_args
-            rules.append(rule)
-
-            if self.server.ipv6:
-                rule = output_base_args + proto_args + [
+                rule = output_base_args + [
+                    '-p', proto,
+                    '-m', proto,
                     '--dport', dport,
-                    '--to-destination', client_addr6 + port,
+                    '--to-destination', client_addr + port,
                 ] + extra_args
-                rules6.append(rule)
+                rules.append(rule)
+
+                if self.server.ipv6:
+                    rule = output_base_args + [
+                        '-p', proto,
+                        '-m', proto,
+                        '--dport', dport,
+                        '--to-destination', client_addr6 + port,
+                    ] + extra_args
+                    rules6.append(rule)
 
 
-            rule = base_args + proto_args + [
-                '--dport', dport,
-            ] + extra_args
-            rules.append(rule)
-            if self.server.ipv6:
-                rules6.append(rule)
+                rule = base_args + [
+                    '-p', proto,
+                    '-m', proto,
+                    '--dport', dport,
+                ] + extra_args
+                rules.append(rule)
+                if self.server.ipv6:
+                    rules6.append(rule)
 
         return rules, rules6
 
