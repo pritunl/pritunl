@@ -220,8 +220,6 @@ class ServerInstanceCom(object):
                 instance_id=self.instance.id,
             )
             self.instance.stop_process()
-        finally:
-            self.clients.stop()
 
     def _socket_thread(self):
         try:
@@ -270,6 +268,7 @@ class ServerInstanceCom(object):
             self.instance.stop_process()
         finally:
             remove_listener(self.instance.id)
+            self.clients.stop()
 
     def _stress_thread(self):
         try:
