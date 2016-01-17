@@ -50,6 +50,10 @@ define([
         }
         port = item[0];
 
+        if (!port) {
+          continue;
+        }
+
         ports.push({
           protocol: protocol,
           port: port,
