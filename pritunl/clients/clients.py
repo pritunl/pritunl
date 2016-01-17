@@ -493,6 +493,9 @@ class Clients(object):
             port = data['port']
             dport = data.get('dport')
 
+            if not port:
+                continue
+
             if not dport:
                 dport = port
                 port = ''
