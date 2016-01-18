@@ -200,7 +200,7 @@ class Organization(mongo.MongoObject):
                 email = search[n + 6:].split(None, 1)
                 email = email[0] if email else ''
                 if email:
-                    spec['email'] = {'$regex': '.*%s.*' % email}
+                    spec['email'] = {'$regex': '.*%s.*/i' % email}
                 search = search[:n] + search[n + 6 + len(email):].strip()
 
             n = search.find('status:')
@@ -222,7 +222,7 @@ class Organization(mongo.MongoObject):
                 else:
                     spec['_id'] = {'$nin': user_ids}
 
-            spec['name'] = {'$regex': '.*%s.*' % search.strip()}
+            spec['name'] = {'$regex': '.*%s.*/i' % search.strip()}
 
             limit = search_limit or page_count
         elif page is not None:
