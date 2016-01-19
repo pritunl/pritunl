@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+User search improvements
+
 Version 1.15.857.70 2016-01-17
 ------------------------------
 
