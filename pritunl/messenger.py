@@ -1,4 +1,3 @@
-from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import mongo
 from pritunl import utils
