@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 User search improvements
+Fix issue with user audits
 
 Version 1.15.857.70 2016-01-17
 ------------------------------
