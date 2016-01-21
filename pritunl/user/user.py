@@ -696,10 +696,13 @@ class User(mongo.MongoObject):
 
     def set_pin(self, pin):
         if not pin:
-            self.pin = pin
-            return
+            changed = bool(self.pin)
+            self.pin = None
+            return changed
 
+        changed = not self.check_pin(pin)
         self.pin = auth.generate_hash_pin_v1(pin)
+        return changed
 
     def send_key_email(self, key_link_domain):
         user_key_link = self.org.create_user_key_link(self.id)

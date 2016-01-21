@@ -217,12 +217,11 @@ def user_key_pin_put(key_id):
             'error_msg': PIN_INVALID_MSG,
         }, 400)
 
-    usr.set_pin(pin)
-
-    usr.audit_event('user_updated',
-        'User pin changed with temporary profile link',
-        remote_addr=utils.get_remote_addr(),
-    )
+    if usr.set_pin(pin):
+        usr.audit_event('user_updated',
+            'User pin changed with temporary profile link',
+            remote_addr=utils.get_remote_addr(),
+        )
 
     usr.commit()
 

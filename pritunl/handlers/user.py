@@ -318,12 +318,11 @@ def user_put(org_id, user_id):
                         'error_msg': PIN_TOO_SHORT_MSG,
                     }, 400)
 
-            user.audit_event('user_updated',
-                'User pin changed',
-                remote_addr=utils.get_remote_addr(),
-            )
-
-            user.set_pin(pin)
+            if user.set_pin(pin):
+                user.audit_event('user_updated',
+                    'User pin changed',
+                    remote_addr=utils.get_remote_addr(),
+                )
 
     if 'network_links' in flask.request.json:
         network_links_cur = set(user.get_network_links())
