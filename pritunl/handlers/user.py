@@ -366,7 +366,13 @@ def user_put(org_id, user_id):
                 'dport': utils.filter_str(data.get('dport')),
             })
 
-        port_forwarding_event = port_forwarding != user.port_forwarding
+        if port_forwarding != user.port_forwarding:
+            port_forwarding_event = True
+            user.audit_event('user_updated',
+                'User port forwarding changed',
+                remote_addr=utils.get_remote_addr(),
+            )
+
         user.port_forwarding = port_forwarding
 
     disabled = flask.request.json.get('disabled')
