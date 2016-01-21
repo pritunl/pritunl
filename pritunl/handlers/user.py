@@ -318,10 +318,11 @@ def user_put(org_id, user_id):
                         'error_msg': PIN_TOO_SHORT_MSG,
                     }, 400)
 
-            user.audit_event('user_updated',
-                'User pin changed',
-                remote_addr=utils.get_remote_addr(),
-            )
+            if pin != user.pin:
+                user.audit_event('user_updated',
+                    'User pin changed',
+                    remote_addr=utils.get_remote_addr(),
+                )
 
             user.set_pin(pin)
 
@@ -368,6 +369,13 @@ def user_put(org_id, user_id):
             })
 
         port_forwarding_event = port_forwarding != user.port_forwarding
+
+        if port_forwarding_event:
+            user.audit_event('user_updated',
+                'User port forwarding changed',
+                remote_addr=utils.get_remote_addr(),
+            )
+
         user.port_forwarding = port_forwarding
 
     disabled = flask.request.json.get('disabled')
