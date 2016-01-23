@@ -224,7 +224,6 @@ class ServerInstanceCom(object):
     def _socket_thread(self):
         try:
             self.connect()
-
             time.sleep(1)
             self.sock_send('bytecount %s\n' % self.bandwidth_rate)
 
