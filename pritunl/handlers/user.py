@@ -34,7 +34,7 @@ def user_get(org_id, user_id=None, page=None):
     if user_id:
         return utils.jsonify(org.get_user(user_id).dict())
 
-    page = flask.request.args.get('page', None)
+    page = flask.request.args.get('page', page)
     page = int(page) if page else page
     search = flask.request.args.get('search', None)
     limit = int(flask.request.args.get('limit', settings.user.page_count))
