@@ -109,7 +109,7 @@ class Authorizer(object):
         if self.user.bypass_secondary or settings.vpn.stress_test:
             return
 
-        if not self.user.sso_auth_check():
+        if not self.user.sso_auth_check(self.password):
             self.user.audit_event('user_connection',
                 ('User connection to "%s" denied. ' +
                  'Single sign-on authentication failed') % (
