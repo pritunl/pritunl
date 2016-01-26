@@ -520,6 +520,9 @@ PIN_TOO_SHORT_MSG = 'Pin is not long enough.'
 PIN_IS_REQUIRED = 'pin_is_required'
 PIN_IS_REQUIRED_MSG = 'Pin is required.'
 
+PIN_RADIUS = 'pin_radius'
+PIN_RADIUS_MSG = 'Pin cannot be used with Radius users.'
+
 NETWORK_IN_USE = 'network_in_use'
 NETWORK_IN_USE_MSG = 'Network address is already in use.'
 
