@@ -459,6 +459,9 @@ DEMO_BLOCKED_MSG = 'Not aviaible in demo.'
 AUTH_INVALID = 'auth_invalid'
 AUTH_INVALID_MSG = 'Authentication credentials are not valid.'
 
+AUTH_DISABLED = 'auth_disabled'
+AUTH_DISABLED_MSG = 'Authentication credentials are disabled.'
+
 AUTH_OTP_REQUIRED = 'auth_otp_required'
 AUTH_OTP_REQUIRED_MSG = 'Two-factor authentication required.'
 
