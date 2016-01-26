@@ -1,29 +1,29 @@
 #!/usr/bin/env python
 '''
 Extremly basic RADIUS authentication. Bare minimum required to authenticate
-a user, yet remain RFC2138 compliant (I hope). 
+a user, yet remain RFC2138 compliant (I hope).
 
 Homepage at http://github.com/btimby/py-radius/
 '''
-# Copyright (c) 1999, Stuart Bishop <zen@shangri-la.dropbear.id.au> 
+# Copyright (c) 1999, Stuart Bishop <zen@shangri-la.dropbear.id.au>
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 #     Redistributions of source code must retain the above copyright
 #     notice, this list of conditions and the following disclaimer.
-# 
+#
 #     Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in the
 #     documentation and/or other materials provided with the
 #     distribution.
-# 
-#     The name of Stuart Bishop may not be used to endorse or promote 
-#     products derived from this software without specific prior written 
+#
+#     The name of Stuart Bishop may not be used to endorse or promote
+#     products derived from this software without specific prior written
 #     permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -130,7 +130,7 @@ class RADIUS:
         '''Attempt t authenticate with the given username and password.
            Returns 0 on failure
            Returns 1 on success
-           Raises a NoResponse (or its subclass SocketError) exception if 
+           Raises a NoResponse (or its subclass SocketError) exception if
                 no responses or no valid responses are received'''
 
         try:
@@ -163,14 +163,14 @@ class RADIUS:
 
                 # Verify the packet is not a cheap forgery or corrupt
                 checkauth = response[4:20]
-                m = md5(response[0:4] + authenticator + response[20:] 
+                m = md5(response[0:4] + authenticator + response[20:]
                     + self._secret).digest()
 
                 if m <> checkauth:
                     continue
 
                 if ord(response[0]) == ACCESS_ACCEPT:
-                    return 1	
+                    return 1
                 else:
                     return 0
 
@@ -196,7 +196,7 @@ if __name__ == '__main__':
 
     if port: port = int(port)
     else: port = 1645
-    
+
     secret = ''
     while not secret: secret = getpass('RADIUS Secret? ')
 
