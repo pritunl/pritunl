@@ -345,6 +345,11 @@ define([
           }
         }
 
+        if (sso === 'radius') {
+          ssoHost = this.$('.sso-radius-host input').val();
+          ssoSecret = this.$('.sso-radius-secret input').val();
+        }
+
         ssoOrg = this.$('.sso-org select').val();
       }
 
