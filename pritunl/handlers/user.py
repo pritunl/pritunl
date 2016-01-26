@@ -306,6 +306,12 @@ def user_put(org_id, user_id):
 
         if pin != True:
             if pin:
+                if RADIUS_AUTH in user.auth_type:
+                    return utils.jsonify({
+                        'error': PIN_RADIUS,
+                        'error_msg': PIN_RADIUS_MSG,
+                    }, 400)
+
                 if not pin.isdigit():
                     return utils.jsonify({
                         'error': PIN_NOT_DIGITS,
