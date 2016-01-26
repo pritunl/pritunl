@@ -41,7 +41,10 @@ def _auth_radius(username, password):
         event.Event(type=SERVERS_UPDATED)
     else:
         if usr.disabled:
-            return flask.abort(403)
+            return utils.jsonify({
+                'error': AUTH_DISABLED,
+                'error_msg': AUTH_DISABLED_MSG,
+            }, 403)
 
         if usr.auth_type != RADIUS_AUTH:
             usr.auth_type = RADIUS_AUTH
