@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add radius support
+
 Version 1.15.862.92 2016-01-22
 ------------------------------
 
