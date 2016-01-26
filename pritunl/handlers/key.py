@@ -194,6 +194,12 @@ def user_key_pin_put(key_id):
     if usr.disabled:
         return flask.abort(403)
 
+    if RADIUS_AUTH in usr.auth_type:
+        return utils.jsonify({
+            'error': PIN_RADIUS,
+            'error_msg': PIN_RADIUS_MSG,
+        }, 400)
+
     current_pin = utils.filter_str(
         flask.request.json.get('current_pin')) or None
     pin = utils.filter_str(flask.request.json.get('pin')) or None
