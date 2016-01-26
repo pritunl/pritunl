@@ -166,6 +166,7 @@ define([
         this.$('.saml-logo').hide();
         this.$('.google-logo').hide();
         this.$('.duo-logo').hide();
+        this.$('.radius-logo').hide();
       } else {
         var sso = this.model.get('sso') || '';
         var auth_type = this.model.get('auth_type');
@@ -202,6 +203,12 @@ define([
           this.$('.onelogin-logo').show();
         } else {
           this.$('.onelogin-logo').hide();
+        }
+
+        if (sso === 'radius' && auth_type === 'radius') {
+          this.$('.radius-logo').show();
+        } else {
+          this.$('.radius-logo').hide();
         }
       }
 
