@@ -515,6 +515,8 @@
               else {
                 window.location = '/';
               }
+            } else if (xmlhttp.status === 202) {
+              window.location = JSON.parse(xmlhttp.response)['redirect'];
             } else if (xmlhttp.status === 402) {
               username = userInput.value;
               password = passInput.value;
