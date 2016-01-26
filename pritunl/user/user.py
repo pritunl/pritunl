@@ -399,7 +399,12 @@ class User(mongo.MongoObject):
         if svr.otp_auth:
             password_mode = 'otp'
 
-        if self.pin or settings.user.pin_mode == PIN_REQUIRED:
+        if RADIUS_AUTH in self.auth_type:
+            if password_mode:
+                password_mode += '_password'
+            else:
+                password_mode = 'password'
+        elif self.pin or settings.user.pin_mode == PIN_REQUIRED:
             if password_mode:
                 password_mode += '_pin'
             else:
