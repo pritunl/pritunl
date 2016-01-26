@@ -50,6 +50,7 @@
         <option value="saml" <%= sso === 'saml' ? 'selected' : '' %>>SAML</option>
         <option value="saml_duo" <%= sso === 'saml_duo' ? 'selected' : '' %>>SAML + Duo Security</option>
         <option value="duo" <%= sso === 'duo' ? 'selected' : '' %>>Duo Security</option>
+        <option value="radius" <%= sso === 'radius' ? 'selected' : '' %>>Radius</option>
       </select>
     </div>
     <div class="sso-org form-group" <%= sso ? '' : 'style="display: none;"' %>>
@@ -138,6 +139,14 @@
     <div class="sso-match form-group" <%= sso === 'google' || sso === 'google_duo' ? '' : 'style="display: none;"' %>>
       <label>Google Apps Domain</label>
       <input type="email" class="form-control" placeholder="Enter Google Apps domain" value="<%- sso_match || '' %>" data-toggle="tooltip" title="Google apps domain to match against users email address. Multiple domains can be entrered sperated by a comma. (example: pritunl.com)">
+    </div>
+    <div class="sso-radius-host form-group" <%= sso === 'radius' ? '' : 'style="display: none;"' %>>
+      <label>Radius Host</label>
+      <input type="email" class="form-control" placeholder="Enter radius host and port" value="<%- sso_host || '' %>" data-toggle="tooltip" title="Radius host such as localhost:1645. If no port is specified default port 1645 will be used">
+    </div>
+    <div class="sso-radius-secret form-group" <%= sso === 'radius' ? '' : 'style="display: none;"' %>>
+      <label>Radius Secret</label>
+      <input type="password" class="form-control" placeholder="Enter Radius secret" value="<%- sso_secret || '' %>" data-toggle="tooltip" title="Radius shared secret">
     </div>
     <div class="sso-host form-group" <%= sso === 'duo' || sso === 'saml_duo' || sso === 'saml_onelogin_duo' || sso === 'saml_okta_duo' || sso === 'google_duo' ? '' : 'style="display: none;"' %>>
       <label>Duo API Hostname</label>
