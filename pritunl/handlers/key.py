@@ -254,6 +254,7 @@ def user_linked_key_page_get(short_code):
 
     key_page = static.StaticFile(settings.conf.www_path, view_name,
         cache=False, gzip=False).data
+    key_page = key_page.replace('<%= auth_type %>', user.auth_type)
     key_page = key_page.replace('<%= user_name %>', '%s - %s' % (
         org.name, user.name))
     key_page = key_page.replace('<%= user_key_tar_url %>', '/key/%s.tar' % (
