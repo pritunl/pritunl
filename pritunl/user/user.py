@@ -258,7 +258,7 @@ class User(mongo.MongoObject):
     def disconnect(self):
         messenger.publish('instance', ['user_disconnect', self.id])
 
-    def sso_auth_check(self):
+    def sso_auth_check(self, password):
         if GOOGLE_AUTH in self.auth_type:
             try:
                 resp = utils.request.get(AUTH_SERVER +
@@ -277,6 +277,14 @@ class User(mongo.MongoObject):
                 return sso.auth_onelogin(self.name)
             except:
                 logger.exception('OneLogin auth check error', 'user',
+                    user_id=self.id,
+                )
+            return False
+        elif RADIUS_AUTH in self.auth_type:
+            try:
+                return sso.verify_radius(self.name, password)[0]
+            except:
+                logger.exception('Radius auth check error', 'user',
                     user_id=self.id,
                 )
             return False
