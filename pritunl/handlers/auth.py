@@ -48,7 +48,8 @@ def _auth_radius(username, password):
 
         if usr.auth_type != RADIUS_AUTH:
             usr.auth_type = RADIUS_AUTH
-            usr.commit('auth_type')
+            usr.set_pin(None)
+            usr.commit(('auth_type', 'pin'))
 
     key_link = org.create_user_key_link(usr.id, one_time=True)
 
