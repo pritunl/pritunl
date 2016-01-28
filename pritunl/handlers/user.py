@@ -34,6 +34,9 @@ def user_get(org_id, user_id=None, page=None):
     if user_id:
         return utils.jsonify(org.get_user(user_id).dict())
 
+    if not org:
+        return flask.abort(404)
+
     page = flask.request.args.get('page', page)
     page = int(page) if page else page
     search = flask.request.args.get('search', None)
