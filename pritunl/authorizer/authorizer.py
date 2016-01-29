@@ -87,7 +87,7 @@ class Authorizer(object):
                 )
                 raise AuthError('Invalid OTP code')
 
-        if self.user.pin:
+        if self.user.pin and settings.user.pin_mode != PIN_DISABLED:
             if not self.user.check_pin(self.password):
                 self.user.audit_event('user_connection',
                     ('User connection to "%s" denied. ' +
