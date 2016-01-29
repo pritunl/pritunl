@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add option to disable user pins
+
 Version 1.16.867.0 2016-01-27
 -----------------------------
 
