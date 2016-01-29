@@ -309,6 +309,12 @@ def user_put(org_id, user_id):
 
         if pin != True:
             if pin:
+                if settings.user.pin_mode == PIN_DISABLED:
+                    return utils.jsonify({
+                        'error': PIN_IS_DISABLED,
+                        'error_msg': PIN_IS_DISABLED_MSG,
+                    }, 400)
+
                 if RADIUS_AUTH in user.auth_type:
                     return utils.jsonify({
                         'error': PIN_RADIUS,
