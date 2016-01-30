@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with user search
+
 Version 1.16.869.90 2016-01-29
 ------------------------------
 
