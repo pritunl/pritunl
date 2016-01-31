@@ -520,9 +520,6 @@ PIN_NOT_DIGITS_MSG = 'Pin must contain only digits.'
 PIN_TOO_SHORT = 'pin_too_short'
 PIN_TOO_SHORT_MSG = 'Pin is not long enough.'
 
-PIN_IS_REQUIRED = 'pin_required'
-PIN_IS_REQUIRED_MSG = 'Pin is required.'
-
 PIN_IS_DISABLED = 'pin_disabled'
 PIN_IS_DISABLED_MSG = 'Pin is disabled.'
 
