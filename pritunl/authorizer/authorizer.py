@@ -19,13 +19,14 @@ class Authorizer(object):
     )
 
     def __init__(self, svr, usr, remote_ip, plaform, device_name,
-            password, callback):
+            password, reauth, callback):
         self.server = svr
         self.user = usr
         self.remote_ip = remote_ip
         self.platform = plaform
         self.device_name = device_name
         self.password = password
+        self.reauth = reauth
         self.callback = callback
         self.push_type = None
 
@@ -43,7 +44,8 @@ class Authorizer(object):
             self._check_call(self._check_primary)
             self._check_call(self._check_password)
             self._check_call(self._check_sso)
-            self._check_call(self._check_push)
+            if not self.reauth:
+                self._check_call(self._check_push)
             self.callback(True)
         except:
             pass

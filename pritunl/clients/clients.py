@@ -406,6 +406,7 @@ class Clients(object):
                 platform,
                 device_name,
                 password,
+                reauth,
                 callback,
             ).authenticate()
         except:
