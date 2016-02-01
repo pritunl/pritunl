@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.16.872.77 2016-02-01
+------------------------------
 
 Fix disconnect issue with Duo and Okta Push
 
