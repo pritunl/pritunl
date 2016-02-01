@@ -14,6 +14,7 @@ class Authorizer(object):
         'platform',
         'device_name',
         'password',
+        'reauth',
         'callback',
         'push_type',
     )
