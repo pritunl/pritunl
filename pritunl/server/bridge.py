@@ -42,7 +42,7 @@ class Bridge(object):
             'ACCEPT',
             '-m', 'comment',
             '--comment', 'pritunl_%s' % settings.local.host_id,
-        ] + ['--wait'] if settings.local.iptables_wait else [])
+        ])
         utils.check_output_logged([
             'iptables',
             '-I',
@@ -53,7 +53,7 @@ class Bridge(object):
             'ACCEPT',
             '-m', 'comment',
             '--comment', 'pritunl_%s' % settings.local.host_id,
-        ] + ['--wait'] if settings.local.iptables_wait else [])
+        ])
         utils.check_output_logged([
             'ip',
             'link',
@@ -128,7 +128,7 @@ class Bridge(object):
                 'ACCEPT',
                 '-m', 'comment',
                 '--comment', 'pritunl_%s' % settings.local.host_id,
-            ] + ['--wait'] if settings.local.iptables_wait else [])
+            ])
         except subprocess.CalledProcessError:
             pass
         try:
@@ -142,7 +142,7 @@ class Bridge(object):
                 'ACCEPT',
                 '-m', 'comment',
                 '--comment', 'pritunl_%s' % settings.local.host_id,
-            ] + ['--wait'] if settings.local.iptables_wait else [])
+            ])
         except subprocess.CalledProcessError:
             pass
 
