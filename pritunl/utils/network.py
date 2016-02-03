@@ -8,6 +8,7 @@ import re
 import socket
 import struct
 import fcntl
+import netifaces
 
 _tun_interfaces = set(['tun%s' % _x for _x in xrange(100)])
 _tap_interfaces = set(['tap%s' % _x for _x in xrange(100)])
@@ -87,43 +88,68 @@ def parse_network(network):
 def get_network_gateway(network):
     return str(ipaddress.IPNetwork(network).iterhosts().next())
 
+# def get_local_networks():
+#     addresses = []
+#     output = check_output_logged(['ifconfig'])
+#
+#     for interface in output.split('\n\n'):
+#         interface_name = re.findall(r'[a-z0-9]+', interface, re.IGNORECASE)
+#         if not interface_name:
+#             continue
+#         interface_name = interface_name[0]
+#
+#         if re.search(r'tun[0-9]+', interface_name) or interface_name == 'lo':
+#             continue
+#
+#         addr = re.findall(r'inet.{0,10}' + IP_REGEX, interface, re.IGNORECASE)
+#         if not addr:
+#             continue
+#
+#         addr = re.findall(IP_REGEX, addr[0], re.IGNORECASE)
+#         if not addr:
+#             continue
+#
+#         mask = re.findall(r'mask.{0,10}' + IP_REGEX, interface, re.IGNORECASE)
+#         if not mask:
+#             continue
+#
+#         mask = re.findall(IP_REGEX, mask[0], re.IGNORECASE)
+#         if not mask:
+#             continue
+#
+#         addr = addr[0]
+#         mask = mask[0]
+#         if addr.split('.')[0] == '127':
+#             continue
+#
+#         addresses.append(network_addr(addr, mask))
+#
+#     return addresses
+
 def get_local_networks():
-    addresses = []
-    output = check_output_logged(['ifconfig'])
+    ifaces = netifaces.interfaces()
+    networks = []
 
-    for interface in output.split('\n\n'):
-        interface_name = re.findall(r'[a-z0-9]+', interface, re.IGNORECASE)
-        if not interface_name:
-            continue
-        interface_name = interface_name[0]
-
-        if re.search(r'tun[0-9]+', interface_name) or interface_name == 'lo':
+    for iface in ifaces:
+        if iface == 'lo':
             continue
 
-        addr = re.findall(r'inet.{0,10}' + IP_REGEX, interface, re.IGNORECASE)
-        if not addr:
+        addrs = netifaces.ifaddresses(iface).get(2)
+        if not addrs:
+            continue
+        addrs = addrs[0]
+
+        address = addrs.get('addr')
+        if not address:
             continue
 
-        addr = re.findall(IP_REGEX, addr[0], re.IGNORECASE)
-        if not addr:
+        netmask = addrs.get('netmask')
+        if not netmask:
             continue
 
-        mask = re.findall(r'mask.{0,10}' + IP_REGEX, interface, re.IGNORECASE)
-        if not mask:
-            continue
+        networks.append(network_addr(address, netmask))
 
-        mask = re.findall(IP_REGEX, mask[0], re.IGNORECASE)
-        if not mask:
-            continue
-
-        addr = addr[0]
-        mask = mask[0]
-        if addr.split('.')[0] == '127':
-            continue
-
-        addresses.append(network_addr(addr, mask))
-
-    return addresses
+    return networks
 
 def get_routes():
     routes_output = check_output_logged(['route', '-n'])
@@ -137,72 +163,116 @@ def get_routes():
 
     return routes
 
-def get_gateway():
-    routes_output = check_output_logged(['route', '-n'])
+# def get_gateway():
+#     routes_output = check_output_logged(['route', '-n'])
+#
+#     for line in routes_output.splitlines():
+#         line_split = line.split()
+#         if len(line_split) < 8 or not re.match(IP_REGEX, line_split[0]) or \
+#                 not re.match(IP_REGEX, line_split[1]):
+#             continue
+#
+#         if line_split[0] == '0.0.0.0':
+#             return (line_split[7], line_split[1])
 
-    for line in routes_output.splitlines():
-        line_split = line.split()
-        if len(line_split) < 8 or not re.match(IP_REGEX, line_split[0]) or \
-                not re.match(IP_REGEX, line_split[1]):
-            continue
-
-        if line_split[0] == '0.0.0.0':
-            return (line_split[7], line_split[1])
+# def get_interfaces():
+#     gateway = get_gateway()
+#     if not gateway:
+#         from pritunl import logger
+#         logger.error('Failed to find gateway address', 'utils')
+#     gateway_inf, gateway_addr = gateway
+#
+#     output = check_output_logged(['ifconfig'])
+#     interfaces = {}
+#
+#     for interface in output.split('\n\n'):
+#         data = {}
+#
+#         interface_name = re.findall(r'[a-z0-9]+', interface, re.IGNORECASE)
+#         if not interface_name:
+#             continue
+#         interface_name = interface_name[0]
+#         data['interface'] = interface_name
+#
+#         addr = re.findall(r'inet.{0,10}' + IP_REGEX, interface, re.IGNORECASE)
+#         if not addr:
+#             continue
+#         addr = re.findall(IP_REGEX, addr[0], re.IGNORECASE)
+#         if not addr:
+#             continue
+#         data['address'] = addr[0]
+#
+#         netmask = re.findall(r'mask.{0,10}' + IP_REGEX,
+#             interface, re.IGNORECASE)
+#         if not netmask:
+#             continue
+#         netmask = re.findall(IP_REGEX, netmask[0], re.IGNORECASE)
+#         if not netmask:
+#             continue
+#         data['netmask'] = netmask[0]
+#
+#         broadcast = re.findall(r'broadcast.{0,10}' + IP_REGEX,
+#             interface, re.IGNORECASE)
+#         if not broadcast:
+#             broadcast = re.findall(r'bcast.{0,10}' + IP_REGEX,
+#                 interface, re.IGNORECASE)
+#         if not broadcast:
+#             continue
+#         broadcast = re.findall(IP_REGEX, broadcast[0], re.IGNORECASE)
+#         if not broadcast:
+#             continue
+#         data['broadcast'] = broadcast[0]
+#
+#         if data['interface'] == gateway_inf:
+#             data['gateway'] = gateway_addr
+#         else:
+#             data['gateway'] = None
+#
+#         interfaces[interface_name] = data
+#
+#     return interfaces
 
 def get_interfaces():
-    gateway = get_gateway()
-    if not gateway:
-        from pritunl import logger
-        logger.error('Failed to find gateway address', 'utils')
-    gateway_inf, gateway_addr = gateway
-
-    output = check_output_logged(['ifconfig'])
+    ifaces = netifaces.interfaces()
+    ifaces_gateway = {}
+    gateways = netifaces.gateways()
     interfaces = {}
 
-    for interface in output.split('\n\n'):
-        data = {}
+    default_gateway = gateways.get('default', {}).get(2)
+    gateways = gateways.get(2, []) + \
+        [default_gateway] if default_gateway else []
 
-        interface_name = re.findall(r'[a-z0-9]+', interface, re.IGNORECASE)
-        if not interface_name:
-            continue
-        interface_name = interface_name[0]
-        data['interface'] = interface_name
+    for gateway in gateways:
+        ifaces_gateway[gateway[0]] = gateway[1]
 
-        addr = re.findall(r'inet.{0,10}' + IP_REGEX, interface, re.IGNORECASE)
-        if not addr:
+    for iface in ifaces:
+        if iface == 'lo':
             continue
-        addr = re.findall(IP_REGEX, addr[0], re.IGNORECASE)
-        if not addr:
-            continue
-        data['address'] = addr[0]
 
-        netmask = re.findall(r'mask.{0,10}' + IP_REGEX,
-            interface, re.IGNORECASE)
+        addrs = netifaces.ifaddresses(iface).get(2)
+        if not addrs:
+            continue
+        addrs = addrs[0]
+
+        address = addrs.get('addr')
+        if not address:
+            continue
+
+        broadcast = addrs.get('broadcast')
+        if not broadcast:
+            continue
+
+        netmask = addrs.get('netmask')
         if not netmask:
             continue
-        netmask = re.findall(IP_REGEX, netmask[0], re.IGNORECASE)
-        if not netmask:
-            continue
-        data['netmask'] = netmask[0]
 
-        broadcast = re.findall(r'broadcast.{0,10}' + IP_REGEX,
-            interface, re.IGNORECASE)
-        if not broadcast:
-            broadcast = re.findall(r'bcast.{0,10}' + IP_REGEX,
-                interface, re.IGNORECASE)
-        if not broadcast:
-            continue
-        broadcast = re.findall(IP_REGEX, broadcast[0], re.IGNORECASE)
-        if not broadcast:
-            continue
-        data['broadcast'] = broadcast[0]
-
-        if data['interface'] == gateway_inf:
-            data['gateway'] = gateway_addr
-        else:
-            data['gateway'] = None
-
-        interfaces[interface_name] = data
+        interfaces[iface] = {
+            'interface': iface,
+            'address': address,
+            'broadcast': broadcast,
+            'netmask': netmask,
+            'gateway': ifaces_gateway.get(iface),
+        }
 
     return interfaces
 
