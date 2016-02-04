@@ -893,6 +893,8 @@ def server_operation_put(server_id, operation):
 
     event.Event(type=SERVERS_UPDATED)
     event.Event(type=SERVER_HOSTS_UPDATED, resource_id=svr.id)
+    for org in svr.iter_orgs():
+        event.Event(type=USERS_UPDATED, resource_id=org.id)
     svr.send_link_events()
 
     return utils.jsonify(svr.dict())
