@@ -447,6 +447,13 @@ def server_put_post(server_id=None):
             else:
                 mode = ALL_TRAFFIC
 
+    if network_def:
+        if _check_network_overlap(network, network_used):
+            return utils.jsonify({
+                'error': NETWORK_IN_USE,
+                'error_msg': NETWORK_IN_USE_MSG,
+            }, 400)
+
     if port_def:
         if '%s%s' % (port, protocol) in port_used:
             return utils.jsonify({
@@ -455,13 +462,6 @@ def server_put_post(server_id=None):
             }, 400)
 
     if not server_id:
-        if network_def and network_mode != BRIDGE:
-            if _check_network_overlap(network, network_used):
-                return utils.jsonify({
-                    'error': NETWORK_IN_USE,
-                    'error_msg': NETWORK_IN_USE_MSG,
-                }, 400)
-
         if network_mode == BRIDGE:
             if not _check_network_range(network, network_start, network_end):
                 return utils.jsonify({
@@ -544,12 +544,6 @@ def server_put_post(server_id=None):
                     'error_msg': MISSING_PARAMS_MSG,
                 }, 400)
             svr.network_mode = network_mode
-        if network_def and svr.network_mode != BRIDGE:
-            if _check_network_overlap(network, network_used):
-                return utils.jsonify({
-                    'error': NETWORK_IN_USE,
-                    'error_msg': NETWORK_IN_USE_MSG,
-                }, 400)
         if bind_address_def:
             svr.bind_address = bind_address
         if port_def:
