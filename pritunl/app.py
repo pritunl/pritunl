@@ -44,7 +44,6 @@ def _run_wsgi():
         request_queue_size=settings.app.request_queue_size,
         server_name=wsgiserver.CherryPyWSGIServer.version)
 
-
     if settings.conf.ssl:
         server_cert_path = os.path.join(settings.conf.temp_path, 'server.crt')
         server_key_path = os.path.join(settings.conf.temp_path, 'server.key')
