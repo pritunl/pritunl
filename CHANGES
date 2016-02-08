@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Bridged mode improvements
+
 Version 1.16.872.77 2016-02-01
 ------------------------------
 
