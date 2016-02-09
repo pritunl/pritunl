@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Trim long user names in web console
+Fix issue with emailing keys
 
 Version 1.16.879.94 2016-02-08
 ------------------------------
