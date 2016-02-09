@@ -374,7 +374,7 @@ def user_put(org_id, user_id):
 
     if 'port_forwarding' in flask.request.json:
         port_forwarding = []
-        for data in flask.request.json['port_forwarding']:
+        for data in flask.request.json['port_forwarding'] or []:
             port_forwarding.append({
                 'protocol': utils.filter_str(data.get('protocol')),
                 'port': utils.filter_str(data.get('port')),
