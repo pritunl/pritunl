@@ -80,8 +80,18 @@ define([
     },
     update: function() {
       var email = this.model.get('email');
-      this.$('.user-name').text(
-        this.model.get('name') + (email ? ' (' + email + ')' : ''));
+      var name = this.model.get('name') + (email ? ' (' + email + ')' : '');
+
+      if (name.length > 40) {
+        name = name.substr(0, 40);
+        if (name.substr(39, 1) === '.') {
+          name += '..';
+        } else {
+          name += '...';
+        }
+      }
+
+      this.$('.user-name').text(name);
       if (email && this.model.get('gravatar')) {
         this.$('.name-gravatar').attr('src', '//www.gravatar.com/avatar/' +
           window.md5(email) + '?r=x&s=52&d=404');
