@@ -94,7 +94,7 @@
     </div>
     <div class="monitoring form-group">
       <label>Monitoring Mode</label>
-      <select class="form-control" data-toggle="tooltip" title="Auditing mode">
+      <select class="form-control" data-toggle="tooltip" title="Monitoring mode">
         <option value="none" <%= !monitoring ? 'selected' : '' %>>Disabled</option>
         <option value="prometheus" <%= monitoring === 'prometheus' ? 'selected' : '' %>>Prometheus (Port 9780)</option>
         <option value="datadog" <%= monitoring === 'datadog' ? 'selected' : '' %>>Datadog</option>
