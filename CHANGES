@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.16.881.14 2016-02-10
+------------------------------
 
 Trim long user names in web console
 Fix issue with emailing profiles
