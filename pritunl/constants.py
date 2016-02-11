@@ -606,6 +606,9 @@ SUBSCRIPTION_SERVER_ERROR = 'subscription_server_error'
 SUBSCRIPTION_SERVER_ERROR_MSG = 'Unable to connect to ' + \
     'subscription server, please try again later.'
 
+LICENSE_INVALID = 'license_invalid'
+LICENSE_INVALID_MSG = 'License key is invalid'
+
 MONGODB_URI_INVALID = 'mongodb_uri_invalid'
 MONGODB_URI_INVALID_MSG = 'MongoDB URI is invalid.'
 
