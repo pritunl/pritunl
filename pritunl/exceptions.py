@@ -9,6 +9,8 @@ class BaseError(Exception):
             message = '%s. %r' % (message, data)
         Exception.__init__(self, message)
 
+class LicenseInvalid(BaseError):
+    pass
 
 class UserError(BaseError):
     pass
