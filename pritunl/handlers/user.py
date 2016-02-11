@@ -596,22 +596,24 @@ def auth_user_post():
     network_links = flask.request.json.get('network_links')
 
     usr = org.find_user(name=username)
-    if not usr:
-        usr = org.new_user(name=username, type=CERT_CLIENT)
-        usr.audit_event('user_created',
-            'User created with authentication token',
-            remote_addr=utils.get_remote_addr())
+    if usr:
+        usr.remove()
 
-        if network_links:
-            for network_link in network_links:
-                try:
-                    usr.add_network_link(network_link, force=True)
-                except (ipaddress.AddressValueError, ValueError):
-                    return _network_link_invalid()
+    usr = org.new_user(name=username, type=CERT_CLIENT)
+    usr.audit_event('user_created',
+        'User created with authentication token',
+        remote_addr=utils.get_remote_addr())
 
-        event.Event(type=ORGS_UPDATED)
-        event.Event(type=USERS_UPDATED, resource_id=org.id)
-        event.Event(type=SERVERS_UPDATED)
+    if network_links:
+        for network_link in network_links:
+            try:
+                usr.add_network_link(network_link, force=True)
+            except (ipaddress.AddressValueError, ValueError):
+                return _network_link_invalid()
+
+    event.Event(type=ORGS_UPDATED)
+    event.Event(type=USERS_UPDATED, resource_id=org.id)
+    event.Event(type=SERVERS_UPDATED)
 
     keys = {}
     for svr in org.iter_servers():
