@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Interface improvements
+
 Version 1.16.881.14 2016-02-10
 ------------------------------
 
