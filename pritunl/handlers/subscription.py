@@ -1,4 +1,5 @@
 from pritunl.constants import *
+from pritunl.exceptions import *
 from pritunl import utils
 from pritunl import app
 from pritunl import subscription
@@ -71,7 +72,13 @@ def subscription_post():
     if response.status_code != 200:
         return utils.jsonify(data, response.status_code)
 
-    subscription.update_license(license)
+    try:
+        subscription.update_license(license)
+    except LicenseInvalid:
+        return utils.jsonify({
+            'error': LICENSE_INVALID,
+            'error_msg': LICENSE_INVALID_MSG,
+        }, 500)
     return utils.jsonify(subscription.dict())
 
 @app.app.route('/subscription', methods=['PUT'])
