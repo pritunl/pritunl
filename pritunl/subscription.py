@@ -1,5 +1,6 @@
 from pritunl.constants import *
 from pritunl.helpers import *
+from pritunl.exceptions import *
 from pritunl import settings
 from pritunl import logger
 from pritunl import utils
@@ -42,7 +43,7 @@ def update():
                     logger.warning('License key is invalid', 'subscription')
                     update_license(None)
                     update()
-                    return
+                    return False
 
                 if response.status_code == 473:
                     raise ValueError(('Version %r not recognized by ' +
@@ -109,6 +110,8 @@ def update():
             else:
                 event.Event(type=SUBSCRIPTION_NONE_INACTIVE)
 
+    return True
+
 def dict():
     if settings.app.demo_mode:
         url_key = 'demo'
@@ -130,5 +133,7 @@ def update_license(license):
     settings.app.license = license
     settings.app.license_plan = None
     settings.commit()
-    update()
+    valid = update()
     messenger.publish('subscription', 'updated')
+    if not valid:
+        raise LicenseInvalid('License key is invalid')
