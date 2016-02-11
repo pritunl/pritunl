@@ -16,7 +16,7 @@ define([
         'click .super-user-toggle': 'onSuperSelect',
         'click .otp-auth-toggle': 'onOtpAuthSelect',
         'click .auth-api-toggle': 'onAuthSelect',
-        'click .auth-token input, .auth-secret input': 'onClickInput',
+        'click .api-token input, .api-secret input': 'onClickInput',
         'click .generate-new-api-key': 'onGenerateNewKey'
       }, ModalModifyAdminView.__super__.events);
     },
