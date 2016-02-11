@@ -243,7 +243,7 @@ def get_interfaces():
         [default_gateway] if default_gateway else []
 
     for gateway in gateways:
-        ifaces_gateway[gateway[0]] = gateway[1]
+        ifaces_gateway[gateway[1]] = gateway[0]
 
     for iface in ifaces:
         if iface == 'lo':
