@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.16.884.17 2016-02-13
+------------------------------
 
 Interface improvements
 Fix issue with Cent OS package
