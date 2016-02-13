@@ -13,6 +13,7 @@ define([
     title: 'Settings',
     okText: 'Save',
     enterOk: false,
+    hasAdvanced: true,
     events: function() {
       return _.extend({
         'click .sso-mode select': 'onSsoMode',
