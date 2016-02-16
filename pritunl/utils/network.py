@@ -43,6 +43,18 @@ def get_interface_address(iface):
 
     return addrs[0].get('addr')
 
+def get_interface_address6(iface):
+    try:
+        addrs = netifaces.ifaddresses(iface)
+    except ValueError:
+        return
+
+    addrs = addrs.get(netifaces.AF_INET6)
+    if not addrs:
+        return
+
+    return addrs[0].get('addr')
+
 def ip_to_long(ip_str):
     ip = ip_str.split('.')
     ip.reverse()
