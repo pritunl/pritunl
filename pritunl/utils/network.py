@@ -238,8 +238,8 @@ def get_interfaces():
     gateways = netifaces.gateways()
     interfaces = {}
 
-    default_gateway = gateways.get('default', {}).get(2)
-    gateways = gateways.get(2, []) + \
+    default_gateway = gateways.get('default', {}).get(netifaces.AF_INET)
+    gateways = gateways.get(netifaces.AF_INET, []) + \
         [default_gateway] if default_gateway else []
 
     for gateway in gateways:
@@ -249,7 +249,7 @@ def get_interfaces():
         if iface == 'lo':
             continue
 
-        addrs = netifaces.ifaddresses(iface).get(2)
+        addrs = netifaces.ifaddresses(iface).get(netifaces.AF_INET)
         if not addrs:
             continue
         addrs = addrs[0]
