@@ -20,7 +20,7 @@ import threading
 import uuid
 
 _limiter = limiter.Limiter('vpn', 'peer_limit', 'peer_limit_timeout')
-_listeners = {}
+_port_listeners = {}
 
 class Clients(object):
     def __init__(self, svr, instance, instance_com):
@@ -835,14 +835,14 @@ class Clients(object):
                 )
 
     def start(self):
-        _listeners[self.instance.id] = self.on_port_forwarding
+        _port_listeners[self.instance.id] = self.on_port_forwarding
         host.global_servers.add(self.instance.id)
         if self.server.dns_mapping:
             host.dns_mapping_servers.add(self.instance.id)
         self.call_queue.start(10)
 
     def stop(self):
-        _listeners.pop(self.instance.id, None)
+        _port_listeners.pop(self.instance.id, None)
         try:
             host.global_servers.remove(self.instance.id)
         except KeyError:
@@ -856,7 +856,7 @@ class Clients(object):
         })
 
 def on_port_forwarding(msg):
-    for listener in _listeners.values():
+    for listener in _port_listeners.values():
         listener(
             msg['message']['org_id'],
             msg['message']['user_id'],
