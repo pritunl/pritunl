@@ -34,27 +34,17 @@ def interface_release(interface_type, interface):
 def get_remote_addr():
     return flask.request.remote_addr
 
-def get_interface_address(interface):
-    global _sock
-    global _sockfd
-
-    if _sock is None:
-        try:
-            _sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            _sockfd = _sock.fileno()
-        except:
-            _sock = False
-            _sockfd = False
-
-    if not _sock:
-        return
-
-    ifreq = struct.pack('16sH14s', interface, socket.AF_INET, '\x00' * 14)
+def get_interface_address(iface):
     try:
-        res = fcntl.ioctl(_sockfd, 0x8915, ifreq)
-    except:
+        addrs = netifaces.ifaddresses(iface)
+    except ValueError:
         return
-    return socket.inet_ntoa(struct.unpack('16sH2x4s8x', res)[2])
+
+    addrs = addrs.get(netifaces.AF_INET)
+    if not addrs:
+        return
+
+    return addrs[0].get('addr')
 
 def ip_to_long(ip_str):
     ip = ip_str.split('.')
