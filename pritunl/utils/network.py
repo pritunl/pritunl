@@ -88,6 +88,10 @@ def parse_network(network):
 def get_network_gateway(network):
     return str(ipaddress.IPNetwork(network).iterhosts().next())
 
+def get_local_address():
+    gateways = netifaces.gateways()
+    return gateways['default'].get(netifaces.AF_INET, [None])[0]
+
 def get_local_networks():
     ifaces = netifaces.interfaces()
     networks = []
