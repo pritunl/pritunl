@@ -13,12 +13,15 @@ from pritunl import objcache
 from pritunl import host
 from pritunl import authorizer
 
+import time
+import subprocess
 import collections
 import bson
 import hashlib
 import threading
 import uuid
 
+_route_lock = threading.Lock()
 _limiter = limiter.Limiter('vpn', 'peer_limit', 'peer_limit_timeout')
 _port_listeners = {}
 
@@ -835,6 +838,58 @@ class Clients(object):
                 logger.exception('Error removing client', 'server',
                     server_id=self.server.id,
                 )
+
+    def add_route(self, virt_address, virt_address6,
+            host_address, host_address6):
+        if not host_address:
+            return
+
+        _route_lock.acquire()
+        try:
+            for i in xrange(3):
+                try:
+                    utils.check_output_logged([
+                        'ip',
+                        'route',
+                        'add',
+                        virt_address,
+                        'via',
+                        host_address,
+                    ])
+                    break
+                except:
+                    if i == 2:
+                        raise
+                    time.sleep(0.2)
+        except:
+            logger.exception('Failed to add route', 'clients',
+                virt_address=virt_address,
+                virt_address6=virt_address6,
+                host_address=host_address,
+                host_address6=host_address6,
+            )
+        finally:
+            _route_lock.release()
+
+    def remove_route(self, virt_address, virt_address6,
+            host_address, host_address6):
+        if not host_address:
+            return
+
+        _route_lock.acquire()
+        try:
+            subprocess.check_output([
+                'ip',
+                'route',
+                'del',
+                virt_address,
+                'via',
+                host_address,
+            ])
+        except:
+            pass
+        finally:
+            _route_lock.release()
 
     def start(self):
         _port_listeners[self.instance.id] = self.on_port_forwarding
