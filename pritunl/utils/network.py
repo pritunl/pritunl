@@ -53,7 +53,9 @@ def get_interface_address6(iface):
     if not addrs:
         return
 
-    return addrs[0].get('addr')
+    addr = addrs[0].get('addr')
+    if addr:
+        return addr.split('%')[0]
 
 def ip_to_long(ip_str):
     ip = ip_str.split('.')
