@@ -37,6 +37,7 @@ class Clients(object):
         self.call_queue = callqueue.CallQueue(
             self.instance.is_sock_interrupt, 512)
         self.obj_cache = objcache.ObjCache()
+        self.client_routes = {}
 
         self.clients = docdb.DocDb(
             'user_id',
@@ -846,6 +847,20 @@ class Clients(object):
 
         _route_lock.acquire()
         try:
+            cur_host_address = self.client_routes.pop(virt_address)
+            if cur_host_address:
+                try:
+                    subprocess.check_output([
+                        'ip',
+                        'route',
+                        'del',
+                        virt_address,
+                        'via',
+                        cur_host_address,
+                    ])
+                except:
+                    pass
+
             for i in xrange(3):
                 try:
                     utils.check_output_logged([
