@@ -90,7 +90,11 @@ def get_network_gateway(network):
 
 def get_local_address():
     gateways = netifaces.gateways()
-    return gateways['default'].get(netifaces.AF_INET, [None])[0]
+    default_intf = gateways['default'].get(netifaces.AF_INET)
+    if not default_intf:
+        return
+    default_intf = default_intf[1]
+    return get_interface_address(default_intf)
 
 def get_local_networks():
     ifaces = netifaces.interfaces()
