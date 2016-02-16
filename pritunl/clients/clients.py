@@ -596,6 +596,7 @@ class Clients(object):
             'virt_address': client['virt_address'],
             'virt_address6': client['virt_address6'],
             'host_address': settings.local.host.local_address,
+            'host_address6': settings.local.host.local_address6,
             'dns_servers': client['dns_servers'],
             'dns_suffix': client['dns_suffix'],
             'connected_since': int(timestamp.strftime('%s')),
