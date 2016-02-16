@@ -5,9 +5,6 @@ from pritunl import ipaddress
 
 import flask
 import re
-import socket
-import struct
-import fcntl
 import netifaces
 
 _tun_interfaces = set(['tun%s' % _x for _x in xrange(100)])
