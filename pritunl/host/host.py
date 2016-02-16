@@ -23,6 +23,7 @@ class Host(mongo.MongoObject):
         'routed_subnet6',
         'link_address',
         'local_address',
+        'local_address6',
     }
     fields_default = {
         'status': OFFLINE,
