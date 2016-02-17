@@ -24,6 +24,7 @@ import uuid
 _route_lock = threading.Lock()
 _limiter = limiter.Limiter('vpn', 'peer_limit', 'peer_limit_timeout')
 _port_listeners = {}
+_client_listeners = {}
 
 class Clients(object):
     def __init__(self, svr, instance, instance_com):
@@ -908,6 +909,7 @@ class Clients(object):
 
     def start(self):
         _port_listeners[self.instance.id] = self.on_port_forwarding
+        _client_listeners[self.instance.id] = self.on_client
         host.global_servers.add(self.instance.id)
         if self.server.dns_mapping:
             host.dns_mapping_servers.add(self.instance.id)
@@ -915,6 +917,7 @@ class Clients(object):
 
     def stop(self):
         _port_listeners.pop(self.instance.id, None)
+        _client_listeners.pop(self.instance.id, None)
         try:
             host.global_servers.remove(self.instance.id)
         except KeyError:
