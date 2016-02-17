@@ -854,7 +854,8 @@ class Clients(object):
 
     def add_route(self, virt_address, virt_address6,
             host_address, host_address6):
-        if not host_address:
+        if not host_address or host_address == \
+                settings.local.host.local_address:
             return
 
         _route_lock.acquire()
