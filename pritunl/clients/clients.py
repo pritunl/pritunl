@@ -852,6 +852,27 @@ class Clients(object):
             self.clients_call_queue.put(self.remove_route, virt_address,
                 virt_address6, host_address, host_address6)
 
+    def init_routes(self):
+        for doc in self.collection.find({
+            'server_id': self.server.id,
+            'user_type': CERT_CLIENT,
+        }):
+            if doc['host_id'] == settings.local.host_id:
+                continue
+
+            virt_address = doc.get('virt_address')
+            virt_address6 = doc.get('virt_address6')
+            host_address = doc.get('host_address')
+            host_address6 = doc.get('host_address6')
+
+            if not virt_address or not host_address:
+                continue
+
+            self.add_route(virt_address, virt_address6,
+                host_address, host_address6)
+
+        self.clients_call_queue.start()
+
     def add_route(self, virt_address, virt_address6,
             host_address, host_address6):
         if not host_address or host_address == \
@@ -926,6 +947,10 @@ class Clients(object):
         if self.server.dns_mapping:
             host.dns_mapping_servers.add(self.instance.id)
         self.call_queue.start(10)
+
+        thread = threading.Thread(target=self.init_routes)
+        thread.daemon = True
+        thread.start()
 
     def stop(self):
         _port_listeners.pop(self.instance.id, None)
