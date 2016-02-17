@@ -948,3 +948,13 @@ def on_port_forwarding(msg):
             msg['message']['org_id'],
             msg['message']['user_id'],
         )
+
+def on_client(msg):
+    for listener in _client_listeners.values():
+        listener(
+            msg['message']['state'],
+            msg['message']['virt_address'],
+            msg['message']['virt_address6'],
+            msg['message']['host_address'],
+            msg['message']['host_address6'],
+        )
