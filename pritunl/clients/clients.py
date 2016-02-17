@@ -37,6 +37,8 @@ class Clients(object):
         self.iroutes_index = collections.defaultdict(set)
         self.call_queue = callqueue.CallQueue(
             self.instance.is_sock_interrupt, 512)
+        self.clients_call_queue = callqueue.CallQueue(
+            self.instance.is_sock_interrupt)
         self.obj_cache = objcache.ObjCache()
         self.client_routes = {}
 
@@ -840,6 +842,15 @@ class Clients(object):
                 logger.exception('Error removing client', 'server',
                     server_id=self.server.id,
                 )
+
+    def on_client(self, state, virt_address, virt_address6,
+            host_address, host_address6):
+        if state:
+            self.clients_call_queue.put(self.add_route, virt_address,
+                virt_address6, host_address, host_address6)
+        else:
+            self.clients_call_queue.put(self.remove_route, virt_address,
+                virt_address6, host_address, host_address6)
 
     def add_route(self, virt_address, virt_address6,
             host_address, host_address6):
