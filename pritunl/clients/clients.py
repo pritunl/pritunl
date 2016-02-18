@@ -884,6 +884,9 @@ class Clients(object):
             if not virt_address or not host_address:
                 continue
 
+            if self.instance.is_sock_interrupt:
+                return
+
             self.add_route(virt_address, virt_address6,
                 host_address, host_address6)
 
