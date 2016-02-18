@@ -12,6 +12,7 @@ from pritunl import callqueue
 from pritunl import objcache
 from pritunl import host
 from pritunl import authorizer
+from pritunl import messenger
 
 import time
 import subprocess
