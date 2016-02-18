@@ -1010,6 +1010,9 @@ class Clients(object):
             'instance_id': self.instance.id,
         })
 
+        if self.server.replica_count and self.server.replica_count > 1:
+            self.clear_routes()
+
 def on_port_forwarding(msg):
     for listener in _port_listeners.values():
         listener(
