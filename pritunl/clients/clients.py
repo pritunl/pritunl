@@ -976,6 +976,7 @@ class Clients(object):
                 'via',
                 host_address,
             ])
+            self.client_routes.pop(virt_address, None)
         except:
             pass
         finally:
