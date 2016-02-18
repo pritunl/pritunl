@@ -985,9 +985,10 @@ class Clients(object):
             host.dns_mapping_servers.add(self.instance.id)
         self.call_queue.start(10)
 
-        thread = threading.Thread(target=self.init_routes)
-        thread.daemon = True
-        thread.start()
+        if self.server.replica_count and self.server.replica_count > 1:
+            thread = threading.Thread(target=self.init_routes)
+            thread.daemon = True
+            thread.start()
 
     def stop(self):
         _port_listeners.pop(self.instance.id, None)
