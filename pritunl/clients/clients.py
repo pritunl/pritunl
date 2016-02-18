@@ -891,6 +891,8 @@ class Clients(object):
 
     def add_route(self, virt_address, virt_address6,
             host_address, host_address6):
+        virt_address = virt_address.split('/')[0]
+
         _route_lock.acquire()
         try:
             cur_host_address = self.client_routes.pop(virt_address, None)
@@ -954,6 +956,8 @@ class Clients(object):
             host_address, host_address6):
         if not host_address:
             return
+
+        virt_address = virt_address.split('/')[0]
 
         _route_lock.acquire()
         try:
