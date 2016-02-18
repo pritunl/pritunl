@@ -891,13 +891,27 @@ class Clients(object):
 
     def add_route(self, virt_address, virt_address6,
             host_address, host_address6):
-        if not host_address or host_address == \
-                settings.local.host.local_address:
-            return
-
         _route_lock.acquire()
         try:
-            cur_host_address = self.client_routes.pop(virt_address)
+            cur_host_address = self.client_routes.pop(virt_address, None)
+            if cur_host_address:
+                try:
+                    subprocess.check_output([
+                        'ip',
+                        'route',
+                        'del',
+                        virt_address,
+                        'via',
+                        cur_host_address,
+                    ])
+                except:
+                    pass
+
+            if not host_address or host_address == \
+                    settings.local.host.local_address:
+                return
+
+            cur_host_address = self.client_routes.pop(virt_address, None)
             if cur_host_address:
                 try:
                     subprocess.check_output([
