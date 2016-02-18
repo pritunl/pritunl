@@ -892,6 +892,10 @@ class Clients(object):
 
         self.clients_call_queue.start()
 
+    def clear_routes(self):
+        for virt_address, host_address in self.client_routes.items():
+            self.remove_route(virt_address, host_address)
+
     def add_route(self, virt_address, virt_address6,
             host_address, host_address6):
         virt_address = virt_address.split('/')[0]
