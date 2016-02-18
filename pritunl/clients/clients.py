@@ -614,7 +614,7 @@ class Clients(object):
                 settings.local.sub_plan == 'enterprise':
             domain_hash = hashlib.md5()
             domain_hash.update((client['user_name'].split('@')[0] +
-                                '.' + client['org_name']).lower())
+                '.' + client['org_name']).lower())
             domain_hash = bson.binary.Binary(domain_hash.digest(),
                 subtype=bson.binary.MD5_SUBTYPE)
             doc['domain'] = domain_hash
@@ -870,9 +870,9 @@ class Clients(object):
 
     def init_routes(self):
         for doc in self.collection.find({
-            'server_id': self.server.id,
-            'user_type': CERT_CLIENT,
-        }):
+                    'server_id': self.server.id,
+                    'user_type': CERT_CLIENT,
+                }):
             if doc['host_id'] == settings.local.host_id:
                 continue
 
