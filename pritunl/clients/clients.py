@@ -621,6 +621,13 @@ class Clients(object):
 
         try:
             doc_id = self.collection.insert(doc)
+            messenger.publish('client', {
+                'state': True,
+                'virt_address': client['virt_address'],
+                'virt_address6': client['virt_address6'],
+                'host_address': settings.local.host.local_address,
+                'host_address6': settings.local.host.local_address6,
+            })
         except:
             logger.exception('Error adding client', 'server',
                 server_id=self.server.id,
@@ -656,6 +663,14 @@ class Clients(object):
                     'User disconnected from "%s"' % self.server.name,
                     remote_addr=remote_ip,
                 )
+
+        messenger.publish('client', {
+            'state': False,
+            'virt_address': client['virt_address'],
+            'virt_address6': client['virt_address6'],
+            'host_address': settings.local.host.local_address,
+            'host_address6': settings.local.host.local_address6,
+        })
 
         self.instance_com.push_output(
             'User disconnected user_id=%s' % client['user_id'])
