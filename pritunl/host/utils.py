@@ -133,6 +133,8 @@ def init():
                 interface=settings.conf.local_address_interface)
             settings.local.host.local_address = None
 
+    settings.local.host.local_networks = utils.get_local_networks()
+
     settings.local.host.commit()
     event.Event(type=HOSTS_UPDATED)
 
