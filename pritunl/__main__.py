@@ -14,6 +14,7 @@ Commands:
   start                 Start server
   version               Print the version and exit
   reset-password        Reset administrator password
+  reset-version         Reset database version to server version
   reset-ssl-cert        Reset the server ssl certificate
   reconfigure           Reconfigure database connection
   set-mongodb           Change the mongodb uri
