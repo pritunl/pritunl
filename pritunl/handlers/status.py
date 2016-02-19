@@ -53,6 +53,7 @@ def status_get():
         {'$project': {
             '_id': True,
             'status': True,
+            'local_networks': True,
         }},
         {'$group': {
             '_id': None,
@@ -65,6 +66,7 @@ def status_get():
             'servers': {
                 '$push': '$status',
             },
+            'local_networks': {'$push':'$local_networks'},
         }},
     ])
 
@@ -72,15 +74,19 @@ def status_get():
     for val in response:
         break
 
+    local_networks = set()
     if val:
         host_count = val['host_count']
         hosts_online = val['hosts_online']
+
+        for hst_networks in val['local_networks']:
+            for network in hst_networks:
+                local_networks.add(network)
     else:
         host_count = 0
         hosts_online = 0
 
     user_count = organization.get_user_count_multi()
-    local_networks = utils.get_local_networks()
 
     orgs_count = org_collection.find({
        'type': ORG_DEFAULT,
