@@ -59,6 +59,10 @@ class Clients(object):
     def collection(cls):
         return mongo.get_collection('clients')
 
+    @property
+    def route_clients(self):
+        return self.server.replica_count and self.server.replica_count > 1
+
     def get_org(self, org_id):
         org = self.obj_cache.get(org_id)
         if not org:
@@ -990,7 +994,7 @@ class Clients(object):
             host.dns_mapping_servers.add(self.instance.id)
         self.call_queue.start(10)
 
-        if self.server.replica_count and self.server.replica_count > 1:
+        if self.route_clients:
             thread = threading.Thread(target=self.init_routes)
             thread.daemon = True
             thread.start()
@@ -1010,7 +1014,7 @@ class Clients(object):
             'instance_id': self.instance.id,
         })
 
-        if self.server.replica_count and self.server.replica_count > 1:
+        if self.route_clients:
             self.clear_routes()
 
 def on_port_forwarding(msg):
