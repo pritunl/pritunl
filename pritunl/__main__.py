@@ -57,6 +57,17 @@ def main(default_conf=None):
     if cmd == 'version':
         print '%s v%s' % (pritunl.__title__, pritunl.__version__)
         sys.exit(0)
+    elif cmd == 'reset-version':
+        from pritunl import setup
+        from pritunl import utils
+
+        setup.setup_db()
+        utils.set_db_ver(pritunl.__version__)
+
+        time.sleep(.5)
+        print 'Database version reset to %s' % pritunl.__version__
+
+        sys.exit(0)
     elif cmd == 'reset-password':
         from pritunl import setup
         from pritunl import auth
