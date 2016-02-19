@@ -900,7 +900,7 @@ class Clients(object):
 
     def clear_routes(self):
         for virt_address, host_address in self.client_routes.items():
-            self.remove_route(virt_address, host_address)
+            self.remove_route(virt_address, None, host_address, None)
 
     def add_route(self, virt_address, virt_address6,
             host_address, host_address6):
