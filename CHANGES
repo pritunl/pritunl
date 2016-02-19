@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Route clients across replicated servers
+Add reset-version command
 Fix display issue in web console
 
 Version 1.16.884.17 2016-02-13
