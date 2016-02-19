@@ -87,6 +87,7 @@ class Host(mongo.MongoObject):
             'routed_subnet6': self.routed_subnet6,
             'link_address': self.link_address,
             'local_address': self.local_address,
+            'local_address6': self.local_address6,
         }
 
     def iter_servers(self, fields=None):
