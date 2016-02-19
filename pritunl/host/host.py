@@ -24,6 +24,7 @@ class Host(mongo.MongoObject):
         'link_address',
         'local_address',
         'local_address6',
+        'local_networks',
     }
     fields_default = {
         'status': OFFLINE,
@@ -82,6 +83,7 @@ class Host(mongo.MongoObject):
             'uptime': self.uptime,
             'user_count': self.user_count,
             'users_online': self.users_online,
+            'local_networks': self.local_networks,
             'public_address': self.public_addr,
             'public_address6': self.public_addr6,
             'routed_subnet6': self.routed_subnet6,
