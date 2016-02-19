@@ -37,7 +37,7 @@ define([
       return this;
     },
     update: function() {
-      this.$('.user-username').text(this.model.get('username'));
+      this.$('.admin-username').text(this.model.get('username'));
 
       if (this.model.get('disabled')) {
         this.$('.admin .status-icon').removeClass('online');
