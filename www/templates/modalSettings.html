@@ -30,14 +30,6 @@
         <option value="dark" <%= theme === 'dark' ? 'selected' : '' %>>Dark</option>
       </select>
     </div>
-    <div class="email-from form-group">
-      <label>SMTP From Address</label>
-      <input type="email" class="form-control" placeholder="Enter SMTP from address" value="<%- email_from || '' %>" data-toggle="tooltip" title="SMTP name and from email address (example: Pritunl <contact@pritunl.com>)">
-    </div>
-    <div class="email-username form-group">
-      <label>SMTP Username</label>
-      <input type="text" class="form-control" placeholder="Enter SMTP username" value="<%- email_username || '' %>">
-    </div>
     <div class="sso-mode form-group">
       <label>Single Sign-On</label>
       <select class="form-control" data-toggle="tooltip" title="Single Sign-On Mode">
@@ -109,14 +101,6 @@
         <option value="dark" <%= theme === 'dark' ? 'selected' : '' %>>Dark</option>
       </select>
     </div>
-    <div class="email-server form-group">
-      <label>SMTP Server</label>
-      <input type="text" class="form-control" placeholder="Enter SMTP server" value="<%- email_server || '' %>">
-    </div>
-    <div class="email-password form-group">
-      <label>SMTP Password</label>
-      <input type="password" class="form-control" placeholder="Enter SMTP password" value="<%- email_password ? '********************' : '' %>">
-    </div>
     <div class="sso-saml-url form-group" <%= sso === 'saml' || sso === 'saml_duo' || sso === 'saml_okta' || sso === 'saml_okta_duo' || sso === 'saml_onelogin' || sso === 'saml_onelogin_duo' ? '' : 'style="display: none;"' %>>
       <label>SAML Sign-On URL</label>
       <input type="text" class="form-control" placeholder="Enter SAML sign-on url" value="<%- sso_saml_url || '' %>" data-toggle="tooltip" title="The SAML identity provider single sign-on url. Also known as SAML 2.0 Endpoint">
@@ -157,12 +141,28 @@
 </div>
 <div class="layout-horizontal">
   <div class="settings-left layout-flex left advanced">
+    <div class="email-from form-group">
+      <label>SMTP From Address</label>
+      <input type="email" class="form-control" placeholder="Enter SMTP from address" value="<%- email_from || '' %>" data-toggle="tooltip" title="SMTP name and from email address (example: Pritunl <contact@pritunl.com>)">
+    </div>
+    <div class="email-username form-group">
+      <label>SMTP Username</label>
+      <input type="text" class="form-control" placeholder="Enter SMTP username" value="<%- email_username || '' %>">
+    </div>
     <div class="server-cert form-group">
       <label>Enter Server SSL Certificate</label><br>
       <textarea class="form-control" rows="4" spellcheck="false"><%- server_cert %></textarea>
     </div>
   </div>
   <div class="settings-right right advanced">
+    <div class="email-server form-group">
+      <label>SMTP Server</label>
+      <input type="text" class="form-control" placeholder="Enter SMTP server" value="<%- email_server || '' %>">
+    </div>
+    <div class="email-password form-group">
+      <label>SMTP Password</label>
+      <input type="password" class="form-control" placeholder="Enter SMTP password" value="<%- email_password ? '********************' : '' %>">
+    </div>
     <div class="server-key form-group">
       <label>Enter Server SSL Key</label><br>
       <textarea class="form-control" rows="4" spellcheck="false"><%- server_key %></textarea>
