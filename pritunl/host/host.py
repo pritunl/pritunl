@@ -72,6 +72,14 @@ class Host(mongo.MongoObject):
         return self.public_address6 or self.auto_public_address6
 
     @property
+    def local_addr(self):
+        return self.local_address or self.auto_local_address
+
+    @property
+    def local_addr6(self):
+        return self.local_address6 or self.auto_local_address6
+
+    @property
     def link_addr(self):
         return self.link_address or  self.public_address or \
             self.auto_public_address
@@ -90,8 +98,8 @@ class Host(mongo.MongoObject):
             'public_address6': self.public_addr6,
             'routed_subnet6': self.routed_subnet6,
             'link_address': self.link_address,
-            'local_address': self.local_address,
-            'local_address6': self.local_address6,
+            'local_address': self.local_addr,
+            'local_address6': self.local_addr6,
         }
 
     def iter_servers(self, fields=None):
