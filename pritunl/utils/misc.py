@@ -178,6 +178,23 @@ def check_output_logged(*args, **kwargs):
 
     return stdoutdata
 
+def check_call_silent(*args, **kwargs):
+    if 'stdout' in kwargs or 'stderr' in kwargs:
+        raise ValueError('Output arguments not allowed, it will be overridden')
+
+    process = subprocess.Popen(stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        *args, **kwargs)
+
+    stdoutdata, stderrdata = process.communicate()
+    return_code = process.poll()
+
+    if return_code:
+        cmd = kwargs.get('args', args[0])
+        raise subprocess.CalledProcessError(
+            return_code, cmd, output=stdoutdata)
+
+    return stdoutdata
+
 def find_caller():
     try:
         raise Exception
