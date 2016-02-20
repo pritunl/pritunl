@@ -92,8 +92,6 @@ class Host(mongo.MongoObject):
             'link_address': self.link_address,
             'local_address': self.local_address,
             'local_address6': self.local_address6,
-            'auto_local_address': self.auto_local_address,
-            'auto_local_address6': self.auto_local_address6,
         }
 
     def iter_servers(self, fields=None):
