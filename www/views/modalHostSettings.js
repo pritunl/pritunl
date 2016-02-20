@@ -20,6 +20,8 @@ define([
       var publicAddress = this.$('.public-address input').val() || null;
       var publicAddress6 = this.$('.public-address6 input').val() || null;
       var routedSubnet6 = this.$('.routed-subnet6 input').val() || null;
+      var localAddress = this.$('.local-address input').val() || null;
+      var localAddress6 = this.$('.local-address6 input').val() || null;
       var linkAddress = this.$('.link-address input').val() || null;
 
       this.setLoading('Saving host...');
@@ -28,6 +30,8 @@ define([
         public_address: publicAddress,
         public_address6: publicAddress6,
         routed_subnet6: routedSubnet6,
+        local_address: localAddress,
+        local_address6: localAddress6,
         link_address: linkAddress
       }, {
         success: function() {
