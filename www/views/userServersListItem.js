@@ -65,7 +65,7 @@ define([
 
       var addrReal = this.model.get('real_address');
       if (addrReal) {
-        this.$('.server-real-addr .title').text(addrReal.split(':')[0]);
+        this.$('.server-real-addr .title').text(addrReal);
         this.$('.server-real-addr').show();
       }
       else {
