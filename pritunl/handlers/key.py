@@ -49,7 +49,7 @@ def _get_onc_archive(org_id, user_id):
         'attachment; filename="%s.zip"' % usr.name)
     return (usr, response)
 
-def _find_doc(query, one_time=None):
+def _find_doc(query, one_time=None, one_time_new=False):
     utils.rand_sleep()
 
     collection = mongo.get_collection('users_key_link')
@@ -58,16 +58,26 @@ def _find_doc(query, one_time=None):
     if one_time and doc and doc.get('one_time'):
         short_id = utils.generate_short_id()
         collection = mongo.get_collection('users_key_link')
+
+        if one_time_new:
+            set_doc = {
+                'short_id': short_id,
+            }
+        else:
+            set_doc = {
+                'one_time': 'used',
+            }
+
         response = collection.update({
             '_id': doc['_id'],
             'short_id': doc['short_id'],
             'one_time': True,
-        }, {'$set': {
-            'short_id': short_id,
-        }})
+        }, {'$set': set_doc})
         if not response['updatedExisting']:
             return None
-        doc['short_id'] = short_id
+
+        if one_time_new:
+            doc['short_id'] = short_id
 
     if not doc:
         time.sleep(settings.app.rate_limit_sleep)
@@ -247,7 +257,7 @@ def user_key_pin_put(key_id):
 def user_linked_key_page_get(short_code):
     doc = _find_doc({
         'short_id': short_code,
-    }, one_time=True)
+    }, one_time=True, one_time_new=True)
     if not doc:
         return flask.abort(404)
 
