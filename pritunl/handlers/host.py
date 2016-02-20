@@ -85,6 +85,14 @@ def host_put(hst=None):
                 }, 400)
             hst.routed_subnet6 = routed_subnet6
 
+    if 'local_address' in flask.request.json:
+        hst.local_address = utils.filter_str(
+            flask.request.json['local_address'])
+
+    if 'local_address6' in flask.request.json:
+        hst.local_address6 = utils.filter_str(
+            flask.request.json['local_address6'])
+
     if 'link_address' in flask.request.json:
         hst.link_address = utils.filter_str(
             flask.request.json['link_address'])
