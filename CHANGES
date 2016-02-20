@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Route clients across replicated servers
+Add import uri to profile view page
 Add reset-version command
 Fix display issue in web console
 
