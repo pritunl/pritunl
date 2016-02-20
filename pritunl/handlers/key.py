@@ -275,6 +275,11 @@ def user_linked_key_page_get(short_code):
     key_page = static.StaticFile(settings.conf.www_path, view_name,
         cache=False, gzip=False).data
     key_page = key_page.replace('<%= header_class %>', header_class)
+
+    uri_url = flask.request.url_root[:-1] + '/ku/' + doc['short_id']
+    uri_url = uri_url.replace('http', 'pritunl', 1)
+    key_page = key_page.replace('<%= uri_url %>', uri_url)
+
     key_page = key_page.replace('<%= user_name %>', '%s - %s' % (
         org.name, user.name))
     key_page = key_page.replace('<%= user_key_tar_url %>', '/key/%s.tar' % (
