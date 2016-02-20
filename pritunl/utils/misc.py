@@ -218,6 +218,10 @@ def find_caller():
 
     return rv
 
+def generate_short_id():
+    return ''.join(random.sample(
+        SHORT_URL_CHARS, settings.app.short_url_length))
+
 def rmtree(path):
     for i in xrange(8):
         try:
