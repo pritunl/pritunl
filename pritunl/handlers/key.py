@@ -56,16 +56,18 @@ def _find_doc(query, one_time=None):
     doc = collection.find_one(query)
 
     if one_time and doc and doc.get('one_time'):
+        short_id = utils.generate_short_id()
         collection = mongo.get_collection('users_key_link')
         response = collection.update({
             '_id': doc['_id'],
             'short_id': doc['short_id'],
             'one_time': True,
         }, {'$set': {
-            'one_time': 'used',
+            'short_id': short_id,
         }})
         if not response['updatedExisting']:
             return None
+        doc['short_id'] = short_id
 
     if not doc:
         time.sleep(settings.app.rate_limit_sleep)
