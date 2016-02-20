@@ -15,7 +15,6 @@ from pritunl import authorizer
 from pritunl import messenger
 
 import time
-import subprocess
 import collections
 import bson
 import hashlib
