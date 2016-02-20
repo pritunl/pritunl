@@ -912,7 +912,7 @@ class Clients(object):
             cur_host_address = self.client_routes.pop(virt_address, None)
             if cur_host_address:
                 try:
-                    subprocess.check_output([
+                    utils.check_call_silent([
                         'ip',
                         'route',
                         'del',
@@ -930,7 +930,7 @@ class Clients(object):
             cur_host_address = self.client_routes.pop(virt_address, None)
             if cur_host_address:
                 try:
-                    subprocess.check_output([
+                    utils.check_call_silent([
                         'ip',
                         'route',
                         'del',
@@ -975,7 +975,7 @@ class Clients(object):
 
         _route_lock.acquire()
         try:
-            subprocess.check_output([
+            utils.check_call_silent([
                 'ip',
                 'route',
                 'del',
