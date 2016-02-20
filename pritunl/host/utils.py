@@ -117,21 +117,24 @@ def init():
 
     if settings.conf.local_address_interface == 'auto':
         try:
-            settings.local.host.local_address = utils.get_local_address()
-            settings.local.host.local_address6 = utils.get_local_address6()
+            settings.local.host.auto_local_address = utils.get_local_address()
+            settings.local.host.auto_local_address6 = \
+                utils.get_local_address6()
         except:
             logger.exception('Failed to get local_address auto', 'host')
             settings.local.host.local_address = None
     else:
         try:
-            settings.local.host.local_address = utils.get_interface_address(
-                str(settings.conf.local_address_interface))
-            settings.local.host.local_address6 = utils.get_interface_address6(
-                str(settings.conf.local_address_interface))
+            settings.local.host.auto_local_address = \
+                utils.get_interface_address(
+                    str(settings.conf.local_address_interface))
+            settings.local.host.auto_local_address6 = \
+                utils.get_interface_address6(
+                    str(settings.conf.local_address_interface))
         except:
             logger.exception('Failed to get local_address', 'host',
                 interface=settings.conf.local_address_interface)
-            settings.local.host.local_address = None
+            settings.local.host.auto_local_address = None
 
     settings.local.host.local_networks = utils.get_local_networks()
 
