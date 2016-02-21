@@ -262,8 +262,7 @@ class ServerIpPool:
                     'server_id': server_id,
                     'org_id': org_id,
                     'user_id': user.id,
-                    'address': '%s/%s' % (remote_ip_addr,
-                        network.prefixlen),
+                    'address': '%s/%s' % (remote_ip_addr, network.prefixlen),
                 }}
 
                 if bulk:
