@@ -6,6 +6,7 @@ Pritunl Changelog
 Route clients across replicated servers
 Add import uri to profile view page
 Add reset-version command
+Fix issue with bridge mode assigning addresses out of range
 Fix display issue in web console
 
 Version 1.16.884.17 2016-02-13
