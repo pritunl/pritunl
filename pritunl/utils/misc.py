@@ -2,7 +2,6 @@ from pritunl import __version__
 
 from pritunl.constants import *
 from pritunl import settings
-from pritunl import ntplib
 
 import subprocess
 import time
