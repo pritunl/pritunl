@@ -123,9 +123,17 @@ class ServerIpPool:
         ip_pool_avial = True
         pool_end = False
 
-        ip_network = ipaddress.IPv4Network(self.server.network)
-        ip_pool = ip_network.iterhosts()
-        ip_pool.next()
+        network = ipaddress.IPv4Network(self.server.network)
+        network_start = self.server.network_start
+        network_end = self.server.network_end
+        if network_start:
+            network_start = ipaddress.IPv4Address(network_start)
+        if network_end:
+            network_end = ipaddress.IPv4Address(network_end)
+
+        ip_pool = self.get_ip_pool(network, network_start)
+        if not ip_pool:
+            return
 
         try:
             doc = self.collection.find({
@@ -134,8 +142,11 @@ class ServerIpPool:
             }).sort('_id', pymongo.DESCENDING)[0]
             if doc:
                 last_addr = doc['_id']
+
                 for remote_ip_addr in ip_pool:
                     if int(remote_ip_addr) == last_addr:
+                        break
+                    if network_end and remote_ip_addr > network_end:
                         break
         except IndexError:
             pass
@@ -163,6 +174,8 @@ class ServerIpPool:
 
             try:
                 remote_ip_addr = ip_pool.next()
+                if network_end and remote_ip_addr > network_end:
+                    raise StopIteration()
             except StopIteration:
                 pool_end = True
                 break
@@ -177,8 +190,7 @@ class ServerIpPool:
                 'server_id': server_id,
                 'org_id': org_id,
                 'user_id': user.id,
-                'address': '%s/%s' % (remote_ip_addr,
-                    ip_network.prefixlen),
+                'address': '%s/%s' % (remote_ip_addr, network.prefixlen),
             }}
 
             if bulk:
