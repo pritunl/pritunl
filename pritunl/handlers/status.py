@@ -113,6 +113,6 @@ def status_get():
         'server_version': __version__,
         'current_host': settings.local.host_id,
         'public_ip': settings.local.public_ip,
-        'local_networks': local_networks,
+        'local_networks': list(local_networks),
         'notification': notification,
     })
