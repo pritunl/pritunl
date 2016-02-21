@@ -133,6 +133,25 @@ def user_key_link_get(org_id, user_id):
 
     return utils.jsonify(org.create_user_key_link(user_id))
 
+@app.app.route('/key/<org_id>/<user_id>/<server_id>.key', methods=['GET'])
+@auth.session_auth
+def user_linked_key_conf_get(org_id, user_id, server_id):
+    org = organization.get_by_id(org_id)
+    usr = org.get_user(user_id)
+    key_conf = usr.build_key_conf(server_id)
+
+    usr.audit_event('user_profile',
+        'User key profile downloaded from web console',
+        remote_addr=utils.get_remote_addr(),
+    )
+
+    response = flask.Response(response=key_conf['conf'],
+        mimetype='application/ovpn')
+    response.headers.add('Content-Disposition',
+        'attachment; filename="%s"' % key_conf['name'])
+
+    return response
+
 @app.app.route('/key/<key_id>.tar', methods=['GET'])
 def user_linked_key_tar_archive_get(key_id):
     doc = _find_doc({
