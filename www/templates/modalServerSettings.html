@@ -17,7 +17,7 @@
     <div class="network form-group">
       <label>Network</label>
       <span class="label label-default no-select" toggle="tooltip" title="Maximum number of users for this subnet"></span>
-      <input type="text" class="form-control" placeholder="Enter network address" data-toggle="tooltip" title="Network address for the private network that will be created for VPN clients" value="<%- network %>" autocapitalize="off">
+      <input type="text" class="form-control" placeholder="Enter network address" data-toggle="tooltip" title="Network address for the private network that will be created for VPN clients. When using bridged mode this network must match the local network of a network interface on the server" value="<%- network %>" autocapitalize="off">
     </div>
   </div>
   <div class="right">
@@ -98,7 +98,7 @@
     </div>
     <div class="network-start form-group" <%= network_mode === 'bridge' ? '' : 'style="display: none;"' %>>
       <label>Network Start</label>
-      <input type="text" class="form-control" placeholder="Enter start address" data-toggle="tooltip" title="Starting network address for the bridged VPN client IP addresses" value="<%- network_start %>" autocapitalize="off">
+      <input type="text" class="form-control" placeholder="Enter start address" data-toggle="tooltip" title="Starting network address for the bridged VPN client IP addresses. Must be in the subnet of the server network" value="<%- network_start %>" autocapitalize="off">
     </div>
     <div class="multi-device-toggle toggle-form form-group">
       <label>Allow Multiple Devices</label>
@@ -146,7 +146,7 @@
     </div>
     <div class="network-end form-group" <%= network_mode === 'bridge' ? '' : 'style="display: none;"' %>>
       <label>Network End</label>
-      <input type="text" class="form-control" placeholder="Enter end address" data-toggle="tooltip" title="Ending network address for the bridged VPN client IP addresses" value="<%- network_end %>" autocapitalize="off">
+      <input type="text" class="form-control" placeholder="Enter end address" data-toggle="tooltip" title="Ending network address for the bridged VPN client IP addresses. Must be in the subnet of the server network" value="<%- network_end %>" autocapitalize="off">
     </div>
     <div class="dns-mapping-toggle toggle-form form-group">
       <label>Enable VPN Client DNS Mapping</label>
