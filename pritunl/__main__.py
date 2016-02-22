@@ -17,7 +17,7 @@ Commands:
   reset-version         Reset database version to server version
   reset-ssl-cert        Reset the server ssl certificate
   reconfigure           Reconfigure database connection
-  set-mongodb           Change the mongodb uri
+  set-mongodb           Set the mongodb uri
   logs                  View server logs"""
 
 def main(default_conf=None):
