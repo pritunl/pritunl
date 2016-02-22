@@ -61,7 +61,8 @@ class Clients(object):
     @property
     def route_clients(self):
         return self.server.replica_count and self.server.replica_count > 1 \
-            and self.server.inter_client
+            and self.server.inter_client and \
+            self.server.network_mode != BRIDGE
 
     def get_org(self, org_id):
         org = self.obj_cache.get(org_id)
