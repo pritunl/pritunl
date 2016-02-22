@@ -157,9 +157,7 @@ def check_call_silent(*args, **kwargs):
 
     process = subprocess.Popen(stdout=subprocess.PIPE, stderr=subprocess.PIPE,
         *args, **kwargs)
-
-    stdoutdata, stderrdata = process.communicate()
-    return_code = process.poll()
+    return_code = process.wait()
 
     if return_code:
         cmd = kwargs.get('args', args[0])
