@@ -40,7 +40,7 @@ class Clients(object):
         self.clients_call_queue = callqueue.CallQueue(
             self.instance.is_sock_interrupt)
         self.obj_cache = objcache.ObjCache()
-        self.client_routes = {}
+        self.client_routes = set()
 
         self.clients = docdb.DocDb(
             'user_id',
@@ -900,8 +900,8 @@ class Clients(object):
         self.clients_call_queue.start()
 
     def clear_routes(self):
-        for virt_address, host_address in self.client_routes.items():
-            self.remove_route(virt_address, None, host_address, None)
+        for virt_address in self.client_routes.copy():
+            self.remove_route(virt_address, None, None, None)
 
     def add_route(self, virt_address, virt_address6,
             host_address, host_address6):
@@ -909,16 +909,19 @@ class Clients(object):
 
         _route_lock.acquire()
         try:
-            cur_host_address = self.client_routes.pop(virt_address, None)
-            if cur_host_address:
+            if virt_address in self.client_routes:
                 try:
-                    utils.check_call_silent([
-                        'ip',
-                        'route',
-                        'del',
-                        virt_address,
-                    ])
-                except:
+                    self.client_routes.remove(virt_address)
+                    try:
+                        utils.check_call_silent([
+                            'ip',
+                            'route',
+                            'del',
+                            virt_address,
+                        ])
+                    except :
+                        pass
+                except KeyError:
                     pass
 
             if not host_address or host_address == \
