@@ -161,10 +161,7 @@ def check_call_silent(*args, **kwargs):
 
     if return_code:
         cmd = kwargs.get('args', args[0])
-        raise subprocess.CalledProcessError(
-            return_code, cmd, output=stdoutdata)
-
-    return stdoutdata
+        raise subprocess.CalledProcessError(return_code, cmd)
 
 def find_caller():
     try:
