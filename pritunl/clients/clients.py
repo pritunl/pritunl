@@ -925,18 +925,6 @@ class Clients(object):
                     settings.local.host.local_address:
                 return
 
-            cur_host_address = self.client_routes.pop(virt_address, None)
-            if cur_host_address:
-                try:
-                    utils.check_call_silent([
-                        'ip',
-                        'route',
-                        'del',
-                        virt_address,
-                    ])
-                except:
-                    pass
-
             for i in xrange(3):
                 try:
                     utils.check_output_logged([
