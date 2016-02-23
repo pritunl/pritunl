@@ -940,7 +940,17 @@ class Clients(object):
                     ])
                     break
                 except:
-                    if i == 2:
+                    if i == 0:
+                        try:
+                            utils.check_call_silent([
+                                'ip',
+                                'route',
+                                'del',
+                                virt_address,
+                            ])
+                        except:
+                            pass
+                    elif i == 2:
                         raise
                     time.sleep(0.2)
         except:
