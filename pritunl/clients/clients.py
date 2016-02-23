@@ -20,6 +20,7 @@ import bson
 import hashlib
 import threading
 import uuid
+import subprocess
 
 _route_lock = threading.Lock()
 _limiter = limiter.Limiter('vpn', 'peer_limit', 'peer_limit_timeout')
@@ -919,7 +920,7 @@ class Clients(object):
                             'del',
                             virt_address,
                         ])
-                    except :
+                    except subprocess.CalledProcessError:
                         pass
                 except KeyError:
                     pass
@@ -939,7 +940,7 @@ class Clients(object):
                         host_address,
                     ])
                     break
-                except:
+                except subprocess.CalledProcessError:
                     if i == 0:
                         try:
                             utils.check_call_silent([
@@ -948,7 +949,7 @@ class Clients(object):
                                 'del',
                                 virt_address,
                             ])
-                        except:
+                        except subprocess.CalledProcessError:
                             pass
                     elif i == 2:
                         raise
@@ -979,7 +980,7 @@ class Clients(object):
                 virt_address,
             ])
             self.client_routes.pop(virt_address, None)
-        except:
+        except subprocess.CalledProcessError:
             pass
         finally:
             _route_lock.release()
