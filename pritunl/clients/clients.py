@@ -917,8 +917,6 @@ class Clients(object):
                         'route',
                         'del',
                         virt_address,
-                        'via',
-                        cur_host_address,
                     ])
                 except:
                     pass
@@ -935,8 +933,6 @@ class Clients(object):
                         'route',
                         'del',
                         virt_address,
-                        'via',
-                        cur_host_address,
                     ])
                 except:
                     pass
@@ -980,8 +976,6 @@ class Clients(object):
                 'route',
                 'del',
                 virt_address,
-                'via',
-                host_address,
             ])
             self.client_routes.pop(virt_address, None)
         except:
