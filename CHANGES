@@ -9,6 +9,7 @@ Add reset-version command
 Interface improvements
 Fix issue with bridge mode assigning addresses out of range
 Fix display issue in web console
+Fix issue with service restart
 
 Version 1.16.884.17 2016-02-13
 ------------------------------
