@@ -789,39 +789,42 @@ class ServerInstance(object):
 
     @interrupter
     def _keep_alive_thread(self):
-        while not self.interrupt:
-            try:
-                doc = self.collection.find_and_modify({
-                    '_id': self.server.id,
-                    'instances.instance_id': self.id,
-                }, {'$set': {
-                    'instances.$.ping_timestamp': utils.now(),
-                }}, fields={
-                    '_id': False,
-                    'instances': True,
-                }, new=True)
+        try:
+            while not self.interrupt:
+                try:
+                    doc = self.collection.find_and_modify({
+                        '_id': self.server.id,
+                        'instances.instance_id': self.id,
+                    }, {'$set': {
+                        'instances.$.ping_timestamp': utils.now(),
+                    }}, fields={
+                        '_id': False,
+                        'instances': True,
+                    }, new=True)
 
-                yield
+                    yield
 
-                if not doc:
-                    logger.error(
-                        'Instance doc lost, stopping server', 'server',
+                    if not doc:
+                        logger.error(
+                            'Instance doc lost, stopping server', 'server',
+                            server_id=self.server.id,
+                        )
+
+                        if self.stop_process():
+                            break
+                        else:
+                            time.sleep(0.1)
+                            continue
+
+                except:
+                    logger.exception('Failed to update server ping', 'server',
                         server_id=self.server.id,
                     )
+                    time.sleep(1)
 
-                    if self.stop_process():
-                        break
-                    else:
-                        time.sleep(0.1)
-                        continue
-
-            except:
-                logger.exception('Failed to update server ping', 'server',
-                    server_id=self.server.id,
-                )
-                time.sleep(1)
-
-            yield interrupter_sleep(settings.vpn.server_ping)
+                yield interrupter_sleep(settings.vpn.server_ping)
+        except GeneratorExit:
+            self.stop_process()
 
     def _iptables_thread(self):
         if self.interrupter_sleep(settings.vpn.iptables_update_rate):
