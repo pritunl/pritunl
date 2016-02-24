@@ -11,6 +11,8 @@ def _dns_thread():
     from pritunl import host
 
     while True:
+        process = None
+
         try:
             if not host.dns_mapping_servers:
                 yield interrupter_sleep(3)
@@ -50,7 +52,11 @@ def _dns_thread():
 
                 yield interrupter_sleep(3)
         except GeneratorExit:
-            raise
+            if process:
+                process.terminate()
+                time.sleep(1)
+                process.kill()
+            return
         except:
             logger.exception('Error in dns service', 'setup')
 
