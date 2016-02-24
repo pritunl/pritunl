@@ -609,8 +609,8 @@ class Clients(object):
             'real_address': client['real_address'],
             'virt_address': client['virt_address'],
             'virt_address6': client['virt_address6'],
-            'host_address': settings.local.host.local_address,
-            'host_address6': settings.local.host.local_address6,
+            'host_address': settings.local.host.local_addr,
+            'host_address6': settings.local.host.local_addr6,
             'dns_servers': client['dns_servers'],
             'dns_suffix': client['dns_suffix'],
             'connected_since': int(timestamp.strftime('%s')),
@@ -632,8 +632,8 @@ class Clients(object):
                     'state': True,
                     'virt_address': client['virt_address'],
                     'virt_address6': client['virt_address6'],
-                    'host_address': settings.local.host.local_address,
-                    'host_address6': settings.local.host.local_address6,
+                    'host_address': settings.local.host.local_addr,
+                    'host_address6': settings.local.host.local_addr6,
                 })
         except:
             logger.exception('Error adding client', 'server',
@@ -676,8 +676,8 @@ class Clients(object):
                 'state': False,
                 'virt_address': client['virt_address'],
                 'virt_address6': client['virt_address6'],
-                'host_address': settings.local.host.local_address,
-                'host_address6': settings.local.host.local_address6,
+                'host_address': settings.local.host.local_addr,
+                'host_address6': settings.local.host.local_addr6,
             })
 
         self.instance_com.push_output(
@@ -926,7 +926,7 @@ class Clients(object):
                     pass
 
             if not host_address or host_address == \
-                    settings.local.host.local_address:
+                    settings.local.host.local_addr:
                 return
 
             for i in xrange(3):
