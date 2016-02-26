@@ -5,7 +5,7 @@ define([
   'views/alert',
   'views/modalDetachHost',
   'text!templates/serverHostsListItem.html'
-], function($, _, Backbone, AlertView, ModalDetachHost,
+], function($, _, Backbone, AlertView, ModalDetachHostView,
     serverHostsListItemTemplate) {
   'use strict';
   var ServerHostsListItemView = Backbone.View.extend({
@@ -50,7 +50,7 @@ define([
         return;
       }
 
-      var modal = new ModalDetachHost({
+      var modal = new ModalDetachHostView({
         model: model
       });
       this.listenToOnce(modal, 'applied', function() {
