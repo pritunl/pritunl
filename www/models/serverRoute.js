@@ -7,6 +7,7 @@ define([
   var ServerRouteModel = Backbone.Model.extend({
     defaults: {
       'id': null,
+      'server': null,
       'network': null,
       'default_route': null,
       'network_link': null,
