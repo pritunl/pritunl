@@ -306,8 +306,10 @@ def user_linked_key_page_get(short_code):
     key_page = key_page.replace('<%= header_class %>', header_class)
 
     uri_url = flask.request.url_root[:-1] + '/ku/' + doc['short_id']
-    uri_url = uri_url.replace('https://', 'pritunl://', 1)
-    uri_url = uri_url.replace('http://', 'pritunl://', 1)
+    if uri_url.starts_with('https'):
+        uri_url = uri_url.replace('https', 'pritunl', 1)
+    else:
+        uri_url = uri_url.replace('http', 'pritunl', 1)
     key_page = key_page.replace('<%= uri_url %>', uri_url)
 
     key_page = key_page.replace('<%= user_name %>', '%s - %s' % (
