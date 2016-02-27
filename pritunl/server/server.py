@@ -401,8 +401,8 @@ class Server(mongo.MongoObject):
         for cert in ca_split:
             if not cert:
                 continue
-            certs.append(cert.replace('-----END CERTIFICATE-----', '').replace(
-                '\n', ''))
+            certs.append(cert.replace('-----END CERTIFICATE-----',
+                '').replace('\n', ''))
 
         return certs
 
