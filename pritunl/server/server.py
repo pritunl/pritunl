@@ -431,7 +431,7 @@ class Server(mongo.MongoObject):
 
         for route in self.routes:
             route_network = route['network']
-            route_id = hashlib.md5(route_network).hexdigest()
+            route_id = route_network.encode('hex')
 
             if route_network == '0.0.0.0/0':
                 routes.append({
@@ -455,7 +455,7 @@ class Server(mongo.MongoObject):
                 })
 
         routes.append({
-            'id': hashlib.md5(self.network).hexdigest(),
+            'id': self.network.encode('hex'),
             'server': self.id,
             'network': self.network,
             'nat': virtual_nat,
