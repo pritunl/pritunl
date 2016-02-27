@@ -89,6 +89,7 @@ class Server(mongo.MongoObject):
         'network_start',
         'network_end',
         'multi_device',
+        'routes',
         'local_networks',
         'dns_servers',
         'search_domain',
