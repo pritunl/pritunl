@@ -468,6 +468,12 @@ class Server(mongo.MongoObject):
 
         return routes
 
+    def add_route(self, network, nat):
+        self.routes.append({
+            'network': network,
+            'nat': nat,
+        })
+
     def get_link_server(self, link_server_id, fields=None):
         return Server(id=link_server_id, fields=fields)
 
