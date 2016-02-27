@@ -9,7 +9,7 @@ define([
       'id': null,
       'server': null,
       'network': null,
-      'default_route': null,
+      'virtual_network': null,
       'network_link': null,
       'nat': null
     },
