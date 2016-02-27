@@ -4,6 +4,7 @@ define([
   'backbone',
   'models/status',
   'views/alert',
+  'views/serverRoutesList',
   'views/serverOrgsList',
   'views/serverHostsList',
   'views/serverLinksList',
@@ -13,10 +14,10 @@ define([
   'views/modalServerSettings',
   'views/modalDeleteServer',
   'text!templates/serversListItem.html'
-], function($, _, Backbone, StatusModel, AlertView, ServerOrgsListView,
-    ServerHostsListView, ServerLinksListView, ServerOutputView,
-    ServerOutputLinkView, ServerBandwidthView, ModalServerSettingsView,
-    ModalDeleteServerView, serversListItemTemplate) {
+], function($, _, Backbone, StatusModel, AlertView, ServerRoutesListView,
+    ServerOrgsListView, ServerHostsListView, ServerLinksListView,
+    ServerOutputView, ServerOutputLinkView, ServerBandwidthView,
+    ModalServerSettingsView, ModalDeleteServerView, serversListItemTemplate) {
   'use strict';
   var ServersListItemView = Backbone.View.extend({
     className: 'server',
@@ -37,6 +38,12 @@ define([
       this.orgsCount = null;
       this.hostsCount = null;
       this.statusModel = new StatusModel();
+
+      this.serverRoutesListView = new ServerRoutesListView({
+        server: this.model,
+        serverView: this
+      });
+      this.addView(this.serverRoutesListView);
 
       this.serverOrgsListView = new ServerOrgsListView({
         server: this.model,
@@ -103,6 +110,7 @@ define([
         this.serverOutputLinkView.render().el);
       this.$('.server-graph-viewer').append(
         this.serverBandwidthView.render().el);
+      this.$el.append(this.serverRoutesListView.render().el);
       this.$el.append(this.serverOrgsListView.render().el);
       this.$el.append(this.serverHostsListView.render().el);
       this.$el.append(this.serverLinksListView.render().el);
