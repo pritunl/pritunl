@@ -468,16 +468,27 @@ class Server(mongo.MongoObject):
 
         return routes
 
-    def add_route(self, network, nat):
+    def add_route(self, network, nat_route):
+        exists = False
+
         for route in self.routes:
             if route['network'] == network:
-                route['nat'] = nat
-                return
+                route['nat'] = nat_route
+                exists = True
+                break
 
-        self.routes.append({
+        if not exists:
+            self.routes.append({
+                'network': network,
+                'nat': nat_route,
+            })
+
+        return {
+            'id': network.encode('hex'),
+            'server': self.id,
             'network': network,
-            'nat': nat,
-        })
+            'nat': nat_route,
+        }
 
     def get_link_server(self, link_server_id, fields=None):
         return Server(id=link_server_id, fields=fields)
