@@ -469,6 +469,11 @@ class Server(mongo.MongoObject):
         return routes
 
     def add_route(self, network, nat):
+        for route in self.routes:
+            if route['network'] == network:
+                route['nat'] = nat
+                return
+
         self.routes.append({
             'network': network,
             'nat': nat,
