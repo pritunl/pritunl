@@ -427,6 +427,7 @@ class Server(mongo.MongoObject):
     def get_routes(self):
         routes = []
         routes_dict = {}
+        virtual_nat = True
 
         for route in self.routes:
             route_network = route['network']
@@ -441,6 +442,8 @@ class Server(mongo.MongoObject):
                     'virtual_network': False,
                     'network_link': False,
                 })
+            elif route_network == 'virtual':
+                virtual_nat = route.get('nat', True)
             else:
                 routes_dict[route_network] = ({
                     'id': route_id,
@@ -455,7 +458,7 @@ class Server(mongo.MongoObject):
             'id': hashlib.md5(self.network).hexdigest(),
             'server': self.id,
             'network': self.network,
-            'nat': True,
+            'nat': virtual_nat,
             'virtual_network': True,
             'network_link': False,
         })
