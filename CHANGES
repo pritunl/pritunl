@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix uri on profile view page
+
 Version 1.17.895.42 2016-02-24
 ------------------------------
 
