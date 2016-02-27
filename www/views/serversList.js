@@ -10,14 +10,15 @@ define([
   'views/alert',
   'views/serversListItem',
   'views/modalAddServer',
+  'views/modalAddRoute',
   'views/modalAttachOrg',
   'views/modalAttachHost',
   'views/modalAttachLink',
   'text!templates/serversList.html'
 ], function($, _, Backbone, StatusModel, ServerCollection, OrgCollection,
     HostCollection, ListView, AlertView, ServersListItemView,
-    ModalAddServerView, ModalAttachOrgView, ModalAttachHostView,
-    ModalAttachLinkView, serversListTemplate) {
+    ModalAddServerView, ModalAddRouteView, ModalAttachOrgView,
+    ModalAttachHostView, ModalAttachLinkView, serversListTemplate) {
   'use strict';
   var ServersListView = ListView.extend({
     className: 'servers-list',
@@ -30,6 +31,7 @@ define([
       'click .link.first': 'firstPage',
       'click .link.last': 'lastPage',
       'click .servers-add-server': 'onAddServer',
+      'click .servers-add-route': 'onAddRoute',
       'click .servers-attach-org': 'onAttachOrg',
       'click .servers-attach-host': 'onAttachHost',
       'click .servers-link-server': 'onLinkServer'
@@ -133,6 +135,21 @@ define([
           this.$('.servers-add-server').removeAttr('disabled');
         }.bind(this)
       });
+    },
+    onAddRoute: function() {
+      var modal = new ModalAddRouteView({
+        collection: this.collection
+      });
+      this.listenToOnce(modal, 'applied', function() {
+        var alertView = new AlertView({
+          type: 'success',
+          message: 'Successfully added route.',
+          dismissable: true
+        });
+        $('.alerts-container').append(alertView.render().el);
+        this.addView(alertView);
+      }.bind(this));
+      this.addView(modal);
     },
     onAttachOrg: function() {
       if (this.orgs.models.length) {
