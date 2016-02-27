@@ -126,6 +126,7 @@ class Server(mongo.MongoObject):
         'ipv6_firewall': True,
         'network_mode': TUNNEL,
         'multi_device': False,
+        'routes': [],
         'dns_servers': [],
         'otp_auth': False,
         'tls_auth': True,
