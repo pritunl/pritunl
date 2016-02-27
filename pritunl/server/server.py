@@ -23,7 +23,6 @@ import subprocess
 import threading
 import random
 import collections
-import hashlib
 
 _resource_lock = collections.defaultdict(threading.Lock)
 
