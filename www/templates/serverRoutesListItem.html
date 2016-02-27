@@ -1,0 +1,10 @@
+<div class="name-container">
+  <span class="name-icon glyphicon glyphicon-globe"></span>
+  <a class="route-network title" data-toggle="tooltip" title="Click to modify this route"><%- network %></a>
+</div>
+<div class="button-container">
+  <div class="route-default label label-danger no-select" <%= default_route ? '' : 'style="display: none;"' %>>Default</div>
+  <div class="route-network-link label label-warning no-select" <%= network_link ? '' : 'style="display: none;"' %>>Network Link</div>
+<div class="route-nat label label-success no-select" <%= nat ? '' : 'style="display: none;"' %>>NAT</div>
+  <button type="button" <%- default_route || network_link ? 'disabled' : '' %> class="server-remove-route btn btn-danger btn-xs">Remove Route</button>
+</div>
