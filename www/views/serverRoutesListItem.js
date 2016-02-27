@@ -3,10 +3,11 @@ define([
   'underscore',
   'backbone',
   'views/alert',
+  'views/modalModifyRoute',
   'views/modalRemoveRoute',
   'text!templates/serverRoutesListItem.html'
-], function($, _, Backbone, AlertView, ModalRemoveRouteView,
-    serverRoutesListItemTemplate) {
+], function($, _, Backbone, AlertView, ModalModifyRouteView,
+    ModalRemoveRouteView, serverRoutesListItemTemplate) {
   'use strict';
   var ServerRoutesListItemView = Backbone.View.extend({
     className: 'route',
@@ -30,21 +31,16 @@ define([
         this.$('.route-nat').hide();
       }
     },
-    onModify: function(evt) {
+    onModify: function() {
       var model = this.model.clone();
 
-      if (evt.shiftKey && evt.ctrlKey) {
-        model.destroy();
-        return;
-      }
-
-      var modal = new ModalRemoveRouteView({
+      var modal = new ModalModifyRouteView({
         model: model
       });
       this.listenToOnce(modal, 'applied', function() {
         var alertView = new AlertView({
           type: 'success',
-          message: 'Successfully removed route.',
+          message: 'Successfully modified route.',
           dismissable: true
         });
         $('.alerts-container').append(alertView.render().el);
