@@ -397,7 +397,13 @@ def user_linked_key_conf_get(key_id, server_id):
         return flask.abort(404)
 
     org = organization.get_by_id(doc['org_id'])
+    if not org:
+        return flask.abort(404)
+
     user = org.get_user(id=doc['user_id'])
+    if not user:
+        return flask.abort(404)
+
     if user.disabled:
         return flask.abort(403)
 
