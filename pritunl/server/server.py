@@ -23,6 +23,7 @@ import subprocess
 import threading
 import random
 import collections
+import hashlib
 
 _resource_lock = collections.defaultdict(threading.Lock)
 
@@ -422,6 +423,47 @@ class Server(mongo.MongoObject):
 
         if block:
             self.load()
+
+    def get_routes(self):
+        routes = []
+        routes_dict = {}
+
+        for route in self.routes:
+            route_network = route['network']
+            route_id = hashlib.md5(route_network).hexdigest()
+
+            if route_network == '0.0.0.0/0':
+                routes.append({
+                    'id': route_id,
+                    'server': self.id,
+                    'network': route_network,
+                    'nat': route.get('nat', True),
+                    'virtual_network': False,
+                    'network_link': False,
+                })
+            else:
+                routes_dict[route_network] = ({
+                    'id': route_id,
+                    'server': self.id,
+                    'network': route_network,
+                    'nat': route.get('nat', True),
+                    'virtual_network': False,
+                    'network_link': False,
+                })
+
+        routes.append({
+            'id': hashlib.md5(self.network).hexdigest(),
+            'server': self.id,
+            'network': self.network,
+            'nat': True,
+            'virtual_network': True,
+            'network_link': False,
+        })
+
+        for route_network in sorted(routes_dict.keys()):
+            routes.append(routes_dict[route_network])
+
+        return routes
 
     def get_link_server(self, link_server_id, fields=None):
         return Server(id=link_server_id, fields=fields)
