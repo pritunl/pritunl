@@ -307,12 +307,14 @@ define([
       var pageTotal = this.collection.getPageTotal();
 
       if (!views.length) {
+        this.$('.servers-add-route').attr('disabled', 'disabled');
         this.$('.servers-attach-org').attr('disabled', 'disabled');
         this.$('.servers-attach-host').attr('disabled', 'disabled');
         this.$('.servers-link-server').attr('disabled', 'disabled');
         this.$('.no-servers').slideDown(window.slideTime);
       }
       else {
+        this.$('.servers-add-route').removeAttr('disabled');
         this.$('.servers-attach-org').removeAttr('disabled');
         this.$('.servers-attach-host').removeAttr('disabled');
         this.$('.servers-link-server').removeAttr('disabled');
