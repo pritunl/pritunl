@@ -700,6 +700,13 @@ def server_org_delete(server_id, org_id):
 
     return utils.jsonify({})
 
+@app.app.route('/server/<server_id>/route', methods=['GET'])
+@auth.session_auth
+def server_route_get(server_id):
+    svr = server.get_by_id(server_id, fields=('_id', 'network',
+        'network_start', 'network_end', 'routes'))
+    return utils.jsonify(svr.get_routes())
+
 @app.app.route('/server/<server_id>/host', methods=['GET'])
 @auth.session_auth
 def server_host_get(server_id):
