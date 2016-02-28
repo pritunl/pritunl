@@ -493,6 +493,12 @@ class Server(mongo.MongoObject):
             'nat': nat_route,
         }
 
+    def remove_route(self, network):
+        for i, route in enumerate(self.routes):
+            if route['network'] == network:
+                self.routes.pop(i)
+                break
+
     def get_link_server(self, link_server_id, fields=None):
         return Server(id=link_server_id, fields=fields)
 
