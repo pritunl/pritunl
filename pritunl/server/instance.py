@@ -370,73 +370,70 @@ class ServerInstance(object):
 
         interfaces = set()
         interfaces6 = set()
-        other_networks = []
-        if self.server.mode == ALL_TRAFFIC and \
-                self.server.network_mode != BRIDGE:
-            other_networks = ['0.0.0.0/0']
-            if self.server.ipv6 and not settings.local.host.routed_subnet6:
-                other_networks.append('::/0')
 
         link_svr_networks = []
         for link_svr in self.server.iter_links(fields=(
                 '_id', 'network', 'network_start', 'network_end')):
             link_svr_networks.append(link_svr.network)
 
-        if settings.vpn.nat_routes:
-            for network_address in self.server.local_networks or \
-                    other_networks:
-                args_base = ['POSTROUTING', '-t', 'nat']
-                is6 = ':' in network_address
-                if is6:
-                    network = network_address
+        for route in self.server.get_routes(include_hidden=True):
+            if route['virtual_network'] or not route['nat']:
+                continue
+
+            network_address = route['network']
+
+            args_base = ['POSTROUTING', '-t', 'nat']
+            is6 = ':' in network_address
+            if is6:
+                network = network_address
+            else:
+                network = utils.parse_network(network_address)[0]
+
+            if is6:
+                if network not in routes6:
+                    logger.info(
+                        'Failed to find interface for local ' + \
+                        'IPv6 network route, using default route',
+                        'server',
+                        server_id=self.server.id,
+                        network=network,
+                    )
+                    interface = default_interface6
                 else:
-                    network = utils.parse_network(network_address)[0]
-
-                if is6:
-                    if network not in routes6:
-                        logger.info(
-                            'Failed to find interface for local ' + \
-                            'IPv6 network route, using default route',
-                            'server',
-                            server_id=self.server.id,
-                            network=network,
-                        )
-                        interface = default_interface6
-                    else:
-                        interface = routes6[network]
-                    interfaces6.add(interface)
+                    interface = routes6[network]
+                interfaces6.add(interface)
+            else:
+                if network not in routes:
+                    logger.info(
+                        'Failed to find interface for local ' + \
+                        'network route, using default route',
+                        'server',
+                        server_id=self.server.id,
+                        network=network,
+                    )
+                    interface = default_interface
                 else:
-                    if network not in routes:
-                        logger.info(
-                            'Failed to find interface for local ' + \
-                            'network route, using default route',
-                            'server',
-                            server_id=self.server.id,
-                            network=network,
-                        )
-                        interface = default_interface
-                    else:
-                        interface = routes[network]
-                    interfaces.add(interface)
+                    interface = routes[network]
+                interfaces.add(interface)
 
-                if network != '0.0.0.0' and network != '::/0':
-                    args_base += ['-d', network_address]
+            if network != '0.0.0.0' and network != '::/0':
+                args_base += ['-d', network_address]
 
-                args_base += [
-                    '-o', interface,
-                    '-j', 'MASQUERADE',
-                ]
+            args_base += [
+                '-o', interface,
+                '-j', 'MASQUERADE',
+            ]
 
-                if is6:
-                    rules6.append(args_base + ['-s', self.server.network6])
+            if is6:
+                rules6.append(args_base + ['-s', self.server.network6])
+            else:
+                rules.append(args_base + ['-s', self.server.network])
+
+            for link_svr_net in link_svr_networks:
+                if ':' in link_svr_net:
+                    rules6.append(args_base + ['-s', link_svr_net])
                 else:
-                    rules.append(args_base + ['-s', self.server.network])
-
-                for link_svr_net in link_svr_networks:
-                    if ':' in link_svr_net:
-                        rules6.append(args_base + ['-s', link_svr_net])
-                    else:
-                        rules.append(args_base + ['-s', link_svr_net])
+                    rules.append(args_base + ['-s', link_svr_net])
 
         for interface in interfaces:
             rules.append([
