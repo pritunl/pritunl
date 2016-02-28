@@ -731,6 +731,17 @@ def server_route_put(server_id, route_network):
 
     return utils.jsonify(route)
 
+@app.app.route('/server/<server_id>/route/<route_network>', methods=['DELETE'])
+@auth.session_auth
+def server_route_delete(server_id, route_network):
+    svr = server.get_by_id(server_id, fields=('_id', 'network',
+        'network_start', 'network_end', 'routes'))
+    route_network = route_network.decode('hex')
+    route = svr.remove_route(route_network)
+    svr.commit('routes')
+
+    return utils.jsonify(route)
+
 @app.app.route('/server/<server_id>/host', methods=['GET'])
 @auth.session_auth
 def server_host_get(server_id):
