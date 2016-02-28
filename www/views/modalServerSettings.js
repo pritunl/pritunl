@@ -17,7 +17,6 @@ define([
     hasAdvanced: true,
     events: function() {
       return _.extend({
-        'change .server-mode select': 'onServerMode',
         'change .dh-param-bits select': 'onDhParamBits',
         'change .network-mode select': 'onNetworkMode',
         'click .otp-auth-toggle': 'onOtpAuthSelect',
