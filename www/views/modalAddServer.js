@@ -68,19 +68,6 @@ define([
       }
 
       return port;
-    },
-    _get_free_interface: function() {
-      var i;
-      var iface;
-
-      for (i = 0; i < 64; i++) {
-        iface = 'tun' + i;
-        if (this.usedInterfaces.indexOf(iface) === -1) {
-          break;
-        }
-      }
-
-      return iface;
     }
   });
 
