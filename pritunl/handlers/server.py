@@ -717,6 +717,8 @@ def server_route_post(server_id):
     route = svr.add_route(route_network, nat_route)
     svr.commit('routes')
 
+    event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
+
     return utils.jsonify(route)
 
 @app.app.route('/server/<server_id>/route/<route_network>', methods=['PUT'])
@@ -729,6 +731,8 @@ def server_route_put(server_id, route_network):
     route = svr.add_route(route_network, nat_route)
     svr.commit('routes')
 
+    event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
+
     return utils.jsonify(route)
 
 @app.app.route('/server/<server_id>/route/<route_network>', methods=['DELETE'])
@@ -739,6 +743,8 @@ def server_route_delete(server_id, route_network):
     route_network = route_network.decode('hex')
     route = svr.remove_route(route_network)
     svr.commit('routes')
+
+    event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
 
     return utils.jsonify(route)
 
