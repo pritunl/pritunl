@@ -469,6 +469,10 @@ class Server(mongo.MongoObject):
 
     def add_route(self, network, nat_route):
         exists = False
+        orig_network = network
+
+        if network == self.network:
+            network = 'virtual'
 
         for route in self.routes:
             if route['network'] == network:
@@ -483,9 +487,9 @@ class Server(mongo.MongoObject):
             })
 
         return {
-            'id': network.encode('hex'),
+            'id': orig_network.encode('hex'),
             'server': self.id,
-            'network': network,
+            'network': orig_network,
             'nat': nat_route,
         }
 
