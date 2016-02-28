@@ -32,59 +32,12 @@ define([
         'click div.otp-auth-toggle': 'onInputChange'
       }, ModalServerSettingsView.__super__.events);
     },
-    initialize: function(options) {
-      this.localNetworks = options.localNetworks;
-      ModalServerSettingsView.__super__.initialize.call(this);
-    },
     body: function() {
       return this.template(this.model.toJSON());
     },
     postRender: function() {
-      if (this.model.get('mode') === 'local_traffic') {
-        this.$('.otp-auth-toggle').appendTo('.left');
-        this.$('.otp-auth-toggle').slice(1).remove();
-      }
-      this.$('.local-network input').select2({
-        tags: this.localNetworks,
-        tokenSeparators: [',', ' '],
-        placeholder: 'Select Local Networks',
-        formatNoMatches: function() {
-          return 'Enter Network Address';
-        },
-        width: '200px'
-      });
-      this.$('.local-network input').select2(
-        'val', this.model.get('local_networks'));
       this.$('.network .label').tooltip();
       this.updateMaxHosts();
-    },
-    getServerMode: function() {
-      return this.$('.server-mode select').val();
-    },
-    setServerMode: function(mode) {
-      if (mode === 'local_traffic') {
-        if (!this.$('.otp-auth-toggle').parent().hasClass('left')) {
-          this.$('.local-network').slideDown(window.slideTime);
-          this.$('.otp-auth-toggle').slideUp(window.slideTime, function() {
-            this.$('.otp-auth-toggle').appendTo('.left:not(.advanced)');
-            this.$('.otp-auth-toggle').slice(1).remove();
-            this.$('.otp-auth-toggle').show();
-          }.bind(this));
-        }
-      }
-      else {
-        if (!this.$('.otp-auth-toggle').parent().hasClass('right')) {
-          this.$('.local-network').slideUp(window.slideTime);
-          this.$('.otp-auth-toggle').slideUp(window.slideTime, function() {
-            this.$('.otp-auth-toggle').appendTo('.right:not(.advanced)');
-            this.$('.otp-auth-toggle').slice(1).remove();
-            this.$('.otp-auth-toggle').show();
-          }.bind(this));
-        }
-      }
-    },
-    onServerMode: function() {
-      this.setServerMode(this.getServerMode());
     },
     onDhParamBits: function(evt) {
       var val = $(evt.target).val();
@@ -336,13 +289,11 @@ define([
       var port = this.$('input.port').val();
       var protocol = this.$('select.protocol').val();
       var dhParamBits = parseInt(this.$('.dh-param-bits select').val(), 10);
-      var mode = this.$('.server-mode select').val();
       var ipv6 = this.getIpv6Select();
       var ipv6Firewall = this.getIpv6FirewallSelect();
       var multiDevice = this.getMultiDeviceSelect();
       var dnsServers = this.getDnsServers();
       var searchDomain = this.$('.search-domain input').val();
-      var localNetworks = [];
       var interClient = this.getInterClientSelect();
       var pingInterval = parseInt(this.$('.ping-interval input').val(), 10);
       var pingTimeout = parseInt(this.$('.ping-timeout input').val(), 10);
@@ -377,14 +328,6 @@ define([
         this.setAlert('danger', 'Port can not be empty.', 'input.port');
         return;
       }
-      if (this.getServerMode() === 'local_traffic') {
-        localNetworks = this.$('.local-network input').select2('val');
-        if (!localNetworks) {
-          this.setAlert('danger', 'Local network can not be empty.',
-            '.local-network');
-          return;
-        }
-      }
       if (!searchDomain) {
         searchDomain = null;
       }
@@ -405,14 +348,12 @@ define([
         'port': port,
         'protocol': protocol,
         'dh_param_bits': dhParamBits,
-        'mode': mode,
         'network_mode': networkMode,
         'network_start': networkStart,
         'network_end': networkEnd,
         'ipv6': ipv6,
         'ipv6_firewall': ipv6Firewall,
         'multi_device': multiDevice,
-        'local_networks': localNetworks,
         'dns_servers': dnsServers,
         'search_domain': searchDomain,
         'otp_auth': otpAuth,
