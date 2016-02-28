@@ -412,7 +412,7 @@ class Server(mongo.MongoObject):
         if block:
             self.load()
 
-    def get_routes(self, include_hidden=False):
+    def get_routes(self, include_hidden=False, include_default=True):
         routes = []
         routes_dict = {}
         virtual_nat = True
@@ -422,6 +422,9 @@ class Server(mongo.MongoObject):
             route_id = route_network.encode('hex')
 
             if route_network == '0.0.0.0/0':
+                if not include_default:
+                    continue
+
                 routes.append({
                     'id': route_id,
                     'server': self.id,
