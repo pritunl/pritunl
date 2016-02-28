@@ -117,11 +117,15 @@ class ServerInstance(object):
             self.primary_user = primary_org.get_user(self.server.primary_user)
 
         push = ''
-        if self.server.mode == LOCAL_TRAFFIC:
-            for network in self.server.local_networks:
+        for route in self.server.get_routes():
+            if route['virtual_network'] or route['network'] == '0.0.0.0/0':
+                continue
+
+            network = route['network']
+            if ':' in network:
+                push += 'push "route-ipv6 %s "\n' % network
+            else:
                 push += 'push "route %s %s"\n' % utils.parse_network(network)
-        elif self.server.mode == VPN_TRAFFIC:
-            pass
 
         gateway = utils.get_network_gateway(self.server.network)
         gateway6 = utils.get_network_gateway(self.server.network6)
@@ -132,13 +136,17 @@ class ServerInstance(object):
             if self.server.id < link_svr.id:
                 push += 'route %s %s %s\n' % (utils.parse_network(
                     link_svr.network) + (gateway,))
-                for local_network in link_svr.local_networks:
-                    if ':' in local_network:
+                for route in link_svr.get_routes():
+                    if route['virtual_network']:
+                        continue
+
+                    network = route['network']
+                    if ':' in network:
                         push += 'route-ipv6 %s %s\n' % (
-                            local_network, gateway6)
+                            network, gateway6)
                     else:
                         push += 'route %s %s %s\n' % (utils.parse_network(
-                            local_network) + (gateway,))
+                            network) + (gateway,))
 
         for network_link in self.server.network_links:
             if ':' in network_link:
