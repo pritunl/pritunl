@@ -45,9 +45,7 @@ dict_fields = [
     'protocol',
     'dh_param_bits',
     'dh_params',
-    'mode',
     'multi_device',
-    'local_networks',
     'dns_servers',
     'search_domain',
     'otp_auth',
@@ -82,7 +80,6 @@ class Server(mongo.MongoObject):
         'port',
         'protocol',
         'dh_param_bits',
-        'mode',
         'ipv6',
         'ipv6_firewall',
         'network_mode',
@@ -90,7 +87,6 @@ class Server(mongo.MongoObject):
         'network_end',
         'multi_device',
         'routes',
-        'local_networks',
         'dns_servers',
         'search_domain',
         'otp_auth',
@@ -154,11 +150,10 @@ class Server(mongo.MongoObject):
     def __init__(self, name=None, network=None, network_mode=None,
             network_start=None, network_end=None, ipv6=None,
             ipv6_firewall=None,bind_address=None, port=None, protocol=None,
-            dh_param_bits=None, mode=None, multi_device=None,
-            local_networks=None, dns_servers=None, search_domain=None,
-            otp_auth=None, cipher=None, hash=None, jumbo_frames=None,
-            lzo_compression=None, inter_client=None, ping_interval=None,
-            ping_timeout=None, link_ping_interval=None,
+            dh_param_bits=None, multi_device=None, dns_servers=None,
+            search_domain=None, otp_auth=None, cipher=None, hash=None,
+            jumbo_frames=None, lzo_compression=None, inter_client=None,
+            ping_interval=None, ping_timeout=None, link_ping_interval=None,
             link_ping_timeout=None, max_clients=None, replica_count=None,
             dns_mapping=None, debug=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
@@ -193,12 +188,8 @@ class Server(mongo.MongoObject):
             self.protocol = protocol
         if dh_param_bits is not None:
             self.dh_param_bits = dh_param_bits
-        if mode is not None:
-            self.mode = mode
         if multi_device is not None:
             self.multi_device = multi_device
-        if local_networks is not None:
-            self.local_networks = local_networks
         if dns_servers is not None:
             self.dns_servers = dns_servers
         if search_domain is not None:
@@ -270,14 +261,12 @@ class Server(mongo.MongoObject):
             'port': self.port,
             'protocol': self.protocol,
             'dh_param_bits': self.dh_param_bits,
-            'mode': self.mode,
             'ipv6': True if self.ipv6 else False,
             'ipv6_firewall': True if self.ipv6_firewall else False,
             'network_mode': self.network_mode,
             'network_start': self.network_start,
             'network_end': self.network_end,
             'multi_device': self.multi_device,
-            'local_networks': self.local_networks,
             'dns_servers': self.dns_servers,
             'search_domain': self.search_domain,
             'otp_auth': True if self.otp_auth else False,
