@@ -719,6 +719,18 @@ def server_route_post(server_id):
 
     return utils.jsonify(route)
 
+@app.app.route('/server/<server_id>/route/<route_network>', methods=['PUT'])
+@auth.session_auth
+def server_route_put(server_id, route_network):
+    svr = server.get_by_id(server_id, fields=('_id', 'network',
+        'network_start', 'network_end', 'routes'))
+    route_network = route_network.decode('hex')
+    nat_route = True if flask.request.json.get('nat') else False
+    route = svr.add_route(route_network, nat_route)
+    svr.commit('routes')
+
+    return utils.jsonify(route)
+
 @app.app.route('/server/<server_id>/host', methods=['GET'])
 @auth.session_auth
 def server_host_get(server_id):
