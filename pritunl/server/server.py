@@ -417,6 +417,17 @@ class Server(mongo.MongoObject):
         routes_dict = {}
         virtual_nat = True
 
+        for network_link in self.network_links:
+            route_id = network_link.encode('hex')
+            routes_dict[network_link] = ({
+                'id': route_id,
+                'server': self.id,
+                'network': network_link,
+                'nat': False,
+                'virtual_network': False,
+                'network_link': True,
+            })
+
         for route in self.routes:
             route_network = route['network']
             route_id = route_network.encode('hex')
@@ -446,14 +457,21 @@ class Server(mongo.MongoObject):
             elif route_network == 'virtual':
                 virtual_nat = route.get('nat', True)
             else:
-                routes_dict[route_network] = ({
-                    'id': route_id,
-                    'server': self.id,
-                    'network': route_network,
-                    'nat': route.get('nat', True),
-                    'virtual_network': False,
-                    'network_link': False,
-                })
+                if route_network in routes_dict:
+                    if routes_dict[route_network]['virtual_network']:
+                        nat = route.get('nat', False)
+                    else:
+                        nat = route.get('nat', True)
+                    routes_dict[route_network]['nat'] = nat
+                else:
+                    routes_dict[route_network] = ({
+                        'id': route_id,
+                        'server': self.id,
+                        'network': route_network,
+                        'nat': route.get('nat', True),
+                        'virtual_network': False,
+                        'network_link': False,
+                    })
 
         routes.append({
             'id': self.network.encode('hex'),
