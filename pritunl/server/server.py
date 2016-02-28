@@ -462,6 +462,8 @@ class Server(mongo.MongoObject):
 
         if network == self.network:
             network = 'virtual'
+        elif network == '::/0':
+            network = '0.0.0.0/0'
 
         for route in self.routes:
             if route['network'] == network:
