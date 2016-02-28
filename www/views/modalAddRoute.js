@@ -14,19 +14,44 @@ define([
     template: _.template(modalAddRouteTemplate),
     title: 'Add Route',
     okText: 'Attach',
+    events: function() {
+      return _.extend({
+        'click .nat-route-toggle': 'onNatRouteSelect'
+      }, ModalAddRouteView.__super__.events);
+    },
     body: function() {
       return this.template({
         servers: this.collection.toJSON(),
         lastServer: lastServer
       });
     },
+    getNatRouteSelect: function() {
+      return this.$('.nat-route-toggle .selector').hasClass('selected');
+    },
+    setNatRouteSelect: function(state) {
+      if (state) {
+        this.$('.nat-route-toggle .selector').addClass('selected');
+        this.$('.nat-route-toggle .selector-inner').show();
+      }
+      else {
+        this.$('.nat-route-toggle .selector').removeClass('selected');
+        this.$('.nat-route-toggle .selector-inner').hide();
+      }
+    },
+    onNatRouteSelect: function() {
+      this.setNatRouteSelect(!this.getNatRouteSelect());
+    },
     onOk: function() {
       this.setLoading('Adding route...');
       var model = new ServerRouteModel();
+
       var server = this.$('.server select').val();
+      var nat = this.getNatRouteSelect();
+
       lastServer = server;
       model.save({
         network: this.$('.route-network input').val(),
+        nat: nat,
         server: server
       }, {
         success: function() {
