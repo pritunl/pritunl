@@ -412,7 +412,7 @@ class Server(mongo.MongoObject):
         if block:
             self.load()
 
-    def get_routes(self):
+    def get_routes(self, include_hidden=False):
         routes = []
         routes_dict = {}
         virtual_nat = True
@@ -430,6 +430,16 @@ class Server(mongo.MongoObject):
                     'virtual_network': False,
                     'network_link': False,
                 })
+
+                if include_hidden and self.ipv6:
+                    routes.append({
+                        'id': route_id,
+                        'server': self.id,
+                        'network': '::/0',
+                        'nat': route.get('nat', True),
+                        'virtual_network': False,
+                        'network_link': False,
+                    })
             elif route_network == 'virtual':
                 virtual_nat = route.get('nat', True)
             else:
