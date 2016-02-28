@@ -220,35 +220,11 @@ def server_put_post(server_id=None):
         if dh_param_bits not in VALID_DH_PARAM_BITS:
             return _dh_param_bits_invalid()
 
-    mode = None
-    mode_def = False
-    if 'mode' in flask.request.json:
-        mode_def = True
-        mode = flask.request.json['mode']
-
-        if mode not in (ALL_TRAFFIC, LOCAL_TRAFFIC, VPN_TRAFFIC):
-            return utils.jsonify({
-                'error': MODE_INVALID,
-                'error_msg': MODE_INVALID_MSG,
-            }, 400)
-
     multi_device = False
     multi_device_def = False
     if 'multi_device' in flask.request.json:
         multi_device_def = True
         multi_device = True if flask.request.json['multi_device'] else False
-
-    local_networks = None
-    local_networks_def = False
-    if 'local_networks' in flask.request.json:
-        local_networks_def = True
-        local_networks = flask.request.json['local_networks'] or []
-
-        for local_network in local_networks:
-            try:
-                ipaddress.IPNetwork(local_network)
-            except (ipaddress.AddressValueError, ValueError):
-                return _local_network_invalid()
 
     dns_servers = None
     dns_servers_def = False
@@ -440,13 +416,6 @@ def server_put_post(server_id=None):
             dh_param_bits_def = True
             dh_param_bits = settings.vpn.default_dh_param_bits
 
-        if not mode_def:
-            mode_def = True
-            if local_networks_def and local_networks:
-                mode = LOCAL_TRAFFIC
-            else:
-                mode = ALL_TRAFFIC
-
     if network_def:
         if _check_network_overlap(network, network_used):
             return utils.jsonify({
@@ -487,9 +456,7 @@ def server_put_post(server_id=None):
             port=port,
             protocol=protocol,
             dh_param_bits=dh_param_bits,
-            mode=mode,
             multi_device=multi_device,
-            local_networks=local_networks,
             dns_servers=dns_servers,
             search_domain=search_domain,
             otp_auth=otp_auth,
@@ -553,12 +520,8 @@ def server_put_post(server_id=None):
         if dh_param_bits_def and svr.dh_param_bits != dh_param_bits:
             svr.dh_param_bits = dh_param_bits
             svr.generate_dh_param()
-        if mode_def:
-            svr.mode = mode
         if multi_device_def:
             svr.multi_device = multi_device
-        if local_networks_def:
-            svr.local_networks = local_networks
         if dns_servers_def:
             svr.dns_servers = dns_servers
         if search_domain_def:
