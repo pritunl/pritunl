@@ -412,6 +412,12 @@ class Server(mongo.MongoObject):
         if block:
             self.load()
 
+    def is_route_all(self):
+        for route in self.get_routes():
+            if route['network'] == '0.0.0.0/0':
+                return True
+        return False
+
     def get_routes(self, include_hidden=False, include_default=True):
         routes = []
         routes_dict = {}
