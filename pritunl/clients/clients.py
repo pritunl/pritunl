@@ -79,21 +79,24 @@ class Clients(object):
 
         if user.link_server_id:
             link_usr_svr = self.server.get_link_server(user.link_server_id,
-                fields=('_id', 'network', 'network_start',
-                        'network_end', 'local_networks'))
+                fields=('_id', 'network', 'network_start', 'network_end',
+                    'local_networks', 'organizations', 'routes'))
 
-            for local_network in link_usr_svr.get_routes(
+            for route in link_usr_svr.get_routes(
                     include_default=False):
-                if ':' in local_network:
-                    client_conf += 'iroute-ipv6 %s\n' % local_network
+                network = route['network']
+
+                if ':' in network:
+                    client_conf += 'iroute-ipv6 %s\n' % network
                 else:
                     client_conf += 'iroute %s %s\n' % utils.parse_network(
-                        local_network)
+                        network)
         else:
             if self.server.is_route_all():
                 if platform == 'ios':
                     client_conf += 'push "route 0.0.0.0 128.0.0.0"\n'
                     client_conf += 'push "route 128.0.0.0 128.0.0.0"\n'
+                    client_conf += 'push "redirect-gateway ipv6"\n'
                 else:
                     client_conf += 'push "redirect-gateway def1"\n'
 
