@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Fix uri on profile view page
+Fix connection issue with linked servers
 
 Version 1.17.895.42 2016-02-24
 ------------------------------
