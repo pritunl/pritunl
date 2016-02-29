@@ -618,7 +618,7 @@ def server_org_put(server_id, org_id):
 
     svr = server.get_by_id(server_id,
         fields=('_id', 'status', 'network', 'network_start', 'network_end',
-        'organizations'))
+        'organizations', 'routes'))
     org = organization.get_by_id(org_id, fields=('_id', 'name'))
     if svr.status == ONLINE:
         return utils.jsonify({
@@ -646,7 +646,7 @@ def server_org_delete(server_id, org_id):
     svr = server.get_by_id(server_id,
         fields=('_id', 'status', 'network', 'network_start',
             'network_end', 'primary_organization',
-            'primary_user', 'organizations'))
+            'primary_user', 'organizations', 'routes'))
     org = organization.get_by_id(org_id, fields=('_id'))
 
     if svr.status == ONLINE:
@@ -668,14 +668,14 @@ def server_org_delete(server_id, org_id):
 @auth.session_auth
 def server_route_get(server_id):
     svr = server.get_by_id(server_id, fields=('_id', 'network',
-        'network_start', 'network_end', 'routes'))
+        'network_start', 'network_end', 'routes', 'organizations'))
     return utils.jsonify(svr.get_routes())
 
 @app.app.route('/server/<server_id>/route', methods=['POST'])
 @auth.session_auth
 def server_route_post(server_id):
     svr = server.get_by_id(server_id, fields=('_id', 'network',
-        'network_start', 'network_end', 'routes'))
+        'network_start', 'network_end', 'routes', 'organizations'))
     route_network = flask.request.json['network']
     nat_route = True if flask.request.json.get('nat') else False
     route = svr.add_route(route_network, nat_route)
@@ -689,7 +689,7 @@ def server_route_post(server_id):
 @auth.session_auth
 def server_route_put(server_id, route_network):
     svr = server.get_by_id(server_id, fields=('_id', 'network',
-        'network_start', 'network_end', 'routes'))
+        'network_start', 'network_end', 'routes', 'organizations'))
     route_network = route_network.decode('hex')
     nat_route = True if flask.request.json.get('nat') else False
     route = svr.add_route(route_network, nat_route)
@@ -703,7 +703,7 @@ def server_route_put(server_id, route_network):
 @auth.session_auth
 def server_route_delete(server_id, route_network):
     svr = server.get_by_id(server_id, fields=('_id', 'network',
-        'network_start', 'network_end', 'routes'))
+        'network_start', 'network_end', 'routes', 'organizations'))
     route_network = route_network.decode('hex')
     route = svr.remove_route(route_network)
     svr.commit('routes')
