@@ -82,9 +82,8 @@ class Clients(object):
                 fields=('_id', 'network', 'network_start',
                         'network_end', 'local_networks'))
 
-            client_conf += 'iroute %s %s\n' % utils.parse_network(
-                link_usr_svr.network)
-            for local_network in link_usr_svr.local_networks:
+            for local_network in link_usr_svr.get_routes(
+                    include_default=False):
                 if ':' in local_network:
                     client_conf += 'iroute-ipv6 %s\n' % local_network
                 else:
