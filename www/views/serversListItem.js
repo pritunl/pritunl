@@ -151,13 +151,7 @@ define([
       this.$('.server-public-address .status-text').text(
         this.model.get('public_address'));
 
-      var modes = {
-        'all_traffic': 'All Traffic',
-        'local_traffic': 'Local Traffic Only',
-        'vpn_traffic': 'VPN Traffic Only',
-      };
-      this.$('.server-mode .status-text').text(
-        modes[this.model.get('mode')]);
+      this.$('.server-mode .status-text').text();
 
       this.updateButtons();
     },
