@@ -368,8 +368,8 @@ class ServerInstance(object):
         interfaces6 = set()
 
         link_svr_networks = []
-        for link_svr in self.server.iter_links(fields=(
-                '_id', 'network', 'network_start', 'network_end')):
+        for link_svr in self.server.iter_links(fields=('_id', 'network',
+                'network_start', 'network_end', 'organizations', 'routes')):
             link_svr_networks.append(link_svr.network)
 
         for route in self.server.get_routes(include_hidden=True):
