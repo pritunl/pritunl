@@ -579,6 +579,7 @@ def server_put_post(server_id=None):
 
     logger.LogEntry(message='Created server "%s".' % svr.name)
     event.Event(type=SERVERS_UPDATED)
+    event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
     for org in svr.iter_orgs():
         event.Event(type=USERS_UPDATED, resource_id=org.id)
     return utils.jsonify(svr.dict())
