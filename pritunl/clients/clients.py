@@ -96,7 +96,6 @@ class Clients(object):
                 if platform == 'ios':
                     client_conf += 'push "route 0.0.0.0 128.0.0.0"\n'
                     client_conf += 'push "route 128.0.0.0 128.0.0.0"\n'
-                    client_conf += 'push "redirect-gateway ipv6"\n'
                 else:
                     client_conf += 'push "redirect-gateway def1"\n'
 
@@ -138,18 +137,17 @@ class Clients(object):
                         utils.parse_network(network_link))
 
             for link_svr in self.server.iter_links(fields=(
-                '_id', 'network', 'local_networks', 'network_start',
-                'network_end')):
-                client_conf += 'push "route %s %s"\n' % utils.parse_network(
-                    link_svr.network)
+                    '_id', 'network', 'local_networks', 'network_start',
+                    'network_end', 'organizations', 'routes')):
+                for route in link_svr.get_routes(
+                        include_default=False):
+                    network = route['network']
 
-                for local_network in link_svr.local_networks:
-                    if ':' in local_network:
-                        client_conf += 'push "route-ipv6 %s"\n' % (
-                            local_network)
+                    if ':' in network:
+                        client_conf += 'push "route-ipv6 %s"\n' % (network)
                     else:
                         client_conf += 'push "route %s %s"\n' % (
-                            utils.parse_network(local_network))
+                            utils.parse_network(network))
 
         return client_conf
 
