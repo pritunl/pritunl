@@ -116,30 +116,33 @@ class ServerInstance(object):
                 id=self.server.primary_organization)
             self.primary_user = primary_org.get_user(self.server.primary_user)
 
-        push = ''
-        for route in self.server.get_routes():
-            if route['virtual_network'] or route['network'] == '0.0.0.0/0':
-                continue
-
-            network = route['network']
-            if ':' in network:
-                push += 'push "route-ipv6 %s "\n' % network
-            else:
-                push += 'push "route %s %s"\n' % utils.parse_network(network)
-
         gateway = utils.get_network_gateway(self.server.network)
         gateway6 = utils.get_network_gateway(self.server.network6)
 
+        push = ''
+        for route in self.server.get_routes(include_default=False):
+            if route['virtual_network']:
+                continue
+
+            network = route['network']
+            if not route.get('network_link'):
+                if ':' in network:
+                    push += 'push "route-ipv6 %s "\n' % network
+                else:
+                    push += 'push "route %s %s"\n' % utils.parse_network(
+                        network)
+            else:
+                if ':' in network:
+                    push += 'route-ipv6 %s %s\n' % (network, gateway6)
+                else:
+                    push += 'route %s %s %s\n' % (utils.parse_network(
+                        network) + (gateway,))
+
         for link_svr in self.server.iter_links(fields=(
                 '_id', 'network', 'local_networks', 'network_start',
-                'network_end')):
+                'network_end', 'organizations', 'routes')):
             if self.server.id < link_svr.id:
-                push += 'route %s %s %s\n' % (utils.parse_network(
-                    link_svr.network) + (gateway,))
-                for route in link_svr.get_routes():
-                    if route['virtual_network']:
-                        continue
-
+                for route in link_svr.get_routes(include_default=False):
                     network = route['network']
                     if ':' in network:
                         push += 'route-ipv6 %s %s\n' % (
@@ -147,13 +150,6 @@ class ServerInstance(object):
                     else:
                         push += 'route %s %s %s\n' % (utils.parse_network(
                             network) + (gateway,))
-
-        for network_link in self.server.network_links:
-            if ':' in network_link:
-                push += 'route-ipv6 %s %s\n' % (network_link, gateway6)
-            else:
-                push += 'route %s %s %s\n' % (utils.parse_network(
-                    network_link) + (gateway,))
 
         if self.server.network_mode == BRIDGE:
             host_int_data = self.host_interface_data
