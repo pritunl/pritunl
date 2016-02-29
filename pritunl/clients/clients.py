@@ -94,7 +94,6 @@ class Clients(object):
                 if platform == 'ios':
                     client_conf += 'push "route 0.0.0.0 128.0.0.0"\n'
                     client_conf += 'push "route 128.0.0.0 128.0.0.0"\n'
-                    client_conf += 'push "redirect-gateway ipv6"\n'
                 else:
                     client_conf += 'push "redirect-gateway def1"\n'
 
