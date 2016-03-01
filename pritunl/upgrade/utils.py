@@ -18,6 +18,12 @@ def database_setup():
         connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
     _database = client.get_default_database()
 
+def database_clean_up():
+    global _prefix
+    global _database
+    _prefix = None
+    _database = None
+
 def get_collection(collection):
     return getattr(_database, _prefix + collection)
 

@@ -223,6 +223,8 @@ def setup_server():
 
         setup_ready.wait()
 
+    upgrade.database_clean_up()
+
     last_error = time.time() - 24
     while True:
         try:
