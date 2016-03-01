@@ -10,7 +10,7 @@ define([
   'use strict';
   var lastServer;
   var ModalAddRouteView = ModalView.extend({
-    className: 'attach-org-modal',
+    className: 'add-route-modal',
     template: _.template(modalAddRouteTemplate),
     title: 'Add Route',
     okText: 'Attach',
