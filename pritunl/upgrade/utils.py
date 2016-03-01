@@ -1,7 +1,9 @@
 from pritunl.constants import *
 from pritunl import settings
+from pritunl import utils
 
 import pymongo
+import os
 
 _prefix = None
 _database = None
@@ -19,3 +21,29 @@ def get_collection(collection):
     if _database is None:
         _database_setup()
     return getattr(_database, _prefix + collection)
+
+def setup_cert(load_db):
+    server_cert = None
+    server_key = None
+
+    if load_db:
+        settings_collection = get_collection('settings')
+        doc = settings_collection.find_one({'_id': 'app'})
+        if doc:
+            server_cert = doc.get('server_cert')
+            server_key = doc.get('server_key')
+
+    server_cert_path = os.path.join(settings.conf.temp_path,
+        'setup_server.crt')
+    server_key_path = os.path.join(settings.conf.temp_path,
+        'setup_server.key')
+
+    if not server_cert or not server_key:
+        logger.info('Generating setup server ssl cert', 'setup')
+        utils.generate_server_cert(server_cert_path, server_key_path)
+    else:
+        with open(server_cert_path, 'w') as server_cert_file:
+            server_cert_file.write(server_cert)
+        with open(server_key_path, 'w') as server_key_file:
+            os.chmod(server_key_path, 0600)
+            server_key_file.write(server_key)
