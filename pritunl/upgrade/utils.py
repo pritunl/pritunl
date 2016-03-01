@@ -9,7 +9,7 @@ import os
 _prefix = None
 _database = None
 
-def _database_setup():
+def database_setup():
     global _prefix
     global _database
 
@@ -19,8 +19,6 @@ def _database_setup():
     _database = client.get_default_database()
 
 def get_collection(collection):
-    if _database is None:
-        _database_setup()
     return getattr(_database, _prefix + collection)
 
 def setup_cert(load_db):

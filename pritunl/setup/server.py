@@ -150,7 +150,7 @@ def server_thread():
     server_key_path = os.path.join(settings.conf.temp_path, SERVER_KEY_NAME)
 
     if settings.conf.ssl:
-        upgrade.setup_cert(not db_setup)
+        upgrade.setup_cert(bool(settings.conf.mongodb_uri))
         server.ssl_adapter = SSLAdapter(server_cert_path, server_key_path)
 
     try:
@@ -212,6 +212,7 @@ def setup_server():
         logger.info('Starting setup server', 'setup')
 
         if not db_setup:
+            upgrade.database_setup()
             upgrade_database()
 
         settings.local.server_start.clear()
