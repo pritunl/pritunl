@@ -78,6 +78,9 @@ class ServerNetworkLocked(ServerError):
 class BridgeLookupError(ServerError):
     pass
 
+class ServerRouteNatVirtual(ServerError):
+    pass
+
 
 class NotFound(BaseError):
     pass
