@@ -558,6 +558,9 @@ SERVER_NOT_OFFLINE_LINK_SERVER_MSG = 'Server must be offline to link ' + \
 SERVER_NOT_OFFLINE_UNLINK_SERVER_MSG = 'Server must be offline to unlink ' + \
     'a server.'
 
+SERVER_ROUTE_INVALID = 'server_route_invalid'
+SERVER_ROUTE_INVALID_MSG = 'Route network address is not valid.'
+
 SERVER_LINK_COMMON_HOST = 'server_link_common_host'
 SERVER_LINK_COMMON_HOST_MSG = 'Linked servers cannot have a common host.'
 
