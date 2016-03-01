@@ -12,6 +12,11 @@ class BaseError(Exception):
 class LicenseInvalid(BaseError):
     pass
 
+
+class NetworkInvalid(BaseError):
+    pass
+
+
 class UserError(BaseError):
     pass
 
