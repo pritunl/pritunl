@@ -705,7 +705,19 @@ def server_route_put(server_id, route_network):
         'network_start', 'network_end', 'routes', 'organizations'))
     route_network = route_network.decode('hex')
     nat_route = True if flask.request.json.get('nat') else False
-    route = svr.add_route(route_network, nat_route)
+
+    try:
+        route = svr.add_route(route_network, nat_route)
+    except NetworkInvalid:
+        return utils.jsonify({
+            'error': SERVER_ROUTE_INVALID,
+            'error_msg': SERVER_ROUTE_INVALID_MSG,
+        }, 400)
+    except ServerRouteNatVirtual:
+        return utils.jsonify({
+            'error': SERVER_ROUTE_VIRTUAL_NAT,
+            'error_msg': SERVER_ROUTE_VIRTUAL_NAT_MSG,
+        }, 400)
     svr.commit('routes')
 
     event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
