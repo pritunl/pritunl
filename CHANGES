@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add new route interface
+Improve upgrade process
 Fix uri on profile view page
 Fix connection issue with linked servers
 
