@@ -25,6 +25,7 @@ define([
     },
     update: function() {
       this.$('.route-network').text(this.model.get('network'));
+      this.$('.route-network-no-click').text(this.model.get('network'));
       if (this.model.get('nat')) {
         this.$('.route-nat').show();
       } else {
