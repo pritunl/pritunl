@@ -561,6 +561,9 @@ SERVER_NOT_OFFLINE_UNLINK_SERVER_MSG = 'Server must be offline to unlink ' + \
 SERVER_ROUTE_INVALID = 'server_route_invalid'
 SERVER_ROUTE_INVALID_MSG = 'Route network address is not valid.'
 
+SERVER_ROUTE_VIRTUAL_NAT = 'server_route_virtual_nat'
+SERVER_ROUTE_VIRTUAL_NAT_MSG = 'Virtual network routes cannot use NAT.'
+
 SERVER_LINK_COMMON_HOST = 'server_link_common_host'
 SERVER_LINK_COMMON_HOST_MSG = 'Linked servers cannot have a common host.'
 
