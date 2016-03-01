@@ -150,8 +150,7 @@ def server_thread():
     server_key_path = os.path.join(settings.conf.temp_path, SERVER_KEY_NAME)
 
     if settings.conf.ssl:
-        logger.info('Generating setup server ssl cert', 'setup')
-        utils.generate_server_cert(server_cert_path, server_key_path)
+        upgrade.setup_cert(not db_setup)
         server.ssl_adapter = SSLAdapter(server_cert_path, server_key_path)
 
     try:
