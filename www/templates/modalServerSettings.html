@@ -14,10 +14,11 @@
         <option value="tcp" <%= protocol === 'tcp' ? 'selected' : '' %>>tcp</option>
       </select>
     </div>
-    <div class="network form-group">
-      <label>Network</label>
-      <span class="label label-default no-select" toggle="tooltip" title="Maximum number of users for this subnet"></span>
-      <input type="text" class="form-control" placeholder="Enter network address" data-toggle="tooltip" title="Network address for the private network that will be created for VPN clients. When using bridged mode this network must match the local network of a network interface on the server" value="<%- network %>" autocapitalize="off">
+    <div class="ipv6-toggle toggle-form form-group">
+      <label>Enable IPv6</label>
+      <div class="selector <%= ipv6 ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Enable IPv6 on server, requires IPv6 network interface">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
     </div>
   </div>
   <div class="right">
@@ -25,11 +26,10 @@
       <label>DNS Server</label>
       <input type="text" class="form-control" placeholder="Enter DNS server" data-toggle="tooltip" title="Optional, DNS server for clients" value="<%- dns_servers.join(', ') %>" autocapitalize="off">
     </div>
-    <div class="ipv6-toggle toggle-form form-group">
-      <label>Enable IPv6</label>
-      <div class="selector <%= ipv6 ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Enable IPv6 on server, requires IPv6 network interface">
-        <span class="selector-inner glyphicon glyphicon-ok"></span>
-      </div>
+    <div class="network form-group">
+      <label>Network</label>
+      <span class="label label-default no-select" toggle="tooltip" title="Maximum number of users for this subnet"></span>
+      <input type="text" class="form-control" placeholder="Enter network address" data-toggle="tooltip" title="Network address for the private network that will be created for VPN clients. When using bridged mode this network must match the local network of a network interface on the server" value="<%- network %>" autocapitalize="off">
     </div>
     <div class="otp-auth-toggle toggle-form form-group">
       <label>Enable Two-Step Authentication</label>
