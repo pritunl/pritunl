@@ -504,6 +504,9 @@ class Server(mongo.MongoObject):
 
         if network == self.network:
             network = 'virtual'
+
+            if nat_route:
+                raise ServerRouteNatVirtual('Cannot nat virtual network')
         elif network == '::/0':
             network = '0.0.0.0/0'
 
