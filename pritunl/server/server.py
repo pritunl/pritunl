@@ -17,6 +17,7 @@ from pritunl import transaction
 from pritunl import event
 from pritunl import messenger
 from pritunl import organization
+from pritunl import ipaddress
 
 import os
 import subprocess
@@ -500,6 +501,12 @@ class Server(mongo.MongoObject):
 
     def add_route(self, network, nat_route):
         exists = False
+
+        try:
+            network = str(ipaddress.IPNetwork(network))
+        except ValueError:
+            raise NetworkInvalid('Network address is invalid')
+
         orig_network = network
 
         if network == self.network:
