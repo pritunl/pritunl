@@ -738,9 +738,17 @@ def server_route_put(server_id, route_network):
 @auth.session_auth
 def server_route_delete(server_id, route_network):
     svr = server.get_by_id(server_id, fields=('_id', 'network',
-        'network_start', 'network_end', 'routes', 'organizations'))
+        'network_start', 'network_end', 'routes', 'organizations', 'status'))
     route_network = route_network.decode('hex')
-    route = svr.remove_route(route_network)
+
+    try:
+        route = svr.remove_route(route_network)
+    except ServerOnlineError:
+        return utils.jsonify({
+            'error': SERVER_ROUTE_ONLINE,
+            'error_msg': SERVER_ROUTE_ONLINE_MSG,
+        }, 400)
+
     svr.commit('routes')
 
     event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
