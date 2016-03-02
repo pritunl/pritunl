@@ -105,7 +105,6 @@ def get_factor_id(user_id):
 
 def auth_okta(username):
     user_id = get_user_id(username)
-
     if not user_id:
         return False
 
