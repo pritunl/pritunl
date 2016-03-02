@@ -168,7 +168,7 @@ class Authorizer(object):
                 info=info,
             )
         elif self.push_type == SAML_OKTA_AUTH:
-            allow = sso.auth_okta(
+            allow = sso.auth_okta_push(
                 self.user.name,
                 ipaddr=self.remote_ip,
                 type='Connection',
