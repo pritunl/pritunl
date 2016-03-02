@@ -502,6 +502,10 @@ class Server(mongo.MongoObject):
     def add_route(self, network, nat_route):
         exists = False
 
+        if self.status == ONLINE:
+            raise ServerOnlineError(
+                'Cannot add route while server is online')
+
         try:
             network = str(ipaddress.IPNetwork(network))
         except ValueError:
@@ -537,6 +541,10 @@ class Server(mongo.MongoObject):
         }
 
     def remove_route(self, network):
+        if self.status == ONLINE:
+            raise ServerOnlineError(
+                'Cannot remove route while server is online')
+
         for i, route in enumerate(self.routes):
             if route['network'] == network:
                 self.routes.pop(i)
