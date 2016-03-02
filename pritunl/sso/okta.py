@@ -103,7 +103,15 @@ def get_factor_id(user_id):
         )
     return None
 
-def auth_okta(username, strong=False, ipaddr=None, type=None, info=None):
+def auth_okta(username):
+    user_id = get_user_id(username)
+
+    if not user_id:
+        return False
+
+    return True
+
+def auth_okta_push(username, strong=False, ipaddr=None, type=None, info=None):
     user_id = get_user_id(username)
     if not user_id:
         return False
