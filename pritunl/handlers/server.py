@@ -675,12 +675,17 @@ def server_route_get(server_id):
 @auth.session_auth
 def server_route_post(server_id):
     svr = server.get_by_id(server_id, fields=('_id', 'network',
-        'network_start', 'network_end', 'routes', 'organizations'))
+        'network_start', 'network_end', 'routes', 'organizations', 'status'))
     route_network = flask.request.json['network']
     nat_route = True if flask.request.json.get('nat') else False
 
     try:
         route = svr.add_route(route_network, nat_route)
+    except ServerOnlineError:
+        return utils.jsonify({
+            'error': SERVER_ROUTE_ONLINE,
+            'error_msg': SERVER_ROUTE_ONLINE_MSG,
+        }, 400)
     except NetworkInvalid:
         return utils.jsonify({
             'error': SERVER_ROUTE_INVALID,
@@ -702,12 +707,17 @@ def server_route_post(server_id):
 @auth.session_auth
 def server_route_put(server_id, route_network):
     svr = server.get_by_id(server_id, fields=('_id', 'network',
-        'network_start', 'network_end', 'routes', 'organizations'))
+        'network_start', 'network_end', 'routes', 'organizations', 'status'))
     route_network = route_network.decode('hex')
     nat_route = True if flask.request.json.get('nat') else False
 
     try:
         route = svr.add_route(route_network, nat_route)
+    except ServerOnlineError:
+        return utils.jsonify({
+            'error': SERVER_ROUTE_ONLINE,
+            'error_msg': SERVER_ROUTE_ONLINE_MSG,
+        }, 400)
     except NetworkInvalid:
         return utils.jsonify({
             'error': SERVER_ROUTE_INVALID,
