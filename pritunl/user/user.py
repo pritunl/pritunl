@@ -280,6 +280,14 @@ class User(mongo.MongoObject):
                     user_id=self.id,
                 )
             return False
+        elif SAML_OKTA_AUTH in self.auth_type:
+            try:
+                return sso.auth_okta(self.name)
+            except:
+                logger.exception('Okta auth check error', 'user',
+                    user_id=self.id,
+                )
+            return False
         elif RADIUS_AUTH in self.auth_type:
             try:
                 return sso.verify_radius(self.name, password)[0]
