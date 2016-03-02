@@ -560,6 +560,9 @@ SERVER_NOT_OFFLINE_LINK_SERVER_MSG = 'Server must be offline to link ' + \
 SERVER_NOT_OFFLINE_UNLINK_SERVER_MSG = 'Server must be offline to unlink ' + \
     'a server.'
 
+SERVER_ROUTE_ONLINE = 'server_route_online'
+SERVER_ROUTE_ONLINE_MSG = 'Cannot modify routes while server is online.'
+
 SERVER_ROUTE_INVALID = 'server_route_invalid'
 SERVER_ROUTE_INVALID_MSG = 'Route network address is not valid.'
 
