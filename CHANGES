@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.18.902.99 2016-03-02
+------------------------------
 
 Improve Okta authentication
 
