@@ -38,10 +38,12 @@ define([
     },
     initialize: function() {
       this.collection = new ServerCollection();
+      this.servers = new ServerCollection();
       this.orgs = new OrgCollection();
       this.hosts = new HostCollection();
       this.statusModel = new StatusModel();
       this.listenTo(window.events, 'servers_updated', this.update);
+      this.listenTo(window.events, 'servers_updated', this.updateServers);
       this.listenTo(window.events, 'organizations_updated', this.updateOrgs);
       this.listenTo(window.events, 'hosts_updated', this.updateHosts);
       ServersListView.__super__.initialize.call(this);
@@ -62,8 +64,35 @@ define([
       this.collection.setPage(this.collection.getPageTotal());
       this.update();
     },
-    updateOrgs: function() {
+    updateServers: function(callback) {
+      this.servers.fetch({
+        success: function() {
+          if (callback) {
+            callback();
+          }
+        }.bind(this),
+        error: function() {
+          this.servers.reset();
+          var alertView = new AlertView({
+            type: 'danger',
+            message: 'Failed to load servers, server error occurred.',
+            dismissable: true
+          });
+          $('.alerts-container').append(alertView.render().el);
+          this.addView(alertView);
+          if (callback) {
+            callback();
+          }
+        }.bind(this)
+      });
+    },
+    updateOrgs: function(callback) {
       this.orgs.fetch({
+        success: function() {
+          if (callback) {
+            callback();
+          }
+        }.bind(this),
         error: function() {
           this.orgs.reset();
           var alertView = new AlertView({
@@ -73,24 +102,42 @@ define([
           });
           $('.alerts-container').append(alertView.render().el);
           this.addView(alertView);
+          if (callback) {
+            callback();
+          }
         }.bind(this)
       });
     },
-    updateLinks: function() {
-      this.links.fetch({
+    updateHosts: function(callback) {
+      this.hosts.fetch({
+        success: function() {
+          if (callback) {
+            callback();
+          }
+        }.bind(this),
         error: function() {
           this.links.reset();
           var alertView = new AlertView({
             type: 'danger',
-            message: 'Failed to load links, server error occurred.',
+            message: 'Failed to load hosts, server error occurred.',
             dismissable: true
           });
           $('.alerts-container').append(alertView.render().el);
           this.addView(alertView);
+          if (callback) {
+            callback();
+          }
         }.bind(this)
       });
     },
     onAddServer: function() {
+      if (!this.servers.models.length) {
+        this.updateServers((this._addServer).bind(this));
+      } else {
+        this._addServer();
+      }
+    },
+    _addServer: function() {
       this.$('.servers-add-server').attr('disabled', 'disabled');
       this.statusModel.fetch({
         success: function() {
@@ -98,10 +145,10 @@ define([
           var usedNetworks = [];
           var usedPorts = [];
           var usedInterfaces = [];
-          for (i = 0; i < this.collection.models.length; i++) {
-            usedNetworks.push(this.collection.models[i].get('network'));
-            usedPorts.push(this.collection.models[i].get('port'));
-            usedInterfaces.push(this.collection.models[i].get('interface'));
+          for (i = 0; i < this.servers.models.length; i++) {
+            usedNetworks.push(this.servers.models[i].get('network'));
+            usedPorts.push(this.servers.models[i].get('port'));
+            usedInterfaces.push(this.servers.models[i].get('interface'));
           }
 
           var modal = new ModalAddServerView({
@@ -137,8 +184,15 @@ define([
       });
     },
     onAddRoute: function() {
+      if (!this.servers.models.length) {
+        this.updateServers((this._addRoute).bind(this));
+      } else {
+        this._addRoute();
+      }
+    },
+    _addRoute: function() {
       var modal = new ModalAddRouteView({
-        collection: this.collection
+        collection: this.servers
       });
       this.listenToOnce(modal, 'applied', function() {
         var alertView = new AlertView({
@@ -152,28 +206,19 @@ define([
       this.addView(modal);
     },
     onAttachOrg: function() {
-      if (this.orgs.models.length) {
-        this._attachOrg();
-        return;
-      }
-      this.$('.servers-attach-org').attr('disabled', 'disabled');
-      this.orgs.fetch({
-        success: function() {
+      var callback = function() {
+        if (!this.orgs.models.length) {
+          this.updateOrgs((this._attachOrg).bind(this));
+        } else {
           this._attachOrg();
-          this.$('.servers-attach-org').removeAttr('disabled');
-        }.bind(this),
-        error: function() {
-          this.orgs.reset();
-          var alertView = new AlertView({
-            type: 'danger',
-            message: 'Failed to load organizations, server error occurred.',
-            dismissable: true
-          });
-          $('.alerts-container').append(alertView.render().el);
-          this.addView(alertView);
-          this.$('.servers-attach-org').removeAttr('disabled');
-        }.bind(this)
-      });
+        }
+      }.bind(this);
+
+      if (!this.servers.models.length) {
+        this.updateServers(callback);
+      } else {
+        callback();
+      }
     },
     _attachOrg: function() {
       if (!this.orgs.length) {
@@ -189,7 +234,7 @@ define([
       }
       var modal = new ModalAttachOrgView({
         orgs: this.orgs,
-        collection: this.collection
+        collection: this.servers
       });
       this.listenToOnce(modal, 'applied', function() {
         var alertView = new AlertView({
@@ -203,28 +248,19 @@ define([
       this.addView(modal);
     },
     onAttachHost: function() {
-      if (this.hosts.models.length) {
-        this._attachHost();
-        return;
-      }
-      this.$('.servers-attach-host').attr('disabled', 'disabled');
-      this.hosts.fetch({
-        success: function() {
+      var callback = function() {
+        if (!this.hosts.models.length) {
+          this.updateHosts((this._attachHost).bind(this));
+        } else {
           this._attachHost();
-          this.$('.servers-attach-host').removeAttr('disabled');
-        }.bind(this),
-        error: function() {
-          this.hosts.reset();
-          var alertView = new AlertView({
-            type: 'danger',
-            message: 'Failed to load hosts, server error occurred.',
-            dismissable: true
-          });
-          $('.alerts-container').append(alertView.render().el);
-          this.addView(alertView);
-          this.$('.servers-attach-host').removeAttr('disabled');
-        }.bind(this)
-      });
+        }
+      }.bind(this);
+
+      if (!this.servers.models.length) {
+        this.updateServers(callback);
+      } else {
+        callback();
+      }
     },
     _attachHost: function() {
       if (!this.hosts.length) {
@@ -239,7 +275,7 @@ define([
       }
       var modal = new ModalAttachHostView({
         hosts: this.hosts,
-        collection: this.collection
+        collection: this.servers
       });
       this.listenToOnce(modal, 'applied', function() {
         var alertView = new AlertView({
@@ -253,7 +289,14 @@ define([
       this.addView(modal);
     },
     onLinkServer: function() {
-      if (this.collection.length < 2) {
+      if (!this.servers.models.length) {
+        this.updateServers((this._linkServer).bind(this));
+      } else {
+        this._linkServer();
+      }
+    },
+    _linkServer: function() {
+      if (this.servers.length < 2) {
         var alertView = new AlertView({
           type: 'danger',
           message: 'No servers exists, a server must be created before ' +
@@ -266,7 +309,7 @@ define([
       }
 
       var modal = new ModalAttachLinkView({
-        collection: this.collection
+        collection: this.servers
       });
       this.listenToOnce(modal, 'applied', function() {
         var alertView = new AlertView({
