@@ -151,7 +151,11 @@ define([
       this.$('.server-public-address .status-text').text(
         this.model.get('public_address'));
 
-      this.$('.server-mode .status-text').text();
+      if (this.model.get('multi_device')) {
+        this.$('.server-mode .status-text').text('Enabled');
+      } else {
+        this.$('.server-mode .status-text').text('Disabled');
+      }
 
       this.updateButtons();
     },
