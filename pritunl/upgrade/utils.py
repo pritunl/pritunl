@@ -27,7 +27,7 @@ def database_clean_up():
 def get_collection(collection):
     return getattr(_database, _prefix + collection)
 
-def setup_cert(load_db):
+def setup_cert(load_db, server_cert_path, server_key_path):
     server_cert = None
     server_key = None
 
@@ -37,11 +37,6 @@ def setup_cert(load_db):
         if doc:
             server_cert = doc.get('server_cert')
             server_key = doc.get('server_key')
-
-    server_cert_path = os.path.join(settings.conf.temp_path,
-        'setup_server.crt')
-    server_key_path = os.path.join(settings.conf.temp_path,
-        'setup_server.key')
 
     if not server_cert or not server_key:
         logger.info('Generating setup server ssl cert', 'setup')
