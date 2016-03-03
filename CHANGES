@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix server route display issue
+
 Version 1.18.902.99 2016-03-02
 ------------------------------
 
