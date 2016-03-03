@@ -466,8 +466,6 @@ class Server(mongo.MongoObject):
                         'virtual_network': False,
                         'network_link': False,
                     })
-            elif route_network == 'virtual':
-                virtual_nat = route.get('nat', True)
             else:
                 if route_network in routes_dict:
                     if routes_dict[route_network]['virtual_network']:
@@ -489,7 +487,7 @@ class Server(mongo.MongoObject):
             'id': self.network.encode('hex'),
             'server': self.id,
             'network': self.network,
-            'nat': virtual_nat,
+            'nat': False,
             'virtual_network': True,
             'network_link': False,
         })
