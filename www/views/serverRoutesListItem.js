@@ -21,6 +21,7 @@ define([
     },
     render: function() {
       this.$el.html(this.template(this.model.toJSON()));
+      this.$('[data-toggle="tooltip"]').tooltip();
       return this;
     },
     update: function() {
