@@ -1,9 +1,9 @@
 from pritunl.utils.request import get
 
-def get_ami_id():
+def get_instance_id():
     try:
         resp = get(
-            'http://169.254.169.254/latest/meta-data/ami-id',
+            'http://169.254.169.254/latest/meta-data/instance-id',
             timeout=0.5,
         )
 

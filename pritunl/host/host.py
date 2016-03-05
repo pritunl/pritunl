@@ -14,8 +14,8 @@ class Host(mongo.MongoObject):
         'name',
         'hostname',
         'ping_timestamp',
-        'ami_id',
-        'auto_ami_id',
+        'instance_id',
+        'auto_instance_id',
         'status',
         'start_timestamp',
         'public_address',
@@ -88,14 +88,14 @@ class Host(mongo.MongoObject):
 
     @property
     def aws_id(self):
-        return self.ami_id or self.auto_ami_id
+        return self.instance_id or self.auto_instance_id
 
     def dict(self):
         return {
             'id': self.id,
             'name': self.name,
             'hostname': self.hostname,
-            'ami_id': self.aws_id,
+            'instance_id': self.aws_id,
             'status': self.status,
             'uptime': self.uptime,
             'user_count': self.user_count,
