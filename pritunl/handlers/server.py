@@ -667,14 +667,14 @@ def server_org_delete(server_id, org_id):
 @app.app.route('/server/<server_id>/route', methods=['GET'])
 @auth.session_auth
 def server_route_get(server_id):
-    svr = server.get_by_id(server_id, fields=('_id', 'network',
+    svr = server.get_by_id(server_id, fields=('_id', 'network', 'links',
         'network_start', 'network_end', 'routes', 'organizations'))
-    return utils.jsonify(svr.get_routes())
+    return utils.jsonify(svr.get_routes(include_server_links=True))
 
 @app.app.route('/server/<server_id>/route', methods=['POST'])
 @auth.session_auth
 def server_route_post(server_id):
-    svr = server.get_by_id(server_id, fields=('_id', 'network',
+    svr = server.get_by_id(server_id, fields=('_id', 'network', 'links',
         'network_start', 'network_end', 'routes', 'organizations', 'status'))
     route_network = flask.request.json['network']
     nat_route = True if flask.request.json.get('nat') else False
@@ -706,7 +706,7 @@ def server_route_post(server_id):
 @app.app.route('/server/<server_id>/route/<route_network>', methods=['PUT'])
 @auth.session_auth
 def server_route_put(server_id, route_network):
-    svr = server.get_by_id(server_id, fields=('_id', 'network',
+    svr = server.get_by_id(server_id, fields=('_id', 'network', 'links',
         'network_start', 'network_end', 'routes', 'organizations', 'status'))
     route_network = route_network.decode('hex')
     nat_route = True if flask.request.json.get('nat') else False
@@ -728,6 +728,11 @@ def server_route_put(server_id, route_network):
             'error': SERVER_ROUTE_VIRTUAL_NAT,
             'error_msg': SERVER_ROUTE_VIRTUAL_NAT_MSG,
         }, 400)
+    except ServerRouteNatServerLink:
+        return utils.jsonify({
+            'error': SERVER_ROUTE_SERVER_LINK_NAT,
+            'error_msg': SERVER_ROUTE_SERVER_LINK_NAT_MSG,
+        }, 400)
     svr.commit('routes')
 
     event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
@@ -737,7 +742,7 @@ def server_route_put(server_id, route_network):
 @app.app.route('/server/<server_id>/route/<route_network>', methods=['DELETE'])
 @auth.session_auth
 def server_route_delete(server_id, route_network):
-    svr = server.get_by_id(server_id, fields=('_id', 'network',
+    svr = server.get_by_id(server_id, fields=('_id', 'network', 'links',
         'network_start', 'network_end', 'routes', 'organizations', 'status'))
     route_network = route_network.decode('hex')
 
@@ -820,7 +825,8 @@ def server_host_delete(server_id, host_id):
     if settings.app.demo_mode:
         return utils.demo_blocked()
 
-    svr = server.get_by_id(server_id, fields=('_id', 'hosts', 'replica_count'))
+    svr = server.get_by_id(server_id, fields=(
+        '_id', 'hosts', 'replica_count'))
     hst = host.get_by_id(host_id, fields=('_id', 'name'))
 
     svr.remove_host(hst.id)
