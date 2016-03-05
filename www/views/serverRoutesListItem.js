@@ -27,10 +27,34 @@ define([
     update: function() {
       this.$('.route-network').text(this.model.get('network'));
       this.$('.route-network-no-click').text(this.model.get('network'));
+
+      if (this.model.get('virtual_network')) {
+        this.$('.route-virtual-network').show();
+      } else {
+        this.$('.route-virtual-network').hide();
+      }
+      if (this.model.get('network_link')) {
+        this.$('.route-network-link').show();
+      } else {
+        this.$('.route-network-link').hide();
+      }
+      if (this.model.get('server_link')) {
+        this.$('.route-server-link').show();
+      } else {
+        this.$('.route-server-link').hide();
+      }
       if (this.model.get('nat')) {
         this.$('.route-nat').show();
       } else {
         this.$('.route-nat').hide();
+      }
+
+      if (this.model.get('virtual_network') ||
+          this.model.get('network_link') ||
+          this.model.get('server_link')) {
+        this.$('.server-remove-route').attr('disabled', 'disabled');
+      } else {
+        this.$('.server-remove-route').removeAttr('disabled');
       }
     },
     onModify: function() {
