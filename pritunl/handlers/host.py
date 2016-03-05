@@ -97,6 +97,10 @@ def host_put(hst=None):
         hst.link_address = utils.filter_str(
             flask.request.json['link_address'])
 
+    if 'instance_id' in flask.request.json:
+        hst.instance_id = utils.filter_str(
+            flask.request.json['instance_id'])
+
     hst.commit(hst.changed)
     event.Event(type=HOSTS_UPDATED)
     messenger.publish('hosts', 'updated')
