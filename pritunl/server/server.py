@@ -548,7 +548,7 @@ class Server(mongo.MongoObject):
         for route in self.get_routes(include_server_links=True):
             if route['network'] == network:
                 server_link = route['server_link']
-                if route['nat'] != nat_route:
+                if server_link and route['nat'] != nat_route:
                     raise ServerRouteNatServerLink('Cannot nat server link')
 
         if network == self.network:
