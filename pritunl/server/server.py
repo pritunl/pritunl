@@ -424,8 +424,10 @@ class Server(mongo.MongoObject):
                 return True
         return False
 
-    def get_routes(self, include_hidden=False, include_default=True):
+    def get_routes(self, include_hidden=False, include_default=True,
+            include_server_links=False):
         routes = []
+        link_routes = []
         routes_dict = {}
 
         for network_link in self.network_links:
@@ -437,7 +439,28 @@ class Server(mongo.MongoObject):
                 'nat': False,
                 'virtual_network': False,
                 'network_link': True,
+                'server_link': False,
             })
+
+        if include_server_links:
+            for link_svr in self.iter_links(fields=('_id', 'network',
+                    'network_start', 'network_end', 'routes',
+                    'organizations', 'links')):
+                for route in link_svr.get_routes():
+                    data = routes_dict.get(route['network'], {})
+
+                    data['id'] = route['id']
+                    data['server'] = self.id
+                    data['network'] = route['network']
+                    data['nat'] = route['nat']
+                    data['virtual_network'] = False
+                    data['network_link'] = False
+                    data['server_link'] = True
+
+                    if route['virtual_network']:
+                        link_routes.append(data)
+                    else:
+                        routes_dict[route['network']] = data
 
         for route in self.routes:
             route_network = route['network']
@@ -454,6 +477,7 @@ class Server(mongo.MongoObject):
                     'nat': route.get('nat', True),
                     'virtual_network': False,
                     'network_link': False,
+                    'server_link': False,
                 })
 
                 if include_hidden and self.ipv6:
@@ -464,6 +488,7 @@ class Server(mongo.MongoObject):
                         'nat': route.get('nat', True),
                         'virtual_network': False,
                         'network_link': False,
+                        'server_link': False,
                     })
             else:
                 if route_network in routes_dict:
@@ -473,14 +498,19 @@ class Server(mongo.MongoObject):
                         nat = route.get('nat', True)
                     routes_dict[route_network]['nat'] = nat
                 else:
-                    routes_dict[route_network] = ({
+                    if route.get('server_link') and \
+                            route_network not in routes_dict:
+                        continue
+
+                    routes_dict[route_network] = {
                         'id': route_id,
                         'server': self.id,
                         'network': route_network,
                         'nat': route.get('nat', True),
                         'virtual_network': False,
                         'network_link': False,
-                    })
+                        'server_link': False,
+                    }
 
         routes.append({
             'id': self.network.encode('hex'),
@@ -489,12 +519,16 @@ class Server(mongo.MongoObject):
             'nat': False,
             'virtual_network': True,
             'network_link': False,
+            'server_link': False,
         })
 
         for route_network in sorted(routes_dict.keys()):
-            routes.append(routes_dict[route_network])
+            if not routes_dict[route_network]['server_link']:
+                routes.append(routes_dict[route_network])
+            else:
+                link_routes.append(routes_dict[route_network])
 
-        return routes
+        return routes + link_routes
 
     def add_route(self, network, nat_route):
         exists = False
