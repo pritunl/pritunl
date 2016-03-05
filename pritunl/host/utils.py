@@ -147,6 +147,7 @@ def init():
                 interface=settings.conf.local_address_interface)
             settings.local.host.auto_local_address6 = None
 
+    settings.local.host.auto_ami_id = utils.get_ami_id()
     settings.local.host.local_networks = utils.get_local_networks()
 
     settings.local.host.commit()
