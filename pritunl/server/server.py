@@ -544,6 +544,13 @@ class Server(mongo.MongoObject):
 
         orig_network = network
 
+        server_link = False
+        for route in self.get_routes(include_server_links=True):
+            if route['network'] == network:
+                server_link = route['server_link']
+                if route['nat'] != nat_route:
+                    raise ServerRouteNatServerLink('Cannot nat server link')
+
         if network == self.network:
             network = 'virtual'
 
@@ -555,6 +562,7 @@ class Server(mongo.MongoObject):
         for route in self.routes:
             if route['network'] == network:
                 route['nat'] = nat_route
+                route['server_link'] = server_link
                 exists = True
                 break
 
@@ -562,6 +570,7 @@ class Server(mongo.MongoObject):
             self.routes.append({
                 'network': network,
                 'nat': nat_route,
+                'server_link': server_link,
             })
 
         return {
