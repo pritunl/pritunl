@@ -81,7 +81,7 @@ class Host(mongo.MongoObject):
 
     @property
     def link_addr(self):
-        return self.link_address or  self.public_address or \
+        return self.link_address or self.public_address or \
             self.auto_public_address
 
     def dict(self):
