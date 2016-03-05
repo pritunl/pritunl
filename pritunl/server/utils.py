@@ -132,35 +132,33 @@ def link_servers(server_id, link_server_id, use_local_address=False):
     if server_id == link_server_id:
         raise TypeError('Server id must be different then link server id')
 
-    collection = mongo.get_collection('servers')
-
-    count = 0
-    spec = {
-        '_id': {'$in': [server_id, link_server_id]},
-    }
-    project = {
-        '_id': True,
-        'status': True,
-        'hosts': True,
-        'replica_count': True,
-    }
+    fields = ('_id', 'status', 'hosts', 'replica_count', 'network', 'links',
+        'network_start', 'network_end', 'routes', 'organizations')
 
     hosts = set()
-    for doc in collection.find(spec, project):
-        if doc['status'] == ONLINE:
+    routes = set()
+
+    for svr in (
+                get_by_id(server_id, fields=fields),
+                get_by_id(link_server_id, fields=fields),
+            ):
+        if svr.status == ONLINE:
             raise ServerLinkOnlineError('Server must be offline to link')
 
-        if doc['replica_count'] > 1:
+        if svr.replica_count > 1:
             raise ServerLinkReplicaError('Server has replicas')
 
-        hosts_set = set(doc['hosts'])
+        hosts_set = set(svr.hosts)
         if hosts & hosts_set:
             raise ServerLinkCommonHostError('Servers have a common host')
         hosts.update(hosts_set)
 
-        count += 1
-    if count != 2:
-        raise ServerLinkError('Link server not found')
+        routes_set = set()
+        for route in svr.get_routes():
+            routes_set.add(route['network'])
+        if routes & routes_set:
+            raise ServerLinkCommonRouteError('Servers have a common route')
+        routes.update(routes_set)
 
     tran = transaction.Transaction()
     collection = tran.collection('servers')
