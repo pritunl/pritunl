@@ -22,7 +22,13 @@
   <label>Local IPv6 Address</label>
   <input type="text" class="form-control" placeholder="Enter local IPv6 address" data-toggle="tooltip" title="Local IPv6 network address for server" value="<%- local_address6 %>">
 </div>
-<div class="advanced form-group link-address">
-  <label>Link Address</label>
-  <input type="text" class="form-control" placeholder="Enter link address" data-toggle="tooltip" title="IP address or domain used when linked servers connect to a linked server on this host" value="<%- link_address %>">
+<div class="advanced">
+  <div class="form-group link-address">
+    <label>Link Address</label>
+    <input type="text" class="form-control" placeholder="Enter link address" data-toggle="tooltip" title="IP address or domain used when linked servers connect to a linked server on this host" value="<%- link_address %>">
+  </div>
+  <div class="form-group instance-id">
+    <label>AWS Instance ID</label>
+    <input type="text" class="form-control" placeholder="Enter AWS instance ID" data-toggle="tooltip" title="ID of AWS instance. Only available on AWS." value="<%- instance_id %>">
+  </div>
 </div>
