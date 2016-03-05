@@ -86,6 +86,10 @@ class Host(mongo.MongoObject):
         return self.link_address or self.public_address or \
             self.auto_public_address
 
+    @property
+    def aws_id(self):
+        return self.ami_id or self.auto_ami_id
+
     def dict(self):
         return {
             'id': self.id,
