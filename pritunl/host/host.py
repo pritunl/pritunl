@@ -91,6 +91,7 @@ class Host(mongo.MongoObject):
             'id': self.id,
             'name': self.name,
             'hostname': self.hostname,
+            'ami_id': self.aws_id,
             'status': self.status,
             'uptime': self.uptime,
             'user_count': self.user_count,
