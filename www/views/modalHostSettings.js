@@ -23,6 +23,7 @@ define([
       var localAddress = this.$('.local-address input').val() || null;
       var localAddress6 = this.$('.local-address6 input').val() || null;
       var linkAddress = this.$('.link-address input').val() || null;
+      var instanceId = this.$('.instance-id input').val() || null;
 
       this.setLoading('Saving host...');
       this.model.save({
@@ -32,7 +33,8 @@ define([
         routed_subnet6: routedSubnet6,
         local_address: localAddress,
         local_address6: localAddress6,
-        link_address: linkAddress
+        link_address: linkAddress,
+        instance_id: instanceId
       }, {
         success: function() {
           this.close(true);
