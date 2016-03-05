@@ -8,6 +8,7 @@ define([
     defaults: {
       'name': null,
       'hostname': null,
+      'instance_id': null,
       'status': null,
       'uptime': null,
       'user_count': null,
