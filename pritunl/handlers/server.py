@@ -925,6 +925,8 @@ def server_link_put(server_id, link_server_id):
 
     event.Event(type=SERVER_LINKS_UPDATED, resource_id=server_id)
     event.Event(type=SERVER_LINKS_UPDATED, resource_id=link_server_id)
+    event.Event(type=SERVER_ROUTES_UPDATED, resource_id=server_id)
+    event.Event(type=SERVER_ROUTES_UPDATED, resource_id=link_server_id)
 
     return utils.jsonify({})
 
@@ -944,6 +946,8 @@ def server_link_delete(server_id, link_server_id):
 
     event.Event(type=SERVER_LINKS_UPDATED, resource_id=server_id)
     event.Event(type=SERVER_LINKS_UPDATED, resource_id=link_server_id)
+    event.Event(type=SERVER_ROUTES_UPDATED, resource_id=server_id)
+    event.Event(type=SERVER_ROUTES_UPDATED, resource_id=link_server_id)
 
     return utils.jsonify({})
 
