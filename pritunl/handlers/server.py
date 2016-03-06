@@ -906,6 +906,11 @@ def server_link_put(server_id, link_server_id):
             'error': SERVER_LINK_COMMON_HOST,
             'error_msg': SERVER_LINK_COMMON_HOST_MSG,
         }, 400)
+    except ServerLinkCommonRouteError:
+        return utils.jsonify({
+            'error': SERVER_LINK_COMMON_ROUTE,
+            'error_msg': SERVER_LINK_COMMON_ROUTE_MSG,
+        }, 400)
     except ServerLinkReplicaError:
         return utils.jsonify({
             'error': SERVER_LINKS_AND_REPLICA,
