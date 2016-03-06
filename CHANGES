@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add server link routes
+
 Version 1.18.903.84 2016-03-03
 ------------------------------
 
