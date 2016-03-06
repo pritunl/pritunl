@@ -572,6 +572,9 @@ SERVER_ROUTE_VIRTUAL_NAT_MSG = 'Virtual network routes cannot use NAT.'
 SERVER_LINK_COMMON_HOST = 'server_link_common_host'
 SERVER_LINK_COMMON_HOST_MSG = 'Linked servers cannot have a common host.'
 
+SERVER_LINK_COMMON_ROUTE = 'server_link_common_route'
+SERVER_LINK_COMMON_ROUTE_MSG = 'Linked servers cannot have a common route.'
+
 SERVER_INVALID = 'server_invalid'
 SERVER_INVALID_MSG = 'Server is not valid.'
 
