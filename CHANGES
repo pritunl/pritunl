@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.18.906.35 2016-03-06
+------------------------------
 
 Add server link routes
 Fix configuration issue with virtual network route
