@@ -490,13 +490,11 @@ class Server(mongo.MongoObject):
                         'network_link': False,
                         'server_link': False,
                     })
+            elif route_network == 'virtual':
+                continue
             else:
                 if route_network in routes_dict:
-                    if routes_dict[route_network]['virtual_network']:
-                        nat = route.get('nat', False)
-                    else:
-                        nat = route.get('nat', True)
-                    routes_dict[route_network]['nat'] = nat
+                    routes_dict[route_network]['nat'] = route.get('nat', True)
                 else:
                     if route.get('server_link') and \
                             route_network not in routes_dict:
