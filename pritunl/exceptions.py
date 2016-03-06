@@ -89,6 +89,9 @@ class BridgeLookupError(ServerError):
 class ServerRouteNatVirtual(ServerError):
     pass
 
+class ServerRouteNatServerLink(ServerError):
+    pass
+
 
 class NotFound(BaseError):
     pass
