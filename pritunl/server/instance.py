@@ -140,7 +140,7 @@ class ServerInstance(object):
 
         for link_svr in self.server.iter_links(fields=(
                 '_id', 'network', 'local_networks', 'network_start',
-                'network_end', 'organizations', 'routes')):
+                'network_end', 'organizations', 'routes', 'links')):
             if self.server.id < link_svr.id:
                 for route in link_svr.get_routes(include_default=False):
                     network = route['network']
@@ -369,7 +369,8 @@ class ServerInstance(object):
 
         link_svr_networks = []
         for link_svr in self.server.iter_links(fields=('_id', 'network',
-                'network_start', 'network_end', 'organizations', 'routes')):
+                'network_start', 'network_end', 'organizations', 'routes',
+                'links')):
             link_svr_networks.append(link_svr.network)
 
         for route in self.server.get_routes(include_hidden=True):
