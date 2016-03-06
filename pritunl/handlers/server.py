@@ -696,6 +696,11 @@ def server_route_post(server_id):
             'error': SERVER_ROUTE_VIRTUAL_NAT,
             'error_msg': SERVER_ROUTE_VIRTUAL_NAT_MSG,
         }, 400)
+    except ServerRouteNatServerLink:
+        return utils.jsonify({
+            'error': SERVER_ROUTE_SERVER_LINK_NAT,
+            'error_msg': SERVER_ROUTE_SERVER_LINK_NAT_MSG,
+        }, 400)
 
     svr.commit('routes')
 
