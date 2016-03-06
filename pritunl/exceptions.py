@@ -68,6 +68,9 @@ class ServerLinkOnlineError(ServerError):
 class ServerLinkCommonHostError(ServerError):
     pass
 
+class ServerLinkCommonRouteError(ServerError):
+    pass
+
 class ServerLinkReplicaError(ServerError):
     pass
 
