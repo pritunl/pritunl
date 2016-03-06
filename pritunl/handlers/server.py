@@ -741,6 +741,9 @@ def server_route_put(server_id, route_network):
     svr.commit('routes')
 
     event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
+    for svr_link in svr.links:
+        event.Event(type=SERVER_ROUTES_UPDATED,
+            resource_id=svr_link['server_id'])
 
     return utils.jsonify(route)
 
@@ -762,6 +765,9 @@ def server_route_delete(server_id, route_network):
     svr.commit('routes')
 
     event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
+    for svr_link in svr.links:
+        event.Event(type=SERVER_ROUTES_UPDATED,
+            resource_id=svr_link['server_id'])
 
     return utils.jsonify(route)
 
