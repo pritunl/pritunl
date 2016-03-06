@@ -705,6 +705,9 @@ def server_route_post(server_id):
     svr.commit('routes')
 
     event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
+    for svr_link in svr.links:
+        event.Event(type=SERVER_ROUTES_UPDATED,
+            resource_id=svr_link['server_id'])
 
     return utils.jsonify(route)
 
