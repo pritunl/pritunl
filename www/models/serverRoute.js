@@ -11,6 +11,7 @@ define([
       'network': null,
       'virtual_network': null,
       'network_link': null,
+      'server_link': null,
       'nat': null
     },
     url: function() {
