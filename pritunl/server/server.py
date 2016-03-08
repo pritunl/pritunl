@@ -447,6 +447,9 @@ class Server(mongo.MongoObject):
                     'network_start', 'network_end', 'routes',
                     'organizations', 'links')):
                 for route in link_svr.get_routes():
+                    if route['network'] == '0.0.0.0/0':
+                        continue
+
                     data = routes_dict.get(route['network'], {})
 
                     data['id'] = route['id']
