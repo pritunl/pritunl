@@ -4,7 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add support for mongodb ssl when using dns or monitoring
-Fix issue with replicated servers
+Fix issue with replicated servers route clean up
 Fix SSL issue with some browsers
 
 Version 1.18.906.35 2016-03-06
