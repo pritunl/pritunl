@@ -35,7 +35,13 @@ define([
       'theme': null,
       'server_cert': null,
       'server_key': null,
-      'cloud_provider': null
+      'cloud_provider': null,
+      'us_east_1_access_key': null,
+      'us_east_1_secret_key': null,
+      'us_west_1_access_key': null,
+      'us_west_1_secret_key': null,
+      'us_west_2_access_key': null,
+      'us_west_2_secret_key': null
     },
     url: function() {
       return '/settings';
