@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Fix issue with replicated servers
+Fix SSL issue with some browsers
 
 Version 1.18.906.35 2016-03-06
 ------------------------------
