@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Add support for mongodb ssl when using dns or monitoring
 Fix issue with replicated servers
 Fix SSL issue with some browsers
 
