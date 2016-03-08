@@ -45,7 +45,13 @@ define([
       'eu_west_1_access_key': null,
       'eu_west_1_secret_key': null,
       'eu_central_1_access_key': null,
-      'eu_central_1_secret_key': null
+      'eu_central_1_secret_key': null,
+      'ap_northeast_1_access_key': null,
+      'ap_northeast_1_secret_key': null,
+      'ap_northeast_2_access_key': null,
+      'ap_northeast_2_secret_key': null,
+      'ap_southeast_1_access_key': null,
+      'ap_southeast_2_secret_key': null
     },
     url: function() {
       return '/settings';
