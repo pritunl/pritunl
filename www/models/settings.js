@@ -34,7 +34,8 @@ define([
       'public_address': null,
       'theme': null,
       'server_cert': null,
-      'server_key': null
+      'server_key': null,
+      'cloud_provider': null
     },
     url: function() {
       return '/settings';
