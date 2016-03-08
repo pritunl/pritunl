@@ -979,7 +979,10 @@ class Clients(object):
                 'del',
                 virt_address,
             ])
-            self.client_routes.pop(virt_address, None)
+            try:
+                self.client_routes.remove(virt_address)
+            except KeyError:
+                pass
         except subprocess.CalledProcessError:
             pass
         finally:
