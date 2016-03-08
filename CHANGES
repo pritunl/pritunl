@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with replicated servers
+
 Version 1.18.906.35 2016-03-06
 ------------------------------
 
