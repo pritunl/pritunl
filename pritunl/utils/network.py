@@ -73,6 +73,8 @@ def long_to_ip(ip_num):
     ]))
 
 def subnet_to_cidr(subnet):
+    if subnet == '0.0.0.0':
+        return 0
     count = 0
     while ~ip_to_long(subnet) & pow(2, count):
         count += 1
