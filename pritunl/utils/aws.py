@@ -1,4 +1,6 @@
 from pritunl.utils.request import get
+
+from pritunl.exceptions import *
 from pritunl import settings
 
 import boto
@@ -31,8 +33,8 @@ def add_vpc_route(region, vpc_id, network, resource_id):
     )
 
     tables = vpc_conn.get_all_route_tables(filters={'vpc-id': vpc_id})
-    if not tables:
-        raise ValueError('Failed to find routing table')
+    if tables:
+        raise VpcRouteTableNotFound('Failed to find VPC routing table')
     table = tables[0]
 
     instance_id = None
