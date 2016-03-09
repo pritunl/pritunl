@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Fix issue with finding network interface for route
+Fix issue with profile sync
 
 Version 1.18.908.31 2016-03-08
 ------------------------------
