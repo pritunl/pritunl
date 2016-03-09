@@ -47,6 +47,27 @@ def _dict():
             'routed_subnet6': settings.local.host.routed_subnet6,
             'server_cert': 'demo',
             'server_key': 'demo',
+            'cloud_provider': settings.app.cloud_provider,
+            'us_east_1_access_key': 'demo',
+            'us_east_1_secret_key': 'demo',
+            'us_west_1_access_key': 'demo',
+            'us_west_1_secret_key': 'demo',
+            'us_west_2_access_key': 'demo',
+            'us_west_2_secret_key': 'demo',
+            'eu_west_1_access_key': 'demo',
+            'eu_west_1_secret_key': 'demo',
+            'eu_central_1_access_key': 'demo',
+            'eu_central_1_secret_key': 'demo',
+            'ap_northeast_1_access_key': 'demo',
+            'ap_northeast_1_secret_key': 'demo',
+            'ap_northeast_2_access_key': 'demo',
+            'ap_northeast_2_secret_key': 'demo',
+            'ap_southeast_1_access_key': 'demo',
+            'ap_southeast_1_secret_key': 'demo',
+            'ap_southeast_2_access_key': 'demo',
+            'ap_southeast_2_secret_key': 'demo',
+            'sa_east_1_access_key': 'demo',
+            'sa_east_1_secret_key': 'demo',
         }
     else:
         return {
@@ -76,6 +97,35 @@ def _dict():
             'routed_subnet6': settings.local.host.routed_subnet6,
             'server_cert': settings.app.server_cert,
             'server_key': settings.app.server_key,
+            'cloud_provider': settings.app.cloud_provider,
+            'us_east_1_access_key': settings.app.us_east_1_access_key,
+            'us_east_1_secret_key': settings.app.us_east_1_secret_key,
+            'us_west_1_access_key': settings.app.us_west_1_access_key,
+            'us_west_1_secret_key': settings.app.us_west_1_secret_key,
+            'us_west_2_access_key': settings.app.us_west_2_access_key,
+            'us_west_2_secret_key': settings.app.us_west_2_secret_key,
+            'eu_west_1_access_key': settings.app.eu_west_1_access_key,
+            'eu_west_1_secret_key': settings.app.eu_west_1_secret_key,
+            'eu_central_1_access_key': settings.app.eu_central_1_access_key,
+            'eu_central_1_secret_key': settings.app.eu_central_1_secret_key,
+            'ap_northeast_1_access_key':
+                settings.app.ap_northeast_1_access_key,
+            'ap_northeast_1_secret_key':
+                settings.app.ap_northeast_1_secret_key,
+            'ap_northeast_2_access_key':
+                settings.app.ap_northeast_2_access_key,
+            'ap_northeast_2_secret_key':
+                settings.app.ap_northeast_2_secret_key,
+            'ap_southeast_1_access_key':
+                settings.app.ap_southeast_1_access_key,
+            'ap_southeast_1_secret_key':
+                settings.app.ap_southeast_1_secret_key,
+            'ap_southeast_2_access_key':
+                settings.app.ap_southeast_2_access_key,
+            'ap_southeast_2_secret_key':
+                settings.app.ap_southeast_2_secret_key,
+            'sa_east_1_access_key': settings.app.sa_east_1_access_key,
+            'sa_east_1_secret_key': settings.app.sa_east_1_secret_key,
         }
 
 @app.app.route('/settings', methods=['GET'])
