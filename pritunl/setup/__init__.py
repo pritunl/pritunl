@@ -17,6 +17,7 @@ from pritunl.setup.runners import setup_runners
 from pritunl.setup.handlers import setup_handlers
 from pritunl.setup.check import setup_check
 from pritunl.setup.server_cert import setup_server_cert
+
 from pritunl import settings
 
 def setup_all():
