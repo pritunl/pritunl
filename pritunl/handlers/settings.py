@@ -391,6 +391,45 @@ def settings_put():
         else:
             settings.app.server_key = None
 
+    if 'cloud_provider' in flask.request.json:
+        settings_commit = True
+        cloud_provider = flask.request.json['cloud_provider']
+        if cloud_provider:
+            settings.app.cloud_provider = cloud_provider
+        else:
+            settings.app.cloud_provider = None
+
+    for aws_key in (
+                'us_east_1_access_key',
+                'us_east_1_secret_key',
+                'us_west_1_access_key',
+                'us_west_1_secret_key',
+                'us_west_2_access_key',
+                'us_west_2_secret_key',
+                'eu_west_1_access_key',
+                'eu_west_1_secret_key',
+                'eu_central_1_access_key',
+                'eu_central_1_secret_key',
+                'ap_northeast_1_access_key',
+                'ap_northeast_1_secret_key',
+                'ap_northeast_2_access_key',
+                'ap_northeast_2_secret_key',
+                'ap_southeast_1_access_key',
+                'ap_southeast_1_secret_key',
+                'ap_southeast_2_access_key',
+                'ap_southeast_2_secret_key',
+                'sa_east_1_access_key',
+                'sa_east_1_secret_key',
+            ):
+        if aws_key in flask.request.json:
+            settings_commit = True
+            aws_value = flask.request.json[aws_key]
+
+            if aws_value:
+                setattr(settings.app, aws_key, utils.filter_str(aws_value))
+            else:
+                setattr(settings.app, aws_key, None)
+
     if not settings.app.sso:
         settings.app.sso_match = None
         settings.app.sso_token = None
