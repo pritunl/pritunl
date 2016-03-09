@@ -292,45 +292,45 @@ define([
       var serverKey = this.$('.server-key textarea').val();
       var cloudProvider = this.$('.cloud-provider select').val();
       var usEast1AccessKey = this.$(
-        '.us-east-1-access-key input').val();;
+        '.us-east-1-access-key input').val();
       var usEast1SecretKey = this.$(
-        '.us-east-1-secret-key input').val();;
+        '.us-east-1-secret-key input').val();
       var usWest1AccessKey = this.$(
-        '.us-west-1-access-key input').val();;
+        '.us-west-1-access-key input').val();
       var usWest1SecretKey = this.$(
-        '.us-west-1-secret-key input').val();;
+        '.us-west-1-secret-key input').val();
       var usWest2AccessKey = this.$(
-        '.us-west-2-access-key input').val();;
+        '.us-west-2-access-key input').val();
       var usWest2SecretKey = this.$(
-        '.us-west-2-secret-key input').val();;
+        '.us-west-2-secret-key input').val();
       var euWest1AccessKey = this.$(
-        '.eu-west-1-access-key input').val();;
+        '.eu-west-1-access-key input').val();
       var euWest1SecretKey = this.$(
-        '.eu-west-1-secret-key input').val();;
+        '.eu-west-1-secret-key input').val();
       var euCentral1AccessKey = this.$(
-        '.eu-central-1-access-key input').val();;
+        '.eu-central-1-access-key input').val();
       var euCentral1SecretKey = this.$(
-        '.eu-central-1-secret-key input').val();;
+        '.eu-central-1-secret-key input').val();
       var apNortheast1AccessKey = this.$(
-        '.ap-northeast-1-access-key input').val();;
+        '.ap-northeast-1-access-key input').val();
       var apNortheast1SecretKey = this.$(
-        '.ap-northeast-1-secret-key input').val();;
+        '.ap-northeast-1-secret-key input').val();
       var apNortheast2AccessKey = this.$(
-        '.ap-northeast-2-access-key input').val();;
+        '.ap-northeast-2-access-key input').val();
       var apNortheast2SecretKey = this.$(
-        '.ap-northeast-2-secret-key input').val();;
+        '.ap-northeast-2-secret-key input').val();
       var apSoutheast1AccessKey = this.$(
-        '.ap-southeast-1-access-key input').val();;
+        '.ap-southeast-1-access-key input').val();
       var apSoutheast1SecretKey = this.$(
-        '.ap-southeast-1-secret-key input').val();;
+        '.ap-southeast-1-secret-key input').val();
       var apSoutheast2AccessKey = this.$(
-        '.ap-southeast-2-access-key input').val();;
+        '.ap-southeast-2-access-key input').val();
       var apSoutheast2SecretKey = this.$(
-        '.ap-southeast-2-secret-key input').val();;
+        '.ap-southeast-2-secret-key input').val();
       var saEast1AccessKey = this.$(
-        '.sa-east-1-access-key input').val();;
+        '.sa-east-1-access-key input').val();
       var saEast1SecretKey = this.$(
-        '.sa-east-1-secret_key input').val();;
+        '.sa-east-1-secret_key input').val();
 
       var sso = this.getSsoMode();
       var ssoMatch = null;
