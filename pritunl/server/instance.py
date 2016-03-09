@@ -410,8 +410,8 @@ class ServerInstance(object):
                 if not interface:
                     logger.info(
                         'Failed to find interface for local ' + \
-                        'IPv6 network route, using default route',
-                        'server',
+                            'IPv6 network route, using default route',
+                            'server',
                         server_id=self.server.id,
                         network=network,
                     )
@@ -427,8 +427,8 @@ class ServerInstance(object):
                 if not interface:
                     logger.info(
                         'Failed to find interface for local ' + \
-                        'network route, using default route',
-                        'server',
+                            'network route, using default route',
+                            'server',
                         server_id=self.server.id,
                         network=network,
                     )
