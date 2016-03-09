@@ -288,19 +288,27 @@ class ServerInstance(object):
             )
             raise
 
-        routes = {}
+        routes = []
+        default_interface = None
         for line in routes_output.splitlines():
             line_split = line.split()
             if len(line_split) < 8 or not re.match(IP_REGEX, line_split[0]):
                 continue
             if line_split[0] not in routes:
-                routes[line_split[0]] = line_split[7]
+                if line_split[0] == '0.0.0.0':
+                    default_interface = line_split[7]
 
-        if '0.0.0.0' not in routes:
+                routes.append((
+                    ipaddress.IPNetwork('%s/%s' % (line_split[0],
+                        utils.subnet_to_cidr(line_split[2]))),
+                    line_split[7]
+                ))
+        routes.reverse()
+
+        if not default_interface:
             raise IptablesError('Failed to find default network interface')
-        default_interface = routes['0.0.0.0']
 
-        routes6 = {}
+        routes6 = []
         default_interface6 = None
         if self.server.ipv6:
             try:
@@ -319,23 +327,28 @@ class ServerInstance(object):
                     continue
 
                 try:
-                    ipaddress.IPv6Network(line_split[0])
+                    route_network = ipaddress.IPv6Network(line_split[0])
                 except (ipaddress.AddressValueError, ValueError):
                     continue
 
-                if line_split[0] not in routes6:
-                    routes6[line_split[0]] = line_split[6]
+                if not default_interface6 and line_split[0] == '::/0':
+                    default_interface6 = line_split[6]
 
-            if '::/0' not in routes6:
+                routes6.append((
+                    route_network,
+                    line_split[6]
+                ))
+
+            if not default_interface6:
                 raise IptablesError(
                     'Failed to find default IPv6 network interface')
-            default_interface6 = routes6['::/0']
 
             if default_interface6 == 'lo':
                 logger.error('Failed to find default IPv6 interface',
                     'server',
                     server_id=self.server.id,
                 )
+        routes6.reverse()
 
         rules.append(['INPUT', '-i', self.interface, '-j', 'ACCEPT'])
         rules.append(['FORWARD', '-i', self.interface, '-j', 'ACCEPT'])
@@ -385,9 +398,16 @@ class ServerInstance(object):
                 network = network_address
             else:
                 network = utils.parse_network(network_address)[0]
+            network_obj = ipaddress.IPNetwork(network_address)
 
             if is6:
-                if network not in routes6:
+                interface = None
+                for route_net, route_intf in routes6:
+                    if network_obj in route_net:
+                        interface = route_intf
+                        break
+
+                if not interface:
                     logger.info(
                         'Failed to find interface for local ' + \
                         'IPv6 network route, using default route',
@@ -396,11 +416,15 @@ class ServerInstance(object):
                         network=network,
                     )
                     interface = default_interface6
-                else:
-                    interface = routes6[network]
                 interfaces6.add(interface)
             else:
-                if network not in routes:
+                interface = None
+                for route_net, route_intf in routes:
+                    if network_obj in route_net:
+                        interface = route_intf
+                        break
+
+                if not interface:
                     logger.info(
                         'Failed to find interface for local ' + \
                         'network route, using default route',
@@ -409,8 +433,6 @@ class ServerInstance(object):
                         network=network,
                     )
                     interface = default_interface
-                else:
-                    interface = routes[network]
                 interfaces.add(interface)
 
             if network != '0.0.0.0' and network != '::/0':
