@@ -18,12 +18,9 @@ _changes_audit_text = {
     'sso': 'Single sign-on settings changed',
 }
 
-@app.app.route('/settings', methods=['GET'])
-@auth.session_auth
-def settings_get():
-    response = flask.g.administrator.dict()
+def _dict():
     if settings.app.demo_mode:
-        response.update({
+        return {
             'theme': settings.app.theme,
             'auditing': settings.app.auditing,
             'monitoring': settings.app.monitoring,
@@ -50,36 +47,42 @@ def settings_get():
             'routed_subnet6': settings.local.host.routed_subnet6,
             'server_cert': 'demo',
             'server_key': 'demo',
-        })
+        }
     else:
-        response.update({
+        return {
             'theme': settings.app.theme,
             'auditing': settings.app.auditing,
             'monitoring': settings.app.monitoring,
             'datadog_api_key': settings.app.datadog_api_key,
             'email_from': settings.app.email_from,
-            'email_server': settings.app.email_server,
-            'email_username': settings.app.email_username,
-            'email_password': bool(settings.app.email_password),
+            'email_server': 'demo',
+            'email_username': 'demo',
+            'email_password': True,
             'pin_mode': settings.user.pin_mode,
             'sso': settings.app.sso,
             'sso_match': settings.app.sso_match,
-            'sso_token': settings.app.sso_token,
-            'sso_secret': settings.app.sso_secret,
-            'sso_host': settings.app.sso_host,
-            'sso_admin': settings.app.sso_admin,
+            'sso_token': 'demo',
+            'sso_secret': 'demo',
+            'sso_host': 'demo',
+            'sso_admin': 'demo',
             'sso_org': settings.app.sso_org,
-            'sso_saml_url': settings.app.sso_saml_url,
-            'sso_saml_issuer_url': settings.app.sso_saml_issuer_url,
-            'sso_saml_cert': settings.app.sso_saml_cert,
-            'sso_okta_token': settings.app.sso_okta_token,
-            'sso_onelogin_key': settings.app.sso_onelogin_key,
+            'sso_saml_url': 'demo',
+            'sso_saml_issuer_url': 'demo',
+            'sso_saml_cert': 'demo',
+            'sso_okta_token': 'demo',
+            'sso_onelogin_key': 'demo',
             'public_address': settings.local.host.public_addr,
             'public_address6': settings.local.host.public_addr6,
             'routed_subnet6': settings.local.host.routed_subnet6,
-            'server_cert': settings.app.server_cert,
-            'server_key': settings.app.server_key,
-        })
+            'server_cert': 'demo',
+            'server_key': 'demo',
+        }
+
+@app.app.route('/settings', methods=['GET'])
+@auth.session_auth
+def settings_get():
+    response = flask.g.administrator.dict()
+    response.update(_dict())
     return utils.jsonify(response)
 
 @app.app.route('/settings', methods=['PUT'])
@@ -370,28 +373,5 @@ def settings_put():
     event.Event(type=SETTINGS_UPDATED)
 
     response = flask.g.administrator.dict()
-    response.update({
-        'theme': settings.app.theme,
-        'auditing': settings.app.auditing,
-        'monitoring': settings.app.monitoring,
-        'datadog_api_key': settings.app.datadog_api_key,
-        'email_from': settings.app.email_from,
-        'email_server': settings.app.email_server,
-        'email_username': settings.app.email_username,
-        'email_password': bool(settings.app.email_password),
-        'pin_mode': settings.user.pin_mode,
-        'sso': settings.app.sso,
-        'sso_match': settings.app.sso_match,
-        'sso_token': settings.app.sso_token,
-        'sso_secret': settings.app.sso_secret,
-        'sso_host': settings.app.sso_host,
-        'sso_admin': settings.app.sso_admin,
-        'sso_org': settings.app.sso_org,
-        'sso_saml_url': settings.app.sso_saml_url,
-        'sso_saml_issuer_url': settings.app.sso_saml_issuer_url,
-        'sso_saml_cert': settings.app.sso_saml_cert,
-        'sso_okta_token': settings.app.sso_okta_token,
-        'sso_onelogin_key': settings.app.sso_onelogin_key,
-        'public_address': settings.local.host.public_addr,
-    })
+    response.update(_dict())
     return utils.jsonify(response)
