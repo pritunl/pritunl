@@ -290,6 +290,7 @@ define([
       var pinMode = this.$('.pin-mode select').val();
       var serverCert = this.$('.server-cert textarea').val();
       var serverKey = this.$('.server-key textarea').val();
+      var cloudProvider = this.$('.cloud-provider select').val();
 
       var sso = this.getSsoMode();
       var ssoMatch = null;
@@ -389,7 +390,8 @@ define([
         routed_subnet6: routedSubnet6,
         theme: theme,
         server_cert: serverCert,
-        server_key: serverKey
+        server_key: serverKey,
+        cloud_provider: cloudProvider
       };
 
       if (!username) {
