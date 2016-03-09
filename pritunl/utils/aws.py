@@ -33,7 +33,7 @@ def add_vpc_route(region, vpc_id, network, resource_id):
     )
 
     tables = vpc_conn.get_all_route_tables(filters={'vpc-id': vpc_id})
-    if tables:
+    if not tables:
         raise VpcRouteTableNotFound('Failed to find VPC routing table')
     table = tables[0]
 
