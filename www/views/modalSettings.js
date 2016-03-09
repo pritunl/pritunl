@@ -22,6 +22,7 @@ define([
         'paste .pass input': 'onPassEvent',
         'input .pass input': 'onPassEvent',
         'propertychange .pass input': 'onPassEvent',
+        'change .cloud-provider select': 'onCloudProviderChange',
         'change .monitoring select': 'onMonitoringChange',
         'change .theme select': 'onThemeChange',
         'click .api-token input, .api-secret input': 'onClickInput'
@@ -221,6 +222,14 @@ define([
     },
     onSsoMode: function() {
       this.setSsoMode(this.getSsoMode());
+    },
+    onCloudProviderChange: function() {
+      if (this.$('.cloud-provider select').val() === 'aws') {
+        this.$('.aws-settings').slideDown(window.slideTime);
+      }
+      else {
+        this.$('.aws-settings').slideUp(window.slideTime);
+      }
     },
     onMonitoringChange: function() {
       if (this.$('.monitoring select').val() === 'datadog') {
