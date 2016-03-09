@@ -468,7 +468,7 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
 
     auth_test_signature = base64.b64encode(hmac.new(
         user.sync_secret.encode(), auth_string,
-        hashlib.sha512).digest())
+        hashlib.sha256).digest())
     if auth_signature != auth_test_signature:
         return flask.abort(401)
 
