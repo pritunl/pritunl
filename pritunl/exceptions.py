@@ -118,3 +118,10 @@ class AuthError(Exception):
 
 class AuthForked(Exception):
     pass
+
+
+class AwsError(BaseError):
+    pass
+
+class VpcRouteTableNotFound(AwsError):
+    pass
