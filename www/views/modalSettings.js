@@ -330,7 +330,7 @@ define([
       var saEast1AccessKey = this.$(
         '.sa-east-1-access-key input').val();
       var saEast1SecretKey = this.$(
-        '.sa-east-1-secret_key input').val();
+        '.sa-east-1-secret-key input').val();
 
       var sso = this.getSsoMode();
       var ssoMatch = null;
