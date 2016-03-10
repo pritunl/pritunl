@@ -3,11 +3,13 @@ from pritunl import settings
 from pritunl import wsgiserver
 from pritunl import limiter
 
+import threading
 import flask
 import logging
 import logging.handlers
 import time
 import os
+import urlparse
 
 try:
     import OpenSSL
@@ -18,6 +20,7 @@ except ImportError:
     SSLAdapter = ssl_builtin.BuiltinSSLAdapter
 
 app = flask.Flask(__name__)
+redirect_app = flask.Flask(__name__ + '_redirect')
 
 @app.before_request
 def before_request():
@@ -36,15 +39,24 @@ def after_request(response):
     response.headers.add('Write-Count', flask.g.write_count)
     return response
 
-def _run_wsgi():
+@redirect_app.after_request
+def redirect_after_request(response):
+    url = list(urlparse.urlsplit(flask.request.url))
+    url[0] = 'https'
+    if settings.conf.port != 443:
+        url[1] += ':%s' % settings.conf.port
+    url = urlparse.urlunsplit(url)
+    return flask.redirect(url)
+
+def _run_wsgi(app_obj, ssl, port):
     logger.info('Starting server', 'app')
 
     server = limiter.CherryPyWSGIServerLimited(
-        (settings.conf.bind_addr, settings.conf.port), app,
+        (settings.conf.bind_addr, port), app_obj,
         request_queue_size=settings.app.request_queue_size,
         server_name=wsgiserver.CherryPyWSGIServer.version)
 
-    if settings.conf.ssl:
+    if ssl:
         server_cert_path = os.path.join(settings.conf.temp_path, 'server.crt')
         server_key_path = os.path.join(settings.conf.temp_path, 'server.key')
         server.ssl_adapter = SSLAdapter(server_cert_path, server_key_path)
@@ -60,7 +72,7 @@ def _run_wsgi():
         logger.exception('Server error occurred', 'app')
         raise
 
-def _run_wsgi_debug():
+def _run_wsgi_debug(app_obj, ssl, port):
     logger.info('Starting debug server', 'app')
 
     # App.run server uses werkzeug logger
@@ -73,8 +85,8 @@ def _run_wsgi_debug():
     settings.local.server_start.wait()
 
     try:
-        app.run(host=settings.conf.bind_addr,
-            port=settings.conf.port, threaded=True)
+        app_obj.run(host=settings.conf.bind_addr,
+            port=port, threaded=True)
     except (KeyboardInterrupt, SystemExit):
         pass
     except:
@@ -82,12 +94,24 @@ def _run_wsgi_debug():
         raise
 
 def run_server():
+    port = settings.conf.port
+
     if settings.conf.debug:
         logger.LogEntry(message='Web debug server started.')
     else:
         logger.LogEntry(message='Web server started.')
 
+    def redirect_thread():
+        if settings.conf.debug:
+            _run_wsgi_debug(redirect_app, False, 80)
+        else:
+            _run_wsgi(redirect_app, False, 80)
+
+    thread = threading.Thread(target=redirect_thread)
+    thread.daemon = True
+    thread.start()
+
     if settings.conf.debug:
-        _run_wsgi_debug()
+        _run_wsgi_debug(app, settings.conf.ssl, port)
     else:
-        _run_wsgi()
+        _run_wsgi(app, settings.conf.ssl, port)
