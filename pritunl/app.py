@@ -94,24 +94,16 @@ def _run_wsgi_debug(app_obj, ssl, port):
         raise
 
 def run_server():
-    port = settings.conf.port
-
     if settings.conf.debug:
         logger.LogEntry(message='Web debug server started.')
     else:
         logger.LogEntry(message='Web server started.')
 
-    def redirect_thread():
-        if settings.conf.debug:
-            _run_wsgi_debug(redirect_app, False, 80)
-        else:
-            _run_wsgi(redirect_app, False, 80)
-
-    thread = threading.Thread(target=redirect_thread)
-    thread.daemon = True
-    thread.start()
-
     if settings.conf.debug:
-        _run_wsgi_debug(app, settings.conf.ssl, port)
+        _run_wsgi_debug(app, settings.conf.ssl, settings.conf.port)
     else:
-        _run_wsgi(app, settings.conf.ssl, port)
+        thread = threading.Thread(target=_run_wsgi,
+            args=(redirect_app, False, 80))
+        thread.daemon = True
+        thread.start()
+        _run_wsgi(app, settings.conf.ssl, settings.conf.port)
