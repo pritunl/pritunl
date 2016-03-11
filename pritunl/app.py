@@ -100,10 +100,10 @@ def run_server():
         logger.LogEntry(message='Web server started.')
 
     if settings.conf.debug:
-        _run_wsgi_debug(app, settings.conf.ssl, settings.conf.port)
+        _run_wsgi_debug(app, settings.app.ssl, settings.app.port)
     else:
         thread = threading.Thread(target=_run_wsgi,
             args=(redirect_app, False, 80))
         thread.daemon = True
         thread.start()
-        _run_wsgi(app, settings.conf.ssl, settings.conf.port)
+        _run_wsgi(app, settings.app.ssl, settings.app.port)
