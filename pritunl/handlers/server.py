@@ -674,6 +674,9 @@ def server_route_get(server_id):
 @app.app.route('/server/<server_id>/route', methods=['POST'])
 @auth.session_auth
 def server_route_post(server_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     svr = server.get_by_id(server_id, fields=('_id', 'network', 'links',
         'network_start', 'network_end', 'routes', 'organizations', 'status'))
     route_network = flask.request.json['network']
@@ -714,6 +717,9 @@ def server_route_post(server_id):
 @app.app.route('/server/<server_id>/route/<route_network>', methods=['PUT'])
 @auth.session_auth
 def server_route_put(server_id, route_network):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     svr = server.get_by_id(server_id, fields=('_id', 'network', 'links',
         'network_start', 'network_end', 'routes', 'organizations', 'status'))
     route_network = route_network.decode('hex')
@@ -753,6 +759,9 @@ def server_route_put(server_id, route_network):
 @app.app.route('/server/<server_id>/route/<route_network>', methods=['DELETE'])
 @auth.session_auth
 def server_route_delete(server_id, route_network):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     svr = server.get_by_id(server_id, fields=('_id', 'network', 'links',
         'network_start', 'network_end', 'routes', 'organizations', 'status'))
     route_network = route_network.decode('hex')
