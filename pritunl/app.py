@@ -1,5 +1,6 @@
 from pritunl.constants import *
 from pritunl.exceptions import *
+from pritunl.helpers import *
 from pritunl import logger
 from pritunl import settings
 from pritunl import wsgiserver
@@ -35,7 +36,10 @@ def set_acme(token, authorization):
     acme_authorization = authorization
 
 def restart_server():
+    set_app_server_interrupt()
     app_server.interrupt = ServerRestart('Restart')
+    time.sleep(1)
+    clear_app_server_interrupt()
 
 @app.before_request
 def before_request():
