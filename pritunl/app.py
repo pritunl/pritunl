@@ -42,7 +42,10 @@ def after_request(response):
 @redirect_app.after_request
 def redirect_after_request(response):
     url = list(urlparse.urlsplit(flask.request.url))
-    url[0] = 'https'
+    if settings.app.ssl:
+        url[0] = 'https'
+    else:
+        url[0] = 'http'
     if settings.conf.port != 443:
         url[1] += ':%s' % settings.app.port
     url = urlparse.urlunsplit(url)
