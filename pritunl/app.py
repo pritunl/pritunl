@@ -105,8 +105,9 @@ def run_server():
     if settings.conf.debug:
         _run_wsgi_debug(app, settings.app.ssl, settings.app.port)
     else:
-        thread = threading.Thread(target=_run_wsgi,
-            args=(redirect_app, False, 80))
-        thread.daemon = True
-        thread.start()
+        if settings.app.redirect_server:
+            thread = threading.Thread(target=_run_wsgi,
+                args=(redirect_app, False, 80))
+            thread.daemon = True
+            thread.start()
         _run_wsgi(app, settings.app.ssl, settings.app.port)
