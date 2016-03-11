@@ -60,10 +60,16 @@ def update_server(delay=0):
         _update_lock.release()
 
 def restart_server(delay=0):
-    set_app_server_interrupt()
-    app_server.interrupt = ServerRestart('Restart')
-    time.sleep(1)
-    clear_app_server_interrupt()
+    def thread_func():
+        time.sleep(delay)
+        set_app_server_interrupt()
+        if app_server:
+            app_server.interrupt = ServerRestart('Restart')
+        time.sleep(1)
+        clear_app_server_interrupt()
+    thread = threading.Thread(target=thread_func)
+    thread.daemon = True
+    thread.start()
 
 @app.before_request
 def before_request():
