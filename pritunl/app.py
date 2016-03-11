@@ -25,6 +25,14 @@ except ImportError:
 app = flask.Flask(__name__)
 app_server = None
 redirect_app = flask.Flask(__name__ + '_redirect')
+acme_token = None
+acme_authorization = None
+
+def set_acme(token, authorization):
+    global acme_token
+    global acme_authorization
+    acme_token = token
+    acme_authorization = authorization
 
 def restart_server():
     app_server.interrupt = ServerRestart('Restart')
@@ -49,6 +57,10 @@ def after_request(response):
 @redirect_app.after_request
 def redirect_after_request(response):
     url = list(urlparse.urlsplit(flask.request.url))
+
+    if flask.request.path.startswith('/.well-known/acme-challenge/'):
+        return response
+
     if settings.app.ssl:
         url[0] = 'https'
     else:
@@ -57,6 +69,12 @@ def redirect_after_request(response):
         url[1] += ':%s' % settings.app.port
     url = urlparse.urlunsplit(url)
     return flask.redirect(url)
+
+@redirect_app.route('/.well-known/acme-challenge/<token>', methods=['GET'])
+def acme_token_get(token):
+    if token == acme_token:
+        return flask.Response(acme_authorization, mimetype='text/plain')
+    return flask.abort(404)
 
 def _run_redirect_wsgi():
     logger.info('Starting redirect server', 'app')
