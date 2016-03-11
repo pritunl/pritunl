@@ -9,6 +9,11 @@ class BaseError(Exception):
             message = '%s. %r' % (message, data)
         Exception.__init__(self, message)
 
+
+class ServerRestart(BaseError):
+    pass
+
+
 class LicenseInvalid(BaseError):
     pass
 
