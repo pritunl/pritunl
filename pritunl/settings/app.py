@@ -5,6 +5,7 @@ class SettingsApp(SettingsGroupMongo):
     fields = {
         'ssl': True,
         'port': 443,
+        'redirect_server': True,
         'demo_mode': False,
         'allow_insecure_session': False,
         'auditing': None,
