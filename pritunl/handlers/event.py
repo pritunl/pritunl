@@ -16,4 +16,5 @@ def event_get(cursor=None):
     if cursor is not None:
         cursor = utils.ObjectId(cursor)
 
-    return utils.jsonify(event.get_events(cursor=cursor))
+    return utils.jsonify(event.get_events(
+        cursor=cursor, yield_app_server=True))
