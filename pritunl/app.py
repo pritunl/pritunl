@@ -80,8 +80,10 @@ def _run_wsgi():
     )
 
     if settings.app.ssl:
-        server_cert_path = os.path.join(settings.conf.temp_path, 'server.crt')
-        server_key_path = os.path.join(settings.conf.temp_path, 'server.key')
+        server_cert_path = os.path.join(settings.conf.temp_path,
+            SERVER_CERT_NAME)
+        server_key_path = os.path.join(settings.conf.temp_path,
+            SERVER_KEY_NAME)
         server.ssl_adapter = SSLAdapter(server_cert_path, server_key_path)
 
     settings.local.server_ready.set()
