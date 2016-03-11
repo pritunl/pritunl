@@ -44,7 +44,7 @@ def redirect_after_request(response):
     url = list(urlparse.urlsplit(flask.request.url))
     url[0] = 'https'
     if settings.conf.port != 443:
-        url[1] += ':%s' % settings.conf.port
+        url[1] += ':%s' % settings.app.port
     url = urlparse.urlunsplit(url)
     return flask.redirect(url)
 
