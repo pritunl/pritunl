@@ -9,6 +9,7 @@ define([
       'username': null,
       'password': null,
       'auditing': null,
+      'port': null,
       'token': null,
       'secret': null,
       'default': null,
