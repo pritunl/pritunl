@@ -225,11 +225,23 @@ def settings_put():
 
     if 'acme_domain' in flask.request.json:
         settings_commit = True
+
         acme_domain = utils.filter_str(
             flask.request.json['acme_domain'] or None)
-        acme_domain = acme_domain.replace('https://', '')
-        acme_domain = acme_domain.replace('http://', '')
-        acme_domain = acme_domain.replace('/', '')
+        if acme_domain:
+            acme_domain = acme_domain.replace('https://', '')
+            acme_domain = acme_domain.replace('http://', '')
+            acme_domain = acme_domain.replace('/', '')
+
+        if acme_domain != settings.app.acme_domain:
+            if not acme_domain:
+                settings.app.acme_key = None
+                settings.app.server_key = None
+                settings.app.server_cert = None
+                utils.create_server_cert()
+                update_server = True
+            else:
+                update_acme = True
         settings.app.acme_domain = acme_domain
 
     if 'auditing' in flask.request.json:
@@ -510,6 +522,25 @@ def settings_put():
             event.Event(type=USERS_UPDATED, resource_id=org.id)
 
     event.Event(type=SETTINGS_UPDATED)
+
+    if update_server:
+        app.update_server(0.5)
+
+    if update_acme:
+        try:
+            acme.update_acme_cert()
+            app.update_server(0.5)
+        except:
+            logger.exception('Failed to get LetsEncrypt cert', 'handler',
+                acme_domain=settings.app.acme_domain,
+            )
+            settings.app.acme_domain = None
+            settings.app.acme_key = None
+            settings.commit()
+            return utils.jsonify({
+                'error': ACME_ERROR,
+                'error_msg': ACME_ERROR_MSG,
+            }, 400)
 
     response = flask.g.administrator.dict()
     response.update(_dict())
