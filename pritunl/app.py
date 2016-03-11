@@ -108,6 +108,7 @@ def _run_wsgi(restart=False):
         request_queue_size=settings.app.request_queue_size,
         server_name=APP_NAME,
     )
+    app_server.shutdown_timeout = 1
 
     if settings.app.ssl:
         server_cert_path = os.path.join(settings.conf.temp_path,
