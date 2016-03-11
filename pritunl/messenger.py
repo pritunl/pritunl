@@ -75,7 +75,8 @@ def get_cursor_id(channels):
                 publish(channels, None)
 
 @interrupter_generator
-def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None):
+def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None,
+        yield_app_server=False):
     collection = mongo.get_collection('messages')
     start_time = time.time()
     cursor_id = cursor_id or get_cursor_id(channels)
@@ -124,6 +125,9 @@ def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None):
                                 yield doc
 
                         return
+
+                if yield_app_server and check_app_server_interrupt():
+                    return
 
                 if timeout and time.time() - start_time >= timeout:
                     return
