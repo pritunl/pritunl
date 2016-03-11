@@ -89,12 +89,12 @@ def redirect_after_request(response):
     if flask.request.path.startswith('/.well-known/acme-challenge/'):
         return response
 
-    if settings.app.ssl:
+    if settings.app.server_ssl:
         url[0] = 'https'
     else:
         url[0] = 'http'
-    if settings.conf.port != 443:
-        url[1] += ':%s' % settings.app.port
+    if settings.app.server_port != 443:
+        url[1] += ':%s' % settings.app.server_port
     url = urlparse.urlunsplit(url)
     return flask.redirect(url)
 
