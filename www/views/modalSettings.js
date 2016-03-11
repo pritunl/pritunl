@@ -21,6 +21,7 @@ define([
         'keyup .pass input': 'onPassEvent',
         'paste .pass input': 'onPassEvent',
         'input .pass input': 'onPassEvent',
+        'input .port input': 'onPortChange',
         'propertychange .pass input': 'onPassEvent',
         'change .cloud-provider select': 'onCloudProviderChange',
         'change .monitoring select': 'onMonitoringChange',
@@ -31,6 +32,7 @@ define([
     initialize: function(options) {
       this.orgs = new OrgCollection();
       this.initial = options.initial;
+      this.curPort = this.model.get('port');
       if (this.initial) {
         this.title = 'Initial Setup';
         this.cancelText = 'Setup Later';
@@ -222,6 +224,14 @@ define([
     },
     onSsoMode: function() {
       this.setSsoMode(this.getSsoMode());
+    },
+    onPortChange: function() {
+      if (parseInt(this.$('.port input').val(), 10) !== this.curPort) {
+        this.setAlert('warning',
+          'Changing port requires restarting server.', '.port');
+      } else {
+        this.clearAlert();
+      }
     },
     onCloudProviderChange: function() {
       if (this.$('.cloud-provider select').val() === 'aws') {
