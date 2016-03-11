@@ -23,3 +23,31 @@ def generate_server_cert(server_cert_path, server_key_path):
         '-out', server_cert_path,
     ])
     os.chmod(server_key_path, 0600)
+
+def generate_private_key():
+    return check_output_logged([
+        'openssl', 'genrsa', '4096',
+    ])
+
+def generate_csr(private_key, domain):
+    private_key_path = get_temp_path() + '.key'
+
+    with open(private_key_path, 'w') as private_key_file:
+        os.chmod(private_key_path, 0600)
+        private_key_file.write(private_key)
+
+    csr = check_output_logged([
+        'openssl',
+        'req',
+        '-new',
+        '-sha256',
+        '-key', private_key_path,
+        '-subj', '/CN=%s' % domain,
+    ])
+
+    try:
+        os.remove(private_key_path)
+    except:
+        pass
+
+    return csr
