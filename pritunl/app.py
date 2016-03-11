@@ -67,15 +67,15 @@ def _run_redirect_wsgi():
         logger.exception('Redirect server error occurred', 'app')
         raise
 
-def _run_wsgi(app_obj, ssl, port):
+def _run_wsgi():
     logger.info('Starting server', 'app')
 
     server = limiter.CherryPyWSGIServerLimited(
-        (settings.conf.bind_addr, port), app_obj,
+        (settings.conf.bind_addr, settings.app.port), app,
         request_queue_size=settings.app.request_queue_size,
         server_name=APP_NAME)
 
-    if ssl:
+    if settings.app.ssl:
         server_cert_path = os.path.join(settings.conf.temp_path, 'server.crt')
         server_key_path = os.path.join(settings.conf.temp_path, 'server.key')
         server.ssl_adapter = SSLAdapter(server_cert_path, server_key_path)
@@ -91,7 +91,7 @@ def _run_wsgi(app_obj, ssl, port):
         logger.exception('Server error occurred', 'app')
         raise
 
-def _run_wsgi_debug(app_obj, ssl, port):
+def _run_wsgi_debug():
     logger.info('Starting debug server', 'app')
 
     # App.run server uses werkzeug logger
@@ -104,8 +104,8 @@ def _run_wsgi_debug(app_obj, ssl, port):
     settings.local.server_start.wait()
 
     try:
-        app_obj.run(host=settings.conf.bind_addr,
-            port=port, threaded=True)
+        app.run(host=settings.conf.bind_addr,
+            port=settings.app.port, threaded=True)
     except (KeyboardInterrupt, SystemExit):
         pass
     except:
@@ -119,11 +119,10 @@ def run_server():
         logger.LogEntry(message='Web server started.')
 
     if settings.conf.debug:
-        _run_wsgi_debug(app, settings.app.ssl, settings.app.port)
+        _run_wsgi_debug()
     else:
         if settings.app.redirect_server:
-            thread = threading.Thread(target=_run_wsgi,
-                args=(redirect_app, False, 80))
+            thread = threading.Thread(target=_run_redirect_wsgi)
             thread.daemon = True
             thread.start()
-        _run_wsgi(app, settings.app.ssl, settings.app.port)
+        _run_wsgi()
