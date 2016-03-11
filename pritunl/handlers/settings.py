@@ -21,6 +21,7 @@ _changes_audit_text = {
 def _dict():
     if settings.app.demo_mode:
         return {
+            'port': settings.app.port,
             'theme': settings.app.theme,
             'auditing': settings.app.auditing,
             'monitoring': settings.app.monitoring,
@@ -71,6 +72,7 @@ def _dict():
         }
     else:
         return {
+            'port': settings.app.port,
             'theme': settings.app.theme,
             'auditing': settings.app.auditing,
             'monitoring': settings.app.monitoring,
