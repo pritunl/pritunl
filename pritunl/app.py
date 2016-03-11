@@ -52,6 +52,21 @@ def redirect_after_request(response):
     url = urlparse.urlunsplit(url)
     return flask.redirect(url)
 
+def _run_redirect_wsgi():
+    logger.info('Starting redirect server', 'app')
+
+    server = limiter.CherryPyWSGIServerLimited(
+        (settings.conf.bind_addr, 80), redirect_app,
+        server_name=APP_NAME)
+
+    try:
+        server.start()
+    except (KeyboardInterrupt, SystemExit):
+        pass
+    except:
+        logger.exception('Redirect server error occurred', 'app')
+        raise
+
 def _run_wsgi(app_obj, ssl, port):
     logger.info('Starting server', 'app')
 
