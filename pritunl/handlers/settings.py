@@ -22,6 +22,7 @@ def _dict():
     if settings.app.demo_mode:
         return {
             'port': settings.app.port,
+            'acme_domain': settings.app.acme_domain,
             'theme': settings.app.theme,
             'auditing': settings.app.auditing,
             'monitoring': settings.app.monitoring,
@@ -73,6 +74,7 @@ def _dict():
     else:
         return {
             'port': settings.app.port,
+            'acme_domain': settings.app.acme_domain,
             'theme': settings.app.theme,
             'auditing': settings.app.auditing,
             'monitoring': settings.app.monitoring,
@@ -186,6 +188,15 @@ def settings_put():
             }, 400)
 
         settings.app.port = port
+
+    if 'acme_domain' in flask.request.json:
+        settings_commit = True
+        acme_domain = utils.filter_str(
+            flask.request.json['acme_domain'] or None)
+        acme_domain = acme_domain.replace('https://', '')
+        acme_domain = acme_domain.replace('http://', '')
+        acme_domain = acme_domain.replace('/', '')
+        settings.app.acme_domain = acme_domain
 
     if 'auditing' in flask.request.json:
         settings_commit = True
