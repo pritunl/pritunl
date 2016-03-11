@@ -1,8 +1,10 @@
 from pritunl.constants import *
+from pritunl.exceptions import *
 from pritunl import logger
 from pritunl import settings
 from pritunl import wsgiserver
 from pritunl import limiter
+from pritunl import utils
 
 import threading
 import flask
@@ -21,7 +23,11 @@ except ImportError:
     SSLAdapter = ssl_builtin.BuiltinSSLAdapter
 
 app = flask.Flask(__name__)
+app_server = None
 redirect_app = flask.Flask(__name__ + '_redirect')
+
+def restart_server():
+    app_server.interrupt = ServerRestart('Restart')
 
 @app.before_request
 def before_request():
@@ -69,10 +75,12 @@ def _run_redirect_wsgi():
         logger.exception('Redirect server error occurred', 'app')
         raise
 
-def _run_wsgi():
+def _run_wsgi(restart=False):
+    global app_server
+
     logger.info('Starting server', 'app')
 
-    server = limiter.CherryPyWSGIServerLimited(
+    app_server = limiter.CherryPyWSGIServerLimited(
         (settings.conf.bind_addr, settings.app.port),
         app,
         request_queue_size=settings.app.request_queue_size,
@@ -84,15 +92,19 @@ def _run_wsgi():
             SERVER_CERT_NAME)
         server_key_path = os.path.join(settings.conf.temp_path,
             SERVER_KEY_NAME)
-        server.ssl_adapter = SSLAdapter(server_cert_path, server_key_path)
+        app_server.ssl_adapter = SSLAdapter(server_cert_path, server_key_path)
 
-    settings.local.server_ready.set()
-    settings.local.server_start.wait()
+    if not restart:
+        settings.local.server_ready.set()
+        settings.local.server_start.wait()
 
     try:
-        server.start()
+        app_server.start()
     except (KeyboardInterrupt, SystemExit):
         pass
+    except ServerRestart:
+        logger.info('Server restarting...', 'app')
+        return _run_wsgi(True)
     except:
         logger.exception('Server error occurred', 'app')
         raise
