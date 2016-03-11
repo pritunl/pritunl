@@ -23,7 +23,6 @@ _changes_audit_text = {
 def _dict():
     if settings.app.demo_mode:
         return {
-            'port': settings.app.port,
             'acme_domain': settings.app.acme_domain,
             'theme': settings.app.theme,
             'auditing': settings.app.auditing,
@@ -49,6 +48,7 @@ def _dict():
             'public_address': settings.local.host.public_addr,
             'public_address6': settings.local.host.public_addr6,
             'routed_subnet6': settings.local.host.routed_subnet6,
+            'server_port': settings.app.server_port,
             'server_cert': 'demo',
             'server_key': 'demo',
             'cloud_provider': settings.app.cloud_provider,
@@ -75,7 +75,6 @@ def _dict():
         }
     else:
         return {
-            'port': settings.app.port,
             'acme_domain': settings.app.acme_domain,
             'theme': settings.app.theme,
             'auditing': settings.app.auditing,
@@ -101,6 +100,7 @@ def _dict():
             'public_address': settings.local.host.public_addr,
             'public_address6': settings.local.host.public_addr6,
             'routed_subnet6': settings.local.host.routed_subnet6,
+            'server_port': settings.app.server_port,
             'server_cert': settings.app.server_cert,
             'server_key': settings.app.server_key,
             'cloud_provider': settings.app.cloud_provider,

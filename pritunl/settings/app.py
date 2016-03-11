@@ -3,8 +3,8 @@ from pritunl.settings.group_mongo import SettingsGroupMongo
 class SettingsApp(SettingsGroupMongo):
     group = 'app'
     fields = {
-        'ssl': True,
-        'port': 443,
+        'server_ssl': True,
+        'server_port': 443,
         'redirect_server': True,
         'demo_mode': False,
         'allow_insecure_session': False,
