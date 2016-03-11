@@ -6,10 +6,12 @@ from pritunl import utils
 import os
 
 def setup_server_cert():
-    server_cert_path = os.path.join(settings.conf.temp_path, SERVER_CERT_NAME)
-    server_key_path = os.path.join(settings.conf.temp_path, SERVER_KEY_NAME)
-
     if not settings.app.server_cert or not settings.app.server_key:
+        server_cert_path = os.path.join(
+            settings.conf.temp_path, SERVER_CERT_NAME)
+        server_key_path = os.path.join(
+            settings.conf.temp_path, SERVER_KEY_NAME)
+
         logger.info('Generating server ssl cert', 'setup')
 
         utils.generate_server_cert(server_cert_path, server_key_path)
