@@ -168,6 +168,25 @@ def settings_put():
         changes.add('token')
 
     settings_commit = False
+    if 'port' in flask.request.json:
+        settings_commit = True
+
+        port = flask.request.json['port']
+        if not port:
+            port = 443
+
+        try:
+            port = int(port)
+            if port < 1 or port > 65535:
+                raise ValueError('Port invalid')
+        except ValueError:
+            return utils.jsonify({
+                'error': PORT_INVALID,
+                'error_msg': PORT_INVALID_MSG,
+            }, 400)
+
+        settings.app.port = port
+
     if 'auditing' in flask.request.json:
         settings_commit = True
         auditing = flask.request.json['auditing'] or None
