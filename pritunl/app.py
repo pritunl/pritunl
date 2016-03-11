@@ -56,8 +56,10 @@ def _run_redirect_wsgi():
     logger.info('Starting redirect server', 'app')
 
     server = limiter.CherryPyWSGIServerLimited(
-        (settings.conf.bind_addr, 80), redirect_app,
-        server_name=APP_NAME)
+        (settings.conf.bind_addr, 80),
+        redirect_app,
+        server_name=APP_NAME,
+    )
 
     try:
         server.start()
@@ -71,9 +73,11 @@ def _run_wsgi():
     logger.info('Starting server', 'app')
 
     server = limiter.CherryPyWSGIServerLimited(
-        (settings.conf.bind_addr, settings.app.port), app,
+        (settings.conf.bind_addr, settings.app.port),
+        app,
         request_queue_size=settings.app.request_queue_size,
-        server_name=APP_NAME)
+        server_name=APP_NAME,
+    )
 
     if settings.app.ssl:
         server_cert_path = os.path.join(settings.conf.temp_path, 'server.crt')
@@ -104,8 +108,11 @@ def _run_wsgi_debug():
     settings.local.server_start.wait()
 
     try:
-        app.run(host=settings.conf.bind_addr,
-            port=settings.app.port, threaded=True)
+        app.run(
+            host=settings.conf.bind_addr,
+            port=settings.app.port,
+            threaded=True,
+        )
     except (KeyboardInterrupt, SystemExit):
         pass
     except:
