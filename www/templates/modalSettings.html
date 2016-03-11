@@ -30,6 +30,10 @@
         <option value="dark" <%= theme === 'dark' ? 'selected' : '' %>>Dark</option>
       </select>
     </div>
+    <div class="port form-group">
+      <label>Web Console Port</label>
+      <input type="text" class="form-control" placeholder="Enter web console port" value="<%- port %>" autofocus>
+    </div>
     <div class="sso-mode form-group">
       <label>Single Sign-On</label>
       <select class="form-control" data-toggle="tooltip" title="Single Sign-On Mode">

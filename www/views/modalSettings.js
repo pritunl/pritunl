@@ -277,6 +277,7 @@ define([
       var password = this.$('.pass input').val();
       var verifyPassword = this.$('.verify-pass input').val();
       var auditing = this.$('.auditing select').val();
+      var port = this.$('.port input').val();
       var monitoring = this.$('.monitoring select').val();
       var datadogAPiKey = this.$('.datadog-api-key input').val();
       var publicAddress = this.$('.public-address input').val();
@@ -408,6 +409,7 @@ define([
         username: username,
         auditing: auditing,
         monitoring: monitoring,
+        port: port,
         datadog_api_key: datadogAPiKey,
         email_from: emailFrom,
         email_server: emailServer,
