@@ -133,19 +133,24 @@ def _run_wsgi(restart=False):
     logger.info('Starting server', 'app')
 
     app_server = limiter.CherryPyWSGIServerLimited(
-        (settings.conf.bind_addr, settings.app.port),
+        (settings.conf.bind_addr, settings.app.server_port),
         app,
         request_queue_size=settings.app.request_queue_size,
         server_name=APP_NAME,
     )
     app_server.shutdown_timeout = 1
 
-    if settings.app.ssl:
+    if settings.app.server_ssl:
+        utils.write_server_cert()
+
         server_cert_path = os.path.join(settings.conf.temp_path,
             SERVER_CERT_NAME)
         server_key_path = os.path.join(settings.conf.temp_path,
             SERVER_KEY_NAME)
-        app_server.ssl_adapter = SSLAdapter(server_cert_path, server_key_path)
+        app_server.ssl_adapter = SSLAdapter(
+            server_cert_path,
+            server_key_path,
+        )
 
     if not restart:
         settings.local.server_ready.set()
