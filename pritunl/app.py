@@ -28,6 +28,10 @@ app_server = None
 redirect_app = flask.Flask(__name__ + '_redirect')
 acme_token = None
 acme_authorization = None
+_cur_cert = None
+_cur_key = None
+_cur_port = None
+_update_lock = threading.Lock()
 
 def set_acme(token, authorization):
     global acme_token
@@ -35,7 +39,27 @@ def set_acme(token, authorization):
     acme_token = token
     acme_authorization = authorization
 
-def restart_server():
+def update_server(delay=0):
+    global _cur_cert
+    global _cur_key
+    global _cur_port
+
+    if not settings.local.server_ready.is_set():
+        return
+
+    _update_lock.acquire()
+    try:
+        if _cur_cert != settings.app.server_cert or \
+                _cur_key != settings.app.server_key or \
+                _cur_port != settings.app.server_port:
+            _cur_cert = settings.app.server_cert
+            _cur_key = settings.app.server_key
+            _cur_port = settings.app.server_port
+            restart_server(delay=delay)
+    finally:
+        _update_lock.release()
+
+def restart_server(delay=0):
     set_app_server_interrupt()
     app_server.interrupt = ServerRestart('Restart')
     time.sleep(1)
