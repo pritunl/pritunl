@@ -2,11 +2,13 @@ from pritunl.constants import *
 from pritunl import settings
 from pritunl import utils
 from pritunl import app
+from pritunl import acme
 from pritunl import auth
 from pritunl import event
 from pritunl import ipaddress
 from pritunl import server
 from pritunl import organization
+from pritunl import logger
 
 import flask
 
@@ -149,6 +151,10 @@ def settings_put():
     admin = flask.g.administrator
     changes = set()
 
+    settings_commit = False
+    update_server = False
+    update_acme = False
+
     if 'username' in flask.request.json and flask.request.json['username']:
         username = utils.filter_str(
             flask.request.json['username']).lower()
@@ -169,17 +175,42 @@ def settings_put():
         admin.generate_secret()
         changes.add('token')
 
-    settings_commit = False
-    if 'port' in flask.request.json:
+    if 'server_cert' in flask.request.json:
+        settings_commit = True
+        server_cert = flask.request.json['server_cert']
+        if server_cert:
+            server_cert = server_cert.strip()
+        else:
+            server_cert = None
+
+        if server_cert != settings.app.server_cert:
+            update_server = True
+
+        settings.app.server_cert = server_cert
+
+    if 'server_key' in flask.request.json:
+        settings_commit = True
+        server_key = flask.request.json['server_key']
+        if server_key:
+            server_key = server_key.strip()
+        else:
+            server_key = None
+
+        if server_key != settings.app.server_key:
+            update_server = True
+
+        settings.app.server_key = server_key
+
+    if 'server_port' in flask.request.json:
         settings_commit = True
 
-        port = flask.request.json['port']
-        if not port:
-            port = 443
+        server_port = flask.request.json['server_port']
+        if not server_port:
+            server_port = 443
 
         try:
-            port = int(port)
-            if port < 1 or port > 65535:
+            server_port = int(server_port)
+            if server_port < 1 or server_port > 65535:
                 raise ValueError('Port invalid')
         except ValueError:
             return utils.jsonify({
@@ -187,7 +218,10 @@ def settings_put():
                 'error_msg': PORT_INVALID_MSG,
             }, 400)
 
-        settings.app.port = port
+        if server_port != settings.app.server_port:
+            update_server = True
+
+        settings.app.server_port = server_port
 
     if 'acme_domain' in flask.request.json:
         settings_commit = True
@@ -406,22 +440,6 @@ def settings_put():
                 }, 400)
             settings.local.host.routed_subnet6 = routed_subnet6
             settings.local.host.commit('routed_subnet6')
-
-    if 'server_cert' in flask.request.json:
-        settings_commit = True
-        server_cert = flask.request.json['server_cert']
-        if server_cert:
-            settings.app.server_cert = server_cert.strip()
-        else:
-            settings.app.server_cert = None
-
-    if 'server_key' in flask.request.json:
-        settings_commit = True
-        server_key = flask.request.json['server_key']
-        if server_key:
-            settings.app.server_key = server_key.strip()
-        else:
-            settings.app.server_key = None
 
     if 'cloud_provider' in flask.request.json:
         settings_commit = True
