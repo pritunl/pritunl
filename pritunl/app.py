@@ -1,3 +1,4 @@
+from pritunl.constants import *
 from pritunl import logger
 from pritunl import settings
 from pritunl import wsgiserver
@@ -57,7 +58,7 @@ def _run_wsgi(app_obj, ssl, port):
     server = limiter.CherryPyWSGIServerLimited(
         (settings.conf.bind_addr, port), app_obj,
         request_queue_size=settings.app.request_queue_size,
-        server_name=wsgiserver.CherryPyWSGIServer.version)
+        server_name=APP_NAME)
 
     if ssl:
         server_cert_path = os.path.join(settings.conf.temp_path, 'server.crt')
