@@ -72,6 +72,7 @@ class SettingsApp(SettingsGroupMongo):
         'org_page_count': 5,
         'server_page_count': 3,
         'host_page_count': 10,
+        'acme_api_url': 'https://acme-v01.api.letsencrypt.org',
         'acme_timestamp': None,
         'acme_key': None,
         'acme_domain': None,
