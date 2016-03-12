@@ -192,6 +192,13 @@ def _run_wsgi_debug():
         raise
 
 def run_server():
+    global _cur_cert
+    global _cur_key
+    global _cur_port
+    _cur_cert = settings.app.server_cert
+    _cur_key = settings.app.server_key
+    _cur_port = settings.app.server_port
+
     if settings.conf.debug:
         logger.LogEntry(message='Web debug server started.')
     else:
