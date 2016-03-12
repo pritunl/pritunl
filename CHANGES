@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Add support for LetsEncrypt
 Fix issue with finding network interface for route
 Fix issue with profile sync
 
