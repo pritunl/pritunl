@@ -50,4 +50,5 @@ def update_acme_cert():
 
     settings.app.server_key = private_key
     settings.app.server_cert = cert
+    settings.app.acme_timestamp = utils.time_now()
     settings.commit()
