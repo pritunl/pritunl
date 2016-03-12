@@ -481,6 +481,10 @@ AUTH_DISABLED_MSG = 'Authentication credentials are disabled.'
 AUTH_OTP_REQUIRED = 'auth_otp_required'
 AUTH_OTP_REQUIRED_MSG = 'Two-factor authentication required.'
 
+ACME_ERROR = 'acme_error'
+ACME_ERROR_MSG = 'Error getting LetsEncrypt certificate check ' + \
+    'the logs for more information.'
+
 NETWORK_INVALID = 'network_invalid'
 NETWORK_INVALID_MSG = 'Network address is not valid, format must be ' + \
     '"[10,172,192].[0-255,16-31,168].[0-255].0/[8-24]" ' + \
