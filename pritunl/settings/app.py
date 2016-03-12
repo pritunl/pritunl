@@ -73,6 +73,7 @@ class SettingsApp(SettingsGroupMongo):
         'server_page_count': 3,
         'host_page_count': 10,
         'acme_key': None,
+        'acme_domain': None,
         'server_cert': None,
         'server_key': None,
         'cloud_provider': None,
