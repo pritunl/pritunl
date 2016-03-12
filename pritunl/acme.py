@@ -1,6 +1,5 @@
 from pritunl import settings
 from pritunl import utils
-from pritunl import app
 
 import os
 
