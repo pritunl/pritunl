@@ -7,6 +7,6 @@ def upgrade_1_19():
     settings_collection.update({
         '_id': 'app',
     }, {'$set': {
-        'ssl': settings.conf.ssl,
-        'port': settings.conf.port,
+        'server_ssl': settings.conf.ssl,
+        'server_port': settings.conf.port,
     }}, upsert=True)
