@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add support for LetsEncrypt
+Redirect http to https on web console
 Fix issue with finding network interface for route
 Fix issue with profile sync
 
