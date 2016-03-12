@@ -39,3 +39,16 @@ def get_acme_cert(account_key, csr):
         pass
 
     return certificate
+
+def update_acme_cert():
+    if not settings.app.acme_key:
+        settings.app.acme_key = utils.generate_private_key()
+        settings.commit()
+
+    private_key = utils.generate_private_key()
+    csr = utils.generate_csr(private_key, settings.app.acme_domain)
+    cert = get_acme_cert(settings.app.acme_key, csr)
+
+    settings.app.server_key = private_key
+    settings.app.server_cert = cert
+    settings.commit()
