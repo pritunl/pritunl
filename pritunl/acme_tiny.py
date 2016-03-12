@@ -31,17 +31,13 @@ except ImportError:
 #DEFAULT_CA = "https://acme-staging.api.letsencrypt.org"
 #DEFAULT_CA = "https://acme-v01.api.letsencrypt.org"
 
-LOGGER = logging.getLogger(__name__)
-LOGGER.addHandler(logging.StreamHandler())
-LOGGER.setLevel(logging.INFO)
-
 def get_crt(account_key, csr, set_acme):
     # helper function base64 encode for jose spec
     def _b64(b):
         return base64.urlsafe_b64encode(b).decode('utf8').replace("=", "")
 
     # parse account key to get public key
-    logger.info("Parsing account key...")
+    logger.info("Parsing acme account key...", "acme")
     proc = subprocess.Popen(["openssl", "rsa", "-in", account_key, "-noout", "-text"],
         stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = proc.communicate()
@@ -85,7 +81,7 @@ def get_crt(account_key, csr, set_acme):
             return getattr(e, "code", None), getattr(e, "read", e.__str__)()
 
     # find domains
-    logger.info("Parsing CSR...")
+    logger.info("Parsing acme CSR...", "acme")
     proc = subprocess.Popen(["openssl", "req", "-in", csr, "-noout", "-text"],
         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = proc.communicate()
@@ -102,21 +98,21 @@ def get_crt(account_key, csr, set_acme):
                 domains.add(san[4:])
 
     # get the certificate domains and expiration
-    logger.info("Registering account...")
+    logger.info("Registering acme account...", "acme")
     code, result = _send_signed_request(settings.app.acme_api_url + "/acme/new-reg", {
         "resource": "new-reg",
         "agreement": "https://letsencrypt.org/documents/LE-SA-v1.0.1-July-27-2015.pdf",
     })
     if code == 201:
-        logger.info("Registered!")
+        logger.info("Registered acme certificate", "acme")
     elif code == 409:
-        logger.info("Already registered!")
+        logger.info("Already registered acme certificate", "acme")
     else:
         raise ValueError("Error registering: {0} {1}".format(code, result))
 
     # verify each domain
     for domain in domains:
-        logger.info("Verifying {0}...".format(domain))
+        logger.info("Verifying acme domain {0}...".format(domain), "acme")
 
         # get new challenge
         code, result = _send_signed_request(settings.app.acme_api_url + "/acme/new-authz", {
@@ -161,7 +157,7 @@ def get_crt(account_key, csr, set_acme):
             if challenge_status['status'] == "pending":
                 time.sleep(2)
             elif challenge_status['status'] == "valid":
-                logger.info("{0} verified!".format(domain))
+                logger.info("Verified acme domain {0}".format(domain))
                 set_acme(None, None)
                 break
             else:
@@ -169,7 +165,7 @@ def get_crt(account_key, csr, set_acme):
                     domain, challenge_status))
 
     # get the new certificate
-    logger.info("Signing certificate...")
+    logger.info("Signing acme certificate...")
     proc = subprocess.Popen(["openssl", "req", "-in", csr, "-outform", "DER"],
         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     csr_der, err = proc.communicate()
@@ -181,6 +177,6 @@ def get_crt(account_key, csr, set_acme):
         raise ValueError("Error signing certificate: {0} {1}".format(code, result))
 
     # return signed certificate!
-    logger.info("Certificate signed!")
+    logger.info("Signed acme certificate", "acme")
     return """-----BEGIN CERTIFICATE-----\n{0}\n-----END CERTIFICATE-----\n""".format(
         "\n".join(textwrap.wrap(base64.b64encode(result).decode('utf8'), 64)))
