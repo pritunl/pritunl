@@ -236,6 +236,7 @@ def settings_put():
         if acme_domain != settings.app.acme_domain:
             if not acme_domain:
                 settings.app.acme_key = None
+                settings.app.acme_timestamp = None
                 settings.app.server_key = None
                 settings.app.server_cert = None
                 utils.create_server_cert()
