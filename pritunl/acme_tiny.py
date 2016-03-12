@@ -20,6 +20,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+from pritunl import settings
 from pritunl import logger
 import subprocess, json, base64, binascii, time, hashlib, re, copy, textwrap, logging
 try:
@@ -28,13 +29,13 @@ except ImportError:
     from urllib2 import urlopen # Python 2
 
 #DEFAULT_CA = "https://acme-staging.api.letsencrypt.org"
-DEFAULT_CA = "https://acme-v01.api.letsencrypt.org"
+#DEFAULT_CA = "https://acme-v01.api.letsencrypt.org"
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.addHandler(logging.StreamHandler())
 LOGGER.setLevel(logging.INFO)
 
-def get_crt(account_key, csr, set_acme, CA=DEFAULT_CA):
+def get_crt(account_key, csr, set_acme):
     # helper function base64 encode for jose spec
     def _b64(b):
         return base64.urlsafe_b64encode(b).decode('utf8').replace("=", "")
@@ -66,7 +67,7 @@ def get_crt(account_key, csr, set_acme, CA=DEFAULT_CA):
     def _send_signed_request(url, payload):
         payload64 = _b64(json.dumps(payload).encode('utf8'))
         protected = copy.deepcopy(header)
-        protected["nonce"] = urlopen(CA + "/directory").headers['Replay-Nonce']
+        protected["nonce"] = urlopen(settings.app.acme_api_url + "/directory").headers['Replay-Nonce']
         protected64 = _b64(json.dumps(protected).encode('utf8'))
         proc = subprocess.Popen(["openssl", "dgst", "-sha256", "-sign", account_key],
             stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -102,7 +103,7 @@ def get_crt(account_key, csr, set_acme, CA=DEFAULT_CA):
 
     # get the certificate domains and expiration
     logger.info("Registering account...")
-    code, result = _send_signed_request(CA + "/acme/new-reg", {
+    code, result = _send_signed_request(settings.app.acme_api_url + "/acme/new-reg", {
         "resource": "new-reg",
         "agreement": "https://letsencrypt.org/documents/LE-SA-v1.0.1-July-27-2015.pdf",
     })
@@ -118,7 +119,7 @@ def get_crt(account_key, csr, set_acme, CA=DEFAULT_CA):
         logger.info("Verifying {0}...".format(domain))
 
         # get new challenge
-        code, result = _send_signed_request(CA + "/acme/new-authz", {
+        code, result = _send_signed_request(settings.app.acme_api_url + "/acme/new-authz", {
             "resource": "new-authz",
             "identifier": {"type": "dns", "value": domain},
         })
@@ -172,7 +173,7 @@ def get_crt(account_key, csr, set_acme, CA=DEFAULT_CA):
     proc = subprocess.Popen(["openssl", "req", "-in", csr, "-outform", "DER"],
         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     csr_der, err = proc.communicate()
-    code, result = _send_signed_request(CA + "/acme/new-cert", {
+    code, result = _send_signed_request(settings.app.acme_api_url + "/acme/new-cert", {
         "resource": "new-cert",
         "csr": _b64(csr_der),
     })
