@@ -2,3 +2,4 @@ Flask>=0.10.1
 pymongo>=3.0.3
 netifaces>=0.10.4
 pyOpenSSL>=0.15.1
+boto>=2.39.0
