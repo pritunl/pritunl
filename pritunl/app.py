@@ -182,7 +182,7 @@ def _run_wsgi_debug():
     try:
         app.run(
             host=settings.conf.bind_addr,
-            port=settings.app.port,
+            port=settings.app.server_port,
             threaded=True,
         )
     except (KeyboardInterrupt, SystemExit):
