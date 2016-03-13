@@ -427,6 +427,8 @@ class Server(mongo.MongoObject):
     def get_routes(self, include_hidden=False, include_default=True,
             include_server_links=False):
         routes = []
+        virtual_vpc_region = None
+        virtual_vpc_id = None
         link_routes = []
         routes_dict = {}
 
@@ -437,6 +439,8 @@ class Server(mongo.MongoObject):
                 'server': self.id,
                 'network': network_link,
                 'nat': False,
+                'vpc_region': None,
+                'vpc_id': None,
                 'virtual_network': False,
                 'network_link': True,
                 'server_link': False,
@@ -456,6 +460,8 @@ class Server(mongo.MongoObject):
                     data['server'] = self.id
                     data['network'] = route['network']
                     data['nat'] = route['nat']
+                    data['vpc_region'] = route['vpc_region']
+                    data['vpc_id'] = route['vpc_id']
                     data['virtual_network'] = False
                     data['network_link'] = False
                     data['server_link'] = True
@@ -478,6 +484,8 @@ class Server(mongo.MongoObject):
                     'server': self.id,
                     'network': route_network,
                     'nat': route.get('nat', True),
+                    'vpc_region': route.get('vpc_region', True),
+                    'vpc_id': route.get('vpc_id', True),
                     'virtual_network': False,
                     'network_link': False,
                     'server_link': False,
@@ -489,12 +497,15 @@ class Server(mongo.MongoObject):
                         'server': self.id,
                         'network': '::/0',
                         'nat': route.get('nat', True),
+                        'vpc_region': route.get('vpc_region', True),
+                        'vpc_id': route.get('vpc_id', True),
                         'virtual_network': False,
                         'network_link': False,
                         'server_link': False,
                     })
             elif route_network == 'virtual':
-                continue
+                virtual_vpc_region = route.get('vpc_region', True),
+                virtual_vpc_id = route.get('vpc_id', True),
             else:
                 if route_network in routes_dict:
                     routes_dict[route_network]['nat'] = route.get('nat', True)
@@ -508,6 +519,8 @@ class Server(mongo.MongoObject):
                         'server': self.id,
                         'network': route_network,
                         'nat': route.get('nat', True),
+                        'vpc_region': route.get('vpc_region', True),
+                        'vpc_id': route.get('vpc_id', True),
                         'virtual_network': False,
                         'network_link': False,
                         'server_link': False,
@@ -518,6 +531,8 @@ class Server(mongo.MongoObject):
             'server': self.id,
             'network': self.network,
             'nat': False,
+            'vpc_region': virtual_vpc_region,
+            'vpc_id': virtual_vpc_id,
             'virtual_network': True,
             'network_link': False,
             'server_link': False,
