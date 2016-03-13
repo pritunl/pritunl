@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with debug server
+
 Version 1.19.912.44 2016-03-12
 ------------------------------
 
