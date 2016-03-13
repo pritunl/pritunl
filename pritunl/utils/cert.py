@@ -5,6 +5,10 @@ from pritunl import settings
 import os
 
 def create_server_cert():
+    from pritunl import logger
+
+    logger.info('Generating server certificate...', 'utils')
+
     server_cert_path = os.path.join(settings.conf.temp_path, SERVER_CERT_NAME)
     server_key_path = os.path.join(settings.conf.temp_path, SERVER_KEY_NAME)
 
