@@ -481,6 +481,20 @@ define([
         success: function() {
           window.sso = sso;
           this.close(true);
+
+          if (serverPort !== this.curServerPort) {
+            setTimeout(function() {
+              window.location = window.location.protocol + '//' +
+                window.location.hostname +
+                (serverPort === '443' || !serverPort ? '' : ':' +
+                  serverPort) +
+                window.location.pathname;
+            }, 8000);
+          } else if (acmeDomain !== this.curAcmeDomain) {
+            setTimeout(function() {
+              window.location.reload();
+            }, 8000);
+          }
         }.bind(this),
         error: function(model, response) {
           this.clearLoading();
