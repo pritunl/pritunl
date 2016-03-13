@@ -21,7 +21,6 @@ define([
         'keyup .pass input': 'onPassEvent',
         'paste .pass input': 'onPassEvent',
         'input .pass input': 'onPassEvent',
-        'input .port input': 'onPortChange',
         'propertychange .pass input': 'onPassEvent',
         'change .cloud-provider select': 'onCloudProviderChange',
         'change .monitoring select': 'onMonitoringChange',
@@ -32,7 +31,8 @@ define([
     initialize: function(options) {
       this.orgs = new OrgCollection();
       this.initial = options.initial;
-      this.curPort = this.model.get('port');
+      this.curServerPort = this.model.get('server_port');
+      this.curAcmeDomain = this.model.get('acme_domain') || null;
       if (this.initial) {
         this.title = 'Initial Setup';
         this.cancelText = 'Setup Later';
@@ -225,14 +225,6 @@ define([
     onSsoMode: function() {
       this.setSsoMode(this.getSsoMode());
     },
-    onPortChange: function() {
-      if (parseInt(this.$('.port input').val(), 10) !== this.curPort) {
-        this.setAlert('warning',
-          'Changing port requires restarting server.', '.port');
-      } else {
-        this.clearAlert();
-      }
-    },
     onCloudProviderChange: function() {
       if (this.$('.cloud-provider select').val() === 'aws') {
         this.$('.aws-settings').slideDown(window.slideTime);
@@ -287,7 +279,8 @@ define([
       var password = this.$('.pass input').val();
       var verifyPassword = this.$('.verify-pass input').val();
       var auditing = this.$('.auditing select').val();
-      var port = this.$('.port input').val();
+      var serverPort = this.$('.server-port input').val();
+      var acmeDomain = this.$('.acme-domain input').val() || null;
       var monitoring = this.$('.monitoring select').val();
       var datadogAPiKey = this.$('.datadog-api-key input').val();
       var publicAddress = this.$('.public-address input').val();
@@ -342,6 +335,10 @@ define([
         '.sa-east-1-access-key input').val();
       var saEast1SecretKey = this.$(
         '.sa-east-1-secret-key input').val();
+
+      if (serverPort) {
+        serverPort = parseInt(serverPort, 10);
+      }
 
       var sso = this.getSsoMode();
       var ssoMatch = null;
@@ -419,7 +416,6 @@ define([
         username: username,
         auditing: auditing,
         monitoring: monitoring,
-        port: port,
         datadog_api_key: datadogAPiKey,
         email_from: emailFrom,
         email_server: emailServer,
@@ -441,8 +437,10 @@ define([
         public_address6: publicAddress6,
         routed_subnet6: routedSubnet6,
         theme: theme,
+        server_port: serverPort,
         server_cert: serverCert,
         server_key: serverKey,
+        acme_domain: acmeDomain,
         cloud_provider: cloudProvider,
         us_east_1_access_key: usEast1AccessKey,
         us_east_1_secret_key: usEast1SecretKey,
