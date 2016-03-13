@@ -531,7 +531,7 @@ class Server(mongo.MongoObject):
 
         return routes + link_routes
 
-    def add_route(self, network, nat_route):
+    def upsert_route(self, network, nat_route):
         exists = False
 
         if self.status == ONLINE:

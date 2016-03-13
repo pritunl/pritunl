@@ -683,7 +683,7 @@ def server_route_post(server_id):
     nat_route = True if flask.request.json.get('nat') else False
 
     try:
-        route = svr.add_route(route_network, nat_route)
+        route = svr.upsert_route(route_network, nat_route)
     except ServerOnlineError:
         return utils.jsonify({
             'error': SERVER_ROUTE_ONLINE,
@@ -726,7 +726,7 @@ def server_route_put(server_id, route_network):
     nat_route = True if flask.request.json.get('nat') else False
 
     try:
-        route = svr.add_route(route_network, nat_route)
+        route = svr.upsert_route(route_network, nat_route)
     except ServerOnlineError:
         return utils.jsonify({
             'error': SERVER_ROUTE_ONLINE,
