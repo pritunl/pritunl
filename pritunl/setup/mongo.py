@@ -89,6 +89,7 @@ def setup_mongo():
             prefix + 'servers_output_link'),
         'servers_bandwidth': getattr(database, prefix + 'servers_bandwidth'),
         'servers_ip_pool': getattr(database, prefix + 'servers_ip_pool'),
+        'routes_reserve': getattr(database, prefix + 'routes_reserve'),
         'dh_params': getattr(database, prefix + 'dh_params'),
         'auth_sessions': getattr(database, prefix + 'auth_sessions'),
         'auth_nonces': getattr(database, prefix + 'auth_nonces'),
