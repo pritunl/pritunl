@@ -427,10 +427,10 @@ class Server(mongo.MongoObject):
     def get_routes(self, include_hidden=False, include_default=True,
             include_server_links=False):
         routes = []
-        virtual_vpc_region = None
-        virtual_vpc_id = None
         link_routes = []
         routes_dict = {}
+        virtual_vpc_region = None
+        virtual_vpc_id = None
 
         for network_link in self.network_links:
             route_id = network_link.encode('hex')
