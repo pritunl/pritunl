@@ -544,7 +544,7 @@ class Server(mongo.MongoObject):
         for route_network in sorted(routes_dict.keys()):
             if not routes_dict[route_network]['server_link']:
                 routes.append(routes_dict[route_network])
-            else:
+            elif not routes_dict[route_network]['virtual_network']:
                 link_routes.append(routes_dict[route_network])
 
         return routes + link_routes
