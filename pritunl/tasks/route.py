@@ -22,7 +22,7 @@ class TaskRoute(task.Task):
             timestamp_spec = utils.now() - datetime.timedelta(
                 seconds=settings.vpn.route_ping_ttl)
 
-            docs = self.server_collection.find({
+            docs = self.routes_collection.find({
                 'timestamp': {'$lt': timestamp_spec},
             })
 
