@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add aws vpc integration
+
 Version 1.19.913.28 2016-03-13
 ------------------------------
 
