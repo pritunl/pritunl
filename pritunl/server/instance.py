@@ -895,7 +895,7 @@ class ServerInstance(object):
 
                 yield interrupter_sleep(settings.vpn.route_ping)
         except GeneratorExit:
-            self.stop_process()
+            pass
 
     def _iptables_thread(self):
         if self.interrupter_sleep(settings.vpn.iptables_update_rate):
