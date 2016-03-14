@@ -20,6 +20,9 @@ define([
     body: function() {
       return this.template(this.model.toJSON());
     },
+    postRender: function() {
+      this.$('.label').tooltip();
+    },
     getNatRouteSelect: function() {
       return this.$('.nat-route-toggle .selector').hasClass('selected');
     },
