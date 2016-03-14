@@ -939,7 +939,7 @@ class ServerInstance(object):
         try:
             self.routes_collection.update_one({
                 '_id': ra_id,
-                'timestamp': {'$gte': timestamp_spec},
+                'timestamp': {'$lt': timestamp_spec},
             }, {'$set': {
                 'instance_id': self.id,
                 'server_id': self.server.id,
