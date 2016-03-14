@@ -1007,6 +1007,8 @@ class ServerInstance(object):
                 self.generate_iptables_rules()
             self.set_iptables_rules()
 
+            self.init_route_advertisements()
+
             self.process = self.openvpn_start()
             if not self.process:
                 return
