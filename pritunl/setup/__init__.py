@@ -8,7 +8,7 @@ from pritunl.setup.signal_handler import setup_signal_handler
 from pritunl.setup.public_ip import setup_public_ip
 from pritunl.setup.poolers import setup_poolers
 from pritunl.setup.host import setup_host
-from pritunl.setup.port_forwarding import setup_port_forwarding
+from pritunl.setup.server_listeners import setup_server_listeners
 from pritunl.setup.dns import setup_dns
 from pritunl.setup.monitoring import setup_monitoring
 from pritunl.setup.host_fix import setup_host_fix
@@ -36,7 +36,7 @@ def setup_all():
 
         setup_public_ip()
         setup_host()
-        setup_port_forwarding()
+        setup_server_listeners()
         setup_dns()
         setup_monitoring()
         setup_poolers()
