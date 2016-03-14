@@ -47,11 +47,15 @@ define([
 
       var server = this.$('.server select').val();
       var nat = this.getNatRouteSelect();
+      var vpcRegion = this.$('.vpc-region select').val();
+      var vpcId = this.$('.vpc-id input').val();
 
       lastServer = server;
       model.save({
         network: this.$('.route-network input').val(),
         nat: nat,
+        vpc_region: vpcRegion,
+        vpc_id: vpcId,
         server: server
       }, {
         success: function() {
