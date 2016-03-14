@@ -43,6 +43,7 @@ class ServerInstance(object):
         self.iptables_lock = threading.Lock()
         self.tun_nat = False
         self.server_links = []
+        self.route_advertisements = set()
         self._temp_path = utils.get_temp_path()
         self.ovpn_conf_path = os.path.join(self._temp_path,
             OVPN_CONF_NAME)
@@ -56,6 +57,10 @@ class ServerInstance(object):
     @cached_static_property
     def user_collection(cls):
         return mongo.get_collection('users')
+
+    @cached_static_property
+    def routes_collection(cls):
+        return mongo.get_collection('routes_reserve')
 
     def get_cursor_id(self):
         return messenger.get_cursor_id('servers')
@@ -865,6 +870,55 @@ class ServerInstance(object):
                     server_id=self.server.id,
                 )
                 time.sleep(1)
+
+    def init_route_advertisements(self):
+        for route in self.server.get_routes(include_server_links=True):
+            vpc_region = route['vpc_region']
+            vpc_id = route['vpc_id']
+            network = route['network']
+
+            if vpc_region and vpc_id:
+                self.reserve_route_advertisement(
+                    vpc_region, vpc_id, network)
+                self.reserve_route_advertisement(
+                    vpc_region, vpc_id, network)
+
+    def clear_route_advertisements(self):
+        for ra_id in self.route_advertisements.copy():
+            self.routes_collection.delete_one({
+                '_id': ra_id,
+            })
+
+    def reserve_route_advertisement(self, vpc_region, vpc_id, network):
+        ra_id = '%s_%s_%s' % (self.server.id, vpc_id, network)
+        timestamp_spec = utils.now() - datetime.timedelta(
+            seconds=settings.vpn.route_ping_ttl)
+
+        try:
+            self.routes_collection.update_one({
+                '_id': ra_id,
+                'timestamp': {'$gte': timestamp_spec},
+            }, {'$set': {
+                'instance_id': self.id,
+                'server_id': self.server.id,
+                'vpc_region': vpc_region,
+                'vpc_id': vpc_id,
+                'network': network,
+                'timestamp': utils.now(),
+            }}, upsert=True)
+
+            utils.add_vpc_route(vpc_region, vpc_id, network,
+                settings.local.host.aws_id)
+
+            self.route_advertisements.add(ra_id)
+        except:
+            logger.exception('Failed to add vpc route', 'server',
+                server_id=self.server.id,
+                instance_id=self.id,
+                vpc_region=vpc_region,
+                vpc_id=vpc_id,
+                network=network,
+            )
 
     def start_threads(self, cursor_id):
         thread = threading.Thread(target=self._sub_thread, args=(cursor_id,))
