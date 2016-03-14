@@ -215,6 +215,8 @@ def setup_mongo():
     ], background=True)
     upsert_index(mongo.collections['servers_ip_pool'], 'user_id',
         background=True)
+    upsert_index(mongo.collections['routes_reserve'], 'timestamp',
+        background=True)
     upsert_index(mongo.collections['dh_params'], 'dh_param_bits',
         background=True)
     upsert_index(mongo.collections['auth_nonces'], [
