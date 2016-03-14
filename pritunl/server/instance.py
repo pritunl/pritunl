@@ -22,6 +22,7 @@ import threading
 import traceback
 import re
 import collections
+import pymongo
 
 _resource_locks = collections.defaultdict(threading.Lock)
 
@@ -952,6 +953,8 @@ class ServerInstance(object):
                 settings.local.host.aws_id)
 
             self.route_advertisements.add(ra_id)
+        except pymongo.errors.DuplicateKeyError:
+            return
         except:
             logger.exception('Failed to add vpc route', 'server',
                 server_id=self.server.id,
