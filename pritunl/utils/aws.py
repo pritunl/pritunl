@@ -26,6 +26,9 @@ def add_vpc_route(region, vpc_id, network, resource_id):
     aws_key = getattr(settings.app, region_key + '_access_key')
     aws_secret = getattr(settings.app, region_key + '_secret_key')
 
+    if not aws_key or not aws_secret:
+        raise ValueError('AWS credentials not available for %s' % region)
+
     vpc_conn = boto.connect_vpc(
         aws_access_key_id=aws_key,
         aws_secret_access_key=aws_secret,
