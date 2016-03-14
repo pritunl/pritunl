@@ -8,6 +8,25 @@
     <span class="selector-inner glyphicon glyphicon-ok"></span>
   </div>
 </div>
+<div class="vpc-region form-group">
+  <label>VPC Route Advertisement Region</label>
+  <select class="form-control" data-toggle="tooltip" title="VPC region for route advertisement">
+    <option value="us-east-1" selected>US East (N. Virginia)</option>
+    <option value="us-west-1">US West (N. California)</option>
+    <option value="us-west-2">US West (Oregon)</option>
+    <option value="eu-west-1">EU (Ireland)</option>
+    <option value="eu-central-1">EU (Frankfurt)</option>
+    <option value="ap-northeast-1">Asia Pacific (Tokyo)</option>
+    <option value="ap-northeast-2">Asia Pacific (Seoul)</option>
+    <option value="ap-southeast-1">Asia Pacific (Singapore)</option>
+    <option value="ap-southeast-2">Asia Pacific (Sydney)</option>
+    <option value="sa-east-1">South America (Sao Paulo)</option>
+  </select>
+</div>
+<div class="vpc-id form-group">
+  <label>VPC Route Advertisement ID</label>
+  <input type="text" class="form-control" placeholder="Enter VPC ID" data-toggle="tooltip" title="VPC ID for route advertisement. EC2 server must be connected to the VPC.">
+</div>
 <div class="server form-group">
   <label>Select a server</label>
   <select class="form-control">
