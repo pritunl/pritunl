@@ -855,6 +855,47 @@ class ServerInstance(object):
         except GeneratorExit:
             self.stop_process()
 
+    @interrupter
+    def _route_ad_keep_alive_thread(self):
+        try:
+            while not self.interrupt:
+                try:
+                    for ra_id in self.route_advertisements.copy():
+                        yield
+
+                        response = self.routes_collection.update_one({
+                            '_id': ra_id,
+                            'instance_id': self.id,
+                        }, {'$set': {
+                            'timestamp': utils.now(),
+                        }})
+
+                        if not response.modified_count:
+                            logger.error(
+                                'Lost route advertisement reserve',
+                                'server',
+                                server_id=self.server.id,
+                                instance_id=self.id,
+                                route_id=ra_id,
+                            )
+                            try:
+                                self.route_advertisements.remove(ra_id)
+                            except KeyError:
+                                pass
+
+                    yield
+                except:
+                    logger.exception(
+                        'Failed to update route advertisement',
+                        'server',
+                        server_id=self.server.id,
+                    )
+                    time.sleep(1)
+
+                yield interrupter_sleep(settings.vpn.route_ping)
+        except GeneratorExit:
+            self.stop_process()
+
     def _iptables_thread(self):
         if self.interrupter_sleep(settings.vpn.iptables_update_rate):
             return
@@ -926,6 +967,10 @@ class ServerInstance(object):
         thread.start()
 
         thread = threading.Thread(target=self._keep_alive_thread)
+        thread.daemon = True
+        thread.start()
+
+        thread = threading.Thread(target=self._route_ad_keep_alive_thread)
         thread.daemon = True
         thread.start()
 
