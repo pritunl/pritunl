@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add aws vpc integration
+Fix setup server port on database upgrades
 
 Version 1.19.913.28 2016-03-13
 ------------------------------
