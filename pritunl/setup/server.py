@@ -134,13 +134,15 @@ def setup_upgrade_get():
     return ''
 
 def server_thread():
+    global server
+
     app.logger.setLevel(logging.DEBUG)
     app.logger.addFilter(logger.log_filter)
     app.logger.addHandler(logger.log_handler)
 
-    global server
+    server_port = upgrade.get_server_port(bool(settings.conf.mongodb_uri))
     server = wsgiserver.CherryPyWSGIServer(
-        (settings.conf.bind_addr, settings.conf.port), app,
+        (settings.conf.bind_addr, server_port), app,
         server_name=wsgiserver.CherryPyWSGIServer.version,
         timeout=1,
         shutdown_timeout=0.5,
