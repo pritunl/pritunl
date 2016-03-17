@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.20.917.37 2016-03-17
+------------------------------
 
 Add aws vpc integration
 Remove Duo SSO administrator user
