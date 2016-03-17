@@ -345,7 +345,6 @@ define([
       var ssoToken = null;
       var ssoSecret = null;
       var ssoHost = null;
-      var ssoAdmin = null;
       var ssoOrg = null;
       var ssoSamlUrl = null;
       var ssoSamlIssuerUrl = null;
@@ -377,7 +376,6 @@ define([
           ssoToken = this.$('.sso-token input').val();
           ssoSecret = this.$('.sso-secret input').val();
           ssoHost = this.$('.sso-host input').val();
-          ssoAdmin = this.$('.sso-admin input').val();
         }
 
         if (sso === 'saml' || sso === 'saml_duo' || sso === 'saml_okta' ||
@@ -426,7 +424,6 @@ define([
         sso_token: ssoToken,
         sso_secret: ssoSecret,
         sso_host: ssoHost,
-        sso_admin: ssoAdmin,
         sso_org: ssoOrg,
         sso_saml_url: ssoSamlUrl,
         sso_saml_issuer_url: ssoSamlIssuerUrl,
