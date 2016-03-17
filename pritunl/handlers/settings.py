@@ -38,7 +38,6 @@ def _dict():
             'sso_token': 'demo',
             'sso_secret': 'demo',
             'sso_host': 'demo',
-            'sso_admin': 'demo',
             'sso_org': settings.app.sso_org,
             'sso_saml_url': 'demo',
             'sso_saml_issuer_url': 'demo',
@@ -90,7 +89,6 @@ def _dict():
             'sso_token': settings.app.sso_token,
             'sso_secret': settings.app.sso_secret,
             'sso_host': settings.app.sso_host,
-            'sso_admin': settings.app.sso_admin,
             'sso_org': settings.app.sso_org,
             'sso_saml_url': settings.app.sso_saml_url,
             'sso_saml_issuer_url': settings.app.sso_saml_issuer_url,
@@ -345,13 +343,6 @@ def settings_put():
             changes.add('sso')
         settings.app.sso_host = sso_host
 
-    if 'sso_admin' in flask.request.json:
-        settings_commit = True
-        sso_admin = flask.request.json['sso_admin'] or None
-        if sso_admin != settings.app.sso_admin:
-            changes.add('sso')
-        settings.app.sso_admin = sso_admin
-
     if 'sso_org' in flask.request.json:
         settings_commit = True
         sso_org = flask.request.json['sso_org']
@@ -498,7 +489,6 @@ def settings_put():
         settings.app.sso_token = None
         settings.app.sso_secret = None
         settings.app.sso_host = None
-        settings.app.sso_admin = None
         settings.app.sso_org = None
         settings.app.sso_saml_url = None
         settings.app.sso_saml_issuer_url = None
