@@ -66,10 +66,6 @@
       <label>Duo Integration Key</label>
       <input type="text" class="form-control" placeholder="Enter integration key" value="<%- sso_token || '' %>">
     </div>
-    <div class="sso-admin form-group" <%= sso === 'duo' || sso === 'saml_duo' || sso === 'saml_onelogin_duo' || sso === 'saml_okta_duo' || sso === 'google_duo' ? '' : 'style="display: none;"' %>>
-      <label>Duo Admin Username</label>
-      <input type="text" class="form-control" placeholder="Enter admin username" value="<%- sso_admin || '' %>" data-toggle="tooltip" title="Require a Duo push request from this username when logging into the web console as the admin">
-    </div>
   </div>
   <div class="settings-right right">
     <div class="pass form-group">
