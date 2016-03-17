@@ -432,13 +432,6 @@ def reset_password():
         default=True,
     ).commit()
 
-    settings_collection = mongo.get_collection('settings')
-    settings_collection.update({
-        '_id': 'app',
-    }, {'$set': {
-        'sso_admin': None,
-    }})
-
     return DEFAULT_USERNAME, DEFAULT_PASSWORD
 
 def iter_admins(fields=None):
