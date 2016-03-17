@@ -24,7 +24,6 @@ define([
       'sso_host': null,
       'sso_token': null,
       'sso_secret': null,
-      'sso_admin': null,
       'sso_org': null,
       'sso_saml_url': null,
       'sso_saml_issuer_url': null,
