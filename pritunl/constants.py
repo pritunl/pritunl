@@ -507,6 +507,9 @@ DNS_SERVER_INVALID_MSG = 'DNS server is not valid, ' + \
 PORT_INVALID = 'port_invalid'
 PORT_INVALID_MSG = 'Port number is not valid, must be between 1 and 65535.'
 
+PORT_RESERVED = 'port_reserved'
+PORT_RESERVED_MSG = 'Port number is reserved and cannot be used.'
+
 DH_PARAM_BITS_INVALID = 'dh_param_bits_invalid'
 DH_PARAM_BITS_INVALID_MSG = 'DH param bits are not valid, must ' + \
     '1024, 1536, 2048, 2048, 3072 or 4096.'
