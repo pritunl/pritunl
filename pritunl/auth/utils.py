@@ -34,6 +34,18 @@ def hash_password_v2(salt, password):
         hash_digest = pass_hash.digest()
     return hash_digest
 
+def hash_password_v3(salt, password):
+    pass_hash = hashlib.sha512()
+    pass_hash.update(password[:settings.app.password_len_limit])
+    pass_hash.update(base64.b64decode(salt))
+    hash_digest = pass_hash.digest()
+
+    for _ in xrange(100000):
+        pass_hash = hashlib.sha512()
+        pass_hash.update(hash_digest)
+        hash_digest = pass_hash.digest()
+    return hash_digest
+
 def hash_pin_v1(salt, pin):
     pass_hash = hashlib.sha512()
     pass_hash.update(pin[:settings.app.password_len_limit])
