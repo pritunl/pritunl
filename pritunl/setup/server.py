@@ -91,7 +91,18 @@ def static_get(file_name):
 
 @app.route('/setup/mongodb', methods=['PUT'])
 def setup_mongodb_put():
+    setup_key = flask.request.json['setup_key']
     mongodb_uri = flask.request.json['mongodb_uri']
+
+    if not db_setup:
+        return flask.abort(404)
+
+    utils.rand_sleep()
+    if setup_key != settings.local.setup_key:
+        return utils.jsonify({
+            'error': SETUP_KEY_INVALID,
+            'error_msg': SETUP_KEY_INVALID_MSG,
+        }, 400)
 
     if not mongodb_uri:
         return utils.jsonify({
