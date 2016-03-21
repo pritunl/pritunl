@@ -118,7 +118,7 @@ class Administrator(mongo.MongoObject):
         elif hash_ver == '3':
             hash_func = hash_password_v3
         else:
-            raise AttributeError('Unknown hash version')
+            raise ValueError('Unknown hash version')
 
         test_hash = base64.b64encode(hash_func(pass_salt, test_pass))
         return pass_hash == test_hash
