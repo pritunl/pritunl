@@ -115,6 +115,8 @@ class Administrator(mongo.MongoObject):
             hash_func = hash_password_v1
         elif hash_ver == '2':
             hash_func = hash_password_v2
+        elif hash_ver == '3':
+            hash_func = hash_password_v3
         else:
             raise AttributeError('Unknown hash version')
 
