@@ -17,6 +17,7 @@ class SettingsConf(SettingsGroupFile):
         'www_path': '/usr/share/pritunl/www',
         'var_run_path': '/var/run',
         'uuid_path': '/var/lib/pritunl/pritunl.uuid',
+        'setup_key_path': '/var/lib/pritunl/setup_key',
         'bind_addr': '0.0.0.0',
         'mongodb_uri': 'mongodb://localhost:27017/pritunl',
         'mongodb_collection_prefix': None,
