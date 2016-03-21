@@ -239,8 +239,8 @@ class Administrator(mongo.MongoObject):
 
             salt = base64.b64encode(os.urandom(8))
             pass_hash = base64.b64encode(
-                hash_password_v2(salt, self.password))
-            pass_hash = '2$%s$%s' % (salt, pass_hash)
+                hash_password_v3(salt, self.password))
+            pass_hash = '3$%s$%s' % (salt, pass_hash)
             self.password = pass_hash
 
             if self.default and self.exists:
