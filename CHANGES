@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Improve security in initial setup process
+Improve database setup and upgrade process
 
 Version 1.20.917.37 2016-03-17
 ------------------------------
