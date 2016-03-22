@@ -70,9 +70,9 @@ def hash_pin_v2(salt, pin):
         hash_digest = pass_hash.digest()
     return hash_digest
 
-def generate_hash_pin_v1(pin):
+def generate_hash_pin_v2(pin):
     salt = base64.b64encode(os.urandom(8))
     pin_hash = base64.b64encode(hash_pin_v1(salt, pin))
-    pin_hash = '1$%s$%s' % (salt, pin_hash)
+    pin_hash = '2$%s$%s' % (salt, pin_hash)
 
     return pin_hash
