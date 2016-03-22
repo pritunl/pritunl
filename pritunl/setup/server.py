@@ -151,7 +151,7 @@ def server_thread():
     app.logger.addFilter(logger.log_filter)
     app.logger.addHandler(logger.log_handler)
 
-    server_port = upgrade.get_server_port(bool(settings.conf.mongodb_uri))
+    server_port = upgrade.get_server_port()
     server = wsgiserver.CherryPyWSGIServer(
         (settings.conf.bind_addr, server_port), app,
         server_name=wsgiserver.CherryPyWSGIServer.version,
@@ -166,7 +166,6 @@ def server_thread():
 
     if settings.conf.ssl:
         upgrade.setup_cert(
-            bool(settings.conf.mongodb_uri),
             server_cert_path,
             server_key_path,
         )
