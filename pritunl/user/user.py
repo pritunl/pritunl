@@ -729,7 +729,7 @@ class User(mongo.MongoObject):
             return changed
 
         changed = not self.check_pin(pin)
-        self.pin = auth.generate_hash_pin_v1(pin)
+        self.pin = auth.generate_hash_pin_v2(pin)
         return changed
 
     def send_key_email(self, key_link_domain):
