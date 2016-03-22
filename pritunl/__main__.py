@@ -13,6 +13,7 @@ Command Help: pritunl [command] --help
 Commands:
   start                 Start server
   version               Print the version and exit
+  setup-key             Print the setup key and exit
   reset-password        Reset administrator password
   reset-version         Reset database version to server version
   reset-ssl-cert        Reset the server ssl certificate
