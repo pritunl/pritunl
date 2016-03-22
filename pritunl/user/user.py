@@ -710,9 +710,16 @@ class User(mongo.MongoObject):
         if not self.pin or not test_pin:
             return False
 
-        _, pin_salt, pin_hash = self.pin.split('$')
+        hash_ver, pin_salt, pin_hash = self.pin.split('$')
 
-        test_hash = base64.b64encode(auth.hash_pin_v1(pin_salt, test_pin))
+        if hash_ver == '1':
+            hash_func = auth.hash_pin_v1
+        elif hash_ver == '2':
+            hash_func = auth.hash_pin_v2
+        else:
+            raise ValueError('Unknown hash version')
+
+        test_hash = base64.b64encode(hash_func(pin_salt, test_pin))
         return test_hash == pin_hash
 
     def set_pin(self, pin):
