@@ -226,7 +226,7 @@ def user_post(org_id):
                         'error_msg': PIN_TOO_SHORT_MSG,
                     }, 400)
 
-                pin = auth.generate_hash_pin_v1(pin)
+                pin = auth.generate_hash_pin_v2(pin)
 
             if port_forwarding_in:
                 for data in port_forwarding_in:
