@@ -22,6 +22,7 @@ import hmac
 import json
 import uuid
 import pymongo
+import urllib
 
 class User(mongo.MongoObject):
     fields = {
@@ -269,6 +270,22 @@ class User(mongo.MongoObject):
                     return True
             except:
                 logger.exception('Google auth check error', 'user',
+                    user_id=self.id,
+                )
+            return False
+        elif SLACK_AUTH in self.auth_type:
+            try:
+                resp = utils.request.get(AUTH_SERVER +
+                    '/update/slack?user=%s&team=%s&license=%s' % (
+                        urllib.quote(self.name),
+                        urllib.quote(settings.app.sso_match[0]),
+                        settings.app.license,
+                    ))
+
+                if resp.status_code == 200:
+                    return True
+            except:
+                logger.exception('Slack auth check error', 'user',
                     user_id=self.id,
                 )
             return False
