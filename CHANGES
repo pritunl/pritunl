@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add single sign-on with Slack
+
 Version 1.20.923.9 2016-03-23
 -----------------------------
 
