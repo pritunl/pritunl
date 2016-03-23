@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.20.923.9 2016-03-23
+-----------------------------
 
 Fix issue with creating users
 
