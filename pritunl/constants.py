@@ -204,6 +204,26 @@ DEMO_ADMIN_AUDIT_EVENTS = [
     },
 ]
 
+DEMO_OUTPUT = [
+    '[us-east] Mon Dec 28 04:01:00 2015 OpenVPN 2.3.6 x86_64-redhat' +
+        '-linux-gnu [SSL (OpenSSL)] [LZO] [EPOLL] [PKCS11] [MH] [IPv6] ' +
+        'built on Dec 10 2014',
+    '[us-east] Mon Dec 28 04:01:00 2015 library versions: OpenSSL 1.0.1k-' +
+        'fips 8 Jan 2015, LZO 2.08',
+    '[us-east] Mon Dec 28 04:01:00 2015 Control Channel Authentication: ' +
+        'tls-auth using INLINE static key file',
+    '[us-east] Mon Dec 28 04:01:00 2015 TUN/TAP device tun19 opened',
+    '[us-east] Mon Dec 28 04:01:00 2015 do_ifconfig, tt->ipv6=0, ' +
+        'tt->did_ifconfig_ipv6_setup=0',
+    '[us-east] Mon Dec 28 04:01:00 2015 /sbin/ip link set dev ' +
+        'tun19 up mtu 1500',
+    '[us-east] Mon Dec 28 04:01:00 2015 /sbin/ip addr add dev ' +
+        'tun19 10.100.0.1/16 broadcast 10.100.255.255',
+    '[us-east] Mon Dec 28 04:01:00 2015 UDPv4 link local (bound): [undef]',
+    '[us-east] Mon Dec 28 04:01:00 2015 UDPv4 link remote: [undef]',
+    '[us-east] Mon Dec 28 04:01:00 2015 Initialization Sequence Completed',
+]
+
 GROUP_MONGO = 'mongo'
 GROUP_FILE = 'file'
 GROUP_LOCAL = 'local'
