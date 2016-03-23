@@ -104,6 +104,8 @@ def login_static_get():
                 bodyClass += 'sso-onelogin '
             elif GOOGLE_AUTH in settings.app.sso:
                 bodyClass += 'sso-google '
+            elif SLACK_AUTH in settings.app.sso:
+                bodyClass += 'sso-slack '
             elif settings.app.sso == DUO_AUTH:
                 bodyClass += 'sso-duo '
 
