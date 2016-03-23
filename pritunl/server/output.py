@@ -77,6 +77,9 @@ class ServerOutput(object):
         self.push_output('%s %s' % (timestamp, message), *args, **kwargs)
 
     def get_output(self):
+        if settings.app.demo_mode:
+            return DEMO_OUTPUT
+
         response = self.collection.aggregate([
             {'$match': {
                 'server_id': self.server_id,
