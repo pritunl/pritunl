@@ -6,25 +6,34 @@ from pritunl import ipaddress
 import flask
 import re
 import netifaces
+import collections
 
-_tun_interfaces = set(['tun%s' % _x for _x in xrange(100)])
-_tap_interfaces = set(['tap%s' % _x for _x in xrange(100)])
+_used_interfaces = set()
+_tun_interfaces = collections.deque(['tun%s' % _x for _x in xrange(100)])
+_tap_interfaces = collections.deque(['tap%s' % _x for _x in xrange(100)])
 _sock = None
 _sockfd = None
 
 def interface_acquire(interface_type):
     if interface_type == 'tun':
-        return _tun_interfaces.pop()
+        intf = _tun_interfaces.popleft()
     elif interface_type == 'tap':
-        return _tap_interfaces.pop()
+        intf = _tap_interfaces.popleft()
     else:
         raise ValueError('Unknown interface type %s' % interface_type)
 
+    _used_interfaces.add(intf)
+    return intf
+
 def interface_release(interface_type, interface):
+    if interface not in _used_interfaces:
+        return
+    _used_interfaces.add(interface)
+
     if interface_type == 'tun':
-        _tun_interfaces.add(interface)
+        _tun_interfaces.append(interface)
     elif interface_type == 'tap':
-        _tap_interfaces.add(interface)
+        _tap_interfaces.append(interface)
     else:
         raise ValueError('Unknown interface type %s' % interface_type)
 
