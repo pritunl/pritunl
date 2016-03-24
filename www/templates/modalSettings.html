@@ -132,7 +132,7 @@
     </div>
     <div class="sso-match-google form-group" <%= sso === 'google' || sso === 'google_duo' ? '' : 'style="display: none;"' %>>
       <label>Google Apps Domain</label>
-      <input type="text" class="form-control" placeholder="Enter Google Apps domain" value="<%- sso_match || '' %>" data-toggle="tooltip" title="Google apps domain to match against users email address. Multiple domains can be entrered sperated by a comma. (example: pritunl.com)">
+      <input type="text" class="form-control" spellcheck="false" placeholder="Enter Google Apps domain" value="<%- sso_match || '' %>" data-toggle="tooltip" title="Google apps domain to match against users email address. Multiple domains can be entrered sperated by a comma. (example: pritunl.com)">
     </div>
     <div class="sso-match-slack form-group" <%= sso === 'slack' || sso === 'slack_duo' ? '' : 'style="display: none;"' %>>
       <label>Slack Team</label>
