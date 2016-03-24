@@ -136,7 +136,7 @@
     </div>
     <div class="sso-match-slack form-group" <%= sso === 'slack' || sso === 'slack_duo' ? '' : 'style="display: none;"' %>>
       <label>Slack Team</label>
-      <input type="text" class="form-control" spellcheck="false" placeholder="Enter slack team" value="<%- sso_match || '' %>" data-toggle="tooltip" title="Slack team domain (example: pritunl.slack.com)">
+      <input type="text" class="form-control" spellcheck="false" placeholder="Enter slack team" value="<%- sso_match || '' %>" data-toggle="tooltip" title="Slack team domain to match against users team. (example: pritunl.slack.com)">
     </div>
     <div class="sso-radius-host form-group" <%= sso === 'radius' ? '' : 'style="display: none;"' %>>
       <label>Radius Host</label>
