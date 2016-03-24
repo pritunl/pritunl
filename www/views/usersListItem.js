@@ -175,6 +175,7 @@ define([
       if (this.model.get('bypass_secondary')) {
         this.$('.saml-logo').hide();
         this.$('.google-logo').hide();
+        this.$('.slack-logo').hide();
         this.$('.duo-logo').hide();
         this.$('.radius-logo').hide();
       } else {
@@ -188,10 +189,17 @@ define([
         }
 
         if (sso.indexOf('google') !== -1 &&
-            auth_type.indexOf('google') !== -1) {
+          auth_type.indexOf('google') !== -1) {
           this.$('.google-logo').show();
         } else {
           this.$('.google-logo').hide();
+        }
+
+        if (sso.indexOf('slack') !== -1 &&
+          auth_type.indexOf('slack') !== -1) {
+          this.$('.slack-logo').show();
+        } else {
+          this.$('.slack-logo').hide();
         }
 
         if (sso.indexOf('duo') !== -1 &&
