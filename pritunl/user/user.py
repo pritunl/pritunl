@@ -264,7 +264,9 @@ class User(mongo.MongoObject):
             try:
                 resp = utils.request.get(AUTH_SERVER +
                     '/update/google?user=%s&license=%s' % (
-                        self.email, settings.app.license))
+                        urllib.quote(self.email),
+                        settings.app.license,
+                    ))
 
                 if resp.status_code == 200:
                     return True
