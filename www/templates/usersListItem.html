@@ -35,6 +35,7 @@ if (name.length > 40) {
   <div class="sso-logos">
     <div class="saml-logo" data-toggle="tooltip" title="User authenticated with SAML" <%= bypass_secondary !== true && sso && sso.indexOf('saml') !== -1 && auth_type ? '' : 'style="display: none"' %>><i class="fa fa-lock"></i></div>
     <div class="google-logo" data-toggle="tooltip" title="User is authenticating with Google Apps" <%= bypass_secondary !== true && sso && sso.indexOf('google') !== -1 && auth_type.indexOf('google') !== -1 ? '' : 'style="display: none"' %>></div>
+    <div class="slack-logo" data-toggle="tooltip" title="User is authenticating with Slack" <%= bypass_secondary !== true && sso && sso.indexOf('slack') !== -1 && auth_type.indexOf('slack') !== -1 ? '' : 'style="display: none"' %>></div>
     <div class="duo-logo" data-toggle="tooltip" title="User is authenticating with Duo Security" <%= bypass_secondary !== true && sso && sso.indexOf('duo') !== -1 && auth_type.indexOf('duo') !== -1 ? '' : 'style="display: none"' %>></div>
     <div class="okta-logo" data-toggle="tooltip" title="User is authenticating with Okta" <%= bypass_secondary !== true && sso && sso.indexOf('okta') !== -1 && auth_type.indexOf('okta') !== -1 ? '' : 'style="display: none"' %>></div>
     <div class="onelogin-logo" data-toggle="tooltip" title="User is authenticating with OneLogin" <%= bypass_secondary !== true && sso && sso.indexOf('onelogin') !== -1 && auth_type.indexOf('onelogin') !== -1 ? '' : 'style="display: none"' %>></div>
