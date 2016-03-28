@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with task
+
 Version 1.21.926.53 2016-03-26
 ------------------------------
 
