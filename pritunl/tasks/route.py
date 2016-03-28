@@ -50,7 +50,7 @@ class TaskRoute(task.Task):
                     if vpc_region == route_vpc_region or \
                             route_vpc_id == route_vpc_id or \
                             route_network == route_network:
-                        match = true
+                        match = True
 
                 if not match:
                     self.routes_collection.remove({
