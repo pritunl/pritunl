@@ -41,6 +41,7 @@ dict_fields = [
     'network_mode',
     'network_start',
     'network_end',
+    'restrict_routes',
     'bind_address',
     'port',
     'protocol',
