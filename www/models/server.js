@@ -23,6 +23,7 @@ define([
       'network_mode': null,
       'network_start': null,
       'network_end': null,
+      'restrict_routes': null,
       'multi_device': null,
       'dns_servers': null,
       'search_domain': null,
