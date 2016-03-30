@@ -135,6 +135,7 @@ class Server(mongo.MongoObject):
         'otp_auth': False,
         'tls_auth': True,
         'lzo_compression': False,
+        'restrict_routes': True,
         'inter_client': True,
         'ping_interval': 10,
         'ping_timeout': 60,
