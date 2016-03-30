@@ -356,32 +356,231 @@ class ServerInstance(object):
                 )
         routes6.reverse()
 
-        rules.append(['INPUT', '-i', self.interface, '-j', 'ACCEPT'])
-        rules.append(['FORWARD', '-i', self.interface, '-j', 'ACCEPT'])
-        if self.server.ipv6:
-            if self.server.ipv6_firewall and \
-                    settings.local.host.routed_subnet6:
-                rules6.append(
-                    ['INPUT', '-d', self.server.network6, '-j', 'DROP'])
-                rules6.append(
-                    ['INPUT', '-d', self.server.network6, '-m', 'conntrack',
-                     '--ctstate','RELATED,ESTABLISHED', '-j', 'ACCEPT'])
-                rules6.append(
-                    ['INPUT', '-d', self.server.network6, '-p', 'icmpv6',
-                     '-m', 'conntrack', '--ctstate', 'NEW', '-j', 'ACCEPT'])
-                rules6.append(
-                    ['FORWARD', '-d', self.server.network6, '-j', 'DROP'])
-                rules6.append(
-                    ['FORWARD', '-d', self.server.network6, '-m', 'conntrack',
-                     '--ctstate', 'RELATED,ESTABLISHED', '-j', 'ACCEPT'])
-                rules6.append(
-                    ['FORWARD', '-d', self.server.network6, '-p', 'icmpv6',
-                     '-m', 'conntrack', '--ctstate', 'NEW', '-j', 'ACCEPT'])
+        route_all = self.server.is_route_all()
+        if route_all:
+            rules.append([
+                'INPUT',
+                '-i', self.interface,
+                '-j', 'ACCEPT',
+            ])
+            rules.append([
+                'OUTPUT',
+                '-o', self.interface,
+                '-j', 'ACCEPT',
+            ])
+            rules.append([
+                'FORWARD',
+                '-i', self.interface,
+                '-j', 'ACCEPT',
+            ])
+            if self.server.ipv6:
+                if self.server.ipv6_firewall and \
+                        settings.local.host.routed_subnet6:
+                    rules6.append([
+                        'INPUT',
+                        '-d', self.server.network6,
+                         '-m', 'conntrack',
+                         '--ctstate','RELATED,ESTABLISHED',
+                         '-j', 'ACCEPT',
+                    ])
+                    rules6.append([
+                        'INPUT',
+                        '-d', self.server.network6,
+                        '-p', 'icmpv6',
+                         '-m', 'conntrack',
+                        '--ctstate', 'NEW',
+                        '-j', 'ACCEPT',
+                    ])
+
+                    rules6.append([
+                        'INPUT',
+                        '-d', self.server.network6,
+                        '-j', 'DROP',
+                    ])
+
+                    rules6.append([
+                        'FORWARD',
+                        '-d', self.server.network6,
+                        '-m', 'conntrack',
+                         '--ctstate', 'RELATED,ESTABLISHED',
+                        '-j', 'ACCEPT',
+                    ])
+                    rules6.append([
+                        'FORWARD',
+                        '-d', self.server.network6,
+                        '-p', 'icmpv6',
+                         '-m', 'conntrack',
+                        '--ctstate', 'NEW',
+                        '-j', 'ACCEPT',
+                    ])
+
+                    rules6.append([
+                        'FORWARD',
+                        '-d', self.server.network6,
+                        '-j', 'DROP',
+                    ])
+                else:
+                    rules6.append([
+                        'INPUT',
+                        '-d', self.server.network6,
+                        '-j', 'ACCEPT',
+                    ])
+                    rules6.append([
+                        'FORWARD',
+                        '-d', self.server.network6,
+                        '-j', 'ACCEPT',
+                    ])
+        elif self.server.restrict_routes:
+            if self.server.inter_client:
+                rules.append([
+                    'INPUT', '-i', self.interface,
+                    '-d', self.server.network,
+                    '-j', 'ACCEPT',
+                ])
+                rules6.append([
+                    'INPUT', '-i', self.interface,
+                    '-d', self.server.network6,
+                    '-j', 'ACCEPT',
+                ])
+                rules.append([
+                    'OUTPUT', '-o', self.interface,
+                    '-s', self.server.network,
+                    '-j', 'ACCEPT',
+                ])
+                rules6.append([
+                    'OUTPUT', '-o', self.interface,
+                    '-s', self.server.network6,
+                    '-j', 'ACCEPT',
+                ])
+                rules.append([
+                    'FORWARD', '-i', self.interface,
+                    '-d', self.server.network,
+                    '-j', 'ACCEPT',
+                ])
+                rules.append([
+                    'FORWARD', '-o', self.interface,
+                    '-s', self.server.network,
+                    '-j', 'ACCEPT',
+                ])
+                rules6.append([
+                    'FORWARD', '-i', self.interface,
+                    '-d', self.server.network6,
+                    '-j', 'ACCEPT',
+                ])
+                rules6.append([
+                    'FORWARD', '-o', self.interface,
+                    '-s', self.server.network6,
+                    '-j', 'ACCEPT',
+                ])
             else:
-                rules6.append(
-                    ['INPUT', '-d', self.server.network6, '-j', 'ACCEPT'])
-                rules6.append(
-                    ['FORWARD', '-d', self.server.network6, '-j', 'ACCEPT'])
+                server_addr = utils.get_network_gateway(self.server.network)
+                server_addr6 = utils.get_network_gateway(self.server.network6)
+                rules.append([
+                    'INPUT', '-i', self.interface,
+                    '-d', server_addr,
+                    '-j', 'ACCEPT',
+                ])
+                rules6.append([
+                    'INPUT', '-i', self.interface,
+                    '-d', server_addr6,
+                    '-j', 'ACCEPT',
+                ])
+                rules.append([
+                    'OUTPUT', '-o', self.interface,
+                    '-s', server_addr,
+                    '-j', 'ACCEPT',
+                ])
+                rules6.append([
+                    'OUTPUT', '-o', self.interface,
+                    '-s', server_addr6,
+                    '-j', 'ACCEPT',
+                ])
+
+            for route in self.server.get_routes(
+                        include_hidden=True,
+                        include_server_links=True,
+                        include_default=False,
+                    ):
+                network_address = route['network']
+                is6 = ':' in network_address
+                is_nat = route['nat']
+
+                if route['virtual_network']:
+                    continue
+
+                if self.server.restrict_routes:
+                    if is6:
+                        rules6.append([
+                            'INPUT',
+                            '-i', self.interface,
+                            '-d', network_address,
+                            '-j', 'ACCEPT',
+                        ])
+                        rules6.append([
+                            'OUTPUT',
+                            '-o', self.interface,
+                            '-s', network_address,
+                            '-j', 'ACCEPT',
+                        ])
+                        rules6.append([
+                            'FORWARD',
+                            '-i', self.interface,
+                            '-d', network_address,
+                            '-j', 'ACCEPT',
+                        ])
+
+                        if is_nat:
+                            rules6.append([
+                                'FORWARD',
+                                '-o', self.interface,
+                                '-m', 'conntrack',
+                                '--ctstate', 'RELATED,ESTABLISHED',
+                                '-s', network_address,
+                                '-j', 'ACCEPT',
+                            ])
+                        else:
+                            rules6.append([
+                                'FORWARD',
+                                '-o', self.interface,
+                                '-s', network_address,
+                                '-j', 'ACCEPT',
+                            ])
+                    else:
+                        rules.append([
+                            'INPUT',
+                            '-i', self.interface,
+                            '-d', network_address,
+                            '-j', 'ACCEPT',
+                        ])
+                        rules.append([
+                            'OUTPUT',
+                            '-o', self.interface,
+                            '-s', network_address,
+                            '-j', 'ACCEPT',
+                        ])
+                        rules.append([
+                            'FORWARD',
+                            '-i', self.interface,
+                            '-d', network_address,
+                            '-j', 'ACCEPT',
+                        ])
+
+                        if is_nat:
+                            rules.append([
+                                'FORWARD',
+                                '-o', self.interface,
+                                '-m', 'conntrack',
+                                '--ctstate', 'RELATED,ESTABLISHED',
+                                '-s', network_address,
+                                '-j', 'ACCEPT',
+                            ])
+                        else:
+                            rules.append([
+                                'FORWARD',
+                                '-o', self.interface,
+                                '-s', network_address,
+                                '-j', 'ACCEPT',
+                            ])
 
         interfaces = set()
         interfaces6 = set()
