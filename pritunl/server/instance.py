@@ -659,46 +659,47 @@ class ServerInstance(object):
                 else:
                     rules.append(args_base + ['-s', link_svr_net])
 
-        for interface in interfaces:
-            rules.append([
-                'FORWARD',
-                '-i', interface,
-                '-o', self.interface,
-                '-m', 'state',
-                '--state', 'ESTABLISHED,RELATED',
-                '-j', 'ACCEPT',
-            ])
-            rules.append([
-                'FORWARD',
-                '-i', self.interface,
-                '-o', interface,
-                '-m', 'state',
-                '--state', 'ESTABLISHED,RELATED',
-                '-j', 'ACCEPT',
-            ])
+        if route_all:
+            for interface in interfaces:
+                rules.append([
+                    'FORWARD',
+                    '-i', interface,
+                    '-o', self.interface,
+                    '-m', 'state',
+                    '--state', 'ESTABLISHED,RELATED',
+                    '-j', 'ACCEPT',
+                ])
+                rules.append([
+                    'FORWARD',
+                    '-i', self.interface,
+                    '-o', interface,
+                    '-m', 'state',
+                    '--state', 'ESTABLISHED,RELATED',
+                    '-j', 'ACCEPT',
+                ])
 
-        for interface in interfaces6:
-            if self.server.ipv6 and self.server.ipv6_firewall and \
-                    settings.local.host.routed_subnet6 and \
-                    interface == default_interface6:
-                continue
+            for interface in interfaces6:
+                if self.server.ipv6 and self.server.ipv6_firewall and \
+                        settings.local.host.routed_subnet6 and \
+                        interface == default_interface6:
+                    continue
 
-            rules6.append([
-                'FORWARD',
-                '-i', interface,
-                '-o', self.interface,
-                '-m', 'state',
-                '--state', 'ESTABLISHED,RELATED',
-                '-j', 'ACCEPT',
-            ])
-            rules6.append([
-                'FORWARD',
-                '-i', self.interface,
-                '-o', interface,
-                '-m', 'state',
-                '--state', 'ESTABLISHED,RELATED',
-                '-j', 'ACCEPT',
-            ])
+                rules6.append([
+                    'FORWARD',
+                    '-i', interface,
+                    '-o', self.interface,
+                    '-m', 'state',
+                    '--state', 'ESTABLISHED,RELATED',
+                    '-j', 'ACCEPT',
+                ])
+                rules6.append([
+                    'FORWARD',
+                    '-i', self.interface,
+                    '-o', interface,
+                    '-m', 'state',
+                    '--state', 'ESTABLISHED,RELATED',
+                    '-j', 'ACCEPT',
+                ])
 
         extra_args = [
             '-m', 'comment',
