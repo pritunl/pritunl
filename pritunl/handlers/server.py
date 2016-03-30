@@ -162,6 +162,13 @@ def server_put_post(server_id=None):
         network_end_def = True
         network_end = flask.request.json['network_end']
 
+    restrict_routes = None
+    restrict_routes_def = False
+    if 'restrict_routes' in flask.request.json:
+        restrict_routes_def = True
+        restrict_routes = True if flask.request.json['restrict_routes'] \
+            else False
+
     ipv6 = None
     ipv6_def = False
     if 'ipv6' in flask.request.json:
@@ -450,6 +457,7 @@ def server_put_post(server_id=None):
             network_mode=network_mode,
             network_start=network_start,
             network_end=network_end,
+            restrict_routes=restrict_routes,
             ipv6=ipv6,
             ipv6_firewall=ipv6_firewall,
             bind_address=bind_address,
@@ -499,6 +507,8 @@ def server_put_post(server_id=None):
             svr.network_start = network_start
         if network_end_def:
             svr.network_end = network_end
+        if restrict_routes_def:
+            svr.restrict_routes = restrict_routes
         if ipv6_def:
             svr.ipv6 = ipv6
         if ipv6_firewall_def:
