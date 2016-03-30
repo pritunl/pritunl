@@ -156,14 +156,14 @@ class Server(mongo.MongoObject):
     cache_prefix = 'server'
 
     def __init__(self, name=None, network=None, network_mode=None,
-            network_start=None, network_end=None, ipv6=None,
-            ipv6_firewall=None,bind_address=None, port=None, protocol=None,
-            dh_param_bits=None, multi_device=None, dns_servers=None,
-            search_domain=None, otp_auth=None, cipher=None, hash=None,
-            jumbo_frames=None, lzo_compression=None, inter_client=None,
-            ping_interval=None, ping_timeout=None, link_ping_interval=None,
-            link_ping_timeout=None, max_clients=None, replica_count=None,
-            dns_mapping=None, debug=None, **kwargs):
+            network_start=None, network_end=None, restrict_routes=None,
+            ipv6=None, ipv6_firewall=None,bind_address=None, port=None,
+            protocol=None, dh_param_bits=None, multi_device=None,
+            dns_servers=None, search_domain=None, otp_auth=None,
+            cipher=None, hash=None, jumbo_frames=None, lzo_compression=None,
+            inter_client=None, ping_interval=None, ping_timeout=None,
+            link_ping_interval=None, link_ping_timeout=None, max_clients=None,
+            replica_count=None, dns_mapping=None, debug=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         if 'network' in self.loaded_fields:
@@ -184,6 +184,8 @@ class Server(mongo.MongoObject):
             self.network_start = network_start
         if network_end is not None:
             self.network_end = network_end
+        if restrict_routes is not None:
+            self.restrict_routes = restrict_routes
         if ipv6 is not None:
             self.ipv6 = ipv6
         if ipv6_firewall is not None:
@@ -274,6 +276,7 @@ class Server(mongo.MongoObject):
             'network_mode': self.network_mode,
             'network_start': self.network_start,
             'network_end': self.network_end,
+            'restrict_routes': self.restrict_routes,
             'multi_device': self.multi_device,
             'dns_servers': self.dns_servers,
             'search_domain': self.search_domain,
