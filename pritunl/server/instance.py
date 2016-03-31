@@ -422,12 +422,12 @@ class ServerInstance(object):
                 else:
                     rules6.append([
                         'INPUT',
-                        '-d', self.server.network6,
+                        '-o', self.interface,
                         '-j', 'ACCEPT',
                     ])
                     rules6.append([
                         'FORWARD',
-                        '-d', self.server.network6,
+                        '-o', self.interface,
                         '-j', 'ACCEPT',
                     ])
         elif self.server.restrict_routes:
