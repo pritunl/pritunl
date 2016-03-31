@@ -12,6 +12,7 @@ from pritunl import mongo
 from pritunl import event
 from pritunl import messenger
 from pritunl import organization
+from pritunl import iptables
 from pritunl import ipaddress
 
 import os
@@ -39,8 +40,7 @@ class ServerInstance(object):
         self.primary_user = None
         self.process = None
         self.auth_log_process = None
-        self.iptables_rules = []
-        self.ip6tables_rules = []
+        self.iptables = iptables.Iptables()
         self.iptables_lock = threading.Lock()
         self.tun_nat = False
         self.server_links = []
@@ -283,8 +283,19 @@ class ServerInstance(object):
         rem_interface(self.server.network, self.interface)
 
     def generate_iptables_rules(self):
-        rules = []
-        rules6 = []
+        server_addr = utils.get_network_gateway(self.server.network)
+        server_addr6 = utils.get_network_gateway(self.server.network6)
+        ipv6_firewall = self.server.ipv6_firewall and \
+            settings.local.host.routed_subnet6
+
+        self.iptables.id = self.server.id
+        self.iptables.server_addr = server_addr
+        self.iptables.server_addr6 = server_addr6
+        self.iptables.virt_interface = self.interface
+        self.iptables.virt_network = self.server.network
+        self.iptables.virt_network6 = self.server.network6
+        self.iptables.ipv6_firewall = ipv6_firewall
+        self.iptables.inter_client = self.server.inter_client
 
         try:
             routes_output = utils.check_output_logged(['route', '-n'])
@@ -356,257 +367,23 @@ class ServerInstance(object):
                 )
         routes6.reverse()
 
-        route_all = self.server.is_route_all()
-        if route_all:
-            rules.append([
-                'INPUT',
-                '-i', self.interface,
-                '-j', 'ACCEPT',
-            ])
-            rules.append([
-                'OUTPUT',
-                '-o', self.interface,
-                '-j', 'ACCEPT',
-            ])
-            rules.append([
-                'FORWARD',
-                '-i', self.interface,
-                '-j', 'ACCEPT',
-            ])
-            if self.server.ipv6:
-                if self.server.ipv6_firewall and \
-                        settings.local.host.routed_subnet6:
-                    rules6.append([
-                        'INPUT',
-                        '-d', self.server.network6,
-                         '-m', 'conntrack',
-                         '--ctstate','RELATED,ESTABLISHED',
-                         '-j', 'ACCEPT',
-                    ])
-                    rules6.append([
-                        'INPUT',
-                        '-d', self.server.network6,
-                        '-p', 'icmpv6',
-                         '-m', 'conntrack',
-                        '--ctstate', 'NEW',
-                        '-j', 'ACCEPT',
-                    ])
-
-                    rules6.append([
-                        'INPUT',
-                        '-d', self.server.network6,
-                        '-j', 'DROP',
-                    ])
-
-                    rules6.append([
-                        'FORWARD',
-                        '-d', self.server.network6,
-                        '-m', 'conntrack',
-                         '--ctstate', 'RELATED,ESTABLISHED',
-                        '-j', 'ACCEPT',
-                    ])
-                    rules6.append([
-                        'FORWARD',
-                        '-d', self.server.network6,
-                        '-p', 'icmpv6',
-                         '-m', 'conntrack',
-                        '--ctstate', 'NEW',
-                        '-j', 'ACCEPT',
-                    ])
-
-                    rules6.append([
-                        'FORWARD',
-                        '-d', self.server.network6,
-                        '-j', 'DROP',
-                    ])
-                else:
-                    rules6.append([
-                        'INPUT',
-                        '-o', self.interface,
-                        '-j', 'ACCEPT',
-                    ])
-                    rules6.append([
-                        'FORWARD',
-                        '-o', self.interface,
-                        '-j', 'ACCEPT',
-                    ])
-        elif self.server.restrict_routes:
-            if self.server.inter_client:
-                rules.append([
-                    'INPUT', '-i', self.interface,
-                    '-d', self.server.network,
-                    '-j', 'ACCEPT',
-                ])
-                rules6.append([
-                    'INPUT', '-i', self.interface,
-                    '-d', self.server.network6,
-                    '-j', 'ACCEPT',
-                ])
-                rules.append([
-                    'OUTPUT', '-o', self.interface,
-                    '-s', self.server.network,
-                    '-j', 'ACCEPT',
-                ])
-                rules6.append([
-                    'OUTPUT', '-o', self.interface,
-                    '-s', self.server.network6,
-                    '-j', 'ACCEPT',
-                ])
-                rules.append([
-                    'FORWARD', '-i', self.interface,
-                    '-d', self.server.network,
-                    '-j', 'ACCEPT',
-                ])
-                rules.append([
-                    'FORWARD', '-o', self.interface,
-                    '-s', self.server.network,
-                    '-j', 'ACCEPT',
-                ])
-                rules6.append([
-                    'FORWARD', '-i', self.interface,
-                    '-d', self.server.network6,
-                    '-j', 'ACCEPT',
-                ])
-                rules6.append([
-                    'FORWARD', '-o', self.interface,
-                    '-s', self.server.network6,
-                    '-j', 'ACCEPT',
-                ])
-            else:
-                server_addr = utils.get_network_gateway(self.server.network)
-                server_addr6 = utils.get_network_gateway(self.server.network6)
-                rules.append([
-                    'INPUT', '-i', self.interface,
-                    '-d', server_addr,
-                    '-j', 'ACCEPT',
-                ])
-                rules6.append([
-                    'INPUT', '-i', self.interface,
-                    '-d', server_addr6,
-                    '-j', 'ACCEPT',
-                ])
-                rules.append([
-                    'OUTPUT', '-o', self.interface,
-                    '-s', server_addr,
-                    '-j', 'ACCEPT',
-                ])
-                rules6.append([
-                    'OUTPUT', '-o', self.interface,
-                    '-s', server_addr6,
-                    '-j', 'ACCEPT',
-                ])
-
-            for route in self.server.get_routes(
-                        include_hidden=True,
-                        include_server_links=True,
-                        include_default=False,
-                    ):
-                network_address = route['network']
-                is6 = ':' in network_address
-                is_nat = route['nat']
-
-                if route['virtual_network']:
-                    continue
-
-                if self.server.restrict_routes:
-                    if is6:
-                        rules6.append([
-                            'INPUT',
-                            '-i', self.interface,
-                            '-d', network_address,
-                            '-j', 'ACCEPT',
-                        ])
-                        rules6.append([
-                            'OUTPUT',
-                            '-o', self.interface,
-                            '-s', network_address,
-                            '-j', 'ACCEPT',
-                        ])
-                        rules6.append([
-                            'FORWARD',
-                            '-i', self.interface,
-                            '-d', network_address,
-                            '-j', 'ACCEPT',
-                        ])
-
-                        if is_nat:
-                            rules6.append([
-                                'FORWARD',
-                                '-o', self.interface,
-                                '-m', 'conntrack',
-                                '--ctstate', 'RELATED,ESTABLISHED',
-                                '-s', network_address,
-                                '-j', 'ACCEPT',
-                            ])
-                        else:
-                            rules6.append([
-                                'FORWARD',
-                                '-o', self.interface,
-                                '-s', network_address,
-                                '-j', 'ACCEPT',
-                            ])
-                    else:
-                        rules.append([
-                            'INPUT',
-                            '-i', self.interface,
-                            '-d', network_address,
-                            '-j', 'ACCEPT',
-                        ])
-                        rules.append([
-                            'OUTPUT',
-                            '-o', self.interface,
-                            '-s', network_address,
-                            '-j', 'ACCEPT',
-                        ])
-                        rules.append([
-                            'FORWARD',
-                            '-i', self.interface,
-                            '-d', network_address,
-                            '-j', 'ACCEPT',
-                        ])
-
-                        if is_nat:
-                            rules.append([
-                                'FORWARD',
-                                '-o', self.interface,
-                                '-m', 'conntrack',
-                                '--ctstate', 'RELATED,ESTABLISHED',
-                                '-s', network_address,
-                                '-j', 'ACCEPT',
-                            ])
-                        else:
-                            rules.append([
-                                'FORWARD',
-                                '-o', self.interface,
-                                '-s', network_address,
-                                '-j', 'ACCEPT',
-                            ])
-
         interfaces = set()
         interfaces6 = set()
 
-        link_svr_networks = []
-        for link_svr in self.server.iter_links(fields=('_id', 'network',
-                'network_start', 'network_end', 'organizations', 'routes',
-                'links')):
-            link_svr_networks.append(link_svr.network)
-
-        for route in self.server.get_routes(include_hidden=True):
-            if route['virtual_network'] or not route['nat']:
+        for route in self.server.get_routes(
+                    include_hidden=True,
+                    include_server_links=True,
+                    include_default=True,
+                ):
+            if route['virtual_network']:
                 continue
 
-            network_address = route['network']
+            network = route['network']
+            is6 = ':' in network
+            network_obj = ipaddress.IPNetwork(network)
 
-            args_base = ['POSTROUTING', '-t', 'nat']
-            is6 = ':' in network_address
+            interface = None
             if is6:
-                network = network_address
-            else:
-                network = utils.parse_network(network_address)[0]
-            network_obj = ipaddress.IPNetwork(network_address)
-
-            if is6:
-                interface = None
                 for route_net, route_intf in routes6:
                     if network_obj in route_net:
                         interface = route_intf
@@ -623,7 +400,6 @@ class ServerInstance(object):
                     interface = default_interface6
                 interfaces6.add(interface)
             else:
-                interface = None
                 for route_net, route_intf in routes:
                     if network_obj in route_net:
                         interface = route_intf
@@ -640,290 +416,39 @@ class ServerInstance(object):
                     interface = default_interface
                 interfaces.add(interface)
 
-            if network != '0.0.0.0' and network != '::/0':
-                args_base += ['-d', network_address]
-
-            args_base += [
-                '-o', interface,
-                '-j', 'MASQUERADE',
-            ]
-
-            if is6:
-                rules6.append(args_base + ['-s', self.server.network6])
-            else:
-                rules.append(args_base + ['-s', self.server.network])
-
-            for link_svr_net in link_svr_networks:
-                if ':' in link_svr_net:
-                    rules6.append(args_base + ['-s', link_svr_net])
-                else:
-                    rules.append(args_base + ['-s', link_svr_net])
-
-        if route_all:
-            for interface in interfaces:
-                rules.append([
-                    'FORWARD',
-                    '-i', interface,
-                    '-o', self.interface,
-                    '-m', 'state',
-                    '--state', 'ESTABLISHED,RELATED',
-                    '-j', 'ACCEPT',
-                ])
-                rules.append([
-                    'FORWARD',
-                    '-i', self.interface,
-                    '-o', interface,
-                    '-m', 'state',
-                    '--state', 'ESTABLISHED,RELATED',
-                    '-j', 'ACCEPT',
-                ])
-
-            for interface in interfaces6:
-                if self.server.ipv6 and self.server.ipv6_firewall and \
-                        settings.local.host.routed_subnet6 and \
-                        interface == default_interface6:
-                    continue
-
-                rules6.append([
-                    'FORWARD',
-                    '-i', interface,
-                    '-o', self.interface,
-                    '-m', 'state',
-                    '--state', 'ESTABLISHED,RELATED',
-                    '-j', 'ACCEPT',
-                ])
-                rules6.append([
-                    'FORWARD',
-                    '-i', self.interface,
-                    '-o', interface,
-                    '-m', 'state',
-                    '--state', 'ESTABLISHED,RELATED',
-                    '-j', 'ACCEPT',
-                ])
-
-        extra_args = [
-            '-m', 'comment',
-            '--comment', 'pritunl_%s' % self.server.id,
-        ]
-
-        if settings.local.iptables_wait:
-            extra_args.append('--wait')
-
-        rules = [x + extra_args for x in rules]
-        rules6 = [x + extra_args for x in rules6]
-
-        return rules, rules6
-
-    def exists_iptables_rule(self, rule):
-        process = subprocess.Popen(
-            ['iptables', '-C'] + rule,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-
-        if process.wait():
-            return False
-        return True
-
-    def exists_ip6tables_rule(self, rule):
-        process = subprocess.Popen(
-            ['ip6tables', '-C'] + rule,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-
-        if process.wait():
-            return False
-        return True
-
-    def remove_iptables_rule(self, rule):
-        process = subprocess.Popen(
-            ['iptables', '-D'] + rule,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            self.iptables.add_route(
+                network,
+                nat=route['nat'],
+                nat_interface=interface,
             )
 
-        if process.wait():
-            return False
-        return True
+        self.iptables.generate()
 
-    def remove_ip6tables_rule(self, rule):
-        process = subprocess.Popen(
-            ['ip6tables', '-D'] + rule,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            )
-
-        if process.wait():
-            return False
-        return True
-
-    def set_iptables_rule(self, rule):
-        for i in xrange(3):
-            try:
-                utils.check_output_logged(['iptables', '-I'] + rule)
-                break
-            except:
-                if i == 2:
-                    raise
-                logger.error(
-                    'Failed to insert iptables rule, retrying...',
-                    'instance',
-                    rule=rule,
-                )
-            time.sleep(1)
-
-    def set_ip6tables_rule(self, rule):
-        for i in xrange(3):
-            try:
-                utils.check_output_logged(['ip6tables', '-I'] + rule)
-                break
-            except:
-                if i == 2:
-                    raise
-                logger.error(
-                    'Failed to insert ip6tables rule, retrying...',
-                    'instance',
-                    rule=rule,
-                )
-            time.sleep(1)
-
-    def enable_iptables_tun_nat(self):
-        self.iptables_lock.acquire()
-        try:
-            if self.iptables_rules is None:
-                return
-
-            if self.tun_nat:
-                return
-            self.tun_nat = True
-
-            rule = [
-                'POSTROUTING',
-                '-t', 'nat',
-                '-o', self.interface,
-                '-j', 'MASQUERADE',
-                '-m', 'comment',
-                '--comment', 'pritunl_%s' % self.server.id,
-            ]
-            self.iptables_rules.append(rule)
-            self.set_iptables_rule(rule)
-            if self.server.ipv6:
-                self.ip6tables_rules.append(rule)
-                self.set_ip6tables_rule(rule)
-        finally:
-            self.iptables_lock.release()
-
-    def append_iptables_rules(self, rules):
-        self.iptables_lock.acquire()
-        try:
-            if self.iptables_rules is None:
-                return
-            for rule in rules:
-                if not self.exists_iptables_rule(rule):
-                    self.set_iptables_rule(rule)
-                self.iptables_rules.append(rule)
-        finally:
-            self.iptables_lock.release()
-
-    def delete_iptables_rules(self, rules):
-        self.iptables_lock.acquire()
-        try:
-            if self.iptables_rules is None:
-                return
-            for rule in rules:
-                try:
-                    self.iptables_rules.remove(rule)
-                except ValueError:
-                    pass
-                self.remove_iptables_rule(rule)
-        finally:
-            self.iptables_lock.release()
-
-    def append_ip6tables_rules(self, rules):
-        self.iptables_lock.acquire()
-        try:
-            if self.ip6tables_rules is None:
-                return
-            for rule in rules:
-                if not self.exists_ip6tables_rule(rule):
-                    self.set_ip6tables_rule(rule)
-                self.ip6tables_rules.append(rule)
-        finally:
-            self.iptables_lock.release()
-
-    def delete_ip6tables_rules(self, rules):
-        self.iptables_lock.acquire()
-        try:
-            if self.ip6tables_rules is None:
-                return
-            for rule in rules:
-                try:
-                    self.ip6tables_rules.remove(rule)
-                except ValueError:
-                    pass
-                self.remove_ip6tables_rule(rule)
-        finally:
-            self.iptables_lock.release()
-
-    def set_iptables_rules(self, log=False):
-        logger.debug('Setting iptables rules', 'server',
-            server_id=self.server.id,
-        )
-
-        self.iptables_lock.acquire()
-        try:
-            if self.iptables_rules is not None:
-                for rule in self.iptables_rules:
-                    if not self.exists_iptables_rule(rule):
-                        if log and not self.interrupt:
-                            logger.error(
-                                'Unexpected loss of iptables rule, ' +
-                                    'adding again...',
-                                'instance',
-                                rule=rule,
-                            )
-                        self.set_iptables_rule(rule)
-
-            if self.ip6tables_rules is not None:
-                for rule in self.ip6tables_rules:
-                    if not self.exists_ip6tables_rule(rule):
-                        if log and not self.interrupt:
-                            logger.error(
-                                'Unexpected loss of ip6tables rule, ' +
-                                    'adding again...',
-                                'instance',
-                                rule=rule,
-                            )
-                        self.set_ip6tables_rule(rule)
-        except subprocess.CalledProcessError as error:
-            logger.exception('Failed to apply iptables ' + \
-                'routing rule', 'server',
-                server_id=self.server.id,
-                output=error.output,
-            )
-            raise
-        finally:
-            self.iptables_lock.release()
-
-    def clear_iptables_rules(self):
-        logger.debug('Clearing iptables rules', 'server',
-            server_id=self.server.id,
-        )
-
-        self.iptables_lock.acquire()
-        try:
-            if self.iptables_rules is not None:
-                for rule in self.iptables_rules:
-                    self.remove_iptables_rule(rule)
-
-            if self.ip6tables_rules is not None:
-                for rule in self.ip6tables_rules:
-                    self.remove_ip6tables_rule(rule)
-        finally:
-            self.iptables_rules = None
-            self.ip6tables_rules = None
-            self.iptables_lock.release()
+    # def enable_iptables_tun_nat(self):
+    #     self.iptables_lock.acquire()
+    #     try:
+    #         if self.iptables_rules is None:
+    #             return
+    #
+    #         if self.tun_nat:
+    #             return
+    #         self.tun_nat = True
+    #
+    #         rule = [
+    #             'POSTROUTING',
+    #             '-t', 'nat',
+    #             '-o', self.interface,
+    #             '-j', 'MASQUERADE',
+    #             '-m', 'comment',
+    #             '--comment', 'pritunl_%s' % self.server.id,
+    #         ]
+    #         self.iptables_rules.append(rule)
+    #         self.set_iptables_rule(rule)
+    #         if self.server.ipv6:
+    #             self.ip6tables_rules.append(rule)
+    #             self.set_ip6tables_rule(rule)
+    #     finally:
+    #         self.iptables_lock.release()
 
     def stop_process(self):
         self.sock_interrupt = True
@@ -1103,7 +628,7 @@ class ServerInstance(object):
 
         while not self.interrupt:
             try:
-                self.set_iptables_rules(log=True)
+                self.iptables.upsert_rules(log=True)
                 if self.interrupter_sleep(
                         settings.vpn.iptables_update_rate):
                     return
@@ -1206,9 +731,8 @@ class ServerInstance(object):
             self.bridge_start()
             self.generate_ovpn_conf()
 
-            self.iptables_rules, self.ip6tables_rules = \
-                self.generate_iptables_rules()
-            self.set_iptables_rules()
+            self.generate_iptables_rules()
+            self.iptables.upsert_rules()
 
             self.init_route_advertisements()
 
@@ -1243,7 +767,7 @@ class ServerInstance(object):
 
             self.interrupt = True
             self.bridge_stop()
-            self.clear_iptables_rules()
+            self.iptables.clear_rules()
             self.resources_release()
 
             if not self.clean_exit:
@@ -1256,7 +780,7 @@ class ServerInstance(object):
             self.interrupt = True
             self.stop_process()
             if self.resource_lock:
-                self.clear_iptables_rules()
+                self.iptables.clear_rules()
                 self.bridge_stop()
             self.resources_release()
 
