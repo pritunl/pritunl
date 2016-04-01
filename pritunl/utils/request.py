@@ -4,6 +4,7 @@ import urllib2
 import httplib
 import socket
 import base64
+import ssl
 
 class Response:
     def __init__(self, url, headers, status_code, reason, content):
@@ -17,7 +18,7 @@ class Response:
         return json.loads(self.content)
 
 def _request(method, url, json_data=None, params=None, headers=None,
-        timeout=None, auth=None):
+        timeout=None, auth=None, verify=True):
     if headers is None:
         headers = {}
     if timeout is None:
@@ -40,7 +41,13 @@ def _request(method, url, json_data=None, params=None, headers=None,
         data = urllib.urlencode(params)
 
     try:
-        url_response = urllib2.urlopen(request, data=data, timeout=timeout)
+        if not verify:
+            context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+        else:
+            context = None
+
+        url_response = urllib2.urlopen(request, data=data, timeout=timeout,
+            context=context)
         return Response(url,
             headers=dict(url_response.info().items()),
             status_code=url_response.getcode(),
