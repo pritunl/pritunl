@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add restricted routing
+Auto restart non-responsive web server
 
 Version 1.21.928.27 2016-03-28
 ------------------------------
