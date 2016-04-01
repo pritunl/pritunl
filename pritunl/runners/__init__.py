@@ -13,6 +13,7 @@ from pritunl.runners.instance import start_instance
 from pritunl.runners.time_sync import start_time_sync
 from pritunl.runners.limiter import start_limiter
 from pritunl.runners.listener import start_listener
+from pritunl.runners.web_watch import start_web_watch
 
 def start_all():
     start_settings()
@@ -29,5 +30,6 @@ def start_all():
     start_time_sync()
     start_limiter()
     start_update_server()
+    start_web_watch()
 
     start_listener()
