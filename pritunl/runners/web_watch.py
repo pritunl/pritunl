@@ -15,16 +15,18 @@ def _web_watch_thread():
         while True:
             url = ''
             if settings.app.server_ssl:
+                verify = False
                 url += 'https://'
             else:
                 url += 'http://'
+                verify = True
             url += 'localhost:%s/ping' % settings.app.server_port
 
             try:
                 resp = utils.request.get(
                     url,
                     timeout=1,
-                    verify=False,
+                    verify=verify,
                 )
 
                 if resp.status_code != 200:
