@@ -3,6 +3,7 @@ from pritunl.utils.misc import check_output_logged, get_temp_path
 from pritunl import settings
 
 import os
+import collections
 
 def create_server_cert():
     from pritunl import logger
@@ -21,10 +22,34 @@ def create_server_cert():
 
 def write_server_cert():
     server_cert_path = os.path.join(settings.conf.temp_path, SERVER_CERT_NAME)
+    server_chain_path = os.path.join(settings.conf.temp_path,
+        SERVER_CHAIN_NAME)
     server_key_path = os.path.join(settings.conf.temp_path, SERVER_KEY_NAME)
 
+    server_cert_full = settings.app.server_cert
+
+    if settings.app.acme_domain:
+        server_cert_full += LETS_ENCRYPT_INTER
+
+    server_cert_full = server_cert_full.strip()
+    server_cert_full = server_cert_full.split('-----BEGIN CERTIFICATE-----')
+
+    server_certs = collections.deque()
+
+    for cert in server_cert_full:
+        cert = cert.strip()
+        if not cert:
+            continue
+
+        server_certs.append('-----BEGIN CERTIFICATE-----\n' + cert)
+
+    server_cert = server_certs.popleft()
+    server_chain = '\n'.join(server_certs)
+
     with open(server_cert_path, 'w') as server_cert_file:
-        server_cert_file.write(settings.app.server_cert)
+        server_cert_file.write(server_cert)
+    with open(server_chain_path, 'w') as server_chain_file:
+        server_chain_file.write(server_chain)
     with open(server_key_path, 'w') as server_key_file:
         os.chmod(server_key_path, 0600)
         server_key_file.write(settings.app.server_key)
