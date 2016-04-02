@@ -192,6 +192,20 @@ class pyOpenSSLAdapter(wsgiserver.SSLAdapter):
         """Return an SSL.Context from self attributes."""
         # See http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/442473
         c = SSL.Context(SSL.SSLv23_METHOD)
+        c.set_options(SSL.OP_NO_SSLv3)
+        c.set_cipher_list(':'.join((
+            'DHE-RSA-AES256-SHA',
+            'AES256-SHA',
+            'DHE-RSA-AES128-SHA',
+            'AES128-SHA',
+            'EDH-RSA-DES-CBC3-SHA',
+            'DHE-RSA-AES256-SHA',
+            'AES256-SHA',
+            'DHE-RSA-AES128-SHA',
+            'AES128-SHA',
+            'EDH-RSA-DES-CBC3-SHA',
+            'DES-CBC3-SHA',
+        )))
         c.use_privatekey_file(self.private_key)
         if self.certificate_chain:
             c.load_verify_locations(self.certificate_chain)
