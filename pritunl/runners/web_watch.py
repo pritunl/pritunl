@@ -8,7 +8,7 @@ import threading
 
 @interrupter
 def _web_watch_thread():
-    yield interrupter_sleep(3)
+    yield interrupter_sleep(5)
 
     error_count = 0
     while True:
