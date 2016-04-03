@@ -43,6 +43,7 @@ def _web_watch_thread():
                 )
                 break
 
+            error_count = 0
             yield interrupter_sleep(3)
 
         error_count += 1
