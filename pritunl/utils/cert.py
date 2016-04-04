@@ -25,6 +25,17 @@ def create_server_cert():
     with open(server_key_path, 'r') as server_key_file:
         settings.app.server_key = server_key_file.read().strip()
 
+def create_server_dh_params():
+    from pritunl import logger
+
+    logger.info('Generating server dh params...', 'utils')
+
+    server_dh_path = os.path.join(settings.conf.temp_path, SERVER_DH_NAME)
+    generate_server_dh_params(server_dh_path)
+
+    with open(server_dh_path, 'r') as server_dh_file:
+        settings.app.server_dh_params = server_dh_file.read().strip()
+
 def write_server_cert():
     server_cert_path = os.path.join(settings.conf.temp_path, SERVER_CERT_NAME)
     server_chain_path = os.path.join(settings.conf.temp_path,
