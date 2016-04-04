@@ -41,6 +41,7 @@ def write_server_cert():
     server_chain_path = os.path.join(settings.conf.temp_path,
         SERVER_CHAIN_NAME)
     server_key_path = os.path.join(settings.conf.temp_path, SERVER_KEY_NAME)
+    server_dh_path = os.path.join(settings.conf.temp_path, SERVER_DH_NAME)
 
     server_cert_full = settings.app.server_cert
 
@@ -94,10 +95,12 @@ def generate_server_dh_params(server_dh_path):
 
 def generate_server_cert(server_cert_path, server_key_path):
     check_output_logged([
-        'openssl', 'req', '-batch', '-x509', '-nodes', '-sha256',
-        '-newkey', 'rsa:4096',
-        '-days', '3652',
-        '-keyout', server_key_path,
+        'openssl', 'ecparam', '-name', 'prime256v1', '-genkey', '-noout',
+        '-out', server_key_path,
+    ])
+    check_output_logged([
+        'openssl', 'req', '-new', '-batch', '-x509', '-days', '3652',
+        '-key', server_key_path,
         '-out', server_cert_path,
     ])
     os.chmod(server_key_path, 0600)
