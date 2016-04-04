@@ -44,7 +44,7 @@ def update_acme_cert():
         settings.app.acme_key = utils.generate_private_key()
         settings.commit()
 
-    private_key = utils.generate_private_key()
+    private_key = utils.generate_private_ec_key()
     csr = utils.generate_csr(private_key, settings.app.acme_domain)
     cert = get_acme_cert(settings.app.acme_key, csr)
 
