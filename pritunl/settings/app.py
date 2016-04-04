@@ -79,6 +79,8 @@ class SettingsApp(SettingsGroupMongo):
         'acme_renew': 2592000,
         'server_cert': None,
         'server_key': None,
+        'server_dh_params': None,
+        'server_dh_size': 1024,
         'cloud_provider': None,
         'us_east_1_access_key': None,
         'us_east_1_secret_key': None,
