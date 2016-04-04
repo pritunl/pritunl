@@ -107,6 +107,11 @@ def generate_private_key():
         'openssl', 'genrsa', '4096',
     ])
 
+def generate_private_ec_key():
+    return check_output_logged([
+        'openssl', 'ecparam', '-name', 'prime256v1', '-genkey', '-noout',
+    ])
+
 def generate_csr(private_key, domain):
     private_key_path = get_temp_path() + '.key'
 
