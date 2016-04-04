@@ -212,11 +212,16 @@ def run_server():
     else:
         logger.LogEntry(message='Web server started.')
 
+    if not settings.conf.debug and settings.app.redirect_server:
+        thread = threading.Thread(target=_run_redirect_wsgi)
+        thread.daemon = True
+        thread.start()
+
+    if settings.conf.ssl:
+        time.sleep(1)
+        setup_server_cert()
+
     if settings.conf.debug:
         _run_wsgi_debug()
     else:
-        if settings.app.redirect_server:
-            thread = threading.Thread(target=_run_redirect_wsgi)
-            thread.daemon = True
-            thread.start()
         _run_wsgi()
