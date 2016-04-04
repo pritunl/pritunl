@@ -6,9 +6,14 @@ import os
 import collections
 
 def create_server_cert():
+    from pritunl import acme
     from pritunl import logger
 
     logger.info('Generating server certificate...', 'utils')
+
+    if settings.app.acme_domain:
+        acme.update_acme_cert()
+        return
 
     server_cert_path = os.path.join(settings.conf.temp_path, SERVER_CERT_NAME)
     server_key_path = os.path.join(settings.conf.temp_path, SERVER_KEY_NAME)
