@@ -16,9 +16,6 @@ from pritunl.setup.subscription import setup_subscription
 from pritunl.setup.runners import setup_runners
 from pritunl.setup.handlers import setup_handlers
 from pritunl.setup.check import setup_check
-from pritunl.setup.server_cert import setup_server_cert
-
-from pritunl import settings
 
 def setup_all():
     setup_local()
@@ -30,10 +27,6 @@ def setup_all():
         setup_signal_handler()
         setup_server()
         setup_mongo()
-
-        if settings.conf.ssl:
-            setup_server_cert()
-
         setup_public_ip()
         setup_host()
         setup_server_listeners()
