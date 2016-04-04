@@ -126,6 +126,7 @@ def generate_csr(private_key, domain):
         'openssl',
         'req',
         '-new',
+        '-batch',
         '-sha256',
         '-key', private_key_path,
         '-subj', '/CN=%s' % domain,
