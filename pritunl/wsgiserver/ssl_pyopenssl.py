@@ -37,6 +37,7 @@ import threading
 import time
 
 from pritunl import wsgiserver
+from pritunl import utils
 
 try:
     from OpenSSL import SSL
@@ -166,7 +167,10 @@ class pyOpenSSLAdapter(wsgiserver.SSLAdapter):
     This is needed for cheaper "chained root" SSL certificates, and should be
     left as None if not required."""
 
-    def __init__(self, certificate, private_key, certificate_chain=None):
+    dh_params = None
+
+    def __init__(self, certificate, private_key, certificate_chain=None,
+            dh_params=None):
         if SSL is None:
             raise ImportError("You must install pyOpenSSL to use HTTPS.")
 
@@ -174,6 +178,7 @@ class pyOpenSSLAdapter(wsgiserver.SSLAdapter):
         self.certificate = certificate
         self.private_key = private_key
         self.certificate_chain = certificate_chain
+        self.dh_params = dh_params
         self._environ = None
 
     def bind(self, sock):
@@ -192,6 +197,10 @@ class pyOpenSSLAdapter(wsgiserver.SSLAdapter):
         """Return an SSL.Context from self attributes."""
         # See http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/442473
         c = SSL.Context(SSL.SSLv23_METHOD)
+        if self.dh_params:
+            c.load_tmp_dh(self.dh_params)
+            c.set_tmp_ecdh(crypto.get_elliptic_curve('prime256v1'))
+            c.set_options(SSL.OP_SINGLE_DH_USE)
         c.set_options(SSL.OP_NO_SSLv2)
         c.set_options(SSL.OP_NO_SSLv3)
         c.set_cipher_list(':'.join((
