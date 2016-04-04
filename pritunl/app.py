@@ -155,6 +155,8 @@ def _run_wsgi(restart=False):
         settings.local.server_ready.set()
         settings.local.server_start.wait()
 
+    start_web_watch()
+
     try:
         app_server.start()
     except (KeyboardInterrupt, SystemExit):
@@ -198,6 +200,58 @@ def setup_server_cert():
     if not settings.app.server_cert or not settings.app.server_key:
         utils.create_server_cert()
         settings.commit()
+
+@interrupter
+def _web_watch_thread():
+    yield interrupter_sleep(5)
+
+    error_count = 0
+    while True:
+        while True:
+            url = ''
+            if settings.app.server_ssl:
+                verify = False
+                url += 'https://'
+            else:
+                url += 'http://'
+                verify = True
+            url += 'localhost:%s/ping' % settings.app.server_port
+
+            try:
+                resp = utils.request.get(
+                    url,
+                    timeout=1,
+                    verify=verify,
+                )
+
+                if resp.status_code != 200:
+                    logger.error('Failed to ping web server, bad status',
+                        'watch',
+                        url=url,
+                        status_code=resp.status_code,
+                        content=resp.content,
+                    )
+                    break
+            except:
+                logger.exception('Failed to ping web server', 'watch',
+                    url=url,
+                )
+                break
+
+            error_count = 0
+            yield interrupter_sleep(3)
+
+        error_count += 1
+        if error_count > 1:
+            error_count = 0
+            logger.error('Web server non-responsive, restarting...', 'watch')
+            restart_server()
+            yield interrupter_sleep(10)
+        else:
+            yield interrupter_sleep(2)
+
+def start_web_watch():
+    threading.Thread(target=_web_watch_thread).start()
 
 def run_server():
     global _cur_cert
