@@ -141,18 +141,14 @@ def _run_wsgi(restart=False):
     app_server.shutdown_timeout = 1
 
     if settings.app.server_ssl:
-        utils.write_server_cert()
+        server_cert_path, server_chain_path, server_key_path, \
+            server_dh_path = utils.write_server_cert()
 
-        server_cert_path = os.path.join(settings.conf.temp_path,
-            SERVER_CERT_NAME)
-        server_chain_path = os.path.join(settings.conf.temp_path,
-            SERVER_CHAIN_NAME)
-        server_key_path = os.path.join(settings.conf.temp_path,
-            SERVER_KEY_NAME)
         app_server.ssl_adapter = SSLAdapter(
             server_cert_path,
             server_key_path,
             server_chain_path,
+            server_dh_path,
         )
 
     if not restart:
