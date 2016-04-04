@@ -12,7 +12,6 @@ import flask
 import logging
 import logging.handlers
 import time
-import os
 import urlparse
 
 try:
