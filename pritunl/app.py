@@ -194,6 +194,15 @@ def _run_wsgi_debug():
         logger.exception('Server error occurred', 'app')
         raise
 
+def setup_server_cert():
+    if not settings.app.server_dh_params:
+        utils.create_server_dh_params()
+        settings.commit()
+
+    if not settings.app.server_cert or not settings.app.server_key:
+        utils.create_server_cert()
+        settings.commit()
+
 def run_server():
     global _cur_cert
     global _cur_key
