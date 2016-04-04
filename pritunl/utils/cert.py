@@ -61,14 +61,36 @@ def write_server_cert():
 
     server_cert = server_certs.popleft()
     server_chain = '\n'.join(server_certs)
+    dh_params = settings.app.server_dh_params
 
     with open(server_cert_path, 'w') as server_cert_file:
         server_cert_file.write(server_cert)
-    with open(server_chain_path, 'w') as server_chain_file:
-        server_chain_file.write(server_chain)
     with open(server_key_path, 'w') as server_key_file:
         os.chmod(server_key_path, 0600)
         server_key_file.write(settings.app.server_key)
+
+    if server_certs:
+        with open(server_chain_path, 'w') as server_chain_file:
+            server_chain_file.write(server_chain)
+    else:
+        server_chain_path = None
+
+    if dh_params:
+        with open(server_dh_path, 'w') as server_dh_file:
+            os.chmod(server_dh_path, 0600)
+            server_dh_file.write(dh_params)
+    else:
+        server_dh_path = None
+
+    return server_cert_path, server_chain_path, server_key_path, server_dh_path
+
+def generate_server_dh_params(server_dh_path):
+    check_output_logged([
+        'openssl',
+        'dhparam', str(settings.app.server_dh_size),
+        '-out', server_dh_path,
+    ])
+    os.chmod(server_dh_path, 0600)
 
 def generate_server_cert(server_cert_path, server_key_path):
     check_output_logged([
