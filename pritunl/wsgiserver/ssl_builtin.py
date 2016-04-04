@@ -36,7 +36,8 @@ class BuiltinSSLAdapter(wsgiserver.SSLAdapter):
     private_key = None
     """The filename of the server's private key file."""
 
-    def __init__(self, certificate, private_key, certificate_chain=None):
+    def __init__(self, certificate, private_key, certificate_chain=None,
+            dh_params=None):
         if ssl is None:
             raise ImportError("You must install the ssl module to use HTTPS.")
         self.certificate = certificate
