@@ -1,3 +1,5 @@
+from pritunl.constants import *
+
 from pritunl import app
 from pritunl import logger
 from pritunl import utils
@@ -8,7 +10,9 @@ from pritunl import settings
 @auth.session_auth
 def logs_get():
     if settings.app.demo_mode:
-        return utils.demo_blocked()
+        return utils.jsonify({
+            'output': DEMO_LOGS,
+        })
 
     log_view = logger.LogView()
     return utils.jsonify({
