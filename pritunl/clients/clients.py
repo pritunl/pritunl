@@ -275,11 +275,22 @@ class Clients(object):
             )
 
             virt_address = self.server.get_ip_addr(org_id, user_id)
+            if not virt_address:
+                logger.error('User missing ip address',
+                    'clients',
+                    server_id=self.server.id,
+                    instance_id=self.instance.id,
+                    user_id=user.id,
+                    multi_device=self.server.multi_device,
+                    network=self.server.network,
+                    user_count=self.server.user_count,
+                )
+
+
             if not self.server.multi_device:
                 for clnt in self.clients.find({'user_id': user_id}):
                     time.sleep(3)
                     self.instance_com.client_kill(clnt['id'])
-
             elif virt_address:
                 if mac_addr:
                     for clnt in self.clients.find({
@@ -303,6 +314,17 @@ class Clients(object):
                         virt_address = ip_addr
                         address_dynamic = True
                         break
+
+                if not virt_address:
+                    logger.error('Unable to assign ip address, pool full',
+                        'clients',
+                        server_id=self.server.id,
+                        instance_id=self.instance.id,
+                        user_id=user.id,
+                        multi_device=self.server.multi_device,
+                        network=self.server.network,
+                        user_count=self.server.user_count,
+                    )
 
             if not virt_address:
                 self.instance_com.send_client_deny(client_id, key_id,
