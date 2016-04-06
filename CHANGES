@@ -6,6 +6,7 @@ Pritunl Changelog
 Add restricted routing
 Auto restart non-responsive web server
 Add Lets Encrypt intermediate certificates
+Improve issues with assigning client ip address
 Fix ssl issues
 
 Version 1.21.928.27 2016-03-28
