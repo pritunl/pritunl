@@ -279,7 +279,7 @@ elif cmd == 'set-version':
         ['git', 'status', '-s']).rstrip().split('\n')
     changed = any([True if x[0] == 'M' else False for x in changes])
     if changed:
-        subprocess.check_call(['git', 'commit', '-m', 'Rebuild dist'])
+        subprocess.check_call(['git', 'commit', '-S', '-m', 'Rebuild dist'])
         subprocess.check_call(['git', 'push'])
 
 
@@ -346,7 +346,7 @@ elif cmd == 'set-version':
     subprocess.check_call(['git', 'add', CHANGES_PATH])
     subprocess.check_call(['git', 'add', INIT_PATH])
     subprocess.check_call(['git', 'add', SETUP_PATH])
-    subprocess.check_call(['git', 'commit', '-m', 'Create new release'])
+    subprocess.check_call(['git', 'commit', '-S', '-m', 'Create new release'])
     subprocess.check_call(['git', 'push'])
 
 
