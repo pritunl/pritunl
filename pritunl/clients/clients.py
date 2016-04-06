@@ -228,7 +228,7 @@ class Clients(object):
 
         if primary_reconnect or secondary_reconnect:
             self.instance_com.push_output('Gateway link ' +
-                                          'changed, relinking gateways')
+                'changed, relinking gateways')
 
     def has_failover_iroute(self, client_id):
         self.iroutes_lock.acquire()
