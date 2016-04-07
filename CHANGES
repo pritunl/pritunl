@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issues with VPC route advertisement
+
 Version 1.21.938.4 2016-04-07
 -----------------------------
 
