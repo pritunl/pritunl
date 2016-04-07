@@ -94,6 +94,12 @@ def generate_server_dh_params(dh_size):
 
     return server_dh_path
 
+def generate_server_dh_params_inline(dh_size):
+    return check_output_logged([
+        'openssl',
+        'dhparam', str(dh_size),
+    ])
+
 def generate_server_cert():
     server_cert_path = os.path.join(settings.conf.temp_path, SERVER_CERT_NAME)
     server_key_path = os.path.join(settings.conf.temp_path, SERVER_KEY_NAME)
