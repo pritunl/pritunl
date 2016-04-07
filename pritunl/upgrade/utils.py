@@ -27,9 +27,11 @@ def database_clean_up():
 def get_collection(collection):
     return getattr(_database, _prefix + collection)
 
-def setup_cert(server_cert_path, server_key_path):
+def setup_cert():
     server_cert = None
     server_key = None
+    server_dh_params = None
+    acme_domain = None
 
     if _database:
         settings_collection = get_collection('settings')
@@ -37,17 +39,22 @@ def setup_cert(server_cert_path, server_key_path):
         if doc:
             server_cert = doc.get('server_cert')
             server_key = doc.get('server_key')
+            server_dh_params = doc.get('server_dh_params')
+            acme_domain = doc.get('acme_domain')
 
     if not server_cert or not server_key:
         logger.info('Generating setup server ssl cert', 'setup')
-        utils.generate_server_cert(server_cert_path, server_key_path)
-    else:
-        with open(server_cert_path, 'w') as server_cert_file:
-            server_cert_file.write(server_cert)
-        with open(server_key_path, 'w') as server_key_file:
-            os.chmod(server_key_path, 0600)
-            server_key_file.write(server_key)
+        server_cert_path, server_key_path = utils.generate_server_cert()
+        server_dh_path = utils.generate_server_dh_params(1024)
+        return server_cert_path, None, server_key_path, server_dh_path
 
+    return utils.write_server_cert(
+        server_cert,
+        server_key,
+        server_dh_params,
+        acme_domain,
+    )
+`
 def get_server_port():
     port = settings.conf.port
 
