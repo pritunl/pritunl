@@ -32,6 +32,7 @@ _cur_cert = None
 _cur_key = None
 _cur_port = None
 _update_lock = threading.Lock()
+_watch_event = threading.Event()
 
 def set_acme(token, authorization):
     global acme_token
@@ -141,6 +142,8 @@ def _run_wsgi(restart=False):
     app_server.shutdown_timeout = 1
 
     if settings.app.server_ssl:
+        setup_server_cert()
+
         server_cert_path, server_chain_path, server_key_path, \
             server_dh_path = utils.write_server_cert(
                 settings.app.server_cert,
@@ -160,7 +163,7 @@ def _run_wsgi(restart=False):
         settings.local.server_ready.set()
         settings.local.server_start.wait()
 
-    start_web_watch()
+    _watch_event.set()
 
     try:
         app_server.start()
@@ -172,6 +175,8 @@ def _run_wsgi(restart=False):
     except:
         logger.exception('Server error occurred', 'app')
         raise
+    finally:
+        _watch_event.clear()
 
 def _run_wsgi_debug():
     logger.info('Starting debug server', 'app')
@@ -213,6 +218,11 @@ def _web_watch_thread():
     error_count = 0
     while True:
         while True:
+            if not _watch_event.wait(0.5):
+                error_count = 0
+                yield
+                continue
+
             url = ''
             if settings.app.server_ssl:
                 verify = False
@@ -283,4 +293,5 @@ def run_server():
     if settings.conf.debug:
         _run_wsgi_debug()
     else:
+        start_web_watch()
         _run_wsgi()
