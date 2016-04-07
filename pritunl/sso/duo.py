@@ -2,7 +2,6 @@ from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import logger
-from pritunl import utils
 
 import base64
 import email
@@ -10,6 +9,7 @@ import hmac
 import hashlib
 import urllib
 import httplib
+import requests
 
 def sign(method, path, params):
     now = email.Utils.formatdate()
@@ -54,7 +54,7 @@ def auth_duo(username, strong=False, ipaddr=None, type=None, info=None,
     url = 'https://%s/auth/v2/auth' % settings.app.sso_host
 
     try:
-        response = utils.request.post(url,
+        response = requests.post(url,
             headers=headers,
             params=params,
             timeout=settings.app.sso_timeout,

@@ -4,9 +4,9 @@ from pritunl import app
 from pritunl import settings
 from pritunl import static
 from pritunl import auth
-from pritunl import utils
 
 import flask
+import requests
 
 @app.app.route('/s/', methods=['GET'])
 @app.app.route('/s/<path:file_path>', methods=['GET'])
@@ -14,7 +14,7 @@ import flask
 def static_get(file_path=None):
     if settings.local.dart_url:
         file_path = file_path or 'index.html'
-        response = utils.request.get(settings.local.dart_url + file_path)
+        response = requests.get(settings.local.dart_url + file_path)
         return flask.Response(response.content, headers=response.headers)
 
     if settings.conf.debug and 'styles/fonts/' in file_path:

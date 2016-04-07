@@ -9,6 +9,7 @@ from pritunl import auth
 import flask
 import re
 import httplib
+import requests
 
 @app.app.route('/subscription', methods=['GET'])
 @auth.session_auth
@@ -55,9 +56,9 @@ def subscription_post():
     license = re.sub(r'[\W_]+', '', license)
 
     try:
-        response = utils.request.get(
+        response = requests.get(
             'https://app.pritunl.com/subscription',
-            json_data={
+            json={
                 'license': license,
                 'version': settings.local.version_int,
             },
@@ -95,16 +96,16 @@ def subscription_put():
 
     try:
         if cancel:
-            response = utils.request.delete(
+            response = requests.delete(
                 'https://app.pritunl.com/subscription',
-                json_data={
+                json={
                     'license': settings.app.license,
                 },
             )
         else:
-            response = utils.request.put(
+            response = requests.put(
                 'https://app.pritunl.com/subscription',
-                json_data={
+                json={
                     'license': settings.app.license,
                     'card': card,
                     'plan': plan,

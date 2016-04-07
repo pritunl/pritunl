@@ -1,14 +1,14 @@
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import logger
-from pritunl import utils
 
 import urllib
 import httplib
+import requests
 
 def auth_onelogin(username):
     try:
-        response = utils.request.get(
+        response = requests.get(
             ONELOGIN_URL + '/api/v3/users/username/%s' % (
                 urllib.quote(username)),
             auth=(settings.app.sso_onelogin_key, 'x'),

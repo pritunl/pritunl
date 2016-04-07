@@ -1,15 +1,14 @@
-from pritunl.utils.request import get
-
 from pritunl.exceptions import *
 from pritunl import settings
 
 import boto
 import boto.ec2
 import boto.vpc
+import requests
 
 def get_instance_id():
     try:
-        resp = get(
+        resp = requests.get(
             'http://169.254.169.254/latest/meta-data/instance-id',
             timeout=0.5,
         )

@@ -6,6 +6,7 @@ import urllib
 import httplib
 import time
 import urlparse
+import requests
 
 def _getokta_url():
     parsed = urlparse.urlparse(settings.app.sso_saml_url)
@@ -13,7 +14,7 @@ def _getokta_url():
 
 def get_user_id(username):
     try:
-        response = utils.request.get(
+        response = requests.get(
             _getokta_url() + '/api/v1/users/%s' % urllib.quote(username),
             headers={
                 'Accept': 'application/json',
@@ -53,7 +54,7 @@ def get_user_id(username):
 
 def get_factor_id(user_id):
     try:
-        response = utils.request.get(
+        response = requests.get(
             _getokta_url() + '/api/v1/users/%s/factors' % user_id,
             headers={
                 'Accept': 'application/json',
@@ -122,7 +123,7 @@ def auth_okta_push(username, strong=False, ipaddr=None, type=None, info=None):
         return True
 
     try:
-        response = utils.request.post(
+        response = requests.post(
             _getokta_url() + '/api/v1/users/%s/factors/%s/verify' % (
                 user_id, factor_id),
             headers={
@@ -202,7 +203,7 @@ def auth_okta_push(username, strong=False, ipaddr=None, type=None, info=None):
         time.sleep(settings.app.sso_okta_poll_rate)
 
         try:
-            response = utils.request.get(
+            response = requests.get(
                 poll_url,
                 headers={
                     'Accept': 'application/json',

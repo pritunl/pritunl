@@ -23,6 +23,7 @@ import json
 import uuid
 import pymongo
 import urllib
+import requests
 
 class User(mongo.MongoObject):
     fields = {
@@ -262,7 +263,7 @@ class User(mongo.MongoObject):
     def sso_auth_check(self, password):
         if GOOGLE_AUTH in self.auth_type:
             try:
-                resp = utils.request.get(AUTH_SERVER +
+                resp = requests.get(AUTH_SERVER +
                     '/update/google?user=%s&license=%s' % (
                         urllib.quote(self.email),
                         settings.app.license,
@@ -277,7 +278,7 @@ class User(mongo.MongoObject):
             return False
         elif SLACK_AUTH in self.auth_type:
             try:
-                resp = utils.request.get(AUTH_SERVER +
+                resp = requests.get(AUTH_SERVER +
                     '/update/slack?user=%s&team=%s&license=%s' % (
                         urllib.quote(self.name),
                         urllib.quote(settings.app.sso_match[0]),

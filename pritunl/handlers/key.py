@@ -18,6 +18,7 @@ import hmac
 import hashlib
 import base64
 import urlparse
+import requests
 
 def _get_key_tar_archive(org_id, user_id):
     org = organization.get_by_id(org_id)
@@ -582,11 +583,11 @@ def sso_request_get():
         return flask.abort(405)
 
     if GOOGLE_AUTH in sso_mode:
-        resp = utils.request.post(AUTH_SERVER + '/v1/request/google',
+        resp = requests.post(AUTH_SERVER + '/v1/request/google',
             headers={
                 'Content-Type': 'application/json',
             },
-            json_data={
+            json={
                 'license': settings.app.license,
                 'callback': callback,
                 'state': state,
@@ -618,11 +619,11 @@ def sso_request_get():
         return flask.redirect(data['url'])
 
     elif SLACK_AUTH in sso_mode:
-        resp = utils.request.post(AUTH_SERVER + '/v1/request/slack',
+        resp = requests.post(AUTH_SERVER + '/v1/request/slack',
             headers={
                 'Content-Type': 'application/json',
             },
-            json_data={
+            json={
                 'license': settings.app.license,
                 'callback': callback,
                 'state': state,
@@ -654,11 +655,11 @@ def sso_request_get():
         return flask.redirect(data['url'])
 
     elif SAML_AUTH in sso_mode:
-        resp = utils.request.post(AUTH_SERVER + '/v1/request/saml',
+        resp = requests.post(AUTH_SERVER + '/v1/request/saml',
             headers={
                 'Content-Type': 'application/json',
             },
-            json_data={
+            json={
                 'license': settings.app.license,
                 'callback': callback,
                 'state': state,

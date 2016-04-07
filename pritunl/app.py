@@ -13,6 +13,7 @@ import logging
 import logging.handlers
 import time
 import urlparse
+import requests
 
 try:
     import OpenSSL
@@ -222,7 +223,7 @@ def _web_watch_thread():
             url += 'localhost:%s/ping' % settings.app.server_port
 
             try:
-                resp = utils.request.get(
+                resp = requests.get(
                     url,
                     timeout=1,
                     verify=verify,

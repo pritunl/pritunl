@@ -8,6 +8,8 @@ from pritunl import event
 from pritunl import mongo
 from pritunl import messenger
 
+import requests
+
 def update():
     license = settings.app.license
     collection = mongo.get_collection('settings')
@@ -28,9 +30,9 @@ def update():
     else:
         for i in xrange(2):
             try:
-                response = utils.request.get(
+                response = requests.get(
                     'https://app.pritunl.com/subscription',
-                    json_data={
+                    json={
                         'id': settings.app.id,
                         'license': license,
                         'version': settings.local.version_int,
