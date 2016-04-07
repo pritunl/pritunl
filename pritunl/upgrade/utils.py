@@ -48,6 +48,9 @@ def setup_cert():
         server_dh_path = utils.generate_server_dh_params(1024)
         return server_cert_path, None, server_key_path, server_dh_path
 
+    if not server_dh_params:
+        server_dh_params = utils.generate_server_dh_params_inline(1024)
+
     return utils.write_server_cert(
         server_cert,
         server_key,
