@@ -43,13 +43,9 @@ class TaskRoute(task.Task):
 
                 match = False
                 for route in svr.get_routes(include_server_links=True):
-                    route_vpc_region = route['vpc_region']
-                    route_vpc_id = route['vpc_id']
-                    route_network = route['network']
-
-                    if vpc_region == route_vpc_region or \
-                            route_vpc_id == route_vpc_id or \
-                            route_network == route_network:
+                    if vpc_region == route['vpc_region'] and \
+                            vpc_id == route['vpc_id'] and \
+                            network == route['network']:
                         match = True
 
                 if not match:
