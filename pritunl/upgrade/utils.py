@@ -54,7 +54,7 @@ def setup_cert():
         server_dh_params,
         acme_domain,
     )
-`
+
 def get_server_port():
     port = settings.conf.port
 
