@@ -375,6 +375,9 @@ class ServerInstance(object):
                     include_server_links=True,
                     include_default=True,
                 ):
+            if route['virtual_network'] or route['link_virtual_network']:
+                self.iptables.add_nat_network(route['network'])
+
             if route['virtual_network']:
                 continue
 
