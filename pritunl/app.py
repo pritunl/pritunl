@@ -240,7 +240,7 @@ def _web_watch_thread():
                     verify=verify,
                 )
 
-                if resp.status_code != 200:
+                if resp.status_code != 200 and _watch_event.is_set():
                     logger.error('Failed to ping web server, bad status',
                         'watch',
                         url=url,
@@ -249,10 +249,11 @@ def _web_watch_thread():
                     )
                     break
             except:
-                logger.exception('Failed to ping web server', 'watch',
-                    url=url,
-                )
-                break
+                if _watch_event.is_set():
+                    logger.exception('Failed to ping web server', 'watch',
+                        url=url,
+                    )
+                    break
 
             error_count = 0
             yield interrupter_sleep(3)
