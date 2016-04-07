@@ -650,8 +650,6 @@ class ServerInstance(object):
             if vpc_region and vpc_id:
                 self.reserve_route_advertisement(
                     vpc_region, vpc_id, network)
-                self.reserve_route_advertisement(
-                    vpc_region, vpc_id, network)
 
     def clear_route_advertisements(self):
         for ra_id in self.route_advertisements.copy():
