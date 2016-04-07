@@ -5,6 +5,12 @@ import random
 import flask
 import time
 import bson
+import requests
+
+try:
+    requests.packages.urllib3.disable_warnings()
+except:
+    pass
 
 _mongo_errors = []
 for error_attr in (
