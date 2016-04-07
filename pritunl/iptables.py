@@ -12,6 +12,8 @@ class Iptables(object):
         self._routes6 = set()
         self._nat_routes = {}
         self._nat_routes6 = {}
+        self._nat_networks = set()
+        self._nat_networks6 = set()
         self._accept = []
         self._accept6 = []
         self._drop = []
@@ -48,6 +50,12 @@ class Iptables(object):
                 self._nat_routes[network] = nat_interface
             else:
                 self._routes.add(network)
+
+    def add_nat_network(self, network):
+        if ':' in network:
+            self._nat_networks6.add(network)
+        else:
+            self._nat_networks.add(network)
 
     def _generate_input(self):
         if self._accept_all:
@@ -360,44 +368,48 @@ class Iptables(object):
                 all_interface = interface
                 continue
 
-            self._accept.append([
-                'POSTROUTING',
-                '-t', 'nat',
-                '-s', self.virt_network,
-                '-d', route,
-                '-o', interface,
-                '-j', 'MASQUERADE',
-            ])
+            for nat_network in self._nat_networks:
+                self._accept.append([
+                    'POSTROUTING',
+                    '-t', 'nat',
+                    '-s', nat_network,
+                    '-d', route,
+                    '-o', interface,
+                    '-j', 'MASQUERADE',
+                ])
 
         for route, interface in self._nat_routes6.items():
             if route == '::/0':
                 all_interface = interface
                 continue
 
-            self._accept6.append([
-                'POSTROUTING',
-                '-t', 'nat',
-                '-s', self.virt_network,
-                '-d', route,
-                '-o', interface,
-                '-j', 'MASQUERADE',
-            ])
+            for nat_network in self._nat_networks6:
+                self._accept6.append([
+                    'POSTROUTING',
+                    '-t', 'nat',
+                    '-s', nat_network,
+                    '-d', route,
+                    '-o', interface,
+                    '-j', 'MASQUERADE',
+                ])
 
         if self._accept_all and all_interface:
-            self._accept.append([
-                'POSTROUTING',
-                '-t', 'nat',
-                '-s', self.virt_network,
-                '-o', all_interface,
-                '-j', 'MASQUERADE',
-            ])
-            self._accept6.append([
-                'POSTROUTING',
-                '-t', 'nat',
-                '-s', self.virt_network,
-                '-o', all_interface,
-                '-j', 'MASQUERADE',
-            ])
+            for nat_network in self._nat_networks:
+                self._accept.append([
+                    'POSTROUTING',
+                    '-t', 'nat',
+                    '-s', nat_network,
+                    '-o', all_interface,
+                    '-j', 'MASQUERADE',
+                ])
+            for nat_network in self._nat_networks6:
+                self._accept6.append([
+                    'POSTROUTING',
+                    '-t', 'nat',
+                    '-s', nat_network,
+                    '-o', all_interface,
+                    '-j', 'MASQUERADE',
+                ])
 
     def generate(self):
         self._accept = []
