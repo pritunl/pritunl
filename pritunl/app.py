@@ -141,7 +141,12 @@ def _run_wsgi(restart=False):
 
     if settings.app.server_ssl:
         server_cert_path, server_chain_path, server_key_path, \
-            server_dh_path = utils.write_server_cert()
+            server_dh_path = utils.write_server_cert(
+                settings.app.server_cert,
+                settings.app.server_key,
+                settings.app.server_dh_params,
+                settings.app.acme_domain,
+            )
 
         app_server.ssl_adapter = SSLAdapter(
             server_cert_path,
