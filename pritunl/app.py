@@ -170,6 +170,7 @@ def _run_wsgi(restart=False):
     except (KeyboardInterrupt, SystemExit):
         pass
     except ServerRestart:
+        _watch_event.clear()
         logger.info('Server restarting...', 'app')
         return _run_wsgi(True)
     except:
