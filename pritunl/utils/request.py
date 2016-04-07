@@ -42,12 +42,26 @@ def _request(method, url, json_data=None, params=None, headers=None,
 
     try:
         if not verify:
-            context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+            try:
+                context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+            except AttributeError:
+                context = None
         else:
             context = None
 
-        url_response = urllib2.urlopen(request, data=data, timeout=timeout,
-            context=context)
+        if context:
+            url_response = urllib2.urlopen(
+                request,
+                data=data,
+                timeout=timeout,
+                context=context,
+            )
+        else:
+            url_response = urllib2.urlopen(
+                request,
+                data=data,
+                timeout=timeout,
+            )
         return Response(url,
             headers=dict(url_response.info().items()),
             status_code=url_response.getcode(),
