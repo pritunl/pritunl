@@ -363,10 +363,10 @@ class Iptables(object):
             self._accept.append([
                 'POSTROUTING',
                 '-t', 'nat',
+                '-s', self.virt_network,
                 '-d', route,
                 '-o', interface,
                 '-j', 'MASQUERADE',
-                '-s', self.virt_network,
             ])
 
         for route, interface in self._nat_routes6.items():
@@ -377,26 +377,26 @@ class Iptables(object):
             self._accept6.append([
                 'POSTROUTING',
                 '-t', 'nat',
+                '-s', self.virt_network,
                 '-d', route,
                 '-o', interface,
                 '-j', 'MASQUERADE',
-                '-s', self.virt_network,
             ])
 
         if self._accept_all and all_interface:
             self._accept.append([
                 'POSTROUTING',
                 '-t', 'nat',
+                '-s', self.virt_network,
                 '-o', all_interface,
                 '-j', 'MASQUERADE',
-                '-s', self.virt_network,
             ])
             self._accept6.append([
                 'POSTROUTING',
                 '-t', 'nat',
+                '-s', self.virt_network,
                 '-o', all_interface,
                 '-j', 'MASQUERADE',
-                '-s', self.virt_network,
             ])
 
     def generate(self):
