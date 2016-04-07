@@ -182,17 +182,16 @@ def server_thread():
         shutdown_timeout=0.5,
     )
 
-    server_cert_path = os.path.join(settings.conf.temp_path,
-        SETUP_SERVER_CERT_NAME)
-    server_key_path = os.path.join(settings.conf.temp_path,
-        SETUP_SERVER_KEY_NAME)
-
     if settings.conf.ssl:
-        upgrade.setup_cert(
+        server_cert_path, server_chain_path, server_key_path, \
+            server_dh_path = upgrade.setup_cert()
+
+        server.ssl_adapter = SSLAdapter(
             server_cert_path,
             server_key_path,
+            server_chain_path,
+            server_dh_path,
         )
-        server.ssl_adapter = SSLAdapter(server_cert_path, server_key_path)
 
     try:
         server.start()
