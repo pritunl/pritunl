@@ -450,6 +450,7 @@ class Server(mongo.MongoObject):
                 'virtual_network': False,
                 'network_link': True,
                 'server_link': False,
+                'link_virtual_network': False,
             })
 
         if include_server_links:
@@ -471,6 +472,7 @@ class Server(mongo.MongoObject):
                     data['virtual_network'] = False
                     data['network_link'] = False
                     data['server_link'] = True
+                    data['link_virtual_network'] = route['virtual_network']
 
                     if route['virtual_network']:
                         link_routes.append(data)
@@ -494,6 +496,7 @@ class Server(mongo.MongoObject):
                     'virtual_network': False,
                     'network_link': False,
                     'server_link': False,
+                    'link_virtual_network': False,
                 })
 
                 if include_hidden and self.ipv6:
@@ -507,6 +510,7 @@ class Server(mongo.MongoObject):
                         'virtual_network': False,
                         'network_link': False,
                         'server_link': False,
+                        'link_virtual_network': False,
                     })
             elif route_network == 'virtual':
                 virtual_vpc_region = route.get('vpc_region', None)
@@ -533,6 +537,7 @@ class Server(mongo.MongoObject):
                         'virtual_network': False,
                         'network_link': False,
                         'server_link': False,
+                        'link_virtual_network': False,
                     }
 
         routes.append({
@@ -545,6 +550,7 @@ class Server(mongo.MongoObject):
             'virtual_network': True,
             'network_link': False,
             'server_link': False,
+            'link_virtual_network': False,
         })
 
         for route_network in sorted(routes_dict.keys()):
