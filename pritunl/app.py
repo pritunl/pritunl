@@ -212,6 +212,9 @@ def setup_server_cert():
 
 @interrupter
 def _web_watch_thread():
+    if settings.app.demo_mode:
+        return
+
     yield interrupter_sleep(5)
 
     error_count = 0
