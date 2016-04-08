@@ -176,8 +176,6 @@ def _run_wsgi(restart=False):
     except:
         logger.exception('Server error occurred', 'app')
         raise
-    finally:
-        _watch_event.clear()
 
 def _run_wsgi_debug():
     logger.info('Starting debug server', 'app')
