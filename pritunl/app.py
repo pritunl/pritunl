@@ -234,7 +234,7 @@ def _web_watch_thread():
             try:
                 resp = requests.get(
                     url,
-                    timeout=1,
+                    timeout=5,
                     verify=verify,
                 )
 
