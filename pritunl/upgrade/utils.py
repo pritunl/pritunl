@@ -4,7 +4,6 @@ from pritunl import utils
 from pritunl import logger
 
 import pymongo
-import os
 
 _prefix = None
 _database = None
