@@ -64,9 +64,6 @@ def _auth_radius(username, password):
 
 @app.app.route('/auth/session', methods=['POST'])
 def auth_session_post():
-    if settings.app.demo_mode:
-        return utils.demo_blocked()
-
     username = flask.request.json['username']
     password = flask.request.json['password']
     otp_code = flask.request.json.get('otp_code')
@@ -109,9 +106,6 @@ def auth_session_post():
 
 @app.app.route('/auth/session', methods=['DELETE'])
 def auth_delete():
-    if settings.app.demo_mode:
-        return utils.demo_blocked()
-
     admin_id = flask.session.get('admin_id')
     session_id = flask.session.get('session_id')
     if admin_id and session_id:
