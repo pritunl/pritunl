@@ -34,6 +34,11 @@ define([
             model = collection.models[i];
             this.cursor = model.get('id');
 
+            if (this.cursor === 'demo') {
+              this.disable();
+              return;
+            }
+
             if (!window.authenticated) {
               continue;
             }
@@ -63,11 +68,18 @@ define([
       });
     },
     start: function() {
+      if (this.disabled) {
+        return;
+      }
       this.currentLoop = new Date().getTime();
       this.callFetch(this.currentLoop);
     },
     stop: function() {
       this.currentLoop = null;
+    },
+    disable: function() {
+      this.currentLoop = null;
+      this.disabled = true;
     }
   });
 
