@@ -13,8 +13,10 @@ import time
 @auth.session_auth
 def event_get(cursor=None):
     if settings.app.demo_mode:
-        time.sleep(5)
-        return utils.jsonify([])
+        time.sleep(0.1)
+        return utils.jsonify([{
+            'id': 'demo',
+        }])
 
     if check_global_interrupt():
         raise flask.abort(500)
