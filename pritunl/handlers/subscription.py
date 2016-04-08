@@ -14,8 +14,16 @@ import requests
 @app.app.route('/subscription', methods=['GET'])
 @auth.session_auth
 def subscription_get():
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache()
+        if resp:
+            return utils.jsonify(resp)
+
     subscription.update()
-    return utils.jsonify(subscription.dict())
+    resp = subscription.dict()
+    if settings.app.demo_mode:
+        utils.demo_set_cache(resp)
+    return utils.jsonify(resp)
 
 @app.app.route('/subscription/state', methods=['GET'])
 @auth.session_auth

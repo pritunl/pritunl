@@ -16,8 +16,16 @@ import flask
 @app.app.route('/host/<hst>', methods=['GET'])
 @auth.session_auth
 def host_get(hst=None):
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache()
+        if resp:
+            return utils.jsonify(resp)
+
     if hst:
-        return utils.jsonify(host.get_by_id(hst).dict())
+        resp = host.get_by_id(hst).dict()
+        if settings.app.demo_mode:
+            utils.demo_set_cache(resp)
+        return utils.jsonify(resp)
 
     hosts = []
     page = flask.request.args.get('page', None)
@@ -27,13 +35,17 @@ def host_get(hst=None):
         hosts.append(hst)
 
     if page is not None:
-        return utils.jsonify({
+        resp = {
             'page': page,
             'page_total': host.get_host_page_total(),
             'hosts': hosts,
-        })
+        }
     else:
-        return utils.jsonify(hosts)
+        resp = hosts
+
+    if settings.app.demo_mode:
+        utils.demo_set_cache(resp)
+    return utils.jsonify(resp)
 
 @app.app.route('/host/<hst>', methods=['PUT'])
 @auth.session_auth
@@ -124,5 +136,13 @@ def host_delete(hst):
 @app.app.route('/host/<hst>/usage/<period>', methods=['GET'])
 @auth.session_auth
 def host_usage_get(hst, period):
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache()
+        if resp:
+            return utils.jsonify(resp)
+
     hst = host.get_by_id(hst)
-    return utils.jsonify(hst.usage.get_period(period))
+    resp = hst.usage.get_period(period)
+    if settings.app.demo_mode:
+        utils.demo_set_cache(resp)
+    return utils.jsonify(resp)

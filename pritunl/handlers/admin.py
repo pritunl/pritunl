@@ -12,6 +12,11 @@ import pymongo
 @app.app.route('/admin/<admin_id>', methods=['GET'])
 @auth.session_auth
 def admin_get(admin_id=None):
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache()
+        if resp:
+            return utils.jsonify(resp)
+
     if not flask.g.administrator.super_user:
             return utils.jsonify({
                 'error': REQUIRES_SUPER_USER,
@@ -26,6 +31,8 @@ def admin_get(admin_id=None):
     for admin in auth.iter_admins():
         admins.append(admin.dict())
 
+    if settings.app.demo_mode:
+        utils.demo_set_cache(admins)
     return utils.jsonify(admins)
 
 @app.app.route('/admin/<admin_id>', methods=['PUT'])
@@ -238,6 +245,11 @@ def admin_delete(admin_id):
 @app.app.route('/admin/<admin_id>/audit', methods=['GET'])
 @auth.session_auth
 def admin_audit_get(admin_id):
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache()
+        if resp:
+            return utils.jsonify(resp)
+
     if not flask.g.administrator.super_user:
         return utils.jsonify({
             'error': REQUIRES_SUPER_USER,
@@ -245,4 +257,8 @@ def admin_audit_get(admin_id):
         }, 400)
 
     admin = auth.get_by_id(admin_id)
-    return utils.jsonify(admin.get_audit_events())
+
+    resp = admin.get_audit_events()
+    if settings.app.demo_mode:
+        utils.demo_set_cache(resp)
+    return utils.jsonify(resp)

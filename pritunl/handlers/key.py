@@ -212,6 +212,9 @@ def user_linked_key_onc_archive_get(key_id):
 
 @app.app.route('/key_pin/<key_id>', methods=['PUT'])
 def user_key_pin_put(key_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     doc = _find_doc({
         'key_id': key_id,
     })

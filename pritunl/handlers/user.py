@@ -30,12 +30,20 @@ def _network_link_invalid():
 @app.app.route('/user/<org_id>/<int:page>', methods=['GET'])
 @auth.session_auth
 def user_get(org_id, user_id=None, page=None):
+    if settings.app.demo_mode and user_id:
+        resp = utils.demo_get_cache()
+        if resp:
+            return utils.jsonify(resp)
+
     org = organization.get_by_id(org_id)
     if not org:
         return flask.abort(404)
 
     if user_id:
-        return utils.jsonify(org.get_user(user_id).dict())
+        resp = org.get_user(user_id).dict()
+        if settings.app.demo_mode:
+            utils.demo_set_cache(resp)
+        return utils.jsonify(resp)
 
     page = flask.request.args.get('page', page)
     page = int(page) if page else page
@@ -45,6 +53,11 @@ def user_get(org_id, user_id=None, page=None):
     dns_mapping = False
     server_count = 0
     servers = []
+
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache(page, search, limit)
+        if resp:
+            return utils.jsonify(resp)
 
     for svr in org.iter_servers(fields=('name', 'otp_auth', 'dns_mapping')):
         servers.append(svr)
@@ -167,14 +180,14 @@ def user_get(org_id, user_id=None, page=None):
                 server_data['virt_address6'] = addr6
 
     if page is not None:
-        return utils.jsonify({
+        resp = {
             'page': page,
             'page_total': org.page_total,
             'server_count': server_count,
             'users': users,
-        })
+        }
     elif search is not None:
-        return utils.jsonify({
+        resp = {
             'search': search,
             'search_more': limit < org.last_search_count,
             'search_limit': limit,
@@ -182,9 +195,13 @@ def user_get(org_id, user_id=None, page=None):
             'search_time':  round((time.time() - flask.g.start), 4),
             'server_count': server_count,
             'users': users,
-        })
+        }
     else:
-        return utils.jsonify(users)
+        resp = users
+
+    if settings.app.demo_mode and not search:
+        utils.demo_set_cache(resp, page, search, limit)
+    return utils.jsonify(resp)
 
 @app.app.route('/user/<org_id>', methods=['POST'])
 @auth.session_auth
@@ -511,13 +528,24 @@ def user_otp_secret_put(org_id, user_id):
 @app.app.route('/user/<org_id>/<user_id>/audit', methods=['GET'])
 @auth.session_auth
 def user_audit_get(org_id, user_id):
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache()
+        if resp:
+            return utils.jsonify(resp)
+
     org = organization.get_by_id(org_id)
     user = org.get_user(user_id)
 
-    return utils.jsonify(user.get_audit_events())
+    resp = user.get_audit_events()
+    if settings.app.demo_mode:
+        utils.demo_set_cache(resp)
+    return utils.jsonify(resp)
 
 @app.app.route('/auth/user', methods=['POST'])
 def auth_user_post():
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     auth_token = flask.request.headers.get('Auth-Token', None)
     auth_timestamp = flask.request.headers.get('Auth-Timestamp', None)
     auth_nonce = flask.request.headers.get('Auth-Nonce', None)

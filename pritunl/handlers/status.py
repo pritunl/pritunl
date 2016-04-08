@@ -10,6 +10,11 @@ from pritunl import __version__
 @app.app.route('/status', methods=['GET'])
 @auth.session_auth
 def status_get():
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache()
+        if resp:
+            return utils.jsonify(resp)
+
     server_collection = mongo.get_collection('servers')
     clients_collection = mongo.get_collection('clients')
     host_collection = mongo.get_collection('hosts')
@@ -102,7 +107,7 @@ def status_get():
     else:
         notification = settings.local.notification
 
-    return utils.jsonify({
+    resp = {
         'org_count': orgs_count,
         'users_online': users_online,
         'user_count': user_count,
@@ -115,4 +120,7 @@ def status_get():
         'public_ip': settings.local.public_ip,
         'local_networks': list(local_networks),
         'notification': notification,
-    })
+    }
+    if settings.app.demo_mode:
+        utils.demo_set_cache(resp)
+    return utils.jsonify(resp)

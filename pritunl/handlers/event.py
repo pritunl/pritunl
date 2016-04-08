@@ -3,13 +3,19 @@ from pritunl import utils
 from pritunl import event
 from pritunl import app
 from pritunl import auth
+from pritunl import settings
 
 import flask
+import time
 
 @app.app.route('/event', methods=['GET'])
 @app.app.route('/event/<cursor>', methods=['GET'])
 @auth.session_auth
 def event_get(cursor=None):
+    if settings.app.demo_mode:
+        time.sleep(5)
+        return utils.jsonify([])
+
     if check_global_interrupt():
         raise flask.abort(500)
 

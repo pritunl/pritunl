@@ -97,23 +97,40 @@ def _check_network_range(test_network, start_addr, end_addr):
 @auth.session_auth
 def server_get(server_id=None):
     if server_id:
-        return utils.jsonify(server.get_dict(server_id))
+        if settings.app.demo_mode:
+            resp = utils.demo_get_cache()
+            if resp:
+                return utils.jsonify(resp)
+
+        resp = server.get_dict(server_id)
+        if settings.app.demo_mode:
+            utils.demo_set_cache(resp)
+        return utils.jsonify(resp)
 
     servers = []
     page = flask.request.args.get('page', None)
     page = int(page) if page else page
 
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache(page)
+        if resp:
+            return utils.jsonify(resp)
+
     for svr in server.iter_servers_dict(page=page):
         servers.append(svr)
 
     if page is not None:
-        return utils.jsonify({
+        resp = {
             'page': page,
             'page_total': server.get_server_page_total(),
             'servers': servers,
-        })
+        }
     else:
-        return utils.jsonify(servers)
+        resp = servers
+
+    if settings.app.demo_mode:
+        utils.demo_set_cache(resp, page)
+    return utils.jsonify(resp)
 
 @app.app.route('/server', methods=['POST'])
 @app.app.route('/server/<server_id>', methods=['PUT'])
@@ -611,6 +628,11 @@ def server_delete(server_id):
 @app.app.route('/server/<server_id>/organization', methods=['GET'])
 @auth.session_auth
 def server_org_get(server_id):
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache()
+        if resp:
+            return utils.jsonify(resp)
+
     orgs = []
     svr = server.get_by_id(server_id, fields=('_id', 'organizations'))
     for org_doc in svr.get_org_fields(fields=('_id', 'name')):
@@ -618,6 +640,8 @@ def server_org_get(server_id):
         org_doc['server'] = svr.id
         orgs.append(org_doc)
 
+    if settings.app.demo_mode:
+        utils.demo_set_cache(orgs)
     return utils.jsonify(orgs)
 
 @app.app.route('/server/<server_id>/organization/<org_id>', methods=['PUT'])
@@ -677,9 +701,18 @@ def server_org_delete(server_id, org_id):
 @app.app.route('/server/<server_id>/route', methods=['GET'])
 @auth.session_auth
 def server_route_get(server_id):
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache()
+        if resp:
+            return utils.jsonify(resp)
+
     svr = server.get_by_id(server_id, fields=('_id', 'network', 'links',
         'network_start', 'network_end', 'routes', 'organizations'))
-    return utils.jsonify(svr.get_routes(include_server_links=True))
+
+    resp = svr.get_routes(include_server_links=True)
+    if settings.app.demo_mode:
+        utils.demo_set_cache(resp)
+    return utils.jsonify(resp)
 
 @app.app.route('/server/<server_id>/route', methods=['POST'])
 @auth.session_auth
@@ -800,6 +833,11 @@ def server_route_delete(server_id, route_network):
 @app.app.route('/server/<server_id>/host', methods=['GET'])
 @auth.session_auth
 def server_host_get(server_id):
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache()
+        if resp:
+            return utils.jsonify(resp)
+
     hosts = []
     svr = server.get_by_id(server_id, fields=('_id', 'status',
         'replica_count', 'hosts', 'instances'))
@@ -825,6 +863,8 @@ def server_host_get(server_id):
             'address6': hst.public_addr6,
         })
 
+    if settings.app.demo_mode:
+        utils.demo_set_cache(hosts)
     return utils.jsonify(hosts)
 
 @app.app.route('/server/<server_id>/host/<host_id>', methods=['PUT'])
@@ -877,6 +917,11 @@ def server_host_delete(server_id, host_id):
 @app.app.route('/server/<server_id>/link', methods=['GET'])
 @auth.session_auth
 def server_link_get(server_id):
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache()
+        if resp:
+            return utils.jsonify(resp)
+
     links = []
     svr = server.get_by_id(server_id, fields=('_id', 'status', 'links',
         'replica_count', 'instances'))
@@ -916,6 +961,8 @@ def server_link_get(server_id):
                 'use_local_address': link_use_local[link_svr.id],
             })
 
+    if settings.app.demo_mode:
+        utils.demo_set_cache(links)
     return utils.jsonify(links)
 
 @app.app.route('/server/<server_id>/link/<link_server_id>', methods=['PUT'])
@@ -1010,10 +1057,18 @@ def server_operation_put(server_id, operation):
 @app.app.route('/server/<server_id>/output', methods=['GET'])
 @auth.session_auth
 def server_output_get(server_id):
-    return utils.jsonify({
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache()
+        if resp:
+            return utils.jsonify(resp)
+
+    resp = {
         'id': server_id,
         'output': server.output_get(server_id),
-    })
+    }
+    if settings.app.demo_mode:
+        utils.demo_set_cache(resp)
+    return utils.jsonify(resp)
 
 @app.app.route('/server/<server_id>/output', methods=['DELETE'])
 @auth.session_auth
@@ -1027,10 +1082,18 @@ def server_output_delete(server_id):
 @app.app.route('/server/<server_id>/link_output', methods=['GET'])
 @auth.session_auth
 def server_link_output_get(server_id):
-    return utils.jsonify({
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache()
+        if resp:
+            return utils.jsonify(resp)
+
+    resp = {
         'id': server_id,
         'output': server.output_link_get(server_id),
-    })
+    }
+    if settings.app.demo_mode:
+        utils.demo_set_cache(resp)
+    return utils.jsonify(resp)
 
 @app.app.route('/server/<server_id>/link_output', methods=['DELETE'])
 @auth.session_auth
@@ -1044,4 +1107,12 @@ def server_link_output_delete(server_id):
 @app.app.route('/server/<server_id>/bandwidth/<period>', methods=['GET'])
 @auth.session_auth
 def server_bandwidth_get(server_id, period):
-    return utils.jsonify(server.bandwidth_get(server_id, period))
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache()
+        if resp:
+            return utils.jsonify(resp)
+
+    resp = server.bandwidth_get(server_id, period)
+    if settings.app.demo_mode:
+        utils.demo_set_cache(resp)
+    return utils.jsonify(resp)

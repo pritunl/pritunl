@@ -135,8 +135,16 @@ def _dict():
 @app.app.route('/settings', methods=['GET'])
 @auth.session_auth
 def settings_get():
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache()
+        if resp:
+            return utils.jsonify(resp)
+
     response = flask.g.administrator.dict()
     response.update(_dict())
+
+    if settings.app.demo_mode:
+        utils.demo_set_cache(response)
     return utils.jsonify(response)
 
 @app.app.route('/settings', methods=['PUT'])

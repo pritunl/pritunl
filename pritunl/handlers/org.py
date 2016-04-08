@@ -14,23 +14,40 @@ import flask
 @auth.session_auth
 def org_get(org_id=None):
     if org_id:
-        return utils.jsonify(organization.get_by_id(org_id).dict())
+        if settings.app.demo_mode:
+            resp = utils.demo_get_cache()
+            if resp:
+                return utils.jsonify(resp)
+
+        resp = organization.get_by_id(org_id).dict()
+        if settings.app.demo_mode:
+            utils.demo_set_cache(resp)
+        return utils.jsonify(resp)
 
     orgs = []
     page = flask.request.args.get('page', None)
     page = int(page) if page else page
 
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache(page)
+        if resp:
+            return utils.jsonify(resp)
+
     for org in organization.iter_orgs(page=page):
         orgs.append(org.dict())
 
     if page is not None:
-        return utils.jsonify({
+        resp = {
             'page': page,
             'page_total': organization.get_org_page_total(),
             'organizations': orgs,
-        })
+        }
     else:
-        return utils.jsonify(orgs)
+        resp = orgs
+
+    if settings.app.demo_mode:
+        utils.demo_set_cache(resp, page)
+    return utils.jsonify(resp)
 
 @app.app.route('/organization', methods=['POST'])
 @auth.session_auth
