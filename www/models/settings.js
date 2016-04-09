@@ -33,6 +33,7 @@ define([
       'public_address': null,
       'public_address6': null,
       'routed_subnet6': null,
+      'reverse_proxy': null,
       'theme': null,
       'server_port': null,
       'server_cert': null,
