@@ -31,6 +31,8 @@ define([
       'sso_okta_token': null,
       'sso_onelogin_key': null,
       'public_address': null,
+      'public_address6': null,
+      'routed_subnet6': null,
       'theme': null,
       'server_port': null,
       'server_cert': null,
