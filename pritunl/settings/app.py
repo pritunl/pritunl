@@ -9,7 +9,7 @@ class SettingsApp(SettingsGroupMongo):
         'reverse_proxy_header': 'X-Forwarded-For',
         'redirect_server': True,
         'server_watch': True,
-        'server_watch_timeout': 5,
+        'server_watch_timeout': 10,
         'demo_mode': False,
         'allow_insecure_session': False,
         'auditing': None,
