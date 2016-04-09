@@ -297,5 +297,6 @@ def run_server():
     if settings.conf.debug:
         _run_wsgi_debug()
     else:
-        start_web_watch()
+        if settings.app.server_watch:
+            start_web_watch()
         _run_wsgi()
