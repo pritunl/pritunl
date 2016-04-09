@@ -47,6 +47,7 @@ def _dict():
             'public_address': settings.local.host.public_addr,
             'public_address6': settings.local.host.public_addr6,
             'routed_subnet6': settings.local.host.routed_subnet6,
+            'reverse_proxy': settings.app.reverse_proxy,
             'server_port': settings.app.server_port,
             'server_cert': 'demo',
             'server_key': 'demo',
@@ -98,6 +99,7 @@ def _dict():
             'public_address': settings.local.host.public_addr,
             'public_address6': settings.local.host.public_addr6,
             'routed_subnet6': settings.local.host.routed_subnet6,
+            'reverse_proxy': settings.app.reverse_proxy,
             'server_port': settings.app.server_port,
             'server_cert': settings.app.server_cert,
             'server_key': settings.app.server_key,
@@ -458,6 +460,11 @@ def settings_put():
                 }, 400)
             settings.local.host.routed_subnet6 = routed_subnet6
             settings.local.host.commit('routed_subnet6')
+
+    if 'reverse_proxy' in flask.request.json:
+        settings_commit = True
+        reverse_proxy = flask.request.json['reverse_proxy']
+        settings.app.reverse_proxy = True if reverse_proxy else False
 
     if 'cloud_provider' in flask.request.json:
         settings_commit = True
