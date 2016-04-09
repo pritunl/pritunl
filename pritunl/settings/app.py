@@ -6,6 +6,7 @@ class SettingsApp(SettingsGroupMongo):
         'server_ssl': True,
         'server_port': 443,
         'reverse_proxy': False,
+        'reverse_proxy_header': 'X-Forwarded-For',
         'redirect_server': True,
         'server_watch': True,
         'server_watch_timeout': 5,
