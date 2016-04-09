@@ -36,7 +36,7 @@
     </div>
     <div class="reverse-proxy form-group">
       <label>Allow Reverse Proxy</label>
-      <select class="form-control" data-toggle="tooltip" title="Allow reading client IP address from reverse proxy header. Enable when using services such as CloudFlare">
+      <select class="form-control" data-toggle="tooltip" title="Allow reading client IP address from reverse proxy header. Enable when using services such as CloudFlare or when using a load balancer">
         <option value="false" <%= !reverse_proxy ? 'selected' : '' %>>Disabled</option>
         <option value="true" <%= reverse_proxy ? 'selected' : '' %>>Enabled</option>
       </select>
