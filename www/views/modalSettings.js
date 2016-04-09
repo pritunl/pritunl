@@ -312,6 +312,7 @@ define([
       var publicAddress = this.$('.public-address input').val();
       var publicAddress6 = this.$('.public-address6 input').val();
       var routedSubnet6 = this.$('.routed-subnet6 input').val();
+      var reverseProxy = this.$('.reverse-proxy select').val();
       var theme = this.$('.theme:visible select').val();
       var emailFrom = this.$('.email-from input').val();
       var emailServer = this.$('.email-server input').val();
@@ -364,6 +365,12 @@ define([
 
       if (serverPort) {
         serverPort = parseInt(serverPort, 10);
+      }
+
+      if (reverseProxy === 'true') {
+        reverseProxy = true;
+      } else {
+        reverseProxy = false;
       }
 
       var i;
@@ -472,6 +479,7 @@ define([
         public_address: publicAddress,
         public_address6: publicAddress6,
         routed_subnet6: routedSubnet6,
+        reverse_proxy: reverseProxy,
         theme: theme,
         server_port: serverPort,
         server_cert: serverCert,

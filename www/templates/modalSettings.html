@@ -34,6 +34,13 @@
       <label>Web Console Port</label>
       <input type="text" class="form-control" placeholder="Enter web console port" value="<%- server_port %>">
     </div>
+    <div class="reverse-proxy form-group">
+      <label>Allow Reverse Proxy</label>
+      <select class="form-control" data-toggle="tooltip" title="Allow reading client IP address from reverse proxy header. Enable when using services such as CloudFlare">
+        <option value="false" <%= !reverse_proxy ? 'selected' : '' %>>Disabled</option>
+        <option value="true" <%= reverse_proxy ? 'selected' : '' %>>Enabled</option>
+      </select>
+    </div>
     <div class="sso-mode form-group">
       <label>Single Sign-On</label>
       <select class="form-control" data-toggle="tooltip" title="Single Sign-On Mode">
