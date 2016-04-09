@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Improve web server performance
 Add reverse proxy support
 
 Version 1.21.939.33 2016-04-08
