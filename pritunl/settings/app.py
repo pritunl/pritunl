@@ -5,7 +5,7 @@ class SettingsApp(SettingsGroupMongo):
     fields = {
         'server_ssl': True,
         'server_port': 443,
-        'reverse_proxy': True,
+        'reverse_proxy': False,
         'redirect_server': True,
         'server_watch': True,
         'server_watch_timeout': 5,
