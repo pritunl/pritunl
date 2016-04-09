@@ -139,6 +139,7 @@ def _run_wsgi(restart=False):
         app,
         request_queue_size=settings.app.request_queue_size,
         server_name=APP_NAME,
+        numthreads=settings.app.request_thread_count,
     )
     app_server.shutdown_timeout = 1
 
