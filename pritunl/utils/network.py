@@ -2,6 +2,7 @@ from pritunl.utils.misc import check_output_logged
 
 from pritunl.constants import *
 from pritunl import ipaddress
+from pritunl import settings
 
 import flask
 import re
@@ -38,6 +39,10 @@ def interface_release(interface_type, interface):
         raise ValueError('Unknown interface type %s' % interface_type)
 
 def get_remote_addr():
+    if settings.app.reverse_proxy:
+        forward_ip = flask.request.headers.get('X-Forwarded-For')
+        if forward_ip:
+            return forward_ip.split(',')[-1]
     return flask.request.remote_addr
 
 def get_interface_address(iface):
