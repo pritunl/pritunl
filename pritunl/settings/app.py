@@ -7,6 +7,7 @@ class SettingsApp(SettingsGroupMongo):
         'server_port': 443,
         'reverse_proxy': True,
         'redirect_server': True,
+        'server_watch': True,
         'demo_mode': False,
         'allow_insecure_session': False,
         'auditing': None,
