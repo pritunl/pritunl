@@ -8,6 +8,7 @@ class SettingsApp(SettingsGroupMongo):
         'reverse_proxy': True,
         'redirect_server': True,
         'server_watch': True,
+        'server_watch_timeout': 5,
         'demo_mode': False,
         'allow_insecure_session': False,
         'auditing': None,
