@@ -61,6 +61,7 @@ def update_server(delay=0):
         _update_lock.release()
 
 def restart_server(delay=0):
+    _watch_event.clear()
     def thread_func():
         time.sleep(delay)
         set_app_server_interrupt()
@@ -170,7 +171,6 @@ def _run_wsgi(restart=False):
     except (KeyboardInterrupt, SystemExit):
         pass
     except ServerRestart:
-        _watch_event.clear()
         logger.info('Server restarting...', 'app')
         return _run_wsgi(True)
     except:
