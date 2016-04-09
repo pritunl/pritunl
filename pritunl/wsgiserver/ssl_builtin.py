@@ -52,9 +52,9 @@ class BuiltinSSLAdapter(wsgiserver.SSLAdapter):
         """Wrap and return the given socket, plus WSGI environ entries."""
         try:
             s = ssl.wrap_socket(sock, do_handshake_on_connect=True,
-                                server_side=True, certfile=self.certificate,
-                                keyfile=self.private_key,
-                                ssl_version=ssl.PROTOCOL_SSLv23)
+                server_side=True, certfile=self.certificate,
+                keyfile=self.private_key,
+                ssl_version=ssl.PROTOCOL_SSLv23)
         except ssl.SSLError:
             e = sys.exc_info()[1]
             if e.errno == ssl.SSL_ERROR_EOF:

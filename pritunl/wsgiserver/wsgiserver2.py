@@ -77,7 +77,8 @@ __all__ = ['HTTPRequest', 'HTTPConnection', 'HTTPServer',
            'WorkerThread', 'ThreadPool', 'SSLAdapter',
            'CherryPyWSGIServer',
            'Gateway', 'WSGIGateway', 'WSGIGateway_10', 'WSGIGateway_u0',
-           'WSGIPathInfoDispatcher', 'get_ssl_adapter_class']
+           'WSGIPathInfoDispatcher', 'get_ssl_adapter_class',
+           'socket_errors_to_ignore']
 
 import os
 try:
@@ -85,19 +86,33 @@ try:
 except:
     import Queue as queue
 import re
-import rfc822
+import email.utils
 import socket
 import sys
+import threading
+import time
+import traceback as traceback_
+import operator
+from urllib import unquote
+import warnings
+import errno
+import logging
+try:
+    # prefer slower Python-based io module
+    import _pyio as io
+except ImportError:
+    # Python 2.6
+    import io
+
+
 if 'win' in sys.platform and hasattr(socket, "AF_INET6"):
     if not hasattr(socket, 'IPPROTO_IPV6'):
         socket.IPPROTO_IPV6 = 41
     if not hasattr(socket, 'IPV6_V6ONLY'):
         socket.IPV6_V6ONLY = 27
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
-DEFAULT_BUFFER_SIZE = -1
+
+
+DEFAULT_BUFFER_SIZE = io.DEFAULT_BUFFER_SIZE
 
 
 class FauxSocket(object):
@@ -111,23 +126,6 @@ _fileobject_uses_str_type = isinstance(
     socket._fileobject(FauxSocket())._rbuf, basestring)
 del FauxSocket  # this class is not longer required for anything.
 
-import threading
-import time
-import traceback
-
-
-def format_exc(limit=None):
-    """Like print_exc() but return a string. Backport for Python 2.3."""
-    try:
-        etype, value, tb = sys.exc_info()
-        return ''.join(traceback.format_exception(etype, value, tb, limit))
-    finally:
-        etype = value = tb = None
-
-import operator
-
-from urllib import unquote
-import warnings
 
 if sys.version_info >= (3, 0):
     bytestr = bytes
@@ -166,8 +164,6 @@ QUESTION_MARK = ntob('?')
 ASTERISK = ntob('*')
 FORWARD_SLASH = ntob('/')
 quoted_slash = re.compile(ntob("(?i)%2F"))
-
-import errno
 
 
 def plat_specific_errors(*errnames):
@@ -212,7 +208,6 @@ comma_separated_headers = [
 ]
 
 
-import logging
 if not hasattr(logging, 'statistics'):
     logging.statistics = {}
 
@@ -676,6 +671,10 @@ class HTTPRequest(object):
 
         # uri may be an abs_path (including "http://host.domain.tld");
         scheme, authority, path = self.parse_request_uri(uri)
+        if path is None:
+            self.simple_response("400 Bad Request",
+                                 "Invalid path in Request-URI.")
+            return False
         if NUMBER_SIGN in path:
             self.simple_response("400 Bad Request",
                                  "Illegal #fragment in Request-URI.")
@@ -972,7 +971,7 @@ class HTTPRequest(object):
                 self.rfile.read(remaining)
 
         if "date" not in hkeys:
-            self.outheaders.append(("Date", rfc822.formatdate()))
+            self.outheaders.append(("Date", email.utils.formatdate()))
 
         if "server" not in hkeys:
             self.outheaders.append(("Server", self.server.server_name))
@@ -1053,7 +1052,7 @@ class CP_fileobject(socket._fileobject):
             if size < 0:
                 # Read until EOF
                 # reset _rbuf.  we consume it via buf.
-                self._rbuf = StringIO.StringIO()
+                self._rbuf = io.BytesIO()
                 while True:
                     data = self.recv(rbufsize)
                     if not data:
@@ -1068,12 +1067,12 @@ class CP_fileobject(socket._fileobject):
                     # return.
                     buf.seek(0)
                     rv = buf.read(size)
-                    self._rbuf = StringIO.StringIO()
+                    self._rbuf = io.BytesIO()
                     self._rbuf.write(buf.read())
                     return rv
 
                 # reset _rbuf.  we consume it via buf.
-                self._rbuf = StringIO.StringIO()
+                self._rbuf = io.BytesIO()
                 while True:
                     left = size - buf_len
                     # recv() will malloc the amount of memory given as its
@@ -1111,7 +1110,7 @@ class CP_fileobject(socket._fileobject):
                 buf.seek(0)
                 bline = buf.readline(size)
                 if bline.endswith('\n') or len(bline) == size:
-                    self._rbuf = StringIO.StringIO()
+                    self._rbuf = io.BytesIO()
                     self._rbuf.write(buf.read())
                     return bline
                 del bline
@@ -1122,7 +1121,7 @@ class CP_fileobject(socket._fileobject):
                     buf.seek(0)
                     buffers = [buf.read()]
                     # reset _rbuf.  we consume it via buf.
-                    self._rbuf = StringIO.StringIO()
+                    self._rbuf = io.BytesIO()
                     data = None
                     recv = self.recv
                     while data != "\n":
@@ -1134,7 +1133,7 @@ class CP_fileobject(socket._fileobject):
 
                 buf.seek(0, 2)  # seek end
                 # reset _rbuf.  we consume it via buf.
-                self._rbuf = StringIO.StringIO()
+                self._rbuf = io.BytesIO()
                 while True:
                     data = self.recv(self._rbufsize)
                     if not data:
@@ -1156,11 +1155,11 @@ class CP_fileobject(socket._fileobject):
                 if buf_len >= size:
                     buf.seek(0)
                     rv = buf.read(size)
-                    self._rbuf = StringIO.StringIO()
+                    self._rbuf = io.BytesIO()
                     self._rbuf.write(buf.read())
                     return rv
                 # reset _rbuf.  we consume it via buf.
-                self._rbuf = StringIO.StringIO()
+                self._rbuf = io.BytesIO()
                 while True:
                     data = self.recv(self._rbufsize)
                     if not data:
@@ -1323,10 +1322,9 @@ class HTTPConnection(object):
     wbufsize = DEFAULT_BUFFER_SIZE
     RequestHandlerClass = HTTPRequest
 
-    def __init__(self, server, sock, makefile=CP_fileobject, peer=None):
+    def __init__(self, server, sock, makefile=CP_fileobject):
         self.server = server
         self.socket = sock
-        self.peer = sock.getpeername()
         self.rfile = makefile(sock, "rb", self.rbufsize)
         self.wfile = makefile(sock, "wb", self.wbufsize)
         self.requests_seen = 0
@@ -1341,9 +1339,6 @@ class HTTPConnection(object):
                 # get written to the previous request.
                 req = None
                 req = self.RequestHandlerClass(self.server, self)
-
-                if not self.server.validate_request(self.peer, req):
-                    return
 
                 # This order of operations should guarantee correct pipelining.
                 req.parse_request()
@@ -1763,7 +1758,7 @@ class HTTPServer(object):
     timeout = 10
     """The timeout in seconds for accepted connections (default 10)."""
 
-    version = "CherryPy/3.6.0"
+    version = "CherryPy/5.1.0"
     """A version string for the HTTPServer."""
 
     software = None
@@ -1803,12 +1798,6 @@ class HTTPServer(object):
             server_name = socket.gethostname()
         self.server_name = server_name
         self.clear_stats()
-
-    def validate_peer(self, peer):
-        return True
-
-    def validate_request(self, peer, request):
-        return True
 
     def clear_stats(self):
         self._start_time = None
@@ -1896,25 +1885,6 @@ class HTTPServer(object):
         if self.software is None:
             self.software = "%s Server" % self.version
 
-        # SSL backward compatibility
-        if (self.ssl_adapter is None and
-                getattr(self, 'ssl_certificate', None) and
-                getattr(self, 'ssl_private_key', None)):
-            warnings.warn(
-                "SSL attributes are deprecated in CherryPy 3.2, and will "
-                "be removed in CherryPy 3.3. Use an ssl_adapter attribute "
-                "instead.",
-                DeprecationWarning
-            )
-            try:
-                from pritunl.wsgiserver.ssl_pyopenssl import pyOpenSSLAdapter
-            except ImportError:
-                pass
-            else:
-                self.ssl_adapter = pyOpenSSLAdapter(
-                    self.ssl_certificate, self.ssl_private_key,
-                    getattr(self, 'ssl_certificate_chain', None))
-
         # Select the appropriate socket
         if isinstance(self.bind_addr, basestring):
             # AF_UNIX socket
@@ -1927,7 +1897,7 @@ class HTTPServer(object):
 
             # So everyone can access the socket...
             try:
-                os.chmod(self.bind_addr, 511)  # 0777
+                os.chmod(self.bind_addr, 0o777)
             except:
                 pass
 
@@ -1996,7 +1966,7 @@ class HTTPServer(object):
         sys.stderr.write(msg + '\n')
         sys.stderr.flush()
         if traceback:
-            tblines = format_exc()
+            tblines = traceback_.format_exc()
             sys.stderr.write(tblines)
             sys.stderr.flush()
 
@@ -2030,11 +2000,6 @@ class HTTPServer(object):
         """Accept a new connection and put it on the Queue."""
         try:
             s, addr = self.socket.accept()
-
-            peer = s.getpeername()
-            if not self.validate_peer(peer):
-                return
-
             if self.stats['Enabled']:
                 self.stats['Accepts'] += 1
             if not self.ready:
@@ -2073,7 +2038,7 @@ class HTTPServer(object):
                 if hasattr(s, 'settimeout'):
                     s.settimeout(self.timeout)
 
-            conn = self.ConnectionClass(self, s, makefile, peer)
+            conn = self.ConnectionClass(self, s, makefile)
 
             if not isinstance(self.bind_addr, basestring):
                 # optional values
@@ -2203,7 +2168,7 @@ ssl_adapters = {
 }
 
 
-def get_ssl_adapter_class(name='pyopenssl'):
+def get_ssl_adapter_class(name='builtin'):
     """Return an SSL adapter class for the given name."""
     adapter = ssl_adapters[name.lower()]
     if isinstance(adapter, basestring):

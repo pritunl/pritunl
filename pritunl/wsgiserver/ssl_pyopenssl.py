@@ -71,7 +71,7 @@ class SSL_fileobject(wsgiserver.CP_fileobject):
                 time.sleep(self.ssl_retry)
             except SSL.WantWriteError:
                 time.sleep(self.ssl_retry)
-            except SSL.SysCallError, e:
+            except SSL.SysCallError as e:
                 if is_reader and e.args == (-1, 'Unexpected EOF'):
                     return ""
 
@@ -79,7 +79,7 @@ class SSL_fileobject(wsgiserver.CP_fileobject):
                 if is_reader and errnum in wsgiserver.socket_errors_to_ignore:
                     return ""
                 raise socket.error(errnum)
-            except SSL.Error, e:
+            except SSL.Error as e:
                 if is_reader and e.args == (-1, 'Unexpected EOF'):
                     return ""
 
@@ -105,11 +105,11 @@ class SSL_fileobject(wsgiserver.CP_fileobject):
 
     def sendall(self, *args, **kwargs):
         return self._safe_call(False, super(SSL_fileobject, self).sendall,
-                               *args, **kwargs)
+            *args, **kwargs)
 
     def send(self, *args, **kwargs):
         return self._safe_call(False, super(SSL_fileobject, self).send,
-                               *args, **kwargs)
+            *args, **kwargs)
 
 
 class SSLConnection:

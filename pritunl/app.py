@@ -115,7 +115,7 @@ def acme_token_get(token):
 def _run_redirect_wsgi():
     logger.info('Starting redirect server', 'app')
 
-    server = limiter.CherryPyWSGIServerLimited(
+    server = wsgiserver.CherryPyWSGIServer(
         (settings.conf.bind_addr, 80),
         redirect_app,
         server_name=APP_NAME,
@@ -134,7 +134,7 @@ def _run_wsgi(restart=False):
 
     logger.info('Starting server', 'app')
 
-    app_server = limiter.CherryPyWSGIServerLimited(
+    app_server = wsgiserver.CherryPyWSGIServer(
         (settings.conf.bind_addr, settings.app.server_port),
         app,
         request_queue_size=settings.app.request_queue_size,
