@@ -5,6 +5,7 @@ Pritunl Changelog
 
 Improve web server performance
 Add reverse proxy support
+Fix issue with non-responsive web server
 
 Version 1.21.939.33 2016-04-08
 ------------------------------
