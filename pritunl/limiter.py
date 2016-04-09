@@ -43,7 +43,7 @@ class CherryPyWSGIServerLimited(wsgiserver.CherryPyWSGIServer):
             logger.error(msg, 'app')
 
     def validate_peer(self, peer):
-        return _wsgi_limiter.validate(peer)
+        return settings.app.reverse_proxy or _wsgi_limiter.validate(peer)
 
     def validate_request(self, peer, request):
-        return _wsgi_limiter.validate(peer)
+        return settings.app.reverse_proxy or _wsgi_limiter.validate(peer)
