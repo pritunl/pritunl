@@ -363,6 +363,7 @@ class Iptables(object):
 
     def _generate_post_routing(self):
         all_interface = None
+        all_interface6 = None
 
         for route, interface in self._nat_routes.items():
             if route == '0.0.0.0/0':
@@ -381,7 +382,7 @@ class Iptables(object):
 
         for route, interface in self._nat_routes6.items():
             if route == '::/0':
-                all_interface = interface
+                all_interface6 = interface
                 continue
 
             for nat_network in self._nat_networks6:
@@ -408,7 +409,7 @@ class Iptables(object):
                     'POSTROUTING',
                     '-t', 'nat',
                     '-s', nat_network,
-                    '-o', all_interface,
+                    '-o', all_interface6,
                     '-j', 'MASQUERADE',
                 ])
 
