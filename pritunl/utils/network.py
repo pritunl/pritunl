@@ -46,7 +46,7 @@ def get_remote_addr():
             return forward_ip.split(',')[-1]
 
     if not settings.conf.debug:
-        forward_ip = flask.request.headers.get('X-Pritunl-For')
+        forward_ip = flask.request.headers.get('PR-Forward-For')
         if forward_ip:
             return forward_ip
 
