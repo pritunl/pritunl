@@ -4,7 +4,6 @@ from pritunl.helpers import *
 from pritunl import logger
 from pritunl import settings
 from pritunl import wsgiserver
-from pritunl import limiter
 from pritunl import utils
 
 import threading
@@ -35,6 +34,16 @@ _cur_key = None
 _cur_port = None
 _update_lock = threading.Lock()
 _watch_event = threading.Event()
+
+class CherryPyWSGIServerLogged(wsgiserver.CherryPyWSGIServer):
+    def error_log(self, msg='', level=None, traceback=False):
+        if not settings.app.log_web_errors:
+            return
+
+        if traceback:
+            logger.exception(msg, 'app')
+        else:
+            logger.error(msg, 'app')
 
 def set_acme(token, authorization):
     global acme_token
@@ -117,7 +126,7 @@ def acme_token_get(token):
 def _run_redirect_wsgi():
     logger.info('Starting redirect server', 'app')
 
-    server = limiter.CherryPyWSGIServerLimited(
+    server = CherryPyWSGIServerLogged(
         (settings.conf.bind_addr, 80),
         redirect_app,
         server_name=APP_NAME,
@@ -136,7 +145,7 @@ def _run_server(restart):
 
     logger.info('Starting server', 'app')
 
-    app_server = limiter.CherryPyWSGIServerLimited(
+    app_server = CherryPyWSGIServerLogged(
         ('localhost', settings.app.server_internal_port),
         app,
         request_queue_size=settings.app.request_queue_size,
