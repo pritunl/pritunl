@@ -8,6 +8,7 @@ import flask
 import re
 import netifaces
 import collections
+import urlparse
 
 _used_interfaces = set()
 _tun_interfaces = collections.deque(['tun%s' % _x for _x in xrange(100)])
@@ -289,3 +290,10 @@ def ip4to6x96(prefix, net, addr):
         addr_hex[2:6] + ':' + addr_hex[6:10]
 
     return str(ipaddress.IPv6Address(addr6))
+
+def redirect(location, code=302):
+    if not settings.conf.debug:
+        base_url = flask.request.headers.get('PR-Forward-Url')
+        if base_url:
+            location = urlparse.urljoin(base_url, location)
+    return flask.redirect(location, code)

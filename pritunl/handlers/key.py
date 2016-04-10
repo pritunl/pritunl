@@ -619,7 +619,7 @@ def sso_request_get():
 
         data = resp.json()
 
-        return flask.redirect(data['url'])
+        return utils.redirect(data['url'])
 
     elif SLACK_AUTH in sso_mode:
         resp = requests.post(AUTH_SERVER + '/v1/request/slack',
@@ -655,7 +655,7 @@ def sso_request_get():
 
         data = resp.json()
 
-        return flask.redirect(data['url'])
+        return utils.redirect(data['url'])
 
     elif SAML_AUTH in sso_mode:
         resp = requests.post(AUTH_SERVER + '/v1/request/saml',
@@ -815,4 +815,4 @@ def sso_callback_get():
         remote_addr=utils.get_remote_addr(),
     )
 
-    return flask.redirect(flask.request.url_root[:-1] + key_link['view_url'])
+    return utils.redirect(flask.request.url_root[:-1] + key_link['view_url'])
