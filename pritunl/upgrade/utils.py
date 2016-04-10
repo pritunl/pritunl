@@ -50,7 +50,7 @@ def setup_cert():
     if not server_dh_params:
         server_dh_params = utils.generate_server_dh_params_inline(1024)
 
-    return utils.write_server_cert(
+    return utils.write_server_cert_chain(
         server_cert,
         server_key,
         server_dh_params,
