@@ -252,67 +252,6 @@ def setup_server_cert():
         utils.create_server_cert()
         settings.commit()
 
-@interrupter
-def _web_watch_thread():
-    if settings.app.demo_mode:
-        return
-
-    yield interrupter_sleep(5)
-
-    error_count = 0
-    while True:
-        while True:
-            if not _watch_event.wait(0.5):
-                error_count = 0
-                yield
-                continue
-
-            url = ''
-            if settings.app.server_ssl:
-                verify = False
-                url += 'https://'
-            else:
-                url += 'http://'
-                verify = True
-            url += 'localhost:%s/ping' % settings.app.server_port
-
-            try:
-                resp = requests.get(
-                    url,
-                    timeout=settings.app.server_watch_timeout,
-                    verify=verify,
-                )
-
-                if resp.status_code != 200 and _watch_event.is_set():
-                    logger.error('Failed to ping web server, bad status',
-                        'watch',
-                        url=url,
-                        status_code=resp.status_code,
-                        content=resp.content,
-                    )
-                    break
-            except:
-                if _watch_event.is_set():
-                    logger.exception('Failed to ping web server', 'watch',
-                        url=url,
-                    )
-                    break
-
-            error_count = 0
-            yield interrupter_sleep(3)
-
-        error_count += 1
-        if error_count > 1:
-            error_count = 0
-            logger.error('Web server non-responsive, restarting...', 'watch')
-            restart_server()
-            yield interrupter_sleep(10)
-        else:
-            yield interrupter_sleep(2)
-
-def start_web_watch():
-    threading.Thread(target=_web_watch_thread).start()
-
 def run_server():
     global _cur_cert
     global _cur_key
@@ -329,6 +268,4 @@ def run_server():
     if settings.conf.debug:
         _run_wsgi_debug()
     else:
-        if settings.app.server_watch:
-            start_web_watch()
         _run_wsgi()
