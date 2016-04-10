@@ -175,7 +175,7 @@ def _run_server(restart):
     )
 
     def poll_thread():
-        if process.wait() and process_state:
+        if process.wait() and process_state and not check_global_interrupt():
             stdout, stderr = process._communicate(None)
             logger.error("Web server process exited unexpectedly", "app",
                 stdout=stdout,
