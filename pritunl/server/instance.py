@@ -289,6 +289,7 @@ class ServerInstance(object):
             settings.local.host.routed_subnet6
 
         self.iptables.id = self.server.id
+        self.iptables.ipv6 = self.server.ipv6
         self.iptables.server_addr = server_addr
         self.iptables.server_addr6 = server_addr6
         self.iptables.virt_interface = self.interface
