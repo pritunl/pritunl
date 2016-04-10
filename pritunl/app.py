@@ -12,17 +12,8 @@ import logging
 import logging.handlers
 import time
 import urlparse
-import requests
 import subprocess
 import os
-
-try:
-    import OpenSSL
-    from pritunl.wsgiserver import ssl_pyopenssl
-    SSLAdapter = ssl_pyopenssl.pyOpenSSLAdapter
-except ImportError:
-    from pritunl.wsgiserver import ssl_builtin
-    SSLAdapter = ssl_builtin.BuiltinSSLAdapter
 
 app = flask.Flask(__name__)
 app_server = None
