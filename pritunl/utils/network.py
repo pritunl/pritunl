@@ -44,6 +44,12 @@ def get_remote_addr():
             settings.app.reverse_proxy_header)
         if forward_ip:
             return forward_ip.split(',')[-1]
+
+    if not settings.conf.debug:
+        forward_ip = flask.request.headers.get('X-Pritunl-For')
+        if forward_ip:
+            return forward_ip
+
     return flask.request.remote_addr
 
 def get_interface_address(iface):
