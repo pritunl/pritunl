@@ -14,6 +14,8 @@ import logging.handlers
 import time
 import urlparse
 import requests
+import subprocess
+import os
 
 try:
     import OpenSSL
@@ -115,7 +117,7 @@ def acme_token_get(token):
 def _run_redirect_wsgi():
     logger.info('Starting redirect server', 'app')
 
-    server = wsgiserver.CherryPyWSGIServer(
+    server = limiter.CherryPyWSGIServerLimited(
         (settings.conf.bind_addr, 80),
         redirect_app,
         server_name=APP_NAME,
@@ -129,37 +131,61 @@ def _run_redirect_wsgi():
         logger.exception('Redirect server error occurred', 'app')
         raise
 
-def _run_wsgi(restart=False):
+def _run_server(restart):
     global app_server
 
     logger.info('Starting server', 'app')
 
-    app_server = wsgiserver.CherryPyWSGIServer(
-        (settings.conf.bind_addr, settings.app.server_port),
+    app_server = limiter.CherryPyWSGIServerLimited(
+        ('localhost', settings.app.server_internal_port),
         app,
         request_queue_size=settings.app.request_queue_size,
         server_name=APP_NAME,
         numthreads=settings.app.request_thread_count,
+        shutdown_timeout=3,
     )
-    app_server.shutdown_timeout = 1
+
+    server_cert_path = None
+    server_key_path = None
+    redirect_server = 'true' if settings.app.redirect_server else 'false'
+    internal_addr = 'localhost:' + str(settings.app.server_internal_port)
 
     if settings.app.server_ssl:
         setup_server_cert()
 
-        server_cert_path, server_chain_path, server_key_path, \
-            server_dh_path = utils.write_server_cert(
-                settings.app.server_cert,
-                settings.app.server_key,
-                settings.app.server_dh_params,
-                settings.app.acme_domain,
-            )
-
-        app_server.ssl_adapter = SSLAdapter(
-            server_cert_path,
-            server_key_path,
-            server_chain_path,
-            server_dh_path,
+        server_cert_path, server_key_path = utils.write_server_cert(
+            settings.app.server_cert,
+            settings.app.server_key,
+            settings.app.acme_domain,
         )
+
+    process_state = True
+    process = subprocess.Popen(
+        ['pritunl-web'],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        env=dict(os.environ, **{
+            'REDIRECT_SERVER': redirect_server,
+            'BIND_HOST': settings.conf.bind_addr,
+            'BIND_PORT': str(settings.app.server_port),
+            'INTERNAL_ADDRESS': internal_addr,
+            'CERT_PATH': server_cert_path or '',
+            'KEY_PATH': server_key_path or '',
+        }),
+    )
+
+    def poll_thread():
+        if process.wait() and process_state:
+            stdout, stderr = process._communicate(None)
+            logger.error("Web server process exited unexpectedly", "app",
+                stdout=stdout,
+                stderr=stderr,
+            )
+            time.sleep(1)
+            restart_server(1)
+    thread = threading.Thread(target=poll_thread)
+    thread.daemon = True
+    thread.start()
 
     if not restart:
         settings.local.server_ready.set()
@@ -170,13 +196,28 @@ def _run_wsgi(restart=False):
     try:
         app_server.start()
     except (KeyboardInterrupt, SystemExit):
-        pass
+        return
     except ServerRestart:
-        logger.info('Server restarting...', 'app')
-        return _run_wsgi(True)
+        raise
     except:
         logger.exception('Server error occurred', 'app')
         raise
+    finally:
+        process_state = False
+        try:
+            process.kill()
+        except:
+            pass
+
+def _run_wsgi():
+    restart = False
+    while True:
+        try:
+            _run_server(restart)
+        except ServerRestart:
+            restart = True
+            logger.info('Server restarting...', 'app')
+            continue
 
 def _run_wsgi_debug():
     logger.info('Starting debug server', 'app')
