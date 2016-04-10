@@ -80,7 +80,8 @@ class Clients(object):
         if user.link_server_id:
             link_usr_svr = self.server.get_link_server(user.link_server_id,
                 fields=('_id', 'network', 'network_start', 'network_end',
-                    'local_networks', 'organizations', 'routes', 'links'))
+                    'local_networks', 'organizations', 'routes', 'links',
+                    'ipv6'))
 
             for route in link_usr_svr.get_routes(
                     include_default=False):
@@ -138,7 +139,8 @@ class Clients(object):
 
             for link_svr in self.server.iter_links(fields=(
                     '_id', 'network', 'local_networks', 'network_start',
-                    'network_end', 'organizations', 'routes', 'links')):
+                    'network_end', 'organizations', 'routes', 'links',
+                    'ipv6')):
                 for route in link_svr.get_routes(
                         include_default=False):
                     network = route['network']

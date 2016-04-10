@@ -652,7 +652,7 @@ def server_org_put(server_id, org_id):
 
     svr = server.get_by_id(server_id,
         fields=('_id', 'status', 'network', 'network_start', 'network_end',
-        'organizations', 'routes'))
+        'organizations', 'routes', 'ipv6'))
     org = organization.get_by_id(org_id, fields=('_id', 'name'))
     if svr.status == ONLINE:
         return utils.jsonify({
@@ -680,7 +680,7 @@ def server_org_delete(server_id, org_id):
     svr = server.get_by_id(server_id,
         fields=('_id', 'status', 'network', 'network_start',
             'network_end', 'primary_organization',
-            'primary_user', 'organizations', 'routes'))
+            'primary_user', 'organizations', 'routes', 'ipv6'))
     org = organization.get_by_id(org_id, fields=('_id'))
 
     if svr.status == ONLINE:
@@ -707,7 +707,7 @@ def server_route_get(server_id):
             return utils.jsonify(resp)
 
     svr = server.get_by_id(server_id, fields=('_id', 'network', 'links',
-        'network_start', 'network_end', 'routes', 'organizations'))
+        'network_start', 'network_end', 'routes', 'organizations', 'ipv6'))
 
     resp = svr.get_routes(include_server_links=True)
     if settings.app.demo_mode:
@@ -721,7 +721,8 @@ def server_route_post(server_id):
         return utils.demo_blocked()
 
     svr = server.get_by_id(server_id, fields=('_id', 'network', 'links',
-        'network_start', 'network_end', 'routes', 'organizations', 'status'))
+        'network_start', 'network_end', 'routes', 'organizations', 'status',
+        'ipv6'))
     route_network = flask.request.json['network']
     nat_route = True if flask.request.json.get('nat') else False
     vpc_region = utils.filter_str(flask.request.json.get('vpc_region')) or None
@@ -766,7 +767,8 @@ def server_route_put(server_id, route_network):
         return utils.demo_blocked()
 
     svr = server.get_by_id(server_id, fields=('_id', 'network', 'links',
-        'network_start', 'network_end', 'routes', 'organizations', 'status'))
+        'network_start', 'network_end', 'routes', 'organizations', 'status',
+        'ipv6'))
     route_network = route_network.decode('hex')
     nat_route = True if flask.request.json.get('nat') else False
     vpc_region = utils.filter_str(flask.request.json.get('vpc_region')) or None
@@ -810,7 +812,8 @@ def server_route_delete(server_id, route_network):
         return utils.demo_blocked()
 
     svr = server.get_by_id(server_id, fields=('_id', 'network', 'links',
-        'network_start', 'network_end', 'routes', 'organizations', 'status'))
+        'network_start', 'network_end', 'routes', 'organizations', 'status',
+        'ipv6'))
     route_network = route_network.decode('hex')
 
     try:

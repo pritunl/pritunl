@@ -133,7 +133,7 @@ def link_servers(server_id, link_server_id, use_local_address=False):
         raise TypeError('Server id must be different then link server id')
 
     fields = ('_id', 'status', 'hosts', 'replica_count', 'network', 'links',
-        'network_start', 'network_end', 'routes', 'organizations')
+        'network_start', 'network_end', 'routes', 'organizations', 'ipv6')
 
     hosts = set()
     routes = set()
