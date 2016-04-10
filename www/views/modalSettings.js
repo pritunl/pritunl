@@ -533,11 +533,11 @@ define([
                 (serverPort === '443' || !serverPort ? '' : ':' +
                   serverPort) +
                 window.location.pathname;
-            }, 8000);
+            }, 10000);
           } else if (acmeDomain !== this.curAcmeDomain) {
             setTimeout(function() {
               window.location.reload();
-            }, 8000);
+            }, 10000);
           }
         }.bind(this),
         error: function(model, response) {
