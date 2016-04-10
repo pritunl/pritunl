@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Redesigned web server
+Fix issues with ipv6 servers
 
 Version 1.21.940.94 2016-04-09
 ------------------------------
