@@ -33,7 +33,24 @@ def create_server_dh_params():
     with open(server_dh_path, 'r') as server_dh_file:
         settings.app.server_dh_params = server_dh_file.read().strip()
 
-def write_server_cert(server_cert, server_key,
+def write_server_cert(server_cert, server_key, acme_domain):
+    server_cert_path = os.path.join(settings.conf.temp_path, SERVER_CERT_NAME)
+    server_key_path = os.path.join(settings.conf.temp_path, SERVER_KEY_NAME)
+
+    server_cert_full = server_cert
+
+    if acme_domain:
+        server_cert_full += LETS_ENCRYPT_INTER
+
+    with open(server_cert_path, 'w') as server_cert_file:
+        server_cert_file.write(server_cert_full)
+    with open(server_key_path, 'w') as server_key_file:
+        os.chmod(server_key_path, 0600)
+        server_key_file.write(server_key)
+
+    return server_cert_path, server_key_path
+
+def write_server_cert_chain(server_cert, server_key,
         server_dh_params, acme_domain):
     server_cert_path = os.path.join(settings.conf.temp_path, SERVER_CERT_NAME)
     server_chain_path = os.path.join(settings.conf.temp_path,
