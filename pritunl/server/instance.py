@@ -314,6 +314,8 @@ class ServerInstance(object):
                 continue
             if line_split[0] not in routes:
                 if line_split[0] == '0.0.0.0':
+                    if default_interface:
+                        continue
                     default_interface = line_split[7]
 
                 routes.append((
@@ -349,12 +351,14 @@ class ServerInstance(object):
                 except (ipaddress.AddressValueError, ValueError):
                     continue
 
-                if not default_interface6 and line_split[0] == '::/0':
+                if line_split[0] == '::/0':
+                    if default_interface6:
+                        continue
                     default_interface6 = line_split[6]
 
                 routes6.append((
                     route_network,
-                    line_split[6]
+                    line_split[6],
                 ))
 
             if not default_interface6:
