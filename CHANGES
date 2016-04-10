@@ -3,7 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
-Fix url redirection when using not using port 443
+Fix url redirection when not using port 443
 
 Version 1.21.941.39 2016-04-10
 ------------------------------
