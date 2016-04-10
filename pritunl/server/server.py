@@ -553,6 +553,20 @@ class Server(mongo.MongoObject):
             'link_virtual_network': False,
         })
 
+        if self.ipv6:
+            routes.append({
+                'id': self.network6.encode('hex'),
+                'server': self.id,
+                'network': self.network6,
+                'nat': False,
+                'vpc_region': virtual_vpc_region,
+                'vpc_id': virtual_vpc_id,
+                'virtual_network': True,
+                'network_link': False,
+                'server_link': False,
+                'link_virtual_network': False,
+            })
+
         for route_network in sorted(routes_dict.keys()):
             if not routes_dict[route_network]['server_link']:
                 routes.append(routes_dict[route_network])
