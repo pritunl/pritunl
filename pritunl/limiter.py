@@ -1,6 +1,4 @@
 from pritunl import settings
-from pritunl import wsgiserver
-from pritunl import logger
 
 import time
 
@@ -29,21 +27,3 @@ class Limiter(object):
         else:
             self.peers_expire_count[peer] = (cur_time + limit_timeout, 1)
         return True
-
-_wsgi_limiter = Limiter('app', 'peer_limit', 'peer_limit_timeout')
-
-class CherryPyWSGIServerLimited(wsgiserver.CherryPyWSGIServer):
-    def error_log(self, msg='', level=None, traceback=False):
-        if not settings.app.log_web_errors:
-            return
-
-        if traceback:
-            logger.exception(msg, 'app')
-        else:
-            logger.error(msg, 'app')
-
-    def validate_peer(self, peer):
-        return settings.app.reverse_proxy or _wsgi_limiter.validate(peer)
-
-    def validate_request(self, peer, request):
-        return settings.app.reverse_proxy or _wsgi_limiter.validate(peer)
