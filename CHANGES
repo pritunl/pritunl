@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with Lets Encrypt
+
 Version 1.21.941.90 2016-04-10
 ------------------------------
 
