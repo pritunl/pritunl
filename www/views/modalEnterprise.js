@@ -94,6 +94,7 @@ define([
     lock: function() {
       this.lockClose = true;
       this.$('.ok').attr('disabled', 'disabled');
+      this.$('.enterprise-support-link').attr('disabled', 'disabled');
       this.$('.enterprise-buttons button').attr('disabled', 'disabled');
     },
     unlock: function() {
@@ -104,6 +105,7 @@ define([
       if (statusData[0] === 'Inactive' || statusData[0] === 'Canceled') {
         notSel = ':not(.enterprise-update)';
       }
+      this.$('.enterprise-support-link').removeAttr('disabled');
       this.$('.enterprise-buttons button' + notSel).removeAttr('disabled');
     },
     onSupport: function() {
