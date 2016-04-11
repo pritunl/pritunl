@@ -108,7 +108,7 @@ def redirect_after_request(response):
     url = urlparse.urlunsplit(url)
     return flask.redirect(url)
 
-@redirect_app.route('/.well-known/acme-challenge/<token>', methods=['GET'])
+@app.route('/.well-known/acme-challenge/<token>', methods=['GET'])
 def acme_token_get(token):
     if token == acme_token:
         return flask.Response(acme_authorization, mimetype='text/plain')
