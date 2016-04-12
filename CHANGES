@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Reduce cpu usage for large servers
+
 Version 1.21.942.24 2016-04-11
 ------------------------------
 
