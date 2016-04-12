@@ -162,6 +162,7 @@ def settings_put():
     settings_commit = False
     update_server = False
     update_acme = False
+    update_cert = False
 
     if 'username' in flask.request.json and flask.request.json['username']:
         username = utils.filter_str(
@@ -253,8 +254,8 @@ def settings_put():
                 settings.app.acme_timestamp = None
                 settings.app.server_key = None
                 settings.app.server_cert = None
-                utils.create_server_cert()
                 update_server = True
+                update_cert = True
             else:
                 update_acme = True
         settings.app.acme_domain = acme_domain
@@ -535,9 +536,6 @@ def settings_put():
 
     event.Event(type=SETTINGS_UPDATED)
 
-    if update_server:
-        app.update_server(0.5)
-
     if update_acme:
         try:
             acme.update_acme_cert()
@@ -553,6 +551,11 @@ def settings_put():
                 'error': ACME_ERROR,
                 'error_msg': ACME_ERROR_MSG,
             }, 400)
+    elif update_cert:
+        utils.create_server_cert()
+        app.update_server(0.5)
+    elif update_server:
+        app.update_server(0.5)
 
     response = flask.g.administrator.dict()
     response.update(_dict())
