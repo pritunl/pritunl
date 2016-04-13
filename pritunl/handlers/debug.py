@@ -5,4 +5,4 @@ from pritunl import app
 @auth.session_auth
 def restart_web_get():
     app.restart_server(1)
-    return 'restarting'
+    return 'restarting web server...'
