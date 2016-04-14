@@ -445,6 +445,7 @@ class Server(mongo.MongoObject):
                 'server': self.id,
                 'network': network_link,
                 'nat': False,
+                'nat_interface': None,
                 'vpc_region': None,
                 'vpc_id': None,
                 'virtual_network': False,
@@ -467,6 +468,7 @@ class Server(mongo.MongoObject):
                     data['server'] = self.id
                     data['network'] = route['network']
                     data['nat'] = route['nat']
+                    data['nat_interface'] = route['nat_interface']
                     data['vpc_region'] = None
                     data['vpc_id'] = None
                     data['virtual_network'] = False
@@ -491,6 +493,7 @@ class Server(mongo.MongoObject):
                     'server': self.id,
                     'network': route_network,
                     'nat': route.get('nat', True),
+                    'nat_interface': route.get('nat_interface'),
                     'vpc_region': route.get('vpc_region', None),
                     'vpc_id': route.get('vpc_id', None),
                     'virtual_network': False,
@@ -505,6 +508,7 @@ class Server(mongo.MongoObject):
                         'server': self.id,
                         'network': '::/0',
                         'nat': route.get('nat', True),
+                        'nat_interface': route.get('nat_interface'),
                         'vpc_region': route.get('vpc_region', None),
                         'vpc_id': route.get('vpc_id', None),
                         'virtual_network': False,
@@ -532,6 +536,7 @@ class Server(mongo.MongoObject):
                         'server': self.id,
                         'network': route_network,
                         'nat': route.get('nat', True),
+                        'nat_interface': route.get('nat_interface'),
                         'vpc_region': route.get('vpc_region', None),
                         'vpc_id': route.get('vpc_id', None),
                         'virtual_network': False,
@@ -545,6 +550,7 @@ class Server(mongo.MongoObject):
             'server': self.id,
             'network': self.network,
             'nat': False,
+            'nat_interface': None,
             'vpc_region': virtual_vpc_region,
             'vpc_id': virtual_vpc_id,
             'virtual_network': True,
@@ -559,6 +565,7 @@ class Server(mongo.MongoObject):
                 'server': self.id,
                 'network': self.network6,
                 'nat': False,
+                'nat_interface': None,
                 'vpc_region': virtual_vpc_region,
                 'vpc_id': virtual_vpc_id,
                 'virtual_network': True,
