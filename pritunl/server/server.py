@@ -575,7 +575,8 @@ class Server(mongo.MongoObject):
 
         return routes + link_routes
 
-    def upsert_route(self, network, nat_route, vpc_region, vpc_id):
+    def upsert_route(self, network, nat_route, nat_interface,
+            vpc_region, vpc_id):
         exists = False
 
         if self.status == ONLINE:
@@ -607,6 +608,7 @@ class Server(mongo.MongoObject):
         for route in self.routes:
             if route['network'] == network:
                 route['nat'] = nat_route
+                route['nat_interface'] = nat_interface
                 route['vpc_region'] = vpc_region
                 route['vpc_id'] = vpc_id
                 route['server_link'] = server_link
@@ -617,6 +619,7 @@ class Server(mongo.MongoObject):
             self.routes.append({
                 'network': network,
                 'nat': nat_route,
+                'nat_interface': nat_interface,
                 'vpc_region': vpc_region,
                 'vpc_id': vpc_id,
                 'server_link': server_link,
@@ -627,6 +630,7 @@ class Server(mongo.MongoObject):
             'server': self.id,
             'network': orig_network,
             'nat': nat_route,
+            'nat_interface': nat_interface,
             'vpc_region': vpc_region,
             'vpc_id': vpc_id,
         }
