@@ -18,6 +18,8 @@ class Iptables(object):
         self._accept6 = []
         self._drop = []
         self._drop6 = []
+        self._other = []
+        self._other6 = []
         self._accept_all = False
         self._lock = threading.Lock()
         self.id = None
@@ -57,6 +59,40 @@ class Iptables(object):
             self._nat_networks6.add(network)
         else:
             self._nat_networks.add(network)
+
+    def add_rule(self, rule):
+        self._lock.acquire()
+        try:
+            self._other.append(rule)
+            if not self._exists_iptables_rule(rule):
+                self._insert_iptables_rule(rule)
+        finally:
+            self._lock.release()
+
+    def add_rule6(self, rule):
+        self._lock.acquire()
+        try:
+            self._other6.append(rule)
+            if not self._exists_iptables_rule(rule, ipv6=True):
+                self._insert_iptables_rule(rule, ipv6=True)
+        finally:
+            self._lock.release()
+
+    def remove_rule(self, rule):
+        self._lock.acquire()
+        try:
+            self._other.remove(rule)
+            self._remove_iptables_rule(rule)
+        finally:
+            self._lock.release()
+
+    def remove_rule6(self, rule):
+        self._lock.acquire()
+        try:
+            self._other6.remove(rule)
+            self._remove_iptables_rule(rule, ipv6=True)
+        finally:
+            self._lock.release()
 
     def _generate_input(self):
         if self._accept_all:
@@ -549,16 +585,18 @@ class Iptables(object):
     def clear_rules(self):
         self._lock.acquire()
         try:
-            for rule in self._accept + self._drop:
+            for rule in self._accept + self._drop + self._other:
                 self._remove_iptables_rule(rule)
 
             if self.ipv6:
-                for rule in self._accept6 + self._drop6:
+                for rule in self._accept6 + self._drop6 + self._other6:
                     self._remove_iptables_rule(rule, ipv6=True)
 
-            self._accept = []
-            self._accept6 = []
-            self._drop = []
-            self._drop6 = []
+            self._accept = None
+            self._accept6 = None
+            self._other = None
+            self._other6 = None
+            self._drop = None
+            self._drop6 = None
         finally:
             self._lock.release()
