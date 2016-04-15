@@ -522,10 +522,12 @@ class Server(mongo.MongoObject):
             else:
                 if route_network in routes_dict:
                     routes_dict[route_network]['nat'] = route.get('nat', True)
+                    routes_dict[route_network]['nat_interface'] = route.get(
+                        'nat_interface')
                     routes_dict[route_network]['vpc_region'] = route.get(
-                        'vpc_region', None)
+                        'vpc_region')
                     routes_dict[route_network]['vpc_id'] = route.get(
-                        'vpc_id', None)
+                        'vpc_id')
                 else:
                     if route.get('server_link') and \
                             route_network not in routes_dict:
