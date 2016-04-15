@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add nat interface option to routes
+Fix issue with port fowarding
 
 Version 1.21.945.14 2016-04-14
 ------------------------------
