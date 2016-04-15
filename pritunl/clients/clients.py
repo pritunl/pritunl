@@ -500,10 +500,9 @@ class Clients(object):
         rules = []
         rules6 = []
 
-        base_args = [
+        forward_base_args = [
             'FORWARD',
             '-d', client_addr,
-            '!', '-i', self.instance.interface,
             '-o', self.instance.interface,
             '-j', 'ACCEPT',
         ]
@@ -584,7 +583,7 @@ class Clients(object):
                     rules6.append(rule)
 
 
-                rule = base_args + [
+                rule = forward_base_args + [
                     '-p', proto,
                     '-m', proto,
                     '--dport', dport,
