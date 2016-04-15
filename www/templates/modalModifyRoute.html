@@ -1,6 +1,6 @@
 <div class="nat-route-toggle toggle-form form-group">
   <label>NAT Route</label>
-  <div class="selector <%= nat ? 'selected' : '' %> no-select" data-toggle="tooltip" title="NAT vpn traffic destined to this network.">
+  <div class="selector <%= nat ? 'selected' : '' %> no-select" data-toggle="tooltip" title="NAT vpn traffic destined to this network">
     <span class="selector-inner glyphicon glyphicon-ok"></span>
   </div>
 </div>
@@ -25,5 +25,5 @@
 </div>
 <div class="vpc-id form-group">
   <label>VPC Route Advertisement ID</label>
-  <input type="text" class="form-control" placeholder="Enter VPC ID" value="<%- vpc_id || '' %>" data-toggle="tooltip" title="VPC ID for route advertisement. EC2 server must be connected to the VPC.">
+  <input type="text" class="form-control" placeholder="Enter VPC ID" value="<%- vpc_id || '' %>" data-toggle="tooltip" title="VPC ID for route advertisement. EC2 server must be connected to the VPC">
 </div>
