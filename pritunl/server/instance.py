@@ -390,38 +390,40 @@ class ServerInstance(object):
             is6 = ':' in network
             network_obj = ipaddress.IPNetwork(network)
 
-            interface = None
+            interface = route['nat_interface']
             if is6:
-                for route_net, route_intf in routes6:
-                    if network_obj in route_net:
-                        interface = route_intf
-                        break
-
                 if not interface:
-                    logger.info(
-                        'Failed to find interface for local ' + \
-                            'IPv6 network route, using default route',
-                            'server',
-                        server_id=self.server.id,
-                        network=network,
-                    )
-                    interface = default_interface6
+                    for route_net, route_intf in routes6:
+                        if network_obj in route_net:
+                            interface = route_intf
+                            break
+
+                    if not interface:
+                        logger.info(
+                            'Failed to find interface for local ' + \
+                                'IPv6 network route, using default route',
+                                'server',
+                            server_id=self.server.id,
+                            network=network,
+                        )
+                        interface = default_interface6
                 interfaces6.add(interface)
             else:
-                for route_net, route_intf in routes:
-                    if network_obj in route_net:
-                        interface = route_intf
-                        break
-
                 if not interface:
-                    logger.info(
-                        'Failed to find interface for local ' + \
-                            'network route, using default route',
-                            'server',
-                        server_id=self.server.id,
-                        network=network,
-                    )
-                    interface = default_interface
+                    for route_net, route_intf in routes:
+                        if network_obj in route_net:
+                            interface = route_intf
+                            break
+
+                    if not interface:
+                        logger.info(
+                            'Failed to find interface for local ' + \
+                                'network route, using default route',
+                                'server',
+                            server_id=self.server.id,
+                            network=network,
+                        )
+                        interface = default_interface
                 interfaces.add(interface)
 
             self.iptables.add_route(
