@@ -526,6 +526,18 @@ class Clients(object):
             '--comment', 'pritunl_%s' % self.server.id,
         ]
 
+        forward2_base_rule = [
+            'FORWARD',
+            '-s', client_addr,
+            '-i', self.instance.interface,
+            '-m', 'conntrack',
+            '--ctstate','RELATED,ESTABLISHED',
+            '-j', 'ACCEPT',
+        ] + extra_args
+        rules.append(forward2_base_rule)
+        if self.server.ipv6:
+            rules6.append(forward2_base_rule)
+
         for data in usr.port_forwarding:
             proto = data.get('protocol')
             port = data['port']
