@@ -434,31 +434,26 @@ class ServerInstance(object):
 
         self.iptables.generate()
 
-    # def enable_iptables_tun_nat(self):
-    #     self.iptables_lock.acquire()
-    #     try:
-    #         if self.iptables_rules is None:
-    #             return
-    #
-    #         if self.tun_nat:
-    #             return
-    #         self.tun_nat = True
-    #
-    #         rule = [
-    #             'POSTROUTING',
-    #             '-t', 'nat',
-    #             '-o', self.interface,
-    #             '-j', 'MASQUERADE',
-    #             '-m', 'comment',
-    #             '--comment', 'pritunl_%s' % self.server.id,
-    #         ]
-    #         self.iptables_rules.append(rule)
-    #         self.set_iptables_rule(rule)
-    #         if self.server.ipv6:
-    #             self.ip6tables_rules.append(rule)
-    #             self.set_ip6tables_rule(rule)
-    #     finally:
-    #         self.iptables_lock.release()
+    def enable_iptables_tun_nat(self):
+        # TODO
+        self.iptables_lock.acquire()
+        try:
+            if self.tun_nat:
+                return
+            self.tun_nat = True
+
+            rule = [
+                'POSTROUTING',
+                '-t', 'nat',
+                '-o', self.interface,
+                '-j', 'MASQUERADE',
+                '-m', 'comment',
+                '--comment', 'pritunl_%s' % self.server.id,
+            ]
+            self.iptables.add_rule(rule)
+            self.iptables.add_rule6(rule)
+        finally:
+            self.iptables_lock.release()
 
     def stop_process(self):
         self.sock_interrupt = True
