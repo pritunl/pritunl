@@ -41,12 +41,14 @@ define([
     },
     onOk: function() {
       var nat = this.getNatRouteSelect();
+      var natInterface = this.$('.nat-interface input').val();
       var vpcRegion = this.$('.vpc-region select').val();
       var vpcId = this.$('.vpc-id input').val();
 
       this.setLoading('Modifying route...');
       this.model.save({
         nat: nat,
+        nat_interface: natInterface,
         vpc_region: vpcRegion,
         vpc_id: vpcId
       }, {
