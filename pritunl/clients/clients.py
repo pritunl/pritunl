@@ -546,11 +546,14 @@ class Clients(object):
             if not port:
                 continue
 
+            client_addr_port = client_addr
+            client_addr_port6 = client_addr6
             if not dport:
                 dport = port
                 port = ''
             else:
-                port = ':' + port
+                client_addr_port += ':' + port
+                client_addr_port6 += ':' + port
             dport = dport.replace('-', ':')
 
             if proto:
@@ -563,7 +566,7 @@ class Clients(object):
                     '-p', proto,
                     '-m', proto,
                     '--dport', dport,
-                    '--to-destination', client_addr + port,
+                    '--to-destination', client_addr_port,
                 ] + extra_args
                 rules.append(rule)
 
@@ -572,7 +575,7 @@ class Clients(object):
                         '-p', proto,
                         '-m', proto,
                         '--dport', dport,
-                        '--to-destination', client_addr6 + port,
+                        '--to-destination', client_addr_port6,
                     ] + extra_args
                     rules6.append(rule)
 
@@ -581,7 +584,7 @@ class Clients(object):
                     '-p', proto,
                     '-m', proto,
                     '--dport', dport,
-                    '--to-destination', client_addr + port,
+                    '--to-destination', client_addr_port,
                 ] + extra_args
                 rules.append(rule)
 
@@ -590,7 +593,7 @@ class Clients(object):
                         '-p', proto,
                         '-m', proto,
                         '--dport', dport,
-                        '--to-destination', client_addr6 + port,
+                        '--to-destination', client_addr_port6,
                     ] + extra_args
                     rules6.append(rule)
 
@@ -598,7 +601,7 @@ class Clients(object):
                 rule = forward_base_args + [
                     '-p', proto,
                     '-m', proto,
-                    '--dport', dport,
+                    '--dport', port or dport,
                 ] + extra_args
                 rules.append(rule)
                 if self.server.ipv6:
