@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve port forwarding
+
 Version 1.21.946.24 2016-04-15
 ------------------------------
 
