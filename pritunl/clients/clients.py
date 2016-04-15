@@ -608,14 +608,17 @@ class Clients(object):
 
     def set_iptables_rules(self, rules, rules6):
         if rules or rules6:
-            self.instance.enable_iptables_tun_nat()
-            self.instance.append_iptables_rules(rules)
-            self.instance.append_ip6tables_rules(rules6)
+            for rule in rules:
+                self.instance.iptables.add_rule(rule)
+            for rule6 in rules6:
+                self.instance.iptables.add_rule6(rule6)
 
     def clear_iptables_rules(self, rules, rules6):
         if rules or rules6:
-            self.instance.delete_iptables_rules(rules)
-            self.instance.delete_iptables_rules(rules6)
+            for rule in rules:
+                self.instance.iptables.remove_rule(rule)
+            for rule6 in rules6:
+                self.instance.iptables.remove_rule6(rule6)
 
     def _connected(self, client_id):
         client = self.clients.find_id(client_id)
