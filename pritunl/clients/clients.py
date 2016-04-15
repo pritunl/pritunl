@@ -608,6 +608,7 @@ class Clients(object):
 
     def set_iptables_rules(self, rules, rules6):
         if rules or rules6:
+            self.instance.enable_iptables_tun_nat()
             for rule in rules:
                 self.instance.iptables.add_rule(rule)
             for rule6 in rules6:
