@@ -31,6 +31,7 @@ class Iptables(object):
         self.ipv6_firewall = None
         self.inter_client = None
         self.ipv6 = False
+        self.cleared = False
 
     @property
     def comment(self):
@@ -40,6 +41,9 @@ class Iptables(object):
         ]
 
     def add_route(self, network, nat=False, nat_interface=None):
+        if self.cleared:
+            return
+
         if network == '0.0.0.0/0' or network == '::/0':
             self._accept_all = True
 
@@ -55,12 +59,18 @@ class Iptables(object):
                 self._routes.add(network)
 
     def add_nat_network(self, network):
+        if self.cleared:
+            return
+
         if ':' in network:
             self._nat_networks6.add(network)
         else:
             self._nat_networks.add(network)
 
     def add_rule(self, rule):
+        if self.cleared:
+            return
+
         self._lock.acquire()
         try:
             self._other.append(rule)
@@ -70,6 +80,9 @@ class Iptables(object):
             self._lock.release()
 
     def add_rule6(self, rule):
+        if self.cleared:
+            return
+
         self._lock.acquire()
         try:
             self._other6.append(rule)
@@ -79,6 +92,9 @@ class Iptables(object):
             self._lock.release()
 
     def remove_rule(self, rule):
+        if self.cleared:
+            return
+
         self._lock.acquire()
         try:
             self._other.remove(rule)
@@ -87,6 +103,9 @@ class Iptables(object):
             self._lock.release()
 
     def remove_rule6(self, rule):
+        if self.cleared:
+            return
+
         self._lock.acquire()
         try:
             self._other6.remove(rule)
@@ -450,6 +469,9 @@ class Iptables(object):
                 ])
 
     def generate(self):
+        if self.cleared:
+            return
+
         self._accept = []
         self._accept6 = []
         self._drop = []
@@ -529,6 +551,9 @@ class Iptables(object):
             time.sleep(1)
 
     def upsert_rules(self, log=False):
+        if self.cleared:
+            return
+
         self._lock.acquire()
         try:
             if not self._accept:
@@ -583,8 +608,13 @@ class Iptables(object):
             self._lock.release()
 
     def clear_rules(self):
+        if self.cleared:
+            return
+
         self._lock.acquire()
         try:
+            self.cleared = True
+
             for rule in self._accept + self._drop + self._other:
                 self._remove_iptables_rule(rule)
 
