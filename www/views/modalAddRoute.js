@@ -47,6 +47,7 @@ define([
 
       var server = this.$('.server select').val();
       var nat = this.getNatRouteSelect();
+      var natInterface = this.$('.nat-interface input').val();
       var vpcRegion = this.$('.vpc-region select').val();
       var vpcId = this.$('.vpc-id input').val();
 
@@ -54,6 +55,7 @@ define([
       model.save({
         network: this.$('.route-network input').val(),
         nat: nat,
+        nat_interface: natInterface,
         vpc_region: vpcRegion,
         vpc_id: vpcId,
         server: server
