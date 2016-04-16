@@ -297,6 +297,7 @@ class ServerInstance(object):
         self.iptables.virt_network6 = self.server.network6
         self.iptables.ipv6_firewall = ipv6_firewall
         self.iptables.inter_client = self.server.inter_client
+        self.iptables.restrict_routes = self.server.restrict_routes
 
         try:
             routes_output = utils.check_output_logged(['route', '-n'])
