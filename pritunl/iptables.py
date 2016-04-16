@@ -6,6 +6,8 @@ import subprocess
 import time
 import threading
 
+_global_lock = threading.Lock()
+
 class Iptables(object):
     def __init__(self):
         self._routes = set()
@@ -492,64 +494,80 @@ class Iptables(object):
     def _exists_iptables_rule(self, rule, ipv6=False):
         rule = self._parse_rule(rule)
 
-        process = subprocess.Popen(
-            ['ip6tables' if ipv6 else 'iptables', '-C'] + rule,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
+        _global_lock.acquire()
+        try:
+            process = subprocess.Popen(
+                ['ip6tables' if ipv6 else 'iptables', '-C'] + rule,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
 
-        if process.wait():
-            return False
-        return True
+            if process.wait():
+                return False
+            return True
+        finally:
+            _global_lock.release()
 
     def _remove_iptables_rule(self, rule, ipv6=False):
         rule = self._parse_rule(rule)
 
-        process = subprocess.Popen(
-            ['ip6tables' if ipv6 else 'iptables', '-D'] + rule,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
+        _global_lock.acquire()
+        try:
+            process = subprocess.Popen(
+                ['ip6tables' if ipv6 else 'iptables', '-D'] + rule,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
 
-        if process.wait():
-            return False
-        return True
+            if process.wait():
+                return False
+            return True
+        finally:
+            _global_lock.release()
 
     def _insert_iptables_rule(self, rule, ipv6=False):
         rule = self._parse_rule(rule)
 
-        for i in xrange(3):
-            try:
-                utils.check_output_logged(
-                    ['ip6tables' if ipv6 else 'iptables', '-I'] + rule)
-                break
-            except:
-                if i == 2:
-                    raise
-                logger.error(
-                    'Failed to insert iptables rule, retrying...',
-                    'instance',
-                    rule=rule,
-                )
-            time.sleep(1)
+        _global_lock.acquire()
+        try:
+            for i in xrange(3):
+                try:
+                    utils.check_output_logged(
+                        ['ip6tables' if ipv6 else 'iptables', '-I'] + rule)
+                    break
+                except:
+                    if i == 2:
+                        raise
+                    logger.error(
+                        'Failed to insert iptables rule, retrying...',
+                        'instance',
+                        rule=rule,
+                    )
+                time.sleep(1)
+        finally:
+            _global_lock.release()
 
     def _append_iptables_rule(self, rule, ipv6=False):
         rule = self._parse_rule(rule)
 
-        for i in xrange(3):
-            try:
-                utils.check_output_logged(
-                    ['ip6tables' if ipv6 else 'iptables', '-A'] + rule)
-                break
-            except:
-                if i == 2:
-                    raise
-                logger.error(
-                    'Failed to insert iptables rule, retrying...',
-                    'instance',
-                    rule=rule,
-                )
-            time.sleep(1)
+        _global_lock.acquire()
+        try:
+            for i in xrange(3):
+                try:
+                    utils.check_output_logged(
+                        ['ip6tables' if ipv6 else 'iptables', '-A'] + rule)
+                    break
+                except:
+                    if i == 2:
+                        raise
+                    logger.error(
+                        'Failed to insert iptables rule, retrying...',
+                        'instance',
+                        rule=rule,
+                    )
+                time.sleep(1)
+        finally:
+            _global_lock.release()
 
     def upsert_rules(self, log=False):
         if self.cleared:
