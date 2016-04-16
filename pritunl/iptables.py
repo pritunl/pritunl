@@ -615,11 +615,11 @@ class Iptables(object):
         try:
             self.cleared = True
 
-            for rule in self._accept + self._drop + self._other:
+            for rule in self._accept + self._other + self._drop:
                 self._remove_iptables_rule(rule)
 
             if self.ipv6:
-                for rule in self._accept6 + self._drop6 + self._other6:
+                for rule in self._accept6 + self._other6 + self._drop6:
                     self._remove_iptables_rule(rule, ipv6=True)
 
             self._accept = None
