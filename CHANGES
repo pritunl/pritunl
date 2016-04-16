@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with restricted routes
+
 Version 1.21.946.40 2016-04-15
 ------------------------------
 
