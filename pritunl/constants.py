@@ -733,6 +733,9 @@ SERVER_ROUTE_VIRTUAL_NAT_MSG = 'Virtual network routes cannot use NAT.'
 SERVER_ROUTE_SERVER_LINK_NAT = 'server_route_server_link_nat'
 SERVER_ROUTE_SERVER_LINK_NAT_MSG = 'Server link routes cannot modify NAT.'
 
+SERVER_ROUTE_NETWORK_LINK_NAT = 'server_route_network_link_nat'
+SERVER_ROUTE_NETWORK_LINK_NAT_MSG = 'Network link routes cannot use NAT.'
+
 SERVER_LINK_COMMON_HOST = 'server_link_common_host'
 SERVER_LINK_COMMON_HOST_MSG = 'Linked servers cannot have a common host.'
 
