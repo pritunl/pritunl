@@ -97,6 +97,9 @@ class ServerRouteNatVirtual(ServerError):
 class ServerRouteNatServerLink(ServerError):
     pass
 
+class ServerRouteNatNetworkLink(ServerError):
+    pass
+
 
 class NotFound(BaseError):
     pass
