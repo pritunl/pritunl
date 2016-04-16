@@ -32,6 +32,7 @@ class Iptables(object):
         self.inter_client = None
         self.ipv6 = False
         self.cleared = False
+        self.restrict_routes = False
 
     @property
     def comment(self):
@@ -582,28 +583,29 @@ class Iptables(object):
                             )
                         self._insert_iptables_rule(rule, ipv6=True)
 
-            for rule in self._drop:
-                if not self._exists_iptables_rule(rule):
-                    if log:
-                        logger.error(
-                            'Unexpected loss of iptables drop rule, ' +
-                                'adding again...',
-                            'instance',
-                            rule=rule,
-                        )
-                    self._append_iptables_rule(rule)
-
-            if self.ipv6:
-                for rule in self._drop6:
-                    if not self._exists_iptables_rule(rule, ipv6=True):
+            if self.restrict_routes:
+                for rule in self._drop:
+                    if not self._exists_iptables_rule(rule):
                         if log:
                             logger.error(
-                                'Unexpected loss of ip6tables drop rule, ' +
+                                'Unexpected loss of iptables drop rule, ' +
                                     'adding again...',
                                 'instance',
                                 rule=rule,
                             )
-                        self._append_iptables_rule(rule, ipv6=True)
+                        self._append_iptables_rule(rule)
+
+                if self.ipv6:
+                    for rule in self._drop6:
+                        if not self._exists_iptables_rule(rule, ipv6=True):
+                            if log:
+                                logger.error(
+                                    'Unexpected loss of ip6tables drop ' +
+                                        'rule, adding again...',
+                                    'instance',
+                                    rule=rule,
+                                )
+                            self._append_iptables_rule(rule, ipv6=True)
         finally:
             self._lock.release()
 
@@ -615,12 +617,20 @@ class Iptables(object):
         try:
             self.cleared = True
 
-            for rule in self._accept + self._other + self._drop:
+            for rule in self._accept + self._other:
                 self._remove_iptables_rule(rule)
 
             if self.ipv6:
-                for rule in self._accept6 + self._other6 + self._drop6:
+                for rule in self._accept6 + self._other6:
                     self._remove_iptables_rule(rule, ipv6=True)
+
+            if self.restrict_routes:
+                for rule in self._drop:
+                    self._remove_iptables_rule(rule)
+
+                if self.ipv6:
+                    for rule in self._drop6:
+                        self._remove_iptables_rule(rule, ipv6=True)
 
             self._accept = None
             self._accept6 = None
