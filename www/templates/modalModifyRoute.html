@@ -6,11 +6,11 @@
 </div>
 <div class="nat-interface form-group">
   <label>NAT Interface</label>
-  <input type="text" class="form-control" placeholder="Auto select" data-toggle="tooltip" title="Outbound interface for NAT. Leave blank to automatically set interface" value="<%- nat_interface || '' %>">
+  <input type="text" class="form-control" placeholder="Auto select" data-toggle="tooltip" title="Optional outbound interface for NAT. Leave blank to automatically set interface" value="<%- nat_interface || '' %>">
 </div>
 <div class="vpc-region form-group">
   <label>VPC Route Advertisement Region</label>
-  <select class="form-control" data-toggle="tooltip" title="VPC region for route advertisement">
+  <select class="form-control" data-toggle="tooltip" title="Optional VPC region for route advertisement">
     <option value="us-east-1" <%= vpc_region === 'us-east-1' ? 'selected' : '' %>>US East (N. Virginia)</option>
     <option value="us-west-1" <%= vpc_region === 'us-west-1' ? 'selected' : '' %>>US West (N. California)</option>
     <option value="us-west-2" <%= vpc_region === 'us-west-2' ? 'selected' : '' %>>US West (Oregon)</option>
@@ -25,5 +25,5 @@
 </div>
 <div class="vpc-id form-group">
   <label>VPC Route Advertisement ID</label>
-  <input type="text" class="form-control" placeholder="Enter VPC ID" value="<%- vpc_id || '' %>" data-toggle="tooltip" title="VPC ID for route advertisement. EC2 server must be connected to the VPC">
+  <input type="text" class="form-control" placeholder="Enter VPC ID" value="<%- vpc_id || '' %>" data-toggle="tooltip" title="Optional VPC ID for route advertisement. EC2 server must be connected to the VPC">
 </div>
