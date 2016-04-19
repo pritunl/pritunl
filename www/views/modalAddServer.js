@@ -27,7 +27,7 @@ define([
         'ipv6_firewall': true,
         'dns_servers': ['8.8.8.8'],
         'cipher': 'aes256',
-        'hash': 'sha256',
+        'hash': 'sha1',
         'inter_client': true
       });
       ModalAddServerView.__super__.initialize.call(this, options);
