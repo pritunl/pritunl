@@ -33,6 +33,7 @@ define([
       });
     },
     postRender: function() {
+      this.$('.label').tooltip();
       this.setLoading('Loading AWS VPC information...', true);
       this.vpcs.fetch({
         success: function() {
