@@ -18,6 +18,7 @@ define([
     events: function() {
       return _.extend({
         'change .vpc-region': 'updateVpcIds',
+        'click .route-advertisement-toggle': 'onRotueAdSelect',
         'click .nat-route-toggle': 'onNatRouteSelect'
       }, ModalAddRouteView.__super__.events);
     },
@@ -90,6 +91,26 @@ define([
     onNatRouteSelect: function() {
       this.setNatRouteSelect(!this.getNatRouteSelect());
     },
+    getRotueAdSelect: function() {
+      return this.$('.route-advertisement-toggle .selector').hasClass(
+        'selected');
+    },
+    setRotueAdSelect: function(state) {
+      if (state) {
+        this.$('.route-advertisement-toggle .selector').addClass('selected');
+        this.$('.route-advertisement-toggle .selector-inner').show();
+        this.$('.route-advertisement').slideDown(window.slideTime);
+      }
+      else {
+        this.$('.route-advertisement-toggle .selector').removeClass(
+          'selected');
+        this.$('.route-advertisement-toggle .selector-inner').hide();
+        this.$('.route-advertisement').slideUp(window.slideTime);
+      }
+    },
+    onRotueAdSelect: function() {
+      this.setRotueAdSelect(!this.getRotueAdSelect());
+    },
     onOk: function() {
       this.setLoading('Adding route...');
       var model = new ServerRouteModel();
@@ -97,8 +118,14 @@ define([
       var server = this.$('.server select').val();
       var nat = this.getNatRouteSelect();
       var natInterface = this.$('.nat-interface input').val();
-      var vpcRegion = this.$('.vpc-region select').val();
-      var vpcId = this.$('.vpc-id input').val();
+      var routeAd = this.getRotueAdSelect();
+      var vpcRegion = null;
+      var vpcId = null;
+
+      if (routeAd) {
+        vpcRegion = this.$('.vpc-region select').val();
+        vpcId = this.$('.vpc-id select').val();
+      }
 
       lastServer = server;
       model.save({
