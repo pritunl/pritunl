@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Improve route advertisement configuration
 Interface improvements
 
 Version 1.21.947.73 2016-04-16
