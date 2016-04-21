@@ -1133,3 +1133,8 @@ def server_bandwidth_get(server_id, period):
     if settings.app.demo_mode:
         utils.demo_set_cache(resp)
     return utils.jsonify(resp)
+
+@app.app.route('/server/vpcs', methods=['GET'])
+@auth.session_auth
+def server_vpcs_get():
+    return utils.jsonify(utils.get_vpcs())
