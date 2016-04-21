@@ -3,9 +3,10 @@ define([
   'underscore',
   'backbone',
   'models/serverRoute',
+  'models/vpcs',
   'views/modal',
   'text!templates/modalAddRoute.html'
-], function($, _, Backbone, ServerRouteModel, ModalView,
+], function($, _, Backbone, ServerRouteModel, VpcsModel, ModalView,
     modalAddRouteTemplate) {
   'use strict';
   var lastServer;
@@ -16,14 +17,62 @@ define([
     okText: 'Attach',
     events: function() {
       return _.extend({
+        'change .vpc-region': 'updateVpcIds',
         'click .nat-route-toggle': 'onNatRouteSelect'
       }, ModalAddRouteView.__super__.events);
+    },
+    initialize: function() {
+      this.vpcs = new VpcsModel();
+      ModalAddRouteView.__super__.initialize.call(this);
     },
     body: function() {
       return this.template({
         servers: this.collection.toJSON(),
         lastServer: lastServer
       });
+    },
+    postRender: function() {
+      this.setLoading('Loading AWS VPC information...', true);
+      this.vpcs.fetch({
+        success: function() {
+          this.clearLoading();
+          this.updateVpcIds();
+        }.bind(this),
+        error: function(model, response) {
+          this.clearLoading();
+          this.updateVpcIds();
+          if (response.responseJSON) {
+            this.setAlert('danger', response.responseJSON.error_msg);
+          }
+          else {
+            this.setAlert('danger', this.errorMsg);
+          }
+        }.bind(this)
+      });
+    },
+    updateVpcIds: function() {
+      var vpcRegion = this.$('.vpc-region select').val();
+      var vpcs = this.vpcs.get(vpcRegion) || [];
+      var vpcId;
+      var vpcNet;
+      var vpcLabel;
+
+      if (!vpcs.length) {
+        this.$('.vpc-id select').html(
+          '<option selected value="">No VPCs available</option>');
+        return;
+      }
+
+      this.$('.vpc-id select').empty();
+
+      for (var i = 0; i < vpcs.length; i++) {
+        vpcId = vpcs[i].id;
+        vpcNet = vpcs[i].network;
+        vpcLabel = vpcId + ' (' + vpcNet + ')';
+        this.$('.vpc-id select').append(
+          '<option ' + (i ? '' : 'selected') + ' value="' + vpcId + '">'
+            + vpcLabel + '</option>');
+      }
     },
     getNatRouteSelect: function() {
       return this.$('.nat-route-toggle .selector').hasClass('selected');
