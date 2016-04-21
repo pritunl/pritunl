@@ -2,9 +2,10 @@ define([
   'jquery',
   'underscore',
   'backbone',
+  'models/vpcs',
   'views/modal',
   'text!templates/modalModifyRoute.html'
-], function($, _, Backbone, ModalView, modaleModifyRouteTemplate) {
+], function($, _, Backbone, VpcsModel, ModalView, modaleModifyRouteTemplate) {
   'use strict';
   var ModalModifyRouteView = ModalView.extend({
     className: 'modify-route-modal',
@@ -14,14 +15,64 @@ define([
     hasAdvanced: false,
     events: function() {
       return _.extend({
+        'change .vpc-region': 'updateVpcIds',
+        'click .route-advertisement-toggle': 'onRotueAdSelect',
         'click .nat-route-toggle': 'onNatRouteSelect'
       }, ModalModifyRouteView.__super__.events);
+    },
+    initialize: function() {
+      this.vpcs = new VpcsModel();
+      ModalModifyRouteView.__super__.initialize.call(this);
     },
     body: function() {
       return this.template(this.model.toJSON());
     },
     postRender: function() {
       this.$('.label').tooltip();
+      this.setLoading('Loading AWS VPC information...', true);
+      this.vpcs.fetch({
+        success: function() {
+          this.clearLoading();
+          this.updateVpcIds();
+        }.bind(this),
+        error: function(model, response) {
+          this.clearLoading();
+          this.updateVpcIds();
+          if (response.responseJSON) {
+            this.setAlert('danger', response.responseJSON.error_msg);
+          }
+          else {
+            this.setAlert('danger', this.errorMsg);
+          }
+        }.bind(this)
+      });
+    },
+    updateVpcIds: function() {
+      var curVpcId = this.model.get('vpc_id');
+
+      var vpcRegion = this.$('.vpc-region select').val();
+      var vpcs = this.vpcs.get(vpcRegion) || [];
+      var vpcId;
+      var vpcNet;
+      var vpcLabel;
+
+      if (!vpcs.length) {
+        this.$('.vpc-id select').html(
+          '<option selected value="">No VPCs available</option>');
+        return;
+      }
+
+      this.$('.vpc-id select').empty();
+
+      for (var i = 0; i < vpcs.length; i++) {
+        vpcId = vpcs[i].id;
+        vpcNet = vpcs[i].network;
+        vpcLabel = vpcId + ' (' + vpcNet + ')';
+
+        this.$('.vpc-id select').append(
+          '<option ' + (vpcId === curVpcId ? 'selected' : '') + ' value="' +
+            vpcId + '">' + vpcLabel + '</option>');
+      }
     },
     getNatRouteSelect: function() {
       return this.$('.nat-route-toggle .selector').hasClass('selected');
@@ -39,11 +90,37 @@ define([
     onNatRouteSelect: function() {
       this.setNatRouteSelect(!this.getNatRouteSelect());
     },
+    getRotueAdSelect: function() {
+      return this.$('.route-advertisement-toggle .selector').hasClass(
+        'selected');
+    },
+    setRotueAdSelect: function(state) {
+      if (state) {
+        this.$('.route-advertisement-toggle .selector').addClass('selected');
+        this.$('.route-advertisement-toggle .selector-inner').show();
+        this.$('.route-advertisement').slideDown(window.slideTime);
+      }
+      else {
+        this.$('.route-advertisement-toggle .selector').removeClass(
+          'selected');
+        this.$('.route-advertisement-toggle .selector-inner').hide();
+        this.$('.route-advertisement').slideUp(window.slideTime);
+      }
+    },
+    onRotueAdSelect: function() {
+      this.setRotueAdSelect(!this.getRotueAdSelect());
+    },
     onOk: function() {
       var nat = this.getNatRouteSelect();
       var natInterface = this.$('.nat-interface input').val();
-      var vpcRegion = this.$('.vpc-region select').val();
-      var vpcId = this.$('.vpc-id input').val();
+      var routeAd = this.getRotueAdSelect();
+      var vpcRegion = null;
+      var vpcId = null;
+
+      if (routeAd) {
+        vpcRegion = this.$('.vpc-region select').val();
+        vpcId = this.$('.vpc-id select').val();
+      }
 
       this.setLoading('Modifying route...');
       this.model.save({
