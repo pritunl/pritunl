@@ -1,4 +1,5 @@
 from pritunl.exceptions import *
+from pritunl.constants import *
 from pritunl import settings
 
 import boto
@@ -60,3 +61,31 @@ def add_vpc_route(region, vpc_id, network, resource_id):
             instance_id=instance_id,
             interface_id=interface_id,
         )
+
+def get_vpcs():
+    vpcs_data = {}
+
+    for region in AWS_REGIONS:
+        region_key = region.replace('-', '_')
+        aws_key = getattr(settings.app, region_key + '_access_key')
+        aws_secret = getattr(settings.app, region_key + '_secret_key')
+        vpc_data = []
+        vpcs_data[region] = vpc_data
+
+        if not aws_key or not aws_secret:
+            continue
+
+        vpc_conn = boto.connect_vpc(
+            aws_access_key_id=aws_key,
+            aws_secret_access_key=aws_secret,
+            region=boto.ec2.get_region(region),
+        )
+
+        vpcs = vpc_conn.get_all_vpcs()
+        for vpc in vpcs:
+            vpc_data.append({
+                'id': vpc.id,
+                'network': vpc.cidr_block,
+            })
+
+    return vpcs_data
