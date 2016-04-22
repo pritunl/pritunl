@@ -72,8 +72,8 @@ define([
         vpcNet = vpcs[i].network;
         vpcLabel = vpcId + ' (' + vpcNet + ')';
         this.$('.vpc-id select').append(
-          '<option ' + (i ? '' : 'selected') + ' value="' + vpcId + '">'
-            + vpcLabel + '</option>');
+          '<option ' + (i ? '' : 'selected') + ' value="' + vpcId + '">' +
+            vpcLabel + '</option>');
       }
     },
     getNatRouteSelect: function() {
