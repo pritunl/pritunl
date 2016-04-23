@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Increase open file ulimit in service
+
 Version 1.21.953.42 2016-04-22
 ------------------------------
 
