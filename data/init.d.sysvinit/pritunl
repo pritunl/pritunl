@@ -15,6 +15,7 @@ start() {
     echo 'Service already running' >&2
     return 1
   fi
+  ulimit -n 50000
   echo 'Starting service...' >&2
   pritunl start --daemon --pidfile $PIDFILE > /dev/null
   echo 'Service started' >&2
