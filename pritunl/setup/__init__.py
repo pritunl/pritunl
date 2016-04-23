@@ -17,7 +17,11 @@ from pritunl.setup.runners import setup_runners
 from pritunl.setup.handlers import setup_handlers
 from pritunl.setup.check import setup_check
 
+import resource
+
 def setup_all():
+    from pritunl import logger
+
     setup_local()
     setup_logger()
 
@@ -38,8 +42,12 @@ def setup_all():
         setup_runners()
         setup_handlers()
         setup_check()
+
+        soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
+        if soft < 250000 or hard < 250000:
+            logger.warning(
+                'Open file ulimit is lower then recommended', 'setup')
     except:
-        from pritunl import logger
         logger.exception('Pritunl setup failed', 'setup')
         raise
 
