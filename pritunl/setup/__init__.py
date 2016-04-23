@@ -44,7 +44,7 @@ def setup_all():
         setup_check()
 
         soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
-        if soft < 250000 or hard < 250000:
+        if soft < 25000 or hard < 25000:
             logger.warning(
                 'Open file ulimit is lower then recommended', 'setup')
     except:
