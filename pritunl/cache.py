@@ -22,9 +22,6 @@ def init():
         socket_connect_timeout=3,
     )
 
-    p = _client.pubsub()
-    p.subscribe()
-
 def get(key):
     return _client.get(key)
 
