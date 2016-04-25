@@ -18,8 +18,8 @@ def init():
     has_cache = True
     _client = redis.StrictRedis.from_url(
         redis_uri,
-        socket_timeout=3,
-        socket_connect_timeout=3,
+        socket_timeout=settings.app.redis_timeout,
+        socket_connect_timeout=settings.app.redis_timeout,
     )
 
 def get(key):
