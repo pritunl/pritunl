@@ -38,6 +38,9 @@ def lpushc(key, cap, *vals):
     _client.lpush(key, *vals)
     return _client.ltrim(key, cap)
 
+def rpush(key, *vals):
+    return _client.rpush(key, *vals)
+
 def push(key, *vals):
     return _client.lpush(key, *vals)
 
