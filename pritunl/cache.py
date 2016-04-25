@@ -25,24 +25,41 @@ def init():
 def get(key):
     return _client.get(key)
 
-def set(key, val):
-    return _client.set(key, val)
+def set(key, val, ttl=None):
+    if ttl:
+        _client.setex(key, ttl, val)
+    else:
+        _client.set(key, val)
 
-def setex(key, ttl, val):
-    return _client.setex(key, ttl, val)
+def lpush(key, *vals, **kwargs):
+    ttl = kwargs.get('ttl')
+    cap = kwargs.get('cap')
 
-def lpush(key, *vals):
-    return _client.lpush(key, *vals)
+    if not ttl and not cap:
+        _client.lpush(key, *vals)
+    else:
+        pipe = _client.pipeline()
+        pipe.lpush(key, *vals)
+        if cap:
+            pipe.ltrim(key, cap)
+        if ttl:
+            pipe.expire(key, ttl)
+        pipe.execute()
 
-def lpushc(key, cap, *vals):
-    _client.lpush(key, *vals)
-    return _client.ltrim(key, cap)
+def rpush(key, *vals, **kwargs):
+    ttl = kwargs.get('ttl')
+    cap = kwargs.get('cap')
 
-def rpush(key, *vals):
-    return _client.rpush(key, *vals)
-
-def push(key, *vals):
-    return _client.lpush(key, *vals)
+    if not ttl and not cap:
+        _client.rpush(key, *vals)
+    else:
+        pipe = _client.pipeline()
+        pipe.rpush(key, *vals)
+        if cap:
+            pipe.ltrim(key, cap)
+        if ttl:
+            pipe.expire(key, ttl)
+        pipe.execute()
 
 def remove(key):
     return  _client.delete(key)
