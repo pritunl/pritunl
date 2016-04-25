@@ -2,6 +2,7 @@ from pritunl.setup.local import setup_local
 from pritunl.setup.app import setup_app
 from pritunl.setup.server import setup_server
 from pritunl.setup.mongo import setup_mongo
+from pritunl.setup.cache import setup_cache
 from pritunl.setup.temp_path import setup_temp_path
 from pritunl.setup.logger import setup_logger
 from pritunl.setup.signal_handler import setup_signal_handler
@@ -31,6 +32,7 @@ def setup_all():
         setup_signal_handler()
         setup_server()
         setup_mongo()
+        setup_cache()
         setup_public_ip()
         setup_host()
         setup_server_listeners()
