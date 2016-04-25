@@ -31,5 +31,11 @@ def set(key, val):
 def setex(key, ttl, val):
     return _client.setex(key, ttl, val)
 
+def lpush(key, *vals):
+    return _client.lpush(key, *vals)
+
+def rpush(key, *vals):
+    return _client.lpush(key, *vals)
+
 def remove(key):
     return  _client.delete(key)
