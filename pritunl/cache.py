@@ -28,5 +28,8 @@ def get(key):
 def set(key, val):
     return _client.set(key, val)
 
+def setex(key, ttl, val):
+    return _client.setex(key, ttl, val)
+
 def remove(key):
     return  _client.delete(key)
