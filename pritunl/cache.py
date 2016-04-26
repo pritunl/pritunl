@@ -1,5 +1,3 @@
-from pritunl.helpers import *
-from pritunl.constants import *
 from pritunl import settings
 
 import redis
