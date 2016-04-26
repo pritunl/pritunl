@@ -11,7 +11,6 @@ import flask
 import logging
 import logging.handlers
 import time
-import urlparse
 import subprocess
 import os
 
