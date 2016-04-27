@@ -4,7 +4,7 @@ class SettingsApp(SettingsGroupMongo):
     group = 'app'
     fields = {
         'redis_uri': None,
-        'redis_timeout': 3,
+        'redis_timeout': 6,
         'server_ssl': True,
         'server_port': 443,
         'server_internal_port': 9756,
