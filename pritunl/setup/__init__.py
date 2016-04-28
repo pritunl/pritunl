@@ -48,7 +48,9 @@ def setup_all():
         soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
         if soft < 25000 or hard < 25000:
             logger.warning(
-                'Open file ulimit is lower then recommended', 'setup')
+                'Open file ulimit is lower then recommended',
+                'setup',
+            )
     except:
         logger.exception('Pritunl setup failed', 'setup')
         raise
