@@ -80,6 +80,7 @@ def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None,
     collection = mongo.get_collection('messages')
     start_time = time.time()
     cursor_id = cursor_id or get_cursor_id(channels)
+
     while True:
         try:
             spec = {}
