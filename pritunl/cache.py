@@ -3,8 +3,11 @@ from pritunl import settings
 from pritunl import utils
 
 import time
+import datetime
+import calendar
 import json
 import redis
+import bson
 
 _set = set
 _client = None
@@ -68,9 +71,13 @@ def remove(key):
     return  _client.delete(key)
 
 def publish(channel, msg, cap=25, ttl=300):
+    timestamp = utils.now()
+
     doc = json.dumps({
         'id': str(utils.ObjectId()),
-        'msg': msg,
+        'message': msg,
+        'timestamp': int(calendar.timegm(timestamp.timetuple()) * 1000 +
+            timestamp.microsecond / 1000),
     })
 
     pipe = _client.pipeline()
@@ -106,6 +113,8 @@ def subscribe(channel, cursor_id=None, timeout=5):
             if doc['id'] == cursor_id:
                 found = True
                 break
+            doc['timestamp'] = datetime.datetime.fromtimestamp(
+                doc['timestamp'] / 1000., bson.tz_util.utc)
             past.append(doc)
             duplicates.add(doc['id'])
 
@@ -124,6 +133,8 @@ def subscribe(channel, cursor_id=None, timeout=5):
 
             doc = json.loads(msg['data'])
             doc['id'] = utils.ObjectId(doc['id'])
+            doc['timestamp'] = datetime.datetime.fromtimestamp(
+                doc['timestamp'] / 1000., bson.tz_util.utc)
             if duplicates:
                 if doc['id'] in duplicates:
                     continue
