@@ -80,7 +80,7 @@ def publish(channel, msg, cap=25, ttl=300):
     pipe.publish(channel, doc)
     pipe.execute()
 
-def subscribe(channel, cursor=None, timeout=5):
+def subscribe(channel, cursor_id=None, timeout=5):
     if timeout:
         get_timeout = 0.25
         start_time = time.time()
@@ -91,7 +91,7 @@ def subscribe(channel, cursor=None, timeout=5):
     pubsub = _client.pubsub()
     pubsub.subscribe(channel)
 
-    if cursor:
+    if cursor_id:
         found = False
         past = []
         duplicates = _set()
@@ -99,7 +99,7 @@ def subscribe(channel, cursor=None, timeout=5):
         for msg in history:
             doc = json.loads(msg)
             doc['id'] = utils.ObjectId(doc['id'])
-            if doc['id'] == cursor:
+            if doc['id'] == cursor_id:
                 found = True
                 break
             past.append(doc)
