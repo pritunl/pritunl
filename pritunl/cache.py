@@ -70,15 +70,19 @@ def rpush(key, *vals, **kwargs):
 def remove(key):
     return  _client.delete(key)
 
-def publish(channel, msg, cap=25, ttl=300):
+def publish(channel, msg, extra=None, cap=25, ttl=300):
     timestamp = utils.now()
 
-    doc = json.dumps({
+    doc = {
         '_id': str(utils.ObjectId()),
         'message': msg,
         'timestamp': int(calendar.timegm(timestamp.timetuple()) * 1000 +
             timestamp.microsecond / 1000),
-    })
+    }
+    if extra:
+        for key, val in extra.items():
+            doc[key] = val
+    doc = json.dumps(doc)
 
     pipe = _client.pipeline()
     pipe.lpush(channel, doc)
