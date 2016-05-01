@@ -188,7 +188,6 @@ def _run_wsgi():
 def _run_wsgi_debug():
     logger.info('Starting debug server', 'app')
 
-    # App.run server uses werkzeug logger
     werkzeug_logger = logging.getLogger('werkzeug')
     werkzeug_logger.setLevel(logging.WARNING)
     werkzeug_logger.addFilter(logger.log_filter)
