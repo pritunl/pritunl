@@ -1,5 +1,7 @@
 from pritunl import settings
+from pritunl import utils
 
+import json
 import redis
 
 _client = None
@@ -61,3 +63,15 @@ def rpush(key, *vals, **kwargs):
 
 def remove(key):
     return  _client.delete(key)
+
+def publish(channel, msg, cap=25):
+    doc = json.dumps({
+        'id': str(utils.ObjectId()),
+        'msg': msg,
+    })
+
+    pipe = _client.pipeline()
+    pipe.lpush(channel, doc)
+    pipe.ltrim(channel, 0, cap)
+    pipe.publish(channel, doc)
+    pipe.execute()
