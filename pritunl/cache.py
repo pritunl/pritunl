@@ -1,9 +1,11 @@
 from pritunl import settings
 from pritunl import utils
 
+import time
 import json
 import redis
 
+_set = set
 _client = None
 has_cache = False
 
@@ -75,3 +77,48 @@ def publish(channel, msg, cap=25):
     pipe.ltrim(channel, 0, cap)
     pipe.publish(channel, doc)
     pipe.execute()
+
+def subscribe(channel, cursor=None, timeout=5):
+    if timeout:
+        get_timeout = 0.25
+        start_time = time.time()
+    else:
+        get_timeout = None
+
+    duplicates = None
+    pubsub = _client.pubsub()
+    pubsub.subscribe(channel)
+
+    if cursor:
+        found = False
+        past = []
+        duplicates = _set()
+        history = _client.lrange(channel, 0, -1)
+        for msg in history:
+            doc = json.loads(msg)
+            doc['id'] = utils.ObjectId(doc['id'])
+            if doc['id'] == cursor:
+                found = True
+                break
+            past.append(doc)
+            duplicates.add(doc['id'])
+
+        if found:
+            for doc in reversed(past):
+                yield doc
+
+    while True:
+        msg = pubsub.get_message(timeout=get_timeout)
+        if msg and msg['type'] == 'message':
+            doc = json.loads(msg['data'])
+            doc['id'] = utils.ObjectId(doc['id'])
+            if duplicates:
+                if doc['id'] in duplicates:
+                    continue
+                else:
+                    duplicates = None
+
+            yield doc
+
+        if timeout and time.time() - start_time >= timeout:
+            return
