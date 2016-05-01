@@ -39,7 +39,7 @@ def lpush(key, *vals, **kwargs):
         pipe = _client.pipeline()
         pipe.lpush(key, *vals)
         if cap:
-            pipe.ltrim(key, cap)
+            pipe.ltrim(key, 0, cap)
         if ttl:
             pipe.expire(key, ttl)
         pipe.execute()
@@ -54,7 +54,7 @@ def rpush(key, *vals, **kwargs):
         pipe = _client.pipeline()
         pipe.rpush(key, *vals)
         if cap:
-            pipe.ltrim(key, cap)
+            pipe.ltrim(key, 0, cap)
         if ttl:
             pipe.expire(key, ttl)
         pipe.execute()
