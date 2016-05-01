@@ -74,7 +74,7 @@ def publish(channel, msg, cap=25, ttl=300):
     timestamp = utils.now()
 
     doc = json.dumps({
-        'id': str(utils.ObjectId()),
+        '_id': str(utils.ObjectId()),
         'message': msg,
         'timestamp': int(calendar.timegm(timestamp.timetuple()) * 1000 +
             timestamp.microsecond / 1000),
@@ -109,14 +109,14 @@ def subscribe(channel, cursor_id=None, timeout=5):
         history = _client.lrange(channel, 0, -1)
         for msg in history:
             doc = json.loads(msg)
-            doc['id'] = utils.ObjectId(doc['id'])
-            if doc['id'] == cursor_id:
+            doc['_id'] = utils.ObjectId(doc['_id'])
+            if doc['_id'] == cursor_id:
                 found = True
                 break
             doc['timestamp'] = datetime.datetime.fromtimestamp(
                 doc['timestamp'] / 1000., bson.tz_util.utc)
             past.append(doc)
-            duplicates.add(doc['id'])
+            duplicates.add(doc['_id'])
 
             yield
 
@@ -132,11 +132,11 @@ def subscribe(channel, cursor_id=None, timeout=5):
             yield
 
             doc = json.loads(msg['data'])
-            doc['id'] = utils.ObjectId(doc['id'])
+            doc['_id'] = utils.ObjectId(doc['_id'])
             doc['timestamp'] = datetime.datetime.fromtimestamp(
                 doc['timestamp'] / 1000., bson.tz_util.utc)
             if duplicates:
-                if doc['id'] in duplicates:
+                if doc['_id'] in duplicates:
                     continue
                 else:
                     duplicates = None
