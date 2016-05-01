@@ -1,3 +1,4 @@
+from pritunl.helpers import *
 from pritunl import settings
 from pritunl import utils
 
@@ -80,6 +81,7 @@ def publish(channel, msg, cap=25, ttl=300):
     pipe.publish(channel, doc)
     pipe.execute()
 
+@interrupter_generator
 def subscribe(channel, cursor_id=None, timeout=5):
     if timeout:
         get_timeout = 0.25
@@ -90,6 +92,8 @@ def subscribe(channel, cursor_id=None, timeout=5):
     duplicates = None
     pubsub = _client.pubsub()
     pubsub.subscribe(channel)
+
+    yield
 
     if cursor_id:
         found = False
@@ -105,13 +109,19 @@ def subscribe(channel, cursor_id=None, timeout=5):
             past.append(doc)
             duplicates.add(doc['id'])
 
+            yield
+
         if found:
             for doc in reversed(past):
                 yield doc
 
+    yield
+
     while True:
         msg = pubsub.get_message(timeout=get_timeout)
         if msg and msg['type'] == 'message':
+            yield
+
             doc = json.loads(msg['data'])
             doc['id'] = utils.ObjectId(doc['id'])
             if duplicates:
