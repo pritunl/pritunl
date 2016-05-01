@@ -66,7 +66,7 @@ def rpush(key, *vals, **kwargs):
 def remove(key):
     return  _client.delete(key)
 
-def publish(channel, msg, cap=25):
+def publish(channel, msg, cap=25, ttl=300):
     doc = json.dumps({
         'id': str(utils.ObjectId()),
         'msg': msg,
@@ -75,6 +75,8 @@ def publish(channel, msg, cap=25):
     pipe = _client.pipeline()
     pipe.lpush(channel, doc)
     pipe.ltrim(channel, 0, cap)
+    if ttl:
+        pipe.expire(channel, ttl)
     pipe.publish(channel, doc)
     pipe.execute()
 
