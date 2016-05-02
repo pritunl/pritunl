@@ -70,7 +70,7 @@ def rpush(key, *vals, **kwargs):
 def remove(key):
     return  _client.delete(key)
 
-def publish(channel, msg, extra=None, cap=25, ttl=300):
+def publish(channel, msg, extra=None, cap=20, ttl=300):
     timestamp = utils.now()
 
     doc = {
