@@ -93,7 +93,7 @@ def publish(channel, msg, extra=None, cap=20, ttl=300):
     pipe.execute()
 
 @interrupter_generator
-def subscribe(channel, cursor_id=None, timeout=5):
+def subscribe(channel, cursor_id=None, timeout=None):
     if timeout:
         get_timeout = 0.25
         start_time = time.time()
