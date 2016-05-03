@@ -95,7 +95,7 @@ def publish(channel, msg, extra=None, cap=20, ttl=300):
 @interrupter_generator
 def subscribe(channel, cursor_id=None, timeout=None):
     if timeout:
-        get_timeout = 0.25
+        get_timeout = 0.5
         start_time = time.time()
     else:
         get_timeout = None
