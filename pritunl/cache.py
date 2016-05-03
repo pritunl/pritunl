@@ -93,7 +93,7 @@ def publish(channel, msg, extra=None, cap=20, ttl=300):
     pipe.execute()
 
 @interrupter_generator
-def subscribe(channel, cursor_id=None, timeout=None):
+def subscribe(channel, cursor_id=None, timeout=None, yield_app_server=False):
     if timeout:
         get_timeout = 0.5
         start_time = time.time()
@@ -146,6 +146,9 @@ def subscribe(channel, cursor_id=None, timeout=None):
                     duplicates = None
 
             yield doc
+
+        if yield_app_server and check_app_server_interrupt():
+            return
 
         if timeout and time.time() - start_time >= timeout:
             return
