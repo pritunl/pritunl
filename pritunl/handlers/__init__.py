@@ -14,4 +14,3 @@ import pritunl.handlers.status
 import pritunl.handlers.subscription
 import pritunl.handlers.user
 import pritunl.handlers.admin
-import pritunl.handlers.debug
