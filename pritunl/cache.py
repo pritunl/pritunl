@@ -67,25 +67,29 @@ def rpush(key, *vals, **kwargs):
 def remove(key):
     return  _client.delete(key)
 
-def publish(channel, msg, extra=None, cap=50, ttl=300):
-    doc = {
-        '_id': utils.ObjectId(),
-        'message': msg,
-        'timestamp': utils.now(),
-    }
-    if extra:
-        for key, val in extra.items():
-            doc[key] = val
+def publish(channels, msg, extra=None, cap=50, ttl=300):
+    if isinstance(channels, str):
+        channels = [channels]
 
-    doc = json.dumps(doc, default=utils.json_default)
+    for channel in channels:
+        doc = {
+            '_id': utils.ObjectId(),
+            'message': msg,
+            'timestamp': utils.now(),
+        }
+        if extra:
+            for key, val in extra.items():
+                doc[key] = val
 
-    pipe = _client.pipeline()
-    pipe.lpush(channel, doc)
-    pipe.ltrim(channel, 0, cap)
-    if ttl:
-        pipe.expire(channel, ttl)
-    pipe.publish(channel, doc)
-    pipe.execute()
+        doc = json.dumps(doc, default=utils.json_default)
+
+        pipe = _client.pipeline()
+        pipe.lpush(channel, doc)
+        pipe.ltrim(channel, 0, cap)
+        if ttl:
+            pipe.expire(channel, ttl)
+        pipe.publish(channel, doc)
+        pipe.execute()
 
 @interrupter_generator
 def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None,
