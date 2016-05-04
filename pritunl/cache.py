@@ -71,18 +71,16 @@ def remove(key):
     return  _client.delete(key)
 
 def publish(channel, msg, extra=None, cap=20, ttl=300):
-    timestamp = utils.now()
-
     doc = {
-        '_id': str(utils.ObjectId()),
+        '_id': utils.ObjectId(),
         'message': msg,
-        'timestamp': int(calendar.timegm(timestamp.timetuple()) * 1000 +
-            timestamp.microsecond / 1000),
+        'timestamp': utils.now(),
     }
     if extra:
         for key, val in extra.items():
             doc[key] = val
-    doc = json.dumps(doc)
+
+    doc = json.dumps(doc, default=utils.json_default)
 
     pipe = _client.pipeline()
     pipe.lpush(channel, doc)
@@ -114,13 +112,11 @@ def subscribe(channel, cursor_id=None, timeout=None, yield_delay=None,
         duplicates = _set()
         history = _client.lrange(channel, 0, -1)
         for msg in history:
-            doc = json.loads(msg)
-            doc['_id'] = utils.ObjectId(doc['_id'])
+            doc = json.loads(msg, object_hook=utils.json_object_hook_handler)
             if doc['_id'] == cursor_id:
                 found = True
                 break
-            doc['timestamp'] = datetime.datetime.fromtimestamp(
-                doc['timestamp'] / 1000., bson.tz_util.utc)
+            doc['channel'] = channel
             past.append(doc)
             duplicates.add(doc['_id'])
 
@@ -137,10 +133,8 @@ def subscribe(channel, cursor_id=None, timeout=None, yield_delay=None,
         if msg and msg['type'] == 'message':
             yield
 
-            doc = json.loads(msg['data'])
-            doc['_id'] = utils.ObjectId(doc['_id'])
-            doc['timestamp'] = datetime.datetime.fromtimestamp(
-                doc['timestamp'] / 1000., bson.tz_util.utc)
+            doc = json.loads(msg['data'],
+                object_hook=utils.json_object_hook_handler)
             if duplicates:
                 if doc['_id'] in duplicates:
                     continue
