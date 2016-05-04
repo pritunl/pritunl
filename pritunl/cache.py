@@ -91,7 +91,7 @@ def publish(channel, msg, extra=None, cap=20, ttl=300):
     pipe.execute()
 
 @interrupter_generator
-def subscribe(channel, cursor_id=None, timeout=None, yield_delay=None,
+def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None,
         yield_app_server=False):
     if timeout:
         get_timeout = 0.5
@@ -102,21 +102,29 @@ def subscribe(channel, cursor_id=None, timeout=None, yield_delay=None,
     duplicates = None
     yield_stop = False
     pubsub = _client.pubsub()
-    pubsub.subscribe(channel)
+
+    if isinstance(channels, str):
+        channels = [channels]
+
+    for channel in channels:
+        pubsub.subscribe(channel)
 
     yield
 
     if cursor_id:
+        if len(channels) > 1:
+            raise TypeError('Cannot specify cursor_id with multiple channels')
+
         found = False
         past = []
         duplicates = _set()
-        history = _client.lrange(channel, 0, -1)
+        history = _client.lrange(channels[0], 0, -1)
         for msg in history:
             doc = json.loads(msg, object_hook=utils.json_object_hook_handler)
             if doc['_id'] == cursor_id:
                 found = True
                 break
-            doc['channel'] = channel
+            doc['channel'] = channels[0]
             past.append(doc)
             duplicates.add(doc['_id'])
 
