@@ -106,10 +106,10 @@ def _run_server(restart):
         ('localhost', settings.app.server_internal_port),
         app,
         request_queue_size=settings.app.request_queue_size,
-        server_name=APP_NAME,
         numthreads=settings.app.request_thread_count,
         shutdown_timeout=3,
     )
+    app_server.server_name = ''
 
     server_cert_path = None
     server_key_path = None
