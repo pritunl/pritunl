@@ -3,11 +3,8 @@ from pritunl import settings
 from pritunl import utils
 
 import time
-import datetime
-import calendar
 import json
 import redis
-import bson
 
 _set = set
 _client = None
