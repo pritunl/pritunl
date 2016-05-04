@@ -135,6 +135,7 @@ def subscribe(channel, cursor_id=None, timeout=None, yield_delay=None,
 
             doc = json.loads(msg['data'],
                 object_hook=utils.json_object_hook_handler)
+            doc['channel'] = msg['channel']
             if duplicates:
                 if doc['_id'] in duplicates:
                     continue
