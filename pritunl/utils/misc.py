@@ -416,3 +416,11 @@ def get_process_cpu_mem():
         raise ValueError('Invalid output')
 
     return float(output[0]), float(output[1])
+
+def get_url_root():
+    url_root = flask.request.url_root
+
+    if settings.app.server_ssl:
+        url_root = url_root.replace('http://', 'https://')
+
+    return url_root
