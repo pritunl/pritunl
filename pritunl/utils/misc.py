@@ -421,6 +421,6 @@ def get_url_root():
     url_root = flask.request.url_root
 
     if settings.app.server_ssl:
-        url_root = url_root.replace('http://', 'https://')
+        url_root = url_root.replace('http://', 'https://', 1)
 
     return url_root
