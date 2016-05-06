@@ -59,7 +59,7 @@ def _auth_radius(username, password):
     )
 
     return utils.jsonify({
-        'redirect': flask.request.url_root[:-1] + key_link['view_url'],
+        'redirect': utils.get_url_root()[:-1] + key_link['view_url'],
     }, 202)
 
 @app.app.route('/auth/session', methods=['POST'])
