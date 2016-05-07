@@ -81,6 +81,13 @@ def get_cursor_id(channels):
 @interrupter_generator
 def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None,
         yield_app_server=False):
+    if cache.has_cache:
+        for msg in cache.subscribe(channels, cursor_id=cursor_id,
+                timeout=timeout, yield_delay=yield_delay,
+                yield_app_server=yield_app_server):
+            yield msg
+        return
+
     collection = mongo.get_collection('messages')
     start_time = time.time()
     cursor_id = cursor_id or get_cursor_id(channels)
