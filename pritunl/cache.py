@@ -67,14 +67,14 @@ def rpush(key, *vals, **kwargs):
 def remove(key):
     return  _client.delete(key)
 
-def publish(channels, msg, extra=None, cap=50, ttl=300):
+def publish(channels, message, extra=None, cap=50, ttl=300):
     if isinstance(channels, str):
         channels = [channels]
 
     for channel in channels:
         doc = {
             '_id': utils.ObjectId(),
-            'message': msg,
+            'message': message,
             'timestamp': utils.now(),
         }
         if extra:
