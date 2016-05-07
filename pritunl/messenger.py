@@ -60,6 +60,12 @@ def publish(channels, message, extra=None, transaction=None):
             collection.insert(docs, manipulate=False)
 
 def get_cursor_id(channels):
+    if cache.has_cache:
+        if not isinstance(channels, str):
+            raise TypeError(
+                'Cannot get cache cursor_id for muiltiple channels')
+        return cache.get_cursor_id(channels)
+
     collection = mongo.get_collection('messages')
     spec = {}
 
