@@ -1,11 +1,15 @@
 from pritunl.helpers import *
 from pritunl import mongo
+from pritunl import cache
 from pritunl import utils
 
 import pymongo
 import time
 
 def publish(channels, message, extra=None, transaction=None):
+    if cache.has_cache:
+        return cache.publish(channels, message, extra=extra)
+
     collection = mongo.get_collection('messages')
     doc = {
         'message': message,
