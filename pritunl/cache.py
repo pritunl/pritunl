@@ -91,6 +91,12 @@ def publish(channels, message, extra=None, cap=50, ttl=300):
         pipe.publish(channel, doc)
         pipe.execute()
 
+def get_cursor_id(channels):
+    msg = _client.lindex(channels, 0)
+    if msg:
+        doc = json.loads(msg, object_hook=utils.json_object_hook_handler)
+        return doc['_id']
+
 @interrupter_generator
 def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None,
         yield_app_server=False):
