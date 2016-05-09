@@ -167,8 +167,6 @@ def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None,
                 yield_stop = True
                 continue
 
-        if yield_stop or (yield_app_server and check_app_server_interrupt()):
-            return
-
-        if timeout and time.time() - start_time >= timeout:
+        if yield_stop or (yield_app_server and check_app_server_interrupt()) \
+                or (timeout and time.time() - start_time >= timeout):
             return
