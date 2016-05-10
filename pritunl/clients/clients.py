@@ -1046,14 +1046,17 @@ class Clients(object):
     def stop(self):
         _port_listeners.pop(self.instance.id, None)
         _client_listeners.pop(self.instance.id, None)
+
         try:
             host.global_servers.remove(self.instance.id)
         except KeyError:
             pass
+
         try:
             host.dns_mapping_servers.remove(self.instance.id)
         except KeyError:
             pass
+
         host.global_clients.remove({
             'instance_id': self.instance.id,
         })
