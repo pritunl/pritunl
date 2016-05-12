@@ -51,7 +51,6 @@ def insert_point(measurement, tags, fields):
             'measurement': measurement,
             'tags': tags,
             'time': utils.now(),
-            'time_precision': 'ms',
             'fields': fields,
         })
     finally:
