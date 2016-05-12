@@ -4,6 +4,7 @@ from pritunl import settings
 
 import threading
 import urlparse
+import time
 
 _queue = []
 _queue_lock = threading.Lock()
@@ -108,3 +109,15 @@ def _connect():
         )
 
     _cur_influxdb_uri = influxdb_uri
+
+def _runner():
+    while True:
+        time.sleep(10)
+        _connect()
+        write_queue()
+
+def init():
+    _connect()
+    thread = threading.Thread(target=_runner)
+    thread.daemon = True
+    thread.start()
