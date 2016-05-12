@@ -61,12 +61,16 @@ def write_queue():
 
     _queue_lock.acquire()
     try:
+        if not _queue:
+            return
         queue = _queue
         _queue = []
+        client = _client
     finally:
         _queue_lock.release()
 
-    _client.write_points(queue)
+    if client:
+        client.write_points(queue)
 
 def _connect():
     global _client
