@@ -30,8 +30,7 @@ class Transaction(mongo.MongoObject):
         'ttl': settings.mongo.tran_ttl,
     }
 
-    def __init__(self, lock_id=None, priority=None,
-            ttl=None, **kwargs):
+    def __init__(self, lock_id=None, priority=None, ttl=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         if lock_id is not None:
