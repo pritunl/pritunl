@@ -8,6 +8,7 @@ import urlparse
 _queue = []
 _queue_lock = threading.Lock()
 _client = None
+_cur_influxdb_uri = None
 
 def _get_servers(uri):
     uri = urlparse.urlparse(uri)
@@ -67,16 +68,21 @@ def write_queue():
 
     _client.write_points(queue)
 
-def init():
+def _connect():
     global _client
+    global _cur_influxdb_uri
 
     influxdb_uri = settings.app.influxdb_uri
+    if influxdb_uri == _cur_influxdb_uri:
+        return
+
     if not influxdb_uri:
         _queue_lock.acquire()
         try:
             _client = None
         finally:
             _queue_lock.release()
+        _cur_influxdb_uri = influxdb_uri
         return
 
     hosts, username, password, database = _get_servers(influxdb_uri)
@@ -96,3 +102,5 @@ def init():
             password=password,
             database=database,
         )
+
+    _cur_influxdb_uri = influxdb_uri
