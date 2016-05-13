@@ -13,7 +13,6 @@ _queue_lock = threading.Lock()
 _client = None
 _cur_influxdb_uri = None
 
-
 def insert_point(measurement, tags, fields):
     _queue_lock.acquire()
     try:
