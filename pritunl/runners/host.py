@@ -78,6 +78,8 @@ def _keep_alive_thread():
             cpu_usage = None
             mem_usage = None
             thread_count = threading.active_count()
+            server_count = len(host.global_servers)
+            device_count = host.global_clients.count({})
             try:
                 cpu_usage, mem_usage = utils.get_process_cpu_mem()
             except:
@@ -90,8 +92,8 @@ def _keep_alive_thread():
             settings.local.host.collection.update({
                 '_id': settings.local.host.id,
             }, {'$set': {
-                'server_count': len(host.global_servers),
-                'device_count': host.global_clients.count({}),
+                'server_count': server_count,
+                'device_count': device_count,
                 'cpu_usage': cpu_usage,
                 'mem_usage': mem_usage,
                 'thread_count': thread_count,
