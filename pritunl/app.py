@@ -4,6 +4,7 @@ from pritunl import logger
 from pritunl import settings
 from pritunl import wsgiserver
 from pritunl import utils
+from pritunl import monitoring
 
 import threading
 import flask
@@ -82,12 +83,26 @@ def before_request():
 
 @app.after_request
 def after_request(response):
-    response.headers.add('Execution-Time',
-        int((time.time() - flask.g.start) * 1000))
-    response.headers.add('Query-Time',
-        int(flask.g.query_time * 1000))
-    response.headers.add('Query-Count', flask.g.query_count)
-    response.headers.add('Write-Count', flask.g.write_count)
+    resp_time = int((time.time() - flask.g.start) * 1000)
+    db_time = int(flask.g.query_time * 1000)
+    db_reads = flask.g.query_count
+    db_writes = flask.g.write_count
+
+    response.headers.add('Execution-Time', resp_time)
+    response.headers.add('Query-Time', db_time)
+    response.headers.add('Query-Count', db_reads)
+    response.headers.add('Write-Count', db_writes)
+
+    monitoring.insert_point('requests', {
+        'host': settings.local.host.name,
+    }, {
+        'remote_ip': utils.get_remote_addr(),
+        'response_time': resp_time,
+        'db_time': db_time,
+        'db_reads': db_reads,
+        'db_writes': db_writes,
+    })
+
     return response
 
 @app.route('/.well-known/acme-challenge/<token>', methods=['GET'])
