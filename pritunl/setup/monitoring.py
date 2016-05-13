@@ -1,6 +1,7 @@
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import logger
+from pritunl import monitoring
 
 import os
 import threading
@@ -70,4 +71,5 @@ def _monitoring_thread():
         yield interrupter_sleep(1)
 
 def setup_monitoring():
+    monitoring.init()
     threading.Thread(target=_monitoring_thread).start()
