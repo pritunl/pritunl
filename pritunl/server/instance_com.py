@@ -8,6 +8,7 @@ from pritunl import utils
 from pritunl import mongo
 from pritunl import clients
 from pritunl import ipaddress
+from pritunl import monitoring
 
 import os
 import time
@@ -214,6 +215,14 @@ class ServerInstanceCom(object):
                 self.bytes_recv = 0
                 self.bytes_sent = 0
                 self.bytes_lock.release()
+
+                monitoring.insert_point('server_bandwidth', {
+                    'host': settings.local.host.name,
+                    'server': self.server.name,
+                }, {
+                    'bytes_sent': bytes_sent,
+                    'bytes_recv': bytes_recv,
+                })
 
                 if bytes_recv != 0 or bytes_sent != 0:
                     self.server.bandwidth.add_data(
