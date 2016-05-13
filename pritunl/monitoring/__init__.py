@@ -1,3 +1,5 @@
+from pritunl.monitoring.utils import get_servers
+
 from pritunl.helpers import *
 from pritunl import influxdb
 from pritunl import utils
@@ -5,42 +7,12 @@ from pritunl import settings
 from pritunl import logger
 
 import threading
-import urlparse
 
 _queue = []
 _queue_lock = threading.Lock()
 _client = None
 _cur_influxdb_uri = None
 
-def _get_servers(uri):
-    uri = urlparse.urlparse(uri)
-
-    netloc = uri.netloc.split('@', 1)
-    if len(netloc) == 2:
-        username, password = netloc[0].split(':', 1)
-        netloc = netloc[1]
-    else:
-        username = None
-        password = None
-        netloc = netloc[0]
-
-    hosts = []
-    netloc = netloc.split(',')
-    for host in netloc:
-        host, port = host.split(':', 1)
-        try:
-            port = int(port)
-        except:
-            port = 0
-
-        hosts.append((host, port))
-
-    if uri.path:
-        database = uri.path.replace('/', '', 1)
-    else:
-        database = None
-
-    return hosts, username, password, database
 
 def insert_point(measurement, tags, fields):
     _queue_lock.acquire()
@@ -98,7 +70,7 @@ def _connect():
         _cur_influxdb_uri = influxdb_uri
         return
 
-    hosts, username, password, database = _get_servers(influxdb_uri)
+    hosts, username, password, database = get_servers(influxdb_uri)
 
     if len(hosts) == 1:
         _client = influxdb.InfluxDBClient(
