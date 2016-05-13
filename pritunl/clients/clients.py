@@ -714,7 +714,7 @@ class Clients(object):
 
         org = self.get_org(org_id)
         if org:
-            user = org.get_user(user_id, fields=('_id',))
+            user = org.get_user(user_id, fields=('_id', 'name'))
             if user:
                 user.audit_event(
                     'user_connection',
