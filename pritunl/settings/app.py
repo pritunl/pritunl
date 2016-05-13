@@ -17,6 +17,7 @@ class SettingsApp(SettingsGroupMongo):
         'allow_insecure_session': False,
         'auditing': None,
         'monitoring': None,
+        'influxdb_uri': None,
         'prometheus_port': 9780,
         'datadog_api_key': None,
         'settings_check_interval': 600,
