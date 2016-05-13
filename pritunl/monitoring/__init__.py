@@ -128,6 +128,7 @@ def _runner():
                 'monitoring',
                 influxdb_uri=settings.app.influxdb_uri,
             )
+            continue
         try:
             write_queue()
         except:
