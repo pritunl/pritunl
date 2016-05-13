@@ -27,7 +27,7 @@ def _dict():
             'theme': settings.app.theme,
             'auditing': settings.app.auditing,
             'monitoring': settings.app.monitoring,
-            'datadog_api_key': settings.app.datadog_api_key,
+            'influxdb_uri': 'demo',
             'email_from': settings.app.email_from,
             'email_server': 'demo',
             'email_username': 'demo',
@@ -79,7 +79,7 @@ def _dict():
             'theme': settings.app.theme,
             'auditing': settings.app.auditing,
             'monitoring': settings.app.monitoring,
-            'datadog_api_key': settings.app.datadog_api_key,
+            'influxdb_uri': settings.app.influxdb_uri,
             'email_from': settings.app.email_from,
             'email_server': settings.app.email_server,
             'email_username': settings.app.email_username,
@@ -279,10 +279,10 @@ def settings_put():
         monitoring = flask.request.json['monitoring'] or None
         settings.app.monitoring = monitoring
 
-    if 'datadog_api_key' in flask.request.json:
+    if 'influxdb_uri' in flask.request.json:
         settings_commit = True
-        datadog_api_key = flask.request.json['datadog_api_key'] or None
-        settings.app.datadog_api_key = datadog_api_key
+        influxdb_uri = flask.request.json['influxdb_uri'] or None
+        settings.app.influxdb_uri = influxdb_uri
 
     if 'email_from' in flask.request.json:
         settings_commit = True
