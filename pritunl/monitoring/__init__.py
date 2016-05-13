@@ -49,7 +49,7 @@ def insert_point(measurement, tags, fields):
             return
 
         _queue.append({
-            'measurement': 'pritunl_' + measurement,
+            'measurement': settings.app.influxdb_prefix + measurement,
             'tags': tags,
             'time': utils.now(),
             'fields': fields,
