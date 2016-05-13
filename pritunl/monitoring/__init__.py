@@ -49,7 +49,7 @@ def insert_point(measurement, tags, fields):
             return
 
         _queue.append({
-            'measurement': measurement,
+            'measurement': 'pritunl_' + measurement,
             'tags': tags,
             'time': utils.now(),
             'fields': fields,
