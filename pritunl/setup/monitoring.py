@@ -72,4 +72,4 @@ def _monitoring_thread():
 
 def setup_monitoring():
     monitoring.init()
-    threading.Thread(target=_monitoring_thread).start()
+    #threading.Thread(target=_monitoring_thread).start()
