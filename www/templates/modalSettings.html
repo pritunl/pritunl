@@ -96,10 +96,10 @@
         <option value="influxdb" <%= monitoring === 'influxdb' ? 'selected' : '' %>>InfluxDB</option>
       </select>
     </div>
-    <div class="datadog-api-key-box">
-      <div class="datadog-api-key form-group" <%= monitoring === 'datadog' ? '' : 'style="display: none;"' %>>
-        <label>Datadog API Key</label>
-        <input type="text" class="form-control" placeholder="Enter Datadog API key" value="<%- datadog_api_key || '' %>">
+    <div class="influxdb-uri-box">
+      <div class="influxdb-uri form-group" <%= monitoring === 'influxdb' ? '' : 'style="display: none;"' %>>
+        <label>InfluxDB URI</label>
+        <input type="text" class="form-control" placeholder="Enter InfluxDB URI" value="<%- influxdb_uri || '' %>">
       </div>
     </div>
     <div class="theme form-group">
