@@ -93,15 +93,16 @@ def after_request(response):
     response.headers.add('Query-Count', db_reads)
     response.headers.add('Write-Count', db_writes)
 
-    monitoring.insert_point('requests', {
-        'host': settings.local.host.name,
-    }, {
-        'remote_ip': utils.get_remote_addr(),
-        'response_time': resp_time,
-        'db_time': db_time,
-        'db_reads': db_reads,
-        'db_writes': db_writes,
-    })
+    if not flask.request.path.startswith('/event'):
+        monitoring.insert_point('requests', {
+            'host': settings.local.host.name,
+        }, {
+            'remote_ip': utils.get_remote_addr(),
+            'response_time': resp_time,
+            'db_time': db_time,
+            'db_reads': db_reads,
+            'db_writes': db_writes,
+        })
 
     return response
 
