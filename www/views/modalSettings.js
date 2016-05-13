@@ -260,11 +260,11 @@ define([
       }
     },
     onMonitoringChange: function() {
-      if (this.$('.monitoring select').val() === 'datadog') {
-        this.$('.datadog-api-key').slideDown(window.slideTime);
+      if (this.$('.monitoring select').val() === 'influxdb') {
+        this.$('.influxdb-uri').slideDown(window.slideTime);
       }
       else {
-        this.$('.datadog-api-key').slideUp(window.slideTime);
+        this.$('.influxdb-uri').slideUp(window.slideTime);
       }
     },
     onThemeChange: function() {
