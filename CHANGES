@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Add monitoring with InfluxDB
 Add support for redis
 
 Version 1.21.967.90 2016-05-06
