@@ -111,7 +111,7 @@ def _connect():
 
 def _runner():
     while True:
-        time.sleep(10)
+        time.sleep(5)
         _connect()
         write_queue()
 
