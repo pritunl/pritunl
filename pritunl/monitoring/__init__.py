@@ -1,3 +1,4 @@
+from pritunl.helpers import *
 from pritunl import influxdb
 from pritunl import utils
 from pritunl import settings
@@ -5,7 +6,6 @@ from pritunl import logger
 
 import threading
 import urlparse
-import time
 
 _queue = []
 _queue_lock = threading.Lock()
@@ -118,9 +118,10 @@ def _connect():
 
     _cur_influxdb_uri = influxdb_uri
 
+@interrupter
 def _runner():
     while True:
-        time.sleep(settings.app.influxdb_interval)
+        yield interrupter_sleep(settings.app.influxdb_interval)
         try:
             _connect()
         except:
