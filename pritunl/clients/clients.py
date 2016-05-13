@@ -13,6 +13,7 @@ from pritunl import objcache
 from pritunl import host
 from pritunl import authorizer
 from pritunl import messenger
+from pritunl import monitoring
 
 import time
 import collections
@@ -275,6 +276,14 @@ class Clients(object):
                 'User connected to "%s"' % self.server.name,
                 remote_addr=remote_ip,
             )
+            monitoring.insert_point('user_connect', {
+                'host': settings.local.host.name,
+                'server': self.server.name,
+            }, {
+                'user': user.name,
+                'platform': platform,
+                'remote_ip': remote_ip,
+            })
 
             virt_address = self.server.get_ip_addr(org_id, user_id)
             if not virt_address:
@@ -712,6 +721,13 @@ class Clients(object):
                     'User disconnected from "%s"' % self.server.name,
                     remote_addr=remote_ip,
                 )
+                monitoring.insert_point('user_disconnect', {
+                    'host': settings.local.host.name,
+                    'server': self.server.name,
+                }, {
+                    'user': user.name,
+                    'remote_ip': remote_ip,
+                })
 
         if self.route_clients:
             messenger.publish('client', {
