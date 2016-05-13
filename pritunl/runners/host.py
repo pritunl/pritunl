@@ -6,6 +6,7 @@ from pritunl import logger
 from pritunl import utils
 from pritunl import mongo
 from pritunl import event
+from pritunl import monitoring
 
 import threading
 import time
@@ -76,6 +77,7 @@ def _keep_alive_thread():
 
             cpu_usage = None
             mem_usage = None
+            thread_count = threading.active_count()
             try:
                 cpu_usage, mem_usage = utils.get_process_cpu_mem()
             except:
@@ -92,12 +94,20 @@ def _keep_alive_thread():
                 'device_count': host.global_clients.count({}),
                 'cpu_usage': cpu_usage,
                 'mem_usage': mem_usage,
-                'thread_count': threading.active_count(),
+                'thread_count': thread_count,
                 'status': ONLINE,
                 'ping_timestamp': utils.now(),
                 'auto_public_address': settings.local.public_ip,
                 'auto_public_address6': settings.local.public_ip6,
             }})
+
+            monitoring.insert_point('system', {
+                'host': settings.local.host.name,
+            }, {
+                'cpu_usage': cpu_usage,
+                'mem_usage': mem_usage,
+                'thread_count': thread_count,
+            })
 
             if settings.local.host.auto_public_address != \
                     settings.local.public_ip or \
