@@ -109,6 +109,8 @@ def _keep_alive_thread():
                 'cpu_usage': cpu_usage,
                 'mem_usage': mem_usage,
                 'thread_count': thread_count,
+                'server_count': server_count,
+                'device_count': device_count,
             })
 
             if settings.local.host.auto_public_address != \
