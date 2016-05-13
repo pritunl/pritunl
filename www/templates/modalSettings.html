@@ -93,8 +93,7 @@
       <label>Monitoring Mode</label>
       <select class="form-control" data-toggle="tooltip" title="Monitoring mode">
         <option value="none" <%= !monitoring ? 'selected' : '' %>>Disabled</option>
-        <option value="prometheus" <%= monitoring === 'prometheus' ? 'selected' : '' %>>Prometheus (Port 9780)</option>
-        <option value="datadog" <%= monitoring === 'datadog' ? 'selected' : '' %>>Datadog</option>
+        <option value="influxdb" <%= monitoring === 'influxdb' ? 'selected' : '' %>>InfluxDB</option>
       </select>
     </div>
     <div class="datadog-api-key-box">
