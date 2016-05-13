@@ -70,7 +70,15 @@ def write_queue():
         _queue_lock.release()
 
     if client:
-        client.write_points(queue)
+        try:
+            client.write_points(queue)
+        except:
+            _queue_lock.acquire()
+            try:
+                _queue = queue + _queue
+            finally:
+                _queue_lock.release()
+            raise
 
 def _connect():
     global _client
