@@ -257,7 +257,7 @@ class Administrator(mongo.MongoObject):
         if settings.app.auditing != ALL:
             return
 
-        self.audit_collection.insert_one({
+        self.audit_collection.insert({
             'user_id': self.id,
             'timestamp': utils.now(),
             'type': event_type,

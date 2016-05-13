@@ -826,7 +826,7 @@ class User(mongo.MongoObject):
         if settings.app.auditing != ALL:
             return
 
-        self.audit_collection.insert_one({
+        self.audit_collection.insert({
             'user_id': self.id,
             'org_id': self.org_id,
             'timestamp': utils.now(),

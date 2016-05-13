@@ -656,7 +656,7 @@ class ServerInstance(object):
 
     def clear_route_advertisements(self):
         for ra_id in self.route_advertisements.copy():
-            self.routes_collection.delete_one({
+            self.routes_collection.remove({
                 '_id': ra_id,
             })
 
