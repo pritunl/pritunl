@@ -19,6 +19,7 @@ class SettingsApp(SettingsGroupMongo):
         'monitoring': None,
         'influxdb_uri': None,
         'influxdb_prefix': 'pritunl_',
+        'influxdb_interval': 3,
         'prometheus_port': 9780,
         'datadog_api_key': None,
         'settings_check_interval': 600,

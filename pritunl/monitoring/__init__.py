@@ -120,7 +120,7 @@ def _connect():
 
 def _runner():
     while True:
-        time.sleep(5)
+        time.sleep(settings.app.influxdb_interval)
         try:
             _connect()
         except:
