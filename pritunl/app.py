@@ -97,6 +97,7 @@ def after_request(response):
         monitoring.insert_point('requests', {
             'host': settings.local.host.name,
         }, {
+            'path': flask.request.path,
             'remote_ip': utils.get_remote_addr(),
             'response_time': resp_time,
             'db_time': db_time,
