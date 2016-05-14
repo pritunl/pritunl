@@ -115,7 +115,7 @@ def init():
     try:
         _connect()
     except:
-        logger.exception('InfluxDB init connection error',
+        logger.exception('InfluxDB initial connection error',
             'monitoring',
             influxdb_uri=settings.app.influxdb_uri,
         )
