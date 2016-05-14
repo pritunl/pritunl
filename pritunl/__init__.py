@@ -2,7 +2,7 @@ from pritunl import patches
 from pritunl.constants import *
 
 __title__ = 'pritunl'
-__version__ = '1.21.967.90'
+__version__ = '1.22.975.2snapshot'
 __author__ = 'Pritunl'
 __email__ = 'contact@pritunl.com'
 __license__ = 'Custom'
