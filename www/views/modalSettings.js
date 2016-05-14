@@ -308,7 +308,7 @@ define([
       var serverPort = this.$('.server-port input').val();
       var acmeDomain = this.$('.acme-domain input').val() || null;
       var monitoring = this.$('.monitoring select').val();
-      var datadogAPiKey = this.$('.datadog-api-key input').val();
+      var influxdbUriKey = this.$('.influxdb-uri input').val();
       var publicAddress = this.$('.public-address input').val();
       var publicAddress6 = this.$('.public-address6 input').val();
       var routedSubnet6 = this.$('.routed-subnet6 input').val();
@@ -400,8 +400,8 @@ define([
         monitoring = null;
       }
 
-      if (monitoring !== 'datadog') {
-        datadogAPiKey = null;
+      if (monitoring !== 'influxdb') {
+        influxdbUriKey = null;
       }
 
       if (sso) {
@@ -460,7 +460,7 @@ define([
         username: username,
         auditing: auditing,
         monitoring: monitoring,
-        datadog_api_key: datadogAPiKey,
+        influxdb_uri: influxdbUriKey,
         email_from: emailFrom,
         email_server: emailServer,
         email_username: emailUsername,
