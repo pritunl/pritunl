@@ -5,6 +5,7 @@ Pritunl Changelog
 
 Add monitoring with InfluxDB
 Add support for redis
+Prometheus and Datadog support removed
 
 Version 1.21.967.90 2016-05-06
 ------------------------------
