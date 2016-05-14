@@ -100,6 +100,7 @@ def _runner():
                 'monitoring',
                 influxdb_uri=settings.app.influxdb_uri,
             )
+            yield interrupter_sleep(5)
             continue
         try:
             write_queue()
@@ -108,6 +109,7 @@ def _runner():
                 'monitoring',
                 influxdb_uri=settings.app.influxdb_uri,
             )
+            yield interrupter_sleep(5)
 
 def init():
     try:
