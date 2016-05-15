@@ -71,6 +71,10 @@ def _connect():
 
     hosts, username, password, database = get_servers(influxdb_uri)
 
+    logger.info('Connecting to InfluxDB', 'monitoring',
+        influxdb_uri=influxdb_uri,
+    )
+
     if len(hosts) == 1:
         _client = influxdb.InfluxDBClient(
             hosts[0][0],
