@@ -1,6 +1,7 @@
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import utils
+from pritunl import logger
 
 import time
 import json
@@ -19,6 +20,11 @@ def init():
         return
 
     has_cache = True
+
+    logger.info('Connecting to Redis', 'cache',
+        redis_uri = redis_uri,
+    )
+
     _client = redis.StrictRedis.from_url(
         redis_uri,
         socket_timeout=settings.app.redis_timeout,
