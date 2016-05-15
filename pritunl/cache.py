@@ -116,63 +116,71 @@ def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None,
     yield_stop = False
     pubsub = _client.pubsub()
 
-    if isinstance(channels, str):
-        channels = [channels]
+    try:
+        if isinstance(channels, str):
+            channels = [channels]
 
-    for channel in channels:
-        pubsub.subscribe(channel)
+        for channel in channels:
+            pubsub.subscribe(channel)
 
-    yield
+        yield
 
-    if cursor_id:
-        if len(channels) > 1:
-            raise TypeError('Cannot specify cursor_id with multiple channels')
+        if cursor_id:
+            if len(channels) > 1:
+                raise TypeError(
+                    'Cannot specify cursor_id with multiple channels')
 
-        found = False
-        past = []
-        duplicates = _set()
-        history = _client.lrange(channels[0], 0, -1)
-        for msg in history:
-            doc = json.loads(msg, object_hook=utils.json_object_hook_handler)
-            if doc['_id'] == cursor_id:
-                found = True
-                break
-            doc['channel'] = channels[0]
-            past.append(doc)
-            duplicates.add(doc['_id'])
+            found = False
+            past = []
+            duplicates = _set()
+            history = _client.lrange(channels[0], 0, -1)
+            for msg in history:
+                doc = json.loads(
+                    msg,
+                    object_hook=utils.json_object_hook_handler,
+                )
+                if doc['_id'] == cursor_id:
+                    found = True
+                    break
+                doc['channel'] = channels[0]
+                past.append(doc)
+                duplicates.add(doc['_id'])
 
-            yield
+                yield
 
-        if found:
-            for doc in reversed(past):
+            if found:
+                for doc in reversed(past):
+                    yield doc
+
+        yield
+
+        while True:
+            msg = pubsub.get_message(timeout=get_timeout)
+            if msg and msg['type'] == 'message':
+                yield
+
+                doc = json.loads(msg['data'],
+                    object_hook=utils.json_object_hook_handler)
+                doc['channel'] = msg['channel']
+                if duplicates:
+                    if doc['_id'] in duplicates:
+                        continue
+                    else:
+                        duplicates = None
+
                 yield doc
 
-    yield
+                if yield_stop:
+                    return
 
-    while True:
-        msg = pubsub.get_message(timeout=get_timeout)
-        if msg and msg['type'] == 'message':
-            yield
-
-            doc = json.loads(msg['data'],
-                object_hook=utils.json_object_hook_handler)
-            doc['channel'] = msg['channel']
-            if duplicates:
-                if doc['_id'] in duplicates:
+                if yield_delay:
+                    get_timeout = yield_delay
+                    yield_stop = True
                     continue
-                else:
-                    duplicates = None
 
-            yield doc
-
-            if yield_stop:
+            if yield_stop or (yield_app_server and
+                    check_app_server_interrupt()) or (timeout and
+                    time.time() - start_time >= timeout):
                 return
-
-            if yield_delay:
-                get_timeout = yield_delay
-                yield_stop = True
-                continue
-
-        if yield_stop or (yield_app_server and check_app_server_interrupt()) \
-                or (timeout and time.time() - start_time >= timeout):
-            return
+    finally:
+        pubsub.close()
