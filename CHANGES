@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add open file count to monitoring
+
 Version 1.22.977.25 2016-05-16
 ------------------------------
 
