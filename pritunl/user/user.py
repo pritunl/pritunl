@@ -265,6 +265,9 @@ class User(mongo.MongoObject):
 
     def sso_auth_check(self, password):
         if GOOGLE_AUTH in self.auth_type:
+            if settings.user.skip_remote_sso_check:
+                return True
+
             try:
                 resp = requests.get(AUTH_SERVER +
                     '/update/google?user=%s&license=%s' % (
@@ -280,6 +283,9 @@ class User(mongo.MongoObject):
                 )
             return False
         elif SLACK_AUTH in self.auth_type:
+            if settings.user.skip_remote_sso_check:
+                return True
+
             try:
                 resp = requests.get(AUTH_SERVER +
                     '/update/slack?user=%s&team=%s&license=%s' % (
