@@ -48,7 +48,10 @@ def run_thread():
                     for minute in ('all', cur_time.minute):
                         for second in ('all', cur_time.second):
                             for task_cls in task.tasks[hour][minute][second]:
-                                run_task(task_cls())
+                                run_id = '%s_%s_%s_%s' % (task_cls.type,
+                                    cur_time.hour, cur_time.minute,
+                                    cur_time.second)
+                                run_task(task_cls(id=run_id, upsert=True))
         except:
             logger.exception('Error in tasks run thread', 'runners')
 
