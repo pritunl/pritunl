@@ -1,4 +1,5 @@
 from pritunl.helpers import *
+from pritunl.constants import *
 from pritunl import settings
 from pritunl import logger
 from pritunl import task
@@ -72,6 +73,7 @@ def check_thread():
 
                 response = task.Task.collection.update({
                     '_id': task_item.id,
+                    'state': {'$ne': COMPLETE},
                     'ttl_timestamp': {'$lt': cur_timestamp},
                 }, {'$unset': {
                     'runner_id': '',
