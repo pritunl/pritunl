@@ -10,6 +10,7 @@ from pritunl import monitoring
 
 import threading
 import time
+import os
 
 @interrupter
 def _host_check_thread():
@@ -75,6 +76,11 @@ def _keep_alive_thread():
 
             ping_timestamp = utils.now()
 
+            try:
+                open_file_count = len(os.listdir('/proc/self/fd'))
+            except:
+                open_file_count = 0
+
             cpu_usage = None
             mem_usage = None
             thread_count = threading.active_count()
@@ -97,6 +103,7 @@ def _keep_alive_thread():
                 'cpu_usage': cpu_usage,
                 'mem_usage': mem_usage,
                 'thread_count': thread_count,
+                'open_file_count': open_file_count,
                 'status': ONLINE,
                 'ping_timestamp': utils.now(),
                 'auto_public_address': settings.local.public_ip,
@@ -109,6 +116,7 @@ def _keep_alive_thread():
                 'cpu_usage': cpu_usage,
                 'mem_usage': mem_usage,
                 'thread_count': thread_count,
+                'open_file_count': open_file_count,
                 'server_count': server_count,
                 'device_count': device_count,
             })
