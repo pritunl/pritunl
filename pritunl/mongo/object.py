@@ -9,7 +9,9 @@ class MongoObject(object):
     fields_default = {}
     fields_required = {}
 
-    def __new__(cls, id=None, doc=None, spec=None, fields=None, **kwargs):
+    def __new__(cls, id=None, doc=None, spec=None, fields=None,
+            upsert=False,**kwargs):
+        from pritunl import utils
         fields = fields or cls.fields
 
         mongo_object = object.__new__(cls)
@@ -23,9 +25,12 @@ class MongoObject(object):
             try:
                 mongo_object.load(doc=doc, spec=spec, fields=fields)
             except NotFound:
-                return None
+                if not upsert:
+                    return None
+                mongo_object.exists = False
+                if not id:
+                    mongo_object.id = utils.ObjectId()
         else:
-            from pritunl import utils
             mongo_object.exists = False
             mongo_object.id = utils.ObjectId()
         return mongo_object
