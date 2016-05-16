@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve task system
+
 Version 1.22.977.55 2016-05-16
 ------------------------------
 
