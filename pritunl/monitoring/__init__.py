@@ -52,7 +52,7 @@ def write_queue():
                 _queue_lock.release()
             raise
 
-def _connect():
+def connect():
     global _client
     global _cur_influxdb_uri
 
@@ -98,7 +98,7 @@ def _runner():
     while True:
         yield interrupter_sleep(settings.app.influxdb_interval)
         try:
-            _connect()
+            connect()
         except:
             logger.exception('InfluxDB connection error',
                 'monitoring',
@@ -117,7 +117,7 @@ def _runner():
 
 def init():
     try:
-        _connect()
+        connect()
     except:
         logger.exception('InfluxDB initial connection error',
             'monitoring',
