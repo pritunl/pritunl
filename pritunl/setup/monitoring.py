@@ -4,7 +4,6 @@ from pritunl import logger
 from pritunl import monitoring
 
 import os
-import threading
 import subprocess
 
 @interrupter
