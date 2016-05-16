@@ -84,8 +84,6 @@ def _keep_alive_thread():
                 'mem_usage': mem_usage,
                 'thread_count': thread_count,
                 'open_file_count': open_file_count,
-                'server_count': server_count,
-                'device_count': device_count,
             })
 
             if settings.local.host.auto_public_address != \
@@ -110,5 +108,4 @@ def _keep_alive_thread():
             time.sleep(0.5)
 
 def start_host():
-    threading.Thread(target=_host_check_thread).start()
     threading.Thread(target=_keep_alive_thread).start()
