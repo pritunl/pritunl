@@ -141,9 +141,10 @@ def setup_mongo():
     ], background=True)
     upsert_index(mongo.collections['queue'], 'runner_id', background=True)
     upsert_index(mongo.collections['queue'], 'ttl_timestamp', background=True)
-    upsert_index(mongo.collections['task'], 'type', background=True,
-        unique=True)
-    upsert_index(mongo.collections['task'], 'ttl_timestamp', background=True)
+    upsert_index(mongo.collections['tasks'], [
+        ('ttl_timestamp', pymongo.ASCENDING),
+        ('state', pymongo.ASCENDING),
+    ], background=True)
     upsert_index(mongo.collections['log_entries'], [
         ('timestamp', pymongo.DESCENDING),
     ], background=True)
@@ -224,6 +225,8 @@ def setup_mongo():
         ('nonce', pymongo.ASCENDING),
     ], background=True, unique=True)
 
+    upsert_index(mongo.collections['tasks'], 'timestamp',
+        background=True, expireAfterSeconds=300)
     upsert_index(mongo.collections['clients'], 'timestamp',
         background=True, expireAfterSeconds=settings.vpn.client_ttl)
     upsert_index(mongo.collections['users_key_link'], 'timestamp',
