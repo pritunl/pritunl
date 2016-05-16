@@ -1,6 +1,5 @@
 from pritunl.monitoring.utils import get_servers
 
-from pritunl.helpers import *
 from pritunl import influxdb
 from pritunl import utils
 from pritunl import settings
@@ -93,28 +92,6 @@ def connect():
 
     _cur_influxdb_uri = influxdb_uri
 
-@interrupter
-def _runner():
-    while True:
-        yield interrupter_sleep(settings.app.influxdb_interval)
-        try:
-            connect()
-        except:
-            logger.exception('InfluxDB connection error',
-                'monitoring',
-                influxdb_uri=settings.app.influxdb_uri,
-            )
-            yield interrupter_sleep(5)
-            continue
-        try:
-            write_queue()
-        except:
-            logger.exception('InfluxDB write queue error',
-                'monitoring',
-                influxdb_uri=settings.app.influxdb_uri,
-            )
-            yield interrupter_sleep(5)
-
 def init():
     try:
         connect()
@@ -123,6 +100,3 @@ def init():
             'monitoring',
             influxdb_uri=settings.app.influxdb_uri,
         )
-    thread = threading.Thread(target=_runner)
-    thread.daemon = True
-    thread.start()
