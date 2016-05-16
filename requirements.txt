@@ -5,3 +5,4 @@ pyOpenSSL>=0.15.1
 boto>=2.39.0
 requests>=2.9.1
 redis>=2.10.5
+python-dateutil>=2.5.3
