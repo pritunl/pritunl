@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Improve task system
+Improve cluster monitoring metrics
 
 Version 1.22.977.55 2016-05-16
 ------------------------------
