@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Fix issue with ip pool resulting in address shortage
 Improve task system
 Improve cluster monitoring metrics
 
