@@ -22,7 +22,7 @@ def init():
     has_cache = True
 
     logger.info('Connecting to Redis', 'cache',
-        redis_uri = redis_uri,
+        redis_uri=redis_uri,
     )
 
     _client = redis.StrictRedis.from_url(
