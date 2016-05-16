@@ -13,39 +13,6 @@ import time
 import os
 
 @interrupter
-def _host_check_thread():
-    collection = mongo.get_collection('hosts')
-
-    while True:
-        try:
-            ttl_timestamp = {'$lt': utils.now() -
-                datetime.timedelta(seconds=settings.app.host_ping_ttl)}
-
-            cursor = collection.find({
-                'ping_timestamp': ttl_timestamp,
-            }, {
-                '_id': True,
-            })
-
-            for doc in cursor:
-                response = collection.update({
-                    '_id': doc['_id'],
-                    'ping_timestamp': ttl_timestamp,
-                }, {'$set': {
-                    'status': OFFLINE,
-                    'ping_timestamp': None,
-                }})
-
-                if response['updatedExisting']:
-                    event.Event(type=HOSTS_UPDATED)
-        except GeneratorExit:
-            raise
-        except:
-            logger.exception('Error checking host status', 'runners')
-
-        yield interrupter_sleep(settings.app.host_ping_ttl)
-
-@interrupter
 def _keep_alive_thread():
     last_update = None
     proc_stat = None
