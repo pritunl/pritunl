@@ -71,7 +71,7 @@ def setup_mongo():
         'time_sync': getattr(database, prefix + 'time_sync'),
         'transaction': getattr(database, prefix + 'transaction'),
         'queue': getattr(database, prefix + 'queue'),
-        'task': getattr(database, prefix + 'task'),
+        'tasks': getattr(database, prefix + 'tasks'),
         'settings': getattr(database, prefix + 'settings'),
         'messages': getattr(database, prefix + 'messages'),
         'administrators': getattr(database, prefix + 'administrators'),
