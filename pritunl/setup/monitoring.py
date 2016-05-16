@@ -84,6 +84,7 @@ def _monitoring_thread():
             )
             yield interrupter_sleep(5)
             continue
+
         try:
             monitoring.write_queue()
         except:
