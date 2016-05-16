@@ -92,6 +92,4 @@ class TaskServer(task.Task):
         except:
             logger.exception('Error checking server states', 'tasks')
 
-        yield interrupter_sleep(settings.vpn.server_ping)
-
 task.add_task(TaskServer, seconds=xrange(0, 60, settings.vpn.server_ping))
