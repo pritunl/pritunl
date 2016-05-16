@@ -54,9 +54,10 @@ class User(mongo.MongoObject):
         'bypass_secondary': False,
     }
 
-    def __init__(self, org, name=None, email=None, type=None, auth_type=None,
-            disabled=None, resource_id=None, bypass_secondary=None,
-            dns_servers=None, dns_suffix=None, port_forwarding=None, **kwargs):
+    def __init__(self, org, name=None, email=None, pin=None, type=None,
+            auth_type=None, disabled=None, resource_id=None,
+            bypass_secondary=None, dns_servers=None, dns_suffix=None,
+            port_forwarding=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         self.org = org
@@ -66,6 +67,8 @@ class User(mongo.MongoObject):
             self.name = name
         if email is not None:
             self.email = email
+        if pin is not None:
+            self.pin = pin
         if type is not None:
             self.type = type
         if auth_type is not None:
