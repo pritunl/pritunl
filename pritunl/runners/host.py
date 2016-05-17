@@ -4,7 +4,6 @@ from pritunl import settings
 from pritunl import host
 from pritunl import logger
 from pritunl import utils
-from pritunl import mongo
 from pritunl import event
 from pritunl import monitoring
 
