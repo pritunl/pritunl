@@ -406,7 +406,7 @@ def ping(address, timeout=1):
 
 def get_process_cpu_mem():
     proc = psutil.Process(os.getpid())
-    return proc.cpu_percent(), proc.memory_percent()
+    return proc.cpu_percent(interval=0.5), proc.memory_percent()
 
 def get_url_root():
     url_root = flask.request.url_root
