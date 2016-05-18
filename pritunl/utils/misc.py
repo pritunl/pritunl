@@ -22,6 +22,7 @@ import Queue
 import urllib2
 import json
 import math
+import psutil
 
 _null = open(os.devnull, 'w')
 
@@ -404,18 +405,8 @@ def ping(address, timeout=1):
     return runtime
 
 def get_process_cpu_mem():
-    output = subprocess.check_output([
-        'ps', '-p', str(os.getpid()), '-o', '%cpu,%mem'])
-
-    output = output.split('\n')
-    if len(output) < 2:
-        raise ValueError('Invalid output')
-
-    output = output[1].strip().split()
-    if len(output) != 2:
-        raise ValueError('Invalid output')
-
-    return float(output[0]), float(output[1])
+    proc = psutil.Process(os.getpid())
+    return proc.cpu_percent(), proc.memory_percent()
 
 def get_url_root():
     url_root = flask.request.url_root
