@@ -1,7 +1,7 @@
-BASE_URL = 'https://localhost:9700'
-API_TOKEN = 'B20d2WJaVTOORbDzVT0QqGeurz0ONrZY'
-API_SECRET = 'g2SV9YxUBAb6y3ZtLPLrbp4Gqcx8H9xW'
-ORG_ID = '5674382bb0e73045a8b837e4'
+BASE_URL = 'https://sn0.pritunl.net'
+API_TOKEN = 'mEaIyxlXBmsUkjWPdEgMiRooRGdmONuc'
+API_SECRET = 'rHzdcFQZWDGTSI4q0ZIepn1OtqpJJYWf'
+ORG_ID = '573b2d405a3d9c0a455b6dbe'
 
 import requests
 import time
