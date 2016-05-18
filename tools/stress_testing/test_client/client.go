@@ -18,7 +18,7 @@ var (
 )
 
 const (
-	host = "10.167.0.1"
+	host = "10.154.0.2"
 )
 
 func ExecOutput(name string, args ...string) (output string, err error) {
@@ -43,7 +43,7 @@ func run() (err error) {
 	lock := sync.Mutex{}
 
 	cmd = exec.Command("openvpn", "--float", "--config",
-		fmt.Sprintf("confs/user_%04d.ovpn", num))
+		fmt.Sprintf("confs/user_%05d.ovpn", num))
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		return
