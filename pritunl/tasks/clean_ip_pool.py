@@ -14,12 +14,12 @@ class TaskCleanIpPool(task.Task):
         return mongo.get_collection('servers')
 
     def task(self):
-        org_ids = self.server_collection.find({}, {
+        server_ids = self.server_collection.find({}, {
             '_id': True,
         }).distinct('_id')
 
         self.pool_collection.remove({
-            'server_id': {'$nin': org_ids},
+            'server_id': {'$nin': server_ids},
         })
 
         response = self.pool_collection.aggregate([
