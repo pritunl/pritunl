@@ -11,7 +11,7 @@ First in the Pritunl web console create a new organization then hold shift and c
 
 Open the `add_test_users.py` file and copy the organization ID to the `ORG_ID` constant. Then set the `COUNT` to the number of users you want to create and set the `MONGO_URI` to your database. Once done run the script then refresh the web console and the test users should be added to the organization. These users contain test keys and cannot be used to connect to a server.
 
-Create a test server with a network address of `10.165.0.0/16` and set the server mode to `VPN Traffic Only`. Once created attach the test organization to the server.
+Create a test server with a network address of `10.165.0.0/16` and remove the `0.0.0.0/0` route. Once created attach the test organization to the server.
 
 Before starting the test first stop any running vpn servers. Then in the terminal of the pritunl server run the command `pritunl set vpn.stress_test true`. Once this command is run start the test server.
 
@@ -25,7 +25,7 @@ This test will create real user connections using a docker container for each cl
 
 First edit the `get_test_names.py` and set the `COUNT` to the number of users you want to test. Then run the script and copy the list of user names into the Bulk Add Users for a new organization in the web console.
 
-Create a test server with a network address of `10.167.0.0/16` and set the server mode to `VPN Traffic Only`. Once created attach the organization to the server and start the server. It is import that the public address for the server host is set to an address that docker containers will be able to access.
+Create a test server with a network address of `10.154.0.0/16` and remove the `0.0.0.0/0` route. Once created attach the organization to the server and start the server. It is import that the public address for the server host is set to an address that docker containers will be able to access.
 
 Then in the users page hold shift and click the green "Organization" label this will show the organization ID to the right. Open the `download_all_users.py` file and copy the organization ID to the `ORG_ID` constant. The set the `BASE_URL`, `API_TOKEN` and `API_SECRET` constants. The api key can be found in the settings. Then run the script. This will download all the user profiles to the `test_client/confs` directory for use by the docker container.
 
