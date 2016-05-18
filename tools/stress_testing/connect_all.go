@@ -32,7 +32,7 @@ func main() {
 
 	for i := 1; i <= count; i++ {
 		cmd, err := Exec(
-			"openvpn", fmt.Sprintf("user_%04d.ovpn", i),
+			"openvpn", fmt.Sprintf("user_%05d.ovpn", i),
 		)
 		if err != nil {
 			panic(err)
