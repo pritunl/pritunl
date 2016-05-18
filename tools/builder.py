@@ -461,15 +461,16 @@ elif cmd == 'upload':
 
 
     # Sync mirror
-    subprocess.check_call(['rsync',
-        '--human-readable',
-        '--archive',
-        '--progress',
-        '--delete',
-        '--acls',
-        'mirror/',
-        test_mirror_url if is_snapshot else mirror_url,
-    ], cwd=pacur_path)
+    for mir_url in test_mirror_url if is_snapshot else mirror_url:
+        subprocess.check_call(['rsync',
+            '--human-readable',
+            '--archive',
+            '--progress',
+            '--delete',
+            '--acls',
+            'mirror/',
+            mir_url,
+        ], cwd=pacur_path)
 
 
     # Add to github
