@@ -1,6 +1,6 @@
-COUNT = 15000
-MONGO_URI = 'mongodb://localhost:27017/pritunl'
-ORG_ID = '5674466ab0e7305d8bd57657'
+COUNT = 100000
+MONGO_URI = 'mongodb://sn.pritunl.net:27017/pritunl'
+ORG_ID = '573b2d405a3d9c0a455b6dbe'
 
 import pymongo
 import bson
