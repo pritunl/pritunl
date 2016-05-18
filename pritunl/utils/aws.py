@@ -38,7 +38,6 @@ def add_vpc_route(region, vpc_id, network, resource_id):
     tables = vpc_conn.get_all_route_tables(filters={'vpc-id': vpc_id})
     if not tables:
         raise VpcRouteTableNotFound('Failed to find VPC routing table')
-    table = tables[0]
 
     instance_id = None
     interface_id = None
@@ -47,20 +46,21 @@ def add_vpc_route(region, vpc_id, network, resource_id):
     else:
         instance_id = resource_id
 
-    try:
-        vpc_conn.create_route(
-            table.id,
-            network,
-            instance_id=instance_id,
-            interface_id=interface_id,
-        )
-    except:
-        vpc_conn.replace_route(
-            table.id,
-            network,
-            instance_id=instance_id,
-            interface_id=interface_id,
-        )
+    for table in tables:
+        try:
+            vpc_conn.create_route(
+                table.id,
+                network,
+                instance_id=instance_id,
+                interface_id=interface_id,
+            )
+        except:
+            vpc_conn.replace_route(
+                table.id,
+                network,
+                instance_id=instance_id,
+                interface_id=interface_id,
+            )
 
 def get_vpcs():
     vpcs_data = {}
