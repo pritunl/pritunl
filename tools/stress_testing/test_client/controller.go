@@ -1,19 +1,22 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"os/exec"
+	"net/http"
 	"os"
+	"os/exec"
 	"os/signal"
+	"strconv"
+	"strings"
 	"sync"
 	"syscall"
-	"strings"
-	"flag"
-	"net/http"
 	"time"
 )
 
-const count = 128
+const count = 500
+
+var host = 0
 
 func ExecOutput(name string, args ...string) (output string, err error) {
 	cmd := exec.Command(name, args...)
@@ -41,18 +44,18 @@ func Setup() {
 				waiter.Done()
 			}(cid)
 
-			time.Sleep(250 * time.Millisecond)
+			time.Sleep(5 * time.Millisecond)
 		}
 		waiter.Wait()
 	}()
 
-	for i := 1; i <= count; i++ {
+	for i := 1 + (host * count); i <= count+(host*count); i++ {
 		cid, err := ExecOutput(
 			"docker",
 			"run",
 			"-d",
 			"--privileged",
-			"-p", fmt.Sprintf("%d:%d", 4000 + i, 4000 + i),
+			"-p", fmt.Sprintf("%d:%d", 4000+i, 4000+i),
 			"test_client",
 			"--num", fmt.Sprintf("%d", i),
 		)
@@ -64,7 +67,7 @@ func Setup() {
 		fmt.Println(cid)
 		cids = append(cids, cid)
 
-		time.Sleep(250 * time.Millisecond)
+		time.Sleep(5 * time.Millisecond)
 	}
 
 	fmt.Println("\n")
@@ -79,10 +82,10 @@ func Start() {
 	waiter := sync.WaitGroup{}
 	waiter.Add(count)
 
-	for i := 1; i <= count; i++ {
+	for i := 1 + (host * count); i <= count+(host*count); i++ {
 		go func(i int) {
 			resp, err := http.Get(
-				fmt.Sprintf("http://localhost:%d/start", 4000 + i))
+				fmt.Sprintf("http://localhost:%d/start", 4000+i))
 			if err != nil {
 				return
 			}
@@ -91,7 +94,7 @@ func Start() {
 				panic(fmt.Sprintf("failed to start %d", i))
 			}
 
-			fmt.Println(fmt.Sprintf("http://localhost:%d/start", 4000 + i))
+			fmt.Println(fmt.Sprintf("http://localhost:%d/start", 4000+i))
 
 			waiter.Done()
 		}(i)
@@ -104,10 +107,10 @@ func Stop() {
 	waiter := sync.WaitGroup{}
 	waiter.Add(count)
 
-	for i := 1; i <= count; i++ {
+	for i := 1 + (host * count); i <= count+(host*count); i++ {
 		go func(i int) {
 			resp, err := http.Get(
-				fmt.Sprintf("http://localhost:%d/stop", 4000 + i))
+				fmt.Sprintf("http://localhost:%d/stop", 4000+i))
 			if err != nil {
 				return
 			}
@@ -116,7 +119,7 @@ func Stop() {
 				panic(fmt.Sprintf("failed to stop %d", i))
 			}
 
-			fmt.Println(fmt.Sprintf("http://localhost:%d/stop", 4000 + i))
+			fmt.Println(fmt.Sprintf("http://localhost:%d/stop", 4000+i))
 
 			waiter.Done()
 		}(i)
@@ -129,10 +132,10 @@ func Ping() {
 	waiter := sync.WaitGroup{}
 	waiter.Add(count)
 
-	for i := 1; i <= count; i++ {
+	for i := 1 + (host * count); i <= count+(host*count); i++ {
 		go func(i int) {
 			resp, err := http.Get(
-				fmt.Sprintf("http://localhost:%d/ping", 4000 + i))
+				fmt.Sprintf("http://localhost:%d/ping", 4000+i))
 			if err != nil {
 				return
 			}
@@ -141,7 +144,7 @@ func Ping() {
 				panic(fmt.Sprintf("failed to ping %d", i))
 			}
 
-			fmt.Println(fmt.Sprintf("http://localhost:%d/ping", 4000 + i))
+			fmt.Println(fmt.Sprintf("http://localhost:%d/ping", 4000+i))
 
 			waiter.Done()
 		}(i)
@@ -154,10 +157,10 @@ func Download() {
 	waiter := sync.WaitGroup{}
 	waiter.Add(count)
 
-	for i := 1; i <= count; i++ {
+	for i := 1 + (host * count); i <= count+(host*count); i++ {
 		go func(i int) {
 			resp, err := http.Get(
-				fmt.Sprintf("http://localhost:%d/download", 4000 + i))
+				fmt.Sprintf("http://localhost:%d/download", 4000+i))
 			if err != nil {
 				return
 			}
@@ -166,7 +169,7 @@ func Download() {
 				panic(fmt.Sprintf("failed to download %d", i))
 			}
 
-			fmt.Println(fmt.Sprintf("http://localhost:%d/download", 4000 + i))
+			fmt.Println(fmt.Sprintf("http://localhost:%d/download", 4000+i))
 
 			waiter.Done()
 		}(i)
@@ -177,6 +180,11 @@ func Download() {
 
 func main() {
 	flag.Parse()
+
+	hostStr := os.Getenv("HOST")
+	if hostStr != "" {
+		host, _ = strconv.Atoi(hostStr)
+	}
 
 	switch flag.Arg(0) {
 	case "setup":
