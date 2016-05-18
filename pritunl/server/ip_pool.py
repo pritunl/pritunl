@@ -96,8 +96,7 @@ class ServerIpPool:
                     'server_id': server_id,
                     'org_id': org_id,
                     'user_id': user_id,
-                    'address': '%s/%s' % (remote_ip_addr,
-                        network.prefixlen),
+                    'address': '%s/%s' % (remote_ip_addr, network.prefixlen),
                 })
                 return True
             except pymongo.errors.DuplicateKeyError:
