@@ -322,7 +322,7 @@ def server_put_post(server_id=None):
         if max_clients:
             max_clients = int(max_clients)
         if not max_clients:
-            max_clients = 4096
+            max_clients = 2000
 
     replica_count = None
     replica_count_def = False
