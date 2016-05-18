@@ -629,6 +629,9 @@ class ServerInstance(object):
             pass
 
     def _iptables_thread(self):
+        if not settings.vpn.iptables_update:
+            return
+
         if self.interrupter_sleep(settings.vpn.iptables_update_rate):
             return
 
