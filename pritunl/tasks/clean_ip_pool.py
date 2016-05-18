@@ -42,7 +42,6 @@ class TaskCleanIpPool(task.Task):
         for doc in response:
             user_id = doc['_id']['user_id']
             network = doc['_id']['network']
-
             doc_ids = doc['docs'][1:]
 
             for doc_id in doc_ids:
