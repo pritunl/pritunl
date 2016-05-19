@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Performance improvements for replicated servers
 Support multiple routing tables with VPC route advertisement
 Fix issue with host CPU and memory usage on some platforms
 
