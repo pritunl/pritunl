@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.22.980.85 2016-05-19
+------------------------------
 
 Performance improvements for replicated servers
 Support multiple routing tables with VPC route advertisement
