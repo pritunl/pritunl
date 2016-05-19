@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Support multiple routing tables with VPC route advertisement
 Fix issue with host CPU and memory usage on some platforms
 
 Version 1.22.977.72 2016-05-16
