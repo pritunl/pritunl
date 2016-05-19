@@ -7,3 +7,5 @@ requests>=2.9.1
 redis>=2.10.5
 python-dateutil>=2.5.3
 psutil>=4.1.0
+python-iptables>=0.10.0
+pyroute2==0.3.22
