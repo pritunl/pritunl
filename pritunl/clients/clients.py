@@ -21,9 +21,7 @@ import bson
 import hashlib
 import threading
 import uuid
-import subprocess
 
-_route_lock = threading.Lock()
 _limiter = limiter.Limiter('vpn', 'peer_limit', 'peer_limit_timeout')
 _port_listeners = {}
 _client_listeners = {}
@@ -966,58 +964,20 @@ class Clients(object):
             host_address, host_address6):
         virt_address = virt_address.split('/')[0]
 
-        _route_lock.acquire()
         try:
             if virt_address in self.client_routes:
-                self.client_routes.remove(virt_address)
                 try:
-                    utils.check_call_silent([
-                        'ip',
-                        'route',
-                        'del',
-                        virt_address,
-                    ])
-                except subprocess.CalledProcessError:
+                    self.client_routes.remove(virt_address)
+                except KeyError:
                     pass
+                utils.del_route(virt_address)
 
             if not host_address or host_address == \
                     settings.local.host.local_addr:
                 return
 
             self.client_routes.add(virt_address)
-
-            for i in xrange(3):
-                try:
-                    if i == 0:
-                        exec_func = utils.check_call_silent
-                    else:
-                        exec_func = utils.check_output_logged
-
-                    exec_func([
-                        'ip',
-                        'route',
-                        'add',
-                        virt_address,
-                        'via',
-                        host_address,
-                    ])
-
-                    break
-                except subprocess.CalledProcessError:
-                    if i == 0:
-                        try:
-                            utils.check_call_silent([
-                                'ip',
-                                'route',
-                                'del',
-                                virt_address,
-                            ])
-                        except subprocess.CalledProcessError:
-                            pass
-                    elif i == 2:
-                        raise
-                    else:
-                        time.sleep(0.2)
+            utils.add_route(virt_address, host_address)
         except:
             logger.exception('Failed to add route', 'clients',
                 virt_address=virt_address,
