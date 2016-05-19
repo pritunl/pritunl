@@ -985,32 +985,17 @@ class Clients(object):
                 host_address=host_address,
                 host_address6=host_address6,
             )
-        finally:
-            _route_lock.release()
 
     def remove_route(self, virt_address, virt_address6,
             host_address, host_address6):
-        if not host_address:
-            return
-
         virt_address = virt_address.split('/')[0]
 
-        _route_lock.acquire()
         try:
-            utils.check_call_silent([
-                'ip',
-                'route',
-                'del',
-                virt_address,
-            ])
-            try:
-                self.client_routes.remove(virt_address)
-            except KeyError:
-                pass
-        except subprocess.CalledProcessError:
+            self.client_routes.remove(virt_address)
+        except KeyError:
             pass
-        finally:
-            _route_lock.release()
+
+        utils.del_route(virt_address)
 
     def start(self):
         _port_listeners[self.instance.id] = self.on_port_forwarding
