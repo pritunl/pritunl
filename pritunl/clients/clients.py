@@ -969,27 +969,31 @@ class Clients(object):
         _route_lock.acquire()
         try:
             if virt_address in self.client_routes:
+                self.client_routes.remove(virt_address)
                 try:
-                    self.client_routes.remove(virt_address)
-                    try:
-                        utils.check_call_silent([
-                            'ip',
-                            'route',
-                            'del',
-                            virt_address,
-                        ])
-                    except subprocess.CalledProcessError:
-                        pass
-                except KeyError:
+                    utils.check_call_silent([
+                        'ip',
+                        'route',
+                        'del',
+                        virt_address,
+                    ])
+                except subprocess.CalledProcessError:
                     pass
 
             if not host_address or host_address == \
                     settings.local.host.local_addr:
                 return
 
+            self.client_routes.add(virt_address)
+
             for i in xrange(3):
                 try:
-                    utils.check_output_logged([
+                    if i == 0:
+                        exec_func = utils.check_call_silent
+                    else:
+                        exec_func = utils.check_output_logged
+
+                    exec_func([
                         'ip',
                         'route',
                         'add',
@@ -997,6 +1001,7 @@ class Clients(object):
                         'via',
                         host_address,
                     ])
+
                     break
                 except subprocess.CalledProcessError:
                     if i == 0:
@@ -1011,7 +1016,8 @@ class Clients(object):
                             pass
                     elif i == 2:
                         raise
-                    time.sleep(0.2)
+                    else:
+                        time.sleep(0.2)
         except:
             logger.exception('Failed to add route', 'clients',
                 virt_address=virt_address,
