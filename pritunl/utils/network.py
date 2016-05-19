@@ -9,12 +9,17 @@ import re
 import netifaces
 import collections
 import urlparse
+import threading
+import pyroute2.iproute
+import pyroute2.netlink
 
 _used_interfaces = set()
 _tun_interfaces = collections.deque(['tun%s' % _x for _x in xrange(100)])
 _tap_interfaces = collections.deque(['tap%s' % _x for _x in xrange(100)])
 _sock = None
 _sockfd = None
+_ip_route = pyroute2.iproute.IPRoute()
+_ip_route_lock = threading.Lock()
 
 def interface_acquire(interface_type):
     if interface_type == 'tun':
@@ -297,3 +302,50 @@ def redirect(location, code=302):
         if base_url:
             location = urlparse.urljoin(base_url, location)
     return flask.redirect(location, code)
+
+def del_route(dst_addr):
+    if '/' not in dst_addr:
+        dst_addr += '/32'
+
+    _ip_route_lock.acquire()
+    try:
+        _ip_route.route(
+            'del',
+            dst=dst_addr,
+        )
+    except pyroute2.netlink.exceptions.NetlinkError as err:
+        if err.code != 3:
+            raise
+    finally:
+        _ip_route_lock.release()
+
+def add_route(dst_addr, via_addr):
+    if '/' not in dst_addr:
+        dst_addr += '/32'
+
+    _ip_route_lock.acquire()
+    try:
+        _ip_route.route(
+            'add',
+            dst=dst_addr,
+            gateway=via_addr,
+        )
+    except pyroute2.netlink.exceptions.NetlinkError as err:
+        if err.code == 17:
+            try:
+                _ip_route.route(
+                    'del',
+                    dst=dst_addr,
+                )
+            except pyroute2.netlink.exceptions.NetlinkError as err:
+                if err.code != 3:
+                    raise
+            _ip_route.route(
+                'add',
+                dst=dst_addr,
+                gateway=via_addr,
+            )
+        else:
+            raise
+    finally:
+        _ip_route_lock.release()
