@@ -65,7 +65,7 @@ def setup_mongo():
 
     if prefix + 'messages' not in cur_collections:
         database.create_collection(prefix + 'messages', capped=True,
-            size=125000, max=1250)
+            size=200000, max=2000)
 
     mongo.collections.update({
         'time_sync': getattr(database, prefix + 'time_sync'),
