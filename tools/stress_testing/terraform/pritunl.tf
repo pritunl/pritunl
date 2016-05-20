@@ -28,6 +28,7 @@ resource "aws_instance" "node" {
     ami = "ami-ab8d66c6"
     instance_type = "c4.large"
     availability_zone = "us-east-1e"
+    source_dest_check = false
     vpc_security_group_ids = ["sg-48e43533"]
     subnet_id = "subnet-c1f1a8fc"
     tags = {
