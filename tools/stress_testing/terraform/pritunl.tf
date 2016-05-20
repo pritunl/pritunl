@@ -54,9 +54,9 @@ resource "aws_route53_record" "node2" {
 }
 
 resource "aws_instance" "client" {
-    count = 20
-    ami = "ami-bb806bd6"
-    instance_type = "r3.xlarge"
+    count = 40
+    ami = "ami-ea4ea487"
+    instance_type = "r3.large"
     availability_zone = "us-east-1e"
     vpc_security_group_ids = ["sg-acfd2cd7"]
     subnet_id = "subnet-c1f1a8fc"
@@ -66,7 +66,7 @@ resource "aws_instance" "client" {
 }
 
 resource "aws_route53_record" "client" {
-    count = 20
+    count = 40
     zone_id = "Z5BPZC3LYPA7M"
     name = "sc${count.index}.pritunl.net"
     type = "A"
