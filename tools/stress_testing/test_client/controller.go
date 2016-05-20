@@ -1,22 +1,26 @@
 package main
 
 import (
-	"flag"
 	"fmt"
+	"github.com/gin-gonic/gin"
+	"io/ioutil"
 	"net/http"
-	"os"
 	"os/exec"
-	"os/signal"
 	"strconv"
 	"strings"
 	"sync"
-	"syscall"
 	"time"
 )
 
-const count = 500
+const (
+	commander = "scmd.pritunl.net"
+	count     = 250
+)
 
-var host = 0
+var (
+	hostIndex = 0
+	cids      []string
+)
 
 func ExecOutput(name string, args ...string) (output string, err error) {
 	cmd := exec.Command(name, args...)
@@ -30,68 +34,85 @@ func ExecOutput(name string, args ...string) (output string, err error) {
 	return
 }
 
+func Event() {
+	_, err := http.Get(
+		fmt.Sprintf("http://%s:4000/event/%d", commander, hostIndex))
+	if err != nil {
+		panic(err)
+	}
+}
+
 func Setup() {
-	cids := []string{}
+	cids = []string{}
 
-	defer func() {
-		waiter := sync.WaitGroup{}
-		waiter.Add(len(cids))
-		for _, cid := range cids {
-			go func(cid string) {
-				ExecOutput("docker", "kill", cid)
-				ExecOutput("docker", "rm", cid)
-				println(cid)
-				waiter.Done()
-			}(cid)
+	for i := 1 + (hostIndex * count); i <= count+(hostIndex*count); i++ {
+		for {
+			cid, err := ExecOutput(
+				"docker",
+				"run",
+				"-d",
+				"--privileged",
+				"-p", fmt.Sprintf("%d:%d", 4000+i, 4000+i),
+				"test_client",
+				"--num", fmt.Sprintf("%d", i),
+			)
+			if err != nil {
+				time.Sleep(1 * time.Second)
+				continue
+			}
 
-			time.Sleep(5 * time.Millisecond)
+			cid = strings.TrimSpace(cid)
+			fmt.Println(cid)
+			cids = append(cids, cid)
+			Event()
+
+			break
 		}
-		waiter.Wait()
-	}()
-
-	for i := 1 + (host * count); i <= count+(host*count); i++ {
-		cid, err := ExecOutput(
-			"docker",
-			"run",
-			"-d",
-			"--privileged",
-			"-p", fmt.Sprintf("%d:%d", 4000+i, 4000+i),
-			"test_client",
-			"--num", fmt.Sprintf("%d", i),
-		)
-		if err != nil {
-			panic(err)
-		}
-
-		cid = strings.TrimSpace(cid)
-		fmt.Println(cid)
-		cids = append(cids, cid)
 
 		time.Sleep(5 * time.Millisecond)
 	}
 
 	fmt.Println("\n")
+}
 
-	signals := make(chan os.Signal, 1)
-	signal.Notify(signals, os.Interrupt)
-	signal.Notify(signals, syscall.SIGTERM)
-	<-signals
+func Close() {
+	waiter := sync.WaitGroup{}
+	waiter.Add(len(cids))
+	for _, cid := range cids {
+		go func(cid string) {
+			ExecOutput("docker", "kill", cid)
+			ExecOutput("docker", "rm", cid)
+			println(cid)
+			Event()
+			waiter.Done()
+		}(cid)
+
+		time.Sleep(5 * time.Millisecond)
+	}
+	waiter.Wait()
 }
 
 func Start() {
 	waiter := sync.WaitGroup{}
 	waiter.Add(count)
 
-	for i := 1 + (host * count); i <= count+(host*count); i++ {
+	for i := 1 + (hostIndex * count); i <= count+(hostIndex*count); i++ {
 		go func(i int) {
+			fmt.Println(fmt.Sprintf("+http://localhost:%d/start", 4000+i))
 			resp, err := http.Get(
 				fmt.Sprintf("http://localhost:%d/start", 4000+i))
 			if err != nil {
 				return
 			}
+			defer resp.Body.Close()
 
 			if resp.StatusCode != 200 {
-				panic(fmt.Sprintf("failed to start %d", i))
+				body, _ := ioutil.ReadAll(resp.Body)
+				if !strings.Contains(string(body), "already started") {
+					fmt.Println("already started")
+				} else {
+					panic(fmt.Sprintf("failed to start %d", i))
+				}
 			}
 
 			fmt.Println(fmt.Sprintf("http://localhost:%d/start", 4000+i))
@@ -107,7 +128,7 @@ func Stop() {
 	waiter := sync.WaitGroup{}
 	waiter.Add(count)
 
-	for i := 1 + (host * count); i <= count+(host*count); i++ {
+	for i := 1 + (hostIndex * count); i <= count+(hostIndex*count); i++ {
 		go func(i int) {
 			resp, err := http.Get(
 				fmt.Sprintf("http://localhost:%d/stop", 4000+i))
@@ -132,7 +153,7 @@ func Ping() {
 	waiter := sync.WaitGroup{}
 	waiter.Add(count)
 
-	for i := 1 + (host * count); i <= count+(host*count); i++ {
+	for i := 1 + (hostIndex * count); i <= count+(hostIndex*count); i++ {
 		go func(i int) {
 			resp, err := http.Get(
 				fmt.Sprintf("http://localhost:%d/ping", 4000+i))
@@ -157,7 +178,7 @@ func Download() {
 	waiter := sync.WaitGroup{}
 	waiter.Add(count)
 
-	for i := 1 + (host * count); i <= count+(host*count); i++ {
+	for i := 1 + (hostIndex * count); i <= count+(hostIndex*count); i++ {
 		go func(i int) {
 			resp, err := http.Get(
 				fmt.Sprintf("http://localhost:%d/download", 4000+i))
@@ -179,23 +200,50 @@ func Download() {
 }
 
 func main() {
-	flag.Parse()
-
-	hostStr := os.Getenv("HOST")
-	if hostStr != "" {
-		host, _ = strconv.Atoi(hostStr)
+	resp, err := http.Get(
+		fmt.Sprintf("http://%s:4000/register", commander))
+	if err != nil {
+		panic(err)
 	}
 
-	switch flag.Arg(0) {
-	case "setup":
-		Setup()
-	case "start":
+	hostIndexStr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
+	resp.Body.Close()
+	hostIndex, _ = strconv.Atoi(string(hostIndexStr))
+
+	r := gin.Default()
+
+	r.GET("/setup", func(c *gin.Context) {
+		go Setup()
+		c.String(200, "")
+	})
+
+	r.GET("/close", func(c *gin.Context) {
+		go Close()
+		c.String(200, "")
+	})
+
+	r.GET("/start", func(c *gin.Context) {
 		Start()
-	case "stop":
+		c.String(200, "")
+	})
+
+	r.GET("/stop", func(c *gin.Context) {
 		Stop()
-	case "ping":
+		c.String(200, "")
+	})
+
+	r.GET("/ping", func(c *gin.Context) {
 		Ping()
-	case "download":
+		c.String(200, "")
+	})
+
+	r.GET("/download", func(c *gin.Context) {
 		Download()
-	}
+		c.String(200, "")
+	})
+
+	r.Run(":3800")
 }
