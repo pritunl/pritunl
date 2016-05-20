@@ -8,7 +8,6 @@ import (
 	"os/exec"
 	"flag"
 	"github.com/gin-gonic/gin"
-	"errors"
 )
 
 var (
@@ -35,7 +34,6 @@ func ExecOutput(name string, args ...string) (output string, err error) {
 
 func run() (err error) {
 	if cmd != nil {
-		err = errors.New("already started")
 		return
 	}
 
