@@ -28,7 +28,8 @@ define([
         'dns_servers': ['8.8.8.8'],
         'cipher': 'aes256',
         'hash': 'sha1',
-        'inter_client': true
+        'inter_client': true,
+        'restrict_routes': true
       });
       ModalAddServerView.__super__.initialize.call(this, options);
     },
