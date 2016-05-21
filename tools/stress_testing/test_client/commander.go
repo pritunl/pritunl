@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/dropbox/godropbox/container/set"
 	"github.com/gin-gonic/gin"
 	"github.com/sethgrid/multibar"
 	"net/http"
@@ -16,7 +17,7 @@ const (
 )
 
 var (
-	hosts = []string{}
+	hosts      = set.NewSet()
 	hostsLock  = sync.Mutex{}
 	bars       []*Bar
 	barsWaiter sync.WaitGroup
@@ -46,14 +47,14 @@ func Print(msg string) {
 func Setup() (err error) {
 	bars = []*Bar{}
 	barsWaiter = sync.WaitGroup{}
-	barsWaiter.Add(len(hosts))
+	barsWaiter.Add(hosts.Len())
 
 	barContainer, err := multibar.New()
 	if err != nil {
 		return
 	}
 
-	for i, _ := range hosts {
+	for i := 0; i < hosts.Len(); i += 1 {
 		bar := &Bar{
 			size: controllerSize,
 			setter: barContainer.MakeBar(
@@ -64,7 +65,9 @@ func Setup() (err error) {
 
 	go barContainer.Listen()
 
-	for _, host := range hosts {
+	for hostInf := range hosts.Iter() {
+		host := hostInf.(string)
+
 		resp, e := http.Get(
 			fmt.Sprintf("http://%s:3800/setup", host))
 		if e != nil {
@@ -94,7 +97,7 @@ func Close() (err error) {
 		return
 	}
 
-	for i, _ := range hosts {
+	for i := 0; i < hosts.Len(); i += 1 {
 		bar := &Bar{
 			size: controllerSize,
 			setter: barContainer.MakeBar(
@@ -106,7 +109,9 @@ func Close() (err error) {
 
 	go barContainer.Listen()
 
-	for _, host := range hosts {
+	for hostInf := range hosts.Iter() {
+		host := hostInf.(string)
+
 		resp, e := http.Get(
 			fmt.Sprintf("http://%s:3800/close", host))
 		if e != nil {
@@ -133,13 +138,16 @@ func Start(delay int) (err error) {
 		return
 	}
 
-	setter := barContainer.MakeBar(len(hosts), "STATUS:")
+	setter := barContainer.MakeBar(hosts.Len(), "STATUS:")
 	go barContainer.Listen()
 
 	time.Sleep(100 * time.Millisecond)
 	setter(0)
 
-	for i, host := range hosts {
+	i := 0
+	for hostInf := range hosts.Iter() {
+		host := hostInf.(string)
+
 		_, err = http.Get(
 			fmt.Sprintf("http://%s:3800/start", host))
 		if err != nil {
@@ -147,9 +155,11 @@ func Start(delay int) (err error) {
 		}
 		setter(i + 1)
 
-		if i < len(hosts)-1 {
+		if i < hosts.Len()-1 {
 			time.Sleep(time.Duration(delay) * time.Second)
 		}
+
+		i += 1
 	}
 
 	time.Sleep(1 * time.Second)
@@ -164,13 +174,16 @@ func Stop() (err error) {
 		return
 	}
 
-	setter := barContainer.MakeBar(len(hosts), "STATUS:")
+	setter := barContainer.MakeBar(hosts.Len(), "STATUS:")
 	go barContainer.Listen()
 
 	time.Sleep(100 * time.Millisecond)
 	setter(0)
 
-	for i, host := range hosts {
+	i := 0
+	for hostInf := range hosts.Iter() {
+		host := hostInf.(string)
+
 		resp, e := http.Get(
 			fmt.Sprintf("http://%s:3800/stop", host))
 		if e != nil {
@@ -184,6 +197,8 @@ func Stop() (err error) {
 		}
 
 		setter(i + 1)
+
+		i += 1
 	}
 
 	time.Sleep(1 * time.Second)
@@ -195,7 +210,12 @@ func Stop() (err error) {
 func Command(cmd, arg string) (err error) {
 	switch cmd {
 	case "status":
-		fmt.Printf("%d HOSTS REGISTERED\n", len(hosts))
+		for hostInf := range hosts.Iter() {
+			host := hostInf.(string)
+
+			fmt.Printf("HOST: %s\n", string(host))
+		}
+		fmt.Printf("%d HOSTS REGISTERED\n", hosts.Len())
 		break
 	case "setup":
 		Setup()
@@ -225,8 +245,8 @@ func main() {
 		addr = addr[:strings.LastIndex(addr, ":")]
 
 		hostsLock.Lock()
-		hosts = append(hosts, addr)
-		index := len(hosts) - 1
+		hosts.Add(addr)
+		index := hosts.Len() - 1
 		hostsLock.Unlock()
 
 		Print(fmt.Sprintf("%d HOSTS REGISTERED", index+1))
@@ -236,7 +256,7 @@ func main() {
 
 	r.GET("/event/:index", func(c *gin.Context) {
 		hostIndex, _ := strconv.Atoi(c.Param("index"))
-		bars[hostIndex].Incr()
+		go bars[hostIndex].Incr()
 		c.String(200, "")
 	})
 
