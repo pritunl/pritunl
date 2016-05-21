@@ -14,10 +14,9 @@ import traceback
 import uuid
 
 class ServerInstanceLink(object):
-    def __init__(self, server, linked_server, linked_host=None):
+    def __init__(self, server, linked_server):
         self.server = server
         self.linked_server = linked_server
-        self.linked_host = linked_host
 
         self.process = None
         self.interface = None
@@ -32,10 +31,7 @@ class ServerInstanceLink(object):
 
     @cached_property
     def output_label(self):
-        if self.linked_host:
-            return settings.local.host.name +  '->' + self.linked_host.name
-        else:
-            return self.server.name + '<->' + self.linked_server.name
+        return self.server.name + '<->' + self.linked_server.name
 
     def generate_client_conf(self):
         if not os.path.exists(self._temp_path):
@@ -44,13 +40,7 @@ class ServerInstanceLink(object):
         self.interface = utils.interface_acquire(
             self.linked_server.adapter_type)
 
-        if self.linked_host:
-            remotes = 'remote %s %s' % (
-                self.host.link_addr,
-                self.linked_server.port,
-            )
-        else:
-            remotes = self.linked_server.get_key_remotes(True)
+        remotes = self.linked_server.get_key_remotes(True)
 
         client_conf = OVPN_INLINE_LINK_CONF % (
             uuid.uuid4().hex,
