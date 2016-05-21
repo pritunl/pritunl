@@ -54,7 +54,7 @@ resource "aws_route53_record" "node2" {
 }
 
 resource "aws_instance" "client" {
-    count = 40
+    count = 80
     ami = "ami-ea4ea487"
     instance_type = "r3.large"
     availability_zone = "us-east-1e"
@@ -66,10 +66,10 @@ resource "aws_instance" "client" {
 }
 
 resource "aws_route53_record" "client" {
-    count = 40
+    count = 80
     zone_id = "Z5BPZC3LYPA7M"
     name = "sc${count.index}.pritunl.net"
     type = "A"
     ttl = "10"
-    records = ["${element(aws_instance.client.*.public_ip, count.index)}"]
+    records = ["${element(aws_instance.client.*.private_ip, count.index)}"]
 }
