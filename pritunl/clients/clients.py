@@ -925,8 +925,11 @@ class Clients(object):
                     server_id=self.server.id,
                 )
 
-    def on_client(self, state, virt_address, virt_address6,
+    def on_client(self, state, server_id, virt_address, virt_address6,
             host_address, host_address6):
+        if server_id != self.server.id:
+            return
+
         if state:
             self.clients_call_queue.put(self.add_route, virt_address,
                 virt_address6, host_address, host_address6)
@@ -1044,6 +1047,7 @@ def on_client(msg):
     for listener in _client_listeners.values():
         listener(
             msg['message']['state'],
+            msg['message'].get('server_id'),
             msg['message']['virt_address'],
             msg['message']['virt_address6'],
             msg['message']['host_address'],
