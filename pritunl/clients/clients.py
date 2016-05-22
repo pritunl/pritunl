@@ -679,6 +679,7 @@ class Clients(object):
             if self.route_clients:
                 messenger.publish('client', {
                     'state': True,
+                    'server_id': self.server.id,
                     'virt_address': client['virt_address'],
                     'virt_address6': client['virt_address6'],
                     'host_address': settings.local.host.local_addr,
@@ -730,6 +731,7 @@ class Clients(object):
         if self.route_clients:
             messenger.publish('client', {
                 'state': False,
+                'server_id': self.server.id,
                 'virt_address': client['virt_address'],
                 'virt_address6': client['virt_address6'],
                 'host_address': settings.local.host.local_addr,
