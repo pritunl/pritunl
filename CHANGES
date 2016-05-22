@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add Chromebook hostname to server settings
+Improve replicated servers
 
 Version 1.22.980.85 2016-05-19
 ------------------------------
