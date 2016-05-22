@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add Chromebook hostname to server settings
+
 Version 1.22.980.85 2016-05-19
 ------------------------------
 
