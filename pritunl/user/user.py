@@ -541,8 +541,8 @@ class User(mongo.MongoObject):
         conf_hash.update(str(self.id))
         conf_hash = '{%s}' % conf_hash.hexdigest()
 
-        hosts = svr.get_hosts()
-        if not hosts:
+        host, port = svr.get_onc_host()
+        if not host:
             return None, None
 
         ca_certs = svr.ca_certificate_list
@@ -588,12 +588,12 @@ class User(mongo.MongoObject):
         onc_conf = OVPN_ONC_CLIENT_CONF % (
             conf_hash,
             '%s - %s (%s)' % (self.name, self.org.name, svr.name),
-            hosts[0][0], # TODO
+            host,
             HASHES[svr.hash],
             ONC_CIPHERS[svr.cipher],
             client_ref,
             'adaptive' if svr.lzo_compression == ADAPTIVE else 'false',
-            hosts[0][1], # TODO
+            port,
             svr.protocol,
             server_ref,
             tls_auth,
