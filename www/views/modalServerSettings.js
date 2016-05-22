@@ -310,6 +310,7 @@ define([
       var multiDevice = this.getMultiDeviceSelect();
       var dnsServers = this.getDnsServers();
       var searchDomain = this.$('.search-domain input').val();
+      var oncHostname = this.$('.onc-hostname input').val();
       var interClient = this.getInterClientSelect();
       var pingInterval = parseInt(this.$('.ping-interval input').val(), 10);
       var pingTimeout = parseInt(this.$('.ping-timeout input').val(), 10);
@@ -348,6 +349,9 @@ define([
       if (!searchDomain) {
         searchDomain = null;
       }
+      if (!oncHostname) {
+        oncHostname = null;
+      }
       if (isNaN(replicaCount) || replicaCount === 0) {
         replicaCount = 1;
       }
@@ -382,6 +386,7 @@ define([
         'ping_timeout': pingTimeout,
         'link_ping_interval': linkPingInterval,
         'link_ping_timeout': linkPingTimeout,
+        'onc_hostname': oncHostname,
         'max_clients': maxClients,
         'replica_count': replicaCount,
         'dns_mapping': dnsMapping,
