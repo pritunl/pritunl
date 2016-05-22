@@ -314,6 +314,12 @@ def server_put_post(server_id=None):
         if not link_ping_timeout:
             link_ping_timeout = 5
 
+    onc_hostname = None
+    onc_hostname_def = False
+    if 'onc_hostname' in flask.request.json:
+        onc_hostname_def = True
+        onc_hostname = utils.filter_str(flask.request.json['onc_hostname'])
+
     max_clients = None
     max_clients_def = False
     if 'max_clients' in flask.request.json:
@@ -494,6 +500,7 @@ def server_put_post(server_id=None):
             ping_timeout=ping_timeout,
             link_ping_interval=link_ping_interval,
             link_ping_timeout=link_ping_timeout,
+            onc_hostname=onc_hostname,
             max_clients=max_clients,
             replica_count=replica_count,
             dns_mapping=dns_mapping,
@@ -573,6 +580,8 @@ def server_put_post(server_id=None):
             svr.link_ping_interval = link_ping_interval
         if link_ping_timeout_def:
             svr.link_ping_timeout = link_ping_timeout
+        if onc_hostname_def:
+            svr.onc_hostname = onc_hostname
         if max_clients_def:
             svr.max_clients = max_clients
         if replica_count_def:
