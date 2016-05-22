@@ -45,6 +45,7 @@ dict_fields = [
     'bind_address',
     'port',
     'protocol',
+    'onc_hostname',
     'dh_param_bits',
     'dh_params',
     'multi_device',
@@ -101,6 +102,7 @@ class Server(mongo.MongoObject):
         'ping_timeout',
         'link_ping_interval',
         'link_ping_timeout',
+        'onc_hostname',
         'dns_mapping',
         'debug',
         'cipher',
@@ -163,8 +165,9 @@ class Server(mongo.MongoObject):
             dns_servers=None, search_domain=None, otp_auth=None,
             cipher=None, hash=None, jumbo_frames=None, lzo_compression=None,
             inter_client=None, ping_interval=None, ping_timeout=None,
-            link_ping_interval=None, link_ping_timeout=None, max_clients=None,
-            replica_count=None, dns_mapping=None, debug=None, **kwargs):
+            link_ping_interval=None, link_ping_timeout=None, onc_hostname=None,
+            max_clients=None, replica_count=None, dns_mapping=None, debug=None,
+            **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         if 'network' in self.loaded_fields:
@@ -225,6 +228,8 @@ class Server(mongo.MongoObject):
             self.link_ping_interval = link_ping_interval
         if link_ping_timeout is not None:
             self.link_ping_timeout = link_ping_timeout
+        if onc_hostname is not None:
+            self.onc_hostname = onc_hostname
         if max_clients is not None:
             self.max_clients = max_clients
         if replica_count is not None:
@@ -291,6 +296,7 @@ class Server(mongo.MongoObject):
             'ping_timeout': self.ping_timeout,
             'link_ping_interval': self.link_ping_interval,
             'link_ping_timeout': self.link_ping_timeout,
+            'onc_hostname': self.onc_hostname,
             'max_clients': self.max_clients,
             'replica_count': self.replica_count,
             'dns_mapping': True if self.dns_mapping else False,
