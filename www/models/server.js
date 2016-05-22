@@ -26,6 +26,7 @@ define([
       'restrict_routes': null,
       'multi_device': null,
       'dns_servers': null,
+      'onc_hostname': null,
       'search_domain': null,
       'otp_auth': null,
       'cipher': null,
