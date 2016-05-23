@@ -5,6 +5,7 @@ Pritunl Changelog
 
 Add Chromebook hostname to server settings
 Improve replicated servers
+Performance improvements for high demand clusters
 
 Version 1.22.980.85 2016-05-19
 ------------------------------
