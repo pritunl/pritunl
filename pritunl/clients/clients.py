@@ -788,9 +788,20 @@ class Clients(object):
 
     def send_event(self):
         for org_id in self.server.organizations:
-            event.Event(type=USERS_UPDATED, resource_id=org_id)
-        event.Event(type=HOSTS_UPDATED, resource_id=settings.local.host_id)
-        event.Event(type=SERVERS_UPDATED)
+            event.Event(
+                type=USERS_UPDATED,
+                resource_id=org_id,
+                delay=SERVER_EVENT_DELAY,
+            )
+        event.Event(
+            type=HOSTS_UPDATED,
+            resource_id=settings.local.host_id,
+            delay=SERVER_EVENT_DELAY,
+        )
+        event.Event(
+            type=SERVERS_UPDATED,
+            delay=SERVER_EVENT_DELAY,
+        )
 
     def interrupter_sleep(self, length):
         if check_global_interrupt() or self.instance.sock_interrupt:
