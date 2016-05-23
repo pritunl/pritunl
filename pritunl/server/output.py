@@ -15,15 +15,23 @@ class ServerOutput(object):
     def collection(cls):
         return mongo.get_collection('servers_output')
 
-    def send_event(self):
-        event.Event(type=SERVER_OUTPUT_UPDATED, resource_id=self.server_id,
-            delay=OUTPUT_DELAY)
+    def send_event(self, delay=True):
+        if delay:
+            delay = SERVER_OUTPUT_DELAY
+        else:
+            delay = None
+
+        event.Event(
+            type=SERVER_OUTPUT_UPDATED,
+            resource_id=self.server_id,
+            delay=delay,
+        )
 
     def clear_output(self):
         self.collection.remove({
             'server_id': self.server_id,
         })
-        self.send_event()
+        self.send_event(delay=False)
 
     def prune_output(self):
         response = self.collection.aggregate([
