@@ -3,14 +3,13 @@ from pritunl import event
 from pritunl import logger
 
 import time
-import collections
 import threading
 
 @interrupter
 def _event_runner_thread():
     evt_queue = event.event_queue
     events = {}
-    del_evts = collections.deque()
+    del_evts = []
 
     while True:
         try:
@@ -28,10 +27,10 @@ def _event_runner_thread():
                         event.Event(evt_type, resource_id)
                         del_evts.append((evt_type, resource_id))
 
-                while True:
-                    if not del_evts:
-                        break
-                    del events[del_evts.pop()]
+                if del_evts:
+                    for evt_key in del_evts:
+                        del events[evt_key]
+                    del_evts = []
 
                 if not events:
                     break
