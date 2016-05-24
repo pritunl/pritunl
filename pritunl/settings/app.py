@@ -3,6 +3,7 @@ from pritunl.settings.group_mongo import SettingsGroupMongo
 class SettingsApp(SettingsGroupMongo):
     group = 'app'
     fields = {
+        'secondary_mongodb_uri': None,
         'redis_uri': None,
         'redis_timeout': 6,
         'server_ssl': True,
