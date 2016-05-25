@@ -52,11 +52,15 @@ def _event(event_type, **kwargs):
         handler(**kwargs)
 
 def event(event_type, **kwargs):
+    if settings.local.sub_plan == 'enterprise':
+        return
     if not _has_plugins or event_type not in _handlers:
         return
     _queue.put(_event, event_type, **kwargs)
 
 def caller(caller_type, **kwargs):
+    if settings.local.sub_plan == 'enterprise':
+        return
     if not _has_plugins or caller_type not in _handlers:
         return
 
