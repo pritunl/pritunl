@@ -797,6 +797,18 @@ class Clients(object):
                     'user': user.name,
                     'remote_ip': remote_ip,
                 })
+                plugins.event(
+                    'user_disconnected',
+                    host_id=settings.local.host_id,
+                    server_id=self.server.id,
+                    org_id=org.id,
+                    user_id=user.id,
+                    host_name=settings.local.host.name,
+                    server_name=self.server.name,
+                    org_name=org.name,
+                    user_name=user.name,
+                    remote_ip=remote_ip,
+                )
 
         if self.route_clients:
             messenger.publish('client', {
