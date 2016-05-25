@@ -37,7 +37,7 @@ def init():
         file_name, file_ext = os.path.splitext(file_name)
         if file_ext != '.py':
             continue
-        modules.append(imp.load_source('plugin.' + file_name, file_path))
+        modules.append(imp.load_source('plugin_' + file_name, file_path))
 
     for module in modules:
         for call_type, handler in _get_functions(module).iteritems():
