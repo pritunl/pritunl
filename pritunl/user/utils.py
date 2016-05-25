@@ -20,7 +20,7 @@ def new_pooled_user(org, type):
 def reserve_pooled_user(org, name=None, email=None, pin=None, type=CERT_CLIENT,
         auth_type=None, disabled=None, resource_id=None,
         dns_servers=None, dns_suffix=None, bypass_secondary=None,
-        port_forwarding=None):
+        client_to_client=None, port_forwarding=None):
     doc = {}
 
     if name is not None:
@@ -43,6 +43,8 @@ def reserve_pooled_user(org, name=None, email=None, pin=None, type=CERT_CLIENT,
         doc['dns_suffix'] = dns_suffix
     if bypass_secondary is not None:
         doc['bypass_secondary'] = bypass_secondary
+    if client_to_client is not None:
+        doc['client_to_client'] = client_to_client
     if port_forwarding is not None:
         doc['port_forwarding'] = port_forwarding
 
