@@ -82,6 +82,7 @@ def user_get(org_id, user_id=None, page=None):
         'otp_secret',
         'disabled',
         'bypass_secondary',
+        'client_to_client',
         'dns_servers',
         'dns_suffix',
         'port_forwarding',
@@ -224,7 +225,10 @@ def user_post(org_id):
             pin = utils.filter_str(user_data.get('pin')) or None
             disabled = user_data.get('disabled')
             network_links = user_data.get('network_links')
-            bypass_secondary = user_data.get('bypass_secondary')
+            bypass_secondary = True if user_data.get(
+                'bypass_secondary') else False
+            client_to_client = True if user_data.get(
+                'client_to_client') else False
             dns_servers = user_data.get('dns_servers') or None
             dns_suffix = utils.filter_str(user_data.get('dns_suffix')) or None
             port_forwarding_in = user_data.get('port_forwarding')
@@ -255,8 +259,8 @@ def user_post(org_id):
 
             user = org.new_user(type=CERT_CLIENT, name=name, email=email,
                 pin=pin, disabled=disabled, bypass_secondary=bypass_secondary,
-                dns_servers=dns_servers, dns_suffix=dns_suffix,
-                port_forwarding=port_forwarding)
+                client_to_client=client_to_client, dns_servers=dns_servers,
+                dns_suffix=dns_suffix, port_forwarding=port_forwarding)
             user.audit_event('user_created',
                 'User created from web console',
                 remote_addr=utils.get_remote_addr(),
@@ -420,6 +424,10 @@ def user_put(org_id, user_id):
     bypass_secondary = flask.request.json.get('bypass_secondary')
     if bypass_secondary is not None:
         user.bypass_secondary = True if bypass_secondary else False
+
+    client_to_client = flask.request.json.get('client_to_client')
+    if client_to_client is not None:
+        user.client_to_client = True if client_to_client else False
 
     if 'dns_servers' in flask.request.json:
         dns_servers = flask.request.json['dns_servers'] or None
