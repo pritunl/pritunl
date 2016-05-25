@@ -1070,7 +1070,7 @@ class Clients(object):
         host.global_servers.add(self.instance.id)
         if self.server.dns_mapping:
             host.dns_mapping_servers.add(self.instance.id)
-        self.call_queue.start(10)
+        self.call_queue.start(settings.vpn.call_queue_threads)
 
         if self.route_clients:
             thread = threading.Thread(target=self.init_routes)
