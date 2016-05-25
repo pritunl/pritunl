@@ -151,6 +151,7 @@ def setup_mongo():
 
     settings.init()
 
+    cur_collections = database.collection_names()
     if prefix + 'logs' not in cur_collections:
         log_limit = settings.app.log_limit
         database.create_collection(prefix + 'logs', capped=True,
