@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add support for secondary MongoDB server
+
 Version 1.22.984.30 2016-05-23
 ------------------------------
 
