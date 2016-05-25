@@ -14,7 +14,8 @@ define([
     hasAdvanced: true,
     events: function() {
       return _.extend({
-        'click .bypass-secondary-toggle': 'onBypassSecondarySelect'
+        'click .bypass-secondary-toggle': 'onBypassSecondarySelect',
+        'click .client-to-client-toggle': 'onClientToClientSelect'
       }, ModalRenameUserView.__super__.events);
     },
     body: function() {
@@ -79,6 +80,22 @@ define([
     onBypassSecondarySelect: function() {
       this.setBypassSecondarySelect(!this.getBypassSecondarySelect());
     },
+    getClientToClientSelect: function() {
+      return this.$('.client-to-client-toggle .selector').hasClass('selected');
+    },
+    setClientToClientSelect: function(state) {
+      if (state) {
+        this.$('.client-to-client-toggle .selector').addClass('selected');
+        this.$('.client-to-client-toggle .selector-inner').show();
+      }
+      else {
+        this.$('.client-to-client-toggle .selector').removeClass('selected');
+        this.$('.client-to-client-toggle .selector-inner').hide();
+      }
+    },
+    onClientToClientSelect: function() {
+      this.setClientToClientSelect(!this.getClientToClientSelect());
+    },
     onOk: function() {
       var i;
       var name = this.$('.name input').val();
@@ -87,6 +104,7 @@ define([
       var dnsSuffix = this.$('.dns-suffix input').val();
       var pin = this.$('.pin input').val() || null;
       var bypassSecondary = this.getBypassSecondarySelect();
+      var clientToClient = this.getClientToClientSelect();
       var portForwarding = this.getPortForwarding();
 
       if (pin === '******') {
@@ -133,6 +151,7 @@ define([
         pin: pin,
         network_links: networkLinks,
         bypass_secondary: bypassSecondary,
+        client_to_client: clientToClient,
         dns_servers: dnsServers,
         dns_suffix: dnsSuffix,
         port_forwarding: portForwarding
