@@ -102,7 +102,7 @@ def setup_mongo():
     cur_collections = secondary_database.collection_names()
     if prefix + 'messages' not in cur_collections:
         secondary_database.create_collection(prefix + 'messages', capped=True,
-            size=200192, max=1500)
+            size=5000192, max=1500)
 
     mongo.collections.update({
         'transaction': getattr(database, prefix + 'transaction'),
