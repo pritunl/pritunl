@@ -422,8 +422,8 @@ class Clients(object):
             user = org.get_user(user_id, fields=(
                 '_id', 'name', 'email', 'pin', 'type', 'auth_type',
                 'disabled', 'otp_secret', 'link_server_id',
-                'bypass_secondary', 'dns_servers', 'dns_suffix',
-                'port_forwarding'))
+                'bypass_secondary', 'client_to_client', 'dns_servers',
+                'dns_suffix', 'port_forwarding'))
             if not user:
                 self.instance_com.send_client_deny(client_id, key_id,
                     'User is not valid')
@@ -474,7 +474,11 @@ class Clients(object):
         if not org:
             return
 
-        usr = org.get_user(user_id)
+        usr = org.get_user(user_id, fields=(
+            '_id', 'name', 'email', 'pin', 'type', 'auth_type',
+            'disabled', 'otp_secret', 'link_server_id',
+            'bypass_secondary', 'client_to_client', 'dns_servers',
+            'dns_suffix', 'port_forwarding'))
         if not usr:
             return
 
@@ -498,14 +502,61 @@ class Clients(object):
         self.set_iptables_rules(rules, rules6)
 
     def generate_iptables_rules(self, usr, virt_address, virt_address6):
-        if not usr.port_forwarding:
-            return [], []
+        rules = []
+        rules6 = []
 
         client_addr = virt_address.split('/')[0]
         client_addr6 = virt_address6.split('/')[0]
 
-        rules = []
-        rules6 = []
+        if usr.client_to_client:
+            for chain in ('INPUT', 'OUTPUT', 'FORWARD'):
+                rules.append([
+                    chain,
+                    '-d', client_addr,
+                    '-j', 'DROP',
+                ])
+                rules6.append([
+                    chain,
+                    '-d', client_addr6,
+                    '-j', 'DROP',
+                ])
+                rules.append([
+                    chain,
+                    '-s', client_addr,
+                    '-j', 'DROP',
+                ])
+                rules6.append([
+                    chain,
+                    '-s', client_addr6,
+                    '-j', 'DROP',
+                ])
+                rules.append([
+                    chain,
+                    '-d', client_addr,
+                    '-s', self.server.network,
+                    '-j', 'ACCEPT',
+                ])
+                rules6.append([
+                    chain,
+                    '-d', client_addr6,
+                    '-s', self.server.network6,
+                    '-j', 'ACCEPT',
+                ])
+                rules.append([
+                    chain,
+                    '-s', client_addr,
+                    '-d', self.server.network,
+                    '-j', 'ACCEPT',
+                ])
+                rules6.append([
+                    chain,
+                    '-s', client_addr6,
+                    '-d', self.server.network6,
+                    '-j', 'ACCEPT',
+                ])
+
+        if not usr.port_forwarding:
+            return rules, rules6
 
         forward_base_args = [
             'FORWARD',
