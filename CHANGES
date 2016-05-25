@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with user creation
+
 Version 1.22.986.23 2016-05-25
 ------------------------------
 
