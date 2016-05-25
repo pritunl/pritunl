@@ -109,7 +109,7 @@ def setup_mongo():
         'queue': getattr(database, prefix + 'queue'),
         'tasks': getattr(database, prefix + 'tasks'),
         'settings': getattr(database, prefix + 'settings'),
-        'messages': getattr(database, prefix + 'messages'),
+        'messages': getattr(secondary_database, prefix + 'messages'),
         'administrators': getattr(database, prefix + 'administrators'),
         'users': getattr(database, prefix + 'users'),
         'users_audit': getattr(database, prefix + 'users_audit'),
@@ -127,12 +127,12 @@ def setup_mongo():
         'servers_ip_pool': getattr(database, prefix + 'servers_ip_pool'),
         'routes_reserve': getattr(database, prefix + 'routes_reserve'),
         'dh_params': getattr(database, prefix + 'dh_params'),
-        'auth_sessions': getattr(database, prefix + 'auth_sessions'),
-        'auth_nonces': getattr(database, prefix + 'auth_nonces'),
-        'auth_limiter': getattr(database, prefix + 'auth_limiter'),
-        'otp': getattr(database, prefix + 'otp'),
-        'otp_cache': getattr(database, prefix + 'otp_cache'),
-        'sso_tokens': getattr(database, prefix + 'sso_tokens'),
+        'auth_sessions': getattr(secondary_database, prefix + 'auth_sessions'),
+        'auth_nonces': getattr(secondary_database, prefix + 'auth_nonces'),
+        'auth_limiter': getattr(secondary_database, prefix + 'auth_limiter'),
+        'otp': getattr(secondary_database, prefix + 'otp'),
+        'otp_cache': getattr(secondary_database, prefix + 'otp_cache'),
+        'sso_tokens': getattr(secondary_database, prefix + 'sso_tokens'),
     })
 
     for collection_name, collection in mongo.collections.items():
