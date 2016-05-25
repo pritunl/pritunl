@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.22.986.23 2016-05-25
+------------------------------
 
 Add client-to-client only user setting
 Add support for secondary MongoDB server
