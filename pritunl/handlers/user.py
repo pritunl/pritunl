@@ -419,7 +419,7 @@ def user_put(org_id, user_id):
 
     bypass_secondary = flask.request.json.get('bypass_secondary')
     if bypass_secondary is not None:
-        user.bypass_secondary = bypass_secondary
+        user.bypass_secondary = True if bypass_secondary else False
 
     if 'dns_servers' in flask.request.json:
         dns_servers = flask.request.json['dns_servers'] or None
