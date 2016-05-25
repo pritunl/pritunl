@@ -61,8 +61,45 @@ def setup_mongo():
                 logger.exception('Error connecting to mongodb server')
 
     database = client.get_default_database()
-    cur_collections = database.collection_names()
 
+    settings_col = getattr(database, prefix + 'settings')
+    app_settings = settings_col.find_one({'_id': 'app'})
+    if app_settings:
+        secondary_mongodb_uri = app_settings.get('secondary_mongodb_uri')
+    else:
+        secondary_mongodb_uri = None
+
+    if secondary_mongodb_uri:
+        while True:
+            try:
+                read_pref = _get_read_pref(
+                    settings.conf.mongodb_read_preference)
+
+                if read_pref:
+                    secondary_client = pymongo.MongoClient(
+                        settings.conf.mongodb_uri,
+                        connectTimeoutMS=MONGO_CONNECT_TIMEOUT,
+                        read_preference=read_pref
+                    )
+                else:
+                    secondary_client = pymongo.MongoClient(
+                        settings.conf.mongodb_uri,
+                        connectTimeoutMS=MONGO_CONNECT_TIMEOUT,
+                    )
+
+                break
+            except pymongo.errors.ConnectionFailure:
+                time.sleep(0.5)
+                if time.time() - last_error > 30:
+                    last_error = time.time()
+                    logger.exception(
+                        'Error connecting to secondary mongodb server')
+
+        secondary_database = secondary_client.get_default_database()
+    else:
+        secondary_database = database
+
+    cur_collections = secondary_database.collection_names()
     if prefix + 'messages' not in cur_collections:
         database.create_collection(prefix + 'messages', capped=True,
             size=200192, max=1500)
