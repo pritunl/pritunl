@@ -76,3 +76,15 @@ def find_user(org, name=None, type=None, resource_id=None):
     if resource_id is not None:
         spec['resource_id'] = resource_id
     return User(org, spec=spec)
+
+def get_by_id(id, fields=None, load_org=False):
+    from pritunl import organization
+
+    user = User(id=id, fields=fields)
+    if not user:
+        return None
+
+    if load_org:
+        user.org = organization.get_by_id(user.id)
+
+    return user
