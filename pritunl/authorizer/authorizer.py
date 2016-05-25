@@ -3,6 +3,7 @@ from pritunl.constants import *
 from pritunl import logger
 from pritunl import settings
 from pritunl import sso
+from pritunl import plugins
 
 import threading
 
@@ -45,6 +46,7 @@ class Authorizer(object):
             self._check_call(self._check_primary)
             self._check_call(self._check_password)
             self._check_call(self._check_sso)
+            self._check_call(self._auth_plugins)
             if not self.reauth:
                 self._check_call(self._check_push)
             self.callback(True)
@@ -185,3 +187,28 @@ class Authorizer(object):
                 remote_addr=self.remote_ip,
             )
             raise AuthError('User failed push authentication')
+
+    def _auth_plugins(self):
+        if self.user.type == CERT_CLIENT:
+            returns = plugins.caller(
+                'user_authenticate',
+                host_id=settings.local.host_id,
+                server_id=self.server.id,
+                org_id=self.user.org.id,
+                user_id=self.user.id,
+                host_name=settings.local.host.name,
+                server_name=self.server.name,
+                org_name=self.user.org.name,
+                user_name=self.user.name,
+                remote_ip=self.remote_ip,
+                platform=self.platform,
+                device_name=self.device_name,
+                password=self.password,
+            )
+
+            if not returns:
+                return
+
+            for return_val in returns:
+                if not return_val[0]:
+                    raise AuthError(return_val[1])
