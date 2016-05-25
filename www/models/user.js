@@ -24,6 +24,7 @@ define([
       'network_links': null,
       'dns_mapping': null,
       'bypass_secondary': null,
+      'client_to_client': null,
       'dns_servers': null,
       'dns_suffix': null,
       'port_forwarding': null,
