@@ -72,7 +72,6 @@ def find_user(org, name=None, type=None, resource_id=None):
         spec['name'] = name
     if type is not None:
         spec['type'] = type
-    # TODO check explain for resource_id
     if resource_id is not None:
         spec['resource_id'] = resource_id
     return User(org, spec=spec)
