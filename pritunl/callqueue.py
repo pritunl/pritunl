@@ -1,11 +1,15 @@
+from pritunl.helpers import *
 from pritunl import logger
 
 import threading
 import Queue
 
 class CallQueue(object):
-    def __init__(self, checker, maxsize=0):
-        self._check = checker
+    def __init__(self, checker=None, maxsize=0):
+        if checker is None:
+            self._check = check_global_interrupt
+        else:
+            self._check = checker
         self._queue = Queue.Queue(maxsize)
 
     def put(self, func, *args, **kwargs):
