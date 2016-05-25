@@ -25,7 +25,6 @@ def init():
     global _has_plugins
     global _handlers
 
-
     _queue = callqueue.CallQueue(maxsize=settings.app.plugin_queue_size)
     _queue.start(settings.app.plugin_queue_threads)
     _has_plugins = True
