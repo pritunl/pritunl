@@ -23,6 +23,7 @@ for i in xrange(COUNT):
         "org_id" : bson.ObjectId(ORG_ID),
         "disabled" : False,
         "bypass_secondary": False,
+        "client_to_client": False,
         "sync_token" : "kVd5DKrRne30vJXhbh0LVWSHphigbGuF",
         "type" : "client",
         "email" : None,
