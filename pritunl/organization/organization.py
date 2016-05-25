@@ -186,6 +186,15 @@ class Organization(mongo.MongoObject):
         if search is not None:
             searched = True
 
+            n = search.find('id:')
+            if n != -1:
+                user_id = search[n + 3:].split(None, 1)
+                user_id = user_id[0] if user_id else ''
+                if user_id:
+                    type_search = True
+                    spec['_id'] = utils.ObjectId(user_id)
+                search = search[:n] + search[n + 3 + len(user_id):].strip()
+
             n = search.find('type:')
             if n != -1:
                 user_type = search[n + 5:].split(None, 1)
