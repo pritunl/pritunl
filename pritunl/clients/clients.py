@@ -14,6 +14,7 @@ from pritunl import host
 from pritunl import authorizer
 from pritunl import messenger
 from pritunl import monitoring
+from pritunl import plugins
 
 import time
 import collections
@@ -374,6 +375,24 @@ class Clients(object):
             })
 
             if user.type == CERT_CLIENT:
+                plugins.event(
+                    'user_connected',
+                    host_id=settings.local.host_id,
+                    server_id=self.server.id,
+                    org_id=org.id,
+                    user_id=user.id,
+                    host_name=settings.local.host.name,
+                    server_name=self.server.name,
+                    org_name=org.name,
+                    user_name=user.name,
+                    platform=platform,
+                    device_id=device_id,
+                    device_name=device_name,
+                    virtual_ip=virt_address,
+                    virtual_ip6=virt_address6,
+                    remote_ip=remote_ip,
+                    mac_addr=mac_addr,
+                )
                 host.global_clients.insert({
                     'instance_id': self.instance.id,
                     'client_id': client_id,
