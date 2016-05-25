@@ -31,6 +31,12 @@
     placeholder="Enter network address" data-toggle="tooltip"
     title="Enter network address with cidr subnet. This will provision access to a clients local network to the attached vpn servers and other clients. Multiple networks may be separated by a comma.">
 </div>
+<div class="client-to-client-toggle toggle-form form-group">
+  <label>Client-to-Client Only</label>
+  <div class="selector no-select" data-toggle="tooltip" title="Only allow client to communicate with other clients. Blocking access to routed networks.">
+    <span class="selector-inner glyphicon glyphicon-ok"></span>
+  </div>
+</div>
 <div class="advanced form-group bypass-secondary">
   <div class="form-group dns-servers">
     <label>DNS Forwarding Server</label>
