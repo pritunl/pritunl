@@ -57,8 +57,6 @@ def event(event_type, **kwargs):
     _queue.put(_event, event_type, **kwargs)
 
 def caller(caller_type, **kwargs):
-    if settings.local.sub_plan != 'enterprise':
-        return
     if not _has_plugins or caller_type not in _handlers:
         return
 
