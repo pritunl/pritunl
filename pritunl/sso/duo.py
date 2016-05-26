@@ -2,6 +2,8 @@ from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import logger
+from pritunl import organization
+from pritunl import plugins
 
 import base64
 import email
@@ -11,7 +13,7 @@ import urllib
 import httplib
 import requests
 
-def sign(method, path, params):
+def _sign(method, path, params):
     now = email.Utils.formatdate()
     canon = [now, method.upper(), settings.app.sso_host.lower(), path]
     args = []
@@ -50,7 +52,7 @@ def auth_duo(username, strong=False, ipaddr=None, type=None, info=None,
         if info:
             params['pushinfo'] = urllib.urlencode(info)
 
-    headers = sign('POST', '/auth/v2/auth', params)
+    headers = _sign('POST', '/auth/v2/auth', params)
     url = 'https://%s/auth/v2/auth' % settings.app.sso_host
 
     try:
@@ -100,3 +102,54 @@ def auth_duo(username, strong=False, ipaddr=None, type=None, info=None,
         )
 
     return allow, None
+
+def plugin_auth_duo_login(host_id, host_name, user_name, remote_ip):
+    returns = plugins.caller(
+        'authenticate_duo_login',
+        host_id=host_id,
+        host_name=host_name,
+        user_name=user_name,
+        remote_ip=remote_ip,
+    )
+
+    if not returns:
+        return True, None
+
+    org_name = None
+    for return_val in returns:
+        if not return_val[0]:
+            return False, None
+        if return_val[1]:
+            org_name = return_val[1]
+
+    org_id = None
+    if org_name:
+        org = organization.get_by_name(org_name, fields=('_id'))
+        if org:
+            org_id = org.id
+
+    return True, org_id
+
+def plugin_auth_duo_connection(host_id, server_id, org_id, user_id,
+        host_name, server_name, org_name, user_name, remote_ip):
+    returns = plugins.caller(
+        'authenticate_duo_connection',
+        host_id=host_id,
+        server_id=server_id,
+        org_id=org_id,
+        user_id=user_id,
+        host_name=host_name,
+        server_name=server_name,
+        org_name=org_name,
+        user_name=user_name,
+        remote_ip=remote_ip,
+    )
+
+    if not returns:
+        return True
+
+    for return_val in returns:
+        if not return_val[0]:
+            return False
+
+    return True
