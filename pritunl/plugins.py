@@ -30,6 +30,10 @@ def init():
 
     modules = []
     plugin_dir = settings.app.plugin_directory
+
+    if not os.path.exists(plugin_dir):
+        return
+
     for file_name in os.listdir(plugin_dir):
         file_path = os.path.join(plugin_dir, file_name)
         file_name, file_ext = os.path.splitext(file_name)
