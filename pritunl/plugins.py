@@ -1,5 +1,6 @@
 from pritunl import callqueue
 from pritunl import settings
+from pritunl import logger
 
 import imp
 import os
@@ -51,7 +52,12 @@ def init():
 
 def _event(event_type, **kwargs):
     for handler in _handlers[event_type]:
-        handler(**kwargs)
+        try:
+            handler(**kwargs)
+        except:
+            logger.exception('Error in plugin handler', 'plugins',
+                event_type=event_type,
+            )
 
 def event(event_type, **kwargs):
     if settings.local.sub_plan != 'enterprise':
