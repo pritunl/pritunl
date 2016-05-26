@@ -514,7 +514,7 @@ def sso_authenticate_post():
             valid, org_id = sso.auth_duo(
                 username,
                 strong=True,
-                ipaddr=flask.request.remote_addr,
+                ipaddr=utils.get_remote_addr(),
                 type='Key',
             )
             break
@@ -777,10 +777,11 @@ def sso_callback_get():
             org = organization.get_by_name(org_name, fields=('_id'))
             if org:
                 org_id = org.id
+
     if DUO_AUTH in sso_mode:
         valid, _ = sso.auth_duo(
             username,
-            ipaddr=flask.request.remote_addr,
+            ipaddr=utils.get_remote_addr(),
             type='Key',
         )
         if not valid:
