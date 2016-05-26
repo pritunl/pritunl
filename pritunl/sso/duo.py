@@ -103,11 +103,11 @@ def auth_duo(username, strong=False, ipaddr=None, type=None, info=None,
 
     return allow, None
 
-def plugin_auth_duo_login(host_id, host_name, user_name, remote_ip):
+def plugin_auth_duo_login(user_name, remote_ip):
     returns = plugins.caller(
         'authenticate_duo_login',
-        host_id=host_id,
-        host_name=host_name,
+        host_id=settings.local.host_id,
+        host_name=settings.local.host.name,
         user_name=user_name,
         remote_ip=remote_ip,
     )
@@ -130,15 +130,15 @@ def plugin_auth_duo_login(host_id, host_name, user_name, remote_ip):
 
     return True, org_id
 
-def plugin_auth_duo_connection(host_id, server_id, org_id, user_id,
-        host_name, server_name, org_name, user_name, remote_ip):
+def plugin_auth_duo_connection(server_id, org_id, user_id, server_name,
+        org_name, user_name, remote_ip):
     returns = plugins.caller(
         'authenticate_duo_connection',
-        host_id=host_id,
+        host_id=settings.local.host_id,
         server_id=server_id,
         org_id=org_id,
         user_id=user_id,
-        host_name=host_name,
+        host_name=settings.local.host.name,
         server_name=server_name,
         org_name=org_name,
         user_name=user_name,
