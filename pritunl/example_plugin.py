@@ -1,4 +1,10 @@
-# Called on user connect
+# Aviaible libraries
+import requests
+import pymongo
+import redis
+import boto
+
+# Called on user connect.
 def user_connected(host_id, server_id, org_id, user_id, host_name,
         server_name, org_name, user_name, platform, device_id, device_name,
         virtual_ip, virtual_ip6, remote_ip, mac_addr, **kwargs):
