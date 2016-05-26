@@ -11,13 +11,13 @@ def user_connected(host_id, server_id, org_id, user_id, host_name,
     pass
 
 # Called on user disconnect, may not always be called if a server is stopped
-# or unexpected failure occurs
+# or unexpected failure occurs.
 def user_disconnected(host_id, server_id, org_id, user_id, host_name,
         server_name, org_name, user_name, remote_ip, **kwargs):
     pass
 
 # [SYNCHRONOUS] Called on user authentication must return True or False
-# and None or a string with reason if False
+# and None or a string with reason if False.
 def user_authenticate(host_id, server_id, org_id, user_id, host_name,
         server_name, org_name, user_name, remote_ip, platform, device_name,
         password, **kwargs):
