@@ -509,6 +509,7 @@ def sso_authenticate_post():
         usernames.append(username.split('@')[0])
 
     valid = False
+    org_id = None
     for i, username in enumerate(usernames):
         try:
             valid, org_id = sso.auth_duo(
@@ -524,8 +525,19 @@ def sso_authenticate_post():
                     username=username,
                 )
 
-    if not valid:
-        logger.error('Invalid duo username', 'sso',
+    if valid:
+        valid, org_id_new = sso.plugin_auth_duo_login(
+            user_name=username,
+            remote_ip=utils.get_remote_addr(),
+        )
+        org_id = org_id_new or org_id
+        if not valid:
+            logger.error('Duo plugin authentication not valid', 'sso',
+                username=username,
+            )
+            return flask.abort(401)
+    else:
+        logger.error('Duo authentication not valid', 'sso',
             username=username,
         )
         return flask.abort(401)
@@ -784,7 +796,21 @@ def sso_callback_get():
             ipaddr=utils.get_remote_addr(),
             type='Key',
         )
-        if not valid:
+        if valid:
+            valid, org_id_new = sso.plugin_auth_duo_login(
+                user_name=username,
+                remote_ip=utils.get_remote_addr(),
+            )
+            org_id = org_id_new or org_id
+            if not valid:
+                logger.error('Duo plugin authentication not valid', 'sso',
+                    username=username,
+                )
+                return flask.abort(401)
+        else:
+            logger.error('Duo authentication not valid', 'sso',
+                username=username,
+            )
             return flask.abort(401)
 
     org = organization.get_by_id(org_id)
