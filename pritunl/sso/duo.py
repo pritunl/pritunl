@@ -2,7 +2,6 @@ from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import logger
-from pritunl import organization
 from pritunl import plugins
 
 import base64
@@ -104,6 +103,8 @@ def auth_duo(username, strong=False, ipaddr=None, type=None, info=None,
     return allow, None
 
 def plugin_auth_duo_login(user_name, remote_ip):
+    from pritunl import organization
+
     returns = plugins.caller(
         'authenticate_duo_login',
         host_id=settings.local.host_id,
