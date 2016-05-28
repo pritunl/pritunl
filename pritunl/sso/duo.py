@@ -150,7 +150,7 @@ def plugin_auth_duo_connection(server_id, org_id, user_id, server_name,
         return True
 
     for return_val in returns:
-        if not return_val[0]:
+        if not return_val:
             return False
 
     return True
