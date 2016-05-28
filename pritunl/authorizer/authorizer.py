@@ -169,6 +169,24 @@ class Authorizer(object):
                 type='Connection',
                 info=info,
             )
+            if allow:
+                allow = sso.plugin_auth_duo_connection(
+                    server_id=self.server.id,
+                    org_id=self.user.org.id,
+                    user_id=self.user.id,
+                    server_name=self.server.name,
+                    org_name=self.user.org.name,
+                    user_name=self.user.name,
+                    remote_ip=self.remote_ip,
+                )
+                if not allow:
+                    self.user.audit_event('user_connection',
+                        ('User connection to "%s" denied. ' +
+                         'Duo plugin authentication failed') % (
+                            self.server.name),
+                        remote_addr=self.remote_ip,
+                    )
+                    raise AuthError('User failed duo plugin authentication')
         elif self.push_type == SAML_OKTA_AUTH:
             allow = sso.auth_okta_push(
                 self.user.name,
