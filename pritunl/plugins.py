@@ -47,8 +47,9 @@ def init():
             if call_type not in call_types:
                 continue
             if call_type not in _handlers:
-                _handlers[call_type] = []
-            _handlers[call_type].append(handler)
+                _handlers[call_type] = [handler]
+            else:
+                _handlers[call_type].append(handler)
 
 def _event(event_type, **kwargs):
     for handler in _handlers[event_type]:
