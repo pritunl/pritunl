@@ -38,8 +38,8 @@ def authenticate_duo_login(host_id, host_name, user_name, remote_ip, **kwargs):
     else:
         return False, None
 
-# [SYNCHRONOUS] Called after a user has authenticated with Duo when connecting
-# to a VPN server. Must return True or False to accept auth request.
+# [SYNCHRONOUS] Called after a user has authenticated with Duo when
+# connecting to a VPN server. Must return True or False to accept auth request.
 def authenticate_duo_connection(host_id, server_id, org_id, user_id,
         host_name, server_name, org_name, user_name, remote_ip, **kwargs):
     if 'auth_ok':
