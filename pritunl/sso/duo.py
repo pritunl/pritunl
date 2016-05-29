@@ -75,11 +75,11 @@ def auth_duo(username, strong=False, ipaddr=None, type=None, info=None,
                 )
                 allow = True
             else:
+                allow = False
                 logger.error('Cannot use Duo bypass with profile login',
                     'sso',
                     data=resp_data,
                 )
-                allow = False
         else:
             allow = True
     elif data.get('code') == 40002:
