@@ -3,7 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
-Add Duo plugin support
+Add SSO plugin support
 
 Version 1.23.987.18 2016-05-26
 ------------------------------
