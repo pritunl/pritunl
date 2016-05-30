@@ -106,7 +106,7 @@ def plugin_auth_duo_login(user_name, remote_ip):
     from pritunl import organization
 
     returns = plugins.caller(
-        'authenticate_duo_login',
+        'authenticate_duo',
         host_id=settings.local.host_id,
         host_name=settings.local.host.name,
         user_name=user_name,
