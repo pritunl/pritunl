@@ -32,7 +32,7 @@ def user_authenticate(host_id, server_id, org_id, user_id, host_name,
 # included the user will be added to that organization. If Duo is used as a
 # secondary authentication method the organization name from Duo if set will
 # have priority over the organization name from the primary SSO provider.
-def authenticate_duo_login(host_id, host_name, user_name, remote_ip, **kwargs):
+def authenticate_duo(host_id, host_name, user_name, remote_ip, **kwargs):
     if 'auth_ok':
         return True, 'organization_name'
     else:
