@@ -803,8 +803,9 @@ def sso_callback_get():
                 user_name=username,
                 remote_ip=utils.get_remote_addr(),
             )
-            org_id = org_id_new or org_id
-            if not valid:
+            if valid:
+                org_id = org_id_new or org_id
+            else:
                 logger.error('Duo plugin authentication not valid', 'sso',
                     username=username,
                 )
