@@ -792,6 +792,20 @@ def sso_callback_get():
             if org:
                 org_id = org.id
                 break
+
+        valid, org_id_new = sso.plugin_sso_authenticate(
+            sso_type='slack',
+            user_name=username,
+            user_email=email,
+            remote_ip=utils.get_remote_addr(),
+        )
+        if valid:
+            org_id = org_id_new or org_id
+        else:
+            logger.error('Slack plugin authentication not valid', 'sso',
+                username=username,
+            )
+            return flask.abort(401)
     else:
         username = params.get('username')[0]
         email = username
