@@ -1,6 +1,5 @@
 from pritunl import settings
 from pritunl import logger
-from pritunl import utils
 
 import urllib
 import httplib
