@@ -758,6 +758,20 @@ def sso_callback_get():
             org = organization.get_by_name(org_name, fields=('_id'))
             if org:
                 org_id = org.id
+
+        valid, org_id_new = sso.plugin_sso_authenticate(
+            sso_type='saml',
+            user_name=username,
+            user_email=email,
+            remote_ip=utils.get_remote_addr(),
+        )
+        if valid:
+            org_id = org_id_new or org_id
+        else:
+            logger.error('Saml plugin authentication not valid', 'sso',
+                username=username,
+            )
+            return flask.abort(401)
     elif doc.get('type') == SLACK_AUTH:
         username = params.get('username')[0]
         email = None
