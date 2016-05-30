@@ -1,7 +1,7 @@
 from pritunl import settings
 from pritunl import plugins
 
-def plugin_sso_authenticate(sso_type, user_name, remote_ip):
+def plugin_sso_authenticate(sso_type, user_name, user_email, remote_ip):
     from pritunl import organization
 
     returns = plugins.caller(
@@ -10,6 +10,7 @@ def plugin_sso_authenticate(sso_type, user_name, remote_ip):
         host_id=settings.local.host_id,
         host_name=settings.local.host.name,
         user_name=user_name,
+        user_email=user_email,
         remote_ip=remote_ip,
     )
 
