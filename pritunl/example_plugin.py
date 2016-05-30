@@ -42,10 +42,6 @@ def sso_authenticate(sso_type, host_id, host_name, user_name, user_email,
         pass
     elif sso_type == 'saml':
         pass
-    elif sso_type == 'okta':
-        pass
-    elif sso_type == 'onelogin':
-        pass
     elif sso_type == 'radius':
         pass
 
