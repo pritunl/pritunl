@@ -529,6 +529,7 @@ def sso_authenticate_post():
         valid, org_id_new = sso.plugin_sso_authenticate(
             sso_type='duo',
             user_name=username,
+            user_email=email,
             remote_ip=utils.get_remote_addr(),
         )
         org_id = org_id_new or org_id
@@ -794,6 +795,7 @@ def sso_callback_get():
         valid, org_id_new = sso.plugin_sso_authenticate(
             sso_type='google',
             user_name=username,
+            user_email=email,
             remote_ip=utils.get_remote_addr(),
         )
         if valid:
@@ -814,6 +816,7 @@ def sso_callback_get():
             valid, org_id_new = sso.plugin_sso_authenticate(
                 sso_type='duo',
                 user_name=username,
+                user_email=email,
                 remote_ip=utils.get_remote_addr(),
             )
             if valid:
