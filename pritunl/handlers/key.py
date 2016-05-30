@@ -526,7 +526,8 @@ def sso_authenticate_post():
                 )
 
     if valid:
-        valid, org_id_new = sso.plugin_auth_duo_login(
+        valid, org_id_new = sso.plugin_sso_authenticate(
+            sso_type='duo',
             user_name=username,
             remote_ip=utils.get_remote_addr(),
         )
@@ -797,7 +798,8 @@ def sso_callback_get():
             type='Key',
         )
         if valid:
-            valid, org_id_new = sso.plugin_auth_duo_login(
+            valid, org_id_new = sso.plugin_sso_authenticate(
+                sso_type='duo',
                 user_name=username,
                 remote_ip=utils.get_remote_addr(),
             )
