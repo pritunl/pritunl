@@ -1,4 +1,5 @@
 from pritunl.plugins.utils import *
+from pritunl.plugins import example
 
 from pritunl import callqueue
 from pritunl import settings
@@ -12,8 +13,6 @@ _has_plugins = False
 _handlers = {}
 
 def init():
-    from pritunl import example_plugin
-
     global _queue
     global _has_plugins
     global _handlers
@@ -21,7 +20,7 @@ def init():
     _queue = callqueue.CallQueue(maxsize=settings.app.plugin_queue_size)
     _queue.start(settings.app.plugin_queue_threads)
     _has_plugins = True
-    call_types = set(get_functions(example_plugin).keys())
+    call_types = set(get_functions(example).keys())
 
     modules = []
     plugin_dir = settings.app.plugin_directory
