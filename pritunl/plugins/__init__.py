@@ -42,7 +42,7 @@ def init():
             continue
         modules.append(imp.load_source('plugin_' + file_name, file_path))
 
-    for module in modules:
+    for module in modules + [example_plugin]:
         for call_type, handler in _get_functions(module).iteritems():
             if call_type not in call_types:
                 continue
