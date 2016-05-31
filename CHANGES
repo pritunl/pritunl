@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.23.992.76 2016-05-31
+------------------------------
 
 Add SSO plugin support
 
