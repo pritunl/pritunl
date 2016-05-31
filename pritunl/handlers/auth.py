@@ -96,7 +96,7 @@ def auth_session_post():
     flask.session['session_id'] = admin.new_session()
     flask.session['admin_id'] = str(admin.id)
     flask.session['timestamp'] = int(utils.time_now())
-    if not settings.conf.ssl:
+    if not settings.app.server_ssl:
         flask.session['source'] = remote_addr
 
     return utils.jsonify({
