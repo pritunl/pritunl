@@ -705,7 +705,7 @@ class Server(mongo.MongoObject):
         for doc in self.host_collection.find(spec, project):
             address = doc['public_address'] or doc['auto_public_address']
             remotes.append('%s://%s:%s' % (
-                'https' if settings.conf.ssl else 'http',
+                'https' if settings.app.server_ssl else 'http',
                 address,
                 settings.conf.port,
             ))
