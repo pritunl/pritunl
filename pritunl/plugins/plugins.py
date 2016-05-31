@@ -1,21 +1,15 @@
+from pritunl.plugins.utils import *
+
 from pritunl import callqueue
 from pritunl import settings
 from pritunl import logger
 
 import imp
 import os
-import inspect
 
 _queue = None
 _has_plugins = False
 _handlers = {}
-
-def _get_functions(module):
-    funcs = {}
-    for x in inspect.getmembers(module):
-        if inspect.isfunction(x[1]):
-            funcs[x[0]] = x[1]
-    return funcs
 
 def init():
     from pritunl import example_plugin
@@ -27,7 +21,7 @@ def init():
     _queue = callqueue.CallQueue(maxsize=settings.app.plugin_queue_size)
     _queue.start(settings.app.plugin_queue_threads)
     _has_plugins = True
-    call_types = set(_get_functions(example_plugin).keys())
+    call_types = set(get_functions(example_plugin).keys())
 
     modules = []
     plugin_dir = settings.app.plugin_directory
@@ -43,7 +37,7 @@ def init():
         modules.append(imp.load_source('plugin_' + file_name, file_path))
 
     for module in modules:
-        for call_type, handler in _get_functions(module).iteritems():
+        for call_type, handler in get_functions(module).iteritems():
             if call_type not in call_types:
                 continue
             if call_type not in _handlers:
