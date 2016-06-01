@@ -712,8 +712,8 @@ class Server(mongo.MongoObject):
         return remotes
 
     def get_key_remotes(self, include_link_addr=False):
-        remotes = []
-        remotes6 = []
+        remotes = set()
+        remotes6 = set()
         spec = {
             '_id': {'$in': self.hosts},
         }
@@ -732,22 +732,24 @@ class Server(mongo.MongoObject):
             if include_link_addr and doc['link_address']:
                 address = doc['link_address']
                 if ':' in address and settings.user.ipv6_remotes:
-                    remotes6.append('remote %s %s %s' % (
+                    remotes6.add('remote %s %s %s' % (
                         address, self.port, self.protocol + '6'))
                 else:
-                    remotes.append('remote %s %s %s' % (
+                    remotes.add('remote %s %s %s' % (
                         doc['link_address'], self.port, self.protocol))
             else:
                 address = doc['public_address'] or doc['auto_public_address']
-                remotes.append('remote %s %s %s' % (
+                remotes.add('remote %s %s %s' % (
                     address, self.port, self.protocol))
 
                 address6 = doc.get('public_address6') or \
                     doc.get('auto_public_address6')
                 if address6 and settings.user.ipv6_remotes:
-                    remotes6.append('remote %s %s %s' % (
+                    remotes6.add('remote %s %s %s' % (
                         address6, self.port, self.protocol + '6'))
 
+        remotes = list(remotes)
+        remotes6 = list(remotes6)
         random.shuffle(remotes)
         random.shuffle(remotes6)
 
