@@ -68,7 +68,6 @@ def setup_db():
 
 def setup_loc():
     setup_local()
-    setup_app()
 
     try:
         setup_logger()
