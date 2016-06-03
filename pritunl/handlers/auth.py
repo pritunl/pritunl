@@ -82,38 +82,25 @@ def _auth_radius(username, password):
     }, 202)
 
 def _auth_plugin(username, password):
-    returns = plugins.caller(
-        'user_login',
-        host_id=settings.local.host_id,
-        host_name=settings.local.host.name,
+    valid, org_id = sso.plugin_login_authenticate(
         user_name=username,
         password=password,
         remote_ip=utils.get_remote_addr(),
     )
 
-    if not returns:
+    if not valid:
         return utils.jsonify({
             'error': AUTH_INVALID,
             'error_msg': AUTH_INVALID_MSG,
         }, 401)
 
-    org_name = None
-    for return_val in returns:
-        if not return_val[0]:
-            return utils.jsonify({
-                'error': AUTH_INVALID,
-                'error_msg': AUTH_INVALID_MSG,
-            }, 401)
-        if return_val[1]:
-            org_name = return_val[1]
-
-    org_id = None
-    if org_name:
-        org = organization.get_by_name(org_name, fields=('_id'))
-        if org:
-            org_id = org.id
-
     if not org_id:
+        logger.error(
+            'Login plugin did not return valid organization name',
+            'auth',
+            org_name=org_id,
+            user_name=username,
+        )
         return utils.jsonify({
             'error': AUTH_INVALID,
             'error_msg': AUTH_INVALID_MSG,
@@ -121,12 +108,6 @@ def _auth_plugin(username, password):
 
     org = organization.get_by_id(org_id)
     if not org:
-        logger.error(
-            'Login plugin did not return valid organization name',
-            'auth',
-            org_name=org_name,
-            user_name=username,
-        )
         return flask.abort(405)
 
     usr = org.find_user(name=username)
