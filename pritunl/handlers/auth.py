@@ -24,6 +24,20 @@ def _auth_radius(username, password):
     if not org_id:
         org_id = settings.app.sso_org
 
+    valid, org_id_new = sso.plugin_sso_authenticate(
+        sso_type='radius',
+        user_name=username,
+        user_email=None,
+        remote_ip=utils.get_remote_addr(),
+    )
+    if valid:
+        org_id = org_id_new or org_id
+    else:
+        logger.error('Radius plugin authentication not valid', 'sso',
+            username=username,
+        )
+        return flask.abort(401)
+
     org = organization.get_by_id(org_id)
     if not org:
         return flask.abort(405)
