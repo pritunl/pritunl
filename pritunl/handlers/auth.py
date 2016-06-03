@@ -36,7 +36,10 @@ def _auth_radius(username, password):
         logger.error('Radius plugin authentication not valid', 'sso',
             username=username,
         )
-        return flask.abort(401)
+        return utils.jsonify({
+            'error': AUTH_INVALID,
+            'error_msg': AUTH_INVALID_MSG,
+        }, 401)
 
     org = organization.get_by_id(org_id)
     if not org:
