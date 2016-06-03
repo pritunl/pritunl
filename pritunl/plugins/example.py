@@ -26,6 +26,12 @@ def user_authenticate(host_id, server_id, org_id, user_id, host_name,
     else:
         return False, 'Reason for denial'
 
+def user_login(host_id, host_name, user_name, password, **kwargs):
+    if 'auth_ok':
+        return True, 'organization_name'
+    else:
+        return False, None
+
 # [SYNCHRONOUS] Called after a user has authenticated with SSO when
 # loging into the web console. Must return True or False to accept auth
 # request and an organization name or None. If an organization name is
