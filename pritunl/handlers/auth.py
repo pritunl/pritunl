@@ -6,6 +6,7 @@ from pritunl import app
 from pritunl import event
 from pritunl import organization
 from pritunl import sso
+from pritunl import plugins
 
 import flask
 import time
@@ -55,6 +56,84 @@ def _auth_radius(username, password):
 
     usr.audit_event('user_profile',
         'User profile viewed from single sign-on',
+        remote_addr=utils.get_remote_addr(),
+    )
+
+    return utils.jsonify({
+        'redirect': utils.get_url_root()[:-1] + key_link['view_url'],
+    }, 202)
+
+def _auth_plugin(username, password):
+    returns = plugins.caller(
+        'user_login',
+        host_id=settings.local.host_id,
+        host_name=settings.local.host.name,
+        user_name=username,
+        password=password,
+        remote_ip=utils.get_remote_addr(),
+    )
+
+    if not returns:
+        return utils.jsonify({
+            'error': AUTH_INVALID,
+            'error_msg': AUTH_INVALID_MSG,
+        }, 401)
+
+    org_name = None
+    for return_val in returns:
+        if not return_val[0]:
+            return utils.jsonify({
+                'error': AUTH_INVALID,
+                'error_msg': AUTH_INVALID_MSG,
+            }, 401)
+        if return_val[1]:
+            org_name = return_val[1]
+
+    org_id = None
+    if org_name:
+        org = organization.get_by_name(org_name, fields=('_id'))
+        if org:
+            org_id = org.id
+
+    if not org_id:
+        return utils.jsonify({
+            'error': AUTH_INVALID,
+            'error_msg': AUTH_INVALID_MSG,
+        }, 401)
+
+    org = organization.get_by_id(org_id)
+    if not org:
+        return flask.abort(405)
+
+    usr = org.find_user(name=username)
+    if not usr:
+        usr = org.new_user(name=username, type=CERT_CLIENT,
+            auth_type=RADIUS_AUTH)
+        usr.audit_event(
+            'user_created',
+            'User created with plugin',
+            remote_addr=utils.get_remote_addr(),
+        )
+
+        event.Event(type=ORGS_UPDATED)
+        event.Event(type=USERS_UPDATED, resource_id=org.id)
+        event.Event(type=SERVERS_UPDATED)
+    else:
+        if usr.disabled:
+            return utils.jsonify({
+                'error': AUTH_DISABLED,
+                'error_msg': AUTH_DISABLED_MSG,
+            }, 403)
+
+        if usr.auth_type != RADIUS_AUTH:
+            usr.auth_type = RADIUS_AUTH
+            usr.set_pin(None)
+            usr.commit(('auth_type', 'pin'))
+
+    key_link = org.create_user_key_link(usr.id, one_time=True)
+
+    usr.audit_event('user_profile',
+        'User profile viewed from plugin',
         remote_addr=utils.get_remote_addr(),
     )
 
