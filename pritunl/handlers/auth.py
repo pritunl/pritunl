@@ -132,7 +132,7 @@ def _auth_plugin(username, password):
     usr = org.find_user(name=username)
     if not usr:
         usr = org.new_user(name=username, type=CERT_CLIENT,
-            auth_type=RADIUS_AUTH)
+            auth_type=PLUGIN_AUTH)
         usr.audit_event(
             'user_created',
             'User created with plugin authentication',
@@ -149,8 +149,8 @@ def _auth_plugin(username, password):
                 'error_msg': AUTH_DISABLED_MSG,
             }, 403)
 
-        if usr.auth_type != RADIUS_AUTH:
-            usr.auth_type = RADIUS_AUTH
+        if usr.auth_type != PLUGIN_AUTH:
+            usr.auth_type = PLUGIN_AUTH
             usr.set_pin(None)
             usr.commit(('auth_type', 'pin'))
 
