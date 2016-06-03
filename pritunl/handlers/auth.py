@@ -7,6 +7,7 @@ from pritunl import event
 from pritunl import organization
 from pritunl import sso
 from pritunl import plugins
+from pritunl import logger
 
 import flask
 import time
@@ -103,6 +104,12 @@ def _auth_plugin(username, password):
 
     org = organization.get_by_id(org_id)
     if not org:
+        logger.error(
+            'Login plugin did not return valid organization name',
+            'auth',
+            org_name=org_name,
+            user_name=username,
+        )
         return flask.abort(405)
 
     usr = org.find_user(name=username)
