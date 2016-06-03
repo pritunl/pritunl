@@ -178,10 +178,7 @@ def auth_session_post():
             return _auth_radius(username, password)
 
         time.sleep(random.randint(0, 100) / 1000.)
-        return utils.jsonify({
-            'error': AUTH_INVALID,
-            'error_msg': AUTH_INVALID_MSG,
-        }, 401)
+        return _auth_plugin(username, password)
 
     if not otp_code and admin.otp_auth:
         return utils.jsonify({
