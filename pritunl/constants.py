@@ -467,6 +467,7 @@ SAML_OKTA_DUO_AUTH = 'saml_okta_duo'
 SAML_ONELOGIN_AUTH = 'saml_onelogin'
 SAML_ONELOGIN_DUO_AUTH = 'saml_onelogin_duo'
 RADIUS_AUTH = 'radius'
+PLUGIN_AUTH = 'plugin'
 
 SETTINGS_UPDATED = 'settings_updated'
 ADMINS_UPDATED = 'administrators_updated'
