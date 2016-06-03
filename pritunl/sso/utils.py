@@ -31,3 +31,33 @@ def plugin_sso_authenticate(sso_type, user_name, user_email, remote_ip):
             org_id = org.id
 
     return True, org_id
+
+def plugin_login_authenticate(user_name, password, remote_ip):
+    from pritunl import organization
+
+    returns = plugins.caller(
+        'user_login',
+        host_id=settings.local.host_id,
+        host_name=settings.local.host.name,
+        user_name=user_name,
+        password=password,
+        remote_ip=remote_ip,
+    )
+
+    if not returns:
+        return False, None
+
+    org_name = None
+    for return_val in returns:
+        if not return_val[0]:
+            return False, None
+        if return_val[1]:
+            org_name = return_val[1]
+
+    org_id = None
+    if org_name:
+        org = organization.get_by_name(org_name, fields=('_id'))
+        if org:
+            org_id = org.id
+
+    return True, org_id
