@@ -135,7 +135,7 @@ def _auth_plugin(username, password):
             auth_type=RADIUS_AUTH)
         usr.audit_event(
             'user_created',
-            'User created with plugin',
+            'User created with plugin authentication',
             remote_addr=utils.get_remote_addr(),
         )
 
@@ -157,7 +157,7 @@ def _auth_plugin(username, password):
     key_link = org.create_user_key_link(usr.id, one_time=True)
 
     usr.audit_event('user_profile',
-        'User profile viewed from plugin',
+        'User profile viewed from plugin authentication',
         remote_addr=utils.get_remote_addr(),
     )
 
