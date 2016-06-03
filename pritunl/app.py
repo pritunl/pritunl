@@ -157,14 +157,16 @@ def _run_server(restart):
     )
 
     def poll_thread():
-        if process.wait() and process_state and not check_global_interrupt():
-            stdout, stderr = process._communicate(None)
-            logger.error("Web server process exited unexpectedly", "app",
-                stdout=stdout,
-                stderr=stderr,
-            )
-            time.sleep(1)
-            restart_server(1)
+        if process.wait() and process_state:
+            time.sleep(0.5)
+            if not check_global_interrupt():
+                stdout, stderr = process._communicate(None)
+                logger.error("Web server process exited unexpectedly", "app",
+                    stdout=stdout,
+                    stderr=stderr,
+                )
+                time.sleep(1)
+                restart_server(1)
     thread = threading.Thread(target=poll_thread)
     thread.daemon = True
     thread.start()
