@@ -26,6 +26,11 @@ def user_authenticate(host_id, server_id, org_id, user_id, host_name,
     else:
         return False, 'Reason for denial'
 
+# [SYNCHRONOUS] Called on user login must return True or False
+# and an organization name that the user will be added to. The organization
+# name must be included. This plugin is used to support user logins with
+# credentials from other systems. The user_name and password must be verified
+# in the plugin, no other authentication will be checked.
 def user_login(host_id, host_name, user_name, password, **kwargs):
     if 'auth_ok':
         return True, 'organization_name'
