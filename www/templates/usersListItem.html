@@ -40,6 +40,7 @@ if (name.length > 40) {
     <div class="okta-logo" data-toggle="tooltip" title="User is authenticating with Okta" <%= bypass_secondary !== true && sso && sso.indexOf('okta') !== -1 && auth_type.indexOf('okta') !== -1 ? '' : 'style="display: none"' %>></div>
     <div class="onelogin-logo" data-toggle="tooltip" title="User is authenticating with OneLogin" <%= bypass_secondary !== true && sso && sso.indexOf('onelogin') !== -1 && auth_type.indexOf('onelogin') !== -1 ? '' : 'style="display: none"' %>></div>
     <div class="radius-logo" data-toggle="tooltip" title="User authenticated with Radius" <%= bypass_secondary !== true && sso === 'radius' && auth_type === 'radius' ? '' : 'style="display: none"' %>><i class="fa fa-lock"></i></div>
+    <div class="plugin-logo" data-toggle="tooltip" title="User authenticated with plugin" <%= bypass_secondary !== true && auth_type === 'plugin' ? '' : 'style="display: none"' %>><i class="fa fa-lock"></i></div>
   </div>
   <div class="right-container <%- otp_auth ? '' : 'no-otp-auth' %>">
     <div class="status-container">
