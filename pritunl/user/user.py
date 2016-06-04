@@ -443,7 +443,7 @@ class User(mongo.MongoObject):
         if svr.otp_auth:
             password_mode = 'otp'
 
-        if RADIUS_AUTH in self.auth_type:
+        if RADIUS_AUTH in self.auth_type or PLUGIN_AUTH in self.auth_type:
             if password_mode:
                 password_mode += '_password'
             else:
