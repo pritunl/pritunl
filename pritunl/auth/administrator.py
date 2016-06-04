@@ -372,7 +372,8 @@ def check_session():
         if not administrator:
             return False
 
-        if not settings.app.allow_insecure_session and \
+        if not settings.app.reverse_proxy and \
+                not settings.app.allow_insecure_session and \
                 not settings.app.server_ssl and flask.session.get(
                 'source') != utils.get_remote_addr():
             flask.session.clear()
