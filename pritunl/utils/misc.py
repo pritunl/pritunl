@@ -23,6 +23,7 @@ import urllib2
 import json
 import math
 import psutil
+import urlparse
 
 _null = open(os.devnull, 'w')
 
@@ -410,18 +411,21 @@ def get_process_cpu_mem():
 
 def redirect(location, code=302):
     if not settings.conf.debug:
-        base_url = flask.request.headers.get('PR-Forward-Url')
-        if base_url:
-            location = urlparse.urljoin(base_url, location)
+        location = urlparse.urljoin(get_url_root(), location)
+
     return flask.redirect(location, code)
 
 def get_url_root():
     if not settings.conf.debug:
-        url_root = flask.request.headers.get('PR-Forward-Url') + '/'
+        url_root = flask.request.headers.get('PR-Forwarded-Url')
     else:
         url_root = flask.request.url_root
 
-    if settings.app.server_ssl or settings.app.reverse_proxy:
+    if settings.app.reverse_proxy and \
+            flask.request.headers.get('PR-Forwarded-Header'):
         url_root = url_root.replace('http://', 'https://', 1)
+
+    if url_root[-1] == '/':
+        url_root = url_root[:-1]
 
     return url_root
