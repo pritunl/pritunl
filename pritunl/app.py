@@ -19,6 +19,7 @@ app_server = None
 redirect_app = flask.Flask(__name__ + '_redirect')
 acme_token = None
 acme_authorization = None
+_cur_ssl = None
 _cur_cert = None
 _cur_key = None
 _cur_port = None
@@ -42,18 +43,22 @@ def set_acme(token, authorization):
     acme_authorization = authorization
 
 def update_server(delay=0):
+    global _cur_ssl
     global _cur_cert
     global _cur_key
     global _cur_port
+    global _cur_reverse_proxy
 
     if not settings.local.server_ready.is_set():
         return
 
     _update_lock.acquire()
     try:
-        if _cur_cert != settings.app.server_cert or \
+        if _cur_ssl != settings.app.server_ssl or \
+                _cur_cert != settings.app.server_cert or \
                 _cur_key != settings.app.server_key or \
                 _cur_port != settings.app.server_port:
+            _cur_ssl = settings.app.server_ssl
             _cur_cert = settings.app.server_cert
             _cur_key = settings.app.server_key
             _cur_port = settings.app.server_port
@@ -238,9 +243,11 @@ def setup_server_cert():
         settings.commit()
 
 def run_server():
+    global _cur_ssl
     global _cur_cert
     global _cur_key
     global _cur_port
+    _cur_ssl = settings.app.server_ssl
     _cur_cert = settings.app.server_cert
     _cur_key = settings.app.server_key
     _cur_port = settings.app.server_port
