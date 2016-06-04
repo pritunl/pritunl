@@ -308,6 +308,9 @@ class User(mongo.MongoObject):
             return False
         elif SAML_ONELOGIN_AUTH in self.auth_type and \
                 SAML_ONELOGIN_AUTH in settings.app.sso:
+            if settings.user.skip_remote_sso_check:
+                return True
+
             try:
                 return sso.auth_onelogin(self.name)
             except:
@@ -317,6 +320,9 @@ class User(mongo.MongoObject):
             return False
         elif SAML_OKTA_AUTH in self.auth_type and \
                 SAML_OKTA_AUTH in settings.app.sso:
+            if settings.user.skip_remote_sso_check:
+                return True
+
             try:
                 return sso.auth_okta(self.name)
             except:
