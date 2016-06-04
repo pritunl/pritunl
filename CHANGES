@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Add additional plugin functionality
 Fix issue with reverse proxy
 
 Version 1.23.993.6 2016-06-01
