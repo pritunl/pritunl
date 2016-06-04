@@ -410,7 +410,7 @@ def get_process_cpu_mem():
 
 def get_url_root():
     if not settings.conf.debug:
-        url_root = flask.request.headers.get('PR-Forward-Url')
+        url_root = flask.request.headers.get('PR-Forward-Url') + '/'
     else:
         url_root = flask.request.url_root
 
