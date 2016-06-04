@@ -77,7 +77,7 @@ def _auth_radius(username, password):
     )
 
     return utils.jsonify({
-        'redirect': utils.get_url_root()[:-1] + key_link['view_url'],
+        'redirect': utils.get_url_root() + key_link['view_url'],
     }, 202)
 
 def _auth_plugin(username, password):
@@ -148,7 +148,7 @@ def _auth_plugin(username, password):
     )
 
     return utils.jsonify({
-        'redirect': utils.get_url_root()[:-1] + key_link['view_url'],
+        'redirect': utils.get_url_root() + key_link['view_url'],
     }, 202)
 
 @app.app.route('/auth/session', methods=['POST'])

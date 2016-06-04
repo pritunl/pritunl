@@ -309,7 +309,7 @@ def user_linked_key_page_get(short_code):
         cache=False, gzip=False).data
     key_page = key_page.replace('<%= header_class %>', header_class)
 
-    uri_url = (utils.get_url_root()[:-1] + '/ku/' + doc['short_id']).encode()
+    uri_url = (utils.get_url_root() + '/ku/' + doc['short_id']).encode()
     if uri_url.startswith('https'):
         uri_url = uri_url.replace('https', 'pritunl', 1)
     else:
@@ -580,7 +580,7 @@ def sso_authenticate_post():
         remote_addr=utils.get_remote_addr(),
     )
 
-    return utils.get_url_root()[:-1] + key_link['view_url']
+    return utils.get_url_root() + key_link['view_url']
 
 @app.app.route('/sso/request', methods=['GET'])
 def sso_request_get():
@@ -593,7 +593,7 @@ def sso_request_get():
 
     state = utils.rand_str(64)
     secret = utils.rand_str(64)
-    callback = utils.get_url_root() + 'sso/callback'
+    callback = utils.get_url_root() + '/sso/callback'
 
     if not settings.local.sub_active:
         logger.error('Subscription must be active for sso', 'sso')
@@ -889,4 +889,4 @@ def sso_callback_get():
         remote_addr=utils.get_remote_addr(),
     )
 
-    return utils.redirect(utils.get_url_root()[:-1] + key_link['view_url'])
+    return utils.redirect(utils.get_url_root() + key_link['view_url'])

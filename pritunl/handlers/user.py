@@ -475,7 +475,7 @@ def user_put(org_id, user_id):
         )
 
         try:
-            user.send_key_email(utils.get_url_root()[:-1])
+            user.send_key_email(utils.get_url_root())
         except EmailNotConfiguredError:
             return utils.jsonify({
                 'error': EMAIL_NOT_CONFIGURED,
