@@ -6,7 +6,6 @@ from pritunl import app
 from pritunl import event
 from pritunl import organization
 from pritunl import sso
-from pritunl import plugins
 from pritunl import logger
 
 import flask
