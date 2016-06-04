@@ -268,7 +268,7 @@ class User(mongo.MongoObject):
     def disconnect(self):
         messenger.publish('instance', ['user_disconnect', self.id])
 
-    def sso_auth_check(self, password):
+    def sso_auth_check(self, password, remote_ip):
         if GOOGLE_AUTH in self.auth_type and GOOGLE_AUTH in settings.app.sso:
             if settings.user.skip_remote_sso_check:
                 return True
@@ -340,9 +340,11 @@ class User(mongo.MongoObject):
             return False
         elif PLUGIN_AUTH in self.auth_type:
             try:
-                valid, _ = sso.plugin_login_authenticate(
-                    self.name, password)[0]
-                return valid
+                return sso.plugin_login_authenticate(
+                    user_name=self.name,
+                    password=password,
+                    remote_ip=remote_ip,
+                )[0]
             except:
                 logger.exception('Plugin auth check error', 'user',
                     user_id=self.id,
