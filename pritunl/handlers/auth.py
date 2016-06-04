@@ -81,6 +81,12 @@ def _auth_radius(username, password):
     }, 202)
 
 def _auth_plugin(username, password):
+    if settings.local.sub_plan != 'enterprise':
+        return utils.jsonify({
+            'error': AUTH_INVALID,
+            'error_msg': AUTH_INVALID_MSG,
+        }, 401)
+
     valid, org_id = sso.plugin_login_authenticate(
         user_name=username,
         password=password,
