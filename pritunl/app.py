@@ -23,6 +23,7 @@ _cur_ssl = None
 _cur_cert = None
 _cur_key = None
 _cur_port = None
+_cur_reverse_proxy = None
 _update_lock = threading.Lock()
 _watch_event = threading.Event()
 
@@ -57,11 +58,15 @@ def update_server(delay=0):
         if _cur_ssl != settings.app.server_ssl or \
                 _cur_cert != settings.app.server_cert or \
                 _cur_key != settings.app.server_key or \
-                _cur_port != settings.app.server_port:
+                _cur_port != settings.app.server_port or \
+                _cur_reverse_proxy != settings.app.reverse_proxy_header if \
+                    settings.app.reverse_proxy else '':
             _cur_ssl = settings.app.server_ssl
             _cur_cert = settings.app.server_cert
             _cur_key = settings.app.server_key
             _cur_port = settings.app.server_port
+            _cur_reverse_proxy = settings.app.reverse_proxy_header if \
+                settings.app.reverse_proxy else ''
             restart_server(delay=delay)
     finally:
         _update_lock.release()
@@ -247,10 +252,13 @@ def run_server():
     global _cur_cert
     global _cur_key
     global _cur_port
+    global _cur_reverse_proxy
     _cur_ssl = settings.app.server_ssl
     _cur_cert = settings.app.server_cert
     _cur_key = settings.app.server_key
     _cur_port = settings.app.server_port
+    _cur_reverse_proxy = settings.app.reverse_proxy_header if \
+        settings.app.reverse_proxy else ''
 
     if settings.conf.debug:
         logger.LogEntry(message='Web debug server started.')
