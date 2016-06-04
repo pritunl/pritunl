@@ -147,6 +147,8 @@ def _run_server(restart):
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         env=dict(os.environ, **{
+            'REVERSE_PROXY_HEADER': settings.app.reverse_proxy_header if \
+                settings.app.reverse_proxy else '',
             'REDIRECT_SERVER': redirect_server,
             'BIND_HOST': settings.conf.bind_addr,
             'BIND_PORT': str(settings.app.server_port),
