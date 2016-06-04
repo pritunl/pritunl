@@ -6,6 +6,7 @@ import flask
 import datetime
 
 @app.app.route('/ping', methods=['GET'])
+@app.app.route('/check', methods=['GET'])
 def ping_get():
     ping_timestamp = settings.local.host_ping_timestamp
     host_ping_ttl = datetime.timedelta(seconds=settings.app.host_ping_ttl)
