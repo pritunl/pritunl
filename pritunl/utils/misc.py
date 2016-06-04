@@ -408,6 +408,13 @@ def get_process_cpu_mem():
     proc = psutil.Process(os.getpid())
     return proc.cpu_percent(interval=0.5), proc.memory_percent()
 
+def redirect(location, code=302):
+    if not settings.conf.debug:
+        base_url = flask.request.headers.get('PR-Forward-Url')
+        if base_url:
+            location = urlparse.urljoin(base_url, location)
+    return flask.redirect(location, code)
+
 def get_url_root():
     if not settings.conf.debug:
         url_root = flask.request.headers.get('PR-Forward-Url') + '/'

@@ -296,13 +296,6 @@ def ip4to6x96(prefix, net, addr):
 
     return str(ipaddress.IPv6Address(addr6))
 
-def redirect(location, code=302):
-    if not settings.conf.debug:
-        base_url = flask.request.headers.get('PR-Forward-Url')
-        if base_url:
-            location = urlparse.urljoin(base_url, location)
-    return flask.redirect(location, code)
-
 def del_route(dst_addr):
     if '/' not in dst_addr:
         dst_addr += '/32'
