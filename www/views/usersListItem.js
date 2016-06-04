@@ -178,6 +178,7 @@ define([
         this.$('.slack-logo').hide();
         this.$('.duo-logo').hide();
         this.$('.radius-logo').hide();
+        this.$('.plugin-logo').hide();
       } else {
         var sso = this.model.get('sso') || '';
         var auth_type = this.model.get('auth_type');
@@ -227,6 +228,12 @@ define([
           this.$('.radius-logo').show();
         } else {
           this.$('.radius-logo').hide();
+        }
+
+        if (auth_type === 'plugin') {
+          this.$('.plugin-logo').show();
+        } else {
+          this.$('.plugin-logo').hide();
         }
       }
 
