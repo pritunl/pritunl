@@ -8,7 +8,6 @@ import flask
 import re
 import netifaces
 import collections
-import urlparse
 import threading
 import pyroute2.iproute
 import pyroute2.netlink
