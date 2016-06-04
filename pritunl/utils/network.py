@@ -45,13 +45,12 @@ def interface_release(interface_type, interface):
 
 def get_remote_addr():
     if settings.app.reverse_proxy:
-        forward_ip = flask.request.headers.get(
-            settings.app.reverse_proxy_header)
+        forward_ip = flask.request.headers.get('PR-Forwarded-Header')
         if forward_ip:
             return forward_ip.split(',')[-1]
 
     if not settings.conf.debug:
-        forward_ip = flask.request.headers.get('PR-Forward-For')
+        forward_ip = flask.request.headers.get('PR-Forwarded-For')
         if forward_ip:
             return forward_ip
 
