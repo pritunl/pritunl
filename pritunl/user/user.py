@@ -338,6 +338,16 @@ class User(mongo.MongoObject):
                     user_id=self.id,
                 )
             return False
+        elif PLUGIN_AUTH in self.auth_type:
+            try:
+                valid, _ = sso.plugin_login_authenticate(
+                    self.name, password)[0]
+                return valid
+            except:
+                logger.exception('Plugin auth check error', 'user',
+                    user_id=self.id,
+                )
+            return False
 
         return True
 
