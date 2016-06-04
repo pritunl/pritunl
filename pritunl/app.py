@@ -59,8 +59,8 @@ def update_server(delay=0):
                 _cur_cert != settings.app.server_cert or \
                 _cur_key != settings.app.server_key or \
                 _cur_port != settings.app.server_port or \
-                _cur_reverse_proxy != settings.app.reverse_proxy_header if \
-                    settings.app.reverse_proxy else '':
+                _cur_reverse_proxy != (settings.app.reverse_proxy_header if
+                    settings.app.reverse_proxy else ''):
             _cur_ssl = settings.app.server_ssl
             _cur_cert = settings.app.server_cert
             _cur_key = settings.app.server_key
