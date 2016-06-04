@@ -409,7 +409,7 @@ def get_process_cpu_mem():
     return proc.cpu_percent(interval=0.5), proc.memory_percent()
 
 def get_url_root():
-    url_root = flask.request.url_root
+    url_root = flask.request.headers.get('PR-Forward-Url')
 
     if settings.app.server_ssl or settings.app.reverse_proxy:
         url_root = url_root.replace('http://', 'https://', 1)
