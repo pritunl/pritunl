@@ -32,7 +32,8 @@ def user_connect(host_id, server_id, org_id, user_id, host_name,
 # used to support user logins with credentials from other systems. The
 # user_name and password must be verified in the plugin, no other
 # authentication will be checked.
-def user_authenticate(host_id, host_name, user_name, password, remote_ip, **kwargs):
+def user_authenticate(host_id, host_name, user_name, password, remote_ip,
+        **kwargs):
     if 'auth_ok':
         return True, 'organization_name'
     else:
