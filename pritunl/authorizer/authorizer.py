@@ -191,7 +191,7 @@ class Authorizer(object):
     def _auth_plugins(self):
         if self.user.type == CERT_CLIENT:
             returns = plugins.caller(
-                'user_authenticate',
+                'user_connect',
                 host_id=settings.local.host_id,
                 server_id=self.server.id,
                 org_id=self.user.org.id,
