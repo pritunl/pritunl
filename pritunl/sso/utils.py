@@ -36,7 +36,7 @@ def plugin_login_authenticate(user_name, password, remote_ip):
     from pritunl import organization
 
     returns = plugins.caller(
-        'user_login',
+        'user_authenticate',
         host_id=settings.local.host_id,
         host_name=settings.local.host.name,
         user_name=user_name,
