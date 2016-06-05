@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.23.997.12 2016-06-05
+------------------------------
 
 Changes to plugin system
 
