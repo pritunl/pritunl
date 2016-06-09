@@ -46,7 +46,7 @@ def user_authenticate(host_id, host_name, user_name, password, remote_ip,
 # secondary authentication method and the organization name from Duo is set it
 # will have priority over the organization name from the primary SSO provider.
 def sso_authenticate(sso_type, host_id, host_name, user_name, user_email,
-        remote_ip, **kwargs):
+        remote_ip, sso_org_name, sso_org_names, **kwargs):
     if sso_type == 'duo':
         pass
     elif sso_type == 'google':
