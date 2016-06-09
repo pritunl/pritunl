@@ -239,12 +239,17 @@ def _run_wsgi_debug():
         raise
 
 def setup_server_cert():
+    commit = False
+
     if not settings.app.server_dh_params:
+        commit = True
         utils.create_server_dh_params()
-        settings.commit()
 
     if not settings.app.server_cert or not settings.app.server_key:
+        commit = True
         utils.create_server_cert()
+
+    if commit:
         settings.commit()
 
 def run_server():
