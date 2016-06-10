@@ -764,7 +764,7 @@ def sso_callback_get():
             user_name=username,
             user_email=email,
             remote_ip=utils.get_remote_addr(),
-            sso_org_name=org_name,
+            sso_org_names=[org_name],
         )
         if valid:
             org_id = org_id_new or org_id
