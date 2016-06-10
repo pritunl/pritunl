@@ -48,7 +48,7 @@ def user_authenticate(host_id, host_name, user_name, password, remote_ip,
 # The sso_org_name will specify the org name in the SAML attribute. The
 # sso_org_names will be a list of org names set by Slack single sign-on.
 def sso_authenticate(sso_type, host_id, host_name, user_name, user_email,
-        remote_ip, sso_org_name, sso_org_names, **kwargs):
+        remote_ip, sso_org_name, **kwargs):
     if sso_type == 'duo':
         pass
     elif sso_type == 'google':
