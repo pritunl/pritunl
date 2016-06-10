@@ -46,7 +46,7 @@ def user_authenticate(host_id, host_name, user_name, password, remote_ip,
 # secondary authentication method and the organization name from Duo is set it
 # will have priority over the organization name from the primary SSO provider.
 # The sso_org_names will specify a list of org names provided by SAML and
-# Slack single sign on.
+# Slack single sign-on.
 def sso_authenticate(sso_type, host_id, host_name, user_name, user_email,
         remote_ip, sso_org_name, **kwargs):
     if sso_type == 'duo':
