@@ -272,7 +272,7 @@ def setup_server():
         thread.start()
 
         setup_ready.wait()
-        time.sleep(0.5)
+        time.sleep(1)
 
     upgrade.database_clean_up()
 
