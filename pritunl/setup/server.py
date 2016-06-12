@@ -13,7 +13,6 @@ from pritunl import listener
 
 import logging
 import time
-import os
 import pymongo
 import flask
 import threading
