@@ -5,6 +5,7 @@ from pritunl import logger
 import urllib
 import httplib
 import requests
+import xml.etree.ElementTree
 
 def _get_base_url():
     return 'https://api.%s.onelogin.com' % settings.app.sso_onelogin_region
@@ -86,7 +87,13 @@ def auth_onelogin(username):
             return False
 
         if response.status_code == 200:
-            return True
+            data = xml.etree.ElementTree.fromstring(response.content)
+            if data.find('status').text == '1':
+                return True
+
+            logger.error('OneLogin user disabled', 'sso',
+                username=username,
+            )
         elif response.status_code == 404:
             logger.error('OneLogin user not found', 'sso',
                 username=username,
