@@ -132,9 +132,12 @@
       <label>Okta API Token</label>
       <input type="text" class="form-control" placeholder="Enter Okta API token" value="<%- sso_okta_token || '' %>" data-toggle="tooltip" title="Okta API token">
     </div>
-    <div class="sso-onelogin-key form-group" <%= sso === 'saml_onelogin' || sso === 'saml_onelogin_duo' ? '' : 'style="display: none;"' %>>
-      <label>OneLogin API Key</label>
-      <input type="text" class="form-control" placeholder="Enter OneLogin API key" value="<%- sso_onelogin_key || '' %>" data-toggle="tooltip" title="OneLogin API key">
+    <div class="sso-onelogin-id form-group" <%= sso === 'saml_onelogin' || sso === 'saml_onelogin_duo' ? '' : 'style="display: none;"' %>>
+      <label>OneLogin API Client ID</label>
+      <input type="text" class="form-control" placeholder="Enter OneLogin API client ID" value="<%- sso_onelogin_key || '' %>" data-toggle="tooltip" title="OneLogin API client ID">
+    <div class="sso-onelogin-secret form-group" <%= sso === 'saml_onelogin' || sso === 'saml_onelogin_duo' ? '' : 'style="display: none;"' %>>
+      <label>OneLogin API Client Secret</label>
+      <input type="text" class="form-control" placeholder="Enter OneLogin API client secret" value="<%- sso_onelogin_key || '' %>" data-toggle="tooltip" title="OneLogin API client secret">
     </div>
     <div class="sso-match-google form-group" <%= sso === 'google' || sso === 'google_duo' ? '' : 'style="display: none;"' %>>
       <label>Google Apps Domain</label>
