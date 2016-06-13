@@ -43,7 +43,8 @@ def _dict():
             'sso_saml_issuer_url': 'demo',
             'sso_saml_cert': 'demo',
             'sso_okta_token': 'demo',
-            'sso_onelogin_key': 'demo',
+            'sso_onelogin_id': 'demo',
+            'sso_onelogin_secret': 'demo',
             'public_address': settings.local.host.public_addr,
             'public_address6': settings.local.host.public_addr6,
             'routed_subnet6': settings.local.host.routed_subnet6,
@@ -95,7 +96,8 @@ def _dict():
             'sso_saml_issuer_url': settings.app.sso_saml_issuer_url,
             'sso_saml_cert': settings.app.sso_saml_cert,
             'sso_okta_token': settings.app.sso_okta_token,
-            'sso_onelogin_key': settings.app.sso_onelogin_key,
+            'sso_onelogin_id': settings.app.sso_onelogin_id,
+            'sso_onelogin_secret': settings.app.sso_onelogin_secret,
             'public_address': settings.local.host.public_addr,
             'public_address6': settings.local.host.public_addr6,
             'routed_subnet6': settings.local.host.routed_subnet6,
@@ -402,12 +404,19 @@ def settings_put():
             changes.add('sso')
         settings.app.sso_okta_token = sso_okta_token
 
-    if 'sso_onelogin_key' in flask.request.json:
+    if 'sso_onelogin_id' in flask.request.json:
         settings_commit = True
-        sso_onelogin_key = flask.request.json['sso_onelogin_key'] or None
-        if sso_onelogin_key != settings.app.sso_onelogin_key:
+        sso_onelogin_id = flask.request.json['sso_onelogin_id'] or None
+        if sso_onelogin_id != settings.app.sso_onelogin_id:
             changes.add('sso')
-        settings.app.sso_onelogin_key = sso_onelogin_key
+        settings.app.sso_onelogin_id = sso_onelogin_id
+
+    if 'sso_onelogin_secret' in flask.request.json:
+        settings_commit = True
+        sso_onelogin_secret = flask.request.json['sso_onelogin_secret'] or None
+        if sso_onelogin_secret != settings.app.sso_onelogin_secret:
+            changes.add('sso')
+        settings.app.sso_onelogin_secret = sso_onelogin_secret
 
     if 'theme' in flask.request.json:
         settings_commit = True
@@ -517,6 +526,8 @@ def settings_put():
         settings.app.sso_saml_cert = None
         settings.app.sso_okta_token = None
         settings.app.sso_onelogin_key = None
+        settings.app.sso_onelogin_id = None
+        settings.app.sso_onelogin_secret = None
 
     for change in changes:
         flask.g.administrator.audit_event(
