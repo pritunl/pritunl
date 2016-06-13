@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add support for OneLogin API v1
+
 Version 1.23.1002.28 2016-06-10
 -------------------------------
 
