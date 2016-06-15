@@ -50,6 +50,7 @@ def auth_onelogin(username):
                 'username': username
             },
         )
+
         if response.status_code != 200:
             logger.error('OneLogin api error', 'sso',
                 username=username,
