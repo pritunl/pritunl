@@ -47,7 +47,7 @@ def auth_onelogin(username):
                 'Content-Type': 'application/json',
             },
             params={
-                'username': username
+                'username': username,
             },
         )
 
