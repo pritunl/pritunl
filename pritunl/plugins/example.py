@@ -65,6 +65,7 @@ def sso_authenticate(sso_type, host_id, host_name, user_name, user_email,
     else:
         return False, None
 
+# [SYNCHRONOUS]
 def server_config(host_id, host_name, server_id, server_name, host_id,
         host_name, server_id, server_name, port, protocol, ipv6, ipv6_firewall,
         network, network6, network_mode, network_start, network_stop,
