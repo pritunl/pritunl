@@ -64,3 +64,6 @@ def sso_authenticate(sso_type, host_id, host_name, user_name, user_email,
         return True, 'organization_name'
     else:
         return False, None
+
+def server_config(host_id, host_name, server_id, server_name, **kwargs):
+    return ''
