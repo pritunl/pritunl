@@ -127,7 +127,9 @@ class ServerInstance(object):
         gateway6 = utils.get_network_gateway(self.server.network6)
 
         push = ''
+        routes = []
         for route in self.server.get_routes(include_default=False):
+            routes.append(route)
             if route['virtual_network']:
                 continue
 
@@ -260,6 +262,7 @@ class ServerInstance(object):
                 replica_count=self.server.replica_count,
                 dns_mapping=self.server.dns_mapping,
                 debug=self.server.debug,
+                routes=routes,
             )
 
             if returns:
