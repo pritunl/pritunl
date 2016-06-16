@@ -14,6 +14,7 @@ from pritunl import messenger
 from pritunl import organization
 from pritunl import iptables
 from pritunl import ipaddress
+from pritunl import plugins
 
 import os
 import signal
@@ -223,6 +224,47 @@ class ServerInstance(object):
             for conf_line in server_conf.split('\n'):
                 if conf_line:
                     self.server.output.push_message('  ' + conf_line)
+
+        if settings.local.sub_plan == 'enterprise':
+            returns = plugins.caller(
+                'server_config',
+                host_id=settings.local.host_id,
+                host_name=settings.local.host.name,
+                server_id=self.server.id,
+                server_name=self.server.name,
+                port=self.server.port,
+                protocol=self.server.protocol,
+                ipv6=self.server.ipv6,
+                ipv6_firewall=self.server.ipv6_firewall,
+                network=self.server.network,
+                network6=self.server.network6,
+                network_mode=self.server.network_mode,
+                network_start=self.server.network_start,
+                network_stop=self.server.network_end,
+                restrict_routes=self.server.restrict_routes,
+                bind_address=self.server.bind_address,
+                onc_hostname=self.server.onc_hostname,
+                dh_param_bits=self.server.dh_param_bits,
+                multi_device=self.server.multi_device,
+                dns_servers=self.server.dns_servers,
+                search_domain=self.server.search_domain,
+                otp_auth=self.server.otp_auth,
+                cipher=self.server.cipher,
+                hash=self.server.hash,
+                inter_client=self.server.inter_client,
+                ping_interval=self.server.ping_interval,
+                ping_timeout=self.server.ping_timeout,
+                link_ping_interval=self.server.link_ping_interval,
+                link_ping_timeout=self.server.link_ping_timeout,
+                max_clients=self.server.max_clients,
+                replica_count=self.server.replica_count,
+                dns_mapping=self.server.dns_mapping,
+                debug=self.server.debug,
+            )
+
+            if returns:
+                for return_val in returns:
+                    server_conf += return_val
 
         server_conf += '<ca>\n%s\n</ca>\n' % self.server.ca_certificate
 
