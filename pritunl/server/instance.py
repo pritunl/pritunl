@@ -267,7 +267,7 @@ class ServerInstance(object):
 
             if returns:
                 for return_val in returns:
-                    server_conf += return_val
+                    server_conf += return_val.strip() + '/n'
 
         server_conf += '<ca>\n%s\n</ca>\n' % self.server.ca_certificate
 
