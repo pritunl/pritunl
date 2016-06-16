@@ -129,7 +129,7 @@ class ServerInstance(object):
         push = ''
         routes = []
         for route in self.server.get_routes(include_default=False):
-            routes.append(route)
+            routes.append(route['network'])
             if route['virtual_network']:
                 continue
 
