@@ -246,14 +246,6 @@ def setup_server():
 
     listener.add_listener('system', on_system_msg)
 
-    if db_ver_int > settings.local.version_int:
-        logger.error('Database version is newer than server version',
-            'setup',
-            db_version=db_ver_int,
-            server_version=settings.local.version_int,
-        )
-        exit(75)
-
     if not settings.conf.mongodb_uri:
         setup_state = 'setup'
     elif check_db_ver(db_ver_int):
