@@ -76,6 +76,7 @@ def user_get(org_id, user_id=None, page=None):
         'organization_name',
         'name',
         'email',
+        'groups',
         'pin',
         'type',
         'auth_type',
@@ -234,6 +235,11 @@ def user_post(org_id):
             port_forwarding_in = user_data.get('port_forwarding')
             port_forwarding = []
 
+            groups = user_data.get('groups') or []
+            for i, group in enumerate(groups):
+                groups[i] = utils.filter_str(group)
+            groups = list(set(groups))
+
             if pin:
                 if not pin.isdigit():
                     return utils.jsonify({
@@ -258,7 +264,8 @@ def user_post(org_id):
                     })
 
             user = org.new_user(type=CERT_CLIENT, name=name, email=email,
-                pin=pin, disabled=disabled, bypass_secondary=bypass_secondary,
+                groups=groups, pin=pin, disabled=disabled,
+                bypass_secondary=bypass_secondary,
                 client_to_client=client_to_client, dns_servers=dns_servers,
                 dns_suffix=dns_suffix, port_forwarding=port_forwarding)
             user.audit_event('user_created',
@@ -324,6 +331,20 @@ def user_put(org_id, user_id):
             )
 
         user.email = email
+
+    if 'groups' in flask.request.json:
+        groups = flask.request.json['groups'] or []
+        for i, group in enumerate(groups):
+            groups[i] = utils.filter_str(group)
+        groups = set(groups)
+
+        if groups != set(user.groups or []):
+            user.audit_event('user_updated',
+                'User groups changed',
+                remote_addr=utils.get_remote_addr(),
+            )
+
+        user.groups = list(groups)
 
     if 'pin' in flask.request.json:
         pin = flask.request.json['pin']
