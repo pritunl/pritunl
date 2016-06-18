@@ -120,6 +120,7 @@ class User(mongo.MongoObject):
             'organization_name': self.org.name,
             'name': self.name,
             'email': self.email,
+            'groups': self.groups or [],
             'pin': bool(self.pin),
             'type': self.type,
             'auth_type': self.auth_type,
