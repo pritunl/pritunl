@@ -6,6 +6,10 @@
   <label>Email (optional)</label>
   <input type="email" class="form-control" placeholder="Enter email address" data-toggle="tooltip" title="User email address" value="<%- email ? email : '' %>">
 </div>
+<div class="form-group groups">
+  <label>Groups</label>
+  <input type="text" placeholder="Enter groups space separated" value="<%- groups ? groups.join(',') : '' %>">
+</div>
 <div class="form-group pin">
   <label>Pin</label>
   <input type="password" class="form-control" placeholder="Enter user pin"
