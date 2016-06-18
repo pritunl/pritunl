@@ -24,6 +24,13 @@ define([
       this.orgs = options.orgs;
       ModalAddUserView.__super__.initialize.call(this);
     },
+    postRender: function() {
+      this.$('.groups input').select2({
+        tags: [],
+        tokenSeparators: [',', ' '],
+        width: '200px'
+      });
+    },
     body: function() {
       return this.template({
         orgs: this.orgs.toJSON(),
@@ -103,6 +110,14 @@ define([
     onClientToClientSelect: function() {
       this.setClientToClientSelect(!this.getClientToClientSelect());
     },
+    getGroups: function() {
+      var groups = [];
+      var groupsData = this.$('.groups input').select2('data');
+      for (var i = 0; i < groupsData.length; i++) {
+        groups.push(groupsData[i].text);
+      }
+      return groups;
+    },
     onOk: function() {
       var i;
       var name = this.$('.name input').val();
@@ -114,6 +129,7 @@ define([
       var bypassSecondary = this.getBypassSecondarySelect();
       var clientToClient = this.getClientToClientSelect();
       var portForwarding = this.getPortForwarding();
+      var groups = this.getGroups();
 
       var networkLink;
       var networkLinks = [];
@@ -153,6 +169,7 @@ define([
       userModel.save({
         organization: org,
         name: name,
+        groups: groups,
         email: email,
         pin: pin,
         network_links: networkLinks,
