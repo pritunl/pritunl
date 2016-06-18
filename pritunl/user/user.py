@@ -30,6 +30,7 @@ class User(mongo.MongoObject):
         'org_id',
         'name',
         'email',
+        'groups',
         'pin',
         'otp_secret',
         'type',
@@ -57,7 +58,7 @@ class User(mongo.MongoObject):
     }
 
     def __init__(self, org, name=None, email=None, pin=None, type=None,
-            auth_type=None, disabled=None, resource_id=None,
+            groups=None, auth_type=None, disabled=None, resource_id=None,
             bypass_secondary=None, client_to_client=None, dns_servers=None,
             dns_suffix=None, port_forwarding=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
@@ -73,6 +74,8 @@ class User(mongo.MongoObject):
             self.pin = pin
         if type is not None:
             self.type = type
+        if groups is not None:
+            self.groups = groups
         if auth_type is not None:
             self.auth_type = auth_type
         if disabled is not None:
