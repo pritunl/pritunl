@@ -23,6 +23,13 @@ define([
         portForwardingFormatted: this.model.portForwardingFormatted()
       }, this.model.toJSON()));
     },
+    postRender: function() {
+      this.$('.groups input').select2({
+        tags: [],
+        tokenSeparators: [',', ' '],
+        width: '200px'
+      });
+    },
     getPortForwarding: function() {
       var item;
       var protocol;
@@ -96,6 +103,14 @@ define([
     onClientToClientSelect: function() {
       this.setClientToClientSelect(!this.getClientToClientSelect());
     },
+    getGroups: function() {
+      var groups = [];
+      var groupsData = this.$('.groups input').select2('data');
+      for (var i = 0; i < groupsData.length; i++) {
+        groups.push(groupsData[i].text);
+      }
+      return groups;
+    },
     onOk: function() {
       var i;
       var name = this.$('.name input').val();
@@ -106,6 +121,7 @@ define([
       var bypassSecondary = this.getBypassSecondarySelect();
       var clientToClient = this.getClientToClientSelect();
       var portForwarding = this.getPortForwarding();
+      var groups = this.getGroups();
 
       if (pin === '******') {
         pin = true;
@@ -146,6 +162,7 @@ define([
       this.setLoading('Modifying user...');
       this.model.save({
         name: name,
+        groups: groups,
         email: email,
         disabled: null,
         pin: pin,
