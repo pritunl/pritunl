@@ -11,6 +11,7 @@ define([
       'organization_name': null,
       'name': null,
       'email': null,
+      'groups': null,
       'gravatar': null,
       'audit': null,
       'type': null,
