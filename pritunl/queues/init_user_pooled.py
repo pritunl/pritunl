@@ -46,7 +46,7 @@ class QueueInitUserPooled(QueueInitUser):
 
 @queue.add_reserve('queued_user')
 def reserve_queued_user(org, name=None, email=None, pin=None, type=None,
-        auth_type=None, disabled=None, bypass_secondary=None,
+        groups=None, auth_type=None, disabled=None, bypass_secondary=None,
         client_to_client=None, dns_servers=None, dns_suffix=None,
         port_forwarding=None, resource_id=None, block=False):
     reserve_id = str(org.id) + '-' + type
@@ -60,6 +60,8 @@ def reserve_queued_user(org, name=None, email=None, pin=None, type=None,
         reserve_data['pin'] = pin
     if type is not None:
         reserve_data['type'] = type
+    if groups is not None:
+        reserve_data['groups'] = groups
     if auth_type is not None:
         reserve_data['auth_type'] = auth_type
     if disabled is not None:
