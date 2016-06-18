@@ -18,7 +18,7 @@ def new_pooled_user(org, type):
     thread.start()
 
 def reserve_pooled_user(org, name=None, email=None, pin=None, type=CERT_CLIENT,
-        auth_type=None, disabled=None, resource_id=None,
+        groups=None, auth_type=None, disabled=None, resource_id=None,
         dns_servers=None, dns_suffix=None, bypass_secondary=None,
         client_to_client=None, port_forwarding=None):
     doc = {}
@@ -31,6 +31,8 @@ def reserve_pooled_user(org, name=None, email=None, pin=None, type=CERT_CLIENT,
         doc['pin'] = pin
     if type is not None:
         doc['type'] = type
+    if groups is not None:
+        doc['groups'] = groups
     if auth_type is not None:
         doc['auth_type'] = auth_type
     if disabled is not None:
