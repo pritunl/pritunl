@@ -440,7 +440,7 @@ class Clients(object):
 
             user = org.get_user(user_id, fields=(
                 '_id', 'name', 'email', 'pin', 'type', 'auth_type',
-                'disabled', 'otp_secret', 'link_server_id',
+                'groups', 'disabled', 'otp_secret', 'link_server_id',
                 'bypass_secondary', 'client_to_client', 'dns_servers',
                 'dns_suffix', 'port_forwarding'))
             if not user:
