@@ -36,6 +36,11 @@ define([
       return this.template(this.model.toJSON());
     },
     postRender: function() {
+      this.$('.groups input').select2({
+        tags: [],
+        tokenSeparators: [',', ' '],
+        width: '200px'
+      });
       this.$('.network .label').tooltip();
       this.updateMaxHosts();
     },
@@ -299,6 +304,14 @@ define([
       }
       this.$('.network .label').hide();
     },
+    getGroups: function() {
+      var groups = [];
+      var groupsData = this.$('.groups input').select2('data');
+      for (var i = 0; i < groupsData.length; i++) {
+        groups.push(groupsData[i].text);
+      }
+      return groups;
+    },
     onOk: function() {
       var name = this.$('.name input').val();
       var network = this.$('.network input').val();
@@ -333,6 +346,7 @@ define([
       var networkMode = this.$('.network-mode select').val();
       var networkStart = this.$('.network-start input').val();
       var networkEnd = this.$('.network-end input').val();
+      var groups = this.getGroups();
 
       if (!name) {
         this.setAlert('danger', 'Name can not be empty.', '.name');
@@ -365,6 +379,7 @@ define([
         'name': name,
         'type': this.model.get('type'),
         'network': network,
+        'groups': groups,
         'bind_address': bindAddress,
         'port': port,
         'protocol': protocol,
