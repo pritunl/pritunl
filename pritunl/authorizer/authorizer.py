@@ -67,6 +67,15 @@ class Authorizer(object):
             raise
 
     def _check_primary(self):
+        if not self.server.check_groups(self.user.groups):
+            self.user.audit_event(
+                'user_connection',
+                ('User connection to "%s" denied. User not in ' +
+                    'servers groups') % (self.server.name),
+                remote_addr=self.remote_ip,
+            )
+            raise AuthError('User not in servers groups')
+
         if self.user.disabled:
             self.user.audit_event('user_connection',
                 'User connection to "%s" denied. User is disabled' % (
