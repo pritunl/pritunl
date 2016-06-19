@@ -667,6 +667,13 @@ class Server(mongo.MongoObject):
                 self.routes.pop(i)
                 break
 
+    def check_groups(self, groups):
+        if not self.groups:
+            return True
+        if not groups:
+            return False
+        return bool(set(groups) & set(self.groups))
+
     def get_link_server(self, link_server_id, fields=None):
         return Server(id=link_server_id, fields=fields)
 
