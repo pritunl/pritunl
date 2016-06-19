@@ -10,7 +10,6 @@ from pritunl import user
 from pritunl import utils
 
 import uuid
-import random
 import math
 import pymongo
 import threading
