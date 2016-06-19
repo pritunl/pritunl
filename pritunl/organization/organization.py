@@ -204,6 +204,14 @@ class Organization(mongo.MongoObject):
                     spec['type'] = user_type
                 search = search[:n] + search[n + 5 + len(user_type):].strip()
 
+            n = search.find('group:')
+            if n != -1:
+                user_group = search[n + 6:].split(None, 1)
+                user_group = user_group[0] if user_group else ''
+                if user_group:
+                    spec['groups'] = user_group
+                search = search[:n] + search[n + 6 + len(user_group):].strip()
+
             n = search.find('email:')
             if n != -1:
                 email = search[n + 6:].split(None, 1)
