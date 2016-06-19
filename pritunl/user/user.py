@@ -646,7 +646,7 @@ class User(mongo.MongoObject):
             os.makedirs(temp_path)
             tar_file = tarfile.open(key_archive_path, 'w')
             try:
-                for svr in self.org.iter_servers():
+                for svr in self.iter_servers():
                     server_conf_path = os.path.join(temp_path,
                         '%s_%s.ovpn' % (self.id, svr.id))
                     conf_name, client_conf, conf_hash = self._generate_conf(
@@ -675,7 +675,10 @@ class User(mongo.MongoObject):
             os.makedirs(temp_path)
             zip_file = zipfile.ZipFile(key_archive_path, 'w')
             try:
-                for svr in self.org.iter_servers():
+                for svr in self.iter_servers():
+                    if not svr.check_groups(self.groups):
+                        continue
+
                     server_conf_path = os.path.join(temp_path,
                         '%s_%s.ovpn' % (self.id, svr.id))
                     conf_name, client_conf, conf_hash = self._generate_conf(
@@ -732,7 +735,7 @@ class User(mongo.MongoObject):
                 os.remove(user_key_path)
                 os.remove(user_p12_path)
 
-                for svr in self.org.iter_servers():
+                for svr in self.iter_servers():
                     server_conf_path = os.path.join(temp_path,
                         '%s_%s.onc' % (self.id, svr.id))
                     conf_name, client_conf = self._generate_onc(svr)
@@ -824,7 +827,7 @@ class User(mongo.MongoObject):
         from pritunl import server
 
         if not force:
-            for svr in self.org.iter_servers(('status',)):
+            for svr in self.iter_servers(('status',)):
                 if svr.status == ONLINE:
                     raise ServerOnlineError('Server online')
 
@@ -841,7 +844,7 @@ class User(mongo.MongoObject):
         }, upsert=True)
 
         if force:
-            for svr in self.org.iter_servers(server.operation_fields):
+            for svr in self.iter_servers(server.operation_fields):
                 if svr.status == ONLINE:
                     logger.info(
                         'Restarting running server to add network link',
