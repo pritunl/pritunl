@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Add support for user groups
 Improvements to plugin system
 
 Version 1.23.1005.91 2016-06-13
