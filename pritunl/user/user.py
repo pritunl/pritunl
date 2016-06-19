@@ -758,6 +758,9 @@ class User(mongo.MongoObject):
 
     def build_key_conf(self, server_id, include_user_cert=True):
         svr = self.org.get_by_id(server_id)
+        if not svr.check_groups(self.groups):
+            raise UserNotInServerGroups('User not in server groups')
+
         conf_name, client_conf, conf_hash = self._generate_conf(svr,
             include_user_cert)
 
@@ -768,7 +771,10 @@ class User(mongo.MongoObject):
         }
 
     def sync_conf(self, server_id, conf_hash):
-        key = self.build_key_conf(server_id, False)
+        try:
+            key = self.build_key_conf(server_id, False)
+        except UserNotInServerGroups:
+            return
 
         if key['hash'] != conf_hash:
             return key
