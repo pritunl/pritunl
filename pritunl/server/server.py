@@ -281,6 +281,7 @@ class Server(mongo.MongoObject):
             'port': self.port,
             'protocol': self.protocol,
             'dh_param_bits': self.dh_param_bits,
+            'groups': self.groups or [],
             'ipv6': True if self.ipv6 else False,
             'ipv6_firewall': True if self.ipv6_firewall else False,
             'network_mode': self.network_mode,
