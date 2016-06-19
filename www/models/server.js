@@ -14,6 +14,7 @@ define([
       'devices_online': null,
       'user_count': null,
       'network': null,
+      'groups': null,
       'bind_address': null,
       'port': null,
       'protocol': null,
