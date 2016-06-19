@@ -109,6 +109,7 @@ class Server(mongo.MongoObject):
         'hash',
         'jumbo_frames',
         'organizations',
+        'groups',
         'hosts',
         'links',
         'primary_organization',
