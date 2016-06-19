@@ -46,6 +46,13 @@ class HostError(BaseError):
     pass
 
 
+class UserError(BaseError):
+    pass
+
+class UserNotInServerGroups(UserError):
+    pass
+
+
 class ServerError(BaseError):
     pass
 
