@@ -348,7 +348,7 @@ def user_linked_key_page_get(short_code):
             'href="/key_onc/%s.zip">Download Chromebook Profiles</a><br>\n' % (
                 doc['key_id'])
 
-    for server in org.iter_servers():
+    for server in user.iter_servers():
         conf_links += '<a class="btn btn-sm" title="Download Profile" ' + \
             'href="/key/%s/%s.key">Download Profile (%s)</a><br>\n' % (
                 doc['key_id'], server.id, server.name)
@@ -386,7 +386,7 @@ def user_uri_key_page_get(short_code):
     )
 
     keys = {}
-    for server in org.iter_servers():
+    for server in user.iter_servers():
         key = user.build_key_conf(server.id)
         keys[key['name']] = key['conf']
 
