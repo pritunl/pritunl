@@ -244,6 +244,15 @@ def server_put_post(server_id=None):
         if dh_param_bits not in VALID_DH_PARAM_BITS:
             return _dh_param_bits_invalid()
 
+    groups = None
+    groups_def = False
+    if 'groups' in flask.request.json:
+        groups_def = True
+        groups = flask.request.json['groups'] or []
+        for i, group in enumerate(groups):
+            groups[i] = utils.filter_str(group)
+        groups = list(set(groups))
+
     multi_device = False
     multi_device_def = False
     if 'multi_device' in flask.request.json:
@@ -477,6 +486,7 @@ def server_put_post(server_id=None):
         svr = server.new_server(
             name=name,
             network=network,
+            groups=groups,
             network_mode=network_mode,
             network_start=network_start,
             network_end=network_end,
@@ -527,6 +537,8 @@ def server_put_post(server_id=None):
             svr.name = name
         if network_def:
             svr.network = network
+        if groups_def:
+            svr.groups = groups
         if network_start_def:
             svr.network_start = network_start
         if network_end_def:
