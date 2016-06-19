@@ -632,6 +632,12 @@ class User(mongo.MongoObject):
 
         return file_name, onc_conf
 
+    def iter_servers(self, fields=None):
+        for svr in self.org.iter_servers(fields=fields):
+            if not svr.check_groups(self.groups):
+                continue
+            yield svr
+
     def build_key_tar_archive(self):
         temp_path = utils.get_temp_path()
         key_archive_path = os.path.join(temp_path, '%s.tar' % self.id)
