@@ -59,7 +59,8 @@ def user_get(org_id, user_id=None, page=None):
         if resp:
             return utils.jsonify(resp)
 
-    for svr in org.iter_servers(fields=('name', 'otp_auth', 'dns_mapping')):
+    for svr in org.iter_servers(fields=('name', 'otp_auth',
+            'dns_mapping', 'groups')):
         servers.append(svr)
         server_count += 1
         if svr.otp_auth:
@@ -110,6 +111,8 @@ def user_get(org_id, user_id=None, page=None):
 
         server_data = []
         for svr in servers:
+            if not svr.check_groups(usr.groups):
+                continue
             data = {
                 'id': svr.id,
                 'name': svr.name,
