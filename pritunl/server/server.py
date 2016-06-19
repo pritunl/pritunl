@@ -160,7 +160,7 @@ class Server(mongo.MongoObject):
     }
     cache_prefix = 'server'
 
-    def __init__(self, name=None, network=None, network_mode=None,
+    def __init__(self, name=None, groups=None, network=None, network_mode=None,
             network_start=None, network_end=None, restrict_routes=None,
             ipv6=None, ipv6_firewall=None,bind_address=None, port=None,
             protocol=None, dh_param_bits=None, multi_device=None,
@@ -182,6 +182,8 @@ class Server(mongo.MongoObject):
 
         if name is not None:
             self.name = name
+        if groups is not None:
+            self.groups = groups
         if network is not None:
             self.network = network
         if network_mode is not None:
