@@ -35,6 +35,7 @@ dict_fields = [
     'uptime',
     'instances',
     'organizations',
+    'groups',
     'ipv6',
     'ipv6_firewall',
     'network',
