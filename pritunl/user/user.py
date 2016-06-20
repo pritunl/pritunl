@@ -726,7 +726,7 @@ class User(mongo.MongoObject):
                     '-password', 'pass:',
                     '-inkey', user_key_path,
                     '-in', user_cert_path,
-                    '-out', user_p12_path
+                    '-out', user_p12_path,
                 ])
 
                 zip_file.write(user_p12_path, arcname='%s.p12' % self.name)
