@@ -352,7 +352,7 @@ def user_put(org_id, user_id):
     if 'pin' in flask.request.json:
         pin = flask.request.json['pin']
 
-        if pin != True:
+        if pin is not True:
             if pin:
                 if settings.user.pin_mode == PIN_DISABLED:
                     return utils.jsonify({
