@@ -47,7 +47,7 @@ def _auth_radius(username, password):
     usr = org.find_user(name=username)
     if not usr:
         usr = org.new_user(name=username, type=CERT_CLIENT,
-            auth_type=RADIUS_AUTH, groups=groups)
+            auth_type=RADIUS_AUTH, groups=list(groups))
         usr.audit_event(
             'user_created',
             'User created with single sign-on',
@@ -65,7 +65,7 @@ def _auth_radius(username, password):
             }, 403)
 
         if groups and groups - set(usr.groups):
-            usr.groups = set(usr.groups) | groups
+            usr.groups = list(set(usr.groups) | groups)
             usr.commit('groups')
 
         if usr.auth_type != RADIUS_AUTH:
@@ -122,7 +122,7 @@ def _auth_plugin(username, password):
     usr = org.find_user(name=username)
     if not usr:
         usr = org.new_user(name=username, type=CERT_CLIENT,
-            auth_type=PLUGIN_AUTH, groups=groups)
+            auth_type=PLUGIN_AUTH, groups=list(groups))
         usr.audit_event(
             'user_created',
             'User created with plugin authentication',
@@ -140,7 +140,7 @@ def _auth_plugin(username, password):
             }, 403)
 
         if groups and groups - set(usr.groups):
-            usr.groups = set(usr.groups) | groups
+            usr.groups = list(set(usr.groups) | groups)
             usr.commit('groups')
 
         if usr.auth_type != PLUGIN_AUTH:

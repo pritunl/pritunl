@@ -557,7 +557,7 @@ def sso_authenticate_post():
     usr = org.find_user(name=username)
     if not usr:
         usr = org.new_user(name=username, email=email, type=CERT_CLIENT,
-            auth_type=DUO_AUTH, groups=groups)
+            auth_type=DUO_AUTH, groups=list(groups))
         usr.audit_event('user_created', 'User created with single sign-on',
             remote_addr=utils.get_remote_addr())
 
@@ -569,7 +569,7 @@ def sso_authenticate_post():
             return flask.abort(403)
 
         if groups and groups - set(usr.groups):
-            usr.groups = set(usr.groups) | groups
+            usr.groups = list(set(usr.groups) | groups)
             usr.commit('groups')
 
         if usr.auth_type != DUO_AUTH:
@@ -875,7 +875,7 @@ def sso_callback_get():
     usr = org.find_user(name=username)
     if not usr:
         usr = org.new_user(name=username, email=email, type=CERT_CLIENT,
-            auth_type=sso_mode, groups=groups)
+            auth_type=sso_mode, groups=list(groups))
         usr.audit_event('user_created', 'User created with single sign-on',
             remote_addr=utils.get_remote_addr())
 
@@ -887,7 +887,7 @@ def sso_callback_get():
             return flask.abort(403)
 
         if groups and groups - set(usr.groups):
-            usr.groups = set(usr.groups) | groups
+            usr.groups = list(set(usr.groups) | groups)
             usr.commit('groups')
 
         if usr.auth_type != sso_mode:
