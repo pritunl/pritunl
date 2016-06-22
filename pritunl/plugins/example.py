@@ -35,9 +35,9 @@ def user_connect(host_id, server_id, org_id, user_id, host_name,
 def user_authenticate(host_id, host_name, user_name, password, remote_ip,
         **kwargs):
     if 'auth_ok':
-        return True, 'organization_name'
+        return True, 'organization_name', ['group', 'names']
     else:
-        return False, None
+        return False, None, None
 
 # [SYNCHRONOUS] Called after a user has authenticated with SSO when
 # loging into the web console. Must return True or False to accept auth
@@ -61,9 +61,9 @@ def sso_authenticate(sso_type, host_id, host_name, user_name, user_email,
         pass
 
     if 'auth_ok':
-        return True, 'organization_name'
+        return True, 'organization_name', ['group', 'names']
     else:
-        return False, None
+        return False, None, None
 
 # [SYNCHRONOUS]
 def server_config(host_id, host_name, server_id, server_name, port, protocol,
