@@ -23,7 +23,7 @@ def _auth_radius(username, password):
     if not org_id:
         org_id = settings.app.sso_org
 
-    valid, org_id_new = sso.plugin_sso_authenticate(
+    valid, org_id_new, groups = sso.plugin_sso_authenticate(
         sso_type='radius',
         user_name=username,
         user_email=None,
@@ -47,7 +47,7 @@ def _auth_radius(username, password):
     usr = org.find_user(name=username)
     if not usr:
         usr = org.new_user(name=username, type=CERT_CLIENT,
-            auth_type=RADIUS_AUTH)
+            auth_type=RADIUS_AUTH, groups=groups)
         usr.audit_event(
             'user_created',
             'User created with single sign-on',
@@ -63,6 +63,10 @@ def _auth_radius(username, password):
                 'error': AUTH_DISABLED,
                 'error_msg': AUTH_DISABLED_MSG,
             }, 403)
+
+        if groups and groups - set(usr.groups):
+            usr.groups = set(usr.groups) | groups
+            usr.commit('groups')
 
         if usr.auth_type != RADIUS_AUTH:
             usr.auth_type = RADIUS_AUTH
@@ -87,7 +91,7 @@ def _auth_plugin(username, password):
             'error_msg': AUTH_INVALID_MSG,
         }, 401)
 
-    valid, org_id = sso.plugin_login_authenticate(
+    valid, org_id, groups = sso.plugin_login_authenticate(
         user_name=username,
         password=password,
         remote_ip=utils.get_remote_addr(),
@@ -118,7 +122,7 @@ def _auth_plugin(username, password):
     usr = org.find_user(name=username)
     if not usr:
         usr = org.new_user(name=username, type=CERT_CLIENT,
-            auth_type=PLUGIN_AUTH)
+            auth_type=PLUGIN_AUTH, groups=groups)
         usr.audit_event(
             'user_created',
             'User created with plugin authentication',
@@ -134,6 +138,10 @@ def _auth_plugin(username, password):
                 'error': AUTH_DISABLED,
                 'error_msg': AUTH_DISABLED_MSG,
             }, 403)
+
+        if groups and groups - set(usr.groups):
+            usr.groups = set(usr.groups) | groups
+            usr.commit('groups')
 
         if usr.auth_type != PLUGIN_AUTH:
             usr.auth_type = PLUGIN_AUTH
