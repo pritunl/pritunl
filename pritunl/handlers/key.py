@@ -526,7 +526,7 @@ def sso_authenticate_post():
                 )
 
     if valid:
-        valid, org_id_new = sso.plugin_sso_authenticate(
+        valid, org_id_new, groups = sso.plugin_sso_authenticate(
             sso_type='duo',
             user_name=username,
             user_email=email,
@@ -557,7 +557,7 @@ def sso_authenticate_post():
     usr = org.find_user(name=username)
     if not usr:
         usr = org.new_user(name=username, email=email, type=CERT_CLIENT,
-            auth_type=DUO_AUTH)
+            auth_type=DUO_AUTH, groups=groups)
         usr.audit_event('user_created', 'User created with single sign-on',
             remote_addr=utils.get_remote_addr())
 
@@ -567,6 +567,10 @@ def sso_authenticate_post():
     else:
         if usr.disabled:
             return flask.abort(403)
+
+        if groups and groups - set(usr.groups):
+            usr.groups = set(usr.groups) | groups
+            usr.commit('groups')
 
         if usr.auth_type != DUO_AUTH:
             usr.auth_type = DUO_AUTH
@@ -759,7 +763,7 @@ def sso_callback_get():
             if org:
                 org_id = org.id
 
-        valid, org_id_new = sso.plugin_sso_authenticate(
+        valid, org_id_new, groups = sso.plugin_sso_authenticate(
             sso_type='saml',
             user_name=username,
             user_email=email,
@@ -794,7 +798,7 @@ def sso_callback_get():
                 org_id = org.id
                 break
 
-        valid, org_id_new = sso.plugin_sso_authenticate(
+        valid, org_id_new, groups = sso.plugin_sso_authenticate(
             sso_type='slack',
             user_name=username,
             user_email=email,
@@ -822,7 +826,7 @@ def sso_callback_get():
             if org:
                 org_id = org.id
 
-        valid, org_id_new = sso.plugin_sso_authenticate(
+        valid, org_id_new, groups = sso.plugin_sso_authenticate(
             sso_type='google',
             user_name=username,
             user_email=email,
@@ -843,7 +847,7 @@ def sso_callback_get():
             type='Key',
         )
         if valid:
-            valid, org_id_new = sso.plugin_sso_authenticate(
+            valid, org_id_new, groups2 = sso.plugin_sso_authenticate(
                 sso_type='duo',
                 user_name=username,
                 user_email=email,
@@ -856,6 +860,8 @@ def sso_callback_get():
                     username=username,
                 )
                 return flask.abort(401)
+
+            groups = ((groups or set()) | (groups2 or set())) or None
         else:
             logger.error('Duo authentication not valid', 'sso',
                 username=username,
@@ -869,7 +875,7 @@ def sso_callback_get():
     usr = org.find_user(name=username)
     if not usr:
         usr = org.new_user(name=username, email=email, type=CERT_CLIENT,
-            auth_type=sso_mode)
+            auth_type=sso_mode, groups=groups)
         usr.audit_event('user_created', 'User created with single sign-on',
             remote_addr=utils.get_remote_addr())
 
@@ -879,6 +885,10 @@ def sso_callback_get():
     else:
         if usr.disabled:
             return flask.abort(403)
+
+        if groups and groups - set(usr.groups):
+            usr.groups = set(usr.groups) | groups
+            usr.commit('groups')
 
         if usr.auth_type != sso_mode:
             usr.auth_type = sso_mode
