@@ -65,7 +65,7 @@ def _auth_radius(username, password):
             }, 403)
 
         if groups and groups - set(usr.groups or []):
-            usr.groups = list(set(usr.groups) | groups)
+            usr.groups = list(set(usr.groups or []) | groups)
             usr.commit('groups')
 
         if usr.auth_type != RADIUS_AUTH:
@@ -140,7 +140,7 @@ def _auth_plugin(username, password):
             }, 403)
 
         if groups and groups - set(usr.groups or []):
-            usr.groups = list(set(usr.groups) | groups)
+            usr.groups = list(set(usr.groups or []) | groups)
             usr.commit('groups')
 
         if usr.auth_type != PLUGIN_AUTH:

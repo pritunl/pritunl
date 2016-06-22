@@ -569,7 +569,7 @@ def sso_authenticate_post():
             return flask.abort(403)
 
         if groups and groups - set(usr.groups or []):
-            usr.groups = list(set(usr.groups) | groups)
+            usr.groups = list(set(usr.groups or []) | groups)
             usr.commit('groups')
 
         if usr.auth_type != DUO_AUTH:
@@ -887,7 +887,7 @@ def sso_callback_get():
             return flask.abort(403)
 
         if groups and groups - set(usr.groups or []):
-            usr.groups = list(set(usr.groups) | groups)
+            usr.groups = list(set(usr.groups or []) | groups)
             usr.commit('groups')
 
         if usr.auth_type != sso_mode:
