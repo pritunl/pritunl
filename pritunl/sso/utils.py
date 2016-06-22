@@ -55,7 +55,7 @@ def plugin_login_authenticate(user_name, password, remote_ip):
         return False, None
 
     org_name = None
-    groups = None
+    groups = set()
     for return_val in returns:
         if not return_val[0]:
             return False, None
