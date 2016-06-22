@@ -568,7 +568,7 @@ def sso_authenticate_post():
         if usr.disabled:
             return flask.abort(403)
 
-        if groups and groups - set(usr.groups):
+        if groups and groups - set(usr.groups or []):
             usr.groups = list(set(usr.groups) | groups)
             usr.commit('groups')
 
@@ -886,7 +886,7 @@ def sso_callback_get():
         if usr.disabled:
             return flask.abort(403)
 
-        if groups and groups - set(usr.groups):
+        if groups and groups - set(usr.groups or []):
             usr.groups = list(set(usr.groups) | groups)
             usr.commit('groups')
 

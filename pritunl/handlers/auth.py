@@ -64,7 +64,7 @@ def _auth_radius(username, password):
                 'error_msg': AUTH_DISABLED_MSG,
             }, 403)
 
-        if groups and groups - set(usr.groups):
+        if groups and groups - set(usr.groups or []):
             usr.groups = list(set(usr.groups) | groups)
             usr.commit('groups')
 
@@ -139,7 +139,7 @@ def _auth_plugin(username, password):
                 'error_msg': AUTH_DISABLED_MSG,
             }, 403)
 
-        if groups and groups - set(usr.groups):
+        if groups and groups - set(usr.groups or []):
             usr.groups = list(set(usr.groups) | groups)
             usr.commit('groups')
 
