@@ -19,6 +19,7 @@ def plugin_sso_authenticate(sso_type, user_name, user_email, remote_ip,
     if not returns:
         return True, None
 
+    groups = set()
     org_name = None
     for return_val in returns:
         if not return_val[0]:
@@ -26,13 +27,17 @@ def plugin_sso_authenticate(sso_type, user_name, user_email, remote_ip,
         if return_val[1]:
             org_name = return_val[1]
 
+        if len(return_val) > 2:
+            for val in return_val[2]:
+                groups.add(val)
+
     org_id = None
     if org_name:
         org = organization.get_by_name(org_name, fields=('_id'))
         if org:
             org_id = org.id
 
-    return True, org_id
+    return True, org_id, groups or None
 
 def plugin_login_authenticate(user_name, password, remote_ip):
     from pritunl import organization
