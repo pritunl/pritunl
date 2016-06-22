@@ -197,7 +197,7 @@ def server_thread():
     except StopServer:
         pass
 
-    time.sleep(1.5)
+    time.sleep(2)
     setup_ready.set()
     settings.local.server_start.set()
 
