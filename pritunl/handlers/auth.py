@@ -13,17 +13,22 @@ import time
 import random
 
 def _auth_radius(username, password):
-    valid, org_id = sso.verify_radius(username, password)
+    valid, org_names, groups = sso.verify_radius(username, password)
     if not valid:
         return utils.jsonify({
             'error': AUTH_INVALID,
             'error_msg': AUTH_INVALID_MSG,
         }, 401)
 
-    if not org_id:
-        org_id = settings.app.sso_org
+    org_id = settings.app.sso_org
+    if org_names:
+        for org_name in org_names:
+            org = organization.get_by_name(org_name, fields=('_id'))
+            if org:
+                org_id = org.id
+                break
 
-    valid, org_id_new, groups = sso.plugin_sso_authenticate(
+    valid, org_id_new, groups2 = sso.plugin_sso_authenticate(
         sso_type='radius',
         user_name=username,
         user_email=None,
@@ -39,6 +44,8 @@ def _auth_radius(username, password):
             'error': AUTH_INVALID,
             'error_msg': AUTH_INVALID_MSG,
         }, 401)
+
+    groups = ((groups or set()) | (groups2 or set())) or None
 
     org = organization.get_by_id(org_id)
     if not org:
