@@ -10,7 +10,7 @@ def verify_radius(username, password):
     host = host[0]
 
     resp = radius.authenticate(
-        username.encode(),
+        (settings.app.sso_radius_prefix or '') + username.encode(),
         password.encode(),
         settings.app.sso_secret.encode(),
         host=host,
