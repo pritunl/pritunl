@@ -17,7 +17,7 @@ def plugin_sso_authenticate(sso_type, user_name, user_email, remote_ip,
     )
 
     if not returns:
-        return True, None
+        return True, None, None
 
     groups = set()
     org_name = None
@@ -52,7 +52,7 @@ def plugin_login_authenticate(user_name, password, remote_ip):
     )
 
     if not returns:
-        return False, None
+        return False, None, None
 
     org_name = None
     groups = set()
