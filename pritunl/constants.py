@@ -203,8 +203,7 @@ ArpW8Ik1sSuQBjZ8oQLfN+G8OoY7MNRopyLyQQCNy4aWfE+xYnoVoa5+yr+aPiX0
 Sr4AUhtzf8oVDrHZYWRrP4joIcOu/Q==
 -----END CERTIFICATE-----"""
 
-RADIUS_DICTONARY = """
-ATTRIBUTE	User-Name					1	string
+RADIUS_DICTONARY = """ATTRIBUTE	User-Name					1	string
 ATTRIBUTE	User-Password				2	string
 ATTRIBUTE	CHAP-Password				3	octets
 ATTRIBUTE	NAS-IP-Address				4	ipaddr
