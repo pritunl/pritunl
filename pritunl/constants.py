@@ -203,6 +203,88 @@ ArpW8Ik1sSuQBjZ8oQLfN+G8OoY7MNRopyLyQQCNy4aWfE+xYnoVoa5+yr+aPiX0
 Sr4AUhtzf8oVDrHZYWRrP4joIcOu/Q==
 -----END CERTIFICATE-----"""
 
+RADIUS_DICTONARY = """
+ATTRIBUTE	User-Name					1	string
+ATTRIBUTE	User-Password				2	string
+ATTRIBUTE	CHAP-Password				3	octets
+ATTRIBUTE	NAS-IP-Address				4	ipaddr
+ATTRIBUTE	NAS-Port					5	integer
+ATTRIBUTE	Service-Type				6	integer
+ATTRIBUTE	Framed-Protocol				7	integer
+ATTRIBUTE	Framed-IP-Address			8	ipaddr
+ATTRIBUTE	Framed-IP-Netmask			9	ipaddr
+ATTRIBUTE	Framed-Routing				10	integer
+ATTRIBUTE	Filter-Id					11	string
+ATTRIBUTE	Framed-MTU					12	integer
+ATTRIBUTE	Framed-Compression			13	integer
+ATTRIBUTE	Login-IP-Host				14	ipaddr
+ATTRIBUTE	Login-Service				15	integer
+ATTRIBUTE	Login-TCP-Port				16	integer
+ATTRIBUTE	Reply-Message				18	string
+ATTRIBUTE	Callback-Number				19	string
+ATTRIBUTE	Callback-Id					20	string
+ATTRIBUTE	Framed-Route				22	string
+ATTRIBUTE	Framed-IPX-Network			23	ipaddr
+ATTRIBUTE	State						24	octets
+ATTRIBUTE	Class						25	octets
+ATTRIBUTE	Vendor-Specific				26	octets
+ATTRIBUTE	Session-Timeout				27	integer
+ATTRIBUTE	Idle-Timeout				28	integer
+ATTRIBUTE	Termination-Action			29	integer
+ATTRIBUTE	Called-Station-Id			30	string
+ATTRIBUTE	Calling-Station-Id			31	string
+ATTRIBUTE	NAS-Identifier				32	string
+ATTRIBUTE	Proxy-State					33	octets
+ATTRIBUTE	Login-LAT-Service			34	string
+ATTRIBUTE	Login-LAT-Node				35	string
+ATTRIBUTE	Login-LAT-Group				36	octets
+ATTRIBUTE	Framed-AppleTalk-Link		37	integer
+ATTRIBUTE	Framed-AppleTalk-Network	38	integer
+ATTRIBUTE	Framed-AppleTalk-Zone		39	string
+ATTRIBUTE	Acct-Status-Type			40	integer
+ATTRIBUTE	Acct-Delay-Time				41	integer
+ATTRIBUTE	Acct-Input-Octets			42	integer
+ATTRIBUTE	Acct-Output-Octets			43	integer
+ATTRIBUTE	Acct-Session-Id				44	string
+ATTRIBUTE	Acct-Authentic				45	integer
+ATTRIBUTE	Acct-Session-Time			46	integer
+ATTRIBUTE	Acct-Input-Packets			47	integer
+ATTRIBUTE	Acct-Output-Packets			48	integer
+ATTRIBUTE	Acct-Terminate-Cause		49	integer
+ATTRIBUTE	Acct-Multi-Session-Id		50	string
+ATTRIBUTE	Acct-Link-Count				51	integer
+ATTRIBUTE	Acct-Input-Gigawords		52	integer
+ATTRIBUTE	Acct-Output-Gigawords		53	integer
+ATTRIBUTE	Event-Timestamp				55	date
+ATTRIBUTE	CHAP-Challenge				60	string
+ATTRIBUTE	NAS-Port-Type				61	integer
+ATTRIBUTE	Port-Limit					62	integer
+ATTRIBUTE	Login-LAT-Port				63	integer
+ATTRIBUTE	Acct-Tunnel-Connection		68	string
+ATTRIBUTE	ARAP-Password				70	string
+ATTRIBUTE	ARAP-Features				71	string
+ATTRIBUTE	ARAP-Zone-Access			72	integer
+ATTRIBUTE	ARAP-Security				73	integer
+ATTRIBUTE	ARAP-Security-Data			74	string
+ATTRIBUTE	Password-Retry				75	integer
+ATTRIBUTE	Prompt						76	integer
+ATTRIBUTE	Connect-Info				77	string
+ATTRIBUTE	Configuration-Token			78	string
+ATTRIBUTE	EAP-Message					79	string
+ATTRIBUTE	Message-Authenticator		80	octets
+ATTRIBUTE	ARAP-Challenge-Response		84	string
+ATTRIBUTE	Acct-Interim-Interval		85	integer
+ATTRIBUTE	NAS-Port-Id					87	string
+ATTRIBUTE	Framed-Pool					88	string
+ATTRIBUTE	NAS-IPv6-Address			95	octets
+ATTRIBUTE	Framed-Interface-Id			96	octets
+ATTRIBUTE	Framed-IPv6-Prefix			97	octets
+ATTRIBUTE	Login-IPv6-Host				98	octets
+ATTRIBUTE	Framed-IPv6-Route			99	string
+ATTRIBUTE	Framed-IPv6-Pool			100	string
+ATTRIBUTE	Framed-IPv6-Pool			100	string
+"""
+
 DEMO_LOG_ENTRIES = [
     {
         'id': '56610a2ab0e7307d6a553175',
