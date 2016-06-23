@@ -9,3 +9,4 @@ python-dateutil==2.5.3
 psutil==4.2.0
 python-iptables==0.10.0
 pyroute2==0.3.22
+twisted==16.2.0
