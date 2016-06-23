@@ -81,6 +81,7 @@ class SettingsApp(SettingsGroupMongo):
         'sso_onelogin_id': None,
         'sso_onelogin_secret': None,
         'sso_onelogin_region': 'us',
+        'sso_radius_prefix': None,
         'queue_low_thread_limit': 4,
         'queue_med_thread_limit': 2,
         'queue_high_thread_limit': 1,
