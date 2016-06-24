@@ -259,6 +259,20 @@ define([
         this.$('.sso-match-google').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideDown(window.slideTime);
         this.$('.sso-radius-secret').slideDown(window.slideTime);
+      } else if (mode === 'radius_duo') {
+        this.$('.sso-saml-url').slideUp(window.slideTime);
+        this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
+        this.$('.sso-saml-cert').slideUp(window.slideTime);
+        this.$('.sso-token').slideUp(window.slideTime);
+        this.$('.sso-secret').slideUp(window.slideTime);
+        this.$('.sso-host').slideUp(window.slideTime);
+        this.$('.sso-okta-token').slideUp(window.slideTime);
+        this.$('.sso-onelogin-id').slideUp(window.slideTime);
+        this.$('.sso-onelogin-secret').slideUp(window.slideTime);
+        this.$('.sso-match-slack').slideUp(window.slideTime);
+        this.$('.sso-match-google').slideUp(window.slideTime);
+        this.$('.sso-radius-host').slideDown(window.slideTime);
+        this.$('.sso-radius-secret').slideDown(window.slideTime);
       }
     },
     onSsoMode: function() {
@@ -420,14 +434,15 @@ define([
 
       if (sso) {
         if (sso === 'duo' || sso === 'saml_duo' || sso === 'google_duo' ||
-            sso === 'saml_onelogin_duo') {
+            sso === 'saml_onelogin_duo' || sso === 'radius_duo') {
           ssoToken = this.$('.sso-token input').val();
           ssoSecret = this.$('.sso-secret input').val();
           ssoHost = this.$('.sso-host input').val();
         }
 
         if (sso === 'saml' || sso === 'saml_duo' || sso === 'saml_okta' ||
-            sso === 'saml_onelogin' || sso === 'saml_onelogin_duo') {
+            sso === 'saml_onelogin' || sso === 'saml_onelogin_duo' ||
+            sso === 'radius_duo') {
           ssoSamlUrl = this.$('.sso-saml-url input').val();
           ssoSamlIssuerUrl = this.$('.sso-saml-issuer-url input').val();
           ssoSamlCert = this.$('.sso-saml-cert textarea').val();
@@ -463,7 +478,7 @@ define([
           }
         }
 
-        if (sso === 'radius') {
+        if (sso === 'radius' || sso === 'radius_duo') {
           ssoHost = this.$('.sso-radius-host input').val();
           ssoSecret = this.$('.sso-radius-secret input').val();
         }
