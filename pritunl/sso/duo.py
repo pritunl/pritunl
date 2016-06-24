@@ -10,6 +10,8 @@ import hashlib
 import urllib
 import httplib
 import requests
+import time
+import threading
 
 def _sign(method, path, params):
     now = email.Utils.formatdate()
@@ -33,7 +35,146 @@ def _sign(method, path, params):
     }
 
 def auth_duo(username, strong=False, ipaddr=None, type=None, info=None,
-        factor='push'):
+        factor='push', thread=True):
+    if factor == 'push' and thread:
+        state = {
+            'interrupt': False,
+            'valid': None,
+            'org_id': None,
+            'exception': None,
+        }
+        state_lock = threading.Lock()
+        state_event = threading.Event()
+
+        def phone_thread():
+            start = time.time()
+            backup_delay = settings.app.ssu_duo_backup_delay
+
+            while True:
+                if state['interrupt']:
+                    return
+                if time.time() - start >= backup_delay:
+                    break
+                time.sleep(0.1)
+
+            try:
+                valid, org_id = auth_duo(
+                    username,
+                    strong=strong,
+                    ipaddr=ipaddr,
+                    type=type,
+                    info=info,
+                    factor='phone',
+                    thread=False,
+                )
+            except Exception as error:
+                state_lock.acquire()
+                try:
+                    if state['interrupt']:
+                        return
+                    state['interrupt'] = True
+                    state['exception'] = error
+                    state_event.set()
+                finally:
+                    state_lock.release()
+                return
+
+            if not valid:
+                return
+
+            state_lock.acquire()
+            try:
+                if state['interrupt']:
+                    return
+
+                state['interrupt'] = True
+                state['valid'] = valid
+                state['org_id'] = org_id
+
+                state_event.set()
+            finally:
+                state_lock.release()
+
+        def push_thread():
+            try:
+                valid, org_id = auth_duo(
+                    username,
+                    strong=strong,
+                    ipaddr=ipaddr,
+                    type=type,
+                    info=info,
+                    factor='push',
+                    thread=False,
+                )
+            except UserDuoPushUnavailable:
+                state_lock.acquire()
+                try:
+                    if state['interrupt']:
+                        return
+
+                    state['interrupt'] = True
+                finally:
+                    state_lock.release()
+
+                try:
+                    valid, org_id = auth_duo(
+                        username,
+                        strong=strong,
+                        ipaddr=ipaddr,
+                        type=type,
+                        info=info,
+                        factor='phone',
+                        thread=False,
+                    )
+                except Exception as error:
+                    state['interrupt'] = True
+                    state['exception'] = error
+                    state_event.set()
+                    return
+
+                state['valid'] = valid
+                state['org_id'] = org_id
+                state_event.set()
+                return
+            except Exception as error:
+                state_lock.acquire()
+                try:
+                    if state['interrupt']:
+                        return
+                    state['interrupt'] = True
+                    state['exception'] = error
+                    state_event.set()
+                finally:
+                    state_lock.release()
+                return
+
+            state_lock.acquire()
+            try:
+                if state['interrupt']:
+                    return
+
+                state['interrupt'] = True
+                state['valid'] = valid
+                state['org_id'] = org_id
+                state_event.set()
+            finally:
+                state_lock.release()
+
+        thread = threading.Thread(target=phone_thread)
+        thread.daemon = True
+        thread.start()
+
+        thread = threading.Thread(target=push_thread)
+        thread.daemon = True
+        thread.start()
+
+        state_event.wait()
+
+        if state['exception']:
+            raise state['exception']
+
+        return state['valid'], state['org_id']
+
     params = {
         'username': username,
         'factor': factor,
@@ -83,7 +224,7 @@ def auth_duo(username, strong=False, ipaddr=None, type=None, info=None,
             allow = True
     elif data.get('code') == 40002:
         if factor == 'push':
-            return auth_duo(username, strong, ipaddr, type, info, 'phone')
+            raise UserDuoPushUnavailable('Duo push is unavailable')
 
         if SAML_DUO_AUTH in settings.app.sso and \
                 settings.app.sso_saml_duo_skip_unavailable:
