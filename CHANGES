@@ -6,6 +6,7 @@ Pritunl Changelog
 Add support for user groups
 Add groups to plugin system
 Add organization and groups support to radius single sign-on
+Improvements to Duo single sign-on
 Improvements to plugin system
 
 Version 1.23.1005.91 2016-06-13
