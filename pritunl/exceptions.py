@@ -52,6 +52,9 @@ class UserError(BaseError):
 class UserNotInServerGroups(UserError):
     pass
 
+class UserDuoPushUnavailable(UserError):
+    pass
+
 
 class ServerError(BaseError):
     pass
