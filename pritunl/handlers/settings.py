@@ -35,9 +35,9 @@ def _dict():
             'pin_mode': settings.user.pin_mode,
             'sso': settings.app.sso,
             'sso_match': settings.app.sso_match,
-            'sso_token': 'demo',
-            'sso_secret': 'demo',
-            'sso_host': 'demo',
+            'sso_duo_token': 'demo',
+            'sso_duo_secret': 'demo',
+            'sso_duo_host': 'demo',
             'sso_org': settings.app.sso_org,
             'sso_saml_url': 'demo',
             'sso_saml_issuer_url': 'demo',
@@ -45,6 +45,8 @@ def _dict():
             'sso_okta_token': 'demo',
             'sso_onelogin_id': 'demo',
             'sso_onelogin_secret': 'demo',
+            'sso_radius_secret': 'demo',
+            'sso_radius_host': 'demo',
             'public_address': settings.local.host.public_addr,
             'public_address6': settings.local.host.public_addr6,
             'routed_subnet6': settings.local.host.routed_subnet6,
@@ -88,9 +90,9 @@ def _dict():
             'pin_mode': settings.user.pin_mode,
             'sso': settings.app.sso,
             'sso_match': settings.app.sso_match,
-            'sso_token': settings.app.sso_token,
-            'sso_secret': settings.app.sso_secret,
-            'sso_host': settings.app.sso_host,
+            'sso_duo_token': settings.app.sso_duo_token,
+            'sso_duo_secret': settings.app.sso_duo_secret,
+            'sso_duo_host': settings.app.sso_duo_host,
             'sso_org': settings.app.sso_org,
             'sso_saml_url': settings.app.sso_saml_url,
             'sso_saml_issuer_url': settings.app.sso_saml_issuer_url,
@@ -98,6 +100,8 @@ def _dict():
             'sso_okta_token': settings.app.sso_okta_token,
             'sso_onelogin_id': settings.app.sso_onelogin_id,
             'sso_onelogin_secret': settings.app.sso_onelogin_secret,
+            'sso_radius_secret': settings.app.sso_radius_secret,
+            'sso_radius_host': settings.app.sso_radius_host,
             'public_address': settings.local.host.public_addr,
             'public_address6': settings.local.host.public_addr6,
             'routed_subnet6': settings.local.host.routed_subnet6,
@@ -341,26 +345,40 @@ def settings_put():
         else:
             settings.app.sso_match = None
 
-    if 'sso_token' in flask.request.json:
+    if 'sso_duo_token' in flask.request.json:
         settings_commit = True
-        sso_token = flask.request.json['sso_token'] or None
-        if sso_token != settings.app.sso_token:
+        sso_duo_token = flask.request.json['sso_duo_token'] or None
+        if sso_duo_token != settings.app.sso_duo_token:
             changes.add('sso')
-        settings.app.sso_token = sso_token
+        settings.app.sso_duo_token = sso_duo_token
 
-    if 'sso_secret' in flask.request.json:
+    if 'sso_duo_secret' in flask.request.json:
         settings_commit = True
-        sso_secret = flask.request.json['sso_secret'] or None
-        if sso_secret != settings.app.sso_secret:
+        sso_duo_secret = flask.request.json['sso_duo_secret'] or None
+        if sso_duo_secret != settings.app.sso_duo_secret:
             changes.add('sso')
-        settings.app.sso_secret = sso_secret
+        settings.app.sso_duo_secret = sso_duo_secret
 
-    if 'sso_host' in flask.request.json:
+    if 'sso_duo_host' in flask.request.json:
         settings_commit = True
-        sso_host = flask.request.json['sso_host'] or None
-        if sso_host != settings.app.sso_host:
+        sso_duo_host = flask.request.json['sso_duo_host'] or None
+        if sso_duo_host != settings.app.sso_duo_host:
             changes.add('sso')
-        settings.app.sso_host = sso_host
+        settings.app.sso_duo_host = sso_duo_host
+
+    if 'sso_radius_secret' in flask.request.json:
+        settings_commit = True
+        sso_radius_secret = flask.request.json['sso_radius_secret'] or None
+        if sso_radius_secret != settings.app.sso_radius_secret:
+            changes.add('sso')
+        settings.app.sso_radius_secret = sso_radius_secret
+
+    if 'sso_radius_host' in flask.request.json:
+        settings_commit = True
+        sso_radius_host = flask.request.json['sso_radius_host'] or None
+        if sso_radius_host != settings.app.sso_radius_host:
+            changes.add('sso')
+        settings.app.sso_radius_host = sso_radius_host
 
     if 'sso_org' in flask.request.json:
         settings_commit = True
@@ -516,10 +534,13 @@ def settings_put():
                 setattr(settings.app, aws_key, None)
 
     if not settings.app.sso:
-        settings.app.sso_match = None
+        settings.app.sso_host = None
         settings.app.sso_token = None
         settings.app.sso_secret = None
-        settings.app.sso_host = None
+        settings.app.sso_match = None
+        settings.app.sso_duo_token = None
+        settings.app.sso_duo_secret = None
+        settings.app.sso_duo_host = None
         settings.app.sso_org = None
         settings.app.sso_saml_url = None
         settings.app.sso_saml_issuer_url = None
@@ -528,6 +549,8 @@ def settings_put():
         settings.app.sso_onelogin_key = None
         settings.app.sso_onelogin_id = None
         settings.app.sso_onelogin_secret = None
+        settings.app.sso_radius_secret = None
+        settings.app.sso_radius_host = None
 
     for change in changes:
         flask.g.administrator.audit_event(
