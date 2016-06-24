@@ -299,7 +299,7 @@ def user_linked_key_page_get(short_code):
     else:
         view_name = KEY_VIEW_NAME
 
-    if user.auth_type == RADIUS_AUTH or \
+    if RADIUS_AUTH in user.auth_type or \
             settings.user.pin_mode == PIN_DISABLED:
         header_class = 'pin-disabled'
     else:
