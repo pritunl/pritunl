@@ -78,11 +78,11 @@
     </div>
     <div class="sso-token form-group" <%= sso === 'duo' || sso === 'saml_duo' || sso === 'saml_onelogin_duo' || sso === 'saml_okta_duo' || sso === 'slack_duo' || sso === 'google_duo' || sso === 'radius_duo' ? '' : 'style="display: none;"' %>>
       <label>Duo Integration Key</label>
-      <input type="text" class="form-control" placeholder="Enter integration key" value="<%- sso_token || '' %>">
+      <input type="text" class="form-control" placeholder="Enter integration key" value="<%- sso_duo_token || '' %>">
     </div>
     <div class="sso-secret form-group" <%= sso === 'duo' || sso === 'saml_duo' || sso === 'saml_onelogin_duo' || sso === 'saml_okta_duo' || sso === 'slack_duo' || sso === 'google_duo' || sso === 'radius_duo' ? '' : 'style="display: none;"' %>>
       <label>Duo Secret Key</label>
-      <input type="text" class="form-control" placeholder="Enter secret key" value="<%- sso_secret || '' %>">
+      <input type="text" class="form-control" placeholder="Enter secret key" value="<%- sso_duo_secret || '' %>">
     </div>
   </div>
   <div class="settings-right right">
@@ -155,15 +155,15 @@
     </div>
     <div class="sso-radius-host form-group" <%= sso === 'radius' || sso === 'radius_duo' ? '' : 'style="display: none;"' %>>
       <label>Radius Host</label>
-      <input type="email" class="form-control" placeholder="Enter radius host and port" value="<%- sso_host || '' %>" data-toggle="tooltip" title="Radius host such as localhost:1645. If no port is specified default port 1645 will be used">
+      <input type="email" class="form-control" placeholder="Enter radius host and port" value="<%- sso_radius_host || '' %>" data-toggle="tooltip" title="Radius host such as localhost:1645. If no port is specified default port 1645 will be used">
     </div>
     <div class="sso-radius-secret form-group" <%= sso === 'radius' || sso === 'radius_duo' ? '' : 'style="display: none;"' %>>
       <label>Radius Secret</label>
-      <input type="password" class="form-control" placeholder="Enter Radius secret" value="<%- sso_secret || '' %>" data-toggle="tooltip" title="Radius shared secret">
+      <input type="password" class="form-control" placeholder="Enter Radius secret" value="<%- sso_radius_secret || '' %>" data-toggle="tooltip" title="Radius shared secret">
     </div>
     <div class="sso-host form-group" <%= sso === 'duo' || sso === 'saml_duo' || sso === 'saml_onelogin_duo' || sso === 'saml_okta_duo' || sso === 'slack_duo' || sso === 'google_duo' || sso === 'radius_duo' ? '' : 'style="display: none;"' %>>
       <label>Duo API Hostname</label>
-      <input type="text" class="form-control" placeholder="Enter api hostname" value="<%- sso_host || '' %>">
+      <input type="text" class="form-control" placeholder="Enter api hostname" value="<%- sso_duo_host || '' %>">
     </div>
   </div>
 </div>
