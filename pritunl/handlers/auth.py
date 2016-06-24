@@ -13,6 +13,8 @@ import time
 import random
 
 def _auth_radius(username, password):
+    sso_mode = settings.app.sso
+
     valid, org_names, groups = sso.verify_radius(username, password)
     if not valid:
         return utils.jsonify({
@@ -47,6 +49,46 @@ def _auth_radius(username, password):
 
     groups = ((groups or set()) | (groups2 or set())) or None
 
+    if DUO_AUTH in sso_mode:
+        try:
+            valid, _ = sso.auth_duo(
+                'zach@pritunl.com',
+                ipaddr=utils.get_remote_addr(),
+                type='Key',
+            )
+        except:
+            logger.exception('TEST ERROR', 'test')
+            raise
+        if valid:
+            valid, org_id_new, groups2 = sso.plugin_sso_authenticate(
+                sso_type='duo',
+                user_name=username,
+                user_email=None,
+                remote_ip=utils.get_remote_addr(),
+            )
+            if valid:
+                org_id = org_id_new or org_id
+            else:
+                logger.error('Duo plugin authentication not valid', 'sso',
+                    username=username,
+                )
+                return utils.jsonify({
+                    'error': AUTH_INVALID,
+                    'error_msg': AUTH_INVALID_MSG,
+                }, 401)
+
+            groups = ((groups or set()) | (groups2 or set())) or None
+        else:
+            logger.error('Duo authentication not valid', 'sso',
+                username=username,
+            )
+            return utils.jsonify({
+                'error': AUTH_INVALID,
+                'error_msg': AUTH_INVALID_MSG,
+            }, 401)
+
+    groups = ((groups or set()) | (groups2 or set())) or None
+
     org = organization.get_by_id(org_id)
     if not org:
         return flask.abort(405)
@@ -54,7 +96,7 @@ def _auth_radius(username, password):
     usr = org.find_user(name=username)
     if not usr:
         usr = org.new_user(name=username, type=CERT_CLIENT,
-            auth_type=RADIUS_AUTH, groups=list(groups))
+            auth_type=sso_mode, groups=list(groups))
         usr.audit_event(
             'user_created',
             'User created with single sign-on',
@@ -75,8 +117,8 @@ def _auth_radius(username, password):
             usr.groups = list(set(usr.groups or []) | groups)
             usr.commit('groups')
 
-        if usr.auth_type != RADIUS_AUTH:
-            usr.auth_type = RADIUS_AUTH
+        if usr.auth_type != sso_mode:
+            usr.auth_type = sso_mode
             usr.set_pin(None)
             usr.commit(('auth_type', 'pin'))
 
@@ -175,7 +217,7 @@ def auth_session_post():
 
     admin = auth.get_by_username(username, remote_addr)
     if not admin:
-        if settings.app.sso == RADIUS_AUTH:
+        if RADIUS_AUTH in settings.app.sso:
             return _auth_radius(username, password)
 
         time.sleep(random.randint(0, 100) / 1000.)
