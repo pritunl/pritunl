@@ -2,7 +2,6 @@ from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import logger
-from pritunl import plugins
 
 import base64
 import email
