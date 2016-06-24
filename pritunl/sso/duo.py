@@ -13,7 +13,7 @@ import requests
 
 def _sign(method, path, params):
     now = email.Utils.formatdate()
-    canon = [now, method.upper(), settings.app.sso_host.lower(), path]
+    canon = [now, method.upper(), settings.app.sso_duo_host.lower(), path]
     args = []
     for key in sorted(params.keys()):
         val = params[key]
@@ -24,8 +24,8 @@ def _sign(method, path, params):
     canon.append('&'.join(args))
     canon = '\n'.join(canon)
 
-    sig = hmac.new(settings.app.sso_secret.encode(), canon, hashlib.sha1)
-    auth = '%s:%s' % (settings.app.sso_token.encode(), sig.hexdigest())
+    sig = hmac.new(settings.app.sso_duo_secret.encode(), canon, hashlib.sha1)
+    auth = '%s:%s' % (settings.app.sso_duo_token.encode(), sig.hexdigest())
 
     return {
         'Date': now,
@@ -51,7 +51,7 @@ def auth_duo(username, strong=False, ipaddr=None, type=None, info=None,
             params['pushinfo'] = urllib.urlencode(info)
 
     headers = _sign('POST', '/auth/v2/auth', params)
-    url = 'https://%s/auth/v2/auth' % settings.app.sso_host
+    url = 'https://%s/auth/v2/auth' % settings.app.sso_duo_host
 
     try:
         response = requests.post(url,

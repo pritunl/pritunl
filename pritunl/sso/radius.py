@@ -7,7 +7,7 @@ from pritunl.pyrad import dictionary
 import StringIO
 
 def verify_radius(username, password):
-    host = settings.app.sso_host.split(':')
+    host = settings.app.sso_radius_host.split(':')
     if len(host) > 1:
         port = int(host[1])
     else:
@@ -17,7 +17,7 @@ def verify_radius(username, password):
     conn = client.Client(
         server=host,
         authport=port,
-        secret=settings.app.sso_secret.encode(),
+        secret=settings.app.sso_radius_secret.encode(),
         dict=dictionary.Dictionary(StringIO.StringIO(RADIUS_DICTONARY)),
     )
 
