@@ -3,6 +3,7 @@ from pritunl.upgrade.upgrade_1_5 import upgrade_1_5
 from pritunl.upgrade.upgrade_1_17 import upgrade_1_17
 from pritunl.upgrade.upgrade_1_18 import upgrade_1_18
 from pritunl.upgrade.upgrade_1_19 import upgrade_1_19
+from pritunl.upgrade.upgrade_1_24 import upgrade_1_24
 from pritunl.upgrade.utils import *
 
 from pritunl import logger
@@ -40,6 +41,12 @@ def upgrade_server():
         logger.info('Running 1.19 database upgrade', 'upgrade')
         upgrade_1_19()
         utils.set_db_ver('1.19.0.0')
+
+    if utils.get_db_ver_int() < utils.get_int_ver('1.24.0.0'):
+        upgraded = True
+        logger.info('Running 1.24 database upgrade', 'upgrade')
+        upgrade_1_24()
+        utils.set_db_ver('1.24.0.0')
 
     if not upgraded:
         logger.info('No upgrade needed', 'upgrade')
