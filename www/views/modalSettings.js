@@ -263,9 +263,6 @@ define([
         this.$('.sso-saml-url').slideUp(window.slideTime);
         this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
         this.$('.sso-saml-cert').slideUp(window.slideTime);
-        this.$('.sso-token').slideUp(window.slideTime);
-        this.$('.sso-secret').slideUp(window.slideTime);
-        this.$('.sso-host').slideUp(window.slideTime);
         this.$('.sso-okta-token').slideUp(window.slideTime);
         this.$('.sso-onelogin-id').slideUp(window.slideTime);
         this.$('.sso-onelogin-secret').slideUp(window.slideTime);
@@ -273,6 +270,9 @@ define([
         this.$('.sso-match-google').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideDown(window.slideTime);
         this.$('.sso-radius-secret').slideDown(window.slideTime);
+        this.$('.sso-token').slideDown(window.slideTime);
+        this.$('.sso-secret').slideDown(window.slideTime);
+        this.$('.sso-host').slideDown(window.slideTime);
       }
     },
     onSsoMode: function() {
