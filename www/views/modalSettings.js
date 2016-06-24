@@ -403,9 +403,6 @@ define([
       var i;
       var sso = this.getSsoMode();
       var ssoMatch = null;
-      var ssoToken = null;
-      var ssoSecret = null;
-      var ssoHost = null;
       var ssoOrg = null;
       var ssoSamlUrl = null;
       var ssoSamlIssuerUrl = null;
@@ -413,6 +410,11 @@ define([
       var ssoOktaToken = null;
       var ssoOneLoginId = null;
       var ssoOneLoginSecret = null;
+      var ssoRadiusHost = null;
+      var ssoRadiusSecret = null;
+      var ssoDuoToken = null;
+      var ssoDuoSecret = null;
+      var ssoDuoHost = null;
 
       if (this.$('.verify-pass input').is(':visible') &&
           password && password !== verifyPassword) {
@@ -435,9 +437,9 @@ define([
       if (sso) {
         if (sso === 'duo' || sso === 'saml_duo' || sso === 'google_duo' ||
             sso === 'saml_onelogin_duo' || sso === 'radius_duo') {
-          ssoToken = this.$('.sso-token input').val();
-          ssoSecret = this.$('.sso-secret input').val();
-          ssoHost = this.$('.sso-host input').val();
+          ssoDuoToken = this.$('.sso-token input').val();
+          ssoDuoSecret = this.$('.sso-secret input').val();
+          ssoDuoHost = this.$('.sso-host input').val();
         }
 
         if (sso === 'saml' || sso === 'saml_duo' || sso === 'saml_okta' ||
@@ -479,8 +481,8 @@ define([
         }
 
         if (sso === 'radius' || sso === 'radius_duo') {
-          ssoHost = this.$('.sso-radius-host input').val();
-          ssoSecret = this.$('.sso-radius-secret input').val();
+          ssoRadiusHost = this.$('.sso-radius-host input').val();
+          ssoRadiusSecret = this.$('.sso-radius-secret input').val();
         }
 
         ssoOrg = this.$('.sso-org select').val();
@@ -497,9 +499,9 @@ define([
         pin_mode: pinMode,
         sso: sso,
         sso_match: ssoMatch,
-        sso_token: ssoToken,
-        sso_secret: ssoSecret,
-        sso_host: ssoHost,
+        sso_duo_token: ssoDuoToken,
+        sso_duo_secret: ssoDuoSecret,
+        sso_duo_host: ssoDuoHost,
         sso_org: ssoOrg,
         sso_saml_url: ssoSamlUrl,
         sso_saml_issuer_url: ssoSamlIssuerUrl,
@@ -507,6 +509,8 @@ define([
         sso_okta_token: ssoOktaToken,
         sso_onelogin_id: ssoOneLoginId,
         sso_onelogin_secret: ssoOneLoginSecret,
+        sso_radius_host: ssoRadiusHost,
+        sso_radius_secret: ssoRadiusSecret,
         public_address: publicAddress,
         public_address6: publicAddress6,
         routed_subnet6: routedSubnet6,
