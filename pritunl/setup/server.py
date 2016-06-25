@@ -197,7 +197,7 @@ def server_thread():
     except StopServer:
         pass
 
-    time.sleep(2)
+    time.sleep(1.5)
     setup_ready.set()
     settings.local.server_start.set()
 
@@ -264,6 +264,7 @@ def setup_server():
         thread.start()
 
         setup_ready.wait()
+        time.sleep(1.5)
 
     upgrade.database_clean_up()
 
