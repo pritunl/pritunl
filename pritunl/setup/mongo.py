@@ -263,6 +263,14 @@ def setup_mongo():
         ('token', pymongo.ASCENDING),
         ('nonce', pymongo.ASCENDING),
     ], background=True, unique=True)
+    upsert_index(mongo.collections['sso_cache'], [
+        ('user_id', pymongo.ASCENDING),
+        ('server_id', pymongo.ASCENDING),
+        ('remote_ip', pymongo.ASCENDING),
+        ('mac_addr', pymongo.ASCENDING),
+        ('platform', pymongo.ASCENDING),
+        ('device_name', pymongo.ASCENDING),
+    ], background=True)
 
     upsert_index(mongo.collections['tasks'], 'timestamp',
         background=True, expireAfterSeconds=300)
@@ -282,6 +290,8 @@ def setup_mongo():
         expireAfterSeconds=settings.user.otp_cache_ttl)
     upsert_index(mongo.collections['sso_tokens'], 'timestamp', background=True,
         expireAfterSeconds=600)
+    upsert_index(mongo.collections['sso_cache'], 'timestamp',
+        background=True, expireAfterSeconds=settings.app.sso_cache_timeout)
 
     if not auth.Administrator.collection.find_one():
         auth.Administrator(
