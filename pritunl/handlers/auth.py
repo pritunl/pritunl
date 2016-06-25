@@ -103,6 +103,7 @@ def _auth_radius(username, password):
     if not usr:
         usr = org.new_user(name=username, type=CERT_CLIENT,
             auth_type=sso_mode, groups=list(groups) if groups else None)
+
         usr.audit_event(
             'user_created',
             'User created with single sign-on',
