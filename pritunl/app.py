@@ -213,7 +213,6 @@ def _run_wsgi():
         except ServerRestart:
             restart = True
             logger.info('Server restarting...', 'app')
-            continue
 
 def _run_wsgi_debug():
     logger.info('Starting debug server', 'app')
