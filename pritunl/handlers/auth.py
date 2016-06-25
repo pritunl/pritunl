@@ -53,7 +53,7 @@ def _auth_radius(username, password):
     if DUO_AUTH in sso_mode:
         try:
             valid, _ = sso.auth_duo(
-                'zach@pritunl.com',
+                username,
                 ipaddr=utils.get_remote_addr(),
                 type='Key',
             )
