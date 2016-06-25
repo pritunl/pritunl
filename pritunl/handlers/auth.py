@@ -1,4 +1,5 @@
 from pritunl.constants import *
+from pritunl.exceptions import *
 from pritunl import settings
 from pritunl import auth
 from pritunl import utils
@@ -50,11 +51,17 @@ def _auth_radius(username, password):
     groups = ((groups or set()) | (groups2 or set())) or None
 
     if DUO_AUTH in sso_mode:
-        valid, _ = sso.auth_duo(
-            'zach@pritunl.com',
-            ipaddr=utils.get_remote_addr(),
-            type='Key',
-        )
+        try:
+            valid, _ = sso.auth_duo(
+                'zach@pritunl.com',
+                ipaddr=utils.get_remote_addr(),
+                type='Key',
+            )
+        except InvalidUser:
+            return utils.jsonify({
+                'error': AUTH_INVALID,
+                'error_msg': AUTH_INVALID_MSG,
+            }, 401)
         if valid:
             valid, org_id_new, groups2 = sso.plugin_sso_authenticate(
                 sso_type='duo',
