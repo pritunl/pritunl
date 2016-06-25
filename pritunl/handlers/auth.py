@@ -102,7 +102,7 @@ def _auth_radius(username, password):
     usr = org.find_user(name=username)
     if not usr:
         usr = org.new_user(name=username, type=CERT_CLIENT,
-            auth_type=sso_mode, groups=list(groups))
+            auth_type=sso_mode, groups=list(groups) if groups else None)
         usr.audit_event(
             'user_created',
             'User created with single sign-on',
@@ -177,7 +177,7 @@ def _auth_plugin(username, password):
     usr = org.find_user(name=username)
     if not usr:
         usr = org.new_user(name=username, type=CERT_CLIENT,
-            auth_type=PLUGIN_AUTH, groups=list(groups))
+            auth_type=PLUGIN_AUTH, groups=list(groups) if groups else None)
         usr.audit_event(
             'user_created',
             'User created with plugin authentication',
