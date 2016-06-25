@@ -65,9 +65,9 @@ class SettingsApp(SettingsGroupMongo):
         'id': None,
         'sso': False,
         'sso_match': None,
-        'sso_host': None,
-        'sso_token': None,
-        'sso_secret': None,
+        'sso_host': None, # Deprecated
+        'sso_token': None, # Deprecated
+        'sso_secret': None, # Deprecated
         'sso_timeout': 60,
         'sso_org': None,
         'sso_saml_url': None,
