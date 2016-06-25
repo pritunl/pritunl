@@ -422,8 +422,10 @@ class Clients(object):
         user_id = client_data['user_id']
         remote_ip = client_data.get('remote_ip')
         platform = client_data.get('platform')
+        device_id = client_data.get('device_id')
         device_name = client_data.get('device_name')
         password = client_data.get('password')
+        mac_addr = client_data.get('mac_addr')
 
         try:
             if not settings.vpn.stress_test and \
@@ -468,7 +470,9 @@ class Clients(object):
                 user,
                 remote_ip,
                 platform,
+                device_id,
                 device_name,
+                mac_addr,
                 password,
                 reauth,
                 callback,
