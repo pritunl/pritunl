@@ -151,6 +151,10 @@ def _run_server(restart):
             settings.app.acme_domain,
         )
 
+    if not restart:
+        settings.local.server_ready.set()
+        settings.local.server_start.wait()
+
     process_state = True
     process = subprocess.Popen(
         ['pritunl-web'],
@@ -169,6 +173,7 @@ def _run_server(restart):
     )
 
     def poll_thread():
+        time.sleep(0.5)
         if process.wait() and process_state:
             time.sleep(0.25)
             if not check_global_interrupt():
@@ -182,10 +187,6 @@ def _run_server(restart):
     thread = threading.Thread(target=poll_thread)
     thread.daemon = True
     thread.start()
-
-    if not restart:
-        settings.local.server_ready.set()
-        settings.local.server_start.wait()
 
     _watch_event.set()
 
