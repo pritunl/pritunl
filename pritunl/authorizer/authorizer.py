@@ -13,20 +13,24 @@ class Authorizer(object):
         'user',
         'remote_ip',
         'platform',
+        'device_id',
         'device_name',
+        'mac_addr',
         'password',
         'reauth',
         'callback',
         'push_type',
     )
 
-    def __init__(self, svr, usr, remote_ip, plaform, device_name,
-            password, reauth, callback):
+    def __init__(self, svr, usr, remote_ip, plaform, device_id, device_name,
+            mac_addr, password, reauth, callback):
         self.server = svr
         self.user = usr
         self.remote_ip = remote_ip
         self.platform = plaform
+        self.device_id = device_id
         self.device_name = device_name
+        self.mac_addr = mac_addr
         self.password = password
         self.reauth = reauth
         self.callback = callback
