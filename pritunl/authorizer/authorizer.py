@@ -1,9 +1,12 @@
 from pritunl.exceptions import *
 from pritunl.constants import *
+from pritunl.helpers import *
 from pritunl import logger
 from pritunl import settings
 from pritunl import sso
 from pritunl import plugins
+from pritunl import utils
+from pritunl import mongo
 
 import threading
 
@@ -35,6 +38,10 @@ class Authorizer(object):
         self.reauth = reauth
         self.callback = callback
         self.push_type = None
+
+    @property
+    def sso_cache_collection(cls):
+        return mongo.get_collection('sso_cache')
 
     def _set_push_type(self):
         if settings.app.sso and DUO_AUTH in self.user.auth_type and \
@@ -144,6 +151,19 @@ class Authorizer(object):
         if not self.push_type:
             return
 
+        if settings.app.sso_cache:
+            doc = self.sso_cache_collection.find_one({
+                'user_id': self.user.id,
+                'server_id': self.server.id,
+                'remote_ip': self.remote_ip,
+                'mac_addr': self.mac_addr,
+                'platform': self.platform,
+                'device_id': self.device_id,
+                'device_name': self.device_name,
+            })
+            if doc:
+                return
+
         def thread_func():
             try:
                 self._check_call(self._auth_push_thread)
@@ -200,6 +220,26 @@ class Authorizer(object):
                 remote_addr=self.remote_ip,
             )
             raise AuthError('User failed push authentication')
+
+        if settings.app.sso_cache:
+            self.sso_cache_collection.update({
+                'user_id': self.user.id,
+                'server_id': self.server.id,
+                'remote_ip': self.remote_ip,
+                'mac_addr': self.mac_addr,
+                'platform': self.platform,
+                'device_id': self.device_id,
+                'device_name': self.device_name,
+            }, {
+                'user_id': self.user.id,
+                'server_id': self.server.id,
+                'remote_ip': self.remote_ip,
+                'mac_addr': self.mac_addr,
+                'platform': self.platform,
+                'device_id': self.device_id,
+                'device_name': self.device_name,
+                'timestamp': utils.now(),
+            }, upsert=True)
 
     def _auth_plugins(self):
         if self.user.type == CERT_CLIENT:
