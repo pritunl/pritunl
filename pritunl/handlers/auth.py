@@ -50,15 +50,11 @@ def _auth_radius(username, password):
     groups = ((groups or set()) | (groups2 or set())) or None
 
     if DUO_AUTH in sso_mode:
-        try:
-            valid, _ = sso.auth_duo(
-                'zach@pritunl.com',
-                ipaddr=utils.get_remote_addr(),
-                type='Key',
-            )
-        except:
-            logger.exception('TEST ERROR', 'test')
-            raise
+        valid, _ = sso.auth_duo(
+            'zach@pritunl.com',
+            ipaddr=utils.get_remote_addr(),
+            type='Key',
+        )
         if valid:
             valid, org_id_new, groups2 = sso.plugin_sso_authenticate(
                 sso_type='duo',
