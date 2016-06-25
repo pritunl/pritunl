@@ -58,6 +58,9 @@ def _auth_radius(username, password):
                 type='Key',
             )
         except InvalidUser:
+            logger.error('Duo authentication username not valid', 'sso',
+                username=username,
+            )
             return utils.jsonify({
                 'error': AUTH_INVALID,
                 'error_msg': AUTH_INVALID_MSG,
