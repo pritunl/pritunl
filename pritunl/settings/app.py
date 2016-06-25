@@ -64,6 +64,8 @@ class SettingsApp(SettingsGroupMongo):
         'email_from': None,
         'id': None,
         'sso': False,
+        'sso_cache': True,
+        'sso_cache_timeout': 21600,
         'sso_match': None,
         'sso_host': None, # Deprecated
         'sso_token': None, # Deprecated
