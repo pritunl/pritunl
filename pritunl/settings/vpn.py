@@ -3,6 +3,7 @@ from pritunl.settings.group_mongo import SettingsGroupMongo
 class SettingsVpn(SettingsGroupMongo):
     group = 'vpn'
     fields = {
+        'ipv6': True,
         'call_queue_threads': 32,
         'client_ttl': 300,
         'peer_limit': 300,
