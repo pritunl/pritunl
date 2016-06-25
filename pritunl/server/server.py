@@ -765,7 +765,7 @@ class Server(mongo.MongoObject):
         random.shuffle(remotes)
         random.shuffle(remotes6)
 
-        if self.ipv6:
+        if self.ipv6 or settings.vpn.ipv6:
             remotes = remotes6 + remotes
 
         if len(remotes) > 1:
