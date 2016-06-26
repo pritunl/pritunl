@@ -8,6 +8,7 @@ Add groups to plugin system
 Add organization and groups support to Radius single sign-on
 Add support for Duo authentication with Radius single sign-on
 Cache push authentication for user connections
+Accept IPv6 client connections by default
 Improvements to Duo single sign-on
 Improvements to plugin system
 
