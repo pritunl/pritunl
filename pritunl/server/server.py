@@ -743,7 +743,7 @@ class Server(mongo.MongoObject):
         for doc in self.host_collection.find(spec, project):
             if include_link_addr and doc['link_address']:
                 address = doc['link_address']
-                if ':' in address and settings.user.ipv6_remotes:
+                if ':' in address and settings.vpn.ipv6:
                     remotes6.add('remote %s %s %s' % (
                         address, self.port, self.protocol + '6'))
                 else:
@@ -756,7 +756,7 @@ class Server(mongo.MongoObject):
 
                 address6 = doc.get('public_address6') or \
                     doc.get('auto_public_address6')
-                if address6 and settings.user.ipv6_remotes:
+                if address6 and settings.vpn.ipv6:
                     remotes6.add('remote %s %s %s' % (
                         address6, self.port, self.protocol + '6'))
 
