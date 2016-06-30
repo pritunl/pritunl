@@ -13,11 +13,6 @@ import requests
 @app.app.route('/s/<path:file_path>', methods=['GET'])
 @auth.session_auth
 def static_get(file_path=None):
-    if settings.local.dart_url:
-        file_path = file_path or 'index.html'
-        response = requests.get(settings.local.dart_url + file_path)
-        return flask.Response(response.content, headers=response.headers)
-
     if settings.conf.debug and 'styles/fonts/' in file_path:
         file_path = file_path.replace('styles/fonts/', 'fonts/', 1)
 
@@ -79,9 +74,6 @@ def robots_static_get():
 def index_static_get():
     if not auth.check_session():
         return utils.redirect('login')
-
-    if settings.local.dart_url:
-        return utils.redirect('/s/')
 
     static_file = static.StaticFile(settings.conf.www_path,
         'index.html', cache=False)

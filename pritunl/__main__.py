@@ -38,8 +38,6 @@ def main(default_conf=None):
             help='Path to configuration file')
         parser.add_option('-q', '--quiet', action='store_true',
             help='Suppress logging output')
-        parser.add_option('--dart-url', type='string',
-            help='Dart pub serve url to redirect static requests')
     elif cmd == 'logs':
         parser.add_option('--archive', action='store_true',
             help='Archive log file')
@@ -229,8 +227,6 @@ def main(default_conf=None):
         raise ValueError('Invalid command')
 
     from pritunl import settings
-
-    settings.local.dart_url = options.dart_url
 
     if options.quiet:
         settings.local.quiet = True
