@@ -292,7 +292,7 @@ def get_user(id, session_id):
     if not session_id:
         return
 
-    user =  Administrator(spec={
+    user = Administrator(spec={
         '_id': id,
         'sessions': session_id,
     })
