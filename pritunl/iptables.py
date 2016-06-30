@@ -103,7 +103,9 @@ class Iptables(object):
             self._other.remove(rule)
             self._remove_iptables_rule(rule)
         except ValueError:
-            pass
+            logger.warning('Lost iptables rule', 'iptables',
+                rule=rule,
+            )
         finally:
             self._lock.release()
 
@@ -116,7 +118,9 @@ class Iptables(object):
             self._other6.remove(rule)
             self._remove_iptables_rule(rule, ipv6=True)
         except ValueError:
-            pass
+            logger.warning('Lost ip6tables rule', 'iptables',
+                rule=rule,
+            )
         finally:
             self._lock.release()
 
