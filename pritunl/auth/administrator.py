@@ -337,7 +337,7 @@ def check_session():
             flask.request.path] +
             ([flask.request.data] if flask.request.data else []))
 
-        if len(auth_string) > AUTH_SIG_STRING_MAX_LEN:
+        if len(auth_string) > AUTH_SIG_STRING_MAX_LEN or len(auth_nonce) < 8:
             return False
 
         if not administrator.secret or len(administrator.secret) < 8:
