@@ -717,9 +717,7 @@ class Server(mongo.MongoObject):
         for doc in self.host_collection.find(spec, project):
             address = doc['public_address'] or doc['auto_public_address']
             if settings.conf.port == 443:
-                remotes.append('https://%s' % (
-                    address,
-                ))
+                remotes.append('https://%s' % address)
             else:
                 remotes.append('https://%s:%s' % (
                     address,
