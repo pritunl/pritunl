@@ -296,7 +296,6 @@ class Clients(object):
                     user_count=self.server.user_count,
                 )
 
-
             if not self.server.multi_device:
                 for clnt in self.clients.find({'user_id': user_id}):
                     time.sleep(3)
