@@ -6,7 +6,6 @@ from pritunl import settings
 from pritunl import utils
 from pritunl import mongo
 from pritunl import logger
-from pritunl import sso
 
 import base64
 import os
