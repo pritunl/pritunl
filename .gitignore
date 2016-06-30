@@ -22,9 +22,3 @@ Thumbs.db
 /www/styles/*
 !/www/styles/vendor
 /tools/build_keys.json
-/dart/.pub
-/dart/packages
-/dart/web/packages
-/dart/web/vendor/packages
-/dart/web/vendor/ace/packages
-/dart/build
