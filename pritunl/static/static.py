@@ -108,5 +108,6 @@ class StaticFile(object):
                 'no-cache, no-store, must-revalidate')
             response.headers.add('Pragma', 'no-cache')
             response.headers.add('Expires', 0)
+
         response.headers.add('Last-Modified', self.last_modified)
         return response
