@@ -216,6 +216,7 @@ def _auth_plugin(username, password):
     }, 202)
 
 @app.app.route('/auth/session', methods=['POST'])
+@auth.open_auth
 def auth_session_post():
     username = flask.request.json['username']
     password = flask.request.json['password']
@@ -255,6 +256,7 @@ def auth_session_post():
     })
 
 @app.app.route('/auth/session', methods=['DELETE'])
+@auth.open_auth
 def auth_delete():
     admin_id = flask.session.get('admin_id')
     session_id = flask.session.get('session_id')

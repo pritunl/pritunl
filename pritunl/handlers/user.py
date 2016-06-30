@@ -574,6 +574,7 @@ def user_audit_get(org_id, user_id):
     return utils.jsonify(resp)
 
 @app.app.route('/auth/user', methods=['POST'])
+@auth.open_auth
 def auth_user_post():
     if settings.app.demo_mode:
         return utils.demo_blocked()

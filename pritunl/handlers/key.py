@@ -154,6 +154,7 @@ def user_linked_key_conf_get(org_id, user_id, server_id):
     return response
 
 @app.app.route('/key/<key_id>.tar', methods=['GET'])
+@auth.open_auth
 def user_linked_key_tar_archive_get(key_id):
     doc = _find_doc({
         'key_id': key_id,
@@ -173,6 +174,7 @@ def user_linked_key_tar_archive_get(key_id):
     return resp
 
 @app.app.route('/key/<key_id>.zip', methods=['GET'])
+@auth.open_auth
 def user_linked_key_zip_archive_get(key_id):
     doc = _find_doc({
         'key_id': key_id,
@@ -192,6 +194,7 @@ def user_linked_key_zip_archive_get(key_id):
     return resp
 
 @app.app.route('/key_onc/<key_id>.zip', methods=['GET'])
+@auth.open_auth
 def user_linked_key_onc_archive_get(key_id):
     doc = _find_doc({
         'key_id': key_id,
@@ -211,6 +214,7 @@ def user_linked_key_onc_archive_get(key_id):
     return resp
 
 @app.app.route('/key_pin/<key_id>', methods=['PUT'])
+@auth.open_auth
 def user_key_pin_put(key_id):
     if settings.app.demo_mode:
         return utils.demo_blocked()
@@ -277,6 +281,7 @@ def user_key_pin_put(key_id):
     return utils.jsonify({})
 
 @app.app.route('/k/<short_code>', methods=['GET'])
+@auth.open_auth
 def user_linked_key_page_get(short_code):
     doc = _find_doc({
         'short_id': short_code,
@@ -357,6 +362,7 @@ def user_linked_key_page_get(short_code):
     return key_page
 
 @app.app.route('/k/<short_code>', methods=['DELETE'])
+@auth.open_auth
 def user_linked_key_page_delete_get(short_code):
     utils.rand_sleep()
 
@@ -368,6 +374,7 @@ def user_linked_key_page_delete_get(short_code):
     return utils.jsonify({})
 
 @app.app.route('/ku/<short_code>', methods=['GET'])
+@auth.open_auth
 def user_uri_key_page_get(short_code):
     doc = _find_doc({
         'short_id': short_code,
@@ -393,6 +400,7 @@ def user_uri_key_page_get(short_code):
     return utils.jsonify(keys)
 
 @app.app.route('/key/<key_id>/<server_id>.key', methods=['GET'])
+@auth.open_auth
 def user_linked_key_conf_get(key_id, server_id):
     doc = _find_doc({
         'key_id': key_id,
@@ -427,6 +435,7 @@ def user_linked_key_conf_get(key_id, server_id):
 
 @app.app.route('/key/<org_id>/<user_id>/<server_id>/<key_hash>',
     methods=['GET'])
+@auth.open_auth
 def key_sync_get(org_id, user_id, server_id, key_hash):
     utils.rand_sleep()
 
@@ -497,6 +506,7 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
     return utils.response('')
 
 @app.app.route('/sso/authenticate', methods=['POST'])
+@auth.open_auth
 def sso_authenticate_post():
     if settings.app.sso != DUO_AUTH:
         return flask.abort(405)
@@ -587,6 +597,7 @@ def sso_authenticate_post():
     return utils.get_url_root() + key_link['view_url']
 
 @app.app.route('/sso/request', methods=['GET'])
+@auth.open_auth
 def sso_request_get():
     sso_mode = settings.app.sso
 
@@ -717,6 +728,7 @@ def sso_request_get():
         )
 
 @app.app.route('/sso/callback', methods=['GET'])
+@auth.open_auth
 def sso_callback_get():
     sso_mode = settings.app.sso
 
