@@ -102,6 +102,8 @@ class Iptables(object):
         try:
             self._other.remove(rule)
             self._remove_iptables_rule(rule)
+        except ValueError:
+            pass
         finally:
             self._lock.release()
 
@@ -113,6 +115,8 @@ class Iptables(object):
         try:
             self._other6.remove(rule)
             self._remove_iptables_rule(rule, ipv6=True)
+        except ValueError:
+            pass
         finally:
             self._lock.release()
 
