@@ -86,6 +86,7 @@ def restart_server(delay=0):
 
 @app.before_request
 def before_request():
+    flask.g.authed = False
     flask.g.query_count = 0
     flask.g.write_count = 0
     flask.g.query_time = 0
@@ -93,6 +94,9 @@ def before_request():
 
 @app.after_request
 def after_request(response):
+    if not flask.g.authed:
+        raise ValueError('Request not authorized')
+
     resp_time = int((time.time() - flask.g.start) * 1000)
     db_time = int(flask.g.query_time * 1000)
     db_reads = flask.g.query_count
