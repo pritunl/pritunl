@@ -212,11 +212,9 @@ class Administrator(mongo.MongoObject):
         return True
 
     def generate_token(self):
-        logger.info('Generating auth token', 'auth')
         self.token = utils.generate_secret()
 
     def generate_secret(self):
-        logger.info('Generating auth secret', 'auth')
         self.secret = utils.generate_secret()
 
     def new_session(self):
