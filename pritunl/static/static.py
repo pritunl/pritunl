@@ -18,14 +18,19 @@ class StaticFile(object):
     def __init__(self, root, path, cache=True, gzip=True):
         path = '/'.join([x for x in path.split('/') if x and x != '..'])
         path = os.path.normpath(os.path.join(root, path))
+
         if os.path.commonprefix([root, path]) != root:
             raise InvalidStaticFile(
                 'Static path is not a prefix of root path',
                 {'path': path},
             )
+
         if os.path.splitext(path)[1] not in STATIC_FILE_EXTENSIONS:
-            raise InvalidStaticFile('Static path file extension is invalid',
-                {'path': path})
+            raise InvalidStaticFile(
+                'Static path file extension is invalid',
+                {'path': path},
+            )
+
         self.path = path
         self.cache = cache
         self.gzip = gzip
