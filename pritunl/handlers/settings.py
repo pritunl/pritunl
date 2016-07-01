@@ -73,6 +73,8 @@ def _dict():
             'ap_southeast_1_secret_key': 'demo',
             'ap_southeast_2_access_key': 'demo',
             'ap_southeast_2_secret_key': 'demo',
+            'ap_south_1_access_key': 'demo',
+            'ap_south_1_secret_key': 'demo',
             'sa_east_1_access_key': 'demo',
             'sa_east_1_secret_key': 'demo',
         }
@@ -136,6 +138,10 @@ def _dict():
                 settings.app.ap_southeast_2_access_key,
             'ap_southeast_2_secret_key':
                 settings.app.ap_southeast_2_secret_key,
+            'ap_south_1_access_key':
+                settings.app.ap_south_1_access_key,
+            'ap_south_1_secret_key':
+                settings.app.ap_south_1_secret_key,
             'sa_east_1_access_key': settings.app.sa_east_1_access_key,
             'sa_east_1_secret_key': settings.app.sa_east_1_secret_key,
         }
@@ -521,6 +527,8 @@ def settings_put():
                 'ap_southeast_1_secret_key',
                 'ap_southeast_2_access_key',
                 'ap_southeast_2_secret_key',
+                'ap_south_1_access_key',
+                'ap_south_1_secret_key',
                 'sa_east_1_access_key',
                 'sa_east_1_secret_key',
             ):
