@@ -13,7 +13,10 @@ def upgrade_1_24():
         sso_secret = doc.get('sso_secret')
 
         if sso:
-            if DUO_AUTH in sso:
+            if DUO_AUTH in sso and \
+                    not doc.get('sso_duo_host') and \
+                    not doc.get('sso_duo_token') and \
+                    not doc.get('sso_duo_secret'):
                 settings_collection.update({
                     '_id': 'app',
                 }, {'$set': {
@@ -21,7 +24,9 @@ def upgrade_1_24():
                     'sso_duo_token': sso_token,
                     'sso_duo_secret': sso_secret,
                 }})
-            elif sso == RADIUS_AUTH:
+            elif sso == RADIUS_AUTH and \
+                    not doc.get('sso_radius_host') and \
+                    not doc.get('sso_radius_secret'):
                 settings_collection.update({
                     '_id': 'app',
                 }, {'$set': {
