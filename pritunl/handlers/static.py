@@ -7,7 +7,6 @@ from pritunl import auth
 from pritunl import utils
 
 import flask
-import requests
 
 @app.app.route('/s/', methods=['GET'])
 @app.app.route('/s/<path:file_path>', methods=['GET'])
