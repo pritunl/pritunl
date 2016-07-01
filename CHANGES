@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Add support for ap-south-1 region
 Fix client reconnect issue with port forwarding
 
 Version 1.24.1020.94 2016-06-28
