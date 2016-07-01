@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix Duo authentication message on login page
+
 Version 1.24.1023.67 2016-07-01
 -------------------------------
 
