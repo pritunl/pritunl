@@ -61,6 +61,8 @@ define([
       'ap_southeast_1_secret_key': null,
       'ap_southeast_2_access_key': null,
       'ap_southeast_2_secret_key': null,
+      'ap_south_1_access_key': null,
+      'ap_south_1_secret_key': null,
       'sa_east_1_access_key': null,
       'sa_east_1_secret_key': null
     },

@@ -15,6 +15,7 @@ define([
       'ap-northeast-2': [],
       'ap-southeast-1': [],
       'ap-southeast-2': [],
+      'ap-south-1': [],
       'sa-east-1': []
     },
     url: '/server/vpcs'
