@@ -2,7 +2,7 @@ flask==0.10.1
 pymongo==3.0.3
 netifaces==0.10.4
 pyopenssl>=0.15.1
-boto==2.39.0
+boto==2.41.0
 requests==2.10.0
 redis==2.10.5
 python-dateutil==2.5.3
