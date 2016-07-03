@@ -47,7 +47,6 @@ class ServerInstanceLink(object):
             utils.random_name(),
             self.interface,
             self.linked_server.adapter_type,
-            self.linked_server.protocol,
             remotes,
             CIPHERS[self.linked_server.cipher],
             HASHES[self.linked_server.hash],
