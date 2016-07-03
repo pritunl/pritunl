@@ -743,25 +743,34 @@ class Server(mongo.MongoObject):
         if include_link_addr:
             project['link_address'] = True
 
+        if self.protocol == 'tcp':
+            protocol = 'tcp-client'
+            protocol6 = 'tcp6-client'
+        elif self.protocol == 'udp':
+            protocol = 'udp'
+            protocol6 = 'udp6'
+        else:
+            raise ValueError('Unknown protocol')
+
         for doc in self.host_collection.find(spec, project):
             if include_link_addr and doc['link_address']:
                 address = doc['link_address']
                 if ':' in address and settings.vpn.ipv6:
                     remotes6.add('remote %s %s %s' % (
-                        address, self.port, self.protocol + '6'))
+                        address, self.port, protocol6))
                 else:
                     remotes.add('remote %s %s %s' % (
-                        doc['link_address'], self.port, self.protocol))
+                        doc['link_address'], self.port, protocol))
             else:
                 address = doc['public_address'] or doc['auto_public_address']
                 remotes.add('remote %s %s %s' % (
-                    address, self.port, self.protocol))
+                    address, self.port, protocol))
 
                 address6 = doc.get('public_address6') or \
                     doc.get('auto_public_address6')
                 if address6 and settings.vpn.ipv6:
                     remotes6.add('remote %s %s %s' % (
-                        address6, self.port, self.protocol + '6'))
+                        address6, self.port, protocol6))
 
         remotes = list(remotes)
         remotes6 = list(remotes6)
