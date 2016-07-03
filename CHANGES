@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improvements to web server
+
 Version 1.24.1023.75 2016-07-01
 -------------------------------
 
