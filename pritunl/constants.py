@@ -1087,7 +1087,6 @@ setenv UV_ID %s
 setenv UV_NAME %s
 dev %s
 dev-type %s
-proto %s
 %s
 nobind
 persist-tun
