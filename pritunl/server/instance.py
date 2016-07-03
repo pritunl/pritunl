@@ -178,10 +178,22 @@ class ServerInstance(object):
             if self.server.ipv6:
                 server_line += '\nserver-ipv6 ' + self.server.network6
 
+        if self.server.protocol == 'tcp':
+            if self.server.ipv6 or settings.vpn.ipv6:
+                protocol = 'tcp6-server'
+            else:
+                protocol = 'tcp-server'
+        elif self.server.protocol == 'udp':
+            if self.server.ipv6 or settings.vpn.ipv6:
+                protocol = 'udp6'
+            else:
+                protocol = 'udp'
+        else:
+            raise ValueError('Unknown protocol')
+
         server_conf = OVPN_INLINE_SERVER_CONF % (
             self.server.port,
-            self.server.protocol + (
-                '6' if self.server.ipv6 or settings.vpn.ipv6 else ''),
+            protocol,
             self.interface,
             server_line,
             self.management_socket_path,
