@@ -95,7 +95,7 @@ def before_request():
 
 @app.after_request
 def after_request(response):
-    if not flask.g.authed:
+    if settings.app.check_requests and not flask.g.authed:
         raise ValueError('Request not authorized')
 
     resp_time = int((time.time() - flask.g.start) * 1000)
