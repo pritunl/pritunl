@@ -75,7 +75,7 @@ def get_crt(account_key, csr, set_acme):
             "payload": payload64, "signature": _b64(out),
         })
         try:
-            resp = urlopen(url, data.encode('utf8'))
+            resp = urlopen(url, data.encode('utf8'), timeout=10)
             return resp.getcode(), resp.read()
         except IOError as e:
             return getattr(e, "code", None), getattr(e, "read", e.__str__)()
@@ -131,7 +131,7 @@ def get_crt(account_key, csr, set_acme):
         # check that the file is in place
         wellknown_url = "http://{0}/.well-known/acme-challenge/{1}".format(domain, token)
         try:
-            resp = urlopen(wellknown_url)
+            resp = urlopen(wellknown_url, timeout=10)
             resp_data = resp.read().decode('utf8').strip()
             assert resp_data == keyauthorization
         except (IOError, AssertionError):
@@ -149,7 +149,7 @@ def get_crt(account_key, csr, set_acme):
         # wait for challenge to be verified
         while True:
             try:
-                resp = urlopen(challenge['uri'])
+                resp = urlopen(challenge['uri'], timeout=10)
                 challenge_status = json.loads(resp.read().decode('utf8'))
             except IOError as e:
                 raise ValueError("Error checking challenge: {0} {1}".format(
