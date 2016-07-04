@@ -89,3 +89,25 @@ def get_vpcs():
             })
 
     return vpcs_data
+
+def get_zones():
+    zones = []
+
+    for region in AWS_REGIONS:
+        region_key = region.replace('-', '_')
+        aws_key = getattr(settings.app, region_key + '_access_key')
+        aws_secret = getattr(settings.app, region_key + '_secret_key')
+
+        if not aws_key or not aws_secret:
+            continue
+
+        conn = boto.route53.connect_to_region(
+            region,
+            aws_access_key_id=aws_key,
+            aws_secret_access_key=aws_secret,
+        )
+
+        for zone in conn.get_zones():
+            zones.append(zone.name)
+
+    return zones
