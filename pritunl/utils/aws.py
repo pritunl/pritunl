@@ -126,17 +126,34 @@ def set_zone_record(region, zone_name, host_name, ip_addr, ip_addr6):
 
     zone = conn.get_zone(zone_name)
     record_name = host_name + '.' + zone_name
+    record_name_trim = record_name.rstrip('.')
+    zone_host_name = None
+    zone_host_name6 = None
 
-    try:
-        zone.add_record('A', record_name, ip_addr)
-    except:
-        zone.update_a(record_name, ip_addr)
+    if ip_addr:
+        zone_host_name = record_name_trim
+        try:
+            zone.add_record('A', record_name, ip_addr)
+        except:
+            zone.update_a(record_name, ip_addr)
+    else:
+        try:
+            zone.delete_a(record_name)
+        except:
+            pass
 
     if ip_addr6:
+        zone_host_name6 = record_name_trim
         try:
             zone.add_record('AAAA', record_name, ip_addr6)
         except:
             old_record = zone.find_records(record_name, 'AAAA', all=False)
             zone.update_record(old_record, ip_addr6)
+    else:
+        try:
+            old_record = zone.find_records(record_name, 'AAAA', all=False)
+            zone.delete_record(old_record)
+        except:
+            pass
 
-    return record_name.rstrip('.')
+    return zone_host_name, zone_host_name6
