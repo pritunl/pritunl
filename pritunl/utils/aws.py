@@ -5,6 +5,7 @@ from pritunl import settings
 import boto
 import boto.ec2
 import boto.vpc
+import boto.route53
 import requests
 
 def get_instance_id():
@@ -111,3 +112,31 @@ def get_zones():
             zones.append(zone.name)
 
     return zones
+
+def set_zone_record(region, zone_name, host_name, ip_addr, ip_addr6):
+    region_key = region.replace('-', '_')
+    aws_key = getattr(settings.app, region_key + '_access_key')
+    aws_secret = getattr(settings.app, region_key + '_secret_key')
+
+    conn = boto.route53.connect_to_region(
+        region,
+        aws_access_key_id=aws_key,
+        aws_secret_access_key=aws_secret,
+    )
+
+    zone = conn.get_zone(zone_name)
+    record_name = host_name + '.' + zone_name
+
+    try:
+        zone.add_record('A', record_name, ip_addr)
+    except:
+        zone.update_a(record_name, ip_addr)
+
+    if ip_addr6:
+        try:
+            zone.add_record('AAAA', record_name, ip_addr6)
+        except:
+            old_record = zone.find_records(record_name, 'AAAA', all=False)
+            zone.update_record(old_record, ip_addr6)
+
+    return record_name.rstrip('.')
