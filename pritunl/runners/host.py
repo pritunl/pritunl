@@ -17,6 +17,11 @@ def _keep_alive_thread():
     proc_stat = None
     settings.local.host_ping_timestamp = utils.now()
 
+    cur_public_ip = None
+    cur_public_ip6 = None
+    auto_public_host = settings.local.host.auto_public_host
+    auto_public_host6 = settings.local.host.auto_public_host6
+
     while True:
         try:
             timestamp = utils.now()
@@ -61,6 +66,26 @@ def _keep_alive_thread():
                     host_name=settings.local.host.name,
                 )
 
+            route53_region = settings.app.route53_region
+            route53_zone = settings.app.route53_zone
+            if route53_region and route53_zone:
+                if cur_public_ip != settings.local.public_ip or \
+                        cur_public_ip6 != settings.local.public_ip6:
+                    cur_public_ip = settings.local.public_ip
+                    cur_public_ip6 = settings.local.public_ip6
+
+                    auto_public_host, auto_public_host6 = \
+                        utils.set_zone_record(
+                        route53_region,
+                        route53_zone,
+                        settings.local.host.name,
+                        cur_public_ip,
+                        cur_public_ip6,
+                    )
+            else:
+                auto_public_host = None
+                auto_public_host6 = None
+
             settings.local.host.collection.update({
                 '_id': settings.local.host.id,
             }, {'$set': {
@@ -74,6 +99,8 @@ def _keep_alive_thread():
                 'ping_timestamp': utils.now(),
                 'auto_public_address': settings.local.public_ip,
                 'auto_public_address6': settings.local.public_ip6,
+                'auto_public_host': auto_public_host,
+                'auto_public_host6': auto_public_host6,
             }})
 
             monitoring.insert_point('system', {
