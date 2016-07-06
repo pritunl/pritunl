@@ -110,6 +110,7 @@ class SettingsApp(SettingsGroupMongo):
         'server_dh_params': None,
         'server_dh_size': 1024,
         'cloud_provider': None,
+        'route53_region': None,
         'route53_zone': None,
         'us_east_1_access_key': None,
         'us_east_1_secret_key': None,
