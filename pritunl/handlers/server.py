@@ -883,8 +883,8 @@ def server_host_get(server_id):
     hosts_offline = svr.replica_count - len(active_hosts) > 0
 
     for hst in svr.iter_hosts(fields=('_id', 'name',
-            'public_address', 'auto_public_address',
-            'public_address6', 'auto_public_address6')):
+            'public_address', 'auto_public_address', 'auto_public_host',
+            'public_address6', 'auto_public_address6', 'auto_public_host6')):
         if svr.status == ONLINE and hst.id in active_hosts:
             status = ONLINE
         elif svr.status == ONLINE and hosts_offline:
@@ -913,7 +913,8 @@ def server_host_put(server_id, host_id):
 
     svr = server.get_by_id(server_id, fields=('_id', 'hosts', 'links'))
     hst = host.get_by_id(host_id, fields=('_id', 'name',
-        'public_address', 'auto_public_address'))
+        'public_address', 'auto_public_address', 'auto_public_host',
+        'public_address6', 'auto_public_address6', 'auto_public_host6'))
 
     try:
         svr.add_host(hst.id)
