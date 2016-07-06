@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Add auto route53 configuration
 Fix virtual network routing on Android
 
 Version 1.24.1025.78 2016-07-03
