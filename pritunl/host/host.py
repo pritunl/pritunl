@@ -22,6 +22,8 @@ class Host(mongo.MongoObject):
         'public_address6',
         'auto_public_address',
         'auto_public_address6',
+        'auto_public_host',
+        'auto_public_host6',
         'routed_subnet6',
         'link_address',
         'local_address',
@@ -67,11 +69,13 @@ class Host(mongo.MongoObject):
 
     @property
     def public_addr(self):
-        return self.public_address or self.auto_public_address
+        return self.auto_public_host or self.public_address or \
+            self.auto_public_address
 
     @property
     def public_addr6(self):
-        return self.public_address6 or self.auto_public_address6
+        return self.auto_public_host6 or self.public_address6 or \
+            self.auto_public_address6
 
     @property
     def local_addr(self):
@@ -83,8 +87,8 @@ class Host(mongo.MongoObject):
 
     @property
     def link_addr(self):
-        return self.link_address or self.public_address or \
-            self.auto_public_address
+        return self.link_address or self.auto_public_host or \
+            self.public_address or self.auto_public_address
 
     @property
     def aws_id(self):
