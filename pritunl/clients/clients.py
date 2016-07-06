@@ -148,6 +148,14 @@ class Clients(object):
                         client_conf += 'push "route %s %s"\n' % (
                             utils.parse_network(network))
 
+            if platform == 'android':
+                client_conf += 'push "route %s %s"\n' % (
+                    utils.parse_network(self.server.network))
+
+                if self.server.ipv6:
+                    client_conf += 'push "route-ipv6 %s"\n' % (
+                        self.server.network6)
+
         return client_conf
 
     def reserve_iroute(self, client_id, network, primary):
