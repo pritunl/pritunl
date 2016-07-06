@@ -94,15 +94,11 @@ class Clients(object):
                         network)
         else:
             if self.server.is_route_all():
-                if platform == 'ios':
-                    client_conf += 'push "route 0.0.0.0 128.0.0.0"\n'
-                    client_conf += 'push "route 128.0.0.0 128.0.0.0"\n'
-                else:
-                    client_conf += 'push "redirect-gateway def1"\n'
+                client_conf += 'push "redirect-gateway def1"\n'
 
                 if self.server.ipv6:
-                    if platform != 'ios':
-                        client_conf += 'push "redirect-gateway-ipv6 def1"\n'
+                    client_conf += 'push "redirect-gateway ipv6"\n'
+                    client_conf += 'push "redirect-gateway-ipv6 def1"\n'
                     client_conf += 'push "route-ipv6 2000::/3"\n'
 
             if self.server.dns_mapping:
