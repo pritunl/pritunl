@@ -32,7 +32,8 @@ define([
       else if (platform === 'mac' || platform === 'ios') {
         platform = 'apple';
       }
-      else if (platform === 'linux' || platform === 'chrome') {
+      else if (platform === 'linux' || platform === 'chrome' ||
+          platform === 'android') {
         platform = platform;
       }
       else {
