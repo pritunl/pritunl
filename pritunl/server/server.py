@@ -712,10 +712,12 @@ class Server(mongo.MongoObject):
             '_id': False,
             'public_address': True,
             'auto_public_address': True,
+            'auto_public_host': True,
         }
 
         for doc in self.host_collection.find(spec, project):
-            address = doc['public_address'] or doc['auto_public_address']
+            address = doc.get('auto_public_host') or \
+                doc['public_address'] or doc['auto_public_address']
             if settings.conf.port == 443:
                 remotes.append('https://%s' % address)
             else:
@@ -736,8 +738,10 @@ class Server(mongo.MongoObject):
             '_id': False,
             'public_address': True,
             'auto_public_address': True,
+            'auto_public_host': True,
             'public_address6': True,
             'auto_public_address6': True,
+            'auto_public_host6': True,
         }
 
         if include_link_addr:
@@ -762,11 +766,13 @@ class Server(mongo.MongoObject):
                     remotes.add('remote %s %s %s' % (
                         doc['link_address'], self.port, protocol))
             else:
-                address = doc['public_address'] or doc['auto_public_address']
+                address = doc.get('auto_public_host') or \
+                    doc['public_address'] or doc['auto_public_address']
                 remotes.add('remote %s %s %s' % (
                     address, self.port, protocol))
 
-                address6 = doc.get('public_address6') or \
+                address6 = doc.get('auto_public_host6') or \
+                    doc.get('public_address6') or \
                     doc.get('auto_public_address6')
                 if address6 and settings.vpn.ipv6:
                     remotes6.add('remote %s %s %s' % (
@@ -803,12 +809,15 @@ class Server(mongo.MongoObject):
             '_id': False,
             'public_address': True,
             'auto_public_address': True,
+            'auto_public_host': True,
             'public_address6': True,
             'auto_public_address6': True,
+            'auto_public_host6': True,
         }
 
         for doc in self.host_collection.find(spec, project):
-            address = doc['public_address'] or doc['auto_public_address']
+            address = doc.get('auto_public_host') or \
+                doc['public_address'] or doc['auto_public_address']
             hosts.append((address, self.port))
 
         random.shuffle(hosts)
