@@ -86,6 +86,8 @@ def _keep_alive_thread():
                         cur_public_ip,
                         cur_public_ip6,
                     )
+
+                    event.Event(type=HOSTS_UPDATED)
             else:
                 auto_public_host = None
                 auto_public_host6 = None
