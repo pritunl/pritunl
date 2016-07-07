@@ -92,12 +92,14 @@ def get_vpcs():
     return vpcs_data
 
 def get_zones():
-    zones = []
+    zones_data = {}
 
     for region in AWS_REGIONS:
         region_key = region.replace('-', '_')
         aws_key = getattr(settings.app, region_key + '_access_key')
         aws_secret = getattr(settings.app, region_key + '_secret_key')
+        zone_data = []
+        zones_data[region] = zone_data
 
         if not aws_key or not aws_secret:
             continue
@@ -109,9 +111,9 @@ def get_zones():
         )
 
         for zone in conn.get_zones():
-            zones.append(zone.name)
+            zone_data.append(zone.name)
 
-    return zones
+    return zones_data
 
 def set_zone_record(region, zone_name, host_name, ip_addr, ip_addr6):
     region_key = region.replace('-', '_')
