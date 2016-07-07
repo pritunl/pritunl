@@ -43,6 +43,8 @@ define([
       'server_key': null,
       'acme_domain': null,
       'cloud_provider': null,
+      'route53_region': null,
+      'route53_zone': null,
       'us_east_1_access_key': null,
       'us_east_1_secret_key': null,
       'us_west_1_access_key': null,
