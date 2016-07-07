@@ -3,9 +3,11 @@ define([
   'underscore',
   'backbone',
   'collections/org',
+  'models/zones',
   'views/modal',
   'text!templates/modalSettings.html'
-], function($, _, Backbone, OrgCollection, ModalView, modalSettingsTemplate) {
+], function($, _, Backbone, OrgCollection, ZonesModel, ModalView,
+    modalSettingsTemplate) {
   'use strict';
   var ModalSettingsView = ModalView.extend({
     className: 'settings-modal',
@@ -21,6 +23,7 @@ define([
         'keyup .pass input': 'onPassEvent',
         'paste .pass input': 'onPassEvent',
         'input .pass input': 'onPassEvent',
+        'change .route53-region select': 'updateZones',
         'propertychange .pass input': 'onPassEvent',
         'change .cloud-provider select': 'onCloudProviderChange',
         'change .monitoring select': 'onMonitoringChange',
@@ -30,6 +33,7 @@ define([
     },
     initialize: function(options) {
       this.orgs = new OrgCollection();
+      this.zones = new ZonesModel();
       this.initial = options.initial;
       this.curServerPort = this.model.get('server_port');
       this.curAcmeDomain = this.model.get('acme_domain') || null;
@@ -44,7 +48,7 @@ define([
         this.model.toJSON()));
     },
     postRender: function() {
-      this.setLoading('Loading organizations...');
+      this.setLoading('Loading...');
       this.orgs.fetch({
         success: function() {
           this.clearLoading();
@@ -62,6 +66,47 @@ define([
             'Failed to load organizations, server error occurred.');
         }.bind(this)
       });
+      this.zones.fetch({
+        success: function() {
+          this.clearLoading();
+          this.updateZones();
+        }.bind(this),
+        error: function() {
+          this.clearLoading();
+          this.setAlert('danger',
+            'Failed to load Route 53 zones, server error occurred.');
+        }.bind(this)
+      });
+    },
+    updateZones: function() {
+      var region = this.$('.route53-region select').val();
+      var zone;
+
+      var zones;
+      if (!region) {
+        this.$('.route53-zone select').html(
+          '<option selected value="">Disabled</option>');
+        return;
+      } else {
+        zones = this.zones.get(region) || [];
+      }
+
+      if (!zones.length) {
+        this.$('.route53-zone select').html(
+          '<option selected value="">No zones available</option>');
+        return;
+      }
+
+      this.$('.route53-zone select').empty();
+
+      var curZone = this.model.get('route53_zone') || zones[0];
+
+      for (var i = 0; i < zones.length; i++) {
+        zone = zones[i];
+        this.$('.route53-zone select').append(
+          '<option ' + (zone === curZone ? 'selected' : '') + ' value="' +
+            zone + '">' + zone + '</option>');
+      }
     },
     update: function() {
       this.$('.api-token input').val(this.model.get('token'));
@@ -394,6 +439,14 @@ define([
       var saEast1SecretKey = this.$(
         '.sa-east-1-secret-key input').val();
 
+      var route53Region = this.$('.route53-region select').val();
+      var route53Zone = this.$('.route53-zone select').val();
+
+      if (!route53Region || !route53Zone) {
+        route53Region = null;
+        route53Zone = null;
+      }
+
       if (serverPort) {
         serverPort = parseInt(serverPort, 10);
       }
@@ -525,6 +578,8 @@ define([
         server_key: serverKey,
         acme_domain: acmeDomain,
         cloud_provider: cloudProvider,
+        route53_region: route53Region,
+        route53_zone: route53Zone,
         us_east_1_access_key: usEast1AccessKey,
         us_east_1_secret_key: usEast1SecretKey,
         us_west_1_access_key: usWest1AccessKey,
