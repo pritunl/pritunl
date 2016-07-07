@@ -19,6 +19,8 @@ def _keep_alive_thread():
 
     cur_public_ip = None
     cur_public_ip6 = None
+    cur_route53_region = settings.app.route53_region
+    cur_route53_zone = settings.app.route53_zone
     auto_public_host = settings.local.host.auto_public_host
     auto_public_host6 = settings.local.host.auto_public_host6
 
@@ -70,7 +72,9 @@ def _keep_alive_thread():
             route53_zone = settings.app.route53_zone
             if route53_region and route53_zone:
                 if cur_public_ip != settings.local.public_ip or \
-                        cur_public_ip6 != settings.local.public_ip6:
+                        cur_public_ip6 != settings.local.public_ip6 or \
+                        cur_route53_region != route53_region or \
+                        cur_route53_zone != route53_zone:
                     cur_public_ip = settings.local.public_ip
                     cur_public_ip6 = settings.local.public_ip6
 
