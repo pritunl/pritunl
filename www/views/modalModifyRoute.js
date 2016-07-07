@@ -15,7 +15,7 @@ define([
     hasAdvanced: false,
     events: function() {
       return _.extend({
-        'change .vpc-region': 'updateVpcIds',
+        'change .vpc-region select': 'updateVpcIds',
         'click .route-advertisement-toggle': 'onRotueAdSelect',
         'click .nat-route-toggle': 'onNatRouteSelect'
       }, ModalModifyRouteView.__super__.events);
