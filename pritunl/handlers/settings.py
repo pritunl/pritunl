@@ -508,6 +508,24 @@ def settings_put():
         else:
             settings.app.cloud_provider = None
 
+    if 'route53_region' in flask.request.json:
+        settings_commit = True
+        route53_region = utils.filter_str(
+            flask.request.json['route53_region']) or None
+        if route53_region:
+            settings.app.route53_region = route53_region
+        else:
+            settings.app.route53_region = None
+
+    if 'route53_zone' in flask.request.json:
+        settings_commit = True
+        route53_zone = utils.filter_str(
+            flask.request.json['route53_zone']) or None
+        if route53_zone:
+            settings.app.route53_zone = route53_zone
+        else:
+            settings.app.route53_zone = None
+
     for aws_key in (
                 'us_east_1_access_key',
                 'us_east_1_secret_key',
