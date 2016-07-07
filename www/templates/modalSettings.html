@@ -169,6 +169,23 @@
 </div>
 <div class="aws-settings layout-horizontal" <%= cloud_provider === 'aws' ? '' : 'style="display: none;"' %>>
   <div class="settings-left layout-flex left">
+    <div class="route53-region form-group">
+      <label>Auto Route 53 Region</label>
+      <select class="form-control" data-toggle="tooltip" title="Select Route 53 region. This will automatically create and update DNS records for each host in the selected region. The AWS keys below must be saved before a list of available zones will be shown.">
+        <option value="" <%= !route53_region ? 'selected' : '' %>>Disabled</option>
+        <option value="us-east-1" <%= route53_region === 'us-east-1' ? 'selected' : '' %>>US East (N. Virginia)</option>
+        <option value="us-west-1" <%= route53_region === 'us-west-1' ? 'selected' : '' %>>US West (N. California)</option>
+        <option value="us-west-2" <%= route53_region === 'us-west-2' ? 'selected' : '' %>>US West (Oregon)</option>
+        <option value="eu-west-1" <%= route53_region === 'eu-west-1' ? 'selected' : '' %>>EU (Ireland)</option>
+        <option value="eu-central-1" <%= route53_region === 'eu-central-1' ? 'selected' : '' %>>EU (Frankfurt)</option>
+        <option value="ap-northeast-1" <%= route53_region === 'ap-northeast-1' ? 'selected' : '' %>>Asia Pacific (Tokyo)</option>
+        <option value="ap-northeast-2" <%= route53_region === 'ap-northeast-2' ? 'selected' : '' %>>Asia Pacific (Seoul)</option>
+        <option value="ap-southeast-1" <%= route53_region === 'ap-southeast-1' ? 'selected' : '' %>>Asia Pacific (Singapore)</option>
+        <option value="ap-southeast-2" <%= route53_region === 'ap-southeast-2' ? 'selected' : '' %>>Asia Pacific (Sydney)</option>
+        <option value="ap-south-1" <%= route53_region === 'ap-south-1' ? 'selected' : '' %>>Asia Pacific (Mumbai)</option>
+        <option value="sa-east-1" <%= route53_region === 'sa-east-1' ? 'selected' : '' %>>South America (Sao Paulo)</option>
+      </select>
+    </div>
     <div class="us-east-1-access-key form-group">
       <label>US East (N. Virginia) Access Key</label>
       <input type="text" class="form-control" placeholder="Enter access key" value="<%- us_east_1_access_key || '' %>">
@@ -215,6 +232,12 @@
     </div>
   </div>
   <div class="settings-right right">
+    <div class="route53-zone form-group">
+      <label>Auto Route 53 Zone</label>
+      <select class="form-control" data-toggle="tooltip" title="Select Route 53 zone. This will automatically create and update DNS records for each host in the selected zone. The name of the host will be used for the subdomain in the zone. The AWS keys below must be saved before a list of available zones will be shown.">
+        <option value="none" <%= !route53_zone ? 'selected' : '' %>>Disabled</option>
+      </select>
+    </div>
     <div class="us-east-1-secret-key form-group">
       <label>US East (N. Virginia) Secret Key</label>
       <input type="text" class="form-control" placeholder="Enter secret key" value="<%- us_east_1_secret_key || '' %>">
