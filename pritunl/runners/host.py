@@ -13,6 +13,7 @@ import os
 
 @interrupter
 def _keep_alive_thread():
+    update_host = False
     last_update = None
     proc_stat = None
     settings.local.host_ping_timestamp = utils.now()
@@ -90,7 +91,7 @@ def _keep_alive_thread():
                         cur_public_ip6,
                     )
 
-                    event.Event(type=HOSTS_UPDATED)
+                    update_host = True
             else:
                 auto_public_host = None
                 auto_public_host6 = None
@@ -111,6 +112,10 @@ def _keep_alive_thread():
                 'auto_public_host': auto_public_host,
                 'auto_public_host6': auto_public_host6,
             }})
+
+            if update_host:
+                update_host = False
+                event.Event(type=HOSTS_UPDATED)
 
             monitoring.insert_point('system', {
                 'host': settings.local.host.name,
