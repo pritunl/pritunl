@@ -620,3 +620,8 @@ def settings_put():
     response = flask.g.administrator.dict()
     response.update(_dict())
     return utils.jsonify(response)
+
+@app.app.route('/settings/zones', methods=['GET'])
+@auth.session_auth
+def settings_zones_get():
+    return utils.jsonify(utils.get_zones())
