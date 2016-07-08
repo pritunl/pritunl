@@ -31,9 +31,11 @@ class Host(mongo.MongoObject):
         'auto_local_address',
         'auto_local_address6',
         'local_networks',
+        'availability_group',
     }
     fields_default = {
         'status': OFFLINE,
+        'availability_group': DEFAULT,
     }
 
     def __init__(self, name=None, **kwargs):
