@@ -123,6 +123,7 @@ class Server(mongo.MongoObject):
         'replica_count',
         'instances',
         'instances_count',
+        'availability_group',
     }
     fields_default = {
         'ipv6': False,
@@ -1299,6 +1300,7 @@ class Server(mongo.MongoObject):
             'start_timestamp': None,
             'instances': [],
             'instances_count': 0,
+            'availability_group': None,
         }})
 
         if not response['updatedExisting']:
