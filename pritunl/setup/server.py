@@ -150,8 +150,7 @@ def setup_mongodb_put():
     settings.conf.mongodb_uri = mongodb_uri
     settings.conf.commit()
 
-    db_ver = utils.get_db_ver()
-    if check_db_ver(db_ver):
+    if check_db_ver():
         setup_state = 'upgrade'
         upgrade_database()
     else:
@@ -219,21 +218,21 @@ def on_system_msg(msg):
         logger.warning('Received shut down event', 'setup')
         set_global_interrupt()
 
-def check_db_ver(db_ver):
-    db_ver_split = db_ver.split('.')
-    db_ver_x, db_ver_y = int(db_ver_split[0]), int(db_ver_split[1])
-    ver_split = settings.local.version.split('.')
-    ver_x, ver_y = int(ver_split[0]), int(ver_split[1])
+def check_db_ver():
+    db_ver = utils.get_db_ver()
+    db_min_ver = utils.get_min_db_ver()
+    db_min_ver_int = utils.get_int_ver(db_min_ver)
 
-    if db_ver_x > ver_x or db_ver_y > ver_y:
-        logger.error('Database version is newer than server version',
+    if settings.local.version_int < db_min_ver_int:
+        logger.error('Pritunl version not compatible with database version',
             'setup',
             db_version=db_ver,
+            db_min_version=db_min_ver,
             server_version=settings.local.version,
         )
         exit(75)
 
-    return db_ver_x < ver_x or db_ver_y < ver_y
+    return utils.get_int_ver(MIN_DATABASE_VER) > db_min_ver_int
 
 def setup_server():
     global setup_state
@@ -241,7 +240,7 @@ def setup_server():
     last_error = time.time() - 24
     while True:
         try:
-            db_ver = utils.get_db_ver()
+            utils.get_db_ver_int()
             break
         except:
             time.sleep(0.5)
@@ -253,7 +252,7 @@ def setup_server():
 
     if not settings.conf.mongodb_uri:
         setup_state = 'setup'
-    elif check_db_ver(db_ver):
+    elif check_db_ver():
         setup_state = 'upgrade'
 
     if setup_state:
@@ -276,7 +275,7 @@ def setup_server():
     last_error = time.time() - 24
     while True:
         try:
-            utils.set_db_ver(__version__)
+            utils.set_db_ver(__version__, MIN_DATABASE_VER)
             break
         except:
             time.sleep(0.5)
