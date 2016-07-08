@@ -96,6 +96,16 @@ def _keep_alive_thread():
                 auto_public_host = None
                 auto_public_host6 = None
 
+            if settings.local.host.auto_public_address != \
+                settings.local.public_ip or \
+                    settings.local.host.auto_public_address6 != \
+                    settings.local.public_ip6:
+                settings.local.host.auto_public_address = \
+                    settings.local.public_ip
+                settings.local.host.auto_public_address6 = \
+                    settings.local.public_ip6
+                host_event = True
+
             settings.local.host.collection.update({
                 '_id': settings.local.host.id,
             }, {'$set': {
@@ -125,16 +135,6 @@ def _keep_alive_thread():
                 'thread_count': thread_count,
                 'open_file_count': open_file_count,
             })
-
-            if settings.local.host.auto_public_address != \
-                    settings.local.public_ip or \
-                    settings.local.host.auto_public_address6 != \
-                    settings.local.public_ip6:
-                settings.local.host.auto_public_address = \
-                    settings.local.public_ip
-                settings.local.host.auto_public_address6 = \
-                    settings.local.public_ip6
-                event.Event(type=HOSTS_UPDATED)
 
             settings.local.host_ping_timestamp = ping_timestamp
         except GeneratorExit:
