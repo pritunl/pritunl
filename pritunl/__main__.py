@@ -66,11 +66,12 @@ def main(default_conf=None):
 
         sys.exit(0)
     elif cmd == 'reset-version':
+        from pritunl.constants import MIN_DATABASE_VER
         from pritunl import setup
         from pritunl import utils
 
         setup.setup_db()
-        utils.set_db_ver(pritunl.__version__)
+        utils.set_db_ver(pritunl.__version__, MIN_DATABASE_VER)
 
         time.sleep(.3)
         print 'Database version reset to %s' % pritunl.__version__
