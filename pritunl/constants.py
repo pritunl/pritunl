@@ -4,6 +4,7 @@ import datetime
 APP_NAME = 'pritunl'
 APP_NAME_FORMATED = 'Pritunl'
 CONF_FILENAME = '%s.conf' % APP_NAME
+MIN_DATABASE_VER = '1.25.0.0'
 
 SAVED = 'saved'
 UNSAVED = 'unsaved'
