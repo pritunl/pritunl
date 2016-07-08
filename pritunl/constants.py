@@ -26,6 +26,8 @@ UPDATE = 'update'
 ONLINE = 'online'
 OFFLINE = 'offline'
 
+DEFAULT = 'default'
+
 TUNNEL = 'tunnel'
 BRIDGE = 'bridge'
 
