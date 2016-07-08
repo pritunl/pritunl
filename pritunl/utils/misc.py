@@ -81,7 +81,7 @@ def get_int_ver(version):
 
     return int(''.join([x.zfill(4) for x in ver]))
 
-def get_db_ver():
+def _get_version_doc():
     if settings.conf.mongodb_uri:
         prefix = settings.conf.mongodb_collection_prefix or ''
         client = pymongo.MongoClient(settings.conf.mongodb_uri,
@@ -90,29 +90,46 @@ def get_db_ver():
         settings_db = getattr(database, prefix + 'settings')
         doc = settings_db.find_one({
             '_id': 'version',
-        }) or {}
+        })
 
-        version = doc.get('version')
-        if version:
-            return version
+        if doc:
+            return doc
 
-    return __version__
+    return {}
+
+def get_db_ver(default=True):
+    return _get_version_doc().get('version') or (
+        __version__ if default else None)
+
+def get_min_db_ver(default=True):
+    return _get_version_doc().get('version_min') or (
+        '1.24.0.0' if default else None)
 
 def get_db_ver_int():
-    version = get_db_ver()
-    if version:
-        return get_int_ver(version)
+    return get_int_ver(get_db_ver())
 
-def set_db_ver(version):
+def get_min_db_ver_int():
+    return get_int_ver(get_min_db_ver())
+
+def set_db_ver(version, version_min=None):
     from pritunl import logger
 
-    db_version = get_db_ver()
+    db_version = get_db_ver(False)
+    db_min_version = get_min_db_ver(False)
 
-    if version != db_version:
+    if version != db_version or MIN_DATABASE_VER != db_min_version:
         logger.info('Setting db version', 'utils',
             cur_ver=db_version,
             new_ver=version,
+            cur_min_ver=db_min_version,
+            new_min_ver=MIN_DATABASE_VER,
         )
+
+    update_doc = {
+        'version': version,
+    }
+    if version_min:
+        update_doc['version_min'] = version_min
 
     prefix = settings.conf.mongodb_collection_prefix or ''
     client = pymongo.MongoClient(settings.conf.mongodb_uri,
@@ -121,9 +138,7 @@ def set_db_ver(version):
     settings_db = getattr(database, prefix + 'settings')
     doc = settings_db.update({
         '_id': 'version',
-    }, {
-        'version': version,
-    }, upsert=True)
+    }, update_doc, upsert=True)
 
     return doc.get('version')
 
