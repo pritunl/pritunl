@@ -5,6 +5,7 @@ Pritunl Changelog
 
 Add auto route53 configuration
 Improvements to iOS and Android routing with IPv6
+Allow interoperable versions to use the same database
 Fix virtual network routing on Android
 
 Version 1.24.1025.78 2016-07-03
