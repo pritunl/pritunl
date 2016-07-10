@@ -637,6 +637,7 @@ class ServerInstance(object):
                             time.sleep(0.1)
                             continue
 
+                    yield
                 except:
                     logger.exception('Failed to update server ping', 'server',
                         server_id=self.server.id,
