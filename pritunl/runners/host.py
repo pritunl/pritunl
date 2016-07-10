@@ -91,6 +91,9 @@ def _keep_alive_thread():
                         cur_public_ip6,
                     )
 
+                    settings.local.host.auto_public_host = auto_public_host
+                    settings.local.host.auto_public_host6 = auto_public_host6
+
                     host_event = True
             else:
                 auto_public_host = None
