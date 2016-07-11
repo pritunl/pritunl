@@ -620,6 +620,8 @@ class ServerInstance(object):
                 try:
                     doc = self.collection.find_and_modify({
                         '_id': self.server.id,
+                        'availability_group': \
+                            settings.local.host.availability_group,
                         'instances.instance_id': self.id,
                     }, {'$set': {
                         'instances.$.ping_timestamp': utils.now(),
