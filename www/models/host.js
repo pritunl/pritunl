@@ -17,7 +17,8 @@ define([
       'public_address6': null,
       'routed_subnet6': null,
       'local_address': null,
-      'link_address': null
+      'link_address': null,
+      'availability_group': null
     },
     url: function() {
       var url = '/host';
