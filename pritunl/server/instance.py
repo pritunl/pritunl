@@ -880,11 +880,21 @@ class ServerInstance(object):
             utils.rmtree(self._temp_path)
 
     def run(self, send_events=False):
+        availability_group = settings.local.host.availability_group
+
         response = self.collection.update({
             '_id': self.server.id,
             'status': ONLINE,
             'instances_count': {'$lt': self.server.replica_count},
+            '$or': [
+                {'availability_group': None},
+                {'availability_group': {'$exists': False}},
+                {'availability_group': availability_group},
+            ],
         }, {
+            '$set': {
+                'availability_group': availability_group,
+            },
             '$push': {
                 'instances': {
                     'instance_id': self.id,
