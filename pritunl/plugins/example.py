@@ -65,7 +65,8 @@ def sso_authenticate(sso_type, host_id, host_name, user_name, user_email,
     else:
         return False, None, None
 
-# [SYNCHRONOUS]
+# [SYNCHRONOUS] Called when a server is started to return custom configuration
+# lines that will be added to the servers OpenVPN configuration.
 def server_config(host_id, host_name, server_id, server_name, port, protocol,
         ipv6, ipv6_firewall, network, network6, network_mode, network_start,
         network_stop, restrict_routes, bind_address, onc_hostname,
