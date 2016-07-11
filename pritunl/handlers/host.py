@@ -109,6 +109,10 @@ def host_put(hst=None):
         hst.link_address = utils.filter_str(
             flask.request.json['link_address'])
 
+    if 'availability_group' in flask.request.json:
+        hst.availability_group = utils.filter_str(
+            flask.request.json['availability_group']) or DEFAULT
+
     if 'instance_id' in flask.request.json:
         hst.instance_id = utils.filter_str(
             flask.request.json['instance_id'])
