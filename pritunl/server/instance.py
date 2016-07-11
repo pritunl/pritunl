@@ -595,6 +595,11 @@ class ServerInstance(object):
                     if message == 'stop':
                         if self.stop_process():
                             self.clean_exit = True
+                    elif message == 'rebalance':
+                        if settings.local.host.availability_group != \
+                                msg['availability_group']:
+                            if self.stop_process():
+                                self.clean_exit = True
                     elif message == 'force_stop':
                         self.clean_exit = True
                         for _ in xrange(10):
