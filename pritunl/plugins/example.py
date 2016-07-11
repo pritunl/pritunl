@@ -1,4 +1,4 @@
-# Aviaible libraries
+# Aviaible libraries included with a default Pritunl installation
 # import requests
 # import pymongo
 # import redis
