@@ -88,6 +88,10 @@ class Host(mongo.MongoObject):
         return self.local_address6 or self.auto_local_address6
 
     @property
+    def local_iface(self):
+        return utils.find_interface_addr(self.local_addr)['interface']
+
+    @property
     def link_addr(self):
         return self.link_address or self.auto_public_host or \
             self.public_address or self.auto_public_address
