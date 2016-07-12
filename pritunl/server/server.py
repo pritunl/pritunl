@@ -1222,6 +1222,35 @@ class Server(mongo.MongoObject):
 
         self.pre_start_check()
 
+        docs = self.host_collection.find({
+            'status': ONLINE,
+        }, {
+            '_id': True,
+            'availability_group': True,
+        })
+
+        hosts_group = {}
+        for doc in docs:
+            hosts_group[doc['_id']] = doc.get(
+                'availability_group', DEFAULT)
+
+        hosts_set = set(self.hosts)
+        group_best = None
+        group_len_max = 0
+        server_groups = collections.defaultdict(set)
+
+        for hst in hosts_set:
+            avail_zone = hosts_group.get(hst)
+            if not avail_zone:
+                continue
+
+            server_groups[avail_zone].add(hst)
+            group_len = len(server_groups[avail_zone])
+
+            if group_len > group_len_max:
+                group_len_max = group_len
+                group_best = avail_zone
+
         start_timestamp = utils.now()
         response = self.collection.update({
             '_id': self.id,
