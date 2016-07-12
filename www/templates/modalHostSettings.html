@@ -2,10 +2,6 @@
   <label>Name</label>
   <input type="text" class="form-control" placeholder="Enter name" data-toggle="tooltip" title="Name of host" value="<%- name %>" autofocus>
 </div>
-<div class="form-group availability-group">
-  <label>Availability Group</label>
-  <input type="text" class="form-control" placeholder="Enter availability group" data-toggle="tooltip" title="Availability group for host, this should generally match the AWS availability zone. Replicated servers will only be replicated to a group of hosts in the same availability group. This allows having failover hosts in multiple EC2 availability zones while still using features that require all hosts to be in the same availability zone" value="<%- availability_group %>">
-</div>
 <div class="form-group public-address">
   <label>Public Address</label>
   <input type="text" class="form-control" placeholder="Enter public address" data-toggle="tooltip" title="Public IP address or domain name of the host" value="<%- public_address %>">
@@ -27,6 +23,10 @@
   <input type="text" class="form-control" placeholder="Enter local IPv6 address" data-toggle="tooltip" title="Local IPv6 network address for server" value="<%- local_address6 %>">
 </div>
 <div class="advanced">
+  <div class="form-group availability-group">
+    <label>Availability Group</label>
+    <input type="text" class="form-control" placeholder="Enter availability group" data-toggle="tooltip" title="Availability group for host, this should generally match the AWS availability zone. Replicated servers will only be replicated to a group of hosts in the same availability group. This allows having failover hosts in multiple EC2 availability zones while still using features that require all hosts to be in the same availability zone" value="<%- availability_group %>">
+  </div>
   <div class="form-group link-address">
     <label>Link Address</label>
     <input type="text" class="form-control" placeholder="Enter link address" data-toggle="tooltip" title="IP address or domain used when linked servers connect to a linked server on this host" value="<%- link_address %>">
