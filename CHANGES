@@ -7,6 +7,7 @@ Add VXLan support for replicated servers
 Add auto route53 configuration
 Improvements to iOS and Android routing with IPv6
 Allow interoperable versions to use the same database
+Allow incoming dns queries from outside of VPN subnet
 Fix virtual network routing on Android
 
 Version 1.24.1025.78 2016-07-03
