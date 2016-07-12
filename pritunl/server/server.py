@@ -1203,25 +1203,7 @@ class Server(mongo.MongoObject):
         instance = ServerInstance(self)
         instance.run(send_events=send_events)
 
-    def start(self, timeout=None):
-        timeout = timeout or settings.vpn.op_timeout
-        cursor_id = self.get_cursor_id()
-
-        if self.status != OFFLINE:
-            return
-
-        if not self.dh_params:
-            self.generate_dh_param()
-            return
-
-        if not self.organizations:
-            raise ServerMissingOrg('Server cannot be started ' + \
-                'without any organizations', {
-                    'server_id': self.id,
-                })
-
-        self.pre_start_check()
-
+    def get_best_availability_group(self):
         docs = self.host_collection.find({
             'status': ONLINE,
         }, {
@@ -1251,6 +1233,27 @@ class Server(mongo.MongoObject):
                 group_len_max = group_len
                 group_best = avail_zone
 
+        return group_best
+
+    def start(self, timeout=None):
+        timeout = timeout or settings.vpn.op_timeout
+        cursor_id = self.get_cursor_id()
+
+        if self.status != OFFLINE:
+            return
+
+        if not self.dh_params:
+            self.generate_dh_param()
+            return
+
+        if not self.organizations:
+            raise ServerMissingOrg('Server cannot be started ' + \
+                'without any organizations', {
+                    'server_id': self.id,
+                })
+
+        self.pre_start_check()
+
         start_timestamp = utils.now()
         response = self.collection.update({
             '_id': self.id,
@@ -1259,7 +1262,7 @@ class Server(mongo.MongoObject):
         }, {'$set': {
             'status': ONLINE,
             'start_timestamp': start_timestamp,
-            'availability_group': group_best,
+            'availability_group': self.get_best_availability_group(),
         }})
 
         if not response['updatedExisting']:
