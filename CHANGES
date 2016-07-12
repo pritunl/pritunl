@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Add VXLan support for replicated servers
 Add auto route53 configuration
 Improvements to iOS and Android routing with IPv6
 Allow interoperable versions to use the same database
