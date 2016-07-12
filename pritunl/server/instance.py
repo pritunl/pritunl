@@ -15,6 +15,7 @@ from pritunl import organization
 from pritunl import iptables
 from pritunl import ipaddress
 from pritunl import plugins
+from pritunl import vxlan
 
 import os
 import signal
@@ -40,6 +41,7 @@ class ServerInstance(object):
         self.bridge_interface = None
         self.primary_user = None
         self.process = None
+        self.vxlan = None
         self.auth_log_process = None
         self.iptables = iptables.Iptables()
         self.iptables_lock = threading.Lock()
@@ -782,6 +784,15 @@ class ServerInstance(object):
         thread.start()
 
     def stop_threads(self):
+        if self.server.route_clients:
+            try:
+                self.vxlan.stop()
+            except:
+                logger.exception('Failed to stop server vxlan', 'vxlan',
+                    server_id=self.server.id,
+                    instance_id=self.id,
+                )
+
         if self.auth_log_process:
             try:
                 self.auth_log_process.send_signal(signal.SIGINT)
@@ -804,6 +815,17 @@ class ServerInstance(object):
 
             self.enable_ip_forwarding()
             self.bridge_start()
+
+            if self.server.route_clients:
+                try:
+                    self.vxlan = vxlan.get_vxlan(self.server.id)
+                    self.vxlan.start()
+                except:
+                    logger.exception('Failed to setup server vxlan', 'vxlan',
+                        server_id=self.server.id,
+                        instance_id=self.id,
+                    )
+
             self.generate_ovpn_conf()
 
             self.generate_iptables_rules()
