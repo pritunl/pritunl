@@ -736,7 +736,7 @@ class Clients(object):
             'real_address': client['real_address'],
             'virt_address': client['virt_address'],
             'virt_address6': client['virt_address6'],
-            'host_address': settings.local.host.local_addr,
+            'host_address': self.route_addr,
             'host_address6': settings.local.host.local_addr6,
             'dns_servers': client['dns_servers'],
             'dns_suffix': client['dns_suffix'],
@@ -754,13 +754,13 @@ class Clients(object):
 
         try:
             doc_id = self.collection.insert(doc)
-            if self.route_clients:
+            if self.server.route_clients:
                 messenger.publish('client', {
                     'state': True,
                     'server_id': self.server.id,
                     'virt_address': client['virt_address'],
                     'virt_address6': client['virt_address6'],
-                    'host_address': settings.local.host.local_addr,
+                    'host_address': self.route_addr,
                     'host_address6': settings.local.host.local_addr6,
                 })
         except:
@@ -818,13 +818,13 @@ class Clients(object):
                     remote_ip=remote_ip,
                 )
 
-        if self.route_clients:
+        if self.server.route_clients:
             messenger.publish('client', {
                 'state': False,
                 'server_id': self.server.id,
                 'virt_address': client['virt_address'],
                 'virt_address6': client['virt_address6'],
-                'host_address': settings.local.host.local_addr,
+                'host_address': self.route_addr,
                 'host_address6': settings.local.host.local_addr6,
             })
 
@@ -1078,8 +1078,9 @@ class Clients(object):
                     pass
                 utils.del_route(virt_address)
 
-            if not host_address or host_address == \
-                    settings.local.host.local_addr:
+            if not host_address or \
+                    host_address == settings.local.host.local_addr or \
+                    host_address == self.route_addr:
                 return
 
             self.client_routes.add(virt_address)
@@ -1111,7 +1112,7 @@ class Clients(object):
             host.dns_mapping_servers.add(self.instance.id)
         self.call_queue.start(settings.vpn.call_queue_threads)
 
-        if self.route_clients:
+        if self.server.route_clients:
             thread = threading.Thread(target=self.init_routes)
             thread.daemon = True
             thread.start()
@@ -1134,7 +1135,7 @@ class Clients(object):
             'instance_id': self.instance.id,
         })
 
-        if self.route_clients:
+        if self.server.route_clients:
             self.clear_routes()
 
 def on_port_forwarding(msg):
