@@ -162,6 +162,10 @@ class ServerInstance(object):
                         push += 'route %s %s %s\n' % (utils.parse_network(
                             network) + (gateway,))
 
+        if self.vxlan:
+            push += 'push "route %s %s"\n' % utils.parse_network(
+                self.vxlan.vxlan_net)
+
         if self.server.network_mode == BRIDGE:
             host_int_data = self.host_interface_data
             host_address = host_int_data['address']
@@ -494,6 +498,9 @@ class ServerInstance(object):
                 nat=route['nat'],
                 nat_interface=interface,
             )
+
+        if self.vxlan:
+            self.iptables.add_route(self.vxlan.vxlan_net)
 
         self.iptables.generate()
 
