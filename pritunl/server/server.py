@@ -249,6 +249,10 @@ class Server(mongo.MongoObject):
         return mongo.get_collection('servers')
 
     @cached_static_property
+    def host_collection(cls):
+        return mongo.get_collection('hosts')
+
+    @cached_static_property
     def user_collection(cls):
         return mongo.get_collection('users')
 
