@@ -54,7 +54,7 @@ class Vxlan(object):
             'type',
             'vxlan',
             'id',
-            str(self.vxlan_id),
+            str(settings.vpn.vxlan_id_start + self.vxlan_id - 54),
             'dev',
             local_iface['interface'],
             'nolearning',
