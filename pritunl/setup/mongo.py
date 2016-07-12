@@ -272,6 +272,8 @@ def setup_mongo():
         ('platform', pymongo.ASCENDING),
         ('device_name', pymongo.ASCENDING),
     ], background=True)
+    upsert_index(mongo.collections['vxlans'], 'server_id',
+        background=True, unique=True)
 
     upsert_index(mongo.collections['tasks'], 'timestamp',
         background=True, expireAfterSeconds=300)
