@@ -54,7 +54,7 @@ class Vxlan(object):
             'type',
             'vxlan',
             'id',
-            str(settings.vpn.vxlan_id_start + self.vxlan_id - 54),
+            str(settings.vpn.vxlan_id_start + self.vxlan_id),
             'dev',
             local_iface['interface'],
             'nolearning',
@@ -245,7 +245,7 @@ class Vxlan(object):
             self.running_lock.release()
 
 def _get_ids():
-    ids = range(54, 254)
+    ids = range(0, 254)
     random.shuffle(ids)
     return ids
 
