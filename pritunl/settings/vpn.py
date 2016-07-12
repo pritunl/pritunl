@@ -25,6 +25,8 @@ class SettingsVpn(SettingsGroupMongo):
         'nat_routes': True,
         'ipv6_prefix': 'fd00',
         'stress_test': False,
+        'vxlan_id_start': 9700,
+        'vxlan_net_prefix': '100.97.',
         'safe_priv_subnets': [
             '10.0.0.0/8',
             '100.64.0.0/10',
