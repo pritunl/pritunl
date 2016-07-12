@@ -1259,6 +1259,7 @@ class Server(mongo.MongoObject):
         }, {'$set': {
             'status': ONLINE,
             'start_timestamp': start_timestamp,
+            'availability_group': group_best,
         }})
 
         if not response['updatedExisting']:
