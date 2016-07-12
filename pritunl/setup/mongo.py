@@ -135,6 +135,7 @@ def setup_mongo():
         'otp_cache': getattr(secondary_database, prefix + 'otp_cache'),
         'sso_tokens': getattr(secondary_database, prefix + 'sso_tokens'),
         'sso_cache': getattr(secondary_database, prefix + 'sso_cache'),
+        'vxlans': getattr(database, prefix + 'vxlans'),
     })
 
     for collection_name, collection in mongo.collections.items():
