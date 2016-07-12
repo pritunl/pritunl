@@ -226,6 +226,18 @@ def find_interface(network):
         if address in network and data['netmask'] == str(network.netmask):
             return data
 
+def find_interface_addr(addr):
+    match_addr = ipaddress.IPAddress(addr)
+
+    for interface, data in get_interfaces().items():
+        try:
+            address = ipaddress.IPAddress(data['address'])
+        except ValueError:
+            continue
+
+        if match_addr == address:
+            return data
+
 def net4to6x64(prefix, net):
     net = net.split('/')[0]
     nets = net.split('.')
