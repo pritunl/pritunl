@@ -222,6 +222,17 @@ def get_interfaces():
 
     return interfaces
 
+def get_interface_mac_address(iface):
+    ifaddrs = netifaces.ifaddresses(iface)
+    if not ifaddrs:
+        return
+
+    mac_addrs = ifaddrs.get(netifaces.AF_LINK)
+    if not mac_addrs:
+        return
+
+    return mac_addrs[0].get('addr')
+
 def find_interface(network):
     network = ipaddress.IPNetwork(network)
 
