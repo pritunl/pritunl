@@ -89,7 +89,7 @@ class Host(mongo.MongoObject):
 
     @property
     def local_iface(self):
-        return utils.find_interface_addr(self.local_addr)['interface']
+        return utils.find_interface_addr(self.local_addr)
 
     @property
     def link_addr(self):
