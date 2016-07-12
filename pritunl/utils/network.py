@@ -187,7 +187,9 @@ def get_interfaces():
         if iface == 'lo':
             continue
 
-        addrs = netifaces.ifaddresses(iface).get(netifaces.AF_INET)
+        ifaddrs = netifaces.ifaddresses(iface)
+
+        addrs = ifaddrs.get(netifaces.AF_INET)
         if not addrs:
             continue
         addrs = addrs[0]
@@ -204,8 +206,14 @@ def get_interfaces():
         if not netmask:
             continue
 
+        mac_addr = None
+        mac_addrs = ifaddrs.get(netifaces.AF_LINK)
+        if mac_addrs:
+            mac_addr = mac_addrs[0].get('addr')
+
         interfaces[iface] = {
             'interface': iface,
+            'mac_address': mac_addr,
             'address': address,
             'broadcast': broadcast,
             'netmask': netmask,
