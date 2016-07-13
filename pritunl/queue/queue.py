@@ -187,7 +187,7 @@ class Queue(mongo.MongoObject):
         return response['updatedExisting']
 
     @classmethod
-    def reserve(cls, reserve_id, reserve_data, block=False, block_timeout=30):
+    def reserve(cls, reserve_id, reserve_data, block=False, block_timeout=90):
         if block:
             cursor_id = messenger.get_cursor_id('queue')
 
