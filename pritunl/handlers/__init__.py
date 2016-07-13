@@ -1,3 +1,4 @@
+import pritunl.handlers.errors
 import pritunl.handlers.auth
 import pritunl.handlers.before_request
 import pritunl.handlers.event
