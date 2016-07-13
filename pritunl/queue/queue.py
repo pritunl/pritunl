@@ -215,7 +215,7 @@ class Queue(mongo.MongoObject):
                             })
                 except TypeError:
                     pass
-            raise QueueTimeout('Blocking queue reserve timed out', {
+            logger.error('Blocking queue reserve timed out', {
                 'queue_id': doc['_id'],
                 'queue_type': doc['type'],
             })
