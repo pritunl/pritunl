@@ -268,10 +268,6 @@ class Server(mongo.MongoObject):
     def org_collection(cls):
         return mongo.get_collection('organizations')
 
-    @cached_static_property
-    def host_collection(cls):
-        return mongo.get_collection('hosts')
-
     def dict(self):
         return {
             'id': self.id,
