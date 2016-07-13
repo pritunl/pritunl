@@ -315,6 +315,11 @@ class Server(mongo.MongoObject):
             and self.inter_client and self.network_mode != BRIDGE
 
     @property
+    def replicating(self):
+        return self.replica_count and self.replica_count > 1 \
+            and self.network_mode != BRIDGE
+
+    @property
     def uptime(self):
         if self.status != ONLINE or not self.start_timestamp:
             return
