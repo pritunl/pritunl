@@ -66,7 +66,7 @@ class Queue(mongo.MongoObject):
 
     def _keep_alive_thread(self):
         while True:
-            time.sleep(self.ttl - 5)
+            time.sleep(self.ttl - 6)
             if self.queue_com.state in (COMPLETE, STOPPED):
                 break
             response = self.collection.update({
