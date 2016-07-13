@@ -219,6 +219,7 @@ class Queue(mongo.MongoObject):
                 'queue_id': doc['_id'],
                 'queue_type': doc['type'],
             })
+            return doc
         else:
             return doc
 
