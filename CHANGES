@@ -9,6 +9,7 @@ Improvements to iOS and Android routing with IPv6
 Allow interoperable versions to use the same database
 Allow incoming dns queries from outside of VPN subnet
 Fix virtual network routing on Android
+Fix issue with server bind address
 
 Version 1.24.1025.78 2016-07-03
 -------------------------------
