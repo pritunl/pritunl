@@ -245,7 +245,7 @@ class Vxlan(object):
             self.running_lock.release()
 
 def _get_ids():
-    ids = range(0, 254)
+    ids = range(0, 256)
     random.shuffle(ids)
     return ids
 
