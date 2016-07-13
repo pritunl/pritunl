@@ -66,6 +66,12 @@ class ServerInstance(object):
     def routes_collection(cls):
         return mongo.get_collection('routes_reserve')
 
+    @cached_property
+    def route_addr(self):
+        if self.vxlan and self.vxlan.vxlan_addr:
+            return self.vxlan.vxlan_addr
+        return
+
     def get_cursor_id(self):
         return messenger.get_cursor_id('servers')
 
