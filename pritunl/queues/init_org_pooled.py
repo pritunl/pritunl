@@ -45,13 +45,13 @@ class QueueInitOrgPooled(queue.Queue):
         if self.reserve_data:
             return False
 
-        self.org.running.clear()
+        self.org.queue_com.running.clear()
         self.org.queue_com.popen_kill_all()
 
         return True
 
     def resume_task(self):
-        self.org.running.set()
+        self.org.queue_com.running.set()
 
 @queue.add_reserve('queued_org')
 def reserve_queued_org(name=None, auth_api=None, type=None, block=False):
