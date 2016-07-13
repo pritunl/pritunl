@@ -793,7 +793,7 @@ class ServerInstance(object):
         thread.start()
 
     def stop_threads(self):
-        if self.server.route_clients:
+        if self.server.replicating:
             try:
                 self.vxlan.stop()
             except:
@@ -825,7 +825,7 @@ class ServerInstance(object):
             self.enable_ip_forwarding()
             self.bridge_start()
 
-            if self.server.route_clients:
+            if self.server.replicating:
                 try:
                     self.vxlan = vxlan.get_vxlan(self.server.id)
                     self.vxlan.start()
