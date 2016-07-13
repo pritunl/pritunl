@@ -253,6 +253,10 @@ class Server(mongo.MongoObject):
         return mongo.get_collection('hosts')
 
     @cached_static_property
+    def vxlan_collection(cls):
+        return mongo.get_collection('vxlans')
+
+    @cached_static_property
     def user_collection(cls):
         return mongo.get_collection('users')
 
@@ -1344,6 +1348,12 @@ class Server(mongo.MongoObject):
             'instances': [],
             'instances_count': 0,
             'availability_group': None,
+        }})
+
+        self.vxlan_collection.update({
+            'server_id': self.id,
+        }, {'$set': {
+            'hosts': [],
         }})
 
         if not response['updatedExisting']:
