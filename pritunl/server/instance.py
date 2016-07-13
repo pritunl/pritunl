@@ -185,12 +185,14 @@ class ServerInstance(object):
                 server_line += '\nserver-ipv6 ' + self.server.network6
 
         if self.server.protocol == 'tcp':
-            if self.server.ipv6 or settings.vpn.ipv6:
+            if (self.server.ipv6 or settings.vpn.ipv6) and \
+                    not self.server.bind_address:
                 protocol = 'tcp6-server'
             else:
                 protocol = 'tcp-server'
         elif self.server.protocol == 'udp':
-            if self.server.ipv6 or settings.vpn.ipv6:
+            if (self.server.ipv6 or settings.vpn.ipv6) and \
+                    not self.server.bind_address:
                 protocol = 'udp6'
             else:
                 protocol = 'udp'
