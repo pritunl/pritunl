@@ -350,17 +350,6 @@ class Organization(mongo.MongoObject):
                 usr = queue.reserve('queued_user', org=self, type=type,
                     block=block, **kwargs)
 
-                if usr:
-                    logger.debug('Reserved queued user', 'organization',
-                        org_id=self.id,
-                        user_id=usr.id,
-                    )
-            else:
-                logger.debug('Reserved pooled user', 'organization',
-                    org_id=self.id,
-                    user_id=usr.id,
-                )
-
             if usr:
                 user.new_pooled_user(org=self, type=type)
                 return usr
