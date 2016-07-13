@@ -8,8 +8,10 @@ from pritunl import messenger
 import threading
 import random
 import pymongo
+import subprocess
 
 _vxlans = {}
+_loaded = False
 
 class Vxlan(object):
     def __init__(self, vxlan_id, server_id):
@@ -33,7 +35,19 @@ class Vxlan(object):
         return settings.vpn.vxlan_iface_prefix + str(self.vxlan_id)
 
     def start(self):
+        global _loaded
+
         local_iface = settings.local.host.local_iface
+
+        if not _loaded:
+            _loaded = True
+            try:
+                utils.check_call_silent([
+                    'modprobe',
+                    'vxlan',
+                ])
+            except subprocess.CalledProcessError:
+                pass
 
         self.remove_iface()
 
@@ -171,7 +185,7 @@ class Vxlan(object):
                 'down',
                 self.iface_name,
             ])
-        except:
+        except subprocess.CalledProcessError:
             pass
 
         try:
@@ -181,7 +195,7 @@ class Vxlan(object):
                 'del',
                 self.iface_name,
             ])
-        except:
+        except subprocess.CalledProcessError:
             pass
 
     def get_host_addr(self, host_vxlan_id):
@@ -216,7 +230,7 @@ class Vxlan(object):
                     ])
 
                     break
-                except:
+                except subprocess.CalledProcessError:
                     if i == 0:
                         utils.check_output_logged([
                             'bridge',
