@@ -618,6 +618,9 @@ class ServerInstance(object):
                             if self.stop_process():
                                 self.clean_exit = True
                     elif message == 'force_stop':
+                        for instance_link in self.server_links:
+                            instance_link.stop()
+
                         self.clean_exit = True
                         for _ in xrange(10):
                             self.process.send_signal(signal.SIGKILL)
