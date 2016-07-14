@@ -192,7 +192,8 @@ $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
 $ apt-get install pritunl mongodb-server
-$ service pritunl start
+$ systemctl start pritunl
+$ systemctl enable pritunl
 ```
 
 ## Development Repository
@@ -349,7 +350,8 @@ $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
 $ apt-get install pritunl mongodb-server
-$ service pritunl start
+$ systemctl start pritunl
+$ systemctl enable pritunl
 ```
 
 ## License
