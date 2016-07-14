@@ -263,7 +263,7 @@ def _get_ids():
     random.shuffle(ids)
     return ids
 
-def get_vxlan(server_id):
+def get_vxlan_id(server_id):
     coll = mongo.get_collection('vxlans')
     vxlan_ids = _get_ids()
 
@@ -272,7 +272,7 @@ def get_vxlan(server_id):
             'server_id': server_id,
         })
         if doc:
-            return Vxlan(doc['_id'], server_id)
+            return doc['_id']
 
         vxlan_id = vxlan_ids.pop()
         try:
@@ -283,7 +283,14 @@ def get_vxlan(server_id):
             })
         except pymongo.errors.DuplicateKeyError:
             continue
-        return Vxlan(vxlan_id, server_id)
+
+        return vxlan_id
+
+def get_vxlan(server_id):
+    return Vxlan(get_vxlan_id(server_id), server_id)
+
+def get_vxlan_net(server_id):
+    return Vxlan(get_vxlan_id(server_id), server_id).vxlan_net
 
 def on_vxlan(msg):
     vxlan_id = msg['message']['vxlan_id']
