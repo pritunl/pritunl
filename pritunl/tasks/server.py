@@ -120,7 +120,7 @@ class TaskServer(task.Task):
                             avail_zone == cur_avail_group:
                         group_best = avail_zone
 
-                if cur_avail_group != group_best:
+                if group_best and cur_avail_group != group_best:
                     logger.info(
                         'Rebalancing server availability group',
                         'server',
