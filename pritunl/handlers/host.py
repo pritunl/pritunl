@@ -60,12 +60,18 @@ def host_put(hst=None):
             flask.request.json['name']) or utils.random_name()
 
     if 'public_address' in flask.request.json:
-        hst.public_address = utils.filter_str(
+        public_address = utils.filter_str(
             flask.request.json['public_address'])
 
+        if public_address != hst.public_addr:
+            hst.public_address = public_address
+
     if 'public_address6' in flask.request.json:
-        hst.public_address6 = utils.filter_str(
+        public_address6 = utils.filter_str(
             flask.request.json['public_address6'])
+
+        if public_address6 != hst.public_addr6:
+            hst.public_address6 = public_address6
 
     if 'routed_subnet6' in flask.request.json:
         routed_subnet6 = flask.request.json['routed_subnet6']
@@ -98,16 +104,25 @@ def host_put(hst=None):
             hst.routed_subnet6 = routed_subnet6
 
     if 'local_address' in flask.request.json:
-        hst.local_address = utils.filter_str(
+        local_address = utils.filter_str(
             flask.request.json['local_address'])
 
+        if local_address != hst.local_addr:
+            hst.local_address = local_address
+
     if 'local_address6' in flask.request.json:
-        hst.local_address6 = utils.filter_str(
+        local_address6 = utils.filter_str(
             flask.request.json['local_address6'])
 
+        if local_address6 != hst.local_addr6:
+            hst.local_address6 = local_address6
+
     if 'link_address' in flask.request.json:
-        hst.link_address = utils.filter_str(
+        link_address = utils.filter_str(
             flask.request.json['link_address'])
+
+        if link_address != hst.link_addr:
+            hst.link_address = link_address
 
     if 'availability_group' in flask.request.json:
         hst.availability_group = utils.filter_str(
