@@ -225,7 +225,7 @@ def auth_session_post():
 
     admin = auth.get_by_username(username, remote_addr)
     if not admin:
-        if RADIUS_AUTH in settings.app.sso:
+        if settings.app.sso and RADIUS_AUTH in settings.app.sso:
             return _auth_radius(username, password)
 
         time.sleep(random.randint(0, 100) / 1000.)
