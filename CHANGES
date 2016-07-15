@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Improve host settings
 Fix login message for invalid username
 
 Version 1.25.1036.25 2016-07-14
