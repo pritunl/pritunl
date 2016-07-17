@@ -689,6 +689,17 @@ class Server(mongo.MongoObject):
                 self.routes.pop(i)
                 break
 
+    def has_non_nat_route(self):
+        for route in self.get_routes(include_default=False):
+            if route['virtual_network'] or route['network_link'] or \
+                    route['server_link']:
+                continue
+
+            if not route['nat']:
+                return True
+
+        return False
+
     def check_groups(self, groups):
         if not self.groups:
             return True
@@ -1431,5 +1442,11 @@ class Server(mongo.MongoObject):
 
         if self.links and self.replica_count > 1:
             return SERVER_LINKS_AND_REPLICA, SERVER_LINKS_AND_REPLICA_MSG
+
+        if self.vxlan and self.replicating and self.has_non_nat_route():
+            return SERVER_VXLAN_NON_NAT, SERVER_VXLAN_NON_NAT_MSG
+
+        if self.replicating and self.multi_device and self.inter_client:
+            return SERVER_MULTI_DEVICE_REPLICA, SERVER_MULTI_DEVICE_REPLICA_MSG
 
         return None, None
