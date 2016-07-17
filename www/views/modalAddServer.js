@@ -29,7 +29,8 @@ define([
         'cipher': 'aes256',
         'hash': 'sha1',
         'inter_client': true,
-        'restrict_routes': true
+        'restrict_routes': true,
+        'vxlan': true
       });
       ModalAddServerView.__super__.initialize.call(this, options);
     },

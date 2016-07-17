@@ -25,6 +25,7 @@ define([
         'click .debug-toggle': 'onDebugSelect',
         'click .ipv6-toggle': 'onIpv6Select',
         'click .multi-device-toggle': 'onMultiDeviceSelect',
+        'click .vxlan-toggle': 'onVxlanSelect',
         'click .ipv6-firewall-toggle': 'onIpv6FirewallSelect',
         'click .restrict-routes-toggle': 'onRestrictRoutesSelect',
         'change select.protocol, .cipher select, .network-mode select':
@@ -207,6 +208,22 @@ define([
     onMultiDeviceSelect: function() {
       this.setMultiDeviceSelect(!this.getMultiDeviceSelect());
     },
+    getVxlanSelect: function() {
+      return this.$('.vxlan-toggle .selector').hasClass('selected');
+    },
+    setVxlanSelect: function(state) {
+      if (state) {
+        this.$('.vxlan-toggle .selector').addClass('selected');
+        this.$('.vxlan-toggle .selector-inner').show();
+      }
+      else {
+        this.$('.vxlan-toggle .selector').removeClass('selected');
+        this.$('.vxlan-toggle .selector-inner').hide();
+      }
+    },
+    onVxlanSelect: function() {
+      this.setVxlanSelect(!this.getVxlanSelect());
+    },
     getIpv6FirewallSelect: function() {
       return this.$('.ipv6-firewall-toggle .selector').hasClass('selected');
     },
@@ -337,6 +354,7 @@ define([
       var debug = this.getDebugSelect();
       var otpAuth = this.getOtpAuthSelect();
       var restrictRoutes = this.getRestrictRoutesSelect();
+      var vxlan = this.getVxlanSelect();
       var cipher = this.$('.cipher select').val();
       var hash = this.$('.hash select').val();
       var bindAddress = this.$('.bind-address input').val();
@@ -404,6 +422,7 @@ define([
         'onc_hostname': oncHostname,
         'max_clients': maxClients,
         'replica_count': replicaCount,
+        'vxlan': vxlan,
         'dns_mapping': dnsMapping,
         'debug': debug
       };
