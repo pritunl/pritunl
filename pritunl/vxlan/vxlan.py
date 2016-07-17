@@ -162,8 +162,12 @@ class Vxlan(object):
             return
 
         for host_vxlan_id, data in enumerate(doc['hosts']):
-            self.add_host(host_vxlan_id + 1,
-                data['vxlan_mac'], data['host_dst'])
+            host_dst = data.get('host_dst')
+            vxlan_mac = data.get('vxlan_mac')
+            if not host_dst or not vxlan_mac:
+                continue
+
+            self.add_host(host_vxlan_id + 1, vxlan_mac, host_dst)
 
     def stop(self):
         self.running_lock.acquire()
