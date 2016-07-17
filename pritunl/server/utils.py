@@ -30,10 +30,11 @@ def get_online_ipv6_count():
     }).count()
 
 def get_used_resources(ignore_server_id):
-    response = Server.collection.aggregate([
+    response = Server.collection.aggregate(([
         {'$match': {
             '_id': {'$ne': ignore_server_id},
         }},
+    ] if ignore_server_id else []) + [
         {'$project': {
             'network': True,
             'interface': True,
@@ -132,32 +133,42 @@ def link_servers(server_id, link_server_id, use_local_address=False):
     if server_id == link_server_id:
         raise TypeError('Server id must be different then link server id')
 
-    fields = ('_id', 'status', 'hosts', 'replica_count', 'network', 'links',
-        'network_start', 'network_end', 'routes', 'organizations', 'ipv6')
-
     hosts = set()
     routes = set()
-
-    for svr in (
-                get_by_id(server_id, fields=fields),
-                get_by_id(link_server_id, fields=fields),
+    for svr, link_id in (
+                (get_by_id(server_id), link_server_id),
+                (get_by_id(link_server_id), server_id),
             ):
-        if svr.status == ONLINE:
-            raise ServerLinkOnlineError('Server must be offline to link')
+        has_link = False
+        if svr.links:
+            for link in svr.links:
+                if link['server_id'] == link_id:
+                    has_link = True
 
-        if svr.replica_count > 1:
-            raise ServerLinkReplicaError('Server has replicas')
+        if not has_link:
+            if not svr.links:
+                svr.links = []
+
+            svr.links.append({
+                'server_id': link_id,
+                'user_id': None,
+                'use_local_address': use_local_address,
+            })
+
+        err, err_msg = svr.validate_conf()
+        if err:
+            return err, err_msg
 
         hosts_set = set(svr.hosts)
         if hosts & hosts_set:
-            raise ServerLinkCommonHostError('Servers have a common host')
+            return SERVER_LINK_COMMON_HOST, SERVER_LINK_COMMON_HOST_MSG
         hosts.update(hosts_set)
 
         routes_set = set()
         for route in svr.get_routes():
             routes_set.add(route['network'])
         if routes & routes_set:
-            raise ServerLinkCommonRouteError('Servers have a common route')
+            return SERVER_LINK_COMMON_ROUTE, SERVER_LINK_COMMON_ROUTE_MSG
         routes.update(routes_set)
 
     tran = transaction.Transaction()
@@ -186,6 +197,8 @@ def link_servers(server_id, link_server_id, use_local_address=False):
     }})
 
     tran.commit()
+
+    return None, None
 
 def unlink_servers(server_id, link_server_id):
     collection = mongo.get_collection('servers')
