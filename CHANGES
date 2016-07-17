@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve replicated servers
+
 Version 1.25.1039.3 2016-07-17
 ------------------------------
 
