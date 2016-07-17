@@ -198,12 +198,24 @@ deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse
 $ nano /etc/apt/sources.list.d/pritunl.list
 deb http://repo.pritunl.com/stable/apt xenial main
 
+$ nano /lib/systemd/system/mongod.service
+[Unit]
+Description=High-performance, schema-free document-oriented database
+After=network.target
+
+[Service]
+User=mongodb
+ExecStart=/usr/bin/mongod --config /etc/mongod.conf
+
+[Install]
+WantedBy=multi-user.target
+
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv EA312927
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
 $ apt-get install pritunl mongodb-org
-$ systemctl start pritunl
-$ systemctl enable pritunl
+$ systemctl start pritunl mongod
+$ systemctl enable pritunl mongod
 ```
 
 ## Development Repository
@@ -366,12 +378,24 @@ deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse
 $ nano /etc/apt/sources.list.d/pritunl.list
 deb http://repo.pritunl.com/dev/apt xenial main
 
+$ nano /lib/systemd/system/mongod.service
+[Unit]
+Description=High-performance, schema-free document-oriented database
+After=network.target
+
+[Service]
+User=mongodb
+ExecStart=/usr/bin/mongod --config /etc/mongod.conf
+
+[Install]
+WantedBy=multi-user.target
+
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv EA312927
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
 $ apt-get install pritunl mongodb-org
-$ systemctl start pritunl
-$ systemctl enable pritunl
+$ systemctl start pritunl mongod
+$ systemctl enable pritunl mongod
 ```
 
 ## License
