@@ -1430,9 +1430,6 @@ class Server(mongo.MongoObject):
                 return BRIDGE_NETWORK_INVALID, BRIDGE_NETWORK_INVALID_MSG
 
         if self.links and self.replica_count > 1:
-            return utils.jsonify({
-                'error': SERVER_LINKS_AND_REPLICA,
-                'error_msg': SERVER_LINKS_AND_REPLICA_MSG,
-            }, 400)
+            return SERVER_LINKS_AND_REPLICA, SERVER_LINKS_AND_REPLICA_MSG
 
         return None, None
