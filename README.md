@@ -100,9 +100,10 @@ baseurl=http://repo.pritunl.com/stable/yum/centos/7/
 gpgcheck=1
 enabled=1
 
+$ yum install epel-release
 $ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys CF8E292A
 $ gpg --armor --export CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
-$ yum install epel-release pritunl mongodb-org
+$ yum install pritunl mongodb-org
 $ systemctl start mongod pritunl
 $ systemctl enable mongod pritunl
 ```
@@ -267,9 +268,10 @@ baseurl=http://repo.pritunl.com/dev/yum/centos/7/
 gpgcheck=1
 enabled=1
 
+$ yum install epel-release
 $ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys CF8E292A
 $ gpg --armor --export CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
-$ yum install epel-release pritunl mongodb-org
+$ yum install pritunl mongodb-org
 $ systemctl start mongod pritunl
 $ systemctl enable mongod pritunl
 ```
