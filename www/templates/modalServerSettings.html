@@ -170,6 +170,12 @@
         <span class="selector-inner glyphicon glyphicon-ok"></span>
       </div>
     </div>
+    <div class="vxlan-toggle toggle-form form-group">
+      <label>VXLan Routing</label>
+      <div class="selector <%= vxlan ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Use VXLan for routing client-to-client traffic with replicated servers">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
     <div class="ipv6-firewall-toggle toggle-form form-group" <%= ipv6 ? '' : 'style="display: none;"' %>>
       <label>Routed IPv6 Firewall</label>
       <div class="selector <%= ipv6_firewall ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Enabled firewall when routed IPv6 is used">
