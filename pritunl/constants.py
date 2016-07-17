@@ -787,8 +787,20 @@ INTERFACE_IN_USE_MSG = 'Tunnel interface is already in use.'
 PORT_PROTOCOL_IN_USE = 'port_protocol_in_use'
 PORT_PROTOCOL_IN_USE_MSG = 'Port and protocol is already in use.'
 
-IPV6_BRIDGED_INVALID = 'ipv6_bridged_invalid'
-IPV6_BRIDGED_INVALID_MSG = 'IPv6 cannot be used with bridged servers.'
+BRIDGED_IPV6_INVALID = 'bridged_ipv6_invalid'
+BRIDGED_IPV6_INVALID_MSG = 'IPv6 cannot be used with bridged servers.'
+
+BRIDGED_SERVER_LINKS_INVALID = 'bridged_server_links_invalid'
+BRIDGED_SERVER_LINKS_INVALID_MSG = 'Server links cannot be used with ' + \
+    'bridged servers.'
+
+BRIDGED_NET_LINKS_INVALID = 'bridged_net_links_invalid'
+BRIDGED_NET_LINKS_INVALID_MSG = 'Network links cannot be used with ' + \
+    'bridged servers.'
+
+BRIDGED_REPLICA_INVALID = 'bridged_replica_invalid'
+BRIDGED_REPLICA_INVALID_MSG = 'Replication count must be one with ' + \
+    'bridged servers.'
 
 SERVER_LINKS_NOT_OFFLINE = 'server_links_not_offline'
 SERVER_LINKS_NOT_OFFLINE_SETTINGS_MSG = 'All linked servers must be ' + \
