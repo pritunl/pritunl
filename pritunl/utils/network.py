@@ -371,3 +371,51 @@ def add_route(dst_addr, via_addr):
             raise
     finally:
         _ip_route_lock.release()
+
+def check_network_overlap(test_network, networks):
+    test_net = ipaddress.IPNetwork(test_network)
+    test_start = test_net.network
+    test_end = test_net.broadcast
+
+    for network in networks:
+        net_start = network.network
+        net_end = network.broadcast
+
+        if test_start >= net_start and test_start <= net_end:
+            return True
+        elif test_end >= net_start and test_end <= net_end:
+            return True
+        elif net_start >= test_start and net_start <= test_end:
+            return True
+        elif net_end >= test_start and net_end <= test_end:
+            return True
+
+    return False
+
+def check_network_private(test_network):
+    test_net = ipaddress.IPNetwork(test_network)
+    test_start = test_net.network
+    test_end = test_net.broadcast
+
+    for network in settings.vpn.safe_priv_subnets:
+        network = ipaddress.IPNetwork(network)
+        net_start = network.network
+        net_end = network.broadcast
+
+        if test_start >= net_start and test_end <= net_end:
+            return True
+
+    return False
+
+def check_network_range(test_network, start_addr, end_addr):
+    test_net = ipaddress.IPNetwork(test_network)
+    start_addr = ipaddress.IPAddress(start_addr)
+    end_addr = ipaddress.IPAddress(end_addr)
+
+    return all((
+        start_addr != test_net.network,
+        end_addr != test_net.broadcast,
+        start_addr < end_addr,
+        start_addr in test_net,
+        end_addr in test_net,
+    ))
