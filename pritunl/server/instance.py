@@ -157,7 +157,8 @@ class ServerInstance(object):
 
         for link_svr in self.server.iter_links(fields=(
                 '_id', 'network', 'local_networks', 'network_start',
-                'network_end', 'organizations', 'routes', 'links', 'ipv6')):
+                'network_end', 'organizations', 'routes', 'links', 'ipv6',
+                'replica_count', 'network_mode')):
             if self.server.id < link_svr.id:
                 for route in link_svr.get_routes(include_default=False):
                     network = route['network']
@@ -802,7 +803,7 @@ class ServerInstance(object):
         thread.start()
 
     def stop_threads(self):
-        if self.server.replicating:
+        if self.vxlan:
             try:
                 self.vxlan.stop()
             except:
@@ -834,7 +835,7 @@ class ServerInstance(object):
             self.enable_ip_forwarding()
             self.bridge_start()
 
-            if self.server.replicating:
+            if self.server.replicating and self.server.vxlan:
                 try:
                     self.vxlan = vxlan.get_vxlan(self.server.id)
                     self.vxlan.start()
