@@ -412,13 +412,6 @@ def server_put_post(server_id=None):
                 'error_msg': MISSING_PARAMS_MSG,
             }, 400)
 
-        if network_def and network_mode == BRIDGE and \
-                (not network_start or not network_end):
-            return utils.jsonify({
-                'error': MISSING_PARAMS,
-                'error_msg': MISSING_PARAMS_MSG,
-            }, 400)
-
         if not network_def:
             network_def = True
             rand_range = range(215, 250)
@@ -455,34 +448,9 @@ def server_put_post(server_id=None):
             dh_param_bits_def = True
             dh_param_bits = settings.vpn.default_dh_param_bits
 
-    if network_def:
-        if _check_network_overlap(network, network_used):
-            return utils.jsonify({
-                'error': NETWORK_IN_USE,
-                'error_msg': NETWORK_IN_USE_MSG,
-            }, 400)
-
-    if port_def:
-        if '%s%s' % (port, protocol) in port_used:
-            return utils.jsonify({
-                'error': PORT_PROTOCOL_IN_USE,
-                'error_msg': PORT_PROTOCOL_IN_USE_MSG,
-            }, 400)
+    changed = None
 
     if not server_id:
-        if network_mode == BRIDGE:
-            if not _check_network_range(network, network_start, network_end):
-                return utils.jsonify({
-                    'error': BRIDGE_NETWORK_INVALID,
-                    'error_msg': BRIDGE_NETWORK_INVALID_MSG,
-                }, 400)
-
-            if ipv6:
-                return utils.jsonify({
-                    'error': IPV6_BRIDGED_INVALID,
-                    'error_msg': IPV6_BRIDGED_INVALID_MSG,
-                }, 400)
-
         svr = server.new_server(
             name=name,
             network=network,
@@ -517,21 +485,8 @@ def server_put_post(server_id=None):
             debug=debug,
         )
         svr.add_host(settings.local.host_id)
-        svr.commit()
     else:
         svr = server.get_by_id(server_id)
-        if svr.status == ONLINE:
-            return utils.jsonify({
-                'error': SERVER_NOT_OFFLINE,
-                'error_msg': SERVER_NOT_OFFLINE_SETTINGS_MSG,
-            }, 400)
-
-        for link_svr in svr.iter_links(fields=('status',)):
-            if link_svr.status == ONLINE:
-                return utils.jsonify({
-                    'error': SERVER_LINKS_NOT_OFFLINE,
-                    'error_msg': SERVER_LINKS_NOT_OFFLINE_SETTINGS_MSG,
-                }, 400)
 
         if name_def:
             svr.name = name
@@ -550,12 +505,6 @@ def server_put_post(server_id=None):
         if ipv6_firewall_def:
             svr.ipv6_firewall = ipv6_firewall
         if network_mode_def:
-            if network_mode == BRIDGE and (
-                    not network_start or not network_end):
-                return utils.jsonify({
-                    'error': MISSING_PARAMS,
-                    'error_msg': MISSING_PARAMS_MSG,
-                }, 400)
             svr.network_mode = network_mode
         if bind_address_def:
             svr.bind_address = bind_address
@@ -603,27 +552,16 @@ def server_put_post(server_id=None):
         if debug_def:
             svr.debug = debug
 
-        if svr.network_mode == BRIDGE:
-            if not _check_network_range(svr.network, svr.network_start,
-                    svr.network_end):
-                return utils.jsonify({
-                    'error': BRIDGE_NETWORK_INVALID,
-                    'error_msg': BRIDGE_NETWORK_INVALID_MSG,
-                }, 400)
+        changed = svr.changed
 
-            if svr.ipv6:
-                return utils.jsonify({
-                    'error': IPV6_BRIDGED_INVALID,
-                    'error_msg': IPV6_BRIDGED_INVALID_MSG,
-                }, 400)
+    err, err_msg = svr.validate_conf()
+    if err:
+        return utils.jsonify({
+            'error': err,
+            'error_msg': err_msg,
+        }, 400)
 
-        if svr.links and svr.replica_count > 1:
-            return utils.jsonify({
-                'error': SERVER_LINKS_AND_REPLICA,
-                'error_msg': SERVER_LINKS_AND_REPLICA_MSG,
-            }, 400)
-
-        svr.commit(svr.changed)
+    svr.commit(changed)
 
     logger.LogEntry(message='Created server "%s".' % svr.name)
     event.Event(type=SERVERS_UPDATED)
