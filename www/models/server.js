@@ -41,6 +41,7 @@ define([
       'link_ping_timeout': null,
       'max_clients': null,
       'replica_count': null,
+      'vxlan': null,
       'dns_mapping': null,
       'debug': null
     },
