@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.25.1039.3 2016-07-17
+------------------------------
 
 Fix issue with loading default CA certificates on older distros
 
