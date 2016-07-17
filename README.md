@@ -85,9 +85,6 @@ $ sudo start pritunl
 ### centos 7
 
 ```
-$ wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-$ rpm -i epel-release-latest-7.noarch.rpm
-
 $ sudo nano /etc/yum.repos.d/mongodb-org-3.2.repo
 [mongodb-org-3.2]
 name=MongoDB Repository
@@ -105,7 +102,7 @@ enabled=1
 
 $ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys CF8E292A
 $ gpg --armor --export CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
-$ yum install pritunl mongodb-org
+$ yum install epel-release pritunl mongodb-org
 $ systemctl start mongod pritunl
 $ systemctl enable mongod pritunl
 ```
@@ -255,9 +252,6 @@ $ sudo start pritunl
 ### centos 7
 
 ```
-$ wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-$ rpm -i epel-release-latest-7.noarch.rpm
-
 $ sudo nano /etc/yum.repos.d/mongodb-org-3.2.repo
 [mongodb-org-3.2]
 name=MongoDB Repository
@@ -275,7 +269,7 @@ enabled=1
 
 $ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys CF8E292A
 $ gpg --armor --export CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
-$ yum install pritunl mongodb-org
+$ yum install epel-release pritunl mongodb-org
 $ systemctl start mongod pritunl
 $ systemctl enable mongod pritunl
 ```
