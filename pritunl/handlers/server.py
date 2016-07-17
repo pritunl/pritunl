@@ -349,6 +349,12 @@ def server_put_post(server_id=None):
         if not replica_count:
             replica_count = 1
 
+    vxlan = True
+    vxlan_def = False
+    if 'vxlan' in flask.request.json:
+        vxlan_def = True
+        vxlan = True if flask.request.json['vxlan'] else False
+
     dns_mapping = False
     dns_mapping_def = False
     if 'dns_mapping' in flask.request.json:
@@ -481,6 +487,7 @@ def server_put_post(server_id=None):
             onc_hostname=onc_hostname,
             max_clients=max_clients,
             replica_count=replica_count,
+            vxlan=vxlan,
             dns_mapping=dns_mapping,
             debug=debug,
         )
@@ -547,6 +554,8 @@ def server_put_post(server_id=None):
             svr.max_clients = max_clients
         if replica_count_def:
             svr.replica_count = replica_count
+        if vxlan_def:
+            svr.vxlan = vxlan
         if dns_mapping_def:
             svr.dns_mapping = dns_mapping
         if debug_def:
