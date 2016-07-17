@@ -327,7 +327,7 @@ class Clients(object):
                     ['user_reconnect', user_id, settings.local.host_id])
 
                 for clnt in self.clients.find({'user_id': user_id}):
-                    time.sleep(1.5)
+                    time.sleep(2)
                     self.instance_com.client_kill(clnt['id'])
             elif virt_address:
                 if mac_addr:
