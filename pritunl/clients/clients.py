@@ -63,7 +63,7 @@ class Clients(object):
     def route_addr(self):
         if self.instance.vxlan and self.instance.vxlan.vxlan_addr:
             return self.instance.vxlan.vxlan_addr
-        return
+        return settings.local.host.local_addr
 
     def get_org(self, org_id):
         org = self.obj_cache.get(org_id)
