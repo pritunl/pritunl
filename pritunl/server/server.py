@@ -1385,3 +1385,54 @@ class Server(mongo.MongoObject):
         )
         self.stop()
         self.start()
+
+    def validate_conf(self, used_resources=None):
+        from pritunl.server.utils import get_used_resources
+
+        if not used_resources:
+            used_resources = get_used_resources(self.id)
+        network_used = used_resources['networks']
+        port_used = used_resources['ports']
+
+        if self.status == ONLINE:
+            return SERVER_NOT_OFFLINE, SERVER_NOT_OFFLINE_SETTINGS_MSG
+
+        for link_svr in self.iter_links(fields=('status',)):
+            if link_svr.status == ONLINE:
+                return SERVER_LINKS_NOT_OFFLINE, \
+                    SERVER_LINKS_NOT_OFFLINE_SETTINGS_MSG
+
+        if utils.check_network_overlap(self.network, network_used):
+            return NETWORK_IN_USE, NETWORK_IN_USE_MSG
+
+        if '%s%s' % (self.port, self.protocol) in port_used:
+            return PORT_PROTOCOL_IN_USE, PORT_PROTOCOL_IN_USE_MSG
+
+        if self.network_mode == BRIDGE:
+            if not self.network_start or not self.network_end:
+                return MISSING_PARAMS, MISSING_PARAMS_MSG
+
+            if self.ipv6:
+                return BRIDGED_IPV6_INVALID, BRIDGED_IPV6_INVALID_MSG
+
+            if self.links:
+                return BRIDGED_SERVER_LINKS_INVALID, \
+                    BRIDGED_SERVER_LINKS_INVALID_MSG
+
+            if self.network_links:
+                return BRIDGED_NET_LINKS_INVALID, BRIDGED_NET_LINKS_INVALID_MSG
+
+            if self.replica_count > 1:
+                return BRIDGED_REPLICA_INVALID, BRIDGED_REPLICA_INVALID_MSG
+
+            if not utils.check_network_range(
+                    self.network, self.network_start, self.network_end):
+                return BRIDGE_NETWORK_INVALID, BRIDGE_NETWORK_INVALID_MSG
+
+        if self.links and self.replica_count > 1:
+            return utils.jsonify({
+                'error': SERVER_LINKS_AND_REPLICA,
+                'error_msg': SERVER_LINKS_AND_REPLICA_MSG,
+            }, 400)
+
+        return None, None
