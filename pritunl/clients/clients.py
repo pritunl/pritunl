@@ -302,8 +302,32 @@ class Clients(object):
                 )
 
             if not self.server.multi_device:
+                if self.server.route_clients:
+                    docs = self.collection.find({
+                        'user_id': user_id,
+                        'server_id': self.server.id,
+                    })
+
+                    for doc in docs:
+                        messenger.publish('client', {
+                            'state': False,
+                            'server_id': self.server.id,
+                            'virt_address': doc['virt_address'],
+                            'virt_address6': doc['virt_address6'],
+                            'host_address': doc['host_address'],
+                            'host_address6': doc['host_address6'],
+                        })
+
+                self.collection.remove({
+                    'user_id': user_id,
+                    'server_id': self.server.id,
+                })
+
+                messenger.publish('instance',
+                    ['user_reconnect', user_id, settings.local.host_id])
+
                 for clnt in self.clients.find({'user_id': user_id}):
-                    time.sleep(3)
+                    time.sleep(1.5)
                     self.instance_com.client_kill(clnt['id'])
             elif virt_address:
                 if mac_addr:
@@ -818,7 +842,7 @@ class Clients(object):
                     remote_ip=remote_ip,
                 )
 
-        if self.server.route_clients:
+        if self.server.route_clients and not client.get('ignore_routes'):
             messenger.publish('client', {
                 'state': False,
                 'server_id': self.server.id,
@@ -874,6 +898,16 @@ class Clients(object):
 
     def disconnect_user(self, user_id):
         for client in self.clients.find({'user_id': user_id}):
+            self.instance_com.client_kill(client['id'])
+
+    def reconnect_user(self, user_id, host_id):
+        if host_id == settings.local.host_id:
+            return
+
+        for client in self.clients.find({'user_id': user_id}):
+            self.clients.update_id(client['id'], {
+                'ignore_routes': True,
+            })
             self.instance_com.client_kill(client['id'])
 
     def send_event(self):
