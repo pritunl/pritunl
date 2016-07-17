@@ -679,9 +679,7 @@ def server_route_post(server_id):
     if settings.app.demo_mode:
         return utils.demo_blocked()
 
-    svr = server.get_by_id(server_id, fields=('_id', 'network', 'links',
-        'network_start', 'network_end', 'routes', 'organizations', 'status',
-        'ipv6'))
+    svr = server.get_by_id(server_id)
     route_network = flask.request.json['network']
     nat_route = True if flask.request.json.get('nat') else False
     nat_interface = flask.request.json.get('nat_interface') or None
@@ -717,6 +715,13 @@ def server_route_post(server_id):
             'error_msg': SERVER_ROUTE_NETWORK_LINK_NAT_MSG,
         }, 400)
 
+    err, err_msg = svr.validate_conf()
+    if err:
+        return utils.jsonify({
+            'error': err,
+            'error_msg': err_msg,
+        }, 400)
+
     svr.commit('routes')
 
     event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
@@ -732,9 +737,7 @@ def server_route_put(server_id, route_network):
     if settings.app.demo_mode:
         return utils.demo_blocked()
 
-    svr = server.get_by_id(server_id, fields=('_id', 'network', 'links',
-        'network_start', 'network_end', 'routes', 'organizations', 'status',
-        'ipv6'))
+    svr = server.get_by_id(server_id)
     route_network = route_network.decode('hex')
     nat_route = True if flask.request.json.get('nat') else False
     nat_interface = flask.request.json.get('nat_interface') or None
@@ -769,6 +772,14 @@ def server_route_put(server_id, route_network):
             'error': SERVER_ROUTE_NETWORK_LINK_NAT,
             'error_msg': SERVER_ROUTE_NETWORK_LINK_NAT_MSG,
         }, 400)
+
+    err, err_msg = svr.validate_conf()
+    if err:
+        return utils.jsonify({
+            'error': err,
+            'error_msg': err_msg,
+        }, 400)
+
     svr.commit('routes')
 
     event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
@@ -849,7 +860,7 @@ def server_host_put(server_id, host_id):
     if settings.app.demo_mode:
         return utils.demo_blocked()
 
-    svr = server.get_by_id(server_id, fields=('_id', 'hosts', 'links'))
+    svr = server.get_by_id(server_id)
     hst = host.get_by_id(host_id, fields=('_id', 'name',
         'public_address', 'auto_public_address', 'auto_public_host',
         'public_address6', 'auto_public_address6', 'auto_public_host6'))
@@ -860,6 +871,13 @@ def server_host_put(server_id, host_id):
         return utils.jsonify({
             'error': SERVER_LINK_COMMON_HOST,
             'error_msg': SERVER_LINK_COMMON_HOST_MSG,
+        }, 400)
+
+    err, err_msg = svr.validate_conf()
+    if err:
+        return utils.jsonify({
+            'error': err,
+            'error_msg': err_msg,
         }, 400)
 
     svr.commit('hosts')
@@ -950,27 +968,12 @@ def server_link_put(server_id, link_server_id):
 
     use_local_address = flask.request.json.get('use_local_address', False)
 
-    try:
-        server.link_servers(server_id, link_server_id, use_local_address)
-    except ServerLinkOnlineError:
+    err, err_msg = server.link_servers(
+        server_id, link_server_id, use_local_address)
+    if err:
         return utils.jsonify({
-            'error': SERVER_NOT_OFFLINE,
-            'error_msg': SERVER_NOT_OFFLINE_LINK_SERVER_MSG,
-        }, 400)
-    except ServerLinkCommonHostError:
-        return utils.jsonify({
-            'error': SERVER_LINK_COMMON_HOST,
-            'error_msg': SERVER_LINK_COMMON_HOST_MSG,
-        }, 400)
-    except ServerLinkCommonRouteError:
-        return utils.jsonify({
-            'error': SERVER_LINK_COMMON_ROUTE,
-            'error_msg': SERVER_LINK_COMMON_ROUTE_MSG,
-        }, 400)
-    except ServerLinkReplicaError:
-        return utils.jsonify({
-            'error': SERVER_LINKS_AND_REPLICA,
-            'error_msg': SERVER_LINKS_AND_REPLICA_MSG,
+            'error': err,
+            'error_msg': err_msg,
         }, 400)
 
     event.Event(type=SERVER_LINKS_UPDATED, resource_id=server_id)
