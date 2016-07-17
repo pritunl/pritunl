@@ -64,6 +64,7 @@ dict_fields = [
     'link_ping_timeout',
     'max_clients',
     'replica_count',
+    'vxlan',
     'dns_mapping',
     'debug',
 ]
@@ -121,6 +122,7 @@ class Server(mongo.MongoObject):
         'start_timestamp',
         'max_clients',
         'replica_count',
+        'vxlan',
         'instances',
         'instances_count',
         'availability_group',
@@ -156,6 +158,7 @@ class Server(mongo.MongoObject):
         'status': OFFLINE,
         'max_clients': 2000,
         'replica_count': 1,
+        'vxlan': True,
         'instances': [],
         'instances_count': 0,
     }
@@ -169,8 +172,8 @@ class Server(mongo.MongoObject):
             cipher=None, hash=None, jumbo_frames=None, lzo_compression=None,
             inter_client=None, ping_interval=None, ping_timeout=None,
             link_ping_interval=None, link_ping_timeout=None, onc_hostname=None,
-            max_clients=None, replica_count=None, dns_mapping=None, debug=None,
-            **kwargs):
+            max_clients=None, replica_count=None, vxlan=None, dns_mapping=None,
+            debug=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         if 'network' in self.loaded_fields:
@@ -239,6 +242,8 @@ class Server(mongo.MongoObject):
             self.max_clients = max_clients
         if replica_count is not None:
             self.replica_count = replica_count
+        if vxlan is not None:
+            self.vxlan = vxlan
         if dns_mapping is not None:
             self.dns_mapping = dns_mapping
         if debug is not None:
@@ -309,6 +314,7 @@ class Server(mongo.MongoObject):
             'onc_hostname': self.onc_hostname,
             'max_clients': self.max_clients,
             'replica_count': self.replica_count,
+            'vxlan': self.vxlan,
             'dns_mapping': True if self.dns_mapping else False,
             'debug': True if self.debug else False,
         }
