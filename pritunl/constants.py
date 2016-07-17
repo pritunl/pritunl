@@ -799,7 +799,7 @@ BRIDGED_NET_LINKS_INVALID_MSG = 'Network links cannot be used with ' + \
     'bridged servers.'
 
 BRIDGED_REPLICA_INVALID = 'bridged_replica_invalid'
-BRIDGED_REPLICA_INVALID_MSG = 'Replication count must be one with ' + \
+BRIDGED_REPLICA_INVALID_MSG = 'Cannot have multiple replicas with ' + \
     'bridged servers.'
 
 SERVER_LINKS_NOT_OFFLINE = 'server_links_not_offline'
@@ -809,6 +809,9 @@ SERVER_LINKS_NOT_OFFLINE_SETTINGS_MSG = 'All linked servers must be ' + \
 SERVER_LINKS_AND_REPLICA = 'server_links_and_replica'
 SERVER_LINKS_AND_REPLICA_MSG = 'Cannot have multiple replicas with ' + \
     'linked servers.'
+
+SERVER_VXLAN_NON_NAT = 'server_vxlan_non_nat'
+SERVER_VXLAN_NON_NAT_MSG = 'Cannot use VXLan with non-NAT routes.'
 
 SERVER_NOT_OFFLINE = 'server_not_offline'
 SERVER_NOT_OFFLINE_SETTINGS_MSG = 'Server must be offline to modify settings.'
