@@ -126,7 +126,7 @@
   <div class="right advanced">
     <div class="bind-address form-group">
       <label>Bind Address</label>
-      <input type="text" class="form-control" placeholder="Enter bind address" data-toggle="tooltip" title="Optional, local address to bind vpn server to. Leave empty to bind to all interfaces" value="<%- bind_address || '' %>" autocapitalize="off">
+      <input type="text" class="form-control" placeholder="Enter bind address" data-toggle="tooltip" title="Optional, local address to bind vpn server to. Leave empty to bind to all interfaces. Using a bind address disables IPv6 connections and prevents several features from being used. Only use when necessary" value="<%- bind_address || '' %>" autocapitalize="off">
     </div>
     <div class="hash form-group">
       <label>Hash Algorithm</label>
