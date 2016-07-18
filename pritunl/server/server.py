@@ -1409,11 +1409,19 @@ class Server(mongo.MongoObject):
             return SERVER_NOT_OFFLINE, SERVER_NOT_OFFLINE_SETTINGS_MSG
 
         hosts = set()
+        routes = set()
         for link_svr in self.iter_links():
             hosts_set = set(link_svr.hosts)
             if hosts & hosts_set:
                 return SERVER_LINK_COMMON_HOST, SERVER_LINK_COMMON_HOST_MSG
             hosts.update(hosts_set)
+
+            routes_set = set()
+            for route in link_svr.get_routes():
+                routes_set.add(route['network'])
+            if routes & routes_set:
+                return SERVER_LINK_COMMON_ROUTE, SERVER_LINK_COMMON_ROUTE_MSG
+            routes.update(routes_set)
 
             if link_svr.status == ONLINE:
                 return SERVER_LINKS_NOT_OFFLINE, \
