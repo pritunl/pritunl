@@ -1408,7 +1408,13 @@ class Server(mongo.MongoObject):
         if self.status == ONLINE:
             return SERVER_NOT_OFFLINE, SERVER_NOT_OFFLINE_SETTINGS_MSG
 
-        for link_svr in self.iter_links(fields=('status',)):
+        hosts = set()
+        for link_svr in self.iter_links():
+            hosts_set = set(link_svr.hosts)
+            if hosts & hosts_set:
+                return SERVER_LINK_COMMON_HOST, SERVER_LINK_COMMON_HOST_MSG
+            hosts.update(hosts_set)
+
             if link_svr.status == ONLINE:
                 return SERVER_LINKS_NOT_OFFLINE, \
                     SERVER_LINKS_NOT_OFFLINE_SETTINGS_MSG
