@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Improvements for replicated servers
+Performance improvements
 
 Version 1.25.1039.56 2016-07-17
 -------------------------------
