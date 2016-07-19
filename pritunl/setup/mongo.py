@@ -254,6 +254,10 @@ def setup_mongo():
         ('server_id', pymongo.ASCENDING),
         ('user_id', pymongo.ASCENDING),
     ], background=True)
+    upsert_index(mongo.collections['servers_ip_pool'], [
+        ('server_id', pymongo.ASCENDING),
+        ('_id', pymongo.DESCENDING),
+    ], background=True)
     upsert_index(mongo.collections['servers_ip_pool'], 'user_id',
         background=True)
     upsert_index(mongo.collections['routes_reserve'], 'timestamp',
