@@ -324,8 +324,11 @@ class Clients(object):
                     #             'host_address6': doc['host_address6'],
                     #         })
 
-                    messenger.publish('instance',
-                        ['user_reconnect', user_id, settings.local.host_id])
+                    messenger.publish('instance', [
+                        'user_reconnect',
+                        user_id,
+                        settings.local.host_id,
+                    ])
 
                     self.collection.remove({
                         'user_id': user_id,
