@@ -277,6 +277,7 @@ class Clients(object):
                 self.instance_com.send_client_deny(client_id, key_id,
                     'Client connection info timed out')
                 return
+
             virt_address = doc['virt_address']
             virt_address6 = doc['virt_address6']
         else:
