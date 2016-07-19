@@ -843,15 +843,15 @@ class Clients(object):
                     remote_ip=remote_ip,
                 )
 
-        if self.server.route_clients and not client.get('ignore_routes'):
-            messenger.publish('client', {
-                'state': False,
-                'server_id': self.server.id,
-                'virt_address': client['virt_address'],
-                'virt_address6': client['virt_address6'],
-                'host_address': self.route_addr,
-                'host_address6': settings.local.host.local_addr6,
-            })
+        # if self.server.route_clients and not client.get('ignore_routes'):
+        #     messenger.publish('client', {
+        #         'state': False,
+        #         'server_id': self.server.id,
+        #         'virt_address': client['virt_address'],
+        #         'virt_address6': client['virt_address6'],
+        #         'host_address': self.route_addr,
+        #         'host_address6': settings.local.host.local_addr6,
+        #     })
 
         self.instance_com.push_output(
             'User disconnected user_id=%s' % client['user_id'])
