@@ -302,29 +302,30 @@ class Clients(object):
                 )
 
             if not self.server.multi_device:
-                if self.server.route_clients:
-                    docs = self.collection.find({
+                if self.server.replicating:
+                    # if self.server.route_clients:
+                    #     docs = self.collection.find({
+                    #         'user_id': user_id,
+                    #         'server_id': self.server.id,
+                    #     })
+                    #
+                    #     for doc in docs:
+                    #         messenger.publish('client', {
+                    #             'state': False,
+                    #             'server_id': self.server.id,
+                    #             'virt_address': doc['virt_address'],
+                    #             'virt_address6': doc['virt_address6'],
+                    #             'host_address': doc['host_address'],
+                    #             'host_address6': doc['host_address6'],
+                    #         })
+
+                    messenger.publish('instance',
+                        ['user_reconnect', user_id, settings.local.host_id])
+
+                    self.collection.remove({
                         'user_id': user_id,
                         'server_id': self.server.id,
                     })
-
-                    for doc in docs:
-                        messenger.publish('client', {
-                            'state': False,
-                            'server_id': self.server.id,
-                            'virt_address': doc['virt_address'],
-                            'virt_address6': doc['virt_address6'],
-                            'host_address': doc['host_address'],
-                            'host_address6': doc['host_address6'],
-                        })
-
-                self.collection.remove({
-                    'user_id': user_id,
-                    'server_id': self.server.id,
-                })
-
-                messenger.publish('instance',
-                    ['user_reconnect', user_id, settings.local.host_id])
 
                 for clnt in self.clients.find({'user_id': user_id}):
                     time.sleep(2)
