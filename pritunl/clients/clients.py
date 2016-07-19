@@ -15,6 +15,7 @@ from pritunl import authorizer
 from pritunl import messenger
 from pritunl import monitoring
 from pritunl import plugins
+from pritunl import vxlan
 
 import time
 import collections
@@ -147,6 +148,10 @@ class Clients(object):
                     else:
                         client_conf += 'push "route %s %s"\n' % (
                             utils.parse_network(network))
+
+                if link_svr.server.replicating and link_svr.server.vxlan:
+                    client_conf += 'push "route %s %s"\n' % \
+                        utils.parse_network(vxlan.get_vxlan_net(link_svr.id))
 
             if platform == 'android':
                 client_conf += 'push "route %s %s"\n' % (
