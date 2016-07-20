@@ -135,10 +135,7 @@ class Clients(object):
                     client_conf += 'push "route %s %s"\n' % (
                         utils.parse_network(network_link))
 
-            for link_svr in self.server.iter_links(fields=(
-                    '_id', 'network', 'local_networks', 'network_start',
-                    'network_end', 'organizations', 'routes', 'links',
-                    'ipv6')):
+            for link_svr in self.server.iter_links():
                 for route in link_svr.get_routes(
                         include_default=False):
                     network = route['network']
@@ -149,7 +146,7 @@ class Clients(object):
                         client_conf += 'push "route %s %s"\n' % (
                             utils.parse_network(network))
 
-                if link_svr.server.replicating and link_svr.server.vxlan:
+                if link_svr.replicating and link_svr.vxlan:
                     client_conf += 'push "route %s %s"\n' % \
                         utils.parse_network(vxlan.get_vxlan_net(link_svr.id))
 
