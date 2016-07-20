@@ -1018,11 +1018,9 @@ class Clients(object):
 
                         response = self.collection.update({
                             '_id': client['doc_id'],
-                        }, {
-                            '$set': {
-                                'timestamp': utils.now(),
-                            },
-                        })
+                        }, {'$set': {
+                            'timestamp': utils.now(),
+                        }})
                         if not response['updatedExisting']:
                             logger.error('Client lost unexpectedly', 'server',
                                 server_id=self.server.id,
