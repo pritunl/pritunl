@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.25.1042.81 2016-07-20
+-------------------------------
 
 Fix connection issue with linked servers
 
