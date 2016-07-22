@@ -207,7 +207,8 @@ def setup_mongo():
     upsert_index(mongo.collections['users_audit'], [
         ('timestamp', pymongo.DESCENDING),
     ], background=True)
-    upsert_index(mongo.collections['users_key_link'], 'key_id', background=True)
+    upsert_index(mongo.collections['users_key_link'], 'key_id',
+        background=True)
     upsert_index(mongo.collections['users_key_link'], 'short_id',
         background=True, unique=True)
     upsert_index(mongo.collections['users_net_link'], 'user_id',
