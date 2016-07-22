@@ -776,12 +776,16 @@ class Clients(object):
 
         if settings.local.sub_active and \
                 settings.local.sub_plan == 'enterprise':
+            domain = (client['user_name'].split('@')[0] +
+                '.' + client['org_name']).lower()
             domain_hash = hashlib.md5()
-            domain_hash.update((client['user_name'].split('@')[0] +
-                '.' + client['org_name']).lower())
+            domain_hash.update(domain)
             domain_hash = bson.binary.Binary(domain_hash.digest(),
                 subtype=bson.binary.MD5_SUBTYPE)
             doc['domain'] = domain_hash
+            doc['domain_name'] = domain
+            doc['virt_address_num'] = utils.ip_to_long(
+                client['virt_address'].split('/')[0])
 
         try:
             doc_id = self.collection.insert(doc)

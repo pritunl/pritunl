@@ -218,6 +218,8 @@ def setup_mongo():
         background=True)
     upsert_index(mongo.collections['clients'], 'user_id', background=True)
     upsert_index(mongo.collections['clients'], 'domain', background=True)
+    upsert_index(mongo.collections['clients'], 'virt_address_num',
+        background=True)
     upsert_index(mongo.collections['clients'], [
         ('server_id', pymongo.ASCENDING),
         ('type', pymongo.ASCENDING),
