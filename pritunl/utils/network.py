@@ -82,6 +82,23 @@ def get_interface_address6(iface):
     if addr:
         return addr.split('%')[0]
 
+def get_ip_pool_reverse(network, network_start):
+    ip_pool = network.iterhostsreversed()
+
+    if network_start:
+        network_break = network_start
+
+        while True:
+            try:
+                ip_addr = ip_pool.next()
+            except StopIteration:
+                return
+
+            if ip_addr == network_break:
+                break
+
+    return ip_pool
+
 def ip_to_long(ip_str):
     ip = ip_str.split('.')
     ip.reverse()
