@@ -230,6 +230,14 @@ def setup_mongo():
         ('host_id', pymongo.ASCENDING),
         ('type', pymongo.ASCENDING),
     ], background=True)
+    upsert_index(mongo.collections['clients_pool'],
+        'client_id', background=True)
+    upsert_index(mongo.collections['clients_pool'],
+        'timestamp', background=True)
+    upsert_index(mongo.collections['clients_pool'], [
+        ('server_id', pymongo.ASCENDING),
+        ('user_id', pymongo.ASCENDING),
+    ], background=True)
     upsert_index(mongo.collections['organizations'], 'type', background=True)
     upsert_index(mongo.collections['organizations'],
         'auth_token', background=True)
