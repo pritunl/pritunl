@@ -185,6 +185,15 @@ class ServerInstanceCom(object):
         if event_type == 'user_disconnect':
             user_id = msg[1]
             self.clients.disconnect_user(user_id)
+        elif event_type == 'user_disconnect_id':
+            user_id = msg[1]
+            client_id = msg[2]
+            self.clients.disconnect_user_id(user_id, client_id)
+        elif event_type == 'user_disconnect_mac':
+            user_id = msg[1]
+            host_id = msg[2]
+            mac_addr = msg[3]
+            self.clients.disconnect_user_mac(user_id, host_id, mac_addr)
         elif event_type == 'user_reconnect':
             user_id = msg[1]
             host_id = msg[2]
