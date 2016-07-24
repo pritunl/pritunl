@@ -6,8 +6,12 @@ from pritunl import sso
 from pritunl import plugins
 from pritunl import utils
 from pritunl import mongo
+from pritunl import tunldb
 
 import threading
+import uuid
+
+_states = tunldb.TunlDB()
 
 class Authorizer(object):
     __slots__ = (
@@ -21,7 +25,9 @@ class Authorizer(object):
         'password',
         'reauth',
         'callback',
+        'state',
         'push_type',
+        'challenge',
     )
 
     def __init__(self, svr, usr, remote_ip, plaform, device_id, device_name,
@@ -36,7 +42,15 @@ class Authorizer(object):
         self.password = password
         self.reauth = reauth
         self.callback = callback
+        self.state = None
         self.push_type = None
+        self.challenge = None
+
+        if self.password and self.password.startswith('CRV1:'):
+            challenge = self.password.split(':')
+            if len(challenge) == 5:
+                self.state = challenge[2]
+                self.password = challenge[4]
 
     @property
     def sso_cache_collection(cls):
@@ -62,6 +76,36 @@ class Authorizer(object):
             self.callback(True)
         except:
             pass
+
+    def has_challenge(self):
+        return not self.state and (self.platform == 'android' or
+            self.platform == 'ios')
+
+    def set_challenge(self, password, msg, show):
+        password = password or ''
+        state = uuid.uuid4().hex
+        key = str(self.user.id)
+        _states.set(key, state + ':' + password[:256])
+        _states.expire(key, 120)
+        self.challenge = 'CRV1:R%s:%s:bmls:%s' % (
+            (',E' if show else ''), state, msg)
+
+    def get_challenge(self):
+        if not self.state:
+            return
+
+        key = str(self.user.id)
+
+        data = _states.get(key)
+        if not data:
+            return
+
+        state, password = data.split(':', 1)
+        if self.state == state:
+            if not password and self.user.has_pin():
+                self.state = None
+            else:
+                return password
 
     def _check_call(self, func):
         try:
@@ -99,10 +143,28 @@ class Authorizer(object):
             return
 
         if self.server.otp_auth and self.user.type == CERT_CLIENT:
+            if not self.password and self.has_challenge() and \
+                    self.user.has_pin():
+                self.set_challenge(None, 'Enter Pin', False)
+                raise AuthError('Challenge pin')
+
+            challenge = self.get_challenge()
+            if challenge:
+                self.password = challenge + self.password
+
+            orig_password = self.password
             otp_code = self.password[-6:]
             self.password = self.password[:-6]
 
             if not self.user.verify_otp_code(otp_code, self.remote_ip):
+                if self.has_challenge():
+                    if self.user.has_password(self.server):
+                        self.set_challenge(
+                            orig_password, 'Enter OTP Code', True)
+                    else:
+                        self.set_challenge(None, 'Enter OTP Code', True)
+                    raise AuthError('Challenge otp code')
+
                 self.user.audit_event('user_connection',
                     ('User connection to "%s" denied. ' +
                      'User failed two-step authentication') % (
@@ -111,8 +173,12 @@ class Authorizer(object):
                 )
                 raise AuthError('Invalid OTP code')
 
-        if self.user.pin and settings.user.pin_mode != PIN_DISABLED:
+        if self.user.has_pin():
             if not self.user.check_pin(self.password):
+                if self.has_challenge():
+                    self.set_challenge(None, 'Enter Pin', False)
+                    raise AuthError('Challenge pin')
+
                 self.user.audit_event('user_connection',
                     ('User connection to "%s" denied. ' +
                      'User failed pin authentication') % (
