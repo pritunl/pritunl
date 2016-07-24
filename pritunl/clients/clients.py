@@ -514,6 +514,7 @@ class Clients(object):
 
             self.clients.insert({
                 'id': client_id,
+                'doc_id': doc_id,
                 'org_id': org_id,
                 'org_name': org.name,
                 'user_id': user_id,
@@ -879,6 +880,7 @@ class Clients(object):
 
         timestamp = utils.now()
         doc = {
+            '_id': client['doc_id'],
             'user_id': client['user_id'],
             'server_id': self.server.id,
             'host_id': settings.local.host_id,
@@ -912,7 +914,7 @@ class Clients(object):
                 client['virt_address'].split('/')[0])
 
         try:
-            doc_id = self.collection.insert(doc)
+            self.collection.insert(doc)
             if self.server.route_clients:
                 messenger.publish('client', {
                     'state': True,
@@ -930,7 +932,6 @@ class Clients(object):
             return
 
         self.clients.update_id(client_id, {
-            'doc_id': doc_id,
             'timestamp': time.time(),
         })
 
