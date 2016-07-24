@@ -54,9 +54,9 @@ class ServerInstanceCom(object):
         self.sock_send('client-auth %s %s\n%s\nEND\n' % (
             client_id, key_id, client_conf))
 
-    def send_client_deny(self, client_id, key_id, reason):
-        self.sock_send('client-deny %s %s "%s"\n' % (
-            client_id, key_id, reason))
+    def send_client_deny(self, client_id, key_id, reason, client_reason=None):
+        self.sock_send('client-deny %s %s "%s"%s\n' % (client_id, key_id,
+            reason, ((' "%s"' % client_reason) if client_reason else '')))
         self.push_output('ERROR User auth failed "%s"' % reason)
 
     def push_output(self, message):
