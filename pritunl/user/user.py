@@ -480,6 +480,12 @@ class User(mongo.MongoObject):
 
         return password_mode
 
+    def has_password(self, svr):
+        return bool(self._get_password_mode(svr))
+
+    def has_pin(self):
+        return self.pin and settings.user.pin_mode != PIN_DISABLED
+
     def _get_key_info_str(self, svr, conf_hash):
         return '#' + json.dumps({
             'version': CLIENT_CONF_VER,
