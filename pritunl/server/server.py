@@ -1475,7 +1475,4 @@ class Server(mongo.MongoObject):
         if self.vxlan and self.replicating and self.has_non_nat_route():
             return SERVER_VXLAN_NON_NAT, SERVER_VXLAN_NON_NAT_MSG
 
-        if self.replicating and self.multi_device and self.inter_client:
-            return SERVER_MULTI_DEVICE_REPLICA, SERVER_MULTI_DEVICE_REPLICA_MSG
-
         return None, None
