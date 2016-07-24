@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Support multiple devices with client-to-client traffic on replicated servers
 Add reverse DNS lookup for VPN clients
 
 Version 1.25.1042.81 2016-07-20
