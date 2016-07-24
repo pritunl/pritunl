@@ -547,7 +547,7 @@ class User(mongo.MongoObject):
         if svr.lzo_compression != ADAPTIVE:
             client_conf += 'comp-lzo no\n'
 
-        if self._get_password_mode(svr):
+        if self.has_password(svr):
             client_conf += 'auth-user-pass\n'
 
         if svr.tls_auth:
