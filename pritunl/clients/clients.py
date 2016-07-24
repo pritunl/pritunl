@@ -1176,6 +1176,14 @@ class Clients(object):
                             )
                             self.instance_com.client_kill(client_id)
                             continue
+
+                        if self.server.multi_device and \
+                                self.server.replicating:
+                            self.pool_collection.update({
+                                '_id': client['doc_id'],
+                            }, {'$set': {
+                                'timestamp': utils.now(),
+                            }})
                     except:
                         self.clients_queue.append(client_id)
                         logger.exception('Failed to update client', 'server',
