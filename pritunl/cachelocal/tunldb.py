@@ -2,7 +2,6 @@ import Queue
 import time
 import collections
 import threading
-import thread
 import uuid
 import copy
 import itertools
@@ -41,7 +40,6 @@ class TunlDB(object):
             lambda: {'subs': set(), 'msgs': collections.deque(
                 maxlen=CHANNEL_BUFFER), 'timer': None})
         self._commit_log = []
-        self._locks = collections.defaultdict(threading.Lock)
 
     def _put_queue(self):
         if self._path:
@@ -100,7 +98,7 @@ class TunlDB(object):
         self._put_queue()
 
     def expire(self, key, ttl):
-        ttl_time = int(time.time() * 1000) + (ttl * 1000)
+        ttl_time = int(time.time() * 1000) + int(ttl * 1000)
 
         cur_timer = self._timers.pop(key, None)
         if cur_timer:
@@ -453,20 +451,6 @@ class TunlDB(object):
         except ValueError:
             pass
         self._put_queue()
-
-    def lock_acquire(self, key):
-        return self._locks[key].acquire()
-
-    def lock_release(self, key):
-        try:
-            self._locks[key].release()
-        except thread.error:
-            pass
-
-    def lock_remove(self, key):
-        self.lock_release(key)
-        self._locks.pop(key, None)
-        return TunlDBTransaction(self)
 
     def export_data(self):
         if not self._path:
