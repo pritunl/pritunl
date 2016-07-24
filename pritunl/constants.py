@@ -813,10 +813,6 @@ SERVER_LINKS_AND_REPLICA_MSG = 'Cannot have multiple replicas with ' + \
 SERVER_VXLAN_NON_NAT = 'server_vxlan_non_nat'
 SERVER_VXLAN_NON_NAT_MSG = 'Cannot use VXLan with non-NAT routes.'
 
-SERVER_MULTI_DEVICE_REPLICA = 'server_multi_device_replica'
-SERVER_MULTI_DEVICE_REPLICA_MSG = 'Cannot use inter-client communication ' + \
-    'with allow multiple devices and multiple replicas.'
-
 SERVER_NOT_OFFLINE = 'server_not_offline'
 SERVER_NOT_OFFLINE_SETTINGS_MSG = 'Server must be offline to modify settings.'
 SERVER_NOT_OFFLINE_ATTACH_ORG_MSG = 'Server must be offline to attach ' + \
