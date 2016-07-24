@@ -604,7 +604,7 @@ def sso_request_get():
     if sso_mode not in (GOOGLE_AUTH, GOOGLE_DUO_AUTH, SLACK_AUTH,
             SLACK_DUO_AUTH, SAML_AUTH, SAML_DUO_AUTH, SAML_OKTA_AUTH,
             SAML_OKTA_DUO_AUTH, SAML_ONELOGIN_AUTH, SAML_ONELOGIN_DUO_AUTH):
-        return flask.abort(405)
+        return flask.abort(404)
 
     state = utils.rand_str(64)
     secret = utils.rand_str(64)
@@ -726,6 +726,9 @@ def sso_request_get():
             response=resp.content,
             content_type="text/html;charset=utf-8",
         )
+
+    else:
+        return flask.abort(404)
 
 @app.app.route('/sso/callback', methods=['GET'])
 @auth.open_auth
