@@ -274,6 +274,10 @@ class Server(mongo.MongoObject):
         return mongo.get_collection('clients')
 
     @cached_static_property
+    def clients_pool_collection(cls):
+        return mongo.get_collection('clients_pool')
+
+    @cached_static_property
     def org_collection(cls):
         return mongo.get_collection('organizations')
 
@@ -1288,6 +1292,7 @@ class Server(mongo.MongoObject):
             'instances_count': 0,
         }, {'$set': {
             'status': ONLINE,
+            'pool_cursor': None,
             'start_timestamp': start_timestamp,
             'availability_group': self.get_best_availability_group(),
         }})
@@ -1296,6 +1301,11 @@ class Server(mongo.MongoObject):
             raise ServerInstanceSet('Server instances already running. %r', {
                     'server_id': self.id,
                 })
+
+        self.clients_pool_collection.remove({
+            'server_id': self.id,
+        })
+
         self.status = ONLINE
         self.start_timestamp = start_timestamp
 
@@ -1362,6 +1372,7 @@ class Server(mongo.MongoObject):
         }, {'$set': {
             'status': OFFLINE,
             'start_timestamp': None,
+            'pool_cursor': None,
             'instances': [],
             'instances_count': 0,
             'availability_group': None,
@@ -1372,6 +1383,10 @@ class Server(mongo.MongoObject):
         }, {'$set': {
             'hosts': [],
         }})
+
+        self.clients_pool_collection.remove({
+            'server_id': self.id,
+        })
 
         if not response['updatedExisting']:
             raise ServerStopError('Server not running', {
