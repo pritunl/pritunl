@@ -117,6 +117,7 @@ def setup_mongo():
             prefix + 'users_key_link'),
         'users_net_link': getattr(database, prefix + 'users_net_link'),
         'clients': getattr(database, prefix + 'clients'),
+        'clients_pool': getattr(database, prefix + 'clients_pool'),
         'organizations': getattr(database, prefix + 'organizations'),
         'hosts': getattr(database, prefix + 'hosts'),
         'hosts_usage': getattr(database, prefix + 'hosts_usage'),
