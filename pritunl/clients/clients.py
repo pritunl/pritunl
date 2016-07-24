@@ -618,14 +618,14 @@ class Clients(object):
                             self._connected(client_id)
                     else:
                         self.instance_com.send_client_deny(
-                            client_id, key_id, reason)
+                            client_id, key_id, reason, auth.challenge)
                 except:
                     logger.exception('Error in authorizer callback', 'server',
                         server_id=self.server.id,
                         instance_id=self.instance.id,
                     )
 
-            authorizer.Authorizer(
+            auth = authorizer.Authorizer(
                 self.server,
                 user,
                 remote_ip,
@@ -636,7 +636,9 @@ class Clients(object):
                 password,
                 reauth,
                 callback,
-            ).authenticate()
+            )
+
+            auth.authenticate()
         except:
             logger.exception('Error parsing client connect', 'server',
                 server_id=self.server.id,
