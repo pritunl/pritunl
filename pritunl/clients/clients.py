@@ -23,6 +23,7 @@ import bson
 import hashlib
 import threading
 import uuid
+import pymongo
 
 _limiter = limiter.Limiter('vpn', 'peer_limit', 'peer_limit_timeout')
 _port_listeners = {}
@@ -59,6 +60,14 @@ class Clients(object):
     @cached_static_property
     def collection(cls):
         return mongo.get_collection('clients')
+
+    @cached_static_property
+    def pool_collection(cls):
+        return mongo.get_collection('clients_pool')
+
+    @cached_static_property
+    def server_collection(cls):
+        return mongo.get_collection('servers')
 
     @cached_property
     def route_addr(self):
@@ -256,6 +265,169 @@ class Clients(object):
 
         return False
 
+    def get_virt_addr(self, org_id, user_id, mac_addr, doc_id):
+        address_dynamic = False
+        disconnected = set()
+        subnet = '/%s' % self.ip_network.prefixlen
+
+        virt_address = self.server.get_ip_addr(org_id, user_id)
+        if not virt_address:
+            logger.error('User missing ip address',
+                'clients',
+                server_id=self.server.id,
+                instance_id=self.instance.id,
+                user_id=user_id,
+                multi_device=self.server.multi_device,
+                network=self.server.network,
+                user_count=self.server.user_count,
+            )
+
+        if virt_address and self.server.multi_device:
+            if self.server.replicating:
+                doc = self.pool_collection.find_one({
+                    '_id': utils.ip_to_long(virt_address.split('/')[0]),
+                })
+                if doc:
+                    if doc['server_id'] == self.server.id and \
+                            doc['user_id'] == user_id and \
+                            doc['mac_addr'] == mac_addr:
+                        response = self.pool_collection.update({
+                            '_id': utils.ip_to_long(
+                                virt_address.split('/')[0]),
+                            'server_id': self.server.id,
+                            'user_id': user_id,
+                            'mac_addr': mac_addr,
+                        }, {'$set': {
+                            'server_id': self.server.id,
+                            'user_id': user_id,
+                            'mac_addr': mac_addr,
+                            'client_id': doc_id,
+                            'timestamp': utils.now(),
+                        }})
+
+                        if response['updatedExisting']:
+                            messenger.publish('instance', [
+                                'user_disconnect_id',
+                                user_id,
+                                doc['client_id'],
+                            ])
+                            disconnected.add(doc['client_id'])
+                        else:
+                            virt_address = None
+                    else:
+                        virt_address = None
+                else:
+                    try:
+                        self.pool_collection.insert({
+                            '_id': utils.ip_to_long(
+                                virt_address.split('/')[0]),
+                            'server_id': self.server.id,
+                            'user_id': user_id,
+                            'mac_addr': mac_addr,
+                            'client_id': doc_id,
+                            'timestamp': utils.now(),
+                        })
+                    except pymongo.errors.DuplicateKeyError:
+                        virt_address = None
+
+                if mac_addr:
+                    messenger.publish('instance', [
+                        'user_disconnect_mac',
+                        user_id,
+                        settings.local.host_id,
+                        mac_addr,
+                    ])
+            else:
+                if mac_addr:
+                    for clnt in self.clients.find({
+                        'user_id': user_id,
+                        'mac_addr': mac_addr,
+                    }):
+                        self.instance_com.client_kill(clnt['id'])
+
+                if self.clients.find({'virt_address': virt_address}):
+                    virt_address = None
+
+        if not virt_address:
+            if self.server.replicating and self.server.multi_device:
+                doc = self.pool_collection.find_and_modify({
+                    'server_id': self.server.id,
+                    'user_id': None,
+                }, {
+                    'server_id': self.server.id,
+                    'user_id': user_id,
+                    'mac_addr': mac_addr,
+                    'client_id': doc_id,
+                    'timestamp': utils.now(),
+                }, new=True)
+
+                if doc:
+                    address_dynamic = True
+                    virt_address = utils.long_to_ip(doc['_id']) + subnet
+                else:
+                    doc = self.server_collection.find_one({
+                        '_id': self.server.id,
+                    }, {
+                        'pool_cursor': True,
+                    })
+                    last_addr = doc.get('pool_cursor')
+
+                    if last_addr:
+                        last_addr = ipaddress.IPv4Address(
+                            utils.long_to_ip(last_addr))
+
+                    network = ipaddress.IPv4Network(self.server.network)
+                    ip_pool = utils.get_ip_pool_reverse(network, last_addr)
+
+                    if ip_pool:
+                        for ip_addr in ip_pool:
+                            try:
+                                self.pool_collection.insert({
+                                    '_id': long(ip_addr._ip),
+                                    'server_id': self.server.id,
+                                    'user_id': user_id,
+                                    'mac_addr': mac_addr,
+                                    'client_id': doc_id,
+                                    'timestamp': utils.now(),
+                                })
+                                virt_address = str(ip_addr) + subnet
+                                address_dynamic = True
+                                break
+                            except pymongo.errors.DuplicateKeyError:
+                                continue
+
+                        self.server_collection.update({
+                            '_id': self.server.id,
+                            'status': ONLINE,
+                        }, {'$set': {
+                            'pool_cursor': utils.ip_to_long(
+                                virt_address.split('/')[0]),
+                        }})
+            else:
+                while True:
+                    try:
+                        ip_addr = self.ip_pool.pop()
+                    except IndexError:
+                        break
+                    ip_addr += subnet
+
+                    if not self.clients.find({'virt_address': ip_addr}):
+                        virt_address = ip_addr
+                        address_dynamic = True
+
+        if not virt_address:
+            logger.error('Unable to assign ip address, pool full',
+                'clients',
+                server_id=self.server.id,
+                instance_id=self.instance.id,
+                user_id=user_id,
+                multi_device=self.server.multi_device,
+                network=self.server.network,
+                user_count=self.server.user_count,
+            )
+
+        return virt_address, address_dynamic
+
     def allow_client(self, client_data, org, user, reauth=False):
         client_id = client_data['client_id']
         key_id = client_data['key_id']
@@ -266,7 +438,7 @@ class Clients(object):
         platform = client_data.get('platform')
         mac_addr = client_data.get('mac_addr')
         remote_ip = client_data.get('remote_ip')
-        address_dynamic = False
+        doc_id = utils.ObjectId()
 
         if reauth:
             doc = self.clients.find_id(client_id)
@@ -292,17 +464,8 @@ class Clients(object):
                 'remote_ip': remote_ip,
             })
 
-            virt_address = self.server.get_ip_addr(org_id, user_id)
-            if not virt_address:
-                logger.error('User missing ip address',
-                    'clients',
-                    server_id=self.server.id,
-                    instance_id=self.instance.id,
-                    user_id=user.id,
-                    multi_device=self.server.multi_device,
-                    network=self.server.network,
-                    user_count=self.server.user_count,
-                )
+            virt_address, address_dynamic = self.get_virt_addr(
+                org_id, user_id, mac_addr, doc_id)
 
             if not self.server.multi_device:
                 if self.server.replicating:
@@ -328,48 +491,9 @@ class Clients(object):
                         settings.local.host_id,
                     ])
 
-                    self.collection.remove({
-                        'user_id': user_id,
-                        'server_id': self.server.id,
-                    })
-
                 for clnt in self.clients.find({'user_id': user_id}):
                     time.sleep(2)
                     self.instance_com.client_kill(clnt['id'])
-            elif virt_address:
-                if mac_addr:
-                    for clnt in self.clients.find({
-                                'user_id': user_id,
-                                'mac_addr': mac_addr,
-                            }):
-                        self.instance_com.client_kill(clnt['id'])
-
-                if self.clients.find({'virt_address': virt_address}):
-                    virt_address = None
-
-            if not virt_address:
-                while True:
-                    try:
-                        ip_addr = self.ip_pool.pop()
-                    except IndexError:
-                        break
-                    ip_addr = '%s/%s' % (ip_addr, self.ip_network.prefixlen)
-
-                    if not self.clients.find({'virt_address': ip_addr}):
-                        virt_address = ip_addr
-                        address_dynamic = True
-                        break
-
-                if not virt_address:
-                    logger.error('Unable to assign ip address, pool full',
-                        'clients',
-                        server_id=self.server.id,
-                        instance_id=self.instance.id,
-                        user_id=user.id,
-                        multi_device=self.server.multi_device,
-                        network=self.server.network,
-                        user_count=self.server.user_count,
-                    )
 
             if not virt_address:
                 self.instance_com.send_client_deny(client_id, key_id,
@@ -905,11 +1029,33 @@ class Clients(object):
                     server_id=self.server.id,
                 )
 
+        if self.server.multi_device and self.server.replicating:
+            self.pool_collection.remove({
+                'server_id': self.server.id,
+                'user_id': client.get('user_id'),
+                'client_id': doc_id,
+            })
+
         self.call_queue.put(self._disconnected, client)
 
     def disconnect_user(self, user_id):
         for client in self.clients.find({'user_id': user_id}):
             self.instance_com.client_kill(client['id'])
+
+    def disconnect_user_id(self, user_id, client_id):
+        for clnt in self.clients.find({'user_id': user_id}):
+            if clnt.get('doc_id') == client_id:
+                self.instance_com.client_kill(clnt['id'])
+
+    def disconnect_user_mac(self, user_id, host_id, mac_addr):
+        if host_id == settings.local.host_id:
+            return
+
+        for clnt in self.clients.find({
+                    'user_id': user_id,
+                    'mac_addr': mac_addr,
+                }):
+            self.instance_com.client_kill(clnt['id'])
 
     def reconnect_user(self, user_id, host_id):
         if host_id == settings.local.host_id:
