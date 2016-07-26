@@ -518,7 +518,7 @@ elif cmd == 'upload-github':
             'Authorization': 'token %s' % github_token,
             'Content-type': 'application/json',
         },
-        )
+    )
 
     for release in response.json():
         if release['tag_name'] == cur_version:
