@@ -155,6 +155,7 @@ with open(BUILD_KEYS_PATH, 'r') as build_keys_file:
     build_keys = json.loads(build_keys_file.read().strip())
     github_owner = build_keys['github_owner']
     github_token = build_keys['github_token']
+    gitlab_token = build_keys['gitlab_token']
     mirror_url = build_keys['mirror_url']
     test_mirror_url = build_keys['test_mirror_url']
     mongodb_uris = build_keys['mongodb_uris']
@@ -354,7 +355,7 @@ elif cmd == 'set-version':
     if not is_snapshot:
         subprocess.check_call(['git', 'branch', new_version])
         subprocess.check_call(['git', 'push', '-u', 'origin', new_version])
-    time.sleep(8)
+    time.sleep(6)
 
 
     # Create release
@@ -381,6 +382,28 @@ elif cmd == 'set-version':
 
     subprocess.check_call(['git', 'pull'])
     subprocess.check_call(['git', 'push', '--tags'])
+    time.sleep(6)
+
+
+    # Create gitlab release
+    response = requests.post(
+        'https://git.pritunl.com/api/v3/projects' + \
+            '/%s%%2F%s/repository/tags/%s/release' % (
+            github_owner, pkg_name, new_version),
+        headers={
+            'Private-Token': gitlab_token,
+            'Content-type': 'application/json',
+        },
+        data=json.dumps({
+            'tag_name': new_version,
+            'description': release_body,
+        }),
+    )
+
+    if response.status_code != 201:
+        print 'Failed to create release on gitlab'
+        print response.json()
+        sys.exit(1)
 
 
 elif cmd == 'build':
