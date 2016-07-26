@@ -379,6 +379,9 @@ elif cmd == 'set-version':
         print response.json()
         sys.exit(1)
 
+    subprocess.check_call(['git', 'pull'])
+    subprocess.check_call(['git', 'push', '--tags'])
+
 
 elif cmd == 'build':
     is_snapshot = 'snapshot' in cur_version
