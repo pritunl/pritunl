@@ -209,6 +209,53 @@ elif cmd == 'sync-db':
     sync_db()
 
 
+elif cmd == 'sync-releases':
+    next_url = 'https://api.github.com/repos/%s/%s/releases' % (
+        github_owner, pkg_name)
+
+    while True:
+        # Get github release
+        response = requests.get(
+            next_url,
+            headers={
+                'Authorization': 'token %s' % github_token,
+                'Content-type': 'application/json',
+            },
+        )
+
+        if response.status_code != 200:
+            print 'Failed to get repo releases on github'
+            print response.json()
+            sys.exit(1)
+
+        for release in response.json():
+            print release['tag_name']
+
+            # Create gitlab release
+            resp = requests.post(
+                'https://git.pritunl.com/api/v3/projects' + \
+                    '/%s%%2F%s/repository/tags/%s/release' % (
+                    github_owner, pkg_name, release['tag_name']),
+                headers={
+                    'Private-Token': gitlab_token,
+                    'Content-type': 'application/json',
+                },
+                data=json.dumps({
+                    'tag_name': release['tag_name'],
+                    'description': release['body'],
+                }),
+            )
+
+            if resp.status_code not in (201, 409):
+                print 'Failed to create releases on gitlab'
+                print resp.json()
+                sys.exit(1)
+
+        if 'Link' not in response.headers or \
+                'rel="next"' not in response.headers['Link']:
+            break
+        next_url = response.headers['Link'].split(';')[0][1:-1]
+
 elif cmd == 'set-version':
     new_version_orig = args[1]
     new_version = get_ver(new_version_orig)
