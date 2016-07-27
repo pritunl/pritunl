@@ -73,10 +73,10 @@ class ServerIpPool:
             return
 
         try:
-            doc = self.collection.find_one({
+            doc = self.collection.find({
                 'network': network_hash,
                 'server_id': server_id,
-            }).sort('_id', pymongo.DESCENDING)
+            }).sort('_id', pymongo.DESCENDING)[0]
             if doc:
                 last_addr = doc['_id']
                 for remote_ip_addr in ip_pool:
@@ -135,10 +135,10 @@ class ServerIpPool:
             return
 
         try:
-            doc = self.collection.find_one({
+            doc = self.collection.find({
                 'network': network_hash,
                 'server_id': server_id,
-            }).sort('_id', pymongo.DESCENDING)
+            }).sort('_id', pymongo.DESCENDING)[0]
             if doc:
                 last_addr = doc['_id']
 
