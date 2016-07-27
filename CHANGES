@@ -3,7 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
-Improve pin and OTP authentication on iOS and Android
+Improve user pin and OTP authentication on iOS and Android
 Support multiple devices with client-to-client traffic on replicated servers
 Add reverse DNS lookup for VPN clients
 Fix case sensitive dns issue
