@@ -376,12 +376,14 @@ def check_session():
                 not settings.app.server_ssl and \
                 flask.session.get('source') != utils.get_remote_addr():
             flask.session.clear()
+            clear_session(admin_id, session_id)
             return False
 
         session_timeout = settings.app.session_timeout
         if session_timeout and int(utils.time_now()) - \
                 flask.session['timestamp'] > session_timeout:
             flask.session.clear()
+            clear_session(admin_id, session_id)
             return False
 
         flask.session['timestamp'] = int(utils.time_now())
