@@ -6,7 +6,7 @@ Version 1.25.1050.42 2016-07-28
 
 Improve user pin and OTP authentication on iOS and Android
 Support multiple devices with client-to-client traffic on replicated servers
-Add reverse DNS lookup for VPN clients
+Add reverse dns lookup for VPN clients
 Fix case sensitive dns issue
 
 Version 1.25.1042.81 2016-07-20
