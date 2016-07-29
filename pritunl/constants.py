@@ -720,8 +720,8 @@ NETWORK_INVALID_MSG = 'Network address is not valid, format must be ' + \
     'such as "10.12.32.0/24".'
 
 BRIDGE_NETWORK_INVALID = '_bridge_network_invalid'
-BRIDGE_NETWORK_INVALID_MSG = 'Bridge network start and end must be inside the ' + \
-    'server network.'
+BRIDGE_NETWORK_INVALID_MSG = 'Bridge network start and end must be ' + \
+    'inside the server network.'
 
 LOCAL_NETWORK_INVALID = 'local_network_invalid'
 LOCAL_NETWORK_INVALID_MSG = 'Local network address is not valid, ' + \
