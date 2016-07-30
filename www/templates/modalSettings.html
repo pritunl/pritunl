@@ -6,7 +6,7 @@
     </div>
     <div class="auditing form-group">
       <label>Auditing Mode</label>
-      <select class="form-control" data-toggle="tooltip" title="Auditing mode" data-toggle="tooltip" title="Log administrator and user actions">
+      <select class="form-control" data-toggle="tooltip" title="Auditing mode. Enable to log user actions such as login attempts and profile downloads" data-toggle="tooltip" title="Log administrator and user actions">
         <option value="none" <%= !auditing ? 'selected' : '' %>>Disabled</option>
         <option value="all" <%= auditing === 'all' ? 'selected' : '' %>>All</option>
       </select>
