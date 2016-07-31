@@ -55,8 +55,12 @@ define([
       model.save({
         organization: org
       }, {
-        success: function() {
-          this.close(true);
+        success: function(_, response) {
+          if (response.status === 'users_background') {
+            this.close(true, response.status_msg);
+          } else {
+            this.close(true);
+          }
         }.bind(this),
         error: function(model, response) {
           this.$('.users textarea').removeAttr('disabled');
