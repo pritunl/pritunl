@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve bulk add users
+
 Version 1.25.1050.42 2016-07-28
 -------------------------------
 
