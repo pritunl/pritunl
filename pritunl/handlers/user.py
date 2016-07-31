@@ -219,11 +219,12 @@ def _create_users(org_id, users_data, remote_addr):
     users = []
     partial_event = len(users_data) <= 100
 
-    _users_background_lock.acquire()
-    if _users_background:
-        return
-    _users_background = True
-    _users_background_lock.release()
+    if len(users_data) > 10:
+        _users_background_lock.acquire()
+        if _users_background:
+            return
+        _users_background = True
+        _users_background_lock.release()
 
     try:
         for i, user_data in enumerate(users_data):
@@ -301,9 +302,10 @@ def _create_users(org_id, users_data, remote_addr):
         logger.exception('Error creating users', 'users')
         raise
     finally:
-        _users_background_lock.acquire()
-        _users_background = False
-        _users_background_lock.release()
+        if len(users_data) > 10:
+            _users_background_lock.acquire()
+            _users_background = False
+            _users_background_lock.release()
 
         event.Event(type=ORGS_UPDATED)
         event.Event(type=USERS_UPDATED, resource_id=org.id)
