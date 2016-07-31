@@ -212,6 +212,7 @@ def user_get(org_id, user_id=None, page=None):
 def _create_users(org_id, users_data, remote_addr):
     org = organization.get_by_id(org_id)
     users = []
+    partial_event = len(users_data) <= 100
 
     try:
         for i, user_data in enumerate(users_data):
@@ -280,6 +281,11 @@ def _create_users(org_id, users_data, remote_addr):
                         }, 400)
 
             users.append(user.dict())
+
+            if partial_event and i != 0 and i % 10 == 0:
+                event.Event(type=ORGS_UPDATED)
+                event.Event(type=USERS_UPDATED, resource_id=org.id)
+                event.Event(type=SERVERS_UPDATED)
     except:
         logger.exception('Error creating users', 'users')
         raise
