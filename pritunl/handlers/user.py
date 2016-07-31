@@ -18,6 +18,7 @@ import base64
 import hmac
 import hashlib
 import pymongo
+import threading
 
 def _network_link_invalid():
     return utils.jsonify({
@@ -208,22 +209,12 @@ def user_get(org_id, user_id=None, page=None):
         utils.demo_set_cache(resp, page, search, limit)
     return utils.jsonify(resp)
 
-@app.app.route('/user/<org_id>', methods=['POST'])
-@auth.session_auth
-def user_post(org_id):
-    if settings.app.demo_mode:
-        return utils.demo_blocked()
-
+def _create_users(org_id, users_data, remote_addr):
     org = organization.get_by_id(org_id)
     users = []
 
-    if isinstance(flask.request.json, list):
-        users_data = flask.request.json
-    else:
-        users_data = [flask.request.json]
-
     try:
-        for user_data in users_data:
+        for i, user_data in enumerate(users_data):
             name = utils.filter_str(user_data['name'])
             email = utils.filter_str(user_data.get('email'))
             pin = utils.filter_str(user_data.get('pin')) or None
@@ -273,7 +264,7 @@ def user_post(org_id):
                 dns_suffix=dns_suffix, port_forwarding=port_forwarding)
             user.audit_event('user_created',
                 'User created from web console',
-                remote_addr=utils.get_remote_addr(),
+                remote_addr=remote_addr,
             )
 
             if network_links:
@@ -289,18 +280,48 @@ def user_post(org_id):
                         }, 400)
 
             users.append(user.dict())
+    except:
+        logger.exception('Error creating users', 'users')
+        raise
     finally:
         event.Event(type=ORGS_UPDATED)
         event.Event(type=USERS_UPDATED, resource_id=org.id)
         event.Event(type=SERVERS_UPDATED)
 
-    if isinstance(flask.request.json, list):
-        logger.LogEntry(message='Created %s new users.' % len(
-            flask.request.json))
+    if len(users) > 1:
+        logger.LogEntry(message='Created %s new users.' % len(users))
         return utils.jsonify(users)
     else:
         logger.LogEntry(message='Created new user "%s".' % users[0]['name'])
         return utils.jsonify(users[0])
+
+@app.app.route('/user/<org_id>', methods=['POST'])
+@auth.session_auth
+def user_post(org_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
+    remote_addr = utils.get_remote_addr()
+
+    if isinstance(flask.request.json, list):
+        users_data = flask.request.json
+    else:
+        users_data = [flask.request.json]
+
+    if len(users_data) > 10:
+        thread = threading.Thread(
+            target=_create_users,
+            args=(org_id, users_data, remote_addr),
+        )
+        thread.daemon = True
+        thread.start()
+
+        return utils.jsonify({
+            'status': USERS_BACKGROUND,
+            'status_msg': USERS_BACKGROUND_MSG,
+        }, 202)
+
+    return _create_users(org_id, users_data, remote_addr)
 
 @app.app.route('/user/<org_id>/<user_id>', methods=['PUT'])
 @auth.session_auth
