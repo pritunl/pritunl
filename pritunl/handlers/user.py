@@ -20,6 +20,9 @@ import hashlib
 import pymongo
 import threading
 
+_users_background = False
+_users_background_lock = threading.Lock()
+
 def _network_link_invalid():
     return utils.jsonify({
         'error': NETWORK_LINK_INVALID,
@@ -210,9 +213,17 @@ def user_get(org_id, user_id=None, page=None):
     return utils.jsonify(resp)
 
 def _create_users(org_id, users_data, remote_addr):
+    global _users_background
+
     org = organization.get_by_id(org_id)
     users = []
     partial_event = len(users_data) <= 100
+
+    _users_background_lock.acquire()
+    if _users_background:
+        return
+    _users_background = True
+    _users_background_lock.release()
 
     try:
         for i, user_data in enumerate(users_data):
@@ -290,6 +301,10 @@ def _create_users(org_id, users_data, remote_addr):
         logger.exception('Error creating users', 'users')
         raise
     finally:
+        _users_background_lock.acquire()
+        _users_background = False
+        _users_background_lock.release()
+
         event.Event(type=ORGS_UPDATED)
         event.Event(type=USERS_UPDATED, resource_id=org.id)
         event.Event(type=SERVERS_UPDATED)
@@ -315,6 +330,12 @@ def user_post(org_id):
         users_data = [flask.request.json]
 
     if len(users_data) > 10:
+        if _users_background:
+            return utils.jsonify({
+                'error': USERS_BACKGROUND_BUSY,
+                'error_msg': USERS_BACKGROUND_BUSY_MSG,
+            }, 429)
+
         thread = threading.Thread(
             target=_create_users,
             args=(org_id, users_data, remote_addr),
