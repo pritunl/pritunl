@@ -212,14 +212,14 @@ def user_get(org_id, user_id=None, page=None):
         utils.demo_set_cache(resp, page, search, limit)
     return utils.jsonify(resp)
 
-def _create_users(org_id, users_data, remote_addr):
+def _create_users(org_id, users_data, remote_addr, background):
     global _users_background
 
     org = organization.get_by_id(org_id)
     users = []
     partial_event = len(users_data) <= 100
 
-    if len(users_data) > 10:
+    if background:
         _users_background_lock.acquire()
         if _users_background:
             return
@@ -302,7 +302,7 @@ def _create_users(org_id, users_data, remote_addr):
         logger.exception('Error creating users', 'users')
         raise
     finally:
-        if len(users_data) > 10:
+        if background:
             _users_background_lock.acquire()
             _users_background = False
             _users_background_lock.release()
@@ -340,7 +340,7 @@ def user_post(org_id):
 
         thread = threading.Thread(
             target=_create_users,
-            args=(org_id, users_data, remote_addr),
+            args=(org_id, users_data, remote_addr, True),
         )
         thread.daemon = True
         thread.start()
@@ -350,7 +350,7 @@ def user_post(org_id):
             'status_msg': USERS_BACKGROUND_MSG,
         }, 202)
 
-    return _create_users(org_id, users_data, remote_addr)
+    return _create_users(org_id, users_data, remote_addr, False)
 
 @app.app.route('/user/<org_id>/<user_id>', methods=['PUT'])
 @auth.session_auth
