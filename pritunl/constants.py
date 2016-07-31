@@ -763,6 +763,10 @@ NETWORK_LINK_NOT_OFFLINE = 'network_link_not_offline'
 NETWORK_LINK_NOT_OFFLINE_MSG = 'All attached servers must be offline to ' + \
     'add a network link.'
 
+USERS_BACKGROUND = 'users_background'
+USERS_BACKGROUND_MSG = 'Users will be created in background. This task ' + \
+    'will take several seconds for each user being created.'
+
 PIN_INVALID = 'pin_invalid'
 PIN_INVALID_MSG = 'Current pin is invalid.'
 
