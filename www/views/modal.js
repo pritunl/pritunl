@@ -156,13 +156,13 @@ define([
       this.clearLoading();
       this.$('.modal').modal('hide');
     },
-    close: function(triggerApplied) {
+    close: function(triggerApplied, msg) {
       this.triggerApplied = triggerApplied;
       if (this.safeClose && this.lockClose) {
         return;
       }
       if (triggerApplied) {
-        this.trigger('applied');
+        this.trigger('applied', msg);
       }
       this.clearAlert();
       this.$('.modal').modal('hide');
