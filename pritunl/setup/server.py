@@ -33,7 +33,7 @@ def stop_server():
     def stop():
         global web_process_state
 
-        server.interrupt = ServerStop('Stop server')
+        time.sleep(0.25)
 
         web_process_state = False
         try:
@@ -238,7 +238,6 @@ def server_thread():
     except ServerStop:
         pass
 
-    time.sleep(0.25)
     setup_ready.set()
     settings.local.server_start.set()
 
