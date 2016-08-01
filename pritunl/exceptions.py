@@ -1,4 +1,4 @@
-class StopServer(Exception):
+class ServerStop(Exception):
     pass
 
 
