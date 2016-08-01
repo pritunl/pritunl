@@ -29,7 +29,6 @@ def get_collection(collection):
 def setup_cert():
     server_cert = None
     server_key = None
-    server_dh_params = None
     acme_domain = None
 
     if _database:
@@ -38,22 +37,15 @@ def setup_cert():
         if doc:
             server_cert = doc.get('server_cert')
             server_key = doc.get('server_key')
-            server_dh_params = doc.get('server_dh_params')
             acme_domain = doc.get('acme_domain')
 
     if not server_cert or not server_key:
         logger.info('Generating setup server ssl cert', 'setup')
-        server_cert_path, server_key_path = utils.generate_server_cert()
-        server_dh_path = utils.generate_server_dh_params(1024)
-        return server_cert_path, None, server_key_path, server_dh_path
+        return utils.generate_server_cert()
 
-    if not server_dh_params:
-        server_dh_params = utils.generate_server_dh_params_inline(1024)
-
-    return utils.write_server_cert_chain(
+    return utils.write_server_cert(
         server_cert,
         server_key,
-        server_dh_params,
         acme_domain,
     )
 
