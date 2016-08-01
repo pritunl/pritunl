@@ -146,7 +146,7 @@ def _run_server(restart):
     server_cert_path = None
     server_key_path = None
     redirect_server = 'true' if settings.app.redirect_server else 'false'
-    internal_addr = 'localhost:' + str(settings.app.server_internal_port)
+    internal_addr = 'localhost:%s' % settings.app.server_internal_port
 
     if settings.app.server_ssl:
         setup_server_cert()
