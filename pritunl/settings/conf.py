@@ -11,6 +11,7 @@ class SettingsConf(SettingsGroupFile):
         'ssl': True,
         'static_cache': True,
         'port': 9700,
+        'internal_port': 9755,
         'pooler': True,
         'temp_path': '/tmp/pritunl',
         'log_path': '/var/log/pritunl.log',
