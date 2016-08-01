@@ -304,16 +304,14 @@
       }, 820);
 
       var check = function() {
-        console.log('check');
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function() {
           if (xmlhttp.readyState === 4) {
-            if (xmlhttp.status === 200) {
-              if (xmlhttp.responseText) {
+            if (xmlhttp.status === 200 || xmlhttp.status === 404) {
+              if (xmlhttp.responseText || xmlhttp.status === 404) {
                 setTimeout(function() {
-                  console.log('done')
                   window.location = '/';
-                }, 2500);
+                }, 3000);
               }
               else {
                 check();
