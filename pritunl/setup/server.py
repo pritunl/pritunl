@@ -16,8 +16,12 @@ import time
 import pymongo
 import flask
 import threading
+import subprocess
+import os
 
 server = None
+web_process = None
+web_process_state = None
 app = flask.Flask(__name__)
 upgrade_done = threading.Event()
 setup_ready = threading.Event()
@@ -27,7 +31,16 @@ setup_state = None
 
 def stop_server():
     def stop():
-        server.interrupt = StopServer('Stop server')
+        global web_process_state
+
+        server.interrupt = ServerStop('Stop server')
+
+        web_process_state = False
+        try:
+            web_process.kill()
+        except:
+            pass
+
     setup_ready.set()
     settings.local.server_ready.wait()
     threading.Thread(target=stop).start()
@@ -167,36 +180,65 @@ def setup_upgrade_get():
 
 def server_thread():
     global server
+    global web_process
+    global web_process_state
 
     app.logger.setLevel(logging.DEBUG)
     app.logger.addFilter(logger.log_filter)
     app.logger.addHandler(logger.log_handler)
 
-    server_port = upgrade.get_server_port()
     server = wsgiserver.CherryPyWSGIServer(
-        (settings.conf.bind_addr, server_port), app,
-        server_name=wsgiserver.CherryPyWSGIServer.version,
+        ('localhost', settings.conf.internal_port), app,
         timeout=1,
         shutdown_timeout=0.5,
     )
+    server.server_name = ''
 
     if settings.conf.ssl:
-        server_cert_path, server_chain_path, server_key_path, \
-            server_dh_path = upgrade.setup_cert()
+        server_cert_path, server_key_path = upgrade.setup_cert()
+    else:
+        server_cert_path = None
+        server_key_path = None
 
-        server.ssl_adapter = SSLAdapter(
-            server_cert_path,
-            server_key_path,
-            server_chain_path,
-            server_dh_path,
-        )
+    web_process_state = True
+    web_process = subprocess.Popen(
+        ['pritunl-web'],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        env=dict(os.environ, **{
+            'REVERSE_PROXY_HEADER': '',
+            'REDIRECT_SERVER': 'true',
+            'BIND_HOST': settings.conf.bind_addr,
+            'BIND_PORT': str(upgrade.get_server_port()),
+            'INTERNAL_ADDRESS': 'localhost:%s' % settings.conf.internal_port,
+            'CERT_PATH': server_cert_path or '',
+            'KEY_PATH': server_key_path or '',
+        }),
+    )
+
+    def poll_thread():
+        time.sleep(0.5)
+        if web_process.wait() and web_process_state:
+            time.sleep(0.25)
+            if not check_global_interrupt():
+                stdout, stderr = web_process._communicate(None)
+                logger.error('Web server process exited unexpectedly', 'setup',
+                    stdout=stdout,
+                    stderr=stderr,
+                )
+            set_global_interrupt()
+        else:
+            server.interrupt = ServerStop('Stop server')
+    thread = threading.Thread(target=poll_thread)
+    thread.daemon = True
+    thread.start()
 
     try:
         server.start()
-    except StopServer:
+    except ServerStop:
         pass
 
-    time.sleep(1.5)
+    time.sleep(0.25)
     setup_ready.set()
     settings.local.server_start.set()
 
