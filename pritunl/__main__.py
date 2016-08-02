@@ -196,7 +196,6 @@ def main(default_conf=None):
 
         settings.app.server_cert = None
         settings.app.server_key = None
-        settings.app.server_dh_params = None
         settings.commit()
 
         time.sleep(.3)
