@@ -36,6 +36,14 @@ class BuiltinSSLAdapter(wsgiserver.SSLAdapter):
     private_key = None
     """The filename of the server's private key file."""
 
+    certificate_chain = None
+    """The filename of the certificate chain file."""
+
+    """The ssl.SSLContext that will be used to wrap sockets where available
+    (on Python > 2.7.9 / 3.3)
+    """
+    context = None
+
     def __init__(self, certificate, private_key, certificate_chain=None,
             dh_params=None):
         if ssl is None:
@@ -43,6 +51,12 @@ class BuiltinSSLAdapter(wsgiserver.SSLAdapter):
         self.certificate = certificate
         self.private_key = private_key
         self.certificate_chain = certificate_chain
+        if hasattr(ssl, 'create_default_context'):
+            self.context = ssl.create_default_context(
+                purpose=ssl.Purpose.CLIENT_AUTH,
+                cafile=certificate_chain
+            )
+            self.context.load_cert_chain(certificate, private_key)
 
     def bind(self, sock):
         """Wrap and return the given socket."""
@@ -51,10 +65,15 @@ class BuiltinSSLAdapter(wsgiserver.SSLAdapter):
     def wrap(self, sock):
         """Wrap and return the given socket, plus WSGI environ entries."""
         try:
-            s = ssl.wrap_socket(sock, do_handshake_on_connect=True,
-                server_side=True, certfile=self.certificate,
-                keyfile=self.private_key,
-                ssl_version=ssl.PROTOCOL_SSLv23)
+            if self.context is not None:
+                s = self.context.wrap_socket(sock,do_handshake_on_connect=True,
+                    server_side=True)
+            else:
+                s = ssl.wrap_socket(sock, do_handshake_on_connect=True,
+                    server_side=True, certfile=self.certificate,
+                    keyfile=self.private_key,
+                    ssl_version=ssl.PROTOCOL_SSLv23,
+                    ca_certs=self.certificate_chain)
         except ssl.SSLError:
             e = sys.exc_info()[1]
             if e.errno == ssl.SSL_ERROR_EOF:
@@ -87,9 +106,5 @@ class BuiltinSSLAdapter(wsgiserver.SSLAdapter):
         }
         return ssl_environ
 
-    if sys.version_info >= (3, 0):
-        def makefile(self, sock, mode='r', bufsize=DEFAULT_BUFFER_SIZE):
-            return wsgiserver.CP_makefile(sock, mode, bufsize)
-    else:
-        def makefile(self, sock, mode='r', bufsize=DEFAULT_BUFFER_SIZE):
-            return wsgiserver.CP_fileobject(sock, mode, bufsize)
+    def makefile(self, sock, mode='r', bufsize=DEFAULT_BUFFER_SIZE):
+        return wsgiserver.CP_makefile(sock, mode, bufsize)

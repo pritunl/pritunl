@@ -37,7 +37,6 @@ import threading
 import time
 
 from pritunl import wsgiserver
-from pritunl import utils
 
 try:
     from OpenSSL import SSL
@@ -46,7 +45,7 @@ except ImportError:
     SSL = None
 
 
-class SSL_fileobject(wsgiserver.CP_fileobject):
+class SSL_fileobject(wsgiserver.CP_makefile):
 
     """SSL file object attached to a socket object."""
 
