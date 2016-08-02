@@ -1,7 +1,3 @@
-class ServerStop(Exception):
-    pass
-
-
 class BaseError(Exception):
     def __init__(self, message, data=None):
         if data:
@@ -9,6 +5,8 @@ class BaseError(Exception):
             message = '%s. %r' % (message, data)
         Exception.__init__(self, message)
 
+class ServerStop(BaseError):
+    pass
 
 class ServerRestart(BaseError):
     pass
