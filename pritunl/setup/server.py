@@ -174,7 +174,6 @@ def setup_mongodb_put():
 @app.route('/setup/upgrade', methods=['GET'])
 def setup_upgrade_get():
     if upgrade_done.wait(15):
-        stop_server()
         return 'true'
     return ''
 
