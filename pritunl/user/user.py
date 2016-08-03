@@ -841,7 +841,7 @@ class User(mongo.MongoObject):
         from pritunl import server
 
         if not force:
-            for svr in self.iter_servers(('status',)):
+            for svr in self.iter_servers(('status', 'groups')):
                 if svr.status == ONLINE:
                     raise ServerOnlineError('Server online')
 
