@@ -17,7 +17,6 @@ import os
 
 app = flask.Flask(__name__)
 app_server = None
-redirect_app = flask.Flask(__name__ + '_redirect')
 acme_token = None
 acme_authorization = None
 _cur_ssl = None
