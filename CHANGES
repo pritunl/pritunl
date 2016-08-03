@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Improve setup web server
+Fix interface issue with user groups
 
 Version 1.25.1054.4 2016-08-01
 ------------------------------
