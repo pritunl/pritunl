@@ -188,7 +188,6 @@ def server_thread():
 
     server = wsgiserver.CherryPyWSGIServer(
         ('localhost', settings.conf.internal_port), app,
-        timeout=1,
         shutdown_timeout=0.5,
     )
     server.server_name = ''
