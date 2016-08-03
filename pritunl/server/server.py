@@ -404,7 +404,7 @@ class Server(mongo.MongoObject):
     @cached_property
     def network_links(self):
         links = set()
-        users_links = {}
+        users_links = collections.defaultdict(set)
 
         org_ids = self.org_collection.find({
             '_id': {'$in': self.organizations},
@@ -415,7 +415,7 @@ class Server(mongo.MongoObject):
         for doc in self.user_net_link_collection.find({
                     'org_id': {'$in': org_ids},
                 }):
-            users_links[doc['user_id']] = doc['network']
+            users_links[doc['user_id']].add(doc['network'])
 
         user_ids = self.user_collection.find({
             '_id': {'$in': users_links.keys()},
@@ -424,7 +424,7 @@ class Server(mongo.MongoObject):
         }).distinct('_id')
 
         for user_id in user_ids:
-            links.add(users_links[user_id])
+            links |= users_links[user_id]
 
         return links
 
