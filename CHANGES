@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Update Lets Encrypt support
+
 Version 1.25.1057.22 2016-08-04
 -------------------------------
 
