@@ -101,7 +101,7 @@ def get_crt(account_key, csr, set_acme):
     logger.info("Registering acme account...", "acme")
     code, result = _send_signed_request(settings.app.acme_api_url + "/acme/new-reg", {
         "resource": "new-reg",
-        "agreement": "https://letsencrypt.org/documents/LE-SA-v1.0.1-July-27-2015.pdf",
+        "agreement": "https://letsencrypt.org/documents/LE-SA-v1.1.1-August-1-2016.pdf",
     })
     if code == 201:
         logger.info("Registered acme certificate", "acme")
