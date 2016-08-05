@@ -853,24 +853,6 @@ SERVER_LINK_COMMON_HOST_MSG = 'Linked servers cannot have a common host.'
 SERVER_LINK_COMMON_ROUTE = 'server_link_common_route'
 SERVER_LINK_COMMON_ROUTE_MSG = 'Linked servers cannot have a common route.'
 
-SERVER_INVALID = 'server_invalid'
-SERVER_INVALID_MSG = 'Server is not valid.'
-
-NODE_API_KEY_INVLID = 'node_api_key_invlid'
-NODE_API_KEY_INVLID_MSG = 'Node server api key is invalid.'
-
-NODE_CONNECTION_ERROR = 'node_connection_error'
-NODE_CONNECTION_ERROR_MSG = 'Failed to connect to node server.'
-
-ORG_INVALID = 'organization_invalid'
-ORG_INVALID_MSG = 'Organization is not valid.'
-
-USER_INVALID = 'user_invalid'
-USER_INVALID_MSG = 'User is not valid.'
-
-USER_TYPE_INVALID = 'user_type_invalid'
-USER_TYPE_INVALID_MSG = 'User type is not valid.'
-
 EMAIL_NOT_CONFIGURED = 'email_not_configured'
 EMAIL_NOT_CONFIGURED_MSG = 'Required email settings have not been ' + \
     'configured, please open settings and configure email.'
