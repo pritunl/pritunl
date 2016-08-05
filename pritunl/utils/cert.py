@@ -3,7 +3,6 @@ from pritunl.utils.misc import check_output_logged, get_temp_path
 from pritunl import settings
 
 import os
-import collections
 
 def create_server_cert():
     from pritunl import acme
