@@ -185,7 +185,7 @@ deb http://repo.pritunl.com/stable/apt wily main
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv EA312927
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
 $ apt-get update
-$ apt-get install pritunl mongodb-org
+$ apt-get install pritunl mongodb
 $ service pritunl start
 ```
 
