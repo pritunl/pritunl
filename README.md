@@ -173,22 +173,6 @@ $ apt-get install pritunl mongodb-org
 $ service pritunl start
 ```
 
-### ubuntu wily
-
-```
-$ nano /etc/apt/sources.list.d/mongodb-org-3.2.list
-deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.2 multiverse
-
-$ nano /etc/apt/sources.list.d/pritunl.list
-deb http://repo.pritunl.com/stable/apt wily main
-
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv EA312927
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
-$ apt-get update
-$ apt-get install pritunl mongodb-org
-$ service pritunl start
-```
-
 ### ubuntu xenial
 
 ```
@@ -345,22 +329,6 @@ deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.2 multiverse
 
 $ nano /etc/apt/sources.list.d/pritunl.list
 deb http://repo.pritunl.com/dev/apt trusty main
-
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv EA312927
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
-$ apt-get update
-$ apt-get install pritunl mongodb-org
-$ service pritunl start
-```
-
-### ubuntu wily
-
-```
-$ nano /etc/apt/sources.list.d/mongodb-org-3.2.list
-deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.2 multiverse
-
-$ nano /etc/apt/sources.list.d/pritunl.list
-deb http://repo.pritunl.com/dev/apt wily main
 
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv EA312927
 $ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
