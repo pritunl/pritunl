@@ -4,6 +4,14 @@
 # import redis
 # import boto
 
+# Called on authorization of user connection attempt. Allow will be True
+# when user authenticated sucessfully. When allow is False reason will
+# explain why the user was not authenticated.
+def user_connection(host_id, server_id, org_id, user_id, host_name,
+        server_name, org_name, user_name, platform, device_id, device_name,
+        remote_ip, mac_addr, password, allow, reason, **kwargs):
+    pass
+
 # Called after user has connected.
 def user_connected(host_id, server_id, org_id, user_id, host_name,
         server_name, org_name, user_name, platform, device_id, device_name,
