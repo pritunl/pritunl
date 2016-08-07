@@ -1000,7 +1000,8 @@ class Clients(object):
             return
 
         virt_address = client['virt_address']
-        if not self.server.multi_device and not self.server.replicating and \
+        if not self.server.multi_device and \
+                not self.server.replicating and \
                 client['address_dynamic']:
             updated = self.clients.update({
                 'id': client_id,
