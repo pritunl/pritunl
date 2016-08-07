@@ -619,6 +619,26 @@ class Clients(object):
                     else:
                         self.instance_com.send_client_deny(
                             client_id, key_id, reason, auth.challenge)
+
+                    plugins.event(
+                        'user_connection',
+                        host_id=settings.local.host_id,
+                        server_id=self.server.id,
+                        org_id=org.id,
+                        user_id=user.id,
+                        host_name=settings.local.host.name,
+                        server_name=self.server.name,
+                        org_name=org.name,
+                        user_name=user.name,
+                        platform=platform,
+                        device_id=device_id,
+                        device_name=device_name,
+                        remote_ip=remote_ip,
+                        mac_addr=mac_addr,
+                        password=password,
+                        allow=allow,
+                        reason=reason
+                    )
                 except:
                     logger.exception('Error in authorizer callback', 'server',
                         server_id=self.server.id,
