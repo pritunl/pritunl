@@ -1010,17 +1010,6 @@ class Clients(object):
             client['ip6tables_rules'],
         )
 
-        virt_address = client['virt_address']
-        if client['address_dynamic']:
-            updated = self.clients.update({
-                'id': client_id,
-                'virt_address': virt_address,
-            }, {
-                'virt_address': None,
-            })
-            if updated:
-                self.ip_pool.append(virt_address.split('/')[0])
-
         doc_id = client.get('doc_id')
         if doc_id:
             try:
@@ -1032,12 +1021,22 @@ class Clients(object):
                     server_id=self.server.id,
                 )
 
+        virt_address = client['virt_address']
         if self.server.multi_device and self.server.replicating:
             self.pool_collection.remove({
                 'server_id': self.server.id,
                 'user_id': client.get('user_id'),
                 'client_id': doc_id,
             })
+        elif client['address_dynamic']:
+            updated = self.clients.update({
+                'id': client_id,
+                'virt_address': virt_address,
+            }, {
+                'virt_address': None,
+            })
+            if updated:
+                self.ip_pool.append(virt_address.split('/')[0])
 
         self.call_queue.put(self._disconnected, client)
 
