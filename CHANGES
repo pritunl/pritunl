@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Improvements to plugin system
 Fix issue with multiple devices when server is not replicated
 
 Version 1.25.1057.45 2016-08-04
