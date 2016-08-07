@@ -998,6 +998,19 @@ class Clients(object):
         client = self.clients.find_id(client_id)
         if not client:
             return
+
+        virt_address = client['virt_address']
+        if not self.server.multi_device and not self.server.replicating and \
+                client['address_dynamic']:
+            updated = self.clients.update({
+                'id': client_id,
+                'virt_address': virt_address,
+            }, {
+                'virt_address': None,
+            })
+            if updated:
+                self.ip_pool.append(virt_address.split('/')[0])
+
         self.clients.remove_id(client_id)
         host.global_clients.remove({
             'instance_id': self.instance.id,
@@ -1021,22 +1034,12 @@ class Clients(object):
                     server_id=self.server.id,
                 )
 
-        virt_address = client['virt_address']
         if self.server.multi_device and self.server.replicating:
             self.pool_collection.remove({
                 'server_id': self.server.id,
                 'user_id': client.get('user_id'),
                 'client_id': doc_id,
             })
-        elif client['address_dynamic']:
-            updated = self.clients.update({
-                'id': client_id,
-                'virt_address': virt_address,
-            }, {
-                'virt_address': None,
-            })
-            if updated:
-                self.ip_pool.append(virt_address.split('/')[0])
 
         self.call_queue.put(self._disconnected, client)
 
