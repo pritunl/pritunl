@@ -14,22 +14,6 @@ import uuid
 _states = tunldb.TunlDB()
 
 class Authorizer(object):
-    __slots__ = (
-        'server',
-        'user',
-        'remote_ip',
-        'platform',
-        'device_id',
-        'device_name',
-        'mac_addr',
-        'password',
-        'reauth',
-        'callback',
-        'state',
-        'push_type',
-        'challenge',
-    )
-
     def __init__(self, svr, usr, remote_ip, plaform, device_id, device_name,
             mac_addr, password, reauth, callback):
         self.server = svr
