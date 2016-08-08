@@ -1460,7 +1460,8 @@ class Server(mongo.MongoObject):
                     BRIDGED_SERVER_LINKS_INVALID_MSG
 
             if self.network_links:
-                return BRIDGED_NET_LINKS_INVALID, BRIDGED_NET_LINKS_INVALID_MSG
+                return BRIDGED_NET_LINKS_INVALID, \
+                    BRIDGED_NET_LINKS_INVALID_MSG
 
             if self.replica_count > 1:
                 return BRIDGED_REPLICA_INVALID, BRIDGED_REPLICA_INVALID_MSG
