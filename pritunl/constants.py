@@ -768,8 +768,8 @@ USERS_BACKGROUND_MSG = 'Users will be created in background. This task ' + \
     'will take several seconds for each user being created.'
 
 USERS_BACKGROUND_BUSY = 'users_background_busy'
-USERS_BACKGROUND_BUSY_MSG = 'Users are already being created in background. ' + \
-    'Wait for task to complete before adding more users.'
+USERS_BACKGROUND_BUSY_MSG = 'Users are already being created in ' + \
+    'background. Wait for task to complete before adding more users.'
 
 PIN_INVALID = 'pin_invalid'
 PIN_INVALID_MSG = 'Current pin is invalid.'
