@@ -8,6 +8,7 @@ from pritunl import event
 from pritunl import organization
 from pritunl import sso
 from pritunl import logger
+from pritunl import plugins
 
 import flask
 import time
@@ -18,7 +19,7 @@ def _auth_radius(username, password):
 
     valid, org_names, groups = sso.verify_radius(username, password)
     if not valid:
-        return utils.jsonify({
+        return None, AUTH_INVALID, utils.jsonify({
             'error': AUTH_INVALID,
             'error_msg': AUTH_INVALID_MSG,
         }, 401)
@@ -43,7 +44,7 @@ def _auth_radius(username, password):
         logger.error('Radius plugin authentication not valid', 'sso',
             username=username,
         )
-        return utils.jsonify({
+        return None, AUTH_INVALID, utils.jsonify({
             'error': AUTH_INVALID,
             'error_msg': AUTH_INVALID_MSG,
         }, 401)
@@ -61,7 +62,7 @@ def _auth_radius(username, password):
             logger.error('Duo authentication username not valid', 'sso',
                 username=username,
             )
-            return utils.jsonify({
+            return None, AUTH_INVALID, utils.jsonify({
                 'error': AUTH_INVALID,
                 'error_msg': AUTH_INVALID_MSG,
             }, 401)
@@ -78,7 +79,7 @@ def _auth_radius(username, password):
                 logger.error('Duo plugin authentication not valid', 'sso',
                     username=username,
                 )
-                return utils.jsonify({
+                return None, AUTH_INVALID, utils.jsonify({
                     'error': AUTH_INVALID,
                     'error_msg': AUTH_INVALID_MSG,
                 }, 401)
@@ -88,7 +89,7 @@ def _auth_radius(username, password):
             logger.error('Duo authentication not valid', 'sso',
                 username=username,
             )
-            return utils.jsonify({
+            return None, AUTH_INVALID, utils.jsonify({
                 'error': AUTH_INVALID,
                 'error_msg': AUTH_INVALID_MSG,
             }, 401)
@@ -97,7 +98,10 @@ def _auth_radius(username, password):
 
     org = organization.get_by_id(org_id)
     if not org:
-        return flask.abort(405)
+        return None, AUTH_INVALID, utils.jsonify({
+            'error': AUTH_INVALID,
+            'error_msg': AUTH_INVALID_MSG,
+        }, 401)
 
     usr = org.find_user(name=username)
     if not usr:
@@ -115,7 +119,7 @@ def _auth_radius(username, password):
         event.Event(type=SERVERS_UPDATED)
     else:
         if usr.disabled:
-            return utils.jsonify({
+            return None, AUTH_DISABLED, utils.jsonify({
                 'error': AUTH_DISABLED,
                 'error_msg': AUTH_DISABLED_MSG,
             }, 403)
@@ -136,13 +140,13 @@ def _auth_radius(username, password):
         remote_addr=utils.get_remote_addr(),
     )
 
-    return utils.jsonify({
+    return None, None, utils.jsonify({
         'redirect': utils.get_url_root() + key_link['view_url'],
     }, 202)
 
 def _auth_plugin(username, password):
     if settings.local.sub_plan != 'enterprise':
-        return utils.jsonify({
+        return None, AUTH_INVALID, utils.jsonify({
             'error': AUTH_INVALID,
             'error_msg': AUTH_INVALID_MSG,
         }, 401)
@@ -154,7 +158,7 @@ def _auth_plugin(username, password):
     )
 
     if not valid:
-        return utils.jsonify({
+        return None, AUTH_INVALID, utils.jsonify({
             'error': AUTH_INVALID,
             'error_msg': AUTH_INVALID_MSG,
         }, 401)
@@ -166,14 +170,17 @@ def _auth_plugin(username, password):
             org_name=org_id,
             user_name=username,
         )
-        return utils.jsonify({
+        return None, AUTH_INVALID, utils.jsonify({
             'error': AUTH_INVALID,
             'error_msg': AUTH_INVALID_MSG,
         }, 401)
 
     org = organization.get_by_id(org_id)
     if not org:
-        return flask.abort(405)
+        return None, AUTH_INVALID, utils.jsonify({
+            'error': AUTH_INVALID,
+            'error_msg': AUTH_INVALID_MSG,
+        }, 401)
 
     usr = org.find_user(name=username)
     if not usr:
@@ -190,7 +197,7 @@ def _auth_plugin(username, password):
         event.Event(type=SERVERS_UPDATED)
     else:
         if usr.disabled:
-            return utils.jsonify({
+            return None, AUTH_DISABLED, utils.jsonify({
                 'error': AUTH_DISABLED,
                 'error_msg': AUTH_DISABLED_MSG,
             }, 403)
@@ -211,18 +218,11 @@ def _auth_plugin(username, password):
         remote_addr=utils.get_remote_addr(),
     )
 
-    return utils.jsonify({
+    return None, None, utils.jsonify({
         'redirect': utils.get_url_root() + key_link['view_url'],
     }, 202)
 
-@app.app.route('/auth/session', methods=['POST'])
-@auth.open_auth
-def auth_session_post():
-    username = flask.request.json['username']
-    password = flask.request.json['password']
-    otp_code = flask.request.json.get('otp_code')
-    remote_addr = utils.get_remote_addr()
-
+def _auth(remote_addr, username, password, otp_code):
     admin = auth.get_by_username(username, remote_addr)
     if not admin:
         if settings.app.sso and RADIUS_AUTH in settings.app.sso:
@@ -232,17 +232,44 @@ def auth_session_post():
         return _auth_plugin(username, password)
 
     if not otp_code and admin.otp_auth:
-        return utils.jsonify({
+        return None, AUTH_OTP_REQUIRED, utils.jsonify({
             'error': AUTH_OTP_REQUIRED,
             'error_msg': AUTH_OTP_REQUIRED_MSG,
         }, 402)
 
     if not admin.auth_check(password, otp_code, remote_addr):
         time.sleep(random.randint(0, 100) / 1000.)
-        return utils.jsonify({
+        return None, AUTH_INVALID, utils.jsonify({
             'error': AUTH_INVALID,
             'error_msg': AUTH_INVALID_MSG,
         }, 401)
+
+    return admin, None, None
+
+@app.app.route('/auth/session', methods=['POST'])
+@auth.open_auth
+def auth_session_post():
+    username = flask.request.json['username']
+    password = flask.request.json['password']
+    otp_code = flask.request.json.get('otp_code')
+    remote_addr = utils.get_remote_addr()
+
+    admin, reason, resp = _auth(remote_addr, username, password, otp_code)
+
+    if reason != AUTH_OTP_REQUIRED:
+        plugins.event(
+            'user_login',
+            host_id=settings.local.host_id,
+            host_name=settings.local.host.name,
+            remote_ip=remote_addr,
+            username=username,
+            password=password,
+            allow=not bool(reason),
+            reason=reason,
+        )
+
+    if resp:
+        return resp
 
     flask.session['session_id'] = admin.new_session()
     flask.session['admin_id'] = str(admin.id)
