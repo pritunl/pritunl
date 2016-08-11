@@ -181,6 +181,12 @@ def _auth_plugin(username, password):
 
     org = organization.get_by_id(org_id)
     if not org:
+        logger.error(
+            'Login plugin did not return valid organization id',
+            'auth',
+            org_name=org_id,
+            user_name=username,
+        )
         return None, AUTH_INVALID, utils.jsonify({
             'error': AUTH_INVALID,
             'error_msg': AUTH_INVALID_MSG,
