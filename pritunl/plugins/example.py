@@ -4,6 +4,13 @@
 # import redis
 # import boto
 
+# Called on authorization of user login attempt. Allow will be True
+# when user authenticated sucessfully. When allow is False reason will
+# explain why the user was not authenticated.
+def user_login(host_id, host_name, remote_ip, username, password,
+    allow, reason, **kwargs):
+    pass
+
 # Called on authorization of user connection attempt. Allow will be True
 # when user authenticated sucessfully. When allow is False reason will
 # explain why the user was not authenticated.
@@ -46,13 +53,6 @@ def user_authenticate(host_id, host_name, user_name, password, remote_ip,
         return True, 'organization_name', ['group', 'names']
     else:
         return False, None, None
-
-# Called on authorization of user login attempt. Allow will be True
-# when user authenticated sucessfully. When allow is False reason will
-# explain why the user was not authenticated.
-def user_login(host_id, host_name, remote_ip, username, password,
-        allow, reason, **kwargs):
-    pass
 
 # [SYNCHRONOUS] Called after a user has authenticated with SSO when
 # loging into the web console. Must return True or False to accept auth
