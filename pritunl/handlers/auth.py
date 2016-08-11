@@ -271,6 +271,9 @@ def auth_session_post():
     if resp:
         return resp
 
+    if not admin:
+        raise ValueError('Admin undefined')
+
     flask.session['session_id'] = admin.new_session()
     flask.session['admin_id'] = str(admin.id)
     flask.session['timestamp'] = int(utils.time_now())
