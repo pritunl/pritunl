@@ -47,6 +47,9 @@ def user_authenticate(host_id, host_name, user_name, password, remote_ip,
     else:
         return False, None, None
 
+# Called on authorization of user login attempt. Allow will be True
+# when user authenticated sucessfully. When allow is False reason will
+# explain why the user was not authenticated.
 def user_login(host_id, host_name, remote_ip, username, password,
         allow, reason, **kwargs):
     pass
