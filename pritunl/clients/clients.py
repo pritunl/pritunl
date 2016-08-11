@@ -284,59 +284,96 @@ class Clients(object):
 
         if virt_address and self.server.multi_device:
             if self.server.replicating:
+                device_found = False
+
                 doc = self.pool_collection.find_one({
-                    '_id': utils.ip_to_long(virt_address.split('/')[0]),
+                    'server_id': self.server.id,
+                    'user_id': user_id,
+                    'mac_addr': mac_addr,
                 })
                 if doc:
-                    if doc['server_id'] == self.server.id and \
-                            doc['user_id'] == user_id and \
-                            doc['mac_addr'] == mac_addr:
-                        response = self.pool_collection.update({
-                            '_id': utils.ip_to_long(
-                                virt_address.split('/')[0]),
-                            'server_id': self.server.id,
-                            'user_id': user_id,
-                            'mac_addr': mac_addr,
-                        }, {'$set': {
-                            'server_id': self.server.id,
-                            'user_id': user_id,
-                            'mac_addr': mac_addr,
-                            'client_id': doc_id,
-                            'timestamp': utils.now(),
-                        }})
+                    orig_virt_address = virt_address
+                    virt_address = utils.long_to_ip(doc['_id']) + subnet
 
-                        if response['updatedExisting']:
-                            messenger.publish('instance', [
-                                'user_disconnect_id',
-                                user_id,
-                                doc['client_id'],
-                            ])
-                            disconnected.add(doc['client_id'])
+                    response = self.pool_collection.update({
+                        '_id': doc['_id'],
+                        'server_id': self.server.id,
+                        'user_id': user_id,
+                        'mac_addr': mac_addr,
+                    }, {'$set': {
+                        'server_id': self.server.id,
+                        'user_id': user_id,
+                        'mac_addr': mac_addr,
+                        'client_id': doc_id,
+                        'timestamp': utils.now(),
+                    }})
+
+                    if response['updatedExisting']:
+                        device_found = True
+                        messenger.publish('instance', [
+                            'user_disconnect_id',
+                            user_id,
+                            doc['client_id'],
+                        ])
+                        disconnected.add(doc['client_id'])
+                    else:
+                        virt_address = orig_virt_address
+
+                if not device_found:
+                    doc = self.pool_collection.find_one({
+                        '_id': utils.ip_to_long(
+                            virt_address.split('/')[0]),
+                    })
+                    if doc:
+                        if doc['server_id'] == self.server.id and \
+                                doc['user_id'] == user_id and \
+                                mac_addr and doc['mac_addr'] == mac_addr:
+                            response = self.pool_collection.update({
+                                '_id': utils.ip_to_long(
+                                    virt_address.split('/')[0]),
+                                'server_id': self.server.id,
+                                'user_id': user_id,
+                                'mac_addr': mac_addr,
+                            }, {'$set': {
+                                'server_id': self.server.id,
+                                'user_id': user_id,
+                                'mac_addr': mac_addr,
+                                'client_id': doc_id,
+                                'timestamp': utils.now(),
+                            }})
+
+                            if response['updatedExisting']:
+                                messenger.publish('instance', [
+                                    'user_disconnect_id',
+                                    user_id,
+                                    doc['client_id'],
+                                ])
+                                disconnected.add(doc['client_id'])
+                            else:
+                                virt_address = None
                         else:
                             virt_address = None
                     else:
-                        virt_address = None
-                else:
-                    try:
-                        self.pool_collection.insert({
-                            '_id': utils.ip_to_long(
-                                virt_address.split('/')[0]),
-                            'server_id': self.server.id,
-                            'user_id': user_id,
-                            'mac_addr': mac_addr,
-                            'client_id': doc_id,
-                            'timestamp': utils.now(),
-                        })
-                    except pymongo.errors.DuplicateKeyError:
-                        virt_address = None
+                        try:
+                            self.pool_collection.insert({
+                                '_id': utils.ip_to_long(
+                                    virt_address.split('/')[0]),
+                                'server_id': self.server.id,
+                                'user_id': user_id,
+                                'mac_addr': mac_addr,
+                                'client_id': doc_id,
+                                'timestamp': utils.now(),
+                            })
+                        except pymongo.errors.DuplicateKeyError:
+                            virt_address = None
 
-                if mac_addr:
-                    messenger.publish('instance', [
-                        'user_disconnect_mac',
-                        user_id,
-                        settings.local.host_id,
-                        mac_addr,
-                    ])
+                    if mac_addr:
+                        messenger.publish('instance', [
+                            'user_disconnect_mac',
+                            user_id,
+                            settings.local.host_id,
+                            mac_addr,
+                        ])
             else:
                 if mac_addr:
                     for clnt in self.clients.find({
