@@ -414,6 +414,7 @@ class Clients(object):
                     if not self.clients.find({'virt_address': ip_addr}):
                         virt_address = ip_addr
                         address_dynamic = True
+                        break
 
         if not virt_address:
             logger.error('Unable to assign ip address, pool full',
