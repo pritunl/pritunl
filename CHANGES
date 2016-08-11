@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Fix issue with multiple devices causing server crash
 Improvements to plugin system
 Improvements to web server
 
