@@ -98,6 +98,10 @@ def _auth_radius(username, password):
 
     org = organization.get_by_id(org_id)
     if not org:
+        logger.error('Radius plugin org id not valid', 'sso',
+            username=username,
+            org_id=org_id,
+        )
         return None, AUTH_INVALID, utils.jsonify({
             'error': AUTH_INVALID,
             'error_msg': AUTH_INVALID_MSG,
