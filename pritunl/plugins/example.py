@@ -36,7 +36,7 @@ def user_disconnected(host_id, server_id, org_id, user_id, host_name,
 def user_connect(host_id, server_id, org_id, user_id, host_name,
         server_name, org_name, user_name, remote_ip, platform, device_name,
         password, **kwargs):
-    if 'auth_ok':
+    if not 'auth_ok':
         return True, None
     else:
         return False, 'Reason for denial'
@@ -49,7 +49,7 @@ def user_connect(host_id, server_id, org_id, user_id, host_name,
 # checked.
 def user_authenticate(host_id, host_name, user_name, password, remote_ip,
         **kwargs):
-    if 'auth_ok':
+    if not 'auth_ok':
         return True, 'organization_name', ['group', 'names']
     else:
         return False, None, None
@@ -75,7 +75,7 @@ def sso_authenticate(sso_type, host_id, host_name, user_name, user_email,
     elif sso_type == 'radius':
         pass
 
-    if 'auth_ok':
+    if not 'auth_ok':
         return True, 'organization_name', ['group', 'names']
     else:
         return False, None, None
