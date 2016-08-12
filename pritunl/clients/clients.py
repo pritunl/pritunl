@@ -286,38 +286,39 @@ class Clients(object):
             if self.server.replicating:
                 device_found = False
 
-                doc = self.pool_collection.find_one({
-                    'server_id': self.server.id,
-                    'user_id': user_id,
-                    'mac_addr': mac_addr,
-                })
-                if doc:
-                    orig_virt_address = virt_address
-                    virt_address = utils.long_to_ip(doc['_id']) + subnet
-
-                    response = self.pool_collection.update({
-                        '_id': doc['_id'],
+                if mac_addr:
+                    doc = self.pool_collection.find_one({
                         'server_id': self.server.id,
                         'user_id': user_id,
                         'mac_addr': mac_addr,
-                    }, {'$set': {
-                        'server_id': self.server.id,
-                        'user_id': user_id,
-                        'mac_addr': mac_addr,
-                        'client_id': doc_id,
-                        'timestamp': utils.now(),
-                    }})
+                    })
+                    if doc:
+                        orig_virt_address = virt_address
+                        virt_address = utils.long_to_ip(doc['_id']) + subnet
 
-                    if response['updatedExisting']:
-                        device_found = True
-                        messenger.publish('instance', [
-                            'user_disconnect_id',
-                            user_id,
-                            doc['client_id'],
-                        ])
-                        disconnected.add(doc['client_id'])
-                    else:
-                        virt_address = orig_virt_address
+                        response = self.pool_collection.update({
+                            '_id': doc['_id'],
+                            'server_id': self.server.id,
+                            'user_id': user_id,
+                            'mac_addr': mac_addr,
+                        }, {'$set': {
+                            'server_id': self.server.id,
+                            'user_id': user_id,
+                            'mac_addr': mac_addr,
+                            'client_id': doc_id,
+                            'timestamp': utils.now(),
+                        }})
+
+                        if response['updatedExisting']:
+                            device_found = True
+                            messenger.publish('instance', [
+                                'user_disconnect_id',
+                                user_id,
+                                doc['client_id'],
+                            ])
+                            disconnected.add(doc['client_id'])
+                        else:
+                            virt_address = orig_virt_address
 
                 if not device_found:
                     doc = self.pool_collection.find_one({
