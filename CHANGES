@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with mobile devices on replicated multi-device servers
+
 Version 1.25.1064.86 2016-08-11
 -------------------------------
 
