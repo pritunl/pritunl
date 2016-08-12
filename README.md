@@ -21,10 +21,8 @@ yum -y install golang git bzr python2 python-pip net-tools openvpn bridge-utils 
 echo "export GOPATH=/go" >> ~/.bash_profile
 source ~/.bash_profile
 go get github.com/pritunl/pritunl-dns
-go get github.com/pritunl/pritunl-monitor
 go get github.com/pritunl/pritunl-web
 ln -s /go/bin/pritunl-dns /usr/local/bin/pritunl-dns
-ln -s /go/bin/pritunl-monitor /usr/local/bin/pritunl-monitor
 ln -s /go/bin/pritunl-web /usr/local/bin/pritunl-web
 
 wget https://github.com/pritunl/pritunl/archive/$VERSION.tar.gz
