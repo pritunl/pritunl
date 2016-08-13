@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.25.1066.97 2016-08-13
+-------------------------------
 
 Add set-host-name cli command
 Fix issue with mobile devices on replicated multi-device servers
