@@ -66,6 +66,18 @@ def setup_db():
         logger.exception('Pritunl setup failed', 'setup')
         raise
 
+def setup_db_host():
+    setup_local()
+
+    try:
+        setup_logger()
+        setup_mongo()
+        setup_host()
+    except:
+        from pritunl import logger
+        logger.exception('Pritunl setup failed', 'setup')
+        raise
+
 def setup_loc():
     setup_local()
 
