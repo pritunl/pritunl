@@ -189,6 +189,28 @@ def main(default_conf=None):
         print 'Database configuration successfully set'
 
         sys.exit(0)
+    elif cmd == 'set-host-name':
+        from pritunl.constants import HOSTS_UPDATED
+        from pritunl import setup
+        from pritunl import settings
+        from pritunl import event
+        from pritunl import messenger
+        setup.setup_db_host()
+
+        host_name = None
+        if len(args) > 1:
+            host_name = args[1]
+
+        settings.local.host.name = host_name or utils.random_name()
+        settings.local.host.commit()
+
+        event.Event(type=HOSTS_UPDATED)
+        messenger.publish('hosts', 'updated')
+
+        time.sleep(.1)
+        print 'Host name successfully set'
+
+        sys.exit(0)
     elif cmd == 'reset-ssl-cert':
         from pritunl import setup
         from pritunl import settings
