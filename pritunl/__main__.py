@@ -195,6 +195,7 @@ def main(default_conf=None):
         from pritunl import settings
         from pritunl import event
         from pritunl import messenger
+        from pritunl import utils
         setup.setup_db_host()
 
         host_name = None
