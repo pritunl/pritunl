@@ -30,7 +30,6 @@ tar xf $VERSION.tar.gz
 cd pritunl-$VERSION
 python2 setup.py build
 pip install -r requirements.txt
-mkdir -p /var/lib/pritunl
 python2 setup.py install
 
 systemctl daemon-reload
