@@ -242,6 +242,19 @@ $ systemctl start pritunl mongod
 $ systemctl enable pritunl mongod
 ```
 
+### ubuntu yakkety
+
+```
+$ nano /etc/apt/sources.list.d/pritunl.list
+deb http://repo.pritunl.com/stable/apt yakkety main
+
+$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
+$ apt-get update
+$ apt-get install pritunl mongodb-server
+$ systemctl start pritunl mongodb
+$ systemctl enable pritunl mongodb
+```
+
 ## Development Repository
 
 **For testing only, not for production use**
