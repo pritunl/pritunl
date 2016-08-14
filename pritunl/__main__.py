@@ -104,7 +104,7 @@ def main(default_conf=None):
     elif cmd == 'get':
         from pritunl import setup
         from pritunl import settings
-        setup.setup_db()
+        setup.setup_db_host()
 
         if len(args) != 2:
             raise ValueError('Invalid arguments')
@@ -115,7 +115,10 @@ def main(default_conf=None):
         if len(split) > 1:
             key_str = split[1]
 
-        group = getattr(settings, group_str)
+        if group_str == 'host':
+            group = settings.local.host
+        else:
+            group = getattr(settings, group_str)
         if key_str:
             val = getattr(group, key_str)
             print '%s.%s = %s' % (group_str, key_str,
