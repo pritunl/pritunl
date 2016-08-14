@@ -133,7 +133,7 @@ def main(default_conf=None):
         from pritunl import settings
         from pritunl import event
         from pritunl import messenger
-        setup.setup_db()
+        setup.setup_db_host()
 
         if len(args) != 3:
             raise ValueError('Invalid arguments')
