@@ -83,6 +83,8 @@ $ sudo start pritunl
 ### centos 7
 
 ```
+# SELinux must be disabled
+
 $ sudo nano /etc/yum.repos.d/mongodb-org-3.2.repo
 [mongodb-org-3.2]
 name=MongoDB Repository
@@ -287,6 +289,8 @@ $ sudo start pritunl
 ### centos 7
 
 ```
+# SELinux must be disabled
+
 $ sudo nano /etc/yum.repos.d/mongodb-org-3.2.repo
 [mongodb-org-3.2]
 name=MongoDB Repository
