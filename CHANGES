@@ -3,7 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
-Add host settings to get and set command
+Add host settings to get and set cli command
 
 Version 1.25.1066.97 2016-08-13
 -------------------------------
