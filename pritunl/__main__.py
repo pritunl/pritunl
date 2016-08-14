@@ -131,6 +131,8 @@ def main(default_conf=None):
         from pritunl.constants import HOSTS_UPDATED
         from pritunl import setup
         from pritunl import settings
+        from pritunl import event
+        from pritunl import messenger
         setup.setup_db()
 
         if len(args) != 3:
@@ -142,11 +144,18 @@ def main(default_conf=None):
             group = settings.local.host
         else:
             group = getattr(settings, group_str)
+
         val_str = args[2]
         val = json.loads(val_str)
         setattr(group, key_str, val)
 
-        settings.commit()
+        if group_str == 'host':
+            settings.local.host.commit()
+
+            event.Event(type=HOSTS_UPDATED)
+            messenger.publish('hosts', 'updated')
+        else:
+            settings.commit()
 
         time.sleep(.3)
 
