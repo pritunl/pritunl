@@ -128,6 +128,7 @@ def main(default_conf=None):
 
         sys.exit(0)
     elif cmd == 'set':
+        from pritunl.constants import HOSTS_UPDATED
         from pritunl import setup
         from pritunl import settings
         setup.setup_db()
@@ -137,7 +138,10 @@ def main(default_conf=None):
 
         group_str, key_str = args[1].split('.')
 
-        group = getattr(settings, group_str)
+        if group_str == 'host':
+            group = settings.local.host
+        else:
+            group = getattr(settings, group_str)
         val_str = args[2]
         val = json.loads(val_str)
         setattr(group, key_str, val)
