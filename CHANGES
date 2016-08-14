@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add host settings to get and set command
+
 Version 1.25.1066.97 2016-08-13
 -------------------------------
 
