@@ -79,8 +79,11 @@ def _keep_alive_thread():
                         cur_host_name != host_name or \
                         cur_route53_region != route53_region or \
                         cur_route53_zone != route53_zone:
+                    cur_host_name = host_name
                     cur_public_ip = settings.local.public_ip
                     cur_public_ip6 = settings.local.public_ip6
+                    cur_route53_region = route53_region
+                    cur_route53_zone = route53_zone
 
                     auto_public_host, auto_public_host6 = \
                         utils.set_zone_record(
