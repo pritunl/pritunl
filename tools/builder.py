@@ -19,7 +19,8 @@ Commands:
   version               Print the version and exit
   sync-db               Sync database
   set-version           Set current version
-  build                 Build and release"""
+  build                 Build and release
+  upload                Upload release"""
 
 INIT_PATH = 'pritunl/__init__.py'
 SETUP_PATH = 'setup.py'
