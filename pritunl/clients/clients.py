@@ -52,10 +52,15 @@ class Clients(object):
         )
         self.clients_queue = collections.deque()
 
+        skip = True
         self.ip_pool = []
         self.ip_network = ipaddress.IPv4Network(self.server.network)
         for ip_addr in self.ip_network.iterhosts():
+            if skip:
+                skip = False
+                continue
             self.ip_pool.append(str(ip_addr))
+        self.ip_pool.pop()
 
     @cached_static_property
     def collection(cls):
