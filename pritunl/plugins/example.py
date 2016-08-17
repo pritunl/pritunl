@@ -8,7 +8,7 @@
 # when user authenticated sucessfully. When allow is False reason will
 # explain why the user was not authenticated.
 def user_login(host_id, host_name, remote_ip, username, password,
-    allow, reason, **kwargs):
+        allow, reason, **kwargs):
     pass
 
 # Called on authorization of user connection attempt. Allow will be True
