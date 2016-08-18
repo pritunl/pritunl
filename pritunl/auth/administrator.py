@@ -218,7 +218,7 @@ class Administrator(mongo.MongoObject):
         self.secret = utils.generate_secret()
 
     def new_session(self):
-        session_id = uuid.uuid4().hex
+        session_id = utils.generate_secret()
         self.collection.update({
             '_id': self.id,
         }, {'$push': {
