@@ -97,7 +97,7 @@ require.config({
 });
 
 require([
-  'backbone',
+  'backbone'
 ], function(Backbone) {
   'use strict';
   Backbone.View = Backbone.View.extend({
