@@ -130,6 +130,8 @@ def setup_mongo():
         'routes_reserve': getattr(database, prefix + 'routes_reserve'),
         'dh_params': getattr(database, prefix + 'dh_params'),
         'auth_sessions': getattr(secondary_database, prefix + 'auth_sessions'),
+        'auth_csrf_tokens': getattr(secondary_database,
+            prefix + 'auth_csrf_tokens'),
         'auth_nonces': getattr(secondary_database, prefix + 'auth_nonces'),
         'auth_limiter': getattr(secondary_database, prefix + 'auth_limiter'),
         'otp': getattr(secondary_database, prefix + 'otp'),
