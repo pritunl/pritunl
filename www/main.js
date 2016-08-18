@@ -147,8 +147,7 @@ require([
     time -= hours * 3600;
     var minutes = Math.floor(time / 60);
     time -= minutes * 60;
-    var seconds = time;
-    return days + 'd ' + hours + 'h ' + minutes + 'm ' + seconds + 's';
+    return days + 'd ' + hours + 'h ' + minutes + 'm ' + time + 's';
   };
 
   window.formatTime = function(time, type) {
