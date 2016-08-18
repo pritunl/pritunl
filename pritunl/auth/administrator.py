@@ -1,4 +1,5 @@
 from pritunl.auth.utils import *
+from pritunl.auth.csrf import validate_token
 
 from pritunl.constants import *
 from pritunl.helpers import *
@@ -393,6 +394,18 @@ def check_session():
 
     flask.g.administrator = administrator
     return True
+
+def check_session_csrf():
+    auth_token = flask.request.headers.get('Auth-Token', None)
+    csrf_token = flask.request.headers.get('Csrf-Token', None)
+
+    if not auth_token and not validate_token(csrf_token):
+        logger.error('CSRF check failed', 'auth',
+            path=flask.request.path,
+        )
+        return False
+
+    return check_session()
 
 def get_by_username(username, remote_addr=None):
     username = utils.filter_str(username).lower()
