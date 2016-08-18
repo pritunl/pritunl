@@ -1,10 +1,10 @@
-from pritunl.auth.administrator import check_session
+from pritunl.auth.administrator import check_session, check_session_csrf
 
 import flask
 
 def session_auth(call):
     def _wrapped(*args, **kwargs):
-        if not check_session():
+        if not check_session_csrf():
             return flask.abort(401)
         flask.g.authed = True
         return call(*args, **kwargs)
