@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.25.1071.11 2016-08-18
+-------------------------------
 
 Add host settings to get and set cli command
 Fix issue with Windows clients on multi-device servers
