@@ -399,7 +399,9 @@ def check_session_csrf():
     auth_token = flask.request.headers.get('Auth-Token', None)
     csrf_token = flask.request.headers.get('Csrf-Token', None)
 
-    if not auth_token and not validate_token(csrf_token):
+    if not auth_token and \
+            flask.request.method != 'GET' and \
+            not validate_token(csrf_token):
         logger.error('CSRF check failed', 'auth',
             path=flask.request.path,
         )
