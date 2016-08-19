@@ -25,18 +25,6 @@ def subscription_get():
         utils.demo_set_cache(resp)
     return utils.jsonify(resp)
 
-@app.app.route('/subscription/state', methods=['GET'])
-@auth.session_auth
-def subscription_state_get():
-    return utils.jsonify({
-        'super_user': flask.g.administrator.super_user,
-        'theme': settings.app.theme,
-        'active': settings.local.sub_active,
-        'plan': settings.local.sub_plan,
-        'version': settings.local.version_int,
-        'sso': settings.app.sso,
-    })
-
 @app.app.route('/subscription/styles/<plan>/<ver>.css', methods=['GET'])
 @auth.session_auth
 def subscription_styles_get(plan, ver):
