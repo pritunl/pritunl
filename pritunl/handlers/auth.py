@@ -270,8 +270,8 @@ def auth_delete():
     })
 
 @app.app.route('/state', methods=['GET'])
-@auth.session_auth
-def subscription_state_get():
+@auth.session_light_auth
+def auth_state_get():
     return utils.jsonify({
         'super_user': flask.g.administrator.super_user,
         'csrf_token': auth.get_token(),
