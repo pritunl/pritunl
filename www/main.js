@@ -129,13 +129,14 @@ require([
   'jquery',
   'underscore',
   'backbone',
+  'models/state',
   'models/subscription',
   'collections/event',
   'views/header',
   'routers/main',
   'initialize'
-], function($, _, Backbone, SubscriptionModel, EventCollection, HeaderView,
-    mainRouter, initialize) {
+], function($, _, Backbone, StateModel, SubscriptionModel, EventCollection,
+    HeaderView, mainRouter, initialize) {
   'use strict';
 
   initialize();
@@ -510,9 +511,8 @@ require([
     mainRouter.initialize();
   };
 
-  var model = new SubscriptionModel();
+  var model = new StateModel();
   model.fetch({
-    url: '/subscription/state',
     success: function(model) {
       window.subActive = model.get('active');
       window.subPlan = model.get('plan');
@@ -520,6 +520,7 @@ require([
       window.theme = model.get('theme');
       window.superUser = model.get('super_user');
       window.sso = model.get('sso');
+      window.csrfToken = model.get('csrf_token');
 
       if (window.subActive && window.theme === 'dark') {
         $('body').addClass('dark');
