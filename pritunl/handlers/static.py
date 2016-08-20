@@ -71,7 +71,7 @@ def robots_static_get():
 @app.app.route('/', methods=['GET'])
 @auth.open_auth
 def index_static_get():
-    if not auth.check_session():
+    if not auth.check_session(False):
         return utils.redirect('login')
 
     static_file = static.StaticFile(settings.conf.www_path,
@@ -82,7 +82,7 @@ def index_static_get():
 @app.app.route('/login', methods=['GET'])
 @auth.open_auth
 def login_static_get():
-    if auth.check_session():
+    if auth.check_session(False):
         return utils.redirect('')
     static_file = static.StaticFile(settings.conf.www_path,
         'login.html', cache=False, gzip=False)
