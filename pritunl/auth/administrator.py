@@ -308,7 +308,7 @@ def find_user(username=None, token=None):
 
     return Administrator(spec=spec)
 
-def check_session():
+def check_session(csrf_check):
     auth_token = flask.request.headers.get('Auth-Token', None)
     if auth_token:
         auth_timestamp = flask.request.headers.get('Auth-Timestamp', None)
@@ -368,6 +368,15 @@ def check_session():
         admin_id = utils.ObjectId(admin_id)
         session_id = flask.session.get('session_id')
 
+        if csrf_check:
+            csrf_token = flask.request.headers.get('Csrf-Token', None)
+            if flask.request.method != 'GET' and \
+                    not validate_token(csrf_token):
+                logger.error('CSRF check failed', 'auth',
+                    path=flask.request.path,
+                )
+                return False
+
         administrator = get_user(admin_id, session_id)
         if not administrator:
             return False
@@ -394,20 +403,6 @@ def check_session():
 
     flask.g.administrator = administrator
     return True
-
-def check_session_csrf():
-    auth_token = flask.request.headers.get('Auth-Token', None)
-    csrf_token = flask.request.headers.get('Csrf-Token', None)
-
-    if not auth_token and \
-            flask.request.method != 'GET' and \
-            not validate_token(csrf_token):
-        logger.error('CSRF check failed', 'auth',
-            path=flask.request.path,
-        )
-        return False
-
-    return check_session()
 
 def get_by_username(username, remote_addr=None):
     username = utils.filter_str(username).lower()
