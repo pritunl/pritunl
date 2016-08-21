@@ -373,6 +373,7 @@ def check_session(csrf_check):
             if flask.request.method != 'GET' and \
                     not validate_token(csrf_token):
                 logger.error('CSRF check failed', 'auth',
+                    method=flask.request.method,
                     path=flask.request.path,
                 )
                 return False
