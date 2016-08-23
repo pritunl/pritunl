@@ -15,7 +15,6 @@ import flask
 import datetime
 import hmac
 import pymongo
-import uuid
 import struct
 
 class Administrator(mongo.MongoObject):
