@@ -149,23 +149,6 @@ class Administrator(mongo.MongoObject):
             )
             return False
 
-        # sso_admin = settings.app.sso_admin
-        # if settings.app.sso and DUO_AUTH in settings.app.sso and sso_admin:
-        #     allow, _ = sso.auth_duo(
-        #         sso_admin,
-        #         strong=True,
-        #         ipaddr=remote_addr,
-        #         type='Administrator'
-        #     )
-        #     if not allow:
-        #         self.audit_event(
-        #             'admin_auth',
-        #             'Administrator login failed, ' +
-        #                 'failed secondary authentication',
-        #             remote_addr=remote_addr,
-        #         )
-        #         return False
-
         self.audit_event(
             'admin_auth',
             'Administrator login successful',
