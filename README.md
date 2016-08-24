@@ -46,8 +46,8 @@ $ nano /etc/pacman.conf
 [pritunl]
 Server = http://repo.pritunl.com/stable/pacman
 
-$ pacman-key --keyserver hkp://keyserver.ubuntu.com -r CF8E292A
-$ pacman-key --lsign-key CF8E292A
+$ pacman-key --keyserver hkp://keyserver.ubuntu.com -r 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+$ pacman-key --lsign-key 7568D9BB55FF9E5287D586017AE645C0CF8E292A
 $ pacman -Sy
 $ pacman -S pritunl mongodb
 $ systemctl start mongodb pritunl
@@ -72,8 +72,8 @@ baseurl=http://repo.pritunl.com/stable/yum/centos/7/
 gpgcheck=1
 enabled=1
 
-$ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys CF8E292A
-$ gpg --armor --export CF8E292A > key.tmp; sudo rpm --import key.tmp; rm -f key.tmp
+$ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+$ gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A > key.tmp; sudo rpm --import key.tmp; rm -f key.tmp
 $ sudo yum install pritunl mongodb-org
 $ sudo service mongod start
 $ sudo start pritunl
@@ -100,8 +100,8 @@ gpgcheck=1
 enabled=1
 
 $ yum install epel-release
-$ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys CF8E292A
-$ gpg --armor --export CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
+$ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+$ gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
 $ yum install pritunl mongodb-org
 $ systemctl start mongod pritunl
 $ systemctl enable mongod pritunl
@@ -120,8 +120,8 @@ gpgcheck=1
 enabled=1
 
 $ yum install gpg
-$ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys CF8E292A
-$ gpg --armor --export CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
+$ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+$ gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
 $ yum install pritunl mongodb-server
 $ systemctl start mongod pritunl
 $ systemctl enable mongod pritunl
@@ -140,8 +140,8 @@ gpgcheck=1
 enabled=1
 
 $ yum install gpg
-$ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys CF8E292A
-$ gpg --armor --export CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
+$ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+$ gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
 $ yum install pritunl mongodb-server
 $ systemctl start mongod pritunl
 $ systemctl enable mongod pritunl
@@ -156,8 +156,8 @@ deb http://repo.mongodb.org/apt/debian wheezy/mongodb-org/3.2 main
 $ nano /etc/apt/sources.list.d/pritunl.list
 deb http://repo.pritunl.com/stable/apt wheezy main
 
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv EA312927
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
+$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 42F3E95A2C4F08279C4960ADD68FA50FEA312927
+$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
 $ apt-get update
 $ apt-get install pritunl mongodb-org
 $ service pritunl start
@@ -172,8 +172,8 @@ deb http://repo.mongodb.org/apt/debian wheezy/mongodb-org/3.2 main
 $ nano /etc/apt/sources.list.d/pritunl.list
 deb http://repo.pritunl.com/stable/apt jessie main
 
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv EA312927
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
+$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 42F3E95A2C4F08279C4960ADD68FA50FEA312927
+$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
 $ apt-get update
 $ apt-get install pritunl mongodb-org
 $ systemctl start mongod pritunl
@@ -189,8 +189,8 @@ deb http://repo.mongodb.org/apt/ubuntu precise/mongodb-org/3.2 multiverse
 $ nano /etc/apt/sources.list.d/pritunl.list
 deb http://repo.pritunl.com/stable/apt precise main
 
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv EA312927
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
+$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 42F3E95A2C4F08279C4960ADD68FA50FEA312927
+$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
 $ apt-get update
 $ apt-get install pritunl mongodb-org
 $ service pritunl start
@@ -205,8 +205,8 @@ deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.2 multiverse
 $ nano /etc/apt/sources.list.d/pritunl.list
 deb http://repo.pritunl.com/stable/apt trusty main
 
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv EA312927
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
+$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 42F3E95A2C4F08279C4960ADD68FA50FEA312927
+$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
 $ apt-get update
 $ apt-get install pritunl mongodb-org
 $ service pritunl start
@@ -233,8 +233,8 @@ ExecStart=/usr/bin/mongod --config /etc/mongod.conf
 [Install]
 WantedBy=multi-user.target
 
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv EA312927
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
+$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 42F3E95A2C4F08279C4960ADD68FA50FEA312927
+$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
 $ apt-get update
 $ apt-get install pritunl mongodb-org
 $ systemctl start pritunl mongod
@@ -247,7 +247,7 @@ $ systemctl enable pritunl mongod
 $ nano /etc/apt/sources.list.d/pritunl.list
 deb http://repo.pritunl.com/stable/apt yakkety main
 
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
+$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
 $ apt-get update
 $ apt-get install pritunl mongodb-server
 $ systemctl start pritunl mongodb
