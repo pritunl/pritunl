@@ -637,6 +637,8 @@ class ServerInstance(object):
     @interrupter
     def _keep_alive_thread(self):
         try:
+            error_count = 0
+
             while not self.interrupt:
                 try:
                     doc = self.collection.find_and_modify({
@@ -664,9 +666,20 @@ class ServerInstance(object):
                         else:
                             time.sleep(0.1)
                             continue
+                    else:
+                        error_count = 0
 
                     yield
                 except:
+                    error_count += 1
+                    if error_count > 3 and self.stop_process():
+                        logger.exception(
+                            'Failed to update server ping, stopping server',
+                            'server',
+                            server_id=self.server.id,
+                        )
+                        break
+
                     logger.exception('Failed to update server ping', 'server',
                         server_id=self.server.id,
                     )
