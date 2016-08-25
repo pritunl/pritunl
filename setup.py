@@ -8,20 +8,20 @@ import fileinput
 
 VERSION = '1.25.1075.19'
 PATCH_DIR = 'build'
-install_upstart = True
 install_systemd = True
+install_upstart = False
 install_sysvinit = False
 
 prefix = sys.prefix
 for arg in copy.copy(sys.argv):
     if arg.startswith('--prefix'):
         prefix = os.path.normpath(shlex.split(arg)[0].split('=')[-1])
-    elif arg == '--no-upstart':
-        sys.argv.remove('--no-upstart')
-        install_upstart = False
     elif arg == '--no-systemd':
         sys.argv.remove('--no-systemd')
         install_systemd = False
+    elif arg == '--upstart':
+        sys.argv.remove('--upstart')
+        install_upstart = True
     elif arg == '--sysvinit':
         sys.argv.remove('--sysvinit')
         install_sysvinit = True
