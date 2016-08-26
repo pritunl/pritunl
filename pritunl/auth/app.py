@@ -17,7 +17,7 @@ def session_light_auth(call):
             return flask.abort(401)
         flask.g.authed = True
         return call(*args, **kwargs)
-    _wrapped.__name__ = '%s_session_auth' % call.__name__
+    _wrapped.__name__ = '%s_session_light_auth' % call.__name__
     return _wrapped
 
 def open_auth(call):
