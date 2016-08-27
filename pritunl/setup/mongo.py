@@ -322,8 +322,19 @@ def setup_mongo():
         ).commit()
 
     secret_key = settings.app.cookie_secret
+    secret_key2 = settings.app.cookie_secret2
+    settings_commit = False
+
     if not secret_key:
+        settings_commit = True
         secret_key = utils.rand_str(64)
         settings.app.cookie_secret = secret_key
+
+    if not secret_key2:
+        settings_commit = True
+        settings.app.cookie_secret2 = utils.rand_str(64)
+
+    if settings_commit:
         settings.commit()
+
     app.app.secret_key = secret_key.encode()
