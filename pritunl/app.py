@@ -107,6 +107,9 @@ def after_request(response):
     response.headers.add('Query-Count', db_reads)
     response.headers.add('Write-Count', db_writes)
 
+    response.headers.add('X-Frame-Options', 'DENY')
+    response.headers.add('X-Content-Type-Options', 'nosniff')
+
     if not flask.request.path.startswith('/event'):
         monitoring.insert_point('requests', {
             'host': settings.local.host.name,
