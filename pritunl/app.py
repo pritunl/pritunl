@@ -136,11 +136,6 @@ def _run_server(restart):
 
     logger.info('Starting server', 'app')
 
-    if settings.app.ssl:
-        app.config.update(
-            SESSION_COOKIE_SECURE=True,
-        )
-
     app_server = CherryPyWSGIServerLogged(
         ('localhost', settings.app.server_internal_port),
         app,
@@ -156,6 +151,10 @@ def _run_server(restart):
     internal_addr = 'localhost:%s' % settings.app.server_internal_port
 
     if settings.app.server_ssl:
+        app.config.update(
+            SESSION_COOKIE_SECURE=True,
+        )
+
         setup_server_cert()
 
         server_cert_path, server_key_path = utils.write_server_cert(
