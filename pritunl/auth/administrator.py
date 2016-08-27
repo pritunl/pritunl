@@ -350,6 +350,13 @@ def check_session(csrf_check):
         admin_id = utils.ObjectId(admin_id)
         session_id = flask.session.get('session_id')
 
+        signature = flask.session.get('signature')
+        if not signature:
+            return False
+
+        if not utils.check_flask_sig():
+            return False
+
         if csrf_check:
             csrf_token = flask.request.headers.get('Csrf-Token', None)
             if flask.request.method != 'GET' and \
@@ -380,6 +387,7 @@ def check_session(csrf_check):
             return False
 
         flask.session['timestamp'] = int(utils.time_now())
+        utils.set_flask_sig()
 
     if administrator.disabled:
         return False
