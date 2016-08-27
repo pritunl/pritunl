@@ -250,6 +250,8 @@ def auth_session_post():
     if not settings.app.server_ssl:
         flask.session['source'] = remote_addr
 
+    utils.set_flask_sig()
+
     return utils.jsonify({
         'authenticated': True,
         'default': admin.default or False,
