@@ -45,7 +45,7 @@ def setup_mongo():
                 client = pymongo.MongoClient(
                     settings.conf.mongodb_uri,
                     connectTimeoutMS=MONGO_CONNECT_TIMEOUT,
-                    read_preference=read_pref
+                    read_preference=read_pref,
                 )
             else:
                 client = pymongo.MongoClient(
