@@ -68,6 +68,10 @@ def after_request(response):
         int(flask.g.query_time * 1000))
     response.headers.add('Query-Count', flask.g.query_count)
     response.headers.add('Write-Count', flask.g.write_count)
+
+    response.headers.add('X-Frame-Options', 'DENY')
+    response.headers.add('X-Content-Type-Options', 'nosniff')
+
     return response
 
 @app.route('/', methods=['GET'])
