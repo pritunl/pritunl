@@ -672,7 +672,7 @@ class ServerInstance(object):
                     yield
                 except:
                     error_count += 1
-                    if error_count >= 3 and self.stop_process():
+                    if error_count >= 2 and self.stop_process():
                         logger.exception(
                             'Failed to update server ping, stopping server',
                             'server',
