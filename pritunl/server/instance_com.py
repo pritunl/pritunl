@@ -247,7 +247,10 @@ class ServerInstanceCom(object):
         except GeneratorExit:
             raise
         except:
-            self.push_output('ERROR Management rate thread error')
+            try:
+                self.push_output('ERROR Management rate thread error')
+            except:
+                pass
             logger.exception('Error in management rate thread', 'server',
                 server_id=self.server.id,
                 instance_id=self.instance.id,
