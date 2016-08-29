@@ -45,12 +45,14 @@ def setup_mongo():
                 client = pymongo.MongoClient(
                     settings.conf.mongodb_uri,
                     connectTimeoutMS=MONGO_CONNECT_TIMEOUT,
+                    socketTimeoutMS=MONGO_SOCKET_TIMEOUT,
                     read_preference=read_pref,
                 )
             else:
                 client = pymongo.MongoClient(
                     settings.conf.mongodb_uri,
                     connectTimeoutMS=MONGO_CONNECT_TIMEOUT,
+                    socketTimeoutMS=MONGO_SOCKET_TIMEOUT,
                 )
 
             break
@@ -79,12 +81,14 @@ def setup_mongo():
                     secondary_client = pymongo.MongoClient(
                         settings.conf.mongodb_uri,
                         connectTimeoutMS=MONGO_CONNECT_TIMEOUT,
+                        socketTimeoutMS=MONGO_SOCKET_TIMEOUT,
                         read_preference=read_pref,
                     )
                 else:
                     secondary_client = pymongo.MongoClient(
                         settings.conf.mongodb_uri,
                         connectTimeoutMS=MONGO_CONNECT_TIMEOUT,
+                        socketTimeoutMS=MONGO_SOCKET_TIMEOUT,
                     )
 
                 break
