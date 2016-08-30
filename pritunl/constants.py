@@ -525,10 +525,6 @@ SHUT_DOWN = 'shut_down'
 SERVER = 'server'
 NODE_SERVER = 'node_server'
 
-ALL_TRAFFIC = 'all_traffic'
-LOCAL_TRAFFIC = 'local_traffic'
-VPN_TRAFFIC = 'vpn_traffic'
-
 CERT_CA = 'ca'
 CERT_SERVER = 'server'
 CERT_CLIENT = 'client'
