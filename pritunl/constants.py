@@ -522,9 +522,6 @@ CONF_TEMP_EXT = '.tmp'
 LOG_ARCHIVE_NAME = 'pritunl_log'
 SHUT_DOWN = 'shut_down'
 
-SERVER = 'server'
-NODE_SERVER = 'node_server'
-
 CERT_CA = 'ca'
 CERT_SERVER = 'server'
 CERT_CLIENT = 'client'
