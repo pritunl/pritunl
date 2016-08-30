@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Improve server reliability
 Packaging improvements
 
 Version 1.25.1075.19 2016-08-22
