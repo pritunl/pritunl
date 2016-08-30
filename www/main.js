@@ -456,10 +456,13 @@ require([
 
   var append = $.fn.append;
   $.fn.append = function() {
-    if (this[0].className === 'alerts-container' &&
-        $(this).children().length > 2) {
-      for (var i = 0; i < $(this).children().length - 2; i++) {
-        $(this).children().first().find('.close').click();
+    if (this[0].className === 'alerts-container') {
+      var len = $(this).children().length;
+      if (len > 2) {
+        var children = $(this).children();
+        for (var i = 0; i < len - 2; i++) {
+          $(children[i]).find('.close').click();
+        }
       }
     }
     return append.apply(this, arguments);
