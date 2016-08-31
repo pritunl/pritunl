@@ -890,6 +890,9 @@ SETUP_KEY_INVALID_MSG = 'Setup key is invalid.'
 DUO_USER_INVALID = 'duo_user_invalid'
 DUO_USER_INVALID_MSG = 'Username is invalid.'
 
+SSO_ORG_NULL = 'sso_org_null'
+SSO_ORG_NULL_MSG = 'The SSO organization must be set.'
+
 NO_ADMINS_ENABLED = 'no_admins_enabled'
 NO_ADMINS_ENABLED_MSG = 'At least one super administrator must be enabled.'
 
