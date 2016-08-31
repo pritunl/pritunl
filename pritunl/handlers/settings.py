@@ -402,6 +402,12 @@ def settings_put():
         if sso_org != settings.app.sso_org:
             changes.add('sso')
 
+        if settings.app.sso and not sso_org:
+            return utils.jsonify({
+                'error': SSO_ORG_NULL,
+                'error_msg': SSO_ORG_NULL_MSG,
+            }, 400)
+
         settings.app.sso_org = sso_org
 
     if 'sso_saml_url' in flask.request.json:
