@@ -109,11 +109,6 @@ class Organization(mongo.MongoObject):
             ca_user.initialize()
             ca_user.commit()
 
-        logger.debug('Init ca_user', 'organization',
-            org_id=self.id,
-            user_id=ca_user.id,
-        )
-
         self.ca_private_key = ca_user.private_key
         self.ca_certificate = ca_user.certificate
 
@@ -138,10 +133,6 @@ class Organization(mongo.MongoObject):
         mongo.MongoObject.commit(self, *args, **kwargs)
 
         if not exists:
-            logger.debug('Fill new org pool', 'organization',
-                org_id=self.id,
-            )
-
             thread = threading.Thread(
                 target=pooler.fill,
                 args=(
@@ -357,11 +348,6 @@ class Organization(mongo.MongoObject):
         usr = user.User(org=self, type=type, **kwargs)
         usr.queue_initialize(block=block,
             priority=HIGH if type in (CERT_SERVER, CERT_CLIENT) else None)
-
-        logger.debug('Queued user init', 'organization',
-            org_id=self.id,
-            user_id=usr.id,
-        )
 
         return usr
 
