@@ -717,9 +717,11 @@ class Server(mongo.MongoObject):
     def get_cache_key(self, suffix=None):
         if not self.cache_prefix:
             raise AttributeError('Cached config object requires cache_prefix')
+
         key = self.cache_prefix + '-' + self.id
         if suffix:
             key += '-%s' % suffix
+
         return key
 
     def get_ip_addr(self, org_id, user_id):
