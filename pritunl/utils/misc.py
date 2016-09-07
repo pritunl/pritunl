@@ -380,7 +380,6 @@ def sync_public_ip(attempts=1, timeout=5, update=False):
         if i:
             time.sleep(3)
             logger.info('Retrying get public ip address', 'utils')
-        logger.debug('Getting public ip address', 'utils')
         try:
             request = urllib2.Request(
                 settings.app.public_ip_server)
@@ -390,7 +389,6 @@ def sync_public_ip(attempts=1, timeout=5, update=False):
         except:
             pass
 
-    logger.debug('Getting public ipv6 address', 'utils')
     try:
         request = urllib2.Request(
             settings.app.public_ip6_server)
