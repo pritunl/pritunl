@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.25.1092.73 2016-09-08
+-------------------------------
 
 Fix web console display issue
 
