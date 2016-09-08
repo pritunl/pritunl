@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Packaging updates
+
 Version 1.25.1084.95 2016-08-31
 -------------------------------
 
