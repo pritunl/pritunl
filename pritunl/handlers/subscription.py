@@ -26,7 +26,7 @@ def subscription_get():
     return utils.jsonify(resp)
 
 @app.app.route('/subscription/styles/<plan>/<ver>.css', methods=['GET'])
-@auth.session_auth
+@auth.session_light_auth
 def subscription_styles_get(plan, ver):
     try:
         styles = settings.local.sub_styles[plan]
