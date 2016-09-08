@@ -53,7 +53,7 @@ def post_git_asset(release_id, file_name, file_path):
         headers={
             'Authorization': 'token %s' % github_token,
             'Content-Type': 'application/octet-stream',
-            'Content-Size': file_size,
+            'Content-Size': str(file_size),
         },
         params={
             'name': file_name,
