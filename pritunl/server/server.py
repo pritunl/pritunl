@@ -557,9 +557,11 @@ class Server(mongo.MongoObject):
                 virtual_vpc_id = route.get('vpc_id', None)
             else:
                 if route_network in routes_dict:
-                    routes_dict[route_network]['nat'] = route.get('nat', True)
-                    routes_dict[route_network]['nat_interface'] = route.get(
-                        'nat_interface')
+                    if not route.get('server_link'):
+                        routes_dict[route_network]['nat'] = route.get(
+                            'nat', True)
+                        routes_dict[route_network]['nat_interface'] = \
+                            route.get('nat_interface')
                     routes_dict[route_network]['vpc_region'] = route.get(
                         'vpc_region')
                     routes_dict[route_network]['vpc_id'] = route.get(
