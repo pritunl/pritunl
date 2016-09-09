@@ -657,8 +657,9 @@ class Server(mongo.MongoObject):
 
         for route in self.routes:
             if route['network'] == network:
-                route['nat'] = nat_route
-                route['nat_interface'] = nat_interface
+                if not server_link:
+                    route['nat'] = nat_route
+                    route['nat_interface'] = nat_interface
                 route['vpc_region'] = vpc_region
                 route['vpc_id'] = vpc_id
                 route['server_link'] = server_link
