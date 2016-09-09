@@ -123,12 +123,13 @@ def main(default_conf=None):
         if key_str:
             val = getattr(group, key_str)
             print '%s.%s = %s' % (group_str, key_str,
-                json.dumps(val))
+                json.dumps(val, default=lambda x: str(x)))
 
         else:
             for field in group.fields:
                 val = getattr(group, field)
-                print '%s.%s = %s' % (group_str, field, json.dumps(val))
+                print '%s.%s = %s' % (group_str, field,
+                    json.dumps(val, default=lambda x: str(x)))
 
         sys.exit(0)
     elif cmd == 'set':
@@ -164,7 +165,7 @@ def main(default_conf=None):
         time.sleep(.3)
 
         print '%s.%s = %s' % (group_str, key_str,
-            json.dumps(getattr(group, key_str)))
+            json.dumps(getattr(group, key_str), default=lambda x: str(x)))
 
         sys.exit(0)
     elif cmd == 'unset':
@@ -186,7 +187,7 @@ def main(default_conf=None):
         time.sleep(.3)
 
         print '%s.%s = %s' % (group_str, key_str,
-            json.dumps(getattr(group, key_str)))
+            json.dumps(getattr(group, key_str), default=lambda x: str(x)))
 
         sys.exit(0)
     elif cmd == 'set-mongodb':
