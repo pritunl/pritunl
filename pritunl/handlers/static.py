@@ -88,35 +88,35 @@ def login_static_get():
     static_file = static.StaticFile(settings.conf.www_path,
         'login.html', cache=False, gzip=False)
 
-    bodyClass = ''
+    body_class = ''
 
     if settings.local.sub_active:
         if settings.app.theme == 'dark':
-            bodyClass += 'dark '
+            body_class += 'dark '
 
         if settings.local.sub_plan == 'enterprise':
             if not settings.app.sso:
                 pass
             elif settings.app.sso in (SAML_AUTH, SAML_DUO_AUTH):
-                bodyClass += 'sso-saml '
+                body_class += 'sso-saml '
             elif SAML_OKTA_AUTH in settings.app.sso:
-                bodyClass += 'sso-okta '
+                body_class += 'sso-okta '
             elif SAML_ONELOGIN_AUTH in settings.app.sso:
-                bodyClass += 'sso-onelogin '
+                body_class += 'sso-onelogin '
             elif GOOGLE_AUTH in settings.app.sso:
-                bodyClass += 'sso-google '
+                body_class += 'sso-google '
             elif SLACK_AUTH in settings.app.sso:
-                bodyClass += 'sso-slack '
+                body_class += 'sso-slack '
             elif settings.app.sso == DUO_AUTH:
-                bodyClass += 'sso-duo '
+                body_class += 'sso-duo '
 
             if settings.app.sso and DUO_AUTH in settings.app.sso:
-                bodyClass += 'sso-duo-auth '
+                body_class += 'sso-duo-auth '
 
     if settings.app.demo_mode:
-        bodyClass += 'demo '
+        body_class += 'demo '
 
     static_file.data = static_file.data.replace(
-        '<body>', '<body class="' + bodyClass + '">')
+        '<body>', '<body class="' + body_class + '">')
 
     return static_file.get_response()
