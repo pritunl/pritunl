@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with cli setting get command
+
 Version 1.25.1092.73 2016-09-08
 -------------------------------
 
