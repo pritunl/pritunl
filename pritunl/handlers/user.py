@@ -133,7 +133,6 @@ def user_get(org_id, user_id=None, page=None):
             users_servers[usr.id][svr.id] = data
 
         user_dict['servers'] = sorted(server_data, key=lambda x: x['name'])
-
         users.append(user_dict)
 
     clients_collection = mongo.get_collection('clients')
