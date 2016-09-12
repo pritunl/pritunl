@@ -73,7 +73,7 @@ def main(default_conf=None):
         setup.setup_db()
         utils.set_db_ver(pritunl.__version__, MIN_DATABASE_VER)
 
-        time.sleep(.3)
+        time.sleep(.2)
         print 'Database version reset to %s' % pritunl.__version__
 
         sys.exit(0)
@@ -84,7 +84,7 @@ def main(default_conf=None):
         setup.setup_db()
         username, password = auth.reset_password()
 
-        time.sleep(.3)
+        time.sleep(.2)
         print 'Administrator password successfully reset:\n' + \
             '  username: "%s"\n  password: "%s"' % (username, password)
 
@@ -97,7 +97,7 @@ def main(default_conf=None):
         settings.conf.mongodb_uri = None
         settings.conf.commit()
 
-        time.sleep(.3)
+        time.sleep(.2)
         print 'Database configuration successfully reset'
 
         sys.exit(0)
@@ -162,7 +162,7 @@ def main(default_conf=None):
         else:
             settings.commit()
 
-        time.sleep(.3)
+        time.sleep(.2)
 
         print '%s.%s = %s' % (group_str, key_str,
             json.dumps(getattr(group, key_str), default=lambda x: str(x)))
@@ -184,7 +184,7 @@ def main(default_conf=None):
 
         settings.commit()
 
-        time.sleep(.3)
+        time.sleep(.2)
 
         print '%s.%s = %s' % (group_str, key_str,
             json.dumps(getattr(group, key_str), default=lambda x: str(x)))
@@ -203,7 +203,7 @@ def main(default_conf=None):
         settings.conf.mongodb_uri = mongodb_uri
         settings.conf.commit()
 
-        time.sleep(.3)
+        time.sleep(.2)
         print 'Database configuration successfully set'
 
         sys.exit(0)
@@ -216,7 +216,7 @@ def main(default_conf=None):
         settings.app.server_key = None
         settings.commit()
 
-        time.sleep(.3)
+        time.sleep(.2)
         print 'Server ssl certificate successfully reset'
 
         sys.exit(0)
