@@ -745,7 +745,7 @@ class Server(mongo.MongoObject):
                 user_id=user_id)
 
     def get_sync_remotes(self):
-        remotes = []
+        remotes = set()
         spec = {
             '_id': {'$in': self.hosts},
         }
@@ -760,14 +760,14 @@ class Server(mongo.MongoObject):
             address = doc.get('auto_public_host') or \
                 doc['public_address'] or doc['auto_public_address']
             if settings.conf.port == 443:
-                remotes.append('https://%s' % address)
+                remotes.add('https://%s' % address)
             else:
-                remotes.append('https://%s:%s' % (
+                remotes.add('https://%s:%s' % (
                     address,
                     settings.conf.port,
                 ))
 
-        return remotes
+        return list(remotes)
 
     def get_key_remotes(self, include_link_addr=False):
         remotes = set()
