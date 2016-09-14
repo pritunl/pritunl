@@ -16,7 +16,6 @@ def _check_updates():
             continue
 
         try:
-            logger.debug('Checking notifications...', 'runners')
             request = urllib2.Request(
                 settings.app.notification_server +
                 '/%s' % settings.local.version_int)
