@@ -693,7 +693,7 @@ MISSING_PARAMS = 'missing_params'
 MISSING_PARAMS_MSG = 'Missing required parameters.'
 
 DEMO_BLOCKED = 'demo_blocked'
-DEMO_BLOCKED_MSG = 'Not aviaible in demo.'
+DEMO_BLOCKED_MSG = 'Not available in demo.'
 
 AUTH_INVALID = 'auth_invalid'
 AUTH_INVALID_MSG = 'Authentication credentials are not valid.'
