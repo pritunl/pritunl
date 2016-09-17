@@ -106,10 +106,6 @@ class ServerInstance(object):
             self.interface = None
 
     def generate_ovpn_conf(self):
-        logger.debug('Generating server ovpn conf', 'server',
-            server_id=self.server.id,
-        )
-
         if not self.server.primary_organization or \
                 not self.server.primary_user:
             self.server.create_primary_user()
@@ -315,10 +311,6 @@ class ServerInstance(object):
             ovpn_conf.write(server_conf)
 
     def enable_ip_forwarding(self):
-        logger.debug('Enabling ip forwarding', 'server',
-            server_id=self.server.id,
-        )
-
         try:
             utils.check_output_logged(
                 ['sysctl', '-w', 'net.ipv4.ip_forward=1'])
@@ -834,10 +826,6 @@ class ServerInstance(object):
 
     def _run_thread(self, send_events):
         from pritunl.server.utils import get_by_id
-
-        logger.debug('Starting ovpn process', 'server',
-            server_id=self.server.id,
-        )
 
         self.resources_acquire()
         try:
