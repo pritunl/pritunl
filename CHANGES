@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Web interface improvements
+Fix issue with reset-password
 
 Version 1.25.1093.62 2016-09-09
 -------------------------------
