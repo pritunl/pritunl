@@ -23,6 +23,7 @@ define([
       var localAddress = this.$('.local-address input').val() || null;
       var localAddress6 = this.$('.local-address6 input').val() || null;
       var linkAddress = this.$('.link-address input').val() || null;
+      var syncAddress = this.$('.sync-address input').val() || null;
       var availabilityGroup = this.$(
           '.availability-group input').val() || null;
       var instanceId = this.$('.instance-id input').val() || null;
@@ -35,7 +36,8 @@ define([
         routed_subnet6: routedSubnet6,
         local_address: localAddress,
         local_address6: localAddress6,
-        link_address: linkAddress,
+        link_address: syncAddress,
+        sync_address: linkAddress,
         availability_group: availabilityGroup,
         instance_id: instanceId
       }, {
