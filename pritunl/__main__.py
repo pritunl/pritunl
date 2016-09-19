@@ -151,7 +151,16 @@ def main(default_conf=None):
             group = getattr(settings, group_str)
 
         val_str = args[2]
-        val = json.loads(val_str)
+        """ json.loads is being used to manipulate/validate incoming arguments
+            it doesn't deal with strings that are not already quoted as json strings
+            so if it generates an exception try enconding the value with JSONEncoder
+            we still want to pass in bool/ints directly to json.loads
+        """
+        try:
+            val = json.loads(val_str)
+        except ValueError as e:
+            val = json.loads(json.JSONEncoder().encode(val_str))
+
         setattr(group, key_str, val)
 
         if group_str == 'host':
