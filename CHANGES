@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Add sync address to host settings
 Web interface improvements
 Fix issue with reset-password
 
