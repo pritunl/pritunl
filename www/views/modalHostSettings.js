@@ -36,8 +36,8 @@ define([
         routed_subnet6: routedSubnet6,
         local_address: localAddress,
         local_address6: localAddress6,
-        link_address: syncAddress,
-        sync_address: linkAddress,
+        link_address: linkAddress,
+        sync_address: syncAddress,
         availability_group: availabilityGroup,
         instance_id: instanceId
       }, {
