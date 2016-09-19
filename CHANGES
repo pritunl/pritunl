@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with host settings
+
 Version 1.25.1103.15 2016-09-19
 -------------------------------
 
