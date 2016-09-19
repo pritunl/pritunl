@@ -124,6 +124,11 @@ def host_put(hst=None):
         if link_address != hst.link_addr:
             hst.link_address = link_address
 
+    if 'sync_address' in flask.request.json:
+        sync_address = utils.filter_str(
+            flask.request.json['sync_address'])
+        hst.sync_address = sync_address
+
     if 'availability_group' in flask.request.json:
         hst.availability_group = utils.filter_str(
             flask.request.json['availability_group']) or DEFAULT
