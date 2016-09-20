@@ -4,11 +4,17 @@ import logging
 
 class LogFormatter(logging.Formatter):
     def format(self, record):
+        from pritunl import plugins
+
         try:
             try:
                 host_name = settings.local.host.name
             except AttributeError:
                 host_name = 'undefined'
+            try:
+                host_id = settings.local.host_id
+            except AttributeError:
+                host_id = 'undefined'
 
             formatted_record = '[' + host_name + ']'
 
@@ -22,7 +28,15 @@ class LogFormatter(logging.Formatter):
                     record.msg = 'Unreadable'
                     formatted_record += logging.Formatter.format(self, record)
 
+            kwargs = {
+                'message': formatted_record,
+                'host_id': host_id,
+                'host_name': host_name,
+            }
+
             if hasattr(record, 'data') and record.data:
+                kwargs.update(record.data)
+
                 traceback = record.data.pop('traceback', None)
                 stdout = record.data.pop('stdout', None)
                 stderr = record.data.pop('stderr', None)
@@ -53,6 +67,11 @@ class LogFormatter(logging.Formatter):
                     formatted_record += \
                         '\nTraceback (most recent call last):\n'
                     formatted_record += ''.join(traceback).rstrip('\n')
+
+            plugins.event(
+                'log_entry',
+                **kwargs
+            )
         except:
             from pritunl import logger
             logger.exception('Log format error')
