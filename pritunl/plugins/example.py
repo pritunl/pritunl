@@ -47,6 +47,10 @@ def user_authenticate(host_id, host_name, user_name, password, remote_ip,
     else:
         return False, None, None
 
+# Called on log entries. The kwargs includes variables from the log event.
+def log_entry(host_id, host_name, message, **kwargs):
+    pass
+
 # [SYNCHRONOUS] Called after a user has authenticated with SSO when
 # loging into the web console. Must return True or False to accept auth
 # request and an organization name or None. If an organization name is
