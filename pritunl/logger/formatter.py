@@ -70,7 +70,7 @@ class LogFormatter(logging.Formatter):
 
             plugins.event(
                 'log_entry',
-                **kwargs
+                **kwargs,
             )
         except:
             from pritunl import logger
