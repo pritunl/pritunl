@@ -124,8 +124,9 @@ class Clients(object):
             for dns_server in self.server.dns_servers:
                 client_conf += 'push "dhcp-option DNS %s"\n' % dns_server
             if self.server.search_domain:
-                client_conf += 'push "dhcp-option DOMAIN %s"\n' % (
-                    self.server.search_domain)
+                for domain in self.server.search_domain.split(','):
+                    client_conf += 'push "dhcp-option DOMAIN %s"\n' % (
+                        domain.strip())
 
             network_links = user.get_network_links()
             for network_link in network_links:
