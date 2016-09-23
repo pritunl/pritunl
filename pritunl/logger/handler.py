@@ -26,6 +26,7 @@ class LogHandler(logging.Handler):
         log_handler.setLevel(logging.DEBUG)
         log_handler.setFormatter(LogFormatter(
             '[%(asctime)s][%(levelname)s] %(message)s'))
+
         return log_handler
 
     def emit(self, record):
