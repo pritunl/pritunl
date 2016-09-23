@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add support for multiple search domains
+
 Version 1.25.1105.67 2016-09-21
 -------------------------------
 
