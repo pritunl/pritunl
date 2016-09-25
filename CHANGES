@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.25.1109.79 2016-09-25
+-------------------------------
 
 Fix issue with server settings
 
