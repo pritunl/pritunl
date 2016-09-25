@@ -274,9 +274,10 @@ def server_put_post(server_id=None):
     search_domain = None
     search_domain_def = False
     if 'search_domain' in flask.request.json:
-        search_domain_def = True
-        search_domain = ', '.join([utils.filter_str(x.strip()) for x in
-            flask.request.json['search_domain'].split(',')])
+        if flask.request.json['search_domain'] is not None:
+            search_domain_def = True
+            search_domain = ', '.join([utils.filter_str(x.strip()) for x in
+                flask.request.json['search_domain'].split(',')])
 
     inter_client = True
     inter_client_def = False
