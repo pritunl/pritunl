@@ -16,6 +16,10 @@ class LicenseInvalid(BaseError):
     pass
 
 
+class OtpRequred(BaseError):
+    pass
+
+
 class NetworkInvalid(BaseError):
     pass
 
