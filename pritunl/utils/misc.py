@@ -172,8 +172,7 @@ def check_call_silent(*args, **kwargs):
     if 'stdout' in kwargs or 'stderr' in kwargs:
         raise ValueError('Output arguments not allowed, it will be overridden')
 
-    process = subprocess.Popen(stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-        *args, **kwargs)
+    process = subprocess.Popen(stdout=_null, stderr=_null, *args, **kwargs)
     return_code = process.wait()
 
     if return_code:
@@ -270,7 +269,7 @@ def check_openssl():
 def check_iptables_wait():
     try:
         subprocess.check_call(['iptables', '--wait', '-L', '-n'],
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            stdout=_null, stderr=_null)
         return True
     except:
         pass
