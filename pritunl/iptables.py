@@ -395,8 +395,8 @@ class Iptables(object):
             ])
             self._accept.append([
                 'FORWARD',
-                '-s', route,
                 '-o', self.virt_interface,
+                '-s', route,
                 '-m', 'conntrack',
                 '--ctstate', 'RELATED,ESTABLISHED',
                 '-j', 'ACCEPT',
