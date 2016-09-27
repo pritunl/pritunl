@@ -19,7 +19,7 @@ class SettingsVpn(SettingsGroupMongo):
         'status_update_rate': 3,
         'http_request_timeout': 10,
         'op_timeout': 30,
-        'iptables_update': True,
+        'iptables_update': False,
         'iptables_update_rate': 900,
         'bandwidth_update_rate': 15,
         'nat_routes': True,
