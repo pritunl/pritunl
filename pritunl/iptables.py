@@ -164,23 +164,27 @@ class Iptables(object):
 
         if self.inter_client:
             self._accept.append([
-                'INPUT', '-i', self.virt_interface,
+                'INPUT',
+                '-i', self.virt_interface,
                 '-d', self.virt_network,
                 '-j', 'ACCEPT',
             ])
             self._accept6.append([
-                'INPUT', '-i', self.virt_interface,
+                'INPUT',
+                '-i', self.virt_interface,
                 '-d', self.virt_network6,
                 '-j', 'ACCEPT',
             ])
         else:
             self._accept.append([
-                'INPUT', '-i', self.virt_interface,
+                'INPUT',
+                '-i', self.virt_interface,
                 '-d', self.server_addr,
                 '-j', 'ACCEPT',
             ])
             self._accept6.append([
-                'INPUT', '-i', self.virt_interface,
+                'INPUT',
+                '-i', self.virt_interface,
                 '-d', self.server_addr6,
                 '-j', 'ACCEPT',
             ])
