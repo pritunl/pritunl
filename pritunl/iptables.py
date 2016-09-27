@@ -232,23 +232,27 @@ class Iptables(object):
 
         if self.inter_client:
             self._accept.append([
-                'OUTPUT', '-o', self.virt_interface,
+                'OUTPUT',
+                '-o', self.virt_interface,
                 '-s', self.virt_network,
                 '-j', 'ACCEPT',
             ])
             self._accept6.append([
-                'OUTPUT', '-o', self.virt_interface,
+                'OUTPUT',
+                '-o', self.virt_interface,
                 '-s', self.virt_network6,
                 '-j', 'ACCEPT',
             ])
         else:
             self._accept.append([
-                'OUTPUT', '-o', self.virt_interface,
+                'OUTPUT',
+                '-o', self.virt_interface,
                 '-s', self.server_addr,
                 '-j', 'ACCEPT',
             ])
             self._accept6.append([
-                'OUTPUT', '-o', self.virt_interface,
+                'OUTPUT',
+                '-o', self.virt_interface,
                 '-s', self.server_addr6,
                 '-j', 'ACCEPT',
             ])
@@ -330,22 +334,26 @@ class Iptables(object):
 
         if self.inter_client:
             self._accept.append([
-                'FORWARD', '-i', self.virt_interface,
+                'FORWARD',
+                '-i', self.virt_interface,
                 '-d', self.virt_network,
                 '-j', 'ACCEPT',
             ])
             self._accept6.append([
-                'FORWARD', '-i', self.virt_interface,
+                'FORWARD',
+                '-i', self.virt_interface,
                 '-d', self.virt_network6,
                 '-j', 'ACCEPT',
             ])
             self._accept.append([
-                'FORWARD', '-o', self.virt_interface,
+                'FORWARD',
+                '-o', self.virt_interface,
                 '-s', self.virt_network,
                 '-j', 'ACCEPT',
             ])
             self._accept6.append([
-                'FORWARD', '-o', self.virt_interface,
+                'FORWARD',
+                '-o', self.virt_interface,
                 '-s', self.virt_network6,
                 '-j', 'ACCEPT',
             ])
