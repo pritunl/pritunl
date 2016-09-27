@@ -69,7 +69,7 @@ def auth_request(method, path, headers=None, data=None):
     auth_timestamp = str(int(time.time()))
     auth_nonce = uuid.uuid4().hex
     auth_string = '&'.join([API_TOKEN, auth_timestamp, auth_nonce,
-                            method.upper(), path] + ([data] if data else []))
+        method.upper(), path] + ([data] if data else []))
     auth_signature = base64.b64encode(hmac.new(
         API_SECRET, auth_string, hashlib.sha256).digest())
     auth_headers = {
@@ -85,7 +85,7 @@ def auth_request(method, path, headers=None, data=None):
         verify=False,
         headers=auth_headers,
         data=data,
-        )
+    )
 
 def add_route(network):
     response = auth_request('POST',
@@ -97,7 +97,7 @@ def add_route(network):
             'network': network,
             'nat': True,
         }),
-        )
+    )
     assert(response.status_code == 200)
 
 response = requests.get('https://ip-ranges.amazonaws.com/ip-ranges.json')
