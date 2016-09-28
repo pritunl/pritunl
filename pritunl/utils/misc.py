@@ -424,7 +424,6 @@ def get_process_cpu_mem():
 def redirect(location, code=302):
     if not settings.conf.debug:
         location = urlparse.urljoin(get_url_root(), location)
-
     return flask.redirect(location, code)
 
 def get_url_root():
