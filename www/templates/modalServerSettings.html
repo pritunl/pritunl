@@ -65,7 +65,7 @@
     </div>
     <div class="cipher form-group">
       <label>Encryption Cipher</label>
-      <select class="form-control" data-toggle="tooltip" title="Encryption cipher used for VPN traffic. AES 256bit is recommended">
+      <select class="form-control" data-toggle="tooltip" title="Encryption cipher used for VPN traffic. AES 256bit is recommended. Using AES 128bit will significantly improve bandwidth">
         <option value="none" <%= cipher === 'none' ? 'selected' : '' %>>None</option>
         <option value="bf128" <%= cipher === 'bf128' ? 'selected' : '' %>>Blowfish 128bit</option>
         <option value="bf256" <%= cipher === 'bf256' ? 'selected' : '' %>>Blowfish 256bit</option>
@@ -130,7 +130,7 @@
     </div>
     <div class="hash form-group">
       <label>Hash Algorithm</label>
-      <select class="form-control" data-toggle="tooltip" title="Authentication hashing algorithm">
+      <select class="form-control" data-toggle="tooltip" title="Authentication hashing algorithm. Using SHA-1 will improve bandwidth">
         <option value="none" <%= hash === 'none' ? 'selected' : '' %>>None</option>
         <option value="md5" <%= hash === 'md5' ? 'selected' : '' %>>MD5</option>
         <option value="sha1" <%= hash === 'sha1' ? 'selected' : '' %>>SHA-1</option>
