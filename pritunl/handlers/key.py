@@ -513,6 +513,7 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
             'signature': sync_signature,
             'conf': key_conf['conf'],
         })
+
     return utils.jsonify({})
 
 @app.app.route('/sso/authenticate', methods=['POST'])
