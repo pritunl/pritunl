@@ -88,7 +88,8 @@ def auth_request(method, path, headers=None, data=None):
     )
 
 def add_route(network):
-    response = auth_request('POST',
+    response = auth_request(
+        'POST',
         '/server/%s/route' % SERVER_ID,
         headers={
             'Content-Type': 'application/json',
