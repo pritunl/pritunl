@@ -433,7 +433,7 @@ def user_linked_key_conf_get(key_id, server_id):
 
     return response
 
-@app.app.route('/key/<org_id>/<user_id>/<server_id>/<key_hash>',
+@app.app.route('/key/sync/<org_id>/<user_id>/<server_id>/<key_hash>',
     methods=['GET'])
 @auth.open_auth
 def key_sync_get(org_id, user_id, server_id, key_hash):
@@ -468,6 +468,9 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
     elif not user.sync_secret:
         return flask.abort(401)
 
+    if auth_token != user.sync_token:
+        return flask.abort(401)
+
     if user.disabled:
         return flask.abort(403)
 
@@ -481,7 +484,7 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
 
     auth_test_signature = base64.b64encode(hmac.new(
         user.sync_secret.encode(), auth_string,
-        hashlib.sha256).digest())
+        hashlib.sha512).digest())
     if auth_signature != auth_test_signature:
         return flask.abort(401)
 
@@ -502,8 +505,15 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
             remote_addr=utils.get_remote_addr(),
         )
 
-        return utils.response(key_conf['conf'])
-    return utils.response('')
+        sync_signature = base64.b64encode(hmac.new(
+            user.sync_secret.encode(), key_conf['conf'],
+            hashlib.sha512).digest())
+
+        return utils.jsonify({
+            'signature': sync_signature,
+            'conf': key_conf['conf'],
+        })
+    return utils.jsonify({})
 
 @app.app.route('/sso/authenticate', methods=['POST'])
 @auth.open_auth
