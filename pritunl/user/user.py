@@ -486,8 +486,8 @@ class User(mongo.MongoObject):
     def has_pin(self):
         return self.pin and settings.user.pin_mode != PIN_DISABLED
 
-    def _get_key_info_str(self, svr, conf_hash):
-        return '#' + json.dumps({
+    def _get_key_info_str(self, svr, conf_hash, include_sync_keys):
+        data = {
             'version': CLIENT_CONF_VER,
             'user': self.name,
             'organization': self.org.name,
@@ -495,12 +495,16 @@ class User(mongo.MongoObject):
             'user_id': str(self.id),
             'organization_id': str(self.org.id),
             'server_id': str(svr.id),
-            'sync_token': self.sync_token,
-            'sync_secret': self.sync_secret,
-            'sync_hash': conf_hash,
             'sync_hosts': svr.get_sync_remotes(),
+            'sync_hash': conf_hash,
             'password_mode': self._get_password_mode(svr),
-        }, indent=1).replace('\n', '\n#')
+        }
+
+        if include_sync_keys:
+            data['sync_token'] = self.sync_token
+            data['sync_secret'] = self.sync_secret
+
+        return '#' + json.dumps(data, indent=1).replace('\n', '\n#')
 
     def _generate_conf(self, svr, include_user_cert=True):
         if not self.sync_token or not self.sync_secret:
@@ -532,7 +536,7 @@ class User(mongo.MongoObject):
         conf_hash = conf_hash.hexdigest()
 
         client_conf = OVPN_INLINE_CLIENT_CONF % (
-            self._get_key_info_str(svr, conf_hash),
+            self._get_key_info_str(svr, conf_hash, include_user_cert),
             uuid.uuid4().hex,
             utils.random_name(),
             svr.adapter_type,
