@@ -440,7 +440,7 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
     utils.rand_sleep()
 
     if not settings.local.sub_active:
-        return utils.response('', status_code=480)
+        return utils.jsonify({}, status_code=480)
 
     auth_token = flask.request.headers.get('Auth-Token', None)
     auth_timestamp = flask.request.headers.get('Auth-Timestamp', None)
