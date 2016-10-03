@@ -494,7 +494,7 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
             'token': auth_token,
             'nonce': auth_nonce,
             'timestamp': utils.now(),
-        }, w=0)
+        })
     except pymongo.errors.DuplicateKeyError:
         return flask.abort(401)
 
