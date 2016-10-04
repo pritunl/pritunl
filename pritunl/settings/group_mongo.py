@@ -29,6 +29,8 @@ class SettingsGroupMongo(SettingsGroupBase):
         for field in self.changed:
             doc[field] = getattr(self, field)
 
+        self.changed = set()
+
         if init or len(doc) > 1:
             return doc
 
@@ -39,6 +41,8 @@ class SettingsGroupMongo(SettingsGroupBase):
 
         for field in self.unseted:
             doc[field] = ""
+
+        self.unseted = set()
 
         if len(doc) > 1:
             return doc
