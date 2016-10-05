@@ -78,7 +78,8 @@ def update_server(delay=0):
             _cur_reverse_proxy = settings.app.reverse_proxy_header if \
                 settings.app.reverse_proxy else ''
 
-            restart_server(delay=delay)
+            if settings.app.server_auto_restart:
+                restart_server(delay=delay)
     finally:
         _update_lock.release()
 
