@@ -606,6 +606,8 @@ def settings_put():
 
     event.Event(type=SETTINGS_UPDATED)
 
+    logger.info('Changing server settings', 'handler')
+
     if update_acme:
         try:
             acme.update_acme_cert()
