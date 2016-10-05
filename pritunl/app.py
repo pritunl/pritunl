@@ -255,6 +255,7 @@ def setup_server_cert():
 
     if not settings.app.server_cert or not settings.app.server_key:
         commit = True
+        logger.info('Generating server certificate...', 'utils')
         utils.create_server_cert()
 
     if commit:

@@ -622,6 +622,7 @@ def settings_put():
                 'error_msg': ACME_ERROR_MSG,
             }, 400)
     elif update_cert:
+        logger.info('Regenerating server certificate...', 'utils')
         utils.create_server_cert()
         app.update_server(0.5)
     elif update_server:

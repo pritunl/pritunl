@@ -6,9 +6,6 @@ import os
 
 def create_server_cert():
     from pritunl import acme
-    from pritunl import logger
-
-    logger.info('Generating server certificate...', 'utils')
 
     if settings.app.acme_domain:
         acme.update_acme_cert()
