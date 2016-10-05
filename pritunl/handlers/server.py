@@ -822,6 +822,13 @@ def server_route_delete(server_id, route_network):
             'error_msg': SERVER_ROUTE_ONLINE_MSG,
         }, 400)
 
+    err, err_msg = svr.validate_conf()
+    if err:
+        return utils.jsonify({
+            'error': err,
+            'error_msg': err_msg,
+        }, 400)
+
     svr.commit('routes')
 
     event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
