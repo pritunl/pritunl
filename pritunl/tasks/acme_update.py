@@ -35,7 +35,7 @@ class AcmeUpdate(task.Task):
             return
 
         logger.info(
-            'Updating acme certificate.', 'tasks',
+            'Updating acme certificate', 'tasks',
             acme_domain=acme_domain,
         )
 
