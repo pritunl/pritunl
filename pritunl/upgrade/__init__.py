@@ -2,7 +2,6 @@ from pritunl.upgrade.upgrade_1_4 import upgrade_1_4
 from pritunl.upgrade.upgrade_1_5 import upgrade_1_5
 from pritunl.upgrade.upgrade_1_17 import upgrade_1_17
 from pritunl.upgrade.upgrade_1_18 import upgrade_1_18
-from pritunl.upgrade.upgrade_1_19 import upgrade_1_19
 from pritunl.upgrade.upgrade_1_24 import upgrade_1_24
 from pritunl.upgrade.utils import *
 
