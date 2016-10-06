@@ -618,6 +618,7 @@ def settings_put():
             )
             settings.app.acme_domain = None
             settings.app.acme_key = None
+            settings.app.acme_timestamp = None
             settings.commit()
             return utils.jsonify({
                 'error': ACME_ERROR,
