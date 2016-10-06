@@ -198,6 +198,10 @@ class Transaction(mongo.MongoObject):
             self._run_collection_actions(collection, rollback_actions)
 
     def rollback_actions(self):
+        logger.warning('Transaction failed rolling back...', 'transaction',
+            actions=self.action_sets,
+        )
+
         response = self.transaction_collection.update({
             '_id': self.id,
             'state': ROLLBACK,
