@@ -36,12 +36,6 @@ def upgrade_server():
         upgrade_1_18()
         utils.set_db_ver('1.18.0.0', '1.18.0.0')
 
-    if utils.get_db_ver_int() < utils.get_int_ver('1.19.0.0'):
-        upgraded = True
-        logger.info('Running 1.19 database upgrade', 'upgrade')
-        upgrade_1_19()
-        utils.set_db_ver('1.19.0.0', '1.19.0.0')
-
     if utils.get_db_ver_int() < utils.get_int_ver('1.24.0.0'):
         upgraded = True
         logger.info('Running 1.24 database upgrade', 'upgrade')
