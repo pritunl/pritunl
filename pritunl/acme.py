@@ -48,7 +48,7 @@ def update_acme_cert():
     csr = utils.generate_csr(private_key, settings.app.acme_domain)
     cert = get_acme_cert(settings.app.acme_key, csr)
 
-    settings.app.server_key = private_key
-    settings.app.server_cert = cert
+    settings.app.server_key = private_key.strip()
+    settings.app.server_cert = cert.strip()
     settings.app.acme_timestamp = utils.time_now()
     settings.commit()
