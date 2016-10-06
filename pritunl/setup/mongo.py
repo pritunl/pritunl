@@ -305,7 +305,8 @@ def setup_mongo():
         background=True, expireAfterSeconds=settings.app.key_link_timeout)
     upsert_index(mongo.collections['auth_sessions'], 'timestamp',
         background=True, expireAfterSeconds=settings.app.session_timeout)
-    upsert_index(mongo.collections['auth_nonces'], 'timestamp', background=True,
+    upsert_index(mongo.collections['auth_nonces'], 'timestamp',
+        background=True,
         expireAfterSeconds=settings.app.auth_time_window * 2.1)
     upsert_index(mongo.collections['auth_limiter'], 'timestamp',
         background=True, expireAfterSeconds=settings.app.auth_limiter_ttl)
