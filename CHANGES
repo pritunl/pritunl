@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve reliability
+
 Version 1.25.1119.59 2016-10-05
 -------------------------------
 
