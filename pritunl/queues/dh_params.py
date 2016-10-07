@@ -1,6 +1,5 @@
 from pritunl.constants import *
 from pritunl.helpers import *
-from pritunl import logger
 from pritunl import mongo
 from pritunl import utils
 from pritunl import event

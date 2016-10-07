@@ -1,7 +1,6 @@
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import pooler
-from pritunl import logger
 from pritunl import mongo
 from pritunl import utils
 from pritunl import queue
