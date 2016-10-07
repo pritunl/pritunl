@@ -35,11 +35,6 @@ class QueueDhParams(queue.Queue):
         return mongo.get_collection('servers')
 
     def task(self):
-        logger.debug('Generating server dh params', 'server',
-            queue_id=self.id,
-            dh_param_bits=self.dh_param_bits,
-        )
-
         self.queue_com.wait_status()
 
         temp_path = utils.get_temp_path()
@@ -73,18 +68,8 @@ class QueueDhParams(queue.Queue):
             }})
 
             if response['updatedExisting']:
-                logger.debug('Set queued server dh params', 'server',
-                    queue_id=self.id,
-                    dh_param_bits=self.dh_param_bits,
-                )
-
                 event.Event(type=SERVERS_UPDATED)
                 return
-
-        logger.debug('Adding pooled dh params', 'server',
-            queue_id=self.id,
-            dh_param_bits=self.dh_param_bits,
-        )
 
         self.dh_params_collection.insert({
             'dh_param_bits': self.dh_param_bits,
@@ -98,22 +83,12 @@ class QueueDhParams(queue.Queue):
         if self.reserve_data:
             return False
 
-        logger.debug('Pausing queued dh params', 'server',
-            queue_id=self.id,
-            dh_param_bits=self.dh_param_bits,
-        )
-
         self.queue_com.running.clear()
         self.queue_com.popen_kill_all()
 
         return True
 
     def stop_task(self):
-        logger.debug('Stopping queued dh params', 'server',
-            queue_id=self.id,
-            dh_param_bits=self.dh_param_bits,
-        )
-
         self.queue_com.running.clear()
         self.queue_com.popen_kill_all()
 
@@ -135,11 +110,6 @@ def reserve_pooled_dh_params(svr):
 
     QueueDhParams.dh_params_collection.remove(doc['_id'])
 
-    logger.debug('Reserved pooled dh params', 'server',
-        server_id=svr.id,
-        dh_param_bits=svr.dh_param_bits,
-    )
-
     svr.dh_params = doc['dh_params']
     return True
 
@@ -152,10 +122,6 @@ def reserve_queued_dh_params(svr, block=False):
 
     doc = QueueDhParams.reserve(reserve_id, reserve_data, block=block)
     if not doc:
-        logger.debug('Reserved queued dh params', 'server',
-            server_id=svr.id,
-            dh_param_bits=svr.dh_param_bits,
-        )
         return False
 
     if block:
