@@ -45,29 +45,34 @@ def wget(url, cwd=None, output=None):
     subprocess.check_call(args, cwd=cwd)
 
 def post_git_asset(release_id, file_name, file_path):
-    file_size = os.path.getsize(file_path)
-    response = requests.post(
-        'https://uploads.github.com/repos/%s/%s/releases/%s/assets' % (
-            github_owner, pkg_name, release_id),
-        verify=False,
-        headers={
-            'Authorization': 'token %s' % github_token,
-            'Content-Type': 'application/octet-stream',
-            'Content-Size': str(file_size),
-        },
-        params={
-            'name': file_name,
-        },
-        data=open(file_path, 'rb').read(),
-    )
+    for i in xrange(5):
+        file_size = os.path.getsize(file_path)
+        response = requests.post(
+            'https://uploads.github.com/repos/%s/%s/releases/%s/assets' % (
+                github_owner, pkg_name, release_id),
+            verify=False,
+            headers={
+                'Authorization': 'token %s' % github_token,
+                'Content-Type': 'application/octet-stream',
+                'Content-Size': str(file_size),
+            },
+            params={
+                'name': file_name,
+            },
+            data=open(file_path, 'rb').read(),
+        )
 
-    if response.status_code != 201:
-        data = response.json()
-        errors = data.get('errors')
-        if not errors or errors[0].get('code') != 'already_exists':
-            print 'Failed to create asset on github'
-            print data
-            sys.exit(1)
+        if response.status_code == 201:
+            return
+        else:
+            time.sleep(1)
+
+    data = response.json()
+    errors = data.get('errors')
+    if not errors or errors[0].get('code') != 'already_exists':
+        print 'Failed to create asset on github'
+        print data
+        sys.exit(1)
 
 def get_ver(version):
     day_num = (cur_date - datetime.datetime(2013, 9, 12)).days
