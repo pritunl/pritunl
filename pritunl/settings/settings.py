@@ -107,8 +107,12 @@ class Settings(object):
                 continue
 
             group = getattr(self, group_name)
-            group.__dict__.update(group.fields)
-            group.__dict__.update(doc)
+
+            data = {}
+            data.update(group.fields)
+            data.update(doc)
+
+            group.__dict__.update(data)
         self._loaded = True
 
     def _init_modules(self):
