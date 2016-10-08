@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with removing routes
+
 Version 1.25.1122.21 2016-10-08
 -------------------------------
 
