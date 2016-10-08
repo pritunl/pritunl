@@ -10,7 +10,7 @@ def _check():
     yield
 
     try:
-        settings.load_mongo()
+        settings.reload_mongo()
     except:
         logger.exception('Auto settings check failed', 'runners')
 
