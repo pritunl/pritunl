@@ -95,12 +95,17 @@ class Settings(object):
         collection.bulk_execute()
         tran.commit()
 
-    def load_mongo(self):
+    def _load_mongo(self):
         for cls in module_classes:
             if cls.type != GROUP_MONGO:
                 continue
             setattr(self, cls.group, cls())
 
+        self.reload_mongo()
+
+        self._loaded = True
+
+    def reload_mongo(self):
         for doc in self.collection.find():
             group_name = doc.pop('_id')
             if group_name not in self.groups:
@@ -113,7 +118,6 @@ class Settings(object):
             data.update(doc)
 
             group.__dict__.update(data)
-        self._loaded = True
 
     def _init_modules(self):
         for cls in module_classes:
@@ -125,5 +129,5 @@ class Settings(object):
             setattr(self, cls.group, group_cls)
 
     def init(self):
-        self.load_mongo()
+        self._load_mongo()
         self.commit(True)
