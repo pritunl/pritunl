@@ -809,9 +809,7 @@ def server_route_delete(server_id, route_network):
     if settings.app.demo_mode:
         return utils.demo_blocked()
 
-    svr = server.get_by_id(server_id, fields=('_id', 'network', 'links',
-        'network_start', 'network_end', 'routes', 'organizations', 'status',
-        'ipv6'))
+    svr = server.get_by_id(server_id)
     route_network = route_network.decode('hex')
 
     try:
