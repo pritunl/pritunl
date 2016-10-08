@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Improve logging
+Fix issue with unexpected server restart
 
 Version 1.25.1120.61 2016-10-06
 -------------------------------
