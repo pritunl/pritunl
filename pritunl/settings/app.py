@@ -26,7 +26,7 @@ class SettingsApp(SettingsGroupMongo):
         'influxdb_interval': 3,
         'prometheus_port': 9780,
         'datadog_api_key': None,
-        'settings_check_interval': 600,
+        'settings_check_interval': 60,
         'key_link_timeout': 86400,
         'password_len_limit': 128,
         'public_ip_server': 'https://app.pritunl.com/ip',
