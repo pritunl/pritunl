@@ -20,7 +20,8 @@ Commands:
   sync-db               Sync database
   set-version           Set current version
   build                 Build and release
-  upload                Upload release"""
+  upload                Upload release
+  upload-github         Upload release to GitHub"""
 
 INIT_PATH = 'pritunl/__init__.py'
 SETUP_PATH = 'setup.py'
