@@ -484,6 +484,7 @@ class Server(mongo.MongoObject):
                 'nat_interface': None,
                 'vpc_region': None,
                 'vpc_id': None,
+                'net_gateway': False,
                 'virtual_network': False,
                 'network_link': True,
                 'server_link': False,
@@ -507,6 +508,7 @@ class Server(mongo.MongoObject):
                     data['nat_interface'] = route['nat_interface']
                     data['vpc_region'] = None
                     data['vpc_id'] = None
+                    data['net_gateway'] = route['net_gateway']
                     data['virtual_network'] = False
                     data['network_link'] = False
                     data['server_link'] = True
@@ -532,6 +534,7 @@ class Server(mongo.MongoObject):
                     'nat_interface': route.get('nat_interface'),
                     'vpc_region': route.get('vpc_region', None),
                     'vpc_id': route.get('vpc_id', None),
+                    'net_gateway': route.get('net_gateway', False),
                     'virtual_network': False,
                     'network_link': False,
                     'server_link': False,
@@ -547,6 +550,7 @@ class Server(mongo.MongoObject):
                         'nat_interface': route.get('nat_interface'),
                         'vpc_region': route.get('vpc_region'),
                         'vpc_id': route.get('vpc_id'),
+                        'net_gateway': route.get('net_gateway', False),
                         'virtual_network': False,
                         'network_link': False,
                         'server_link': False,
@@ -579,6 +583,7 @@ class Server(mongo.MongoObject):
                         'nat_interface': route.get('nat_interface'),
                         'vpc_region': route.get('vpc_region', None),
                         'vpc_id': route.get('vpc_id', None),
+                        'net_gateway': route.get('net_gateway', False),
                         'virtual_network': False,
                         'network_link': False,
                         'server_link': False,
@@ -593,6 +598,7 @@ class Server(mongo.MongoObject):
             'nat_interface': None,
             'vpc_region': virtual_vpc_region,
             'vpc_id': virtual_vpc_id,
+            'net_gateway': False,
             'virtual_network': True,
             'network_link': False,
             'server_link': False,
@@ -608,6 +614,7 @@ class Server(mongo.MongoObject):
                 'nat_interface': None,
                 'vpc_region': virtual_vpc_region,
                 'vpc_id': virtual_vpc_id,
+                'net_gateway': False,
                 'virtual_network': True,
                 'network_link': False,
                 'server_link': False,
@@ -623,7 +630,7 @@ class Server(mongo.MongoObject):
         return routes + link_routes
 
     def upsert_route(self, network, nat_route, nat_interface,
-            vpc_region, vpc_id):
+            vpc_region, vpc_id, net_gateway):
         exists = False
 
         if self.status == ONLINE:
@@ -662,6 +669,7 @@ class Server(mongo.MongoObject):
                     route['nat_interface'] = nat_interface
                 route['vpc_region'] = vpc_region
                 route['vpc_id'] = vpc_id
+                route['net_gateway'] = net_gateway
                 route['server_link'] = server_link
                 exists = True
                 break
@@ -673,6 +681,7 @@ class Server(mongo.MongoObject):
                 'nat_interface': nat_interface,
                 'vpc_region': vpc_region,
                 'vpc_id': vpc_id,
+                'net_gateway': net_gateway,
                 'server_link': server_link,
             })
 
@@ -684,6 +693,7 @@ class Server(mongo.MongoObject):
             'nat_interface': nat_interface,
             'vpc_region': vpc_region,
             'vpc_id': vpc_id,
+            'net_gateway': net_gateway,
         }
 
     def remove_route(self, network):
