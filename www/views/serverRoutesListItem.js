@@ -48,6 +48,11 @@ define([
       } else {
         this.$('.route-nat').hide();
       }
+      if (this.model.get('net_gateway')) {
+        this.$('.route-net-gateway').show();
+      } else {
+        this.$('.route-net-gateway').hide();
+      }
 
       if (this.model.get('virtual_network') ||
           this.model.get('network_link') ||
