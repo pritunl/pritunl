@@ -699,10 +699,11 @@ def server_route_post(server_id):
     nat_interface = flask.request.json.get('nat_interface') or None
     vpc_region = utils.filter_str(flask.request.json.get('vpc_region')) or None
     vpc_id = utils.filter_str(flask.request.json.get('vpc_id')) or None
+    net_gateway = True if flask.request.json.get('net_gateway') else False
 
     try:
         route = svr.upsert_route(route_network, nat_route, nat_interface,
-            vpc_region, vpc_id)
+            vpc_region, vpc_id, net_gateway)
     except ServerOnlineError:
         return utils.jsonify({
             'error': SERVER_ROUTE_ONLINE,
@@ -757,10 +758,11 @@ def server_route_put(server_id, route_network):
     nat_interface = flask.request.json.get('nat_interface') or None
     vpc_region = utils.filter_str(flask.request.json.get('vpc_region')) or None
     vpc_id = utils.filter_str(flask.request.json.get('vpc_id')) or None
+    net_gateway = True if flask.request.json.get('net_gateway') else False
 
     try:
         route = svr.upsert_route(route_network, nat_route, nat_interface,
-            vpc_region, vpc_id)
+            vpc_region, vpc_id, net_gateway)
     except ServerOnlineError:
         return utils.jsonify({
             'error': SERVER_ROUTE_ONLINE,
