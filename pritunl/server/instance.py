@@ -138,7 +138,13 @@ class ServerInstance(object):
                 continue
 
             network = route['network']
-            if not route.get('network_link'):
+            if route['net_gateway']:
+                if ':' in network:
+                    push += 'push "route-ipv6 %s net_gateway"\n' % network
+                else:
+                    push += 'push "route %s %s net_gateway"\n' % \
+                        utils.parse_network(network)
+            elif not route.get('network_link'):
                 if ':' in network:
                     push += 'push "route-ipv6 %s"\n' % network
                 else:
@@ -158,6 +164,10 @@ class ServerInstance(object):
             if self.server.id < link_svr.id:
                 for route in link_svr.get_routes(include_default=False):
                     network = route['network']
+
+                    if route['net_gateway']:
+                        continue
+
                     if ':' in network:
                         push += 'route-ipv6 %s %s\n' % (
                             network, gateway6)
@@ -451,7 +461,7 @@ class ServerInstance(object):
             if route['virtual_network'] or route['link_virtual_network']:
                 self.iptables.add_nat_network(route['network'])
 
-            if route['virtual_network']:
+            if route['virtual_network'] or route['net_gateway']:
                 continue
 
             network = route['network']
@@ -746,6 +756,9 @@ class ServerInstance(object):
             vpc_region = route['vpc_region']
             vpc_id = route['vpc_id']
             network = route['network']
+
+            if route['net_gateway']:
+                continue
 
             if vpc_region and vpc_id:
                 self.reserve_route_advertisement(
