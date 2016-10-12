@@ -140,7 +140,7 @@ class ServerInstance(object):
             network = route['network']
             if not route.get('network_link'):
                 if ':' in network:
-                    push += 'push "route-ipv6 %s "\n' % network
+                    push += 'push "route-ipv6 %s"\n' % network
                 else:
                     push += 'push "route %s %s"\n' % utils.parse_network(
                         network)
