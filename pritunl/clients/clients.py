@@ -102,6 +102,9 @@ class Clients(object):
                     include_default=False):
                 network = route['network']
 
+                if route['net_gateway']:
+                    continue
+
                 if ':' in network:
                     client_conf += 'iroute-ipv6 %s\n' % network
                 else:
@@ -155,11 +158,22 @@ class Clients(object):
                         include_default=False):
                     network = route['network']
 
-                    if ':' in network:
-                        client_conf += 'push "route-ipv6 %s"\n' % (network)
+                    if route['net_gateway']:
+                        if ':' in network:
+                            client_conf += \
+                                'push "route-ipv6 %s net_gateway"\n' % (
+                                network)
+                        else:
+                            client_conf += \
+                                'push "route %s %s net_gateway"\n' % (
+                                utils.parse_network(network))
                     else:
-                        client_conf += 'push "route %s %s"\n' % (
-                            utils.parse_network(network))
+                        if ':' in network:
+                            client_conf += 'push "route-ipv6 %s"\n' % (
+                                network)
+                        else:
+                            client_conf += 'push "route %s %s"\n' % (
+                                utils.parse_network(network))
 
                 if link_svr.replicating and link_svr.vxlan:
                     client_conf += 'push "route %s %s"\n' % \
