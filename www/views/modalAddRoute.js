@@ -19,7 +19,8 @@ define([
       return _.extend({
         'change .vpc-region select': 'updateVpcIds',
         'click .route-advertisement-toggle': 'onRotueAdSelect',
-        'click .nat-route-toggle': 'onNatRouteSelect'
+        'click .nat-route-toggle': 'onNatRouteSelect',
+        'click .net-gateway-toggle': 'onNetGatewaySelect'
       }, ModalAddRouteView.__super__.events);
     },
     initialize: function() {
@@ -96,6 +97,22 @@ define([
       return this.$('.route-advertisement-toggle .selector').hasClass(
         'selected');
     },
+    getNetGatewaySelect: function() {
+      return this.$('.net-gateway-toggle .selector').hasClass('selected');
+    },
+    setNetGatewaySelect: function(state) {
+      if (state) {
+        this.$('.net-gateway-toggle .selector').addClass('selected');
+        this.$('.net-gateway-toggle .selector-inner').show();
+      }
+      else {
+        this.$('.net-gateway-toggle .selector').removeClass('selected');
+        this.$('.net-gateway-toggle .selector-inner').hide();
+      }
+    },
+    onNetGatewaySelect: function() {
+      this.setNetGatewaySelect(!this.getNetGatewaySelect());
+    },
     setRotueAdSelect: function(state) {
       if (state) {
         this.$('.route-advertisement-toggle .selector').addClass('selected');
@@ -119,6 +136,7 @@ define([
       var server = this.$('.server select').val();
       var nat = this.getNatRouteSelect();
       var natInterface = this.$('.nat-interface input').val();
+      var netGateway = this.getNetGatewaySelect();
       var routeAd = this.getRotueAdSelect();
       var vpcRegion = null;
       var vpcId = null;
@@ -133,6 +151,7 @@ define([
         network: this.$('.route-network input').val(),
         nat: nat,
         nat_interface: natInterface,
+        net_gateway: netGateway,
         vpc_region: vpcRegion,
         vpc_id: vpcId,
         server: server
