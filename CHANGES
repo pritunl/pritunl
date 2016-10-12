@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add support for route exclusion
+
 Version 1.25.1122.55 2016-10-08
 -------------------------------
 
