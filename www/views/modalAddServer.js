@@ -26,7 +26,7 @@ define([
         'dh_param_bits': 1536,
         'ipv6_firewall': true,
         'dns_servers': ['8.8.8.8'],
-        'cipher': 'aes256',
+        'cipher': 'aes128',
         'hash': 'sha1',
         'inter_client': true,
         'restrict_routes': true,
