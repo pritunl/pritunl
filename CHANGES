@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add support for lib iptables
+
 Version 1.25.1126.38 2016-10-12
 -------------------------------
 
