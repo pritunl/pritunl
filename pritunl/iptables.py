@@ -39,13 +39,6 @@ class Iptables(object):
         self.cleared = False
         self.restrict_routes = False
 
-    @property
-    def comment(self):
-        return [
-            '-m', 'comment',
-            '--comment', 'pritunl_%s' % self.id,
-        ]
-
     def add_route(self, network, nat=False, nat_interface=None):
         if self.cleared:
             return
