@@ -123,7 +123,8 @@ class Authorizer(object):
             raise AuthError('User is disabled')
 
     def _check_password(self):
-        if self.user.bypass_secondary or settings.vpn.stress_test:
+        if self.user.bypass_secondary or self.user.link_server_id or \
+                settings.vpn.stress_test:
             return
 
         if self.server.otp_auth and self.user.type == CERT_CLIENT:
