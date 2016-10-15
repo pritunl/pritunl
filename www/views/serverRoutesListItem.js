@@ -43,7 +43,7 @@ define([
       } else {
         this.$('.route-server-link').hide();
       }
-      if (this.model.get('nat')) {
+      if (this.model.get('nat') && !this.model.get('net_gateway')) {
         this.$('.route-nat').show();
       } else {
         this.$('.route-nat').hide();
