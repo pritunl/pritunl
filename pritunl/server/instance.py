@@ -1,6 +1,7 @@
 from pritunl.server.instance_com import ServerInstanceCom
 from pritunl.server.instance_link import ServerInstanceLink
 from pritunl.server.bridge import add_interface, rem_interface
+from pritunl.server.metrics import ServerMetrics
 
 from pritunl.constants import *
 from pritunl.exceptions import *
@@ -28,6 +29,7 @@ import collections
 import pymongo
 
 _resource_locks = collections.defaultdict(threading.Lock)
+_metrics = ServerMetrics()
 
 class ServerInstance(object):
     def __init__(self, server):
@@ -142,20 +144,23 @@ class ServerInstance(object):
                 if ':' in network:
                     push += 'push "route-ipv6 %s net_gateway"\n' % network
                 else:
-                    push += 'push "route %s %s net_gateway"\n' % \
-                        utils.parse_network(network)
+                    network_key = utils.parse_network(network)
+                    metric = _metrics.add_missing_metric(network_key, str(self.server.id))
+                    push += 'push "route %s %s net_gateway %d"\n' % (network_key + (metric,))
             elif not route.get('network_link'):
                 if ':' in network:
                     push += 'push "route-ipv6 %s"\n' % network
                 else:
-                    push += 'push "route %s %s"\n' % utils.parse_network(
-                        network)
+                    network_key = utils.parse_network(network)
+                    metric = _metrics.add_missing_metric(network_key, str(self.server.id))
+                    push += 'push "route %s %s %d"\n' % (network_key + (metric,))
             else:
                 if ':' in network:
                     push += 'route-ipv6 %s %s\n' % (network, gateway6)
                 else:
-                    push += 'route %s %s %s\n' % (utils.parse_network(
-                        network) + (gateway,))
+                    network_key = utils.parse_network(network)
+                    metric = _metrics.add_missing_metric(network_key, str(self.server.id))
+                    push += 'route %s %s %s %d\n' % (network_key + (gateway, metric,))
 
         for link_svr in self.server.iter_links(fields=(
                 '_id', 'network', 'local_networks', 'network_start',
@@ -538,6 +543,8 @@ class ServerInstance(object):
 
     def stop_process(self):
         self.sock_interrupt = True
+
+        _metrics.del_stopped_metric(str(self.server.id))
 
         for instance_link in self.server_links:
             instance_link.stop()
