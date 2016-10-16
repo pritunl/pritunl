@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Web console improvements
 Add support for lib iptables
 Fix issue with required pin and linked servers
 
