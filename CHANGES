@@ -5,6 +5,7 @@ Pritunl Changelog
 
 Web console improvements
 Add support for lib iptables
+Improve Okta single sign-on
 Fix issue with required pin and linked servers
 
 Version 1.25.1126.38 2016-10-12
