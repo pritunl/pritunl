@@ -111,6 +111,9 @@ def auth_okta(username):
     return True
 
 def auth_okta_push(username, strong=False, ipaddr=None, type=None, info=None):
+    if not settings.app.sso_okta_push:
+        return True
+
     user_id = get_user_id(username)
     if not user_id:
         return False
