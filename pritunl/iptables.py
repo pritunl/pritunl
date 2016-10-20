@@ -139,7 +139,7 @@ class Iptables(object):
                     rule = self._init_rule6()
                     rule.dst = self.virt_network6
                     match = iptc.Match(rule, 'conntrack')
-                    match.ctstate = ['RELATED', 'ESTABLISHED']
+                    match.ctstate = 'RELATED,ESTABLISHED'
                     rule.add_match(match)
                     rule.create_target('ACCEPT')
                     self._accept6.append(('INPUT', rule))
@@ -478,7 +478,7 @@ class Iptables(object):
                     rule = self._init_rule6()
                     rule.dst = self.virt_network6
                     match = iptc.Match(rule, 'conntrack')
-                    match.ctstate = ['RELATED', 'ESTABLISHED']
+                    match.ctstate = 'RELATED,ESTABLISHED'
                     rule.add_match(match)
                     rule.create_target('ACCEPT')
                     self._accept6.append(('FORWARD', rule))
@@ -683,7 +683,7 @@ class Iptables(object):
                 rule.out_interface = self.virt_interface
                 rule.src = route
                 match = iptc.Match(rule, 'conntrack')
-                match.ctstate = ['RELATED', 'ESTABLISHED']
+                match.ctstate = 'RELATED,ESTABLISHED'
                 rule.add_match(match)
                 rule.create_target('ACCEPT')
                 self._accept.append(('FORWARD', rule))
@@ -717,7 +717,7 @@ class Iptables(object):
                 rule.out_interface = self.virt_interface
                 rule.src = route
                 match = iptc.Match(rule, 'conntrack')
-                match.ctstate = ['RELATED', 'ESTABLISHED']
+                match.ctstate = 'RELATED,ESTABLISHED'
                 rule.add_match(match)
                 rule.create_target('ACCEPT')
                 self._accept6.append(('FORWARD', rule))
