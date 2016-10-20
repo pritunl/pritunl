@@ -157,7 +157,7 @@ class Iptables(object):
                     rule.dst = self.virt_network6
                     rule.protocol = 'icmpv6'
                     match = iptc.Match(rule, 'conntrack')
-                    match.ctstate = ['NEW']
+                    match.ctstate = 'NEW'
                     rule.add_match(match)
                     rule.create_target('ACCEPT')
                     self._accept6.append(('INPUT', rule))
@@ -496,7 +496,7 @@ class Iptables(object):
                     rule.dst = self.virt_network6
                     rule.protocol = 'icmpv6'
                     match = iptc.Match(rule, 'conntrack')
-                    match.ctstate = ['NEW']
+                    match.ctstate = 'NEW'
                     rule.add_match(match)
                     rule.create_target('ACCEPT')
                     self._accept6.append(('FORWARD', rule))
