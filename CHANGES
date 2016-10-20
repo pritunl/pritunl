@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue when using lib iptables
+
 Version 1.25.1133.28 2016-10-19
 -------------------------------
 
