@@ -1037,6 +1037,7 @@ OVPN_ONC_CLIENT_CONF = """\
         "AuthRetry": "interact",
         "Auth": "%s",
         "Cipher": "%s",
+        "IgnoreDefaultRoute": %s,
         "ClientCertType": "Pattern",
         "ClientCertPattern": {
           "IssuerCARef": [
