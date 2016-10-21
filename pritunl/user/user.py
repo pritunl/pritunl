@@ -626,12 +626,18 @@ class User(mongo.MongoObject):
         else:
             auth = OVPN_ONC_AUTH_NONE % self.id
 
+        if svr.is_route_all():
+            ignore_default = 'true'
+        else:
+            ignore_default = 'false'
+
         onc_conf = OVPN_ONC_CLIENT_CONF % (
             conf_hash,
             '%s - %s (%s)' % (self.name, self.org.name, svr.name),
             host,
             HASHES[svr.hash],
             ONC_CIPHERS[svr.cipher],
+            ignore_default,
             client_ref,
             'adaptive' if svr.lzo_compression == ADAPTIVE else 'false',
             port,
