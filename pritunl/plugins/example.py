@@ -85,5 +85,6 @@ def server_config(host_id, host_name, server_id, server_name, port, protocol,
         dh_param_bits, multi_device, dns_servers, search_domain, otp_auth,
         cipher, hash, inter_client, ping_interval, ping_timeout,
         link_ping_interval, link_ping_timeout, max_clients, replica_count,
-        dns_mapping, debug, routes, **kwargs):
+        dns_mapping, debug, routes, interface, bridge_interface, vxlan,
+        **kwargs):
     return ''
