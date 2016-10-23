@@ -297,6 +297,9 @@ class ServerInstance(object):
                 dns_mapping=self.server.dns_mapping,
                 debug=self.server.debug,
                 routes=routes,
+                interface=self.interface,
+                bridge_interface=self.bridge_interface,
+                vxlan=self.vxlan,
             )
 
             if returns:
