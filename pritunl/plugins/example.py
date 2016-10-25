@@ -51,6 +51,12 @@ def user_authenticate(host_id, host_name, user_name, password, remote_ip,
 def log_entry(host_id, host_name, message, **kwargs):
     pass
 
+# Called on audit event. User id can be referring to a user or administrator.
+# The org_id will be None for administrators.
+def audit_event(host_id, host_name, user_id, org_id, timestamp, type,
+        remote_addr, message, **kwargs):
+    pass
+
 # [SYNCHRONOUS] Called after a user has authenticated with SSO when
 # loging into the web console. Must return True or False to accept auth
 # request and an organization name or None. If an organization name is
