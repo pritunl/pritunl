@@ -7,6 +7,7 @@ from pritunl import settings
 from pritunl import utils
 from pritunl import mongo
 from pritunl import logger
+from pritunl import plugins
 
 import base64
 import os
@@ -237,13 +238,27 @@ class Administrator(mongo.MongoObject):
         if settings.app.auditing != ALL:
             return
 
+        timestamp = utils.now()
+
         self.audit_collection.insert({
             'user_id': self.id,
-            'timestamp': utils.now(),
+            'timestamp': timestamp,
             'type': event_type,
             'remote_addr': remote_addr,
             'message': event_msg,
         })
+
+        plugins.event(
+            'audit_event',
+            host_id=settings.local.host_id,
+            host_name=settings.local.host.name,
+            user_id=self.id,
+            org_id=None,
+            timestamp=timestamp,
+            type=event_type,
+            remote_addr=remote_addr,
+            message=event_msg,
+        )
 
     def get_audit_events(self):
         if settings.app.demo_mode:
