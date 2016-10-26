@@ -105,7 +105,8 @@ class Authorizer(object):
             raise
 
     def _check_primary(self):
-        if not self.server.check_groups(self.user.groups):
+        if not self.user.link_server_id and \
+                not self.server.check_groups(self.user.groups):
             self.user.audit_event(
                 'user_connection',
                 ('User connection to "%s" denied. User not in ' +
