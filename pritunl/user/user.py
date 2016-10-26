@@ -10,6 +10,7 @@ from pritunl import messenger
 from pritunl import ipaddress
 from pritunl import sso
 from pritunl import auth
+from pritunl import plugins
 
 import tarfile
 import zipfile
@@ -897,14 +898,28 @@ class User(mongo.MongoObject):
         if settings.app.auditing != ALL:
             return
 
+        timestamp = utils.now()
+
         self.audit_collection.insert({
             'user_id': self.id,
             'org_id': self.org_id,
-            'timestamp': utils.now(),
+            'timestamp': timestamp,
             'type': event_type,
             'remote_addr': remote_addr,
             'message': event_msg,
         })
+
+        plugins.event(
+            'audit_event',
+            host_id=settings.local.host_id,
+            host_name=settings.local.host.name,
+            user_id=self.id,
+            org_id=self.org_id,
+            timestamp=timestamp,
+            type=event_type,
+            remote_addr=remote_addr,
+            message=event_msg,
+        )
 
     def get_audit_events(self):
         if settings.app.demo_mode:
