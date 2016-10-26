@@ -5,6 +5,7 @@ Pritunl Changelog
 
 Improvements to plugin system
 Improve Chrome OS support
+Fix issue with linked servers using groups
 
 Version 1.25.1134.24 2016-10-20
 -------------------------------
