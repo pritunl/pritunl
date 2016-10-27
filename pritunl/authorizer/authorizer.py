@@ -293,7 +293,7 @@ class Authorizer(object):
             }, upsert=True)
 
     def _auth_plugins(self):
-        if self.user.type == CERT_CLIENT:
+        if not self.user.link_server_id and self.user.type == CERT_CLIENT:
             returns = plugins.caller(
                 'user_connect',
                 host_id=settings.local.host_id,
