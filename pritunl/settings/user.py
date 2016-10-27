@@ -9,6 +9,7 @@ class SettingsUser(SettingsGroupMongo):
         'otp_secret_len': 16,
         'pin_mode': PIN_OPTIONAL,
         'pin_min_length': 6,
+        'force_password_mode': None,
         'cert_key_bits': 4096,
         'cert_message_digest': 'sha256',
         'otp_cache_ttl': 43200,

@@ -463,6 +463,9 @@ class User(mongo.MongoObject):
         if self.bypass_secondary:
             return
 
+        if settings.user.force_password_mode:
+            return settings.user.force_password_mode
+
         if svr.otp_auth:
             password_mode = 'otp'
 
