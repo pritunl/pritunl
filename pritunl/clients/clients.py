@@ -696,7 +696,7 @@ class Clients(object):
                         mac_addr=mac_addr,
                         password=password,
                         allow=allow,
-                        reason=reason
+                        reason=reason,
                     )
                 except:
                     logger.exception('Error in authorizer callback', 'server',
