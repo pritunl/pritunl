@@ -65,7 +65,7 @@
     </div>
     <div class="cipher form-group">
       <label>Encryption Cipher</label>
-      <select class="form-control" data-toggle="tooltip" title="Encryption cipher used for VPN traffic. AES 256bit is recommended. Using AES 128bit will significantly improve bandwidth">
+      <select class="form-control" data-toggle="tooltip" title="Encryption cipher used for VPN traffic. AES 128bit is recommended. Using AES 256bit will impact bandwidth">
         <option value="none" <%= cipher === 'none' ? 'selected' : '' %>>None</option>
         <option value="bf128" <%= cipher === 'bf128' ? 'selected' : '' %>>Blowfish 128bit</option>
         <option value="bf256" <%= cipher === 'bf256' ? 'selected' : '' %>>Blowfish 256bit</option>
