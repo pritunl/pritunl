@@ -6,7 +6,11 @@ import itertools
 import subprocess
 import time
 import threading
-import iptc
+try:
+    import iptc
+    LIB_IPTABLES = False
+except:
+    LIB_IPTABLES = False
 
 _global_lock = threading.Lock()
 
@@ -122,7 +126,7 @@ class Iptables(object):
 
     def _generate_input(self):
         if self._accept_all:
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule()
                 rule.in_interface = self.virt_interface
                 rule.create_target('ACCEPT')
@@ -135,7 +139,7 @@ class Iptables(object):
                 ])
 
             if self.ipv6_firewall:
-                if settings.vpn.lib_iptables:
+                if settings.vpn.lib_iptables and LIB_IPTABLES:
                     rule = self._init_rule6()
                     rule.dst = self.virt_network6
                     match = iptc.Match(rule, 'conntrack')
@@ -152,7 +156,7 @@ class Iptables(object):
                         '-j', 'ACCEPT',
                     ])
 
-                if settings.vpn.lib_iptables:
+                if settings.vpn.lib_iptables and LIB_IPTABLES:
                     rule = self._init_rule6()
                     rule.dst = self.virt_network6
                     rule.protocol = 'icmpv6'
@@ -171,7 +175,7 @@ class Iptables(object):
                         '-j', 'ACCEPT',
                     ])
 
-                if settings.vpn.lib_iptables:
+                if settings.vpn.lib_iptables and LIB_IPTABLES:
                     rule = self._init_rule6()
                     rule.dst = self.virt_network6
                     rule.create_target('DROP')
@@ -183,7 +187,7 @@ class Iptables(object):
                         '-j', 'DROP',
                     ])
             else:
-                if settings.vpn.lib_iptables:
+                if settings.vpn.lib_iptables and LIB_IPTABLES:
                     rule = self._init_rule6()
                     rule.in_interface = self.virt_interface
                     rule.create_target('ACCEPT')
@@ -198,7 +202,7 @@ class Iptables(object):
             return
 
         if self.inter_client:
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule()
                 rule.in_interface = self.virt_interface
                 rule.dst = self.virt_network
@@ -212,7 +216,7 @@ class Iptables(object):
                     '-j', 'ACCEPT',
                 ])
 
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule6()
                 rule.in_interface = self.virt_interface
                 rule.dst = self.virt_network6
@@ -226,7 +230,7 @@ class Iptables(object):
                     '-j', 'ACCEPT',
                 ])
         else:
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule()
                 rule.in_interface = self.virt_interface
                 rule.dst = self.server_addr
@@ -240,7 +244,7 @@ class Iptables(object):
                     '-j', 'ACCEPT',
                 ])
 
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule6()
                 rule.in_interface = self.virt_interface
                 rule.dst = self.server_addr6
@@ -255,7 +259,7 @@ class Iptables(object):
                 ])
 
         for route in itertools.chain(self._routes, self._nat_routes.keys()):
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule()
                 rule.in_interface = self.virt_interface
                 rule.dst = route
@@ -270,7 +274,7 @@ class Iptables(object):
                 ])
 
         for route in itertools.chain(self._routes6, self._nat_routes6.keys()):
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule6()
                 rule.in_interface = self.virt_interface
                 rule.dst = route
@@ -284,7 +288,7 @@ class Iptables(object):
                     '-j', 'ACCEPT',
                 ])
 
-        if settings.vpn.lib_iptables:
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
             rule = self._init_rule()
             rule.in_interface = self.virt_interface
             rule.create_target('DROP')
@@ -296,7 +300,7 @@ class Iptables(object):
                 '-j', 'DROP',
             ])
 
-        if settings.vpn.lib_iptables:
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
             rule = self._init_rule6()
             rule.in_interface = self.virt_interface
             rule.create_target('DROP')
@@ -310,7 +314,7 @@ class Iptables(object):
 
     def _generate_output(self):
         if self._accept_all:
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule()
                 rule.out_interface = self.virt_interface
                 rule.create_target('ACCEPT')
@@ -322,7 +326,7 @@ class Iptables(object):
                     '-j', 'ACCEPT',
                 ])
 
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule6()
                 rule.out_interface = self.virt_interface
                 rule.create_target('ACCEPT')
@@ -337,7 +341,7 @@ class Iptables(object):
             return
 
         if self.inter_client:
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule()
                 rule.out_interface = self.virt_interface
                 rule.src = self.virt_network
@@ -351,7 +355,7 @@ class Iptables(object):
                     '-j', 'ACCEPT',
                 ])
 
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule6()
                 rule.out_interface = self.virt_interface
                 rule.src = self.virt_network6
@@ -365,7 +369,7 @@ class Iptables(object):
                     '-j', 'ACCEPT',
                 ])
         else:
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule()
                 rule.out_interface = self.virt_interface
                 rule.src = self.server_addr
@@ -379,7 +383,7 @@ class Iptables(object):
                     '-j', 'ACCEPT',
                 ])
 
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule6()
                 rule.out_interface = self.virt_interface
                 rule.src = self.server_addr6
@@ -394,7 +398,7 @@ class Iptables(object):
                 ])
 
         for route in itertools.chain(self._routes, self._nat_routes.keys()):
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule()
                 rule.out_interface = self.virt_interface
                 rule.src = route
@@ -409,7 +413,7 @@ class Iptables(object):
                 ])
 
         for route in itertools.chain(self._routes6, self._nat_routes6.keys()):
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule6()
                 rule.out_interface = self.virt_interface
                 rule.src = route
@@ -423,7 +427,7 @@ class Iptables(object):
                     '-j', 'ACCEPT',
                 ])
 
-        if settings.vpn.lib_iptables:
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
             rule = self._init_rule()
             rule.out_interface = self.virt_interface
             rule.create_target('DROP')
@@ -435,7 +439,7 @@ class Iptables(object):
                 '-j', 'DROP',
             ])
 
-        if settings.vpn.lib_iptables:
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
             rule = self._init_rule6()
             rule.out_interface = self.virt_interface
             rule.create_target('DROP')
@@ -449,7 +453,7 @@ class Iptables(object):
 
     def _generate_forward(self):
         if self._accept_all:
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule()
                 rule.in_interface = self.virt_interface
                 rule.create_target('ACCEPT')
@@ -461,7 +465,7 @@ class Iptables(object):
                     '-j', 'ACCEPT',
                 ])
 
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule()
                 rule.out_interface = self.virt_interface
                 rule.create_target('ACCEPT')
@@ -474,7 +478,7 @@ class Iptables(object):
                 ])
 
             if self.ipv6_firewall:
-                if settings.vpn.lib_iptables:
+                if settings.vpn.lib_iptables and LIB_IPTABLES:
                     rule = self._init_rule6()
                     rule.dst = self.virt_network6
                     match = iptc.Match(rule, 'conntrack')
@@ -491,7 +495,7 @@ class Iptables(object):
                         '-j', 'ACCEPT',
                     ])
 
-                if settings.vpn.lib_iptables:
+                if settings.vpn.lib_iptables and LIB_IPTABLES:
                     rule = self._init_rule6()
                     rule.dst = self.virt_network6
                     rule.protocol = 'icmpv6'
@@ -510,7 +514,7 @@ class Iptables(object):
                         '-j', 'ACCEPT',
                     ])
 
-                if settings.vpn.lib_iptables:
+                if settings.vpn.lib_iptables and LIB_IPTABLES:
                     rule = self._init_rule6()
                     rule.dst = self.virt_network6
                     rule.create_target('DROP')
@@ -522,7 +526,7 @@ class Iptables(object):
                         '-j', 'DROP',
                     ])
             else:
-                if settings.vpn.lib_iptables:
+                if settings.vpn.lib_iptables and LIB_IPTABLES:
                     rule = self._init_rule6()
                     rule.in_interface = self.virt_interface
                     rule.create_target('ACCEPT')
@@ -534,7 +538,7 @@ class Iptables(object):
                         '-j', 'ACCEPT',
                     ])
 
-                if settings.vpn.lib_iptables:
+                if settings.vpn.lib_iptables and LIB_IPTABLES:
                     rule = self._init_rule6()
                     rule.out_interface = self.virt_interface
                     rule.create_target('ACCEPT')
@@ -549,7 +553,7 @@ class Iptables(object):
             return
 
         if self.inter_client:
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule()
                 rule.in_interface = self.virt_interface
                 rule.dst = self.virt_network
@@ -563,7 +567,7 @@ class Iptables(object):
                     '-j', 'ACCEPT',
                 ])
 
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule6()
                 rule.in_interface = self.virt_interface
                 rule.dst = self.virt_network6
@@ -577,7 +581,7 @@ class Iptables(object):
                     '-j', 'ACCEPT',
                 ])
 
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule()
                 rule.out_interface = self.virt_interface
                 rule.src = self.virt_network
@@ -591,7 +595,7 @@ class Iptables(object):
                     '-j', 'ACCEPT',
                 ])
 
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule6()
                 rule.out_interface = self.virt_interface
                 rule.src = self.virt_network6
@@ -606,7 +610,7 @@ class Iptables(object):
                 ])
 
         for route in self._routes:
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule()
                 rule.in_interface = self.virt_interface
                 rule.dst = route
@@ -620,7 +624,7 @@ class Iptables(object):
                     '-j', 'ACCEPT',
                 ])
 
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule()
                 rule.out_interface = self.virt_interface
                 rule.src = route
@@ -635,7 +639,7 @@ class Iptables(object):
                 ])
 
         for route in self._routes6:
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule6()
                 rule.in_interface = self.virt_interface
                 rule.dst = route
@@ -649,7 +653,7 @@ class Iptables(object):
                     '-j', 'ACCEPT',
                 ])
 
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule6()
                 rule.out_interface = self.virt_interface
                 rule.src = route
@@ -664,7 +668,7 @@ class Iptables(object):
                 ])
 
         for route in self._nat_routes.keys():
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule()
                 rule.in_interface = self.virt_interface
                 rule.dst = route
@@ -678,7 +682,7 @@ class Iptables(object):
                     '-j', 'ACCEPT',
                 ])
 
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule()
                 rule.out_interface = self.virt_interface
                 rule.src = route
@@ -698,7 +702,7 @@ class Iptables(object):
                 ])
 
         for route in self._nat_routes6.keys():
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule6()
                 rule.in_interface = self.virt_interface
                 rule.dst = route
@@ -712,7 +716,7 @@ class Iptables(object):
                     '-j', 'ACCEPT',
                 ])
 
-            if settings.vpn.lib_iptables:
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule6()
                 rule.out_interface = self.virt_interface
                 rule.src = route
@@ -731,7 +735,7 @@ class Iptables(object):
                     '-j', 'ACCEPT',
                 ])
 
-        if settings.vpn.lib_iptables:
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
             rule = self._init_rule()
             rule.in_interface = self.virt_interface
             rule.create_target('DROP')
@@ -743,7 +747,7 @@ class Iptables(object):
                 '-j', 'DROP',
             ])
 
-        if settings.vpn.lib_iptables:
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
             rule = self._init_rule()
             rule.out_interface = self.virt_interface
             rule.create_target('DROP')
@@ -755,7 +759,7 @@ class Iptables(object):
                 '-j', 'DROP',
             ])
 
-        if settings.vpn.lib_iptables:
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
             rule = self._init_rule6()
             rule.in_interface = self.virt_interface
             rule.create_target('DROP')
@@ -767,7 +771,7 @@ class Iptables(object):
                 '-j', 'DROP',
             ])
 
-        if settings.vpn.lib_iptables:
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
             rule = self._init_rule6()
             rule.out_interface = self.virt_interface
             rule.create_target('DROP')
@@ -789,7 +793,7 @@ class Iptables(object):
                 continue
 
             for nat_network in self._nat_networks:
-                if settings.vpn.lib_iptables:
+                if settings.vpn.lib_iptables and LIB_IPTABLES:
                     rule = self._init_rule()
                     rule.src = nat_network
                     rule.dst = route
@@ -812,7 +816,7 @@ class Iptables(object):
                 continue
 
             for nat_network in self._nat_networks6:
-                if settings.vpn.lib_iptables:
+                if settings.vpn.lib_iptables and LIB_IPTABLES:
                     rule = self._init_rule6()
                     rule.src = nat_network
                     rule.dst = route
@@ -831,7 +835,7 @@ class Iptables(object):
 
         if self._accept_all and all_interface:
             for nat_network in self._nat_networks:
-                if settings.vpn.lib_iptables:
+                if settings.vpn.lib_iptables and LIB_IPTABLES:
                     rule = self._init_rule()
                     rule.src = nat_network
                     rule.out_interface = all_interface
@@ -846,7 +850,7 @@ class Iptables(object):
                         '-j', 'MASQUERADE',
                     ])
             for nat_network in self._nat_networks6:
-                if settings.vpn.lib_iptables:
+                if settings.vpn.lib_iptables and LIB_IPTABLES:
                     rule = self._init_rule6()
                     rule.src = nat_network
                     rule.out_interface = all_interface6
@@ -1147,12 +1151,15 @@ class Iptables(object):
 
         self._lock.acquire()
         try:
-            tables = {
-                'nat': iptc.Table(iptc.Table.NAT),
-                'nat6': iptc.Table6(iptc.Table.NAT),
-                'filter': iptc.Table(iptc.Table.FILTER),
-                'filter6': iptc.Table6(iptc.Table.FILTER),
-            }
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
+                tables = {
+                    'nat': iptc.Table(iptc.Table.NAT),
+                    'nat6': iptc.Table6(iptc.Table.NAT),
+                    'filter': iptc.Table(iptc.Table.FILTER),
+                    'filter6': iptc.Table6(iptc.Table.FILTER),
+                }
+            else:
+                tables = None
 
             # TODO
             # tables['nat'].autocommit = False
@@ -1227,12 +1234,15 @@ class Iptables(object):
 
         self._lock.acquire()
         try:
-            tables = {
-                'nat': iptc.Table(iptc.Table.NAT),
-                'nat6': iptc.Table6(iptc.Table.NAT),
-                'filter': iptc.Table(iptc.Table.FILTER),
-                'filter6': iptc.Table6(iptc.Table.FILTER),
-            }
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
+                tables = {
+                    'nat': iptc.Table(iptc.Table.NAT),
+                    'nat6': iptc.Table6(iptc.Table.NAT),
+                    'filter': iptc.Table(iptc.Table.FILTER),
+                    'filter6': iptc.Table6(iptc.Table.FILTER),
+                }
+            else:
+                tables = None
 
             # TODO
             # tables['nat'].autocommit = False
