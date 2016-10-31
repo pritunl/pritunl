@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Web interface improvements
+Fix iptables support issue
 
 Version 1.25.1141.65 2016-10-27
 -------------------------------
