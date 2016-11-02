@@ -25,7 +25,8 @@ class TaskServer(task.Task):
     @interrupter
     def task(self):
         try:
-            timestamp_spec = utils.now() - datetime.timedelta(
+            timestamp = utils.now()
+            timestamp_spec = timestamp - datetime.timedelta(
                 seconds=settings.vpn.server_ping_ttl)
 
             docs = self.server_collection.find({
@@ -40,6 +41,14 @@ class TaskServer(task.Task):
             for doc in docs:
                 for instance in doc['instances']:
                     if instance['ping_timestamp'] < timestamp_spec:
+                        logger.warning('Removing instance doc', 'server',
+                            server_id=doc['_id'],
+                            instance_id=instance['instance_id'],
+                            cur_timestamp=timestamp,
+                            ttl_timestamp=timestamp_spec,
+                            ping_timestamp=instance['ping_timestamp'],
+                        )
+
                         self.server_collection.update({
                             '_id': doc['_id'],
                             'instances.instance_id': instance['instance_id'],
