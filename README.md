@@ -200,10 +200,12 @@ tee -a /lib/systemd/system/mongod.service << EOF
 [Unit]
 Description=High-performance, schema-free document-oriented database
 After=network.target
+Documentation=https://docs.mongodb.org/manual
 
 [Service]
 User=mongodb
-ExecStart=/usr/bin/mongod --config /etc/mongod.conf
+Group=mongodb
+ExecStart=/usr/bin/mongod --quiet --config /etc/mongod.conf
 
 [Install]
 WantedBy=multi-user.target
