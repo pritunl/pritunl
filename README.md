@@ -112,48 +112,6 @@ systemctl start mongod pritunl
 systemctl enable mongod pritunl
 ```
 
-### fedora 23
-
-```
-# SELinux must be disabled
-
-tee -a /etc/yum.repos.d/pritunl.repo << EOF
-[pritunl]
-name=Pritunl Repository
-baseurl=http://repo.pritunl.com/stable/yum/fedora/23/
-gpgcheck=1
-enabled=1
-EOF
-
-yum install gpg
-gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7568D9BB55FF9E5287D586017AE645C0CF8E292A
-gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
-yum install pritunl mongodb-server
-systemctl start mongod pritunl
-systemctl enable mongod pritunl
-```
-
-### fedora 24
-
-```
-# SELinux must be disabled
-
-tee -a /etc/yum.repos.d/pritunl.repo << EOF
-[pritunl]
-name=Pritunl Repository
-baseurl=http://repo.pritunl.com/stable/yum/fedora/24/
-gpgcheck=1
-enabled=1
-EOF
-
-yum install gpg
-gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7568D9BB55FF9E5287D586017AE645C0CF8E292A
-gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
-yum install pritunl mongodb-server
-systemctl start mongod pritunl
-systemctl enable mongod pritunl
-```
-
 ### debian wheezy
 
 ```
