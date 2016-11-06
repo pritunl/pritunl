@@ -1,5 +1,5 @@
 flask==0.10.1
-pymongo==3.3.0
+pymongo==3.3.1
 netifaces==0.10.5
 pyopenssl>=0.15.1
 boto==2.42.0
