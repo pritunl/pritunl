@@ -5,6 +5,10 @@ class BaseError(Exception):
             message = '%s. %r' % (message, data)
         Exception.__init__(self, message)
 
+class PluginMissing(BaseError):
+    pass
+
+
 class ServerStop(BaseError):
     pass
 
