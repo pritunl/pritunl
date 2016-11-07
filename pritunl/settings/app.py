@@ -18,6 +18,7 @@ class SettingsApp(SettingsGroupMongo):
         'allow_insecure_session': False,
         'auditing': None,
         'monitoring': None,
+        'plugin_requred': None,
         'plugin_directory': '/var/lib/pritunl/plugins',
         'plugin_queue_size': 512,
         'plugin_queue_threads': 10,
