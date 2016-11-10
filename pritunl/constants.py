@@ -431,15 +431,6 @@ GROUP_MONGO = 'mongo'
 GROUP_FILE = 'file'
 GROUP_LOCAL = 'local'
 
-SETTINGS_RESERVED = {
-    'groups',
-    'collection',
-    'commit',
-    'load',
-    'on_msg',
-    'start',
-}
-
 DEFAULT_BIND_ADDR = '0.0.0.0'
 DEFAULT_PORT = 9700
 DEFAULT_USERNAME = 'pritunl'
