@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add setting to require plugins by name
+Add us-east-2 EC2 region
 
 Version 1.25.1148.96 2016-11-03
 -------------------------------
