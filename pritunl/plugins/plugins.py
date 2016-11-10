@@ -43,7 +43,12 @@ def init():
 
     missing_plugins = plugins_required - plugins_loaded
     if missing_plugins:
-        set_global_interrupt()
+        try:
+            logger.error('Missing required plugins', 'plugins',
+                missing=list(missing_plugins),
+            )
+        finally:
+            set_global_interrupt()
         raise PluginMissing(
             'Missing required plugins %s' % list(missing_plugins))
 
