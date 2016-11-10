@@ -398,6 +398,10 @@ define([
         '.us-east-1-access-key input').val();
       var usEast1SecretKey = this.$(
         '.us-east-1-secret-key input').val();
+      var usEast2AccessKey = this.$(
+        '.us-east-2-access-key input').val();
+      var usEast2SecretKey = this.$(
+        '.us-east-2-secret-key input').val();
       var usWest1AccessKey = this.$(
         '.us-west-1-access-key input').val();
       var usWest1SecretKey = this.$(
@@ -582,6 +586,8 @@ define([
         route53_zone: route53Zone,
         us_east_1_access_key: usEast1AccessKey,
         us_east_1_secret_key: usEast1SecretKey,
+        us_east_2_access_key: usEast2AccessKey,
+        us_east_2_secret_key: usEast2SecretKey,
         us_west_1_access_key: usWest1AccessKey,
         us_west_1_secret_key: usWest1SecretKey,
         us_west_2_access_key: usWest2AccessKey,

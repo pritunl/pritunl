@@ -47,6 +47,8 @@ define([
       'route53_zone': null,
       'us_east_1_access_key': null,
       'us_east_1_secret_key': null,
+      'us_east_2_access_key': null,
+      'us_east_2_secret_key': null,
       'us_west_1_access_key': null,
       'us_west_1_secret_key': null,
       'us_west_2_access_key': null,

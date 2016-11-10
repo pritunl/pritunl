@@ -174,6 +174,7 @@
       <select class="form-control" data-toggle="tooltip" title="Select Route 53 region. This will automatically create and update DNS records for each host in the selected region.">
         <option value="" <%= !route53_region ? 'selected' : '' %>>Disabled</option>
         <option value="us-east-1" <%= route53_region === 'us-east-1' ? 'selected' : '' %>>US East (N. Virginia)</option>
+        <option value="us-east-2" <%= route53_region === 'us-east-2' ? 'selected' : '' %>>US East (Ohio)</option>
         <option value="us-west-1" <%= route53_region === 'us-west-1' ? 'selected' : '' %>>US West (N. California)</option>
         <option value="us-west-2" <%= route53_region === 'us-west-2' ? 'selected' : '' %>>US West (Oregon)</option>
         <option value="eu-west-1" <%= route53_region === 'eu-west-1' ? 'selected' : '' %>>EU (Ireland)</option>
@@ -189,6 +190,10 @@
     <div class="us-east-1-access-key form-group">
       <label>US East (N. Virginia) Access Key</label>
       <input type="text" class="form-control" placeholder="Enter access key" value="<%- us_east_1_access_key || '' %>">
+    </div>
+    <div class="us-east-2-access-key form-group">
+      <label>US East (Ohio) Access Key</label>
+      <input type="text" class="form-control" placeholder="Enter access key" value="<%- us_east_2_access_key || '' %>">
     </div>
     <div class="us-west-1-access-key form-group">
       <label>US West (N. California) Access Key</label>
@@ -241,6 +246,10 @@
     <div class="us-east-1-secret-key form-group">
       <label>US East (N. Virginia) Secret Key</label>
       <input type="text" class="form-control" placeholder="Enter secret key" value="<%- us_east_1_secret_key || '' %>">
+    </div>
+    <div class="us-east-2-secret-key form-group">
+      <label>US East (Ohio) Secret Key</label>
+      <input type="text" class="form-control" placeholder="Enter secret key" value="<%- us_east_2_secret_key || '' %>">
     </div>
     <div class="us-west-1-secret-key form-group">
       <label>US West (N. California) Secret Key</label>
