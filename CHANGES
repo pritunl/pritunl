@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.25.1158.92 2016-11-13
+-------------------------------
 
 Add setting to require plugins by name
 Add us-east-2 AWS region
