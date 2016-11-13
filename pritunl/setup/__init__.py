@@ -1,3 +1,4 @@
+from pritunl.helpers import *
 from pritunl.setup.local import setup_local
 from pritunl.setup.server import setup_server
 from pritunl.setup.mongo import setup_mongo
@@ -53,6 +54,7 @@ def setup_all():
             )
     except:
         logger.exception('Pritunl setup failed', 'setup')
+        set_global_interrupt()
         raise
 
 def setup_db():
