@@ -39,6 +39,7 @@ define([
       'ping_timeout': null,
       'link_ping_interval': null,
       'link_ping_timeout': null,
+      'allowed_devices': null,
       'max_clients': null,
       'replica_count': null,
       'vxlan': null,

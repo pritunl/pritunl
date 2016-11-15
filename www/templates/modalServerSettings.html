@@ -146,6 +146,14 @@
       <label>User Link Ping Timeout</label>
       <input type="number" class="form-control" placeholder="Enter ping timeout" data-toggle="tooltip" title="Optional, ping timeout used when multiple users have the same network link to failover to another user when one network link fails." min="0" step="0.1" value="<%- link_ping_timeout || '' %>" autocapitalize="off">
     </div>
+    <div class="allowed-devices form-group">
+      <label>Allowed Devices</label>
+      <select class="form-control" data-toggle="tooltip" title="Device types permitted to connect to server.">
+        <option value="any" <%= !allowed_devices ? 'selected' : '' %>>Any</option>
+        <option value="mobile" <%= allowed_devices === 'mobile' ? 'selected' : '' %>>Mobile</option>
+        <option value="desktop" <%= allowed_devices === 'desktop' ? 'selected' : '' %>>Desktop</option>
+      </select>
+    </div>
     <div class="search-domain form-group">
       <label>DNS Search Domain</label>
       <input type="text" class="form-control" placeholder="Enter DNS search domain" data-toggle="tooltip" title="Optional, DNS search domain for clients. Separate multiple search domains by a comma" value="<%- search_domain || '' %>" autocapitalize="off">
