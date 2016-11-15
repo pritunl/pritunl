@@ -471,6 +471,16 @@ STATIC_FILE_EXTENSIONS = {
     '.woff',
     '.woff2',
 }
+MOBILE_PLATFORMS = {
+    'android',
+    'ios',
+}
+DESKTOP_PLATFORMS = {
+    'linux',
+    'mac',
+    'win',
+    'chrome',
+}
 
 INFO = 'info'
 WARNING = 'warning'
