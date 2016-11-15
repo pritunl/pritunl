@@ -62,6 +62,7 @@ dict_fields = [
     'ping_timeout',
     'link_ping_interval',
     'link_ping_timeout',
+    'allowed_devices',
     'max_clients',
     'replica_count',
     'vxlan',
@@ -120,6 +121,7 @@ class Server(mongo.MongoObject):
         'dh_params',
         'status',
         'start_timestamp',
+        'allowed_devices',
         'max_clients',
         'replica_count',
         'vxlan',
@@ -172,8 +174,8 @@ class Server(mongo.MongoObject):
             cipher=None, hash=None, jumbo_frames=None, lzo_compression=None,
             inter_client=None, ping_interval=None, ping_timeout=None,
             link_ping_interval=None, link_ping_timeout=None, onc_hostname=None,
-            max_clients=None, replica_count=None, vxlan=None, dns_mapping=None,
-            debug=None, **kwargs):
+            allowed_devices=None, max_clients=None, replica_count=None,
+            vxlan=None, dns_mapping=None, debug=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         if 'network' in self.loaded_fields:
@@ -238,6 +240,8 @@ class Server(mongo.MongoObject):
             self.link_ping_timeout = link_ping_timeout
         if onc_hostname is not None:
             self.onc_hostname = onc_hostname
+        if allowed_devices is not None:
+            self.allowed_devices = allowed_devices
         if max_clients is not None:
             self.max_clients = max_clients
         if replica_count is not None:
@@ -316,6 +320,7 @@ class Server(mongo.MongoObject):
             'link_ping_interval': self.link_ping_interval,
             'link_ping_timeout': self.link_ping_timeout,
             'onc_hostname': self.onc_hostname,
+            'allowed_devices': self.allowed_devices,
             'max_clients': self.max_clients,
             'replica_count': self.replica_count,
             'vxlan': self.vxlan,
