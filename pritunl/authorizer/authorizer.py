@@ -125,6 +125,29 @@ class Authorizer(object):
                 )
             raise AuthError('User not in servers groups')
 
+        if self.server.allowed_devices:
+            if self.server.allowed_devices == 'mobile':
+                platforms = MOBILE_PLATFORMS
+            elif self.server.allowed_devices == 'desktop':
+                platforms = DESKTOP_PLATFORMS
+            else:
+                logger.error('Unknown allowed devices option',
+                    'server',
+                    server_id=self.server.id,
+                    allowed_devices=self.server.allowed_devices,
+                )
+                platforms = {}
+
+            if self.platform not in platforms:
+                self.user.audit_event(
+                    'user_connection',
+                    ('User connection to "%s" denied. User platform ' +
+                     'not allowed') % (self.server.name),
+                    remote_addr=self.remote_ip,
+                )
+                raise AuthError(
+                    'User platform "%s" not allowed' % self.platform)
+
     def _check_password(self):
         if self.user.bypass_secondary or self.user.link_server_id or \
                 settings.vpn.stress_test:
