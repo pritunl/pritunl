@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add allowed devices option to server settings
+
 Version 1.25.1158.92 2016-11-13
 -------------------------------
 
