@@ -45,6 +45,8 @@ def main(default_conf=None):
             help='Tail log file')
         parser.add_option('--limit', type='int',
             help='Limit log lines')
+    elif cmd == 'set':
+        parser.disable_interspersed_args()
 
     (options, args) = parser.parse_args()
 
