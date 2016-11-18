@@ -1,9 +1,0 @@
-[Unit]
-Description=Pritunl Daemon
-
-[Service]
-LimitNOFILE=50000
-ExecStart=%PREFIX%/bin/pritunl start
-
-[Install]
-WantedBy=multi-user.target
