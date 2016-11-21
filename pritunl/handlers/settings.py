@@ -228,7 +228,7 @@ def settings_put():
         if server_key != settings.app.server_key:
             update_server = True
 
-        settings.app.server_key = server_key.strip()
+        settings.app.server_key = server_key
 
     if 'server_port' in flask.request.json:
         settings_commit = True
