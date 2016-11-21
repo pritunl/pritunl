@@ -110,7 +110,6 @@ class SettingsApp(SettingsGroupMongo):
         'acme_renew': 2592000,
         'server_cert': None,
         'server_key': None,
-        'server_dh_size': 1024,
         'cloud_provider': None,
         'route53_region': None,
         'route53_zone': None,
