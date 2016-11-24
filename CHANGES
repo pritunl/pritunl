@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with Google Cloud
+
 Version 1.25.1164.91 2016-11-19
 -------------------------------
 
