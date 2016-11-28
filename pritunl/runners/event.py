@@ -9,7 +9,7 @@ import threading
 def _event_runner_thread():
     evt_queue = event.event_queue
     events = {}
-    del_evts = []
+    del_evts = set()
 
     while True:
         try:
@@ -25,7 +25,7 @@ def _event_runner_thread():
                 for (evt_type, resource_id), evt_time in events.iteritems():
                     if cur_time >= evt_time:
                         event.Event(evt_type, resource_id)
-                        del_evts.append((evt_type, resource_id))
+                        del_evts.add((evt_type, resource_id))
 
                 if del_evts:
                     for evt_key in del_evts:
