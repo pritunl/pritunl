@@ -29,7 +29,10 @@ def _event_runner_thread():
 
                 if del_evts:
                     for evt_key in del_evts:
-                        del events[evt_key]
+                        try:
+                            del events[evt_key]
+                        except KeyError:
+                            pass
                     del_evts = []
 
                 if not events:
