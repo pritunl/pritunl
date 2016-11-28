@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Fix issue with Google Cloud
+Fix issue with user list failing to update
 
 Version 1.25.1164.91 2016-11-19
 -------------------------------
