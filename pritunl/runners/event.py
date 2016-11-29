@@ -33,7 +33,7 @@ def _event_runner_thread():
                             del events[evt_key]
                         except KeyError:
                             pass
-                    del_evts = []
+                    del_evts = set()
 
                 if not events:
                     break
