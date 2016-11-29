@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with event system
+
 Version 1.25.1173.81 2016-11-28
 -------------------------------
 
