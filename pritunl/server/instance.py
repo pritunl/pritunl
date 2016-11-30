@@ -851,6 +851,7 @@ class ServerInstance(object):
             network6=self.server.network6,
             host_address=settings.local.host.local_addr,
             host_address6=settings.local.host.local_addr6,
+            host_networks=settings.local.host.local_networks,
             cur_timestamp=utils.now(),
         )
 
