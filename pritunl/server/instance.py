@@ -844,6 +844,16 @@ class ServerInstance(object):
     def _run_thread(self, send_events):
         from pritunl.server.utils import get_by_id
 
+        logger.info('Starting vpn server', 'server',
+            server_id=self.server.id,
+            instance_id=self.id,
+            network=self.server.network,
+            network6=self.server.network6,
+            host_address=settings.local.host.local_addr,
+            host_address6=settings.local.host.local_addr6,
+            cur_timestamp=utils.now(),
+        )
+
         self.resources_acquire()
         try:
             cursor_id = self.get_cursor_id()
