@@ -255,7 +255,7 @@ class Authorizer(object):
                     'device_id': self.device_id,
                     'device_name': self.device_name,
                     'timestamp': utils.now(),
-                }, upsert=True)
+                })
                 return
 
         def thread_func():
