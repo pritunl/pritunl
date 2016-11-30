@@ -226,6 +226,36 @@ def main(default_conf=None):
         print 'Server ssl certificate successfully reset'
 
         sys.exit(0)
+    elif cmd == 'destroy-secondary':
+        from pritunl import setup
+        from pritunl import logger
+        from pritunl import mongo
+
+        setup.setup_db()
+
+        mongo.get_collection('transaction').drop()
+        mongo.get_collection('queue').drop()
+        mongo.get_collection('tasks').drop()
+
+        mongo.get_collection('messages').drop()
+        mongo.get_collection('users_key_link').drop()
+        mongo.get_collection('auth_sessions').drop()
+        mongo.get_collection('auth_csrf_tokens').drop()
+        mongo.get_collection('auth_nonces').drop()
+        mongo.get_collection('auth_limiter').drop()
+        mongo.get_collection('otp').drop()
+        mongo.get_collection('otp_cache').drop()
+        mongo.get_collection('sso_tokens').drop()
+        mongo.get_collection('sso_cache').drop()
+
+        server_coll = mongo.get_collection('servers')
+        server_coll.update_many({}, {'$set': {
+            'status': 'offline',
+            'instances': [],
+            'instances_count': 0,
+        }})
+
+        sys.exit(0)
     elif cmd == 'logs':
         from pritunl import setup
         from pritunl import logger
