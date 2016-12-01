@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add support for client push authentication cache
+Improve configuration sync
 Fix issue with Okta + Duo settings
 
 Version 1.25.1175.88 2016-11-30
