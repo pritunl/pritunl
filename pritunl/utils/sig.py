@@ -1,3 +1,4 @@
+from pritunl.utils.filter import session_str
 from pritunl import settings
 
 import base64
