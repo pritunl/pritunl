@@ -15,7 +15,7 @@ _states = tunldb.TunlDB()
 
 class Authorizer(object):
     def __init__(self, svr, usr, remote_ip, plaform, device_id, device_name,
-            mac_addr, password, reauth, callback):
+            mac_addr, password, push_token, reauth, callback):
         self.server = svr
         self.user = usr
         self.remote_ip = remote_ip
@@ -24,6 +24,7 @@ class Authorizer(object):
         self.device_name = device_name
         self.mac_addr = mac_addr
         self.password = password
+        self.push_token = push_token
         self.reauth = reauth
         self.callback = callback
         self.state = None
@@ -40,14 +41,9 @@ class Authorizer(object):
     def sso_cache_collection(cls):
         return mongo.get_collection('sso_cache')
 
-    def _set_push_type(self):
-        if settings.app.sso and DUO_AUTH in self.user.auth_type and \
-                DUO_AUTH in settings.app.sso:
-            self.push_type = DUO_AUTH
-        elif settings.app.sso and \
-                SAML_OKTA_AUTH in self.user.auth_type and \
-                SAML_OKTA_AUTH in settings.app.sso:
-            self.push_type = SAML_OKTA_AUTH
+    @property
+    def sso_client_cache_collection(cls):
+        return mongo.get_collection('sso_client_cache')
 
     def authenticate(self):
         try:
@@ -223,9 +219,34 @@ class Authorizer(object):
         if self.user.bypass_secondary or settings.vpn.stress_test:
             return
 
-        self._set_push_type()
+        self.push_type = self.user.get_push_type()
         if not self.push_type:
             return
+
+        if settings.app.sso_client_cache and self.push_token:
+            doc = self.sso_client_cache_collection.find_one({
+                'user_id': self.user.id,
+                'server_id': self.server.id,
+                'device_id': self.device_id,
+                'device_name': self.device_name,
+                'push_token': self.push_token,
+            })
+            if doc:
+                self.sso_client_cache_collection.update({
+                    'user_id': self.user.id,
+                    'server_id': self.server.id,
+                    'device_id': self.device_id,
+                    'device_name': self.device_name,
+                    'push_token': self.push_token,
+                }, {
+                    'user_id': self.user.id,
+                    'server_id': self.server.id,
+                    'device_id': self.device_id,
+                    'device_name': self.device_name,
+                    'push_token': self.push_token,
+                    'timestamp': utils.now(),
+                })
+                return
 
         if settings.app.sso_cache:
             doc = self.sso_cache_collection.find_one({
@@ -332,6 +353,21 @@ class Authorizer(object):
                 'platform': self.platform,
                 'device_id': self.device_id,
                 'device_name': self.device_name,
+                'timestamp': utils.now(),
+            }, upsert=True)
+
+        if settings.app.sso_client_cache and self.push_token:
+            self.sso_client_cache_collection.update({
+                'user_id': self.user.id,
+                'server_id': self.server.id,
+                'device_id': self.device_id,
+                'device_name': self.device_name,
+            }, {
+                'user_id': self.user.id,
+                'server_id': self.server.id,
+                'device_id': self.device_id,
+                'device_name': self.device_name,
+                'push_token': self.push_token,
                 'timestamp': utils.now(),
             }, upsert=True)
 
