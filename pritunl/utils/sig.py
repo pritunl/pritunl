@@ -12,9 +12,9 @@ def get_sig(sig_str, secret):
 
 def get_flask_sig():
     sig_str = '&'.join((
-        flask.session['session_id'],
-        flask.session['admin_id'],
-        str(flask.session['timestamp']),
+        session_str('session_id'),
+        session_str('admin_id'),
+        session_str('timestamp'),
     ))
     return get_sig(
         settings.app.cookie_secret2,
@@ -25,4 +25,4 @@ def set_flask_sig():
     flask.session['signature'] = get_flask_sig()
 
 def check_flask_sig():
-    return flask.session.get('signature') == get_flask_sig()
+    return session_str('signature') == get_flask_sig()

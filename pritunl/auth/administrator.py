@@ -359,13 +359,13 @@ def check_session(csrf_check):
         if not flask.session:
             return False
 
-        admin_id = flask.session.get('admin_id')
+        admin_id = utils.session_opt_str('admin_id')
         if not admin_id:
             return False
         admin_id = utils.ObjectId(admin_id)
-        session_id = flask.session.get('session_id')
+        session_id = utils.session_opt_str('session_id')
 
-        signature = flask.session.get('signature')
+        signature = utils.session_opt_str('signature')
         if not signature:
             return False
 
@@ -388,14 +388,14 @@ def check_session(csrf_check):
         if not settings.app.reverse_proxy and \
                 not settings.app.allow_insecure_session and \
                 not settings.app.server_ssl and \
-                flask.session.get('source') != utils.get_remote_addr():
+                utils.session_opt_str('source') != utils.get_remote_addr():
             flask.session.clear()
             clear_session(admin_id, session_id)
             return False
 
         session_timeout = settings.app.session_timeout
         if session_timeout and int(utils.time_now()) - \
-                flask.session['timestamp'] > session_timeout:
+                utils.session_int('timestamp') > session_timeout:
             flask.session.clear()
             clear_session(admin_id, session_id)
             return False

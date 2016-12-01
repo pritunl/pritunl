@@ -260,10 +260,11 @@ def auth_session_post():
 @app.app.route('/auth/session', methods=['DELETE'])
 @auth.open_auth
 def auth_delete():
-    admin_id = utils.json_opt_oid('admin_id')
-    session_id = utils.json_opt_filter_str('session_id')
+    admin_id = utils.session_opt_str('admin_id')
+    session_id = utils.session_opt_str('session_id')
     if admin_id and session_id:
-        auth.clear_session(admin_id, session_id)
+        admin_id = utils.ObjectId(admin_id)
+        auth.clear_session(admin_id, str(session_id))
     flask.session.clear()
 
     return utils.jsonify({
