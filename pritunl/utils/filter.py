@@ -43,3 +43,17 @@ def json_oid(key):
 def json_opt_oid(key):
     val = flask.request.json.get(key)
     return None if val is None else ObjectId(val)
+
+def session_int(key):
+    return int(flask.session.get(key))
+
+def session_opt_int(key):
+    val = flask.session.get(key)
+    return None if val is None else int(val)
+
+def session_str(key):
+    return str(flask.session.get(key) or '')
+
+def session_opt_str(key):
+    val = flask.session.get(key)
+    return None if val is None else str(val)
