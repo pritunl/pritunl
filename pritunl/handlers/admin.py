@@ -51,6 +51,8 @@ def admin_put(admin_id):
 
     if 'username' in flask.request.json:
         username = utils.filter_str(flask.request.json['username']) or None
+        if username:
+            username = username.lower()
 
         if username != admin.username:
             admin.audit_event('admin_updated',
@@ -184,7 +186,7 @@ def admin_post():
             'error_msg': REQUIRES_SUPER_USER_MSG,
         }, 400)
 
-    username = utils.filter_str(flask.request.json['username'])
+    username = utils.filter_str(flask.request.json['username']).lower()
     password = flask.request.json['password']
     otp_auth = flask.request.json.get('otp_auth', False)
     auth_api = flask.request.json.get('auth_api', False)
