@@ -233,6 +233,8 @@ def main(default_conf=None):
 
         setup.setup_db()
 
+        mongo.get_collection('clients').drop()
+        mongo.get_collection('clients_pool').drop()
         mongo.get_collection('transaction').drop()
         mongo.get_collection('queue').drop()
         mongo.get_collection('tasks').drop()
