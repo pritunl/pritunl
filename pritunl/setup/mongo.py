@@ -290,10 +290,6 @@ def setup_mongo():
     upsert_index(mongo.collections['sso_cache'], [
         ('user_id', pymongo.ASCENDING),
         ('server_id', pymongo.ASCENDING),
-        ('remote_ip', pymongo.ASCENDING),
-        ('mac_addr', pymongo.ASCENDING),
-        ('platform', pymongo.ASCENDING),
-        ('device_name', pymongo.ASCENDING),
     ], background=True)
     upsert_index(mongo.collections['vxlans'], 'server_id',
         background=True, unique=True)
