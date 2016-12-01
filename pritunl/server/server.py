@@ -785,7 +785,10 @@ class Server(mongo.MongoObject):
                     settings.conf.port,
                 ))
 
-        return list(remotes)
+        remotes = list(remotes)
+        remotes.sort()
+
+        return remotes
 
     def get_key_remotes(self, include_link_addr=False):
         remotes = set()
