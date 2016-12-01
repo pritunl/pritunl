@@ -39,6 +39,8 @@ PyQueue = Queue.Queue
 PyPriorityQueue = Queue.PriorityQueue
 
 def ObjectId(oid=None):
+    if oid is not None:
+        oid = str(oid)
     if oid is None or len(oid) != 32:
         try:
             return bson.ObjectId(oid)
@@ -220,6 +222,7 @@ def rmtree(path):
             time.sleep(0.01)
 
 def filter_str(in_str):
+    in_str = str(in_str)
     if not in_str:
         return in_str
     return ''.join(x for x in in_str if x.isalnum() or x in NAME_SAFE_CHARS)
