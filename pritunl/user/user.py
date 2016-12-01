@@ -490,6 +490,15 @@ class User(mongo.MongoObject):
     def has_pin(self):
         return self.pin and settings.user.pin_mode != PIN_DISABLED
 
+    def get_push_type(self):
+        if settings.app.sso and DUO_AUTH in self.auth_type and \
+                DUO_AUTH in settings.app.sso:
+            return DUO_AUTH
+        elif settings.app.sso and \
+                SAML_OKTA_AUTH in self.auth_type and \
+                SAML_OKTA_AUTH in settings.app.sso:
+            return SAML_OKTA_AUTH
+
     def _get_key_info_str(self, svr, conf_hash, include_sync_keys):
         data = {
             'version': CLIENT_CONF_VER,
@@ -502,6 +511,8 @@ class User(mongo.MongoObject):
             'sync_hosts': svr.get_sync_remotes(),
             'sync_hash': conf_hash,
             'password_mode': self._get_password_mode(svr),
+            'push_auth': True if self.get_push_type() else False,
+            'push_auth_ttl': settings.app.sso_client_cache_timeout,
         }
 
         if include_sync_keys:
@@ -537,6 +548,7 @@ class User(mongo.MongoObject):
         conf_hash.update(str(svr.otp_auth))
         conf_hash.update(JUMBO_FRAMES[svr.jumbo_frames])
         conf_hash.update(ca_certificate)
+        conf_hash.update(self._get_key_info_str(svr, None, False))
         conf_hash = conf_hash.hexdigest()
 
         client_conf = OVPN_INLINE_CLIENT_CONF % (
