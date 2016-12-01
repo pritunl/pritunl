@@ -702,7 +702,7 @@ def auth_user_post():
             'error_msg': AUTH_INVALID_MSG,
         }, 401)
 
-    username = flask.request.json['username']
+    username = utils.json_filter_str('username')
     network_links = flask.request.json.get('network_links')
 
     usr = org.find_user(name=username)

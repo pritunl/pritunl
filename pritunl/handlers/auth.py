@@ -218,9 +218,9 @@ def _auth_plugin(username, password):
 @app.app.route('/auth/session', methods=['POST'])
 @auth.open_auth
 def auth_session_post():
-    username = flask.request.json['username']
-    password = flask.request.json['password']
-    otp_code = flask.request.json.get('otp_code')
+    username = utils.json_filter_str('username')
+    password = utils.json_str('password')
+    otp_code = utils.json_opt_filter_str('otp_code')
     remote_addr = utils.get_remote_addr()
 
     admin = auth.get_by_username(username, remote_addr)
@@ -260,10 +260,9 @@ def auth_session_post():
 @app.app.route('/auth/session', methods=['DELETE'])
 @auth.open_auth
 def auth_delete():
-    admin_id = flask.session.get('admin_id')
-    session_id = flask.session.get('session_id')
+    admin_id = utils.json_opt_oid('admin_id')
+    session_id = utils.json_opt_filter_str('session_id')
     if admin_id and session_id:
-        admin_id = utils.ObjectId(admin_id)
         auth.clear_session(admin_id, session_id)
     flask.session.clear()
 

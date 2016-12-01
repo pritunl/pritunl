@@ -522,7 +522,7 @@ def sso_authenticate_post():
     if settings.app.sso != DUO_AUTH:
         return flask.abort(405)
 
-    username = flask.request.json['username']
+    username = utils.json_filter_str('username')
     usernames = [username]
     email = None
     if '@' in username:
