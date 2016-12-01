@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with web console settings
+
 Version 1.25.1176.91 2016-12-01
 -------------------------------
 
