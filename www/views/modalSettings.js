@@ -497,21 +497,22 @@ define([
 
       if (sso) {
         if (sso === 'duo' || sso === 'saml_duo' || sso === 'google_duo' ||
-            sso === 'saml_onelogin_duo' || sso === 'radius_duo') {
+            sso === 'saml_onelogin_duo' || sso === 'saml_okta_duo' ||
+            sso === 'radius_duo') {
           ssoDuoToken = this.$('.sso-token input').val();
           ssoDuoSecret = this.$('.sso-secret input').val();
           ssoDuoHost = this.$('.sso-host input').val();
         }
 
         if (sso === 'saml' || sso === 'saml_duo' || sso === 'saml_okta' ||
-            sso === 'saml_onelogin' || sso === 'saml_onelogin_duo' ||
-            sso === 'radius_duo') {
+            sso === 'saml_okta_duo' || sso === 'saml_onelogin' ||
+            sso === 'saml_onelogin_duo' || sso === 'radius_duo') {
           ssoSamlUrl = this.$('.sso-saml-url input').val();
           ssoSamlIssuerUrl = this.$('.sso-saml-issuer-url input').val();
           ssoSamlCert = this.$('.sso-saml-cert textarea').val();
         }
 
-        if (sso === 'saml_okta') {
+        if (sso === 'saml_okta' || sso === 'saml_okta_duo') {
           ssoOktaToken = this.$('.sso-okta-token input').val();
         }
 
