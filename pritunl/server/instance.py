@@ -566,11 +566,11 @@ class ServerInstance(object):
             return subprocess.Popen(['openvpn', self.ovpn_conf_path],
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         except OSError:
-            self.server.output.push_output(traceback.format_exc())
             logger.exception('Failed to start ovpn process', 'server',
                 server_id=self.server.id,
             )
-            self.publish('error')
+            self.server.output.push_output(traceback.format_exc())
+            raise
 
     def interrupter_sleep(self, length):
         if check_global_interrupt() or self.interrupt:
@@ -883,9 +883,6 @@ class ServerInstance(object):
             self.init_route_advertisements()
 
             self.process = self.openvpn_start()
-            if not self.process:
-                return
-
             self.start_threads(cursor_id)
 
             self.instance_com = ServerInstanceCom(self.server, self)
@@ -1003,37 +1000,49 @@ class ServerInstance(object):
                     message='Server stopped unexpectedly "%s".' % (
                         self.server.name))
         except:
-            self.interrupt = True
-            self.stop_process()
-
             logger.exception('Server error occurred while running', 'server',
                 server_id=self.server.id,
             )
+
+            try:
+                self.interrupt = True
+                self.stop_process()
+            except:
+                logger.exception('Server stop error', 'server',
+                    server_id=self.server.id,
+                )
         finally:
             try:
-                self.bridge_stop()
-                self.iptables.clear_rules()
+                if self.resource_lock:
+                    self.bridge_stop()
+                    self.iptables.clear_rules()
             except:
                 logger.exception('Server resource error', 'server',
                     server_id=self.server.id,
                 )
-            self.resources_release()
 
-            self.stop_threads()
-            self.collection.update({
-                '_id': self.server.id,
-                'instances.instance_id': self.id,
-            }, {
-                '$pull': {
-                    'instances': {
-                        'instance_id': self.id,
+            try:
+                self.resources_release()
+
+                self.stop_threads()
+                self.collection.update({
+                    '_id': self.server.id,
+                    'instances.instance_id': self.id,
+                }, {
+                    '$pull': {
+                        'instances': {
+                            'instance_id': self.id,
+                        },
                     },
-                },
-                '$inc': {
-                    'instances_count': -1,
-                },
-            })
-            utils.rmtree(self._temp_path)
+                    '$inc': {
+                        'instances_count': -1,
+                    },
+                })
+                utils.rmtree(self._temp_path)
+            except:
+                logger.exception('Server clean up error', 'server',
+                    server_id=self.server.id,
+                )
 
     def run(self, send_events=False):
         availability_group = settings.local.host.availability_group
