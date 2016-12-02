@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve logging
+
 Version 1.25.1177.82 2016-12-02
 -------------------------------
 
