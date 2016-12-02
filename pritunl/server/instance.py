@@ -1011,9 +1011,8 @@ class ServerInstance(object):
             )
         finally:
             try:
-                if self.resource_lock:
-                    self.iptables.clear_rules()
-                    self.bridge_stop()
+                self.bridge_stop()
+                self.iptables.clear_rules()
             except:
                 logger.exception('Server resource error', 'server',
                     server_id=self.server.id,
