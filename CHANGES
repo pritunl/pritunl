@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with server start
+
 Version 1.25.1176.93 2016-12-01
 -------------------------------
 
