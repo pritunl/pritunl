@@ -104,6 +104,7 @@ class ServerInstance(object):
             self.resource_lock.release()
             utils.interface_release(self.server.adapter_type, self.interface)
             self.interface = None
+            self.resource_lock = None
 
     def generate_ovpn_conf(self):
         if not self.server.primary_organization or \
@@ -1004,15 +1005,21 @@ class ServerInstance(object):
         except:
             self.interrupt = True
             self.stop_process()
-            if self.resource_lock:
-                self.iptables.clear_rules()
-                self.bridge_stop()
-            self.resources_release()
 
             logger.exception('Server error occurred while running', 'server',
                 server_id=self.server.id,
             )
         finally:
+            try:
+                if self.resource_lock:
+                    self.iptables.clear_rules()
+                    self.bridge_stop()
+            except:
+                logger.exception('Server resource error', 'server',
+                    server_id=self.server.id,
+                )
+            self.resources_release()
+
             self.stop_threads()
             self.collection.update({
                 '_id': self.server.id,
