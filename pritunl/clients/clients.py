@@ -454,13 +454,14 @@ class Clients(object):
                             except pymongo.errors.DuplicateKeyError:
                                 continue
 
-                        self.server_collection.update({
-                            '_id': self.server.id,
-                            'status': ONLINE,
-                        }, {'$set': {
-                            'pool_cursor': utils.ip_to_long(
-                                virt_address.split('/')[0]),
-                        }})
+                        if virt_address:
+                            self.server_collection.update({
+                                '_id': self.server.id,
+                                'status': ONLINE,
+                            }, {'$set': {
+                                'pool_cursor': utils.ip_to_long(
+                                    virt_address.split('/')[0]),
+                            }})
             else:
                 while True:
                     try:
