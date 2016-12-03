@@ -687,7 +687,8 @@ class ServerInstance(object):
                         )
                         break
 
-                    logger.exception('Failed to update server ping', 'server',
+                    logger.exception('Failed to update server ping',
+                        'server',
                         server_id=self.server.id,
                     )
                     time.sleep(2)
