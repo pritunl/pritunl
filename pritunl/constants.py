@@ -431,8 +431,6 @@ GROUP_MONGO = 'mongo'
 GROUP_FILE = 'file'
 GROUP_LOCAL = 'local'
 
-DEFAULT_BIND_ADDR = '0.0.0.0'
-DEFAULT_PORT = 9700
 DEFAULT_USERNAME = 'pritunl'
 DEFAULT_PASSWORD = 'pritunl'
 DEFAULT_CONF_PATH = '/etc/pritunl.conf'
