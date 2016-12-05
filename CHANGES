@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add client push authentication cache to settings
+
 Version 1.25.1177.86 2016-12-02
 -------------------------------
 
