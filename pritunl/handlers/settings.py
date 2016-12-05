@@ -47,6 +47,7 @@ def _dict():
             'sso_onelogin_secret': 'demo',
             'sso_radius_secret': 'demo',
             'sso_radius_host': 'demo',
+            'sso_client_cache': settings.app.sso_client_cache,
             'public_address': settings.local.host.public_addr,
             'public_address6': settings.local.host.public_addr6,
             'routed_subnet6': settings.local.host.routed_subnet6,
@@ -108,6 +109,7 @@ def _dict():
             'sso_onelogin_secret': settings.app.sso_onelogin_secret,
             'sso_radius_secret': settings.app.sso_radius_secret,
             'sso_radius_host': settings.app.sso_radius_host,
+            'sso_client_cache': settings.app.sso_client_cache,
             'public_address': settings.local.host.public_addr,
             'public_address6': settings.local.host.public_addr6,
             'routed_subnet6': settings.local.host.routed_subnet6,
@@ -455,6 +457,14 @@ def settings_put():
         if sso_onelogin_secret != settings.app.sso_onelogin_secret:
             changes.add('sso')
         settings.app.sso_onelogin_secret = sso_onelogin_secret
+
+    if 'sso_client_cache' in flask.request.json:
+        settings_commit = True
+        sso_client_cache = True if \
+            flask.request.json['sso_client_cache'] else False
+        if sso_client_cache != settings.app.sso_client_cache:
+            changes.add('sso')
+        settings.app.sso_client_cache = sso_client_cache
 
     if 'theme' in flask.request.json:
         settings_commit = True
