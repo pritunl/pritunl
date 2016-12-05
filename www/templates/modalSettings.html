@@ -165,6 +165,12 @@
       <label>Duo API Hostname</label>
       <input type="text" class="form-control" placeholder="Enter api hostname" value="<%- sso_duo_host || '' %>">
     </div>
+    <div class="sso-client-cache toggle-form form-group" <%= !sso || (sso.indexOf('duo') === -1 && sso.indexOf('okta') === -1) ? 'style="display: none;"' : '' %>>
+      <label>Enable Push Authentication Cache</label>
+      <div class="selector <%= sso_client_cache ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Enable a seven day Duo/Okta push authentication cache using a token stored on the client. Only supported by Pritunl client">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
   </div>
 </div>
 <div class="aws-settings layout-horizontal" <%= cloud_provider === 'aws' ? '' : 'style="display: none;"' %>>

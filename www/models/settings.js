@@ -33,6 +33,7 @@ define([
       'sso_onelogin_secret': null,
       'sso_radius_host': null,
       'sso_radius_secret': null,
+      'sso_client_cache': null,
       'public_address': null,
       'public_address6': null,
       'routed_subnet6': null,
