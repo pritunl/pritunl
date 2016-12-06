@@ -48,7 +48,7 @@ def auth_duo(username, strong=False, ipaddr=None, type=None, info=None,
 
         def phone_thread():
             start = time.time()
-            backup_delay = settings.app.ssu_duo_backup_delay
+            backup_delay = settings.app.sso_duo_backup_delay
 
             while True:
                 if state['interrupt']:
