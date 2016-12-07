@@ -94,7 +94,7 @@ class SettingsApp(SettingsGroupMongo):
         'sso_duo_host': None,
         'sso_duo_token': None,
         'sso_duo_secret': None,
-        'sso_duo_backup_delay': 15,
+        'sso_duo_backup_delay': 20,
         'queue_low_thread_limit': 4,
         'queue_med_thread_limit': 2,
         'queue_high_thread_limit': 1,
