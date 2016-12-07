@@ -53,7 +53,7 @@ define([
         url += '/' + this.get('id');
 
         if (this.get('operation')) {
-          url += '/' + this.get('operation');
+          url += '/operation/' + this.get('operation');
         }
       }
 
