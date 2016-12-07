@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Improve Duo authentication
 Fix issue with dynamic IP pool on multi-device replicated servers
 
 Version 1.25.1180.33 2016-12-05
