@@ -70,7 +70,6 @@ def after_request(response):
     response.headers.add('Write-Count', flask.g.write_count)
 
     response.headers.add('X-Frame-Options', 'DENY')
-    response.headers.add('X-Content-Type-Options', 'nosniff')
 
     return response
 
