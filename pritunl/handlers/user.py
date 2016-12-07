@@ -318,6 +318,7 @@ def _create_users(org_id, users_data, remote_addr, background):
         return utils.jsonify(users[0])
 
 @app.app.route('/user/<org_id>', methods=['POST'])
+@app.app.route('/user/<org_id>/multi', methods=['POST'])
 @auth.session_auth
 def user_post(org_id):
     if settings.app.demo_mode:

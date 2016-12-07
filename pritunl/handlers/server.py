@@ -1034,7 +1034,7 @@ def server_link_delete(server_id, link_server_id):
 
     return utils.jsonify({})
 
-@app.app.route('/server/<server_id>/<operation>', methods=['PUT'])
+@app.app.route('/server/<server_id>/operation/<operation>', methods=['PUT'])
 @auth.session_auth
 def server_operation_put(server_id, operation):
     if settings.app.demo_mode:
