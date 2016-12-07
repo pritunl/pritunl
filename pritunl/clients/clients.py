@@ -124,8 +124,11 @@ class Clients(object):
                 client_conf += 'push "dhcp-option DNS %s"\n' % (
                     utils.get_network_gateway(self.server.network))
 
-            for dns_server in self.server.dns_servers:
-                client_conf += 'push "dhcp-option DNS %s"\n' % dns_server
+            if not self.server.dns_mapping or \
+                    settings.vpn.dns_mapping_push_all:
+                for dns_server in self.server.dns_servers:
+                    client_conf += 'push "dhcp-option DNS %s"\n' % dns_server
+
             if self.server.search_domain:
                 for domain in self.server.search_domain.split(','):
                     client_conf += 'push "dhcp-option DOMAIN %s"\n' % (
