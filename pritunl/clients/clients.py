@@ -1124,11 +1124,23 @@ class Clients(object):
                 )
 
         if self.server.multi_device and self.server.replicating:
-            self.pool_collection.remove({
-                'server_id': self.server.id,
-                'user_id': client.get('user_id'),
-                'client_id': doc_id,
-            })
+            if client['address_dynamic']:
+                self.pool_collection.update({
+                    'server_id': self.server.id,
+                    'user_id': client.get('user_id'),
+                    'client_id': doc_id,
+                }, {'$set': {
+                    'user_id': None,
+                    'mac_addr': None,
+                    'client_id': None,
+                    'timestamp': None,
+                }})
+            else:
+                self.pool_collection.remove({
+                    'server_id': self.server.id,
+                    'user_id': client.get('user_id'),
+                    'client_id': doc_id,
+                })
 
         self.call_queue.put(self._disconnected, client)
 
