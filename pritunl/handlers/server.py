@@ -218,7 +218,7 @@ def server_put_post(server_id=None):
 
     port = None
     port_def = False
-    if 'port' in flask.request.json:
+    if 'port' in flask.request.json and flask.request.json['port'] != 0:
         port_def = True
         port = flask.request.json['port']
 
