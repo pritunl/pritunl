@@ -31,7 +31,6 @@ def _network_link_invalid():
 
 @app.app.route('/user/<org_id>', methods=['GET'])
 @app.app.route('/user/<org_id>/<user_id>', methods=['GET'])
-@app.app.route('/user/<org_id>/<int:page>', methods=['GET'])
 @auth.session_auth
 def user_get(org_id, user_id=None, page=None):
     if settings.app.demo_mode and user_id:
