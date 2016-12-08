@@ -398,7 +398,7 @@ def settings_put():
 
     if 'sso_org' in flask.request.json:
         settings_commit = True
-        sso_org = flask.request.json['sso_org']
+        sso_org = flask.request.json['sso_org'] or None
 
         if sso_org:
             sso_org = utils.ObjectId(sso_org)
@@ -479,14 +479,18 @@ def settings_put():
         settings.app.theme = theme
 
     if 'public_address' in flask.request.json:
-        public_address = flask.request.json['public_address']
-        settings.local.host.public_address = public_address
-        settings.local.host.commit('public_address')
+        public_address = flask.request.json['public_address'] or None
+
+        if public_address != settings.local.host.public_addr:
+            settings.local.host.public_address = public_address
+            settings.local.host.commit('public_address')
 
     if 'public_address6' in flask.request.json:
-        public_address6 = flask.request.json['public_address6']
-        settings.local.host.public_address6 = public_address6
-        settings.local.host.commit('public_address6')
+        public_address6 = flask.request.json['public_address6'] or None
+
+        if public_address6 != settings.local.host.public_addr6:
+            settings.local.host.public_address6 = public_address6
+            settings.local.host.commit('public_address6')
 
     if 'routed_subnet6' in flask.request.json:
         routed_subnet6 = flask.request.json['routed_subnet6']
@@ -526,11 +530,8 @@ def settings_put():
 
     if 'cloud_provider' in flask.request.json:
         settings_commit = True
-        cloud_provider = flask.request.json['cloud_provider']
-        if cloud_provider:
-            settings.app.cloud_provider = cloud_provider
-        else:
-            settings.app.cloud_provider = None
+        cloud_provider = flask.request.json['cloud_provider'] or None
+        settings.app.cloud_provider = cloud_provider
 
     if 'route53_region' in flask.request.json:
         settings_commit = True
