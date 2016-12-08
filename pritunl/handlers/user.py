@@ -229,8 +229,8 @@ def _create_users(org_id, users_data, remote_addr, background):
             name = utils.filter_str(user_data['name'])
             email = utils.filter_str(user_data.get('email'))
             pin = utils.filter_str(user_data.get('pin')) or None
-            disabled = user_data.get('disabled')
-            network_links = user_data.get('network_links')
+            disabled = True if user_data.get('disabled') else False
+            network_links = user_data.get('network_links') or None
             bypass_secondary = True if user_data.get(
                 'bypass_secondary') else False
             client_to_client = True if user_data.get(
@@ -399,7 +399,7 @@ def user_put(org_id, user_id):
         user.groups = list(groups)
 
     if 'pin' in flask.request.json:
-        pin = flask.request.json['pin']
+        pin = flask.request.json['pin'] or None
 
         if pin is not True:
             if pin:
@@ -437,7 +437,7 @@ def user_put(org_id, user_id):
         network_links_cur = set(user.get_network_links())
         network_links_new = set()
 
-        for network_link in flask.request.json['network_links']:
+        for network_link in flask.request.json['network_links'] or []:
             try:
                 network_link = str(ipaddress.IPNetwork(network_link))
             except (ipaddress.AddressValueError, ValueError):
@@ -484,23 +484,19 @@ def user_put(org_id, user_id):
 
         user.port_forwarding = port_forwarding
 
-    disabled = flask.request.json.get('disabled')
-    if disabled is not None:
-        if disabled != user.disabled:
-            user.audit_event('user_updated',
-                'User %s' % ('disabled' if disabled else 'enabled'),
-                remote_addr=utils.get_remote_addr(),
-            )
+    disabled = True if flask.request.json.get('disabled') else False
+    if disabled != user.disabled:
+        user.audit_event('user_updated',
+            'User %s' % ('disabled' if disabled else 'enabled'),
+            remote_addr=utils.get_remote_addr(),
+        )
+    user.disabled = disabled
 
-        user.disabled = disabled
+    user.bypass_secondary = True if flask.request.json.get(
+        'bypass_secondary') else False
 
-    bypass_secondary = flask.request.json.get('bypass_secondary')
-    if bypass_secondary is not None:
-        user.bypass_secondary = True if bypass_secondary else False
-
-    client_to_client = flask.request.json.get('client_to_client')
-    if client_to_client is not None:
-        user.client_to_client = True if client_to_client else False
+    user.client_to_client = True if flask.request.json.get(
+        'client_to_client') else False
 
     if 'dns_servers' in flask.request.json:
         dns_servers = flask.request.json['dns_servers'] or None
