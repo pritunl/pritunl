@@ -363,7 +363,7 @@ def user_linked_key_page_get(short_code):
 
 @app.app.route('/k/<short_code>', methods=['DELETE'])
 @auth.open_auth
-def user_linked_key_page_delete_get(short_code):
+def user_linked_key_page_delete(short_code):
     utils.rand_sleep()
 
     collection = mongo.get_collection('users_key_link')
