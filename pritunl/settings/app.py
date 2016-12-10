@@ -79,7 +79,6 @@ class SettingsApp(SettingsGroupMongo):
         'sso_saml_url': None,
         'sso_saml_issuer_url': None,
         'sso_saml_cert': None,
-        'sso_saml_duo_skip_unavailable': False,
         'sso_okta_token': None,
         'sso_okta_poll_rate': 0.25,
         'sso_okta_push': True,
