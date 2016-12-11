@@ -110,7 +110,9 @@ def login_static_get():
             elif settings.app.sso == DUO_AUTH:
                 body_class += 'sso-duo '
 
-            if settings.app.sso and DUO_AUTH in settings.app.sso:
+            if settings.app.sso and DUO_AUTH in settings.app.sso and \
+                    settings.app.sso != DUO_AUTH and \
+                    settings.app.sso_duo_mode != 'passcode':
                 body_class += 'sso-duo-auth '
 
     if settings.app.demo_mode:
