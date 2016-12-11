@@ -149,8 +149,8 @@ class Authorizer(object):
                 settings.vpn.stress_test:
             return
 
-        if DUO_AUTH in self.user.auth_type and \
-                settings.app.sso_duo_mode == 'passcode':
+        duo_mode = settings.app.sso_duo_mode
+        if DUO_AUTH in self.user.auth_type and duo_mode == 'passcode':
             if not self.password and self.has_challenge() and \
                 self.user.has_pin():
                 self.set_challenge(None, 'Enter Pin', False)
@@ -167,6 +167,7 @@ class Authorizer(object):
 
             duo_auth = sso.Duo(
                 username=self.user.name,
+                factor=duo_mode,
                 remote_ip=self.remote_ip,
                 auth_type='Connection',
                 passcode=passcode,
@@ -353,6 +354,7 @@ class Authorizer(object):
         if self.push_type == DUO_AUTH:
             duo_auth = sso.Duo(
                 username=self.user.name,
+                factor=settings.app.sso_duo_mode,
                 remote_ip=self.remote_ip,
                 auth_type='Connection',
                 info=info,

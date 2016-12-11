@@ -33,9 +33,10 @@ def _sign(method, path, params):
     }
 
 class Duo(object):
-    def __init__(self, username, remote_ip=None, auth_type=None,
+    def __init__(self, username, factor=None, remote_ip=None, auth_type=None,
             info=None, passcode=None):
         self.username = username
+        self.factor = factor
         self.remote_ip = remote_ip
         self.auth_type = auth_type
         self.info = info
@@ -44,9 +45,9 @@ class Duo(object):
         self._valid = False
 
     def authenticate(self):
-        if settings.app.sso_duo_mode == 'phone':
+        if self.factor == 'phone':
             factor = 'phone'
-        elif settings.app.sso_duo_mode == 'passcode':
+        elif self.factor == 'passcode':
             factor = 'passcode'
         else:
             factor = 'push'
@@ -105,7 +106,7 @@ class Duo(object):
                     )
             self._valid = True
         elif data.get('code') == 40002:
-            if factor == 'push' and settings.app.sso_duo_mode == 'push_phone':
+            if factor == 'push' and self.factor == 'push_phone':
                 self._auth('phone')
             else:
                 raise InvalidUser('Invalid username')

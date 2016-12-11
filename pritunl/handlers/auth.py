@@ -54,6 +54,7 @@ def _auth_radius(username, password):
         try:
             duo_auth = sso.Duo(
                 username=username,
+                factor=settings.app.sso_duo_mode,
                 remote_ip=utils.get_remote_addr(),
                 auth_type='Key',
             )

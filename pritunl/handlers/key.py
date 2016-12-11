@@ -535,6 +535,7 @@ def sso_authenticate_post():
         try:
             duo_auth = sso.Duo(
                 username=username,
+                factor=settings.app.sso_duo_mode,
                 remote_ip=utils.get_remote_addr(),
                 auth_type='Key',
             )
@@ -892,6 +893,7 @@ def sso_callback_get():
         else:
             duo_auth = sso.Duo(
                 username=username,
+                factor=settings.app.sso_duo_mode,
                 remote_ip=utils.get_remote_addr(),
                 auth_type='Key',
             )
@@ -983,6 +985,7 @@ def sso_duo_post():
 
     duo_auth = sso.Duo(
         username=username,
+        factor=settings.app.sso_duo_mode,
         remote_ip=utils.get_remote_addr(),
         auth_type='Key',
         passcode=passcode,
