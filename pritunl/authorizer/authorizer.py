@@ -354,7 +354,8 @@ class Authorizer(object):
             duo_auth = sso.Duo(
                 username=self.user.name,
                 remote_ip=self.remote_ip,
-                auth_type='Key',
+                auth_type='Connection',
+                info=info,
             )
             allow = duo_auth.authenticate()
         elif self.push_type == SAML_OKTA_AUTH:
