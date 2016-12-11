@@ -780,6 +780,12 @@ PIN_IS_DISABLED_MSG = 'Pin is disabled.'
 PIN_RADIUS = 'pin_radius'
 PIN_RADIUS_MSG = 'Pin cannot be used with Radius users.'
 
+TOKEN_INVALID = 'token_invalid'
+TOKEN_INVALID_MSG = 'Token is invalid.'
+
+PASSCODE_INVALID = 'passcode_invalid'
+PASSCODE_INVALID_MSG = 'Passcode is invalid.'
+
 NETWORK_IN_USE = 'network_in_use'
 NETWORK_IN_USE_MSG = 'Network address is already in use.'
 
