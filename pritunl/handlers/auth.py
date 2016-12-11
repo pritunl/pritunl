@@ -52,11 +52,12 @@ def _auth_radius(username, password):
 
     if DUO_AUTH in sso_mode:
         try:
-            valid, _ = sso.auth_duo(
-                username,
-                ipaddr=utils.get_remote_addr(),
-                type='Key',
+            duo_auth = sso.Duo(
+                username=username,
+                remote_ip=utils.get_remote_addr(),
+                auth_type='Key',
             )
+            valid = duo_auth.authenticate()
         except InvalidUser:
             logger.error('Duo authentication username not valid', 'sso',
                 username=username,
