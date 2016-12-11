@@ -105,7 +105,7 @@ class Duo(object):
                     )
             self._valid = True
         elif data.get('code') == 40002:
-            if factor == 'push' and settings.app.sso_duo_mode == 'push_call':
+            if factor == 'push' and settings.app.sso_duo_mode == 'push_phone':
                 self._auth('phone')
             else:
                 raise InvalidUser('Invalid username')
