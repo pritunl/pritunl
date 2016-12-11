@@ -114,6 +114,13 @@ class User(mongo.MongoObject):
     def otp_cache_collection(cls):
         return mongo.get_collection('otp_cache')
 
+    @property
+    def has_duo_passcode(self):
+        return settings.app.sso and \
+            DUO_AUTH in self.auth_type and \
+            DUO_AUTH in settings.app.sso and \
+            settings.app.sso_duo_mode == 'passcode'
+
     def dict(self):
         return {
             'id': self.id,
