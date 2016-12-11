@@ -501,7 +501,8 @@ class User(mongo.MongoObject):
 
     def get_push_type(self):
         if settings.app.sso and DUO_AUTH in self.auth_type and \
-                DUO_AUTH in settings.app.sso:
+                DUO_AUTH in settings.app.sso and \
+                settings.app.sso_duo_mode != 'passcode':
             return DUO_AUTH
         elif settings.app.sso and \
                 SAML_OKTA_AUTH in self.auth_type and \
