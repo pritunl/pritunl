@@ -54,11 +54,11 @@ def ubuntu_woff_static_get():
         'fonts/ubuntu-bold.woff', cache=True)
     return static_file.get_response()
 
-@app.app.route('/favicon.ico', methods=['GET'])
+@app.app.route('/logo.png', methods=['GET'])
 @auth.open_auth
-def favicon_static_get():
+def logo_static_get():
     static_file = static.StaticFile(settings.conf.www_path,
-        'favicon.ico', cache=True)
+        'logo.png', cache=True)
     return static_file.get_response()
 
 @app.app.route('/robots.txt', methods=['GET'])
