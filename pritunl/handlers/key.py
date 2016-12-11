@@ -519,7 +519,8 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
 @app.app.route('/sso/authenticate', methods=['POST'])
 @auth.open_auth
 def sso_authenticate_post():
-    if settings.app.sso != DUO_AUTH:
+    if settings.app.sso != DUO_AUTH or \
+            settings.app.sso_duo_mode == 'passcode':
         return flask.abort(405)
 
     username = utils.json_filter_str('username')
