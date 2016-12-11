@@ -328,7 +328,7 @@ def user_linked_key_page_get(short_code):
     key_page = key_page.replace('<%= user_key_zip_url %>', '/key/%s.zip' % (
         doc['key_id']))
 
-    if org.otp_auth:
+    if org.otp_auth and not user.has_duo_passcode:
         key_page = key_page.replace('<%= user_otp_key %>', user.otp_secret)
         key_page = key_page.replace('<%= user_otp_url %>',
             'otpauth://totp/%s@%s?secret=%s' % (
