@@ -44,11 +44,12 @@ data_files = [
         'www/dbconf.html',
         'www/key_view.html',
         'www/key_view_dark.html',
+        'www/duo.html',
         'www/login.html',
         'www/upgrade.html',
-        'www/vendor/dist/favicon.ico',
         'www/vendor/dist/index.html',
         'www/vendor/dist/robots.txt',
+        'www/logo.png',
     ]),
     ('/usr/share/pritunl/www/css', [main_css_path]),
     ('/usr/share/pritunl/www/fonts', [
