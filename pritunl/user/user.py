@@ -473,7 +473,9 @@ class User(mongo.MongoObject):
         if settings.user.force_password_mode:
             return settings.user.force_password_mode
 
-        if svr.otp_auth:
+        if self.has_duo_passcode:
+            password_mode = 'duo_otp'
+        elif svr.otp_auth:
             password_mode = 'otp'
 
         if (RADIUS_AUTH in self.auth_type and
