@@ -38,6 +38,7 @@ def _dict():
             'sso_duo_token': 'demo',
             'sso_duo_secret': 'demo',
             'sso_duo_host': 'demo',
+            'sso_duo_mode': settings.app.sso_duo_mode,
             'sso_org': settings.app.sso_org,
             'sso_saml_url': 'demo',
             'sso_saml_issuer_url': 'demo',
@@ -100,6 +101,7 @@ def _dict():
             'sso_duo_token': settings.app.sso_duo_token,
             'sso_duo_secret': settings.app.sso_duo_secret,
             'sso_duo_host': settings.app.sso_duo_host,
+            'sso_duo_mode': settings.app.sso_duo_mode,
             'sso_org': settings.app.sso_org,
             'sso_saml_url': settings.app.sso_saml_url,
             'sso_saml_issuer_url': settings.app.sso_saml_issuer_url,
@@ -381,6 +383,13 @@ def settings_put():
         if sso_duo_host != settings.app.sso_duo_host:
             changes.add('sso')
         settings.app.sso_duo_host = sso_duo_host
+
+    if 'sso_duo_mode' in flask.request.json:
+        settings_commit = True
+        sso_duo_mode = flask.request.json['sso_duo_mode'] or None
+        if sso_duo_mode != settings.app.sso_duo_mode:
+            changes.add('sso')
+        settings.app.sso_duo_mode = sso_duo_mode
 
     if 'sso_radius_secret' in flask.request.json:
         settings_commit = True
