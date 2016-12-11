@@ -605,6 +605,20 @@ def settings_put():
         settings.app.sso_onelogin_secret = None
         settings.app.sso_radius_secret = None
         settings.app.sso_radius_host = None
+    else:
+        if RADIUS_AUTH in settings.app.sso and \
+                settings.app.sso_duo_mode == 'passcode':
+            return utils.jsonify({
+                'error': RADIUS_DUO_PASSCODE,
+                'error_msg': RADIUS_DUO_PASSCODE_MSG,
+            }, 400)
+
+        if settings.app.sso == DUO_AUTH and \
+                settings.app.sso_duo_mode == 'passcode':
+            return utils.jsonify({
+                'error': DUO_PASSCODE,
+                'error_msg': DUO_PASSCODE_MSG,
+            }, 400)
 
     for change in changes:
         flask.g.administrator.audit_event(
