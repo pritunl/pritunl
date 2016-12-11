@@ -530,15 +530,14 @@ def sso_authenticate_post():
         usernames.append(username.split('@')[0])
 
     valid = False
-    org_id = None
     for i, username in enumerate(usernames):
         try:
-            valid, org_id = sso.auth_duo(
-                username,
-                strong=True,
-                ipaddr=utils.get_remote_addr(),
-                type='Key',
+            duo_auth = sso.Duo(
+                username=username,
+                remote_ip=utils.get_remote_addr(),
+                auth_type='Key',
             )
+            valid = duo_auth.authenticate()
             break
         except InvalidUser:
             if i == len(usernames) - 1:
@@ -547,13 +546,12 @@ def sso_authenticate_post():
                 )
 
     if valid:
-        valid, org_id_new, groups = sso.plugin_sso_authenticate(
+        valid, org_id, groups = sso.plugin_sso_authenticate(
             sso_type='duo',
             user_name=username,
             user_email=email,
             remote_ip=utils.get_remote_addr(),
         )
-        org_id = org_id_new or org_id
         if not valid:
             logger.error('Duo plugin authentication not valid', 'sso',
                 username=username,
