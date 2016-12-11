@@ -149,7 +149,47 @@ class Authorizer(object):
                 settings.vpn.stress_test:
             return
 
-        if self.server.otp_auth and self.user.type == CERT_CLIENT:
+        if DUO_AUTH in self.user.auth_type and \
+                settings.app.sso_duo_mode == 'passcode':
+            if not self.password and self.has_challenge() and \
+                self.user.has_pin():
+                self.set_challenge(None, 'Enter Pin', False)
+                raise AuthError('Challenge pin')
+
+            challenge = self.get_challenge()
+            if challenge:
+                self.password = challenge + self.password
+
+            passcode_len = settings.app.sso_duo_passcode_length
+            orig_password = self.password
+            passcode = self.password[-passcode_len:]
+            self.password = self.password[:-passcode_len]
+
+            duo_auth = sso.Duo(
+                username=self.user.name,
+                remote_ip=self.remote_ip,
+                auth_type='Connection',
+                passcode=passcode,
+            )
+            allow = duo_auth.authenticate()
+
+            if not allow:
+                if self.has_challenge():
+                    if self.user.has_password(self.server):
+                        self.set_challenge(
+                            orig_password, 'Enter Duo Passcode', True)
+                    else:
+                        self.set_challenge(None, 'Enter Duo Passcode', True)
+                    raise AuthError('Challenge otp code')
+
+                self.user.audit_event('user_connection',
+                    ('User connection to "%s" denied. ' +
+                     'User failed Duo passcode authentication') % (
+                        self.server.name),
+                    remote_addr=self.remote_ip,
+                )
+                raise AuthError('Invalid OTP code')
+        elif self.server.otp_auth and self.user.type == CERT_CLIENT:
             if not self.password and self.has_challenge() and \
                     self.user.has_pin():
                 self.set_challenge(None, 'Enter Pin', False)
