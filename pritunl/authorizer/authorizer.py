@@ -351,12 +351,12 @@ class Authorizer(object):
             info['Device'] = '%s (%s)' % (self.device_name, platform_name)
 
         if self.push_type == DUO_AUTH:
-            allow, _ = sso.auth_duo(
-                self.user.name,
-                ipaddr=self.remote_ip,
-                type='Connection',
-                info=info,
+            duo_auth = sso.Duo(
+                username=self.user.name,
+                remote_ip=self.remote_ip,
+                auth_type='Key',
             )
+            allow = duo_auth.authenticate()
         elif self.push_type == SAML_OKTA_AUTH:
             allow = sso.auth_okta_push(
                 self.user.name,
