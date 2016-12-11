@@ -874,6 +874,12 @@ IPV6_SUBNET_SIZE_INVALID = 'ipv6_subnet_size_invalid'
 IPV6_SUBNET_SIZE_INVALID_MSG = 'IPv6 routed subnet size is invalid, must ' + \
     'be at least /64.'
 
+RADIUS_DUO_PASSCODE = 'radius_duo_passcode'
+RADIUS_DUO_PASSCODE_MSG = 'Duo passcode cannot be used with Radius.'
+
+DUO_PASSCODE = 'duo_passcode'
+DUO_PASSCODE_MSG = 'Duo passcode cannot be when only authenticating with Duo.'
+
 SUBSCRIPTION_SERVER_ERROR = 'subscription_server_error'
 SUBSCRIPTION_SERVER_ERROR_MSG = 'Unable to connect to ' + \
     'subscription server, please try again later.'
