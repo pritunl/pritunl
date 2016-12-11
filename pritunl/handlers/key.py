@@ -866,9 +866,7 @@ def sso_callback_get():
             return flask.abort(401)
 
     if DUO_AUTH in sso_mode:
-        duo_mode = settings.app.sso_duo_mode
-
-        if duo_mode == 'passcode':
+        if settings.app.sso_duo_mode == 'passcode':
             token = utils.generate_secret()
 
             tokens_collection = mongo.get_collection('sso_tokens')
@@ -972,7 +970,7 @@ def sso_duo_post():
     doc = tokens_collection.find_one({
         '_id': token,
     })
-    if not doc:
+    if not doc or doc['_id'] != token:
         return utils.jsonify({
             'error': TOKEN_INVALID,
             'error_msg': TOKEN_INVALID_MSG,
