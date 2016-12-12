@@ -332,7 +332,7 @@ define([
     onOk: function() {
       var name = this.$('.name input').val();
       var network = this.$('.network input').val();
-      var port = this.$('input.port').val();
+      var port = parseInt(this.$('input.port').val(), 10);
       var protocol = this.$('select.protocol').val();
       var dhParamBits = parseInt(this.$('.dh-param-bits select').val(), 10);
       var ipv6 = this.getIpv6Select();
