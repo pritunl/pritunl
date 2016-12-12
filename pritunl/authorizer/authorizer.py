@@ -336,20 +336,6 @@ class Authorizer(object):
                 'push_token': self.push_token,
             })
             if doc:
-                self.sso_client_cache_collection.update({
-                    'user_id': self.user.id,
-                    'server_id': self.server.id,
-                    'device_id': self.device_id,
-                    'device_name': self.device_name,
-                    'push_token': self.push_token,
-                }, {
-                    'user_id': self.user.id,
-                    'server_id': self.server.id,
-                    'device_id': self.device_id,
-                    'device_name': self.device_name,
-                    'push_token': self.push_token,
-                    'timestamp': utils.now(),
-                })
                 return
 
         if settings.app.sso_cache:
