@@ -8,7 +8,7 @@ import time
 import threading
 try:
     import iptc
-    LIB_IPTABLES = False
+    LIB_IPTABLES = True
 except:
     LIB_IPTABLES = False
 
