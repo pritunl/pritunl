@@ -101,6 +101,14 @@
         display: block;
       }
 
+      .key-box .uri-title {
+        font-weight: bold;
+        font-family: 'Ubuntu', sans-serif;
+        margin: 0 0 2px 0;
+        font-size: 16px;
+        display: block;
+      }
+
       .key-box .key-body {
         padding: 20px;
         text-align: center;
@@ -330,6 +338,7 @@
         <label id="otp-label">Two-step authentication key</label>
         <input id="key" type="text" readonly value="<%= user_otp_key %>">
         <div id="qrcode"></div>
+        <h4 class="uri-title">Profile URI Link:</h4>
         <input id="uri-input" type="text" class="form-control"
           spellcheck="false" value="<%= uri_url %>">
         <a class="btn btn-success" title="Download Profiles" href="<%= user_key_tar_url %>">Download Profiles</a><br>
