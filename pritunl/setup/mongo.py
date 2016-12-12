@@ -323,7 +323,8 @@ def setup_mongo():
         background=True, expireAfterSeconds=settings.app.sso_cache_timeout)
     upsert_index(mongo.collections['sso_client_cache'], 'timestamp',
         background=True,
-        expireAfterSeconds=settings.app.sso_client_cache_timeout + 21600)
+        expireAfterSeconds=settings.app.sso_client_cache_timeout + 21600 +
+            settings.app.sso_client_cache_window)
 
     if not auth.Administrator.collection.find_one():
         auth.Administrator(
