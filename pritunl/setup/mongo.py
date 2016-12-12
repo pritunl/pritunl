@@ -145,6 +145,8 @@ def setup_mongo():
         'sso_cache': getattr(secondary_database, prefix + 'sso_cache'),
         'sso_client_cache': getattr(secondary_database,
             prefix + 'sso_client_cache'),
+        'sso_passcode_cache': getattr(secondary_database,
+            prefix + 'sso_passcode_cache'),
         'vxlans': getattr(database, prefix + 'vxlans'),
     })
 
@@ -297,6 +299,10 @@ def setup_mongo():
         ('user_id', pymongo.ASCENDING),
         ('server_id', pymongo.ASCENDING),
     ], background=True)
+    upsert_index(mongo.collections['sso_passcode_cache'], [
+        ('user_id', pymongo.ASCENDING),
+        ('server_id', pymongo.ASCENDING),
+    ], background=True)
     upsert_index(mongo.collections['vxlans'], 'server_id',
         background=True, unique=True)
 
@@ -325,6 +331,9 @@ def setup_mongo():
         background=True,
         expireAfterSeconds=settings.app.sso_client_cache_timeout + 21600 +
             settings.app.sso_client_cache_window)
+    upsert_index(mongo.collections['sso_passcode_cache'], 'timestamp',
+        background=True,
+        expireAfterSeconds=settings.app.sso_passcode_cache_timeout)
 
     if not auth.Administrator.collection.find_one():
         auth.Administrator(
