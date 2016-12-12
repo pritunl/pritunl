@@ -45,6 +45,10 @@ class Authorizer(object):
     def sso_client_cache_collection(cls):
         return mongo.get_collection('sso_client_cache')
 
+    @property
+    def sso_passcode_cache_collection(cls):
+        return mongo.get_collection('sso_passcode_cache')
+
     def authenticate(self):
         try:
             self._check_call(self._check_primary)
@@ -165,31 +169,90 @@ class Authorizer(object):
             passcode = self.password[-passcode_len:]
             self.password = self.password[:-passcode_len]
 
-            duo_auth = sso.Duo(
-                username=self.user.name,
-                factor=duo_mode,
-                remote_ip=self.remote_ip,
-                auth_type='Connection',
-                passcode=passcode,
-            )
-            allow = duo_auth.authenticate()
+            allow = False
+            if settings.app.sso_passcode_cache:
+                doc = self.sso_passcode_cache_collection.find_one({
+                    'user_id': self.user.id,
+                    'server_id': self.server.id,
+                    'remote_ip': self.remote_ip,
+                    'mac_addr': self.mac_addr,
+                    'platform': self.platform,
+                    'device_id': self.device_id,
+                    'device_name': self.device_name,
+                    'passcode': passcode,
+                })
+                if doc:
+                    self.sso_passcode_cache_collection.update({
+                        'user_id': self.user.id,
+                        'server_id': self.server.id,
+                        'remote_ip': self.remote_ip,
+                        'mac_addr': self.mac_addr,
+                        'platform': self.platform,
+                        'device_id': self.device_id,
+                        'device_name': self.device_name,
+                        'passcode': passcode,
+                    }, {
+                        'user_id': self.user.id,
+                        'server_id': self.server.id,
+                        'remote_ip': self.remote_ip,
+                        'mac_addr': self.mac_addr,
+                        'platform': self.platform,
+                        'device_id': self.device_id,
+                        'device_name': self.device_name,
+                        'passcode': passcode,
+                        'timestamp': utils.now(),
+                    })
+                    allow = True
 
             if not allow:
-                if self.has_challenge():
-                    if self.user.has_password(self.server):
-                        self.set_challenge(
-                            orig_password, 'Enter Duo Passcode', True)
-                    else:
-                        self.set_challenge(None, 'Enter Duo Passcode', True)
-                    raise AuthError('Challenge otp code')
-
-                self.user.audit_event('user_connection',
-                    ('User connection to "%s" denied. ' +
-                     'User failed Duo passcode authentication') % (
-                        self.server.name),
-                    remote_addr=self.remote_ip,
+                duo_auth = sso.Duo(
+                    username=self.user.name,
+                    factor=duo_mode,
+                    remote_ip=self.remote_ip,
+                    auth_type='Connection',
+                    passcode=passcode,
                 )
-                raise AuthError('Invalid OTP code')
+                allow = duo_auth.authenticate()
+
+                if not allow:
+                    if self.has_challenge():
+                        if self.user.has_password(self.server):
+                            self.set_challenge(
+                                orig_password, 'Enter Duo Passcode', True)
+                        else:
+                            self.set_challenge(
+                                None, 'Enter Duo Passcode', True)
+                        raise AuthError('Challenge otp code')
+
+                    self.user.audit_event('user_connection',
+                        ('User connection to "%s" denied. ' +
+                         'User failed Duo passcode authentication') % (
+                            self.server.name),
+                        remote_addr=self.remote_ip,
+                    )
+                    raise AuthError('Invalid OTP code')
+
+                if settings.app.sso_passcode_cache:
+                    self.sso_passcode_cache_collection.update({
+                        'user_id': self.user.id,
+                        'server_id': self.server.id,
+                        'remote_ip': self.remote_ip,
+                        'mac_addr': self.mac_addr,
+                        'platform': self.platform,
+                        'device_id': self.device_id,
+                        'device_name': self.device_name,
+                    }, {
+                        'user_id': self.user.id,
+                        'server_id': self.server.id,
+                        'remote_ip': self.remote_ip,
+                        'mac_addr': self.mac_addr,
+                        'platform': self.platform,
+                        'device_id': self.device_id,
+                        'device_name': self.device_name,
+                        'passcode': passcode,
+                        'timestamp': utils.now(),
+                    }, upsert=True)
+
         elif self.server.otp_auth and self.user.type == CERT_CLIENT:
             if not self.password and self.has_challenge() and \
                     self.user.has_pin():
