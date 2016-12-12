@@ -165,6 +165,15 @@
       <label>Duo API Hostname</label>
       <input type="text" class="form-control" placeholder="Enter api hostname" value="<%- sso_duo_host || '' %>">
     </div>
+    <div class="sso-duo-mode form-group" <%= !sso || sso.indexOf('duo') === -1 ? 'style="display: none;"' : '' %>>
+      <label>Duo Mode</label>
+      <select class="form-control" data-toggle="tooltip" title="Duo authentication mode">
+        <option value="push" <%= sso_duo_mode === 'push' ? 'selected' : '' %>>Push</option>
+        <option value="phone" <%= sso_duo_mode === 'phone' ? 'selected' : '' %>>Phone Callback</option>
+        <option value="push_phone" <%= sso_duo_mode === 'push_phone' ? 'selected' : '' %>>Push + Phone Callback</option>
+        <option value="passcode" <%= sso_duo_mode === 'passcode' ? 'selected' : '' %>>Passcode</option>
+      </select>
+    </div>
     <div class="sso-client-cache toggle-form form-group" <%= !sso || (sso.indexOf('duo') === -1 && sso.indexOf('okta') === -1) ? 'style="display: none;"' : '' %>>
       <label>Enable Push Authentication Cache</label>
       <div class="selector <%= sso_client_cache ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Enable a seven day Duo/Okta push authentication cache using a token stored on the client. Only supported by Pritunl client">
