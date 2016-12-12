@@ -293,7 +293,7 @@ def setup_mongo():
         ('user_id', pymongo.ASCENDING),
         ('server_id', pymongo.ASCENDING),
     ], background=True)
-    upsert_index(mongo.collections['sso_cache'], [
+    upsert_index(mongo.collections['sso_client_cache'], [
         ('user_id', pymongo.ASCENDING),
         ('server_id', pymongo.ASCENDING),
     ], background=True)
