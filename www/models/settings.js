@@ -24,6 +24,7 @@ define([
       'sso_duo_host': null,
       'sso_duo_token': null,
       'sso_duo_secret': null,
+      'sso_duo_mode': null,
       'sso_org': null,
       'sso_saml_url': null,
       'sso_saml_issuer_url': null,
