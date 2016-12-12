@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.26.1187.26 2016-12-12
+-------------------------------
 
 Add support for Duo passcode
 Push authentication improvements
