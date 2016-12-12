@@ -151,7 +151,8 @@ def server_put_post(server_id=None):
 
     network = None
     network_def = False
-    if 'network' in flask.request.json:
+    if 'network' in flask.request.json and \
+            flask.request.json['network'] != '':
         network_def = True
         network = flask.request.json['network']
 
