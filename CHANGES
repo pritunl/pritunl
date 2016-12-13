@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with iptables
+
 Version 1.26.1187.26 2016-12-12
 -------------------------------
 
