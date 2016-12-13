@@ -904,15 +904,12 @@ class Iptables(object):
 
         _global_lock.acquire()
         try:
-            process = subprocess.Popen(
+            utils.check_call_silent(
                 ['ip6tables' if ipv6 else 'iptables', '-C'] + rule,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
             )
-
-            if process.wait():
-                return False
             return True
+        except subprocess.CalledProcessError:
+            return False
         finally:
             _global_lock.release()
 
@@ -962,15 +959,12 @@ class Iptables(object):
 
         _global_lock.acquire()
         try:
-            process = subprocess.Popen(
+            utils.check_call_silent(
                 ['ip6tables' if ipv6 else 'iptables', '-D'] + rule,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
             )
-
-            if process.wait():
-                return False
             return True
+        except subprocess.CalledProcessError:
+            return False
         finally:
             _global_lock.release()
 
