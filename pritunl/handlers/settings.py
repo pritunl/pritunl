@@ -462,7 +462,8 @@ def settings_put():
 
     if 'sso_onelogin_secret' in flask.request.json:
         settings_commit = True
-        sso_onelogin_secret = flask.request.json['sso_onelogin_secret'] or None
+        sso_onelogin_secret = \
+            flask.request.json['sso_onelogin_secret'] or None
         if sso_onelogin_secret != settings.app.sso_onelogin_secret:
             changes.add('sso')
         settings.app.sso_onelogin_secret = sso_onelogin_secret
