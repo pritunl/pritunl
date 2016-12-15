@@ -42,17 +42,17 @@ systemctl enable mongod pritunl
 ### archlinux
 
 ```
-tee -a /etc/pacman.conf << EOF
+sudo tee -a /etc/pacman.conf << EOF
 [pritunl]
 Server = http://repo.pritunl.com/stable/pacman
 EOF
 
-pacman-key --keyserver hkp://keyserver.ubuntu.com -r 7568D9BB55FF9E5287D586017AE645C0CF8E292A
-pacman-key --lsign-key 7568D9BB55FF9E5287D586017AE645C0CF8E292A
-pacman -Sy
-pacman -S pritunl mongodb
-systemctl start mongodb pritunl
-systemctl enable mongodb pritunl
+sudo pacman-key --keyserver hkp://keyserver.ubuntu.com -r 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+sudo pacman-key --lsign-key 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+sudo pacman -Sy
+sudo pacman -S --noconfirm pritunl mongodb
+sudo systemctl start mongodb pritunl
+sudo systemctl enable mongodb pritunl
 ```
 
 ### amazon linux
@@ -77,7 +77,7 @@ EOF
 
 gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7568D9BB55FF9E5287D586017AE645C0CF8E292A
 gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A > key.tmp; sudo rpm --import key.tmp; rm -f key.tmp
-sudo yum install pritunl mongodb-org
+sudo yum -y install pritunl mongodb-org
 sudo service mongod start
 sudo start pritunl
 ```
@@ -87,7 +87,7 @@ sudo start pritunl
 ```
 # SELinux must be disabled
 
-tee -a /etc/yum.repos.d/mongodb-org-3.2.repo << EOF
+sudo tee -a /etc/yum.repos.d/mongodb-org-3.2.repo << EOF
 [mongodb-org-3.2]
 name=MongoDB Repository
 baseurl=https://repo.mongodb.org/yum/redhat/7/mongodb-org/3.2/x86_64/
@@ -96,7 +96,7 @@ enabled=1
 gpgkey=https://www.mongodb.org/static/pgp/server-3.2.asc
 EOF
 
-tee -a /etc/yum.repos.d/pritunl.repo << EOF
+sudo tee -a /etc/yum.repos.d/pritunl.repo << EOF
 [pritunl]
 name=Pritunl Repository
 baseurl=http://repo.pritunl.com/stable/yum/centos/7/
@@ -104,99 +104,99 @@ gpgcheck=1
 enabled=1
 EOF
 
-yum install epel-release
+sudo yum -y install epel-release
 gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7568D9BB55FF9E5287D586017AE645C0CF8E292A
 gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A > key.tmp; sudo rpm --import key.tmp; rm -f key.tmp
-yum install pritunl mongodb-org
-systemctl start mongod pritunl
-systemctl enable mongod pritunl
+sudo yum -y install pritunl mongodb-org
+sudo systemctl start mongod pritunl
+sudo systemctl enable mongod pritunl
 ```
 
 ### debian wheezy
 
 ```
-tee -a /etc/apt/sources.list.d/mongodb-org-3.2.list << EOF
+sudo tee -a /etc/apt/sources.list.d/mongodb-org-3.2.list << EOF
 deb http://repo.mongodb.org/apt/debian wheezy/mongodb-org/3.2 main
 EOF
 
-tee -a /etc/apt/sources.list.d/pritunl.list << EOF
+sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
 deb http://repo.pritunl.com/stable/apt wheezy main
 EOF
 
-apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 42F3E95A2C4F08279C4960ADD68FA50FEA312927
-apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
-apt-get update
-apt-get install pritunl mongodb-org
-service pritunl start
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 42F3E95A2C4F08279C4960ADD68FA50FEA312927
+sudo -key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+sudo apt-get update
+sudo apt-get --assume-yes install pritunl mongodb-org
+sudo service pritunl start
 ```
 
 ### debian jessie
 
 ```
-tee -a /etc/apt/sources.list.d/mongodb-org-3.2.list << EOF
+sudo tee -a /etc/apt/sources.list.d/mongodb-org-3.2.list << EOF
 deb http://repo.mongodb.org/apt/debian wheezy/mongodb-org/3.2 main
 EOF
 
-tee -a /etc/apt/sources.list.d/pritunl.list << EOF
+sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
 deb http://repo.pritunl.com/stable/apt jessie main
 EOF
 
-apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 42F3E95A2C4F08279C4960ADD68FA50FEA312927
-apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
-apt-get update
-apt-get install pritunl mongodb-org
-systemctl start mongod pritunl
-systemctl enable mongod pritunl
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 42F3E95A2C4F08279C4960ADD68FA50FEA312927
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+sudo apt-get update
+sudo apt-get --assume-yes install pritunl mongodb-org
+sudo systemctl start mongod pritunl
+sudo systemctl enable mongod pritunl
 ```
 
 ### ubuntu precise
 
 ```
-tee -a /etc/apt/sources.list.d/mongodb-org-3.2.list << EOF
+sudo tee -a /etc/apt/sources.list.d/mongodb-org-3.2.list << EOF
 deb http://repo.mongodb.org/apt/ubuntu precise/mongodb-org/3.2 multiverse
 EOF
 
-tee -a /etc/apt/sources.list.d/pritunl.list << EOF
+sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
 deb http://repo.pritunl.com/stable/apt precise main
 EOF
 
-apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 42F3E95A2C4F08279C4960ADD68FA50FEA312927
-apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
-apt-get update
-apt-get install pritunl mongodb-org
-service pritunl start
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 42F3E95A2C4F08279C4960ADD68FA50FEA312927
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+sudo apt-get update
+sudo apt-get --assume-yes install pritunl mongodb-org
+sudo service pritunl start
 ```
 
 ### ubuntu trusty
 
 ```
-tee -a /etc/apt/sources.list.d/mongodb-org-3.2.list << EOF
+sudo tee -a /etc/apt/sources.list.d/mongodb-org-3.2.list << EOF
 deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.2 multiverse
 EOF
 
-tee -a /etc/apt/sources.list.d/pritunl.list << EOF
+sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
 deb http://repo.pritunl.com/stable/apt trusty main
 EOF
 
-apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 42F3E95A2C4F08279C4960ADD68FA50FEA312927
-apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
-apt-get update
-apt-get install pritunl mongodb-org
-service pritunl start
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 42F3E95A2C4F08279C4960ADD68FA50FEA312927
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+sudo apt-get update
+sudo apt-get --assume-yes install pritunl mongodb-org
+sudo service pritunl start
 ```
 
 ### ubuntu xenial
 
 ```
-tee -a /etc/apt/sources.list.d/mongodb-org-3.2.list << EOF
+sudo tee -a /etc/apt/sources.list.d/mongodb-org-3.2.list << EOF
 deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse
 EOF
 
-tee -a /etc/apt/sources.list.d/pritunl.list << EOF
+sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
 deb http://repo.pritunl.com/stable/apt xenial main
 EOF
 
-tee -a /lib/systemd/system/mongod.service << EOF
+sudo tee -a /lib/systemd/system/mongod.service << EOF
 [Unit]
 Description=High-performance, schema-free document-oriented database
 After=network.target
@@ -211,26 +211,26 @@ ExecStart=/usr/bin/mongod --quiet --config /etc/mongod.conf
 WantedBy=multi-user.target
 EOF
 
-apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 42F3E95A2C4F08279C4960ADD68FA50FEA312927
-apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
-apt-get update
-apt-get install pritunl mongodb-org
-systemctl start pritunl mongod
-systemctl enable pritunl mongod
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 42F3E95A2C4F08279C4960ADD68FA50FEA312927
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+sudo apt-get update
+sudo apt-get --assume-yes install pritunl mongodb-org
+sudo systemctl start pritunl mongod
+sudo systemctl enable pritunl mongod
 ```
 
 ### ubuntu yakkety
 
 ```
-tee -a /etc/apt/sources.list.d/pritunl.list << EOF
+sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
 deb http://repo.pritunl.com/stable/apt yakkety main
 EOF
 
-apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
-apt-get update
-apt-get install pritunl mongodb-server
-systemctl start pritunl mongodb
-systemctl enable pritunl mongodb
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+sudo apt-get update
+sudo apt-get --assume-yes install pritunl mongodb-server
+sudo systemctl start pritunl mongodb
+sudo systemctl enable pritunl mongodb
 ```
 
 ## License
