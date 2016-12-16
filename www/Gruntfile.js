@@ -252,7 +252,7 @@ module.exports = function(grunt) {
       all: {
         staticFiles: [
           'vendor/dist/css/main.css',
-          'vendor/dist/js/main.js',
+          'vendor/dist/js/main.js'
         ],
         replaceFiles: [
           'vendor/dist/index.html'
