@@ -15,6 +15,15 @@ def user_connection(host_id, server_id, org_id, user_id, host_name,
         key1='value1',
         key2='value2',
     )
+
+    try:
+        raise Exception('example')
+    except:
+        logger.exception('Example exception log message', 'plugin',
+            key1='value1',
+            key2='value2',
+        )
+
     pass
 
 # Called after user has connected.
