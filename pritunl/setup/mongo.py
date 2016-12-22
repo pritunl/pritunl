@@ -322,10 +322,10 @@ def setup_mongo():
         background=True, expireAfterSeconds=settings.app.auth_limiter_ttl)
     upsert_index(mongo.collections['otp'], 'timestamp', background=True,
         expireAfterSeconds=120)
-    upsert_index(mongo.collections['otp_cache'], 'timestamp', background=True,
-        expireAfterSeconds=settings.user.otp_cache_ttl)
-    upsert_index(mongo.collections['sso_tokens'], 'timestamp', background=True,
-        expireAfterSeconds=600)
+    upsert_index(mongo.collections['otp_cache'], 'timestamp',
+        background=True, expireAfterSeconds=settings.user.otp_cache_ttl)
+    upsert_index(mongo.collections['sso_tokens'], 'timestamp',
+        background=True, expireAfterSeconds=600)
     upsert_index(mongo.collections['sso_cache'], 'timestamp',
         background=True, expireAfterSeconds=settings.app.sso_cache_timeout)
     upsert_index(mongo.collections['sso_client_cache'], 'timestamp',
