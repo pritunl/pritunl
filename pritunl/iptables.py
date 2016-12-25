@@ -900,59 +900,13 @@ class Iptables(object):
         ]
 
     def _exists_iptables_rule_cmd(self, rule, ipv6=False):
-        rule = self._parse_rule(rule)
-
-        _global_lock.acquire()
-        try:
-            utils.check_call_silent(
-                ['ip6tables' if ipv6 else 'iptables', '-C'] + rule,
-            )
-            return True
-        except subprocess.CalledProcessError:
-            return False
-        finally:
-            _global_lock.release()
-
-    def _exists_iptables_rule(self, rule, ipv6=False, tables=None):
-        # TODO
         return False
 
+    def _exists_iptables_rule(self, rule, ipv6=False, tables=None):
         if not isinstance(rule, tuple):
             return self._exists_iptables_rule_cmd(rule, ipv6)
 
-        _global_lock.acquire()
-        try:
-            if ipv6:
-                if rule[0] == 'POSTROUTING':
-                    if tables:
-                        table = tables['nat6']
-                    else:
-                        table = iptc.Table6(iptc.Table.NAT)
-                else:
-                    if tables:
-                        table = tables['filter6']
-                    else:
-                        table = iptc.Table6(iptc.Table.FILTER)
-            else:
-                if rule[0] == 'POSTROUTING':
-                    if tables:
-                        table = tables['nat']
-                    else:
-                        table = iptc.Table(iptc.Table.NAT)
-                else:
-                    if tables:
-                        table = tables['filter']
-                    else:
-                        table = iptc.Table(iptc.Table.FILTER)
-            chain = iptc.Chain(table, rule[0])
-
-            for rule2 in chain.rules:
-                if rule[1] == rule2:
-                    return True
-
-            return False
-        finally:
-            _global_lock.release()
+        return False
 
     def _remove_iptables_rule_cmd(self, rule, ipv6=False):
         rule = self._parse_rule(rule)
