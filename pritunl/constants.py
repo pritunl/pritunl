@@ -581,32 +581,6 @@ VALID_IP_ENDPOINTS = {
     '221', '225', '229', '233', '237', '241', '245', '249', '253',
 }
 
-OPENSSL_HEARTBLEED = {
-    'OpenSSL 1.0.1-fips-beta1 03 Jan 2012',
-    'OpenSSL 1.0.1-beta1 03 Jan 2012',
-    'OpenSSL 1.0.1-fips-beta2 19 Jan 2012',
-    'OpenSSL 1.0.1-beta2 19 Jan 2012',
-    'OpenSSL 1.0.1-fips-beta3 23 Feb 2012',
-    'OpenSSL 1.0.1-beta3 23 Feb 2012',
-    'OpenSSL 1.0.1-fips 14 Mar 2012',
-    'OpenSSL 1.0.1 14 Mar 2012',
-    'OpenSSL 1.0.1a-fips 19 Apr 2012',
-    'OpenSSL 1.0.1a 19 Apr 2012',
-    'OpenSSL 1.0.1b-fips 26 Apr 2012',
-    'OpenSSL 1.0.1b 26 Apr 2012',
-    'OpenSSL 1.0.1c-fips 10 May 2012',
-    'OpenSSL 1.0.1c 10 May 2012',
-    'OpenSSL 1.0.1d-fips 5 Feb 2013',
-    'OpenSSL 1.0.1d 5 Feb 2013',
-    'OpenSSL 1.0.1e-fips 11 Feb 2013',
-    'OpenSSL 1.0.1e 11 Feb 2013',
-    'OpenSSL 1.0.1f-fips 6 Jan 2014',
-    'OpenSSL 1.0.1f 6 Jan 2014',
-    'OpenSSL 1.0.2-beta1-fips 24 Feb 2014',
-    'OpenSSL 1.0.2-beta1 24 Feb 2014',
-}
-OPENSSL_HEARTBLEED_BUILD_DATE = datetime.date(2014, 4, 7)
-
 CERT_CONF = """\
 [ default ]
 [ req ]

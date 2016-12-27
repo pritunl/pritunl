@@ -7,7 +7,6 @@ import uuid
 import os
 
 def setup_local():
-    settings.local.openssl_heartbleed = not utils.check_openssl()
     settings.local.iptables_wait = utils.check_iptables_wait()
 
     if settings.conf.host_id:

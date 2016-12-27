@@ -252,22 +252,6 @@ def get_temp_path():
     return os.path.join(settings.conf.temp_path, uuid.uuid4().hex)
 
 def check_openssl():
-    try:
-        # Check for unpatched heartbleed
-        openssl_ver = check_output_logged(['openssl', 'version', '-a'])
-        version, build_date = openssl_ver.split('\n')[0:2]
-
-        build_date = build_date.replace('built on:', '').strip()
-        build_date = build_date.split()
-        build_date = ' '.join([build_date[1],
-            build_date[2].zfill(2), build_date[5]])
-        build_date = datetime.datetime.strptime(build_date, '%b %d %Y').date()
-
-        if version in OPENSSL_HEARTBLEED and \
-                build_date < OPENSSL_HEARTBLEED_BUILD_DATE:
-            return False
-    except:
-        pass
     return True
 
 def check_iptables_wait():

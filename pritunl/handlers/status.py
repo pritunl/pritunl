@@ -99,13 +99,7 @@ def status_get():
         '_id': True,
     }).count()
 
-    if settings.local.openssl_heartbleed:
-        notification = 'You are running an outdated version of openssl ' + \
-            'containting the heartbleed bug. This could allow an attacker ' + \
-            'to compromise your server. Please upgrade your openssl ' + \
-            'package and restart the pritunl service.'
-    else:
-        notification = settings.local.notification
+    notification = settings.local.notification
 
     resp = {
         'org_count': orgs_count,
