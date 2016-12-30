@@ -366,6 +366,7 @@ define([
       var networkStart = this.$('.network-start input').val();
       var networkEnd = this.$('.network-end input').val();
       var groups = this.getGroups();
+      var policy = this.$('.policy textarea').val().trim() || null;
 
       if (!name) {
         this.setAlert('danger', 'Name can not be empty.', '.name');
@@ -430,7 +431,8 @@ define([
         'replica_count': replicaCount,
         'vxlan': vxlan,
         'dns_mapping': dnsMapping,
-        'debug': debug
+        'debug': debug,
+        'policy': policy
       };
 
       this.setLoading(this.loadingMsg);
