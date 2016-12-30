@@ -10,6 +10,7 @@ import pymongo
 import os
 import json
 import random
+import datetime
 
 class HostUsage(object):
     def __init__(self, host_id):
