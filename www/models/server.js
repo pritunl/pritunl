@@ -44,7 +44,8 @@ define([
       'replica_count': null,
       'vxlan': null,
       'dns_mapping': null,
-      'debug': null
+      'debug': null,
+      'policy': null
     },
     url: function() {
       var url = '/server';
