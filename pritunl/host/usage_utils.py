@@ -1,4 +1,3 @@
-from pritunl.constants import *
 from pritunl import utils
 from pritunl import logger
 
