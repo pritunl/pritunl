@@ -122,3 +122,8 @@ def login_static_get():
         '<body>', '<body class="' + body_class + '">')
 
     return static_file.get_response()
+
+@app.app.route('/setup', methods=['GET'])
+@auth.open_auth
+def setup_get():
+    return utils.redirect('')
