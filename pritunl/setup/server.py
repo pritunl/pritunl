@@ -18,6 +18,7 @@ import flask
 import threading
 import subprocess
 import os
+import urlparse
 
 server = None
 web_process = None
@@ -53,6 +54,19 @@ except ImportError:
     from pritunl.wsgiserver import ssl_builtin
     SSLAdapter = ssl_builtin.BuiltinSSLAdapter
 
+def redirect(location, code=302):
+    if not settings.conf.debug:
+        url_root = flask.request.headers.get('PR-Forwarded-Url')
+    else:
+        url_root = flask.request.url_root
+
+    if url_root[-1] == '/':
+        url_root = url_root[:-1]
+
+    if not settings.conf.debug:
+        location = urlparse.urljoin(url_root, location)
+    return flask.redirect(location, code)
+
 @app.before_request
 def before_request():
     flask.g.query_count = 0
@@ -76,14 +90,14 @@ def after_request(response):
 @app.route('/', methods=['GET'])
 def index_get():
     if setup_state == 'upgrade':
-        return flask.redirect('upgrade')
+        return redirect('upgrade')
     else:
-        return flask.redirect('setup')
+        return redirect('setup')
 
 @app.route('/setup', methods=['GET'])
 def setup_get():
     if setup_state == 'upgrade':
-        return flask.redirect('upgrade')
+        return redirect('upgrade')
 
     try:
         static_file = static.StaticFile(settings.conf.www_path,
@@ -96,7 +110,7 @@ def setup_get():
 @app.route('/upgrade', methods=['GET'])
 def upgrade_get():
     if setup_state != 'upgrade':
-        return flask.redirect('setup')
+        return redirect('setup')
 
     try:
         static_file = static.StaticFile(settings.conf.www_path,
