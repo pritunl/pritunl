@@ -7,7 +7,6 @@ class SettingsConf(SettingsGroupFile):
     path = conf_path
     fields = {
         'host_id': None,
-        'debug': False,
         'ssl': True,
         'static_cache': True,
         'port': 9700,
@@ -26,7 +25,6 @@ class SettingsConf(SettingsGroupFile):
         'local_address_interface': 'auto',
     }
     commit_fields = {
-        'debug',
         'static_cache',
         'bind_addr',
         'port',
