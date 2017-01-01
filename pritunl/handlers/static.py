@@ -127,3 +127,8 @@ def login_static_get():
 @auth.open_auth
 def setup_get():
     return utils.redirect('')
+
+@app.app.route('/upgrade', methods=['GET'])
+@auth.open_auth
+def upgrade_get():
+    return utils.redirect('')
