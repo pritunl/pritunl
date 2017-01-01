@@ -98,8 +98,7 @@ class StaticFile(object):
         if self.gzip:
             response.headers.add('Content-Encoding', 'gzip')
 
-        if settings.conf.static_cache and \
-                not settings.conf.debug and self.cache:
+        if settings.conf.static_cache and self.cache:
             response.headers.add('Cache-Control',
                 'max-age=%s, public' % settings.app.static_cache_time)
             response.headers.add('ETag', '"%s"' % self.etag)
