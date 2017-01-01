@@ -54,6 +54,7 @@ def setup_mongo():
                     settings.conf.mongodb_uri,
                     connectTimeoutMS=MONGO_CONNECT_TIMEOUT,
                     socketTimeoutMS=MONGO_SOCKET_TIMEOUT,
+                    serverSelectionTimeoutMS=MONGO_SOCKET_TIMEOUT,
                 )
 
             break
@@ -91,6 +92,7 @@ def setup_mongo():
                         settings.conf.mongodb_uri,
                         connectTimeoutMS=MONGO_CONNECT_TIMEOUT,
                         socketTimeoutMS=MONGO_SOCKET_TIMEOUT,
+                        serverSelectionTimeoutMS=MONGO_SOCKET_TIMEOUT,
                     )
 
                 break
