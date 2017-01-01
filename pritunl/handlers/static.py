@@ -12,9 +12,6 @@ import flask
 @app.app.route('/s/<path:file_path>', methods=['GET'])
 @auth.session_light_auth
 def static_get(file_path=None):
-    if settings.conf.debug and 'styles/fonts/' in file_path:
-        file_path = file_path.replace('styles/fonts/', 'fonts/', 1)
-
     if not file_path:
         return flask.abort(404)
 
