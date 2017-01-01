@@ -162,10 +162,7 @@ def deinit():
     }})
     event.Event(type=HOSTS_UPDATED)
 
-    if settings.conf.debug:
-        logger.LogEntry(message='Web debug server stopped.')
-    else:
-        logger.LogEntry(message='Web server stopped.')
+    logger.LogEntry(message='Web server stopped.')
 
 def get_prefered_hosts(hosts, replica_count):
     return random.sample(hosts, min(replica_count, len(hosts)))

@@ -280,10 +280,7 @@ def run_server():
     _cur_reverse_proxy = settings.app.reverse_proxy_header if \
         settings.app.reverse_proxy else ''
 
-    if settings.conf.debug:
-        logger.LogEntry(message='Web debug server started.')
-    else:
-        logger.LogEntry(message='Web server started.')
+    logger.LogEntry(message='Web server started.')
 
     if settings.conf.debug:
         _run_wsgi_debug()
