@@ -55,10 +55,7 @@ except ImportError:
     SSLAdapter = ssl_builtin.BuiltinSSLAdapter
 
 def redirect(location, code=302):
-    if not settings.conf.debug:
-        url_root = flask.request.headers.get('PR-Forwarded-Url')
-    else:
-        url_root = flask.request.url_root
+    url_root = flask.request.headers.get('PR-Forwarded-Url')
 
     if url_root[-1] == '/':
         url_root = url_root[:-1]

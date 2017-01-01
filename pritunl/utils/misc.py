@@ -410,15 +410,11 @@ def get_process_cpu_mem():
     return proc.cpu_percent(interval=0.5), proc.memory_percent()
 
 def redirect(location, code=302):
-    if not settings.conf.debug:
-        location = urlparse.urljoin(get_url_root(), location)
+    location = urlparse.urljoin(get_url_root(), location)
     return flask.redirect(location, code)
 
 def get_url_root():
-    if not settings.conf.debug:
-        url_root = flask.request.headers.get('PR-Forwarded-Url')
-    else:
-        url_root = flask.request.url_root
+    url_root = flask.request.headers.get('PR-Forwarded-Url')
 
     if settings.app.reverse_proxy and \
             flask.request.headers.get('PR-Forwarded-Header'):
