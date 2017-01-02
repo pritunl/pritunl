@@ -782,12 +782,12 @@ class Server(mongo.MongoObject):
                 doc.get('auto_public_host') or \
                 doc['public_address'] or \
                 doc['auto_public_address']
-            if settings.conf.port == 443:
+            if settings.app.server_port == 443:
                 remotes.add('https://%s' % address)
             else:
                 remotes.add('https://%s:%s' % (
                     address,
-                    settings.conf.port,
+                    settings.app.server_port,
                 ))
 
         remotes = list(remotes)
