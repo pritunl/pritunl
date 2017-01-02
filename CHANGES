@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with configuration sync
+
 Version 1.26.1188.41 2016-12-13
 -------------------------------
 
