@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.26.1208.95 2017-01-02
+-------------------------------
 
 Fix issue with configuration sync
 
