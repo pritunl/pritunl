@@ -238,29 +238,6 @@ def _run_wsgi():
             restart = True
             logger.info('Server restarting...', 'app')
 
-def _run_wsgi_debug():
-    logger.info('Starting debug server', 'app')
-
-    werkzeug_logger = logging.getLogger('werkzeug')
-    werkzeug_logger.setLevel(logging.WARNING)
-    werkzeug_logger.addFilter(logger.log_filter)
-    werkzeug_logger.addHandler(logger.log_handler)
-
-    settings.local.server_ready.set()
-    settings.local.server_start.wait()
-
-    try:
-        app.run(
-            host=settings.conf.bind_addr,
-            port=settings.app.server_port,
-            threaded=True,
-        )
-    except (KeyboardInterrupt, SystemExit):
-        pass
-    except:
-        logger.exception('Server error occurred', 'app')
-        raise
-
 def setup_server_cert():
     if not settings.app.server_cert or not settings.app.server_key:
         logger.info('Generating server certificate...', 'app')
@@ -282,7 +259,4 @@ def run_server():
 
     logger.LogEntry(message='Web server started.')
 
-    if settings.conf.debug:
-        _run_wsgi_debug()
-    else:
-        _run_wsgi()
+    _run_wsgi()
