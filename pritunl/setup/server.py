@@ -60,9 +60,7 @@ def redirect(location, code=302):
     if url_root[-1] == '/':
         url_root = url_root[:-1]
 
-    if not settings.conf.debug:
-        location = urlparse.urljoin(url_root, location)
-    return flask.redirect(location, code)
+    return flask.redirect(urlparse.urljoin(url_root, location), code)
 
 @app.before_request
 def before_request():
