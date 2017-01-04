@@ -778,17 +778,20 @@ class Server(mongo.MongoObject):
         }
 
         for doc in self.host_collection.find(spec, project):
-            address = doc.get('sync_address') or \
-                doc.get('auto_public_host') or \
-                doc['public_address'] or \
-                doc['auto_public_address']
-            if settings.app.server_port == 443:
-                remotes.add('https://%s' % address)
+            sync_address = doc.get('sync_address')
+            if sync_address:
+                remotes.add('https://%s' % sync_address)
             else:
-                remotes.add('https://%s:%s' % (
-                    address,
-                    settings.app.server_port,
-                ))
+                address = doc.get('auto_public_host') or \
+                    doc['public_address'] or \
+                    doc['auto_public_address']
+                if settings.app.server_port == 443:
+                    remotes.add('https://%s' % address)
+                else:
+                    remotes.add('https://%s:%s' % (
+                        address,
+                        settings.app.server_port,
+                    ))
 
         remotes = list(remotes)
         remotes.sort()
