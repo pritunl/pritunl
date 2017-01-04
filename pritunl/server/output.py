@@ -6,6 +6,7 @@ from pritunl import event
 from pritunl import utils
 
 import pymongo
+import datetime
 
 class ServerOutput(object):
     def __init__(self, server_id):
