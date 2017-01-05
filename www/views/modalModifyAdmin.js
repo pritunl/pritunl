@@ -116,6 +116,7 @@ define([
         username: username,
         super_user: superUser,
         otp_auth: otpAuth,
+        otp_secret: null,
         auth_api: authApi,
         token: null,
         secret: null
