@@ -478,7 +478,7 @@ def settings_put():
 
     if 'theme' in flask.request.json:
         settings_commit = True
-        theme = 'dark' if flask.request.json['theme'] == 'dark' else 'light'
+        theme = 'light' if flask.request.json['theme'] == 'light' else 'dark'
 
         if theme != settings.app.theme:
             if theme == 'dark':
