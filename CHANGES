@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve configuration sync
+
 Version 1.26.1209.89 2017-01-03
 -------------------------------
 
