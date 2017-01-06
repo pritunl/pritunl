@@ -33,9 +33,9 @@
       <input type="text" class="form-control" placeholder="Enter DNS server. Separate multiple DNS servers by a comma. Leave blank to use clients existing DNS servers" data-toggle="tooltip" title="Optional, DNS server for clients" value="<%- dns_servers.join(', ') %>" autocapitalize="off">
     </div>
     <div class="network form-group">
-      <label>Network</label>
+      <label>Virtual Network</label>
       <span class="label label-default no-select" toggle="tooltip" title="Maximum number of users for this subnet"></span>
-      <input type="text" class="form-control" placeholder="Enter network address" data-toggle="tooltip" title="Network address for the private network that will be created for VPN clients. When using bridged mode this network must match the local network of a network interface on the server" value="<%- network %>" autocapitalize="off">
+      <input type="text" class="form-control" placeholder="Enter network address" data-toggle="tooltip" title="Network address for the private network that will be created for VPN clients" value="<%- network %>" autocapitalize="off">
     </div>
     <div class="otp-auth-toggle toggle-form form-group">
       <label>Enable Two-Step Authentication</label>
