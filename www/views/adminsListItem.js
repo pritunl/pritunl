@@ -57,6 +57,13 @@ define([
       } else {
         this.$('.get-otp-auth').addClass('no-otp-auth');
       }
+
+      if (this.model.get('audit')) {
+        this.$('.audit-admin').removeClass('no-audit-admin');
+      }
+      else {
+        this.$('.audit-admin').addClass('no-audit-admin');
+      }
     },
     getSelect: function() {
       return this.$('.selector').hasClass('selected');
