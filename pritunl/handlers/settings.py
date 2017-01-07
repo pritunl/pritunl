@@ -476,7 +476,7 @@ def settings_put():
             changes.add('sso')
         settings.app.sso_client_cache = sso_client_cache
 
-    if flask.request.get('theme'):
+    if flask.request.json.get('theme'):
         settings_commit = True
         theme = 'light' if flask.request.json['theme'] == 'light' else 'dark'
 
