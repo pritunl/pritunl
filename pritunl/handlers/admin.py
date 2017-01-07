@@ -29,7 +29,9 @@ def admin_get(admin_id=None):
     admins = []
 
     for admin in auth.iter_admins():
-        admins.append(admin.dict())
+        admin = admin.dict()
+        admin['audit'] = settings.app.auditing == ALL
+        admins.append(admin)
 
     if settings.app.demo_mode:
         utils.demo_set_cache(admins)
