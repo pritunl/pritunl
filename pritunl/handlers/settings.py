@@ -180,6 +180,7 @@ def settings_put():
         return utils.demo_blocked()
 
     org_event = False
+    admin_event = False
     admin = flask.g.administrator
     changes = set()
 
@@ -294,6 +295,7 @@ def settings_put():
                     'error': REQUIRES_SUPER_USER,
                     'error_msg': REQUIRES_SUPER_USER_MSG,
                 }, 400)
+            admin_event = True
             org_event = True
 
         settings.app.auditing = auditing
@@ -632,6 +634,9 @@ def settings_put():
         settings.commit()
 
     admin.commit(admin.changed)
+
+    if admin_event:
+        event.Event(type=ADMINS_UPDATED)
 
     if org_event:
         for org in organization.iter_orgs(fields=('_id')):
