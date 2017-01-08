@@ -26,6 +26,7 @@ define([
     },
     update: function() {
       this.$('.route-network').text(this.model.get('network'));
+      this.$('.route-comment').text(this.model.get('comment'));
       this.$('.route-network-no-click').text(this.model.get('network'));
 
       if (this.model.get('virtual_network')) {
