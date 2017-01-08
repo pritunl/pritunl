@@ -1,3 +1,7 @@
+<div class="route-comment form-group">
+  <label>Comment</label>
+  <input type="text" class="form-control" placeholder="Enter route comment" data-toggle="tooltip" title="Comment for route"  value="<%- comment || '' %>">
+</div>
 <div class="nat-route-toggle toggle-form form-group">
   <label>NAT Route</label>
   <div class="selector <%= nat ? 'selected' : '' %> no-select" data-toggle="tooltip" title="NAT vpn traffic destined to this network">

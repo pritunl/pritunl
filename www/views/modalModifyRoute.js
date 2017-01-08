@@ -128,6 +128,7 @@ define([
       this.setRotueAdSelect(!this.getRotueAdSelect());
     },
     onOk: function() {
+      var comment = this.$('.route-comment input').val();
       var nat = this.getNatRouteSelect();
       var natInterface = this.$('.nat-interface input').val();
       var netGateway = this.getNetGatewaySelect();
@@ -142,6 +143,7 @@ define([
 
       this.setLoading('Modifying route...');
       this.model.save({
+        comment: comment,
         nat: nat,
         nat_interface: natInterface,
         net_gateway: netGateway,

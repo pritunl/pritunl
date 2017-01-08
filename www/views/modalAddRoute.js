@@ -134,6 +134,7 @@ define([
       var model = new ServerRouteModel();
 
       var network = this.$('.route-network input').val();
+      var comment = this.$('.route-comment input').val();
       var server = this.$('.server select').val();
       var nat = this.getNatRouteSelect();
       var natInterface = this.$('.nat-interface input').val();
@@ -150,6 +151,7 @@ define([
       lastServer = server;
       model.save({
         network: network,
+        comment: comment,
         nat: nat,
         nat_interface: natInterface,
         net_gateway: netGateway,
