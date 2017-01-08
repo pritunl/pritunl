@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Add route comments
 Improve configuration sync
 Web interface improvements
 
