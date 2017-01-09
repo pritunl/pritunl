@@ -191,11 +191,12 @@
             "files": {
               "/etc/yum.repos.d/mongodb-org-3.0.repo": {
                 "content": {"Fn::Join": ["", [
-                  "[mongodb-org-3.0]\n",
+                  "[mongodb-org-3.2]\n",
                   "name=MongoDB Repository\n",
-                  "baseurl=http://repo.mongodb.org/yum/amazon/2013.03/mongodb-org/3.0/x86_64/\n",
-                  "gpgcheck=0\n",
-                  "enabled=1\n"
+                  "baseurl=https://repo.mongodb.org/yum/amazon/2013.03/mongodb-org/3.2/x86_64/\n",
+                  "gpgcheck=1\n",
+                  "enabled=1\n",
+                  "gpgkey=https://www.mongodb.org/static/pgp/server-3.2.asc\n"
                 ]]},
                 "mode": "000644",
                 "owner": "root",
@@ -298,8 +299,9 @@
                   "[pritunl]\n",
                   "name=Pritunl Repository\n",
                   "baseurl=http://repo.pritunl.com/stable/yum/centos/7/\n",
-                  "gpgcheck=0\n",
-                  "enabled=1\n"
+                  "gpgcheck=1\n",
+                  "enabled=1\n",
+                  "gpgkey=https://s3.amazonaws.com/pritunl-repo/pritunl.asc\n"
                 ]]},
                 "mode": "000644",
                 "owner": "root",
@@ -318,9 +320,7 @@
               "/etc/pritunl.conf": {
                 "content": {"Fn::Join": ["", [
                   "{\n",
-                  "    \"debug\": false,\n",
                   "    \"bind_addr\": \"0.0.0.0\",\n",
-                  "    \"port\": 9700,\n",
                   "    \"log_path\": \"/var/log/pritunl.log\",\n",
                   "    \"temp_path\": \"/tmp/pritunl_%r\",\n",
                   "    \"local_address_interface\": \"auto\",\n",
@@ -403,8 +403,14 @@
         "SecurityGroupIngress": [
           {
             "IpProtocol": "tcp",
-            "FromPort": "9700",
-            "ToPort": "9700",
+            "FromPort": "80",
+            "ToPort": "80",
+            "CidrIp": "0.0.0.0/0"
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "443",
+            "ToPort": "443",
             "CidrIp": "0.0.0.0/0"
           },
           {

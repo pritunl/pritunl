@@ -176,8 +176,9 @@
                   "[pritunl]\n",
                   "name=Pritunl Repository\n",
                   "baseurl=http://repo.pritunl.com/stable/yum/centos/7/\n",
-                  "gpgcheck=0\n",
-                  "enabled=1\n"
+                  "gpgcheck=1\n",
+                  "enabled=1\n",
+                  "gpgkey=https://s3.amazonaws.com/pritunl-repo/pritunl.asc\n"
                 ]]},
                 "mode": "000644",
                 "owner": "root",
@@ -196,9 +197,7 @@
               "/etc/pritunl.conf": {
                 "content": {"Fn::Join": ["", [
                   "{\n",
-                  "    \"debug\": false,\n",
                   "    \"bind_addr\": \"0.0.0.0\",\n",
-                  "    \"port\": 9700,\n",
                   "    \"log_path\": \"/var/log/pritunl.log\",\n",
                   "    \"temp_path\": \"/tmp/pritunl_%r\",\n",
                   "    \"local_address_interface\": \"auto\",\n",
@@ -264,8 +263,14 @@
         "SecurityGroupIngress": [
           {
             "IpProtocol": "tcp",
-            "FromPort": "9700",
-            "ToPort": "9700",
+            "FromPort": "80",
+            "ToPort": "80",
+            "CidrIp": "0.0.0.0/0"
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "443",
+            "ToPort": "443",
             "CidrIp": "0.0.0.0/0"
           },
           {
