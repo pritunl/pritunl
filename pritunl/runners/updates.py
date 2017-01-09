@@ -22,9 +22,9 @@ def _check_updates():
             response = urllib2.urlopen(request, timeout=60)
             data = json.load(response)
 
-            settings.local.notification = data.get('message', '')
-            settings.local.www_state = data.get('www', OK)
-            settings.local.vpn_state = data.get('vpn', OK)
+            settings.local.notification = str(data.get('message', ''))
+            settings.local.www_state = str(data.get('www', OK))
+            settings.local.vpn_state = str(data.get('vpn', OK))
         except:
             logger.exception('Failed to check notifications', 'runners')
 
