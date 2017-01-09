@@ -371,7 +371,7 @@ def sync_public_ip(attempts=1, timeout=5, update=False):
             request = urllib2.Request(
                 settings.app.public_ip_server)
             response = urllib2.urlopen(request, timeout=timeout)
-            settings.local.public_ip = json.load(response)['ip']
+            settings.local.public_ip = str(json.load(response)['ip'])
             break
         except:
             pass
@@ -380,7 +380,7 @@ def sync_public_ip(attempts=1, timeout=5, update=False):
         request = urllib2.Request(
             settings.app.public_ip6_server)
         response = urllib2.urlopen(request, timeout=timeout)
-        settings.local.public_ip6 = json.load(response)['ip']
+        settings.local.public_ip6 = str(json.load(response)['ip'])
     except:
         pass
 
