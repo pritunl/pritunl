@@ -1,8 +1,7 @@
 Pritunl Changelog
 =================
 
-Version 1.26.1215.38 2017-01-09
--------------------------------
+<%= version %>
 
 Add route comments
 Improve configuration sync
