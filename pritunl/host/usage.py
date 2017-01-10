@@ -123,7 +123,6 @@ class HostUsage(object):
         return data
 
     def get_period_random(self, period):
-        data = {}
         date = utils.now()
         date -= datetime.timedelta(microseconds=date.microsecond,
             seconds=date.second)
