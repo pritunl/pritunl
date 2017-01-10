@@ -19,6 +19,9 @@ class TaskHost(task.Task):
 
     @interrupter
     def task(self):
+        if settings.app.demo_mode:
+            return
+
         try:
             cursor = self.hosts_collection.find({}, {
                 '_id': True,
