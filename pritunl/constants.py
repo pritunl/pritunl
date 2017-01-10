@@ -402,9 +402,7 @@ DEMO_ADMIN_AUDIT_EVENTS = [
 
 DEMO_LOGS = [
     '[us-east][2016-03-08 04:35:40,616][INFO] Starting server',
-    '[us-east][2016-03-08 04:35:41,616][INFO] Starting redirect server',
     '[us-west][2016-03-08 04:35:56,616][INFO] Starting server',
-    '[us-west][2016-03-08 04:35:57,616][INFO] Starting redirect server',
 ]
 
 DEMO_OUTPUT = [
