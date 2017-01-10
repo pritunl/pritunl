@@ -18,6 +18,7 @@ from pritunl.setup.runners import setup_runners
 from pritunl.setup.handlers import setup_handlers
 from pritunl.setup.check import setup_check
 from pritunl.setup.plugins import setup_plugins
+from pritunl.setup.demo import setup_demo
 
 import resource
 
@@ -45,6 +46,8 @@ def setup_all():
         setup_handlers()
         setup_check()
         setup_plugins()
+
+        setup_demo()
 
         soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
         if soft < 25000 or hard < 25000:
