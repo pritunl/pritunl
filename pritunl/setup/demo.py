@@ -62,7 +62,7 @@ def setup_demo():
                 'status': ONLINE,
                 'pool_cursor': None,
                 'start_timestamp': start_timestamp,
-                'availability_group': 'default',
+                'availability_group': DEFAULT,
                 'instances': instances,
                 'instances_count': len(instances),
             }})
