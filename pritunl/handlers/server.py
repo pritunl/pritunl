@@ -1135,9 +1135,11 @@ def server_bandwidth_get(server_id, period):
         if resp:
             return utils.jsonify(resp)
 
-    resp = server.bandwidth_get(server_id, period)
     if settings.app.demo_mode:
+        resp = server.bandwidth_random_get(server_id, period)
         utils.demo_set_cache(resp)
+    else:
+        resp = server.bandwidth_get(server_id, period)
     return utils.jsonify(resp)
 
 @app.app.route('/server/vpcs', methods=['GET'])
