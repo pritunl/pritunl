@@ -11,6 +11,7 @@ def setup_demo():
     from pritunl import server
     from pritunl import host
     from pritunl import mongo
+    from pritunl import logger
 
     if not settings.app.demo_mode:
         return
@@ -98,6 +99,8 @@ def setup_demo():
                     }
 
                     clients_collection.insert(doc)
+
+        logger.info('Demo initiated', 'demo')
 
     thread = threading.Thread(target=thread)
     thread.daemon = True
