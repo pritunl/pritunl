@@ -35,6 +35,7 @@ def setup_demo():
                 'thread_count': 0,
                 'open_file_count': 0,
                 'status': ONLINE,
+                'start_timestamp': start_timestamp,
                 'ping_timestamp': start_timestamp,
                 'auto_public_address': None,
                 'auto_public_address6': None,
