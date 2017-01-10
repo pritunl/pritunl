@@ -129,6 +129,9 @@ def output_link_clear(server_id):
 def bandwidth_get(server_id, period):
     return ServerBandwidth(server_id).get_period(period)
 
+def bandwidth_random_get(server_id, period):
+    return ServerBandwidth(server_id).get_period_random(period)
+
 def link_servers(server_id, link_server_id, use_local_address=False):
     if server_id == link_server_id:
         raise TypeError('Server id must be different then link server id')
