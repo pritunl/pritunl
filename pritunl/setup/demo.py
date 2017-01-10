@@ -74,13 +74,12 @@ def setup_demo():
                     virt_address = svr.get_ip_addr(org.id, usr.id)
                     virt_address6 = svr.ip4to6(virt_address)
 
-                    timestamp = utils.now()
                     doc = {
                         '_id': utils.ObjectId(),
                         'user_id': usr.id,
                         'server_id': svr.id,
                         'host_id': settings.local.host_id,
-                        'timestamp': timestamp,
+                        'timestamp': start_timestamp,
                         'platform': random.choice(platforms),
                         'type': CERT_CLIENT,
                         'device_name': utils.random_name(),
@@ -95,7 +94,7 @@ def setup_demo():
                         'host_address6': settings.local.host.local_addr6,
                         'dns_servers': [],
                         'dns_suffix': None,
-                        'connected_since': int(timestamp.strftime('%s')),
+                        'connected_since': int(start_timestamp.strftime('%s')),
                     }
 
                     clients_collection.insert(doc)
