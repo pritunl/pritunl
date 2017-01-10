@@ -33,6 +33,14 @@ def upsert_index(collection, index, **kwargs):
         collection.drop_index(name)
         collection.create_index(index, **kwargs)
 
+def drop_index(collection, index, **kwargs):
+    try:
+        keys = pymongo.helpers._index_list(index)
+        name = pymongo.helpers._gen_index_name(keys)
+        collection.drop_index(name)
+    except:
+        pass
+
 def setup_mongo():
     prefix = settings.conf.mongodb_collection_prefix or ''
     last_error = time.time() - 24
@@ -312,8 +320,11 @@ def setup_mongo():
 
     upsert_index(mongo.collections['tasks'], 'timestamp',
         background=True, expireAfterSeconds=300)
-    upsert_index(mongo.collections['clients'], 'timestamp',
-        background=True, expireAfterSeconds=settings.vpn.client_ttl)
+    if settings.app.demo_mode:
+        drop_index(mongo.collections['clients'], 'timestamp', background=True)
+    else:
+        upsert_index(mongo.collections['clients'], 'timestamp',
+            background=True, expireAfterSeconds=settings.vpn.client_ttl)
     upsert_index(mongo.collections['users_key_link'], 'timestamp',
         background=True, expireAfterSeconds=settings.app.key_link_timeout)
     upsert_index(mongo.collections['auth_sessions'], 'timestamp',
