@@ -24,6 +24,9 @@ class TaskServer(task.Task):
 
     @interrupter
     def task(self):
+        if settings.app.demo_mode:
+            return
+
         try:
             timestamp = utils.now()
             timestamp_spec = timestamp - datetime.timedelta(
