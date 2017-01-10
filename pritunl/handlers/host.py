@@ -32,6 +32,8 @@ def host_get(hst=None):
     page = int(page) if page else page
 
     for hst in host.iter_hosts_dict(page=page):
+        if settings.app.demo_mode:
+            hst['users_online'] = hst['user_count']
         hosts.append(hst)
 
     if page is not None:
