@@ -171,7 +171,10 @@ def host_usage_get(hst, period):
             return utils.jsonify(resp)
 
     hst = host.get_by_id(hst)
-    resp = hst.usage.get_period(period)
+
     if settings.app.demo_mode:
+        resp = hst.usage.get_period_random(period)
         utils.demo_set_cache(resp)
+    else:
+        resp = hst.usage.get_period(period)
     return utils.jsonify(resp)
