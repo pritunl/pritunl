@@ -165,24 +165,27 @@ class ServerBandwidth(object):
             date_step = datetime.timedelta(minutes=1)
             bytes_recv = 700000
             bytes_sent = 700000
-            bandwidth_rand = lambda x: random.randint(
-                max(x - 50000, 0), max(x + 50000, 0))
+            bytes_step = 50000
+            bytes_min = 500000
+            bytes_max = 900000
         elif period == '5m':
             date_end = date - datetime.timedelta(minutes=date.minute % 5)
             date_cur = date_end - datetime.timedelta(days=1)
             date_step = datetime.timedelta(minutes=5)
             bytes_recv = 3500000
             bytes_sent = 3500000
-            bandwidth_rand = lambda x: random.randint(
-                max(x - 250000, 0), max(x + 250000, 0))
+            bytes_step = 250000
+            bytes_min = 3000000
+            bytes_max = 4000000
         elif period == '30m':
             date_end = date - datetime.timedelta(minutes=date.minute % 30)
             date_cur = date_end - datetime.timedelta(days=7)
             date_step = datetime.timedelta(minutes=30)
             bytes_recv = 21000000
             bytes_sent = 21000000
-            bandwidth_rand = lambda x: random.randint(
-                max(x - 2000000, 0), max(x + 2000000, 0))
+            bytes_step = 2000000
+            bytes_min = 17000000
+            bytes_max = 25000000
         elif period == '2h':
             date_end = date - datetime.timedelta(minutes=date.minute,
                 hours=date.hour % 2)
@@ -190,8 +193,9 @@ class ServerBandwidth(object):
             date_step = datetime.timedelta(hours=2)
             bytes_recv = 84000000
             bytes_sent = 84000000
-            bandwidth_rand = lambda x: random.randint(
-                max(x - 2000000, 0), max(x + 2000000, 0))
+            bytes_step = 2000000
+            bytes_min = 78000000
+            bytes_max = 90000000
         elif period == '1d':
             date_end = date - datetime.timedelta(minutes=date.minute,
                 hours=date.hour)
@@ -199,8 +203,15 @@ class ServerBandwidth(object):
             date_step = datetime.timedelta(days=1)
             bytes_recv = 1008000000
             bytes_sent = 1008000000
-            bandwidth_rand = lambda x: random.randint(
-                max(x - 100000000, 0), max(x + 100000000, 0))
+            bytes_step = 10000000
+            bytes_min = 208000000
+            bytes_max = 1808000000
+
+        def bandwidth_rand(x):
+            x += random.uniform(-bytes_step, bytes_step)
+            x = max(x, bytes_min)
+            x = min(x, bytes_max)
+            return x
 
         data = {
             'received': [],
