@@ -151,9 +151,12 @@ class HostUsage(object):
             date_step = datetime.timedelta(days=1)
 
         cpu = 0.3
-        mem = 0.4
-        usage_rand = lambda x: round(random.uniform(
-            max(x - 0.05, 0), min(x + 0.05, 1)), 4)
+        mem = 0.3
+        def usage_rand(x):
+            x += random.uniform(-0.01, 0.01)
+            x = max(x, 0.25)
+            x = min(x, 0.35)
+            return x
 
         data = {
             'cpu': [],
