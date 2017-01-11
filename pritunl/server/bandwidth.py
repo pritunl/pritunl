@@ -1,4 +1,3 @@
-from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import mongo
@@ -7,6 +6,7 @@ from pritunl import utils
 import os
 import json
 import random
+import datetime
 
 class ServerBandwidth(object):
     def __init__(self, server_id):
