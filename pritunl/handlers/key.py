@@ -635,7 +635,7 @@ def sso_request_get():
                 'callback': callback,
                 'state': state,
                 'secret': secret,
-            }
+            },
         )
 
         if resp.status_code != 200:
@@ -671,7 +671,7 @@ def sso_request_get():
                 'callback': callback,
                 'state': state,
                 'secret': secret,
-            }
+            },
         )
 
         if resp.status_code != 200:
