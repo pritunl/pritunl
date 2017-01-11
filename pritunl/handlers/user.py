@@ -131,7 +131,7 @@ def user_get(org_id, user_id=None, page=None):
                 'real_address': None,
                 'virt_address': None,
                 'virt_address6': None,
-                'connected_since': None
+                'connected_since': None,
             }
             server_data.append(data)
             users_servers[usr.id][svr.id] = data
