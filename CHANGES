@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add user settings
+
 Version 1.26.1217.86 2017-01-11
 -------------------------------
 
