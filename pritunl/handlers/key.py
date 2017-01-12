@@ -437,10 +437,13 @@ def user_linked_key_conf_get(key_id, server_id):
     methods=['GET'])
 @auth.open_auth
 def key_sync_get(org_id, user_id, server_id, key_hash):
-    utils.rand_sleep()
+    if not settings.user.conf_sync:
+        return utils.jsonify({})
 
     if not settings.local.sub_active:
         return utils.jsonify({}, status_code=480)
+
+    utils.rand_sleep()
 
     auth_token = flask.request.headers.get('Auth-Token', None)
     auth_timestamp = flask.request.headers.get('Auth-Timestamp', None)

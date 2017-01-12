@@ -15,4 +15,5 @@ class SettingsUser(SettingsGroupMongo):
         'otp_cache_ttl': 43200,
         'page_count': 10,
         'skip_remote_sso_check': False,
+        'conf_sync': True,
     }
