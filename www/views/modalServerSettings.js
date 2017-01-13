@@ -324,9 +324,18 @@ define([
     getGroups: function() {
       var groups = [];
       var groupsData = this.$('.groups input').select2('data');
-      for (var i = 0; i < groupsData.length; i++) {
-        groups.push(groupsData[i].text);
+
+      if (groupsData.length) {
+        for (var i = 0; i < groupsData.length; i++) {
+          groups.push(groupsData[i].text);
+        }
+      } else {
+        var groupsVal = this.$('.groups input').val();
+        if (groupsVal && groupsVal !== 'Enter groups') {
+          groups = [groupsVal];
+        }
       }
+
       return groups;
     },
     onOk: function() {
