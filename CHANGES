@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Improve web interface
+Change API system
 
 Version 1.26.1218.96 2017-01-12
 -------------------------------
