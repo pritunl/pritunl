@@ -332,8 +332,7 @@ def check_session(csrf_check):
 
         auth_string = '&'.join([
             auth_token, auth_timestamp, auth_nonce, flask.request.method,
-            flask.request.path] +
-            ([flask.request.data] if flask.request.data else []))
+            flask.request.path])
 
         if len(auth_string) > AUTH_SIG_STRING_MAX_LEN or len(auth_nonce) < 8:
             return False
