@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve web interface
+
 Version 1.26.1218.96 2017-01-12
 -------------------------------
 
