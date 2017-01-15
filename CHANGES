@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix web interface issues
+
 Version 1.26.1221.43 2017-01-15
 -------------------------------
 
