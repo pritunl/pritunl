@@ -173,7 +173,6 @@ define([
         name: name,
         groups: groups,
         email: email,
-        disabled: null,
         pin: pin,
         network_links: networkLinks,
         bypass_secondary: bypassSecondary,

@@ -299,7 +299,6 @@ define([
       }
       this.$('.disable-user').addClass('disabled');
       this.model.save({
-        name: undefined,
         disabled: true
       }, {
         success: function() {
@@ -331,7 +330,6 @@ define([
       }
       this.$('.enable-user').addClass('disabled');
       this.model.save({
-        name: undefined,
         disabled: false
       }, {
         success: function() {
