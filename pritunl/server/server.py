@@ -1482,4 +1482,10 @@ class Server(mongo.MongoObject):
         if self.vxlan and self.replicating and self.has_non_nat_route():
             return SERVER_VXLAN_NON_NAT, SERVER_VXLAN_NON_NAT_MSG
 
+        if self.search_domain and not self.dns_servers:
+            return SERVER_DOMAIN_NO_DNS, SERVER_DOMAIN_NO_DNS_MSG
+
+        if self.dns_mapping and not self.dns_servers:
+            return CLIENT_DNS_MAPPING_NO_DNS, CLIENT_DNS_MAPPING_NO_DNS_MSG
+
         return None, None
