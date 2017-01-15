@@ -112,7 +112,10 @@ define([
       }
       this.$('.disable-admin').addClass('disabled');
       this.model.save({
-        disabled: true
+        disabled: true,
+        otp_secret: null,
+        token: null,
+        secret: null
       }, {
         success: function() {
           this.$('.disable-admin').removeClass('disabled');
@@ -145,7 +148,10 @@ define([
       }
       this.$('.enable-admin').addClass('disabled');
       this.model.save({
-        disabled: false
+        disabled: false,
+        otp_secret: null,
+        token: null,
+        secret: null
       }, {
         success: function() {
           this.$('.enable-admin').removeClass('disabled');
