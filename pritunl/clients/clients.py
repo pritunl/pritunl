@@ -131,7 +131,7 @@ class Clients(object):
 
             if self.server.search_domain:
                 for domain in self.server.search_domain.split(','):
-                    client_conf += 'push "dhcp-option DOMAIN-SEARCH %s"\n' % (
+                    client_conf += 'push "dhcp-option DOMAIN %s"\n' % (
                         domain.strip())
 
             network_links = user.get_network_links()
