@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix client connection options
+
 Version 1.26.1220.48 2017-01-14
 -------------------------------
 
