@@ -368,7 +368,7 @@ def user_put(org_id, user_id):
     port_forwarding_event = False
 
     if 'name' in flask.request.json:
-        name = utils.filter_str(flask.request.json['name']) or None
+        name = utils.filter_str(flask.request.json['name']) or 'undefined'
 
         if name != user.name:
             user.audit_event('user_updated',

@@ -52,7 +52,8 @@ def admin_put(admin_id):
     admin = auth.get_by_id(admin_id)
 
     if 'username' in flask.request.json:
-        username = utils.filter_str(flask.request.json['username']) or None
+        username = utils.filter_str(flask.request.json['username']) or \
+            'undefined'
         if username:
             username = username.lower()
 
