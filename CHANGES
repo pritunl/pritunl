@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Improve logging
+Web interface improvements
 
 Version 1.26.1221.83 2017-01-15
 -------------------------------
