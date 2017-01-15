@@ -995,8 +995,8 @@ class Clients(object):
 
         if settings.local.sub_active and \
                 settings.local.sub_plan == 'enterprise':
-            domain = (client['user_name'].split('@')[0] +
-                '.' + client['org_name']).lower()
+            domain = (str(client['user_name']).split('@')[0] +
+                '.' + str(client['org_name'])).lower()
             domain_hash = hashlib.md5()
             domain_hash.update(domain)
             domain_hash = bson.binary.Binary(domain_hash.digest(),
