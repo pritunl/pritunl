@@ -495,6 +495,8 @@ def user_put(org_id, user_id):
             'User %s' % ('disabled' if disabled else 'enabled'),
             remote_addr=utils.get_remote_addr(),
         )
+        if disabled:
+            reset_user = True
     user.disabled = disabled
 
     user.bypass_secondary = True if flask.request.json.get(
@@ -532,14 +534,8 @@ def user_put(org_id, user_id):
             'user_id': user.id,
         })
 
-    if reset_user or disabled:
+    if reset_user:
         user.disconnect()
-
-    if disabled:
-        if user.type == CERT_CLIENT:
-            logger.LogEntry(message='Disabled user "%s".' % user.name)
-    elif disabled == False and user.type == CERT_CLIENT:
-        logger.LogEntry(message='Enabled user "%s".' % user.name)
 
     send_key_email = flask.request.json.get('send_key_email')
     if send_key_email and user.email:
