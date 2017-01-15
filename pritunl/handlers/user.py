@@ -109,7 +109,7 @@ def user_get(org_id, user_id=None, page=None):
 
         if dns_mapping:
             user_dict['dns_mapping'] = ('%s.%s.vpn' % (
-                usr.name.split('@')[0], org.name)).lower()
+                str(usr.name).split('@')[0], org.name)).lower()
         else:
             user_dict['dns_mapping'] = None
         user_dict['network_links'] = []
