@@ -242,7 +242,6 @@ def admin_delete(admin_id):
         }, 400)
 
     admin.remove()
-
     event.Event(type=ADMINS_UPDATED)
 
     return utils.jsonify({})
