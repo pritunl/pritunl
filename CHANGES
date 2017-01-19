@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve web server reliability
+
 Version 1.26.1221.87 2017-01-15
 -------------------------------
 
