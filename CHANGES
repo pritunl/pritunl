@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve profile download page
+
 Version 1.26.1225.85 2017-01-19
 -------------------------------
 
