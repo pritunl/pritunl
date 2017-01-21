@@ -28,8 +28,7 @@ define([
         'propertychange .pass input': 'onPassEvent',
         'change .cloud-provider select': 'onCloudProviderChange',
         'change .monitoring select': 'onMonitoringChange',
-        'change .theme select': 'onThemeChange',
-        'click .api-token input, .api-secret input': 'onClickInput'
+        'change .theme select': 'onThemeChange'
       }, ModalSettingsView.__super__.events);
     },
     initialize: function(options) {
@@ -108,10 +107,6 @@ define([
           '<option ' + (zone === curZone ? 'selected' : '') + ' value="' +
             zone + '">' + zone + '</option>');
       }
-    },
-    update: function() {
-      this.$('.api-token input').val(this.model.get('token'));
-      this.$('.api-secret input').val(this.model.get('secret'));
     },
     getSsoMode: function() {
       return this.$('.sso-mode select').val();
