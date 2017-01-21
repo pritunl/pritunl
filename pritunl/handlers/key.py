@@ -348,14 +348,15 @@ def user_linked_key_page_get(short_code):
     conf_links = ''
 
     if settings.local.sub_active:
-        conf_links += '<a class="btn btn-success" ' + \
+        conf_links += '<a class="btn btn-success download-chrome" ' + \
             'title="Download Chromebook Profiles" ' + \
-            'href="/key_onc/%s.zip">Download Chromebook Profiles</a><br>\n' % (
+            'href="/key_onc/%s.zip">Download Chromebook Profiles</a>\n' % (
                 doc['key_id'])
 
     for server in user.iter_servers():
-        conf_links += '<a class="btn btn-sm" title="Download Profile" ' + \
-            'href="/key/%s/%s.key">Download Profile (%s)</a><br>\n' % (
+        conf_links += '<a class="btn btn-sm download-profile" ' + \
+            'title="Download Profile" ' + \
+            'href="/key/%s/%s.key">Download Profile (%s)</a>\n' % (
                 doc['key_id'], server.id, server.name)
     key_page = key_page.replace('<%= conf_links %>', conf_links)
 
