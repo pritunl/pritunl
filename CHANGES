@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix display issue on profile download page
+
 Version 1.26.1227.2 2017-01-21
 ------------------------------
 
