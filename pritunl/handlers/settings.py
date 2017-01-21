@@ -201,14 +201,6 @@ def settings_put():
         changes.add('password')
         admin.password = password
 
-    if 'token' in flask.request.json and flask.request.json['token']:
-        admin.generate_token()
-        changes.add('token')
-
-    if 'secret' in flask.request.json and flask.request.json['secret']:
-        admin.generate_secret()
-        changes.add('token')
-
     if 'server_cert' in flask.request.json:
         settings_commit = True
         server_cert = flask.request.json['server_cert']
