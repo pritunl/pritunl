@@ -480,8 +480,7 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
 
     auth_string = '&'.join([
         user.sync_token, auth_timestamp, auth_nonce, flask.request.method,
-        flask.request.path] +
-        ([flask.request.data] if flask.request.data else []))
+        flask.request.path])
 
     if len(auth_string) > AUTH_SIG_STRING_MAX_LEN:
         return flask.abort(401)
