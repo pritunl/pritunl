@@ -251,11 +251,16 @@ def main(default_conf=None):
         mongo.get_collection('sso_cache').drop()
 
         server_coll = mongo.get_collection('servers')
-        server_coll.update_many({}, {'$set': {
-            'status': 'offline',
-            'instances': [],
-            'instances_count': 0,
-        }})
+        server_coll.update_many({}, {
+            '$set': {
+                'status': 'offline',
+                'instances': [],
+                'instances_count': 0,
+            },
+            '$unset': {
+                'network_lock': '',
+            },
+        })
 
         sys.exit(0)
     elif cmd == 'logs':
