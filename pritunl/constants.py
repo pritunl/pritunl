@@ -700,10 +700,6 @@ DH_PARAM_BITS_INVALID = 'dh_param_bits_invalid'
 DH_PARAM_BITS_INVALID_MSG = 'DH param bits are not valid, must ' + \
     '1024, 1536, 2048, 2048, 3072 or 4096.'
 
-MODE_INVALID = 'mode_invalid'
-MODE_INVALID_MSG = 'Mode is not valid, must be "all_traffic" or ' + \
-    '"local_traffic" or "vpn_traffic".'
-
 PROTOCOL_INVALID = 'protocol_invalid'
 PROTOCOL_INVALID_MSG = 'Protocol is not valid, must be "udp" or "tcp".'
 
