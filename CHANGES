@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improvements to command line tools
+
 Version 1.26.1231.99 2017-01-25
 -------------------------------
 
