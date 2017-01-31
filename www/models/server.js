@@ -32,6 +32,7 @@ define([
       'otp_auth': null,
       'cipher': null,
       'hash': null,
+      'block_outside_dns': null,
       'jumbo_frames': null,
       'lzo_compression': null,
       'inter_client': null,
