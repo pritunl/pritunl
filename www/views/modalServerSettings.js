@@ -23,6 +23,7 @@ define([
         'click .inter-client-toggle': 'onInterClientSelect',
         'click .dns-mapping-toggle': 'onDnsMappingSelect',
         'click .debug-toggle': 'onDebugSelect',
+        'click .block-outside-dns-toggle': 'setBlockOutsideDnsSelect',
         'click .ipv6-toggle': 'onIpv6Select',
         'click .multi-device-toggle': 'onMultiDeviceSelect',
         'click .vxlan-toggle': 'onVxlanSelect',
@@ -133,6 +134,22 @@ define([
     },
     onDebugSelect: function() {
       this.setDebugSelect(!this.getDebugSelect());
+    },
+    getBlockOutsideDnsSelect: function() {
+      return this.$('.block-outside-dns-toggle .selector').hasClass('selected');
+    },
+    setBlockOutsideDnsSelect: function(state) {
+      if (state) {
+        this.$('.block-outside-dns-toggle .selector').addClass('selected');
+        this.$('.block-outside-dns-toggle .selector-inner').show();
+      }
+      else {
+        this.$('.block-outside-dns-toggle .selector').removeClass('selected');
+        this.$('.block-outside-dns-toggle .selector-inner').hide();
+      }
+    },
+    onBlockOutsideDnsSelect: function() {
+      this.setBlockOutsideDnsSelect(!this.getBlockOutsideDnsSelect());
     },
     getRestrictRoutesSelect: function() {
       return this.$('.restrict-routes-toggle .selector').hasClass('selected');
@@ -362,6 +379,7 @@ define([
       var replicaCount = parseInt(this.$('.replica-count input').val(), 10);
       var dnsMapping = this.getDnsMappingSelect();
       var debug = this.getDebugSelect();
+      var blockOutsideDns = this.getBlockOutsideDnsSelect();
       var otpAuth = this.getOtpAuthSelect();
       var restrictRoutes = this.getRestrictRoutesSelect();
       var vxlan = this.getVxlanSelect();
@@ -429,6 +447,7 @@ define([
         'otp_auth': otpAuth,
         'cipher': cipher,
         'hash': hash,
+        'block_outside_dns': blockOutsideDns,
         'inter_client': interClient,
         'ping_interval': pingInterval,
         'ping_timeout': pingTimeout,
