@@ -379,12 +379,12 @@ define([
       var replicaCount = parseInt(this.$('.replica-count input').val(), 10);
       var dnsMapping = this.getDnsMappingSelect();
       var debug = this.getDebugSelect();
-      var blockOutsideDns = this.getBlockOutsideDnsSelect();
       var otpAuth = this.getOtpAuthSelect();
       var restrictRoutes = this.getRestrictRoutesSelect();
       var vxlan = this.getVxlanSelect();
       var cipher = this.$('.cipher select').val();
       var hash = this.$('.hash select').val();
+      var blockOutsideDns = this.getBlockOutsideDnsSelect();
       var bindAddress = this.$('.bind-address input').val();
       if (!bindAddress) {
         bindAddress = null;
