@@ -55,6 +55,7 @@ dict_fields = [
     'otp_auth',
     'cipher',
     'hash',
+    'block_outside_dns',
     'jumbo_frames',
     'lzo_compression',
     'inter_client',
@@ -112,6 +113,7 @@ class Server(mongo.MongoObject):
         'policy',
         'cipher',
         'hash',
+        'block_outside_dns',
         'jumbo_frames',
         'organizations',
         'groups',
@@ -155,6 +157,7 @@ class Server(mongo.MongoObject):
         'debug': False,
         'cipher': 'aes256',
         'hash': 'sha1',
+        'block_outside_dns': False,
         'jumbo_frames': False,
         'organizations': [],
         'hosts': [],
@@ -173,11 +176,12 @@ class Server(mongo.MongoObject):
             ipv6=None, ipv6_firewall=None,bind_address=None, port=None,
             protocol=None, dh_param_bits=None, multi_device=None,
             dns_servers=None, search_domain=None, otp_auth=None,
-            cipher=None, hash=None, jumbo_frames=None, lzo_compression=None,
-            inter_client=None, ping_interval=None, ping_timeout=None,
-            link_ping_interval=None, link_ping_timeout=None, onc_hostname=None,
-            allowed_devices=None, max_clients=None, replica_count=None,
-            vxlan=None, dns_mapping=None, debug=None, policy=None, **kwargs):
+            cipher=None, hash=None, block_outside_dns=None, jumbo_frames=None,
+            lzo_compression=None, inter_client=None, ping_interval=None,
+            ping_timeout=None, link_ping_interval=None, link_ping_timeout=None,
+            onc_hostname=None, allowed_devices=None, max_clients=None,
+            replica_count=None, vxlan=None, dns_mapping=None, debug=None,
+            policy=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         if 'network' in self.loaded_fields:
@@ -226,6 +230,8 @@ class Server(mongo.MongoObject):
             self.cipher = cipher
         if hash is not None:
             self.hash = hash
+        if block_outside_dns is not None:
+            self.block_outside_dns = block_outside_dns
         if jumbo_frames is not None:
             self.jumbo_frames = jumbo_frames
         if lzo_compression is not None:
@@ -316,6 +322,7 @@ class Server(mongo.MongoObject):
             'otp_auth': True if self.otp_auth else False,
             'cipher': self.cipher,
             'hash': self.hash,
+            'block_outside_dns': self.block_outside_dns,
             'jumbo_frames': self.jumbo_frames,
             'lzo_compression': self.lzo_compression,
             'inter_client': True if self.inter_client else False,
