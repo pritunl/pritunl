@@ -423,6 +423,13 @@ def server_put_post(server_id=None):
                 'error_msg': HASH_INVALID_MSG,
             }, 400)
 
+    block_outside_dns = False
+    block_outside_dns_def = False
+    if 'block_outside_dns' in flask.request.json:
+        block_outside_dns_def = True
+        block_outside_dns = True if flask.request.json[
+            'block_outside_dns'] else False
+
     jumbo_frames = False
     jumbo_frames_def = False
     if 'jumbo_frames' in flask.request.json:
@@ -496,6 +503,7 @@ def server_put_post(server_id=None):
             otp_auth=otp_auth,
             cipher=cipher,
             hash=hash,
+            block_outside_dns=block_outside_dns,
             jumbo_frames=jumbo_frames,
             lzo_compression=lzo_compression,
             inter_client=inter_client,
@@ -555,6 +563,8 @@ def server_put_post(server_id=None):
             svr.cipher = cipher
         if hash_def:
             svr.hash = hash
+        if block_outside_dns_def:
+            svr.block_outside_dns = block_outside_dns
         if jumbo_frames_def:
             svr.jumbo_frames = jumbo_frames
         if lzo_compression_def:
