@@ -555,6 +555,7 @@ class User(mongo.MongoObject):
             conf_hash.update(key_remote)
         conf_hash.update(CIPHERS[svr.cipher])
         conf_hash.update(str(svr.lzo_compression))
+        conf_hash.update(str(svr.block_outside_dns))
         conf_hash.update(str(svr.otp_auth))
         conf_hash.update(JUMBO_FRAMES[svr.jumbo_frames])
         conf_hash.update(ca_certificate)
@@ -576,6 +577,10 @@ class User(mongo.MongoObject):
 
         if svr.lzo_compression != ADAPTIVE:
             client_conf += 'comp-lzo no\n'
+
+        if svr.block_outside_dns:
+            client_conf += 'ignore-unknown-option\n'
+            client_conf += 'block-outside-dns\n'
 
         if self.has_password(svr):
             client_conf += 'auth-user-pass\n'
