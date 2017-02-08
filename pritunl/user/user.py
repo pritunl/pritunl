@@ -579,8 +579,7 @@ class User(mongo.MongoObject):
             client_conf += 'comp-lzo no\n'
 
         if svr.block_outside_dns:
-            client_conf += 'ignore-unknown-option\n'
-            client_conf += 'block-outside-dns\n'
+            client_conf += 'ignore-unknown-option\nblock-outside-dns\n'
 
         if self.has_password(svr):
             client_conf += 'auth-user-pass\n'
