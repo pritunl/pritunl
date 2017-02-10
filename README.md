@@ -44,7 +44,7 @@ systemctl enable mongod pritunl
 ```
 sudo tee -a /etc/pacman.conf << EOF
 [pritunl]
-Server = http://repo.pritunl.com/stable/pacman
+Server = https://repo.pritunl.com/stable/pacman
 EOF
 
 sudo pacman-key --keyserver hkp://keyserver.ubuntu.com -r 7568D9BB55FF9E5287D586017AE645C0CF8E292A
@@ -70,7 +70,7 @@ EOF
 sudo tee -a /etc/yum.repos.d/pritunl.repo << EOF
 [pritunl]
 name=Pritunl Repository
-baseurl=http://repo.pritunl.com/stable/yum/centos/7/
+baseurl=https://repo.pritunl.com/stable/yum/centos/7/
 gpgcheck=1
 enabled=1
 EOF
@@ -99,7 +99,7 @@ EOF
 sudo tee -a /etc/yum.repos.d/pritunl.repo << EOF
 [pritunl]
 name=Pritunl Repository
-baseurl=http://repo.pritunl.com/stable/yum/centos/7/
+baseurl=https://repo.pritunl.com/stable/yum/centos/7/
 gpgcheck=1
 enabled=1
 EOF
@@ -120,7 +120,7 @@ deb http://repo.mongodb.org/apt/debian wheezy/mongodb-org/3.2 main
 EOF
 
 sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
-deb http://repo.pritunl.com/stable/apt wheezy main
+deb https://repo.pritunl.com/stable/apt wheezy main
 EOF
 
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 42F3E95A2C4F08279C4960ADD68FA50FEA312927
@@ -138,7 +138,7 @@ deb http://repo.mongodb.org/apt/debian wheezy/mongodb-org/3.2 main
 EOF
 
 sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
-deb http://repo.pritunl.com/stable/apt jessie main
+deb https://repo.pritunl.com/stable/apt jessie main
 EOF
 
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 42F3E95A2C4F08279C4960ADD68FA50FEA312927
@@ -157,7 +157,7 @@ deb http://repo.mongodb.org/apt/ubuntu precise/mongodb-org/3.2 multiverse
 EOF
 
 sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
-deb http://repo.pritunl.com/stable/apt precise main
+deb https://repo.pritunl.com/stable/apt precise main
 EOF
 
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 42F3E95A2C4F08279C4960ADD68FA50FEA312927
@@ -175,7 +175,7 @@ deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.2 multiverse
 EOF
 
 sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
-deb http://repo.pritunl.com/stable/apt trusty main
+deb https://repo.pritunl.com/stable/apt trusty main
 EOF
 
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 42F3E95A2C4F08279C4960ADD68FA50FEA312927
@@ -193,7 +193,7 @@ deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse
 EOF
 
 sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
-deb http://repo.pritunl.com/stable/apt xenial main
+deb https://repo.pritunl.com/stable/apt xenial main
 EOF
 
 sudo tee -a /lib/systemd/system/mongod.service << EOF
@@ -223,7 +223,7 @@ sudo systemctl enable pritunl mongod
 
 ```
 sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
-deb http://repo.pritunl.com/stable/apt yakkety main
+deb https://repo.pritunl.com/stable/apt yakkety main
 EOF
 
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
