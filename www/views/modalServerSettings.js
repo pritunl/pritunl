@@ -136,7 +136,8 @@ define([
       this.setDebugSelect(!this.getDebugSelect());
     },
     getBlockOutsideDnsSelect: function() {
-      return this.$('.block-outside-dns-toggle .selector').hasClass('selected');
+      return this.$(
+        '.block-outside-dns-toggle .selector').hasClass('selected');
     },
     setBlockOutsideDnsSelect: function(state) {
       if (state) {
