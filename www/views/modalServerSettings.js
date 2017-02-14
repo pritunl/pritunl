@@ -23,7 +23,7 @@ define([
         'click .inter-client-toggle': 'onInterClientSelect',
         'click .dns-mapping-toggle': 'onDnsMappingSelect',
         'click .debug-toggle': 'onDebugSelect',
-        'click .block-outside-dns-toggle': 'setBlockOutsideDnsSelect',
+        'click .block-outside-dns-toggle': 'onBlockOutsideDnsSelect',
         'click .ipv6-toggle': 'onIpv6Select',
         'click .multi-device-toggle': 'onMultiDeviceSelect',
         'click .vxlan-toggle': 'onVxlanSelect',
