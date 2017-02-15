@@ -62,8 +62,7 @@ class Authorizer(object):
             pass
 
     def has_challenge(self):
-        return not self.state and (self.platform == 'android' or
-            self.platform == 'ios')
+        return not self.state
 
     def set_challenge(self, password, msg, show):
         password = password or ''
