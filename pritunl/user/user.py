@@ -36,6 +36,7 @@ class User(mongo.MongoObject):
         'otp_secret',
         'type',
         'auth_type',
+        'yubico_id',
         'disabled',
         'sync_token',
         'sync_secret',
@@ -59,9 +60,9 @@ class User(mongo.MongoObject):
     }
 
     def __init__(self, org, name=None, email=None, pin=None, type=None,
-            groups=None, auth_type=None, disabled=None, resource_id=None,
-            bypass_secondary=None, client_to_client=None, dns_servers=None,
-            dns_suffix=None, port_forwarding=None, **kwargs):
+            groups=None, auth_type=None, yubico_id=None, disabled=None,
+            resource_id=None, bypass_secondary=None, client_to_client=None,
+            dns_servers=None, dns_suffix=None, port_forwarding=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         self.org = org
@@ -79,6 +80,8 @@ class User(mongo.MongoObject):
             self.groups = groups
         if auth_type is not None:
             self.auth_type = auth_type
+        if yubico_id is not None:
+            self.yubico_id = yubico_id
         if disabled is not None:
             self.disabled = disabled
         if resource_id is not None:

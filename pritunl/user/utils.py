@@ -18,9 +18,9 @@ def new_pooled_user(org, type):
     thread.start()
 
 def reserve_pooled_user(org, name=None, email=None, pin=None, type=CERT_CLIENT,
-        groups=None, auth_type=None, disabled=None, resource_id=None,
-        dns_servers=None, dns_suffix=None, bypass_secondary=None,
-        client_to_client=None, port_forwarding=None):
+        groups=None, auth_type=None, yubico_id=None, disabled=None,
+        resource_id=None, dns_servers=None, dns_suffix=None,
+        bypass_secondary=None, client_to_client=None, port_forwarding=None):
     doc = {}
 
     if name is not None:
@@ -35,6 +35,8 @@ def reserve_pooled_user(org, name=None, email=None, pin=None, type=CERT_CLIENT,
         doc['groups'] = groups
     if auth_type is not None:
         doc['auth_type'] = auth_type
+    if yubico_id is not None:
+        doc['yubico_id'] = yubico_id
     if disabled is not None:
         doc['disabled'] = disabled
     if resource_id is not None:
