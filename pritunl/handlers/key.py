@@ -927,6 +927,30 @@ def sso_callback_get():
                 )
                 return flask.abort(401)
 
+    if YUBICO_AUTH in sso_mode:
+        token = utils.generate_secret()
+
+        tokens_collection = mongo.get_collection('sso_tokens')
+        tokens_collection.insert({
+            '_id': token,
+            'type': YUBICO_AUTH,
+            'username': username,
+            'email': email,
+            'org_id': org_id,
+            'groups': groups,
+            'timestamp': utils.now(),
+        })
+
+        yubico_page = static.StaticFile(settings.conf.www_path,
+            'yubico.html', cache=False, gzip=False)
+
+        if settings.app.theme == 'dark':
+            yubico_page.data = yubico_page.data.replace(
+                '<body>', '<body class="dark">')
+        yubico_page.data = yubico_page.data.replace('<%= token %>', token)
+
+        return yubico_page.get_response()
+
     org = organization.get_by_id(org_id)
     if not org:
         return flask.abort(405)
@@ -1024,6 +1048,92 @@ def sso_duo_post():
         event.Event(type=USERS_UPDATED, resource_id=org.id)
         event.Event(type=SERVERS_UPDATED)
     else:
+        if usr.disabled:
+            return flask.abort(403)
+
+        if groups and groups - set(usr.groups or []):
+            usr.groups = list(set(usr.groups or []) | groups)
+            usr.commit('groups')
+
+        if usr.auth_type != sso_mode:
+            usr.auth_type = sso_mode
+            usr.commit('auth_type')
+
+    key_link = org.create_user_key_link(usr.id, one_time=True)
+
+    usr.audit_event('user_profile',
+        'User profile viewed from single sign-on',
+        remote_addr=utils.get_remote_addr(),
+    )
+
+    return utils.jsonify({
+        'redirect': utils.get_url_root() + key_link['view_url'],
+    }, 200)
+
+@app.app.route('/sso/yubico', methods=['POST'])
+@auth.open_auth
+def sso_yubico_post():
+    sso_mode = settings.app.sso
+    token = utils.filter_str(flask.request.json.get('token')) or None
+    key = utils.filter_str(flask.request.json.get('key')) or None
+
+    if sso_mode not in (GOOGLE_YUBICO_AUTH, SLACK_YUBICO_AUTH,
+            SAML_YUBICO_AUTH, SAML_OKTA_YUBICO_AUTH,
+            SAML_ONELOGIN_YUBICO_AUTH):
+        return flask.abort(404)
+
+    if not token or not key:
+        return utils.jsonify({
+            'error': TOKEN_INVALID,
+            'error_msg': TOKEN_INVALID_MSG,
+        }, 401)
+
+    tokens_collection = mongo.get_collection('sso_tokens')
+    doc = tokens_collection.find_one({
+        '_id': token,
+    })
+    if not doc or doc['_id'] != token or doc['type'] != YUBICO_AUTH:
+        return utils.jsonify({
+            'error': TOKEN_INVALID,
+            'error_msg': TOKEN_INVALID_MSG,
+        }, 401)
+
+    username = doc['username']
+    email = doc['email']
+    org_id = doc['org_id']
+    groups = doc['groups']
+
+    valid, yubico_id = sso.auth_yubico(
+        key=key,
+    )
+    if not valid:
+        return utils.jsonify({
+            'error': YUBIKEY_INVALID,
+            'error_msg': YUBIKEY_INVALID_MSG,
+        }, 401)
+
+    org = organization.get_by_id(org_id)
+    if not org:
+        return flask.abort(405)
+
+    usr = org.find_user(name=username)
+    if not usr:
+        usr = org.new_user(name=username, email=email, type=CERT_CLIENT,
+            auth_type=sso_mode, yubico_id=yubico_id,
+            groups=list(groups) if groups else None)
+        usr.audit_event('user_created', 'User created with single sign-on',
+            remote_addr=utils.get_remote_addr())
+
+        event.Event(type=ORGS_UPDATED)
+        event.Event(type=USERS_UPDATED, resource_id=org.id)
+        event.Event(type=SERVERS_UPDATED)
+    else:
+        if yubico_id != usr.yubico_id:
+            return utils.jsonify({
+                'error': YUBIKEY_INVALID,
+                'error_msg': YUBIKEY_INVALID_MSG,
+            }, 401)
+
         if usr.disabled:
             return flask.abort(403)
 
