@@ -12,3 +12,4 @@ pyroute2==0.4.6
 twisted==16.4.0
 pyopenssl>=0.15.1
 certifi>=2016.8.8
+yubico-client>=1.10.0
