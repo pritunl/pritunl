@@ -119,7 +119,7 @@ class User(mongo.MongoObject):
 
     @property
     def has_duo_passcode(self):
-        return settings.app.sso and \
+        return settings.app.sso and self.auth_type and \
             DUO_AUTH in self.auth_type and \
             DUO_AUTH in settings.app.sso and \
             settings.app.sso_duo_mode == 'passcode'
