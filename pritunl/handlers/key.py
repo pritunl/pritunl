@@ -615,9 +615,11 @@ def sso_authenticate_post():
 def sso_request_get():
     sso_mode = settings.app.sso
 
-    if sso_mode not in (GOOGLE_AUTH, GOOGLE_DUO_AUTH, SLACK_AUTH,
-            SLACK_DUO_AUTH, SAML_AUTH, SAML_DUO_AUTH, SAML_OKTA_AUTH,
-            SAML_OKTA_DUO_AUTH, SAML_ONELOGIN_AUTH, SAML_ONELOGIN_DUO_AUTH):
+    if sso_mode not in (GOOGLE_AUTH, GOOGLE_DUO_AUTH, GOOGLE_YUBICO_AUTH,
+            SLACK_AUTH, SLACK_DUO_AUTH, SLACK_YUBICO_AUTH, SAML_AUTH,
+            SAML_DUO_AUTH, SAML_YUBICO_AUTH, SAML_OKTA_AUTH,
+            SAML_OKTA_DUO_AUTH, SAML_OKTA_YUBICO_AUTH, SAML_ONELOGIN_AUTH,
+            SAML_ONELOGIN_DUO_AUTH, SAML_ONELOGIN_YUBICO_AUTH):
         return flask.abort(404)
 
     state = utils.rand_str(64)
@@ -749,9 +751,11 @@ def sso_request_get():
 def sso_callback_get():
     sso_mode = settings.app.sso
 
-    if sso_mode not in (GOOGLE_AUTH, GOOGLE_DUO_AUTH, SLACK_AUTH,
-            SLACK_DUO_AUTH, SAML_AUTH, SAML_DUO_AUTH, SAML_OKTA_AUTH,
-            SAML_OKTA_DUO_AUTH, SAML_ONELOGIN_AUTH, SAML_ONELOGIN_DUO_AUTH):
+    if sso_mode not in (GOOGLE_AUTH, GOOGLE_DUO_AUTH, GOOGLE_YUBICO_AUTH,
+            SLACK_AUTH, SLACK_DUO_AUTH, SLACK_YUBICO_AUTH, SAML_AUTH,
+            SAML_DUO_AUTH, SAML_YUBICO_AUTH, SAML_OKTA_AUTH,
+            SAML_OKTA_DUO_AUTH, SAML_OKTA_YUBICO_AUTH, SAML_ONELOGIN_AUTH,
+            SAML_ONELOGIN_DUO_AUTH, SAML_ONELOGIN_YUBICO_AUTH):
         return flask.abort(405)
 
     state = flask.request.args.get('state')
