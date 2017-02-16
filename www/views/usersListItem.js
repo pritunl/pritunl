@@ -210,6 +210,13 @@ define([
           this.$('.duo-logo').hide();
         }
 
+        if (sso.indexOf('yubico') !== -1 &&
+          auth_type.indexOf('yubico') !== -1) {
+          this.$('.yubico-logo').show();
+        } else {
+          this.$('.yubico-logo').hide();
+        }
+
         if (sso.indexOf('okta') !== -1 &&
           auth_type.indexOf('okta') !== -1) {
           this.$('.okta-logo').show();
