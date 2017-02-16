@@ -969,6 +969,11 @@ def sso_duo_post():
     token = utils.filter_str(flask.request.json.get('token')) or None
     passcode = utils.filter_str(flask.request.json.get('passcode')) or None
 
+    if sso_mode not in (DUO_AUTH, GOOGLE_DUO_AUTH, SLACK_DUO_AUTH,
+            SAML_DUO_AUTH, SAML_OKTA_DUO_AUTH, SAML_ONELOGIN_DUO_AUTH,
+            RADIUS_DUO_AUTH):
+        return flask.abort(404)
+
     if not token or not passcode:
         return utils.jsonify({
             'error': TOKEN_INVALID,
