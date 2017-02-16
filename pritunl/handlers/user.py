@@ -102,7 +102,7 @@ def user_get(org_id, user_id=None, page=None):
         user_dict['status'] = False
         user_dict['sso'] = settings.app.sso
 
-        if otp_auth and not usr.has_duo_passcode:
+        if otp_auth and not usr.has_duo_passcode and not usr.has_yubikey:
             user_dict['otp_auth'] = True
         else:
             user_dict['otp_auth'] = False
