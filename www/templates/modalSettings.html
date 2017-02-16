@@ -47,14 +47,19 @@
         <option value="" <%= sso ? '' : 'selected' %>>Disabled</option>
         <option value="saml_okta" <%= sso === 'saml_okta' ? 'selected' : '' %>>Okta</option>
         <option value="saml_okta_duo" <%= sso === 'saml_okta_duo' ? 'selected' : '' %>>Okta + Duo Security</option>
+        <option value="saml_okta_yubico" <%= sso === 'saml_okta_yubico' ? 'selected' : '' %>>Okta + Yubico</option>
         <option value="saml_onelogin" <%= sso === 'saml_onelogin' ? 'selected' : '' %>>OneLogin</option>
         <option value="saml_onelogin_duo" <%= sso === 'saml_onelogin_duo' ? 'selected' : '' %>>OneLogin + Duo Security</option>
+        <option value="saml_onelogin_yubico" <%= sso === 'saml_onelogin_yubico' ? 'selected' : '' %>>OneLogin + Yubico</option>
         <option value="slack" <%= sso === 'slack' ? 'selected' : '' %>>Slack</option>
         <option value="slack_duo" <%= sso === 'slack_duo' ? 'selected' : '' %>>Slack + Duo Security</option>
+        <option value="slack_yubico" <%= sso === 'slack_yubico' ? 'selected' : '' %>>Slack + Yubico</option>
         <option value="google" <%= sso === 'google' ? 'selected' : '' %>>Google Apps</option>
         <option value="google_duo" <%= sso === 'google_duo' ? 'selected' : '' %>>Google Apps + Duo Security</option>
+        <option value="google_yubico" <%= sso === 'google_yubico' ? 'selected' : '' %>>Google Apps + Yubico</option>
         <option value="saml" <%= sso === 'saml' ? 'selected' : '' %>>SAML</option>
         <option value="saml_duo" <%= sso === 'saml_duo' ? 'selected' : '' %>>SAML + Duo Security</option>
+        <option value="saml_yubico" <%= sso === 'saml_yubico' ? 'selected' : '' %>>SAML + Yubico</option>
         <option value="duo" <%= sso === 'duo' ? 'selected' : '' %>>Duo Security</option>
         <option value="radius" <%= sso === 'radius' ? 'selected' : '' %>>Radius</option>
         <option value="radius_duo" <%= sso === 'radius_duo' ? 'selected' : '' %>>Radius + Duo Security</option>
@@ -68,21 +73,25 @@
         <% }); %>
       </select>
     </div>
-    <div class="sso-onelogin-id form-group" <%= sso === 'saml_onelogin' || sso === 'saml_onelogin_duo' ? '' : 'style="display: none;"' %>>
+    <div class="sso-onelogin-id form-group" <%= !sso || sso.indexOf('onelogin') === -1 ? 'style="display: none;"' : '' %>>
       <label>OneLogin API Client ID</label>
       <input type="text" class="form-control" placeholder="Enter OneLogin API client ID" value="<%- sso_onelogin_id || '' %>" data-toggle="tooltip" title="OneLogin API client ID">
     </div>
-    <div class="sso-saml-cert form-group" <%= sso === 'saml' || sso === 'saml_duo' || sso === 'saml_okta' || sso === 'saml_okta_duo' || sso === 'saml_onelogin' || sso === 'saml_onelogin_duo' ? '' : 'style="display: none;"' %>>
+    <div class="sso-saml-cert form-group" <%= !sso || sso.indexOf('saml') === -1 ? 'style="display: none;"' : '' %>>
       <label>SAML Certificate</label><br>
       <textarea class="form-control" rows="4" spellcheck="false" data-toggle="tooltip" title="The SAML X.509 Certificate" placeholder="Enter saml certificate"><%- sso_saml_cert %></textarea>
     </div>
-    <div class="sso-token form-group" <%= sso === 'duo' || sso === 'saml_duo' || sso === 'saml_onelogin_duo' || sso === 'saml_okta_duo' || sso === 'slack_duo' || sso === 'google_duo' || sso === 'radius_duo' ? '' : 'style="display: none;"' %>>
+    <div class="sso-token form-group" <%= !sso || sso.indexOf('duo') === -1 ? 'style="display: none;"' : '' %>>
       <label>Duo Integration Key</label>
       <input type="text" class="form-control" placeholder="Enter integration key" value="<%- sso_duo_token || '' %>">
     </div>
-    <div class="sso-secret form-group" <%= sso === 'duo' || sso === 'saml_duo' || sso === 'saml_onelogin_duo' || sso === 'saml_okta_duo' || sso === 'slack_duo' || sso === 'google_duo' || sso === 'radius_duo' ? '' : 'style="display: none;"' %>>
+    <div class="sso-secret form-group" <%= !sso || sso.indexOf('duo') === -1 ? 'style="display: none;"' : '' %>>
       <label>Duo Secret Key</label>
       <input type="text" class="form-control" placeholder="Enter secret key" value="<%- sso_duo_secret || '' %>">
+    </div>
+    <div class="sso-yubico-client form-group" <%= !sso || sso.indexOf('yubico') === -1 ? 'style="display: none;"' : '' %>>
+      <label>Yubico Client ID</label>
+      <input type="text" class="form-control" placeholder="Enter client ID" value="<%- sso_yubico_client || '' %>">
     </div>
   </div>
   <div class="settings-right right">
@@ -129,39 +138,39 @@
         <option value="aws" <%= cloud_provider === 'aws' ? 'selected' : '' %>>AWS</option>
       </select>
     </div>
-    <div class="sso-saml-url form-group" <%= sso === 'saml' || sso === 'saml_duo' || sso === 'saml_okta' || sso === 'saml_okta_duo' || sso === 'saml_onelogin' || sso === 'saml_onelogin_duo' ? '' : 'style="display: none;"' %>>
+    <div class="sso-saml-url form-group" <%= !sso || sso.indexOf('saml') === -1 ? 'style="display: none;"' : '' %>>
       <label>SAML Sign-On URL</label>
       <input type="text" class="form-control" placeholder="Enter SAML sign-on url" value="<%- sso_saml_url || '' %>" data-toggle="tooltip" title="The SAML identity provider single sign-on url. Also known as SAML 2.0 Endpoint">
     </div>
-    <div class="sso-onelogin-secret form-group" <%= sso === 'saml_onelogin' || sso === 'saml_onelogin_duo' ? '' : 'style="display: none;"' %>>
+    <div class="sso-onelogin-secret form-group" <%= !sso || sso.indexOf('onelogin') === -1 ? 'style="display: none;"' : '' %>>
       <label>OneLogin API Client Secret</label>
       <input type="text" class="form-control" placeholder="Enter OneLogin API client secret" value="<%- sso_onelogin_secret || '' %>" data-toggle="tooltip" title="OneLogin API client secret">
     </div>
-    <div class="sso-saml-issuer-url form-group" <%= sso === 'saml' || sso === 'saml_duo' || sso === 'saml_okta' || sso === 'saml_okta_duo' || sso === 'saml_onelogin' || sso === 'saml_onelogin_duo' ? '' : 'style="display: none;"' %>>
+    <div class="sso-saml-issuer-url form-group" <%= !sso || sso.indexOf('saml') === -1 ? 'style="display: none;"' : '' %>>
       <label>SAML Issuer URL</label>
       <input type="text" class="form-control" placeholder="Enter SAML issuer url" value="<%- sso_saml_issuer_url || '' %>" data-toggle="tooltip" title="The SAML identity provider issuer url">
     </div>
-    <div class="sso-okta-token form-group" <%= sso === 'saml_okta' || sso === 'saml_okta_duo' ? '' : 'style="display: none;"' %>>
+    <div class="sso-okta-token form-group" <%= !sso || sso.indexOf('okta') === -1 ? 'style="display: none;"' : '' %>>
       <label>Okta API Token</label>
       <input type="text" class="form-control" placeholder="Enter Okta API token" value="<%- sso_okta_token || '' %>" data-toggle="tooltip" title="Okta API token">
     </div>
-    <div class="sso-match-google form-group" <%= sso === 'google' || sso === 'google_duo' ? '' : 'style="display: none;"' %>>
+    <div class="sso-match-google form-group" <%= !sso || sso.indexOf('google') === -1 ? 'style="display: none;"' : '' %>>
       <label>Google Apps Domain</label>
       <input type="text" class="form-control" spellcheck="false" placeholder="Enter Google Apps domain" value="<%- sso_match || '' %>" data-toggle="tooltip" title="Google apps domain to match against users email address. Multiple domains can be entrered sperated by a comma. (example: pritunl.com)">
     </div>
-    <div class="sso-match-slack form-group" <%= sso === 'slack' || sso === 'slack_duo' ? '' : 'style="display: none;"' %>>
+    <div class="sso-match-slack form-group" <%= !sso || sso.indexOf('slack') === -1 ? 'style="display: none;"' : '' %>>
       <label>Slack Team</label>
       <input type="text" class="form-control" spellcheck="false" placeholder="Enter slack team" value="<%- sso_match || '' %>" data-toggle="tooltip" title="Slack team domain to match against users team. (example: pritunl.slack.com)">
     </div>
-    <div class="sso-radius-host form-group" <%= sso === 'radius' || sso === 'radius_duo' ? '' : 'style="display: none;"' %>>
+    <div class="sso-radius-host form-group" <%= !sso || sso.indexOf('radius') === -1 ? 'style="display: none;"' : '' %>>
       <label>Radius Host</label>
       <input type="email" class="form-control" placeholder="Enter radius host and port" value="<%- sso_radius_host || '' %>" data-toggle="tooltip" title="Radius host such as localhost:1645. If no port is specified default port 1645 will be used">
     </div>
-    <div class="sso-radius-secret form-group" <%= sso === 'radius' || sso === 'radius_duo' ? '' : 'style="display: none;"' %>>
+    <div class="sso-radius-secret form-group" <%= !sso || sso.indexOf('radius') === -1 ? 'style="display: none;"' : '' %>>
       <label>Radius Secret</label>
       <input type="password" class="form-control" placeholder="Enter Radius secret" value="<%- sso_radius_secret || '' %>" data-toggle="tooltip" title="Radius shared secret">
     </div>
-    <div class="sso-host form-group" <%= sso === 'duo' || sso === 'saml_duo' || sso === 'saml_onelogin_duo' || sso === 'saml_okta_duo' || sso === 'slack_duo' || sso === 'google_duo' || sso === 'radius_duo' ? '' : 'style="display: none;"' %>>
+    <div class="sso-host form-group" <%= !sso || sso.indexOf('duo') === -1 ? 'style="display: none;"' : '' %>>
       <label>Duo API Hostname</label>
       <input type="text" class="form-control" placeholder="Enter api hostname" value="<%- sso_duo_host || '' %>">
     </div>
@@ -173,6 +182,10 @@
         <option value="push_phone" <%= sso_duo_mode === 'push_phone' ? 'selected' : '' %>>Push + Phone Callback</option>
         <option value="passcode" <%= sso_duo_mode === 'passcode' ? 'selected' : '' %>>Passcode</option>
       </select>
+    </div>
+    <div class="sso-yubico-secret form-group" <%= !sso || sso.indexOf('yubico') === -1 ? 'style="display: none;"' : '' %>>
+      <label>Yubico Secret Key</label>
+      <input type="text" class="form-control" placeholder="Enter secret key" value="<%- sso_yubico_secret || '' %>">
     </div>
     <div class="sso-client-cache toggle-form form-group" <%= !sso || (sso.indexOf('duo') === -1 && sso.indexOf('okta') === -1) ? 'style="display: none;"' : '' %>>
       <label>Enable Push Authentication Cache</label>
