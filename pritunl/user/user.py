@@ -124,6 +124,12 @@ class User(mongo.MongoObject):
             DUO_AUTH in settings.app.sso and \
             settings.app.sso_duo_mode == 'passcode'
 
+    @property
+    def has_yubikey(self):
+        return settings.app.sso and self.auth_type and \
+            YUBICO_AUTH in self.auth_type and \
+            YUBICO_AUTH in settings.app.sso
+
     def dict(self):
         return {
             'id': self.id,
@@ -478,6 +484,8 @@ class User(mongo.MongoObject):
 
         if self.has_duo_passcode:
             password_mode = 'duo_otp'
+        elif self.has_yubikey:
+            password_mode = 'yubikey'
         elif svr.otp_auth:
             password_mode = 'otp'
 
