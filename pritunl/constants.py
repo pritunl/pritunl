@@ -748,6 +748,9 @@ TOKEN_INVALID_MSG = 'Token is invalid.'
 PASSCODE_INVALID = 'passcode_invalid'
 PASSCODE_INVALID_MSG = 'Passcode is invalid.'
 
+YUBIKEY_INVALID = 'yubikey_invalid'
+YUBIKEY_INVALID_MSG = 'YubiKey is invalid.'
+
 NETWORK_IN_USE = 'network_in_use'
 NETWORK_IN_USE_MSG = 'Network address is already in use.'
 
