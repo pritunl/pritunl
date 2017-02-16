@@ -1,4 +1,5 @@
 from pritunl.sso.duo import Duo
+from pritunl.sso.yubico import auth_yubico
 from pritunl.sso.google import verify_google
 from pritunl.sso.slack import verify_slack
 from pritunl.sso.saml import verify_saml
