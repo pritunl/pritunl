@@ -984,7 +984,7 @@ def sso_duo_post():
     doc = tokens_collection.find_one({
         '_id': token,
     })
-    if not doc or doc['_id'] != token:
+    if not doc or doc['_id'] != token or doc['type'] != DUO_AUTH:
         return utils.jsonify({
             'error': TOKEN_INVALID,
             'error_msg': TOKEN_INVALID_MSG,
