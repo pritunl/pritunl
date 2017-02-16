@@ -152,9 +152,11 @@ class Authorizer(object):
                 settings.vpn.stress_test:
             return
 
-        sso_mode = settings.app.sso
+        sso_mode = settings.app.sso or ''
         duo_mode = settings.app.sso_duo_mode
-        if DUO_AUTH in self.user.auth_type and duo_mode == 'passcode':
+        auth_type = self.user.auth_type or ''
+        if DUO_AUTH in sso_mode and DUO_AUTH in auth_type and \
+                duo_mode == 'passcode':
             if not self.password and self.has_challenge() and \
                 self.user.has_pin():
                 self.set_challenge(None, 'Enter Pin', False)
@@ -251,7 +253,7 @@ class Authorizer(object):
                         'timestamp': utils.now(),
                     }, upsert=True)
 
-        elif YUBICO_AUTH in sso_mode and YUBICO_AUTH in self.user.auth_type:
+        elif YUBICO_AUTH in sso_mode and YUBICO_AUTH in auth_type:
             if not self.password and self.has_challenge() and \
                     self.user.has_pin():
                 self.set_challenge(None, 'Enter Pin', False)
