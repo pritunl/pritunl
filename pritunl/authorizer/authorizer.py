@@ -221,7 +221,7 @@ class Authorizer(object):
                         else:
                             self.set_challenge(
                                 None, 'Enter Duo Passcode', True)
-                        raise AuthError('Challenge otp code')
+                        raise AuthError('Challenge Duo code')
 
                     self.user.audit_event('user_connection',
                         ('User connection to "%s" denied. ' +
