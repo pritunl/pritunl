@@ -235,9 +235,7 @@ class Authorizer(object):
                     self.sso_passcode_cache_collection.update({
                         'user_id': self.user.id,
                         'server_id': self.server.id,
-                        'remote_ip': self.remote_ip,
                         'mac_addr': self.mac_addr,
-                        'platform': self.platform,
                         'device_id': self.device_id,
                         'device_name': self.device_name,
                     }, {
@@ -351,9 +349,7 @@ class Authorizer(object):
                 self.sso_cache_collection.update({
                     'user_id': self.user.id,
                     'server_id': self.server.id,
-                    'remote_ip': self.remote_ip,
                     'mac_addr': self.mac_addr,
-                    'platform': self.platform,
                     'device_id': self.device_id,
                     'device_name': self.device_name,
                 }, {
@@ -433,9 +429,7 @@ class Authorizer(object):
             self.sso_cache_collection.update({
                 'user_id': self.user.id,
                 'server_id': self.server.id,
-                'remote_ip': self.remote_ip,
                 'mac_addr': self.mac_addr,
-                'platform': self.platform,
                 'device_id': self.device_id,
                 'device_name': self.device_name,
             }, {
