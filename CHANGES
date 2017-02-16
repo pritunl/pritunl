@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add option to block outside DNS on Windows
+Improve support for alternative clients
 Improvements to command line tools
 
 Version 1.26.1231.99 2017-01-25
