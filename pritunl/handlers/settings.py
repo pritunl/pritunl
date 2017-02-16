@@ -39,6 +39,8 @@ def _dict():
             'sso_duo_secret': 'demo',
             'sso_duo_host': 'demo',
             'sso_duo_mode': settings.app.sso_duo_mode,
+            'sso_yubico_client': 'demo',
+            'sso_yubico_secret': 'demo',
             'sso_org': settings.app.sso_org,
             'sso_saml_url': 'demo',
             'sso_saml_issuer_url': 'demo',
@@ -102,6 +104,8 @@ def _dict():
             'sso_duo_secret': settings.app.sso_duo_secret,
             'sso_duo_host': settings.app.sso_duo_host,
             'sso_duo_mode': settings.app.sso_duo_mode,
+            'sso_yubico_client': settings.app.sso_yubico_client,
+            'sso_yubico_secret': settings.app.sso_yubico_secret,
             'sso_org': settings.app.sso_org,
             'sso_saml_url': settings.app.sso_saml_url,
             'sso_saml_issuer_url': settings.app.sso_saml_issuer_url,
@@ -470,6 +474,22 @@ def settings_put():
             changes.add('sso')
         settings.app.sso_client_cache = sso_client_cache
 
+    if 'sso_yubico_client' in flask.request.json:
+        settings_commit = True
+        sso_yubico_client = \
+            flask.request.json['sso_yubico_client'] or None
+        if sso_yubico_client != settings.app.sso_yubico_client:
+            changes.add('sso')
+        settings.app.sso_yubico_client = sso_yubico_client
+
+    if 'sso_yubico_secret' in flask.request.json:
+        settings_commit = True
+        sso_yubico_secret = \
+            flask.request.json['sso_yubico_secret'] or None
+        if sso_yubico_secret != settings.app.sso_yubico_secret:
+            changes.add('sso')
+        settings.app.sso_yubico_secret = sso_yubico_secret
+
     if flask.request.json.get('theme'):
         settings_commit = True
         theme = 'light' if flask.request.json['theme'] == 'light' else 'dark'
@@ -590,6 +610,8 @@ def settings_put():
         settings.app.sso_duo_token = None
         settings.app.sso_duo_secret = None
         settings.app.sso_duo_host = None
+        settings.app.sso_yubico_client = None
+        settings.app.sso_yubico_secret = None
         settings.app.sso_org = None
         settings.app.sso_saml_url = None
         settings.app.sso_saml_issuer_url = None
