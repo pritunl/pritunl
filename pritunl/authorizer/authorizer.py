@@ -152,6 +152,7 @@ class Authorizer(object):
                 settings.vpn.stress_test:
             return
 
+        sso_mode = settings.app.sso
         duo_mode = settings.app.sso_duo_mode
         if DUO_AUTH in self.user.auth_type and duo_mode == 'passcode':
             if not self.password and self.has_challenge() and \
@@ -247,6 +248,97 @@ class Authorizer(object):
                         'device_id': self.device_id,
                         'device_name': self.device_name,
                         'passcode': passcode,
+                        'timestamp': utils.now(),
+                    }, upsert=True)
+
+        elif YUBICO_AUTH in sso_mode and YUBICO_AUTH in self.user.auth_type:
+            if not self.password and self.has_challenge() and \
+                    self.user.has_pin():
+                self.set_challenge(None, 'Enter Pin', False)
+                raise AuthError('Challenge pin')
+
+            challenge = self.get_challenge()
+            if challenge:
+                self.password = challenge + self.password
+
+            orig_password = self.password
+            yubikey = self.password[-44:]
+            self.password = self.password[:-44]
+
+            allow = False
+            if settings.app.sso_passcode_cache:
+                doc = self.sso_passcode_cache_collection.find_one({
+                    'user_id': self.user.id,
+                    'server_id': self.server.id,
+                    'remote_ip': self.remote_ip,
+                    'mac_addr': self.mac_addr,
+                    'platform': self.platform,
+                    'device_id': self.device_id,
+                    'device_name': self.device_name,
+                    'passcode': yubikey,
+                })
+                if doc:
+                    self.sso_passcode_cache_collection.update({
+                        'user_id': self.user.id,
+                        'server_id': self.server.id,
+                        'remote_ip': self.remote_ip,
+                        'mac_addr': self.mac_addr,
+                        'platform': self.platform,
+                        'device_id': self.device_id,
+                        'device_name': self.device_name,
+                        'passcode': yubikey,
+                    }, {
+                        'user_id': self.user.id,
+                        'server_id': self.server.id,
+                        'remote_ip': self.remote_ip,
+                        'mac_addr': self.mac_addr,
+                        'platform': self.platform,
+                        'device_id': self.device_id,
+                        'device_name': self.device_name,
+                        'passcode': yubikey,
+                        'timestamp': utils.now(),
+                    })
+                    allow = True
+
+            if not allow:
+                valid, yubico_id = sso.auth_yubico(yubikey)
+                if yubico_id != self.user.yubico_id:
+                    valid = False
+
+                if not valid:
+                    if self.has_challenge():
+                        if self.user.has_password(self.server):
+                            self.set_challenge(
+                                orig_password, 'YubiKey', True)
+                        else:
+                            self.set_challenge(
+                                None, 'YubiKey', True)
+                        raise AuthError('Challenge YubiKey')
+
+                    self.user.audit_event('user_connection',
+                        ('User connection to "%s" denied. ' +
+                         'User failed Yubico authentication') % (
+                            self.server.name),
+                        remote_addr=self.remote_ip,
+                        )
+                    raise AuthError('Invalid YubiKey')
+
+                if settings.app.sso_passcode_cache:
+                    self.sso_passcode_cache_collection.update({
+                        'user_id': self.user.id,
+                        'server_id': self.server.id,
+                        'mac_addr': self.mac_addr,
+                        'device_id': self.device_id,
+                        'device_name': self.device_name,
+                    }, {
+                        'user_id': self.user.id,
+                        'server_id': self.server.id,
+                        'remote_ip': self.remote_ip,
+                        'mac_addr': self.mac_addr,
+                        'platform': self.platform,
+                        'device_id': self.device_id,
+                        'device_name': self.device_name,
+                        'passcode': yubikey,
                         'timestamp': utils.now(),
                     }, upsert=True)
 
