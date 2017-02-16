@@ -10,6 +10,8 @@ from pritunl import tunldb
 
 import threading
 import uuid
+import hashlib
+import base64
 
 _states = tunldb.TunlDB()
 
@@ -267,6 +269,10 @@ class Authorizer(object):
             yubikey = self.password[-44:]
             self.password = self.password[:-44]
 
+            yubikey_hash = hashlib.sha512()
+            yubikey_hash.update(yubikey)
+            yubikey_hash = base64.b64encode(yubikey_hash.digest())
+
             allow = False
             if settings.app.sso_passcode_cache:
                 doc = self.sso_passcode_cache_collection.find_one({
@@ -277,7 +283,7 @@ class Authorizer(object):
                     'platform': self.platform,
                     'device_id': self.device_id,
                     'device_name': self.device_name,
-                    'passcode': yubikey,
+                    'passcode': yubikey_hash,
                 })
                 if doc:
                     self.sso_passcode_cache_collection.update({
@@ -288,7 +294,7 @@ class Authorizer(object):
                         'platform': self.platform,
                         'device_id': self.device_id,
                         'device_name': self.device_name,
-                        'passcode': yubikey,
+                        'passcode': yubikey_hash,
                     }, {
                         'user_id': self.user.id,
                         'server_id': self.server.id,
@@ -297,7 +303,7 @@ class Authorizer(object):
                         'platform': self.platform,
                         'device_id': self.device_id,
                         'device_name': self.device_name,
-                        'passcode': yubikey,
+                        'passcode': yubikey_hash,
                         'timestamp': utils.now(),
                     })
                     allow = True
@@ -340,7 +346,7 @@ class Authorizer(object):
                         'platform': self.platform,
                         'device_id': self.device_id,
                         'device_name': self.device_name,
-                        'passcode': yubikey,
+                        'passcode': yubikey_hash,
                         'timestamp': utils.now(),
                     }, upsert=True)
 
