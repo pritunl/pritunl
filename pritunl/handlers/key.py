@@ -1103,9 +1103,7 @@ def sso_yubico_post():
     org_id = doc['org_id']
     groups = doc['groups']
 
-    valid, yubico_id = sso.auth_yubico(
-        key=key,
-    )
+    valid, yubico_id = sso.auth_yubico(key)
     if not valid:
         return utils.jsonify({
             'error': YUBIKEY_INVALID,
