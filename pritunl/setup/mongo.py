@@ -303,6 +303,10 @@ def setup_mongo():
         ('token', pymongo.ASCENDING),
         ('nonce', pymongo.ASCENDING),
     ], background=True, unique=True)
+    upsert_index(mongo.collections['otp_cache'], [
+        ('user_id', pymongo.ASCENDING),
+        ('server_id', pymongo.ASCENDING),
+    ], background=True)
     upsert_index(mongo.collections['sso_cache'], [
         ('user_id', pymongo.ASCENDING),
         ('server_id', pymongo.ASCENDING),
