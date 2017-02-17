@@ -399,38 +399,7 @@ class User(mongo.MongoObject):
     def generate_otp_secret(self):
         self.otp_secret = utils.generate_otp_secret()
 
-    def verify_otp_code(self, code, remote_ip=None):
-        if remote_ip and settings.vpn.cache_otp_codes:
-            doc = self.otp_cache_collection.find_one({
-                '_id': self.id,
-            })
-
-            if doc:
-                _, hash_salt, cur_otp_hash = doc['otp_hash'].split('$')
-                hash_salt = base64.b64decode(hash_salt)
-            else:
-                hash_salt = os.urandom(8)
-                cur_otp_hash = None
-
-            otp_hash = hashlib.sha512()
-            otp_hash.update(code + remote_ip)
-            otp_hash.update(hash_salt)
-            otp_hash = base64.b64encode(otp_hash.digest())
-
-            if otp_hash == cur_otp_hash:
-                self.otp_cache_collection.update({
-                    '_id': self.id,
-                }, {'$set': {
-                    'timestamp': utils.now(),
-                }})
-                return True
-
-            otp_hash = '$'.join((
-                '1',
-                base64.b64encode(hash_salt),
-                otp_hash,
-            ))
-
+    def verify_otp_code(self, code):
         otp_secret = self.otp_secret
         padding = 8 - len(otp_secret) % 8
         if padding != 8:
@@ -451,25 +420,16 @@ class User(mongo.MongoObject):
         if code not in valid_codes:
             return False
 
-        response = self.otp_collection.update({
-            '_id': {
-                'user_id': self.id,
-                'code': code,
-            },
-        }, {'$set': {
-            'timestamp': utils.now(),
-        }}, upsert=True)
-
-        if response['updatedExisting']:
-            return False
-
-        if remote_ip and settings.vpn.cache_otp_codes:
-            self.otp_cache_collection.update({
-                '_id': self.id,
-            }, {'$set': {
-                'otp_hash': otp_hash,
+        try:
+            self.otp_collection.insert({
+                '_id': {
+                    'user_id': self.id,
+                    'code': code,
+                },
                 'timestamp': utils.now(),
-            }}, upsert=True)
+            })
+        except pymongo.errors.DuplicateKeyError:
+            return False
 
         return True
 
