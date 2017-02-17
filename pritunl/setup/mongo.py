@@ -153,6 +153,7 @@ def setup_mongo():
         'auth_limiter': getattr(secondary_database, prefix + 'auth_limiter'),
         'otp': getattr(secondary_database, prefix + 'otp'),
         'otp_cache': getattr(secondary_database, prefix + 'otp_cache'),
+        'yubikey': getattr(secondary_database, prefix + 'yubikey'),
         'sso_tokens': getattr(secondary_database, prefix + 'sso_tokens'),
         'sso_cache': getattr(secondary_database, prefix + 'sso_cache'),
         'sso_client_cache': getattr(secondary_database,
