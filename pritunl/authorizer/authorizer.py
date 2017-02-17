@@ -51,6 +51,10 @@ class Authorizer(object):
     def sso_passcode_cache_collection(cls):
         return mongo.get_collection('sso_passcode_cache')
 
+    @property
+    def otp_cache_collection(cls):
+        return mongo.get_collection('otp_cache')
+
     def authenticate(self):
         try:
             self._check_call(self._check_primary)
@@ -364,22 +368,78 @@ class Authorizer(object):
             otp_code = self.password[-6:]
             self.password = self.password[:-6]
 
-            if not self.user.verify_otp_code(otp_code, self.remote_ip):
-                if self.has_challenge():
-                    if self.user.has_password(self.server):
-                        self.set_challenge(
-                            orig_password, 'Enter OTP Code', True)
-                    else:
-                        self.set_challenge(None, 'Enter OTP Code', True)
-                    raise AuthError('Challenge otp code')
+            allow = False
+            if settings.vpn.cache_otp_codes:
+                doc = self.otp_cache_collection.find_one({
+                    'user_id': self.user.id,
+                    'server_id': self.server.id,
+                    'remote_ip': self.remote_ip,
+                    'mac_addr': self.mac_addr,
+                    'platform': self.platform,
+                    'device_id': self.device_id,
+                    'device_name': self.device_name,
+                    'passcode': otp_code,
+                })
+                if doc:
+                    self.otp_cache_collection.update({
+                        'user_id': self.user.id,
+                        'server_id': self.server.id,
+                        'remote_ip': self.remote_ip,
+                        'mac_addr': self.mac_addr,
+                        'platform': self.platform,
+                        'device_id': self.device_id,
+                        'device_name': self.device_name,
+                        'passcode': otp_code,
+                    }, {
+                        'user_id': self.user.id,
+                        'server_id': self.server.id,
+                        'remote_ip': self.remote_ip,
+                        'mac_addr': self.mac_addr,
+                        'platform': self.platform,
+                        'device_id': self.device_id,
+                        'device_name': self.device_name,
+                        'passcode': otp_code,
+                        'timestamp': utils.now(),
+                    })
+                    allow = True
 
-                self.user.audit_event('user_connection',
-                    ('User connection to "%s" denied. ' +
-                     'User failed two-step authentication') % (
-                        self.server.name),
-                    remote_addr=self.remote_ip,
-                )
-                raise AuthError('Invalid OTP code')
+            if not allow:
+                if not self.user.verify_otp_code(otp_code):
+                    if self.has_challenge():
+                        if self.user.has_password(self.server):
+                            self.set_challenge(
+                                orig_password, 'Enter OTP Code', True)
+                        else:
+                            self.set_challenge(
+                                None, 'Enter OTP Code', True)
+                        raise AuthError('Challenge OTP code')
+
+                    self.user.audit_event('user_connection',
+                        ('User connection to "%s" denied. ' +
+                         'User failed two-step authentication') % (
+                            self.server.name),
+                        remote_addr=self.remote_ip,
+                    )
+                    raise AuthError('Invalid OTP code')
+
+                if settings.vpn.cache_otp_codes:
+                    self.otp_cache_collection.update({
+                        'user_id': self.user.id,
+                        'server_id': self.server.id,
+                        'mac_addr': self.mac_addr,
+                        'device_id': self.device_id,
+                        'device_name': self.device_name,
+                    }, {
+                        'user_id': self.user.id,
+                        'server_id': self.server.id,
+                        'remote_ip': self.remote_ip,
+                        'mac_addr': self.mac_addr,
+                        'platform': self.platform,
+                        'device_id': self.device_id,
+                        'device_name': self.device_name,
+                        'passcode': otp_code,
+                        'timestamp': utils.now(),
+                    }, upsert=True)
 
         if self.user.has_pin():
             if not self.user.check_pin(self.password):
