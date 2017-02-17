@@ -61,8 +61,7 @@ class Authorizer(object):
             self._check_call(self._check_password)
             self._check_call(self._check_sso)
             self._check_call(self._auth_plugins)
-            if not self.reauth:
-                self._check_call(self._check_push)
+            self._check_call(self._check_push)
             self.callback(True)
         except:
             pass
