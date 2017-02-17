@@ -17,7 +17,7 @@ _states = tunldb.TunlDB()
 
 class Authorizer(object):
     def __init__(self, svr, usr, remote_ip, plaform, device_id, device_name,
-            mac_addr, password, push_token, reauth, callback):
+            mac_addr, password, auth_token, reauth, callback):
         self.server = svr
         self.user = usr
         self.remote_ip = remote_ip
@@ -26,12 +26,13 @@ class Authorizer(object):
         self.device_name = device_name
         self.mac_addr = mac_addr
         self.password = password
-        self.push_token = push_token
+        self.auth_token = auth_token
         self.reauth = reauth
         self.callback = callback
         self.state = None
         self.push_type = None
         self.challenge = None
+        self.has_token = False
 
         if self.password and self.password.startswith('CRV1:'):
             challenge = self.password.split(':')
@@ -40,16 +41,16 @@ class Authorizer(object):
                 self.password = challenge[4]
 
     @property
-    def sso_cache_collection(cls):
-        return mongo.get_collection('sso_cache')
+    def sso_passcode_cache_collection(cls):
+        return mongo.get_collection('sso_passcode_cache')
+
+    @property
+    def sso_push_cache_collection(cls):
+        return mongo.get_collection('sso_push_cache')
 
     @property
     def sso_client_cache_collection(cls):
         return mongo.get_collection('sso_client_cache')
-
-    @property
-    def sso_passcode_cache_collection(cls):
-        return mongo.get_collection('sso_passcode_cache')
 
     @property
     def otp_cache_collection(cls):
@@ -58,11 +59,12 @@ class Authorizer(object):
     def authenticate(self):
         try:
             self._check_call(self._check_primary)
+            self._check_call(self._check_token)
             self._check_call(self._check_password)
             self._check_call(self._check_sso)
             self._check_call(self._auth_plugins)
             self._check_call(self._check_push)
-            self.callback(True)
+            self._callback(True)
         except:
             pass
 
@@ -99,14 +101,51 @@ class Authorizer(object):
         try:
             func()
         except AuthError, err:
-            self.callback(False, str(err))
+            self._callback(False, str(err))
             raise
         except AuthForked:
             raise
         except:
             logger.exception('Exception in user authorize', 'authorize')
-            self.callback(False, 'Unknown error occured')
+            self._callback(False, 'Unknown error occured')
             raise
+
+    def _callback(self, allow, reason=None):
+        if allow:
+            try:
+                self._check_call(self._update_token)
+            except:
+                return
+
+        self.callback(allow, reason)
+
+    def _check_token(self):
+        if settings.app.sso_client_cache and self.auth_token:
+            doc = self.sso_client_cache_collection.find_one({
+                'user_id': self.user.id,
+                'server_id': self.server.id,
+                'device_id': self.device_id,
+                'device_name': self.device_name,
+                'auth_token': self.auth_token,
+            })
+            if doc:
+                self.has_token = True
+
+    def _update_token(self):
+        if settings.app.sso_client_cache and self.auth_token:
+            self.sso_client_cache_collection.update({
+                'user_id': self.user.id,
+                'server_id': self.server.id,
+                'device_id': self.device_id,
+                'device_name': self.device_name,
+            }, {
+                'user_id': self.user.id,
+                'server_id': self.server.id,
+                'device_id': self.device_id,
+                'device_name': self.device_name,
+                'auth_token': self.auth_token,
+                'timestamp': utils.now(),
+            }, upsert=True)
 
     def _check_primary(self):
         if self.user.disabled:
@@ -154,7 +193,7 @@ class Authorizer(object):
 
     def _check_password(self):
         if self.user.bypass_secondary or self.user.link_server_id or \
-                settings.vpn.stress_test:
+                settings.vpn.stress_test or self.has_token:
             return
 
         sso_mode = settings.app.sso or ''
@@ -177,7 +216,7 @@ class Authorizer(object):
             self.password = self.password[:-passcode_len]
 
             allow = False
-            if settings.app.sso_passcode_cache:
+            if settings.app.sso_cache:
                 doc = self.sso_passcode_cache_collection.find_one({
                     'user_id': self.user.id,
                     'server_id': self.server.id,
@@ -239,7 +278,7 @@ class Authorizer(object):
                     )
                     raise AuthError('Invalid OTP code')
 
-                if settings.app.sso_passcode_cache:
+                if settings.app.sso_cache:
                     self.sso_passcode_cache_collection.update({
                         'user_id': self.user.id,
                         'server_id': self.server.id,
@@ -277,7 +316,7 @@ class Authorizer(object):
             yubikey_hash = base64.b64encode(yubikey_hash.digest())
 
             allow = False
-            if settings.app.sso_passcode_cache:
+            if settings.app.sso_cache:
                 doc = self.sso_passcode_cache_collection.find_one({
                     'user_id': self.user.id,
                     'server_id': self.server.id,
@@ -334,7 +373,7 @@ class Authorizer(object):
                         )
                     raise AuthError('Invalid YubiKey')
 
-                if settings.app.sso_passcode_cache:
+                if settings.app.sso_cache:
                     self.sso_passcode_cache_collection.update({
                         'user_id': self.user.id,
                         'server_id': self.server.id,
@@ -476,26 +515,16 @@ class Authorizer(object):
             raise AuthError('Failed secondary authentication')
 
     def _check_push(self):
-        if self.user.bypass_secondary or settings.vpn.stress_test:
+        if self.user.bypass_secondary or settings.vpn.stress_test or \
+                self.has_token:
             return
 
         self.push_type = self.user.get_push_type()
         if not self.push_type:
             return
 
-        if settings.app.sso_client_cache and self.push_token:
-            doc = self.sso_client_cache_collection.find_one({
-                'user_id': self.user.id,
-                'server_id': self.server.id,
-                'device_id': self.device_id,
-                'device_name': self.device_name,
-                'push_token': self.push_token,
-            })
-            if doc:
-                return
-
         if settings.app.sso_cache:
-            doc = self.sso_cache_collection.find_one({
+            doc = self.sso_push_cache_collection.find_one({
                 'user_id': self.user.id,
                 'server_id': self.server.id,
                 'remote_ip': self.remote_ip,
@@ -505,7 +534,7 @@ class Authorizer(object):
                 'device_name': self.device_name,
             })
             if doc:
-                self.sso_cache_collection.update({
+                self.sso_push_cache_collection.update({
                     'user_id': self.user.id,
                     'server_id': self.server.id,
                     'mac_addr': self.mac_addr,
@@ -528,7 +557,7 @@ class Authorizer(object):
                 self._check_call(self._auth_push_thread)
             except:
                 return
-            self.callback(True)
+            self._callback(True)
 
         thread = threading.Thread(target=thread_func)
         thread.daemon = True
@@ -585,7 +614,7 @@ class Authorizer(object):
             raise AuthError('User failed push authentication')
 
         if settings.app.sso_cache:
-            self.sso_cache_collection.update({
+            self.sso_push_cache_collection.update({
                 'user_id': self.user.id,
                 'server_id': self.server.id,
                 'mac_addr': self.mac_addr,
@@ -599,21 +628,6 @@ class Authorizer(object):
                 'platform': self.platform,
                 'device_id': self.device_id,
                 'device_name': self.device_name,
-                'timestamp': utils.now(),
-            }, upsert=True)
-
-        if settings.app.sso_client_cache and self.push_token:
-            self.sso_client_cache_collection.update({
-                'user_id': self.user.id,
-                'server_id': self.server.id,
-                'device_id': self.device_id,
-                'device_name': self.device_name,
-            }, {
-                'user_id': self.user.id,
-                'server_id': self.server.id,
-                'device_id': self.device_id,
-                'device_name': self.device_name,
-                'push_token': self.push_token,
                 'timestamp': utils.now(),
             }, upsert=True)
 
