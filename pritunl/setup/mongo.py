@@ -155,7 +155,8 @@ def setup_mongo():
         'otp_cache': getattr(secondary_database, prefix + 'otp_cache'),
         'yubikey': getattr(secondary_database, prefix + 'yubikey'),
         'sso_tokens': getattr(secondary_database, prefix + 'sso_tokens'),
-        'sso_cache': getattr(secondary_database, prefix + 'sso_cache'),
+        'sso_push_cache': getattr(secondary_database,
+            prefix + 'sso_push_cache'),
         'sso_client_cache': getattr(secondary_database,
             prefix + 'sso_client_cache'),
         'sso_passcode_cache': getattr(secondary_database,
@@ -308,7 +309,7 @@ def setup_mongo():
         ('user_id', pymongo.ASCENDING),
         ('server_id', pymongo.ASCENDING),
     ], background=True)
-    upsert_index(mongo.collections['sso_cache'], [
+    upsert_index(mongo.collections['sso_push_cache'], [
         ('user_id', pymongo.ASCENDING),
         ('server_id', pymongo.ASCENDING),
     ], background=True)
@@ -347,15 +348,14 @@ def setup_mongo():
         background=True, expireAfterSeconds=86400)
     upsert_index(mongo.collections['sso_tokens'], 'timestamp',
         background=True, expireAfterSeconds=600)
-    upsert_index(mongo.collections['sso_cache'], 'timestamp',
+    upsert_index(mongo.collections['sso_push_cache'], 'timestamp',
         background=True, expireAfterSeconds=settings.app.sso_cache_timeout)
     upsert_index(mongo.collections['sso_client_cache'], 'timestamp',
         background=True,
         expireAfterSeconds=settings.app.sso_client_cache_timeout + 21600 +
             settings.app.sso_client_cache_window)
     upsert_index(mongo.collections['sso_passcode_cache'], 'timestamp',
-        background=True,
-        expireAfterSeconds=settings.app.sso_passcode_cache_timeout)
+        background=True, expireAfterSeconds=settings.app.sso_cache_timeout)
 
     if not auth.Administrator.collection.find_one():
         auth.Administrator(
