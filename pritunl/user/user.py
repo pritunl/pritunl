@@ -464,6 +464,11 @@ class User(mongo.MongoObject):
 
         return password_mode
 
+    def has_passcode(self, svr):
+        if self.has_yubikey or self.has_duo_passcode or svr.otp_auth:
+            return True
+        return False
+
     def has_password(self, svr):
         return bool(self._get_password_mode(svr))
 
