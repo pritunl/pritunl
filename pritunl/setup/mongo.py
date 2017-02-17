@@ -343,6 +343,8 @@ def setup_mongo():
         expireAfterSeconds=120)
     upsert_index(mongo.collections['otp_cache'], 'timestamp',
         background=True, expireAfterSeconds=settings.user.otp_cache_ttl)
+    upsert_index(mongo.collections['yubikey'], 'timestamp',
+        background=True, expireAfterSeconds=86400)
     upsert_index(mongo.collections['sso_tokens'], 'timestamp',
         background=True, expireAfterSeconds=600)
     upsert_index(mongo.collections['sso_cache'], 'timestamp',

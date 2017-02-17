@@ -1,6 +1,7 @@
 from pritunl import settings
 from pritunl import logger
 from pritunl import mongo
+from pritunl import utils
 
 import hashlib
 import base64
@@ -37,6 +38,7 @@ def auth_yubico(yubikey):
     try:
         yubikey_collection.insert({
             '_id': yubikey_hash,
+            'timestamp': utils.now(),
         })
     except pymongo.errors.DuplicateKeyError:
         logger.error('Yubico replay error', 'sso')
