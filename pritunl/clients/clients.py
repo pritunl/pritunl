@@ -21,6 +21,7 @@ import time
 import collections
 import bson
 import hashlib
+import base64
 import threading
 import uuid
 import pymongo
@@ -648,13 +649,23 @@ class Clients(object):
         device_id = client_data.get('device_id')
         device_name = client_data.get('device_name')
         password = client_data.get('password')
-        push_token = None
+        auth_token = None
         mac_addr = client_data.get('mac_addr')
 
         if password and '<%=PUSH_TOKEN=%>' in password:
-            push_token, password = password.split('<%=PUSH_TOKEN=%>')
-            push_token = utils.filter_str(push_token)
+            auth_token, password = password.split('<%=PUSH_TOKEN=%>')
+            auth_token = utils.filter_str(auth_token)
             password = password or None
+
+        if password and '<%=AUTH_TOKEN=%>' in password:
+            auth_token, password = password.split('<%=AUTH_TOKEN=%>')
+            auth_token = utils.filter_str(auth_token)
+            password = password or None
+
+        if auth_token:
+            auth_token_hash = hashlib.sha512()
+            auth_token_hash.update(auth_token)
+            auth_token = base64.b64encode(auth_token_hash.digest())
 
         try:
             if not settings.vpn.stress_test and \
@@ -705,7 +716,7 @@ class Clients(object):
                         remote_ip=remote_ip,
                         mac_addr=mac_addr,
                         password=password,
-                        push_token=push_token,
+                        auth_token=auth_token,
                         allow=allow,
                         reason=reason,
                     )
@@ -724,7 +735,7 @@ class Clients(object):
                 device_name,
                 mac_addr,
                 password,
-                push_token,
+                auth_token,
                 reauth,
                 callback,
             )
