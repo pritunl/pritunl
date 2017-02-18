@@ -120,7 +120,7 @@ deb http://repo.mongodb.org/apt/debian wheezy/mongodb-org/3.2 main
 EOF
 
 sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
-deb https://repo.pritunl.com/stable/apt wheezy main
+deb http://repo.pritunl.com/stable/apt wheezy main
 EOF
 
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 42F3E95A2C4F08279C4960ADD68FA50FEA312927
@@ -138,7 +138,7 @@ deb http://repo.mongodb.org/apt/debian wheezy/mongodb-org/3.2 main
 EOF
 
 sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
-deb https://repo.pritunl.com/stable/apt jessie main
+deb http://repo.pritunl.com/stable/apt jessie main
 EOF
 
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 42F3E95A2C4F08279C4960ADD68FA50FEA312927
@@ -157,7 +157,7 @@ deb http://repo.mongodb.org/apt/ubuntu precise/mongodb-org/3.2 multiverse
 EOF
 
 sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
-deb https://repo.pritunl.com/stable/apt precise main
+deb http://repo.pritunl.com/stable/apt precise main
 EOF
 
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 42F3E95A2C4F08279C4960ADD68FA50FEA312927
@@ -175,7 +175,7 @@ deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.2 multiverse
 EOF
 
 sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
-deb https://repo.pritunl.com/stable/apt trusty main
+deb http://repo.pritunl.com/stable/apt trusty main
 EOF
 
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 42F3E95A2C4F08279C4960ADD68FA50FEA312927
@@ -193,7 +193,7 @@ deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse
 EOF
 
 sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
-deb https://repo.pritunl.com/stable/apt xenial main
+deb http://repo.pritunl.com/stable/apt xenial main
 EOF
 
 sudo tee -a /lib/systemd/system/mongod.service << EOF
@@ -223,7 +223,7 @@ sudo systemctl enable pritunl mongod
 
 ```
 sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
-deb https://repo.pritunl.com/stable/apt yakkety main
+deb http://repo.pritunl.com/stable/apt yakkety main
 EOF
 
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
