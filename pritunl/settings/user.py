@@ -12,7 +12,6 @@ class SettingsUser(SettingsGroupMongo):
         'force_password_mode': None,
         'cert_key_bits': 4096,
         'cert_message_digest': 'sha256',
-        'otp_cache_ttl': 43200,
         'page_count': 10,
         'skip_remote_sso_check': False,
         'conf_sync': True,
