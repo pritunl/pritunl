@@ -499,6 +499,8 @@ class User(mongo.MongoObject):
             'password_mode': self._get_password_mode(svr),
             'push_auth': True if self.get_push_type() else False,
             'push_auth_ttl': settings.app.sso_client_cache_timeout,
+            'token': self.has_passcode(svr),
+            'token_ttl': settings.app.sso_client_cache_timeout,
         }
 
         if include_sync_keys:
