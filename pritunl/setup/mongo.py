@@ -343,7 +343,7 @@ def setup_mongo():
     upsert_index(mongo.collections['otp'], 'timestamp', background=True,
         expireAfterSeconds=120)
     upsert_index(mongo.collections['otp_cache'], 'timestamp',
-        background=True, expireAfterSeconds=settings.user.otp_cache_ttl)
+        background=True, expireAfterSeconds=settings.vpn.otp_cache_timeout)
     upsert_index(mongo.collections['yubikey'], 'timestamp',
         background=True, expireAfterSeconds=86400)
     upsert_index(mongo.collections['sso_tokens'], 'timestamp',
@@ -352,7 +352,7 @@ def setup_mongo():
         background=True, expireAfterSeconds=settings.app.sso_cache_timeout)
     upsert_index(mongo.collections['sso_client_cache'], 'timestamp',
         background=True,
-        expireAfterSeconds=settings.app.sso_client_cache_timeout + 21600 +
+        expireAfterSeconds=settings.app.sso_client_cache_timeout +
             settings.app.sso_client_cache_window)
     upsert_index(mongo.collections['sso_passcode_cache'], 'timestamp',
         background=True, expireAfterSeconds=settings.app.sso_cache_timeout)
