@@ -132,7 +132,8 @@ class Authorizer(object):
                 self.has_token = True
 
     def _update_token(self):
-        if settings.app.sso_client_cache and self.auth_token:
+        if settings.app.sso_client_cache and self.auth_token and \
+                not self.has_token:
             self.sso_client_cache_collection.update({
                 'user_id': self.user.id,
                 'server_id': self.server.id,
@@ -407,7 +408,7 @@ class Authorizer(object):
             self.password = self.password[:-6]
 
             allow = False
-            if settings.vpn.cache_otp_codes:
+            if settings.vpn.otp_cache:
                 doc = self.otp_cache_collection.find_one({
                     'user_id': self.user.id,
                     'server_id': self.server.id,
@@ -460,7 +461,7 @@ class Authorizer(object):
                     )
                     raise AuthError('Invalid OTP code')
 
-                if settings.vpn.cache_otp_codes:
+                if settings.vpn.otp_cache:
                     self.otp_cache_collection.update({
                         'user_id': self.user.id,
                         'server_id': self.server.id,
