@@ -172,6 +172,9 @@ def main(default_conf=None):
 
         print '%s.%s = %s' % (group_str, key_str,
             json.dumps(getattr(group, key_str), default=lambda x: str(x)))
+        print 'Successfully updated configuration. This change is ' \
+            'stored in the database and has been applied to all hosts ' \
+            'in the cluster.'
 
         sys.exit(0)
     elif cmd == 'unset':
@@ -194,6 +197,9 @@ def main(default_conf=None):
 
         print '%s.%s = %s' % (group_str, key_str,
             json.dumps(getattr(group, key_str), default=lambda x: str(x)))
+        print 'Successfully updated configuration. This change is ' \
+            'stored in the database and has been applied to all hosts ' \
+            'in the cluster.'
 
         sys.exit(0)
     elif cmd == 'set-mongodb':
