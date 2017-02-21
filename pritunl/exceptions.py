@@ -12,7 +12,7 @@ class PluginMissing(BaseError):
 class ServerStop(BaseError):
     pass
 
-class ServerRestart(Exception):
+class ServerRestart(BaseError):
     pass
 
 
