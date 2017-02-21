@@ -2,7 +2,6 @@ from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import logger
 from pritunl import settings
-from pritunl import wsgiserver
 from pritunl import utils
 from pritunl import monitoring
 from pritunl import auth
@@ -14,6 +13,7 @@ import logging.handlers
 import time
 import subprocess
 import os
+import cheroot.wsgi
 
 app = flask.Flask(__name__)
 app_server = None
@@ -26,16 +26,6 @@ _cur_port = None
 _cur_reverse_proxy = None
 _update_lock = threading.Lock()
 _watch_event = threading.Event()
-
-class CherryPyWSGIServerLogged(wsgiserver.CherryPyWSGIServer):
-    def error_log(self, msg='', level=None, traceback=False):
-        if not settings.app.log_web_errors:
-            return
-
-        if traceback:
-            logger.exception(msg, 'app')
-        else:
-            logger.error(msg, 'app')
 
 def set_acme(token, authorization):
     global acme_token
@@ -147,7 +137,7 @@ def _run_server(restart):
 
     logger.info('Starting server', 'app')
 
-    app_server = CherryPyWSGIServerLogged(
+    app_server = cheroot.wsgi.Server(
         ('localhost', settings.app.server_internal_port),
         app,
         request_queue_size=settings.app.request_queue_size,
