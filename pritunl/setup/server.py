@@ -7,7 +7,6 @@ from pritunl import logger
 from pritunl import settings
 from pritunl import static
 from pritunl import utils
-from pritunl import wsgiserver
 from pritunl import upgrade
 from pritunl import listener
 
@@ -19,6 +18,7 @@ import threading
 import subprocess
 import os
 import urlparse
+import cheroot.wsgi
 
 server = None
 web_process = None
@@ -198,8 +198,9 @@ def server_thread():
     app.logger.addFilter(logger.log_filter)
     app.logger.addHandler(logger.log_handler)
 
-    server = wsgiserver.CherryPyWSGIServer(
-        ('localhost', settings.conf.internal_port), app,
+    server = cheroot.wsgi.Server(
+        ('localhost', settings.conf.internal_port),
+        app,
         shutdown_timeout=0.5,
     )
     server.server_name = ''
