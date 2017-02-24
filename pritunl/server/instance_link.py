@@ -52,8 +52,8 @@ class ServerInstanceLink(object):
             HASHES[self.linked_server.hash],
             4 if self.server.debug else 1,
             8 if self.server.debug else 3,
-            self.linked_server.ping_interval,
-            self.linked_server.ping_timeout,
+            settings.app.host_ping,
+            settings.app.host_ping_ttl,
         )
 
         if self.linked_server.lzo_compression != ADAPTIVE:
