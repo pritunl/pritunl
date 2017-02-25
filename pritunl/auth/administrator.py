@@ -22,6 +22,7 @@ class Administrator(mongo.MongoObject):
     fields = {
         'username',
         'password',
+        'yubikey_id',
         'otp_auth',
         'otp_secret',
         'auth_api',
@@ -38,8 +39,8 @@ class Administrator(mongo.MongoObject):
     }
 
     def __init__(self, username=None, password=None, default=None,
-            otp_auth=None, auth_api=None, disabled=None, super_user=None,
-            **kwargs):
+            yubikey_id=None, otp_auth=None, auth_api=None, disabled=None,
+            super_user=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
         if username is not None:
             self.username = username
@@ -47,6 +48,8 @@ class Administrator(mongo.MongoObject):
             self.password = password
         if default is not None:
             self.default = default
+        if yubikey_id is not None:
+            self.yubikey_id = yubikey_id
         if otp_auth is not None:
             self.otp_auth = otp_auth
         if auth_api is not None:
@@ -61,6 +64,7 @@ class Administrator(mongo.MongoObject):
             return {
                 'id': self.id,
                 'username': self.username,
+                'yubikey_id': 'demo',
                 'otp_auth': self.otp_auth,
                 'otp_secret': self.otp_secret,
                 'auth_api': self.auth_api,
@@ -73,6 +77,7 @@ class Administrator(mongo.MongoObject):
         return {
             'id': self.id,
             'username': self.username,
+            'yubikey_id': self.yubikey_id,
             'otp_auth': self.otp_auth,
             'otp_secret': self.otp_secret,
             'auth_api': self.auth_api,
