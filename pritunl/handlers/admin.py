@@ -76,6 +76,17 @@ def admin_put(admin_id):
 
         admin.password = password
 
+    if 'yubikey_id' in flask.request.json:
+        yubikey_id = flask.request.json['yubikey_id'] or None
+
+        if yubikey_id != admin.yubikey_id:
+            admin.audit_event('admin_updated',
+                'Administrator YubiKey ID changed',
+                remote_addr=utils.get_remote_addr(),
+            )
+
+        admin.yubikey_id = yubikey_id[:12] if yubikey_id else None
+
     super_user = flask.request.json.get('super_user')
     if super_user is not None:
         if super_user != admin.super_user:
@@ -191,6 +202,8 @@ def admin_post():
 
     username = utils.filter_str(flask.request.json['username']).lower()
     password = flask.request.json['password']
+    yubikey_id = flask.request.json.get('yubikey_id') or None
+    yubikey_id = yubikey_id[:12] if yubikey_id else None
     otp_auth = flask.request.json.get('otp_auth', False)
     auth_api = flask.request.json.get('auth_api', False)
     disabled = flask.request.json.get('disabled', False)
@@ -200,6 +213,7 @@ def admin_post():
         admin = auth.new_admin(
             username=username,
             password=password,
+            yubikey_id=yubikey_id,
             default=True,
             otp_auth=otp_auth,
             auth_api=auth_api,
