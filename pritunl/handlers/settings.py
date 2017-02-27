@@ -610,8 +610,6 @@ def settings_put():
         settings.app.sso_duo_token = None
         settings.app.sso_duo_secret = None
         settings.app.sso_duo_host = None
-        settings.app.sso_yubico_client = None
-        settings.app.sso_yubico_secret = None
         settings.app.sso_org = None
         settings.app.sso_saml_url = None
         settings.app.sso_saml_issuer_url = None
