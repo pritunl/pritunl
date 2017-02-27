@@ -656,7 +656,6 @@ define([
       var ssoDuoMode = null;
       var ssoYubicoClient = null;
       var ssoYubicoSecret = null;
-      var ssoYubicoMode = null;
       var ssoClientCache = this.getSsoClientCacheSelect();
 
       if (this.$('.verify-pass input').is(':visible') &&
@@ -688,7 +687,6 @@ define([
         if (sso.indexOf('yubico') !== -1) {
           ssoYubicoClient = this.$('.sso-yubico-client input').val();
           ssoYubicoSecret = this.$('.sso-yubico-secret input').val();
-          ssoYubicoMode = this.$('.sso-yubico-mode select').val();
         }
 
         if (sso.indexOf('saml') !== -1) {
