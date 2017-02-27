@@ -8,6 +8,7 @@ from pritunl import utils
 from pritunl import mongo
 from pritunl import logger
 from pritunl import plugins
+from pritunl import sso
 
 import base64
 import os
@@ -128,7 +129,8 @@ class Administrator(mongo.MongoObject):
         test_hash = base64.b64encode(hash_func(pass_salt, test_pass))
         return pass_hash == test_hash
 
-    def auth_check(self, password, otp_code=None, remote_addr=None):
+    def auth_check(self, password, otp_code=None, yubico_key=None,
+            remote_addr=None):
         if not self.test_password(password):
             self.audit_event(
                 'admin_auth',
@@ -145,6 +147,16 @@ class Administrator(mongo.MongoObject):
                 remote_addr=remote_addr,
             )
             return False
+
+        if self.yubikey_id:
+            valid, public_id = sso.auth_yubico(yubico_key)
+            if not valid or self.yubikey_id != public_id:
+                self.audit_event(
+                    'admin_auth',
+                    'Administrator login failed, invalid YubiKey',
+                    remote_addr=remote_addr,
+                )
+                return False
 
         if self.disabled:
             self.audit_event(
