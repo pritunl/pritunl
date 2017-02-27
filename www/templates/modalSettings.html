@@ -89,7 +89,7 @@
       <label>Duo Secret Key</label>
       <input type="text" class="form-control" placeholder="Enter secret key" value="<%- sso_duo_secret || '' %>">
     </div>
-    <div class="sso-yubico-client form-group" <%= !sso || sso.indexOf('yubico') === -1 ? 'style="display: none;"' : '' %>>
+    <div class="sso-yubico-client form-group">
       <label>Yubico Client ID</label>
       <input type="text" class="form-control" placeholder="Enter client ID" value="<%- sso_yubico_client || '' %>">
     </div>
@@ -189,7 +189,7 @@
         <option value="passcode" <%= sso_duo_mode === 'passcode' ? 'selected' : '' %>>Passcode</option>
       </select>
     </div>
-    <div class="sso-yubico-secret form-group" <%= !sso || sso.indexOf('yubico') === -1 ? 'style="display: none;"' : '' %>>
+    <div class="sso-yubico-secret form-group">
       <label>Yubico Secret Key</label>
       <input type="text" class="form-control" placeholder="Enter secret key" value="<%- sso_yubico_secret || '' %>">
     </div>
