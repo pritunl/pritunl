@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Add support for administrator login with YubiKey
 Improvements to auto failover
 
 Version 1.27.1259.77 2017-02-22
