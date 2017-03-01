@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add user inactive timeout to server settings
+
 Version 1.27.1265.38 2017-02-28
 -------------------------------
 
