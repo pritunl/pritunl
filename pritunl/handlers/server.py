@@ -317,7 +317,8 @@ def server_put_post(server_id=None):
     inactive_timeout_def = False
     if 'inactive_timeout' in flask.request.json:
         inactive_timeout_def = True
-        inactive_timeout = int(flask.request.json['inactive_timeout'] or 0)
+        inactive_timeout = int(
+            flask.request.json['inactive_timeout'] or 0) or None
 
     onc_hostname = None
     onc_hostname_def = False
