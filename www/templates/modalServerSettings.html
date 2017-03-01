@@ -156,6 +156,10 @@
       <label>User Link Ping Timeout</label>
       <input type="number" class="form-control" placeholder="Enter ping timeout" data-toggle="tooltip" title="Optional, ping timeout used when multiple users have the same network link to failover to another user when one network link fails." min="0" step="0.1" value="<%- link_ping_timeout || '' %>" autocapitalize="off">
     </div>
+    <div class="inactive-timeout form-group">
+      <label>User Inactive Timeout</label>
+      <input type="number" class="form-control" placeholder="Enter inactive timeout" data-toggle="tooltip" title="Optional, disconnect users after the specified number of seconds of inactivity." min="0" step="0.1" value="<%- inactive_timeout || '' %>" autocapitalize="off">
+    </div>
     <div class="allowed-devices form-group">
       <label>Allowed Devices</label>
       <select class="form-control" data-toggle="tooltip" title="Device types permitted to connect to server.">
