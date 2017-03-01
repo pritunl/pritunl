@@ -112,6 +112,10 @@ class Clients(object):
                     client_conf += 'iroute %s %s\n' % utils.parse_network(
                         network)
         else:
+            if self.server.inactive_timeout:
+                client_conf += 'push "inactive %d"\n' % \
+                    self.server.inactive_timeout
+
             if self.server.is_route_all():
                 client_conf += 'push "redirect-gateway def1"\n'
 
