@@ -85,6 +85,10 @@
         value="<%- link_ping_interval || '' %>" min="0" step="0.1"
         autocapitalize="off">
     </div>
+    <div class="inactive-timeout form-group">
+      <label>User Inactive Timeout</label>
+      <input type="number" class="form-control" placeholder="Enter inactive timeout" data-toggle="tooltip" title="Optional, disconnect users after the specified number of seconds of inactivity." min="0" step="0.1" value="<%- inactive_timeout || '' %>" autocapitalize="off">
+    </div>
     <div class="max-clients form-group">
       <label>Max Clients</label>
       <input type="number" class="form-control" placeholder="Enter max clients" data-toggle="tooltip" title="Maximum number of clients connected to a server or to each server replica." min="0" value="<%- max_clients === -1 ? '' : max_clients %>" autocapitalize="off">
@@ -155,10 +159,6 @@
     <div class="link-ping-timeout form-group">
       <label>User Link Ping Timeout</label>
       <input type="number" class="form-control" placeholder="Enter ping timeout" data-toggle="tooltip" title="Optional, ping timeout used when multiple users have the same network link to failover to another user when one network link fails." min="0" step="0.1" value="<%- link_ping_timeout || '' %>" autocapitalize="off">
-    </div>
-    <div class="inactive-timeout form-group">
-      <label>User Inactive Timeout</label>
-      <input type="number" class="form-control" placeholder="Enter inactive timeout" data-toggle="tooltip" title="Optional, disconnect users after the specified number of seconds of inactivity." min="0" step="0.1" value="<%- inactive_timeout || '' %>" autocapitalize="off">
     </div>
     <div class="allowed-devices form-group">
       <label>Allowed Devices</label>
