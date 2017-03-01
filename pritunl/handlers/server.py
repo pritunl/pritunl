@@ -313,6 +313,12 @@ def server_put_post(server_id=None):
         link_ping_timeout_def = True
         link_ping_timeout = int(flask.request.json['link_ping_timeout'] or 5)
 
+    inactive_timeout = None
+    inactive_timeout_def = False
+    if 'inactive_timeout' in flask.request.json:
+        inactive_timeout_def = True
+        inactive_timeout = int(flask.request.json['inactive_timeout'] or 0)
+
     onc_hostname = None
     onc_hostname_def = False
     if 'onc_hostname' in flask.request.json:
@@ -495,6 +501,7 @@ def server_put_post(server_id=None):
             ping_timeout=ping_timeout,
             link_ping_interval=link_ping_interval,
             link_ping_timeout=link_ping_timeout,
+            inactive_timeout=inactive_timeout,
             onc_hostname=onc_hostname,
             allowed_devices=allowed_devices,
             max_clients=max_clients,
@@ -563,6 +570,8 @@ def server_put_post(server_id=None):
             svr.link_ping_interval = link_ping_interval
         if link_ping_timeout_def:
             svr.link_ping_timeout = link_ping_timeout
+        if inactive_timeout_def:
+            svr.inactive_timeout = inactive_timeout
         if onc_hostname_def:
             svr.onc_hostname = onc_hostname
         if allowed_devices_def:
