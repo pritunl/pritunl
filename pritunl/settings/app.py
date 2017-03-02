@@ -123,6 +123,7 @@ class SettingsApp(SettingsGroupMongo):
         'server_cert': None,
         'server_key': None,
         'cloud_provider': None,
+        'aws_timeout': 3,
         'route53_region': None,
         'route53_zone': None,
         'us_east_1_access_key': None,
