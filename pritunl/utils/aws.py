@@ -2,9 +2,6 @@ from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import settings
 
-import os
-os.environ['BOTO_CONFIG'] = ''
-
 import boto
 import boto.ec2
 import boto.vpc
