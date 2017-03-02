@@ -9,22 +9,18 @@ import boto.route53
 import requests
 
 def connect_vpc(aws_key, aws_secret, region):
-    conn = boto.connect_vpc(
+    return boto.connect_vpc(
         aws_access_key_id=aws_key,
         aws_secret_access_key=aws_secret,
         region=boto.ec2.get_region(region),
     )
 
-    return conn
-
 def connect_route53(aws_key, aws_secret, region):
-    conn = boto.route53.connect_to_region(
+    return boto.route53.connect_to_region(
         region,
         aws_access_key_id=aws_key,
         aws_secret_access_key=aws_secret,
     )
-
-    return conn
 
 def get_instance_id():
     try:
