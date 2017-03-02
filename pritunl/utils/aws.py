@@ -8,6 +8,24 @@ import boto.vpc
 import boto.route53
 import requests
 
+def connect_vpc(aws_key, aws_secret, region):
+    conn = boto.connect_vpc(
+        aws_access_key_id=aws_key,
+        aws_secret_access_key=aws_secret,
+        region=boto.ec2.get_region(region),
+    )
+
+    return conn
+
+def connect_route53(aws_key, aws_secret, region):
+    conn = boto.route53.connect_to_region(
+        region,
+        aws_access_key_id=aws_key,
+        aws_secret_access_key=aws_secret,
+    )
+
+    return conn
+
 def get_instance_id():
     try:
         resp = requests.get(
@@ -30,11 +48,7 @@ def add_vpc_route(region, vpc_id, network, resource_id):
     if not aws_key or not aws_secret:
         raise ValueError('AWS credentials not available for %s' % region)
 
-    vpc_conn = boto.connect_vpc(
-        aws_access_key_id=aws_key,
-        aws_secret_access_key=aws_secret,
-        region=boto.ec2.get_region(region),
-    )
+    vpc_conn = connect_vpc(aws_key, aws_secret, region)
 
     tables = vpc_conn.get_all_route_tables(filters={'vpc-id': vpc_id})
     if not tables:
@@ -76,11 +90,7 @@ def get_vpcs():
         if not aws_key or not aws_secret:
             continue
 
-        vpc_conn = boto.connect_vpc(
-            aws_access_key_id=aws_key,
-            aws_secret_access_key=aws_secret,
-            region=boto.ec2.get_region(region),
-        )
+        vpc_conn = connect_vpc(aws_key, aws_secret, region)
 
         vpcs = vpc_conn.get_all_vpcs()
         for vpc in vpcs:
@@ -104,11 +114,7 @@ def get_zones():
         if not aws_key or not aws_secret:
             continue
 
-        conn = boto.route53.connect_to_region(
-            region,
-            aws_access_key_id=aws_key,
-            aws_secret_access_key=aws_secret,
-        )
+        conn = connect_route53(aws_key, aws_secret, region)
 
         for zone in conn.get_zones():
             zone_data.append(zone.name)
@@ -120,11 +126,7 @@ def set_zone_record(region, zone_name, host_name, ip_addr, ip_addr6):
     aws_key = getattr(settings.app, region_key + '_access_key')
     aws_secret = getattr(settings.app, region_key + '_secret_key')
 
-    conn = boto.route53.connect_to_region(
-        region,
-        aws_access_key_id=aws_key,
-        aws_secret_access_key=aws_secret,
-    )
+    conn = connect_route53(aws_key, aws_secret, region)
 
     zone = conn.get_zone(zone_name)
     record_name = host_name + '.' + zone_name
