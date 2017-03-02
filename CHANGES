@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve AWS error handling
+
 Version 1.27.1266.22 2017-03-01
 -------------------------------
 
