@@ -556,9 +556,9 @@ class Authorizer(object):
         def thread_func():
             try:
                 self._check_call(self._auth_push_thread)
+                self._callback(True)
             except:
-                return
-            self._callback(True)
+                pass
 
         thread = threading.Thread(target=thread_func)
         thread.daemon = True
