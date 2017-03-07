@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Web interface improvements
+Fix issue with AWS route advertisement
 
 Version 1.27.1268.95 2017-03-03
 -------------------------------
