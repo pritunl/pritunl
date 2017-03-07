@@ -1,11 +1,11 @@
-from pritunl.exceptions import *
-from pritunl.constants import *
 from pritunl import settings
+from pritunl.constants import *
+from pritunl.exceptions import *
 
 import boto
 import boto.ec2
-import boto.vpc
 import boto.route53
+import boto.vpc
 import requests
 
 def connect_vpc(aws_key, aws_secret, region):
@@ -46,7 +46,10 @@ def add_vpc_route(region, vpc_id, network, resource_id):
 
     vpc_conn = connect_vpc(aws_key, aws_secret, region)
 
-    tables = vpc_conn.get_all_route_tables(filters={'vpc-id': vpc_id})
+    tables = filter(
+        lambda r: r.id,
+        vpc_conn.get_all_route_tables(filters={'vpc-id': vpc_id})
+    )
     if not tables:
         raise VpcRouteTableNotFound('Failed to find VPC routing table')
 
