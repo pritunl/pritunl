@@ -166,7 +166,7 @@ class Authorizer(object):
                 ('User connection to "%s" denied. User not in ' +
                  'servers groups') % (self.server.name),
                 remote_addr=self.remote_ip,
-                )
+            )
             raise AuthError('User not in servers groups')
 
         if self.server.allowed_devices:
