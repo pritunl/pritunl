@@ -46,14 +46,6 @@ def stop_server():
     settings.local.server_ready.wait()
     threading.Thread(target=stop).start()
 
-try:
-    import OpenSSL
-    from pritunl.wsgiserver import ssl_pyopenssl
-    SSLAdapter = ssl_pyopenssl.pyOpenSSLAdapter
-except ImportError:
-    from pritunl.wsgiserver import ssl_builtin
-    SSLAdapter = ssl_builtin.BuiltinSSLAdapter
-
 def redirect(location, code=302):
     url_root = flask.request.headers.get('PR-Forwarded-Url')
 
