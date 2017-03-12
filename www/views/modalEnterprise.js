@@ -60,6 +60,10 @@ define([
         this.$('.renew .enterprise-label').text('Renew:');
       }
 
+      if (this.model.get('quantity')) {
+        this.$('.quantity .enterprise-item').text(this.model.get('quantity'));
+      }
+
       if (this.model.get('amount')) {
         this.$('.amount .enterprise-item').text('$' +
           (this.model.get('amount') / 100).toFixed(2));

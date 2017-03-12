@@ -12,6 +12,7 @@ define([
       'active': null,
       'status': null,
       'plan': null,
+      'quantity': null,
       'amount': null,
       'period_end': null,
       'trial_end': null,

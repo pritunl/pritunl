@@ -22,6 +22,7 @@ def update():
         settings.local.sub_active = False
         settings.local.sub_status = None
         settings.local.sub_plan = None
+        settings.local.sub_quantity = None
         settings.local.sub_amount = None
         settings.local.sub_period_end = None
         settings.local.sub_trial_end = None
@@ -56,6 +57,7 @@ def update():
                 settings.local.sub_active = data['active']
                 settings.local.sub_status = data['status']
                 settings.local.sub_plan = data['plan']
+                settings.local.sub_quantity = data['quantity']
                 settings.local.sub_amount = data['amount']
                 settings.local.sub_period_end = data['period_end']
                 settings.local.sub_trial_end = data['trial_end']
@@ -74,6 +76,7 @@ def update():
                 settings.local.sub_active = False
                 settings.local.sub_status = None
                 settings.local.sub_plan = None
+                settings.local.sub_quantity = None
                 settings.local.sub_amount = None
                 settings.local.sub_period_end = None
                 settings.local.sub_trial_end = None
@@ -124,6 +127,7 @@ def dict():
         'active': settings.local.sub_active,
         'status': settings.local.sub_status,
         'plan': settings.local.sub_plan,
+        'quantity': settings.local.sub_quantity,
         'amount': settings.local.sub_amount,
         'period_end': settings.local.sub_period_end,
         'trial_end': settings.local.sub_trial_end,
