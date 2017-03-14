@@ -107,7 +107,7 @@ class Authorizer(object):
             raise
         except:
             logger.exception('Exception in user authorize', 'authorize')
-            self._callback(False, 'Unknown error occured')
+            self._callback(False, 'Unknown error occurred')
             raise
 
     def _callback(self, allow, reason=None):

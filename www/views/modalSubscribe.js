@@ -128,7 +128,7 @@ define([
                     this.setAlert('danger', response.responseJSON.error_msg);
                   }
                   else {
-                    this.setAlert('danger', 'Server error occured, ' +
+                    this.setAlert('danger', 'Server error occurred, ' +
                       'please try again later.');
                   }
                   this.clearLoading();
@@ -260,7 +260,7 @@ define([
             this.setAlert('danger', response.responseJSON.error_msg);
           }
           else {
-            this.setAlert('danger', 'Server error occured, ' +
+            this.setAlert('danger', 'Server error occurred, ' +
               'please try again later.');
           }
           this.$('.subscribe-submit').removeAttr('disabled');
