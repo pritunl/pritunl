@@ -49,6 +49,7 @@ class SettingsApp(SettingsGroupMongo):
         'http_request_timeout': 15,
         'request_queue_size': 10,
         'request_thread_count': 50,
+        'request_accepted_queue_size': 50,
         'static_cache_time': 43200,
         'auth_time_window': 300,
         'auth_limiter_ttl': 60,

@@ -141,6 +141,7 @@ def _run_server(restart):
         ('localhost', settings.app.server_internal_port),
         app,
         request_queue_size=settings.app.request_queue_size,
+        accepted_queue_size=settings.app.request_accepted_queue_size,
         numthreads=settings.app.request_thread_count,
         shutdown_timeout=3,
     )
