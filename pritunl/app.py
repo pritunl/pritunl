@@ -143,6 +143,7 @@ def _run_server(restart):
         request_queue_size=settings.app.request_queue_size,
         accepted_queue_size=settings.app.request_accepted_queue_size,
         numthreads=settings.app.request_thread_count,
+        max=settings.app.request_max_thread_count,
         shutdown_timeout=3,
     )
     app_server.server_name = ''
