@@ -226,6 +226,8 @@ def auth_session_post():
     yubico_key = utils.json_opt_filter_str('yubico_key')
     remote_addr = utils.get_remote_addr()
 
+    time.sleep(random.randint(50, 100) / 1000.)
+
     admin = auth.get_by_username(username, remote_addr)
     if not admin:
         if settings.app.sso and RADIUS_AUTH in settings.app.sso:
