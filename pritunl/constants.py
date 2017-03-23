@@ -754,9 +754,6 @@ YUBIKEY_INVALID_MSG = 'YubiKey is invalid.'
 NETWORK_IN_USE = 'network_in_use'
 NETWORK_IN_USE_MSG = 'Network address is already in use.'
 
-INTERFACE_IN_USE = 'interface_in_use'
-INTERFACE_IN_USE_MSG = 'Tunnel interface is already in use.'
-
 PORT_PROTOCOL_IN_USE = 'port_protocol_in_use'
 PORT_PROTOCOL_IN_USE_MSG = 'Port and protocol is already in use.'
 
