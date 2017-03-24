@@ -74,9 +74,6 @@ class SettingsApp(SettingsGroupMongo):
         'sso_client_cache_timeout': 172800,
         'sso_client_cache_window': 21600,
         'sso_match': None,
-        'sso_host': None, # Deprecated
-        'sso_token': None, # Deprecated
-        'sso_secret': None, # Deprecated
         'sso_timeout': 60,
         'sso_org': None,
         'sso_saml_url': None,
