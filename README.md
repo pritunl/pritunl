@@ -110,8 +110,7 @@ sudo systemctl start mongod pritunl
 sudo systemctl enable mongod pritunl
 
 #If you use SELINUX, you need to do this post install
-semanage fcontext -a -t openvpn_etc_t "/tmp/pritunl_xxx(/.*)?"
-#where xxx is the full path of the pritunl config files. This is unique on each install.
+semanage fcontext -a -t openvpn_etc_t "/tmp/pritunl_.*(/.*)?"
 ```
 
 ### debian wheezy
@@ -171,9 +170,7 @@ sudo systemctl start mongod pritunl
 sudo systemctl enable mongod pritunl
 
 #If you use SELINUX, you need to do this post install
-semanage fcontext -a -t openvpn_etc_t "/tmp/pritunl_xxx(/.*)?"
-#where xxx is the full path of the pritunl config files. This is unique on each install.
-
+semanage fcontext -a -t openvpn_etc_t "/tmp/pritunl_.*(/.*)?"
 ```
 
 ### ubuntu precise
