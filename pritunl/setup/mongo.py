@@ -338,6 +338,8 @@ def setup_mongo():
     upsert_index(mongo.collections['auth_nonces'], 'timestamp',
         background=True,
         expireAfterSeconds=settings.app.auth_time_window * 2.1)
+    upsert_index(mongo.collections['auth_csrf_tokens'], 'timestamp',
+        background=True, expireAfterSeconds=604800)
     upsert_index(mongo.collections['auth_limiter'], 'timestamp',
         background=True, expireAfterSeconds=settings.app.auth_limiter_ttl)
     upsert_index(mongo.collections['otp'], 'timestamp', background=True,
