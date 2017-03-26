@@ -391,10 +391,6 @@ def check_session(csrf_check):
         if csrf_check:
             csrf_token = flask.request.headers.get('Csrf-Token', None)
             if not validate_token(admin_id, csrf_token):
-                logger.error('CSRF token check failed', 'auth',
-                    method=flask.request.method,
-                    path=flask.request.path,
-                )
                 return False
 
         administrator = get_user(admin_id, session_id)
