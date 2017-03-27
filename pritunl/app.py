@@ -111,6 +111,9 @@ def after_request(response):
 
     response.headers.add('X-Frame-Options', 'DENY')
 
+    if settings.app.server_ssl:
+        response.headers.add('Strict-Transport-Security', 'max-age=31536000')
+
     if not flask.request.path.startswith('/event'):
         monitoring.insert_point('requests', {
             'host': settings.local.host.name,
