@@ -6,6 +6,7 @@ class SettingsApp(SettingsGroupMongo):
         'secondary_mongodb_uri': None,
         'redis_uri': None,
         'redis_timeout': 6,
+        'server_debug': False,
         'server_ssl': True,
         'server_port': 443,
         'server_internal_port': 9756,
