@@ -104,10 +104,11 @@ def after_request(response):
     db_reads = flask.g.query_count
     db_writes = flask.g.write_count
 
-    response.headers.add('Execution-Time', resp_time)
-    response.headers.add('Query-Time', db_time)
-    response.headers.add('Query-Count', db_reads)
-    response.headers.add('Write-Count', db_writes)
+    if settings.app.server_debug:
+        response.headers.add('Execution-Time', resp_time)
+        response.headers.add('Query-Time', db_time)
+        response.headers.add('Query-Count', db_reads)
+        response.headers.add('Write-Count', db_writes)
 
     response.headers.add('X-Frame-Options', 'DENY')
 
