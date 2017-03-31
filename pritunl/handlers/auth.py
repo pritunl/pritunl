@@ -284,7 +284,7 @@ def auth_delete():
 def auth_state_get():
     return utils.jsonify({
         'super_user': flask.g.administrator.super_user,
-        'csrf_token': auth.get_token(),
+        'csrf_token': auth.get_token(flask.g.administrator.id),
         'theme': settings.app.theme,
         'active': settings.local.sub_active,
         'plan': settings.local.sub_plan,
