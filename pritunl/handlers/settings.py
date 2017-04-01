@@ -603,9 +603,6 @@ def settings_put():
                 setattr(settings.app, aws_key, None)
 
     if not settings.app.sso:
-        settings.app.sso_host = None
-        settings.app.sso_token = None
-        settings.app.sso_secret = None
         settings.app.sso_match = None
         settings.app.sso_duo_token = None
         settings.app.sso_duo_secret = None
