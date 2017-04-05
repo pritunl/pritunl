@@ -849,15 +849,11 @@ def sso_callback_get():
         username = params.get('username')[0]
         email = username
 
-        valid, org_name = sso.verify_google(username)
+        valid = sso.verify_google(username)
         if not valid:
             return flask.abort(401)
 
         org_id = settings.app.sso_org
-        if org_name:
-            org = organization.get_by_name(org_name, fields=('_id'))
-            if org:
-                org_id = org.id
 
         valid, org_id_new, groups = sso.plugin_sso_authenticate(
             sso_type='google',
