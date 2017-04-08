@@ -786,10 +786,6 @@ def sso_callback_get():
         if not username:
             return flask.abort(406)
 
-        valid, org_name = sso.verify_saml(username, email, org_name)
-        if not valid:
-            return flask.abort(401)
-
         org_id = settings.app.sso_org
         if org_name:
             org = organization.get_by_name(org_name, fields=('_id'))
