@@ -1,5 +1,4 @@
 import string
-import datetime
 
 APP_NAME = 'pritunl'
 APP_NAME_FORMATED = 'Pritunl'
