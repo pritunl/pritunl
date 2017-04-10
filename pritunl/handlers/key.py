@@ -813,12 +813,9 @@ def sso_callback_get():
         org_names = params.get('orgs', [''])[0]
         org_names = org_names.split(',')
 
-        valid, org_name = sso.verify_slack(username, user_team, org_names)
+        valid = sso.verify_slack(username, user_team)
         if not valid:
             return flask.abort(401)
-
-        if org_name:
-            org_names = [org_name]
 
         org_id = settings.app.sso_org
         for org_name in org_names:
