@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.27.1307.25 2017-04-11
+-------------------------------
 
 Fix issue with DNS mapping
 
