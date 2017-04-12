@@ -1,6 +1,11 @@
 Pritunl Changelog
 =================
 
+Version
+-------
+
+Add support for AWS GovCloud region
+
 Version 1.27.1307.25 2017-04-11
 -------------------------------
 
