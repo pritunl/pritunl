@@ -134,6 +134,8 @@ class SettingsApp(SettingsGroupMongo):
         'us_west_1_secret_key': None,
         'us_west_2_access_key': None,
         'us_west_2_secret_key': None,
+        'us_gov_west_1_access_key': None,
+        'us_gov_west_1_secret_key': None,
         'eu_west_1_access_key': None,
         'eu_west_1_secret_key': None,
         'eu_central_1_access_key': None,
