@@ -1,8 +1,7 @@
 Pritunl Changelog
 =================
 
-Version
--------
+<%= version %>
 
 Add support for AWS GovCloud region
 
