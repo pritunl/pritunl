@@ -205,6 +205,7 @@
         <option value="us-east-2" <%= route53_region === 'us-east-2' ? 'selected' : '' %>>US East (Ohio)</option>
         <option value="us-west-1" <%= route53_region === 'us-west-1' ? 'selected' : '' %>>US West (N. California)</option>
         <option value="us-west-2" <%= route53_region === 'us-west-2' ? 'selected' : '' %>>US West (Oregon)</option>
+        <option value="us-gov-west-1" <%= route53_region === 'us-gov-west-1' ? 'selected' : '' %>>US GovCloud (West)</option>
         <option value="eu-west-1" <%= route53_region === 'eu-west-1' ? 'selected' : '' %>>EU (Ireland)</option>
         <option value="eu-central-1" <%= route53_region === 'eu-central-1' ? 'selected' : '' %>>EU (Frankfurt)</option>
         <option value="ap-northeast-1" <%= route53_region === 'ap-northeast-1' ? 'selected' : '' %>>Asia Pacific (Tokyo)</option>
@@ -230,6 +231,10 @@
     <div class="us-west-2-access-key form-group">
       <label>US West (Oregon) Access Key</label>
       <input type="text" class="form-control" placeholder="Enter access key" value="<%- us_west_2_access_key || '' %>">
+    </div>
+    <div class="us-gov-west-1-access-key form-group">
+      <label>US GovCloud (West) Access Key</label>
+      <input type="text" class="form-control" placeholder="Enter access key" value="<%- us_gov_west_1_access_key || '' %>">
     </div>
     <div class="eu-west-1-access-key form-group">
       <label>EU (Ireland) Access Key</label>
@@ -286,6 +291,10 @@
     <div class="us-west-2-secret-key form-group">
       <label>US West (Oregon) Secret Key</label>
       <input type="text" class="form-control" placeholder="Enter secret key" value="<%- us_west_2_secret_key || '' %>">
+    </div>
+    <div class="us-gov-west-1-secret-key form-group">
+      <label>US GovCloud (West) Secret Key</label>
+      <input type="text" class="form-control" placeholder="Enter secret key" value="<%- us_gov_west_1_secret_key || '' %>">
     </div>
     <div class="eu-west-1-secret-key form-group">
       <label>EU (Ireland) Secret Key</label>

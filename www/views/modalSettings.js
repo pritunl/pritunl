@@ -532,6 +532,10 @@ define([
         '.us-west-2-access-key input').val();
       var usWest2SecretKey = this.$(
         '.us-west-2-secret-key input').val();
+      var usGovWest1AccessKey = this.$(
+        '.us-gov-west-1-access-key input').val();
+      var usGovWest1SecretKey = this.$(
+        '.us-gov-west-1-secret-key input').val();
       var euWest1AccessKey = this.$(
         '.eu-west-1-access-key input').val();
       var euWest1SecretKey = this.$(
@@ -718,6 +722,8 @@ define([
         us_west_1_secret_key: usWest1SecretKey,
         us_west_2_access_key: usWest2AccessKey,
         us_west_2_secret_key: usWest2SecretKey,
+        us_gov_west_1_access_key: usGovWest1AccessKey,
+        us_gov_west_1_secret_key: usGovWest1SecretKey,
         eu_west_1_access_key: euWest1AccessKey,
         eu_west_1_secret_key: euWest1SecretKey,
         eu_central_1_access_key: euCentral1AccessKey,
