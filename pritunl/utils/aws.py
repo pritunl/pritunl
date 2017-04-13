@@ -44,6 +44,11 @@ def add_vpc_route(region, vpc_id, network, resource_id):
     if not aws_key or not aws_secret:
         raise ValueError('AWS credentials not available for %s' % region)
 
+    if aws_key == 'role':
+        aws_key = None
+    if aws_secret == 'role':
+        aws_secret = None
+
     vpc_conn = connect_vpc(aws_key, aws_secret, region)
 
     tables = vpc_conn.get_all_route_tables(filters={'vpc-id': vpc_id})
@@ -89,6 +94,11 @@ def get_vpcs():
         if not aws_key or not aws_secret:
             continue
 
+        if aws_key == 'role':
+            aws_key = None
+        if aws_secret == 'role':
+            aws_secret = None
+
         vpc_conn = connect_vpc(aws_key, aws_secret, region)
 
         vpcs = vpc_conn.get_all_vpcs()
@@ -113,6 +123,11 @@ def get_zones():
         if not aws_key or not aws_secret:
             continue
 
+        if aws_key == 'role':
+            aws_key = None
+        if aws_secret == 'role':
+            aws_secret = None
+
         conn = connect_route53(aws_key, aws_secret, region)
 
         for zone in conn.get_zones():
@@ -124,6 +139,11 @@ def set_zone_record(region, zone_name, host_name, ip_addr, ip_addr6):
     region_key = region.replace('-', '_')
     aws_key = getattr(settings.app, region_key + '_access_key')
     aws_secret = getattr(settings.app, region_key + '_secret_key')
+
+    if aws_key == 'role':
+        aws_key = None
+    if aws_secret == 'role':
+        aws_secret = None
 
     conn = connect_route53(aws_key, aws_secret, region)
 
