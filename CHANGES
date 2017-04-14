@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add support for AWS roles
+
 Version 1.27.1308.92 2017-04-12
 -------------------------------
 
