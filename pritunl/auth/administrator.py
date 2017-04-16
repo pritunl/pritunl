@@ -305,12 +305,10 @@ def get_user(id, session_id):
     if not session_id:
         return
 
-    user = Administrator(spec={
+    return Administrator(spec={
         '_id': id,
         'sessions': session_id,
     })
-
-    return user
 
 def find_user(username=None, token=None):
     spec = {}
