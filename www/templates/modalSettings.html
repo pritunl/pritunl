@@ -199,7 +199,7 @@
   <div class="settings-left layout-flex left">
     <div class="route53-region form-group">
       <label>Auto Route 53 Region</label>
-      <select class="form-control" data-toggle="tooltip" title="Select Route 53 region. This will automatically create and update DNS records for each host in the selected region.">
+      <select class="form-control" data-toggle="tooltip" title="Select Route 53 region. This will automatically create and update DNS records for each host in the selected region">
         <option value="" <%= !route53_region ? 'selected' : '' %>>Disabled</option>
         <option value="us-east-1" <%= route53_region === 'us-east-1' ? 'selected' : '' %>>US East (N. Virginia)</option>
         <option value="us-east-2" <%= route53_region === 'us-east-2' ? 'selected' : '' %>>US East (Ohio)</option>
