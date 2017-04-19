@@ -430,7 +430,6 @@ DEFAULT_USERNAME = 'pritunl'
 DEFAULT_PASSWORD = 'pritunl'
 DEFAULT_CONF_PATH = '/etc/pritunl.conf'
 SUBSCRIPTION_UPDATE_RATE = 900
-ENV_PREFIX = APP_NAME
 SHORT_URL_CHARS = (string.ascii_lowercase + string.ascii_uppercase +
     string.digits).replace('l', '').replace('I', '').replace('O', '').replace(
     '0', '')
