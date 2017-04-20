@@ -109,7 +109,7 @@ for dir_name in os.listdir('pritunl'):
 setup(
     name='pritunl',
     version=VERSION,
-    description='Pritunl vpn server',
+    description='Enterprise VPN server',
     long_description=open('README.md').read(),
     author='Pritunl',
     author_email='contact@pritunl.com',
