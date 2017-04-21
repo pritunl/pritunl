@@ -667,6 +667,7 @@ class ServerInstance(object):
                         logger.error(
                             'Instance doc lost, stopping server', 'server',
                             server_id=self.server.id,
+                            cur_timestamp=utils.now(),
                         )
 
                         if self.stop_process():
