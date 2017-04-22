@@ -539,8 +539,6 @@ class Server(mongo.MongoObject):
                     data['server_link'] = True
                     data['link_virtual_network'] = route['virtual_network']
 
-                    if route['virtual_network']:
-                        link_routes.append(data)
                     routes_dict[route['network']] = data
 
         for route in self.routes:
