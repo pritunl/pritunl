@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix API issue
+
 Version 1.27.1314.93 2017-04-18
 -------------------------------
 
