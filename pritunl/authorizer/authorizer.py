@@ -107,7 +107,7 @@ class Authorizer(object):
             raise
         except:
             logger.exception('Exception in user authorize', 'authorize')
-            self._callback(False, 'Unknown error occured')
+            self._callback(False, 'Unknown error occurred')
             raise
 
     def _callback(self, allow, reason=None):
@@ -166,7 +166,7 @@ class Authorizer(object):
                 ('User connection to "%s" denied. User not in ' +
                  'servers groups') % (self.server.name),
                 remote_addr=self.remote_ip,
-                )
+            )
             raise AuthError('User not in servers groups')
 
         if self.server.allowed_devices:
@@ -556,9 +556,9 @@ class Authorizer(object):
         def thread_func():
             try:
                 self._check_call(self._auth_push_thread)
+                self._callback(True)
             except:
-                return
-            self._callback(True)
+                pass
 
         thread = threading.Thread(target=thread_func)
         thread.daemon = True

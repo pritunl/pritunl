@@ -1,6 +1,49 @@
 Pritunl Changelog
 =================
 
+Version 1.27.1314.93 2017-04-18
+-------------------------------
+
+Add support for AWS roles
+
+Version 1.27.1308.92 2017-04-12
+-------------------------------
+
+Add support for AWS GovCloud region
+
+Version 1.27.1307.25 2017-04-11
+-------------------------------
+
+Fix issue with DNS mapping
+
+Version 1.27.1282.77 2017-03-17
+-------------------------------
+
+Web server improvements
+
+Version 1.27.1272.94 2017-03-07
+-------------------------------
+
+Web interface improvements
+Fix issue with AWS route advertisement
+
+Version 1.27.1268.95 2017-03-03
+-------------------------------
+
+Improve AWS error handling
+
+Version 1.27.1266.22 2017-03-01
+-------------------------------
+
+Add user inactive timeout to server settings
+
+Version 1.27.1265.38 2017-02-28
+-------------------------------
+
+Add support for administrator login with YubiKey
+Fix issue with cli tools
+Improvements to auto failover
+
 Version 1.27.1259.77 2017-02-22
 -------------------------------
 

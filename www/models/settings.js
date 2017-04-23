@@ -55,6 +55,8 @@ define([
       'us_west_1_secret_key': null,
       'us_west_2_access_key': null,
       'us_west_2_secret_key': null,
+      'us_gov_west_1_access_key': null,
+      'us_gov_west_1_secret_key': null,
       'eu_west_1_access_key': null,
       'eu_west_1_secret_key': null,
       'eu_central_1_access_key': null,

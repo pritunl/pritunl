@@ -375,6 +375,8 @@ define([
         this.$('.link-ping-interval input').val(), 10);
       var linkPingTimeout = parseFloat(
         this.$('.link-ping-timeout input').val(), 10);
+      var inactiveTimeout = parseFloat(
+        this.$('.inactive-timeout input').val(), 10);
       var allowedDevices = this.$('.allowed-devices select').val();
       var maxClients = parseInt(this.$('.max-clients input').val(), 10);
       var replicaCount = parseInt(this.$('.replica-count input').val(), 10);
@@ -454,6 +456,7 @@ define([
         'ping_timeout': pingTimeout,
         'link_ping_interval': linkPingInterval,
         'link_ping_timeout': linkPingTimeout,
+        'inactive_timeout': inactiveTimeout,
         'onc_hostname': oncHostname,
         'allowed_devices': allowedDevices,
         'max_clients': maxClients,

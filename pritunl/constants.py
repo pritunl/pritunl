@@ -1,5 +1,4 @@
 import string
-import datetime
 
 APP_NAME = 'pritunl'
 APP_NAME_FORMATED = 'Pritunl'
@@ -64,6 +63,7 @@ AWS_REGIONS = {
     'us-east-2',
     'us-west-1',
     'us-west-2',
+    'us-gov-west-1',
     'eu-west-1',
     'eu-central-1',
     'ap-northeast-1',
@@ -430,7 +430,6 @@ DEFAULT_USERNAME = 'pritunl'
 DEFAULT_PASSWORD = 'pritunl'
 DEFAULT_CONF_PATH = '/etc/pritunl.conf'
 SUBSCRIPTION_UPDATE_RATE = 900
-ENV_PREFIX = APP_NAME
 SHORT_URL_CHARS = (string.ascii_lowercase + string.ascii_uppercase +
     string.digits).replace('l', '').replace('I', '').replace('O', '').replace(
     '0', '')
@@ -753,9 +752,6 @@ YUBIKEY_INVALID_MSG = 'YubiKey is invalid.'
 
 NETWORK_IN_USE = 'network_in_use'
 NETWORK_IN_USE_MSG = 'Network address is already in use.'
-
-INTERFACE_IN_USE = 'interface_in_use'
-INTERFACE_IN_USE_MSG = 'Tunnel interface is already in use.'
 
 PORT_PROTOCOL_IN_USE = 'port_protocol_in_use'
 PORT_PROTOCOL_IN_USE_MSG = 'Port and protocol is already in use.'
@@ -1094,22 +1090,22 @@ remote-cert-tls server
 """
 
 KEY_LINK_EMAIL_TEXT = """\
-Your vpn key can be downloaded from the temporary link below. You may also directly import your keys in the Pritunl client using the temporary URI link.
+Your vpn profile can be downloaded from the temporary link below. You may also directly import your profiles in the Pritunl client using the temporary URI link.
 
-Key Link: {key_link}
-URI Key Link: {uri_link}"""
+Profile Link: {key_link}
+URI Profile Link: {uri_link}"""
 
 KEY_LINK_EMAIL_HTML = """\
-<p>Your vpn key can be downloaded from the temporary link below.
-You may also directly import your keys in the Pritunl client using the
+<p>Your vpn profile can be downloaded from the temporary link below.
+You may also directly import your profiles in the Pritunl client using the
 temporary URI link.<br><br>
-Key Link: <a href="{key_link}">{key_link}</a><br>
-URI Key Link: <a href="{uri_link}">{uri_link}</a></p>
+Profile Link: <a href="{key_link}">{key_link}</a><br>
+URI Profile Link: <a href="{uri_link}">{uri_link}</a></p>
 
 <div itemscope itemtype="http://schema.org/EmailMessage">
   <div itemprop="action" itemscope itemtype="http://schema.org/ViewAction">
     <link itemprop="url" href="{key_link}"></link>
-    <meta itemprop="name" content="View Key"></meta>
+    <meta itemprop="name" content="View Profile"></meta>
   </div>
-  <meta itemprop="description" content="View Pritunl key and configuration information"></meta>
+  <meta itemprop="description" content="View Pritunl profile and configuration information"></meta>
 </div>"""

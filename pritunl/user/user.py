@@ -290,7 +290,9 @@ class User(mongo.MongoObject):
         messenger.publish('instance', ['user_disconnect', self.id])
 
     def sso_auth_check(self, password, remote_ip):
-        if GOOGLE_AUTH in self.auth_type and GOOGLE_AUTH in settings.app.sso:
+        sso_mode = settings.app.sso or ''
+
+        if GOOGLE_AUTH in self.auth_type and GOOGLE_AUTH in sso_mode:
             if settings.user.skip_remote_sso_check:
                 return True
 
@@ -308,7 +310,7 @@ class User(mongo.MongoObject):
                     user_id=self.id,
                 )
             return False
-        elif SLACK_AUTH in self.auth_type and SLACK_AUTH in settings.app.sso:
+        elif SLACK_AUTH in self.auth_type and SLACK_AUTH in sso_mode:
             if settings.user.skip_remote_sso_check:
                 return True
 
@@ -328,7 +330,7 @@ class User(mongo.MongoObject):
                 )
             return False
         elif SAML_ONELOGIN_AUTH in self.auth_type and \
-                SAML_ONELOGIN_AUTH in settings.app.sso:
+                SAML_ONELOGIN_AUTH in sso_mode:
             if settings.user.skip_remote_sso_check:
                 return True
 
@@ -340,7 +342,7 @@ class User(mongo.MongoObject):
                 )
             return False
         elif SAML_OKTA_AUTH in self.auth_type and \
-                SAML_OKTA_AUTH in settings.app.sso:
+                SAML_OKTA_AUTH in sso_mode:
             if settings.user.skip_remote_sso_check:
                 return True
 
@@ -351,7 +353,7 @@ class User(mongo.MongoObject):
                     user_id=self.id,
                 )
             return False
-        elif RADIUS_AUTH in self.auth_type and RADIUS_AUTH in settings.app.sso:
+        elif RADIUS_AUTH in self.auth_type and RADIUS_AUTH in sso_mode:
             try:
                 return sso.verify_radius(self.name, password)[0]
             except:

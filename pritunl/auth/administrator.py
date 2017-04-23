@@ -8,6 +8,7 @@ from pritunl import utils
 from pritunl import mongo
 from pritunl import logger
 from pritunl import plugins
+from pritunl import sso
 
 import base64
 import os
@@ -22,6 +23,7 @@ class Administrator(mongo.MongoObject):
     fields = {
         'username',
         'password',
+        'yubikey_id',
         'otp_auth',
         'otp_secret',
         'auth_api',
@@ -38,8 +40,8 @@ class Administrator(mongo.MongoObject):
     }
 
     def __init__(self, username=None, password=None, default=None,
-            otp_auth=None, auth_api=None, disabled=None, super_user=None,
-            **kwargs):
+            yubikey_id=None, otp_auth=None, auth_api=None, disabled=None,
+            super_user=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
         if username is not None:
             self.username = username
@@ -47,6 +49,8 @@ class Administrator(mongo.MongoObject):
             self.password = password
         if default is not None:
             self.default = default
+        if yubikey_id is not None:
+            self.yubikey_id = yubikey_id
         if otp_auth is not None:
             self.otp_auth = otp_auth
         if auth_api is not None:
@@ -61,6 +65,7 @@ class Administrator(mongo.MongoObject):
             return {
                 'id': self.id,
                 'username': self.username,
+                'yubikey_id': 'demo',
                 'otp_auth': self.otp_auth,
                 'otp_secret': self.otp_secret,
                 'auth_api': self.auth_api,
@@ -73,6 +78,7 @@ class Administrator(mongo.MongoObject):
         return {
             'id': self.id,
             'username': self.username,
+            'yubikey_id': self.yubikey_id,
             'otp_auth': self.otp_auth,
             'otp_secret': self.otp_secret,
             'auth_api': self.auth_api,
@@ -123,7 +129,8 @@ class Administrator(mongo.MongoObject):
         test_hash = base64.b64encode(hash_func(pass_salt, test_pass))
         return pass_hash == test_hash
 
-    def auth_check(self, password, otp_code=None, remote_addr=None):
+    def auth_check(self, password, otp_code=None, yubico_key=None,
+            remote_addr=None):
         if not self.test_password(password):
             self.audit_event(
                 'admin_auth',
@@ -140,6 +147,16 @@ class Administrator(mongo.MongoObject):
                 remote_addr=remote_addr,
             )
             return False
+
+        if self.yubikey_id:
+            valid, public_id = sso.auth_yubico(yubico_key)
+            if not valid or self.yubikey_id != public_id:
+                self.audit_event(
+                    'admin_auth',
+                    'Administrator login failed, invalid YubiKey',
+                    remote_addr=remote_addr,
+                )
+                return False
 
         if self.disabled:
             self.audit_event(
@@ -288,12 +305,10 @@ def get_user(id, session_id):
     if not session_id:
         return
 
-    user = Administrator(spec={
+    return Administrator(spec={
         '_id': id,
         'sessions': session_id,
     })
-
-    return user
 
 def find_user(username=None, token=None):
     spec = {}
@@ -373,11 +388,7 @@ def check_session(csrf_check):
 
         if csrf_check:
             csrf_token = flask.request.headers.get('Csrf-Token', None)
-            if not validate_token(csrf_token):
-                logger.error('CSRF token check failed', 'auth',
-                    method=flask.request.method,
-                    path=flask.request.path,
-                )
+            if not validate_token(admin_id, csrf_token):
                 return False
 
         administrator = get_user(admin_id, session_id)

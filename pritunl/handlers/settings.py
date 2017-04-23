@@ -69,6 +69,8 @@ def _dict():
             'us_west_1_secret_key': 'demo',
             'us_west_2_access_key': 'demo',
             'us_west_2_secret_key': 'demo',
+            'us_gov_west_1_access_key': 'demo',
+            'us_gov_west_1_secret_key': 'demo',
             'eu_west_1_access_key': 'demo',
             'eu_west_1_secret_key': 'demo',
             'eu_central_1_access_key': 'demo',
@@ -134,6 +136,8 @@ def _dict():
             'us_west_1_secret_key': settings.app.us_west_1_secret_key,
             'us_west_2_access_key': settings.app.us_west_2_access_key,
             'us_west_2_secret_key': settings.app.us_west_2_secret_key,
+            'us_gov_west_1_access_key': settings.app.us_gov_west_1_access_key,
+            'us_gov_west_1_secret_key': settings.app.us_gov_west_1_secret_key,
             'eu_west_1_access_key': settings.app.eu_west_1_access_key,
             'eu_west_1_secret_key': settings.app.eu_west_1_secret_key,
             'eu_central_1_access_key': settings.app.eu_central_1_access_key,
@@ -576,6 +580,8 @@ def settings_put():
                 'us_west_1_secret_key',
                 'us_west_2_access_key',
                 'us_west_2_secret_key',
+                'us_gov_west_1_access_key',
+                'us_gov_west_1_secret_key',
                 'eu_west_1_access_key',
                 'eu_west_1_secret_key',
                 'eu_central_1_access_key',
@@ -603,15 +609,10 @@ def settings_put():
                 setattr(settings.app, aws_key, None)
 
     if not settings.app.sso:
-        settings.app.sso_host = None
-        settings.app.sso_token = None
-        settings.app.sso_secret = None
         settings.app.sso_match = None
         settings.app.sso_duo_token = None
         settings.app.sso_duo_secret = None
         settings.app.sso_duo_host = None
-        settings.app.sso_yubico_client = None
-        settings.app.sso_yubico_secret = None
         settings.app.sso_org = None
         settings.app.sso_saml_url = None
         settings.app.sso_saml_issuer_url = None

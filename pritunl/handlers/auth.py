@@ -223,7 +223,10 @@ def auth_session_post():
     username = utils.json_filter_str('username')
     password = utils.json_str('password')
     otp_code = utils.json_opt_filter_str('otp_code')
+    yubico_key = utils.json_opt_filter_str('yubico_key')
     remote_addr = utils.get_remote_addr()
+
+    time.sleep(random.randint(50, 100) / 1000.)
 
     admin = auth.get_by_username(username, remote_addr)
     if not admin:
@@ -233,13 +236,16 @@ def auth_session_post():
         time.sleep(random.randint(0, 100) / 1000.)
         return _auth_plugin(username, password)
 
-    if not otp_code and admin.otp_auth:
+    if (not otp_code and admin.otp_auth) or \
+            (not yubico_key and admin.yubikey_id):
         return utils.jsonify({
             'error': AUTH_OTP_REQUIRED,
             'error_msg': AUTH_OTP_REQUIRED_MSG,
+            'otp_auth': admin.otp_auth,
+            'yubico_auth': bool(admin.yubikey_id),
         }, 402)
 
-    if not admin.auth_check(password, otp_code, remote_addr):
+    if not admin.auth_check(password, otp_code, yubico_key, remote_addr):
         time.sleep(random.randint(0, 100) / 1000.)
         return utils.jsonify({
             'error': AUTH_INVALID,
@@ -278,7 +284,7 @@ def auth_delete():
 def auth_state_get():
     return utils.jsonify({
         'super_user': flask.g.administrator.super_user,
-        'csrf_token': auth.get_token(),
+        'csrf_token': auth.get_token(flask.g.administrator.id),
         'theme': settings.app.theme,
         'active': settings.local.sub_active,
         'plan': settings.local.sub_plan,

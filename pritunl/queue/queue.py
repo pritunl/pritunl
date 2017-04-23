@@ -128,7 +128,7 @@ class Queue(mongo.MongoObject):
                             last_update = time.time()
                             break
                         elif msg['message'] == [ERROR, self.id]:
-                            raise QueueTaskError('Error occured running ' +
+                            raise QueueTaskError('Error occurred running ' +
                                 'queue task', {
                                     'queue_id': self.id,
                                     'queue_type': self.type,
@@ -188,7 +188,7 @@ class Queue(mongo.MongoObject):
                     if msg['message'] == [COMPLETE, doc['_id']]:
                         return doc
                     elif msg['message'] == [ERROR, doc['_id']]:
-                        raise QueueTaskError('Error occured running ' +
+                        raise QueueTaskError('Error occurred running ' +
                             'queue task', {
                                 'queue_id': doc['_id'],
                                 'queue_type': doc['type'],

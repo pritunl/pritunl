@@ -293,41 +293,32 @@ def server_put_post(server_id=None):
     ping_interval_def = False
     if 'ping_interval' in flask.request.json:
         ping_interval_def = True
-        ping_interval = flask.request.json['ping_interval']
-        if ping_interval:
-            ping_interval = int(ping_interval)
-        if not ping_interval:
-            ping_interval = 10
+        ping_interval = int(flask.request.json['ping_interval'] or 10)
 
     ping_timeout = None
     ping_timeout_def = False
     if 'ping_timeout' in flask.request.json:
         ping_timeout_def = True
-        ping_timeout = flask.request.json['ping_timeout']
-        if ping_timeout:
-            ping_timeout = int(ping_timeout)
-        if not ping_timeout:
-            ping_timeout = 60
+        ping_timeout = int(flask.request.json['ping_timeout'] or 60)
 
     link_ping_interval = None
     link_ping_interval_def = False
     if 'link_ping_interval' in flask.request.json:
         link_ping_interval_def = True
-        link_ping_interval = flask.request.json['link_ping_interval']
-        if link_ping_interval:
-            link_ping_interval = int(link_ping_interval)
-        if not link_ping_interval:
-            link_ping_interval = 1
+        link_ping_interval = int(flask.request.json['link_ping_interval'] or 1)
 
     link_ping_timeout = None
     link_ping_timeout_def = False
     if 'link_ping_timeout' in flask.request.json:
         link_ping_timeout_def = True
-        link_ping_timeout = flask.request.json['link_ping_timeout']
-        if link_ping_timeout:
-            link_ping_timeout = int(link_ping_timeout)
-        if not link_ping_timeout:
-            link_ping_timeout = 5
+        link_ping_timeout = int(flask.request.json['link_ping_timeout'] or 5)
+
+    inactive_timeout = None
+    inactive_timeout_def = False
+    if 'inactive_timeout' in flask.request.json:
+        inactive_timeout_def = True
+        inactive_timeout = int(
+            flask.request.json['inactive_timeout'] or 0) or None
 
     onc_hostname = None
     onc_hostname_def = False
@@ -511,6 +502,7 @@ def server_put_post(server_id=None):
             ping_timeout=ping_timeout,
             link_ping_interval=link_ping_interval,
             link_ping_timeout=link_ping_timeout,
+            inactive_timeout=inactive_timeout,
             onc_hostname=onc_hostname,
             allowed_devices=allowed_devices,
             max_clients=max_clients,
@@ -579,6 +571,8 @@ def server_put_post(server_id=None):
             svr.link_ping_interval = link_ping_interval
         if link_ping_timeout_def:
             svr.link_ping_timeout = link_ping_timeout
+        if inactive_timeout_def:
+            svr.inactive_timeout = inactive_timeout
         if onc_hostname_def:
             svr.onc_hostname = onc_hostname
         if allowed_devices_def:

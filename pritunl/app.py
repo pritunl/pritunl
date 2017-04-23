@@ -104,12 +104,16 @@ def after_request(response):
     db_reads = flask.g.query_count
     db_writes = flask.g.write_count
 
-    response.headers.add('Execution-Time', resp_time)
-    response.headers.add('Query-Time', db_time)
-    response.headers.add('Query-Count', db_reads)
-    response.headers.add('Write-Count', db_writes)
+    if settings.app.server_debug:
+        response.headers.add('Execution-Time', resp_time)
+        response.headers.add('Query-Time', db_time)
+        response.headers.add('Query-Count', db_reads)
+        response.headers.add('Write-Count', db_writes)
 
     response.headers.add('X-Frame-Options', 'DENY')
+
+    if settings.app.server_ssl:
+        response.headers.add('Strict-Transport-Security', 'max-age=31536000')
 
     if not flask.request.path.startswith('/event'):
         monitoring.insert_point('requests', {
@@ -141,7 +145,9 @@ def _run_server(restart):
         ('localhost', settings.app.server_internal_port),
         app,
         request_queue_size=settings.app.request_queue_size,
+        accepted_queue_size=settings.app.request_accepted_queue_size,
         numthreads=settings.app.request_thread_count,
+        max=settings.app.request_max_thread_count,
         shutdown_timeout=3,
     )
     app_server.server_name = ''

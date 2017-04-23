@@ -12,6 +12,7 @@ define([
     template: _.template(modalAddAdminTemplate),
     title: 'Add Administrator',
     okText: 'Add',
+    enterOk: false,
     events: function() {
       return _.extend({
         'click .super-user-toggle': 'onSuperSelect',
@@ -80,6 +81,7 @@ define([
     onOk: function() {
       var username = this.$('.username input').val();
       var password = this.$('.password input').val();
+      var yubikeyId = this.$('.yubikey-id input').val();
       var superUser = this.getSuperSelect();
       var otpAuth = this.getOtpAuthSelect();
       var authApi = this.getAuthSelect();
@@ -97,6 +99,7 @@ define([
       var data = {
         username: username,
         password: password,
+        yubikey_id: yubikeyId,
         super_user: superUser,
         otp_auth: otpAuth,
         auth_api: authApi,

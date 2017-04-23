@@ -6,7 +6,7 @@ import shlex
 import shutil
 import fileinput
 
-VERSION = '1.27.1259.77'
+VERSION = '1.27.1314.93'
 PATCH_DIR = 'build'
 install_systemd = True
 install_upstart = False
@@ -109,7 +109,7 @@ for dir_name in os.listdir('pritunl'):
 setup(
     name='pritunl',
     version=VERSION,
-    description='Pritunl vpn server',
+    description='Enterprise VPN server',
     long_description=open('README.md').read(),
     author='Pritunl',
     author_email='contact@pritunl.com',
@@ -123,10 +123,6 @@ setup(
     packages=packages,
     license=open('LICENSE').read(),
     zip_safe=False,
-    install_requires=[
-        'flask>=0.10.1',
-        'pymongo>=3.0.3',
-    ],
     data_files=data_files,
     entry_points={
         'console_scripts': ['pritunl = pritunl.__main__:main'],

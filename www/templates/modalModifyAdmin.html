@@ -7,6 +7,10 @@
   <input type="password" class="form-control" placeholder="Enter new password"
     data-toggle="tooltip" title="Administrator password">
 </div>
+<div class="form-group yubikey-id">
+  <label>YubiKey ID</label>
+  <input type="text" class="form-control" maxlength="12" placeholder="Insert YubiKey" data-toggle="tooltip" title="Insert and touch YubiKey to get ID" value="<%- yubikey_id %>">
+</div>
 <div class="super-user-toggle toggle-form form-group">
   <label>Super User</label>
   <div class="selector <%= super_user ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Allow administrator to modify other administrators.">

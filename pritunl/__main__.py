@@ -254,7 +254,9 @@ def main(default_conf=None):
         mongo.get_collection('otp').drop()
         mongo.get_collection('otp_cache').drop()
         mongo.get_collection('sso_tokens').drop()
-        mongo.get_collection('sso_cache').drop()
+        mongo.get_collection('sso_push_cache').drop()
+        mongo.get_collection('sso_client_cache').drop()
+        mongo.get_collection('sso_passcode_cache').drop()
 
         server_coll = mongo.get_collection('servers')
         server_coll.update_many({}, {

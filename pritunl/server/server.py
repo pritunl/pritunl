@@ -63,6 +63,7 @@ dict_fields = [
     'ping_timeout',
     'link_ping_interval',
     'link_ping_timeout',
+    'inactive_timeout',
     'allowed_devices',
     'max_clients',
     'replica_count',
@@ -107,6 +108,7 @@ class Server(mongo.MongoObject):
         'ping_timeout',
         'link_ping_interval',
         'link_ping_timeout',
+        'inactive_timeout',
         'onc_hostname',
         'dns_mapping',
         'debug',
@@ -179,9 +181,9 @@ class Server(mongo.MongoObject):
             cipher=None, hash=None, block_outside_dns=None, jumbo_frames=None,
             lzo_compression=None, inter_client=None, ping_interval=None,
             ping_timeout=None, link_ping_interval=None, link_ping_timeout=None,
-            onc_hostname=None, allowed_devices=None, max_clients=None,
-            replica_count=None, vxlan=None, dns_mapping=None, debug=None,
-            policy=None, **kwargs):
+            inactive_timeout=None, onc_hostname=None, allowed_devices=None,
+            max_clients=None, replica_count=None, vxlan=None,
+            dns_mapping=None, debug=None, policy=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         if 'network' in self.loaded_fields:
@@ -246,6 +248,8 @@ class Server(mongo.MongoObject):
             self.link_ping_interval = link_ping_interval
         if link_ping_timeout is not None:
             self.link_ping_timeout = link_ping_timeout
+        if inactive_timeout is not None:
+            self.inactive_timeout = inactive_timeout
         if onc_hostname is not None:
             self.onc_hostname = onc_hostname
         if allowed_devices is not None:
@@ -330,6 +334,7 @@ class Server(mongo.MongoObject):
             'ping_timeout': self.ping_timeout,
             'link_ping_interval': self.link_ping_interval,
             'link_ping_timeout': self.link_ping_timeout,
+            'inactive_timeout': self.inactive_timeout,
             'onc_hostname': self.onc_hostname,
             'allowed_devices': self.allowed_devices,
             'max_clients': self.max_clients,
@@ -534,8 +539,6 @@ class Server(mongo.MongoObject):
                     data['server_link'] = True
                     data['link_virtual_network'] = route['virtual_network']
 
-                    if route['virtual_network']:
-                        link_routes.append(data)
                     routes_dict[route['network']] = data
 
         for route in self.routes:

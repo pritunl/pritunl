@@ -298,7 +298,7 @@
                 "content": {"Fn::Join": ["", [
                   "[pritunl]\n",
                   "name=Pritunl Repository\n",
-                  "baseurl=http://repo.pritunl.com/stable/yum/centos/7/\n",
+                  "baseurl=https://repo.pritunl.com/stable/yum/centos/7/\n",
                   "gpgcheck=1\n",
                   "enabled=1\n",
                   "gpgkey=https://s3.amazonaws.com/pritunl-repo/pritunl.asc\n"

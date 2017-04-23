@@ -6,6 +6,7 @@ class SettingsApp(SettingsGroupMongo):
         'secondary_mongodb_uri': None,
         'redis_uri': None,
         'redis_timeout': 6,
+        'server_debug': False,
         'server_ssl': True,
         'server_port': 443,
         'server_internal_port': 9756,
@@ -49,6 +50,8 @@ class SettingsApp(SettingsGroupMongo):
         'http_request_timeout': 15,
         'request_queue_size': 10,
         'request_thread_count': 50,
+        'request_max_thread_count': 250,
+        'request_accepted_queue_size': 50,
         'static_cache_time': 43200,
         'auth_time_window': 300,
         'auth_limiter_ttl': 60,
@@ -72,9 +75,6 @@ class SettingsApp(SettingsGroupMongo):
         'sso_client_cache_timeout': 172800,
         'sso_client_cache_window': 21600,
         'sso_match': None,
-        'sso_host': None, # Deprecated
-        'sso_token': None, # Deprecated
-        'sso_secret': None, # Deprecated
         'sso_timeout': 60,
         'sso_org': None,
         'sso_saml_url': None,
@@ -123,6 +123,7 @@ class SettingsApp(SettingsGroupMongo):
         'server_cert': None,
         'server_key': None,
         'cloud_provider': None,
+        'aws_timeout': 3,
         'route53_region': None,
         'route53_zone': None,
         'us_east_1_access_key': None,
@@ -133,6 +134,8 @@ class SettingsApp(SettingsGroupMongo):
         'us_west_1_secret_key': None,
         'us_west_2_access_key': None,
         'us_west_2_secret_key': None,
+        'us_gov_west_1_access_key': None,
+        'us_gov_west_1_secret_key': None,
         'eu_west_1_access_key': None,
         'eu_west_1_secret_key': None,
         'eu_central_1_access_key': None,

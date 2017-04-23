@@ -8,6 +8,7 @@ define([
     defaults: {
       'id': null,
       'username': null,
+      'yubikey_id': null,
       'super_user': null,
       'auth_api': null,
       'token': null,

@@ -172,7 +172,7 @@ class Transaction(mongo.MongoObject):
         try:
             self._run_actions()
         except:
-            logger.exception('Error occured running ' +
+            logger.exception('Error occurred running ' +
                 'transaction actions', 'transaction',
                 transaction_id=self.id,
             )
@@ -218,7 +218,7 @@ class Transaction(mongo.MongoObject):
         try:
             self._rollback_actions()
         except:
-            logger.exception('Error occured rolling back ' +
+            logger.exception('Error occurred rolling back ' +
                 'transaction actions', 'transaction',
                 transaction_id=self.id,
             )
@@ -250,7 +250,7 @@ class Transaction(mongo.MongoObject):
         try:
             self._run_post_actions()
         except:
-            logger.exception('Error occured running ' +
+            logger.exception('Error occurred running ' +
                 'transaction post actions', 'transaction',
                 transaction_id=self.id,
             )
