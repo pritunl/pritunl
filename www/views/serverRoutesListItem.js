@@ -29,6 +29,13 @@ define([
       this.$('.route-comment').text(this.model.get('comment'));
       this.$('.route-network-no-click').text(this.model.get('network'));
 
+      if (this.model.get('vpc_id')) {
+        this.$('.route-vpc-id').text(this.model.get('vpc_id'));
+        this.$('.route-vpc-id').show();
+      } else {
+        this.$('.route-vpc-id').hide();
+        this.$('.route-vpc-id').text('');
+      }
       if (this.model.get('virtual_network')) {
         this.$('.route-virtual-network').show();
       } else {
