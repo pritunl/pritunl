@@ -25,6 +25,10 @@ UPDATE = 'update'
 ONLINE = 'online'
 OFFLINE = 'offline'
 
+AVAILABLE = 'available'
+UNAVAILABLE = 'unavailable'
+ACTIVE = 'active'
+
 DEFAULT = 'default'
 
 TUNNEL = 'tunnel'
