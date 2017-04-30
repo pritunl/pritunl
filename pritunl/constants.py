@@ -29,6 +29,9 @@ AVAILABLE = 'available'
 UNAVAILABLE = 'unavailable'
 ACTIVE = 'active'
 
+CONNECTED = 'connected'
+DISCONNECTED = 'disconnected'
+
 DEFAULT = 'default'
 
 TUNNEL = 'tunnel'
