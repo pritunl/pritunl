@@ -4,6 +4,7 @@ import pritunl.handlers.before_request
 import pritunl.handlers.event
 import pritunl.handlers.host
 import pritunl.handlers.key
+import pritunl.handlers.link
 import pritunl.handlers.log
 import pritunl.handlers.logs
 import pritunl.handlers.org
