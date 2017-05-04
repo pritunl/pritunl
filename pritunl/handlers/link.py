@@ -79,7 +79,7 @@ def link_state_put():
 
     enc_data = base64.b64encode(cipher.encrypt(data))
 
-    resp = flask.Response(response=enc_data, mimetype='text/plain')
+    resp = flask.Response(response=enc_data, mimetype='application/base64')
     resp.headers.add('Cache-Control',
         'no-cache, no-store, must-revalidate')
     resp.headers.add('Pragma', 'no-cache')
