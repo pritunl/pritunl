@@ -119,6 +119,19 @@ class Location(mongo.MongoObject):
     def collection(cls):
         return mongo.get_collection('links_locations')
 
+    def get_host(self, host_id):
+        return Host(link=self.link, location=self, id=host_id)
+
+    def iter_hosts(self, skip=None):
+        cursor = Host.collection.find({
+            'location_id': self.id,
+        }).sort('name')
+
+        for doc in cursor:
+            if skip == doc['_id']:
+                continue
+            yield Location(link=self, doc=doc)
+
     def get_active_host(self):
         host_id = self.get_active_host_id()
         return Host(link=self.link, location=self, id=host_id)
