@@ -34,7 +34,7 @@ def link_state_put():
     except ValueError:
         return flask.abort(401)
 
-    host = link.get_location_host(auth_token)
+    host = link.get_host(auth_token)
     if not host:
         return flask.abort(401)
 
