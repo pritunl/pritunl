@@ -12,7 +12,6 @@ import base64
 import hmac
 import hashlib
 import json
-import Crypto
 import Crypto.Random
 import Crypto.Cipher.AES
 
