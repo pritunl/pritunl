@@ -122,14 +122,12 @@ class Location(mongo.MongoObject):
     def get_host(self, host_id):
         return Host(link=self.link, location=self, id=host_id)
 
-    def iter_hosts(self, skip=None):
+    def iter_hosts(self):
         cursor = Host.collection.find({
             'location_id': self.id,
         }).sort('name')
 
         for doc in cursor:
-            if skip == doc['_id']:
-                continue
             yield Location(link=self, doc=doc)
 
     def get_active_host(self):
