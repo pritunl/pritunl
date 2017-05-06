@@ -67,6 +67,9 @@ class Host(mongo.MongoObject):
     def collection(cls):
         return mongo.get_collection('links_hosts')
 
+    def generate_secret(self):
+        self.secret = utils.rand_str(32)
+
     def get_state(self):
         self.status = AVAILABLE
         self.ping_timestamp = utils.now()
