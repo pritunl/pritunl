@@ -79,11 +79,13 @@ class Host(mongo.MongoObject):
             locations = self.link.iter_locations(self.location.id)
 
             for location in locations:
-                host = location.get_active_host()
+                active_host = location.get_active_host()
+                if not active_host:
+                    continue
 
                 links.append({
                     'pre_shared_key': self.link.key,
-                    'right': host.public_address,
+                    'right': active_host.public_address,
                     'left_subnets': self.location.routes,
                     'right_subnets': location.routes,
                 })
