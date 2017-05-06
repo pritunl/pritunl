@@ -152,8 +152,35 @@ class Location(mongo.MongoObject):
             yield Location(link=self, doc=doc)
 
     def get_active_host(self):
-        if self.hosts:
-            return Host(link=self.link, location=self, id=self.hosts[0])
+        doc = Host.collection.find_one({
+            'location_id': self.id,
+            'active': True,
+        })
+
+        if doc:
+            return Host(link=self.link, location=self, doc=doc)
+
+        doc = Host.collection.find_and_modify({
+            'location_id': self.id,
+            'status': AVAILABLE,
+        }, {
+            '$set': {
+                'active': True,
+            },
+        })
+        if not doc:
+            return
+
+        Host.collection.update_many({
+            '_id': {'$ne': doc['_id']},
+            'location_id': self.id,
+        }, {
+            '$set': {
+                'active': False,
+            },
+        })
+
+        return Host(link=self.link, location=self, doc=doc)
 
 
 class Link(mongo.MongoObject):
