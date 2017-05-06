@@ -68,7 +68,7 @@ class Host(mongo.MongoObject):
             'id': self.id,
             'links': links,
         }
-        locations = self.link.get_locations(self.location.id)
+        locations = self.link.iter_locations(self.location.id)
 
         for location in locations:
             host = location.get_active_host()
