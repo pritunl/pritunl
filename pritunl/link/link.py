@@ -73,17 +73,20 @@ class Host(mongo.MongoObject):
             'id': self.id,
             'links': links,
         }
-        locations = self.link.iter_locations(self.location.id)
 
-        for location in locations:
-            host = location.get_active_host()
+        active_host = self.location.get_active_host()
+        if active_host and active_host.id == self.id:
+            locations = self.link.iter_locations(self.location.id)
 
-            links.append({
-                'pre_shared_key': self.link.key,
-                'right': host.public_address,
-                'left_subnets': self.location.routes,
-                'right_subnets': location.routes,
-            })
+            for location in locations:
+                host = location.get_active_host()
+
+                links.append({
+                    'pre_shared_key': self.link.key,
+                    'right': host.public_address,
+                    'left_subnets': self.location.routes,
+                    'right_subnets': location.routes,
+                })
 
         state['hash'] = hashlib.md5(
             json.dumps(state, sort_keys=True)).hexdigest()
