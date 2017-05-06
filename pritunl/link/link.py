@@ -227,16 +227,13 @@ class Link(mongo.MongoObject):
 
     def iter_locations(self, skip=None):
         spec = {
-            '_id': {'$ne': skip},
             'link_id': self.id,
         }
 
         if skip:
-            spec['_id'] = {'$ne': skip},
+            spec['_id'] = {'$ne': skip}
 
         cursor = Location.collection.find(spec).sort('name')
 
         for doc in cursor:
-            if skip == doc['_id']:
-                continue
             yield Location(link=self, doc=doc)
