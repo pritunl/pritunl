@@ -34,12 +34,12 @@ def link_state_put():
     except ValueError:
         return flask.abort(401)
 
-    host = link.get_host(auth_token)
+    host = link.get_host(utils.ObjectId(auth_token))
     if not host:
         return flask.abort(401)
 
     auth_string = '&'.join([
-        host.id,
+        auth_token,
         auth_timestamp,
         auth_nonce,
         flask.request.method,
