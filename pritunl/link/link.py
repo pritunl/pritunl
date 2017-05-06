@@ -144,8 +144,8 @@ class Location(mongo.MongoObject):
             yield Location(link=self, doc=doc)
 
     def get_active_host(self):
-        host_id = self.get_active_host_id()
-        return Host(link=self.link, location=self, id=host_id)
+        if self.hosts:
+            return Host(link=self.link, location=self, id=self.hosts[0])
 
 
 class Link(mongo.MongoObject):
