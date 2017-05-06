@@ -68,6 +68,10 @@ class Host(mongo.MongoObject):
         return mongo.get_collection('links_hosts')
 
     def get_state(self):
+        self.status = AVAILABLE
+        self.ping_timestamp = utils.now()
+        self.commit(('status', 'ping_timestamp'))
+
         links = []
         state = {
             'id': self.id,
@@ -92,9 +96,6 @@ class Host(mongo.MongoObject):
 
         state['hash'] = hashlib.md5(
             json.dumps(state, sort_keys=True)).hexdigest()
-
-        self.ping_timestamp = utils.now()
-        self.commit('ping_timestamp')
 
         return state
 
