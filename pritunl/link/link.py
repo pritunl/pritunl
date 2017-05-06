@@ -97,8 +97,11 @@ class Host(mongo.MongoObject):
                     'right_subnets': location.routes,
                 })
 
-        state['hash'] = hashlib.md5(
-            json.dumps(state, sort_keys=True)).hexdigest()
+        state['hash'] = hashlib.md5(json.dumps(
+            state,
+            sort_keys=True,
+            default=lambda x: str(x),
+        )).hexdigest()
 
         return state
 
