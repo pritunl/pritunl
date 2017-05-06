@@ -219,6 +219,9 @@ class Link(mongo.MongoObject):
     def collection(cls):
         return mongo.get_collection('links')
 
+    def generate_key(self):
+        self.key = utils.rand_str(32)
+
     def get_location(self, location_id):
         return Location(link=self, id=location_id)
 
