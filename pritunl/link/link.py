@@ -6,7 +6,6 @@ from pritunl import utils
 from pritunl import mongo
 
 import hashlib
-import base64
 import json
 
 class Host(mongo.MongoObject):
