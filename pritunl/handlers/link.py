@@ -15,6 +15,11 @@ import json
 import Crypto.Random
 import Crypto.Cipher.AES
 
+@app.app.route('/link', methods=['GET'])
+@auth.session_auth
+def link_get():
+    return utils.jsonify([])
+
 @app.app.route('/link/state', methods=['PUT'])
 @auth.open_auth
 def link_state_put():
