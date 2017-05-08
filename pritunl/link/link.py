@@ -114,6 +114,8 @@ class Location(mongo.MongoObject):
         'link_id',
         'hosts',
         'routes',
+        'location',
+        'quality',
     }
     fields_default = {
         'hosts': [],
