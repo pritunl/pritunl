@@ -18,7 +18,14 @@ import Crypto.Cipher.AES
 @app.app.route('/link', methods=['GET'])
 @auth.session_auth
 def link_get():
-    return utils.jsonify([])
+    page = flask.request.args.get('page', None)
+    page = int(page) if page else page
+
+    return utils.jsonify({
+        'page': page,
+        'page_total': 10,
+        'links': [],
+    })
 
 @app.app.route('/link/state', methods=['PUT'])
 @auth.open_auth
