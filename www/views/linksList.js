@@ -5,9 +5,10 @@ define([
   'collections/link',
   'views/list',
   'views/alert',
+  'views/linksListItem',
   'text!templates/linksList.html'
 ], function($, _, Backbone, LinkCollection, ListView, AlertView,
-    linksListTemplate) {
+    LinksListItemView, linksListTemplate) {
   'use strict';
   var LinksListView = ListView.extend({
     listContainer: '.links-list-container',
@@ -41,11 +42,10 @@ define([
       this.update();
     },
     buildItem: function(model) {
-      // var modelView = new OrgsListItemView({
-      //   model: model
-      // });
-      // this.listenTo(modelView, 'select', this.onSelect);
-      // return modelView;
+      var modelView = new LinksListItemView({
+        model: model
+      });
+      return modelView;
     },
     getOptions: function() {
       return {
