@@ -11,10 +11,11 @@ define([
   'views/users',
   'views/servers',
   'views/hosts',
+  'views/links',
   'views/modalSettings'
 ], function($, _, Backbone, AuthSessionModel, SettingsModel, AlertView,
     LoginView, DashboardView, AdminsView, UsersView, ServersView, HostsView,
-    ModalSettingsView) {
+    LinksView, ModalSettingsView) {
   'use strict';
   var Router = Backbone.Router.extend({
     routes: {
@@ -25,6 +26,7 @@ define([
       'users': 'users',
       'servers': 'servers',
       'hosts': 'hosts',
+      'links': 'links',
       'logout': 'logout',
       'logout/:alert': 'logout'
     },
@@ -256,6 +258,13 @@ define([
         $('header .navbar .nav li').removeClass('active');
         $('header .hosts').addClass('active');
         this.loadPage(new HostsView());
+      }.bind(this));
+    },
+    links: function() {
+      this.auth(function() {
+        $('header .navbar .nav li').removeClass('active');
+        $('header .links').addClass('active');
+        this.loadPage(new LinksView());
       }.bind(this));
     },
     logout: function(alert) {
