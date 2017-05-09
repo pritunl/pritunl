@@ -2,11 +2,11 @@ define([
   'jquery',
   'underscore',
   'backbone',
-  'models/org'
-], function($, _, Backbone, OrgModel) {
+  'models/link'
+], function($, _, Backbone, LinkModel) {
   'use strict';
   var LinkCollection = Backbone.Collection.extend({
-    model: OrgModel,
+    model: LinkModel,
     initialize: function() {
       this.page = window.link_page || 0;
     },
