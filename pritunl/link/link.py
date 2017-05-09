@@ -18,12 +18,10 @@ class Host(mongo.MongoObject):
         'active',
         'ping_timestamp',
         'public_address',
-        'tunnels',
     }
     fields_default = {
         'status': UNAVAILABLE,
         'active': False,
-        'tunnels': 0,
         'routes': [],
     }
 
