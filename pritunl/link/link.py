@@ -64,6 +64,19 @@ class Host(mongo.MongoObject):
     def collection(cls):
         return mongo.get_collection('links_hosts')
 
+    def dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'link_id': self.link_id,
+            'location_id': self.location_id,
+            'secret': self.secret,
+            'status': self.status,
+            'active': self.active,
+            'ping_timestamp': self.ping_timestamp,
+            'public_address': self.public_address,
+        }
+
     def generate_secret(self):
         self.secret = utils.rand_str(32)
 
@@ -141,6 +154,22 @@ class Location(mongo.MongoObject):
     @cached_static_property
     def collection(cls):
         return mongo.get_collection('links_locations')
+
+    def dict(self):
+        hosts = []
+
+        for hst in self.iter_hosts():
+            hosts.append(hst.dict())
+
+        return {
+            'id': self.id,
+            'name': self.name,
+            'link_id': self.link_id,
+            'hosts': hosts,
+            'routes': self.routes,
+            'location': self.location,
+            'quality': self.quality,
+        }
 
     def get_host(self, host_id):
         return Host(link=self.link, location=self, id=host_id)
@@ -220,6 +249,20 @@ class Link(mongo.MongoObject):
     @cached_static_property
     def collection(cls):
         return mongo.get_collection('links')
+
+    def dict(self):
+        locations = []
+
+        for loc in self.iter_locations():
+            locations.append(loc.dict())
+
+        return {
+            'id': self.id,
+            'name': self.name,
+            'status': self.status,
+            'locations': locations,
+            'timeout': self.timeout,
+        }
 
     def generate_key(self):
         self.key = utils.rand_str(32)
