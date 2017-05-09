@@ -1,6 +1,9 @@
 from pritunl.link.link import Link, Location, Host
 
 from pritunl import settings
+from pritunl import mongo
+
+import math
 
 def get_host(host_id):
     host = Host(id=host_id)
@@ -35,3 +38,13 @@ def iter_links(page=None):
 
     for doc in cursor:
         yield Link(doc=doc)
+
+def get_page_total():
+    collection = mongo.get_collection('servers')
+
+    count = collection.find({}, {
+        '_id': True,
+    }).count()
+
+    return int(math.floor(max(0, float(count - 1)) /
+        settings.app.link_page_count))
