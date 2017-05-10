@@ -21,10 +21,14 @@ def link_get():
     page = flask.request.args.get('page', None)
     page = int(page) if page else page
 
+    links = []
+    for lnk in link.iter_links(page):
+        links.append(lnk.dict())
+
     return utils.jsonify({
         'page': page,
         'page_total': 10,
-        'links': [],
+        'links': links,
     })
 
 @app.app.route('/link/state', methods=['PUT'])
