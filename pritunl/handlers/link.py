@@ -27,7 +27,7 @@ def link_get():
 
     return utils.jsonify({
         'page': page,
-        'page_total': 10,
+        'page_total': link.get_page_total(),
         'links': links,
     })
 
