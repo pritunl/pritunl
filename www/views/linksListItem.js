@@ -42,13 +42,13 @@ define([
     onOperation: function(evt) {
       var operation;
 
-      if ($(evt.target).hasClass('server-restart')) {
+      if ($(evt.target).hasClass('link-restart')) {
         operation = 'restart';
       }
-      else if ($(evt.target).hasClass('server-start')) {
+      else if ($(evt.target).hasClass('link-start')) {
         operation = 'start';
       }
-      else if ($(evt.target).hasClass('server-stop')) {
+      else if ($(evt.target).hasClass('link-stop')) {
         operation = 'stop';
       }
       if (!operation) {
