@@ -266,16 +266,11 @@ class Link(mongo.MongoObject):
         return mongo.get_collection('links')
 
     def dict(self):
-        locations = []
-
-        for loc in self.iter_locations():
-            locations.append(loc.dict())
-
         return {
             'id': self.id,
             'name': self.name,
             'status': self.status,
-            'locations': locations,
+            'locations': self.locations,
             'timeout': self.timeout,
         }
 
