@@ -117,23 +117,23 @@ class Host(mongo.MongoObject):
 
         return state
 
+# TODO Support double firewall
+# Site 1 (firewall) <-> Site 2 <-> Site 3 (firewall)
 
 class Location(mongo.MongoObject):
     fields = {
         'name',
         'link_id',
-        'hosts',
         'routes',
         'location',
         'quality',
     }
     fields_default = {
-        'hosts': [],
         'routes': {},
     }
 
-    def __init__(self, link=None, name=None, link_id=None, hosts=None,
-            routes=None, **kwargs):
+    def __init__(self, link=None, name=None, link_id=None, routes=None,
+            **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         self.link = link
@@ -143,9 +143,6 @@ class Location(mongo.MongoObject):
 
         if link_id is not None:
             self.link_id = link_id
-
-        if hosts is not None:
-            self.hosts = hosts
 
         if routes is not None:
             self.routes = routes
