@@ -117,9 +117,6 @@ class Host(mongo.MongoObject):
 
         return state
 
-# TODO Support double firewall
-# Site 1 (firewall) <-> Site 2 <-> Site 3 (firewall)
-
 class Location(mongo.MongoObject):
     fields = {
         'name',
