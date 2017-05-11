@@ -3,8 +3,10 @@ define([
   'underscore',
   'backbone',
   'views/alert',
+  'views/linkLocationsList',
   'text!templates/linksListItem.html'
-], function($, _, Backbone, AlertView, linksListItemTemplate) {
+], function($, _, Backbone, AlertView, LinkLocationsListView,
+    linksListItemTemplate) {
   'use strict';
   var LinksListItemView = Backbone.View.extend({
     className: 'link',
@@ -16,12 +18,17 @@ define([
       'click .toggle-hidden': 'onToggleHidden'
     },
     initialize: function() {
+      this.locationsView = new LinkLocationsListView({
+        link: this.model
+      });
+      this.addView(this.locationsView);
     },
     deinitialize: function() {
     },
     render: function() {
       this.$el.html(this.template(this.model.toJSON()));
       this.update();
+      this.$el.append(this.locationsView.render().el);
       return this;
     },
     update: function() {
