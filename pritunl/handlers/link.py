@@ -31,6 +31,17 @@ def link_get():
         'links': links,
     })
 
+@app.app.route('/link/<link_id>/location', methods=['GET'])
+@auth.session_auth
+def link_location_get(link_id):
+    lnk = link.get_by_id(link_id)
+
+    locations = []
+    for location in lnk.iter_locations():
+        locations.append(location.dict())
+
+    return utils.jsonify(locations)
+
 @app.app.route('/link/state', methods=['PUT'])
 @auth.open_auth
 def link_state_put():
