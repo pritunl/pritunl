@@ -22,7 +22,6 @@ class Host(mongo.MongoObject):
     fields_default = {
         'status': UNAVAILABLE,
         'active': False,
-        'routes': [],
     }
 
     def __init__(self, link=None, location=None, name=None, link_id=None,
