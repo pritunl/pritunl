@@ -164,6 +164,19 @@ class Location(mongo.MongoObject):
             'quality': self.quality,
         }
 
+    def add_route(self, network):
+        try:
+            network = str(ipaddress.IPNetwork(network))
+        except ValueError:
+            raise NetworkInvalid('Network address is invalid')
+
+        network_id = network.encode('hex')
+
+        self.routes[network_id] = {
+            'id': network_id,
+            'network': network,
+        }
+
     def get_host(self, host_id):
         return Host(link=self.link, location=self, id=host_id)
 
