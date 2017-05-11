@@ -16,15 +16,6 @@ define([
       'locations': null,
       'timeout': null
     },
-    parse: function(response) {
-      var locations = response['locations'];
-
-      if (locations) {
-        response['locations'] = new LinkLocationCollection(locations);
-      }
-
-      return response;
-    },
     url: function() {
       var url = '/link';
 
