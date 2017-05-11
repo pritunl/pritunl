@@ -7,8 +7,11 @@ define([
   'use strict';
   var LinkLocationCollection = Backbone.Collection.extend({
     model: LinkLocationModel,
+    initialize: function(options) {
+      this.link = options.link;
+    },
     url: function() {
-      return '/link/' + this.get('link_id') + '/location';
+      return '/link/' + this.link + '/location';
     }
   });
 
