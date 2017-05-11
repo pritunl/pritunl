@@ -163,7 +163,8 @@ class Location(mongo.MongoObject):
             hosts.append(hst.dict())
 
         routes = []
-        for route in self.routes.values():
+        for route_id, route in self.routes.items():
+            route['id'] = route_id
             route['link_id'] = self.link_id
             route['location_id'] = self.id
             routes.append(route)
@@ -187,7 +188,6 @@ class Location(mongo.MongoObject):
         network_id = network.encode('hex')
 
         self.routes[network_id] = {
-            'id': network_id,
             'network': network,
         }
 
