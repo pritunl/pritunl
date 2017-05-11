@@ -17,22 +17,9 @@ define([
       'timeout': null
     },
     parse: function(response) {
-      var location;
       var locations = response['locations'];
 
       if (locations) {
-        for (var i = 0; i < locations.length; i++) {
-          location = locations[i];
-
-          if (location['hosts']) {
-            location['hosts'] = new LinkHostCollection(location['hosts']);
-          }
-
-          if (location['routes']) {
-            location['routes'] = new LinkRouteCollection(location['routes']);
-          }
-        }
-
         response['locations'] = new LinkLocationCollection(locations);
       }
 
