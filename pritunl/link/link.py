@@ -103,11 +103,19 @@ class Host(mongo.MongoObject):
                 if not active_host:
                     continue
 
+                left_subnets = []
+                for route in self.location.routes.values():
+                    left_subnets.append(route['network'])
+
+                right_subnets = []
+                for route in location.routes.values():
+                    right_subnets.append(route['network'])
+
                 links.append({
                     'pre_shared_key': self.link.key,
                     'right': active_host.public_address,
-                    'left_subnets': self.location.routes,
-                    'right_subnets': location.routes,
+                    'left_subnets': left_subnets,
+                    'right_subnets': right_subnets,
                 })
 
         state['hash'] = hashlib.md5(json.dumps(
