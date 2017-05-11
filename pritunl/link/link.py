@@ -159,16 +159,21 @@ class Location(mongo.MongoObject):
 
     def dict(self):
         hosts = []
-
         for hst in self.iter_hosts():
             hosts.append(hst.dict())
+
+        routes = []
+        for route in self.routes.values():
+            route['link_id'] = self.link_id
+            route['location_id'] = self.id
+            routes.append(route)
 
         return {
             'id': self.id,
             'name': self.name,
             'link_id': self.link_id,
             'hosts': hosts,
-            'routes': self.routes,
+            'routes': routes,
             'location': self.location,
             'quality': self.quality,
         }
