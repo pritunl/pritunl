@@ -224,17 +224,15 @@ class Link(mongo.MongoObject):
     fields = {
         'name',
         'status',
-        'locations',
         'timeout',
         'key',
     }
     fields_default = {
         'status': OFFLINE,
-        'locations': [],
     }
 
-    def __init__(self, name=None, status=None, locations=None,
-            timeout=None, key=None, **kwargs):
+    def __init__(self, name=None, status=None, timeout=None,
+            key=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         if name is not None:
@@ -242,9 +240,6 @@ class Link(mongo.MongoObject):
 
         if status is not None:
             self.status = status
-
-        if locations is not None:
-            self.locations = locations
 
         if timeout is not None:
             self.timeout = timeout
