@@ -1,8 +1,9 @@
 define([
   'jquery',
   'underscore',
-  'backbone'
-], function($, _, Backbone) {
+  'backbone',
+  'collections/linkLocation'
+], function($, _, Backbone, LinkLocationCollection) {
   'use strict';
   var LinkModel = Backbone.Model.extend({
     defaults: {
@@ -11,6 +12,14 @@ define([
       'status': null,
       'locations': null,
       'timeout': null
+    },
+    parse: function(response) {
+      if (response['locations']) {
+        response['locations'] = new LinkLocationCollection(
+          response['locations']);
+      }
+
+      return response;
     },
     url: function() {
       var url = '/link';
