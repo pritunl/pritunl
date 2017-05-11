@@ -129,7 +129,7 @@ class Location(mongo.MongoObject):
     }
     fields_default = {
         'hosts': [],
-        'routes': [],
+        'routes': {},
     }
 
     def __init__(self, link=None, name=None, link_id=None, hosts=None,
