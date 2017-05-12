@@ -15,9 +15,6 @@ define([
       'hosts': null,
       'routes': null
     },
-    initialize: function(attributes) {
-      LinkLocationModel.__super__.initialize.call(this);
-    },
     url: function() {
       var url = '/link/' + this.get('link_id') + '/location';
 
