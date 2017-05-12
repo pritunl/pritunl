@@ -23,11 +23,10 @@ define([
       LinkLocationsListView.__super__.initialize.call(this);
     },
     buildItem: function(model) {
-      var modelView = new LinkLocationsListItemView({
+      return new LinkLocationsListItemView({
         model: model,
         link: this.link
       });
-      return modelView;
     },
     resetItems: function(views) {
       if (!views.length) {
