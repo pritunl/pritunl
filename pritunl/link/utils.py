@@ -5,6 +5,9 @@ from pritunl import mongo
 
 import math
 
+def get_by_id(id):
+    return Link(id=id)
+
 def get_host(host_id):
     host = Host(id=host_id)
     if not host:
