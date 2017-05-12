@@ -2,3 +2,29 @@
   <h2 class="link-location-title title"><a class="no-select" data-toggle="tooltip" title="Click to open link settings"><%- name %></a><span class="location-id title">(<%- id %>)</span></h2>
   <button type="button" class="location-del btn btn-danger btn-xs no-select">Delete Location</button>
 </div>
+<div class="link-routes">
+  <% _.each(routes, function(route) { %>
+  <div class="link-route">
+    <div class="name-container">
+      <span class="name-icon glyphicon glyphicon-globe"></span>
+      <span class="route-network title"><%- route.network %></span>
+    </div>
+    <div class="button-container">
+      <button type="button" class="link-remove-route btn btn-danger btn-xs">Remove Route</button>
+    </div>
+  </div>
+  <% }); %>
+</div>
+<div class="link-hosts">
+  <% _.each(hosts, function(host) { %>
+  <div class="link-host">
+    <div class="name-container">
+      <span class="name-icon glyphicon glyphicon-globe"></span>
+      <span class="host-name title"><%- host.name %></span>
+    </div>
+    <div class="button-container">
+      <button type="button" class="link-remove-host btn btn-danger btn-xs">Remove Host</button>
+    </div>
+  </div>
+  <% }); %>
+</div>
