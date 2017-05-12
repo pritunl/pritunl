@@ -18,9 +18,9 @@ define([
       this.collection = new LinkLocationCollection({
         link: options.link.get('id')
       });
+      this.link = options.link;
       this.listenTo(window.events, 'link_locations_updated:' +
         options.link.get('id'), this.update);
-      this.link = options.link;
       LinkLocationsListView.__super__.initialize.call(this);
     },
     buildItem: function(model) {
