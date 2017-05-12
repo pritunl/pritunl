@@ -3,6 +3,11 @@
   <button type="button" class="location-del btn btn-danger btn-xs no-select">Delete Location</button>
 </div>
 <div class="link-routes">
+  <% if (routes.length === 0) { %>
+    <div class="no-routes">
+      There are no routes on this location.
+    </div>
+  <% } %>
   <% _.each(routes, function(route) { %>
   <div class="link-route">
     <div class="name-container">
@@ -16,6 +21,11 @@
   <% }); %>
 </div>
 <div class="link-hosts">
+  <% if (hosts.length === 0) { %>
+  <div class="no-routes">
+    There are no hosts on this location.
+  </div>
+  <% } %>
   <% _.each(hosts, function(host) { %>
   <div class="link-host">
     <div class="name-container">
