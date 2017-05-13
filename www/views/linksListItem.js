@@ -61,8 +61,7 @@ define([
       if ($(evt.target).hasClass('link-start')) {
         status = 'online';
         operation = 'start';
-      }
-      else if ($(evt.target).hasClass('link-stop')) {
+      } else if ($(evt.target).hasClass('link-stop')) {
         status = 'offline';
         operation = 'stop';
       }
@@ -86,8 +85,7 @@ define([
               message: response.responseJSON.error_msg,
               dismissable: true
             });
-          }
-          else {
+          } else {
             alertView = new AlertView({
               type: 'danger',
               message: 'Failed to ' + operation +
@@ -108,8 +106,7 @@ define([
         this.$('.toggle-hidden').removeClass('label-success');
         this.$('.toggle-hidden').addClass('label-primary');
         this.$el.removeClass('show-hidden');
-      }
-      else {
+      } else {
         this.$('.toggle-hidden').addClass('label-success');
         this.$('.toggle-hidden').removeClass('label-primary');
         this.$el.addClass('show-hidden');
