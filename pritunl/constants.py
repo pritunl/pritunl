@@ -959,6 +959,7 @@ JUMBO_FRAMES = {
 }
 
 OVPN_INLINE_SERVER_CONF = """\
+ignore-unknown-option ncp-ciphers
 port %s
 proto %s
 dev %s
@@ -988,7 +989,6 @@ OVPN_INLINE_CLIENT_CONF = """\
 %s
 setenv UV_ID %s
 setenv UV_NAME %s
-ignore-unknown-option ncp-ciphers
 client
 dev %s
 dev-type %s
