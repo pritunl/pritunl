@@ -270,7 +270,6 @@ class Link(mongo.MongoObject):
             'id': self.id,
             'name': self.name,
             'status': self.status,
-            'locations': self.locations,
             'timeout': self.timeout,
         }
 
