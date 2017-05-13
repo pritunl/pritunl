@@ -33,6 +33,14 @@ define([
     },
     update: function() {
       this.$('.link-title a').text(this.model.get('name'));
+
+      if (this.model.get('status') === 'online') {
+        this.$('.link-start').hide();
+        this.$('.link-stop').show();
+      } else {
+        this.$('.link-stop').hide();
+        this.$('.link-start').show();
+      }
     },
     updateOrgsCount: function() {
       this.orgsCount = this.serverOrgsListView.views.length;
