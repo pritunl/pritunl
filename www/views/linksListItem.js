@@ -55,19 +55,50 @@ define([
       console.log('delete');
     },
     onOperation: function(evt) {
+      var status;
       var operation;
 
       if ($(evt.target).hasClass('link-start')) {
+        status = 'online';
         operation = 'start';
       }
       else if ($(evt.target).hasClass('link-stop')) {
+        status = 'offline';
         operation = 'stop';
       }
       if (!operation) {
         return;
       }
 
-      console.log(operation);
+      $(evt.target).attr('disabled', 'disabled');
+      this.model.clone().save({
+        status: status
+      }, {
+        success: function() {
+          $(evt.target).removeAttr('disabled');
+        }.bind(this),
+        error: function(model, response) {
+          var alertView;
+          $(evt.target).removeAttr('disabled');
+          if (response.responseJSON) {
+            alertView = new AlertView({
+              type: 'danger',
+              message: response.responseJSON.error_msg,
+              dismissable: true
+            });
+          }
+          else {
+            alertView = new AlertView({
+              type: 'danger',
+              message: 'Failed to ' + operation +
+              ' the link, server error occurred.',
+              dismissable: true
+            });
+          }
+          $('.alerts-container').append(alertView.render().el);
+          this.addView(alertView);
+        }.bind(this)
+      });
     },
     onToggleHidden: function(evt) {
       if (!evt.ctrlKey && !evt.shiftKey) {
