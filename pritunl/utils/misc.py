@@ -204,10 +204,6 @@ def find_caller():
 
     return rv
 
-def generate_short_id():
-    return ''.join(random.sample(
-        SHORT_URL_CHARS, settings.app.short_url_length))
-
 def rmtree(path):
     for i in xrange(8):
         try:
@@ -338,8 +334,18 @@ def styles_response(etag, last_modified, data):
     return response
 
 def rand_str(length):
-    return re.sub(r'[\W_]+', '', base64.b64encode(
-        os.urandom(length * 2)))[:length]
+    s = re.sub(r'[\W_]+', '', base64.b64encode(
+        os.urandom(int(length * 1.5))))[:length]
+    if len(s) != length:
+        return rand_str(length)
+    return s
+
+def rand_str_ne(length):
+    s = re.sub(r'[\W_lIO0]+', '', base64.b64encode(
+        os.urandom(int(length * 1.5))))[:length]
+    if len(s) != length:
+        return rand_str(length)
+    return s
 
 prime32 = 16777619
 prime64 = 1099511628211

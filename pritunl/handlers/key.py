@@ -57,7 +57,7 @@ def _find_doc(query, one_time=None, one_time_new=False):
     doc = collection.find_one(query)
 
     if one_time and doc and doc.get('one_time'):
-        short_id = utils.generate_short_id()
+        short_id = utils.rand_str(settings.app.long_url_length)
         collection = mongo.get_collection('users_key_link')
 
         if one_time_new:

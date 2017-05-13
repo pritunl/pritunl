@@ -45,6 +45,7 @@ class SettingsApp(SettingsGroupMongo):
         'log_web_errors': False,
         'rate_limit_sleep': 0.5,
         'short_url_length': 8,
+        'long_url_length': 16,
         'license': None,
         'license_plan': None,
         'http_request_timeout': 15,

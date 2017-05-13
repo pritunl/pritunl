@@ -283,7 +283,11 @@ class Organization(mongo.MongoObject):
         success = False
         for _ in xrange(256):
             key_id = uuid.uuid4().hex
-            short_id = utils.generate_short_id()
+
+            if one_time:
+                short_id = utils.rand_str(settings.app.long_url_length)
+            else:
+                short_id = utils.rand_str_ne(settings.app.short_url_length)
 
             try:
                 self.key_link_collection.update({

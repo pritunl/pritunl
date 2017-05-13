@@ -437,9 +437,6 @@ DEFAULT_USERNAME = 'pritunl'
 DEFAULT_PASSWORD = 'pritunl'
 DEFAULT_CONF_PATH = '/etc/pritunl.conf'
 SUBSCRIPTION_UPDATE_RATE = 900
-SHORT_URL_CHARS = (string.ascii_lowercase + string.ascii_uppercase +
-    string.digits).replace('l', '').replace('I', '').replace('O', '').replace(
-    '0', '')
 SUB_RESPONSE_TIMEOUT = 10
 CLIENT_CONF_VER = 1
 MONGO_MESSAGES_SIZE = 100000
