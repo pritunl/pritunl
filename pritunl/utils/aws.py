@@ -67,14 +67,14 @@ def add_vpc_route(region, vpc_id, network, resource_id):
             continue
 
         try:
-            vpc_conn.create_route(
+            vpc_conn.replace_route(
                 table.id,
                 network,
                 instance_id=instance_id,
                 interface_id=interface_id,
             )
         except:
-            vpc_conn.replace_route(
+            vpc_conn.create_route(
                 table.id,
                 network,
                 instance_id=instance_id,
