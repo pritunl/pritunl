@@ -45,6 +45,9 @@ def link_location_get(link_id):
 @app.app.route('/link/state', methods=['PUT'])
 @auth.open_auth
 def link_state_put():
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     auth_token = flask.request.headers.get('Auth-Token', None)
     auth_timestamp = flask.request.headers.get('Auth-Timestamp', None)
     auth_nonce = flask.request.headers.get('Auth-Nonce', None)
