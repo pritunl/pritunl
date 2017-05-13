@@ -14,7 +14,7 @@ define([
     events: {
       'click .link-title a': 'onSettings',
       'click .link-del': 'onDelete',
-      'click .link-restart, .link-start, .link-stop': 'onOperation',
+      'click .link-start, .link-stop': 'onOperation',
       'click .toggle-hidden': 'onToggleHidden'
     },
     initialize: function() {
@@ -57,10 +57,7 @@ define([
     onOperation: function(evt) {
       var operation;
 
-      if ($(evt.target).hasClass('link-restart')) {
-        operation = 'restart';
-      }
-      else if ($(evt.target).hasClass('link-start')) {
+      if ($(evt.target).hasClass('link-start')) {
         operation = 'start';
       }
       else if ($(evt.target).hasClass('link-stop')) {
