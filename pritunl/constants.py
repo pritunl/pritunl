@@ -932,8 +932,11 @@ CIPHERS = {
     'bf128': 'cipher BF-CBC',
     'bf256': 'cipher BF-CBC\nkeysize 256',
     'aes128': 'cipher AES-128-CBC',
+    'aes128gcm': 'cipher AES-128-GCM',
     'aes192': 'cipher AES-192-CBC',
+    'aes192gcm': 'cipher AES-192-GCM',
     'aes256': 'cipher AES-256-CBC',
+    'aes256gcm': 'cipher AES-256-GCM',
 }
 
 HASHES = {
