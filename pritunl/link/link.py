@@ -94,6 +94,9 @@ class Host(mongo.MongoObject):
             'links': links,
         }
 
+        if self.link.status != ONLINE:
+            return state
+
         active_host = self.location.get_active_host()
         if active_host and active_host.id == self.id:
             locations = self.link.iter_locations(self.location.id)
