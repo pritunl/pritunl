@@ -488,7 +488,7 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
     auth_test_signature = base64.b64encode(hmac.new(
         user.sync_secret.encode(), auth_string,
         hashlib.sha512).digest())
-    if auth_signature != auth_test_signature:
+    if not utils.const_compare(auth_signature, auth_test_signature):
         return flask.abort(401)
 
     nonces_collection = mongo.get_collection('auth_nonces')
@@ -772,8 +772,7 @@ def sso_callback_get():
     query = flask.request.query_string.split('&sig=')[0]
     test_sig = base64.urlsafe_b64encode(hmac.new(str(doc['secret']),
         query, hashlib.sha512).digest())
-
-    if sig != test_sig:
+    if not utils.const_compare(sig, test_sig):
         return flask.abort(401)
 
     params = urlparse.parse_qs(query)

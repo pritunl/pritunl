@@ -1,4 +1,5 @@
 from pritunl.utils.filter import session_str
+from pritunl.utils.misc import const_compare
 from pritunl import settings
 
 import base64
@@ -26,4 +27,4 @@ def set_flask_sig():
     flask.session['signature'] = get_flask_sig()
 
 def check_flask_sig():
-    return session_str('signature') == get_flask_sig()
+    return const_compare(session_str('signature'), get_flask_sig())

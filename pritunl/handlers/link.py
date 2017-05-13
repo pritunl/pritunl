@@ -82,7 +82,7 @@ def link_state_put():
     auth_test_signature = base64.b64encode(hmac.new(
         host.secret.encode(), auth_string,
         hashlib.sha512).digest())
-    if auth_signature != auth_test_signature:
+    if not utils.const_compare(auth_signature, auth_test_signature):
         return flask.abort(401)
 
     nonces_collection = mongo.get_collection('auth_nonces')

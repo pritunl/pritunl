@@ -309,6 +309,14 @@ def stop_process(process):
 
     return terminated
 
+def const_compare(x, y):
+    if len(x) != len(y):
+        return False
+    result = 0
+    for x, y in zip(x, y):
+        result |= ord(x) ^ ord(y)
+    return result == 0
+
 def response(data=None, status_code=None):
     response = flask.Response(response=data,
         mimetype='text/html; charset=utf-8')
