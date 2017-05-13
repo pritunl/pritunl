@@ -988,6 +988,7 @@ OVPN_INLINE_CLIENT_CONF = """\
 %s
 setenv UV_ID %s
 setenv UV_NAME %s
+ignore-unknown-option ncp-ciphers
 client
 dev %s
 dev-type %s
