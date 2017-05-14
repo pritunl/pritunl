@@ -50,6 +50,19 @@ def link_post():
 
     return utils.jsonify(lnk.dict())
 
+@app.app.route('/link/<link_id>', methods=['DELETE'])
+@auth.session_auth
+def link_delete(link_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
+    lnk = link.get_by_id(link_id)
+    lnk.remove()
+
+    event.Event(type=LINKS_UPDATED)
+
+    return utils.jsonify({})
+
 @app.app.route('/link/<link_id>', methods=['PUT'])
 @auth.session_auth
 def link_put(link_id):
