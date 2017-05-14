@@ -33,9 +33,9 @@
       <span class="host-name title"><%- host.name %></span>
     </div>
     <div class="button-container">
-      <div class="link-host-active label label-success no-select">Active</div>
-      <div class="link-host-available label label-primary no-select">Available</div>
-      <div class="link-host-unavailable label label-danger no-select">Unavailable</div>
+      <div class="link-host-active label label-success no-select" <%= host.status === 'active' ? '' : 'style="display: none"' %>>Active</div>
+      <div class="link-host-available label label-primary no-select" <%= host.status === 'available' ? '' : 'style="display: none"' %>>Available</div>
+      <div class="link-host-unavailable label label-danger no-select" <%= host.status === 'unavailable' ? '' : 'style="display: none"' %>>Unavailable</div>
       <button type="button" class="link-remove-host btn btn-danger btn-xs">Remove Host</button>
     </div>
   </div>
