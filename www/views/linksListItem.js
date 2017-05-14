@@ -4,9 +4,10 @@ define([
   'backbone',
   'views/alert',
   'views/linkLocationsList',
+  'views/modalDeleteLink',
   'text!templates/linksListItem.html'
 ], function($, _, Backbone, AlertView, LinkLocationsListView,
-    linksListItemTemplate) {
+    ModalDeleteLinkView, linksListItemTemplate) {
   'use strict';
   var LinksListItemView = Backbone.View.extend({
     className: 'link',
@@ -52,7 +53,26 @@ define([
       console.log('settings');
     },
     onDelete: function(evt) {
-      console.log('delete');
+      var model = this.model.clone();
+
+      if (evt.shiftKey && evt.ctrlKey) {
+        model.destroy();
+        return;
+      }
+
+      var modal = new ModalDeleteLinkView({
+        model: model
+      });
+      this.listenToOnce(modal, 'applied', function() {
+        var alertView = new AlertView({
+          type: 'success',
+          message: 'Successfully deleted link.',
+          dismissable: true
+        });
+        $('.alerts-container').append(alertView.render().el);
+        this.addView(alertView);
+      }.bind(this));
+      this.addView(modal);
     },
     onOperation: function(evt) {
       var status;
