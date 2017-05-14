@@ -7,9 +7,11 @@ define([
   'views/alert',
   'views/linksListItem',
   'views/modalAddLink',
+  'views/modalAddLocation',
   'text!templates/linksList.html'
 ], function($, _, Backbone, LinkCollection, ListView, AlertView,
-    LinksListItemView, ModalAddLinkView, linksListTemplate) {
+    LinksListItemView, ModalAddLinkView, ModalAddLocationView,
+    linksListTemplate) {
   'use strict';
   var LinksListView = ListView.extend({
     listContainer: '.links-list-container',
@@ -17,6 +19,7 @@ define([
     listErrorMsg: 'Failed to load links, server error occurred.',
     events: {
       'click .links-add-link': 'onAddLink',
+      'click .links-add-location': 'onAddLocation',
       'click .links-list > .prev-page': 'prevPage',
       'click .links-list > .next-page': 'nextPage',
       'click .links-list > .pages .page-link.first': 'firstPage',
@@ -49,6 +52,21 @@ define([
         var alertView = new AlertView({
           type: 'success',
           message: 'Successfully added link.',
+          dismissable: true
+        });
+        $('.alerts-container').append(alertView.render().el);
+        this.addView(alertView);
+      }.bind(this));
+      this.addView(modal);
+    },
+    onAddLocation: function() {
+      var modal = new ModalAddLocationView({
+        links: this.collection
+      });
+      this.listenToOnce(modal, 'applied', function() {
+        var alertView = new AlertView({
+          type: 'success',
+          message: 'Successfully added location.',
           dismissable: true
         });
         $('.alerts-container').append(alertView.render().el);
