@@ -107,6 +107,9 @@ def link_state_put():
     )
 
     enc_data = base64.b64encode(cipher.encrypt(data))
+    enc_signature = base64.b64encode(hmac.new(
+        host.secret.encode(), enc_data,
+        hashlib.sha512).digest())
 
     resp = flask.Response(response=enc_data, mimetype='application/base64')
     resp.headers.add('Cache-Control',
@@ -114,5 +117,6 @@ def link_state_put():
     resp.headers.add('Pragma', 'no-cache')
     resp.headers.add('Expires', 0)
     resp.headers.add('Cipher-IV', base64.b64encode(iv))
+    resp.headers.add('Cipher-Signature', enc_signature)
 
     return resp
