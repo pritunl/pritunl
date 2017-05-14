@@ -20,7 +20,11 @@ define([
       });
       this.link = options.link;
       this.listenTo(window.events, 'links_updated', this.update);
+      this.interval = setInterval((this.update).bind(this), 1000);
       LinkLocationsListView.__super__.initialize.call(this);
+    },
+    deinitialize: function() {
+      clearInterval(this.interval);
     },
     buildItem: function(model) {
       return new LinkLocationsListItemView({
