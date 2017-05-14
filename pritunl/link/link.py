@@ -71,8 +71,7 @@ class Host(mongo.MongoObject):
             'link_id': self.link_id,
             'location_id': self.location_id,
             'secret': self.secret,
-            'status': self.status,
-            'active': self.active,
+            'status': ACTIVE if self.active else self.status,
             'ping_timestamp': self.ping_timestamp,
             'public_address': self.public_address,
         }
