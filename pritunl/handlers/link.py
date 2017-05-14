@@ -32,6 +32,24 @@ def link_get():
         'links': links,
     })
 
+@app.app.route('/link', methods=['POST'])
+@auth.session_auth
+def link_post():
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
+    name = utils.filter_str(flask.request.json.get('name')) or 'undefined'
+
+    lnk = link.Link(
+        name=name,
+        status=ONLINE,
+    )
+    lnk.commit()
+
+    event.Event(type=LINKS_UPDATED)
+
+    return utils.jsonify(lnk.dict())
+
 @app.app.route('/link/<link_id>', methods=['PUT'])
 @auth.session_auth
 def link_put(link_id):
