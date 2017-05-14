@@ -133,14 +133,18 @@ def link_location_route_post(link_id, location_id):
         return flask.abort(404)
 
     loc = lnk.get_location(location_id)
+    if not loc:
+        return flask.abort(404)
 
-    loc.add_route(flask.request.json.get('network'))
+    network = loc.add_route(flask.request.json.get('network'))
 
     loc.commit('routes')
 
     event.Event(type=LINKS_UPDATED)
 
-    return utils.jsonify(loc.dict())
+    return utils.jsonify({
+        'network': network,
+    })
 
 @app.app.route('/link/state', methods=['PUT'])
 @auth.open_auth
