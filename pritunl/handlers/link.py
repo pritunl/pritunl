@@ -5,6 +5,7 @@ from pritunl import settings
 from pritunl import utils
 from pritunl import mongo
 from pritunl import link
+from pritunl import event
 
 import pymongo
 import flask
@@ -30,6 +31,30 @@ def link_get():
         'page_total': link.get_page_total(),
         'links': links,
     })
+
+@app.app.route('/link/<link_id>', methods=['PUT'])
+@auth.session_auth
+def link_put(link_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
+    lnk = link.get_by_id(link_id)
+
+    lnk.name = utils.filter_str(flask.request.json.get('name')) or 'undefined'
+
+    status = flask.request.json.get('status')
+    if status in (ONLINE, OFFLINE):
+        lnk.status = status
+
+    timeout = flask.request.json.get('timeout')
+    if timeout:
+        lnk.timeout = int(timeout)
+
+    lnk.commit(('name', 'status', 'timeout'))
+
+    event.Event(type=LINKS_UPDATED)
+
+    return utils.jsonify(lnk.dict())
 
 @app.app.route('/link/<link_id>/location', methods=['GET'])
 @auth.session_auth
