@@ -240,7 +240,6 @@ class Link(mongo.MongoObject):
     fields = {
         'name',
         'status',
-        'timeout',
         'key',
     }
     fields_default = {
@@ -272,7 +271,6 @@ class Link(mongo.MongoObject):
             'id': self.id,
             'name': self.name,
             'status': self.status,
-            'timeout': self.timeout,
         }
 
     def generate_key(self):
