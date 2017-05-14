@@ -121,9 +121,10 @@ def link_location_post(link_id):
 
     return utils.jsonify(loc.dict())
 
-@app.app.route('/link/<link_id>/location', methods=['POST'])
+@app.app.route('/link/<link_id>/location/<location_id>/route',
+    methods=['POST'])
 @auth.session_auth
-def link_location_post(link_id):
+def link_location_route_post(link_id, location_id):
     if settings.app.demo_mode:
         return utils.demo_blocked()
 
@@ -131,14 +132,11 @@ def link_location_post(link_id):
     if not lnk:
         return flask.abort(404)
 
-    name = utils.filter_str(flask.request.json.get('name')) or 'undefined'
+    loc = lnk.get_location(location_id)
 
-    loc = link.Location(
-        link=lnk,
-        name=name,
-        link_id=lnk.id,
-    )
-    loc.commit()
+    loc.add_route(flask.request.json.get('network'))
+
+    loc.commit('routes')
 
     event.Event(type=LINKS_UPDATED)
 
