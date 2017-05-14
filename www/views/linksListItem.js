@@ -4,10 +4,11 @@ define([
   'backbone',
   'views/alert',
   'views/linkLocationsList',
+  'views/modalModifyLink',
   'views/modalDeleteLink',
   'text!templates/linksListItem.html'
 ], function($, _, Backbone, AlertView, LinkLocationsListView,
-    ModalDeleteLinkView, linksListItemTemplate) {
+    ModalModifyLinkView, ModalDeleteLinkView, linksListItemTemplate) {
   'use strict';
   var LinksListItemView = Backbone.View.extend({
     className: 'link',
@@ -50,7 +51,10 @@ define([
       this.hostsCount = this.serverHostsListView.views.length;
     },
     onSettings: function() {
-      console.log('settings');
+      var modal = new ModalModifyLinkView({
+        model: this.model.clone()
+      });
+      this.addView(modal);
     },
     onDelete: function(evt) {
       var model = this.model.clone();
