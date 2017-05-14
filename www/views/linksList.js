@@ -6,15 +6,17 @@ define([
   'views/list',
   'views/alert',
   'views/linksListItem',
+  'views/modalAddLink',
   'text!templates/linksList.html'
 ], function($, _, Backbone, LinkCollection, ListView, AlertView,
-    LinksListItemView, linksListTemplate) {
+    LinksListItemView, ModalAddLinkView, linksListTemplate) {
   'use strict';
   var LinksListView = ListView.extend({
     listContainer: '.links-list-container',
     template: _.template(linksListTemplate),
     listErrorMsg: 'Failed to load links, server error occurred.',
     events: {
+      'click .links-add-link': 'onAddLink',
       'click .links-list > .prev-page': 'prevPage',
       'click .links-list > .next-page': 'nextPage',
       'click .links-list > .pages .page-link.first': 'firstPage',
@@ -40,6 +42,19 @@ define([
     lastPage: function() {
       this.collection.setPage(this.collection.getPageTotal());
       this.update();
+    },
+    onAddLink: function() {
+      var modal = new ModalAddLinkView();
+      this.listenToOnce(modal, 'applied', function() {
+        var alertView = new AlertView({
+          type: 'success',
+          message: 'Successfully added link.',
+          dismissable: true
+        });
+        $('.alerts-container').append(alertView.render().el);
+        this.addView(alertView);
+      }.bind(this));
+      this.addView(modal);
     },
     buildItem: function(model) {
       var modelView = new LinksListItemView({
