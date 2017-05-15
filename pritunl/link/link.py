@@ -283,6 +283,15 @@ class Link(mongo.MongoObject):
             'status': self.status,
         }
 
+    def remove(self):
+        Host.collection.remove({
+            'link_id': self.id,
+        })
+        Location.collection.remove({
+            'link_id': self.id,
+        })
+        mongo.MongoObject.remove(self)
+
     def generate_key(self):
         self.key = utils.rand_str(32)
 
