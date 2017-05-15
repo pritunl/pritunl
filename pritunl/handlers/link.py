@@ -143,6 +143,26 @@ def link_location_put(link_id, location_id):
 
     return utils.jsonify(loc.dict())
 
+@app.app.route('/link/<link_id>/location/<location_id>', methods=['DELETE'])
+@auth.session_auth
+def link_location_delete(link_id, location_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
+    lnk = link.get_by_id(link_id)
+    if not lnk:
+        return flask.abort(404)
+
+    loc = lnk.get_location(location_id)
+    if not loc:
+        return flask.abort(404)
+
+    loc.remove()
+
+    event.Event(type=LINKS_UPDATED)
+
+    return utils.jsonify({})
+
 @app.app.route('/link/<link_id>/location/<location_id>/route',
     methods=['POST'])
 @auth.session_auth
