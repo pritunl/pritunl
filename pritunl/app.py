@@ -89,26 +89,12 @@ def restart_server(delay=0):
 @app.before_request
 def before_request():
     flask.g.valid = False
-    flask.g.query_count = 0
-    flask.g.write_count = 0
-    flask.g.query_time = 0
     flask.g.start = time.time()
 
 @app.after_request
 def after_request(response):
     if settings.app.check_requests and not flask.g.valid:
         raise ValueError('Request not authorized')
-
-    resp_time = int((time.time() - flask.g.start) * 1000)
-    db_time = int(flask.g.query_time * 1000)
-    db_reads = flask.g.query_count
-    db_writes = flask.g.write_count
-
-    if settings.app.server_debug:
-        response.headers.add('Execution-Time', resp_time)
-        response.headers.add('Query-Time', db_time)
-        response.headers.add('Query-Count', db_reads)
-        response.headers.add('Write-Count', db_writes)
 
     response.headers.add('X-Frame-Options', 'DENY')
 
@@ -121,10 +107,7 @@ def after_request(response):
         }, {
             'path': flask.request.path,
             'remote_ip': utils.get_remote_addr(),
-            'response_time': resp_time,
-            'db_time': db_time,
-            'db_reads': db_reads,
-            'db_writes': db_writes,
+            'response_time': int((time.time() - flask.g.start) * 1000),
         })
 
     return response
