@@ -57,6 +57,9 @@ def link_delete(link_id):
         return utils.demo_blocked()
 
     lnk = link.get_by_id(link_id)
+    if not lnk:
+        return flask.abort(404)
+
     lnk.remove()
 
     event.Event(type=LINKS_UPDATED)
@@ -70,6 +73,8 @@ def link_put(link_id):
         return utils.demo_blocked()
 
     lnk = link.get_by_id(link_id)
+    if not lnk:
+        return flask.abort(404)
 
     lnk.name = utils.filter_str(flask.request.json.get('name')) or 'undefined'
 
@@ -91,6 +96,8 @@ def link_put(link_id):
 @auth.session_auth
 def link_location_get(link_id):
     lnk = link.get_by_id(link_id)
+    if not lnk:
+        return flask.abort(404)
 
     locations = []
     for location in lnk.iter_locations():
