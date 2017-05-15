@@ -203,6 +203,8 @@ class Location(mongo.MongoObject):
             'network': network,
         }
 
+        return network
+
     def get_host(self, host_id):
         return Host(link=self.link, location=self, id=host_id)
 
