@@ -188,6 +188,36 @@ def link_location_route_post(link_id, location_id):
         'network': network,
     })
 
+@app.app.route('/link/<link_id>/location/<location_id>/host',
+    methods=['POST'])
+@auth.session_auth
+def link_location_host_post(link_id, location_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
+    lnk = link.get_by_id(link_id)
+    if not lnk:
+        return flask.abort(404)
+
+    loc = lnk.get_location(location_id)
+    if not loc:
+        return flask.abort(404)
+
+    name = utils.filter_str(flask.request.json.get('name')) or 'undefined'
+
+    hst = link.Host(
+        link=lnk,
+        location=loc,
+        name=name,
+        link_id=lnk.id,
+        location_id=loc.id,
+    )
+    hst.commit()
+
+    event.Event(type=LINKS_UPDATED)
+
+    return utils.jsonify(hst.dict())
+
 @app.app.route('/link/state', methods=['PUT'])
 @auth.open_auth
 def link_state_put():
