@@ -9,19 +9,7 @@ def get_by_id(id):
     return Link(id=id)
 
 def get_host(host_id):
-    host = Host(id=host_id)
-    if not host:
-        return
-
-    host.link = Link(id=host.link_id)
-    if not host.link:
-        return
-
-    host.location = Location(link=host.link, id=host.location_id)
-    if not host.location:
-        return
-
-    return host
+    return Host(id=host_id)
 
 def iter_links(page=None):
     limit = None
