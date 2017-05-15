@@ -82,11 +82,7 @@ def link_put(link_id):
     if status in (ONLINE, OFFLINE):
         lnk.status = status
 
-    timeout = flask.request.json.get('timeout')
-    if timeout:
-        lnk.timeout = int(timeout)
-
-    lnk.commit(('name', 'status', 'timeout'))
+    lnk.commit(('name', 'status'))
 
     event.Event(type=LINKS_UPDATED)
 
