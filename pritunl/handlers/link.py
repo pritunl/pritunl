@@ -121,6 +121,28 @@ def link_location_post(link_id):
 
     return utils.jsonify(loc.dict())
 
+@app.app.route('/link/<link_id>/location/<location_id>', methods=['PUT'])
+@auth.session_auth
+def link_location_put(link_id, location_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
+    lnk = link.get_by_id(link_id)
+    if not lnk:
+        return flask.abort(404)
+
+    loc = lnk.get_location(location_id)
+    if not loc:
+        return flask.abort(404)
+
+    loc.name = utils.filter_str(flask.request.json.get('name')) or 'undefined'
+
+    loc.commit('name')
+
+    event.Event(type=LINKS_UPDATED)
+
+    return utils.jsonify(loc.dict())
+
 @app.app.route('/link/<link_id>/location/<location_id>/route',
     methods=['POST'])
 @auth.session_auth
