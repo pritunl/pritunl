@@ -185,6 +185,12 @@ class Location(mongo.MongoObject):
             'quality': self.quality,
         }
 
+    def remove(self):
+        Host.collection.remove({
+            'location_id': self.id,
+        })
+        mongo.MongoObject.remove(self)
+
     def add_route(self, network):
         try:
             network = str(ipaddress.IPNetwork(network))
