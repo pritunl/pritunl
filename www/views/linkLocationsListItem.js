@@ -2,15 +2,17 @@ define([
   'jquery',
   'underscore',
   'backbone',
+  'models/linkRoute',
   'views/alert',
   'views/modalAddLocRoute',
   'views/modalAddLocHost',
+  'views/modalDeleteLocRoute',
   'views/modalModifyLocation',
   'views/modalDeleteLocation',
   'text!templates/linkLocationsListItem.html'
-], function($, _, Backbone, AlertView, ModalAddLocRouteView,
-    ModalAddLocHostView, ModalModifyLocationView, ModalDeleteLocationView,
-    linkLocationsListItemTemplate) {
+], function($, _, Backbone, LinkRouteModel, AlertView, ModalAddLocRouteView,
+    ModalAddLocHostView, ModalDeleteLocRouteView, ModalModifyLocationView,
+    ModalDeleteLocationView, linkLocationsListItemTemplate) {
   'use strict';
   var LinkLocationsListItemView = Backbone.View.extend({
     className: 'link-location',
@@ -18,6 +20,7 @@ define([
     events: {
       'click .location-add-route': 'onAddRoute',
       'click .location-add-host': 'onAddHost',
+      'click .link-remove-route': 'onRemoveRoute',
       'click .location-settings': 'onSettings',
       'click .location-del': 'onDelete'
     },
@@ -58,6 +61,19 @@ define([
         $('.alerts-container').append(alertView.render().el);
         this.addView(alertView);
       }.bind(this));
+      this.addView(modal);
+    },
+    onRemoveRoute: function(evt) {
+      var model = new LinkRouteModel({
+        'id': $(evt.currentTarget).attr('data-id'),
+        'network': $(evt.currentTarget).attr('data-network'),
+        'link_id': this.model.get('link_id'),
+        'location_id': this.model.get('id')
+      });
+
+      var modal = new ModalDeleteLocRouteView({
+        model: model
+      });
       this.addView(modal);
     },
     onSettings: function() {
