@@ -8,13 +8,14 @@ define([
   'views/modalAddLocRoute',
   'views/modalAddLocHost',
   'views/modalDeleteLocRoute',
+  'views/modalModifyLocHost',
   'views/modalDeleteLocHost',
   'views/modalModifyLocation',
   'views/modalDeleteLocation',
   'text!templates/linkLocationsListItem.html'
 ], function($, _, Backbone, LinkRouteModel, LinkHostModel, AlertView,
     ModalAddLocRouteView, ModalAddLocHostView, ModalDeleteLocRouteView,
-    ModalDeleteLocHostView, ModalModifyLocationView,
+    ModalModifyLocHostView, ModalDeleteLocHostView, ModalModifyLocationView,
     ModalDeleteLocationView, linkLocationsListItemTemplate) {
   'use strict';
   var LinkLocationsListItemView = Backbone.View.extend({
@@ -25,6 +26,7 @@ define([
       'click .location-add-host': 'onAddHost',
       'click .link-remove-route': 'onRemoveRoute',
       'click .link-remove-host': 'onRemoveHost',
+      'click .host-name': 'onModifyHost',
       'click .location-settings': 'onSettings',
       'click .location-del': 'onDelete'
     },
@@ -34,6 +36,15 @@ define([
     },
     update: function() {
       this.render();
+    },
+    getHost: function(hostId) {
+      var hosts = this.model.get('hosts');
+
+      for (var i = 0; i < hosts.length; i++) {
+        if (hosts[i].id === hostId) {
+          return hosts[i];
+        }
+      }
     },
     onAddRoute: function() {
       var modal = new ModalAddLocRouteView({
@@ -80,13 +91,20 @@ define([
       });
       this.addView(modal);
     },
-    onRemoveHost: function(evt) {
-      var model = new LinkHostModel({
-        'id': $(evt.currentTarget).attr('data-id'),
-        'name': $(evt.currentTarget).attr('data-name'),
-        'link_id': this.model.get('link_id'),
-        'location_id': this.model.get('id')
+    onModifyHost: function(evt) {
+      console.log(this.getHost($(evt.currentTarget).attr('data-id')))
+
+      var model = new LinkHostModel(
+        this.getHost($(evt.currentTarget).attr('data-id')));
+
+      var modal = new ModalModifyLocHostView({
+        model: model
       });
+      this.addView(modal);
+    },
+    onRemoveHost: function(evt) {
+      var model = new LinkHostModel(
+        this.getHost($(evt.currentTarget).attr('data-id')));
 
       var modal = new ModalDeleteLocHostView({
         model: model
