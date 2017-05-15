@@ -10,7 +10,7 @@ define([
       'network': null
     },
     url: function() {
-      var url = '/link/' + this.get('link_id') + '/' +
+      var url = '/link/' + this.get('link_id') + '/location/' +
         this.get('location_id') + '/host';
 
       if (this.get('id')) {
