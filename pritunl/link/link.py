@@ -76,6 +76,10 @@ class Host(mongo.MongoObject):
             'public_address': self.public_address,
         }
 
+    def load_link(self):
+        self.link = Link(id=self.link_id)
+        self.location = Location(link=self.link, id=self.location_id)
+
     def generate_secret(self):
         self.secret = utils.rand_str(32)
 
