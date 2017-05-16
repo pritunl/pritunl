@@ -10,8 +10,8 @@ define([
   'use strict';
   var ModalDeleteLocHostView = ModalView.extend({
     className: 'delete-location-host-modal',
-    template: _.template(modalRemoveHostTemplate),
-    title: 'Remove Host',
+    template: _.template(modalDeleteLocHostTemplate),
+    title: 'Remove Location Host',
     okText: 'Remove',
     body: function() {
       return this.template(this.model.toJSON());
