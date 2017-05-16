@@ -89,7 +89,7 @@ class Host(mongo.MongoObject):
     def get_state(self):
         self.status = AVAILABLE
         self.ping_timestamp = utils.now()
-        self.commit(('status', 'ping_timestamp'))
+        self.commit(('public_address', 'status', 'ping_timestamp'))
 
         links = []
         state = {
