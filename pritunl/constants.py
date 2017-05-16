@@ -988,6 +988,8 @@ persist-tun
 auth %s
 status-version 2
 script-security 2
+sndbuf 393216
+rcvbuf 393216
 reneg-sec 2592000
 hash-size 1024 1024
 max-routes-per-client 1000
@@ -1015,8 +1017,8 @@ ping-restart %s
 hand-window 70
 server-poll-timeout 4
 reneg-sec 2592000
-sndbuf 100000
-rcvbuf 100000
+sndbuf 393216
+rcvbuf 393216
 max-routes 1000
 remote-cert-tls server
 """
@@ -1102,8 +1104,8 @@ ping-restart %s
 hand-window 70
 server-poll-timeout 4
 reneg-sec 2592000
-sndbuf 100000
-rcvbuf 100000
+sndbuf 393216
+rcvbuf 393216
 max-routes 1000
 remote-cert-tls server
 """
