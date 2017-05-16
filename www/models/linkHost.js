@@ -7,7 +7,7 @@ define([
   var LinkHostModel = Backbone.Model.extend({
     defaults: {
       'id': null,
-      'network': null
+      'name': null
     },
     url: function() {
       var url = '/link/' + this.get('link_id') + '/location/' +
