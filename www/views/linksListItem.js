@@ -25,8 +25,6 @@ define([
       });
       this.addView(this.locationsView);
     },
-    deinitialize: function() {
-    },
     render: function() {
       this.$el.html(this.template(this.model.toJSON()));
       this.update();
@@ -61,6 +59,7 @@ define([
 
       if (evt.shiftKey && evt.ctrlKey) {
         model.destroy();
+        this.locationsView.destroy();
         return;
       }
 
@@ -68,6 +67,7 @@ define([
         model: model
       });
       this.listenToOnce(modal, 'applied', function() {
+        this.locationsView.destroy();
         var alertView = new AlertView({
           type: 'success',
           message: 'Successfully deleted link.',
