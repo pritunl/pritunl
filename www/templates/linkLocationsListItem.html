@@ -17,7 +17,7 @@
       <span class="route-network title"><%- route.network %></span>
     </div>
     <div class="button-container">
-      <button type="button" class="link-remove-route btn btn-danger btn-xs">Remove Route</button>
+      <button data-id="<%- route.id %>" data-network="<%- route.network %>" type="button" class="link-remove-route btn btn-danger btn-xs">Remove Route</button>
     </div>
   </div>
   <% }); %>
@@ -32,13 +32,14 @@
   <div class="link-host">
     <div class="name-container">
       <span class="name-icon glyphicon glyphicon-dashboard"></span>
-      <span class="host-name title"><%- host.name %></span>
+      <a data-id="<%- host.id %>" class="host-name title" data-toggle="tooltip" title="Click to modify this host"><%- host.name %></a>
     </div>
     <div class="button-container">
       <div class="link-host-active label label-success no-select" <%= host.status === 'active' ? '' : 'style="display: none"' %>>Active</div>
       <div class="link-host-available label label-primary no-select" <%= host.status === 'available' ? '' : 'style="display: none"' %>>Available</div>
       <div class="link-host-unavailable label label-danger no-select" <%= host.status === 'unavailable' ? '' : 'style="display: none"' %>>Unavailable</div>
-      <button type="button" class="link-remove-host btn btn-danger btn-xs">Remove Host</button>
+      <button data-id="<%- host.id %>" type="button" class="link-uri-host btn btn-primary btn-xs">Get URI</button>
+      <button data-id="<%- host.id %>" type="button" class="link-remove-host btn btn-danger btn-xs">Remove Host</button>
     </div>
   </div>
   <% }); %>
