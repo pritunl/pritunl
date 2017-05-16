@@ -197,8 +197,7 @@ class Location(mongo.MongoObject):
         except ValueError:
             raise NetworkInvalid('Network address is invalid')
 
-        network_id = network.encode('hex')
-
+        network_id = hashlib.md5(network).hexdigest()
         self.routes[network_id] = {
             'network': network,
         }
