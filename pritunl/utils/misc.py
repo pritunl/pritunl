@@ -384,6 +384,7 @@ def sync_public_ip(attempts=1, timeout=5, update=False):
         try:
             request = urllib2.Request(
                 settings.app.public_ip_server)
+            request.add_header('User-Agent', 'pritunl')
             response = urllib2.urlopen(request, timeout=timeout)
             settings.local.public_ip = str(json.load(response)['ip'])
             break
@@ -393,6 +394,7 @@ def sync_public_ip(attempts=1, timeout=5, update=False):
     try:
         request = urllib2.Request(
             settings.app.public_ip6_server)
+        request.add_header('User-Agent', 'pritunl')
         response = urllib2.urlopen(request, timeout=timeout)
         settings.local.public_ip6 = str(json.load(response)['ip'])
     except:
