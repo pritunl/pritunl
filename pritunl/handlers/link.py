@@ -359,6 +359,10 @@ def link_state_put():
     except pymongo.errors.DuplicateKeyError:
         return flask.abort(401)
 
+    host.load_link()
+
+    host.public_address = flask.request.json.get('public_address')
+
     data = json.dumps(host.get_state(), default=lambda x: str(x))
     data += (16 - len(data) % 16) * '\x00'
 
