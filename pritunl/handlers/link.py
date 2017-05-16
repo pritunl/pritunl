@@ -245,6 +245,9 @@ def link_location_host_post(link_id, location_id):
         link_id=lnk.id,
         location_id=loc.id,
     )
+
+    hst.generate_secret()
+
     hst.commit()
 
     event.Event(type=LINKS_UPDATED)
