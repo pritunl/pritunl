@@ -1,4 +1,5 @@
 from pritunl.constants import *
+from pritunl.exceptions import *
 from pritunl import app
 from pritunl import auth
 from pritunl import settings
@@ -181,14 +182,20 @@ def link_location_route_post(link_id, location_id):
     if not loc:
         return flask.abort(404)
 
-    network = loc.add_route(flask.request.json.get('network'))
+    try:
+        network = loc.add_route(flask.request.json.get('network'))
+    except NetworkInvalid:
+        return utils.jsonify({
+            'error': LINK_NETWORK_INVALID,
+            'error_msg': LINK_NETWORK_INVALID_MSG,
+        }, 400)
 
     loc.commit('routes')
 
     event.Event(type=LINKS_UPDATED)
 
     return utils.jsonify({
-        'network': network,
+        'id': network,
     })
 
 @app.app.route('/link/<link_id>/location/<location_id>/route/<network>',
