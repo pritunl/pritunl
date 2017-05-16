@@ -204,6 +204,9 @@ class Location(mongo.MongoObject):
 
         return network_id
 
+    def remove_route(self, network_id):
+        self.routes.pop(network_id)
+
     def get_host(self, host_id):
         return Host(link=self.link, location=self, id=host_id)
 
