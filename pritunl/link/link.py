@@ -83,8 +83,8 @@ class Host(mongo.MongoObject):
     def generate_secret(self):
         self.secret = utils.rand_str(32)
 
-    def get_uri(self, hostname):
-        return 'pritunl://%s:%s@%s' % (self.id, self.secret, hostname)
+    def get_uri(self):
+        return 'pritunl://%s:%s@' % (self.id, self.secret)
 
     def get_state(self):
         self.status = AVAILABLE
