@@ -52,6 +52,16 @@ def get_host_page_total():
     return int(math.floor(max(0, float(count - 1)) /
         settings.app.host_page_count))
 
+def get_hosts_online():
+    host_collection = mongo.get_collection('hosts')
+
+    return host_collection.find({
+        'status': ONLINE,
+    }, {
+        '_id': True,
+        'status': True,
+    }).count()
+
 def iter_hosts_dict(page=None):
     clients_collection = mongo.get_collection('clients')
     server_collection = mongo.get_collection('servers')
