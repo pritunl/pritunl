@@ -57,10 +57,7 @@ class ServerBandwidth(object):
                 minutes=timestamp.minute) - datetime.timedelta(days=365)
 
     def add_data(self, timestamp, received, sent):
-        if mongo.has_bulk:
-            bulk = self.collection.initialize_unordered_bulk_op()
-        else:
-            bulk = None
+        bulk = self.collection.initialize_unordered_bulk_op()
 
         for period in ('1m', '5m', '30m', '2h', '1d'):
             spec = {
@@ -80,15 +77,10 @@ class ServerBandwidth(object):
                 },
             }
 
-            if bulk:
-                bulk.find(spec).upsert().update(doc)
-                bulk.find(rem_spec).remove()
-            else:
-                self.collection.update(spec, doc, upsert=True)
-                self.collection.remove(rem_spec)
+            bulk.find(spec).upsert().update(doc)
+            bulk.find(rem_spec).remove()
 
-        if bulk:
-            bulk.execute()
+        bulk.execute()
 
     def get_period(self, period):
         date_end = self._get_period_timestamp(period, utils.now())

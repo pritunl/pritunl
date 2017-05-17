@@ -150,12 +150,8 @@ class ServerIpPool:
         except IndexError:
             pass
 
-        if mongo.has_bulk:
-            bulk = self.collection.initialize_unordered_bulk_op()
-            bulk_empty = True
-        else:
-            bulk = None
-            bulk_empty = None
+        bulk = self.collection.initialize_unordered_bulk_op()
+        bulk_empty = True
 
         for user in org.iter_users(include_pool=True):
             if ip_pool_avial:
@@ -192,13 +188,10 @@ class ServerIpPool:
                 'address': '%s/%s' % (remote_ip_addr, network.prefixlen),
             }}
 
-            if bulk:
-                bulk.find(spec).upsert().update(doc)
-                bulk_empty = False
-            else:
-                self.collection.update(spec, doc, upsert=True)
+            bulk.find(spec).upsert().update(doc)
+            bulk_empty = False
 
-        if bulk and not bulk_empty:
+        if not bulk_empty:
             bulk.execute()
 
         if pool_end:
@@ -232,12 +225,8 @@ class ServerIpPool:
         if not ip_pool:
             return
 
-        if mongo.has_bulk:
-            bulk = self.collection.initialize_unordered_bulk_op()
-            bulk_empty = True
-        else:
-            bulk = None
-            bulk_empty = None
+        bulk = self.collection.initialize_unordered_bulk_op()
+        bulk_empty = True
 
         for org in self.server.iter_orgs():
             org_id = org.id
@@ -278,25 +267,19 @@ class ServerIpPool:
                 )
                 break
 
-        if bulk and not bulk_empty:
+        if not bulk_empty:
             bulk.execute()
 
     def sync_ip_pool(self):
         server_id = self.server.id
 
-        if mongo.has_bulk:
-            bulk = self.collection.initialize_unordered_bulk_op()
-        else:
-            bulk = None
+        bulk = self.collection.initialize_unordered_bulk_op()
 
         spec = {
             'server_id': server_id,
             'network': {'$ne': self.server.network_hash},
         }
-        if bulk:
-            bulk.find(spec).remove()
-        else:
-            self.collection.remove(spec)
+        bulk.find(spec).remove()
 
         dup_user_ips = self.collection.aggregate([
             {'$match': {
@@ -326,10 +309,7 @@ class ServerIpPool:
                     'user_id': '',
                 }}
 
-                if bulk:
-                    bulk.find(spec).update(doc)
-                else:
-                    self.collection.update(spec, doc)
+                bulk.find(spec).update(doc)
 
         user_ids = self.users_collection.find({
             'org_id': {'$in': self.server.organizations},
@@ -356,13 +336,9 @@ class ServerIpPool:
                 'user_id': '',
             }}
 
-            if bulk:
-                bulk.find(spec).update(doc)
-            else:
-                self.collection.update(spec, doc)
+            bulk.find(spec).update(doc)
 
-        if bulk:
-            bulk.execute()
+        bulk.execute()
 
         for user_id in user_ids - user_ip_ids:
             doc = self.users_collection.find_one(user_id, {
