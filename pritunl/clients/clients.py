@@ -557,6 +557,7 @@ class Clients(object):
                         'user_reconnect',
                         user_id,
                         settings.local.host_id,
+                        self.server.id,
                     ])
 
                 for clnt in self.clients.find({'user_id': user_id}):
@@ -1181,8 +1182,11 @@ class Clients(object):
                 }):
             self.instance_com.client_kill(clnt['id'])
 
-    def reconnect_user(self, user_id, host_id):
+    def reconnect_user(self, user_id, host_id, server_id):
         if host_id == settings.local.host_id:
+            return
+
+        if server_id and self.server.id != server_id:
             return
 
         for client in self.clients.find({'user_id': user_id}):

@@ -197,7 +197,10 @@ class ServerInstanceCom(object):
         elif event_type == 'user_reconnect':
             user_id = msg[1]
             host_id = msg[2]
-            self.clients.reconnect_user(user_id, host_id)
+            server_id = None
+            if len(msg) > 3:
+                server_id = msg[3]
+            self.clients.reconnect_user(user_id, host_id, server_id)
         elif event_type == 'route_advertisement':
             server_id = msg[1]
             vpc_region = msg[2]
