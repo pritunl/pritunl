@@ -7,5 +7,6 @@ import pritunl.tasks.route
 import pritunl.tasks.sync_ip_pool
 import pritunl.tasks.server
 import pritunl.tasks.host
+import pritunl.tasks.link
 import pritunl.tasks.clean_servers
 import pritunl.tasks.clean_vxlans
