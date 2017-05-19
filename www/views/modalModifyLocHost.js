@@ -17,6 +17,7 @@ define([
     },
     onOk: function() {
       var name = this.$('.name input').val();
+      var timeout = parseInt(this.$('.timeout input').val(), 10) || null;
 
       if (!name) {
         this.setAlert('danger', 'Name can not be empty.', '.name');
@@ -25,7 +26,8 @@ define([
 
       this.setLoading('Saving location host...');
       this.model.save({
-        name: name
+        name: name,
+        timeout: timeout
       }, {
         success: function() {
           this.close(true);
