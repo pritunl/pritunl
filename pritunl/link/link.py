@@ -17,6 +17,7 @@ class Host(mongo.MongoObject):
         'secret',
         'status',
         'active',
+        'timeout',
         'ping_timestamp',
         'public_address',
     }
@@ -27,7 +28,8 @@ class Host(mongo.MongoObject):
 
     def __init__(self, link=None, location=None, name=None, link_id=None,
             location_id=None, secret=None, status=None, active=None,
-            ping_timestamp=None, public_address=None, tunnels=None, **kwargs):
+            timeout=None, ping_timestamp=None, public_address=None,
+            tunnels=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         self.link = link
@@ -50,6 +52,9 @@ class Host(mongo.MongoObject):
 
         if active is not None:
             self.active = active
+
+        if timeout is not None:
+            self.timeout = timeout
 
         if ping_timestamp is not None:
             self.ping_timestamp = ping_timestamp
