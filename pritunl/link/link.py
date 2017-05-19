@@ -4,9 +4,11 @@ from pritunl.helpers import *
 from pritunl import utils
 from pritunl import mongo
 from pritunl import ipaddress
+from pritunl import settings
 
 import hashlib
 import json
+import datetime
 
 class Host(mongo.MongoObject):
     fields = {
@@ -67,6 +69,35 @@ class Host(mongo.MongoObject):
     @cached_static_property
     def collection(cls):
         return mongo.get_collection('links_hosts')
+
+    @property
+    def is_available(self):
+        timeout = datetime.timedelta(
+            seconds=self.timeout or settings.vpn.link_timeout)
+
+        if utils.now() - self.ping_timestamp > timeout:
+            return False
+
+        return True
+
+    def check_available(self):
+        if self.is_available:
+            return True
+
+        response = self.collection.update({
+            '_id': self.id,
+            'ping_timestamp': self.ping_timestamp,
+        }, {'$set': {
+            'status': UNAVAILABLE,
+            'active': False,
+        }})
+
+        if response['updatedExisting']:
+            self.active = False
+            self.status = UNAVAILABLE
+            return False
+
+        return True
 
     def dict(self):
         return {
