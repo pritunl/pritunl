@@ -30,6 +30,12 @@ def iter_links(page=None):
     for doc in cursor:
         yield Link(doc=doc)
 
+def iter_hosts():
+    cursor = Host.collection.find({})
+
+    for doc in cursor:
+        yield Host(doc=doc)
+
 def get_page_total():
     collection = mongo.get_collection('servers')
 
