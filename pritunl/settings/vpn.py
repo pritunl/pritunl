@@ -21,6 +21,7 @@ class SettingsVpn(SettingsGroupMongo):
         'dns_mapping_push_all': True,
         'http_request_timeout': 10,
         'op_timeout': 25,
+        'link_timeout': 5,
         'iptables_update': False,
         'iptables_update_rate': 900,
         'bandwidth_update_rate': 15,
