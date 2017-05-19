@@ -23,6 +23,7 @@ define([
     },
     onOk: function() {
       var name = this.$('.name input').val();
+      var timeout = parseInt(this.$('.timeout input').val(), 10) || null;
 
       if (!name) {
         this.setAlert('danger', 'Name can not be empty.', '.name');
@@ -34,7 +35,8 @@ define([
       model.save({
         link_id: this.link,
         location_id: this.location,
-        name: name
+        name: name,
+        timeout: timeout
       }, {
         success: function() {
           this.close(true);
