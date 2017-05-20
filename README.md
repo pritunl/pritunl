@@ -218,21 +218,6 @@ sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
 deb http://repo.pritunl.com/stable/apt xenial main
 EOF
 
-sudo tee -a /lib/systemd/system/mongod.service << EOF
-[Unit]
-Description=High-performance, schema-free document-oriented database
-After=network.target
-Documentation=https://docs.mongodb.org/manual
-
-[Service]
-User=mongodb
-Group=mongodb
-ExecStart=/usr/bin/mongod --quiet --config /etc/mongod.conf
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 42F3E95A2C4F08279C4960ADD68FA50FEA312927
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
 sudo apt-get update
