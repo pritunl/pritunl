@@ -85,8 +85,6 @@ sudo start pritunl
 ### centos 7
 
 ```
-# SELinux must be disabled
-
 sudo tee -a /etc/yum.repos.d/mongodb-org-3.2.repo << EOF
 [mongodb-org-3.2]
 name=MongoDB Repository
@@ -110,6 +108,9 @@ gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A > key.tmp; sudo rp
 sudo yum -y install pritunl mongodb-org
 sudo systemctl start mongod pritunl
 sudo systemctl enable mongod pritunl
+
+#If you use SELINUX, you need to do this post install
+semanage fcontext -a -t openvpn_etc_t "/tmp/pritunl_.*(/.*)?"
 ```
 
 ### debian wheezy
@@ -153,8 +154,6 @@ sudo systemctl enable mongod pritunl
 ### fedora 25
 
 ```
-# SELinux must be disabled
-
 sudo tee -a /etc/yum.repos.d/pritunl.repo << EOF
 [pritunl]
 name=Pritunl Repository
@@ -169,6 +168,9 @@ gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A > key.tmp; sudo rp
 sudo yum -y install pritunl mongodb-server iptables
 sudo systemctl start mongod pritunl
 sudo systemctl enable mongod pritunl
+
+#If you use SELINUX, you need to do this post install
+semanage fcontext -a -t openvpn_etc_t "/tmp/pritunl_.*(/.*)?"
 ```
 
 ### ubuntu precise
