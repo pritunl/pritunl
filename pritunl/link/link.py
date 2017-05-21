@@ -72,6 +72,9 @@ class Host(mongo.MongoObject):
 
     @property
     def is_available(self):
+        if not self.ping_timestamp:
+            return False
+
         timeout = datetime.timedelta(
             seconds=self.timeout or settings.vpn.link_timeout)
 
