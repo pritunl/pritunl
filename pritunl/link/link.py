@@ -253,7 +253,7 @@ class Location(mongo.MongoObject):
         }).sort('name')
 
         for doc in cursor:
-            yield Host(link=self, doc=doc)
+            yield Host(link=self.link, location=self, doc=doc)
 
     def get_active_host(self):
         doc = Host.collection.find_one({
