@@ -1013,7 +1013,8 @@ class Clients(object):
         }
 
         if settings.local.sub_active and \
-                settings.local.sub_plan == 'enterprise':
+                settings.local.sub_plan and \
+                'enterprise' in settings.local.sub_plan:
             domain = (str(client['user_name']).split('@')[0] +
                 '.' + str(client['org_name'])).lower()
             domain_hash = hashlib.md5()

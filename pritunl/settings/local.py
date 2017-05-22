@@ -23,6 +23,7 @@ class SettingsLocal(SettingsGroupLocal):
         'sub_period_end': None,
         'sub_trial_end': None,
         'sub_cancel_at_period_end': None,
+        'sub_balance': None,
         'sub_url_key': False,
         'sub_styles': {},
     }

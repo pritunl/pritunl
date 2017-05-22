@@ -20,6 +20,9 @@ import Crypto.Cipher.AES
 @app.app.route('/link', methods=['GET'])
 @auth.session_auth
 def link_get():
+    if settings.local.sub_plan != 'enterprise_plus':
+        return flask.abort(404)
+
     page = flask.request.args.get('page', None)
     page = int(page) if page else page
 
@@ -36,6 +39,9 @@ def link_get():
 @app.app.route('/link', methods=['POST'])
 @auth.session_auth
 def link_post():
+    if settings.local.sub_plan != 'enterprise_plus':
+        return flask.abort(404)
+
     if settings.app.demo_mode:
         return utils.demo_blocked()
 
@@ -54,6 +60,9 @@ def link_post():
 @app.app.route('/link/<link_id>', methods=['DELETE'])
 @auth.session_auth
 def link_delete(link_id):
+    if settings.local.sub_plan != 'enterprise_plus':
+        return flask.abort(404)
+
     if settings.app.demo_mode:
         return utils.demo_blocked()
 
@@ -70,6 +79,9 @@ def link_delete(link_id):
 @app.app.route('/link/<link_id>', methods=['PUT'])
 @auth.session_auth
 def link_put(link_id):
+    if settings.local.sub_plan != 'enterprise_plus':
+        return flask.abort(404)
+
     if settings.app.demo_mode:
         return utils.demo_blocked()
 
@@ -92,6 +104,9 @@ def link_put(link_id):
 @app.app.route('/link/<link_id>/location', methods=['GET'])
 @auth.session_auth
 def link_location_get(link_id):
+    if settings.local.sub_plan != 'enterprise_plus':
+        return flask.abort(404)
+
     lnk = link.get_by_id(link_id)
     if not lnk:
         return flask.abort(404)
@@ -105,6 +120,9 @@ def link_location_get(link_id):
 @app.app.route('/link/<link_id>/location', methods=['POST'])
 @auth.session_auth
 def link_location_post(link_id):
+    if settings.local.sub_plan != 'enterprise_plus':
+        return flask.abort(404)
+
     if settings.app.demo_mode:
         return utils.demo_blocked()
 
@@ -128,6 +146,9 @@ def link_location_post(link_id):
 @app.app.route('/link/<link_id>/location/<location_id>', methods=['PUT'])
 @auth.session_auth
 def link_location_put(link_id, location_id):
+    if settings.local.sub_plan != 'enterprise_plus':
+        return flask.abort(404)
+
     if settings.app.demo_mode:
         return utils.demo_blocked()
 
@@ -150,6 +171,9 @@ def link_location_put(link_id, location_id):
 @app.app.route('/link/<link_id>/location/<location_id>', methods=['DELETE'])
 @auth.session_auth
 def link_location_delete(link_id, location_id):
+    if settings.local.sub_plan != 'enterprise_plus':
+        return flask.abort(404)
+
     if settings.app.demo_mode:
         return utils.demo_blocked()
 
@@ -171,6 +195,9 @@ def link_location_delete(link_id, location_id):
     methods=['POST'])
 @auth.session_auth
 def link_location_route_post(link_id, location_id):
+    if settings.local.sub_plan != 'enterprise_plus':
+        return flask.abort(404)
+
     if settings.app.demo_mode:
         return utils.demo_blocked()
 
@@ -202,6 +229,9 @@ def link_location_route_post(link_id, location_id):
     methods=['DELETE'])
 @auth.session_auth
 def link_location_route_delete(link_id, location_id, network):
+    if settings.local.sub_plan != 'enterprise_plus':
+        return flask.abort(404)
+
     if settings.app.demo_mode:
         return utils.demo_blocked()
 
@@ -225,6 +255,9 @@ def link_location_route_delete(link_id, location_id, network):
     methods=['POST'])
 @auth.session_auth
 def link_location_host_post(link_id, location_id):
+    if settings.local.sub_plan != 'enterprise_plus':
+        return flask.abort(404)
+
     if settings.app.demo_mode:
         return utils.demo_blocked()
 
@@ -260,6 +293,9 @@ def link_location_host_post(link_id, location_id):
     methods=['GET'])
 @auth.session_auth
 def link_location_host_uri_get(link_id, location_id, host_id):
+    if settings.local.sub_plan != 'enterprise_plus':
+        return flask.abort(404)
+
     if settings.app.demo_mode:
         return utils.demo_blocked()
 
@@ -284,6 +320,9 @@ def link_location_host_uri_get(link_id, location_id, host_id):
     methods=['PUT'])
 @auth.session_auth
 def link_location_host_put(link_id, location_id, host_id):
+    if settings.local.sub_plan != 'enterprise_plus':
+        return flask.abort(404)
+
     if settings.app.demo_mode:
         return utils.demo_blocked()
 
@@ -312,6 +351,9 @@ def link_location_host_put(link_id, location_id, host_id):
     methods=['DELETE'])
 @auth.session_auth
 def link_location_host_delete(link_id, location_id, host_id):
+    if settings.local.sub_plan != 'enterprise_plus':
+        return flask.abort(404)
+
     if settings.app.demo_mode:
         return utils.demo_blocked()
 
@@ -336,6 +378,9 @@ def link_location_host_delete(link_id, location_id, host_id):
 @app.app.route('/link/state', methods=['PUT'])
 @auth.open_auth
 def link_state_put():
+    if settings.local.sub_plan != 'enterprise_plus':
+        return flask.abort(404)
+
     if settings.app.demo_mode:
         return utils.demo_blocked()
 

@@ -263,7 +263,8 @@ class ServerInstance(object):
                 if conf_line:
                     self.server.output.push_message('  ' + conf_line)
 
-        if settings.local.sub_plan == 'enterprise':
+        if settings.local.sub_plan and \
+                'enterprise' in settings.local.sub_plan:
             returns = plugins.caller(
                 'server_config',
                 host_id=settings.local.host_id,

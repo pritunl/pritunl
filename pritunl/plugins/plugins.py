@@ -71,7 +71,8 @@ def _event(event_type, **kwargs):
             )
 
 def event(event_type, **kwargs):
-    if settings.local.sub_plan != 'enterprise':
+    if not settings.local.sub_plan or \
+            'enterprise' not in settings.local.sub_plan:
         return
     if not _has_plugins or event_type not in _handlers:
         return

@@ -143,7 +143,8 @@ def _auth_radius(username, password):
     }, 202)
 
 def _auth_plugin(username, password):
-    if settings.local.sub_plan != 'enterprise':
+    if not settings.local.sub_plan or \
+            'enterprise' not in settings.local.sub_plan:
         return utils.jsonify({
             'error': AUTH_INVALID,
             'error_msg': AUTH_INVALID_MSG,

@@ -91,7 +91,8 @@ def login_static_get():
         if settings.app.theme == 'dark':
             body_class += 'dark '
 
-        if settings.local.sub_plan == 'enterprise':
+        if settings.local.sub_plan and \
+                'enterprise' in settings.local.sub_plan:
             if not settings.app.sso:
                 pass
             elif settings.app.sso in (SAML_AUTH, SAML_DUO_AUTH):
