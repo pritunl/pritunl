@@ -299,6 +299,18 @@ def setup_mongo():
     ], background=True)
     upsert_index(mongo.collections['servers_ip_pool'], 'user_id',
         background=True)
+    upsert_index(mongo.collections['links_hosts'], 'link_id',
+        background=True)
+    upsert_index(mongo.collections['links_hosts'], [
+        ('location_id', pymongo.ASCENDING),
+        ('active', pymongo.ASCENDING),
+    ], background=True, unique=True)
+    upsert_index(mongo.collections['links_hosts'], [
+        ('location_id', pymongo.ASCENDING),
+        ('name', pymongo.ASCENDING),
+    ], background=True, unique=True)
+    upsert_index(mongo.collections['links_locations'], 'link_id',
+        background=True)
     upsert_index(mongo.collections['routes_reserve'], 'timestamp',
         background=True)
     upsert_index(mongo.collections['dh_params'], 'dh_param_bits',
