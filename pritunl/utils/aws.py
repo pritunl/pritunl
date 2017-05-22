@@ -7,6 +7,7 @@ import boto.ec2
 import boto.vpc
 import boto.route53
 import requests
+import time
 
 def connect_vpc(aws_key, aws_secret, region):
     return boto.connect_vpc(
@@ -37,6 +38,8 @@ def get_instance_id():
         pass
 
 def add_vpc_route(region, vpc_id, network, resource_id):
+    time.sleep(0.1)
+
     region_key = region.replace('-', '_')
     aws_key = getattr(settings.app, region_key + '_access_key')
     aws_secret = getattr(settings.app, region_key + '_secret_key')
