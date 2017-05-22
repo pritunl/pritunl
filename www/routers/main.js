@@ -33,18 +33,20 @@ define([
     initialize: function(data) {
       this.data = data;
       this.loadedStyles = {};
-      this.listenTo(window.events, 'subscription_none_active',
-        this.onSubscriptionNoneActive);
       this.listenTo(window.events, 'subscription_premium_active',
         this.onSubscriptionPremiumActive);
       this.listenTo(window.events, 'subscription_enterprise_active',
         this.onSubscriptionEnterpriseActive);
+      this.listenTo(window.events, 'subscription_enterprise_plus_active',
+        this.onSubscriptionEnterprisePlusActive);
       this.listenTo(window.events, 'subscription_none_inactive',
         this.onSubscriptionNoneInactive);
       this.listenTo(window.events, 'subscription_premium_inactive',
         this.onSubscriptionPremiumInactive);
       this.listenTo(window.events, 'subscription_enterprise_inactive',
         this.onSubscriptionEnterpriseInactive);
+      this.listenTo(window.events, 'subscription_enterprise_plus_inactive',
+        this.onSubscriptionEnterprisePlusInactive);
       this.listenTo(window.events, 'theme_light', this.onThemeLight);
       this.listenTo(window.events, 'theme_dark', this.onThemeDark);
     },
@@ -61,12 +63,12 @@ define([
       window.subPlan = 'premium';
       $('body').addClass('premium');
       $('body').removeClass('enterprise');
+      $('body').removeClass('enterprise-plus');
       $('body').removeClass('premium-license');
       $('body').removeClass('enterprise-license');
-
+      $('body').removeClass('enterprise-plus-license');
       this.loadStyles();
       this.updateTheme();
-
       if ($('header .hosts').hasClass('active')) {
         this.dashboard();
       }
@@ -76,8 +78,22 @@ define([
       window.subPlan = 'enterprise';
       $('body').removeClass('premium');
       $('body').addClass('enterprise');
+      $('body').removeClass('enterprise-plus');
       $('body').removeClass('premium-license');
       $('body').removeClass('enterprise-license');
+      $('body').removeClass('enterprise-plus-license');
+      this.loadStyles();
+      this.updateTheme();
+    },
+    onSubscriptionEnterprisePlusActive: function() {
+      window.subActive = true;
+      window.subPlan = 'enterprise_plus';
+      $('body').removeClass('premium');
+      $('body').removeClass('enterprise');
+      $('body').addClass('enterprise-plus');
+      $('body').removeClass('premium-license');
+      $('body').removeClass('enterprise-license');
+      $('body').removeClass('enterprise-plus-license');
       this.loadStyles();
       this.updateTheme();
     },
@@ -86,8 +102,10 @@ define([
       window.subPlan = 'premium';
       $('body').removeClass('premium');
       $('body').removeClass('enterprise');
+      $('body').removeClass('enterprise-plus');
       $('body').addClass('premium-license');
       $('body').removeClass('enterprise-license');
+      $('body').removeClass('enterprise-plus-license');
 
       this.updateTheme();
 
@@ -100,8 +118,26 @@ define([
       window.subPlan = 'enterprise';
       $('body').removeClass('premium');
       $('body').removeClass('enterprise');
+      $('body').removeClass('enterprise-plus');
       $('body').removeClass('premium-license');
       $('body').addClass('enterprise-license');
+      $('body').removeClass('enterprise-plus-license');
+
+      this.updateTheme();
+
+      if ($('header .hosts').hasClass('active')) {
+        this.dashboard();
+      }
+    },
+    onSubscriptionEnterprisePlusInactive: function() {
+      window.subActive = false;
+      window.subPlan = 'enterprise';
+      $('body').removeClass('premium');
+      $('body').removeClass('enterprise');
+      $('body').removeClass('enterprise-plus');
+      $('body').removeClass('premium-license');
+      $('body').removeClass('enterprise-license');
+      $('body').addClass('enterprise-plus-license');
 
       this.updateTheme();
 
@@ -114,9 +150,10 @@ define([
       window.subPlan = null;
       $('body').removeClass('premium');
       $('body').removeClass('enterprise');
+      $('body').removeClass('enterprise-plus');
       $('body').removeClass('premium-license');
       $('body').removeClass('enterprise-license');
-
+      $('body').removeClass('enterprise-plus-license');
       this.updateTheme();
 
       if ($('header .hosts').hasClass('active')) {
@@ -223,7 +260,8 @@ define([
       }.bind(this));
     },
     admins: function() {
-      if (!window.superUser || window.subPlan !== 'enterprise') {
+      if (!window.superUser || (window.subPlan !== 'enterprise' &&
+          window.subPlan !== 'enterprise_plus')) {
         this.dashboard();
         return;
       }
@@ -249,7 +287,8 @@ define([
       }.bind(this));
     },
     hosts: function() {
-      if (!window.subActive || window.subPlan !== 'enterprise') {
+      if (!window.subActive || (window.subPlan !== 'enterprise' &&
+          window.subPlan !== 'enterprise_plus')) {
         this.dashboard();
         return;
       }
@@ -261,6 +300,12 @@ define([
       }.bind(this));
     },
     links: function() {
+      if (window.subPlan !== 'enterprise' &&
+          window.subPlan !== 'enterprise_plus') {
+        this.dashboard();
+        return;
+      }
+
       this.auth(function() {
         $('header .navbar .nav li').removeClass('active');
         $('header .links').addClass('active');

@@ -17,6 +17,7 @@ define([
       'period_end': null,
       'trial_end': null,
       'cancel_at_period_end': null,
+      'balance': null,
       'version': null,
       'theme': null,
       'super_user': null,

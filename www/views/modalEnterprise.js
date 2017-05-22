@@ -19,9 +19,6 @@ define([
       return _.extend({
         'click .enterprise-update, .enterprise-reactivate': 'onUpdate',
         'click .enterprise-change': 'onChange',
-        'click .enterprise-promo': 'onPromo',
-        'click .enterprise-promo-ok': 'onPromoOk',
-        'click .enterprise-support': 'onSupport',
         'click .enterprise-remove': 'onRemoveLicense',
         'click .enterprise-cancel': 'onCancelLicense'
       }, ModalEnterpriseView.__super__.events);
@@ -90,6 +87,15 @@ define([
         this.$('.trial-end').hide();
       }
 
+      if (this.model.get('balance') && this.model.get('balance') < 0) {
+        this.$('.credit .enterprise-item').text('$' +
+          (this.model.get('balance') * -1 / 100).toFixed(2));
+        this.$('.credit').show();
+      }
+      else {
+        this.$('.credit').hide();
+      }
+
       if (this.model.get('url_key')) {
         this.$('.enterprise-support-link').attr('href',
           'https://app.pritunl.com/support/' + this.model.get('url_key'));
@@ -111,30 +117,6 @@ define([
       }
       this.$('.enterprise-support-link').removeAttr('disabled');
       this.$('.enterprise-buttons button' + notSel).removeAttr('disabled');
-    },
-    onSupport: function() {
-      window.$zopim || (function(d, s) {
-        var z = window.$zopim = function(c) {
-          z._.push(c);
-        },
-          $ = z.s = d.createElement(s),
-          e = d.getElementsByTagName(s)[0];
-        z.set=function(o) {
-          z.set._.push(o);
-        };
-        z._ = [];
-        z.set._ = [];
-        $.async = !0;
-        $.setAttribute('charset', 'utf-8');
-
-        $.src = '//v2.zopim.com/?3QAb3PtnE4kUWsqbpjY6MzH9vkMdM7zX';
-        z.t = +new Date();
-        $.type = 'text/javascript';
-        e.parentNode.insertBefore($, e);
-      })(document, 'script');
-      window.$zopim(function() {
-        window.$zopim.livechat.window.show();
-      });
     },
     openCheckout: function(optionsPath) {
       $.ajax({
@@ -231,49 +213,6 @@ define([
     },
     onUpdate: function() {
       this._onCheckout(this.checkoutPath);
-    },
-    onPromo: function() {
-      this.$('.enterprise-promo').hide();
-      this.$('.enterprise-promo-input').show();
-      this.$('.enterprise-promo-ok').show();
-    },
-    _closePromo: function() {
-      this.$('.enterprise-promo-ok').removeAttr('disabled');
-      this.$('.enterprise-promo').show();
-      this.$('.enterprise-promo-input').hide();
-      this.$('.enterprise-promo-input').val('');
-      this.$('.enterprise-promo-ok').hide();
-    },
-    onPromoOk: function() {
-      this.$('.enterprise-promo-ok').attr('disabled', 'disabled');
-      var promoCode = this.$('.enterprise-promo-input').val();
-
-      if (!promoCode) {
-        this._closePromo();
-        return;
-      }
-
-      this.model.save({
-        'promo_code': promoCode
-      }, {
-        success: function() {
-          this._closePromo();
-          this.setAlert('success', 'Promo code successfully applied.');
-          this.update();
-        }.bind(this),
-        error: function(model, response) {
-          this._closePromo();
-          this.unlock();
-
-          if (response.responseJSON) {
-            this.setAlert('danger', response.responseJSON.error_msg);
-          }
-          else {
-            this.setAlert('danger', 'Server error occurred, ' +
-              'please try again later.');
-          }
-        }.bind(this)
-      });
     },
     onRemoveLicense: function() {
       if (this.$('.enterprise-remove').text() === 'Remove License') {
