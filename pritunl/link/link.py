@@ -139,7 +139,7 @@ class Host(mongo.MongoObject):
 
         if self.link.status == ONLINE and active_host and \
                 active_host.id == self.id:
-            locations = self.link.iter_locations(self.location.id)
+            locations = self.link.iter_locations(self.location.id, sort=False)
 
             for location in locations:
                 active_host = location.get_active_host()
@@ -339,7 +339,7 @@ class Link(mongo.MongoObject):
     def get_location(self, location_id):
         return Location(link=self, id=location_id)
 
-    def iter_locations(self, skip=None):
+    def iter_locations(self, skip=None, sort=True):
         spec = {
             'link_id': self.id,
         }
@@ -347,7 +347,10 @@ class Link(mongo.MongoObject):
         if skip:
             spec['_id'] = {'$ne': skip}
 
-        cursor = Location.collection.find(spec).sort('name')
+        if sort:
+            cursor = Location.collection.find(spec).sort('name')
+        else:
+            cursor = Location.collection.find(spec)
 
         for doc in cursor:
             yield Location(link=self, doc=doc)
