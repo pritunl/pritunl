@@ -44,10 +44,7 @@ def update():
 
                 # License key invalid
                 if response.status_code == 470:
-                    logger.warning('License key is invalid', 'subscription')
-                    update_license(None)
-                    update()
-                    return False
+                    raise ValueError('License key is invalid')
 
                 if response.status_code == 473:
                     raise ValueError(('Version %r not recognized by ' +
