@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Add support for AES GCM ciphers
 Improve route advertisement interface
 Fix API issue
 
