@@ -148,13 +148,13 @@
       <label>SAML Sign-On URL</label>
       <input type="text" class="form-control" placeholder="Enter SAML sign-on url" value="<%- sso_saml_url || '' %>" data-toggle="tooltip" title="The SAML identity provider single sign-on url. Also known as SAML 2.0 Endpoint">
     </div>
-    <div class="sso-onelogin-secret form-group" <%= !sso || sso.indexOf('onelogin') === -1 ? 'style="display: none;"' : '' %>>
-      <label>OneLogin API Client Secret</label>
-      <input type="text" class="form-control" placeholder="Enter OneLogin API client secret" value="<%- sso_onelogin_secret || '' %>" data-toggle="tooltip" title="OneLogin API client secret">
-    </div>
     <div class="sso-saml-issuer-url form-group" <%= !sso || sso.indexOf('saml') === -1 ? 'style="display: none;"' : '' %>>
       <label>SAML Issuer URL</label>
       <input type="text" class="form-control" placeholder="Enter SAML issuer url" value="<%- sso_saml_issuer_url || '' %>" data-toggle="tooltip" title="The SAML identity provider issuer url">
+    </div>
+    <div class="sso-onelogin-secret form-group" <%= !sso || sso.indexOf('onelogin') === -1 ? 'style="display: none;"' : '' %>>
+      <label>OneLogin API Client Secret</label>
+      <input type="text" class="form-control" placeholder="Enter OneLogin API client secret" value="<%- sso_onelogin_secret || '' %>" data-toggle="tooltip" title="OneLogin API client secret">
     </div>
     <div class="sso-okta-token form-group" <%= !sso || sso.indexOf('okta') === -1 ? 'style="display: none;"' : '' %>>
       <label>Okta API Token</label>
