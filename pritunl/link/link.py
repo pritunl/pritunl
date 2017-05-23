@@ -19,7 +19,7 @@ class Host(mongo.MongoObject):
         'status',
         'active',
         'timeout',
-        'ping_timestamp',
+        'ping_timestamp_ttl',
         'public_address',
     }
     fields_default = {
@@ -29,7 +29,7 @@ class Host(mongo.MongoObject):
 
     def __init__(self, link=None, location=None, name=None, link_id=None,
             location_id=None, secret=None, status=None, active=None,
-            timeout=None, ping_timestamp=None, public_address=None,
+            timeout=None, ping_timestamp_ttl=None, public_address=None,
             tunnels=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
@@ -57,8 +57,8 @@ class Host(mongo.MongoObject):
         if timeout is not None:
             self.timeout = timeout
 
-        if ping_timestamp is not None:
-            self.ping_timestamp = ping_timestamp
+        if ping_timestamp_ttl is not None:
+            self.ping_timestamp_ttl = ping_timestamp_ttl
 
         if public_address is not None:
             self.public_address = public_address
@@ -72,15 +72,9 @@ class Host(mongo.MongoObject):
 
     @property
     def is_available(self):
-        if not self.ping_timestamp:
+        if not self.ping_timestamp_ttl or \
+                utils.now() > self.ping_timestamp_ttl:
             return False
-
-        timeout = datetime.timedelta(
-            seconds=self.timeout or settings.vpn.link_timeout)
-
-        if utils.now() - self.ping_timestamp > timeout:
-            return False
-
         return True
 
     def check_available(self):
@@ -89,15 +83,17 @@ class Host(mongo.MongoObject):
 
         response = self.collection.update({
             '_id': self.id,
-            'ping_timestamp': self.ping_timestamp,
+            'ping_timestamp_ttl': self.ping_timestamp_ttl,
         }, {'$set': {
             'status': UNAVAILABLE,
             'active': False,
+            'ping_timestamp_ttl': None,
         }})
 
         if response['updatedExisting']:
             self.active = False
             self.status = UNAVAILABLE
+            self.ping_timestamp_ttl = None
             return False
 
         return True
@@ -111,7 +107,7 @@ class Host(mongo.MongoObject):
             'status': ACTIVE if self.active and \
                 self.link.status == ONLINE else self.status,
             'timeout': self.timeout,
-            'ping_timestamp': self.ping_timestamp,
+            'ping_timestamp_ttl': self.ping_timestamp_ttl,
             'public_address': self.public_address,
         }
 
@@ -127,8 +123,9 @@ class Host(mongo.MongoObject):
 
     def get_state(self):
         self.status = AVAILABLE
-        self.ping_timestamp = utils.now()
-        self.commit(('public_address', 'status', 'ping_timestamp'))
+        self.ping_timestamp_ttl = utils.now() + datetime.timedelta(
+            seconds=self.timeout or settings.vpn.link_timeout)
+        self.commit(('public_address', 'status', 'ping_timestamp_ttl'))
 
         links = []
         state = {
