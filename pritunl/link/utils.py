@@ -30,8 +30,8 @@ def iter_links(page=None):
     for doc in cursor:
         yield Link(doc=doc)
 
-def iter_hosts():
-    cursor = Host.collection.find({})
+def iter_hosts(spec=None):
+    cursor = Host.collection.find(spec or {})
 
     for doc in cursor:
         yield Host(doc=doc)
