@@ -309,6 +309,8 @@ def setup_mongo():
         ('location_id', pymongo.ASCENDING),
         ('name', pymongo.ASCENDING),
     ], background=True)
+    upsert_index(mongo.collections['links_hosts'], 'ping_timestamp_ttl',
+        background=True)
     upsert_index(mongo.collections['links_locations'], 'link_id',
         background=True)
     upsert_index(mongo.collections['routes_reserve'], 'timestamp',
