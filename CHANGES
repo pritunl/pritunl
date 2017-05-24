@@ -5,6 +5,7 @@ Pritunl Changelog
 
 Add support for AES GCM ciphers
 Improve route advertisement interface
+Performance improvements
 Fix API issue
 
 Version 1.27.1314.93 2017-04-18
