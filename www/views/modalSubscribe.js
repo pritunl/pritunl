@@ -74,7 +74,8 @@ define([
               this.$('.subscribe-enterprise').text('Get Enterprise $' +
                 (this.plans.enterprise.amount / 100) + '/month');
             }
-            if (this.plans.enterprise_plus && this.plans.enterprise_plus.amount) {
+            if (this.plans.enterprise_plus &&
+                this.plans.enterprise_plus.amount) {
               this.$('.subscribe-enterprise-plus').text('Get Enterprise+ $' +
                 (this.plans.enterprise_plus.amount / 100) + '/month');
             }
