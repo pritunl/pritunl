@@ -5,7 +5,8 @@ define([
   'views/modal',
   'views/alert',
   'text!templates/modalDeleteLocation.html'
-], function($, _, Backbone, ModalView, AlertView, modalDeleteLocationTemplate) {
+], function($, _, Backbone, ModalView, AlertView,
+    modalDeleteLocationTemplate) {
   'use strict';
   var ModalDeleteLocationView = ModalView.extend({
     className: 'delete-location-modal',
