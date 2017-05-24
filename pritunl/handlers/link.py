@@ -378,9 +378,6 @@ def link_location_host_delete(link_id, location_id, host_id):
 @app.app.route('/link/state', methods=['PUT'])
 @auth.open_auth
 def link_state_put():
-    if settings.local.sub_plan != 'enterprise_plus':
-        return flask.abort(404)
-
     if settings.app.demo_mode:
         return utils.demo_blocked()
 
