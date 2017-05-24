@@ -314,6 +314,9 @@ class User(mongo.MongoObject):
             if settings.user.skip_remote_sso_check:
                 return True
 
+            if not isinstance(settings.app.sso_match, list):
+                raise TypeError('Invalid sso match')
+
             try:
                 resp = requests.get(AUTH_SERVER +
                     '/update/slack?user=%s&team=%s&license=%s' % (
