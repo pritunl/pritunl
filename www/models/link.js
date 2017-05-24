@@ -1,12 +1,8 @@
 define([
   'jquery',
   'underscore',
-  'backbone',
-  'collections/linkLocation',
-  'collections/linkHost',
-  'collections/linkRoute'
-], function($, _, Backbone, LinkLocationCollection, LinkHostCollection,
-    LinkRouteCollection) {
+  'backbone'
+], function($, _, Backbone) {
   'use strict';
   var LinkModel = Backbone.Model.extend({
     defaults: {
