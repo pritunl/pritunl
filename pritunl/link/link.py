@@ -172,7 +172,6 @@ class Location(mongo.MongoObject):
         'link_id',
         'routes',
         'location',
-        'quality',
     }
     fields_default = {
         'routes': {},
@@ -216,7 +215,6 @@ class Location(mongo.MongoObject):
             'hosts': hosts,
             'routes': routes,
             'location': self.location,
-            'quality': self.quality,
         }
 
     def remove(self):
