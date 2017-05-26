@@ -8,7 +8,8 @@ define([
     defaults: {
       'id': null,
       'name': null,
-      'timeout': null
+      'timeout': null,
+      'priority': null
     },
     url: function() {
       var url = '/link/' + this.get('link_id') + '/location/' +
