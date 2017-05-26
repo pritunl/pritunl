@@ -339,7 +339,7 @@ def link_location_host_put(link_id, location_id, host_id):
         return flask.abort(404)
 
     hst.name = utils.filter_str(flask.request.json.get('name')) or 'undefined'
-    hst.timeout = int(flask.request.json.get('timeout') or 0) or None
+    hst.timeout = abs(int(flask.request.json.get('timeout') or 0)) or None
 
     hst.commit(('name', 'timeout'))
 
