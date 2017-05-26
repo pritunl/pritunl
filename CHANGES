@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Add IPsec links
 Add support for AES GCM ciphers
 Improve route advertisement interface
 Performance improvements
