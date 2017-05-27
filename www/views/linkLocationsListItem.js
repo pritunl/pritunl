@@ -90,6 +90,11 @@ define([
         'location_id': this.model.get('id')
       });
 
+      if (evt.shiftKey && evt.ctrlKey) {
+        model.destroy();
+        return;
+      }
+
       var modal = new ModalDeleteLocRouteView({
         model: model
       });
@@ -116,6 +121,11 @@ define([
     onRemoveHost: function(evt) {
       var model = new LinkHostModel(
         this.getHost($(evt.currentTarget).attr('data-id')));
+
+      if (evt.shiftKey && evt.ctrlKey) {
+        model.destroy();
+        return;
+      }
 
       var modal = new ModalDeleteLocHostView({
         model: model
