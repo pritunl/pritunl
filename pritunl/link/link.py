@@ -23,6 +23,7 @@ class Host(mongo.MongoObject):
         'priority',
         'ping_timestamp_ttl',
         'public_address',
+        'version',
     }
     fields_default = {
         'status': UNAVAILABLE,
@@ -32,7 +33,7 @@ class Host(mongo.MongoObject):
     def __init__(self, link=None, location=None, name=None, link_id=None,
             location_id=None, secret=None, status=None, active=None,
             timeout=None, priority=None, ping_timestamp_ttl=None,
-            public_address=None, tunnels=None, **kwargs):
+            public_address=None, version=None, tunnels=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         self.link = link
@@ -68,6 +69,9 @@ class Host(mongo.MongoObject):
         if public_address is not None:
             self.public_address = public_address
 
+        if version is not None:
+            self.version = version
+
         if tunnels is not None:
             self.tunnels = tunnels
 
@@ -95,6 +99,7 @@ class Host(mongo.MongoObject):
             'priority': self.priority,
             'ping_timestamp_ttl': self.ping_timestamp_ttl,
             'public_address': self.public_address,
+            'version': self.version,
         }
 
     def check_available(self):
