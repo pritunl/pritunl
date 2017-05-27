@@ -19,6 +19,7 @@ class Host(mongo.MongoObject):
         'status',
         'active',
         'timeout',
+        'priority',
         'ping_timestamp_ttl',
         'public_address',
     }
@@ -29,8 +30,8 @@ class Host(mongo.MongoObject):
 
     def __init__(self, link=None, location=None, name=None, link_id=None,
             location_id=None, secret=None, status=None, active=None,
-            timeout=None, ping_timestamp_ttl=None, public_address=None,
-            tunnels=None, **kwargs):
+            timeout=None, priority=None, ping_timestamp_ttl=None,
+            public_address=None, tunnels=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         self.link = link
@@ -57,6 +58,9 @@ class Host(mongo.MongoObject):
         if timeout is not None:
             self.timeout = timeout
 
+        if priority is not None:
+            self.priority = priority
+
         if ping_timestamp_ttl is not None:
             self.ping_timestamp_ttl = ping_timestamp_ttl
 
@@ -76,6 +80,20 @@ class Host(mongo.MongoObject):
                 utils.now() > self.ping_timestamp_ttl:
             return False
         return True
+
+    def dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'link_id': self.link_id,
+            'location_id': self.location_id,
+            'status': ACTIVE if self.active and \
+                self.link.status == ONLINE else self.status,
+            'timeout': self.timeout,
+            'priority': self.priority,
+            'ping_timestamp_ttl': self.ping_timestamp_ttl,
+            'public_address': self.public_address,
+        }
 
     def check_available(self):
         if self.is_available:
