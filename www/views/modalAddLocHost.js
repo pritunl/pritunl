@@ -24,6 +24,7 @@ define([
     onOk: function() {
       var name = this.$('.name input').val();
       var timeout = parseInt(this.$('.timeout input').val(), 10) || null;
+      var priority = parseInt(this.$('.priority input').val(), 10) || 1;
 
       if (!name) {
         this.setAlert('danger', 'Name can not be empty.', '.name');
@@ -36,7 +37,8 @@ define([
         link_id: this.link,
         location_id: this.location,
         name: name,
-        timeout: timeout
+        timeout: timeout,
+        priority: priority
       }, {
         success: function() {
           this.close(true);
