@@ -9,6 +9,7 @@ from pritunl import settings
 import hashlib
 import json
 import datetime
+import pymongo
 
 class Host(mongo.MongoObject):
     fields = {
@@ -76,7 +77,8 @@ class Host(mongo.MongoObject):
 
     @property
     def is_available(self):
-        if not self.ping_timestamp_ttl or \
+        if self.status != AVAILABLE or \
+                not self.ping_timestamp_ttl or \
                 utils.now() > self.ping_timestamp_ttl:
             return False
         return True
@@ -116,19 +118,6 @@ class Host(mongo.MongoObject):
 
         return True
 
-    def dict(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'link_id': self.link_id,
-            'location_id': self.location_id,
-            'status': ACTIVE if self.active and \
-                self.link.status == ONLINE else self.status,
-            'timeout': self.timeout,
-            'ping_timestamp_ttl': self.ping_timestamp_ttl,
-            'public_address': self.public_address,
-        }
-
     def load_link(self):
         self.link = Link(id=self.link_id)
         self.location = Location(link=self.link, id=self.location_id)
@@ -138,6 +127,25 @@ class Host(mongo.MongoObject):
 
     def get_uri(self):
         return 'pritunl://%s:%s@' % (self.id, self.secret)
+
+    def set_active(self):
+        response = self.collection.update({
+            '_id': self.id,
+            'status': AVAILABLE,
+        }, {'$set': {
+            'active': True,
+        }})
+        if not response['updatedExisting']:
+            return False
+
+        Host.collection.update_many({
+            '_id': {'$ne': self.id},
+            'location_id': self.location_id,
+        }, {'$set': {
+            'active': False,
+        }})
+
+        return True
 
     def get_state(self):
         self.status = AVAILABLE
@@ -274,31 +282,45 @@ class Location(mongo.MongoObject):
 
         doc = Host.collection.find_one({
             'location_id': self.id,
+            'status': AVAILABLE,
             'active': True,
         })
 
         if doc:
             return Host(link=self.link, location=self, doc=doc)
 
-        doc = Host.collection.find_and_modify({
+        cursor = Host.collection.find({
             'location_id': self.id,
             'status': AVAILABLE,
+            'active': False,
         }, {
-            '$set': {
-                'active': True,
-            },
-        })
+            '_id': True,
+        }).sort('priority', pymongo.DESCENDING).limit(1)
+
+        doc = None
+        for doc in cursor:
+            break
+
         if not doc:
             return
 
+        doc_id = doc['_id']
+        response = Host.collection.update({
+            '_id': doc_id,
+            'status': AVAILABLE,
+            'active': False,
+        }, {'$set': {
+            'active': True,
+        }})
+        if not response['updatedExisting']:
+            return
+
         Host.collection.update_many({
-            '_id': {'$ne': doc['_id']},
+            '_id': {'$ne': doc_id},
             'location_id': self.id,
-        }, {
-            '$set': {
-                'active': False,
-            },
-        })
+        }, {'$set': {
+            'active': False,
+        }})
 
         return Host(link=self.link, location=self, doc=doc)
 
