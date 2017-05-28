@@ -9,7 +9,9 @@ define([
       'id': null,
       'name': null,
       'timeout': null,
-      'priority': null
+      'priority': null,
+      'public_address': null,
+      'version': null
     },
     url: function() {
       var url = '/link/' + this.get('link_id') + '/location/' +
