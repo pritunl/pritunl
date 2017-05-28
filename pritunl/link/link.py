@@ -152,6 +152,12 @@ class Host(mongo.MongoObject):
 
         return True
 
+    def set_inactive(self):
+        self.status = UNAVAILABLE
+        self.active = False
+        self.ping_timestamp_ttl = None
+        self.commit(('status', 'active', 'ping_timestamp_ttl'))
+
     def get_state(self):
         self.status = AVAILABLE
         self.ping_timestamp_ttl = utils.now() + datetime.timedelta(
