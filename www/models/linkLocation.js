@@ -11,7 +11,6 @@ define([
       'name': null,
       'status': null,
       'location': null,
-      'quality': null,
       'hosts': null,
       'routes': null
     },
