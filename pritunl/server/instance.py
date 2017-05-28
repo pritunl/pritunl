@@ -817,15 +817,16 @@ class ServerInstance(object):
         thread.daemon = True
         thread.start()
 
-        thread = threading.Thread(target=self._keep_alive_thread)
-        thread.daemon = True
-        thread.start()
-
         thread = threading.Thread(target=self._route_ad_keep_alive_thread)
         thread.daemon = True
         thread.start()
 
         thread = threading.Thread(target=self._iptables_thread)
+        thread.daemon = True
+        thread.start()
+
+    def start_keep_alive_thread(self):
+        thread = threading.Thread(target=self._keep_alive_thread)
         thread.daemon = True
         thread.start()
 
@@ -862,6 +863,8 @@ class ServerInstance(object):
 
         self.resources_acquire()
         try:
+            self.start_keep_alive_thread()
+
             cursor_id = self.get_cursor_id()
 
             os.makedirs(self._temp_path)
@@ -1004,10 +1007,6 @@ class ServerInstance(object):
                     message='Server stopped unexpectedly "%s".' % (
                         self.server.name))
         except:
-            logger.exception('Server error occurred while running', 'server',
-                server_id=self.server.id,
-            )
-
             try:
                 self.interrupt = True
                 self.stop_process()
@@ -1015,6 +1014,10 @@ class ServerInstance(object):
                 logger.exception('Server stop error', 'server',
                     server_id=self.server.id,
                 )
+
+            logger.exception('Server error occurred while running', 'server',
+                server_id=self.server.id,
+            )
         finally:
             try:
                 if self.resource_lock:
@@ -1068,7 +1071,8 @@ class ServerInstance(object):
                 'instances': {
                     'instance_id': self.id,
                     'host_id': settings.local.host_id,
-                    'ping_timestamp': utils.now(),
+                    'ping_timestamp': utils.now() + \
+                        datetime.timedelta(seconds=30),
                 },
             },
             '$inc': {
