@@ -10,6 +10,7 @@ from pritunl import utils
 import logging
 import traceback
 import threading
+import sys
 
 logger = logging.getLogger(APP_NAME)
 log_filter = None
@@ -28,8 +29,8 @@ def _log(log_level, log_msg, log_type, exc_info=None, **kwargs):
         log_msg,
         exc_info=exc_info,
         extra={
-        'type': log_type,
-        'data': kwargs,
+            'type': log_type,
+            'data': kwargs,
         },
     )
 
@@ -52,22 +53,28 @@ def warning(log_msg, log_type=None, **kwargs):
     ))
 
 def error(log_msg, log_type=None, **kwargs):
-    kwargs['traceback'] = traceback.format_stack()
+    f = sys.exc_info()[2].tb_frame
+    kwargs['traceback'] = traceback.format_stack(f=f)
     _log_queue.put((
         ('error', log_msg, log_type),
         kwargs,
     ))
 
 def critical(log_msg, log_type=None, **kwargs):
-    kwargs['traceback'] = traceback.format_stack()
+    f = sys.exc_info()[2].tb_frame
+    kwargs['traceback'] = traceback.format_stack(f=f)
     _log_queue.put((
         ('critical', log_msg, log_type),
         kwargs,
     ))
 
 def exception(log_msg, log_type=None, **kwargs):
-    # Fix for python #15541
-    _log('error', log_msg, log_type, exc_info=1, **kwargs)
+    f = sys.exc_info()[2].tb_frame
+    kwargs['traceback'] = traceback.format_stack(f=f)
+    _log_queue.put((
+        ('error', log_msg, log_type),
+        kwargs,
+    ))
 
 _thread = threading.Thread(target=_logger_thread)
 _thread.daemon = True
