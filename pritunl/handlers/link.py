@@ -461,3 +461,60 @@ def link_state_put():
     resp.headers.add('Cipher-Signature', enc_signature)
 
     return resp
+
+@app.app.route('/link/state', methods=['DELETE'])
+@auth.open_auth
+def link_state_delete():
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
+    auth_token = flask.request.headers.get('Auth-Token', None)
+    auth_timestamp = flask.request.headers.get('Auth-Timestamp', None)
+    auth_nonce = flask.request.headers.get('Auth-Nonce', None)
+    auth_signature = flask.request.headers.get('Auth-Signature', None)
+    if not auth_token or not auth_timestamp or not auth_nonce or \
+        not auth_signature:
+        return flask.abort(401)
+    auth_nonce = auth_nonce[:32]
+
+    try:
+        if abs(int(auth_timestamp) - int(utils.time_now())) > \
+            settings.app.auth_time_window:
+            return flask.abort(401)
+    except ValueError:
+        return flask.abort(401)
+
+    host = link.get_host(utils.ObjectId(auth_token))
+    if not host:
+        return flask.abort(401)
+
+    auth_string = '&'.join([
+        auth_token,
+        auth_timestamp,
+        auth_nonce,
+        flask.request.method,
+        flask.request.path,
+    ])
+
+    if len(auth_string) > AUTH_SIG_STRING_MAX_LEN:
+        return flask.abort(401)
+
+    auth_test_signature = base64.b64encode(hmac.new(
+        host.secret.encode(), auth_string,
+        hashlib.sha512).digest())
+    if not utils.const_compare(auth_signature, auth_test_signature):
+        return flask.abort(401)
+
+    nonces_collection = mongo.get_collection('auth_nonces')
+    try:
+        nonces_collection.insert({
+            'token': auth_token,
+            'nonce': auth_nonce,
+            'timestamp': utils.now(),
+        })
+    except pymongo.errors.DuplicateKeyError:
+        return flask.abort(401)
+
+    host.set_inactive()
+
+    return utils.jsonify({})
