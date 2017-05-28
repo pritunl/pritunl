@@ -156,7 +156,8 @@ class Host(mongo.MongoObject):
         self.status = AVAILABLE
         self.ping_timestamp_ttl = utils.now() + datetime.timedelta(
             seconds=self.timeout or settings.vpn.link_timeout)
-        self.commit(('public_address', 'status', 'ping_timestamp_ttl'))
+        self.commit(('public_address', 'version',
+            'status', 'ping_timestamp_ttl'))
 
         links = []
         state = {

@@ -433,6 +433,7 @@ def link_state_put():
 
     host.load_link()
 
+    host.version = flask.request.json.get('version')
     host.public_address = flask.request.json.get('public_address')
 
     data = json.dumps(host.get_state(), default=lambda x: str(x))
