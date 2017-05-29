@@ -61,6 +61,4 @@ class TaskRoute(task.Task):
         except:
             logger.exception('Error checking route states', 'tasks')
 
-        yield interrupter_sleep(settings.vpn.server_ping)
-
-task.add_task(TaskRoute, seconds=xrange(0, 60, settings.vpn.server_ping))
+task.add_task(TaskRoute, seconds=xrange(0, 60, settings.vpn.server_ping_ttl))
