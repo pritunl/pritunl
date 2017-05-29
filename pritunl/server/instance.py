@@ -116,6 +116,7 @@ class ServerInstance(object):
 
     def resources_release(self):
         if self.resource_lock:
+            time.sleep(5)
             self.resource_lock.release()
             utils.interface_release(self.server.adapter_type, self.interface)
             self.interface = None
