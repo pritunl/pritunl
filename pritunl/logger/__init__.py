@@ -69,12 +69,8 @@ def critical(log_msg, log_type=None, **kwargs):
     ))
 
 def exception(log_msg, log_type=None, **kwargs):
-    f = sys.exc_info()[2].tb_frame
-    kwargs['traceback'] = traceback.format_stack(f=f)
-    _log_queue.put((
-        ('error', log_msg, log_type),
-        kwargs,
-    ))
+    # Fix for python #15541
+    _log('error', log_msg, log_type, exc_info=1, **kwargs)
 
 _thread = threading.Thread(target=_logger_thread)
 _thread.daemon = True
