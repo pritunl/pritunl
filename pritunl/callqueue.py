@@ -16,6 +16,9 @@ class CallQueue(object):
     def put(self, func, *args, **kwargs):
         self._queue.put((func, args, kwargs))
 
+    def size(self):
+        return self._queue.qsize()
+
     def call(self, timeout=0):
         try:
             func, args, kwargs = self._queue.get(timeout=timeout)
