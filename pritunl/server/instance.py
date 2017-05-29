@@ -1011,7 +1011,6 @@ class ServerInstance(object):
             self.interrupt = True
             self.bridge_stop()
             self.iptables.clear_rules()
-            self.resources_release()
 
             if not self.clean_exit:
                 event.Event(type=SERVERS_UPDATED)
@@ -1042,8 +1041,6 @@ class ServerInstance(object):
                 )
 
             try:
-                self.resources_release()
-
                 self.stop_threads()
                 self.collection.update({
                     '_id': self.server.id,
@@ -1063,6 +1060,8 @@ class ServerInstance(object):
                 logger.exception('Server clean up error', 'server',
                     server_id=self.server.id,
                 )
+
+            self.resources_release()
 
     def run(self, send_events=False):
         availability_group = settings.local.host.availability_group
