@@ -45,6 +45,8 @@ def main(default_conf=None):
             help='Tail log file')
         parser.add_option('--limit', type='int',
             help='Limit log lines')
+        parser.add_option('--natural', action='store_true',
+            help='Natural log sort')
     elif cmd == 'set':
         parser.disable_interspersed_args()
 
@@ -284,12 +286,15 @@ def main(default_conf=None):
             else:
                 archive_path = './'
             print 'Log archived to: ' + log_view.archive_log(archive_path,
-                options.limit)
+                options.natural, options.limit)
         elif options.tail:
             for msg in log_view.tail_log_lines():
                 print msg
         else:
-            print log_view.get_log_lines(options.limit)
+            print log_view.get_log_lines(
+                natural=options.natural,
+                limit=options.limit,
+            )
 
         sys.exit(0)
     elif cmd != 'start':
