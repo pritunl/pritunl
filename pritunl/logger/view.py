@@ -65,27 +65,39 @@ class LogView(object):
                pass
         return line
 
-    def get_log_lines(self, limit=None, formatted=True, reverse=False):
+    def get_log_lines(self, natural=False, limit=None, formatted=True,
+            reverse=False):
         limit = limit or 1024
-        response = self.collection.aggregate([
-            {'$sort': {
-                'timestamp': pymongo.DESCENDING,
-            }},
-            {'$limit': limit},
-            {'$group': {
-                '_id': None,
-                'messages': {'$push': '$message'},
-            }},
-        ])
 
-        val = None
-        for val in response:
-            break
+        if natural:
+            cursor = self.collection.find({}).sort(
+                '$natural', pymongo.DESCENDING)
+            if limit:
+                cursor = cursor.limit(limit)
 
-        if val:
-            messages = val['messages']
-        else:
             messages = []
+            for doc in cursor:
+                messages.append(doc['message'])
+        else:
+            response = self.collection.aggregate([
+                {'$sort': {
+                    'timestamp': pymongo.DESCENDING,
+                }},
+                {'$limit': limit},
+                {'$group': {
+                    '_id': None,
+                    'messages': {'$push': '$message'},
+                }},
+            ])
+
+            val = None
+            for val in response:
+                break
+
+            if val:
+                messages = val['messages']
+            else:
+                messages = []
 
         if formatted:
             output = ''
@@ -121,7 +133,7 @@ class LogView(object):
                 else:
                     yield doc['message']
 
-    def archive_log(self, archive_path, limit):
+    def archive_log(self, archive_path, natural, limit):
         temp_path = utils.get_temp_path()
         if os.path.isdir(archive_path):
             archive_path = os.path.join(
@@ -133,7 +145,11 @@ class LogView(object):
             tar_file = tarfile.open(archive_path, 'w')
             try:
                 with open(output_path, 'w') as log_file:
-                    log_file.write(self.get_log_lines(limit, False))
+                    log_file.write(self.get_log_lines(
+                        natural=natural,
+                        limit=limit,
+                        formatted=False
+                    ))
                 tar_file.add(output_path, arcname=LOG_ARCHIVE_NAME)
             finally:
                 tar_file.close()
