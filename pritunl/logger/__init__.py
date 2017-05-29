@@ -10,7 +10,6 @@ from pritunl import utils
 import logging
 import traceback
 import threading
-import sys
 
 logger = logging.getLogger(APP_NAME)
 log_filter = None
@@ -53,16 +52,14 @@ def warning(log_msg, log_type=None, **kwargs):
     ))
 
 def error(log_msg, log_type=None, **kwargs):
-    f = sys.exc_info()[2].tb_frame
-    kwargs['traceback'] = traceback.format_stack(f=f)
+    kwargs['traceback'] = traceback.format_stack()
     _log_queue.put((
         ('error', log_msg, log_type),
         kwargs,
     ))
 
 def critical(log_msg, log_type=None, **kwargs):
-    f = sys.exc_info()[2].tb_frame
-    kwargs['traceback'] = traceback.format_stack(f=f)
+    kwargs['traceback'] = traceback.format_stack()
     _log_queue.put((
         ('critical', log_msg, log_type),
         kwargs,
