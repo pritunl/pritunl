@@ -96,9 +96,23 @@ class ServerInstance(object):
     def resources_acquire(self):
         if self.resource_lock:
             raise TypeError('Server resource lock already set')
+
+        def deadlock():
+            logger.error(
+                'Server resource deadlocked, check for mismatching datetime',
+                'server',
+                server_id=self.server.id,
+                instance_id=self.id,
+            )
+
+        timer = threading.Timer(15, deadlock)
+        timer.start()
+
         self.resource_lock = _resource_locks[self.server.id]
         self.resource_lock.acquire()
         self.interface = utils.interface_acquire(self.server.adapter_type)
+
+        timer.cancel()
 
     def resources_release(self):
         if self.resource_lock:
