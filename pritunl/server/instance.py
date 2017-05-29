@@ -833,16 +833,15 @@ class ServerInstance(object):
         thread.daemon = True
         thread.start()
 
+        thread = threading.Thread(target=self._keep_alive_thread)
+        thread.daemon = True
+        thread.start()
+
         thread = threading.Thread(target=self._route_ad_keep_alive_thread)
         thread.daemon = True
         thread.start()
 
         thread = threading.Thread(target=self._iptables_thread)
-        thread.daemon = True
-        thread.start()
-
-    def start_keep_alive_thread(self):
-        thread = threading.Thread(target=self._keep_alive_thread)
         thread.daemon = True
         thread.start()
 
@@ -879,8 +878,6 @@ class ServerInstance(object):
 
         self.resources_acquire()
         try:
-            self.start_keep_alive_thread()
-
             cursor_id = self.get_cursor_id()
 
             os.makedirs(self._temp_path)
