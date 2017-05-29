@@ -1025,10 +1025,12 @@ class ServerInstance(object):
             except:
                 logger.exception('Server stop error', 'server',
                     server_id=self.server.id,
+                    instance_id=self.id,
                 )
 
             logger.exception('Server error occurred while running', 'server',
                 server_id=self.server.id,
+                instance_id=self.id,
             )
         finally:
             try:
@@ -1038,6 +1040,7 @@ class ServerInstance(object):
             except:
                 logger.exception('Server resource error', 'server',
                     server_id=self.server.id,
+                    instance_id=self.id,
                 )
 
             try:
@@ -1059,9 +1062,16 @@ class ServerInstance(object):
             except:
                 logger.exception('Server clean up error', 'server',
                     server_id=self.server.id,
+                    instance_id=self.id,
                 )
 
-            self.resources_release()
+            try:
+                self.resources_release()
+            except:
+                logger.exception('Failed to release resources', 'server',
+                    server_id=self.server.id,
+                    instance_id=self.id,
+                )
 
     def run(self, send_events=False):
         availability_group = settings.local.host.availability_group
