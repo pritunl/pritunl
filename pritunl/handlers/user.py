@@ -303,7 +303,7 @@ def _create_users(org_id, users_data, remote_addr, background):
         logger.exception('Error creating users', 'users')
         raise
     finally:
-        user_queue.stop()
+        user_queue.close()
 
         if background:
             _users_background_lock.acquire()
