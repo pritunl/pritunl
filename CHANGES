@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.28.1356.19 2017-05-30
+-------------------------------
 
 Add IPsec links
 Add support for AES GCM ciphers
