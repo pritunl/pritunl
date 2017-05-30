@@ -213,7 +213,7 @@ def user_get(org_id, user_id=None, page=None):
         utils.demo_set_cache(resp, page, search, limit)
     return utils.jsonify(resp)
 
-def _create_user(users, org, user_data, remote_addr):
+def _create_user(users, org, user_data, remote_addr, pool):
     name = utils.filter_str(user_data['name'])
     email = utils.filter_str(user_data.get('email'))
     pin = utils.filter_str(user_data.get('pin')) or None
@@ -256,7 +256,7 @@ def _create_user(users, org, user_data, remote_addr):
                 'dport': utils.filter_str(data.get('dport')),
             })
 
-    user = org.new_user(type=CERT_CLIENT, pool=False, name=name,
+    user = org.new_user(type=CERT_CLIENT, pool=pool, name=name,
         email=email, groups=groups, pin=pin, disabled=disabled,
         bypass_secondary=bypass_secondary,
         client_to_client=client_to_client, dns_servers=dns_servers,
@@ -286,10 +286,10 @@ def _create_users(org_id, users_data, remote_addr, background):
     org = organization.get_by_id(org_id)
     users = []
     hosts_online = host.get_hosts_online()
-    user_queue = callqueue.CallQueue(maxsize=hosts_online)
-    user_queue.start(hosts_online)
 
     if background:
+        user_queue = callqueue.CallQueue(maxsize=hosts_online)
+        user_queue.start(hosts_online)
         _users_background_lock.acquire()
         if _users_background:
             return
@@ -297,15 +297,19 @@ def _create_users(org_id, users_data, remote_addr, background):
         _users_background_lock.release()
 
     try:
-        for i, user_data in enumerate(users_data):
-            user_queue.put(_create_user, users, org, user_data, remote_addr)
+        if background:
+            for i, user_data in enumerate(users_data):
+                user_queue.put(_create_user, users, org,
+                    user_data, remote_addr, False)
+        else:
+            for i, user_data in enumerate(users_data):
+                _create_user(users, org, user_data, remote_addr, True)
     except:
         logger.exception('Error creating users', 'users')
         raise
     finally:
-        user_queue.close()
-
         if background:
+            user_queue.close()
             _users_background_lock.acquire()
             _users_background = False
             _users_background_lock.release()
