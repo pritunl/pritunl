@@ -229,7 +229,14 @@ class ServerInstance(object):
         else:
             raise ValueError('Unknown protocol')
 
-        server_conf = OVPN_INLINE_SERVER_CONF % (
+        if utils.check_openvpn_ver():
+            server_ciphers = SERVER_CIPHERS
+            server_conf_template = OVPN_INLINE_SERVER_CONF
+        else:
+            server_ciphers = SERVER_CIPHERS_OLD
+            server_conf_template = OVPN_INLINE_SERVER_CONF_OLD
+
+        server_conf = server_conf_template % (
             self.server.port,
             protocol,
             self.interface,
@@ -240,7 +247,7 @@ class ServerInstance(object):
             self.server.ping_timeout + 20,
             self.server.ping_interval,
             self.server.ping_timeout,
-            SERVER_CIPHERS[self.server.cipher],
+            server_ciphers[self.server.cipher],
             HASHES[self.server.hash],
             4 if self.server.debug else 1,
             8 if self.server.debug else 3,
