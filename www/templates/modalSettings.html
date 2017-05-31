@@ -207,7 +207,9 @@
         <option value="us-west-2" <%= route53_region === 'us-west-2' ? 'selected' : '' %>>US West (Oregon)</option>
         <option value="us-gov-west-1" <%= route53_region === 'us-gov-west-1' ? 'selected' : '' %>>US GovCloud (West)</option>
         <option value="eu-west-1" <%= route53_region === 'eu-west-1' ? 'selected' : '' %>>EU (Ireland)</option>
+        <option value="eu-west-2" <%= route53_region === 'eu-west-2' ? 'selected' : '' %>>EU (London)</option>
         <option value="eu-central-1" <%= route53_region === 'eu-central-1' ? 'selected' : '' %>>EU (Frankfurt)</option>
+        <option value="ca-central-1" <%= route53_region === 'ca-central-1' ? 'selected' : '' %>>Canada (Central)</option>
         <option value="ap-northeast-1" <%= route53_region === 'ap-northeast-1' ? 'selected' : '' %>>Asia Pacific (Tokyo)</option>
         <option value="ap-northeast-2" <%= route53_region === 'ap-northeast-2' ? 'selected' : '' %>>Asia Pacific (Seoul)</option>
         <option value="ap-southeast-1" <%= route53_region === 'ap-southeast-1' ? 'selected' : '' %>>Asia Pacific (Singapore)</option>
@@ -240,9 +242,17 @@
       <label>EU (Ireland) Access Key</label>
       <input type="text" class="form-control" placeholder="Enter access key" data-toggle="tooltip" title="Enter access key or 'role' to use the instance IAM role" value="<%- eu_west_1_access_key || '' %>">
     </div>
+    <div class="eu-west-2-access-key form-group">
+      <label>EU (London) Access Key</label>
+      <input type="text" class="form-control" placeholder="Enter access key" data-toggle="tooltip" title="Enter access key or 'role' to use the instance IAM role" value="<%- eu_west_2_access_key || '' %>">
+    </div>
     <div class="eu-central-1-access-key form-group">
       <label>EU (Frankfurt) Access Key</label>
       <input type="text" class="form-control" placeholder="Enter access key" data-toggle="tooltip" title="Enter access key or 'role' to use the instance IAM role" value="<%- eu_central_1_access_key || '' %>">
+    </div>
+    <div class="ca-central-1-access-key form-group">
+      <label>Canada (Central) Access Key</label>
+      <input type="text" class="form-control" placeholder="Enter access key" data-toggle="tooltip" title="Enter access key or 'role' to use the instance IAM role" value="<%- ca_central_1_access_key || '' %>">
     </div>
     <div class="ap-northeast-1-access-key form-group">
       <label>Asia Pacific (Tokyo) Access Key</label>
@@ -300,9 +310,17 @@
       <label>EU (Ireland) Secret Key</label>
       <input type="text" class="form-control" placeholder="Enter secret key" data-toggle="tooltip" title="Enter secret key or 'role' to use the instance IAM role" value="<%- eu_west_1_secret_key || '' %>">
     </div>
+    <div class="eu-west-2-secret-key form-group">
+      <label>EU (London) Secret Key</label>
+      <input type="text" class="form-control" placeholder="Enter secret key" data-toggle="tooltip" title="Enter secret key or 'role' to use the instance IAM role" value="<%- eu_west_2_secret_key || '' %>">
+    </div>
     <div class="eu-central-1-secret-key form-group">
       <label>EU (Frankfurt) Secret Key</label>
       <input type="text" class="form-control" placeholder="Enter secret key" data-toggle="tooltip" title="Enter secret key or 'role' to use the instance IAM role" value="<%- eu_central_1_secret_key || '' %>">
+    </div>
+    <div class="ca-central-1-secret-key form-group">
+      <label>Canada (Central) Secret Key</label>
+      <input type="text" class="form-control" placeholder="Enter secret key" data-toggle="tooltip" title="Enter secret key or 'role' to use the instance IAM role" value="<%- ca_central_1_secret_key || '' %>">
     </div>
     <div class="ap-northeast-1-secret-key form-group">
       <label>Asia Pacific (Tokyo) Secret Key</label>
