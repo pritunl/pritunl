@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with older versions of OpenVPN
+
 Version 1.28.1356.45 2017-05-30
 -------------------------------
 
