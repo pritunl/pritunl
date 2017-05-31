@@ -318,7 +318,10 @@ def _create_users(org_id, users_data, remote_addr, background):
         event.Event(type=USERS_UPDATED, resource_id=org.id)
         event.Event(type=SERVERS_UPDATED)
 
-    logger.LogEntry(message='Created %s new users.' % len(users))
+    if len(users) == 1:
+        logger.LogEntry(message='Created new user.')
+    else:
+        logger.LogEntry(message='Created %s new users.' % len(users))
     return utils.jsonify(users)
 
 @app.app.route('/user/<org_id>', methods=['POST'])
