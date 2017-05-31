@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Improve links reliability
+Add links to demo
 
 Version 1.28.1357.25 2017-05-31
 -------------------------------
