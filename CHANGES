@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix OpenSSL error
+
 Version 1.28.1357.34 2017-05-31
 -------------------------------
 
