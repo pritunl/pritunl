@@ -9,6 +9,7 @@ import re
 import netifaces
 import collections
 import threading
+import random
 import pyroute2.iproute
 import pyroute2.netlink
 
@@ -435,3 +436,7 @@ def check_network_range(test_network, start_addr, end_addr):
         start_addr in test_net,
         end_addr in test_net,
     ))
+
+def random_ip_addr():
+    return str(ipaddress.IPAddress(100000000 + random.randint(
+        0, 1000000000)))
