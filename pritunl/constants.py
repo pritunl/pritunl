@@ -939,6 +939,14 @@ CIPHERS = {
     'aes256': 'cipher AES-256-CBC',
 }
 
+SERVER_CIPHERS_OLD = {
+    'none': 'cipher none',
+    'bf128': 'cipher BF-CBC',
+    'bf256': 'cipher BF-CBC\nkeysize 256',
+    'aes128': 'cipher AES-128-CBC',
+    'aes192': 'cipher AES-192-CBC',
+    'aes256': 'cipher AES-256-CBC',
+}
 SERVER_CIPHERS = {
     'none': 'cipher none',
     'bf128': 'cipher BF-CBC',
@@ -969,6 +977,34 @@ JUMBO_FRAMES = {
     False: '',
     True: 'tun-mtu 9000\nfragment 0\nmssfix 0\n',
 }
+
+OVPN_INLINE_SERVER_CONF_OLD = """\
+port %s
+proto %s
+dev %s
+%s
+management %s unix
+management-client-auth
+auth-user-pass-optional
+topology subnet
+max-clients %s
+ping %s
+ping-restart %s
+push "ping %s"
+push "ping-restart %s"
+persist-tun
+%s
+auth %s
+status-version 2
+script-security 2
+sndbuf 393216
+rcvbuf 393216
+reneg-sec 2592000
+hash-size 1024 1024
+max-routes-per-client 1000
+verb %s
+mute %s
+"""
 
 OVPN_INLINE_SERVER_CONF = """\
 ignore-unknown-option ncp-ciphers
