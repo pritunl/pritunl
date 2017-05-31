@@ -23,6 +23,11 @@ def link_get():
     if settings.local.sub_plan != 'enterprise_plus':
         return flask.abort(404)
 
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache()
+        if resp:
+            return utils.jsonify(resp)
+
     page = flask.request.args.get('page', None)
     page = int(page) if page else page
 
@@ -30,11 +35,15 @@ def link_get():
     for lnk in link.iter_links(page):
         links.append(lnk.dict())
 
-    return utils.jsonify({
+    data = {
         'page': page,
         'page_total': link.get_page_total(),
         'links': links,
-    })
+    }
+
+    if settings.app.demo_mode:
+        utils.demo_set_cache(data)
+    return utils.jsonify(data)
 
 @app.app.route('/link', methods=['POST'])
 @auth.session_auth
@@ -51,6 +60,9 @@ def link_post():
         name=name,
         status=ONLINE,
     )
+
+    lnk.generate_key()
+
     lnk.commit()
 
     event.Event(type=LINKS_UPDATED)
@@ -107,6 +119,11 @@ def link_location_get(link_id):
     if settings.local.sub_plan != 'enterprise_plus':
         return flask.abort(404)
 
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache()
+        if resp:
+            return utils.jsonify(resp)
+
     lnk = link.get_by_id(link_id)
     if not lnk:
         return flask.abort(404)
@@ -115,6 +132,8 @@ def link_location_get(link_id):
     for location in lnk.iter_locations():
         locations.append(location.dict())
 
+    if settings.app.demo_mode:
+        utils.demo_set_cache(locations)
     return utils.jsonify(locations)
 
 @app.app.route('/link/<link_id>/location', methods=['POST'])
