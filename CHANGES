@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve links reliability
+
 Version 1.28.1357.25 2017-05-31
 -------------------------------
 
