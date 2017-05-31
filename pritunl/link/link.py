@@ -390,7 +390,7 @@ class Link(mongo.MongoObject):
         mongo.MongoObject.remove(self)
 
     def generate_key(self):
-        self.key = utils.rand_str(32)
+        self.key = utils.rand_str(64)
 
     def get_location(self, location_id):
         return Location(link=self, id=location_id)
