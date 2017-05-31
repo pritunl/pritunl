@@ -440,3 +440,26 @@ def get_url_root():
         url_root = url_root[:-1]
 
     return url_root
+
+def check_openvpn_ver():
+    try:
+        process = subprocess.Popen(['openvpn', '--version'],
+            stdout=subprocess.PIPE)
+        output, _ = process.communicate()
+        output = output.split()[1].strip()
+
+        version = [int(x) for x in output.split('.')]
+
+        if version[0] > 2:
+            return True
+
+        if version[0] == 2 and version[1] > 3:
+            return True
+
+        if version[0] == 2 and version[1] == 3 and version[2] > 2:
+            return True
+    except:
+        from pritunl import logger
+        logger.exception('Failed to check openvpn version', 'utils')
+
+    return False
