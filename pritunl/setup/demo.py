@@ -10,6 +10,7 @@ def setup_demo():
     from pritunl import settings
     from pritunl import server
     from pritunl import host
+    from pritunl import link
     from pritunl import mongo
     from pritunl import logger
 
@@ -99,6 +100,19 @@ def setup_demo():
                     }
 
                     clients_collection.insert(doc)
+
+        for lnk in link.iter_links():
+            lnk.status = ONLINE
+            lnk.commit()
+
+            for location in lnk.iter_locations():
+                active = False
+                for hst in location.iter_hosts():
+                    if not active:
+                        hst.active = True
+                        active = True
+                    hst.status = AVAILABLE
+                    hst.commit(('active', 'status'))
 
         logger.info('Demo initiated', 'demo')
 
