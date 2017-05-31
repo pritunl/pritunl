@@ -98,7 +98,8 @@ class Host(mongo.MongoObject):
             'timeout': self.timeout,
             'priority': self.priority,
             'ping_timestamp_ttl': self.ping_timestamp_ttl,
-            'public_address': self.public_address,
+            'public_address': self.public_address if not \
+                settings.app.demo_mode else utils.random_ip_addr(),
             'version': self.version,
         }
 
@@ -164,6 +165,11 @@ class Host(mongo.MongoObject):
             seconds=self.timeout or settings.vpn.link_timeout)
         self.commit(('public_address', 'version',
             'status', 'ping_timestamp_ttl'))
+
+        if not self.link.key:
+            self.link.generate_key()
+            self.link.commit('key')
+            return
 
         links = []
         state = {
