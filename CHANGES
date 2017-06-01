@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add support for additional AWS regions
+
 Version 1.28.1357.38 2017-05-31
 -------------------------------
 
