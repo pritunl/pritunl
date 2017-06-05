@@ -458,8 +458,8 @@ class ServerInstance(object):
                 except (ipaddress.AddressValueError, ValueError):
                     continue
 
-                if line_split[0] == '::/0':
-                    if default_interface6:
+                if line_split[0] in ('::/0', 'ff00::/8'):
+                    if default_interface6 or line_split[6] == 'lo':
                         continue
                     default_interface6 = line_split[6]
 
