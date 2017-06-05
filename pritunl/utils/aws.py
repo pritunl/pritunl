@@ -2,18 +2,16 @@ from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import settings
 
-import boto
-import boto.ec2
-import boto.vpc
-import boto.route53
+import boto3
 import requests
 import time
 
-def connect_vpc(aws_key, aws_secret, region):
-    return boto.connect_vpc(
+def connect_ec2(aws_key, aws_secret, region):
+    return boto3.client(
+        'ec2',
         aws_access_key_id=aws_key,
         aws_secret_access_key=aws_secret,
-        region=boto.ec2.get_region(region),
+        region_name=region,
     )
 
 def connect_route53(aws_key, aws_secret, region):
@@ -43,6 +41,7 @@ def add_vpc_route(region, vpc_id, network, resource_id):
     region_key = region.replace('-', '_')
     aws_key = getattr(settings.app, region_key + '_access_key')
     aws_secret = getattr(settings.app, region_key + '_secret_key')
+    ipv6 = ':' in network
 
     if not aws_key or not aws_secret:
         raise ValueError('AWS credentials not available for %s' % region)
@@ -52,10 +51,19 @@ def add_vpc_route(region, vpc_id, network, resource_id):
     if aws_secret == 'role':
         aws_secret = None
 
-    vpc_conn = connect_vpc(aws_key, aws_secret, region)
+    vpc_conn = connect_ec2(aws_key, aws_secret, region)
 
-    tables = vpc_conn.get_all_route_tables(filters={'vpc-id': vpc_id})
-    if not tables:
+    response = vpc_conn.describe_route_tables(
+        Filters=[
+            {
+                'Name': 'vpc-id',
+                'Values': [
+                    vpc_id,
+                ],
+            },
+        ],
+    )
+    if not response:
         raise VpcRouteTableNotFound('Failed to find VPC routing table')
 
     instance_id = None
@@ -65,24 +73,62 @@ def add_vpc_route(region, vpc_id, network, resource_id):
     else:
         instance_id = resource_id
 
-    for table in tables:
-        if not table.id:
+    for table in response['RouteTables']:
+        table_id = table.get('RouteTableId')
+        if not table_id:
             continue
 
-        try:
-            vpc_conn.replace_route(
-                table.id,
-                network,
-                instance_id=instance_id,
-                interface_id=interface_id,
-            )
-        except:
-            vpc_conn.create_route(
-                table.id,
-                network,
-                instance_id=instance_id,
-                interface_id=interface_id,
-            )
+        exists = False
+        replace = False
+        for route in table['Routes']:
+            if ipv6:
+                if route.get('DestinationIpv6CidrBlock') != network:
+                    continue
+            else:
+                if route.get('DestinationCidrBlock') != network:
+                    continue
+            exists = True
+
+            if interface_id:
+                if route.get('NetworkInterfaceId') != interface_id:
+                    replace = True
+            else:
+                if route.get('InstanceId') != instance_id:
+                    replace = True
+
+            break
+
+        if exists and not replace:
+            continue
+
+        params = {
+            'RouteTableId': table_id,
+        }
+
+        if interface_id:
+            params['NetworkInterfaceId'] = interface_id
+        else:
+            params['InstanceId'] = instance_id
+
+        if ipv6:
+            params['DestinationIpv6CidrBlock'] = network
+        else:
+            params['DestinationCidrBlock'] = network
+
+        if replace:
+            try:
+                response = vpc_conn.create_route(**params)
+                if not response['Return']:
+                    raise ValueError('Invalid response')
+            except:
+                vpc_conn.replace_route(**params)
+        else:
+            try:
+                vpc_conn.replace_route(**params)
+            except:
+                response = vpc_conn.create_route(**params)
+                if not response['Return']:
+                    raise ValueError('Invalid response')
 
 def get_vpcs():
     vpcs_data = {}
