@@ -437,6 +437,7 @@ class ServerInstance(object):
 
         routes6 = []
         default_interface6 = None
+        default_interface6_alt = None
         if self.server.ipv6:
             try:
                 routes_output = utils.check_output_logged(
@@ -458,25 +459,25 @@ class ServerInstance(object):
                 except (ipaddress.AddressValueError, ValueError):
                     continue
 
-                if line_split[0] in ('::/0', 'ff00::/8'):
+                if line_split[0] == '::/0':
                     if default_interface6 or line_split[6] == 'lo':
                         continue
                     default_interface6 = line_split[6]
+
+                if line_split[0] == 'ff00::/8':
+                    if default_interface6_alt or line_split[6] == 'lo':
+                        continue
+                    default_interface6_alt = line_split[6]
 
                 routes6.append((
                     route_network,
                     line_split[6],
                 ))
 
+            default_interface6 = default_interface6 or default_interface6_alt
             if not default_interface6:
                 raise IptablesError(
                     'Failed to find default IPv6 network interface')
-
-            if default_interface6 == 'lo':
-                logger.error('Failed to find default IPv6 interface',
-                    'server',
-                    server_id=self.server.id,
-                )
         routes6.reverse()
 
         interfaces = set()
