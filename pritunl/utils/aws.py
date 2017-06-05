@@ -2,6 +2,8 @@ from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import settings
 
+import boto
+import boto.route53
 import boto3
 import requests
 import time
