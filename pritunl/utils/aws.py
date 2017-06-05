@@ -148,13 +148,13 @@ def get_vpcs():
         if aws_secret == 'role':
             aws_secret = None
 
-        vpc_conn = connect_vpc(aws_key, aws_secret, region)
+        ec2_conn = connect_ec2(aws_key, aws_secret, region)
 
-        vpcs = vpc_conn.get_all_vpcs()
-        for vpc in vpcs:
+        response = ec2_conn.describe_vpcs()
+        for vpc in response['Vpcs']:
             vpc_data.append({
-                'id': vpc.id,
-                'network': vpc.cidr_block,
+                'id': vpc['VpcId'],
+                'network': vpc['CidrBlock'],
             })
 
     return vpcs_data
