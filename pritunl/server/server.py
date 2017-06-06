@@ -586,6 +586,9 @@ class Server(mongo.MongoObject):
                 virtual_comment = route.get('comment', None)
                 virtual_vpc_region = route.get('vpc_region', None)
                 virtual_vpc_id = route.get('vpc_id', None)
+            elif route_network == self.network or \
+                    route_network == self.network6:
+                continue
             else:
                 if route_network in routes_dict:
                     if not route.get('server_link'):
