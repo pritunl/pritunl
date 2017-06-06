@@ -360,7 +360,20 @@ class ServerInstance(object):
             raise
 
         if self.server.ipv6:
+            keys = []
+            output = utils.check_output_logged(['sysctl', 'net.ipv6.conf'])
+
+            for line in output.split('\n'):
+                if '.accept_ra =' in line:
+                    keys.append(line.split('=')[0].strip())
+
             try:
+                for key in keys:
+                    utils.check_output_logged([
+                        'sysctl',
+                        '-w',
+                        '%s=2' % key,
+                    ])
                 utils.check_output_logged(
                     ['sysctl', '-w', 'net.ipv6.conf.all.forwarding=1'])
             except subprocess.CalledProcessError:
