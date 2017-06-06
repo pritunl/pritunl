@@ -689,7 +689,7 @@ class Server(mongo.MongoObject):
                 if route['network_link'] and nat_route:
                     raise ServerRouteNatNetworkLink('Cannot nat network link')
 
-        if network == self.network:
+        if network == self.network or network == self.network6:
             network = 'virtual'
 
             if nat_route:
