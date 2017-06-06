@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Improve IPv6 support
+Improve AWS route advertisement
 
 Version 1.28.1358.35 2017-06-01
 -------------------------------
