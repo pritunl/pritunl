@@ -53,9 +53,9 @@ def add_vpc_route(region, vpc_id, network, resource_id):
     if aws_secret == 'role':
         aws_secret = None
 
-    vpc_conn = connect_ec2(aws_key, aws_secret, region)
+    ec2_conn = connect_ec2(aws_key, aws_secret, region)
 
-    response = vpc_conn.describe_route_tables(
+    response = ec2_conn.describe_route_tables(
         Filters=[
             {
                 'Name': 'vpc-id',
@@ -119,16 +119,16 @@ def add_vpc_route(region, vpc_id, network, resource_id):
 
         if replace:
             try:
-                response = vpc_conn.create_route(**params)
+                response = ec2_conn.create_route(**params)
                 if not response['Return']:
                     raise ValueError('Invalid response')
             except:
-                vpc_conn.replace_route(**params)
+                ec2_conn.replace_route(**params)
         else:
             try:
-                vpc_conn.replace_route(**params)
+                ec2_conn.replace_route(**params)
             except:
-                response = vpc_conn.create_route(**params)
+                response = ec2_conn.create_route(**params)
                 if not response['Return']:
                     raise ValueError('Invalid response')
 
