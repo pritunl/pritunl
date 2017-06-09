@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with DNS server
+
 Version 1.28.1364.80 2017-06-07
 -------------------------------
 
