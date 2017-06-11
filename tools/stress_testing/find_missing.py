@@ -55,5 +55,5 @@ for user in response.json():
         print >> sys.stderr, name
     cur_names.add(name)
 
-for name in names - cur_names:
+for name in sorted(list(names - cur_names)):
     print name
