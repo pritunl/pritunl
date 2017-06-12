@@ -49,7 +49,7 @@ define([
       this.setLoading('Adding organization...');
       var orgModel = new OrgModel();
       orgModel.save({
-        name: this.$('input').val(),
+        name: name,
         auth_api: authApi
       }, {
         success: function() {
