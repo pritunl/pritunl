@@ -305,7 +305,8 @@ def server_put_post(server_id=None):
     link_ping_interval_def = False
     if 'link_ping_interval' in flask.request.json:
         link_ping_interval_def = True
-        link_ping_interval = int(flask.request.json['link_ping_interval'] or 1)
+        link_ping_interval = int(
+            flask.request.json['link_ping_interval'] or 1)
 
     link_ping_timeout = None
     link_ping_timeout_def = False
