@@ -559,7 +559,6 @@ class ServerInstance(object):
         self.iptables.generate()
 
     def enable_iptables_tun_nat(self):
-        # TODO
         self.iptables_lock.acquire()
         try:
             if self.tun_nat:
