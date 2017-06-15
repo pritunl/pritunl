@@ -29,6 +29,7 @@ define([
     buildItem: function(model) {
       return new LinkLocationsListItemView({
         model: model,
+        collection: this.collection,
         link: this.link
       });
     },

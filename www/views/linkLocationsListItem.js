@@ -5,20 +5,24 @@ define([
   'models/linkRoute',
   'models/linkHost',
   'models/linkHostUri',
+  'models/linkExclude',
   'views/alert',
   'views/modalAddLocRoute',
   'views/modalAddLocHost',
+  'views/modalAddLocExclude',
   'views/modalDeleteLocRoute',
   'views/modalModifyLocHost',
   'views/modalLocHostUri',
   'views/modalDeleteLocHost',
+  'views/modalDeleteLocExclude',
   'views/modalModifyLocation',
   'views/modalDeleteLocation',
   'text!templates/linkLocationsListItem.html'
 ], function($, _, Backbone, LinkRouteModel, LinkHostModel, LinkHostUriModel,
-    AlertView, ModalAddLocRouteView, ModalAddLocHostView,
-    ModalDeleteLocRouteView, ModalModifyLocHostView, ModalLocHostUriView,
-    ModalDeleteLocHostView, ModalModifyLocationView, ModalDeleteLocationView,
+    LinkExcludeModel, AlertView, ModalAddLocRouteView, ModalAddLocHostView,
+    ModalAddLocExcludeView, ModalDeleteLocRouteView, ModalModifyLocHostView,
+    ModalLocHostUriView, ModalDeleteLocHostView, ModalDeleteLocExcludeView,
+    ModalModifyLocationView, ModalDeleteLocationView,
     linkLocationsListItemTemplate) {
   'use strict';
   var LinkLocationsListItemView = Backbone.View.extend({
@@ -27,8 +31,10 @@ define([
     events: {
       'mousedown .location-add-route': 'onAddRoute',
       'mousedown .location-add-host': 'onAddHost',
+      'mousedown .location-add-exclude': 'onAddExclude',
       'mousedown .link-remove-route': 'onRemoveRoute',
       'mousedown .link-remove-host': 'onRemoveHost',
+      'mousedown .link-remove-exclude': 'onRemoveExclude',
       'mousedown .link-uri-host': 'onHostUri',
       'mousedown .host-name': 'onModifyHost',
       'mousedown .location-settings': 'onSettings',
@@ -82,6 +88,34 @@ define([
       }.bind(this));
       this.addView(modal);
     },
+    onAddExclude: function() {
+      if (this.collection.length < 2) {
+        var alertView = new AlertView({
+          type: 'danger',
+          message: 'Two locations must be created before creating an exclude.',
+          dismissable: true
+        });
+        $('.alerts-container').append(alertView.render().el);
+        this.addView(alertView);
+        return;
+      }
+
+      var modal = new ModalAddLocExcludeView({
+        location: this.model.get('id'),
+        link: this.model.get('link_id'),
+        locations: this.collection
+      });
+      this.listenToOnce(modal, 'applied', function() {
+        var alertView = new AlertView({
+          type: 'success',
+          message: 'Successfully added location exclude.',
+          dismissable: true
+        });
+        $('.alerts-container').append(alertView.render().el);
+        this.addView(alertView);
+      }.bind(this));
+      this.addView(modal);
+    },
     onRemoveRoute: function(evt) {
       var model = new LinkRouteModel({
         'id': $(evt.currentTarget).attr('data-id'),
@@ -96,6 +130,23 @@ define([
       }
 
       var modal = new ModalDeleteLocRouteView({
+        model: model
+      });
+      this.addView(modal);
+    },
+    onRemoveExclude: function(evt) {
+      var model = new LinkExcludeModel({
+        'id': $(evt.currentTarget).attr('data-id'),
+        'link_id': this.model.get('link_id'),
+        'location_id': this.model.get('id')
+      });
+
+      if (evt.shiftKey && evt.ctrlKey) {
+        model.destroy();
+        return;
+      }
+
+      var modal = new ModalDeleteLocExcludeView({
         model: model
       });
       this.addView(modal);
