@@ -137,8 +137,8 @@ def link_location_get(link_id):
         return flask.abort(404)
 
     locations = []
-    for location in lnk.iter_locations():
-        locations.append(location.dict())
+    for location_dict in lnk.iter_locations_dict():
+        locations.append(location_dict)
 
     if settings.app.demo_mode:
         utils.demo_set_cache(locations)
