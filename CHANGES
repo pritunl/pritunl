@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add link exclusions
+
 Version 1.28.1369.94 2017-06-12
 -------------------------------
 
