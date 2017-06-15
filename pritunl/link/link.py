@@ -180,7 +180,11 @@ class Host(mongo.MongoObject):
 
         if self.link.status == ONLINE and active_host and \
                 active_host.id == self.id:
-            locations = self.link.iter_locations(self.location.id, sort=False)
+            locations = self.link.iter_locations(
+                self.location.id,
+                sort=False,
+                exclude_id=self.location.id,
+            )
 
             for location in locations:
                 active_host = location.get_active_host()
@@ -240,7 +244,7 @@ class Location(mongo.MongoObject):
     def collection(cls):
         return mongo.get_collection('links_locations')
 
-    def dict(self):
+    def dict(self, locations):
         hosts = []
         for hst in self.iter_hosts():
             hosts.append(hst.dict())
@@ -252,12 +256,32 @@ class Location(mongo.MongoObject):
             route['location_id'] = self.id
             routes.append(route)
 
+        excludes = []
+        for exclude in self.link.excludes:
+            if self.id not in exclude:
+                continue
+
+            if exclude[0] == self.id:
+                exclude_id = exclude[1]
+            else:
+                exclude_id = exclude[0]
+
+            location = locations.get(exclude_id)
+            if not location:
+                continue
+
+            excludes.append({
+                'id': exclude_id,
+                'name': location.name,
+            })
+
         return {
             'id': self.id,
             'name': self.name,
             'link_id': self.link_id,
             'hosts': hosts,
             'routes': routes,
+            'excludes': excludes,
             'location': self.location,
         }
 
@@ -348,9 +372,11 @@ class Link(mongo.MongoObject):
         'name',
         'status',
         'key',
+        'excludes',
     }
     fields_default = {
         'status': OFFLINE,
+        'excludes': [],
     }
 
     def __init__(self, name=None, status=None, timeout=None,
@@ -395,7 +421,10 @@ class Link(mongo.MongoObject):
     def get_location(self, location_id):
         return Location(link=self, id=location_id)
 
-    def iter_locations(self, skip=None, sort=True):
+    def iter_locations(self, skip=None, sort=True, exclude_id=None):
+        if exclude_id:
+            excludes = self.excludes
+
         spec = {
             'link_id': self.id,
         }
@@ -409,4 +438,27 @@ class Link(mongo.MongoObject):
             cursor = Location.collection.find(spec)
 
         for doc in cursor:
+            if exclude_id:
+                exclude = [exclude_id, doc['_id']]
+                exclude.sort(key=lambda x: str(x))
+
+                if exclude in excludes:
+                    continue
+
             yield Location(link=self, doc=doc)
+
+    def iter_locations_dict(self):
+        cursor = Location.collection.find({
+            'link_id': self.id,
+        }).sort('name')
+
+        locations = []
+        locations_id = {}
+
+        for doc in cursor:
+            location = Location(link=self, doc=doc)
+            locations.append(location)
+            locations_id[location.id] = location
+
+        for location in locations:
+            yield location.dict(locations_id)
