@@ -109,6 +109,8 @@ class TaskServer(task.Task):
 
             yield
 
+            recover_count = 0
+
             for doc in response:
                 cur_avail_group = doc.get('availability_group', DEFAULT)
 
@@ -164,6 +166,10 @@ class TaskServer(task.Task):
                 prefered_hosts = list(prefered_hosts - active_hosts)
                 if not prefered_hosts:
                     continue
+
+                if recover_count >= 3:
+                    continue
+                recover_count += 1
 
                 logger.info('Recovering server state', 'server',
                     server_id=doc['_id'],
