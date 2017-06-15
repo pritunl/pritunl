@@ -3,7 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
-Fix issue link configuration
+Fix issue with link configuration
 
 Version 1.28.1372.23 2017-06-15
 -------------------------------
