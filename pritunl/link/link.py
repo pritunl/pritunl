@@ -307,6 +307,19 @@ class Location(mongo.MongoObject):
     def remove_route(self, network_id):
         self.routes.pop(network_id)
 
+    def add_exclude(self, exclude_id):
+        exclude = [self.id, exclude_id]
+        exclude.sort(key=lambda x: str(x))
+
+        if exclude not in self.link.excludes:
+            self.link.excludes.append(exclude)
+
+    def remove_exclude(self, exclude_id):
+        exclude = [self.id, exclude_id]
+        exclude.sort(key=lambda x: str(x))
+
+        self.link.excludes.remove(exclude)
+
     def get_host(self, host_id):
         return Host(link=self.link, location=self, id=host_id)
 
