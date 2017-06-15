@@ -12,7 +12,8 @@ define([
       'status': null,
       'location': null,
       'hosts': null,
-      'routes': null
+      'routes': null,
+      'excludes': null
     },
     url: function() {
       var url = '/link/' + this.get('link_id') + '/location';
