@@ -244,7 +244,7 @@ class Location(mongo.MongoObject):
     def collection(cls):
         return mongo.get_collection('links_locations')
 
-    def dict(self, locations):
+    def dict(self, locations=None):
         hosts = []
         for hst in self.iter_hosts():
             hosts.append(hst.dict())
@@ -257,23 +257,24 @@ class Location(mongo.MongoObject):
             routes.append(route)
 
         excludes = []
-        for exclude in self.link.excludes:
-            if self.id not in exclude:
-                continue
+        if locations:
+            for exclude in self.link.excludes:
+                if self.id not in exclude:
+                    continue
 
-            if exclude[0] == self.id:
-                exclude_id = exclude[1]
-            else:
-                exclude_id = exclude[0]
+                if exclude[0] == self.id:
+                    exclude_id = exclude[1]
+                else:
+                    exclude_id = exclude[0]
 
-            location = locations.get(exclude_id)
-            if not location:
-                continue
+                location = locations.get(exclude_id)
+                if not location:
+                    continue
 
-            excludes.append({
-                'id': exclude_id,
-                'name': location.name,
-            })
+                excludes.append({
+                    'id': exclude_id,
+                    'name': location.name,
+                })
 
         return {
             'id': self.id,
