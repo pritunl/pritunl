@@ -37,7 +37,7 @@ def iter_hosts(spec=None):
         yield Host(doc=doc)
 
 def get_page_total():
-    collection = mongo.get_collection('servers')
+    collection = mongo.get_collection('links')
 
     count = collection.find({}, {
         '_id': True,
