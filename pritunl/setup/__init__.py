@@ -1,4 +1,5 @@
 from pritunl.helpers import *
+from pritunl.setup.clean import setup_clean
 from pritunl.setup.local import setup_local
 from pritunl.setup.server import setup_server
 from pritunl.setup.mongo import setup_mongo
@@ -30,6 +31,7 @@ def setup_all():
     setup_logger()
 
     try:
+        setup_clean()
         setup_temp_path()
         setup_signal_handler()
         setup_server()
