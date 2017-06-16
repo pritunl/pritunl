@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve startup
+
 Version 1.28.1372.97 2017-06-15
 -------------------------------
 
