@@ -73,7 +73,7 @@ def set_global_interrupt():
 
     from pritunl import logger
     logger.info('Stopping server', 'setup')
-    signal.alarm(2)
+    signal.alarm(10)
 
 def check_app_server_interrupt():
     return _app_server_interrupt
