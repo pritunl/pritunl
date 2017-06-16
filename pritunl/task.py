@@ -106,7 +106,9 @@ class Task(mongo.MongoObject):
 
 def iter_tasks(spec=None):
     for doc in Task.collection.find(spec or {}):
-        yield _task_types[doc['type']](doc=doc)
+        task = _task_types.get(doc['type'])
+        if task:
+            yield task(doc=doc)
 
 def add_task(task_cls, hours=None, minutes=None, seconds=None,
         run_on_start=False):
