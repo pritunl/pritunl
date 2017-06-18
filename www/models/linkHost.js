@@ -7,6 +7,8 @@ define([
   var LinkHostModel = Backbone.Model.extend({
     defaults: {
       'id': null,
+      'link_id': null,
+      'location_id': null,
       'name': null,
       'timeout': null,
       'priority': null,
