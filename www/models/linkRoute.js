@@ -7,7 +7,9 @@ define([
   var LinkRouteModel = Backbone.Model.extend({
     defaults: {
       'id': null,
-      'network': null
+      'link_id': null,
+      'location_id': null,
+      'exclude_id': null
     },
     url: function() {
       var url = '/link/' + this.get('link_id') + '/location/' +
