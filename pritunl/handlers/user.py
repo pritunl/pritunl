@@ -303,7 +303,9 @@ def _create_users(org_id, users_data, remote_addr, background):
                     user_data, remote_addr, False)
         else:
             for i, user_data in enumerate(users_data):
-                _create_user(users, org, user_data, remote_addr, True)
+                err = _create_user(users, org, user_data, remote_addr, True)
+                if err:
+                    return err
     except:
         logger.exception('Error creating users', 'users')
         raise
