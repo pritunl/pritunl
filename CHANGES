@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with startup
+
 Version 1.28.1373.27 2017-06-16
 -------------------------------
 
