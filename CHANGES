@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve Duo authentication
+
 Version 1.28.1377.74 2017-06-20
 -------------------------------
 
