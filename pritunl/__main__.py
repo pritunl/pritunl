@@ -297,6 +297,28 @@ def main(default_conf=None):
             )
 
         sys.exit(0)
+    elif cmd == 'clear-logs':
+        from pritunl import setup
+        from pritunl import logger
+        from pritunl import mongo
+        from pritunl import settings
+
+        setup.setup_db()
+
+        mongo.get_collection('logs').drop()
+        mongo.get_collection('log_entries').drop()
+
+        prefix = settings.conf.mongodb_collection_prefix or ''
+
+        log_limit = settings.app.log_limit
+        mongo.database.create_collection(prefix + 'logs', capped=True,
+            size=log_limit * 1024, max=log_limit)
+
+        log_entry_limit = settings.app.log_entry_limit
+        mongo.database.create_collection(prefix + 'log_entries', capped=True,
+            size=log_entry_limit * 512, max=log_entry_limit)
+
+        sys.exit(0)
     elif cmd != 'start':
         raise ValueError('Invalid command')
 
