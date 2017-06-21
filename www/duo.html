@@ -322,9 +322,14 @@
       .dark .duo-logo {
         opacity: 0.8;
       }
+
+      .push input,
+      .phone input {
+        display: none !important;
+      }
     </style>
   </head>
-  <body>
+  <body class="<%= body_class %>">
     <div class="login">
       <div class="login-box">
         <h2 class="login-header navbar-inverse">
@@ -346,6 +351,7 @@
       var submitBtn = document.getElementById('submit');
       var alertDiv = document.getElementById('alert');
       var token = '<%= token %>';
+      var duoMode = '<%= duo_mode %>';
 
       var flashAlert = function(div) {
         var alertClass = div.className;
@@ -413,6 +419,11 @@
 
         return false;
       };
+
+      if (duoMode === 'push' || duoMode === 'phone') {
+        setAlert('Duo ' + duoMode + ' authentication required.');
+        onSubmit();
+      }
     </script>
   </body>
 </html>
