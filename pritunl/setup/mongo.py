@@ -138,6 +138,9 @@ def setup_mongo():
     else:
         secondary_database = database
 
+    mongo.database = database
+    mongo.secondary_database = secondary_database
+
     cur_collections = secondary_database.collection_names()
     if prefix + 'messages' not in cur_collections:
         secondary_database.create_collection(prefix + 'messages', capped=True,
