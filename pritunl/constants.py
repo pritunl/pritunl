@@ -759,6 +759,9 @@ TOKEN_INVALID_MSG = 'Token is invalid.'
 PASSCODE_INVALID = 'passcode_invalid'
 PASSCODE_INVALID_MSG = 'Passcode is invalid.'
 
+DUO_FAILED = 'duo_failed'
+DUO_FAILED_MSG = 'Duo authentication failed.'
+
 YUBIKEY_INVALID = 'yubikey_invalid'
 YUBIKEY_INVALID_MSG = 'YubiKey is invalid.'
 
