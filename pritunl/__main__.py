@@ -19,7 +19,8 @@ Commands:
   reset-ssl-cert        Reset the server ssl certificate
   reconfigure           Reconfigure database connection
   set-mongodb           Set the mongodb uri
-  logs                  View server logs"""
+  logs                  View server logs
+  clear-logs            Clear server logs"""
 
 def main(default_conf=None):
     if len(sys.argv) > 1:
