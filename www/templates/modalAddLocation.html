@@ -4,7 +4,7 @@
     <input type="text" class="form-control" placeholder="Enter name" data-toggle="tooltip" title="Name of location" autofocus>
   </div>
   <div class="form-group link">
-    <label>Select a link</label>
+    <label>Link</label>
     <select class="form-control">
       <% _.each(links, function(link) { %>
       <option value="<%- link.id %>" <%= (lastLink === link.id) ? 'selected' : '' %>><%- link.name %></option>
