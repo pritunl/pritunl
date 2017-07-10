@@ -299,8 +299,7 @@ define([
       if (this.servers.length < 2) {
         var alertView = new AlertView({
           type: 'danger',
-          message: 'No servers exists, a server must be created before ' +
-            'attaching.',
+          message: 'Two servers must be created before creating a link.',
           dismissable: true
         });
         $('.alerts-container').append(alertView.render().el);
