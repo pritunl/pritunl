@@ -50,7 +50,7 @@ def _dns_thread():
                     process = None
                     break
 
-                yield interrupter_sleep(3)
+                yield interrupter_sleep(1)
         except GeneratorExit:
             if process:
                 process.terminate()

@@ -1,6 +1,89 @@
 Pritunl Changelog
 =================
 
+Version 1.28.1379.82 2017-06-22
+-------------------------------
+
+Improve Duo authentication
+Improvements to command line tools
+
+Version 1.28.1377.74 2017-06-20
+-------------------------------
+
+Fix issue with startup
+
+Version 1.28.1373.27 2017-06-16
+-------------------------------
+
+Improve startup
+
+Version 1.28.1372.97 2017-06-15
+-------------------------------
+
+Fix issue with link configuration
+
+Version 1.28.1372.23 2017-06-15
+-------------------------------
+
+Add link exclusions
+
+Version 1.28.1369.94 2017-06-12
+-------------------------------
+
+Web interface improvements
+
+Version 1.28.1366.98 2017-06-09
+-------------------------------
+
+Fix issue with DNS server
+
+Version 1.28.1364.80 2017-06-07
+-------------------------------
+
+Improve IPv6 support
+Improve AWS route advertisement
+
+Version 1.28.1358.35 2017-06-01
+-------------------------------
+
+Add support for additional AWS regions
+
+Version 1.28.1357.38 2017-05-31
+-------------------------------
+
+Fix OpenSSL error
+
+Version 1.28.1357.34 2017-05-31
+-------------------------------
+
+Improve links reliability
+Add links to demo
+
+Version 1.28.1357.25 2017-05-31
+-------------------------------
+
+Fix issue with older versions of OpenVPN
+
+Version 1.28.1356.45 2017-05-30
+-------------------------------
+
+Web server improvements
+
+Version 1.28.1356.41 2017-05-30
+-------------------------------
+
+Fix issue with user creation
+
+Version 1.28.1356.19 2017-05-30
+-------------------------------
+
+Add IPsec links
+Add support for AES GCM ciphers
+Improve route advertisement interface
+Performance improvements
+Improve server reliability
+Fix API issue
+
 Version 1.27.1314.93 2017-04-18
 -------------------------------
 

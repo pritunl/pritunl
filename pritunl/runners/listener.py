@@ -3,14 +3,17 @@ from pritunl import listener
 from pritunl import logger
 from pritunl import messenger
 from pritunl import callqueue
+from pritunl import utils
 
 import threading
 import time
+import datetime
 
 @interrupter
 def listener_thread():
     queue = callqueue.CallQueue()
-    queue.start(10)
+    queue.start()
+    lastlog = utils.now()
 
     while True:
         try:
@@ -18,6 +21,17 @@ def listener_thread():
                 for lstnr in listener.channels[msg['channel']]:
                     try:
                         queue.put(lstnr, msg)
+
+                        size = queue.size()
+                        if size >= 50:
+                            if utils.now() - lastlog > datetime.timedelta(
+                                    minutes=3):
+                                lastlog = utils.now()
+                                logger.warning(
+                                    'Message queue flood',
+                                    'runners',
+                                    size=size,
+                                )
                     except:
                         logger.exception('Error in listener callback',
                             'runners')

@@ -87,7 +87,6 @@ def subscription_put():
     card = flask.request.json.get('card')
     email = flask.request.json.get('email')
     plan = flask.request.json.get('plan')
-    promo_code = flask.request.json.get('promo_code')
     cancel = flask.request.json.get('cancel')
 
     try:
@@ -105,7 +104,6 @@ def subscription_put():
                     'license': settings.app.license,
                     'card': card,
                     'plan': plan,
-                    'promo_code': promo_code,
                     'email': email,
                 },
             )

@@ -586,6 +586,9 @@ class Server(mongo.MongoObject):
                 virtual_comment = route.get('comment', None)
                 virtual_vpc_region = route.get('vpc_region', None)
                 virtual_vpc_id = route.get('vpc_id', None)
+            elif route_network == self.network or \
+                    route_network == self.network6:
+                continue
             else:
                 if route_network in routes_dict:
                     if not route.get('server_link'):
@@ -686,7 +689,7 @@ class Server(mongo.MongoObject):
                 if route['network_link'] and nat_route:
                     raise ServerRouteNatNetworkLink('Cannot nat network link')
 
-        if network == self.network:
+        if network == self.network or network == self.network6:
             network = 'virtual'
 
             if nat_route:

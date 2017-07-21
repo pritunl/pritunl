@@ -96,12 +96,27 @@ class ServerInstance(object):
     def resources_acquire(self):
         if self.resource_lock:
             raise TypeError('Server resource lock already set')
+
+        def deadlock():
+            logger.error(
+                'Server resource deadlocked, check for mismatching datetime',
+                'server',
+                server_id=self.server.id,
+                instance_id=self.id,
+            )
+
+        timer = threading.Timer(15, deadlock)
+        timer.start()
+
         self.resource_lock = _resource_locks[self.server.id]
         self.resource_lock.acquire()
         self.interface = utils.interface_acquire(self.server.adapter_type)
 
+        timer.cancel()
+
     def resources_release(self):
         if self.resource_lock:
+            time.sleep(5)
             self.resource_lock.release()
             utils.interface_release(self.server.adapter_type, self.interface)
             self.interface = None
@@ -214,7 +229,14 @@ class ServerInstance(object):
         else:
             raise ValueError('Unknown protocol')
 
-        server_conf = OVPN_INLINE_SERVER_CONF % (
+        if utils.check_openvpn_ver():
+            server_ciphers = SERVER_CIPHERS
+            server_conf_template = OVPN_INLINE_SERVER_CONF
+        else:
+            server_ciphers = SERVER_CIPHERS_OLD
+            server_conf_template = OVPN_INLINE_SERVER_CONF_OLD
+
+        server_conf = server_conf_template % (
             self.server.port,
             protocol,
             self.interface,
@@ -225,7 +247,7 @@ class ServerInstance(object):
             self.server.ping_timeout + 20,
             self.server.ping_interval,
             self.server.ping_timeout,
-            CIPHERS[self.server.cipher],
+            server_ciphers[self.server.cipher],
             HASHES[self.server.hash],
             4 if self.server.debug else 1,
             8 if self.server.debug else 3,
@@ -263,7 +285,8 @@ class ServerInstance(object):
                 if conf_line:
                     self.server.output.push_message('  ' + conf_line)
 
-        if settings.local.sub_plan == 'enterprise':
+        if settings.local.sub_plan and \
+                'enterprise' in settings.local.sub_plan:
             returns = plugins.caller(
                 'server_config',
                 host_id=settings.local.host_id,
@@ -309,7 +332,7 @@ class ServerInstance(object):
                 for return_val in returns:
                     if not return_val:
                         continue
-                    server_conf += return_val.strip() + '/n'
+                    server_conf += return_val.strip() + '\n'
 
         server_conf += '<ca>\n%s\n</ca>\n' % self.server.ca_certificate
 
@@ -337,7 +360,20 @@ class ServerInstance(object):
             raise
 
         if self.server.ipv6:
+            keys = []
+            output = utils.check_output_logged(['sysctl', 'net.ipv6.conf'])
+
+            for line in output.split('\n'):
+                if '.accept_ra =' in line:
+                    keys.append(line.split('=')[0].strip())
+
             try:
+                for key in keys:
+                    utils.check_output_logged([
+                        'sysctl',
+                        '-w',
+                        '%s=2' % key,
+                    ])
                 utils.check_output_logged(
                     ['sysctl', '-w', 'net.ipv6.conf.all.forwarding=1'])
             except subprocess.CalledProcessError:
@@ -414,6 +450,7 @@ class ServerInstance(object):
 
         routes6 = []
         default_interface6 = None
+        default_interface6_alt = None
         if self.server.ipv6:
             try:
                 routes_output = utils.check_output_logged(
@@ -436,24 +473,24 @@ class ServerInstance(object):
                     continue
 
                 if line_split[0] == '::/0':
-                    if default_interface6:
+                    if default_interface6 or line_split[6] == 'lo':
                         continue
                     default_interface6 = line_split[6]
+
+                if line_split[0] == 'ff00::/8':
+                    if default_interface6_alt or line_split[6] == 'lo':
+                        continue
+                    default_interface6_alt = line_split[6]
 
                 routes6.append((
                     route_network,
                     line_split[6],
                 ))
 
+            default_interface6 = default_interface6 or default_interface6_alt
             if not default_interface6:
                 raise IptablesError(
                     'Failed to find default IPv6 network interface')
-
-            if default_interface6 == 'lo':
-                logger.error('Failed to find default IPv6 interface',
-                    'server',
-                    server_id=self.server.id,
-                )
         routes6.reverse()
 
         interfaces = set()
@@ -522,7 +559,6 @@ class ServerInstance(object):
         self.iptables.generate()
 
     def enable_iptables_tun_nat(self):
-        # TODO
         self.iptables_lock.acquire()
         try:
             if self.tun_nat:
@@ -667,6 +703,7 @@ class ServerInstance(object):
                         logger.error(
                             'Instance doc lost, stopping server', 'server',
                             server_id=self.server.id,
+                            instance_id=self.id,
                             cur_timestamp=utils.now(),
                         )
 
@@ -994,7 +1031,6 @@ class ServerInstance(object):
             self.interrupt = True
             self.bridge_stop()
             self.iptables.clear_rules()
-            self.resources_release()
 
             if not self.clean_exit:
                 event.Event(type=SERVERS_UPDATED)
@@ -1003,17 +1039,19 @@ class ServerInstance(object):
                     message='Server stopped unexpectedly "%s".' % (
                         self.server.name))
         except:
-            logger.exception('Server error occurred while running', 'server',
-                server_id=self.server.id,
-            )
-
             try:
                 self.interrupt = True
                 self.stop_process()
             except:
                 logger.exception('Server stop error', 'server',
                     server_id=self.server.id,
+                    instance_id=self.id,
                 )
+
+            logger.exception('Server error occurred while running', 'server',
+                server_id=self.server.id,
+                instance_id=self.id,
+            )
         finally:
             try:
                 if self.resource_lock:
@@ -1022,11 +1060,10 @@ class ServerInstance(object):
             except:
                 logger.exception('Server resource error', 'server',
                     server_id=self.server.id,
+                    instance_id=self.id,
                 )
 
             try:
-                self.resources_release()
-
                 self.stop_threads()
                 self.collection.update({
                     '_id': self.server.id,
@@ -1045,6 +1082,15 @@ class ServerInstance(object):
             except:
                 logger.exception('Server clean up error', 'server',
                     server_id=self.server.id,
+                    instance_id=self.id,
+                )
+
+            try:
+                self.resources_release()
+            except:
+                logger.exception('Failed to release resources', 'server',
+                    server_id=self.server.id,
+                    instance_id=self.id,
                 )
 
     def run(self, send_events=False):
@@ -1067,7 +1113,8 @@ class ServerInstance(object):
                 'instances': {
                     'instance_id': self.id,
                     'host_id': settings.local.host_id,
-                    'ping_timestamp': utils.now(),
+                    'ping_timestamp': utils.now() + \
+                        datetime.timedelta(seconds=30),
                 },
             },
             '$inc': {

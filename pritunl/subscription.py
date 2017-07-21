@@ -27,6 +27,7 @@ def update():
         settings.local.sub_period_end = None
         settings.local.sub_trial_end = None
         settings.local.sub_cancel_at_period_end = None
+        settings.local.sub_balance = None
         settings.local.sub_url_key = None
     else:
         for i in xrange(2):
@@ -43,10 +44,7 @@ def update():
 
                 # License key invalid
                 if response.status_code == 470:
-                    logger.warning('License key is invalid', 'subscription')
-                    update_license(None)
-                    update()
-                    return False
+                    raise ValueError('License key is invalid')
 
                 if response.status_code == 473:
                     raise ValueError(('Version %r not recognized by ' +
@@ -63,6 +61,7 @@ def update():
                 settings.local.sub_trial_end = data['trial_end']
                 settings.local.sub_cancel_at_period_end = data[
                     'cancel_at_period_end']
+                settings.local.sub_balance = data.get('balance')
                 settings.local.sub_url_key = data.get('url_key')
                 settings.local.sub_styles[data['plan']] = data['styles']
             except:
@@ -81,6 +80,7 @@ def update():
                 settings.local.sub_period_end = None
                 settings.local.sub_trial_end = None
                 settings.local.sub_cancel_at_period_end = None
+                settings.local.sub_balance = None
                 settings.local.sub_url_key = None
             break
 
@@ -105,6 +105,8 @@ def update():
                 event.Event(type=SUBSCRIPTION_PREMIUM_ACTIVE)
             elif settings.local.sub_plan == 'enterprise':
                 event.Event(type=SUBSCRIPTION_ENTERPRISE_ACTIVE)
+            elif settings.local.sub_plan == 'enterprise_plus':
+                event.Event(type=SUBSCRIPTION_ENTERPRISE_PLUS_ACTIVE)
             else:
                 event.Event(type=SUBSCRIPTION_NONE_INACTIVE)
         else:
@@ -112,6 +114,8 @@ def update():
                 event.Event(type=SUBSCRIPTION_PREMIUM_INACTIVE)
             elif settings.local.sub_plan == 'enterprise':
                 event.Event(type=SUBSCRIPTION_ENTERPRISE_INACTIVE)
+            elif settings.local.sub_plan == 'enterprise_plus':
+                event.Event(type=SUBSCRIPTION_ENTERPRISE_PLUS_INACTIVE)
             else:
                 event.Event(type=SUBSCRIPTION_NONE_INACTIVE)
 
@@ -132,6 +136,7 @@ def dict():
         'period_end': settings.local.sub_period_end,
         'trial_end': settings.local.sub_trial_end,
         'cancel_at_period_end': settings.local.sub_cancel_at_period_end,
+        'balance': settings.local.sub_balance,
         'url_key': url_key,
     }
 

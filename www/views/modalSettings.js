@@ -540,10 +540,18 @@ define([
         '.eu-west-1-access-key input').val();
       var euWest1SecretKey = this.$(
         '.eu-west-1-secret-key input').val();
+      var euWest2AccessKey = this.$(
+        '.eu-west-2-access-key input').val();
+      var euWest2SecretKey = this.$(
+        '.eu-west-2-secret-key input').val();
       var euCentral1AccessKey = this.$(
         '.eu-central-1-access-key input').val();
       var euCentral1SecretKey = this.$(
         '.eu-central-1-secret-key input').val();
+      var caCentral1AccessKey = this.$(
+        '.ca-central-1-access-key input').val();
+      var caCentral1SecretKey = this.$(
+        '.ca-central-1-secret-key input').val();
       var apNortheast1AccessKey = this.$(
         '.ap-northeast-1-access-key input').val();
       var apNortheast1SecretKey = this.$(
@@ -726,8 +734,12 @@ define([
         us_gov_west_1_secret_key: usGovWest1SecretKey,
         eu_west_1_access_key: euWest1AccessKey,
         eu_west_1_secret_key: euWest1SecretKey,
+        eu_west_2_access_key: euWest2AccessKey,
+        eu_west_2_secret_key: euWest2SecretKey,
         eu_central_1_access_key: euCentral1AccessKey,
         eu_central_1_secret_key: euCentral1SecretKey,
+        ca_central_1_access_key: caCentral1AccessKey,
+        ca_central_1_secret_key: caCentral1SecretKey,
         ap_northeast_1_access_key: apNortheast1AccessKey,
         ap_northeast_1_secret_key: apNortheast1SecretKey,
         ap_northeast_2_access_key: apNortheast2AccessKey,

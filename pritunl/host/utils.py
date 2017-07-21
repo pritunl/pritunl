@@ -43,14 +43,24 @@ def iter_hosts(spec=None, fields=None, page=None):
         yield Host(doc=doc, fields=fields)
 
 def get_host_page_total():
-    org_collection = mongo.get_collection('hosts')
+    host_collection = mongo.get_collection('hosts')
 
-    count = org_collection.find({}, {
+    count = host_collection.find({}, {
         '_id': True,
     }).count()
 
     return int(math.floor(max(0, float(count - 1)) /
         settings.app.host_page_count))
+
+def get_hosts_online():
+    host_collection = mongo.get_collection('hosts')
+
+    return host_collection.find({
+        'status': ONLINE,
+    }, {
+        '_id': True,
+        'status': True,
+    }).count()
 
 def iter_hosts_dict(page=None):
     clients_collection = mongo.get_collection('clients')

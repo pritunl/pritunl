@@ -188,16 +188,26 @@ class ServerInstanceCom(object):
         elif event_type == 'user_disconnect_id':
             user_id = msg[1]
             client_id = msg[2]
-            self.clients.disconnect_user_id(user_id, client_id)
+            server_id = None
+            if len(msg) > 3:
+                server_id = msg[3]
+            self.clients.disconnect_user_id(user_id, client_id, server_id)
         elif event_type == 'user_disconnect_mac':
             user_id = msg[1]
             host_id = msg[2]
             mac_addr = msg[3]
-            self.clients.disconnect_user_mac(user_id, host_id, mac_addr)
+            server_id = None
+            if len(msg) > 4:
+                server_id = msg[4]
+            self.clients.disconnect_user_mac(user_id, host_id,
+                mac_addr, server_id)
         elif event_type == 'user_reconnect':
             user_id = msg[1]
             host_id = msg[2]
-            self.clients.reconnect_user(user_id, host_id)
+            server_id = None
+            if len(msg) > 3:
+                server_id = msg[3]
+            self.clients.reconnect_user(user_id, host_id, server_id)
         elif event_type == 'route_advertisement':
             server_id = msg[1]
             vpc_region = msg[2]

@@ -5,19 +5,17 @@ from pritunl import utils
 from pritunl import logger
 from pritunl import event
 from pritunl import server
+from pritunl import host
 from pritunl import organization
 from pritunl import app
 from pritunl import auth
 from pritunl import mongo
 from pritunl import messenger
 from pritunl import ipaddress
+from pritunl import callqueue
 
 import flask
 import time
-import base64
-import hmac
-import hashlib
-import pymongo
 import threading
 
 _users_background = False
@@ -215,14 +213,83 @@ def user_get(org_id, user_id=None, page=None):
         utils.demo_set_cache(resp, page, search, limit)
     return utils.jsonify(resp)
 
+def _create_user(users, org, user_data, remote_addr, pool):
+    name = utils.filter_str(user_data['name'])
+    email = utils.filter_str(user_data.get('email'))
+    pin = utils.filter_str(user_data.get('pin')) or None
+    disabled = True if user_data.get('disabled') else False
+    network_links = user_data.get('network_links') or None
+    bypass_secondary = True if user_data.get(
+        'bypass_secondary') else False
+    client_to_client = True if user_data.get(
+        'client_to_client') else False
+    dns_servers = user_data.get('dns_servers') or None
+    dns_suffix = utils.filter_str(user_data.get('dns_suffix')) or None
+    port_forwarding_in = user_data.get('port_forwarding')
+    port_forwarding = []
+
+    groups = user_data.get('groups') or []
+    for i, group in enumerate(groups):
+        groups[i] = utils.filter_str(group)
+    groups = list(set(groups))
+
+    if pin:
+        if not pin.isdigit():
+            return utils.jsonify({
+                'error': PIN_NOT_DIGITS,
+                'error_msg': PIN_NOT_DIGITS_MSG,
+            }, 400)
+
+        if len(pin) < settings.user.pin_min_length:
+            return utils.jsonify({
+                'error': PIN_TOO_SHORT,
+                'error_msg': PIN_TOO_SHORT_MSG,
+            }, 400)
+
+        pin = auth.generate_hash_pin_v2(pin)
+
+    if port_forwarding_in:
+        for data in port_forwarding_in:
+            port_forwarding.append({
+                'protocol': utils.filter_str(data.get('protocol')),
+                'port': utils.filter_str(data.get('port')),
+                'dport': utils.filter_str(data.get('dport')),
+            })
+
+    user = org.new_user(type=CERT_CLIENT, pool=pool, name=name,
+        email=email, groups=groups, pin=pin, disabled=disabled,
+        bypass_secondary=bypass_secondary,
+        client_to_client=client_to_client, dns_servers=dns_servers,
+        dns_suffix=dns_suffix, port_forwarding=port_forwarding)
+    user.audit_event('user_created',
+        'User created from web console',
+        remote_addr=remote_addr,
+    )
+
+    if network_links:
+        for network_link in network_links:
+            try:
+                user.add_network_link(network_link)
+            except (ipaddress.AddressValueError, ValueError):
+                return _network_link_invalid()
+            except ServerOnlineError:
+                return utils.jsonify({
+                    'error': NETWORK_LINK_NOT_OFFLINE,
+                    'error_msg': NETWORK_LINK_NOT_OFFLINE_MSG,
+                }, 400)
+
+    users.append(user.dict())
+
 def _create_users(org_id, users_data, remote_addr, background):
     global _users_background
 
     org = organization.get_by_id(org_id)
     users = []
-    partial_event = len(users_data) <= 100
+    hosts_online = host.get_hosts_online()
 
     if background:
+        user_queue = callqueue.CallQueue(maxsize=hosts_online)
+        user_queue.start(hosts_online)
         _users_background_lock.acquire()
         if _users_background:
             return
@@ -230,82 +297,21 @@ def _create_users(org_id, users_data, remote_addr, background):
         _users_background_lock.release()
 
     try:
-        for i, user_data in enumerate(users_data):
-            name = utils.filter_str(user_data['name'])
-            email = utils.filter_str(user_data.get('email'))
-            pin = utils.filter_str(user_data.get('pin')) or None
-            disabled = True if user_data.get('disabled') else False
-            network_links = user_data.get('network_links') or None
-            bypass_secondary = True if user_data.get(
-                'bypass_secondary') else False
-            client_to_client = True if user_data.get(
-                'client_to_client') else False
-            dns_servers = user_data.get('dns_servers') or None
-            dns_suffix = utils.filter_str(user_data.get('dns_suffix')) or None
-            port_forwarding_in = user_data.get('port_forwarding')
-            port_forwarding = []
-
-            groups = user_data.get('groups') or []
-            for i, group in enumerate(groups):
-                groups[i] = utils.filter_str(group)
-            groups = list(set(groups))
-
-            if pin:
-                if not pin.isdigit():
-                    return utils.jsonify({
-                        'error': PIN_NOT_DIGITS,
-                        'error_msg': PIN_NOT_DIGITS_MSG,
-                    }, 400)
-
-                if len(pin) < settings.user.pin_min_length:
-                    return utils.jsonify({
-                        'error': PIN_TOO_SHORT,
-                        'error_msg': PIN_TOO_SHORT_MSG,
-                    }, 400)
-
-                pin = auth.generate_hash_pin_v2(pin)
-
-            if port_forwarding_in:
-                for data in port_forwarding_in:
-                    port_forwarding.append({
-                        'protocol': utils.filter_str(data.get('protocol')),
-                        'port': utils.filter_str(data.get('port')),
-                        'dport': utils.filter_str(data.get('dport')),
-                    })
-
-            user = org.new_user(type=CERT_CLIENT, name=name, email=email,
-                groups=groups, pin=pin, disabled=disabled,
-                bypass_secondary=bypass_secondary,
-                client_to_client=client_to_client, dns_servers=dns_servers,
-                dns_suffix=dns_suffix, port_forwarding=port_forwarding)
-            user.audit_event('user_created',
-                'User created from web console',
-                remote_addr=remote_addr,
-            )
-
-            if network_links:
-                for network_link in network_links:
-                    try:
-                        user.add_network_link(network_link)
-                    except (ipaddress.AddressValueError, ValueError):
-                        return _network_link_invalid()
-                    except ServerOnlineError:
-                        return utils.jsonify({
-                            'error': NETWORK_LINK_NOT_OFFLINE,
-                            'error_msg': NETWORK_LINK_NOT_OFFLINE_MSG,
-                        }, 400)
-
-            users.append(user.dict())
-
-            if partial_event and i != 0 and i % 10 == 0:
-                event.Event(type=ORGS_UPDATED)
-                event.Event(type=USERS_UPDATED, resource_id=org.id)
-                event.Event(type=SERVERS_UPDATED)
+        if background:
+            for i, user_data in enumerate(users_data):
+                user_queue.put(_create_user, users, org,
+                    user_data, remote_addr, False)
+        else:
+            for i, user_data in enumerate(users_data):
+                err = _create_user(users, org, user_data, remote_addr, True)
+                if err:
+                    return err
     except:
         logger.exception('Error creating users', 'users')
         raise
     finally:
         if background:
+            user_queue.close()
             _users_background_lock.acquire()
             _users_background = False
             _users_background_lock.release()
@@ -314,12 +320,11 @@ def _create_users(org_id, users_data, remote_addr, background):
         event.Event(type=USERS_UPDATED, resource_id=org.id)
         event.Event(type=SERVERS_UPDATED)
 
-    if len(users) > 1:
-        logger.LogEntry(message='Created %s new users.' % len(users))
-        return utils.jsonify(users)
+    if len(users) == 1:
+        logger.LogEntry(message='Created new user.')
     else:
-        logger.LogEntry(message='Created new user "%s".' % users[0]['name'])
-        return utils.jsonify(users[0])
+        logger.LogEntry(message='Created %s new users.' % len(users))
+    return utils.jsonify(users)
 
 @app.app.route('/user/<org_id>', methods=['POST'])
 @app.app.route('/user/<org_id>/multi', methods=['POST'])

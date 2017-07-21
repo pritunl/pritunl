@@ -57,7 +57,7 @@ def _find_doc(query, one_time=None, one_time_new=False):
     doc = collection.find_one(query)
 
     if one_time and doc and doc.get('one_time'):
-        short_id = utils.generate_short_id()
+        short_id = utils.rand_str(settings.app.long_url_length)
         collection = mongo.get_collection('users_key_link')
 
         if one_time_new:
@@ -488,7 +488,7 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
     auth_test_signature = base64.b64encode(hmac.new(
         user.sync_secret.encode(), auth_string,
         hashlib.sha512).digest())
-    if auth_signature != auth_test_signature:
+    if not utils.const_compare(auth_signature, auth_test_signature):
         return flask.abort(401)
 
     nonces_collection = mongo.get_collection('auth_nonces')
@@ -772,8 +772,7 @@ def sso_callback_get():
     query = flask.request.query_string.split('&sig=')[0]
     test_sig = base64.urlsafe_b64encode(hmac.new(str(doc['secret']),
         query, hashlib.sha512).digest())
-
-    if sig != test_sig:
+    if not utils.const_compare(sig, test_sig):
         return flask.abort(401)
 
     params = urlparse.parse_qs(query)
@@ -863,58 +862,39 @@ def sso_callback_get():
             return flask.abort(401)
 
     if DUO_AUTH in sso_mode:
-        if settings.app.sso_duo_mode == 'passcode':
-            token = utils.generate_secret()
+        token = utils.generate_secret()
 
-            tokens_collection = mongo.get_collection('sso_tokens')
-            tokens_collection.insert({
-                '_id': token,
-                'type': DUO_AUTH,
-                'username': username,
-                'email': email,
-                'org_id': org_id,
-                'groups': groups,
-                'timestamp': utils.now(),
-            })
+        tokens_collection = mongo.get_collection('sso_tokens')
+        tokens_collection.insert({
+            '_id': token,
+            'type': DUO_AUTH,
+            'username': username,
+            'email': email,
+            'org_id': org_id,
+            'groups': groups,
+            'timestamp': utils.now(),
+        })
 
-            duo_page = static.StaticFile(settings.conf.www_path,
-                'duo.html', cache=False, gzip=False)
+        duo_page = static.StaticFile(settings.conf.www_path,
+            'duo.html', cache=False, gzip=False)
 
-            if settings.app.theme == 'dark':
-                duo_page.data = duo_page.data.replace(
-                    '<body>', '<body class="dark">')
-            duo_page.data = duo_page.data.replace('<%= token %>', token)
-
-            return duo_page.get_response()
+        sso_duo_mode = settings.app.sso_duo_mode
+        if sso_duo_mode == 'passcode':
+            duo_mode = 'passcode'
+        elif sso_duo_mode == 'phone':
+            duo_mode = 'phone'
         else:
-            duo_auth = sso.Duo(
-                username=username,
-                factor=settings.app.sso_duo_mode,
-                remote_ip=utils.get_remote_addr(),
-                auth_type='Key',
-            )
-            valid = duo_auth.authenticate()
-            if valid:
-                valid, org_id_new, groups2 = sso.plugin_sso_authenticate(
-                    sso_type='duo',
-                    user_name=username,
-                    user_email=email,
-                    remote_ip=utils.get_remote_addr(),
-                )
-                if valid:
-                    org_id = org_id_new or org_id
-                else:
-                    logger.error('Duo plugin authentication not valid', 'sso',
-                        username=username,
-                    )
-                    return flask.abort(401)
+            duo_mode = 'push'
 
-                groups = ((groups or set()) | (groups2 or set())) or None
-            else:
-                logger.error('Duo authentication not valid', 'sso',
-                    username=username,
-                )
-                return flask.abort(401)
+        body_class = duo_mode
+        if settings.app.theme == 'dark':
+            body_class += ' dark'
+
+        duo_page.data = duo_page.data.replace('<%= body_class %>', body_class)
+        duo_page.data = duo_page.data.replace('<%= token %>', token)
+        duo_page.data = duo_page.data.replace('<%= duo_mode %>', duo_mode)
+
+        return duo_page.get_response()
 
     if YUBICO_AUTH in sso_mode:
         token = utils.generate_secret()
@@ -980,14 +960,14 @@ def sso_callback_get():
 def sso_duo_post():
     sso_mode = settings.app.sso
     token = utils.filter_str(flask.request.json.get('token')) or None
-    passcode = utils.filter_str(flask.request.json.get('passcode')) or None
+    passcode = utils.filter_str(flask.request.json.get('passcode')) or ''
 
     if sso_mode not in (DUO_AUTH, GOOGLE_DUO_AUTH, SLACK_DUO_AUTH,
             SAML_DUO_AUTH, SAML_OKTA_DUO_AUTH, SAML_ONELOGIN_DUO_AUTH,
             RADIUS_DUO_AUTH):
         return flask.abort(404)
 
-    if not token or not passcode:
+    if not token:
         return utils.jsonify({
             'error': TOKEN_INVALID,
             'error_msg': TOKEN_INVALID_MSG,
@@ -1008,19 +988,55 @@ def sso_duo_post():
     org_id = doc['org_id']
     groups = doc['groups']
 
-    duo_auth = sso.Duo(
-        username=username,
-        factor=settings.app.sso_duo_mode,
+    if settings.app.sso_duo_mode == 'passcode':
+        duo_auth = sso.Duo(
+            username=username,
+            factor=settings.app.sso_duo_mode,
+            remote_ip=utils.get_remote_addr(),
+            auth_type='Key',
+            passcode=passcode,
+        )
+        valid = duo_auth.authenticate()
+        if not valid:
+            logger.error('Duo authentication not valid', 'sso',
+                username=username,
+            )
+            return utils.jsonify({
+                'error': PASSCODE_INVALID,
+                'error_msg': PASSCODE_INVALID_MSG,
+            }, 401)
+    else:
+        duo_auth = sso.Duo(
+            username=username,
+            factor=settings.app.sso_duo_mode,
+            remote_ip=utils.get_remote_addr(),
+            auth_type='Key',
+        )
+        valid = duo_auth.authenticate()
+        if not valid:
+            logger.error('Duo authentication not valid', 'sso',
+                username=username,
+            )
+            return utils.jsonify({
+                'error': DUO_FAILED,
+                'error_msg': DUO_FAILED_MSG,
+            }, 401)
+
+    valid, org_id_new, groups2 = sso.plugin_sso_authenticate(
+        sso_type='duo',
+        user_name=username,
+        user_email=email,
         remote_ip=utils.get_remote_addr(),
-        auth_type='Key',
-        passcode=passcode,
     )
-    valid = duo_auth.authenticate()
-    if not valid:
-        return utils.jsonify({
-            'error': PASSCODE_INVALID,
-            'error_msg': PASSCODE_INVALID_MSG,
-        }, 401)
+    if valid:
+        org_id = org_id_new or org_id
+    else:
+        logger.error('Duo plugin authentication not valid', 'sso',
+            username=username,
+        )
+        return flask.abort(401)
+
+    groups = ((groups or set()) | (groups2 or set())) or None
 
     org = organization.get_by_id(org_id)
     if not org:

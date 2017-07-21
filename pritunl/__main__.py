@@ -19,7 +19,8 @@ Commands:
   reset-ssl-cert        Reset the server ssl certificate
   reconfigure           Reconfigure database connection
   set-mongodb           Set the mongodb uri
-  logs                  View server logs"""
+  logs                  View server logs
+  clear-logs            Clear server logs"""
 
 def main(default_conf=None):
     if len(sys.argv) > 1:
@@ -45,6 +46,8 @@ def main(default_conf=None):
             help='Tail log file')
         parser.add_option('--limit', type='int',
             help='Limit log lines')
+        parser.add_option('--natural', action='store_true',
+            help='Natural log sort')
     elif cmd == 'set':
         parser.disable_interspersed_args()
 
@@ -284,12 +287,37 @@ def main(default_conf=None):
             else:
                 archive_path = './'
             print 'Log archived to: ' + log_view.archive_log(archive_path,
-                options.limit)
+                options.natural, options.limit)
         elif options.tail:
             for msg in log_view.tail_log_lines():
                 print msg
         else:
-            print log_view.get_log_lines(options.limit)
+            print log_view.get_log_lines(
+                natural=options.natural,
+                limit=options.limit,
+            )
+
+        sys.exit(0)
+    elif cmd == 'clear-logs':
+        from pritunl import setup
+        from pritunl import logger
+        from pritunl import mongo
+        from pritunl import settings
+
+        setup.setup_db()
+
+        mongo.get_collection('logs').drop()
+        mongo.get_collection('log_entries').drop()
+
+        prefix = settings.conf.mongodb_collection_prefix or ''
+
+        log_limit = settings.app.log_limit
+        mongo.database.create_collection(prefix + 'logs', capped=True,
+            size=log_limit * 1024, max=log_limit)
+
+        log_entry_limit = settings.app.log_entry_limit
+        mongo.database.create_collection(prefix + 'log_entries', capped=True,
+            size=log_entry_limit * 512, max=log_entry_limit)
 
         sys.exit(0)
     elif cmd != 'start':

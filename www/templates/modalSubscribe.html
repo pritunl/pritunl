@@ -1,46 +1,65 @@
-<div class="subscribe-info form-group">
-  <ul class="subscribe-list left">
-    <li class="subscribe-title">
-      <h2>Premium</h2>
-      <div class="label label-success no-select">7 Day Trial</div>
-    </li>
-    <li data-toggle="tooltip" title="Run a single Pritunl instance">Single server</li>
-    <li data-toggle="tooltip" title="No limit on the number of users created or users connected">Unlimited users</li>
-    <li data-toggle="tooltip" title="No limit on the number of devices that each user has connected">Unlimited devices</li>
-    <li data-toggle="tooltip" title="Forward ports to vpn clients">Port forwarding</li>
-    <li data-toggle="tooltip" title="Create a gateway link to route traffic for a local network to a vpn client. Allowing the vpn clients to access the remote network that is available to the linked vpn client">Gateway links</li>
-    <li data-toggle="tooltip" title="Connect multiple gateway links to a Pritunl server and when a link goes down another available link will automatically be used">Failover gateway links</li>
-    <li data-toggle="tooltip" title="When clients connect with a Pritunl client, vpn setting changes such as port/protocol will be updated to allow the client to connect without needing to download a new configuration">Configuration sync</li>
-    <li data-toggle="tooltip" title="Easily connect Chromebook users with ChromeOS compatible vpn profiles">Chromebook support</li>
-    <li data-toggle="tooltip" title="Per-user option to bypass secondary authentication such as two-factor authentication. For server users that can't provide a two-factor code">Bypass secondary auth</li>
-    <li data-toggle="tooltip" title="Email users a link to download vpn profiles using a configured SMTP server">Email user keys</li>
-    <li data-toggle="tooltip" title="Change the interface to light or dark theme">Additional themes</li>
-  </ul>
-  <ul class="subscribe-list right">
-    <li class="subscribe-title">
-      <h2>Enterprise</h2>
-      <div class="label label-success no-select">7 Day Trial</div>
-    </li>
-    <li data-toggle="tooltip" title="All of the features included with a Premium subscription">All Premium features</li>
-    <li data-toggle="tooltip" title="No limit on the number of Pritunl instances in a single Pritunl cluster">Unlimited servers</li>
-    <li data-toggle="tooltip" title="Single sign-on with SAML, Google Apps, Slack, Duo Security and Radius">Single sign-on</li>
-    <li data-toggle="tooltip" title="When a Pritunl instance fails the vpn servers running on the instance will automatically failover to another available Pritunl instance">Automatic failover</li>
-    <li data-toggle="tooltip" title="Replicate a vpn server accross multiple Pritunl instances to easily scale horizontally to handle more user connections">Replicated servers</li>
-    <li data-toggle="tooltip" title="Automatic VXLan management for replication across availability zones without layer 2 connectivity while still maintaining client-to-client communication">VXLan support</li>
-    <li data-toggle="tooltip" title="Integrate with AWS VPC to allow Pritunl to dynamically control the VPC routing table">AWS VPC integration</li>
-    <li data-toggle="tooltip" title="Easily create a site-to-site link between two Pritunl instances without any complicated configuration">Site-to-site VPN</li>
-    <li data-toggle="tooltip" title="Enable or disable NAT for server routes">Server route NAT control</li>
-    <li data-toggle="tooltip" title="Map connected vpn clients to dns domains such as user0.org0.vpn using a custom dns server that runs along with the Pritunl server">DNS mapping</li>
-    <li data-toggle="tooltip" title="Forward dns queries to a dns server on a remote network such as a consul server on an AWS VPC">DNS forwarding</li>
-    <li data-toggle="tooltip" title="Monitor server and user metrics with InfluxDB">Monitoring</li>
-    <li data-toggle="tooltip" title="Optional advanced auditing of user and administrator related events for improved security and intrusion detection">Advanced auditing</li>
-    <li data-toggle="tooltip" title="Create tap servers that bridge the vpn clients to the servers local network interface. Allowing vpn clients to get an ip address on the servers local network">Bridged VPN mode</li>
-    <li data-toggle="tooltip" title="Allow multiple administrators to manage the Pritunl server">Multiple administrators</li>
-    <li data-toggle="tooltip" title="Control over requiring users to set a pin before they are able to connect to a vpn server">User pin policy</li>
-    <li data-toggle="tooltip" title="Integrate Pritunl with other systems using plugins written in Python">Plugin system</li>
-    <li data-toggle="tooltip" title="Manage Pritunl cluster using RESTful API with support for multiple API keys">API access</li>
-    <li data-toggle="tooltip" title="Contact support for long term subscriptions">Long term subscriptions</li>
-  </ul>
+<div class="layout-horizontal">
+  <div class="subscribe-info layout-flex">
+    <ul class="subscribe-list premium-subscribe-list">
+      <li class="subscribe-title">
+        <h2>Premium</h2>
+        <div class="label label-success no-select">7 Day Trial</div>
+      </li>
+      <li data-toggle="tooltip" title="Run a single Pritunl instance">Single server</li>
+      <li data-toggle="tooltip" title="No limit on the number of users created or users connected">Unlimited users</li>
+      <li data-toggle="tooltip" title="No limit on the number of devices that each user has connected">Unlimited devices</li>
+      <li data-toggle="tooltip" title="Forward ports to vpn clients">Port forwarding</li>
+      <li data-toggle="tooltip" title="Create a gateway link to route traffic for a local network to a vpn client. Allowing the vpn clients to access the remote network that is available to the linked vpn client">Gateway links</li>
+      <li data-toggle="tooltip" title="Connect multiple gateway links to a Pritunl server and when a link goes down another available link will automatically be used">Failover gateway links</li>
+      <li data-toggle="tooltip" title="When clients connect with a Pritunl client, vpn setting changes such as port/protocol will be updated to allow the client to connect without needing to download a new configuration">Configuration sync</li>
+      <li data-toggle="tooltip" title="Easily connect Chromebook users with ChromeOS compatible vpn profiles">Chromebook support</li>
+      <li data-toggle="tooltip" title="Per-user option to bypass secondary authentication such as two-factor authentication. For server users that can't provide a two-factor code">Bypass secondary auth</li>
+      <li data-toggle="tooltip" title="Email users a link to download vpn profiles using a configured SMTP server">Email user keys</li>
+      <li data-toggle="tooltip" title="Change the interface to light or dark theme">Additional themes</li>
+    </ul>
+    <ul class="subscribe-list enterprise-plus-subscribe-list">
+      <li class="subscribe-title">
+        <h2>Enterprise+</h2>
+        <div class="label label-success no-select">7 Day Trial</div>
+      </li>
+      <li data-toggle="tooltip" title="All of the features included with a Premium subscription">All Premium features</li>
+      <li data-toggle="tooltip" title="All of the features included with a Enterprise subscription">All Enterprise features</li>
+      <li data-toggle="tooltip" title="No limit on the number of Pritunl link clients in a single Pritunl cluster">Unlimited links</li>
+      <li data-toggle="tooltip" title="Site-to-site links with IPsec using pritunl-link client. Link client does not require database connection">IPsec site-to-site links</li>
+      <li data-toggle="tooltip" title="Simple VPC peering and hybrid cloud with Pritunl link client">VPC peering</li>
+      <li data-toggle="tooltip" title="Link failover with automated routing table management and automated port forwarding for Unifi links">Automated link failover</li>
+    </ul>
+  </div>
+  <div class="subscribe-info layout-flex">
+    <ul class="subscribe-list enterprise-subscribe-list">
+      <li class="subscribe-title">
+        <h2>Enterprise</h2>
+        <div class="label label-success no-select">7 Day Trial</div>
+      </li>
+      <li data-toggle="tooltip" title="All of the features included with a Premium subscription">All Premium features</li>
+      <li data-toggle="tooltip" title="No limit on the number of Pritunl instances in a single Pritunl cluster">Unlimited servers</li>
+      <li data-toggle="tooltip" title="Single sign-on with SAML, Google Apps, Slack, Duo Security and Radius">Single sign-on</li>
+      <li data-toggle="tooltip" title="When a Pritunl instance fails the vpn servers running on the instance will automatically failover to another available Pritunl instance">Automatic failover</li>
+      <li data-toggle="tooltip" title="Replicate a vpn server accross multiple Pritunl instances to easily scale horizontally to handle more user connections">Replicated servers</li>
+      <li data-toggle="tooltip" title="Automatic VXLan management for replication across availability zones without layer 2 connectivity while still maintaining client-to-client communication">VXLan support</li>
+      <li data-toggle="tooltip" title="Integrate with AWS VPC to allow Pritunl to dynamically control the VPC routing table">AWS VPC integration</li>
+      <li data-toggle="tooltip" title="Easily create a site-to-site link between two Pritunl instances without any complicated configuration">Site-to-site VPN</li>
+      <li data-toggle="tooltip" title="Enable or disable NAT for server routes">Server route NAT control</li>
+      <li data-toggle="tooltip" title="Map connected vpn clients to dns domains such as user0.org0.vpn using a custom dns server that runs along with the Pritunl server">DNS mapping</li>
+      <li data-toggle="tooltip" title="Forward dns queries to a dns server on a remote network such as a consul server on an AWS VPC">DNS forwarding</li>
+      <li data-toggle="tooltip" title="Monitor server and user metrics with InfluxDB">Monitoring</li>
+      <li data-toggle="tooltip" title="Optional advanced auditing of user and administrator related events for improved security and intrusion detection">Advanced auditing</li>
+      <li data-toggle="tooltip" title="Create tap servers that bridge the vpn clients to the servers local network interface. Allowing vpn clients to get an ip address on the servers local network">Bridged VPN mode</li>
+      <li data-toggle="tooltip" title="Allow multiple administrators to manage the Pritunl server">Multiple administrators</li>
+      <li data-toggle="tooltip" title="Control over requiring users to set a pin before they are able to connect to a vpn server">User pin policy</li>
+      <li data-toggle="tooltip" title="Integrate Pritunl with other systems using plugins written in Python">Plugin system</li>
+      <li data-toggle="tooltip" title="Site-to-site links with IPsec using pritunl-link client. Link client does not require database connection">IPsec site-to-site links</li>
+      <li data-toggle="tooltip" title="Simple VPC peering and hybrid cloud with Pritunl link client">VPC peering</li>
+      <li data-toggle="tooltip" title="Link failover with automated routing table management and automated port forwarding for Unifi links">Automated link failover</li>
+      <li data-toggle="tooltip" title="Manage Pritunl cluster using RESTful API with support for multiple API keys">API access</li>
+      <li data-toggle="tooltip" title="Contact support for long term subscriptions">Long term subscriptions</li>
+    </ul>
+  </div>
 </div>
 <div class="subscribe-activate-form form-group">
   <label>Enter License Key</label><br>
@@ -49,10 +68,7 @@
 <div class="subscribe-buttons">
   <button type="button" class="subscribe-premium btn btn-info btn-lg">Get Premium</button>
   <button type="button" class="subscribe-enterprise btn btn-info btn-lg">Get Enterprise</button>
-  <button type="button" class="subscribe-promo btn btn-warning btn-lg">Enter Promo Code</button>
-  <input type="text" class="subscribe-promo-input form-control" placeholder="Enter promo Code" autocapitalize="off">
-  <input type="email" class="subscribe-promo-input-email form-control" placeholder="Enter email address" autocapitalize="off">
-  <button type="button" class="subscribe-promo-ok btn btn-primary btn-lg">Ok</button>
+  <button type="button" class="subscribe-enterprise-plus btn btn-info btn-lg">Get Enterprise+</button>
   <button type="button" class="subscribe-activate btn btn-success btn-lg">Activate Subscription</button>
   <button type="button" class="subscribe-cancel btn btn-danger btn-lg">Cancel</button>
   <button type="button" class="subscribe-submit btn btn-success btn-lg">Submit</button>

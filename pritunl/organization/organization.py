@@ -283,7 +283,11 @@ class Organization(mongo.MongoObject):
         success = False
         for _ in xrange(256):
             key_id = uuid.uuid4().hex
-            short_id = utils.generate_short_id()
+
+            if one_time:
+                short_id = utils.rand_str(settings.app.long_url_length)
+            else:
+                short_id = utils.rand_str_ne(settings.app.short_url_length)
 
             try:
                 self.key_link_collection.update({
@@ -331,10 +335,10 @@ class Organization(mongo.MongoObject):
         for doc in server.Server.collection.find(spec, fields):
             yield server.Server(doc=doc, fields=fields)
 
-    def new_user(self, type=CERT_CLIENT, block=True, **kwargs):
+    def new_user(self, type=CERT_CLIENT, block=True, pool=True, **kwargs):
         # First attempt to get user from pool then attempt to get
         # unfinished queued user in pool then queue a new user init
-        if type in (CERT_SERVER, CERT_CLIENT):
+        if type in (CERT_SERVER, CERT_CLIENT) and pool:
             usr = user.reserve_pooled_user(org=self, type=type, **kwargs)
 
             if not usr:

@@ -22,7 +22,9 @@ define([
     tagName: 'header',
     template: _.template(headerTemplate),
     events: {
-      'click .enterprise-upgrade a, .enterprise-settings a': 'onEnterprise',
+      'click .enterprise-upgrade a': 'onEnterprise',
+      'click .enterprise-plus-upgrade a': 'onEnterprise',
+      'click .enterprise-settings a': 'onEnterprise',
       'click .logs a': 'openLogs',
       'click .change-password a': 'openSettings',
       'click .feedback': 'onFeedback'

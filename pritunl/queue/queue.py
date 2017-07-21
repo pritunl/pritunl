@@ -98,7 +98,7 @@ class Queue(mongo.MongoObject):
         self.keep_alive_thread.daemon = True
         self.keep_alive_thread.start()
 
-    def start(self, transaction=None, block=False, block_timeout=30):
+    def start(self, transaction=None, block=False, block_timeout=60):
         self.ttl_timestamp = utils.now() + \
             datetime.timedelta(seconds=self.ttl)
         self.commit(transaction=transaction)

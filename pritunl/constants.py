@@ -25,6 +25,13 @@ UPDATE = 'update'
 ONLINE = 'online'
 OFFLINE = 'offline'
 
+AVAILABLE = 'available'
+UNAVAILABLE = 'unavailable'
+ACTIVE = 'active'
+
+CONNECTED = 'connected'
+DISCONNECTED = 'disconnected'
+
 DEFAULT = 'default'
 
 TUNNEL = 'tunnel'
@@ -65,7 +72,9 @@ AWS_REGIONS = {
     'us-west-2',
     'us-gov-west-1',
     'eu-west-1',
+    'eu-west-2',
     'eu-central-1',
+    'ca-central-1',
     'ap-northeast-1',
     'ap-northeast-2',
     'ap-southeast-1',
@@ -430,9 +439,6 @@ DEFAULT_USERNAME = 'pritunl'
 DEFAULT_PASSWORD = 'pritunl'
 DEFAULT_CONF_PATH = '/etc/pritunl.conf'
 SUBSCRIPTION_UPDATE_RATE = 900
-SHORT_URL_CHARS = (string.ascii_lowercase + string.ascii_uppercase +
-    string.digits).replace('l', '').replace('I', '').replace('O', '').replace(
-    '0', '')
 SUB_RESPONSE_TIMEOUT = 10
 CLIENT_CONF_VER = 1
 MONGO_MESSAGES_SIZE = 100000
@@ -443,7 +449,6 @@ AUTH_SIG_STRING_MAX_LEN = 10240
 SOCKET_BUFFER = 1024
 SERVER_OUTPUT_DELAY = 1.5
 SERVER_EVENT_DELAY = 2
-RANDOM_ERROR_RATE = 0
 IP_REGEX = r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
 VALID_DH_PARAM_BITS = (1024, 1536, 2048, 3072, 4096)
 AUTH_SERVER = 'https://auth.pritunl.com'
@@ -544,6 +549,7 @@ SETTINGS_UPDATED = 'settings_updated'
 ADMINS_UPDATED = 'administrators_updated'
 ORGS_UPDATED = 'organizations_updated'
 USERS_UPDATED = 'users_updated'
+LINKS_UPDATED = 'links_updated'
 LOG_UPDATED = 'log_updated'
 SYSTEM_LOG_UPDATED = 'system_log_updated'
 HOSTS_UPDATED = 'hosts_updated'
@@ -556,9 +562,11 @@ SERVER_OUTPUT_UPDATED = 'server_output_updated'
 SERVER_LINK_OUTPUT_UPDATED = 'server_link_output_updated'
 SUBSCRIPTION_PREMIUM_ACTIVE = 'subscription_premium_active'
 SUBSCRIPTION_ENTERPRISE_ACTIVE = 'subscription_enterprise_active'
+SUBSCRIPTION_ENTERPRISE_PLUS_ACTIVE = 'subscription_enterprise_plus_active'
 SUBSCRIPTION_NONE_INACTIVE = 'subscription_none_inactive'
 SUBSCRIPTION_PREMIUM_INACTIVE = 'subscription_premium_inactive'
 SUBSCRIPTION_ENTERPRISE_INACTIVE = 'subscription_enterprise_inactive'
+SUBSCRIPTION_ENTERPRISE_PLUS_INACTIVE = 'subscription_enterprise_plus_inactive'
 THEME_LIGHT = 'theme_light'
 THEME_DARK = 'theme_dark'
 
@@ -678,6 +686,10 @@ NETWORK_INVALID_MSG = 'Network address is not valid, format must be ' + \
     '"[10,172,192].[0-255,16-31,168].[0-255].0/[8-24]" ' + \
     'such as "10.12.32.0/24".'
 
+LINK_NETWORK_INVALID = 'link_network_invalid'
+LINK_NETWORK_INVALID_MSG = 'Network address is invalid, format must be ' + \
+    '"10.0.0.0/24".'
+
 BRIDGE_NETWORK_INVALID = '_bridge_network_invalid'
 BRIDGE_NETWORK_INVALID_MSG = 'Bridge network start and end must be ' + \
     'inside the server network.'
@@ -746,6 +758,9 @@ TOKEN_INVALID_MSG = 'Token is invalid.'
 
 PASSCODE_INVALID = 'passcode_invalid'
 PASSCODE_INVALID_MSG = 'Passcode is invalid.'
+
+DUO_FAILED = 'duo_failed'
+DUO_FAILED_MSG = 'Duo authentication failed.'
 
 YUBIKEY_INVALID = 'yubikey_invalid'
 YUBIKEY_INVALID_MSG = 'YubiKey is invalid.'
@@ -928,6 +943,23 @@ CIPHERS = {
     'aes256': 'cipher AES-256-CBC',
 }
 
+SERVER_CIPHERS_OLD = {
+    'none': 'cipher none',
+    'bf128': 'cipher BF-CBC',
+    'bf256': 'cipher BF-CBC\nkeysize 256',
+    'aes128': 'cipher AES-128-CBC',
+    'aes192': 'cipher AES-192-CBC',
+    'aes256': 'cipher AES-256-CBC',
+}
+SERVER_CIPHERS = {
+    'none': 'cipher none',
+    'bf128': 'cipher BF-CBC',
+    'bf256': 'cipher BF-CBC\nkeysize 256',
+    'aes128': 'cipher AES-128-CBC\nncp-ciphers AES-128-GCM:AES-128-CBC',
+    'aes192': 'cipher AES-192-CBC\nncp-ciphers AES-192-GCM:AES-192-CBC',
+    'aes256': 'cipher AES-256-CBC\nncp-ciphers AES-256-GCM:AES-256-CBC',
+}
+
 HASHES = {
     'none': 'none',
     'md5': 'MD5',
@@ -950,7 +982,7 @@ JUMBO_FRAMES = {
     True: 'tun-mtu 9000\nfragment 0\nmssfix 0\n',
 }
 
-OVPN_INLINE_SERVER_CONF = """\
+OVPN_INLINE_SERVER_CONF_OLD = """\
 port %s
 proto %s
 dev %s
@@ -969,6 +1001,37 @@ persist-tun
 auth %s
 status-version 2
 script-security 2
+sndbuf 393216
+rcvbuf 393216
+reneg-sec 2592000
+hash-size 1024 1024
+max-routes-per-client 1000
+verb %s
+mute %s
+"""
+
+OVPN_INLINE_SERVER_CONF = """\
+ignore-unknown-option ncp-ciphers
+port %s
+proto %s
+dev %s
+%s
+management %s unix
+management-client-auth
+auth-user-pass-optional
+topology subnet
+max-clients %s
+ping %s
+ping-restart %s
+push "ping %s"
+push "ping-restart %s"
+persist-tun
+%s
+auth %s
+status-version 2
+script-security 2
+sndbuf 393216
+rcvbuf 393216
 reneg-sec 2592000
 hash-size 1024 1024
 max-routes-per-client 1000
@@ -996,8 +1059,8 @@ ping-restart %s
 hand-window 70
 server-poll-timeout 4
 reneg-sec 2592000
-sndbuf 100000
-rcvbuf 100000
+sndbuf 393216
+rcvbuf 393216
 max-routes 1000
 remote-cert-tls server
 """
@@ -1083,8 +1146,8 @@ ping-restart %s
 hand-window 70
 server-poll-timeout 4
 reneg-sec 2592000
-sndbuf 100000
-rcvbuf 100000
+sndbuf 393216
+rcvbuf 393216
 max-routes 1000
 remote-cert-tls server
 """

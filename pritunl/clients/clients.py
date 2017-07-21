@@ -343,6 +343,7 @@ class Clients(object):
                                 'user_disconnect_id',
                                 user_id,
                                 doc['client_id'],
+                                self.server.id,
                             ])
                             disconnected.add(doc['client_id'])
                         else:
@@ -376,6 +377,7 @@ class Clients(object):
                                     'user_disconnect_id',
                                     user_id,
                                     doc['client_id'],
+                                    self.server.id,
                                 ])
                                 disconnected.add(doc['client_id'])
                             else:
@@ -402,6 +404,7 @@ class Clients(object):
                             user_id,
                             settings.local.host_id,
                             mac_addr,
+                            self.server.id,
                         ])
             else:
                 if mac_addr:
@@ -557,6 +560,7 @@ class Clients(object):
                         'user_reconnect',
                         user_id,
                         settings.local.host_id,
+                        self.server.id,
                     ])
 
                 for clnt in self.clients.find({'user_id': user_id}):
@@ -1009,7 +1013,8 @@ class Clients(object):
         }
 
         if settings.local.sub_active and \
-                settings.local.sub_plan == 'enterprise':
+                settings.local.sub_plan and \
+                'enterprise' in settings.local.sub_plan:
             domain = (str(client['user_name']).split('@')[0] +
                 '.' + str(client['org_name'])).lower()
             domain_hash = hashlib.md5()
@@ -1166,13 +1171,19 @@ class Clients(object):
         for client in self.clients.find({'user_id': user_id}):
             self.instance_com.client_kill(client['id'])
 
-    def disconnect_user_id(self, user_id, client_id):
+    def disconnect_user_id(self, user_id, client_id, server_id):
+        if server_id and self.server.id != server_id:
+            return
+
         for clnt in self.clients.find({'user_id': user_id}):
             if clnt.get('doc_id') == client_id:
                 self.instance_com.client_kill(clnt['id'])
 
-    def disconnect_user_mac(self, user_id, host_id, mac_addr):
+    def disconnect_user_mac(self, user_id, host_id, mac_addr, server_id):
         if host_id == settings.local.host_id:
+            return
+
+        if server_id and self.server.id != server_id:
             return
 
         for clnt in self.clients.find({
@@ -1181,8 +1192,11 @@ class Clients(object):
                 }):
             self.instance_com.client_kill(clnt['id'])
 
-    def reconnect_user(self, user_id, host_id):
+    def reconnect_user(self, user_id, host_id, server_id):
         if host_id == settings.local.host_id:
+            return
+
+        if server_id and self.server.id != server_id:
             return
 
         for client in self.clients.find({'user_id': user_id}):

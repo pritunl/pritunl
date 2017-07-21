@@ -204,10 +204,6 @@ def find_caller():
 
     return rv
 
-def generate_short_id():
-    return ''.join(random.sample(
-        SHORT_URL_CHARS, settings.app.short_url_length))
-
 def rmtree(path):
     for i in xrange(8):
         try:
@@ -313,6 +309,14 @@ def stop_process(process):
 
     return terminated
 
+def const_compare(x, y):
+    if len(x) != len(y):
+        return False
+    result = 0
+    for x, y in zip(x, y):
+        result |= ord(x) ^ ord(y)
+    return result == 0
+
 def response(data=None, status_code=None):
     response = flask.Response(response=data,
         mimetype='text/html; charset=utf-8')
@@ -338,8 +342,18 @@ def styles_response(etag, last_modified, data):
     return response
 
 def rand_str(length):
-    return re.sub(r'[\W_]+', '', base64.b64encode(
-        os.urandom(length * 2)))[:length]
+    s = re.sub(r'[\W_]+', '', base64.b64encode(
+        os.urandom(int(length * 1.5))))[:length]
+    if len(s) != length:
+        return rand_str(length)
+    return s
+
+def rand_str_ne(length):
+    s = re.sub(r'[\W_lIO0]+', '', base64.b64encode(
+        os.urandom(int(length * 1.5))))[:length]
+    if len(s) != length:
+        return rand_str(length)
+    return s
 
 prime32 = 16777619
 prime64 = 1099511628211
@@ -370,6 +384,7 @@ def sync_public_ip(attempts=1, timeout=5, update=False):
         try:
             request = urllib2.Request(
                 settings.app.public_ip_server)
+            request.add_header('User-Agent', 'pritunl')
             response = urllib2.urlopen(request, timeout=timeout)
             settings.local.public_ip = str(json.load(response)['ip'])
             break
@@ -379,6 +394,7 @@ def sync_public_ip(attempts=1, timeout=5, update=False):
     try:
         request = urllib2.Request(
             settings.app.public_ip6_server)
+        request.add_header('User-Agent', 'pritunl')
         response = urllib2.urlopen(request, timeout=timeout)
         settings.local.public_ip6 = str(json.load(response)['ip'])
     except:
@@ -424,3 +440,26 @@ def get_url_root():
         url_root = url_root[:-1]
 
     return url_root
+
+def check_openvpn_ver():
+    try:
+        process = subprocess.Popen(['openvpn', '--version'],
+            stdout=subprocess.PIPE)
+        output, _ = process.communicate()
+        output = output.split()[1].strip()
+
+        version = [int(x) for x in output.split('.')]
+
+        if version[0] > 2:
+            return True
+
+        if version[0] == 2 and version[1] > 3:
+            return True
+
+        if version[0] == 2 and version[1] == 3 and version[2] > 2:
+            return True
+    except:
+        from pritunl import logger
+        logger.exception('Failed to check openvpn version', 'utils')
+
+    return False

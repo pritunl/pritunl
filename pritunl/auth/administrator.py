@@ -127,7 +127,7 @@ class Administrator(mongo.MongoObject):
             raise ValueError('Unknown hash version')
 
         test_hash = base64.b64encode(hash_func(pass_salt, test_pass))
-        return pass_hash == test_hash
+        return utils.const_compare(pass_hash, test_hash)
 
     def auth_check(self, password, otp_code=None, yubico_key=None,
             remote_addr=None):
@@ -358,7 +358,7 @@ def check_session(csrf_check):
         auth_test_signature = base64.b64encode(hmac.new(
             administrator.secret.encode(), auth_string,
             hashlib.sha256).digest())
-        if auth_signature != auth_test_signature:
+        if not utils.const_compare(auth_signature, auth_test_signature):
             return False
 
         try:

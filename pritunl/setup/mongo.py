@@ -9,6 +9,7 @@ from pritunl import utils
 import pymongo
 import pymongo.helpers
 import time
+import collections
 
 def _get_read_pref(name):
     return {
@@ -24,22 +25,44 @@ def _get_read_pref(name):
             pymongo.read_preferences.ReadPreference.NEAREST,
     }.get(name)
 
-def upsert_index(collection, index, **kwargs):
+coll_indexes = collections.defaultdict(set)
+
+def upsert_index(coll_name, index, **kwargs):
+    coll = mongo.collections[coll_name]
+
+    keys = pymongo.helpers._index_list(index)
+    name = pymongo.helpers._gen_index_name(keys)
+    coll_indexes[coll_name].add(name)
+
     try:
-        collection.create_index(index, **kwargs)
+        coll.create_index(index, **kwargs)
     except:
         keys = pymongo.helpers._index_list(index)
         name = pymongo.helpers._gen_index_name(keys)
-        collection.drop_index(name)
-        collection.create_index(index, **kwargs)
+        coll.drop_index(name)
+        coll.create_index(index, **kwargs)
 
-def drop_index(collection, index, **kwargs):
+def drop_index(coll, index, **kwargs):
     try:
         keys = pymongo.helpers._index_list(index)
         name = pymongo.helpers._gen_index_name(keys)
-        collection.drop_index(name)
+        coll.drop_index(name)
     except:
         pass
+
+def clean_indexes():
+    for coll_name, coll in mongo.collections.items():
+        indexes = coll_indexes[coll_name]
+
+        try:
+            for index in coll.list_indexes():
+                name = index['name']
+                if name == '_id' or name == '_id_' or name in indexes:
+                    continue
+
+                coll.drop_index(name)
+        except pymongo.errors.OperationFailure:
+            pass
 
 def setup_mongo():
     prefix = settings.conf.mongodb_collection_prefix or ''
@@ -115,6 +138,9 @@ def setup_mongo():
     else:
         secondary_database = database
 
+    mongo.database = database
+    mongo.secondary_database = secondary_database
+
     cur_collections = secondary_database.collection_names()
     if prefix + 'messages' not in cur_collections:
         secondary_database.create_collection(prefix + 'messages', capped=True,
@@ -143,6 +169,9 @@ def setup_mongo():
             prefix + 'servers_output_link'),
         'servers_bandwidth': getattr(database, prefix + 'servers_bandwidth'),
         'servers_ip_pool': getattr(database, prefix + 'servers_ip_pool'),
+        'links': getattr(database, prefix + 'links'),
+        'links_locations': getattr(database, prefix + 'links_locations'),
+        'links_hosts': getattr(database, prefix + 'links_hosts'),
         'routes_reserve': getattr(database, prefix + 'routes_reserve'),
         'dh_params': getattr(database, prefix + 'dh_params'),
         'auth_sessions': getattr(secondary_database,
@@ -197,167 +226,191 @@ def setup_mongo():
     mongo.collections['logs'].name_str = 'logs'
     mongo.collections['log_entries'].name_str = 'log_entries'
 
-    upsert_index(mongo.collections['logs'], 'timestamp', background=True)
-    upsert_index(mongo.collections['transaction'], 'lock_id',
+    upsert_index('logs', 'timestamp', background=True)
+    upsert_index('transaction', 'lock_id',
         background=True, unique=True)
-    upsert_index(mongo.collections['transaction'], [
+    upsert_index('transaction', [
         ('ttl_timestamp', pymongo.ASCENDING),
         ('state', pymongo.ASCENDING),
         ('priority', pymongo.DESCENDING),
     ], background=True)
-    upsert_index(mongo.collections['queue'], 'runner_id', background=True)
-    upsert_index(mongo.collections['queue'], 'ttl_timestamp', background=True)
-    upsert_index(mongo.collections['tasks'], [
+    upsert_index('queue', 'runner_id', background=True)
+    upsert_index('queue', 'ttl_timestamp', background=True)
+    upsert_index('queue', [
+        ('priority', pymongo.ASCENDING),
         ('ttl_timestamp', pymongo.ASCENDING),
-        ('state', pymongo.ASCENDING),
     ], background=True)
-    upsert_index(mongo.collections['log_entries'], [
+    upsert_index('tasks', [
+        ('ttl_timestamp', pymongo.ASCENDING),
+    ], background=True)
+    upsert_index('log_entries', [
         ('timestamp', pymongo.DESCENDING),
     ], background=True)
-    upsert_index(mongo.collections['messages'], 'channel', background=True)
-    upsert_index(mongo.collections['administrators'], 'username',
+    upsert_index('messages', 'channel', background=True)
+    upsert_index('administrators', 'username',
         background=True, unique=True)
-    upsert_index(mongo.collections['users'], 'resource_id', background=True)
-    upsert_index(mongo.collections['users'], [
+    upsert_index('users', 'resource_id', background=True)
+    upsert_index('users', [
         ('type', pymongo.ASCENDING),
         ('org_id', pymongo.ASCENDING),
     ], background=True)
-    upsert_index(mongo.collections['users'], [
+    upsert_index('users', [
         ('org_id', pymongo.ASCENDING),
         ('name', pymongo.ASCENDING),
     ], background=True)
-    upsert_index(mongo.collections['users_audit'], [
+    upsert_index('users_audit', [
         ('org_id', pymongo.ASCENDING),
         ('user_id', pymongo.ASCENDING),
     ], background=True)
-    upsert_index(mongo.collections['users_audit'], [
+    upsert_index('users_audit', [
         ('timestamp', pymongo.DESCENDING),
     ], background=True)
-    upsert_index(mongo.collections['users_key_link'], 'key_id',
+    upsert_index('users_key_link', 'key_id',
         background=True)
-    upsert_index(mongo.collections['users_key_link'], 'short_id',
+    upsert_index('users_key_link', 'short_id',
         background=True, unique=True)
-    upsert_index(mongo.collections['users_net_link'], 'user_id',
+    upsert_index('users_net_link', 'user_id',
         background=True)
-    upsert_index(mongo.collections['users_net_link'], 'org_id',
+    upsert_index('users_net_link', 'org_id',
         background=True)
-    upsert_index(mongo.collections['users_net_link'], 'network',
+    upsert_index('users_net_link', 'network',
         background=True)
-    upsert_index(mongo.collections['clients'], 'user_id', background=True)
-    upsert_index(mongo.collections['clients'], 'domain', background=True)
-    upsert_index(mongo.collections['clients'], 'virt_address_num',
+    upsert_index('clients', 'user_id', background=True)
+    upsert_index('clients', 'domain', background=True)
+    upsert_index('clients', 'virt_address_num',
         background=True)
-    upsert_index(mongo.collections['clients'], [
+    upsert_index('clients', [
         ('server_id', pymongo.ASCENDING),
         ('type', pymongo.ASCENDING),
     ], background=True)
-    upsert_index(mongo.collections['clients'], [
+    upsert_index('clients', [
         ('host_id', pymongo.ASCENDING),
         ('type', pymongo.ASCENDING),
     ], background=True)
-    upsert_index(mongo.collections['clients_pool'],
+    upsert_index('clients_pool',
         'client_id', background=True)
-    upsert_index(mongo.collections['clients_pool'],
+    upsert_index('clients_pool',
         'timestamp', background=True)
-    upsert_index(mongo.collections['clients_pool'], [
+    upsert_index('clients_pool', [
         ('server_id', pymongo.ASCENDING),
         ('user_id', pymongo.ASCENDING),
     ], background=True)
-    upsert_index(mongo.collections['organizations'], 'type', background=True)
-    upsert_index(mongo.collections['organizations'],
+    upsert_index('organizations', 'type', background=True)
+    upsert_index('organizations',
         'auth_token', background=True)
-    upsert_index(mongo.collections['hosts'], 'name', background=True)
-    upsert_index(mongo.collections['hosts_usage'], [
+    upsert_index('hosts', 'name', background=True)
+    upsert_index('hosts_usage', [
         ('host_id', pymongo.ASCENDING),
         ('timestamp', pymongo.ASCENDING),
     ], background=True)
-    upsert_index(mongo.collections['servers'], 'name', background=True)
-    upsert_index(mongo.collections['servers'], 'ping_timestamp',
+    upsert_index('servers', 'name', background=True)
+    upsert_index('servers', 'ping_timestamp',
         background=True)
-    upsert_index(mongo.collections['servers_output'], [
+    upsert_index('servers_output', [
         ('server_id', pymongo.ASCENDING),
         ('timestamp', pymongo.ASCENDING),
     ], background=True)
-    upsert_index(mongo.collections['servers_output_link'], [
+    upsert_index('servers_output_link', [
         ('server_id', pymongo.ASCENDING),
         ('timestamp', pymongo.ASCENDING),
     ], background=True)
-    upsert_index(mongo.collections['servers_bandwidth'], [
+    upsert_index('servers_bandwidth', [
         ('server_id', pymongo.ASCENDING),
         ('period', pymongo.ASCENDING),
         ('timestamp', pymongo.ASCENDING),
     ], background=True)
-    upsert_index(mongo.collections['servers_ip_pool'], [
+    upsert_index('servers_ip_pool', [
         ('server_id', pymongo.ASCENDING),
         ('user_id', pymongo.ASCENDING),
     ], background=True)
-    upsert_index(mongo.collections['servers_ip_pool'], [
+    upsert_index('servers_ip_pool', [
         ('server_id', pymongo.ASCENDING),
         ('_id', pymongo.DESCENDING),
     ], background=True)
-    upsert_index(mongo.collections['servers_ip_pool'], 'user_id',
+    upsert_index('servers_ip_pool', 'user_id',
         background=True)
-    upsert_index(mongo.collections['routes_reserve'], 'timestamp',
+    upsert_index('links_hosts', 'link_id',
         background=True)
-    upsert_index(mongo.collections['dh_params'], 'dh_param_bits',
+    upsert_index('links_hosts', [
+        ('location_id', pymongo.ASCENDING),
+        ('status', pymongo.ASCENDING),
+        ('active', pymongo.ASCENDING),
+        ('priority', pymongo.DESCENDING),
+    ], background=True)
+    upsert_index('links_hosts', [
+        ('location_id', pymongo.ASCENDING),
+        ('name', pymongo.ASCENDING),
+    ], background=True)
+    upsert_index('links_hosts', 'ping_timestamp_ttl',
         background=True)
-    upsert_index(mongo.collections['auth_nonces'], [
+    upsert_index('links_locations', 'link_id',
+        background=True)
+    upsert_index('routes_reserve', 'timestamp',
+        background=True)
+    upsert_index('dh_params', 'dh_param_bits',
+        background=True)
+    upsert_index('auth_nonces', [
         ('token', pymongo.ASCENDING),
         ('nonce', pymongo.ASCENDING),
     ], background=True, unique=True)
-    upsert_index(mongo.collections['otp_cache'], [
+    upsert_index('otp_cache', [
         ('user_id', pymongo.ASCENDING),
         ('server_id', pymongo.ASCENDING),
     ], background=True)
-    upsert_index(mongo.collections['sso_push_cache'], [
+    upsert_index('sso_push_cache', [
         ('user_id', pymongo.ASCENDING),
         ('server_id', pymongo.ASCENDING),
     ], background=True)
-    upsert_index(mongo.collections['sso_client_cache'], [
+    upsert_index('sso_client_cache', [
         ('user_id', pymongo.ASCENDING),
         ('server_id', pymongo.ASCENDING),
     ], background=True)
-    upsert_index(mongo.collections['sso_passcode_cache'], [
+    upsert_index('sso_passcode_cache', [
         ('user_id', pymongo.ASCENDING),
         ('server_id', pymongo.ASCENDING),
     ], background=True)
-    upsert_index(mongo.collections['vxlans'], 'server_id',
+    upsert_index('vxlans', 'server_id',
         background=True, unique=True)
 
-    upsert_index(mongo.collections['tasks'], 'timestamp',
+    upsert_index('tasks', 'timestamp',
         background=True, expireAfterSeconds=300)
     if settings.app.demo_mode:
         drop_index(mongo.collections['clients'], 'timestamp', background=True)
     else:
-        upsert_index(mongo.collections['clients'], 'timestamp',
+        upsert_index('clients', 'timestamp',
             background=True, expireAfterSeconds=settings.vpn.client_ttl)
-    upsert_index(mongo.collections['users_key_link'], 'timestamp',
+    upsert_index('users_key_link', 'timestamp',
         background=True, expireAfterSeconds=settings.app.key_link_timeout)
-    upsert_index(mongo.collections['auth_sessions'], 'timestamp',
+    upsert_index('auth_sessions', 'timestamp',
         background=True, expireAfterSeconds=settings.app.session_timeout)
-    upsert_index(mongo.collections['auth_nonces'], 'timestamp',
+    upsert_index('auth_nonces', 'timestamp',
         background=True,
         expireAfterSeconds=settings.app.auth_time_window * 2.1)
-    upsert_index(mongo.collections['auth_csrf_tokens'], 'timestamp',
+    upsert_index('auth_csrf_tokens', 'timestamp',
         background=True, expireAfterSeconds=604800)
-    upsert_index(mongo.collections['auth_limiter'], 'timestamp',
+    upsert_index('auth_limiter', 'timestamp',
         background=True, expireAfterSeconds=settings.app.auth_limiter_ttl)
-    upsert_index(mongo.collections['otp'], 'timestamp', background=True,
+    upsert_index('otp', 'timestamp', background=True,
         expireAfterSeconds=120)
-    upsert_index(mongo.collections['otp_cache'], 'timestamp',
+    upsert_index('otp_cache', 'timestamp',
         background=True, expireAfterSeconds=settings.vpn.otp_cache_timeout)
-    upsert_index(mongo.collections['yubikey'], 'timestamp',
+    upsert_index('yubikey', 'timestamp',
         background=True, expireAfterSeconds=86400)
-    upsert_index(mongo.collections['sso_tokens'], 'timestamp',
+    upsert_index('sso_tokens', 'timestamp',
         background=True, expireAfterSeconds=600)
-    upsert_index(mongo.collections['sso_push_cache'], 'timestamp',
+    upsert_index('sso_push_cache', 'timestamp',
         background=True, expireAfterSeconds=settings.app.sso_cache_timeout)
-    upsert_index(mongo.collections['sso_client_cache'], 'timestamp',
+    upsert_index('sso_client_cache', 'timestamp',
         background=True,
         expireAfterSeconds=settings.app.sso_client_cache_timeout +
             settings.app.sso_client_cache_window)
-    upsert_index(mongo.collections['sso_passcode_cache'], 'timestamp',
+    upsert_index('sso_passcode_cache', 'timestamp',
         background=True, expireAfterSeconds=settings.app.sso_cache_timeout)
+
+    try:
+        clean_indexes()
+    except:
+        logger.exception('Failed to clean indexes', 'setup')
 
     if not auth.Administrator.collection.find_one():
         auth.Administrator(

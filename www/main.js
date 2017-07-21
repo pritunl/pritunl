@@ -539,6 +539,9 @@ require([
         else if (window.subPlan === 'enterprise') {
           $('body').addClass('enterprise');
         }
+        else if (window.subPlan === 'enterprise_plus') {
+          $('body').addClass('enterprise-plus');
+        }
       }
       else {
         if (window.subPlan === 'premium') {
@@ -546,6 +549,9 @@ require([
         }
         else if (window.subPlan === 'enterprise') {
           $('body').addClass('enterprise-license');
+        }
+        else if (window.subPlan === 'enterprise-plus') {
+          $('body').addClass('enterprise-plus-license');
         }
       }
 

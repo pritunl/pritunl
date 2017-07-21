@@ -9,7 +9,7 @@ reserve_types = {}
 def get(doc):
     return queue_types[doc['type']](doc=doc)
 
-def start(queue_type, transaction=None, block=False, block_timeout=30,
+def start(queue_type, transaction=None, block=False, block_timeout=60,
         *args, **kwargs):
     que = queue_types[queue_type](*args, **kwargs)
     que.start(transaction=transaction, block=block,

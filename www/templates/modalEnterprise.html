@@ -8,6 +8,7 @@
       <span class="enterprise-label">Plan:</span>
       <span class="enterprise-item premium-plan">Premium</span>
       <span class="enterprise-item enterprise-plan">Enterprise</span>
+      <span class="enterprise-item enterprise-plus-plan">Enterprise+</span>
     </li>
     <li class="quantity">
       <span class="enterprise-label">Quantity:</span>
@@ -25,15 +26,17 @@
       <span class="enterprise-label">Trial Ends:</span>
       <span class="enterprise-item"></span>
     </li>
+    <li class="credit">
+      <span class="enterprise-label">Credit:</span>
+      <span class="enterprise-item"></span>
+    </li>
   </ul>
 </div>
 <div class="enterprise-buttons">
   <button type="button" class="enterprise-update btn btn-primary btn-lg">Update Payment Info</button>
-  <button type="button" class="enterprise-change enterprise-switch btn btn-info btn-lg">Switch to Premium</button>
+  <button type="button" class="enterprise-change enterprise-plus-switch btn btn-info btn-lg">Switch to Enterprise</button>
+  <button type="button" class="enterprise-change enterprise-switch btn btn-success btn-lg">Upgrade to Enterprise+</button>
   <button type="button" class="enterprise-change premium-switch btn btn-info btn-lg">Switch to Enterprise</button>
-  <button type="button" class="enterprise-promo btn btn-warning btn-lg">Enter Promo Code</button>
-  <input type="text" class="enterprise-promo-input form-control" placeholder="Enter promo Code" autocapitalize="off">
-  <button type="button" class="enterprise-promo-ok btn btn-primary btn-lg">Ok</button>
   <a type="button" class="enterprise-support btn btn-primary btn-lg" href="mailto:contact@pritunl.com">Contact Support</a>
   <a type="button" class="enterprise-support-link btn btn-primary btn-lg" href="https://app.pritunl.com/support/<%= url_key %>" target="_blank">Live Slack Support</a>
   <button type="button" class="enterprise-cancel btn btn-danger btn-lg first">Cancel Subscription</button>

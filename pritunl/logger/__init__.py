@@ -28,8 +28,8 @@ def _log(log_level, log_msg, log_type, exc_info=None, **kwargs):
         log_msg,
         exc_info=exc_info,
         extra={
-        'type': log_type,
-        'data': kwargs,
+            'type': log_type,
+            'data': kwargs,
         },
     )
 
