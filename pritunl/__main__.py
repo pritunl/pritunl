@@ -229,6 +229,9 @@ def main(default_conf=None):
 
         settings.app.server_cert = None
         settings.app.server_key = None
+        settings.app.acme_timestamp = None
+        settings.app.acme_key = None
+        settings.app.acme_domain = None
         settings.commit()
 
         time.sleep(.2)
