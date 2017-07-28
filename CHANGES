@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.28.1415.87 2017-07-28
+-------------------------------
 
 Fix issue with server host detach
 
