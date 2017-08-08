@@ -124,7 +124,7 @@ define([
         'location_id': this.model.get('id')
       });
 
-      if (evt.shiftKey && evt.ctrlKey) {
+      if (evt.shiftKey && evt.ctrlKey && evt.altKey) {
         model.destroy();
         return;
       }
@@ -141,7 +141,7 @@ define([
         'location_id': this.model.get('id')
       });
 
-      if (evt.shiftKey && evt.ctrlKey) {
+      if (evt.shiftKey && evt.ctrlKey && evt.altKey) {
         model.destroy();
         return;
       }
@@ -173,7 +173,7 @@ define([
       var model = new LinkHostModel(
         this.getHost($(evt.currentTarget).attr('data-id')));
 
-      if (evt.shiftKey && evt.ctrlKey) {
+      if (evt.shiftKey && evt.ctrlKey && evt.altKey) {
         model.destroy();
         return;
       }
@@ -192,7 +192,7 @@ define([
     onDelete: function(evt) {
       var model = this.model.clone();
 
-      if (evt.shiftKey && evt.ctrlKey) {
+      if (evt.shiftKey && evt.ctrlKey && evt.altKey) {
         model.destroy();
         return;
       }
