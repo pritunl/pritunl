@@ -77,10 +77,6 @@ def fill_user():
 
         org = orgs.get(org_id)
         if not org:
-            logger.warning('Pooler cannot find org from user_count', 'pooler',
-                org_id=org_id,
-                user_type=user_type,
-            )
             continue
         new_users.append([(org, user_type)] * (pool_size - count))
 
