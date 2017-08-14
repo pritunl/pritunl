@@ -131,6 +131,7 @@ define([
       var clientToClient = this.getClientToClientSelect();
       var portForwarding = this.getPortForwarding();
       var groups = this.getGroups();
+      var authType = this.$('.auth-type select').val();
 
       if (pin === '******') {
         pin = true;
@@ -179,7 +180,8 @@ define([
         client_to_client: clientToClient,
         dns_servers: dnsServers,
         dns_suffix: dnsSuffix,
-        port_forwarding: portForwarding
+        port_forwarding: portForwarding,
+        auth_type: authType
       }, {
         success: function() {
           this.close(true);
