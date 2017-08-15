@@ -65,8 +65,11 @@ class User(mongo.MongoObject):
             dns_servers=None, dns_suffix=None, port_forwarding=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
-        self.org = org
-        self.org_id = org.id
+        if org:
+            self.org = org
+            self.org_id = org.id
+        else:
+            self.org = None
 
         if name is not None:
             self.name = name
