@@ -80,14 +80,20 @@ def find_user(org, name=None, type=None, resource_id=None):
         spec['resource_id'] = resource_id
     return User(org, spec=spec)
 
-def get_by_id(id, fields=None, load_org=False):
+def find_user_auth(name, auth_type):
     from pritunl import organization
 
-    user = User(id=id, fields=fields)
-    if not user:
+    spec = {
+        'name': name,
+        'auth_type': auth_type,
+    }
+
+    usr = User(None, spec=spec)
+    if not usr:
         return None
 
-    if load_org:
-        user.org = organization.get_by_id(user.id)
+    usr.org = organization.get_by_id(usr.org_id)
+    if not usr.org:
+        return None
 
-    return user
+    return usr
