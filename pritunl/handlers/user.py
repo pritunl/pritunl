@@ -216,6 +216,7 @@ def user_get(org_id, user_id=None, page=None):
 def _create_user(users, org, user_data, remote_addr, pool):
     name = utils.filter_str(user_data['name'])
     email = utils.filter_str(user_data.get('email'))
+    auth_type = utils.filter_str(user_data.get('auth_type'))
     pin = utils.filter_str(user_data.get('pin')) or None
     disabled = True if user_data.get('disabled') else False
     network_links = user_data.get('network_links') or None
@@ -227,6 +228,9 @@ def _create_user(users, org, user_data, remote_addr, pool):
     dns_suffix = utils.filter_str(user_data.get('dns_suffix')) or None
     port_forwarding_in = user_data.get('port_forwarding')
     port_forwarding = []
+
+    if auth_type not in AUTH_TYPES:
+        auth_type = LOCAL_AUTH
 
     groups = user_data.get('groups') or []
     for i, group in enumerate(groups):
@@ -257,8 +261,8 @@ def _create_user(users, org, user_data, remote_addr, pool):
             })
 
     user = org.new_user(type=CERT_CLIENT, pool=pool, name=name,
-        email=email, groups=groups, pin=pin, disabled=disabled,
-        bypass_secondary=bypass_secondary,
+        email=email, auth_type=auth_type, groups=groups, pin=pin,
+        disabled=disabled, bypass_secondary=bypass_secondary,
         client_to_client=client_to_client, dns_servers=dns_servers,
         dns_suffix=dns_suffix, port_forwarding=port_forwarding)
     user.audit_event('user_created',
@@ -393,6 +397,12 @@ def user_put(org_id, user_id):
             )
 
         user.email = email
+
+    if 'auth_type' in flask.request.json:
+        auth_type = utils.filter_str(flask.request.json['auth_type']) or None
+
+        if auth_type in AUTH_TYPES:
+            user.auth_type = auth_type
 
     if 'groups' in flask.request.json:
         groups = flask.request.json['groups'] or []
