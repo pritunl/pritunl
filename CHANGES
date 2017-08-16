@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add option to change user type
+
 Version 1.28.1426.0 2017-08-08
 ------------------------------
 
