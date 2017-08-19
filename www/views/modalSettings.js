@@ -19,6 +19,7 @@ define([
     events: function() {
       return _.extend({
         'click .sso-mode select': 'onSsoMode',
+        'change .sso-mode select': 'onSsoMode',
         'change .pass input': 'onPassChange',
         'keyup .pass input': 'onPassEvent',
         'paste .pass input': 'onPassEvent',
