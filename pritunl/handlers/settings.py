@@ -46,6 +46,7 @@ def _dict():
             'sso_saml_issuer_url': 'demo',
             'sso_saml_cert': 'demo',
             'sso_okta_token': 'demo',
+            'sso_okta_push': settings.app.sso_okta_push,
             'sso_onelogin_id': 'demo',
             'sso_onelogin_secret': 'demo',
             'sso_radius_secret': 'demo',
@@ -117,6 +118,7 @@ def _dict():
             'sso_saml_issuer_url': settings.app.sso_saml_issuer_url,
             'sso_saml_cert': settings.app.sso_saml_cert,
             'sso_okta_token': settings.app.sso_okta_token,
+            'sso_okta_push': settings.app.sso_okta_push,
             'sso_onelogin_id': settings.app.sso_onelogin_id,
             'sso_onelogin_secret': settings.app.sso_onelogin_secret,
             'sso_radius_secret': settings.app.sso_radius_secret,
@@ -462,6 +464,13 @@ def settings_put():
         if sso_okta_token != settings.app.sso_okta_token:
             changes.add('sso')
         settings.app.sso_okta_token = sso_okta_token
+
+    if 'sso_okta_push' in flask.request.json:
+        sso_mode = settings.app.sso
+        if sso_mode and sso_mode in (SAML_OKTA_AUTH, SAML_OKTA_YUBICO_AUTH):
+            settings_commit = True
+            sso_okta_push = flask.request.json['sso_okta_push']
+            settings.app.sso_okta_push = True if sso_okta_push else False
 
     if 'sso_onelogin_id' in flask.request.json:
         settings_commit = True
