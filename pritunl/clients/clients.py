@@ -1381,7 +1381,7 @@ class Clients(object):
     def init_routes(self):
         for doc in self.collection.find({
                     'server_id': self.server.id,
-                    'user_type': CERT_CLIENT,
+                    'type': CERT_CLIENT,
                 }):
             if doc['host_id'] == settings.local.host_id:
                 continue
@@ -1394,7 +1394,7 @@ class Clients(object):
             if not virt_address or not host_address:
                 continue
 
-            if self.instance.is_sock_interrupt:
+            if self.instance.is_sock_interrupt():
                 return
 
             self.add_route(virt_address, virt_address6,
