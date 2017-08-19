@@ -189,6 +189,12 @@
         <option value="passcode" <%= sso_duo_mode === 'passcode' ? 'selected' : '' %>>Passcode</option>
       </select>
     </div>
+    <div class="sso-okta-push toggle-form form-group" data-toggle="tooltip" title="Enable Okta Push for connection authentication when it is available" <%= (sso === 'saml_okta' || sso === 'saml_okta_yubico') ? '' : 'style="display: none;"' %>>
+      <label>Enable Okta Push</label>
+      <div class="selector <%= sso_okta_push ? 'selected' : '' %> no-select">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
     <div class="sso-yubico-secret form-group">
       <label>Yubico Secret Key</label>
       <input type="text" class="form-control" placeholder="Enter secret key" value="<%- sso_yubico_secret || '' %>">
