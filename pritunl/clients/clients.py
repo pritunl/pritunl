@@ -1411,33 +1411,35 @@ class Clients(object):
 
     def add_route(self, virt_address, virt_address6,
             host_address, host_address6):
-        virt_address = virt_address.split('/')[0]
-        virt_address6 = virt_address6.split('/')[0]
+        if virt_address:
+            virt_address = virt_address.split('/')[0]
 
-        try:
-            if virt_address in self.client_routes:
-                try:
-                    self.client_routes.remove(virt_address)
-                except KeyError:
-                    pass
-                utils.del_route(virt_address)
+            try:
+                if virt_address in self.client_routes:
+                    try:
+                        self.client_routes.remove(virt_address)
+                    except KeyError:
+                        pass
+                    utils.del_route(virt_address)
 
-            if not host_address or \
-                    host_address == settings.local.host.local_addr or \
-                    host_address == self.route_addr:
-                return
+                if not host_address or \
+                        host_address == settings.local.host.local_addr or \
+                        host_address == self.route_addr:
+                    return
 
-            self.client_routes.add(virt_address)
-            utils.add_route(virt_address, host_address)
-        except:
-            logger.exception('Failed to add route', 'clients',
-                virt_address=virt_address,
-                virt_address6=virt_address6,
-                host_address=host_address,
-                host_address6=host_address6,
-            )
+                self.client_routes.add(virt_address)
+                utils.add_route(virt_address, host_address)
+            except:
+                logger.exception('Failed to add route', 'clients',
+                    virt_address=virt_address,
+                    virt_address6=virt_address6,
+                    host_address=host_address,
+                    host_address6=host_address6,
+                )
 
-        if self.server.ipv6:
+        if self.server.ipv6 and virt_address6:
+            virt_address6 = virt_address6.split('/')[0]
+
             try:
                 if virt_address6 in self.client_routes6:
                     try:
