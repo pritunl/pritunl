@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.28.1438.31 2017-08-20
+-------------------------------
 
 Add option to change user type
 Add support for replicated IPv6 client-to-client traffic
