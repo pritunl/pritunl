@@ -84,6 +84,8 @@ class Clients(object):
 
     @cached_property
     def route_addr6(self):
+        if self.instance.vxlan and self.instance.vxlan.vxlan_addr6:
+            return self.instance.vxlan.vxlan_addr6
         return settings.local.host.local_addr6
 
     def get_org(self, org_id):
@@ -191,6 +193,9 @@ class Clients(object):
                 if link_svr.replicating and link_svr.vxlan:
                     client_conf += 'push "route %s %s"\n' % \
                         utils.parse_network(vxlan.get_vxlan_net(link_svr.id))
+                    if link_svr.ipv6:
+                        client_conf += 'push "route-ipv6 %s"\n' % \
+                            vxlan.get_vxlan_net6(link_svr.id)
 
             if platform == 'android':
                 client_conf += 'push "route %s %s"\n' % (

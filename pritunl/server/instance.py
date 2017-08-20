@@ -189,6 +189,8 @@ class ServerInstance(object):
         if self.vxlan:
             push += 'push "route %s %s"\n' % utils.parse_network(
                 self.vxlan.vxlan_net)
+            if self.server.ipv6:
+                push += 'push "route-ipv6 %s"\n' % self.vxlan.vxlan_net6
 
         if self.server.network_mode == BRIDGE:
             host_int_data = self.host_interface_data
@@ -549,6 +551,8 @@ class ServerInstance(object):
 
         if self.vxlan:
             self.iptables.add_route(self.vxlan.vxlan_net)
+            if self.server.ipv6:
+                self.iptables.add_route(self.vxlan.vxlan_net6)
 
         self.iptables.generate()
 
@@ -901,7 +905,8 @@ class ServerInstance(object):
 
             if self.server.replicating and self.server.vxlan:
                 try:
-                    self.vxlan = vxlan.get_vxlan(self.server.id)
+                    self.vxlan = vxlan.get_vxlan(self.server.id,
+                        self.server.ipv6)
                     self.vxlan.start()
                 except:
                     logger.exception('Failed to setup server vxlan', 'vxlan',
