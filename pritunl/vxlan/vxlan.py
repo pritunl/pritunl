@@ -342,7 +342,7 @@ class Vxlan(object):
                         else:
                             raise
         except:
-            logger.error('Failed to ad vxlan host', 'vxlan',
+            logger.error('Failed to add vxlan host', 'vxlan',
                 vxlan_id=self.vxlan_id,
                 server_id=self.server_id,
             )
