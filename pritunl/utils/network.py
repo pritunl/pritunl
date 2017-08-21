@@ -342,22 +342,6 @@ def ip4to6x96(prefix, net, addr):
 
     return str(ipaddress.IPv6Address(addr6))
 
-def del_route(dst_addr):
-    if '/' not in dst_addr:
-        dst_addr += '/32'
-
-    _ip_route_lock.acquire()
-    try:
-        _ip_route.route(
-            'del',
-            dst=dst_addr,
-        )
-    except pyroute2.netlink.exceptions.NetlinkError as err:
-        if err.code != 3:
-            raise
-    finally:
-        _ip_route_lock.release()
-
 def add_route(dst_addr, via_addr):
     if '/' not in dst_addr:
         dst_addr += '/32'
@@ -385,6 +369,22 @@ def add_route(dst_addr, via_addr):
                 gateway=via_addr,
             )
         else:
+            raise
+    finally:
+        _ip_route_lock.release()
+
+def del_route(dst_addr):
+    if '/' not in dst_addr:
+        dst_addr += '/32'
+
+    _ip_route_lock.acquire()
+    try:
+        _ip_route.route(
+            'del',
+            dst=dst_addr,
+        )
+    except pyroute2.netlink.exceptions.NetlinkError as err:
+        if err.code != 3:
             raise
     finally:
         _ip_route_lock.release()
