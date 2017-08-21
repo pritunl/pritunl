@@ -397,6 +397,7 @@ def add_route6(dst_addr, via_addr):
     try:
         _ip_route.route(
             'add',
+            family=pyroute2.iproute.AF_INET6,
             dst=dst_addr,
             gateway=via_addr,
         )
