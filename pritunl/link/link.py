@@ -105,7 +105,8 @@ class Host(mongo.MongoObject):
             'ping_timestamp_ttl': self.ping_timestamp_ttl,
             'public_address': self.public_address if not \
                 settings.app.demo_mode else utils.random_ip_addr(),
-            'address6': self.address6,
+            'address6': self.address6 if not \
+                settings.app.demo_mode else None,
             'version': self.version,
         }
 
