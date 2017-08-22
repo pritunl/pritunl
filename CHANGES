@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Routing improvements
+
 Version 1.28.1438.31 2017-08-20
 -------------------------------
 
