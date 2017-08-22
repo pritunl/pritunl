@@ -528,6 +528,7 @@ def link_state_put():
 
     host.version = flask.request.json.get('version')
     host.public_address = flask.request.json.get('public_address')
+    host.address6 = flask.request.json.get('address6')
 
     data = json.dumps(host.get_state(), default=lambda x: str(x))
     data += (16 - len(data) % 16) * '\x00'
