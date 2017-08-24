@@ -313,7 +313,7 @@ elif cmd == 'set-version':
         '-ti',
         '-u', 'docker',
         '-v', '%s:/mount' % os.path.join(os.getcwd(), STYLES_DIR),
-        'dockercask/npm',
+        'arch',
         'grunt',
         '--ver=%s' % get_int_ver(new_version)
     ])
@@ -324,7 +324,7 @@ elif cmd == 'set-version':
         '-ti',
         '-u', 'docker',
         '-v', '%s:/mount' % os.path.join(os.getcwd(), WWW_DIR),
-        'dockercask/npm',
+        'arch',
         'grunt',
     ])
 
