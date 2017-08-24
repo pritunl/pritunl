@@ -251,7 +251,7 @@ def user_key_pin_put(key_id):
     pin = utils.filter_str(flask.request.json.get('pin')) or None
 
     if pin:
-        if not pin.isdigit():
+        if settings.user.pin_digits_only and not pin.isdigit():
             return utils.jsonify({
                 'error': PIN_NOT_DIGITS,
                 'error_msg': PIN_NOT_DIGITS_MSG,

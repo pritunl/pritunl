@@ -238,7 +238,7 @@ def _create_user(users, org, user_data, remote_addr, pool):
     groups = list(set(groups))
 
     if pin:
-        if not pin.isdigit():
+        if settings.user.pin_digits_only and not pin.isdigit():
             return utils.jsonify({
                 'error': PIN_NOT_DIGITS,
                 'error_msg': PIN_NOT_DIGITS_MSG,
@@ -435,7 +435,7 @@ def user_put(org_id, user_id):
                         'error_msg': PIN_RADIUS_MSG,
                     }, 400)
 
-                if not pin.isdigit():
+                if settings.user.pin_digits_only and not pin.isdigit():
                     return utils.jsonify({
                         'error': PIN_NOT_DIGITS,
                         'error_msg': PIN_NOT_DIGITS_MSG,
