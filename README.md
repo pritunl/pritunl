@@ -181,7 +181,7 @@ sudo systemctl enable mongod pritunl
 sudo tee -a /etc/yum.repos.d/pritunl.repo << EOF
 [pritunl]
 name=Pritunl Repository
-baseurl=https://repo.pritunl.com/stable/yum/fedora/25/
+baseurl=https://repo.pritunl.com/stable/yum/fedora/26/
 gpgcheck=1
 enabled=1
 EOF
