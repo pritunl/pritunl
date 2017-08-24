@@ -154,6 +154,7 @@ sudo systemctl enable mongod pritunl
 
 ```
 # SELinux must be disabled
+# Firewalld must be configured or disabled
 
 sudo tee -a /etc/yum.repos.d/pritunl.repo << EOF
 [pritunl]
@@ -175,6 +176,7 @@ sudo systemctl enable mongod pritunl
 
 ```
 # SELinux must be disabled
+# Firewalld must be configured or disabled
 
 sudo tee -a /etc/yum.repos.d/pritunl.repo << EOF
 [pritunl]
