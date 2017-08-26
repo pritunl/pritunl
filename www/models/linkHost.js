@@ -13,6 +13,7 @@ define([
       'timeout': null,
       'priority': null,
       'public_address': null,
+      'address6': null,
       'version': null
     },
     url: function() {
