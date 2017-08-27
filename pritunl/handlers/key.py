@@ -453,28 +453,28 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
     auth_signature = flask.request.headers.get('Auth-Signature', None)
     if not auth_token or not auth_timestamp or not auth_nonce or \
             not auth_signature:
-        return flask.abort(401)
+        return flask.abort(406)
     auth_nonce = auth_nonce[:32]
 
     try:
         if abs(int(auth_timestamp) - int(utils.time_now())) > \
                 settings.app.auth_time_window:
-            return flask.abort(401)
+            return flask.abort(408)
     except ValueError:
-        return flask.abort(401)
+        return flask.abort(405)
 
     org = organization.get_by_id(org_id)
     if not org:
-        return flask.abort(401)
+        return flask.abort(404)
 
     usr = org.get_user(id=user_id)
     if not usr:
-        return flask.abort(401)
+        return flask.abort(404)
     elif not usr.sync_secret:
-        return flask.abort(401)
+        return flask.abort(410)
 
     if auth_token != usr.sync_token:
-        return flask.abort(401)
+        return flask.abort(410)
 
     if usr.disabled:
         return flask.abort(403)
@@ -484,7 +484,7 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
         flask.request.path])
 
     if len(auth_string) > AUTH_SIG_STRING_MAX_LEN:
-        return flask.abort(401)
+        return flask.abort(413)
 
     auth_test_signature = base64.b64encode(hmac.new(
         usr.sync_secret.encode(), auth_string,
@@ -500,7 +500,7 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
             'timestamp': utils.now(),
         })
     except pymongo.errors.DuplicateKeyError:
-        return flask.abort(401)
+        return flask.abort(409)
 
     key_conf = usr.sync_conf(server_id, key_hash)
     if key_conf:
