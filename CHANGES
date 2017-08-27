@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.28.1445.85 2017-08-27
+-------------------------------
 
 Improve error codes
 
