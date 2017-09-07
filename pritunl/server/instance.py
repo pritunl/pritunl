@@ -52,8 +52,10 @@ class ServerInstance(object):
         self._temp_path = utils.get_temp_path()
         self.ovpn_conf_path = os.path.join(self._temp_path,
             OVPN_CONF_NAME)
-        self.management_socket_path = os.path.join(settings.conf.var_run_path,
-            MANAGEMENT_SOCKET_NAME % self.id)
+        self.management_socket_path = os.path.join(
+            settings.conf.var_run_path,
+            MANAGEMENT_SOCKET_NAME % self.id,
+        )
 
     @cached_static_property
     def collection(cls):
