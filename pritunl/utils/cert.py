@@ -40,7 +40,7 @@ def generate_server_cert():
     server_key_path = os.path.join(settings.conf.temp_path, SERVER_KEY_NAME)
 
     check_output_logged([
-        'openssl', 'ecparam', '-name', 'prime256v1', '-genkey', '-noout',
+        'openssl', 'ecparam', '-name', 'secp384r1', '-genkey', '-noout',
         '-out', server_key_path,
     ])
     check_output_logged([
@@ -59,7 +59,7 @@ def generate_private_key():
 
 def generate_private_ec_key():
     return check_output_logged([
-        'openssl', 'ecparam', '-name', 'prime256v1', '-genkey', '-noout',
+        'openssl', 'ecparam', '-name', 'secp384r1', '-genkey', '-noout',
     ])
 
 def generate_csr(private_key, domain):
