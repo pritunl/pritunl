@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add option to disable client reconnect
+
 Version 1.28.1460.76 2017-09-11
 -------------------------------
 
