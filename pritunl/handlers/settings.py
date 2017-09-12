@@ -52,6 +52,7 @@ def _dict():
             'sso_radius_secret': 'demo',
             'sso_radius_host': 'demo',
             'sso_client_cache': settings.app.sso_client_cache,
+            'client_reconnect': settings.user.reconnect,
             'public_address': settings.local.host.public_addr,
             'public_address6': settings.local.host.public_addr6,
             'routed_subnet6': settings.local.host.routed_subnet6,
@@ -124,6 +125,7 @@ def _dict():
             'sso_radius_secret': settings.app.sso_radius_secret,
             'sso_radius_host': settings.app.sso_radius_host,
             'sso_client_cache': settings.app.sso_client_cache,
+            'client_reconnect': settings.user.reconnect,
             'public_address': settings.local.host.public_addr,
             'public_address6': settings.local.host.public_addr6,
             'routed_subnet6': settings.local.host.routed_subnet6,
@@ -494,6 +496,12 @@ def settings_put():
         if sso_client_cache != settings.app.sso_client_cache:
             changes.add('sso')
         settings.app.sso_client_cache = sso_client_cache
+
+    if 'client_reconnect' in flask.request.json:
+        settings_commit = True
+        client_reconnect = True if \
+            flask.request.json['client_reconnect'] else False
+        settings.user.reconnect = client_reconnect
 
     if 'sso_yubico_client' in flask.request.json:
         settings_commit = True
