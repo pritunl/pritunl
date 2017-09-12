@@ -125,6 +125,7 @@ class SettingsApp(SettingsGroupMongo):
         'server_cert': None,
         'server_key': None,
         'cloud_provider': None,
+        'dns_server_restart': 21600,
         'aws_timeout': 3,
         'route53_region': None,
         'route53_zone': None,
