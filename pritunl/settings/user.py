@@ -10,6 +10,7 @@ class SettingsUser(SettingsGroupMongo):
         'pin_mode': PIN_OPTIONAL,
         'pin_min_length': 6,
         'pin_digits_only': True,
+        'reconnect': True,
         'force_password_mode': None,
         'cert_key_bits': 4096,
         'cert_message_digest': 'sha256',
