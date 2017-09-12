@@ -27,6 +27,7 @@ define([
         'change .route53-region select': 'updateZones',
         'click .sso-client-cache': 'onSsoClientCacheSelect',
         'click .sso-okta-push': 'onSsoOktaPushSelect',
+        'click .client-reconnect': 'onClientReconnect',
         'propertychange .pass input': 'onPassEvent',
         'change .cloud-provider select': 'onCloudProviderChange',
         'change .monitoring select': 'onMonitoringChange',
@@ -477,6 +478,22 @@ define([
     onSsoOktaPushSelect: function() {
       this.setSsoOktaPushSelect(!this.getSsoOktaPushSelect());
     },
+    getClientReconnect: function() {
+      return this.$('.client-reconnect .selector').hasClass('selected');
+    },
+    setClientReconnect: function(state) {
+      if (state) {
+        this.$('.client-reconnect .selector').addClass('selected');
+        this.$('.client-reconnect .selector-inner').show();
+      }
+      else {
+        this.$('.client-reconnect .selector').removeClass('selected');
+        this.$('.client-reconnect .selector-inner').hide();
+      }
+    },
+    onClientReconnect: function() {
+      this.setClientReconnect(!this.getClientReconnect());
+    },
     onSsoMode: function() {
       this.setSsoMode(this.getSsoMode());
     },
@@ -553,6 +570,7 @@ define([
       var cloudProvider = this.$('.cloud-provider select').val();
       var ssoYubicoClient = this.$('.sso-yubico-client input').val();
       var ssoYubicoSecret = this.$('.sso-yubico-secret input').val();
+      var clientReconnect = this.getClientReconnect();
       var usEast1AccessKey = this.$(
         '.us-east-1-access-key input').val();
       var usEast1SecretKey = this.$(
@@ -750,6 +768,7 @@ define([
         sso_radius_host: ssoRadiusHost,
         sso_radius_secret: ssoRadiusSecret,
         sso_client_cache: ssoClientCache,
+        client_reconnect: clientReconnect,
         public_address: publicAddress,
         public_address6: publicAddress6,
         routed_subnet6: routedSubnet6,
