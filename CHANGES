@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issues with pritunl-dns server
+
 Version 1.28.1461.29 2017-09-12
 -------------------------------
 
