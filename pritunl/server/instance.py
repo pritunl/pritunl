@@ -634,15 +634,14 @@ class ServerInstance(object):
                 return False
 
     @interrupter
-    def openvpn_watch(self):
+    def _openvpn_stdout(self):
         while True:
             line = self.process.stdout.readline()
             if not line:
-                if self.process.poll() is not None:
-                    break
-                else:
-                    time.sleep(0.05)
-                    continue
+                if self.process.poll() is not None or self.sock_interrupt:
+                    return
+                time.sleep(0.05)
+                continue
 
             yield
 
@@ -654,6 +653,36 @@ class ServerInstance(object):
                 )
 
             yield
+
+    @interrupter
+    def _openvpn_stderr(self):
+        while True:
+            line = self.process.stderr.readline()
+            if not line:
+                if self.process.poll() is not None or self.sock_interrupt:
+                    return
+                time.sleep(0.05)
+                continue
+
+            yield
+
+            try:
+                self.server.output.push_output(line)
+            except:
+                logger.exception('Failed to push vpn output', 'server',
+                    server_id=self.server.id,
+                )
+
+            yield
+
+    def openvpn_output(self):
+        thread = threading.Thread(target=self._openvpn_stdout)
+        thread.daemon = True
+        thread.start()
+
+        thread = threading.Thread(target=self._openvpn_stderr)
+        thread.daemon = True
+        thread.start()
 
     @interrupter
     def _sub_thread(self, cursor_id):
@@ -999,7 +1028,12 @@ class ServerInstance(object):
                 vxlan=self.vxlan,
             )
             try:
-                self.openvpn_watch()
+                while True:
+                    if self.process.poll() is not None:
+                        break
+                    if self.sock_interrupt:
+                        self.stop_process()
+                    time.sleep(0.05)
             finally:
                 plugins.caller(
                     'server_stop',
