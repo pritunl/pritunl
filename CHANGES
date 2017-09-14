@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with user groups configuration
+
 Version 1.28.1463.29 2017-09-14
 -------------------------------
 
