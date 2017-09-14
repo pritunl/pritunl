@@ -11,6 +11,7 @@ python-dateutil==2.6.0
 psutil==5.2.0
 python-iptables==0.11.0
 pyroute2==0.4.13
+google-api-python-client==1.6.3
 twisted==17.1.0
 pycrypto>=2.6.1
 pyopenssl==16.2.0
