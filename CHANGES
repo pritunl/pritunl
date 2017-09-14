@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add Google G Suite group matching using Admin SDK
+
 Version 1.28.1462.0 2017-09-13
 ------------------------------
 
