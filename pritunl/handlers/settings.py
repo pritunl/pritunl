@@ -35,6 +35,8 @@ def _dict():
             'pin_mode': settings.user.pin_mode,
             'sso': settings.app.sso,
             'sso_match': settings.app.sso_match,
+            'sso_google_key': 'demo',
+            'sso_google_email': 'demo',
             'sso_duo_token': 'demo',
             'sso_duo_secret': 'demo',
             'sso_duo_host': 'demo',
@@ -108,6 +110,8 @@ def _dict():
             'pin_mode': settings.user.pin_mode,
             'sso': settings.app.sso,
             'sso_match': settings.app.sso_match,
+            'sso_google_key': settings.app.sso_google_key,
+            'sso_google_email': settings.app.sso_google_email,
             'sso_duo_token': settings.app.sso_duo_token,
             'sso_duo_secret': settings.app.sso_duo_secret,
             'sso_duo_host': settings.app.sso_duo_host,
@@ -376,6 +380,20 @@ def settings_put():
             settings.app.sso_match = sso_match
         else:
             settings.app.sso_match = None
+
+    if 'sso_google_key' in flask.request.json:
+        settings_commit = True
+        sso_google_key = flask.request.json['sso_google_key'] or None
+        if sso_google_key != settings.app.sso_google_key:
+            changes.add('sso')
+        settings.app.sso_google_key = sso_google_key
+
+    if 'sso_google_email' in flask.request.json:
+        settings_commit = True
+        sso_google_email = flask.request.json['sso_google_email'] or None
+        if sso_google_email != settings.app.sso_google_email:
+            changes.add('sso')
+        settings.app.sso_google_email = sso_google_email
 
     if 'sso_duo_token' in flask.request.json:
         settings_commit = True
