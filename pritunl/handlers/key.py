@@ -563,6 +563,7 @@ def sso_authenticate_post():
                 username=username,
             )
             return flask.abort(401)
+        groups = set(groups or [])
     else:
         logger.error('Duo authentication not valid', 'sso',
             username=username,
@@ -843,6 +844,7 @@ def sso_callback_get():
                 username=username,
             )
             return flask.abort(401)
+        groups = set(groups or [])
     else:
         username = params.get('username')[0]
         email = username
@@ -866,9 +868,10 @@ def sso_callback_get():
                 username=username,
             )
             return flask.abort(401)
+        groups = set(groups or [])
 
         if settings.app.sso_google_mode == 'groups':
-            groups = list(set((groups or []) + google_groups))
+            groups = groups | set(google_groups)
         else:
             for org_name in sorted(google_groups):
                 org = organization.get_by_name(org_name, fields=('_id'))
@@ -886,7 +889,7 @@ def sso_callback_get():
             'username': username,
             'email': email,
             'org_id': org_id,
-            'groups': groups,
+            'groups': list(groups),
             'timestamp': utils.now(),
         })
 
@@ -921,7 +924,7 @@ def sso_callback_get():
             'username': username,
             'email': email,
             'org_id': org_id,
-            'groups': groups,
+            'groups': list(groups),
             'timestamp': utils.now(),
         })
 
@@ -1006,7 +1009,7 @@ def sso_duo_post():
     username = doc['username']
     email = doc['email']
     org_id = doc['org_id']
-    groups = doc['groups']
+    groups = set(doc['groups'] or [])
 
     if settings.app.sso_duo_mode == 'passcode':
         duo_auth = sso.Duo(
@@ -1056,7 +1059,7 @@ def sso_duo_post():
         )
         return flask.abort(401)
 
-    groups = ((groups or set()) | (groups2 or set())) or None
+    groups = groups | set(groups2 or [])
 
     usr = user.find_user_auth(name=username, auth_type=sso_mode)
     if not usr:
@@ -1131,7 +1134,7 @@ def sso_yubico_post():
     username = doc['username']
     email = doc['email']
     org_id = doc['org_id']
-    groups = doc['groups']
+    groups = set(doc['groups'] or [])
 
     valid, yubico_id = sso.auth_yubico(key)
     if not valid:
