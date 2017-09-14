@@ -81,6 +81,10 @@
       <label>SAML Certificate</label><br>
       <textarea class="form-control" rows="4" spellcheck="false" data-toggle="tooltip" title="The SAML X.509 Certificate" placeholder="Enter saml certificate"><%- sso_saml_cert %></textarea>
     </div>
+    <div class="sso-google-key form-group" <%= !sso || sso.indexOf('google') === -1 ? 'style="display: none;"' : '' %>>
+      <label>Google JSON Private Key</label><br>
+      <textarea class="form-control" rows="4" spellcheck="false" data-toggle="tooltip" title="Optional, private key for service account in JSON format. If empty organization wont be matched to user groups." placeholder="Enter Google JSON private key"><%- sso_google_key %></textarea>
+    </div>
     <div class="sso-token form-group" <%= !sso || sso.indexOf('duo') === -1 ? 'style="display: none;"' : '' %>>
       <label>Duo Integration Key</label>
       <input type="text" class="form-control" placeholder="Enter integration key" value="<%- sso_duo_token || '' %>">
@@ -163,6 +167,10 @@
     <div class="sso-match-google form-group" <%= !sso || sso.indexOf('google') === -1 ? 'style="display: none;"' : '' %>>
       <label>Google Apps Domain</label>
       <input type="text" class="form-control" spellcheck="false" placeholder="Enter Google Apps domain" value="<%- sso_match || '' %>" data-toggle="tooltip" title="Google apps domain to match against users email address. Multiple domains can be entrered sperated by a comma. (example: pritunl.com)">
+    </div>
+    <div class="sso-google-email form-group" <%= !sso || sso.indexOf('google') === -1 ? 'style="display: none;"' : '' %>>
+      <label>Google Admin Email</label>
+      <input type="text" class="form-control" spellcheck="false" placeholder="Enter Google admin email" value="<%- sso_google_email || '' %>" data-toggle="tooltip" title="The email address of an administrator user in the Google G Suite to delegate API access to. This user will be used to check the groups of Google users.">
     </div>
     <div class="sso-match-slack form-group" <%= !sso || sso.indexOf('slack') === -1 ? 'style="display: none;"' : '' %>>
       <label>Slack Team</label>
