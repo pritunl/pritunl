@@ -100,6 +100,7 @@ class ServerInstance(object):
                 server_id=self.server.id,
                 instance_id=self.id,
             )
+            self.sock_interrupt = True
 
         timer = threading.Timer(15, deadlock)
         timer.start()
@@ -107,6 +108,10 @@ class ServerInstance(object):
         self.resource_lock = _resource_locks[self.server.id]
         try:
             self.resource_lock.acquire()
+
+            if self.sock_interrupt:
+                raise ValueError('Startup canceled')
+
             self.interface = utils.interface_acquire(
                 self.server.adapter_type)
             timer.cancel()
