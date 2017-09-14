@@ -1076,6 +1076,7 @@ class ServerInstance(object):
                 )
 
             self.interrupt = True
+            self.sock_interrupt = True
             self.bridge_stop()
             self.iptables.clear_rules()
 
@@ -1088,6 +1089,7 @@ class ServerInstance(object):
         except:
             try:
                 self.interrupt = True
+                self.sock_interrupt = True
                 self.stop_process()
             except:
                 logger.exception('Server stop error', 'server',
