@@ -21,6 +21,8 @@ def _dns_thread():
 
             start = time.time()
 
+            yield
+
             process = subprocess.Popen(
                 ['pritunl-dns'],
                 stdout=subprocess.PIPE,
@@ -45,6 +47,9 @@ def _dns_thread():
                         output += process.stderr.readall()
                     except:
                         pass
+
+                    if check_global_interrupt():
+                        return
 
                     logger.error(
                         'DNS mapping service stopped unexpectedly', 'setup',
