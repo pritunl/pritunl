@@ -847,7 +847,7 @@ def sso_callback_get():
         username = params.get('username')[0]
         email = username
 
-        valid = sso.verify_google(username)
+        valid, google_groups = sso.verify_google(username)
         if not valid:
             return flask.abort(401)
 
@@ -866,6 +866,15 @@ def sso_callback_get():
                 username=username,
             )
             return flask.abort(401)
+
+        if settings.app.sso_google_mode == 'groups':
+            groups = list(set((groups or []) + google_groups))
+        else:
+            for org_name in sorted(google_groups):
+                org = organization.get_by_name(org_name, fields=('_id'))
+                if org:
+                    org_id = org.id
+                break
 
     if DUO_AUTH in sso_mode:
         token = utils.generate_secret()
