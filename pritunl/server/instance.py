@@ -938,18 +938,38 @@ class ServerInstance(object):
         )
 
         self.resources_acquire()
+
+        def timeout():
+            logger.error(
+                'Server startup timed out, stopping...',
+                'server',
+                server_id=self.server.id,
+                instance_id=self.id,
+                state=self.state,
+            )
+            self.stop_process()
+
+        self.state = 'init'
+        timer = threading.Timer(settings.vpn.op_timeout + 3, timeout)
+        timer.start()
+
         try:
             cursor_id = self.get_cursor_id()
 
+            self.state = 'temp_path'
             os.makedirs(self._temp_path)
 
+            self.state = 'ip_forwarding'
             self.enable_ip_forwarding()
+            self.state = 'bridge_start'
             self.bridge_start()
 
             if self.server.replicating and self.server.vxlan:
                 try:
+                    self.state = 'get_vxlan'
                     self.vxlan = vxlan.get_vxlan(self.server.id,
                         self.server.ipv6)
+                    self.state = 'start_vxlan'
                     self.vxlan.start()
                 except:
                     logger.exception('Failed to setup server vxlan', 'vxlan',
@@ -957,19 +977,26 @@ class ServerInstance(object):
                         instance_id=self.id,
                     )
 
+            self.state = 'generate_ovpn_conf'
             self.generate_ovpn_conf()
 
+            self.state = 'generate_iptables_rules'
             self.generate_iptables_rules()
+            self.state = 'upsert_iptables_rules'
             self.iptables.upsert_rules()
 
+            self.state = 'init_route_advertisements'
             self.init_route_advertisements()
 
+            self.state = 'openvpn_start'
             self.process = self.openvpn_start()
             self.start_threads(cursor_id)
 
+            self.state = 'instance_com_start'
             self.instance_com = ServerInstanceCom(self.server, self)
             self.instance_com.start()
 
+            self.state = 'events'
             self.publish('started')
 
             if send_events:
@@ -981,12 +1008,18 @@ class ServerInstance(object):
 
             for link_doc in self.server.links:
                 if self.server.id > link_doc['server_id']:
+                    self.state = 'instance_link'
                     instance_link = ServerInstanceLink(
                         server=self.server,
                         linked_server=get_by_id(link_doc['server_id']),
                     )
                     self.server_links.append(instance_link)
                     instance_link.start()
+
+            self.state = 'running'
+            self.openvpn_output()
+
+            timer.cancel()
 
             plugins.caller(
                 'server_start',
@@ -1087,6 +1120,8 @@ class ServerInstance(object):
                     message='Server stopped unexpectedly "%s".' % (
                         self.server.name))
         except:
+            timer.cancel()
+
             try:
                 self.interrupt = True
                 self.sock_interrupt = True
