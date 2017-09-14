@@ -83,7 +83,7 @@
     </div>
     <div class="sso-google-key form-group" <%= !sso || sso.indexOf('google') === -1 ? 'style="display: none;"' : '' %>>
       <label>Google JSON Private Key</label><br>
-      <textarea class="form-control" rows="4" spellcheck="false" data-toggle="tooltip" title="Optional, private key for service account in JSON format. If empty organization wont be matched to user groups." placeholder="Enter Google JSON private key"><%- sso_google_key %></textarea>
+      <textarea class="form-control" rows="4" spellcheck="false" data-toggle="tooltip" title="Optional, private key for service account in JSON format. This will allow a case sensetive match for any of the user groups to an existing organization. The group names will be matched to the first matching organization name in sorted order. If empty organization wont be matched to user groups. Also requires Google Admin Email." placeholder="Enter Google JSON private key"><%- sso_google_key %></textarea>
     </div>
     <div class="sso-token form-group" <%= !sso || sso.indexOf('duo') === -1 ? 'style="display: none;"' : '' %>>
       <label>Duo Integration Key</label>
@@ -170,7 +170,7 @@
     </div>
     <div class="sso-google-email form-group" <%= !sso || sso.indexOf('google') === -1 ? 'style="display: none;"' : '' %>>
       <label>Google Admin Email</label>
-      <input type="text" class="form-control" spellcheck="false" placeholder="Enter Google admin email" value="<%- sso_google_email || '' %>" data-toggle="tooltip" title="The email address of an administrator user in the Google G Suite to delegate API access to. This user will be used to check the groups of Google users.">
+      <input type="text" class="form-control" spellcheck="false" placeholder="Enter Google admin email" value="<%- sso_google_email || '' %>" data-toggle="tooltip" title="Optional, the email address of an administrator user in the Google G Suite to delegate API access to. This user will be used to check the groups of Google users. Only needed when providing the Google pirvate key.">
     </div>
     <div class="sso-match-slack form-group" <%= !sso || sso.indexOf('slack') === -1 ? 'style="display: none;"' : '' %>>
       <label>Slack Team</label>
