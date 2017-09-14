@@ -6,7 +6,7 @@ import shlex
 import shutil
 import fileinput
 
-VERSION = '1.28.1463.29'
+VERSION = '1.28.1463.34'
 PATCH_DIR = 'build'
 install_systemd = True
 install_upstart = False
