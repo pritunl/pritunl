@@ -713,6 +713,8 @@ class ServerInstance(object):
                             time.sleep(0.01)
                 except OSError:
                     pass
+        except GeneratorExit:
+            self.stop_process()
         except:
             logger.exception('Exception in messaging thread', 'server',
                 server_id=self.server.id,
@@ -757,6 +759,8 @@ class ServerInstance(object):
                         error_count = 0
 
                     yield
+                except GeneratorExit:
+                    self.stop_process()
                 except:
                     error_count += 1
                     if error_count >= 2 and self.stop_process():
@@ -806,6 +810,8 @@ class ServerInstance(object):
                                 pass
 
                     yield
+                except GeneratorExit:
+                    pass
                 except:
                     logger.exception(
                         'Failed to update route advertisement',
