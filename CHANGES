@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Server management improvements
+
 Version 1.28.1463.93 2017-09-14
 -------------------------------
 
