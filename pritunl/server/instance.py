@@ -1201,7 +1201,7 @@ class ServerInstance(object):
                 try:
                     self.vxlan.stop()
                 except:
-                    logger.exception('Failed to stop server vxlan', 'vxlan',
+                    logger.exception('Failed to stop server vxlan', 'server',
                         server_id=self.server.id,
                         instance_id=self.id,
                     )
