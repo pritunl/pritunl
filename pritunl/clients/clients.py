@@ -40,9 +40,9 @@ class Clients(object):
         self.iroutes_lock = threading.RLock()
         self.iroutes_index = collections.defaultdict(set)
         self.call_queue = callqueue.CallQueue(
-            self.instance.is_sock_interrupt, 512)
+            self.instance.is_interrupted, 512)
         self.clients_call_queue = callqueue.CallQueue(
-            self.instance.is_sock_interrupt)
+            self.instance.is_interrupted)
         self.obj_cache = objcache.ObjCache()
         self.client_routes = set()
         self.client_routes6 = set()
@@ -1399,7 +1399,7 @@ class Clients(object):
             if not virt_address or not host_address:
                 continue
 
-            if self.instance.is_sock_interrupt():
+            if self.instance.is_interrupted():
                 return
 
             self.add_route(virt_address, virt_address6,
