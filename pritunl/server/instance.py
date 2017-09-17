@@ -1151,11 +1151,6 @@ class ServerInstance(object):
                     vxlan=self.vxlan,
                 )
 
-            self.interrupt = True
-            self.sock_interrupt = True
-            self.bridge_stop()
-            self.iptables.clear_rules()
-
             if not self.clean_exit:
                 event.Event(type=SERVERS_UPDATED)
                 self.server.send_link_events()
