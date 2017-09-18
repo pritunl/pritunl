@@ -8,9 +8,6 @@ define([
     defaults: {
       'id': null,
       'name': null,
-      'auth_api': null,
-      'auth_token': null,
-      'auth_secret': null,
       'user_count': null
     },
     url: function() {
