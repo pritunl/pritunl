@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with single sign-on
+
 Version 1.28.1465.32 2017-09-16
 -------------------------------
 
