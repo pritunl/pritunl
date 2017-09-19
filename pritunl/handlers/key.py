@@ -889,7 +889,7 @@ def sso_callback_get():
             'username': username,
             'email': email,
             'org_id': org_id,
-            'groups': list(groups),
+            'groups': list(groups) if groups else None,
             'timestamp': utils.now(),
         })
 
@@ -924,7 +924,7 @@ def sso_callback_get():
             'username': username,
             'email': email,
             'org_id': org_id,
-            'groups': list(groups),
+            'groups': list(groups) if groups else None,
             'timestamp': utils.now(),
         })
 
