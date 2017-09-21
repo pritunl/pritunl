@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with client IP address on Windows
+
 Version 1.28.1468.86 2017-09-19
 -------------------------------
 
