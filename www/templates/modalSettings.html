@@ -119,7 +119,7 @@
     </div>
     <div class="monitoring form-group">
       <label>Monitoring Mode</label>
-      <select class="form-control" data-toggle="tooltip" title="Monitoring mode">
+      <select class="form-control" data-toggle="tooltip" title="Enable to send performance and usage metrics to InfluxDB ">
         <option value="none" <%= !monitoring ? 'selected' : '' %>>Disabled</option>
         <option value="influxdb" <%= monitoring === 'influxdb' ? 'selected' : '' %>>InfluxDB</option>
       </select>
