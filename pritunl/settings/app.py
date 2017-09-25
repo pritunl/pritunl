@@ -72,6 +72,7 @@ class SettingsApp(SettingsGroupMongo):
         'sso': False,
         'sso_cache': True,
         'sso_cache_timeout': 28800,
+        'sso_whitelist': [],
         'sso_client_cache': False,
         'sso_client_cache_timeout': 172800,
         'sso_client_cache_window': 21600,
