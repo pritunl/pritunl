@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add sso ip whitelist
+
 Version 1.28.1472.86 2017-09-23
 -------------------------------
 
