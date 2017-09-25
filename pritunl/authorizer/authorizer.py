@@ -7,6 +7,7 @@ from pritunl import plugins
 from pritunl import utils
 from pritunl import mongo
 from pritunl import tunldb
+from pritunl import ipaddress
 
 import threading
 import uuid
@@ -33,6 +34,7 @@ class Authorizer(object):
         self.push_type = None
         self.challenge = None
         self.has_token = False
+        self.whitelisted = False
 
         if self.password and self.password.startswith('CRV1:'):
             challenge = self.password.split(':')
@@ -60,6 +62,7 @@ class Authorizer(object):
         try:
             self._check_call(self._check_primary)
             self._check_call(self._check_token)
+            self._check_call(self._check_whitelist)
             self._check_call(self._check_password)
             self._check_call(self._check_sso)
             self._check_call(self._auth_plugins)
@@ -131,6 +134,23 @@ class Authorizer(object):
             if doc:
                 self.has_token = True
 
+    def _check_whitelist(self):
+        if settings.app.sso_whitelist:
+            remote_ip = ipaddress.IPAddress(self.remote_ip)
+
+            for network_str in settings.app.sso_whitelist:
+                try:
+                    network = ipaddress.IPNetwork(network_str)
+                except (ipaddress.AddressValueError, ValueError):
+                    logger.warning('Invalid whitelist network', 'authorize',
+                        network=network_str,
+                    )
+                    continue
+
+                if remote_ip in network:
+                    self.whitelisted = True
+                    break
+
     def _update_token(self):
         if settings.app.sso_client_cache and self.auth_token and \
                 not self.has_token:
@@ -194,7 +214,7 @@ class Authorizer(object):
 
     def _check_password(self):
         if self.user.bypass_secondary or self.user.link_server_id or \
-                settings.vpn.stress_test or self.has_token:
+                settings.vpn.stress_test or self.has_token or self.whitelisted:
             return
 
         sso_mode = settings.app.sso or ''
