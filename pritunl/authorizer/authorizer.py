@@ -537,7 +537,7 @@ class Authorizer(object):
 
     def _check_push(self):
         if self.user.bypass_secondary or settings.vpn.stress_test or \
-                self.has_token:
+                self.has_token or self.whitelisted:
             return
 
         self.push_type = self.user.get_push_type()
