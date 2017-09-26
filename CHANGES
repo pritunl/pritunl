@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Push authentication changes
+
 Version 1.28.1475.11 2017-09-26
 -------------------------------
 
