@@ -214,7 +214,7 @@ class Authorizer(object):
 
     def _check_password(self):
         if self.user.bypass_secondary or self.user.link_server_id or \
-                settings.vpn.stress_test or self.has_token or self.whitelisted:
+                settings.vpn.stress_test or self.has_token:
             return
 
         sso_mode = settings.app.sso or ''
