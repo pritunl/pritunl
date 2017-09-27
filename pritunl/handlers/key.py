@@ -877,7 +877,7 @@ def sso_callback_get():
                 org = organization.get_by_name(org_name, fields=('_id'))
                 if org:
                     org_id = org.id
-                break
+                    break
 
     if DUO_AUTH in sso_mode:
         token = utils.generate_secret()
