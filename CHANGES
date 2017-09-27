@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with Google group matching
+
 Version 1.28.1475.35 2017-09-26
 -------------------------------
 
