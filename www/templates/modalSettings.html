@@ -170,7 +170,7 @@
     </div>
     <div class="sso-google-email form-group" <%= !sso || sso.indexOf('google') === -1 ? 'style="display: none;"' : '' %>>
       <label>Google Admin Email</label>
-      <input type="text" class="form-control" spellcheck="false" placeholder="Enter Google admin email" value="<%- sso_google_email || '' %>" data-toggle="tooltip" title="Optional, the email address of an administrator user in the Google G Suite to delegate API access to. This user will be used to check the groups of Google users. Only needed when providing the Google pirvate key.">
+      <input type="text" class="form-control" spellcheck="false" placeholder="Enter Google admin email" value="<%- sso_google_email || '' %>" data-toggle="tooltip" title="Optional, the email address of an administrator user in the Google G Suite to delegate API access to. This user will be used to get the groups of Google users. Only needed when providing the Google private key.">
     </div>
     <div class="sso-match-slack form-group" <%= !sso || sso.indexOf('slack') === -1 ? 'style="display: none;"' : '' %>>
       <label>Slack Team</label>
