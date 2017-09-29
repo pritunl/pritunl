@@ -11,12 +11,10 @@ define([
   'views/modalSettings',
   'views/modalSubscribe',
   'views/modalEnterprise',
-  'views/modalFeedback',
   'text!templates/header.html'
 ], function($, _, Backbone, SettingsModel, SubscriptionModel, UserModel,
     UserAuditCollection, AlertView, ModalLogsView, ModalSettingsView,
-    ModalSubscribeView, ModalEnterpriseView, ModalFeedbackView,
-    headerTemplate) {
+    ModalSubscribeView, ModalEnterpriseView, headerTemplate) {
   'use strict';
   var HeaderView = Backbone.View.extend({
     tagName: 'header',
@@ -26,8 +24,7 @@ define([
       'click .enterprise-plus-upgrade a': 'onEnterprise',
       'click .enterprise-settings a': 'onEnterprise',
       'click .logs a': 'openLogs',
-      'click .change-password a': 'openSettings',
-      'click .feedback': 'onFeedback'
+      'click .change-password a': 'openSettings'
     },
     initialize: function() {
       this.model = new SettingsModel();
@@ -151,19 +148,6 @@ define([
           this.addView(alertView);
         }.bind(this)
       });
-    },
-    onFeedback: function() {
-      var modal = new ModalFeedbackView();
-      this.listenToOnce(modal, 'applied', function() {
-        var alertView = new AlertView({
-          type: 'success',
-          message: 'Successfully submitted feedback/bug report.',
-          dismissable: true
-        });
-        $('.alerts-container').append(alertView.render().el);
-        this.addView(alertView);
-      }.bind(this));
-      this.addView(modal);
     }
   });
 

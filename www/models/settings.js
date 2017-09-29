@@ -19,6 +19,8 @@ define([
       'influxdb_uri': null,
       'sso': null,
       'sso_match': null,
+      'sso_google_key': null,
+      'sso_google_email': null,
       'sso_duo_host': null,
       'sso_duo_token': null,
       'sso_duo_secret': null,

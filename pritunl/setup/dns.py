@@ -5,6 +5,7 @@ from pritunl import logger
 import os
 import threading
 import subprocess
+import time
 
 @interrupter
 def _dns_thread():
@@ -17,6 +18,10 @@ def _dns_thread():
             if not host.dns_mapping_servers:
                 yield interrupter_sleep(3)
                 continue
+
+            start = time.time()
+
+            yield
 
             process = subprocess.Popen(
                 ['pritunl-dns'],
@@ -43,14 +48,31 @@ def _dns_thread():
                     except:
                         pass
 
+                    if check_global_interrupt():
+                        return
+
                     logger.error(
                         'DNS mapping service stopped unexpectedly', 'setup',
                         output=output,
                     )
                     process = None
-                    break
 
-                yield interrupter_sleep(1)
+                    yield interrupter_sleep(1)
+
+                    break
+                elif time.time() - start > settings.app.dns_server_restart:
+                    def kill_process():
+                        process.kill()
+                    timer = threading.Timer(3, kill_process)
+                    timer.start()
+
+                    process.terminate()
+                    process.wait()
+
+                    timer.cancel()
+
+                    process = None
+                    break
         except GeneratorExit:
             if process:
                 process.terminate()

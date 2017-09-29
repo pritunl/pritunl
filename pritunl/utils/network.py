@@ -84,6 +84,7 @@ def get_interface_address6(iface):
 
 def get_ip_pool_reverse(network, network_start):
     ip_pool = network.iterhostsreversed()
+    ip_pool.next()
 
     if network_start:
         network_break = network_start
@@ -342,22 +343,6 @@ def ip4to6x96(prefix, net, addr):
 
     return str(ipaddress.IPv6Address(addr6))
 
-def del_route(dst_addr):
-    if '/' not in dst_addr:
-        dst_addr += '/32'
-
-    _ip_route_lock.acquire()
-    try:
-        _ip_route.route(
-            'del',
-            dst=dst_addr,
-        )
-    except pyroute2.netlink.exceptions.NetlinkError as err:
-        if err.code != 3:
-            raise
-    finally:
-        _ip_route_lock.release()
-
 def add_route(dst_addr, via_addr):
     if '/' not in dst_addr:
         dst_addr += '/32'
@@ -385,6 +370,73 @@ def add_route(dst_addr, via_addr):
                 gateway=via_addr,
             )
         else:
+            raise
+    finally:
+        _ip_route_lock.release()
+
+def del_route(dst_addr):
+    if '/' not in dst_addr:
+        dst_addr += '/32'
+
+    _ip_route_lock.acquire()
+    try:
+        _ip_route.route(
+            'del',
+            dst=dst_addr,
+        )
+    except pyroute2.netlink.exceptions.NetlinkError as err:
+        if err.code != 3:
+            raise
+    finally:
+        _ip_route_lock.release()
+
+def add_route6(dst_addr, via_addr):
+    if '/' not in dst_addr:
+        dst_addr += '/128'
+
+    _ip_route_lock.acquire()
+    try:
+        _ip_route.route(
+            'add',
+            family=pyroute2.iproute.AF_INET6,
+            dst=dst_addr,
+            gateway=via_addr,
+        )
+    except pyroute2.netlink.exceptions.NetlinkError as err:
+        if err.code == 17:
+            try:
+                _ip_route.route(
+                    'del',
+                    family=pyroute2.iproute.AF_INET6,
+                    dst=dst_addr,
+                )
+            except pyroute2.netlink.exceptions.NetlinkError as err:
+                if err.code != 3:
+                    raise
+            _ip_route.route(
+                'add',
+                family=pyroute2.iproute.AF_INET6,
+                dst=dst_addr,
+                gateway=via_addr,
+            )
+        else:
+            raise
+    finally:
+        _ip_route_lock.release()
+
+def del_route6(dst_addr):
+    if '/' not in dst_addr:
+        dst_addr += '/128'
+
+    _ip_route_lock.acquire()
+    try:
+        _ip_route.route(
+            'del',
+            family=pyroute2.iproute.AF_INET6,
+            dst=dst_addr,
+        )
+    except pyroute2.netlink.exceptions.NetlinkError as err:
+        if err.code != 3:
             raise
     finally:
         _ip_route_lock.release()

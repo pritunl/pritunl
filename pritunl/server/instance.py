@@ -24,17 +24,16 @@ import subprocess
 import threading
 import traceback
 import re
-import collections
 import pymongo
 import datetime
 
-_resource_locks = collections.defaultdict(threading.Lock)
+_instances = {}
+_instances_lock = threading.Lock()
 
 class ServerInstance(object):
     def __init__(self, server):
         self.server = server
         self.id = utils.ObjectId()
-        self.resource_lock = None
         self.interrupt = False
         self.sock_interrupt = False
         self.clean_exit = False
@@ -43,17 +42,17 @@ class ServerInstance(object):
         self.primary_user = None
         self.process = None
         self.vxlan = None
-        self.auth_log_process = None
         self.iptables = iptables.Iptables()
         self.iptables_lock = threading.Lock()
         self.tun_nat = False
         self.server_links = []
         self.route_advertisements = set()
         self._temp_path = utils.get_temp_path()
-        self.ovpn_conf_path = os.path.join(self._temp_path,
-            OVPN_CONF_NAME)
-        self.management_socket_path = os.path.join(settings.conf.var_run_path,
-            MANAGEMENT_SOCKET_NAME % self.id)
+        self.ovpn_conf_path = os.path.join(self._temp_path, OVPN_CONF_NAME)
+        self.management_socket_path = os.path.join(
+            settings.conf.var_run_path,
+            MANAGEMENT_SOCKET_NAME % self.id,
+        )
 
     @cached_static_property
     def collection(cls):
@@ -67,16 +66,12 @@ class ServerInstance(object):
     def routes_collection(cls):
         return mongo.get_collection('routes_reserve')
 
-    @cached_property
-    def route_addr(self):
-        if self.vxlan and self.vxlan.vxlan_addr:
-            return self.vxlan.vxlan_addr
-        return
-
     def get_cursor_id(self):
         return messenger.get_cursor_id('servers')
 
-    def is_sock_interrupt(self):
+    def is_interrupted(self):
+        if _instances.get(self.server.id) != self:
+            return False
         return self.sock_interrupt
 
     def publish(self, message, transaction=None, extra=None):
@@ -94,33 +89,48 @@ class ServerInstance(object):
                 yield msg
 
     def resources_acquire(self):
-        if self.resource_lock:
-            raise TypeError('Server resource lock already set')
+        if self.interface:
+            raise TypeError('Server resource already acquired')
 
-        def deadlock():
-            logger.error(
-                'Server resource deadlocked, check for mismatching datetime',
-                'server',
-                server_id=self.server.id,
-                instance_id=self.id,
-            )
+        _instances_lock.acquire()
+        try:
+            instance = _instances.get(self.server.id)
+            if instance:
+                logger.warning(
+                    'Stopping duplicate instance', 'server',
+                    server_id=self.server.id,
+                    instance_id=instance.id,
+                )
 
-        timer = threading.Timer(15, deadlock)
-        timer.start()
+                try:
+                    instance.stop_process()
+                except:
+                    logger.exception(
+                        'Failed to stop duplicate instance', 'server',
+                        server_id=self.server.id,
+                        instance_id=instance.id,
+                    )
 
-        self.resource_lock = _resource_locks[self.server.id]
-        self.resource_lock.acquire()
+                time.sleep(5)
+
+            _instances[self.server.id] = self
+        finally:
+            _instances_lock.release()
+
         self.interface = utils.interface_acquire(self.server.adapter_type)
 
-        timer.cancel()
-
     def resources_release(self):
-        if self.resource_lock:
-            time.sleep(5)
-            self.resource_lock.release()
-            utils.interface_release(self.server.adapter_type, self.interface)
+        interface = self.interface
+        if interface:
+            utils.interface_release(self.server.adapter_type, interface)
             self.interface = None
-            self.resource_lock = None
+
+        _instances_lock.acquire()
+        try:
+            if _instances.get(self.server.id) == self:
+                _instances.pop(self.server.id)
+        finally:
+            _instances_lock.release()
 
     def generate_ovpn_conf(self):
         if not self.server.primary_organization or \
@@ -195,6 +205,8 @@ class ServerInstance(object):
         if self.vxlan:
             push += 'push "route %s %s"\n' % utils.parse_network(
                 self.vxlan.vxlan_net)
+            if self.server.ipv6:
+                push += 'push "route-ipv6 %s"\n' % self.vxlan.vxlan_net6
 
         if self.server.network_mode == BRIDGE:
             host_int_data = self.host_interface_data
@@ -555,6 +567,8 @@ class ServerInstance(object):
 
         if self.vxlan:
             self.iptables.add_route(self.vxlan.vxlan_net)
+            if self.server.ipv6:
+                self.iptables.add_route(self.vxlan.vxlan_net6)
 
         self.iptables.generate()
 
@@ -622,15 +636,14 @@ class ServerInstance(object):
                 return False
 
     @interrupter
-    def openvpn_watch(self):
+    def _openvpn_stdout(self):
         while True:
             line = self.process.stdout.readline()
             if not line:
-                if self.process.poll() is not None:
-                    break
-                else:
-                    time.sleep(0.05)
-                    continue
+                if self.process.poll() is not None or self.is_interrupted():
+                    return
+                time.sleep(0.05)
+                continue
 
             yield
 
@@ -642,6 +655,36 @@ class ServerInstance(object):
                 )
 
             yield
+
+    @interrupter
+    def _openvpn_stderr(self):
+        while True:
+            line = self.process.stderr.readline()
+            if not line:
+                if self.process.poll() is not None or self.is_interrupted():
+                    return
+                time.sleep(0.05)
+                continue
+
+            yield
+
+            try:
+                self.server.output.push_output(line)
+            except:
+                logger.exception('Failed to push vpn output', 'server',
+                    server_id=self.server.id,
+                )
+
+            yield
+
+    def openvpn_output(self):
+        thread = threading.Thread(target=self._openvpn_stdout)
+        thread.daemon = True
+        thread.start()
+
+        thread = threading.Thread(target=self._openvpn_stderr)
+        thread.daemon = True
+        thread.start()
 
     @interrupter
     def _sub_thread(self, cursor_id):
@@ -672,6 +715,8 @@ class ServerInstance(object):
                             time.sleep(0.01)
                 except OSError:
                     pass
+        except GeneratorExit:
+            self.stop_process()
         except:
             logger.exception('Exception in messaging thread', 'server',
                 server_id=self.server.id,
@@ -716,6 +761,8 @@ class ServerInstance(object):
                         error_count = 0
 
                     yield
+                except GeneratorExit:
+                    self.stop_process()
                 except:
                     error_count += 1
                     if error_count >= 2 and self.stop_process():
@@ -765,6 +812,8 @@ class ServerInstance(object):
                                 pass
 
                     yield
+                except GeneratorExit:
+                    pass
                 except:
                     logger.exception(
                         'Failed to update route advertisement',
@@ -865,23 +914,6 @@ class ServerInstance(object):
         thread.daemon = True
         thread.start()
 
-    def stop_threads(self):
-        if self.vxlan:
-            try:
-                self.vxlan.stop()
-            except:
-                logger.exception('Failed to stop server vxlan', 'vxlan',
-                    server_id=self.server.id,
-                    instance_id=self.id,
-                )
-
-        if self.auth_log_process:
-            try:
-                self.auth_log_process.send_signal(signal.SIGINT)
-            except OSError as error:
-                if error.errno != 3:
-                    raise
-
     def _run_thread(self, send_events):
         from pritunl.server.utils import get_by_id
 
@@ -896,39 +928,107 @@ class ServerInstance(object):
             cur_timestamp=utils.now(),
         )
 
-        self.resources_acquire()
+        def timeout():
+            logger.error('Server startup timed out, stopping...', 'server',
+                server_id=self.server.id,
+                instance_id=self.id,
+                state=self.state,
+            )
+            self.stop_process()
+
+        self.state = 'init'
+        timer = threading.Timer(settings.vpn.op_timeout + 3, timeout)
+        timer.start()
+
         try:
+            self.resources_acquire()
+
             cursor_id = self.get_cursor_id()
 
+            if self.is_interrupted():
+                return
+
+            self.state = 'temp_path'
             os.makedirs(self._temp_path)
 
+            if self.is_interrupted():
+                return
+
+            self.state = 'ip_forwarding'
             self.enable_ip_forwarding()
+
+            if self.is_interrupted():
+                return
+
+            self.state = 'bridge_start'
             self.bridge_start()
+
+            if self.is_interrupted():
+                return
 
             if self.server.replicating and self.server.vxlan:
                 try:
-                    self.vxlan = vxlan.get_vxlan(self.server.id)
+                    self.state = 'get_vxlan'
+                    self.vxlan = vxlan.get_vxlan(self.server.id,
+                        self.server.ipv6)
+
+                    if self.is_interrupted():
+                        return
+
+                    self.state = 'start_vxlan'
                     self.vxlan.start()
+
+                    if self.is_interrupted():
+                        return
                 except:
                     logger.exception('Failed to setup server vxlan', 'vxlan',
                         server_id=self.server.id,
                         instance_id=self.id,
                     )
 
+            self.state = 'generate_ovpn_conf'
             self.generate_ovpn_conf()
 
+            if self.is_interrupted():
+                return
+
+            self.state = 'generate_iptables_rules'
             self.generate_iptables_rules()
+
+            if self.is_interrupted():
+                return
+
+            self.state = 'upsert_iptables_rules'
             self.iptables.upsert_rules()
 
+            if self.is_interrupted():
+                return
+
+            self.state = 'init_route_advertisements'
             self.init_route_advertisements()
 
+            if self.is_interrupted():
+                return
+
+            self.state = 'openvpn_start'
             self.process = self.openvpn_start()
             self.start_threads(cursor_id)
 
+            if self.is_interrupted():
+                return
+
+            self.state = 'instance_com_start'
             self.instance_com = ServerInstanceCom(self.server, self)
             self.instance_com.start()
 
+            if self.is_interrupted():
+                return
+
+            self.state = 'events'
             self.publish('started')
+
+            if self.is_interrupted():
+                return
 
             if send_events:
                 event.Event(type=SERVERS_UPDATED)
@@ -937,14 +1037,29 @@ class ServerInstance(object):
                 for org_id in self.server.organizations:
                     event.Event(type=USERS_UPDATED, resource_id=org_id)
 
+                    if self.is_interrupted():
+                        return
+
             for link_doc in self.server.links:
                 if self.server.id > link_doc['server_id']:
+                    self.state = 'instance_link'
                     instance_link = ServerInstanceLink(
                         server=self.server,
                         linked_server=get_by_id(link_doc['server_id']),
                     )
                     self.server_links.append(instance_link)
                     instance_link.start()
+
+                    if self.is_interrupted():
+                        return
+
+            self.state = 'running'
+            self.openvpn_output()
+
+            if self.is_interrupted():
+                return
+
+            timer.cancel()
 
             plugins.caller(
                 'server_start',
@@ -986,7 +1101,12 @@ class ServerInstance(object):
                 vxlan=self.vxlan,
             )
             try:
-                self.openvpn_watch()
+                while True:
+                    if self.process.poll() is not None:
+                        break
+                    if self.is_interrupted():
+                        self.stop_process()
+                    time.sleep(0.05)
             finally:
                 plugins.caller(
                     'server_stop',
@@ -1028,10 +1148,6 @@ class ServerInstance(object):
                     vxlan=self.vxlan,
                 )
 
-            self.interrupt = True
-            self.bridge_stop()
-            self.iptables.clear_rules()
-
             if not self.clean_exit:
                 event.Event(type=SERVERS_UPDATED)
                 self.server.send_link_events()
@@ -1040,7 +1156,6 @@ class ServerInstance(object):
                         self.server.name))
         except:
             try:
-                self.interrupt = True
                 self.stop_process()
             except:
                 logger.exception('Server stop error', 'server',
@@ -1053,18 +1168,37 @@ class ServerInstance(object):
                 instance_id=self.id,
             )
         finally:
+            timer.cancel()
+
+            self.interrupt = True
+            self.sock_interrupt = True
+
             try:
-                if self.resource_lock:
-                    self.bridge_stop()
-                    self.iptables.clear_rules()
+                self.bridge_stop()
             except:
-                logger.exception('Server resource error', 'server',
+                logger.exception('Failed to remove server bridge', 'server',
                     server_id=self.server.id,
                     instance_id=self.id,
                 )
 
             try:
-                self.stop_threads()
+                self.iptables.clear_rules()
+            except:
+                logger.exception('Server iptables clean up error', 'server',
+                    server_id=self.server.id,
+                    instance_id=self.id,
+                )
+
+            if self.vxlan:
+                try:
+                    self.vxlan.stop()
+                except:
+                    logger.exception('Failed to stop server vxlan', 'server',
+                        server_id=self.server.id,
+                        instance_id=self.id,
+                    )
+
+            try:
                 self.collection.update({
                     '_id': self.server.id,
                     'instances.instance_id': self.id,

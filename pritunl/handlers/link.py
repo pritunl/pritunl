@@ -483,19 +483,19 @@ def link_state_put():
     auth_signature = flask.request.headers.get('Auth-Signature', None)
     if not auth_token or not auth_timestamp or not auth_nonce or \
             not auth_signature:
-        return flask.abort(401)
+        return flask.abort(406)
     auth_nonce = auth_nonce[:32]
 
     try:
         if abs(int(auth_timestamp) - int(utils.time_now())) > \
                 settings.app.auth_time_window:
-            return flask.abort(401)
+            return flask.abort(408)
     except ValueError:
-        return flask.abort(401)
+        return flask.abort(405)
 
     host = link.get_host(utils.ObjectId(auth_token))
     if not host:
-        return flask.abort(401)
+        return flask.abort(404)
 
     auth_string = '&'.join([
         auth_token,
@@ -506,7 +506,7 @@ def link_state_put():
     ])
 
     if len(auth_string) > AUTH_SIG_STRING_MAX_LEN:
-        return flask.abort(401)
+        return flask.abort(413)
 
     auth_test_signature = base64.b64encode(hmac.new(
         host.secret.encode(), auth_string,
@@ -522,12 +522,13 @@ def link_state_put():
             'timestamp': utils.now(),
         })
     except pymongo.errors.DuplicateKeyError:
-        return flask.abort(401)
+        return flask.abort(409)
 
     host.load_link()
 
     host.version = flask.request.json.get('version')
     host.public_address = flask.request.json.get('public_address')
+    host.address6 = flask.request.json.get('address6')
 
     data = json.dumps(host.get_state(), default=lambda x: str(x))
     data += (16 - len(data) % 16) * '\x00'
@@ -566,20 +567,20 @@ def link_state_delete():
     auth_nonce = flask.request.headers.get('Auth-Nonce', None)
     auth_signature = flask.request.headers.get('Auth-Signature', None)
     if not auth_token or not auth_timestamp or not auth_nonce or \
-        not auth_signature:
-        return flask.abort(401)
+            not auth_signature:
+        return flask.abort(406)
     auth_nonce = auth_nonce[:32]
 
     try:
         if abs(int(auth_timestamp) - int(utils.time_now())) > \
-            settings.app.auth_time_window:
-            return flask.abort(401)
+                settings.app.auth_time_window:
+            return flask.abort(408)
     except ValueError:
-        return flask.abort(401)
+        return flask.abort(405)
 
     host = link.get_host(utils.ObjectId(auth_token))
     if not host:
-        return flask.abort(401)
+        return flask.abort(404)
 
     auth_string = '&'.join([
         auth_token,
@@ -590,7 +591,7 @@ def link_state_delete():
     ])
 
     if len(auth_string) > AUTH_SIG_STRING_MAX_LEN:
-        return flask.abort(401)
+        return flask.abort(413)
 
     auth_test_signature = base64.b64encode(hmac.new(
         host.secret.encode(), auth_string,
@@ -606,7 +607,7 @@ def link_state_delete():
             'timestamp': utils.now(),
         })
     except pymongo.errors.DuplicateKeyError:
-        return flask.abort(401)
+        return flask.abort(409)
 
     host.set_inactive()
 

@@ -35,6 +35,8 @@ def _dict():
             'pin_mode': settings.user.pin_mode,
             'sso': settings.app.sso,
             'sso_match': settings.app.sso_match,
+            'sso_google_key': 'demo',
+            'sso_google_email': 'demo',
             'sso_duo_token': 'demo',
             'sso_duo_secret': 'demo',
             'sso_duo_host': 'demo',
@@ -46,11 +48,13 @@ def _dict():
             'sso_saml_issuer_url': 'demo',
             'sso_saml_cert': 'demo',
             'sso_okta_token': 'demo',
+            'sso_okta_push': settings.app.sso_okta_push,
             'sso_onelogin_id': 'demo',
             'sso_onelogin_secret': 'demo',
             'sso_radius_secret': 'demo',
             'sso_radius_host': 'demo',
             'sso_client_cache': settings.app.sso_client_cache,
+            'client_reconnect': settings.user.reconnect,
             'public_address': settings.local.host.public_addr,
             'public_address6': settings.local.host.public_addr6,
             'routed_subnet6': settings.local.host.routed_subnet6,
@@ -106,6 +110,8 @@ def _dict():
             'pin_mode': settings.user.pin_mode,
             'sso': settings.app.sso,
             'sso_match': settings.app.sso_match,
+            'sso_google_key': settings.app.sso_google_key,
+            'sso_google_email': settings.app.sso_google_email,
             'sso_duo_token': settings.app.sso_duo_token,
             'sso_duo_secret': settings.app.sso_duo_secret,
             'sso_duo_host': settings.app.sso_duo_host,
@@ -117,11 +123,13 @@ def _dict():
             'sso_saml_issuer_url': settings.app.sso_saml_issuer_url,
             'sso_saml_cert': settings.app.sso_saml_cert,
             'sso_okta_token': settings.app.sso_okta_token,
+            'sso_okta_push': settings.app.sso_okta_push,
             'sso_onelogin_id': settings.app.sso_onelogin_id,
             'sso_onelogin_secret': settings.app.sso_onelogin_secret,
             'sso_radius_secret': settings.app.sso_radius_secret,
             'sso_radius_host': settings.app.sso_radius_host,
             'sso_client_cache': settings.app.sso_client_cache,
+            'client_reconnect': settings.user.reconnect,
             'public_address': settings.local.host.public_addr,
             'public_address6': settings.local.host.public_addr6,
             'routed_subnet6': settings.local.host.routed_subnet6,
@@ -373,6 +381,20 @@ def settings_put():
         else:
             settings.app.sso_match = None
 
+    if 'sso_google_key' in flask.request.json:
+        settings_commit = True
+        sso_google_key = flask.request.json['sso_google_key'] or None
+        if sso_google_key != settings.app.sso_google_key:
+            changes.add('sso')
+        settings.app.sso_google_key = sso_google_key
+
+    if 'sso_google_email' in flask.request.json:
+        settings_commit = True
+        sso_google_email = flask.request.json['sso_google_email'] or None
+        if sso_google_email != settings.app.sso_google_email:
+            changes.add('sso')
+        settings.app.sso_google_email = sso_google_email
+
     if 'sso_duo_token' in flask.request.json:
         settings_commit = True
         sso_duo_token = flask.request.json['sso_duo_token'] or None
@@ -463,6 +485,13 @@ def settings_put():
             changes.add('sso')
         settings.app.sso_okta_token = sso_okta_token
 
+    if 'sso_okta_push' in flask.request.json:
+        sso_mode = settings.app.sso
+        if sso_mode and sso_mode in (SAML_OKTA_AUTH, SAML_OKTA_YUBICO_AUTH):
+            settings_commit = True
+            sso_okta_push = flask.request.json['sso_okta_push']
+            settings.app.sso_okta_push = True if sso_okta_push else False
+
     if 'sso_onelogin_id' in flask.request.json:
         settings_commit = True
         sso_onelogin_id = flask.request.json['sso_onelogin_id'] or None
@@ -485,6 +514,12 @@ def settings_put():
         if sso_client_cache != settings.app.sso_client_cache:
             changes.add('sso')
         settings.app.sso_client_cache = sso_client_cache
+
+    if 'client_reconnect' in flask.request.json:
+        settings_commit = True
+        client_reconnect = True if \
+            flask.request.json['client_reconnect'] else False
+        settings.user.reconnect = client_reconnect
 
     if 'sso_yubico_client' in flask.request.json:
         settings_commit = True

@@ -81,6 +81,10 @@
       <label>SAML Certificate</label><br>
       <textarea class="form-control" rows="4" spellcheck="false" data-toggle="tooltip" title="The SAML X.509 Certificate" placeholder="Enter saml certificate"><%- sso_saml_cert %></textarea>
     </div>
+    <div class="sso-google-key form-group" <%= !sso || sso.indexOf('google') === -1 ? 'style="display: none;"' : '' %>>
+      <label>Google JSON Private Key</label><br>
+      <textarea class="form-control" rows="4" spellcheck="false" data-toggle="tooltip" title="Optional, private key for service account in JSON format. This will allow a case sensetive match for any of the user groups to an existing organization. The group names will be matched to the first matching organization name in sorted order. If empty organization wont be matched to user groups. Also requires Google Admin Email." placeholder="Enter Google JSON private key"><%- sso_google_key %></textarea>
+    </div>
     <div class="sso-token form-group" <%= !sso || sso.indexOf('duo') === -1 ? 'style="display: none;"' : '' %>>
       <label>Duo Integration Key</label>
       <input type="text" class="form-control" placeholder="Enter integration key" value="<%- sso_duo_token || '' %>">
@@ -115,7 +119,7 @@
     </div>
     <div class="monitoring form-group">
       <label>Monitoring Mode</label>
-      <select class="form-control" data-toggle="tooltip" title="Monitoring mode">
+      <select class="form-control" data-toggle="tooltip" title="Enable to send performance and usage metrics to InfluxDB ">
         <option value="none" <%= !monitoring ? 'selected' : '' %>>Disabled</option>
         <option value="influxdb" <%= monitoring === 'influxdb' ? 'selected' : '' %>>InfluxDB</option>
       </select>
@@ -164,6 +168,10 @@
       <label>Google Apps Domain</label>
       <input type="text" class="form-control" spellcheck="false" placeholder="Enter Google Apps domain" value="<%- sso_match || '' %>" data-toggle="tooltip" title="Google apps domain to match against users email address. Multiple domains can be entrered sperated by a comma. (example: pritunl.com)">
     </div>
+    <div class="sso-google-email form-group" <%= !sso || sso.indexOf('google') === -1 ? 'style="display: none;"' : '' %>>
+      <label>Google Admin Email</label>
+      <input type="text" class="form-control" spellcheck="false" placeholder="Enter Google admin email" value="<%- sso_google_email || '' %>" data-toggle="tooltip" title="Optional, the email address of an administrator user in the Google G Suite to delegate API access to. This user will be used to get the groups of Google users. Only needed when providing the Google private key.">
+    </div>
     <div class="sso-match-slack form-group" <%= !sso || sso.indexOf('slack') === -1 ? 'style="display: none;"' : '' %>>
       <label>Slack Team</label>
       <input type="text" class="form-control" spellcheck="false" placeholder="Enter slack team" value="<%- sso_match || '' %>" data-toggle="tooltip" title="Slack team domain to match against users team. (example: pritunl.slack.com)">
@@ -189,9 +197,21 @@
         <option value="passcode" <%= sso_duo_mode === 'passcode' ? 'selected' : '' %>>Passcode</option>
       </select>
     </div>
+    <div class="sso-okta-push toggle-form form-group" data-toggle="tooltip" title="Enable Okta Push for connection authentication when it is available" <%= (sso === 'saml_okta' || sso === 'saml_okta_yubico') ? '' : 'style="display: none;"' %>>
+      <label>Enable Okta Push</label>
+      <div class="selector <%= sso_okta_push ? 'selected' : '' %> no-select">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
     <div class="sso-yubico-secret form-group">
       <label>Yubico Secret Key</label>
       <input type="text" class="form-control" placeholder="Enter secret key" value="<%- sso_yubico_secret || '' %>">
+    </div>
+    <div class="client-reconnect toggle-form form-group" data-toggle="tooltip" title="Enable auto reconnecting on Pritunl client" <%= sso ? '' : 'style="display: none;"' %>>
+      <label>Enable Client Reconnect</label>
+      <div class="selector <%= client_reconnect ? 'selected' : '' %> no-select">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
     </div>
   </div>
 </div>

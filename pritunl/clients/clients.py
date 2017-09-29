@@ -40,11 +40,12 @@ class Clients(object):
         self.iroutes_lock = threading.RLock()
         self.iroutes_index = collections.defaultdict(set)
         self.call_queue = callqueue.CallQueue(
-            self.instance.is_sock_interrupt, 512)
+            self.instance.is_interrupted, 512)
         self.clients_call_queue = callqueue.CallQueue(
-            self.instance.is_sock_interrupt)
+            self.instance.is_interrupted)
         self.obj_cache = objcache.ObjCache()
         self.client_routes = set()
+        self.client_routes6 = set()
 
         self.clients = docdb.DocDb(
             'user_id',
@@ -80,6 +81,12 @@ class Clients(object):
         if self.instance.vxlan and self.instance.vxlan.vxlan_addr:
             return self.instance.vxlan.vxlan_addr
         return settings.local.host.local_addr
+
+    @cached_property
+    def route_addr6(self):
+        if self.instance.vxlan and self.instance.vxlan.vxlan_addr6:
+            return self.instance.vxlan.vxlan_addr6
+        return settings.local.host.local_addr6
 
     def get_org(self, org_id):
         org = self.obj_cache.get(org_id)
@@ -186,6 +193,9 @@ class Clients(object):
                 if link_svr.replicating and link_svr.vxlan:
                     client_conf += 'push "route %s %s"\n' % \
                         utils.parse_network(vxlan.get_vxlan_net(link_svr.id))
+                    if link_svr.ipv6:
+                        client_conf += 'push "route-ipv6 %s"\n' % \
+                            vxlan.get_vxlan_net6(link_svr.id)
 
             if platform == 'android':
                 client_conf += 'push "route %s %s"\n' % (
@@ -1006,7 +1016,7 @@ class Clients(object):
             'virt_address': client['virt_address'],
             'virt_address6': client['virt_address6'],
             'host_address': self.route_addr,
-            'host_address6': settings.local.host.local_addr6,
+            'host_address6': self.route_addr6,
             'dns_servers': client['dns_servers'],
             'dns_suffix': client['dns_suffix'],
             'connected_since': int(timestamp.strftime('%s')),
@@ -1035,7 +1045,7 @@ class Clients(object):
                     'virt_address': client['virt_address'],
                     'virt_address6': client['virt_address6'],
                     'host_address': self.route_addr,
-                    'host_address6': settings.local.host.local_addr6,
+                    'host_address6': self.route_addr6,
                 })
         except:
             logger.exception('Error adding client', 'server',
@@ -1376,7 +1386,7 @@ class Clients(object):
     def init_routes(self):
         for doc in self.collection.find({
                     'server_id': self.server.id,
-                    'user_type': CERT_CLIENT,
+                    'type': CERT_CLIENT,
                 }):
             if doc['host_id'] == settings.local.host_id:
                 continue
@@ -1389,7 +1399,7 @@ class Clients(object):
             if not virt_address or not host_address:
                 continue
 
-            if self.instance.is_sock_interrupt:
+            if self.instance.is_interrupted():
                 return
 
             self.add_route(virt_address, virt_address6,
@@ -1401,43 +1411,84 @@ class Clients(object):
         for virt_address in self.client_routes.copy():
             self.remove_route(virt_address, None, None, None)
 
+        for virt_address6 in self.client_routes6.copy():
+            self.remove_route(None, virt_address6, None, None)
+
     def add_route(self, virt_address, virt_address6,
             host_address, host_address6):
-        virt_address = virt_address.split('/')[0]
+        if virt_address:
+            virt_address = virt_address.split('/')[0]
 
-        try:
-            if virt_address in self.client_routes:
-                try:
-                    self.client_routes.remove(virt_address)
-                except KeyError:
-                    pass
-                utils.del_route(virt_address)
+            try:
+                if virt_address in self.client_routes:
+                    try:
+                        self.client_routes.remove(virt_address)
+                    except KeyError:
+                        pass
+                    utils.del_route(virt_address)
 
-            if not host_address or \
-                    host_address == settings.local.host.local_addr or \
-                    host_address == self.route_addr:
-                return
+                if not host_address or \
+                        host_address == settings.local.host.local_addr or \
+                        host_address == self.route_addr:
+                    return
 
-            self.client_routes.add(virt_address)
-            utils.add_route(virt_address, host_address)
-        except:
-            logger.exception('Failed to add route', 'clients',
-                virt_address=virt_address,
-                virt_address6=virt_address6,
-                host_address=host_address,
-                host_address6=host_address6,
-            )
+                self.client_routes.add(virt_address)
+                utils.add_route(virt_address, host_address)
+            except:
+                logger.exception('Failed to add route', 'clients',
+                    virt_address=virt_address,
+                    virt_address6=virt_address6,
+                    host_address=host_address,
+                    host_address6=host_address6,
+                )
+
+        if self.server.ipv6 and virt_address6:
+            virt_address6 = virt_address6.split('/')[0]
+
+            try:
+                if virt_address6 in self.client_routes6:
+                    try:
+                        self.client_routes6.remove(virt_address6)
+                    except KeyError:
+                        pass
+                    utils.del_route6(virt_address6)
+
+                if not host_address6 or \
+                        host_address6 == settings.local.host.local_addr6 or \
+                        host_address6 == self.route_addr6:
+                    return
+
+                self.client_routes6.add(virt_address6)
+                utils.add_route6(virt_address6, host_address6)
+            except:
+                logger.exception('Failed to add route6', 'clients',
+                    virt_address=virt_address,
+                    virt_address6=virt_address6,
+                    host_address=host_address,
+                    host_address6=host_address6,
+                )
 
     def remove_route(self, virt_address, virt_address6,
             host_address, host_address6):
-        virt_address = virt_address.split('/')[0]
+        if virt_address:
+            virt_address = virt_address.split('/')[0]
 
-        try:
-            self.client_routes.remove(virt_address)
-        except KeyError:
-            pass
+            try:
+                self.client_routes.remove(virt_address)
+            except KeyError:
+                pass
 
-        utils.del_route(virt_address)
+            utils.del_route(virt_address)
+
+        if virt_address6:
+            virt_address6 = virt_address6.split('/')[0]
+
+            try:
+                self.client_routes6.remove(virt_address6)
+            except KeyError:
+                pass
+
+            utils.del_route6(virt_address6)
 
     def start(self):
         _port_listeners[self.instance.id] = self.on_port_forwarding

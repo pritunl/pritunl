@@ -3,21 +3,4 @@
     <label>Name</label>
     <input type="text" class="form-control" placeholder="Enter name" data-toggle="tooltip" title="Name of organization" value="<%- name %>" autofocus>
   </div>
-  <div class="auth-toggle toggle-form form-group">
-    <label>Enable Token Authorization</label>
-    <div class="selector <%= auth_api ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Enable token authorization api">
-      <span class="selector-inner glyphicon glyphicon-ok"></span>
-    </div>
-  </div>
-  <div class="auth-token-form" <%= auth_api ? '' : 'style="display: none"' %>>
-    <div class="auth-token form-group">
-      <label>Authorization Token</label>
-      <input type="text" class="form-control" placeholder="Auth Token" value="<%- auth_token || '' %>" readonly>
-    </div>
-    <div class="auth-secret form-group">
-      <label>Authorization Secret</label>
-      <input type="text" class="form-control" placeholder="Auth Secret" value="<%- auth_secret || '' %>" readonly>
-    </div>
-    <button type="button" class="generate-new-auth-key btn btn-danger">Generate New Authorization Key</button>
-  </div>
 </div>

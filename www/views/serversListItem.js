@@ -271,7 +271,7 @@ define([
     onDelete: function(evt) {
       var model = this.model.clone();
 
-      if (evt.shiftKey && evt.ctrlKey) {
+      if (evt.shiftKey && evt.ctrlKey && evt.altKey) {
         model.destroy();
         return;
       }

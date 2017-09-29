@@ -42,4 +42,4 @@ class AcmeUpdate(task.Task):
         acme.update_acme_cert()
         app.update_server()
 
-task.add_task(AcmeUpdate, minutes=35, run_on_start=True)
+task.add_task(AcmeUpdate, hours=4, minutes=35, run_on_start=True)

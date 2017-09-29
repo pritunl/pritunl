@@ -1141,11 +1141,9 @@ class Server(mongo.MongoObject):
 
         doc = self.collection.find_and_modify({
             '_id': self.id,
-        }, {
-            '$pull': {
-                'hosts': host_id,
-            },
-        }, {
+        }, {'$pull': {
+            'hosts': host_id,
+        }}, fields={
             'hosts': True,
         }, new=True)
 

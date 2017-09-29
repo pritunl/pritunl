@@ -27,6 +27,7 @@ for i in xrange(COUNT):
         "sync_token" : "kVd5DKrRne30vJXhbh0LVWSHphigbGuF",
         "type" : "client",
         "email" : None,
+        "auth_type": "local",
     }
 
     collection.insert_one(doc)

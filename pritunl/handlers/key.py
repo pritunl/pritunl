@@ -3,6 +3,7 @@ from pritunl.exceptions import *
 from pritunl import utils
 from pritunl import static
 from pritunl import organization
+from pritunl import user
 from pritunl import settings
 from pritunl import app
 from pritunl import auth
@@ -250,7 +251,7 @@ def user_key_pin_put(key_id):
     pin = utils.filter_str(flask.request.json.get('pin')) or None
 
     if pin:
-        if not pin.isdigit():
+        if settings.user.pin_digits_only and not pin.isdigit():
             return utils.jsonify({
                 'error': PIN_NOT_DIGITS,
                 'error_msg': PIN_NOT_DIGITS_MSG,
@@ -290,11 +291,11 @@ def user_linked_key_page_get(short_code):
         return flask.abort(404)
 
     org = organization.get_by_id(doc['org_id'])
-    user = org.get_user(id=doc['user_id'])
-    if user.disabled:
+    usr = org.get_user(id=doc['user_id'])
+    if usr.disabled:
         return flask.abort(403)
 
-    user.audit_event('user_profile',
+    usr.audit_event('user_profile',
         'User temporary profile link viewed',
         remote_addr=utils.get_remote_addr(),
     )
@@ -304,7 +305,7 @@ def user_linked_key_page_get(short_code):
     else:
         view_name = KEY_VIEW_NAME
 
-    if RADIUS_AUTH in user.auth_type or \
+    if RADIUS_AUTH in usr.auth_type or \
             settings.user.pin_mode == PIN_DISABLED:
         header_class = 'pin-disabled'
     else:
@@ -322,22 +323,22 @@ def user_linked_key_page_get(short_code):
     key_page = key_page.replace('<%= uri_url %>', uri_url)
 
     key_page = key_page.replace('<%= user_name %>', '%s - %s' % (
-        org.name, user.name))
+        org.name, usr.name))
     key_page = key_page.replace('<%= user_key_tar_url %>', '/key/%s.tar' % (
         doc['key_id']))
     key_page = key_page.replace('<%= user_key_zip_url %>', '/key/%s.zip' % (
         doc['key_id']))
 
-    if org.otp_auth and not user.has_duo_passcode and not user.has_yubikey:
-        key_page = key_page.replace('<%= user_otp_key %>', user.otp_secret)
+    if org.otp_auth and not usr.has_duo_passcode and not usr.has_yubikey:
+        key_page = key_page.replace('<%= user_otp_key %>', usr.otp_secret)
         key_page = key_page.replace('<%= user_otp_url %>',
             'otpauth://totp/%s@%s?secret=%s' % (
-                user.name, org.name, user.otp_secret))
+                usr.name, org.name, usr.otp_secret))
     else:
         key_page = key_page.replace('<%= user_otp_key %>', '')
         key_page = key_page.replace('<%= user_otp_url %>', '')
 
-    if user.pin:
+    if usr.pin:
         key_page = key_page.replace('<%= cur_pin_display %>', 'block')
     else:
         key_page = key_page.replace('<%= cur_pin_display %>', 'none')
@@ -353,7 +354,7 @@ def user_linked_key_page_get(short_code):
             'href="/key_onc/%s.zip">Download Chromebook Profiles</a>\n' % (
                 doc['key_id'])
 
-    for server in user.iter_servers():
+    for server in usr.iter_servers():
         conf_links += '<a class="btn btn-sm download-profile" ' + \
             'title="Download Profile" ' + \
             'href="/key/%s/%s.key">Download Profile (%s)</a>\n' % (
@@ -384,18 +385,18 @@ def user_uri_key_page_get(short_code):
         return flask.abort(404)
 
     org = organization.get_by_id(doc['org_id'])
-    user = org.get_user(id=doc['user_id'])
-    if user.disabled:
+    usr = org.get_user(id=doc['user_id'])
+    if usr.disabled:
         return flask.abort(403)
 
-    user.audit_event('user_profile',
+    usr.audit_event('user_profile',
         'User temporary profile downloaded from pritunl client',
         remote_addr=utils.get_remote_addr(),
     )
 
     keys = {}
-    for server in user.iter_servers():
-        key = user.build_key_conf(server.id)
+    for server in usr.iter_servers():
+        key = usr.build_key_conf(server.id)
         keys[key['name']] = key['conf']
 
     return utils.jsonify(keys)
@@ -413,16 +414,16 @@ def user_linked_key_conf_get(key_id, server_id):
     if not org:
         return flask.abort(404)
 
-    user = org.get_user(id=doc['user_id'])
-    if not user:
+    usr = org.get_user(id=doc['user_id'])
+    if not usr:
         return flask.abort(404)
 
-    if user.disabled:
+    if usr.disabled:
         return flask.abort(403)
 
-    key_conf = user.build_key_conf(server_id)
+    key_conf = usr.build_key_conf(server_id)
 
-    user.audit_event('user_profile',
+    usr.audit_event('user_profile',
         'User profile downloaded with temporary profile link',
         remote_addr=utils.get_remote_addr(),
     )
@@ -452,41 +453,41 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
     auth_signature = flask.request.headers.get('Auth-Signature', None)
     if not auth_token or not auth_timestamp or not auth_nonce or \
             not auth_signature:
-        return flask.abort(401)
+        return flask.abort(406)
     auth_nonce = auth_nonce[:32]
 
     try:
         if abs(int(auth_timestamp) - int(utils.time_now())) > \
                 settings.app.auth_time_window:
-            return flask.abort(401)
+            return flask.abort(408)
     except ValueError:
-        return flask.abort(401)
+        return flask.abort(405)
 
     org = organization.get_by_id(org_id)
     if not org:
-        return flask.abort(401)
+        return flask.abort(404)
 
-    user = org.get_user(id=user_id)
-    if not user:
-        return flask.abort(401)
-    elif not user.sync_secret:
-        return flask.abort(401)
+    usr = org.get_user(id=user_id)
+    if not usr:
+        return flask.abort(404)
+    elif not usr.sync_secret:
+        return flask.abort(410)
 
-    if auth_token != user.sync_token:
-        return flask.abort(401)
+    if auth_token != usr.sync_token:
+        return flask.abort(410)
 
-    if user.disabled:
+    if usr.disabled:
         return flask.abort(403)
 
     auth_string = '&'.join([
-        user.sync_token, auth_timestamp, auth_nonce, flask.request.method,
+        usr.sync_token, auth_timestamp, auth_nonce, flask.request.method,
         flask.request.path])
 
     if len(auth_string) > AUTH_SIG_STRING_MAX_LEN:
-        return flask.abort(401)
+        return flask.abort(413)
 
     auth_test_signature = base64.b64encode(hmac.new(
-        user.sync_secret.encode(), auth_string,
+        usr.sync_secret.encode(), auth_string,
         hashlib.sha512).digest())
     if not utils.const_compare(auth_signature, auth_test_signature):
         return flask.abort(401)
@@ -499,17 +500,17 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
             'timestamp': utils.now(),
         })
     except pymongo.errors.DuplicateKeyError:
-        return flask.abort(401)
+        return flask.abort(409)
 
-    key_conf = user.sync_conf(server_id, key_hash)
+    key_conf = usr.sync_conf(server_id, key_hash)
     if key_conf:
-        user.audit_event('user_profile',
+        usr.audit_event('user_profile',
             'User profile synced from pritunl client',
             remote_addr=utils.get_remote_addr(),
         )
 
         sync_signature = base64.b64encode(hmac.new(
-            user.sync_secret.encode(), key_conf['conf'],
+            usr.sync_secret.encode(), key_conf['conf'],
             hashlib.sha512).digest())
 
         return utils.jsonify({
@@ -562,6 +563,7 @@ def sso_authenticate_post():
                 username=username,
             )
             return flask.abort(401)
+        groups = set(groups or [])
     else:
         logger.error('Duo authentication not valid', 'sso',
             username=username,
@@ -571,14 +573,19 @@ def sso_authenticate_post():
     if not org_id:
         org_id = settings.app.sso_org
 
-    org = organization.get_by_id(org_id)
-    if not org:
-        logger.error('Organization for Duo sso does not exist', 'sso',
-            org_id=org_id,
-        )
-        return flask.abort(405)
+    usr = user.find_user_auth(name=username, auth_type=DUO_AUTH)
+    if not usr:
+        org = organization.get_by_id(org_id)
+        if not org:
+            logger.error('Organization for Duo sso does not exist', 'sso',
+                org_id=org_id,
+            )
+            return flask.abort(405)
 
-    usr = org.find_user(name=username)
+        usr = org.find_user(name=username)
+    else:
+        org = usr.org
+
     if not usr:
         usr = org.new_user(name=username, email=email, type=CERT_CLIENT,
             auth_type=DUO_AUTH, groups=list(groups) if groups else None)
@@ -837,11 +844,12 @@ def sso_callback_get():
                 username=username,
             )
             return flask.abort(401)
+        groups = set(groups or [])
     else:
         username = params.get('username')[0]
         email = username
 
-        valid = sso.verify_google(username)
+        valid, google_groups = sso.verify_google(username)
         if not valid:
             return flask.abort(401)
 
@@ -860,6 +868,16 @@ def sso_callback_get():
                 username=username,
             )
             return flask.abort(401)
+        groups = set(groups or [])
+
+        if settings.app.sso_google_mode == 'groups':
+            groups = groups | set(google_groups)
+        else:
+            for org_name in sorted(google_groups):
+                org = organization.get_by_name(org_name, fields=('_id'))
+                if org:
+                    org_id = org.id
+                    break
 
     if DUO_AUTH in sso_mode:
         token = utils.generate_secret()
@@ -871,7 +889,7 @@ def sso_callback_get():
             'username': username,
             'email': email,
             'org_id': org_id,
-            'groups': groups,
+            'groups': list(groups) if groups else None,
             'timestamp': utils.now(),
         })
 
@@ -906,7 +924,7 @@ def sso_callback_get():
             'username': username,
             'email': email,
             'org_id': org_id,
-            'groups': groups,
+            'groups': list(groups) if groups else None,
             'timestamp': utils.now(),
         })
 
@@ -920,11 +938,16 @@ def sso_callback_get():
 
         return yubico_page.get_response()
 
-    org = organization.get_by_id(org_id)
-    if not org:
-        return flask.abort(405)
+    usr = user.find_user_auth(name=username, auth_type=sso_mode)
+    if not usr:
+        org = organization.get_by_id(org_id)
+        if not org:
+            return flask.abort(405)
 
-    usr = org.find_user(name=username)
+        usr = org.find_user(name=username)
+    else:
+        org = usr.org
+
     if not usr:
         usr = org.new_user(name=username, email=email, type=CERT_CLIENT,
             auth_type=sso_mode, groups=list(groups) if groups else None)
@@ -986,7 +1009,7 @@ def sso_duo_post():
     username = doc['username']
     email = doc['email']
     org_id = doc['org_id']
-    groups = doc['groups']
+    groups = set(doc['groups'] or [])
 
     if settings.app.sso_duo_mode == 'passcode':
         duo_auth = sso.Duo(
@@ -1036,13 +1059,18 @@ def sso_duo_post():
         )
         return flask.abort(401)
 
-    groups = ((groups or set()) | (groups2 or set())) or None
+    groups = groups | set(groups2 or [])
 
-    org = organization.get_by_id(org_id)
-    if not org:
-        return flask.abort(405)
+    usr = user.find_user_auth(name=username, auth_type=sso_mode)
+    if not usr:
+        org = organization.get_by_id(org_id)
+        if not org:
+            return flask.abort(405)
 
-    usr = org.find_user(name=username)
+        usr = org.find_user(name=username)
+    else:
+        org = usr.org
+
     if not usr:
         usr = org.new_user(name=username, email=email, type=CERT_CLIENT,
             auth_type=sso_mode, groups=list(groups) if groups else None)
@@ -1106,7 +1134,7 @@ def sso_yubico_post():
     username = doc['username']
     email = doc['email']
     org_id = doc['org_id']
-    groups = doc['groups']
+    groups = set(doc['groups'] or [])
 
     valid, yubico_id = sso.auth_yubico(key)
     if not valid:
@@ -1115,11 +1143,16 @@ def sso_yubico_post():
             'error_msg': YUBIKEY_INVALID_MSG,
         }, 401)
 
-    org = organization.get_by_id(org_id)
-    if not org:
-        return flask.abort(405)
+    usr = user.find_user_auth(name=username, auth_type=sso_mode)
+    if not usr:
+        org = organization.get_by_id(org_id)
+        if not org:
+            return flask.abort(405)
 
-    usr = org.find_user(name=username)
+        usr = org.find_user(name=username)
+    else:
+        org = usr.org
+
     if not usr:
         usr = org.new_user(name=username, email=email, type=CERT_CLIENT,
             auth_type=sso_mode, yubico_id=yubico_id,

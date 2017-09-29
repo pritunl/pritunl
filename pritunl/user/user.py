@@ -65,8 +65,11 @@ class User(mongo.MongoObject):
             dns_servers=None, dns_suffix=None, port_forwarding=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
-        self.org = org
-        self.org_id = org.id
+        if org:
+            self.org = org
+            self.org_id = org.id
+        else:
+            self.org = None
 
         if name is not None:
             self.name = name
@@ -504,6 +507,7 @@ class User(mongo.MongoObject):
             'password_mode': self._get_password_mode(svr),
             'push_auth': True if self.get_push_type() else False,
             'push_auth_ttl': settings.app.sso_client_cache_timeout,
+            'disable_reconnect': not settings.user.reconnect,
             'token': self.has_passcode(svr),
             'token_ttl': settings.app.sso_client_cache_timeout,
         }

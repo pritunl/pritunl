@@ -23,6 +23,7 @@ class Host(mongo.MongoObject):
         'priority',
         'ping_timestamp_ttl',
         'public_address',
+        'address6',
         'version',
     }
     fields_default = {
@@ -33,7 +34,8 @@ class Host(mongo.MongoObject):
     def __init__(self, link=None, location=None, name=None, link_id=None,
             location_id=None, secret=None, status=None, active=None,
             timeout=None, priority=None, ping_timestamp_ttl=None,
-            public_address=None, version=None, tunnels=None, **kwargs):
+            public_address=None, address6=None, version=None, tunnels=None,
+            **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         self.link = link
@@ -69,6 +71,9 @@ class Host(mongo.MongoObject):
         if public_address is not None:
             self.public_address = public_address
 
+        if address6 is not None:
+            self.address6 = address6
+
         if version is not None:
             self.version = version
 
@@ -100,6 +105,8 @@ class Host(mongo.MongoObject):
             'ping_timestamp_ttl': self.ping_timestamp_ttl,
             'public_address': self.public_address if not \
                 settings.app.demo_mode else utils.random_ip_addr(),
+            'address6': self.address6 if not \
+                settings.app.demo_mode else None,
             'version': self.version,
         }
 
@@ -163,7 +170,7 @@ class Host(mongo.MongoObject):
         self.status = AVAILABLE
         self.ping_timestamp_ttl = utils.now() + datetime.timedelta(
             seconds=self.timeout or settings.vpn.link_timeout)
-        self.commit(('public_address', 'version',
+        self.commit(('public_address', 'address6', 'version',
             'status', 'ping_timestamp_ttl'))
 
         if not self.link.key:

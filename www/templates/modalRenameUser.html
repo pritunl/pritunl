@@ -39,6 +39,32 @@
   </div>
 </div>
 <div class="advanced">
+  <div class="form-group auth-type">
+    <label>Type</label>
+    <select class="form-control" data-toggle="tooltip" title="User authentication type. This will determine how the user authenticates. This should be set automatically when the user authenticates with single sign-on.">
+      <option value="local" <%= auth_type === 'local' ? 'selected' : '' %>>Local</option>
+      <option value="duo" <%= auth_type === 'duo' ? 'selected' : '' %>>Duo</option>
+      <option value="yubico" <%= auth_type === 'yubico' ? 'selected' : '' %>>Yubico</option>
+      <option value="google" <%= auth_type === 'google' ? 'selected' : '' %>>Google</option>
+      <option value="google_duo" <%= auth_type === 'google_duo' ? 'selected' : '' %>>Google + Duo</option>
+      <option value="google_yubico" <%= auth_type === 'google_yubico' ? 'selected' : '' %>>Google + Yubico</option>
+      <option value="slack" <%= auth_type === 'slack' ? 'selected' : '' %>>Slack</option>
+      <option value="slack_duo" <%= auth_type === 'slack_duo' ? 'selected' : '' %>>Slack + Duo</option>
+      <option value="slack_yubico" <%= auth_type === 'slack_yubico' ? 'selected' : '' %>>Slack + Yubico</option>
+      <option value="saml" <%= auth_type === 'saml' ? 'selected' : '' %>>SAML</option>
+      <option value="saml_duo" <%= auth_type === 'saml_duo' ? 'selected' : '' %>>SAML + Duo</option>
+      <option value="saml_yubico" <%= auth_type === 'saml_yubico' ? 'selected' : '' %>>SAML + Yubico</option>
+      <option value="saml_okta" <%= auth_type === 'saml_okta' ? 'selected' : '' %>>Okta</option>
+      <option value="saml_okta_duo" <%= auth_type === 'saml_okta_duo' ? 'selected' : '' %>>Okta + Duo</option>
+      <option value="saml_okta_yubico" <%= auth_type === 'saml_okta_yubico' ? 'selected' : '' %>>Okta Yubico</option>
+      <option value="saml_onelogin" <%= auth_type === 'saml_onelogin' ? 'selected' : '' %>>OneLogin</option>
+      <option value="saml_onelogin_duo" <%= auth_type === 'saml_onelogin_duo' ? 'selected' : '' %>>OneLogin Duo</option>
+      <option value="saml_onelogin_yubico" <%= auth_type === 'saml_onelogin_yubico' ? 'selected' : '' %>>OneLogin Yubico</option>
+      <option value="radius" <%= auth_type === 'radius' ? 'selected' : '' %>>Radius</option>
+      <option value="radius_duo" <%= auth_type === 'radius_duo' ? 'selected' : '' %>>Radius + Duo</option>
+      <option value="plugin" <%= auth_type === 'plugin' ? 'selected' : '' %>>Plugin</option>
+    </select>
+  </div>
   <div class="form-group dns-servers">
     <label>DNS Forwarding Server</label>
     <input type="text" class="form-control"

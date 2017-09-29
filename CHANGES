@@ -1,6 +1,94 @@
 Pritunl Changelog
 =================
 
+Version 1.28.1476.96 2017-09-27
+-------------------------------
+
+Fix issue with Google group matching
+
+Version 1.28.1475.35 2017-09-26
+-------------------------------
+
+Push authentication changes
+
+Version 1.28.1475.11 2017-09-26
+-------------------------------
+
+Add sso ip whitelist
+
+Version 1.28.1472.86 2017-09-23
+-------------------------------
+
+Fix issue with client IP address on Windows
+
+Version 1.28.1468.86 2017-09-19
+-------------------------------
+
+Fix issue with single sign-on
+
+Version 1.28.1465.32 2017-09-16
+-------------------------------
+
+Server management improvements
+
+Version 1.28.1463.93 2017-09-14
+-------------------------------
+
+Improve server reliability
+
+Version 1.28.1463.34 2017-09-14
+-------------------------------
+
+Fix issue with user groups configuration
+
+Version 1.28.1463.29 2017-09-14
+-------------------------------
+
+Add Google G Suite group matching using Admin SDK
+
+Version 1.28.1462.0 2017-09-13
+------------------------------
+
+Fix issues with pritunl-dns server
+
+Version 1.28.1461.29 2017-09-12
+-------------------------------
+
+Add option to disable client reconnect
+
+Version 1.28.1460.76 2017-09-11
+-------------------------------
+
+Improve server reliability
+
+Version 1.28.1445.85 2017-08-27
+-------------------------------
+
+Improve error codes
+
+Version 1.28.1442.28 2017-08-24
+-------------------------------
+
+Routing improvements
+Logging improvements
+
+Version 1.28.1438.31 2017-08-20
+-------------------------------
+
+Add option to change user type
+Add support for replicated IPv6 client-to-client traffic
+Web interface improvements
+
+Version 1.28.1426.0 2017-08-08
+------------------------------
+
+Web interface improvements
+
+Version 1.28.1415.87 2017-07-28
+-------------------------------
+
+Fix issue with server host detach
+
 Version 1.28.1379.82 2017-06-22
 -------------------------------
 

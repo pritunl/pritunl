@@ -323,7 +323,10 @@
                 errorMsg = JSON.parse(xmlhttp.responseText)['error_msg'];
               }
               catch(error) {
-                errorMsg = 'Unknown server error occurred.';
+                setTimeout(function() {
+                  window.location = '/';
+                }, 500);
+                return;
               }
               setAlert(errorMsg, 'danger');
               saveBtn.disabled = false;
