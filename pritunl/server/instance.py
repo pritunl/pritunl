@@ -1024,13 +1024,14 @@ class ServerInstance(object):
             if self.is_interrupted():
                 return
 
-            self.state = 'events'
+            self.state = 'starting'
             self.publish('started')
 
             if self.is_interrupted():
                 return
 
             if send_events:
+                self.state = 'events'
                 event.Event(type=SERVERS_UPDATED)
                 event.Event(type=SERVER_HOSTS_UPDATED,
                     resource_id=self.server.id)
