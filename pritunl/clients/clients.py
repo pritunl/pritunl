@@ -503,6 +503,7 @@ class Clients(object):
                 instance_id=self.instance.id,
                 user_id=user_id,
                 multi_device=self.server.multi_device,
+                replica_count=self.server.replica_count,
                 network=self.server.network,
                 user_count=self.server.user_count,
             )
