@@ -221,6 +221,46 @@ class Host(mongo.MongoObject):
 
         return state
 
+    def get_static_links(self):
+        if not self.link.key:
+            self.link.generate_key()
+            self.link.commit('key')
+            return
+
+        links = []
+
+        locations = self.link.iter_locations(
+            self.location.id,
+            sort=False,
+            exclude_id=self.location.id,
+        )
+
+        for location in locations:
+            active_host = None
+            for host in location.iter_hosts():
+                active_host = host
+                break
+
+            if not active_host:
+                continue
+
+            left_subnets = []
+            for route in self.location.routes.values():
+                left_subnets.append(route['network'])
+
+            right_subnets = []
+            for route in location.routes.values():
+                right_subnets.append(route['network'])
+
+            links.append({
+                'pre_shared_key': self.link.key,
+                'right': active_host.public_address,
+                'left_subnets': left_subnets,
+                'right_subnets': right_subnets,
+            })
+
+        return links
+
 class Location(mongo.MongoObject):
     fields = {
         'name',
