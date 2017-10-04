@@ -5,6 +5,7 @@ define([
   'models/linkRoute',
   'models/linkHost',
   'models/linkHostUri',
+  'models/linkHostConf',
   'models/linkExclude',
   'views/alert',
   'views/modalAddLocRoute',
@@ -13,17 +14,18 @@ define([
   'views/modalDeleteLocRoute',
   'views/modalModifyLocHost',
   'views/modalLocHostUri',
+  'views/modalLocHostConf',
   'views/modalDeleteLocHost',
   'views/modalDeleteLocExclude',
   'views/modalModifyLocation',
   'views/modalDeleteLocation',
   'text!templates/linkLocationsListItem.html'
 ], function($, _, Backbone, LinkRouteModel, LinkHostModel, LinkHostUriModel,
-    LinkExcludeModel, AlertView, ModalAddLocRouteView, ModalAddLocHostView,
-    ModalAddLocExcludeView, ModalDeleteLocRouteView, ModalModifyLocHostView,
-    ModalLocHostUriView, ModalDeleteLocHostView, ModalDeleteLocExcludeView,
-    ModalModifyLocationView, ModalDeleteLocationView,
-    linkLocationsListItemTemplate) {
+    LinkHostConfModel, LinkExcludeModel, AlertView, ModalAddLocRouteView,
+    ModalAddLocHostView, ModalAddLocExcludeView, ModalDeleteLocRouteView,
+    ModalModifyLocHostView, ModalLocHostUriView, ModalLocHostConfView,
+    ModalDeleteLocHostView, ModalDeleteLocExcludeView, ModalModifyLocationView,
+    ModalDeleteLocationView, linkLocationsListItemTemplate) {
   'use strict';
   var LinkLocationsListItemView = Backbone.View.extend({
     className: 'link-location',
@@ -36,6 +38,7 @@ define([
       'mousedown .link-remove-host': 'onRemoveHost',
       'mousedown .link-remove-exclude': 'onRemoveExclude',
       'mousedown .link-uri-host': 'onHostUri',
+      'mousedown .link-conf-host': 'onHostConf',
       'mousedown .host-name': 'onModifyHost',
       'mousedown .location-settings': 'onSettings',
       'mousedown .location-del': 'onDelete'
@@ -156,6 +159,15 @@ define([
         this.getHost($(evt.currentTarget).attr('data-id')));
 
       var modal = new ModalLocHostUriView({
+        model: model
+      });
+      this.addView(modal);
+    },
+    onHostConf: function(evt) {
+      var model = new LinkHostConfModel(
+        this.getHost($(evt.currentTarget).attr('data-id')));
+
+      var modal = new ModalLocHostConfView({
         model: model
       });
       this.addView(modal);
