@@ -1176,6 +1176,30 @@ max-routes 1000
 remote-cert-tls server
 """
 
+IPSEC_SECRET = '%s %s : PSK "%s'
+
+IPSEC_CONF = """\
+conn %s
+	ikelifetime=8h
+	keylife=1h
+	rekeymargin=9m
+	keyingtries=%%forever
+	authby=secret
+	keyexchange=ikev2
+	mobike=no
+	dpddelay=10s
+	dpdtimeout=30s
+	dpdaction=restart
+	left=%%defaultroute
+	leftid=%s
+	leftsubnet=%s
+	right=%s
+	rightid=%s
+	rightsubnet=%s
+	auto=start
+
+"""
+
 KEY_LINK_EMAIL_TEXT = """\
 Your vpn profile can be downloaded from the temporary link below. You may also directly import your profiles in the Pritunl client using the temporary URI link.
 
