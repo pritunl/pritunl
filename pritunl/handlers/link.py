@@ -352,6 +352,34 @@ def link_location_host_uri_get(link_id, location_id, host_id):
 
     return utils.jsonify(data)
 
+@app.app.route('/link/<link_id>/location/<location_id>/host/<host_id>/conf',
+    methods=['GET'])
+@auth.session_auth
+def link_location_host_conf_get(link_id, location_id, host_id):
+    if not settings.local.sub_plan or \
+            'enterprise' not in settings.local.sub_plan:
+        return flask.abort(404)
+
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
+    lnk = link.get_by_id(link_id)
+    if not lnk:
+        return flask.abort(404)
+
+    loc = lnk.get_location(location_id)
+    if not loc:
+        return flask.abort(404)
+
+    hst = loc.get_host(host_id)
+    if not hst:
+        return flask.abort(404)
+
+    data = hst.dict()
+    data['conf'] = hst.get_static_conf()
+
+    return utils.jsonify(data)
+
 @app.app.route('/link/<link_id>/location/<location_id>/host/<host_id>',
     methods=['PUT'])
 @auth.session_auth
