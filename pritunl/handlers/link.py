@@ -111,6 +111,9 @@ def link_put(link_id):
     if status in (ONLINE, OFFLINE):
         lnk.status = status
 
+    if flask.request.json.get('key'):
+        lnk.generate_key()
+
     lnk.commit(('name', 'status', 'key'))
 
     event.Event(type=LINKS_UPDATED)
