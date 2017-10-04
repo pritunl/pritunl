@@ -6,9 +6,11 @@ define([
   'views/linkLocationsList',
   'views/modalModifyLink',
   'views/modalDeleteLink',
+  'views/modalRekeyLink',
   'text!templates/linksListItem.html'
 ], function($, _, Backbone, AlertView, LinkLocationsListView,
-    ModalModifyLinkView, ModalDeleteLinkView, linksListItemTemplate) {
+    ModalModifyLinkView, ModalDeleteLinkView, ModalRekeyLinkView,
+    linksListItemTemplate) {
   'use strict';
   var LinksListItemView = Backbone.View.extend({
     className: 'link',
@@ -16,6 +18,7 @@ define([
     events: {
       'click .link-title a': 'onSettings',
       'click .link-del': 'onDelete',
+      'click .link-rekey': 'onRekey',
       'click .link-start, .link-stop': 'onOperation',
       'click .toggle-hidden': 'onToggleHidden'
     },
@@ -71,6 +74,23 @@ define([
         var alertView = new AlertView({
           type: 'success',
           message: 'Successfully deleted link.',
+          dismissable: true
+        });
+        $('.alerts-container').append(alertView.render().el);
+        this.addView(alertView);
+      }.bind(this));
+      this.addView(modal);
+    },
+    onRekey: function() {
+      var model = this.model.clone();
+
+      var modal = new ModalRekeyLinkView({
+        model: model
+      });
+      this.listenToOnce(modal, 'applied', function() {
+        var alertView = new AlertView({
+          type: 'success',
+          message: 'Successfully rekeyed link.',
           dismissable: true
         });
         $('.alerts-container').append(alertView.render().el);
