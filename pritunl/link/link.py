@@ -261,6 +261,28 @@ class Host(mongo.MongoObject):
 
         return links
 
+    def get_static_conf(self):
+        secrets = ''
+        conns = ''
+
+        for i, lnk in enumerate(self.get_static_links()):
+            secrets += IPSEC_SECRET % (
+                self.public_address,
+                lnk['right'],
+                lnk['pre_shared_key'],
+            ) + '\n'
+
+            conns += IPSEC_CONN % (
+                '%s-%d' % (self.id, i),
+                self.public_address,
+                ','.join(lnk['left_subnets']),
+                lnk['right'],
+                lnk['right'],
+                ','.join(lnk['right_subnets']),
+            )
+
+        return secrets + '\n' + conns.rstrip()
+
 class Location(mongo.MongoObject):
     fields = {
         'name',
