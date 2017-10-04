@@ -12,6 +12,7 @@ define([
       'name': null,
       'timeout': null,
       'priority': null,
+      'static_host': null,
       'public_address': null,
       'address6': null,
       'version': null
