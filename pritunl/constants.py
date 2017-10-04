@@ -1178,7 +1178,7 @@ remote-cert-tls server
 
 IPSEC_SECRET = '%s %s : PSK "%s'
 
-IPSEC_CONF = """\
+IPSEC_CONN = """\
 conn %s
 	ikelifetime=8h
 	keylife=1h
