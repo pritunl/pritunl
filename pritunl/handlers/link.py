@@ -109,9 +109,6 @@ def link_put(link_id):
 
     status = flask.request.json.get('status')
     if status in (ONLINE, OFFLINE):
-        if status == ONLINE and lnk.status != ONLINE:
-            lnk.generate_key()
-
         lnk.status = status
 
     lnk.commit(('name', 'status', 'key'))
