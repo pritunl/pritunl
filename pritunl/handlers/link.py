@@ -305,6 +305,9 @@ def link_location_host_post(link_id, location_id):
     name = utils.filter_str(flask.request.json.get('name')) or 'undefined'
     timeout = int(flask.request.json.get('timeout') or 0) or None
     priority = abs(int(flask.request.json.get('priority') or 1)) or 1
+    static = bool(flask.request.json.get('static'))
+    public_address = utils.filter_str(
+        flask.request.json.get('public_address'))
 
     hst = link.Host(
         link=lnk,
@@ -314,6 +317,8 @@ def link_location_host_post(link_id, location_id):
         name=name,
         timeout=timeout,
         priority=priority,
+        static=static,
+        public_address=public_address,
     )
 
     hst.generate_secret()
@@ -406,8 +411,11 @@ def link_location_host_put(link_id, location_id, host_id):
     hst.name = utils.filter_str(flask.request.json.get('name')) or 'undefined'
     hst.timeout = abs(int(flask.request.json.get('timeout') or 0)) or None
     hst.priority = abs(int(flask.request.json.get('priority') or 1)) or 1
+    hst.static = bool(flask.request.json.get('static'))
+    hst.public_address = utils.filter_str(
+        flask.request.json.get('public_address'))
 
-    hst.commit(('name', 'timeout', 'priority'))
+    hst.commit(('name', 'timeout', 'priority', 'static', 'public_address'))
 
     event.Event(type=LINKS_UPDATED)
 
