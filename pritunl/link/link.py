@@ -22,6 +22,7 @@ class Host(mongo.MongoObject):
         'timeout',
         'priority',
         'ping_timestamp_ttl',
+        'static',
         'public_address',
         'address6',
         'version',
@@ -29,13 +30,14 @@ class Host(mongo.MongoObject):
     fields_default = {
         'status': UNAVAILABLE,
         'active': False,
+        'static': False,
     }
 
     def __init__(self, link=None, location=None, name=None, link_id=None,
             location_id=None, secret=None, status=None, active=None,
             timeout=None, priority=None, ping_timestamp_ttl=None,
-            public_address=None, address6=None, version=None, tunnels=None,
-            **kwargs):
+            static=None, public_address=None, address6=None,
+            version=None, tunnels=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         self.link = link
@@ -67,6 +69,9 @@ class Host(mongo.MongoObject):
 
         if ping_timestamp_ttl is not None:
             self.ping_timestamp_ttl = ping_timestamp_ttl
+
+        if static is not None:
+            self.static = static
 
         if public_address is not None:
             self.public_address = public_address
@@ -103,6 +108,7 @@ class Host(mongo.MongoObject):
             'timeout': self.timeout,
             'priority': self.priority,
             'ping_timestamp_ttl': self.ping_timestamp_ttl,
+            'static': bool(self.static),
             'public_address': self.public_address if not \
                 settings.app.demo_mode else utils.random_ip_addr(),
             'address6': self.address6 if not \
