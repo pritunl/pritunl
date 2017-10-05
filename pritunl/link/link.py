@@ -242,10 +242,11 @@ class Host(mongo.MongoObject):
         )
 
         for location in locations:
-            active_host = None
-            for host in location.iter_hosts():
-                active_host = host
-                break
+            active_host = location.get_active_host()
+            if not active_host:
+                for host in location.iter_hosts():
+                    active_host = host
+                    break
 
             if not active_host:
                 continue
