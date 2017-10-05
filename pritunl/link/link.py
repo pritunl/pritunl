@@ -407,6 +407,18 @@ class Location(mongo.MongoObject):
         for doc in cursor:
             yield Host(link=self.link, location=self, doc=doc)
 
+    def get_static_host(self):
+        if self.link.status != ONLINE:
+            return
+
+        doc = Host.collection.find_one({
+            'location_id': self.id,
+            'static': True,
+        })
+
+        if doc:
+            return Host(link=self.link, location=self, doc=doc)
+
     def get_active_host(self):
         if self.link.status != ONLINE:
             return
