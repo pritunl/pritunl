@@ -16,7 +16,7 @@ define([
     hasAdvanced: true,
     events: function() {
       return _.extend({
-        'click .static-host-toggle': 'onStaticHostSelect'
+        'click .static-toggle': 'onStaticSelect'
       }, ModalAddLocHostView.__super__.events);
     },
     initialize: function(options) {
@@ -27,26 +27,26 @@ define([
     body: function() {
       return this.template();
     },
-    getStaticHostSelect: function() {
-      return this.$('.static-host-toggle .selector').hasClass('selected');
+    getStaticSelect: function() {
+      return this.$('.static-toggle .selector').hasClass('selected');
     },
-    setStaticHostSelect: function(state) {
+    setStaticSelect: function(state) {
       if (state) {
-        this.$('.static-host-toggle .selector').addClass('selected');
-        this.$('.static-host-toggle .selector-inner').show();
+        this.$('.static-toggle .selector').addClass('selected');
+        this.$('.static-toggle .selector-inner').show();
       } else {
-        this.$('.static-host-toggle .selector').removeClass('selected');
-        this.$('.static-host-toggle .selector-inner').hide();
+        this.$('.static-toggle .selector').removeClass('selected');
+        this.$('.static-toggle .selector-inner').hide();
       }
     },
-    onStaticHostSelect: function() {
-      this.setStaticHostSelect(!this.getStaticHostSelect());
+    onStaticSelect: function() {
+      this.setStaticSelect(!this.getStaticSelect());
     },
     onOk: function() {
       var name = this.$('.name input').val();
       var timeout = parseInt(this.$('.timeout input').val(), 10) || null;
       var priority = parseInt(this.$('.priority input').val(), 10) || 1;
-      var staticHost = this.getStaticHostSelect();
+      var staticHost = this.getStaticSelect();
       var publicAddress = this.$('.public-address input').val();
 
       if (!name) {
@@ -62,7 +62,7 @@ define([
         name: name,
         timeout: timeout,
         priority: priority,
-        static_host: staticHost,
+        static: staticHost,
         public_address: publicAddress
       }, {
         success: function() {
