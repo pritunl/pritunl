@@ -423,6 +423,10 @@ class Location(mongo.MongoObject):
         if self.link.status != ONLINE:
             return
 
+        hst = self.get_static_host()
+        if hst:
+            return hst
+
         doc = Host.collection.find_one({
             'location_id': self.id,
             'status': AVAILABLE,
