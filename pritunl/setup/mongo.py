@@ -343,6 +343,10 @@ def setup_mongo():
     ], background=True)
     upsert_index('links_hosts', [
         ('location_id', pymongo.ASCENDING),
+        ('static', pymongo.ASCENDING),
+    ], background=True)
+    upsert_index('links_hosts', [
+        ('location_id', pymongo.ASCENDING),
         ('name', pymongo.ASCENDING),
     ], background=True)
     upsert_index('links_hosts', 'ping_timestamp_ttl',
