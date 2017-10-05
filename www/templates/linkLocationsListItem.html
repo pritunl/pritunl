@@ -36,12 +36,12 @@
       <a data-id="<%- host.id %>" class="host-name title" data-toggle="tooltip" title="Click to modify this host"><%- host.name %><%- host.public_address ? ' (' + host.public_address + ')' : '' %><%- host.version ? ' v' + host.version : '' %></a>
     </div>
     <div class="button-container">
-      <div class="link-host-static label label-success no-select" <%= host.static_host ? '' : 'style="display: none"' %>>Static</div>
-      <div class="link-host-active label label-success no-select" <%= !host.static_host && host.status === 'active' ? '' : 'style="display: none"' %>>Active</div>
-      <div class="link-host-available label label-primary no-select" <%= !host.static_host && host.status === 'available' ? '' : 'style="display: none"' %>>Available</div>
-      <div class="link-host-unavailable label label-danger no-select" <%= !host.static_host && host.status === 'unavailable' ? '' : 'style="display: none"' %>>Unavailable</div>
-      <button data-id="<%- host.id %>" type="button" class="link-conf-host btn btn-primary btn-xs" <%= host.static_host ? '' : 'style="display: none"' %>>Get Conf</button>
-      <button data-id="<%- host.id %>" type="button" class="link-uri-host btn btn-primary btn-xs" <%= !host.static_host ? '' : 'style="display: none"' %>>Get URI</button>
+      <div class="link-host-static label label-success no-select" <%= host.static ? '' : 'style="display: none"' %>>Static</div>
+      <div class="link-host-active label label-success no-select" <%= !host.static && host.status === 'active' ? '' : 'style="display: none"' %>>Active</div>
+      <div class="link-host-available label label-primary no-select" <%= !host.static && host.status === 'available' ? '' : 'style="display: none"' %>>Available</div>
+      <div class="link-host-unavailable label label-danger no-select" <%= !host.static && host.status === 'unavailable' ? '' : 'style="display: none"' %>>Unavailable</div>
+      <button data-id="<%- host.id %>" type="button" class="link-conf-host btn btn-primary btn-xs" <%= host.static ? '' : 'style="display: none"' %>>Get Conf</button>
+      <button data-id="<%- host.id %>" type="button" class="link-uri-host btn btn-primary btn-xs" <%= !host.static ? '' : 'style="display: none"' %>>Get URI</button>
       <button data-id="<%- host.id %>" type="button" class="link-remove-host btn btn-danger btn-xs">Remove Host</button>
     </div>
   </div>
