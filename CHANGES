@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Add static IPsec links
 Add rekey option to link
 
 Version 1.28.1476.96 2017-09-27
