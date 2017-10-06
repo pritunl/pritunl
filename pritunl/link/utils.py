@@ -1,4 +1,4 @@
-from pritunl.link.link import Link, Location, Host
+from pritunl.link.link import Link, Host
 
 from pritunl import settings
 from pritunl import mongo
