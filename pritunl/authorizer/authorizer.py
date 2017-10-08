@@ -13,6 +13,7 @@ import threading
 import uuid
 import hashlib
 import base64
+import datetime
 
 _states = tunldb.TunlDB()
 
@@ -53,6 +54,10 @@ class Authorizer(object):
     @property
     def sso_client_cache_collection(cls):
         return mongo.get_collection('sso_client_cache')
+
+    @property
+    def limiter_collection(cls):
+        return mongo.get_collection('auth_limiter')
 
     @property
     def otp_cache_collection(cls):
@@ -216,6 +221,32 @@ class Authorizer(object):
         if self.user.bypass_secondary or self.user.link_server_id or \
                 settings.vpn.stress_test or self.has_token or self.whitelisted:
             return
+
+        doc = self.limiter_collection.find_and_modify({
+            '_id': self.user.id,
+        }, {
+            '$inc': {'count': 1},
+            '$setOnInsert': {'timestamp': utils.now()},
+        }, new=True, upsert=True)
+
+        if utils.now() > doc['timestamp'] + datetime.timedelta(
+                seconds=settings.app.auth_limiter_ttl):
+            doc = {
+                'count': 1,
+                'timestamp': utils.now(),
+            }
+            self.limiter_collection.update({
+                '_id': self.user.id,
+            }, doc, upsert=True)
+
+        if doc['count'] > settings.app.auth_limiter_count_max:
+            self.user.audit_event(
+                'user_connection',
+                ('User connection to "%s" denied. Too many ' +
+                 'authentication attempts') % (self.server.name),
+                remote_addr=self.remote_ip,
+            )
+            raise AuthError('Too many authentication attempts')
 
         sso_mode = settings.app.sso or ''
         duo_mode = settings.app.sso_duo_mode
