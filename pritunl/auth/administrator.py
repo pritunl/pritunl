@@ -430,7 +430,8 @@ def get_by_username(username, remote_addr=None):
             '$setOnInsert': {'timestamp': utils.now()},
         }, new=True, upsert=True)
 
-        if utils.now() > doc['timestamp'] + datetime.timedelta(minutes=1):
+        if utils.now() > doc['timestamp'] + datetime.timedelta(
+                seconds=settings.app.auth_limiter_ttl):
             doc = {
                 'count': 1,
                 'timestamp': utils.now(),
