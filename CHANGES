@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add authentication limit to user connections
+
 Version 1.28.1485.27 2017-10-06
 -------------------------------
 
