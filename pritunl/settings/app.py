@@ -56,7 +56,7 @@ class SettingsApp(SettingsGroupMongo):
         'static_cache_time': 43200,
         'auth_time_window': 86400,
         'auth_limiter_ttl': 60,
-        'auth_limiter_count_max': 30,
+        'auth_limiter_count_max': 15,
         'org_pool_size': 1,
         'user_pool_size': 6,
         'server_pool_size': 4,
