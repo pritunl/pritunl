@@ -618,7 +618,7 @@ class Authorizer(object):
         raise AuthForked()
 
     def _auth_push_thread(self):
-        info={
+        info = {
             'Server': self.server.name,
         }
 
