@@ -1,6 +1,5 @@
 from pritunl.host import usage_utils
 
-from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import mongo
@@ -10,6 +9,7 @@ import pymongo
 import os
 import json
 import random
+import datetime
 
 class HostUsage(object):
     def __init__(self, host_id):
@@ -23,10 +23,7 @@ class HostUsage(object):
         cpu_usage = round(cpu_usage, 4)
         mem_usage = round(mem_usage, 4)
 
-        if mongo.has_bulk:
-            bulk = self.collection.initialize_unordered_bulk_op()
-        else:
-            bulk = None
+        bulk = self.collection.initialize_unordered_bulk_op()
 
         for period in ('1m', '5m', '30m', '2h', '1d'):
             spec = {
@@ -49,15 +46,10 @@ class HostUsage(object):
                 },
             }
 
-            if bulk:
-                bulk.find(spec).upsert().update(doc)
-                bulk.find(rem_spec).remove()
-            else:
-                self.collection.update(spec, doc, upsert=True)
-                self.collection.remove(rem_spec)
+            bulk.find(spec).upsert().update(doc)
+            bulk.find(rem_spec).remove()
 
-        if bulk:
-            bulk.execute()
+        bulk.execute()
 
     def get_period(self, period):
         date_end = usage_utils.get_period_timestamp(period, utils.now())
@@ -123,7 +115,6 @@ class HostUsage(object):
         return data
 
     def get_period_random(self, period):
-        data = {}
         date = utils.now()
         date -= datetime.timedelta(microseconds=date.microsecond,
             seconds=date.second)
@@ -152,9 +143,12 @@ class HostUsage(object):
             date_step = datetime.timedelta(days=1)
 
         cpu = 0.3
-        mem = 0.4
-        usage_rand = lambda x: round(random.uniform(
-            max(x - 0.05, 0), min(x + 0.05, 1)), 4)
+        mem = 0.3
+        def usage_rand(x):
+            x += random.uniform(-0.01, 0.01)
+            x = max(x, 0.25)
+            x = min(x, 0.35)
+            return x
 
         data = {
             'cpu': [],

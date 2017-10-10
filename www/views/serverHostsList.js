@@ -25,11 +25,10 @@ define([
       ServerHostsListView.__super__.initialize.call(this);
     },
     buildItem: function(model) {
-      var modelView = new ServerHostsListItemView({
+      return new ServerHostsListItemView({
         model: model,
         server: this.server
       });
-      return modelView;
     },
     resetItems: function(views) {
       if (!views.length) {

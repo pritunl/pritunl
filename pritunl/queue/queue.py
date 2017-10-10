@@ -66,7 +66,7 @@ class Queue(mongo.MongoObject):
 
     def _keep_alive_thread(self):
         while True:
-            time.sleep(self.ttl - 5)
+            time.sleep(self.ttl - 6)
             if self.queue_com.state in (COMPLETE, STOPPED):
                 break
             response = self.collection.update({
@@ -77,32 +77,18 @@ class Queue(mongo.MongoObject):
                     datetime.timedelta(seconds=self.ttl),
             }})
             if response['updatedExisting']:
-                logger.debug('Queue keep alive updated', 'queue',
-                    queue_id=self.id,
-                    queue_type=self.type,
-                )
-
                 messenger.publish('queue', [UPDATE, self.id])
             else:
-                logger.debug('Queue keep alive lost reserve', 'queue',
-                    queue_id=self.id,
-                    queue_type=self.type,
-                )
-
                 self.queue_com.state_lock.acquire()
                 try:
                     self.queue_com.state = STOPPED
                 finally:
                     self.queue_com.state_lock.release()
-                raise QueueStopped('Lost reserve, queue stopped', {
-                    'queue_id': self.id,
-                    'queue_type': self.type,
-                })
 
-        logger.debug('Queue keep alive thread ended', 'queue',
-            queue_id=self.id,
-            queue_type=self.type,
-        )
+                logger.error('Lost reserve, queue stopped', 'queue',
+                    queue_id=self.id,
+                    queue_type=self.type,
+                )
 
     def keep_alive(self):
         if self.keep_alive_thread:
@@ -112,7 +98,7 @@ class Queue(mongo.MongoObject):
         self.keep_alive_thread.daemon = True
         self.keep_alive_thread.start()
 
-    def start(self, transaction=None, block=False, block_timeout=30):
+    def start(self, transaction=None, block=False, block_timeout=60):
         self.ttl_timestamp = utils.now() + \
             datetime.timedelta(seconds=self.ttl)
         self.commit(transaction=transaction)
@@ -142,7 +128,7 @@ class Queue(mongo.MongoObject):
                             last_update = time.time()
                             break
                         elif msg['message'] == [ERROR, self.id]:
-                            raise QueueTaskError('Error occured running ' +
+                            raise QueueTaskError('Error occurred running ' +
                                 'queue task', {
                                     'queue_id': self.id,
                                     'queue_type': self.type,
@@ -178,15 +164,10 @@ class Queue(mongo.MongoObject):
         if self.claimed:
             self.keep_alive()
 
-            logger.debug('Queue claimed', 'queue',
-                queue_id=self.id,
-                queue_type=self.type,
-            )
-
         return response['updatedExisting']
 
     @classmethod
-    def reserve(cls, reserve_id, reserve_data, block=False, block_timeout=30):
+    def reserve(cls, reserve_id, reserve_data, block=False, block_timeout=90):
         if block:
             cursor_id = messenger.get_cursor_id('queue')
 
@@ -207,17 +188,18 @@ class Queue(mongo.MongoObject):
                     if msg['message'] == [COMPLETE, doc['_id']]:
                         return doc
                     elif msg['message'] == [ERROR, doc['_id']]:
-                        raise QueueTaskError('Error occured running ' +
+                        raise QueueTaskError('Error occurred running ' +
                             'queue task', {
                                 'queue_id': doc['_id'],
                                 'queue_type': doc['type'],
                             })
                 except TypeError:
                     pass
-            raise QueueTimeout('Blocking queue reserve timed out', {
+            logger.error('Blocking queue reserve timed out', {
                 'queue_id': doc['_id'],
                 'queue_type': doc['type'],
             })
+            return doc
         else:
             return doc
 
@@ -229,11 +211,6 @@ class Queue(mongo.MongoObject):
                 self.attempts += 1
 
                 if self.attempts > 1 and not self.retry:
-                    logger.debug('Non retry queue exceeded attemps', 'queue',
-                        queue_id=self.id,
-                        queue_type=self.type,
-                    )
-
                     self.remove()
                     return
                 elif self.attempts > settings.mongo.queue_max_attempts:
@@ -244,10 +221,6 @@ class Queue(mongo.MongoObject):
                     if not self.claim_commit('attempts'):
                         return
 
-                    logger.debug('Starting queue task', 'queue',
-                        queue_id=self.id,
-                        queue_type=self.type,
-                    )
                     self.task()
 
                     if self.attempts > 1:
@@ -263,26 +236,11 @@ class Queue(mongo.MongoObject):
                     return
 
                 if self.state == COMMITTED:
-                    logger.debug('Starting queue post_task', 'queue',
-                        queue_id=self.id,
-                        queue_type=self.type,
-                    )
-
                     self.post_task()
                 elif self.state == ROLLBACK:
-                    logger.debug('Starting queue rollback_task', 'queue',
-                        queue_id=self.id,
-                        queue_type=self.type,
-                    )
-
                     self.rollback_task()
 
                 if self.has_post_work:
-                    logger.debug('Starting queue complete_task', 'queue',
-                        queue_id=self.id,
-                        queue_type=self.type,
-                    )
-
                     self.complete_task()
 
             if self.claimed:

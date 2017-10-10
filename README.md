@@ -9,409 +9,274 @@ information can be found at the home page [pritunl.com](https://pritunl.com)
 
 [![pritunl](www/img/logo_code.png)](https://pritunl.com)
 
+## Install From Source
+
+```bash
+export VERSION=X.XX.XX.XX # Set current pritunl version here
+
+wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+rpm -i epel-release-latest-7.noarch.rpm
+yum -y install golang git bzr python2 python-pip net-tools openvpn bridge-utils mongodb-server
+
+echo "export GOPATH=/go" >> ~/.bash_profile
+source ~/.bash_profile
+go get github.com/pritunl/pritunl-dns
+go get github.com/pritunl/pritunl-web
+ln -s /go/bin/pritunl-dns /usr/local/bin/pritunl-dns
+ln -s /go/bin/pritunl-web /usr/local/bin/pritunl-web
+
+wget https://github.com/pritunl/pritunl/archive/$VERSION.tar.gz
+tar xf $VERSION.tar.gz
+cd pritunl-$VERSION
+python2 setup.py build
+pip install -r requirements.txt
+python2 setup.py install
+
+systemctl daemon-reload
+systemctl start mongod pritunl
+systemctl enable mongod pritunl
+```
+
 ## Stable Repository
 
 ### archlinux
 
 ```
-$ nano /etc/pacman.conf
+sudo tee -a /etc/pacman.conf << EOF
 [pritunl]
-Server = http://repo.pritunl.com/stable/pacman
+Server = https://repo.pritunl.com/stable/pacman
+EOF
 
-$ pacman-key --keyserver hkp://keyserver.ubuntu.com -r CF8E292A
-$ pacman-key --lsign-key CF8E292A
-$ pacman -Sy
-$ pacman -S pritunl
-$ systemctl start mongodb pritunl
-$ systemctl enable mongodb pritunl
+sudo pacman-key --keyserver hkp://keyserver.ubuntu.com -r 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+sudo pacman-key --lsign-key 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+sudo pacman -Sy
+sudo pacman -S --noconfirm pritunl mongodb
+sudo systemctl start mongodb pritunl
+sudo systemctl enable mongodb pritunl
 ```
 
 ### amazon linux
 
 ```
-$ wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-$ rpm -i epel-release-latest-7.noarch.rpm
-
-$ nano /etc/yum.repos.d/pritunl.repo
-[pritunl]
-name=Pritunl Repository
-baseurl=http://repo.pritunl.com/stable/yum/centos/7/
+sudo tee -a /etc/yum.repos.d/mongodb-org-3.4.repo << EOF
+[mongodb-org-3.4]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/amazon/2013.03/mongodb-org/3.4/x86_64/
 gpgcheck=1
 enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc
+EOF
 
-$ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys CF8E292A
-$ gpg --armor --export CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
-$ yum install pritunl mongodb-server
-$ start mongod
-$ start pritunl
+sudo tee -a /etc/yum.repos.d/pritunl.repo << EOF
+[pritunl]
+name=Pritunl Repository
+baseurl=https://repo.pritunl.com/stable/yum/centos/7/
+gpgcheck=1
+enabled=1
+EOF
+
+gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A > key.tmp; sudo rpm --import key.tmp; rm -f key.tmp
+sudo yum -y install pritunl mongodb-org
+sudo service mongod start
+sudo start pritunl
 ```
 
 ### centos 7
 
 ```
-$ wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-$ rpm -i epel-release-latest-7.noarch.rpm
+# SELinux must be disabled
 
-$ nano /etc/yum.repos.d/pritunl.repo
+sudo tee -a /etc/yum.repos.d/mongodb-org-3.4.repo << EOF
+[mongodb-org-3.4]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/redhat/7/mongodb-org/3.4/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc
+EOF
+
+sudo tee -a /etc/yum.repos.d/pritunl.repo << EOF
 [pritunl]
 name=Pritunl Repository
-baseurl=http://repo.pritunl.com/stable/yum/centos/7/
+baseurl=https://repo.pritunl.com/stable/yum/centos/7/
 gpgcheck=1
 enabled=1
+EOF
 
-$ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys CF8E292A
-$ gpg --armor --export CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
-$ yum install pritunl mongodb-server
-$ systemctl start mongod pritunl
-$ systemctl enable mongod pritunl
-```
-
-### fedora 22
-
-```
-$ nano /etc/yum.repos.d/pritunl.repo
-[pritunl]
-name=Pritunl Dev Repository
-baseurl=http://repo.pritunl.com/stable/yum/fedora/22/
-gpgcheck=1
-enabled=1
-
-$ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys CF8E292A
-$ gpg --armor --export CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
-$ yum install pritunl mongodb-server
-$ systemctl start mongod pritunl
-$ systemctl enable mongod pritunl
+sudo yum -y install epel-release
+gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A > key.tmp; sudo rpm --import key.tmp; rm -f key.tmp
+sudo yum -y install pritunl mongodb-org
+sudo systemctl start mongod pritunl
+sudo systemctl enable mongod pritunl
 ```
 
 ### debian wheezy
 
 ```
-$ nano /etc/apt/sources.list.d/mongodb-org-3.0.list
-deb http://repo.mongodb.org/apt/debian wheezy/mongodb-org/3.0 main
+sudo tee -a /etc/apt/sources.list.d/mongodb-org-3.4.list << EOF
+deb http://repo.mongodb.org/apt/debian wheezy/mongodb-org/3.4 main
+EOF
 
-$ nano /etc/apt/sources.list.d/pritunl.list
+sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
 deb http://repo.pritunl.com/stable/apt wheezy main
+EOF
 
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
-$ apt-get update
-$ apt-get install pritunl
-$ systemctl start mongod pritunl
-$ systemctl enable mongod pritunl
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 0C49F3730359A14518585931BC711F9BA15703C6
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+sudo apt-get update
+sudo apt-get --assume-yes install pritunl mongodb-org
+sudo service mongod start
+sudo service pritunl start
 ```
 
 ### debian jessie
 
 ```
-$ nano /etc/apt/sources.list.d/mongodb-org-3.0.list
-deb http://repo.mongodb.org/apt/debian wheezy/mongodb-org/3.0 main
+sudo tee -a /etc/apt/sources.list.d/mongodb-org-3.4.list << EOF
+deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.4 main
+EOF
 
-$ nano /etc/apt/sources.list.d/pritunl.list
+sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
 deb http://repo.pritunl.com/stable/apt jessie main
+EOF
 
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
-$ apt-get update
-$ apt-get install pritunl
-$ systemctl start mongod pritunl
-$ systemctl enable mongod pritunl
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 0C49F3730359A14518585931BC711F9BA15703C6
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+sudo apt-get update
+sudo apt-get --assume-yes install pritunl mongodb-org
+sudo systemctl start mongod pritunl
+sudo systemctl enable mongod pritunl
+```
+
+### fedora 25
+
+```
+# SELinux must be disabled
+# Firewalld must be configured or disabled
+
+sudo tee -a /etc/yum.repos.d/pritunl.repo << EOF
+[pritunl]
+name=Pritunl Repository
+baseurl=https://repo.pritunl.com/stable/yum/fedora/25/
+gpgcheck=1
+enabled=1
+EOF
+
+sudo dnf -y install gpg
+gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A > key.tmp; sudo rpm --import key.tmp; rm -f key.tmp
+sudo dnf -y install pritunl mongodb-server iptables
+sudo systemctl start mongod pritunl
+sudo systemctl enable mongod pritunl
+```
+
+### fedora 26
+
+```
+# SELinux must be disabled
+# Firewalld must be configured or disabled
+
+sudo tee -a /etc/yum.repos.d/pritunl.repo << EOF
+[pritunl]
+name=Pritunl Repository
+baseurl=https://repo.pritunl.com/stable/yum/fedora/26/
+gpgcheck=1
+enabled=1
+EOF
+
+sudo dnf -y install gpg
+gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A > key.tmp; sudo rpm --import key.tmp; rm -f key.tmp
+sudo dnf -y install pritunl mongodb-server iptables
+sudo systemctl start mongod pritunl
+sudo systemctl enable mongod pritunl
 ```
 
 ### ubuntu precise
 
 ```
-$ nano /etc/apt/sources.list.d/mongodb-org-3.0.list
-deb http://repo.mongodb.org/apt/ubuntu precise/mongodb-org/3.0 multiverse
+sudo tee -a /etc/apt/sources.list.d/mongodb-org-3.4.list << EOF
+deb http://repo.mongodb.org/apt/ubuntu precise/mongodb-org/3.4 multiverse
+EOF
 
-$ nano /etc/apt/sources.list.d/pritunl.list
+sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
 deb http://repo.pritunl.com/stable/apt precise main
+EOF
 
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
-$ apt-get update
-$ apt-get install pritunl
-$ service pritunl start
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 0C49F3730359A14518585931BC711F9BA15703C6
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+sudo apt-get update
+sudo apt-get --assume-yes install pritunl mongodb-org
+sudo service pritunl start
 ```
 
 ### ubuntu trusty
 
 ```
-$ nano /etc/apt/sources.list.d/mongodb-org-3.0.list
-deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.0 multiverse
+sudo tee -a /etc/apt/sources.list.d/mongodb-org-3.4.list << EOF
+deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.4 multiverse
+EOF
 
-$ nano /etc/apt/sources.list.d/pritunl.list
+sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
 deb http://repo.pritunl.com/stable/apt trusty main
+EOF
 
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
-$ apt-get update
-$ apt-get install pritunl
-$ service pritunl start
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 0C49F3730359A14518585931BC711F9BA15703C6
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+sudo apt-get update
+sudo apt-get --assume-yes install pritunl mongodb-org
+sudo service pritunl start
 ```
 
-### ubuntu vivid
+### ubuntu xenial
 
 ```
-$ nano /etc/apt/sources.list.d/mongodb-org-3.0.list
-deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.0 multiverse
+sudo tee -a /etc/apt/sources.list.d/mongodb-org-3.4.list << EOF
+deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.4 multiverse
+EOF
 
-$ nano /etc/apt/sources.list.d/pritunl.list
-deb http://repo.pritunl.com/stable/apt vivid main
+sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
+deb http://repo.pritunl.com/stable/apt xenial main
+EOF
 
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
-$ apt-get update
-$ apt-get install pritunl
-$ service pritunl start
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 0C49F3730359A14518585931BC711F9BA15703C6
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+sudo apt-get update
+sudo apt-get --assume-yes install pritunl mongodb-org
+sudo systemctl start pritunl mongod
+sudo systemctl enable pritunl mongod
 ```
 
-### ubuntu wily
+### ubuntu yakkety
 
 ```
-$ nano /etc/apt/sources.list.d/mongodb-org-3.0.list
-deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.0 multiverse
+sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
+deb http://repo.pritunl.com/stable/apt yakkety main
+EOF
 
-$ nano /etc/apt/sources.list.d/pritunl.list
-deb http://repo.pritunl.com/stable/apt wily main
-
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
-$ apt-get update
-$ apt-get install pritunl
-$ service pritunl start
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+sudo apt-get update
+sudo apt-get --assume-yes install pritunl mongodb-server
+sudo systemctl start pritunl mongodb
+sudo systemctl enable pritunl mongodb
 ```
 
-## Development Repository
-
-### archlinux
+### ubuntu zesty
 
 ```
-$ nano /etc/pacman.conf
-[pritunl]
-Server = http://repo.pritunl.com/dev/pacman
+sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
+deb http://repo.pritunl.com/stable/apt zesty main
+EOF
 
-$ pacman-key --keyserver hkp://keyserver.ubuntu.com -r CF8E292A
-$ pacman-key --lsign-key CF8E292A
-$ pacman -Sy
-$ pacman -S pritunl
-$ systemctl start mongodb pritunl
-$ systemctl enable mongodb pritunl
-```
-
-### amazon linux
-
-```
-$ wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-$ rpm -i epel-release-latest-7.noarch.rpm
-
-$ nano /etc/yum.repos.d/pritunl.repo
-[pritunl]
-name=Pritunl Dev Repository
-baseurl=http://repo.pritunl.com/dev/yum/centos/7/
-gpgcheck=1
-enabled=1
-
-$ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys CF8E292A
-$ gpg --armor --export CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
-$ yum install pritunl mongodb-server
-$ start mongod
-$ start pritunl
-```
-
-### centos 7
-
-```
-$ wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-$ rpm -i epel-release-latest-7.noarch.rpm
-
-$ nano /etc/yum.repos.d/pritunl.repo
-[pritunl]
-name=Pritunl Dev Repository
-baseurl=http://repo.pritunl.com/dev/yum/centos/7/
-gpgcheck=1
-enabled=1
-
-$ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys CF8E292A
-$ gpg --armor --export CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
-$ yum install pritunl mongodb-server
-$ systemctl start mongod pritunl
-$ systemctl enable mongod pritunl
-```
-
-### fedora 22
-
-```
-$ nano /etc/yum.repos.d/pritunl.repo
-[pritunl]
-name=Pritunl Dev Repository
-baseurl=http://repo.pritunl.com/dev/yum/fedora/22/
-gpgcheck=1
-enabled=1
-
-$ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys CF8E292A
-$ gpg --armor --export CF8E292A > key.tmp; rpm --import key.tmp; rm -f key.tmp
-$ yum install pritunl mongodb-server
-$ systemctl start mongod pritunl
-$ systemctl enable mongod pritunl
-```
-
-### debian wheezy
-
-```
-$ nano /etc/apt/sources.list.d/mongodb-org-3.0.list
-deb http://repo.mongodb.org/apt/debian wheezy/mongodb-org/3.0 main
-
-$ nano /etc/apt/sources.list.d/pritunl.list
-deb http://repo.pritunl.com/dev/apt wheezy main
-
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
-$ apt-get update
-$ apt-get install pritunl
-$ systemctl start mongod pritunl
-$ systemctl enable mongod pritunl
-```
-
-### debian jessie
-
-```
-$ nano /etc/apt/sources.list.d/mongodb-org-3.0.list
-deb http://repo.mongodb.org/apt/debian wheezy/mongodb-org/3.0 main
-
-$ nano /etc/apt/sources.list.d/pritunl.list
-deb http://repo.pritunl.com/dev/apt jessie main
-
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
-$ apt-get update
-$ apt-get install pritunl
-$ systemctl start mongod pritunl
-$ systemctl enable mongod pritunl
-```
-
-### ubuntu precise
-
-```
-$ nano /etc/apt/sources.list.d/mongodb-org-3.0.list
-deb http://repo.mongodb.org/apt/ubuntu precise/mongodb-org/3.0 multiverse
-
-$ nano /etc/apt/sources.list.d/pritunl.list
-deb http://repo.pritunl.com/dev/apt precise main
-
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
-$ apt-get update
-$ apt-get install pritunl
-$ service pritunl start
-```
-
-### ubuntu trusty
-
-```
-$ nano /etc/apt/sources.list.d/mongodb-org-3.0.list
-deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.0 multiverse
-
-$ nano /etc/apt/sources.list.d/pritunl.list
-deb http://repo.pritunl.com/dev/apt trusty main
-
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
-$ apt-get update
-$ apt-get install pritunl
-$ service pritunl start
-```
-
-### ubuntu vivid
-
-```
-$ nano /etc/apt/sources.list.d/mongodb-org-3.0.list
-deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.0 multiverse
-
-$ nano /etc/apt/sources.list.d/pritunl.list
-deb http://repo.pritunl.com/dev/apt vivid main
-
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
-$ apt-get update
-$ apt-get install pritunl
-$ service pritunl start
-```
-
-### ubuntu wily
-
-```
-$ nano /etc/apt/sources.list.d/mongodb-org-3.0.list
-deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.0 multiverse
-
-$ nano /etc/apt/sources.list.d/pritunl.list
-deb http://repo.pritunl.com/dev/apt wily main
-
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7F0CEB10
-$ apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv CF8E292A
-$ apt-get update
-$ apt-get install pritunl
-$ service pritunl start
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+sudo apt-get update
+sudo apt-get --assume-yes install pritunl mongodb-server
+sudo systemctl start pritunl mongodb
+sudo systemctl enable pritunl mongodb
 ```
 
 ## License
 
 Please refer to the [`LICENSE`](LICENSE) file for a copy of the license.
-
-## Export Requirements
-
-You may not export or re-export this software or any copy or adaptation in
-violation of any applicable laws or regulations.
-
-Without limiting the generality of the foregoing, hardware, software,
-technology or services provided under this license agreement may not be
-exported, reexported, transferred or downloaded to or within (or to a national
-resident of) countries under U.S. economic embargo including the following
-countries:
-
-Cuba, Iran, Libya, North Korea, Sudan and Syria. This list is subject to
-change.
-
-Hardware, software, technology or services may not be exported, reexported,
-transferred or downloaded to persons or entities listed on the U.S. Department
-of Commerce Denied Persons List, Entity List of proliferation concern or on
-any U.S. Treasury Department Designated Nationals exclusion list, or to
-parties directly or indirectly involved in the development or production of
-nuclear, chemical, biological weapons or in missile technology programs as
-specified in the U.S. Export Administration Regulations (15 CFR 744).
-
-By accepting this license agreement you confirm that you are not located in
-(or a national resident of) any country under U.S. economic embargo, not
-identified on any U.S. Department of Commerce Denied Persons List, Entity List
-or Treasury Department Designated Nationals exclusion list, and not directly
-or indirectly involved in the development or production of nuclear, chemical,
-biological weapons or in missile technology programs as specified in the U.S.
-Export Administration Regulations.
-
-Software available on this web site contains cryptography and is therefore
-subject to US government export control under the U.S. Export Administration
-Regulations ("EAR"). EAR Part 740.13(e) allows the export and reexport of
-publicly available encryption source code that is not subject to payment of
-license fee or royalty payment. Object code resulting from the compiling of
-such source code may also be exported and reexported under this provision if
-publicly available and not subject to a fee or payment other than reasonable
-and customary fees for reproduction and distribution. This kind of encryption
-source code and the corresponding object code may be exported or reexported
-without prior U.S. government export license authorization provided that the
-U.S. government is notified about the Internet location of the software.
-
-The software available on this web site is publicly available without license
-fee or royalty payment, and all binary software is compiled from the source
-code. The U.S. government has been notified about this site and the location
-site for the source code. Therefore, the source code and compiled object code
-may be downloaded and exported under U.S. export license exception (without a
-U.S. export license) in accordance with the further restrictions outlined
-above regarding embargoed countries, restricted persons and restricted end
-uses.
-
-Local Country Import Requirements. The software you are about to download
-contains cryptography technology. Some countries regulate the import, use
-and/or export of certain products with cryptography. Pritunl makes no
-claims as to the applicability of local country import, use and/or export
-regulations in relation to the download of this product. If you are located
-outside the U.S. and Canada you are advised to consult your local country
-regulations to insure compliance.

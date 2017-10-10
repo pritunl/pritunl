@@ -1,10 +1,13 @@
 from pritunl.static.utils import *
-from pritunl.cache import cache_db
+from pritunl.cachelocal import cache_db
 
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import settings
 
+import gzip
+import StringIO
+import shutil
 import os
 import datetime
 import mimetypes
@@ -12,17 +15,25 @@ import flask
 import werkzeug.http
 
 class StaticFile(object):
-    def __init__(self, root, path, cache=True):
+    def __init__(self, root, path, cache=True, gzip=True):
         path = '/'.join([x for x in path.split('/') if x and x != '..'])
         path = os.path.normpath(os.path.join(root, path))
+
         if os.path.commonprefix([root, path]) != root:
-            raise InvalidStaticFile('Static path is not a prefix of root path',
-                {'path': path})
+            raise InvalidStaticFile(
+                'Static path is not a prefix of root path',
+                {'path': path},
+            )
+
         if os.path.splitext(path)[1] not in STATIC_FILE_EXTENSIONS:
-            raise InvalidStaticFile('Static path file extension is invalid',
-                {'path': path})
+            raise InvalidStaticFile(
+                'Static path file extension is invalid',
+                {'path': path},
+            )
+
         self.path = path
         self.cache = cache
+        self.gzip = gzip
         self.data = None
         self.mime_type = None
         self.last_modified = None
@@ -49,7 +60,7 @@ class StaticFile(object):
 
     def load_file(self):
         if settings.conf.static_cache and cache_db.exists(
-            self.get_cache_key()):
+                self.get_cache_key()):
             self.get_cache()
             return
 
@@ -63,8 +74,15 @@ class StaticFile(object):
             os.path.getmtime(self.path))
         file_size = int(os.path.getsize(self.path))
 
-        with open(self.path, 'r') as static_file:
-            self.data = static_file.read()
+        if self.gzip:
+            gzip_data = StringIO.StringIO()
+            with open(self.path, 'rb') as static_file, \
+                    gzip.GzipFile(fileobj=gzip_data, mode='wb') as gzip_file:
+                shutil.copyfileobj(static_file, gzip_file)
+            self.data = gzip_data.getvalue()
+        else:
+            with open(self.path, 'r') as static_file:
+                self.data = static_file.read()
 
         self.mime_type = mimetypes.guess_type(file_basename)[0] or 'text/plain'
         self.last_modified = werkzeug.http.http_date(file_mtime)
@@ -76,8 +94,11 @@ class StaticFile(object):
         if not self.last_modified:
             flask.abort(404)
         response = flask.Response(response=self.data, mimetype=self.mime_type)
-        if settings.conf.static_cache and \
-            not settings.conf.debug and self.cache:
+
+        if self.gzip:
+            response.headers.add('Content-Encoding', 'gzip')
+
+        if settings.conf.static_cache and self.cache:
             response.headers.add('Cache-Control',
                 'max-age=%s, public' % settings.app.static_cache_time)
             response.headers.add('ETag', '"%s"' % self.etag)
@@ -86,5 +107,6 @@ class StaticFile(object):
                 'no-cache, no-store, must-revalidate')
             response.headers.add('Pragma', 'no-cache')
             response.headers.add('Expires', 0)
+
         response.headers.add('Last-Modified', self.last_modified)
         return response

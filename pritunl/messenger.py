@@ -1,12 +1,15 @@
-from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import mongo
+from pritunl import cache
 from pritunl import utils
 
 import pymongo
 import time
 
 def publish(channels, message, extra=None, transaction=None):
+    if cache.has_cache:
+        return cache.publish(channels, message, extra=extra)
+
     collection = mongo.get_collection('messages')
     doc = {
         'message': message,
@@ -57,6 +60,12 @@ def publish(channels, message, extra=None, transaction=None):
             collection.insert(docs, manipulate=False)
 
 def get_cursor_id(channels):
+    if cache.has_cache:
+        if not isinstance(channels, str):
+            raise TypeError(
+                'Cannot get cache cursor_id for muiltiple channels')
+        return cache.get_cursor_id(channels)
+
     collection = mongo.get_collection('messages')
     spec = {}
 
@@ -76,10 +85,19 @@ def get_cursor_id(channels):
                 publish(channels, None)
 
 @interrupter_generator
-def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None):
+def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None,
+        yield_app_server=False):
+    if cache.has_cache:
+        for msg in cache.subscribe(channels, cursor_id=cursor_id,
+                timeout=timeout, yield_delay=yield_delay,
+                yield_app_server=yield_app_server):
+            yield msg
+        return
+
     collection = mongo.get_collection('messages')
     start_time = time.time()
     cursor_id = cursor_id or get_cursor_id(channels)
+
     while True:
         try:
             spec = {}
@@ -94,9 +112,10 @@ def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None):
 
             yield
 
-            cursor = collection.find(spec,
-                cursor_type=pymongo.cursor.CursorType.TAILABLE_AWAIT).sort(
-                '$natural', pymongo.ASCENDING)
+            cursor = collection.find(
+                spec,
+                cursor_type=pymongo.cursor.CursorType.TAILABLE_AWAIT,
+            ).sort('$natural', pymongo.ASCENDING)
 
             yield
 
@@ -124,6 +143,9 @@ def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None):
                                 yield doc
 
                         return
+
+                if yield_app_server and check_app_server_interrupt():
+                    return
 
                 if timeout and time.time() - start_time >= timeout:
                     return

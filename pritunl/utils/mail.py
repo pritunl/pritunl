@@ -13,9 +13,8 @@ def send_email(to_addr, subject, text_body, html_body):
     email_username = settings.app.email_username
     email_password = settings.app.email_password
 
-    if not email_server or not email_from or not \
-            email_username or not email_password:
-        raise EmailNotConfiguredError('Email not configured')
+    if not email_server or not email_from:
+        raise EmailNotConfiguredError('STMP not configured')
 
     msg = email.mime.multipart.MIMEMultipart('alternative')
     msg['Subject'] = subject
@@ -26,10 +25,15 @@ def send_email(to_addr, subject, text_body, html_body):
     msg.attach(email.mime.text.MIMEText(html_body, 'html'))
 
     try:
-        smtp_conn = smtplib.SMTP_SSL(email_server)
-        smtp_conn.login(email_username, email_password)
+        if not email_username and not email_password:
+            smtp_conn = smtplib.SMTP(email_server)
+        else:
+            smtp_conn = smtplib.SMTP_SSL(email_server)
+            smtp_conn.login(email_username, email_password)
+
         smtp_conn.sendmail(email_from, to_addr, msg.as_string())
         smtp_conn.quit()
+
     except smtplib.SMTPAuthenticationError:
         raise EmailAuthInvalid('Email auth is invalid')
     except smtplib.SMTPSenderRefused:

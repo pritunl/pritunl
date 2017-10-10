@@ -39,8 +39,10 @@ class DocDb(object):
         try:
             index_count = 0
             for index_key in self._index.keys():
-                val = query.pop(index_key, None)
+                val = query.get(index_key, None)
+
                 if val is not None:
+                    query.pop(index_key, None)
                     index_count += 1
                     index = self._index[index_key]
                     if val in index:
@@ -161,6 +163,27 @@ class DocDb(object):
                         index[val].add(doc_id)
 
                 doc[key] = val
+
+    def count(self, query, slow=False):
+        self._lock.acquire()
+        try:
+            if not query:
+                return len(self._docs)
+            doc_ids = self._find(query, slow, True)
+        finally:
+            self._lock.release()
+
+        return len(doc_ids)
+
+    def count_id(self, doc_id):
+        self._lock.acquire()
+        try:
+            if doc_id in self._docs:
+                return 1
+        finally:
+            self._lock.release()
+
+        return 0
 
     def update(self, query, update, slow=False):
         self._lock.acquire()

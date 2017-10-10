@@ -68,14 +68,18 @@ define([
             this.close(true);
           }
         }.bind(this),
-        error: function() {
+        error: function(model, response) {
           if (!error) {
             this.$('.ok').hide();
             this.$('.cancel').text('Close');
             error = true;
             this.clearLoading();
-            this.setAlert('danger',
-              'Failed to delete users, server error occurred.');
+            if (response.responseJSON) {
+              this.setAlert('danger', response.responseJSON.error_msg);
+            }
+            else {
+              this.setAlert('danger', this.errorMsg);
+            }
           }
         }.bind(this)
       };

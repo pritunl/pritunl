@@ -19,7 +19,9 @@ Commands:
   version               Print the version and exit
   sync-db               Sync database
   set-version           Set current version
-  build                 Build and release"""
+  build                 Build and release
+  upload                Upload release
+  upload-github         Upload release to GitHub"""
 
 INIT_PATH = 'pritunl/__init__.py'
 SETUP_PATH = 'setup.py'
@@ -44,25 +46,33 @@ def wget(url, cwd=None, output=None):
     subprocess.check_call(args, cwd=cwd)
 
 def post_git_asset(release_id, file_name, file_path):
-    file_size = os.path.getsize(file_path)
-    response = requests.post(
-        'https://uploads.github.com/repos/%s/%s/releases/%s/assets' % (
-            github_owner, pkg_name, release_id),
-        verify=False,
-        headers={
-            'Authorization': 'token %s' % github_token,
-            'Content-Type': 'application/octet-stream',
-            'Content-Size': file_size,
-        },
-        params={
-            'name': file_name,
-        },
-        data=open(file_path, 'rb').read(),
-    )
+    for i in xrange(5):
+        file_size = os.path.getsize(file_path)
+        response = requests.post(
+            'https://uploads.github.com/repos/%s/%s/releases/%s/assets' % (
+                github_owner, pkg_name, release_id),
+            verify=False,
+            headers={
+                'Authorization': 'token %s' % github_token,
+                'Content-Type': 'application/octet-stream',
+                'Content-Size': str(file_size),
+            },
+            params={
+                'name': file_name,
+            },
+            data=open(file_path, 'rb').read(),
+        )
 
-    if response.status_code != 201:
+        if response.status_code == 201:
+            return
+        else:
+            time.sleep(1)
+
+    data = response.json()
+    errors = data.get('errors')
+    if not errors or errors[0].get('code') != 'already_exists':
         print 'Failed to create asset on github'
-        print response.json()
+        print data
         sys.exit(1)
 
 def get_ver(version):
@@ -152,6 +162,7 @@ with open(BUILD_KEYS_PATH, 'r') as build_keys_file:
     build_keys = json.loads(build_keys_file.read().strip())
     github_owner = build_keys['github_owner']
     github_token = build_keys['github_token']
+    gitlab_token = build_keys['gitlab_token']
     mirror_url = build_keys['mirror_url']
     test_mirror_url = build_keys['test_mirror_url']
     mongodb_uris = build_keys['mongodb_uris']
@@ -205,6 +216,53 @@ elif cmd == 'sync-db':
     sync_db()
 
 
+elif cmd == 'sync-releases':
+    next_url = 'https://api.github.com/repos/%s/%s/releases' % (
+        github_owner, pkg_name)
+
+    while True:
+        # Get github release
+        response = requests.get(
+            next_url,
+            headers={
+                'Authorization': 'token %s' % github_token,
+                'Content-type': 'application/json',
+            },
+        )
+
+        if response.status_code != 200:
+            print 'Failed to get repo releases on github'
+            print response.json()
+            sys.exit(1)
+
+        for release in response.json():
+            print release['tag_name']
+
+            # Create gitlab release
+            resp = requests.post(
+                'https://git.pritunl.com/api/v3/projects' + \
+                    '/%s%%2F%s/repository/tags/%s/release' % (
+                    github_owner, pkg_name, release['tag_name']),
+                headers={
+                    'Private-Token': gitlab_token,
+                    'Content-type': 'application/json',
+                },
+                data=json.dumps({
+                    'tag_name': release['tag_name'],
+                    'description': release['body'],
+                }),
+            )
+
+            if resp.status_code not in (201, 409):
+                print 'Failed to create releases on gitlab'
+                print resp.json()
+                sys.exit(1)
+
+        if 'Link' not in response.headers or \
+                'rel="next"' not in response.headers['Link']:
+            break
+        next_url = response.headers['Link'].split(';')[0][1:-1]
+
 elif cmd == 'set-version':
     new_version_orig = args[1]
     new_version = get_ver(new_version_orig)
@@ -248,10 +306,27 @@ elif cmd == 'set-version':
 
 
     # Build webapp
-    subprocess.check_call(['grunt', '--ver=%s' % get_int_ver(new_version)],
-        cwd=STYLES_DIR)
-    subprocess.check_call(['grunt'], cwd=WWW_DIR)
-
+    subprocess.check_call([
+        'docker',
+        'run',
+        '--rm',
+        '-ti',
+        '-u', 'docker',
+        '-v', '%s:/mount' % os.path.join(os.getcwd(), STYLES_DIR),
+        'arch',
+        'grunt',
+        '--ver=%s' % get_int_ver(new_version)
+    ])
+    subprocess.check_call([
+        'docker',
+        'run',
+        '--rm',
+        '-ti',
+        '-u', 'docker',
+        '-v', '%s:/mount' % os.path.join(os.getcwd(), WWW_DIR),
+        'arch',
+        'grunt',
+    ])
 
     # Commit webapp
     subprocess.check_call(['git', 'reset', 'HEAD', '.'])
@@ -261,7 +336,7 @@ elif cmd == 'set-version':
         ['git', 'status', '-s']).rstrip().split('\n')
     changed = any([True if x[0] == 'M' else False for x in changes])
     if changed:
-        subprocess.check_call(['git', 'commit', '-m', 'Rebuild dist'])
+        subprocess.check_call(['git', 'commit', '-S', '-m', 'Rebuild dist'])
         subprocess.check_call(['git', 'push'])
 
 
@@ -328,7 +403,7 @@ elif cmd == 'set-version':
     subprocess.check_call(['git', 'add', CHANGES_PATH])
     subprocess.check_call(['git', 'add', INIT_PATH])
     subprocess.check_call(['git', 'add', SETUP_PATH])
-    subprocess.check_call(['git', 'commit', '-m', 'Create new release'])
+    subprocess.check_call(['git', 'commit', '-S', '-m', 'Create new release'])
     subprocess.check_call(['git', 'push'])
 
 
@@ -336,7 +411,7 @@ elif cmd == 'set-version':
     if not is_snapshot:
         subprocess.check_call(['git', 'branch', new_version])
         subprocess.check_call(['git', 'push', '-u', 'origin', new_version])
-    time.sleep(8)
+    time.sleep(6)
 
 
     # Create release
@@ -358,6 +433,31 @@ elif cmd == 'set-version':
 
     if response.status_code != 201:
         print 'Failed to create release on github'
+        print response.json()
+        sys.exit(1)
+
+    subprocess.check_call(['git', 'pull'])
+    subprocess.check_call(['git', 'push', '--tags'])
+    time.sleep(6)
+
+
+    # Create gitlab release
+    response = requests.post(
+        'https://git.pritunl.com/api/v3/projects' + \
+            '/%s%%2F%s/repository/tags/%s/release' % (
+            github_owner, pkg_name, new_version),
+        headers={
+            'Private-Token': gitlab_token,
+            'Content-type': 'application/json',
+        },
+        data=json.dumps({
+            'tag_name': new_version,
+            'description': release_body,
+        }),
+    )
+
+    if response.status_code != 201:
+        print 'Failed to create release on gitlab'
         print response.json()
         sys.exit(1)
 
@@ -404,8 +504,10 @@ elif cmd == 'build':
 
     # Run pacur project build
     for build_target in BUILD_TARGETS:
-        subprocess.check_call(['pacur', 'project', 'build', build_target],
-            cwd=pacur_path)
+        subprocess.check_call(
+            ['sudo', 'pacur', 'project', 'build', build_target],
+            cwd=pacur_path,
+        )
 
 
 elif cmd == 'upload':
@@ -434,19 +536,53 @@ elif cmd == 'upload':
 
 
     # Run pacur project build
-    subprocess.check_call(['pacur', 'project', 'repo'], cwd=pacur_path)
+    subprocess.check_call(
+        ['sudo', 'pacur', 'project', 'repo'],
+        cwd=pacur_path,
+    )
 
 
     # Sync mirror
-    subprocess.check_call(['rsync',
-        '--human-readable',
-        '--archive',
-        '--progress',
-        '--delete',
-        '--acls',
-        'mirror/',
-        test_mirror_url if is_snapshot else mirror_url,
-    ], cwd=pacur_path)
+    for mir_url in test_mirror_url if is_snapshot else mirror_url:
+        subprocess.check_call(['rsync',
+            '--human-readable',
+            '--archive',
+            '--progress',
+            '--delete',
+            '--acls',
+            'mirror/',
+            mir_url,
+        ], cwd=pacur_path)
+
+
+    # Add to github
+    for name, path in iter_packages():
+        post_git_asset(release_id, name, path)
+
+
+elif cmd == 'upload-github':
+    is_snapshot = 'snapshot' in cur_version
+    pacur_path = TEST_PACUR_PATH if is_snapshot else STABLE_PACUR_PATH
+
+
+    # Get release id
+    release_id = None
+    response = requests.get(
+        'https://api.github.com/repos/%s/%s/releases' % (
+            github_owner, pkg_name),
+        headers={
+            'Authorization': 'token %s' % github_token,
+            'Content-type': 'application/json',
+        },
+    )
+
+    for release in response.json():
+        if release['tag_name'] == cur_version:
+            release_id = release['id']
+
+    if not release_id:
+        print 'Version does not exists in github'
+        sys.exit(1)
 
 
     # Add to github

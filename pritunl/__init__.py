@@ -2,11 +2,11 @@ from pritunl import patches
 from pritunl.constants import *
 
 __title__ = 'pritunl'
-__version__ = '1.4.730.30'
+__version__ = '1.28.1487.93'
 __author__ = 'Pritunl'
 __email__ = 'contact@pritunl.com'
 __license__ = 'Custom'
-__copyright__ = 'Copyright 2013-2015 Pritunl <contact@pritunl.com>'
+__copyright__ = 'Copyright 2013-2016 Pritunl <contact@pritunl.com>'
 conf_path = DEFAULT_CONF_PATH
 
 def set_conf_path(path=None):

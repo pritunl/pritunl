@@ -2,7 +2,6 @@ from pritunl import __version__
 
 from pritunl.constants import *
 from pritunl import settings
-from pritunl import mongo
 
 import subprocess
 import time
@@ -20,6 +19,13 @@ import hashlib
 import base64
 import re
 import Queue
+import urllib2
+import json
+import math
+import psutil
+import urlparse
+
+_null = open(os.devnull, 'w')
 
 if hasattr(sys, 'frozen'):
     _srcfile = 'logging%s__init__%s' % (os.sep, __file__[-4:])
@@ -33,6 +39,8 @@ PyQueue = Queue.Queue
 PyPriorityQueue = Queue.PriorityQueue
 
 def ObjectId(oid=None):
+    if oid is not None:
+        oid = str(oid)
     if oid is None or len(oid) != 32:
         try:
             return bson.ObjectId(oid)
@@ -43,12 +51,18 @@ def ObjectId(oid=None):
             )
     return oid
 
+def _now(ntp_time):
+    start_time, sync_time = ntp_time
+    return sync_time + (time.time() - start_time)
+
 def now():
-    mongo_time_start, mongo_time = settings.local.mongo_time
-    return mongo_time + (datetime.datetime.utcnow() - mongo_time_start)
+    return datetime.datetime.utcfromtimestamp(time.time())
 
 def time_now():
-    return int((now() - datetime.datetime(1970, 1, 1)).total_seconds())
+    return time.time()
+
+def sync_time():
+    pass
 
 def rand_sleep():
     time.sleep(random.randint(0, 25) / 1000.)
@@ -69,7 +83,7 @@ def get_int_ver(version):
 
     return int(''.join([x.zfill(4) for x in ver]))
 
-def get_db_ver():
+def _get_version_doc():
     if settings.conf.mongodb_uri:
         prefix = settings.conf.mongodb_collection_prefix or ''
         client = pymongo.MongoClient(settings.conf.mongodb_uri,
@@ -78,29 +92,46 @@ def get_db_ver():
         settings_db = getattr(database, prefix + 'settings')
         doc = settings_db.find_one({
             '_id': 'version',
-        }) or {}
+        })
 
-        version = doc.get('version')
-        if version:
-            return version
+        if doc:
+            return doc
 
-    return __version__
+    return {}
+
+def get_db_ver(default=True):
+    return _get_version_doc().get('version') or (
+        __version__ if default else None)
+
+def get_min_db_ver(default=True):
+    return _get_version_doc().get('version_min') or (
+        '1.24.0.0' if default else None)
 
 def get_db_ver_int():
-    version = get_db_ver()
-    if version:
-        return get_int_ver(version)
+    return get_int_ver(get_db_ver())
 
-def set_db_ver(version):
+def get_min_db_ver_int():
+    return get_int_ver(get_min_db_ver())
+
+def set_db_ver(version, version_min=None):
     from pritunl import logger
 
-    db_version = get_db_ver()
+    db_version = get_db_ver(False)
+    db_min_version = get_min_db_ver(False)
 
-    if version != db_version:
+    if version != db_version or MIN_DATABASE_VER != db_min_version:
         logger.info('Setting db version', 'utils',
             cur_ver=db_version,
             new_ver=version,
+            cur_min_ver=db_min_version,
+            new_min_ver=MIN_DATABASE_VER,
         )
+
+    update_doc = {
+        'version': version,
+    }
+    if version_min:
+        update_doc['version_min'] = version_min
 
     prefix = settings.conf.mongodb_collection_prefix or ''
     client = pymongo.MongoClient(settings.conf.mongodb_uri,
@@ -109,9 +140,7 @@ def set_db_ver(version):
     settings_db = getattr(database, prefix + 'settings')
     doc = settings_db.update({
         '_id': 'version',
-    }, {
-        'version': version,
-    }, upsert=True)
+    }, update_doc, upsert=True)
 
     return doc.get('version')
 
@@ -141,36 +170,16 @@ def check_output_logged(*args, **kwargs):
 
     return stdoutdata
 
-def sync_time():
-    nounce = None
-    doc = {}
+def check_call_silent(*args, **kwargs):
+    if 'stdout' in kwargs or 'stderr' in kwargs:
+        raise ValueError('Output arguments not allowed, it will be overridden')
 
-    try:
-        collection = mongo.get_collection('time_sync')
+    process = subprocess.Popen(stdout=_null, stderr=_null, *args, **kwargs)
+    return_code = process.wait()
 
-        nounce = ObjectId()
-        collection.insert({
-            'nounce': nounce,
-        }, manipulate=False)
-
-        mongo_time_start = datetime.datetime.utcnow()
-
-        doc = collection.find_one({
-            'nounce': nounce,
-        })
-        mongo_time = doc['_id'].generation_time.replace(tzinfo=None)
-
-        settings.local.mongo_time = (mongo_time_start, mongo_time)
-
-        collection.remove(doc['_id'])
-    except:
-        from pritunl import logger
-
-        logger.exception('Failed to sync time',
-            nounce=nounce,
-            doc_id=doc.get('id'),
-        )
-        raise
+    if return_code:
+        cmd = kwargs.get('args', args[0])
+        raise subprocess.CalledProcessError(return_code, cmd)
 
 def find_caller():
     try:
@@ -209,6 +218,8 @@ def rmtree(path):
             time.sleep(0.01)
 
 def filter_str(in_str):
+    if in_str is not None:
+        in_str = str(in_str)
     if not in_str:
         return in_str
     return ''.join(x for x in in_str if x.isalnum() or x in NAME_SAFE_CHARS)
@@ -237,28 +248,12 @@ def get_temp_path():
     return os.path.join(settings.conf.temp_path, uuid.uuid4().hex)
 
 def check_openssl():
-    try:
-        # Check for unpatched heartbleed
-        openssl_ver = check_output_logged(['openssl', 'version', '-a'])
-        version, build_date = openssl_ver.split('\n')[0:2]
-
-        build_date = build_date.replace('built on:', '').strip()
-        build_date = build_date.split()
-        build_date = ' '.join([build_date[1],
-            build_date[2].zfill(2), build_date[5]])
-        build_date = datetime.datetime.strptime(build_date, '%b %d %Y').date()
-
-        if version in OPENSSL_HEARTBLEED and \
-                build_date < OPENSSL_HEARTBLEED_BUILD_DATE:
-            return False
-    except:
-        pass
     return True
 
 def check_iptables_wait():
     try:
         subprocess.check_call(['iptables', '--wait', '-L', '-n'],
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            stdout=_null, stderr=_null)
         return True
     except:
         pass
@@ -314,6 +309,14 @@ def stop_process(process):
 
     return terminated
 
+def const_compare(x, y):
+    if len(x) != len(y):
+        return False
+    result = 0
+    for x, y in zip(x, y):
+        result |= ord(x) ^ ord(y)
+    return result == 0
+
 def response(data=None, status_code=None):
     response = flask.Response(response=data,
         mimetype='text/html; charset=utf-8')
@@ -339,8 +342,18 @@ def styles_response(etag, last_modified, data):
     return response
 
 def rand_str(length):
-    return re.sub(r'[\W_]+', '', base64.b64encode(
-        os.urandom(length * 2)))[:length]
+    s = re.sub(r'[\W_]+', '', base64.b64encode(
+        os.urandom(int(length * 1.5))))[:length]
+    if len(s) != length:
+        return rand_str(length)
+    return s
+
+def rand_str_ne(length):
+    s = re.sub(r'[\W_lIO0]+', '', base64.b64encode(
+        os.urandom(int(length * 1.5))))[:length]
+    if len(s) != length:
+        return rand_str(length)
+    return s
 
 prime32 = 16777619
 prime64 = 1099511628211
@@ -360,3 +373,93 @@ def fnv64a(s):
         hval ^= ord(x)
         hval = (hval * prime64) % uint64_max
     return hval
+
+def sync_public_ip(attempts=1, timeout=5, update=False):
+    from pritunl import logger
+
+    for i in xrange(attempts):
+        if i:
+            time.sleep(3)
+            logger.info('Retrying get public ip address', 'utils')
+        try:
+            request = urllib2.Request(
+                settings.app.public_ip_server)
+            request.add_header('User-Agent', 'pritunl')
+            response = urllib2.urlopen(request, timeout=timeout)
+            settings.local.public_ip = str(json.load(response)['ip'])
+            break
+        except:
+            pass
+
+    try:
+        request = urllib2.Request(
+            settings.app.public_ip6_server)
+        request.add_header('User-Agent', 'pritunl')
+        response = urllib2.urlopen(request, timeout=timeout)
+        settings.local.public_ip6 = str(json.load(response)['ip'])
+    except:
+        pass
+
+    if not settings.local.public_ip:
+        logger.warning('Failed to get public ip address', 'utils')
+
+    if update:
+        settings.local.host.collection.update({
+            '_id': settings.local.host.id,
+        }, {'$set': {
+            'auto_public_address': settings.local.public_ip,
+            'auto_public_address6': settings.local.public_ip6,
+        }})
+
+def ping(address, timeout=1):
+    start = time.time()
+    code = subprocess.call(['ping', '-c', '1', '-W',
+            str(math.ceil(timeout)), address],
+        stdout=_null, stderr=_null)
+    runtime = (time.time() - start)
+    if code != 0:
+        return None
+    return runtime
+
+def get_process_cpu_mem():
+    proc = psutil.Process(os.getpid())
+    return proc.cpu_percent(interval=0.5), proc.memory_percent()
+
+def redirect(location, code=302):
+    location = urlparse.urljoin(get_url_root(), location)
+    return flask.redirect(location, code)
+
+def get_url_root():
+    url_root = flask.request.headers.get('PR-Forwarded-Url')
+
+    if settings.app.reverse_proxy and \
+            flask.request.headers.get('PR-Forwarded-Header'):
+        url_root = url_root.replace('http://', 'https://', 1)
+
+    if url_root[-1] == '/':
+        url_root = url_root[:-1]
+
+    return url_root
+
+def check_openvpn_ver():
+    try:
+        process = subprocess.Popen(['openvpn', '--version'],
+            stdout=subprocess.PIPE)
+        output, _ = process.communicate()
+        output = output.split()[1].strip()
+
+        version = [int(x) for x in output.split('.')]
+
+        if version[0] > 2:
+            return True
+
+        if version[0] == 2 and version[1] > 3:
+            return True
+
+        if version[0] == 2 and version[1] == 3 and version[2] > 2:
+            return True
+    except:
+        from pritunl import logger
+        logger.exception('Failed to check openvpn version', 'utils')
+
+    return False

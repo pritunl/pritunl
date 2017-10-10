@@ -1,0 +1,16 @@
+<div class="admin layout-horizontal">
+  <div class="selector no-select">
+    <span class="selector-inner glyphicon glyphicon-ok"></span>
+  </div>
+  <div class="name-container layout-flex">
+    <span class="name-icon glyphicon glyphicon-user"></span>
+    <a class="admin-username title no-select" data-toggle="tooltip" title="Click to modify this administrator"><%- username %></a>
+    <span class="admin-id title">(<%- id %>)</span>
+  </div>
+  <div class="right-container">
+    <a class="get-otp-auth glyphicon glyphicon-qrcode no-select <%- otp_auth ? '' : 'no-otp-auth' %>" data-toggle="tooltip" title="Get two-step authentication key"></a>
+    <a class="audit-admin glyphicon glyphicon-list-alt no-select <%- audit ? '' : 'no-audit-admin' %>" data-toggle="tooltip" title="Administrator audit"></a>
+    <a class="disable-admin glyphicon glyphicon glyphicon-ban-circle no-select" data-toggle="tooltip" title="Disable and logout administrator"></a>
+    <a class="enable-admin glyphicon glyphicon glyphicon-ok-circle no-select" data-toggle="tooltip" title="Enable administrator"></a>
+  </div>
+</div>

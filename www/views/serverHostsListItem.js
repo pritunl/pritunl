@@ -5,7 +5,7 @@ define([
   'views/alert',
   'views/modalDetachHost',
   'text!templates/serverHostsListItem.html'
-], function($, _, Backbone, AlertView, ModalDetachHost,
+], function($, _, Backbone, AlertView, ModalDetachHostView,
     serverHostsListItemTemplate) {
   'use strict';
   var ServerHostsListItemView = Backbone.View.extend({
@@ -45,12 +45,12 @@ define([
     onDetach: function(evt) {
       var model = this.model.clone();
 
-      if (evt.shiftKey && evt.ctrlKey) {
+      if (evt.shiftKey && evt.ctrlKey && evt.altKey) {
         model.destroy();
         return;
       }
 
-      var modal = new ModalDetachHost({
+      var modal = new ModalDetachHostView({
         model: model
       });
       this.listenToOnce(modal, 'applied', function() {

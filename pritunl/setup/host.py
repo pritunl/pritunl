@@ -1,4 +1,11 @@
 from pritunl import mongo
+from pritunl import listener
+from pritunl import settings
+
+def _on_msg(msg):
+    if msg['message'] != 'updated':
+        return
+    settings.local.host.load()
 
 def setup_host():
     from pritunl import host
@@ -12,3 +19,5 @@ def setup_host():
     }}, upsert=True)
 
     host.init()
+
+    listener.add_listener('hosts', _on_msg)

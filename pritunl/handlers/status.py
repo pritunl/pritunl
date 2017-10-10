@@ -10,6 +10,11 @@ from pritunl import __version__
 @app.app.route('/status', methods=['GET'])
 @auth.session_auth
 def status_get():
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache()
+        if resp:
+            return utils.jsonify(resp)
+
     server_collection = mongo.get_collection('servers')
     clients_collection = mongo.get_collection('clients')
     host_collection = mongo.get_collection('hosts')
@@ -53,6 +58,7 @@ def status_get():
         {'$project': {
             '_id': True,
             'status': True,
+            'local_networks': True,
         }},
         {'$group': {
             '_id': None,
@@ -65,6 +71,7 @@ def status_get():
             'servers': {
                 '$push': '$status',
             },
+            'local_networks': {'$push':'$local_networks'},
         }},
     ])
 
@@ -72,15 +79,19 @@ def status_get():
     for val in response:
         break
 
+    local_networks = set()
     if val:
         host_count = val['host_count']
         hosts_online = val['hosts_online']
+
+        for hst_networks in val['local_networks']:
+            for network in hst_networks:
+                local_networks.add(network)
     else:
         host_count = 0
         hosts_online = 0
 
     user_count = organization.get_user_count_multi()
-    local_networks = utils.get_local_networks()
 
     orgs_count = org_collection.find({
        'type': ORG_DEFAULT,
@@ -88,15 +99,9 @@ def status_get():
         '_id': True,
     }).count()
 
-    if settings.local.openssl_heartbleed:
-        notification = 'You are running an outdated version of openssl ' + \
-            'containting the heartbleed bug. This could allow an attacker ' + \
-            'to compromise your server. Please upgrade your openssl ' + \
-            'package and restart the pritunl service.'
-    else:
-        notification = settings.local.notification
+    notification = settings.local.notification
 
-    return utils.jsonify({
+    resp = {
         'org_count': orgs_count,
         'users_online': users_online,
         'user_count': user_count,
@@ -107,6 +112,9 @@ def status_get():
         'server_version': __version__,
         'current_host': settings.local.host_id,
         'public_ip': settings.local.public_ip,
-        'local_networks': local_networks,
+        'local_networks': list(local_networks),
         'notification': notification,
-    })
+    }
+    if settings.app.demo_mode:
+        utils.demo_set_cache(resp)
+    return utils.jsonify(resp)

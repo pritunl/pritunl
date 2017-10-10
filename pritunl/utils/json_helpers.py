@@ -1,5 +1,6 @@
-from pritunl.utils.misc import ObjectId
+from pritunl.utils.misc import ObjectId, fnv32a
 
+from pritunl.constants import *
 from pritunl import mongo
 
 import datetime
@@ -9,6 +10,8 @@ import json
 import bson
 import bson.tz_util
 import bson.objectid
+
+_demo_cache = {}
 
 def json_object_hook_handler(obj):
     obj_data = obj.get('$obj')
@@ -43,3 +46,20 @@ def jsonify(data=None, status_code=None):
     if status_code is not None:
         response.status_code = status_code
     return response
+
+def demo_blocked():
+    return jsonify({
+        'error': DEMO_BLOCKED,
+        'error_msg': DEMO_BLOCKED_MSG,
+    }, 400)
+
+def demo_cache_id(*args):
+    return fnv32a(flask.request.path + ':' + '.'.join([str(x) for x in args]))
+
+def demo_set_cache(data, *args):
+    cache_id = demo_cache_id(*args)
+    _demo_cache[cache_id] = data
+
+def demo_get_cache(*args):
+    cache_id = demo_cache_id(*args)
+    return _demo_cache.get(cache_id)

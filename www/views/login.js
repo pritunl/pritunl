@@ -44,8 +44,10 @@ define([
       if (this.alert) {
         this.setAlert(this.alert);
       }
-      if (window.sso) {
-        this.$('form').addClass('sso');
+      if (window.sso === 'google' || window.sso === 'google_duo') {
+        this.$('form').addClass('sso-google');
+      } else if (window.sso === 'duo') {
+        this.$('form').addClass('sso-duo');
       }
       if (window.demo) {
         this.$('.username, .password').val('demo');

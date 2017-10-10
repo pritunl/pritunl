@@ -1,0 +1,426 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Pritunl - Enterprise Distributed VPN Server",
+  "Parameters": {
+    "KeyName": {
+      "Type": "AWS::EC2::KeyPair::KeyName",
+      "Description": "Name of an existing EC2 KeyPair to enable SSH access",
+      "ConstraintDescription": "Must be the name of an existing EC2 KeyPair"
+    },
+    "StackSize": {
+      "Type": "String",
+      "Default": "1",
+      "Description": "Number of Pritunl instances to create",
+      "ConstraintDescription": "Must be an integer"
+    },
+    "InstanceType": {
+      "Type": "String",
+      "Default": "t2.micro",
+      "Description": "Pritunl EC2 instance type",
+      "AllowedValues": [
+        "t2.micro",
+        "t2.small",
+        "t2.medium",
+        "m3.medium",
+        "m3.large",
+        "m3.xlarge",
+        "m3.2xlarge",
+        "c3.large",
+        "c3.xlarge",
+        "c3.2xlarge",
+        "c3.4xlarge",
+        "c3.8xlarge",
+        "c4.large",
+        "c4.xlarge",
+        "c4.2xlarge",
+        "c4.4xlarge",
+        "c4.8xlarge",
+        "r3.large",
+        "r3.xlarge",
+        "r3.2xlarge",
+        "r3.4xlarge",
+        "r3.8xlarge"
+      ],
+      "ConstraintDescription": "Must be a valid EC2 instance type"
+    },
+    "DatabaseInstanceType": {
+      "Type": "String",
+      "Default": "m3.medium",
+      "Description": "MongoDB EC2 instance type",
+      "AllowedValues": [
+        "t2.micro",
+        "t2.small",
+        "t2.medium",
+        "m3.medium",
+        "m3.large",
+        "m3.xlarge",
+        "m3.2xlarge",
+        "c3.large",
+        "c3.xlarge",
+        "c3.2xlarge",
+        "c3.4xlarge",
+        "c3.8xlarge",
+        "c4.large",
+        "c4.xlarge",
+        "c4.2xlarge",
+        "c4.4xlarge",
+        "c4.8xlarge",
+        "r3.large",
+        "r3.xlarge",
+        "r3.2xlarge",
+        "r3.4xlarge",
+        "r3.8xlarge"
+      ],
+      "ConstraintDescription": "Must be a valid EC2 instance type"
+    },
+    "VpcId": {
+      "Type": "AWS::EC2::VPC::Id",
+      "Description": "VPC Id of existsing VPC",
+      "ConstraintDescription": "Must be the Id of an existing VPC"
+    },
+    "DatabaseVpcSubnet": {
+      "Type": "AWS::EC2::Subnet::Id",
+      "Description": "The SubnetId in your VPC to launch MongoDB instance",
+      "ConstraintDescription" : "Must be an existing subnet in VPC"
+    },
+    "VpcSubnets": {
+      "Type": "List<AWS::EC2::Subnet::Id>",
+      "Description": "The list of SubnetIds in your VPC to launch Pritunl instances",
+      "ConstraintDescription" : "Must be a list of existing subnets in VPC"
+    }
+  },
+  "Mappings": {
+    "AWSInstanceType2Arch": {
+      "t2.micro"  : {"Arch": "HVM64"},
+      "t2.small"  : {"Arch": "HVM64"},
+      "t2.medium" : {"Arch": "HVM64"},
+      "m3.medium" : {"Arch": "HVM64"},
+      "m3.large"  : {"Arch": "HVM64"},
+      "m3.xlarge" : {"Arch": "HVM64"},
+      "m3.2xlarge": {"Arch": "HVM64"},
+      "c3.large"  : {"Arch": "HVM64"},
+      "c3.xlarge" : {"Arch": "HVM64"},
+      "c3.2xlarge": {"Arch": "HVM64"},
+      "c3.4xlarge": {"Arch": "HVM64"},
+      "c3.8xlarge": {"Arch": "HVM64"},
+      "c4.large"  : {"Arch": "HVM64"},
+      "c4.xlarge" : {"Arch": "HVM64"},
+      "c4.2xlarge": {"Arch": "HVM64"},
+      "c4.4xlarge": {"Arch": "HVM64"},
+      "c4.8xlarge": {"Arch": "HVM64"},
+      "r3.large"  : {"Arch": "HVM64"},
+      "r3.xlarge" : {"Arch": "HVM64"},
+      "r3.2xlarge": {"Arch": "HVM64"},
+      "r3.4xlarge": {"Arch": "HVM64"},
+      "r3.8xlarge": {"Arch": "HVM64"}
+    },
+    "AWSRegionArch2AMI": {
+      "us-east-1": {
+        "PV64": "NOT_SUPPORTED",
+        "HVM64": "ami-1ecae776",
+        "HVMG2": "NOT_SUPPORTED"
+      },
+      "us-west-2": {
+        "PV64": "NOT_SUPPORTED",
+        "HVM64": "ami-e7527ed7",
+        "HVMG2": "NOT_SUPPORTED"
+      },
+      "us-west-1": {
+        "PV64": "NOT_SUPPORTED",
+        "HVM64": "ami-d114f295",
+        "HVMG2": "NOT_SUPPORTED"
+      },
+      "eu-west-1": {
+        "PV64": "NOT_SUPPORTED",
+        "HVM64": "ami-a10897d6",
+        "HVMG2": "NOT_SUPPORTED"
+      },
+      "eu-central-1": {
+        "PV64": "NOT_SUPPORTED",
+        "HVM64": "ami-a8221fb5",
+        "HVMG2": "NOT_SUPPORTED"
+      },
+      "ap-southeast-1": {
+        "PV64": "NOT_SUPPORTED",
+        "HVM64": "ami-68d8e93a",
+        "HVMG2": "NOT_SUPPORTED"
+      },
+      "ap-northeast-1": {
+        "PV64": "NOT_SUPPORTED",
+        "HVM64": "ami-cbf90ecb",
+        "HVMG2": "NOT_SUPPORTED"
+      },
+      "ap-southeast-2": {
+        "PV64": "NOT_SUPPORTED",
+        "HVM64": "ami-fd9cecc7",
+        "HVMG2": "NOT_SUPPORTED"
+      },
+      "sa-east-1": {
+        "PV64": "NOT_SUPPORTED",
+        "HVM64": "ami-b52890a8",
+        "HVMG2": "NOT_SUPPORTED"
+      },
+      "cn-north-1": {
+        "PV64": "NOT_SUPPORTED",
+        "HVM64": "ami-f239abcb",
+        "HVMG2": "NOT_SUPPORTED"
+      },
+      "us-gov-west-1": {
+        "PV64": "NOT_SUPPORTED",
+        "HVM64": "ami-41b2d362",
+        "HVMG2": "NOT_SUPPORTED"
+      }
+    }
+  },
+  "Resources": {
+    "DatabaseInstance": {
+      "Type": "AWS::EC2::Instance",
+      "Metadata": {
+        "AWS::CloudFormation::Init": {
+          "configSets": {
+            "InstallAndRun": ["Update", "Setup", "Install", "Configure"]
+          },
+          "Update": {
+            "commands": {
+              "update_system": {
+                "command": "yum update -y"
+              }
+            }
+          },
+          "Setup": {
+            "files": {
+              "/etc/yum.repos.d/mongodb-org-3.0.repo": {
+                "content": {"Fn::Join": ["", [
+                  "[mongodb-org-3.2]\n",
+                  "name=MongoDB Repository\n",
+                  "baseurl=https://repo.mongodb.org/yum/amazon/2013.03/mongodb-org/3.2/x86_64/\n",
+                  "gpgcheck=1\n",
+                  "enabled=1\n",
+                  "gpgkey=https://www.mongodb.org/static/pgp/server-3.2.asc\n"
+                ]]},
+                "mode": "000644",
+                "owner": "root",
+                "group": "root"
+              }
+            }
+          },
+          "Install": {
+            "packages": {
+              "yum": {
+                "mongodb-org": []
+              }
+            }
+          },
+          "Configure": {
+            "commands": {
+              "01_conf_mongodb": {
+                "command": "sed -i 's/bind_ip=127.0.0.1/#bind_ip=127.0.0.1/g' /etc/mongod.conf"
+              },
+              "02_start_mongodb": {
+                "command": "service mongod start"
+              }
+            }
+          }
+        }
+      },
+      "Properties": {
+        "ImageId": {"Fn::FindInMap": [
+          "AWSRegionArch2AMI",
+          {"Ref": "AWS::Region"},
+          {"Fn::FindInMap": [
+            "AWSInstanceType2Arch",
+            {"Ref": "InstanceType"},
+            "Arch"
+          ]}
+        ]},
+        "InstanceType": {"Ref": "InstanceType"},
+        "KeyName": {"Ref": "KeyName"},
+        "NetworkInterfaces": [ {
+          "AssociatePublicIpAddress": "true",
+          "DeviceIndex": "0",
+          "GroupSet": [{"Ref": "DatabaseSecurityGroup"}],
+          "SubnetId": {"Ref": "DatabaseVpcSubnet"}
+        }],
+        "BlockDeviceMappings": [{
+          "DeviceName": "/dev/xvda",
+          "Ebs": {"VolumeSize": "32"}
+        }],
+        "UserData": {"Fn::Base64": {"Fn::Join": ["", [
+          "#!/bin/bash -xe\n",
+          "yum update -y aws-cfn-bootstrap\n",
+          "# Install the files and packages from the metadata\n",
+          "/opt/aws/bin/cfn-init -v ",
+          "  --stack ", {"Ref": "AWS::StackName"},
+          "  --resource DatabaseInstance ",
+          "  --configsets InstallAndRun ",
+          "  --region ", {"Ref": "AWS::Region"}, "\n",
+          "# Signal the status from cfn-init\n",
+          "/opt/aws/bin/cfn-signal -e $? ",
+          "  --stack ", {"Ref": "AWS::StackName"},
+          "  --resource DatabaseInstance ",
+          "  --region ", {"Ref": "AWS::Region"}, "\n"
+        ]]}}
+      },
+      "CreationPolicy": {
+        "ResourceSignal": {
+          "Timeout": "PT5M"
+        }
+      }
+    },
+    "PritunlScalingGroup": {
+      "Type": "AWS::AutoScaling::AutoScalingGroup",
+      "Properties": {
+        "AvailabilityZones": {"Fn::GetAZs": ""},
+        "VPCZoneIdentifier": {"Ref": "VpcSubnets"},
+        "LaunchConfigurationName": {"Ref": "PritunlLaunchConfig"},
+        "MinSize": {"Ref": "StackSize"},
+        "MaxSize": {"Ref": "StackSize"},
+        "DesiredCapacity": {"Ref": "StackSize"}
+      }
+    },
+    "PritunlLaunchConfig": {
+      "Type": "AWS::AutoScaling::LaunchConfiguration",
+      "Metadata": {
+        "AWS::CloudFormation::Init": {
+          "configSets": {
+            "InstallAndRun": ["Update", "Setup", "Install", "Configure"]
+          },
+          "Update": {
+            "commands": {
+              "update_system": {
+                "command": "yum update -y"
+              }
+            }
+          },
+          "Setup": {
+            "files": {
+              "/etc/yum.repos.d/pritunl.repo": {
+                "content": {"Fn::Join": ["", [
+                  "[pritunl]\n",
+                  "name=Pritunl Repository\n",
+                  "baseurl=https://repo.pritunl.com/stable/yum/centos/7/\n",
+                  "gpgcheck=1\n",
+                  "enabled=1\n",
+                  "gpgkey=https://s3.amazonaws.com/pritunl-repo/pritunl.asc\n"
+                ]]},
+                "mode": "000644",
+                "owner": "root",
+                "group": "root"
+              }
+            }
+          },
+          "Install": {
+            "packages": {
+              "yum": {
+                "python27": [],
+                "pritunl": []
+              }
+            },
+            "files": {
+              "/etc/pritunl.conf": {
+                "content": {"Fn::Join": ["", [
+                  "{\n",
+                  "    \"bind_addr\": \"0.0.0.0\",\n",
+                  "    \"log_path\": \"/var/log/pritunl.log\",\n",
+                  "    \"temp_path\": \"/tmp/pritunl_%r\",\n",
+                  "    \"local_address_interface\": \"auto\",\n",
+                  "    \"mongodb_uri\": \"mongodb://", {"Fn::GetAtt": [
+                        "DatabaseInstance", "PrivateIp" ]},
+                        ":27017/pritunl\"\n",
+                  "}\n"
+                ]]},
+                "mode": "000644",
+                "owner": "root",
+                "group": "root"
+              }
+            }
+          },
+          "Configure": {
+            "commands": {
+              "start_pritunl": {
+                "command": "start pritunl"
+              }
+            }
+          }
+        }
+      },
+      "Properties": {
+        "ImageId": {"Fn::FindInMap": [
+            "AWSRegionArch2AMI",
+            {"Ref": "AWS::Region"},
+            {"Fn::FindInMap": [
+              "AWSInstanceType2Arch",
+              {"Ref": "InstanceType"},
+              "Arch"
+            ]}
+        ]},
+        "InstanceType": {"Ref": "InstanceType"},
+        "SecurityGroups": [{"Ref": "PritunlSecurityGroup"}],
+        "AssociatePublicIpAddress": "true",
+        "KeyName": {"Ref": "KeyName"},
+        "UserData": {"Fn::Base64": {"Fn::Join": ["", [
+          "#!/bin/bash -xe\n",
+          "yum update -y aws-cfn-bootstrap\n",
+          "# Install the files and packages from the metadata\n",
+          "/opt/aws/bin/cfn-init -v ",
+          "  --stack ", {"Ref": "AWS::StackName"},
+          "  --resource PritunlLaunchConfig ",
+          "  --configsets InstallAndRun ",
+          "  --region ", {"Ref": "AWS::Region"}, "\n",
+          "# Signal the status from cfn-init\n",
+          "/opt/aws/bin/cfn-signal -e $? ",
+          "  --stack ", {"Ref": "AWS::StackName"},
+          "  --resource PritunlLaunchConfig ",
+          "  --region ", {"Ref": "AWS::Region"}, "\n"
+        ]]}}
+      },
+      "CreationPolicy": {
+        "ResourceSignal": {
+          "Timeout": "PT5M"
+        }
+      }
+    },
+    "DatabaseSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "MongoDB Security Group",
+        "VpcId": {"Ref": "VpcId"},
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "27017",
+            "ToPort": "27017",
+            "SourceSecurityGroupId": {"Ref": "PritunlSecurityGroup"}
+          }
+        ]
+      }
+    },
+    "PritunlSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Pritunl Security Group",
+        "VpcId": {"Ref": "VpcId"},
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "80",
+            "ToPort": "80",
+            "CidrIp": "0.0.0.0/0"
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "443",
+            "ToPort": "443",
+            "CidrIp": "0.0.0.0/0"
+          },
+          {
+            "IpProtocol": "udp",
+            "FromPort": "10000",
+            "ToPort": "19999",
+            "CidrIp": "0.0.0.0/0"
+          }
+        ]
+      }
+    }
+  }
+}

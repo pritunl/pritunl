@@ -13,7 +13,7 @@ define([
       this.set({'users': []});
     },
     url: function() {
-      return '/user/' + this.get('organization');
+      return '/user/' + this.get('organization') + '/multi';
     },
     toJSON: function() {
       return this.get('users');

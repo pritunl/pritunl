@@ -7,5 +7,5 @@ def remove_listener(instance_id):
     _channels.pop(instance_id, None)
 
 def on_msg(msg):
-    for callback in _channels.itervalues():
+    for callback in _channels.values():
         callback(msg)

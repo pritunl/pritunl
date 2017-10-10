@@ -1,8 +1,10 @@
 from pritunl.helpers import *
+from pritunl.constants import *
 from pritunl import utils
 from pritunl import logger
 from pritunl import mongo
 from pritunl import settings
+from pritunl import event
 
 import time
 import threading
@@ -11,8 +13,6 @@ import threading
 def _logger_runner_thread():
     log_queue = logger.log_queue
     collection = mongo.get_collection('logs')
-
-    settings.local.logger_runner = True
 
     while True:
         try:
@@ -29,8 +29,8 @@ def _logger_runner_thread():
 
             if msg_docs:
                 yield
-
                 collection.insert(msg_docs)
+                event.Event(type=SYSTEM_LOG_UPDATED)
 
             yield interrupter_sleep(settings.app.log_db_delay)
 

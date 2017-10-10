@@ -23,13 +23,6 @@ def add_queue_item(queue_item):
         return
     running_queues[queue_item.id] = queue_item
 
-    logger.debug('Add queue item for run', 'queue',
-        queue_id=queue_item.id,
-        queue_type=queue_item.type,
-        queue_priority=queue_item.priority,
-        queue_cpu_type=queue_item.cpu_type,
-    )
-
     runner_queues[queue_item.cpu_type].put((
         abs(queue_item.priority - 4),
         queue_item,
@@ -41,13 +34,6 @@ def add_queue_item(queue_item):
                 continue
 
             if running_queue.pause():
-                logger.debug('Puase queue item', 'queue',
-                    queue_id=running_queue.id,
-                    queue_type=running_queue.type,
-                    queue_priority=running_queue.priority,
-                    queue_cpu_type=running_queue.cpu_type,
-                )
-
                 runner_queues[running_queue.cpu_type].put((
                     abs(running_queue.priority - 4),
                     running_queue,
@@ -101,10 +87,6 @@ def run_queue_item(queue_item, thread_limit):
     release = True
     try:
         if queue_item.queue_com.state == None:
-            logger.debug('Run queue item', 'queue_runner',
-                queue_id=queue_item.id,
-                queue_type=queue_item.type,
-            )
             queue_item.run()
         elif queue_item.queue_com.state == PAUSED:
             release = False

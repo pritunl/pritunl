@@ -1,6 +1,7 @@
-from pritunl.constants import *
 from pritunl import utils
 from pritunl import logger
+
+import datetime
 
 def get_period_timestamp(period, timestamp):
     timestamp -= datetime.timedelta(microseconds=timestamp.microsecond,
@@ -62,7 +63,7 @@ def calc_cpu_usage(last_proc_stat, proc_stat):
 def get_mem_usage():
     try:
         free = utils.check_output_logged(['free']).split()
-        return float(free[15]) / float(free[7])
+        return float(free[8]) / float(free[7])
     except:
         logger.exception('Failed to get memory usage', 'host')
     return 0

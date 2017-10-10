@@ -28,7 +28,7 @@ define([
         }
       });
       Rickshaw.Graph.HoverDetail.prototype.initialize.call(this, args);
-    },
+    }
   });
 
   var ServerBandwidthView = Backbone.View.extend({
@@ -40,9 +40,22 @@ define([
       this.model.setPeriod('1m');
       this.state = false;
       this.interval = setInterval((this.update).bind(this), 15000);
+
+      this.bindId = window.uuid();
+      this.width = this.$el.width();
+      $(window).bind('resize.' + this.bindId, (this.onResize).bind(this));
     },
     deinitialize: function() {
       clearInterval(this.interval);
+      $(window).unbind('resize.' + this.bindId);
+    },
+    onResize: function() {
+      var width = this.$el.width();
+      if (width !== this.width) {
+        this.width = width;
+        this.$el.empty();
+        this.render();
+      }
     },
     render: function() {
       this.$el.html(this.template());
@@ -145,7 +158,7 @@ define([
           color: 'rgba(44, 127, 184, 0.05)',
           stroke: '#2c7fb8',
           data: dataSent.points
-        }],
+        }]
       });
       graphSent.render();
       var xAxisSent = new Rickshaw.Graph.Axis.Time({

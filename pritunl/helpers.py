@@ -2,6 +2,7 @@ import time
 import signal
 
 _interrupt = False
+_app_server_interrupt = False
 
 class cached_property(object):
     def __init__(self, func):
@@ -72,4 +73,15 @@ def set_global_interrupt():
 
     from pritunl import logger
     logger.info('Stopping server', 'setup')
-    signal.alarm(2)
+    signal.alarm(10)
+
+def check_app_server_interrupt():
+    return _app_server_interrupt
+
+def set_app_server_interrupt():
+    global _app_server_interrupt
+    _app_server_interrupt = True
+
+def clear_app_server_interrupt():
+    global _app_server_interrupt
+    _app_server_interrupt = False

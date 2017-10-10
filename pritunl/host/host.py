@@ -14,15 +14,29 @@ class Host(mongo.MongoObject):
         'name',
         'hostname',
         'ping_timestamp',
+        'instance_id',
+        'auto_instance_id',
         'status',
         'start_timestamp',
         'public_address',
+        'public_address6',
         'auto_public_address',
+        'auto_public_address6',
+        'auto_public_host',
+        'auto_public_host6',
+        'routed_subnet6',
         'link_address',
+        'sync_address',
         'local_address',
+        'local_address6',
+        'auto_local_address',
+        'auto_local_address6',
+        'local_networks',
+        'availability_group',
     }
     fields_default = {
         'status': OFFLINE,
+        'availability_group': DEFAULT,
     }
 
     def __init__(self, name=None, **kwargs):
@@ -53,29 +67,59 @@ class Host(mongo.MongoObject):
     def uptime(self):
         if self.status != ONLINE or not self.start_timestamp:
             return
-        return max((utils.now() - self.start_timestamp).seconds, 1)
+        return max(int((
+            utils.now() - self.start_timestamp).total_seconds()), 1)
 
     @property
     def public_addr(self):
-        return self.public_address or self.auto_public_address
+        return self.auto_public_host or self.public_address or \
+            self.auto_public_address
+
+    @property
+    def public_addr6(self):
+        return self.auto_public_host6 or self.public_address6 or \
+            self.auto_public_address6
+
+    @property
+    def local_addr(self):
+        return self.local_address or self.auto_local_address
+
+    @property
+    def local_addr6(self):
+        return self.local_address6 or self.auto_local_address6
+
+    @property
+    def local_iface(self):
+        return utils.find_interface_addr(self.local_addr)
 
     @property
     def link_addr(self):
-        return self.link_address or  self.public_address or \
-            self.auto_public_address
+        return self.link_address or self.auto_public_host or \
+            self.public_address or self.auto_public_address
+
+    @property
+    def aws_id(self):
+        return self.instance_id or self.auto_instance_id
 
     def dict(self):
         return {
             'id': self.id,
             'name': self.name,
             'hostname': self.hostname,
+            'instance_id': self.aws_id,
             'status': self.status,
             'uptime': self.uptime,
             'user_count': self.user_count,
             'users_online': self.users_online,
+            'local_networks': self.local_networks,
             'public_address': self.public_addr,
+            'public_address6': self.public_addr6,
+            'routed_subnet6': self.routed_subnet6,
             'link_address': self.link_address,
-            'local_address': self.local_address,
+            'sync_address': self.sync_address,
+            'local_address': self.local_addr,
+            'local_address6': self.local_addr6,
+            'availability_group': self.availability_group,
         }
 
     def iter_servers(self, fields=None):
@@ -106,6 +150,8 @@ class Host(mongo.MongoObject):
 
                 usr = org.new_user(name=HOST_USER_PREFIX + str(self.id),
                     type=CERT_SERVER, resource_id=self.id)
+                usr.audit_event('user_created',
+                    'User created for host linking')
 
             return usr
 

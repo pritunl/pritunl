@@ -62,7 +62,7 @@ define([
     },
     postRender: function() {
     },
-    setAlert: function(type, message, form) {
+    setAlert: function(type, message, form, append) {
       if (this.alertView) {
         if (this.alertView.type !== type ||
             this.alertView.message !== message) {
@@ -83,7 +83,11 @@ define([
         message: message
       });
       this.addView(this.alertView);
-      this.$('.modal-body').prepend(this.alertView.render().el);
+      if (append) {
+        this.$('.modal-body').append(this.alertView.render().el);
+      } else {
+        this.$('.modal-body').prepend(this.alertView.render().el);
+      }
       if (form) {
         if (type === 'info' || type === 'warning') {
           this.$(form).addClass('has-warning');
@@ -152,13 +156,13 @@ define([
       this.clearLoading();
       this.$('.modal').modal('hide');
     },
-    close: function(triggerApplied) {
+    close: function(triggerApplied, msg) {
       this.triggerApplied = triggerApplied;
       if (this.safeClose && this.lockClose) {
         return;
       }
       if (triggerApplied) {
-        this.trigger('applied');
+        this.trigger('applied', msg);
       }
       this.clearAlert();
       this.$('.modal').modal('hide');

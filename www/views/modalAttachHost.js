@@ -17,6 +17,11 @@ define([
     initialize: function(options) {
       this.hosts = options.hosts;
       ModalAttachHostView.__super__.initialize.call(this);
+
+      this.setAlert('warning', 'Adding a new host will require users ' +
+        'that are not using an offical Pritunl client to download their ' +
+        'updated profile again before being able to connect. Users ' +
+        'using an offical Pritunl client will be able sync the changes.');
     },
     body: function() {
       return this.template({

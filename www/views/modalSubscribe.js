@@ -20,27 +20,12 @@ define([
     safeClose: true,
     initialize: function() {
       ModalSubscribeView.__super__.initialize.call(this);
-      var alertView = new AlertView({
-        type: 'success',
-        message: '<b>Follow and tweet ' +
-          '<a href="https://twitter.com/intent/tweet?' +
-          'original_referer=https%3A%2F%2Fabout.twitter' +
-          '.com%2Fresources%2Fbuttons&text=Enterprise%20' +
-          'open%20source%20VPN%20server&tw_p=tweetbutton' +
-          '&url=http%3A%2F%2Fpritunl.com%2F&via=pritunl" ' +
-          'target="_blank">@pritunl</a> for a ' +
-          'free six month premium subscription.</b>',
-        animate: false
-      });
-      this.addView(alertView);
-      this.$('.modal-body').prepend(alertView.render().el);
     },
     events: function() {
       return _.extend({
         'click .subscribe-premium': 'onPremium',
         'click .subscribe-enterprise': 'onEnterprise',
-        'click .subscribe-promo': 'onPromo',
-        'click .subscribe-promo-ok': 'onPromoOk',
+        'click .subscribe-enterprise-plus': 'onEnterprisePlus',
         'click .subscribe-activate': 'onActivate',
         'click .subscribe-submit': 'onSubmit',
         'click .subscribe-cancel': 'onCancel'
@@ -59,8 +44,7 @@ define([
       this.$('.ok').attr('disabled', 'disabled');
       this.$('.subscribe-premium').attr('disabled', 'disabled');
       this.$('.subscribe-enterprise').attr('disabled', 'disabled');
-      this.$('.subscribe-promo').attr('disabled', 'disabled');
-      this.$('.subscribe-promo-ok').attr('disabled', 'disabled');
+      this.$('.subscribe-enterprise-plus').attr('disabled', 'disabled');
       this.$('.subscribe-activate').attr('disabled', 'disabled');
     },
     unlock: function(noCheckout) {
@@ -69,9 +53,8 @@ define([
       if (!noCheckout) {
         this.$('.subscribe-premium').removeAttr('disabled');
         this.$('.subscribe-enterprise').removeAttr('disabled');
+        this.$('.subscribe-enterprise-plus').removeAttr('disabled');
       }
-      this.$('.subscribe-promo').removeAttr('disabled');
-      this.$('.subscribe-promo-ok').removeAttr('disabled');
       this.$('.subscribe-activate').removeAttr('disabled');
     },
     setupCheckout: function() {
@@ -90,6 +73,11 @@ define([
             if (this.plans.enterprise && this.plans.enterprise.amount) {
               this.$('.subscribe-enterprise').text('Get Enterprise $' +
                 (this.plans.enterprise.amount / 100) + '/month');
+            }
+            if (this.plans.enterprise_plus &&
+                this.plans.enterprise_plus.amount) {
+              this.$('.subscribe-enterprise-plus').text('Get Enterprise+ $' +
+                (this.plans.enterprise_plus.amount / 100) + '/month');
             }
             this.configCheckout(options);
           }.bind(this),
@@ -142,7 +130,7 @@ define([
                     this.setAlert('danger', response.responseJSON.error_msg);
                   }
                   else {
-                    this.setAlert('danger', 'Server error occured, ' +
+                    this.setAlert('danger', 'Server error occurred, ' +
                       'please try again later.');
                   }
                   this.clearLoading();
@@ -187,70 +175,16 @@ define([
     onEnterprise: function() {
       this._onCheckout('enterprise');
     },
-    onPromo: function() {
-      this.$('.subscribe-promo').hide();
-      this.$('.subscribe-promo-input').show();
-      this.$('.subscribe-promo-ok').show();
-    },
-    _closePromo: function() {
-      this.$('.subscribe-promo-ok').removeAttr('disabled');
-      this.$('.subscribe-promo').show();
-      this.$('.subscribe-promo-input').hide();
-      this.$('.subscribe-promo-input').val('');
-      this.$('.subscribe-promo-input-email').hide();
-      this.$('.subscribe-promo-input-email').val('');
-      this.$('.subscribe-promo-ok').hide();
-    },
-    onPromoOk: function() {
-      this.$('.subscribe-promo-ok').attr('disabled', 'disabled');
-      var promoCode = this.$('.subscribe-promo-input').val();
-      var email = this.$('.subscribe-promo-input-email').val();
-
-      if (!promoCode && !email) {
-        this._closePromo();
-        return;
-      }
-
-      if (!email && promoCode.substr(0, 2).toLowerCase() === 'ua') {
-        this.$('.subscribe-promo-input').hide();
-        this.$('.subscribe-promo-input-email').show();
-        this.$('.subscribe-promo-ok').removeAttr('disabled');
-        return;
-      }
-
-      $.ajax({
-        type: 'POST',
-        url: 'https://app.pritunl.com/promo',
-        contentType: 'application/json',
-        dataType: 'json',
-        data: JSON.stringify({
-          'promo_code': promoCode,
-          'email': email,
-        }),
-        success: function(response) {
-          this.setAlert('success', response.msg);
-          this._closePromo();
-        }.bind(this),
-        error: function(response) {
-          if (response.responseJSON) {
-            this.setAlert('danger', response.responseJSON.error_msg);
-          }
-          else {
-            this.setAlert('danger', 'Failed to verify promo code, ' +
-              'please try again later.');
-          }
-          this._closePromo();
-        }.bind(this)
-      });
+    onEnterprisePlus: function() {
+      this._onCheckout('enterprise_plus');
     },
     onActivate: function() {
       this.activateActive = true;
-      this._closePromo();
       this.$('.subscribe-info').slideUp(window.slideTime);
       this.$('.subscribe-activate-form').slideDown(window.slideTime);
       this.$('.subscribe-premium').hide();
       this.$('.subscribe-enterprise').hide();
-      this.$('.subscribe-promo').hide();
+      this.$('.subscribe-enterprise-plus').hide();
       this.$('.subscribe-cancel').show();
       this.$('.subscribe-activate').hide();
       this.$('.subscribe-submit').show();
@@ -274,7 +208,7 @@ define([
             this.setAlert('danger', response.responseJSON.error_msg);
           }
           else {
-            this.setAlert('danger', 'Server error occured, ' +
+            this.setAlert('danger', 'Server error occurred, ' +
               'please try again later.');
           }
           this.$('.subscribe-submit').removeAttr('disabled');
@@ -287,7 +221,7 @@ define([
       this.$('.subscribe-cancel').hide();
       this.$('.subscribe-premium').show();
       this.$('.subscribe-enterprise').show();
-      this.$('.subscribe-promo').show();
+      this.$('.subscribe-enterprise-plus').show();
       this.$('.subscribe-submit').hide();
       this.$('.subscribe-activate').show();
       this.activateActive = false;

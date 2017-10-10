@@ -30,8 +30,7 @@ class Transaction(mongo.MongoObject):
         'ttl': settings.mongo.tran_ttl,
     }
 
-    def __init__(self, lock_id=None, priority=None,
-            ttl=None, **kwargs):
+    def __init__(self, lock_id=None, priority=None, ttl=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         if lock_id is not None:
@@ -107,36 +106,19 @@ class Transaction(mongo.MongoObject):
             obj = getattr(obj, func)(*args or [], **kwargs or {})
 
     def _run_actions(self):
-        has_bulk = mongo.has_bulk
-
-        if has_bulk:
-            collection_bulks = collections.defaultdict(
-                lambda: collection.initialize_ordered_bulk_op())
+        collection_bulks = collections.defaultdict(
+            lambda: collection.initialize_ordered_bulk_op())
 
         for action_set in self.action_sets:
             collection_name, bulk, actions, _, _ = action_set
             collection = mongo.get_collection(collection_name)
 
-            if has_bulk:
-                if bulk:
-                    collection = collection_bulks[collection_name]
-                elif actions == BULK_EXECUTE:
-                    collection = collection_bulks.pop(collection_name)
-                    collection.execute()
-                    continue
-            else:
-                if bulk:
-                    new_action = actions[0]
-                    for action in actions[1:]:
-                        if action[0] == 'upsert':
-                            new_action[2] = {'upsert': True}
-                        elif action[0] == 'update':
-                            new_action[1].append(action[1][0])
-                        elif action[0] == 'remove':
-                            new_action[0] = 'remove'
-                    actions = [new_action]
-                elif actions == BULK_EXECUTE:
-                    continue
+            if bulk:
+                collection = collection_bulks[collection_name]
+            elif actions == BULK_EXECUTE:
+                collection = collection_bulks.pop(collection_name)
+                collection.execute()
+                continue
 
             self._run_collection_actions(collection, actions)
 
@@ -173,7 +155,7 @@ class Transaction(mongo.MongoObject):
         try:
             self._run_actions()
         except:
-            logger.exception('Error occured running ' +
+            logger.exception('Error occurred running ' +
                 'transaction actions', 'transaction',
                 transaction_id=self.id,
             )
@@ -199,6 +181,10 @@ class Transaction(mongo.MongoObject):
             self._run_collection_actions(collection, rollback_actions)
 
     def rollback_actions(self):
+        logger.warning('Transaction failed rolling back...', 'transaction',
+            actions=self.action_sets,
+        )
+
         response = self.transaction_collection.update({
             '_id': self.id,
             'state': ROLLBACK,
@@ -215,7 +201,7 @@ class Transaction(mongo.MongoObject):
         try:
             self._rollback_actions()
         except:
-            logger.exception('Error occured rolling back ' +
+            logger.exception('Error occurred rolling back ' +
                 'transaction actions', 'transaction',
                 transaction_id=self.id,
             )
@@ -247,7 +233,7 @@ class Transaction(mongo.MongoObject):
         try:
             self._run_post_actions()
         except:
-            logger.exception('Error occured running ' +
+            logger.exception('Error occurred running ' +
                 'transaction post actions', 'transaction',
                 transaction_id=self.id,
             )

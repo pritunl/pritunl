@@ -55,15 +55,23 @@ define([
       model.save({
         organization: org
       }, {
-        success: function() {
-          this.close(true);
+        success: function(_, response) {
+          if (response.status === 'users_background') {
+            this.close(true, response.status_msg);
+          } else {
+            this.close(true);
+          }
         }.bind(this),
-        error: function() {
+        error: function(model, response) {
           this.$('.users textarea').removeAttr('disabled');
           this.$('.org select').removeAttr('disabled');
           this.clearLoading();
-          this.setAlert('danger',
-            'Failed to add users, server error occurred.');
+          if (response.responseJSON) {
+            this.setAlert('danger', response.responseJSON.error_msg);
+          }
+          else {
+            this.setAlert('danger', this.errorMsg);
+          }
         }.bind(this)
       });
     }

@@ -62,7 +62,6 @@ class Settings(object):
                 continue
 
             doc = group_cls.get_commit_doc(init)
-
             if doc:
                 has_docs = True
                 collection.bulk().find({
@@ -70,6 +69,22 @@ class Settings(object):
                 }).upsert().update({
                     '$set': doc,
                 })
+
+            unset_doc = group_cls.get_commit_unset_doc()
+            if unset_doc:
+                has_docs = True
+                doc_id = unset_doc.pop('_id')
+                collection.bulk().find({
+                    '_id': doc_id,
+                }).upsert().update({
+                    '$unset': unset_doc,
+                })
+
+                doc = doc or {'_id': doc_id}
+                for key in unset_doc:
+                    doc[key] = getattr(group_cls, key)
+
+            if doc:
                 docs.append(doc)
 
         messenger.publish('setting', docs, transaction=tran)
@@ -80,21 +95,29 @@ class Settings(object):
         collection.bulk_execute()
         tran.commit()
 
-    def load_mongo(self):
+    def _load_mongo(self):
         for cls in module_classes:
             if cls.type != GROUP_MONGO:
                 continue
             setattr(self, cls.group, cls())
 
+        self.reload_mongo()
+
+        self._loaded = True
+
+    def reload_mongo(self):
         for doc in self.collection.find():
             group_name = doc.pop('_id')
             if group_name not in self.groups:
                 continue
 
             group = getattr(self, group_name)
-            group.__dict__.update(group.fields)
-            group.__dict__.update(doc)
-        self._loaded = True
+
+            data = {}
+            data.update(group.fields)
+            data.update(doc)
+
+            group.__dict__.update(data)
 
     def _init_modules(self):
         for cls in module_classes:
@@ -106,5 +129,5 @@ class Settings(object):
             setattr(self, cls.group, group_cls)
 
     def init(self):
-        self.load_mongo()
+        self._load_mongo()
         self.commit(True)

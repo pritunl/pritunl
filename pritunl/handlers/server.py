@@ -12,7 +12,6 @@ from pritunl import auth
 from pritunl import ipaddress
 
 import flask
-import re
 import random
 
 def _network_invalid():
@@ -98,28 +97,48 @@ def _check_network_range(test_network, start_addr, end_addr):
 @auth.session_auth
 def server_get(server_id=None):
     if server_id:
-        return utils.jsonify(server.get_dict(server_id))
+        if settings.app.demo_mode:
+            resp = utils.demo_get_cache()
+            if resp:
+                return utils.jsonify(resp)
+
+        resp = server.get_dict(server_id)
+        if settings.app.demo_mode:
+            utils.demo_set_cache(resp)
+        return utils.jsonify(resp)
 
     servers = []
     page = flask.request.args.get('page', None)
     page = int(page) if page else page
 
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache(page)
+        if resp:
+            return utils.jsonify(resp)
+
     for svr in server.iter_servers_dict(page=page):
         servers.append(svr)
 
     if page is not None:
-        return utils.jsonify({
+        resp = {
             'page': page,
             'page_total': server.get_server_page_total(),
             'servers': servers,
-        })
+        }
     else:
-        return utils.jsonify(servers)
+        resp = servers
+
+    if settings.app.demo_mode:
+        utils.demo_set_cache(resp, page)
+    return utils.jsonify(resp)
 
 @app.app.route('/server', methods=['POST'])
 @app.app.route('/server/<server_id>', methods=['PUT'])
 @auth.session_auth
 def server_put_post(server_id=None):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     used_resources = server.get_used_resources(server_id)
     network_used = used_resources['networks']
     port_used = used_resources['ports']
@@ -132,11 +151,15 @@ def server_put_post(server_id=None):
 
     network = None
     network_def = False
-    if 'network' in flask.request.json:
+    if 'network' in flask.request.json and \
+            flask.request.json['network'] != '':
         network_def = True
         network = flask.request.json['network']
 
-        if not _check_network_private(network):
+        try:
+            if not _check_network_private(network):
+                return _network_invalid()
+        except (ipaddress.AddressValueError, ValueError):
             return _network_invalid()
 
     network_mode = None
@@ -156,6 +179,25 @@ def server_put_post(server_id=None):
     if 'network_end' in flask.request.json:
         network_end_def = True
         network_end = flask.request.json['network_end']
+
+    restrict_routes = None
+    restrict_routes_def = False
+    if 'restrict_routes' in flask.request.json:
+        restrict_routes_def = True
+        restrict_routes = True if flask.request.json['restrict_routes'] \
+            else False
+
+    ipv6 = None
+    ipv6_def = False
+    if 'ipv6' in flask.request.json:
+        ipv6_def = True
+        ipv6 = True if flask.request.json['ipv6'] else False
+
+    ipv6_firewall = None
+    ipv6_firewall_def = False
+    if 'ipv6_firewall' in flask.request.json:
+        ipv6_firewall_def = True
+        ipv6_firewall = True if flask.request.json['ipv6_firewall'] else False
 
     bind_address = None
     bind_address_def = False
@@ -177,7 +219,7 @@ def server_put_post(server_id=None):
 
     port = None
     port_def = False
-    if 'port' in flask.request.json:
+    if 'port' in flask.request.json and flask.request.json['port'] != 0:
         port_def = True
         port = flask.request.json['port']
 
@@ -203,56 +245,20 @@ def server_put_post(server_id=None):
         if dh_param_bits not in VALID_DH_PARAM_BITS:
             return _dh_param_bits_invalid()
 
-    mode = None
-    mode_def = False
-    if 'mode' in flask.request.json:
-        mode_def = True
-        mode = flask.request.json['mode']
-
-        if mode not in (ALL_TRAFFIC, LOCAL_TRAFFIC, VPN_TRAFFIC):
-            return utils.jsonify({
-                'error': MODE_INVALID,
-                'error_msg': MODE_INVALID_MSG,
-            }, 400)
+    groups = None
+    groups_def = False
+    if 'groups' in flask.request.json:
+        groups_def = True
+        groups = flask.request.json['groups'] or []
+        for i, group in enumerate(groups):
+            groups[i] = utils.filter_str(group)
+        groups = list(set(groups))
 
     multi_device = False
     multi_device_def = False
     if 'multi_device' in flask.request.json:
         multi_device_def = True
         multi_device = True if flask.request.json['multi_device'] else False
-
-    local_networks = None
-    local_networks_def = False
-    if 'local_networks' in flask.request.json:
-        local_networks_def = True
-        local_networks = flask.request.json['local_networks'] or []
-
-        for local_network in local_networks:
-            local_network_split = local_network.split('/')
-            if len(local_network_split) != 2:
-                return _local_network_invalid()
-
-            address = local_network_split[0].split('.')
-            if len(address) != 4:
-                return _local_network_invalid()
-            for i, value in enumerate(address):
-                try:
-                    address[i] = int(value)
-                except ValueError:
-                    return _local_network_invalid()
-            if address[0] > 255 or address[0] < 0 or \
-                    address[1] > 255 or address[1] < 0 or \
-                    address[2] > 255 or address[2] < 0 or \
-                    address[3] > 254 or address[3] < 0:
-                return _local_network_invalid()
-
-            try:
-                subnet = int(local_network_split[1])
-            except ValueError:
-                return _local_network_invalid()
-
-            if subnet < 1 or subnet > 32:
-                return _local_network_invalid()
 
     dns_servers = None
     dns_servers_def = False
@@ -261,14 +267,21 @@ def server_put_post(server_id=None):
         dns_servers = flask.request.json['dns_servers'] or []
 
         for dns_server in dns_servers:
-            if not re.match(IP_REGEX, dns_server):
+            try:
+                ipaddress.IPAddress(dns_server)
+            except (ipaddress.AddressValueError, ValueError):
                 return _dns_server_invalid()
 
     search_domain = None
     search_domain_def = False
     if 'search_domain' in flask.request.json:
         search_domain_def = True
-        search_domain = utils.filter_str(flask.request.json['search_domain'])
+        search_domain = flask.request.json['search_domain']
+        if search_domain:
+            search_domain = ', '.join([utils.filter_str(x.strip()) for x in
+                search_domain.split(',')])
+        else:
+            search_domain = None
 
     inter_client = True
     inter_client_def = False
@@ -278,37 +291,92 @@ def server_put_post(server_id=None):
 
     ping_interval = None
     ping_interval_def = False
-    if flask.request.json.get('ping_interval'):
+    if 'ping_interval' in flask.request.json:
         ping_interval_def = True
-        ping_interval = int(flask.request.json['ping_interval'])
+        ping_interval = int(flask.request.json['ping_interval'] or 10)
 
     ping_timeout = None
     ping_timeout_def = False
-    if flask.request.json.get('ping_timeout'):
+    if 'ping_timeout' in flask.request.json:
         ping_timeout_def = True
-        ping_timeout = int(flask.request.json['ping_timeout'])
+        ping_timeout = int(flask.request.json['ping_timeout'] or 60)
+
+    link_ping_interval = None
+    link_ping_interval_def = False
+    if 'link_ping_interval' in flask.request.json:
+        link_ping_interval_def = True
+        link_ping_interval = int(
+            flask.request.json['link_ping_interval'] or 1)
+
+    link_ping_timeout = None
+    link_ping_timeout_def = False
+    if 'link_ping_timeout' in flask.request.json:
+        link_ping_timeout_def = True
+        link_ping_timeout = int(flask.request.json['link_ping_timeout'] or 5)
+
+    inactive_timeout = None
+    inactive_timeout_def = False
+    if 'inactive_timeout' in flask.request.json:
+        inactive_timeout_def = True
+        inactive_timeout = int(
+            flask.request.json['inactive_timeout'] or 0) or None
+
+    onc_hostname = None
+    onc_hostname_def = False
+    if 'onc_hostname' in flask.request.json:
+        onc_hostname_def = True
+        onc_hostname = utils.filter_str(flask.request.json['onc_hostname'])
+
+    allowed_devices = None
+    allowed_devices_def = False
+    if 'allowed_devices' in flask.request.json:
+        allowed_devices_def = True
+        allowed_devices = flask.request.json['allowed_devices'] or None
 
     max_clients = None
     max_clients_def = False
-    if flask.request.json.get('max_clients'):
+    if 'max_clients' in flask.request.json:
         max_clients_def = True
-        max_clients = int(flask.request.json['max_clients'])
-        if max_clients < 1:
-            max_clients = 1
+        max_clients = flask.request.json['max_clients']
+        if max_clients:
+            max_clients = int(max_clients)
+        if not max_clients:
+            max_clients = 2000
 
     replica_count = None
     replica_count_def = False
-    if flask.request.json.get('replica_count'):
+    if 'replica_count' in flask.request.json:
         replica_count_def = True
-        replica_count = int(flask.request.json['replica_count'])
-        if replica_count < 1:
+        replica_count = flask.request.json['replica_count']
+        if replica_count:
+            replica_count = int(replica_count)
+        if not replica_count:
             replica_count = 1
+
+    vxlan = True
+    vxlan_def = False
+    if 'vxlan' in flask.request.json:
+        vxlan_def = True
+        vxlan = True if flask.request.json['vxlan'] else False
+
+    dns_mapping = False
+    dns_mapping_def = False
+    if 'dns_mapping' in flask.request.json:
+        dns_mapping_def = True
+        dns_mapping = True if flask.request.json['dns_mapping'] else False
 
     debug = False
     debug_def = False
     if 'debug' in flask.request.json:
         debug_def = True
         debug = True if flask.request.json['debug'] else False
+
+    policy = None
+    policy_def = False
+    if 'policy' in flask.request.json:
+        policy_def = True
+        if flask.request.json['policy']:
+            policy = flask.request.json['policy'].strip()
 
     otp_auth = False
     otp_auth_def = False
@@ -335,6 +403,25 @@ def server_put_post(server_id=None):
                 'error_msg': CIPHER_INVALID_MSG,
             }, 400)
 
+    hash = None
+    hash_def = False
+    if 'hash' in flask.request.json:
+        hash_def = True
+        hash = flask.request.json['hash']
+
+        if hash not in HASHES:
+            return utils.jsonify({
+                'error': HASH_INVALID,
+                'error_msg': HASH_INVALID_MSG,
+            }, 400)
+
+    block_outside_dns = False
+    block_outside_dns_def = False
+    if 'block_outside_dns' in flask.request.json:
+        block_outside_dns_def = True
+        block_outside_dns = True if flask.request.json[
+            'block_outside_dns'] else False
+
     jumbo_frames = False
     jumbo_frames_def = False
     if 'jumbo_frames' in flask.request.json:
@@ -344,13 +431,6 @@ def server_put_post(server_id=None):
 
     if not server_id:
         if not name_def:
-            return utils.jsonify({
-                'error': MISSING_PARAMS,
-                'error_msg': MISSING_PARAMS_MSG,
-            }, 400)
-
-        if network_def and network_mode == BRIDGE and \
-                (not network_start or not network_end):
             return utils.jsonify({
                 'error': MISSING_PARAMS,
                 'error_msg': MISSING_PARAMS_MSG,
@@ -392,92 +472,68 @@ def server_put_post(server_id=None):
             dh_param_bits_def = True
             dh_param_bits = settings.vpn.default_dh_param_bits
 
-        if not mode_def:
-            mode_def = True
-            if local_networks_def and local_networks:
-                mode = LOCAL_TRAFFIC
-            else:
-                mode = ALL_TRAFFIC
-
-    if network_def:
-        if _check_network_overlap(network, network_used):
-            return utils.jsonify({
-                'error': NETWORK_IN_USE,
-                'error_msg': NETWORK_IN_USE_MSG,
-            }, 400)
-    if port_def:
-        if '%s%s' % (port, protocol) in port_used:
-            return utils.jsonify({
-                'error': PORT_PROTOCOL_IN_USE,
-                'error_msg': PORT_PROTOCOL_IN_USE_MSG,
-            }, 400)
+    changed = None
 
     if not server_id:
-        if network_mode == BRIDGE:
-            if not _check_network_range(network, network_start, network_end):
-                return utils.jsonify({
-                    'error': BRIDGE_NETWORK_INVALID,
-                    'error_msg': BRIDGE_NETWORK_INVALID_MSG,
-                }, 400)
-
         svr = server.new_server(
             name=name,
             network=network,
+            groups=groups,
             network_mode=network_mode,
             network_start=network_start,
             network_end=network_end,
+            restrict_routes=restrict_routes,
+            ipv6=ipv6,
+            ipv6_firewall=ipv6_firewall,
             bind_address=bind_address,
             port=port,
             protocol=protocol,
             dh_param_bits=dh_param_bits,
-            mode=mode,
             multi_device=multi_device,
-            local_networks=local_networks,
             dns_servers=dns_servers,
             search_domain=search_domain,
             otp_auth=otp_auth,
             cipher=cipher,
+            hash=hash,
+            block_outside_dns=block_outside_dns,
             jumbo_frames=jumbo_frames,
             lzo_compression=lzo_compression,
             inter_client=inter_client,
             ping_interval=ping_interval,
             ping_timeout=ping_timeout,
+            link_ping_interval=link_ping_interval,
+            link_ping_timeout=link_ping_timeout,
+            inactive_timeout=inactive_timeout,
+            onc_hostname=onc_hostname,
+            allowed_devices=allowed_devices,
             max_clients=max_clients,
             replica_count=replica_count,
+            vxlan=vxlan,
+            dns_mapping=dns_mapping,
             debug=debug,
+            policy=policy,
         )
         svr.add_host(settings.local.host_id)
-        svr.commit()
     else:
         svr = server.get_by_id(server_id)
-        if svr.status == ONLINE:
-            return utils.jsonify({
-                'error': SERVER_NOT_OFFLINE,
-                'error_msg': SERVER_NOT_OFFLINE_SETTINGS_MSG,
-            }, 400)
-
-        for link_svr in svr.iter_links(fields=('status',)):
-            if link_svr.status == ONLINE:
-                return utils.jsonify({
-                    'error': SERVER_LINKS_NOT_OFFLINE,
-                    'error_msg': SERVER_LINKS_NOT_OFFLINE_SETTINGS_MSG,
-                }, 400)
 
         if name_def:
             svr.name = name
         if network_def:
             svr.network = network
+        if groups_def:
+            svr.groups = groups
         if network_start_def:
             svr.network_start = network_start
         if network_end_def:
             svr.network_end = network_end
+        if restrict_routes_def:
+            svr.restrict_routes = restrict_routes
+        if ipv6_def:
+            svr.ipv6 = ipv6
+        if ipv6_firewall_def:
+            svr.ipv6_firewall = ipv6_firewall
         if network_mode_def:
-            if network_mode == BRIDGE and (
-                    not network_start or not network_end):
-                return utils.jsonify({
-                    'error': MISSING_PARAMS,
-                    'error_msg': MISSING_PARAMS_MSG,
-                }, 400)
             svr.network_mode = network_mode
         if bind_address_def:
             svr.bind_address = bind_address
@@ -488,12 +544,8 @@ def server_put_post(server_id=None):
         if dh_param_bits_def and svr.dh_param_bits != dh_param_bits:
             svr.dh_param_bits = dh_param_bits
             svr.generate_dh_param()
-        if mode_def:
-            svr.mode = mode
         if multi_device_def:
             svr.multi_device = multi_device
-        if local_networks_def:
-            svr.local_networks = local_networks
         if dns_servers_def:
             svr.dns_servers = dns_servers
         if search_domain_def:
@@ -502,6 +554,10 @@ def server_put_post(server_id=None):
             svr.otp_auth = otp_auth
         if cipher_def:
             svr.cipher = cipher
+        if hash_def:
+            svr.hash = hash
+        if block_outside_dns_def:
+            svr.block_outside_dns = block_outside_dns
         if jumbo_frames_def:
             svr.jumbo_frames = jumbo_frames
         if lzo_compression_def:
@@ -512,31 +568,43 @@ def server_put_post(server_id=None):
             svr.ping_interval = ping_interval
         if ping_timeout_def:
             svr.ping_timeout = ping_timeout
+        if link_ping_interval_def:
+            svr.link_ping_interval = link_ping_interval
+        if link_ping_timeout_def:
+            svr.link_ping_timeout = link_ping_timeout
+        if inactive_timeout_def:
+            svr.inactive_timeout = inactive_timeout
+        if onc_hostname_def:
+            svr.onc_hostname = onc_hostname
+        if allowed_devices_def:
+            svr.allowed_devices = allowed_devices
         if max_clients_def:
             svr.max_clients = max_clients
         if replica_count_def:
             svr.replica_count = replica_count
+        if vxlan_def:
+            svr.vxlan = vxlan
+        if dns_mapping_def:
+            svr.dns_mapping = dns_mapping
         if debug_def:
             svr.debug = debug
+        if policy_def:
+            svr.policy = policy
 
-        if svr.network_mode == BRIDGE:
-            if not _check_network_range(svr.network, svr.network_start,
-                    svr.network_end):
-                return utils.jsonify({
-                    'error': BRIDGE_NETWORK_INVALID,
-                    'error_msg': BRIDGE_NETWORK_INVALID_MSG,
-                }, 400)
+        changed = svr.changed
 
-        if svr.links and svr.replica_count > 1:
-            return utils.jsonify({
-                'error': SERVER_LINKS_AND_REPLICA,
-                'error_msg': SERVER_LINKS_AND_REPLICA_MSG,
-            }, 400)
+    err, err_msg = svr.validate_conf()
+    if err:
+        return utils.jsonify({
+            'error': err,
+            'error_msg': err_msg,
+        }, 400)
 
-        svr.commit(svr.changed)
+    svr.commit(changed)
 
     logger.LogEntry(message='Created server "%s".' % svr.name)
     event.Event(type=SERVERS_UPDATED)
+    event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
     for org in svr.iter_orgs():
         event.Event(type=USERS_UPDATED, resource_id=org.id)
     return utils.jsonify(svr.dict())
@@ -544,6 +612,9 @@ def server_put_post(server_id=None):
 @app.app.route('/server/<server_id>', methods=['DELETE'])
 @auth.session_auth
 def server_delete(server_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     svr = server.get_by_id(server_id, fields=('_id', 'name', 'organizations'))
     svr.remove()
     logger.LogEntry(message='Deleted server "%s".' % svr.name)
@@ -555,6 +626,11 @@ def server_delete(server_id):
 @app.app.route('/server/<server_id>/organization', methods=['GET'])
 @auth.session_auth
 def server_org_get(server_id):
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache()
+        if resp:
+            return utils.jsonify(resp)
+
     orgs = []
     svr = server.get_by_id(server_id, fields=('_id', 'organizations'))
     for org_doc in svr.get_org_fields(fields=('_id', 'name')):
@@ -562,14 +638,19 @@ def server_org_get(server_id):
         org_doc['server'] = svr.id
         orgs.append(org_doc)
 
+    if settings.app.demo_mode:
+        utils.demo_set_cache(orgs)
     return utils.jsonify(orgs)
 
 @app.app.route('/server/<server_id>/organization/<org_id>', methods=['PUT'])
 @auth.session_auth
 def server_org_put(server_id, org_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     svr = server.get_by_id(server_id,
         fields=('_id', 'status', 'network', 'network_start', 'network_end',
-        'organizations'))
+        'organizations', 'routes', 'ipv6'))
     org = organization.get_by_id(org_id, fields=('_id', 'name'))
     if svr.status == ONLINE:
         return utils.jsonify({
@@ -591,10 +672,13 @@ def server_org_put(server_id, org_id):
     methods=['DELETE'])
 @auth.session_auth
 def server_org_delete(server_id, org_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     svr = server.get_by_id(server_id,
         fields=('_id', 'status', 'network', 'network_start',
             'network_end', 'primary_organization',
-            'primary_user', 'organizations'))
+            'primary_user', 'organizations', 'routes', 'ipv6'))
     org = organization.get_by_id(org_id, fields=('_id'))
 
     if svr.status == ONLINE:
@@ -612,9 +696,185 @@ def server_org_delete(server_id, org_id):
 
     return utils.jsonify({})
 
+@app.app.route('/server/<server_id>/route', methods=['GET'])
+@auth.session_auth
+def server_route_get(server_id):
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache()
+        if resp:
+            return utils.jsonify(resp)
+
+    svr = server.get_by_id(server_id, fields=('_id', 'network', 'links',
+        'network_start', 'network_end', 'routes', 'organizations', 'ipv6'))
+
+    resp = svr.get_routes(include_server_links=True)
+    if settings.app.demo_mode:
+        utils.demo_set_cache(resp)
+    return utils.jsonify(resp)
+
+@app.app.route('/server/<server_id>/route', methods=['POST'])
+@auth.session_auth
+def server_route_post(server_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
+    svr = server.get_by_id(server_id)
+    route_network = flask.request.json['network']
+    comment = flask.request.json.get('comment') or None
+    metric = flask.request.json.get('metric') or None
+    nat_route = True if flask.request.json.get('nat') else False
+    nat_interface = flask.request.json.get('nat_interface') or None
+    vpc_region = utils.filter_str(flask.request.json.get('vpc_region')) or None
+    vpc_id = utils.filter_str(flask.request.json.get('vpc_id')) or None
+    net_gateway = True if flask.request.json.get('net_gateway') else False
+
+    try:
+        route = svr.upsert_route(route_network, nat_route, nat_interface,
+            vpc_region, vpc_id, net_gateway, comment, metric)
+    except ServerOnlineError:
+        return utils.jsonify({
+            'error': SERVER_ROUTE_ONLINE,
+            'error_msg': SERVER_ROUTE_ONLINE_MSG,
+        }, 400)
+    except NetworkInvalid:
+        return utils.jsonify({
+            'error': SERVER_ROUTE_INVALID,
+            'error_msg': SERVER_ROUTE_INVALID_MSG,
+        }, 400)
+    except ServerRouteNatVirtual:
+        return utils.jsonify({
+            'error': SERVER_ROUTE_VIRTUAL_NAT,
+            'error_msg': SERVER_ROUTE_VIRTUAL_NAT_MSG,
+        }, 400)
+    except ServerRouteNatServerLink:
+        return utils.jsonify({
+            'error': SERVER_ROUTE_SERVER_LINK_NAT,
+            'error_msg': SERVER_ROUTE_SERVER_LINK_NAT_MSG,
+        }, 400)
+    except ServerRouteNatNetworkLink:
+        return utils.jsonify({
+            'error': SERVER_ROUTE_NETWORK_LINK_NAT,
+            'error_msg': SERVER_ROUTE_NETWORK_LINK_NAT_MSG,
+        }, 400)
+
+    err, err_msg = svr.validate_conf()
+    if err:
+        return utils.jsonify({
+            'error': err,
+            'error_msg': err_msg,
+        }, 400)
+
+    svr.commit('routes')
+
+    event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
+    for svr_link in svr.links:
+        event.Event(type=SERVER_ROUTES_UPDATED,
+            resource_id=svr_link['server_id'])
+
+    return utils.jsonify(route)
+
+@app.app.route('/server/<server_id>/route/<route_network>', methods=['PUT'])
+@auth.session_auth
+def server_route_put(server_id, route_network):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
+    svr = server.get_by_id(server_id)
+    route_network = route_network.decode('hex')
+    comment = flask.request.json.get('comment') or None
+    metric = flask.request.json.get('metric') or None
+    nat_route = True if flask.request.json.get('nat') else False
+    nat_interface = flask.request.json.get('nat_interface') or None
+    vpc_region = utils.filter_str(flask.request.json.get('vpc_region')) or None
+    vpc_id = utils.filter_str(flask.request.json.get('vpc_id')) or None
+    net_gateway = True if flask.request.json.get('net_gateway') else False
+
+    try:
+        route = svr.upsert_route(route_network, nat_route, nat_interface,
+            vpc_region, vpc_id, net_gateway, comment, metric)
+    except ServerOnlineError:
+        return utils.jsonify({
+            'error': SERVER_ROUTE_ONLINE,
+            'error_msg': SERVER_ROUTE_ONLINE_MSG,
+        }, 400)
+    except NetworkInvalid:
+        return utils.jsonify({
+            'error': SERVER_ROUTE_INVALID,
+            'error_msg': SERVER_ROUTE_INVALID_MSG,
+        }, 400)
+    except ServerRouteNatVirtual:
+        return utils.jsonify({
+            'error': SERVER_ROUTE_VIRTUAL_NAT,
+            'error_msg': SERVER_ROUTE_VIRTUAL_NAT_MSG,
+        }, 400)
+    except ServerRouteNatServerLink:
+        return utils.jsonify({
+            'error': SERVER_ROUTE_SERVER_LINK_NAT,
+            'error_msg': SERVER_ROUTE_SERVER_LINK_NAT_MSG,
+        }, 400)
+    except ServerRouteNatNetworkLink:
+        return utils.jsonify({
+            'error': SERVER_ROUTE_NETWORK_LINK_NAT,
+            'error_msg': SERVER_ROUTE_NETWORK_LINK_NAT_MSG,
+        }, 400)
+
+    err, err_msg = svr.validate_conf()
+    if err:
+        return utils.jsonify({
+            'error': err,
+            'error_msg': err_msg,
+        }, 400)
+
+    svr.commit('routes')
+
+    event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
+    for svr_link in svr.links:
+        event.Event(type=SERVER_ROUTES_UPDATED,
+            resource_id=svr_link['server_id'])
+
+    return utils.jsonify(route)
+
+@app.app.route('/server/<server_id>/route/<route_network>', methods=['DELETE'])
+@auth.session_auth
+def server_route_delete(server_id, route_network):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
+    svr = server.get_by_id(server_id)
+    route_network = route_network.decode('hex')
+
+    try:
+        route = svr.remove_route(route_network)
+    except ServerOnlineError:
+        return utils.jsonify({
+            'error': SERVER_ROUTE_ONLINE,
+            'error_msg': SERVER_ROUTE_ONLINE_MSG,
+        }, 400)
+
+    err, err_msg = svr.validate_conf()
+    if err:
+        return utils.jsonify({
+            'error': err,
+            'error_msg': err_msg,
+        }, 400)
+
+    svr.commit('routes')
+
+    event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
+    for svr_link in svr.links:
+        event.Event(type=SERVER_ROUTES_UPDATED,
+            resource_id=svr_link['server_id'])
+
+    return utils.jsonify(route)
+
 @app.app.route('/server/<server_id>/host', methods=['GET'])
 @auth.session_auth
 def server_host_get(server_id):
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache()
+        if resp:
+            return utils.jsonify(resp)
+
     hosts = []
     svr = server.get_by_id(server_id, fields=('_id', 'status',
         'replica_count', 'hosts', 'instances'))
@@ -622,7 +882,8 @@ def server_host_get(server_id):
     hosts_offline = svr.replica_count - len(active_hosts) > 0
 
     for hst in svr.iter_hosts(fields=('_id', 'name',
-            'public_address', 'auto_public_address')):
+            'public_address', 'auto_public_address', 'auto_public_host',
+            'public_address6', 'auto_public_address6', 'auto_public_host6')):
         if svr.status == ONLINE and hst.id in active_hosts:
             status = ONLINE
         elif svr.status == ONLINE and hosts_offline:
@@ -636,16 +897,23 @@ def server_host_get(server_id):
             'status': status,
             'name': hst.name,
             'address': hst.public_addr,
+            'address6': hst.public_addr6,
         })
 
+    if settings.app.demo_mode:
+        utils.demo_set_cache(hosts)
     return utils.jsonify(hosts)
 
 @app.app.route('/server/<server_id>/host/<host_id>', methods=['PUT'])
 @auth.session_auth
 def server_host_put(server_id, host_id):
-    svr = server.get_by_id(server_id, fields=('_id', 'hosts', 'links'))
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
+    svr = server.get_by_id(server_id)
     hst = host.get_by_id(host_id, fields=('_id', 'name',
-        'public_address', 'auto_public_address'))
+        'public_address', 'auto_public_address', 'auto_public_host',
+        'public_address6', 'auto_public_address6', 'auto_public_host6'))
 
     try:
         svr.add_host(hst.id)
@@ -653,6 +921,13 @@ def server_host_put(server_id, host_id):
         return utils.jsonify({
             'error': SERVER_LINK_COMMON_HOST,
             'error_msg': SERVER_LINK_COMMON_HOST_MSG,
+        }, 400)
+
+    err, err_msg = svr.validate_conf()
+    if err:
+        return utils.jsonify({
+            'error': err,
+            'error_msg': err_msg,
         }, 400)
 
     svr.commit('hosts')
@@ -669,7 +944,11 @@ def server_host_put(server_id, host_id):
 @app.app.route('/server/<server_id>/host/<host_id>', methods=['DELETE'])
 @auth.session_auth
 def server_host_delete(server_id, host_id):
-    svr = server.get_by_id(server_id, fields=('_id', 'hosts', 'replica_count'))
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
+    svr = server.get_by_id(server_id, fields=(
+        '_id', 'hosts', 'replica_count'))
     hst = host.get_by_id(host_id, fields=('_id', 'name'))
 
     svr.remove_host(hst.id)
@@ -683,6 +962,11 @@ def server_host_delete(server_id, host_id):
 @app.app.route('/server/<server_id>/link', methods=['GET'])
 @auth.session_auth
 def server_link_get(server_id):
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache()
+        if resp:
+            return utils.jsonify(resp)
+
     links = []
     svr = server.get_by_id(server_id, fields=('_id', 'status', 'links',
         'replica_count', 'instances'))
@@ -722,39 +1006,39 @@ def server_link_get(server_id):
                 'use_local_address': link_use_local[link_svr.id],
             })
 
+    if settings.app.demo_mode:
+        utils.demo_set_cache(links)
     return utils.jsonify(links)
 
 @app.app.route('/server/<server_id>/link/<link_server_id>', methods=['PUT'])
 @auth.session_auth
 def server_link_put(server_id, link_server_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     use_local_address = flask.request.json.get('use_local_address', False)
 
-    try:
-        server.link_servers(server_id, link_server_id, use_local_address)
-    except ServerLinkOnlineError:
+    err, err_msg = server.link_servers(
+        server_id, link_server_id, use_local_address)
+    if err:
         return utils.jsonify({
-            'error': SERVER_NOT_OFFLINE,
-            'error_msg': SERVER_NOT_OFFLINE_LINK_SERVER_MSG,
-        }, 400)
-    except ServerLinkCommonHostError:
-        return utils.jsonify({
-            'error': SERVER_LINK_COMMON_HOST,
-            'error_msg': SERVER_LINK_COMMON_HOST_MSG,
-        }, 400)
-    except ServerLinkReplicaError:
-        return utils.jsonify({
-            'error': SERVER_LINKS_AND_REPLICA,
-            'error_msg': SERVER_LINKS_AND_REPLICA_MSG,
+            'error': err,
+            'error_msg': err_msg,
         }, 400)
 
     event.Event(type=SERVER_LINKS_UPDATED, resource_id=server_id)
     event.Event(type=SERVER_LINKS_UPDATED, resource_id=link_server_id)
+    event.Event(type=SERVER_ROUTES_UPDATED, resource_id=server_id)
+    event.Event(type=SERVER_ROUTES_UPDATED, resource_id=link_server_id)
 
     return utils.jsonify({})
 
 @app.app.route('/server/<server_id>/link/<link_server_id>', methods=['DELETE'])
 @auth.session_auth
 def server_link_delete(server_id, link_server_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     try:
         server.unlink_servers(server_id, link_server_id)
     except ServerLinkOnlineError:
@@ -765,16 +1049,18 @@ def server_link_delete(server_id, link_server_id):
 
     event.Event(type=SERVER_LINKS_UPDATED, resource_id=server_id)
     event.Event(type=SERVER_LINKS_UPDATED, resource_id=link_server_id)
+    event.Event(type=SERVER_ROUTES_UPDATED, resource_id=server_id)
+    event.Event(type=SERVER_ROUTES_UPDATED, resource_id=link_server_id)
 
     return utils.jsonify({})
 
-@app.app.route('/server/<server_id>/<operation>', methods=['PUT'])
+@app.app.route('/server/<server_id>/operation/<operation>', methods=['PUT'])
 @auth.session_auth
 def server_operation_put(server_id, operation):
-    fields = server.dict_fields + ['hosts', 'links', 'replica_count',
-        'tls_auth_key', 'ca_certificate']
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
 
-    svr = server.get_by_id(server_id, fields=fields)
+    svr = server.get_by_id(server_id, fields=server.operation_fields)
 
     try:
         if operation == START:
@@ -792,6 +1078,8 @@ def server_operation_put(server_id, operation):
 
     event.Event(type=SERVERS_UPDATED)
     event.Event(type=SERVER_HOSTS_UPDATED, resource_id=svr.id)
+    for org in svr.iter_orgs():
+        event.Event(type=USERS_UPDATED, resource_id=org.id)
     svr.send_link_events()
 
     return utils.jsonify(svr.dict())
@@ -799,32 +1087,69 @@ def server_operation_put(server_id, operation):
 @app.app.route('/server/<server_id>/output', methods=['GET'])
 @auth.session_auth
 def server_output_get(server_id):
-    return utils.jsonify({
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache()
+        if resp:
+            return utils.jsonify(resp)
+
+    resp = {
         'id': server_id,
         'output': server.output_get(server_id),
-    })
+    }
+    if settings.app.demo_mode:
+        utils.demo_set_cache(resp)
+    return utils.jsonify(resp)
 
 @app.app.route('/server/<server_id>/output', methods=['DELETE'])
 @auth.session_auth
 def server_output_delete(server_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     server.output_clear(server_id)
     return utils.jsonify({})
 
 @app.app.route('/server/<server_id>/link_output', methods=['GET'])
 @auth.session_auth
 def server_link_output_get(server_id):
-    return utils.jsonify({
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache()
+        if resp:
+            return utils.jsonify(resp)
+
+    resp = {
         'id': server_id,
         'output': server.output_link_get(server_id),
-    })
+    }
+    if settings.app.demo_mode:
+        utils.demo_set_cache(resp)
+    return utils.jsonify(resp)
 
 @app.app.route('/server/<server_id>/link_output', methods=['DELETE'])
 @auth.session_auth
 def server_link_output_delete(server_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
     server.output_link_clear(server_id)
     return utils.jsonify({})
 
 @app.app.route('/server/<server_id>/bandwidth/<period>', methods=['GET'])
 @auth.session_auth
 def server_bandwidth_get(server_id, period):
-    return utils.jsonify(server.bandwidth_get(server_id, period))
+    if settings.app.demo_mode:
+        resp = utils.demo_get_cache()
+        if resp:
+            return utils.jsonify(resp)
+
+    if settings.app.demo_mode:
+        resp = server.bandwidth_random_get(server_id, period)
+        utils.demo_set_cache(resp)
+    else:
+        resp = server.bandwidth_get(server_id, period)
+    return utils.jsonify(resp)
+
+@app.app.route('/server/vpcs', methods=['GET'])
+@auth.session_auth
+def server_vpcs_get():
+    return utils.jsonify(utils.get_vpcs())

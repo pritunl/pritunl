@@ -2,9 +2,8 @@
 Description=Pritunl Daemon
 
 [Service]
-Type=forking
-PIDFile=/var/run/pritunl.pid
-ExecStart=%PREFIX%/bin/pritunl start --daemon --pidfile /var/run/pritunl.pid
+LimitNOFILE=50000
+ExecStart=%PREFIX%/bin/pritunl start
 
 [Install]
 WantedBy=multi-user.target

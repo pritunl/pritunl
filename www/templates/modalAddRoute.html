@@ -1,0 +1,72 @@
+<div class="route-network form-group">
+  <label>Network</label>
+  <input type="text" class="form-control" placeholder="Enter network address" data-toggle="tooltip" title="Network address with subnet to route" autofocus>
+</div>
+<div class="route-comment form-group">
+  <label>Comment</label>
+  <input type="text" class="form-control" placeholder="Enter route comment" data-toggle="tooltip" title="Comment for route">
+</div>
+<div class="nat-route-toggle toggle-form form-group">
+  <label>NAT Route</label>
+  <div class="selector selected no-select" data-toggle="tooltip" title="NAT vpn traffic destined to this network">
+    <span class="selector-inner glyphicon glyphicon-ok"></span>
+  </div>
+</div>
+<div class="nat-interface form-group">
+  <label>NAT Interface Name</label>
+  <input type="text" class="form-control" placeholder="Auto select" data-toggle="tooltip" title="Optional outbound interface for NAT. Leave blank to automatically detect interface">
+</div>
+<div class="net-gateway-toggle toggle-form form-group">
+  <label>Net Gateway</label>
+  <div class="selector no-select" data-toggle="tooltip" title="Route the network through the pre-existing default gateway. Useful for excluding an address or network from routing that is inside an already routed network">
+    <span class="selector-inner glyphicon glyphicon-ok"></span>
+  </div>
+</div>
+<div class="route-advertisement-toggle toggle-form form-group">
+  <label>Route Advertisement</label>
+  <div class="selector no-select" data-toggle="tooltip" title="Enable VPC route advertisement">
+    <span class="selector-inner glyphicon glyphicon-ok"></span>
+  </div>
+</div>
+<div class="route-advertisement" style="display: none">
+  <div class="vpc-region form-group">
+    <label>VPC Route Advertisement Region</label>
+    <select class="form-control" data-toggle="tooltip" title="VPC region for route advertisement">
+      <option value="us-east-1" selected>US East (N. Virginia)</option>
+      <option value="us-east-2" selected>US East (Ohio)</option>
+      <option value="us-west-1">US West (N. California)</option>
+      <option value="us-west-2">US West (Oregon)</option>
+      <option value="us-gov-west-1">US GovCloud (West)</option>
+      <option value="eu-west-1">EU (Ireland)</option>
+      <option value="eu-west-2">EU (London)</option>
+      <option value="eu-central-1">EU (Frankfurt)</option>
+      <option value="ca-central-1">Canada (Central)</option>
+      <option value="ap-northeast-1">Asia Pacific (Tokyo)</option>
+      <option value="ap-northeast-2">Asia Pacific (Seoul)</option>
+      <option value="ap-southeast-1">Asia Pacific (Singapore)</option>
+      <option value="ap-southeast-2">Asia Pacific (Sydney)</option>
+      <option value="ap-south-1">Asia Pacific (Mumbai)</option>
+      <option value="sa-east-1">South America (Sao Paulo)</option>
+    </select>
+  </div>
+  <div class="vpc-id form-group">
+    <label>VPC Route Advertisement ID</label>
+    <select class="form-control" data-toggle="tooltip" title="VPC ID for route advertisement. EC2 server must be connected to the VPC">
+      <option selected value="">No VPCs available</option>
+    </select>
+  </div>
+</div>
+<div class="server form-group">
+  <label>Select a server</label>
+  <select class="form-control">
+    <% _.each(servers, function(server) { %>
+      <option value="<%- server.id %>" <%= (lastServer === server.id) ? 'selected' : '' %>><%- server.name %></option>
+    <% }); %>
+  </select>
+</div>
+<div class="advanced form-group">
+  <div class="route-metric form-group">
+    <label>Metric</label>
+    <input type="text" class="form-control" placeholder="Enter route metric" data-toggle="tooltip" title="Optional route metric">
+  </div>
+</div>

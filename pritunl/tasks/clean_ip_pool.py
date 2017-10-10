@@ -14,12 +14,44 @@ class TaskCleanIpPool(task.Task):
         return mongo.get_collection('servers')
 
     def task(self):
-        org_ids = self.server_collection.find({}, {
+        server_ids = self.server_collection.find({}, {
             '_id': True,
         }).distinct('_id')
 
         self.pool_collection.remove({
-            'server_id': {'$nin': org_ids},
+            'server_id': {'$nin': server_ids},
         })
 
-task.add_task(TaskCleanIpPool, hours=5, minutes=23)
+        response = self.pool_collection.aggregate([
+            {'$match': {
+                'user_id': {'$exists': True},
+            }},
+            {'$group': {
+                '_id': {
+                    'network': '$network',
+                    'user_id': '$user_id',
+                },
+                'docs': {'$addToSet': '$_id'},
+                'count': {'$sum': 1},
+            }},
+            {'$match': {
+                'count': {'$gt': 1},
+            }},
+        ])
+
+        for doc in response:
+            user_id = doc['_id']['user_id']
+            network = doc['_id']['network']
+            doc_ids = doc['docs'][1:]
+
+            for doc_id in doc_ids:
+                self.pool_collection.update({
+                    '_id': doc_id,
+                    'network': network,
+                    'user_id': user_id,
+                }, {'$unset': {
+                    'org_id': '',
+                    'user_id': '',
+                }})
+
+task.add_task(TaskCleanIpPool, hours=5, minutes=23, run_on_start=True)

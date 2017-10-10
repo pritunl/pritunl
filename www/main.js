@@ -97,7 +97,7 @@ require.config({
 });
 
 require([
-  'backbone',
+  'backbone'
 ], function(Backbone) {
   'use strict';
   Backbone.View = Backbone.View.extend({
@@ -129,13 +129,14 @@ require([
   'jquery',
   'underscore',
   'backbone',
+  'models/state',
   'models/subscription',
   'collections/event',
   'views/header',
   'routers/main',
   'initialize'
-], function($, _, Backbone, SubscriptionModel, EventCollection, HeaderView,
-    mainRouter, initialize) {
+], function($, _, Backbone, StateModel, SubscriptionModel, EventCollection,
+    HeaderView, mainRouter, initialize) {
   'use strict';
 
   initialize();
@@ -147,8 +148,7 @@ require([
     time -= hours * 3600;
     var minutes = Math.floor(time / 60);
     time -= minutes * 60;
-    var seconds = time;
-    return days + 'd ' + hours + 'h ' + minutes + 'm ' + seconds + 's';
+    return days + 'd ' + hours + 'h ' + minutes + 'm ' + time + 's';
   };
 
   window.formatTime = function(time, type) {
@@ -229,6 +229,15 @@ require([
     }
 
     return bytes;
+  };
+
+  window.uuid = function() {
+    var uuid = '';
+    for (var i = 0; i < 8; i++) {
+      uuid += Math.floor((1 + Math.random()) * 0x10000).toString(
+        16).substring(1);
+    }
+    return uuid;
   };
 
   window.md5 = function(string) {
@@ -447,10 +456,13 @@ require([
 
   var append = $.fn.append;
   $.fn.append = function() {
-    if (this[0].className === 'alerts-container' &&
-        $(this).children().length > 2) {
-      for (var i = 0; i < $(this).children().length - 2; i++) {
-        $(this).children().first().find('.close').click();
+    if (this[0].className === 'alerts-container') {
+      var len = $(this).children().length;
+      if (len > 2) {
+        var children = $(this).children();
+        for (var i = 0; i < len - 2; i++) {
+          $(children[i]).find('.close').click();
+        }
       }
     }
     return append.apply(this, arguments);
@@ -502,15 +514,16 @@ require([
     mainRouter.initialize();
   };
 
-  var model = new SubscriptionModel();
+  var model = new StateModel();
   model.fetch({
-    url: '/subscription/state',
     success: function(model) {
       window.subActive = model.get('active');
       window.subPlan = model.get('plan');
       window.subVer = model.get('version');
       window.theme = model.get('theme');
+      window.superUser = model.get('super_user');
       window.sso = model.get('sso');
+      window.csrfToken = model.get('csrf_token');
 
       if (window.subActive && window.theme === 'dark') {
         $('body').addClass('dark');
@@ -526,6 +539,9 @@ require([
         else if (window.subPlan === 'enterprise') {
           $('body').addClass('enterprise');
         }
+        else if (window.subPlan === 'enterprise_plus') {
+          $('body').addClass('enterprise-plus');
+        }
       }
       else {
         if (window.subPlan === 'premium') {
@@ -534,6 +550,15 @@ require([
         else if (window.subPlan === 'enterprise') {
           $('body').addClass('enterprise-license');
         }
+        else if (window.subPlan === 'enterprise-plus') {
+          $('body').addClass('enterprise-plus-license');
+        }
+      }
+
+      if (window.superUser) {
+        $('body').addClass('super-user');
+      } else {
+        $('body').removeClass('super-user');
       }
 
       init();

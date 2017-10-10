@@ -1,6 +1,6 @@
 from pritunl.helpers import *
+from pritunl.constants import *
 from pritunl import settings
-from pritunl import mongo
 from pritunl import logger
 from pritunl import task
 from pritunl import utils
@@ -49,7 +49,10 @@ def run_thread():
                     for minute in ('all', cur_time.minute):
                         for second in ('all', cur_time.second):
                             for task_cls in task.tasks[hour][minute][second]:
-                                run_task(task_cls())
+                                run_id = '%s_%s_%s_%s' % (task_cls.type,
+                                    cur_time.hour, cur_time.minute,
+                                    cur_time.second)
+                                run_task(task_cls(id=run_id, upsert=True))
         except:
             logger.exception('Error in tasks run thread', 'runners')
 
@@ -58,8 +61,6 @@ def run_thread():
 
 @interrupter
 def check_thread():
-    collection = mongo.get_collection('task')
-
     while True:
         try:
             cur_timestamp = utils.now()
@@ -72,6 +73,7 @@ def check_thread():
 
                 response = task.Task.collection.update({
                     '_id': task_item.id,
+                    'state': {'$ne': COMPLETE},
                     'ttl_timestamp': {'$lt': cur_timestamp},
                 }, {'$unset': {
                     'runner_id': '',

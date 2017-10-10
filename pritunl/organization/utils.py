@@ -1,7 +1,6 @@
 from pritunl.organization.organization import Organization
 
 from pritunl.constants import *
-from pritunl import logger
 from pritunl import queue
 from pritunl import user
 from pritunl import mongo
@@ -18,13 +17,13 @@ def new_pooled():
     thread.daemon = True
     thread.start()
 
-    logger.debug('Queued pooled org', 'organization')
-
-def reserve_pooled(name=None, type=ORG_DEFAULT):
+def reserve_pooled(name=None, auth_api=None, type=ORG_DEFAULT):
     doc = {}
 
     if name is not None:
         doc['name'] = name
+    if auth_api is not None:
+        doc['auth_api'] = auth_api
     if type is not None:
         doc['type'] = type
 
@@ -45,15 +44,6 @@ def new_org(type=ORG_DEFAULT, block=True, **kwargs):
             org = queue.reserve('queued_org', block=block, type=type,
                 **kwargs)
 
-            if org:
-                logger.debug('Reserved queued org', 'organization',
-                    org_id=org.id,
-                )
-        else:
-            logger.debug('Reserved pooled org', 'organization',
-                org_id=org.id,
-            )
-
         if org:
             new_pooled()
             return org
@@ -62,23 +52,31 @@ def new_org(type=ORG_DEFAULT, block=True, **kwargs):
         org.initialize()
         org.commit()
 
-        logger.debug('Org init', 'organization',
-            org_id=org.id,
-        )
-
         return org
     else:
         org = Organization(type=type, **kwargs)
         org.queue_initialize(block=block)
 
-        logger.debug('Queue org init', 'organization',
-            org_id=org.id,
-        )
-
         return org
 
 def get_by_id(id, fields=None):
     return Organization(id=id, fields=fields)
+
+def get_by_name(name, fields=None):
+    doc = Organization.collection.find_one({
+        'name': name,
+    }, fields)
+
+    if doc:
+        return Organization(doc=doc, fields=fields)
+
+def get_by_token(token, fields=None):
+    doc = Organization.collection.find_one({
+        'auth_token': token,
+    }, fields)
+
+    if doc:
+        return Organization(doc=doc, fields=fields)
 
 def iter_orgs(spec=None, type=ORG_DEFAULT, fields=None, page=None):
     limit = None

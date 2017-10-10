@@ -19,6 +19,10 @@ def _check_thread():
             }
 
             for doc in collection.find(spec).sort('priority'):
+                logger.info('Transaction timeout retrying...', 'runners',
+                    doc=doc,
+                )
+
                 try:
                     tran = transaction.Transaction(doc=doc)
                     tran.run()

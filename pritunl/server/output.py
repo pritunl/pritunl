@@ -6,6 +6,7 @@ from pritunl import event
 from pritunl import utils
 
 import pymongo
+import datetime
 
 class ServerOutput(object):
     def __init__(self, server_id):
@@ -15,42 +16,37 @@ class ServerOutput(object):
     def collection(cls):
         return mongo.get_collection('servers_output')
 
-    def send_event(self):
-        event.Event(type=SERVER_OUTPUT_UPDATED, resource_id=self.server_id,
-            delay=OUTPUT_DELAY)
+    def send_event(self, delay=True):
+        if delay:
+            delay = SERVER_OUTPUT_DELAY
+        else:
+            delay = None
+
+        event.Event(
+            type=SERVER_OUTPUT_UPDATED,
+            resource_id=self.server_id,
+            delay=delay,
+        )
 
     def clear_output(self):
         self.collection.remove({
             'server_id': self.server_id,
         })
-        self.send_event()
+        self.send_event(delay=False)
 
     def prune_output(self):
-        response = self.collection.aggregate([
-            {'$match': {
-                'server_id': self.server_id,
-            }},
-            {'$project': {
-                '_id': True,
-                'timestamp': True,
-            }},
-            {'$sort': {
-                'timestamp': pymongo.DESCENDING,
-            }},
-            {'$skip': settings.vpn.log_lines},
-            {'$group': {
-                '_id': None,
-                'doc_ids': {'$push': '$_id'},
-            }},
-        ])
+        cursor = self.collection.find({
+            'server_id': self.server_id,
+        }, {
+            '_id': True,
+            'timestamp': True,
+        }).sort('timestamp', pymongo.DESCENDING).skip(settings.vpn.log_lines)
 
-        val = None
-        for val in response:
-            break
+        doc_ids = []
+        for doc in cursor:
+            doc_ids.append(doc['_id'])
 
-        if val:
-            doc_ids = val['doc_ids']
-
+        if doc_ids:
             self.collection.remove({
                 '_id': {'$in': doc_ids},
             })
@@ -77,6 +73,9 @@ class ServerOutput(object):
         self.push_output('%s %s' % (timestamp, message), *args, **kwargs)
 
     def get_output(self):
+        if settings.app.demo_mode:
+            return DEMO_OUTPUT
+
         response = self.collection.aggregate([
             {'$match': {
                 'server_id': self.server_id,

@@ -1,0 +1,33 @@
+<div class="form-group username">
+  <label>Username</label>
+  <input type="text" class="form-control" placeholder="Enter username" data-toggle="tooltip" title="Username for administrator" autofocus>
+</div>
+<div class="form-group password">
+  <label>Password</label>
+  <input type="password" class="form-control" placeholder="Enter new password"
+    data-toggle="tooltip" title="Administrator password">
+</div>
+<div class="form-group yubikey-id">
+  <label>YubiKey ID</label>
+  <input type="text" class="form-control" maxlength="12"
+    placeholder="Insert YubiKey" data-toggle="tooltip"
+    title="Insert and touch YubiKey to get ID">
+</div>
+<div class="super-user-toggle toggle-form form-group">
+  <label>Super User</label>
+  <div class="selector no-select" data-toggle="tooltip" title="Allow administrator to modify other administrators.">
+    <span class="selector-inner glyphicon glyphicon-ok"></span>
+  </div>
+</div>
+<div class="otp-auth-toggle toggle-form form-group">
+  <label>Enable Two-Step Authentication</label>
+  <div class="selector no-select" data-toggle="tooltip" title="Enable two-step authentication with Google Authenticator.">
+    <span class="selector-inner glyphicon glyphicon-ok"></span>
+  </div>
+</div>
+<div class="auth-api-toggle toggle-form form-group">
+  <label>Enable Token Authentication</label>
+  <div class="selector no-select" data-toggle="tooltip" title="Enable authentication with an api token.">
+    <span class="selector-inner glyphicon glyphicon-ok"></span>
+  </div>
+</div>

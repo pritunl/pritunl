@@ -9,6 +9,8 @@ Thumbs.db
 *.pyc
 *.egg
 *.egg-info
+*.tfstate
+*.tfstate.backup
 .sass-cache
 /.vagrant
 /build
@@ -20,9 +22,3 @@ Thumbs.db
 /www/styles/*
 !/www/styles/vendor
 /tools/build_keys.json
-/dart/.pub
-/dart/packages
-/dart/web/packages
-/dart/web/vendor/packages
-/dart/web/vendor/ace/packages
-/dart/build

@@ -10,7 +10,82 @@
     <% }); %>
   </select>
 </div>
+<div class="form-group groups">
+  <label>Groups</label>
+  <div class="groups-label" data-toggle="tooltip" title="Enter space seperated list of groups to associate with user. Names are case sensitive.">
+    <input type="text" placeholder="Enter groups">
+  </div>
+</div>
 <div class="form-group email">
   <label>Email (optional)</label>
   <input type="email" class="form-control" placeholder="Enter email address" data-toggle="tooltip" title="User email address">
+</div>
+<div class="form-group pin">
+  <label>Pin</label>
+  <input type="password" class="form-control" placeholder="Enter user pin" data-toggle="tooltip" title="User pin, required when user connects to vpn. When using with two-factor authentication the pin and two-factor authentication code should both be placed in the password field.">
+</div>
+<div class="form-group port-forwarding">
+  <label>Port Forwarding</label>
+  <input type="text" class="form-control"
+    placeholder="Enter port mappings" data-toggle="tooltip"
+    title="Enter comma seperated list of ports to forward using format source_port:dest_port/protocol or start_port-end_port/protocol. Such as 80, 80/tcp, 80:8000/tcp, 1000-2000/udp."
+    value="">
+</div>
+<div class="form-group network-links">
+  <label>Network Link</label>
+  <input type="text" class="form-control"
+    placeholder="Enter network address" data-toggle="tooltip"
+    title="Enter network address with cidr subnet. This will provision access to a clients local network to the attached vpn servers and other clients. Multiple networks may be separated by a comma.">
+</div>
+<div class="client-to-client-toggle toggle-form form-group">
+  <label>Client-to-Client Only</label>
+  <div class="selector no-select" data-toggle="tooltip" title="Only allow this client to communicate with other clients. Access to routed networks will be blocked.">
+    <span class="selector-inner glyphicon glyphicon-ok"></span>
+  </div>
+</div>
+<div class="advanced form-group">
+  <div class="form-group auth-type">
+    <label>Type</label>
+    <select class="form-control" data-toggle="tooltip" title="User authentication type. This will determine how the user authenticates. This should be set automatically when the user authenticates with single sign-on.">
+      <option value="local" selected>Local</option>
+      <option value="duo">Duo</option>
+      <option value="yubico">Yubico</option>
+      <option value="google">Google</option>
+      <option value="google_duo">Google + Duo</option>
+      <option value="google_yubico">Google + Yubico</option>
+      <option value="slack">Slack</option>
+      <option value="slack_duo">Slack + Duo</option>
+      <option value="slack_yubico">Slack + Yubico</option>
+      <option value="saml">SAML</option>
+      <option value="saml_duo">SAML + Duo</option>
+      <option value="saml_yubico">SAML + Yubico</option>
+      <option value="saml_okta">Okta</option>
+      <option value="saml_okta_duo">Okta + Duo</option>
+      <option value="saml_okta_yubico">Okta Yubico</option>
+      <option value="saml_onelogin">OneLogin</option>
+      <option value="saml_onelogin_duo">OneLogin Duo</option>
+      <option value="saml_onelogin_yubico">OneLogin Yubico</option>
+      <option value="radius">Radius</option>
+      <option value="radius_duo">Radius + Duo</option>
+      <option value="plugin">Plugin</option>
+    </select>
+  </div>
+  <div class="form-group dns-servers">
+    <label>DNS Forwarding Server</label>
+    <input type="text" class="form-control"
+      placeholder="Enter dns server" data-toggle="tooltip"
+      title="Enter dns server with port to forward sub-domain dns requests coming from this users domain. Multiple dns servers may be separated by a comma.">
+  </div>
+  <div class="form-group dns-suffix">
+    <label>DNS Forwarding Suffix</label>
+    <input type="text" class="form-control"
+      placeholder="Enter dns suffix" data-toggle="tooltip"
+      title="Enter the suffix to use when forwarding dns requests. The full dns request will be the combination of the sub-domain of the users dns name suffixed by the dns suffix.">
+  </div>
+  <div class="bypass-secondary-toggle toggle-form form-group">
+    <label>Bypass Secondary Authentication</label>
+    <div class="selector no-select" data-toggle="tooltip" title="Bypass secondary authentication such as two-factor authentication. Use for server users that can't provide a two-factor code.">
+      <span class="selector-inner glyphicon glyphicon-ok"></span>
+    </div>
+  </div>
 </div>

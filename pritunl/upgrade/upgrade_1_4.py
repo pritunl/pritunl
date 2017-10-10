@@ -11,6 +11,9 @@ def upgrade_1_4():
     })
 
     for doc in docs:
+        if not doc.get('network'):
+            continue
+
         if isinstance(doc['network'], (int, long)):
             continue
 

@@ -1,6 +1,1262 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add metric to route options
+
+Version 1.28.1487.93 2017-10-08
+-------------------------------
+
+Add authentication limit to user connections
+
+Version 1.28.1485.27 2017-10-06
+-------------------------------
+
+Add static IPsec links
+Add rekey option to link
+
+Version 1.28.1476.96 2017-09-27
+-------------------------------
+
+Fix issue with Google group matching
+
+Version 1.28.1475.35 2017-09-26
+-------------------------------
+
+Push authentication changes
+
+Version 1.28.1475.11 2017-09-26
+-------------------------------
+
+Add sso ip whitelist
+
+Version 1.28.1472.86 2017-09-23
+-------------------------------
+
+Fix issue with client IP address on Windows
+
+Version 1.28.1468.86 2017-09-19
+-------------------------------
+
+Fix issue with single sign-on
+
+Version 1.28.1465.32 2017-09-16
+-------------------------------
+
+Server management improvements
+
+Version 1.28.1463.93 2017-09-14
+-------------------------------
+
+Improve server reliability
+
+Version 1.28.1463.34 2017-09-14
+-------------------------------
+
+Fix issue with user groups configuration
+
+Version 1.28.1463.29 2017-09-14
+-------------------------------
+
+Add Google G Suite group matching using Admin SDK
+
+Version 1.28.1462.0 2017-09-13
+------------------------------
+
+Fix issues with pritunl-dns server
+
+Version 1.28.1461.29 2017-09-12
+-------------------------------
+
+Add option to disable client reconnect
+
+Version 1.28.1460.76 2017-09-11
+-------------------------------
+
+Improve server reliability
+
+Version 1.28.1445.85 2017-08-27
+-------------------------------
+
+Improve error codes
+
+Version 1.28.1442.28 2017-08-24
+-------------------------------
+
+Routing improvements
+Logging improvements
+
+Version 1.28.1438.31 2017-08-20
+-------------------------------
+
+Add option to change user type
+Add support for replicated IPv6 client-to-client traffic
+Web interface improvements
+
+Version 1.28.1426.0 2017-08-08
+------------------------------
+
+Web interface improvements
+
+Version 1.28.1415.87 2017-07-28
+-------------------------------
+
+Fix issue with server host detach
+
+Version 1.28.1379.82 2017-06-22
+-------------------------------
+
+Improve Duo authentication
+Improvements to command line tools
+
+Version 1.28.1377.74 2017-06-20
+-------------------------------
+
+Fix issue with startup
+
+Version 1.28.1373.27 2017-06-16
+-------------------------------
+
+Improve startup
+
+Version 1.28.1372.97 2017-06-15
+-------------------------------
+
+Fix issue with link configuration
+
+Version 1.28.1372.23 2017-06-15
+-------------------------------
+
+Add link exclusions
+
+Version 1.28.1369.94 2017-06-12
+-------------------------------
+
+Web interface improvements
+
+Version 1.28.1366.98 2017-06-09
+-------------------------------
+
+Fix issue with DNS server
+
+Version 1.28.1364.80 2017-06-07
+-------------------------------
+
+Improve IPv6 support
+Improve AWS route advertisement
+
+Version 1.28.1358.35 2017-06-01
+-------------------------------
+
+Add support for additional AWS regions
+
+Version 1.28.1357.38 2017-05-31
+-------------------------------
+
+Fix OpenSSL error
+
+Version 1.28.1357.34 2017-05-31
+-------------------------------
+
+Improve links reliability
+Add links to demo
+
+Version 1.28.1357.25 2017-05-31
+-------------------------------
+
+Fix issue with older versions of OpenVPN
+
+Version 1.28.1356.45 2017-05-30
+-------------------------------
+
+Web server improvements
+
+Version 1.28.1356.41 2017-05-30
+-------------------------------
+
+Fix issue with user creation
+
+Version 1.28.1356.19 2017-05-30
+-------------------------------
+
+Add IPsec links
+Add support for AES GCM ciphers
+Improve route advertisement interface
+Performance improvements
+Improve server reliability
+Fix API issue
+
+Version 1.27.1314.93 2017-04-18
+-------------------------------
+
+Add support for AWS roles
+
+Version 1.27.1308.92 2017-04-12
+-------------------------------
+
+Add support for AWS GovCloud region
+
+Version 1.27.1307.25 2017-04-11
+-------------------------------
+
+Fix issue with DNS mapping
+
+Version 1.27.1282.77 2017-03-17
+-------------------------------
+
+Web server improvements
+
+Version 1.27.1272.94 2017-03-07
+-------------------------------
+
+Web interface improvements
+Fix issue with AWS route advertisement
+
+Version 1.27.1268.95 2017-03-03
+-------------------------------
+
+Improve AWS error handling
+
+Version 1.27.1266.22 2017-03-01
+-------------------------------
+
+Add user inactive timeout to server settings
+
+Version 1.27.1265.38 2017-02-28
+-------------------------------
+
+Add support for administrator login with YubiKey
+Fix issue with cli tools
+Improvements to auto failover
+
+Version 1.27.1259.77 2017-02-22
+-------------------------------
+
+Fix display issue in web console
+
+Version 1.27.1259.32 2017-02-22
+-------------------------------
+
+Add support for YubiKeys
+Add option to block outside DNS on Windows
+Improve support for alternative clients
+Improve two-factor authentication cache
+Improvements to command line tools
+
+Version 1.26.1231.99 2017-01-25
+-------------------------------
+
+Web server improvements
+
+Version 1.26.1227.85 2017-01-21
+-------------------------------
+
+Fix display issue on profile download page
+
+Version 1.26.1227.2 2017-01-21
+------------------------------
+
+Improve profile download page
+
+Version 1.26.1225.85 2017-01-19
+-------------------------------
+
+Improve web server reliability
+
+Version 1.26.1221.87 2017-01-15
+-------------------------------
+
+Improve logging
+Web interface improvements
+
+Version 1.26.1221.83 2017-01-15
+-------------------------------
+
+Fix web interface issues
+
+Version 1.26.1221.43 2017-01-15
+-------------------------------
+
+Fix client connection options
+
+Version 1.26.1220.48 2017-01-14
+-------------------------------
+
+Improve web interface
+Change API system
+
+Version 1.26.1218.96 2017-01-12
+-------------------------------
+
+Add user settings
+
+Version 1.26.1217.86 2017-01-11
+-------------------------------
+
+Fix issue with single sign-on settings
+
+Version 1.26.1215.39 2017-01-09
+-------------------------------
+
+Add route comments
+Improve configuration sync
+Web interface improvements
+
+Version 1.26.1209.89 2017-01-03
+-------------------------------
+
+Fix startup issue
+
+Version 1.26.1208.95 2017-01-02
+-------------------------------
+
+Fix issue with configuration sync
+
+Version 1.26.1188.41 2016-12-13
+-------------------------------
+
+Fix issue with iptables
+
+Version 1.26.1187.26 2016-12-12
+-------------------------------
+
+Add support for Duo passcode
+Push authentication improvements
+
+Version 1.25.1182.95 2016-12-07
+-------------------------------
+
+Improve Duo authentication
+Fix issue with dynamic IP pool on multi-device replicated servers
+
+Version 1.25.1180.33 2016-12-05
+-------------------------------
+
+Add client push authentication cache to settings
+
+Version 1.25.1177.86 2016-12-02
+-------------------------------
+
+Improve logging
+
+Version 1.25.1177.82 2016-12-02
+-------------------------------
+
+Fix issue with server start
+
+Version 1.25.1176.93 2016-12-01
+-------------------------------
+
+Fix issue with web console settings
+
+Version 1.25.1176.91 2016-12-01
+-------------------------------
+
+Add support for client push authentication cache
+Improve configuration sync
+Fix issue with Okta + Duo settings
+
+Version 1.25.1175.88 2016-11-30
+-------------------------------
+
+Add command line tools
+
+Version 1.25.1174.5 2016-11-29
+------------------------------
+
+Fix issue with event system
+
+Version 1.25.1173.81 2016-11-28
+-------------------------------
+
+Fix issue with Google Cloud
+Fix issue with user list failing to update
+
+Version 1.25.1164.91 2016-11-19
+-------------------------------
+
+Add allowed devices option to server settings
+
+Version 1.25.1158.92 2016-11-13
+-------------------------------
+
+Add setting to require plugins by name
+Add us-east-2 AWS region
+
+Version 1.25.1148.96 2016-11-03
+-------------------------------
+
+Web interface improvements
+Fix iptables support issue
+
+Version 1.25.1141.65 2016-10-27
+-------------------------------
+
+Improvements to plugin system
+Improve Chrome OS support
+Fix issue with linked servers using groups
+
+Version 1.25.1134.24 2016-10-20
+-------------------------------
+
+Fix issue when using lib iptables
+
+Version 1.25.1133.28 2016-10-19
+-------------------------------
+
+Web console improvements
+Add support for lib iptables
+Improve Okta single sign-on
+Fix issue with required pin and linked servers
+
+Version 1.25.1126.38 2016-10-12
+-------------------------------
+
+Add support for route exclusion
+
+Version 1.25.1122.55 2016-10-08
+-------------------------------
+
+Fix issue with removing routes
+
+Version 1.25.1122.21 2016-10-08
+-------------------------------
+
+Improve logging
+Fix issue with unexpected server restart
+
+Version 1.25.1120.61 2016-10-06
+-------------------------------
+
+Improve reliability
+
+Version 1.25.1119.59 2016-10-05
+-------------------------------
+
+Improve logging
+
+Version 1.25.1116.74 2016-10-02
+-------------------------------
+
+Update configuration sync
+
+Version 1.25.1111.71 2016-09-27
+-------------------------------
+
+Improve server stability
+
+Version 1.25.1109.79 2016-09-25
+-------------------------------
+
+Fix issue with server settings
+
+Version 1.25.1108.92 2016-09-24
+-------------------------------
+
+Add support for multiple search domains
+
+Version 1.25.1105.67 2016-09-21
+-------------------------------
+
+Improvements to plugin system
+
+Version 1.25.1103.21 2016-09-19
+-------------------------------
+
+Fix issue with host settings
+
+Version 1.25.1103.15 2016-09-19
+-------------------------------
+
+Add sync address to host settings
+Web interface improvements
+Fix issue with reset-password
+
+Version 1.25.1093.62 2016-09-09
+-------------------------------
+
+Fix server link route configuration issue
+Fix issue with cli setting get command
+
+Version 1.25.1092.73 2016-09-08
+-------------------------------
+
+Fix web console display issue
+
+Version 1.25.1092.18 2016-09-08
+-------------------------------
+
+Packaging updates
+
+Version 1.25.1084.95 2016-08-31
+-------------------------------
+
+Improve server reliability
+Packaging improvements
+
+Version 1.25.1075.19 2016-08-22
+-------------------------------
+
+Improve web server
+
+Version 1.25.1071.11 2016-08-18
+-------------------------------
+
+Add host settings to get and set cli command
+Fix issue with Windows clients on multi-device servers
+
+Version 1.25.1066.97 2016-08-13
+-------------------------------
+
+Add set-host-name cli command
+Fix issue with mobile devices on replicated multi-device servers
+
+Version 1.25.1064.86 2016-08-11
+-------------------------------
+
+Fix issue with multiple devices causing server crash
+Improvements to plugin system
+Improvements to web server
+
+Version 1.25.1060.38 2016-08-07
+-------------------------------
+
+Improvements to plugin system
+Fix issue with multiple devices when server is not replicated
+
+Version 1.25.1057.45 2016-08-04
+-------------------------------
+
+Update Lets Encrypt support
+
+Version 1.25.1057.22 2016-08-04
+-------------------------------
+
+Improve initial setup web server
+Fix interface issue with user and server groups
+Fix issue with multiple user network links
+
+Version 1.25.1054.4 2016-08-01
+------------------------------
+
+Improve bulk add users
+
+Version 1.25.1050.42 2016-07-28
+-------------------------------
+
+Improve user pin and OTP authentication on iOS and Android
+Support multiple devices with client-to-client traffic on replicated servers
+Add reverse dns lookup for VPN clients
+Fix case sensitive dns issue
+
+Version 1.25.1042.81 2016-07-20
+-------------------------------
+
+Fix connection issue with linked servers
+
+Version 1.25.1041.8 2016-07-19
+------------------------------
+
+Improvements for replicated servers
+Performance improvements
+
+Version 1.25.1039.56 2016-07-17
+-------------------------------
+
+Improve replicated servers
+
+Version 1.25.1039.3 2016-07-17
+------------------------------
+
+Fix issue with loading default CA certificates on older distros
+
+Version 1.25.1037.17 2016-07-15
+-------------------------------
+
+Improve host settings
+Fix login message for invalid username
+
+Version 1.25.1036.25 2016-07-14
+-------------------------------
+
+Add VXLan support for replicated servers
+Add auto Route 53 configuration
+Improvements to iOS and Android routing with IPv6
+Allow interoperable versions to use the same database
+Allow incoming dns queries from outside of VPN subnet
+Fix virtual network routing on Android
+Fix issue with server bind address
+
+Version 1.24.1025.78 2016-07-03
+-------------------------------
+
+Fix issue with tcp servers
+
+Version 1.24.1025.13 2016-07-03
+-------------------------------
+
+Improvements to web server
+
+Version 1.24.1023.75 2016-07-01
+-------------------------------
+
+Fix Duo authentication message on login page
+
+Version 1.24.1023.67 2016-07-01
+-------------------------------
+
+Fix issue with Lets Encrypt
+
+Version 1.24.1023.2 2016-07-01
+------------------------------
+
+Add support for ap-south-1 region
+Fix client reconnect issue with port forwarding
+
+Version 1.24.1020.94 2016-06-28
+-------------------------------
+
+Improvements to web server
+
+Version 1.24.1019.41 2016-06-27
+-------------------------------
+
+Fix issue with initial setup
+
+Version 1.24.1019.25 2016-06-27
+-------------------------------
+
+Add support for user groups
+Add groups to plugin system
+Add organization and groups support to Radius single sign-on
+Add support for Duo authentication with Radius single sign-on
+Cache push authentication for single sign-on connections
+Accept IPv6 client connections by default
+Improvements to Duo single sign-on
+Improvements to plugin system
+
+Version 1.23.1005.91 2016-06-13
+-------------------------------
+
+Add support for OneLogin API v1
+Fix disabled user check with legacy OneLogin API
+
+Version 1.23.1002.28 2016-06-10
+-------------------------------
+
+Improvements to plugin system
+
+Version 1.23.997.12 2016-06-05
+------------------------------
+
+Changes to plugin system
+
+Version 1.23.996.29 2016-06-04
+------------------------------
+
+Add additional plugin functionality
+Fix issue with reverse proxy
+
+Version 1.23.993.6 2016-06-01
+-----------------------------
+
+Fix issue with command line tools
+
+Version 1.23.992.76 2016-05-31
+------------------------------
+
+Add SSO plugin support
+
+Version 1.23.987.18 2016-05-26
+------------------------------
+
+Plugin system
+Improve user search
+
+Version 1.22.986.28 2016-05-25
+------------------------------
+
+Fix issue with user creation
+
+Version 1.22.986.23 2016-05-25
+------------------------------
+
+Add client-to-client only user setting
+Add support for secondary MongoDB server
+
+Version 1.22.984.30 2016-05-23
+------------------------------
+
+Add Chromebook hostname to server settings
+Improve replicated servers
+Performance improvements for high demand clusters
+
+Version 1.22.980.85 2016-05-19
+------------------------------
+
+Performance improvements for replicated servers
+Support multiple routing tables with VPC route advertisement
+Fix issue with host CPU and memory usage on some platforms
+
+Version 1.22.977.72 2016-05-16
+------------------------------
+
+Fix issue with ip pool resulting in address shortage
+Improve task system
+Improve cluster monitoring metrics
+
+Version 1.22.977.55 2016-05-16
+------------------------------
+
+Add open file count to monitoring
+Fix dependency issue
+
+Version 1.22.977.25 2016-05-16
+------------------------------
+
+Fix issue with user creation
+
+Version 1.22.977.9 2016-05-16
+-----------------------------
+
+Add monitoring with InfluxDB
+Add support for Redis
+Prometheus and Datadog support removed
+
+Version 1.21.967.90 2016-05-06
+------------------------------
+
+Fix redirection issue with single sign-on
+
+Version 1.21.954.48 2016-04-23
+------------------------------
+
+Increase open file ulimit in service
+
+Version 1.21.953.42 2016-04-22
+------------------------------
+
+Improve route advertisement configuration
+Interface improvements
+
+Version 1.21.947.73 2016-04-16
+------------------------------
+
+Improve network link routes
+Fix issue with restricted routes
+
+Version 1.21.946.40 2016-04-15
+------------------------------
+
+Improve port forwarding
+
+Version 1.21.946.24 2016-04-15
+------------------------------
+
+Add nat interface option to routes
+Fix issue with port fowarding
+
+Version 1.21.945.14 2016-04-14
+------------------------------
+
+Reduce cpu usage for large servers
+
+Version 1.21.942.24 2016-04-11
+------------------------------
+
+Fix issue with Lets Encrypt
+
+Version 1.21.941.90 2016-04-10
+------------------------------
+
+Fix url redirection when not using port 443
+
+Version 1.21.941.39 2016-04-10
+------------------------------
+
+Redesigned web server
+Fix issues with ipv6 servers
+
+Version 1.21.940.94 2016-04-09
+------------------------------
+
+Improve web server
+
+Version 1.21.940.40 2016-04-09
+------------------------------
+
+Improve web server performance
+Add reverse proxy support
+Fix issue with non-responsive web server
+
+Version 1.21.939.33 2016-04-08
+------------------------------
+
+Improve web server restart
+
+Version 1.21.938.80 2016-04-07
+------------------------------
+
+Fix startup issues
+
+Version 1.21.938.43 2016-04-07
+------------------------------
+
+Fix issue with setup server
+
+Version 1.21.938.10 2016-04-07
+------------------------------
+
+Fix issues with VPC route advertisement
+
+Version 1.21.938.4 2016-04-07
+-----------------------------
+
+Add restricted routing
+Auto restart non-responsive web server
+Add Lets Encrypt intermediate certificates
+Improve issues with assigning client ip address
+Fix ssl issues
+
+Version 1.21.928.27 2016-03-28
+------------------------------
+
+Fix issue with task
+
+Version 1.21.926.53 2016-03-26
+------------------------------
+
+Fix issue with VPC route advertisement
+
+Version 1.21.924.38 2016-03-24
+------------------------------
+
+Add single sign-on with Slack
+
+Version 1.20.923.9 2016-03-23
+-----------------------------
+
+Fix issue with creating users
+
+Version 1.20.922.99 2016-03-22
+------------------------------
+
+Improve security in initial setup process
+Improve database setup and upgrade process
+Fix issue with database upgrades
+
+Version 1.20.917.37 2016-03-17
+------------------------------
+
+Add aws vpc integration
+Remove Duo SSO administrator user
+Fix setup server port on database upgrades
+
+Version 1.19.913.28 2016-03-13
+------------------------------
+
+Fix issue with debug server
+
+Version 1.19.912.44 2016-03-12
+------------------------------
+
+Add support for LetsEncrypt
+Redirect http to https on web console
+Move server port option to settings in web console
+Change default web console port to 443
+Fix issue with finding network interface for route
+Fix issue with profile sync
+
+Version 1.18.908.31 2016-03-08
+------------------------------
+
+Add support for mongodb ssl when using dns or monitoring
+Fix issue with replicated servers route clean up
+Fix SSL issue with some browsers
+
+Version 1.18.906.35 2016-03-06
+------------------------------
+
+Add server link routes
+Fix configuration issue with virtual network route
+
+Version 1.18.903.84 2016-03-03
+------------------------------
+
+Fix server route display issue
+
+Version 1.18.902.99 2016-03-02
+------------------------------
+
+Improve Okta authentication
+
+Version 1.18.902.26 2016-03-02
+------------------------------
+
+Add new route interface
+Improve upgrade process
+Improve server management
+Fix uri on profile view page
+Fix connection issue with linked servers
+
+Version 1.17.895.42 2016-02-24
+------------------------------
+
+Route clients across replicated servers
+Add import uri to profile view page
+Add reset-version command
+Interface improvements
+Fix issue with bridge mode assigning addresses out of range
+Fix display issue in web console
+Fix issue with service restart
+
+Version 1.16.884.17 2016-02-13
+------------------------------
+
+Interface improvements
+Fix issue with Cent OS package
+
+Version 1.16.881.14 2016-02-10
+------------------------------
+
+Trim long user names in web console
+Fix issue with emailing profiles
+
+Version 1.16.879.94 2016-02-08
+------------------------------
+
+Bridged mode improvements
+Logging improvements
+
+Version 1.16.872.77 2016-02-01
+------------------------------
+
+Fix disconnect issue with Duo and Okta Push
+
+Version 1.16.871.82 2016-01-31
+------------------------------
+
+Fix issue with user search
+
+Version 1.16.869.90 2016-01-29
+------------------------------
+
+Add option to disable user pins
+
+Version 1.16.867.0 2016-01-27
+-----------------------------
+
+Add radius support
+
+Version 1.15.862.92 2016-01-22
+------------------------------
+
+User search improvements
+Fix issue with user audits
+
+Version 1.15.857.70 2016-01-17
+------------------------------
+
+Fix issue with iptables error
+
+Version 1.15.856.94 2016-01-16
+------------------------------
+
+Add port forwarding
+Add system log view
+Interface improvements
+
+Version 1.14.845.99 2016-01-05
+------------------------------
+
+Add user search operators
+
+Version 1.14.842.79 2016-01-02
+------------------------------
+
+Add multiple administrators
+Compress static web files with gzip
+Disabled profile download for disabled users
+
+Version 1.13.836.1 2015-12-27
+-----------------------------
+
+Add user disconnect audit event
+
+Version 1.13.832.99 2015-12-23
+------------------------------
+
+Add user pins
+Add support for monitoring with Prometheus and Datadog
+
+Version 1.12.828.76 2015-12-19
+------------------------------
+
+Stability improvements
+
+Version 1.12.827.85 2015-12-18
+------------------------------
+
+Fix key import on iOS
+
+Version 1.12.827.72 2015-12-18
+------------------------------
+
+Fix issue with tcp servers not starting
+
+Version 1.12.827.16 2015-12-18
+------------------------------
+
+Improve client connections
+
+Version 1.12.826.5 2015-12-17
+-----------------------------
+
+Stability improvements
+
+Version 1.12.825.85 2015-12-16
+------------------------------
+
+Changes to default settings
+
+Version 1.12.825.77 2015-12-16
+------------------------------
+
+Improve server stability
+
+Version 1.12.825.71 2015-12-16
+------------------------------
+
+Fix timezone issue
+
+Version 1.12.825.62 2015-12-16
+------------------------------
+
+Add auth token to organizations
+Improve stability under high server loads
+Fix issue with inaccurate timestamps leading to client and server timeouts
+Fix issue with gateway redirect on iOS
+Fix display issue with host graphs
+Fix display error with server and host uptime
+
+Version 1.11.813.26 2015-12-04
+------------------------------
+
+Add administrator auditing
+Fix issue with key archive
+
+Version 1.11.811.59 2015-12-02
+------------------------------
+
+Add auditing
+Add MongoDB read preference to conf
+
+Version 1.10.808.53 2015-11-29
+------------------------------
+
+Interface improvements
+
+Version 1.10.808.29 2015-11-29
+------------------------------
+
+Fix memory usage
+
+Version 1.10.807.67 2015-11-28
+------------------------------
+
+Add additional advanced settings
+Fix display issue with sso logos
+
+Version 1.10.807.63 2015-11-28
+------------------------------
+
+Fix issue with bulk add users
+
+Version 1.10.807.55 2015-11-28
+------------------------------
+
+Add demo mode
+
+Version 1.10.806.90 2015-11-27
+------------------------------
+
+Add support for dns forwarding
+
+Version 1.9.805.7 2015-11-26
+----------------------------
+
+Fix issue with Enterprise dns server
+
+Version 1.9.804.88 2015-11-25
+-----------------------------
+
+Disable Enterprise dns server
+
+Version 1.9.804.68 2015-11-25
+-----------------------------
+
+Fix issue with Enterprise login
+
+Version 1.9.803.37 2015-11-24
+-----------------------------
+
+Add reauth check for Okta on vpn connections
+Add OneLogin support with reauth check on vpn connections
+
+Version 1.9.800.2 2015-11-21
+----------------------------
+
+Add additional configuration options
+
+Version 1.9.798.90 2015-11-19
+-----------------------------
+
+Fix display issue in dialog input
+
+Version 1.9.798.13 2015-11-19
+-----------------------------
+
+Fix issue with debian package output
+
+Version 1.9.793.22 2015-11-14
+-----------------------------
+
+Add support for Duo phone callback
+
+Version 1.9.793.2 2015-11-14
+----------------------------
+
+Add option to skip SAML Duo auth when not available
+Fix issue with adding user with add in queue
+
+Version 1.9.792.39 2015-11-13
+-----------------------------
+
+Improve initial setup
+
+Version 1.9.792.33 2015-11-13
+-----------------------------
+
+Fix issue with upstart script
+
+Version 1.9.792.17 2015-11-13
+-----------------------------
+
+Add support for Okta Push
+Improvements to single sign-on
+
+Version 1.9.790.54 2015-11-11
+-----------------------------
+
+Fix users online count in hosts section
+Improve logging for single sign-on
+
+Version 1.9.789.46 2015-11-10
+-----------------------------
+
+Add support for SAML
+Fix issue with Duo clients timing out durning authentication
+Add icons for user authentication type
+
+Version 1.8.787.62 2015-11-08
+-----------------------------
+
+Add bypass secondary authentication to user settings
+Fix display issue with network link ping settings
+
+Version 1.8.785.65 2015-11-06
+-----------------------------
+
+Fix mobile connection issues with multi device enabled
+
+Version 1.8.783.26 2015-11-04
+-----------------------------
+
+Change subscription features
+
+Version 1.8.783.8 2015-11-04
+----------------------------
+
+Add command line options
+Improve multi device support
+Add sysvinit support
+
+Version 1.8.778.54 2015-10-30
+-----------------------------
+
+Add vpn client dns mapping
+Add failover gateway network links
+
+Version 1.7.774.46 2015-10-26
+-----------------------------
+
+Add gateway network links
+Add hash algorithm to server settings
+Add integration with EdgeRouter
+Fix issue with client renegotiation
+
+Version 1.6.757.9 2015-10-09
+----------------------------
+
+Fix display issue in web interface
+
+Version 1.6.755.70 2015-10-07
+-----------------------------
+
+Web interface improvements
+
+Version 1.6.752.82 2015-10-04
+-----------------------------
+
+Add set-mongodb cli command
+Fix issue with linked servers
+
+Version 1.6.751.72 2015-10-03
+-----------------------------
+
+Disable IPv6 remotes in user conf
+
+Version 1.6.749.17 2015-10-01
+-----------------------------
+
+Fix display issue with IPv6 address
+
+Version 1.6.747.62 2015-09-29
+-----------------------------
+
+Add support for IPv6
+
+Version 1.5.743.11 2015-09-25
+-----------------------------
+
+Fix server stopped unexpectedly issue
+
+Version 1.5.737.89 2015-09-19
+-----------------------------
+
+Fix login issue
+
+Version 1.5.737.82 2015-09-19
+-----------------------------
+
+Add support for Duo authentication
+Add support for Google + Duo authentication
+Improve Google single sign-on
+Fix server failed to start after upgrade (premium only)
+Fix host id change after upgrade (enterprise only)
+
+Version 1.4.733.12 2015-09-15
+-----------------------------
+
+Improvements to web console
+Fix issue with upgrade
+
+Version 1.4.730.81 2015-09-12
+-----------------------------
+
+Fix issue with multiple device configurations
+
 Version 1.4.730.30 2015-09-12
 -----------------------------
 

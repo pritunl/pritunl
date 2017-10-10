@@ -2,6 +2,7 @@ from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import logger
+from pritunl import utils
 
 import threading
 import urllib2
@@ -15,18 +16,19 @@ def _check_updates():
             continue
 
         try:
-            logger.debug('Checking notifications...', 'runners')
             request = urllib2.Request(
                 settings.app.notification_server +
                 '/%s' % settings.local.version_int)
             response = urllib2.urlopen(request, timeout=60)
             data = json.load(response)
 
-            settings.local.notification = data.get('message', '')
-            settings.local.www_state = data.get('www', OK)
-            settings.local.vpn_state = data.get('vpn', OK)
+            settings.local.notification = str(data.get('message', ''))
+            settings.local.www_state = str(data.get('www', OK))
+            settings.local.vpn_state = str(data.get('vpn', OK))
         except:
             logger.exception('Failed to check notifications', 'runners')
+
+        utils.sync_public_ip(update=True)
 
         yield interrupter_sleep(settings.app.update_check_rate)
 

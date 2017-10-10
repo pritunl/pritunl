@@ -23,11 +23,18 @@ def get_by_id(id, fields=None):
 def get_dict(id):
     return Server(id=id, fields=dict_fields).dict()
 
+def get_online_ipv6_count():
+    return Server.collection.find({
+        'status': ONLINE,
+        'ipv6': True,
+    }).count()
+
 def get_used_resources(ignore_server_id):
-    response = Server.collection.aggregate([
+    response = Server.collection.aggregate(([
         {'$match': {
             '_id': {'$ne': ignore_server_id},
         }},
+    ] if ignore_server_id else []) + [
         {'$project': {
             'network': True,
             'interface': True,
@@ -122,39 +129,50 @@ def output_link_clear(server_id):
 def bandwidth_get(server_id, period):
     return ServerBandwidth(server_id).get_period(period)
 
+def bandwidth_random_get(server_id, period):
+    return ServerBandwidth(server_id).get_period_random(period)
+
 def link_servers(server_id, link_server_id, use_local_address=False):
     if server_id == link_server_id:
         raise TypeError('Server id must be different then link server id')
 
-    collection = mongo.get_collection('servers')
-
-    count = 0
-    spec = {
-        '_id': {'$in': [server_id, link_server_id]},
-    }
-    project = {
-        '_id': True,
-        'status': True,
-        'hosts': True,
-        'replica_count': True,
-    }
-
     hosts = set()
-    for doc in collection.find(spec, project):
-        if doc['status'] == ONLINE:
-            raise ServerLinkOnlineError('Server must be offline to link')
+    routes = set()
+    for svr, link_id in (
+                (get_by_id(server_id), link_server_id),
+                (get_by_id(link_server_id), server_id),
+            ):
+        has_link = False
+        if svr.links:
+            for link in svr.links:
+                if link['server_id'] == link_id:
+                    has_link = True
 
-        if doc['replica_count'] > 1:
-            raise ServerLinkReplicaError('Server has replicas')
+        if not has_link:
+            if not svr.links:
+                svr.links = []
 
-        hosts_set = set(doc['hosts'])
+            svr.links.append({
+                'server_id': link_id,
+                'user_id': None,
+                'use_local_address': use_local_address,
+            })
+
+        err, err_msg = svr.validate_conf()
+        if err:
+            return err, err_msg
+
+        hosts_set = set(svr.hosts)
         if hosts & hosts_set:
-            raise ServerLinkCommonHostError('Servers have a common host')
+            return SERVER_LINK_COMMON_HOST, SERVER_LINK_COMMON_HOST_MSG
         hosts.update(hosts_set)
 
-        count += 1
-    if count != 2:
-        raise ServerLinkError('Link server not found')
+        routes_set = set()
+        for route in svr.get_routes():
+            routes_set.add(route['network'])
+        if routes & routes_set:
+            return SERVER_LINK_COMMON_ROUTE, SERVER_LINK_COMMON_ROUTE_MSG
+        routes.update(routes_set)
 
     tran = transaction.Transaction()
     collection = tran.collection('servers')
@@ -182,6 +200,8 @@ def link_servers(server_id, link_server_id, use_local_address=False):
     }})
 
     tran.commit()
+
+    return None, None
 
 def unlink_servers(server_id, link_server_id):
     collection = mongo.get_collection('servers')

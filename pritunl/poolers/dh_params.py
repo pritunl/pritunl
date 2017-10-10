@@ -1,7 +1,6 @@
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import pooler
-from pritunl import logger
 from pritunl import mongo
 from pritunl import utils
 from pritunl import queue
@@ -40,7 +39,3 @@ def fill_dh_params():
     for dh_param_bits in utils.roundrobin(*new_dh_params):
         que = queue.start('dh_params', dh_param_bits=dh_param_bits,
             priority=LOW)
-        logger.debug('Queue dh params', 'server',
-            queue_id=que.id,
-            dh_param_bits=dh_param_bits,
-        )

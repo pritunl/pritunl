@@ -45,8 +45,10 @@ class QueueInitUserPooled(QueueInitUser):
         self.org.queue_com.running.set()
 
 @queue.add_reserve('queued_user')
-def reserve_queued_user(org, name=None, email=None, type=None,
-        disabled=None, resource_id=None, block=False):
+def reserve_queued_user(org, name=None, email=None, pin=None, type=None,
+        groups=None, auth_type=None, yubico_id=None, disabled=None,
+        bypass_secondary=None, client_to_client=None, dns_servers=None,
+        dns_suffix=None, port_forwarding=None, resource_id=None, block=False):
     reserve_id = str(org.id) + '-' + type
     reserve_data = {}
 
@@ -54,10 +56,28 @@ def reserve_queued_user(org, name=None, email=None, type=None,
         reserve_data['name'] = name
     if email is not None:
         reserve_data['email'] = email
+    if pin is not None:
+        reserve_data['pin'] = pin
     if type is not None:
         reserve_data['type'] = type
+    if groups is not None:
+        reserve_data['groups'] = groups
+    if auth_type is not None:
+        reserve_data['auth_type'] = auth_type
+    if yubico_id is not None:
+        reserve_data['yubico_id'] = yubico_id
     if disabled is not None:
         reserve_data['disabled'] = disabled
+    if bypass_secondary is not None:
+        reserve_data['bypass_secondary'] = bypass_secondary
+    if client_to_client is not None:
+        reserve_data['client_to_client'] = client_to_client
+    if dns_servers is not None:
+        reserve_data['dns_servers'] = dns_servers
+    if dns_suffix is not None:
+        reserve_data['dns_suffix'] = dns_suffix
+    if port_forwarding is not None:
+        reserve_data['port_forwarding'] = port_forwarding
     if resource_id is not None:
         reserve_data['resource_id'] = resource_id
 

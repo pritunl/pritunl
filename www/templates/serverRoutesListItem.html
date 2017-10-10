@@ -1,0 +1,15 @@
+<div class="name-container">
+  <span class="name-icon glyphicon glyphicon-globe"></span>
+  <a class="route-network title" data-toggle="tooltip" title="Click to modify this route"><%- network %></a>
+  <span class="route-network-no-click title"><%- network %></span>
+  <span class="route-comment title"><%- comment %></span>
+</div>
+<div class="button-container">
+  <div class="route-vpc-id label label-purple no-select" <%= vpc_id ? '' : 'style="display: none;"' %>><%- vpc_id %></div>
+  <div class="route-virtual-network label label-danger no-select" <%= virtual_network ? '' : 'style="display: none;"' %>>Virtual Network</div>
+  <div class="route-network-link label label-warning no-select" <%= network_link ? '' : 'style="display: none;"' %>>Network Link</div>
+  <div class="route-nat label label-success no-select" <%= nat && !net_gateway ? '' : 'style="display: none;"' %>>NAT</div>
+  <div class="route-net-gateway label label-purple no-select" <%= net_gateway ? '' : 'style="display: none;"' %>>Net Gateway</div>
+  <div class="route-server-link label label-primary no-select" <%= server_link ? '' : 'style="display: none;"' %>>Server Link</div>
+  <button type="button" <%- virtual_network || network_link || server_link ? 'disabled' : '' %> class="server-remove-route btn btn-danger btn-xs">Remove Route</button>
+</div>

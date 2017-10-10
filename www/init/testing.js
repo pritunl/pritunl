@@ -24,13 +24,19 @@ define([
       window.devStyles = true;
     }
 
-    // Fix for firefox dev tools
-    if (navigator.userAgent.indexOf('Firefox') !== -1) {
-      window.disableInterval = true;
-    }
-
     var _ajax = Backbone.ajax;
     Backbone.ajax = function(options) {
+      var _headers = options.headers;
+      var headers = {
+        'Csrf-Token': window.csrfToken
+      };
+
+      if (_headers) {
+        options.headers = _.extend(headers, _headers);
+      } else {
+        options.headers = headers;
+      }
+
       var _complete = options.complete;
       options.complete = function(response) {
         if (this.url.substring(0, 6) !== '/event') {

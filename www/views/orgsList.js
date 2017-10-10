@@ -97,10 +97,18 @@ define([
       var modal = new ModalAddUserBulkView({
         orgs: this.collection
       });
-      this.listenToOnce(modal, 'applied', function() {
+      this.listenToOnce(modal, 'applied', function(response) {
+        var msg;
+
+        if (response) {
+          msg = response;
+        } else {
+          msg = 'Successfully added users.';
+        }
+
         var alertView = new AlertView({
           type: 'success',
-          message: 'Successfully added users.',
+          message: msg,
           dismissable: true
         });
         $('.alerts-container').append(alertView.render().el);

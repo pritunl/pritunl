@@ -7,7 +7,6 @@ import uuid
 import os
 
 def setup_local():
-    settings.local.openssl_heartbleed = not utils.check_openssl()
     settings.local.iptables_wait = utils.check_iptables_wait()
 
     if settings.conf.host_id:
@@ -24,6 +23,16 @@ def setup_local():
 
         with open(settings.conf.uuid_path, 'w') as uuid_file:
             uuid_file.write(settings.local.host_id)
+
+    if os.path.isfile(settings.conf.setup_key_path):
+        with open(settings.conf.setup_key_path, 'r') as setup_key_file:
+            settings.local.setup_key = setup_key_file.read().strip()
+    else:
+        settings.local.setup_key = uuid.uuid4().hex
+
+        with open(settings.conf.setup_key_path, 'w') as setup_key_file:
+            os.chmod(settings.conf.setup_key_path, 0600)
+            setup_key_file.write(settings.local.setup_key)
 
     settings.local.version = __version__
     settings.local.version_int = utils.get_int_ver(__version__)

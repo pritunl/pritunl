@@ -1,30 +1,33 @@
-<div class="info-container">
-  <div class="server-name-device">
-    <span class="server-item server-name" data-toggle="tooltip" title="Server name">
-      <span class="name-icon glyphicon glyphicon-dashboard"></span>
+<div class="layout-horizontal">
+  <div class="info-container layout-flex">
+    <div class="server-name-device">
+      <span class="server-item server-name" data-toggle="tooltip" title="Server name">
+        <span class="name-icon glyphicon glyphicon-dashboard"></span>
+        <span class="title"></span>
+      </span>
+      <span class="server-item server-device" data-toggle="tooltip" title="Device name">
+        <span class="name-icon fa"></span>
+        <span class="title"></span>
+      </span>
+    </div>
+  </div>
+  <div class="client-container">
+    <span class="server-item server-addr" data-toggle="tooltip" title="User virtual IP address">
+      <span class="name-icon glyphicon glyphicon-send no-select"></span>
+      <span class="title ipv4"></span>
+      <span class="title ipv6"></span>
+    </span>
+    <span class="server-item server-real-addr" data-toggle="tooltip" title="User real IP address">
+      <span class="name-icon glyphicon glyphicon-globe"></span>
       <span class="title"></span>
     </span>
-    <span class="server-item server-device" data-toggle="tooltip" title="Device name">
-      <span class="name-icon fa"></span>
+    <span class="server-item server-time" data-toggle="tooltip" title="Connected since">
+      <span class="name-icon glyphicon glyphicon-time"></span>
       <span class="title"></span>
     </span>
   </div>
-</div>
-<div class="right-container status-container">
-  <div class="status-icon"></div>
-  <span class="status-text title"></span>
-</div>
-<div class="right-container">
-  <span class="server-item server-addr" data-toggle="tooltip" title="User virtual IP address">
-    <span class="name-icon glyphicon glyphicon-send"></span>
-    <span class="title"></span>
-  </span>
-  <span class="server-item server-real-addr" data-toggle="tooltip" title="User real IP address">
-    <span class="name-icon glyphicon glyphicon-globe"></span>
-    <span class="title"></span>
-  </span>
-  <span class="server-item server-time" data-toggle="tooltip" title="Connected since">
-    <span class="name-icon glyphicon glyphicon-time"></span>
-    <span class="title"></span>
-  </span>
+  <div class="status-container">
+    <div class="status-icon"></div>
+    <span class="status-text title"></span>
+  </div>
 </div>

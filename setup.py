@@ -6,21 +6,25 @@ import shlex
 import shutil
 import fileinput
 
-VERSION = '1.4.730.30'
+VERSION = '1.28.1487.93'
 PATCH_DIR = 'build'
-install_upstart = True
 install_systemd = True
+install_upstart = False
+install_sysvinit = False
 
 prefix = sys.prefix
 for arg in copy.copy(sys.argv):
     if arg.startswith('--prefix'):
         prefix = os.path.normpath(shlex.split(arg)[0].split('=')[-1])
-    elif arg == '--no-upstart':
-        sys.argv.remove('--no-upstart')
-        install_upstart = False
     elif arg == '--no-systemd':
         sys.argv.remove('--no-systemd')
         install_systemd = False
+    elif arg == '--upstart':
+        sys.argv.remove('--upstart')
+        install_upstart = True
+    elif arg == '--sysvinit':
+        sys.argv.remove('--sysvinit')
+        install_sysvinit = True
 
 if not os.path.exists('build'):
     os.mkdir('build')
@@ -40,11 +44,13 @@ data_files = [
         'www/dbconf.html',
         'www/key_view.html',
         'www/key_view_dark.html',
+        'www/duo.html',
+        'www/yubico.html',
         'www/login.html',
         'www/upgrade.html',
-        'www/vendor/dist/favicon.ico',
         'www/vendor/dist/index.html',
         'www/vendor/dist/robots.txt',
+        'www/logo.png',
     ]),
     ('/usr/share/pritunl/www/css', [main_css_path]),
     ('/usr/share/pritunl/www/fonts', [
@@ -72,11 +78,16 @@ data_files = [
 ]
 
 patch_files = []
+if install_sysvinit:
+    data_files.append(('/etc/init.d', ['data/init.d.sysvinit/pritunl']))
+
 if install_upstart:
     patch_files.append('%s/pritunl.conf' % PATCH_DIR)
     data_files.append(('/etc/init', ['%s/pritunl.conf' % PATCH_DIR]))
-    data_files.append(('/etc/init.d', ['data/init.d/pritunl.sh']))
+    if not install_sysvinit:
+        data_files.append(('/etc/init.d', ['data/init.d.upstart/pritunl']))
     shutil.copy('data/init/pritunl.conf', '%s/pritunl.conf' % PATCH_DIR)
+
 if install_systemd:
     patch_files.append('%s/pritunl.service' % PATCH_DIR)
     data_files.append(('/etc/systemd/system',
@@ -98,7 +109,7 @@ for dir_name in os.listdir('pritunl'):
 setup(
     name='pritunl',
     version=VERSION,
-    description='Pritunl vpn server',
+    description='Enterprise VPN server',
     long_description=open('README.md').read(),
     author='Pritunl',
     author_email='contact@pritunl.com',
@@ -112,10 +123,6 @@ setup(
     packages=packages,
     license=open('LICENSE').read(),
     zip_safe=False,
-    install_requires=[
-        'flask>=0.10.1',
-        'pymongo>=3.0.3',
-    ],
     data_files=data_files,
     entry_points={
         'console_scripts': ['pritunl = pritunl.__main__:main'],

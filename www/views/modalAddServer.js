@@ -16,6 +16,7 @@ define([
       this.usedNetworks = options.usedNetworks;
       this.usedPorts = options.usedPorts;
       this.usedInterfaces = options.usedInterfaces;
+      this.newServer = true;
 
       this.model = new ServerModel({
         'name': '',
@@ -23,11 +24,13 @@ define([
         'port': this._get_free_port(),
         'protocol': 'udp',
         'dh_param_bits': 1536,
-        'mode': 'all_traffic',
-        'local_networks': [],
+        'ipv6_firewall': true,
         'dns_servers': ['8.8.8.8'],
-        'cipher': 'aes256',
-        'inter_client': true
+        'cipher': 'aes128',
+        'hash': 'sha1',
+        'inter_client': true,
+        'restrict_routes': true,
+        'vxlan': true
       });
       ModalAddServerView.__super__.initialize.call(this, options);
     },
@@ -67,19 +70,6 @@ define([
       }
 
       return port;
-    },
-    _get_free_interface: function() {
-      var i;
-      var iface;
-
-      for (i = 0; i < 64; i++) {
-        iface = 'tun' + i;
-        if (this.usedInterfaces.indexOf(iface) === -1) {
-          break;
-        }
-      }
-
-      return iface;
     }
   });
 

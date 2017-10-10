@@ -28,7 +28,7 @@ define([
         }
       });
       Rickshaw.Graph.HoverDetail.prototype.initialize.call(this, args);
-    },
+    }
   });
 
   var HostUsageView = Backbone.View.extend({
@@ -41,9 +41,22 @@ define([
       this.state = false;
       this.interval = setInterval((this.update).bind(this), 15000);
       this.update();
+
+      this.bindId = window.uuid();
+      this.width = this.$el.width();
+      $(window).bind('resize.' + this.bindId, (this.onResize).bind(this));
     },
     deinitialize: function() {
       clearInterval(this.interval);
+      $(window).unbind('resize.' + this.bindId);
+    },
+    onResize: function() {
+      var width = this.$el.width();
+      if (width !== this.width) {
+        this.width = width;
+        this.$el.empty();
+        this.render();
+      }
     },
     render: function() {
       this.$el.html(this.template());
@@ -107,10 +120,13 @@ define([
         memUsage.pop();
       }
 
+      var width = this.$el.width();
+      var height = this.$el.height() - 2;
+
       var graphCpu = new Rickshaw.Graph({
         element: this.$('.host-graph-cpu')[0],
-        width: this.$('.host-graph-cpu').width(),
-        height: this.$('.host-graph-cpu').height(),
+        width: width,
+        height: height,
         renderer: 'area',
         stroke: true,
         max: 1,
@@ -139,8 +155,8 @@ define([
 
       var graphMem = new Rickshaw.Graph({
         element: this.$('.host-graph-mem')[0],
-        width: this.$('.host-graph-mem').width(),
-        height: this.$('.host-graph-mem').height(),
+        width: width,
+        height: height,
         renderer: 'area',
         stroke: true,
         max: 1,
@@ -150,7 +166,7 @@ define([
           color: 'rgba(44, 127, 184, 0.05)',
           stroke: '#2c7fb8',
           data: memUsage
-        }],
+        }]
       });
       graphMem.render();
       if (this.getType() === 'mem') {

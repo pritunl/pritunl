@@ -14,14 +14,10 @@ define([
     okText: 'Detach',
     initialize: function() {
       ModalDetachOrgView.__super__.initialize.call(this);
-      var alertView = new AlertView({
-        type: 'danger',
-        message: 'Detaching an organization may require users to ' +
-          're-download their keys.',
-        animate: false
-      });
-      this.addView(alertView);
-      this.$('.modal-body').prepend(alertView.render().el);
+      this.setAlert('warning', 'Detaching an organization will require ' +
+        'users that are not using an offical Pritunl client to download ' +
+        'their updated profile again before being able to connect. Users ' +
+        'using an offical Pritunl client will be able sync the changes.');
     },
     body: function() {
       return this.template(this.model.toJSON());
@@ -32,10 +28,14 @@ define([
         success: function() {
           this.close(true);
         }.bind(this),
-        error: function() {
+        error: function(model, response) {
           this.clearLoading();
-          this.setAlert('danger',
-            'Failed to detach organization, server error occurred.');
+          if (response.responseJSON) {
+            this.setAlert('danger', response.responseJSON.error_msg);
+          }
+          else {
+            this.setAlert('danger', this.errorMsg);
+          }
         }.bind(this)
       });
     }

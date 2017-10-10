@@ -4,27 +4,59 @@ define([
   'backbone',
   'models/settings',
   'models/subscription',
+  'models/user',
+  'collections/userAudit',
   'views/alert',
+  'views/modalLogs',
   'views/modalSettings',
   'views/modalSubscribe',
   'views/modalEnterprise',
-  'views/modalFeedback',
   'text!templates/header.html'
-], function($, _, Backbone, SettingsModel, SubscriptionModel, AlertView,
-    ModalSettingsView, ModalSubscribeView, ModalEnterpriseView,
-    ModalFeedbackView, headerTemplate) {
+], function($, _, Backbone, SettingsModel, SubscriptionModel, UserModel,
+    UserAuditCollection, AlertView, ModalLogsView, ModalSettingsView,
+    ModalSubscribeView, ModalEnterpriseView, headerTemplate) {
   'use strict';
   var HeaderView = Backbone.View.extend({
     tagName: 'header',
     template: _.template(headerTemplate),
     events: {
-      'click .enterprise-upgrade a, .enterprise-settings a': 'onEnterprise',
-      'click .change-password a': 'openSettings',
-      'click .feedback': 'onFeedback'
+      'click .enterprise-upgrade a': 'onEnterprise',
+      'click .enterprise-plus-upgrade a': 'onEnterprise',
+      'click .enterprise-settings a': 'onEnterprise',
+      'click .logs a': 'openLogs',
+      'click .change-password a': 'openSettings'
+    },
+    initialize: function() {
+      this.model = new SettingsModel();
+      this.listenTo(window.events, 'settings_updated', this.update);
+      this.update();
+      HeaderView.__super__.initialize.call(this);
     },
     render: function() {
       this.$el.html(this.template());
       return this;
+    },
+    update: function() {
+      this.model.fetch({
+        success: function(model) {
+          if (model.get('auditing') === 'all') {
+            this.$('.audit-admin a').css('display', 'block');
+          }
+          else {
+            this.$('.audit-admin a').hide();
+          }
+        }.bind(this),
+        error: function() {
+          var alertView = new AlertView({
+            type: 'danger',
+            message: 'Failed to load settings data, ' +
+              'server error occurred.',
+            dismissable: true
+          });
+          $('.alerts-container').append(alertView.render().el);
+          this.addView(alertView);
+        }.bind(this)
+      });
     },
     onEnterprise: function() {
       if (this.onEnterpriseLock) {
@@ -83,6 +115,10 @@ define([
       }.bind(this));
       this.addView(modal);
     },
+    openLogs: function() {
+      var modal = new ModalLogsView();
+      this.addView(modal);
+    },
     openSettings: function() {
       var model = new SettingsModel();
       model.fetch({
@@ -104,7 +140,7 @@ define([
         error: function() {
           var alertView = new AlertView({
             type: 'danger',
-            message: 'Failed to load authentication data, ' +
+            message: 'Failed to load settings data, ' +
               'server error occurred.',
             dismissable: true
           });
@@ -112,19 +148,6 @@ define([
           this.addView(alertView);
         }.bind(this)
       });
-    },
-    onFeedback: function() {
-      var modal = new ModalFeedbackView();
-      this.listenToOnce(modal, 'applied', function() {
-        var alertView = new AlertView({
-          type: 'success',
-          message: 'Successfully submitted feedback/bug report.',
-          dismissable: true
-        });
-        $('.alerts-container').append(alertView.render().el);
-        this.addView(alertView);
-      }.bind(this));
-      this.addView(modal);
     }
   });
 

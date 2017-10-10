@@ -1,4 +1,5 @@
 from pritunl.helpers import *
+from pritunl.constants import *
 from pritunl import settings
 from pritunl import mongo
 from pritunl import logger
@@ -17,37 +18,49 @@ class Task(mongo.MongoObject):
     fields = {
         'attempts',
         'type',
+        'state',
         'ttl',
         'ttl_timestamp',
+        'timestamp',
     }
     fields_default = {
+        'state': PENDING,
         'attempts': 0,
         'ttl': settings.mongo.task_ttl,
     }
     type = None
 
-    def __init__(self, **kwargs):
+    def __init__(self, run_id=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
         self.type = self.type
         self.runner_id = utils.ObjectId()
 
     @cached_static_property
     def collection(cls):
-        return mongo.get_collection('task')
+        return mongo.get_collection('tasks')
 
     def claim_commit(self, fields=None):
         doc = self.get_commit_doc(fields=fields)
 
+        doc['state'] = PENDING
+        doc['attempts'] = self.attempts
         doc['runner_id'] = self.runner_id
         doc['ttl_timestamp'] = utils.now() + \
             datetime.timedelta(seconds=self.ttl)
+        doc['timestamp'] = utils.now()
 
         try:
             response = self.collection.update({
                 '_id': self.id,
-                '$or': [
-                    {'runner_id': self.runner_id},
-                    {'runner_id': {'$exists': False}},
+                '$and': [
+                    {'$or': [
+                        {'state': {'$ne': COMPLETE}},
+                        {'state': {'$exists': False}},
+                    ]},
+                    {'$or': [
+                        {'runner_id': self.runner_id},
+                        {'runner_id': {'$exists': False}},
+                    ]},
                 ],
             }, {
                 '$set': doc,
@@ -76,14 +89,26 @@ class Task(mongo.MongoObject):
             )
 
     def complete(self):
-        self.remove()
+        self.collection.update({
+            '_id': self.id,
+            '$or': [
+                {'runner_id': self.runner_id},
+                {'runner_id': {'$exists': False}},
+            ],
+        }, {
+            '$set': {
+                'state': COMPLETE,
+            },
+        })
 
     def task(self):
         pass
 
 def iter_tasks(spec=None):
     for doc in Task.collection.find(spec or {}):
-        yield _task_types[doc['type']](doc=doc)
+        task = _task_types.get(doc['type'])
+        if task:
+            yield task(doc=doc)
 
 def add_task(task_cls, hours=None, minutes=None, seconds=None,
         run_on_start=False):

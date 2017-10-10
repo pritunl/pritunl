@@ -1,3 +1,4 @@
+/*jshint -W030 */
 define([
   'jquery',
   'underscore',
@@ -18,8 +19,6 @@ define([
       return _.extend({
         'click .enterprise-update, .enterprise-reactivate': 'onUpdate',
         'click .enterprise-change': 'onChange',
-        'click .enterprise-promo': 'onPromo',
-        'click .enterprise-promo-ok': 'onPromoOk',
         'click .enterprise-remove': 'onRemoveLicense',
         'click .enterprise-cancel': 'onCancelLicense'
       }, ModalEnterpriseView.__super__.events);
@@ -31,7 +30,6 @@ define([
       this.update();
 
       // Precache checkout and uservoice with delay to prevent animation lag
-      setTimeout((this.setupUserVoice).bind(this), 200);
       setTimeout((this.setupCheckout).bind(this), 200);
     },
     update: function() {
@@ -57,6 +55,10 @@ define([
         this.$('.enterprise-cancel').show();
         this.$('.enterprise-update').removeAttr('disabled');
         this.$('.renew .enterprise-label').text('Renew:');
+      }
+
+      if (this.model.get('quantity')) {
+        this.$('.quantity .enterprise-item').text(this.model.get('quantity'));
       }
 
       if (this.model.get('amount')) {
@@ -85,6 +87,15 @@ define([
         this.$('.trial-end').hide();
       }
 
+      if (this.model.get('balance') && this.model.get('balance') < 0) {
+        this.$('.credit .enterprise-item').text('$' +
+          (this.model.get('balance') * -1 / 100).toFixed(2));
+        this.$('.credit').show();
+      }
+      else {
+        this.$('.credit').hide();
+      }
+
       if (this.model.get('url_key')) {
         this.$('.enterprise-support-link').attr('href',
           'https://app.pritunl.com/support/' + this.model.get('url_key'));
@@ -93,6 +104,7 @@ define([
     lock: function() {
       this.lockClose = true;
       this.$('.ok').attr('disabled', 'disabled');
+      this.$('.enterprise-support-link').attr('disabled', 'disabled');
       this.$('.enterprise-buttons button').attr('disabled', 'disabled');
     },
     unlock: function() {
@@ -103,53 +115,32 @@ define([
       if (statusData[0] === 'Inactive' || statusData[0] === 'Canceled') {
         notSel = ':not(.enterprise-update)';
       }
+      this.$('.enterprise-support-link').removeAttr('disabled');
       this.$('.enterprise-buttons button' + notSel).removeAttr('disabled');
-    },
-    setupUserVoice: function() {
-      $.getCachedScript('//widget.uservoice.com/Vp7EFBMcYhZHI91VAtHeyg.js', {
-        success: function() {
-          window.UserVoice.push(['set', {
-            contact_title: 'Contact Support',
-            accent_color: '#448dd6',
-            screenshot_enabled: false,
-            smartvote_enabled: false,
-            post_idea_enabled: false
-          }]);
-          window.UserVoice.push(['identify', {
-            type: window.subPlan
-          }]);
-          window.UserVoice.push(['addTrigger', '#trigger-uservoice',
-            {mode: 'contact'}]);
-          window.UserVoice.push(['autoprompt', {}]);
-        }.bind(this),
-        error: function() {
-          this.$('.enterprise-support').attr('disabled', 'disabled');
-        }.bind(this)
-      });
     },
     openCheckout: function(optionsPath) {
       $.ajax({
-          type: 'GET',
-          url: 'https://app.pritunl.com/' + optionsPath,
-          success: function(options) {
-            var plan;
-            var changed = (optionsPath === 'checkout_change');
+        type: 'GET',
+        url: 'https://app.pritunl.com/' + optionsPath,
+        success: function(options) {
+          var plan;
+          var changed = (optionsPath === 'checkout_change');
 
-            if (options.plans) {
-              if (options.plans[window.subPlan].plan) {
-                plan = options.plans[window.subPlan].plan;
-                delete options.plans[window.subPlan].plan;
-              }
-              _.extend(options, options.plans[window.subPlan]);
-              delete options.plans;
+          if (options.plans) {
+            if (options.plans[window.subPlan].plan) {
+              plan = options.plans[window.subPlan].plan;
+              delete options.plans[window.subPlan].plan;
             }
+            _.extend(options, options.plans[window.subPlan]);
+            delete options.plans;
+          }
 
-            this.configCheckout(options, plan, changed);
-          }.bind(this),
-          error: function() {
-            this.setAlert('danger', 'Failed to load checkout data, ' +
-              'please try again later.');
-          }.bind(this)
+          this.configCheckout(options, plan, changed);
+        }.bind(this),
+        error: function() {
+          this.setAlert('danger', 'Failed to load checkout data, ' +
+            'please try again later.');
+        }.bind(this)
       });
     },
     configCheckout: function(options, plan, changed) {
@@ -193,8 +184,7 @@ define([
                     this.setAlert('danger', response.responseJSON.error_msg);
                   }
                   else {
-                    this.setAlert('danger', 'Server error occured, ' +
-                      'please try again later.');
+                    this.setAlert('danger', this.errorMsg);
                   }
                   this.clearLoading();
                   this.unlock();
@@ -224,49 +214,6 @@ define([
     onUpdate: function() {
       this._onCheckout(this.checkoutPath);
     },
-    onPromo: function() {
-      this.$('.enterprise-promo').hide();
-      this.$('.enterprise-promo-input').show();
-      this.$('.enterprise-promo-ok').show();
-    },
-    _closePromo: function() {
-      this.$('.enterprise-promo-ok').removeAttr('disabled');
-      this.$('.enterprise-promo').show();
-      this.$('.enterprise-promo-input').hide();
-      this.$('.enterprise-promo-input').val('');
-      this.$('.enterprise-promo-ok').hide();
-    },
-    onPromoOk: function() {
-      this.$('.enterprise-promo-ok').attr('disabled', 'disabled');
-      var promoCode = this.$('.enterprise-promo-input').val();
-
-      if (!promoCode) {
-        this._closePromo();
-        return;
-      }
-
-      this.model.save({
-        'promo_code': promoCode
-      }, {
-        success: function() {
-          this._closePromo();
-          this.setAlert('success', 'Promo code successfully applied.');
-          this.update();
-        }.bind(this),
-        error: function(model, response) {
-          this._closePromo();
-          this.unlock();
-
-          if (response.responseJSON) {
-            this.setAlert('danger', response.responseJSON.error_msg);
-          }
-          else {
-            this.setAlert('danger', 'Server error occured, ' +
-              'please try again later.');
-          }
-        }.bind(this)
-      });
-    },
     onRemoveLicense: function() {
       if (this.$('.enterprise-remove').text() === 'Remove License') {
         this.$('.enterprise-remove').text('Are you sure?');
@@ -282,10 +229,14 @@ define([
           this.unlock();
           this.close(true);
         }.bind(this),
-        error: function() {
+        error: function(model, response) {
           this.unlock();
-          this.setAlert('danger', 'Server error occured, ' +
-            'please try again later.');
+          if (response.responseJSON) {
+            this.setAlert('danger', response.responseJSON.error_msg);
+          }
+          else {
+            this.setAlert('danger', this.errorMsg);
+          }
         }.bind(this)
       });
     },
@@ -308,10 +259,14 @@ define([
             'current period.');
           this.update();
         }.bind(this),
-        error: function() {
+        error: function(model, response) {
           this.unlock();
-          this.setAlert('danger', 'Server error occured, ' +
-            'please try again later.');
+          if (response.responseJSON) {
+            this.setAlert('danger', response.responseJSON.error_msg);
+          }
+          else {
+            this.setAlert('danger', this.errorMsg);
+          }
         }.bind(this)
       });
     }

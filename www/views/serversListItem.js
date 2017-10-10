@@ -4,6 +4,7 @@ define([
   'backbone',
   'models/status',
   'views/alert',
+  'views/serverRoutesList',
   'views/serverOrgsList',
   'views/serverHostsList',
   'views/serverLinksList',
@@ -13,10 +14,10 @@ define([
   'views/modalServerSettings',
   'views/modalDeleteServer',
   'text!templates/serversListItem.html'
-], function($, _, Backbone, StatusModel, AlertView, ServerOrgsListView,
-    ServerHostsListView, ServerLinksListView, ServerOutputView,
-    ServerOutputLinkView, ServerBandwidthView, ModalServerSettingsView,
-    ModalDeleteServerView, serversListItemTemplate) {
+], function($, _, Backbone, StatusModel, AlertView, ServerRoutesListView,
+    ServerOrgsListView, ServerHostsListView, ServerLinksListView,
+    ServerOutputView, ServerOutputLinkView, ServerBandwidthView,
+    ModalServerSettingsView, ModalDeleteServerView, serversListItemTemplate) {
   'use strict';
   var ServersListItemView = Backbone.View.extend({
     className: 'server',
@@ -37,6 +38,12 @@ define([
       this.orgsCount = null;
       this.hostsCount = null;
       this.statusModel = new StatusModel();
+
+      this.serverRoutesListView = new ServerRoutesListView({
+        server: this.model,
+        serverView: this
+      });
+      this.addView(this.serverRoutesListView);
 
       this.serverOrgsListView = new ServerOrgsListView({
         server: this.model,
@@ -103,6 +110,7 @@ define([
         this.serverOutputLinkView.render().el);
       this.$('.server-graph-viewer').append(
         this.serverBandwidthView.render().el);
+      this.$el.append(this.serverRoutesListView.render().el);
       this.$el.append(this.serverOrgsListView.render().el);
       this.$el.append(this.serverHostsListView.render().el);
       this.$el.append(this.serverLinksListView.render().el);
@@ -143,13 +151,11 @@ define([
       this.$('.server-public-address .status-text').text(
         this.model.get('public_address'));
 
-      var modes = {
-        'all_traffic': 'All Traffic',
-        'local_traffic': 'Local Traffic Only',
-        'vpn_traffic': 'VPN Traffic Only',
-      };
-      this.$('.server-mode .status-text').text(
-        modes[this.model.get('mode')]);
+      if (this.model.get('multi_device')) {
+        this.$('.server-mode .status-text').text('Enabled');
+      } else {
+        this.$('.server-mode .status-text').text('Disabled');
+      }
 
       this.updateButtons();
     },
@@ -265,7 +271,7 @@ define([
     onDelete: function(evt) {
       var model = this.model.clone();
 
-      if (evt.shiftKey && evt.ctrlKey) {
+      if (evt.shiftKey && evt.ctrlKey && evt.altKey) {
         model.destroy();
         return;
       }
@@ -332,10 +338,19 @@ define([
     },
     onClearOutput: function() {
       this.serverOutputView.model.destroy({
-        error: function() {
+        error: function(model, response) {
+          var message;
+          if (response.responseJSON) {
+            message = response.responseJSON.error_msg;
+          }
+          else {
+            message = 'Failed to clear server link output, server error ' +
+              'occurred.';
+          }
+
           var alertView = new AlertView({
             type: 'danger',
-            message: 'Failed to clear server output, server error occurred.',
+            message: message,
             dismissable: true
           });
           $('.alerts-container').append(alertView.render().el);
@@ -345,11 +360,19 @@ define([
     },
     onClearOutputLink: function() {
       this.serverOutputLinkView.model.destroy({
-        error: function() {
+        error: function(model, response) {
+          var message;
+          if (response.responseJSON) {
+            message = response.responseJSON.error_msg;
+          }
+          else {
+            message = 'Failed to clear server link output, server error ' +
+              'occurred.';
+          }
+
           var alertView = new AlertView({
             type: 'danger',
-            message: 'Failed to clear server link output, server error ' +
-              'occurred.',
+            message: message,
             dismissable: true
           });
           $('.alerts-container').append(alertView.render().el);

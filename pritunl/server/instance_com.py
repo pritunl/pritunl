@@ -1,5 +1,4 @@
 from pritunl.server.listener import *
-from pritunl.server.clients import *
 
 from pritunl.constants import *
 from pritunl.helpers import *
@@ -7,6 +6,9 @@ from pritunl import settings
 from pritunl import logger
 from pritunl import utils
 from pritunl import mongo
+from pritunl import clients
+from pritunl import ipaddress
+from pritunl import monitoring
 
 import os
 import time
@@ -14,10 +16,12 @@ import datetime
 import threading
 import socket
 import uuid
+import random
+import bson
 
 class ServerInstanceCom(object):
-    def __init__(self, server, instance):
-        self.server = server
+    def __init__(self, svr, instance):
+        self.server = svr
         self.instance = instance
         self.sock = None
         self.sock_lock = threading.Lock()
@@ -26,7 +30,7 @@ class ServerInstanceCom(object):
         self.bytes_recv = 0
         self.bytes_sent = 0
         self.client = None
-        self.clients = Clients(server, instance, self)
+        self.clients = clients.Clients(svr, instance, self)
         self.client_bytes = {}
         self.cur_timestamp = utils.now()
         self.bandwidth_rate = settings.vpn.bandwidth_update_rate
@@ -50,9 +54,9 @@ class ServerInstanceCom(object):
         self.sock_send('client-auth %s %s\n%s\nEND\n' % (
             client_id, key_id, client_conf))
 
-    def send_client_deny(self, client_id, key_id, reason):
-        self.sock_send('client-deny %s %s "%s"\n' % (
-            client_id, key_id, reason))
+    def send_client_deny(self, client_id, key_id, reason, client_reason=None):
+        self.sock_send('client-deny %s %s "%s"%s\n' % (client_id, key_id,
+            reason, ((' "%s"' % client_reason) if client_reason else '')))
         self.push_output('ERROR User auth failed "%s"' % reason)
 
     def push_output(self, message):
@@ -71,20 +75,19 @@ class ServerInstanceCom(object):
         self.bytes_lock.release()
 
     def parse_line(self, line):
-        line_14 = line[:14]
-        line_18 = line[:18]
-
         if self.client:
             if line == '>CLIENT:ENV,END':
                 cmd = self.client['cmd']
                 if cmd == 'connect':
                     self.clients.connect(self.client)
+                elif cmd == 'reauth':
+                    self.clients.connect(self.client, reauth=True)
                 elif cmd == 'connected':
                     self.clients.connected(self.client.get('client_id'))
                 elif cmd == 'disconnected':
                     self.clients.disconnected(self.client.get('client_id'))
                 self.client = None
-            elif line[:11] == '>CLIENT:ENV':
+            elif line.startswith('>CLIENT:ENV'):
                 env_key, env_val = line[12:].split('=', 1)
                 if env_key == 'tls_id_0':
                     tls_env = ''.join(x for x in env_val if x in VALID_CHARS)
@@ -110,7 +113,12 @@ class ServerInstanceCom(object):
                     self.client['mac_addr'] = env_val
                 elif env_key == 'untrusted_ip':
                     self.client['remote_ip'] = env_val
-                elif env_key == 'IV_PLAT':
+                elif env_key == 'untrusted_ip6':
+                    remote_ip = env_val
+                    if remote_ip.startswith('::ffff:'):
+                        remote_ip = remote_ip.split(':')[-1]
+                    self.client['remote_ip'] = remote_ip
+                elif env_key == 'IV_PLAT' and not self.client.get('platform'):
                     if 'chrome' in env_val.lower():
                         env_val = 'chrome'
                         self.client['device_id'] = uuid.uuid4().hex
@@ -120,35 +128,44 @@ class ServerInstanceCom(object):
                     self.client['device_id'] = env_val
                 elif env_key == 'UV_NAME':
                     self.client['device_name'] = env_val
+                elif env_key == 'UV_PLATFORM':
+                    self.client['platform'] = env_val
                 elif env_key == 'password':
-                    self.client['otp_code'] = env_val
+                    self.client['password'] = env_val
             else:
                 self.push_output('CCOM> %s' % line[1:])
-        elif line_14 == '>BYTECOUNT_CLI':
+        elif line.startswith('>BYTECOUNT_CLI'):
             client_id, bytes_recv, bytes_sent = line.split(',')
             client_id = client_id.split(':')[1]
             self.parse_bytecount(client_id, int(bytes_recv), int(bytes_sent))
-        elif line_14 in ('>CLIENT:CONNEC', '>CLIENT:REAUTH'):
+        elif line.startswith('>CLIENT:CONNECT'):
             _, client_id, key_id = line.split(',')
             self.client = {
                 'cmd': 'connect',
                 'client_id': client_id,
                 'key_id': key_id,
             }
-        elif line_18 == '>CLIENT:ESTABLISHE':
+        elif line.startswith('>CLIENT:REAUTH'):
+            _, client_id, key_id = line.split(',')
+            self.client = {
+                'cmd': 'reauth',
+                'client_id': client_id,
+                'key_id': key_id,
+            }
+        elif line.startswith('>CLIENT:ESTABLISHED'):
             _, client_id = line.split(',')
             self.client = {
                 'cmd': 'connected',
                 'client_id': client_id,
             }
-        elif line_18 == '>CLIENT:DISCONNECT':
+        elif line.startswith('>CLIENT:DISCONNECT'):
             _, client_id = line.split(',')
             self.client = {
                 'cmd': 'disconnected',
                 'client_id': client_id,
             }
-        elif line[:8] != 'SUCCESS:':
-            self.push_output('COM> %s' % line[1:])
+        elif line.startswith('SUCCESS:'):
+            self.push_output('COM> %s' % line)
 
     def wait_for_socket(self):
         for _ in xrange(10000):
@@ -162,12 +179,46 @@ class ServerInstanceCom(object):
         )
 
     def on_msg(self, evt):
-        event_type, user_id = evt['message']
+        msg = evt['message']
+        event_type = msg[0]
 
-        if event_type != 'user_disconnect':
-            return
+        if event_type == 'user_disconnect':
+            user_id = msg[1]
+            self.clients.disconnect_user(user_id)
+        elif event_type == 'user_disconnect_id':
+            user_id = msg[1]
+            client_id = msg[2]
+            server_id = None
+            if len(msg) > 3:
+                server_id = msg[3]
+            self.clients.disconnect_user_id(user_id, client_id, server_id)
+        elif event_type == 'user_disconnect_mac':
+            user_id = msg[1]
+            host_id = msg[2]
+            mac_addr = msg[3]
+            server_id = None
+            if len(msg) > 4:
+                server_id = msg[4]
+            self.clients.disconnect_user_mac(user_id, host_id,
+                mac_addr, server_id)
+        elif event_type == 'user_reconnect':
+            user_id = msg[1]
+            host_id = msg[2]
+            server_id = None
+            if len(msg) > 3:
+                server_id = msg[3]
+            self.clients.reconnect_user(user_id, host_id, server_id)
+        elif event_type == 'route_advertisement':
+            server_id = msg[1]
+            vpc_region = msg[2]
+            vpc_id = msg[3]
+            network = msg[4]
 
-        self.clients.disconnect_user(user_id)
+            if server_id != self.server.id:
+                return
+
+            self.instance.reserve_route_advertisement(
+                vpc_region, vpc_id, network)
 
     @interrupter
     def _watch_thread(self):
@@ -188,6 +239,14 @@ class ServerInstanceCom(object):
                 self.bytes_sent = 0
                 self.bytes_lock.release()
 
+                monitoring.insert_point('server_bandwidth', {
+                    'host': settings.local.host.name,
+                    'server': self.server.name,
+                }, {
+                    'bytes_sent': bytes_sent,
+                    'bytes_recv': bytes_recv,
+                })
+
                 if bytes_recv != 0 or bytes_sent != 0:
                     self.server.bandwidth.add_data(
                         utils.now(), bytes_recv, bytes_sent)
@@ -198,7 +257,10 @@ class ServerInstanceCom(object):
         except GeneratorExit:
             raise
         except:
-            self.push_output('ERROR Management rate thread error')
+            try:
+                self.push_output('ERROR Management rate thread error')
+            except:
+                pass
             logger.exception('Error in management rate thread', 'server',
                 server_id=self.server.id,
                 instance_id=self.instance.id,
@@ -208,7 +270,6 @@ class ServerInstanceCom(object):
     def _socket_thread(self):
         try:
             self.connect()
-
             time.sleep(1)
             self.sock_send('bytecount %s\n' % self.bandwidth_rate)
 
@@ -217,7 +278,7 @@ class ServerInstanceCom(object):
             data = ''
             while True:
                 data += self.sock.recv(SOCKET_BUFFER)
-                if not data:
+                if not data or self.instance.sock_interrupt:
                     if not self.instance.sock_interrupt and \
                             not check_global_interrupt():
                         self.instance.stop_process()
@@ -243,13 +304,49 @@ class ServerInstanceCom(object):
         except:
             if not self.instance.sock_interrupt:
                 self.push_output('ERROR Management socket exception')
-                logger.exception('Error in management socket thread', 'server',
+                logger.exception('Error in management socket thread',
+                    'server',
                     server_id=self.server.id,
                     instance_id=self.instance.id,
+                    socket_path=self.socket_path,
                 )
             self.instance.stop_process()
         finally:
             remove_listener(self.instance.id)
+            self.clients.stop()
+
+    def _stress_thread(self):
+        try:
+            i = 0
+
+            for org in self.server.iter_orgs():
+                for user in org.iter_users():
+                    if user.type != CERT_CLIENT:
+                        continue
+
+                    i += 1
+
+                    client = {
+                        'client_id': i,
+                        'key_id': 1,
+                        'org_id': org.id,
+                        'user_id': user.id,
+                        'mac_addr': utils.rand_str(16),
+                        'remote_ip': str(
+                            ipaddress.IPAddress(100000000 + random.randint(
+                                0, 1000000000))),
+                        'platform': 'linux',
+                        'device_id': str(bson.ObjectId()),
+                        'device_name': utils.random_name(),
+                    }
+
+                    self.clients.connect(client)
+        except:
+            logger.exception('Error in stress thread', 'server',
+                server_id=self.server.id,
+                instance_id=self.instance.id,
+                socket_path=self.socket_path,
+            )
 
     def connect(self):
         self.wait_for_socket()
@@ -268,3 +365,10 @@ class ServerInstanceCom(object):
         thread = threading.Thread(target=self.clients.ping_thread)
         thread.daemon = True
         thread.start()
+
+        self.clients.start()
+
+        if settings.vpn.stress_test:
+            thread = threading.Thread(target=self._stress_thread)
+            thread.daemon = True
+            thread.start()

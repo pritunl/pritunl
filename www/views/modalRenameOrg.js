@@ -9,27 +9,34 @@ define([
   var ModalRenameOrgView = ModalView.extend({
     className: 'rename-org-modal',
     template: _.template(modalRenameOrgTemplate),
-    title: 'Rename Organization',
-    okText: 'Rename',
+    title: 'Modify Organization',
+    okText: 'Modify',
     body: function() {
       return this.template(this.model.toJSON());
     },
     onOk: function() {
-      if (!this.$('input').val()) {
-        this.setAlert('danger', 'Name can not be empty.', '.form-group');
+      var name = this.$('.name input').val();
+
+      if (!name) {
+        this.setAlert('danger', 'Name can not be empty.', '.name');
         return;
       }
-      this.setLoading('Renaming organization...');
+
+      this.setLoading('Modifying organization...');
       this.model.save({
-        name: this.$('input').val()
+        name: name
       }, {
         success: function() {
           this.close(true);
         }.bind(this),
-        error: function() {
+        error: function(model, response) {
           this.clearLoading();
-          this.setAlert('danger',
-            'Failed to rename organization, server error occurred.');
+          if (response.responseJSON) {
+            this.setAlert('danger', response.responseJSON.error_msg);
+          }
+          else {
+            this.setAlert('danger', this.errorMsg);
+          }
         }.bind(this)
       });
     }

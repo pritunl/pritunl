@@ -3,15 +3,17 @@ define([
   'underscore',
   'backbone',
   'models/key',
+  'collections/userAudit',
   'views/alert',
   'views/modalRenameUser',
   'views/modalKeyLink',
+  'views/modalAuditUser',
   'views/modalOtpAuth',
   'views/userServersList',
   'text!templates/usersListItem.html'
-], function($, _, Backbone, KeyModel, AlertView, ModalRenameUserView,
-    ModalKeyLinkView, ModalOtpAuthView, UserServersListView,
-    usersListItemTemplate) {
+], function($, _, Backbone, KeyModel, UserAuditCollection, AlertView,
+    ModalRenameUserView, ModalKeyLinkView, ModalAuditUserView,
+    ModalOtpAuthView, UserServersListView, usersListItemTemplate) {
   'use strict';
   var UsersListItemView = Backbone.View.extend({
     template: _.template(usersListItemTemplate),
@@ -19,6 +21,7 @@ define([
       'click .selector': 'onSelect',
       'click .user-name': 'onRename',
       'click .get-key-link': 'onGetKeyLink',
+      'click .audit-user': 'onAuditUser',
       'click .get-otp-auth': 'onGetOtpAuth',
       'click .disable-user': 'onDisableUser',
       'click .enable-user': 'onEnableUser',
@@ -29,51 +32,12 @@ define([
         models: this.model.get('servers')
       });
     },
-    getVirtAddresses: function() {
-      var i;
-      var servers = this.model.get('servers');
-      var virtAddresses = [];
-
-      for (i = 0; i < servers.length; i++) {
-        if (servers[i].virt_address) {
-          virtAddresses.push(servers[i].virt_address);
-        }
-      }
-
-      return virtAddresses;
-    },
-    getBytesReceived: function() {
-      var i;
-      var servers = this.model.get('servers');
-      var bytesReceived = 0;
-
-      for (i = 0; i < servers.length; i++) {
-        if (servers[i].bytes_received) {
-          bytesReceived += servers[i].bytes_received;
-        }
-      }
-
-      return window.formatSize(bytesReceived);
-    },
-    getBytesSent: function() {
-      var i;
-      var servers = this.model.get('servers');
-      var bytesSent = 0;
-
-      for (i = 0; i < servers.length; i++) {
-        if (servers[i].bytes_sent) {
-          bytesSent += servers[i].bytes_sent;
-        }
-      }
-
-      return window.formatSize(bytesSent);
-    },
     _getDownloadTooltip: function() {
       if (this.model.get('has_key')) {
-        return 'Click to download key';
+        return 'Click to download profile';
       }
       else {
-        return 'Organization must be attached to server to download key';
+        return 'Organization must be attached to server to download profile';
       }
     },
     _getKeyLink: function() {
@@ -90,10 +54,11 @@ define([
     },
     _getKeyLinkTooltip: function() {
       if (this.model.get('has_key')) {
-        return 'Get key links';
+        return 'Get temporary profile links';
       }
       else {
-        return 'Organization must be attached to server to get key links';
+        return 'Organization must be attached to server to get ' +
+          'temporary profile links';
       }
     },
     render: function() {
@@ -115,9 +80,19 @@ define([
     },
     update: function() {
       var email = this.model.get('email');
-      this.$('.user-name').text(
-        this.model.get('name') + (email ? ' (' + email + ')' : ''));
-      if (email) {
+      var name = this.model.get('name') + (email ? ' (' + email + ')' : '');
+
+      if (name.length > 40) {
+        name = name.substr(0, 40);
+        if (name.substr(39, 1) === '.') {
+          name += '..';
+        } else {
+          name += '...';
+        }
+      }
+
+      this.$('.user-name').text(name);
+      if (email && this.model.get('gravatar')) {
         this.$('.name-gravatar').attr('src', '//www.gravatar.com/avatar/' +
           window.md5(email) + '?r=x&s=52&d=404');
       }
@@ -162,13 +137,111 @@ define([
         this._getKeyLinkTooltip());
       this.$('.get-key-link').tooltip();
 
-      if (this.model.get('otp_auth')) {
+      if (!this.model.get('bypass_secondary') && this.model.get('otp_auth')) {
         this.$('.right-container').removeClass('no-otp-auth');
         this.$('.get-otp-auth').removeClass('no-otp-auth');
       }
       else {
         this.$('.right-container').addClass('no-otp-auth');
         this.$('.get-otp-auth').addClass('no-otp-auth');
+      }
+
+      if (this.model.get('audit')) {
+        this.$('.audit-user').removeClass('no-audit-user');
+      }
+      else {
+        this.$('.audit-user').addClass('no-audit-user');
+      }
+
+      var dnsMapping = this.model.get('dns_mapping');
+      if (dnsMapping) {
+        this.$('.user-dns-name .name').text(dnsMapping);
+        this.$('.user-dns-name').show();
+      } else {
+        this.$('.user-dns-name').hide();
+        this.$('.user-dns-name .name').text('');
+      }
+
+      var networkLinks = this.model.get('network_links');
+      this.$('.user-network-link').empty();
+      if (networkLinks) {
+        for (var i = 0; i < networkLinks.length; i++) {
+          this.$('.user-network-link').append(
+            '<span class="fa fa-circle-o">').append(
+            $('<span class="title link"></span>').text(networkLinks[i]));
+        }
+      }
+
+      if (this.model.get('bypass_secondary')) {
+        this.$('.saml-logo').hide();
+        this.$('.google-logo').hide();
+        this.$('.slack-logo').hide();
+        this.$('.duo-logo').hide();
+        this.$('.radius-logo').hide();
+        this.$('.plugin-logo').hide();
+      } else {
+        var sso = this.model.get('sso') || '';
+        var auth_type = this.model.get('auth_type');
+        if (sso.indexOf('saml') !== -1 &&
+            auth_type.indexOf('saml') !== -1) {
+          this.$('.saml-logo').show();
+        } else {
+          this.$('.saml-logo').hide();
+        }
+
+        if (sso.indexOf('google') !== -1 &&
+          auth_type.indexOf('google') !== -1) {
+          this.$('.google-logo').show();
+        } else {
+          this.$('.google-logo').hide();
+        }
+
+        if (sso.indexOf('slack') !== -1 &&
+          auth_type.indexOf('slack') !== -1) {
+          this.$('.slack-logo').show();
+        } else {
+          this.$('.slack-logo').hide();
+        }
+
+        if (sso.indexOf('duo') !== -1 &&
+          auth_type.indexOf('duo') !== -1) {
+          this.$('.duo-logo').show();
+        } else {
+          this.$('.duo-logo').hide();
+        }
+
+        if (sso.indexOf('yubico') !== -1 &&
+          auth_type.indexOf('yubico') !== -1) {
+          this.$('.yubico-logo').show();
+        } else {
+          this.$('.yubico-logo').hide();
+        }
+
+        if (sso.indexOf('okta') !== -1 &&
+          auth_type.indexOf('okta') !== -1) {
+          this.$('.okta-logo').show();
+        } else {
+          this.$('.okta-logo').hide();
+        }
+
+        if (sso.indexOf('onelogin') !== -1 &&
+          auth_type.indexOf('onelogin') !== -1) {
+          this.$('.onelogin-logo').show();
+        } else {
+          this.$('.onelogin-logo').hide();
+        }
+
+        if (sso === 'radius' && auth_type === 'radius') {
+          this.$('.radius-logo').show();
+        } else {
+          this.$('.radius-logo').hide();
+        }
+
+        if (auth_type === 'plugin') {
+          this.$('.plugin-logo').show();
+        } else {
+          this.$('.plugin-logo').hide();
+        }
       }
 
       this.serverList.update(this.model.get('servers'));
@@ -213,6 +286,14 @@ define([
       });
       this.addView(modal);
     },
+    onAuditUser: function() {
+      var modal = new ModalAuditUserView({
+        collection: new UserAuditCollection({
+          'user': this.model
+        })
+      });
+      this.addView(modal);
+    },
     onGetOtpAuth: function() {
       var modal = new ModalOtpAuthView({
         model: this.model
@@ -225,21 +306,28 @@ define([
       }
       this.$('.disable-user').addClass('disabled');
       this.model.save({
-        name: undefined,
         disabled: true
       }, {
         success: function() {
           this.$('.disable-user').removeClass('disabled');
         }.bind(this),
-        error: function() {
+        error: function(model, response) {
+          var message;
+          if (response.responseJSON) {
+            message = response.responseJSON.error_msg;
+          }
+          else {
+            message = 'Failed to disable user, server error occurred.';
+          }
+
           var alertView = new AlertView({
             type: 'danger',
-            message: 'Failed to disable user, server error occurred.',
+            message: message,
             dismissable: true
           });
           $('.alerts-container').append(alertView.render().el);
           this.addView(alertView);
-          this.$('.enable-user').removeClass('disabled');
+          this.$('.disable-user').removeClass('disabled');
         }.bind(this)
       });
     },
@@ -249,16 +337,23 @@ define([
       }
       this.$('.enable-user').addClass('disabled');
       this.model.save({
-        name: undefined,
         disabled: false
       }, {
         success: function() {
           this.$('.enable-user').removeClass('disabled');
         }.bind(this),
-        error: function() {
+        error: function(model, response) {
+          var message;
+          if (response.responseJSON) {
+            message = response.responseJSON.error_msg;
+          }
+          else {
+            message = 'Failed to enable user, server error occurred.';
+          }
+
           var alertView = new AlertView({
             type: 'danger',
-            message: 'Failed to disable user, server error occurred.',
+            message: message,
             dismissable: true
           });
           $('.alerts-container').append(alertView.render().el);

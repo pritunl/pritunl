@@ -1,20 +1,55 @@
-<div class="user">
+<%
+name = name + (email ? ' (' + email + ')' : '');
+
+if (name.length > 40) {
+  name = name.substr(0, 40);
+  if (name.substr(39, 1) === '.') {
+    name += '..';
+  } else {
+    name += '...';
+  }
+}
+%>
+<div class="user layout-horizontal">
   <div class="selector no-select">
     <span class="selector-inner glyphicon glyphicon-ok"></span>
   </div>
-  <div class="name-container type-<%- type %>">
+  <div class="name-container type-<%- type %> layout-flex">
     <span class="name-icon glyphicon glyphicon-user" <%= type === 'server' ? 'data-toggle="tooltip" title="Server user"' : '' %>></span>
-    <img class="name-gravatar" src="<%- email ? '//www.gravatar.com/avatar/' + window.md5(email) + '?r=x&s=52&d=404' : ''%>" onload="$(this).show(); $(this).siblings('.name-icon').hide()" onerror="$(this).hide(); $(this).siblings('.name-icon').show()"/>
-    <a class="user-name title no-select" data-toggle="tooltip" title="Click to rename this user"><%- name %><%- email ? ' (' + email + ')' : '' %></a>
+    <img class="name-gravatar" src="<%- email && gravatar ? '//www.gravatar.com/avatar/' + window.md5(email) + '?r=x&s=52&d=404' : ''%>" onload="$(this).show(); $(this).siblings('.name-icon').hide()" onerror="$(this).hide(); $(this).siblings('.name-icon').show()"/>
+    <a class="user-name title no-select" data-toggle="tooltip" title="Click to modify this user"><%- name %></a>
     <span class="user-id title">(<%- id %>)</span>
   </div>
-
+  <div class="user-dns-name" data-toggle="tooltip"
+      title="User dns name" <%= dns_mapping ? '' : 'style="display: none"' %>>
+    <span class="fa fa-globe"></span><span
+      class="title name"><%- dns_mapping %></span>
+  </div>
+  <div class="user-network-link" data-toggle="tooltip"
+      title="User network links">
+    <% for (var i in network_links) { %>
+      <span class="fa fa-circle-o"></span><span
+        class="title link"><%- network_links[i] %></span>
+    <% } %>
+  </div>
+  <div class="sso-logos">
+    <div class="saml-logo" data-toggle="tooltip" title="User authenticated with SAML" <%= bypass_secondary !== true && sso && sso.indexOf('saml') !== -1 && auth_type.indexOf('saml') !== -1 ? '' : 'style="display: none"' %>><i class="fa fa-lock"></i></div>
+    <div class="google-logo" data-toggle="tooltip" title="User is authenticating with Google Apps" <%= bypass_secondary !== true && sso && sso.indexOf('google') !== -1 && auth_type.indexOf('google') !== -1 ? '' : 'style="display: none"' %>></div>
+    <div class="slack-logo" data-toggle="tooltip" title="User is authenticating with Slack" <%= bypass_secondary !== true && sso && sso.indexOf('slack') !== -1 && auth_type.indexOf('slack') !== -1 ? '' : 'style="display: none"' %>></div>
+    <div class="okta-logo" data-toggle="tooltip" title="User is authenticating with Okta" <%= bypass_secondary !== true && sso && sso.indexOf('okta') !== -1 && auth_type.indexOf('okta') !== -1 ? '' : 'style="display: none"' %>></div>
+    <div class="onelogin-logo" data-toggle="tooltip" title="User is authenticating with OneLogin" <%= bypass_secondary !== true && sso && sso.indexOf('onelogin') !== -1 && auth_type.indexOf('onelogin') !== -1 ? '' : 'style="display: none"' %>></div>
+    <div class="radius-logo" data-toggle="tooltip" title="User is authenticating with Radius" <%= bypass_secondary !== true && sso === 'radius' && auth_type === 'radius' ? '' : 'style="display: none"' %>><i class="fa fa-lock"></i></div>
+    <div class="plugin-logo" data-toggle="tooltip" title="User is authenticating with plugin" <%= bypass_secondary !== true && auth_type === 'plugin' ? '' : 'style="display: none"' %>><i class="fa fa-lock"></i></div>
+    <div class="duo-logo" data-toggle="tooltip" title="User is authenticating with Duo Security" <%= bypass_secondary !== true && sso && sso.indexOf('duo') !== -1 && auth_type.indexOf('duo') !== -1 ? '' : 'style="display: none"' %>></div>
+    <div class="yubico-logo" data-toggle="tooltip" title="User is authenticating with Yubikey" <%= bypass_secondary !== true && sso && sso.indexOf('yubico') !== -1 && auth_type.indexOf('yubico') !== -1 ? '' : 'style="display: none"' %>></div>
+  </div>
   <div class="right-container <%- otp_auth ? '' : 'no-otp-auth' %>">
     <div class="status-container">
       <div class="status-icon <%- disabled ? 'disabled' : (status ? 'online' : 'offline') %>"></div>
       <span class="status-text title"><%- disabled ? 'Disabled' : (status ? 'Online' : 'Offline') %></span>
     </div>
-    <a class="get-otp-auth glyphicon glyphicon-qrcode no-select <%- otp_auth ? '' : 'no-otp-auth' %>" data-toggle="tooltip" title="Get two-step authentication key"></a>
+    <a class="get-otp-auth glyphicon glyphicon-qrcode no-select <%- !bypass_secondary && otp_auth ? '' : 'no-otp-auth' %>" data-toggle="tooltip" title="Get two-step authentication key"></a>
+    <a class="audit-user glyphicon glyphicon-list-alt no-select <%- audit ? '' : 'no-audit-user' %>" data-toggle="tooltip" title="User audit"></a>
     <a class="get-key-link glyphicon glyphicon-link no-select" data-toggle="tooltip" title="<%- key_link_tooltip %>"></a>
     <a class="download-key glyphicon glyphicon-download no-select" data-toggle="tooltip" title="<%- download_tooltip %>" <%= key_link ? 'href="' : '' %><%- key_link ? key_link : '' %><%= key_link ? '"' : '' %>></a>
     <a class="disable-user glyphicon glyphicon glyphicon-ban-circle no-select" data-toggle="tooltip" title="Disable and disconnect user"></a>

@@ -1,13 +1,31 @@
-class StopServer(Exception):
-    pass
-
-
 class BaseError(Exception):
     def __init__(self, message, data=None):
         if data:
             self.__dict__.update(data)
             message = '%s. %r' % (message, data)
         Exception.__init__(self, message)
+
+class PluginMissing(BaseError):
+    pass
+
+
+class ServerStop(BaseError):
+    pass
+
+class ServerRestart(BaseError):
+    pass
+
+
+class LicenseInvalid(BaseError):
+    pass
+
+
+class OtpRequred(BaseError):
+    pass
+
+
+class NetworkInvalid(BaseError):
+    pass
 
 
 class UserError(BaseError):
@@ -34,6 +52,16 @@ class HostError(BaseError):
     pass
 
 
+class UserError(BaseError):
+    pass
+
+class UserNotInServerGroups(UserError):
+    pass
+
+class UserDuoPushUnavailable(UserError):
+    pass
+
+
 class ServerError(BaseError):
     pass
 
@@ -49,6 +77,9 @@ class ServerStartError(ServerError):
 class ServerStopError(ServerError):
     pass
 
+class ServerOnlineError(ServerError):
+    pass
+
 class ServerLinkError(ServerError):
     pass
 
@@ -56,6 +87,9 @@ class ServerLinkOnlineError(ServerError):
     pass
 
 class ServerLinkCommonHostError(ServerError):
+    pass
+
+class ServerLinkCommonRouteError(ServerError):
     pass
 
 class ServerLinkReplicaError(ServerError):
@@ -73,6 +107,15 @@ class ServerNetworkLocked(ServerError):
 class BridgeLookupError(ServerError):
     pass
 
+class ServerRouteNatVirtual(ServerError):
+    pass
+
+class ServerRouteNatServerLink(ServerError):
+    pass
+
+class ServerRouteNatNetworkLink(ServerError):
+    pass
+
 
 class NotFound(BaseError):
     pass
@@ -88,4 +131,21 @@ class QueueTaskError(QueueError):
     pass
 
 class QueueStopped(QueueError):
+    pass
+
+
+class InvalidUser(QueueError):
+    pass
+
+class AuthError(Exception):
+    pass
+
+class AuthForked(Exception):
+    pass
+
+
+class AwsError(BaseError):
+    pass
+
+class VpcRouteTableNotFound(AwsError):
     pass

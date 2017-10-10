@@ -1,0 +1,19 @@
+<label class="user-title" style="<%= user.name ? '' : 'display: none' %>"><%- user.name %><%- user.email ? ' (' + user.email + ')' : '' %></label>
+<ul class="modal-audit-user" style="<%= events.length ? '' : 'display: none' %>">
+  <% _.each(events, function(event) { %>
+  <li class="audit-event layout-horizontal">
+    <span class="event-msg layout-flex">
+      <span class="glyphicon glyphicon-record"></span>
+      <%- event.message %>
+    </span>
+    <span class="event-addr" style="<%= event.remote_addr ? '' : 'display: none' %>">
+      <span class="glyphicon glyphicon-globe"></span>
+      <%- event.remote_addr %>
+    </span>
+    <span class="event-time">
+      <span class="glyphicon glyphicon-time"></span>
+      <%- window.formatTime(event.timestamp) %>
+    </span>
+  </li>
+  <% }); %>
+</ul>

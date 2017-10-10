@@ -1,5 +1,5 @@
-<div class="split">
-  <div class="left">
+<div class="layout-horizontal">
+  <div class="layout-flex left">
     <div class="name form-group">
       <label>Name</label>
       <input type="text" class="form-control" placeholder="Enter name" data-toggle="tooltip" title="Name of VPN server" value="<%- name %>" autofocus>
@@ -14,34 +14,28 @@
         <option value="tcp" <%= protocol === 'tcp' ? 'selected' : '' %>>tcp</option>
       </select>
     </div>
-    <div class="network form-group">
-      <label>Network</label>
-      <span class="label label-default no-select" toggle="tooltip" title="Maximum number of users for this subnet"></span>
-      <input type="text" class="form-control" placeholder="Enter network address" data-toggle="tooltip" title="Network address for the private network that will be created for VPN clients" value="<%- network %>" autocapitalize="off">
+    <div class="form-group groups">
+      <label>Groups</label>
+      <div class="groups-label" data-toggle="tooltip" title="Enter list of groups to allow connections from. Names are case sensitive. If empty all groups will able to connect">
+        <input type="text" placeholder="Enter groups" value="<%- groups ? groups.join(',') : '' %>">
+      </div>
+    </div>
+    <div class="ipv6-toggle toggle-form form-group">
+      <label>Enable IPv6</label>
+      <div class="selector <%= ipv6 ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Enable IPv6 on server, requires IPv6 network interface">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
     </div>
   </div>
   <div class="right">
     <div class="dns-servers form-group">
       <label>DNS Server</label>
-      <input type="text" class="form-control" placeholder="Enter DNS server" data-toggle="tooltip" title="Optional, DNS server for clients" value="<%- dns_servers.join(', ') %>" autocapitalize="off">
+      <input type="text" class="form-control" placeholder="Enter DNS server. Separate multiple DNS servers by a comma. Leave blank to use clients existing DNS servers" data-toggle="tooltip" title="Optional, DNS server for clients" value="<%- dns_servers.join(', ') %>" autocapitalize="off">
     </div>
-    <div class="server-mode form-group">
-      <label>Server Mode</label>
-      <select class="form-control" data-toggle="tooltip" title="Forward all of clients internet traffic, only specified local networks or only traffic sent between vpn clients">
-        <option value="all_traffic" <%= mode === 'all_traffic' ? 'selected' : '' %>>All Traffic</option>
-        <option value="local_traffic" <%= mode === 'local_traffic' ? 'selected' : '' %>>Local Traffic Only</option>
-        <option value="vpn_traffic" <%= mode === 'vpn_traffic' ? 'selected' : '' %>>VPN Traffic Only</option>
-      </select>
-    </div>
-    <div class="local-network form-group" <%= mode === 'local_traffic' ? '' : 'style="display: none;"' %>>
-      <label>Local Networks</label>
-      <input type="text" autocapitalize="off">
-    </div>
-    <div class="multi-device-toggle toggle-form form-group">
-      <label>Allow Multiple Devices</label>
-      <div class="selector <%= multi_device ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Allow users to connect with multiple devices concurrently">
-        <span class="selector-inner glyphicon glyphicon-ok"></span>
-      </div>
+    <div class="network form-group">
+      <label>Virtual Network</label>
+      <span class="label label-default no-select" toggle="tooltip" title="Maximum number of users for this subnet"></span>
+      <input type="text" class="form-control" placeholder="Enter network address" data-toggle="tooltip" title="Network address for the private network that will be created for clients. This network cannot conflict with any existing local networks" value="<%- network %>" autocapitalize="off">
     </div>
     <div class="otp-auth-toggle toggle-form form-group">
       <label>Enable Two-Step Authentication</label>
@@ -49,8 +43,16 @@
         <span class="selector-inner glyphicon glyphicon-ok"></span>
       </div>
     </div>
+    <div class="ipv6-toggle toggle-form form-group">
+      <label>Enable IPv6</label>
+      <div class="selector <%= ipv6 ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Enable IPv6 on server, requires IPv6 network interface">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
   </div>
-  <div class="left advanced">
+</div>
+<div class="layout-horizontal">
+  <div class="layout-flex left advanced">
     <div class="dh-param-bits form-group">
       <label>DH Param Bits</label>
       <select class="form-control" data-toggle="tooltip" title="Size of DH parameters">
@@ -63,7 +65,7 @@
     </div>
     <div class="cipher form-group">
       <label>Encryption Cipher</label>
-      <select class="form-control" data-toggle="tooltip" title="Encryption cipher used for VPN traffic. AES 256bit is recommended">
+      <select class="form-control" data-toggle="tooltip" title="Encryption cipher used for VPN traffic. AES 128bit is recommended for best bandwidth. Using AES 256bit will impact bandwidth. AES ciphers will use GCM when available">
         <option value="none" <%= cipher === 'none' ? 'selected' : '' %>>None</option>
         <option value="bf128" <%= cipher === 'bf128' ? 'selected' : '' %>>Blowfish 128bit</option>
         <option value="bf256" <%= cipher === 'bf256' ? 'selected' : '' %>>Blowfish 256bit</option>
@@ -76,44 +78,39 @@
       <label>Ping Interval</label>
       <input type="number" class="form-control" placeholder="Enter ping interval" data-toggle="tooltip" title="Optional, interval to ping client" value="<%- ping_interval || '' %>" min="0" autocapitalize="off">
     </div>
+    <div class="link-ping-interval form-group">
+      <label>User Link Ping Interval</label>
+      <input type="number" class="form-control" placeholder="Enter ping interval" data-toggle="tooltip"
+        title="Optional, time in between pings used when multiple users have the same network link to failover to another user when one network link fails."
+        value="<%- link_ping_interval || '' %>" min="0" step="0.1"
+        autocapitalize="off">
+    </div>
+    <div class="inactive-timeout form-group">
+      <label>User Inactive Timeout</label>
+      <input type="number" class="form-control" placeholder="Enter inactive timeout" data-toggle="tooltip" title="Optional, disconnect users after the specified number of seconds of inactivity." min="0" step="0.1" value="<%- inactive_timeout || '' %>" autocapitalize="off">
+    </div>
     <div class="max-clients form-group">
       <label>Max Clients</label>
       <input type="number" class="form-control" placeholder="Enter max clients" data-toggle="tooltip" title="Maximum number of clients connected to a server or to each server replica." min="0" value="<%- max_clients === -1 ? '' : max_clients %>" autocapitalize="off">
     </div>
+    <div class="onc-hostname form-group">
+      <label>Chromebook Server Hostname</label>
+      <input type="text" class="form-control" placeholder="Enter Chromebook hostname" data-toggle="tooltip" title="Optional, hostname to use for Chromebook user profiles. Enter a DNS name with mutliple IP addresses to support connecting to replicated servers on Chrome OS." value="<%- onc_hostname || '' %>" autocapitalize="off">
+    </div>
     <div class="network-mode form-group">
       <label>Network Mode</label>
       <select class="form-control" data-toggle="tooltip" title="Network mode">
-        <option value="tunnel" <%= network_mode === 'tunnel' ? 'selected' : ''
-        %>>Tunnel</option>
-        <option value="bridge" <%= network_mode === 'bridge' ? 'selected' : ''
-        %>>Bridge</option>
+        <option value="tunnel" <%= network_mode === 'tunnel' ? 'selected' : '' %>>Tunnel</option>
+        <option value="bridge" <%= network_mode === 'bridge' ? 'selected' : '' %>>Bridge</option>
       </select>
     </div>
     <div class="network-start form-group" <%= network_mode === 'bridge' ? '' : 'style="display: none;"' %>>
       <label>Network Start</label>
-      <input type="text" class="form-control" placeholder="Enter start address" data-toggle="tooltip" title="Starting network address for the bridged VPN client IP addresses" value="<%- network_start %>" autocapitalize="off">
+      <input type="text" class="form-control" placeholder="Enter start address" data-toggle="tooltip" title="Starting network address for the bridged VPN client IP addresses. Must be in the subnet of the server network" value="<%- network_start %>" autocapitalize="off">
     </div>
-  </div>
-  <div class="right advanced">
-    <div class="bind-address form-group">
-      <label>Bind Address</label>
-      <input type="text" class="form-control" placeholder="Enter bind address" data-toggle="tooltip" title="Optional, local address to bind vpn server to. Leave empty to bind to all interfaces" value="<%- bind_address || '' %>" autocapitalize="off">
-    </div>
-    <div class="search-domain form-group">
-      <label>DNS Search Domain</label>
-      <input type="text" class="form-control" placeholder="Enter DNS search domain" data-toggle="tooltip" title="Optional, DNS search domain for clients" value="<%- search_domain || '' %>" autocapitalize="off">
-    </div>
-    <div class="ping-timeout form-group">
-      <label>Ping Timeout</label>
-      <input type="number" class="form-control" placeholder="Enter ping timeout" data-toggle="tooltip" title="Optional, timeout for client ping. Must be greater then ping interval" min="0" *value="<%- ping_timeout || '' %>" autocapitalize="off">
-    </div>
-    <div class="replica-count form-group">
-      <label>Replication Count</label>
-      <input type="number" class="form-control" placeholder="Enter replication count" data-toggle="tooltip" title="Replicate server accross multiple hosts." value="<%- replica_count === -1 ? '' : replica_count %>" min="1" autocapitalize="off">
-    </div>
-    <div class="inter-client-toggle toggle-form form-group">
-      <label>Inter-Client Communication</label>
-      <div class="selector <%= inter_client ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Allow clients to communicate with each other on the vpn network">
+    <div class="multi-device-toggle toggle-form form-group">
+      <label>Allow Multiple Devices</label>
+      <div class="selector <%= multi_device ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Allow users to connect with multiple devices concurrently">
         <span class="selector-inner glyphicon glyphicon-ok"></span>
       </div>
     </div>
@@ -123,9 +120,89 @@
         <span class="selector-inner glyphicon glyphicon-ok"></span>
       </div>
     </div>
+    <div class="restrict-routes-toggle toggle-form form-group">
+      <label>Restrict Routing</label>
+      <div class="selector <%= restrict_routes ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Prevent traffic from networks not specified in the servers routes from being tunneled over the vpn">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
+  <div class="block-outside-dns-toggle toggle-form form-group">
+    <label>Block Outside DNS</label>
+    <div class="selector <%= block_outside_dns ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Block outside DNS on Windows clients">
+      <span class="selector-inner glyphicon glyphicon-ok"></span>
+    </div>
+  </div>
+    <div class="policy form-group">
+      <label>User Policy</label><br>
+      <textarea class="form-control" rows="10" spellcheck="false"><%- policy %></textarea>
+    </div>
+  </div>
+  <div class="right advanced">
+    <div class="bind-address form-group">
+      <label>Bind Address</label>
+      <input type="text" class="form-control" placeholder="Enter bind address" data-toggle="tooltip" title="Optional, local address to bind vpn server to. Leave empty to bind to all interfaces. Using a bind address disables IPv6 connections and prevents several features from being used. Only use when necessary" value="<%- bind_address || '' %>" autocapitalize="off">
+    </div>
+    <div class="hash form-group">
+      <label>Hash Algorithm</label>
+      <select class="form-control" data-toggle="tooltip" title="Authentication hashing algorithm">
+        <option value="none" <%= hash === 'none' ? 'selected' : '' %>>None</option>
+        <option value="md5" <%= hash === 'md5' ? 'selected' : '' %>>MD5</option>
+        <option value="sha1" <%= hash === 'sha1' ? 'selected' : '' %>>SHA-1</option>
+        <option value="sha256" <%= hash === 'sha256' ? 'selected' : '' %>>SHA-256</option>
+        <option value="sha512" <%= hash === 'sha512' ? 'selected' : '' %>>SHA-512</option>
+      </select>
+    </div>
+    <div class="ping-timeout form-group">
+      <label>Ping Timeout</label>
+      <input type="number" class="form-control" placeholder="Enter ping timeout" data-toggle="tooltip" title="Optional, timeout for client ping. Must be greater then ping interval" min="0" value="<%- ping_timeout || '' %>" autocapitalize="off">
+    </div>
+    <div class="link-ping-timeout form-group">
+      <label>User Link Ping Timeout</label>
+      <input type="number" class="form-control" placeholder="Enter ping timeout" data-toggle="tooltip" title="Optional, ping timeout used when multiple users have the same network link to failover to another user when one network link fails." min="0" step="0.1" value="<%- link_ping_timeout || '' %>" autocapitalize="off">
+    </div>
+    <div class="allowed-devices form-group">
+      <label>Allowed Devices</label>
+      <select class="form-control" data-toggle="tooltip" title="Device types permitted to connect to server.">
+        <option value="any" <%= !allowed_devices ? 'selected' : '' %>>Any</option>
+        <option value="mobile" <%= allowed_devices === 'mobile' ? 'selected' : '' %>>Mobile</option>
+        <option value="desktop" <%= allowed_devices === 'desktop' ? 'selected' : '' %>>Desktop</option>
+      </select>
+    </div>
+    <div class="search-domain form-group">
+      <label>DNS Search Domain</label>
+      <input type="text" class="form-control" placeholder="Enter DNS search domain" data-toggle="tooltip" title="Optional, DNS search domain for clients. Separate multiple search domains by a comma" value="<%- search_domain || '' %>" autocapitalize="off">
+    </div>
+    <div class="replica-count form-group">
+      <label>Replication Count</label>
+      <input type="number" class="form-control" placeholder="Enter replication count" data-toggle="tooltip" title="Replicate server accross multiple hosts." value="<%- replica_count === -1 ? '' : replica_count %>" min="1" autocapitalize="off">
+    </div>
     <div class="network-end form-group" <%= network_mode === 'bridge' ? '' : 'style="display: none;"' %>>
       <label>Network End</label>
-      <input type="text" class="form-control" placeholder="Enter end address" data-toggle="tooltip" title="Ending network address for the bridged VPN client IP addresses" value="<%- network_end %>" autocapitalize="off">
+      <input type="text" class="form-control" placeholder="Enter end address" data-toggle="tooltip" title="Ending network address for the bridged VPN client IP addresses. Must be in the subnet of the server network" value="<%- network_end %>" autocapitalize="off">
+    </div>
+    <div class="dns-mapping-toggle toggle-form form-group">
+      <label>Enable VPN Client DNS Mapping</label>
+      <div class="selector <%= dns_mapping ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Map the vpn clients ip address to the .vpn domain such as example_user.example_org.vpn">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
+    <div class="inter-client-toggle toggle-form form-group">
+      <label>Inter-Client Communication</label>
+      <div class="selector <%= inter_client ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Allow clients to communicate with each other on the vpn network">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
+    <div class="vxlan-toggle toggle-form form-group">
+      <label>VXLan Routing</label>
+      <div class="selector <%= vxlan ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Use VXLan for routing client-to-client traffic with replicated servers">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
+    <div class="ipv6-firewall-toggle toggle-form form-group" <%= ipv6 ? '' : 'style="display: none;"' %>>
+      <label>Routed IPv6 Firewall</label>
+      <div class="selector <%= ipv6_firewall ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Enabled firewall when routed IPv6 is used">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
     </div>
   </div>
 </div>
