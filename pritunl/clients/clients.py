@@ -109,15 +109,21 @@ class Clients(object):
             for route in link_usr_svr.get_routes(
                     include_default=False):
                 network = route['network']
+                metric = route.get('metric')
+                if metric:
+                    metric_def = ' default %s' % metric
+                else:
+                    metric_def = ''
 
                 if route['net_gateway']:
                     continue
 
                 if ':' in network:
-                    client_conf += 'iroute-ipv6 %s\n' % network
+                    client_conf += 'iroute-ipv6 %s%s\n' % (
+                        network, metric_def)
                 else:
-                    client_conf += 'iroute %s %s\n' % utils.parse_network(
-                        network)
+                    client_conf += 'iroute %s %s%s\n' % (
+                        utils.parse_network(network) + (metric_def,))
         else:
             if self.server.inactive_timeout:
                 client_conf += 'push "inactive %d"\n' % \
@@ -172,23 +178,30 @@ class Clients(object):
                 for route in link_svr.get_routes(
                         include_default=False):
                     network = route['network']
+                    metric = route.get('metric')
+                    if metric:
+                        metric_def = ' default %s' % metric
+                        metric = ' %s' % metric
+                    else:
+                        metric_def = ''
+                        metric = ''
 
                     if route['net_gateway']:
                         if ':' in network:
                             client_conf += \
-                                'push "route-ipv6 %s net_gateway"\n' % (
-                                network)
+                                'push "route-ipv6 %s net_gateway%s"\n' % (
+                                network, metric)
                         else:
                             client_conf += \
-                                'push "route %s %s net_gateway"\n' % (
-                                utils.parse_network(network))
+                                'push "route %s %s net_gateway%s"\n' % (
+                                utils.parse_network(network) + (metric,))
                     else:
                         if ':' in network:
-                            client_conf += 'push "route-ipv6 %s"\n' % (
-                                network)
+                            client_conf += 'push "route-ipv6 %s%s"\n' % (
+                                network, metric_def)
                         else:
-                            client_conf += 'push "route %s %s"\n' % (
-                                utils.parse_network(network))
+                            client_conf += 'push "route %s %s%s"\n' % (
+                                utils.parse_network(network) + (metric_def,))
 
                 if link_svr.replicating and link_svr.vxlan:
                     client_conf += 'push "route %s %s"\n' % \
