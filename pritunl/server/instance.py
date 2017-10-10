@@ -164,25 +164,35 @@ class ServerInstance(object):
             if route['virtual_network']:
                 continue
 
+            metric = route.get('metric')
+            if metric:
+                metric_def = ' default %s' % metric
+                metric = ' %s' % metric
+            else:
+                metric_def = ''
+                metric = ''
+
             network = route['network']
             if route['net_gateway']:
                 if ':' in network:
-                    push += 'push "route-ipv6 %s net_gateway"\n' % network
+                    push += 'push "route-ipv6 %s net_gateway%s"\n' % (
+                        network, metric)
                 else:
-                    push += 'push "route %s %s net_gateway"\n' % \
-                        utils.parse_network(network)
+                    push += 'push "route %s %s net_gateway%s"\n' % (
+                        utils.parse_network(network) + (metric_def,))
             elif not route.get('network_link'):
                 if ':' in network:
-                    push += 'push "route-ipv6 %s"\n' % network
+                    push += 'push "route-ipv6 %s%s"\n' % (network, metric_def)
                 else:
-                    push += 'push "route %s %s"\n' % utils.parse_network(
-                        network)
+                    push += 'push "route %s %s%s"\n' % (
+                        utils.parse_network(network) + (metric_def,))
             else:
                 if ':' in network:
-                    push += 'route-ipv6 %s %s\n' % (network, gateway6)
+                    push += 'route-ipv6 %s %s%s\n' % (
+                        network, gateway6, metric)
                 else:
-                    push += 'route %s %s %s\n' % (utils.parse_network(
-                        network) + (gateway,))
+                    push += 'route %s %s %s%s\n' % (
+                        utils.parse_network(network) + (gateway, metric))
 
         for link_svr in self.server.iter_links(fields=(
                 '_id', 'network', 'local_networks', 'network_start',
@@ -191,16 +201,21 @@ class ServerInstance(object):
             if self.server.id < link_svr.id:
                 for route in link_svr.get_routes(include_default=False):
                     network = route['network']
+                    metric = route.get('metric')
+                    if metric:
+                        metric = ' %s' % metric
+                    else:
+                        metric = ''
 
                     if route['net_gateway']:
                         continue
 
                     if ':' in network:
-                        push += 'route-ipv6 %s %s\n' % (
-                            network, gateway6)
+                        push += 'route-ipv6 %s %s%s\n' % (
+                            network, gateway6, metric)
                     else:
-                        push += 'route %s %s %s\n' % (utils.parse_network(
-                            network) + (gateway,))
+                        push += 'route %s %s %s%s\n' % (utils.parse_network(
+                            network) + (gateway, metric))
 
         if self.vxlan:
             push += 'push "route %s %s"\n' % utils.parse_network(
