@@ -179,7 +179,7 @@ class ServerInstance(object):
                         network, metric)
                 else:
                     push += 'push "route %s %s net_gateway%s"\n' % (
-                        utils.parse_network(network) + (metric_def,))
+                        utils.parse_network(network) + (metric,))
             elif not route.get('network_link'):
                 if ':' in network:
                     push += 'push "route-ipv6 %s%s"\n' % (network, metric_def)
