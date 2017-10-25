@@ -387,6 +387,8 @@ def setup_mongo():
     else:
         upsert_index('clients', 'timestamp',
             background=True, expireAfterSeconds=settings.vpn.client_ttl)
+        upsert_index('clients_pool', 'timestamp',
+            background=True, expireAfterSeconds=settings.vpn.client_ttl)
     upsert_index('users_key_link', 'timestamp',
         background=True, expireAfterSeconds=settings.app.key_link_timeout)
     upsert_index('auth_sessions', 'timestamp',
