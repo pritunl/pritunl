@@ -254,7 +254,13 @@ class Authorizer(object):
         if DUO_AUTH in sso_mode and DUO_AUTH in auth_type and \
                 duo_mode == 'passcode':
             if not self.password and self.has_challenge() and \
-                self.user.has_pin():
+                    self.user.has_pin():
+                self.user.audit_event('user_connection',
+                    ('User connection to "%s" denied. ' +
+                     'User failed pin authentication') % (
+                        self.server.name),
+                    remote_addr=self.remote_ip,
+                )
                 self.set_challenge(None, 'Enter Pin', False)
                 raise AuthError('Challenge pin')
 
@@ -313,6 +319,13 @@ class Authorizer(object):
                 allow = duo_auth.authenticate()
 
                 if not allow:
+                    self.user.audit_event('user_connection',
+                        ('User connection to "%s" denied. ' +
+                         'User failed Duo passcode authentication') % (
+                            self.server.name),
+                        remote_addr=self.remote_ip,
+                    )
+
                     if self.has_challenge():
                         if self.user.has_password(self.server):
                             self.set_challenge(
@@ -321,13 +334,6 @@ class Authorizer(object):
                             self.set_challenge(
                                 None, 'Enter Duo Passcode', True)
                         raise AuthError('Challenge Duo code')
-
-                    self.user.audit_event('user_connection',
-                        ('User connection to "%s" denied. ' +
-                         'User failed Duo passcode authentication') % (
-                            self.server.name),
-                        remote_addr=self.remote_ip,
-                    )
                     raise AuthError('Invalid OTP code')
 
                 if settings.app.sso_cache:
@@ -352,6 +358,12 @@ class Authorizer(object):
         elif YUBICO_AUTH in sso_mode and YUBICO_AUTH in auth_type:
             if not self.password and self.has_challenge() and \
                     self.user.has_pin():
+                self.user.audit_event('user_connection',
+                    ('User connection to "%s" denied. ' +
+                     'User failed pin authentication') % (
+                        self.server.name),
+                    remote_addr=self.remote_ip,
+                )
                 self.set_challenge(None, 'Enter Pin', False)
                 raise AuthError('Challenge pin')
 
@@ -408,6 +420,13 @@ class Authorizer(object):
                     valid = False
 
                 if not valid:
+                    self.user.audit_event('user_connection',
+                        ('User connection to "%s" denied. ' +
+                         'User failed Yubico authentication') % (
+                            self.server.name),
+                        remote_addr=self.remote_ip,
+                    )
+
                     if self.has_challenge():
                         if self.user.has_password(self.server):
                             self.set_challenge(
@@ -416,13 +435,6 @@ class Authorizer(object):
                             self.set_challenge(
                                 None, 'YubiKey', True)
                         raise AuthError('Challenge YubiKey')
-
-                    self.user.audit_event('user_connection',
-                        ('User connection to "%s" denied. ' +
-                         'User failed Yubico authentication') % (
-                            self.server.name),
-                        remote_addr=self.remote_ip,
-                        )
                     raise AuthError('Invalid YubiKey')
 
                 if settings.app.sso_cache:
@@ -447,6 +459,12 @@ class Authorizer(object):
         elif self.server.otp_auth and self.user.type == CERT_CLIENT:
             if not self.password and self.has_challenge() and \
                     self.user.has_pin():
+                self.user.audit_event('user_connection',
+                    ('User connection to "%s" denied. ' +
+                     'User failed pin authentication') % (
+                        self.server.name),
+                    remote_addr=self.remote_ip,
+                )
                 self.set_challenge(None, 'Enter Pin', False)
                 raise AuthError('Challenge pin')
 
@@ -495,6 +513,13 @@ class Authorizer(object):
 
             if not allow:
                 if not self.user.verify_otp_code(otp_code):
+                    self.user.audit_event('user_connection',
+                        ('User connection to "%s" denied. ' +
+                         'User failed two-step authentication') % (
+                            self.server.name),
+                        remote_addr=self.remote_ip,
+                    )
+
                     if self.has_challenge():
                         if self.user.has_password(self.server):
                             self.set_challenge(
@@ -503,13 +528,6 @@ class Authorizer(object):
                             self.set_challenge(
                                 None, 'Enter OTP Code', True)
                         raise AuthError('Challenge OTP code')
-
-                    self.user.audit_event('user_connection',
-                        ('User connection to "%s" denied. ' +
-                         'User failed two-step authentication') % (
-                            self.server.name),
-                        remote_addr=self.remote_ip,
-                    )
                     raise AuthError('Invalid OTP code')
 
                 if settings.vpn.otp_cache:
@@ -533,16 +551,16 @@ class Authorizer(object):
 
         if self.user.has_pin():
             if not self.user.check_pin(self.password):
-                if self.has_challenge():
-                    self.set_challenge(None, 'Enter Pin', False)
-                    raise AuthError('Challenge pin')
-
                 self.user.audit_event('user_connection',
                     ('User connection to "%s" denied. ' +
                      'User failed pin authentication') % (
                         self.server.name),
                     remote_addr=self.remote_ip,
                 )
+
+                if self.has_challenge():
+                    self.set_challenge(None, 'Enter Pin', False)
+                    raise AuthError('Challenge pin')
                 raise AuthError('Invalid pin')
         elif settings.user.pin_mode == PIN_REQUIRED:
             self.user.audit_event('user_connection',
