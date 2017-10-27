@@ -900,7 +900,7 @@ class Clients(object):
 
         extra_args = [
             '-m', 'comment',
-            '--comment', 'pritunl_%s' % self.server.id,
+            '--comment', 'pritunl-%s' % self.server.id,
         ]
 
         forward2_base_rule = [

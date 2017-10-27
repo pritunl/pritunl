@@ -882,7 +882,7 @@ class Iptables(object):
     def _init_rule(self):
         rule = iptc.Rule()
         match = iptc.Match(rule, 'comment')
-        match.comment = 'pritunl_%s' % self.id
+        match.comment = 'pritunl-%s' % self.id
         rule.add_match(match)
         return rule
 
@@ -896,7 +896,7 @@ class Iptables(object):
     def _parse_rule(self, rule):
         return rule + [
             '-m', 'comment',
-            '--comment', 'pritunl_%s' % self.id,
+            '--comment', 'pritunl-%s' % self.id,
         ]
 
     def _exists_iptables_rule_cmd(self, rule, ipv6=False):

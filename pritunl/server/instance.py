@@ -600,7 +600,7 @@ class ServerInstance(object):
                 '-o', self.interface,
                 '-j', 'MASQUERADE',
                 '-m', 'comment',
-                '--comment', 'pritunl_%s' % self.server.id,
+                '--comment', 'pritunl-%s' % self.server.id,
             ]
             self.iptables.add_rule(rule)
             self.iptables.add_rule6(rule)
