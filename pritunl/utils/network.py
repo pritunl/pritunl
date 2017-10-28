@@ -35,7 +35,7 @@ def interface_acquire(interface_type):
 def interface_release(interface_type, interface):
     if interface not in _used_interfaces:
         return
-    _used_interfaces.add(interface)
+    _used_interfaces.remove(interface)
 
     if interface_type == 'tun':
         _tun_interfaces.append(interface)
