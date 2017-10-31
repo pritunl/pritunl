@@ -583,8 +583,7 @@ def link_state_put():
         hashlib.sha512).digest())
 
     resp = flask.Response(response=enc_data, mimetype='application/base64')
-    resp.headers.add('Cache-Control',
-        'no-cache, no-store, must-revalidate')
+    resp.headers.add('Cache-Control', 'no-cache, no-store, must-revalidate')
     resp.headers.add('Pragma', 'no-cache')
     resp.headers.add('Expires', 0)
     resp.headers.add('Cipher-IV', base64.b64encode(iv))
