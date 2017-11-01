@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add metric to route options
+Improve server routes management
 
 Version 1.28.1487.93 2017-10-08
 -------------------------------
