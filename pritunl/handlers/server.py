@@ -773,6 +773,69 @@ def server_route_post(server_id):
 
     return utils.jsonify(route)
 
+@app.app.route('/server/<server_id>/routes', methods=['POST'])
+@auth.session_auth
+def server_routes_post(server_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
+    svr = server.get_by_id(server_id)
+
+    for route_data in flask.request.json:
+        route_network = route_data['network']
+        comment = route_data.get('comment') or None
+        metric = route_data.get('metric') or None
+        nat_route = True if route_data.get('nat') else False
+        nat_interface = route_data.get('nat_interface') or None
+        vpc_region = utils.filter_str(route_data.get('vpc_region')) or None
+        vpc_id = utils.filter_str(route_data.get('vpc_id')) or None
+        net_gateway = True if route_data.get('net_gateway') else False
+
+        try:
+            route = svr.upsert_route(route_network, nat_route, nat_interface,
+                vpc_region, vpc_id, net_gateway, comment, metric)
+        except ServerOnlineError:
+            return utils.jsonify({
+                'error': SERVER_ROUTE_ONLINE,
+                'error_msg': SERVER_ROUTE_ONLINE_MSG,
+            }, 403)
+        except NetworkInvalid:
+            return utils.jsonify({
+                'error': SERVER_ROUTE_INVALID,
+                'error_msg': SERVER_ROUTE_INVALID_MSG,
+            }, 403)
+        except ServerRouteNatVirtual:
+            return utils.jsonify({
+                'error': SERVER_ROUTE_VIRTUAL_NAT,
+                'error_msg': SERVER_ROUTE_VIRTUAL_NAT_MSG,
+            }, 403)
+        except ServerRouteNatServerLink:
+            return utils.jsonify({
+                'error': SERVER_ROUTE_SERVER_LINK_NAT,
+                'error_msg': SERVER_ROUTE_SERVER_LINK_NAT_MSG,
+            }, 403)
+        except ServerRouteNatNetworkLink:
+            return utils.jsonify({
+                'error': SERVER_ROUTE_NETWORK_LINK_NAT,
+                'error_msg': SERVER_ROUTE_NETWORK_LINK_NAT_MSG,
+            }, 403)
+
+    err, err_msg = svr.validate_conf()
+    if err:
+        return utils.jsonify({
+            'error': err,
+            'error_msg': err_msg,
+        }, 403)
+
+    svr.commit('routes')
+
+    event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
+    for svr_link in svr.links:
+        event.Event(type=SERVER_ROUTES_UPDATED,
+            resource_id=svr_link['server_id'])
+
+    return utils.jsonify(route)
+
 @app.app.route('/server/<server_id>/route/<route_network>', methods=['PUT'])
 @auth.session_auth
 def server_route_put(server_id, route_network):
