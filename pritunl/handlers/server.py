@@ -756,6 +756,11 @@ def server_route_post(server_id):
             'error': SERVER_ROUTE_NETWORK_LINK_NAT,
             'error_msg': SERVER_ROUTE_NETWORK_LINK_NAT_MSG,
         }, 400)
+    except ServerRouteNatNetGateway:
+        return utils.jsonify({
+            'error': SERVER_ROUTE_NET_GATEWAY_NAT,
+            'error_msg': SERVER_ROUTE_NET_GATEWAY_NAT_MSG,
+        }, 400)
 
     err, err_msg = svr.validate_conf()
     if err:
@@ -818,7 +823,12 @@ def server_routes_post(server_id):
             return utils.jsonify({
                 'error': SERVER_ROUTE_NETWORK_LINK_NAT,
                 'error_msg': SERVER_ROUTE_NETWORK_LINK_NAT_MSG,
-            }, 403)
+            }, 400)
+        except ServerRouteNatNetGateway:
+            return utils.jsonify({
+                'error': SERVER_ROUTE_NET_GATEWAY_NAT,
+                'error_msg': SERVER_ROUTE_NET_GATEWAY_NAT_MSG,
+            }, 400)
 
     err, err_msg = svr.validate_conf()
     if err:
@@ -879,6 +889,11 @@ def server_route_put(server_id, route_network):
         return utils.jsonify({
             'error': SERVER_ROUTE_NETWORK_LINK_NAT,
             'error_msg': SERVER_ROUTE_NETWORK_LINK_NAT_MSG,
+        }, 400)
+    except ServerRouteNatNetGateway:
+        return utils.jsonify({
+            'error': SERVER_ROUTE_NET_GATEWAY_NAT,
+            'error_msg': SERVER_ROUTE_NET_GATEWAY_NAT_MSG,
         }, 400)
 
     err, err_msg = svr.validate_conf()
