@@ -803,22 +803,22 @@ def server_routes_post(server_id):
             return utils.jsonify({
                 'error': SERVER_ROUTE_ONLINE,
                 'error_msg': SERVER_ROUTE_ONLINE_MSG,
-            }, 403)
+            }, 400)
         except NetworkInvalid:
             return utils.jsonify({
                 'error': SERVER_ROUTE_INVALID,
                 'error_msg': SERVER_ROUTE_INVALID_MSG,
-            }, 403)
+            }, 400)
         except ServerRouteNatVirtual:
             return utils.jsonify({
                 'error': SERVER_ROUTE_VIRTUAL_NAT,
                 'error_msg': SERVER_ROUTE_VIRTUAL_NAT_MSG,
-            }, 403)
+            }, 400)
         except ServerRouteNatServerLink:
             return utils.jsonify({
                 'error': SERVER_ROUTE_SERVER_LINK_NAT,
                 'error_msg': SERVER_ROUTE_SERVER_LINK_NAT_MSG,
-            }, 403)
+            }, 400)
         except ServerRouteNatNetworkLink:
             return utils.jsonify({
                 'error': SERVER_ROUTE_NETWORK_LINK_NAT,
@@ -835,7 +835,7 @@ def server_routes_post(server_id):
         return utils.jsonify({
             'error': err,
             'error_msg': err_msg,
-        }, 403)
+        }, 400)
 
     svr.commit('routes')
 
