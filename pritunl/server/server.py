@@ -760,7 +760,7 @@ class Server(mongo.MongoObject):
     def has_non_nat_route(self):
         for route in self.get_routes(include_default=False):
             if route['virtual_network'] or route['network_link'] or \
-                    route['server_link']:
+                    route['server_link'] or route['net_gateway']:
                 continue
 
             if not route['nat']:
