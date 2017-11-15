@@ -121,7 +121,7 @@ class SettingsApp(SettingsGroupMongo):
         'link_page_count': 10,
         'host_page_count': 10,
         'acme_api_url': 'https://acme-v01.api.letsencrypt.org',
-        'acme_agreement_url': 'https://letsencrypt.org/documents/LE-SA-v1.1.1-August-1-2016.pdf',
+        'acme_agreement_url': 'https://letsencrypt.org/documents/LE-SA-v1.2-November-15-2017.pdf',
         'acme_timestamp': None,
         'acme_key': None,
         'acme_domain': None,
