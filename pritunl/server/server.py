@@ -707,6 +707,9 @@ class Server(mongo.MongoObject):
         elif network == '::/0':
             network = '0.0.0.0/0'
 
+        if net_gateway and nat_route:
+            raise ServerRouteNatNetGateway('Cannot nat net gateway')
+
         for route in self.routes:
             if route['network'] == network:
                 if not server_link:
