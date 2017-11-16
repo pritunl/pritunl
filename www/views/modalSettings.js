@@ -135,9 +135,11 @@ define([
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
         this.$('.sso-client-cache').slideUp(window.slideTime);
+        this.$('.client-reconnect').slideUp(window.slideTime);
         return;
       } else {
         this.$('.sso-org').slideDown(window.slideTime);
+        this.$('.client-reconnect').slideDown(window.slideTime);
       }
 
       if (mode === 'saml') {
