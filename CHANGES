@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Update Lets Encrypt support
+Web interface improvements
 
 Version 1.28.1515.73 2017-11-05
 -------------------------------
