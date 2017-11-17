@@ -463,12 +463,17 @@ elif cmd == 'set-version':
 
 
 elif cmd == 'build':
-    is_snapshot = 'snapshot' in cur_version
+    if len(args) > 1:
+        build_version = args[1]
+    else:
+        build_version = cur_version
+
+    is_snapshot = 'snapshot' in build_version
     pacur_path = TEST_PACUR_PATH if is_snapshot else STABLE_PACUR_PATH
 
 
     # Get sha256 sum
-    archive_name = '%s.tar.gz' % cur_version
+    archive_name = '%s.tar.gz' % build_version
     archive_path = os.path.join(os.path.sep, 'tmp', archive_name)
     if os.path.isfile(archive_path):
         os.remove(archive_path)
@@ -489,7 +494,7 @@ elif cmd == 'build':
         with open(pkgbuild_path, 'r') as pkgbuild_file:
             pkgbuild_data = re.sub(
                 'pkgver="(.*)"',
-                'pkgver="%s"' % cur_version,
+                'pkgver="%s"' % build_version,
                 pkgbuild_file.read(),
             )
             pkgbuild_data = re.sub(
@@ -511,7 +516,12 @@ elif cmd == 'build':
 
 
 elif cmd == 'upload':
-    is_snapshot = 'snapshot' in cur_version
+    if len(args) > 1:
+        build_version = args[1]
+    else:
+        build_version = cur_version
+
+    is_snapshot = 'snapshot' in build_version
     pacur_path = TEST_PACUR_PATH if is_snapshot else STABLE_PACUR_PATH
 
 
@@ -527,7 +537,7 @@ elif cmd == 'upload':
     )
 
     for release in response.json():
-        if release['tag_name'] == cur_version:
+        if release['tag_name'] == build_version:
             release_id = release['id']
 
     if not release_id:
@@ -561,7 +571,12 @@ elif cmd == 'upload':
 
 
 elif cmd == 'upload-github':
-    is_snapshot = 'snapshot' in cur_version
+    if len(args) > 1:
+        build_version = args[1]
+    else:
+        build_version = cur_version
+
+    is_snapshot = 'snapshot' in build_version
     pacur_path = TEST_PACUR_PATH if is_snapshot else STABLE_PACUR_PATH
 
 
@@ -577,7 +592,7 @@ elif cmd == 'upload-github':
     )
 
     for release in response.json():
-        if release['tag_name'] == cur_version:
+        if release['tag_name'] == build_version:
             release_id = release['id']
 
     if not release_id:
