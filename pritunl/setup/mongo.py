@@ -174,6 +174,7 @@ def setup_mongo():
         'links_hosts': getattr(database, prefix + 'links_hosts'),
         'routes_reserve': getattr(database, prefix + 'routes_reserve'),
         'dh_params': getattr(database, prefix + 'dh_params'),
+        'acme_challenges': getattr(database, prefix + 'acme_challenges'),
         'auth_sessions': getattr(secondary_database,
             prefix + 'auth_sessions'),
         'auth_csrf_tokens': getattr(secondary_database,
