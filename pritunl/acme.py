@@ -1,7 +1,17 @@
 from pritunl import settings
 from pritunl import utils
+from pritunl import mongo
 
 import os
+
+def set_acme(token, authorization):
+    coll = mongo.get_collection('acme_challenges')
+
+    coll.insert({
+        '_id': token,
+        'authorization': authorization,
+        'timestamp': utils.now(),
+    })
 
 def get_acme_cert(account_key, csr):
     from pritunl import app
