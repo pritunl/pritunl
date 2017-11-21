@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Support load balancer with Lets Encrypt certificate
+
 Version 1.28.1526.18 2017-11-16
 -------------------------------
 
