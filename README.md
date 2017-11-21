@@ -37,7 +37,7 @@ systemctl start mongod pritunl
 systemctl enable mongod pritunl
 ```
 
-## Stable Repository
+## Package Repository
 
 ### archlinux
 
