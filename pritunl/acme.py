@@ -24,7 +24,6 @@ def get_authorization(token):
         return doc.get('authorization')
 
 def get_acme_cert(account_key, csr):
-    from pritunl import app
     from pritunl import acme_tiny
 
     temp_path = utils.get_temp_path()
@@ -41,7 +40,7 @@ def get_acme_cert(account_key, csr):
     certificate = acme_tiny.get_crt(
         account_key_path,
         csr_path,
-        app.set_acme,
+        set_acme,
     )
 
     cert_path = temp_path + '.crt'
