@@ -41,7 +41,7 @@ systemctl enable mongod pritunl
 
 ### archlinux
 
-```
+```bash
 sudo tee -a /etc/pacman.conf << EOF
 [pritunl]
 Server = https://repo.pritunl.com/stable/pacman
@@ -57,7 +57,7 @@ sudo systemctl enable mongodb pritunl
 
 ### amazon linux
 
-```
+```bash
 sudo tee -a /etc/yum.repos.d/mongodb-org-3.4.repo << EOF
 [mongodb-org-3.4]
 name=MongoDB Repository
@@ -84,7 +84,7 @@ sudo start pritunl
 
 ### centos 7
 
-```
+```bash
 # SELinux must be disabled
 
 sudo tee -a /etc/yum.repos.d/mongodb-org-3.4.repo << EOF
@@ -114,7 +114,7 @@ sudo systemctl enable mongod pritunl
 
 ### debian jessie
 
-```
+```bash
 sudo tee -a /etc/apt/sources.list.d/mongodb-org-3.4.list << EOF
 deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.4 main
 EOF
@@ -133,7 +133,7 @@ sudo systemctl enable mongod pritunl
 
 ### debian strech
 
-```
+```bash
 sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
 deb http://repo.pritunl.com/stable/apt stretch main
 EOF
@@ -148,7 +148,7 @@ sudo systemctl enable mongodb pritunl
 
 ### fedora 25
 
-```
+```bash
 # SELinux must be disabled
 # Firewalld must be configured or disabled
 
@@ -170,7 +170,7 @@ sudo systemctl enable mongod pritunl
 
 ### fedora 26
 
-```
+```bash
 # SELinux must be disabled
 # Firewalld must be configured or disabled
 
@@ -192,7 +192,7 @@ sudo systemctl enable mongod pritunl
 
 ### ubuntu trusty
 
-```
+```bash
 sudo tee -a /etc/apt/sources.list.d/mongodb-org-3.4.list << EOF
 deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.4 multiverse
 EOF
@@ -210,7 +210,7 @@ sudo service pritunl start
 
 ### ubuntu xenial
 
-```
+```bash
 sudo tee -a /etc/apt/sources.list.d/mongodb-org-3.4.list << EOF
 deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.4 multiverse
 EOF
@@ -229,7 +229,7 @@ sudo systemctl enable pritunl mongod
 
 ### ubuntu yakkety
 
-```
+```bash
 sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
 deb http://repo.pritunl.com/stable/apt yakkety main
 EOF
@@ -243,7 +243,7 @@ sudo systemctl enable pritunl mongodb
 
 ### ubuntu zesty
 
-```
+```bash
 sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
 deb http://repo.pritunl.com/stable/apt zesty main
 EOF
