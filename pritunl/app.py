@@ -5,6 +5,7 @@ from pritunl import settings
 from pritunl import utils
 from pritunl import monitoring
 from pritunl import auth
+from pritunl import acme
 
 import threading
 import flask
@@ -115,8 +116,9 @@ def after_request(response):
 @app.route('/.well-known/acme-challenge/<token>', methods=['GET'])
 @auth.open_auth
 def acme_token_get(token):
-    if token == acme_token:
-        return flask.Response(acme_authorization, mimetype='text/plain')
+    authorization = acme.get_authorization(token)
+    if authorization:
+        return flask.Response(authorization, mimetype='text/plain')
     return flask.abort(404)
 
 def _run_server(restart):
