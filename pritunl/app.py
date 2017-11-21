@@ -18,8 +18,6 @@ import cheroot.wsgi
 
 app = flask.Flask(__name__)
 app_server = None
-acme_token = None
-acme_authorization = None
 _cur_ssl = None
 _cur_cert = None
 _cur_key = None
@@ -27,12 +25,6 @@ _cur_port = None
 _cur_reverse_proxy = None
 _update_lock = threading.Lock()
 _watch_event = threading.Event()
-
-def set_acme(token, authorization):
-    global acme_token
-    global acme_authorization
-    acme_token = token
-    acme_authorization = authorization
 
 def update_server(delay=0):
     global _cur_ssl
