@@ -13,6 +13,16 @@ def set_acme(token, authorization):
         'timestamp': utils.now(),
     })
 
+def get_authorization(token):
+    coll = mongo.get_collection('acme_challenges')
+
+    doc = coll.find_one({
+        '_id': token,
+    })
+
+    if doc:
+        return doc.get('authorization')
+
 def get_acme_cert(account_key, csr):
     from pritunl import app
     from pritunl import acme_tiny
