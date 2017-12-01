@@ -84,10 +84,14 @@ class Duo(object):
             response = requests.post(url,
                 headers=headers,
                 params=params,
-                timeout=settings.app.sso_timeout,
+                timeout=30,
             )
-        except httplib.HTTPException:
-            return
+        except:
+            if factor == 'push' and self.factor == 'push_phone':
+                self._auth('phone')
+                return
+            else:
+                raise
 
         data = response.json()
         resp_data = data.get('response')
