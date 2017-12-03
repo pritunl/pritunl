@@ -8,7 +8,6 @@ import email
 import hmac
 import hashlib
 import urllib
-import httplib
 import requests
 
 def _sign(method, path, params):
