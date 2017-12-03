@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with cpu usage
+
 Version 1.28.1541.26 2017-12-01
 -------------------------------
 
