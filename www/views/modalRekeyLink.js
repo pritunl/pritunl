@@ -13,7 +13,7 @@ define([
     title: 'Rekey Link',
     okText: 'Rekey',
     body: function() {
-      return this.template();
+      return this.template(this.model.toJSON());
     },
     onOk: function() {
       this.setLoading('Rekeying link...');
