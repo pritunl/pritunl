@@ -646,7 +646,10 @@ def settings_put():
                 'sa_east_1_access_key',
                 'sa_east_1_secret_key',
             ):
-        if aws_key in flask.request.json:
+        if settings.app.cloud_provider != 'aws':
+            settings_commit = True
+            setattr(settings.app, aws_key, None)
+        elif aws_key in flask.request.json:
             settings_commit = True
             aws_value = flask.request.json[aws_key]
 
