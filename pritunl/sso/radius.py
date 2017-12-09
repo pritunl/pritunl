@@ -7,30 +7,46 @@ from pritunl.pyrad import dictionary
 import StringIO
 
 def verify_radius(username, password):
-    host = settings.app.sso_radius_host.split(':')
-    if len(host) > 1:
-        port = int(host[1])
-    else:
-        port = 1645
-    host = host[0]
+    hosts = settings.app.sso_radius_host.split(',')
 
-    conn = client.Client(
-        server=host,
-        authport=port,
-        secret=settings.app.sso_radius_secret.encode(),
-        dict=dictionary.Dictionary(StringIO.StringIO(RADIUS_DICTONARY)),
-    )
+    for i, host in enumerate(hosts):
+        host = host.split(':')
+        if len(host) > 1:
+            port = int(host[1])
+        else:
+            port = 1645
+        host = host[0]
 
-    req = conn.CreateAuthPacket(
-        code=packet.AccessRequest,
-        User_Name=(settings.app.sso_radius_prefix or '') + username.encode(),
-    )
-    req['User-Password'] = req.PwCrypt(password.encode())
+        conn = client.Client(
+            server=host,
+            authport=port,
+            secret=settings.app.sso_radius_secret.encode(),
+            dict=dictionary.Dictionary(
+                StringIO.StringIO(RADIUS_DICTONARY)),
+        )
 
-    reply = conn.SendPacket(req)
+        req = conn.CreateAuthPacket(
+            code=packet.AccessRequest,
+            User_Name=(
+                settings.app.sso_radius_prefix or '') + username.encode(),
+        )
+        req['User-Password'] = req.PwCrypt(password.encode())
 
-    if reply.code != packet.AccessAccept:
-        return False, None, None
+        try:
+            reply = conn.SendPacket(req)
+        except:
+            if i == len(hosts) - 1:
+                raise
+            else:
+                continue
+
+        if reply.code != packet.AccessAccept:
+            if i == len(hosts) - 1:
+                return False, None, None
+            else:
+                continue
+
+        break
 
     org_names = reply.get((97, 0)) or []
     groups = set()
