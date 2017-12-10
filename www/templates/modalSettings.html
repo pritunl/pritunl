@@ -178,7 +178,7 @@
     </div>
     <div class="sso-radius-host form-group" <%= !sso || sso.indexOf('radius') === -1 ? 'style="display: none;"' : '' %>>
       <label>Radius Host</label>
-      <input type="email" class="form-control" placeholder="Enter radius host and port" value="<%- sso_radius_host || '' %>" data-toggle="tooltip" title="Radius host such as localhost:1645. If no port is specified default port 1645 will be used">
+      <input type="email" class="form-control" placeholder="Enter radius host and port" value="<%- sso_radius_host || '' %>" data-toggle="tooltip" title="Radius host such as localhost:1645. If no port is specified default port 1645 will be used. Separate multiple hosts with a comma.">
     </div>
     <div class="sso-radius-secret form-group" <%= !sso || sso.indexOf('radius') === -1 ? 'style="display: none;"' : '' %>>
       <label>Radius Secret</label>
