@@ -793,6 +793,7 @@ define([
         email_from: emailFrom,
         email_server: emailServer,
         email_username: emailUsername,
+        email_password: emailPassword,
         pin_mode: pinMode,
         sso: sso,
         sso_match: ssoMatch,
@@ -866,9 +867,6 @@ define([
       }
       if (password) {
         modelAttr.password = password;
-      }
-      if (emailPassword !== '********************') {
-        modelAttr.email_password = emailPassword;
       }
 
       this.setLoading('Saving settings...');
