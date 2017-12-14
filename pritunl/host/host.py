@@ -43,10 +43,6 @@ class Host(mongo.MongoObject):
         mongo.MongoObject.__init__(self, **kwargs)
         self.user_count = None
         self.users_online = None
-
-        if 'id' not in kwargs and 'doc' not in kwargs and 'spec' not in kwargs:
-            self.id = settings.local.host_id
-
         self.usage = HostUsage(self.id)
 
         if name is not None:
