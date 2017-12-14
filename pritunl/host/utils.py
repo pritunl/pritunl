@@ -103,7 +103,10 @@ def iter_hosts_dict(page=None):
         yield hst.dict()
 
 def init():
-    settings.local.host = Host()
+    if not settings.local.host_id:
+        raise ValueError('Host ID undefined')
+
+    settings.local.host = Host(id=settings.local.host_id)
 
     try:
         settings.local.host.load()
