@@ -106,8 +106,7 @@ class Clients(object):
                     'local_networks', 'organizations', 'routes', 'links',
                     'ipv6'))
 
-            for route in link_usr_svr.get_routes(
-                    include_default=False):
+            for route in link_usr_svr.get_routes(include_default=False):
                 network = route['network']
                 metric = route.get('metric')
                 if metric:
