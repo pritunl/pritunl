@@ -11,6 +11,10 @@ import requests
 import pymongo
 import zlib
 import werkzeug.http
+import getpass
+import base64
+import Crypto.Cipher.AES
+import Crypto.Protocol.KDF
 
 USAGE = """Usage: builder [command] [options]
 Command Help: builder [command] --help
@@ -21,6 +25,7 @@ Commands:
   set-version           Set current version
   build                 Build and release
   upload                Upload release
+  build-upload          Build and upload release
   upload-github         Upload release to GitHub"""
 
 INIT_PATH = 'pritunl/__init__.py'
@@ -157,9 +162,95 @@ def sync_db():
                     }}, upsert=True)
 
 
+if len(sys.argv) > 1:
+    cmd = sys.argv[1]
+else:
+    cmd = 'version'
+
+def aes_encrypt(passphrase, data):
+    enc_salt = os.urandom(32)
+    enc_iv = os.urandom(16)
+    enc_key = Crypto.Protocol.KDF.PBKDF2(
+        password=passphrase,
+        salt=enc_salt,
+        dkLen=32,
+        count=1000,
+    )
+
+    data += '\x00' * (16 - (len(data) % 16))
+
+    chiper = Crypto.Cipher.AES.new(
+        enc_key,
+        Crypto.Cipher.AES.MODE_CBC,
+        enc_iv,
+    )
+    enc_data = chiper.encrypt(data)
+
+    return '\n'.join([
+        base64.b64encode(enc_salt),
+        base64.b64encode(enc_iv),
+        base64.b64encode(enc_data),
+    ])
+
+def aes_decrypt(passphrase, data):
+    data = data.split('\n')
+    if len(data) < 3:
+        raise ValueError('Invalid encryption data')
+
+    enc_salt = base64.b64decode(data[0])
+    enc_iv = base64.b64decode(data[1])
+    enc_data = base64.b64decode(data[2])
+    enc_key = Crypto.Protocol.KDF.PBKDF2(
+        password=passphrase,
+        salt=enc_salt,
+        dkLen=32,
+        count=1000,
+    )
+
+    chiper = Crypto.Cipher.AES.new(
+        enc_key,
+        Crypto.Cipher.AES.MODE_CBC,
+        enc_iv,
+    )
+    data = chiper.decrypt(enc_data)
+
+    return data.replace('\x00', '')
+
+passphrase = getpass.getpass('Enter passphrase: ')
+
+if cmd == 'encrypt':
+    passphrase2 = getpass.getpass('Enter passphrase: ')
+
+    if passphrase != passphrase2:
+        print 'ERROR: Passphrase mismatch'
+        sys.exit(1)
+
+    with open(BUILD_KEYS_PATH, 'r') as build_keys_file:
+        data = build_keys_file.read().strip()
+
+    enc_data = aes_encrypt(passphrase, data)
+
+    with open(BUILD_KEYS_PATH, 'w') as build_keys_file:
+        build_keys_file.write(enc_data)
+
+    sys.exit(0)
+
+if cmd == 'decrypt':
+    with open(BUILD_KEYS_PATH, 'r') as build_keys_file:
+        enc_data = build_keys_file.read().strip()
+
+    data = aes_decrypt(passphrase, enc_data)
+
+    with open(BUILD_KEYS_PATH, 'w') as build_keys_file:
+        build_keys_file.write(data)
+
+    sys.exit(0)
+
 # Load build keys
 with open(BUILD_KEYS_PATH, 'r') as build_keys_file:
-    build_keys = json.loads(build_keys_file.read().strip())
+    enc_data = build_keys_file.read()
+    data = aes_decrypt(passphrase, enc_data)
+    build_keys = json.loads(data.strip())
     github_owner = build_keys['github_owner']
     github_token = build_keys['github_token']
     gitlab_token = build_keys['gitlab_token']
@@ -194,12 +285,6 @@ with open(INIT_PATH, 'r') as init_file:
             cur_version = line.split('=')[1].replace("'", '').strip()
 
 
-# Parse args
-if len(sys.argv) > 1:
-    cmd = sys.argv[1]
-else:
-    cmd = 'version'
-
 parser = optparse.OptionParser(usage=USAGE)
 (options, args) = parser.parse_args()
 
@@ -212,11 +297,11 @@ if cmd == 'version':
     sys.exit(0)
 
 
-elif cmd == 'sync-db':
+if cmd == 'sync-db':
     sync_db()
 
 
-elif cmd == 'sync-releases':
+if cmd == 'sync-releases':
     next_url = 'https://api.github.com/repos/%s/%s/releases' % (
         github_owner, pkg_name)
 
@@ -263,7 +348,7 @@ elif cmd == 'sync-releases':
             break
         next_url = response.headers['Link'].split(';')[0][1:-1]
 
-elif cmd == 'set-version':
+if cmd == 'set-version':
     new_version_orig = args[1]
     new_version = get_ver(new_version_orig)
     is_snapshot = 'snapshot' in new_version
@@ -462,7 +547,7 @@ elif cmd == 'set-version':
         sys.exit(1)
 
 
-elif cmd == 'build':
+if cmd == 'build' or cmd == 'build-upload':
     if len(args) > 1:
         build_version = args[1]
     else:
@@ -515,7 +600,7 @@ elif cmd == 'build':
         )
 
 
-elif cmd == 'upload':
+if cmd == 'upload' or cmd == 'build-upload':
     if len(args) > 1:
         build_version = args[1]
     else:
@@ -570,7 +655,7 @@ elif cmd == 'upload':
         post_git_asset(release_id, name, path)
 
 
-elif cmd == 'upload-github':
+if cmd == 'upload-github':
     if len(args) > 1:
         build_version = args[1]
     else:
@@ -603,7 +688,3 @@ elif cmd == 'upload-github':
     # Add to github
     for name, path in iter_packages():
         post_git_asset(release_id, name, path)
-
-else:
-    print 'Unknown command'
-    sys.exit(1)
