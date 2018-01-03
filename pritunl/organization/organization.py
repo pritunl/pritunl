@@ -207,7 +207,7 @@ class Organization(mongo.MongoObject):
                 email = email[0] if email else ''
                 if email:
                     spec['email'] = {
-                        '$regex': '.*%s.*/i' % email,
+                        '$regex': '.*%s.*' % email,
                         '$options': 'i',
                     }
                 search = search[:n] + search[n + 6 + len(email):].strip()
