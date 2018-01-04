@@ -881,9 +881,9 @@ class Iptables(object):
 
     def _init_rule(self):
         rule = iptc.Rule()
-        match = iptc.Match(rule, 'comment')
-        match.comment = 'pritunl-%s' % self.id
-        rule.add_match(match)
+        # match = iptc.Match(rule, 'comment')
+        # match.comment = 'pritunl-%s' % self.id
+        # rule.add_match(match)
         return rule
 
     def _init_rule6(self):
