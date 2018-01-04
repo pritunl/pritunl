@@ -977,7 +977,7 @@ class Iptables(object):
                         'instance',
                         rule=rule,
                     )
-                time.sleep(1)
+                time.sleep(0.5)
         finally:
             _global_lock.release()
 
@@ -1022,7 +1022,7 @@ class Iptables(object):
                         'instance',
                         rule=rule,
                     )
-                time.sleep(1)
+                time.sleep(0.5)
         finally:
             _global_lock.release()
 
@@ -1044,7 +1044,7 @@ class Iptables(object):
                         'instance',
                         rule=rule,
                     )
-                time.sleep(1)
+                time.sleep(0.5)
         finally:
             _global_lock.release()
 
@@ -1089,7 +1089,7 @@ class Iptables(object):
                         'instance',
                         rule=rule,
                     )
-                time.sleep(1)
+                time.sleep(0.5)
         finally:
             _global_lock.release()
 
