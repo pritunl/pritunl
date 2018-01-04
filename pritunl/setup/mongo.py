@@ -37,9 +37,12 @@ def upsert_index(coll_name, index, **kwargs):
     try:
         coll.create_index(index, **kwargs)
     except:
-        keys = pymongo.helpers._index_list(index)
-        name = pymongo.helpers._gen_index_name(keys)
-        coll.drop_index(name)
+        try:
+            keys = pymongo.helpers._index_list(index)
+            name = pymongo.helpers._gen_index_name(keys)
+            coll.drop_index(name)
+        except:
+            pass
         coll.create_index(index, **kwargs)
 
 def drop_index(coll, index, **kwargs):
