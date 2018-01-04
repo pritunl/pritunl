@@ -131,6 +131,7 @@ def auth_okta_push(username, strong=False, ipaddr=None, type=None, info=None):
             headers={
                 'Accept': 'application/json',
                 'Authorization': 'SSWS %s' % settings.app.sso_okta_token,
+                'X-Forwarded-For': ipaddr,
             },
         )
     except httplib.HTTPException:
