@@ -108,6 +108,10 @@ def init():
 
     settings.local.host = Host(id=settings.local.host_id)
 
+    if not settings.local.host:
+        settings.local.host = Host()
+        settings.local.host.id = settings.local.host_id
+
     try:
         settings.local.host.load()
     except NotFound:
