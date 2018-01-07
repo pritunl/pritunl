@@ -93,6 +93,7 @@ class SettingsApp(SettingsGroupMongo):
         'sso_onelogin_id': None,
         'sso_onelogin_secret': None,
         'sso_onelogin_region': 'us',
+        'sso_onelogin_push': False,
         'sso_radius_prefix': None,
         'sso_radius_host': None,
         'sso_radius_secret': None,
