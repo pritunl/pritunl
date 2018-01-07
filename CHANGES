@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with initial setup
+
 Version 1.28.1575.85 2018-01-04
 -------------------------------
 
