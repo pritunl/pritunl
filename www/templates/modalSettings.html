@@ -197,6 +197,12 @@
         <option value="passcode" <%= sso_duo_mode === 'passcode' ? 'selected' : '' %>>Passcode</option>
       </select>
     </div>
+    <div class="sso-onelogin-push toggle-form form-group" data-toggle="tooltip" title="Enable OneLogin Push for connection authentication when it is available" <%= (sso === 'saml_onelogin' || sso === 'saml_onelogin_yubico') ? '' : 'style="display: none;"' %>>
+      <label>Enable OneLogin Push</label>
+      <div class="selector <%= sso_onelogin_push ? 'selected' : '' %> no-select">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
     <div class="sso-okta-push toggle-form form-group" data-toggle="tooltip" title="Enable Okta Push for connection authentication when it is available" <%= (sso === 'saml_okta' || sso === 'saml_okta_yubico') ? '' : 'style="display: none;"' %>>
       <label>Enable Okta Push</label>
       <div class="selector <%= sso_okta_push ? 'selected' : '' %> no-select">
