@@ -15,5 +15,5 @@ google-api-python-client==1.6.3
 twisted==17.1.0
 pycrypto>=2.6.1
 pyopenssl==16.2.0
-certifi>=2017.1.23
+certifi>=2017.11.5
 yubico-client>=1.10.0
