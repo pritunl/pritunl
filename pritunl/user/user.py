@@ -489,6 +489,10 @@ class User(mongo.MongoObject):
                 settings.app.sso_duo_mode != 'passcode':
             return DUO_AUTH
         elif settings.app.sso and \
+                SAML_ONELOGIN_AUTH in self.auth_type and \
+                SAML_ONELOGIN_AUTH in settings.app.sso:
+            return SAML_ONELOGIN_AUTH
+        elif settings.app.sso and \
                 SAML_OKTA_AUTH in self.auth_type and \
                 SAML_OKTA_AUTH in settings.app.sso:
             return SAML_OKTA_AUTH
