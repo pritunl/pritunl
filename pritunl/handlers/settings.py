@@ -51,6 +51,7 @@ def _dict():
             'sso_okta_push': settings.app.sso_okta_push,
             'sso_onelogin_id': 'demo',
             'sso_onelogin_secret': 'demo',
+            'sso_onelogin_push': settings.app.sso_onelogin_push,
             'sso_radius_secret': 'demo',
             'sso_radius_host': 'demo',
             'sso_client_cache': settings.app.sso_client_cache,
@@ -126,6 +127,7 @@ def _dict():
             'sso_okta_push': settings.app.sso_okta_push,
             'sso_onelogin_id': settings.app.sso_onelogin_id,
             'sso_onelogin_secret': settings.app.sso_onelogin_secret,
+            'sso_onelogin_push': settings.app.sso_onelogin_push,
             'sso_radius_secret': settings.app.sso_radius_secret,
             'sso_radius_host': settings.app.sso_radius_host,
             'sso_client_cache': settings.app.sso_client_cache,
@@ -506,6 +508,14 @@ def settings_put():
         if sso_onelogin_secret != settings.app.sso_onelogin_secret:
             changes.add('sso')
         settings.app.sso_onelogin_secret = sso_onelogin_secret
+
+    if 'sso_onelogin_push' in flask.request.json:
+        sso_mode = settings.app.sso
+        if sso_mode and sso_mode in (SAML_OKTA_AUTH, SAML_OKTA_YUBICO_AUTH):
+            settings_commit = True
+            sso_onelogin_push = flask.request.json['sso_onelogin_push']
+            settings.app.sso_onelogin_push = True if \
+                sso_onelogin_push else False
 
     if 'sso_client_cache' in flask.request.json:
         settings_commit = True
