@@ -92,6 +92,9 @@ def get_factor_id(user_id):
         return factor['id']
 
     if settings.app.sso_okta_skip_unavailable:
+        logger.info('Okta push not available, skipped', 'sso',
+            user_id=user_id,
+        )
         return True
     elif not_active:
         logger.error('Okta push not active', 'sso',
