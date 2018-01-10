@@ -33,6 +33,7 @@ define([
       'sso_okta_push': null,
       'sso_onelogin_id': null,
       'sso_onelogin_secret': null,
+      'sso_onelogin_push': null,
       'sso_radius_host': null,
       'sso_radius_secret': null,
       'sso_client_cache': null,
