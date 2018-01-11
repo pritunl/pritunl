@@ -148,6 +148,14 @@
         <option value="aws" <%= cloud_provider === 'aws' ? 'selected' : '' %>>AWS</option>
       </select>
     </div>
+    <div class="sso-okta-app-id form-group" <%= !sso || sso.indexOf('okta') === -1 ? 'style="display: none;"' : '' %>>
+      <label>Okta App ID</label>
+      <input type="text" class="form-control" placeholder="Enter Okta app ID" value="<%- sso_okta_app_id || '' %>" data-toggle="tooltip" title="Optional, ID on Okta Pritunl app. This can be found in the URL of the app settings page.">
+    </div>
+    <div class="sso-onelogin-app-id form-group" <%= !sso || sso.indexOf('onelogin') === -1 ? 'style="display: none;"' : '' %>>
+      <label>OneLogin App ID</label>
+      <input type="text" class="form-control" placeholder="Enter OneLogin app ID" value="<%- sso_onelogin_app_id || '' %>" data-toggle="tooltip" title="Optional, ID on OneLogin Pritunl app. This can be found in the URL of the app settings page.">
+    </div>
     <div class="sso-saml-url form-group" <%= !sso || sso.indexOf('saml') === -1 ? 'style="display: none;"' : '' %>>
       <label>SAML Sign-On URL</label>
       <input type="text" class="form-control" placeholder="Enter SAML sign-on url" value="<%- sso_saml_url || '' %>" data-toggle="tooltip" title="The SAML identity provider single sign-on url. Also known as SAML 2.0 Endpoint">
