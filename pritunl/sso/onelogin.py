@@ -112,7 +112,49 @@ def auth_onelogin(username):
         )
         return False
 
-    return True
+    onelogin_app_id = settings.app.sso_onelogin_app_id
+    if not onelogin_app_id:
+        return True
+
+    try:
+        onelogin_app_id = int(onelogin_app_id)
+    except ValueError:
+        pass
+
+    user_id = user['id']
+
+    response = requests.get(
+        _get_base_url() + '/api/1/users/%d/apps' % user_id,
+        headers={
+            'Authorization': 'bearer:%s' % access_token,
+        },
+    )
+
+    if response.status_code != 200:
+        logger.error('OneLogin api error', 'sso',
+            username=username,
+            status_code=response.status_code,
+            response=response.content,
+        )
+        return False
+
+    applications = response.json()['data']
+    if not applications:
+        logger.error('OneLogin user apps not found', 'sso',
+            username=username,
+        )
+        return False
+
+    for application in applications:
+        if application['id'] == onelogin_app_id:
+            return True
+
+    logger.warning('OneLogin user is not assigned to application', 'sso',
+        username=username,
+        onelogin_app_id=onelogin_app_id,
+    )
+
+    return False
 
 def auth_onelogin_push(username, strong=False, ipaddr=None,
         type=None, info=None):
