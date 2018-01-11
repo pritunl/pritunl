@@ -211,7 +211,7 @@ def auth_okta_push(username, strong=False, ipaddr=None, type=None, info=None):
         elif result == 'waiting':
             pass
         else:
-            logger.error('Okta push rejected', 'sso',
+            logger.warning('Okta push rejected', 'sso',
                 username=username,
                 user_id=user_id,
                 factor_id=factor_id,
