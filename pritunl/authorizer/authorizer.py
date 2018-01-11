@@ -308,6 +308,11 @@ class Authorizer(object):
                     })
                     allow = True
 
+                    logger.info(
+                        'Authentication cached, skipping Duo', 'sso',
+                        username=self.user.name,
+                    )
+
             if not allow:
                 duo_auth = sso.Duo(
                     username=self.user.name,
@@ -414,6 +419,11 @@ class Authorizer(object):
                     })
                     allow = True
 
+                    logger.info(
+                        'Authentication cached, skipping Yubikey', 'sso',
+                        username=self.user.name,
+                    )
+
             if not allow:
                 valid, yubico_id = sso.auth_yubico(yubikey)
                 if yubico_id != self.user.yubico_id:
@@ -511,6 +521,11 @@ class Authorizer(object):
                     })
                     allow = True
 
+                    logger.info(
+                        'Authentication cached, skipping OTP', 'sso',
+                        username=self.user.name,
+                    )
+
             if not allow:
                 if not self.user.verify_otp_code(otp_code):
                     self.user.audit_event('user_connection',
@@ -585,12 +600,29 @@ class Authorizer(object):
             raise AuthError('Failed secondary authentication')
 
     def _check_push(self):
-        if self.user.bypass_secondary or settings.vpn.stress_test or \
-                self.has_token or self.whitelisted:
-            return
-
         self.push_type = self.user.get_push_type()
         if not self.push_type:
+            return
+
+        if settings.vpn.stress_test:
+            return
+
+        if self.user.bypass_secondary:
+            logger.info('Bypass secondary enabled, skipping push', 'sso',
+                username=self.user.name,
+            )
+            return
+
+        if self.has_token:
+            logger.info('Client authentication cached, skipping push', 'sso',
+                username=self.user.name,
+            )
+            return
+
+        if self.whitelisted:
+            logger.info('Client network whitelisted, skipping push', 'sso',
+                username=self.user.name,
+            )
             return
 
         if settings.app.sso_cache:
@@ -620,6 +652,10 @@ class Authorizer(object):
                     'device_name': self.device_name,
                     'timestamp': utils.now(),
                 })
+
+                logger.info('Authentication cached, skipping push', 'sso',
+                    username=self.user.name,
+                )
                 return
 
         def thread_func():
