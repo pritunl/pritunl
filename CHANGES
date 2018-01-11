@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Improve Okta single sign-on
+Improve OneLogin single sign-on
 
 Version 1.28.1578.26 2018-01-07
 -------------------------------
