@@ -47,8 +47,10 @@ def _dict():
             'sso_saml_url': 'demo',
             'sso_saml_issuer_url': 'demo',
             'sso_saml_cert': 'demo',
+            'sso_okta_app_id': settings.app.sso_okta_app_id,
             'sso_okta_token': 'demo',
             'sso_okta_push': settings.app.sso_okta_push,
+            'sso_onelogin_app_id': settings.app.sso_onelogin_app_id,
             'sso_onelogin_id': 'demo',
             'sso_onelogin_secret': 'demo',
             'sso_onelogin_push': settings.app.sso_onelogin_push,
@@ -123,8 +125,10 @@ def _dict():
             'sso_saml_url': settings.app.sso_saml_url,
             'sso_saml_issuer_url': settings.app.sso_saml_issuer_url,
             'sso_saml_cert': settings.app.sso_saml_cert,
+            'sso_okta_app_id': settings.app.sso_okta_app_id,
             'sso_okta_token': settings.app.sso_okta_token,
             'sso_okta_push': settings.app.sso_okta_push,
+            'sso_onelogin_app_id': settings.app.sso_onelogin_app_id,
             'sso_onelogin_id': settings.app.sso_onelogin_id,
             'sso_onelogin_secret': settings.app.sso_onelogin_secret,
             'sso_onelogin_push': settings.app.sso_onelogin_push,
@@ -480,6 +484,13 @@ def settings_put():
             changes.add('sso')
         settings.app.sso_saml_cert = sso_saml_cert
 
+    if 'sso_okta_app_id' in flask.request.json:
+        settings_commit = True
+        sso_okta_app_id = flask.request.json['sso_okta_app_id'] or None
+        if sso_okta_app_id != settings.app.sso_okta_app_id:
+            changes.add('sso')
+        settings.app.sso_okta_app_id = sso_okta_app_id
+
     if 'sso_okta_token' in flask.request.json:
         settings_commit = True
         sso_okta_token = flask.request.json['sso_okta_token'] or None
@@ -493,6 +504,14 @@ def settings_put():
             settings_commit = True
             sso_okta_push = flask.request.json['sso_okta_push']
             settings.app.sso_okta_push = True if sso_okta_push else False
+
+    if 'sso_onelogin_app_id' in flask.request.json:
+        settings_commit = True
+        sso_onelogin_app_id = flask.request.json['sso_onelogin_app_id'] or \
+            None
+        if sso_onelogin_app_id != settings.app.sso_onelogin_app_id:
+            changes.add('sso')
+        settings.app.sso_onelogin_app_id = sso_onelogin_app_id
 
     if 'sso_onelogin_id' in flask.request.json:
         settings_commit = True
@@ -677,8 +696,10 @@ def settings_put():
         settings.app.sso_saml_url = None
         settings.app.sso_saml_issuer_url = None
         settings.app.sso_saml_cert = None
+        settings.app.sso_okta_app_id = None
         settings.app.sso_okta_token = None
         settings.app.sso_onelogin_key = None
+        settings.app.sso_onelogin_app_id = None
         settings.app.sso_onelogin_id = None
         settings.app.sso_onelogin_secret = None
         settings.app.sso_radius_secret = None
