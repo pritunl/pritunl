@@ -37,7 +37,7 @@ def get_user_id(username):
     data = response.json()
     if 'id' in data:
         if data['status'].lower() != 'active':
-            logger.error('Okta user is not active', 'sso',
+            logger.warning('Okta user is not active', 'sso',
                 username=username,
             )
             return None
@@ -97,11 +97,11 @@ def get_factor_id(user_id):
         )
         return True
     elif not_active:
-        logger.error('Okta push not active', 'sso',
+        logger.warning('Okta push not active', 'sso',
             user_id=user_id,
         )
     else:
-        logger.error('Okta push not available', 'sso',
+        logger.warning('Okta push not available', 'sso',
             user_id=user_id,
         )
     return None
