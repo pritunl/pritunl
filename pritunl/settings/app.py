@@ -90,6 +90,7 @@ class SettingsApp(SettingsGroupMongo):
         'sso_okta_poll_rate': 0.25,
         'sso_okta_push': True,
         'sso_okta_skip_unavailable': True,
+        'sso_onelogin_app_id': None,
         'sso_onelogin_key': None,
         'sso_onelogin_id': None,
         'sso_onelogin_secret': None,
