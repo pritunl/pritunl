@@ -111,7 +111,51 @@ def auth_okta(username):
     if not user_id:
         return False
 
-    return True
+    okta_app_id = settings.app.sso_okta_app_id
+    if not okta_app_id:
+        return True
+
+    try:
+        response = requests.get(
+            _getokta_url() + '/api/v1/apps?filter=user.id+eq+"%s"' % user_id,
+            headers={
+                'Accept': 'application/json',
+                'Authorization': 'SSWS %s' % settings.app.sso_okta_token,
+            },
+        )
+    except httplib.HTTPException:
+        logger.exception('Okta api error', 'sso',
+            username=username,
+        )
+        return None
+
+    if response.status_code != 200:
+        logger.error('Okta api error', 'sso',
+            username=username,
+            status_code=response.status_code,
+            response=response.content,
+        )
+        return None
+
+    data = response.json()
+    if 'id' in data:
+        if data['status'].lower() != 'active':
+            logger.warning('Okta user is not active', 'sso',
+                username=username,
+            )
+            return None
+        return data['id']
+
+    for application in data:
+        if application['id'] == okta_app_id:
+            return True
+
+    logger.warning('Okta user is not assigned to application', 'sso',
+        username=username,
+        okta_app_id=okta_app_id,
+    )
+
+    return False
 
 def auth_okta_push(username, strong=False, ipaddr=None, type=None, info=None):
     if not settings.app.sso_okta_push:
