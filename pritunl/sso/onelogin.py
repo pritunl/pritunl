@@ -56,7 +56,7 @@ def auth_onelogin(username):
             if data.find('status').text == '1':
                 return True
 
-            logger.error('OneLogin user disabled', 'sso',
+            logger.warning('OneLogin user disabled', 'sso',
                 username=username,
             )
         elif response.status_code == 404:
@@ -64,7 +64,7 @@ def auth_onelogin(username):
                 username=username,
             )
         elif response.status_code == 406:
-            logger.error('OneLogin user disabled', 'sso',
+            logger.warning('OneLogin user disabled', 'sso',
                 username=username,
             )
         else:
@@ -107,7 +107,7 @@ def auth_onelogin(username):
 
     user = users[0]
     if user['status'] != 1:
-        logger.error('OneLogin user disabled', 'sso',
+        logger.warning('OneLogin user disabled', 'sso',
             username=username,
         )
         return False
