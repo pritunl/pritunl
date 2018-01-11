@@ -66,6 +66,7 @@ def check_thread():
             cur_timestamp = utils.now()
             spec = {
                 'ttl_timestamp': {'$lt': cur_timestamp},
+                'state': {'$ne': COMPLETE},
             }
 
             for task_item in task.iter_tasks(spec):
