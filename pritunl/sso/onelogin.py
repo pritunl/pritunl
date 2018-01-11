@@ -37,52 +37,14 @@ def _get_access_token():
     return response.json()['data'][0]['access_token']
 
 def auth_onelogin(username):
-    if settings.app.sso_onelogin_id and settings.app.sso_onelogin_secret:
-        access_token = _get_access_token()
-        if not access_token:
-            return False
-
-        response = requests.get(
-            _get_base_url() + '/api/1/users',
-            headers={
-                'Authorization': 'bearer:%s' % access_token,
-                'Content-Type': 'application/json',
-            },
-            params={
-                'username': username,
-            },
-        )
-
-        if response.status_code != 200:
-            logger.error('OneLogin api error', 'sso',
-                username=username,
-                status_code=response.status_code,
-                response=response.content,
-            )
-            return False
-
-        users = response.json()['data']
-        if not users:
-            logger.error('OneLogin user not found', 'sso',
-                username=username,
-            )
-            return False
-
-        user = users[0]
-        if user['status'] != 1:
-            logger.error('OneLogin user disabled', 'sso',
-                username=username,
-            )
-            return False
-
-        return True
-    else:
+    if not settings.app.sso_onelogin_id or \
+            not settings.app.sso_onelogin_secret:
         try:
             response = requests.get(
                 ONELOGIN_URL + '/api/v3/users/username/%s' % (
                     urllib.quote(username)),
                 auth=(settings.app.sso_onelogin_key, 'x'),
-            )
+                )
         except httplib.HTTPException:
             logger.exception('OneLogin api error', 'sso',
                 username=username,
@@ -112,6 +74,45 @@ def auth_onelogin(username):
                 response=response.content,
             )
         return False
+
+    access_token = _get_access_token()
+    if not access_token:
+        return False
+
+    response = requests.get(
+        _get_base_url() + '/api/1/users',
+        headers={
+            'Authorization': 'bearer:%s' % access_token,
+            'Content-Type': 'application/json',
+        },
+        params={
+            'username': username,
+        },
+    )
+
+    if response.status_code != 200:
+        logger.error('OneLogin api error', 'sso',
+            username=username,
+            status_code=response.status_code,
+            response=response.content,
+        )
+        return False
+
+    users = response.json()['data']
+    if not users:
+        logger.error('OneLogin user not found', 'sso',
+            username=username,
+        )
+        return False
+
+    user = users[0]
+    if user['status'] != 1:
+        logger.error('OneLogin user disabled', 'sso',
+            username=username,
+        )
+        return False
+
+    return True
 
 def auth_onelogin_push(username, strong=False, ipaddr=None,
         type=None, info=None):
