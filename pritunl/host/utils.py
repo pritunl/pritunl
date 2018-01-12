@@ -172,7 +172,7 @@ def init():
 
 def deinit():
     Host.collection.update({
-        '_id': settings.local.host.id,
+        '_id': settings.local.host_id,
     }, {'$set': {
         'status': OFFLINE,
         'ping_timestamp': None,
