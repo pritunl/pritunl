@@ -530,7 +530,8 @@ def settings_put():
 
     if 'sso_onelogin_push' in flask.request.json:
         sso_mode = settings.app.sso
-        if sso_mode and sso_mode in (SAML_OKTA_AUTH, SAML_OKTA_YUBICO_AUTH):
+        if sso_mode and sso_mode in (
+                SAML_ONELOGIN_AUTH, SAML_ONELOGIN_YUBICO_AUTH):
             settings_commit = True
             sso_onelogin_push = flask.request.json['sso_onelogin_push']
             settings.app.sso_onelogin_push = True if \
