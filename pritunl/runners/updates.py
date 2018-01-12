@@ -28,7 +28,7 @@ def _check_updates():
         except:
             logger.exception('Failed to check notifications', 'runners')
 
-        utils.sync_public_ip(update=True)
+        utils.sync_public_ip()
 
         yield interrupter_sleep(settings.app.update_check_rate)
 

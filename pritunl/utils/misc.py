@@ -374,7 +374,7 @@ def fnv64a(s):
         hval = (hval * prime64) % uint64_max
     return hval
 
-def sync_public_ip(attempts=1, timeout=5, update=False):
+def sync_public_ip(attempts=1, timeout=5):
     from pritunl import logger
 
     for i in xrange(attempts):
@@ -402,14 +402,6 @@ def sync_public_ip(attempts=1, timeout=5, update=False):
 
     if not settings.local.public_ip:
         logger.warning('Failed to get public ip address', 'utils')
-
-    if update:
-        settings.local.host.collection.update({
-            '_id': settings.local.host.id,
-        }, {'$set': {
-            'auto_public_address': settings.local.public_ip,
-            'auto_public_address6': settings.local.public_ip6,
-        }})
 
 def ping(address, timeout=1):
     start = time.time()
