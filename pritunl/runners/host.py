@@ -29,6 +29,13 @@ def _keep_alive_thread():
 
     while True:
         try:
+            if settings.local.host.id != settings.local.host_id:
+                logger.error('Host ID mismatch',
+                    'runners',
+                    host=settings.local.host.id,
+                    host_id=settings.local.host_id,
+                )
+
             timestamp = utils.now()
             timestamp -= datetime.timedelta(
                 microseconds=timestamp.microsecond,
@@ -149,7 +156,7 @@ def _keep_alive_thread():
             raise
         except:
             logger.exception('Error in host keep alive update', 'runners',
-                host_id=settings.local.host.id,
+                host_id=settings.local.host_id,
                 host_name=settings.local.host.name,
             )
             time.sleep(0.5)
