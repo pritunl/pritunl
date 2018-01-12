@@ -247,6 +247,10 @@ def setup_mongo():
     upsert_index('tasks', [
         ('ttl_timestamp', pymongo.ASCENDING),
     ], background=True)
+    upsert_index('tasks', [
+        ('ttl_timestamp', pymongo.ASCENDING),
+        ('state', pymongo.ASCENDING),
+    ], background=True)
     upsert_index('log_entries', [
         ('timestamp', pymongo.DESCENDING),
     ], background=True)
