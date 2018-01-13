@@ -1445,7 +1445,7 @@ class Server(mongo.MongoObject):
         self.stop()
         self.start()
 
-    def validate_conf(self, used_resources=None):
+    def validate_conf(self, used_resources=None, allow_online=False):
         from pritunl.server.utils import get_used_resources
 
         if not used_resources:
@@ -1453,7 +1453,7 @@ class Server(mongo.MongoObject):
         network_used = used_resources['networks']
         port_used = used_resources['ports']
 
-        if self.status == ONLINE:
+        if self.status == ONLINE and not allow_online:
             return SERVER_NOT_OFFLINE, SERVER_NOT_OFFLINE_SETTINGS_MSG
 
         hosts = set()
@@ -1471,7 +1471,7 @@ class Server(mongo.MongoObject):
                 return SERVER_LINK_COMMON_ROUTE, SERVER_LINK_COMMON_ROUTE_MSG
             routes.update(routes_set)
 
-            if link_svr.status == ONLINE:
+            if link_svr.status == ONLINE and not allow_online:
                 return SERVER_LINKS_NOT_OFFLINE, \
                     SERVER_LINKS_NOT_OFFLINE_SETTINGS_MSG
 
