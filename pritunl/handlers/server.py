@@ -1001,7 +1001,7 @@ def server_host_put(server_id, host_id):
             'error_msg': SERVER_LINK_COMMON_HOST_MSG,
         }, 400)
 
-    err, err_msg = svr.validate_conf()
+    err, err_msg = svr.validate_conf(allow_online=True)
     if err:
         return utils.jsonify({
             'error': err,
