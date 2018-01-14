@@ -55,45 +55,16 @@ sudo systemctl start mongodb pritunl
 sudo systemctl enable mongodb pritunl
 ```
 
-### amazon linux
+### amazonlinux 1
 
 ```bash
-sudo tee -a /etc/yum.repos.d/mongodb-org-3.4.repo << EOF
-[mongodb-org-3.4]
+sudo tee -a /etc/yum.repos.d/mongodb-org-3.6.repo << EOF
+[mongodb-org-3.6]
 name=MongoDB Repository
-baseurl=https://repo.mongodb.org/yum/amazon/2013.03/mongodb-org/3.4/x86_64/
+baseurl=https://repo.mongodb.org/yum/amazon/2013.03/mongodb-org/3.6/x86_64/
 gpgcheck=1
 enabled=1
-gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc
-EOF
-
-sudo tee -a /etc/yum.repos.d/pritunl.repo << EOF
-[pritunl]
-name=Pritunl Repository
-baseurl=https://repo.pritunl.com/stable/yum/centos/7/
-gpgcheck=1
-enabled=1
-EOF
-
-gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7568D9BB55FF9E5287D586017AE645C0CF8E292A
-gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A > key.tmp; sudo rpm --import key.tmp; rm -f key.tmp
-sudo yum -y install pritunl mongodb-org
-sudo service mongod start
-sudo start pritunl
-```
-
-### centos 7
-
-```bash
-# SELinux must be disabled
-
-sudo tee -a /etc/yum.repos.d/mongodb-org-3.4.repo << EOF
-[mongodb-org-3.4]
-name=MongoDB Repository
-baseurl=https://repo.mongodb.org/yum/redhat/7/mongodb-org/3.4/x86_64/
-gpgcheck=1
-enabled=1
-gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc
+gpgkey=https://www.mongodb.org/static/pgp/server-3.6.asc
 EOF
 
 sudo tee -a /etc/yum.repos.d/pritunl.repo << EOF
@@ -108,6 +79,64 @@ sudo yum -y install epel-release
 gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7568D9BB55FF9E5287D586017AE645C0CF8E292A
 gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A > key.tmp; sudo rpm --import key.tmp; rm -f key.tmp
 sudo yum -y install pritunl mongodb-org
+sudo service mongod start
+sudo start pritunl
+```
+
+### amazonlinux 2
+
+```bash
+sudo tee -a /etc/yum.repos.d/mongodb-org-3.4.repo << EOF
+[mongodb-org-3.6]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/redhat/7/mongodb-org/mongodb-org/3.6/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-3.6.asc
+EOF
+
+sudo tee -a /etc/yum.repos.d/pritunl.repo << EOF
+[pritunl]
+name=Pritunl Repository
+baseurl=https://repo.pritunl.com/stable/yum/centos/7/
+gpgcheck=1
+enabled=1
+EOF
+
+sudo rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A > key.tmp; sudo rpm --import key.tmp; rm -f key.tmp
+sudo yum -y install pritunl mongodb-org
+sudo systemctl start mongod pritunl
+sudo systemctl enable mongod pritunl
+```
+
+### centos 7
+
+```bash
+# SELinux must be disabled
+
+sudo tee -a /etc/yum.repos.d/mongodb-org-3.4.repo << EOF
+[mongodb-org-3.6]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/redhat/7/mongodb-org/mongodb-org/3.6/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-3.6.asc
+EOF
+
+sudo tee -a /etc/yum.repos.d/pritunl.repo << EOF
+[pritunl]
+name=Pritunl Repository
+baseurl=https://repo.pritunl.com/stable/yum/centos/7/
+gpgcheck=1
+enabled=1
+EOF
+
+sudo rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A > key.tmp; sudo rpm --import key.tmp; rm -f key.tmp
+sudo yum -y install pritunl mongodb-org
 sudo systemctl start mongod pritunl
 sudo systemctl enable mongod pritunl
 ```
@@ -115,8 +144,8 @@ sudo systemctl enable mongod pritunl
 ### debian jessie
 
 ```bash
-sudo tee -a /etc/apt/sources.list.d/mongodb-org-3.4.list << EOF
-deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.4 main
+sudo tee -a /etc/apt/sources.list.d/mongodb-org-3.6.list << EOF
+deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
 EOF
 
 sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
@@ -146,59 +175,15 @@ sudo systemctl start mongodb pritunl
 sudo systemctl enable mongodb pritunl
 ```
 
-### fedora 25
-
-```bash
-# SELinux must be disabled
-# Firewalld must be configured or disabled
-
-sudo tee -a /etc/yum.repos.d/pritunl.repo << EOF
-[pritunl]
-name=Pritunl Repository
-baseurl=https://repo.pritunl.com/stable/yum/fedora/25/
-gpgcheck=1
-enabled=1
-EOF
-
-sudo dnf -y install gpg
-gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7568D9BB55FF9E5287D586017AE645C0CF8E292A
-gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A > key.tmp; sudo rpm --import key.tmp; rm -f key.tmp
-sudo dnf -y install pritunl mongodb-server iptables
-sudo systemctl start mongod pritunl
-sudo systemctl enable mongod pritunl
-```
-
-### fedora 26
-
-```bash
-# SELinux must be disabled
-# Firewalld must be configured or disabled
-
-sudo tee -a /etc/yum.repos.d/pritunl.repo << EOF
-[pritunl]
-name=Pritunl Repository
-baseurl=https://repo.pritunl.com/stable/yum/fedora/26/
-gpgcheck=1
-enabled=1
-EOF
-
-sudo dnf -y install gpg
-gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7568D9BB55FF9E5287D586017AE645C0CF8E292A
-gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A > key.tmp; sudo rpm --import key.tmp; rm -f key.tmp
-sudo dnf -y install pritunl mongodb-server iptables
-sudo systemctl start mongod pritunl
-sudo systemctl enable mongod pritunl
-```
-
 ### ubuntu trusty
 
 ```bash
-sudo tee -a /etc/apt/sources.list.d/mongodb-org-3.4.list << EOF
-deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.4 multiverse
+sudo tee -a /etc/apt/sources.list.d/mongodb-org-3.6.list << EOF
+deb https://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.6 multiverse
 EOF
 
 sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
-deb http://repo.pritunl.com/stable/apt trusty main
+deb https://repo.pritunl.com/stable/apt trusty main
 EOF
 
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 0C49F3730359A14518585931BC711F9BA15703C6
@@ -211,12 +196,12 @@ sudo service pritunl start
 ### ubuntu xenial
 
 ```bash
-sudo tee -a /etc/apt/sources.list.d/mongodb-org-3.4.list << EOF
-deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.4 multiverse
+sudo tee -a /etc/apt/sources.list.d/mongodb-org-3.6.list << EOF
+deb https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.6 multiverse
 EOF
 
 sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
-deb http://repo.pritunl.com/stable/apt xenial main
+deb https://repo.pritunl.com/stable/apt xenial main
 EOF
 
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 0C49F3730359A14518585931BC711F9BA15703C6
@@ -231,7 +216,7 @@ sudo systemctl enable pritunl mongod
 
 ```bash
 sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
-deb http://repo.pritunl.com/stable/apt yakkety main
+deb https://repo.pritunl.com/stable/apt yakkety main
 EOF
 
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
@@ -245,7 +230,7 @@ sudo systemctl enable pritunl mongodb
 
 ```bash
 sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
-deb http://repo.pritunl.com/stable/apt zesty main
+deb https://repo.pritunl.com/stable/apt zesty main
 EOF
 
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
@@ -259,7 +244,21 @@ sudo systemctl enable pritunl mongodb
 
 ```bash
 sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
-deb http://repo.pritunl.com/stable/apt artful main
+deb https://repo.pritunl.com/stable/apt artful main
+EOF
+
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+sudo apt-get update
+sudo apt-get --assume-yes install pritunl mongodb-server
+sudo systemctl start pritunl mongodb
+sudo systemctl enable pritunl mongodb
+```
+
+### ubuntu bionic
+
+```bash
+sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
+deb https://repo.pritunl.com/stable/apt bionic main
 EOF
 
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
