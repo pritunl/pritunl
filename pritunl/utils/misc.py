@@ -137,6 +137,11 @@ def set_db_ver(version, version_min=None):
     client = pymongo.MongoClient(settings.conf.mongodb_uri,
         connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
     database = client.get_default_database()
+
+    db_collections = database.collection_names()
+    if 'authorities' in db_collections:
+        raise TypeError('Cannot connect to a Pritunl Zero database')
+
     settings_db = getattr(database, prefix + 'settings')
     doc = settings_db.update({
         '_id': 'version',
