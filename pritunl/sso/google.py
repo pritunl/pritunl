@@ -41,6 +41,6 @@ def verify_google(user_email):
 
     groups = []
     for group in results['groups']:
-        groups.append(group['name'])
+        groups.append(group['name'].replace(' ', ''))
 
     return True, groups
