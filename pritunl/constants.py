@@ -1179,7 +1179,7 @@ max-routes 1000
 remote-cert-tls server
 """
 
-IPSEC_SECRET = '%s %s : PSK "%s'
+IPSEC_SECRET = '%s %s : PSK "%s"'
 
 IPSEC_CONN = """\
 conn %s
