@@ -264,7 +264,6 @@ class Host(mongo.MongoObject):
             return
 
         links = []
-
         locations = self.link.iter_locations(
             self.location.id,
             sort=False,
