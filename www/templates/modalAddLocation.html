@@ -7,7 +7,9 @@
     <label>Link</label>
     <select class="form-control">
       <% _.each(links, function(link) { %>
-      <option value="<%- link.id %>" <%= (lastLink === link.id) ? 'selected' : '' %>><%- link.name %></option>
+        <% if (link.type !== 'direct') { %>
+          <option value="<%- link.id %>" <%= (lastLink === link.id) ? 'selected' : '' %>><%- link.name %></option>
+        <% } %>
       <% }); %>
     </select>
   </div>
