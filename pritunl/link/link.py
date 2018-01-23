@@ -193,6 +193,7 @@ class Host(mongo.MongoObject):
         links = []
         state = {
             'id': self.id,
+            'type': self.location.type,
             'links': links,
         }
         active_host = self.location.get_active_host()
