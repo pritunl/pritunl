@@ -351,6 +351,7 @@ class Host(mongo.MongoObject):
 class Location(mongo.MongoObject):
     fields = {
         'name',
+        'type',
         'link_id',
         'routes',
         'location',
@@ -359,14 +360,17 @@ class Location(mongo.MongoObject):
         'routes': {},
     }
 
-    def __init__(self, link=None, name=None, link_id=None, routes=None,
-            **kwargs):
+    def __init__(self, link=None, name=None, type=None, link_id=None,
+            routes=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         self.link = link
 
         if name is not None:
             self.name = name
+
+        if type is not None:
+            self.type = type
 
         if link_id is not None:
             self.link_id = link_id
@@ -413,7 +417,9 @@ class Location(mongo.MongoObject):
         return {
             'id': self.id,
             'name': self.name,
+            'type': self.type,
             'link_id': self.link_id,
+            'link_type': self.link.type,
             'hosts': hosts,
             'routes': routes,
             'excludes': excludes,
@@ -534,21 +540,26 @@ class Location(mongo.MongoObject):
 class Link(mongo.MongoObject):
     fields = {
         'name',
+        'type',
         'status',
         'key',
         'excludes',
     }
     fields_default = {
+        'type': SITE_TO_SITE,
         'status': OFFLINE,
         'excludes': [],
     }
 
-    def __init__(self, name=None, status=None, timeout=None,
+    def __init__(self, name=None, type=None, status=None, timeout=None,
             key=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         if name is not None:
             self.name = name
+
+        if type is not None:
+            self.type = type
 
         if status is not None:
             self.status = status
@@ -567,6 +578,7 @@ class Link(mongo.MongoObject):
         return {
             'id': self.id,
             'name': self.name,
+            'type': self.type,
             'status': self.status,
         }
 
