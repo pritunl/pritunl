@@ -17,6 +17,7 @@ define([
     },
     onOk: function() {
       var name = this.$('.name input').val();
+      var linkType = this.$('.link-type select').val();
 
       if (!name) {
         this.setAlert('danger', 'Name can not be empty.', '.name');
@@ -26,7 +27,8 @@ define([
       this.setLoading('Adding link...');
       var model = new LinkModel();
       model.save({
-        name: name
+        name: name,
+        type: linkType
       }, {
         success: function() {
           this.close(true);
