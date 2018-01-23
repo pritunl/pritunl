@@ -48,6 +48,7 @@ define([
       var priority = parseInt(this.$('.priority input').val(), 10) || 1;
       var staticHost = this.getStaticSelect();
       var publicAddress = this.$('.public-address input').val();
+      var localAddress = this.$('.local-address input').val();
 
       if (!name) {
         this.setAlert('danger', 'Name can not be empty.', '.name');
@@ -63,7 +64,8 @@ define([
         timeout: timeout,
         priority: priority,
         static: staticHost,
-        public_address: publicAddress
+        public_address: publicAddress,
+        local_address: localAddress
       }, {
         success: function() {
           this.close(true);
