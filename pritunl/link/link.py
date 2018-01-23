@@ -24,6 +24,7 @@ class Host(mongo.MongoObject):
         'ping_timestamp_ttl',
         'static',
         'public_address',
+        'local_address',
         'address6',
         'version',
     }
@@ -36,8 +37,8 @@ class Host(mongo.MongoObject):
     def __init__(self, link=None, location=None, name=None, link_id=None,
             location_id=None, secret=None, status=None, active=None,
             timeout=None, priority=None, ping_timestamp_ttl=None,
-            static=None, public_address=None, address6=None,
-            version=None, tunnels=None, **kwargs):
+            static=None, public_address=None, local_address=None,
+            address6=None, version=None, tunnels=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         self.link = link
@@ -76,6 +77,9 @@ class Host(mongo.MongoObject):
         if public_address is not None:
             self.public_address = public_address
 
+        if local_address is not None:
+            self.local_address = local_address
+
         if address6 is not None:
             self.address6 = address6
 
@@ -110,6 +114,8 @@ class Host(mongo.MongoObject):
             'ping_timestamp_ttl': self.ping_timestamp_ttl,
             'static': bool(self.static),
             'public_address': self.public_address if not \
+                settings.app.demo_mode else utils.random_ip_addr(),
+            'local_address': self.local_address if not \
                 settings.app.demo_mode else utils.random_ip_addr(),
             'address6': self.address6 if not \
                 settings.app.demo_mode else None,
@@ -176,7 +182,7 @@ class Host(mongo.MongoObject):
         self.status = AVAILABLE
         self.ping_timestamp_ttl = utils.now() + datetime.timedelta(
             seconds=self.timeout or settings.vpn.link_timeout)
-        self.commit(('public_address', 'address6', 'version',
+        self.commit(('public_address', 'address6', 'local_address', 'version',
             'status', 'ping_timestamp_ttl'))
 
         if not self.link.key:
