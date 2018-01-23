@@ -41,6 +41,11 @@ PIN_REQUIRED = 'required'
 PIN_OPTIONAL = 'optional'
 PIN_DISABLED = 'disabled'
 
+SITE_TO_SITE = 'site_to_site'
+DIRECT = 'direct'
+DIRECT_SERVER = 'direct_server'
+DIRECT_CLIENT = 'direct_client'
+
 VERY_LOW = 0
 LOW = 1
 NORMAL = 2
