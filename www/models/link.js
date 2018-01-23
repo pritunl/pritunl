@@ -8,6 +8,7 @@ define([
     defaults: {
       'id': null,
       'name': null,
+      'type': null,
       'status': null,
       'locations': null,
       'timeout': null
