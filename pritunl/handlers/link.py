@@ -57,15 +57,39 @@ def link_post():
         return utils.demo_blocked()
 
     name = utils.filter_str(flask.request.json.get('name')) or 'undefined'
+    type = DIRECT if flask.request.json.get('type') == DIRECT \
+        else SITE_TO_SITE
 
     lnk = link.Link(
         name=name,
+        type=type,
         status=ONLINE,
     )
 
     lnk.generate_key()
 
     lnk.commit()
+
+    if lnk.type == DIRECT:
+        try:
+            loc = link.Location(
+                link=lnk,
+                name='server',
+                type=DIRECT_SERVER,
+                link_id=lnk.id,
+            )
+            loc.commit()
+
+            loc = link.Location(
+                link=lnk,
+                name='client',
+                type=DIRECT_CLIENT,
+                link_id=lnk.id,
+            )
+            loc.commit()
+        except:
+            lnk.remove()
+            raise
 
     event.Event(type=LINKS_UPDATED)
 
@@ -155,7 +179,7 @@ def link_location_post(link_id):
         return utils.demo_blocked()
 
     lnk = link.get_by_id(link_id)
-    if not lnk:
+    if not lnk or lnk.type == DIRECT:
         return flask.abort(404)
 
     name = utils.filter_str(flask.request.json.get('name')) or 'undefined'
@@ -182,7 +206,7 @@ def link_location_put(link_id, location_id):
         return utils.demo_blocked()
 
     lnk = link.get_by_id(link_id)
-    if not lnk:
+    if not lnk or lnk.type == DIRECT:
         return flask.abort(404)
 
     loc = lnk.get_location(location_id)
@@ -208,7 +232,7 @@ def link_location_delete(link_id, location_id):
         return utils.demo_blocked()
 
     lnk = link.get_by_id(link_id)
-    if not lnk:
+    if not lnk or lnk.type == DIRECT:
         return flask.abort(404)
 
     loc = lnk.get_location(location_id)
@@ -233,7 +257,7 @@ def link_location_route_post(link_id, location_id):
         return utils.demo_blocked()
 
     lnk = link.get_by_id(link_id)
-    if not lnk:
+    if not lnk or lnk.type == DIRECT:
         return flask.abort(404)
 
     loc = lnk.get_location(location_id)
@@ -268,7 +292,7 @@ def link_location_route_delete(link_id, location_id, network):
         return utils.demo_blocked()
 
     lnk = link.get_by_id(link_id)
-    if not lnk:
+    if not lnk or lnk.type == DIRECT:
         return flask.abort(404)
 
     loc = lnk.get_location(location_id)
@@ -308,6 +332,8 @@ def link_location_host_post(link_id, location_id):
     static = bool(flask.request.json.get('static'))
     public_address = utils.filter_str(
         flask.request.json.get('public_address'))
+    local_address = utils.filter_str(
+        flask.request.json.get('local_address'))
 
     hst = link.Host(
         link=lnk,
@@ -319,6 +345,7 @@ def link_location_host_post(link_id, location_id):
         priority=priority,
         static=static,
         public_address=public_address,
+        local_address=local_address,
     )
 
     hst.generate_secret()
@@ -414,8 +441,11 @@ def link_location_host_put(link_id, location_id, host_id):
     hst.static = bool(flask.request.json.get('static'))
     hst.public_address = utils.filter_str(
         flask.request.json.get('public_address'))
+    hst.local_address = utils.filter_str(
+        flask.request.json.get('local_address'))
 
-    hst.commit(('name', 'timeout', 'priority', 'static', 'public_address'))
+    hst.commit(('name', 'timeout', 'priority', 'static',
+        'public_address', 'local_address'))
 
     event.Event(type=LINKS_UPDATED)
 
@@ -462,7 +492,7 @@ def link_location_exclude_post(link_id, location_id):
         return utils.demo_blocked()
 
     lnk = link.get_by_id(link_id)
-    if not lnk:
+    if not lnk or lnk.type == DIRECT:
         return flask.abort(404)
 
     loc = lnk.get_location(location_id)
@@ -492,7 +522,7 @@ def link_location_exclude_delete(link_id, location_id, exclude_id):
         return utils.demo_blocked()
 
     lnk = link.get_by_id(link_id)
-    if not lnk:
+    if not lnk or lnk.type == DIRECT:
         return flask.abort(404)
 
     loc = lnk.get_location(location_id)
@@ -564,6 +594,7 @@ def link_state_put():
 
     host.version = flask.request.json.get('version')
     host.public_address = flask.request.json.get('public_address')
+    host.local_address = flask.request.json.get('local_address')
     host.address6 = flask.request.json.get('address6')
 
     data = json.dumps(host.get_state(), default=lambda x: str(x))
