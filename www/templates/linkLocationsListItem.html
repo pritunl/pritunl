@@ -1,12 +1,14 @@
 <div class="link-location-header">
-  <h2 class="link-location-title title"><a class="location-settings no-select" data-toggle="tooltip" title="Click to open link settings"><%- name %></a><span class="location-id title">(<%- id %>)</span></h2>
-  <button type="button" class="location-del btn btn-danger btn-xs no-select">Delete Location</button>
-  <button type="button" class="location-add-exclude btn btn-primary btn-xs no-select">Add Exclude</button>
+  <h2 class="link-location-title title" <%= link_type === 'direct' ? 'style="display: none"' : '' %>><a class="location-settings no-select" data-toggle="tooltip" title="Click to open link settings"><%- name %></a><span class="location-id title">(<%- id %>)</span></h2>
+  <h2 class="link-location-title title" <%= link_type === 'direct' ? '' : 'style="display: none"' %>><%- name %><span class="location-id title">(<%- id %>)</span></h2>
+
+  <button type="button" class="location-del btn btn-danger btn-xs no-select" <%= link_type === 'direct' ? 'style="display: none"' : '' %>>Delete Location</button>
+  <button type="button" class="location-add-exclude btn btn-primary btn-xs no-select" <%= link_type === 'direct' ? 'style="display: none"' : '' %>>Add Exclude</button>
   <button type="button" class="location-add-host btn btn-primary btn-xs no-select">Add Host</button>
-  <button type="button" class="location-add-route btn btn-primary btn-xs no-select">Add Route</button>
+  <button type="button" class="location-add-route btn btn-primary btn-xs no-select" <%= link_type === 'direct' ? 'style="display: none"' : '' %>>Add Route</button>
 </div>
 <div class="link-routes">
-  <% if (routes.length === 0) { %>
+  <% if (routes.length === 0 && link_type !== 'direct') { %>
     <div class="no-routes">
       There are no routes on this location.
     </div>
