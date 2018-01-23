@@ -206,25 +206,48 @@ class Host(mongo.MongoObject):
                 exclude_id=self.location.id,
             )
 
-            for location in locations:
-                active_host = location.get_active_host()
-                if not active_host:
-                    continue
+            if self.link.type == DIRECT:
+                other_location = None
 
-                left_subnets = []
-                for route in self.location.routes.values():
-                    left_subnets.append(route['network'])
+                for location in locations:
+                    if location.type != self.location.type:
+                        other_location = location
 
-                right_subnets = []
-                for route in location.routes.values():
-                    right_subnets.append(route['network'])
+                active_host = other_location.get_active_host()
+                if active_host:
+                    if self.location.type == DIRECT_SERVER:
+                        left_subnets = ['0.0.0.0/0']
+                        right_subnets = ['%s/32' % active_host.local_address]
+                    else:
+                        left_subnets = ['%s/32' % self.local_address]
+                        right_subnets = ['0.0.0.0/0']
 
-                links.append({
-                    'pre_shared_key': self.link.key,
-                    'right': active_host.public_address,
-                    'left_subnets': left_subnets,
-                    'right_subnets': right_subnets,
-                })
+                    links.append({
+                        'pre_shared_key': self.link.key,
+                        'right': active_host.public_address,
+                        'left_subnets': left_subnets,
+                        'right_subnets': right_subnets,
+                    })
+            else:
+                for location in locations:
+                    active_host = location.get_active_host()
+                    if not active_host:
+                        continue
+
+                    left_subnets = []
+                    for route in self.location.routes.values():
+                        left_subnets.append(route['network'])
+
+                    right_subnets = []
+                    for route in location.routes.values():
+                        right_subnets.append(route['network'])
+
+                    links.append({
+                        'pre_shared_key': self.link.key,
+                        'right': active_host.public_address,
+                        'left_subnets': left_subnets,
+                        'right_subnets': right_subnets,
+                    })
 
         state['hash'] = hashlib.md5(json.dumps(
             state,
@@ -248,30 +271,58 @@ class Host(mongo.MongoObject):
             exclude_id=self.location.id,
         )
 
-        for location in locations:
-            active_host = location.get_active_host()
+        if self.link.type == DIRECT:
+            other_location = None
+
+            for location in locations:
+                if location.type != self.location.type:
+                    other_location = location
+
+            active_host = other_location.get_active_host()
             if not active_host:
-                for host in location.iter_hosts():
+                for host in other_location.iter_hosts():
                     active_host = host
                     break
 
-            if not active_host:
-                continue
+            if active_host:
+                if self.location.type == DIRECT_SERVER:
+                    left_subnets = ['0.0.0.0/0']
+                    right_subnets = ['%s/32' % active_host.local_address]
+                else:
+                    left_subnets = ['%s/32' % self.local_address]
+                    right_subnets = ['0.0.0.0/0']
 
-            left_subnets = []
-            for route in self.location.routes.values():
-                left_subnets.append(route['network'])
+                links.append({
+                    'pre_shared_key': self.link.key,
+                    'right': active_host.public_address,
+                    'left_subnets': left_subnets,
+                    'right_subnets': right_subnets,
+                })
+        else:
+            for location in locations:
+                active_host = location.get_active_host()
+                if not active_host:
+                    for host in location.iter_hosts():
+                        active_host = host
+                        break
 
-            right_subnets = []
-            for route in location.routes.values():
-                right_subnets.append(route['network'])
+                if not active_host:
+                    continue
 
-            links.append({
-                'pre_shared_key': self.link.key,
-                'right': active_host.public_address,
-                'left_subnets': left_subnets,
-                'right_subnets': right_subnets,
-            })
+                left_subnets = []
+                for route in self.location.routes.values():
+                    left_subnets.append(route['network'])
+
+                right_subnets = []
+                for route in location.routes.values():
+                    right_subnets.append(route['network'])
+
+                links.append({
+                    'pre_shared_key': self.link.key,
+                    'right': active_host.public_address,
+                    'left_subnets': left_subnets,
+                    'right_subnets': right_subnets,
+                })
 
         return links
 
