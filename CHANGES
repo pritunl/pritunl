@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Add direct IPsec links
 Support attaching host to running servers
 
 Version 1.28.1583.74 2018-01-12
