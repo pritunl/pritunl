@@ -216,11 +216,11 @@ class Host(mongo.MongoObject):
                 active_host = other_location.get_active_host()
                 if active_host:
                     if self.location.type == DIRECT_SERVER:
-                        left_subnets = ['0.0.0.0/0']
+                        left_subnets = ['%s/32' % self.local_address]
                         right_subnets = ['%s/32' % active_host.local_address]
                     else:
                         left_subnets = ['%s/32' % self.local_address]
-                        right_subnets = ['0.0.0.0/0']
+                        right_subnets = ['%s/32' % active_host.local_address]
 
                     links.append({
                         'pre_shared_key': self.link.key,
@@ -285,11 +285,11 @@ class Host(mongo.MongoObject):
 
             if active_host:
                 if self.location.type == DIRECT_SERVER:
-                    left_subnets = ['0.0.0.0/0']
+                    left_subnets = ['%s/32' % self.local_address]
                     right_subnets = ['%s/32' % active_host.local_address]
                 else:
                     left_subnets = ['%s/32' % self.local_address]
-                    right_subnets = ['0.0.0.0/0']
+                    right_subnets = ['%s/32' % active_host.local_address]
 
                 links.append({
                     'pre_shared_key': self.link.key,
