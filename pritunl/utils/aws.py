@@ -219,8 +219,6 @@ def set_zone_record(region, zone_name, host_name, ip_addr, ip_addr6):
 
     cur_ip_addr = None
     cur_ip_addr6 = None
-    zone_host_name = None
-    zone_host_name6 = None
 
     for record in records['ResourceRecordSets']:
         if record.get('Type') not in ('A', 'AAAA'):
