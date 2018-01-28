@@ -787,6 +787,7 @@ def sso_callback_get():
     if doc.get('type') == SAML_AUTH:
         username = params.get('username')[0]
         email = params.get('email', [None])[0]
+        groups = set(params.get('groups') or [])
         org_name = params.get('org', [None])[0]
 
         if not username:
@@ -798,7 +799,7 @@ def sso_callback_get():
             if org:
                 org_id = org.id
 
-        valid, org_id_new, groups = sso.plugin_sso_authenticate(
+        valid, org_id_new, groups2 = sso.plugin_sso_authenticate(
             sso_type='saml',
             user_name=username,
             user_email=email,
@@ -812,6 +813,8 @@ def sso_callback_get():
                 username=username,
             )
             return flask.abort(401)
+
+        groups = groups | set(groups2 or [])
     elif doc.get('type') == SLACK_AUTH:
         username = params.get('username')[0]
         email = None
