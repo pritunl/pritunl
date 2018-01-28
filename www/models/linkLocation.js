@@ -8,6 +8,7 @@ define([
     defaults: {
       'id': null,
       'link_id': null,
+      'link_type': null,
       'name': null,
       'status': null,
       'location': null,
