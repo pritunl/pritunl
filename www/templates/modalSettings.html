@@ -97,7 +97,7 @@
       <label>Yubico Client ID</label>
       <input type="text" class="form-control" placeholder="Enter client ID" value="<%- sso_yubico_client || '' %>">
     </div>
-    <div class="sso-client-cache toggle-form form-group" data-toggle="tooltip" title="Enable a two day single sign-on authentication cache using a token stored on the client. This will allow clients to reconnect without two-factor authentication. Works with Duo push, Okta push, Duo passcodes and YubiKeys. Only supported by Pritunl client" <%= sso ? '' : 'style="display: none;"' %>>
+    <div class="sso-client-cache toggle-form form-group" data-toggle="tooltip" title="Enable a two day single sign-on authentication cache using a token stored on the client. This will allow clients to reconnect without two-factor authentication. Works with Duo push, Okta push, OneLogin push, Duo passcodes and YubiKeys. Only supported by Pritunl client" <%= sso ? '' : 'style="display: none;"' %>>
       <label>Enable Authentication Cache</label>
       <div class="selector <%= sso_client_cache ? 'selected' : '' %> no-select">
         <span class="selector-inner glyphicon glyphicon-ok"></span>
