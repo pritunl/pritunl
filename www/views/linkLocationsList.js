@@ -20,7 +20,7 @@ define([
       });
       this.link = options.link;
       this.listenTo(window.events, 'links_updated', this.update);
-      this.interval = setInterval((this.update).bind(this), 1000);
+      this.interval = setInterval((this.update).bind(this), 2000);
       LinkLocationsListView.__super__.initialize.call(this);
     },
     deinitialize: function() {
