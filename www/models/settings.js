@@ -32,6 +32,7 @@ define([
       'sso_okta_app_id': null,
       'sso_okta_token': null,
       'sso_okta_push': null,
+      'sso_onelogin_app_id': null,
       'sso_onelogin_id': null,
       'sso_onelogin_secret': null,
       'sso_onelogin_push': null,
