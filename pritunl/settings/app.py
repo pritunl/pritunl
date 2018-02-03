@@ -48,6 +48,7 @@ class SettingsApp(SettingsGroupMongo):
         'long_url_length': 16,
         'license': None,
         'license_plan': None,
+        'dedicated': None,
         'http_request_timeout': 15,
         'request_queue_size': 10,
         'request_thread_count': 50,
