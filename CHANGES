@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add dedicated support
+
 Version 1.29.1596.36 2018-01-25
 -------------------------------
 
