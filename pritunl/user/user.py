@@ -294,13 +294,16 @@ class User(mongo.MongoObject):
 
     def sso_auth_check(self, password, remote_ip):
         sso_mode = settings.app.sso or ''
+        auth_server = AUTH_SERVER
+        if settings.app.dedicated:
+            auth_server = settings.app.dedicated
 
         if GOOGLE_AUTH in self.auth_type and GOOGLE_AUTH in sso_mode:
             if settings.user.skip_remote_sso_check:
                 return True
 
             try:
-                resp = requests.get(AUTH_SERVER +
+                resp = requests.get(auth_server +
                     '/update/google?user=%s&license=%s' % (
                         urllib.quote(self.email),
                         settings.app.license,
@@ -321,7 +324,7 @@ class User(mongo.MongoObject):
                 raise TypeError('Invalid sso match')
 
             try:
-                resp = requests.get(AUTH_SERVER +
+                resp = requests.get(auth_server +
                     '/update/slack?user=%s&team=%s&license=%s' % (
                         urllib.quote(self.name),
                         urllib.quote(settings.app.sso_match[0]),

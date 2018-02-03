@@ -383,12 +383,15 @@ def sync_public_ip(attempts=1, timeout=5):
     from pritunl import logger
 
     for i in xrange(attempts):
+        url = settings.app.public_ip_server
+        if settings.app.dedicated:
+            url = settings.app.dedicated + '/ip'
+
         if i:
             time.sleep(3)
             logger.info('Retrying get public ip address', 'utils')
         try:
-            request = urllib2.Request(
-                settings.app.public_ip_server)
+            request = urllib2.Request(url)
             request.add_header('User-Agent', 'pritunl')
             response = urllib2.urlopen(request, timeout=timeout)
             settings.local.public_ip = str(json.load(response)['ip'])
@@ -396,17 +399,18 @@ def sync_public_ip(attempts=1, timeout=5):
         except:
             pass
 
-    try:
-        request = urllib2.Request(
-            settings.app.public_ip6_server)
-        request.add_header('User-Agent', 'pritunl')
-        response = urllib2.urlopen(request, timeout=timeout)
-        settings.local.public_ip6 = str(json.load(response)['ip'])
-    except:
-        pass
+    if not settings.app.dedicated:
+        try:
+            request = urllib2.Request(
+                settings.app.public_ip6_server)
+            request.add_header('User-Agent', 'pritunl')
+            response = urllib2.urlopen(request, timeout=timeout)
+            settings.local.public_ip6 = str(json.load(response)['ip'])
+        except:
+            pass
 
-    if not settings.local.public_ip:
-        logger.warning('Failed to get public ip address', 'utils')
+        if not settings.local.public_ip:
+            logger.warning('Failed to get public ip address', 'utils')
 
 def ping(address, timeout=1):
     start = time.time()

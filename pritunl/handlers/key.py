@@ -632,13 +632,16 @@ def sso_request_get():
     state = utils.rand_str(64)
     secret = utils.rand_str(64)
     callback = utils.get_url_root() + '/sso/callback'
+    auth_server = AUTH_SERVER
+    if settings.app.dedicated:
+        auth_server = settings.app.dedicated
 
     if not settings.local.sub_active:
         logger.error('Subscription must be active for sso', 'sso')
         return flask.abort(405)
 
     if GOOGLE_AUTH in sso_mode:
-        resp = requests.post(AUTH_SERVER + '/v1/request/google',
+        resp = requests.post(auth_server + '/v1/request/google',
             headers={
                 'Content-Type': 'application/json',
             },
@@ -674,7 +677,7 @@ def sso_request_get():
         return utils.redirect(data['url'])
 
     elif SLACK_AUTH in sso_mode:
-        resp = requests.post(AUTH_SERVER + '/v1/request/slack',
+        resp = requests.post(auth_server + '/v1/request/slack',
             headers={
                 'Content-Type': 'application/json',
             },
@@ -710,7 +713,7 @@ def sso_request_get():
         return utils.redirect(data['url'])
 
     elif SAML_AUTH in sso_mode:
-        resp = requests.post(AUTH_SERVER + '/v1/request/saml',
+        resp = requests.post(auth_server + '/v1/request/saml',
             headers={
                 'Content-Type': 'application/json',
             },
