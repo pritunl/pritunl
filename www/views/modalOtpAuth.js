@@ -34,7 +34,9 @@ define([
       if (model) {
         this.$('.generate-new-key').removeAttr('disabled');
         this.clearLoading();
-        this.setAlert('success', 'Successfully generated new key.');
+        if (this.$('input').val() !== this.model.get('otp_secret')) {
+          this.setAlert('success', 'Successfully generated new key.');
+        }
       }
       this.$('input').val(this.model.get('otp_secret'));
 
