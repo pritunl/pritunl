@@ -14,8 +14,7 @@ information can be found at the home page [pritunl.com](https://pritunl.com)
 ```bash
 export VERSION=X.XX.XX.XX # Set current pritunl version here
 
-wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-rpm -i epel-release-latest-7.noarch.rpm
+sudo rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 yum -y install golang git bzr python2 python-pip net-tools openvpn bridge-utils mongodb-server
 
 echo "export GOPATH=/go" >> ~/.bash_profile
