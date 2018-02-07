@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Improve host settings
 Add dedicated support
 
 Version 1.29.1596.36 2018-01-25
