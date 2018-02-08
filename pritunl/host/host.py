@@ -112,6 +112,7 @@ class Host(mongo.MongoObject):
             'public_addr6': self.public_addr6,
             'public_address6': self.public_address6,
             'routed_subnet6': self.routed_subnet6,
+            'link_addr': self.link_addr,
             'link_address': self.link_address,
             'sync_address': self.sync_address,
             'local_address': self.local_address,
