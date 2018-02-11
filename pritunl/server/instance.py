@@ -574,9 +574,14 @@ class ServerInstance(object):
                         interface = default_interface
                 interfaces.add(interface)
 
+            nat = route['nat']
+            if network == '::/0' and self.server.ipv6 and \
+                    settings.local.host.routed_subnet6:
+                nat = False
+
             self.iptables.add_route(
                 network,
-                nat=route['nat'],
+                nat=nat,
                 nat_interface=interface,
             )
 
