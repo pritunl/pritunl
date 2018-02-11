@@ -849,6 +849,8 @@ class Iptables(object):
                         '-o', all_interface,
                         '-j', 'MASQUERADE',
                     ])
+
+        if self._accept_all and all_interface6:
             for nat_network in self._nat_networks6:
                 if settings.vpn.lib_iptables and LIB_IPTABLES:
                     rule = self._init_rule6()
