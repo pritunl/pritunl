@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.29.1614.10 2018-02-12
+-------------------------------
 
 Add proxy NDP support
 
