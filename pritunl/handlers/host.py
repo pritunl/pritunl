@@ -101,6 +101,10 @@ def host_put(hst=None):
                 }, 400)
             hst.routed_subnet6 = routed_subnet6
 
+    if 'proxy_ndp' in flask.request.json:
+        proxy_ndp = True if flask.request.json['proxy_ndp'] else False
+        hst.proxy_ndp = proxy_ndp
+
     if 'local_address' in flask.request.json:
         local_address = utils.filter_str(
             flask.request.json['local_address'])
