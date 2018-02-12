@@ -1208,6 +1208,19 @@ conn %s
 
 """
 
+NDPPD_CONF = """\
+route-ttl 20000
+address-ttl 20000
+proxy %s {
+  router yes
+  timeout 1000
+  ttl 30000
+  rule %s {
+    static
+  }
+}
+"""
+
 KEY_LINK_EMAIL_TEXT = """\
 Your vpn profile can be downloaded from the temporary link below. You may also directly import your profiles in the Pritunl client using the temporary URI link.
 
