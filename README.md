@@ -15,7 +15,7 @@ information can be found at the home page [pritunl.com](https://pritunl.com)
 export VERSION=X.XX.XX.XX # Set current pritunl version here
 
 sudo rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-yum -y install golang git bzr python2 python-pip net-tools openvpn bridge-utils mongodb-server
+sudo yum -y install golang git bzr python2 python-devel python-pip net-tools openvpn bridge-utils psmisc
 
 echo "export GOPATH=/go" >> ~/.bash_profile
 source ~/.bash_profile
@@ -29,11 +29,11 @@ tar xf $VERSION.tar.gz
 cd pritunl-$VERSION
 python2 setup.py build
 pip install -r requirements.txt
-python2 setup.py install
+sudo python2 setup.py install
 
-systemctl daemon-reload
-systemctl start mongod pritunl
-systemctl enable mongod pritunl
+sudo systemctl daemon-reload
+sudo systemctl start mongod pritunl
+sudo systemctl enable mongod pritunl
 ```
 
 ## Package Repository
@@ -113,8 +113,6 @@ sudo systemctl enable mongod pritunl
 ### centos 7
 
 ```bash
-# SELinux must be disabled
-
 sudo tee -a /etc/yum.repos.d/mongodb-org-3.4.repo << EOF
 [mongodb-org-3.6]
 name=MongoDB Repository
