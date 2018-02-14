@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve IPv6 support
+
 Version 1.29.1614.10 2018-02-12
 -------------------------------
 
