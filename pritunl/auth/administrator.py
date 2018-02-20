@@ -277,6 +277,16 @@ class Administrator(mongo.MongoObject):
             message=event_msg,
         )
 
+        logger.info(
+            'Administrator audit event',
+            'audit',
+            user_id=self.id,
+            timestamp=timestamp,
+            type=event_type,
+            remote_addr=remote_addr,
+            message=event_msg,
+        )
+
     def get_audit_events(self):
         if settings.app.demo_mode:
             return DEMO_ADMIN_AUDIT_EVENTS

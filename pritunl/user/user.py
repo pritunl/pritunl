@@ -950,6 +950,17 @@ class User(mongo.MongoObject):
             message=event_msg,
         )
 
+        logger.info(
+            'Audit event',
+            'audit',
+            user_id=self.id,
+            org_id=self.org_id,
+            timestamp=timestamp,
+            type=event_type,
+            remote_addr=remote_addr,
+            message=event_msg,
+        )
+
     def get_audit_events(self):
         if settings.app.demo_mode:
             return DEMO_AUDIT_EVENTS
