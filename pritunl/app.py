@@ -134,11 +134,12 @@ def _run_server(restart):
     redirect_server = 'true' if settings.app.redirect_server else 'false'
     internal_addr = 'localhost:%s' % settings.app.server_internal_port
 
-    if settings.app.server_ssl:
-        app.config.update(
-            SESSION_COOKIE_SECURE=True,
-        )
+    app.config.update(
+        SESSION_COOKIE_HTTPONLY=True,
+        SESSION_COOKIE_SECURE=True,
+    )
 
+    if settings.app.server_ssl:
         setup_server_cert()
 
         server_cert_path, server_key_path = utils.write_server_cert(
