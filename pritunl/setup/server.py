@@ -197,11 +197,6 @@ def server_thread():
     )
     server.server_name = ''
 
-    server.config.update(
-        SESSION_COOKIE_HTTPONLY=True,
-        SESSION_COOKIE_SECURE=True,
-    )
-
     if settings.conf.ssl:
         server_cert_path, server_key_path = upgrade.setup_cert()
     else:
