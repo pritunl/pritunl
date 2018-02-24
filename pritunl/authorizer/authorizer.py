@@ -218,8 +218,28 @@ class Authorizer(object):
                     'User platform %s not allowed' % self.platform)
 
     def _check_password(self):
-        if self.user.bypass_secondary or self.user.link_server_id or \
-                settings.vpn.stress_test or self.has_token or self.whitelisted:
+        if settings.vpn.stress_test:
+            return
+
+        if self.user.bypass_secondary:
+            logger.info(
+                'Bypass secondary enabled, skipping password', 'sso',
+                username=self.user.name,
+            )
+            return
+
+        if self.has_token:
+            logger.info(
+                'Client authentication cached, skipping password', 'sso',
+                username=self.user.name,
+            )
+            return
+
+        if self.whitelisted:
+            logger.info(
+                'Client network whitelisted, skipping password', 'sso',
+                username=self.user.name,
+            )
             return
 
         doc = self.limiter_collection.find_and_modify({
