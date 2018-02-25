@@ -476,9 +476,7 @@ class User(mongo.MongoObject):
         return password_mode
 
     def _get_token_mode(self):
-        return bool(settings.app.sso_client_cache and (
-            self.has_yubikey or self.has_duo_passcode or
-            self.get_push_type()))
+        return bool(settings.app.sso_client_cache)
 
     def has_passcode(self, svr):
         return bool(self.has_yubikey or self.has_duo_passcode or svr.otp_auth)
