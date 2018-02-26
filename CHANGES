@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add support for Google two-factor authentication cache
+Remove lzo support
 
 Version 1.29.1625.53 2018-02-23
 -------------------------------
