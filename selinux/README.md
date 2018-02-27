@@ -3,7 +3,7 @@
 ### setup
 
 ```bash
-yum -y install policycoreutils-newrole policycoreutils-seinfo setools-console
+yum -y install policycoreutils-python selinux-policy selinux-policy-devel policycoreutils-newrole policycoreutils-seinfo setools-console
 yum -y install pritunl
 semodule --disable_dontaudit --build
 ```
