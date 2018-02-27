@@ -38,6 +38,12 @@ restorecon -v /usr/lib/pritunl/bin/python2
 restorecon -v /usr/lib/pritunl/bin/python2.7
 ```
 
+### clear audit log
+
+```bash
+> /var/log/audit/audit.log
+```
+
 ### run pritunl
 
 ```bash
