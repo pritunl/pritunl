@@ -91,7 +91,7 @@ def after_request(response):
 
     response.headers.add('X-Frame-Options', 'DENY')
 
-    if settings.app.server_ssl:
+    if settings.app.server_ssl or settings.app.reverse_proxy:
         response.headers.add('Strict-Transport-Security', 'max-age=31536000')
 
     if not flask.request.path.startswith('/event'):
