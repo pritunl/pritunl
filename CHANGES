@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add lzo support
+
 Version 1.29.1630.26 2018-02-28
 -------------------------------
 
