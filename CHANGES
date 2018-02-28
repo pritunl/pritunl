@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix setup issue
+
 Version 1.29.1630.5 2018-02-28
 ------------------------------
 
