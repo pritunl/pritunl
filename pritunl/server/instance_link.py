@@ -56,6 +56,9 @@ class ServerInstanceLink(object):
             settings.app.host_ping_ttl,
         )
 
+        if self.linked_server.lzo_compression != ADAPTIVE:
+            client_conf += 'comp-lzo no\n'
+
         if self.server.debug:
             self.server.output_link.push_message(
                 'Server conf:',

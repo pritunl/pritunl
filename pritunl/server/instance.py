@@ -292,6 +292,15 @@ class ServerInstance(object):
         if self.server.protocol == 'udp':
             server_conf += 'replay-window 128\n'
 
+        # Pritunl v0.10.x did not include comp-lzo in client conf
+        # if lzo_compression is adaptive dont include comp-lzo in server conf
+        if self.server.lzo_compression == ADAPTIVE:
+            pass
+        elif self.server.lzo_compression:
+            server_conf += 'comp-lzo yes\npush "comp-lzo yes"\n'
+        else:
+            server_conf += 'comp-lzo no\npush "comp-lzo no"\n'
+
         server_conf += JUMBO_FRAMES[self.server.jumbo_frames]
 
         if push:
