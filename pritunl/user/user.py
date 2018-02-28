@@ -572,7 +572,7 @@ class User(mongo.MongoObject):
             svr.ping_timeout,
         )
 
-        if svr.lzo_compression:
+        if svr.lzo_compression != ADAPTIVE:
             client_conf += 'comp-lzo no\n'
 
         if svr.block_outside_dns:
