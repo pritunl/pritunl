@@ -82,8 +82,6 @@ require {
 type pritunl_t;
 type pritunl_tmp_t;
 
-#permissive pritunl_t;
-
 type pritunl_var_lib_t;
 files_type(pritunl_var_lib_t)
 
