@@ -3,9 +3,9 @@
 ### setup
 
 ```bash
-yum -y install policycoreutils-python selinux-policy selinux-policy-devel policycoreutils-newrole policycoreutils-seinfo setools-console
-yum -y install pritunl
-semodule --disable_dontaudit --build
+sudo yum -y install policycoreutils-python selinux-policy selinux-policy-devel policycoreutils-newrole policycoreutils-seinfo setools-console
+sudo yum -y install pritunl
+sudo semodule --disable_dontaudit --build
 ```
 
 ### load module
@@ -16,26 +16,21 @@ ln -s /usr/share/selinux/devel/Makefile
 make load
 ```
 
-### load web module
-
-```bash
-cd selinux-web
-ln -s /usr/share/selinux/devel/Makefile
-make load
-```
-
 ### reset file contexts
 
 ```bash
-rm -rf /var/lib/pritunl
-rm -rf /tmp/pritunl*
-rm -rf /run/pritunl.
-restorecon -v /etc/systemd/system/pritunl.service
-restorecon -v /usr/lib/systemd/system/pritunl.service
-restorecon -v /usr/lib/pritunl/bin/pritunl
-restorecon -v /usr/lib/pritunl/bin/python
-restorecon -v /usr/lib/pritunl/bin/python2
-restorecon -v /usr/lib/pritunl/bin/python2.7
+sudo restorecon -v -R /tmp/pritunl*
+sudo restorecon -v -R /run/pritunl*
+sudo restorecon -v /etc/systemd/system/pritunl.service
+sudo restorecon -v /usr/lib/systemd/system/pritunl.service
+sudo restorecon -v /usr/lib/pritunl/bin/pritunl
+sudo restorecon -v /usr/lib/pritunl/bin/python
+sudo restorecon -v /usr/lib/pritunl/bin/python2
+sudo restorecon -v /usr/lib/pritunl/bin/python2.7
+sudo restorecon -v /usr/bin/pritunl-web
+sudo restorecon -v /usr/bin/pritunl-dns
+sudo restorecon -v -R /var/lib/pritunl
+sudo restorecon -v /var/log/pritunl*
 ```
 
 ### clear audit log
@@ -47,14 +42,14 @@ restorecon -v /usr/lib/pritunl/bin/python2.7
 ### run pritunl
 
 ```bash
-systemctl start pritunl
+sudo systemctl start pritunl
 ```
 
 ### view logs
 
 ```bash
-journalctl --follow _SYSTEMD_UNIT=pritunl.service
-tail -f /var/log/audit/audit.log | grep type=AVC
+sudo journalctl --follow _SYSTEMD_UNIT=pritunl.service
+sudo tail -f /var/log/audit/audit.log | grep pritunl
 ```
 
 ### audit2allow
