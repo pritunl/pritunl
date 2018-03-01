@@ -14,8 +14,11 @@ import base64
 import hmac
 import hashlib
 import json
-import Crypto.Random
-import Crypto.Cipher.AES
+import os
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.ciphers import (
+    Cipher, algorithms, modes
+)
 
 @app.app.route('/link', methods=['GET'])
 @auth.session_auth
@@ -600,15 +603,15 @@ def link_state_put():
     data = json.dumps(host.get_state(), default=lambda x: str(x))
     data += (16 - len(data) % 16) * '\x00'
 
-    iv = Crypto.Random.new().read(16)
+    iv = os.urandom(16)
     key = hashlib.sha256(host.secret).digest()
-    cipher = Crypto.Cipher.AES.new(
-        key,
-        Crypto.Cipher.AES.MODE_CBC,
-        iv,
-    )
+    cipher = Cipher(
+        algorithms.AES(key),
+        modes.CBC(iv),
+        backend=default_backend()
+    ).encryptor()
+    enc_data = base64.b64encode(cipher.update(data) + cipher.finalize())
 
-    enc_data = base64.b64encode(cipher.encrypt(data))
     enc_signature = base64.b64encode(hmac.new(
         host.secret.encode(), enc_data,
         hashlib.sha512).digest())
