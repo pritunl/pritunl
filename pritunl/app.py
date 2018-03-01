@@ -116,7 +116,14 @@ def acme_token_get(token):
 def _run_server(restart):
     global app_server
 
-    logger.info('Starting server', 'app')
+    try:
+        context = subprocess.check_output(['id', '-Z']).strip()
+    except:
+        context = 'none'
+
+    logger.info('Starting server', 'app',
+        context=context,
+    )
 
     app_server = cheroot.wsgi.Server(
         ('localhost', settings.app.server_internal_port),
