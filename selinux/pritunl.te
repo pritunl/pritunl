@@ -9,25 +9,29 @@ require {
 
   type pritunl_web_t;
   type pritunl_web_exec_t;
+  type pritunl_dns_t;
+  type pritunl_dns_exec_t;
   type etc_t;
 
   type NetworkManager_t;
   type auditd_t;
+  type apmd_t;
   type bin_t;
   type cert_t;
   type chkpwd_t;
   type chronyd_t;
   type crond_t;
   type dhcpc_t;
-  type dns_port_t;
   type firewalld_t;
   type fs_t;
   type getty_t;
+  type gssproxy_t;
   type hostname_t;
   type http_port_t;
   type ifconfig_exec_t;
   type init_t;
   type initrc_t;
+  type init_var_lib_t;
   type insmod_exec_t;
   type iptables_exec_t;
   type iptables_var_run_t;
@@ -48,17 +52,17 @@ require {
   type postfix_master_t;
   type postfix_pickup_t;
   type postfix_qmgr_t;
-  type pritunl_tmp_t;
-  type pritunl_web_t;
   type proc_net_t;
   type proc_t;
   type rhnsd_t;
+  type rpm_t;
   type shell_exec_t;
   type sshd_t;
   type sshd_net_t;
   type sysctl_net_t;
   type sysfs_t;
   type syslogd_t;
+  type system_cronjob_t;
   type system_dbusd_t;
   type systemd_hostnamed_t;
   type systemd_logind_t;
@@ -97,9 +101,11 @@ inetd_service_domain(pritunl_t, pritunl_exec_t)
 
 type_transition init_t pritunl_exec_t:process pritunl_t;
 
-allow pritunl_t pritunl_web_t:process { transition noatsecure rlimitinh siginh };
+allow pritunl_t pritunl_web_t:process { transition noatsecure rlimitinh siginh sigkill signal };
 allow pritunl_t pritunl_web_exec_t:file { execute open read };
-allow pritunl_t pritunl_web_t:process sigkill;
+
+allow pritunl_t pritunl_dns_t:process { transition noatsecure rlimitinh siginh sigkill signal };
+allow pritunl_t pritunl_dns_exec_t:file { execute open read };
 
 allow pritunl_t self:fifo_file rw_fifo_file_perms;
 allow pritunl_t self:unix_stream_socket { create_stream_socket_perms connectto };
@@ -117,6 +123,8 @@ allow pritunl_t etc_t:file write;
 #################################
 # var_lib
 #################################
+type_transition pritunl_t init_var_lib_t:file pritunl_var_lib_t;
+
 files_var_lib_filetrans(pritunl_t, pritunl_var_lib_t, { dir file lnk_file })
 manage_dirs_pattern(pritunl_t, pritunl_var_lib_t, pritunl_var_lib_t)
 manage_files_pattern(pritunl_t, pritunl_var_lib_t, pritunl_var_lib_t)
@@ -170,7 +178,8 @@ allow pritunl_t NetworkManager_t:dir search;
 allow pritunl_t NetworkManager_t:file { getattr open read };
 allow pritunl_t auditd_t:dir search;
 allow pritunl_t auditd_t:file { getattr open read };
-
+allow pritunl_t apmd_t:dir search;
+allow pritunl_t apmd_t:file { getattr open read };
 allow pritunl_t cert_t:dir search;
 allow pritunl_t cert_t:file { getattr open read };
 allow pritunl_t cert_t:lnk_file read;
@@ -182,18 +191,20 @@ allow pritunl_t crond_t:dir search;
 allow pritunl_t crond_t:file { getattr open read };
 allow pritunl_t dhcpc_t:dir search;
 allow pritunl_t dhcpc_t:file { getattr open read };
-allow pritunl_t dns_port_t:tcp_socket name_bind;
-allow pritunl_t dns_port_t:udp_socket name_bind;
 allow pritunl_t firewalld_t:dir search;
 allow pritunl_t firewalld_t:file { getattr open read };
 allow pritunl_t getty_t:dir search;
 allow pritunl_t getty_t:file { getattr open read };
+allow pritunl_t gssproxy_t:dir search;
+allow pritunl_t gssproxy_t:file { getattr open read };
 allow pritunl_t hostname_t:dir search;
 allow pritunl_t hostname_t:file { getattr open read };
 allow pritunl_t http_port_t:tcp_socket name_connect;
 allow pritunl_t ifconfig_exec_t:file { execute execute_no_trans open read };
 allow pritunl_t init_t:dir { search };
 allow pritunl_t init_t:file { getattr open read };
+allow pritunl_t init_var_lib_t:dir { search };
+allow pritunl_t init_var_lib_t:file { getattr open read };
 allow pritunl_t initrc_t:dir { search };
 allow pritunl_t initrc_t:file { getattr open read };
 allow pritunl_t insmod_exec_t:file { execute execute_no_trans open read };
@@ -233,13 +244,15 @@ allow pritunl_t proc_t:file { getattr open read };
 allow pritunl_t proc_t:filesystem getattr;
 allow pritunl_t rhnsd_t:dir search;
 allow pritunl_t rhnsd_t:file { getattr open read };
+allow pritunl_t rpm_t:dir search;
+allow pritunl_t rpm_t:file { getattr open read };
 allow pritunl_t self:capability { dac_override net_raw net_admin net_bind_service sys_module };
 allow pritunl_t self:netlink_route_socket { bind create getattr nlmsg_read nlmsg_write setopt read write };
 allow pritunl_t self:process execmem;
 allow pritunl_t self:rawip_socket { create getopt setopt };
-allow pritunl_t self:tcp_socket { accept bind connect create getattr getopt listen setopt shutdown read write };
-allow pritunl_t self:tun_socket create;
-allow pritunl_t self:udp_socket { bind connect create getattr getopt ioctl setopt read write };
+allow pritunl_t self:tcp_socket { accept bind connect create getattr getopt ioctl listen setopt shutdown read write };
+allow pritunl_t self:tun_socket { accept bind connect create getattr getopt ioctl listen setopt shutdown read write };
+allow pritunl_t self:udp_socket { accept bind connect create getattr getopt ioctl listen setopt shutdown read write };
 allow pritunl_t self:unix_dgram_socket { create ioctl };
 allow pritunl_t sshd_t:dir search;
 allow pritunl_t sshd_t:file { getattr open read };
@@ -248,6 +261,8 @@ allow pritunl_t sysctl_net_t:file { getattr open read write };
 allow pritunl_t sysfs_t:file { open read };
 allow pritunl_t syslogd_t:dir search;
 allow pritunl_t syslogd_t:file { getattr open read };
+allow pritunl_t system_cronjob_t:dir search;
+allow pritunl_t system_cronjob_t:file { getattr open read };
 allow pritunl_t system_dbusd_t:dir search;
 allow pritunl_t system_dbusd_t:file { getattr open read };
 allow pritunl_t systemd_hostnamed_t:dir search;
@@ -262,6 +277,12 @@ allow pritunl_t udev_t:file { getattr open read };
 allow pritunl_t usermodehelper_t:file { getattr open read };
 allow pritunl_t unreserved_port_t:tcp_socket { name_bind name_connect };
 allow pritunl_t unreserved_port_t:udp_socket name_bind;
+
+#################################
+# ndppd
+#################################
+allow pritunl_t self:packet_socket { bind create ioctl setopt };
+allow pritunl_t self:rawip_socket ioctl;
 
 #################################
 # todo
