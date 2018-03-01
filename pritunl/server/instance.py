@@ -781,7 +781,7 @@ class ServerInstance(object):
                         if self.stop_process():
                             break
                         else:
-                            time.sleep(0.1)
+                            time.sleep(1)
                             continue
                     else:
                         error_count = 0
@@ -791,7 +791,7 @@ class ServerInstance(object):
                     self.stop_process()
                 except:
                     error_count += 1
-                    if error_count >= 2 and self.stop_process():
+                    if error_count >= 10 and self.stop_process():
                         logger.exception(
                             'Failed to update server ping, stopping server',
                             'server',
