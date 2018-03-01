@@ -965,12 +965,14 @@ class Server(mongo.MongoObject):
                     old_network_hash=self._orig_network_hash,
                 )
                 self.network_lock = queue_ip_pool.id
+                self.network_lock_ttl = utils.now() + \
+                    datetime.timedelta(minutes=6)
+        else:
+            for org_id in self._orgs_added:
+                self.ip_pool.assign_ip_pool_org(org_id)
 
-        for org_id in self._orgs_added:
-            self.ip_pool.assign_ip_pool_org(org_id)
-
-        for org_id in self._orgs_removed:
-            self.ip_pool.unassign_ip_pool_org(org_id)
+            for org_id in self._orgs_removed:
+                self.ip_pool.unassign_ip_pool_org(org_id)
 
         mongo.MongoObject.commit(self, transaction=tran, *args, **kwargs)
 

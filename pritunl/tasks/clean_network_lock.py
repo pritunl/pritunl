@@ -19,4 +19,4 @@ class TaskCleanNetworkLock(task.Task):
         }})
 
 task.add_task(TaskCleanNetworkLock,
-    minutes=xrange(0, 60, 5), run_on_start=True)
+    minutes=xrange(0, 60, 8), run_on_start=True)
