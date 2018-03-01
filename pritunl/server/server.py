@@ -24,6 +24,7 @@ import subprocess
 import threading
 import random
 import collections
+import datetime
 
 _resource_lock = collections.defaultdict(threading.Lock)
 
@@ -85,6 +86,7 @@ class Server(mongo.MongoObject):
         'name',
         'network',
         'network_lock',
+        'network_lock_ttl',
         'bind_address',
         'port',
         'protocol',

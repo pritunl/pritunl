@@ -6,6 +6,9 @@ from pritunl import mongo
 from pritunl import event
 from pritunl import server
 from pritunl import queue
+from pritunl import utils
+
+import datetime
 
 @queue.add_queue
 class QueueAssignIpPool(queue.Queue):
@@ -78,6 +81,7 @@ class QueueAssignIpPool(queue.Queue):
             'network_start': self.network_start,
             'network_end': self.network_end,
             'network_lock': self.id,
+            'network_lock_ttl': utils.now() + datetime.timedelta(minutes=6),
         }})
         if not response['updatedExisting']:
             raise ServerNetworkLocked('Server network is locked', {
