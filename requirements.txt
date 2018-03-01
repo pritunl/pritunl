@@ -14,6 +14,6 @@ pyroute2==0.4.21
 google-api-python-client==1.6.4
 yubico-client==1.10.0
 twisted==17.9.0
-pycrypto==2.6.1
 pyopenssl==17.5.0
+cryptography==2.1.4
 certifi==2017.11.5
