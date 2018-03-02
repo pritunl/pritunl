@@ -11,10 +11,11 @@ import pymongo
 import subprocess
 
 _vxlans = {}
+_vxlan_instances = {}
 _loaded = False
 
 class Vxlan(object):
-    def __init__(self, vxlan_id, server_id, ipv6):
+    def __init__(self, vxlan_id, server_id, instance_id, ipv6):
         self.vxlan_id = vxlan_id
         self.vxlan_mac = None
         self.vxlan_addr = None
@@ -26,11 +27,13 @@ class Vxlan(object):
             self.vxlan_net,
         )
         self.server_id = server_id
+        self.instance_id = instance_id
         self.ipv6 = ipv6
         self.host_vxlan_id = None
         self.running = False
         self.running_lock = threading.Lock()
         _vxlans[(self.vxlan_id, self.server_id)] = self
+        _vxlan_instances[self.vxlan_id] = self.instance_id
 
     @cached_static_property
     def vxlan_collection(cls):
@@ -202,6 +205,9 @@ class Vxlan(object):
             self.add_host(host_vxlan_id + 1, vxlan_mac, host_dst, host_dst6)
 
     def stop(self):
+        if _vxlan_instances.get(self.vxlan_id) != self.instance_id:
+            return
+
         self.running_lock.acquire()
         try:
             self.running = False
@@ -213,6 +219,9 @@ class Vxlan(object):
         _vxlans.pop((self.vxlan_id, self.server_id))
 
     def remove_iface(self):
+        if _vxlan_instances.get(self.vxlan_id) != self.instance_id:
+            return
+
         try:
             utils.check_call_silent([
                 'ip',
@@ -378,14 +387,19 @@ def get_vxlan_id(server_id):
 
         return vxlan_id
 
-def get_vxlan(server_id, ipv6):
-    return Vxlan(get_vxlan_id(server_id), server_id, ipv6)
+def get_vxlan(server_id, instance_id, ipv6):
+    return Vxlan(get_vxlan_id(server_id), server_id, instance_id, ipv6)
 
 def get_vxlan_net(server_id):
-    return Vxlan(get_vxlan_id(server_id), server_id, False).vxlan_net
+    vxlan_id = get_vxlan_id(server_id)
+    return settings.vpn.vxlan_net_prefix + str(vxlan_id) + '.0/24'
 
 def get_vxlan_net6(server_id):
-    return Vxlan(get_vxlan_id(server_id), server_id, True).vxlan_net6
+    vxlan_id = get_vxlan_id(server_id)
+    return utils.net4to6x64(
+        settings.vpn.ipv6_prefix,
+        vxlan_id,
+    )
 
 def on_vxlan(msg):
     vxlan_id = msg['message']['vxlan_id']
