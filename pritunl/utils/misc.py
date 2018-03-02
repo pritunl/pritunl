@@ -153,6 +153,11 @@ def check_output_logged(*args, **kwargs):
     if 'stdout' in kwargs or 'stderr' in kwargs:
         raise ValueError('Output arguments not allowed, it will be overridden')
 
+    try:
+        ignore_states = kwargs.pop('ignore_states')
+    except KeyError:
+        ignore_states = None
+
     process = subprocess.Popen(stdout=subprocess.PIPE, stderr=subprocess.PIPE,
         *args, **kwargs)
 
@@ -162,6 +167,11 @@ def check_output_logged(*args, **kwargs):
     if return_code:
         from pritunl import logger
         cmd = kwargs.get('args', args[0])
+
+        if ignore_states:
+            for ignore_state in ignore_states:
+                if ignore_state in stdoutdata or ignore_state in stderrdata:
+                    return stdoutdata
 
         logger.error('Popen returned error exit code', 'utils',
             cmd=cmd,
