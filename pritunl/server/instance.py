@@ -71,7 +71,7 @@ class ServerInstance(object):
 
     def is_interrupted(self):
         if _instances.get(self.server.id) != self:
-            return False
+            return True
         return self.sock_interrupt
 
     def publish(self, message, transaction=None, extra=None):
