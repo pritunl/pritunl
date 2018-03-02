@@ -172,6 +172,9 @@ class ServerInstanceCom(object):
             if os.path.exists(self.socket_path):
                 return
             time.sleep(0.001)
+            if self.instance.sock_interrupt:
+                return
+
         logger.error('Server management socket path not found', 'server',
             server_id=self.server.id,
             instance_id=self.instance.id,
@@ -350,6 +353,10 @@ class ServerInstanceCom(object):
 
     def connect(self):
         self.wait_for_socket()
+
+        if self.instance.sock_interrupt:
+            return
+
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         self.sock.connect(self.socket_path)
 
