@@ -36,6 +36,7 @@ class ServerInstance(object):
         self.id = utils.ObjectId()
         self.interrupt = False
         self.sock_interrupt = False
+        self.startup_interrupt = False
         self.clean_exit = False
         self.interface = None
         self.bridge_interface = None
@@ -744,6 +745,69 @@ class ServerInstance(object):
             self.stop_process()
 
     @interrupter
+    def _startup_keepalive_thread(self):
+        try:
+            error_count = 0
+
+            while not self.startup_interrupt:
+                try:
+                    doc = self.collection.find_and_modify({
+                        '_id': self.server.id,
+                        'availability_group': \
+                            settings.local.host.availability_group,
+                        'instances.instance_id': self.id,
+                    }, {'$set': {
+                        'instances.$.ping_timestamp': utils.now(),
+                    }}, fields={
+                        '_id': False,
+                        'instances': True,
+                    }, new=True)
+
+                    yield
+
+                    if not doc:
+                        doc = self.collection.find_one({
+                            '_id': self.server.id,
+                        })
+
+                        doc_hosts = ((doc or {}).get('hosts') or [])
+                        if settings.local.host_id in doc_hosts:
+                            logger.error(
+                                'Startup doc lost, stopping server', 'server',
+                                server_id=self.server.id,
+                                instance_id=self.id,
+                                cur_timestamp=utils.now(),
+                            )
+
+                        self.sock_interrupt = True
+                        return
+                    else:
+                        error_count = 0
+
+                    yield
+                except GeneratorExit:
+                    self.stop_process()
+                except:
+                    error_count += 1
+                    if error_count >= 10 and self.stop_process():
+                        logger.exception(
+                            'Failed to update startup ping, stopping server',
+                            'server',
+                            server_id=self.server.id,
+                        )
+                        break
+
+                    logger.exception('Failed to update startup ping',
+                        'server',
+                        server_id=self.server.id,
+                    )
+                    time.sleep(1)
+
+                yield interrupter_sleep(3)
+        except GeneratorExit:
+            self.stop_process()
+
+    @interrupter
     def _keep_alive_thread(self):
         try:
             error_count = 0
@@ -962,8 +1026,12 @@ class ServerInstance(object):
             )
             self.stop_process()
 
+        startup_keepalive_thread = threading.Thread(
+            target=self._startup_keepalive_thread)
+        startup_keepalive_thread.daemon = True
+
         self.state = 'init'
-        timer = threading.Timer(settings.vpn.op_timeout + 3, timeout)
+        timer = threading.Timer(settings.vpn.startup_timeout, timeout)
         timer.start()
 
         try:
@@ -995,7 +1063,7 @@ class ServerInstance(object):
             if self.server.replicating and self.server.vxlan:
                 try:
                     self.state = 'get_vxlan'
-                    self.vxlan = vxlan.get_vxlan(self.server.id,
+                    self.vxlan = vxlan.get_vxlan(self.server.id, self.id,
                         self.server.ipv6)
 
                     if self.is_interrupted():
@@ -1024,6 +1092,18 @@ class ServerInstance(object):
             if self.is_interrupted():
                 return
 
+            self.state = 'publish'
+            self.publish('started')
+
+            if self.is_interrupted():
+                return
+
+            self.state = 'startup_keepalive'
+            startup_keepalive_thread.start()
+
+            if self.is_interrupted():
+                return
+
             self.state = 'upsert_iptables_rules'
             self.iptables.upsert_rules()
 
@@ -1046,12 +1126,6 @@ class ServerInstance(object):
             self.state = 'instance_com_start'
             self.instance_com = ServerInstanceCom(self.server, self)
             self.instance_com.start()
-
-            if self.is_interrupted():
-                return
-
-            self.state = 'starting'
-            self.publish('started')
 
             if self.is_interrupted():
                 return
@@ -1087,6 +1161,7 @@ class ServerInstance(object):
                 return
 
             timer.cancel()
+            self.startup_interrupt = True
 
             plugins.caller(
                 'server_start',
@@ -1196,6 +1271,7 @@ class ServerInstance(object):
             )
         finally:
             timer.cancel()
+            self.startup_interrupt = True
 
             self.interrupt = True
             self.sock_interrupt = True
