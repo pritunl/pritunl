@@ -81,7 +81,7 @@ class Vxlan(object):
             'dev',
             local_iface['interface'],
             'nolearning',
-        ])
+        ], ignore_states=['File exists'])
 
         self.vxlan_mac = utils.get_interface_mac_address(self.iface_name)
         self._init_host()
@@ -100,7 +100,7 @@ class Vxlan(object):
             self.vxlan_addr + '/24',
             'dev',
             self.iface_name,
-        ])
+        ], ignore_states=['File exists'])
 
         if self.ipv6:
             utils.check_output_logged([
@@ -111,7 +111,7 @@ class Vxlan(object):
                 self.vxlan_addr6 + '/64',
                 'dev',
                 self.iface_name,
-            ])
+            ], ignore_states=['File exists'])
 
         utils.check_output_logged([
             'ip',
