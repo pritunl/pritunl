@@ -199,6 +199,7 @@ def _run_server(restart):
                 )
                 time.sleep(1)
                 restart_server(1)
+
     thread = threading.Thread(target=poll_thread)
     thread.daemon = True
     thread.start()
