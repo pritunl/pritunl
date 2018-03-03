@@ -1032,6 +1032,7 @@ class ServerInstance(object):
 
         self.state = 'init'
         timer = threading.Timer(settings.vpn.startup_timeout, timeout)
+        timer.daemon = True
         timer.start()
 
         try:
