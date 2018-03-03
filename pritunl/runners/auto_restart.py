@@ -16,8 +16,8 @@ def _auto_restart_thread():
             if int(time.mktime(cur_time.timetuple())) != last_run:
                 last_run = int(time.mktime(cur_time.timetuple()))
 
-                if cur_time.hour == 2 and cur_time.minute == 44 and \
-                        cur_time.second == 50:
+                if cur_time.hour == 7 and cur_time.minute == 45 and \
+                        cur_time.second == 0:
                     app.restart_server_fast()
         except:
             logger.exception('Error in auto restart thread', 'runners')
