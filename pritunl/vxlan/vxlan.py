@@ -279,7 +279,7 @@ class Vxlan(object):
                         self.iface_name,
                         'dst',
                         host_dst,
-                    ])
+                    ], ignore_states=['File exists'])
 
                     break
                 except subprocess.CalledProcessError:
@@ -320,7 +320,7 @@ class Vxlan(object):
                             vxlan_mac,
                             'dev',
                             self.iface_name,
-                        ])
+                        ], ignore_states=['File exists'])
 
                         break
                     except subprocess.CalledProcessError:
