@@ -117,7 +117,10 @@ def _run_server(restart):
     global app_server
 
     try:
-        context = subprocess.check_output(['id', '-Z']).strip()
+        context = subprocess.check_output(
+            ['id', '-Z'],
+            stderr=subprocess.PIPE,
+        ).strip()
     except:
         context = 'none'
 
