@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix server recovery issues
+
 Version 1.29.1631.29 2018-03-01
 -------------------------------
 
