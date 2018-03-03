@@ -79,6 +79,14 @@ def restart_server(delay=0):
     thread.daemon = True
     thread.start()
 
+def restart_server_fast():
+    _watch_event.clear()
+    set_app_server_interrupt()
+    if app_server:
+        app_server.interrupt = ServerRestart('Restart')
+    time.sleep(1)
+    clear_app_server_interrupt()
+
 @app.before_request
 def before_request():
     flask.g.valid = False
