@@ -2,7 +2,7 @@
 Description=Pritunl Daemon
 
 [Service]
-LimitNOFILE=50000
+LimitNOFILE=500000
 ExecStart=%PREFIX%/bin/pritunl start
 SuccessExitStatus=SIGALRM
 TimeoutStopSec=20
