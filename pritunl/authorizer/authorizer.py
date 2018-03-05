@@ -218,7 +218,7 @@ class Authorizer(object):
                     'User platform %s not allowed' % self.platform)
 
     def _check_password(self):
-        if settings.vpn.stress_test:
+        if settings.vpn.stress_test or self.user.link_server_id:
             return
 
         if self.user.bypass_secondary:
