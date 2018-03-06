@@ -26,8 +26,6 @@ import random
 import collections
 import datetime
 
-_resource_lock = collections.defaultdict(threading.Lock)
-
 dict_fields = [
     'id',
     'name',
