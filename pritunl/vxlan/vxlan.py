@@ -78,6 +78,8 @@ class Vxlan(object):
             'vxlan',
             'id',
             str(settings.vpn.vxlan_id_start + self.vxlan_id),
+            'dstport',
+            '4789',
             'dev',
             local_iface['interface'],
             'nolearning',
