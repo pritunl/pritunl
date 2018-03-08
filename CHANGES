@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Okta sso improvements
+
 Version 1.29.1635.72 2018-03-05
 -------------------------------
 
