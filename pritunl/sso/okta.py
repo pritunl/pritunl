@@ -127,7 +127,8 @@ def auth_okta(username):
 
     try:
         response = requests.get(
-            _getokta_url() + '/api/v1/apps?filter=user.id+eq+"%s"' % user_id,
+            _getokta_url() + \
+            '/api/v1/apps?limit=50&filter=user.id+eq+"%s"' % user_id,
             headers={
                 'Accept': 'application/json',
                 'Authorization': 'SSWS %s' % settings.app.sso_okta_token,
