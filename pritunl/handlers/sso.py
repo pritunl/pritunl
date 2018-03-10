@@ -515,9 +515,9 @@ def sso_duo_post():
         }, 401)
 
     tokens_collection = mongo.get_collection('sso_tokens')
-    doc = tokens_collection.find_one({
+    doc = tokens_collection.find_and_modify(query={
         '_id': token,
-    })
+    }, remove=True)
     if not doc or doc['_id'] != token or doc['type'] != DUO_AUTH:
         return utils.jsonify({
             'error': TOKEN_INVALID,
@@ -640,9 +640,9 @@ def sso_yubico_post():
         }, 401)
 
     tokens_collection = mongo.get_collection('sso_tokens')
-    doc = tokens_collection.find_one({
+    doc = tokens_collection.find_and_modify(query={
         '_id': token,
-    })
+    }, remove=True)
     if not doc or doc['_id'] != token or doc['type'] != YUBICO_AUTH:
         return utils.jsonify({
             'error': TOKEN_INVALID,
