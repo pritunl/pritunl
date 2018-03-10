@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve sso organization matching
+
 Version 1.29.1638.92 2018-03-08
 -------------------------------
 
