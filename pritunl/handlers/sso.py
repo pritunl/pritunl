@@ -355,7 +355,7 @@ def sso_callback_get():
             )
             return flask.abort(401)
         groups = set(groups or [])
-    else:
+    elif doc.get('type') == GOOGLE_AUTH:
         username = params.get('username')[0]
         email = username
 
@@ -391,6 +391,11 @@ def sso_callback_get():
                 if org:
                     org_id = org.id
                     break
+    else:
+        logger.error('Unknown sso type', 'sso',
+            sso_type=doc.get('type'),
+        )
+        return flask.abort(401)
 
     if DUO_AUTH in sso_mode:
         token = utils.generate_secret()
