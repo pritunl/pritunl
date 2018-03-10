@@ -297,7 +297,10 @@ def sso_callback_get():
 
         org_id = settings.app.sso_org
         if org_name:
-            org = organization.get_by_name(org_name, fields=('_id'))
+            org = organization.get_by_name(
+                utils.filter_str(org_name),
+                fields=('_id'),
+            )
             if org:
                 org_id = org.id
 
@@ -329,7 +332,10 @@ def sso_callback_get():
 
         org_id = settings.app.sso_org
         for org_name in org_names:
-            org = organization.get_by_name(org_name, fields=('_id'))
+            org = organization.get_by_name(
+                utils.filter_str(org_name),
+                fields=('_id'),
+            )
             if org:
                 org_id = org.id
                 break
@@ -378,7 +384,10 @@ def sso_callback_get():
             groups = groups | set(google_groups)
         else:
             for org_name in sorted(google_groups):
-                org = organization.get_by_name(org_name, fields=('_id'))
+                org = organization.get_by_name(
+                    utils.filter_str(org_name),
+                    fields=('_id'),
+                )
                 if org:
                     org_id = org.id
                     break
