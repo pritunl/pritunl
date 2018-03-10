@@ -46,7 +46,7 @@ def sso_authenticate_post():
             break
         except InvalidUser:
             if i == len(usernames) - 1:
-                logger.error('Invalid duo username', 'sso',
+                logger.warning('Invalid duo username', 'sso',
                     username=username,
                 )
 
@@ -58,13 +58,13 @@ def sso_authenticate_post():
             remote_ip=utils.get_remote_addr(),
         )
         if not valid:
-            logger.error('Duo plugin authentication not valid', 'sso',
+            logger.warning('Duo plugin authentication not valid', 'sso',
                 username=username,
             )
             return flask.abort(401)
         groups = set(groups or [])
     else:
-        logger.error('Duo authentication not valid', 'sso',
+        logger.warning('Duo authentication not valid', 'sso',
             username=username,
         )
         return flask.abort(401)
@@ -539,7 +539,7 @@ def sso_duo_post():
         )
         valid = duo_auth.authenticate()
         if not valid:
-            logger.error('Duo authentication not valid', 'sso',
+            logger.warning('Duo authentication not valid', 'sso',
                 username=username,
             )
             return utils.jsonify({
@@ -555,7 +555,7 @@ def sso_duo_post():
         )
         valid = duo_auth.authenticate()
         if not valid:
-            logger.error('Duo authentication not valid', 'sso',
+            logger.warning('Duo authentication not valid', 'sso',
                 username=username,
             )
             return utils.jsonify({
@@ -572,7 +572,7 @@ def sso_duo_post():
     if valid:
         org_id = org_id_new or org_id
     else:
-        logger.error('Duo plugin authentication not valid', 'sso',
+        logger.warning('Duo plugin authentication not valid', 'sso',
             username=username,
         )
         return flask.abort(401)
