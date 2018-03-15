@@ -294,13 +294,16 @@ class User(mongo.MongoObject):
 
     def sso_auth_check(self, password, remote_ip):
         sso_mode = settings.app.sso or ''
+        auth_server = AUTH_SERVER
+        if settings.app.dedicated:
+            auth_server = settings.app.dedicated
 
         if GOOGLE_AUTH in self.auth_type and GOOGLE_AUTH in sso_mode:
             if settings.user.skip_remote_sso_check:
                 return True
 
             try:
-                resp = requests.get(AUTH_SERVER +
+                resp = requests.get(auth_server +
                     '/update/google?user=%s&license=%s' % (
                         urllib.quote(self.email),
                         settings.app.license,
@@ -321,7 +324,7 @@ class User(mongo.MongoObject):
                 raise TypeError('Invalid sso match')
 
             try:
-                resp = requests.get(AUTH_SERVER +
+                resp = requests.get(auth_server +
                     '/update/slack?user=%s&team=%s&license=%s' % (
                         urllib.quote(self.name),
                         urllib.quote(settings.app.sso_match[0]),
@@ -472,10 +475,11 @@ class User(mongo.MongoObject):
 
         return password_mode
 
+    def _get_token_mode(self):
+        return bool(settings.app.sso_client_cache)
+
     def has_passcode(self, svr):
-        if self.has_yubikey or self.has_duo_passcode or svr.otp_auth:
-            return True
-        return False
+        return bool(self.has_yubikey or self.has_duo_passcode or svr.otp_auth)
 
     def has_password(self, svr):
         return bool(self._get_password_mode(svr))
@@ -489,8 +493,14 @@ class User(mongo.MongoObject):
                 settings.app.sso_duo_mode != 'passcode':
             return DUO_AUTH
         elif settings.app.sso and \
+                SAML_ONELOGIN_AUTH in self.auth_type and \
+                SAML_ONELOGIN_AUTH in settings.app.sso and \
+                settings.app.sso_onelogin_push:
+            return SAML_ONELOGIN_AUTH
+        elif settings.app.sso and \
                 SAML_OKTA_AUTH in self.auth_type and \
-                SAML_OKTA_AUTH in settings.app.sso:
+                SAML_OKTA_AUTH in settings.app.sso and \
+                settings.app.sso_okta_push:
             return SAML_OKTA_AUTH
 
     def _get_key_info_str(self, svr, conf_hash, include_sync_keys):
@@ -508,7 +518,7 @@ class User(mongo.MongoObject):
             'push_auth': True if self.get_push_type() else False,
             'push_auth_ttl': settings.app.sso_client_cache_timeout,
             'disable_reconnect': not settings.user.reconnect,
-            'token': self.has_passcode(svr),
+            'token': self._get_token_mode(),
             'token_ttl': settings.app.sso_client_cache_timeout,
         }
 
@@ -930,6 +940,17 @@ class User(mongo.MongoObject):
             'audit_event',
             host_id=settings.local.host_id,
             host_name=settings.local.host.name,
+            user_id=self.id,
+            org_id=self.org_id,
+            timestamp=timestamp,
+            type=event_type,
+            remote_addr=remote_addr,
+            message=event_msg,
+        )
+
+        logger.info(
+            'Audit event',
+            'audit',
             user_id=self.id,
             org_id=self.org_id,
             timestamp=timestamp,

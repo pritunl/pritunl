@@ -4,23 +4,29 @@
 </div>
 <div class="form-group public-address">
   <label>Public Address</label>
-  <input type="text" class="form-control" placeholder="Enter public address" data-toggle="tooltip" title="Public IP address or domain name of the host" value="<%- public_address %>">
+  <input type="text" class="form-control" placeholder="Enter public address" data-toggle="tooltip" title="Public IP address or domain name of the host. Leave blank for automatic address" value="<%- public_address %>">
 </div>
 <div class="form-group public-address6">
   <label>Public IPv6 Address</label>
-  <input type="text" class="form-control" placeholder="Enter public IPv6 address" data-toggle="tooltip" title="Public IPv6 address or domain name of the host" value="<%- public_address6 %>">
+  <input type="text" class="form-control" placeholder="Enter public IPv6 address" data-toggle="tooltip" title="Public IPv6 address or domain name of the host. Leave blank for automatic address" value="<%- public_address6 %>">
 </div>
 <div class="form-group routed-subnet6">
   <label>Routed IPv6 Subnet</label>
   <input type="text" class="form-control" placeholder="Enter routed subnet" data-toggle="tooltip" title="IPv6 subnet that is routed to the host, must be at least /64" value="<%- routed_subnet6 %>">
 </div>
+<div class="form-group toggle-form proxy-ndp-toggle">
+  <label>Proxy NDP</label>
+  <div class="selector <%= proxy_ndp ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Proxy IPv6 Neighbor Discovery Protocol when using a routed IPv6 subnet.">
+    <span class="selector-inner glyphicon glyphicon-ok"></span>
+  </div>
+</div>
 <div class="form-group local-address">
   <label>Local Address</label>
-  <input type="text" class="form-control" placeholder="Enter local address" data-toggle="tooltip" title="Local network address for server" value="<%- local_address %>">
+  <input type="text" class="form-control" placeholder="Enter local address" data-toggle="tooltip" title="Local network address for server. Leave blank for automatic address" value="<%- local_address %>">
 </div>
 <div class="form-group local-address6">
   <label>Local IPv6 Address</label>
-  <input type="text" class="form-control" placeholder="Enter local IPv6 address" data-toggle="tooltip" title="Local IPv6 network address for server" value="<%- local_address6 %>">
+  <input type="text" class="form-control" placeholder="Enter local IPv6 address" data-toggle="tooltip" title="Local IPv6 network address for server. Leave blank for automatic address" value="<%- local_address6 %>">
 </div>
 <div class="advanced">
   <div class="form-group availability-group">
@@ -33,7 +39,7 @@
   </div>
   <div class="form-group sync-address">
     <label>Sync Address</label>
-    <input type="text" class="form-control" placeholder="Enter sync address" data-toggle="tooltip" title="IP address or domain used by users when syncing configuration. This is needed when using a load balancer" value="<%- sync_address %>">
+    <input type="text" class="form-control" placeholder="Enter sync address" data-toggle="tooltip" title="IP address or domain used by users when syncing configuration. This is needed when using a load balancer. Leave blank to use public address" value="<%- sync_address %>">
   </div>
   <div class="form-group instance-id">
     <label>AWS Instance ID</label>

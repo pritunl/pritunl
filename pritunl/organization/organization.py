@@ -2,7 +2,6 @@ from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import settings
-from pritunl import logger
 from pritunl import mongo
 from pritunl import queue
 from pritunl import pooler
@@ -208,7 +207,7 @@ class Organization(mongo.MongoObject):
                 email = email[0] if email else ''
                 if email:
                     spec['email'] = {
-                        '$regex': '.*%s.*/i' % email,
+                        '$regex': '.*%s.*' % email,
                         '$options': 'i',
                     }
                 search = search[:n] + search[n + 6 + len(email):].strip()

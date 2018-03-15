@@ -41,6 +41,11 @@ PIN_REQUIRED = 'required'
 PIN_OPTIONAL = 'optional'
 PIN_DISABLED = 'disabled'
 
+SITE_TO_SITE = 'site_to_site'
+DIRECT = 'direct'
+DIRECT_SERVER = 'direct_server'
+DIRECT_CLIENT = 'direct_client'
+
 VERY_LOW = 0
 LOW = 1
 NORMAL = 2
@@ -853,6 +858,9 @@ SERVER_ROUTE_SERVER_LINK_NAT_MSG = 'Server link routes cannot modify NAT.'
 SERVER_ROUTE_NETWORK_LINK_NAT = 'server_route_network_link_nat'
 SERVER_ROUTE_NETWORK_LINK_NAT_MSG = 'Network link routes cannot use NAT.'
 
+SERVER_ROUTE_NET_GATEWAY_NAT = 'server_route_net_gateway_nat'
+SERVER_ROUTE_NET_GATEWAY_NAT_MSG = 'Net gateway routes cannot use NAT.'
+
 SERVER_LINK_COMMON_HOST = 'server_link_common_host'
 SERVER_LINK_COMMON_HOST_MSG = 'Linked servers cannot have a common host.'
 
@@ -1174,6 +1182,43 @@ sndbuf 393216
 rcvbuf 393216
 max-routes 1000
 remote-cert-tls server
+"""
+
+IPSEC_SECRET = '%s %s : PSK "%s"'
+
+IPSEC_CONN = """\
+conn %s
+	ikelifetime=8h
+	keylife=1h
+	rekeymargin=9m
+	keyingtries=%%forever
+	authby=secret
+	keyexchange=ikev2
+	mobike=no
+	dpddelay=10s
+	dpdtimeout=30s
+	dpdaction=restart
+	left=%%defaultroute
+	leftid=%s
+	leftsubnet=%s
+	right=%s
+	rightid=%s
+	rightsubnet=%s
+	auto=start
+
+"""
+
+NDPPD_CONF = """\
+route-ttl 20000
+address-ttl 20000
+proxy %s {
+  router yes
+  timeout 1000
+  ttl 30000
+  rule %s {
+    static
+  }
+}
 """
 
 KEY_LINK_EMAIL_TEXT = """\

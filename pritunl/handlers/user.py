@@ -41,7 +41,11 @@ def user_get(org_id, user_id=None, page=None):
         return flask.abort(404)
 
     if user_id:
-        resp = org.get_user(user_id).dict()
+        usr = org.get_user(user_id)
+        if not usr:
+            return flask.abort(404)
+
+        resp = usr.dict()
         if settings.app.demo_mode:
             utils.demo_set_cache(resp)
         return utils.jsonify(resp)

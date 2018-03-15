@@ -61,4 +61,4 @@ class TaskRoute(task.Task):
         except:
             logger.exception('Error checking route states', 'tasks')
 
-task.add_task(TaskRoute, seconds=xrange(0, 60, settings.vpn.server_ping_ttl))
+task.add_task(TaskRoute, seconds=xrange(0, 60, 30))

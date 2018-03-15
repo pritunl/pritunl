@@ -100,6 +100,18 @@ define([
         this.$('.enterprise-support-link').attr('href',
           'https://app.pritunl.com/support/' + this.model.get('url_key'));
       }
+
+      if (this.model.get('quantity') === 1000) {
+        this.$('.quantity').hide();
+        this.$('.quantity').hide();
+        this.$('.enterprise-change').hide();
+        this.$('.enterprise-cancel').hide();
+        this.$('.enterprise-reactivate').hide();
+        this.$('.enterprise-update').hide();
+        this.$('.renew').hide();
+        this.$('.enterprise-support-link').hide();
+        this.$('.enterprise-plus-plan').text('Dedicated');
+      }
     },
     lock: function() {
       this.lockClose = true;

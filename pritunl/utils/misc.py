@@ -137,6 +137,11 @@ def set_db_ver(version, version_min=None):
     client = pymongo.MongoClient(settings.conf.mongodb_uri,
         connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
     database = client.get_default_database()
+
+    db_collections = database.collection_names()
+    if 'authorities' in db_collections:
+        raise TypeError('Cannot connect to a Pritunl Zero database')
+
     settings_db = getattr(database, prefix + 'settings')
     doc = settings_db.update({
         '_id': 'version',
@@ -148,6 +153,11 @@ def check_output_logged(*args, **kwargs):
     if 'stdout' in kwargs or 'stderr' in kwargs:
         raise ValueError('Output arguments not allowed, it will be overridden')
 
+    try:
+        ignore_states = kwargs.pop('ignore_states')
+    except KeyError:
+        ignore_states = None
+
     process = subprocess.Popen(stdout=subprocess.PIPE, stderr=subprocess.PIPE,
         *args, **kwargs)
 
@@ -157,6 +167,11 @@ def check_output_logged(*args, **kwargs):
     if return_code:
         from pritunl import logger
         cmd = kwargs.get('args', args[0])
+
+        if ignore_states:
+            for ignore_state in ignore_states:
+                if ignore_state in stdoutdata or ignore_state in stderrdata:
+                    return stdoutdata
 
         logger.error('Popen returned error exit code', 'utils',
             cmd=cmd,
@@ -374,16 +389,19 @@ def fnv64a(s):
         hval = (hval * prime64) % uint64_max
     return hval
 
-def sync_public_ip(attempts=1, timeout=5, update=False):
+def sync_public_ip(attempts=1, timeout=5):
     from pritunl import logger
 
     for i in xrange(attempts):
+        url = settings.app.public_ip_server
+        if settings.app.dedicated:
+            url = settings.app.dedicated + '/ip'
+
         if i:
             time.sleep(3)
             logger.info('Retrying get public ip address', 'utils')
         try:
-            request = urllib2.Request(
-                settings.app.public_ip_server)
+            request = urllib2.Request(url)
             request.add_header('User-Agent', 'pritunl')
             response = urllib2.urlopen(request, timeout=timeout)
             settings.local.public_ip = str(json.load(response)['ip'])
@@ -391,25 +409,18 @@ def sync_public_ip(attempts=1, timeout=5, update=False):
         except:
             pass
 
-    try:
-        request = urllib2.Request(
-            settings.app.public_ip6_server)
-        request.add_header('User-Agent', 'pritunl')
-        response = urllib2.urlopen(request, timeout=timeout)
-        settings.local.public_ip6 = str(json.load(response)['ip'])
-    except:
-        pass
+    if not settings.app.dedicated:
+        try:
+            request = urllib2.Request(
+                settings.app.public_ip6_server)
+            request.add_header('User-Agent', 'pritunl')
+            response = urllib2.urlopen(request, timeout=timeout)
+            settings.local.public_ip6 = str(json.load(response)['ip'])
+        except:
+            pass
 
-    if not settings.local.public_ip:
-        logger.warning('Failed to get public ip address', 'utils')
-
-    if update:
-        settings.local.host.collection.update({
-            '_id': settings.local.host.id,
-        }, {'$set': {
-            'auto_public_address': settings.local.public_ip,
-            'auto_public_address6': settings.local.public_ip6,
-        }})
+        if not settings.local.public_ip:
+            logger.warning('Failed to get public ip address', 'utils')
 
 def ping(address, timeout=1):
     start = time.time()
@@ -431,10 +442,7 @@ def redirect(location, code=302):
 
 def get_url_root():
     url_root = flask.request.headers.get('PR-Forwarded-Url')
-
-    if settings.app.reverse_proxy and \
-            flask.request.headers.get('PR-Forwarded-Header'):
-        url_root = url_root.replace('http://', 'https://', 1)
+    url_root = url_root.replace('http://', 'https://', 1)
 
     if url_root[-1] == '/':
         url_root = url_root[:-1]

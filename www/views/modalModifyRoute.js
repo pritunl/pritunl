@@ -12,7 +12,7 @@ define([
     template: _.template(modaleModifyRouteTemplate),
     title: 'Modify Route',
     okText: 'Save',
-    hasAdvanced: false,
+    hasAdvanced: true,
     events: function() {
       return _.extend({
         'change .vpc-region select': 'updateVpcIds',
@@ -129,6 +129,7 @@ define([
     },
     onOk: function() {
       var comment = this.$('.route-comment input').val();
+      var metric = this.$('.route-metric input').val();
       var nat = this.getNatRouteSelect();
       var natInterface = this.$('.nat-interface input').val();
       var netGateway = this.getNetGatewaySelect();
@@ -141,9 +142,12 @@ define([
         vpcId = this.$('.vpc-id select').val();
       }
 
+      metric = metric ? parseInt(metric, 10) : null;
+
       this.setLoading('Modifying route...');
       this.model.save({
         comment: comment,
+        metric: metric,
         nat: nat,
         nat_interface: natInterface,
         net_gateway: netGateway,

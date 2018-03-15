@@ -24,8 +24,7 @@ import subprocess
 import threading
 import random
 import collections
-
-_resource_lock = collections.defaultdict(threading.Lock)
+import datetime
 
 dict_fields = [
     'id',
@@ -85,6 +84,7 @@ class Server(mongo.MongoObject):
         'name',
         'network',
         'network_lock',
+        'network_lock_ttl',
         'bind_address',
         'port',
         'protocol',
@@ -494,6 +494,7 @@ class Server(mongo.MongoObject):
         link_routes = []
         routes_dict = {}
         virtual_comment = None
+        virtual_metric = None
         virtual_vpc_region = None
         virtual_vpc_id = None
 
@@ -504,6 +505,7 @@ class Server(mongo.MongoObject):
                 'server': self.id,
                 'network': network_link,
                 'comment': None,
+                'metric': 0,
                 'nat': False,
                 'nat_interface': None,
                 'vpc_region': None,
@@ -529,6 +531,7 @@ class Server(mongo.MongoObject):
                     data['server'] = self.id
                     data['network'] = route['network']
                     data['comment'] = route.get('comment')
+                    data['metric'] = route.get('metric')
                     data['nat'] = route['nat']
                     data['nat_interface'] = route['nat_interface']
                     data['vpc_region'] = None
@@ -543,7 +546,6 @@ class Server(mongo.MongoObject):
 
         for route in self.routes:
             route_network = route['network']
-            route_comment = route.get('comment')
             route_id = route_network.encode('hex')
 
             if route_network == '0.0.0.0/0':
@@ -554,7 +556,8 @@ class Server(mongo.MongoObject):
                     'id': route_id,
                     'server': self.id,
                     'network': route_network,
-                    'comment': route_comment,
+                    'comment': route.get('comment'),
+                    'metric': route.get('metric'),
                     'nat': route.get('nat', True),
                     'nat_interface': route.get('nat_interface'),
                     'vpc_region': route.get('vpc_region', None),
@@ -571,7 +574,8 @@ class Server(mongo.MongoObject):
                         'id': route_id,
                         'server': self.id,
                         'network': '::/0',
-                        'comment': route_comment,
+                        'comment': route.get('comment'),
+                        'metric': route.get('metric'),
                         'nat': route.get('nat', True),
                         'nat_interface': route.get('nat_interface'),
                         'vpc_region': route.get('vpc_region'),
@@ -584,6 +588,7 @@ class Server(mongo.MongoObject):
                     })
             elif route_network == 'virtual':
                 virtual_comment = route.get('comment', None)
+                virtual_metric = route.get('metric', None)
                 virtual_vpc_region = route.get('vpc_region', None)
                 virtual_vpc_id = route.get('vpc_id', None)
             elif route_network == self.network or \
@@ -598,6 +603,8 @@ class Server(mongo.MongoObject):
                             route.get('nat_interface')
                     routes_dict[route_network]['comment'] = route.get(
                         'comment')
+                    routes_dict[route_network]['metric'] = route.get(
+                        'metric')
                     routes_dict[route_network]['vpc_region'] = route.get(
                         'vpc_region')
                     routes_dict[route_network]['vpc_id'] = route.get(
@@ -612,6 +619,7 @@ class Server(mongo.MongoObject):
                         'server': self.id,
                         'network': route_network,
                         'comment': route.get('comment'),
+                        'metric': route.get('metric'),
                         'nat': route.get('nat', True),
                         'nat_interface': route.get('nat_interface'),
                         'vpc_region': route.get('vpc_region', None),
@@ -628,6 +636,7 @@ class Server(mongo.MongoObject):
             'server': self.id,
             'network': self.network,
             'comment': virtual_comment,
+            'metric': virtual_metric,
             'nat': False,
             'nat_interface': None,
             'vpc_region': virtual_vpc_region,
@@ -645,6 +654,7 @@ class Server(mongo.MongoObject):
                 'server': self.id,
                 'network': self.network6,
                 'comment': virtual_comment,
+                'metric': virtual_metric,
                 'nat': False,
                 'nat_interface': None,
                 'vpc_region': virtual_vpc_region,
@@ -665,7 +675,7 @@ class Server(mongo.MongoObject):
         return routes + link_routes
 
     def upsert_route(self, network, nat_route, nat_interface,
-            vpc_region, vpc_id, net_gateway, comment):
+            vpc_region, vpc_id, net_gateway, comment, metric):
         exists = False
 
         if self.status == ONLINE:
@@ -697,12 +707,16 @@ class Server(mongo.MongoObject):
         elif network == '::/0':
             network = '0.0.0.0/0'
 
+        if net_gateway and nat_route:
+            raise ServerRouteNatNetGateway('Cannot nat net gateway')
+
         for route in self.routes:
             if route['network'] == network:
                 if not server_link:
                     route['nat'] = nat_route
                     route['nat_interface'] = nat_interface
                 route['comment'] = comment
+                route['metric'] = metric
                 route['vpc_region'] = vpc_region
                 route['vpc_id'] = vpc_id
                 route['net_gateway'] = net_gateway
@@ -714,6 +728,7 @@ class Server(mongo.MongoObject):
             self.routes.append({
                 'network': network,
                 'comment': comment,
+                'metric': metric,
                 'nat': nat_route,
                 'nat_interface': nat_interface,
                 'vpc_region': vpc_region,
@@ -727,6 +742,7 @@ class Server(mongo.MongoObject):
             'server': self.id,
             'network': orig_network,
             'comment': comment,
+            'metric': metric,
             'nat': nat_route,
             'nat_interface': nat_interface,
             'vpc_region': vpc_region,
@@ -747,7 +763,7 @@ class Server(mongo.MongoObject):
     def has_non_nat_route(self):
         for route in self.get_routes(include_default=False):
             if route['virtual_network'] or route['network_link'] or \
-                    route['server_link']:
+                    route['server_link'] or route['net_gateway']:
                 continue
 
             if not route['nat']:
@@ -947,12 +963,14 @@ class Server(mongo.MongoObject):
                     old_network_hash=self._orig_network_hash,
                 )
                 self.network_lock = queue_ip_pool.id
+                self.network_lock_ttl = utils.now() + \
+                    datetime.timedelta(minutes=6)
+        else:
+            for org_id in self._orgs_added:
+                self.ip_pool.assign_ip_pool_org(org_id)
 
-        for org_id in self._orgs_added:
-            self.ip_pool.assign_ip_pool_org(org_id)
-
-        for org_id in self._orgs_removed:
-            self.ip_pool.unassign_ip_pool_org(org_id)
+            for org_id in self._orgs_removed:
+                self.ip_pool.unassign_ip_pool_org(org_id)
 
         mongo.MongoObject.commit(self, transaction=tran, *args, **kwargs)
 
@@ -1429,7 +1447,7 @@ class Server(mongo.MongoObject):
         self.stop()
         self.start()
 
-    def validate_conf(self, used_resources=None):
+    def validate_conf(self, used_resources=None, allow_online=False):
         from pritunl.server.utils import get_used_resources
 
         if not used_resources:
@@ -1437,7 +1455,7 @@ class Server(mongo.MongoObject):
         network_used = used_resources['networks']
         port_used = used_resources['ports']
 
-        if self.status == ONLINE:
+        if self.status == ONLINE and not allow_online:
             return SERVER_NOT_OFFLINE, SERVER_NOT_OFFLINE_SETTINGS_MSG
 
         hosts = set()
@@ -1455,7 +1473,7 @@ class Server(mongo.MongoObject):
                 return SERVER_LINK_COMMON_ROUTE, SERVER_LINK_COMMON_ROUTE_MSG
             routes.update(routes_set)
 
-            if link_svr.status == ONLINE:
+            if link_svr.status == ONLINE and not allow_online:
                 return SERVER_LINKS_NOT_OFFLINE, \
                     SERVER_LINKS_NOT_OFFLINE_SETTINGS_MSG
 

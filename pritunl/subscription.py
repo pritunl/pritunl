@@ -32,8 +32,12 @@ def update():
     else:
         for i in xrange(2):
             try:
+                url = 'https://app.pritunl.com/subscription'
+                if settings.app.dedicated:
+                    url = settings.app.dedicated + '/subscription'
+
                 response = requests.get(
-                    'https://app.pritunl.com/subscription',
+                    url,
                     json={
                         'id': settings.app.id,
                         'license': license,

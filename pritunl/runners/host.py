@@ -29,6 +29,13 @@ def _keep_alive_thread():
 
     while True:
         try:
+            if settings.local.host.id != settings.local.host_id:
+                logger.error('Host ID mismatch',
+                    'runners',
+                    host=settings.local.host.id,
+                    host_id=settings.local.host_id,
+                )
+
             timestamp = utils.now()
             timestamp -= datetime.timedelta(
                 microseconds=timestamp.microsecond,
@@ -67,7 +74,7 @@ def _keep_alive_thread():
             except:
                 logger.exception('Failed to get process cpu and mem usage',
                     'runners',
-                    host_id=settings.local.host.id,
+                    host_id=settings.local.host_id,
                     host_name=settings.local.host.name,
                 )
 
@@ -114,7 +121,7 @@ def _keep_alive_thread():
                 host_event = True
 
             settings.local.host.collection.update({
-                '_id': settings.local.host.id,
+                '_id': settings.local.host_id,
             }, {'$set': {
                 'server_count': server_count,
                 'device_count': device_count,
@@ -149,7 +156,7 @@ def _keep_alive_thread():
             raise
         except:
             logger.exception('Error in host keep alive update', 'runners',
-                host_id=settings.local.host.id,
+                host_id=settings.local.host_id,
                 host_name=settings.local.host.name,
             )
             time.sleep(0.5)

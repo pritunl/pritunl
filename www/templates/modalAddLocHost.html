@@ -9,6 +9,22 @@
   </div>
   <div class="priority form-group">
     <label>Priority</label>
-    <input type="number" class="form-control" placeholder="Enter priority" data-toggle="tooltip" title="Priority of host" min="1" step="1" autocapitalize="off">
+    <input type="number" class="form-control" placeholder="Enter priority" data-toggle="tooltip" title="Priority of host, available host with highest priority will selected" min="1" step="1" autocapitalize="off">
+  </div>
+</div>
+<div class="advanced form-group">
+  <div class="static-toggle toggle-form form-group">
+    <label>Static Host</label>
+    <div class="selector no-select" data-toggle="tooltip" title="Static host to run IPsec without the pritunl-link service">
+      <span class="selector-inner glyphicon glyphicon-ok"></span>
+    </div>
+  </div>
+  <div class="public-address form-group">
+    <label>Public Address</label>
+    <input type="text" class="form-control" placeholder="Enter public address" data-toggle="tooltip" title="Public address for static host. Hosts running pritunl-link will set the public address automatically">
+  </div>
+  <div class="local-address form-group">
+    <label>Local Address</label>
+    <input type="text" class="form-control" placeholder="Enter local address" data-toggle="tooltip" title="Local address for static host. Hosts running pritunl-link will set the local address automatically">
   </div>
 </div>

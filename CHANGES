@@ -1,6 +1,176 @@
 Pritunl Changelog
 =================
 
+Version 1.29.1640.83 2018-03-10
+-------------------------------
+
+Improve sso organization matching
+
+Version 1.29.1638.92 2018-03-08
+-------------------------------
+
+Okta sso improvements
+
+Version 1.29.1635.72 2018-03-05
+-------------------------------
+
+Linked server improvements
+
+Version 1.29.1633.23 2018-03-03
+-------------------------------
+
+Fix server recovery issues
+
+Version 1.29.1631.29 2018-03-01
+-------------------------------
+
+Server improvements
+Add SELinux support
+
+Version 1.29.1631.22 2018-03-01
+-------------------------------
+
+Reliablity improvements
+
+Version 1.29.1630.34 2018-02-28
+-------------------------------
+
+Configuration improvements
+
+Version 1.29.1630.29 2018-02-28
+-------------------------------
+
+Add lzo support
+
+Version 1.29.1630.26 2018-02-28
+-------------------------------
+
+Fix setup issue
+
+Version 1.29.1630.5 2018-02-28
+------------------------------
+
+Web server improvements
+
+Version 1.29.1628.17 2018-02-26
+-------------------------------
+
+Add support for Google two-factor authentication cache
+Remove lzo support
+
+Version 1.29.1625.53 2018-02-23
+-------------------------------
+
+Fix issue with server setup
+
+Version 1.29.1624.82 2018-02-22
+-------------------------------
+
+Improve logging
+
+Version 1.29.1618.85 2018-02-16
+-------------------------------
+
+Improve IPv6 support
+
+Version 1.29.1614.10 2018-02-12
+-------------------------------
+
+Add proxy NDP support
+
+Version 1.29.1613.84 2018-02-11
+-------------------------------
+
+Improve IPv6 support
+
+Version 1.29.1609.88 2018-02-07
+-------------------------------
+
+Improve host settings
+Add dedicated support
+
+Version 1.29.1596.36 2018-01-25
+-------------------------------
+
+Add direct IPsec links
+Support attaching host to running servers
+
+Version 1.28.1583.74 2018-01-12
+-------------------------------
+
+Improve server reliability
+
+Version 1.28.1583.22 2018-01-12
+-------------------------------
+
+Fix issue with settings
+
+Version 1.28.1583.4 2018-01-12
+------------------------------
+
+Improve Okta single sign-on
+Improve OneLogin single sign-on
+Improve authentication logging
+Fix database performance issue
+
+Version 1.28.1578.26 2018-01-07
+-------------------------------
+
+Fix issue with initial setup
+
+Version 1.28.1575.85 2018-01-04
+-------------------------------
+
+Improve server reliability
+
+Version 1.28.1548.86 2017-12-08
+-------------------------------
+
+Web interface improvements
+
+Version 1.28.1545.95 2017-12-05
+-------------------------------
+
+Web server improvements
+
+Version 1.28.1543.43 2017-12-03
+-------------------------------
+
+Fix issue with cpu usage
+
+Version 1.28.1541.26 2017-12-01
+-------------------------------
+
+Improve Duo phone authentication
+
+Version 1.28.1531.19 2017-11-21
+-------------------------------
+
+Support load balancer with Lets Encrypt certificate
+
+Version 1.28.1526.18 2017-11-16
+-------------------------------
+
+Update Lets Encrypt support
+Web interface improvements
+
+Version 1.28.1515.73 2017-11-05
+-------------------------------
+
+Add metric to route options
+Improve server routes management
+
+Version 1.28.1487.93 2017-10-08
+-------------------------------
+
+Add authentication limit to user connections
+
+Version 1.28.1485.27 2017-10-06
+-------------------------------
+
+Add static IPsec links
+Add rekey option to link
+
 Version 1.28.1476.96 2017-09-27
 -------------------------------
 

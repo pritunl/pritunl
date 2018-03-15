@@ -8,7 +8,7 @@ def setup_host_fix():
         return
 
     from pritunl import server
-    host_id = settings.local.host.id
+    host_id = settings.local.host_id
 
     for svr in server.iter_servers(fields=['hosts']):
         if svr.hosts != [host_id]:

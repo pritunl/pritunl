@@ -5,6 +5,7 @@ from pritunl import settings
 from pritunl import utils
 from pritunl import monitoring
 from pritunl import auth
+from pritunl import acme
 
 import threading
 import flask
@@ -17,8 +18,6 @@ import cheroot.wsgi
 
 app = flask.Flask(__name__)
 app_server = None
-acme_token = None
-acme_authorization = None
 _cur_ssl = None
 _cur_cert = None
 _cur_key = None
@@ -26,12 +25,6 @@ _cur_port = None
 _cur_reverse_proxy = None
 _update_lock = threading.Lock()
 _watch_event = threading.Event()
-
-def set_acme(token, authorization):
-    global acme_token
-    global acme_authorization
-    acme_token = token
-    acme_authorization = authorization
 
 def update_server(delay=0):
     global _cur_ssl
@@ -86,6 +79,14 @@ def restart_server(delay=0):
     thread.daemon = True
     thread.start()
 
+def restart_server_fast():
+    _watch_event.clear()
+    set_app_server_interrupt()
+    if app_server:
+        app_server.interrupt = ServerRestart('Restart')
+    time.sleep(1)
+    clear_app_server_interrupt()
+
 @app.before_request
 def before_request():
     flask.g.valid = False
@@ -98,7 +99,7 @@ def after_request(response):
 
     response.headers.add('X-Frame-Options', 'DENY')
 
-    if settings.app.server_ssl:
+    if settings.app.server_ssl or settings.app.reverse_proxy:
         response.headers.add('Strict-Transport-Security', 'max-age=31536000')
 
     if not flask.request.path.startswith('/event'):
@@ -115,14 +116,25 @@ def after_request(response):
 @app.route('/.well-known/acme-challenge/<token>', methods=['GET'])
 @auth.open_auth
 def acme_token_get(token):
-    if token == acme_token:
-        return flask.Response(acme_authorization, mimetype='text/plain')
+    authorization = acme.get_authorization(token)
+    if authorization:
+        return flask.Response(authorization, mimetype='text/plain')
     return flask.abort(404)
 
 def _run_server(restart):
     global app_server
 
-    logger.info('Starting server', 'app')
+    try:
+        context = subprocess.check_output(
+            ['id', '-Z'],
+            stderr=subprocess.PIPE,
+        ).strip()
+    except:
+        context = 'none'
+
+    logger.info('Starting server', 'app',
+        context=context,
+    )
 
     app_server = cheroot.wsgi.Server(
         ('localhost', settings.app.server_internal_port),
@@ -140,11 +152,12 @@ def _run_server(restart):
     redirect_server = 'true' if settings.app.redirect_server else 'false'
     internal_addr = 'localhost:%s' % settings.app.server_internal_port
 
-    if settings.app.server_ssl:
-        app.config.update(
-            SESSION_COOKIE_SECURE=True,
-        )
+    app.config.update(
+        SESSION_COOKIE_HTTPONLY=True,
+        SESSION_COOKIE_SECURE=True,
+    )
 
+    if settings.app.server_ssl:
         setup_server_cert()
 
         server_cert_path, server_key_path = utils.write_server_cert(
@@ -186,6 +199,7 @@ def _run_server(restart):
                 )
                 time.sleep(1)
                 restart_server(1)
+
     thread = threading.Thread(target=poll_thread)
     thread.daemon = True
     thread.start()

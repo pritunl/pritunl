@@ -10,6 +10,7 @@ define([
       'server': null,
       'network': null,
       'comment': null,
+      'metric': null,
       'virtual_network': null,
       'network_link': null,
       'server_link': null,

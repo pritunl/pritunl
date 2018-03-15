@@ -485,6 +485,71 @@ class Iptables(object):
                     match.ctstate = 'RELATED,ESTABLISHED'
                     rule.add_match(match)
                     rule.create_target('ACCEPT')
+                    self._accept6.append(('LOCAL', rule))
+                else:
+                    self._accept6.append([
+                        'LOCAL',
+                        '-d', self.virt_network6,
+                        '-m', 'conntrack',
+                        '--ctstate', 'RELATED,ESTABLISHED',
+                        '-j', 'ACCEPT',
+                    ])
+
+                if settings.vpn.lib_iptables and LIB_IPTABLES:
+                    rule = self._init_rule6()
+                    rule.dst = self.virt_network6
+                    rule.protocol = 'icmpv6'
+                    match = iptc.Match(rule, 'conntrack')
+                    match.ctstate = 'NEW'
+                    rule.add_match(match)
+                    rule.create_target('ACCEPT')
+                    self._accept6.append(('LOCAL', rule))
+                else:
+                    self._accept6.append([
+                        'LOCAL',
+                        '-d', self.virt_network6,
+                        '-p', 'icmpv6',
+                        '-m', 'conntrack',
+                        '--ctstate', 'NEW',
+                        '-j', 'ACCEPT',
+                    ])
+
+                if settings.vpn.lib_iptables and LIB_IPTABLES:
+                    rule = self._init_rule6()
+                    rule.dst = self.virt_network6
+                    match = iptc.Match(rule, 'conntrack')
+                    match.ctstate = 'INVALID'
+                    rule.add_match(match)
+                    rule.create_target('DROP')
+                    self._accept6.append(('LOCAL', rule))
+                else:
+                    self._accept6.append([
+                        'LOCAL',
+                        '-d', self.virt_network6,
+                        '-m', 'conntrack',
+                        '--ctstate', 'INVALID',
+                        '-j', 'DROP',
+                    ])
+
+                if settings.vpn.lib_iptables and LIB_IPTABLES:
+                    rule = self._init_rule6()
+                    rule.dst = self.virt_network6
+                    rule.create_target('DROP')
+                    self._drop6.append(('LOCAL', rule))
+                else:
+                    self._drop6.append([
+                        'LOCAL',
+                        '-d', self.virt_network6,
+                        '-j', 'DROP',
+                    ])
+
+                if settings.vpn.lib_iptables and LIB_IPTABLES:
+                    rule = self._init_rule6()
+                    rule.dst = self.virt_network6
+                    match = iptc.Match(rule, 'conntrack')
+                    match.ctstate = 'RELATED,ESTABLISHED'
+                    rule.add_match(match)
+                    rule.create_target('ACCEPT')
                     self._accept6.append(('FORWARD', rule))
                 else:
                     self._accept6.append([
@@ -512,6 +577,23 @@ class Iptables(object):
                         '-m', 'conntrack',
                         '--ctstate', 'NEW',
                         '-j', 'ACCEPT',
+                    ])
+
+                if settings.vpn.lib_iptables and LIB_IPTABLES:
+                    rule = self._init_rule6()
+                    rule.dst = self.virt_network6
+                    match = iptc.Match(rule, 'conntrack')
+                    match.ctstate = 'INVALID'
+                    rule.add_match(match)
+                    rule.create_target('DROP')
+                    self._accept6.append(('FORWARD', rule))
+                else:
+                    self._accept6.append([
+                        'FORWARD',
+                        '-d', self.virt_network6,
+                        '-m', 'conntrack',
+                        '--ctstate', 'INVALID',
+                        '-j', 'DROP',
                     ])
 
                 if settings.vpn.lib_iptables and LIB_IPTABLES:
@@ -849,6 +931,8 @@ class Iptables(object):
                         '-o', all_interface,
                         '-j', 'MASQUERADE',
                     ])
+
+        if self._accept_all and all_interface6:
             for nat_network in self._nat_networks6:
                 if settings.vpn.lib_iptables and LIB_IPTABLES:
                     rule = self._init_rule6()
@@ -881,22 +965,22 @@ class Iptables(object):
 
     def _init_rule(self):
         rule = iptc.Rule()
-        match = iptc.Match(rule, 'comment')
-        match.comment = 'pritunl_%s' % self.id
-        rule.add_match(match)
+        # match = iptc.Match(rule, 'comment')
+        # match.comment = 'pritunl-%s' % self.id
+        # rule.add_match(match)
         return rule
 
     def _init_rule6(self):
         rule = iptc.Rule6()
-        match = iptc.Match(rule, 'comment')
-        match.comment = 'pritunl_%s' % self.id
-        rule.add_match(match)
+        # match = iptc.Match(rule, 'comment')
+        # match.comment = 'pritunl-%s' % self.id
+        # rule.add_match(match)
         return rule
 
     def _parse_rule(self, rule):
         return rule + [
             '-m', 'comment',
-            '--comment', 'pritunl_%s' % self.id,
+            '--comment', 'pritunl-%s' % self.id,
         ]
 
     def _exists_iptables_rule_cmd(self, rule, ipv6=False):
@@ -977,7 +1061,7 @@ class Iptables(object):
                         'instance',
                         rule=rule,
                     )
-                time.sleep(1)
+                time.sleep(0.5)
         finally:
             _global_lock.release()
 
@@ -1022,7 +1106,7 @@ class Iptables(object):
                         'instance',
                         rule=rule,
                     )
-                time.sleep(1)
+                time.sleep(0.5)
         finally:
             _global_lock.release()
 
@@ -1044,7 +1128,7 @@ class Iptables(object):
                         'instance',
                         rule=rule,
                     )
-                time.sleep(1)
+                time.sleep(0.5)
         finally:
             _global_lock.release()
 
@@ -1089,7 +1173,7 @@ class Iptables(object):
                         'instance',
                         rule=rule,
                     )
-                time.sleep(1)
+                time.sleep(0.5)
         finally:
             _global_lock.release()
 

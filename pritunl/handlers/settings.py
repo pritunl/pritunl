@@ -31,7 +31,7 @@ def _dict():
             'email_from': settings.app.email_from,
             'email_server': 'demo',
             'email_username': 'demo',
-            'email_password': True,
+            'email_password': 'demo',
             'pin_mode': settings.user.pin_mode,
             'sso': settings.app.sso,
             'sso_match': settings.app.sso_match,
@@ -47,10 +47,13 @@ def _dict():
             'sso_saml_url': 'demo',
             'sso_saml_issuer_url': 'demo',
             'sso_saml_cert': 'demo',
+            'sso_okta_app_id': settings.app.sso_okta_app_id,
             'sso_okta_token': 'demo',
             'sso_okta_push': settings.app.sso_okta_push,
+            'sso_onelogin_app_id': settings.app.sso_onelogin_app_id,
             'sso_onelogin_id': 'demo',
             'sso_onelogin_secret': 'demo',
+            'sso_onelogin_push': settings.app.sso_onelogin_push,
             'sso_radius_secret': 'demo',
             'sso_radius_host': 'demo',
             'sso_client_cache': settings.app.sso_client_cache,
@@ -106,7 +109,7 @@ def _dict():
             'email_from': settings.app.email_from,
             'email_server': settings.app.email_server,
             'email_username': settings.app.email_username,
-            'email_password': bool(settings.app.email_password),
+            'email_password': settings.app.email_password,
             'pin_mode': settings.user.pin_mode,
             'sso': settings.app.sso,
             'sso_match': settings.app.sso_match,
@@ -122,10 +125,13 @@ def _dict():
             'sso_saml_url': settings.app.sso_saml_url,
             'sso_saml_issuer_url': settings.app.sso_saml_issuer_url,
             'sso_saml_cert': settings.app.sso_saml_cert,
+            'sso_okta_app_id': settings.app.sso_okta_app_id,
             'sso_okta_token': settings.app.sso_okta_token,
             'sso_okta_push': settings.app.sso_okta_push,
+            'sso_onelogin_app_id': settings.app.sso_onelogin_app_id,
             'sso_onelogin_id': settings.app.sso_onelogin_id,
             'sso_onelogin_secret': settings.app.sso_onelogin_secret,
+            'sso_onelogin_push': settings.app.sso_onelogin_push,
             'sso_radius_secret': settings.app.sso_radius_secret,
             'sso_radius_host': settings.app.sso_radius_host,
             'sso_client_cache': settings.app.sso_client_cache,
@@ -478,6 +484,13 @@ def settings_put():
             changes.add('sso')
         settings.app.sso_saml_cert = sso_saml_cert
 
+    if 'sso_okta_app_id' in flask.request.json:
+        settings_commit = True
+        sso_okta_app_id = flask.request.json['sso_okta_app_id'] or None
+        if sso_okta_app_id != settings.app.sso_okta_app_id:
+            changes.add('sso')
+        settings.app.sso_okta_app_id = sso_okta_app_id
+
     if 'sso_okta_token' in flask.request.json:
         settings_commit = True
         sso_okta_token = flask.request.json['sso_okta_token'] or None
@@ -491,6 +504,14 @@ def settings_put():
             settings_commit = True
             sso_okta_push = flask.request.json['sso_okta_push']
             settings.app.sso_okta_push = True if sso_okta_push else False
+
+    if 'sso_onelogin_app_id' in flask.request.json:
+        settings_commit = True
+        sso_onelogin_app_id = flask.request.json['sso_onelogin_app_id'] or \
+            None
+        if sso_onelogin_app_id != settings.app.sso_onelogin_app_id:
+            changes.add('sso')
+        settings.app.sso_onelogin_app_id = sso_onelogin_app_id
 
     if 'sso_onelogin_id' in flask.request.json:
         settings_commit = True
@@ -506,6 +527,15 @@ def settings_put():
         if sso_onelogin_secret != settings.app.sso_onelogin_secret:
             changes.add('sso')
         settings.app.sso_onelogin_secret = sso_onelogin_secret
+
+    if 'sso_onelogin_push' in flask.request.json:
+        sso_mode = settings.app.sso
+        if sso_mode and sso_mode in (
+                SAML_ONELOGIN_AUTH, SAML_ONELOGIN_YUBICO_AUTH):
+            settings_commit = True
+            sso_onelogin_push = flask.request.json['sso_onelogin_push']
+            settings.app.sso_onelogin_push = True if \
+                sso_onelogin_push else False
 
     if 'sso_client_cache' in flask.request.json:
         settings_commit = True
@@ -646,7 +676,10 @@ def settings_put():
                 'sa_east_1_access_key',
                 'sa_east_1_secret_key',
             ):
-        if aws_key in flask.request.json:
+        if settings.app.cloud_provider != 'aws':
+            settings_commit = True
+            setattr(settings.app, aws_key, None)
+        elif aws_key in flask.request.json:
             settings_commit = True
             aws_value = flask.request.json[aws_key]
 
@@ -664,8 +697,10 @@ def settings_put():
         settings.app.sso_saml_url = None
         settings.app.sso_saml_issuer_url = None
         settings.app.sso_saml_cert = None
+        settings.app.sso_okta_app_id = None
         settings.app.sso_okta_token = None
         settings.app.sso_onelogin_key = None
+        settings.app.sso_onelogin_app_id = None
         settings.app.sso_onelogin_id = None
         settings.app.sso_onelogin_secret = None
         settings.app.sso_radius_secret = None

@@ -12,13 +12,37 @@ define([
     template: _.template(modalModifyLocHostTemplate),
     title: 'Modify Location Host',
     okText: 'Save',
+    hasAdvanced: true,
+    events: function() {
+      return _.extend({
+        'click .static-toggle': 'onStaticSelect'
+      }, ModalModifyLocationView.__super__.events);
+    },
     body: function() {
       return this.template(this.model.toJSON());
+    },
+    getStaticSelect: function() {
+      return this.$('.static-toggle .selector').hasClass('selected');
+    },
+    setStaticSelect: function(state) {
+      if (state) {
+        this.$('.static-toggle .selector').addClass('selected');
+        this.$('.static-toggle .selector-inner').show();
+      } else {
+        this.$('.static-toggle .selector').removeClass('selected');
+        this.$('.static-toggle .selector-inner').hide();
+      }
+    },
+    onStaticSelect: function() {
+      this.setStaticSelect(!this.getStaticSelect());
     },
     onOk: function() {
       var name = this.$('.name input').val();
       var timeout = parseInt(this.$('.timeout input').val(), 10) || null;
       var priority = parseInt(this.$('.priority input').val(), 10) || 1;
+      var staticHost = this.getStaticSelect();
+      var publicAddress = this.$('.public-address input').val();
+      var localAddress = this.$('.local-address input').val();
 
       if (!name) {
         this.setAlert('danger', 'Name can not be empty.', '.name');
@@ -29,7 +53,10 @@ define([
       this.model.save({
         name: name,
         timeout: timeout,
-        priority: priority
+        priority: priority,
+        static: staticHost,
+        public_address: publicAddress,
+        local_address: localAddress
       }, {
         success: function() {
           this.close(true);

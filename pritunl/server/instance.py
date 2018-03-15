@@ -36,6 +36,7 @@ class ServerInstance(object):
         self.id = utils.ObjectId()
         self.interrupt = False
         self.sock_interrupt = False
+        self.startup_interrupt = False
         self.clean_exit = False
         self.interface = None
         self.bridge_interface = None
@@ -71,7 +72,7 @@ class ServerInstance(object):
 
     def is_interrupted(self):
         if _instances.get(self.server.id) != self:
-            return False
+            return True
         return self.sock_interrupt
 
     def publish(self, message, transaction=None, extra=None):
@@ -164,25 +165,35 @@ class ServerInstance(object):
             if route['virtual_network']:
                 continue
 
+            metric = route.get('metric')
+            if metric:
+                metric_def = ' default %s' % metric
+                metric = ' %s' % metric
+            else:
+                metric_def = ''
+                metric = ''
+
             network = route['network']
             if route['net_gateway']:
                 if ':' in network:
-                    push += 'push "route-ipv6 %s net_gateway"\n' % network
+                    push += 'push "route-ipv6 %s net_gateway%s"\n' % (
+                        network, metric)
                 else:
-                    push += 'push "route %s %s net_gateway"\n' % \
-                        utils.parse_network(network)
+                    push += 'push "route %s %s net_gateway%s"\n' % (
+                        utils.parse_network(network) + (metric,))
             elif not route.get('network_link'):
                 if ':' in network:
-                    push += 'push "route-ipv6 %s"\n' % network
+                    push += 'push "route-ipv6 %s%s"\n' % (network, metric_def)
                 else:
-                    push += 'push "route %s %s"\n' % utils.parse_network(
-                        network)
+                    push += 'push "route %s %s%s"\n' % (
+                        utils.parse_network(network) + (metric_def,))
             else:
                 if ':' in network:
-                    push += 'route-ipv6 %s %s\n' % (network, gateway6)
+                    push += 'route-ipv6 %s %s%s\n' % (
+                        network, gateway6, metric)
                 else:
-                    push += 'route %s %s %s\n' % (utils.parse_network(
-                        network) + (gateway,))
+                    push += 'route %s %s %s%s\n' % (
+                        utils.parse_network(network) + (gateway, metric))
 
         for link_svr in self.server.iter_links(fields=(
                 '_id', 'network', 'local_networks', 'network_start',
@@ -191,16 +202,21 @@ class ServerInstance(object):
             if self.server.id < link_svr.id:
                 for route in link_svr.get_routes(include_default=False):
                     network = route['network']
+                    metric = route.get('metric')
+                    if metric:
+                        metric = ' %s' % metric
+                    else:
+                        metric = ''
 
                     if route['net_gateway']:
                         continue
 
                     if ':' in network:
-                        push += 'route-ipv6 %s %s\n' % (
-                            network, gateway6)
+                        push += 'route-ipv6 %s %s%s\n' % (
+                            network, gateway6, metric)
                     else:
-                        push += 'route %s %s %s\n' % (utils.parse_network(
-                            network) + (gateway,))
+                        push += 'route %s %s %s%s\n' % (utils.parse_network(
+                            network) + (gateway, metric))
 
         if self.vxlan:
             push += 'push "route %s %s"\n' % utils.parse_network(
@@ -559,9 +575,14 @@ class ServerInstance(object):
                         interface = default_interface
                 interfaces.add(interface)
 
+            nat = route['nat']
+            if network == '::/0' and self.server.ipv6 and \
+                    settings.local.host.routed_subnet6:
+                nat = False
+
             self.iptables.add_route(
                 network,
-                nat=route['nat'],
+                nat=nat,
                 nat_interface=interface,
             )
 
@@ -585,7 +606,7 @@ class ServerInstance(object):
                 '-o', self.interface,
                 '-j', 'MASQUERADE',
                 '-m', 'comment',
-                '--comment', 'pritunl_%s' % self.server.id,
+                '--comment', 'pritunl-%s' % self.server.id,
             ]
             self.iptables.add_rule(rule)
             self.iptables.add_rule6(rule)
@@ -724,6 +745,69 @@ class ServerInstance(object):
             self.stop_process()
 
     @interrupter
+    def _startup_keepalive_thread(self):
+        try:
+            error_count = 0
+
+            while not self.startup_interrupt:
+                try:
+                    doc = self.collection.find_and_modify({
+                        '_id': self.server.id,
+                        'availability_group': \
+                            settings.local.host.availability_group,
+                        'instances.instance_id': self.id,
+                    }, {'$set': {
+                        'instances.$.ping_timestamp': utils.now(),
+                    }}, fields={
+                        '_id': False,
+                        'instances': True,
+                    }, new=True)
+
+                    yield
+
+                    if not doc:
+                        doc = self.collection.find_one({
+                            '_id': self.server.id,
+                        })
+
+                        doc_hosts = ((doc or {}).get('hosts') or [])
+                        if settings.local.host_id in doc_hosts:
+                            logger.error(
+                                'Startup doc lost, stopping server', 'server',
+                                server_id=self.server.id,
+                                instance_id=self.id,
+                                cur_timestamp=utils.now(),
+                            )
+
+                        self.sock_interrupt = True
+                        return
+                    else:
+                        error_count = 0
+
+                    yield
+                except GeneratorExit:
+                    self.stop_process()
+                except:
+                    error_count += 1
+                    if error_count >= 10 and self.stop_process():
+                        logger.exception(
+                            'Failed to update startup ping, stopping server',
+                            'server',
+                            server_id=self.server.id,
+                        )
+                        break
+
+                    logger.exception('Failed to update startup ping',
+                        'server',
+                        server_id=self.server.id,
+                    )
+                    time.sleep(1)
+
+                yield interrupter_sleep(3)
+        except GeneratorExit:
+            self.stop_process()
+
+    @interrupter
     def _keep_alive_thread(self):
         try:
             error_count = 0
@@ -745,17 +829,23 @@ class ServerInstance(object):
                     yield
 
                     if not doc:
-                        logger.error(
-                            'Instance doc lost, stopping server', 'server',
-                            server_id=self.server.id,
-                            instance_id=self.id,
-                            cur_timestamp=utils.now(),
-                        )
+                        doc = self.collection.find_one({
+                            '_id': self.server.id,
+                        })
+
+                        doc_hosts = ((doc or {}).get('hosts') or [])
+                        if settings.local.host_id in doc_hosts:
+                            logger.error(
+                                'Instance doc lost, stopping server', 'server',
+                                server_id=self.server.id,
+                                instance_id=self.id,
+                                cur_timestamp=utils.now(),
+                            )
 
                         if self.stop_process():
                             break
                         else:
-                            time.sleep(0.1)
+                            time.sleep(1)
                             continue
                     else:
                         error_count = 0
@@ -765,7 +855,7 @@ class ServerInstance(object):
                     self.stop_process()
                 except:
                     error_count += 1
-                    if error_count >= 2 and self.stop_process():
+                    if error_count >= 10 and self.stop_process():
                         logger.exception(
                             'Failed to update server ping, stopping server',
                             'server',
@@ -936,8 +1026,13 @@ class ServerInstance(object):
             )
             self.stop_process()
 
+        startup_keepalive_thread = threading.Thread(
+            target=self._startup_keepalive_thread)
+        startup_keepalive_thread.daemon = True
+
         self.state = 'init'
-        timer = threading.Timer(settings.vpn.op_timeout + 3, timeout)
+        timer = threading.Timer(settings.vpn.startup_timeout, timeout)
+        timer.daemon = True
         timer.start()
 
         try:
@@ -969,7 +1064,7 @@ class ServerInstance(object):
             if self.server.replicating and self.server.vxlan:
                 try:
                     self.state = 'get_vxlan'
-                    self.vxlan = vxlan.get_vxlan(self.server.id,
+                    self.vxlan = vxlan.get_vxlan(self.server.id, self.id,
                         self.server.ipv6)
 
                     if self.is_interrupted():
@@ -994,6 +1089,18 @@ class ServerInstance(object):
 
             self.state = 'generate_iptables_rules'
             self.generate_iptables_rules()
+
+            if self.is_interrupted():
+                return
+
+            self.state = 'publish'
+            self.publish('started')
+
+            if self.is_interrupted():
+                return
+
+            self.state = 'startup_keepalive'
+            startup_keepalive_thread.start()
 
             if self.is_interrupted():
                 return
@@ -1024,13 +1131,8 @@ class ServerInstance(object):
             if self.is_interrupted():
                 return
 
-            self.state = 'events'
-            self.publish('started')
-
-            if self.is_interrupted():
-                return
-
             if send_events:
+                self.state = 'events'
                 event.Event(type=SERVERS_UPDATED)
                 event.Event(type=SERVER_HOSTS_UPDATED,
                     resource_id=self.server.id)
@@ -1060,6 +1162,7 @@ class ServerInstance(object):
                 return
 
             timer.cancel()
+            self.startup_interrupt = True
 
             plugins.caller(
                 'server_start',
@@ -1169,6 +1272,7 @@ class ServerInstance(object):
             )
         finally:
             timer.cancel()
+            self.startup_interrupt = True
 
             self.interrupt = True
             self.sock_interrupt = True

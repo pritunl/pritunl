@@ -1,6 +1,6 @@
 <div class="route-comment form-group">
   <label>Comment</label>
-  <input type="text" class="form-control" placeholder="Enter route comment" data-toggle="tooltip" title="Comment for route"  value="<%- comment || '' %>">
+  <input type="text" class="form-control" placeholder="Enter route comment" data-toggle="tooltip" title="Comment for route" value="<%- comment || '' %>">
 </div>
 <div class="nat-route-toggle toggle-form form-group">
   <label>NAT Route</label>
@@ -50,5 +50,11 @@
     <select class="form-control" data-toggle="tooltip" title="VPC ID for route advertisement. EC2 server must be connected to the VPC">
       <option selected value="">No VPCs available</option>
     </select>
+  </div>
+</div>
+<div class="advanced form-group">
+  <div class="route-metric form-group">
+    <label>Metric</label>
+    <input type="text" class="form-control" placeholder="Enter route metric" data-toggle="tooltip" title="Optional route metric, must be greater then zero" value="<%- metric || '' %>">
   </div>
 </div>

@@ -28,7 +28,7 @@ def verify_google(user_email):
         StringIO.StringIO(data['private_key']),
         'notasecret',
         scopes=[
-            'https://www.googleapis.com/auth/admin.directory.group',
+            'https://www.googleapis.com/auth/admin.directory.group.readonly',
         ],
     )
 
@@ -41,6 +41,6 @@ def verify_google(user_email):
 
     groups = []
     for group in results['groups']:
-        groups.append(group['name'])
+        groups.append(group['name'].replace(' ', ''))
 
     return True, groups

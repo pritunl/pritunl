@@ -52,8 +52,12 @@ def subscription_post():
     license = re.sub(r'[\W_]+', '', license)
 
     try:
+        url = 'https://app.pritunl.com/subscription'
+        if settings.app.dedicated:
+            url = settings.app.dedicated + '/subscription'
+
         response = requests.get(
-            'https://app.pritunl.com/subscription',
+            url,
             json={
                 'license': license,
                 'version': settings.local.version_int,
@@ -90,16 +94,20 @@ def subscription_put():
     cancel = flask.request.json.get('cancel')
 
     try:
+        url = 'https://app.pritunl.com/subscription'
+        if settings.app.dedicated:
+            url = settings.app.dedicated + '/subscription'
+
         if cancel:
             response = requests.delete(
-                'https://app.pritunl.com/subscription',
+                url,
                 json={
                     'license': settings.app.license,
                 },
             )
         else:
             response = requests.put(
-                'https://app.pritunl.com/subscription',
+                url,
                 json={
                     'license': settings.app.license,
                     'card': card,

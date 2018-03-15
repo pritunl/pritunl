@@ -16,9 +16,12 @@ def _check_updates():
             continue
 
         try:
+            url = settings.app.notification_server
+            if settings.app.dedicated:
+                url = settings.app.dedicated + '/notification'
+
             request = urllib2.Request(
-                settings.app.notification_server +
-                '/%s' % settings.local.version_int)
+                url + '/%s' % settings.local.version_int)
             response = urllib2.urlopen(request, timeout=60)
             data = json.load(response)
 
@@ -28,7 +31,7 @@ def _check_updates():
         except:
             logger.exception('Failed to check notifications', 'runners')
 
-        utils.sync_public_ip(update=True)
+        utils.sync_public_ip()
 
         yield interrupter_sleep(settings.app.update_check_rate)
 

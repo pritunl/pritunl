@@ -37,9 +37,12 @@ def upsert_index(coll_name, index, **kwargs):
     try:
         coll.create_index(index, **kwargs)
     except:
-        keys = pymongo.helpers._index_list(index)
-        name = pymongo.helpers._gen_index_name(keys)
-        coll.drop_index(name)
+        try:
+            keys = pymongo.helpers._index_list(index)
+            name = pymongo.helpers._gen_index_name(keys)
+            coll.drop_index(name)
+        except:
+            pass
         coll.create_index(index, **kwargs)
 
 def drop_index(coll, index, **kwargs):
@@ -141,7 +144,12 @@ def setup_mongo():
     mongo.database = database
     mongo.secondary_database = secondary_database
 
+    db_collections = database.collection_names()
     cur_collections = secondary_database.collection_names()
+
+    if 'authorities' in db_collections or 'authorities' in cur_collections:
+        raise TypeError('Cannot connect to a Pritunl Zero database')
+
     if prefix + 'messages' not in cur_collections:
         secondary_database.create_collection(prefix + 'messages', capped=True,
             size=5000192, max=1000)
@@ -174,6 +182,7 @@ def setup_mongo():
         'links_hosts': getattr(database, prefix + 'links_hosts'),
         'routes_reserve': getattr(database, prefix + 'routes_reserve'),
         'dh_params': getattr(database, prefix + 'dh_params'),
+        'acme_challenges': getattr(database, prefix + 'acme_challenges'),
         'auth_sessions': getattr(secondary_database,
             prefix + 'auth_sessions'),
         'auth_csrf_tokens': getattr(secondary_database,
@@ -242,6 +251,10 @@ def setup_mongo():
     ], background=True)
     upsert_index('tasks', [
         ('ttl_timestamp', pymongo.ASCENDING),
+    ], background=True)
+    upsert_index('tasks', [
+        ('ttl_timestamp', pymongo.ASCENDING),
+        ('state', pymongo.ASCENDING),
     ], background=True)
     upsert_index('log_entries', [
         ('timestamp', pymongo.DESCENDING),
@@ -343,6 +356,10 @@ def setup_mongo():
     ], background=True)
     upsert_index('links_hosts', [
         ('location_id', pymongo.ASCENDING),
+        ('static', pymongo.ASCENDING),
+    ], background=True)
+    upsert_index('links_hosts', [
+        ('location_id', pymongo.ASCENDING),
         ('name', pymongo.ASCENDING),
     ], background=True)
     upsert_index('links_hosts', 'ping_timestamp_ttl',
@@ -383,8 +400,12 @@ def setup_mongo():
     else:
         upsert_index('clients', 'timestamp',
             background=True, expireAfterSeconds=settings.vpn.client_ttl)
+        upsert_index('clients_pool', 'timestamp',
+            background=True, expireAfterSeconds=settings.vpn.client_ttl)
     upsert_index('users_key_link', 'timestamp',
         background=True, expireAfterSeconds=settings.app.key_link_timeout)
+    upsert_index('acme_challenges', 'timestamp',
+        background=True, expireAfterSeconds=180)
     upsert_index('auth_sessions', 'timestamp',
         background=True, expireAfterSeconds=settings.app.session_timeout)
     upsert_index('auth_nonces', 'timestamp',

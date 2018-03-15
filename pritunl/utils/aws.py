@@ -2,8 +2,6 @@ from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import settings
 
-import boto
-import boto.route53
 import boto3
 import requests
 import time
@@ -14,13 +12,6 @@ def connect_ec2(aws_key, aws_secret, region):
         aws_access_key_id=aws_key,
         aws_secret_access_key=aws_secret,
         region_name=region,
-    )
-
-def connect_route53(aws_key, aws_secret, region):
-    return boto.route53.connect_to_region(
-        region,
-        aws_access_key_id=aws_key,
-        aws_secret_access_key=aws_secret,
     )
 
 def get_instance_id():
@@ -179,10 +170,17 @@ def get_zones():
         if aws_secret == 'role':
             aws_secret = None
 
-        conn = connect_route53(aws_key, aws_secret, region)
+        client = boto3.client(
+            'route53',
+            aws_access_key_id=aws_key,
+            aws_secret_access_key=aws_secret,
+        )
 
-        for zone in conn.get_zones():
-            zone_data.append(zone.name)
+        hosted_zone_id = None
+        hosted_zone_name = None
+        hosted_zones = client.list_hosted_zones_by_name()
+        for hosted_zone in hosted_zones['HostedZones']:
+            zone_data.append(hosted_zone['Name'])
 
     return zones_data
 
@@ -196,38 +194,136 @@ def set_zone_record(region, zone_name, host_name, ip_addr, ip_addr6):
     if aws_secret == 'role':
         aws_secret = None
 
-    conn = connect_route53(aws_key, aws_secret, region)
+    client = boto3.client(
+        'route53',
+        aws_access_key_id=aws_key,
+        aws_secret_access_key=aws_secret,
+    )
 
-    zone = conn.get_zone(zone_name)
-    record_name = host_name + '.' + zone_name
-    record_name_trim = record_name.rstrip('.')
+    hosted_zone_id = None
+    hosted_zone_name = None
+    hosted_zones = client.list_hosted_zones_by_name()
+    for hosted_zone in hosted_zones['HostedZones']:
+        if hosted_zone['Name'].startswith(zone_name):
+            hosted_zone_id = hosted_zone['Id']
+            hosted_zone_name = hosted_zone['Name']
+
+    if not hosted_zone_id or not hosted_zone_name:
+        raise ValueError('Route53 zone not found')
+
+    record_name = host_name + '.' + hosted_zone_name
+
+    records = client.list_resource_record_sets(
+        HostedZoneId=hosted_zone_id,
+    )
+
+    cur_ip_addr = None
+    cur_ip_addr6 = None
+
+    for record in records['ResourceRecordSets']:
+        if record.get('Type') not in ('A', 'AAAA'):
+            continue
+        if record.get('Name') != record_name:
+            continue
+
+        if len(record['ResourceRecords']) == 1:
+            if record['Type'] == 'A':
+                cur_ip_addr = record['ResourceRecords'][0]['Value']
+            else:
+                cur_ip_addr6 = record['ResourceRecords'][0]['Value']
+        else:
+            if record['Type'] == 'A':
+                cur_ip_addr = []
+            else:
+                cur_ip_addr6 = []
+
+            for val in record['ResourceRecords']:
+                if record['Type'] == 'A':
+                    cur_ip_addr.append(val['Value'])
+                else:
+                    cur_ip_addr6.append(val['Value'])
+
+    changes = []
+
+    if ip_addr != cur_ip_addr:
+        if not ip_addr and cur_ip_addr:
+            if isinstance(cur_ip_addr, list):
+                vals = cur_ip_addr
+            else:
+                vals = [cur_ip_addr]
+
+            resource_recs = []
+            for val in vals:
+                resource_recs.append({'Value': val})
+
+            changes.append({
+                'Action': 'DELETE',
+                'ResourceRecordSet': {
+                    'Name': record_name,
+                    'Type': 'A',
+                    'TTL': 60,
+                    'ResourceRecords': resource_recs,
+                },
+            })
+        else:
+            changes.append({
+                'Action': 'UPSERT',
+                'ResourceRecordSet': {
+                    'Name': record_name,
+                    'Type': 'A',
+                    'TTL': 60,
+                    'ResourceRecords': [
+                        {'Value': ip_addr},
+                    ],
+                },
+            })
+
+    if ip_addr6 != cur_ip_addr6:
+        if not ip_addr6 and cur_ip_addr6:
+            if isinstance(cur_ip_addr6, list):
+                vals = cur_ip_addr6
+            else:
+                vals = [cur_ip_addr6]
+
+            resource_recs = []
+            for val in vals:
+                resource_recs.append({'Value': val})
+
+            changes.append({
+                'Action': 'DELETE',
+                'ResourceRecordSet': {
+                    'Name': record_name,
+                    'Type': 'AAAA',
+                    'TTL': 60,
+                    'ResourceRecords': resource_recs,
+                },
+            })
+        else:
+            changes.append({
+                'Action': 'UPSERT',
+                'ResourceRecordSet': {
+                    'Name': record_name,
+                    'Type': 'AAAA',
+                    'TTL': 60,
+                    'ResourceRecords': [
+                        {'Value': ip_addr6},
+                    ],
+                },
+            })
+
+    if changes:
+        client.change_resource_record_sets(
+            HostedZoneId=hosted_zone_id,
+            ChangeBatch={
+                'Changes': changes,
+            },
+        )
+
     zone_host_name = None
     zone_host_name6 = None
-
     if ip_addr:
-        zone_host_name = record_name_trim
-        try:
-            zone.add_record('A', record_name, ip_addr)
-        except:
-            zone.update_a(record_name, ip_addr)
-    else:
-        try:
-            zone.delete_a(record_name)
-        except:
-            pass
-
+        zone_host_name = record_name.rstrip('.')
     if ip_addr6:
-        zone_host_name6 = record_name_trim
-        try:
-            zone.add_record('AAAA', record_name, ip_addr6)
-        except:
-            old_record = zone.find_records(record_name, 'AAAA', all=False)
-            zone.update_record(old_record, ip_addr6)
-    else:
-        try:
-            old_record = zone.find_records(record_name, 'AAAA', all=False)
-            zone.delete_record(old_record)
-        except:
-            pass
+        zone_host_name6 = record_name.rstrip('.')
 
     return zone_host_name, zone_host_name6

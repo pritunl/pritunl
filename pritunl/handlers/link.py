@@ -14,8 +14,11 @@ import base64
 import hmac
 import hashlib
 import json
-import Crypto.Random
-import Crypto.Cipher.AES
+import os
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.ciphers import (
+    Cipher, algorithms, modes
+)
 
 @app.app.route('/link', methods=['GET'])
 @auth.session_auth
@@ -57,15 +60,39 @@ def link_post():
         return utils.demo_blocked()
 
     name = utils.filter_str(flask.request.json.get('name')) or 'undefined'
+    type = DIRECT if flask.request.json.get('type') == DIRECT \
+        else SITE_TO_SITE
 
     lnk = link.Link(
         name=name,
+        type=type,
         status=ONLINE,
     )
 
     lnk.generate_key()
 
     lnk.commit()
+
+    if lnk.type == DIRECT:
+        try:
+            loc = link.Location(
+                link=lnk,
+                name='server',
+                type=DIRECT_SERVER,
+                link_id=lnk.id,
+            )
+            loc.commit()
+
+            loc = link.Location(
+                link=lnk,
+                name='client',
+                type=DIRECT_CLIENT,
+                link_id=lnk.id,
+            )
+            loc.commit()
+        except:
+            lnk.remove()
+            raise
 
     event.Event(type=LINKS_UPDATED)
 
@@ -109,10 +136,10 @@ def link_put(link_id):
 
     status = flask.request.json.get('status')
     if status in (ONLINE, OFFLINE):
-        if status == ONLINE and lnk.status != ONLINE:
-            lnk.generate_key()
-
         lnk.status = status
+
+    if flask.request.json.get('key'):
+        lnk.generate_key()
 
     lnk.commit(('name', 'status', 'key'))
 
@@ -155,7 +182,7 @@ def link_location_post(link_id):
         return utils.demo_blocked()
 
     lnk = link.get_by_id(link_id)
-    if not lnk:
+    if not lnk or lnk.type == DIRECT:
         return flask.abort(404)
 
     name = utils.filter_str(flask.request.json.get('name')) or 'undefined'
@@ -182,7 +209,7 @@ def link_location_put(link_id, location_id):
         return utils.demo_blocked()
 
     lnk = link.get_by_id(link_id)
-    if not lnk:
+    if not lnk or lnk.type == DIRECT:
         return flask.abort(404)
 
     loc = lnk.get_location(location_id)
@@ -208,7 +235,7 @@ def link_location_delete(link_id, location_id):
         return utils.demo_blocked()
 
     lnk = link.get_by_id(link_id)
-    if not lnk:
+    if not lnk or lnk.type == DIRECT:
         return flask.abort(404)
 
     loc = lnk.get_location(location_id)
@@ -233,7 +260,7 @@ def link_location_route_post(link_id, location_id):
         return utils.demo_blocked()
 
     lnk = link.get_by_id(link_id)
-    if not lnk:
+    if not lnk or lnk.type == DIRECT:
         return flask.abort(404)
 
     loc = lnk.get_location(location_id)
@@ -268,7 +295,7 @@ def link_location_route_delete(link_id, location_id, network):
         return utils.demo_blocked()
 
     lnk = link.get_by_id(link_id)
-    if not lnk:
+    if not lnk or lnk.type == DIRECT:
         return flask.abort(404)
 
     loc = lnk.get_location(location_id)
@@ -305,6 +332,11 @@ def link_location_host_post(link_id, location_id):
     name = utils.filter_str(flask.request.json.get('name')) or 'undefined'
     timeout = int(flask.request.json.get('timeout') or 0) or None
     priority = abs(int(flask.request.json.get('priority') or 1)) or 1
+    static = bool(flask.request.json.get('static'))
+    public_address = utils.filter_str(
+        flask.request.json.get('public_address'))
+    local_address = utils.filter_str(
+        flask.request.json.get('local_address'))
 
     hst = link.Host(
         link=lnk,
@@ -314,6 +346,9 @@ def link_location_host_post(link_id, location_id):
         name=name,
         timeout=timeout,
         priority=priority,
+        static=static,
+        public_address=public_address,
+        local_address=local_address,
     )
 
     hst.generate_secret()
@@ -352,6 +387,34 @@ def link_location_host_uri_get(link_id, location_id, host_id):
 
     return utils.jsonify(data)
 
+@app.app.route('/link/<link_id>/location/<location_id>/host/<host_id>/conf',
+    methods=['GET'])
+@auth.session_auth
+def link_location_host_conf_get(link_id, location_id, host_id):
+    if not settings.local.sub_plan or \
+            'enterprise' not in settings.local.sub_plan:
+        return flask.abort(404)
+
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
+    lnk = link.get_by_id(link_id)
+    if not lnk:
+        return flask.abort(404)
+
+    loc = lnk.get_location(location_id)
+    if not loc:
+        return flask.abort(404)
+
+    hst = loc.get_host(host_id)
+    if not hst:
+        return flask.abort(404)
+
+    data = hst.dict()
+    data['conf'] = hst.get_static_conf()
+
+    return utils.jsonify(data)
+
 @app.app.route('/link/<link_id>/location/<location_id>/host/<host_id>',
     methods=['PUT'])
 @auth.session_auth
@@ -378,8 +441,14 @@ def link_location_host_put(link_id, location_id, host_id):
     hst.name = utils.filter_str(flask.request.json.get('name')) or 'undefined'
     hst.timeout = abs(int(flask.request.json.get('timeout') or 0)) or None
     hst.priority = abs(int(flask.request.json.get('priority') or 1)) or 1
+    hst.static = bool(flask.request.json.get('static'))
+    hst.public_address = utils.filter_str(
+        flask.request.json.get('public_address'))
+    hst.local_address = utils.filter_str(
+        flask.request.json.get('local_address'))
 
-    hst.commit(('name', 'timeout', 'priority'))
+    hst.commit(('name', 'timeout', 'priority', 'static',
+        'public_address', 'local_address'))
 
     event.Event(type=LINKS_UPDATED)
 
@@ -426,7 +495,7 @@ def link_location_exclude_post(link_id, location_id):
         return utils.demo_blocked()
 
     lnk = link.get_by_id(link_id)
-    if not lnk:
+    if not lnk or lnk.type == DIRECT:
         return flask.abort(404)
 
     loc = lnk.get_location(location_id)
@@ -456,7 +525,7 @@ def link_location_exclude_delete(link_id, location_id, exclude_id):
         return utils.demo_blocked()
 
     lnk = link.get_by_id(link_id)
-    if not lnk:
+    if not lnk or lnk.type == DIRECT:
         return flask.abort(404)
 
     loc = lnk.get_location(location_id)
@@ -528,27 +597,27 @@ def link_state_put():
 
     host.version = flask.request.json.get('version')
     host.public_address = flask.request.json.get('public_address')
+    host.local_address = flask.request.json.get('local_address')
     host.address6 = flask.request.json.get('address6')
 
     data = json.dumps(host.get_state(), default=lambda x: str(x))
     data += (16 - len(data) % 16) * '\x00'
 
-    iv = Crypto.Random.new().read(16)
+    iv = os.urandom(16)
     key = hashlib.sha256(host.secret).digest()
-    cipher = Crypto.Cipher.AES.new(
-        key,
-        Crypto.Cipher.AES.MODE_CBC,
-        iv,
-    )
+    cipher = Cipher(
+        algorithms.AES(key),
+        modes.CBC(iv),
+        backend=default_backend()
+    ).encryptor()
+    enc_data = base64.b64encode(cipher.update(data) + cipher.finalize())
 
-    enc_data = base64.b64encode(cipher.encrypt(data))
     enc_signature = base64.b64encode(hmac.new(
         host.secret.encode(), enc_data,
         hashlib.sha512).digest())
 
     resp = flask.Response(response=enc_data, mimetype='application/base64')
-    resp.headers.add('Cache-Control',
-        'no-cache, no-store, must-revalidate')
+    resp.headers.add('Cache-Control', 'no-cache, no-store, must-revalidate')
     resp.headers.add('Pragma', 'no-cache')
     resp.headers.add('Expires', 0)
     resp.headers.add('Cipher-IV', base64.b64encode(iv))

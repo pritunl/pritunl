@@ -129,7 +129,7 @@ def setup_clean():
                 table = line[1:]
                 continue
 
-            if '--comment pritunl_' not in line:
+            if '--comment pritunl' not in line:
                 continue
 
             try:

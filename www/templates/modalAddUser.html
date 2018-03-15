@@ -35,7 +35,7 @@
   <label>Network Link</label>
   <input type="text" class="form-control"
     placeholder="Enter network address" data-toggle="tooltip"
-    title="Enter network address with cidr subnet. This will provision access to a clients local network to the attached vpn servers and other clients. Multiple networks may be separated by a comma.">
+    title="Enter network address with cidr subnet. This will provision access to a clients local network to the attached vpn servers and other clients. Multiple networks may be separated by a comma. Router must have a static route to VPN virtual network through client.">
 </div>
 <div class="client-to-client-toggle toggle-form form-group">
   <label>Client-to-Client Only</label>
@@ -43,7 +43,7 @@
     <span class="selector-inner glyphicon glyphicon-ok"></span>
   </div>
 </div>
-<div class="advanced form-group bypass-secondary">
+<div class="advanced form-group">
   <div class="form-group auth-type">
     <label>Type</label>
     <select class="form-control" data-toggle="tooltip" title="User authentication type. This will determine how the user authenticates. This should be set automatically when the user authenticates with single sign-on.">

@@ -106,18 +106,23 @@ class Clients(object):
                     'local_networks', 'organizations', 'routes', 'links',
                     'ipv6'))
 
-            for route in link_usr_svr.get_routes(
-                    include_default=False):
+            for route in link_usr_svr.get_routes(include_default=False):
                 network = route['network']
+                metric = route.get('metric')
+                if metric:
+                    metric_def = ' default %s' % metric
+                else:
+                    metric_def = ''
 
                 if route['net_gateway']:
                     continue
 
                 if ':' in network:
-                    client_conf += 'iroute-ipv6 %s\n' % network
+                    client_conf += 'iroute-ipv6 %s%s\n' % (
+                        network, metric_def)
                 else:
-                    client_conf += 'iroute %s %s\n' % utils.parse_network(
-                        network)
+                    client_conf += 'iroute %s %s%s\n' % (
+                        utils.parse_network(network) + (metric_def,))
         else:
             if self.server.inactive_timeout:
                 client_conf += 'push "inactive %d"\n' % \
@@ -172,23 +177,30 @@ class Clients(object):
                 for route in link_svr.get_routes(
                         include_default=False):
                     network = route['network']
+                    metric = route.get('metric')
+                    if metric:
+                        metric_def = ' default %s' % metric
+                        metric = ' %s' % metric
+                    else:
+                        metric_def = ''
+                        metric = ''
 
                     if route['net_gateway']:
                         if ':' in network:
                             client_conf += \
-                                'push "route-ipv6 %s net_gateway"\n' % (
-                                network)
+                                'push "route-ipv6 %s net_gateway%s"\n' % (
+                                network, metric)
                         else:
                             client_conf += \
-                                'push "route %s %s net_gateway"\n' % (
-                                utils.parse_network(network))
+                                'push "route %s %s net_gateway%s"\n' % (
+                                utils.parse_network(network) + (metric,))
                     else:
                         if ':' in network:
-                            client_conf += 'push "route-ipv6 %s"\n' % (
-                                network)
+                            client_conf += 'push "route-ipv6 %s%s"\n' % (
+                                network, metric_def)
                         else:
-                            client_conf += 'push "route %s %s"\n' % (
-                                utils.parse_network(network))
+                            client_conf += 'push "route %s %s%s"\n' % (
+                                utils.parse_network(network) + (metric_def,))
 
                 if link_svr.replicating and link_svr.vxlan:
                     client_conf += 'push "route %s %s"\n' % \
@@ -503,6 +515,7 @@ class Clients(object):
                 instance_id=self.instance.id,
                 user_id=user_id,
                 multi_device=self.server.multi_device,
+                replica_count=self.server.replica_count,
                 network=self.server.network,
                 user_count=self.server.user_count,
             )
@@ -886,7 +899,7 @@ class Clients(object):
 
         extra_args = [
             '-m', 'comment',
-            '--comment', 'pritunl_%s' % self.server.id,
+            '--comment', 'pritunl-%s' % self.server.id,
         ]
 
         forward2_base_rule = [

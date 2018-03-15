@@ -22,20 +22,23 @@ class Host(mongo.MongoObject):
         'timeout',
         'priority',
         'ping_timestamp_ttl',
+        'static',
         'public_address',
+        'local_address',
         'address6',
         'version',
     }
     fields_default = {
         'status': UNAVAILABLE,
         'active': False,
+        'static': False,
     }
 
     def __init__(self, link=None, location=None, name=None, link_id=None,
             location_id=None, secret=None, status=None, active=None,
             timeout=None, priority=None, ping_timestamp_ttl=None,
-            public_address=None, address6=None, version=None, tunnels=None,
-            **kwargs):
+            static=None, public_address=None, local_address=None,
+            address6=None, version=None, tunnels=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         self.link = link
@@ -68,8 +71,14 @@ class Host(mongo.MongoObject):
         if ping_timestamp_ttl is not None:
             self.ping_timestamp_ttl = ping_timestamp_ttl
 
+        if static is not None:
+            self.static = static
+
         if public_address is not None:
             self.public_address = public_address
+
+        if local_address is not None:
+            self.local_address = local_address
 
         if address6 is not None:
             self.address6 = address6
@@ -103,7 +112,10 @@ class Host(mongo.MongoObject):
             'timeout': self.timeout,
             'priority': self.priority,
             'ping_timestamp_ttl': self.ping_timestamp_ttl,
+            'static': bool(self.static),
             'public_address': self.public_address if not \
+                settings.app.demo_mode else utils.random_ip_addr(),
+            'local_address': self.local_address if not \
                 settings.app.demo_mode else utils.random_ip_addr(),
             'address6': self.address6 if not \
                 settings.app.demo_mode else None,
@@ -170,7 +182,7 @@ class Host(mongo.MongoObject):
         self.status = AVAILABLE
         self.ping_timestamp_ttl = utils.now() + datetime.timedelta(
             seconds=self.timeout or settings.vpn.link_timeout)
-        self.commit(('public_address', 'address6', 'version',
+        self.commit(('public_address', 'address6', 'local_address', 'version',
             'status', 'ping_timestamp_ttl'))
 
         if not self.link.key:
@@ -181,6 +193,7 @@ class Host(mongo.MongoObject):
         links = []
         state = {
             'id': self.id,
+            'type': self.location.type,
             'links': links,
         }
         active_host = self.location.get_active_host()
@@ -193,8 +206,105 @@ class Host(mongo.MongoObject):
                 exclude_id=self.location.id,
             )
 
+            if self.link.type == DIRECT:
+                other_location = None
+
+                for location in locations:
+                    if location.type != self.location.type:
+                        other_location = location
+
+                active_host = other_location.get_active_host()
+                if active_host:
+                    if self.location.type == DIRECT_SERVER:
+                        left_subnets = ['%s/32' % self.local_address]
+                        right_subnets = ['%s/32' % active_host.local_address]
+                    else:
+                        left_subnets = ['%s/32' % self.local_address]
+                        right_subnets = ['%s/32' % active_host.local_address]
+
+                    links.append({
+                        'pre_shared_key': self.link.key,
+                        'right': active_host.public_address,
+                        'left_subnets': left_subnets,
+                        'right_subnets': right_subnets,
+                    })
+            else:
+                for location in locations:
+                    active_host = location.get_active_host()
+                    if not active_host:
+                        continue
+
+                    left_subnets = []
+                    for route in self.location.routes.values():
+                        left_subnets.append(route['network'])
+
+                    right_subnets = []
+                    for route in location.routes.values():
+                        right_subnets.append(route['network'])
+
+                    links.append({
+                        'pre_shared_key': self.link.key,
+                        'right': active_host.public_address,
+                        'left_subnets': left_subnets,
+                        'right_subnets': right_subnets,
+                    })
+
+        state['hash'] = hashlib.md5(json.dumps(
+            state,
+            sort_keys=True,
+            default=lambda x: str(x),
+        )).hexdigest()
+
+        return state
+
+    def get_static_links(self):
+        if not self.link.key:
+            self.link.generate_key()
+            self.link.commit('key')
+            return
+
+        links = []
+        locations = self.link.iter_locations(
+            self.location.id,
+            sort=False,
+            exclude_id=self.location.id,
+        )
+
+        if self.link.type == DIRECT:
+            other_location = None
+
+            for location in locations:
+                if location.type != self.location.type:
+                    other_location = location
+
+            active_host = other_location.get_active_host()
+            if not active_host:
+                for host in other_location.iter_hosts():
+                    active_host = host
+                    break
+
+            if active_host:
+                if self.location.type == DIRECT_SERVER:
+                    left_subnets = ['%s/32' % self.local_address]
+                    right_subnets = ['%s/32' % active_host.local_address]
+                else:
+                    left_subnets = ['%s/32' % self.local_address]
+                    right_subnets = ['%s/32' % active_host.local_address]
+
+                links.append({
+                    'pre_shared_key': self.link.key,
+                    'right': active_host.public_address,
+                    'left_subnets': left_subnets,
+                    'right_subnets': right_subnets,
+                })
+        else:
             for location in locations:
                 active_host = location.get_active_host()
+                if not active_host:
+                    for host in location.iter_hosts():
+                        active_host = host
+                        break
+
                 if not active_host:
                     continue
 
@@ -213,17 +323,34 @@ class Host(mongo.MongoObject):
                     'right_subnets': right_subnets,
                 })
 
-        state['hash'] = hashlib.md5(json.dumps(
-            state,
-            sort_keys=True,
-            default=lambda x: str(x),
-        )).hexdigest()
+        return links
 
-        return state
+    def get_static_conf(self):
+        secrets = ''
+        conns = ''
+
+        for i, lnk in enumerate(self.get_static_links()):
+            secrets += IPSEC_SECRET % (
+                self.public_address,
+                lnk['right'],
+                lnk['pre_shared_key'],
+            ) + '\n'
+
+            conns += IPSEC_CONN % (
+                '%s-%d' % (self.id, i),
+                self.public_address,
+                ','.join(lnk['left_subnets']),
+                lnk['right'],
+                lnk['right'],
+                ','.join(lnk['right_subnets']),
+            )
+
+        return secrets + '\n' + conns.rstrip()
 
 class Location(mongo.MongoObject):
     fields = {
         'name',
+        'type',
         'link_id',
         'routes',
         'location',
@@ -232,14 +359,17 @@ class Location(mongo.MongoObject):
         'routes': {},
     }
 
-    def __init__(self, link=None, name=None, link_id=None, routes=None,
-            **kwargs):
+    def __init__(self, link=None, name=None, type=None, link_id=None,
+            routes=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         self.link = link
 
         if name is not None:
             self.name = name
+
+        if type is not None:
+            self.type = type
 
         if link_id is not None:
             self.link_id = link_id
@@ -286,7 +416,9 @@ class Location(mongo.MongoObject):
         return {
             'id': self.id,
             'name': self.name,
+            'type': self.type,
             'link_id': self.link_id,
+            'link_type': self.link.type,
             'hosts': hosts,
             'routes': routes,
             'excludes': excludes,
@@ -339,9 +471,25 @@ class Location(mongo.MongoObject):
         for doc in cursor:
             yield Host(link=self.link, location=self, doc=doc)
 
+    def get_static_host(self):
+        if self.link.status != ONLINE:
+            return
+
+        doc = Host.collection.find_one({
+            'location_id': self.id,
+            'static': True,
+        })
+
+        if doc:
+            return Host(link=self.link, location=self, doc=doc)
+
     def get_active_host(self):
         if self.link.status != ONLINE:
             return
+
+        hst = self.get_static_host()
+        if hst:
+            return hst
 
         doc = Host.collection.find_one({
             'location_id': self.id,
@@ -391,21 +539,26 @@ class Location(mongo.MongoObject):
 class Link(mongo.MongoObject):
     fields = {
         'name',
+        'type',
         'status',
         'key',
         'excludes',
     }
     fields_default = {
+        'type': SITE_TO_SITE,
         'status': OFFLINE,
         'excludes': [],
     }
 
-    def __init__(self, name=None, status=None, timeout=None,
+    def __init__(self, name=None, type=None, status=None, timeout=None,
             key=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         if name is not None:
             self.name = name
+
+        if type is not None:
+            self.type = type
 
         if status is not None:
             self.status = status
@@ -424,6 +577,7 @@ class Link(mongo.MongoObject):
         return {
             'id': self.id,
             'name': self.name,
+            'type': self.type,
             'status': self.status,
         }
 

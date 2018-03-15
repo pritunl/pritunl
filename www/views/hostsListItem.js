@@ -74,9 +74,9 @@ define([
       }
 
       this.$('.host-public-address .status-text').text(
-        this.model.get('public_address'));
+        this.model.get('public_addr'));
       this.$('.host-local-address .status-text').text(
-        this.model.get('local_address'));
+        this.model.get('local_addr'));
     },
     onCpuUsageGraph: function() {
       this.$('.host-mem-usage-btn').removeClass('btn-primary');

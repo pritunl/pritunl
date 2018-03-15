@@ -3,7 +3,7 @@ from pritunl import logger
 # import requests
 # import pymongo
 # import redis
-# import boto
+# import boto3
 
 # Called on authorization of user connection attempt. Allow will be True
 # when user authenticated sucessfully. When allow is False reason will

@@ -1,10 +1,29 @@
 from pritunl import settings
 from pritunl import utils
+from pritunl import mongo
 
 import os
 
+def set_acme(token, authorization):
+    coll = mongo.get_collection('acme_challenges')
+
+    coll.insert({
+        '_id': token,
+        'authorization': authorization,
+        'timestamp': utils.now(),
+    })
+
+def get_authorization(token):
+    coll = mongo.get_collection('acme_challenges')
+
+    doc = coll.find_one({
+        '_id': token,
+    })
+
+    if doc:
+        return doc.get('authorization')
+
 def get_acme_cert(account_key, csr):
-    from pritunl import app
     from pritunl import acme_tiny
 
     temp_path = utils.get_temp_path()
@@ -21,7 +40,7 @@ def get_acme_cert(account_key, csr):
     certificate = acme_tiny.get_crt(
         account_key_path,
         csr_path,
-        app.set_acme,
+        set_acme,
     )
 
     cert_path = temp_path + '.crt'

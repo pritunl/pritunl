@@ -12,7 +12,7 @@ def _check():
     try:
         settings.reload_mongo()
     except:
-        logger.exception('Auto settings check failed', 'runners')
+        logger.exception('Settings check failed', 'runners')
 
     _start_check_timer()
 

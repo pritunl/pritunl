@@ -15,6 +15,7 @@ define([
     template: _.template(modalAddRouteTemplate),
     title: 'Add Route',
     okText: 'Attach',
+    hasAdvanced: true,
     events: function() {
       return _.extend({
         'change .vpc-region select': 'updateVpcIds',
@@ -135,6 +136,7 @@ define([
 
       var network = this.$('.route-network input').val();
       var comment = this.$('.route-comment input').val();
+      var metric = this.$('.route-metric input').val();
       var server = this.$('.server select').val();
       var nat = this.getNatRouteSelect();
       var natInterface = this.$('.nat-interface input').val();
@@ -148,10 +150,13 @@ define([
         vpcId = this.$('.vpc-id select').val();
       }
 
+      metric = metric ? parseInt(metric, 10) : null;
+
       lastServer = server;
       model.save({
         network: network,
         comment: comment,
+        metric: metric,
         nat: nat,
         nat_interface: natInterface,
         net_gateway: netGateway,

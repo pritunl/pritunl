@@ -3,7 +3,6 @@ from pritunl.host.usage import HostUsage
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
-from pritunl import settings
 from pritunl import utils
 from pritunl import mongo
 from pritunl import logger
@@ -25,6 +24,7 @@ class Host(mongo.MongoObject):
         'auto_public_host',
         'auto_public_host6',
         'routed_subnet6',
+        'proxy_ndp',
         'link_address',
         'sync_address',
         'local_address',
@@ -43,10 +43,6 @@ class Host(mongo.MongoObject):
         mongo.MongoObject.__init__(self, **kwargs)
         self.user_count = None
         self.users_online = None
-
-        if 'id' not in kwargs and 'doc' not in kwargs and 'spec' not in kwargs:
-            self.id = settings.local.host_id
-
         self.usage = HostUsage(self.id)
 
         if name is not None:
@@ -112,13 +108,19 @@ class Host(mongo.MongoObject):
             'user_count': self.user_count,
             'users_online': self.users_online,
             'local_networks': self.local_networks,
-            'public_address': self.public_addr,
-            'public_address6': self.public_addr6,
+            'public_addr': self.public_addr,
+            'public_address': self.public_address,
+            'public_addr6': self.public_addr6,
+            'public_address6': self.public_address6,
             'routed_subnet6': self.routed_subnet6,
+            'proxy_ndp': self.proxy_ndp,
+            'link_addr': self.link_addr,
             'link_address': self.link_address,
             'sync_address': self.sync_address,
-            'local_address': self.local_addr,
-            'local_address6': self.local_addr6,
+            'local_address': self.local_address,
+            'local_addr': self.local_addr,
+            'local_address6': self.local_address6,
+            'local_addr6': self.local_addr6,
             'availability_group': self.availability_group,
         }
 

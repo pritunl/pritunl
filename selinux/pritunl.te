@@ -1,0 +1,296 @@
+policy_module(pritunl, 1.0.0)
+
+require {
+  type user_t;
+  type unconfined_t;
+  type var_lib_t;
+  type var_log_t;
+  type tmp_t;
+
+  type pritunl_web_t;
+  type pritunl_web_exec_t;
+  type pritunl_dns_t;
+  type pritunl_dns_exec_t;
+  type etc_t;
+
+  type NetworkManager_t;
+  type auditd_t;
+  type apmd_t;
+  type bin_t;
+  type cert_t;
+  type chkpwd_t;
+  type chronyd_t;
+  type crond_t;
+  type dhcpc_t;
+  type firewalld_t;
+  type fs_t;
+  type getty_t;
+  type gssproxy_t;
+  type hostname_t;
+  type http_port_t;
+  type ifconfig_exec_t;
+  type init_t;
+  type initrc_t;
+  type init_var_lib_t;
+  type insmod_exec_t;
+  type iptables_exec_t;
+  type iptables_var_run_t;
+  type irqbalance_t;
+  type kernel_t;
+  type ldconfig_exec_t;
+  type lib_t;
+  type lvm_t;
+  type modules_conf_t;
+  type modules_object_t;
+  type mongod_port_t;
+  type mongod_t;
+  type net_conf_t;
+  type node_t;
+  type openvpn_exec_t;
+  type passwd_file_t;
+  type policykit_t;
+  type postfix_master_t;
+  type postfix_pickup_t;
+  type postfix_qmgr_t;
+  type proc_net_t;
+  type proc_t;
+  type rhnsd_t;
+  type rpm_t;
+  type shell_exec_t;
+  type sshd_t;
+  type sshd_net_t;
+  type sysctl_net_t;
+  type sysfs_t;
+  type syslogd_t;
+  type system_cronjob_t;
+  type system_dbusd_t;
+  type systemd_hostnamed_t;
+  type systemd_logind_t;
+  type systemd_tmpfiles_t;
+  type tmp_t;
+  type tmpfs_t;
+  type tun_tap_device_t;
+  type tuned_t;
+  type udev_t;
+  type unconfined_t;
+  type unconfined_service_t;
+  type unreserved_port_t;
+  type usermodehelper_t;
+  type var_run_t;
+}
+
+type pritunl_t;
+type pritunl_tmp_t;
+
+type pritunl_var_lib_t;
+files_type(pritunl_var_lib_t)
+
+type pritunl_var_log_t;
+logging_log_file(pritunl_var_log_t)
+
+type pritunl_unit_file_t;
+systemd_unit_file(pritunl_unit_file_t)
+
+type pritunl_var_run_t;
+type pritunl_exec_t;
+
+init_daemon_domain(pritunl_t, pritunl_exec_t)
+inetd_service_domain(pritunl_t, pritunl_exec_t)
+
+type_transition init_t pritunl_exec_t:process pritunl_t;
+
+allow pritunl_t pritunl_web_t:process { transition noatsecure rlimitinh siginh sigkill signal };
+allow pritunl_t pritunl_web_exec_t:file { execute open read };
+
+allow pritunl_t pritunl_dns_t:process { transition noatsecure rlimitinh siginh sigkill signal };
+allow pritunl_t pritunl_dns_exec_t:file { execute open read };
+
+allow pritunl_t self:fifo_file rw_fifo_file_perms;
+allow pritunl_t self:unix_stream_socket { create_stream_socket_perms connectto };
+
+domain_use_interactive_fds(pritunl_t)
+files_read_etc_files(pritunl_t)
+miscfiles_read_localization(pritunl_t)
+
+#################################
+# etc
+#################################
+allow pritunl_t etc_t:file write;
+# files_etc_filetrans
+
+#################################
+# var_lib
+#################################
+type_transition pritunl_t init_var_lib_t:file pritunl_var_lib_t;
+
+files_var_lib_filetrans(pritunl_t, pritunl_var_lib_t, { dir file lnk_file })
+manage_dirs_pattern(pritunl_t, pritunl_var_lib_t, pritunl_var_lib_t)
+manage_files_pattern(pritunl_t, pritunl_var_lib_t, pritunl_var_lib_t)
+manage_lnk_files_pattern(pritunl_t, pritunl_var_lib_t, pritunl_var_lib_t)
+
+#################################
+# var_log
+#################################
+logging_log_filetrans(pritunl_t, pritunl_var_log_t, { dir file lnk_file })
+manage_dirs_pattern(pritunl_t, pritunl_var_log_t, pritunl_var_log_t)
+manage_files_pattern(pritunl_t, pritunl_var_log_t, pritunl_var_log_t)
+manage_lnk_files_pattern(pritunl_t, pritunl_var_log_t, pritunl_var_log_t)
+allow pritunl_var_log_t fs_t:filesystem associate;
+allow pritunl_var_log_t tmpfs_t:filesystem associate;
+
+#################################
+# sock
+#################################
+type_transition pritunl_t var_run_t:sock_file pritunl_var_run_t;
+
+allow pritunl_t var_run_t:dir { add_entry_dir_perms remove_name };
+allow pritunl_t var_run_t:file { manage_file_perms };
+allow pritunl_t pritunl_var_run_t:sock_file { manage_file_perms };
+allow pritunl_t sshd_net_t:dir search;
+allow pritunl_t sshd_net_t:file { getattr open read };
+allow pritunl_var_run_t fs_t:filesystem associate;
+allow pritunl_var_run_t tmpfs_t:filesystem associate;
+allow unconfined_t pritunl_var_run_t:sock_file getattr;
+
+#################################
+# tmp
+#################################
+files_tmp_filetrans(pritunl_t, pritunl_tmp_t, { dir file lnk_file })
+manage_dirs_pattern(pritunl_t, pritunl_tmp_t, pritunl_tmp_t)
+manage_files_pattern(pritunl_t, pritunl_tmp_t, pritunl_tmp_t)
+manage_lnk_files_pattern(pritunl_t, pritunl_tmp_t, pritunl_tmp_t)
+allow pritunl_tmp_t fs_t:filesystem associate;
+allow pritunl_tmp_t tmpfs_t:filesystem associate;
+allow pritunl_t pritunl_tmp_t:file execute;
+
+#################################
+# lib
+#################################
+allow pritunl_t lib_t:dir { manage_dir_perms };
+allow pritunl_t lib_t:file { manage_file_perms };
+
+#################################
+# other
+#################################
+allow pritunl_t NetworkManager_t:dir search;
+allow pritunl_t NetworkManager_t:file { getattr open read };
+allow pritunl_t auditd_t:dir search;
+allow pritunl_t auditd_t:file { getattr open read };
+allow pritunl_t apmd_t:dir search;
+allow pritunl_t apmd_t:file { getattr open read };
+allow pritunl_t cert_t:dir search;
+allow pritunl_t cert_t:file { getattr open read };
+allow pritunl_t cert_t:lnk_file read;
+allow pritunl_t chkpwd_t:dir search;
+allow pritunl_t chkpwd_t:file { getattr open read };
+allow pritunl_t chronyd_t:dir search;
+allow pritunl_t chronyd_t:file { getattr open read };
+allow pritunl_t crond_t:dir search;
+allow pritunl_t crond_t:file { getattr open read };
+allow pritunl_t dhcpc_t:dir search;
+allow pritunl_t dhcpc_t:file { getattr open read };
+allow pritunl_t firewalld_t:dir search;
+allow pritunl_t firewalld_t:file { getattr open read };
+allow pritunl_t getty_t:dir search;
+allow pritunl_t getty_t:file { getattr open read };
+allow pritunl_t gssproxy_t:dir search;
+allow pritunl_t gssproxy_t:file { getattr open read };
+allow pritunl_t hostname_t:dir search;
+allow pritunl_t hostname_t:file { getattr open read };
+allow pritunl_t http_port_t:tcp_socket name_connect;
+allow pritunl_t ifconfig_exec_t:file { execute execute_no_trans open read };
+allow pritunl_t init_t:dir { search };
+allow pritunl_t init_t:file { getattr open read };
+allow pritunl_t init_var_lib_t:dir { search };
+allow pritunl_t init_var_lib_t:file { getattr open read };
+allow pritunl_t initrc_t:dir { search };
+allow pritunl_t initrc_t:file { getattr open read };
+allow pritunl_t insmod_exec_t:file { execute execute_no_trans open read };
+allow pritunl_t iptables_exec_t:file { execute execute_no_trans open read };
+allow pritunl_t iptables_var_run_t:file { lock open read };
+allow pritunl_t irqbalance_t:dir search;
+allow pritunl_t irqbalance_t:file { getattr open read };
+allow pritunl_t kernel_t:dir search;
+allow pritunl_t kernel_t:file { getattr open read };
+allow pritunl_t kernel_t:system module_request;
+allow pritunl_t ldconfig_exec_t:file { execute execute_no_trans open read };
+allow pritunl_t lvm_t:dir search;
+allow pritunl_t lvm_t:file { getattr open read };
+allow pritunl_t modules_conf_t:dir { getattr open read search };
+allow pritunl_t modules_conf_t:file { getattr open read };
+allow pritunl_t modules_object_t:dir search;
+allow pritunl_t modules_object_t:file { getattr open read };
+allow pritunl_t mongod_port_t:tcp_socket name_connect;
+allow pritunl_t mongod_t:dir search;
+allow pritunl_t mongod_t:file { getattr open read };
+allow pritunl_t net_conf_t:file { getattr open read };
+allow pritunl_t node_t:tcp_socket node_bind;
+allow pritunl_t node_t:udp_socket node_bind;
+allow pritunl_t openvpn_exec_t:file { execute execute_no_trans open read };
+allow pritunl_t passwd_file_t:file { getattr open read };
+allow pritunl_t policykit_t:dir search;
+allow pritunl_t policykit_t:file { getattr open read };
+allow pritunl_t postfix_master_t:dir search;
+allow pritunl_t postfix_master_t:file { getattr open read };
+allow pritunl_t postfix_pickup_t:dir search;
+allow pritunl_t postfix_pickup_t:file { getattr open read };
+allow pritunl_t postfix_qmgr_t:dir search;
+allow pritunl_t postfix_qmgr_t:file { getattr open read };
+allow pritunl_t proc_net_t:file { getattr open read };
+allow pritunl_t proc_t:dir read;
+allow pritunl_t proc_t:file { getattr open read };
+allow pritunl_t proc_t:filesystem getattr;
+allow pritunl_t rhnsd_t:dir search;
+allow pritunl_t rhnsd_t:file { getattr open read };
+allow pritunl_t rpm_t:dir search;
+allow pritunl_t rpm_t:file { getattr open read };
+allow pritunl_t self:capability { dac_override net_raw net_admin net_bind_service sys_module };
+allow pritunl_t self:netlink_route_socket { bind create getattr nlmsg_read nlmsg_write setopt read write };
+allow pritunl_t self:process execmem;
+allow pritunl_t self:rawip_socket { create getopt setopt };
+allow pritunl_t self:tcp_socket { accept bind connect create getattr getopt ioctl listen setopt shutdown read write };
+allow pritunl_t self:tun_socket { accept bind connect create getattr getopt ioctl listen setopt shutdown read write };
+allow pritunl_t self:udp_socket { accept bind connect create getattr getopt ioctl listen setopt shutdown read write };
+allow pritunl_t self:unix_dgram_socket { create ioctl };
+allow pritunl_t sshd_t:dir search;
+allow pritunl_t sshd_t:file { getattr open read };
+allow pritunl_t sysctl_net_t:dir { getattr open read search };
+allow pritunl_t sysctl_net_t:file { getattr open read write };
+allow pritunl_t sysfs_t:file { open read };
+allow pritunl_t syslogd_t:dir search;
+allow pritunl_t syslogd_t:file { getattr open read };
+allow pritunl_t system_cronjob_t:dir search;
+allow pritunl_t system_cronjob_t:file { getattr open read };
+allow pritunl_t system_dbusd_t:dir search;
+allow pritunl_t system_dbusd_t:file { getattr open read };
+allow pritunl_t systemd_hostnamed_t:dir search;
+allow pritunl_t systemd_hostnamed_t:file { getattr open read };
+allow pritunl_t systemd_logind_t:dir search;
+allow pritunl_t systemd_logind_t:file { getattr open read };
+allow pritunl_t tun_tap_device_t:chr_file { ioctl open read write };
+allow pritunl_t tuned_t:dir search;
+allow pritunl_t tuned_t:file { getattr open read };
+allow pritunl_t udev_t:dir search;
+allow pritunl_t udev_t:file { getattr open read };
+allow pritunl_t usermodehelper_t:file { getattr open read };
+allow pritunl_t unreserved_port_t:tcp_socket { name_bind name_connect };
+allow pritunl_t unreserved_port_t:udp_socket name_bind;
+
+#################################
+# ndppd
+#################################
+allow pritunl_t self:packet_socket { bind create ioctl setopt };
+allow pritunl_t self:rawip_socket ioctl;
+
+#################################
+# todo
+#################################
+allow pritunl_t shell_exec_t:file { execute execute_no_trans };
+allow pritunl_t bin_t:file { execute execute_no_trans };
+allow pritunl_t unconfined_t:dir search;
+allow pritunl_t unconfined_t:file { getattr open read };
+allow pritunl_t unconfined_service_t:dir search;
+allow pritunl_t unconfined_service_t:file { getattr open read };
+
+allow systemd_tmpfiles_t pritunl_tmp_t:dir { getattr read };
+allow systemd_tmpfiles_t pritunl_tmp_t:file { getattr open read };

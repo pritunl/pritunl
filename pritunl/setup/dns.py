@@ -73,6 +73,9 @@ def _dns_thread():
 
                     process = None
                     break
+
+                time.sleep(0.5)
+                yield
         except GeneratorExit:
             if process:
                 process.terminate()

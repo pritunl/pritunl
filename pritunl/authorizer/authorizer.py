@@ -13,6 +13,7 @@ import threading
 import uuid
 import hashlib
 import base64
+import datetime
 
 _states = tunldb.TunlDB()
 
@@ -53,6 +54,10 @@ class Authorizer(object):
     @property
     def sso_client_cache_collection(cls):
         return mongo.get_collection('sso_client_cache')
+
+    @property
+    def limiter_collection(cls):
+        return mongo.get_collection('auth_limiter')
 
     @property
     def otp_cache_collection(cls):
@@ -213,9 +218,55 @@ class Authorizer(object):
                     'User platform %s not allowed' % self.platform)
 
     def _check_password(self):
-        if self.user.bypass_secondary or self.user.link_server_id or \
-                settings.vpn.stress_test or self.has_token or self.whitelisted:
+        if settings.vpn.stress_test or self.user.link_server_id:
             return
+
+        if self.user.bypass_secondary:
+            logger.info(
+                'Bypass secondary enabled, skipping password', 'sso',
+                username=self.user.name,
+            )
+            return
+
+        if self.has_token:
+            logger.info(
+                'Client authentication cached, skipping password', 'sso',
+                username=self.user.name,
+            )
+            return
+
+        if self.whitelisted:
+            logger.info(
+                'Client network whitelisted, skipping password', 'sso',
+                username=self.user.name,
+            )
+            return
+
+        doc = self.limiter_collection.find_and_modify({
+            '_id': self.user.id,
+        }, {
+            '$inc': {'count': 1},
+            '$setOnInsert': {'timestamp': utils.now()},
+        }, new=True, upsert=True)
+
+        if utils.now() > doc['timestamp'] + datetime.timedelta(
+                seconds=settings.app.auth_limiter_ttl):
+            doc = {
+                'count': 1,
+                'timestamp': utils.now(),
+            }
+            self.limiter_collection.update({
+                '_id': self.user.id,
+            }, doc, upsert=True)
+
+        if doc['count'] > settings.app.auth_limiter_count_max:
+            self.user.audit_event(
+                'user_connection',
+                ('User connection to "%s" denied. Too many ' +
+                 'authentication attempts') % (self.server.name),
+                remote_addr=self.remote_ip,
+            )
+            raise AuthError('Too many authentication attempts')
 
         sso_mode = settings.app.sso or ''
         duo_mode = settings.app.sso_duo_mode
@@ -223,7 +274,13 @@ class Authorizer(object):
         if DUO_AUTH in sso_mode and DUO_AUTH in auth_type and \
                 duo_mode == 'passcode':
             if not self.password and self.has_challenge() and \
-                self.user.has_pin():
+                    self.user.has_pin():
+                self.user.audit_event('user_connection',
+                    ('User connection to "%s" denied. ' +
+                     'User failed pin authentication') % (
+                        self.server.name),
+                    remote_addr=self.remote_ip,
+                )
                 self.set_challenge(None, 'Enter Pin', False)
                 raise AuthError('Challenge pin')
 
@@ -271,6 +328,11 @@ class Authorizer(object):
                     })
                     allow = True
 
+                    logger.info(
+                        'Authentication cached, skipping Duo', 'sso',
+                        username=self.user.name,
+                    )
+
             if not allow:
                 duo_auth = sso.Duo(
                     username=self.user.name,
@@ -282,6 +344,13 @@ class Authorizer(object):
                 allow = duo_auth.authenticate()
 
                 if not allow:
+                    self.user.audit_event('user_connection',
+                        ('User connection to "%s" denied. ' +
+                         'User failed Duo passcode authentication') % (
+                            self.server.name),
+                        remote_addr=self.remote_ip,
+                    )
+
                     if self.has_challenge():
                         if self.user.has_password(self.server):
                             self.set_challenge(
@@ -290,13 +359,6 @@ class Authorizer(object):
                             self.set_challenge(
                                 None, 'Enter Duo Passcode', True)
                         raise AuthError('Challenge Duo code')
-
-                    self.user.audit_event('user_connection',
-                        ('User connection to "%s" denied. ' +
-                         'User failed Duo passcode authentication') % (
-                            self.server.name),
-                        remote_addr=self.remote_ip,
-                    )
                     raise AuthError('Invalid OTP code')
 
                 if settings.app.sso_cache:
@@ -321,6 +383,12 @@ class Authorizer(object):
         elif YUBICO_AUTH in sso_mode and YUBICO_AUTH in auth_type:
             if not self.password and self.has_challenge() and \
                     self.user.has_pin():
+                self.user.audit_event('user_connection',
+                    ('User connection to "%s" denied. ' +
+                     'User failed pin authentication') % (
+                        self.server.name),
+                    remote_addr=self.remote_ip,
+                )
                 self.set_challenge(None, 'Enter Pin', False)
                 raise AuthError('Challenge pin')
 
@@ -371,12 +439,24 @@ class Authorizer(object):
                     })
                     allow = True
 
+                    logger.info(
+                        'Authentication cached, skipping Yubikey', 'sso',
+                        username=self.user.name,
+                    )
+
             if not allow:
                 valid, yubico_id = sso.auth_yubico(yubikey)
                 if yubico_id != self.user.yubico_id:
                     valid = False
 
                 if not valid:
+                    self.user.audit_event('user_connection',
+                        ('User connection to "%s" denied. ' +
+                         'User failed Yubico authentication') % (
+                            self.server.name),
+                        remote_addr=self.remote_ip,
+                    )
+
                     if self.has_challenge():
                         if self.user.has_password(self.server):
                             self.set_challenge(
@@ -385,13 +465,6 @@ class Authorizer(object):
                             self.set_challenge(
                                 None, 'YubiKey', True)
                         raise AuthError('Challenge YubiKey')
-
-                    self.user.audit_event('user_connection',
-                        ('User connection to "%s" denied. ' +
-                         'User failed Yubico authentication') % (
-                            self.server.name),
-                        remote_addr=self.remote_ip,
-                        )
                     raise AuthError('Invalid YubiKey')
 
                 if settings.app.sso_cache:
@@ -416,6 +489,12 @@ class Authorizer(object):
         elif self.server.otp_auth and self.user.type == CERT_CLIENT:
             if not self.password and self.has_challenge() and \
                     self.user.has_pin():
+                self.user.audit_event('user_connection',
+                    ('User connection to "%s" denied. ' +
+                     'User failed pin authentication') % (
+                        self.server.name),
+                    remote_addr=self.remote_ip,
+                )
                 self.set_challenge(None, 'Enter Pin', False)
                 raise AuthError('Challenge pin')
 
@@ -462,8 +541,20 @@ class Authorizer(object):
                     })
                     allow = True
 
+                    logger.info(
+                        'Authentication cached, skipping OTP', 'sso',
+                        username=self.user.name,
+                    )
+
             if not allow:
                 if not self.user.verify_otp_code(otp_code):
+                    self.user.audit_event('user_connection',
+                        ('User connection to "%s" denied. ' +
+                         'User failed two-step authentication') % (
+                            self.server.name),
+                        remote_addr=self.remote_ip,
+                    )
+
                     if self.has_challenge():
                         if self.user.has_password(self.server):
                             self.set_challenge(
@@ -472,13 +563,6 @@ class Authorizer(object):
                             self.set_challenge(
                                 None, 'Enter OTP Code', True)
                         raise AuthError('Challenge OTP code')
-
-                    self.user.audit_event('user_connection',
-                        ('User connection to "%s" denied. ' +
-                         'User failed two-step authentication') % (
-                            self.server.name),
-                        remote_addr=self.remote_ip,
-                    )
                     raise AuthError('Invalid OTP code')
 
                 if settings.vpn.otp_cache:
@@ -502,16 +586,16 @@ class Authorizer(object):
 
         if self.user.has_pin():
             if not self.user.check_pin(self.password):
-                if self.has_challenge():
-                    self.set_challenge(None, 'Enter Pin', False)
-                    raise AuthError('Challenge pin')
-
                 self.user.audit_event('user_connection',
                     ('User connection to "%s" denied. ' +
                      'User failed pin authentication') % (
                         self.server.name),
                     remote_addr=self.remote_ip,
                 )
+
+                if self.has_challenge():
+                    self.set_challenge(None, 'Enter Pin', False)
+                    raise AuthError('Challenge pin')
                 raise AuthError('Invalid pin')
         elif settings.user.pin_mode == PIN_REQUIRED:
             self.user.audit_event('user_connection',
@@ -536,12 +620,29 @@ class Authorizer(object):
             raise AuthError('Failed secondary authentication')
 
     def _check_push(self):
-        if self.user.bypass_secondary or settings.vpn.stress_test or \
-                self.has_token or self.whitelisted:
-            return
-
         self.push_type = self.user.get_push_type()
         if not self.push_type:
+            return
+
+        if settings.vpn.stress_test:
+            return
+
+        if self.user.bypass_secondary:
+            logger.info('Bypass secondary enabled, skipping push', 'sso',
+                username=self.user.name,
+            )
+            return
+
+        if self.has_token:
+            logger.info('Client authentication cached, skipping push', 'sso',
+                username=self.user.name,
+            )
+            return
+
+        if self.whitelisted:
+            logger.info('Client network whitelisted, skipping push', 'sso',
+                username=self.user.name,
+            )
             return
 
         if settings.app.sso_cache:
@@ -571,6 +672,10 @@ class Authorizer(object):
                     'device_name': self.device_name,
                     'timestamp': utils.now(),
                 })
+
+                logger.info('Authentication cached, skipping push', 'sso',
+                    username=self.user.name,
+                )
                 return
 
         def thread_func():
@@ -587,7 +692,7 @@ class Authorizer(object):
         raise AuthForked()
 
     def _auth_push_thread(self):
-        info={
+        info = {
             'Server': self.server.name,
         }
 
@@ -615,6 +720,13 @@ class Authorizer(object):
                 info=info,
             )
             allow = duo_auth.authenticate()
+        elif self.push_type == SAML_ONELOGIN_AUTH:
+            allow = sso.auth_onelogin_push(
+                self.user.name,
+                ipaddr=self.remote_ip,
+                type='Connection',
+                info=info,
+            )
         elif self.push_type == SAML_OKTA_AUTH:
             allow = sso.auth_okta_push(
                 self.user.name,

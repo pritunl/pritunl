@@ -721,6 +721,7 @@ def server_route_post(server_id):
     svr = server.get_by_id(server_id)
     route_network = flask.request.json['network']
     comment = flask.request.json.get('comment') or None
+    metric = flask.request.json.get('metric') or None
     nat_route = True if flask.request.json.get('nat') else False
     nat_interface = flask.request.json.get('nat_interface') or None
     vpc_region = utils.filter_str(flask.request.json.get('vpc_region')) or None
@@ -729,7 +730,7 @@ def server_route_post(server_id):
 
     try:
         route = svr.upsert_route(route_network, nat_route, nat_interface,
-            vpc_region, vpc_id, net_gateway, comment)
+            vpc_region, vpc_id, net_gateway, comment, metric)
     except ServerOnlineError:
         return utils.jsonify({
             'error': SERVER_ROUTE_ONLINE,
@@ -755,6 +756,79 @@ def server_route_post(server_id):
             'error': SERVER_ROUTE_NETWORK_LINK_NAT,
             'error_msg': SERVER_ROUTE_NETWORK_LINK_NAT_MSG,
         }, 400)
+    except ServerRouteNatNetGateway:
+        return utils.jsonify({
+            'error': SERVER_ROUTE_NET_GATEWAY_NAT,
+            'error_msg': SERVER_ROUTE_NET_GATEWAY_NAT_MSG,
+        }, 400)
+
+    err, err_msg = svr.validate_conf()
+    if err:
+        return utils.jsonify({
+            'error': err,
+            'error_msg': err_msg,
+        }, 400)
+
+    svr.commit('routes')
+
+    event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
+    for svr_link in svr.links:
+        event.Event(type=SERVER_ROUTES_UPDATED,
+            resource_id=svr_link['server_id'])
+
+    return utils.jsonify(route)
+
+@app.app.route('/server/<server_id>/routes', methods=['POST'])
+@auth.session_auth
+def server_routes_post(server_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
+    svr = server.get_by_id(server_id)
+
+    for route_data in flask.request.json:
+        route_network = route_data['network']
+        comment = route_data.get('comment') or None
+        metric = route_data.get('metric') or None
+        nat_route = True if route_data.get('nat') else False
+        nat_interface = route_data.get('nat_interface') or None
+        vpc_region = utils.filter_str(route_data.get('vpc_region')) or None
+        vpc_id = utils.filter_str(route_data.get('vpc_id')) or None
+        net_gateway = True if route_data.get('net_gateway') else False
+
+        try:
+            route = svr.upsert_route(route_network, nat_route, nat_interface,
+                vpc_region, vpc_id, net_gateway, comment, metric)
+        except ServerOnlineError:
+            return utils.jsonify({
+                'error': SERVER_ROUTE_ONLINE,
+                'error_msg': SERVER_ROUTE_ONLINE_MSG,
+            }, 400)
+        except NetworkInvalid:
+            return utils.jsonify({
+                'error': SERVER_ROUTE_INVALID,
+                'error_msg': SERVER_ROUTE_INVALID_MSG,
+            }, 400)
+        except ServerRouteNatVirtual:
+            return utils.jsonify({
+                'error': SERVER_ROUTE_VIRTUAL_NAT,
+                'error_msg': SERVER_ROUTE_VIRTUAL_NAT_MSG,
+            }, 400)
+        except ServerRouteNatServerLink:
+            return utils.jsonify({
+                'error': SERVER_ROUTE_SERVER_LINK_NAT,
+                'error_msg': SERVER_ROUTE_SERVER_LINK_NAT_MSG,
+            }, 400)
+        except ServerRouteNatNetworkLink:
+            return utils.jsonify({
+                'error': SERVER_ROUTE_NETWORK_LINK_NAT,
+                'error_msg': SERVER_ROUTE_NETWORK_LINK_NAT_MSG,
+            }, 400)
+        except ServerRouteNatNetGateway:
+            return utils.jsonify({
+                'error': SERVER_ROUTE_NET_GATEWAY_NAT,
+                'error_msg': SERVER_ROUTE_NET_GATEWAY_NAT_MSG,
+            }, 400)
 
     err, err_msg = svr.validate_conf()
     if err:
@@ -781,6 +855,7 @@ def server_route_put(server_id, route_network):
     svr = server.get_by_id(server_id)
     route_network = route_network.decode('hex')
     comment = flask.request.json.get('comment') or None
+    metric = flask.request.json.get('metric') or None
     nat_route = True if flask.request.json.get('nat') else False
     nat_interface = flask.request.json.get('nat_interface') or None
     vpc_region = utils.filter_str(flask.request.json.get('vpc_region')) or None
@@ -789,7 +864,7 @@ def server_route_put(server_id, route_network):
 
     try:
         route = svr.upsert_route(route_network, nat_route, nat_interface,
-            vpc_region, vpc_id, net_gateway, comment)
+            vpc_region, vpc_id, net_gateway, comment, metric)
     except ServerOnlineError:
         return utils.jsonify({
             'error': SERVER_ROUTE_ONLINE,
@@ -814,6 +889,11 @@ def server_route_put(server_id, route_network):
         return utils.jsonify({
             'error': SERVER_ROUTE_NETWORK_LINK_NAT,
             'error_msg': SERVER_ROUTE_NETWORK_LINK_NAT_MSG,
+        }, 400)
+    except ServerRouteNatNetGateway:
+        return utils.jsonify({
+            'error': SERVER_ROUTE_NET_GATEWAY_NAT,
+            'error_msg': SERVER_ROUTE_NET_GATEWAY_NAT_MSG,
         }, 400)
 
     err, err_msg = svr.validate_conf()
@@ -921,7 +1001,7 @@ def server_host_put(server_id, host_id):
             'error_msg': SERVER_LINK_COMMON_HOST_MSG,
         }, 400)
 
-    err, err_msg = svr.validate_conf()
+    err, err_msg = svr.validate_conf(allow_online=True)
     if err:
         return utils.jsonify({
             'error': err,
