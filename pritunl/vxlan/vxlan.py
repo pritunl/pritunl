@@ -268,7 +268,7 @@ class Vxlan(object):
             for i in xrange(2):
                 try:
                     if i == 0:
-                        check_func = utils.check_call_silent
+                        check_func = utils.check_output
                     else:
                         check_func = utils.check_output_logged
 
@@ -308,7 +308,7 @@ class Vxlan(object):
                 for i in xrange(2):
                     try:
                         if i == 0:
-                            check_func = utils.check_call_silent
+                            check_func = utils.check_output
                         else:
                             check_func = utils.check_output_logged
 
