@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix IPv6 issues
+
 Version 1.29.1640.83 2018-03-10
 -------------------------------
 
