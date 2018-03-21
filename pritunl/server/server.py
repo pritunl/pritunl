@@ -571,7 +571,7 @@ class Server(mongo.MongoObject):
 
                 if include_hidden and self.ipv6:
                     routes.append({
-                        'id': route_id,
+                        'id': '::/0'.encode('hex'),
                         'server': self.id,
                         'network': '::/0',
                         'comment': route.get('comment'),
