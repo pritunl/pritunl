@@ -66,9 +66,7 @@ def _event(event_type, **kwargs):
         try:
             handler(**kwargs)
         except:
-            logger.exception('Error in plugin handler', 'plugins',
-                event_type=event_type,
-            )
+            logger.exception('Error in plugin handler', 'plugins')
 
 def event(event_type, **kwargs):
     if not settings.local.sub_plan or \
