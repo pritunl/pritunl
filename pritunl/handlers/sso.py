@@ -289,27 +289,60 @@ def sso_callback_get():
     if doc.get('type') == SAML_AUTH:
         username = params.get('username')[0]
         email = params.get('email', [None])[0]
-        groups = set(params.get('groups') or [])
-        org_name = params.get('org', [None])[0]
+
+        org_names = []
+        if params.get('org'):
+            org_names_param = params.get('org')[0]
+            if ';' in org_names_param:
+                org_names = org_names_param.split(';')
+            else:
+                org_names = org_names_param.split(',')
+            org_names = [x for x in org_names if x]
+        org_names = sorted(org_names)
+
+        groups = []
+        if params.get('groups'):
+            groups_param = params.get('groups')[0]
+            if ';' in groups_param:
+                groups = groups_param.split(';')
+            else:
+                groups = groups_param.split(',')
+            groups = [x for x in groups if x]
+        groups = set(groups)
 
         if not username:
             return flask.abort(406)
 
         org_id = settings.app.sso_org
-        if org_name:
-            org = organization.get_by_name(
-                utils.filter_str(org_name),
-                fields=('_id'),
-            )
-            if org:
-                org_id = org.id
+        if org_names:
+            not_found = False
+            for org_name in org_names:
+                org = organization.get_by_name(
+                    utils.filter_str(org_name),
+                    fields=('_id'),
+                )
+                if org:
+                    not_found = False
+                    org_id = org.id
+                    break
+                else:
+                    not_found = True
+
+            if not_found:
+                logger.warning('Supplied saml org names do not exists',
+                    'sso',
+                    sso_type='saml',
+                    user_name=username,
+                    user_email=email,
+                    org_names=org_names,
+                )
 
         valid, org_id_new, groups2 = sso.plugin_sso_authenticate(
             sso_type='saml',
             user_name=username,
             user_email=email,
             remote_ip=utils.get_remote_addr(),
-            sso_org_names=[org_name],
+            sso_org_names=org_names,
         )
         if valid:
             org_id = org_id_new or org_id
@@ -325,11 +358,12 @@ def sso_callback_get():
         email = None
         user_team = params.get('team')[0]
         org_names = params.get('orgs', [''])[0]
-        org_names = org_names.split(',')
+        org_names = sorted(org_names.split(','))
 
         if user_team != settings.app.sso_match[0]:
             return flask.abort(401)
 
+        not_found = False
         org_id = settings.app.sso_org
         for org_name in org_names:
             org = organization.get_by_name(
@@ -337,8 +371,20 @@ def sso_callback_get():
                 fields=('_id'),
             )
             if org:
+                not_found = False
                 org_id = org.id
                 break
+            else:
+                not_found = True
+
+        if not_found:
+            logger.warning('Supplied saml org names do not exists',
+                'sso',
+                sso_type='saml',
+                user_name=username,
+                user_email=email,
+                org_names=org_names,
+            )
 
         valid, org_id_new, groups = sso.plugin_sso_authenticate(
             sso_type='slack',
@@ -383,14 +429,28 @@ def sso_callback_get():
         if settings.app.sso_google_mode == 'groups':
             groups = groups | set(google_groups)
         else:
-            for org_name in sorted(google_groups):
+            not_found = False
+            google_groups = sorted(google_groups)
+            for org_name in google_groups:
                 org = organization.get_by_name(
                     utils.filter_str(org_name),
                     fields=('_id'),
                 )
                 if org:
+                    not_found = False
                     org_id = org.id
                     break
+                else:
+                    not_found = True
+
+            if not_found:
+                logger.warning('Supplied saml org names do not exists',
+                    'sso',
+                    sso_type='saml',
+                    user_name=username,
+                    user_email=email,
+                    org_names=google_groups,
+                )
     else:
         logger.error('Unknown sso type', 'sso',
             sso_type=doc.get('type'),
