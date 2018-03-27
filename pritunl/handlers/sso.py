@@ -19,6 +19,64 @@ import base64
 import urlparse
 import requests
 
+def _validate_user(username, email, sso_mode, org_id, groups,
+        http_redirect=False, yubico_id=None):
+    usr = user.find_user_auth(name=username, auth_type=sso_mode)
+    if not usr:
+        org = organization.get_by_id(org_id)
+        if not org:
+            logger.error('Organization for sso does not exist', 'sso',
+                org_id=org_id,
+            )
+            return flask.abort(405)
+
+        usr = org.find_user(name=username)
+    else:
+        org = usr.org
+
+    if not usr:
+        usr = org.new_user(name=username, email=email, type=CERT_CLIENT,
+            auth_type=sso_mode, yubico_id=yubico_id,
+            groups=list(groups) if groups else None)
+        usr.audit_event('user_created', 'User created with single sign-on',
+            remote_addr=utils.get_remote_addr())
+
+        event.Event(type=ORGS_UPDATED)
+        event.Event(type=USERS_UPDATED, resource_id=org.id)
+        event.Event(type=SERVERS_UPDATED)
+    else:
+        if yubico_id and yubico_id != usr.yubico_id:
+            return utils.jsonify({
+                'error': YUBIKEY_INVALID,
+                'error_msg': YUBIKEY_INVALID_MSG,
+            }, 401)
+
+        if usr.disabled:
+            return flask.abort(403)
+
+        if groups and groups - set(usr.groups or []):
+            usr.groups = list(set(usr.groups or []) | groups)
+            usr.commit('groups')
+
+        if usr.auth_type != sso_mode:
+            usr.auth_type = sso_mode
+            usr.commit('auth_type')
+            event.Event(type=USERS_UPDATED, resource_id=org.id)
+
+    key_link = org.create_user_key_link(usr.id, one_time=True)
+
+    usr.audit_event('user_profile',
+        'User profile viewed from single sign-on',
+        remote_addr=utils.get_remote_addr(),
+    )
+
+    if http_redirect:
+        return utils.redirect(utils.get_url_root() + key_link['view_url'])
+    else:
+        return utils.jsonify({
+            'redirect': utils.get_url_root() + key_link['view_url'],
+        }, 200)
+
 @app.app.route('/sso/authenticate', methods=['POST'])
 @auth.open_auth
 def sso_authenticate_post():
@@ -72,49 +130,7 @@ def sso_authenticate_post():
     if not org_id:
         org_id = settings.app.sso_org
 
-    usr = user.find_user_auth(name=username, auth_type=DUO_AUTH)
-    if not usr:
-        org = organization.get_by_id(org_id)
-        if not org:
-            logger.error('Organization for Duo sso does not exist', 'sso',
-                org_id=org_id,
-            )
-            return flask.abort(405)
-
-        usr = org.find_user(name=username)
-    else:
-        org = usr.org
-
-    if not usr:
-        usr = org.new_user(name=username, email=email, type=CERT_CLIENT,
-            auth_type=DUO_AUTH, groups=list(groups) if groups else None)
-        usr.audit_event('user_created', 'User created with single sign-on',
-            remote_addr=utils.get_remote_addr())
-
-        event.Event(type=ORGS_UPDATED)
-        event.Event(type=USERS_UPDATED, resource_id=org.id)
-        event.Event(type=SERVERS_UPDATED)
-    else:
-        if usr.disabled:
-            return flask.abort(403)
-
-        if groups and groups - set(usr.groups or []):
-            usr.groups = list(set(usr.groups or []) | groups)
-            usr.commit('groups')
-
-        if usr.auth_type != DUO_AUTH:
-            usr.auth_type = DUO_AUTH
-            usr.commit('auth_type')
-            event.Event(type=USERS_UPDATED, resource_id=org.id)
-
-    key_link = org.create_user_key_link(usr.id, one_time=True)
-
-    usr.audit_event('user_profile',
-        'User profile viewed from single sign-on',
-        remote_addr=utils.get_remote_addr(),
-    )
-
-    return utils.get_url_root() + key_link['view_url']
+    return _validate_user(username, email, DUO_AUTH, org_id, groups)
 
 @app.app.route('/sso/request', methods=['GET'])
 @auth.open_auth
@@ -516,45 +532,8 @@ def sso_callback_get():
 
         return yubico_page.get_response()
 
-    usr = user.find_user_auth(name=username, auth_type=sso_mode)
-    if not usr:
-        org = organization.get_by_id(org_id)
-        if not org:
-            return flask.abort(405)
-
-        usr = org.find_user(name=username)
-    else:
-        org = usr.org
-
-    if not usr:
-        usr = org.new_user(name=username, email=email, type=CERT_CLIENT,
-            auth_type=sso_mode, groups=list(groups) if groups else None)
-        usr.audit_event('user_created', 'User created with single sign-on',
-            remote_addr=utils.get_remote_addr())
-
-        event.Event(type=ORGS_UPDATED)
-        event.Event(type=USERS_UPDATED, resource_id=org.id)
-        event.Event(type=SERVERS_UPDATED)
-    else:
-        if usr.disabled:
-            return flask.abort(403)
-
-        if groups and groups - set(usr.groups or []):
-            usr.groups = list(set(usr.groups or []) | groups)
-            usr.commit('groups')
-
-        if usr.auth_type != sso_mode:
-            usr.auth_type = sso_mode
-            usr.commit('auth_type')
-
-    key_link = org.create_user_key_link(usr.id, one_time=True)
-
-    usr.audit_event('user_profile',
-        'User profile viewed from single sign-on',
-        remote_addr=utils.get_remote_addr(),
-    )
-
-    return utils.redirect(utils.get_url_root() + key_link['view_url'])
+    return _validate_user(username, email, sso_mode, org_id, groups,
+        http_redirect=True)
 
 @app.app.route('/sso/duo', methods=['POST'])
 @auth.open_auth
@@ -639,47 +618,7 @@ def sso_duo_post():
 
     groups = groups | set(groups2 or [])
 
-    usr = user.find_user_auth(name=username, auth_type=sso_mode)
-    if not usr:
-        org = organization.get_by_id(org_id)
-        if not org:
-            return flask.abort(405)
-
-        usr = org.find_user(name=username)
-    else:
-        org = usr.org
-
-    if not usr:
-        usr = org.new_user(name=username, email=email, type=CERT_CLIENT,
-            auth_type=sso_mode, groups=list(groups) if groups else None)
-        usr.audit_event('user_created', 'User created with single sign-on',
-            remote_addr=utils.get_remote_addr())
-
-        event.Event(type=ORGS_UPDATED)
-        event.Event(type=USERS_UPDATED, resource_id=org.id)
-        event.Event(type=SERVERS_UPDATED)
-    else:
-        if usr.disabled:
-            return flask.abort(403)
-
-        if groups and groups - set(usr.groups or []):
-            usr.groups = list(set(usr.groups or []) | groups)
-            usr.commit('groups')
-
-        if usr.auth_type != sso_mode:
-            usr.auth_type = sso_mode
-            usr.commit('auth_type')
-
-    key_link = org.create_user_key_link(usr.id, one_time=True)
-
-    usr.audit_event('user_profile',
-        'User profile viewed from single sign-on',
-        remote_addr=utils.get_remote_addr(),
-    )
-
-    return utils.jsonify({
-        'redirect': utils.get_url_root() + key_link['view_url'],
-    }, 200)
+    return _validate_user(username, email, sso_mode, org_id, groups)
 
 @app.app.route('/sso/yubico', methods=['POST'])
 @auth.open_auth
@@ -715,57 +654,11 @@ def sso_yubico_post():
     groups = set(doc['groups'] or [])
 
     valid, yubico_id = sso.auth_yubico(key)
-    if not valid:
+    if not valid or not yubico_id:
         return utils.jsonify({
             'error': YUBIKEY_INVALID,
             'error_msg': YUBIKEY_INVALID_MSG,
         }, 401)
 
-    usr = user.find_user_auth(name=username, auth_type=sso_mode)
-    if not usr:
-        org = organization.get_by_id(org_id)
-        if not org:
-            return flask.abort(405)
-
-        usr = org.find_user(name=username)
-    else:
-        org = usr.org
-
-    if not usr:
-        usr = org.new_user(name=username, email=email, type=CERT_CLIENT,
-            auth_type=sso_mode, yubico_id=yubico_id,
-            groups=list(groups) if groups else None)
-        usr.audit_event('user_created', 'User created with single sign-on',
-            remote_addr=utils.get_remote_addr())
-
-        event.Event(type=ORGS_UPDATED)
-        event.Event(type=USERS_UPDATED, resource_id=org.id)
-        event.Event(type=SERVERS_UPDATED)
-    else:
-        if yubico_id != usr.yubico_id:
-            return utils.jsonify({
-                'error': YUBIKEY_INVALID,
-                'error_msg': YUBIKEY_INVALID_MSG,
-            }, 401)
-
-        if usr.disabled:
-            return flask.abort(403)
-
-        if groups and groups - set(usr.groups or []):
-            usr.groups = list(set(usr.groups or []) | groups)
-            usr.commit('groups')
-
-        if usr.auth_type != sso_mode:
-            usr.auth_type = sso_mode
-            usr.commit('auth_type')
-
-    key_link = org.create_user_key_link(usr.id, one_time=True)
-
-    usr.audit_event('user_profile',
-        'User profile viewed from single sign-on',
-        remote_addr=utils.get_remote_addr(),
-    )
-
-    return utils.jsonify({
-        'redirect': utils.get_url_root() + key_link['view_url'],
-    }, 200)
+    return _validate_user(username, email, sso_mode, org_id, groups,
+        yubico_id=yubico_id)
