@@ -667,7 +667,7 @@
         xmlhttp.onreadystatechange = function() {
           if (xmlhttp.readyState === 4) {
             if (xmlhttp.status === 200) {
-              window.location = xmlhttp.responseText;
+              window.location = JSON.parse(xmlhttp.response)['redirect'];
             } else if (xmlhttp.status === 401) {
               setDuoAlert('Unable to authenticate, please try again',
                 'danger');
