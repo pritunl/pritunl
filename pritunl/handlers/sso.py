@@ -32,6 +32,45 @@ def _validate_user(username, email, sso_mode, org_id, groups,
 
         usr = org.find_user(name=username)
     else:
+        if usr.org_id != org_id:
+            logger.info('User organization changed, moving user', 'sso',
+                user_name=username,
+                user_email=email,
+                remote_ip=utils.get_remote_addr(),
+                cur_org_id=usr.org_id,
+                new_org_id=org_id,
+            )
+
+            org = organization.get_by_id(org_id)
+            if not org:
+                logger.error('Organization for sso does not exist', 'sso',
+                    org_id=org_id,
+                )
+                return flask.abort(405)
+
+            usr.remove()
+            old_org_id = usr.org_id
+
+            usr = org.new_user(
+                name=usr.name,
+                email=usr.email,
+                type=usr.type,
+                groups=usr.groups,
+                auth_type=usr.auth_type,
+                yubico_id=usr.yubico_id,
+                disabled=usr.disabled,
+                bypass_secondary=usr.bypass_secondary,
+                client_to_client=usr.client_to_client,
+                dns_servers=usr.dns_servers,
+                dns_suffix=usr.dns_suffix,
+                port_forwarding=usr.port_forwarding,
+            )
+
+            event.Event(type=ORGS_UPDATED)
+            event.Event(type=USERS_UPDATED, resource_id=old_org_id)
+            event.Event(type=USERS_UPDATED, resource_id=org.id)
+            event.Event(type=SERVERS_UPDATED)
+
         org = usr.org
 
     if not usr:
