@@ -294,7 +294,7 @@ class Authorizer(object):
             self.password = self.password[:-passcode_len]
 
             allow = False
-            if settings.app.sso_cache:
+            if settings.app.sso_cache and not self.auth_token:
                 doc = self.sso_passcode_cache_collection.find_one({
                     'user_id': self.user.id,
                     'server_id': self.server.id,
@@ -361,7 +361,7 @@ class Authorizer(object):
                         raise AuthError('Challenge Duo code')
                     raise AuthError('Invalid OTP code')
 
-                if settings.app.sso_cache:
+                if settings.app.sso_cache and not self.auth_token:
                     self.sso_passcode_cache_collection.update({
                         'user_id': self.user.id,
                         'server_id': self.server.id,
@@ -405,7 +405,7 @@ class Authorizer(object):
             yubikey_hash = base64.b64encode(yubikey_hash.digest())
 
             allow = False
-            if settings.app.sso_cache:
+            if settings.app.sso_cache and not self.auth_token:
                 doc = self.sso_passcode_cache_collection.find_one({
                     'user_id': self.user.id,
                     'server_id': self.server.id,
@@ -467,7 +467,7 @@ class Authorizer(object):
                         raise AuthError('Challenge YubiKey')
                     raise AuthError('Invalid YubiKey')
 
-                if settings.app.sso_cache:
+                if settings.app.sso_cache and not self.auth_token:
                     self.sso_passcode_cache_collection.update({
                         'user_id': self.user.id,
                         'server_id': self.server.id,
@@ -645,7 +645,7 @@ class Authorizer(object):
             )
             return
 
-        if settings.app.sso_cache:
+        if settings.app.sso_cache and not self.auth_token:
             doc = self.sso_push_cache_collection.find_one({
                 'user_id': self.user.id,
                 'server_id': self.server.id,
@@ -746,7 +746,7 @@ class Authorizer(object):
             )
             raise AuthError('User failed push authentication')
 
-        if settings.app.sso_cache:
+        if settings.app.sso_cache and not self.auth_token:
             self.sso_push_cache_collection.update({
                 'user_id': self.user.id,
                 'server_id': self.server.id,
