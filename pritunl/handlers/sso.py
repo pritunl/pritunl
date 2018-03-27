@@ -45,7 +45,7 @@ def _validate_user(username, email, sso_mode, org_id, groups,
         event.Event(type=USERS_UPDATED, resource_id=org.id)
         event.Event(type=SERVERS_UPDATED)
     else:
-        if yubico_id and yubico_id != usr.yubico_id:
+        if yubico_id and usr.yubico_id and yubico_id != usr.yubico_id:
             return utils.jsonify({
                 'error': YUBIKEY_INVALID,
                 'error_msg': YUBIKEY_INVALID_MSG,
@@ -54,13 +54,24 @@ def _validate_user(username, email, sso_mode, org_id, groups,
         if usr.disabled:
             return flask.abort(403)
 
+        changed = False
+
+        if yubico_id and not usr.yubico_id:
+            changed = True
+            usr.yubico_id = yubico_id
+            usr.commit('yubico_id')
+
         if groups and groups - set(usr.groups or []):
+            changed = True
             usr.groups = list(set(usr.groups or []) | groups)
             usr.commit('groups')
 
         if usr.auth_type != sso_mode:
+            changed = True
             usr.auth_type = sso_mode
             usr.commit('auth_type')
+
+        if changed:
             event.Event(type=USERS_UPDATED, resource_id=org.id)
 
     key_link = org.create_user_key_link(usr.id, one_time=True)
