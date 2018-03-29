@@ -461,7 +461,10 @@ class Location(mongo.MongoObject):
         exclude = [self.id, exclude_id]
         exclude.sort(key=lambda x: str(x))
 
-        self.link.excludes.remove(exclude)
+        try:
+            self.link.excludes.remove(exclude)
+        except ValueError:
+            pass
 
     def get_host(self, host_id):
         return Host(link=self.link, location=self, id=host_id)
