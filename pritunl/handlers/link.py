@@ -483,10 +483,10 @@ def link_location_host_delete(link_id, location_id, host_id):
 
     return utils.jsonify({})
 
-@app.app.route('/link/<link_id>/location/<location_id>/exclude',
+@app.app.route('/link/<link_id>/location/<location_id>/peer',
     methods=['POST'])
 @auth.session_auth
-def link_location_exclude_post(link_id, location_id):
+def link_location_peer_post(link_id, location_id):
     if not settings.local.sub_plan or \
             'enterprise' not in settings.local.sub_plan:
         return flask.abort(404)
@@ -502,21 +502,19 @@ def link_location_exclude_post(link_id, location_id):
     if not loc:
         return flask.abort(404)
 
-    exclude_id = utils.ObjectId(flask.request.json.get('exclude_id'))
-    loc.add_exclude(exclude_id)
+    peer_id = utils.ObjectId(flask.request.json.get('peer_id'))
+    loc.remove_exclude(peer_id)
 
     lnk.commit('excludes')
 
     event.Event(type=LINKS_UPDATED)
 
-    return utils.jsonify({
-        'location_id': exclude_id,
-    })
+    return utils.jsonify({})
 
-@app.app.route('/link/<link_id>/location/<location_id>/exclude/<exclude_id>',
+@app.app.route('/link/<link_id>/location/<location_id>/peer/<peer_id>',
     methods=['DELETE'])
 @auth.session_auth
-def link_location_exclude_delete(link_id, location_id, exclude_id):
+def link_location_peer_delete(link_id, location_id, peer_id):
     if not settings.local.sub_plan or \
             'enterprise' not in settings.local.sub_plan:
         return flask.abort(404)
@@ -532,7 +530,7 @@ def link_location_exclude_delete(link_id, location_id, exclude_id):
     if not loc:
         return flask.abort(404)
 
-    loc.remove_exclude(exclude_id)
+    loc.add_exclude(peer_id)
 
     lnk.commit('excludes')
 
