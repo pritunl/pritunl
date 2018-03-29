@@ -393,8 +393,9 @@ class Location(mongo.MongoObject):
             route['location_id'] = self.id
             routes.append(route)
 
-        excludes = []
+        peers = []
         if locations:
+            excludes = set()
             for exclude in self.link.excludes:
                 if self.id not in exclude:
                     continue
@@ -404,12 +405,14 @@ class Location(mongo.MongoObject):
                 else:
                     exclude_id = exclude[0]
 
-                location = locations.get(exclude_id)
-                if not location:
+                excludes.add(exclude_id)
+
+            for location_id, location in locations.iteritems():
+                if location_id in excludes:
                     continue
 
-                excludes.append({
-                    'id': exclude_id,
+                peers.append({
+                    'id': location_id,
                     'name': location.name,
                 })
 
@@ -421,7 +424,7 @@ class Location(mongo.MongoObject):
             'link_type': self.link.type,
             'hosts': hosts,
             'routes': routes,
-            'excludes': excludes,
+            'peers': peers,
             'location': self.location,
         }
 
