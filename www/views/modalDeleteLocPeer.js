@@ -4,20 +4,20 @@ define([
   'backbone',
   'views/modal',
   'views/alert',
-  'text!templates/modalDeleteLocExclude.html'
+  'text!templates/modalDeleteLocPeer.html'
 ], function($, _, Backbone, ModalView, AlertView,
-    modalDeleteLocExcludeTemplate) {
+    modalDeleteLocPeerTemplate) {
   'use strict';
-  var ModalDeleteLocExcludeView = ModalView.extend({
-    className: 'delete-location-exclude-modal',
-    template: _.template(modalDeleteLocExcludeTemplate),
-    title: 'Remove Location Exclude',
+  var ModalDeleteLocPeerView = ModalView.extend({
+    className: 'delete-location-peer-modal',
+    template: _.template(modalDeleteLocPeerTemplate),
+    title: 'Remove Location Peer',
     okText: 'Remove',
     body: function() {
       return this.template(this.model.toJSON());
     },
     onOk: function() {
-      this.setLoading('Removing location exclude...');
+      this.setLoading('Removing location peer...');
       this.model.destroy({
         success: function() {
           this.close(true);
@@ -35,5 +35,5 @@ define([
     }
   });
 
-  return ModalDeleteLocExcludeView;
+  return ModalDeleteLocPeerView;
 });
