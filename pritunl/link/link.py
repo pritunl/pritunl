@@ -408,7 +408,7 @@ class Location(mongo.MongoObject):
                 excludes.add(exclude_id)
 
             for location_id, location in locations.iteritems():
-                if location_id in excludes:
+                if location_id in excludes or location_id == self.id:
                     continue
 
                 peers.append({
