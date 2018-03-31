@@ -43,8 +43,12 @@ class LogFormatter(logging.Formatter):
             if record.data:
                 width = len(max(record.data, key=len))
                 for key, val in record.data.items():
-                    formatted_record += '\n  %s = %r' % (
-                        key.ljust(width), val)
+                    if isinstance(val, basestring):
+                        formatted_record += '\n  %s = "%s"' % (
+                            key.ljust(width), val)
+                    else:
+                        formatted_record += '\n  %s = %r' % (
+                            key.ljust(width), val)
 
             if stdout:
                 formatted_record += '\nProcess stdout:'
