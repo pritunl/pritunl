@@ -133,7 +133,7 @@ def _run_server(restart):
         context = 'none'
 
     logger.info('Starting server', 'app',
-        context=context,
+        selinux_context=context,
     )
 
     app_server = cheroot.wsgi.Server(
