@@ -10,6 +10,7 @@ import hashlib
 import json
 import datetime
 import pymongo
+import collections
 
 class Host(mongo.MongoObject):
     fields = {
@@ -202,7 +203,6 @@ class Host(mongo.MongoObject):
                 active_host.id == self.id:
             locations = self.link.iter_locations(
                 self.location.id,
-                sort=False,
                 exclude_id=self.location.id,
             )
 
@@ -266,7 +266,6 @@ class Host(mongo.MongoObject):
         links = []
         locations = self.link.iter_locations(
             self.location.id,
-            sort=False,
             exclude_id=self.location.id,
         )
 
@@ -407,12 +406,12 @@ class Location(mongo.MongoObject):
 
                 excludes.add(exclude_id)
 
-            for location_id, location in locations.iteritems():
-                if location_id in excludes or location_id == self.id:
+            for location in locations:
+                if location.id in excludes or location.id == self.id:
                     continue
 
                 peers.append({
-                    'id': location_id,
+                    'id': location.id,
                     'name': location.name,
                 })
 
@@ -602,7 +601,7 @@ class Link(mongo.MongoObject):
     def get_location(self, location_id):
         return Location(link=self, id=location_id)
 
-    def iter_locations(self, skip=None, sort=True, exclude_id=None):
+    def iter_locations(self, skip=None, exclude_id=None):
         if exclude_id:
             excludes = self.excludes
 
@@ -610,15 +609,11 @@ class Link(mongo.MongoObject):
             'link_id': self.id,
         }
 
-        if skip:
-            spec['_id'] = {'$ne': skip}
-
-        if sort:
-            cursor = Location.collection.find(spec).sort('name')
-        else:
-            cursor = Location.collection.find(spec)
-
+        cursor = Location.collection.find(spec).sort('_id')
         for doc in cursor:
+            if skip and doc['_id'] == skip:
+                continue
+
             if exclude_id:
                 exclude = [exclude_id, doc['_id']]
                 exclude.sort(key=lambda x: str(x))
@@ -631,15 +626,20 @@ class Link(mongo.MongoObject):
     def iter_locations_dict(self):
         cursor = Location.collection.find({
             'link_id': self.id,
-        }).sort('name')
+        }).sort('_id')
 
         locations = []
-        locations_id = {}
+        locations_name = collections.defaultdict(list)
+        locations_names = []
 
         for doc in cursor:
             location = Location(link=self, doc=doc)
             locations.append(location)
-            locations_id[location.id] = location
 
         for location in locations:
-            yield location.dict(locations_id)
+            locations_names.append(location.name)
+            locations_name[location.name].append(location.dict(locations))
+
+        for name in sorted(locations_names):
+            for location in locations_name[name]:
+                yield location
