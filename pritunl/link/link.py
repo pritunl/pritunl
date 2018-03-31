@@ -397,6 +397,9 @@ class Location(mongo.MongoObject):
 
         peers = []
         if locations:
+            peers_name = collections.defaultdict(list)
+            peers_names = set()
+
             excludes = set()
             for exclude in self.link.excludes:
                 if self.id not in exclude:
@@ -414,13 +417,18 @@ class Location(mongo.MongoObject):
                 if location.id in excludes or location.id == self.id:
                     continue
 
-                peers.append({
+                peers_names.add(location.name)
+                peers_name[location.name].append({
                     'id': location.id,
                     'name': location.name,
                     'status': status.get(str(i)) or 'disconnected',
                 })
 
                 i += 1
+
+            for name in sorted(list(peers_names)):
+                for peer in peers_name[name]:
+                    peers.append(peer)
 
         return {
             'id': self.id,
@@ -637,16 +645,16 @@ class Link(mongo.MongoObject):
 
         locations = []
         locations_name = collections.defaultdict(list)
-        locations_names = []
+        locations_names = set()
 
         for doc in cursor:
             location = Location(link=self, doc=doc)
             locations.append(location)
 
         for location in locations:
-            locations_names.append(location.name)
+            locations_names.add(location.name)
             locations_name[location.name].append(location.dict(locations))
 
-        for name in sorted(locations_names):
+        for name in sorted(list(locations_names)):
             for location in locations_name[name]:
                 yield location
