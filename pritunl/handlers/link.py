@@ -598,7 +598,12 @@ def link_state_put():
     host.local_address = flask.request.json.get('local_address')
     host.address6 = flask.request.json.get('address6')
 
-    data = json.dumps(host.get_state(), default=lambda x: str(x))
+    state, active = host.get_state()
+    if active:
+        host.location.status = flask.request.json.get('status') or None
+        host.location.commit('status')
+
+    data = json.dumps(state, default=lambda x: str(x))
     data += (16 - len(data) % 16) * '\x00'
 
     iv = os.urandom(16)
