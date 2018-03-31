@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Logging improvements
+Added monitoring metrics
 
 Version 1.29.1657.94 2018-03-27
 -------------------------------
