@@ -921,15 +921,21 @@ class User(mongo.MongoObject):
 
         return links
 
-    def audit_event(self, event_type, event_msg, remote_addr=None):
+    def audit_event(self, event_type, event_msg, remote_addr=None, **kwargs):
         if settings.app.auditing != ALL:
             return
 
         timestamp = utils.now()
 
+        org_name = None
+        if self.org:
+            org_name = self.org.name
+
         self.audit_collection.insert({
             'user_id': self.id,
+            'user_name': self.name,
             'org_id': self.org_id,
+            'org_name': org_name,
             'timestamp': timestamp,
             'type': event_type,
             'remote_addr': remote_addr,
@@ -941,22 +947,28 @@ class User(mongo.MongoObject):
             host_id=settings.local.host_id,
             host_name=settings.local.host.name,
             user_id=self.id,
+            user_name=self.name,
             org_id=self.org_id,
+            org_name=org_name,
             timestamp=timestamp,
             type=event_type,
             remote_addr=remote_addr,
             message=event_msg,
+            **kwargs
         )
 
         logger.info(
             'Audit event',
             'audit',
             user_id=self.id,
+            user_name=self.name,
             org_id=self.org_id,
+            org_name=org_name,
             timestamp=timestamp,
             type=event_type,
             remote_addr=remote_addr,
             message=event_msg,
+            **kwargs
         )
 
     def get_audit_events(self):
