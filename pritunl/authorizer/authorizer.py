@@ -224,21 +224,27 @@ class Authorizer(object):
         if self.user.bypass_secondary:
             logger.info(
                 'Bypass secondary enabled, skipping password', 'sso',
-                username=self.user.name,
+                user_name=self.user.name,
+                org_name=self.user.org.name,
+                server_name=self.server.name,
             )
             return
 
         if self.has_token:
             logger.info(
                 'Client authentication cached, skipping password', 'sso',
-                username=self.user.name,
+                user_name=self.user.name,
+                org_name=self.user.org.name,
+                server_name=self.server.name,
             )
             return
 
         if self.whitelisted:
             logger.info(
                 'Client network whitelisted, skipping password', 'sso',
-                username=self.user.name,
+                user_name=self.user.name,
+                org_name=self.user.org.name,
+                server_name=self.server.name,
             )
             return
 
@@ -330,7 +336,9 @@ class Authorizer(object):
 
                     logger.info(
                         'Authentication cached, skipping Duo', 'sso',
-                        username=self.user.name,
+                        user_name=self.user.name,
+                        org_name=self.user.org.name,
+                        server_name=self.server.name,
                     )
 
             if not allow:
@@ -441,7 +449,9 @@ class Authorizer(object):
 
                     logger.info(
                         'Authentication cached, skipping Yubikey', 'sso',
-                        username=self.user.name,
+                        user_name=self.user.name,
+                        org_name=self.user.org.name,
+                        server_name=self.server.name,
                     )
 
             if not allow:
@@ -543,7 +553,9 @@ class Authorizer(object):
 
                     logger.info(
                         'Authentication cached, skipping OTP', 'sso',
-                        username=self.user.name,
+                        user_name=self.user.name,
+                        org_name=self.user.org.name,
+                        server_name=self.server.name,
                     )
 
             if not allow:
@@ -629,19 +641,25 @@ class Authorizer(object):
 
         if self.user.bypass_secondary:
             logger.info('Bypass secondary enabled, skipping push', 'sso',
-                username=self.user.name,
+                user_name=self.user.name,
+                org_name=self.user.org.name,
+                server_name=self.server.name,
             )
             return
 
         if self.has_token:
             logger.info('Client authentication cached, skipping push', 'sso',
-                username=self.user.name,
+                user_name=self.user.name,
+                org_name=self.user.org.name,
+                server_name=self.server.name,
             )
             return
 
         if self.whitelisted:
             logger.info('Client network whitelisted, skipping push', 'sso',
-                username=self.user.name,
+                user_name=self.user.name,
+                org_name=self.user.org.name,
+                server_name=self.server.name,
             )
             return
 
@@ -674,7 +692,9 @@ class Authorizer(object):
                 })
 
                 logger.info('Authentication cached, skipping push', 'sso',
-                    username=self.user.name,
+                    user_name=self.user.name,
+                    org_name=self.user.org.name,
+                    server_name=self.server.name,
                 )
                 return
 
