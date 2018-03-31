@@ -548,6 +548,7 @@ class Clients(object):
                 'user_connection',
                 'User connected to "%s"' % self.server.name,
                 remote_addr=remote_ip,
+                server_name=self.server.name,
             )
             monitoring.insert_point('user_connections', {
                 'host': settings.local.host.name,
@@ -1093,6 +1094,7 @@ class Clients(object):
                     'user_connection',
                     'User disconnected from "%s"' % self.server.name,
                     remote_addr=remote_ip,
+                    server_name=self.server.name,
                 )
                 monitoring.insert_point('user_disconnections', {
                     'host': settings.local.host.name,
