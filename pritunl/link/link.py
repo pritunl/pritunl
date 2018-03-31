@@ -198,9 +198,9 @@ class Host(mongo.MongoObject):
             'links': links,
         }
         active_host = self.location.get_active_host()
+        active = active_host and active_host.id == self.id
 
-        if self.link.status == ONLINE and active_host and \
-                active_host.id == self.id:
+        if self.link.status == ONLINE and active_host and active:
             locations = self.link.iter_locations(
                 self.location.id,
                 exclude_id=self.location.id,
@@ -255,7 +255,7 @@ class Host(mongo.MongoObject):
             default=lambda x: str(x),
         )).hexdigest()
 
-        return state
+        return state, active
 
     def get_static_links(self):
         if not self.link.key:
@@ -353,6 +353,7 @@ class Location(mongo.MongoObject):
         'link_id',
         'routes',
         'location',
+        'status',
     }
     fields_default = {
         'routes': {},
@@ -392,6 +393,8 @@ class Location(mongo.MongoObject):
             route['location_id'] = self.id
             routes.append(route)
 
+        status = self.status or {}
+
         peers = []
         if locations:
             excludes = set()
@@ -406,6 +409,7 @@ class Location(mongo.MongoObject):
 
                 excludes.add(exclude_id)
 
+            i = 0
             for location in locations:
                 if location.id in excludes or location.id == self.id:
                     continue
@@ -413,7 +417,10 @@ class Location(mongo.MongoObject):
                 peers.append({
                     'id': location.id,
                     'name': location.name,
+                    'status': status.get(str(i)) or 'disconnected',
                 })
+
+                i += 1
 
         return {
             'id': self.id,
