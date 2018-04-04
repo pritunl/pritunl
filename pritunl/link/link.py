@@ -179,6 +179,28 @@ class Host(mongo.MongoObject):
         self.ping_timestamp_ttl = None
         self.commit(('status', 'active', 'ping_timestamp_ttl'))
 
+    def get_state_locations(self):
+        loc_excludes = set()
+        for exclude in self.link.excludes:
+            if self.location.id not in exclude:
+                continue
+
+            if exclude[0] == self.location.id:
+                exclude_id = exclude[1]
+            else:
+                exclude_id = exclude[0]
+
+            loc_excludes.add(exclude_id)
+
+        locations = []
+        locations_id = {}
+
+        for location in self.link.iter_locations():
+            locations.append(location)
+            locations_id[location.id] = location
+
+        return locations, locations_id, loc_excludes
+
     def get_state(self):
         self.status = AVAILABLE
         self.ping_timestamp_ttl = utils.now() + datetime.timedelta(
@@ -200,16 +222,17 @@ class Host(mongo.MongoObject):
         active_host = self.location.get_active_host()
         active = active_host and active_host.id == self.id
 
-        if self.link.status == ONLINE and active_host and active:
-            locations = self.link.iter_locations(
-                self.location.id,
-                exclude_id=self.location.id,
-            )
+        loc_transit_excludes = set(self.location.transit_excludes)
+        locations, locations_id, loc_excludes = self.get_state_locations()
 
+        if self.link.status == ONLINE and active_host and active:
             if self.link.type == DIRECT:
                 other_location = None
 
                 for location in locations:
+                    if location.id == self.location.id:
+                        continue
+
                     if location.type != self.location.type:
                         other_location = location
 
@@ -230,17 +253,55 @@ class Host(mongo.MongoObject):
                     })
             else:
                 for location in locations:
+                    if location.id in loc_excludes or \
+                            location.id == self.location.id:
+                        continue
+
                     active_host = location.get_active_host()
                     if not active_host:
                         continue
 
+                    excludes = set()
+                    transit_excludes = set(self.location.transit_excludes)
+                    for exclude in self.link.excludes:
+                        if location.id not in exclude:
+                            continue
+
+                        if exclude[0] == location.id:
+                            exclude_id = exclude[1]
+                        else:
+                            exclude_id = exclude[0]
+
+                        excludes.add(exclude_id)
+
                     left_subnets = []
                     for route in self.location.routes.values():
-                        left_subnets.append(route['network'])
+                        if route['network'] not in left_subnets:
+                            left_subnets.append(route['network'])
+
+                    for transit_id in self.location.transits:
+                        if transit_id != self.id and \
+                                transit_id in excludes and \
+                                transit_id in locations_id and \
+                                transit_id not in loc_transit_excludes:
+                            transit_loc = locations_id[transit_id]
+                            for route in transit_loc.routes.values():
+                                if route['network'] not in left_subnets:
+                                    left_subnets.append(route['network'])
 
                     right_subnets = []
                     for route in location.routes.values():
                         right_subnets.append(route['network'])
+
+                    for transit_id in location.transits:
+                        if transit_id != self.id and \
+                                transit_id in loc_excludes and \
+                                transit_id in locations_id and \
+                                transit_id not in transit_excludes:
+                            transit_loc = locations_id[transit_id]
+                            for route in transit_loc.routes.values():
+                                if route['network'] not in left_subnets:
+                                    right_subnets.append(route['network'])
 
                     links.append({
                         'pre_shared_key': self.link.key,
@@ -264,15 +325,17 @@ class Host(mongo.MongoObject):
             return
 
         links = []
-        locations = self.link.iter_locations(
-            self.location.id,
-            exclude_id=self.location.id,
-        )
+
+        loc_transit_excludes = set(self.location.transit_excludes)
+        locations, locations_id, loc_excludes = self.get_state_locations()
 
         if self.link.type == DIRECT:
             other_location = None
 
             for location in locations:
+                if location.id == self.location.id:
+                    continue
+
                 if location.type != self.location.type:
                     other_location = location
 
@@ -298,6 +361,10 @@ class Host(mongo.MongoObject):
                 })
         else:
             for location in locations:
+                if location.id in loc_excludes or \
+                        location.id == self.location.id:
+                    continue
+
                 active_host = location.get_active_host()
                 if not active_host:
                     for host in location.iter_hosts():
@@ -307,13 +374,47 @@ class Host(mongo.MongoObject):
                 if not active_host:
                     continue
 
+                excludes = set()
+                transit_excludes = set(self.location.transit_excludes)
+                for exclude in self.link.excludes:
+                    if location.id not in exclude:
+                        continue
+
+                    if exclude[0] == location.id:
+                        exclude_id = exclude[1]
+                    else:
+                        exclude_id = exclude[0]
+
+                    excludes.add(exclude_id)
+
                 left_subnets = []
                 for route in self.location.routes.values():
-                    left_subnets.append(route['network'])
+                    if route['network'] not in left_subnets:
+                        left_subnets.append(route['network'])
+
+                for transit_id in self.location.transits:
+                    if transit_id != self.id and \
+                            transit_id in excludes and \
+                            transit_id in locations_id and \
+                            transit_id not in loc_transit_excludes:
+                        transit_loc = locations_id[transit_id]
+                        for route in transit_loc.routes.values():
+                            if route['network'] not in left_subnets:
+                                left_subnets.append(route['network'])
 
                 right_subnets = []
                 for route in location.routes.values():
                     right_subnets.append(route['network'])
+
+                for transit_id in location.transits:
+                    if transit_id != self.id and \
+                            transit_id in loc_excludes and \
+                            transit_id in locations_id and \
+                            transit_id not in transit_excludes:
+                        transit_loc = locations_id[transit_id]
+                        for route in transit_loc.routes.values():
+                            if route['network'] not in left_subnets:
+                                right_subnets.append(route['network'])
 
                 links.append({
                     'pre_shared_key': self.link.key,
@@ -352,11 +453,14 @@ class Location(mongo.MongoObject):
         'type',
         'link_id',
         'routes',
-        'location',
         'status',
+        'transits',
+        'transit_excludes',
     }
     fields_default = {
         'routes': {},
+        'transits': [],
+        'transit_excludes': [],
     }
 
     def __init__(self, link=None, name=None, type=None, link_id=None,
@@ -381,7 +485,7 @@ class Location(mongo.MongoObject):
     def collection(cls):
         return mongo.get_collection('links_locations')
 
-    def dict(self, locations=None):
+    def dict(self, locations=None, locations_id=None):
         hosts = []
         for hst in self.iter_hosts():
             hosts.append(hst.dict())
@@ -412,15 +516,37 @@ class Location(mongo.MongoObject):
 
                 excludes.add(exclude_id)
 
+            transit_excludes = set(self.transit_excludes)
+            transited_ids = set()
+            transited_locations = []
+
             i = 0
             for location in locations:
                 if location.id in excludes or location.id == self.id:
                     continue
 
+                for transit_id in location.transits:
+                    if transit_id != self.id and \
+                            transit_id in excludes and \
+                            transit_id in locations_id and \
+                            transit_id not in transited_ids and \
+                            transit_id not in transit_excludes:
+                        transited_ids.add(transit_id)
+                        transited_locations.append({
+                            'id': transit_id,
+                            'name': locations_id[transit_id].name,
+                            'transit': transit_id in self.transits,
+                            'transited_id': location.id,
+                            'transited_name': location.name,
+                        })
+
                 peers_names.add(location.name)
                 peers_name[location.name].append({
                     'id': location.id,
                     'name': location.name,
+                    'transit': location.id in self.transits,
+                    'transited_id': None,
+                    'transited_name': None,
                     'status': status.get(str(i)) or 'disconnected',
                 })
 
@@ -429,6 +555,8 @@ class Location(mongo.MongoObject):
             for name in sorted(list(peers_names)):
                 for peer in peers_name[name]:
                     peers.append(peer)
+
+            peers += transited_locations
 
         return {
             'id': self.id,
@@ -439,7 +567,6 @@ class Location(mongo.MongoObject):
             'hosts': hosts,
             'routes': routes,
             'peers': peers,
-            'location': self.location,
         }
 
     def remove(self):
@@ -468,8 +595,14 @@ class Location(mongo.MongoObject):
         exclude = [self.id, exclude_id]
         exclude.sort(key=lambda x: str(x))
 
-        if exclude not in self.link.excludes:
+        if exclude in self.link.excludes:
+            if exclude_id not in self.transit_excludes:
+                self.transit_excludes.append(exclude_id)
+        else:
             self.link.excludes.append(exclude)
+
+        self.link.excludes.sort()
+        self.transit_excludes.sort()
 
     def remove_exclude(self, exclude_id):
         exclude = [self.id, exclude_id]
@@ -477,6 +610,22 @@ class Location(mongo.MongoObject):
 
         try:
             self.link.excludes.remove(exclude)
+        except ValueError:
+            pass
+
+        try:
+            self.transit_excludes.remove(exclude_id)
+        except ValueError:
+            pass
+
+    def add_transit(self, transit_id):
+        if transit_id not in self.transits:
+            self.transits.append(transit_id)
+        self.transits.sort()
+
+    def remove_transit(self, transit_id):
+        try:
+            self.transits.remove(transit_id)
         except ValueError:
             pass
 
@@ -620,11 +769,10 @@ class Link(mongo.MongoObject):
         if exclude_id:
             excludes = self.excludes
 
-        spec = {
+        cursor = Location.collection.find({
             'link_id': self.id,
-        }
+        }).sort('_id')
 
-        cursor = Location.collection.find(spec).sort('_id')
         for doc in cursor:
             if skip and doc['_id'] == skip:
                 continue
@@ -644,16 +792,19 @@ class Link(mongo.MongoObject):
         }).sort('_id')
 
         locations = []
+        locations_id = {}
         locations_name = collections.defaultdict(list)
         locations_names = set()
 
         for doc in cursor:
             location = Location(link=self, doc=doc)
             locations.append(location)
+            locations_id[location.id] = location
 
         for location in locations:
             locations_names.add(location.name)
-            locations_name[location.name].append(location.dict(locations))
+            locations_name[location.name].append(location.dict(
+                locations, locations_id))
 
         for name in sorted(list(locations_names)):
             for location in locations_name[name]:
