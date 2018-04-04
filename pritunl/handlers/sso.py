@@ -395,9 +395,9 @@ def sso_callback_get():
                     not_found = True
 
             if not_found:
-                logger.warning('Supplied saml org names do not exists',
+                logger.warning('Supplied org names do not exists',
                     'sso',
-                    sso_type='saml',
+                    sso_type=doc.get('type'),
                     user_name=username,
                     user_email=email,
                     org_names=org_names,
@@ -444,9 +444,9 @@ def sso_callback_get():
                 not_found = True
 
         if not_found:
-            logger.warning('Supplied saml org names do not exists',
+            logger.warning('Supplied org names do not exists',
                 'sso',
-                sso_type='saml',
+                sso_type=doc.get('type'),
                 user_name=username,
                 user_email=email,
                 org_names=org_names,
@@ -510,9 +510,9 @@ def sso_callback_get():
                     not_found = True
 
             if not_found:
-                logger.warning('Supplied saml org names do not exists',
+                logger.warning('Supplied org names do not exists',
                     'sso',
-                    sso_type='saml',
+                    sso_type=doc.get('type'),
                     user_name=username,
                     user_email=email,
                     org_names=google_groups,
