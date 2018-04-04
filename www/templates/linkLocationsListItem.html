@@ -57,6 +57,9 @@
       <span class="peer-name title"><%- peer.name %></span>
     </div>
     <div class="button-container">
+      <div class="link-peer-connected label label-success no-select" <%= peer.status === 'connected' ? '' : 'style="display: none"' %>>Connected</div>
+      <div class="link-peer-connecting label label-primary no-select" <%= peer.status === 'connecting' ? '' : 'style="display: none"' %>>Connecting</div>
+      <div class="link-peer-disconnected label label-danger no-select" <%= peer.status === 'disconnected' ? '' : 'style="display: none"' %>>Disconnected</div>
       <button data-id="<%- peer.id %>" data-name="<%- peer.name %>" type="button" class="link-remove-peer btn btn-danger btn-xs">Remove Peer</button>
     </div>
   </div>
