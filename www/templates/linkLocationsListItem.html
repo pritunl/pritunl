@@ -60,7 +60,10 @@
       <div class="link-peer-connected label label-success no-select" <%= peer.status === 'connected' ? '' : 'style="display: none"' %>>Connected</div>
       <div class="link-peer-connecting label label-primary no-select" <%= peer.status === 'connecting' ? '' : 'style="display: none"' %>>Connecting</div>
       <div class="link-peer-disconnected label label-danger no-select" <%= peer.status === 'disconnected' ? '' : 'style="display: none"' %>>Disconnected</div>
-      <button data-id="<%- peer.id %>" data-name="<%- peer.name %>" type="button" class="link-remove-peer btn btn-danger btn-xs">Remove Peer</button>
+      <div class="link-peer-transited label label-success no-select" <%= peer.transited_name ? '' : 'style="display: none"' %>>Transit (<%- peer.transited_name %>)</div>
+      <button data-id="<%- peer.id %>" data-name="<%- peer.name %>" type="button" class="link-add-transit btn btn-primary btn-xs" <%= link_type !== 'direct' && peer.transit === false ? '' : 'style="display: none"' %>>Transit Peer</button>
+      <button data-id="<%- peer.id %>" data-name="<%- peer.name %>" type="button" class="link-remove-transit btn btn-warning btn-xs" <%= link_type !== 'direct' && peer.transit === true ? '' : 'style="display: none"' %>>Untransit Peer</button>
+      <button data-id="<%- peer.id %>" data-name="<%- peer.name %>" type="button" class="link-remove-peer btn btn-danger btn-xs" <%= link_type !== 'direct' ? '' : 'style="display: none"' %>>Remove Peer</button>
     </div>
   </div>
   <% }); %>
