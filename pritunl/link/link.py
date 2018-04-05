@@ -538,6 +538,7 @@ class Location(mongo.MongoObject):
                             'transit': transit_id in self.transits,
                             'transited_id': location.id,
                             'transited_name': location.name,
+                            'status': status.get(str(i)) or 'disconnected',
                         })
 
                 peers_names.add(location.name)
