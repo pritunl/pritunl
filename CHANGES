@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.29.1666.4 2018-04-05
+------------------------------
 
 Add link transit peers
 
