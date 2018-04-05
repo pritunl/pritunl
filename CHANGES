@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Host interface improvements
+
 Version 1.29.1666.4 2018-04-05
 ------------------------------
 
