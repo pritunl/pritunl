@@ -2,7 +2,6 @@ from pritunl.host.host import Host
 
 from pritunl.constants import *
 from pritunl.exceptions import *
-import pritunl
 from pritunl import settings
 from pritunl import organization
 from pritunl import event
@@ -118,7 +117,7 @@ def init():
     except NotFound:
         pass
 
-    settings.local.host.version = pritunl.__version__
+    settings.local.host.version = settings.local.version
     settings.local.host.status = ONLINE
     settings.local.host.users_online = 0
     settings.local.host.start_timestamp = utils.now()
