@@ -809,11 +809,11 @@ class Iptables(object):
         sorted_routes6 = collections.defaultdict(list)
 
         for route in self._routes:
-            cidr = route.split('/')[-1]
+            cidr = int(route.split('/')[-1])
             sorted_routes[cidr].append(route)
 
         for route in self._routes6:
-            cidr = route.split('/')[-1]
+            cidr = int(route.split('/')[-1])
             sorted_routes6[cidr].append(route)
 
         sorted_nat_routes = collections.defaultdict(list)
@@ -824,7 +824,7 @@ class Iptables(object):
                 all_interface = interface
                 continue
 
-            cidr = route.split('/')[-1]
+            cidr = int(route.split('/')[-1])
             sorted_nat_routes[cidr].append((route, interface))
 
         for route, interface in self._nat_routes6.items():
@@ -832,7 +832,7 @@ class Iptables(object):
                 all_interface6 = interface
                 continue
 
-            cidr = route.split('/')[-1]
+            cidr = int(route.split('/')[-1])
             sorted_nat_routes6[cidr].append((route, interface))
 
         if self._accept_all and all_interface:
