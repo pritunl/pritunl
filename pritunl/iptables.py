@@ -6,6 +6,7 @@ import itertools
 import subprocess
 import time
 import threading
+import collections
 try:
     import iptc
     LIB_IPTABLES = True
@@ -804,51 +805,35 @@ class Iptables(object):
         all_interface = None
         all_interface6 = None
 
+        sorted_routes = collections.defaultdict(list)
+        sorted_routes6 = collections.defaultdict(list)
+
+        for route in self._routes:
+            cidr = route.split('/')[-1]
+            sorted_routes[cidr].append(route)
+
+        for route in self._routes6:
+            cidr = route.split('/')[-1]
+            sorted_routes6[cidr].append(route)
+
+        sorted_nat_routes = collections.defaultdict(list)
+        sorted_nat_routes6 = collections.defaultdict(list)
+
         for route, interface in self._nat_routes.items():
             if route == '0.0.0.0/0':
                 all_interface = interface
                 continue
 
-            for nat_network in self._nat_networks:
-                if settings.vpn.lib_iptables and LIB_IPTABLES:
-                    rule = self._init_rule()
-                    rule.src = nat_network
-                    rule.dst = route
-                    rule.out_interface = interface
-                    rule.create_target('MASQUERADE')
-                    self._accept.append(('POSTROUTING', rule))
-                else:
-                    self._accept.append([
-                        'POSTROUTING',
-                        '-t', 'nat',
-                        '-s', nat_network,
-                        '-d', route,
-                        '-o', interface,
-                        '-j', 'MASQUERADE',
-                    ])
+            cidr = route.split('/')[-1]
+            sorted_nat_routes[cidr].append((route, interface))
 
         for route, interface in self._nat_routes6.items():
             if route == '::/0':
                 all_interface6 = interface
                 continue
 
-            for nat_network in self._nat_networks6:
-                if settings.vpn.lib_iptables and LIB_IPTABLES:
-                    rule = self._init_rule6()
-                    rule.src = nat_network
-                    rule.dst = route
-                    rule.out_interface = interface
-                    rule.create_target('MASQUERADE')
-                    self._accept6.append(('POSTROUTING', rule))
-                else:
-                    self._accept6.append([
-                        'POSTROUTING',
-                        '-t', 'nat',
-                        '-s', nat_network,
-                        '-d', route,
-                        '-o', interface,
-                        '-j', 'MASQUERADE',
-                    ])
+            cidr = route.split('/')[-1]
+            sorted_nat_routes6[cidr].append((route, interface))
 
         if self._accept_all and all_interface:
             for nat_network in self._nat_networks:
@@ -883,6 +868,82 @@ class Iptables(object):
                         '-o', all_interface6,
                         '-j', 'MASQUERADE',
                     ])
+
+        for cidr in sorted(sorted_nat_routes.keys()):
+            for route, interface in sorted_nat_routes[cidr]:
+                for nat_network in self._nat_networks:
+                    if settings.vpn.lib_iptables and LIB_IPTABLES:
+                        rule = self._init_rule()
+                        rule.src = nat_network
+                        rule.dst = route
+                        rule.out_interface = interface
+                        rule.create_target('MASQUERADE')
+                        self._accept.append(('POSTROUTING', rule))
+                    else:
+                        self._accept.append([
+                            'POSTROUTING',
+                            '-t', 'nat',
+                            '-s', nat_network,
+                            '-d', route,
+                            '-o', interface,
+                            '-j', 'MASQUERADE',
+                        ])
+
+        for cidr in sorted(sorted_nat_routes6.keys()):
+            for route, interface in sorted_nat_routes6[cidr]:
+                for nat_network in self._nat_networks6:
+                    if settings.vpn.lib_iptables and LIB_IPTABLES:
+                        rule = self._init_rule6()
+                        rule.src = nat_network
+                        rule.dst = route
+                        rule.out_interface = interface
+                        rule.create_target('MASQUERADE')
+                        self._accept6.append(('POSTROUTING', rule))
+                    else:
+                        self._accept6.append([
+                            'POSTROUTING',
+                            '-t', 'nat',
+                            '-s', nat_network,
+                            '-d', route,
+                            '-o', interface,
+                            '-j', 'MASQUERADE',
+                        ])
+
+        for cidr in sorted(sorted_routes.keys()):
+            for route in sorted_routes[cidr]:
+                for nat_network in self._nat_networks:
+                    if settings.vpn.lib_iptables and LIB_IPTABLES:
+                        rule = self._init_rule()
+                        rule.src = nat_network
+                        rule.dst = route
+                        rule.create_target('ACCEPT')
+                        self._accept.append(('POSTROUTING', rule))
+                    else:
+                        self._accept.append([
+                            'POSTROUTING',
+                            '-t', 'nat',
+                            '-s', nat_network,
+                            '-d', route,
+                            '-j', 'ACCEPT',
+                        ])
+
+        for cidr in sorted(sorted_routes6.keys()):
+            for route in sorted_routes6[cidr]:
+                for nat_network in self._nat_networks6:
+                    if settings.vpn.lib_iptables and LIB_IPTABLES:
+                        rule = self._init_rule6()
+                        rule.src = nat_network
+                        rule.dst = route
+                        rule.create_target('ACCEPT')
+                        self._accept6.append(('POSTROUTING', rule))
+                    else:
+                        self._accept6.append([
+                            'POSTROUTING',
+                            '-t', 'nat',
+                            '-s', nat_network,
+                            '-d', route,
+                            '-j', 'ACCEPT',
+                        ])
 
     def generate(self):
         if self.cleared:
