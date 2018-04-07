@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Server NAT routing improvements
+
 Version 1.29.1666.76 2018-04-05
 -------------------------------
 
