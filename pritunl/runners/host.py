@@ -1,6 +1,5 @@
 from pritunl.constants import *
 from pritunl.helpers import *
-import pritunl
 from pritunl import settings
 from pritunl import host
 from pritunl import logger
@@ -124,7 +123,7 @@ def _keep_alive_thread():
             settings.local.host.collection.update({
                 '_id': settings.local.host_id,
             }, {'$set': {
-                'version': pritunl.__version__,
+                'version': settings.local.version,
                 'server_count': server_count,
                 'device_count': device_count,
                 'cpu_usage': cpu_usage,
