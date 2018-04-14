@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Update Lets Encrypt support
 Fix routing issue
 
 Version 1.29.1670.66 2018-04-09
