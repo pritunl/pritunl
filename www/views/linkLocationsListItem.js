@@ -7,10 +7,13 @@ define([
   'models/linkHostUri',
   'models/linkHostConf',
   'models/linkPeer',
+  'models/linkTransit',
   'views/alert',
   'views/modalAddLocRoute',
   'views/modalAddLocHost',
   'views/modalAddLocPeer',
+  'views/modalAddLocTransit',
+  'views/modalDeleteLocTransit',
   'views/modalDeleteLocRoute',
   'views/modalModifyLocHost',
   'views/modalLocHostUri',
@@ -21,11 +24,13 @@ define([
   'views/modalDeleteLocation',
   'text!templates/linkLocationsListItem.html'
 ], function($, _, Backbone, LinkRouteModel, LinkHostModel, LinkHostUriModel,
-    LinkHostConfModel, LinkPeerModel, AlertView, ModalAddLocRouteView,
-    ModalAddLocHostView, ModalAddLocPeerView, ModalDeleteLocRouteView,
-    ModalModifyLocHostView, ModalLocHostUriView, ModalLocHostConfView,
-    ModalDeleteLocHostView, ModalDeleteLocPeerView, ModalModifyLocationView,
-    ModalDeleteLocationView, linkLocationsListItemTemplate) {
+    LinkHostConfModel, LinkPeerModel, LinkTransitModel, AlertView,
+    ModalAddLocRouteView, ModalAddLocHostView, ModalAddLocPeerView,
+    ModalAddLocTransitView, ModalDeleteLocTransitView,
+    ModalDeleteLocRouteView, ModalModifyLocHostView, ModalLocHostUriView,
+    ModalLocHostConfView, ModalDeleteLocHostView, ModalDeleteLocPeerView,
+    ModalModifyLocationView, ModalDeleteLocationView,
+    linkLocationsListItemTemplate) {
   'use strict';
   var LinkLocationsListItemView = Backbone.View.extend({
     className: 'link-location',
@@ -37,6 +42,8 @@ define([
       'mousedown .link-remove-route': 'onRemoveRoute',
       'mousedown .link-remove-host': 'onRemoveHost',
       'mousedown .link-remove-peer': 'onRemovePeer',
+      'mousedown .link-add-transit': 'onAddTransit',
+      'mousedown .link-remove-transit': 'onRemoveTransit',
       'mousedown .link-uri-host': 'onHostUri',
       'mousedown .link-conf-host': 'onHostConf',
       'mousedown .host-name': 'onModifyHost',
@@ -151,6 +158,32 @@ define([
       }
 
       var modal = new ModalDeleteLocPeerView({
+        model: model
+      });
+      this.addView(modal);
+    },
+    onAddTransit: function(evt) {
+      var model = new LinkTransitModel({
+        'link_id': this.model.get('link_id'),
+        'location_id': this.model.get('id'),
+        'transit_id': $(evt.currentTarget).attr('data-id'),
+        'name': $(evt.currentTarget).attr('data-name')
+      });
+
+      var modal = new ModalAddLocTransitView({
+        model: model
+      });
+      this.addView(modal);
+    },
+    onRemoveTransit: function(evt) {
+      var model = new LinkTransitModel({
+        'id': $(evt.currentTarget).attr('data-id'),
+        'link_id': this.model.get('link_id'),
+        'location_id': this.model.get('id'),
+        'name': $(evt.currentTarget).attr('data-name')
+      });
+
+      var modal = new ModalDeleteLocTransitView({
         model: model
       });
       this.addView(modal);
