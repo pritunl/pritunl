@@ -1468,7 +1468,7 @@ class Server(mongo.MongoObject):
 
             routes_set = set()
             for route in link_svr.get_routes():
-                if route != '0.0.0.0/0':
+                if route['network'] != '0.0.0.0/0':
                     routes_set.add(route['network'])
             if routes & routes_set:
                 return SERVER_LINK_COMMON_ROUTE, SERVER_LINK_COMMON_ROUTE_MSG
