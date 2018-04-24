@@ -216,7 +216,7 @@ def sso_request_get():
                 'state': state,
                 'secret': secret,
             },
-                             )
+        )
 
         if resp.status_code != 200:
             logger.error('Google auth server error', 'sso',
@@ -252,7 +252,7 @@ def sso_request_get():
                 'state': state,
                 'secret': secret,
             },
-                             )
+        )
 
         if resp.status_code != 200:
             logger.error('Slack auth server error', 'sso',
@@ -291,7 +291,7 @@ def sso_request_get():
                 'issuer_url': settings.app.sso_saml_issuer_url,
                 'cert': settings.app.sso_saml_cert,
             },
-                             )
+        )
 
         if resp.status_code != 200:
             logger.error('Saml auth server error', 'sso',
