@@ -21,7 +21,6 @@ from pritunl import ipaddress
 
 import os
 import subprocess
-import threading
 import random
 import collections
 import datetime
