@@ -51,6 +51,13 @@ def ObjectId(oid=None):
             )
     return oid
 
+def ObjectIdSilent(oid=None):
+    if oid is not None:
+        oid = str(oid)
+    if oid is None or len(oid) != 32:
+        return bson.ObjectId(oid)
+    return oid
+
 def _now(ntp_time):
     start_time, sync_time = ntp_time
     return sync_time + (time.time() - start_time)
