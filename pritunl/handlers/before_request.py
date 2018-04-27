@@ -17,4 +17,7 @@ def parse_object_id(_, values):
             if key.endswith('_id'):
                 val = values[key]
                 if len(val) > 10:
-                    values[key] = utils.ObjectId(val)
+                    try:
+                        values[key] = utils.ObjectIdSilent(val)
+                    except:
+                        values[key] = None
