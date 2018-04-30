@@ -678,8 +678,8 @@ def sso_yubico_post():
     key = utils.filter_str(flask.request.json.get('key')) or None
 
     if sso_mode not in (GOOGLE_YUBICO_AUTH, SLACK_YUBICO_AUTH,
-                        SAML_YUBICO_AUTH, SAML_OKTA_YUBICO_AUTH,
-                        SAML_ONELOGIN_YUBICO_AUTH):
+            SAML_YUBICO_AUTH, SAML_OKTA_YUBICO_AUTH,
+            SAML_ONELOGIN_YUBICO_AUTH):
         return flask.abort(404)
 
     if not token or not key:
