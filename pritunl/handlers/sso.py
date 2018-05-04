@@ -384,7 +384,7 @@ def sso_callback_get():
             not_found = False
             for org_name in org_names:
                 org = organization.get_by_name(
-                    utils.filter_str(org_name),
+                    utils.filter_unicode(org_name),
                     fields=('_id'),
                 )
                 if org:
@@ -433,7 +433,7 @@ def sso_callback_get():
         org_id = settings.app.sso_org
         for org_name in org_names:
             org = organization.get_by_name(
-                utils.filter_str(org_name),
+                utils.filter_unicode(org_name),
                 fields=('_id'),
             )
             if org:
@@ -499,7 +499,7 @@ def sso_callback_get():
             google_groups = sorted(google_groups)
             for org_name in google_groups:
                 org = organization.get_by_name(
-                    utils.filter_str(org_name),
+                    utils.filter_unicode(org_name),
                     fields=('_id'),
                 )
                 if org:
