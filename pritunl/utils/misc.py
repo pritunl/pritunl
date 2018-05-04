@@ -275,6 +275,11 @@ def filter_str(in_str):
         return in_str
     return ''.join(x for x in in_str if x.isalnum() or x in NAME_SAFE_CHARS)
 
+def filter_unicode(in_str):
+    if not in_str:
+        return in_str
+    return ''.join(x for x in in_str if x.isalnum() or x in NAME_SAFE_CHARS)
+
 def generate_secret():
     return re.sub(r'[\W_]+', '', base64.b64encode(os.urandom(64)))[:32]
 
