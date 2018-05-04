@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.29.1695.84 2018-05-04
+-------------------------------
 
 Improve single sign-on
 
