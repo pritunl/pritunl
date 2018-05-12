@@ -94,6 +94,7 @@ def user_get(org_id, user_id=None, page=None):
         'dns_suffix',
         'port_forwarding',
     )
+
     for usr in org.iter_users(page=page, search=search,
             search_limit=limit, fields=fields):
         users_id.append(usr.id)
