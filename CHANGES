@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve DNS server
+
 Version 1.29.1695.84 2018-05-04
 -------------------------------
 
