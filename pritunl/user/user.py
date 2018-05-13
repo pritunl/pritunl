@@ -310,7 +310,7 @@ class User(mongo.MongoObject):
                     ))
 
                 if resp.status_code != 200:
-                    logger.exception('Google auth check request error', 'user',
+                    logger.error('Google auth check request error', 'user',
                         user_id=self.id,
                         status_code=resp.status_code,
                         content=resp.content,
@@ -339,7 +339,7 @@ class User(mongo.MongoObject):
                     ))
 
                 if resp.status_code != 200:
-                    logger.exception('Slack auth check request error', 'user',
+                    logger.error('Slack auth check request error', 'user',
                         user_id=self.id,
                         status_code=resp.status_code,
                         content=resp.content,
