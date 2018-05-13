@@ -312,6 +312,7 @@ class User(mongo.MongoObject):
                 if resp.status_code != 200:
                     logger.error('Google auth check request error', 'user',
                         user_id=self.id,
+                        user_name=self.name,
                         status_code=resp.status_code,
                         content=resp.content,
                     )
@@ -321,6 +322,7 @@ class User(mongo.MongoObject):
             except:
                 logger.exception('Google auth check error', 'user',
                     user_id=self.id,
+                    user_name=self.name,
                 )
             return False
         elif SLACK_AUTH in self.auth_type and SLACK_AUTH in sso_mode:
@@ -341,6 +343,7 @@ class User(mongo.MongoObject):
                 if resp.status_code != 200:
                     logger.error('Slack auth check request error', 'user',
                         user_id=self.id,
+                        user_name=self.name,
                         status_code=resp.status_code,
                         content=resp.content,
                     )
@@ -350,6 +353,7 @@ class User(mongo.MongoObject):
             except:
                 logger.exception('Slack auth check error', 'user',
                     user_id=self.id,
+                    user_name=self.name,
                 )
             return False
         elif SAML_ONELOGIN_AUTH in self.auth_type and \
@@ -362,6 +366,7 @@ class User(mongo.MongoObject):
             except:
                 logger.exception('OneLogin auth check error', 'user',
                     user_id=self.id,
+                    user_name=self.name,
                 )
             return False
         elif SAML_OKTA_AUTH in self.auth_type and \
@@ -374,6 +379,7 @@ class User(mongo.MongoObject):
             except:
                 logger.exception('Okta auth check error', 'user',
                     user_id=self.id,
+                    user_name=self.name,
                 )
             return False
         elif RADIUS_AUTH in self.auth_type and RADIUS_AUTH in sso_mode:
@@ -382,6 +388,7 @@ class User(mongo.MongoObject):
             except:
                 logger.exception('Radius auth check error', 'user',
                     user_id=self.id,
+                    user_name=self.name,
                 )
             return False
         elif PLUGIN_AUTH in self.auth_type:
@@ -394,6 +401,7 @@ class User(mongo.MongoObject):
             except:
                 logger.exception('Plugin auth check error', 'user',
                     user_id=self.id,
+                    user_name=self.name,
                 )
             return False
 
