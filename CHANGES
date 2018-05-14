@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.29.1705.7 2018-05-14
+------------------------------
 
 Improve DNS server
 
