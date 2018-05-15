@@ -1085,6 +1085,8 @@ class Clients(object):
         org_id = client['org_id']
         user_id = client['user_id']
         remote_ip = client['real_address']
+        virt_address = client['virt_address']
+        virt_address6 = client['virt_address6']
 
         org = self.get_org(org_id)
         if org:
@@ -1114,6 +1116,8 @@ class Clients(object):
                     org_name=org.name,
                     user_name=user.name,
                     remote_ip=remote_ip,
+                    ** {"virtual_ip": virt_address,
+                        "virtual_ip6": virt_address6}
                 )
 
         # if self.server.route_clients and not client.get('ignore_routes'):
