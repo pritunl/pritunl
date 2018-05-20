@@ -21,16 +21,16 @@ def _network_invalid():
     }, 400)
 
 def _port_invalid():
-        return utils.jsonify({
-            'error': PORT_INVALID,
-            'error_msg': PORT_INVALID_MSG,
-        }, 400)
+    return utils.jsonify({
+        'error': PORT_INVALID,
+        'error_msg': PORT_INVALID_MSG,
+    }, 400)
 
 def _dh_param_bits_invalid():
-        return utils.jsonify({
-            'error': DH_PARAM_BITS_INVALID,
-            'error_msg': DH_PARAM_BITS_INVALID_MSG,
-        }, 400)
+    return utils.jsonify({
+        'error': DH_PARAM_BITS_INVALID,
+        'error_msg': DH_PARAM_BITS_INVALID_MSG,
+    }, 400)
 
 def _local_network_invalid():
     return utils.jsonify({
