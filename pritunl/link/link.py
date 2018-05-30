@@ -216,6 +216,7 @@ class Host(mongo.MongoObject):
         links = []
         state = {
             'id': self.id,
+            'ipv6': self.link.ipv6,
             'type': self.location.type,
             'links': links,
         }
@@ -563,6 +564,7 @@ class Location(mongo.MongoObject):
             'id': self.id,
             'name': self.name,
             'type': self.type,
+            'ipv6': self.link.ipv6,
             'link_id': self.link_id,
             'link_type': self.link.type,
             'hosts': hosts,
@@ -713,6 +715,7 @@ class Link(mongo.MongoObject):
         'status',
         'key',
         'excludes',
+        'ipv6',
     }
     fields_default = {
         'type': SITE_TO_SITE,
@@ -721,7 +724,7 @@ class Link(mongo.MongoObject):
     }
 
     def __init__(self, name=None, type=None, status=None, timeout=None,
-            key=None, **kwargs):
+            key=None, ipv6=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         if name is not None:
@@ -739,6 +742,9 @@ class Link(mongo.MongoObject):
         if key is not None:
             self.key = key
 
+        if ipv6 is not None:
+            self.ipv6 = ipv6
+
     @cached_static_property
     def collection(cls):
         return mongo.get_collection('links')
@@ -748,6 +754,7 @@ class Link(mongo.MongoObject):
             'id': self.id,
             'name': self.name,
             'type': self.type,
+            'ipv6': self.ipv6,
             'status': self.status,
         }
 
