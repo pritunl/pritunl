@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.29.1721.99 2018-05-30
+-------------------------------
 
 Add IPv6 IPsec links
 
