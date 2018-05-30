@@ -62,11 +62,13 @@ def link_post():
     name = utils.filter_str(flask.request.json.get('name')) or 'undefined'
     type = DIRECT if flask.request.json.get('type') == DIRECT \
         else SITE_TO_SITE
+    ipv6 = True if flask.request.json.get('ipv6') else False
 
     lnk = link.Link(
         name=name,
         type=type,
         status=ONLINE,
+        ipv6=ipv6,
     )
 
     lnk.generate_key()
@@ -141,7 +143,9 @@ def link_put(link_id):
     if flask.request.json.get('key'):
         lnk.generate_key()
 
-    lnk.commit(('name', 'status', 'key'))
+    lnk.ipv6 = True if flask.request.json.get('ipv6') else False
+
+    lnk.commit(('name', 'status', 'key', 'ipv6'))
 
     event.Event(type=LINKS_UPDATED)
 
