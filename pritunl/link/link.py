@@ -248,7 +248,8 @@ class Host(mongo.MongoObject):
 
                     links.append({
                         'pre_shared_key': self.link.key,
-                        'right': active_host.public_address,
+                        'right': active_host.address6 \
+                            if self.link.ipv6 else active_host.public_address,
                         'left_subnets': left_subnets,
                         'right_subnets': right_subnets,
                     })
@@ -306,7 +307,8 @@ class Host(mongo.MongoObject):
 
                     links.append({
                         'pre_shared_key': self.link.key,
-                        'right': active_host.public_address,
+                        'right': active_host.address6 \
+                            if self.link.ipv6 else active_host.public_address,
                         'left_subnets': left_subnets,
                         'right_subnets': right_subnets,
                     })
@@ -356,7 +358,8 @@ class Host(mongo.MongoObject):
 
                 links.append({
                     'pre_shared_key': self.link.key,
-                    'right': active_host.public_address,
+                    'right': active_host.address6 \
+                        if self.link.ipv6 else active_host.public_address,
                     'left_subnets': left_subnets,
                     'right_subnets': right_subnets,
                 })
@@ -419,7 +422,8 @@ class Host(mongo.MongoObject):
 
                 links.append({
                     'pre_shared_key': self.link.key,
-                    'right': active_host.public_address,
+                    'right': active_host.address6 \
+                        if self.link.ipv6 else active_host.public_address,
                     'left_subnets': left_subnets,
                     'right_subnets': right_subnets,
                 })
