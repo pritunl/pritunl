@@ -59,6 +59,22 @@ def user_authenticate(host_id, host_name, user_name, password, remote_ip,
     else:
         return False, None, None
 
+# [SYNCHRONOUS] Called when a user configuration is synced or downloaded
+# to return custom configuration lines that will be added to the users
+# OpenVPN configuration.
+def user_config(host_id, host_name, org_id, user_id, user_name, server_id,
+        server_name, server_port, server_protocol, server_ipv6,
+        server_ipv6_firewall, server_network, server_network6,
+        server_network_mode, server_network_start, server_network_stop,
+        server_restrict_routes, server_bind_address, server_onc_hostname,
+        server_dh_param_bits, server_multi_device, server_dns_servers,
+        server_search_domain, server_otp_auth, server_cipher, server_hash,
+        server_inter_client, server_ping_interval, server_ping_timeout,
+        server_link_ping_interval, server_link_ping_timeout,
+        server_allowed_devices, server_max_clients, server_replica_count,
+        server_dns_mapping, server_debug, **kwargs):
+    return ''
+
 # Called on log entries. The kwargs includes variables from the log event.
 def log_entry(host_id, host_name, message, **kwargs):
     pass
