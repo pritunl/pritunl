@@ -751,10 +751,10 @@ def server_route_post(server_id):
             'error': SERVER_ROUTE_SERVER_LINK_NAT,
             'error_msg': SERVER_ROUTE_SERVER_LINK_NAT_MSG,
         }, 400)
-    except ServerRouteNatNetworkLink:
+    except ServerRouteGatewayNetworkLink:
         return utils.jsonify({
-            'error': SERVER_ROUTE_NETWORK_LINK_NAT,
-            'error_msg': SERVER_ROUTE_NETWORK_LINK_NAT_MSG,
+            'error': SERVER_ROUTE_NETWORK_LINK_GATEWAY,
+            'error_msg': SERVER_ROUTE_NETWORK_LINK_GATEWAY_MSG,
         }, 400)
     except ServerRouteNatNetGateway:
         return utils.jsonify({
@@ -819,10 +819,10 @@ def server_routes_post(server_id):
                 'error': SERVER_ROUTE_SERVER_LINK_NAT,
                 'error_msg': SERVER_ROUTE_SERVER_LINK_NAT_MSG,
             }, 400)
-        except ServerRouteNatNetworkLink:
+        except ServerRouteGatewayNetworkLink:
             return utils.jsonify({
-                'error': SERVER_ROUTE_NETWORK_LINK_NAT,
-                'error_msg': SERVER_ROUTE_NETWORK_LINK_NAT_MSG,
+                'error': SERVER_ROUTE_NETWORK_LINK_GATEWAY,
+                'error_msg': SERVER_ROUTE_NETWORK_LINK_GATEWAY_MSG,
             }, 400)
         except ServerRouteNatNetGateway:
             return utils.jsonify({
@@ -885,10 +885,10 @@ def server_route_put(server_id, route_network):
             'error': SERVER_ROUTE_SERVER_LINK_NAT,
             'error_msg': SERVER_ROUTE_SERVER_LINK_NAT_MSG,
         }, 400)
-    except ServerRouteNatNetworkLink:
+    except ServerRouteGatewayNetworkLink:
         return utils.jsonify({
-            'error': SERVER_ROUTE_NETWORK_LINK_NAT,
-            'error_msg': SERVER_ROUTE_NETWORK_LINK_NAT_MSG,
+            'error': SERVER_ROUTE_NETWORK_LINK_GATEWAY,
+            'error_msg': SERVER_ROUTE_NETWORK_LINK_GATEWAY_MSG,
         }, 400)
     except ServerRouteNatNetGateway:
         return utils.jsonify({
