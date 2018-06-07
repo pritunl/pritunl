@@ -579,6 +579,59 @@ class User(mongo.MongoObject):
         conf_hash.update(JUMBO_FRAMES[svr.jumbo_frames])
         conf_hash.update(ca_certificate)
         conf_hash.update(self._get_key_info_str(svr, None, False))
+
+        plugin_config = ''
+        if settings.local.sub_plan and \
+                'enterprise' in settings.local.sub_plan:
+            returns = plugins.caller(
+                'user_config',
+                host_id=settings.local.host_id,
+                host_name=settings.local.host.name,
+                org_id=self.org_id,
+                user_id=self.id,
+                user_name=self.name,
+                server_id=svr.id,
+                server_name=svr.name,
+                server_port=svr.port,
+                server_protocol=svr.protocol,
+                server_ipv6=svr.ipv6,
+                server_ipv6_firewall=svr.ipv6_firewall,
+                server_network=svr.network,
+                server_network6=svr.network6,
+                server_network_mode=svr.network_mode,
+                server_network_start=svr.network_start,
+                server_network_stop=svr.network_end,
+                server_restrict_routes=svr.restrict_routes,
+                server_bind_address=svr.bind_address,
+                server_onc_hostname=svr.onc_hostname,
+                server_dh_param_bits=svr.dh_param_bits,
+                server_multi_device=svr.multi_device,
+                server_dns_servers=svr.dns_servers,
+                server_search_domain=svr.search_domain,
+                server_otp_auth=svr.otp_auth,
+                server_cipher=svr.cipher,
+                server_hash=svr.hash,
+                server_inter_client=svr.inter_client,
+                server_ping_interval=svr.ping_interval,
+                server_ping_timeout=svr.ping_timeout,
+                server_link_ping_interval=svr.link_ping_interval,
+                server_link_ping_timeout=svr.link_ping_timeout,
+                server_allowed_devices=svr.allowed_devices,
+                server_max_clients=svr.max_clients,
+                server_replica_count=svr.replica_count,
+                server_dns_mapping=svr.dns_mapping,
+                server_debug=svr.debug,
+            )
+
+            if returns:
+                for return_val in returns:
+                    if not return_val:
+                        continue
+
+                    val = return_val.strip()
+                    conf_hash.update(val)
+                    plugin_config += val + '\n'
+
         conf_hash = conf_hash.hexdigest()
 
         client_conf = OVPN_INLINE_CLIENT_CONF % (
@@ -608,6 +661,7 @@ class User(mongo.MongoObject):
             client_conf += 'key-direction 1\n'
 
         client_conf += JUMBO_FRAMES[svr.jumbo_frames]
+        client_conf += plugin_config
         client_conf += '<ca>\n%s\n</ca>\n' % ca_certificate
         if include_user_cert:
             if svr.tls_auth:
