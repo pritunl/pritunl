@@ -660,6 +660,7 @@ def server_org_put(server_id, org_id):
     svr.add_org(org)
     svr.commit(svr.changed)
     event.Event(type=SERVERS_UPDATED)
+    event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
     event.Event(type=SERVER_ORGS_UPDATED, resource_id=svr.id)
     event.Event(type=USERS_UPDATED, resource_id=org.id)
     return utils.jsonify({
@@ -691,6 +692,7 @@ def server_org_delete(server_id, org_id):
     svr.commit(svr.changed)
 
     event.Event(type=SERVERS_UPDATED)
+    event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
     event.Event(type=SERVER_ORGS_UPDATED, resource_id=svr.id)
     event.Event(type=USERS_UPDATED, resource_id=org.id)
 
