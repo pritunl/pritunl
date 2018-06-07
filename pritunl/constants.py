@@ -855,8 +855,9 @@ SERVER_ROUTE_VIRTUAL_NAT_MSG = 'Virtual network routes cannot use NAT.'
 SERVER_ROUTE_SERVER_LINK_NAT = 'server_route_server_link_nat'
 SERVER_ROUTE_SERVER_LINK_NAT_MSG = 'Server link routes cannot modify NAT.'
 
-SERVER_ROUTE_NETWORK_LINK_NAT = 'server_route_network_link_nat'
-SERVER_ROUTE_NETWORK_LINK_NAT_MSG = 'Network link routes cannot use NAT.'
+SERVER_ROUTE_NETWORK_LINK_GATEWAY = 'server_route_network_link_gateway'
+SERVER_ROUTE_NETWORK_LINK_GATEWAY_MSG = 'Network link routes cannot use ' + \
+    'net gateway.'
 
 SERVER_ROUTE_NET_GATEWAY_NAT = 'server_route_net_gateway_nat'
 SERVER_ROUTE_NET_GATEWAY_NAT_MSG = 'Net gateway routes cannot use NAT.'
