@@ -905,15 +905,6 @@ class Server(mongo.MongoObject):
 
         return '\n'.join(remotes)
 
-    def get_onc_host(self):
-        if self.onc_hostname:
-            return self.onc_hostname, self.port
-
-        for host, port in self.get_hosts():
-            return host, port
-
-        return None, None
-
     def get_hosts(self):
         hosts = []
         spec = {
