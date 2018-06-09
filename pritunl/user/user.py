@@ -688,7 +688,7 @@ class User(mongo.MongoObject):
         if not hosts:
             return None, None
 
-        ca_certs = svr.ca_certificate_list
+        ca_certs = svr.ca_certificate_x509
 
         tls_auth = ''
         if svr.tls_auth:
