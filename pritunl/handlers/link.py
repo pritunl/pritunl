@@ -416,6 +416,7 @@ def link_location_host_conf_get(link_id, location_id, host_id):
 
     data = hst.dict()
     data['conf'] = hst.get_static_conf()
+    data['ubnt_conf'] = hst.get_ubnt_conf()
 
     return utils.jsonify(data)
 
