@@ -38,7 +38,7 @@ def _get_key_zip_archive(org_id, user_id):
     response = flask.Response(response=key_archive,
         mimetype='application/octet-stream')
     response.headers.add('Content-Disposition',
-        'attachment; filename="%s.zip"' % usr.name)
+        'attachment; filename="%s_%s.zip"' % (org.name, usr.name))
     return (usr, response)
 
 def _get_onc_archive(org_id, user_id):
