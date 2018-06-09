@@ -1101,38 +1101,9 @@ remote-cert-tls server
 OVPN_ONC_CLIENT_CONF = """\
 {
   "Type": "UnencryptedConfiguration",
-  "NetworkConfigurations": [{
-    "GUID": "%s",
-    "Name": "%s",
-    "Type": "VPN",
-    "VPN": {
-      "Host": "%s",
-      "Type": "OpenVPN",
-      "OpenVPN": {
-        "AuthRetry": "interact",
-        "Auth": "%s",
-        "Cipher": "%s",
-        "IgnoreDefaultRoute": true,
-        "ClientCertType": "Pattern",
-        "ClientCertPattern": {
-          "IssuerCARef": [
+  "NetworkConfigurations": [
 %s
-          ]
-        },
-        "CompLZO": "%s",%s
-        "Port": %s,
-        "Proto": "%s",
-        "PushPeerInfo": true,
-        "RenegSec": 2592000,
-        "ServerCARefs": [
-%s
-        ],
-        "ServerPollTimeout": 4,%s
-        "RemoteCertTLS": "server",%s
-        "Verb": "2"
-      }
-    }
-  }],
+  ],
   "Certificates": [
 %s
   ]
