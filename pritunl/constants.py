@@ -1162,6 +1162,13 @@ OVPN_ONC_CA_CERT = """\
       "X509": "%s"
     }"""
 
+OVPN_ONC_CLIENT_CERT = """\
+    {
+      "GUID": "%s",
+      "Type": "Client",
+      "PKCS12": "%s"
+    }"""
+
 OVPN_INLINE_LINK_CONF = """\
 client
 setenv UV_ID %s
