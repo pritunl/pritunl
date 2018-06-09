@@ -673,13 +673,10 @@ class User(mongo.MongoObject):
 
         return file_name, client_conf, conf_hash
 
-    def _generate_onc(self, svr):
+    def _generate_onc(self, svr, user_cert_id):
         if not svr.primary_organization or \
                 not svr.primary_user:
             svr.create_primary_user()
-
-        file_name = '%s_%s_%s.onc' % (
-            self.org.name, self.name, svr.name)
 
         conf_hash = hashlib.md5()
         conf_hash.update(str(svr.id))
@@ -699,28 +696,19 @@ class User(mongo.MongoObject):
                 if line.startswith('#'):
                     continue
                 tls_auth += line + '\\n'
-            tls_auth = '\n        "TLSAuthContents": "%s",' % tls_auth
-            tls_auth = '\n        "KeyDirection": "1",' + tls_auth
+            tls_auth = '\n          "TLSAuthContents": "%s",' % tls_auth
+            tls_auth = '\n          "KeyDirection": "1",' + tls_auth
 
-        certs = ""
+        onc_certs = {}
         cert_ids = []
         for cert in ca_certs:
             cert_id = '{%s}' % hashlib.md5(cert).hexdigest()
+            onc_certs[cert_id] = cert
             cert_ids.append(cert_id)
-            certs += OVPN_ONC_CA_CERT % (
-                cert_id,
-                cert,
-            ) + ',\n'
-        certs = certs[:-2]
-
-        client_ref = ''
-        for cert_id in cert_ids:
-            client_ref += '            "%s",\n' % cert_id
-        client_ref = client_ref[:-2]
 
         server_ref = ''
         for cert_id in cert_ids:
-            server_ref += '          "%s",\n' % cert_id
+            server_ref += '            "%s",\n' % cert_id
         server_ref = server_ref[:-2]
 
         password_mode = self._get_password_mode(svr)
@@ -739,19 +727,19 @@ class User(mongo.MongoObject):
                 primary_host = host
                 primary_port = port
             else:
-                extra_hosts += '          "%s:%s",\n' % (host, port)
+                extra_hosts += '            "%s:%s",\n' % (host, port)
         extra_hosts = extra_hosts[:-2]
         if extra_hosts:
-            extra_hosts = '\n        "ExtraHosts": [\n%s\n        ],' % \
+            extra_hosts = '\n          "ExtraHosts": [\n%s\n        ],' % \
                 extra_hosts
 
-        onc_conf = OVPN_ONC_CLIENT_CONF % (
+        onc_net = OVPN_ONC_NET_CONF % (
             conf_hash,
             '%s - %s (%s)' % (self.name, self.org.name, svr.name),
             primary_host,
             HASHES[svr.hash],
             ONC_CIPHERS[svr.cipher],
-            client_ref,
+            user_cert_id,
             'adaptive' if svr.lzo_compression == ADAPTIVE else 'false',
             extra_hosts,
             primary_port,
@@ -759,10 +747,9 @@ class User(mongo.MongoObject):
             server_ref,
             tls_auth,
             auth,
-            certs,
         )
 
-        return file_name, onc_conf
+        return onc_net, onc_certs
 
     def iter_servers(self, fields=None):
         for svr in self.org.iter_servers(fields=fields):
@@ -831,62 +818,70 @@ class User(mongo.MongoObject):
 
         return key_archive
 
-    def build_onc_archive(self):
+    def build_onc(self):
         temp_path = utils.get_temp_path()
-        key_archive_path = os.path.join(temp_path, '%s.zip' % self.id)
 
         try:
             os.makedirs(temp_path)
-            zip_file = zipfile.ZipFile(key_archive_path, 'w')
-            try:
-                user_cert_path = os.path.join(temp_path, '%s.crt' % self.id)
-                user_key_path = os.path.join(temp_path, '%s.key' % self.id)
-                user_p12_path = os.path.join(temp_path, '%s.p12' % self.id)
 
-                with open(user_cert_path, 'w') as user_cert:
-                    user_cert.write(self.certificate)
+            user_cert_path = os.path.join(temp_path, '%s.crt' % self.id)
+            user_key_path = os.path.join(temp_path, '%s.key' % self.id)
+            user_p12_path = os.path.join(temp_path, '%s.p12' % self.id)
 
-                with open(user_key_path, 'w') as user_key:
-                    os.chmod(user_key_path, 0600)
-                    user_key.write(self.private_key)
+            with open(user_cert_path, 'w') as user_cert:
+                user_cert.write(self.certificate)
 
-                utils.check_output_logged([
-                    'openssl',
-                    'pkcs12',
-                    '-export',
-                    '-nodes',
-                    '-password', 'pass:',
-                    '-inkey', user_key_path,
-                    '-in', user_cert_path,
-                    '-out', user_p12_path,
-                ])
+            with open(user_key_path, 'w') as user_key:
+                os.chmod(user_key_path, 0600)
+                user_key.write(self.private_key)
 
-                zip_file.write(user_p12_path, arcname='%s.p12' % self.name)
+            utils.check_output_logged([
+                'openssl',
+                'pkcs12',
+                '-export',
+                '-nodes',
+                '-password', 'pass:',
+                '-inkey', user_key_path,
+                '-in', user_cert_path,
+                '-out', user_p12_path,
+            ])
 
-                os.remove(user_cert_path)
-                os.remove(user_key_path)
-                os.remove(user_p12_path)
+            with open(user_p12_path, 'r') as user_key_p12:
+                user_key_base64 = base64.b64encode(user_key_p12.read())
+                user_cert_id = '{%s}' % hashlib.md5(
+                    user_key_base64).hexdigest()
 
-                for svr in self.iter_servers():
-                    server_conf_path = os.path.join(temp_path,
-                        '%s_%s.onc' % (self.id, svr.id))
-                    conf_name, client_conf = self._generate_onc(svr)
-                    if not client_conf:
-                        continue
+            os.remove(user_cert_path)
+            os.remove(user_key_path)
+            os.remove(user_p12_path)
 
-                    with open(server_conf_path, 'w') as ovpn_conf:
-                        ovpn_conf.write(client_conf)
-                    zip_file.write(server_conf_path, arcname=conf_name)
-                    os.remove(server_conf_path)
-            finally:
-                zip_file.close()
+            onc_nets = ''
+            onc_certs_store = {}
 
-            with open(key_archive_path, 'r') as archive_file:
-                key_archive = archive_file.read()
+            for svr in self.iter_servers():
+                onc_net, onc_certs = self._generate_onc(
+                    svr, user_cert_id)
+                if not onc_net:
+                    continue
+                onc_certs_store.update(onc_certs)
+
+                onc_nets += onc_net + ',\n'
+            onc_nets = onc_nets[:-2]
+
+            if onc_nets == '':
+                return None
+
+            onc_certs = ''
+            for cert_id, cert in onc_certs_store.items():
+                onc_certs += OVPN_ONC_CA_CERT % (cert_id, cert) + ',\n'
+            onc_certs += OVPN_ONC_CLIENT_CERT % (
+                user_cert_id, user_key_base64)
+
+            onc_conf = OVPN_ONC_CLIENT_CONF % (onc_nets, onc_certs)
         finally:
             utils.rmtree(temp_path)
 
-        return key_archive
+        return onc_conf
 
     def build_key_conf(self, server_id, include_user_cert=True):
         svr = self.org.get_by_id(server_id)
