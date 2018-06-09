@@ -321,12 +321,6 @@ def server_put_post(server_id=None):
         inactive_timeout = int(
             flask.request.json['inactive_timeout'] or 0) or None
 
-    onc_hostname = None
-    onc_hostname_def = False
-    if 'onc_hostname' in flask.request.json:
-        onc_hostname_def = True
-        onc_hostname = utils.filter_str(flask.request.json['onc_hostname'])
-
     allowed_devices = None
     allowed_devices_def = False
     if 'allowed_devices' in flask.request.json:
@@ -504,7 +498,6 @@ def server_put_post(server_id=None):
             link_ping_interval=link_ping_interval,
             link_ping_timeout=link_ping_timeout,
             inactive_timeout=inactive_timeout,
-            onc_hostname=onc_hostname,
             allowed_devices=allowed_devices,
             max_clients=max_clients,
             replica_count=replica_count,
@@ -574,8 +567,6 @@ def server_put_post(server_id=None):
             svr.link_ping_timeout = link_ping_timeout
         if inactive_timeout_def:
             svr.inactive_timeout = inactive_timeout
-        if onc_hostname_def:
-            svr.onc_hostname = onc_hostname
         if allowed_devices_def:
             svr.allowed_devices = allowed_devices
         if max_clients_def:
