@@ -682,12 +682,13 @@ class User(mongo.MongoObject):
             self.org.name, self.name, svr.name)
 
         conf_hash = hashlib.md5()
+        conf_hash.update(str(svr.id))
         conf_hash.update(str(self.org_id))
         conf_hash.update(str(self.id))
         conf_hash = '{%s}' % conf_hash.hexdigest()
 
-        host, port = svr.get_onc_host()
-        if not host:
+        hosts = svr.get_hosts()
+        if not hosts:
             return None, None
 
         ca_certs = svr.ca_certificate_list
@@ -703,14 +704,14 @@ class User(mongo.MongoObject):
 
         certs = ""
         cert_ids = []
-
         for cert in ca_certs:
             cert_id = '{%s}' % hashlib.md5(cert).hexdigest()
             cert_ids.append(cert_id)
             certs += OVPN_ONC_CA_CERT % (
                 cert_id,
                 cert,
-            )
+            ) + ',\n'
+        certs = certs[:-2]
 
         client_ref = ''
         for cert_id in cert_ids:
@@ -730,21 +731,30 @@ class User(mongo.MongoObject):
         else:
             auth = OVPN_ONC_AUTH_NONE % self.id
 
-        if svr.is_route_all():
-            ignore_default = 'true'
-        else:
-            ignore_default = 'false'
+        primary_host = None
+        primary_port = None
+        extra_hosts = ''
+        for host, port in hosts:
+            if primary_host is None:
+                primary_host = host
+                primary_port = port
+            else:
+                extra_hosts += '          "%s:%s",\n' % (host, port)
+        extra_hosts = extra_hosts[:-2]
+        if extra_hosts:
+            extra_hosts = '\n        "ExtraHosts": [\n%s\n        ],' % \
+                extra_hosts
 
         onc_conf = OVPN_ONC_CLIENT_CONF % (
             conf_hash,
             '%s - %s (%s)' % (self.name, self.org.name, svr.name),
-            host,
+            primary_host,
             HASHES[svr.hash],
             ONC_CIPHERS[svr.cipher],
-            ignore_default,
             client_ref,
             'adaptive' if svr.lzo_compression == ADAPTIVE else 'false',
-            port,
+            extra_hosts,
+            primary_port,
             svr.protocol,
             server_ref,
             tls_auth,
