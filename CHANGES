@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add support for EdgeRouter IPsec links
+
 Version 1.29.1731.20 2018-06-09
 -------------------------------
 
