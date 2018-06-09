@@ -129,13 +129,22 @@ class Clients(object):
                     self.server.inactive_timeout
 
             if self.server.is_route_all():
-                client_conf += 'push "redirect-gateway def1"\n'
+                if platform == 'chrome':
+                    #client_conf += 'push "redirect-gateway def1"\n'
+                    client_conf += 'push "route 0.0.0.0 128.0.0.0"\n'
+                    client_conf += 'push "route 128.0.0.0 128.0.0.0"\n'
+                else:
+                    client_conf += 'push "redirect-gateway def1"\n'
 
                 if self.server.ipv6 or (settings.vpn.ipv6_route_all and (
                         platform == 'android' or platform == 'ios')):
-                    client_conf += 'push "redirect-gateway ipv6"\n'
-                    client_conf += 'push "redirect-gateway-ipv6 def1"\n'
-                    client_conf += 'push "route-ipv6 2000::/3"\n'
+                    if platform == 'chrome':
+                        #client_conf += 'push "redirect-gateway ipv6"\n'
+                        client_conf += 'push "route-ipv6 2000::/3"\n'
+                    else:
+                        client_conf += 'push "redirect-gateway ipv6"\n'
+                        client_conf += 'push "redirect-gateway-ipv6 def1"\n'
+                        client_conf += 'push "route-ipv6 2000::/3"\n'
 
             if self.server.dns_mapping:
                 client_conf += 'push "dhcp-option DNS %s"\n' % (
