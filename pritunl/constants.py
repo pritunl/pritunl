@@ -1218,6 +1218,32 @@ conn %s
 
 """
 
+UBNT_CONF = """\
+set vpn ipsec auto-firewall-nat-exclude enable
+
+set vpn ipsec ike-group pritunl lifetime 10800
+set vpn ipsec ike-group pritunl key-exchange ikev2
+set vpn ipsec ike-group pritunl proposal 1 dh-group 14
+set vpn ipsec ike-group pritunl proposal 1 encryption aes128
+set vpn ipsec ike-group pritunl proposal 1 hash sha1
+
+set vpn ipsec esp-group pritunl lifetime 3600
+set vpn ipsec esp-group pritunl pfs dh-group14
+set vpn ipsec esp-group pritunl proposal 1 encryption aes128
+set vpn ipsec esp-group pritunl proposal 1 hash sha1
+"""
+
+UBNT_PEER = """
+set vpn ipsec site-to-site peer %s authentication mode pre-shared-secret
+set vpn ipsec site-to-site peer %s authentication pre-shared-secret %s
+set vpn ipsec site-to-site peer %s connection-type initiate
+set vpn ipsec site-to-site peer %s local-address %s
+set vpn ipsec site-to-site peer %s ike-group pritunl
+set vpn ipsec site-to-site peer %s tunnel 1 esp-group pritunl
+set vpn ipsec site-to-site peer %s tunnel 1 local prefix %s
+set vpn ipsec site-to-site peer %s tunnel 1 remote prefix %s
+"""
+
 NDPPD_CONF = """\
 route-ttl 20000
 address-ttl 20000
