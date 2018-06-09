@@ -454,7 +454,7 @@ class Server(mongo.MongoObject):
         return 'tap' if self.network_mode == BRIDGE else 'tun'
 
     @property
-    def ca_certificate_list(self):
+    def ca_certificate_x509(self):
         ca_split = self.ca_certificate.split('-----BEGIN CERTIFICATE-----')
         certs = []
 
