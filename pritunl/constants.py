@@ -1140,10 +1140,9 @@ OVPN_ONC_CLIENT_CONF = """\
 """
 
 OVPN_ONC_AUTH_NONE = """
-        "SaveCredentials": true,
+        "SaveCredentials": false,
         "UserAuthenticationType": "Password",
-        "Username": "%s",
-        "Password": "chrome","""
+        "Username": "%s","""
 
 OVPN_ONC_AUTH_OTP = """
         "SaveCredentials": false,
