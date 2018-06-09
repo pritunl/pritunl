@@ -350,8 +350,8 @@ def user_linked_key_page_get(short_code):
 
     if settings.local.sub_active:
         conf_links += '<a class="btn btn-success download-chrome" ' + \
-            'title="Download ChromeOS Profile" ' + \
-            'href="/key_onc/%s.onc">Download ChromeOS Profile</a>\n' % (
+            'title="Download Chrome OS Profile" ' + \
+            'href="/key_onc/%s.onc">Download Chrome OS Profile</a>\n' % (
                 doc['key_id'])
 
     for server in usr.iter_servers():
