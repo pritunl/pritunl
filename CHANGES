@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.29.1731.20 2018-06-09
+-------------------------------
 
 Improve Chrome OS support
 Improvements to plugin system
