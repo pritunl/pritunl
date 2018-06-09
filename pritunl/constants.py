@@ -1119,7 +1119,7 @@ OVPN_ONC_CLIENT_CONF = """\
 %s
           ]
         },
-        "CompLZO": "%s",
+        "CompLZO": "%s",%s
         "Port": %s,
         "Proto": "%s",
         "PushPeerInfo": true,
@@ -1133,7 +1133,10 @@ OVPN_ONC_CLIENT_CONF = """\
       }
     }
   }],
-%s}
+  "Certificates": [
+%s
+  ]
+}
 """
 
 OVPN_ONC_AUTH_NONE = """
@@ -1153,12 +1156,11 @@ OVPN_ONC_AUTH_PASS = """
         "Username": "%s","""
 
 OVPN_ONC_CA_CERT = """\
-  "Certificates": [{
-    "GUID": "%s",
-    "Type": "Authority",
-    "X509": "%s"
-  }]
-"""
+    {
+      "GUID": "%s",
+      "Type": "Authority",
+      "X509": "%s"
+    }"""
 
 OVPN_INLINE_LINK_CONF = """\
 client
