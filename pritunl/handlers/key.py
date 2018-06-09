@@ -44,11 +44,11 @@ def _get_key_zip_archive(org_id, user_id):
 def _get_onc_archive(org_id, user_id):
     org = organization.get_by_id(org_id)
     usr = org.get_user(user_id)
-    key_archive = usr.build_onc_archive()
-    response = flask.Response(response=key_archive,
-        mimetype='application/octet-stream')
+    onc_conf = usr.build_onc()
+    response = flask.Response(response=onc_conf,
+        mimetype='application/x-onc')
     response.headers.add('Content-Disposition',
-        'attachment; filename="%s.zip"' % usr.name)
+        'attachment; filename="%s_%s.onc"' % (org.name, usr.name))
     return (usr, response)
 
 def _find_doc(query, one_time=None, one_time_new=False):
@@ -110,7 +110,7 @@ def user_key_zip_archive_get(org_id, user_id):
 
     return resp
 
-@app.app.route('/key_onc/<org_id>/<user_id>.zip', methods=['GET'])
+@app.app.route('/key_onc/<org_id>/<user_id>.onc', methods=['GET'])
 @auth.session_light_auth
 def user_key_onc_archive_get(org_id, user_id):
     usr, resp = _get_onc_archive(org_id, user_id)
@@ -194,7 +194,7 @@ def user_linked_key_zip_archive_get(key_id):
 
     return resp
 
-@app.app.route('/key_onc/<key_id>.zip', methods=['GET'])
+@app.app.route('/key_onc/<key_id>.onc', methods=['GET'])
 @auth.open_auth
 def user_linked_key_onc_archive_get(key_id):
     doc = _find_doc({
@@ -350,8 +350,8 @@ def user_linked_key_page_get(short_code):
 
     if settings.local.sub_active:
         conf_links += '<a class="btn btn-success download-chrome" ' + \
-            'title="Download Chromebook Profiles" ' + \
-            'href="/key_onc/%s.zip">Download Chromebook Profiles</a>\n' % (
+            'title="Download ChromeOS Profile" ' + \
+            'href="/key_onc/%s.onc">Download ChromeOS Profile</a>\n' % (
                 doc['key_id'])
 
     for server in usr.iter_servers():
