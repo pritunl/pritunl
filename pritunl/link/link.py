@@ -452,6 +452,30 @@ class Host(mongo.MongoObject):
 
         return secrets + '\n' + conns.rstrip()
 
+    def get_ubnt_conf(self):
+        conf = UBNT_CONF
+
+        for i, lnk in enumerate(self.get_static_links()):
+            if not len(lnk['left_subnets']) or not len(lnk['right_subnets']):
+                continue
+
+            conf += UBNT_PEER % (
+                lnk['right'],
+                lnk['right'],
+                lnk['pre_shared_key'],
+                lnk['right'],
+                lnk['right'],
+                self.public_address,
+                lnk['right'],
+                lnk['right'],
+                lnk['right'],
+                lnk['left_subnets'][0],
+                lnk['right'],
+                lnk['right_subnets'][0],
+            )
+
+        return conf.rstrip()
+
 class Location(mongo.MongoObject):
     fields = {
         'name',
