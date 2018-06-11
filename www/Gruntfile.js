@@ -1,58 +1,6 @@
 /* jshint strict:false */
 
-var fs = require('fs');
-var path = require('path');
-var crypto = require('crypto');
-
 module.exports = function(grunt) {
-  grunt.registerMultiTask('versioning', 'Version static files', function() {
-    var options = this.options({
-      hashLength: 6,
-      encoding: 'utf8',
-      replaceFiles: []
-    });
-    var i;
-    var data;
-    var filePath;
-    var filePathNew;
-    var replacePath;
-    var hash;
-    var staticFiles = this.data.staticFiles;
-    var replaceFiles = this.data.replaceFiles;
-    var searchStr;
-    var replaceStr;
-    var replaces = {};
-
-    for (i = 0; i < staticFiles.length; i++) {
-      filePath = staticFiles[i];
-
-      hash = crypto.createHash('md5').update(grunt.file.read(
-        filePath, options.encoding)).digest('hex');
-      hash = hash.substr(0, options.hashLength);
-
-      filePathNew = path.dirname(filePath) + path.sep + path.basename(
-        filePath, path.extname(filePath)) + '.' + hash + path.extname(
-        filePath);
-
-      fs.rename(filePath, filePathNew);
-      replaces[path.basename(filePath)] = path.basename(filePathNew);
-    }
-
-    if (replaceFiles) {
-      for (i = 0; i < replaceFiles.length; i++) {
-        replacePath = replaceFiles[i];
-        data = grunt.file.read(replacePath, options.encoding);
-
-        for (searchStr in replaces) {
-          replaceStr = replaces[searchStr];
-          data = data.replace(new RegExp(searchStr, 'g'), replaceStr);
-        }
-
-        grunt.file.write(replacePath, data, options.encoding);
-      }
-    }
-  });
-
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
@@ -87,7 +35,7 @@ module.exports = function(grunt) {
         'models/*.js',
         'routers/*.js',
         'views/*.js',
-        '*.js',
+        '*.js'
       ]
     },
 
@@ -246,18 +194,6 @@ module.exports = function(grunt) {
           'vendor/dist/index.html': 'root/demo_index.html'
         }
       }
-    },
-
-    versioning: {
-      all: {
-        staticFiles: [
-          'vendor/dist/css/main.css',
-          'vendor/dist/js/main.js'
-        ],
-        replaceFiles: [
-          'vendor/dist/index.html'
-        ],
-      }
     }
   });
 
@@ -267,13 +203,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-requirejs');
 
   grunt.registerTask('default', ['jshint', 'clean',
-    'requirejs:production', 'copy:dist', 'versioning']);
+    'requirejs:production', 'copy:dist']);
 
   grunt.registerTask('test', ['jshint', 'clean', 'requirejs:test',
-    'copy:dist', 'versioning']);
+    'copy:dist']);
 
   grunt.registerTask('demo', ['jshint', 'clean', 'requirejs:demo',
-    'copy:demo', 'versioning']);
+    'copy:demo']);
 
   grunt.registerTask('lint', ['jshint']);
 };
