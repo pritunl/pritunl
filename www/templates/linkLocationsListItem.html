@@ -35,7 +35,7 @@
   <div class="link-host">
     <div class="name-container">
       <span class="name-icon glyphicon glyphicon-dashboard"></span>
-      <a data-id="<%- host.id %>" class="host-name title" data-toggle="tooltip" title="Click to modify this host"><%- host.name %><%- host.public_address ? ' (' + host.public_address + ')' : '' %><%- !host.static && host.version ? ' v' + host.version : '' %></a>
+      <a data-id="<%- host.id %>" class="host-name title" data-toggle="tooltip" title="Click to modify this host"><%- host.name %><%- ' (' + ((ipv6 ? host.address6 : host.public_address) || 'Unknown') + ')' %><%- !host.static && host.version ? ' v' + host.version : '' %></a>
     </div>
     <div class="button-container">
       <div class="link-host-static label label-success no-select" <%= host.static ? '' : 'style="display: none"' %>>Static</div>
