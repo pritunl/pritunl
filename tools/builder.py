@@ -413,6 +413,40 @@ if cmd == 'set-version':
         'grunt',
     ])
 
+    css_hash = subprocess.check_output(
+        'md5 www/vendor/dist/css/main.css | tail -c 7',
+        shell=True).strip()
+    app_hash = subprocess.check_output(
+        'md5 www/vendor/dist/js/main.js | tail -c 7', shell=True).strip()
+    subprocess.check_call([
+        'mv',
+        'www/vendor/dist/css/main.css',
+        'www/vendor/dist/css/main.%s.css' % css_hash,
+    ])
+    subprocess.check_call([
+        'mv',
+        'www/vendor/dist/js/main.js',
+        'www/vendor/dist/js/main.%s.js' % app_hash,
+    ])
+    subprocess.check_call([
+        'sed',
+        '-i', '.delete',
+        '-e', 's|s/css/main.css|s/css/main.%s.css|g' % css_hash,
+        'www/vendor/dist/index.html',
+    ])
+    subprocess.check_call([
+        'sed',
+        '-i', '.delete',
+        '-e', 's|s/js/main.js|s/js/main.%s.js|g' % app_hash,
+        'www/vendor/dist/index.html',
+    ])
+    subprocess.check_call([
+        'rm',
+        '-f',
+        'www/vendor/dist/index.html.delete',
+    ])
+
+
     # Commit webapp
     subprocess.check_call(['git', 'reset', 'HEAD', '.'])
     subprocess.check_call(['git', 'add', 'www/styles/vendor/main.css'])
