@@ -561,6 +561,7 @@ class Location(mongo.MongoObject):
                             transit_id not in transited_ids and \
                             transit_id not in transit_excludes:
                         transited_ids.add(transit_id)
+
                         transited_locations.append({
                             'id': transit_id,
                             'name': locations_id[transit_id].name,
