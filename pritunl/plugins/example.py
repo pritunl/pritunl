@@ -33,7 +33,8 @@ def user_connected(host_id, server_id, org_id, user_id, host_name,
 # Called on user disconnect, may not always be called if a server is stopped
 # or unexpected failure occurs.
 def user_disconnected(host_id, server_id, org_id, user_id, host_name,
-        server_name, org_name, user_name, remote_ip, **kwargs):
+        server_name, org_name, user_name, remote_ip, virtual_ip, virtual_ip6,
+        **kwargs):
     pass
 
 # [SYNCHRONOUS] Called on user connect must return True or False to allow
