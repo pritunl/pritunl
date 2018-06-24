@@ -1141,19 +1141,24 @@ OVPN_ONC_NET_CONF = """\
     }"""
 
 OVPN_ONC_AUTH_NONE = """
-        "SaveCredentials": false,
-        "UserAuthenticationType": "Password",
-        "Username": "%s","""
+          "SaveCredentials": false,
+          "UserAuthenticationType": "Password",
+          "Username": "%s","""
 
 OVPN_ONC_AUTH_OTP = """
-        "SaveCredentials": false,
-        "UserAuthenticationType": "OTP",
-        "Username": "%s","""
+          "SaveCredentials": false,
+          "UserAuthenticationType": "OTP",
+          "Username": "%s","""
 
 OVPN_ONC_AUTH_PASS = """
-        "SaveCredentials": false,
-        "UserAuthenticationType": "Password",
-        "Username": "%s","""
+          "SaveCredentials": false,
+          "UserAuthenticationType": "Password",
+          "Username": "%s","""
+
+OVPN_ONC_AUTH_PASS_OTP = """
+          "SaveCredentials": false,
+          "UserAuthenticationType": "Password",
+          "Username": "%s","""
 
 OVPN_ONC_CA_CERT = """\
     {
