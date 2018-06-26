@@ -334,7 +334,7 @@ def server_put_post(server_id=None):
         max_clients = flask.request.json['max_clients']
         if max_clients:
             max_clients = int(max_clients)
-        if not max_clients:
+        else:
             max_clients = 2000
 
     replica_count = None
