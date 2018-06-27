@@ -311,7 +311,7 @@ class Organization(mongo.MongoObject):
             'id': key_id,
             'key_url': '/key/%s.tar' % key_id,
             'key_zip_url': '/key/%s.zip' % key_id,
-            'key_onc_url': '/key_onc/%s.zip' % key_id,
+            'key_onc_url': '/key_onc/%s.onc' % key_id,
             'view_url': '/k/%s' % short_id,
             'uri_url': '/ku/%s' % short_id,
         }
