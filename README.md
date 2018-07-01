@@ -57,7 +57,7 @@ sudo systemctl enable mongodb pritunl
 ### amazonlinux 1
 
 ```bash
-sudo tee -a /etc/yum.repos.d/mongodb-org-3.6.repo << EOF
+sudo tee /etc/yum.repos.d/mongodb-org-3.6.repo << EOF
 [mongodb-org-3.6]
 name=MongoDB Repository
 baseurl=https://repo.mongodb.org/yum/amazon/2013.03/mongodb-org/3.6/x86_64/
@@ -66,7 +66,7 @@ enabled=1
 gpgkey=https://www.mongodb.org/static/pgp/server-3.6.asc
 EOF
 
-sudo tee -a /etc/yum.repos.d/pritunl.repo << EOF
+sudo tee /etc/yum.repos.d/pritunl.repo << EOF
 [pritunl]
 name=Pritunl Repository
 baseurl=https://repo.pritunl.com/stable/yum/centos/7/
@@ -85,7 +85,7 @@ sudo start pritunl
 ### amazonlinux 2
 
 ```bash
-sudo tee -a /etc/yum.repos.d/mongodb-org-3.6.repo << EOF
+sudo tee /etc/yum.repos.d/mongodb-org-3.6.repo << EOF
 [mongodb-org-3.6]
 name=MongoDB Repository
 baseurl=https://repo.mongodb.org/yum/redhat/7/mongodb-org/3.6/x86_64/
@@ -94,7 +94,7 @@ enabled=1
 gpgkey=https://www.mongodb.org/static/pgp/server-3.6.asc
 EOF
 
-sudo tee -a /etc/yum.repos.d/pritunl.repo << EOF
+sudo tee /etc/yum.repos.d/pritunl.repo << EOF
 [pritunl]
 name=Pritunl Repository
 baseurl=https://repo.pritunl.com/stable/yum/amazonlinux/2/
@@ -113,7 +113,7 @@ sudo systemctl enable mongod pritunl
 ### centos 7
 
 ```bash
-sudo tee -a /etc/yum.repos.d/mongodb-org-3.4.repo << EOF
+sudo tee /etc/yum.repos.d/mongodb-org-3.4.repo << EOF
 [mongodb-org-3.6]
 name=MongoDB Repository
 baseurl=https://repo.mongodb.org/yum/redhat/7/mongodb-org/3.6/x86_64/
@@ -122,7 +122,7 @@ enabled=1
 gpgkey=https://www.mongodb.org/static/pgp/server-3.6.asc
 EOF
 
-sudo tee -a /etc/yum.repos.d/pritunl.repo << EOF
+sudo tee /etc/yum.repos.d/pritunl.repo << EOF
 [pritunl]
 name=Pritunl Repository
 baseurl=https://repo.pritunl.com/stable/yum/centos/7/
@@ -141,11 +141,11 @@ sudo systemctl enable mongod pritunl
 ### debian jessie
 
 ```bash
-sudo tee -a /etc/apt/sources.list.d/mongodb-org-3.6.list << EOF
+sudo tee /etc/apt/sources.list.d/mongodb-org-3.6.list << EOF
 deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
 EOF
 
-sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
+sudo tee /etc/apt/sources.list.d/pritunl.list << EOF
 deb http://repo.pritunl.com/stable/apt jessie main
 EOF
 
@@ -160,7 +160,7 @@ sudo systemctl enable mongod pritunl
 ### debian strech
 
 ```bash
-sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
+sudo tee /etc/apt/sources.list.d/pritunl.list << EOF
 deb http://repo.pritunl.com/stable/apt stretch main
 EOF
 
@@ -175,11 +175,11 @@ sudo systemctl enable mongodb pritunl
 ### ubuntu trusty
 
 ```bash
-sudo tee -a /etc/apt/sources.list.d/mongodb-org-3.6.list << EOF
+sudo tee /etc/apt/sources.list.d/mongodb-org-3.6.list << EOF
 deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.6 multiverse
 EOF
 
-sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
+sudo tee /etc/apt/sources.list.d/pritunl.list << EOF
 deb http://repo.pritunl.com/stable/apt trusty main
 EOF
 
@@ -193,11 +193,11 @@ sudo service pritunl start
 ### ubuntu xenial
 
 ```bash
-sudo tee -a /etc/apt/sources.list.d/mongodb-org-3.6.list << EOF
+sudo tee /etc/apt/sources.list.d/mongodb-org-3.6.list << EOF
 deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.6 multiverse
 EOF
 
-sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
+sudo tee /etc/apt/sources.list.d/pritunl.list << EOF
 deb http://repo.pritunl.com/stable/apt xenial main
 EOF
 
@@ -212,7 +212,7 @@ sudo systemctl enable pritunl mongod
 ### ubuntu yakkety
 
 ```bash
-sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
+sudo tee /etc/apt/sources.list.d/pritunl.list << EOF
 deb http://repo.pritunl.com/stable/apt yakkety main
 EOF
 
@@ -226,7 +226,7 @@ sudo systemctl enable pritunl mongodb
 ### ubuntu zesty
 
 ```bash
-sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
+sudo tee /etc/apt/sources.list.d/pritunl.list << EOF
 deb http://repo.pritunl.com/stable/apt zesty main
 EOF
 
@@ -240,7 +240,7 @@ sudo systemctl enable pritunl mongodb
 ### ubuntu artful
 
 ```bash
-sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
+sudo tee /etc/apt/sources.list.d/pritunl.list << EOF
 deb http://repo.pritunl.com/stable/apt artful main
 EOF
 
@@ -254,7 +254,7 @@ sudo systemctl enable pritunl mongodb
 ### ubuntu bionic
 
 ```bash
-sudo tee -a /etc/apt/sources.list.d/pritunl.list << EOF
+sudo tee /etc/apt/sources.list.d/pritunl.list << EOF
 deb http://repo.pritunl.com/stable/apt bionic main
 EOF
 
