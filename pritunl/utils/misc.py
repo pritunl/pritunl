@@ -58,6 +58,10 @@ def ObjectIdSilent(oid=None):
         return bson.ObjectId(oid)
     return oid
 
+def ParseObjectId(oid):
+    if oid:
+        return bson.ObjectId(str(oid))
+
 def _now(ntp_time):
     start_time, sync_time = ntp_time
     return sync_time + (time.time() - start_time)
