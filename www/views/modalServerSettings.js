@@ -457,7 +457,6 @@ define([
         'link_ping_interval': linkPingInterval,
         'link_ping_timeout': linkPingTimeout,
         'inactive_timeout': inactiveTimeout,
-        'onc_hostname': oncHostname,
         'allowed_devices': allowedDevices,
         'max_clients': maxClients,
         'replica_count': replicaCount,
