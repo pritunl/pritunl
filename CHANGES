@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Link improvements
+
 Version 1.29.1758.63 2018-07-06
 -------------------------------
 
