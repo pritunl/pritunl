@@ -11,6 +11,7 @@ from pritunl import mongo
 from pritunl import sso
 from pritunl import event
 from pritunl import logger
+from pritunl import limiter
 
 import flask
 import time
@@ -263,11 +264,18 @@ def user_key_pin_put(key_id):
                 'error_msg': PIN_TOO_SHORT_MSG,
             }, 400)
 
-    if usr.pin and not usr.check_pin(current_pin):
-        return utils.jsonify({
-            'error': PIN_INVALID,
-            'error_msg': PIN_INVALID_MSG,
-        }, 400)
+    if usr.pin:
+        if not limiter.auth_check(usr.id):
+            return utils.jsonify({
+                'error': AUTH_TOO_MANY,
+                'error_msg': AUTH_TOO_MANY_MSG,
+            }, 400)
+
+        if not usr.check_pin(current_pin):
+            return utils.jsonify({
+                'error': PIN_INVALID,
+                'error_msg': PIN_INVALID_MSG,
+            }, 400)
 
     if usr.set_pin(pin):
         usr.audit_event('user_updated',
