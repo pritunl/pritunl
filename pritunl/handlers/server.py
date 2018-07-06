@@ -378,6 +378,14 @@ def server_put_post(server_id=None):
         otp_auth_def = True
         otp_auth = True if flask.request.json['otp_auth'] else False
 
+    mss_fix = None
+    mss_fix_def = False
+    if 'mss_fix' in flask.request.json:
+        mss_fix_def = True
+        mss_fix = flask.request.json['mss_fix'] or None
+        if mss_fix:
+            mss_fix = int(mss_fix) or None
+
     lzo_compression = False
     lzo_compression_def = False
     if 'lzo_compression' in flask.request.json:
@@ -505,6 +513,7 @@ def server_put_post(server_id=None):
             dns_mapping=dns_mapping,
             debug=debug,
             policy=policy,
+            mss_fix=mss_fix,
         )
         svr.add_host(settings.local.host_id)
     else:
@@ -581,6 +590,8 @@ def server_put_post(server_id=None):
             svr.debug = debug
         if policy_def:
             svr.policy = policy
+        if mss_fix_def:
+            svr.mss_fix = mss_fix
 
         changed = svr.changed
 
