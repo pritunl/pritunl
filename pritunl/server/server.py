@@ -68,6 +68,7 @@ dict_fields = [
     'dns_mapping',
     'debug',
     'policy',
+    'mss_fix',
 ]
 operation_fields = dict_fields + [
     'hosts',
@@ -110,6 +111,7 @@ class Server(mongo.MongoObject):
         'dns_mapping',
         'debug',
         'policy',
+        'mss_fix',
         'cipher',
         'hash',
         'block_outside_dns',
@@ -180,7 +182,7 @@ class Server(mongo.MongoObject):
             ping_timeout=None, link_ping_interval=None, link_ping_timeout=None,
             inactive_timeout=None, allowed_devices=None,
             max_clients=None, replica_count=None, vxlan=None,
-            dns_mapping=None, debug=None, policy=None, **kwargs):
+            dns_mapping=None, debug=None, policy=None, mss_fix=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         if 'network' in self.loaded_fields:
@@ -261,6 +263,8 @@ class Server(mongo.MongoObject):
             self.debug = debug
         if policy is not None:
             self.policy = policy
+        if mss_fix is not None:
+            self.mss_fix = mss_fix
 
     @cached_static_property
     def collection(cls):
@@ -337,6 +341,7 @@ class Server(mongo.MongoObject):
             'dns_mapping': True if self.dns_mapping else False,
             'debug': True if self.debug else False,
             'policy': self.policy,
+            'mss_fix': self.mss_fix,
         }
 
     @property
