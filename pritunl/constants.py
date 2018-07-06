@@ -767,6 +767,9 @@ USERS_BACKGROUND_BUSY = 'users_background_busy'
 USERS_BACKGROUND_BUSY_MSG = 'Users are already being created in ' + \
     'background. Wait for task to complete before adding more users.'
 
+AUTH_TOO_MANY = 'auth_too_many'
+AUTH_TOO_MANY_MSG = 'Too many authentication attempts.'
+
 PIN_INVALID = 'pin_invalid'
 PIN_INVALID_MSG = 'Current pin is invalid.'
 
