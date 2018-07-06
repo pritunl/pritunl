@@ -93,10 +93,6 @@
       <label>Max Clients</label>
       <input type="number" class="form-control" placeholder="Enter max clients" data-toggle="tooltip" title="Maximum number of clients connected to a server or to each server replica." min="0" value="<%- max_clients === -1 ? '' : max_clients %>" autocapitalize="off">
     </div>
-    <div class="onc-hostname form-group">
-      <label>Chromebook Server Hostname</label>
-      <input type="text" class="form-control" placeholder="Enter Chromebook hostname" data-toggle="tooltip" title="Optional, hostname to use for Chromebook user profiles. Enter a DNS name with mutliple IP addresses to support connecting to replicated servers on Chrome OS." value="<%- onc_hostname || '' %>" autocapitalize="off">
-    </div>
     <div class="network-mode form-group">
       <label>Network Mode</label>
       <select class="form-control" data-toggle="tooltip" title="Network mode">
