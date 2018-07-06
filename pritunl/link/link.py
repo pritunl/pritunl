@@ -515,9 +515,17 @@ class Location(mongo.MongoObject):
         return mongo.get_collection('links_locations')
 
     def dict(self, locations=None, locations_id=None):
+        static_location = False
+
+        location_online = False
         hosts = []
         for hst in self.iter_hosts():
+            if hst.active:
+                location_online = True
+
             hosts.append(hst.dict())
+            if hst.static:
+                static_location = True
 
         routes = []
         for route_id, route in self.routes.items():
@@ -527,6 +535,8 @@ class Location(mongo.MongoObject):
             routes.append(route)
 
         status = self.status or {}
+        if self.link.status != ONLINE or not location_online:
+            status = {}
 
         peers = []
         if locations:
@@ -569,6 +579,7 @@ class Location(mongo.MongoObject):
                             'transited_id': location.id,
                             'transited_name': location.name,
                             'status': status.get(str(i)) or 'disconnected',
+                            'static': static_location,
                         })
 
                 peers_names.add(location.name)
@@ -579,6 +590,7 @@ class Location(mongo.MongoObject):
                     'transited_id': None,
                     'transited_name': None,
                     'status': status.get(str(i)) or 'disconnected',
+                    'static': static_location,
                 })
 
                 i += 1
