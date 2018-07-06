@@ -86,8 +86,12 @@ def main(default_conf=None):
         from pritunl import setup
         from pritunl import auth
 
+        password = None
+        if len(args) > 1:
+            password = args[1]
+
         setup.setup_db()
-        username, password = auth.reset_password()
+        username, password = auth.reset_password(password)
 
         time.sleep(.2)
         print 'Administrator password successfully reset:\n' + \
