@@ -501,7 +501,7 @@ class Authorizer(object):
             self.password = self.password[:-6]
 
             allow = False
-            if settings.vpn.otp_cache:
+            if settings.app.sso_cache:
                 doc = self.otp_cache_collection.find_one({
                     'user_id': self.user.id,
                     'server_id': self.server.id,
