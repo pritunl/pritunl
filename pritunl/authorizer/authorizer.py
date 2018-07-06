@@ -8,6 +8,7 @@ from pritunl import utils
 from pritunl import mongo
 from pritunl import tunldb
 from pritunl import ipaddress
+from pritunl import limiter
 
 import threading
 import uuid
@@ -248,24 +249,7 @@ class Authorizer(object):
             )
             return
 
-        doc = self.limiter_collection.find_and_modify({
-            '_id': self.user.id,
-        }, {
-            '$inc': {'count': 1},
-            '$setOnInsert': {'timestamp': utils.now()},
-        }, new=True, upsert=True)
-
-        if utils.now() > doc['timestamp'] + datetime.timedelta(
-                seconds=settings.app.auth_limiter_ttl):
-            doc = {
-                'count': 1,
-                'timestamp': utils.now(),
-            }
-            self.limiter_collection.update({
-                '_id': self.user.id,
-            }, doc, upsert=True)
-
-        if doc['count'] > settings.app.auth_limiter_count_max:
+        if not limiter.auth_check(self.user.id):
             self.user.audit_event(
                 'user_connection',
                 ('User connection to "%s" denied. Too many ' +
