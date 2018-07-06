@@ -56,6 +56,7 @@ def _dict():
             'sso_onelogin_push': settings.app.sso_onelogin_push,
             'sso_radius_secret': 'demo',
             'sso_radius_host': 'demo',
+            'sso_cache': settings.app.sso_cache,
             'sso_client_cache': settings.app.sso_client_cache,
             'client_reconnect': settings.user.reconnect,
             'public_address': settings.local.host.public_addr,
@@ -134,6 +135,7 @@ def _dict():
             'sso_onelogin_push': settings.app.sso_onelogin_push,
             'sso_radius_secret': settings.app.sso_radius_secret,
             'sso_radius_host': settings.app.sso_radius_host,
+            'sso_cache': settings.app.sso_cache,
             'sso_client_cache': settings.app.sso_client_cache,
             'client_reconnect': settings.user.reconnect,
             'public_address': settings.local.host.public_addr,
@@ -536,6 +538,14 @@ def settings_put():
             sso_onelogin_push = flask.request.json['sso_onelogin_push']
             settings.app.sso_onelogin_push = True if \
                 sso_onelogin_push else False
+
+    if 'sso_cache' in flask.request.json:
+        settings_commit = True
+        sso_cache = True if \
+            flask.request.json['sso_cache'] else False
+        if sso_cache != settings.app.sso_cache:
+            changes.add('sso')
+        settings.app.sso_cache = sso_cache
 
     if 'sso_client_cache' in flask.request.json:
         settings_commit = True
