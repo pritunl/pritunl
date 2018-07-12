@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Link improvements
+Add mss fix to server options
 
 Version 1.29.1758.63 2018-07-06
 -------------------------------
