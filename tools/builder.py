@@ -325,7 +325,7 @@ if cmd == 'sync-releases':
 
             # Create gitlab release
             resp = requests.post(
-                'https://git.pritunl.com/api/v3/projects' + \
+                'https://git.pritunl.com/api/v4/projects' + \
                     '/%s%%2F%s/repository/tags/%s/release' % (
                     github_owner, pkg_name, release['tag_name']),
                 headers={
@@ -562,7 +562,7 @@ if cmd == 'set-version':
 
     # Create gitlab release
     response = requests.post(
-        'https://git.pritunl.com/api/v3/projects' + \
+        'https://git.pritunl.com/api/v4/projects' + \
             '/%s%%2F%s/repository/tags/%s/release' % (
             github_owner, pkg_name, new_version),
         headers={
