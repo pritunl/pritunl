@@ -46,7 +46,8 @@ define([
       'vxlan': null,
       'dns_mapping': null,
       'debug': null,
-      'policy': null
+      'policy': null,
+      'mss_fix': null
     },
     url: function() {
       var url = '/server';
