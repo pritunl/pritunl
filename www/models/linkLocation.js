@@ -9,6 +9,8 @@ define([
       'id': null,
       'link_id': null,
       'link_type': null,
+      'type': null,
+      'ipv6': null,
       'name': null,
       'status': null,
       'location': null,
