@@ -9,7 +9,8 @@ define([
       'id': null,
       'name': null,
       'hostname': null,
-      'conf': null
+      'conf': null,
+      'ubnt_conf': null
     },
     url: function() {
       return '/link/' + this.get('link_id') + '/location/' +
