@@ -318,6 +318,22 @@ class User(mongo.MongoObject):
                     )
                     return False
 
+                valid, google_groups = sso.verify_google(self.email)
+                if not valid:
+                    logger.error('Google auth check failed', 'user',
+                        user_id=self.id,
+                        user_name=self.name,
+                    )
+                    return False
+
+                if settings.app.sso_google_mode == 'groups':
+                    cur_groups = set(self.groups)
+                    new_groups = set(google_groups)
+
+                    if cur_groups != new_groups:
+                        self.groups = list(new_groups)
+                        self.commit('groups')
+
                 return True
             except:
                 logger.exception('Google auth check error', 'user',
