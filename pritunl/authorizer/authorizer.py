@@ -9,6 +9,7 @@ from pritunl import mongo
 from pritunl import tunldb
 from pritunl import ipaddress
 from pritunl import limiter
+from pritunl import utils
 
 import threading
 import uuid
@@ -260,9 +261,18 @@ class Authorizer(object):
 
         sso_mode = settings.app.sso or ''
         duo_mode = settings.app.sso_duo_mode
+        onelogin_mode = utils.get_onelogin_mode()
+        okta_mode = utils.get_okta_mode()
         auth_type = self.user.auth_type or ''
-        if DUO_AUTH in sso_mode and DUO_AUTH in auth_type and \
-                duo_mode == 'passcode':
+
+        has_duo_passcode = DUO_AUTH in sso_mode and \
+            DUO_AUTH in auth_type and duo_mode == 'passcode'
+        has_onelogin_passcode = SAML_ONELOGIN_AUTH == sso_mode and \
+            SAML_ONELOGIN_AUTH in auth_type and onelogin_mode == 'passcode'
+        has_okta_passcode = SAML_OKTA_AUTH == sso_mode and \
+            SAML_OKTA_AUTH in auth_type and okta_mode == 'passcode'
+
+        if has_duo_passcode or has_onelogin_passcode or has_okta_passcode:
             if not self.password and self.has_challenge() and \
                     self.user.has_pin():
                 self.user.audit_event('user_connection',
@@ -319,39 +329,61 @@ class Authorizer(object):
                     allow = True
 
                     logger.info(
-                        'Authentication cached, skipping Duo', 'sso',
+                        'Authentication cached, skipping secondary passcode',
+                        'sso',
                         user_name=self.user.name,
                         org_name=self.user.org.name,
                         server_name=self.server.name,
                     )
 
             if not allow:
-                duo_auth = sso.Duo(
-                    username=self.user.name,
-                    factor=duo_mode,
-                    remote_ip=self.remote_ip,
-                    auth_type='Connection',
-                    passcode=passcode,
-                )
-                allow = duo_auth.authenticate()
+                if DUO_AUTH in sso_mode:
+                    label = 'Duo'
+                    duo_auth = sso.Duo(
+                        username=self.user.name,
+                        factor=duo_mode,
+                        remote_ip=self.remote_ip,
+                        auth_type='Connection',
+                        passcode=passcode,
+                    )
+                    allow = duo_auth.authenticate()
+                elif SAML_ONELOGIN_AUTH == sso_mode:
+                    label = 'OneLogin'
+                    allow = sso.auth_onelogin_secondary(
+                        username=self.user.name,
+                        passcode=passcode,
+                        remote_ip=self.remote_ip,
+                        onelogin_mode=onelogin_mode,
+                    )
+                elif SAML_OKTA_AUTH == sso_mode:
+                    label = 'Okta'
+                    allow = sso.auth_okta_secondary(
+                        username=self.user.name,
+                        passcode=passcode,
+                        remote_ip=self.remote_ip,
+                        okta_mode=okta_mode,
+                    )
+                else:
+                    raise AuthError('Unknown secondary passcode challenge')
 
                 if not allow:
                     self.user.audit_event('user_connection',
                         ('User connection to "%s" denied. ' +
-                         'User failed Duo passcode authentication') % (
-                            self.server.name),
+                         'User failed %s passcode authentication') % (
+                            self.server.name, label),
                         remote_addr=self.remote_ip,
                     )
 
                     if self.has_challenge():
                         if self.user.has_password(self.server):
                             self.set_challenge(
-                                orig_password, 'Enter Duo Passcode', True)
+                                orig_password,
+                                'Enter %s Passcode' % label, True)
                         else:
                             self.set_challenge(
-                                None, 'Enter Duo Passcode', True)
-                        raise AuthError('Challenge Duo code')
-                    raise AuthError('Invalid OTP code')
+                                None, 'Enter %s Passcode' % label, True)
+                        raise AuthError('Challenge secondary passcode')
+                    raise AuthError('Invalid secondary passcode')
 
                 if settings.app.sso_cache and not self.auth_token:
                     self.sso_passcode_cache_collection.update({
@@ -715,6 +747,9 @@ class Authorizer(object):
         if self.device_name:
             info['Device'] = '%s (%s)' % (self.device_name, platform_name)
 
+        onelogin_mode = utils.get_onelogin_mode()
+        okta_mode = utils.get_okta_mode()
+
         if self.push_type == DUO_AUTH:
             duo_auth = sso.Duo(
                 username=self.user.name,
@@ -725,18 +760,18 @@ class Authorizer(object):
             )
             allow = duo_auth.authenticate()
         elif self.push_type == SAML_ONELOGIN_AUTH:
-            allow = sso.auth_onelogin_push(
-                self.user.name,
-                ipaddr=self.remote_ip,
-                type='Connection',
-                info=info,
+            allow = sso.auth_onelogin_secondary(
+                username=self.user.name,
+                passcode=None,
+                remote_ip=self.remote_ip,
+                onelogin_mode=onelogin_mode,
             )
         elif self.push_type == SAML_OKTA_AUTH:
-            allow = sso.auth_okta_push(
-                self.user.name,
-                ipaddr=self.remote_ip,
-                type='Connection',
-                info=info,
+            allow = sso.auth_okta_secondary(
+                username=self.user.name,
+                passcode=None,
+                remote_ip=self.remote_ip,
+                okta_mode=okta_mode,
             )
         else:
             raise ValueError('Unkown push auth type')
