@@ -123,9 +123,23 @@ class User(mongo.MongoObject):
     @property
     def has_duo_passcode(self):
         return settings.app.sso and self.auth_type and \
-            DUO_AUTH in self.auth_type and \
-            DUO_AUTH in settings.app.sso and \
-            settings.app.sso_duo_mode == 'passcode'
+           DUO_AUTH in self.auth_type and \
+           DUO_AUTH in settings.app.sso and \
+           settings.app.sso_duo_mode == 'passcode'
+
+    @property
+    def has_onelogin_passcode(self):
+        return settings.app.sso and self.auth_type and \
+           SAML_ONELOGIN_AUTH in self.auth_type and \
+           SAML_ONELOGIN_AUTH == settings.app.sso and \
+           'passcode' in utils.get_onelogin_mode()
+
+    @property
+    def has_okta_passcode(self):
+        return settings.app.sso and self.auth_type and \
+           SAML_OKTA_AUTH in self.auth_type and \
+           SAML_OKTA_AUTH == settings.app.sso and \
+           'passcode' in utils.get_okta_mode()
 
     @property
     def has_yubikey(self):
@@ -493,6 +507,10 @@ class User(mongo.MongoObject):
 
         if self.has_duo_passcode:
             password_mode = 'duo_otp'
+        elif self.has_onelogin_passcode:
+            password_mode = 'onelogin_otp'
+        elif self.has_okta_passcode:
+            password_mode = 'okta_otp'
         elif self.has_yubikey:
             password_mode = 'yubikey'
         elif svr.otp_auth:
@@ -517,7 +535,8 @@ class User(mongo.MongoObject):
         return bool(settings.app.sso_client_cache)
 
     def has_passcode(self, svr):
-        return bool(self.has_yubikey or self.has_duo_passcode or svr.otp_auth)
+        return bool(self.has_yubikey or
+            self.has_duo_passcode or svr.otp_auth)
 
     def has_password(self, svr):
         return bool(self._get_password_mode(svr))
@@ -526,6 +545,9 @@ class User(mongo.MongoObject):
         return self.pin and settings.user.pin_mode != PIN_DISABLED
 
     def get_push_type(self):
+        onelogin_mode = utils.get_onelogin_mode()
+        okta_mode = utils.get_okta_mode()
+
         if settings.app.sso and DUO_AUTH in self.auth_type and \
                 DUO_AUTH in settings.app.sso and \
                 settings.app.sso_duo_mode != 'passcode':
@@ -533,12 +555,12 @@ class User(mongo.MongoObject):
         elif settings.app.sso and \
                 SAML_ONELOGIN_AUTH in self.auth_type and \
                 SAML_ONELOGIN_AUTH in settings.app.sso and \
-                settings.app.sso_onelogin_push:
+                'push' in onelogin_mode:
             return SAML_ONELOGIN_AUTH
         elif settings.app.sso and \
                 SAML_OKTA_AUTH in self.auth_type and \
                 SAML_OKTA_AUTH in settings.app.sso and \
-                settings.app.sso_okta_push:
+                'push' in okta_mode:
             return SAML_OKTA_AUTH
 
     def _get_key_info_str(self, svr, conf_hash, include_sync_keys):
