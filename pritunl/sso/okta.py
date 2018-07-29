@@ -53,69 +53,6 @@ def get_user_id(username):
 
     return user_id
 
-def get_factor_id(username, user_id):
-    try:
-        response = requests.get(
-            _getokta_url() + '/api/v1/users/%s/factors' % user_id,
-            headers={
-                'Accept': 'application/json',
-                'Authorization': 'SSWS %s' % settings.app.sso_okta_token,
-            },
-        )
-    except httplib.HTTPException:
-        logger.exception('Okta api error', 'sso',
-            username=username,
-            okta_user_id=user_id,
-        )
-        return None
-
-    if response.status_code != 200:
-        logger.error('Okta api error', 'sso',
-            username=username,
-            okta_user_id=user_id,
-            status_code=response.status_code,
-            response=response.content,
-        )
-        return None
-
-    not_active = False
-    data = response.json()
-    for factor in data:
-        factor_id = factor.get('id')
-        factor_provider = factor.get('provider')
-        factor_status = factor.get('status')
-        if not factor_id or not factor_provider or not factor_status:
-            continue
-
-        if factor_provider.lower() != 'okta' or \
-                factor['factorType'].lower() != 'push':
-            continue
-
-        if factor_status.lower() != 'active':
-            not_active = True
-            continue
-
-        return factor['id']
-
-    if settings.app.sso_okta_skip_unavailable:
-        logger.info('Okta push not available, skipped', 'sso',
-            username=username,
-            okta_user_id=user_id,
-        )
-        return True
-    elif not_active:
-        logger.warning('Okta push not active', 'sso',
-            username=username,
-            okta_user_id=user_id,
-        )
-    else:
-        logger.warning('Okta push not available', 'sso',
-            username=username,
-            okta_user_id=user_id,
-        )
-
-    return None
-
 def auth_okta(username):
     user_id = get_user_id(username)
     if not user_id:
@@ -160,19 +97,88 @@ def auth_okta(username):
 
     return False
 
-def auth_okta_push(username, strong=False, ipaddr=None, type=None, info=None):
-    if not settings.app.sso_okta_push:
-        return True
-
+def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
     user_id = get_user_id(username)
     if not user_id:
         return False
 
-    factor_id = get_factor_id(username, user_id)
-    if not factor_id:
+    if 'passcode' in okta_mode and not passcode:
+        logger.error('Okta passcode empty', 'sso',
+            username=username,
+            okta_user_id=user_id,
+        )
         return False
-    elif factor_id is True:
-        return True
+
+    try:
+        response = requests.get(
+            _getokta_url() + '/api/v1/users/%s/factors' % user_id,
+            headers={
+                'Accept': 'application/json',
+                'Authorization': 'SSWS %s' % settings.app.sso_okta_token,
+            },
+        )
+    except httplib.HTTPException:
+        logger.exception('Okta api error', 'sso',
+            username=username,
+            okta_user_id=user_id,
+        )
+        return False
+
+    if response.status_code != 200:
+        logger.error('Okta api error', 'sso',
+            username=username,
+            okta_user_id=user_id,
+            status_code=response.status_code,
+            response=response.content,
+        )
+        return False
+
+    not_active = False
+    factor_id = None
+    data = response.json()
+    for factor in data:
+        if not factor.get('id') or not factor.get('provider') or \
+                not factor.get('status'):
+            continue
+
+        if factor.get('provider').lower() != 'okta' or \
+                factor.get('status').lower() != 'active':
+            continue
+
+        if 'push' in okta_mode:
+            if factor['factorType'].lower() != 'push':
+                continue
+        elif 'passcode' in okta_mode:
+            if factor['factorType'].lower() != 'token:software:totp':
+                continue
+        else:
+            continue
+
+        factor_id = factor['id']
+
+    if not factor_id:
+        if 'none' in okta_mode:
+            logger.info('Okta secondary not available, skipped', 'sso',
+                username=username,
+                okta_user_id=user_id,
+            )
+            return True
+        elif not_active:
+            logger.warning('Okta secondary not active', 'sso',
+                username=username,
+                okta_user_id=user_id,
+            )
+            return False
+        else:
+            logger.warning('Okta secondary not available', 'sso',
+                username=username,
+                okta_user_id=user_id,
+            )
+            return False
+
+    verify_data = {}
+    if passcode:
+        verify_data['passCode'] = passcode
 
     try:
         response = requests.post(
@@ -180,9 +186,11 @@ def auth_okta_push(username, strong=False, ipaddr=None, type=None, info=None):
                 user_id, factor_id),
             headers={
                 'Accept': 'application/json',
+                'Content-Type': 'application/json',
                 'Authorization': 'SSWS %s' % settings.app.sso_okta_token,
-                'X-Forwarded-For': ipaddr,
+                'X-Forwarded-For': remote_ip,
             },
+            json=verify_data,
         )
     except httplib.HTTPException:
         logger.exception('Okta api error', 'sso',
@@ -192,7 +200,7 @@ def auth_okta_push(username, strong=False, ipaddr=None, type=None, info=None):
         )
         return False
 
-    if response.status_code != 201:
+    if response.status_code != 200 and response.status_code != 201:
         logger.error('Okta api error', 'sso',
             username=username,
             user_id=user_id,
