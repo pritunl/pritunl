@@ -115,7 +115,7 @@ def setup_mongo():
 
                 if read_pref:
                     secondary_client = pymongo.MongoClient(
-                        settings.conf.mongodb_uri,
+                        secondary_mongodb_uri,
                         connectTimeoutMS=MONGO_CONNECT_TIMEOUT,
                         socketTimeoutMS=MONGO_SOCKET_TIMEOUT,
                         serverSelectionTimeoutMS=MONGO_SOCKET_TIMEOUT,
@@ -123,7 +123,7 @@ def setup_mongo():
                     )
                 else:
                     secondary_client = pymongo.MongoClient(
-                        settings.conf.mongodb_uri,
+                        secondary_mongodb_uri,
                         connectTimeoutMS=MONGO_CONNECT_TIMEOUT,
                         socketTimeoutMS=MONGO_SOCKET_TIMEOUT,
                         serverSelectionTimeoutMS=MONGO_SOCKET_TIMEOUT,
