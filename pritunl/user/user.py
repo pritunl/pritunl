@@ -535,8 +535,9 @@ class User(mongo.MongoObject):
         return bool(settings.app.sso_client_cache)
 
     def has_passcode(self, svr):
-        return bool(self.has_yubikey or
-            self.has_duo_passcode or svr.otp_auth)
+        return bool(self.has_yubikey or self.has_duo_passcode or
+            self.has_onelogin_passcode or self.has_okta_passcode or
+            svr.otp_auth)
 
     def has_password(self, svr):
         return bool(self._get_password_mode(svr))
