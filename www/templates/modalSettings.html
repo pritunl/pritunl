@@ -211,17 +211,23 @@
         <option value="passcode" <%= sso_duo_mode === 'passcode' ? 'selected' : '' %>>Passcode</option>
       </select>
     </div>
-    <div class="sso-onelogin-push toggle-form form-group" data-toggle="tooltip" title="Enable OneLogin Push for connection authentication when it is available. If OneLogin user does not have OneLogin Push configured this will be skipped, refer to documentation to force push authentication" <%= (sso === 'saml_onelogin' || sso === 'saml_onelogin_yubico') ? '' : 'style="display: none;"' %>>
-      <label>Enable OneLogin Push</label>
-      <div class="selector <%= sso_onelogin_push ? 'selected' : '' %> no-select">
-        <span class="selector-inner glyphicon glyphicon-ok"></span>
-      </div>
+    <div class="sso-onelogin-mode form-group" <%= sso === 'saml_onelogin' ? '' : 'style="display: none;"' %>>
+      <label>OneLogin Secondary Factor</label>
+      <select class="form-control" data-toggle="tooltip" title="Secondary factor for OneLogin users. Push when available will skip authentication for users who do not have push configured.">
+        <option value="" <%= !sso_onelogin_mode ? 'selected' : '' %>>Disabled</option>
+        <option value="passcode" <%= sso_onelogin_mode === 'passcode' ? 'selected' : '' %>>Passcode</option>
+        <option value="push" <%= sso_onelogin_mode === 'push' ? 'selected' : '' %>>Push</option>
+        <option value="push_none" <%= sso_onelogin_mode === 'push_none' ? 'selected' : '' %>>Push when available</option>
+      </select>
     </div>
-    <div class="sso-okta-push toggle-form form-group" data-toggle="tooltip" title="Enable Okta Push for connection authentication when it is available. If Okta user does not have Okta Push configured this will be skipped, refer to documentation to force push authentication" <%= (sso === 'saml_okta' || sso === 'saml_okta_yubico') ? '' : 'style="display: none;"' %>>
-      <label>Enable Okta Push</label>
-      <div class="selector <%= sso_okta_push ? 'selected' : '' %> no-select">
-        <span class="selector-inner glyphicon glyphicon-ok"></span>
-      </div>
+    <div class="sso-okta-mode form-group" <%= sso === 'saml_okta' ? '' : 'style="display: none;"' %>>
+      <label>Okta Secondary Factor</label>
+      <select class="form-control" data-toggle="tooltip" title="Secondary factor for Okta users. Push when available will skip authentication for users who do not have push configured.">
+        <option value="" <%= !sso_okta_mode ? 'selected' : '' %>>Disabled</option>
+        <option value="passcode" <%= sso_okta_mode === 'passcode' ? 'selected' : '' %>>Passcode</option>
+        <option value="push" <%= sso_okta_mode === 'push' ? 'selected' : '' %>>Push</option>
+        <option value="push_none" <%= sso_okta_mode === 'push_none' ? 'selected' : '' %>>Push when available</option>
+      </select>
     </div>
     <div class="sso-yubico-secret form-group">
       <label>Yubico Secret Key</label>
