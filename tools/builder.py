@@ -10,7 +10,6 @@ import math
 import requests
 import pymongo
 import zlib
-import werkzeug.http
 import getpass
 import base64
 import Crypto.Cipher.AES
@@ -123,7 +122,9 @@ def iter_packages():
             yield name, path
 
 def generate_last_modifited_etag(file_path):
-    file_name = os.path.basename(file_path).encode(sys.getfilesystemencoding())
+    import werkzeug.http
+    file_name = os.path.basename(file_path).encode(
+        sys.getfilesystemencoding())
     file_mtime = datetime.datetime.utcfromtimestamp(
         os.path.getmtime(file_path))
     file_size = int(os.path.getsize(file_path))
