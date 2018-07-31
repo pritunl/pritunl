@@ -429,29 +429,8 @@ def check_session(csrf_check):
     flask.g.administrator = administrator
     return True
 
-def get_by_username(username, remote_addr=None):
+def get_by_username(username):
     username = utils.filter_str(username).lower()
-
-    if remote_addr:
-        doc = Administrator.limiter_collection.find_and_modify({
-            '_id': remote_addr,
-        }, {
-            '$inc': {'count': 1},
-            '$setOnInsert': {'timestamp': utils.now()},
-        }, new=True, upsert=True)
-
-        if utils.now() > doc['timestamp'] + datetime.timedelta(
-                seconds=settings.app.auth_limiter_ttl):
-            doc = {
-                'count': 1,
-                'timestamp': utils.now(),
-            }
-            Administrator.limiter_collection.update({
-                '_id': remote_addr,
-            }, doc, upsert=True)
-
-        if doc['count'] > settings.app.auth_limiter_count_max:
-            raise flask.abort(403)
 
     admin = find_user(username=username)
     if not admin:
