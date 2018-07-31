@@ -8,6 +8,7 @@ from pritunl import event
 from pritunl import organization
 from pritunl import sso
 from pritunl import logger
+from pritunl import limiter
 
 import flask
 import time
@@ -245,6 +246,12 @@ def auth_session_post():
             'otp_auth': admin.otp_auth,
             'yubico_auth': bool(admin.yubikey_id),
         }, 402)
+
+    if not limiter.auth_check(admin.id):
+        return utils.jsonify({
+            'error': AUTH_TOO_MANY,
+            'error_msg': AUTH_TOO_MANY_MSG,
+        }, 400)
 
     if not admin.auth_check(password, otp_code, yubico_key, remote_addr):
         time.sleep(random.randint(0, 100) / 1000.)
