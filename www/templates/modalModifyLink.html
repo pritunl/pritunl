@@ -4,3 +4,9 @@
     <input type="text" class="form-control" placeholder="Enter name" data-toggle="tooltip" title="Name of link" autofocus value="<%- name %>">
   </div>
 </div>
+<div class="ipv6-toggle toggle-form form-group">
+  <label>IPv6</label>
+  <div class="selector <%= ipv6 ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Connect link hosts with IPv6. All link hosts must have an IPv6 address.">
+    <span class="selector-inner glyphicon glyphicon-ok"></span>
+  </div>
+</div>
