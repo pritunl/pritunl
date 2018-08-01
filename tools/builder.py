@@ -12,8 +12,12 @@ import pymongo
 import zlib
 import getpass
 import base64
-import Crypto.Cipher.AES
-import Crypto.Protocol.KDF
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.ciphers import (
+    Cipher, algorithms, modes
+)
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 USAGE = """Usage: builder [command] [options]
 Command Help: builder [command] --help
@@ -171,21 +175,24 @@ else:
 def aes_encrypt(passphrase, data):
     enc_salt = os.urandom(32)
     enc_iv = os.urandom(16)
-    enc_key = Crypto.Protocol.KDF.PBKDF2(
-        password=passphrase,
+
+    kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA1(),
+        length=32,
         salt=enc_salt,
-        dkLen=32,
-        count=1000,
+        iterations=1000,
+        backend=default_backend(),
     )
+    enc_key = kdf.derive(passphrase)
 
     data += '\x00' * (16 - (len(data) % 16))
 
-    chiper = Crypto.Cipher.AES.new(
-        enc_key,
-        Crypto.Cipher.AES.MODE_CBC,
-        enc_iv,
-    )
-    enc_data = chiper.encrypt(data)
+    cipher = Cipher(
+        algorithms.AES(enc_key),
+        modes.CBC(enc_iv),
+        backend=default_backend()
+    ).encryptor()
+    enc_data = cipher.update(data) + cipher.finalize()
 
     return '\n'.join([
         base64.b64encode(enc_salt),
@@ -201,19 +208,22 @@ def aes_decrypt(passphrase, data):
     enc_salt = base64.b64decode(data[0])
     enc_iv = base64.b64decode(data[1])
     enc_data = base64.b64decode(data[2])
-    enc_key = Crypto.Protocol.KDF.PBKDF2(
-        password=passphrase,
-        salt=enc_salt,
-        dkLen=32,
-        count=1000,
-    )
 
-    chiper = Crypto.Cipher.AES.new(
-        enc_key,
-        Crypto.Cipher.AES.MODE_CBC,
-        enc_iv,
+    kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA1(),
+        length=32,
+        salt=enc_salt,
+        iterations=1000,
+        backend=default_backend(),
     )
-    data = chiper.decrypt(enc_data)
+    enc_key = kdf.derive(passphrase)
+
+    cipher = Cipher(
+        algorithms.AES(enc_key),
+        modes.CBC(enc_iv),
+        backend=default_backend()
+    ).decryptor()
+    data = cipher.update(enc_data) + cipher.finalize()
 
     return data.replace('\x00', '')
 
