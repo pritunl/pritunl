@@ -8,7 +8,6 @@ import subprocess
 import time
 import math
 import requests
-import pymongo
 import zlib
 import getpass
 import base64
@@ -141,6 +140,14 @@ def generate_last_modifited_etag(file_path):
     ))
 
 def sync_db():
+    import pymongo
+
+    releases_dbs = []
+    for mongodb_uri in mongodb_uris:
+        mongo_client = pymongo.MongoClient(mongodb_uri)
+        mongo_db = mongo_client.get_default_database()
+        releases_dbs.append(mongo_db.releases)
+
     for releases_db in releases_dbs:
         for file_name in os.listdir(RELEASES_DIR):
             file_path = os.path.join(RELEASES_DIR, file_name)
@@ -268,13 +275,6 @@ with open(BUILD_KEYS_PATH, 'r') as build_keys_file:
     mirror_url = build_keys['mirror_url']
     test_mirror_url = build_keys['test_mirror_url']
     mongodb_uris = build_keys['mongodb_uris']
-
-releases_dbs = []
-for mongodb_uri in mongodb_uris:
-    mongo_client = pymongo.MongoClient(mongodb_uri)
-    mongo_db = mongo_client.get_default_database()
-    releases_dbs.append(mongo_db.releases)
-
 
 # Get package info
 with open(INIT_PATH, 'r') as init_file:
