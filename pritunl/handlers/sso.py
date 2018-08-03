@@ -187,7 +187,8 @@ def sso_authenticate_post():
 def sso_request_get():
     sso_mode = settings.app.sso
 
-    if sso_mode not in (GOOGLE_AUTH, GOOGLE_DUO_AUTH, GOOGLE_YUBICO_AUTH,
+    if sso_mode not in (AZURE_AUTH, AZURE_DUO_AUTH, AZURE_YUBICO_AUTH,
+            GOOGLE_AUTH, GOOGLE_DUO_AUTH, GOOGLE_YUBICO_AUTH,
             SLACK_AUTH, SLACK_DUO_AUTH, SLACK_YUBICO_AUTH, SAML_AUTH,
             SAML_DUO_AUTH, SAML_YUBICO_AUTH, SAML_OKTA_AUTH,
             SAML_OKTA_DUO_AUTH, SAML_OKTA_YUBICO_AUTH, SAML_ONELOGIN_AUTH,
@@ -205,7 +206,46 @@ def sso_request_get():
         logger.error('Subscription must be active for sso', 'sso')
         return flask.abort(405)
 
-    if GOOGLE_AUTH in sso_mode:
+    if AZURE_AUTH in sso_mode:
+        resp = requests.post(auth_server + '/v1/request/azure',
+            headers={
+                'Content-Type': 'application/json',
+            },
+            json={
+                'license': settings.app.license,
+                'callback': callback,
+                'state': state,
+                'secret': secret,
+                'directory_id': settings.app.sso_azure_directory_id,
+                'app_id': settings.app.sso_azure_app_id,
+                'app_secret': settings.app.sso_azure_app_secret,
+            },
+        )
+
+        if resp.status_code != 200:
+            logger.error('Azure auth server error', 'sso',
+                status_code=resp.status_code,
+                content=resp.content,
+            )
+
+            if resp.status_code == 401:
+                return flask.abort(405)
+
+            return flask.abort(500)
+
+        tokens_collection = mongo.get_collection('sso_tokens')
+        tokens_collection.insert({
+            '_id': state,
+            'type': AZURE_AUTH,
+            'secret': secret,
+            'timestamp': utils.now(),
+        })
+
+        data = resp.json()
+
+        return utils.redirect(data['url'])
+
+    elif GOOGLE_AUTH in sso_mode:
         resp = requests.post(auth_server + '/v1/request/google',
             headers={
                 'Content-Type': 'application/json',
@@ -326,7 +366,8 @@ def sso_request_get():
 def sso_callback_get():
     sso_mode = settings.app.sso
 
-    if sso_mode not in (GOOGLE_AUTH, GOOGLE_DUO_AUTH, GOOGLE_YUBICO_AUTH,
+    if sso_mode not in (AZURE_AUTH, AZURE_DUO_AUTH, AZURE_YUBICO_AUTH,
+            GOOGLE_AUTH, GOOGLE_DUO_AUTH, GOOGLE_YUBICO_AUTH,
             SLACK_AUTH, SLACK_DUO_AUTH, SLACK_YUBICO_AUTH, SAML_AUTH,
             SAML_DUO_AUTH, SAML_YUBICO_AUTH, SAML_OKTA_AUTH,
             SAML_OKTA_DUO_AUTH, SAML_OKTA_YUBICO_AUTH, SAML_ONELOGIN_AUTH,
@@ -517,6 +558,63 @@ def sso_callback_get():
                     user_email=email,
                     org_names=google_groups,
                 )
+    elif doc.get('type') == AZURE_AUTH:
+        username = params.get('username')[0]
+        email = None
+
+        tenant, username = username.split('/', 2)
+        if tenant != settings.app.sso_azure_directory_id:
+            logger.error('Azure directory ID mismatch', 'sso',
+                username=username,
+            )
+            return flask.abort(401)
+
+        valid, azure_groups = sso.verify_azure(username)
+        if not valid:
+            return flask.abort(401)
+
+        org_id = settings.app.sso_org
+
+        valid, org_id_new, groups = sso.plugin_sso_authenticate(
+            sso_type='azure',
+            user_name=username,
+            user_email=email,
+            remote_ip=utils.get_remote_addr(),
+        )
+        if valid:
+            org_id = org_id_new or org_id
+        else:
+            logger.error('Azure plugin authentication not valid', 'sso',
+                username=username,
+            )
+            return flask.abort(401)
+        groups = set(groups or [])
+
+        if settings.app.sso_azure_mode == 'groups':
+            groups = groups | set(azure_groups)
+        else:
+            not_found = False
+            azure_groups = sorted(azure_groups)
+            for org_name in azure_groups:
+                org = organization.get_by_name(
+                    utils.filter_unicode(org_name),
+                    fields=('_id'),
+                )
+                if org:
+                    not_found = False
+                    org_id = org.id
+                    break
+                else:
+                    not_found = True
+
+            if not_found:
+                logger.warning('Supplied org names do not exists',
+                    'sso',
+                    sso_type=doc.get('type'),
+                    user_name=username,
+                    user_email=email,
+                    org_names=azure_groups,
+                )
     else:
         logger.error('Unknown sso type', 'sso',
             sso_type=doc.get('type'),
@@ -592,9 +690,9 @@ def sso_duo_post():
     token = utils.filter_str(flask.request.json.get('token')) or None
     passcode = utils.filter_str(flask.request.json.get('passcode')) or ''
 
-    if sso_mode not in (DUO_AUTH, GOOGLE_DUO_AUTH, SLACK_DUO_AUTH,
-            SAML_DUO_AUTH, SAML_OKTA_DUO_AUTH, SAML_ONELOGIN_DUO_AUTH,
-            RADIUS_DUO_AUTH):
+    if sso_mode not in (DUO_AUTH, AZURE_DUO_AUTH, GOOGLE_DUO_AUTH,
+            SLACK_DUO_AUTH, SAML_DUO_AUTH, SAML_OKTA_DUO_AUTH,
+            SAML_ONELOGIN_DUO_AUTH, RADIUS_DUO_AUTH):
         return flask.abort(404)
 
     if not token:
