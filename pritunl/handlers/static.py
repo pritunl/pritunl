@@ -101,6 +101,8 @@ def login_static_get():
                 body_class += 'sso-okta '
             elif SAML_ONELOGIN_AUTH in settings.app.sso:
                 body_class += 'sso-onelogin '
+            elif AZURE_AUTH in settings.app.sso:
+                body_class += 'sso-azure '
             elif GOOGLE_AUTH in settings.app.sso:
                 body_class += 'sso-google '
             elif SLACK_AUTH in settings.app.sso:
