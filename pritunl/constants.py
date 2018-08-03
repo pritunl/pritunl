@@ -531,6 +531,9 @@ ALL = 'all'
 LOCAL_AUTH = 'local'
 DUO_AUTH = 'duo'
 YUBICO_AUTH = 'yubico'
+AZURE_AUTH = 'azure'
+AZURE_DUO_AUTH = 'azure_duo'
+AZURE_YUBICO_AUTH = 'azure_yubico'
 GOOGLE_AUTH = 'google'
 GOOGLE_DUO_AUTH = 'google_duo'
 GOOGLE_YUBICO_AUTH = 'google_yubico'
@@ -554,6 +557,9 @@ AUTH_TYPES = {
     LOCAL_AUTH,
     DUO_AUTH,
     YUBICO_AUTH,
+    AZURE_AUTH,
+    AZURE_DUO_AUTH,
+    AZURE_YUBICO_AUTH,
     GOOGLE_AUTH,
     GOOGLE_DUO_AUTH,
     GOOGLE_YUBICO_AUTH,
