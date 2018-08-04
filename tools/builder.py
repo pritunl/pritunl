@@ -403,32 +403,34 @@ if cmd == 'set-version':
 
     # Build webapp
     subprocess.check_call([
+        'sudo',
         'docker',
         'run',
         '--rm',
         '-ti',
         '-u', 'docker',
-        '-v', '%s:/mount' % os.path.join(os.getcwd(), STYLES_DIR),
-        'arch',
+        '-v', '%s:/mount:Z' % os.path.join(os.getcwd(), STYLES_DIR),
+        'dev',
         'grunt',
         '--ver=%s' % get_int_ver(new_version)
     ])
     subprocess.check_call([
+        'sudo',
         'docker',
         'run',
         '--rm',
         '-ti',
         '-u', 'docker',
-        '-v', '%s:/mount' % os.path.join(os.getcwd(), WWW_DIR),
-        'arch',
+        '-v', '%s:/mount:Z' % os.path.join(os.getcwd(), WWW_DIR),
+        'dev',
         'grunt',
     ])
 
     css_hash = subprocess.check_output(
-        'md5 www/vendor/dist/css/main.css | tail -c 7',
+        'md5sum www/vendor/dist/css/main.css | head -c 32',
         shell=True).strip()
     app_hash = subprocess.check_output(
-        'md5 www/vendor/dist/js/main.js | tail -c 7', shell=True).strip()
+        'md5sum www/vendor/dist/js/main.js | head -c 32', shell=True).strip()
     subprocess.check_call([
         'mv',
         'www/vendor/dist/css/main.css',
@@ -441,22 +443,16 @@ if cmd == 'set-version':
     ])
     subprocess.check_call([
         'sed',
-        '-i', '.delete',
+        '-i',
         '-e', 's|s/css/main.css|s/css/main.%s.css|g' % css_hash,
         'www/vendor/dist/index.html',
     ])
     subprocess.check_call([
         'sed',
-        '-i', '.delete',
+        '-i',
         '-e', 's|s/js/main.js|s/js/main.%s.js|g' % app_hash,
         'www/vendor/dist/index.html',
     ])
-    subprocess.check_call([
-        'rm',
-        '-f',
-        'www/vendor/dist/index.html.delete',
-    ])
-
 
     # Commit webapp
     subprocess.check_call(['git', 'reset', 'HEAD', '.'])
