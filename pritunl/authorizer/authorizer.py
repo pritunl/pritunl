@@ -647,6 +647,15 @@ class Authorizer(object):
             )
             raise AuthError('Failed secondary authentication')
 
+        if not self.server.check_groups(self.user.groups):
+            self.user.audit_event(
+                'user_connection',
+                ('User connection to "%s" denied. User not in ' +
+                 'servers groups') % (self.server.name),
+                remote_addr=self.remote_ip,
+            )
+            raise AuthError('User not in servers groups')
+
     def _check_push(self):
         self.push_type = self.user.get_push_type()
         if not self.push_type:
