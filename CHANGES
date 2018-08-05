@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve user management
+
 Version 1.29.1787.23 2018-08-04
 -------------------------------
 
