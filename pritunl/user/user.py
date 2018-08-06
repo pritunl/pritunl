@@ -355,6 +355,53 @@ class User(mongo.MongoObject):
                     user_name=self.name,
                 )
             return False
+        elif AZURE_AUTH in self.auth_type and AZURE_AUTH in sso_mode:
+            if settings.user.skip_remote_sso_check:
+                return True
+
+            try:
+                resp = requests.get(auth_server +
+                    ('/update/azure?user=%s&license=%s&' +
+                    'directory_id=%s&app_id=%s&app_secret=%s') % (
+                        urllib.quote(self.name),
+                        settings.app.license,
+                        urllib.quote(settings.app.sso_azure_directory_id),
+                        urllib.quote(settings.app.sso_azure_app_id),
+                        urllib.quote(settings.app.sso_azure_app_secret),
+                ))
+
+                if resp.status_code != 200:
+                    logger.error('Azure auth check request error', 'user',
+                        user_id=self.id,
+                        user_name=self.name,
+                        status_code=resp.status_code,
+                        content=resp.content,
+                    )
+                    return False
+
+                valid, azure_groups = sso.verify_azure(self.name)
+                if not valid:
+                    logger.error('Azure auth check failed', 'user',
+                        user_id=self.id,
+                        user_name=self.name,
+                    )
+                    return False
+
+                if settings.app.sso_azure_mode == 'groups':
+                    cur_groups = set(self.groups)
+                    new_groups = set(azure_groups)
+
+                    if cur_groups != new_groups:
+                        self.groups = list(new_groups)
+                        self.commit('groups')
+
+                return True
+            except:
+                logger.exception('Azure auth check error', 'user',
+                    user_id=self.id,
+                    user_name=self.name,
+                )
+            return False
         elif SLACK_AUTH in self.auth_type and SLACK_AUTH in sso_mode:
             if settings.user.skip_remote_sso_check:
                 return True
