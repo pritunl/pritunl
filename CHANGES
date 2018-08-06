@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve logging
+
 Version 1.29.1788.11 2018-08-05
 -------------------------------
 
