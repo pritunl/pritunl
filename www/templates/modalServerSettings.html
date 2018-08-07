@@ -104,6 +104,10 @@
       <label>Network Start</label>
       <input type="text" class="form-control" placeholder="Enter start address" data-toggle="tooltip" title="Starting network address for the bridged VPN client IP addresses. Must be in the subnet of the server network" value="<%- network_start %>" autocapitalize="off">
     </div>
+    <div class="mss-fix form-group">
+      <label>MSS Fix</label>
+      <input type="text" class="form-control" placeholder="Enter MSS fix" data-toggle="tooltip" title="Optional, MSS fix value" value="<%- mss_fix || '' %>" autocapitalize="off">
+    </div>
     <div class="multi-device-toggle toggle-form form-group">
       <label>Allow Multiple Devices</label>
       <div class="selector <%= multi_device ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Allow users to connect with multiple devices concurrently">
