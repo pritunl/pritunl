@@ -31,9 +31,10 @@ def get_crt(account_key, csr, set_acme, contact=None):
         try:
             resp = urlopen(Request(url, data=data, headers={"Content-Type": "application/jose+json", "User-Agent": "acme-tiny"}))
             resp_data, code, headers = resp.read().decode("utf8"), resp.getcode(), resp.headers
-            resp_data = json.loads(resp_data) # try to parse json results
-        except ValueError:
-            pass # ignore json parsing errors
+            try:
+                resp_data = json.loads(resp_data) # try to parse json results
+            except ValueError:
+                pass # ignore json parsing errors
         except IOError as e:
             resp_data = e.read().decode("utf8") if hasattr(e, "read") else str(e)
             code, headers = getattr(e, "code", None), {}
