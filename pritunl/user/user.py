@@ -216,8 +216,10 @@ class User(mongo.MongoObject):
             self.org.queue_com.wait_status()
 
             if self.type != CERT_CA:
-                self.org.write_file('ca_certificate', ca_cert_path, chmod=0600)
-                self.org.write_file('ca_private_key', ca_key_path, chmod=0600)
+                self.org.write_file(
+                    'ca_certificate', ca_cert_path, chmod=0600)
+                self.org.write_file(
+                    'ca_private_key', ca_key_path, chmod=0600)
                 self.generate_otp_secret()
 
             try:
