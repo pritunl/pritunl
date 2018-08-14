@@ -65,7 +65,7 @@ def auth_okta(username):
     try:
         response = requests.get(
             _getokta_url() + \
-            '/api/v1/apps?limit=50&filter=user.id+eq+"%s"' % user_id,
+            '/api/v1/apps/%s/users/%s' % (okta_app_id, user_id),
             headers={
                 'Accept': 'application/json',
                 'Authorization': 'SSWS %s' % settings.app.sso_okta_token,
@@ -86,13 +86,17 @@ def auth_okta(username):
         return None
 
     data = response.json()
-    for application in data:
-        if application['id'] == okta_app_id:
-            return True
+    # Group users return PROVISIONED
+    if data['status'] == "PROVISIONED":
+        return True
+    # Individually assigned users return ACTIVE
+    if data['status'] == "ACTIVE":
+        return True
 
     logger.warning('Okta user is not assigned to application', 'sso',
         username=username,
         okta_app_id=okta_app_id,
+        status=data['status']
     )
 
     return False
