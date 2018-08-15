@@ -85,8 +85,7 @@ def auth_okta(username):
         )
         return None
 
-    data = response.json()
-    if data['status'].lower() == 'active':
+    if response.json():
         return True
 
     logger.warning('Okta user is not assigned to application', 'sso',
