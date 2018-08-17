@@ -63,6 +63,7 @@ dict_fields = [
     'inactive_timeout',
     'allowed_devices',
     'max_clients',
+    'max_devices',
     'replica_count',
     'vxlan',
     'dns_mapping',
@@ -128,6 +129,7 @@ class Server(mongo.MongoObject):
         'start_timestamp',
         'allowed_devices',
         'max_clients',
+        'max_devices',
         'replica_count',
         'vxlan',
         'instances',
@@ -179,10 +181,11 @@ class Server(mongo.MongoObject):
             dns_servers=None, search_domain=None, otp_auth=None,
             cipher=None, hash=None, block_outside_dns=None, jumbo_frames=None,
             lzo_compression=None, inter_client=None, ping_interval=None,
-            ping_timeout=None, link_ping_interval=None, link_ping_timeout=None,
-            inactive_timeout=None, allowed_devices=None,
-            max_clients=None, replica_count=None, vxlan=None,
-            dns_mapping=None, debug=None, policy=None, mss_fix=None, **kwargs):
+            ping_timeout=None, link_ping_interval=None,
+            link_ping_timeout=None, inactive_timeout=None,
+            allowed_devices=None, max_clients=None, max_devices=None,
+            replica_count=None, vxlan=None, dns_mapping=None, debug=None,
+            policy=None, mss_fix=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         if 'network' in self.loaded_fields:
@@ -253,6 +256,8 @@ class Server(mongo.MongoObject):
             self.allowed_devices = allowed_devices
         if max_clients is not None:
             self.max_clients = max_clients
+        if max_devices is not None:
+            self.max_devices = max_devices
         if replica_count is not None:
             self.replica_count = replica_count
         if vxlan is not None:
@@ -336,6 +341,7 @@ class Server(mongo.MongoObject):
             'inactive_timeout': self.inactive_timeout,
             'allowed_devices': self.allowed_devices,
             'max_clients': self.max_clients,
+            'max_devices': self.max_devices,
             'replica_count': self.replica_count,
             'vxlan': self.vxlan,
             'dns_mapping': True if self.dns_mapping else False,
