@@ -337,6 +337,16 @@ def server_put_post(server_id=None):
         else:
             max_clients = 2000
 
+    max_devices = None
+    max_devices_def = False
+    if 'max_devices' in flask.request.json:
+        max_devices_def = True
+        max_devices = flask.request.json['max_devices']
+        if max_devices:
+            max_devices = int(max_devices)
+        else:
+            max_devices = 0
+
     replica_count = None
     replica_count_def = False
     if 'replica_count' in flask.request.json:
@@ -508,6 +518,7 @@ def server_put_post(server_id=None):
             inactive_timeout=inactive_timeout,
             allowed_devices=allowed_devices,
             max_clients=max_clients,
+            max_devices=max_devices,
             replica_count=replica_count,
             vxlan=vxlan,
             dns_mapping=dns_mapping,
@@ -580,6 +591,8 @@ def server_put_post(server_id=None):
             svr.allowed_devices = allowed_devices
         if max_clients_def:
             svr.max_clients = max_clients
+        if max_devices_def:
+            svr.max_devices = max_devices
         if replica_count_def:
             svr.replica_count = replica_count
         if vxlan_def:
