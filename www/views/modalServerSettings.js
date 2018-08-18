@@ -367,7 +367,6 @@ define([
       var multiDevice = this.getMultiDeviceSelect();
       var dnsServers = this.getDnsServers();
       var searchDomain = this.$('.search-domain input').val();
-      var oncHostname = this.$('.onc-hostname input').val();
       var interClient = this.getInterClientSelect();
       var pingInterval = parseInt(this.$('.ping-interval input').val(), 10);
       var pingTimeout = parseInt(this.$('.ping-timeout input').val(), 10);
@@ -397,6 +396,7 @@ define([
       var networkEnd = this.$('.network-end input').val();
       var groups = this.getGroups();
       var policy = this.$('.policy textarea').val().trim() || null;
+      var mssFix = this.$('.mss-fix input').val() || null;
 
       if (!name) {
         this.setAlert('danger', 'Name can not be empty.', '.name');
@@ -412,9 +412,6 @@ define([
       }
       if (!searchDomain) {
         searchDomain = null;
-      }
-      if (!oncHostname) {
-        oncHostname = null;
       }
       if (isNaN(replicaCount) || replicaCount === 0) {
         replicaCount = 1;
@@ -463,6 +460,7 @@ define([
         'vxlan': vxlan,
         'dns_mapping': dnsMapping,
         'debug': debug,
+        'mss_fix': mssFix,
         'policy': policy
       };
 
