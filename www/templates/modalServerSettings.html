@@ -108,6 +108,10 @@
       <label>MSS Fix</label>
       <input type="text" class="form-control" placeholder="Enter MSS fix" data-toggle="tooltip" title="Optional, MSS fix value" value="<%- mss_fix || '' %>" autocapitalize="off">
     </div>
+    <div class="max-devices form-group">
+      <label>Max Devices</label>
+      <input type="number" class="form-control" placeholder="Enter max devices" data-toggle="tooltip" title="Maximum number of devices per client connected to a server." min="0" value="<%- max_devices === -1 ? '' : max_devices %>" autocapitalize="off">
+    </div>
     <div class="multi-device-toggle toggle-form form-group">
       <label>Allow Multiple Devices</label>
       <div class="selector <%= multi_device ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Allow users to connect with multiple devices concurrently">
