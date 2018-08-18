@@ -368,7 +368,8 @@ class ServerInstance(object):
         server_conf += '<ca>\n%s\n</ca>\n' % self.server.ca_certificate
 
         if self.server.tls_auth:
-            server_conf += 'key-direction 0\n<tls-auth>\n%s\n</tls-auth>\n' % (
+            server_conf += \
+                'key-direction 0\n<tls-auth>\n%s\n</tls-auth>\n' % (
                 self.server.tls_auth_key)
 
         server_conf += '<cert>\n%s\n</cert>\n' % utils.get_cert_block(
