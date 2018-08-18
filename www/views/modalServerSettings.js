@@ -378,6 +378,7 @@ define([
         this.$('.inactive-timeout input').val(), 10);
       var allowedDevices = this.$('.allowed-devices select').val();
       var maxClients = parseInt(this.$('.max-clients input').val(), 10);
+      var maxDevices = parseInt(this.$('.max-devices input').val(), 10);
       var replicaCount = parseInt(this.$('.replica-count input').val(), 10);
       var dnsMapping = this.getDnsMappingSelect();
       var debug = this.getDebugSelect();
@@ -456,6 +457,7 @@ define([
         'inactive_timeout': inactiveTimeout,
         'allowed_devices': allowedDevices,
         'max_clients': maxClients,
+        'max_devices': maxDevices,
         'replica_count': replicaCount,
         'vxlan': vxlan,
         'dns_mapping': dnsMapping,
