@@ -529,7 +529,67 @@ class Clients(object):
                 user_count=self.server.user_count,
             )
 
-        return virt_address, address_dynamic
+        if self.server.multi_device and self.server.max_devices:
+            if self.server.replicating:
+                if not virt_address:
+                    raise ValueError('Failed to get virtual address')
+
+                cur_id = utils.ip_to_long(virt_address.split('/')[0])
+                conn_count = 0
+                docs = self.pool_collection.find({
+                    'server_id': self.server.id,
+                    'user_id': user_id,
+                })
+
+                for doc in docs:
+                    if doc['_id'] == cur_id:
+                        continue
+
+                    if conn_count > self.server.max_devices:
+                        messenger.publish('instance', [
+                            'user_disconnect_id',
+                            user_id,
+                            doc['client_id'],
+                            self.server.id,
+                        ])
+                        continue
+
+                    conn_count += 1
+
+                if conn_count >= self.server.max_devices:
+                    if address_dynamic:
+                        self.pool_collection.update({
+                            'server_id': self.server.id,
+                            'user_id': user_id,
+                            'client_id': doc_id,
+                        }, {'$set': {
+                            'user_id': None,
+                            'mac_addr': None,
+                            'client_id': None,
+                            'timestamp': None,
+                        }})
+                    else:
+                        self.pool_collection.remove({
+                            'server_id': self.server.id,
+                            'user_id': user_id,
+                            'client_id': doc_id,
+                        })
+                    return None, False, True
+            else:
+                conn_count = 0
+                for clnt in self.clients.find({
+                    'user_id': user_id,
+                }):
+                    if conn_count > self.server.max_devices:
+                        self.instance_com.client_kill(clnt['id'])
+                    conn_count += 1
+
+                if conn_count >= self.server.max_devices:
+                    if address_dynamic:
+                        self.ip_pool.append(virt_address.split('/')[0])
+                    return None, False, True
+
+        return virt_address, address_dynamic, False
 
     def allow_client(self, client_data, org, user, reauth=False):
         client_id = client_data['client_id']
@@ -568,8 +628,13 @@ class Clients(object):
                 'remote_ip': remote_ip,
             })
 
-            virt_address, address_dynamic = self.get_virt_addr(
+            virt_address, address_dynamic, device_limit = self.get_virt_addr(
                 org_id, user_id, mac_addr, doc_id)
+
+            if device_limit:
+                self.instance_com.send_client_deny(client_id, key_id,
+                    'Too many devices')
+                return
 
             if not self.server.multi_device:
                 if self.server.replicating:
@@ -762,7 +827,14 @@ class Clients(object):
                         reason=reason,
                     )
                 except:
-                    logger.exception('Error in authorizer callback', 'server',
+                    try:
+                        self.instance_com.send_client_deny(
+                            client_id, key_id, 'exception', auth.challenge)
+                    except:
+                        pass
+
+                    logger.exception(
+                        'Error in authorizer callback', 'server',
                         server_id=self.server.id,
                         instance_id=self.instance.id,
                     )
