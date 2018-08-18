@@ -42,6 +42,7 @@ define([
       'inactive_timeout': null,
       'allowed_devices': null,
       'max_clients': null,
+      'max_devices': null,
       'replica_count': null,
       'vxlan': null,
       'dns_mapping': null,
