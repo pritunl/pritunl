@@ -112,9 +112,9 @@
       <label>Max Devices</label>
       <input type="number" class="form-control" placeholder="Enter max devices" data-toggle="tooltip" title="Maximum number of devices per client connected to a server." min="0" value="<%- max_devices === -1 ? '' : max_devices %>" autocapitalize="off">
     </div>
-    <div class="policy form-group">
-      <label>User Policy</label><br>
-      <textarea class="form-control" rows="10" spellcheck="false"><%- policy %></textarea>
+    <div class="pre-connect-msg form-group">
+      <label>Pre-Connect Message</label><br>
+      <textarea class="form-control" rows="6" spellcheck="false"><%- pre_connect_msg %></textarea>
     </div>
   </div>
   <div class="right advanced">
