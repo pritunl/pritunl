@@ -68,7 +68,7 @@ dict_fields = [
     'vxlan',
     'dns_mapping',
     'debug',
-    'policy',
+    'pre_connect_msg',
     'mss_fix',
 ]
 operation_fields = dict_fields + [
@@ -111,7 +111,7 @@ class Server(mongo.MongoObject):
         'inactive_timeout',
         'dns_mapping',
         'debug',
-        'policy',
+        'pre_connect_msg',
         'mss_fix',
         'cipher',
         'hash',
@@ -185,7 +185,7 @@ class Server(mongo.MongoObject):
             link_ping_timeout=None, inactive_timeout=None,
             allowed_devices=None, max_clients=None, max_devices=None,
             replica_count=None, vxlan=None, dns_mapping=None, debug=None,
-            policy=None, mss_fix=None, **kwargs):
+            pre_connect_msg=None, mss_fix=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         if 'network' in self.loaded_fields:
@@ -266,8 +266,8 @@ class Server(mongo.MongoObject):
             self.dns_mapping = dns_mapping
         if debug is not None:
             self.debug = debug
-        if policy is not None:
-            self.policy = policy
+        if pre_connect_msg is not None:
+            self.pre_connect_msg = pre_connect_msg
         if mss_fix is not None:
             self.mss_fix = mss_fix
 
@@ -346,7 +346,7 @@ class Server(mongo.MongoObject):
             'vxlan': self.vxlan,
             'dns_mapping': True if self.dns_mapping else False,
             'debug': True if self.debug else False,
-            'policy': self.policy,
+            'pre_connect_msg': self.pre_connect_msg,
             'mss_fix': self.mss_fix,
         }
 
