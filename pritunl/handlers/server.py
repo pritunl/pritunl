@@ -375,12 +375,12 @@ def server_put_post(server_id=None):
         debug_def = True
         debug = True if flask.request.json['debug'] else False
 
-    policy = None
-    policy_def = False
-    if 'policy' in flask.request.json:
-        policy_def = True
-        if flask.request.json['policy']:
-            policy = flask.request.json['policy'].strip()
+    pre_connect_msg = None
+    pre_connect_msg_def = False
+    if 'pre_connect_msg' in flask.request.json:
+        pre_connect_msg_def = True
+        if flask.request.json['pre_connect_msg']:
+            pre_connect_msg = flask.request.json['pre_connect_msg'].strip()
 
     otp_auth = False
     otp_auth_def = False
@@ -523,7 +523,7 @@ def server_put_post(server_id=None):
             vxlan=vxlan,
             dns_mapping=dns_mapping,
             debug=debug,
-            policy=policy,
+            pre_connect_msg=pre_connect_msg,
             mss_fix=mss_fix,
         )
         svr.add_host(settings.local.host_id)
@@ -601,8 +601,8 @@ def server_put_post(server_id=None):
             svr.dns_mapping = dns_mapping
         if debug_def:
             svr.debug = debug
-        if policy_def:
-            svr.policy = policy
+        if pre_connect_msg_def:
+            svr.pre_connect_msg = pre_connect_msg
         if mss_fix_def:
             svr.mss_fix = mss_fix
 
