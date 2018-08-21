@@ -632,6 +632,9 @@ class User(mongo.MongoObject):
             'token_ttl': settings.app.sso_client_cache_timeout,
         }
 
+        if svr.pre_connect_msg:
+            data['pre_connect_msg'] = svr.pre_connect_msg
+
         if include_sync_keys:
             data['sync_token'] = self.sync_token
             data['sync_secret'] = self.sync_secret
