@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.29.1804.86 2018-08-21
+-------------------------------
 
 Single sign-on improvements
 Server management improvements
