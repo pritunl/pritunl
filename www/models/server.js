@@ -47,7 +47,7 @@ define([
       'vxlan': null,
       'dns_mapping': null,
       'debug': null,
-      'policy': null,
+      'pre_connect_msg': null,
       'mss_fix': null
     },
     url: function() {
