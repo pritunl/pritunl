@@ -14,6 +14,7 @@ define([
     okText: 'Save',
     loadingMsg: 'Saving server...',
     errorMsg: 'Failed to saving server, server error occurred.',
+    enterOk: false,
     hasAdvanced: true,
     events: function() {
       return _.extend({
@@ -396,7 +397,8 @@ define([
       var networkStart = this.$('.network-start input').val();
       var networkEnd = this.$('.network-end input').val();
       var groups = this.getGroups();
-      var policy = this.$('.policy textarea').val().trim() || null;
+      var preConnectMsg = this.$(
+        '.pre-connect-msg textarea').val().trim() || null;
       var mssFix = this.$('.mss-fix input').val() || null;
 
       if (!name) {
@@ -463,7 +465,7 @@ define([
         'dns_mapping': dnsMapping,
         'debug': debug,
         'mss_fix': mssFix,
-        'policy': policy
+        'pre_connect_msg': preConnectMsg
       };
 
       this.setLoading(this.loadingMsg);
