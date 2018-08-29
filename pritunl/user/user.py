@@ -62,7 +62,8 @@ class User(mongo.MongoObject):
     def __init__(self, org, name=None, email=None, pin=None, type=None,
             groups=None, auth_type=None, yubico_id=None, disabled=None,
             resource_id=None, bypass_secondary=None, client_to_client=None,
-            dns_servers=None, dns_suffix=None, port_forwarding=None, **kwargs):
+            dns_servers=None, dns_suffix=None, port_forwarding=None,
+            **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         if org:
@@ -228,11 +229,13 @@ class User(mongo.MongoObject):
                     '-config', ssl_conf_path,
                     '-out', reqs_path,
                     '-keyout', key_path,
-                    '-reqexts', '%s_req_ext' % self.type.replace('_pool', ''),
+                    '-reqexts', '%s_req_ext' % self.type.replace(
+                        '_pool', ''),
                 ]
                 self.org.queue_com.popen(args)
             except (OSError, ValueError):
-                logger.exception('Failed to create user cert requests', 'user',
+                logger.exception(
+                    'Failed to create user cert requests', 'user',
                     org_id=self.org.id,
                     user_id=self.id,
                 )
