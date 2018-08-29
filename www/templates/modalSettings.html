@@ -57,6 +57,9 @@
         <option value="google" <%= sso === 'google' ? 'selected' : '' %>>Google Apps</option>
         <option value="google_duo" <%= sso === 'google_duo' ? 'selected' : '' %>>Google Apps + Duo Security</option>
         <option value="google_yubico" <%= sso === 'google_yubico' ? 'selected' : '' %>>Google Apps + Yubico</option>
+        <option value="azure" <%= sso === 'azure' ? 'selected' : '' %>>Azure</option>
+        <option value="azure_duo" <%= sso === 'azure_duo' ? 'selected' : '' %>>Azure + Duo Security</option>
+        <option value="azure_yubico" <%= sso === 'azure_yubico' ? 'selected' : '' %>>Azure + Yubico</option>
         <option value="saml" <%= sso === 'saml' ? 'selected' : '' %>>SAML</option>
         <option value="saml_duo" <%= sso === 'saml_duo' ? 'selected' : '' %>>SAML + Duo Security</option>
         <option value="saml_yubico" <%= sso === 'saml_yubico' ? 'selected' : '' %>>SAML + Yubico</option>
@@ -80,6 +83,10 @@
     <div class="sso-saml-cert form-group" <%= !sso || sso.indexOf('saml') === -1 ? 'style="display: none;"' : '' %>>
       <label>SAML Certificate</label><br>
       <textarea class="form-control" rows="4" spellcheck="false" data-toggle="tooltip" title="The SAML X.509 Certificate" placeholder="Enter saml certificate"><%- sso_saml_cert %></textarea>
+    </div>
+    <div class="sso-azure-directory-id form-group" <%= !sso || sso.indexOf('azure') === -1 ? 'style="display: none;"' : '' %>>
+      <label>Azure Directory ID</label>
+      <input type="text" class="form-control" placeholder="Enter Azure directory ID" value="<%- sso_azure_directory_id || '' %>" data-toggle="tooltip" title="Azure Directory ID">
     </div>
     <div class="sso-google-key form-group" <%= !sso || sso.indexOf('google') === -1 ? 'style="display: none;"' : '' %>>
       <label>Google JSON Private Key</label><br>
@@ -177,6 +184,14 @@
     <div class="sso-okta-token form-group" <%= !sso || sso.indexOf('okta') === -1 ? 'style="display: none;"' : '' %>>
       <label>Okta API Token</label>
       <input type="text" class="form-control" placeholder="Enter Okta API token" value="<%- sso_okta_token || '' %>" data-toggle="tooltip" title="Okta API token">
+    </div>
+    <div class="sso-azure-app-id form-group" <%= !sso || sso.indexOf('azure') === -1 ? 'style="display: none;"' : '' %>>
+      <label>Azure Application ID</label>
+      <input type="text" class="form-control" placeholder="Enter Azure application ID" value="<%- sso_azure_app_id || '' %>" data-toggle="tooltip" title="Azure Application ID">
+    </div>
+    <div class="sso-azure-app-secret form-group" <%= !sso || sso.indexOf('azure') === -1 ? 'style="display: none;"' : '' %>>
+      <label>Azure Application Secret</label>
+      <input type="text" class="form-control" placeholder="Enter Azure application secret" value="<%- sso_azure_app_secret || '' %>" data-toggle="tooltip" title="Azure Application Secret">
     </div>
     <div class="sso-match-google form-group" <%= !sso || sso.indexOf('google') === -1 ? 'style="display: none;"' : '' %>>
       <label>Google Apps Domain</label>
