@@ -30,6 +30,12 @@ if (name.length > 40) {
         class="title link"><%- network_links[i] %></span>
     <% } %>
   </div>
+  <div class="user-groups" data-toggle="tooltip" title="User groups">
+    <% for (var i in groups) { %>
+    <span class="fa fa-compass"></span><span
+      class="title group"><%- groups[i] %></span>
+    <% } %>
+  </div>
   <div class="sso-logos">
     <div class="saml-logo" data-toggle="tooltip" title="User authenticated with SAML" <%= bypass_secondary !== true && sso && sso.indexOf('saml') !== -1 && auth_type.indexOf('saml') !== -1 ? '' : 'style="display: none"' %>><i class="fa fa-lock"></i></div>
     <div class="google-logo" data-toggle="tooltip" title="User is authenticating with Google Apps" <%= bypass_secondary !== true && sso && sso.indexOf('google') !== -1 && auth_type.indexOf('google') !== -1 ? '' : 'style="display: none"' %>></div>
