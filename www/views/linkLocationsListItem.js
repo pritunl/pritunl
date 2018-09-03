@@ -18,6 +18,7 @@ define([
   'views/modalModifyLocHost',
   'views/modalLocHostUri',
   'views/modalLocHostConf',
+  'views/modalLocHostUbntConf',
   'views/modalDeleteLocHost',
   'views/modalDeleteLocPeer',
   'views/modalModifyLocation',
@@ -28,8 +29,8 @@ define([
     ModalAddLocRouteView, ModalAddLocHostView, ModalAddLocPeerView,
     ModalAddLocTransitView, ModalDeleteLocTransitView,
     ModalDeleteLocRouteView, ModalModifyLocHostView, ModalLocHostUriView,
-    ModalLocHostConfView, ModalDeleteLocHostView, ModalDeleteLocPeerView,
-    ModalModifyLocationView, ModalDeleteLocationView,
+    ModalLocHostConfView, ModalLocHostUbntConfView, ModalDeleteLocHostView,
+    ModalDeleteLocPeerView, ModalModifyLocationView, ModalDeleteLocationView,
     linkLocationsListItemTemplate) {
   'use strict';
   var LinkLocationsListItemView = Backbone.View.extend({
@@ -46,6 +47,7 @@ define([
       'mousedown .link-remove-transit': 'onRemoveTransit',
       'mousedown .link-uri-host': 'onHostUri',
       'mousedown .link-conf-host': 'onHostConf',
+      'mousedown .link-ubnt-conf-host': 'onHostUbntConf',
       'mousedown .host-name': 'onModifyHost',
       'mousedown .location-settings': 'onSettings',
       'mousedown .location-del': 'onDelete'
@@ -202,6 +204,15 @@ define([
         this.getHost($(evt.currentTarget).attr('data-id')));
 
       var modal = new ModalLocHostConfView({
+        model: model
+      });
+      this.addView(modal);
+    },
+    onHostUbntConf: function(evt) {
+      var model = new LinkHostConfModel(
+        this.getHost($(evt.currentTarget).attr('data-id')));
+
+      var modal = new ModalLocHostUbntConfView({
         model: model
       });
       this.addView(modal);
