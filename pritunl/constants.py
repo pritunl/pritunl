@@ -1131,7 +1131,6 @@ OVPN_ONC_NET_CONF = """\
           "AuthRetry": "interact",
           "Auth": "%s",
           "Cipher": "%s",
-          "IgnoreDefaultRoute": true,
           "ClientCertType": "Ref",
           "ClientCertRef": "%s",
           "CompLZO": "%s",%s
