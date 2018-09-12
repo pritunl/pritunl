@@ -805,18 +805,23 @@ class User(mongo.MongoObject):
             server_ref += '            "%s",\n' % cert_id
         server_ref = server_ref[:-2]
 
+        if svr.is_route_all():
+            other = '\n          "IgnoreDefaultRoute": false,'
+        else:
+            other = '\n          "IgnoreDefaultRoute": true,'
+
         password_mode = self._get_password_mode(svr)
         if not password_mode:
-            auth = OVPN_ONC_AUTH_NONE % self.id
+            other += OVPN_ONC_AUTH_NONE % self.id
         else:
             has_otp = 'otp' in password_mode or 'yubikey' in password_mode
             has_pass = 'password' in password_mode or 'pin' in password_mode
             if has_otp and has_pass:
-                auth = OVPN_ONC_AUTH_PASS_OTP % self.id
+                other += OVPN_ONC_AUTH_PASS_OTP % self.id
             elif has_otp:
-                auth = OVPN_ONC_AUTH_OTP % self.id
+                other += OVPN_ONC_AUTH_OTP % self.id
             else:
-                auth = OVPN_ONC_AUTH_PASS % self.id
+                other += OVPN_ONC_AUTH_PASS % self.id
 
         primary_host = None
         primary_port = None
@@ -845,7 +850,7 @@ class User(mongo.MongoObject):
             svr.protocol,
             server_ref,
             tls_auth,
-            auth,
+            other,
         )
 
         return onc_net, onc_certs
