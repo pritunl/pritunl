@@ -130,9 +130,7 @@ class Clients(object):
 
             if self.server.is_route_all():
                 if platform == 'chrome':
-                    #client_conf += 'push "redirect-gateway def1"\n'
-                    client_conf += 'push "route 0.0.0.0 128.0.0.0"\n'
-                    client_conf += 'push "route 128.0.0.0 128.0.0.0"\n'
+                    client_conf += 'push "redirect-gateway def1"\n'
                 else:
                     client_conf += 'push "redirect-gateway def1"\n'
 
