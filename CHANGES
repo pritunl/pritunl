@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve Chrome OS support
+
 Version 1.29.1804.86 2018-08-21
 -------------------------------
 
