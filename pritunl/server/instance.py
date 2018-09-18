@@ -1026,7 +1026,8 @@ class ServerInstance(object):
         )
 
         def timeout():
-            logger.error('Server startup timed out, stopping server', 'server',
+            logger.error('Server startup timed out, stopping server',
+                'server',
                 server_id=self.server.id,
                 instance_id=self.id,
                 state=self.state,
