@@ -1006,9 +1006,13 @@ def server_host_put(server_id, host_id):
         return utils.demo_blocked()
 
     svr = server.get_by_id(server_id)
+    if not svr:
+        return flask.abort(404)
     hst = host.get_by_id(host_id, fields=('_id', 'name',
         'public_address', 'auto_public_address', 'auto_public_host',
         'public_address6', 'auto_public_address6', 'auto_public_host6'))
+    if not svr:
+        return flask.abort(404)
 
     try:
         svr.add_host(hst.id)
@@ -1044,7 +1048,11 @@ def server_host_delete(server_id, host_id):
 
     svr = server.get_by_id(server_id, fields=(
         '_id', 'hosts', 'replica_count'))
+    if not svr:
+        return flask.abort(404)
     hst = host.get_by_id(host_id, fields=('_id', 'name'))
+    if not hst:
+        return flask.abort(404)
 
     svr.remove_host(hst.id)
     svr.commit('hosts')
@@ -1065,6 +1073,8 @@ def server_link_get(server_id):
     links = []
     svr = server.get_by_id(server_id, fields=('_id', 'status', 'links',
         'replica_count', 'instances'))
+    if not svr:
+        return flask.abort(404)
     hosts_offline = svr.replica_count - len(svr.instances) > 0
 
     if svr.links:
