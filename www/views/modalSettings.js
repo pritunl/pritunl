@@ -118,6 +118,9 @@ define([
       if (!mode) {
         this.$('.sso-match-slack').slideUp(window.slideTime);
         this.$('.sso-match-google').slideUp(window.slideTime);
+        this.$('.sso-azure-directory-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-secret').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
         this.$('.sso-google-email').slideUp(window.slideTime);
         this.$('.sso-token').slideUp(window.slideTime);
@@ -151,6 +154,9 @@ define([
         this.$('.sso-duo-mode').slideUp(window.slideTime);
         this.$('.sso-match-slack').slideUp(window.slideTime);
         this.$('.sso-match-google').slideUp(window.slideTime);
+        this.$('.sso-azure-directory-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-secret').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
         this.$('.sso-google-email').slideUp(window.slideTime);
         this.$('.sso-okta-app-id').slideUp(window.slideTime);
@@ -168,6 +174,9 @@ define([
       } else if (mode === 'saml_duo') {
         this.$('.sso-match-slack').slideUp(window.slideTime);
         this.$('.sso-match-google').slideUp(window.slideTime);
+        this.$('.sso-azure-directory-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-secret').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
         this.$('.sso-google-email').slideUp(window.slideTime);
         this.$('.sso-okta-app-id').slideUp(window.slideTime);
@@ -193,6 +202,9 @@ define([
         this.$('.sso-duo-mode').slideUp(window.slideTime);
         this.$('.sso-match-slack').slideUp(window.slideTime);
         this.$('.sso-match-google').slideUp(window.slideTime);
+        this.$('.sso-azure-directory-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-secret').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
         this.$('.sso-google-email').slideUp(window.slideTime);
         this.$('.sso-okta-app-id').slideUp(window.slideTime);
@@ -214,6 +226,9 @@ define([
         this.$('.sso-duo-mode').slideUp(window.slideTime);
         this.$('.sso-match-slack').slideUp(window.slideTime);
         this.$('.sso-match-google').slideUp(window.slideTime);
+        this.$('.sso-azure-directory-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-secret').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
         this.$('.sso-google-email').slideUp(window.slideTime);
         this.$('.sso-onelogin-app-id').slideUp(window.slideTime);
@@ -231,6 +246,9 @@ define([
       } else if (mode === 'saml_okta_duo') {
         this.$('.sso-match-slack').slideUp(window.slideTime);
         this.$('.sso-match-google').slideUp(window.slideTime);
+        this.$('.sso-azure-directory-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-secret').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
         this.$('.sso-google-email').slideUp(window.slideTime);
         this.$('.sso-onelogin-app-id').slideUp(window.slideTime);
@@ -256,6 +274,9 @@ define([
         this.$('.sso-duo-mode').slideUp(window.slideTime);
         this.$('.sso-match-slack').slideUp(window.slideTime);
         this.$('.sso-match-google').slideUp(window.slideTime);
+        this.$('.sso-azure-directory-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-secret').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
         this.$('.sso-google-email').slideUp(window.slideTime);
         this.$('.sso-onelogin-app-id').slideUp(window.slideTime);
@@ -277,6 +298,9 @@ define([
         this.$('.sso-duo-mode').slideUp(window.slideTime);
         this.$('.sso-match-slack').slideUp(window.slideTime);
         this.$('.sso-match-google').slideUp(window.slideTime);
+        this.$('.sso-azure-directory-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-secret').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
         this.$('.sso-google-email').slideUp(window.slideTime);
         this.$('.sso-okta-app-id').slideUp(window.slideTime);
@@ -294,6 +318,9 @@ define([
       } else if (mode === 'saml_onelogin_duo') {
         this.$('.sso-match-slack').slideUp(window.slideTime);
         this.$('.sso-match-google').slideUp(window.slideTime);
+        this.$('.sso-azure-directory-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-secret').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
         this.$('.sso-google-email').slideUp(window.slideTime);
         this.$('.sso-okta-app-id').slideUp(window.slideTime);
@@ -316,6 +343,9 @@ define([
         this.$('.sso-token').slideUp(window.slideTime);
         this.$('.sso-secret').slideUp(window.slideTime);
         this.$('.sso-host').slideUp(window.slideTime);
+        this.$('.sso-azure-directory-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-secret').slideUp(window.slideTime);
         this.$('.sso-duo-mode').slideUp(window.slideTime);
         this.$('.sso-match-slack').slideUp(window.slideTime);
         this.$('.sso-match-google').slideUp(window.slideTime);
@@ -334,6 +364,9 @@ define([
         this.$('.sso-onelogin-secret').slideDown(window.slideTime);
         this.$('.sso-onelogin-mode').slideDown(window.slideTime);
       } else if (mode === 'slack') {
+        this.$('.sso-azure-directory-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-secret').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideUp(window.slideTime);
         this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
         this.$('.sso-saml-cert').slideUp(window.slideTime);
@@ -354,10 +387,37 @@ define([
         this.$('.sso-google-key').slideUp(window.slideTime);
         this.$('.sso-google-email').slideUp(window.slideTime);
         this.$('.sso-match-slack').slideDown(window.slideTime);
+      } else if (mode === 'azure') {
+        this.$('.sso-saml-url').slideUp(window.slideTime);
+        this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
+        this.$('.sso-saml-cert').slideUp(window.slideTime);
+        this.$('.sso-token').slideUp(window.slideTime);
+        this.$('.sso-secret').slideUp(window.slideTime);
+        this.$('.sso-host').slideUp(window.slideTime);
+        this.$('.sso-duo-mode').slideUp(window.slideTime);
+        this.$('.sso-okta-app-id').slideUp(window.slideTime);
+        this.$('.sso-okta-token').slideUp(window.slideTime);
+        this.$('.sso-okta-mode').slideUp(window.slideTime);
+        this.$('.sso-onelogin-app-id').slideUp(window.slideTime);
+        this.$('.sso-onelogin-id').slideUp(window.slideTime);
+        this.$('.sso-onelogin-secret').slideUp(window.slideTime);
+        this.$('.sso-onelogin-mode').slideUp(window.slideTime);
+        this.$('.sso-radius-host').slideUp(window.slideTime);
+        this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-match-slack').slideUp(window.slideTime);
+        this.$('.sso-match-google').slideUp(window.slideTime);
+        this.$('.sso-google-key').slideUp(window.slideTime);
+        this.$('.sso-google-email').slideUp(window.slideTime);
+        this.$('.sso-azure-directory-id').slideDown(window.slideTime);
+        this.$('.sso-azure-app-id').slideDown(window.slideTime);
+        this.$('.sso-azure-app-secret').slideDown(window.slideTime);
       } else if (mode === 'google') {
         this.$('.sso-saml-url').slideUp(window.slideTime);
         this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
         this.$('.sso-saml-cert').slideUp(window.slideTime);
+        this.$('.sso-azure-directory-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-secret').slideUp(window.slideTime);
         this.$('.sso-token').slideUp(window.slideTime);
         this.$('.sso-secret').slideUp(window.slideTime);
         this.$('.sso-host').slideUp(window.slideTime);
@@ -376,6 +436,9 @@ define([
         this.$('.sso-google-key').slideDown(window.slideTime);
         this.$('.sso-google-email').slideDown(window.slideTime);
       } else if (mode === 'slack_duo') {
+        this.$('.sso-azure-directory-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-secret').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideUp(window.slideTime);
         this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
         this.$('.sso-saml-cert').slideUp(window.slideTime);
@@ -396,7 +459,34 @@ define([
         this.$('.sso-secret').slideDown(window.slideTime);
         this.$('.sso-host').slideDown(window.slideTime);
         this.$('.sso-duo-mode').slideDown(window.slideTime);
+      } else if (mode === 'azure_duo') {
+        this.$('.sso-saml-url').slideUp(window.slideTime);
+        this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
+        this.$('.sso-saml-cert').slideUp(window.slideTime);
+        this.$('.sso-okta-app-id').slideUp(window.slideTime);
+        this.$('.sso-okta-token').slideUp(window.slideTime);
+        this.$('.sso-okta-mode').slideUp(window.slideTime);
+        this.$('.sso-onelogin-app-id').slideUp(window.slideTime);
+        this.$('.sso-onelogin-id').slideUp(window.slideTime);
+        this.$('.sso-onelogin-secret').slideUp(window.slideTime);
+        this.$('.sso-onelogin-mode').slideUp(window.slideTime);
+        this.$('.sso-radius-host').slideUp(window.slideTime);
+        this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-match-slack').slideUp(window.slideTime);
+        this.$('.sso-match-google').slideUp(window.slideTime);
+        this.$('.sso-google-key').slideUp(window.slideTime);
+        this.$('.sso-google-email').slideUp(window.slideTime);
+        this.$('.sso-azure-directory-id').slideDown(window.slideTime);
+        this.$('.sso-azure-app-id').slideDown(window.slideTime);
+        this.$('.sso-azure-app-secret').slideDown(window.slideTime);
+        this.$('.sso-token').slideDown(window.slideTime);
+        this.$('.sso-secret').slideDown(window.slideTime);
+        this.$('.sso-host').slideDown(window.slideTime);
+        this.$('.sso-duo-mode').slideDown(window.slideTime);
       } else if (mode === 'google_duo') {
+        this.$('.sso-azure-directory-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-secret').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideUp(window.slideTime);
         this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
         this.$('.sso-saml-cert').slideUp(window.slideTime);
@@ -418,6 +508,9 @@ define([
         this.$('.sso-host').slideDown(window.slideTime);
         this.$('.sso-duo-mode').slideDown(window.slideTime);
       } else if (mode === 'slack_yubico') {
+        this.$('.sso-azure-directory-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-secret').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideUp(window.slideTime);
         this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
         this.$('.sso-saml-cert').slideUp(window.slideTime);
@@ -438,7 +531,34 @@ define([
         this.$('.sso-google-key').slideUp(window.slideTime);
         this.$('.sso-google-email').slideUp(window.slideTime);
         this.$('.sso-match-slack').slideDown(window.slideTime);
+      } else if (mode === 'azure_yubico') {
+        this.$('.sso-saml-url').slideUp(window.slideTime);
+        this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
+        this.$('.sso-saml-cert').slideUp(window.slideTime);
+        this.$('.sso-token').slideUp(window.slideTime);
+        this.$('.sso-secret').slideUp(window.slideTime);
+        this.$('.sso-host').slideUp(window.slideTime);
+        this.$('.sso-duo-mode').slideUp(window.slideTime);
+        this.$('.sso-okta-app-id').slideUp(window.slideTime);
+        this.$('.sso-okta-token').slideUp(window.slideTime);
+        this.$('.sso-okta-mode').slideUp(window.slideTime);
+        this.$('.sso-onelogin-app-id').slideUp(window.slideTime);
+        this.$('.sso-onelogin-id').slideUp(window.slideTime);
+        this.$('.sso-onelogin-secret').slideUp(window.slideTime);
+        this.$('.sso-onelogin-mode').slideUp(window.slideTime);
+        this.$('.sso-radius-host').slideUp(window.slideTime);
+        this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-match-slack').slideUp(window.slideTime);
+        this.$('.sso-match-google').slideUp(window.slideTime);
+        this.$('.sso-google-key').slideUp(window.slideTime);
+        this.$('.sso-google-email').slideUp(window.slideTime);
+        this.$('.sso-azure-directory-id').slideDown(window.slideTime);
+        this.$('.sso-azure-app-id').slideDown(window.slideTime);
+        this.$('.sso-azure-app-secret').slideDown(window.slideTime);
       } else if (mode === 'google_yubico') {
+        this.$('.sso-azure-directory-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-secret').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideUp(window.slideTime);
         this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
         this.$('.sso-saml-cert').slideUp(window.slideTime);
@@ -460,6 +580,9 @@ define([
         this.$('.sso-google-key').slideDown(window.slideTime);
         this.$('.sso-google-email').slideDown(window.slideTime);
       } else if (mode === 'duo') {
+        this.$('.sso-azure-directory-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-secret').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideUp(window.slideTime);
         this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
         this.$('.sso-saml-cert').slideUp(window.slideTime);
@@ -481,6 +604,9 @@ define([
         this.$('.sso-host').slideDown(window.slideTime);
         this.$('.sso-duo-mode').slideDown(window.slideTime);
       } else if (mode === 'radius') {
+        this.$('.sso-azure-directory-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-secret').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideUp(window.slideTime);
         this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
         this.$('.sso-saml-cert').slideUp(window.slideTime);
@@ -502,6 +628,9 @@ define([
         this.$('.sso-radius-host').slideDown(window.slideTime);
         this.$('.sso-radius-secret').slideDown(window.slideTime);
       } else if (mode === 'radius_duo') {
+        this.$('.sso-azure-directory-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-secret').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideUp(window.slideTime);
         this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
         this.$('.sso-saml-cert').slideUp(window.slideTime);
@@ -734,6 +863,9 @@ define([
       var sso = this.getSsoMode();
       var ssoMatch = null;
       var ssoOrg = null;
+      var ssoAzureDirectoryId = null;
+      var ssoAzureAppId = null;
+      var ssoAzureAppSecret = null;
       var ssoGoogleKey = null;
       var ssoGoogleEmail = null;
       var ssoSamlUrl = null;
@@ -798,6 +930,13 @@ define([
           ssoOneLoginMode = this.$('.sso-onelogin-mode select').val();
         }
 
+        if (sso.indexOf('azure') !== -1) {
+          ssoAzureDirectoryId = this.$(
+            '.sso-azure-directory-id input').val();
+          ssoAzureAppId = this.$('.sso-azure-app-id input').val();
+          ssoAzureAppSecret = this.$('.sso-azure-app-secret input').val();
+        }
+
         if (sso.indexOf('google') !== -1) {
           ssoMatch = this.$('.sso-match-google input').val().split(',');
 
@@ -849,6 +988,9 @@ define([
         sso_yubico_client: ssoYubicoClient,
         sso_yubico_secret: ssoYubicoSecret,
         sso_org: ssoOrg,
+        sso_azure_directory_id: ssoAzureDirectoryId,
+        sso_azure_app_id: ssoAzureAppId,
+        sso_azure_app_secret: ssoAzureAppSecret,
         sso_google_key: ssoGoogleKey,
         sso_google_email: ssoGoogleEmail,
         sso_saml_url: ssoSamlUrl,
