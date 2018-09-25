@@ -62,7 +62,8 @@ define([
         this.$('.route-net-gateway').hide();
       }
 
-      if (this.model.get('virtual_network') ||
+      if (this.mode.get('network') === '::/0' ||
+          this.model.get('virtual_network') ||
           this.model.get('network_link') ||
           this.model.get('server_link')) {
         this.$('.server-remove-route').attr('disabled', 'disabled');
