@@ -80,7 +80,8 @@ define([
     },
     update: function() {
       var email = this.model.get('email');
-      var name = this.model.get('name') + (email ? ' (' + email + ')' : '');
+      var name = this.model.get('name');
+      var i;
 
       if (name.length > 40) {
         name = name.substr(0, 40);
@@ -165,15 +166,26 @@ define([
       var networkLinks = this.model.get('network_links');
       this.$('.user-network-link').empty();
       if (networkLinks) {
-        for (var i = 0; i < networkLinks.length; i++) {
+        for (i = 0; i < networkLinks.length; i++) {
           this.$('.user-network-link').append(
             '<span class="fa fa-circle-o">').append(
             $('<span class="title link"></span>').text(networkLinks[i]));
         }
       }
 
+      var groups = this.model.get('groups');
+      this.$('.user-groups').empty();
+      if (groups) {
+        for (i = 0; i < groups.length; i++) {
+          this.$('.user-groups').append(
+            '<span class="fa fa-compass">').append(
+            $('<span class="title group"></span>').text(groups[i]));
+        }
+      }
+
       if (this.model.get('bypass_secondary')) {
         this.$('.saml-logo').hide();
+        this.$('.azure-logo').hide();
         this.$('.google-logo').hide();
         this.$('.slack-logo').hide();
         this.$('.duo-logo').hide();
@@ -187,6 +199,13 @@ define([
           this.$('.saml-logo').show();
         } else {
           this.$('.saml-logo').hide();
+        }
+
+        if (sso.indexOf('azure') !== -1 &&
+          auth_type.indexOf('azure') !== -1) {
+          this.$('.azure-logo').show();
+        } else {
+          this.$('.azure-logo').hide();
         }
 
         if (sso.indexOf('google') !== -1 &&
