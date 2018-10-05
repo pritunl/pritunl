@@ -4,7 +4,6 @@ from pritunl import logger
 from pritunl import settings
 from pritunl import sso
 from pritunl import plugins
-from pritunl import utils
 from pritunl import mongo
 from pritunl import tunldb
 from pritunl import ipaddress
