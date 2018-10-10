@@ -129,10 +129,7 @@ class Clients(object):
                     self.server.inactive_timeout
 
             if self.server.is_route_all():
-                if platform == 'chrome':
-                    client_conf += 'push "redirect-gateway def1"\n'
-                else:
-                    client_conf += 'push "redirect-gateway def1"\n'
+                client_conf += 'push "redirect-gateway def1"\n'
 
                 if self.server.ipv6 or (settings.vpn.ipv6_route_all and (
                         platform == 'android' or platform == 'ios')):
