@@ -36,6 +36,9 @@ def init():
             file_name, file_ext = os.path.splitext(file_name)
             if file_ext != '.py':
                 continue
+            logger.info('Loading plugin', 'plugins',
+                name=file_name,
+            )
             plugins_loaded.add(file_name)
             modules.append(imp.load_source('plugin_' + file_name, file_path))
 
