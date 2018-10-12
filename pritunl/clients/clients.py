@@ -134,8 +134,8 @@ class Clients(object):
                 if self.server.ipv6 or (settings.vpn.ipv6_route_all and (
                         platform == 'android' or platform == 'ios')):
                     if platform == 'chrome':
-                        #client_conf += 'push "redirect-gateway ipv6"\n'
-                        client_conf += 'push "route-ipv6 2000::/3"\n'
+                        client_conf += 'push "redirect-gateway ipv6"\n'
+                        client_conf += 'push "redirect-gateway-ipv6 def1"\n'
                     else:
                         client_conf += 'push "redirect-gateway ipv6"\n'
                         client_conf += 'push "redirect-gateway-ipv6 def1"\n'
