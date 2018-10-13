@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Logging improvements
+
 Version 1.29.1827.6 2018-09-13
 ------------------------------
 
