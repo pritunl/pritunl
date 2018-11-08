@@ -25,6 +25,9 @@ import base64
 import threading
 import uuid
 import pymongo
+import json
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import padding
 
 _limiter = limiter.Limiter('vpn', 'peer_limit', 'peer_limit_timeout')
 _port_listeners = {}
@@ -739,6 +742,20 @@ class Clients(object):
                     self.instance_com.push_output('  ' + conf_line)
 
         self.instance_com.send_client_auth(client_id, key_id, client_conf)
+
+    def decrypt_rsa(self, cipher_data):
+        cipher_data = base64.b64decode(cipher_data)
+
+        plaintext = self.server_private_key.decrypt(
+            cipher_data,
+            padding.OAEP(
+                mgf=padding.MGF1(algorithm=hashes.SHA512()),
+                algorithm=hashes.SHA512(),
+                label=None,
+            ),
+        )
+
+        return json.loads(str(plaintext))
 
     def _connect(self, client_data, reauth):
         client_id = client_data['client_id']
