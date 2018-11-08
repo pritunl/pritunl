@@ -186,9 +186,11 @@ class Authorizer(object):
             return
 
         password = self.auth_data.get('password')
-        auth_token = self.auth_data.get('token')
-        auth_nonce = self.auth_data.get('nonce')
-        auth_timestamp = self.auth_data.get('timestamp')
+        password = str(password) if password else None
+        auth_token = utils.filter_str(self.auth_data.get('token')) or None
+        auth_nonce = utils.filter_str(self.auth_data.get('nonce')) or None
+        auth_timestamp = utils.filter_str(
+            self.auth_data.get('timestamp')) or None
 
         if not auth_nonce:
             raise AuthError('Auth data missing nonce')
@@ -228,8 +230,8 @@ class Authorizer(object):
             )
             raise AuthError('Duplicate nonce')
 
-        self.password = password or None
-        self.auth_token = auth_token or None
+        self.password = password
+        self.auth_token = auth_token
 
     def _check_primary(self):
         if self.user.disabled:
