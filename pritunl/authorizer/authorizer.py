@@ -14,13 +14,14 @@ import threading
 import uuid
 import hashlib
 import base64
+import pymongo
 import datetime
 
 _states = tunldb.TunlDB()
 
 class Authorizer(object):
     def __init__(self, svr, usr, remote_ip, plaform, device_id, device_name,
-            mac_addr, password, auth_token, reauth, callback):
+            mac_addr, password, auth_data, reauth, callback):
         self.server = svr
         self.user = usr
         self.remote_ip = remote_ip
@@ -29,7 +30,8 @@ class Authorizer(object):
         self.device_name = device_name
         self.mac_addr = mac_addr
         self.password = password
-        self.auth_token = auth_token
+        self.auth_data = auth_data
+        self.auth_token = None
         self.reauth = reauth
         self.callback = callback
         self.state = None
@@ -64,8 +66,13 @@ class Authorizer(object):
     def otp_cache_collection(cls):
         return mongo.get_collection('otp_cache')
 
+    @property
+    def nonces_collection(cls):
+        return mongo.get_collection('auth_nonces')
+
     def authenticate(self):
         try:
+            self._check_call(self._check_auth_data)
             self._check_call(self._check_primary)
             self._check_call(self._check_token)
             self._check_call(self._check_whitelist)
@@ -173,6 +180,56 @@ class Authorizer(object):
                 'auth_token': self.auth_token,
                 'timestamp': utils.now(),
             }, upsert=True)
+
+    def _check_auth_data(self):
+        if not self.auth_data:
+            return
+
+        password = self.auth_data.get('password')
+        auth_token = self.auth_data.get('token')
+        auth_nonce = self.auth_data.get('nonce')
+        auth_timestamp = self.auth_data.get('timestamp')
+
+        if not auth_nonce:
+            raise AuthError('Auth data missing nonce')
+
+        if not auth_timestamp:
+            raise AuthError('Auth data missing timestamp')
+
+        if abs(int(auth_timestamp) - int(utils.time_now())) > \
+                settings.app.auth_time_window:
+            self.user.audit_event(
+                'user_connection',
+                'User connection to "%s" denied. Auth timestamp expired' % \
+                    self.server.name,
+                remote_addr=self.remote_ip,
+            )
+            raise AuthError('Auth timestamp expired')
+
+        if auth_token:
+            auth_token_hash = hashlib.sha512()
+            auth_token_hash.update(auth_token)
+            auth_token = base64.b64encode(auth_token_hash.digest())
+        else:
+            auth_token = None
+
+        try:
+            self.nonces_collection.insert({
+                'token': self.user.id,
+                'nonce': auth_nonce,
+                'timestamp': utils.now(),
+            })
+        except pymongo.errors.DuplicateKeyError:
+            self.user.audit_event(
+                'user_connection',
+                'User connection to "%s" denied. Duplicate nonce' % \
+                self.server.name,
+                remote_addr=self.remote_ip,
+            )
+            raise AuthError('Duplicate nonce')
+
+        self.password = password or None
+        self.auth_token = auth_token or None
 
     def _check_primary(self):
         if self.user.disabled:
