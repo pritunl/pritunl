@@ -769,23 +769,14 @@ class Clients(object):
         device_id = client_data.get('device_id')
         device_name = client_data.get('device_name')
         password = client_data.get('password')
-        auth_token = None
+        auth_data = None
         mac_addr = client_data.get('mac_addr')
 
-        if password and '<%=PUSH_TOKEN=%>' in password:
-            auth_token, password = password.split('<%=PUSH_TOKEN=%>')
-            auth_token = utils.filter_str(auth_token)
-            password = password or None
-
-        if password and '<%=AUTH_TOKEN=%>' in password:
-            auth_token, password = password.split('<%=AUTH_TOKEN=%>')
-            auth_token = utils.filter_str(auth_token)
-            password = password or None
-
-        if auth_token:
-            auth_token_hash = hashlib.sha512()
-            auth_token_hash.update(auth_token)
-            auth_token = base64.b64encode(auth_token_hash.digest())
+        if password and '<%=RSA_ENCRYPTED=%>' in password and \
+                self.server_private_key:
+            auth_data = self.decrypt_rsa(
+                password.split('<%=RSA_ENCRYPTED=%>')[-1])
+            password = None
 
         try:
             if not settings.vpn.stress_test and \
@@ -836,7 +827,8 @@ class Clients(object):
                         remote_ip=remote_ip,
                         mac_addr=mac_addr,
                         password=password,
-                        auth_token=auth_token,
+                        auth_token=None,
+                        auth_data=auth_data,
                         allow=allow,
                         reason=reason,
                     )
@@ -862,7 +854,7 @@ class Clients(object):
                 device_name,
                 mac_addr,
                 password,
-                auth_token,
+                auth_data,
                 reauth,
                 callback,
             )
