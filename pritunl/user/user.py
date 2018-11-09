@@ -602,9 +602,10 @@ class User(mongo.MongoObject):
         okta_mode = utils.get_okta_mode()
 
         if settings.app.sso and DUO_AUTH in self.auth_type and \
-                DUO_AUTH in settings.app.sso and \
-                settings.app.sso_duo_mode != 'passcode':
-            return DUO_AUTH
+                DUO_AUTH in settings.app.sso:
+            if settings.app.sso_duo_mode != 'passcode':
+                return DUO_AUTH
+            return
         elif settings.app.sso and \
                 SAML_ONELOGIN_AUTH in self.auth_type and \
                 SAML_ONELOGIN_AUTH in settings.app.sso and \
