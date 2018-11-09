@@ -20,13 +20,13 @@ import datetime
 _states = tunldb.TunlDB()
 
 class Authorizer(object):
-    def __init__(self, svr, usr, remote_ip, plaform, device_id, device_name,
+    def __init__(self, svr, usr, remote_ip, platform, device_id, device_name,
             mac_addr, password, auth_password, auth_token, auth_nonce,
             auth_timestamp, reauth, callback):
         self.server = svr
         self.user = usr
         self.remote_ip = remote_ip
-        self.platform = plaform
+        self.platform = platform
         self.device_id = device_id
         self.device_name = device_name
         self.mac_addr = mac_addr
