@@ -24,6 +24,11 @@ import subprocess
 import random
 import collections
 import datetime
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives.asymmetric import padding
 
 dict_fields = [
     'id',
@@ -70,6 +75,8 @@ dict_fields = [
     'debug',
     'pre_connect_msg',
     'mss_fix',
+    'auth_public_key',
+    'auth_private_key',
 ]
 operation_fields = dict_fields + [
     'hosts',
@@ -135,6 +142,8 @@ class Server(mongo.MongoObject):
         'instances',
         'instances_count',
         'availability_group',
+        'auth_public_key',
+        'auth_private_key',
     }
     fields_default = {
         'ipv6': False,
@@ -478,6 +487,32 @@ class Server(mongo.MongoObject):
             self.generate_dh_param()
         finally:
             self.generate_tls_auth_wait()
+
+    def generate_auth_key(self):
+        if self.auth_public_key and self.auth_private_key:
+            return
+
+        private_key = rsa.generate_private_key(
+            public_exponent=65537,
+            key_size=4096,
+            backend=default_backend(),
+        )
+
+        private_pem = private_key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.TraditionalOpenSSL,
+            encryption_algorithm=serialization.NoEncryption(),
+        )
+
+        public_pem = private_key.public_key().public_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.PKCS1,
+        )
+
+        self.auth_public_key = public_pem
+        self.auth_private_key = private_pem
+
+        self.commit({'auth_public_key', 'auth_private_key'})
 
     def queue_dh_params(self, block=False):
         queue.start('dh_params', block=block, server_id=self.id,
