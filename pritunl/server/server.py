@@ -514,6 +514,21 @@ class Server(mongo.MongoObject):
 
         self.commit({'auth_public_key', 'auth_private_key'})
 
+    def get_auth_key(self):
+        self.generate_auth_key()
+        return self.auth_public_key, self.auth_private_key
+
+    def get_auth_private_key(self):
+        self.generate_auth_key()
+
+        private_key = serialization.load_pem_private_key(
+            self.auth_private_key.encode(),
+            password=None,
+            backend=default_backend(),
+        )
+
+        return private_key
+
     def queue_dh_params(self, block=False):
         queue.start('dh_params', block=block, server_id=self.id,
             dh_param_bits=self.dh_param_bits, priority=HIGH)
