@@ -21,7 +21,8 @@ _states = tunldb.TunlDB()
 
 class Authorizer(object):
     def __init__(self, svr, usr, remote_ip, plaform, device_id, device_name,
-            mac_addr, password, auth_data, reauth, callback):
+            mac_addr, password, auth_password, auth_token, auth_nonce,
+            auth_timestamp, reauth, callback):
         self.server = svr
         self.user = usr
         self.remote_ip = remote_ip
@@ -30,8 +31,11 @@ class Authorizer(object):
         self.device_name = device_name
         self.mac_addr = mac_addr
         self.password = password
-        self.auth_data = auth_data
-        self.auth_token = None
+        self.auth_password = auth_password
+        self.auth_token = auth_token
+        self.auth_nonce = auth_nonce
+        self.auth_timestamp = auth_timestamp
+        self.server_auth_token = None
         self.reauth = reauth
         self.callback = callback
         self.state = None
@@ -136,13 +140,13 @@ class Authorizer(object):
         self.callback(allow, reason)
 
     def _check_token(self):
-        if settings.app.sso_client_cache and self.auth_token:
+        if settings.app.sso_client_cache and self.server_auth_token:
             doc = self.sso_client_cache_collection.find_one({
                 'user_id': self.user.id,
                 'server_id': self.server.id,
                 'device_id': self.device_id,
                 'device_name': self.device_name,
-                'auth_token': self.auth_token,
+                'auth_token': self.server_auth_token,
             })
             if doc:
                 self.has_token = True
@@ -165,7 +169,7 @@ class Authorizer(object):
                     break
 
     def _update_token(self):
-        if settings.app.sso_client_cache and self.auth_token and \
+        if settings.app.sso_client_cache and self.server_auth_token and \
                 not self.has_token:
             self.sso_client_cache_collection.update({
                 'user_id': self.user.id,
@@ -177,28 +181,22 @@ class Authorizer(object):
                 'server_id': self.server.id,
                 'device_id': self.device_id,
                 'device_name': self.device_name,
-                'auth_token': self.auth_token,
+                'auth_token': self.server_auth_token,
                 'timestamp': utils.now(),
             }, upsert=True)
 
     def _check_auth_data(self):
-        if not self.auth_data:
+        if not self.auth_token and not self.auth_nonce and \
+                not self.auth_timestamp:
             return
 
-        password = self.auth_data.get('password')
-        password = str(password) if password else None
-        auth_token = utils.filter_str(self.auth_data.get('token')) or None
-        auth_nonce = utils.filter_str(self.auth_data.get('nonce')) or None
-        auth_timestamp = utils.filter_str(
-            self.auth_data.get('timestamp')) or None
-
-        if not auth_nonce:
+        if not self.auth_nonce:
             raise AuthError('Auth data missing nonce')
 
-        if not auth_timestamp:
+        if not self.auth_timestamp:
             raise AuthError('Auth data missing timestamp')
 
-        if abs(int(auth_timestamp) - int(utils.time_now())) > \
+        if abs(int(self.auth_timestamp) - int(utils.time_now())) > \
                 settings.app.auth_time_window:
             self.user.audit_event(
                 'user_connection',
@@ -208,9 +206,9 @@ class Authorizer(object):
             )
             raise AuthError('Auth timestamp expired')
 
-        if auth_token:
+        if self.auth_token:
             auth_token_hash = hashlib.sha512()
-            auth_token_hash.update(auth_token)
+            auth_token_hash.update(self.auth_token)
             auth_token = base64.b64encode(auth_token_hash.digest())
         else:
             auth_token = None
@@ -218,7 +216,7 @@ class Authorizer(object):
         try:
             self.nonces_collection.insert({
                 'token': self.user.id,
-                'nonce': auth_nonce,
+                'nonce': self.auth_nonce,
                 'timestamp': utils.now(),
             })
         except pymongo.errors.DuplicateKeyError:
@@ -230,8 +228,8 @@ class Authorizer(object):
             )
             raise AuthError('Duplicate nonce')
 
-        self.password = password
-        self.auth_token = auth_token
+        self.password = self.auth_password
+        self.server_auth_token = auth_token
 
     def _check_primary(self):
         if self.user.disabled:
@@ -352,7 +350,7 @@ class Authorizer(object):
             self.password = self.password[:-passcode_len]
 
             allow = False
-            if settings.app.sso_cache and not self.auth_token:
+            if settings.app.sso_cache and not self.server_auth_token:
                 doc = self.sso_passcode_cache_collection.find_one({
                     'user_id': self.user.id,
                     'server_id': self.server.id,
@@ -443,7 +441,7 @@ class Authorizer(object):
                         raise AuthError('Challenge secondary passcode')
                     raise AuthError('Invalid secondary passcode')
 
-                if settings.app.sso_cache and not self.auth_token:
+                if settings.app.sso_cache and not self.server_auth_token:
                     self.sso_passcode_cache_collection.update({
                         'user_id': self.user.id,
                         'server_id': self.server.id,
@@ -487,7 +485,7 @@ class Authorizer(object):
             yubikey_hash = base64.b64encode(yubikey_hash.digest())
 
             allow = False
-            if settings.app.sso_cache and not self.auth_token:
+            if settings.app.sso_cache and not self.server_auth_token:
                 doc = self.sso_passcode_cache_collection.find_one({
                     'user_id': self.user.id,
                     'server_id': self.server.id,
@@ -551,7 +549,7 @@ class Authorizer(object):
                         raise AuthError('Challenge YubiKey')
                     raise AuthError('Invalid YubiKey')
 
-                if settings.app.sso_cache and not self.auth_token:
+                if settings.app.sso_cache and not self.server_auth_token:
                     self.sso_passcode_cache_collection.update({
                         'user_id': self.user.id,
                         'server_id': self.server.id,
@@ -746,7 +744,7 @@ class Authorizer(object):
             )
             return
 
-        if settings.app.sso_cache and not self.auth_token:
+        if settings.app.sso_cache and not self.server_auth_token:
             doc = self.sso_push_cache_collection.find_one({
                 'user_id': self.user.id,
                 'server_id': self.server.id,
@@ -852,7 +850,7 @@ class Authorizer(object):
             )
             raise AuthError('User failed push authentication')
 
-        if settings.app.sso_cache and not self.auth_token:
+        if settings.app.sso_cache and not self.server_auth_token:
             self.sso_push_cache_collection.update({
                 'user_id': self.user.id,
                 'server_id': self.server.id,
