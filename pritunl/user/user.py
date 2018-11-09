@@ -618,6 +618,8 @@ class User(mongo.MongoObject):
             return SAML_OKTA_AUTH
 
     def _get_key_info_str(self, svr, conf_hash, include_sync_keys):
+        public_key, _ = svr.get_auth_key()
+
         data = {
             'version': CLIENT_CONF_VER,
             'user': self.name,
@@ -634,6 +636,7 @@ class User(mongo.MongoObject):
             'disable_reconnect': not settings.user.reconnect,
             'token': self._get_token_mode(),
             'token_ttl': settings.app.sso_client_cache_timeout,
+            'server_public_key': public_key.splitlines(),
         }
 
         if svr.pre_connect_msg:
