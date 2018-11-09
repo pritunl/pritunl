@@ -67,6 +67,8 @@ class Clients(object):
             self.ip_pool.append(str(ip_addr))
         self.ip_pool.pop()
 
+        self.server_private_key = self.server.get_auth_private_key()
+
     @cached_static_property
     def collection(cls):
         return mongo.get_collection('clients')
