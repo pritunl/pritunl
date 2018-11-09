@@ -858,20 +858,20 @@ class Clients(object):
                     )
 
             auth = authorizer.Authorizer(
-                self.server,
-                user,
-                remote_ip,
-                platform,
-                device_id,
-                device_name,
-                mac_addr,
-                password,
-                auth_password,
-                auth_token,
-                auth_nonce,
-                auth_timestamp,
-                reauth,
-                callback,
+                svr=self.server,
+                usr=user,
+                remote_ip=remote_ip,
+                platform=platform,
+                device_id=device_id,
+                device_name=device_name,
+                mac_addr=mac_addr,
+                password=password,
+                auth_password=auth_password,
+                auth_token=auth_token,
+                auth_nonce=auth_nonce,
+                auth_timestamp=auth_timestamp,
+                reauth=reauth,
+                callback=callback,
             )
 
             auth.authenticate()
