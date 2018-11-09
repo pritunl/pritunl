@@ -33,6 +33,38 @@ def verify_azure(user_name):
     access_token = data['access_token']
 
     response = requests.get(
+        'https://graph.windows.net/%s/users/%s' % (
+            settings.app.sso_azure_directory_id,
+            urllib.quote(user_name),
+        ),
+        headers={
+            'Authorization': 'Bearer %s' % access_token,
+        },
+        params={
+            'api-version': '1.6',
+        },
+        timeout=30,
+    )
+
+    if response.status_code != 200:
+        logger.error('Bad status from Azure api',
+            'sso',
+            status_code=response.status_code,
+            response=response.content,
+        )
+        return False, []
+
+    data = response.json()
+
+    if not data.get('accountEnabled'):
+        logger.error('Azure account is disabled',
+            'sso',
+            status_code=response.status_code,
+            response=response.content,
+        )
+        return False, []
+
+    response = requests.get(
         'https://graph.windows.net/%s/users/%s/memberOf' % (
             settings.app.sso_azure_directory_id,
             urllib.quote(user_name),
