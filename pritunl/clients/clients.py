@@ -757,7 +757,15 @@ class Clients(object):
             ),
         )
 
-        return json.loads(str(plaintext))
+        data = json.loads(str(plaintext))
+
+        auth_password = data.get('password')
+        auth_password = str(auth_password) if auth_password else None
+        auth_token = utils.filter_str(data.get('token')) or None
+        auth_nonce = utils.filter_str(data.get('nonce')) or None
+        auth_timestamp = utils.filter_str(data.get('timestamp')) or None
+
+        return auth_password, auth_token, auth_nonce, auth_timestamp
 
     def _connect(self, client_data, reauth):
         client_id = client_data['client_id']
@@ -769,14 +777,16 @@ class Clients(object):
         device_id = client_data.get('device_id')
         device_name = client_data.get('device_name')
         password = client_data.get('password')
-        auth_data = None
+        auth_password = None
+        auth_token = None
+        auth_nonce = None
+        auth_timestamp = None
         mac_addr = client_data.get('mac_addr')
 
         if password and '<%=RSA_ENCRYPTED=%>' in password and \
                 self.server_private_key:
-            auth_data = self.decrypt_rsa(
-                password.split('<%=RSA_ENCRYPTED=%>')[-1])
-            password = None
+            auth_password, auth_token, auth_nonce, auth_timestamp = \
+                self.decrypt_rsa(password.split('<%=RSA_ENCRYPTED=%>')[-1])
 
         try:
             if not settings.vpn.stress_test and \
@@ -827,8 +837,10 @@ class Clients(object):
                         remote_ip=remote_ip,
                         mac_addr=mac_addr,
                         password=password,
-                        auth_token=None,
-                        auth_data=auth_data,
+                        auth_password=auth_password,
+                        auth_token=auth_token,
+                        auth_nonce=auth_nonce,
+                        auth_timestamp=auth_timestamp,
                         allow=allow,
                         reason=reason,
                     )
@@ -854,7 +866,10 @@ class Clients(object):
                 device_name,
                 mac_addr,
                 password,
-                auth_data,
+                auth_password,
+                auth_token,
+                auth_nonce,
+                auth_timestamp,
                 reauth,
                 callback,
             )
