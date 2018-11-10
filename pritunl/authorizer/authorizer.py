@@ -589,7 +589,7 @@ class Authorizer(object):
             self.password = self.password[:-6]
 
             allow = False
-            if settings.app.sso_cache:
+            if settings.app.sso_cache and not self.server_auth_token:
                 doc = self.otp_cache_collection.find_one({
                     'user_id': self.user.id,
                     'server_id': self.server.id,
@@ -649,7 +649,7 @@ class Authorizer(object):
                         raise AuthError('Challenge OTP code')
                     raise AuthError('Invalid OTP code')
 
-                if settings.vpn.otp_cache:
+                if settings.app.sso_cache and not self.server_auth_token:
                     self.otp_cache_collection.update({
                         'user_id': self.user.id,
                         'server_id': self.server.id,
