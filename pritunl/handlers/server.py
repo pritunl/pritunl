@@ -617,7 +617,6 @@ def server_put_post(server_id=None):
 
     svr.commit(changed)
 
-    logger.LogEntry(message='Created server "%s".' % svr.name)
     event.Event(type=SERVERS_UPDATED)
     event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
     for org in svr.iter_orgs():
