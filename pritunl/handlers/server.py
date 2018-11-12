@@ -617,6 +617,8 @@ def server_put_post(server_id=None):
 
     svr.commit(changed)
 
+    svr.generate_auth_key()
+
     event.Event(type=SERVERS_UPDATED)
     event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
     for org in svr.iter_orgs():
