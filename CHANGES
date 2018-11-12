@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with requirements
+
 Version 1.29.1887.37 2018-11-12
 -------------------------------
 
