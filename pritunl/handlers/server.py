@@ -619,6 +619,9 @@ def server_put_post(server_id=None):
 
     svr.generate_auth_key()
 
+    if not server_id:
+        logger.LogEntry(message='Created server "%s".' % svr.name)
+
     event.Event(type=SERVERS_UPDATED)
     event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
     for org in svr.iter_orgs():
