@@ -10,7 +10,8 @@ from pritunl import logger
 # explain why the user was not authenticated.
 def user_connection(host_id, server_id, org_id, user_id, host_name,
         server_name, org_name, user_name, platform, device_id, device_name,
-        remote_ip, mac_addr, password, allow, reason, **kwargs):
+        remote_ip, mac_addr, password, auth_password, auth_token, auth_nonce,
+        auth_timestamp, allow, reason, **kwargs):
     logger.info('Example log message', 'plugin',
         key1='value1',
         key2='value2',
