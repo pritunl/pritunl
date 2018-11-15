@@ -259,7 +259,10 @@ def upsert_indexes():
         background=True, expireAfterSeconds=settings.app.session_timeout)
     upsert_index('auth_nonces', 'timestamp',
         background=True,
-        expireAfterSeconds=auth_expire_window)
+        expireAfterSeconds=max(
+            settings.app.auth_time_window * 2,
+            settings.app.auth_expire_window,
+        ))
     upsert_index('auth_csrf_tokens', 'timestamp',
         background=True, expireAfterSeconds=604800)
     upsert_index('auth_limiter', 'timestamp',
