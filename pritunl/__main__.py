@@ -281,6 +281,7 @@ def main(default_conf=None):
             },
             '$unset': {
                 'network_lock': '',
+                'network_lock_ttl': '',
             },
         })
 
