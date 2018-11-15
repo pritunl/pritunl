@@ -490,7 +490,7 @@ class Server(mongo.MongoObject):
 
     def generate_auth_key(self):
         if self.auth_public_key and self.auth_private_key:
-            return
+            return False
 
         private_key = rsa.generate_private_key(
             public_exponent=65537,
@@ -512,14 +512,18 @@ class Server(mongo.MongoObject):
         self.auth_public_key = public_pem
         self.auth_private_key = private_pem
 
-        self.commit({'auth_public_key', 'auth_private_key'})
+        return True
+
+    def generate_auth_key_commit(self):
+        if self.generate_auth_key():
+            self.commit({'auth_public_key', 'auth_private_key'})
 
     def get_auth_key(self):
-        self.generate_auth_key()
+        self.generate_auth_key_commit()
         return self.auth_public_key, self.auth_private_key
 
     def get_auth_private_key(self):
-        self.generate_auth_key()
+        self.generate_auth_key_commit()
 
         private_key = serialization.load_pem_private_key(
             self.auth_private_key.encode(),
