@@ -608,6 +608,8 @@ def server_put_post(server_id=None):
 
         changed = svr.changed
 
+    svr.generate_auth_key()
+
     err, err_msg = svr.validate_conf()
     if err:
         return utils.jsonify({
@@ -616,8 +618,6 @@ def server_put_post(server_id=None):
         }, 400)
 
     svr.commit(changed)
-
-    svr.generate_auth_key()
 
     if not server_id:
         logger.LogEntry(message='Created server "%s".' % svr.name)
