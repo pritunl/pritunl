@@ -288,6 +288,78 @@ def main(default_conf=None):
         print 'Secondary database destroyed'
 
         sys.exit(0)
+    elif cmd == 'repair-database':
+        from pritunl import setup
+        from pritunl import logger
+        from pritunl import mongo
+
+        setup.setup_db()
+
+        print 'Repairing database...'
+
+        mongo.get_collection('clients').drop()
+        mongo.get_collection('clients_pool').drop()
+        mongo.get_collection('transaction').drop()
+        mongo.get_collection('queue').drop()
+        mongo.get_collection('tasks').drop()
+
+        mongo.get_collection('messages').drop()
+        mongo.get_collection('users_key_link').drop()
+        mongo.get_collection('auth_sessions').drop()
+        mongo.get_collection('auth_csrf_tokens').drop()
+        mongo.get_collection('auth_nonces').drop()
+        mongo.get_collection('auth_limiter').drop()
+        mongo.get_collection('otp').drop()
+        mongo.get_collection('otp_cache').drop()
+        mongo.get_collection('sso_tokens').drop()
+        mongo.get_collection('sso_push_cache').drop()
+        mongo.get_collection('sso_client_cache').drop()
+        mongo.get_collection('sso_passcode_cache').drop()
+
+        mongo.get_collection('logs').drop()
+        mongo.get_collection('log_entries').drop()
+        mongo.get_collection('servers_ip_pool').drop()
+
+        setup.upsert_indexes()
+
+        server_coll = mongo.get_collection('servers')
+        server_coll.update_many({}, {
+            '$set': {
+                'status': 'offline',
+                'instances': [],
+                'instances_count': 0,
+            },
+            '$unset': {
+                'network_lock': '',
+                'network_lock_ttl': '',
+            },
+        })
+
+        from pritunl import server
+
+        for svr in server.iter_servers():
+            try:
+                svr.ip_pool.sync_ip_pool()
+            except:
+                logger.exception('Failed to sync server IP pool', 'tasks',
+                    server_id=svr.id,
+                )
+
+        server_coll.update_many({}, {
+            '$set': {
+                'status': 'offline',
+                'instances': [],
+                'instances_count': 0,
+            },
+            '$unset': {
+                'network_lock': '',
+                'network_lock_ttl': '',
+            },
+        })
+
+        print 'Database repair complete'
+
+        sys.exit(0)
     elif cmd == 'logs':
         from pritunl import setup
         from pritunl import logger
