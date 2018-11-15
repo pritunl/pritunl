@@ -270,6 +270,8 @@ def main(default_conf=None):
         mongo.get_collection('sso_client_cache').drop()
         mongo.get_collection('sso_passcode_cache').drop()
 
+        setup.upsert_indexes()
+
         server_coll = mongo.get_collection('servers')
         server_coll.update_many({}, {
             '$set': {
