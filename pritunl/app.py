@@ -232,10 +232,16 @@ def _run_wsgi():
             logger.info('Server restarting...', 'app')
 
 def setup_server_cert():
+    global _cur_cert
+    global _cur_key
+
     if not settings.app.server_cert or not settings.app.server_key:
         logger.info('Generating server certificate...', 'app')
         utils.create_server_cert()
         settings.commit()
+
+        _cur_cert = settings.app.server_cert
+        _cur_key = settings.app.server_key
 
 def run_server():
     global _cur_ssl
