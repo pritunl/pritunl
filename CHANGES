@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with creating servers
+
 Version 1.29.1887.80 2018-11-12
 -------------------------------
 
