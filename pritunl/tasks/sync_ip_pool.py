@@ -15,4 +15,4 @@ class TaskSyncIpPool(task.Task):
                     task_id=self.id,
                 )
 
-task.add_task(TaskSyncIpPool, minutes=7)
+task.add_task(TaskSyncIpPool, hours=4, minutes=7)
