@@ -249,6 +249,8 @@ def main(default_conf=None):
 
         setup.setup_db()
 
+        print 'Destroying secondary database...'
+
         mongo.get_collection('clients').drop()
         mongo.get_collection('clients_pool').drop()
         mongo.get_collection('transaction').drop()
@@ -279,6 +281,8 @@ def main(default_conf=None):
                 'network_lock': '',
             },
         })
+
+        print 'Secondary database destroyed'
 
         sys.exit(0)
     elif cmd == 'logs':
