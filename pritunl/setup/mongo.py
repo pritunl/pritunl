@@ -83,6 +83,12 @@ def upsert_indexes():
         mongo.database.create_collection(prefix + 'log_entries', capped=True,
             size=log_entry_limit * 512, max=log_entry_limit)
 
+    cur_collections = mongo.secondary_database.collection_names()
+    if prefix + 'messages' not in cur_collections:
+        mongo.secondary_database.create_collection(
+            prefix + 'messages', capped=True,
+            size=5000192, max=1000)
+
     upsert_index('logs', 'timestamp', background=True)
     upsert_index('transaction', 'lock_id',
         background=True, unique=True)
@@ -371,10 +377,6 @@ def setup_mongo():
 
     if 'authorities' in db_collections or 'authorities' in cur_collections:
         raise TypeError('Cannot connect to a Pritunl Zero database')
-
-    if prefix + 'messages' not in cur_collections:
-        secondary_database.create_collection(prefix + 'messages', capped=True,
-            size=5000192, max=1000)
 
     mongo.collection_types = {
         'transaction': 1,
