@@ -2,7 +2,7 @@ from pritunl.helpers import *
 from pritunl.setup.clean import setup_clean
 from pritunl.setup.local import setup_local
 from pritunl.setup.server import setup_server
-from pritunl.setup.mongo import setup_mongo
+from pritunl.setup.mongo import setup_mongo, upsert_indexes
 from pritunl.setup.boto_conf import setup_boto_conf
 from pritunl.setup.cache import setup_cache
 from pritunl.setup.temp_path import setup_temp_path

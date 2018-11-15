@@ -28,7 +28,7 @@ def _get_read_pref(name):
 coll_indexes = collections.defaultdict(set)
 
 def upsert_index(coll_name, index, **kwargs):
-    coll = mongo.collections[coll_name]
+    coll = mongo.get_collection(coll_name)
 
     keys = pymongo.helpers._index_list(index)
     name = pymongo.helpers._gen_index_name(keys)
@@ -54,7 +54,8 @@ def drop_index(coll, index, **kwargs):
         pass
 
 def clean_indexes():
-    for coll_name, coll in mongo.collections.items():
+    for coll_name in mongo.collection_types.keys():
+        coll = mongo.get_collection(coll_name)
         indexes = coll_indexes[coll_name]
 
         try:
@@ -67,173 +68,20 @@ def clean_indexes():
         except pymongo.errors.OperationFailure:
             pass
 
-def setup_mongo():
+def upsert_indexes():
     prefix = settings.conf.mongodb_collection_prefix or ''
-    last_error = time.time() - 24
+    mongo.prefix = prefix
 
-    while True:
-        try:
-            read_pref = _get_read_pref(settings.conf.mongodb_read_preference)
-
-            if read_pref:
-                client = pymongo.MongoClient(
-                    settings.conf.mongodb_uri,
-                    connectTimeoutMS=MONGO_CONNECT_TIMEOUT,
-                    socketTimeoutMS=MONGO_SOCKET_TIMEOUT,
-                    serverSelectionTimeoutMS=MONGO_SOCKET_TIMEOUT,
-                    read_preference=read_pref,
-                )
-            else:
-                client = pymongo.MongoClient(
-                    settings.conf.mongodb_uri,
-                    connectTimeoutMS=MONGO_CONNECT_TIMEOUT,
-                    socketTimeoutMS=MONGO_SOCKET_TIMEOUT,
-                    serverSelectionTimeoutMS=MONGO_SOCKET_TIMEOUT,
-                )
-
-            break
-        except pymongo.errors.ConnectionFailure:
-            time.sleep(0.5)
-            if time.time() - last_error > 30:
-                last_error = time.time()
-                logger.exception('Error connecting to mongodb server')
-
-    database = client.get_default_database()
-
-    settings_col = getattr(database, prefix + 'settings')
-    app_settings = settings_col.find_one({'_id': 'app'})
-    if app_settings:
-        secondary_mongodb_uri = app_settings.get('secondary_mongodb_uri')
-    else:
-        secondary_mongodb_uri = None
-
-    if secondary_mongodb_uri:
-        while True:
-            try:
-                read_pref = _get_read_pref(
-                    settings.conf.mongodb_read_preference)
-
-                if read_pref:
-                    secondary_client = pymongo.MongoClient(
-                        secondary_mongodb_uri,
-                        connectTimeoutMS=MONGO_CONNECT_TIMEOUT,
-                        socketTimeoutMS=MONGO_SOCKET_TIMEOUT,
-                        serverSelectionTimeoutMS=MONGO_SOCKET_TIMEOUT,
-                        read_preference=read_pref,
-                    )
-                else:
-                    secondary_client = pymongo.MongoClient(
-                        secondary_mongodb_uri,
-                        connectTimeoutMS=MONGO_CONNECT_TIMEOUT,
-                        socketTimeoutMS=MONGO_SOCKET_TIMEOUT,
-                        serverSelectionTimeoutMS=MONGO_SOCKET_TIMEOUT,
-                    )
-
-                break
-            except pymongo.errors.ConnectionFailure:
-                time.sleep(0.5)
-                if time.time() - last_error > 30:
-                    last_error = time.time()
-                    logger.exception(
-                        'Error connecting to secondary mongodb server')
-
-        secondary_database = secondary_client.get_default_database()
-    else:
-        secondary_database = database
-
-    mongo.database = database
-    mongo.secondary_database = secondary_database
-
-    db_collections = database.collection_names()
-    cur_collections = secondary_database.collection_names()
-
-    if 'authorities' in db_collections or 'authorities' in cur_collections:
-        raise TypeError('Cannot connect to a Pritunl Zero database')
-
-    if prefix + 'messages' not in cur_collections:
-        secondary_database.create_collection(prefix + 'messages', capped=True,
-            size=5000192, max=1000)
-
-    mongo.collections.update({
-        'transaction': getattr(database, prefix + 'transaction'),
-        'queue': getattr(database, prefix + 'queue'),
-        'tasks': getattr(database, prefix + 'tasks'),
-        'settings': getattr(database, prefix + 'settings'),
-        'messages': getattr(secondary_database, prefix + 'messages'),
-        'administrators': getattr(database, prefix + 'administrators'),
-        'users': getattr(database, prefix + 'users'),
-        'users_audit': getattr(database, prefix + 'users_audit'),
-        'users_key_link': getattr(secondary_database,
-            prefix + 'users_key_link'),
-        'users_net_link': getattr(database, prefix + 'users_net_link'),
-        'clients': getattr(database, prefix + 'clients'),
-        'clients_pool': getattr(database, prefix + 'clients_pool'),
-        'organizations': getattr(database, prefix + 'organizations'),
-        'hosts': getattr(database, prefix + 'hosts'),
-        'hosts_usage': getattr(database, prefix + 'hosts_usage'),
-        'servers': getattr(database, prefix + 'servers'),
-        'servers_output': getattr(database, prefix + 'servers_output'),
-        'servers_output_link': getattr(database,
-            prefix + 'servers_output_link'),
-        'servers_bandwidth': getattr(database, prefix + 'servers_bandwidth'),
-        'servers_ip_pool': getattr(database, prefix + 'servers_ip_pool'),
-        'links': getattr(database, prefix + 'links'),
-        'links_locations': getattr(database, prefix + 'links_locations'),
-        'links_hosts': getattr(database, prefix + 'links_hosts'),
-        'routes_reserve': getattr(database, prefix + 'routes_reserve'),
-        'dh_params': getattr(database, prefix + 'dh_params'),
-        'acme_challenges': getattr(database, prefix + 'acme_challenges'),
-        'auth_sessions': getattr(secondary_database,
-            prefix + 'auth_sessions'),
-        'auth_csrf_tokens': getattr(secondary_database,
-            prefix + 'auth_csrf_tokens'),
-        'auth_nonces': getattr(secondary_database, prefix + 'auth_nonces'),
-        'auth_limiter': getattr(secondary_database, prefix + 'auth_limiter'),
-        'otp': getattr(secondary_database, prefix + 'otp'),
-        'otp_cache': getattr(secondary_database, prefix + 'otp_cache'),
-        'yubikey': getattr(secondary_database, prefix + 'yubikey'),
-        'sso_tokens': getattr(secondary_database, prefix + 'sso_tokens'),
-        'sso_push_cache': getattr(secondary_database,
-            prefix + 'sso_push_cache'),
-        'sso_client_cache': getattr(secondary_database,
-            prefix + 'sso_client_cache'),
-        'sso_passcode_cache': getattr(secondary_database,
-            prefix + 'sso_passcode_cache'),
-        'vxlans': getattr(database, prefix + 'vxlans'),
-    })
-
-    for collection_name, collection in mongo.collections.items():
-        collection.name_str = collection_name
-
-    settings.local.mongo_time = None
-
-    while True:
-        try:
-            utils.sync_time()
-            break
-        except:
-            logger.exception('Failed to sync time', 'setup')
-            time.sleep(30)
-
-    settings.init()
-
-    cur_collections = database.collection_names()
+    cur_collections = mongo.database.collection_names()
     if prefix + 'logs' not in cur_collections:
         log_limit = settings.app.log_limit
-        database.create_collection(prefix + 'logs', capped=True,
+        mongo.database.create_collection(prefix + 'logs', capped=True,
             size=log_limit * 1024, max=log_limit)
 
     if prefix + 'log_entries' not in cur_collections:
         log_entry_limit = settings.app.log_entry_limit
-        database.create_collection(prefix + 'log_entries', capped=True,
+        mongo.database.create_collection(prefix + 'log_entries', capped=True,
             size=log_entry_limit * 512, max=log_entry_limit)
-
-    mongo.collections.update({
-        'logs': getattr(database, prefix + 'logs'),
-        'log_entries': getattr(database, prefix + 'log_entries'),
-    })
-    mongo.collections['logs'].name_str = 'logs'
-    mongo.collections['log_entries'].name_str = 'log_entries'
 
     upsert_index('logs', 'timestamp', background=True)
     upsert_index('transaction', 'lock_id',
@@ -396,7 +244,8 @@ def setup_mongo():
     upsert_index('tasks', 'timestamp',
         background=True, expireAfterSeconds=300)
     if settings.app.demo_mode:
-        drop_index(mongo.collections['clients'], 'timestamp', background=True)
+        drop_index(mongo.get_collection('clients'),
+            'timestamp', background=True)
     else:
         upsert_index('clients', 'timestamp',
             background=True, expireAfterSeconds=settings.vpn.client_ttl)
@@ -436,6 +285,150 @@ def setup_mongo():
         clean_indexes()
     except:
         logger.exception('Failed to clean indexes', 'setup')
+
+def setup_mongo():
+    prefix = settings.conf.mongodb_collection_prefix or ''
+    last_error = time.time() - 24
+
+    while True:
+        try:
+            read_pref = _get_read_pref(settings.conf.mongodb_read_preference)
+
+            if read_pref:
+                client = pymongo.MongoClient(
+                    settings.conf.mongodb_uri,
+                    connectTimeoutMS=MONGO_CONNECT_TIMEOUT,
+                    socketTimeoutMS=MONGO_SOCKET_TIMEOUT,
+                    serverSelectionTimeoutMS=MONGO_SOCKET_TIMEOUT,
+                    read_preference=read_pref,
+                )
+            else:
+                client = pymongo.MongoClient(
+                    settings.conf.mongodb_uri,
+                    connectTimeoutMS=MONGO_CONNECT_TIMEOUT,
+                    socketTimeoutMS=MONGO_SOCKET_TIMEOUT,
+                    serverSelectionTimeoutMS=MONGO_SOCKET_TIMEOUT,
+                )
+
+            break
+        except pymongo.errors.ConnectionFailure:
+            time.sleep(0.5)
+            if time.time() - last_error > 30:
+                last_error = time.time()
+                logger.exception('Error connecting to mongodb server')
+
+    database = client.get_default_database()
+
+    settings_col = getattr(database, prefix + 'settings')
+    app_settings = settings_col.find_one({'_id': 'app'})
+    if app_settings:
+        secondary_mongodb_uri = app_settings.get('secondary_mongodb_uri')
+    else:
+        secondary_mongodb_uri = None
+
+    if secondary_mongodb_uri:
+        while True:
+            try:
+                read_pref = _get_read_pref(
+                    settings.conf.mongodb_read_preference)
+
+                if read_pref:
+                    secondary_client = pymongo.MongoClient(
+                        secondary_mongodb_uri,
+                        connectTimeoutMS=MONGO_CONNECT_TIMEOUT,
+                        socketTimeoutMS=MONGO_SOCKET_TIMEOUT,
+                        serverSelectionTimeoutMS=MONGO_SOCKET_TIMEOUT,
+                        read_preference=read_pref,
+                    )
+                else:
+                    secondary_client = pymongo.MongoClient(
+                        secondary_mongodb_uri,
+                        connectTimeoutMS=MONGO_CONNECT_TIMEOUT,
+                        socketTimeoutMS=MONGO_SOCKET_TIMEOUT,
+                        serverSelectionTimeoutMS=MONGO_SOCKET_TIMEOUT,
+                    )
+
+                break
+            except pymongo.errors.ConnectionFailure:
+                time.sleep(0.5)
+                if time.time() - last_error > 30:
+                    last_error = time.time()
+                    logger.exception(
+                        'Error connecting to secondary mongodb server')
+
+        secondary_database = secondary_client.get_default_database()
+    else:
+        secondary_database = database
+
+    mongo.database = database
+    mongo.secondary_database = secondary_database
+
+    db_collections = database.collection_names()
+    cur_collections = secondary_database.collection_names()
+
+    if 'authorities' in db_collections or 'authorities' in cur_collections:
+        raise TypeError('Cannot connect to a Pritunl Zero database')
+
+    if prefix + 'messages' not in cur_collections:
+        secondary_database.create_collection(prefix + 'messages', capped=True,
+            size=5000192, max=1000)
+
+    mongo.collection_types = {
+        'transaction': 1,
+        'queue': 1,
+        'tasks': 1,
+        'settings': 1,
+        'messages': 2,
+        'administrators': 1,
+        'users': 1,
+        'users_audit': 1,
+        'users_key_link': 2,
+        'users_net_link': 1,
+        'clients': 1,
+        'clients_pool': 1,
+        'organizations': 1,
+        'hosts': 1,
+        'hosts_usage': 1,
+        'servers': 1,
+        'servers_output': 1,
+        'servers_output_link': 1,
+        'servers_bandwidth': 1,
+        'servers_ip_pool': 1,
+        'links': 1,
+        'links_locations': 1,
+        'links_hosts': 1,
+        'routes_reserve': 1,
+        'dh_params': 1,
+        'acme_challenges': 1,
+        'auth_sessions': 2,
+        'auth_csrf_tokens': 2,
+        'auth_nonces': 2,
+        'auth_limiter': 2,
+        'otp': 2,
+        'otp_cache': 2,
+        'yubikey': 2,
+        'sso_tokens': 2,
+        'sso_push_cache': 2,
+        'sso_client_cache': 2,
+        'sso_passcode_cache': 2,
+        'vxlans': 1,
+        'logs': 1,
+        'log_entries': 1,
+    }
+
+    settings.local.mongo_time = None
+
+    while True:
+        try:
+            utils.sync_time()
+            break
+        except:
+            logger.exception('Failed to sync time', 'setup')
+            time.sleep(30)
+
+    settings.init()
+
+    upsert_indexes()
 
     if not auth.Administrator.collection.find_one():
         auth.Administrator(
