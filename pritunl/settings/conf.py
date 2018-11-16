@@ -9,7 +9,7 @@ class SettingsConf(SettingsGroupFile):
         'host_id': None,
         'ssl': True,
         'static_cache': True,
-        'port': 9700,
+        'port': 443,
         'internal_port': 9755,
         'pooler': True,
         'temp_path': '/tmp/pritunl',
