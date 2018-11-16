@@ -134,8 +134,7 @@ def setup_mongodb_put():
     if setup_state != 'setup':
         return flask.abort(404)
 
-    utils.rand_sleep()
-    if setup_key != settings.local.setup_key:
+    if not utils.const_compare(setup_key, settings.local.setup_key):
         return utils.jsonify({
             'error': SETUP_KEY_INVALID,
             'error_msg': SETUP_KEY_INVALID_MSG,
