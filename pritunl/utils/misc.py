@@ -130,7 +130,8 @@ def set_db_ver(version, version_min=None):
     db_version = get_db_ver(False)
     db_min_version = get_min_db_ver(False)
 
-    if version != db_version or MIN_DATABASE_VER != db_min_version:
+    if (version != db_version or MIN_DATABASE_VER != db_min_version) and \
+            db_version:
         logger.info('Setting db version', 'utils',
             cur_ver=db_version,
             new_ver=version,
