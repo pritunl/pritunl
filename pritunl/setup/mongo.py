@@ -372,10 +372,10 @@ def setup_mongo():
     mongo.database = database
     mongo.secondary_database = secondary_database
 
-    db_collections = database.collection_names()
-    cur_collections = secondary_database.collection_names()
-
-    if 'authorities' in db_collections or 'authorities' in cur_collections:
+    cur_collections = database.collection_names()
+    cur_sec_collections = secondary_database.collection_names()
+    if 'authorities' in cur_collections or \
+            'authorities' in cur_sec_collections:
         raise TypeError('Cannot connect to a Pritunl Zero database')
 
     mongo.collection_types = {
