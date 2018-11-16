@@ -41,5 +41,5 @@ def upgrade_server():
         upgrade_1_24()
         utils.set_db_ver('1.24.0.0', '1.24.0.0')
 
-    if not upgraded:
+    if not upgraded and utils.get_db_ver(False):
         logger.info('No upgrade needed', 'upgrade')
