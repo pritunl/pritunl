@@ -421,6 +421,17 @@ def setup_mongo():
         'log_entries': 1,
     }
 
+    cur_collections = mongo.secondary_database.collection_names()
+    if prefix + 'messages' not in cur_collections:
+        mongo.secondary_database.create_collection(
+            prefix + 'messages', capped=True,
+            size=5000192, max=1000)
+    elif not mongo.get_collection('messages').options().get('capped'):
+        mongo.get_collection('messages').drop()
+        mongo.secondary_database.create_collection(
+            prefix + 'messages', capped=True,
+            size=5000192, max=1000)
+
     settings.local.mongo_time = None
 
     while True:
