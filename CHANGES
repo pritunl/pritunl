@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix database initialization
+
 Version 1.29.1890.32 2018-11-15
 -------------------------------
 
