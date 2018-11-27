@@ -787,6 +787,12 @@ class Clients(object):
                 self.server_private_key:
             auth_password, auth_token, auth_nonce, auth_timestamp = \
                 self.decrypt_rsa(password.split('<%=RSA_ENCRYPTED=%>')[-1])
+        elif password and '<%=PUSH_TOKEN=%>' in password:
+            _, password = password.split('<%=PUSH_TOKEN=%>')
+            password = password or None
+        elif password and '<%=AUTH_TOKEN=%>' in password:
+            _, password = password.split('<%=AUTH_TOKEN=%>')
+            password = password or None
 
         try:
             if not settings.vpn.stress_test and \
