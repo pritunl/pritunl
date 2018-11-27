@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix connection issue with older clients
+
 Version 1.29.1891.28 2018-11-16
 -------------------------------
 
