@@ -69,7 +69,7 @@
       </select>
     </div>
     <div class="sso-org form-group" <%= sso ? '' : 'style="display: none;"' %>>
-      <label>Single Sign-On Organization</label>
+      <label>Default Single Sign-On Organization</label>
       <select class="form-control">
         <% _.each(orgs, function(org) { %>
         <option value="<%- org.id %>" <%= (sso_org === org.id) ? 'selected' : '' %>><%- org.name %></option>
