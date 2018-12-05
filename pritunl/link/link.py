@@ -123,6 +123,26 @@ class Host(mongo.MongoObject):
             'version': self.version,
         }
 
+    def simple_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'link_id': self.link_id,
+            'location_id': self.location_id,
+            'timeout': self.timeout,
+            'priority': self.priority,
+            'ping_timestamp_ttl': self.ping_timestamp_ttl,
+            'static': bool(self.static),
+            'public_address': self.public_address if not \
+                settings.app.demo_mode else utils.random_ip_addr(),
+            'local_address': self.local_address if not \
+                settings.app.demo_mode else utils.random_ip_addr(),
+            'address6': self.address6 if not \
+                settings.app.demo_mode else None,
+            'version': self.version,
+            'uri': self.get_uri(),
+        }
+
     def check_available(self):
         if self.is_available:
             return True
