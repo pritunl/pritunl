@@ -534,6 +534,10 @@ class Location(mongo.MongoObject):
     def collection(cls):
         return mongo.get_collection('links_locations')
 
+    @cached_static_property
+    def host_collection(cls):
+        return mongo.get_collection('links_hosts')
+
     def dict(self, locations=None, locations_id=None):
         static_location = False
 
