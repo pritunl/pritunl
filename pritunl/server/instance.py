@@ -960,6 +960,10 @@ class ServerInstance(object):
             })
 
     def reserve_route_advertisement(self, vpc_region, vpc_id, network):
+        cloud_provider = settings.app.cloud_provider
+        if not cloud_provider:
+            return
+
         ra_id = '%s_%s_%s' % (self.server.id, vpc_id, network)
         timestamp_spec = utils.now() - datetime.timedelta(
             seconds=settings.vpn.route_ping_ttl)
