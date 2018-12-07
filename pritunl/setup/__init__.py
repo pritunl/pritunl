@@ -12,6 +12,7 @@ from pritunl.setup.public_ip import setup_public_ip
 from pritunl.setup.poolers import setup_poolers
 from pritunl.setup.host import setup_host
 from pritunl.setup.server_listeners import setup_server_listeners
+from pritunl.setup.settings import setup_settings
 from pritunl.setup.dns import setup_dns
 from pritunl.setup.ndppd import setup_ndppd
 from pritunl.setup.monitoring import setup_monitoring
@@ -37,6 +38,7 @@ def setup_all():
         setup_signal_handler()
         setup_server()
         setup_mongo()
+        setup_settings()
         setup_boto_conf()
         setup_public_ip()
         setup_host()
