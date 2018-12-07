@@ -159,6 +159,7 @@
       <select class="form-control" data-toggle="tooltip" title="Cloud provider for integration">
         <option value="none" <%= cloud_provider === 'none' ? 'selected' : '' %>>None</option>
         <option value="aws" <%= cloud_provider === 'aws' ? 'selected' : '' %>>AWS</option>
+        <option value="oracle" <%= cloud_provider === 'oracle' ? 'selected' : '' %>>Oracle</option>
       </select>
     </div>
     <div class="sso-okta-app-id form-group" <%= !sso || sso.indexOf('okta') === -1 ? 'style="display: none;"' : '' %>>
@@ -408,6 +409,20 @@
       <input type="text" class="form-control" placeholder="Enter secret key" data-toggle="tooltip" title="Enter secret key or 'role' to use the instance IAM role" value="<%- sa_east_1_secret_key || '' %>">
     </div>
   </div>
+</div>
+<div class="oracle-settings layout-horizontal" <%= cloud_provider === 'oracle' ? '' : 'style="display: none;"' %>>
+<div class="settings-left layout-flex left">
+  <div class="oracle-user-ocid form-group">
+    <label>Oracle User OCID</label>
+    <input type="text" class="form-control" placeholder="Enter user OCID" data-toggle="tooltip" title="Enter the OCID of the Oracle Cloud user that is associated with the public key" value="<%- oracle_user_ocid || '' %>">
+  </div>
+</div>
+<div class="settings-right right">
+  <div class="oracle-public-key form-group">
+    <label>Oracle API Public Key</label><br>
+    <textarea class="form-control" rows="4" spellcheck="false" data-toggle="tooltip" title="Generated public key for Oracle API. Copy this public key to the user API keys in the Oracle Cloud console. Clear the input field to generate a new key." ><%- oracle_public_key %></textarea>
+  </div>
+</div>
 </div>
 <div class="layout-horizontal">
   <div class="settings-left layout-flex left advanced">
