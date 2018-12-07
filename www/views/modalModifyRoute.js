@@ -30,23 +30,6 @@ define([
     },
     postRender: function() {
       this.$('.label').tooltip();
-      this.setLoading('Loading AWS VPC information...', true);
-      this.vpcs.fetch({
-        success: function() {
-          this.clearLoading();
-          this.updateVpcIds();
-        }.bind(this),
-        error: function(model, response) {
-          this.clearLoading();
-          this.updateVpcIds();
-          if (response.responseJSON) {
-            this.setAlert('danger', response.responseJSON.error_msg);
-          }
-          else {
-            this.setAlert('danger', this.errorMsg);
-          }
-        }.bind(this)
-      });
     },
     updateVpcIds: function() {
       var curVpcId = this.model.get('vpc_id');
@@ -134,13 +117,6 @@ define([
       var natInterface = this.$('.nat-interface input').val();
       var netGateway = this.getNetGatewaySelect();
       var routeAd = this.getRotueAdSelect();
-      var vpcRegion = null;
-      var vpcId = null;
-
-      if (routeAd) {
-        vpcRegion = this.$('.vpc-region select').val();
-        vpcId = this.$('.vpc-id select').val();
-      }
 
       metric = metric ? parseInt(metric, 10) : null;
 
@@ -151,8 +127,7 @@ define([
         nat: nat,
         nat_interface: natInterface,
         net_gateway: netGateway,
-        vpc_region: vpcRegion,
-        vpc_id: vpcId
+        advertise: routeAd
       }, {
         success: function() {
           this.close(true);
