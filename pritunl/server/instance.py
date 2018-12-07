@@ -976,8 +976,10 @@ class ServerInstance(object):
                 'timestamp': utils.now(),
             }}, upsert=True)
 
-            utils.add_vpc_route(vpc_region, vpc_id, network,
-                settings.local.host.aws_id)
+            if settings.app.cloud_provider == 'aws':
+                utils.add_vpc_route(network)
+            elif settings.app.cloud_provider == 'oracle':
+                utils.oracle_add_route(network)
 
             self.route_advertisements.add(ra_id)
         except pymongo.errors.DuplicateKeyError:
