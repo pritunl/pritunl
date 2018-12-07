@@ -863,11 +863,20 @@ class Link(mongo.MongoObject):
     def get_location(self, location_id):
         return Location(link=self, id=location_id)
 
+    def get_location_by_name(self, location_name):
+        doc = self.location_collection.find_one({
+            'link_id': self.id,
+            'name': location_name,
+        })
+
+        if doc:
+            return Location(link=self, doc=doc)
+
     def iter_locations(self, skip=None, exclude_id=None):
         if exclude_id:
             excludes = self.excludes
 
-        cursor = Location.collection.find({
+        cursor = self.location_collection.find({
             'link_id': self.id,
         }).sort('_id')
 
