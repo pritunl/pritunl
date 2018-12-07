@@ -124,6 +124,10 @@ class NotFound(BaseError):
     pass
 
 
+class RequestError(BaseError):
+    pass
+
+
 class QueueError(BaseError):
     pass
 
