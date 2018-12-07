@@ -72,6 +72,8 @@ def _dict():
             'cloud_provider': settings.app.cloud_provider,
             'route53_region': settings.app.route53_region,
             'route53_zone': settings.app.route53_zone,
+            'oracle_user_ocid': settings.app.oracle_user_ocid,
+            'oracle_public_key': 'demo',
             'us_east_1_access_key': 'demo',
             'us_east_1_secret_key': 'demo',
             'us_east_2_access_key': 'demo',
@@ -154,6 +156,8 @@ def _dict():
             'cloud_provider': settings.app.cloud_provider,
             'route53_region': settings.app.route53_region,
             'route53_zone': settings.app.route53_zone,
+            'oracle_user_ocid': settings.app.oracle_user_ocid,
+            'oracle_public_key': settings.app.oracle_public_key,
             'us_east_1_access_key': settings.app.us_east_1_access_key,
             'us_east_1_secret_key': settings.app.us_east_1_secret_key,
             'us_east_2_access_key': settings.app.us_east_2_access_key,
@@ -681,6 +685,22 @@ def settings_put():
         settings_commit = True
         settings.app.route53_zone = utils.filter_str(
             flask.request.json['route53_zone']) or None
+
+    if settings.app.cloud_provider == 'oracle':
+        if 'oracle_user_ocid' in flask.request.json:
+            settings_commit = True
+            settings.app.oracle_user_ocid = utils.filter_str(
+                flask.request.json['oracle_user_ocid']) or None
+    elif settings.app.oracle_user_ocid:
+        settings_commit = True
+        settings.app.oracle_user_ocid = None
+
+    if 'oracle_public_key' in flask.request.json:
+        if flask.request.json['oracle_public_key'] == 'reset':
+            settings_commit = True
+            private_key, public_key = utils.generate_rsa_key()
+            settings.app.oracle_private_key = private_key
+            settings.app.oracle_public_key = public_key
 
     for aws_key in (
                 'us_east_1_access_key',
