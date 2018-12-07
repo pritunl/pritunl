@@ -637,6 +637,14 @@ class Location(mongo.MongoObject):
             'peers': peers,
         }
 
+    def simple_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'type': self.type,
+            'link_id': self.link_id,
+        }
+
     def remove(self):
         Host.collection.remove({
             'location_id': self.id,
