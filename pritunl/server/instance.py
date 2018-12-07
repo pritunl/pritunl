@@ -941,6 +941,7 @@ class ServerInstance(object):
 
     def init_route_advertisements(self):
         for route in self.server.get_routes(include_server_links=True):
+            advertise = route['advertise']
             vpc_region = route['vpc_region']
             vpc_id = route['vpc_id']
             network = route['network']
@@ -948,7 +949,7 @@ class ServerInstance(object):
             if route['net_gateway']:
                 continue
 
-            if vpc_region and vpc_id:
+            if advertise or (vpc_region and vpc_id):
                 self.reserve_route_advertisement(
                     vpc_region, vpc_id, network)
 
@@ -976,9 +977,9 @@ class ServerInstance(object):
                 'timestamp': utils.now(),
             }}, upsert=True)
 
-            if settings.app.cloud_provider == 'aws':
+            if cloud_provider == 'aws':
                 utils.add_vpc_route(network)
-            elif settings.app.cloud_provider == 'oracle':
+            elif cloud_provider == 'oracle':
                 utils.oracle_add_route(network)
             else:
                 logger.error('Unknown cloud provider type', 'server',
