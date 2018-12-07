@@ -15,14 +15,14 @@ information can be found at the home page [pritunl.com](https://pritunl.com)
 export VERSION=X.XX.XX.XX # Set current pritunl version here
 
 sudo rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-sudo yum -y install golang git bzr python2 python-devel python-pip net-tools openvpn bridge-utils psmisc
+sudo yum -y install golang git bzr python2 python-devel python-pip net-tools openvpn bridge-utils psmisc gcc-c++
 
 echo "export GOPATH=/go" >> ~/.bash_profile
 source ~/.bash_profile
-go get github.com/pritunl/pritunl-dns
-go get github.com/pritunl/pritunl-web
-ln -s /go/bin/pritunl-dns /usr/local/bin/pritunl-dns
-ln -s /go/bin/pritunl-web /usr/local/bin/pritunl-web
+go get -u github.com/pritunl/pritunl-dns
+go get -u github.com/pritunl/pritunl-web
+sudo ln -s /go/bin/pritunl-dns /usr/bin/pritunl-dns
+sudo ln -s /go/bin/pritunl-web /usr/bin/pritunl-web
 
 wget https://github.com/pritunl/pritunl/archive/$VERSION.tar.gz
 tar xf $VERSION.tar.gz
