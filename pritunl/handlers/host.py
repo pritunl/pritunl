@@ -129,13 +129,6 @@ def host_put(hst=None):
         hst.availability_group = utils.filter_str(
             flask.request.json['availability_group']) or DEFAULT
 
-    if 'instance_id' in flask.request.json:
-        instance_id = utils.filter_str(
-            flask.request.json['instance_id'])
-
-        if instance_id != hst.aws_id:
-            hst.instance_id = instance_id
-
     hst.commit(hst.changed)
     event.Event(type=HOSTS_UPDATED)
     messenger.publish('hosts', 'updated')
